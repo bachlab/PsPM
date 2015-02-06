@@ -1,0 +1,533 @@
+function varargout = scr_review(varargin)
+% SCR_REVIEW MATLAB code for scr_review.fig
+%__________________________________________________________________________
+% PsPM 3.0
+% (C) 2008-2015 Gabriel Graeni (University of Zurich)
+% $Id: scr_review.m 701 2015-01-22 14:36:13Z tmoser $
+% $Rev: 701 $
+% initialise
+% -------------------------------------------------------------------------
+global settings;
+if isempty(settings), scr_init; end;
+% -------------------------------------------------------------------------
+% Last Modified by GUIDE v2.5 28-Sep-2014 14:10:50
+
+% Begin initialization code - DO NOT EDIT
+gui_Singleton = 1;
+gui_State = struct('gui_Name',       mfilename, ...
+    'gui_Singleton',  gui_Singleton, ...
+    'gui_OpeningFcn', @scr_review_OpeningFcn, ...
+    'gui_OutputFcn',  @scr_review_OutputFcn, ...
+    'gui_LayoutFcn',  [] , ...
+    'gui_Callback',   []);
+if nargin && ischar(varargin{1})
+    gui_State.gui_Callback = str2func(varargin{1});
+end
+
+if nargout
+    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+else
+    gui_mainfcn(gui_State, varargin{:});
+end
+% End initialization code - DO NOT EDIT
+
+
+% --- Executes just before scr_review is made visible.
+function scr_review_OpeningFcn(hObject, eventdata, handles, varargin)
+% This function has no output args, see OutputFcn.
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% varargin   command line arguments to scr_review (see VARARGIN)
+
+% Left alignment of text fields
+set(handles.textPlot1,'HorizontalAlignment','left')
+set(handles.textPlot2,'HorizontalAlignment','left')
+set(handles.textPlot3,'HorizontalAlignment','left')
+set(handles.textPlot4,'HorizontalAlignment','left')
+set(handles.textPlot5,'HorizontalAlignment','left')
+set(handles.textPlot6,'HorizontalAlignment','left')
+set(handles.textStatus,'HorizontalAlignment','left')
+set(handles.textStatus,'String','Select a model...');
+
+handles.nrPlot = 6;
+%handles.figCnt = 0;
+handles.modelCnt = 0;
+handles.currentModel = 1;
+handles.listModelEntry{1} = '';
+
+% buffer figure handles to keep
+handles.figToKeep = findall(0, 'type', 'figure');
+
+% Choose default command line output for scr_review
+handles.output = hObject;
+
+% Update handles structure
+guidata(hObject, handles);
+
+% UIWAIT makes scr_review wait for user response (see UIRESUME)
+% uiwait(handles.scr_review);
+
+
+% --- Outputs from this function are returned to the command line.
+function varargout = scr_review_OutputFcn(hObject, eventdata, handles)
+% varargout  cell array for returning output args (see VARARGOUT);
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Get default command line output from handles structure
+varargout{1} = handles.output;
+
+
+
+% --- Executes on button press in buttonAddModel.
+function buttonAddModel_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonAddModel (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+filt='.*\.mat$';
+[modelfileArray, sts]=spm_select([1 inf], filt, 'Select model file');
+if sts==0, return; end;
+
+% check each model file
+setButtonDisable(handles)
+set(handles.textStatus,'String','Loading model. Please wait...');
+drawnow
+for iFile = 1:size(modelfileArray, 1)
+    modelfile = spm_file(modelfileArray(iFile, :));
+    [sts, model, modeltype] = scr_load1(modelfile, 'all', 'any');
+    if sts == -1 || ~any(strcmp(modeltype,{'glm','dcm','sf'}))
+        set(handles.textStatus,'String','No supported modeltype detected');
+        drawnow
+        return;
+    elseif strcmp(modeltype,'sf')
+        if ~isfield(model,'dcm')
+            set(handles.textStatus,'String','No supported modeltype detected');
+            drawnow
+            return;
+        end
+    end
+    
+    handles.modelCnt = handles.modelCnt+1;
+    
+    handles.modelData{handles.modelCnt}.modeltype = modeltype;
+    handles.modelData{handles.modelCnt}.model = model;
+    handles.modelData{handles.modelCnt}.modelfile = modelfile;
+    if strcmp(modeltype,'dcm')
+        handles.modelData{handles.modelCnt}.maxSessionNr = numel(model.sn);
+    end
+    if strcmp(modeltype,'sf')
+        handles.modelData{handles.modelCnt}.maxEpochNr = numel(model.dcm);
+    end
+    [~,modelfileName,~] = fileparts(modelfile);
+    handles.listModelEntry{handles.modelCnt} = modelfileName;
+    set(handles.listModel, 'String', handles.listModelEntry);
+    set(handles.listModel, 'Value', handles.modelCnt);
+    handles.currentModel = handles.modelCnt;
+    handles.modelData{handles.modelCnt}.fig = setFigureHandle(handles);
+    
+    showModel(handles);
+    
+end;
+setButtonEnable(handles)
+
+if handles.modelCnt > 1
+    set(handles.buttonRemoveModel, 'Enable', 'on');
+end
+guidata(hObject, handles);
+
+% --- Executes on button press in buttonRemoveModel.
+function buttonRemoveModel_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonRemoveModel (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.modelData{handles.currentModel} = [];
+handles.modelData(cellfun('isempty',handles.modelData)) = [];
+handles.listModelEntry{handles.currentModel} = [];
+handles.listModelEntry(cellfun('isempty',handles.listModelEntry)) = [];
+handles.modelCnt = handles.modelCnt - 1;
+set(handles.listModel, 'String', handles.listModelEntry);
+if handles.currentModel > handles.modelCnt
+    handles.currentModel = handles.modelCnt;
+end
+set(handles.listModel, 'Value', handles.currentModel);
+if handles.modelCnt < 2
+    set(handles.buttonRemoveModel, 'Enable', 'off');
+end
+showModel(handles);
+
+guidata(hObject, handles);
+
+
+% --- Executes on button press in buttonExit.
+function buttonExit_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonExit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+closeFigures(handles);
+delete(gcbf)
+
+
+% --- Executes when user attempts to close scr_review.
+function scr_review_CloseRequestFcn(hObject, eventdata, handles)
+% hObject    handle to scr_review (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: delete(hObject) closes the figure
+closeFigures(handles);
+delete(gcbf)
+
+
+
+% --- Executes on button press in buttonPlot1.
+function buttonPlot1_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonPlot1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+tmpStatusString = get(handles.textStatus,'String');
+set(handles.textStatus,'String','Plotting is in progress. Please wait...');
+switch handles.modelData{handles.currentModel}.modeltype
+    case 'glm'
+        handles.modelData{handles.currentModel}.fig = scr_rev_glm(handles.modelData{handles.currentModel}.modelfile, handles.modelData{handles.currentModel}.model, 1);
+        
+    case 'dcm'
+        sessionNr = checkSessionNr(handles);
+        if sessionNr
+            scr_rev_dcm(handles.modelData{handles.currentModel}.model, 'sum', sessionNr, [])
+        end
+        
+    case 'sf'
+        epochNr = str2num(get(handles.editEpochNr,'String'));
+        if isempty(epochNr) || epochNr > handles.modelData{handles.currentModel}.maxEpochNr || epochNr < 1
+            uiwait(msgbox(sprintf('Epoch number has to be within the range [1 - %d]',handles.modelData{handles.currentModel}.maxEpochNr),'Warning'));
+        else
+            scr_rev_dcm(handles.modelData{handles.currentModel}.model.dcm, 'sf', epochNr, []);
+        end
+end
+set(handles.textStatus,'String',tmpStatusString);
+guidata(hObject, handles);
+
+
+% --- Executes on button press in buttonPlot2.
+function buttonPlot2_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonPlot2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+tmpStatusString = get(handles.textStatus,'String');
+set(handles.textStatus,'String','Plotting is in progress. Please wait...');
+switch handles.modelData{handles.currentModel}.modeltype
+    case 'glm'
+        handles.modelData{handles.currentModel}.fig = scr_rev_glm(handles.modelData{handles.currentModel}.modelfile, handles.modelData{handles.currentModel}.model, 2);
+        
+    case 'dcm'
+        sessionNr = checkSessionNr(handles);
+        if sessionNr
+            maxTrialNr = numel(handles.modelData{handles.currentModel}.model.sn{sessionNr}.u);
+            trialNr = str2num(get(handles.editTrialNr,'String'));
+            if isempty(trialNr) || trialNr > maxTrialNr || trialNr < 1
+                uiwait(msgbox(sprintf('Trial number has to be within the range [1 - %d]',maxTrialNr),'Warning'));
+            else
+                scr_rev_dcm(handles.modelData{handles.currentModel}.model, 'inv', sessionNr, trialNr);
+            end
+        end
+        
+end
+set(handles.textStatus,'String',tmpStatusString);
+guidata(hObject, handles);
+
+% --- Executes on button press in buttonPlot3.
+function buttonPlot3_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonPlot3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+tmpStatusString = get(handles.textStatus,'String');
+set(handles.textStatus,'String','Plotting is in progress. Please wait...');
+switch handles.modelData{handles.currentModel}.modeltype
+    case 'glm'
+        handles.modelData{handles.currentModel}.fig = scr_rev_glm(handles.modelData{handles.currentModel}.modelfile, handles.modelData{handles.currentModel}.model, 3);
+        
+    case 'dcm'
+        sessionNr = checkSessionNr(handles);
+        if sessionNr
+            scr_rev_dcm(handles.modelData{handles.currentModel}.model, 'scrf', sessionNr, []);
+        end
+        
+end
+set(handles.textStatus,'String',tmpStatusString);
+guidata(hObject, handles);
+
+% --- Executes on button press in buttonPlot4.
+function buttonPlot4_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonPlot4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+tmpStatusString = get(handles.textStatus,'String');
+set(handles.textStatus,'String','Plotting is in progress. Please wait...');
+switch handles.modelData{handles.currentModel}.modeltype
+    case 'glm'
+        handles.modelData{handles.currentModel}.fig = scr_rev_glm(handles.modelData{handles.currentModel}.modelfile, handles.modelData{handles.currentModel}.model, 4);
+    case 'dcm'
+        scr_rev_dcm(handles.modelData{handles.currentModel}.model, 'names');
+end
+set(handles.textStatus,'String',tmpStatusString);
+guidata(hObject, handles);
+
+% --- Executes on button press in buttonPlot5.
+function buttonPlot5_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonPlot5 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+tmpStatusString = get(handles.textStatus,'String');
+set(handles.textStatus,'String','Plotting is in progress. Please wait...');
+switch handles.modelData{handles.currentModel}.modeltype
+    case 'glm'
+        handles.modelData{handles.currentModel}.fig = scr_rev_glm(handles.modelData{handles.currentModel}.modelfile, handles.modelData{handles.currentModel}.model, 5);
+    case 'dcm'
+        handles.modelData{handles.currentModel}.fig = scr_rev_con(handles.modelData{handles.currentModel}.model);
+        
+end
+set(handles.textStatus,'String',tmpStatusString);
+guidata(hObject, handles);
+
+% --- Executes on button press in buttonPlot6.
+function buttonPlot6_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonPlot6 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+tmpStatusString = get(handles.textStatus,'String');
+set(handles.textStatus,'String','Plotting is in progress. Please wait...');
+switch handles.modelData{handles.currentModel}.modeltype
+    case 'glm'
+        handles.modelData{handles.currentModel}.fig = scr_rev_con(handles.modelData{handles.currentModel}.model);
+        
+end
+set(handles.textStatus,'String',tmpStatusString);
+guidata(hObject, handles);
+
+
+% --- Executes on button press in buttonPlotClose.
+function buttonPlotClose_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonPlotClose (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+closeFigures(handles)
+
+function editTrialNr_Callback(hObject, eventdata, handles)
+% hObject    handle to editTrialNr (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of editTrialNr as text
+%        str2double(get(hObject,'String')) returns contents of editTrialNr as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function editTrialNr_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to editTrialNr (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function editSessionNr_Callback(hObject, eventdata, handles)
+% hObject    handle to editSessionNr (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of editSessionNr as text
+%        str2double(get(hObject,'String')) returns contents of editSessionNr as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function editSessionNr_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to editSessionNr (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+% --- Executes on selection change in listModel.
+function listModel_Callback(hObject, eventdata, handles)
+% hObject    handle to listModel (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns listModel contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from listModel
+entryNr = get(handles.listModel,'Value');
+if ~isempty(entryNr)
+    handles.currentModel = entryNr;
+    showModel(handles);
+    guidata(hObject, handles)
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function listModel_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to listModel (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+%--------------------------------------------------------------------------
+% Functions
+%--------------------------------------------------------------------------
+function setInvisble(handles)
+for i=1:handles.nrPlot
+    eval(sprintf('set(handles.buttonPlot%d,''Visible'',''off'')',i));
+    eval(sprintf('set(handles.textPlot%d,''Visible'',''off'')',i));
+end
+set(handles.buttonPlotClose,'Visible','off');
+set(handles.editTrialNr,'Visible','off');
+set(handles.editEpochNr,'Visible','off');
+set(handles.editSessionNr,'Visible','off');
+set(handles.textSessionNr,'Visible','off');
+set(handles.textSessionRange,'Visible','off');
+
+function setButtonPlotString(handles, inString)
+for i=1:size(inString,2)
+    if ~isempty(inString{i})
+        eval(sprintf('set(handles.buttonPlot%d,''String'',inString{%d})',i,i));
+        eval(sprintf('set(handles.buttonPlot%d,''Visible'',''on'')',i));
+    end
+end
+set(handles.buttonPlotClose,'Visible','on');
+
+function setButtonDisable(handles)
+for i=1:handles.nrPlot
+    eval(sprintf('set(handles.buttonPlot%d,''Enable'',''off'')',i));
+end
+
+function setButtonEnable(handles)
+for i=1:handles.nrPlot
+    eval(sprintf('set(handles.buttonPlot%d,''Enable'',''on'')',i));
+end
+
+function setTextPlotString(handles, inString)
+for i=1:size(inString,2)
+    if ~isempty(inString{i})
+        eval(sprintf('set(handles.textPlot%d,''String'',inString{%d})',i,i));
+        eval(sprintf('set(handles.textPlot%d,''Visible'',''on'')',i));
+    end
+end
+
+function setTrial(handles)
+set(handles.editTrialNr,'Visible','on');
+
+function setSession(handles)
+nr = handles.modelData{handles.currentModel}.maxSessionNr;
+set(handles.editSessionNr,'Visible','on');
+set(handles.textSessionNr,'Visible','on');
+set(handles.textSessionRange,'Visible','on');
+set(handles.textSessionRange,'String',sprintf('[1 - %d]',nr));
+
+function setEpoch(handles)
+set(handles.editEpochNr,'Visible','on');
+
+function fig = setFigureHandle(handles)
+for i=1:handles.nrPlot
+    fig(i).h=-1;
+end
+
+function closeFigures(handles)
+close(setdiff(findobj('type','figure'),handles.figToKeep));
+
+function sessionNr = checkSessionNr(handles)
+sessionNr = str2num(get(handles.editSessionNr,'String'));
+if isempty(sessionNr) || sessionNr > handles.modelData{handles.currentModel}.maxSessionNr || sessionNr < 1
+    uiwait(msgbox(sprintf('Session number has to be within the range [1 - %d]',handles.modelData{handles.currentModel}.maxSessionNr),'Warning'));
+    sessionNr = [];
+end
+
+function showModel(handles)
+
+% detect model
+switch handles.modelData{handles.currentModel}.modeltype
+    case 'glm'
+        buttonPlotString = {'Plot', ...
+            'Plot', ...
+            'Plot', ...
+            'Show', ...
+            'Plot'};
+        textPlotString = {'Design matrix in SPM style', ...
+            'Orthogonality in SPM style', ...
+            'Predicted & observed', ...
+            'Regressors in command window', ...
+            'Reconstructed responses'};
+        % detect contrasts
+        if isfield(handles.modelData{handles.currentModel}.model, 'con')
+            buttonPlotString{6} = 'Show';
+            textPlotString{6} = 'Contrast names in command window';
+        end;
+        setInvisble(handles);
+        setButtonPlotString(handles, buttonPlotString);
+        setTextPlotString(handles, textPlotString);
+        set(handles.textStatus,'String','Detected modeltype: GLM');
+        drawnow
+        
+    case 'dcm'
+        buttonPlotString = {'Display', ...
+            'Display', ...
+            'Display', ...
+            'Show'};
+        textPlotString = {'All trials for one session', ...
+            'Diagnostics for trial nr.', ...
+            'Skin conductance response function (SCR)', ...
+            'Trial and condition names in command window'};
+        % detect contrasts
+        if isfield(handles.modelData{handles.currentModel}.model, 'con')
+            buttonPlotString{5} = 'Show';
+            textPlotString{5} = 'Contrast names in command window';
+        end;
+        setInvisble(handles);
+        setButtonPlotString(handles, buttonPlotString);
+        setTextPlotString(handles, textPlotString);
+        setSession(handles);
+        setTrial(handles);
+        set(handles.textStatus,'String','Detected modeltype: DCM')
+        drawnow
+        
+    case 'sf'
+        buttonPlotString = {'Display'};
+        textPlotString = {'Diagnostics for epoch nr.'};
+        if isfield(handles.modelData{handles.currentModel}.model, 'con')
+            buttonPlotString{2} = 'Show';
+            textPlotString{2} = 'Contrast names in command window';
+        end;
+        setInvisble(handles);
+        setButtonPlotString(handles, buttonPlotString);
+        setTextPlotString(handles, textPlotString);
+        setEpoch(handles);
+        set(handles.textStatus,'String','Detected modeltype: SF')
+        drawnow
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function editEpochNr_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to editEpochNr (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
