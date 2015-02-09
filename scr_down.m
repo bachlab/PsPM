@@ -28,31 +28,33 @@ if isempty(settings), scr_init; end;
 % check input arguments
 % -------------------------------------------------------------------------
 if nargin<1
-    errmsg='No data file'; warning(errmsg); return;
+    errmsg='No data file'; warning('ID:invalid_input', errmsg); return;
 elseif nargin<2
-    errmsg='No frequency given'; warning(errmsg); return;
+    errmsg='No frequency given'; warning('ID:invalid_input', errmsg); return;
 elseif newsr < 10
-    warning('This function does not support downsampling to frequencies below 10 Hz.');
+    errmsg='This function does not support downsampling to frequencies below 10 Hz.';
+    warning('ID:rate_below_minimum', errmsg);
+    return;
 end;
     
 if nargin < 3 || isempty(chan)
     chan = 0;
 elseif isnumeric(chan) && isvector(chan)
     if numel(chan) == 1 && chan < 0
-        warning('chan must be nonnegative'); return;
+        warning('ID:invalid_input', 'chan must be nonnegative'); return;
     elseif any(chan < 0)
-        warning('All elements of chan must be positive'); return;
+        warning('ID:invalid_input', 'All elements of chan must be positive'); return;
     end
 elseif ischar(chan)
     if strcmpi(chan, 'all')
         chan = 0;
     else
-        warning('Channel argument must be a number, or ''all''.'); return;
+        warning('ID:invalid_input', 'Channel argument must be a number, or ''all''.'); return;
     end;
 end;
 
 if nargin == 4 && ~isstruct(options)
-    warning('options has to be a struct'); 
+    warning('ID:invalid_input','options has to be a struct'); 
     return;
 end
       

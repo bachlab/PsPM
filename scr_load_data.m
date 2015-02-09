@@ -81,7 +81,7 @@ elseif isnumeric(chan)
     end;
 elseif ischar(chan)
     if any(~ismember(chan, [{settings.chantypes.type}, 'none', 'wave', 'events']))
-    warning('ID:invalid_input', 'Unknown channel type.'); return; end;
+    warning('ID:invalid_channeltype', 'Unknown channel type.'); return; end;
 elseif isstruct(chan)
     if ~(isfield(chan, 'infos') && isfield(chan, 'data'))
         warning('ID:invalid_input', 'Fields .infos and .data are required to save file.'); return;
