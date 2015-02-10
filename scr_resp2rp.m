@@ -8,7 +8,9 @@ function sts = scr_resp2rp(fn, sr, chan, options)
 %       sr: sample rate for respiration rate channel
 %       chan: number of heart beat channel (optional, default: first heart
 %             beat channel)
-%       options: options.plot creates a diagnostic plot
+%       options: options.plot creates a respiratory cycle detection plot
+%                options.diagnostics creates an interpolation diagnostics
+%                plot
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -40,6 +42,7 @@ elseif ~isnumeric(chan)
 end;
 
 try options.plot; catch, options.plot = 0; end;
+try options.diagnostics; catch, options.diagnostics = 0; end;
 
 % get data
 % -------------------------------------------------------------------------
@@ -92,7 +95,7 @@ newdata.header.chantype = 'rp';
 nsts = scr_add_channel(fn, newdata, msg);
 if nsts == -1, return; end;
 
-% create diagnostic plot
+% create diagnostic plot for detection/interpolation
 % -------------------------------------------------------------------------
 if options.plot
     figure('Position', [50, 50, 1000, 500]);
@@ -103,6 +106,11 @@ if options.plot
     stem(newt, 2 * (newrp < 1 | newrp > 9), 'Marker', 'none', 'Color', 'r', 'LineWidth', 4);
     plot(newt, resp(1:numel(newt)), 'k');
     plot(newt, newresp(1:numel(newt)), 'b');
+    stem(respstamp, ones(size(respstamp)), 'Marker', 'o', 'Color', 'b');
+elseif options.diagnostics
+    figure('Position', [50, 50, 1000, 500]);
+    axes; hold on;
+    plot(newt, newrp, 'b');
     stem(respstamp, ones(size(respstamp)), 'Marker', 'o', 'Color', 'b');
 end;
 
