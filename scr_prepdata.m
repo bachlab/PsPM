@@ -74,7 +74,7 @@ end;
 
 % lowpass filt 
 % -------------------------------------------------------------------------
-if ~ischar(filt.lpfreq)
+if ~ischar(filt.lpfreq) && ~isnan(filt.lpfreq)
     if filt.lpfreq >= nyq 
         warning('ID:no_low_pass_filtering', 'The low pass filter cutoff frequency is higher (or equal) than the nyquist frequency. The data won''t be low pass filtered!');
     else
@@ -91,7 +91,7 @@ end;
 
 % highpass filt
 % -------------------------------------------------------------------------
-if ~ischar(filt.hpfreq)
+if ~ischar(filt.hpfreq) && ~isnan(filt.hpfreq)
     [sts, filt.b, filt.a]=scr_butter(filt.hporder, filt.hpfreq/nyq, 'high');
     if sts == -1, return; end;
     if uni
@@ -110,7 +110,7 @@ end;
 % downsample
 % -------------------------------------------------------------------------
 if ~ischar(filt.down) && filt.sr ~= filt.down
-    if strcmpi(filt.lpfreq, 'none')
+    if strcmpi(filt.lpfreq, 'none') || isnan(filt.lpfreq)
         warning('No low pass filter applied - aliasing is possible. Use a low pass filter to prevent.');
     elseif filt.down < 2 * filt.lpfreq, 
         filt.down = 2 * filt.lpfreq; 
