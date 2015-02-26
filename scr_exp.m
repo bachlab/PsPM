@@ -40,7 +40,9 @@ sts = -1;
 % check input arguments
 % ------------------------------------------------------------------------
 if nargin < 1
-    errmsg=sprintf('No model file(s) specified'); warning(errmsg); return;
+    errmsg=sprintf('No model file(s) specified'); 
+    warning('ID:invalid_input',errmsg); 
+    return;
 elseif nargin < 2
     target='screen';
 end;
@@ -55,12 +57,14 @@ end;
 if ischar(modelfile)
     modelfile = {modelfile};
 elseif ~iscell(modelfile)
-    warning('Model file must be a cell array of char, or char.'); return;
+    warning('ID:invalid_input', 'Model file must be a cell array of char, or char.'); 
+    return;
 end;
 
 % check target --
 if ~ischar(target)
-    warning('Target must be a char'); return;
+    warning('ID:invalid_input', 'Target must be a char'); 
+    return;
 elseif strcmp(target, 'screen')
     fid = 1;
 else
@@ -70,7 +74,7 @@ else
         target=fullfile(pth, [filename, '.txt']);
     end;
     % check whether file exists
-    if exist(target) == 2
+    if exist(target, 'file') == 2
         overwrite=menu(sprintf('Output file (%s) already exists. Overwrite?', target), 'yes', 'no');
         if overwrite == 2, warning('Nothing written to file.'); return; end;
     end;
@@ -79,18 +83,20 @@ else
     if fid == -1, warning('Output file (%s) could not be opened.', target); return; end;
 end;
 
-% check target and statstype --
-if ~ischar(target)
-    warning('Data type must be a char'); return;
+% check statstype --
+if ~ischar(statstype)
+    warning('Stats type must be a char'); 
+    return;
 elseif strcmpi(statstype, 'param')
     statstype = 'stats';
 elseif ~strcmpi(statstype, {'cond', 'recon'})
-    warning('Unknown data type (%s)', statstype); return;
+    warning('ID:invalid_input', 'Unknown Stats type (%s)', statstype); 
+    return;
 end;
 
 % check delimiter --
 if ~ischar(delim)
-    warning('Delimiter must be a char'); return;
+    warning('ID:invalid_input', 'Delimiter must be a char'); return;
 end;
 
 % get data
