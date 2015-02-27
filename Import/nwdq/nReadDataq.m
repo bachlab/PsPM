@@ -20,13 +20,15 @@ function [info, data] = nReadDataq(filename)
 % The data structure contains an array per channel with the 
 % recorded data samples.
 %
-% Things this function can't do:
-% - it does not read the file trailer
-% - it does not distinguish between packed an unpacked files
-% - it does not distinguish between hiRes and non-hiRes files
-% - it does not distinguish differential and non differential ...
-% channel-configuration (not tested)
+% Things the function hasn't been tested yet (because lack of test-data):
+% - packed an unpacked files
+% - hiRes and non-hiRes files
+% - differential and non differential channel-configuration
 %
+% Things the function does not do:
+% - it does not read the file trailer
+% 
+% Author: Tobias Moser (University of Zurich) in Feb. 2015
 
 % initialize info
 info = struct();
@@ -209,9 +211,6 @@ info.otherSettings = fread(fid, 1, '*uint8');
 % go to headerChannelTablePos and start with the iteration through each channel
 % until the number fo info.maxChannels is reached
 
-% after header is written: conclude some more variables
-info.numberOfSamplesWritten = info.adcDataBytes / 2 / uint32(info.totalChannelsAcquired);
-
 %% Header Channel Section
 
 % only read if the header channel size is equal to 36 bytes
@@ -248,22 +247,60 @@ if info.channelInfoEntrySize == 36
         info.channelMvFullScale(i) = fread(fid, 1, 'bit4=>uint8');
         % Item 10 - see documentation 
         info.channelSpecificSettings = fread(fid, 1, '*uint16');
+        
+        % calculate (according to Element 6 in File-Header)
+        % numer of channel samples
+        info.numberOfChannelSamples(i) = ...
+            (((info.adcDataBytes/uint32(2*info.totalChannelsAcquired)) - 1) ...
+            / uint32(info.sampleRateDivisor(i))) + 1;
+        
     end 
 end
+
+%% Conclusion
+
+% warn if file has some special properties
+if info.packedFile
+    warn('Importing from a packed file. Support has not been tested yet.');
+end
+
+if info.hiResFile 
+    warn('Importing from a hiRes file. Support has not been tested yet.');
+end
+
+if info.maxChannels >= 144
+    warn('Importing from a Multiplexer file. Support has not been tested yet.');
+end
+    
+% prepare 
+if info.packedFile
+    info.adcDataBytes = 2*sum(info.numberOfChannelSamples(:));
+end
+info.numberOfSamplesWritten = info.adcDataBytes / 2 / uint32(info.totalChannelsAcquired);
 
 %% DATA section
 
 % after the fileheader is where to find the acquired data
 data = cell(1,info.totalChannelsAcquired);
 for i=1:info.totalChannelsAcquired,
-   fseek(fid, info.bytesInDataFileHeader + int16(2*(i-1)), -1);
-   % read data
-   data{i} = fread(fid, info.numberOfSamplesWritten, '*int16', 2*(info.totalChannelsAcquired -1));
-   % convert data to an equivalent engineering unit
-   % - shift 16bit number to the right by two bits
-   % - multiply by slope m
-   % - add the intercept b
-   data{i} = double(bitshift(data{i}, -2))*info.calibrationScalingFactor(i)+info.calibrationInterceptFactor(i);
+    fseek(fid, info.bytesInDataFileHeader + int16(2*(i-1)), -1);
+    % read data
+    if info.packedFile
+        % does this make sense, because reading
+        nSamples = info.numberOfChannelSamples(i);
+    else
+        nSamples = info.numberOfSamplesWritten;
+    end
+    data{i} = fread(fid, nSamples, '*int16', 2*(info.totalChannelsAcquired -1));
+    % convert data to an equivalent engineering unit
+    % - shift 16bit number to the right by two bits
+    % - multiply by slope m
+    % - add the intercept b
+    if info.hiResFile
+        data{i} = double(data{i}*0.25)*info.calibrationScalingFactor(i)+info.calibrationInterceptFactor(i);
+    else
+        data{i} = double(bitshift(data{i}, -2))*info.calibrationScalingFactor(i)+info.calibrationInterceptFactor(i);
+    end
 end
 
 
