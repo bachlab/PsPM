@@ -261,15 +261,15 @@ end
 
 % warn if file has some special properties
 if info.packedFile
-    warn('Importing from a packed file. Support has not been tested yet.');
+    warning('Importing from a packed file. Support has not been tested yet.');
 end
 
 if info.hiResFile 
-    warn('Importing from a hiRes file. Support has not been tested yet.');
+    warning('Importing from a hiRes file. Support has not been tested yet.');
 end
 
 if info.maxChannels >= 144
-    warn('Importing from a Multiplexer file. Support has not been tested yet.');
+    warning('Importing from a Multiplexer file. Support has not been tested yet.');
 end
     
 % prepare 
