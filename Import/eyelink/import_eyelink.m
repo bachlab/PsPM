@@ -116,10 +116,11 @@ messages = unique(regexprep(msg_str, '[0-9]+\s(.*)', '$1'));
 
 % we assume each MSG has a specific text message
 str_spe_pos = zeros(length(str_gen_pos), 1);
-for j = 1:size(messages,2)
+for j = 1:size(messages,1)
     for m = 1:size(str_gen_pos,1)
-        if ~isempty(regexp(datastr{1,2}{str_gen_pos(m,1),1}, ... 
-                strcat('[0-9]\s',messages(j)), 'once'))  % messages(j)
+        s = regexp(datastr{1,2}{str_gen_pos(m,1),1}, ... 
+                strcat('[0-9]\s',messages(j)), 'once');
+        if s{1} > 0
             str_spe_pos(str_gen_pos(m,1),1) = j;
         end
     end
@@ -171,7 +172,7 @@ for i=1:3,
 end
 
 markers{1,2}(:) = {'0'};
-markers{1,3}(:) = {0};
+markers{1,3} = zeros( length(data.raw), 1);
 markers{1, 1} = data.raw(:, 10);
 marker_pos = find(markers{1,1} == 1);
 
@@ -181,11 +182,11 @@ for i=1:length(marker_pos),
     markers{1, 2}{marker_pos(i)} = messages{data.raw(marker_pos(i), 11)};
     % there is no actual value
     % value has to be numeric
-    % markers{1, 3}{marker_pos(i)} = 0;
+    markers{1, 3}(marker_pos(i)) = data.raw(marker_pos(i), 11);
 end
 
 % return markers
 data.markers = markers{1,1};
 data.markerinfos.name = markers{1,2};
-data.markerinfos.value = cell2mat(markers{1,3});
+data.markerinfos.value = markers{1,3};
 
