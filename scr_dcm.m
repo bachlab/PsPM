@@ -187,7 +187,7 @@ for sn = 1:numel(model.scr)
     foo{sn} = (model.scr{sn}(:) - mean(model.scr{sn}));
 end;
 foo = cell2mat(foo);
-model.zfactor = std(foo);
+model.zfactor = std(foo(:));
 for sn = 1:numel(model.scr)
     model.scr{sn} = (model.scr{sn}(:) - min(model.scr{sn}))/model.zfactor;
 end;
