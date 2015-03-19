@@ -18,6 +18,7 @@ function scr_con1(modelfile, connames, convec, datatype, deletecon)
 %           'recon': contrasts formulated in terms of conditions in a GLM,
 %                   reconstructs estimated response from all basis functions
 %                   and uses the peak of the estimated response
+%           'zscored': 
 % deletecon: should existing contrasts be deleted (1) or appended (0)? 
 %   default = 0;
 %__________________________________________________________________________
@@ -72,10 +73,14 @@ if numel(connames)~=numel(convec)
 end;
 
 % check datatype
+zscored = 0;
 switch datatype
     case 'param'
         datatype = 'stats';
     case {'cond', 'recon'}
+    case {'zscored'}
+        datatype = 'stats';
+        zscored = 1;
     otherwise
         warning('Unknown datatype');
         return;
@@ -88,8 +93,14 @@ for iFn =1:numel(modelfile)
     % user output --
     fprintf('Loading data ... ');
     % retrieve stats --
-    [sts, data, mdltype] = scr_load1(modelfile{iFn}, datatype); 
+    [sts, data, mdltype] = scr_load1(modelfile{iFn}, datatype);
     if sts == -1, return; end;
+    % zscore stats if given
+    if zscored == 1
+        for i = 1:size(data.stats, 2)
+            data.stats(:,i) = zscore(data.stats(:,i));
+        end
+    end
     % create con structure or retrieve existing contrasts --
     if deletecon == 1
         con = []; conno = 0; 

@@ -62,8 +62,8 @@ datatype        = cfg_menu;
 datatype.name   = 'Stats type';
 datatype.tag    = 'datatype';
 datatype.val    = {'param'};
-datatype.labels = {'param','cond','recon'};
-datatype.values = {'param','cond','recon'};
+datatype.labels = {'param','cond','recon', 'zscored'};
+datatype.values = {'param','cond','recon', 'zscored'};
 datatype.help   = {['Contrasts are usually specified on parameter estimates. For GLM, you can ' ...
     'also choose to specify them on conditions or reconstructed responses per condition. In this ' ...
     'case, your contrast vector needs to take into account only the first basis function. ' ...

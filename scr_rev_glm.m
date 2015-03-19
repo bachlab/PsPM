@@ -83,6 +83,39 @@ for i=1:length(plotNr)
                 fig(2).title=get(fig(2).ax(1).h, 'Title');
                 set(fig(2).title, 'String', sprintf('Design Orthogonality: %s', filename), 'FontWeight', 'Bold', 'FontSize', 14, 'Interpreter', 'none');
                 
+                % first approach of displaying regressors in orthogonality 
+                % plot -> disabled because not finished yet
+%                 % calculate width of a square
+%                 ns = numel(glm.names);
+%                 YLim = get(fig(2).ax(1).h, 'YLim');
+%                 sy = diff(YLim) / ns;
+%                 XLim = get(fig(2).ax(1).h, 'XLim');
+%                 sx = diff(XLim) / ns;
+%                 
+%                 % iterate through regressors and colors
+%                 corder = get(groot, 'defaultAxesColorOrder');
+%                 cl = length(corder);
+%                 for j=1:ns
+%                    if j > cl
+%                        m = floor(j/cl);
+%                        color = corder(j - m*cl, :);
+%                    else
+%                        color = corder(j,:);
+%                    end
+%                    
+%                    % draw around
+%                    of = 0.01;
+%                    space = 0.25;
+%                    x = [-space, sx*j-of, sx*j-of, sx*(j-1)+0.01, sx*(j-1)+of, -space];
+%                    x = XLim(1) + x;
+%                    y = [(j)*sy-of, (j)*sy-of, -space, -space, (j-1)*sy+of, (j-1)*sy+of];
+%                    y = YLim(1) + y;
+%                    
+%                    fig(3).ax(1).p(j+1) = patch(x,y, 'none');
+%                    set(fig(3).ax(1).p(j+1), 'EdgeColor', color, 'FaceColor', 'none', 'LineWidth', 1.5);
+%                 end
+
+                
             case 3
                 % --- plot predicted & observed
                 pos = [0.2*pos0(3),0.1*pos0(4),0.7*pos0(3),0.7*pos0(4)];
@@ -112,8 +145,8 @@ for i=1:length(plotNr)
                    legend_text(end+1) = timing.names(j);
                    if sum(timing.durations{j}) > 0 
                        % plot area with patch
-                       y_pos = [YLim(1); YLim(1); YLim(2); YLim(2)];
-                       y_pos = [y_pos, y_pos, y_pos];
+                       y_pos_base = [YLim(1); YLim(1); YLim(2); YLim(2)];
+                       y_pos = repmat(y_pos_base, 1,length(timing.onsets{j}));
                        offsets = timing.onsets{j}' + timing.durations{j}';
                        x_pos = [timing.onsets{j}'; offsets; offsets; timing.onsets{j}'];
                        k = k + 1;

@@ -100,6 +100,12 @@ for k = 1:length(str_sacc_pos{3})
     datanum(str_sacc_pos{3}(k) - blink_offset : str_sacc_pos{4}(k) + blink_offset, 9) = 1;
 end
 
+%% unset pupil diameter while saccades (detected above)
+if strcmpi(eyesObserved, 'LR'),
+    datanum(datanum(:,8) == 1,2:7) = 0;
+else
+    datanum(datanum(:,8) == 1,2:4) = 0;
+end;
 
 %% identify messages
 % translate MSG into double
@@ -132,7 +138,7 @@ end
 % HERE: correction
 % 1.    check whether elements of vector of messages_plus_1 are also members of
 %       the vector containing NaN
-% 2.    loop (with increading relevant positions by 1) until there are no members left
+% 2.    loop (with increasing relevant positions by 1) until there are no members left
 
 str_NaN = find(isnan(datanum(:,1)));
 str_gen_pos_plus = str_gen_pos + 1;
@@ -147,7 +153,6 @@ end
 
 datanum(str_gen_pos_plus, 10) = 1;
 datanum(str_gen_pos_plus, 11) = str_spe_pos(str_gen_pos,1); 
-
 
 %% remove lines starting with NaN (i.e. pure text lines) so that lines have a time interpretation
 data.raw = datanum;
