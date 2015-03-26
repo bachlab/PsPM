@@ -230,6 +230,8 @@ switch val
         cfg_add_module('pspm.tools.dcg2hp');
     case 9
         cfg_add_module('pspm.tools.resp2rp');
+    case 10
+        cfg_add_module('pspm.tools.emg2emg_proc');
 end;
 
 % --- Executes during object creation, after setting all properties.
