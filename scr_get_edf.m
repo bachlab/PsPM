@@ -31,11 +31,19 @@ end;
 % loop through import jobs
 for k = 1:numel(import)
        
-    chan = import{k}.channel;
+    % define channel number ---
+    if import{k}.channel > 0
+        chan = import{k}.channel;
+    else
+        chan = scr_find_channel(hdr.label, import{k}.type);
+        if chan < 1, return; end;
+    end;
+
     if chan > numel(hdr.label), 
         warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', chan, datafile); 
         return; 
     end;
+    
     % data
     import{k}.data = indata(chan);     % data per channel
     % sample rate ---
