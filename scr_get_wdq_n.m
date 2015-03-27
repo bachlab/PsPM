@@ -35,7 +35,7 @@ addpath([settings.path, 'Import', filesep, 'nwdq']);
 for k = 1:numel(import)
     chan = import{k}.channel;
     if chan > size(inputdata, 2)
-        warning('Channel %1.0f does not exist in data file', chan); return;
+        warning('ID:channel_not_contained_in_file', 'Channel %1.0f does not exist in data file', chan); return;
     end;
     import{k}.sr = inputinfo.sampleRatePerChannel; % sample rate per channel
     import{k}.data = inputdata{chan};     % data per channel

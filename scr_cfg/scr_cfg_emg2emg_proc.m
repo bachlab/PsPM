@@ -11,8 +11,8 @@ datafile.name    = 'Data File';
 datafile.tag     = 'datafile';
 datafile.num     = [1 1];
 %datafile.filter  = '.*\.(mat|MAT)$';
-datafile.help    = {['Specify data file. Specify data file. The processed' ...
-    'data will be written to a new channel in this file.']};
+datafile.help    = {['Specify data file. Specify data file. The processed ' ...
+    'data will be written to a new file.']};
 
 % Executable Branch
 emg2emg_proc = cfg_exbranch;

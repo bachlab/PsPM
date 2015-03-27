@@ -59,6 +59,7 @@ for k = 1:numel(import)
             import{k}.markerinfo.name = {mrk(:).type};
         else
             import{k}.data = [];
+            import{k}.marker = '';
             import{k}.markerinfo.value = [];
             import{k}.markerinfo.name = [];
         end;
