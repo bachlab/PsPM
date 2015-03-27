@@ -69,7 +69,7 @@ elseif strcmpi(import.marker, 'continuous')
     % hi2lo should be maxima
     lo2hi = temp(1+find(d(temp(2:end-1)-2) > 0))-3;
     hi2lo = temp(1+find(d(temp(2:end-1)-2) < 0))-3;
-    
+
     % if ~isempty(lo2hi_lo) && numel(lo2hi_lo) ~= numel(lo2hi_hi)
     if isempty(lo2hi) && isempty(hi2lo)
         fprintf('\n');

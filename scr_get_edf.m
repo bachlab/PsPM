@@ -49,17 +49,18 @@ for k = 1:numel(import)
         import{k}.sr = hdr.Fs;
         
         % get data ---
-        import{k}.data = indata(chan);
+        import{k}.data = indata(chan, :);
         
     else                % event channels
         % time unit
         import{k}.sr = 1./hdr.Fs;
         sourceinfo.chan{k, 1} = 'Automatically extracted marker recordings';
         if ~isempty(mrk)
-            import{k}.data = [mrk(:).sample];
-            import{k}.marker = 'timestamps';
-            import{k}.markerinfo.value = [mrk(:).value];
-            import{k}.markerinfo.name = {mrk(:).type};
+            import{k}.data = indata(chan, :);%[mrk(:).sample];
+            import{k}.marker = 'continuous';
+            import{k}.flank = 'ascending';
+%             import{k}.markerinfo.value = [mrk(:).value];
+%             import{k}.markerinfo.name = {mrk(:).type};
         else
             import{k}.data = [];
             import{k}.marker = '';
