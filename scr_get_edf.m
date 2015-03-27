@@ -20,6 +20,7 @@ addpath([settings.path, 'Import', filesep, 'fieldtrip']);
 % -------------------------------------------------------------------------
 hdr = ft_read_header(datafile);
 indata = ft_read_data(datafile);
+try mrk = ft_read_event(datafile); catch, mrk = []; end;
 
 % convert 3 dim to 2 dim (summarize all trials)
 if numel(size(indata)) == 3,
@@ -30,32 +31,43 @@ end;
 % -------------------------------------------------------------------------
 % loop through import jobs
 for k = 1:numel(import)
-       
-    % define channel number ---
-    if import{k}.channel > 0
-        chan = import{k}.channel;
-    else
-        chan = scr_find_channel(hdr.label, import{k}.type);
-        if chan < 1, return; end;
-    end;
 
-    if chan > numel(hdr.label), 
-        warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', chan, datafile); 
-        return; 
+    if strcmpi(settings.chantypes(import{k}.typeno).data, 'wave')
+        % channel number ---
+        if import{k}.channel > 0
+            chan = import{k}.channel;
+        else
+            chan = scr_find_channel(hdr.label, import{k}.type);
+            if chan < 1, return; end;
+        end;
+        
+        if chan > size(indata, 1), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', chan, datafile); return; end;
+        
+        sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', chan, hdr.label{chan});
+        
+        % sample rate ---
+        import{k}.sr = hdr.Fs;
+        
+        % get data ---
+        import{k}.data = indata(chan);
+        
+    else                % event channels
+        % time unit
+        import{k}.sr = 1./hdr.Fs;
+        sourceinfo.chan{k, 1} = 'Automatically extracted marker recordings';
+        if ~isempty(mrk)
+            import{k}.data = [mrk(:).sample];
+            import{k}.marker = 'timestamps';
+            import{k}.markerinfo.value = [mrk(:).value];
+            import{k}.markerinfo.name = {mrk(:).type};
+        else
+            import{k}.data = [];
+            import{k}.marker = '';
+            import{k}.markerinfo.value = [];
+            import{k}.markerinfo.name = [];
+        end;
     end;
-    
-    % data
-    import{k}.data = indata(chan);     % data per channel
-    % sample rate ---
-    import{k}.sr = hdr.Fs;
-    sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', chan, hdr.label{chan});
-    
-    if strcmpi(settings.chantypes(import{k}.typeno).data, 'events')
-        % marker channels: get the ascending flank of each marker
-        sourceinfo.chan{k, 1} = 'Extracted marker recordings';
-        import{k}.marker = 'continuous';
-    end;
-           
+               
 end;
 
 % clear path and return
