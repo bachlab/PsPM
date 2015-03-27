@@ -188,10 +188,11 @@ else
         warning('Basis function arguments must be numeric.');
     end;
 end;
-if ~isempty(basepath), addpath(basepath); end;
+if ~isempty(basepath), addpath(basepath); end; 
 try
     model.bf.X = feval(model.bf.fhandle, [1/model.filter.down; model.bf.args(:)]);
 catch
+    keyboard
     warning('ID:invalid_fhandle', 'Specified basis function %s doesn''t exist or is faulty', func2str(model.bf.fhandle)); return;
 end;
 

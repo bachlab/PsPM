@@ -77,8 +77,8 @@ newresp = medfilt1(newresp, ceil(filt.sr) + 1);
 respstamp = find(diff(sign(newresp)) == -2)/data{1}.header.sr;
 ibi = diff(respstamp);
 indx = find(ibi < 1);
-ibi(indx) = [];
 respstamp(indx + 1) = [];
+ibi = diff(respstamp);
 newt = (1/sr):(1/sr):infos.duration;
 newrp = interp1(respstamp(2:end), ibi, newt, 'linear' ,'extrap'); % assign rp to following zero crossing
 

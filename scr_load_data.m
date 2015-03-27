@@ -111,17 +111,17 @@ if isstruct(chan)
     try
         data = chan.data; infos = chan.infos;
     catch
-        warning('ID:invalid_input', 'Input struct is not a valid SCRalyze struct'); return;
+        warning('ID:invalid_input', 'Input struct is not a valid PsPM struct'); return;
     end;
     gerrmsg = sprintf('\nData structure is invalid:');
 elseif isstruct(fn)
     try
         data = fn.data; infos = fn.infos;
     catch
-        warning('ID:invalid_input', 'Input struct is not a valid SCRalyze struct'); return;
+        warning('ID:invalid_input', 'Input struct is not a valid PsPM struct'); return;
     end;
 else
-    gerrmsg = sprintf('Data file %s is not a valid SCRalyze file:\n', fn);
+    gerrmsg = sprintf('Data file %s is not a valid PsPM file:\n', fn);
     try
         load(fn);
     catch
