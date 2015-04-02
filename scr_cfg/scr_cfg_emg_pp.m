@@ -1,4 +1,4 @@
-function emg2emg_proc = scr_cfg_emg2emg_proc
+function [emg_pp] = scr_cfg_emg_pp
 % function to process emg data which leads to emg_proc data
 % 
 
@@ -15,15 +15,15 @@ datafile.help    = {['Specify data file. Specify data file. The processed ' ...
     'data will be written to a new file.']};
 
 % Executable Branch
-emg2emg_proc = cfg_exbranch;
-emg2emg_proc.name = 'Convert EMG to EMG processed';
-emg2emg_proc.tag  = 'emg2emg_proc';
-emg2emg_proc.val  = {datafile};
-emg2emg_proc.prog = @scr_cfg_run_emg2emg_proc;
-emg2emg_proc.vout = @scr_cfg_vout_emg2emg_proc;
-emg2emg_proc.help = {''};
+emg_pp = cfg_exbranch;
+emg_pp.name = 'Preprocess startle eyeblink EMG';
+emg_pp.tag  = 'emg_pp';
+emg_pp.val  = {datafile};
+emg_pp.prog = @scr_cfg_run_emg_pp;
+emg_pp.vout = @scr_cfg_vout_emg_pp;
+emg_pp.help = {'Preprocess startle eyeblink EMG ...'};
 
-function vout = scr_cfg_vout_emg2emg_proc(job)
+function vout = scr_cfg_vout_emg_pp(job)
 vout = cfg_dep;
 vout.sname      = 'Output File';
 vout.tgt_spec = cfg_findspec({{'class','cfg_files'}});

@@ -8,6 +8,6 @@ function cfg = scr_cfg_tools
 cfg        = cfg_repeat;
 cfg.name   = 'Tools';
 cfg.tag    = 'tools';
-cfg.values = {scr_cfg_display, scr_cfg_rename, scr_cfg_split_sessions, scr_cfg_artefact_rm, scr_cfg_downsample, scr_cfg_ecg2hb, scr_cfg_hb2hp, scr_cfg_resp2rp, scr_cfg_emg2emg_proc}; % Values in a cfg_repeat can be any cfg_item objects
+cfg.values = {scr_cfg_display, scr_cfg_rename, scr_cfg_split_sessions, scr_cfg_artefact_rm, scr_cfg_downsample, scr_cfg_ecg2hb, scr_cfg_hb2hp, scr_cfg_resp2rp, scr_cfg_emg_pp}; % Values in a cfg_repeat can be any cfg_item objects
 cfg.forcestruct = true;
 cfg.help   = {'Help: Tools...'};

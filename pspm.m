@@ -231,7 +231,7 @@ switch val
     case 9
         cfg_add_module('pspm.tools.resp2rp');
     case 10
-        cfg_add_module('pspm.tools.emg2emg_proc');
+        cfg_add_module('pspm.tools.emg_pp');
 end;
 
 % --- Executes during object creation, after setting all properties.

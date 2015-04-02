@@ -12,7 +12,7 @@ datafile         = cfg_files;
 datafile.name    = 'Data File(s)';
 datafile.tag     = 'datafile';
 datafile.num     = [1 Inf];
-datafile.help    = {'Select datafile.'};
+datafile.help    = {'Specify data file to be interpolated.'};
 
 %% Overwrite file
 overwrite         = cfg_menu;

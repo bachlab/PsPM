@@ -1,4 +1,4 @@
-function out = scr_cfg_run_emg2emg_proc(job)
+function out = scr_cfg_run_emg_pp(job)
 % Executes scr_emg_pp
 
 % $Id$
