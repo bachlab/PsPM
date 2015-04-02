@@ -97,8 +97,14 @@ for iFn =1:numel(modelfile)
     if sts == -1, return; end;
     % zscore stats if given
     if zscored == 1
-        for i = 1:size(data.stats, 2)
-            data.stats(:,i) = zscore(data.stats(:,i));
+        if strcmpi(mdltype, 'dcm')
+            for i = 1:size(data.stats, 2)
+                data.stats(:,i) = zscore(data.stats(:,i));
+            end
+        else
+            % do not zscore if data is not dcm!
+            warning(['Specified Z-scored but model is not of type DCM. ',...
+                'Will use all parameter estimates instead (= param).']);
         end
     end
     % create con structure or retrieve existing contrasts --
