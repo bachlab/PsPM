@@ -18,7 +18,8 @@ function scr_con1(modelfile, connames, convec, datatype, deletecon)
 %           'recon': contrasts formulated in terms of conditions in a GLM,
 %                   reconstructs estimated response from all basis functions
 %                   and uses the peak of the estimated response
-%           'zscored': 
+%           'zscored': use all parameter estimates. This option is only
+%                   available for non-linear models
 % deletecon: should existing contrasts be deleted (1) or appended (0)? 
 %   default = 0;
 %__________________________________________________________________________
@@ -87,20 +88,20 @@ switch datatype
 end;
         
 
+
 % work on contrasts
 % ------------------------------------------------------------------------
 for iFn =1:numel(modelfile)
     % user output --
     fprintf('Loading data ... ');
+
     % retrieve stats --
     [sts, data, mdltype] = scr_load1(modelfile{iFn}, datatype);
     if sts == -1, return; end;
     % zscore stats if given
     if zscored == 1
         if strcmpi(mdltype, 'dcm')
-            for i = 1:size(data.stats, 2)
-                data.stats(:,i) = zscore(data.stats(:,i));
-            end
+            data.stats = zscore(data.stats);
         else
             % do not zscore if data is not dcm!
             warning(['Specified Z-scored but model is not of type DCM. ',...
