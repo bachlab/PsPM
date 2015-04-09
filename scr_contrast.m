@@ -24,7 +24,7 @@ function varargout = scr_contrast(varargin)
 
 % Edit the above text to modify the response to help scr_contrast
 
-% Last Modified by GUIDE v2.5 09-Apr-2015 14:11:27
+% Last Modified by GUIDE v2.5 27-Sep-2014 18:38:33
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -113,7 +113,6 @@ function listNames_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns listNames contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from listNames
 listValue = get(handles.listNames, 'Value');
-lbTop = get(handles.listNames, 'ListboxTop');
 radioGroupValue = getGroupValue(handles);
 contrastVal = find(handles.conArray{handles.currentContrast}.contrasts(:,listValue));
 if isempty(contrastVal)
@@ -130,9 +129,6 @@ else
 end
 
 set(handles.listNames,'String',handles.conArray{handles.currentContrast}.namesString);
-if numel(handles.conArray{handles.currentContrast}.namesString) >= lbTop
-    set(handles.listNames, 'ListboxTop', lbTop);
-end;
 guidata(hObject, handles);
 
 
@@ -227,11 +223,11 @@ switch modeltype
         drawnow
         handles.paramnames = model.trlnames;
 end
+
 handles.names = handles.paramnames;
 handles.modeltype = modeltype;
 set(handles.listNames, 'String', handles.names);
 setTestGroupValue(handles, 1)
-adjustStatsTypeDisplay(handles);
 guidata(hObject, handles);
 
 
@@ -283,28 +279,14 @@ function panelStatstype_SelectionChangeFcn(hObject, eventdata, handles)
 testStatstype = getStatsTypeValue(handles);
 if testStatstype == 1
     handles.names = handles.paramnames;
-    if strcmpi(handles.modeltype, 'dcm')
-        set(handles.checkboxZscored, 'Enable', 'on');
-    end;
 else
     handles.names = handles.condnames;
-    set(handles.checkboxZscored, 'Enable', 'off');
-    set(handles.checkboxZscored, 'Value', 0);
 end;
-lbTop = get(handles.listNames, 'ListboxTop');
-if lbTop > numel(handles.names)
-    set(handles.listNames, 'ListboxTop', 1);
-end
-lbValue = get(handles.listNames, 'Value');
-if lbValue > numel(handles.names)
-    set(handles.listNames, 'Value', 1);
-end
 set(handles.listNames, 'String', handles.names);
 
 % assign stats type to contrast and initialise contrast vector --
-handles.conArray{handles.currentContrast}.namesString = handles.names;
-handles.conArray{handles.currentContrast}.statstype = testStatstype;
-handles.conArray{handles.currentContrast}.contrasts = zeros(3,numel(handles.names));
+handles.conArray{handles.contrastCnt}.statstype = testStatstype;
+handles.conArray{handles.contrastCnt}.contrasts = zeros(3,numel(handles.names));
 
 guidata(hObject, handles);
 
@@ -319,8 +301,6 @@ function listContrastNames_Callback(hObject, eventdata, handles)
 %        contents{get(hObject,'Value')} returns selected item from listContrastNames
 entryNr = get(handles.listContrastNames,'Value');
 handles.currentContrast = entryNr;
-% reset ListboxTop
-set(handles.listNames, 'ListboxTop', 1);
 set(handles.listNames,'String',handles.conArray{handles.currentContrast}.namesString);
 setTestGroupValue(handles, handles.conArray{handles.currentContrast}.testGroupVal);
 setContrastGroup(handles, handles.conArray{handles.currentContrast}.testGroupVal)
@@ -489,12 +469,8 @@ for i=1:numel(handles.conArray)
 end
 
 deletecon = get(handles.checkboxDeleteCon,'Value');
-zscored = get(handles.checkboxZscored, 'Value');
 datatype = {'param', 'cond', 'recon'};
 datatype = datatype{handles.conArray{i}.statstype};
-if strcmpi(datatype, 'param') && zscored
-    datatype = 'zscored';
-end
 scr_con1(handles.modelfile, handles.contrastNamesString, conVec, datatype, deletecon);
 
 %--------------------------------------------------------------------------
@@ -568,21 +544,7 @@ set(handles.radioQuadEffects,'Enable','off');
 set(handles.radioParam,'Enable','off');
 set(handles.radioCond,'Enable','off');
 set(handles.radioRecon,'Enable','off');
-set(handles.checkboxZscored, 'Enable', 'off');
 
-function adjustStatsTypeDisplay(handles)
-
-switch handles.modeltype
-    case {'sf','dcm'}
-        set(handles.radioParam, 'String', 'show all trials');      
-        set(handles.radioCond, 'String', 'show conditions');
-        hidem(handles.radioRecon);
-    case 'glm'
-        showm(handles.radioRecon);
-        set(handles.radioParam, 'String', 'show all basis functions');
-        set(handles.radioCond, 'String', 'show only first basis function');
-        set(handles.radioRecon, 'String', 'show combined basis function');
-end;
 
 function enableButtonGroups(handles)
 set(handles.radioGroup1,'Enable','on');
@@ -594,25 +556,12 @@ set(handles.radioIntercept,'Value',1);
 set(handles.radioCondDiff,'Enable','on');
 set(handles.radioQuadEffects,'Enable','on');
 
-switch handles.modeltype
-    case {'sf','dcm'}
-        set(handles.radioParam, 'Enable', 'on'); 
-        set(handles.radioCond, 'Enable', 'on');
-        set(handles.checkboxZscored, 'Enable', 'on');
-        if ~strcmpi(handles.modeltype, 'sf')
-            set(handles.radioCond, 'Enable', 'on');
-        end
-    case {'glm', 'sf'}
-        set(handles.radioParam, 'Enable', 'on');
-        set(handles.radioRecon, 'Enable', 'on');
-end
-        
+set(handles.radioParam,'Enable','on');
+set(handles.radioParam,'Value',1);
+if ~strcmpi(handles.modeltype, 'sf')
+    set(handles.radioCond,'Enable','on');
+end;
+if strcmpi(handles.modeltype, 'glm')
+    set(handles.radioRecon,'Enable','on');
+end;
 
-
-% --- Executes on button press in checkboxZscored.
-function checkboxZscored_Callback(hObject, eventdata, handles)
-% hObject    handle to checkboxZscored (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of checkboxZscored
