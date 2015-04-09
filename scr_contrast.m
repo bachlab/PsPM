@@ -302,8 +302,9 @@ end
 set(handles.listNames, 'String', handles.names);
 
 % assign stats type to contrast and initialise contrast vector --
-handles.conArray{handles.contrastCnt}.statstype = testStatstype;
-handles.conArray{handles.contrastCnt}.contrasts = zeros(3,numel(handles.names));
+handles.conArray{handles.currentContrast}.namesString = handles.names;
+handles.conArray{handles.currentContrast}.statstype = testStatstype;
+handles.conArray{handles.currentContrast}.contrasts = zeros(3,numel(handles.names));
 
 guidata(hObject, handles);
 
@@ -318,6 +319,8 @@ function listContrastNames_Callback(hObject, eventdata, handles)
 %        contents{get(hObject,'Value')} returns selected item from listContrastNames
 entryNr = get(handles.listContrastNames,'Value');
 handles.currentContrast = entryNr;
+% reset ListboxTop
+set(handles.listNames, 'ListboxTop', 1);
 set(handles.listNames,'String',handles.conArray{handles.currentContrast}.namesString);
 setTestGroupValue(handles, handles.conArray{handles.currentContrast}.testGroupVal);
 setContrastGroup(handles, handles.conArray{handles.currentContrast}.testGroupVal)
@@ -570,11 +573,11 @@ set(handles.checkboxZscored, 'Enable', 'off');
 function adjustStatsTypeDisplay(handles)
 
 switch handles.modeltype
-    case 'dcm'
+    case {'sf','dcm'}
         set(handles.radioParam, 'String', 'show all trials');      
         set(handles.radioCond, 'String', 'show conditions');
         hidem(handles.radioRecon);
-    case {'sf','glm'}
+    case 'glm'
         showm(handles.radioRecon);
         set(handles.radioParam, 'String', 'show all basis functions');
         set(handles.radioCond, 'String', 'show only first basis function');
@@ -592,15 +595,15 @@ set(handles.radioCondDiff,'Enable','on');
 set(handles.radioQuadEffects,'Enable','on');
 
 switch handles.modeltype
-    case 'dcm'
+    case {'sf','dcm'}
         set(handles.radioParam, 'Enable', 'on'); 
         set(handles.radioCond, 'Enable', 'on');
         set(handles.checkboxZscored, 'Enable', 'on');
-    case {'glm', 'sf'}
-        set(handles.radioParam, 'Enable', 'on');
         if ~strcmpi(handles.modeltype, 'sf')
             set(handles.radioCond, 'Enable', 'on');
         end
+    case {'glm', 'sf'}
+        set(handles.radioParam, 'Enable', 'on');
         set(handles.radioRecon, 'Enable', 'on');
 end
         
