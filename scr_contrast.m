@@ -24,7 +24,7 @@ function varargout = scr_contrast(varargin)
 
 % Edit the above text to modify the response to help scr_contrast
 
-% Last Modified by GUIDE v2.5 27-Sep-2014 18:38:33
+% Last Modified by GUIDE v2.5 09-Apr-2015 08:53:23
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -469,7 +469,7 @@ for i=1:numel(handles.conArray)
 end
 
 deletecon = get(handles.checkboxDeleteCon,'Value');
-datatype = {'param', 'cond', 'recon'};
+datatype = {'param', 'cond', 'recon', 'zscored'};
 datatype = datatype{handles.conArray{i}.statstype};
 scr_con1(handles.modelfile, handles.contrastNamesString, conVec, datatype, deletecon);
 
@@ -492,6 +492,7 @@ function val = getStatsTypeValue(handles)
 val(1) = get(handles.radioParam,'Value');
 val(2) = get(handles.radioCond,'Value');
 val(3) = get(handles.radioRecon,'Value');
+val(4) = get(handles.radioZscored,'Value');
 val = find(val);
 
 function setTestGroupValue(handles, val)
@@ -544,6 +545,7 @@ set(handles.radioQuadEffects,'Enable','off');
 set(handles.radioParam,'Enable','off');
 set(handles.radioCond,'Enable','off');
 set(handles.radioRecon,'Enable','off');
+set(handles.radioZscored, 'Enable', 'off');
 
 
 function enableButtonGroups(handles)
@@ -564,4 +566,6 @@ end;
 if strcmpi(handles.modeltype, 'glm')
     set(handles.radioRecon,'Enable','on');
 end;
-
+if strcmpi(handles.modeltype, 'dcm')
+    set(handles.radioZscored,'Enable', 'on');
+end;
