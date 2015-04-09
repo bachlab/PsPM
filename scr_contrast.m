@@ -277,7 +277,7 @@ function panelStatstype_SelectionChangeFcn(hObject, eventdata, handles)
 
 % get current stats type and assign names --
 testStatstype = getStatsTypeValue(handles);
-if testStatstype == 1
+if testStatstype == 1 || testStatstype == 4
     handles.names = handles.paramnames;
 else
     handles.names = handles.condnames;
