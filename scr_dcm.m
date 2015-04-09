@@ -407,7 +407,7 @@ end;
 cMsr = 3 * iEvnt; 
 if isempty(cMsr), cMsr = 0; end;
 for iEvnt = 1:numel(dcm.sn{1}.e(1).a)
-    dcm.names{iEvnt + cMsr, 1} = sprintf('%s response amplitude', fixevntnames{iEvnt});
+    dcm.names{iEvnt + cMsr, 1} = sprintf('%s: response amplitude', fixevntnames{iEvnt});
 end;
     
 if isfield(options, 'trlnames') && numel(options.trlnames) == size(dcm.stats, 1)

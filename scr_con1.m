@@ -75,12 +75,15 @@ end;
 
 % check datatype
 zscored = 0;
+% store for output
+out_datatype = datatype;
 switch datatype
     case 'param'
         datatype = 'stats';
     case {'cond', 'recon'}
     case {'zscored'}
         datatype = 'stats';
+        out_datatype = 'param';
         zscored = 1;
     otherwise
         warning('Unknown datatype');
@@ -142,11 +145,19 @@ for iFn =1:numel(modelfile)
     % data.stats has more than one column
     conval = conmat * data.stats;
     
+    % zscored text-output for connames
+    if strcmpi(mdltype, 'dcm') && zscored 
+        out_zscored = ' (z-scored)';
+    else
+        out_zscored = '';
+    end
+    
     % create name matrix if necessary --
     if size(conval, 2) > 1
        for iCon = 1:size(conval, 1)
            for iMsr = 1:size(conval, 2)
-               newconnames{iCon, iMsr} = sprintf('%s - %s', connames{iCon}, data.names{iMsr});
+               newconnames{iCon, iMsr} = sprintf('%s - %s%s', connames{iCon}, ...
+                   data.names{iMsr}, out_zscored);
            end;
        end;
     else
@@ -155,7 +166,7 @@ for iFn =1:numel(modelfile)
     
     % save contrasts
     for iCon=1:numel(conval)
-        con(conno+iCon).type   = mdltype;
+        con(conno+iCon).type   = out_datatype;
         con(conno+iCon).name   = newconnames{iCon};
         con(conno+iCon).con    = conval(iCon);
         indx = mod(iCon, size(conval, 1)); 
