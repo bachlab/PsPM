@@ -37,7 +37,7 @@ lambda2 = p(4);
 t = (td:td:90)';
 
 gt = exp(-((t - t0).^2)./(2.*sigma.^2));
-ht = exp(-t*lambda1) + exp (-t*lambda2);
+ht = exp(-t*lambda1) + exp(-t*lambda2);
 
 ft = conv(gt, ht);
 ft = ft(1:numel(t));

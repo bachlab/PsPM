@@ -22,7 +22,7 @@ hdr = ft_read_header(datafile);
 indata = ft_read_data(datafile);
 %try mrk = ft_read_event(datafile); catch, mrk = []; end;
 
-% convert 3 dim to 2 dim (summarize all trials)
+% convert 3 dim to 2 dim (collapse all trials into continuous data)
 if numel(size(indata)) == 3,
     indata = indata(:,:);
 end;
@@ -44,9 +44,9 @@ for k = 1:numel(import)
         warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', chan, datafile); 
         return; 
     end;
-    
+
     % data
-    import{k}.data = indata(chan);     % data per channel
+    import{k}.data = indata(chan, :);     % data per channel
     % sample rate ---
     import{k}.sr = hdr.Fs;
     sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', chan, hdr.label{chan});
