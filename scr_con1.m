@@ -1,4 +1,4 @@
-function scr_con1(modelfile, connames, convec, datatype, deletecon)
+function scr_con1(modelfile, connames, convec, datatype, deletecon, options)
 % SCR_CON1 creates contrasts on the first level (i.e. within one dataset)
 % and saves them to the modelfile to be accessed later
 %
@@ -18,10 +18,12 @@ function scr_con1(modelfile, connames, convec, datatype, deletecon)
 %           'recon': contrasts formulated in terms of conditions in a GLM,
 %                   reconstructs estimated response from all basis functions
 %                   and uses the peak of the estimated response
-%           'zscored': use all parameter estimates. This option is only
-%                   available for non-linear models
-% deletecon: should existing contrasts be deleted (1) or appended (0)? 
-%   default = 0;
+%           'options': 
+%               - options.zscored - zscore data only for non-linear models
+%
+%           deletecon: should existing contrasts be deleted (1) or 
+%                   appended (0)? 
+%                   default = 0;
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -73,24 +75,22 @@ if numel(connames)~=numel(convec)
      return;
 end;
 
-% check datatype
-zscored = 0;
 % store for output
 out_datatype = datatype;
 switch datatype
     case 'param'
         datatype = 'stats';
     case {'cond', 'recon'}
-    case {'zscored'}
-        datatype = 'stats';
-        out_datatype = 'param';
-        zscored = 1;
     otherwise
         warning('Unknown datatype');
         return;
 end;
-        
 
+% set load1_options
+load1_options = struct('zscored',0);
+if isfield(options, 'zscored') && options.zscored
+    load1_options.zscored = 1;
+end;
 
 % work on contrasts
 % ------------------------------------------------------------------------
@@ -99,18 +99,8 @@ for iFn =1:numel(modelfile)
     fprintf('Loading data ... ');
 
     % retrieve stats --
-    [sts, data, mdltype] = scr_load1(modelfile{iFn}, datatype);
+    [sts, data, mdltype] = scr_load1(modelfile{iFn}, datatype, '', load1_options);
     if sts == -1, return; end;
-    % zscore stats if given
-    if zscored == 1
-        if strcmpi(mdltype, 'dcm')
-            data.stats = zscore(data.stats);
-        else
-            % do not zscore if data is not dcm!
-            warning(['Specified Z-scored but model is not of type DCM. ',...
-                'Will use all parameter estimates instead (= param).']);
-        end
-    end
     % create con structure or retrieve existing contrasts --
     if deletecon == 1
         con = []; conno = 0; 
@@ -146,7 +136,7 @@ for iFn =1:numel(modelfile)
     conval = conmat * data.stats;
     
     % zscored text-output for connames
-    if strcmpi(mdltype, 'dcm') && zscored 
+    if isfield(data, 'zscored') && data.zscored 
         out_zscored = ' (z-scored)';
     else
         out_zscored = '';

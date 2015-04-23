@@ -57,13 +57,25 @@ deletecon.labels  = {'No', 'Yes'};
 deletecon.values  = {false, true};
 deletecon.help    = {'Deletes existing contrasts from the model file.'};
 
+% Zscore data
+zscored         = cfg_menu;
+zscored.name    = 'Z-scoring';
+zscored.tag     = 'zscored';
+zscored.val     = {false};
+zscored.labels  = {'No', 'Yes'};
+zscored.values  = {false, true};
+zscored.help    = {['Use parameter estimates across all conditions for each ', ...
+    'parameter/eventtype, substract the mean and divide by the standard ',...
+    'deviation, before computing the contrast. This option is only available ',...
+    'for models with trial-wise parameter estimates.']};
+
 % Datatype
 datatype        = cfg_menu;
 datatype.name   = 'Stats type';
 datatype.tag    = 'datatype';
 datatype.val    = {'param'};
-datatype.labels = {'param','cond','recon', 'zscored'};
-datatype.values = {'param','cond','recon', 'zscored'};
+datatype.labels = {'param','cond','recon'};
+datatype.values = {'param','cond','recon'};
 datatype.help   = {['Contrasts are usually specified on parameter estimates. For GLM, you can ' ...
     'also choose to specify them on conditions or reconstructed responses per condition. In this ' ...
     'case, your contrast vector needs to take into account only the first basis function. ' ...
@@ -76,16 +88,14 @@ datatype.help   = {['Contrasts are usually specified on parameter estimates. For
     'of basis functions and uses only the first one (i.e. without derivatives), ', ...
     'or based on assignment of trials to conditions in DCM.'], '', ...
     ['- Reconstructed: Contrasts formulated in terms of conditions in a GLM, reconstructs estimated response ' ...
-    'from all basis functions and uses the peak of the estimated response.'], '', ...
-    ['- Zscored: Use all parameter estimates, substract the mean and '...
-    ,'divide by the standard deviation. This option is only available for non-linear models.'], ''};
+    'from all basis functions and uses the peak of the estimated response.'], ''};
 
 
 % Executable Branch
 contrast      = cfg_exbranch;
 contrast.name = 'First-Level Contrasts';
 contrast.tag  = 'contrast';
-contrast.val  = {modelfile, datatype, con_rep, deletecon};
+contrast.val  = {modelfile, datatype, con_rep, deletecon, zscored};
 contrast.prog = @scr_cfg_run_contrast1;
 contrast.vout = @scr_cfg_vout_contrast;
 contrast.help = {['Define within-subject contrasts here for testing on the second level. Contrasts can be between ' ...

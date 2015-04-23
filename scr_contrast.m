@@ -283,14 +283,16 @@ function panelStatstype_SelectionChangeFcn(hObject, eventdata, handles)
 testStatstype = getStatsTypeValue(handles);
 if testStatstype == 1
     handles.names = handles.paramnames;
-    if strcmpi(handles.modeltype, 'dcm')
-        set(handles.checkboxZscored, 'Enable', 'on');
-    end;
 else
     handles.names = handles.condnames;
+end;
+
+if strcmpi(handles.modeltype, 'dcm') && testStatstype ~= 3
+    set(handles.checkboxZscored, 'Enable', 'on');
+else
     set(handles.checkboxZscored, 'Enable', 'off');
     set(handles.checkboxZscored, 'Value', 0);
-end;
+end
 lbTop = get(handles.listNames, 'ListboxTop');
 if lbTop > numel(handles.names)
     set(handles.listNames, 'ListboxTop', 1);
@@ -492,10 +494,8 @@ deletecon = get(handles.checkboxDeleteCon,'Value');
 zscored = get(handles.checkboxZscored, 'Value');
 datatype = {'param', 'cond', 'recon'};
 datatype = datatype{handles.conArray{i}.statstype};
-if strcmpi(datatype, 'param') && zscored
-    datatype = 'zscored';
-end
-scr_con1(handles.modelfile, handles.contrastNamesString, conVec, datatype, deletecon);
+options.zscored = zscored;
+scr_con1(handles.modelfile, handles.contrastNamesString, conVec, datatype, deletecon, options);
 
 %--------------------------------------------------------------------------
 % Functions

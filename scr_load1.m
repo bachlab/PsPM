@@ -1,5 +1,5 @@
 function [sts, data, mdltype] = scr_load1(fn, action, savedata, options)
-% FORMAT: [sts, data, mdltype] = scr_load1(datafile, action, data, options)
+% FORMAT: [sts, data, mdltype] = scr_load1(datafile, action, savedata, options)
 %           datafile: filename
 %           action (default 'none'):
 %                   'none':  check whether file is valid at all
@@ -23,7 +23,12 @@ function [sts, data, mdltype] = scr_load1(fn, action, savedata, options)
 %           data: for 'save' option - a struct containing the model as only
 %                           field
 %                 for 'savecon' option - contains the con structure                
-%           options: for 'save' - options.overwrite (default: user dialogue)
+%           options:        options.zscored 
+%                               zscore data - substract the mean and divide
+%                               by the standard deviation.
+%                           
+%                           for 'save' - options.overwrite 
+%                           (default: user dialogue)
 %
 %           output
 %           'data' - depending on option
@@ -95,6 +100,11 @@ if exist(fn, 'file')
 elseif ~strcmpi(action, 'save')
     warning('1st level file (%s) doesn''t exist', fn); return;
 end;
+
+%  set default zscored
+if nargin <= 3 || ~isfield(options, 'zscored')
+    options.zscored = 0;
+end
 
 % check whether file is a matlab file --
 if ~strcmpi(action, 'save')
@@ -188,7 +198,6 @@ switch action
         else
             warning('%s''cond'' option is not defined', errmsg);
         end;
-        mdltype = 'cond';
     case 'recon'
         if strcmpi(mdltype, 'glm')
             if ~reconflag
@@ -200,7 +209,6 @@ switch action
         else
             warning('%s. ''recon'' option only defined for GLM files', errmsg);
         end;
-        mdltype = 'recon';
     case 'con'
         if conflag
             data = indata.(mdltype).con;
@@ -217,6 +225,19 @@ switch action
     otherwise
         warning('Unknown action. Just checking file. File is valid.'); return;
 end;
+
+if options.zscored
+    if strcmpi(mdltype, 'dcm') && ...
+        (strcmpi(action, 'cond') || strcmpi(action, 'stats'))
+        
+        data.stats = zscore(data.stats);
+        data.zscored = 1;
+    else
+        data.zscored = 0;
+        warning(['Z-scoring only available for non-linear models and action ''stats'' or ''cond''. ',...
+                'Not z-scoring data!']);
+    end
+end
 
 % set status and return
 sts = 1;

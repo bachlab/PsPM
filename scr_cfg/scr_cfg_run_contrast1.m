@@ -17,9 +17,12 @@ end
 % delete existing contrast
 deletecon = job.deletecon;
 
+% zscore data
+options.zscored = job.zscored;
+
 % datatype
 datatype = job.datatype;
 
-scr_con1(modelfile, connames, convec, datatype, deletecon);
+scr_con1(modelfile, connames, convec, datatype, deletecon, options);
 
 out = modelfile;
