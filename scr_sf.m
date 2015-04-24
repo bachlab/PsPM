@@ -265,6 +265,7 @@ for iFile = 1:numel(model.datafile)
     if exist('events','var'), sf.events = events; end;
     sf.input = model;
     sf.options = options;
-    save(model.modelfile{iFile}, 'sf');
+    modeltype = 'sf';
+    save(model.modelfile{iFile}, 'sf', 'modeltype');
     fprintf('\n');
 end;

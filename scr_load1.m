@@ -124,14 +124,33 @@ if isfield('indata', 'dsm'), warning('ID:SCRalyze_1_file', 'SCRalyze 1.x compati
 % check file contents
 % ------------------------------------------------------------------------
 % check model type --
-mdltype = find(ismember(mdltypes, fieldnames(indata)));
-if isempty(mdltype)
-    warning('%sNo known model type in this file', errmsg); return;
-elseif numel(mdltype) > 1
-    warning('%sMore than one model type in this file', errmsg); return;
+if isfield(indata, 'modeltype')
+    mdltype = find(ismember(mdltypes, indata.modeltype));
+    if isempty(mdltype)
+        warning('%sNo known model type in this file', errmsg); return;
+    else
+        mdltype = mdltypes{mdltype};
+        indata.modeltype = mdltype;
+    end;
 else
-    mdltype = mdltypes{mdltype};
+    warning('ID:obsolete_function', ['Modelfile has no field ''modeltype'' defined.', ...
+        ' Falling back to old and obsolete behaviour by trying',... 
+        ' to determine modeltype according to available fieldnames.', ...
+        ' This backward compatibility will be removed in future versions of PsPM.']);
+    % field modeltype is not defined; falling back to old and obsolete
+    % behaviour - must be removed in future (present is 24.04.2015)
+    mdltype = find(ismember(mdltypes, fieldnames(indata)));
+    if isempty(mdltype)
+        warning('%sNo known model type in this file', errmsg); return;
+    elseif numel(mdltype) > 1
+        warning('%sMore than one model type in this file', errmsg); return;
+    else
+        mdltype = mdltypes{mdltype};
+        indata.modeltype = mdltype;
+    end;
 end;
+
+
 
 % check model content --
 if ~isfield(indata.(mdltype), 'modelfile')
@@ -219,9 +238,9 @@ switch action
         data = indata.(mdltype);
     case 'savecon'
         indata.(mdltype).con = savedata;
-        save(fn, '-struct', 'indata', mdltype);
+        save(fn, '-struct', 'indata', mdltype, 'modeltype');
     case 'save'
-        save(fn, '-struct', 'indata', mdltype);
+        save(fn, '-struct', 'indata', mdltype, 'modeltype');
     otherwise
         warning('Unknown action. Just checking file. File is valid.'); return;
 end;

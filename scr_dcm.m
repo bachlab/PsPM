@@ -427,7 +427,8 @@ dcm.options = options;
 dcm.warnings = warnings;
 
 if ~options.nosave
-    save(model.modelfile, 'dcm');
+    modeltype = 'dcm';
+    save(model.modelfile, 'dcm', 'modeltype');
 end;
 
 return;

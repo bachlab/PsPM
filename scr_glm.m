@@ -623,6 +623,7 @@ glm.XM = glm.XM .* repmat(glm.regscale, size(glm.XM, 1), 1);
 glm.stats = glm.stats .* glm.regscale';
 
 savedata = struct('glm', glm);
+savedata.modeltype = 'glm';
 scr_load1(model.modelfile, 'save', savedata, options);
 
 
