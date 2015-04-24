@@ -11,7 +11,7 @@ datafile.name    = 'Data File';
 datafile.tag     = 'datafile';
 datafile.num     = [1 1];
 %datafile.filter  = '.*\.(mat|MAT)$';
-datafile.help    = {['Specify data file. Specify data file. The interpolated' ...
+datafile.help    = {['Specify data file. The interpolated' ...
     'respiration period data will be written to a new channel in this file.']};
 
 % Sample rate
