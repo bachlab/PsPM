@@ -18,9 +18,12 @@ addpath([settings.path, 'Import', filesep, 'fieldtrip']);
 
 % get data
 % -------------------------------------------------------------------------
+% disable warning for ft_read_header
+w_state = warning('query');
+warning('off', 'all'); % unfortunately the warning is not issued with an ID
 hdr = ft_read_header(datafile);
 indata = ft_read_data(datafile);
-%try mrk = ft_read_event(datafile); catch, mrk = []; end;
+warning(w_state.state, w_state.identifier);
 
 % convert 3 dim to 2 dim (collapse all trials into continuous data)
 if numel(size(indata)) == 3,
