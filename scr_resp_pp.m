@@ -14,14 +14,12 @@ function sts = scr_resp_pp(fn, sr, chan, options)
 %                .datatype - a cell array with any of 'rp', 'ra', 'RLL',
 %                'rs', 'all' (default)
 %                .plot - 1 creates a respiratory cycle detection plot
-%                .diagnostics - 1 creates an interpolation diagnostics
-%                plot
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: scr_resp2rp.m 711 2015-02-04 11:01:18Z dominik_bach $
-% $Rev: 711 $
+% $Id:  $
+% $Rev  $
 
 
 % initialise & user output
@@ -174,17 +172,11 @@ if options.plot
     % normal breathing is 12-20 per minute, i. e. 3 - 5 s per breath. prd.
     % according to Schmidt/Thews, 10-18 per minute, i. e. 3-6 s per period
     % here we flag values outside 1-10 s breathing period
-    stem(newt, 2 * (newrp < 1 | newrp > 9), 'Marker', 'none', 'Color', 'r', 'LineWidth', 4);
     plot(newt, resp(1:numel(newt)), 'k');
     plot(newt, newresp(1:numel(newt)), 'b');
-    stem(respstamp, ones(size(respstamp)), 'Marker', 'o', 'Color', 'b');
-elseif options.diagnostics
-    figure('Position', [50, 50, 1000, 500]);
-    axes; hold on;
-    plot(newt, newrp, 'b');
+    indx = diff(respstamp)<1||diff(respstamp)>10;
+    stem(respstamp(indx), 2 * ones(size(indx)), 'Marker', 'none', 'Color', 'r', 'LineWidth', 4);
     stem(respstamp, ones(size(respstamp)), 'Marker', 'o', 'Color', 'b');
 end;
-
-
 
 sts = 1;
