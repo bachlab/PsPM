@@ -1,14 +1,17 @@
 function [sts,pt_debug] = scr_ecg2hb(fn, chan, varargin)
-% scr_ecg2hb identifies the position of R spikes in ECG data and writes
-% them as heart beat channel into the datafile. This functions implements
-% the algorithm by Pan & Tompkins (1985) with some adjustments.
+% scr_ecg2hb identifies the position of QRS complexes in ECG data and
+% writes them as heart beat channel into the datafile. This function
+% implements the algorithm by Pan & Tompkins (1985) with some adjustments.
 %
 % Format:
 % sts = scr_ecg2hb(fn, chan,options)
 %       fn: data file name
 %       chan: number of ECG channel (optional, default: first ECG
 %             channel)
-%       options: ... minHR - sets minimal HR [def. 20bpm].
+%       options: ... semi - activates the semi automatic mode, allowing the
+%                           handcorrection of all IBIs that fulfill:
+%                           >/< mean(ibi) +/- 3 * std(ibi) [def. 0].
+%                ... minHR - sets minimal HR [def. 20bpm].
 %                ... maxHR - sets maximal HR [def. 200bpm].
 %                ... debugmode - runs the algorithm in debugmode
 %                    (additional results in debug variable 'pt_debug')
@@ -21,23 +24,23 @@ function [sts,pt_debug] = scr_ecg2hb(fn, chan, varargin)
 % Pan J & Tomkins WJ (1985). A Real-Time QRS Detection Algorithm. IEEE
 % Transactions on Biomedical Engineering, 32, 230-236.
 %__________________________________________________________________________
-% PsPM 3.0
-% (C) 2013 Philipp C Paulus & Dominik R Bach
+% SCRalyze 3.0
+% (C) 2013-2015 Philipp C Paulus & Dominik R Bach
 % (Technische Universitaet Dresden, University of Zurich)
 
-% $Id: scr_ecg2hb.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id: scr_ecg2hb.m 563 2014-04-29 16:42:21Z dominik_bach $
+% $Rev: 563 $
 
 % -------------------------------------------------------------------------
 % DEVELOPERS NOTES: Changes from the original Pan & Tompkins algorithm
-
+%
 %   filter:       P. & T. intend to achieve a pass band from 5-15 Hz with a
 %                 real-time filter. This function uses an offline second
 %                 order Butterworth filter with a pass band of 5-15 Hz.
-
+%
 %   derivative:   Instead of a the real-time derivativion used by P. & T.,
 %                 the MATLAB function 'diff' is used.
-
+%
 %   time shift:   In this implementation of the algorithm there is a
 %                 time shift between the amplified and integrated signal.
 %                 Therefore an R-spike is identified if there is a peak in
@@ -45,61 +48,64 @@ function [sts,pt_debug] = scr_ecg2hb(fn, chan, varargin)
 %                 integrated signal.
 %                 time shift=round(pt.settings.filt.sr/6.25) - time shift
 %                 of approximately 0.16 sec
-
+%
 %   tmax:         To avoid the case that tmax might become smaller than
 %                 tmin. tmax must at least be 2*tmin.
-
+%
 %   HRmin:        P. & T. do not suggest a minimal HR since the algorithm
 %                 is designed for clinical use. We set a minimal HR of 5
 %                 bpm (options.HRmin).
-
+%
 %   HRmax:        P. & T. suggest a maximum heartrate of 300 bpm. Since in
 %                 most psychophysiological studies HR > 200 bpm are very
 %                 unlikely to occur HRmax was set to be 200 bpm
 %                 (options.HRmax).
-
+%
 % -------------------------------------------------------------------------
 %   Important variables of the algorithm
 % -------------------------------------------------------------------------
-
 %   PEAKF/PEAKI:  Are the current peaks in the amplified (F) and integrated
 %                 (I) signal. These peaks are compared with the threshold
 %                 set.
-
+%
 %   twave check:  Compares the slope of the current, potential QRS complex
 %                 with the slope of the ones preceding it. If the slope is
 %                 less than half of those preceding it, a twave is
 %                 identified and the current PEAK is marked to be a noise
 %                 peak and the threshold set will be updated.
-
+%
 %   SPKF/SPKI:    If the current peak (PEAKF/PEAKI) is larger than the
 %                 threshold set and has sufficient steepness it is
 %                 marked as a QRS complex, the threshold set will be
 %                 updated.
-
+%
 %   NPKF/NPKI:    Are current peaks which are either smaller than the
 %                 threshold set or have insufficient steepness.
-
+%
 %   THRF/THRI:    Are the running estimates of the thresholds. They are
 %                 updated in different manner according to the type of
 %                 the current peak (noise or signal peak).
-
+%
 %   x:            Contains the data. Column 1 contains the filtered raw
 %                 signal, column 2 contains the amplified signal, column 3
 %                 the integrated signal.
-
+%
 %   pt_peaks:     Contains all peaks in the amplified (column 1) and
 %                 integrated (column 2) signal.
-
+%
 %   R:            Vector of the same length as the raw data, containing
 %                 information on the position of the QRS complexes.
 % -------------------------------------------------------------------------
 
-% initialise & user output
+% initialise
 % -------------------------------------------------------------------------
 sts = -1;
 global settings;
 if isempty(settings), scr_init; end;
+
+% user output
+% -------------------------------------------------------------------------
+fprintf('QRS detection for %s ... ', fn);
 
 % check input
 % -------------------------------------------------------------------------
@@ -115,17 +121,14 @@ elseif ~isnumeric(chan)
     end
 end;
 
-% get optional inputs or set default values
-% -------------------------------------------------------------------------
-pt_debug=[];
-
-
 % additional options
 % -------------------------------------------------------------------------
+pt.settings.semi=1;         %   semiautomatic mode - [def: 0]
 pt.settings.minHR=20;       %   original: 0 ; set to 20 bpm [def](min 1)
 pt.settings.maxHR=200;      %   original: 300 bpm; adjusted to 200 bpm [def]!
 pt.settings.twthresh=0.36;  %   original: 0.36 s [def]!
 pt.settings.debugmode=0;    %   no debuggin [def]
+pt_debug=[];
 
 % input check
 % values for the options variables must be numeric, minHR must be smaller
@@ -140,19 +143,16 @@ if numel(data) > 1
     fprintf('There is more than one ECG channel in the data file. Only the first of these will be analysed.');
     data = data(1);
 end;
+if not(strcmp(data{1,1}.header.chantype,'ecg'))
+    warning('Specified channel is not an ECG channel. Don''t know what to do!')
+    return
+end
 
-
+% =========================================================================
 % Pan Tompkins QRS detection
-% -------------------------------------------------------------------------
-pt.data.x=data{1,1}.data;
-pt.settings.n=length(pt.data.x);
+% =========================================================================
 
 % ---Settings -------------------------------------------------------------
-% setup threshold variables
-pt.set.THRI=zeros(pt.settings.n,1);
-pt.set.THRF=pt.set.THRI;
-pt.set.R=[];
-
 % define filter properties
 pt.settings.filt.sr=data{1}.header.sr ;
 pt.settings.filt.lpfreq=15;
@@ -160,15 +160,21 @@ pt.settings.filt.lporder=1;
 pt.settings.filt.hpfreq=5;
 pt.settings.filt.hporder=1;
 pt.settings.filt.direction='uni';
-pt.settings.filt.down='none';
+pt.settings.filt.down=200;
 
 % set min and max HR
-pt.settings.tmin=round(60/pt.settings.maxHR*pt.settings.filt.sr);
-pt.set.tmax=round(60/pt.settings.minHR*pt.settings.filt.sr);
+pt.settings.tmin=round(60/pt.settings.maxHR*pt.settings.filt.down);
+pt.set.tmax=round(60/pt.settings.minHR*pt.settings.filt.down);
 
 % ---Filter Rawdata--------------------------------------------------------
-[nsts,pt.data.x,foo]=scr_prepdata(pt.data.x,pt.settings.filt);
+[nsts,pt.data.x,pt.settings.filt.sr]=scr_prepdata(data{1}.data,pt.settings.filt);
 if nsts == -1, return; end;
+pt.settings.n=length(pt.data.x);
+
+% ---setup threshold variables and R variable------------------------------
+pt.set.THRI=zeros(pt.settings.n,1);
+pt.set.THRF=pt.set.THRI;
+pt.set.R=[];
 
 % --Derive-----------------------------------------------------------------
 pt.data.x(1:size(pt.data.x,1)-1,2)=diff(pt.data.x);
@@ -179,7 +185,6 @@ pt.data.x(:,2)=pt.data.x(:,2).^2;
 % --Sliding Window Integrator----------------------------------------------
 pt.settings.q=round(pt.settings.filt.sr/6.66667);
 pt.data.x(:,3)=pt.data.x(:,2);
-
 for j=(pt.settings.q+1):pt.settings.n
     pt.data.x(j,3)=(1/pt.settings.q)*(sum(pt.data.x((j-pt.settings.q):j,2)));
 end
@@ -200,14 +205,12 @@ pt.set.NPKI=mean(pt.data.pt_peaks(pt.settings.q:pt.settings.q+2*pt.settings.filt
 
 [pt.set]=update_set(pt.set.SPKF*2,pt.set,'SPKF1');
 [pt.set]=update_set(pt.set.SPKI*2,pt.set,'SPKI1');
-
 pt.set.tstart=pt.set.tstart+pt.settings.q;
 
 % proceed
 pt.data.r(pt.set.tstart)=1;
 pt.set.R=pt.set.tstart;
 pt.set.tstart=pt.set.tstart+pt.settings.tmin;
-
 
 % ---Debug Mode------------------------------------------------------------
 if pt.settings.debugmode==1
@@ -224,13 +227,10 @@ if pt.settings.debugmode==1
     pt.pt_debug.data(:,5)=pt.data.pt_peaks(:,2);
 end
 % ---Start R-Spike search: setup standard values---------------------------
-
 pt.set.ts=round(pt.settings.filt.sr/6.25);
 
 % ---Run find_r------------------------------------------------------------
-
 [pt]=find_r(pt);
-% -------------------------------------------------------------------------
 
 % ---Debug Mode------------------------------------------------------------
 if pt.settings.debugmode==1
@@ -244,18 +244,25 @@ if pt.settings.debugmode==1
 end
 
 % ---Manual check for outliers---------------------------------------------
-% outfact=3;
-% 
-% if any(diff(pt.set.R)<mean(diff(pt.set.R))-outfact*std(diff(pt.set.R))) || any(diff(pt.set.R)>mean(diff(pt.set.R))+outfact*std(diff(pt.set.R))) 
-%      scr_ecg2hb_qc(pt) % open gui to manually check for outliers
-% end
+if pt.settings.semi==1
+    outfact=3; % get only IBIs that are >/< mean(IBI)+/-outfact*std(IBI)
+    
+    if any(diff(pt.set.R)<mean(diff(pt.set.R))-outfact*std(diff(pt.set.R))) || any(diff(pt.set.R)>mean(diff(pt.set.R))+outfact*std(diff(pt.set.R)))
+        noise=find(diff(pt.set.R)<mean(diff(pt.set.R))-outfact*std(diff(pt.set.R)));
+        miss=find(diff(pt.set.R)>mean(diff(pt.set.R))+outfact*std(diff(pt.set.R)));
+        pt.faulty=sort([noise miss]);
+        % -----------------------------------------------------------------
+        [nsts,R]=scr_ecg2hb_qc(pt); % open gui to manually check for outliers
+        if nsts~=-1 && not(isempty(R))
+            pt.set.R=R;
+        end
+    end
+end
 
 % ---Prepare output and save-----------------------------------------------
-
 newhr=pt.set.R/pt.settings.filt.sr;
 
 % save data
-% -------------------------------------------------------------------------
 msg = sprintf('QRS detection with Pan & Tompkins algorithm and HB-timeseries added to data on %s', date);
 
 newdata.data = newhr(:);
@@ -263,15 +270,16 @@ newdata.header.sr = 1;
 newdata.header.units = 'events';
 newdata.header.chantype = 'hb';
 
+% user output
+fprintf('  done.\n');
+
 nsts = scr_add_channel(fn, newdata, msg);
 if nsts == -1, return; end;
-
 sts = 1;
-
 return;
 
 % -------------------------------------------------------------------------
-% --- see below for subfunctions find_r, update_set, tmax, twave_check
+%   see below for subfunctions find_r, update_set, tmax, twave_check
 % -------------------------------------------------------------------------
 
 %% ---Find R---------------------------------------------------------------
@@ -284,7 +292,6 @@ pt.set.grad=gradient(pt.data.x(:,2));
 CSE(1,:)='SPKI%d';
 CSE(2,:)='SPKF%d';
 % -------------------------------------------------------------------------
-
 while pt.set.tstart+pt.set.tmax <= pt.settings.n
     % ---R-spike search--------------------------------------------------------
     if cse < 3
@@ -296,25 +303,23 @@ while pt.set.tstart+pt.set.tmax <= pt.settings.n
             else invl=j:pt.settings.n;
                 invl2=j:pt.settings.n;
             end
-            
-            %-----------------------------------------------------------
+            % -------------------------------------------------------------
             % no peak found in first pass, so lower threshold
             if j==(pt.set.tstart+pt.set.tmax) && cse==1
                 cse=2;
                 j=pt.set.tstart;
-                % ----------------------------------------------------------
+                % ---------------------------------------------------------
                 % no peak found in second pass, so use most likely peak
             elseif  j==(pt.set.tstart+pt.set.tmax) && cse==2
                 cse=3;
-                % ----------------------------------------------------------
+                % ---------------------------------------------------------
                 % no peak at this point
             elseif pt.data.pt_peaks(j,1) == 0
                 j = j + 1;
-                %---------------------------------------------------------
+                % ---------------------------------------------------------
                 % R peak at this point
             elseif pt.data.pt_peaks(j,1) >= (pt.set.THRF/cse) && max(pt.data.pt_peaks(invl2,2)) >= (pt.set.THRI/cse)  ...
                     && strcmp(twave_check(pt,j),'negative')
-                
                 if pt.settings.debugmode==1 % save current thresholds to debug variable
                     if j+pt.set.tmax <= pt.settings.n
                         pt.pt_debug.data(j:j+pt.set.tmax,6)=pt.set.THRF/cse;
@@ -324,19 +329,17 @@ while pt.set.tstart+pt.set.tmax <= pt.settings.n
                         pt.pt_debug.data(j:end,7)=pt.set.THRI/cse;
                     end
                 end
-                
                 [pt.set]=update_set(max(pt.data.pt_peaks(invl2,2)),pt.set,sprintf(CSE(1,:),cse));
                 [pt.set]=update_set(pt.data.pt_peaks(j,1),pt.set,sprintf(CSE(2,:),cse));
                 pt.data.r(j,1)=1;
                 cse=1;
                 pt.set.tstart=j+pt.settings.tmin;
                 pt.set.R(end+1)=j;
-                
-                % ---update tmax-----------------------------------
+                % ---update tmax-------------------------------------------
                 if length(pt.set.R)>= 9
                     [pt]=tmax(pt);
                 end
-                % -------------------------------------------------
+                % ---------------------------------------------------------
                 
                 break
                 % ----------------------------------------------------------
@@ -356,7 +359,12 @@ while pt.set.tstart+pt.set.tmax <= pt.settings.n
     elseif cse==3
         % divide invl into 3 smaller intervals
         for k=1:3
-            minvl=invl(1,(k-1)*round(length(invl)/3)+1:k*round(length(invl)/3));
+            mindx=[];
+            mindx=(k-1)*round(length(invl)/3)+1:k*round(length(invl)/3);
+            if max(mindx)>length(invl)
+                mindx(mindx>length(invl))=[];
+            end
+            minvl=invl(1,mindx);
             if any(pt.data.pt_peaks(minvl,1)>pt.set.THRF)
                 [PEAKI,posPEAKI]=max(pt.data.pt_peaks(minvl,2));
                 [pt.set]=update_set(PEAKI,pt.set,CSE(1,:));
@@ -368,12 +376,11 @@ while pt.set.tstart+pt.set.tmax <= pt.settings.n
                 pt.set.R(end+1)=pt.set.tstart;
                 cse=1;
                 pt.set.tstart=pt.set.tstart+pt.settings.tmin;
-                
                 break
             end
             
             if k==3
-                if pt.set.R(end)-pt.set.R(end-1)<0
+                if pt.set.R(end)-pt.set.R(end-1)>0
                     [PEAKI,posPEAKI]=max(pt.data.pt_peaks(invl,2));
                     [pt.set]=update_set(PEAKI,pt.set,CSE(1,:));
                     [PEAKF,posPEAKF]=max(pt.data.pt_peaks(invl,1));
@@ -384,23 +391,21 @@ while pt.set.tstart+pt.set.tmax <= pt.settings.n
                     pt.set.R(end+1)=pt.set.tstart;
                     cse=1;
                     pt.set.tstart=pt.set.tstart+pt.settings.tmin;
+                    break
                 end
             end
         end
-        % ---update tmax-----------------------------------------------
+        % ---update tmax---------------------------------------------------
         if length(pt.set.R)>= 9
             [pt]=tmax(pt);
         end
-        % -------------------------------------------------------------
-        
+        % ----------------------------------------------------------------- 
     end
-    
 end
 
 %% ---Update_set-----------------------------------------------------------
 function [set]=update_set(PEAK,set,CSE)
 % -------------------------------------------------------------------------
-
 switch CSE
     case 'SPKI1'
         SPKI=set.SPKI;
@@ -429,14 +434,11 @@ switch CSE
 end
 
 % ---Thresholds------------------------------------------------------------
-
-
 switch CSE
     case {'SPKI1','SPKI2','NPKI'}
         set.SPKI=SPKI;
         set.NPKI=NPKI;
         set.THRI= NPKI + 0.25 * (SPKI-NPKI);
-        
     case {'SPKF1','SPKF2','NPKF'}
         set.SPKF=SPKF;
         set.NPKF=NPKF;
@@ -495,5 +497,3 @@ if ~isempty(q) && q(end) < pt.settings.filt.sr * pt.settings.twthresh
 else twave='negative';
 end
 % -------------------------------------------------------------------------
-
-
