@@ -148,8 +148,9 @@ switch model
             end;
             % check number of events and non-allowed values per condition:
             for iCond = 1:numel(in.names)
-                if ~isnumeric(in.onsets{iCond}) || ~isvector(in.onsets{iCond})
-                    warning('ID:no_numeric_vector', '%sCondition "%s" - onsets{%i} must be a numeric vector.', errmsg, in.names{iCond}, iCond); return;
+                if ~((isvector(in.onsets{iCond}) && isnumeric(in.onsets{iCond})) ... 
+                        || (isempty(in.onsets{iCond}) && ~strcmp('', in.onsets{iCond})))
+                    warning('ID:no_numeric_vector', '%sCondition "%s" - onsets{%i} must be a numeric vector or empty.', errmsg, in.names{iCond}, iCond); return;
                 end
                 
                 if numel(in.durations{iCond}) == 1
