@@ -9,9 +9,12 @@ function varargout = scr_ecg2hb_qc(varargin)
 %       r(3,:) ... removed
 %       r(4,:) ... added
 %__________________________________________________________________________
-% SCRalyze 3.0
+% PsPM 3.0
 % (C) 2013-2015 Philipp C Paulus
 % (Technische Universitaet Dresden, University of Zurich)
+
+% $Id$   
+% $Rev$
 
 % Last Modified by GUIDE v2.5 29-Apr-2015 11:42:30
 

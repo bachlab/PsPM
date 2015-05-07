@@ -24,12 +24,12 @@ function [sts,pt_debug] = scr_ecg2hb(fn, chan, varargin)
 % Pan J & Tomkins WJ (1985). A Real-Time QRS Detection Algorithm. IEEE
 % Transactions on Biomedical Engineering, 32, 230-236.
 %__________________________________________________________________________
-% SCRalyze 3.0
+% PsPM 3.0
 % (C) 2013-2015 Philipp C Paulus & Dominik R Bach
 % (Technische Universitaet Dresden, University of Zurich)
 
-% $Id: scr_ecg2hb.m 563 2014-04-29 16:42:21Z dominik_bach $
-% $Rev: 563 $
+% $Id$
+% $Rev$
 
 % -------------------------------------------------------------------------
 % DEVELOPERS NOTES: Changes from the original Pan & Tompkins algorithm
@@ -110,15 +110,13 @@ fprintf('QRS detection for %s ... ', fn);
 % check input
 % -------------------------------------------------------------------------
 if nargin < 1
-    warning('No input. Don''t know what to do.'); return;
+    warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
 elseif ~ischar(fn)
-    warning('Need file name string as first input.'); return;
+    warning('ID:invalid_input', 'Need file name string as first input.'); return;
 elseif nargin < 2
     chan = 'ecg';
-elseif ~isnumeric(chan)
-    if ~strcmp(chan,'ecg')
-        warning('Channel number must be numeric'); return;
-    end
+elseif ~isnumeric(chan) && ~strcmp(chan,'ecg')
+        warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end;
 
 % additional options
@@ -144,8 +142,8 @@ if numel(data) > 1
     data = data(1);
 end;
 if not(strcmp(data{1,1}.header.chantype,'ecg'))
-    warning('Specified channel is not an ECG channel. Don''t know what to do!')
-    return
+    warning('ID:invalid_input', 'Specified channel is not an ECG channel. Don''t know what to do!')
+    return;
 end
 
 % =========================================================================
