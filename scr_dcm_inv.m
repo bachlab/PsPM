@@ -380,7 +380,7 @@ if (numel(options.meanSCR) > 1) && (~options.getrf)
     invopt.priors = priors;
     
     % estimate
-    [post, out] = VBA_NLStateSpaceModel((options.meanSCR(:)'/model.zfactor),u,f_fname,g_fname,dim,invopt);
+    [post, out] = VBA_NLStateSpaceModel(options.meanSCR(:)',u,f_fname,g_fname,dim,invopt);
     
     % extract params
     for k = 1:aSCRno
@@ -468,7 +468,7 @@ if ~options.getrf
         % =======================================================================
         
         for trl = 1:trlno
-            c = clock;
+            c = clock; 
             fprintf('----------------------------------------------------------\n');
             fprintf('%02.0f:%02.0f:%02.0f: Session %1.0f - Trial %1.0f\n', c(4:6), sn, trl);
             
