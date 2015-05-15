@@ -134,7 +134,7 @@ elseif strcmpi(modeltype{1}, 'GLM')
 else
     if strcmpi(statstype, 'stats')
         trlnames = data(1).trlnames;
-    elseif strcmpi(statstype, 'stats')
+    elseif strcmpi(statstype, 'cond')
         trlnames = data(1).condnames;
     end;
     % combine with measure names
