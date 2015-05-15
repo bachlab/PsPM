@@ -1,4 +1,4 @@
-function [sts,pt_debug] = scr_ecg2hb(fn, chan, varargin)
+function [sts,pt_debug] = scr_ecg2hb(fn, chan, options)
 % scr_ecg2hb identifies the position of QRS complexes in ECG data and
 % writes them as heart beat channel into the datafile. This function
 % implements the algorithm by Pan & Tompkins (1985) with some adjustments.
@@ -103,10 +103,6 @@ sts = -1;
 global settings;
 if isempty(settings), scr_init; end;
 
-% user output
-% -------------------------------------------------------------------------
-fprintf('QRS detection for %s ... ', fn);
-
 % check input
 % -------------------------------------------------------------------------
 if nargin < 1
@@ -118,6 +114,10 @@ elseif nargin < 2
 elseif ~isnumeric(chan) && ~strcmp(chan,'ecg')
         warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end;
+
+% user output
+% -------------------------------------------------------------------------
+fprintf('QRS detection for %s ... ', fn);
 
 % additional options
 % -------------------------------------------------------------------------
@@ -132,6 +132,63 @@ pt_debug=[];
 % values for the options variables must be numeric, minHR must be smaller
 % than maxHR, debugmode must either be 1 or 0.
 
+if nargin > 2 && exist('options', 'var')
+    
+    if isstruct(options)
+        if isfield(options, 'semi') 
+            if any(options.semi == 0:1)
+                pt.settings.semi = options.semi;
+            else
+                warning('ID:invalid_input', '''options.semi'' must be either 0 or 1.'); return;
+            end
+        end
+        
+         if isfield(options, 'debugmode') 
+            if any(options.debugmode == 0:1)
+                pt.settings.debugmode = options.debugmode;
+            else
+                warning('ID:invalid_input', '''options.debugmode'' must be either 0 or 1.'); return;
+            end
+         end
+        
+        if isfield(options, 'minHR') && isfield(options, 'maxHR')
+            if isnumeric(options.minHR) && isnumeric(options.maxHR) ...
+                    && options.minHR < options.maxHR
+                pt.settings.minHR = options.minHR;
+                pt.settings.maxHR = options.maxHR;
+            else
+                warning('ID:invalid_input', ['''options.minHR'' and ''options.maxHR'' ', ...
+                    'must be numeric and ''options.minHR'' must be ', ...
+                    'smaller than ''options.maxHR''']); return;
+            end
+        elseif isfield(options, 'minHR')
+            if isnumeric(options.minHR) && options.minHR < pt.settings.maxHR
+                pt.settings.minHR = options.minHR;
+            else
+                warning('ID:invalid_input', '''options.minHR'' must be numeric and smaller than %d.', ...
+                    [pt.settings.maxHR]); return;
+            end
+        elseif isfield(options, 'maxHR')
+            if isnumeric(options.maxHR) && options.maxHR > pt.settings.minHR
+                pt.settings.maxHR = options.maxHR;
+            else
+                warning('ID:invalid_input', '''options.maxHR'' must be numeric and greater than %d.', ...
+                    [pt.settings.minHR]); return;
+            end
+        end
+        
+        if isfield(options, 'twthresh')
+            if isnumeric(options.twthresh)
+                pt.settings.twthresh = options.twthresh;
+            else
+                warning('ID:invalid_input', '''options.twthresh'' must be numeric.'); return;  
+            end
+        end
+    else
+        warning('ID:invalid_input', '''options'' must be of type struct.'); return;
+    end
+
+end
 
 % get data
 % -------------------------------------------------------------------------
