@@ -129,7 +129,7 @@ for d=1:numel(D)
     end;
     
     [pth nfn ext] = fileparts(newdatafile);
-    infos.downsmapledfile = [nfn ext];
+    infos.downsampledfile = [nfn ext];
     save(newdatafile, 'infos', 'data');
     Dout{d}=newdatafile;
   
