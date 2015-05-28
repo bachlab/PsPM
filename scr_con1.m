@@ -3,7 +3,7 @@ function scr_con1(modelfile, connames, convec, datatype, deletecon, options)
 % and saves them to the modelfile to be accessed later
 %
 % FORMAT:
-% SCR_CON1 (MODELFILE, CONNAMES, CONVEC, [DATATYPE, DELETECON])
+% SCR_CON1 (MODELFILE, CONNAMES, CONVEC, [DATATYPE, DELETECON, OPTIONS])
 %
 % modelfile: a filename, or cell array of filenames
 % connames: a cell array of names for the desired contrasts
@@ -18,12 +18,13 @@ function scr_con1(modelfile, connames, convec, datatype, deletecon, options)
 %           'recon': contrasts formulated in terms of conditions in a GLM,
 %                   reconstructs estimated response from all basis functions
 %                   and uses the peak of the estimated response
-%           'options': 
-%               - options.zscored - zscore data only for non-linear models
-%
 %           deletecon: should existing contrasts be deleted (1) or 
 %                   appended (0)? 
 %                   default = 0;
+% options: options.zscored: 1 - zscore data
+%                               Restriction: only for non-linear models 
+%                               and not when datatype == 'recon'
+%                           0 - do not zscore data
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -49,6 +50,9 @@ elseif nargin<4
 end;
 if nargin < 5
     deletecon = 0;
+end;
+if nargin < 6
+    options = struct();
 end;
 
 % check & convert filename --

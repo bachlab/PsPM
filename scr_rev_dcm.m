@@ -35,11 +35,7 @@ if strcmp(job,'sf')
     end
 else
     if numel(dcm.sn) < sn
-        if strcmpi(modeltype, 'dcm')
-            warning('Session %1.0f does not exist', sn); return;
-        elseif strcmpi(modeltype, 'sfdcm')
-            warning('Episode %1.0f does not exist', sn); return;
-        end;
+        warning('Session %1.0f does not exist', sn); return;
     elseif strcmpi(job, 'inv') && numel(dcm.sn{sn}.u) < trl
         warning('Trial %1.0f in session %1.0f does not exist', trl, sn); return;
     end;
