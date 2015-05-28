@@ -199,7 +199,7 @@ if numel(data) > 1
     data = data(1);
 end;
 if not(strcmp(data{1,1}.header.chantype,'ecg'))
-    warning('ID:invalid_input', 'Specified channel is not an ECG channel. Don''t know what to do!')
+    warning('ID:not_allowed_channeltype', 'Specified channel is not an ECG channel. Don''t know what to do!')
     return;
 end
 
