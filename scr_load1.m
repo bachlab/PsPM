@@ -44,7 +44,7 @@ function [sts, data, mdltype] = scr_load1(fn, action, savedata, options)
 % $Rev: 701 $
 
 % -------------------------------------------------------------------------
-% DEVELOPERS NOTES: General structure of SCRalyze 1st level model files
+% DEVELOPERS NOTES: General structure of PsPM 1st level model files
 % 
 % each file contains one struct variable with the model
 % allowed model names are specified in scr_init
