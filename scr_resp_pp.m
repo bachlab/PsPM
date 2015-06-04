@@ -169,11 +169,13 @@ end;
 if options.plot
     figure('Position', [50, 50, 1000, 500]);
     axes; hold on;
+    oldsr = data{1}.header.sr;
+    oldt = (1/oldsr):(1/oldsr):infos.duration;
     % normal breathing is 12-20 per minute, i. e. 3 - 5 s per breath. prd.
     % according to Schmidt/Thews, 10-18 per minute, i. e. 3-6 s per period
     % here we flag values outside 1-10 s breathing period
-    plot(newt, resp(1:numel(newt)), 'k');
-    plot(newt, newresp(1:numel(newt)), 'b');
+    plot(oldt, resp(1:numel(oldt)), 'k');
+    plot(oldt, newresp(1:numel(oldt)), 'b');
     indx = (diff(respstamp)<1)|(diff(respstamp)>10);
     stem(respstamp(indx), 2*ones(size(respstamp(indx))), 'Marker', 'none', 'Color', 'r', 'LineWidth', 4);
     stem(respstamp, ones(size(respstamp)), 'Marker', 'o', 'Color', 'b');
