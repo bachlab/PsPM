@@ -83,8 +83,7 @@ for i=1:length(plotNr)
                 fig(2).title=get(fig(2).ax(1).h, 'Title');
                 set(fig(2).title, 'String', sprintf('Design Orthogonality: %s', filename), 'FontWeight', 'Bold', 'FontSize', 14, 'Interpreter', 'none');
                 
-                % first approach of displaying regressors in orthogonality 
-                % plot -> disabled because not finished yet
+                % display regressornames
                 % calculate width of a square
                 ns = numel(glm.names);
                 YLim = get(fig(2).ax(1).h, 'YLim');
@@ -103,7 +102,7 @@ for i=1:length(plotNr)
                        color = corder(j,:);
                    end
                    
-                   % draw lines around
+                   % draw lines
                    space = -0.5;
                    x = [space, sx*j];
                    x = XLim(1) + x;
