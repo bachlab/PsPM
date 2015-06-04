@@ -45,7 +45,7 @@ elseif ~isnumeric(chan)
 end;
 
 try options.systemtype; catch, options.systemtype = 'bellows'; end;
-try options.datatype; catch, options.datatype = {'rp', 'amp', 'RLL'}; end;
+try options.datatype; catch, options.datatype = {'rp', 'ra', 'RLL', 'rs'}; end;
 try options.plot; catch, options.plot = 0; end;
 try options.diagnostics; catch, options.diagnostics = 0; end;
 
