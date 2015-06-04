@@ -229,7 +229,6 @@ switch val
     case 8
         cfg_add_module('pspm.tools.dcg2hp');
     case 9
-        %cfg_add_module('pspm.tools.resp2rp');
         cfg_add_module('pspm.tools.resp_pp');
 %     case 10
 %         cfg_add_module('pspm.tools.emg_pp');

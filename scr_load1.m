@@ -182,20 +182,35 @@ else
     reconflag = 1;
 end;
 
+% if not glm
 % create condition names --
-if ~isvector(indata.(mdltype).stats)
+if ~strcmpi(mdltype, 'glm')
     indata.(mdltype).condnames = unique(indata.(mdltype).trlnames);
 end;
 
 % retrieve file contents
 % -------------------------------------------------------------------------
+
+if options.zscored
+    if strcmpi(mdltype, 'dcm') && ...
+        (strcmpi(action, 'cond') || strcmpi(action, 'stats'))
+        
+        indata.(mdltype).stats = zscore(indata.(mdltype).stats);
+        data.zscored = 1;
+    else
+        data.zscored = 0;
+        warning(['Z-scoring only available for non-linear models and action ''stats'' or ''cond''. ',...
+                'Not z-scoring data!']);
+    end
+end
+
 switch action
     case 'none'
         data = [];
     case 'stats'
         data.stats = indata.(mdltype).stats;
         data.names = indata.(mdltype).names;
-        if ~isvector(indata.(mdltype).stats)
+        if ~strcmpi(mdltype, 'glm')
             data.trlnames = indata.(mdltype).trlnames;
             data.condnames = indata.(mdltype).condnames;
         end;
@@ -205,7 +220,7 @@ switch action
             data.stats = indata.glm.stats(condindx);
             data.names = indata.glm.names(condindx);
             clear condindx
-        elseif ~isvector(indata.(mdltype).stats)
+        elseif ~strcmpi(mdltype, 'glm')
             for iCond = 1:numel(indata.(mdltype).condnames)
                 condindx = strcmpi(indata.(mdltype).condnames{iCond}, indata.(mdltype).trlnames);
                 data.stats(iCond, :) = mean(indata.dcm.stats(condindx, :), 1);
@@ -244,18 +259,6 @@ switch action
         warning('Unknown action. Just checking file. File is valid.'); return;
 end;
 
-if options.zscored
-    if strcmpi(mdltype, 'dcm') && ...
-        (strcmpi(action, 'cond') || strcmpi(action, 'stats'))
-        
-        data.stats = zscore(data.stats);
-        data.zscored = 1;
-    else
-        data.zscored = 0;
-        warning(['Z-scoring only available for non-linear models and action ''stats'' or ''cond''. ',...
-                'Not z-scoring data!']);
-    end
-end
 
 % set status and return
 sts = 1;
