@@ -16,6 +16,8 @@ end
 
 options.plot = job.plot;
 
+
+
 sts = scr_hb2hr(job.datafile{1}, sr, chan, options.plot);
 
 out = job.datafile;

@@ -103,7 +103,7 @@ for i=1:length(plotNr)
                    end
                    
                    % draw lines
-                   space = -0.5;
+                   space = -0.7;
                    x = [space, sx*j];
                    x = XLim(1) + x;
                    y = [(j)*sy, (j)*sy];
@@ -116,9 +116,10 @@ for i=1:length(plotNr)
                        'LineWidth', 1.5);
                    
                    % draw text
-                   fig(3).ax(1).t(j) = text(0, j*sy+0.4, glm.names(j));
+                   fig(3).ax(1).t(j) = text(-0.2, j*sy+0.3, glm.names(j));
                    set(fig(3).ax(1).t(j), ...
                         'Color', color, ...
+                        'FontSize', 7.5, ...
                         'Clipping', 'off');
                 end
 
