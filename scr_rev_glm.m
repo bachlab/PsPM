@@ -85,35 +85,43 @@ for i=1:length(plotNr)
                 
                 % first approach of displaying regressors in orthogonality 
                 % plot -> disabled because not finished yet
-%                 % calculate width of a square
-%                 ns = numel(glm.names);
-%                 YLim = get(fig(2).ax(1).h, 'YLim');
-%                 sy = diff(YLim) / ns;
-%                 XLim = get(fig(2).ax(1).h, 'XLim');
-%                 sx = diff(XLim) / ns;
-%                 
-%                 % iterate through regressors and colors
-%                 corder = get(groot, 'defaultAxesColorOrder');
-%                 cl = length(corder);
-%                 for j=1:ns
-%                    if j > cl
-%                        m = floor(j/cl);
-%                        color = corder(j - m*cl, :);
-%                    else
-%                        color = corder(j,:);
-%                    end
-%                    
-%                    % draw around
-%                    of = 0.01;
-%                    space = 0.25;
-%                    x = [-space, sx*j-of, sx*j-of, sx*(j-1)+0.01, sx*(j-1)+of, -space];
-%                    x = XLim(1) + x;
-%                    y = [(j)*sy-of, (j)*sy-of, -space, -space, (j-1)*sy+of, (j-1)*sy+of];
-%                    y = YLim(1) + y;
-%                    
-%                    fig(3).ax(1).p(j+1) = patch(x,y, 'none');
-%                    set(fig(3).ax(1).p(j+1), 'EdgeColor', color, 'FaceColor', 'none', 'LineWidth', 1.5);
-%                 end
+                % calculate width of a square
+                ns = numel(glm.names);
+                YLim = get(fig(2).ax(1).h, 'YLim');
+                sy = diff(YLim) / ns;
+                XLim = get(fig(2).ax(1).h, 'XLim');
+                sx = diff(XLim) / ns;
+                
+                % iterate through regressors and colors
+                corder = get(groot, 'defaultAxesColorOrder');
+                cl = length(corder);
+                for j=1:ns
+                   if j > cl
+                       m = floor(j/cl);
+                       color = corder(j - m*cl, :);
+                   else
+                       color = corder(j,:);
+                   end
+                   
+                   % draw lines around
+                   space = -0.5;
+                   x = [space, sx*j];
+                   x = XLim(1) + x;
+                   y = [(j)*sy, (j)*sy];
+                   y = YLim(1) + y;
+                   
+                   fig(3).ax(1).p(j+1) = patch(x,y, 'none');
+                   set(fig(3).ax(1).p(j+1), 'EdgeColor', color, ...
+                       'FaceColor', 'none', ...
+                       'Clipping', 'off', ...
+                       'LineWidth', 1.5);
+                   
+                   % draw text
+                   fig(3).ax(1).t(j) = text(0, j*sy+0.4, glm.names(j));
+                   set(fig(3).ax(1).t(j), ...
+                        'Color', color, ...
+                        'Clipping', 'off');
+                end
 
                 
             case 3
