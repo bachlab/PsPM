@@ -220,7 +220,7 @@ switch action
             data.stats = indata.glm.stats(condindx);
             data.names = indata.glm.names(condindx);
             clear condindx
-        elseif ~strcmpi(mdltype, 'glm')
+        else
             for iCond = 1:numel(indata.(mdltype).condnames)
                 condindx = strcmpi(indata.(mdltype).condnames{iCond}, indata.(mdltype).trlnames);
                 data.stats(iCond, :) = mean(indata.dcm.stats(condindx, :), 1);
@@ -228,8 +228,6 @@ switch action
             data.names = indata.(mdltype).names;
             data.trlnames = indata.(mdltype).trlnames;
             data.condnames = indata.(mdltype).condnames;
-        else
-            warning('%s''cond'' option is not defined', errmsg);
         end;
     case 'recon'
         if strcmpi(mdltype, 'glm')
