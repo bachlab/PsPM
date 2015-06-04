@@ -174,8 +174,8 @@ if options.plot
     % here we flag values outside 1-10 s breathing period
     plot(newt, resp(1:numel(newt)), 'k');
     plot(newt, newresp(1:numel(newt)), 'b');
-    indx = diff(respstamp)<1||diff(respstamp)>10;
-    stem(respstamp(indx), 2 * ones(size(indx)), 'Marker', 'none', 'Color', 'r', 'LineWidth', 4);
+    indx = (diff(respstamp)<1)|(diff(respstamp)>10);
+    stem(respstamp(indx), 2*ones(size(respstamp(indx))), 'Marker', 'none', 'Color', 'r', 'LineWidth', 4);
     stem(respstamp, ones(size(respstamp)), 'Marker', 'o', 'Color', 'b');
 end;
 
