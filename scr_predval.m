@@ -7,7 +7,8 @@ function [AIC, T, df] = scr_predval(X)
 %                   
 %           with X: a 2-column vector for paired tests, a 2-element cell
 %                   array for unpaired tests
-%                AIC: computed from RSS of the predictive model
+%                AIC: computed from RSS of the predictive model, up to a
+%                     constant (i. e. only AIC comparisons are meaningful)
 %                T: t-value of the associated t-test
 %                df: df of the associated t-test
 %__________________________________________________________________________
@@ -64,7 +65,8 @@ end;
 [b, dev, stat] = glmfit(X, Y);
 T = stat.t(2); % first column is intercept
 RSS = sum(stat.resid(:).^2);
-AIC = n * log(RSS/n);
+% number of parameters: number of columns in X, plus intercept
+AIC = n * log(RSS/n) + 2 * (1 + size(X, 2));
 
 
 
