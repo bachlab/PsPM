@@ -64,7 +64,7 @@ function [sts, data, mdltype] = scr_load1(fn, action, savedata, options)
 % -------------------------------------------------------------------------
 global settings;
 if isempty(settings), scr_init; end;
-sts = -1; data = []; mdltype = 'no valid model';
+sts = -1; data = struct; mdltype = 'no valid model';
 errmsg = sprintf('Data file %s is not a valid SCRalyze file:\n', fn);
 mdltypes = settings.first; % allowed first level model types
 
@@ -84,7 +84,7 @@ end;
 if isempty(ext)
     ext = '.mat';
 end;
-filename = fullfile(pth, [filename, ext]);
+fn = fullfile(pth, [filename, ext]);
     
 
 % check whether file exists --
