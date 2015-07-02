@@ -66,7 +66,7 @@ global settings;
 if isempty(settings), scr_init; end;
 sts = -1; data = struct; mdltype = 'no valid model';
 errmsg = sprintf('Data file %s is not a valid SCRalyze file:\n', fn);
-modalities = settings.modalities; % allowed modalities
+modalities = fieldnames(settings.modalities); % allowed modalities
 
 % check input arguments & set defaults
 % -------------------------------------------------------------------------
@@ -136,7 +136,7 @@ else
 end;
 
 % update mdltypes
-mdltypes = settings.modalities.(indata.modality).first;
+mdltypes = {settings.modalities.(modality).first};
 
 % check file contents
 % ------------------------------------------------------------------------
