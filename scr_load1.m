@@ -136,7 +136,7 @@ else
 end;
 
 % update mdltypes
-mdltypes = {settings.modalities.(modality).first};
+mdltypes = settings.modalities.(modality).first;
 
 % check file contents
 % ------------------------------------------------------------------------
