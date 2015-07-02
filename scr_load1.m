@@ -66,7 +66,7 @@ global settings;
 if isempty(settings), scr_init; end;
 sts = -1; data = struct; mdltype = 'no valid model';
 errmsg = sprintf('Data file %s is not a valid SCRalyze file:\n', fn);
-mdltypes = settings.first; % allowed first level model types
+modalities = settings.modalities; % allowed modalities
 
 % check input arguments & set defaults
 % -------------------------------------------------------------------------
@@ -120,6 +120,23 @@ end;
 % check for SCRalyze 1.x files --
 if isfield('indata', 'dsm'), warning('ID:SCRalyze_1_file', 'SCRalyze 1.x compatibility is discontinued'); return; end;
 
+% check for modality
+if isfield(indata, 'modality') 
+    modality = find(ismember(modalities, indata.modality));
+    if isempty(modality)
+        warning('No known modalitiy in this file'); return;
+    else
+        modality = modalities{modality};
+        indata.modality = modality;
+    end;
+else
+    % no modality field, use default modality
+    modality = 'scr';
+    indata.modality = modality;
+end;
+
+% update mdltypes
+mdltypes = settings.modalities.(indata.modality).first;
 
 % check file contents
 % ------------------------------------------------------------------------

@@ -596,7 +596,13 @@ defaults.dcm{2} = ...
 % -------------------------------------------------------------------------
 %  FIRST LEVEL settings
 % -------------------------------------------------------------------------
-defaults.first = {'glm', 'sf', 'dcm'};              % allowed first level model types
+defaults.first = {'glm', 'sf', 'dcm'}; % allowed first level model types
+
+% define modalities and allowed first level models
+defaults.modalities = struct( ...
+    'scr', struct('first', defaults.first) ... 
+    );
+
 
 % look for settings, otherwise set defaults
 % -------------------------------------------------------------------------
