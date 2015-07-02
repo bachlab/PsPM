@@ -267,9 +267,9 @@ switch action
         data = indata.(mdltype);
     case 'savecon'
         indata.(mdltype).con = savedata;
-        save(fn, '-struct', 'indata', mdltype, 'modeltype');
+        save(fn, '-struct', 'indata', mdltype, 'modeltype', 'modality');
     case 'save'
-        save(fn, '-struct', 'indata', mdltype, 'modeltype');
+        save(fn, '-struct', 'indata', mdltype, 'modeltype', 'modality');
     otherwise
         warning('Unknown action. Just checking file. File is valid.'); return;
 end;

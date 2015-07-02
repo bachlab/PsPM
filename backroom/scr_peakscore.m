@@ -316,7 +316,9 @@ for k = 1:numel(onsets)
     glm.names = {};
 end;
 
-save(modelfile, 'glm');
+modeltype = 'glm';
+modality = 'scr';
+save(modelfile, 'glm', 'modeltype', 'modality');
 
 
 %-------------------------------------------------------------------------

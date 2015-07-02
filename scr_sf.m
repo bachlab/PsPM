@@ -266,6 +266,7 @@ for iFile = 1:numel(model.datafile)
     sf.input = model;
     sf.options = options;
     modeltype = 'sf';
-    save(model.modelfile{iFile}, 'sf', 'modeltype');
+    modality = 'scr';
+    save(model.modelfile{iFile}, 'sf', 'modeltype', 'modality');
     fprintf('\n');
 end;

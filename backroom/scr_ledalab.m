@@ -156,7 +156,9 @@ dcm.names = description;
 
 % save & clean up
 % -------------------------------------------------------------------------
-save(outfile, 'dcm');
+modeltype = 'dcm';
+modality = 'scr';
+save(outfile, 'dcm', 'modeltype', 'modality');
 if options.cleanup
     for f = 1:numel(ledafn)
         delete(ledafn{f});

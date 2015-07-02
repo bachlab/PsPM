@@ -624,6 +624,7 @@ glm.stats = glm.stats .* glm.regscale';
 
 savedata = struct('glm', glm);
 savedata.modeltype = 'glm';
+savedata.modality = 'scr';
 scr_load1(model.modelfile, 'save', savedata, options);
 
 

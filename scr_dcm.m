@@ -428,7 +428,8 @@ dcm.warnings = warnings;
 
 if ~options.nosave
     modeltype = 'dcm';
-    save(model.modelfile, 'dcm', 'modeltype');
+    modality = 'scr';
+    save(model.modelfile, 'dcm', 'modeltype', 'modality');
 end;
 
 return;
