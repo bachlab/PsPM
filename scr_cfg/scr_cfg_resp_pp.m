@@ -57,7 +57,7 @@ stype_cushion.val  = {'cushion'};
 stype_cushion.help = {''};
 
 systemtype        = cfg_choice;
-systemtype.name   = 'Systemtype';
+systemtype.name   = 'System type';
 systemtype.tag    = 'systemtype';
 systemtype.val    = {stype_bellows};
 systemtype.values = {stype_bellows, stype_cushion};
@@ -96,7 +96,7 @@ dtype_rs.values = {0, 1};
 dtype_rs.help   = {'Create a channel with respiration time stamps.'};
 
 datatype       = cfg_branch;
-datatype.name  = 'Datatype';
+datatype.name  = 'Data type';
 datatype.tag   = 'datatype';
 datatype.val   = {dtype_rp, dtype_ra, dtype_rll, dtype_rs};
 datatype.help  = {''};
