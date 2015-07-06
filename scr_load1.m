@@ -29,7 +29,8 @@ function [sts, data, mdltype] = scr_load1(fn, action, savedata, options)
 %                               zscore data - substract the mean and divide
 %                               by the standard deviation.
 %                           
-%                           for 'save' - options.overwrite 
+%                           for 'save' - options.overwrite and
+%                           options.dont_ask_overwrite
 %                           (default: user dialogue)
 %
 %           output
@@ -88,15 +89,21 @@ if isempty(ext)
     ext = '.mat';
 end;
 fn = fullfile(pth, [filename, ext]);
-    
+
+try options.overwrite = (options.overwrite == 1); catch, options.overwrite = 0; end;
+try options.dont_ask_overwrite = (options.dont_ask_overwrite == 1); catch, options.dont_ask_overwrite = 0; end;
 
 % check whether file exists --
 if exist(fn, 'file')
     if strcmpi(action, 'save')
-        if ~(nargin > 3 && options.overwrite)
-            overwrite = menu(sprintf('File (%s) already exists. Overwrite?', fn), 'yes', 'no');
-            if overwrite ~=2
-                warning('Data not saved.\n'); return;
+        if ~options.overwrite
+            if ~options.dont_ask_overwrite
+                overwrite = menu(sprintf('File (%s) already exists. Overwrite?', fn), 'yes', 'no');
+                if overwrite ~=2
+                    warning('ID:not_saving_data', 'Data not saved.\n'); return;
+                end;
+            else
+                warning('ID:not_saving_data', 'Not saving data.\n'); return;
             end;
         end;
     end;
@@ -248,7 +255,7 @@ switch action
         else
             for iCond = 1:numel(indata.(mdltype).condnames)
                 condindx = strcmpi(indata.(mdltype).condnames{iCond}, indata.(mdltype).trlnames);
-                data.stats(iCond, :) = mean(indata.dcm.stats(condindx, :), 1);
+                data.stats(iCond, :) = mean(indata.(mdltype).stats(condindx, :), 1);
             end;
             data.names = indata.(mdltype).names;
             data.trlnames = indata.(mdltype).trlnames;
@@ -263,7 +270,7 @@ switch action
             data.stats = indata.glm.recon;
             data.names = indata.glm.reconnames;
         else
-            warning('%s. ''recon'' option only defined for GLM files', errmsg);
+            warning('ID:invalid_input', '%s. ''recon'' option only defined for GLM files', errmsg);
         end;
     case 'con'
         if conflag
