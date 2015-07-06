@@ -1,5 +1,5 @@
 function [sts, data, mdltype] = scr_load1(fn, action, savedata, options)
-% FORMAT: [sts, data, mdltype] = scr_load1(datafile, action, savedata, options)
+% FORMAT: [sts, data, mdltype] = scr_load1(fn, action, savedata, options)
 %           datafile: filename
 %           action (default 'none'):
 %                   'none':  check whether file is valid at all
@@ -20,9 +20,11 @@ function [sts, data, mdltype] = scr_load1(fn, action, savedata, options)
 %                   'save':  check and save first levle model, use an additional
 %                            input argument data that contains the model
 %                            struct
-%           data: for 'save' option - a struct containing the model as only
-%                           field
-%                 for 'savecon' option - contains the con structure                
+%
+%           savedata:       for 'save' option - a struct containing the 
+%                           model as only field
+%                           for 'savecon' option - contains the con structure                
+%
 %           options:        options.zscored 
 %                               zscore data - substract the mean and divide
 %                               by the standard deviation.
@@ -65,19 +67,20 @@ function [sts, data, mdltype] = scr_load1(fn, action, savedata, options)
 global settings;
 if isempty(settings), scr_init; end;
 sts = -1; data = struct; mdltype = 'no valid model';
-errmsg = sprintf('Data file %s is not a valid SCRalyze file:\n', fn);
 modalities = fieldnames(settings.modalities); % allowed modalities
 
 % check input arguments & set defaults
 % -------------------------------------------------------------------------
 % check missing input --
 if nargin < 1
-    warning('No datafile specified'); return;
+    warning('ID:invalid_input', 'No datafile specified'); return;
 elseif nargin < 2
     action = 'none';
 elseif any(strcmpi(action, {'save', 'savecon'})) && nargin < 3
-    warning('Save failed, no data provided'); return; 
+    warning('ID:missing_data', 'Save failed, no data provided'); return; 
 end;
+
+errmsg = sprintf('Data file %s is not a valid PsPM file:\n', fn);
 
 % canonicalise file name
 [pth, filename, ext] = fileparts(fn);
@@ -98,7 +101,7 @@ if exist(fn, 'file')
         end;
     end;
 elseif ~strcmpi(action, 'save')
-    warning('1st level file (%s) doesn''t exist', fn); return;
+    warning('ID:invalid_input', '1st level file (%s) doesn''t exist', fn); return;
 end;
 
 %  set default zscored
@@ -111,7 +114,7 @@ if ~strcmpi(action, 'save')
     try
         indata = load(fn);
     catch
-        errmsg = [gerrmsg, 'Not a matlab data file.']; warning(errmsg); return;
+        errmsg = [errmsg, 'Not a matlab data file.']; warning('ID:invalid_input', errmsg); return;
     end;
 else
     indata = savedata;
@@ -124,7 +127,7 @@ if isfield('indata', 'dsm'), warning('ID:SCRalyze_1_file', 'SCRalyze 1.x compati
 if isfield(indata, 'modality') 
     modality = find(ismember(modalities, indata.modality));
     if isempty(modality)
-        warning('No known modalitiy in this file'); return;
+        warning('ID:invalid_data_structure', 'No known modalitiy in this file'); return;
     else
         modality = modalities{modality};
         indata.modality = modality;
@@ -144,10 +147,15 @@ mdltypes = settings.modalities.(modality).first;
 if isfield(indata, 'modeltype')
     mdltype = find(ismember(mdltypes, indata.modeltype));
     if isempty(mdltype)
-        warning('%sNo known model type in this file', errmsg); return;
+        warning('ID:invalid_data_structure', '%sNo known model type in this file', errmsg); return;
     else
         mdltype = mdltypes{mdltype};
         indata.modeltype = mdltype;
+        
+        if ~isfield(indata, mdltype),
+            warning('ID:invalid_data_structure', 'Cannot find model ''%s'' in file ''%s''.', mdltype, fn); 
+            return;
+        end;
     end;
 else
     warning('ID:obsolete_function', ['Modelfile has no field ''modeltype'' defined.', ...
@@ -170,21 +178,21 @@ end;
 
 % check model content --
 if ~isfield(indata.(mdltype), 'modelfile')
-    warning('%sNo file name contained in model structure.', errmsg); return;
+    warning('ID:invalid_data_structure', '%sNo file name contained in model structure.', errmsg); return;
 elseif ~isfield(indata.(mdltype), 'stats')
-    warning('%sNo stats contained in file.', errmsg); return;
+    warning('ID:invalid_data_structure', '%sNo stats contained in file.', errmsg); return;
 elseif ~isfield(indata.(mdltype), 'names')
-    warning('%sNo names contained in file.', errmsg); return;
+    warning('ID:invalid_data_structure', '%sNo names contained in file.', errmsg); return;
 elseif ~strcmpi(mdltype, 'glm') && ~isfield(indata.(mdltype), 'trlnames')
-        warning('%sNo trial names contained in file.', errmsg); return;
+        warning('ID:invalid_data_structure', '%sNo trial names contained in file.', errmsg); return;
 elseif strcmpi(mdltype, 'glm') && size(indata.(mdltype).stats, 1) ~= numel(indata.(mdltype).stats)
-        warning('%sGLM stats should be a n x 1 vector.', errmsg); return;
+        warning('ID:invalid_data_structure', '%sGLM stats should be a n x 1 vector.', errmsg); return;
 elseif strcmpi(mdltype, 'glm') && numel(indata.(mdltype).names) ~= numel(indata.(mdltype).stats)
-        warning('%sNumbers of names and parameters do not match.', errmsg); return;
+        warning('ID:invalid_data_structure', '%sNumbers of names and parameters do not match.', errmsg); return;
 elseif ~strcmpi(mdltype, 'glm') && numel(indata.(mdltype).names) ~= size(indata.(mdltype).stats, 2)
-        warning('%sNumbers of names and parameters do not match.', errmsg); return;
+        warning('ID:invalid_data_strucutre', '%sNumbers of names and parameters do not match.', errmsg); return;
 elseif ~strcmpi(mdltype, 'glm') && numel(indata.(mdltype).trlnames) ~= size(indata.(mdltype).stats,1)
-        warning('%sNumbers of trial names and parameters do not match.', errmsg); return;
+        warning('ID:invalid_data_structure', '%sNumbers of trial names and parameters do not match.', errmsg); return;
 end;
 
 % check optional fields --
@@ -216,7 +224,7 @@ if options.zscored
         data.zscored = 1;
     else
         data.zscored = 0;
-        warning(['Z-scoring only available for non-linear models and action ''stats'' or ''cond''. ',...
+        warning('ID:invalid_input', ['Z-scoring only available for non-linear models and action ''stats'' or ''cond''. ',...
                 'Not z-scoring data!']);
     end
 end
@@ -271,7 +279,7 @@ switch action
     case 'save'
         save(fn, '-struct', 'indata', mdltype, 'modeltype', 'modality');
     otherwise
-        warning('Unknown action. Just checking file. File is valid.'); return;
+        warning('ID:unknown_action', 'Unknown action. Just checking file. File is valid.'); return;
 end;
 
 
