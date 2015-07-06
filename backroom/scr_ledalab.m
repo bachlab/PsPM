@@ -154,11 +154,12 @@ dcm.sn{1}.description = description;
 dcm.stats = transpose([dcm.sn{1}.e.a]);
 dcm.names = description;
 
+dcm.modeltype = 'dcm';
+dcm.modality = settings.modalities.glm;
+
 % save & clean up
 % -------------------------------------------------------------------------
-modeltype = 'dcm';
-modality = 'scr';
-save(outfile, 'dcm', 'modeltype', 'modality');
+save(outfile, 'dcm');
 if options.cleanup
     for f = 1:numel(ledafn)
         delete(ledafn{f});

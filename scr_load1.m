@@ -68,7 +68,7 @@ function [sts, data, mdltype] = scr_load1(fn, action, savedata, options)
 global settings;
 if isempty(settings), scr_init; end;
 sts = -1; data = struct; mdltype = 'no valid model';
-modalities = fieldnames(settings.modalities); % allowed modalities
+mdltypes = settings.first;
 
 % check input arguments & set defaults
 % -------------------------------------------------------------------------
@@ -130,62 +130,33 @@ end;
 % check for SCRalyze 1.x files --
 if isfield('indata', 'dsm'), warning('ID:SCRalyze_1_file', 'SCRalyze 1.x compatibility is discontinued'); return; end;
 
-% check for modality
-if isfield(indata, 'modality') 
-    modality = find(ismember(modalities, indata.modality));
-    if isempty(modality)
-        warning('ID:invalid_data_structure', 'No known modalitiy in this file'); return;
-    else
-        modality = modalities{modality};
-        indata.modality = modality;
-    end;
-else
-    % no modality field, use default modality
-    modality = 'scr';
-    indata.modality = modality;
-end;
-
-% update mdltypes
-mdltypes = settings.modalities.(modality).first;
-
 % check file contents
 % ------------------------------------------------------------------------
 % check model type --
-if isfield(indata, 'modeltype')
-    mdltype = find(ismember(mdltypes, indata.modeltype));
-    if isempty(mdltype)
-        warning('ID:invalid_data_structure', '%sNo known model type in this file', errmsg); return;
-    else
-        mdltype = mdltypes{mdltype};
-        indata.modeltype = mdltype;
-        
-        if ~isfield(indata, mdltype),
-            warning('ID:invalid_data_structure', 'Cannot find model ''%s'' in file ''%s''.', mdltype, fn); 
-            return;
-        end;
-    end;
+mdltype = find(ismember(mdltypes, fieldnames(indata)));
+if isempty(mdltype)
+    warning('ID:invalid_data_structure', '%sNo known model type in this file', errmsg); return;
+elseif numel(mdltype) > 1
+    warning('ID:invalid_data_structure', '%sMore than one model type in this file', errmsg); return;
 else
-    warning('ID:obsolete_function', ['Modelfile has no field ''modeltype'' defined.', ...
-        ' Falling back to determining modeltype from fieldnames.', ...
-        ' This backward compatibility will be removed in future versions of PsPM.']);
-    % field modeltype is not defined; falling back to old and obsolete
-    % behaviour - must be removed in future (present is 24.04.2015)
-    mdltype = find(ismember(mdltypes, fieldnames(indata)));
-    if isempty(mdltype)
-        warning('%sNo known model type in this file', errmsg); return;
-    elseif numel(mdltype) > 1
-        warning('%sMore than one model type in this file', errmsg); return;
-    else
-        mdltype = mdltypes{mdltype};
-        indata.modeltype = mdltype;
-    end;
+    mdltype = mdltypes{mdltype};
 end;
-
-
 
 % check model content --
 if ~isfield(indata.(mdltype), 'modelfile')
     warning('ID:invalid_data_structure', '%sNo file name contained in model structure.', errmsg); return;
+elseif ~isfield(indata.(mdltype), 'modeltype')
+    warning('ID:invalid_data_structure', '%sNo modeltype contained in model structure.', errmsg); 
+    % do not return, since this is not yet fully implemented; just give a
+    % warning message
+    % --------------------------------------------
+    % return
+elseif ~isfield(indata.(mdltype), 'modality')
+    warning('ID:invalid_data_structure', '%sNo modality contained in model structure.', errmsg);
+    % do not return, since this is not yet fully implemented; just give a
+    % warning message
+    % --------------------------------------------
+    % return
 elseif ~isfield(indata.(mdltype), 'stats')
     warning('ID:invalid_data_structure', '%sNo stats contained in file.', errmsg); return;
 elseif ~isfield(indata.(mdltype), 'names')
@@ -282,9 +253,9 @@ switch action
         data = indata.(mdltype);
     case 'savecon'
         indata.(mdltype).con = savedata;
-        save(fn, '-struct', 'indata', mdltype, 'modeltype', 'modality');
+        save(fn, '-struct', 'indata', mdltype);
     case 'save'
-        save(fn, '-struct', 'indata', mdltype, 'modeltype', 'modality');
+        save(fn, '-struct', 'indata', mdltype);
     otherwise
         warning('ID:unknown_action', 'Unknown action. Just checking file. File is valid.'); return;
 end;

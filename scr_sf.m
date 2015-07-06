@@ -265,8 +265,9 @@ for iFile = 1:numel(model.datafile)
     if exist('events','var'), sf.events = events; end;
     sf.input = model;
     sf.options = options;
-    modeltype = 'sf';
-    modality = 'scr';
-    save(model.modelfile{iFile}, 'sf', 'modeltype', 'modality');
+    sf.modeltype = 'sf';
+    sf.modality = settings.modalities.sf;
+    
+    save(model.modelfile{iFile}, 'sf');
     fprintf('\n');
 end;

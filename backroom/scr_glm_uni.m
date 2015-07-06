@@ -467,10 +467,10 @@ clear tmp;
 glm.beta=pinv(glm.X)*glm.Y;
 glm.Yhat=glm.X*glm.beta;
 glm.e=glm.Y-glm.Yhat;
+glm.modeltype = 'glm';
+glm.modality = settings.modalities.glm;
 
-modeltype = 'glm';
-modality = 'scr';
-save(modelfile, 'glm', 'modeltype', 'modality');
+save(modelfile, 'glm');
 
 
 %-------------------------------------------------------------------------

@@ -425,11 +425,11 @@ dcm.modelfile = model.modelfile;
 dcm.input = model;
 dcm.options = options;
 dcm.warnings = warnings;
+dcm.modeltype = 'dcm';
+dcm.modality = settings.modalities.dcm;
 
 if ~options.nosave
-    modeltype = 'dcm';
-    modality = 'scr';
-    save(model.modelfile, 'dcm', 'modeltype', 'modality');
+    save(model.modelfile, 'dcm');
 end;
 
 return;

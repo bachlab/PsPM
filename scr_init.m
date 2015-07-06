@@ -553,6 +553,11 @@ defaults.split.brk2norm = 3; % split sessions: assume inter marker intervals 3 t
 % -------------------------------------------------------------------------
 defaults.get_transfer_sr=100;            % resampling rate for automatic transfer function computation
 
+% default modalities
+% -------------------------------------------------------------------------
+defaults.modalities = struct('glm', 'scr', ...
+    'sf', 'scr', ...
+    'dcm', 'scr');
 
 % -------------------------------------------------------------------------
 %  modality-specific GLM settings
@@ -566,7 +571,8 @@ defaults.glm(1) = ...                                              % GLM for SCR
     'cbf', struct('fhandle', @scr_bf_scrf, 'args', 1), ...  % default basis function/set
     'filter', struct('lpfreq', 5, 'lporder', 1,  ...        % default filter settings
     'hpfreq', 0.05, 'hporder', 1, 'down', 10, ...
-    'direction', 'uni'));
+    'direction', 'uni'), ...
+    'default', 1);
 
 % defaults.glm(2) = ...                                              % GLM for HP
 %     struct('modality', 'hp', ...
@@ -597,12 +603,6 @@ defaults.dcm{2} = ...
 %  FIRST LEVEL settings
 % -------------------------------------------------------------------------
 defaults.first = {'glm', 'sf', 'dcm'}; % allowed first level model types
-
-% define modalities and allowed first level models
-defaults.modalities = struct( ...
-    'scr', struct('first', {defaults.first}) ... 
-    );
-
 
 % look for settings, otherwise set defaults
 % -------------------------------------------------------------------------

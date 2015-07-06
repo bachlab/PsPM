@@ -141,7 +141,8 @@ end;
 % get further input or set defaults --
 % check modality --
 if ~isfield(model, 'modality')
-    model.modality = 'scr';
+    % load default modality
+    model.modality = settings.modalities.glm;
 elseif ~ismember(model.modality, {settings.glm.modality})
     warning('ID:invalid_input', 'Unknown modality %s.', model.modality); return;
 end;
@@ -448,6 +449,8 @@ glm.timing.names      = names;
 glm.timing.onsets     = onsets;
 glm.timing.durations  = durations;
 glm.timing.pmod       = pmod;
+glm.modality          = model.modality;
+glm.modeltype         = 'glm';
 
 % clear local variables --
 clear iSn iMs ynew newonsets newdurations newmissing missingtimes 
@@ -623,8 +626,6 @@ glm.XM = glm.XM .* repmat(glm.regscale, size(glm.XM, 1), 1);
 glm.stats = glm.stats .* glm.regscale';
 
 savedata = struct('glm', glm);
-savedata.modeltype = 'glm';
-savedata.modality = 'scr';
 scr_load1(model.modelfile, 'save', savedata, options);
 
 

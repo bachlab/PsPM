@@ -252,6 +252,8 @@ glm.durationinfo='duration in seconds';
 tmp.duration=numel(glm.Y);
 glm.norm=normalize;
 glm.name = names;
+glm.modeltype = 'glm';
+glm.modality = settings.modalities.glm;
 
 %-------------------------------------------------------------------------
 % peak scoring
@@ -316,9 +318,7 @@ for k = 1:numel(onsets)
     glm.names = {};
 end;
 
-modeltype = 'glm';
-modality = 'scr';
-save(modelfile, 'glm', 'modeltype', 'modality');
+save(modelfile, 'glm');
 
 
 %-------------------------------------------------------------------------
