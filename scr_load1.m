@@ -146,17 +146,19 @@ end;
 if ~isfield(indata.(mdltype), 'modelfile')
     warning('ID:invalid_data_structure', '%sNo file name contained in model structure.', errmsg); return;
 elseif ~isfield(indata.(mdltype), 'modeltype')
-    warning('ID:invalid_data_structure', '%sNo modeltype contained in model structure.', errmsg); 
+    warning('ID:invalid_data_structure', '%sNo modeltype contained in model structure. Modeltype is automatically added to the model structure.', errmsg); 
     % do not return, since this is not yet fully implemented; just give a
-    % warning message
+    % warning message and instead set it as it should be
     % --------------------------------------------
     % return
+    indata.(mdltype).modeltype = mdltype;
 elseif ~isfield(indata.(mdltype), 'modality')
-    warning('ID:invalid_data_structure', '%sNo modality contained in model structure.', errmsg);
+    warning('ID:invalid_data_structure', '%sNo modality contained in model structure. Modality is autmoatically added to the model structure.', errmsg);
     % do not return, since this is not yet fully implemented; just give a
-    % warning message
+    % warning message and instead set it as it should be
     % --------------------------------------------
     % return
+    indata.(mdltype).modality = settings.modalities.(mdltype);
 elseif ~isfield(indata.(mdltype), 'stats')
     warning('ID:invalid_data_structure', '%sNo stats contained in file.', errmsg); return;
 elseif ~isfield(indata.(mdltype), 'names')
