@@ -2,7 +2,7 @@ function [sts, b, a] = scr_butter(order, freqratio, pass)
 % This function interfaces Matlab Signal Processing Toolbox filters and
 % additionally implements a few standard filters for those who don''t have
 % this toolbox
-% FORMAT [sts, a, b] = scr_butter(order, freqratio)
+% FORMAT [sts, b, a] = scr_butter(order, freqratio)
 % returns sts = -1 if non-standard filters are requested
 %
 %__________________________________________________________________________

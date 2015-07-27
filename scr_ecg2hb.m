@@ -10,7 +10,7 @@ function [sts,pt_debug] = scr_ecg2hb(fn, chan, options)
 %             channel)
 %       options: ... semi - activates the semi automatic mode, allowing the
 %                           handcorrection of all IBIs that fulfill:
-%                           >/< mean(ibi) +/- 3 * std(ibi) [def. 0].
+%                           >/< mean(ibi) +/- 3 * std(ibi) [def. 1].
 %                ... minHR - sets minimal HR [def. 20bpm].
 %                ... maxHR - sets maximal HR [def. 200bpm].
 %                ... debugmode - runs the algorithm in debugmode
@@ -121,17 +121,18 @@ fprintf('QRS detection for %s ... ', fn);
 
 % additional options
 % -------------------------------------------------------------------------
+% settings for semi automatic mode
 pt.settings.semi=1;         %   semiautomatic mode - [def: 0]
+pt.settings.outfact=2;      %   mark those IBIs that are >/< mean(IBI)+/- outfact * std(IBI)
+% settings for QRS detection
 pt.settings.minHR=20;       %   original: 0 ; set to 20 bpm [def](min 1)
 pt.settings.maxHR=200;      %   original: 300 bpm; adjusted to 200 bpm [def]!
 pt.settings.twthresh=0.36;  %   original: 0.36 s [def]!
 pt.settings.debugmode=0;    %   no debuggin [def]
 pt_debug=[];
 
-% input check
-% values for the options variables must be numeric, minHR must be smaller
-% than maxHR, debugmode must either be 1 or 0.
-
+% input checks
+% -------------------------------------------------------------------------
 if nargin > 2 && exist('options', 'var')
     
     if isstruct(options)
@@ -253,6 +254,7 @@ pt.data.pt_peaks(indx+1,2)=pt.data.x(indx+1,3);
 
 % --Find first noisepeak and first signal peak-----------------------------
 pt.data.r=zeros(pt.settings.n,1); % initialise r vector
+
 [pt.set.SPKF,pt.set.tstart]=max(pt.data.pt_peaks(pt.settings.q:pt.settings.q+2*pt.settings.filt.sr,1));
 pt.set.SPKI=max(pt.data.pt_peaks(pt.settings.q:pt.set.tmax,2));
 pt.set.NPKF=mean(pt.data.pt_peaks(pt.settings.q:pt.settings.q+2*pt.settings.filt.sr,2));
@@ -262,10 +264,11 @@ pt.set.NPKI=mean(pt.data.pt_peaks(pt.settings.q:pt.settings.q+2*pt.settings.filt
 [pt.set]=update_set(pt.set.SPKI*2,pt.set,'SPKI1');
 pt.set.tstart=pt.set.tstart+pt.settings.q;
 
-% proceed
-pt.data.r(pt.set.tstart)=1;
-pt.set.R=pt.set.tstart;
-pt.set.tstart=pt.set.tstart+pt.settings.tmin;
+% start qrs detection at tstart
+pt.set.tstart=1;
+% pt.data.r(pt.set.tstart)=1;
+% pt.set.R=pt.set.tstart;
+% pt.set.tstart=pt.set.tstart+pt.settings.tmin;
 
 % ---Debug Mode------------------------------------------------------------
 if pt.settings.debugmode==1
@@ -300,16 +303,17 @@ end
 
 % ---Manual check for outliers---------------------------------------------
 if pt.settings.semi==1
-    outfact=3; % get only IBIs that are >/< mean(IBI)+/-outfact*std(IBI)
-    
-    if any(diff(pt.set.R)<mean(diff(pt.set.R))-outfact*std(diff(pt.set.R))) || any(diff(pt.set.R)>mean(diff(pt.set.R))+outfact*std(diff(pt.set.R)))
-        noise=find(diff(pt.set.R)<mean(diff(pt.set.R))-outfact*std(diff(pt.set.R)));
-        miss=find(diff(pt.set.R)>mean(diff(pt.set.R))+outfact*std(diff(pt.set.R)));
+    if any(diff(pt.set.R)<mean(diff(pt.set.R))-pt.settings.outfact*std(diff(pt.set.R))) || any(diff(pt.set.R)>mean(diff(pt.set.R))+pt.settings.outfact*std(diff(pt.set.R)))
+        noise=find(diff(pt.set.R)<mean(diff(pt.set.R))-pt.settings.outfact*std(diff(pt.set.R)));
+        miss=find(diff(pt.set.R)>mean(diff(pt.set.R))+pt.settings.outfact*std(diff(pt.set.R)));
         pt.faulty=sort([noise miss]);
         % -----------------------------------------------------------------
         [nsts,R]=scr_ecg2hb_qc(pt); % open gui to manually check for outliers
         if nsts~=-1 && not(isempty(R))
             pt.set.R=R;
+        else warning('Manual correction not completed. Results will not be saved to file!')
+            sts=-1;
+            return
         end
     end
 end

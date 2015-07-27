@@ -11,12 +11,12 @@ function varargout = scr_ecg2hb_qc(varargin)
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2013-2015 Philipp C Paulus
-% (Technische Universitaet Dresden, University of Zurich)
+% (Dresden University of Technology, University of Zurich)
 
 % $Id$   
 % $Rev$
 
-% Last Modified by GUIDE v2.5 29-Apr-2015 11:42:30
+% Last Modified by GUIDE v2.5 30-Jun-2015 18:23:17
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -59,13 +59,16 @@ handles.R=[];
 handles.jo=0;       % default value for jump only - 0; plot data!
 set(handles.togg_add,'Value',0)
 set(handles.togg_remove,'Value',0)
+% settings for manual mode
+handles.manualmode=0;       % default: deactivated
+handles.winsize=8;          % winsize for the manual mode
 % -------------------------------------------------------------------------
 % set color values
 handles.clr{1}=[.0627 .3059 .5451]; % blue for ecg plot
-handles.clr{2}=[.25 .25 .25]; % grey for correct ones
+handles.clr{2}=[0 .75 1]; % skyblue for correct ones
 handles.clr{3}=[1 .6471 0]; % dark yellow for possibly wrong ones
-handles.clr{4}=[1 .2706 0]; % red for deleted ones
-handles.clr{5}=[0 .3922 0]; % green for added ones
+handles.clr{4}=[.5412 .1686 .8863]; % violet for deleted ones
+handles.clr{5}=[0 .3922 0]; % darkgreen for added ones
 % -------------------------------------------------------------------------
 guidata(hObject,handles);
 % get input
@@ -110,7 +113,7 @@ elseif not(isempty(handles.R))
     varargout{2} = handles.R;
 else varargout{2} = [];
 end
-delete(handles.figure1);
+delete(hObject);
 % -------------------------------------------------------------------------
 
 % --- Executes on button press in togg_add.
@@ -175,6 +178,7 @@ handles.output.R=[];
 guidata(hObject,handles);
 % -------------------------------------------------------------------------
 uiresume
+% delete(hObject);
 
 
 % --- Executes on button press in push_next.
@@ -183,11 +187,20 @@ function push_next_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % -------------------------------------------------------------------------
-handles.k=handles.k+1;
-if handles.k==handles.maxk
-    set(handles.push_next,'enable','off')
+if handles.manualmode==0
+    handles.k=handles.k+1;
+    % disable next button if out of bounds.
+    if handles.k==handles.maxk
+        set(handles.push_next,'enable','off')
+    end
+else % manual mode
+    handles.count=handles.count+handles.winsize;
+    % disable next button if out of bounds.
+    if handles.count + handles.winsize >= length(handles.data.data.r)/handles.data.settings.filt.sr
+        set(handles.push_next,'enable','off')
+    end
 end
-% enable last
+% enable "back"
 if strcmp(get(handles.push_last,'enable'),'off')
     set(handles.push_last,'enable','on')
 end
@@ -206,9 +219,16 @@ function push_last_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % -------------------------------------------------------------------------
-handles.k=handles.k-1;
-if handles.k==1
-    set(handles.push_last,'enable','off')
+if handles.manualmode==0
+    handles.k=handles.k-1;
+    if handles.k==1
+        set(handles.push_last,'enable','off')
+    end
+else % manual mode
+    handles.count=handles.count-handles.winsize;
+    if handles.count <= 0
+        set(handles.push_last,'enable','off')
+    end
 end
 % enable next
 if strcmp(get(handles.push_next,'enable'),'off')
@@ -238,13 +258,14 @@ handles.sts=1;
 guidata(hObject,handles);
 uiresume
 % -------------------------------------------------------------------------
+% delete(hObject);
 
 % --- plots the current segment
 function pp_set(hObject,handles)
 % -------------------------------------------------------------------------
 
 % header
-factr=3;                % IBIs larger than mean(IBI)+(factr*std(IBI)) will
+factr=handles.data.settings.outfact; % IBIs larger than mean(IBI)+(factr*std(IBI)) will
 % be marked for checking as well as IBIs smaller
 % than mean(IBI)-(factor*std(IBI))
 sr=handles.data.settings.filt.sr;
@@ -262,11 +283,15 @@ ecg=handles.data.data.x(:,1)';
 % create vectors for potential mislabeled qrs complexes
 flag(ibi>(mean(ibi)+(factr*std(ibi))))=1;   % too short
 flag(ibi<(mean(ibi)-(factr*std(ibi))))=1;   % too long
+flag(ibi/sr < 60/120)=1;                    % get all ibis > 120 bpm
+flag(ibi/sr > 60/40)=1;                     % get all ibis < 40 bpm
+
 maxk=length(find(flag==1));
 r(2,R(flag==1))=1;
 r(1,R(flag==1))=0;
 r(r==0)=NaN;
 r(3:4,:)=NaN;   % initialise for no qrs at this point and additional qrs at this point
+
 y=1/sr:1/sr:length(r)/sr;
 % -------------------------------------------------------------------------
 % output.
@@ -277,22 +302,19 @@ handles.plot.factr=factr;
 handles.plot.y=y;
 handles.plot.ecg=ecg;
 handles.plot.sr=sr;
-handles.maxk=maxk;
-handles.factr=factr;
+if exist('handles.maxk','var')==0 && exist('maxk','var')
+    handles.maxk=maxk;
+end
 % Update handles structure
 guidata(hObject,handles);
 
 % --- plot data
 function pp_plot(hObject,handles)
-% for development and bugtracing only.
-if handles.k<1
-    keyboard
-end
-% -------------------------------------------------------------------------
+
 % where are potential mislabeled qrs complexes?
-if any(not(isnan(handles.plot.r(2,:))))
+if any(not(isnan(handles.plot.r(2,:)))) && handles.manualmode==0
     count=handles.plot.R(handles.data.faulty(handles.k))/handles.plot.sr;
-else keyboard
+else count=handles.count;
 end
 % -------------------------------------------------------------------------
 if handles.jo==0 % check only if changes were done.
@@ -311,12 +333,17 @@ if handles.jo==0 % check only if changes were done.
     % -------------------------------------------------------------------------
     for k=1:size(handles.plot.r,1)
         handles.s(k)=stem(handles.plot.y,handles.plot.r(k,:),'color',handles.clr{k+1});
+        set(handles.s(k),'linewidth',2,'MarkerFaceColor',handles.clr{k+1})
         sbase=get(handles.s(k),'baseline');
         set(sbase,'BaseValue',min(handles.plot.ecg),'Visible','off');
     end
 end
 % -------------------------------------------------------------------------
-xlim([count-2 count+2])
+if handles.manualmode==0
+    xlim([count-2 count+2])
+else
+    xlim([count-1 count+handles.winsize])
+end
 xlabel('time in seconds [s]')
 % -------------------------------------------------------------------------
 handles.count=count; % set current position.
@@ -330,6 +357,11 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+handles.output.sts=-1;
+handles.output.R=[];
+% Update handles structure
+guidata(hObject,handles);
+% -------------------------------------------------------------------------
 uiresume
 % Hint: delete(hObject) closes the figure
-delete(hObject);
+% delete(hObject);
