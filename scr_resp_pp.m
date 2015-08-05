@@ -55,7 +55,7 @@ elseif ~iscell(options.datatype)
     warning('Unknown data type.'); return;
 else 
     datatypes = {'rp', 'ra', 'RLL', 'rs', 'all'};
-    datatype = zeros(4, 1);
+    datatype = zeros(5, 1);
     for k = 1:numel(options.datatype)
         datatype(strcmpi(options.datatype{k}, datatypes)) = 1;
     end;
