@@ -10,9 +10,9 @@ sr = job.sr;
 % channel
 if isfield(job.chan,'chan_nr')
     chan = job.chan.chan_nr;
-    sts = scr_hb2hr(job.datafile{1}, sr, chan);
+    sts = scr_hb2hp(job.datafile{1}, sr, chan);
 else
-    sts = scr_hb2hr(job.datafile{1}, sr);
+    sts = scr_hb2hp(job.datafile{1}, sr);
 end
 
 out = job.datafile;
