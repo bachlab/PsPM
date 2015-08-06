@@ -14,12 +14,14 @@ function sts = scr_resp_pp(fn, sr, chan, options)
 %                .datatype - a cell array with any of 'rp', 'ra', 'RLL',
 %                'rs', 'all' (default)
 %                .plot - 1 creates a respiratory cycle detection plot
+%                .replace - specified an equals 1 when existing data should
+%                be replaced with modified data.
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id:  $
-% $Rev  $
+% $Id$
+% $Rev$
 
 
 % initialise & user output
@@ -48,6 +50,7 @@ try options.systemtype; catch, options.systemtype = 'bellows'; end;
 try options.datatype; catch, options.datatype = {'rp', 'ra', 'RLL', 'rs'}; end;
 try options.plot; catch, options.plot = 0; end;
 try options.diagnostics; catch, options.diagnostics = 0; end;
+try options.replace; catch, options.replace = 0; end;
 
 if ~ischar(options.systemtype) || sum(strcmpi(options.systemtype, {'bellows', 'cushion'})) == 0
     warning('Unknown system type.'); return;
@@ -113,16 +116,30 @@ ibi = diff(respstamp);
 indx = find(ibi < 1);
 respstamp(indx + 1) = [];
 
+if options.replace == 1 && numel(find(datatype == 1)) > 1
+    % replace makes no sense
+    warning('ID:invalid_input', 'More than one datatype defined. Replacing data makes no sense. Resetting ''options.replace'' to 0.');
+    options.replace = 0;
+end;
+
 % compute data values, interpolate and write
 % -------------------------------------------------------------------------
 for iType = 1:(numel(datatypes) - 1)
     if datatype(iType)
         clear newdata
         % compute new data values
+        
+        % replace or added to
+        if options.replace == 1
+            r_o_a = 'replaced';
+        else
+            r_o_a = 'added to';
+        end
+        
         switch iType
             case 1
                 respdata = diff(respstamp);
-                msg = sprintf('Respiration converted to respiration period and added to data on %s', date);
+                msg = sprintf('Respiration converted to respiration period and %s data on %s',r_o_a, date);
                 newdata.header.chantype = 'rp';
                 newdata.header.units = 's';
             case 2
@@ -130,7 +147,7 @@ for iType = 1:(numel(datatypes) - 1)
                     win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
                     respdata(k) = range(resp(win));
                 end;
-                msg = sprintf('Respiration converted to respiration amplitude and added to data on %s', date);
+                msg = sprintf('Respiration converted to respiration amplitude and %s data on %s',r_o_a, date);
                 newdata.header.chantype = 'ra';
                 newdata.header.units = 'unknown';
             case 3
@@ -139,11 +156,11 @@ for iType = 1:(numel(datatypes) - 1)
                     win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
                     respdata(k) = sum(abs(diff(resp(win))))/ibi(k);
                 end;
-                msg = sprintf('Respiration converted to RLL and added to data on %s', date);
+                msg = sprintf('Respiration converted to RLL and %s data on %s', r_o_a, date);
                 newdata.header.chantype = 'RLL';
                 newdata.header.units = 'unknown';
             case 4
-                msg = sprintf('Respiration converted to respiration time stamps and added to data on %s', date);
+                msg = sprintf('Respiration converted to respiration time stamps and %s data on %s', r_o_a,date);
                 newdata.header.chantype = 'rs';
                 newdata.header.units = 'events';
         end;
@@ -159,7 +176,11 @@ for iType = 1:(numel(datatypes) - 1)
         end;
         % write
         newdata.data = writedata(:);
-        nsts = scr_add_channel(fn, newdata, msg);
+        if options.replace == 1          
+            nsts = scr_rewrite_channel(fn, chan, newdata, msg);
+        else
+            nsts = scr_add_channel(fn, newdata, msg); 
+        end;
         if nsts == -1, return; end;
     end;
 end;

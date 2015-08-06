@@ -19,6 +19,8 @@ function [sts,pt_debug] = scr_ecg2hb(fn, chan, options)
 %                    [def. 0].
 %                ... twthresh - sets the threshold to perform the twave
 %                    check. [def. 0.36s].
+%                ... replace - specified an equals 1 when existing data 
+%                               should be replaced with modified data.
 %
 % Reference:
 % Pan J & Tomkins WJ (1985). A Real-Time QRS Detection Algorithm. IEEE
@@ -115,6 +117,8 @@ elseif ~isnumeric(chan) && ~strcmp(chan,'ecg')
         warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end;
 
+try options.replace; catch options.replace = 0; end;
+
 % user output
 % -------------------------------------------------------------------------
 fprintf('QRS detection for %s ... ', fn);
@@ -136,6 +140,12 @@ pt_debug=[];
 if nargin > 2 && exist('options', 'var')
     
     if isstruct(options)
+        if isfield(options, 'replace')
+            if ~any(options.replace == 0:1)
+                warning('ID:invalid_input', '''options.replace'' must be either 0 or 1.'); return;
+            end;             
+        end
+        
         if isfield(options, 'semi') 
             if any(options.semi == 0:1)
                 pt.settings.semi = options.semi;
@@ -322,8 +332,6 @@ end
 newhr=pt.set.R/pt.settings.filt.sr;
 
 % save data
-msg = sprintf('QRS detection with Pan & Tompkins algorithm and HB-timeseries added to data on %s', date);
-
 newdata.data = newhr(:);
 newdata.header.sr = 1;
 newdata.header.units = 'events';
@@ -332,7 +340,13 @@ newdata.header.chantype = 'hb';
 % user output
 fprintf('  done.\n');
 
-nsts = scr_add_channel(fn, newdata, msg);
+if options.replace == 1
+    msg = sprintf('QRS detection with Pan & Tompkins algorithm and HB-timeseries replaced data on %s', date);
+    nsts = scr_rewrite_channel(fn, chan, newdata, msg);
+else
+    msg = sprintf('QRS detection with Pan & Tompkins algorithm and HB-timeseries added to data on %s', date);
+    nsts = scr_add_channel(fn, newdata, msg);
+end;
 if nsts == -1, return; end;
 sts = 1;
 return;

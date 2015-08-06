@@ -1,4 +1,4 @@
-function sts = scr_hb2hr(fn, sr, chan)
+efunction sts = scr_hb2hr(fn, sr, chan, options)
 % scr_hb2hr transforms heart beat data into an interpolated heart rate
 % signal and adds this as an additional channel to the data file
 % 
@@ -7,6 +7,9 @@ function sts = scr_hb2hr(fn, sr, chan)
 %       sr: sample rate for heart rate channel
 %       chan: number of heart beat channel (optional, default: first heart
 %             beat channel)
+%       options: optional arguments [struct]
+%           .replace - if specified and 1 when existing data should be
+%                      overwritten
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -20,6 +23,8 @@ function sts = scr_hb2hr(fn, sr, chan)
 sts = -1;
 global settings;
 if isempty(settings), scr_init; end;
+
+try options.replace; catch options.replace = 0; end;
 
 % check input
 % -------------------------------------------------------------------------
@@ -57,14 +62,18 @@ newhr = interp1(hb(2:end), hr, newt, 'linear' ,'extrap'); % assign hr to followi
 
 % save data
 % -------------------------------------------------------------------------
-msg = sprintf('Heart beat converted to heart rate and added to data on %s', date);
-
 newdata.data = newhr(:) * 60;
 newdata.header.sr = sr;
 newdata.header.units = 'bpm';
 newdata.header.chantype = 'hr';
 
-nsts = scr_add_channel(fn, newdata, msg);
+if options.replace == 1
+    msg = sprintf('Heart beat converted to heart rate and replaced data on %s', date);
+    nsts = scr_rewrite_channel(fn, chan, newdata, msg);
+else
+    msg = sprintf('Heart beat converted to heart rate and added to data on %s', date);
+    nsts = scr_add_channel(fn, newdata, msg);
+end;
 if nsts == -1, return; end;
 
 sts = 1;

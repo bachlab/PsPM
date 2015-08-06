@@ -2,13 +2,16 @@ function [ sts ] = scr_rewrite_channel( fn, channel, newdata, msg, options)
 %SCR_REWRITE_CHANNEL replaces or removes a channel in an existing data file
 %and updates the infos
 % 
-% sts = scr_rewrite_channel(fn, channel)
+% sts = scr_rewrite_channel(fn, channel, newdata, msg, options)
 %   Deletes channel
 %       fn: data file name
 %       channel: [integer/chantype] 
 %           If integer(s), deletes channel(s) #'channel' 
 %           If chantype, removes last (by default, see options) channel of
 %           type chantype (as defined in settings).
+%       newdata: [struct()/empty]
+%           If struct, specifies the new data content
+%           if empty, channel will be deleted
 % sts = scr_rewrite_channel(fn, channel, newdata)
 %   Replace existing channel. If 'channel' is 0, replaces last channel of
 %   type newdata.header.chantype.
@@ -112,7 +115,7 @@ elseif channel == 0
 else
     channel = channel(:);
     if any(channel > numel(channels))
-        warning('ID:invalid_input', 'channel is larer than channel count in file'); return;
+        warning('ID:invalid_input', 'channel is larger than channel count in file'); return;
     else
         channeli = channel;
     end
