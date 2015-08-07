@@ -44,6 +44,7 @@ function dcm = scr_dcm(model, options)
 %               when this is previously estimated by scr_get_rf)
 %
 % inversion options
+% - options.method: 'vb' (default) or 'mp' (only cRF, no dummy events)
 % - options.depth: no of trials to invert at the same time (default: 2)
 % - options.sfpre: sf-free window before first event (default 2 s)
 % - options.sfpost: sf-free window after last event (default 5 s)
@@ -78,6 +79,7 @@ function dcm = scr_dcm(model, options)
 %            Dynamic causal modelling of anticipatory skin conductance 
 %            changes. Biological Psychology, 85(1), 163-70
 %            (2) Staib M, Castegnetti G, Bach DR (2014), under review.
+%            (3) Bach DR (2015), in preparation (for MP inversion)
 %
 %__________________________________________________________________________
 % PsPM 3.0
@@ -151,6 +153,18 @@ try options.nosave;  catch, options.nosave = 0;   end;
 try options.overwrite; catch, options.overwrite = 0; end;
 if options.indrf && options.rf
     warning('RF can be provided or estimated, not both.'); return;
+end;
+try options.method; catch, options.method = 'dcm'; end;
+
+% check inversion method (default is dcm) ---
+if ischar(options.method)
+    if strcmpi(options.method, 'mp')
+        options.rf = 0; options.getrf = 0; options.indrf = 0;
+    elseif ~strcmpi(options.method, 'dcm')
+        options.method = 'dcm';
+    end;
+else
+    options.method = 'dcm';
 end;
 
 % check files --
@@ -385,7 +399,11 @@ options.meanSCR = (mean(D))';
 
 % invert DCM
 % ------------------------------------------------------------------------
-dcm = scr_dcm_inv(model, options);
+if strcmpi(options.method, 'mp')
+    dcm = scr_dcm_inv_mp(model, options);
+else
+    dcm = scr_dcm_inv(model, options);
+end;
 
 % assemble stats & names
 % ------------------------------------------------------------------------
