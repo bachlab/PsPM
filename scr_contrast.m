@@ -192,7 +192,8 @@ if sts == -1 || ~any(strcmp(modeltype,{'glm','dcm','sf'}))
     drawnow
     return;
 elseif strcmp(modeltype,'sf')
-    if ~isfield(model,'dcm')
+    dcm = cellfun(@(field) strcmpi(field(1).modeltype, 'dcm'), model.model);
+    if numel(dcm) < 1
         set(handles.textStatus,'String','No supported modeltype detected');
         drawnow
         return;

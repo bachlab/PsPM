@@ -52,8 +52,8 @@ function outfile = scr_sf(model, options)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (WTCN, UZH)
 %
-% $Id: scr_sf.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % ------------------------------------------------------------------------
 % DEVELOPERS NOTE
@@ -239,20 +239,22 @@ for iFile = 1:numel(model.datafile)
                 win(2) = min(win(2), numel(Y{datatype(k)}));
             end;
             % collect information --
-            sf.(method{k})(iEpoch).boundaries = squeeze(epochs{iFile}(iEpoch, :));
-            sf.(method{k})(iEpoch).timeunits  = model.timeunits;
-            sf.(method{k})(iEpoch).samples    = win;
-            sf.(method{k})(iEpoch).sr         = sr(datatype(k));
+            sf.model{k}(iEpoch).modeltype = method{k};
+            sf.model{k}(iEpoch).boundaries = squeeze(epochs{iFile}(iEpoch, :));
+            sf.model{k}(iEpoch).timeunits  = model.timeunits;
+            sf.model{k}(iEpoch).samples    = win;
+            sf.model{k}(iEpoch).sr         = sr(datatype(k));
+            
             escr = Y{datatype(k)}(win(1):win(end));
-            sf.(method{k})(iEpoch).data = escr;
+            sf.model{k}(iEpoch).data = escr;
             % do the analysis and collect results --
             invrs = fhandle{k}(escr, sr(datatype(k)), options);
             if any(strcmpi(method{k}, {'dcm', 'mp'}))
-                sf.(method{k})(iEpoch).inv     = invrs;
-                sf.stats(iEpoch, k)            = invrs.f;
+                sf.model{k}(iEpoch).inv     = invrs;
+                sf.stats(iEpoch, k)         = invrs.f;
             else
-                sf.(method{k})(iEpoch).stats   = invrs;
-                sf.stats(iEpoch, k)            = invrs;
+                sf.model{k}(iEpoch).stats   = invrs;
+                sf.stats(iEpoch, k)         = invrs;
             end;
         end;
         sf.trlnames{iEpoch} = sprintf('Epoch #%d', iEpoch);
@@ -269,5 +271,6 @@ for iFile = 1:numel(model.datafile)
     sf.modality = settings.modalities.sf;
     
     save(model.modelfile{iFile}, 'sf');
+    outfile = model.modelfile(iFile);
     fprintf('\n');
 end;

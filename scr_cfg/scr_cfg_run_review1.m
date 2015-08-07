@@ -32,5 +32,6 @@ switch modeltype
            end
     case 'sf'
         arg{1} = job.modeltype.sf.episode_nr;
-        scr_rev_dcm(model, modeltype, arg{1}); 
+        dcm = cellfun(@(field) strcmpi(field(1).modeltype, 'dcm'), model.model);
+        scr_rev_dcm(model.model{dcm}, modeltype, arg{1}); 
 end

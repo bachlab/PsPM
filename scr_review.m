@@ -102,7 +102,8 @@ for iFile = 1:size(modelfileArray, 1)
         drawnow
         return;
     elseif strcmp(modeltype,'sf')
-        if ~isfield(model,'dcm')
+        dcm = cellfun(@(field) strcmpi(field(1).modeltype, 'dcm'), model.model);
+        if numel(dcm) < 1
             set(handles.textStatus,'String','No supported modeltype detected');
             drawnow
             return;
@@ -118,7 +119,7 @@ for iFile = 1:size(modelfileArray, 1)
         handles.modelData{handles.modelCnt}.maxSessionNr = numel(model.sn);
     end
     if strcmp(modeltype,'sf')
-        handles.modelData{handles.modelCnt}.maxEpochNr = numel(model.dcm);
+        handles.modelData{handles.modelCnt}.maxEpochNr = numel(model.model{dcm});
     end
     [~,modelfileName,~] = fileparts(modelfile);
     handles.listModelEntry{handles.modelCnt} = modelfileName;
@@ -203,7 +204,9 @@ switch handles.modelData{handles.currentModel}.modeltype
         if isempty(epochNr) || epochNr > handles.modelData{handles.currentModel}.maxEpochNr || epochNr < 1
             uiwait(msgbox(sprintf('Epoch number has to be within the range [1 - %d]',handles.modelData{handles.currentModel}.maxEpochNr),'Warning'));
         else
-            scr_rev_dcm(handles.modelData{handles.currentModel}.model.dcm, 'sf', epochNr, []);
+            dcm_method = cellfun(@(field) strcmpi(field(1).modeltype, 'dcm'),...
+                handles.modelData{handles.currentModel}.model.model);
+            scr_rev_dcm(handles.modelData{handles.currentModel}.model.model{dcm_method}, 'sf', epochNr, []);
         end
 end
 set(handles.textStatus,'String',tmpStatusString);

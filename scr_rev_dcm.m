@@ -24,12 +24,11 @@ function scr_rev_dcm(dcm, job, sn, trl)
 % ------------------------------------------------------------------------
 global settings;
 if isempty(settings), scr_init; end;
-try, sn; catch, sn = 1; end;
+try sn; catch, sn = 1; end;
 
 % check input
 % ------------------------------------------------------------------------
 if strcmp(job,'sf')
-    dcm = dcm.dcm;
     if numel(dcm) < sn
         warning('Episode %1.0f does not exist', sn); return;
     end

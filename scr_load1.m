@@ -175,6 +175,31 @@ elseif ~strcmpi(mdltype, 'glm') && numel(indata.(mdltype).trlnames) ~= size(inda
         warning('ID:invalid_data_structure', '%sNumbers of trial names and parameters do not match.', errmsg); return;
 end;
 
+% Backwards compatibility for SF-Models
+% Transform old sf-structure into new structure
+if strcmpi(mdltype, 'sf') && ~isfield(indata.(mdltype), 'model')
+    % methods are newly stored within .model 
+    % move methods to .model{k}
+    
+    % issue warning
+    warning('ID:obsolete_function', ['Old structure of sf model detect. ', ...
+        'Trying to transform into new structure. ', ...
+        'This functionality will be removed within future PsPM versions.']);
+    
+    methods = {'auc','dcm','scl','mp'};
+    i = 1;
+    for k = 1:numel(methods)
+        if isfield(indata.sf, methods{k})
+            indata.sf.model{i} = indata.sf.(methods{k});
+            for j = 1:numel(indata.sf.model{i})
+                indata.sf.model{i}(j).modeltype = methods{k};
+            end
+            indata.sf = rmfield(indata.sf, methods{k});
+            i = i + 1;
+        end;
+    end
+end
+
 % check optional fields --
 if ~isfield(indata.(mdltype), 'con')
     conflag = 0;
