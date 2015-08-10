@@ -1,4 +1,4 @@
-efunction sts = scr_hb2hr(fn, sr, chan, options)
+function sts = scr_hb2hr(fn, sr, chan, options)
 % scr_hb2hr transforms heart beat data into an interpolated heart rate
 % signal and adds this as an additional channel to the data file
 % 
@@ -24,7 +24,7 @@ sts = -1;
 global settings;
 if isempty(settings), scr_init; end;
 
-try options.replace; catch options.replace = 0; end;
+try options.replace; catch, options.replace = 0; end;
 
 % check input
 % -------------------------------------------------------------------------
@@ -68,12 +68,13 @@ newdata.header.units = 'bpm';
 newdata.header.chantype = 'hr';
 
 if options.replace == 1
-    msg = sprintf('Heart beat converted to heart rate and replaced data on %s', date);
-    nsts = scr_rewrite_channel(fn, chan, newdata, msg);
+    action = 'replace';
 else
-    msg = sprintf('Heart beat converted to heart rate and added to data on %s', date);
-    nsts = scr_add_channel(fn, newdata, msg);
+    action = 'add';
 end;
+
+o.msg.prefix = 'Heart beat converted to heart rate and';
+nsts = scr_write_channel(fn, newdata, action, o);
 if nsts == -1, return; end;
 
 sts = 1;

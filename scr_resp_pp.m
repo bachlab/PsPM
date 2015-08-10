@@ -129,17 +129,10 @@ for iType = 1:(numel(datatypes) - 1)
         clear newdata
         % compute new data values
         
-        % replace or added to
-        if options.replace == 1
-            r_o_a = 'replaced';
-        else
-            r_o_a = 'added to';
-        end
-        
         switch iType
             case 1
                 respdata = diff(respstamp);
-                msg = sprintf('Respiration converted to respiration period and %s data on %s',r_o_a, date);
+                o.msg.prefix = 'Respiration converted to respiration period and';
                 newdata.header.chantype = 'rp';
                 newdata.header.units = 's';
             case 2
@@ -147,7 +140,7 @@ for iType = 1:(numel(datatypes) - 1)
                     win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
                     respdata(k) = range(resp(win));
                 end;
-                msg = sprintf('Respiration converted to respiration amplitude and %s data on %s',r_o_a, date);
+                o.msg.prefix = 'Respiration converted to respiration amplitude and';
                 newdata.header.chantype = 'ra';
                 newdata.header.units = 'unknown';
             case 3
@@ -156,11 +149,11 @@ for iType = 1:(numel(datatypes) - 1)
                     win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
                     respdata(k) = sum(abs(diff(resp(win))))/ibi(k);
                 end;
-                msg = sprintf('Respiration converted to RLL and %s data on %s', r_o_a, date);
+                o.msg.prefix = 'Respiration converted to RLL and';
                 newdata.header.chantype = 'RLL';
                 newdata.header.units = 'unknown';
             case 4
-                msg = sprintf('Respiration converted to respiration time stamps and %s data on %s', r_o_a,date);
+                o.msg.prefix = 'Respiration converted to respiration time stamps and';
                 newdata.header.chantype = 'rs';
                 newdata.header.units = 'events';
         end;
@@ -177,10 +170,11 @@ for iType = 1:(numel(datatypes) - 1)
         % write
         newdata.data = writedata(:);
         if options.replace == 1          
-            nsts = scr_rewrite_channel(fn, chan, newdata, msg);
+        	action = 'replace';
         else
-            nsts = scr_add_channel(fn, newdata, msg); 
+            action = 'add';
         end;
+        nsts = scr_write_channel(fn, newdata, action, o);
         if nsts == -1, return; end;
     end;
 end;

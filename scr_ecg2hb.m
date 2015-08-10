@@ -19,7 +19,7 @@ function [sts,pt_debug] = scr_ecg2hb(fn, chan, options)
 %                    [def. 0].
 %                ... twthresh - sets the threshold to perform the twave
 %                    check. [def. 0.36s].
-%                ... replace - specified an equals 1 when existing data 
+%                ... replace - specified and equals 1 when existing data 
 %                               should be replaced with modified data.
 %
 % Reference:
@@ -340,13 +340,15 @@ newdata.header.chantype = 'hb';
 % user output
 fprintf('  done.\n');
 
+
 if options.replace == 1
-    msg = sprintf('QRS detection with Pan & Tompkins algorithm and HB-timeseries replaced data on %s', date);
-    nsts = scr_rewrite_channel(fn, chan, newdata, msg);
-else
-    msg = sprintf('QRS detection with Pan & Tompkins algorithm and HB-timeseries added to data on %s', date);
-    nsts = scr_add_channel(fn, newdata, msg);
+    action = 'replace';
+else 
+    action = 'add';
 end;
+
+o.msg.prefix = 'QRS detection with Pan & Tompkins algorithm and HB-timeseries';
+nsts = scr_write_channel(fn, newdata, action, o);
 if nsts == -1, return; end;
 sts = 1;
 return;

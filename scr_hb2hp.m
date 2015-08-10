@@ -62,7 +62,6 @@ newhp = interp1(hb(2:end), hp, newt, 'linear' ,'extrap'); % assign hr to followi
 
 % save data
 % -------------------------------------------------------------------------
-msg = sprintf('Heart beat converted to heart period and added to data on %s', date);
 
 newdata.data = newhp(:);
 newdata.header.sr = sr;
@@ -70,12 +69,13 @@ newdata.header.units = 'ms';
 newdata.header.chantype = 'hp';
 
 if options.replace == 1
-    msg = sprintf('Heart beat converted to heart period and replaced data on %s', date);
-    nsts = scr_rewrite_channel(fn, chan, newdata, msg);
+    action = 'replace';
 else
-    msg = sprintf('Heart beat converted to heart period and added to data on %s', date);
-    nsts = scr_add_channel(fn, newdata, msg);
+    action = 'add';
 end;
+o.msg.prefix = 'Heart beat converted to heart period and';
+scr_write_channel(fn, newdata, action, o);
+
 
 if nsts == -1, return; end;
 
