@@ -33,11 +33,7 @@ x0 = p(4);
 b = p(3);
 a = p(2);
 A = p(1);
-gamma_a = gamma(a);
 
 x = (td:td:90)';
 
-fx = ((A/((b.^a).*gamma_a)).*((x-x0).^(a-1))).*exp((-x-x0)/b);
-
-%fx = ft(1:numel(x));
-%fx = ft/max(fx);
+fx = A * gampdf(x - x0, a, b);
