@@ -26,7 +26,7 @@ if isempty(settings), scr_init; end;
 if nargin < 1
    errmsg='No sampling interval stated'; warning(errmsg); return;
 elseif nargin < 2
-    p=[82.8  2.56e5 0.00226 -574];
+    p=[82.8 2.56e5 0.00226 -574];
 end;
 
 x0 = p(4);
@@ -37,7 +37,7 @@ gamma_a = gamma(a);
 
 x = (td:td:90)';
 
-fx = ((A/((b.^a).*gamma_a)).*(x-x0).^(a-1)).*exp((-x-x0)/b);
+fx = ((A/((b.^a).*gamma_a)).*((x-x0).^(a-1))).*exp((-x-x0)/b);
 
 %fx = ft(1:numel(x));
 %fx = ft/max(fx);
