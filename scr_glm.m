@@ -21,7 +21,10 @@ function glm = scr_glm(model, options)
 % model.bf:         basis function/basis set; modality specific default
 %                   with subfields .fhandle (function handle or string) and
 %                   .args (arguments, first argument sampling interval will
-%                   be added by scr_glm)
+%                   be added by scr_glm). The optional subfield .shiftbf = n
+%                   indicates that the onset of the basis function precedes
+%                   event onsets by n seconds (default: 0: used for
+%                   interpolated data channels)
 % model.channel:    channel number; default: first channel of the specified modality
 % model.norm:       normalise data; default 0
 % model.filter:     filter settings; modality specific default
@@ -90,7 +93,11 @@ function glm = scr_glm(model, options)
 % Bach DR, Friston KJ, Dolan RJ (2013). An improved algorithm for
 % model-based analysis of evoked skin conductance responses. Biological
 % Psychology, 94, 490-497.
-% 
+%
+% (4) Further validation and comparison with Ledalab:
+% Bach DR (2014).  A head-to-head comparison of SCRalyze and Ledalab, two 
+% model-based methods for skin conductance analysis. Biological Psychology, 
+% 103, 63-88.
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -195,6 +202,8 @@ try
 catch
     warning('ID:invalid_fhandle', 'Specified basis function %s doesn''t exist or is faulty', func2str(model.bf.fhandle)); return;
 end;
+try model.bf.shiftbf; catch, model.bf.shiftbf = 0; end;
+if ~isnumeric(model.bf.shiftbf), model.bf.shiftbf = 0; end;
 
 % remove path & clear local variables --
 if ~isempty(basepath), rmpath(basepath); end;
@@ -410,6 +419,12 @@ if model.norm
     Y = (Y - mean(Y))/std(Y);
 end;
 Y = Y(:);
+
+% shift bf if required
+if model.bf.shiftbf ~= 0
+    Y = [NaN(sr * model.bf.shiftbf, 1); Y];
+    M = [ones(sr * model.bf.shiftbf, 1); M];
+end;
 
 % collect information into tmp --
 tmp.length=numel(Y);
