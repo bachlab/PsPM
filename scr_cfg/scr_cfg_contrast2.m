@@ -1,8 +1,8 @@
 function contrast = scr_cfg_contrast2
 % Contrast (first level)
 
-% $Id: scr_cfg_contrast2.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 
 % Select File

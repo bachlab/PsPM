@@ -1,7 +1,7 @@
 function rename = scr_cfg_rename
 
-% $Id: scr_cfg_rename.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 %% Data file
 filename         = cfg_files;

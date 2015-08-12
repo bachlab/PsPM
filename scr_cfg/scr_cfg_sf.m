@@ -1,7 +1,7 @@
 function sf = scr_cfg_sf
 
-% $Id: scr_cfg_sf.m 711 2015-02-04 11:01:18Z dominik_bach $
-% $Rev: 711 $
+% $Id$
+% $Rev$
 
 % Initialise
 global settings

@@ -1,8 +1,8 @@
 function out = scr_cfg_run_rename(job)
 % Executes scr_ren
 
-% $Id: scr_cfg_run_rename.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 n = size(job.file,2);
 

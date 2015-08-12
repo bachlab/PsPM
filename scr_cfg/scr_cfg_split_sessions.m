@@ -1,7 +1,7 @@
 function split_sessions = scr_cfg_split_sessions
 
-% $Id: scr_cfg_split_sessions.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 %% Data file
 datafile         = cfg_files;

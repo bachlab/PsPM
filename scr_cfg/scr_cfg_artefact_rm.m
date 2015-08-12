@@ -1,7 +1,7 @@
 function artefact_rm = scr_cfg_artefact_rm
 
-% $Id: scr_cfg_artefact_rm.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 %% Global items
 chan_nr         = cfg_entry;

@@ -23,11 +23,10 @@ if nargin<1
 end;
 
 % set options ---
-try
-    options.overwrite; 
-catch
-    options.overwrite = 0;
-end;
+try options.overwrite; catch, options.overwrite = 0; end;
+try options.limit; catch, options.limit = struct(); end;
+try options.limit.upper; catch, options.limit.upper = 0; end;
+try options.limit.lower; catch, options.limit.lower = 0; end;
 
 % check data file argument --
 if ischar(datafile) || isstruct(datafile)
@@ -68,7 +67,16 @@ for d=1:numel(D)
             dat = data{k}.data;
             x = 1:length(dat);
             v = dat;
-            xq = find(v == 0);
+            if isnan(options.limit.upper) && isnan(options.limit.lower)
+                filt = 0;
+            elseif isnan(options.limit.upper)
+                    filt = v <= options.limit.lower;
+            elseif isnan(options.limit.lower)
+                    filt = v >= options.limit.upper;
+            else
+                    filt = v >= options.limit.upper | v <= options.limit.lower;
+            end;
+            xq = find(filt);
             % throw away data not being informative
             % -> not being informative defined by user
             x(xq) = [];
@@ -93,6 +101,7 @@ for d=1:numel(D)
         savedata.options = options;
         sts = scr_load_data(newdatafile, savedata);
     end;
+    
     if sts ~= 1
         warning('Interpolation unsuccessful for file %s.\n', newdatafile); 
     else

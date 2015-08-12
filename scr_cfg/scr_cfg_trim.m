@@ -1,7 +1,7 @@
 function trim = scr_cfg_trim
 
-% $Id: scr_cfg_trim.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 
 %% Select file

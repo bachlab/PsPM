@@ -1,8 +1,8 @@
 function scr_cfg_run_review1(job)
 % Runs review model - first level
 
-% $Id: scr_cfg_run_review1.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % check model file
 [sts, model, ~] = scr_load1(job.modelfile{1}, 'all', 'any');
@@ -31,7 +31,7 @@ switch modeltype
                    scr_rev_dcm(model, dcm_job);
            end
     case 'sf'
-        arg{1} = job.modeltype.sf.episode_nr;
+        arg{1} = job.modeltype.sf.epoch_nr;
         dcm = cellfun(@(field) strcmpi(field(1).modeltype, 'dcm'), model.model);
         scr_rev_dcm(model.model{dcm}, modeltype, arg{1}); 
 end

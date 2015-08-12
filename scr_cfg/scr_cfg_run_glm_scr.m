@@ -1,8 +1,8 @@
 function out = scr_cfg_run_glm_scr(job)
 % Executes scr_glm
 
-% $Id: scr_cfg_run_glm_scr.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % modality
 model.modality = 'scr';

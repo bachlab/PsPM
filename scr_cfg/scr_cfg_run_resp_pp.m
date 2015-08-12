@@ -31,6 +31,7 @@ for i = 1:numel(f)
     end;
 end;
 
+options.replace = job.replace_chan;
 
 sts = scr_resp_pp(job.datafile{1}, sr, chan, options);
 

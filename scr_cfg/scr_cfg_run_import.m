@@ -2,8 +2,8 @@ function [out,datafiles, datatype, import, options] = scr_cfg_run_import(job)
 % Arranges the users inputs to the 4 input arguments for the function
 % scr_import and executes it
 
-% $Id: scr_cfg_run_import.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 datatype = fieldnames(job.datatype);
 datatype = datatype{1};

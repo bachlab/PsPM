@@ -1,8 +1,8 @@
 function glm_scr = scr_cfg_glm_scr
 % GLM
 
-% $Id: scr_cfg_glm_scr.m 711 2015-02-04 11:01:18Z dominik_bach $
-% $Rev: 711 $
+% $Id$
+% $Rev$
 
 % Initialise
 global settings

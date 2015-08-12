@@ -1,8 +1,8 @@
 function review = scr_cfg_review2
 % Review model (first level)
 
-% $Id: scr_cfg_review2.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 %% Data File Selector
 modelfile         = cfg_files;

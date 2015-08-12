@@ -1,8 +1,8 @@
 function out = scr_cfg_run_artefact_rm(job)
 % Executes scr_pp
 
-% $Id: scr_cfg_run_artefact_rm.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 options = struct;
 options.overwrite = job.overwrite;

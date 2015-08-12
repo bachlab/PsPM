@@ -1,8 +1,8 @@
 function out = scr_cfg_run_contrast2(job)
 % Executes scr_con1
 
-% $Id: scr_cfg_run_contrast2.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % modelfile
 if isfield(job.testtype, 'one_sample')

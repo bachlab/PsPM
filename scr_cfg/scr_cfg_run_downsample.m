@@ -1,8 +1,8 @@
 function out = scr_cfg_run_downsample(job)
 % Executes scr_down
 
-% $Id: scr_cfg_run_downsample.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % channels to downsample
 if isfield(job.chan,'all_chan')

@@ -225,11 +225,10 @@ switch val
     case 6
         cfg_add_module('pspm.tools.artefact_rm');
     case 7
-        cfg_add_module('pspm.tools.ecg2hb');
+        cfg_add_module('pspm.tools.pp_ecg');
     case 8
-        cfg_add_module('pspm.tools.dcg2hp');
-    case 9
         cfg_add_module('pspm.tools.resp_pp');
+            
 %     case 10
 %         cfg_add_module('pspm.tools.emg_pp');
 end;

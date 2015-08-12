@@ -1,8 +1,8 @@
 function out = scr_cfg_run_sf(job)
 % Executes scr_sf
 
-% $Id: scr_cfg_run_sf.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 global settings
 if isempty(settings), scr_init; end;

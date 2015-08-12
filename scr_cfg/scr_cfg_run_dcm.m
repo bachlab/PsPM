@@ -1,8 +1,8 @@
 function [out, dcm] = scr_cfg_run_dcm(job)
 % Executes scr_dcm
 
-% $Id: scr_cfg_run_dcm.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % initialise
 % -------------------------------------------------------------------------

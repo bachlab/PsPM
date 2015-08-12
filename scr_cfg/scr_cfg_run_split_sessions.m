@@ -1,8 +1,8 @@
 function out = scr_cfg_run_split_sessions(job)
 % Split sessions
 
-% $Id: scr_cfg_run_split_sessions.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 options = struct;
 options.overwrite = job.overwrite;

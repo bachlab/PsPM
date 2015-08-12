@@ -1,8 +1,8 @@
 function dcm = scr_cfg_dcm
 % DCM
 
-% $Id: scr_cfg_dcm.m 711 2015-02-04 11:01:18Z dominik_bach $
-% $Rev: 711 $
+% $Id$
+% $Rev$
 
 % Initialise
 global settings
@@ -329,7 +329,7 @@ indrf.val     = {0};
 indrf.values  = {0,1};
 indrf.help    = {['A response function can be estimated from the data and used instead of the canonical ' ...
     'response function. This is not ' ...
-    'normally recommended unless you have long inter trial intervals in the range of 20-30 s (see Staib & Bach, forthcoming)']};
+    'normally recommended unless you have long inter trial intervals in the range of 20-30 s (see Staib, Castegnetti & Bach, 2015)']};
 
 % Only estimate RF
 getrf         = cfg_menu;
@@ -481,7 +481,7 @@ dcm.help = {['Non-linear models for SCR are powerful if response timing is not p
     'can later be summarized across trials, and compared between conditions, using the contrast manager.'], '', ...
     'References:', '', ...
     'Bach, Daunizeau et al. (2010) Biological Psychology (Model development)', '', ...
-    'Staib et al., submitted (Improved algorithm)'};
+    'Staib et al. (2015) Journal of Neuroscience Methods (Improved algorithm)'};
 
 function vout = scr_cfg_vout_dcm(job)
 vout = cfg_dep;

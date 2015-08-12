@@ -1,8 +1,8 @@
 function scr_cfg_run_export(job)
 % Executes scr_exp
 
-% $Id: scr_cfg_run_export.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % datafile
 modelfile = job.modelfile;

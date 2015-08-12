@@ -1,7 +1,7 @@
 function cfg = scr_cfg_preparation
 
-% $Id: scr_cfg_preparation.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 
 %% Preparation

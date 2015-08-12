@@ -1,8 +1,8 @@
 function downsample = scr_cfg_downsample
 % Downsample
 
-% $Id: scr_cfg_downsample.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % Data File
 datafile         = cfg_files;

@@ -1,8 +1,8 @@
 function review = scr_cfg_review1
 % Review model (first level)
 
-% $Id: scr_cfg_review1.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 %% Data File Selector
 modelfile         = cfg_files;
@@ -73,17 +73,17 @@ dcm.values  = {inv, sum, scrf, names};
 
 %% SF
 % SF
-episode_nr         = cfg_entry;
-episode_nr.name    = 'Episode Number';
-episode_nr.tag     = 'episode_nr';
-episode_nr.strtype = 'i';
-episode_nr.num     = [1 1];
-episode_nr.help    = {'Episode to review.'};
+epoch_nr         = cfg_entry;
+epoch_nr.name    = 'Epoch Number';
+epoch_nr.tag     = 'epoch_nr';
+epoch_nr.strtype = 'i';
+epoch_nr.num     = [1 1];
+epoch_nr.help    = {'Epoch to review.'};
 
 sf         = cfg_branch;
 sf.name    = 'SF';
 sf.tag     = 'sf';
-sf.val     = {episode_nr};
+sf.val     = {epoch_nr};
 sf.help    = {'DCM for spontaneous fluctuations: Show inversion results for one episode.'};
 
 %% Contrasts
