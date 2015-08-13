@@ -103,7 +103,7 @@ for iFile = 1:size(modelfileArray, 1)
         return;
     elseif strcmp(modeltype,'sf')
         dcm = cellfun(@(field) strcmpi(field(1).modeltype, 'dcm'), model.model);
-        if numel(dcm) < 1
+        if ~any(dcm)
             set(handles.textStatus,'String','No supported modeltype detected');
             drawnow
             return;

@@ -43,8 +43,8 @@ function [sts, data, mdltype] = scr_load1(fn, action, savedata, options)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (WTCN, UZH)
 
-% $Id: scr_load1.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % -------------------------------------------------------------------------
 % DEVELOPERS NOTES: General structure of PsPM 1st level model files

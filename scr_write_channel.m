@@ -63,12 +63,14 @@ elseif ischar(options.channel) && ~any(strcmpi(options.channel,{settings.chantyp
     warning('ID:invalid_input', 'options.channel is not a valid channel type.'); return;
 elseif isnumeric(options.channel) && (any(mod(options.channel,1)) || any(options.channel<0))
     warning('ID:invalid_input', 'options.channel must be a positive integer or a channel type.'); return;
-elseif ~isstruct(newdata) && ~iscell(newdata)
-    if ~isempty(newdata)
-       warning('ID:invalid_input', 'newdata must either be a newdata structure or empty'); return;
+elseif isempty(newdata)
+    if ~strcmpi(action, 'delete')
+        warning('ID:invalid_input', 'newdata is empty. Got nothing to %s.', action); return;
     elseif options.channel == 0
         warning('ID:invalid_input', 'If options.channel is 0, a newdata structure must be provided'); return;
-    end
+    end;
+elseif ~isempty(newdata) && ~isstruct(newdata) && ~iscell(newdata)
+       warning('ID:invalid_input', 'newdata must either be a newdata structure or empty'); return;
 end;
 
 %% Channel deletion conditions

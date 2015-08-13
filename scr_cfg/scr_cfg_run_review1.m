@@ -33,5 +33,9 @@ switch modeltype
     case 'sf'
         arg{1} = job.modeltype.sf.epoch_nr;
         dcm = cellfun(@(field) strcmpi(field(1).modeltype, 'dcm'), model.model);
-        scr_rev_dcm(model.model{dcm}, modeltype, arg{1}); 
+        if any(dcm)
+            scr_rev_dcm(model.model{dcm}, modeltype, arg{1});
+        else
+            warning('Methods contained in SF model are not supported.');
+        end;
 end
