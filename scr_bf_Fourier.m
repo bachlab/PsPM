@@ -1,4 +1,4 @@
-function bf = scr_bf_Fourier(varargin)
+function [bf, x] = scr_bf_Fourier(varargin)
 
 % SCR_BF_Fourier provides a sine/cosine set of basis functions with or without
 %   Hanning window, of specified lenght and order
@@ -51,7 +51,8 @@ end;
 
 % construct basis set
 %----------------------------------------------------------------------
-pst   = [td:td:n]';
+pst   = 0:td:n';
+x = pst;
 pst   = pst/max(pst);
 
 if window

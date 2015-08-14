@@ -1,4 +1,4 @@
-function [FIR] = scr_bf_FIR(varargin)
+function [FIR, x] = scr_bf_FIR(varargin)
 
 % SCR_BF_FIR provides a pre-defined finite impulse response (FIR) model for
 % skin conductance responses with n (default 30) post-stimulus timebins of 1 second
@@ -40,7 +40,10 @@ end;
     
 
 % initialise FIR
-FIR=zeros(round((d*n)/td), n);
+FIR=[zeros(1, n); zeros(round((d*n)/td), n);];
+
+% generate timestamps
+x = (0:td:n)';
 
 % set FIR columns
 starts=1;

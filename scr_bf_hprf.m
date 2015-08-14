@@ -1,4 +1,4 @@
-function [bf,p] = scr_bf_hprf(td,p)
+function [bf, x ,p] = scr_bf_hprf(td,p)
 % SCR_bf_hprf: heart period response function
 % (scaled gamma functions)
 % FORMAT: [bf p] = SCR_bf_hprf(td, p)
@@ -39,5 +39,6 @@ s(3,:)=[.0075 -2.4 8.7 4.9];
 s=s(:,idx);
 
 for k=1:length(idx)
-    bf(k,:) =gampdf(x - s(3,k), s(1,k), s(2,k));
+    bf(k,:)=gampdf(x - s(3,k), s(1,k), s(2,k));
 end
+x = x';

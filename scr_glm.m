@@ -198,11 +198,23 @@ else
 end;
 if ~isempty(basepath), addpath(basepath); end; 
 try
-    model.bf.X = feval(model.bf.fhandle, [1/model.filter.down; model.bf.args(:)]);
+    td = 1/model.filter.down;
+    [model.bf.X, bf_ts] = feval(model.bf.fhandle, [td; model.bf.args(:)]);
 catch
     warning('ID:invalid_fhandle', 'Specified basis function %s doesn''t exist or is faulty', func2str(model.bf.fhandle)); return;
 end;
-try model.bf.shiftbf; catch, model.bf.shiftbf = 0; end;
+
+if ~isfield(model.bf, 'shiftbf')
+    % try to set shiftbf
+    if bf_ts(1) < 0
+        model.bf.shiftbf = abs(bf_ts(1));
+    elseif bf_ts(1) > 0
+        warning('ID:invalid_basis_function', 'The first basis function timestamp is larger 0 (not allowed).');
+    else
+        model.bf.shiftbf = 0;
+    end;
+end;
+
 if ~isnumeric(model.bf.shiftbf), model.bf.shiftbf = 0; end;
 
 % remove path & clear local variables --
@@ -355,10 +367,10 @@ for iSn = 1:nFile
     if sts ~= 1, return; end;
     
     % concatenate data 
-    Y=[Y; newy(:)];
+    Y=[Y; NaN(newsr * model.bf.shiftbf, 1); newy(:)];
     
     % get duration of single sessions
-    tmp(1).snduration(iSn) = numel(newy);
+    tmp(1).snduration(iSn) = numel(newy) + newsr * model.bf.shiftbf;
     
     % process missing values
     newmissing = zeros(size(newy(:)));
@@ -368,7 +380,7 @@ for iSn = 1:nFile
             newmissing(missingtimes(iMs, 1):missingtimes(iMs, 2)) = 1;
         end;
     end;
-    M = [M; newmissing];    
+    M = [M; ones(newsr * model.bf.shiftbf, 1); newmissing];    
        
     % convert regressor information to samples
     for n = 1:numel(multi(1).names)
@@ -419,12 +431,6 @@ if model.norm
     Y = (Y - mean(Y))/std(Y);
 end;
 Y = Y(:);
-
-% shift bf if required
-if model.bf.shiftbf ~= 0
-    Y = [NaN(sr * model.bf.shiftbf, 1); Y];
-    M = [ones(sr * model.bf.shiftbf, 1); M];
-end;
 
 % collect information into tmp --
 tmp.length=numel(Y);
@@ -593,6 +599,9 @@ for iSn = 1:numel(model.datafile)
         [sts, Rf{iSn}(:, iR)]  = scr_prepdata(R{iSn}(:, iR), model.filter);
         if sts ~= 1, return; end;
     end
+    if model.bf.shiftbf ~= 0
+        Rf{iSn} = [ NaN(model.bf.shiftbf*model.filter.down, nR); Rf{iSn}];
+    end;
 end
 Rf = cell2mat(Rf(:));
 

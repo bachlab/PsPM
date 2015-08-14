@@ -1,4 +1,4 @@
-function [ft, p] = scr_bf_scrf_f(td, p)
+function [ft, p, t] = scr_bf_scrf_f(td, p)
 % SCR_bf_crf: canonical skin conductance response function 
 % (exponentially modified gaussian, EMG)
 % FORMAT: [bf p] = SCR_bf_scrf_f(td, p)
@@ -34,7 +34,7 @@ sigma = p(2);
 lambda1 = p(3);
 lambda2 = p(4);
 
-t = (td:td:90)';
+t = (0:td:90)';
 
 gt = exp(-((t - t0).^2)./(2.*sigma.^2));
 ht = exp(-t*lambda1) + exp(-t*lambda2);

@@ -1,4 +1,4 @@
-function [bs] = scr_bf_brf(varargin)
+function [bs, x] = scr_bf_brf(varargin)
 % SCR_brf constructs a blink response function
 %
 % FORMAT: [INFBS] = SCR_BF_BRF(TD, type) 
@@ -34,7 +34,7 @@ end;
     
 if (d<1)||(d>3), d=1; end;
 
-x = (td:td:1)';
+x = (0:td:1)';
 
 switch d
     case 1

@@ -1,4 +1,4 @@
-function [bs] = scr_bf_scrf(varargin)
+function [bs, x] = scr_bf_scrf(varargin)
 % SCR_infbs constructs an informed basis set with a biexponentially 
 % modified gaussian function and derivatives to time and dispersion
 %
@@ -38,7 +38,7 @@ end;
 if (d<0)||(d>2), d=0; end;
 
 % get parameters and basis function
-[bs(:, 1), p] = scr_bf_scrf_f(td);
+[bs(:, 1), p, x] = scr_bf_scrf_f(td);
 if d>0
     bs(:, 2) = [0; diff(bs(:,1))]; 
     bs(:, 2) = bs(:,2)/sum(abs(bs(:,2)));

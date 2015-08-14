@@ -1,9 +1,9 @@
-function [bs, x] = scr_bf_hprf_fc(varargin)
-% SCR_bf_hprf_fc  
-% Description: 
+function [bs, x] = scr_bf_hprf_e(varargin)
+% SCR_bf_hprf_e 
+% Description:
 %
-% FORMAT: [INFBS] = SCR_BF_HPRF_FC(TD, D) 
-%     OR: [INFBS] = SCR_BF_HPRF_FC([TD, D]) 
+% FORMAT: [INFBS] = SCR_BF_HPRF_E(TD, D) 
+%     OR: [INFBS] = SCR_BF_HPRF_E([TD, D]) 
 % with td = time resolution in s and d:number of derivatives (default 0)
 %
 % REFERENCE
