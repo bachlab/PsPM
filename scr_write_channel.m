@@ -1,4 +1,4 @@
-function [sts] = scr_write_channel(fn, newdata, action, options)
+function [sts, infos] = scr_write_channel(fn, newdata, action, options)
 % scr_write_channel adds, replaces and deletes channels in an existing
 % data file.
 %
@@ -10,28 +10,33 @@ function [sts] = scr_write_channel(fn, newdata, action, options)
 %
 %   newdata: [struct()/empty]
 %
-%   action: 'add' - add newdata as a new channel
-%
-%           'replace'   -   replace channel with given newdata
-%
-%           'delete'    -   remove channel given with options.channel
+%   action: 'add'       add newdata as a new channel
+%           'replace'   replace channel with given newdata
+%           'delete'    remove channel given with options.channel
 %   
-%   options: .msg       -   custom history message [char/struct()]
-%               .prefix     -   custom history message prefix text, but
-%                               automatically added action verb (only
-%                               prefix defined). The text will be
-%                               <prefix> <action>ed on <date>
+%   options: .msg       custom history message [char/struct()]
+%               .prefix     custom history message prefix text, but
+%                           automatically added action verb (only
+%                           prefix defined). The text will be
+%                           <prefix> <action>ed on <date>
 %
-%            .channel   -   specifiy which channel should be 'edited'
-%                           default value is 0
+%            .channel   specifiy which channel should be 'edited'
+%                       default value is 0
 %
-%            .delete    -   ['last';'first;'all'] 
-%                           method to look for a channel when
-%                           options.channel is not an integer
-%                           'last' (default) deletes last occurence of the
-%                                   given chantype
-%                           'first' deletes the first occurence
-%                           'all' removes all occurences
+%            .delete    ['last';'first;'all'] 
+%                       method to look for a channel when
+%                       options.channel is not an integer
+
+%                       * 'last' (default) deletes last occurence of the
+%                          given chantype
+%                       * 'first' deletes the first occurence
+%                       * 'all' removes all occurences
+% 
+%   Outputs will be written into the info struct. The structure depends on
+%   the passed action and options.
+%       
+%           .channel    contains channel id of added / replaced / deleted
+%                       channels.
 % 
 %
 %__________________________________________________________________________
@@ -46,6 +51,7 @@ function [sts] = scr_write_channel(fn, newdata, action, options)
 sts = -1;
 global settings;
 if isempty(settings), scr_init; end;
+outinfos = struct();
 
 %% load options.channel
 % -------------------------------------------------------------------------
@@ -182,6 +188,8 @@ else
 end;
 infos.history{nhist + 1} = msg;
 
+%% add infos to outinfo struct
+outinfos.channel = channeli;
 
 %% save data
 % -------------------------------------------------------------------------
@@ -191,6 +199,8 @@ outdata.options.overwrite = 1;
 
 nsts = scr_load_data(fn, outdata);
 if nsts == -1, return; end;
+
+infos = outinfos;
 
 sts = 1;
 end

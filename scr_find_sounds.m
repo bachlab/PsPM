@@ -1,4 +1,4 @@
-function [sts, snd_markers, delays] = scr_find_sounds(file, options)
+function [sts, infos] = scr_find_sounds(file, options)
 %SCR_FIND_SOUNDS finds and evtl. analyzes sound events in a pspm file.
 % A sound is accepted as event if it is longer than 10ms and events are
 % recognized as different if they are at least 50 ms appart.
@@ -37,9 +37,11 @@ function [sts, snd_markers, delays] = scr_find_sounds(file, options)
 %               triggers. By default first 'marker' channel.
 %   Outputs
 %       sts : 1 on successfull completion, -1 otherwise
-%       snd_markers : vector of begining of sound sound events
-%       delays : vector of delays between markers and detected sounds. Only
-%           available with option 'diagnostics' turned on.
+%       info: struct()
+%           .snd_markers : vector of begining of sound sound events
+%           .delays : vector of delays between markers and detected sounds. 
+%                Only available with option 'diagnostics' turned on.
+%           .channel: number of added chan, when options.addChannel == true
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2015 Samuel Gerster (University of Zurich)
@@ -83,22 +85,27 @@ if mod(options.sndchannel,1)
     warning('Option channel is not an integer. Option set to default.')
 end
 
+% call it outinfos not to get confused
+outinfos = struct();
 
 % Load Data
-data = load(file);
+[sts, ininfo, indata] = scr_load_data(file);
+if sts == -1
+    warning('ID:invalid_input', 'Failed loading file %s.', file);
+end;
 
 %% Sound
 % Check for existence of sound channel
 if ~options.sndchannel
     % TODO: since no channel type 'snd' exist for now, 'custom' is used as a
     % placeholder
-    sndi = find(strcmpi(cellfun(@(x) x.header.chantype,[data.data],'un',0),'custom'),1);
+    sndi = find(strcmpi(cellfun(@(x) x.header.chantype,[indata.data],'un',0),'custom'),1);
     if ~any(sndi)
         warning('ID:no_sound_chan', 'No sound channel found. Aborted'); sts=-1; return;
     end
-    snd = data.data{sndi};
+    snd = indata.data{sndi};
 else
-    snd = data.data{options.sndchannel};
+    snd = indata.data{options.sndchannel};
 end
 
 % Process Sound
@@ -149,14 +156,14 @@ snd_fe(noevent_i)=[];
 if options.diagnostics
     % Check for existence of marker channel
     if ~options.trigchannel
-        mkri = find(strcmpi(cellfun(@(x) x.header.chantype,[data.data],'un',0),'marker'),1);
+        mkri = find(strcmpi(cellfun(@(x) x.header.chantype,[indata.data],'un',0),'marker'),1);
         if ~any(mkri)
             warning('ID:no_marker_chan', 'No marker channel found. Aborted'); sts=-1; return;
         end
     else
         mkri=options.trigchannel;
     end
-    mkr = data.data{mkri};
+    mkr = indata.data{mkri};
 
     %% Estimate delays from trigger to sound
     delays = nan(length(mkr.data),1);
@@ -177,6 +184,9 @@ if options.diagnostics
     %% Display some diagnostics
     fprintf('%4d sound events associated with a marker found\nMean Delay : %5.1f ms\nStd dev    : %5.1f ms\n',...
         length(snd_markers),mean(delays)*1000,std(delays)*1000);
+    
+    outinfos.delays = delays;
+    outinfos.snd_markers = snd_markers;
 end
 
 %% Save as new channel
@@ -187,7 +197,8 @@ if options.addChannel
     snd_events.header.sr = 1;
     snd_events.header.chantype = 'custom';
     snd_events.header.units ='events';
-    scr_add_channel(file, snd_events);
+    [sts, ininfos] = scr_write_channel(file, snd_events, 'add');
+    outinfos.channel = ininfos.channel;
 end
 
 %% Plot Option
@@ -213,6 +224,7 @@ if options.plot
     hold off
 end
 
+infos = outinfos;
 sts=1;
 
 end
