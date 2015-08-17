@@ -41,3 +41,6 @@ if d>0
     bs(:, 2) = [0; diff(bs(:,1))]; 
     bs(:, 2) = bs(:,2)/sum(abs(bs(:,2)));
 end;
+
+% orthogonalise
+bs = spm_ortho(bs);

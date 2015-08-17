@@ -5,8 +5,8 @@ function scr_init
 % PsPM 3.0
 % (C) 2009-2015 Dominik R Bach (WTCN, UZH)
 
-% $Id: scr_init.m 711 2015-02-04 11:01:18Z dominik_bach $
-% $Rev: 711 $
+% $Id$
+% $Rev$
 
 clc
 

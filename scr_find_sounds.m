@@ -11,7 +11,7 @@ function [sts, infos] = scr_find_sounds(file, options)
 %               the duration of the sound event (in markerinfo)
 %           diagnostics : [TRUE/false] computes the delay between trigger
 %               and displays the mean delay and standard deviation.
-%           maxdelay : [integer] Size of the window in seconds in wich 
+%           maxdelay : [integer] Size of the window in seconds in which 
 %               scr_find_sounds will accept sounds to belong to a marker.
 %               default is 3s.
 %           plot : [true/FALSE] displays a histogramm of the 
