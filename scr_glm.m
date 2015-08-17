@@ -199,20 +199,21 @@ end;
 if ~isempty(basepath), addpath(basepath); end; 
 try
     td = 1/model.filter.down;
-    [model.bf.X, bf_ts] = feval(model.bf.fhandle, [td; model.bf.args(:)]);
+    
+    % model.bf.X contains the function values
+    % bf_x contains the timestamps
+    [model.bf.X, bf_x] = feval(model.bf.fhandle, [td; model.bf.args(:)]);
 catch
     warning('ID:invalid_fhandle', 'Specified basis function %s doesn''t exist or is faulty', func2str(model.bf.fhandle)); return;
 end;
 
-if ~isfield(model.bf, 'shiftbf')
-    % try to set shiftbf
-    if bf_ts(1) < 0
-        model.bf.shiftbf = abs(bf_ts(1));
-    elseif bf_ts(1) > 0
-        warning('ID:invalid_basis_function', 'The first basis function timestamp is larger 0 (not allowed).');
-    else
-        model.bf.shiftbf = 0;
-    end;
+% set shiftbf
+if bf_x(1) < 0
+    model.bf.shiftbf = abs(bf_x(1));
+elseif bf_x(1) > 0
+    warning('ID:invalid_basis_function', 'The first basis function timestamp is larger than 0 (not allowed).'); return;
+else
+    model.bf.shiftbf = 0;
 end;
 
 if ~isnumeric(model.bf.shiftbf), model.bf.shiftbf = 0; end;

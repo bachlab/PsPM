@@ -4,10 +4,10 @@ function [fx, x, p] = scr_bf_hprf_fc_f(td, p)
 %
 % FORMAT: [bf p] = SCR_bf_hprf_fc_f(td, p)
 % with  td = time resolution in s
-%       p(1):
-%       p(2):
-%       p(3):
-%       p(4):
+%       p(1): a
+%       p(2): b
+%       p(3): x0
+%       p(4): A
 % 
 % REFERENCE
 %
