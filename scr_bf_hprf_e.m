@@ -1,43 +1,82 @@
-function [bs, x] = scr_bf_hprf_e(varargin)
-% SCR_bf_hprf_e 
-% Description:
+function [bf, x, b] = scr_bf_hprf_e(varargin)
+% scr_bf_hprf constructs the heart period response function consisting of 
+% modified Gaussian functions
 %
-% FORMAT: [INFBS] = SCR_BF_HPRF_E(TD, D) 
-%     OR: [INFBS] = SCR_BF_HPRF_E([TD, D]) 
-% with td = time resolution in s and d:number of derivatives (default 0)
+% FORMAT: [bf,b] = scr_bf_hprf(td, b)
+%
+% with  td = time resolution in s and 
+%       x = timestamps
+%       b  = number of basis functions (default 1:6)
+%
+% basis functions will be orthogonalized using spm_orth by default. Onsets
+% scr_glm must be shifted by 5 s to account for the pre-event epoch.
+%
+% put in values 1:6 for b in order to get following basis functions:
+%
+% 1:    BF 1    -   mu 1 s, sigma 1.9 s (contains pre event epoch of -5s)
+% 2:    BF 2    -   mu 5.2 s, sigma 1.9 s
+% 3:    BF 3    -   mu 7.2 s, sigma 1.5 s
+% 4:    BF 4    -   mu 7.2 s, sigma 4 s
+% 5:    BF 5    -   mu 12.6 s, sigma 2 s
+% 6:    BF 6    -   mu 23.9 s, sigma 4.1 s
+%
+% -------------------------------------------------------------------------
 %
 % REFERENCE
-%
-%________________________________________________________________________
+% 
+%__________________________________________________________________________
 % PsPM 3.0
-% (C) 2015 Tobias Moser (University of Zurich)
+% (C) 2015 Philipp C Paulus & Dominik R Bach
+% (Technische Universitaet Dresden, University of Zurich)
 
-% $Id$   
-% $Rev$
-
-% initialise
-global settings
+% input checks 
+% -------------------------------------------------------------------------
+global settings;
 if isempty(settings), scr_init; end;
 
-% check input arguments
-if nargin==0
-    errmsg='No sampling interval stated'; warning(errmsg); return;
+if nargin < 1
+   errmsg='No sampling interval stated'; warning(errmsg); return;
 end;
 
-td = varargin{1}(1);
-if numel(varargin{1}) == 1 && nargin == 1
-    d = 0;
-elseif numel(varargin{1}) == 2
-    d = varargin{1}(2);
+varargin=cell2mat(varargin);
+
+if length(varargin)==1
+    b=1:6;
+elseif varargin(end)<=6 && varargin(end)~=0
+    b=varargin(2:end);
+    b=sort(b,'ascend');
 else
-    d = varargin{2}(1);
-end;
-    
-if (d<0)||(d>1), d=0; end;
+    errmsg='your input for ''b'' is not supported. Choose value(s) between 1 and 6.'; 
+    warning(errmsg); b=[]; bf=[]; return
+end
+% -------------------------------------------------------------------------
+% initialise
+td = varargin(1);
+x = (0:td:50);
+bf=[];
+% -------------------------------------------------------------------------
+% normpdf
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%              ATTENTION µ +ts !!                         %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ts=5;
 
-% get parameters and basis function
-[bs(:, 1), p, x] = scr_bf_hprf_fc_f(td);
-if d>0
-    bs(:, 2) = [0; diff(bs(:,1))]; 
-    bs(:, 2) = bs(:,2)/sum(abs(bs(:,2)));
-end;
+n(1,:)=[1 5.2 7.2 7.2 12.6 23.9]+ts;
+n(2,:)=[1.9 1.9 1.5 4 2 4.1];
+% -------------------------------------------------------------------------
+% get normpdf functions
+for in_b=1:length(b)
+    mu = n(1,b(in_b));
+    sigma = n(2,b(in_b));
+    
+    % use own function (no stats toolbox needed)
+    bf(:, in_b) = 1./(sigma*sqrt(2*pi)).*exp((-(x-mu).^2)./(2*(sigma^2)));
+end
+% shift by 5s
+% -------------------------------------------------------------------------
+x = x-ts;
+% -------------------------------------------------------------------------
+% orthogonalize
+bf=spm_orth(bf);
+
+% done.

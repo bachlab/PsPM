@@ -36,7 +36,7 @@ end;
 if (d<0)||(d>1), d=0; end;
 
 % get parameters and basis function
-[bs(:, 1), p, x] = scr_bf_hprf_fc_f(td);
+[bs(:, 1), x, p] = scr_bf_hprf_fc_f(td);
 if d>0
     bs(:, 2) = [0; diff(bs(:,1))]; 
     bs(:, 2) = bs(:,2)/sum(abs(bs(:,2)));

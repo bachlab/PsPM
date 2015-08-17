@@ -1,4 +1,4 @@
-function [fx, p, x] = scr_bf_hprf_fc_f(td, p)
+function [fx, x, p] = scr_bf_hprf_fc_f(td, p)
 % SCR_bf_hprf_fc_f
 % Description: 
 %
@@ -36,4 +36,8 @@ a = p(2);
 A = p(1);
 
 x = (0:td:10.9)';
+
 fx = A * gampdf(x - x0, a, b);
+
+
+
