@@ -36,9 +36,16 @@ b = p(2);
 a = p(1);
 A = p(4);
 
+gl = gammaln(a);
+
 x = (0:td:10.9)';
 
-fx = A * gampdf(x - x0, a, b);
+% try not to use stats toolbox, but stats toolbox has also stirling
+% approximation implemented. So this might be useful.
+%
+%fx = A * gampdf(x - x0, a, b);
+
+fx = A * exp(log(x-x0).*(a-1) - gl - (x-x0)./b - log(b)*a);
 
 
 

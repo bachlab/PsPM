@@ -43,4 +43,4 @@ if d>0
 end;
 
 % orthogonalise
-bs = spm_ortho(bs);
+bs = spm_orth(bs);
