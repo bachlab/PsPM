@@ -1,7 +1,24 @@
-function [newdatafile] = scr_interpolate(datafile, options)
-% SCR_INTERPOLATE interpolates an SCR dataset and 
-% writes it to a file with a prepended 'i'
-
+function [sts, outdata] = scr_interpolate(indata, options)
+% SCR_INTERPOLATE
+% 
+% [sts, outdata] = scr_interpolate(indata, options)
+% This function interpolates NaN values passed with the indata parameter.
+% The behaviour of the function can furthermore be adjusted with the
+% combination of different options.
+%
+%   indata: [struct/char/numeric] or [cell array of struct/char/numeric]
+%           contains the data to be interpolated
+%  
+%   options: 
+%       .overwrite:     defines if existing datafiles should be overwritten
+%       .method:        defines the interpolation method see interp1() for
+%                       possible interpolation methods
+%       .channels       if pass should be the same size as indata and
+%                       contains for each entry in indata the channel(s) to 
+%                       be interpolated.
+%       .newfile        if false the data will be added to the file where
+%                       the data was loaded from. if true the data will be
+%                       written to a new file prepended with 'i'.
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2015 Tobias Moser (University of Zurich)
@@ -13,7 +30,9 @@ function [newdatafile] = scr_interpolate(datafile, options)
 % -------------------------------------------------------------------------
 global settings;
 if isempty(settings), scr_init; end;
-newdatafile = [];
+% will return a cell of the same size as the indata
+outdata = {};
+sts = -1;
 
 % check input arguments
 % -------------------------------------------------------------------------
@@ -24,105 +43,136 @@ end;
 
 % set options ---
 try options.overwrite; catch, options.overwrite = 0; end;
-% try options.limit; catch, options.limit = struct(); end;
-% try options.limit.upper; catch, options.limit.upper = 0; end;
-% try options.limit.lower; catch, options.limit.lower = 0; end;
+try options.method; catch, options.method = 'linear'; end;
+try options.channels; catch, options.channels = {}; end;
+try optinos.newfile; catch, options.newfile = false; end;
+
+if numel(options.channels) > 0
+    if numel(options.channels) ~= numel(indata)
+        warning('ID:invalid_input', 'options.channels must have same size as indata');
+    elseif (numel(options.channels) == 1) && ~iscell(options.channels)
+        options.channels = {options.channels};
+    end;
+end;
 
 % check data file argument --
-if ischar(datafile) || isstruct(datafile)
-    D = {datafile};
-elseif iscell(datafile) 
-    D = datafile;
+if ischar(indata) || isstruct(indata) || isnumeric(indata)
+    D = {indata};
+elseif iscell(indata)
+    D = indata;
 else
-    warning('Data file must be a char, cell, or struct.');
+    warning('ID:invalid_data', 'Data must be char, numeric or cell');
 end;
-clear datafile
+
+outdata = cell(size(D));
 
 % work on all data files
 % -------------------------------------------------------------------------
 for d=1:numel(D)
     % determine file names ---
-    datafile=D{d};
+    actual=D{d};
         
+    % flag to decide what kind of data should be handled
+    inline_flag = 0;
+    
     % user output ---
-    if isstruct(datafile)
-        fprintf('Interpolating ... ');
+    if ischar(actual)
+        fprintf('Interpolating %s ... ', actual);
     else
-        fprintf('Interpolating %s ... ', datafile);
-    end;
-    
-    % check and get datafile ---
-    [sts, infos, data] = scr_load_data(datafile, 0);
-    if any(sts == -1)
-        newdatafile = []; 
-        break; 
-    end;
-    
-    % trim file ---
-    for k = 1:numel(data)
-        
-        % only interpolate waveform channels
-        if ~strcmpi(data{k}.header.units, 'events') 
-            
-            dat = data{k}.data;
-            x = 1:length(dat);
-            v = dat;
-            
-            % disabled limit-filter to cut away unwanted data
-            %--------------------------------------------------------------
-            % if isnan(options.limit.upper) && isnan(options.limit.lower)
-            %         filt = 0;
-            % elseif isnan(options.limit.upper)
-            %         filt = v <= options.limit.lower;
-            % elseif isnan(options.limit.lower)
-            %         filt = v >= options.limit.upper;
-            % else
-            %         filt = v >= options.limit.upper | v <= options.limit.lower;
-            % end;
-            filt = isnan(v);
-            xq = find(filt);
-            % throw away data not being informative
-            % -> not being informative defined by user
-            x(xq) = [];
-            v(xq) = [];
-            vq = interp1(x, v, xq, 'linear');
-            dat(xq) = vq;
-            
-            data{k}.data = dat;
+        fprintf('Interpolating ... ');
+        if isnumeric(actual)
+            inline_flag = 1;
         end;
     end;
     
-    clear savedata
-    savedata.data = data; 
-    savedata.infos = infos; 
-    if isstruct(datafile)
-        sts = scr_load_data(savedata, 'none');
-        newdatafile = savedata;
+    % not inline data must be loaded first; check and get datafile ---
+    if ~inline_flag
+        % struct get checked if structure is okay; files get loaded
+        [sts, infos, data] = scr_load_data(actual, 0);
+        if any(sts == -1)
+            warning('ID:invalid_input', 'Cannot load data from data');
+            break;
+        end;
+
+        if numel(options.channels{d}) > 0
+            % channels passed; try to get appropriate channels
+            c = options.channels{d};
+            chans = data{c};
+        else
+            % no channels passed; try to search appropriate channels
+            c = cellfun(@(f) ~strcmpi(f.header.units, 'events'), data);
+            chans = data{c};
+        end;
     else
-        [pth, fn, ext] = fileparts(datafile);
-        newdatafile    = fullfile(pth, ['i', fn, ext]);
-        savedata.infos.interpolatefile = newdatafile;
-        savedata.options = options;
-        sts = scr_load_data(newdatafile, savedata);
+        chans = {actual};
+    end
+    
+    % trim file ---
+    for k = 1:numel(chans)
+        if inline_flag
+            dat = chans{k};
+        else
+            dat = chans{k}.data;
+        end;
+        
+        x = 1:length(dat);
+        v = dat;
+        
+        % add some other checks if you want to filter out more
+        % data like this
+        
+        filt = isnan(v);
+        xq = find(filt);
+        
+        % throw away data matching 'filt'
+        
+        x(xq) = [];
+        v(xq) = [];
+        vq = interp1(x, v, xq, options.method);
+        dat(xq) = vq;
+        
+        if inline_flag
+            chans{k} = dat;
+        else
+            chans{k}.data = dat;
+        end;
     end;
     
-    if sts ~= 1
-        warning('Interpolation unsuccessful for file %s.\n', newdatafile); 
+    if ~inline_flag 
+        clear savedata
+        savedata.data = chans;
+        savedata.infos = infos;
+        
+        if isstruct(actual)
+            % check datastructure
+            sts = scr_load_data(savedata, 'none');
+            outdata{d} = savedata;
+        else
+            if options.newfile
+                % save as a new file preprended with 'i'
+                [pth, fn, ext] = fileparts(actual);
+                newdatafile    = fullfile(pth, ['i', fn, ext]);
+                savedata.infos.interpolatefile = newdatafile;
+                savedata.options = options;
+                sts = scr_load_data(newdatafile, savedata);
+                
+                outdata{d} = newdatafile;
+            else
+                % add to existing file 
+                o.msg.prefix = 'Interpolated channel';
+                [sts, infos] = scr_write_channel(actual, savedata, 'add', o);
+                
+                % added channel ids are in infos.channel
+                outdata{d} = infos.channel;
+            end;
+        end;
     else
-        Dout{d} = newdatafile;
-        % user output
-        fprintf('  done.\n');
+        outdata{d} = chans{1};
     end;
+   
 end;
 
-% if cell array of datafiles is being processed, return cell array of
-% filenames
-if d > 1
-    clear newdatafile
-    newdatafile = Dout;
-end;
-
-return;
+sts = 1;
 
 
     
