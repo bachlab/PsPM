@@ -1,4 +1,4 @@
-function out = scr_cfg_run_glm_scr(job)
+function out = scr_cfg_run_glm_hp_e(job)
 % Executes scr_glm
 
 % $Id$
