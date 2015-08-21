@@ -58,16 +58,18 @@ end;
 % check data file argument --
 if ischar(indata) || isstruct(indata) || isnumeric(indata)
     D = {indata};
-elseif iscell(indata)
+elseif iscell(indata) ... 
+        && sum(cellfun(@(f) isstruct(f), indata) | ... 
+            cellfun(@(f) isnumeric(f), indata) | ...
+            cellfun(@(f) ischar(f), indata)) == numel(indata)
     D = indata;
 else
-    warning('ID:invalid_data', 'Data must be char, numeric or cell');
+    warning('ID:invalid_data', 'Data must be either char, numeric, struct or cell array of char, numeric or struct.');
+    return;
 end;
 
 if iscell(indata)
     outdata = cell(size(D));
-else
-    outdata = [];
 end;
 
 % work on all data files
@@ -98,7 +100,7 @@ for d=1:numel(D)
             break;
         end;
 
-        if numel(options.channels{d}) > 0
+        if numel(options.channels) > 0 && numel(options.channels{d}) > 0
             % channels passed; try to get appropriate channels
             c = options.channels{d};
             chans = data{c};
@@ -107,6 +109,12 @@ for d=1:numel(D)
             c = cellfun(@(f) ~strcmpi(f.header.units, 'events'), data);
             chans = data{c};
         end;
+        
+        % sanity check chans should be a cell
+        if ~iscell(chans) && numel(chans) == 1
+            chans = {chans};
+        end;
+        
     else
         chans = {actual};
     end
@@ -171,9 +179,14 @@ for d=1:numel(D)
             end;
         end;
     else
-        outdata = chans{1};
+        outdata{d} = chans{1};
     end;
    
+end;
+
+% format output same as input
+if (numel(outdata) == 1) && ~iscell(indata)
+    outdata = outdata{1};
 end;
 
 sts = 1;
