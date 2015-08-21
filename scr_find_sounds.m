@@ -2,15 +2,23 @@ function [sts, infos] = scr_find_sounds(file, options)
 %SCR_FIND_SOUNDS finds and evtl. analyzes sound events in a pspm file.
 % A sound is accepted as event if it is longer than 10ms and events are
 % recognized as different if they are at least 50 ms appart.
-% sts = scr_find_sounds(file,options)
+% [sts, infos] = scr_find_sounds(file,options)
 %   Arguments
 %       file : path and filename of the pspm file holding the sound
 %       options : struct with following possible values
 %           addChannel : [true/FALSE] adds a marker channel to the original
 %               file with the onset time of the detected sound events and
 %               the duration of the sound event (in markerinfo)
+%           channelOutput : ['all'/'corrected'] (default: 'all') defines
+%               whether all sound markers or only sound markers which have
+%               been assigned to a marker from the trigger channel should
+%               be added as channel to the original file. 'corrected'
+%               requires enabled diagnostics, but does not force it (the
+%               option will otherwise not work).
 %           diagnostics : [TRUE/false] computes the delay between trigger
-%               and displays the mean delay and standard deviation.
+%               and displays the mean delay and standard deviation and
+%               removes triggers which could not be assigned to a trigger
+%               from existing trigger channel.
 %           maxdelay : [integer] Size of the window in seconds in which 
 %               scr_find_sounds will accept sounds to belong to a marker.
 %               default is 3s.
@@ -65,6 +73,7 @@ try options.resample; catch, options.resample = 1; end;
 try options.sndchannel; catch, options.sndchannel = 0; end;
 try options.threshold; catch, options.threshold = 0.1; end;
 try options.trigchannel; catch, options.trigchannel = 0; end;
+try options.channelOutput; catch; options.channelOutput = 'all'; end;
 
 if options.plot
     options.diagnostics = true;
@@ -143,12 +152,16 @@ if snd_re(1)>snd_fe(1)
     snd_re = snd_re(2:end);
 end
 if snd_fe(end) < snd_re(end)
-    snd_fe = snd_fe(1:end-1)
+    snd_fe = snd_fe(1:end-1);
 end
 % Discard sounds shorter than 10ms
 noevent_i = find((snd_fe-snd_re)<0.01);
 snd_re(noevent_i)=[];
 snd_fe(noevent_i)=[];
+
+% keep current snd_re for channelOutput 'all'
+snd_re_all = snd_re;
+snd_fe_all = snd_fe;
 
 %% Triggers
 if options.diagnostics
@@ -190,8 +203,14 @@ end
 %% Save as new channel
 if options.addChannel
     % Save the new channel
-    snd_events.data = snd_re;
-    snd_events.markerinfo.value = snd_fe-snd_re;
+    if strcmpi(options.channelOutput, 'all')
+        snd_events.data = snd_re_all;
+        snd_events.markerinfo.value = snd_fe_all-snd_re_all;
+    else
+        snd_events.data = snd_re;
+        snd_events.markerinfo.value = snd_fe-snd_re;
+    end;
+    
     snd_events.header.sr = 1;
     snd_events.header.chantype = 'snd';
     snd_events.header.units ='events';
