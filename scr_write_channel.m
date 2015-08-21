@@ -5,10 +5,12 @@ function [sts, infos] = scr_write_channel(fn, newdata, action, options)
 % This function is an integration of the former functions scr_add_channel 
 % and scr_rewrite_channel. 
 %
-% [sts] = scr_write_channel(fn, newdata, action, options)
+% [sts, infos] = scr_write_channel(fn, newdata, action, options)
 %   fn: data file name
 %
 %   newdata: [struct()/empty]
+%            is either a new data struct or a cell array of new data
+%            structs
 %
 %   action: 'add'       add newdata as a new channel
 %           'replace'   replace channel with given newdata

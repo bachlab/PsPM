@@ -364,7 +364,14 @@ for iSn = 1:nFile
     
     % prepare (filter & downsample) data
     model.filter.sr = sr(iSn);
-    [sts, newy, newsr] = scr_prepdata(y{iSn}, model.filter);
+    % find NaN values
+    oldy = y{iSn};
+    nan_idx = isnan(oldy);
+    % interpolate y data
+    [sts, oldy] = scr_interpolate(oldy);
+    if sts ~= 1, return; end;
+    % filter data
+    [sts, newy, newsr] = scr_prepdata(oldy, model.filter);
     if sts ~= 1, return; end;
     
     % concatenate data 
@@ -381,6 +388,9 @@ for iSn = 1:nFile
             newmissing(missingtimes(iMs, 1):missingtimes(iMs, 2)) = 1;
         end;
     end;
+    % copy NaN in y data should be missing
+    newmissing(nan_idx) = 1;
+    
     M = [M; ones(newsr * model.bf.shiftbf, 1); newmissing];    
        
     % convert regressor information to samples
@@ -429,7 +439,8 @@ end;
 
 % normalise if desired --
 if model.norm
-    Y = (Y - mean(Y))/std(Y);
+    % omitnan from shiftbf
+    Y = (Y - mean(Y, 'omitnan'))/std(Y, 'omitnan');
 end;
 Y = Y(:);
 

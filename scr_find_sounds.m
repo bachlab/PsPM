@@ -29,7 +29,7 @@ function [sts, infos] = scr_find_sounds(file, options)
 %               Resampling will restore more or less the original signal
 %               and lead to more accurate timings.
 %           sndchannel : [integer] number of the channel holding the sound.
-%               By default first 'custom' channel.
+%               By default first 'snd' channel.
 %           threshold : [0...1] percent of the max of the power in the
 %               signal that will be accepted as a sound event. Default is
 %               0.1.
@@ -97,16 +97,14 @@ end;
 %% Sound
 % Check for existence of sound channel
 if ~options.sndchannel
-    % TODO: since no channel type 'snd' exist for now, 'custom' is used as a
-    % placeholder
-    sndi = find(strcmpi(cellfun(@(x) x.header.chantype,[indata.data],'un',0),'custom'),1);
+    sndi = find(strcmpi(cellfun(@(x) x.header.chantype,[indata.data],'un',0),'snd'),1);
     if ~any(sndi)
         warning('ID:no_sound_chan', 'No sound channel found. Aborted'); sts=-1; return;
     end
     snd = indata.data{sndi};
 else
     snd = indata.data{options.sndchannel};
-end
+end;
 
 % Process Sound
 snd.data = snd.data-mean(snd.data);
@@ -120,7 +118,7 @@ if options.resample>1
 else
     t = tsnd;
     snd_pow = snd.data.^2;
-end
+end;
 % Apply simple bidirectional square filter
 mask = ones(round(.01*snd.header.sr),1)/round(.01*snd.header.sr);
 snd_pow = conv(snd_pow,mask);
@@ -195,7 +193,7 @@ if options.addChannel
     snd_events.data = snd_re;
     snd_events.markerinfo.value = snd_fe-snd_re;
     snd_events.header.sr = 1;
-    snd_events.header.chantype = 'custom';
+    snd_events.header.chantype = 'snd';
     snd_events.header.units ='events';
     [sts, ininfos] = scr_write_channel(file, snd_events, 'add');
     outinfos.channel = ininfos.channel;
