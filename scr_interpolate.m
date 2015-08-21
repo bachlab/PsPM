@@ -11,7 +11,7 @@ function [sts, outdata] = scr_interpolate(indata, options)
 %  
 %   options: 
 %       .overwrite:     defines if existing datafiles should be overwritten
-%       .method:        defines the interpolation method see interp1() for
+%       .method:        defines the interpolation method, see interp1() for
 %                       possible interpolation methods
 %       .channels       if pass should be the same size as indata and
 %                       contains for each entry in indata the channel(s) to 
@@ -76,17 +76,17 @@ end;
 % -------------------------------------------------------------------------
 for d=1:numel(D)
     % determine file names ---
-    actual=D{d};
+    fn=D{d};
         
     % flag to decide what kind of data should be handled
     inline_flag = 0;
     
     % user output ---
-    if ischar(actual)
-        fprintf('Interpolating %s ... ', actual);
+    if ischar(fn)
+        fprintf('Interpolating %s ... ', fn);
     else
         fprintf('Interpolating ... ');
-        if isnumeric(actual)
+        if isnumeric(fn)
             inline_flag = 1;
         end;
     end;
@@ -94,7 +94,7 @@ for d=1:numel(D)
     % not inline data must be loaded first; check and get datafile ---
     if ~inline_flag
         % struct get checked if structure is okay; files get loaded
-        [sts, infos, data] = scr_load_data(actual, 0);
+        [sts, infos, data] = scr_load_data(fn, 0);
         if any(sts == -1)
             warning('ID:invalid_input', 'Cannot load data from data');
             break;
@@ -116,7 +116,7 @@ for d=1:numel(D)
         end;
         
     else
-        chans = {actual};
+        chans = {fn};
     end
     
     % trim file ---
@@ -130,8 +130,8 @@ for d=1:numel(D)
         x = 1:length(dat);
         v = dat;
         
-        % add some other checks if you want to filter out more
-        % data like this
+        % add some other checks here if you want to filter out other data
+        % features (e. g. out-of-range values)
         
         filt = isnan(v);
         xq = find(filt);
@@ -155,14 +155,14 @@ for d=1:numel(D)
         savedata.data = chans;
         savedata.infos = infos;
         
-        if isstruct(actual)
+        if isstruct(fn)
             % check datastructure
             sts = scr_load_data(savedata, 'none');
             outdata{d} = savedata;
         else
             if options.newfile
                 % save as a new file preprended with 'i'
-                [pth, fn, ext] = fileparts(actual);
+                [pth, fn, ext] = fileparts(fn);
                 newdatafile    = fullfile(pth, ['i', fn, ext]);
                 savedata.infos.interpolatefile = newdatafile;
                 savedata.options = options;
@@ -172,7 +172,7 @@ for d=1:numel(D)
             else
                 % add to existing file 
                 o.msg.prefix = 'Interpolated channel';
-                [sts, infos] = scr_write_channel(actual, savedata, 'add', o);
+                [sts, infos] = scr_write_channel(fn, savedata, 'add', o);
                 
                 % added channel ids are in infos.channel
                 outdata{d} = infos.channel;

@@ -17,7 +17,7 @@ function glm = scr_glm(model, options)
 % model.timeunits:  one of 'seconds', 'samples', 'markers'
 % 
 % optional fields
-% model.modality:   currently 'scr', default 'scr'
+% model.modelspec:  'scr' (default), 'hp_e', 'hp_fc'
 % model.bf:         basis function/basis set; modality specific default
 %                   with subfields .fhandle (function handle or string) and
 %                   .args (arguments, first argument sampling interval will
@@ -146,14 +146,14 @@ elseif ~ischar(model.timeunits) || ~ismember(model.timeunits, {'seconds', 'marke
 end;
 
 % get further input or set defaults --
-% check modality --
-if ~isfield(model, 'modality')
-    % load default modality
-    model.modality = settings.modalities.glm;
-elseif ~ismember(model.modality, {settings.glm.modality})
-    warning('ID:invalid_input', 'Unknown modality %s.', model.modality); return;
+if ~isfield(model, 'modelspec')
+    % load default model specification
+    model.modelspec = settings.glm(1).modelspec;
+elseif ~ismember(model.modelspec, {settings.glm.modelspec})
+    warning('ID:invalid_input', 'Unknown model specification %s.', model.modelspec); return;
 end;
-modno = find(strcmpi(model.modality, {settings.glm.modality}));
+modno = find(strcmpi(model.modelspec, {settings.glm.modelspec}));
+model.modality = settings.glm(modno).modality;
 
 % check data channel --
 if ~isfield(model, 'channel')
@@ -483,6 +483,7 @@ glm.timing.onsets     = onsets;
 glm.timing.durations  = durations;
 glm.timing.pmod       = pmod;
 glm.modality          = model.modality;
+glm.modelspec         = model.modelspec;
 glm.modeltype         = 'glm';
 
 % clear local variables --

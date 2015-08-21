@@ -1,6 +1,6 @@
 function [sts, infos] = scr_find_sounds(file, options)
-%SCR_FIND_SOUNDS finds and evtl. analyzes sound events in a pspm file.
-% A sound is accepted as event if it is longer than 10ms and events are
+%SCR_FIND_SOUNDS finds and if required analyzes sound events in a pspm file.
+% A sound is accepted as event if it is longer than 10 ms and events are
 % recognized as different if they are at least 50 ms appart.
 % [sts, infos] = scr_find_sounds(file,options)
 %   Arguments
