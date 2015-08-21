@@ -1,5 +1,5 @@
 function [sts, data]=scr_get_sound(import)
-% SCR_GET_PUPIL is a common function for importing pupil data
+% SCR_GET_SOUND is a common function for importing sound data
 %
 % FORMAT:
 %   [sts, data]=scr_get_sound(import)
