@@ -64,7 +64,11 @@ else
     warning('ID:invalid_data', 'Data must be char, numeric or cell');
 end;
 
-outdata = cell(size(D));
+if iscell(indata)
+    outdata = cell(size(D));
+else
+    outdata = [];
+end;
 
 % work on all data files
 % -------------------------------------------------------------------------
@@ -167,7 +171,7 @@ for d=1:numel(D)
             end;
         end;
     else
-        outdata{d} = chans{1};
+        outdata = chans{1};
     end;
    
 end;
