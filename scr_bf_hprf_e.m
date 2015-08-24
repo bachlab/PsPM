@@ -2,7 +2,7 @@ function [bf, x, b] = scr_bf_hprf_e(varargin)
 % scr_bf_hprf constructs the heart period response function consisting of 
 % modified Gaussian functions
 %
-% FORMAT: [bf,b] = scr_bf_hprf(td, b)
+% FORMAT: [bf, x, b] = scr_bf_hprf(td, b)
 %
 % with  td = time resolution in s and 
 %       x = timestamps

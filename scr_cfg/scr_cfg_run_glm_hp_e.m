@@ -13,8 +13,16 @@ params = scr_cfg_run_glm(job);
 model = params.model;
 options = params.options;
 
+bf = fieldnames(job.bf);
+bf = bf{1};
+
+if strcmpi(bf, 'hprf_e')
+    model.bf.fhandle = str2func('scr_bf_hprf_e');
+    model.bf.args = job.bf.hprf_e.n_bf;
+end;
+
 % set modality
-model.modality = 'scr';
+model.modality = 'hp';
 
 out = scr_glm(model, options);
 if exist('out', 'var') && isfield(out, 'modelfile')

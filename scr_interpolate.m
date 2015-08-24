@@ -83,9 +83,9 @@ for d=1:numel(D)
     
     % user output ---
     if ischar(fn)
-        fprintf('Interpolating %s ... ', fn);
+        fprintf('Interpolating %s ... \n', fn);
     else
-        fprintf('Interpolating ... ');
+        fprintf('Interpolating ... \n');
         if isnumeric(fn)
             inline_flag = 1;
         end;
@@ -172,7 +172,7 @@ for d=1:numel(D)
             else
                 % add to existing file 
                 o.msg.prefix = 'Interpolated channel';
-                [sts, infos] = scr_write_channel(fn, savedata, 'add', o);
+                [sts, infos] = scr_write_channel(fn, savedata.data, 'add', o);
                 
                 % added channel ids are in infos.channel
                 outdata{d} = infos.channel;

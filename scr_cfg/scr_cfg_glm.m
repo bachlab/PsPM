@@ -1,12 +1,16 @@
-function [glm] = scr_cfg_glm
-% function [glm] = scr_cfg_glm
+function [glm] = scr_cfg_glm(vars)
+% function [glm] = scr_cfg_glm(vars)
 %
 % Matlabbatch function specifies the basic glm_module.
 % Its called by scr_cfg_glm_<modalities> where modality specific settings
 % are set. Then the struct is passed on to the next higher level of the
 % matlabbatch configuration set.
 %
-% 
+% vars is a struct of text-variables. current vars are:
+%   - modality
+%   - modspec
+%   - glmref
+%   - glmhelp
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2015 Tobias Moser (University of Zurich)
@@ -25,7 +29,8 @@ datafile.name    = 'Data File';
 datafile.tag     = 'datafile';
 datafile.num     = [1 1];
 datafile.filter  = '.*\.(mat|MAT)$';
-datafile.help    = {['Add the data file containing the SCR data (and potential marker information). '...
+datafile.help    = {['Add the data file containing the ', vars.modality, ...
+    ' data (and potential marker information). '...
     'If you have trimmed your data, add the file containing the trimmed data.']};
 
 % Modelfile name
@@ -82,8 +87,8 @@ missing.name   = 'Missing Epochs';
 missing.tag    = 'missing';
 missing.val    = {no_epochs};
 missing.values = {no_epochs, epochs};
-missing.help   = {['Indicate epochs in your data in which the SCR signal is ' ...
-    'missing or corrupted (e.g., due to artifacts).']};
+missing.help   = {['Indicate epochs in your data in which the ', vars.modality ...
+    ,' signal is missing or corrupted (e.g., due to artifacts).']};
 
 % Condition file
 condfile         = cfg_files;
@@ -244,7 +249,7 @@ nuisancefile.help    = {['You can include nuisance parameters such as motion par
     'the design matrix. Nuisance parameters are not convolved with the canonical response function.'], ...
     ['The file has to be either a .txt file containing the regressors in columns, or a .mat file containing ' ...
     'the regressors in a matrix variable called R. There must be as many values for each column of R as there ' ...
-    'are data values in your data file. SCRalyze will call the regressors pertaining to the different columns R1, R2, ...']};
+    'are data values in your data file. PsPM will call the regressors pertaining to the different columns R1, R2, ...']};
 
 % Sessions
 session        = cfg_branch;
@@ -306,7 +311,7 @@ norm.tag     = 'norm';
 norm.val     = {false};
 norm.labels  = {'No', 'Yes'};
 norm.values  = {false, true};
-norm.help    = {['Specify if you want to z-normalize the SCR data for each subject. For within-subjects ' ...
+norm.help    = {['Specify if you want to z-normalize the ', vars.modality, ' data for each subject. For within-subjects ' ...
     'designs, this is highly recommended, but for between-subjects designs it needs to be set to "no". ']};
 
 % Channel
@@ -324,14 +329,16 @@ chan_nr.num     = [1 1];
 chan_nr.help    = {''};
 
 chan         = cfg_choice;
-chan.name    = 'SCR Channel';
+chan.name    = [vars.modality, ' Channel'];
 chan.tag     = 'chan';
 chan.val     = {chan_def};
 chan.values  = {chan_def,chan_nr};
-chan.help    = {['Indicate the channel containing the SCR data.'], ['By default ' ...
-    'the first SCR channel is assumed to contain the data for this model.'], ['If the first ' ...
-    'SCR channel does not contain the data for this model (e. g. there are two SCR channels), ' ...
-    'indicate the the channel number (within the SCR file) that contains the data for this model.']};
+chan.help    = {'Indicate the channel containing the ', vars.modality, ' data.', ['By default ' ...
+    'the first ', vars.modality ,' channel is assumed to contain the data for this model.'], ...
+    ['If the first ', vars.modality, ' channel does not contain the data for this', ...
+    ' model (e. g. there are two ', vars.modality, ' channels), ' ...
+    'indicate the the channel number (within the ', vars.modality, ...
+    ' file) that contains the data for this model.']};
 
 % Overwrite File
 overwrite         = cfg_menu;
@@ -391,6 +398,11 @@ bf.values = {scrf{:}, fir};
 bf.help   = {['Basis functions. Standard is to use a canonical skin conductance response function ' ...
     '(SCRF) with time derivative for later reconstruction of the response peak.']};
 
+%% Filter settings
+% try to get default settings for filter
+f = strcmpi({settings.glm.modelspec}, vars.modspec);
+def_filt = settings.glm(f).filter;
+
 % Filter
 disable        = cfg_const;
 disable.name   = 'Disable';
@@ -403,8 +415,8 @@ lpfreq         = cfg_entry;
 lpfreq.name    = 'Cutoff Frequency';
 lpfreq.tag     = 'freq';
 lpfreq.strtype = 'r';
-if isfield(settings.glm(1,1).filter,'lpfreq')
-    lpfreq.val = {settings.glm(1,1).filter.lpfreq};
+if isfield(def_filt,'lpfreq')
+    lpfreq.val = {def_filt.lpfreq};
 end
 lpfreq.num     = [1 1];
 lpfreq.help    = {'Specify the low-pass filter cutoff in Hz.'};
@@ -413,8 +425,8 @@ lporder         = cfg_entry;
 lporder.name    = 'Filter Order';
 lporder.tag     = 'order';
 lporder.strtype = 'i';
-if isfield(settings.glm(1,1).filter,'lporder')
-    lporder.val = {settings.glm(1,1).filter.lporder};
+if isfield(def_filt,'lporder')
+    lporder.val = {def_filt.lporder};
 end
 lporder.num     = [1 1];
 lporder.help    = {'Specify the low-pass filter order.'};
@@ -437,8 +449,8 @@ hpfreq         = cfg_entry;
 hpfreq.name    = 'Cutoff Frequency';
 hpfreq.tag     = 'freq';
 hpfreq.strtype = 'r';
-if isfield(settings.glm(1,1).filter,'hpfreq')
-    hpfreq.val = {settings.glm(1,1).filter.hpfreq};
+if isfield(def_filt,'hpfreq')
+    hpfreq.val = {def_filt.hpfreq};
 end
 hpfreq.num     = [1 1];
 hpfreq.help    = {'Specify the high-pass filter cutoff in Hz.'};
@@ -447,8 +459,8 @@ hporder         = cfg_entry;
 hporder.name    = 'Filter Order';
 hporder.tag     = 'order';
 hporder.strtype = 'i';
-if isfield(settings.glm(1,1).filter,'hporder')
-    hporder.val = {settings.glm(1,1).filter.hporder};
+if isfield(def_filt,'hporder')
+    hporder.val = {def_filt.hporder};
 end
 hporder.num     = [1 1];
 hporder.help    = {'Specify the high-pass filter order.'};
@@ -471,17 +483,22 @@ down         = cfg_entry;
 down.name    = 'New Sampling Rate';
 down.tag     = 'down';
 down.strtype = 'r';
-if isfield(settings.glm(1,1).filter,'down')
-    down.val = {settings.glm(1,1).filter.down};
+if isfield(def_filt,'down')
+    down.val = {def_filt.down};
 end
 down.num     = [1 1];
-down.help    = {'Specify the sampling rate in Hz to down sample SCR data. Enter NaN to leave the sampling rate unchanged.'};
+down.help    = {['Specify the sampling rate in Hz to down sample ', vars.modality, ' data.', ...
+    ' Enter NaN to leave the sampling rate unchanged.']};
 
 % Filter direction
 direction         = cfg_menu;
 direction.name    = 'Filter Direction';
 direction.tag     = 'direction';
-direction.val     = {'uni'};
+if isfield(def_filt, 'direction')
+    direction.val = {def_filt.direction};
+else
+    direction.val     = {'uni'};
+end;
 direction.labels  = {'Unidirectional', 'Bidirectional'};
 direction.values  = {'uni', 'bi'};
 direction.help    = {['A unidirectional filter is applied twice in the forward direction. ' ...
@@ -499,15 +516,14 @@ filter_def.name   = 'Default';
 filter_def.tag    = 'def';
 filter_def.val    = {0};
 filter_def.help   = {['Standard settings for the Butterworth bandpass filter. These are the optimal ' ...
-    'settings from the paper “An improved algorithm for model-based analysis of evoked skin conductance ' ...
-    'responses” (Bach et al., 2013).']};
+    'settings for ', vars.modality, ' data.']};
 
 filter        = cfg_choice;
 filter.name   = 'Filter Settings';
 filter.tag    = 'filter';
 filter.val    = {filter_def};
 filter.values = {filter_def, filter_edit};
-filter.help   = {'Specify how you want filter the SCR data.'};
+filter.help   = {['Specify how you want filter the ',vars.modality,' data.']};
 
 
 %% Executable Branch
@@ -517,15 +533,15 @@ glm.tag   = 'glm';
 glm.val   = {modelfile, outdir, chan, timeunits, session_rep, bf, norm, filter, overwrite};
 %glm_scr.prog  = ;
 glm.vout  = @scr_cfg_vout_glm;
-glm.help  = {['General linear convolution models (GLM) are powerful for analysing evoked responses that ' ...
+glm.help  = {...
+    vars.glmhelp, ...
+    ['General linear convolution models (GLM) are powerful for analysing evoked responses that ' ...
     'follow an event with (approximately) fixed latency. This is similar to standard analysis of fMRI data. ' ...
     'The user specifies events for different conditions. These are used to estimate the mean response amplitude ' ...
     'per condition. These mean amplitudes can later be compared, using the contrast manager.'], '', ...
     'References: ', '', ...
-    'Bach, Flandin, et al. (2009) Journal of Neuroscience Methods (Development of the SCR model)', '', ...
-    'Bach, Flandin, et al. (2010) International Journal of Psychophysiology (Canonical SCR function)', '', ...
-    'Bach, Friston & Dolan (2013) Psychophysiology (Improved algorithm)' '', ...
-    'Bach (2014) Biological Psychology (Comparison with Ledalab)'};
+    vars.glmref{:} ...
+    };
 
 function vout = scr_cfg_vout_glm(job)
 vout = cfg_dep;

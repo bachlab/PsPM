@@ -612,7 +612,7 @@ for iSn = 1:numel(model.datafile)
         [sts, Rf{iSn}(:, iR)]  = scr_prepdata(R{iSn}(:, iR), model.filter);
         if sts ~= 1, return; end;
     end
-    if model.bf.shiftbf ~= 0
+    if (model.bf.shiftbf ~= 0) && ~isempty(Rf{iSn})
         Rf{iSn} = [ NaN(model.bf.shiftbf*model.filter.down, nR); Rf{iSn}];
     end;
 end

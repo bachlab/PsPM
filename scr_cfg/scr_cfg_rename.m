@@ -37,7 +37,7 @@ rename.tag  = 'rename';
 rename.val  = {rename_file};
 rename.prog = @scr_cfg_run_rename;
 rename.vout = @scr_cfg_vout_rename;
-rename.help = {'Rename SCRalyze data file. This renames the file and updates the file information.'};
+rename.help = {'Rename PsPM data file. This renames the file and updates the file information.'};
 
 function vout = scr_cfg_vout_rename(job)
 vout = cfg_dep;

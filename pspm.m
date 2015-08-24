@@ -31,7 +31,7 @@ function varargout = pspm(varargin)
 
 % Edit the above text to modify the response to help PsPM
 
-% Last Modified by GUIDE v2.5 17-Nov-2014 07:47:08
+% Last Modified by GUIDE v2.5 24-Aug-2015 12:18:45
 % initialise
 % -------------------------------------------------------------------------
 global settings;
@@ -146,14 +146,6 @@ function con1_Callback(hObject, eventdata, handles)
 scr_contrast;
 %cfg_add_module('pspm.first_level.contrast');
 
-% --- Executes on button press in GLM.
-function GLM_Callback(hObject, eventdata, handles)
-% hObject    handle to GLM (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% scr_glm_UI;
-cfg_add_module('pspm.first_level.scr.glm');
-
 % --- Executes on button press in DCM.
 function DCM_Callback(hObject, eventdata, handles)
 % hObject    handle to DCM (see GCBO)
@@ -244,3 +236,37 @@ function Other_utils_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes during object creation, after setting all properties.
+function GLM_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to GLM (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in GLM.
+function GLM_Callback(hObject, eventdata, handles)
+% hObject    handle to GLM (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns GLM contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from GLM
+
+selected = get(hObject,'Value');
+
+switch selected
+    case 1
+        cfg_add_module('pspm.first_level.scr.glm_scr');
+    case 2
+        cfg_add_module('pspm.first_level.hp.glm_hp_e');
+    case 3 
+        cfg_add_module('pspm.first_level.hp.glm_hp_fc');
+end;

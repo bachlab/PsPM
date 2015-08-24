@@ -65,7 +65,7 @@ global settings;
 if isempty(settings), scr_init; end;
 
 % initialise output
-sts = -1; infos = []; data = []; filestruct=[];
+sts = -1; infos = []; data = []; filestruct=[]; gerrmsg = '';
 
 % input check
 % -------------------------------------------------------------------------

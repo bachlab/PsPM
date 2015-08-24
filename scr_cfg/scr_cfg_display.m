@@ -18,4 +18,4 @@ display.name = 'Display Data';
 display.tag  = 'display';
 display.val  = {datafile};
 display.prog = @scr_cfg_run_display;
-display.help = {'Display SCRalyze data file in a new figure.'};
+display.help = {'Display PsPM data file in a new figure.'};
