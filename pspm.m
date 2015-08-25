@@ -220,9 +220,10 @@ switch val
         cfg_add_module('pspm.tools.pp_ecg');
     case 8
         cfg_add_module('pspm.tools.resp_pp');
-            
-%     case 10
-%         cfg_add_module('pspm.tools.emg_pp');
+    case 9
+        cfg_add_module('pspm.tools.interpolate');
+    case 10
+        cfg_add_module('pspm.tools.find_sounds');
 end;
 
 % --- Executes during object creation, after setting all properties.

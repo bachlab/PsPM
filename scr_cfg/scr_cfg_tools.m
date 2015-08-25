@@ -10,8 +10,6 @@ cfg.name   = 'Tools';
 cfg.tag    = 'tools';
 cfg.values = {scr_cfg_display, scr_cfg_rename, scr_cfg_split_sessions, ...
     scr_cfg_artefact_rm, scr_cfg_downsample, scr_cfg_pp_ecg, ... 
-    scr_cfg_resp_pp};
-    %scr_cfg_emg_pp, ... 
-    %scr_cfg_interpolate}; % Values in a cfg_repeat can be any cfg_item objects
+    scr_cfg_resp_pp, scr_cfg_interpolate, scr_cfg_find_sounds};
 cfg.forcestruct = true;
 cfg.help   = {'Help: Tools...'};

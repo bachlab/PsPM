@@ -102,12 +102,12 @@ for d=1:numel(D)
 
         if numel(options.channels) > 0 && numel(options.channels{d}) > 0
             % channels passed; try to get appropriate channels
-            c = options.channels{d};
-            chans = data{c};
+            work_chans = options.channels{d};
+            chans = data{work_chans};
         else
             % no channels passed; try to search appropriate channels
-            c = cellfun(@(f) ~strcmpi(f.header.units, 'events'), data);
-            chans = data{c};
+            work_chans = cellfun(@(f) ~strcmpi(f.header.units, 'events'), data);
+            chans = data{work_chans};
         end;
         
         % sanity check chans should be a cell
@@ -152,7 +152,8 @@ for d=1:numel(D)
     
     if ~inline_flag 
         clear savedata
-        savedata.data = chans;
+        savedata.data = data;
+        savedata.data{work_chans} = chans{:};
         savedata.infos = infos;
         
         if isstruct(fn)

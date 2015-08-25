@@ -27,12 +27,16 @@ overwrite.help    = {'Overwrite existing file?'};
 
 %% Executable branch
 interpolate_data      = cfg_exbranch;
-interpolate_data.name = 'Interpolate';
-interpolate_data.tag  = 'interploate';
+interpolate_data.name = 'Interpolate missing data';
+interpolate_data.tag  = 'interpolate';
 interpolate_data.val  = {datafile, overwrite};
 interpolate_data.prog = @scr_cfg_run_interpolate;
 interpolate_data.vout = @scr_cfg_vout_interpolate;
-interpolate_data.help = {['Try to interpolate, where no data is present.']};
+interpolate_data.help = {['The function interpolates missing values. ', ...
+    'The function works either on all continuous channels in the ', ...
+    'specified PsPM data file and writes them to a new file with the ', ...
+    'same name prepended by an ‘i’. Or only a specific channel is ', ...
+    'interpolated and written to a new channel.']};
 
 function vout = scr_cfg_vout_interpolate(job)
 vout = cfg_dep;
