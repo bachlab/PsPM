@@ -128,10 +128,15 @@ if ~isfield(model, 'datafile')
     warning('ID:invalid_input', 'No input data file specified.'); return;
 elseif ~isfield(model, 'modelfile')
     warning('ID:invalid_input', 'No output model file specified.'); return;
-elseif ~isfield(model, 'timing')
-    warning('ID:invalid_input', 'No event onsets specified.'); return;
+elseif ((~isfield(model, 'timing')) || isempty(model.timing)) ...
+        && (~isfield(model, 'nuisance') || isempty(model.nuisance))
+    warning('ID:invalid_input', 'Event onsets and nuisance file are not specified. At least one of the two must be specified.'); return;
 elseif ~isfield(model, 'timeunits')
     warning('ID:invalid_input', 'No timeunits specified.'); return;      
+end;
+
+if ~isfield(model, 'timing')
+    model.timing = {};
 end;
 
 % check faulty input --
@@ -247,7 +252,7 @@ if ischar(model.timing) || isstruct(model.timing)
     model.timing = {model.timing};
 end;
 
-if numel(model.datafile) ~= numel(model.timing)
+if ~isempty(model.timing) && (numel(model.datafile) ~= numel(model.timing))
     warning('ID:number_of_elements_dont_match', 'Session numbers of data files and event definitions do not match.'); return;
 end;
 
@@ -394,45 +399,51 @@ for iSn = 1:nFile
     M = [M; ones(newsr * model.bf.shiftbf, 1); newmissing];    
        
     % convert regressor information to samples
-    for n = 1:numel(multi(1).names)
-        % convert onsets to samples
-        switch model.timeunits
-            case 'samples'
-                newonsets    = round(multi(iSn).onsets{n} * newsr/sr(iSn));
-                newdurations = round(multi(iSn).durations{n} * newsr/sr(iSn));
-            case 'seconds'
-                newonsets    = round(multi(iSn).onsets{n} * newsr);
-                newdurations = round(multi(iSn).durations{n} * newsr);
-            case 'markers'
-                try
-                    newonsets = round(events{iSn}(multi(iSn).onsets{n}) * newsr); % markers are timestamps in seconds
-                catch
-                    warning('\nSome events in condition %01.0f were not found in the data file %s', n, model.datafile{iSn}); return;
+    if ~isempty(multi)
+        for n = 1:numel(multi(1).names)
+            % convert onsets to samples
+            switch model.timeunits
+                case 'samples'
+                    newonsets    = round(multi(iSn).onsets{n} * newsr/sr(iSn));
+                    newdurations = round(multi(iSn).durations{n} * newsr/sr(iSn));
+                case 'seconds'
+                    newonsets    = round(multi(iSn).onsets{n} * newsr);
+                    newdurations = round(multi(iSn).durations{n} * newsr);
+                case 'markers'
+                    try
+                        newonsets = round(events{iSn}(multi(iSn).onsets{n}) * newsr); % markers are timestamps in seconds
+                    catch
+                        warning('\nSome events in condition %01.0f were not found in the data file %s', n, model.datafile{iSn}); return;
+                    end;
+                    newdurations = multi(iSn).durations{n};
+            end;
+            % get the first multiple condition definition --
+            if iSn == 1
+                names{n} = multi(1).names{n};
+                onsets{n} = [];
+                durations{n} = [];
+                if isfield(multi, 'pmod') && (numel(multi(1).pmod) >= n)
+                    for p = 1:numel(multi(1).pmod(n).param)
+                        pmod(n).param{p} = [];
+                    end
+                    pmod(n).name = multi(1).pmod(n).name;
                 end;
-                newdurations = multi(iSn).durations{n};
-        end;
-        % get the first multiple condition definition --
-        if iSn == 1
-            names{n} = multi(1).names{n};
-            onsets{n} = [];
-            durations{n} = [];
+                % or shift multiple condition definition --
+            else
+                newonsets = newonsets + sum(tmp.snduration(1:(iSn - 1)));
+            end;
+            onsets{n} = [onsets{n}; newonsets(:)];
+            durations{n} = [durations{n}; newdurations(:)];
             if isfield(multi, 'pmod') && (numel(multi(1).pmod) >= n)
                 for p = 1:numel(multi(1).pmod(n).param)
-                    pmod(n).param{p} = [];
-                end
-                pmod(n).name = multi(1).pmod(n).name;
-            end;
-        % or shift multiple condition definition --
-        else
-            newonsets = newonsets + sum(tmp.snduration(1:(iSn - 1)));
-        end;
-        onsets{n} = [onsets{n}; newonsets(:)];
-        durations{n} = [durations{n}; newdurations(:)];
-        if isfield(multi, 'pmod') && (numel(multi(1).pmod) >= n)
-            for p = 1:numel(multi(1).pmod(n).param)
-                pmod(n).param{p} = [pmod(n).param{p}; multi(iSn).pmod(n).param{p}(:)];
+                    pmod(n).param{p} = [pmod(n).param{p}; multi(iSn).pmod(n).param{p}(:)];
+                end;
             end;
         end;
+    else
+        names = {};
+        onsets = {};
+        durations = {};
     end;
    
 end;
@@ -546,6 +557,7 @@ Xfilter.down = 'none'; % turn off no low pass warning
 snoffsets = cumsum(tmp.snduration);
 snonsets  = [1, snoffsets(2:end) + 1];
 tmp.XC = cell(1,numel(names));
+tmp.regscalec = cell(1,numel(names));
 for iCond = 1:numel(names)
     tmp.XC{iCond} = [];
     tmp.regscalec{iCond} = [];
@@ -597,6 +609,7 @@ end;
 % define model
 glm.X = cell2mat(tmp.XC);
 glm.regscale = cell2mat(tmp.regscalec);
+glm.names = cell(numel(names), 1);
 r=1;
 for iCond = 1:numel(names)
     n = numel(tmp.namec{iCond});
@@ -618,8 +631,9 @@ for iSn = 1:numel(model.datafile)
 end
 Rf = cell2mat(Rf(:));
 
+n = size(glm.names, 1);
 for iR = 1:nR
-    glm.names{end+1, 1} = sprintf('R%01.0f', iR);
+    glm.names{n+iR, 1} = sprintf('R%01.0f', iR);
 end;
 
 glm.X = [glm.X, Rf];
@@ -627,9 +641,10 @@ glm.regscale((end+1):(end+nR)) = 1;
 
 % add constant(s)
 r=1;
+n = size(glm.names, 1);
 for iSn = 1:numel(model.datafile);
     glm.X(r:(r+tmp.snduration(iSn)-1), end+1)=1;
-    glm.names{end+1, 1} = ['Constant ', num2str(iSn)];
+    glm.names{n+iSn, 1} = ['Constant ', num2str(iSn)];
     r = r + tmp.snduration(iSn);
 end;
 glm.interceptno = iSn;

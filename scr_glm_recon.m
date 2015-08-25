@@ -28,19 +28,22 @@ bfdur = size(bs, 1);
 
 % find all non-nuisance regressors 
 % -------------------------------------------------------------------------
-regno = (numel(glm.names) - glm.interceptno)/bfno;
+n_nuis = sum(cellfun(@(c) ~isempty(c), regexpi(glm.names, '^R[0-9]*$', 'match')));
+regno = (numel(glm.names) - (glm.interceptno+n_nuis))/bfno;
 if regno ~= floor(regno), warning('Mismatch in basis functions and regressor number.'); return; end;
 
 % reconstruct responses
 % -------------------------------------------------------------------------
 resp = NaN(bfdur, regno);
+recon = cell(regno, 1);
+condname = {};
 for k = 1:regno
     condname{k} = glm.names{((k - 1) * bfno + 1)};
     foo = strfind(condname{k}, ', bf');
     condname{k} = [condname{k}(1:(foo-1)), ' recon']; clear foo;
     resp(:, k) = bs * glm.stats(((k - 1) * bfno + 1):(k * bfno));
     [foo, bar] = max(abs(resp(:, k)));
-    recon(k, 1) = resp(bar, k);
+    recon{k, 1} = resp(bar, k);
 end;
 
 % save
