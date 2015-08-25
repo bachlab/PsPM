@@ -16,7 +16,7 @@ if isempty(settings), scr_init; end;
 
 %% Select file / datafile
 datafile         = cfg_files;
-datafile.name    = 'Data File(s)';
+datafile.name    = 'Data File';
 datafile.tag     = 'datafile';
 datafile.num     = [1 Inf];
 datafile.help    = {['Specify the PsPM datafile containing the imported ', ...

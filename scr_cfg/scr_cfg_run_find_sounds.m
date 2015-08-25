@@ -1,13 +1,50 @@
 function [out] = scr_cfg_run_find_sounds(job)
 
-options = struct();
+out = NaN;
 
-file = job.datafile;
-options.addChannel = true;
-options.threshold = job.options.threshold;
+file = job.datafile{1};
 
-if isfield(job.options.chan, 'chan_nr')
+if isfield(job.chan, 'chan_nr')
    options.sndchannel = job.chan.chan_nr;
 end;
 
-scr_find_sounds(file);
+options.threshold = job.threshold;
+
+f = fieldnames(job.output);
+switch f{1}
+    case 'new_chan'
+        
+        options.addChannel = true;
+        options.diagnostics = false;
+        [sts, infos] = scr_find_sounds(file, options);
+        out = infos.channel;
+        
+    case 'diagnostic'
+        d = job.output.diagnostic;
+        if d.new_corrected_chan
+            options.addChannel = true;
+            options.channelOutput = 'corrected';
+        end;
+        
+        if isfield(d.marker_chan, 'marker_nr')
+            options.trigchannel = d.marker_nr;
+        end;
+        
+        options.maxdelay = d.max_delay;
+        
+        diag_out = fieldnames(d.diag_output);
+        switch diag_out{1}
+            case 'hist_plot'
+                options.plot = true;
+            case 'text_only'
+                options.plot = false;
+        end;
+        
+        [sts, infos] = scr_find_sounds(file, options);
+        if isfield(infos, 'channel')
+            out = infos.channel;
+        end;
+        
+end;
+
+

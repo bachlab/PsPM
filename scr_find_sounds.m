@@ -106,13 +106,13 @@ end;
 %% Sound
 % Check for existence of sound channel
 if ~options.sndchannel
-    sndi = find(strcmpi(cellfun(@(x) x.header.chantype,[indata.data],'un',0),'snd'),1);
+    sndi = find(strcmpi(cellfun(@(x) x.header.chantype,indata,'un',0),'snd'),1);
     if ~any(sndi)
         warning('ID:no_sound_chan', 'No sound channel found. Aborted'); sts=-1; return;
     end
-    snd = indata.data{sndi};
+    snd = indata{sndi};
 else
-    snd = indata.data{options.sndchannel};
+    snd = indata{options.sndchannel};
 end;
 
 % Process Sound
@@ -167,14 +167,14 @@ snd_fe_all = snd_fe;
 if options.diagnostics
     % Check for existence of marker channel
     if ~options.trigchannel
-        mkri = find(strcmpi(cellfun(@(x) x.header.chantype,[indata.data],'un',0),'marker'),1);
+        mkri = find(strcmpi(cellfun(@(x) x.header.chantype,indata,'un',0),'marker'),1);
         if ~any(mkri)
             warning('ID:no_marker_chan', 'No marker channel found. Aborted'); sts=-1; return;
         end
     else
         mkri=options.trigchannel;
     end
-    mkr = indata.data{mkri};
+    mkr = indata{mkri};
 
     %% Estimate delays from trigger to sound
     delays = nan(length(mkr.data),1);
