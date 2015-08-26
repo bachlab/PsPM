@@ -227,8 +227,6 @@ else
     model.bf.shiftbf = 0;
 end;
 
-if ~isnumeric(model.bf.shiftbf), model.bf.shiftbf = 0; end;
-
 % remove path & clear local variables --
 if ~isempty(basepath), rmpath(basepath); end;
 clear basepath basefn baseext
