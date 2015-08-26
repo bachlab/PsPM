@@ -7,7 +7,7 @@ function [data] = import_eyelink(filename)
 %
 % (C) Christoph Korn & Tobias Moser (University of Zurich)
 %__________________________________________________________________________
-% PsPM 3.0
+% PsPM 3.1
 %
 % $ Id: $
 % $ Rev: $
@@ -77,34 +77,43 @@ end
 %% identify saccades/blinks
 % note: blinks are always surrounded by saccades, therefore use saccades
 % find L and R saccades 
-saccades = {'SSACC L','ESACC L','SSACC R','ESACC R'};
+% saccades = {'SSACC L','ESACC L','SSACC R','ESACC R'};
+saccades = {'SBLINK L','EBLINK L','SBLINK R','EBLINK R'};
 for j = 1:size(saccades,2)
-    str_sacc(:,j) = strncmp(saccades{j}, datastr{1, 1}, 7);
+    str_sacc(:,j) = strncmp(saccades{j}, datastr{1, 1}, 8); %% LAST NUMBER GIVES NUMBER OF CHARACTERS
 end
 for h = 1:size(saccades,2)
     str_sacc_pos{h} = find(str_sacc(:,h));
 end
 
-% special cases if data collection started or ended with a saccade
-% to do
-
-
 %% add saccade information as extra colum to relevant data
-blink_offset = 0; % possibility to remove more
-% L
-for k = 1:length(str_sacc_pos{1})
-    datanum(str_sacc_pos{1}(k) - blink_offset : str_sacc_pos{2}(k) + blink_offset, 8) = 1;
-end
-% R
-for k = 1:length(str_sacc_pos{3})
-    datanum(str_sacc_pos{3}(k) - blink_offset : str_sacc_pos{4}(k) + blink_offset, 9) = 1;
-end
+blink_offset =  floor( 0.05 * data.sampleRate ); % possibility to remove more; correponds to 10 points for sr of 500
 
-%% unset pupil diameter while saccades (detected above)
-if strcmpi(eyesObserved, 'LR'),
-    datanum(datanum(:,8) == 1,2:7) = 0;
-else
-    datanum(datanum(:,8) == 1,2:4) = 0;
+% cycle through eyes
+for i=1:numel(eyesObserved)
+    
+    if strcmpi(eyesObserved(i), 'L')
+        corr = 0;
+    else
+        corr = 2;
+    end;
+    
+    sblink = 1 + corr;
+    eblink = 2 + corr;
+    
+        
+    for k = 1:length(str_sacc_pos{sblink})    
+        if str_sacc_pos{eblink}(k) + blink_offset > size( datanum, 1 ) && str_sacc_pos{sblink}(k) - blink_offset <= 0
+            datanum(1 : end, 8) = 1;
+        elseif str_sacc_pos{eblink}(k) + blink_offset > size( datanum, 1 )
+            datanum(str_sacc_pos{sblink}(k) - blink_offset : end, 8) = 1;
+        elseif str_sacc_pos{sblink}(k) - blink_offset <= 0
+            datanum(1 : str_sacc_pos{eblink}(k) + blink_offset, 8) = 1;
+        else
+            datanum(str_sacc_pos{sblink}(k) - blink_offset : str_sacc_pos{eblink}(k) + blink_offset, 8) = 1;
+        end
+    end;
+    
 end;
 
 %% identify messages
@@ -138,7 +147,7 @@ end
 % HERE: correction
 % 1.    check whether elements of vector of messages_plus_1 are also members of
 %       the vector containing NaN
-% 2.    loop (with increasing relevant positions by 1) until there are no members left
+% 2.    loop (with increading relevant positions by 1) until there are no members left
 
 str_NaN = find(isnan(datanum(:,1)));
 str_gen_pos_plus = str_gen_pos + 1;
@@ -154,6 +163,7 @@ end
 datanum(str_gen_pos_plus, 10) = 1;
 datanum(str_gen_pos_plus, 11) = str_spe_pos(str_gen_pos,1); 
 
+
 %% remove lines starting with NaN (i.e. pure text lines) so that lines have a time interpretation
 data.raw = datanum;
 data.raw(isnan(datanum(:,1)),:) = [];
@@ -164,10 +174,15 @@ if strcmpi(eyesObserved, 'LR'),
     % pupilL, pupilR, xL, yL, xR,yR, blinkL, blinkR
     data.channels = data.raw(:, [4,7,2:3,5:6,8:9]);
     data.units = {pupilUnit, pupilUnit, 'pixel', 'pixel', 'pixel', 'pixel', 'blink', 'blink'};
+    % cwk: set blinks to NaN
+    data.channels( data.channels(:,7) == 1, [1,3:4] ) = NaN; % [4,2:3]
+    data.channels( data.channels(:,8) == 1, [2,5:6] ) = NaN;
 else
-    % pupil, x, y, blink, blink
-    data.channels = data.raw(:,[4,2:3,5]);
+    % pupil, x, y, blink
+    data.channels = [data.raw(:,[4,2:3,5])];
     data.units = {pupilUnit, 'pixel', 'pixel', 'blink'};
+    % cwk: set blinks to NaN
+    data.channels( data.channels(:,4) == 1, [1:3] ) = NaN;
 end
 
 % translate makers back into special cell structure

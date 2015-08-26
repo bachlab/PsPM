@@ -23,7 +23,9 @@ for iSession=1:nrSession
     end
     
     % data & design
-    if isfield(job.session(iSession).data_design,'condfile')
+    if isfield(job.session(iSession).data_design,'no_condition')
+        model.timing = {};
+    elseif isfield(job.session(iSession).data_design,'condfile')
         model.timing{iSession,1} = job.session(iSession).data_design.condfile{1};
     else
         nrCond = size(job.session(iSession).data_design.condition,2);

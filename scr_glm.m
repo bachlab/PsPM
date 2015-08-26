@@ -1,6 +1,6 @@
 function glm = scr_glm(model, options)
-% scr_glm specifies a within subject general linear convolution model of 
-% predicted signals and calculates amplitude estimates for these responses 
+% scr_glm specifies a within subject general linear convolution model of
+% predicted signals and calculates amplitude estimates for these responses
 %
 % FORMAT:
 % glm = scr_glm(model, options)
@@ -11,11 +11,11 @@ function glm = scr_glm(model, options)
 %                   a cell array of file names
 % model.timing:     a multiple condition file name (single session) OR
 %                   a cell array of multiple condition file names OR
-%                   a struct (single session) with fields .names, .onsets, 
+%                   a struct (single session) with fields .names, .onsets,
 %                       and (optional) .durations and .pmod  OR
 %                   a cell array of struct
 % model.timeunits:  one of 'seconds', 'samples', 'markers'
-% 
+%
 % optional fields
 % model.modelspec:  'scr' (default), 'hp_e', 'hp_fc'
 % model.bf:         basis function/basis set; modality specific default
@@ -29,15 +29,15 @@ function glm = scr_glm(model, options)
 % model.norm:       normalise data; default 0
 % model.filter:     filter settings; modality specific default
 % model.missing:    allows to specify missing (e. g. artefact) epochs in
-%                   the data file. See scr_get_timing for epoch definition; 
+%                   the data file. See scr_get_timing for epoch definition;
 %                   specify a cell array for multiple input files. This
 %                   must always be specified in SECONDS.
 %                   Default: no missing values
 % model.nuisance:   allows to specify nuisance regressors. Must be a file
 %                   name; the file is either a .txt file containing the
 %                   regressors in columns, or a .mat file containing the
-%                   regressors in a matrix variable called R. There must be 
-%                   as many values for each column of R as there are data 
+%                   regressors in a matrix variable called R. There must be
+%                   as many values for each column of R as there are data
 %                   values. SCRalyze will call these regressors R1, R2, ...
 %
 % OPTIONS (optional argument)
@@ -46,7 +46,7 @@ function glm = scr_glm(model, options)
 %                          channel
 %
 % TIMING - multiple condition file(s) or struct variable(s):
-% The structure is equivalent to SPM2/5/8/12 (www.fil.ion.ucl.ac.uk/spm), 
+% The structure is equivalent to SPM2/5/8/12 (www.fil.ion.ucl.ac.uk/spm),
 % such that SPM files can be used.
 % The file contains the following variables:
 % - names: a cell array of string for the names of the experimental
@@ -54,8 +54,8 @@ function glm = scr_glm(model, options)
 % - onsets: a cell array of number vectors for the onsets of events for
 %   each experimental condition, expressed in seconds, marker numbers, or
 %   samples, as specified in timeunits
-% - durations (optional, default 0): a cell array of vectors for the 
-%   duration of each event. You need to use 'seconds' or 'samples' as time 
+% - durations (optional, default 0): a cell array of vectors for the
+%   duration of each event. You need to use 'seconds' or 'samples' as time
 %   units
 % - pmod: this is used to specify regressors that specify how responses in
 %   an experimental condition depend on a parameter to model the effect
@@ -80,23 +80,23 @@ function glm = scr_glm(model, options)
 % REFERENCES:
 %
 % (1) GLM for SCR:
-% Bach DR, Flandin G, Friston KJ, Dolan RJ (2009). Time-series analysis for 
+% Bach DR, Flandin G, Friston KJ, Dolan RJ (2009). Time-series analysis for
 % rapid event-related skin conductance responses. Journal of Neuroscience
 % Methods, 184, 224-234.
 %
 % (2) Canonical response function, and GLM assumptions for SCR:
-% Bach DR, Flandin G, Friston KJ, Dolan RJ (2010). Modelling event-related 
+% Bach DR, Flandin G, Friston KJ, Dolan RJ (2010). Modelling event-related
 % skin conductance responses. International Journal of Psychophysiology,
 % 75, 349-356.
-% 
+%
 % (3) Fine-tuning of filters and response functions:
 % Bach DR, Friston KJ, Dolan RJ (2013). An improved algorithm for
 % model-based analysis of evoked skin conductance responses. Biological
 % Psychology, 94, 490-497.
 %
 % (4) Further validation and comparison with Ledalab:
-% Bach DR (2014).  A head-to-head comparison of SCRalyze and Ledalab, two 
-% model-based methods for skin conductance analysis. Biological Psychology, 
+% Bach DR (2014).  A head-to-head comparison of SCRalyze and Ledalab, two
+% model-based methods for skin conductance analysis. Biological Psychology,
 % 103, 63-88.
 %__________________________________________________________________________
 % PsPM 3.0
@@ -128,15 +128,21 @@ if ~isfield(model, 'datafile')
     warning('ID:invalid_input', 'No input data file specified.'); return;
 elseif ~isfield(model, 'modelfile')
     warning('ID:invalid_input', 'No output model file specified.'); return;
-elseif ((~isfield(model, 'timing')) || isempty(model.timing)) ...
-        && (~isfield(model, 'nuisance') || isempty(model.nuisance))
-    warning('ID:invalid_input', 'Event onsets and nuisance file are not specified. At least one of the two must be specified.'); return;
 elseif ~isfield(model, 'timeunits')
-    warning('ID:invalid_input', 'No timeunits specified.'); return;      
+    warning('ID:invalid_input', 'No timeunits specified.'); return;
 end;
 
-if ~isfield(model, 'timing')
-    model.timing = {};
+% check whether field timing doesnt exist, field is emtpy or field is cell
+% with empty entries
+if ~isfield(model, 'timing') || isempty(model.timing) || ...
+       iscell(model.timing) && (sum(cellfun(@(f) isempty(f), model.timing)) == numel(model.timing))
+    % model.timing is not set
+    % test the same way if nuisance is not set
+    if ~isfield(model, 'nuisance') || isempty(model.nuisance) || ...
+            iscell(model.nuisance) && (sum(cellfun(@(f) isempty(f), model.nuisance)) == numel(model.nuisance))
+        % nuisance is not set
+        warning('ID:invalid_input', 'Event onsets and nuisance file are not specified. At least one of the two must be specified.'); return;
+    end;
 end;
 
 % check faulty input --
@@ -171,13 +177,13 @@ end;
 if ~isfield(model, 'norm')
     model.norm = 0;
 elseif ~ismember(model.norm, [0, 1])
-    warning('ID:invalid_input', 'Normalisation must be specified as 0 or 1.'); return; 
+    warning('ID:invalid_input', 'Normalisation must be specified as 0 or 1.'); return;
 end;
 
 % check filter --
 if ~isfield(model, 'filter')
     model.filter = settings.glm(modno).filter;
-elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down) 
+elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
     % tested because the field is used before the call of scr_prepdata (everything else is tested there)
     warning('ID:invalid_input', 'Filter structure needs a numeric ''down'' field.'); return;
 end;
@@ -201,7 +207,7 @@ else
         warning('Basis function arguments must be numeric.');
     end;
 end;
-if ~isempty(basepath), addpath(basepath); end; 
+if ~isempty(basepath), addpath(basepath); end;
 try
     td = 1/model.filter.down;
     
@@ -231,12 +237,12 @@ if ~isfield(options, 'overwrite')
     options.overwrite = 0;
 elseif ~ismember(options.overwrite, [0, 1])
     options.overwrite = 0;
-end; 
+end;
 if ~isfield(options, 'marker_chan_num')
     options.marker_chan_num = 'marker';
 elseif ~(isnumeric(options.marker_chan_num) && numel(options.marker_chan_num)==1)
     options.marker_chan_num = 'marker';
-end; 
+end;
 
 % check files --
 if exist(model.modelfile, 'file') && ~(isfield(options, 'overwrite') && options.overwrite == 1)
@@ -319,7 +325,7 @@ else
     if numel(model.nuisance) ~= nFile
         warning('ID:number_of_elements_dont_match', 'Same number of data files and nuisance regressor files is needed.'); return;
     end;
-
+    
     for iSn = 1:nFile
         if isempty(model.nuisance{iSn})
             R{iSn} = [];
@@ -379,7 +385,7 @@ for iSn = 1:nFile
     [sts, newy, newsr] = scr_prepdata(oldy, model.filter);
     if sts ~= 1, return; end;
     
-    % concatenate data 
+    % concatenate data
     Y=[Y; NaN(newsr * model.bf.shiftbf, 1); newy(:)];
     
     % get duration of single sessions
@@ -396,8 +402,8 @@ for iSn = 1:nFile
     % copy NaN in y data should be missing
     newmissing(nan_idx) = 1;
     
-    M = [M; ones(newsr * model.bf.shiftbf, 1); newmissing];    
-       
+    M = [M; ones(newsr * model.bf.shiftbf, 1); newmissing];
+    
     % convert regressor information to samples
     if ~isempty(multi)
         for n = 1:numel(multi(1).names)
@@ -445,7 +451,7 @@ for iSn = 1:nFile
         onsets = {};
         durations = {};
     end;
-   
+    
 end;
 
 % normalise if desired --
@@ -458,7 +464,7 @@ Y = Y(:);
 % collect information into tmp --
 tmp.length=numel(Y);
 
-% scale pmods before orthogonalisation -- 
+% scale pmods before orthogonalisation --
 tmp.pmodno=zeros(numel(names), 1);
 if exist('pmod', 'var')
     for n=1:numel(pmod)
@@ -483,7 +489,7 @@ end;
 % collect data & regressors for output model --
 glm.input.data    = y;
 glm.input.sr      = sr;
-glm.Y             = Y; 
+glm.Y             = Y;
 glm.M             = M;
 glm.infos.sr      = newsr;
 glm.infos.duration     = numel(glm.Y)/glm.infos.sr;
@@ -498,7 +504,7 @@ glm.modelspec         = model.modelspec;
 glm.modeltype         = 'glm';
 
 % clear local variables --
-clear iSn iMs ynew newonsets newdurations newmissing missingtimes 
+clear iSn iMs ynew newonsets newdurations newmissing missingtimes
 
 
 % create temporary onset functions
@@ -549,9 +555,9 @@ end;
 % create design matrix
 %-------------------------------------------------------------------------
 % create design matrix filter
-Xfilter = model.filter; 
-Xfilter.sr = glm.infos.sr; 
-Xfilter.down = 'none'; % turn off no low pass warning 
+Xfilter = model.filter;
+Xfilter.sr = glm.infos.sr;
+Xfilter.down = 'none'; % turn off no low pass warning
 
 % convolve with basis functions
 snoffsets = cumsum(tmp.snduration);
@@ -564,9 +570,9 @@ for iCond = 1:numel(names)
     iXCcol = 1;
     for iXcol = 1:size(tmp.X{iCond}, 2)
         for iBf = 1:glm.bf.bfno
-            % process each session individually 
+            % process each session individually
             for iSn = 1:numel(tmp.snduration)
-                % convolve 
+                % convolve
                 tmp.col{iSn, 1} = conv(tmp.X{iCond}(snonsets(iSn):snoffsets(iSn), iXcol), glm.bf.X(:,iBf));
                 % filter design matrix w/o downsampling
                 [sts,  tmp.col{iSn, 1}] = scr_prepdata(tmp.col{iSn, 1}, Xfilter);
