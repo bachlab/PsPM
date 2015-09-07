@@ -20,8 +20,8 @@ function fig = scr_rev_glm(modelfile, glm, plotNr)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: scr_rev_glm.m 714 2015-02-05 15:10:44Z tmoser $
-% $Rev: 714 $
+% $Id$
+% $Rev$
 
 % initialise
 % ------------------------------------------------------------------------
@@ -92,7 +92,7 @@ for i=1:length(plotNr)
                 sx = diff(XLim) / ns;
                 
                 % iterate through regressors and colors
-                corder = get(groot, 'defaultAxesColorOrder');
+                corder = get(fig(2).h, 'defaultAxesColorOrder');
                 cl = length(corder);
                 for j=1:ns
                    if j > cl
@@ -109,15 +109,15 @@ for i=1:length(plotNr)
                    y = [(j)*sy, (j)*sy];
                    y = YLim(1) + y;
                    
-                   fig(3).ax(1).p(j+1) = patch(x,y, color);
-                   set(fig(3).ax(1).p(j+1), 'EdgeColor', color, ...
+                   fig(2).ax(1).p(j+1) = patch(x,y, color);
+                   set(fig(2).ax(1).p(j+1), 'EdgeColor', color, ...
                        'FaceColor', 'none', ...
                        'Clipping', 'off', ...
                        'LineWidth', 1.5);
                    
                    % draw text
-                   fig(3).ax(1).t(j) = text(-0.2, j*sy+0.3, glm.names(j));
-                   set(fig(3).ax(1).t(j), ...
+                   fig(2).ax(1).t(j) = text(0.2, j*sy+0.4, glm.names(j));
+                   set(fig(2).ax(1).t(j), ...
                         'Color', color, ...
                         'FontSize', 7.5, ...
                         'Clipping', 'off');
@@ -138,7 +138,7 @@ for i=1:length(plotNr)
                 legend_text = {'Observed', 'Predicted', 'Residual'};
                 set(fig(3).ax(1).h, 'XTick', YTick, 'XTickLabel', YTickLabel, 'TickDir', 'out', 'YTick',[],  'FontWeight', 'Bold', 'FontSize', 10,  'TickLength', [0.005 0.025], 'XLim', [0 size(glm.Y,1)]);
                 YLim = get(fig(3).ax(1).h, 'YLim');
-                corder = get(groot, 'defaultAxesColorOrder');
+                corder = get(fig(3).h, 'defaultAxesColorOrder');
                 cl = length(corder);
                 k = 1;
                 for j=1:length(timing.onsets)
