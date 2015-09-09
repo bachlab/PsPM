@@ -191,6 +191,7 @@ end;
 infos.history{nhist + 1} = msg;
 
 %% add infos to outinfo struct
+% -------------------------------------------------------------------------
 outinfos.channel = channeli;
 
 %% save data

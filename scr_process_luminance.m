@@ -1,8 +1,8 @@
-function [sts, reg] = scr_process_luminance(ldata, sr, options)
+function [sts, out] = scr_process_luminance(ldata, sr, options)
 % function to process raw luminance data and transfer it into two nuisance
 % regressors (dilation and constriction) for glm
 %
-% [sts, reg] = scr_process_luminance(lum_data)
+% [sts, out] = scr_process_luminance(lum_data)
 %   Inputs:
 %       ldata:      luminance data as (cell of) 1x1 double
 %       sr:         sample rate in Hz of the input data
@@ -142,7 +142,10 @@ for i = 1:w
         % -----------------------------------------------------------------
 
         p = options.params.transfer;
-        transd = -(p(1) * exp(lumd * p(3)) + p(2));
+        a = p(1);
+        b = p(2);
+        c = p(3);
+        transd = -(a * exp(lumd * c) + b);
 
         % find changes
         % -----------------------------------------------------------------
@@ -151,7 +154,7 @@ for i = 1:w
         ev = diff(lumd) > 0;
         ev(end+1) = 0;
         
-        eventd = +ev;       
+        eventd = +ev;
         
         % create regressor 1 (bf1)
         % -----------------------------------------------------------------
@@ -161,6 +164,9 @@ for i = 1:w
         bf1d = zeros(n_bf, 1);
         x = linspace(0,bf_dur-offset,(bf_dur-offset)*lsr + 1)';
         
+        % a: shape
+        % b: scale
+        % A: quantifier
         p = options.params.bf.dilation;
         a = p(1);
         b = p(2);
