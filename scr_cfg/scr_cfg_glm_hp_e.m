@@ -30,6 +30,35 @@ glm_hp_e.prog = @scr_cfg_run_glm_hp_e;
 
 %% Basis function
 % change basis function 
+
+%FIR
+n         = cfg_entry;
+n.name    = 'N: Number of Time Bins';
+n.tag     = 'n';
+n.strtype = 'i';
+n.num     = [1 1];
+n.help    = {'Number of time bins.'};
+
+d         = cfg_entry;
+d.name    = 'D: Duration of Time Bins';
+d.tag     = 'd';
+d.strtype = 'r';
+d.num     = [1 1];
+d.help    = {'Duration of time bins (in seconds).'};
+
+arg        = cfg_branch;
+arg.name   = 'Arguments';
+arg.tag    = 'arg';
+arg.val    = {n, d};
+arg.help   = {''};
+
+fir        = cfg_branch;
+fir.name   = 'FIR';
+fir.tag    = 'fir';
+fir.val    = {arg};
+fir.help   = {'Uninformed finite impulse response (FIR) model: specify the number and duration of time bins to be estimated.'};
+
+
 % HPRF
 n_bf         = cfg_entry;
 n_bf.name    = 'Number of basis functions';
@@ -49,7 +78,7 @@ bf        = cfg_choice;
 bf.name   = 'Basis Function';
 bf.tag    = 'bf';
 bf.val    = {hprf_e};
-bf.values = {hprf_e};
+bf.values = {hprf_e, fir};
 bf.help   = {['Basis functions. Standard is to use a canonical evoked heart period response function ' ...
     '(HPRF_E) with time derivative for later reconstruction of the response peak.']};
 

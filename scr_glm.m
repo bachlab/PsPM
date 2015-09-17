@@ -454,8 +454,10 @@ end;
 
 % normalise if desired --
 if model.norm
-    % omitnan from shiftbf
-    Y = (Y - mean(Y, 'omitnan'))/std(Y, 'omitnan');
+    % ignore nan values
+    no_nan = ~isnan(Y);
+    % normalise
+    Y = (Y - mean(Y(no_nan)))/std(Y(no_nan));
 end;
 Y = Y(:);
 
