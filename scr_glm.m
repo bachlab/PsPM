@@ -375,13 +375,23 @@ for iSn = 1:nFile
     model.filter.sr = sr(iSn);
     % find NaN values
     oldy = y{iSn};
-    nan_idx = isnan(oldy);
+    % find which fields are nan after interoplation and prepdata
+    nan_idx = find(isnan(oldy));
     % interpolate y data
     [sts, oldy] = scr_interpolate(oldy);
     if sts ~= 1, return; end;
     % filter data
     [sts, newy, newsr] = scr_prepdata(oldy, model.filter);
     if sts ~= 1, return; end;
+    
+    % if has been downsampled adjust nan_idx
+    if numel(oldy) ~= numel(newy)
+        nan_idx = round(nan_idx*(model.filter.down/model.filter.sr));
+        % find duplicates
+        dupli = diff(nan_idx) == 0;
+        % remove duplicates
+        nan_idx(dupli) = [];
+    end;
     
     % concatenate data
     Y=[Y; NaN(newsr * model.bf.shiftbf, 1); newy(:)];
