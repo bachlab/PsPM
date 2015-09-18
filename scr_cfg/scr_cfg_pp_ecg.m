@@ -79,7 +79,7 @@ ecg2hb_opt.val      = {ecg2hb_minhr, ecg2hb_maxhr, ecg2hb_peakmaxhr, ...
     ecg2hb_semi, ecg2hb_twthresh};
 ecg2hb_opt.help     = {''};
 
-ecg2hb              = cfg_branch;
+ecg2hb              = cfg_exbranch;
 ecg2hb.name         = 'Convert ECG to Heart Beat';
 ecg2hb.tag          = 'ecg2hb';
 ecg2hb.help         = {'Convert ECG data into Heart beat time stamps.'};
@@ -107,14 +107,23 @@ hb2hp_chan_nr.strtype = 'i';
 hb2hp_chan_nr.num     = [1 1];
 hb2hp_chan_nr.help    = {''};
 
+hb2hp_proc_chan         = cfg_entry;
+hb2hp_proc_chan.name    = 'Processed channel';
+hb2hp_proc_chan.tag     = 'proc_chan';
+hb2hp_proc_chan.strtype = 'i';
+hb2hp_proc_chan.num     = [1 1];
+hb2hp_proc_chan.help    = {['Convert a channel already preprocessed with ', ...
+    'ECG to Heart beat. Specify the preprocessed channel with a number ', ...
+    'corresponding to the position in the list of preprocessings.']};
+
 hb2hp_chan          = cfg_choice;
 hb2hp_chan.name     = 'Channel';
 hb2hp_chan.tag      = 'chan';
 hb2hp_chan.help     = {'Number of Heart Beat channel (default: first Heart Beat channel).'};
 hb2hp_chan.val     = {hb2hp_chan_def};
-hb2hp_chan.values  = {hb2hp_chan_def, hb2hp_chan_nr};
+hb2hp_chan.values  = {hb2hp_chan_def, hb2hp_chan_nr, hb2hp_proc_chan};
 
-hb2hp               = cfg_branch;
+hb2hp               = cfg_exbranch;
 hb2hp.name          = 'Convert Heart Beat to Heart Period';
 hb2hp.tag           = 'hb2hp';
 hb2hp.val           = {hb2hp_sr, hb2hp_chan};

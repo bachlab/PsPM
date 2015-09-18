@@ -1,4 +1,4 @@
-function [sts,pt_debug] = scr_ecg2hb(fn, chan, options)
+function [sts,infos] = scr_ecg2hb(fn, chan, options)
 % scr_ecg2hb identifies the position of QRS complexes in ECG data and
 % writes them as heart beat channel into the datafile. This function
 % implements the algorithm by Pan & Tompkins (1985) with some adjustments.
@@ -14,7 +14,7 @@ function [sts,pt_debug] = scr_ecg2hb(fn, chan, options)
 %                ... minHR - sets minimal HR [def. 20bpm].
 %                ... maxHR - sets maximal HR [def. 200bpm].
 %                ... debugmode - runs the algorithm in debugmode
-%                    (additional results in debug variable 'pt_debug')
+%                    (additional results in debug variable 'infos.pt_debug')
 %                    and plots a graph that allows quality checks
 %                    [def. 0].
 %                ... twthresh - sets the threshold to perform the twave
@@ -104,6 +104,8 @@ function [sts,pt_debug] = scr_ecg2hb(fn, chan, options)
 sts = -1;
 global settings;
 if isempty(settings), scr_init; end;
+infos = struct();
+
 
 % check input
 % -------------------------------------------------------------------------
@@ -203,7 +205,7 @@ end
 
 % get data
 % -------------------------------------------------------------------------
-[nsts, infos, data] = scr_load_data(fn, chan);
+[nsts, dinfo, data] = scr_load_data(fn, chan);
 if nsts == -1, return; end;
 if numel(data) > 1
     fprintf('There is more than one ECG channel in the data file. Only the first of these will be analysed.');
@@ -348,9 +350,13 @@ else
 end;
 
 o.msg.prefix = 'QRS detection with Pan & Tompkins algorithm and HB-timeseries';
-nsts = scr_write_channel(fn, newdata, action, o);
+[nsts, write_info] = scr_write_channel(fn, newdata, action, o);
 if nsts == -1, return; end;
+infos.channel = write_info.channel;
+infos.pt_debug = pt_debug;
 sts = 1;
+
+
 return;
 
 % -------------------------------------------------------------------------

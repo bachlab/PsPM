@@ -1,4 +1,4 @@
-function sts = scr_hb2hp(fn, sr, chan, options)
+function [sts, infos] = scr_hb2hp(fn, sr, chan, options)
 % scr_hb2hp transforms heart beat data into an interpolated heart rate
 % signal and adds this as an additional channel to the data file
 % 
@@ -44,7 +44,7 @@ end;
 
 % get data
 % -------------------------------------------------------------------------
-[nsts, infos, data] = scr_load_data(fn, chan);
+[nsts, dinfos, data] = scr_load_data(fn, chan);
 if nsts == -1, return; end;
 if numel(data) > 1
     fprintf('There is more than one heart beat channel in the data file. Only the first of these will be analysed.');
@@ -56,7 +56,7 @@ end;
 hb  = data{1}.data;
 ibi = diff(hb);
 hp = 1000 * ibi; % in ms
-newt = (1/sr):(1/sr):infos.duration;
+newt = (1/sr):(1/sr):dinfos.duration;
 newhp = interp1(hb(2:end), hp, newt, 'linear' ,'extrap'); % assign hr to following heart beat 
 
 
@@ -74,9 +74,8 @@ else
     action = 'add';
 end;
 o.msg.prefix = 'Heart beat converted to heart period and';
-scr_write_channel(fn, newdata, action, o);
-
-
+[sts, winfos] = scr_write_channel(fn, newdata, action, o);
 if nsts == -1, return; end;
+infos.channel = winfos.channel;
 
 sts = 1;

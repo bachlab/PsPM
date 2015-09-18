@@ -5,8 +5,10 @@ function out = scr_cfg_run_pp_ecg(job)
 % $Id$
 % $Rev$
 
-fn = job.datafile;
+fn = job.datafile{1};
 replace = job.replace_chan;
+
+outputs = cell(size(job.pp_type));
 
 for i=1:numel(job.pp_type)
     pp_fields = fields(job.pp_type{i});
@@ -33,21 +35,34 @@ for i=1:numel(job.pp_type)
                 opt.replace = replace;
                 
                 % call function
-                scr_ecg2hb(fn, chan, opt);
+                [sts, winfo] = scr_ecg2hb(fn, chan, opt);
             case 'hb2hp'
                 sr = job.pp_type{i}.hb2hp.sr;
                 
                 if isfield(job.pp_type{i}.hb2hp.chan, 'chan_nr')
                     chan = job.pp_type{i}.hb2hp.chan.chan_nr;
-                elseif isfield(job.pp_type{i}.ecg2hb.chan, 'chan_def')
+                elseif isfield(job.pp_type{i}.hb2hp.chan, 'proc_chan')
+                    pchan = job.pp_type{i}.hb2hp.chan.proc_chan;
+                    if pchan > numel(outputs)
+                        warning('Argument for processed channel is out of range.');
+                        return;
+                    elseif pchan >= i
+                        warning('Processed channel is not yet processed, cannot continue.');
+                        return;
+                    else
+                        chan = outputs{pchan};
+                    end;
+                elseif isfield(job.pp_type{i}.hb2hp.chan, 'chan_def')
                     chan = 'hb';
                 end;
                 
                 opt = struct(); 
                 opt.replace = replace;
                 
-                scr_hb2hp(fn, sr, chan, opt);
+                [sts, winfo] = scr_hb2hp(fn, sr, chan, opt);
         end;
+        
+        outputs{i} = winfo.channel;
         
     end; 
 end;
