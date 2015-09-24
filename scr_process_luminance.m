@@ -2,22 +2,22 @@ function [sts, out] = scr_process_luminance(ldata, sr, options)
 % function to process raw luminance data and transfer it into two nuisance
 % regressors (dilation and constriction) for glm
 %
-% [sts, out] = scr_process_luminance(lum_data)
+% [sts, out] = scr_process_luminance(ldata, sr, options)
 %   Inputs:
 %       ldata:      luminance data as (cell of) 1x1 double
 %       sr:         sample rate in Hz of the input data
 %       options:    struct with optional settings
-%           .params     struct of different params for the different
-%                       transfer steps
-%               .transfer   params for the transfer function
-%               .bf         settings for the basis functions
-%                   .duration       duration of the basis functions in s
-%                   .offset         offset in s
-%                   .dilation       params for the gamma function in the dilation
-%                                   basis function
-%                   .constriction   params for the gamma function in the second
-%                                   constrition basis function
-%
+%           .transfer   params for the transfer function
+%           
+%           .bf         settings for the basis functions
+%               .duration       duration of the basis functions in s
+%               .offset         offset in s
+%               .dilation       options for the dilation basis function
+%                   .fhandle        function handle to the dilation
+%                                   response function
+%               .constriction       
+%                   .fhandle        function handle to the constriction
+%                                   response function
 %           .fn         filename; if specified out.reg will be saved to
 %                       a file with filename options.fn into the 
 %                       variable 'R'
@@ -70,39 +70,58 @@ if nargin < 3
     options = struct();
 end;
 
-if ~isfield(options, 'params')
-    options.params = struct();
-    if ~isfield(options.params, 'transfer')
-        % [A, B, C]
-        options.params.transfer = [30.8093436443031,-1.02893596973461,-0.465448527907005];
-    end;
-    if ~isfield(options.params, 'bf')
-        options.params.bf = struct();
-        
-        if ~isfield(options.params.bf, 'dilation')
-            options.params.bf.dilation = [2.36014158356245,0.283916258442016,0.684370683567310];
-        end;
-        
-        if ~isfield(options.params.bf, 'constriction')
-            options.params.bf.constriction = [3.01020996411611,0.210623941429870,0.409361374423507];
-        end;
-        
-        if ~isfield(options.params.bf, 'duration')
-            options.params.bf.duration = 20;
-        end;
-          
-        if ~isfield(options.params.bf, 'offset')
-            options.params.bf.offset = 0.2;
-        end;
-    end;
+% setup default values
+
+if ~isfield(options, 'transfer')
+    % [A, B, C]
+    options.transfer = [30.8093436443031,-1.02893596973461,-0.465448527907005];
 end;
 
+if ~isfield(options, 'bf')
+    options.bf = struct();
+end;
 
-if ~iscell(ldata) && ~iscell(sr)
-    ldata = {ldata};
-    sr = {sr};
-else
-    warning('ID:invalid_input', '');
+if ~isfield(options.bf, 'duration')
+    options.bf.duration = 20;
+end;
+
+if ~isfield(options.bf, 'offset')
+    options.bf.offset = 0.2;
+end;
+
+if ~isfield(options.bf, 'dilation')
+    options.bf.dilation = struct();
+end;
+
+if ~isfield(options.bf, 'constriction')
+    options.bf.constriction = struct();
+end;
+
+if ~isfield(options.bf.dilation, 'fhandle')
+    options.bf.dilation.fhandle = @scr_bf_ldrf_gm;
+end;
+
+if ~isfield(options.bf.constriction, 'fhandle')
+    options.bf.constriction.fhandle = @scr_bf_lcrf_gm;
+end;
+    
+if ~isa(options.bf.constriction.fhandle, 'function_handle')
+    warning('ID:invalid_input', ['options.bf.constriction.fhandle has', ...
+        ' to be a valid function handle.']); return;
+elseif ~isa(options.bf.dilation.fhandle, 'function_handle')
+    warning('ID:invalid_input', ['options.bf.dilation.fhandle has', ...
+        ' to be a valid function handle.']); return;
+end;
+
+% if one is not a cell
+if ~(iscell(ldata) && iscell(sr))
+    % if both are not cells
+    if ~iscell(ldata) && ~iscell(sr)
+        ldata = {ldata};
+        sr = {sr};
+    else
+        warning('ID:invalid_input', 'If either ldata or sr is a cell the other has to be a cell too.'); return;
+    end;
 end;
 
 % cycle through data 
@@ -124,7 +143,7 @@ for i = 1:w
         end;
         
         lsr = sr{i,j};
-        n_bf = options.params.bf.duration*lsr;
+        n_bf = options.duration*lsr;
         
         lumd = [repmat(lumd(1),n_bf,1);lumd];
                 
@@ -141,7 +160,7 @@ for i = 1:w
         % transfer luminance data into steady state data
         % -----------------------------------------------------------------
 
-        p = options.params.transfer;
+        p = options.transfer;
         a = p(1);
         b = p(2);
         c = p(3);
@@ -157,35 +176,28 @@ for i = 1:w
         eventd = +ev;
         
         % create regressor 1 (bf1)
-        % -----------------------------------------------------------------
-        offset = options.params.bf.offset;
-        bf_dur = options.params.bf.duration;
+        % -----------------------------------------------------------------        
+        o = struct();
+        o.offset = options.offset;
+        o.duration = options.duration;
         
         bf1d = zeros(n_bf, 1);
-        x = linspace(0,bf_dur-offset,(bf_dur-offset)*lsr + 1)';
-        
-        % a: shape
-        % b: scale
-        % A: quantifier
-        p = options.params.bf.dilation;
-        a = p(1);
-        b = p(2);
-        A = p(3);
-        gl = gammaln(a);
-        
-        bf1d(offset*lsr:end) = A * exp(log(x).*(a-1) - gl - (x)./b - log(b)*a);
+        bf1d(:) = feval(options.bf.dilation.fhandle, lsr^-1, o);
+      
                 
         % create regressor 2 (bf2)
         % -----------------------------------------------------------------
         % bf2: constriction      
         bf2d = zeros(n_bf, 1);
-        p = options.params.bf.constriction;
-        a = p(1);
-        b = p(2);
-        A = p(3);
-        gl = gammaln(a);
+        bf2d(:) = feval(options.bf.constriction.fhandle, lsr^-1, o);
         
-        bf2d(offset*lsr:end) = A * exp(log(x).*(a-1) - gl - (x)./b - log(b)*a);        
+        % scale data max(abs(.)) should be 1 and min(.) should be 0
+        % -----------------------------------------------------------------
+        bf1d = bf1d - min(bf1d);
+        bf2d = bf2d - min(bf2d);
+        
+        bf1d = bf1d/max(abs(bf1d));
+        bf2d = bf2d/max(abs(bf2d));
         
         % convolve ready state with bf's
         % -----------------------------------------------------------------
