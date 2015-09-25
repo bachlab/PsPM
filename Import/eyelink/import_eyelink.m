@@ -94,8 +94,10 @@ for i=1:numel(eyesObserved)
     
     if strcmpi(eyesObserved(i), 'L')
         corr = 0;
+        idx = 8;
     else
         corr = 2;
+        idx = 9;
     end;
     
     sblink = 1 + corr;
@@ -104,13 +106,13 @@ for i=1:numel(eyesObserved)
         
     for k = 1:length(str_sacc_pos{sblink})    
         if str_sacc_pos{eblink}(k) + blink_offset > size( datanum, 1 ) && str_sacc_pos{sblink}(k) - blink_offset <= 0
-            datanum(1 : end, 8) = 1;
+            datanum(1 : end, idx) = 1;
         elseif str_sacc_pos{eblink}(k) + blink_offset > size( datanum, 1 )
-            datanum(str_sacc_pos{sblink}(k) - blink_offset : end, 8) = 1;
+            datanum(str_sacc_pos{sblink}(k) - blink_offset : end, idx) = 1;
         elseif str_sacc_pos{sblink}(k) - blink_offset <= 0
-            datanum(1 : str_sacc_pos{eblink}(k) + blink_offset, 8) = 1;
+            datanum(1 : str_sacc_pos{eblink}(k) + blink_offset, idx) = 1;
         else
-            datanum(str_sacc_pos{sblink}(k) - blink_offset : str_sacc_pos{eblink}(k) + blink_offset, 8) = 1;
+            datanum(str_sacc_pos{sblink}(k) - blink_offset : str_sacc_pos{eblink}(k) + blink_offset, idx) = 1;
         end
     end;
     

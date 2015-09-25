@@ -20,6 +20,8 @@ function [sts, outdata] = scr_interpolate(indata, options)
 %       .channels       if passed, should have the same size as indata and
 %                       contains for each entry in indata the channel(s) to 
 %                       be interpolated.
+%       .replace_channels if true, the original channels will be replaced
+%                       with the interpolated data
 %       .newfile        if false the data will be added to the file where
 %                       the data was loaded from. if true the data will be
 %                       written to a new file prepended with 'i'.
@@ -55,6 +57,7 @@ try options.overwrite; catch, options.overwrite = 0; end;
 try options.method; catch, options.method = 'linear'; end;
 try options.channels; catch, options.channels = []; end;
 try options.newfile; catch, options.newfile = false; end;
+try options.replace_channels; catch, options.replace_channels = false; end;
 try options.extrapolate; catch, options.extrapolate = false; end;
 try options.dont_ask_overwrite; catch, options.dont_ask_overwrite = false; end;
 
@@ -87,6 +90,9 @@ elseif ~islogical(options.extrapolate) && ~isnumeric(options.extrapolate)
     return;
 elseif ~islogical(options.overwrite) && ~isnumeric(options.overwrite)
     warning('ID:invalid_input', 'options.overwrite must be numeric or logical');
+    return;
+elseif ~islogical(options.replace_channels) && ~isnumeric(options.replace_channels)
+    warning('ID:invalid_input', 'options.replace_channels must be numeric or logical');
     return;
 end;
 
@@ -202,7 +208,9 @@ for d=1:numel(D)
         if s_overlap || e_overlap
             if ~options.extrapolate
                 warning('ID:option_disabled', ['Cannot interpolate without extrapolating,', ...
-                    ' because data overlaps at the beginning or at the end.']);
+                    ' because out-of-range data overlaps at the beginning or at the end.', ...
+                    ' Either turn on extrapolation or use scr_trim to cut away ', ...
+                    'out-of-range values at the beginning or end of the data.']);
                 return;
             elseif s_overlap && strcmpi(options.method, 'previous')
                 warning('ID:out_of_range', ['Cannot extrapolate with ', ...
@@ -259,9 +267,18 @@ for d=1:numel(D)
                     outdata{d} = newdatafile;
                 end;
             else
+                o = struct();
+                
                 % add to existing file 
+                if ~options.replace_channels
+                    w_action = 'add';
+                else
+                    w_action = 'replace';
+                    o.channel = work_chans;
+                end;
+                    
                 o.msg.prefix = 'Interpolated channel';
-                [sts, infos] = scr_write_channel(fn, savedata.data(work_chans), 'add', o);
+                [sts, infos] = scr_write_channel(fn, savedata.data(work_chans), w_action, o);
                 
                 % added channel ids are in infos.channel
                 outdata{d} = infos.channel;
