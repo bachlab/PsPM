@@ -212,7 +212,7 @@ if options.addChannel
     end;
     
     snd_events.header.sr = 1;
-    snd_events.header.chantype = 'snd';
+    snd_events.header.chantype = 'marker';
     snd_events.header.units ='events';
     [sts, ininfos] = scr_write_channel(file, snd_events, 'add');
     outinfos.channel = ininfos.channel;

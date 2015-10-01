@@ -94,6 +94,9 @@ new_corrected_chan.tag     = 'new_corrected_chan';
 new_corrected_chan.val     = {false};
 new_corrected_chan.labels  = {'No', 'Yes'};
 new_corrected_chan.values  = {false, true};
+new_corrected_chan.help    = {['Create new data channel which contains ', ...
+    'only marker onsets which could have been assigned to a ', ...
+    'marker in the specified marker channel.']};
 
 %% Marker channel
 mrk_chan_def         = cfg_const;
@@ -131,6 +134,8 @@ diagnostic        = cfg_branch;
 diagnostic.name   = 'Diagnostic';
 diagnostic.tag    = 'diagnostic';
 diagnostic.val = {diag_output, new_corrected_chan, marker_chan, max_delay};
+diagnostic.help   = {['Analyze delays between existing marker channel ', ... 
+    'and detected sound onsets.']};
 
 %% Output
 output          = cfg_choice;
