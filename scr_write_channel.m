@@ -71,6 +71,8 @@ elseif ischar(options.channel) && ~any(strcmpi(options.channel,{settings.chantyp
     warning('ID:invalid_input', 'options.channel is not a valid channel type.'); return;
 elseif isnumeric(options.channel) && (any(mod(options.channel,1)) || any(options.channel<0))
     warning('ID:invalid_input', 'options.channel must be a positive integer or a channel type.'); return;
+elseif ~isnumeric(options.channel) && ~ischar(options.channel)
+    warning('ID:invalid_input', 'options.channel must contain valid channel types or positive integers.'); return;
 elseif isempty(newdata)
     if ~strcmpi(action, 'delete')
         warning('ID:invalid_input', 'newdata is empty. Got nothing to %s.', action); return;
@@ -79,13 +81,6 @@ elseif isempty(newdata)
     end;
 elseif ~isempty(newdata) && ~isstruct(newdata) && ~iscell(newdata)
        warning('ID:invalid_input', 'newdata must either be a newdata structure or empty'); return;
-end;
-
-%% Channel deletion conditions
-% -------------------------------------------------------------------------
-if ~strcmpi(action, 'delete') && (isnumeric(options.channel) ...
-    && numel(options.channel) > 1)
-    warning('ID:invalid_input', 'Multiple channels selection only possible while deleting.'); return;
 end;
 
 %% Process other options
@@ -100,21 +95,22 @@ if nsts == -1, return; end;
 
 %% Find channel according to action
 % -------------------------------------------------------------------------
-channels = [];
+% channels in file
+fchannels = [];
 if ~strcmpi(action, 'add')
     % Search for channel(s)
-    channels = cellfun(@(x) x.header.chantype,data,'un',0);
+    fchannels = cellfun(@(x) x.header.chantype,data,'un',0);
     if ischar(options.channel)
         if strcmpi(options.delete,'all')
-            channeli = find(strcmpi(options.channel,channels));
+            channeli = find(strcmpi(options.channel,fchannels));
         else
-            channeli = find(strcmpi(options.channel,channels),1,options.delete);
+            channeli = find(strcmpi(options.channel,fchannels),1,options.delete);
         end
     elseif options.channel == 0
-        channeli = find(strcmpi(newdata.header.chantype,channels),1,'last');
+        channeli = find(strcmpi(newdata.header.chantype,fchannels),1,'last');
     else
-        channel = options.channel(:);
-        if any(channel > numel(channels))
+        channel = options.channel;
+        if any(channel > numel(fchannels))
             warning('ID:invalid_input', 'channel is larger than channel count in file'); return;
         else
             channeli = channel;
@@ -142,8 +138,8 @@ if strcmpi(action, 'add')
         chantypes = {newdata.header.chantype};
     end;
     
-    channels = cell(1,numel(data) + numel(newdata));
-    channels(channeli) = chantypes;
+    fchannels = cell(1,numel(data) + numel(newdata));
+    fchannels(channeli) = chantypes;
 end;
 
 %% Manage message
@@ -166,7 +162,7 @@ else
     msg = '';
     for i=channeli'
         % translate prefix
-        p = sprintf(prefix, i, channels{i});
+        p = sprintf(prefix, i, fchannels{i});
         msg = [msg, p, sprintf(' %s on %s\n; ', v, date)];
     end;
     msg(end-1:end)='';

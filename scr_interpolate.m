@@ -274,7 +274,7 @@ for d=1:numel(D)
                     w_action = 'add';
                 else
                     w_action = 'replace';
-                    o.channel = work_chans;
+                    o.channel = find(work_chans);
                 end;
                     
                 o.msg.prefix = 'Interpolated channel';
