@@ -14,7 +14,7 @@ f = fieldnames(job.output);
 switch f{1}
     case 'new_chan'
         
-        options.addChannel = true;
+        options.addchannel = true;
         options.diagnostics = false;
         [sts, infos] = scr_find_sounds(file, options);
         out = infos.channel;
@@ -22,8 +22,8 @@ switch f{1}
     case 'diagnostic'
         d = job.output.diagnostic;
         if d.new_corrected_chan
-            options.addChannel = true;
-            options.channelOutput = 'corrected';
+            options.addchannel = true;
+            options.channeloutput = 'corrected';
         end;
         
         if isfield(d.marker_chan, 'marker_nr')

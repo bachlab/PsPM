@@ -6,10 +6,10 @@ function [sts, infos] = scr_find_sounds(file, options)
 %   Arguments
 %       file : path and filename of the pspm file holding the sound
 %       options : struct with following possible values
-%           addChannel : [true/FALSE] adds a marker channel to the original
+%           addchannel : [true/FALSE] adds a marker channel to the original
 %               file with the onset time of the detected sound events and
 %               the duration of the sound event (in markerinfo)
-%           channelOutput : ['all'/'corrected'] (default: 'all') defines
+%           channeloutput : ['all'/'corrected'] (default: 'all') defines
 %               whether all sound markers or only sound markers which have
 %               been assigned to a marker from the trigger channel should
 %               be added as channel to the original file. 'corrected'
@@ -49,7 +49,7 @@ function [sts, infos] = scr_find_sounds(file, options)
 %           .snd_markers : vector of begining of sound sound events
 %           .delays : vector of delays between markers and detected sounds. 
 %                Only available with option 'diagnostics' turned on.
-%           .channel: number of added chan, when options.addChannel == true
+%           .channel: number of added chan, when options.addchannel == true
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2015 Samuel Gerster (University of Zurich)
@@ -57,15 +57,21 @@ function [sts, infos] = scr_find_sounds(file, options)
 % $Id$
 % $Rev$
 
+% initialise
+% -------------------------------------------------------------------------
+global settings;
+if isempty(settings), scr_init; end;
+
+sts = -1;
 % Check argument
 if ~exist(file,'file')
-    warning('ID:file_not_found', 'File %s was not found. Aborted.',file); sts=-1; return;
+    warning('ID:file_not_found', 'File %s was not found. Aborted.',file); return;
 end
 
 fprintf('Processing sound in file %s\n',file);
 
 % Process options
-try options.addChannel; catch, options.addChannel = false; end;
+try options.addchannel; catch, options.addchannel = false; end;
 try options.diagnostics; catch, options.diagnostics = true; end;
 try options.maxdelay; catch, options.maxdelay = 3; end;
 try options.plot; catch, options.plot = false; end;
@@ -73,25 +79,31 @@ try options.resample; catch, options.resample = 1; end;
 try options.sndchannel; catch, options.sndchannel = 0; end;
 try options.threshold; catch, options.threshold = 0.1; end;
 try options.trigchannel; catch, options.trigchannel = 0; end;
-try options.channelOutput; catch; options.channelOutput = 'all'; end;
+try options.channeloutput; catch; options.channeloutput = 'all'; end;
 
 if options.plot
     options.diagnostics = true;
 end
 
 if ~isnumeric(options.resample) || mod(options.resample,1) || options.resample<1
-    options.resample = 1;
-    warning('Option interpolate is not an integer or negative. Option set to default (%d)',options.resample)
-end
-
-if ~isnumeric(options.maxdelay) || options.maxdelay < 0
-    options.maxdelay = 3;
-    warning('Option maxdelay is not a number or negative. Option set to default (%4.2f s)',options.maxdelay)
-end
-
-if mod(options.sndchannel,1)
-    options.sndchannel = 0;
-    warning('Option channel is not an integer. Option set to default.')
+    warning('ID:invalid_input', 'Option resample is not an integer or negative.'); return;
+elseif ~isnumeric(options.maxdelay) || options.maxdelay < 0
+    warning('ID:invalid_input', 'Option maxdelay is not a number or negative.'); return;
+elseif ~isnumeric(options.threshold) || options.threshold < 0
+    warning('ID:invalid_input', 'Option threshold is not a number or negative.'); return;
+elseif ~isnumeric(options.sndchannel) || mod(options.sndchannel,1) || options.sndchannel < 0
+    warning('ID:invalid_input', 'Option sndchannel is not an integer.'); return;
+elseif ~isnumeric(options.trigchannel) || mod(options.trigchannel,1) || options.trigchannel < 0
+    warning('ID:invalid_input', 'Option trichannel is not an integer.'); return;
+elseif ~islogical(options.addchannel) && ~isnumeric(options.addchannel)
+    warning('ID:invalid_input', 'Option addchannel is not numeric or logical'); return;
+elseif ~islogical(options.diagnostics) && ~isnumeric(options.diagnostics)
+    warning('ID:invalid_input', 'Option diagnostics is not numeric or logical'); return;
+elseif ~islogical(options.plot) && ~isnumeric(options.plot)
+    warning('ID:invalid_input', 'Option plot is not numeric or logical'); return;
+elseif ~strcmpi(options.channeloutput, 'all') && ~strcmpi(options.channeloutput, 'corrected')
+    warning('ID:invalid_input', 'Option channeloutput must be either ''all'' or ''corrected''.');
+    return;
 end
 
 % call it outinfos not to get confused
@@ -100,7 +112,7 @@ outinfos = struct();
 % Load Data
 [sts, ininfo, indata] = scr_load_data(file);
 if sts == -1
-    warning('ID:invalid_input', 'Failed loading file %s.', file);
+    warning('ID:invalid_input', 'Failed loading file %s.', file); return;
 end;
 
 %% Sound
@@ -111,6 +123,8 @@ if ~options.sndchannel
         warning('ID:no_sound_chan', 'No sound channel found. Aborted'); sts=-1; return;
     end
     snd = indata{sndi};
+elseif options.sndchannel > numel(indata)
+    warning('ID:out_of_range', 'Option sndchannel is out of the data range.'); return;
 else
     snd = indata{options.sndchannel};
 end;
@@ -159,7 +173,7 @@ noevent_i = find((snd_fe-snd_re)<0.01);
 snd_re(noevent_i)=[];
 snd_fe(noevent_i)=[];
 
-% keep current snd_re for channelOutput 'all'
+% keep current snd_re for channeloutput 'all'
 snd_re_all = snd_re;
 snd_fe_all = snd_fe;
 
@@ -171,6 +185,8 @@ if options.diagnostics
         if ~any(mkri)
             warning('ID:no_marker_chan', 'No marker channel found. Aborted'); sts=-1; return;
         end
+    elseif options.trigchannel > numel(indata)
+        warning('ID:out_of_range', 'Option trigchannel is out of the data range.'); return;     
     else
         mkri=options.trigchannel;
     end
@@ -201,9 +217,9 @@ if options.diagnostics
 end
 
 %% Save as new channel
-if options.addChannel
+if options.addchannel
     % Save the new channel
-    if strcmpi(options.channelOutput, 'all')
+    if strcmpi(options.channeloutput, 'all')
         snd_events.data = snd_re_all;
         snd_events.markerinfo.value = snd_fe_all-snd_re_all;
     else
@@ -211,6 +227,8 @@ if options.addChannel
         snd_events.markerinfo.value = snd_fe-snd_re;
     end;
     
+    % marker channels have sr = 1 (because marker events are specified in
+    % seconds)
     snd_events.header.sr = 1;
     snd_events.header.chantype = 'marker';
     snd_events.header.units ='events';
