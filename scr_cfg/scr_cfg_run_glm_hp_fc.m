@@ -23,6 +23,7 @@ end;
 
 % set modality
 model.modality = 'hp';
+model.modelspec = 'hp_fc';
 
 out = scr_glm(model, options);
 if exist('out', 'var') && isfield(out, 'modelfile')
