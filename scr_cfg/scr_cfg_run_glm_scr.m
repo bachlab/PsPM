@@ -7,7 +7,8 @@ function out = scr_cfg_run_glm_scr(job)
 global settings
 if isempty(settings), scr_init; end;
 
-params = scr_cfg_run_glm(job);
+def_filter = settings.glm(1).filter;
+params = scr_cfg_run_glm(job, def_filter);
 
 % basis function
 bf = fieldnames(job.bf);
@@ -26,6 +27,7 @@ options = params.options;
 
 % set modality
 model.modality = 'scr';
+model.modelspec = 'scr';
 
 out = scr_glm(model, options);
 if exist('out', 'var') && isfield(out, 'modelfile')

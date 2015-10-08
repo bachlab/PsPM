@@ -1,4 +1,4 @@
-function [params] = scr_cfg_run_glm(job)
+function [params] = scr_cfg_run_glm(job, def_filter)
 % Gets together model and appropriate options and passes them back to
 % scr_cfg_run_glm_<modality> which then calls the scr_glm function after
 % the appropriate parameters have been passed/changed.
@@ -80,12 +80,12 @@ model.norm = job.norm;
 
 % filter
 if isfield(job.filter,'def')
-    model.filter = settings.glm(1,1).filter;
+    model.filter = def_filter;
 else
     % lowpass
     if isfield(job.filter.edit.lowpass,'disable')
         model.filter.lpfreq = NaN;
-        model.filter.lporder = settings.glm(1,1).filter.lporder;
+        model.filter.lporder = def_filter.lporder;
     else
         model.filter.lpfreq = job.filter.edit.lowpass.enable.freq;
         model.filter.lporder = job.filter.edit.lowpass.enable.order;
@@ -93,7 +93,7 @@ else
     % highpass
     if isfield(job.filter.edit.highpass,'disable')
         model.filter.hpfreq = NaN;
-        model.filter.hporder = settings.glm(1,1).filter.hporder;
+        model.filter.hporder = def_filter.hporder;
     else
         model.filter.hpfreq = job.filter.edit.highpass.enable.freq;
         model.filter.hporder = job.filter.edit.highpass.enable.order;

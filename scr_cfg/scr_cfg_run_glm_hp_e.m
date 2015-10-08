@@ -7,7 +7,8 @@ function out = scr_cfg_run_glm_hp_e(job)
 global settings
 if isempty(settings), scr_init; end;
 
-params = scr_cfg_run_glm(job);
+def_filter = settings.glm(2).filter;
+params = scr_cfg_run_glm(job, def_filter);
 
 % get parameters
 model = params.model;
