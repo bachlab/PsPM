@@ -102,8 +102,11 @@ function glm = scr_glm(model, options)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: scr_glm.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
+
+% function revision
+rev = '$Rev$';
 
 % initialise & user output
 % -------------------------------------------------------------------------
@@ -512,6 +515,7 @@ glm.timing.pmod       = pmod;
 glm.modality          = model.modality;
 glm.modelspec         = model.modelspec;
 glm.modeltype         = 'glm';
+glm.revision          = rev;
 
 % clear local variables --
 clear iSn iMs ynew newonsets newdurations newmissing missingtimes

@@ -83,8 +83,11 @@ function dcm = scr_dcm(model, options)
 % PsPM 3.0
 % (c) 2010-2015 Dominik R Bach (WTCN, UZH)
 
-% $Id: scr_dcm.m 702 2015-01-22 15:06:14Z tmoser $  
-% $Rev: 702 $
+% $Id$  
+% $Rev$
+
+% function revision
+rev = '$Rev$';
 
 % initialise & set output
 % ------------------------------------------------------------------------
@@ -430,6 +433,7 @@ dcm.options = options;
 dcm.warnings = warnings;
 dcm.modeltype = 'dcm';
 dcm.modality = settings.modalities.dcm;
+dcm.revision = rev;
 
 if ~options.nosave
     save(model.modelfile, 'dcm');

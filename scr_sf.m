@@ -55,12 +55,14 @@ function outfile = scr_sf(model, options)
 % $Id$
 % $Rev$
 
+% function revision
+rev = '$Rev$';
+
 % ------------------------------------------------------------------------
 % DEVELOPERS NOTE
 % the output also contains a field .time that contains the inversion time
 % in ms (for DCM and MP)
 % ------------------------------------------------------------------------
-
 
 % initialise
 % ------------------------------------------------------------------------
@@ -269,6 +271,7 @@ for iFile = 1:numel(model.datafile)
     sf.options = options;
     sf.modeltype = 'sf';
     sf.modality = settings.modalities.sf;
+    sf.revision = rev;
     
     save(model.modelfile{iFile}, 'sf');
     outfile = model.modelfile(iFile);
