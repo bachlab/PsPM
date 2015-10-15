@@ -161,12 +161,14 @@ snd_pres = (c(1:end-n_pad) & c(n_pad+1:end));
 snd_re = t(conv([1,-1],snd_pres(1:end-1)+0)>0);
 % Find falling edges
 snd_fe = t(conv([1,-1],snd_pres(1:end-1)+0)<0);
-% Start with a rising and end with a falling edge
-if snd_re(1)>snd_fe(1)
-    snd_re = snd_re(2:end);
-end
-if snd_fe(end) < snd_re(end)
-    snd_fe = snd_fe(1:end-1);
+if numel(snd_re) ~= 0 && numel(snd_fe) ~= 0
+    % Start with a rising and end with a falling edge
+    if snd_re(1)>snd_fe(1)
+        snd_re = snd_re(2:end);
+    end
+    if snd_fe(end) < snd_re(end)
+        snd_fe = snd_fe(1:end-1);
+    end
 end
 % Discard sounds shorter than 10ms
 noevent_i = find((snd_fe-snd_re)<0.01);
