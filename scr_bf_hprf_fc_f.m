@@ -25,10 +25,16 @@ if isempty(settings), scr_init; end;
 % -------------------------------------------------------------------------
 
 if nargin < 1
-   errmsg='No sampling interval stated'; warning(errmsg); return;
+   errmsg='No sampling interval stated'; warning('ID:invalid_input',errmsg); return;
 elseif nargin < 2
     % former parameters [256389.754969900,0.00225906399760227,-574.596030378357,82.7785576729272]
     p=[43.2180170215633,0.195621916215104,-3.46706926741904,81.0383536117737];
+end;
+
+if td > 10.9
+    warning('ID:invalid_input', 'Time resolution is larger than duration of the function.'); return;
+elseif td == 0
+    warning('ID:invalid_input', 'Time resolution must be larger than 0.'); return;
 end;
 
 x0 = p(3);
@@ -38,7 +44,7 @@ A = p(4);
 
 gl = gammaln(a);
 
-x = (0:td:10.9)';
+x = (0:td:10.9-td)';
 
 % try not to use stats toolbox, but stats toolbox has also stirling
 % approximation implemented. So this might be useful.

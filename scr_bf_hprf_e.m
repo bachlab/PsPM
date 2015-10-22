@@ -2,10 +2,9 @@ function [bf, x, b] = scr_bf_hprf_e(varargin)
 % scr_bf_hprf constructs the heart period response function consisting of 
 % modified Gaussian functions
 %
-% FORMAT: [bf, x, b] = scr_bf_hprf(td, b)
+% FORMAT: [bf, x, b] = scr_bf_hprf_e(td, b) or scr_bf_hprf_e([td, b])
 %
 % with  td = time resolution in s and 
-%       x = timestamps
 %       b  = number of basis functions (default 1:6)
 %
 % basis functions will be orthogonalized using spm_orth by default. Onsets
@@ -35,7 +34,7 @@ global settings;
 if isempty(settings), scr_init; end;
 
 if nargin < 1
-   errmsg='No sampling interval stated'; warning(errmsg); return;
+   errmsg='No sampling interval stated'; warning('ID:invalid_input', errmsg); return;
 end;
 
 varargin=cell2mat(varargin);
@@ -49,11 +48,21 @@ else
     errmsg='your input for ''b'' is not supported. Choose value(s) between 1 and 6.'; 
     warning(errmsg); b=[]; bf=[]; return
 end
+
 % -------------------------------------------------------------------------
 % initialise
 td = varargin(1);
-x = (0:td:50);
+
+if td > 50    
+    warning('ID:invalid_input', 'Time resolution is larger than duration of the function.'); return;
+elseif td == 0
+    warning('ID:invalid_input', 'Time resolution must be larger than 0.'); return;
+end;
+
+x = (0:td:50-td);
 bf=[];
+
+
 % -------------------------------------------------------------------------
 % normpdf
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

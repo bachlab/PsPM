@@ -1,8 +1,8 @@
 function [bs, x] = scr_bf_brf(varargin)
 % SCR_brf constructs a blink response function
 %
-% FORMAT: [INFBS] = SCR_BF_BRF(TD, type) 
-%     OR: [INFBS] = SCR_BF_BRF([TD, type]) 
+% FORMAT: [BS, X] = SCR_BF_BRF(TD, type) 
+%     OR: [BS, X] = SCR_BF_BRF([TD, type]) 
 % with td = time resolution in s 
 % type: 1 - one Gaussian, 2 - one Gaussian with time derivative, 3 - two
 % Gaussians
@@ -20,7 +20,7 @@ if isempty(settings), scr_init; end;
 
 % check input arguments
 if nargin==0
-    errmsg='No sampling interval stated'; warning(errmsg); return;
+    errmsg='No sampling interval stated'; warning('ID:invalid_input', errmsg); return;
 end;
 
 td = varargin{1}(1);
@@ -32,9 +32,15 @@ else
     d = varargin{2}(1);
 end;
     
+if td > 1
+    warning('ID:invalid_input', 'Time resolution is larger than duration of the function.'); return;
+elseif td == 0
+    warning('ID:invalid_input', 'Time resolution must be larger than 0.'); return;    
+end;
+
 if (d<1)||(d>3), d=1; end;
 
-x = (0:td:1)';
+x = (0:td:1-td)';
 
 switch d
     case 1

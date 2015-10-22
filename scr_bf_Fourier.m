@@ -4,7 +4,7 @@ function [bf, x] = scr_bf_Fourier(varargin)
 %   Hanning window, of specified lenght and order
 %
 % FORMAT:
-% Fourier = scr_bf_Fourier(td, n, order, window) or 
+% [bf, x] = scr_bf_Fourier(td, n, order, window) or 
 %           scr_bf_Fourier([td, n, order, window])
 % with 
 %   td: sampling interval in seconds 
@@ -34,7 +34,7 @@ n = 30; order = 8; window = 1;
 % get sampling interval
 %----------------------------------------------------------------------
 if nargin == 0
-    errmsg = 'No sampling interval stated'; warning(errmsg); return;
+    errmsg = 'No sampling interval stated'; warning('ID:invalid_input', errmsg); return;
 end;
 td = varargin{1}(1);
 
@@ -49,9 +49,16 @@ else
    if nargin > 3, window = varargin{4}; end;
 end;
 
+if td > n
+    warning('ID:invalid_input', 'Time resolution is larger than duration of the function.'); return;
+elseif td == 0
+    warning('ID:invalid_input', 'Time resolution must be larger than 0.'); return;    
+end;
+
+
 % construct basis set
 %----------------------------------------------------------------------
-pst   = 0:td:n';
+pst   = 0:td:n-td';
 x = pst;
 pst   = pst/max(pst);
 

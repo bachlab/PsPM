@@ -2,8 +2,8 @@ function [bs, x] = scr_bf_hprf_fc(varargin)
 % SCR_bf_hprf_fc  
 % Description: 
 %
-% FORMAT: [INFBS] = SCR_BF_HPRF_FC(TD, D) 
-%     OR: [INFBS] = SCR_BF_HPRF_FC([TD, D]) 
+% FORMAT: [bs, x] = SCR_BF_HPRF_FC(TD, D) 
+%     OR: [bs, x] = SCR_BF_HPRF_FC([TD, D]) 
 % with td = time resolution in s and d:number of derivatives (default 0)
 %
 % REFERENCE
@@ -21,7 +21,7 @@ if isempty(settings), scr_init; end;
 
 % check input arguments
 if nargin==0
-    errmsg='No sampling interval stated'; warning(errmsg); return;
+    errmsg='No sampling interval stated'; warning('ID:invalid_input', errmsg); return;
 end;
 
 td = varargin{1}(1);
@@ -31,6 +31,12 @@ elseif numel(varargin{1}) == 2
     d = varargin{1}(2);
 else
     d = varargin{2}(1);
+end;
+
+if td > 10.9
+    warning('ID:invalid_input', 'Time resolution is larger than duration of the function.'); return;
+elseif td == 0
+    warning('ID:invalid_input', 'Time resolution must be larger than 0.'); return;
 end;
     
 if (d<0)||(d>1), d=0; end;

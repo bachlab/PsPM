@@ -5,8 +5,8 @@ function [FIR, x] = scr_bf_FIR(varargin)
 % each
 %
 % FORMAT:
-    % FIR=SCR_BF_FIR(TD, N) OR FIR=SCR_BF_FIR([TD, N]) OR 
-    % FIR=SCR_BF_FIR([TD, N, D]) with 
+    % [FIR, x]=SCR_BF_FIR(TD, N, D) OR
+    % [FIR, x]=SCR_BF_FIR([TD, N, D]) with 
 %   TD: sampling interval in seconds 
 %   N: number of timepoints (default: 30)
 %   D: duration of bin in seconds (default: 1 s)
@@ -20,30 +20,40 @@ function [FIR, x] = scr_bf_FIR(varargin)
 
 % check input arguments
 if nargin==0
-    errmsg='No sampling interval stated'; warning(errmsg); return;
+    errmsg='No sampling interval stated'; warning('ID:invalid_input', errmsg); return;
 end;
+
+n = 30;
+d = 1;
 
 td = varargin{1}(1);
-if numel(varargin{1}) == 1 && nargin == 1
-    n = 30;
-elseif numel(varargin{1}) >= 2
-    n = varargin{1}(2);
-else
-    n = varargin{2}(1);
+if nargin == 1 && numel(varargin{1}) > 1
+        n = varargin{1}(2);
+        if numel(varargin{1}) >= 3
+            d = varargin{1}(3);
+        end;
+        
+elseif nargin > 1
+    if nargin >= 2
+        n = varargin{2}(1);
+    end;
+    if nargin >= 3
+        d = varargin{3}(1);
+    end;
 end;
 
-if nargin == 1 && numel(varargin{1}) < 3
-    d = 1;
-else
-    d = varargin{1}(3);
+if td > d
+    warning('ID:invalid_input', 'Time resolution is larger than duration of the function.'); return;
+elseif td == 0
+    warning('ID:invalid_input', 'Time resolution must be larger than 0.'); return;    
 end;
-    
+
 
 % initialise FIR
-FIR=[zeros(1, n); zeros(round((d*n)/td), n);];
+FIR=[zeros(1, n); zeros(round((d*n/td)), n);];
 
 % generate timestamps
-x = (0:td:n)';
+x = (0:td:d-td)';
 
 % set FIR columns
 starts=1;
