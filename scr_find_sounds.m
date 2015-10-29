@@ -241,7 +241,12 @@ end
 %% Plot Option
 if options.plot
     figure
-    histogram(delays*1000,10)
+    % use version dependent histogram function
+    if verLessThan('matlab', '8.4')
+        hist(delays*1000,10)
+    else
+        histogram(delays*1000, 10)
+    end;
     title('Trigger to sound delays')
     xlabel('t [ms]')
     if options.resample

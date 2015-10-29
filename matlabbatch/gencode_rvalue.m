@@ -143,8 +143,17 @@ switch class(item)
                 if cflag
                     str = {sitem};
                 else
-                    bsz   = max(numel(sitem)+2,100); % bsz needs to be > 100 and larger than string length
-                    str1 = textscan(sitem, '%s', 'delimiter',';', 'bufsize',bsz);
+                    try
+                        if ~verLessThan('matlab', '8.4')
+                            bszopt = {};
+                        else
+                            error('Need bufsize option');
+                        end
+                    catch
+                        bsz   = max(numel(sitem)+2,100); % bsz needs to be > 100 and larger than string length
+                        bszopt = {'bufsize', bsz};
+                    end
+                    str1 = textscan(sitem, '%s', 'delimiter',';', bszopt{:});
                     if numel(str1{1}) > 1
                         str = str1{1};
                     else
