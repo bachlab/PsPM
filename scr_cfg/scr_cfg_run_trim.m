@@ -31,7 +31,7 @@ else
 end
 
 if ~isfield(options,'marker_chan_num')
-    options.marker_chan_num = 0; % Defualt value
+    options.marker_chan_num = 0; % Default value
 end
 
 out = scr_trim(job.datafile, from, to, ref, options);
