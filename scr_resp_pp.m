@@ -40,7 +40,7 @@ elseif nargin < 2
     warning('No sample rate given.'); return; 
 elseif ~isnumeric(sr)
     warning('Sample rate needs to be numeric.'); return;
-elseif nargin < 3 || isempty(chan)
+elseif nargin < 3 || isempty(chan) || (chan == 0)
     chan = 'resp';
 elseif ~isnumeric(chan)
     warning('Channel number must be numeric'); return;

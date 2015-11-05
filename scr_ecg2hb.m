@@ -7,7 +7,8 @@ function [sts,infos] = scr_ecg2hb(fn, chan, options)
 % sts = scr_ecg2hb(fn, chan,options)
 %       fn: data file name
 %       chan: number of ECG channel (optional, default: first ECG
-%             channel)
+%             channel) if is empty (= 0 / []) then default channel will be
+%             used
 %       options: ... semi - activates the semi automatic mode, allowing the
 %                           handcorrection of all IBIs that fulfill:
 %                           >/< mean(ibi) +/- 3 * std(ibi) [def. 1].
@@ -113,7 +114,7 @@ if nargin < 1
     warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
 elseif ~ischar(fn)
     warning('ID:invalid_input', 'Need file name string as first input.'); return;
-elseif nargin < 2
+elseif nargin < 2 || isempty(chan) || chan == 0
     chan = 'ecg';
 elseif ~isnumeric(chan) && ~strcmp(chan,'ecg')
         warning('ID:invalid_input', 'Channel number must be numeric'); return;

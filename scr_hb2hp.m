@@ -6,7 +6,8 @@ function [sts, infos] = scr_hb2hp(fn, sr, chan, options)
 %       fn: data file name
 %       sr: sample rate for heart rate channel
 %       chan: number of heart beat channel (optional, default: first heart
-%             beat channel)
+%             beat channel); if empty (= 0 / []) will be set to default
+%             value
 %       options: optional arguments [struct]
 %           .replace - if specified and 1 when existing data should be
 %                      overwritten
@@ -36,7 +37,7 @@ elseif nargin < 2
     warning('No sample rate given.'); return; 
 elseif ~isnumeric(sr)
     warning('Sample rate needs to be numeric.'); return;
-elseif nargin < 3
+elseif nargin < 3 || isempty(chan) || (chan == 0)
     chan = 'hb';
 elseif ~isnumeric(chan)
     warning('Channel number must be numeric'); return;

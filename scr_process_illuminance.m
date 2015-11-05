@@ -39,7 +39,7 @@ function [sts, out] = scr_process_illuminance(ldata, sr, options)
 %                   where the data has been stored to
 %__________________________________________________________________________
 % PsPM 3.1
-% (C) 2015 Tobias Moser (University of Zurich)
+% (C) 2015 Tobias Moser, Christoph Korn (University of Zurich)
 
 % $Id$
 % $Rev$

@@ -47,7 +47,8 @@ if sts ~= 1, return, end;
 
 % determine channel number
 % -------------------------------------------------------------------------
-if nargin >= 4
+if nargin >= 4 && ~isempty(varargin{4}) && ...
+        (~isequal(size(varargin{4}), [1,1]) || varargin{4} ~= 0)
     channum = varargin{4};
 else
     for k = 1:numel(data)
