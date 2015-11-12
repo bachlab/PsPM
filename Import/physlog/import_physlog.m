@@ -1,4 +1,71 @@
 function [sts, out] = import_physlog(fn)
+% DESCRIPTION:
+%   This function was written in order to provide a scanphyslog import 
+%   function in the PsPM environment. The function is kept very slim and
+%   some ideas were taken from other functions (such as the event handling
+%   bitand() from [1]). This function should be called by scr_get_physlog.
+%
+%   [1] http://www.mathworks.com/matlabcentral/fileexchange/
+%       42100-readphilipsscanphyslog-filename--channels--skipprep-
+%
+% FORMAT: [sts, out] = import_physlog(fn)
+%
+% INPUT: 
+%   fn:                 (=Filename) Is the path to the according
+%                       scanphyslog file.
+%
+% OUTPUT:      
+%   sts:                Defines whether the function went through without 
+%                       any problems or not. If sts == 1 there were no 
+%                       errors. If sts ~= 1 there have been errors.
+%   
+%   out:                Is a struct() with 4 fields (record_date, 
+%                       record_time, trigger, data)
+%       record_date:    Contains the record date of the corresponding file.
+%                       This value is read from the file header.
+%
+%       record_time:    Contains the record time of the corresponding file.
+%                       As record_date, this value is also read out of the
+%                       file header.
+%       
+%       trigger:        Is a struct() with three fields:
+%               val:    Contains the event column converted from
+%                       hex to dec. 
+%               sr:     Defines the sample rate of the data contained in
+%                       .trigger.
+%               t:      Contains for each trigger one continuous channel
+%                       with the corresponding event. The channels are:
+%                       (according to philips event settings)
+%
+%                           .t{:,1} = Trigger ECG
+%                           .t{:,2} = Trigger PPU
+%                           .t{:,3} = Trigger Respiration
+%                           .t{:,4} = Measurement ('slice onset')
+%                           .t{:,5} = start of scan sequence (decimal 16)
+%                           .t{:,6} = end of scan sequence (decimal 32)
+%                           .t{:,7} = Trigger external
+%                           .t{:,8} = Calibration
+%                           .t{:,9} = Manual start
+%                           .t{:,10} = Reference ECG Trigger
+%
+%                       Channel 4 apparently is only set when the scan
+%                       software is patched accordingly.
+%
+%       data:           Is 6x1 cell structure in PsPM data like fashion. It
+%                       contains: 
+%                           
+%                           - again a data field with all the data
+%                             values of the corresponding channel in 
+%                             nx1 double format. 
+%                           - a header field which sepecifies sr, chantype
+%                             and units of the corresponding data channel.
+%     
+%__________________________________________________________________________
+% PsPM 3.1
+% (C) 2008-2015 Tobias Moser (University of Zurich)
+
+% $Id$
+% $Rev$
 
 % set output
 sts = -1;
@@ -8,8 +75,6 @@ out = struct();
 fileID = fopen(fn,'rt');
 end_hdr = false;
 
-% ## Sat 08-08-2015 12:41:09
-% datetime('11-Nov-2015','Format','dd-MMM-yyyy');
 out.record_date = datetime('now','Format','dd-MMM-yyyy');
 out.record_time = datetime('now','Format','HH:mm:ss');
 

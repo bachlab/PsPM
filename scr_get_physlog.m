@@ -1,9 +1,36 @@
 function [sts, import, sourceinfo] = scr_get_physlog(datafile, import)
-% scr_get_physlog loads data from physlog files
+% DESCRIPTION:
+%   scr_get_physlog loads data from physlog files using the
+%   import_physlog() function. It maps the output of the called function
+%   according to the settings passed in the 'import' parameter.
+%   
+%   Special about this function is that channel numbers for event/marker 
+%   channels correspond to the different event types scanphyslog files.
+%   Possible event types are:
+%
+%           Chan-Nr:   Type:
+%           --------   -----
+%                 1    Trigger ECG
+%                 2    Trigger PPU
+%                 3    Trigger Respiration
+%                 4    Measurement ('slice onset')
+%                 5    start of scan sequence
+%                 6    end of scan sequence
+%                 7    Trigger external
+%                 8    Calibration
+%                 9    Manual start
+%                 10   Reference ECG Trigger
+%    
+%   Channel types are:
+%           Chan-Nr:   Type:
+%           --------   -----
+%                1-4   ECG channel
+%                  5   PPU channel
+%                  6   Resp channel
 %
 % FORMAT: [sts, import, sourceinfo] = scr_get_physlog(datafile, import);
 %__________________________________________________________________________
-% PsPM 3.0
+% PsPM 3.1
 % (C) 2008-2015 Tobias Moser (University of Zurich)
 
 % $Id$
