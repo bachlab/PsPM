@@ -70,12 +70,10 @@ elseif strcmpi(import.marker, 'continuous')
     lo2hi = temp(1+find(d(temp(2:end-1)-2) > 0))-3;
     hi2lo = temp(1+find(d(temp(2:end-1)-2) < 0))-3;
 
-    % if ~isempty(lo2hi_lo) && numel(lo2hi_lo) ~= numel(lo2hi_hi)
     if isempty(lo2hi) && isempty(hi2lo)
         fprintf('\n');
         warning('No markers, or problem with TTL channel.');
         import.data = [];
-        return;
     elseif isfield(import, 'flank') && strcmpi(import.flank, 'ascending')
         import.data = lo2hi./import.sr; 
         mPos = lo2hi+3; 
@@ -94,8 +92,8 @@ elseif strcmpi(import.marker, 'continuous')
         return;
     end;
     
-    % check if markerinfo should be set
-    if ~isfield(import, 'markerinfo')
+    % check if markerinfo should be set and if there are any data points
+    if ~isfield(import, 'markerinfo') && ~isempty(import.data)
         
         % determine baseline
         v = unique(data(find(~isnan(data))));

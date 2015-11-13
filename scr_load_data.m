@@ -152,7 +152,7 @@ nflag = zeros(numel(data), 1);
 for k = 1:numel(data)
     if ~isfield(data{k}, 'header') || ~isfield(data{k}, 'data')
         vflag(k) = 1;
-    elseif size(data{k}.data, 2) ~= 1
+    elseif size(data{k}.data, 2) > 1
         vflag(k) = 1;
     elseif ~isfield(data{k}.header, 'chantype') || ~isfield(data{k}.header, 'sr') || ~isfield(data{k}.header, 'units')
         vflag(k) = 1;
