@@ -1,30 +1,66 @@
 function [sts, outdata] = scr_interpolate(indata, options)
 % SCR_INTERPOLATE
 % 
+% FORMAT: 
 % [sts, outdata] = scr_interpolate(indata, options)
+%
+% DESCRIPTION: 
 % This function interpolates NaN values passed with the indata parameter.
 % The behaviour of the function can furthermore be adjusted with the
 % combination of different options.
 %
+% The function works either on single data sets such as a filename, a
+% numeric array or a pspm data struct. Alternatively it is possible to pass
+% a cell containing all possible datatypes. The function then iterates
+% through the whole data set and replaces the passed data with the interpolated
+% data. For filenames the interpolated data will, depending on option.newfile, 
+% be written to the existing file or can also be added to a new file 
+% with filename 'i'+<old filename>. The corresponding cell (in outdata)
+% will then contain the filename of the new file (if newfile = 1) or will
+% contain the channel id where the interpolated data can be found in the
+% existing file (because it has been added or replaced). The edited data set 
+% will then be returned as parameter outdata.
+%
+% INPUT:
 %   indata: [struct/char/numeric] or [cell array of struct/char/numeric]
 %           contains the data to be interpolated
 %  
 %   options: 
-%       .overwrite:     defines if existing datafiles should be overwritten
-%       .dont_ask_overwrite: defines if user should be asked whether
+%       .overwrite:     Defines if existing datafiles should be
+%                       overwritten (Default is 0)
+%       .dont_ask_overwrite: Defines if user should be asked whether
 %                       existing files should be overwritten or not.
-%       .method:        defines the interpolation method, see interp1() for
-%                       possible interpolation methods
-%       .extrapolate    true if should extrapolate for data out of the data
-%                       range (not recommended; default is false)
-%       .channels       if passed, should have the same size as indata and
+%                       (Default is 0)
+%       .method:        Defines the interpolation method, see interp1() for
+%                       possible interpolation methods (Default is linear)
+%       .extrapolate    1 if should extrapolate for data out of the data
+%                       range (not recommended; Default is 0)
+%       .channels       If passed, should have the same size as indata and
 %                       contains for each entry in indata the channel(s) to 
-%                       be interpolated.
-%       .replace_channels if true, the original channels will be replaced
-%                       with the interpolated data
-%       .newfile        if false the data will be added to the file where
-%                       the data was loaded from. if true the data will be
-%                       written to a new file prepended with 'i'.
+%                       be interpolated. If options.channels is empty or a 
+%                       certain cell is empty the function then tries to 
+%                       interpolate all continuous data channels. This
+%                       works only on files or structs.
+%                       (Default is empty).
+%       .replace_channels: If 1, the original channels will be replaced
+%                       with the interpolated data. Otherwise the 
+%                       interpolated data will be added as new channel to 
+%                       the same file. Only works for filenames passed in 
+%                       indata and if newfile is 0 (Default is 0).
+%       .newfile:       This is only possible if data is loaded from a file.
+%                       If 0 the data will be added to the file where
+%                       the data was loaded from. If 1 the data will be
+%                       written to a new file called 'i'+<old filename>.
+%                       (Default is 0)
+% OUTPUT:
+%       sts:            Returns the status of the function
+%                       -1: function did not work properly
+%                       1: the function went through properly
+%       
+%       outdata:        Has the same format as indata but contains the
+%                       interpolated data (or the filename(s) where the 
+%                       interpolated data can be found). 
+%       
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2015 Tobias Moser (University of Zurich)
@@ -56,10 +92,10 @@ end;
 try options.overwrite; catch, options.overwrite = 0; end;
 try options.method; catch, options.method = 'linear'; end;
 try options.channels; catch, options.channels = []; end;
-try options.newfile; catch, options.newfile = false; end;
-try options.replace_channels; catch, options.replace_channels = false; end;
+try options.newfile; catch, options.newfile = 0; end;
+try options.replace_channels; catch, options.replace_channels = 0; end;
 try options.extrapolate; catch, options.extrapolate = false; end;
-try options.dont_ask_overwrite; catch, options.dont_ask_overwrite = false; end;
+try options.dont_ask_overwrite; catch, options.dont_ask_overwrite = 0; end;
 
 % check channel size
 if numel(options.channels) > 0

@@ -164,6 +164,8 @@ for k = 1:numel(data)
         wflag(k) = 1;
     elseif ~ismember(data{k}.header.chantype, {settings.chantypes.type})
         nflag(k) = 1;
+    elseif isempty(data{k}.data)
+        warning('Channel %01.0f is empty.', k);
     end;
 end;
 

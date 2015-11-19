@@ -573,8 +573,8 @@ defaults.import.mat.sr_threshold = 1; %maximum value of the field '.sr' to which
 
 % Preprocessing settings
 % ----------------------
-defaults.split.maxsn = 10; % split sessions: assume maximum 10 sessions
-defaults.split.brk2norm = 3; % split sessions: assume inter marker intervals 3 times longer for breaks
+defaults.split.max_sn = 10; % split sessions: assume maximum 10 sessions
+defaults.split.min_break_ratio = 3; % split sessions: assume inter marker intervals 3 times longer for breaks
 
 
 % other settings
