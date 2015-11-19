@@ -14,7 +14,7 @@ end
 % options
 options.overwrite = job.overwrite;
 
-out = scr_down(job.datafile, job.newfreq, chan, options);
+[sts, out] = scr_down(job.datafile, job.newfreq, chan, options);
 
 if ~iscell(out)
     out ={out};

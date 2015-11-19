@@ -11,7 +11,7 @@ function [sts, outdata] = scr_interpolate(indata, options)
 %
 % The function works either on single data sets such as a filename, a
 % numeric array or a pspm data struct. Alternatively it is possible to pass
-% a cell containing all possible datatypes. The function then iterates
+% a cell containing all these possible datatypes. The function then iterates
 % through the whole data set and replaces the passed data with the interpolated
 % data. For filenames the interpolated data will, depending on option.newfile, 
 % be written to the existing file or can also be added to a new file 
@@ -94,7 +94,7 @@ try options.method; catch, options.method = 'linear'; end;
 try options.channels; catch, options.channels = []; end;
 try options.newfile; catch, options.newfile = 0; end;
 try options.replace_channels; catch, options.replace_channels = 0; end;
-try options.extrapolate; catch, options.extrapolate = false; end;
+try options.extrapolate; catch, options.extrapolate = 0; end;
 try options.dont_ask_overwrite; catch, options.dont_ask_overwrite = 0; end;
 
 % check channel size

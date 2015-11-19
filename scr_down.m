@@ -1,19 +1,22 @@
-function newdatafile=scr_down(datafile, newsr, chan, options)
-
+function [sts, newfile]=scr_down(datafile, newsr, chan, options)
+%
 % SCR_DOWN downsamples a SCRalyze dataset to the desired new sample rate
 % this function applies anti-aliasing filtering at 1/2 of the new sample
 % rate. The data will be written to a new file, the original name will be
 % prepended with 'd'
 %
 % FORMAT:
-% NEWDATAFILE=SCR_DOWN (datafile, newsr, chan, options)
+% [STS, NEWFILE] = SCR_DOWN (datafile, newsr, chan, options)
 %
-% datafile can be a name, or for convenience, a cell array of filenames
-% newfreq: new frequency (must be >= 10 Hz)
-% chan: channels to downsample (default: all channels)
-% options:  options.overwrite - overwrite existing files by default
+% INPUT: 
+%   datafile:   can be a name, or for convenience, a cell array of filenames
+%   newfreq:    new frequency (must be >= 10 Hz)
+%   chan:       channels to downsample (default: all channels)
+%   options:    options.overwrite - overwrite existing files by default
 %
-% RETURNS a filename for the updated file, or cell array of filenames
+% OUTPUT:
+%   sts:        1 if the 
+%   newfile:    a filename for the updated file, or cell array of filenames
 %
 %__________________________________________________________________________
 % PsPM 3.0
@@ -24,6 +27,7 @@ function newdatafile=scr_down(datafile, newsr, chan, options)
 
 global settings;
 if isempty(settings), scr_init; end;
+sts = -1;
 
 % check input arguments
 % -------------------------------------------------------------------------
@@ -98,10 +102,10 @@ for d=1:numel(D)
     
     % make outputfile
     [p f ex]=fileparts(datafile);
-    newdatafile=fullfile(p, ['d', f, ex]);
+    newfile=fullfile(p, ['d', f, ex]);
     
-    if exist(newdatafile)==2 && ~options.overwrite
-        overwrite=menu(sprintf('New file (%s) already exists. Overwrite?', newdatafile), 'yes', 'no');
+    if exist(newfile)==2 && ~options.overwrite
+        overwrite=menu(sprintf('New file (%s) already exists. Overwrite?', newfile), 'yes', 'no');
         %close gcf;
         if overwrite==2, return; end;
     end;
@@ -128,10 +132,10 @@ for d=1:numel(D)
         end;
     end;
     
-    [pth nfn ext] = fileparts(newdatafile);
+    [pth nfn ext] = fileparts(newfile);
     infos.downsampledfile = [nfn ext];
-    save(newdatafile, 'infos', 'data');
-    Dout{d}=newdatafile;
+    save(newfile, 'infos', 'data');
+    Dout{d}=newfile;
   
 end;
 
@@ -142,8 +146,9 @@ fprintf('  done.\n');
 % filenames
 if d>1
     clear newdatafile
-    newdatafile=Dout;
+    newfile=Dout;
 end;
 
+sts = 1;
 
 return;
