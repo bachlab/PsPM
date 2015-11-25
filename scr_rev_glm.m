@@ -96,7 +96,7 @@ for i=1:length(plotNr)
                 cl = length(corder);
                 for j=1:ns
                    if j > cl
-                       m = floor(j/cl);
+                       m = floor((j-0.1)/cl);
                        color = corder(j - m*cl, :);
                    else
                        color = corder(j,:);

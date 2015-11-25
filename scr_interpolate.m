@@ -28,9 +28,6 @@ function [sts, outdata] = scr_interpolate(indata, options)
 %   options: 
 %       .overwrite:     Defines if existing datafiles should be
 %                       overwritten (Default is 0)
-%       .dont_ask_overwrite: Defines if user should be asked whether
-%                       existing files should be overwritten or not.
-%                       (Default is 0)
 %       .method:        Defines the interpolation method, see interp1() for
 %                       possible interpolation methods (Default is linear)
 %       .extrapolate    1 if should extrapolate for data out of the data

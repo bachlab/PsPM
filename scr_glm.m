@@ -575,7 +575,7 @@ Xfilter.down = 'none'; % turn off no low pass warning
 
 % convolve with basis functions
 snoffsets = cumsum(tmp.snduration);
-snonsets  = [1, snoffsets(2:end) + 1];
+snonsets  = [1, snoffsets(1:end) + 1];
 tmp.XC = cell(1,numel(names));
 tmp.regscalec = cell(1,numel(names));
 for iCond = 1:numel(names)

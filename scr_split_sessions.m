@@ -173,7 +173,7 @@ for d = 1:numel(D)
             
             % adjust split points according to prefix and suffix ---
             if (splitpoint(sn,1) - options.prefix) < 0
-                sta_p = 0;
+                sta_p = 0.001;
                 sta_prefix = splitpoint(sn,1);
             else
                 sta_p = splitpoint(sn,1) - options.prefix;
@@ -224,8 +224,8 @@ for d = 1:numel(D)
                     end;
                 else
                     % convert from s into datapoints
-                    startpoint = floor(sta_p * data{k}.header.sr) + 1;
-                    stoppoint  = floor(sto_p * data{k}.header.sr) + 1;
+                    startpoint = ceil(sta_p * data{k}.header.sr);
+                    stoppoint  = floor(sto_p * data{k}.header.sr);
                     data{k}.data = indata{k}.data(startpoint:stoppoint);
                 end;
             end;
