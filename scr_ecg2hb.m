@@ -114,7 +114,7 @@ if nargin < 1
     warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
 elseif ~ischar(fn)
     warning('ID:invalid_input', 'Need file name string as first input.'); return;
-elseif nargin < 2 || isempty(chan) || chan == 0
+elseif (nargin < 2) || isempty(chan) || (isnumeric(chan) && (chan == 0))
     chan = 'ecg';
 elseif ~isnumeric(chan) && ~strcmp(chan,'ecg')
         warning('ID:invalid_input', 'Channel number must be numeric'); return;
