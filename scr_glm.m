@@ -390,6 +390,9 @@ for iSn = 1:nFile
     % if has been downsampled adjust nan_idx
     if numel(oldy) ~= numel(newy)
         nan_idx = round(nan_idx*(model.filter.down/model.filter.sr));
+        % sanitize ends 
+        nan_idx(nan_idx < 1) = 1;
+        nan_idx(nan_idx > numel(nan_idx)) = numel(nan_idx);
         % find duplicates
         dupli = diff(nan_idx) == 0;
         % remove duplicates

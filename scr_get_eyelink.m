@@ -26,27 +26,62 @@ data = import_eyelink(datafile);
 % marker channel. if there is any marker channel, the settings accordingly
 % markerinfos, markers and marker type.
 % -------------------------------------------------------------------------
+
+% ensure sessions have the same samplerate
+sr = cell2mat(cellfun(@(d) d.sampleRate, data, 'UniformOutput', false));
+eyesObs = cellfun(@(d) d.eyesObserved, data, 'UniformOutput', false);
+if numel(data) > 1 && (any(diff(sr)) || any(~strcmp(eyesObs,eyesObs{1})))
+    warning('ID:invalid_data_structure', ['Cannot concatenate multiple sessions with different ', ... 
+        'sample rate or different eye observation.']);
+    % channels
+    channels = data{1}.channels;
+    % samplerate
+    sampleRate = data{1}.sampleRate;
+    % markers
+    markers = data{1}.markers;
+    % markerinfos
+    markerinfos = data{1}.markerinfos;
+    % units
+    units = data{1}.units;
+else
+    % try to concatenate sessions
+    
+    % channels
+    channels = cellfun(@(d) d.channels, data, 'UniformOutput', false);
+    channels = vertcat(channels{:});
+    % markers
+    markers = cellfun(@(d) d.markers, data, 'UniformOutput', false);
+    markers = vertcat(markers{:});
+    % markerinfos
+    markerinfos = cellfun(@(d) d.markerinfos, data, 'UniformOutput', false);
+    markerinfos = vertcat(markerinfos{:});
+    % units (they should be for all channels the same
+    units = data{1}.units;
+    % samplerate
+    sampleRate = data{1}.sampleRate;
+end;
+
 for k = 1:numel(import)
     if strcmpi(import{k}.type, 'marker')
         import{k}.marker = 'continuous';
-        import{k}.sr     = data.sampleRate;
-        import{k}.data   = data.markers;
+        import{k}.sr     = sampleRate;
+        import{k}.data   = markers;
         % marker info is read and set (in this instance) but
         % imported data cannot be read at the moment (in later instances)
-        import{k}.markerinfo = data.markerinfos;
+        import{k}.markerinfo = markerinfos;
     else
         chan = import{k}.channel;
-        if chan > size(data.channels, 2), warning('ID:channel_not_contained_in_file', 'Column %02.0f not contained in file %s.\n', chan, datafile); return; end;
-        import{k}.sr = data.sampleRate;
-        import{k}.data = data.channels(:, chan);
-        import{k}.units = data.units{import{k}.channel};
+        if chan > size(channels, 2), warning('ID:channel_not_contained_in_file', 'Column %02.0f not contained in file %s.\n', chan, datafile); return; end;
+        import{k}.sr = sampleRate;
+        import{k}.data = channels(:, chan);
+        import{k}.units = units{import{k}.channel};
         sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan);
     end;
 end;
 
-% extract record time and date
-sourceinfo.date = data.record_date;
-sourceinfo.time = data.record_time;
+% extract record time and date / should be in all sessions the same
+sourceinfo.date = data{1}.record_date;
+sourceinfo.time = data{1}.record_time;
 
 % remove specific import path
 rmpath([settings.path, 'Import', filesep, 'eyelink']);
