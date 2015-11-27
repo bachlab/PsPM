@@ -172,8 +172,8 @@ function push_cancel_Callback(hObject, eventdata, handles)
 % hObject    handle to push_cancel (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-handles.output.sts=-1;
-handles.output.R=[];
+handles.sts=-1;
+handles.R=[];
 % Update handles structure
 guidata(hObject,handles);
 % -------------------------------------------------------------------------
@@ -357,8 +357,8 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-handles.output.sts=-1;
-handles.output.R=[];
+handles.sts=-1;
+handles.R=[];
 % Update handles structure
 guidata(hObject,handles);
 % -------------------------------------------------------------------------
