@@ -96,6 +96,8 @@ for datatype_i=1:length(fileoptions)
     chantypes    = settings.import.datatypes(datatype_i).chantypes;
     short        = settings.import.datatypes(datatype_i).short;
     ext          = settings.import.datatypes(datatype_i).ext;
+    help         = {settings.import.datatypes(datatype_i).help};
+
     
     %% Channel/Column Number
     % Default Channel Nr.
@@ -213,7 +215,7 @@ for datatype_i=1:length(fileoptions)
     datatype_item{datatype_i}       = cfg_branch;
     datatype_item{datatype_i}.name  = fileoptions{datatype_i};
     datatype_item{datatype_i}.tag   = short;
-    datatype_item{datatype_i}.help  = {''};
+    datatype_item{datatype_i}.help  = help;
     if multioption == 1
         datatype_item{datatype_i}.val   = {datafile,importchan};
     else
