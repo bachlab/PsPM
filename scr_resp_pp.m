@@ -161,7 +161,8 @@ for iType = 1:(numel(datatypes) - 1)
         switch iType
             case {1, 2, 3}
                 newt = (1/sr):(1/sr):infos.duration;
-                writedata = interp1(respstamp(2:end), respdata, newt, 'linear' ,'extrap'); % assign rp to following zero crossing
+                writedata = interp1(respstamp(2:end), respdata, newt, 'linear' ,'extrap'); % assign rp/ra/RLL to following zero crossing
+                writedata(writedata < 0) = 0;                                              % 'extrap' option may introduce falsely negative values
                 newdata.header.sr = sr;
             case {4}
                 writedata = respstamp;
