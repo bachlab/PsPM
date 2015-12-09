@@ -38,19 +38,14 @@ function scr_peakscore(datafile, regfile, modelfile, timeunits, normalize, chan,
 %                 'peakwindow')
 %                 for method 'spr', post stimulus onset and post onset peak 
 %                 window (default: [1 4; 0.5 5]);
+% options.diagnostics: makes a plot after every detected peak (for
+%               development purposes, default = 0)
 %__________________________________________________________________________
-% PsPM 3.0
+% PsPM 3.1
 % (c) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 % $Id: scr_peakscore.m 701 2015-01-22 14:36:13Z tmoser $
 % $Rev: 701 $
-
-% v003 drb 07.05.2013 added SPR method upon request of reviewers
-% v002 drb 27.08.2012 removed high-pass filtering
-% v001 drb 06.08.2012
-
-% note the terminology here is to call the data 'scr' even if it's other
-% waveform signals
 
 global settings;
 if isempty(settings), scr_init; end;
@@ -76,6 +71,7 @@ end;
 % set options
 try options.overwrite; catch, options.overwrite = 0; end;
 try options.method; catch, options.method = 'simple'; end;
+try options.diagnostics; catch, options.diagnostics = 0; end;
 
 if strcmpi(options.method, 'spr')
     try options.summary;
@@ -264,6 +260,8 @@ for k = 1:numel(onsets)
     for n = 1:numel(onsets{k})
         firstwin = onsets{k}(n) + (round(options.window(1, 1) * glm.sr.fin):round(options.window(1, 2) * glm.sr.fin));
         secondwin = onsets{k}(n) + (round(options.window(2, 1) * glm.sr.fin):round(options.window(2, 2) * glm.sr.fin));
+        initialfirstwin = firstwin; % for diagnostics
+        initialsecondwin = secondwin; % for diagnostics
         % if final peak window is cut off, don't analyse
         if all(secondwin < numel(glm.Y))
             if strcmpi(options.method, 'simple')
@@ -275,28 +273,50 @@ for k = 1:numel(onsets)
                 b = [1/3 1/3 1/3]; a = 1;
                 scr = filter(b, a, glm.Y);
                 scr1 = filter(b, a, diff(scr));
+                scr2 = filter(b, a, diff(scr1));
                 foundpeak = 0;
-                while (~foundpeak) && (numel(firstwin) > 1);
+                % first, look for maximum curvature in SCR, i. e.
+                % maximum of second derivative (according to Boucsein
+                % method)
+                [pks, lcs] = findpeaks(scr2(firstwin));
+                onsetindx = 1;
+                while (~foundpeak) && (onsetindx <= numel(lcs));
+                    onset = firstwin(lcs(onsetindx));
+                    % look for first peak after onset
+                    secondwin = onset + (round(options.window(2, 1) * glm.sr.fin):round(options.window(2, 2) * glm.sr.fin));
+                    peak = find(diff(sign(scr1(secondwin))) == -2, 1);  % look for local maximum as change from pos to neg
+                    % found peak? Otherwise, look for next onset
+                    if ~isempty(peak)
+                        peak = secondwin(1) + peak;
+                        foundpeak = 1;
+                    else
+                        onsetindx = onsetindx + 1;
+                    end;
+                end;
+                % do check on first derivative (old peak score method used
+                % until Staib, Castegnetti & Bach 2015) if diagnostics
+                % required
+                foundfirstpeak = 0;
+                while (options.diagnostics) && (~foundfirstpeak) && (numel(firstwin) > 1);
                     % look for minimum as change in first derivative from
                     % neg to pos 
-                    onset = find(diff(sign(scr1(firstwin))) == 2, 1);
-                    if isempty(onset)
+                    firstonset = find(diff(sign(scr1(firstwin))) == 2, 1);
+                    if isempty(firstonset)
                        firstwin = [];
                     else
-                        onset = onset + firstwin(1);
+                        firstonset = firstonset + firstwin(1);
                         % look for first peak after onset
-                        secondwin = onset + (round(options.window(2, 1) * glm.sr.fin):round(options.window(2, 2) * glm.sr.fin));
-                        peak = find(diff(sign(scr1(secondwin))) == -2, 1);  % look for local maximum as change from pos to neg
+                        secondwin = firstonset + (round(options.window(2, 1) * glm.sr.fin):round(options.window(2, 2) * glm.sr.fin));
+                        firstpeak = find(diff(sign(scr1(secondwin))) == -2, 1);  % look for local maximum as change from pos to neg
                         % found peak? Otherwise, look for next onset
-                        if ~isempty(peak)
-                            peak = secondwin(1) + peak;
-                            foundpeak = 1;
+                        if ~isempty(firstpeak)
+                            firstpeak = secondwin(1) + firstpeak;
+                            foundfirstpeak = 1;
                         else
-                            firstwin(1:find(firstwin == onset)) = [];
+                            firstwin(1:find(firstwin == firstonset)) = [];
                         end;
                     end;
                 end;
-                win = onsets{k}(n) + (1:round((options.window(1, 2) + options.window(2, 2)) * glm.sr.fin));
                 if foundpeak
                     peakscore(n) = scr(peak) - scr(onset);
                     % if an onset is followed by first peak before the peak
@@ -305,6 +325,23 @@ for k = 1:numel(onsets)
                     peakscore(n) = max(0, peakscore(n));
                 else
                     peakscore(n) = 0;
+                end;
+                if options.diagnostics
+                    figure; axes; hold on
+                    win = initialfirstwin(1):secondwin(end);
+                    plot(win, scr(win) - scr(win(1)), 'k');
+                    plot(win, scr1(win), 'r');
+                    plot(win, scr2(win), 'b');
+                    if foundpeak
+                        stem(onset, scr(onset));
+                        stem(peak, scr(peak));
+                    end;
+                    if foundfirstpeak
+                        stem(firstonset,scr(firstonset));
+                        stem(firstpeak, scr(firstpeak));
+                    end;
+                	s = input('Press RETURN to continue.', 's');
+                    close(gcf);
                 end;
             end;
         end;
