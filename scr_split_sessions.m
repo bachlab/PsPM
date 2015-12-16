@@ -13,7 +13,7 @@ function newdatafile = scr_split_sessions(datafile, markerchannel, options)
 %                           relevant markers
 % options  
 % options.overwrite:        overwrite existing files by default
-% options.max_sessions:     Define the maximum of sessions to look for.
+% options.max_sn:           Define the maximum of sessions to look for.
 %                           Default is settings.split.max_sn = 10
 % options.min_break_ratio:  Minimum for ratio 
 %                           [(session distance)/(mean marker distance)]
