@@ -139,7 +139,7 @@ if strcmpi(action, 'add')
     end;
     
     fchannels = cell(1,numel(data) + numel(newdata));
-    fchannels(channeli) = chantypes;
+    fchannels(channeli,1) = chantypes;
 end;
 
 %% Manage message
@@ -171,12 +171,12 @@ end;
 %% Modify data according to action
 % -------------------------------------------------------------------------
 if strcmpi(action, 'delete')
-    data(channeli) = [];
+    data(channeli,1) = [];
 else
     if isstruct(newdata)
-        data{channeli} = newdata;
+        data{channeli,1} = newdata;
     elseif iscell(newdata)
-        data(channeli) = newdata;
+        data(channeli,1) = newdata;
     end;
 end
 if isfield(infos, 'history')
