@@ -155,14 +155,11 @@ if (x_dist < data_dist)
         stop = ep.range(2) + offset;
         
         if start < dstart
-            stop = ep.range(2)+(2*offset-(start-dstart));
             start = dstart;
+            stop = dstart+x_dist;
         elseif stop > dstop
-            start = ep.range(1)-(2*offset-(dstop-stop));
             stop = dstop;
-        else
-            start = ep.range(1)-offset;
-            stop = ep.range(2)+offset;
+            start = stop-x_dist;
         end;
     end;  
     set(handles.axData, 'xlim', [start,stop]);
@@ -194,6 +191,11 @@ if new_dist ~= y_dist
             offset = (y_dist-new_dist)/2;
             start = from - offset;
             stop = to + offset;
+            if (stop > dmax || start < dmin) && ...
+                    (round(dmax-dmin)==round(stop-start))
+                stop = dmax;
+                start = dmin;
+            end;
         else
             start = dmin;
             stop = dmax;
