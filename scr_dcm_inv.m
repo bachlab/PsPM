@@ -61,7 +61,10 @@ function dcm = scr_dcm_inv(model, options)
 % REFERENCE: (1) Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010).
 %            Dynamic causal modelling of anticipatory skin conductance
 %            changes. Biological Psychology, 85(1), 163-70
-%            (2) Staib M, Castegnetti G, Bach DR (2014), in preparation
+%            (2) Staib, M., Castegnetti, G., & Bach, D. R. (2015).
+%            Optimising a model-based approach to inferring fear
+%            learning from skin conductance responses. Journal of
+%            neuroscience methods, 255, 131-138.
 %
 % for terminology and data transformations see developer notes
 %__________________________________________________________________________
