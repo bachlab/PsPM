@@ -22,7 +22,7 @@ function varargout = scr_data_editor(varargin)
 
 % Edit the above text to modify the response to help scr_data_editor
 
-% Last Modified by GUIDE v2.5 18-Dec-2015 15:17:00
+% Last Modified by GUIDE v2.5 22-Dec-2015 14:29:19
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -59,6 +59,7 @@ handles.plots = {};
 handles.selected_data = {};
 handles.epochs = {};
 handles.highlighted_epoch = -1;
+handles.output_type = 'interpolate';
 
 handles.fgDataEditor.WindowButtonDownFcn = @buttonDown_Callback;
 handles.fgDataEditor.WindowButtonUpFcn = @buttonUp_Callback;
@@ -66,18 +67,29 @@ handles.fgDataEditor.WindowButtonMotionFcn = @buttonMotion_Callback;
 
 p = plot(varargin{1});
 hold on;
-y = NaN(numel(p.YData),1);
+ydata = get(p, 'YData');
+y = NaN(numel(ydata),1);
 x = p.XData;
-hi = plot(x,y, 'LineWidth', 1.5);
-hold off;
+
+handles.limits.x = get(handles.axData, 'xlim');
+handles.limits.y = get(handles.axData, 'ylim');
 
 handles.plots{end+1}.data_plot = p;
-handles.plots{end}.highlight_plot = hi;
+handles.NaN_data = y;
+handles.plots{end}.y_data = p.YData;
+handles.x_data = p.XData;
+handles.plots{end}.sel_container = hggroup;
+handles.plots{end}.highlight_plot = plot(x,y, 'LineWidth', 1.5);
 handles.plots{end}.select_data.X = x';
 handles.plots{end}.select_data.Y = y';
+handles.plots{end}.interpolate = plot(x,y, 'LineWidth', 0.5);
+uistack(handles.plots{end}.interpolate, 'bottom');
+
+hold off;
 
 % Update handles structure
 guidata(hObject, handles);
+uiwait(handles.fgDataEditor);
 
 % --- Outputs from this function are returned to the command line.
 function varargout = scr_data_editor_OutputFcn(hObject, eventdata, handles) 
@@ -86,11 +98,9 @@ function varargout = scr_data_editor_OutputFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Get default command line output from handles structure
-varargout{1} = handles.output;
-
 % UIWAIT makes scr_data_editor wait for user response (see UIRESUME)
-% uiwait(handles.fgDataEditor);
+varargout{1} = handles.output;
+delete(hObject);
 
 % --- Executes on selection change in lbEpochs.
 function lbEpochs_Callback(hObject, eventdata, handles)
@@ -109,13 +119,18 @@ function ResetEpochHighlight
 handles = guidata(gca);
 
 for i=1:numel(handles.epochs)
-    for j=1:numel(handles.epochs{i}.response_plots)
-        set(handles.epochs{i}.response_plots{j}.p, ...
-            'Color', 'green',  ...
-            'LineWidth',0.5 ...
-            );
+    if handles.epochs{i}.highlighted
+        for j=1:numel(handles.epochs{i}.response_plots)
+            set(handles.epochs{i}.response_plots{j}.p, ...
+                'Color', 'green',  ...
+                'LineWidth',0.5 ...
+                );
+        end;
+        handles.epochs{i}.highlighted = false;
     end;
 end;
+
+guidata(gca, handles);
 
 % --------------------------------------------------------------------
 function HighlightEpoch(epId)
@@ -125,6 +140,10 @@ handles = guidata(gca);
 ResetEpochHighlight;
 
 ep = handles.epochs{epId};
+
+ep.highlighted = true;
+handles.epochs{epId} = ep;
+
 range = ep.range(1):ep.range(2);
 
 % highlight epochs
@@ -132,14 +151,14 @@ for i=1:numel(ep.response_plots)
     set(ep.response_plots{i}.p, 'Color', 'black', 'LineWidth', 1.5);
 end;
 
-cur_xlim = get(handles.axData, 'xlim');
+cur_xlim = handles.limits.x;
 start = cur_xlim(1);
 stop = cur_xlim(2);
 x_dist = stop-start;
 new_dist = ep.range(2)-ep.range(1);
 
-dstart = min(handles.plots{1}.data_plot.XData);
-dstop = max(handles.plots{1}.data_plot.XData);
+dstart = min(handles.x_data);
+dstop = max(handles.x_data);
 
 data_dist = dstop - dstart;
 
@@ -163,6 +182,7 @@ if (x_dist < data_dist)
         end;
     end;  
     set(handles.axData, 'xlim', [start,stop]);
+    handles.limits.x = [start,stop];
 elseif x_dist >= data_dist
     start = dstart;
     stop = dstop;
@@ -172,13 +192,13 @@ end;
 x_dist = stop - start;
 
 % try to set ylim
-from = min(handles.plots{1}.data_plot.YData(range));
-to = max(handles.plots{1}.data_plot.YData(range));
+from = min(handles.plots{1}.y_data(range));
+to = max(handles.plots{1}.y_data(range));
 
-dmax = max(handles.plots{1}.data_plot.YData);
-dmin = min(handles.plots{1}.data_plot.YData);
+dmax = max(handles.plots{1}.y_data);
+dmin = min(handles.plots{1}.y_data);
 
-cur_ylim = get(handles.axData, 'ylim');
+cur_ylim = handles.limits.y;
 y_dist = cur_ylim(2) - cur_ylim(1);
 new_dist = to - from;
 
@@ -202,6 +222,7 @@ if new_dist ~= y_dist
         end;
     end;
     set(handles.axData, 'ylim', [start,stop]);
+    handles.limits.y = [start,stop];
 end;
 
 handles.highlighted_epoch = epId;
@@ -423,15 +444,15 @@ end;
 
 for i=1:numel(handles.plots)
     p = handles.plots{i};
-    xd = p.data_plot.XData;
-    yd = p.data_plot.YData;
+    xd = handles.x_data;
+    yd = p.y_data;
     
     if strcmpi(action, 'highlight') && strcmpi(handles.mode, 'removeepoch')
         range = find(xd >= x_from & xd <= x_to & ~isnan(p.select_data.Y));
     else
         range = find(xd >= x_from & xd <= x_to);
     end;
-    highlight_yd = NaN(numel(yd), 1);
+    highlight_yd = handles.NaN_data;
     switch action
         case 'add'
             p.select_data.Y(range) = yd(range);   
@@ -440,7 +461,7 @@ for i=1:numel(handles.plots)
         case 'highlight'
             highlight_yd(range) = yd(range);
     end;
-    p.highlight_plot.YData = highlight_yd;
+    set(p.highlight_plot, 'YData', highlight_yd);
     handles.plots{i} = p;
 end;
 
@@ -452,11 +473,33 @@ end;
 guidata(gca, handles);
 
 % --------------------------------------------------------------------
+function InterpolateData
+handles = guidata(gca);
+interp_state = get(handles.cbInterpolate, 'Value');
+
+if interp_state ~= 0 && strcmpi(handles.output_type, 'interpolate');
+    for i=1:numel(handles.plots)
+        xd = handles.x_data;
+        yd = handles.plots{i}.y_data;
+        
+        for j = 1:numel(handles.epochs)
+            start = find(xd == handles.epochs{j}.range(1));
+            stop = find(xd == handles.epochs{j}.range(2));
+            yd(start:stop) = NaN;
+        end;
+        [sts, newyd] = scr_interpolate(yd);
+        set(handles.plots{i}.interpolate, 'YData', newyd);
+    end
+else
+    for i=1:numel(handles.plots)
+        set(handles.plots{i}.interpolate, 'YData', handles.NaN_data);
+    end;
+end;
+% --------------------------------------------------------------------
 function UpdateEpochList
 handles = guidata(gca);
 
 % we work with plot 1 only because epochs are for all plots the same
-xd = handles.plots{1}.select_data.X;
 yd = handles.plots{1}.select_data.Y;
 
 % find epochs in yd
@@ -469,57 +512,83 @@ if numel(v_pos)>1
 else
     ep = [];
 end;
-old_epochs = handles.epochs;
-new_epochs = {};
+epochs = handles.epochs;
+xd = handles.x_data;
 
+% add epochs if necessary
 for i=1:size(ep,2)
     response_plots = cell(numel(handles.plots),1);
-    
-    hold on;
-    for j=1:numel(handles.plots)
-        xd = handles.plots{j}.data_plot.XData;
-        yd = NaN(numel(xd), 1);
-        yd(ep(1,i):ep(2,i)) = handles.plots{j}.data_plot.YData(ep(1,i):ep(2,i));
-        
-        p = plot(xd, yd, 'Color', 'green');
-        response_plots{j} = struct('p', p);
+    k = 1;
+    epochFound = false;
+    while ~epochFound && k <= numel(epochs)
+        if epochs{k}.range == xd(ep(1:2, i))
+            epochFound = true;
+        end;
+        k = k+1;
     end;
-    hold off;
-    
-    new_epochs{i} = struct( ...
-        'name', sprintf('%d: %d-%d', i, xd(ep(1,i)), xd(ep(2,i))) , ...
-        'range', xd(ep(1:2, i)), ...
-        'response_plots', {response_plots} ...
-    );
+            
+    % add epoch if not found
+    if ~epochFound 
+        hold on;
+        for j=1:numel(handles.plots)
+            
+            yd = handles.NaN_data;
+            yd(ep(1,i):ep(2,i)) = handles.plots{j}.y_data(ep(1,i):ep(2,i));
+            
+            p = plot(xd, yd, 'Color', 'green', 'Parent', handles.plots{j}.sel_container);
+            response_plots{j} = struct('p', p);
+        end;
+        hold off;
+        
+        epochs{numel(epochs) + 1} = struct( ...
+            'name', sprintf('%d-%d', xd(ep(1,i)), xd(ep(2,i))) , ...
+            'range', xd(ep(1:2, i)), ...
+            'highlighted', false, ...
+            'response_plots', {response_plots} ...
+            );
+    end;
 end;
 
-names = cellfun(@(x) x.name, new_epochs, 'UniformOutput', 0);
+% remove epochs if necessary
+if numel(epochs) ~= size(ep,2)
+    i = 1;
+    while i <= numel(epochs)
+        epochFound = false;
+        k = 1;
+        while ~epochFound && k <= size(ep,2)
+            if epochs{i}.range == xd(ep(1:2, k))
+                epochFound = true;
+            end;
+            k = k+1;
+        end;
+        
+        if ~epochFound
+            for j=1:numel(epochs{i}.response_plots)
+                delete(epochs{i}.response_plots{j}.p);
+            end;
+            epochs(i) = [];
+        else
+            i = i+1;
+        end;
+    end;
+end;
+
+names = cellfun(@(x) x.name, epochs, 'UniformOutput', 0);
 sel_ep = get(handles.lbEpochs, 'Value');
 if sel_ep > numel(names)
     sel_ep = numel(names);
     set(handles.lbEpochs, 'Value', sel_ep);
-elseif sel_ep == 0 && numel(names) > 0
+elseif (sel_ep == 0) && (numel(names) > 0)
     sel_ep = 1;
     handles.highlighted_epoch = -1;
     set(handles.lbEpochs, 'Value', sel_ep);
 end;
 set(handles.lbEpochs, 'String', names);
 
-% clean up old_epochs
-for i=1:numel(old_epochs)
-    for j=1:numel(old_epochs{i}.response_plots)
-        delete(old_epochs{i}.response_plots{j}.p);
-    end;
-end;
-
-handles.epochs = new_epochs;
-
-% put highlight plots on top
-for i=1:numel(handles.plots)
-    uistack(handles.plots{i}.highlight_plot, 'top');
-end;
-
+handles.epochs = epochs;
 guidata(gca, handles);
+
+InterpolateData;
 
 
 % --------------------------------------------------------------------
@@ -595,3 +664,91 @@ else
 end;
 set(handles.lbEpochs, 'Value', new_ep);
 HighlightEpoch(new_ep);
+
+
+% --- Executes on button press in pbOk.
+function pbOk_Callback(hObject, eventdata, handles)
+% hObject    handle to pbOk (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+switch handles.output_type
+    case 'interpolate'
+        interp = cellfun(@(x) get(x.interpolate, 'YData'), handles.plots, 'UniformOutput', 0);
+        handles.output = interp;
+    case 'epochs'
+        ep = cellfun(@(x) x.range, handles.epochs, 'UniformOutput', 0);
+        handles.output = ep;
+    otherwise 
+        handles.output = {};
+end;
+        
+guidata(gca, handles);
+uiresume(handles.fgDataEditor);
+
+
+% --- Executes on button press in pbCancel.
+function pbCancel_Callback(hObject, eventdata, handles)
+% hObject    handle to pbCancel (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+handles.output = {};
+guidata(gca, handles);
+uiresume(handles.fgDataEditor);
+
+
+% --- Executes on button press in cbInterpolate.
+function cbInterpolate_Callback(hObject, eventdata, handles)
+% hObject    handle to cbInterpolate (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of cbInterpolate
+InterpolateData;
+
+% --- Executes on selection change in ppOutput.
+function ppOutput_Callback(hObject, eventdata, handles)
+% hObject    handle to ppOutput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns ppOutput contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from ppOutput
+
+output_type = get(hObject,'Value');
+
+switch output_type
+    case 1
+        set(handles.cbInterpolate, 'Enable', 'on');
+        handles.output_type = 'interpolate';
+    case 2
+        set(handles.cbInterpolate, 'Enable', 'off');
+        handles.output_type = 'epochs';
+end;
+guidata(hObject, handles);
+InterpolateData;
+
+
+% --- Executes during object creation, after setting all properties.
+function ppOutput_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to ppOutput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes when user attempts to close fgDataEditor.
+function fgDataEditor_CloseRequestFcn(hObject, eventdata, handles)
+% hObject    handle to fgDataEditor (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: delete(hObject) closes the figure
+handles.output = {};
+uiresume(handles.fgDataEditor);

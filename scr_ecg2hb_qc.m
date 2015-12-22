@@ -16,7 +16,7 @@ function varargout = scr_ecg2hb_qc(varargin)
 % $Id$   
 % $Rev$
 
-% Last Modified by GUIDE v2.5 30-Jun-2015 18:23:17
+% Last Modified by GUIDE v2.5 22-Dec-2015 09:59:33
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
