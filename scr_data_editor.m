@@ -1,26 +1,12 @@
 function varargout = scr_data_editor(varargin)
 % SCR_DATA_EDITOR MATLAB code for scr_data_editor.fig
-%      SCR_DATA_EDITOR, by itself, creates a new SCR_DATA_EDITOR or raises the existing
-%      singleton*.
-%
-%      H = SCR_DATA_EDITOR returns the handle to a new SCR_DATA_EDITOR or the handle to
-%      the existing singleton*.
-%
-%      SCR_DATA_EDITOR('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in SCR_DATA_EDITOR.M with the given input arguments.
-%
-%      SCR_DATA_EDITOR('Property','Value',...) creates a new SCR_DATA_EDITOR or raises the
-%      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before scr_data_editor_OpeningFcn gets called.  An
-%      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to scr_data_editor_OpeningFcn via varargin.
-%
-%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
-%      instance to run (singleton)".
-%
-% See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help scr_data_editor
+%__________________________________________________________________________
+% PsPM 3.1
+% (C) 2015 Tobias Moser (University of Zurich)
+
+% $Id$
+% $Rev$
 
 % Last Modified by GUIDE v2.5 22-Dec-2015 14:29:19
 
@@ -52,7 +38,7 @@ function scr_data_editor_OpeningFcn(hObject, eventdata, handles, varargin)
 % varargin   command line arguments to scr_data_editor (see VARARGIN)
 
 % Choose default command line output for scr_data_editor
-handles.output = hObject;
+handles.output = {};
 handles.mode = 'default';
 handles.select = struct();
 handles.plots = {};
@@ -61,28 +47,29 @@ handles.epochs = {};
 handles.highlighted_epoch = -1;
 handles.output_type = 'interpolate';
 
-handles.fgDataEditor.WindowButtonDownFcn = @buttonDown_Callback;
-handles.fgDataEditor.WindowButtonUpFcn = @buttonUp_Callback;
-handles.fgDataEditor.WindowButtonMotionFcn = @buttonMotion_Callback;
+set(handles.fgDataEditor, 'WindowButtonDownFcn', @buttonDown_Callback);
+set(handles.fgDataEditor, 'WindowButtonUpFcn', @buttonUp_Callback);
+set(handles.fgDataEditor, 'WindowButtonMotionFcn', @buttonMotion_Callback);
+corder = get(handles.fgDataEditor, 'defaultAxesColorOrder');
 
-p = plot(varargin{1});
+p = plot(varargin{1}, 'Color', corder(1,:));
 hold on;
 ydata = get(p, 'YData');
 y = NaN(numel(ydata),1);
-x = p.XData;
+x = get(p, 'XData');
 
 handles.limits.x = get(handles.axData, 'xlim');
 handles.limits.y = get(handles.axData, 'ylim');
 
 handles.plots{end+1}.data_plot = p;
 handles.NaN_data = y;
-handles.plots{end}.y_data = p.YData;
-handles.x_data = p.XData;
+handles.plots{end}.y_data = ydata;
+handles.x_data = x;
 handles.plots{end}.sel_container = hggroup;
-handles.plots{end}.highlight_plot = plot(x,y, 'LineWidth', 1.5);
+handles.plots{end}.highlight_plot = plot(x,y, 'LineWidth', 1.5, 'Color', corder(2,:));
 handles.plots{end}.select_data.X = x';
 handles.plots{end}.select_data.Y = y';
-handles.plots{end}.interpolate = plot(x,y, 'LineWidth', 0.5);
+handles.plots{end}.interpolate = plot(x,y, 'LineWidth', 0.5, 'Color', corder(3,:));
 uistack(handles.plots{end}.interpolate, 'bottom');
 
 hold off;
@@ -280,10 +267,10 @@ function tlAddEpoch_OnCallback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-handles.tlRemoveEpoch.State = 'off';
-handles.tlZoomin.State = 'off';
-handles.tlZoomout.State = 'off';
-handles.tlNavigate.State = 'off';
+set(handles.tlRemoveEpoch, 'State', 'off');
+set(handles.tlZoomin, 'State', 'off');
+set(handles.tlZoomout, 'State', 'off');
+set(handles.tlNavigate, 'State', 'off');
 pan off;
 zoom off;
 
@@ -315,10 +302,10 @@ function tlRemoveEpoch_OnCallback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-handles.tlAddEpoch.State = 'off';
-handles.tlZoomin.State = 'off';
-handles.tlZoomout.State = 'off';
-handles.tlNavigate.State = 'off';
+set(handles.tlAddEpoch, 'State', 'off');
+set(handles.tlZoomin, 'State', 'off');
+set(handles.tlZoomout, 'State', 'off');
+set(handles.tlNavigate, 'State', 'off');
 pan off;
 zoom off;
 
@@ -332,22 +319,27 @@ handles.select.stop = [0,0];
 handles.select.p = 0;
 guidata(hObject, handles);
 
-
 % --------------------------------------------------------------------
 function tlZoomin_OnCallback(hObject, eventdata, handles)
 % hObject    handle to tlZoomin (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-handles.tlAddEpoch.State = 'off';
-handles.tlRemoveEpoch.State = 'off';
-handles.tlZoomout.State = 'off';
-handles.tlNavigate.State = 'off';
+set(handles.tlRemoveEpoch, 'State', 'off');
+set(handles.tlAddEpoch, 'State', 'off');
+set(handles.tlZoomout, 'State', 'off');
+set(handles.tlNavigate, 'State', 'off');
 pan off;
+
 z = zoom;
-z.Motion = 'horizontal';
-z.Direction = 'in';
-z.Enable = 'on';
+set(z, 'Motion', 'horizontal');
+set(z, 'Direction', 'in');
+% unset OnCallback while enabling zoomin otherwise this would end up in a
+% recurstion loop (dont know why exactly)
+cb = get(handles.tlZoomin, 'OnCallback');
+set(handles.tlZoomin, 'OnCallback', '');
+set(z, 'Enable', 'on');
+set(handles.tlZoomin, 'OnCallback', cb);
 
 % --------------------------------------------------------------------
 function drawSelection
@@ -361,8 +353,8 @@ y = [start(2), start(2), pos(2), pos(2)];
 
 if handles.select.p ~= 0
     p = handles.select.p;
-    p.XData = x;
-    p.YData = y;
+    set(p, 'XData', x);
+    set(p, 'YData', y);
 else
     p = patch(x,y, 'white', 'FaceColor', 'none');
     handles.select.p = p;
@@ -605,10 +597,10 @@ function tlNavigate_OnCallback(hObject, eventdata, handles)
 % hObject    handle to tlNavigate (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-handles.tlAddEpoch.State = 'off';
-handles.tlRemoveEpoch.State = 'off';
-handles.tlZoomout.State = 'off';
-handles.tlZoomin.State = 'off';
+set(handles.tlRemoveEpoch, 'State', 'off');
+set(handles.tlZoomin, 'State', 'off');
+set(handles.tlZoomout, 'State', 'off');
+set(handles.tlAddEpoch, 'State', 'off');
 zoom off;
 pan on;
 
@@ -618,16 +610,16 @@ function tlZoomout_OnCallback(hObject, eventdata, handles)
 % hObject    handle to tlZoomout (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-handles.tlAddEpoch.State = 'off';
-handles.tlRemoveEpoch.State = 'off';
-handles.tlZoomin.State = 'off';
-handles.tlNavigate.State = 'off';
+set(handles.tlRemoveEpoch, 'State', 'off');
+set(handles.tlZoomin, 'State', 'off');
+set(handles.tlAddEpoch, 'State', 'off');
+set(handles.tlNavigate, 'State', 'off');
 pan off;
 
 z = zoom;
-z.Motion = 'horizontal';
-z.Direction = 'out';
-z.Enable = 'on';
+set(z, 'Motion', 'horizontal');
+set(z, 'Direction', 'out');
+set(z, 'Enable', 'on');
 
 
 % --------------------------------------------------------------------
