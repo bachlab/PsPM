@@ -138,7 +138,7 @@ if strcmpi(action, 'add')
         chantypes = {newdata.header.chantype};
     end;
     
-    fchannels = cell(1,numel(data) + numel(newdata));
+    fchannels = cell(numel(data) + numel(newdata),1);
     fchannels(channeli,1) = chantypes;
 end;
 
@@ -171,7 +171,7 @@ end;
 %% Modify data according to action
 % -------------------------------------------------------------------------
 if strcmpi(action, 'delete')
-    data(channeli,1) = [];
+    data(channeli) = [];
 else
     if isstruct(newdata)
         data{channeli,1} = newdata;
