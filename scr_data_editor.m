@@ -1,6 +1,22 @@
 function varargout = scr_data_editor(varargin)
 % SCR_DATA_EDITOR MATLAB code for scr_data_editor.fig
-
+%
+% FORMAT: 
+% [varargout] = scr_data_editor(varargin)
+%
+% DESCRIPTION: 
+%
+%
+% INPUT:
+%   varargin:       Can be multiple kinds of data types but to use
+%                   scr_data_editor() to edit acquisition data, the actual
+%                   data vector has to be passed via the varargin
+%                   argmument. The data should be 1xn or nx1 double vector.
+% OUTPUT:
+%   varargout:      The output depends on the actual output type chosen in
+%                   the graphical interface. At the moment either the
+%                   interpolated data or epochs only can be chosen as
+%                   output of the function.
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2015 Tobias Moser (University of Zurich)

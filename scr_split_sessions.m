@@ -133,9 +133,9 @@ for d = 1:numel(D)
     elseif numel(mrk) <=  options.max_sn
         fprintf('  The file won''t be trimmed. Not enough markers in channel %i.\n', markerchannel);
     else
-        imi(1:options.max_sn) = [];
+        imi(1:(options.max_sn-1)) = [];
         cutoff = options.min_break_ratio * max(imi);
-        
+            
         % get split points ---
         splitpoint = find(diff(mrk) > cutoff)+1;
         
@@ -152,6 +152,7 @@ for d = 1:numel(D)
                 sto = splitpoint(s) - 1;
             end;
             
+            % include last space (estimated by mean space)
             mean_space = mean(diff(mrk(sta:sto)));
             start_time = mrk(sta);
             stop_time = mrk(sto)+mean_space;
