@@ -47,12 +47,17 @@ addpath([settings.path, 'Import', filesep, 'physlog']);
 % load data with specific function
 % -------------------------------------------------------------------------
 [sts, out] = import_physlog(datafile);
+if sts ~= 1
+    warning('ID:invalid_input', 'Physlog import was not successfull');
+    return;
+end;
 
 % iterate through data and fill up channel list as specified in import
 % -------------------------------------------------------------------------
 for k = 1:numel(import)
-    if strcmpi(import{k}.type, 'marker')
+    if strcmpi(import{k}.type, 'marker')        
         chan = import{k}.channel;
+        if chan > size(out.trigger.t, 2), warning('ID:channel_not_contained_in_file', 'Column %02.0f not contained in file %s.\n', chan, datafile); return; end;
         import{k}.marker = 'continuous';
         import{k}.sr     = out.trigger.sr;
         import{k}.data   = out.trigger.t{:,chan};

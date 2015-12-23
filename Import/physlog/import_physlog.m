@@ -72,7 +72,13 @@ sts = -1;
 out = struct();
 
 % read header
-fileID = fopen(fn,'rt');
+if exist(fn, 'file')
+    fileID = fopen(fn,'rt');
+else
+    warning('ID:invalid_input', 'File ''%s'' not found.', fn);
+    return;
+end;
+
 end_hdr = false;
 
 out.record_date = datetime('now','Format','dd-MMM-yyyy');
@@ -104,8 +110,13 @@ sr = 500;
 
 % read actual data
 fileID = fopen(fn,'r');
+try
 dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter, ...
     'ReturnOnError', false, 'commentstyle', '#', 'MultipleDelimsAsOne',1);
+catch
+    fclose('all');
+    warning('ID:invalid_input', 'Cannot read file ''%s''.', fn); return;
+end;
 fclose('all');
 
 % handle triggers
@@ -122,16 +133,16 @@ fclose('all');
 
 trig = struct();
 trig.val = int16(hex2dec(dataArray{:,10}));
-trig.t{:,1} = bitand(trig.val, 1) ~= 0; % ECG
-trig.t{:,2} = bitand(trig.val, 2) ~= 0; % PPU
-trig.t{:,3} = bitand(trig.val, 4) ~= 0; % Respiration
-trig.t{:,4} = bitand(trig.val, 8) ~= 0; % Measurement
-trig.t{:,5} = bitand(trig.val, 16) ~= 0; % start of scan sequence
-trig.t{:,6} = bitand(trig.val, 32) ~= 0; % end of scan sequence
-trig.t{:,7} = bitand(trig.val, 64) ~= 0; % external
-trig.t{:,8} = bitand(trig.val, 128) ~= 0; % calibration
-trig.t{:,9} = bitand(trig.val, 512) ~= 0; % manual start
-trig.t{:,10} = bitand(trig.val, int16(32768)) ~= 0; % reference ecg trigger
+trig.t{:,1} = double(bitand(trig.val, 1) ~= 0); % ECG
+trig.t{:,2} = double(bitand(trig.val, 2) ~= 0); % PPU
+trig.t{:,3} = double(bitand(trig.val, 4) ~= 0); % Respiration
+trig.t{:,4} = double(bitand(trig.val, 8) ~= 0); % Measurement
+trig.t{:,5} = double(bitand(trig.val, 16) ~= 0); % start of scan sequence
+trig.t{:,6} = double(bitand(trig.val, 32) ~= 0); % end of scan sequence
+trig.t{:,7} = double(bitand(trig.val, 64) ~= 0); % external
+trig.t{:,8} = double(bitand(trig.val, 128) ~= 0); % calibration
+trig.t{:,9} = double(bitand(trig.val, 512) ~= 0); % manual start
+trig.t{:,10} = double(bitand(trig.val, int16(32768)) ~= 0); % reference ecg trigger
 
 out.trigger = trig;
 out.trigger.sr = sr;
