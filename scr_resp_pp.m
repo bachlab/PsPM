@@ -147,7 +147,7 @@ for iType = 1:(numel(datatypes) - 1)
                 ibi = diff(respstamp);
                 for k = 1:(numel(respstamp) - 1)
                     win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
-                    respdata(k) = sum(abs(diff(resp(win))))/ibi(k);
+                    respdata(k) = range(resp(win))/ibi(k);
                 end;
                 o.msg.prefix = 'Respiration converted to RLL and';
                 newdata.header.chantype = 'RLL';
