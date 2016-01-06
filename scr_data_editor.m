@@ -74,9 +74,6 @@ ydata = get(p, 'YData');
 y = NaN(numel(ydata),1);
 x = get(p, 'XData');
 
-handles.limits.x = get(handles.axData, 'xlim');
-handles.limits.y = get(handles.axData, 'ylim');
-
 handles.plots{end+1}.data_plot = p;
 handles.NaN_data = y;
 handles.plots{end}.y_data = ydata;
@@ -154,7 +151,7 @@ for i=1:numel(ep.response_plots)
     set(ep.response_plots{i}.p, 'Color', 'black', 'LineWidth', 1.5);
 end;
 
-cur_xlim = handles.limits.x;
+cur_xlim = get(handles.axData, 'xlim');
 start = cur_xlim(1);
 stop = cur_xlim(2);
 x_dist = stop-start;
@@ -185,7 +182,6 @@ if (x_dist < data_dist)
         end;
     end;  
     set(handles.axData, 'xlim', [start,stop]);
-    handles.limits.x = [start,stop];
 elseif x_dist >= data_dist
     start = dstart;
     stop = dstop;
@@ -201,7 +197,7 @@ to = max(handles.plots{1}.y_data(range));
 dmax = max(handles.plots{1}.y_data);
 dmin = min(handles.plots{1}.y_data);
 
-cur_ylim = handles.limits.y;
+cur_ylim = get(handles.axData, 'ylim');
 y_dist = cur_ylim(2) - cur_ylim(1);
 new_dist = to - from;
 
@@ -225,7 +221,6 @@ if new_dist ~= y_dist
         end;
     end;
     set(handles.axData, 'ylim', [start,stop]);
-    handles.limits.y = [start,stop];
 end;
 
 handles.highlighted_epoch = epId;

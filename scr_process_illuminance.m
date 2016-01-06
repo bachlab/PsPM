@@ -25,13 +25,6 @@ function [sts, out] = scr_process_illuminance(ldata, sr, options)
 %           .overwrite  [true/FALSE] specifies if file specified with
 %                       options.fn should be overwritten or not.
 %
-%           .dont_ask_overwrite [true/FALSE] specifies if user should be
-%                               asked whether file should be overwritten 
-%                               or not. Only when file specified with 
-%                               options.fn already exists and 
-%                               options.overwrite == false
-%           
-% 
 %   Outputs:
 %           sts:    status
 %           out:    has same size as ldata and contains either the
@@ -168,7 +161,6 @@ for i = 1:w
         elseif s(1) < s(2)
             % transpose data
             lumd = lumd';
-            s = size(lumd);
         end;
         
         lsr = sr{i,j};
