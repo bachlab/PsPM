@@ -97,7 +97,7 @@ if ~strcmpi(action, 'delete')
             [h,w] = size(d);
             if w ~= 1
                 if h == 1
-                    warning(['Passed struct (%i) seems to have the wrong ',
+                    warning('ID:invalid_data_structure', ['Passed struct (%i) seems to have the wrong ', ...
                         'orientation. Trying to transpose...'], i);
                     d = d';
                     newdata{i}.data = d;
@@ -202,7 +202,8 @@ if strcmpi(action, 'delete')
     data(channeli) = [];
 else
     data(channeli,1) = newdata;
-end
+end;
+
 if isfield(infos, 'history')
     nhist = numel(infos.history);
 else
