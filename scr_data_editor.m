@@ -8,7 +8,7 @@ function varargout = scr_data_editor(varargin)
 %
 %
 % INPUT:
-%   varargin:       Can be multiple kinds of data types but to use
+%   varargin:       Can be multiple kinds of data types. In order to use
 %                   scr_data_editor() to edit acquisition data, the actual
 %                   data vector has to be passed via the varargin
 %                   argmument. The data should be 1xn or nx1 double vector.

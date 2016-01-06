@@ -10,7 +10,7 @@ function [sts, infos] = scr_write_channel(fn, newdata, action, options)
 %
 %   newdata: [struct()/empty]
 %            is either a new data struct or a cell array of new data
-%            structs
+%            structs. 
 %
 %   action: 'add'       add newdata as a new channel
 %           'replace'   replace channel with given newdata
@@ -83,6 +83,38 @@ elseif ~isempty(newdata) && ~isstruct(newdata) && ~iscell(newdata)
        warning('ID:invalid_input', 'newdata must either be a newdata structure or empty'); return;
 end;
 
+%% Determine whether the data has the correct 'orientation' and try to fix it
+% -------------------------------------------------------------------------
+
+if isstruct(newdata)
+    newdata = {newdata};
+end;
+
+if ~strcmpi(action, 'delete')    
+    for i=1:numel(newdata)
+        if isfield(newdata{i}, 'data')
+            d = newdata{i}.data;
+            [h,w] = size(d);
+            if w ~= 1
+                if h == 1
+                    warning(['Passed struct (%i) seems to have the wrong ',
+                        'orientation. Trying to transpose...'], i);
+                    d = d';
+                    newdata{i}.data = d;
+                else
+                    warning('ID:invalid_data_structure', ...
+                        'Passed struct (%i) seems to have the wrong format.', i);
+                    return;
+                end;
+            end;
+        else
+            warning('ID:invalid_data_strucutre', ...
+                'Passed struct (%i) contains no ''.data'' field.', i);
+            return;
+        end;
+    end;
+end;
+
 %% Process other options
 % -------------------------------------------------------------------------
 try options.msg; catch, options.msg = ''; end;
@@ -107,7 +139,9 @@ if ~strcmpi(action, 'add')
             channeli = find(strcmpi(options.channel,fchannels),1,options.delete);
         end
     elseif options.channel == 0
-        channeli = find(strcmpi(newdata.header.chantype,fchannels),1,'last');
+        channeli = cellfun(@(x) find(strcmpi(x.header.chantype, fchannels),1,'last'), ... 
+            newdata, 'UniformOutput', 0);
+        channeli = cell2mat(channeli);
     else
         channel = options.channel;
         if any(channel > numel(fchannels))
@@ -131,13 +165,7 @@ end;
 
 if strcmpi(action, 'add')
     channeli = numel(data) + (1:numel(newdata));
-    
-    if iscell(newdata) 
-        chantypes = cellfun(@(f) f.header.chantype, newdata, 'un', 0);
-    elseif isstruct(newdata)
-        chantypes = {newdata.header.chantype};
-    end;
-    
+    chantypes = cellfun(@(f) f.header.chantype, newdata, 'un', 0);
     fchannels = cell(numel(data) + numel(newdata),1);
     fchannels(channeli,1) = chantypes;
 end;
@@ -173,11 +201,7 @@ end;
 if strcmpi(action, 'delete')
     data(channeli) = [];
 else
-    if isstruct(newdata)
-        data{channeli,1} = newdata;
-    elseif iscell(newdata)
-        data(channeli,1) = newdata;
-    end;
+    data(channeli,1) = newdata;
 end
 if isfield(infos, 'history')
     nhist = numel(infos.history);
