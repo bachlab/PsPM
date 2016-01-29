@@ -46,6 +46,8 @@ b_l = pl(2);
 a_l = pl(1);
 A_l = pl(4);
 
+p = [pe pl];
+
 gl_e = gammaln(a_e);
 gl_l = gammaln(a_l);
 
@@ -57,5 +59,5 @@ x = (0:td:10.9-td)';
 %fx = A * gampdf(x - x0, a, b);
 
 fx_e = A_e * exp(log(x-x0_e).*(a_e-1) - gl_e - (x-x0_e)./b_e - log(b_e)*a_e);
-fx_l = A_l * exp(log(x-x0_l).*(a_l-1) - gl_l - (x-x0_l)./b_l - log(b_l)*a_l);
+fx_l = A_l * gampdf(x - x0_l, a_l, b_l);
 fx = [fx_e fx_l];

@@ -40,7 +40,7 @@ end;
 if (d<0)||(d>1), d=0; end;
 
 % get parameters and basis function
-[bs_com, x, p] = scr_bf_rarf_fc_f_gc(td);
+[bs_com, x, p] = scr_bf_rarf_fc_f(td);
 if d>0
     bs = bs_com;
     bs(:,1) = bs(:,1)/sum(abs(bs(:,1)));
