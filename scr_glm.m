@@ -574,7 +574,8 @@ end;
 % create design matrix filter
 Xfilter = model.filter;
 Xfilter.sr = glm.infos.sr;
-Xfilter.down = 'none'; % turn off no low pass warning
+Xfilter.down = 'none'; % turn off downsampling
+Xfilter.lpfreq = NaN; % turn off low pass filter
 
 % convolve with basis functions
 snoffsets = cumsum(tmp.snduration);

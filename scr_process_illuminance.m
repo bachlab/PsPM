@@ -47,13 +47,26 @@ out = {};
 % check options
 if nargin < 3
     options = struct();
+elseif ~isstruct(options)
+    warning('ID:invalid_input', 'Options must be a structure.'); return;
 end;
 
 % setup default values
-try options.transfer; catch; options.transfer = [30.8093436443031,-1.02893596973461,-0.465448527907005]; end;
-try options.bf; catch; options.bf = struct(); end;
-try options.bf.duration; catch; options.bf.duration = 20; end;
-try options.bf.offset; catch; options.bf.offset = 0.2; end;
+if ~isfield(options, 'transfer')
+    options.transfer = [30.8093436443031,-1.02893596973461,-0.465448527907005]; 
+end;
+if ~isfield(options, 'bf') || ~isstruct(options.bf)
+    options.bf = struct();
+end;
+if ~isfield(options.bf, 'duration')
+    options.bf.duration = 20;
+end;
+if ~isfield(options.bf, 'offset')
+    options.bf.offset = 20;
+end;
+if ~isfield(options.bf, 'dilation') 
+    options.bf.duration = 20;
+end;
 try options.bf.dilation; catch; options.bf.dilation = struct(); end;
 try options.bf.constriction; catch; options.bf.constriction = struct(); end;
 try options.bf.dilation.fhandle; catch; options.bf.dilation.fhandle = @scr_bf_ldrf_gm; end;
