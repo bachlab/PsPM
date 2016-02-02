@@ -1,4 +1,4 @@
-function [fx, x, p] = scr_bf_rarf_fc_f_gc(td, p)
+function [fx, x, p] = scr_bf_rarf_fc_f(td, p)
 % SCR_bf_hprf_fc_f
 % Description: 
 %

@@ -2,7 +2,8 @@ function varargout = scr_data_editor(varargin)
 % SCR_DATA_EDITOR MATLAB code for scr_data_editor.fig
 %
 % FORMAT: 
-% [varargout] = scr_data_editor(varargin)
+%   [varargout] = scr_data_editor(varargin)
+%   [sts, outdata, outinfo] = scr_data_editor(indata, chan)
 %
 % DESCRIPTION: 
 %
@@ -24,7 +25,7 @@ function varargout = scr_data_editor(varargin)
 % $Id$
 % $Rev$
 
-% Last Modified by GUIDE v2.5 22-Dec-2015 14:29:19
+% Last Modified by GUIDE v2.5 02-Feb-2016 12:16:26
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -53,43 +54,292 @@ function scr_data_editor_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to scr_data_editor (see VARARGIN)
 
+% initialise
+% -------------------------------------------------------------------------
+global settings;
+if isempty(settings), scr_init; end;
+
+if get(handles.rbInterpolate, 'Value') 
+    set(handles.cbInterpolate, 'Enable', 'on');
+    handles.output_type = 'interpolate';
+else
+    set(handles.cbInterpolate, 'Enable', 'off');
+    handles.output_type = 'epochs';
+end;
+
 % Choose default command line output for scr_data_editor
 handles.output = {};
 handles.mode = 'default';
 handles.select = struct();
 handles.plots = {};
-handles.selected_data = {};
+handles.selected_data = [];
 handles.epochs = {};
 handles.highlighted_epoch = -1;
-handles.output_type = 'interpolate';
 
+handles.data = {};
+handles.input_mode = '';
+handles.input_file = '';
+handles.output_file = '';
+    
 set(handles.fgDataEditor, 'WindowButtonDownFcn', @buttonDown_Callback);
 set(handles.fgDataEditor, 'WindowButtonUpFcn', @buttonUp_Callback);
 set(handles.fgDataEditor, 'WindowButtonMotionFcn', @buttonMotion_Callback);
-corder = get(handles.fgDataEditor, 'defaultAxesColorOrder');
-
-p = plot(varargin{1}, 'Color', corder(1,:));
-hold on;
-ydata = get(p, 'YData');
-y = NaN(numel(ydata),1);
-x = get(p, 'XData');
-
-handles.plots{end+1}.data_plot = p;
-handles.NaN_data = y;
-handles.plots{end}.y_data = ydata;
-handles.x_data = x;
-handles.plots{end}.sel_container = hggroup;
-handles.plots{end}.highlight_plot = plot(x,y, 'LineWidth', 1.5, 'Color', corder(2,:));
-handles.plots{end}.select_data.X = x';
-handles.plots{end}.select_data.Y = y';
-handles.plots{end}.interpolate = plot(x,y, 'LineWidth', 0.5, 'Color', corder(3,:));
-uistack(handles.plots{end}.interpolate, 'bottom');
-
-hold off;
 
 % Update handles structure
 guidata(hObject, handles);
+
+if numel(varargin) > 0
+    if ischar(varargin{1})
+        if exist(varargin{1}, 'file')
+            set(handles.pnlInput, 'Visible', 'on');
+            set(handles.pnlOutput, 'Visible', 'on');
+            
+            loadFromFile(varargin{1});
+        else
+            warning('File ''%s'' does not exist.');
+        end;
+    elseif isnumeric(varargin{1})
+        set(handles.pnlInput, 'Visible', 'off');
+        set(handles.pnlOutput, 'Visible', 'off');
+        
+        handles.data = varargin{1};
+        handles.input_mode = 'raw';
+        guidata(hObject, handles);
+        PlotData;
+    end;
+end;
 uiwait(handles.fgDataEditor);
+
+% --------------------------------------------------------------------
+function [sts] = CreateOutput()
+
+handles = guidata(gca);
+
+sts = -1;
+if strcmpi(handles.input_mode, 'file') && strcmpi(handles.output_file, '')
+    msgbox('No output file specified. Cannot create output.','Error','error'); 
+else
+    out_file = handles.output_file;
+    switch handles.output_type
+        case 'interpolate'
+            plots = ~cellfun(@isempty, handles.plots);
+            interp = cellfun(@(x) get(x.interpolate, 'YData'), handles.plots(plots), 'UniformOutput', 0);
+            
+            if strcmpi(handles.input_mode, 'file')
+                channels = find(plots);
+                newchan = cell(numel(channels), 1);
+                for i=1:numel(channels)
+                    newchan{i} = handles.data{channels(i)};
+                    newchan{i}.data = interp{i}';
+                end;
+                if exist(out_file, 'file')
+                    overwrite = menu(sprintf('File (%s) already exists. Add channels?', out_file), 'yes', 'no');
+                    if overwrite
+                        scr_write_channel(out_file, newchan, 'add');
+                    end;
+                else
+                    [sts, infos, data] = scr_load_data(out_file, newchan);
+                end;
+            else
+                handles.output = interp;
+            end;
+            sts = 1;
+        case 'epochs'
+            ep = cellfun(@(x) x.range, handles.epochs, 'UniformOutput', 0);
+            epochs = cell2mat(ep)';
+            
+            if strcmpi(handles.input_mode, 'file')
+                if exist(out_file, 'file')
+                    write_ok = menu(sprintf('File (%s) already exists. Overwrite?', out_file), 'yes', 'no');
+                else
+                    write_ok = true;
+                end;
+                
+                if write_ok
+                    save(out_file, 'epochs');
+                end;
+            else
+                handles.output = epochs;
+            end;
+            sts = 1;
+        otherwise
+            handles.output = {};
+            sts = 1;
+    end;
+end;
+
+guidata(gca, handles);
+
+% --------------------------------------------------------------------
+function loadFromFile(file)
+handles = guidata(gca);
+
+% clear epochs
+handles.selected_data(:) = NaN;
+guidata(gca, handles);
+UpdateEpochList;
+
+% clear channels
+handles.channels = {};
+set(handles.lbChannel, 'String', '');
+
+% remove plots
+for i=1:numel(handles.plots)
+    if ~isempty(handles.plots{i})
+        RemovePlot(i);
+    end;
+end;
+
+% load file
+[sts, infos, data] = scr_load_data(file);
+channels = cellfun(@(x) {x.header.chantype,x.header.units}, data, 'UniformOutput', 0);
+
+set(handles.edOpenFilePath, 'String', file);
+
+% format channels
+corder = get(handles.fgDataEditor, 'defaultAxesColorOrder');
+cl = length(corder)-2;
+disp_names = cell(numel(channels), 1);
+for i=1:numel(channels)
+    if strcmpi(channels{i}(2), 'events')
+        disp_names{i} = sprintf('<html><font color="#DDDDDD">%s</font></html>', channels{i}{1});
+    else
+        m = floor((i-0.1)/cl);
+        color = corder(i - m*cl, :);
+        disp_names{i} = sprintf('<html><font bgcolor="#%02s%02s%02s">%s</font></html>',...
+            dec2hex(round(color(1)*255)), ...
+            dec2hex(round(color(2)*255)), ...
+            dec2hex(round(color(3)*255)), ...
+            channels{i}{1});
+    end;
+end;
+
+set(handles.lbChannel, 'String', disp_names);
+
+handles.data = data;
+handles.infos = infos;
+handles.input_mode = 'file';
+handles.plots = cell(size(data));
+guidata(gca, handles);
+
+PlotData;
+
+% --------------------------------------------------------------------
+function PlotData
+handles = guidata(gca);
+chan = {};
+% load data
+switch handles.input_mode
+    case 'file'
+        % get highest sample rate
+        sr = max(cellfun(@(x) x.header.sr, handles.data));
+        xdata = (0:sr^-1:handles.infos.duration)';
+        chan_id = get(handles.lbChannel, 'Value');
+        if ~any(numel(handles.data) < chan_id)
+            chan = chan_id;
+        else
+            warning('Cannot plot selected channel(s).');
+        end;
+    case 'raw'
+        xdata = (1:numel(handles.data))';
+        chan = 1;
+end;
+
+handles.selected_data = NaN(numel(xdata),1);
+handles.x_data = xdata;
+
+guidata(gca, handles);
+
+if ~isempty(chan)
+    np = get(handles.axData, 'NextPlot');
+    action = 'replace';
+    for i=1:numel(chan)
+        AddPlot(chan(i), action);
+        action = 'add';
+    end;   
+    set(handles.axData, 'NextPlot', np);
+end;
+
+% --------------------------------------------------------------------
+function AddPlot(chan_id, action)
+handles = guidata(gca);
+
+if isempty(action)
+    action = 'replace';
+end;
+
+np = get(handles.axData, 'NextPlot');
+set(handles.axData, 'NextPlot', action);
+corder = get(handles.fgDataEditor, 'defaultAxesColorOrder');
+cl = length(corder)-2;
+
+m = floor((chan_id-0.1)/cl);
+color = corder(chan_id - m*cl, :);
+if strcmpi(handles.input_mode, 'file')
+    sr = handles.data{chan_id}.header.sr;
+    ydata = handles.data{chan_id}.data;
+    xdata = (0:sr^-1:handles.infos.duration)';
+    if numel(xdata) > numel(ydata)
+        xdata = xdata(2:end);
+    end;
+else
+    xdata = 1:numel(handles.data)';
+    ydata = handles.data;
+    sr = 1;
+end;
+
+p = plot(xdata,ydata, 'Color', color);
+set(handles.axData, 'NextPlot', 'add');
+NaN_data = NaN(numel(xdata),1);
+handles.plots{chan_id}.sr = sr;
+handles.plots{chan_id}.data_plot = p;
+handles.plots{chan_id}.y_data = ydata;
+handles.plots{chan_id}.x_data = xdata;
+handles.plots{chan_id}.sel_container = hggroup;
+handles.plots{chan_id}.highlight_plot = plot(xdata,NaN_data, 'LineWidth', 1.5, 'Color', corder(end,:));
+handles.plots{chan_id}.interpolate = plot(xdata,NaN_data, 'LineWidth', 0.5, 'Color', corder(end-1,:), 'LineStyle', '--');
+uistack(handles.plots{chan_id}.interpolate, 'bottom');
+
+% add response plots
+for i=1:numel(handles.epochs)
+    rp_x = handles.plots{chan_id}.x_data;
+    rp_y = NaN(1,numel(handles.plots{chan_id}.x_data));
+    range = rp_x > handles.epochs{i}.range(1) & rp_x < handles.epochs{i}.range(2);
+    rp_y(range) = handles.plots{chan_id}.y_data(range);
+    
+    p = plot(rp_x, rp_y, 'Color', 'green', 'Parent', handles.plots{chan_id}.sel_container);
+    handles.epochs{i}.response_plots{chan_id} = struct('p', p);
+end;
+
+set(handles.axData, 'NextPlot', np);
+guidata(gca, handles);
+
+
+% --------------------------------------------------------------------
+function RemovePlot(chan_id)
+handles = guidata(gca);
+
+if numel(handles.plots) >= chan_id
+    
+    % remove response plots
+    for i=1:numel(handles.epochs)
+        if numel(handles.epochs{i}.response_plots) >= chan_id ...
+                && ~isempty(handles.epochs{i}.response_plots{chan_id})
+            delete(handles.epochs{i}.response_plots{chan_id}.p);
+            handles.epochs{i}.response_plots{chan_id} = [];
+        end;
+    end;
+    
+    delete(handles.plots{chan_id}.data_plot);
+    delete(handles.plots{chan_id}.sel_container);
+    delete(handles.plots{chan_id}.highlight_plot);
+    delete(handles.plots{chan_id}.interpolate);
+    % empty entry
+    handles.plots{chan_id} = [];
+end;
+
+guidata(gca, handles);
+
 
 % --- Outputs from this function are returned to the command line.
 function varargout = scr_data_editor_OutputFcn(hObject, eventdata, handles) 
@@ -121,10 +371,12 @@ handles = guidata(gca);
 for i=1:numel(handles.epochs)
     if handles.epochs{i}.highlighted
         for j=1:numel(handles.epochs{i}.response_plots)
-            set(handles.epochs{i}.response_plots{j}.p, ...
-                'Color', 'green',  ...
-                'LineWidth',0.5 ...
-                );
+            if ~isempty(handles.epochs{i}.response_plots{j})
+                set(handles.epochs{i}.response_plots{j}.p, ...
+                    'Color', 'green',  ...
+                    'LineWidth',0.5 ...
+                    );
+            end;
         end;
         handles.epochs{i}.highlighted = false;
     end;
@@ -144,11 +396,11 @@ ep = handles.epochs{epId};
 ep.highlighted = true;
 handles.epochs{epId} = ep;
 
-range = ep.range(1):ep.range(2);
-
 % highlight epochs
 for i=1:numel(ep.response_plots)
-    set(ep.response_plots{i}.p, 'Color', 'black', 'LineWidth', 1.5);
+    if ~isempty(ep.response_plots{i})
+        set(ep.response_plots{i}.p, 'Color', 'black', 'LineWidth', 1.5);
+    end;
 end;
 
 cur_xlim = get(handles.axData, 'xlim');
@@ -191,11 +443,15 @@ end;
 x_dist = stop - start;
 
 % try to set ylim
-from = min(handles.plots{1}.y_data(range));
-to = max(handles.plots{1}.y_data(range));
-
-dmax = max(handles.plots{1}.y_data);
-dmin = min(handles.plots{1}.y_data);
+plots = ~cellfun(@isempty, handles.plots);
+minmax = cellfun(@(x) [max(x.y_data(x.x_data >= ep.range(1)& x.x_data <= ep.range(2))), ...
+    max(x.y_data), min(x.y_data(x.x_data >= ep.range(1)& x.x_data <= ep.range(2))), min(x.y_data)], ... 
+    handles.plots(plots), 'UniformOutput', false);
+minmax = cell2mat(minmax);
+to = max(minmax(:,1));
+from = min(minmax(:,3));
+dmax = max(minmax(:,2));
+dmin = min(minmax(:,4));
 
 cur_ylim = get(handles.axData, 'ylim');
 y_dist = cur_ylim(2) - cur_ylim(1);
@@ -417,13 +673,15 @@ UpdateEpochList;
 function buttonMotion_Callback(src, data)
 handles = guidata(gca);
 
-switch handles.mode
-    case {'addepoch', 'removeepoch'}
-        if isequal(handles.select.stop,[0,0]) && ...
-                ~isequal(handles.select.start,[0,0])
-            drawSelection;
-            SelectedArea('highlight');
-        end;       
+if isfield(handles, 'mode')
+    switch handles.mode
+        case {'addepoch', 'removeepoch'}
+            if isequal(handles.select.stop,[0,0]) && ...
+                    ~isequal(handles.select.start,[0,0])
+                drawSelection;
+                SelectedArea('highlight');
+            end;
+    end;
 end;
 
 % --------------------------------------------------------------------
@@ -435,6 +693,15 @@ if strcmpi(action, 'highlight')
     stop = pt(1,1:2);
 else
     stop = handles.select.stop;
+    % turn highlight off
+    for i=1:numel(handles.plots)
+        p = handles.plots{i};
+        if ~isempty(p)
+            xd = p.x_data;
+            highlight_yd = NaN(numel(xd),1);
+            set(p.highlight_plot, 'YData', highlight_yd');
+        end;
+    end;
 end;
 
 if start(1) > stop(1)
@@ -445,27 +712,26 @@ else
     x_to = stop(1);
 end;
 
-for i=1:numel(handles.plots)
-    p = handles.plots{i};
-    xd = handles.x_data;
-    yd = p.y_data;
-    
-    if strcmpi(action, 'highlight') && strcmpi(handles.mode, 'removeepoch')
-        range = find(xd >= x_from & xd <= x_to & ~isnan(p.select_data.Y));
-    else
-        range = find(xd >= x_from & xd <= x_to);
-    end;
-    highlight_yd = handles.NaN_data;
-    switch action
-        case 'add'
-            p.select_data.Y(range) = yd(range);   
-        case 'remove'
-            p.select_data.Y(range) = NaN;
-        case 'highlight'
-            highlight_yd(range) = yd(range);
-    end;
-    set(p.highlight_plot, 'YData', highlight_yd);
-    handles.plots{i} = p;
+
+sel_x = handles.x_data;
+
+switch action
+    case 'add'
+        handles.selected_data(sel_x >= x_from & sel_x <= x_to) = 1;
+    case 'remove'
+        handles.selected_data(sel_x >= x_from & sel_x <= x_to) = NaN;
+    case 'highlight'
+        for i=1:numel(handles.plots)
+            p = handles.plots{i};
+            if ~isempty(p)
+                xd = p.x_data;
+                yd = p.y_data;
+                r = xd >= x_from & xd <= x_to;
+                highlight_yd = NaN(numel(xd),1);
+                highlight_yd(r) = yd(r);
+                set(p.highlight_plot, 'YData', highlight_yd');
+            end;
+        end;
 end;
 
 if ~strcmpi(action, 'highlight')
@@ -482,116 +748,136 @@ interp_state = get(handles.cbInterpolate, 'Value');
 
 if interp_state ~= 0 && strcmpi(handles.output_type, 'interpolate');
     for i=1:numel(handles.plots)
-        xd = handles.x_data;
-        yd = handles.plots{i}.y_data;
-        
-        for j = 1:numel(handles.epochs)
-            start = find(xd == handles.epochs{j}.range(1));
-            stop = find(xd == handles.epochs{j}.range(2));
-            yd(start:stop) = NaN;
+        if ~isempty(handles.plots{i})
+            xd = handles.plots{i}.x_data;
+            yd = handles.plots{i}.y_data;
+            
+            for j = 1:numel(handles.epochs)
+                range = xd >= handles.epochs{j}.range(1) & xd <= handles.epochs{j}.range(2);
+                yd(range) = NaN;
+            end;
+            [sts, newyd] = scr_interpolate(yd);
+            set(handles.plots{i}.interpolate, 'YData', newyd);
         end;
-        [sts, newyd] = scr_interpolate(yd);
-        set(handles.plots{i}.interpolate, 'YData', newyd);
     end
 else
     for i=1:numel(handles.plots)
-        set(handles.plots{i}.interpolate, 'YData', handles.NaN_data);
+        if ~isempty(handles.plots{i})
+            NaN_data = NaN(numel(handles.plots{i}.x_data),1);
+            set(handles.plots{i}.interpolate, 'YData', NaN_data);
+        end;
     end;
 end;
+
+% --------------------------------------------------------------------
+function [epochs] = findSelectedEpochs()
+handles = guidata(gca);
+
+sd = handles.selected_data;
+% find epochs in yd
+v_pos = find(~isnan(sd));
+xd = handles.x_data;
+if numel(v_pos)>1
+    epoch_end = xd([v_pos(find(diff(v_pos) > 1)); v_pos(end)]);
+    epoch_start = xd(v_pos([1;find(diff(v_pos) > 1)+1]));
+    
+    epochs = [epoch_start, epoch_end];
+else
+    epochs = [];
+end;
+    
 % --------------------------------------------------------------------
 function UpdateEpochList
 handles = guidata(gca);
 
-% we work with plot 1 only because epochs are for all plots the same
-yd = handles.plots{1}.select_data.Y;
-
-% find epochs in yd
-v_pos = find(~isnan(yd));
-if numel(v_pos)>1
-    epoch_end = [v_pos(find(diff(v_pos) > 1)), v_pos(end)];
-    epoch_start = v_pos([1,find(diff(v_pos) > 1)+1]);
+if numel(handles.plots) > 0 
+    ep = findSelectedEpochs;
+    epochs = handles.epochs;
     
-    ep = [epoch_start; epoch_end];
-else
-    ep = [];
-end;
-epochs = handles.epochs;
-xd = handles.x_data;
-
-% add epochs if necessary
-for i=1:size(ep,2)
-    response_plots = cell(numel(handles.plots),1);
-    k = 1;
-    epochFound = false;
-    while ~epochFound && k <= numel(epochs)
-        if epochs{k}.range == xd(ep(1:2, i))
-            epochFound = true;
-        end;
-        k = k+1;
-    end;
-            
-    % add epoch if not found
-    if ~epochFound 
-        hold on;
-        for j=1:numel(handles.plots)
-            
-            yd = handles.NaN_data;
-            yd(ep(1,i):ep(2,i)) = handles.plots{j}.y_data(ep(1,i):ep(2,i));
-            
-            p = plot(xd, yd, 'Color', 'green', 'Parent', handles.plots{j}.sel_container);
-            response_plots{j} = struct('p', p);
-        end;
-        hold off;
-        
-        epochs{numel(epochs) + 1} = struct( ...
-            'name', sprintf('%d-%d', xd(ep(1,i)), xd(ep(2,i))) , ...
-            'range', xd(ep(1:2, i)), ...
-            'highlighted', false, ...
-            'response_plots', {response_plots} ...
-            );
-    end;
-end;
-
-% remove epochs if necessary
-if numel(epochs) ~= size(ep,2)
-    i = 1;
-    while i <= numel(epochs)
-        epochFound = false;
+    % add epochs if necessary
+    for i=1:size(ep,1)
+        response_plots = cell(numel(handles.plots),1);
         k = 1;
-        while ~epochFound && k <= size(ep,2)
-            if epochs{i}.range == xd(ep(1:2, k))
+        epochFound = false;
+        while ~epochFound && k <= numel(epochs)
+            if epochs{k}.range == ep(i,1:2)
                 epochFound = true;
             end;
             k = k+1;
         end;
         
+        % add epoch if not found
         if ~epochFound
-            for j=1:numel(epochs{i}.response_plots)
-                delete(epochs{i}.response_plots{j}.p);
+            hold on;
+            for j=1:numel(handles.plots)
+                if ~isempty(handles.plots{j})
+                    rp_y = NaN(1,numel(handles.plots{j}.x_data));
+                    rp_x = handles.plots{j}.x_data;
+                    sta = ep(i,1);
+                    sto = ep(i,2);
+                    r = rp_x >= sta & rp_x <= sto;
+                    rp_y(r) = handles.plots{j}.y_data(r);
+                    
+                    
+                    p = plot(rp_x, rp_y, 'Color', 'green', 'Parent', handles.plots{j}.sel_container);
+                    response_plots{j} = struct('p', p, 'p_id', j);
+                end;
             end;
-            epochs(i) = [];
-        else
-            i = i+1;
+            hold off;
+            
+            epochs{numel(epochs) + 1} = struct( ...
+                'name', sprintf('%d-%d', ep(i,1), ep(i,2)) , ...
+                'range', ep(i, 1:2), ...
+                'highlighted', false, ...
+                'response_plots', {response_plots} ...
+                );
         end;
     end;
+    
+    % remove epochs if necessary
+    if numel(epochs) ~= size(ep,1)
+        i = 1;
+        while i <= numel(epochs)
+            epochFound = false;
+            k = 1;
+            while ~epochFound && k <= size(ep,1)
+                if epochs{i}.range == ep(k, 1:2)
+                    epochFound = true;
+                end;
+                k = k+1;
+            end;
+            
+            if ~epochFound
+                for j=1:numel(epochs{i}.response_plots)
+                    if ~isempty(epochs{i}.response_plots{j})
+                        delete(epochs{i}.response_plots{j}.p);
+                    end;
+                end;
+                epochs(i) = [];
+            else
+                i = i+1;
+            end;
+        end;
+    end;
+    
+    
+    names = cellfun(@(x) x.name, epochs, 'UniformOutput', 0);
+    sel_ep = get(handles.lbEpochs, 'Value');
+    if sel_ep > numel(names)
+        sel_ep = numel(names);
+        set(handles.lbEpochs, 'Value', sel_ep);
+    elseif (sel_ep == 0) && (numel(names) > 0)
+        sel_ep = 1;
+        handles.highlighted_epoch = -1;
+        set(handles.lbEpochs, 'Value', sel_ep);
+    end;
+    set(handles.lbEpochs, 'String', names);
+    
+    handles.epochs = epochs;
+    guidata(gca, handles);
+    
+    InterpolateData;
 end;
-
-names = cellfun(@(x) x.name, epochs, 'UniformOutput', 0);
-sel_ep = get(handles.lbEpochs, 'Value');
-if sel_ep > numel(names)
-    sel_ep = numel(names);
-    set(handles.lbEpochs, 'Value', sel_ep);
-elseif (sel_ep == 0) && (numel(names) > 0)
-    sel_ep = 1;
-    handles.highlighted_epoch = -1;
-    set(handles.lbEpochs, 'Value', sel_ep);
-end;
-set(handles.lbEpochs, 'String', names);
-
-handles.epochs = epochs;
-guidata(gca, handles);
-
-InterpolateData;
 
 
 % --------------------------------------------------------------------
@@ -669,25 +955,15 @@ set(handles.lbEpochs, 'Value', new_ep);
 HighlightEpoch(new_ep);
 
 
-% --- Executes on button press in pbOk.
-function pbOk_Callback(hObject, eventdata, handles)
-% hObject    handle to pbOk (see GCBO)
+% --- Executes on button press in pbApply.
+function pbApply_Callback(hObject, eventdata, handles)
+% hObject    handle to pbApply (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-switch handles.output_type
-    case 'interpolate'
-        interp = cellfun(@(x) get(x.interpolate, 'YData'), handles.plots, 'UniformOutput', 0);
-        handles.output = interp;
-    case 'epochs'
-        ep = cellfun(@(x) x.range, handles.epochs, 'UniformOutput', 0);
-        handles.output = ep;
-    otherwise 
-        handles.output = {};
+if CreateOutput == 1
+    uiresume(handles.fgDataEditor);
 end;
-        
-guidata(gca, handles);
-uiresume(handles.fgDataEditor);
 
 
 % --- Executes on button press in pbCancel.
@@ -709,29 +985,6 @@ function cbInterpolate_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of cbInterpolate
 InterpolateData;
-
-% --- Executes on selection change in ppOutput.
-function ppOutput_Callback(hObject, eventdata, handles)
-% hObject    handle to ppOutput (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns ppOutput contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from ppOutput
-
-output_type = get(hObject,'Value');
-
-switch output_type
-    case 1
-        set(handles.cbInterpolate, 'Enable', 'on');
-        handles.output_type = 'interpolate';
-    case 2
-        set(handles.cbInterpolate, 'Enable', 'off');
-        handles.output_type = 'epochs';
-end;
-guidata(hObject, handles);
-InterpolateData;
-
 
 % --- Executes during object creation, after setting all properties.
 function ppOutput_CreateFcn(hObject, eventdata, handles)
@@ -755,3 +1008,144 @@ function fgDataEditor_CloseRequestFcn(hObject, eventdata, handles)
 % Hint: delete(hObject) closes the figure
 handles.output = {};
 uiresume(handles.fgDataEditor);
+
+
+% --- Executes on selection change in lbChannel.
+function lbChannel_Callback(hObject, eventdata, handles)
+% hObject    handle to lbChannel (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns lbChannel contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from lbChannel
+
+if strcmpi(handles.input_mode, 'file')
+    plots = find(cellfun(@(x) ~isempty(x), handles.plots));
+    sel = get(hObject, 'Value');
+    to_plot = sel(~ismember(sel, plots));
+    to_remove = plots(~ismember(plots, sel));
+    
+    for i=1:numel(to_remove)
+        RemovePlot(to_remove(i));
+    end;
+    
+    for i=1:numel(to_plot)
+        if ~strcmpi(handles.data{to_plot(i)}.header.units, 'events')
+            AddPlot(to_plot(i), 'add');
+        end;
+    end;
+    InterpolateData;
+end;
+
+% --- Executes during object creation, after setting all properties.
+function lbChannel_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to lbChannel (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in rbEpochs.
+function rbEpochs_Callback(hObject, eventdata, handles)
+% hObject    handle to rbEpochs (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of rbEpochs
+
+
+% --- Executes on button press in rbInterpolate.
+function rbInterpolate_Callback(hObject, eventdata, handles)
+% hObject    handle to rbInterpolate (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of rbInterpolate
+
+
+% --- Executes on button press in pbOpenInputFile.
+function pbOpenInputFile_Callback(hObject, eventdata, handles)
+% hObject    handle to pbOpenInputFile (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+[file, path] = uigetfile('*.mat', 'Select input file');
+if file ~= 0
+    fn = [path,file];
+    handles.input_file = fn;
+    guidata(hObject, handles);
+    loadFromFile(fn);
+end;
+
+% --- Executes on button press in pbOpenOutputFile.
+function pbOpenOutputFile_Callback(hObject, eventdata, handles)
+% hObject    handle to pbOpenOutputFile (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+[file, path] = uiputfile('*.mat', 'Select output file');
+if file ~= 0
+    fn = [path,file];
+    handles.output_file = fn;
+    guidata(hObject, handles);
+    set(handles.edOutputFile, 'String', handles.output_file);
+end;
+
+
+function edOpenFilePath_Callback(hObject, eventdata, handles)
+% hObject    handle to edOpenFilePath (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edOpenFilePath as text
+%        str2double(get(hObject,'String')) returns contents of edOpenFilePath as a double
+if isempty(handles.input_file)
+    set(hObject, 'String', 'No input specified');
+else
+    set(hObject, 'String', handles.input_file);
+end;
+
+
+
+function edOutputFile_Callback(hObject, eventdata, handles)
+% hObject    handle to edOutputFile (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edOutputFile as text
+%        str2double(get(hObject,'String')) returns contents of edOutputFile as a double
+if isempty(handles.output_file)
+    set(hObject, 'String', 'No output specified');
+else
+    set(hObject, 'String', handles.output_file);
+end;
+
+% --- Executes when selected object is changed in bgMode.
+function bgMode_SelectionChangedFcn(hObject, eventdata, handles)
+% hObject    handle to the selected object in bgMode 
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+if get(handles.rbInterpolate, 'Value') 
+    set(handles.cbInterpolate, 'Enable', 'on');
+    handles.output_type = 'interpolate';
+else
+    set(handles.cbInterpolate, 'Enable', 'off');
+    handles.output_type = 'epochs';
+end;
+
+guidata(hObject, handles);
+InterpolateData;
+
+
+% --- Executes on button press in pbSaveOutput.
+function pbSaveOutput_Callback(hObject, eventdata, handles)
+% hObject    handle to pbSaveOutput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+CreateOutput;

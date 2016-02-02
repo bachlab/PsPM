@@ -1,4 +1,4 @@
-function [bs, x] = scr_bf_rarf_fc_gc(varargin)
+function [bs, x] = scr_bf_rarf_fc(varargin)
 % SCR_bf_rarf_fc  
 % Description: 
 %
