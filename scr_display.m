@@ -778,17 +778,18 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat))
         
         
         
+        unit = deblank(handles.data{handles.prop.idwave}.header.units);
         if strcmp(handles.prop.wave,'ecg')
-            ylabel(' Amplitude [µV] ','Fontsize',14);
+            ylabel([' Amplitude [',unit,'] '],'Fontsize',14);
         elseif strcmp(handles.prop.wave,'scr')
-            ylabel(' Amplitude [µS] ','Fontsize',14)
+            ylabel([' Amplitude [',unit,'] '],'Fontsize',14)
         elseif strcmp(handles.prop.wave,'emg')
-            ylabel(' Amplitude [µV] ','Fontsize',14)
+            ylabel([' Amplitude [',unit,'] '],'Fontsize',14)
         elseif strcmp(handles.prop.wave,'hp')
             ylabel(' Interpolated IBI [ms] ','Fontsize',14)
         elseif strcmp(handles.prop.wave,'pupil')
             ylabel(' size in arbitrary units ','Fontsize',14)
-        else ylabel(' unknown unit ','Fontsize',14)
+        else ylabel([' unknown unit [',unit,'] '],'Fontsize',14)
         end
         
         xlabel(' Time in seconds [s] ','Fontsize',16);

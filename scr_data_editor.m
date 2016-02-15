@@ -110,7 +110,7 @@ if numel(varargin) > 0
 end;
 uiwait(handles.fgDataEditor);
 
-% --------------------------------------------------------------------
+% -------------------------------------------------------------------------
 function [sts] = CreateOutput()
 
 handles = guidata(gca);
@@ -127,30 +127,34 @@ else
             
             if strcmpi(handles.input_mode, 'file')
                 channels = find(plots);
-                newchan = cell(numel(channels), 1);
+                                
+                newd.data = handles.data;
+                newd.infos = handles.infos;
+                
+                % replace interpolated data
                 for i=1:numel(channels)
-                    newchan{i} = handles.data{channels(i)};
-                    newchan{i}.data = interp{i}';
+                  newd.data{i}.data = interp{i}';
                 end;
                 if exist(out_file, 'file')
-                    overwrite = menu(sprintf('File (%s) already exists. Add channels?', out_file), 'yes', 'no');
-                    if overwrite
-                        scr_write_channel(out_file, newchan, 'add');
+                    button = questdlg(sprintf('File (%s) already exists. Add channels?', out_file), 'Add channels?', 'Yes', 'No', 'No');
+                    if strcmpi(button, 'Yes');
+                        scr_write_channel(out_file, newd.data(plots), 'add');
                     end;
                 else
-                    [sts, infos, data] = scr_load_data(out_file, newchan);
+                    [sts, infos, data] = scr_load_data(out_file, newd);
                 end;
             else
                 handles.output = interp;
             end;
             sts = 1;
         case 'epochs'
-            ep = cellfun(@(x) x.range, handles.epochs, 'UniformOutput', 0);
+            ep = cellfun(@(x) x.range', handles.epochs, 'UniformOutput', 0);
             epochs = cell2mat(ep)';
             
             if strcmpi(handles.input_mode, 'file')
                 if exist(out_file, 'file')
-                    write_ok = menu(sprintf('File (%s) already exists. Overwrite?', out_file), 'yes', 'no');
+                    button = questdlg(sprintf('File (%s) already exists. Overwrite?', out_file), 'Add channels?', 'Yes', 'No', 'No');
+                    write_ok = strcmpi(button, 'Yes');
                 else
                     write_ok = true;
                 end;
@@ -727,6 +731,17 @@ switch action
                 xd = p.x_data;
                 yd = p.y_data;
                 r = xd >= x_from & xd <= x_to;
+                if strcmpi(handles.mode, 'removeepoch')
+                	ep = findSelectedEpochs;
+                    sel_d = zeros(size(xd));
+                    
+                    for j=1:size(ep,1)
+                        sel_d(xd >= ep(j,1) & xd <= ep(j,2)) = 1;
+                    end;
+                    
+                    r = r & sel_d;
+                end;
+                
                 highlight_yd = NaN(numel(xd),1);
                 highlight_yd(r) = yd(r);
                 set(p.highlight_plot, 'YData', highlight_yd');
@@ -741,7 +756,7 @@ end;
 
 guidata(gca, handles);
 
-% --------------------------------------------------------------------
+% -------------------------------------------------------------------------
 function InterpolateData
 handles = guidata(gca);
 interp_state = get(handles.cbInterpolate, 'Value');
@@ -774,7 +789,6 @@ function [epochs] = findSelectedEpochs()
 handles = guidata(gca);
 
 sd = handles.selected_data;
-% find epochs in yd
 v_pos = find(~isnan(sd));
 xd = handles.x_data;
 if numel(v_pos)>1
