@@ -16,7 +16,7 @@ function varargout = scr_ecg2hb_qc(varargin)
 % $Id$   
 % $Rev$
 
-% Last Modified by GUIDE v2.5 22-Dec-2015 09:59:33
+% Last Modified by GUIDE v2.5 15-Feb-2016 15:35:11
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -50,6 +50,7 @@ function scr_ecg2hb_qc_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
 % -------------------------------------------------------------------------
 % set default status for GUI
+handles.mode = '';
 handles.action=[];
 handles.k=1;        % counter for the potential mislabeled qrs complexes
 handles.s=[];
@@ -123,20 +124,13 @@ function togg_add_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 % Hint: get(hObject,'Value') returns toggle state of togg_add
 set(handles.togg_remove,'Value',0)
-% -------------------------------------------------------------------------
-% click input
-[x,foo]=ginput(1);
-x=round(x*handles.plot.sr);
-% -------------------------------------------------------------------------
-% add qrs complex at position x and remove entry from r(2,x)
-handles.plot.r(4,x)=1;
-handles.plot.r(2,x)=NaN;
-handles.jo=0;   % changes were done, so set flag to 0
-% Update handles structure
-guidata(hObject,handles);
-% plot new
-pp_plot(hObject,handles);
-% -------------------------------------------------------------------------
+if strcmpi(handles.mode, 'add_qrs')
+    exitModus;
+else
+    handles.mode = 'add_qrs';
+    set(handles.figure1,'Pointer','crosshair');
+    guidata(hObject, handles);
+end;
 
 
 % --- Executes on button press in togg_remove.
@@ -147,23 +141,14 @@ function togg_remove_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of togg_remove
 % -------------------------------------------------------------------------
-% click input
-[x,foo]=ginput(1);
-x=round(x*handles.plot.sr);
-% -------------------------------------------------------------------------
-% add qrs complex at position x and remove entry from r(2,x)
-faulty=nansum(handles.plot.r,1);
-pos=find(faulty==1);
-[foo,ind]=min(abs(pos-x));
-b=pos(ind);
-% -------------------------------------------------------------------------
-handles.plot.r(3,b)=1;
-handles.plot.r([1 2 4],b)=NaN;
-handles.jo=0;   % changes were done, so set flag to 0
-% Update handles structure
-guidata(hObject,handles);
-% plot new
-pp_plot(hObject,handles)
+
+if strcmpi(handles.mode, 'remove_qrs')
+    exitModus;
+else
+    handles.mode = 'remove_qrs';
+    set(handles.figure1,'Pointer','crosshair');
+    guidata(hObject, handles);
+end;
 % -------------------------------------------------------------------------
 
 
@@ -172,6 +157,7 @@ function push_cancel_Callback(hObject, eventdata, handles)
 % hObject    handle to push_cancel (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+exitModus;
 handles.sts=-1;
 handles.R=[];
 % Update handles structure
@@ -187,6 +173,7 @@ function push_next_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % -------------------------------------------------------------------------
+exitModus;
 if handles.manualmode==0
     handles.k=handles.k+1;
     % disable next button if out of bounds.
@@ -219,6 +206,7 @@ function push_last_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % -------------------------------------------------------------------------
+handles.mode = '';
 if handles.manualmode==0
     handles.k=handles.k-1;
     if handles.k==1
@@ -246,6 +234,7 @@ function push_done_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 handles=guidata(hObject);
+handles.mode = '';
 % -------------------------------------------------------------------------
 r=handles.plot.r;
 r(1,r(3,:)==1)=NaN; % deleted QRS markers
@@ -365,3 +354,66 @@ guidata(hObject,handles);
 uiresume
 % Hint: delete(hObject) closes the figure
 % delete(hObject);
+
+
+% --- Executes on key press with focus on figure1 and none of its controls.
+function figure1_KeyPressFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  structure with the following fields (see MATLAB.UI.FIGURE)
+%	Key: name of the key that was pressed, in lower case
+%	Character: character interpretation of the key(s) that was pressed
+%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
+% handles    structure with handles and user data (see GUIDATA)
+if strcmpi(eventdata.Key, 'escape')
+    exitModus;
+end;
+
+% -------------------------------------------------------------------------
+function exitModus()
+handles = guidata(gca);
+set(handles.figure1, 'Pointer', 'Arrow');
+handles.mode = '';
+guidata(gca, handles);
+
+% --- Executes on mouse press over figure background, over a disabled or
+% --- inactive control, or over an axes background.
+function figure1_WindowButtonDownFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+pt = get(handles.axes, 'CurrentPoint');
+
+switch handles.mode
+    case 'add_qrs'
+        x = pt(1);
+        % -----------------------------------------------------------------
+        % click input
+        x=round(x*handles.plot.sr);
+        % -----------------------------------------------------------------
+        % add qrs complex at position x and remove entry from r(2,x)
+        handles.plot.r(4,x)=1;
+        handles.plot.r(2,x)=NaN;
+        handles.jo=0;   % changes were done, so set flag to 0
+        % Update handles structure
+        guidata(hObject,handles);
+        % plot new
+        pp_plot(hObject,handles);
+        % -----------------------------------------------------------------
+    case 'remove_qrs'        % click input
+        x = pt(1);
+        x=round(x*handles.plot.sr);
+        % -----------------------------------------------------------------
+        % add qrs complex at position x and remove entry from r(2,x)
+        faulty=nansum(handles.plot.r,1);
+        pos=find(faulty==1);
+        [foo,ind]=min(abs(pos-x));
+        b=pos(ind);
+        % -----------------------------------------------------------------
+        handles.plot.r(3,b)=1;
+        handles.plot.r([1 2 4],b)=NaN;
+        handles.jo=0;   % changes were done, so set flag to 0
+        % Update handles structure
+        guidata(hObject,handles);
+        % plot new
+        pp_plot(hObject,handles)
+end;
