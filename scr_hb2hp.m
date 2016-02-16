@@ -11,6 +11,8 @@ function [sts, infos] = scr_hb2hp(fn, sr, chan, options)
 %       options: optional arguments [struct]
 %           .replace - if specified and 1 when existing data should be
 %                      overwritten
+%           .cutoff  - maximum heart period which will be replaced by the
+%                      average of the surrounding values
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -26,6 +28,7 @@ global settings;
 if isempty(settings), scr_init; end;
 
 try options.replace; catch options.replace = 0; end;
+try options.cutoff; catch options.cutoff = 3; end;
 
 % check input
 % -------------------------------------------------------------------------
@@ -56,6 +59,17 @@ end;
 % -------------------------------------------------------------------------
 hb  = data{1}.data;
 ibi = diff(hb);
+% replace periods if they are longer than options.cutoff
+c = find(ibi > options.cutoff);
+for i = 1:numel(c)
+    if c(i) == 1
+        ibi(c(i)) = ibi(c(i)+1);
+    elseif c(i) == numel(ibi)
+        ibi(c(i)) = ibi(c(i)-1);
+    else
+        ibi(c(i)) = mean([ibi(c(i)-1),ibi(c(i)+1)]);
+    end;
+end;
 hp = 1000 * ibi; % in ms
 newt = (1/sr):(1/sr):dinfos.duration;
 newhp = interp1(hb(2:end), hp, newt, 'linear' ,'extrap'); % assign hr to following heart beat 
@@ -63,7 +77,6 @@ newhp = interp1(hb(2:end), hp, newt, 'linear' ,'extrap'); % assign hr to followi
 
 % save data
 % -------------------------------------------------------------------------
-
 newdata.data = newhp(:);
 newdata.header.sr = sr;
 newdata.header.units = 'ms';
