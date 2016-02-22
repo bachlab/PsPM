@@ -23,9 +23,6 @@ function scr=scr_transfer_function(data, c, Rs, offset)
 % $Id: scr_transfer_function.m 701 2015-01-22 14:36:13Z tmoser $
 % $Rev: 701 $
 
-% v002 drb 27.07.2011 catch integer values
-% SCRalyze2, 31.7.2008 - 6.5.2009
-
 % initialise
 % -------------------------------------------------------------------------
 global settings;
