@@ -82,6 +82,10 @@ end;
 % extract record time and date / should be in all sessions the same
 sourceinfo.date = data{1}.record_date;
 sourceinfo.time = data{1}.record_time;
+% other record settings
+sourceinfo.gaze_coords = data{1}.gaze_coords;
+sourceinfo.elcl_proc = data{1}.elcl_proc;
+sourceinfo.eyesObserved = data{1}.eyesObserved;
 
 % remove specific import path
 rmpath([settings.path, 'Import', filesep, 'eyelink']);

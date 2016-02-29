@@ -53,7 +53,7 @@ end;
 
 % setup default values
 if ~isfield(options, 'transfer')
-    options.transfer = [30.8093436443031,-1.02893596973461,-0.465448527907005]; 
+    options.transfer = [32.5630666816594,-1.02577520996545,-0.475357710693852]; 
 end;
 if ~isfield(options, 'bf') || ~isstruct(options.bf)
     options.bf = struct();

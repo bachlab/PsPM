@@ -1,7 +1,7 @@
 % SCR_QUIT clears settings, removes paths & closes figures
 %__________________________________________________________________________
-% PsPM 3.0 
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% PsPM 3.1
+% (C) 2008-2016 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %
 % $Id: scr_quit.m 701 2015-01-22 14:36:13Z tmoser $
 % $Rev: 701 $
@@ -31,6 +31,6 @@ close all
 disp(' ');
 disp('Thanks for using PsPM.');
 disp('_____________________________________________________________________________________________');
-disp('PsPM 3.0 (c) 2008-2015 Dominik R. Bach');
+disp('PsPM 3.1 (c) 2008-2016 Dominik R. Bach');
 disp('University of Zurich, CH  --  University College London, UK');
     

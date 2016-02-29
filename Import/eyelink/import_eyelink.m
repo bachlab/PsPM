@@ -85,6 +85,13 @@ for sn = 1:numel(offsets)
                 % which is either LR or L or R
                 data{sn}.sampleRate = str2double(headerFields{4});
                 data{sn}.eyesObserved = headerFields{7};
+            case 'GAZE_COORDS'
+                data{sn}.gaze_coords.ymin = str2double(headerFields{3});
+                data{sn}.gaze_coords.xmin = str2double(headerFields{4});
+                data{sn}.gaze_coords.ymax = str2double(headerFields{5});
+                data{sn}.gaze_coords.xmax = str2double(headerFields{6});
+            case 'ELCL_PROC'
+                data{sn}.elcl_proc = headerFields{3};
         end;
     end;
     
