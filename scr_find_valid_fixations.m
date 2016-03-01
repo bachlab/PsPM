@@ -1,10 +1,16 @@
-function [sts, out_file] = scr_find_valid_fixations(fn, box_degree, distance, screen_settings, options)
-% scr_find_valid_fixaitons takes data from eyelink recordings and filters
-% out invalid fixations and returns the data for which the fixation is
-% valid.
+function [sts, out_file] = scr_find_valid_fixations(fn, options)
+% scr_find_valid_fixaitons takes a file with data from eyelink recordings
+% and filters out invalid fixations. It either only interpolates pupil size
+% during blinks or additionally interpolates the pupil size when the
+% fixation is within a given range. It then returns the data for which the
+% fixation is valid.
+%
+% With two options it is possible to tell the function whether to add or
+% replace the channels and to tell whether the function should create a new
+% file or overwrite the file given in fn.
 %
 % FORMAT: 
-%   [sts, valid_fixations] = scr_find_valid_fixations(fn, options)
+%   [sts, out_file] = scr_find_valid_fixations(fn, options)
 %
 % ARGUMENTS: 
 %           fn:                 The actual data file containing the eyelink
