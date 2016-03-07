@@ -73,8 +73,8 @@ end;
 % check validate_fixations and then the depending mandatory fields
 if ~isfield(options, 'validate_fixations')
     options.validate_fixations = false;
-elseif ~islogical(options.validate_fixations)
-    warning('ID:invalid_input', 'Options.validate_fixations is not logical.'); return;
+elseif ~islogical(options.validate_fixations) && ~isnumeric(options.validate_fixations)
+    warning('ID:invalid_input', 'Options.validate_fixations is neither logical nor numeric.'); return;
 elseif options.validate_fixations
     % if we land here validate_fixations fits the expected format and is
     % true. so lets check if all mandatory fields are set and then set the
@@ -83,7 +83,7 @@ elseif options.validate_fixations
         warning('ID:invalid_input', 'Options.box_degree is not set or is not numeric.'); return;
     elseif ~isfield(options, 'distance') || ~isnumeric(options.distance)
         warning('ID:invalid_input', 'Options.distance is not set or not numeric.'); return;
-    elseif ~isfield(options, 'screen_settings') || ~isstruct(screen_settings)
+    elseif ~isfield(options, 'screen_settings') || ~isstruct(options.screen_settings)
         warning('ID:invalid_input', 'Options.screen_settings is not set or not struct.'); return;
     elseif ~isfield(options.screen_settings, 'aspect_actual') || ...
             ~isnumeric(options.screen_settings.aspect_actual) || ...
@@ -96,11 +96,11 @@ elseif options.validate_fixations
             || any(size(options.screen_settings.aspect_used) ~= [1 2])
         warning('ID:invalid_input', ['Options.screen_settings.aspect_used ', ...
             'is not numeric or has the wrong size (should be 1x2).']); return;
-    elseif ~isfield(options.display_size, 'display_size') || ~isnumeric(options.display_size) ...
-            || any(size(options.display_size) ~= [1 2])
-        warning('ID:invalid_input', ['Options.display_size is not set, is ', ...
-            'not numeric or has the wrong size (should be 1x2)']); return;
-    elseif isfield(options.fixation_point) && (~isnumeric(options.fixation_point) || ...
+    elseif ~isfield(options.screen_settings, 'display_size') ...
+            || ~isnumeric(options.screen_settings.display_size) ...
+        warning('ID:invalid_input', ['Options.screen_settings.display_size is not set or is ', ...
+            'not numeric.']); return;
+    elseif isfield(options, 'fixation_point') && (~isnumeric(options.fixation_point) || ...
             size(options.fixation_point,2) ~= 2)
         warning('ID:invalid_input', ['Options.fixation_point is not ', ...
             'numeric, or has the wrong size (should be nx2).']); return;        
@@ -127,7 +127,7 @@ elseif options.validate_fixations
     vis.screen_y_res    = vis.screen_y / vis.screen_h; % in px/mm
     
     % expand fixation_point
-    if ~isfield(options.fixation_point) || isempty(options.fixation_point) ...
+    if ~isfield(options, 'fixation_point') || isempty(options.fixation_point) ...
         || size(options.fixation_point,1) == 1
         % set fixation point default or expand to data size
         % find first wave channel
@@ -140,9 +140,9 @@ elseif options.validate_fixations
         vis.fix_point(:,1) = zeros(numel(data{wv(1)}.data), 1);
         vis.fix_point(:,2) = zeros(numel(data{wv(1)}.data), 1);
     
-        if size(options.fixation_point,1) == 1
-            vis.fix_point(:,1) = fixation_point(1);
-            vis.fix_point(:,2) = fixation_point(2);
+        if isfield(options, 'fixation_point') && size(options.fixation_point,1) == 1
+            vis.fix_point(:,1) = options.fixation_point(1);
+            vis.fix_point(:,2) = options.fixation_point(2);
         else
             vis.fix_point(:,1) = vis.screen_x/2;
             vis.fix_point(:,2) = vis.screen_y/2;
@@ -187,30 +187,36 @@ for i=1:n_eyes
     blink = ['blink_', eye];
     pupil = ['pupil_', eye];
     
-    bl = cellfun(@(x) strcmpi(blink, x.header.chantype), data);
-    pu = cellfun(@(x) strcmpi(pupil, x.header.chantype), data);
-
+    % always use first found channel
+    bl = find(cellfun(@(x) strcmpi(blink, x.header.chantype), data),1);    
+    pu = find(cellfun(@(x) strcmpi(pupil, x.header.chantype), data),1);
+    
+    excl = data{bl}.data == 1;
+    
     if options.validate_fixations
-        gx = cellfun(@(x) strcmpi(gaze_x, x.header.chantype), data);
-        gy = cellfun(@(x) strcmpi(gaze_y, x.header.chantype), data);
+        gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype), data),1);
+        gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype), data),1);
         
         data_dev{i}(:,1) = data{gx}.data > vis.x_upper | data{gx}.data < vis.x_lower;
         data_dev{i}(:,2) = data{gy}.data > vis.y_upper | data{gy}.data < vis.y_lower;
         data_dev{i}(:,3) = data_dev{i}(:,1) | data_dev{i}(:,2);
         
         % set fixation breaks
-        data{bl}.data(data_dev{i}(:,3)) = NaN;
+        excl(data_dev{i}(:,3)) = 1;
     end;
-    
+
     % interpolate / extrapolate at the edges
     o.extrapolate = 1;
-    [~, new_pu{i}] = scr_interpolate(data{pu}.data, o);
-    % zscore
     new_pu{i} = data{pu};
+    % set excluded periods in pupil data to NaN in order to interpolate
+    data{pu}.data(excl == 1) = NaN;
+    % interpolate 
+    [~, new_pu{i}.data] = scr_interpolate(data{pu}.data, o);
+    % zscore
     new_pu{i}.data = zscore(new_pu{i}.data);
     
     excl_hdr = struct('chantype', ['pupil_missing_', eye], 'units', '', 'sr', new_pu{i}.header.sr);
-    new_excl{i} = struct('data', isnan(data{bl}.data), 'header', excl_hdr);
+    new_excl{i} = struct('data', excl, 'header', excl_hdr);
 end;
 
 if ~isempty(options.new_file)
@@ -232,11 +238,11 @@ for i = 1:numel(new_chans)
         new_data{end+1} = new_chans{i};
     else
         % look for same chan_type
-        chans = cellfun(@(x) strcmpi(new_data{i}.header.chantype, x.header.chantype), new_data);
+        chans = cellfun(@(x) strcmpi(new_chans{i}.header.chantype, x.header.chantype), new_data);
         if any(chans) 
-            % replace the first channel
-            idx = find(chans);
-            new_data{idx(1)}.data = new_chans{i}.data;
+            % replace the first found channel
+            idx = find(chans, 1, 'first');
+            new_data{idx}.data = new_chans{i}.data;
         else
             new_data{end+1} = new_chans{i};
         end;
@@ -244,4 +250,7 @@ for i = 1:numel(new_chans)
     end;
 end;
 
-[sts,~, ~, ~] = scr_load_data(out_file, new_data);
+file_struct.infos = infos;
+file_struct.data = new_data;
+
+[sts, ~, ~, ~] = scr_load_data(out_file, file_struct);
