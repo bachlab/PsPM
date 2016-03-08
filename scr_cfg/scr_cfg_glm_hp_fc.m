@@ -23,7 +23,7 @@ vars.glmhelp = '';
 glm_hp_fc = scr_cfg_glm(vars);
 
 % set correct name
-glm_hp_fc.name = 'GLM (fear-conditioning)';
+glm_hp_fc.name = 'GLM for HP (fear-conditioning)';
 glm_hp_fc.tag = 'glm_hp_fc';
 
 % set callback function

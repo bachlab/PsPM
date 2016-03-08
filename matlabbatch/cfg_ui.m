@@ -33,7 +33,7 @@ rev = '$Rev: 701 $'; %#ok
 
 % edit the above text to modify the response to help cfg_ui
 
-% Last Modified by GUIDE v2.5 17-Sep-2012 21:54:36
+% Last Modified by GUIDE v2.5 08-Mar-2016 10:02:52
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;

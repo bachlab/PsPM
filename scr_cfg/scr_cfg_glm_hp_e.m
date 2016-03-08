@@ -22,7 +22,7 @@ vars.glmhelp = '';
 glm_hp_e = scr_cfg_glm(vars);
 
 % set correct name
-glm_hp_e.name = 'GLM (evoked)';
+glm_hp_e.name = 'GLM for HP (evoked)';
 glm_hp_e.tag = 'glm_hp_e';
 
 % set callback function

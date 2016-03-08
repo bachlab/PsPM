@@ -28,7 +28,7 @@ glm_scr = scr_cfg_glm(vars);
 glm_scr.prog = @scr_cfg_run_glm_scr;
 
 % set correct name
-glm_scr.name = 'GLM';
+glm_scr.name = 'GLM for SCR';
 glm_scr.tag = 'glm_scr';
 
 
