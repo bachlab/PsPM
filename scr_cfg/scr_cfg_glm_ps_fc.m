@@ -27,7 +27,7 @@ glm_ps_fc.tag = 'glm_ps_fc';
 glm_ps_fc.prog = @scr_cfg_run_glm_ps_fc;
 
 %% Basis function
-% HPRF
+% PSRF
 psrf_fc = cell(1, 2);
 for i=1:2
     psrf_fc{i}        = cfg_const;
@@ -35,8 +35,15 @@ for i=1:2
     psrf_fc{i}.tag    = ['psrf_fc' num2str(i-1)];
     psrf_fc{i}.val    = {i-1};
 end
-psrf_fc{1}.help   = {'PSRF_FC without derivatives.'};
-psrf_fc{2}.help   = {'PSRF_FC with time derivative (default).'};
+psrf_fc{1}.help   = {'PSRF_FC CS only and without derivatives.'};
+psrf_fc{2}.help   = {'PSRF_FC CS and derivatives for CS (default).'};
+
+psrf_fc{3}        = cfg_const;
+psrf_fc{3}.name   = ['PSRF_FC 2'];
+psrf_fc{3}.tag    = ['psrf_fc2'];
+psrf_fc{3}.val    = {2};
+psrf_fc{3}.val    = {'PSRF_FC CS and US without derivatives for CS'};
+
 
 bf        = cfg_choice;
 bf.name   = 'Basis Function';
