@@ -45,6 +45,7 @@ s(3,:)=[.0075 -2.4 8.7 4.9];
 s=s(:,idx);
 
 for k=1:length(idx)
-    bf(k,:)=gampdf(x - s(3,k), s(1,k), s(2,k));
+    bf(:,k)=gampdf(x - s(3,k), s(1,k), s(2,k));
 end
+
 x = x';

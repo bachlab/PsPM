@@ -69,8 +69,8 @@ fseek(fid, 0, -1);
 lTmp = fread(fid, 1, '*uint16');
 lAcquired = uint8(0);
 for i=1:lLength
-    lBit = bitget(lTmp, i, 'uint16');
-    lAcquired = bitset(lAcquired, i, lBit, 'uint8');
+    lBit = bitget(lTmp, i);
+    lAcquired = bitset(lAcquired, i, lBit);
 end
     
 info.totalChannelsAcquired = lAcquired;
@@ -157,7 +157,7 @@ info.gridAnnotationCompressionMode = fread(fid, 1, '*uint8');
 % Element 24 - Channel number enabled for adjustments
 info.adjustmentsforChannelNumber = fread(fid, 1, '*uint8');
 
-% Element 25 - Scroll, "T" key, "P" key, and "W" key states (WinDaq differst from AT-Codas)
+% Element 25 - Scroll, "T" key, "P" key, and "W" key states (WinDaq differs from AT-Codas)
 info.scrollKeyStates = fread(fid, 1, '*uint8');
 
 % Element 26 - Array of 32 elements describing the channels assigned to each waveform window
@@ -165,22 +165,23 @@ info.scrollKeyStates = fread(fid, 1, '*uint8');
 info.channelsToWaveformWindow = fread(fid, 32, '*uint8');
 
 % Element 27 - various bits, see documentation
-info.hiResFile = fread(fid, 1, '*bit1');
-info.thermocoupleType = fread(fid, 1, '*bit2');
-info.mostSignificatn4Bits = fread(fid, 1, '*bit4');
-info.oscFreeRun = fread(fid, 1, '*bit1');
-info.lowestPhysicalChannel = fread(fid, 1, '*bit1');
+info.hiResFile = fread(fid, 1, '*ubit1');
+info.thermocoupleType = fread(fid, 1, '*ubit2');
+info.mostSignificatn4Bits = fread(fid, 1, '*ubit4');
+info.oscFreeRun = fread(fid, 1, '*ubit1');
+info.lowestPhysicalChannel = fread(fid, 1, '*ubit1');
 
 % Bit 9 = 1 if lowest physical channel number is 0 instead of 1
-if info.lowestPhysicalChannel == 1 
+if info.lowestPhysicalChannel == 1
     info.lowestPhysicalChannel = 0;
 else
     info.lowestPhysicalChannel = 1;
+end;
     
-info.f3KeySelection = fread(fid, 1, '*bit2');
-info.f4KeySelection = fread(fid, 1, '*bit2');
-info.packedFile = fread(fid, 1, '*bit1');
-info.fft.display = fread(fid, 1, '*bit1');
+info.f3KeySelection = fread(fid, 1, '*ubit2');
+info.f4KeySelection = fread(fid, 1, '*ubit2');
+info.packedFile = fread(fid, 1, '*ubit1');
+info.fft.display = fread(fid, 1, '*ubit1');
 
 % Element 28 - Bits 14 and 15 define FFT window. Bit 13 defines FFT type.
 info.fft.typeAndWindow = fread(fid, 1, '*uint16');
@@ -291,7 +292,7 @@ for i=1:info.totalChannelsAcquired,
     else
         nSamples = info.numberOfSamplesWritten;
     end
-    data{i} = fread(fid, nSamples, '*int16', 2*(info.totalChannelsAcquired -1));
+    data{i} = fread(fid, nSamples, '*uint16', 2*(info.totalChannelsAcquired -1));
     % convert data to an equivalent engineering unit
     % - shift 16bit number to the right by two bits
     % - multiply by slope m
@@ -300,10 +301,13 @@ for i=1:info.totalChannelsAcquired,
         data{i} = double(data{i}*0.25)*info.calibrationScalingFactor(i)+info.calibrationInterceptFactor(i);
     else
         data{i} = double(bitshift(data{i}, -2))*info.calibrationScalingFactor(i)+info.calibrationInterceptFactor(i);
-    end
-end
+    end;
+end;
 
+fclose(fid);
 
-fclose(fid);    
-
-end
+datacheck = cellfun(@(x) numel(x), data);
+if sum(datacheck) == 0
+    warning(['Data seems to be empty. Has the file been closed properly? ', ...
+        'Maybe try to open, save and import the file again.']);
+end;

@@ -212,8 +212,6 @@ for i=1:n_eyes
     data{pu}.data(excl == 1) = NaN;
     % interpolate 
     [~, new_pu{i}.data] = scr_interpolate(data{pu}.data, o);
-    % zscore
-    new_pu{i}.data = zscore(new_pu{i}.data);
     
     excl_hdr = struct('chantype', ['pupil_missing_', eye], 'units', '', 'sr', new_pu{i}.header.sr);
     new_excl{i} = struct('data', excl, 'header', excl_hdr);

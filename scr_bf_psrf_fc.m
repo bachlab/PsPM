@@ -28,7 +28,7 @@ end;
 % default values
 duration = 20;
 
-cs = 0;
+cs = 1;
 cs_d = 0;
 us = 0;
 
@@ -57,7 +57,7 @@ elseif numel(varargin{1}) > 1
     cs = varargin{1}(2);
 end;
 
-x = (0:td:duration)';
+x = (0:td:duration-td)';
 bs = zeros(numel(x), sum([cs,cs_d,us]));
 
 if cs || cs_d
@@ -67,7 +67,7 @@ if cs || cs_d
     
     sta = 1+ceil(p_cs(4)/td);
     sto = numel(x);
-    x_cs = (0:td:(duration - p_cs(4)))';
+    x_cs = (0:td:(duration - p_cs(4) - td))';
     
     gl_cs = gammaln(a);
     g_cs = A * (exp(log(x_cs).*(a-1) - gl_cs - (x_cs)./b - log(b)*a));
@@ -95,11 +95,15 @@ if us
     
     sta = 1+ceil(p_us(4)/td);
     sto = numel(x);
-    x_us = (0:td:(duration-p_us(4)))';
+    x_us = (0:td:(duration - p_us(4) - td))';
     
     gl_us = gammaln(a);
     g_us = A * (exp(log(x_us).*(a-1) - gl_us - (x_us)./b - log(b)*a));
     
     % put into bs
     bs(sta:sto, sum([cs, cs_d, us])) = g_us;
+end;
+
+if cs && cs_d 
+    bs(:,1:2) = spm_orth(bs(:,1:2));
 end;
