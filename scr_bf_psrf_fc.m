@@ -2,8 +2,8 @@ function [bs, x] = scr_bf_psrf_fc(varargin)
 % SCR_bf_psrf_fc
 % Description: 
 %
-% FORMAT: [bs, x] = SCR_BF_PSRF_FC(TD, cs, cs_d, us)
-%         [bs, x] = SCR_BF_PSRF_FC([TD, cs, cs_d, us])
+% FORMAT: [bs, x] = SCR_BF_PSRF_FC(TD, cs, cs_d, us, us_shift)
+%         [bs, x] = SCR_BF_PSRF_FC([TD, cs, cs_d, us, us_shift])
 % with td = time resolution in s and d:number of derivatives (default 0)
 %
 % REFERENCE
@@ -31,13 +31,15 @@ duration = 20;
 cs = 1;
 cs_d = 0;
 us = 0;
-
-p_cs = [6.02748993374604 0.730338256670511 1.61015747521252 0.02934727535797];
-p_us = [1.580910440721072 1.588518509251424 2.252132280243361 4.02145529040228];
+us_shift = 3.5;
 
 % set parameters
 td = varargin{1}(1);
 if nargin > 1 
+    if nargin > 4
+        us_shift = varargin{5};
+    end;
+    
     if nargin > 3
         us = varargin{4};
     end;
@@ -48,6 +50,10 @@ if nargin > 1
     cs = varargin{2};
 elseif numel(varargin{1}) > 1
     n = numel(varargin{1});
+    
+    if n > 4
+        us_shift = varargin{1}(5);
+    end;
     if n > 3
         us = varargin{1}(4);
     end;
@@ -56,6 +62,9 @@ elseif numel(varargin{1}) > 1
     end;
     cs = varargin{1}(2);
 end;
+
+p_cs = [6.02748993374604 0.730338256670511 1.61015747521252 0.02934727535797];
+p_us = [1.580910440721072 1.588518509251424 2.252132280243361 us_shift];
 
 x = (0:td:duration-td)';
 bs = zeros(numel(x), sum([cs,cs_d,us]));

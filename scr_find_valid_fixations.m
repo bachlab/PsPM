@@ -40,6 +40,22 @@ function [sts, out_file] = scr_find_valid_fixations(fn, options)
 %               new_file:           Define new filename to store data to
 %                                   it. Default is '' which means that the
 %                                   file under fn will be 'replaced'
+%               interpolate:        If interpolation is enabled (=1), NaN
+%                                   values in pupil channels will be
+%                                   interpolated. Otherwise if disabled 
+%                                   (=0, default) the NaN values will
+%                                   remain and interpolation and defining
+%                                   as missing is left over to eventual
+%                                   processing with scr_glm.
+%               missing:            If missing is enabled (=1), an extra
+%                                   channel will be written containing
+%                                   information about the validated data.
+%                                   Data points equal to 1 describe epochs
+%                                   which have been discriminated as 
+%                                   invalid during validation. Data points
+%                                   equal to 0 describe epochs of valid
+%                                   data (= no blink & valid fixation).
+%                                   Default is disabled (=0)
 %               
 %__________________________________________________________________________
 % PsPM 3.1
@@ -71,8 +87,22 @@ if sts ~= 1
 end;
 
 % check validate_fixations and then the depending mandatory fields
+if ~isfield(options, 'interpolate')
+    options.interpolate = false;
+end;
+    
+if ~isfield(options, 'missing')
+    options.missing = false;
+end;
+    
 if ~isfield(options, 'validate_fixations')
     options.validate_fixations = false;
+end;
+
+if ~islogical(options.interpolate) && ~isnumeric(options.interpolate)
+    warning('ID:invalid_input', 'Options.interpolate is neither logical nor numeric.'); return;
+elseif ~islogical(options.missing) && ~isnumeric(options.missing)
+    warning('ID:invalid_input', 'Options.missing is neither logical nor numeric.'); return;
 elseif ~islogical(options.validate_fixations) && ~isnumeric(options.validate_fixations)
     warning('ID:invalid_input', 'Options.validate_fixations is neither logical nor numeric.'); return;
 elseif options.validate_fixations
@@ -105,7 +135,7 @@ elseif options.validate_fixations
         warning('ID:invalid_input', ['Options.fixation_point is not ', ...
             'numeric, or has the wrong size (should be nx2).']); return;        
     end;
-    
+end;
     % if we're still here, everything is has the expected format and all
     % mandatory fields are set. now the visual parameters will be set.
 
@@ -205,14 +235,17 @@ for i=1:n_eyes
         excl(data_dev{i}(:,3)) = 1;
     end;
 
-    % interpolate / extrapolate at the edges
-    o.extrapolate = 1;
+    % set excluded periods in pupil data to NaN
     new_pu{i} = data{pu};
-    % set excluded periods in pupil data to NaN in order to interpolate
-    data{pu}.data(excl == 1) = NaN;
-    % interpolate 
-    [~, new_pu{i}.data] = scr_interpolate(data{pu}.data, o);
+    new_pu{i}.data(excl == 1) = NaN;
     
+    if options.interpolate
+        % interpolate / extrapolate at the edges
+        o.extrapolate = 1;
+        % interpolate
+        [~, new_pu{i}.data] = scr_interpolate(new_pu{i}.data, o);
+    end;
+        
     excl_hdr = struct('chantype', ['pupil_missing_', eye], 'units', '', 'sr', new_pu{i}.header.sr);
     new_excl{i} = struct('data', excl, 'header', excl_hdr);
 end;
@@ -229,7 +262,12 @@ else
 end;
 
 % collect data
-new_chans = [new_pu; new_excl];
+if options.missing
+    new_chans = [new_pu; new_excl];
+else
+    new_chans = new_pu;
+end;
+
 new_data = data;
 for i = 1:numel(new_chans)
     if strcmpi(options.channel_action, 'add')
