@@ -266,7 +266,7 @@ for i=1:n_eyes
 end;
 
 op = struct();
-op.dont_ask_overwrite = 1;
+op.dont_ask_overwrite = options.dont_ask_overwrite;
 op.overwrite = options.overwrite;
 
 if ~isempty(options.newfile)
