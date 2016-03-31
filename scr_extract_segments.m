@@ -6,11 +6,11 @@ function [sts, segments] = scr_extract_segments(varargin)
 % The function supports either manual setting of data files, channels,
 % timing and timeunits or automatic extraction from a glm model file.
 %
-% The segments variable returned will be a nx1 cell where n corresponds to
-% the number of sessions. Each element contains a kxl cell where k
-% corresponds to the number of conditions and l to the number of onsets/events.
-% The elements of the kxl cell will contain a struct with fields data, mean
-% and var.
+% The segments variable returned will be a cx1 cell where c corresponds to
+% the number of conditions. Each element contains a struct with 
+% fields data, mean, std and sem (std of the mean).
+% The field data is a nxo*s vector where n is number of data points and o*s
+% corresponds to the onsets multiplied by the sessions.
 %
 %   FORMAT:
 %       [sts, segments] = scr_extract_segments('manual', data_fn, chan, timing, options)
@@ -21,7 +21,9 @@ function [sts, segments] = scr_extract_segments(varargin)
 %                           settings from. Either 'manual' or 'auto'.
 %       glm:                Path to the glm file. 
 %       data_fn:            Path or cell of paths to data files from which
-%                           the segments should be extracted.
+%                           the segments should be extracted. Each file
+%                           will be treated as session. Onset values are
+%                           averaged through conditions and sessions.
 %       chan:               Channel number or cell of channel numbers which
 %                           defines which channel should be taken to
 %                           extract the segments. Chan should correspond to
@@ -31,13 +33,19 @@ function [sts, segments] = scr_extract_segments(varargin)
 %       timing:             Either a cell containing the timing settings or
 %                           a string pointing to the timing file.
 %       options:
-%           timeunit:      'seconds' (default) or 'samples'. In 'auto' mode
-%                           the value will be ignored and take from the glm
-%                           model file.
-%           length:         Length of the segments in the 'timeuits'. 
+%           timeunit:       'seconds' (default) or 'samples'. In 'auto' 
+%                           mode the value will be ignored and take from 
+%                           the glm model file.
+%           length:         Length of the segments in the 'timeunits'. 
 %                           If given always the same length is taken for 
 %                           segments. If not given lengths are take from 
 %                           the timing data. This argument is optional.
+%           plot:           If 1 mean values (solid) and standard error of
+%                           the mean (dashed) will be ploted. Default is 0.
+%           outputfile:     Define filename to store segments. If is equal
+%                           to '', no file will be written. Default is 0.
+%           overwrite:      Define if already existing files should be
+%                           overwritten. Default ist 0.
 %
 %__________________________________________________________________________
 % PsPM 3.1
@@ -127,15 +135,35 @@ if ~isstruct(options)
 end;
 
 % set default timeunit
-if ~isfield('timeunit', options)
+if ~isfield(options, 'timeunit')
     options.timeunit = 'seconds';
 else
     options.timeunit = lower(options.timeunit);
 end;
 
 % set default length
-if ~isfield('length', options)
+if ~isfield(options, 'length')
     options.length = -1;
+end;
+
+% default plot
+if ~isfield(options, 'plot')
+    options.plot = 0;
+end;
+
+% outputfile
+if ~isfield(options, 'outputfile')
+    options.outputfile = 0;
+end;
+
+% overwrite
+if ~isfield(options, 'overwrite')
+    options.overwrite = 0;
+end;
+
+% dont_ask_overwrite
+if ~isfield(options, 'dont_ask_overwrite')
+    options.dont_ask_overwrite = 0;
 end;
 
 % check mutual arguments (options)   
@@ -143,40 +171,98 @@ if ~ismember(options.timeunit, {'seconds','samples'})
     warning('ID:invalid_input', 'Invalid timeunit, use either ''seconds'' or ''samples'''); return;
 elseif ~isnumeric(options.length)
     warning('ID:invalid_input', 'options.length is not numeric.'); return;
+elseif ~isnumeric(options.plot)
+    warning('ID:invalid_input', 'options.plot is not numeric.'); return;
+elseif ~isempty(options.outputfile) && ~ischar(options.outputfile)
+    warning('ID:invalid_input', 'options.outputfile has to be a string.'); return;
+elseif ~isnumeric(options.overwrite) && ~islogical(options.overwrite)
+    warning('ID:invalid_input', 'Options.overwrite has to be numeric or logical.'); return;
+elseif ~isnumeric(options.dont_ask_overwrite) && ~islogical(options.dont_ask_overwrite)
+    warning('ID:invalid_input', 'Options.dont_ask_overwrite has to be numeric or logical.'); return;
 end;
 
 % load timing
 [~, multi]  = scr_get_timing('onsets', timing, options.timeunit);
 
-% start to extract segments
-segments = cell(numel(data_fn),1);
-for n = 1:numel(data_fn)
-    % load data
-    [~, ~, data] = scr_load_data(data_fn{n}, chan{n});
-    
-    segments{n} = cell(numel(multi(n).names));
-    for c = 1:numel(multi(n).names)
-        for o = 1:numel(multi(n).onsets{c})
-            start = multi(n).onsets{c}(o);
-            if options.length == -1
-                try
-                    stop = start + multi(n).durations{c}(o);
-                catch
-                    warning('ID:invalid_input', 'Cannot determine onset duration.'); return;
-                end;
-            else
-                stop = start + options.length;
-            end;
+% set size of segments according to first entry of timing
+n_sessions = numel(data_fn);
+n_cond = numel(multi(1).names);
+n_onsets = numel(multi(1).onsets{1});
+segments = cell(n_cond,1);
 
-            switch options.timeunit
-                case 'seconds'
-                    start = data{1}.header.sr*start;
-                    stop = data{1}.header.sr*stop;
+% load data
+for n = 1:n_sessions
+    [~, ~, data{n}] = scr_load_data(data_fn{n}, chan{n});
+end;
+
+if options.plot
+    fh = figure('Name', 'Condition mean per subject');
+    ax = axes(fh, 'NextPlot', 'add');
+end;
+
+for c = 1:n_cond
+    for o = 1:n_onsets
+        start = multi(n).onsets{c}(o);
+        if options.length == -1
+            try
+                stop = start + multi(n).durations{c}(o);
+            catch
+                warning('ID:invalid_input', 'Cannot determine onset duration.'); return;
             end;
-            segments{n}{c,o}.data = data{1}.data(start:stop);
-            segments{n}{c,o}.mean = nanmean(data{1}.data(start:stop));
-            segments{n}{c,o}.var = nanvar(data{1}.data(start:stop));
+        else
+            stop = start + options.length;
         end;
+        
+        switch options.timeunit
+            case 'seconds'
+                start = data{n}{1}.header.sr*start;
+                stop = data{n}{1}.header.sr*stop;
+        end;
+        
+        if ~isfield(segments{c}, 'data')
+            segments{c}.data = NaN((stop-start), n_onsets*n_sessions);
+        end;
+        
+        for n = 1:n_sessions
+            segments{c}.data(1:(stop-start), (o+(n-1)*n_onsets)) = data{n}{1}.data(start:(stop-1));
+        end;
+    end;
+    % create mean
+    m = segments{c}.data;
+    segments{c}.mean = mean(m,2);
+    segments{c}.std = std(m,0,2);
+    segments{c}.sem = segments{c}.std./sqrt(n_onsets*n_sessions);
+    
+    sr = data{1}{1}.header.sr;
+    segments{c}.t = linspace(sr^-1, numel(segments{c}.mean)/sr, numel(segments{c}.mean))';
+    
+    if options.plot
+        p = plot(ax, segments{c}.t, segments{c}.mean, '-', ...
+            segments{c}.t, segments{c}.mean + segments{c}.sem, '--', ...
+            segments{c}.t, segments{c}.mean - segments{c}.sem, '--');
+        % correct colors
+        set(p(2), 'Color', get(p(1), 'Color'));
+        set(p(3), 'Color', get(p(1), 'Color'));
+    end;
+end;
+
+if ~isempty(options.outputfile)
+    write_ok = 0;
+    if exists(options.outputfile, 'file')
+        if options.overwrite 
+            write_ok = 1;
+        elseif ~options.dont_ask_overwrite
+            button = questdlg(sprintf('File (%s) already exists. Replace file?', ...
+                options.outputfile), 'Replace file?', 'Yes', 'No', 'No');
+            
+            write_ok = strcmpi(button, 'Yes');
+        end;
+    else
+        write_ok = 1;
+    end;
+    
+    if write_ok
+        save(options.outputfile, 'segments');
     end;
 end;
 

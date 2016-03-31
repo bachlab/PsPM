@@ -137,7 +137,7 @@ else
                 end;
                 if exist(out_file, 'file')
                     button = questdlg(sprintf('File (%s) already exists. Add channels?', out_file), 'Add channels?', 'Yes', 'No', 'No');
-                    if strcmpi(button, 'Yes');
+                    if strcmpi(button, 'Yes')
                         scr_write_channel(out_file, newd.data(plots), 'add');
                     end;
                 else

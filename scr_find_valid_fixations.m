@@ -37,9 +37,11 @@ function [sts, out_file] = scr_find_valid_fixations(fn, options)
 %               channel_action:     Define whether to add oder replace the
 %                                   data. Default is 'add'. Possible values
 %                                   are 'add' or 'replace'
-%               new_file:           Define new filename to store data to
+%               newfile:            Define new filename to store data to
 %                                   it. Default is '' which means that the
 %                                   file under fn will be 'replaced'
+%               overwrite:          Define whether existing files should be
+%                                   overwritten or not. Default is 0.
 %               interpolate:        If interpolation is enabled (=1), NaN
 %                                   values in pupil channels will be
 %                                   interpolated. Otherwise if disabled 
@@ -69,6 +71,7 @@ function [sts, out_file] = scr_find_valid_fixations(fn, options)
 global settings;
 if isempty(settings), scr_init; end;
 sts = -1;
+out_file = '';
 
 % validate input
 if nargin < 2 || ~exist('options', 'var') 
@@ -127,7 +130,7 @@ elseif options.validate_fixations
         warning('ID:invalid_input', ['Options.screen_settings.aspect_used ', ...
             'is not numeric or has the wrong size (should be 1x2).']); return;
     elseif ~isfield(options.screen_settings, 'display_size') ...
-            || ~isnumeric(options.screen_settings.display_size) ...
+            || ~isnumeric(options.screen_settings.display_size)
         warning('ID:invalid_input', ['Options.screen_settings.display_size is not set or is ', ...
             'not numeric.']); return;
     elseif isfield(options, 'fixation_point') && (~isnumeric(options.fixation_point) || ...
@@ -135,10 +138,7 @@ elseif options.validate_fixations
         warning('ID:invalid_input', ['Options.fixation_point is not ', ...
             'numeric, or has the wrong size (should be nx2).']); return;        
     end;
-end;
-    % if we're still here, everything is has the expected format and all
-    % mandatory fields are set. now the visual parameters will be set.
-
+    
     % Visual inputs for specifying boundaries
     vis.box_degree      = options.box_degree;        % boundary of box in degree visual angles; has to be chosen by experimenter
     vis.distance_mm     = options.distance;      % eye-to-screen distance in mm
@@ -158,7 +158,7 @@ end;
     
     % expand fixation_point
     if ~isfield(options, 'fixation_point') || isempty(options.fixation_point) ...
-        || size(options.fixation_point,1) == 1
+            || size(options.fixation_point,1) == 1
         % set fixation point default or expand to data size
         % find first wave channel
         ct = cellfun(@(x) x.header.chantype, data, 'UniformOutput', false);
@@ -169,7 +169,7 @@ end;
         % set default to middle of screen
         vis.fix_point(:,1) = zeros(numel(data{wv(1)}.data), 1);
         vis.fix_point(:,2) = zeros(numel(data{wv(1)}.data), 1);
-    
+        
         if isfield(options, 'fixation_point') && size(options.fixation_point,1) == 1
             vis.fix_point(:,1) = options.fixation_point(1);
             vis.fix_point(:,2) = options.fixation_point(2);
@@ -189,7 +189,7 @@ end;
     vis.x_upper         = vis.fix_point(:,1) + vis.x_bound;
     vis.x_lower         = vis.fix_point(:,1) - vis.x_bound;
     vis.y_upper         = vis.fix_point(:,2) + vis.y_bound;
-    vis.y_lower         = vis.fix_point(:,2) - vis.y_bound;    
+    vis.y_lower         = vis.fix_point(:,2) - vis.y_bound;
 end;
 
 if ~isfield(options, 'channel_action')
@@ -198,10 +198,25 @@ elseif sum(strcmpi(options.channel_action, {'add','replace'})) == 0
     warning('ID:invalid_input', 'Options.channel_action must be either ''add'' or ''replace''.'); return;
 end;
 
-if ~isfield(options, 'new_file')
-    options.new_file = '';
-elseif ~ischar(options.new_file)
-    warning('ID:invalid_input', 'Options.new_file is not char.'); return;
+% overwrite
+if ~isfield(options, 'overwrite')
+    options.overwrite = 0;
+elseif ~isnumeric(options.overwrite) || ~islogical(options.overwrite)
+    warning('ID:invalid_input', 'Options.overwrite must be either numeric or logical.'); return;
+end;
+
+% dont_ask_overwrite
+if ~isfield(options, 'dont_ask_overwrite')
+    options.dont_ask_overwrite = 0;
+elseif ~isnumeric(options.dont_ask_overwrite) || ~islogical(options.dont_ask_overwrite)
+    warning('ID:invalid_input', 'Options.dont_ask_overwrite has to be numeric or logical.');
+end;
+
+% newfile
+if ~isfield(options, 'newfile')
+    options.newfile = '';
+elseif ~ischar(options.newfile)
+    warning('ID:invalid_input', 'Options.newfile is not char.'); return;
 end;
 
 % iterate through eyes
@@ -250,12 +265,16 @@ for i=1:n_eyes
     new_excl{i} = struct('data', excl, 'header', excl_hdr);
 end;
 
-if ~isempty(options.new_file)
-    [pathstr, ~, ~] = fileparts(options.new_file);
+op = struct();
+op.dont_ask_overwrite = 1;
+op.overwrite = options.overwrite;
+
+if ~isempty(options.newfile)
+    [pathstr, ~, ~] = fileparts(options.newfile);
     if exist(pathstr, 'dir')
-        out_file = options.new_file;
+        out_file = options.newfile;
     else
-        warning('ID:invalid_input', 'Path to options.new_file (%s) does not exist.', options.new_file);
+        warning('ID:invalid_input', 'Path to options.newfile (%s) does not exist.', options.newfile);
     end;
 else
     out_file = fn;
@@ -289,4 +308,4 @@ end;
 file_struct.infos = infos;
 file_struct.data = new_data;
 
-[sts, ~, ~, ~] = scr_load_data(out_file, file_struct);
+[sts, ~, ~, ~] = scr_load_data(out_file, file_struct, op);
