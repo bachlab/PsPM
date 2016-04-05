@@ -201,14 +201,14 @@ end;
 % overwrite
 if ~isfield(options, 'overwrite')
     options.overwrite = 0;
-elseif ~isnumeric(options.overwrite) || ~islogical(options.overwrite)
+elseif ~isnumeric(options.overwrite) && ~islogical(options.overwrite)
     warning('ID:invalid_input', 'Options.overwrite must be either numeric or logical.'); return;
 end;
 
 % dont_ask_overwrite
 if ~isfield(options, 'dont_ask_overwrite')
     options.dont_ask_overwrite = 0;
-elseif ~isnumeric(options.dont_ask_overwrite) || ~islogical(options.dont_ask_overwrite)
+elseif ~isnumeric(options.dont_ask_overwrite) && ~islogical(options.dont_ask_overwrite)
     warning('ID:invalid_input', 'Options.dont_ask_overwrite has to be numeric or logical.');
 end;
 
@@ -307,5 +307,6 @@ end;
 
 file_struct.infos = infos;
 file_struct.data = new_data;
+file_struct.options = op;
 
-[sts, ~, ~, ~] = scr_load_data(out_file, file_struct, op);
+[sts, ~, ~, ~] = scr_load_data(out_file, file_struct);

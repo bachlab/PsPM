@@ -1,4 +1,4 @@
-function [sts, segments] = scr_extract_segments(varargin)
+function [sts, out] = scr_extract_segments(varargin)
 % Function in order to extract segments of a certain length after defined
 % onsets and create mean over segments in order to compare data within a
 % sigle recording.
@@ -59,7 +59,7 @@ function [sts, segments] = scr_extract_segments(varargin)
 global settings;
 if isempty(settings), scr_init; end;
 sts = -1;
-segments = {};
+out = struct();
 
 if nargin >= 2
     switch varargin{1}
@@ -153,7 +153,7 @@ end;
 
 % outputfile
 if ~isfield(options, 'outputfile')
-    options.outputfile = 0;
+    options.outputfile = '';
 end;
 
 % overwrite
@@ -238,17 +238,20 @@ for c = 1:n_cond
     
     if options.plot
         p = plot(ax, segments{c}.t, segments{c}.mean, '-', ...
-            segments{c}.t, segments{c}.mean + segments{c}.sem, '--', ...
-            segments{c}.t, segments{c}.mean - segments{c}.sem, '--');
+            segments{c}.t, segments{c}.mean + segments{c}.sem, '-', ...
+            segments{c}.t, segments{c}.mean - segments{c}.sem, '-');
         % correct colors
+        set(p(1), 'LineWidth', 2);
         set(p(2), 'Color', get(p(1), 'Color'));
         set(p(3), 'Color', get(p(1), 'Color'));
     end;
 end;
 
+out.segments = segments;
+
 if ~isempty(options.outputfile)
     write_ok = 0;
-    if exists(options.outputfile, 'file')
+    if exist(options.outputfile, 'file')
         if options.overwrite 
             write_ok = 1;
         elseif ~options.dont_ask_overwrite
@@ -263,6 +266,7 @@ if ~isempty(options.outputfile)
     
     if write_ok
         save(options.outputfile, 'segments');
+        out.outputfile = options.outputfile;
     end;
 end;
 

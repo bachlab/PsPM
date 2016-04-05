@@ -6,7 +6,7 @@ function [sts, newfile]=scr_down(datafile, newsr, chan, options)
 % prepended with 'd'
 %
 % FORMAT:
-% [STS, NEWFILE] = SCR_DOWN (datafile, newsr, chan, options)
+% [STS, NEWFILE] = SCR_DOWN(datafile, newsr, chan, options)
 %
 % INPUT: 
 %   datafile:   can be a name, or for convenience, a cell array of filenames
