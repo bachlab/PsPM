@@ -34,7 +34,7 @@ function [sts, out] = scr_extract_segments(varargin)
 %                           a string pointing to the timing file.
 %       options:
 %           timeunit:       'seconds' (default) or 'samples'. In 'auto' 
-%                           mode the value will be ignored and take from 
+%                           mode the value will be ignored and taken from 
 %                           the glm model file.
 %           length:         Length of the segments in the 'timeunits'. 
 %                           If given always the same length is taken for 
