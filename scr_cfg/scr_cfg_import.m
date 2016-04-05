@@ -66,7 +66,6 @@ input       = cfg_branch;
 input.name  = 'Input';
 input.tag   = 'input';
 input.val   = {transf_const,offset,resistor};
-input.val   = {};
 input.help  = {'Enter the transfer constants manually.'};
 
 none      = cfg_const;
