@@ -1,5 +1,6 @@
 function [sts, infos, data, filestruct] = scr_load_data(fn, chan)
-% This function checks and returns the structure of SCRalyze data files
+% This function checks and returns the structure of PsPM 3.x and 
+% SCRalyze 2.x data files - SCRalyze 1.x is not supported
 %
 % FORMAT: [sts, infos, data, filestruct] = scr_load_data(fn, chan)
 %           fn: filename, or struct with fields .infos, .data
@@ -7,8 +8,8 @@ function [sts, infos, data, filestruct] = scr_load_data(fn, chan)
 %                   vector of channelnumbers - returns only these channels
 %                   'wave' - returns all waveform channels
 %                   'events' - returns all event channels
-%                   'scr', 'hr', 'hb', 'resp', 'marker' - returns the 
-%                        respective channels
+%                   'channel type' - returns the respective channels
+%                       (see settings for channel types)
 %                   'none' - just checks the file
 %                   a struct with fields .infos, .data, .options - checks 
 %                      and saves file
@@ -30,7 +31,7 @@ function [sts, infos, data, filestruct] = scr_load_data(fn, chan)
 % $Rev: 705 $
 
 % -------------------------------------------------------------------------
-% DEVELOPERS NOTES: General structure of SCRalyze data files
+% DEVELOPERS NOTES: General structure of PsPM data files
 %
 % each file contains two variables:
 % infos - struct variable with general infos
@@ -55,7 +56,7 @@ function [sts, infos, data, filestruct] = scr_load_data(fn, chan)
 % data.header.chantype = 'trigger' is allowed for backward compatibility;
 % this feature will be removed in the future
 % 
-% compatibility with SCRalyze 1.x files is removed after version b2.1.8
+% compatibility with SCRalyze 1.x files was removed after version b2.1.8
 % -------------------------------------------------------------------------
 
 
