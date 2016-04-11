@@ -1,4 +1,4 @@
-function [sts, conditions] = scr_segment_mean(segments, options)
+function [sts, out] = scr_segment_mean(segments, options)
 % SCR_SEGMENT_MEAN is a function which takes segments created by 
 % scr_extract_segments and creates means among sessions.
 %
@@ -16,6 +16,13 @@ function [sts, conditions] = scr_segment_mean(segments, options)
 %                       are different), 'downsample' (will sample down to
 %                       minimum sample rate), 'interpolate' (will 
 %                       interpolate to maximum sample rate)
+%       newfile:        If specified, the segment data will be written into
+%                       file specified. If is equal to '' (empty) then data
+%                       will not be returned. If written to file. The file
+%                       is also speciefied in the out struct. Default is
+%                       ''.
+%       overwrite:      If specified, file specified in options.newfile,
+%                       will be overwritten, if it already exists.
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2008-2016 Tobias Moser (University of Zurich)
@@ -28,7 +35,7 @@ function [sts, conditions] = scr_segment_mean(segments, options)
 global settings;
 if isempty(settings), scr_init; end;
 sts = -1;
-conditions = {};
+out = struct();
 
 if nargin < 2
     options = struct();
@@ -36,6 +43,18 @@ end;
 
 if ~isfield(options, 'plot')
     options.plot = 0;
+end;
+
+if ~isfield(options, 'newfile')
+    options.newfile = '';
+end;
+
+if ~isfield(options, 'overwrite')
+    options.overwrite = 0;
+end;
+
+if ~isfield(options, 'dont_ask_overwrite')
+    options.dont_ask_overwrite = 0;
 end;
 
 if ~isfield(options, 'adjust_method')
@@ -54,6 +73,12 @@ elseif any(diff(cellfun(@numel, segments)))
     warning('ID:invalid_input', 'All elements of segments must have the same length.'); return;
 elseif ~any(ismember(options.adjust_method, {'none', 'downsample', 'interpolate'}))
     warning('ID:invalid_input', 'options.adjust_method must be ''none'', ''downsample'' or ''interpolate'''); return;
+elseif ~isempty(options.newfile) && ~ischar(options.newfile)
+    warning('ID:invalid_input', 'options.newfile is not a string.'); return;
+elseif ~isnumeric(options.overwrite) && ~islogical(options.overwrite)
+    warning('ID:invalid_input', 'options.overwrite has to be either numeric or logical.'); return;
+elseif ~isnumeric(options.dont_ask_overwrite) && ~islogical(options.dont_ask_overwrite)
+    warning('ID:invalid_input', 'options.dont_ask_overwrite has to be either numeric or logical'); return;
 end;
 
 % if files specified load them
@@ -140,5 +165,28 @@ for c = 1:n_cond
     end;
 end;
 
+out.conditions = conditions;
+
+if ~isempty(options.newfile)
+    [pathstr, ~, ~] = fileparts(options.newfile);
+    if exist(pathstr, 'dir')
+        f_ex = exist(options.newfile, 'file') ~= 0;
+        write_ok = ~f_ex || options.overwrite;
+        if f_ex && ~options.overwrite && ~options.dont_ask_overwrite
+            button = questdlg(sprintf('File (%s) already exists. Replace file?', ...
+                options.outputfile), 'Replace file?', 'Yes', 'No', 'No');
+            
+            write_ok = strcmpi(button, 'Yes');
+        end;
+        
+        if write_ok
+            segment_mean = conditions;
+            save(options.newfile, 'segment_mean');
+        end;
+    else
+        warning('ID:invalid_input', 'Path specified in options.newfile does not seem to exist.');
+    end;
+    out.file = options.newfile;
+end;
 sts = 1;
 

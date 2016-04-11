@@ -292,8 +292,6 @@ if strcmpi(handles.input_mode, 'file')
         start_from = xdata(end);
         xdata(end:end+n_diff) = start_from:sr^-1:(start_from+n_diff*sr^-1);
     end;
-    
-    
 else
     xdata = 1:numel(handles.data)';
     ydata = handles.data;
