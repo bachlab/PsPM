@@ -35,8 +35,10 @@ gui_State = struct('gui_Name',       mfilename, ...
                    'gui_OutputFcn',  @scr_data_editor_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
-if nargin && ischar(varargin{1})
-    gui_State.gui_Callback = str2func(varargin{1});
+                            
+if nargin && ischar(varargin{1}) && ... 
+        (numel(regexp(varargin{1}, [filesep])) == 0)
+        gui_State.gui_Callback = str2func(varargin{1});
 end
 
 if nargout
@@ -282,10 +284,16 @@ color = corder(chan_id - m*cl, :);
 if strcmpi(handles.input_mode, 'file')
     sr = handles.data{chan_id}.header.sr;
     ydata = handles.data{chan_id}.data;
-    xdata = (0:sr^-1:handles.infos.duration)';
-    if numel(xdata) > numel(ydata)
-        xdata = xdata(2:end);
+    xdata = (sr^-1:sr^-1:handles.infos.duration)';
+    n_diff =  numel(ydata) - numel(xdata);
+    if n_diff < 0
+        xdata = xdata(1:end+n_diff);
+    elseif n_diff > 0
+        start_from = xdata(end);
+        xdata(end:end+n_diff) = start_from:sr^-1:(start_from+n_diff*sr^-1);
     end;
+    
+    
 else
     xdata = 1:numel(handles.data)';
     ydata = handles.data;
