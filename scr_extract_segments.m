@@ -197,15 +197,24 @@ end;
 
 if options.plot
     fg = figure('Name', 'Condition mean per subject', 'Visible', 'off');
-    ax = axes(fg, 'NextPlot', 'add');
+    ax = axes('NextPlot', 'add');
+    set(fg, 'CurrentAxes', ax);
+    
+    % load colormap
+    corder = get(fg, 'defaultAxesColorOrder');
+    cl = length(corder);
+    
+    % legend labels
+    legend_lb = cell(n_cond*3,1);
 end;
 
 for c = 1:n_cond
     for o = 1:n_onsets
-        start = multi(n).onsets{c}(o);
+        
+        start = multi(1).onsets{c}(o);
         if options.length == -1
             try
-                stop = start + multi(n).durations{c}(o);
+                stop = start + multi(1).durations{c}(o);
             catch
                 warning('ID:invalid_input', 'Cannot determine onset duration.'); return;
             end;
@@ -215,8 +224,8 @@ for c = 1:n_cond
         
         switch options.timeunit
             case 'seconds'
-                start = data{n}{1}.header.sr*start;
-                stop = data{n}{1}.header.sr*stop;
+                start = data{1}{1}.header.sr*start;
+                stop = data{1}{1}.header.sr*stop;
         end;
         
         if ~isfield(segments{c}, 'data')
@@ -241,9 +250,14 @@ for c = 1:n_cond
             segments{c}.t, segments{c}.mean + segments{c}.sem, '-', ...
             segments{c}.t, segments{c}.mean - segments{c}.sem, '-');
         % correct colors
-        set(p(1), 'LineWidth', 2);
-        set(p(2), 'Color', get(p(1), 'Color'));
-        set(p(3), 'Color', get(p(1), 'Color'));
+        color = corder(mod(c,cl) + 1, :);
+        set(p(1), 'LineWidth', 2, 'Color', color);
+        set(p(2), 'Color', color);
+        set(p(3), 'Color', color);
+        
+        legend_lb{(c-1)*3 + 1} = ['AVG ' multi(1).names{c}];
+        legend_lb{(c-1)*3 + 2} = ['SEM+ ' multi(1).names{c}];
+        legend_lb{(c-1)*3 + 3} = ['SEM- ' multi(1).names{c}];
     end;
 end;
 
@@ -259,7 +273,7 @@ if ~isempty(options.outputfile)
             write_ok = 1;
         elseif ~options.dont_ask_overwrite
             button = questdlg(sprintf('File (%s) already exists. Replace file?', ...
-                options.outputfile), 'Replace file?', 'Yes', 'No', 'No');
+                outfile), 'Replace file?', 'Yes', 'No', 'No');
             
             write_ok = strcmpi(button, 'Yes');
         end;
@@ -276,6 +290,7 @@ end;
 if options.plot
     % show plot
     set(fg, 'Visible', 'on');
+    legend(legend_lb);
 end;
 
 sts = 1;
