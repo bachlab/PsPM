@@ -89,9 +89,9 @@ if nargin >= 2
                 warning('ID:invalid_input', 'data_fn has to be a string or a cell array of strings.'); return;
             elseif ~isnumeric(chan) && (iscell(chan) && any(~cellfun(@isnumeric, chan)))
                 warning('ID:invalid_input', 'chan has to be numeric or a cell array of numerics.'); return;
-            elseif ~strcmpi(class(data_fn), class(chan)) || (iscell(chan) && (numel(chan) ~= numel(data_fn)))
+            elseif strcmpi(class(data_fn), class(chan)) && (iscell(chan) && (numel(chan) ~= numel(data_fn)))
                 warning('ID:invalid_input', 'data_fn and chan must correspond in number of elements.'); return;
-            elseif ~strcmpi(class(data_fn), class(timing)) || (iscell(timing) && (numel(timing) ~= numel(data_fn)))
+            elseif strcmpi(class(data_fn), class(timing)) && (iscell(timing) && (numel(timing) ~= numel(data_fn)))
                 warning('ID:invalid_input', 'data_fn and timing must correspond in number of elements.'); return;
             end;
             
@@ -171,7 +171,7 @@ if ~ismember(options.timeunit, {'seconds','samples'})
     warning('ID:invalid_input', 'Invalid timeunit, use either ''seconds'' or ''samples'''); return;
 elseif ~isnumeric(options.length)
     warning('ID:invalid_input', 'options.length is not numeric.'); return;
-elseif ~isnumeric(options.plot)
+elseif ~isnumeric(options.plot) && ~islogical(options.plot)
     warning('ID:invalid_input', 'options.plot is not numeric.'); return;
 elseif ~isempty(options.outputfile) && ~ischar(options.outputfile)
     warning('ID:invalid_input', 'options.outputfile has to be a string.'); return;
@@ -196,8 +196,8 @@ for n = 1:n_sessions
 end;
 
 if options.plot
-    fh = figure('Name', 'Condition mean per subject');
-    ax = axes(fh, 'NextPlot', 'add');
+    fg = figure('Name', 'Condition mean per subject', 'Visible', 'off');
+    ax = axes(fg, 'NextPlot', 'add');
 end;
 
 for c = 1:n_cond
@@ -250,8 +250,11 @@ end;
 out.segments = segments;
 
 if ~isempty(options.outputfile)
+    % ensure correct file suffix
+    [pt, fn, ~] = fileparts(options.outputfile);
+    outfile = [pt filesep fn '.mat'];
     write_ok = 0;
-    if exist(options.outputfile, 'file')
+    if exist(outfile, 'file')
         if options.overwrite 
             write_ok = 1;
         elseif ~options.dont_ask_overwrite
@@ -265,9 +268,14 @@ if ~isempty(options.outputfile)
     end;
     
     if write_ok
-        save(options.outputfile, 'segments');
-        out.outputfile = options.outputfile;
+        save(outfile, 'segments');
+        out.outputfile = outfile;
     end;
+end;
+
+if options.plot
+    % show plot
+    set(fg, 'Visible', 'on');
 end;
 
 sts = 1;
