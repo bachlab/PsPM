@@ -48,7 +48,7 @@ distance.help                 = {'Distance between eyes and screen.'};
 
 %% Actual aspect
 aspect_actual                      = cfg_entry;
-aspect_actual.name                 = 'Actual aspect ratio';
+aspect_actual.name                 = 'Actual hardware aspect ratio';
 aspect_actual.tag                  = 'aspect_actual';
 aspect_actual.strtype              = 'i';
 aspect_actual.num                  = [1 2];
@@ -60,7 +60,10 @@ aspect_used.name                 = 'Used aspect ratio';
 aspect_used.tag                  = 'aspect_used';
 aspect_used.strtype              = 'i';
 aspect_used.num                  = [1 2];
-aspect_used.help                 = {'Aspect ratio set in the software (e.g. [5 4]).'};
+aspect_used.help                 = {'Usually, this is the same as the ', ...
+    'actual aspect ratio. But in some cases, the used aspect ratio ', ...
+    'may differ (e.g., because the software does not support [16 9] ', ...
+    'and therefore [5 4] is set).'};
 
 %% Screen size
 screen_size                      = cfg_entry;
@@ -90,7 +93,7 @@ fixpoint_file         = cfg_files;
 fixpoint_file.name    = 'File';
 fixpoint_file.tag     = 'fixpoint_file';
 fixpoint_file.num     = [1 1];
-fixpoint_file.help    = {['.mat File containing a variable F with a ', ...
+fixpoint_file.help    = {['.mat File containing a variable F with an ', ...
     'nx2 matrix. N should have the length of the recorded data and each ', ...
     'row should define the fixation point for one recorded data row.']};
 
@@ -101,7 +104,7 @@ fixpoint.tag            = 'fixpoint';
 fixpoint.strtype        = 'r';
 fixpoint.num            = [1 2];
 fixpoint.help           = {['If the fixation point does not change ', ...
-    'during the acquisition, specify x and y of the constant fixation point.']};
+    'during the acquisition, specify x- and y-coordinates of the constant fixation point.']};
 
 %% Fixation point
 fixation_point                      = cfg_choice;
@@ -109,8 +112,8 @@ fixation_point.name                 = 'Fixation point';
 fixation_point.tag                  = 'fixation_point';
 fixation_point.val                  = {fixpoint_default};
 fixation_point.values               = {fixpoint_default, fixpoint_file, fixpoint};
-fixation_point.help                 = {['Point of fixation. Should be given ', ...
-    'in pixels, fitting the x and y of the eye tracker software.']};
+fixation_point.help                 = {['Point of fixation. Should be ', ...
+    'given in pixels, according to the x- and y-coordinates set by the eye tracker software.']};
 
 %% Enable fixation validation
 enable_fixation_validation       = cfg_branch;
@@ -127,7 +130,7 @@ validate_fixations.tag    = 'validate_fixations';
 validate_fixations.val    = {disable_fixation_validation};
 validate_fixations.values = {disable_fixation_validation, enable_fixation_validation};
 validate_fixations.help   = {['Disable or enable validation of fixations ', ...
-    'within a given range.']};
+    'within a given range on the screen (in degree visual angle).']};
 
 %% Enable interpolation
 enable_interpolation        = cfg_const;
@@ -151,8 +154,8 @@ interpolate.values          = {enable_interpolation, disable_interpolation};
 interpolate.val             = {enable_interpolation};
 interpolate.help            = {['If interpolation is enabled NaN values ', ...
     'during blinks and invalid fixations in pupil channels will be ', ...
-    'linearly interpolated. Otherwise NaN values remain and interpolation ', ...
-    'as well as defining as missing is left over to the GLM function.']};
+    'linearly interpolated. Otherwise NaN values remain ', ...
+    '(and the GLM function will treat these data points as missing). ']};
 
 %% Enable missing
 enable_missing        = cfg_const;
@@ -260,7 +263,14 @@ find_valid_fixations.tag  = 'find_valid_fixations';
 find_valid_fixations.val  = {datafile, validate_fixations, interpolate, missing, output};
 find_valid_fixations.prog = @scr_cfg_run_find_valid_fixations;
 find_valid_fixations.vout = @scr_cfg_vout_find_valid_fixations;
-find_valid_fixations.help = {['']};
+find_valid_fixations.help = {['Pupil data time series can contain missing ', ...
+    'values due to blinks and head movements. Additionally, pupil ', ...
+    'measurements obtained from a video-based eye tracker depend on the ', ...
+    'gaze angle, therefore breaks of fixation can be excluded. Valid ', ...
+    'fixations can be determined by setting an a priori threshold with ', ...
+    'respect to the fixation point (in degree visual angle) for x- or y-gaze-positions.'], ...
+    'References:', ...
+    'Korn, Bach (2016) Journal of Vision'};
 
 function vout = scr_cfg_vout_find_valid_fixations(job)
 vout = cfg_dep;

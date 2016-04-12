@@ -236,6 +236,10 @@ for i=1:n_eyes
     bl = find(cellfun(@(x) strcmpi(blink, x.header.chantype), data),1);    
     pu = find(cellfun(@(x) strcmpi(pupil, x.header.chantype), data),1);
     
+    if ~any(bl) || ~any(pu)
+        warning('ID:invalid_input', 'Problems finding pupil or blink channel.'); return;
+    end;
+    
     excl = data{bl}.data == 1;
     
     if options.validate_fixations
