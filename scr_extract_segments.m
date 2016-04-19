@@ -255,9 +255,9 @@ for c = 1:n_cond
         set(p(2), 'Color', color);
         set(p(3), 'Color', color);
         
-        legend_lb{(c-1)*3 + 1} = ['AVG ' multi(1).names{c}];
-        legend_lb{(c-1)*3 + 2} = ['SEM+ ' multi(1).names{c}];
-        legend_lb{(c-1)*3 + 3} = ['SEM- ' multi(1).names{c}];
+        legend_lb{(c-1)*3 + 1} = [multi(1).names{c} ' AVG'];
+        legend_lb{(c-1)*3 + 2} = [multi(1).names{c} ' SEM+'];
+        legend_lb{(c-1)*3 + 3} = [multi(1).names{c} ' SEM-'];
     end;
 end;
 
