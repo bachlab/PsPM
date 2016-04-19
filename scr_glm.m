@@ -699,7 +699,7 @@ glm.EV   = 1 - (var(glm.e)/var(glm.YM));   % explained variance proportion
 %-------------------------------------------------------------------------
 glm.X = glm.X .* repmat(glm.regscale, size(glm.X, 1), 1);
 glm.XM = glm.XM .* repmat(glm.regscale, size(glm.XM, 1), 1);
-glm.stats = glm.stats .* glm.regscale';
+glm.stats = glm.stats ./ glm.regscale';
 
 savedata = struct('glm', glm);
 scr_load1(model.modelfile, 'save', savedata, options);
