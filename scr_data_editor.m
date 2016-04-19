@@ -183,7 +183,9 @@ handles = guidata(gca);
 % clear epochs
 handles.selected_data(:) = NaN;
 guidata(gca, handles);
+
 UpdateEpochList;
+handles = guidata(gca);
 
 % clear channels
 handles.channels = {};
@@ -884,7 +886,7 @@ if numel(handles.plots) > 0
     names = cellfun(@(x) x.name, epochs, 'UniformOutput', 0);
     sel_ep = get(handles.lbEpochs, 'Value');
     if sel_ep > numel(names)
-        sel_ep = numel(names);
+        sel_ep = max(numel(names), 1);
         set(handles.lbEpochs, 'Value', sel_ep);
     elseif (sel_ep == 0) && (numel(names) > 0)
         sel_ep = 1;
