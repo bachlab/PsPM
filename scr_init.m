@@ -109,12 +109,14 @@ if isempty (dummy)
     addpath([pth, fs, 'matlabbatch']);
     matlabbatchpath=1;
 else
-    if ~isempty(strfind(dummy, 'spm8\matlabbatch\cfg_ui.m'))
+    m = regexpi(dummy, 'spm[0-9]+\\matlabbatch\\cfg_ui.m');
+    if ~isempty(m)
         if strcmp(questdlg(sprintf(['Matlabbatch from SPM and its config folder are currently on your MATLAB search path.\n\n' ...
-                'Do you want to remove these folders temporarily from your MATLAB search path in order to avoid potentioal ' ...
+                'Do you want to remove these folders temporarily from your MATLAB search path in order to avoid potential ' ...
                 'issues with matlabbatch from PsPM?']), ...
                 'Matlabbatch', ...
                 'Yes', 'No', 'No'), 'Yes')
+            
             [matlabbatch_dir,~,~] = fileparts(dummy);
             rmpath(matlabbatch_dir);
             dummy=which('spm_cfg');
