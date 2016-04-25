@@ -174,7 +174,7 @@ output_file.help        = {['Where to store the extracted segments.']};
 
 %% Overwrite
 overwrite               = cfg_menu;
-overwrite.name          = 'Overwrite existing File';
+overwrite.name          = 'Overwrite existing file';
 overwrite.tag           = 'overwrite';
 overwrite.val           = {false};
 overwrite.labels        = {'No', 'Yes'};
@@ -204,7 +204,8 @@ extract_segments.tag  = 'extract_segments';
 extract_segments.val  = {extract_mode, options, output};
 extract_segments.prog = @scr_cfg_run_extract_segments;
 extract_segments.vout = @scr_cfg_vout_extract_segments;
-extract_segments.help = {['']};
+extract_segments.help = {['This function extracts data segments ', ...
+    '(e.g., for visual inspection of mean responses per condition).']};
 
 function vout = scr_cfg_vout_extract_segments(job)
 vout = cfg_dep;

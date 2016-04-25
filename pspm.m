@@ -224,6 +224,14 @@ switch val
         cfg_add_module('pspm.tools.interpolate');
     case 10
         cfg_add_module('pspm.tools.find_sounds');
+    case 11
+        cfg_add_module('pspm.tools.process_illuminance');
+    case 12
+        cfg_add_module('pspm.tools.find_valid_fixations');
+    case 13
+        cfg_add_module('pspm.tools.extract_segments');
+    case 14
+        cfg_add_module('pspm.tools.segment_mean');
 end;
 
 % --- Executes during object creation, after setting all properties.

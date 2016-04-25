@@ -3,7 +3,7 @@ function [sts, out] = scr_segment_mean(segments, options)
 % scr_extract_segments and creates means among sessions.
 %
 % FORMAT: 
-%   [sts, segment_mean] = scr_segment_mean(segments, options)
+%   [sts, out] = scr_segment_mean(segments, options)
 %
 % INPUT:
 %   segments:           Cell of multiple segments, each obtained with
@@ -63,8 +63,8 @@ end;
 
 if nargin > 1 && ~isstruct(options)
     warning('ID:invalid_input', 'Options must be a struct.'); return;
-elseif ~isnumeric(options.plot)
-    warning('ID:invalid_input', 'Options.plot must be numeric.'); return;
+elseif ~isnumeric(options.plot) && ~islogical(options.plot)
+    warning('ID:invalid_input', 'Options.plot must be numeric or logical.'); return;
 elseif ~(iscell(segments) || ischar(segments)) || ...
         (iscell(segments) && any(~cellfun(@(x) iscell(x) || ischar(x), segments)))
     warning('ID:invalid_input', ['The function expects segments to be a ', ...
@@ -174,7 +174,7 @@ if ~isempty(options.newfile)
         write_ok = ~f_ex || options.overwrite;
         if f_ex && ~options.overwrite && ~options.dont_ask_overwrite
             button = questdlg(sprintf('File (%s) already exists. Replace file?', ...
-                options.outputfile), 'Replace file?', 'Yes', 'No', 'No');
+                options.newfile), 'Replace file?', 'Yes', 'No', 'No');
             
             write_ok = strcmpi(button, 'Yes');
         end;
