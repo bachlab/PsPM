@@ -124,6 +124,8 @@ else
     out_file = handles.output_file;
     switch handles.output_type
         case 'interpolate'
+            % again run interpolation
+            InterpolateData;
             plots = ~cellfun(@isempty, handles.plots);
             interp = cellfun(@(x) get(x.interpolate, 'YData'), handles.plots(plots), 'UniformOutput', 0);
             
@@ -137,14 +139,35 @@ else
                 for i=1:numel(channels)
                   newd.data{i}.data = interp{i}';
                 end;
+                write_file = 1;
+                write_success = 0;
+                disp_success = 1;
                 if exist(out_file, 'file')
-                    button = questdlg(sprintf('File (%s) already exists. Add channels?', out_file), 'Add channels?', 'Yes', 'No', 'No');
-                    if strcmpi(button, 'Yes')
-                        scr_write_channel(out_file, newd.data(plots), 'add');
+                    button = questdlg(sprintf(['File (%s) already exists. ', ...
+                        'Add channels or replace file?'], out_file), ...
+                        'Add or replace channels?', 'Add channels', ...
+                        'Replace file', 'Cancel', 'Cancel');    
+                    if strcmpi(button, 'Add channels')
+                        [write_success, ~] = scr_write_channel(out_file, newd.data(plots), 'add');
+                        write_file = 0;
+                    elseif strcmpi(button, 'Cancel')
+                        disp_success = 0;
+                        write_file = 0;
                     end;
-                else
-                    [sts, infos, data] = scr_load_data(out_file, newd);
                 end;
+                
+                if write_file
+                    newd.options.overwrite = 1;
+                    [write_success, ~, ~] = scr_load_data(out_file, newd);
+                    if disp_success
+                        if write_success
+                            helpdlg('File successfully written.','File successfully written.');
+                        else
+                            errordlg('Could not write file correctly.','Error while saving file.');
+                        end;
+                    end;
+                end;
+                        
             else
                 handles.output = interp;
             end;
@@ -769,7 +792,7 @@ function InterpolateData
 handles = guidata(gca);
 interp_state = get(handles.cbInterpolate, 'Value');
 
-if interp_state ~= 0 && strcmpi(handles.output_type, 'interpolate');
+if strcmpi(handles.output_type, 'interpolate')
     for i=1:numel(handles.plots)
         if ~isempty(handles.plots{i})
             xd = handles.plots{i}.x_data;
@@ -781,6 +804,11 @@ if interp_state ~= 0 && strcmpi(handles.output_type, 'interpolate');
             end;
             [sts, newyd] = scr_interpolate(yd);
             set(handles.plots{i}.interpolate, 'YData', newyd);
+            if interp_state == 0
+                set(handles.plots{i}.interpolate, 'Visible', 'off')
+            else
+                set(handles.plots{i}.interpolate, 'Visible', 'on')
+            end;
         end;
     end
 else
