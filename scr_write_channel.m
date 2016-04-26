@@ -92,7 +92,7 @@ end;
 
 if ~strcmpi(action, 'delete')    
     for i=1:numel(newdata)
-        if isfield(newdata{i}, 'data')
+        if isfield(newdata{i}, 'data') && isfield(newdata{i}, 'header')
             d = newdata{i}.data;
             [h,w] = size(d);
             if w ~= 1
@@ -109,7 +109,7 @@ if ~strcmpi(action, 'delete')
             end;
         else
             warning('ID:invalid_data_strucutre', ...
-                'Passed struct (%i) contains no ''.data'' field.', i);
+                'Passed struct (%i) contains no ''.data'' or no ''.header'' field.', i);
             return;
         end;
     end;
