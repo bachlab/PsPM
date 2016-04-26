@@ -232,41 +232,47 @@ for i=1:n_eyes
     blink = ['blink_', eye];
     pupil = ['pupil_', eye];
     
-    % always use first found channel
-    bl = find(cellfun(@(x) strcmpi(blink, x.header.chantype), data),1);    
-    pu = find(cellfun(@(x) strcmpi(pupil, x.header.chantype), data),1);
     
-    if ~any(bl) || ~any(pu)
-        warning('ID:invalid_input', 'Problems finding pupil or blink channel.'); return;
-    end;
+    bl = cellfun(@(x) strcmpi(blink, x.header.chantype), data);
+    pu = cellfun(@(x) strcmpi(pupil, x.header.chantype), data);
     
-    excl = data{bl}.data == 1;
+    if any(bl) && any(pu)
+        if ~any(bl) || ~any(pu)
+            warning('ID:invalid_input', 'Problems finding pupil or blink channel.'); return;
+        end;
     
-    if options.validate_fixations
-        gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype), data),1);
-        gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype), data),1);
+        % always use first found channel
+        bl = find(bl,1);
+        pu = find(pu,1);
         
-        data_dev{i}(:,1) = data{gx}.data > vis.x_upper | data{gx}.data < vis.x_lower;
-        data_dev{i}(:,2) = data{gy}.data > vis.y_upper | data{gy}.data < vis.y_lower;
-        data_dev{i}(:,3) = data_dev{i}(:,1) | data_dev{i}(:,2);
+        excl = data{bl}.data == 1;
         
-        % set fixation breaks
-        excl(data_dev{i}(:,3)) = 1;
-    end;
-
-    % set excluded periods in pupil data to NaN
-    new_pu{i} = data{pu};
-    new_pu{i}.data(excl == 1) = NaN;
-    
-    if options.interpolate
-        % interpolate / extrapolate at the edges
-        o.extrapolate = 1;
-        % interpolate
-        [~, new_pu{i}.data] = scr_interpolate(new_pu{i}.data, o);
-    end;
+        if options.validate_fixations
+            gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype), data),1);
+            gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype), data),1);
+            
+            data_dev{i}(:,1) = data{gx}.data > vis.x_upper | data{gx}.data < vis.x_lower;
+            data_dev{i}(:,2) = data{gy}.data > vis.y_upper | data{gy}.data < vis.y_lower;
+            data_dev{i}(:,3) = data_dev{i}(:,1) | data_dev{i}(:,2);
+            
+            % set fixation breaks
+            excl(data_dev{i}(:,3)) = 1;
+        end;
         
-    excl_hdr = struct('chantype', ['pupil_missing_', eye], 'units', '', 'sr', new_pu{i}.header.sr);
-    new_excl{i} = struct('data', excl, 'header', excl_hdr);
+        % set excluded periods in pupil data to NaN
+        new_pu{i} = data{pu};
+        new_pu{i}.data(excl == 1) = NaN;
+        
+        if options.interpolate
+            % interpolate / extrapolate at the edges
+            o.extrapolate = 1;
+            % interpolate
+            [~, new_pu{i}.data] = scr_interpolate(new_pu{i}.data, o);
+        end;
+        
+        excl_hdr = struct('chantype', ['pupil_missing_', eye], 'units', '', 'sr', new_pu{i}.header.sr);
+        new_excl{i} = struct('data', excl, 'header', excl_hdr);
+    end;
 end;
 
 op = struct();
