@@ -292,7 +292,7 @@ for i=1:info.totalChannelsAcquired,
     else
         nSamples = info.numberOfSamplesWritten;
     end
-    data{i} = fread(fid, nSamples, '*uint16', 2*(info.totalChannelsAcquired -1));
+    data{i} = fread(fid, nSamples, '*int16', 2*(info.totalChannelsAcquired -1));
     % convert data to an equivalent engineering unit
     % - shift 16bit number to the right by two bits
     % - multiply by slope m
