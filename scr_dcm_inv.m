@@ -49,6 +49,7 @@ function dcm = scr_dcm_inv(model, options)
 % - options.sclpost: scl-change-free window after last event (default 5 s)
 % - options.aSCR_sigma_offset: minimum dispersion (standard deviation) for
 %   flexible responses (default 0.1 s)
+% - options.missing: data points to be disregarded by inversion
 %
 % display options
 % - options.dispwin: display progress window (default 1)
@@ -498,6 +499,7 @@ if ~options.getrf
             
             % assign data
             y = yscr{sn}(win);
+            ymissing = options.missing{sn}(win);
             
             % intial states
             priors.SigmaX0 = zeros(7);
@@ -693,6 +695,10 @@ if ~options.getrf
                 priors.iQx{k} = eye(dim.n);
             end;
             invopt.priors = priors;
+            
+            % handle missing values
+            invopt.isYout = ymissing(:)';
+            
             % -- invert model
             [post, out]= VBA_NLStateSpaceModel(y(:)',u,f_fname,g_fname,dim,invopt);
             

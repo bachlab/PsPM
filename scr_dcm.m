@@ -74,13 +74,18 @@ function dcm = scr_dcm(model, options)
 % in SN units such that an eSCR SN pulse with 1 unit amplitude causes an eSCR
 % with 1 mcS amplitude
 %
+% scr_dcm can handle NaN values in data channels. These are disregarded
+% during model inversion, and trials containing NaNs are interpolated for
+% averages and principal response components. It is not recommended to use
+% this feature for missing data epochs with a duration of > 1-2 s
+%
 % REFERENCE: (1) Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010).
 %            Dynamic causal modelling of anticipatory skin conductance 
 %            changes. Biological Psychology, 85(1), 163-70
 %            (2) Staib, M., Castegnetti, G., & Bach, D. R. (2015).
 %            Optimising a model-based approach to inferring fear
 %            learning from skin conductance responses. Journal of
-%            neuroscience methods, 255, 131-138.
+%            Neuroscience Methods, 255, 131-138.
 %
 %__________________________________________________________________________
 % PsPM 3.0
@@ -186,6 +191,10 @@ for iSn = 1:numel(model.datafile)
         return;
     end;
     model.filter.sr = data{1}.header.sr;
+    options.missing{iSn, 1} = isnan(data{1}.data);
+    if any(options.missing{iSn, 1} == true)
+        [sts, data{1}.data] = scr_interpolate(data{1}.data);
+    end;
     [sts, model.scr{iSn, 1}, model.sr] = scr_prepdata(data{1}.data, model.filter);
     if sts == -1, return; end;
 end;
@@ -367,6 +376,7 @@ for iSn = 1:numel(model.scr)
     end;
 end;
 clear c n
+
 
 % do PCA if required
 if (options.indrf || options.getrf) && ~isempty(options.flexevents)
