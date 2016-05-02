@@ -186,14 +186,9 @@ end;
 
 % set size of segments according to first entry of timing
 n_sessions = numel(data_fn);
+% all sessions should have the same number of onsets (conditions)
 n_cond = numel(multi(1).names);
-n_onsets = numel(multi(1).onsets{1});
 segments = cell(n_cond,1);
-
-% load data
-for n = 1:n_sessions
-    [~, ~, data{n}] = scr_load_data(data_fn{n}, chan{n});
-end;
 
 if options.plot
     fg = figure('Name', 'Condition mean per subject', 'Visible', 'off');
@@ -208,34 +203,42 @@ if options.plot
     legend_lb = cell(n_cond*3,1);
 end;
 
-for c = 1:n_cond
-    for o = 1:n_onsets
-        
-        start = multi(1).onsets{c}(o);
-        if options.length == -1
-            try
-                stop = start + multi(1).durations{c}(o);
-            catch
-                warning('ID:invalid_input', 'Cannot determine onset duration.'); return;
+
+for n = 1:n_sessions
+    % load data
+    [~, ~, data{n}] = scr_load_data(data_fn{n}, chan{n});
+    for c = 1:n_cond
+        n_onsets = numel(multi(n).onsets{c});
+        for o = 1:n_onsets
+            start = multi(n).onsets{c}(o);
+            if options.length == -1
+                try
+                    stop = start + multi(n).durations{c}(o);
+                catch
+                    warning('ID:invalid_input', 'Cannot determine onset duration.'); return;
+                end;
+            else
+                stop = start + options.length;
             end;
-        else
-            stop = start + options.length;
-        end;
-        
-        switch options.timeunit
-            case 'seconds'
-                start = data{1}{1}.header.sr*start;
-                stop = data{1}{1}.header.sr*stop;
-        end;
-        
-        if ~isfield(segments{c}, 'data')
-            segments{c}.data = NaN((stop-start), n_onsets*n_sessions);
-        end;
-        
-        for n = 1:n_sessions
+            
+            switch options.timeunit
+                case 'seconds'
+                    start = data{n}{1}.header.sr*start;
+                    stop = data{n}{1}.header.sr*stop;
+            end;
+            
+            start = max(1,round(start));
+            stop = min(numel(data{n}{1}.data), round(stop));
+            
+            if ~isfield(segments{c}, 'data')
+                segments{c}.data = NaN((stop-start), n_onsets*n_sessions);
+            end;
             segments{c}.data(1:(stop-start), (o+(n-1)*n_onsets)) = data{n}{1}.data(start:(stop-1));
         end;
     end;
+end;
+
+for c=1:n_cond
     % create mean
     m = segments{c}.data;
     segments{c}.mean = mean(m,2);

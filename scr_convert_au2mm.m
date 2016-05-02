@@ -68,7 +68,6 @@ end;
 [f_sts, infos, data] = scr_load_data(fn, chan);
 
 if f_sts == 1
-        
     % check if ellipse mode is used
     if isfield(infos.source, 'elcl_proc') && strcmpi(infos.source.elcl_proc, 'ellipse')
         % actual conversion
