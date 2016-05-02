@@ -1,5 +1,5 @@
-function out = scr_cfg_run_pp_ecg(job)
-% Preprocess ECG data 
+function out = scr_cfg_run_pp_heart_data(job)
+% Preprocess heart data 
 %
 %
 % $Id$

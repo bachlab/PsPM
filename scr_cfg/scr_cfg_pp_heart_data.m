@@ -1,4 +1,4 @@
-function pp_ecg = scr_cfg_pp_ecg
+function pp_heart_data = scr_cfg_pp_heart_data
 % Preprocess ECG data
 % Data File
 datafile         = cfg_files;
@@ -157,13 +157,13 @@ replace_chan.help   = {['Replace existing conversion(s) with new ', ...
     'will be created.']};
 
 % Executable Branch
-pp_ecg      = cfg_exbranch;
-pp_ecg.name = 'Preprocess ECG data';
-pp_ecg.tag  = 'pp_ecg';
-pp_ecg.val  = {datafile, pp, replace_chan};
-pp_ecg.prog = @scr_cfg_run_pp_ecg;
-pp_ecg.vout = @scr_cfg_vout_pp_ecg;
-pp_ecg.help = {['Convert ECG to heart beat detects QRS complexes in ', ...
+pp_heart_data      = cfg_exbranch;
+pp_heart_data.name = 'Preprocess heart data';
+pp_heart_data.tag  = 'pp_heart_data';
+pp_heart_data.val  = {datafile, pp, replace_chan};
+pp_heart_data.prog = @scr_cfg_run_pp_heart_data;
+pp_heart_data.vout = @scr_cfg_vout_pp_heart_data;
+pp_heart_data.help = {['Convert ECG to heart beat detects QRS complexes in ', ...
     'ECG data and write timestamps of detected R spikes into a new ', ...
     'heart beat channel. This function uses an algorithm adapted from ', ...
     'Pan & Tompkins (1985). Hidden options for minimum and maximum heart ', ...
@@ -174,7 +174,7 @@ pp_ecg.help = {['Convert ECG to heart beat detects QRS complexes in ', ...
     'This function uses heart period rather than heart rate because heart ',...
     'period varies linearly with ANS input into the heart.']};
 
-function vout = scr_cfg_vout_pp_ecg(job)
+function vout = scr_cfg_vout_pp_heart_data(job)
 vout = cfg_dep;
 vout.sname      = 'Output File';
 vout.tgt_spec = cfg_findspec({{'class','cfg_files'}});
