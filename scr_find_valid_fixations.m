@@ -58,6 +58,19 @@ function [sts, out_file] = scr_find_valid_fixations(fn, options)
 %                                   equal to 0 describe epochs of valid
 %                                   data (= no blink & valid fixation).
 %                                   Default is disabled (=0)
+%               channels:           Choose channels in which the data
+%                                   should be set to NaN (or interpolated)
+%                                   during invalid fixations.
+%                                   Default is 'pupil'. A char or numeric
+%                                   value or a cell array of char or
+%                                   numerics is expected. Channel names
+%                                   pupil, gaze_x, gaze_y, blink, 
+%                                   pupil_missing will be automatically 
+%                                   expanded to the corresponding eye. E.g.
+%                                   pupil becoms pupil_l or pupil_r 
+%                                   according to the eye which is 
+%                                   being processed.
+%                                   
 %               
 %__________________________________________________________________________
 % PsPM 3.1
@@ -102,12 +115,20 @@ if ~isfield(options, 'validate_fixations')
     options.validate_fixations = false;
 end;
 
+if ~isfield(options, 'channels')
+    options.channels = 'pupil';
+end;
+
 if ~islogical(options.interpolate) && ~isnumeric(options.interpolate)
     warning('ID:invalid_input', 'Options.interpolate is neither logical nor numeric.'); return;
 elseif ~islogical(options.missing) && ~isnumeric(options.missing)
     warning('ID:invalid_input', 'Options.missing is neither logical nor numeric.'); return;
 elseif ~islogical(options.validate_fixations) && ~isnumeric(options.validate_fixations)
     warning('ID:invalid_input', 'Options.validate_fixations is neither logical nor numeric.'); return;
+elseif ~iscell(options.channels) && ~ischar(options.channels) && ~isnumeric(options.channels)
+    warning('ID:invalid_input', 'Options.channels should be a char, numeric or a cell of char or numeric.'); return;
+elseif iscell(options.channels) && any(~cellfun(@(x) ischar(x) || isnumeric(x), options.channels))
+    warning('ID:invalid_input', 'Option.channels contains invalid values.');
 elseif options.validate_fixations
     % if we land here validate_fixations fits the expected format and is
     % true. so lets check if all mandatory fields are set and then set the
@@ -219,6 +240,10 @@ elseif ~ischar(options.newfile)
     warning('ID:invalid_input', 'Options.newfile is not char.'); return;
 end;
 
+if ~iscell(options.channels)
+    options.channels = {options.channels};
+end;
+
 % iterate through eyes
 n_eyes = numel(infos.source.eyesObserved);
 new_pu = cell(n_eyes, 1);
@@ -232,18 +257,24 @@ for i=1:n_eyes
     blink = ['blink_', eye];
     pupil = ['pupil_', eye];
     
+    % find chars to replace
+    str_chans = cellfun(@ischar, options.channels);
+    options.channels(str_chans) = regexprep(options.channels(str_chans), '(pupil|gaze_x|gaze_y|blink|pupil_missing)', '$0_l');
+    
+    % replace strings with numbers
+    str_chan_num = options.channels(str_chans);
+    for j=1:numel(str_chan_num)
+        str_chan_num(j) = {find(cellfun(@(y) strcmpi(str_chan_num(j),...
+            y.header.chantype), data),1)};
+    end;
+    options.channels(str_chans) = str_chan_num;
+    work_chans = options.channels;
     
     bl = cellfun(@(x) strcmpi(blink, x.header.chantype), data);
-    pu = cellfun(@(x) strcmpi(pupil, x.header.chantype), data);
     
-    if any(bl) && any(pu)
-        if ~any(bl) || ~any(pu)
-            warning('ID:invalid_input', 'Problems finding pupil or blink channel.'); return;
-        end;
-    
+    if any(bl) && numel(work_chans) > 1
         % always use first found channel
         bl = find(bl,1);
-        pu = find(pu,1);
         
         excl = data{bl}.data == 1;
         
@@ -260,7 +291,7 @@ for i=1:n_eyes
         end;
         
         % set excluded periods in pupil data to NaN
-        new_pu{i} = data{pu};
+        new_pu{i} = data{work_chans};
         new_pu{i}.data(excl == 1) = NaN;
         
         if options.interpolate

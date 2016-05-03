@@ -146,6 +146,18 @@ disable_interpolation.tag    = 'disable_interpolation';
 disable_interpolation.val    = {0};
 disable_interpolation.help    = {'Interpolation is disabled.'};
 
+%% Channels
+channels                    = cfg_entry;
+channels.name               = 'Channels';
+channels.tag                = 'channels';
+channels.strtype            = 's';
+channels.num                = [1 Inf];
+channels.val                = {'pupil'};
+channels.help               = {['Enter a list of channels (numbers or names) ', ...
+    'to work on. ', ...
+    'Default is pupil channels. Channel names which depend on eyes will ', ...
+    'automatically be expanded. E.g. pupil becomes pupil_l.']};
+
 %% Interpolate
 interpolate                 = cfg_choice;
 interpolate.name            = 'Interpolate';
@@ -177,10 +189,12 @@ missing.name            = 'Missing';
 missing.tag             = 'missing';
 missing.values          = {enable_missing, disable_missing};
 missing.val             = {enable_missing};
-missing.help            = {['If interpolation is enabled NaN values ', ...
-    'during blinks and invalid fixations in pupil channels will be ', ...
-    'linearly missingd. Otherwise NaN values remain and interpolation ', ...
-    'as well as defining as missing is left over to the GLM function.']};
+missing.help            = {['If enabled an additional channel containing ', ...
+    'additional information about valid data points will be written. ', ...
+    'Data points equal to 1 describe epochs which have been discriminated ', ...
+    'as invalid during validation (=missing). Data points equal ', ...
+    'to 0 describe epochs of valid data. This function may be ', ...
+    'enabled in combination with enabled interpolation.']};
 
 %% Overwrite original
 overwrite_original      = cfg_const;
@@ -260,7 +274,7 @@ output.val              = {file_output, channel_output};
 find_valid_fixations      = cfg_exbranch;
 find_valid_fixations.name = 'Find valid fixations';
 find_valid_fixations.tag  = 'find_valid_fixations';
-find_valid_fixations.val  = {datafile, validate_fixations, interpolate, missing, output};
+find_valid_fixations.val  = {datafile, validate_fixations, channels, interpolate, missing, output};
 find_valid_fixations.prog = @scr_cfg_run_find_valid_fixations;
 find_valid_fixations.vout = @scr_cfg_vout_find_valid_fixations;
 find_valid_fixations.help = {['Pupil data time series can contain missing ', ...

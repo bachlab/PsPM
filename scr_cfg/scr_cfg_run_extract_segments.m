@@ -10,7 +10,7 @@ if isfield(job, 'mode')
     elseif isfield(job.mode, 'mode_manual')
         mode = 'manual';
         chan = job.mode.mode_manual.channel;
-        fn = job.mode.mode_manual.datafile{1};
+        fn = job.mode.mode_manual.datafiles;
         
         if isfield(job.mode.mode_manual.conditions, 'condition')
             conditions = job.mode.mode_manual.conditions.condition;
@@ -24,7 +24,7 @@ if isfield(job, 'mode')
                 tm.durations{i} = conditions(i).cond_durations;
             end;
         elseif isfield(job.mode.mode_manual.conditions, 'condition_file')
-            tm = job.mode.mode_manual.conditions.condition_file{1};
+            tm = job.mode.mode_manual.conditions.condition_files;
         end;
         
     end;

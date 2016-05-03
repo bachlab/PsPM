@@ -36,6 +36,13 @@ if isfield(job.missing, 'enable_missing')
     options.interpolate = 1;
 end;
 
+options.channels = strsplit(job.channels);
+% convert numbers
+num_vals = str2double(options.channels);
+nums = ~isnan(num_vals);
+
+options.channels(nums) = num2cell(num_vals(nums));
+
 if isfield(job.output_settings.file_output, 'new_file')
     f_path = job.output_settings.file_output.new_file.file_path{1};
     f_name = job.output_settings.file_output.new_file.file_name;

@@ -16,10 +16,10 @@ if isempty(settings), scr_init; end;
 
 %% Data file
 datafile                = cfg_files;
-datafile.name           = 'Data file';
-datafile.tag            = 'datafile';
-datafile.num            = [1 1];
-datafile.help           = {['PsPM file from which data segments should ', ...
+datafile.name           = 'Data files';
+datafile.tag            = 'datafiles';
+datafile.num            = [1 Inf];
+datafile.help           = {['PsPM files from which data segments should ', ...
     'be extracted.']};
 
 %% Channel
@@ -33,10 +33,10 @@ channel.help            = {['Channel in specified data file from which ', ...
 
 %% Condition file
 condition_file          = cfg_files;
-condition_file.name     = 'Condition file';
-condition_file.tag      = 'condition_file';
-condition_file.num      = [1 1];
-condition_file.help     = {['Condition file as expected in a GLM model.']};
+condition_file.name     = 'Condition files';
+condition_file.tag      = 'condition_files';
+condition_file.num      = [1 Inf];
+condition_file.help     = {['Condition files as expected in a GLM model.']};
 
 %% Condition onsets
 cond_onsets             = cfg_entry;
@@ -103,7 +103,7 @@ mode_manual.help        = {['Manual mode allows to specify all the settings manu
 glm_file                = cfg_files;
 glm_file.name           = 'GLM file';
 glm_file.tag            = 'glm_file';
-glm_file.num            = [1 Inf];
+glm_file.num            = [1 1];
 glm_file.help           = {['Choose GLM file to extract the needed information.']};
 
 %% Automatic mode
@@ -140,8 +140,8 @@ segment_length.tag      = 'segment_length';
 segment_length.strtype  = 'r';
 segment_length.num      = [1 1];
 segment_length.val      = {-1};
-segment_length.help     = {['Length of segments. Ignored if durations in ', ...
-    'conditions is specified, otherwise applies to all segments (-1 = disabled).']};
+segment_length.help     = {['Length of segments. If set (= enabled) ', ...
+    'durations in conditions will be ignored (-1 = disabled).']};
 
 %% Options
 options                 = cfg_branch;
