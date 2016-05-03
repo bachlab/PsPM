@@ -255,11 +255,11 @@ for i=1:n_eyes
     gaze_x = ['gaze_x_', eye];
     gaze_y = ['gaze_y_', eye];
     blink = ['blink_', eye];
-    pupil = ['pupil_', eye];
     
     % find chars to replace
     str_chans = cellfun(@ischar, options.channels);
-    options.channels(str_chans) = regexprep(options.channels(str_chans), '(pupil|gaze_x|gaze_y|blink|pupil_missing)', '$0_l');
+    options.channels(str_chans) = regexprep(options.channels(str_chans), ...
+        '(pupil|gaze_x|gaze_y|blink|pupil_missing)', ['$0_' eye]);
     
     % replace strings with numbers
     str_chan_num = options.channels(str_chans);
@@ -268,7 +268,7 @@ for i=1:n_eyes
             y.header.chantype), data),1)};
     end;
     options.channels(str_chans) = str_chan_num;
-    work_chans = options.channels;
+    work_chans = cell2mat(options.channels);
     
     bl = cellfun(@(x) strcmpi(blink, x.header.chantype), data);
     
@@ -291,18 +291,21 @@ for i=1:n_eyes
         end;
         
         % set excluded periods in pupil data to NaN
-        new_pu{i} = data{work_chans};
-        new_pu{i}.data(excl == 1) = NaN;
-        
-        if options.interpolate
-            % interpolate / extrapolate at the edges
-            o.extrapolate = 1;
-            % interpolate
-            [~, new_pu{i}.data] = scr_interpolate(new_pu{i}.data, o);
+        new_pu{i} = {data{work_chans}};
+        new_excl{i} = cell(1,numel(new_pu{i}));
+        for j=1:numel(new_pu{i})
+            new_pu{i}{j}.data(excl == 1) = NaN;
+       
+            if options.interpolate
+                % interpolate / extrapolate at the edges
+                o.extrapolate = 1;
+                % interpolate
+                [~, new_pu{i}{j}.data] = scr_interpolate(new_pu{i}.data, o);
+            end;
+
+            excl_hdr = struct('chantype', ['pupil_missing_', eye], 'units', '', 'sr', new_pu{i}{j}.header.sr);
+            new_excl{i}{j} = struct('data', excl, 'header', excl_hdr);
         end;
-        
-        excl_hdr = struct('chantype', ['pupil_missing_', eye], 'units', '', 'sr', new_pu{i}.header.sr);
-        new_excl{i} = struct('data', excl, 'header', excl_hdr);
     end;
 end;
 
@@ -323,9 +326,9 @@ end;
 
 % collect data
 if options.missing
-    new_chans = [new_pu; new_excl];
+    new_chans = [[new_excl{:}], [new_pu{:}]];
 else
-    new_chans = new_pu;
+    new_chans = [new_pu{:}];
 end;
 
 new_data = data;

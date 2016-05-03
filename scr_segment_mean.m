@@ -107,7 +107,8 @@ conditions = cell(n_cond,1);
 
 if options.plot
     fh = figure('Name', 'Condition grand mean (multiple subjects)');
-    ax = axes(fh, 'NextPlot', 'add');
+    ax = axes('NextPlot', 'add');
+    set(fh, 'CurrentAxes', ax);
 end;
 
 for c = 1:n_cond
