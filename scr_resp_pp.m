@@ -1,7 +1,7 @@
 function sts = scr_resp_pp(fn, sr, chan, options)
 % scr_resp_pp preprocesses raw respiration traces. The function detects 
 % respiration cycles for bellows and cushion systems, computes respiration
-% period, amplitude and RLL, assigns these measures to the start of each
+% period, amplitude and RFR, assigns these measures to the start of each
 % cycle and linearly interpolates these (expect rs = respiration time 
 % stamps). Results are written to new channels in the same file
 % 
@@ -11,7 +11,7 @@ function sts = scr_resp_pp(fn, sr, chan, options)
 %       chan: number of respiration channel (optional, default: first
 %       respiration channel)
 %       options: .systemtype - 'bellows' (default) or 'cushion'
-%                .datatype - a cell array with any of 'rp', 'ra', 'RLL',
+%                .datatype - a cell array with any of 'rp', 'ra', 'RFR',
 %                'rs', 'all' (default)
 %                .plot - 1 creates a respiratory cycle detection plot
 %                .replace - specified an equals 1 when existing data should
@@ -47,7 +47,7 @@ elseif ~isnumeric(chan)
 end;
 
 try options.systemtype; catch, options.systemtype = 'bellows'; end;
-try options.datatype; catch, options.datatype = {'rp', 'ra', 'RLL', 'rs'}; end;
+try options.datatype; catch, options.datatype = {'rp', 'ra', 'RFR', 'rs'}; end;
 try options.plot; catch, options.plot = 0; end;
 try options.diagnostics; catch, options.diagnostics = 0; end;
 try options.replace; catch, options.replace = 0; end;
@@ -57,7 +57,7 @@ if ~ischar(options.systemtype) || sum(strcmpi(options.systemtype, {'bellows', 'c
 elseif ~iscell(options.datatype) 
     warning('Unknown data type.'); return;
 else 
-    datatypes = {'rp', 'ra', 'RLL', 'rs', 'all'};
+    datatypes = {'rp', 'ra', 'RFR', 'rs', 'all'};
     datatype = zeros(5, 1);
     for k = 1:numel(options.datatype)
         datatype(strcmpi(options.datatype{k}, datatypes)) = 1;
@@ -149,8 +149,8 @@ for iType = 1:(numel(datatypes) - 1)
                     win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
                     respdata(k) = range(resp(win))/ibi(k);
                 end;
-                o.msg.prefix = 'Respiration converted to RLL and';
-                newdata.header.chantype = 'RLL';
+                o.msg.prefix = 'Respiration converted to RFR and';
+                newdata.header.chantype = 'RFR';
                 newdata.header.units = 'unknown';
             case 4
                 o.msg.prefix = 'Respiration converted to respiration time stamps and';
@@ -161,7 +161,7 @@ for iType = 1:(numel(datatypes) - 1)
         switch iType
             case {1, 2, 3}
                 newt = (1/sr):(1/sr):infos.duration;
-                writedata = interp1(respstamp(2:end), respdata, newt, 'linear' ,'extrap'); % assign rp/ra/RLL to following zero crossing
+                writedata = interp1(respstamp(2:end), respdata, newt, 'linear' ,'extrap'); % assign rp/ra/RFR to following zero crossing
                 writedata(writedata < 0) = 0;                                              % 'extrap' option may introduce falsely negative values
                 newdata.header.sr = sr;
             case {4}

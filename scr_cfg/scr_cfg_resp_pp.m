@@ -90,13 +90,13 @@ dtype_ra.labels = {'No', 'Yes'};
 dtype_ra.values = {0, 1};
 dtype_ra.help   = {'Create a channel with interpolated respiration amplitude.'};
 
-dtype_rll        = cfg_menu;
-dtype_rll.name   = 'Respiration line length';
-dtype_rll.tag    = 'rll';
-dtype_rll.val    = {1};
-dtype_rll.labels = {'No', 'Yes'};
-dtype_rll.values = {0, 1};
-dtype_rll.help   = {'Create a channel with interpolated respiration line length.'};
+dtype_rfr        = cfg_menu;
+dtype_rfr.name   = 'Respiratory flow rate';
+dtype_rfr.tag    = 'rfr';
+dtype_rfr.val    = {1};
+dtype_rfr.labels = {'No', 'Yes'};
+dtype_rfr.values = {0, 1};
+dtype_rfr.help   = {'Create a channel with interpolated respiratory flow rate.'};
 
 dtype_rs        = cfg_menu;
 dtype_rs.name   = 'Respiration time stamps';
@@ -109,7 +109,7 @@ dtype_rs.help   = {'Create a channel with respiration time stamps.'};
 datatype       = cfg_branch;
 datatype.name  = 'Data type';
 datatype.tag   = 'datatype';
-datatype.val   = {dtype_rp, dtype_ra, dtype_rll, dtype_rs};
+datatype.val   = {dtype_rp, dtype_ra, dtype_rfr, dtype_rs};
 datatype.help  = {''};
 
 plot         = cfg_menu;
@@ -134,13 +134,13 @@ resp_pp.val  = {datafile,sr,chan, replace_chan ,options};
 resp_pp.prog = @scr_cfg_run_resp_pp;
 resp_pp.vout = @scr_cfg_vout_resp_pp;
 resp_pp.help = {['Convert continuous respiration traces into interpolated ', ...
-    'respiration period, amplitude, or RLL, or into time stamps indicating ', ...
+    'respiration period, amplitude, or RFR, or into time stamps indicating ', ...
     'the start of inspiration. This function detects the beginning of ', ...
-    'inspiration, assigns period/amplitude/RLL of the last cycle to this ', ...
+    'inspiration, assigns period/amplitude/RFR of the last cycle to this ', ...
     'data point, and interpolates data. This function outputs respiration ', ...
     'period rather than respiration rate in analogy to heart period models ', ...
     '- heart period linearly varies with ANS input to the heart. ', ...
-    'RLL (respiration line length) is the integral of the absolute thorax ', ...
+    'RFR (respiratory flow rate) is the integral of the absolute thorax ', ...
     'excursion per respiration cycle, divided by the cycle period. ', ...
     'Converted data are written into new channel(s).']};
 
