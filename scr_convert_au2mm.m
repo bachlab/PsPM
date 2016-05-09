@@ -4,7 +4,7 @@ function [sts, out] = scr_convert_au2mm(fn, chan, options)
 % a new channel.
 %
 % FORMAT: 
-%   [sts] = scr_convert_au2mm(fn, chan, options)
+%   [sts, out] = scr_convert_au2mm(fn, chan, options)
 %
 % ARGUMENTS: 
 %           fn:                 a numeric vector of milimeter values

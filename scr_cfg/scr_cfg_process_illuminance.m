@@ -118,7 +118,7 @@ overwrite.help    = {'Choose “yes” if you want to overwrite existing file(s) wit
 
 %% Executable branch
 proc_illuminance      = cfg_exbranch;
-proc_illuminance.name = 'Process illuminance markers';
+proc_illuminance.name = 'Prepare illuminance GLM';
 proc_illuminance.tag  = 'process_illuminance';
 proc_illuminance.val  = {lum_file, sr, bf, outdir, filename, overwrite};
 proc_illuminance.prog = @scr_cfg_run_proc_illuminance;
