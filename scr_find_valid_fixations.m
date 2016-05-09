@@ -58,6 +58,10 @@ function [sts, out_file] = scr_find_valid_fixations(fn, options)
 %                                   equal to 0 describe epochs of valid
 %                                   data (= no blink & valid fixation).
 %                                   Default is disabled (=0)
+%               eyes:               Define on which eye the operations
+%                                   should be performed. Possible values
+%                                   are: 'left', 'right', 'all'. Default is
+%                                   'all'.
 %               channels:           Choose channels in which the data
 %                                   should be set to NaN (or interpolated)
 %                                   during invalid fixations.
@@ -119,10 +123,16 @@ if ~isfield(options, 'channels')
     options.channels = 'pupil';
 end;
 
+if ~isfield(options, 'eyes')
+    options.eyes = 'all';
+end;
+
 if ~islogical(options.interpolate) && ~isnumeric(options.interpolate)
     warning('ID:invalid_input', 'Options.interpolate is neither logical nor numeric.'); return;
 elseif ~islogical(options.missing) && ~isnumeric(options.missing)
     warning('ID:invalid_input', 'Options.missing is neither logical nor numeric.'); return;
+elseif ~any(strcmpi(options.eyes, {'all', 'left', 'right'}))
+    warning('ID:invalid_input', 'Options.eyes must be either ''all'', ''left'' or ''right''.'); return;
 elseif ~islogical(options.validate_fixations) && ~isnumeric(options.validate_fixations)
     warning('ID:invalid_input', 'Options.validate_fixations is neither logical nor numeric.'); return;
 elseif ~iscell(options.channels) && ~ischar(options.channels) && ~isnumeric(options.channels)
@@ -249,62 +259,64 @@ n_eyes = numel(infos.source.eyesObserved);
 new_pu = cell(n_eyes, 1);
 new_excl = cell(n_eyes, 1);
 data_dev = cell(n_eyes,1);
+
 for i=1:n_eyes
     eye = lower(infos.source.eyesObserved(i));
-    
-    gaze_x = ['gaze_x_', eye];
-    gaze_y = ['gaze_y_', eye];
-    blink = ['blink_', eye];
-    
-    % find chars to replace
-    str_chans = cellfun(@ischar, options.channels);
-    options.channels(str_chans) = regexprep(options.channels(str_chans), ...
-        '(pupil|gaze_x|gaze_y|blink|pupil_missing)', ['$0_' eye]);
-    
-    % replace strings with numbers
-    str_chan_num = options.channels(str_chans);
-    for j=1:numel(str_chan_num)
-        str_chan_num(j) = {find(cellfun(@(y) strcmpi(str_chan_num(j),...
-            y.header.chantype), data),1)};
-    end;
-    options.channels(str_chans) = str_chan_num;
-    work_chans = cell2mat(options.channels);
-    
-    bl = cellfun(@(x) strcmpi(blink, x.header.chantype), data);
-    
-    if any(bl) && numel(work_chans) > 1
-        % always use first found channel
-        bl = find(bl,1);
+    if strcmpi(options.eyes, 'all') || strcmpi(options.eyes(1), eye)   
+        gaze_x = ['gaze_x_', eye];
+        gaze_y = ['gaze_y_', eye];
+        blink = ['blink_', eye];
         
-        excl = data{bl}.data == 1;
+        % find chars to replace
+        str_chans = cellfun(@ischar, options.channels);
+        options.channels(str_chans) = regexprep(options.channels(str_chans), ...
+            '(pupil|gaze_x|gaze_y|blink|pupil_missing)', ['$0_' eye]);
         
-        if options.validate_fixations
-            gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype), data),1);
-            gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype), data),1);
-            
-            data_dev{i}(:,1) = data{gx}.data > vis.x_upper | data{gx}.data < vis.x_lower;
-            data_dev{i}(:,2) = data{gy}.data > vis.y_upper | data{gy}.data < vis.y_lower;
-            data_dev{i}(:,3) = data_dev{i}(:,1) | data_dev{i}(:,2);
-            
-            % set fixation breaks
-            excl(data_dev{i}(:,3)) = 1;
+        % replace strings with numbers
+        str_chan_num = options.channels(str_chans);
+        for j=1:numel(str_chan_num)
+            str_chan_num(j) = {find(cellfun(@(y) strcmpi(str_chan_num(j),...
+                y.header.chantype), data),1)};
         end;
+        options.channels(str_chans) = str_chan_num;
+        work_chans = cell2mat(options.channels);
         
-        % set excluded periods in pupil data to NaN
-        new_pu{i} = {data{work_chans}};
-        new_excl{i} = cell(1,numel(new_pu{i}));
-        for j=1:numel(new_pu{i})
-            new_pu{i}{j}.data(excl == 1) = NaN;
-       
-            if options.interpolate
-                % interpolate / extrapolate at the edges
-                o.extrapolate = 1;
-                % interpolate
-                [~, new_pu{i}{j}.data] = scr_interpolate(new_pu{i}.data, o);
+        bl = cellfun(@(x) strcmpi(blink, x.header.chantype), data);
+        
+        if any(bl) && numel(work_chans) >= 1
+            % always use first found channel
+            bl = find(bl,1);
+            
+            excl = data{bl}.data == 1;
+            
+            if options.validate_fixations
+                gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype), data),1);
+                gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype), data),1);
+                
+                data_dev{i}(:,1) = data{gx}.data > vis.x_upper | data{gx}.data < vis.x_lower;
+                data_dev{i}(:,2) = data{gy}.data > vis.y_upper | data{gy}.data < vis.y_lower;
+                data_dev{i}(:,3) = data_dev{i}(:,1) | data_dev{i}(:,2);
+                
+                % set fixation breaks
+                excl(data_dev{i}(:,3)) = 1;
             end;
-
-            excl_hdr = struct('chantype', ['pupil_missing_', eye], 'units', '', 'sr', new_pu{i}{j}.header.sr);
-            new_excl{i}{j} = struct('data', excl, 'header', excl_hdr);
+            
+            % set excluded periods in pupil data to NaN
+            new_pu{i} = {data{work_chans}};
+            new_excl{i} = cell(1,numel(new_pu{i}));
+            for j=1:numel(new_pu{i})
+                new_pu{i}{j}.data(excl == 1) = NaN;
+                
+                if options.interpolate
+                    % interpolate / extrapolate at the edges
+                    o.extrapolate = 1;
+                    % interpolate
+                    [~, new_pu{i}{j}.data] = scr_interpolate(new_pu{i}{j}.data, o);
+                end;
+                
+                excl_hdr = struct('chantype', ['pupil_missing_', eye], 'units', '', 'sr', new_pu{i}{j}.header.sr);
+                new_excl{i}{j} = struct('data', excl, 'header', excl_hdr);
+            end;
         end;
     end;
 end;
@@ -331,26 +343,30 @@ else
     new_chans = [new_pu{:}];
 end;
 
-new_data = data;
-for i = 1:numel(new_chans)
-    if strcmpi(options.channel_action, 'add')
-        new_data{end+1} = new_chans{i};
-    else
-        % look for same chan_type
-        chans = cellfun(@(x) strcmpi(new_chans{i}.header.chantype, x.header.chantype), new_data);
-        if any(chans) 
-            % replace the first found channel
-            idx = find(chans, 1, 'first');
-            new_data{idx}.data = new_chans{i}.data;
-        else
+if numel(new_chans) >= 1
+    new_data = data;
+    for i = 1:numel(new_chans)
+        if strcmpi(options.channel_action, 'add')
             new_data{end+1} = new_chans{i};
+        else
+            % look for same chan_type
+            chans = cellfun(@(x) strcmpi(new_chans{i}.header.chantype, x.header.chantype), new_data);
+            if any(chans)
+                % replace the first found channel
+                idx = find(chans, 1, 'first');
+                new_data{idx}.data = new_chans{i}.data;
+            else
+                new_data{end+1} = new_chans{i};
+            end;
+            
         end;
-        
     end;
+    
+    file_struct.infos = infos;
+    file_struct.data = new_data;
+    file_struct.options = op;
+    
+    [sts, ~, ~, ~] = scr_load_data(out_file, file_struct);
+else
+    warning('ID:invalid_input', 'Appearently no data was generated.');
 end;
-
-file_struct.infos = infos;
-file_struct.data = new_data;
-file_struct.options = op;
-
-[sts, ~, ~, ~] = scr_load_data(out_file, file_struct);

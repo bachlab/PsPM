@@ -21,6 +21,17 @@ datafile.num     = [1 Inf];
 datafile.help    = {['Specify the PsPM datafile containing the imported ', ...
     'pupil data.']};
 
+%% Eyes
+eyes                = cfg_menu;
+eyes.name           = 'Eyes';
+eyes.tag            = 'eyes';
+eyes.val            = {'all'};
+eyes.labels         = {'All eyes', 'Left eye', 'Right eye'};
+eyes.values         = {'all', 'left', 'right'};
+eyes.help           = {['Choose eyes which should be processed. If ''All', ...
+    'eyes'' is selected, all eyes which are present in the data will ', ...
+    'be processed. Otherwise only the chosen eye will be processed.']};
+
 %% Disable fixation validation
 disable_fixation_validation       = cfg_const;
 disable_fixation_validation.name  = 'Disabled';
@@ -274,7 +285,7 @@ output.val              = {file_output, channel_output};
 find_valid_fixations      = cfg_exbranch;
 find_valid_fixations.name = 'Find valid fixations';
 find_valid_fixations.tag  = 'find_valid_fixations';
-find_valid_fixations.val  = {datafile, validate_fixations, channels, interpolate, missing, output};
+find_valid_fixations.val  = {datafile, eyes, validate_fixations, channels, interpolate, missing, output};
 find_valid_fixations.prog = @scr_cfg_run_find_valid_fixations;
 find_valid_fixations.vout = @scr_cfg_vout_find_valid_fixations;
 find_valid_fixations.help = {['Pupil data time series can contain missing ', ...

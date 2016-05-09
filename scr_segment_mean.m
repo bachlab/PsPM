@@ -144,10 +144,16 @@ for c = 1:n_cond
                 end;
         end;
     end;
-    
-    conditions{c}.data = NaN(size(subj_seg{1}{c}.mean,1), n_subjects);
+    max_size = max(cellfun(@(x) size(x{c}.mean, 1), subj_seg));
+    conditions{c}.data = NaN(max_size, n_subjects);
     for s = 1:n_subjects
         conditions{c}.data(:,s) = subj_seg{s}{c}.mean;
+        if size(subj_seg{s}{c}.mean, 1) ~= max_size
+            warning('ID:invalid_input', ['There still seems to be something ', ...
+                'wrong with the size of the extracted segments: session %i, ', ...
+                'condition %i, expected size %i, actual size %i.'], ...
+                s, c, max_size, size(subj_seg{s}{c}.mean, 1));
+        end;
     end;
     m = conditions{c}.data;
     conditions{c}.mean = mean(m,2);

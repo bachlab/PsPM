@@ -33,7 +33,11 @@ if isfield(job.interpolate, 'enable_interpolation')
 end;
 
 if isfield(job.missing, 'enable_missing')
-    options.interpolate = 1;
+    options.missing = 1;
+end;
+
+if isfield(job, 'eyes')
+    options.eyes = job.eyes;
 end;
 
 options.channels = strsplit(job.channels);
