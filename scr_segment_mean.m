@@ -156,8 +156,8 @@ for c = 1:n_cond
         end;
     end;
     m = conditions{c}.data;
-    conditions{c}.mean = mean(m,2);
-    conditions{c}.std = std(m,0,2);
+    conditions{c}.mean = mean(m,2,'omitnan');
+    conditions{c}.std = std(m,0,2,'omitnan');
     conditions{c}.sem = conditions{c}.std/sqrt(n_subjects);
     conditions{c}.t = subj_seg{1}{c}.t;
     

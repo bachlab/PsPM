@@ -241,8 +241,8 @@ end;
 for c=1:n_cond
     % create mean
     m = segments{c}.data;
-    segments{c}.mean = mean(m,2);
-    segments{c}.std = std(m,0,2);
+    segments{c}.mean = mean(m,2, 'omitnan');
+    segments{c}.std = std(m,0,2, 'omitnan');
     segments{c}.sem = segments{c}.std./sqrt(n_onsets*n_sessions);
     
     sr = data{1}{1}.header.sr;
