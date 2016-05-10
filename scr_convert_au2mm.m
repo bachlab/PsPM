@@ -72,6 +72,7 @@ if f_sts == 1
     if isfield(infos.source, 'elcl_proc') && strcmpi(infos.source.elcl_proc, 'ellipse')
         % actual conversion
         data{1}.data = options.offset + options.multiplicator.*data{1}.data;
+        data{1}.header.units = 'mm';
         [f_sts, f_info] = scr_write_channel(fn, data{1}, options.channel_action);
         sts = f_sts;
         out.chan = f_info.channel;
