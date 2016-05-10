@@ -19,4 +19,6 @@ elseif isfield(job.mode, 'channel')
     
 end;
 
+options.extrapolate = job.extrapolate;
+
 [sts, out] = scr_interpolate(fn, options);

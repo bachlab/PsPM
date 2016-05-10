@@ -14,6 +14,15 @@ datafile.tag     = 'datafiles';
 datafile.num     = [1 Inf];
 datafile.help    = {'Select data files.'};
 
+%% Extrapolate
+extrapolate      = cfg_menu;
+extrapolate.name = 'Extrapolate';
+extrapolate.tag  = 'extrapolate';
+extrapolate.val  = {False};
+extrapolate.labels = {'Enabled','Disabled'};
+extrapolate.values = {True, False};
+extrapolate.help   = {['Enable extrapolation when trying to interpolate ', ...
+    'NaN values at the edges of the data files.']};
 
 %% Overwrite file
 overwrite         = cfg_menu;
