@@ -18,9 +18,9 @@ datafile.help    = {'Select data files.'};
 extrapolate      = cfg_menu;
 extrapolate.name = 'Extrapolate';
 extrapolate.tag  = 'extrapolate';
-extrapolate.val  = {False};
+extrapolate.val  = {false};
 extrapolate.labels = {'Enabled','Disabled'};
-extrapolate.values = {True, False};
+extrapolate.values = {true, false};
 extrapolate.help   = {['Enable extrapolation when trying to interpolate ', ...
     'NaN values at the edges of the data files.']};
 
@@ -94,7 +94,7 @@ wm.help           = {['Specify whether to work on a whole file or just ', ...
 interpolate_data      = cfg_exbranch;
 interpolate_data.name = 'Interpolate missing data';
 interpolate_data.tag  = 'interpolate';
-interpolate_data.val  = {datafile, wm};
+interpolate_data.val  = {datafile, extrapolate, wm};
 interpolate_data.prog = @scr_cfg_run_interpolate;
 interpolate_data.vout = @scr_cfg_vout_interpolate;
 interpolate_data.help = {['The function interpolates missing values, ', ...
