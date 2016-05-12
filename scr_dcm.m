@@ -193,7 +193,9 @@ for iSn = 1:numel(model.datafile)
     model.filter.sr = data{1}.header.sr;
     options.missing{iSn, 1} = isnan(data{1}.data);
     if any(options.missing{iSn, 1} == true)
-        [sts, data{1}.data] = scr_interpolate(data{1}.data);
+        interpolateoptions = struct('extrapolate', 1);
+        [sts, data{1}.data] = scr_interpolate(data{1}.data, interpolateoptions);
+        clear interpolateoptions    
     end;
     [sts, model.scr{iSn, 1}, model.sr] = scr_prepdata(data{1}.data, model.filter);
     if sts == -1, return; end;
