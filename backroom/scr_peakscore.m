@@ -27,6 +27,8 @@ function scr_peakscore(datafile, regfile, modelfile, timeunits, normalize, chan,
 %
 % options.overwrite = 1: overwrite existing files
 % options.method:   'simple' - computes a max/baseline difference
+%                   'min' - same but computes a min/baseline difference
+%                   'abs' - signed peak of largest modulus
 %                   'spr' - method preferred by the Society for
 %                   Psychophysiological Research (SPR). Detect peak in peak
 %                   window, then find onset in onset window, score 0 if no
@@ -83,7 +85,7 @@ end;
 try options.window;
 catch
     switch options.method
-        case 'simple'
+        case {'simple', 'min', 'abs'}
             options.window = [-1 0; 1 4];
         case 'spr'
             options.window = [1 4; 0.5 5];
@@ -268,6 +270,14 @@ for k = 1:numel(onsets)
                 baseline = mean(glm.Y(firstwin));
                 peak = max(glm.Y(secondwin));
                 peakscore(n) = peak - baseline;
+            elseif strcmpi(options.method, 'min')
+                baseline = mean(glm.Y(firstwin));
+                peak = min(glm.Y(secondwin));
+                peakscore(n) = peak - baseline;
+            elseif strcmpi(options.method, 'abs')
+                baseline = mean(glm.Y(firstwin));
+                [peak, peakindx] = max(abs(glm.Y(secondwin)- baseline));
+                peakscore(n) = peak * sign(glm.Y(secondwin(peakindx))- baseline);
             elseif strcmpi(options.method, 'spr')
                 % create running average
                 b = [1/3 1/3 1/3]; a = 1;
