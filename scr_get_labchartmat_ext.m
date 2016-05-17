@@ -65,6 +65,8 @@ for k = 1:numel(import)
         import{k}.data   = labchart.comtick_block1;
         import{k}.sr     = min(sr);
         import{k}.marker = 'timestamps';
+        
+        sourceinfo{blk}.chan{k, 1} = sprintf('Channel %02.0f: %s', k, 'Events');
     else
         % define channel number ---
         if import{k}.channel > 0

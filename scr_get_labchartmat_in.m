@@ -61,6 +61,7 @@ for blk = 1:blkno
             import{blk}{k}.data = labchart.com(markerindex, 3);
             import{blk}{k}.markerinfo.name = markertype(labchart.com(markerindex, 5));
             import{blk}{k}.markerinfo.value = labchart.com(markerindex, 5);
+            sourceinfo{blk}.chan{k, 1} = sprintf('Channel %02.0f: %s', k, 'Events');
         else
             % define channel number ---
             if import{blk}{k}.channel > 0
