@@ -92,7 +92,7 @@ chan_action.val     = {'replace'};
 chan_action.values  = {'replace', 'add'};
 chan_action.labels  = {'Replace channel', 'Add channel'};
 chan_action.help    = {['Choose whether to ''replace'' the given channel ', ... 
-    'or ''add'' the converted data as a new channel. (replace, add)']};
+    'or ''add'' the converted data as a new channel.']};
 
 %% Executable branch
 pp_convert        = cfg_exbranch;

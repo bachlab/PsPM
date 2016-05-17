@@ -97,7 +97,7 @@ mode_manual             = cfg_branch;
 mode_manual.name        = 'Manual';
 mode_manual.tag         = 'mode_manual';
 mode_manual.val         = {datafile, channel, conditions};
-mode_manual.help        = {['Manual mode allows to specify all the settings manually.']};
+mode_manual.help        = {['Specify all the settings manually.']};
 
 %% GLM file
 glm_file                = cfg_files;
@@ -108,11 +108,10 @@ glm_file.help           = {['Choose GLM file to extract the needed information.'
 
 %% Automatic mode
 mode_automatic          = cfg_branch;
-mode_automatic.name     = 'Automatic';
+mode_automatic.name     = 'Automatically read from GLM';
 mode_automatic.tag      = 'mode_automatic';
 mode_automatic.val      = {glm_file};
-mode_automatic.help     = {['Automatic mode extracts all relevant ', ...
-    'information from a GLM file.']};
+mode_automatic.help     = {['Extracts all relevant information from a GLM file.']};
 
 %% Mode
 extract_mode            = cfg_choice;
@@ -120,9 +119,8 @@ extract_mode.name       = 'Mode';
 extract_mode.tag        = 'mode';
 extract_mode.val        = {mode_automatic};
 extract_mode.values     = {mode_automatic, mode_manual};
-extract_mode.help       = {['Use automatic mode if the function should ', ...
-    'extract all information from a GLM model file. Otherwise ', ...
-    'use manual mode to define the relevant information manually.']};
+extract_mode.help       = {['Either extract all information from a GLM ', ...
+    'model file or define the relevant information manually. ']};
 
 %% Timeunit
 timeunit                = cfg_menu;
