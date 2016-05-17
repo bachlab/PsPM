@@ -145,23 +145,17 @@ for c = 1:n_cond
         end;
     end;
     seg_size = cellfun(@(x) size(x{c}.mean, 1), subj_seg);
-    max_size = max(seg_size);
-    max_el = find(seg_size == max_size,1);
-    conditions{c}.data = NaN(max_size, n_subjects);
+    min_size = min(seg_size);
+    min_el = find(seg_size == min_size,1);
+    conditions{c}.data = NaN(min_size, n_subjects);
     for s = 1:n_subjects
-        conditions{c}.data(1:numel(subj_seg{s}{c}.mean),s) = subj_seg{s}{c}.mean;
-        if size(subj_seg{s}{c}.mean, 1) ~= max_size
-            warning('ID:invalid_input', ['There still seems to be something ', ...
-                'wrong with the size of the extracted segments: session %i, ', ...
-                'condition %i, expected size %i, actual size %i.'], ...
-                s, c, max_size, size(subj_seg{s}{c}.mean, 1));
-        end;
+        conditions{c}.data(:,s) = subj_seg{s}{c}.mean(1:min_size);
     end;
     m = conditions{c}.data;
     conditions{c}.mean = mean(m,2,'omitnan');
     conditions{c}.std = std(m,0,2,'omitnan');
     conditions{c}.sem = conditions{c}.std/sqrt(n_subjects);
-    conditions{c}.t = subj_seg{max_el}{c}.t;
+    conditions{c}.t = subj_seg{min_el}{c}.t;
     
     if options.plot
         p = plot(ax, conditions{c}.t, conditions{c}.mean, '-', ...
