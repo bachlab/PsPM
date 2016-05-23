@@ -110,7 +110,7 @@ if options.plot
     ax = axes('NextPlot', 'add');
     set(fh, 'CurrentAxes', ax);
 end;
-
+legend_lb = cell(1,n_cond*3);
 for c = 1:n_cond
     sr = cellfun(@(x) size(x{c}.mean,1)/max(x{c}.t), subj_seg);
     if sum(diff(sr)) ~= 0
@@ -155,6 +155,7 @@ for c = 1:n_cond
     conditions{c}.mean = mean(m,2,'omitnan');
     conditions{c}.std = std(m,0,2,'omitnan');
     conditions{c}.sem = conditions{c}.std/sqrt(n_subjects);
+    conditions{c}.name = subj_seg{s}{c}.name;
     conditions{c}.t = subj_seg{min_el}{c}.t;
     
     if options.plot
@@ -165,9 +166,16 @@ for c = 1:n_cond
         set(p(1), 'LineWidth', 2);
         set(p(2), 'Color', get(p(1), 'Color'));
         set(p(3), 'Color', get(p(1), 'Color'));
+        
+        nm = conditions{c}.name;
+        legend_lb{(c-1)*3 + 1} = [nm ' AVG'];
+        legend_lb{(c-1)*3 + 2} = [nm ' SEM+'];
+        legend_lb{(c-1)*3 + 3} = [nm ' SEM-'];
     end;
 end;
-
+if options.plot
+    legend(legend_lb);
+end;
 out.conditions = conditions;
 
 if ~isempty(options.newfile)
