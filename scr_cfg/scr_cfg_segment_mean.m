@@ -53,7 +53,8 @@ adjust_method.val       = {'none'};
 adjust_method.labels    = {'None', 'Interpolate', 'Downsample'};
 adjust_method.values    = {'none', 'interpolate', 'downsample'};
 adjust_method.help      = {['How to deal with different sample rates ', ...
-    'across segment files.']};
+    'across segment files. ''interpolate'' data segments to highest or', ...
+    '''downsample'' data segments to lowest sampling rate.']};
 
 %% Overwrite
 overwrite               = cfg_menu;

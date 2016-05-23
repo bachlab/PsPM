@@ -56,9 +56,7 @@ cond_durations.tag         = 'cond_durations';
 cond_durations.strtype     = 'i';
 cond_durations.num         = [1 Inf];
 cond_durations.help         = {['If all events included in this ', ...
-    'condition have the same length specify just a single number. ', ...
-    'If events have different durations, specify a vector with the same ', ...
-    'length as the vector for onsets.']};
+    'condition have the same length specify just a single number.']};
 
 %% Condition name
 cond_name               = cfg_entry;

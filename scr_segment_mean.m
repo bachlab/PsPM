@@ -137,7 +137,7 @@ for c = 1:n_cond
                 subj_t = subj_seg{subj(1)}{c}.t;
                 
                 for i = 1:size(subj_seg, 1)
-                    if sr(i) < max_sr()
+                    if sr(i) < max_sr
                         subj_seg{i}{c}.mean = interp1(subj_seg{i}{c}.t, subj_seg{i}{c}.mean, subj_t);
                         subj_seg{i}{c}.t = subj_t;
                     end;

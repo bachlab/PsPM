@@ -211,8 +211,12 @@ for d=1:numel(D)
         if inline_flag
             dat = chans{k};
         else
-            
             dat = chans{k}.data;
+        end;
+        
+        if numel(find(~isnan(dat))) < 2
+            warning('ID:invalid_input','Need at least two sample points to run interpolation.');
+            return;
         end;
         
         x = 1:length(dat);

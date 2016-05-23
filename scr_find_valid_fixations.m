@@ -306,7 +306,11 @@ for i=1:n_eyes
             new_excl{i} = cell(1,numel(new_pu{i}));
             for j=1:numel(new_pu{i})
                 new_pu{i}{j}.data(excl == 1) = NaN;
-                
+                if all(isnan(new_pu{i}{j}.data))
+                    warning('ID:invalid_input', ['All values of channel ''%s'' ', ...
+                        'completely set to NaN. Please reconsider your parameters.'], ...
+                        new_pu{i}{j}.header.chantype);
+                end;
                 if options.interpolate
                     % interpolate / extrapolate at the edges
                     o.extrapolate = 1;

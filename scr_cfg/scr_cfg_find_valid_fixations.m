@@ -55,7 +55,7 @@ distance.name                 = 'Distance';
 distance.tag                  = 'distance';
 distance.strtype              = 'i';
 distance.num                  = [1 1];
-distance.help                 = {'Distance between eyes and screen.'};
+distance.help                 = {'Distance between eyes and screen in mm.'};
 
 %% Actual aspect
 aspect_actual                      = cfg_entry;
@@ -106,7 +106,7 @@ fixpoint_file.tag     = 'fixpoint_file';
 fixpoint_file.num     = [1 1];
 fixpoint_file.help    = {['.mat File containing a variable F with an ', ...
     'nx2 matrix. N should have the length of the recorded data and each ', ...
-    'row should define the fixation point for one recorded data row.']};
+    'row should define the fixation point for the respective recorded data row.']};
 
 %% Point
 fixpoint                = cfg_entry;
@@ -263,7 +263,7 @@ replace_channel.tag         = 'replace_channel';
 replace_channel.val         = {1};
 replace_channel.help        = {['The function tries to replace the ', ...
     'existing data channels. If there is no existing data channel found, ', ...
-    'the new channel will be added at the end of the file (very likely ', ...
+    'the new channel will be added at the end of the file (this very likely ', ...
     'applies to the new missing data channels).']};
 
 %% Channel output
@@ -295,7 +295,8 @@ find_valid_fixations.help = {['Pupil data time series can contain missing ', ...
     'fixations can be determined by setting an a priori threshold with ', ...
     'respect to the fixation point (in degree visual angle) for x- or y-gaze-positions.'], ...
     'References:', ...
-    'Korn, Bach (2016) Journal of Vision'};
+    'Korn, Bach (2016) Journal of Vision', ...
+    'Hayes & Petrov, 2015, Behavior Research Methods'};
 
 function vout = scr_cfg_vout_find_valid_fixations(job)
 vout = cfg_dep;
