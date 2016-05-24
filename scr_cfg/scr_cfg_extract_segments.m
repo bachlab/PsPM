@@ -102,7 +102,7 @@ glm_file                = cfg_files;
 glm_file.name           = 'GLM file';
 glm_file.tag            = 'glm_file';
 glm_file.num            = [1 1];
-glm_file.help           = {['Choose GLM file to extract the needed information.']};
+glm_file.help           = {['Choose GLM file to extract the required information.']};
 
 %% Automatic mode
 mode_automatic          = cfg_branch;

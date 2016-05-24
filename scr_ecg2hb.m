@@ -154,16 +154,16 @@ if nargin > 2 && exist('options', 'var')
                 pt.settings.semi = options.semi;
             else
                 warning('ID:invalid_input', '''options.semi'' must be either 0 or 1.'); return;
-            end
-        end
-        
-         if isfield(options, 'debugmode') 
+            end;
+        end;
+              
+        if isfield(options, 'debugmode')
             if any(options.debugmode == 0:1)
                 pt.settings.debugmode = options.debugmode;
             else
                 warning('ID:invalid_input', '''options.debugmode'' must be either 0 or 1.'); return;
-            end
-         end
+            end;
+        end;
         
         if isfield(options, 'minHR') && isfield(options, 'maxHR')
             if isnumeric(options.minHR) && isnumeric(options.maxHR) ...
@@ -316,12 +316,14 @@ end
 
 % ---Manual check for outliers---------------------------------------------
 if pt.settings.semi==1
-    if any(diff(pt.set.R)<mean(diff(pt.set.R))-pt.settings.outfact*std(diff(pt.set.R))) || any(diff(pt.set.R)>mean(diff(pt.set.R))+pt.settings.outfact*std(diff(pt.set.R)))
+    if any(diff(pt.set.R)<mean(diff(pt.set.R))-pt.settings.outfact*std(diff(pt.set.R))) || ... 
+            any(diff(pt.set.R)>mean(diff(pt.set.R))+pt.settings.outfact*std(diff(pt.set.R)))
+        
         noise=find(diff(pt.set.R)<mean(diff(pt.set.R))-pt.settings.outfact*std(diff(pt.set.R)));
         miss=find(diff(pt.set.R)>mean(diff(pt.set.R))+pt.settings.outfact*std(diff(pt.set.R)));
         pt.faulty=sort([noise miss]);
         % -----------------------------------------------------------------
-        [nsts,R]=scr_ecg2hb_qc(pt); % open gui to manually check for outliers
+        [nsts,R]=scr_ecg_editor(pt); % open gui to manually check for outliers
         if nsts~=-1 && not(isempty(R))
             pt.set.R=R;
         else warning('Manual correction not completed. Results will not be saved to file!')

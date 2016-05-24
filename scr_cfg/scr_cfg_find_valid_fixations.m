@@ -19,7 +19,7 @@ datafile.name    = 'Data File';
 datafile.tag     = 'datafile';
 datafile.num     = [1 Inf];
 datafile.help    = {['Specify the PsPM datafile containing the imported ', ...
-    'pupil data.']};
+    'eye tracking data.']};
 
 %% Eyes
 eyes                = cfg_menu;
@@ -38,7 +38,7 @@ disable_fixation_validation.name  = 'Disabled';
 disable_fixation_validation.tag   = 'disable_fixation_validation';
 disable_fixation_validation.val   = {0};
 disable_fixation_validation.help  = {['Validation of fixation is disabled. Only blinks ', ...
-    'will cause invalid data points.']};
+    'result in invalid data points.']};
 
 %% Visual angle
 box_degree                      = cfg_entry;
@@ -104,7 +104,7 @@ fixpoint_file         = cfg_files;
 fixpoint_file.name    = 'File';
 fixpoint_file.tag     = 'fixpoint_file';
 fixpoint_file.num     = [1 1];
-fixpoint_file.help    = {['.mat File containing a variable F with an ', ...
+fixpoint_file.help    = {['.mat file containing a variable F with an ', ...
     'nx2 matrix. N should have the length of the recorded data and each ', ...
     'row should define the fixation point for the respective recorded data row.']};
 

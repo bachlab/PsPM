@@ -82,8 +82,9 @@ newdata.header.sr = sr;
 newdata.header.units = 'ms';
 newdata.header.chantype = 'hp';
 
-if options.replace == 1
+if options.replace
     action = 'replace';
+    o.channel = chan;
 else
     action = 'add';
 end;

@@ -60,6 +60,34 @@ for i=1:numel(job.pp_type)
                 opt.replace = replace;
                 
                 [sts, winfo] = scr_hb2hp(fn, sr, chan, opt);
+            case 'ecg2hp'
+                sr = job.pp_type{i}.ecg2hp.sr;
+                
+                if isfield(job.pp_type{i}.ecg2hp.chan, 'chan_nr')
+                    chan = job.pp_type{i}.ecg2hp.chan.chan_nr;
+                elseif isfield(job.pp_type{i}.ecg2hp.chan, 'chan_def')
+                    chan = 'ecg';
+                end;
+   
+                % copy options
+                opt = struct();
+                
+                opt.minhr = job.pp_type{i}.ecg2hp.opt.minhr;
+                opt.maxhr = job.pp_type{i}.ecg2hp.opt.maxhr;
+                opt.peakmaxhr = job.pp_type{i}.ecg2hp.opt.peakmaxhr;
+                opt.semi = job.pp_type{i}.ecg2hp.opt.semi;
+                opt.twthresh = job.pp_type{i}.ecg2hp.opt.twthresh;
+                
+                % set replace
+                opt.replace = replace;
+                
+                % call ecg2hb
+                [sts, winfo] = scr_ecg2hb(fn, chan, opt);
+                
+                % replace channel
+                opt.replace = true;
+                % call ecg2hp
+                [sts, winfo] = scr_hb2hp(fn, sr, winfo.channel, opt);
         end;
         
         outputs{i} = winfo.channel;

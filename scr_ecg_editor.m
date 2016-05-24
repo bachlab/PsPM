@@ -1,7 +1,21 @@
-function varargout = scr_ecg2hb_qc(varargin)
+function varargout = scr_ecg_editor(varargin)
 %
-% scr_ecg2hb_qc allows manual correction of ecg2hb. Function can only be
-% called from within scr_ecg2hb.
+% scr_ecg_edtior allows manual correction of ecg data and creates a hb output. 
+% Function can be called seperately.
+%
+%   INPUT:
+%       [sts, R] = scr_ecg_editor(pt)
+%       [sts, R] = scr_ecg_editor(fn, chan, options)
+%
+%       pt:         A struct() from scr_ecg2hb detection.
+%       fn:         A file to  data file containing the ecg channel to be
+%                   edited
+%       chan:       Channel id of ecg channel in the data file
+%       options:    A struct() of options
+%           hb:         Channel id of the existing hb channel
+%           artifact:   Epoch file with epochs of artifacts (to be ignored)
+%           
+%       
 %
 %   variable r
 %       r(1,:) ... original r vector
@@ -9,25 +23,26 @@ function varargout = scr_ecg2hb_qc(varargin)
 %       r(3,:) ... removed
 %       r(4,:) ... added
 %__________________________________________________________________________
-% PsPM 3.0
-% (C) 2013-2015 Philipp C Paulus
+% PsPM 3.1
+% (C) 2013-2016 Philipp C Paulus, Tobias Moser
 % (Dresden University of Technology, University of Zurich)
 
 % $Id$   
 % $Rev$
 
-% Last Modified by GUIDE v2.5 23-May-2016 17:22:36
+% Last Modified by GUIDE v2.5 24-May-2016 10:31:34
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
     'gui_Singleton',  gui_Singleton, ...
     'gui_OpeningFcn', @scr_ecg2hb_qc_OpeningFcn, ...
-    'gui_OutputFcn',  @scr_ecg2hb_qc_OutputFcn, ...
+    'gui_OutputFcn',  @scr_ecg_editor_OutputFcn, ...
     'gui_LayoutFcn',  [] , ...
     'gui_Callback',   []);
-if nargin && ischar(varargin{1})
-    gui_State.gui_Callback = str2func(varargin{1});
+if nargin && ischar(varargin{1}) && ... 
+        (numel(regexp(varargin{1}, [filesep])) == 0)
+        gui_State.gui_Callback = str2func(varargin{1});
 end
 
 if nargout
@@ -72,8 +87,22 @@ handles.clr{4}=[.5412 .1686 .8863]; % violet for deleted ones
 handles.clr{5}=[0 .3922 0]; % darkgreen for added ones
 % -------------------------------------------------------------------------
 guidata(hObject,handles);
-% get input
-handles.data=varargin{1};
+% parse input
+if isstruct(varargin{1})
+    handles.data = varargin{1};
+else
+    if numel(varargin) > 2
+        handles.options = varargin{3};
+    else
+        handles.options = struct();
+    end;
+    if isfield(handles.options, 'hb')
+        chans = [varargin{2} handles.options.hb];
+    else
+        chans = varargin{2};
+    end;
+    [ ~, ~, handles.data, ~] = scr_load_data(varargin{1}, chans);
+end;
 % set values
 pp_set(hObject,handles);
 handles=guidata(hObject);
@@ -95,7 +124,7 @@ uiwait(handles.figure1);
 % -------------------------------------------------------------------------
 
 % --- Outputs from this function are returned to the command line.
-function varargout = scr_ecg2hb_qc_OutputFcn(hObject, eventdata, handles)
+function varargout = scr_ecg_editor_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -182,9 +211,9 @@ if handles.manualmode==0
         set(handles.push_next,'enable','off')
     end
 else % manual mode
-    handles.count=handles.count+handles.winsize;
+    handles.count=handles.count+(handles.winsize-handles.winsize/4);
     % disable next button if out of bounds.
-    if handles.count + handles.winsize >= length(handles.data.data.r)/handles.data.settings.filt.sr
+    if handles.count + (handles.winsize-handles.winsize/4) >= length(handles.plot.r)/handles.plot.sr
         set(handles.push_next,'enable','off')
     end
 end
@@ -214,7 +243,7 @@ if handles.manualmode==0
         set(handles.push_last,'enable','off')
     end
 else % manual mode
-    handles.count=handles.count-handles.winsize;
+    handles.count=handles.count-(handles.winsize-handles.winsize/4);
     if handles.count <= 0
         set(handles.push_last,'enable','off')
     end
@@ -254,21 +283,44 @@ uiresume
 function pp_set(hObject,handles)
 % -------------------------------------------------------------------------
 
-% header
-factr=handles.data.settings.outfact; % IBIs larger than mean(IBI)+(factr*std(IBI)) will
-% be marked for checking as well as IBIs smaller
-% than mean(IBI)-(factor*std(IBI))
-sr=handles.data.settings.filt.sr;
-% -------------------------------------------------------------------------
-% get data from handles struct
-r=handles.data.data.r';  % vector containing only zeros and ones where a QRS
-% complex was found
-R=handles.data.set.R;   % vector containing the timepoints of these QRS
+if isstruct(handles.data)
+    % header
+    factr=handles.data.settings.outfact; % IBIs larger than mean(IBI)+(factr*std(IBI)) will
+    % be marked for checking as well as IBIs smaller
+    % than mean(IBI)-(factor*std(IBI))
+    sr=handles.data.settings.filt.sr;
+    % -------------------------------------------------------------------------
+    % get data from handles struct
+    r=handles.data.data.r';  % vector containing only zeros and ones where a QRS
+    % complex was found
+    R=handles.data.set.R;   % vector containing the timepoints of these QRS
+    % QRS complexes
+    ecg=handles.data.data.x(:,1)';
+else
+    handles.manualmode = 1;
+    handles.count = 0;
+    if isfield(handles.options, 'factor')
+        factr = handles.options.factor;
+    else
+        factr = 1;
+    end;
+    sr = handles.data{1}.header.sr;
+    ecg = handles.data{1}.data;
+    r = zeros(4,numel(ecg));
+    if numel(handles.data) > 0
+        R = round(handles.data{2}.data*sr);
+        r(1,R) = 1;
+        if isfield(handles.options, 'semi') && handles.options.semi == 1
+            handles.manualmode = 0;
+        end;
+    else
+        R = [];
+    end;
+end;
 % complexes
 ibi=diff(R);            % duration of IBI intervalls
 flag=zeros(size(ibi));  % flag variable to identify potential mislabeled
-% QRS complexes
-ecg=handles.data.data.x(:,1)';
+
 % -------------------------------------------------------------------------
 % create vectors for potential mislabeled qrs complexes
 flag(ibi>(mean(ibi)+(factr*std(ibi))))=1;   % too short
@@ -292,6 +344,10 @@ handles.plot.factr=factr;
 handles.plot.y=y;
 handles.plot.ecg=ecg;
 handles.plot.sr=sr;
+
+% use self detected faulties
+handles.faulty = find(flag);
+
 if exist('handles.maxk','var')==0 && exist('maxk','var')
     handles.maxk=maxk;
 end
@@ -303,9 +359,10 @@ function pp_plot(hObject,handles)
 
 % where are potential mislabeled qrs complexes?
 if any(not(isnan(handles.plot.r(2,:)))) && handles.manualmode==0
-    count=handles.plot.R(handles.data.faulty(handles.k))/handles.plot.sr;
-else count=handles.count;
-end
+    count=handles.plot.R(handles.faulty(handles.k))/handles.plot.sr;
+else
+    count=handles.count;
+end;
 % -------------------------------------------------------------------------
 if handles.jo==0 % check only if changes were done.
     % plot ecg signal
@@ -332,7 +389,7 @@ end
 if handles.manualmode==0
     xlim([count-2 count+2])
 else
-    xlim([count-1 count+handles.winsize])
+    xlim([count-1 count+(handles.winsize-handles.winsize/4)])
 end
 xlabel('time in seconds [s]')
 % -------------------------------------------------------------------------
@@ -419,22 +476,6 @@ switch handles.mode
         pp_plot(hObject,handles)
 end;
 
-
-% --- Executes on button press in panMode.
-function panMode_Callback(hObject, eventdata, handles)
-% hObject    handle to panMode (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-h = pan(handles.figure1);
-en = get(h, 'Enable');
-if strcmpi(en, 'on')
-    set(h, 'Enable', 'off');
-else
-    set(h, 'Enable', 'on');
-    set(h, 'Motion', 'horizontal');
-end;
-
-
 % --- Executes on button press in zoomIn.
 function zoomIn_Callback(hObject, eventdata, handles)
 % hObject    handle to zoomIn (see GCBO)
@@ -442,6 +483,8 @@ function zoomIn_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 xl = xlim();
 xlim([xl(1)/2, xl(2)/2]);
+handles.winsize = handles.winsize / 2;
+guidata(hObject, handles);
 
 % --- Executes on button press in zoomOut.
 function zoomOut_Callback(hObject, eventdata, handles)
@@ -450,3 +493,5 @@ function zoomOut_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 xl = xlim();
 xlim([xl(1)*2, xl(2)*2]);
+handles.winsize = handles.winsize * 2;
+guidata(hObject, handles);

@@ -132,10 +132,18 @@ hb2hp.help          = {['Convert heart beat time stamps into interpolated ', ...
     'Heart beat conversion, or directly work on heart beat time stamps, ', ...
     'for example obtained by a pulse oxymeter.']};
 
+
+ecg2hp              = cfg_exbranch;
+ecg2hp.name         = 'Convert ECG to Heart Period';
+ecg2hp.tag          = 'ecg2hp';
+% re-use already defined variables
+ecg2hp.val          = {ecg2hb_chan,ecg2hb_opt,hb2hp_sr};
+ecg2hp.help         = {['Convert ECG data into Heart period time series.']};
+
 pp_type             = cfg_choice;
 pp_type.name        = 'Type of preprocessing';
 pp_type.tag         = 'pp_type';
-pp_type.values      = {ecg2hb, hb2hp};
+pp_type.values      = {ecg2hb, hb2hp, ecg2hp};
 pp_type.help        = {'Specify the type of preprocessing.'};
 
 pp                  = cfg_repeat;
