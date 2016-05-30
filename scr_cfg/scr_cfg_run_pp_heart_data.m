@@ -14,14 +14,31 @@ for i=1:numel(job.pp_type)
     pp_fields = fields(job.pp_type{i});
     for j=1:numel(pp_fields) % numel should be 1
         pp = pp_fields{j};
+        % extract chan
+        subs_pp.type= '.';
+        subs_pp.subs = pp;
+        pp_field = subsref(job.pp_type{i}, subs_pp);
+        if isfield(pp_field.chan, 'chan_nr')
+            chan = pp_field.chan.chan_nr;
+        elseif isfield(pp_field.chan, 'chan_def')
+            % only works as long as pp has format of something2somethingelse
+            % e.g. ppu2hb
+            chan = regexprep(pp, '(\w*)2(\w*)', '$1');
+        elseif isfield(pp_field.chan, 'proc_chan')
+            pchan = pp_field.chan.proc_chan;
+            if pchan > numel(outputs)
+                warning('Argument for processed channel is out of range.');
+                return;
+            elseif pchan >= i
+                warning('Processed channel is not yet processed, cannot continue.');
+                return;
+            else
+                chan = outputs{pchan};
+            end;
+        end;
+
         switch pp
             case 'ecg2hb'
-                if isfield(job.pp_type{i}.ecg2hb.chan, 'chan_nr')
-                    chan = job.pp_type{i}.ecg2hb.chan.chan_nr;
-                elseif isfield(job.pp_type{i}.ecg2hb.chan, 'chan_def')
-                    chan = 'ecg';
-                end;
-                
                 % copy options
                 opt = struct();
                 
@@ -37,25 +54,7 @@ for i=1:numel(job.pp_type)
                 % call function
                 [sts, winfo] = scr_ecg2hb(fn, chan, opt);
             case 'hb2hp'
-                sr = job.pp_type{i}.hb2hp.sr;
-                
-                if isfield(job.pp_type{i}.hb2hp.chan, 'chan_nr')
-                    chan = job.pp_type{i}.hb2hp.chan.chan_nr;
-                elseif isfield(job.pp_type{i}.hb2hp.chan, 'proc_chan')
-                    pchan = job.pp_type{i}.hb2hp.chan.proc_chan;
-                    if pchan > numel(outputs)
-                        warning('Argument for processed channel is out of range.');
-                        return;
-                    elseif pchan >= i
-                        warning('Processed channel is not yet processed, cannot continue.');
-                        return;
-                    else
-                        chan = outputs{pchan};
-                    end;
-                elseif isfield(job.pp_type{i}.hb2hp.chan, 'chan_def')
-                    chan = 'hb';
-                end;
-                
+                sr = job.pp_type{i}.hb2hp.sr;              
                 opt = struct(); 
                 opt.replace = replace;
                 
@@ -63,15 +62,8 @@ for i=1:numel(job.pp_type)
             case 'ecg2hp'
                 sr = job.pp_type{i}.ecg2hp.sr;
                 
-                if isfield(job.pp_type{i}.ecg2hp.chan, 'chan_nr')
-                    chan = job.pp_type{i}.ecg2hp.chan.chan_nr;
-                elseif isfield(job.pp_type{i}.ecg2hp.chan, 'chan_def')
-                    chan = 'ecg';
-                end;
-   
                 % copy options
                 opt = struct();
-                
                 opt.minhr = job.pp_type{i}.ecg2hp.opt.minhr;
                 opt.maxhr = job.pp_type{i}.ecg2hp.opt.maxhr;
                 opt.peakmaxhr = job.pp_type{i}.ecg2hp.opt.peakmaxhr;
@@ -88,6 +80,10 @@ for i=1:numel(job.pp_type)
                 opt.replace = true;
                 % call ecg2hp
                 [sts, winfo] = scr_hb2hp(fn, sr, winfo.channel, opt);
+            case 'ppu2hb'
+                opt = struct();
+                opt.replace = logical(replace);
+                [sts, winfo] = scr_ppu2hb(fn, chan, opt);
         end;
         
         outputs{i} = winfo.channel;

@@ -1,4 +1,4 @@
-function [ sts ] = pspm_ppu2hb( fn,chan,options )
+function [ sts, outinfo ] = scr_ppu2hb( fn,chan,options )
 %PSPM_PPU2HB Converts a pulse oxymeter channel to heartbeats and adds it as
 %a new channel
 %   First a template is generated from non ambiguous heartbeats. The ppu
@@ -23,6 +23,7 @@ function [ sts ] = pspm_ppu2hb( fn,chan,options )
 % initialise
 % -------------------------------------------------------------------------
 sts = -1;
+outinfo = struct();
 global settings;
 if isempty(settings), scr_init; end;
 
@@ -33,7 +34,7 @@ if nargin < 1
 elseif ~ischar(fn)
     warning('ID:invalid_input', 'Need file name string as first input.'); return;
 elseif nargin < 2
-    chan = 'ecg';
+    chan = 'ppu';
 elseif ~isnumeric(chan) && ~strcmp(chan,'ppu')
         warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end;
@@ -116,18 +117,25 @@ newdata.header.sr = 1;
 newdata.header.units = 'events';
 newdata.header.chantype = 'hb';
 
-% Replace last existing channel or save as new channel
+write_options = struct();
+write_options.msg = msg;
+
 if options.replace
-    nsts = scr_rewrite_channel(fn,0,newdata,msg);
+    write_action = 'replace';
 else
-    nsts = scr_add_channel(fn, newdata, msg);
-end
-    
+    write_action = 'add';
+end;
+
+% Replace last existing channel or save as new channel
+[nsts, nout] = scr_write_channel(fn,newdata,write_action, write_options);    
 
 % user output
 fprintf('  done.\n');
-if nsts == -1, return; end;
-sts = 1;
+if nsts ~= -1,
+    sts = 1;
+    outinfo.channel = nout.channel;
+end;
+
 return;
 
 end

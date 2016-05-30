@@ -132,6 +132,32 @@ hb2hp.help          = {['Convert heart beat time stamps into interpolated ', ...
     'Heart beat conversion, or directly work on heart beat time stamps, ', ...
     'for example obtained by a pulse oxymeter.']};
 
+ppu2hb_chan_def     = cfg_const;
+ppu2hb_chan_def.name = 'Default';
+ppu2hb_chan_def.tag = 'chan_def';
+ppu2hb_chan_def.val = {0};
+ppu2hb_chan_def.help = {['First PPU channel.']};
+
+ppu2hb_chan_nr      = cfg_entry;
+ppu2hb_chan_nr.name = 'Number';
+ppu2hb_chan_nr.tag  = 'chan_nr';
+ppu2hb_chan_nr.strtype = 'i';
+ppu2hb_chan_nr.num  = [1 1];
+ppu2hb_chan_nr.help = {''};
+
+ppu2hb_chan         = cfg_choice;
+ppu2hb_chan.name    = 'Channel';
+ppu2hb_chan.tag     = 'chan';
+ppu2hb_chan.val     = {ppu2hb_chan_def};
+ppu2hb_chan.values  = {ppu2hb_chan_def, ppu2hb_chan_nr};
+ppu2hb_chan.help    = {['Number of PPU channel (default: first PPU channel)']};
+
+ppu2hb              = cfg_exbranch;
+ppu2hb.name         = 'Convert PPU to Heart Beat';
+ppu2hb.tag          = 'ppu2hb';
+ppu2hb.val          = {ppu2hb_chan};
+hb2hp.help          = {['Convert Peripheral Pulse Units (PPU) to a ', ...
+    'Heart Beat events.']};
 
 ecg2hp              = cfg_exbranch;
 ecg2hp.name         = 'Convert ECG to Heart Period';
@@ -143,7 +169,7 @@ ecg2hp.help         = {['Convert ECG data into Heart period time series.']};
 pp_type             = cfg_choice;
 pp_type.name        = 'Type of preprocessing';
 pp_type.tag         = 'pp_type';
-pp_type.values      = {ecg2hb, hb2hp, ecg2hp};
+pp_type.values      = {ecg2hb, hb2hp, ppu2hb, ecg2hp};
 pp_type.help        = {'Specify the type of preprocessing.'};
 
 pp                  = cfg_repeat;

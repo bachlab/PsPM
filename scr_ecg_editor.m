@@ -36,7 +36,7 @@ function varargout = scr_ecg_editor(varargin)
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
     'gui_Singleton',  gui_Singleton, ...
-    'gui_OpeningFcn', @scr_ecg2hb_qc_OpeningFcn, ...
+    'gui_OpeningFcn', @scr_ecg_editor_OpeningFcn, ...
     'gui_OutputFcn',  @scr_ecg_editor_OutputFcn, ...
     'gui_LayoutFcn',  [] , ...
     'gui_Callback',   []);
@@ -54,7 +54,7 @@ end
 
 
 % --- Executes just before scr_ecg2hb_qc is made visible.
-function scr_ecg2hb_qc_OpeningFcn(hObject, eventdata, handles, varargin)
+function scr_ecg_editor_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -73,8 +73,8 @@ handles.e=0;        % flag for the status of the ecg plot.
 handles.sts=[];       % outputvariable
 handles.R=[];
 handles.jo=0;       % default value for jump only - 0; plot data!
-set(handles.togg_add,'Value',0)
-set(handles.togg_remove,'Value',0)
+set(handles.togg_add,'Value',0);
+set(handles.togg_remove,'Value',0);
 % settings for manual mode
 handles.manualmode=0;       % default: deactivated
 handles.winsize=8;          % winsize for the manual mode
