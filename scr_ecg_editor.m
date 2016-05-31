@@ -30,7 +30,7 @@ function varargout = scr_ecg_editor(varargin)
 % $Id$   
 % $Rev$
 
-% Last Modified by GUIDE v2.5 24-May-2016 10:31:34
+% Last Modified by GUIDE v2.5 31-May-2016 11:09:04
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -65,7 +65,10 @@ function scr_ecg_editor_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
 % -------------------------------------------------------------------------
 % set default status for GUI
-handles.mode = '';
+handles.edit_mode = '';
+handles.gui_mode = '';
+handles.hb_chan = -1;
+handles.data_chan = -1;
 handles.action=[];
 handles.k=1;        % counter for the potential mislabeled qrs complexes
 handles.s=[];
@@ -78,6 +81,7 @@ set(handles.togg_remove,'Value',0);
 % settings for manual mode
 handles.manualmode=0;       % default: deactivated
 handles.winsize=8;          % winsize for the manual mode
+handles.data = {};
 % -------------------------------------------------------------------------
 % set color values
 handles.clr{1}=[.0627 .3059 .5451]; % blue for ecg plot
@@ -88,34 +92,40 @@ handles.clr{5}=[0 .3922 0]; % darkgreen for added ones
 % -------------------------------------------------------------------------
 guidata(hObject,handles);
 % parse input
-if isstruct(varargin{1})
-    handles.data = varargin{1};
-else
+if numel(varargin) == 0 || ~isstruct(varargin{1})
+    handles.gui_mode = 'file';
+    handles.hb_chan = -1;
     if numel(varargin) > 2
         handles.options = varargin{3};
     else
         handles.options = struct();
     end;
     if isfield(handles.options, 'hb')
-        chans = [varargin{2} handles.options.hb];
-    else
-        chans = varargin{2};
+        handles.hb_chan = handles.options.hb;
     end;
-    [ ~, ~, handles.data, ~] = scr_load_data(varargin{1}, chans);
+    if isfield(handles.options, 'semi')
+        set(handles.cbManualMode, 'Value', ~handles.options.semi);
+    end;
+    if numel(varargin)~= 0
+        if numel(varargin) >= 2 
+            handles.data_chan = varargin{2};
+        end;
+        load_data_file(hObject, handles, varargin{1});
+        % update handles
+        handles = guidata(hObject);
+    end;
+else
+    handles.data = varargin{1};
+    handles.gui_mode = 'inline';
 end;
-% set values
-pp_set(hObject,handles);
-handles=guidata(hObject);
-% plot
-pp_plot(hObject,handles);
+
+reload_plot(hObject, handles);
 % -------------------------------------------------------------------------
-% activate buttons accordingly
-handles=guidata(hObject);
-if handles.maxk==1
-    set(handles.push_next,'enable','off')
-    set(handles.push_last,'enable','off')
-else set(handles.push_last,'enable','off')
-end
+if strcmpi(handles.gui_mode, 'file')
+    set(handles.pnlFileIO, 'visible', 'on');
+else
+    set(handles.pnlFileIO, 'visible', 'off');
+end;
 % -------------------------------------------------------------------------
 % Update handles structure
 guidata(hObject, handles);
@@ -154,10 +164,10 @@ function togg_add_Callback(hObject, eventdata, handles)
 % Hint: get(hObject,'Value') returns toggle state of togg_add
 pan off;
 set(handles.togg_remove,'Value',0)
-if strcmpi(handles.mode, 'add_qrs')
+if strcmpi(handles.edit_mode, 'add_qrs')
     exitModus;
 else
-    handles.mode = 'add_qrs';
+    handles.edit_mode = 'add_qrs';
     set(handles.figure1,'Pointer','crosshair');
     guidata(hObject, handles);
 end;
@@ -172,10 +182,10 @@ function togg_remove_Callback(hObject, eventdata, handles)
 % Hint: get(hObject,'Value') returns toggle state of togg_remove
 % -------------------------------------------------------------------------
 pan off;
-if strcmpi(handles.mode, 'remove_qrs')
+if strcmpi(handles.edit_mode, 'remove_qrs')
     exitModus;
 else
-    handles.mode = 'remove_qrs';
+    handles.edit_mode = 'remove_qrs';
     set(handles.figure1,'Pointer','crosshair');
     guidata(hObject, handles);
 end;
@@ -236,7 +246,7 @@ function push_last_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % -------------------------------------------------------------------------
-handles.mode = '';
+handles.edit_mode = '';
 if handles.manualmode==0
     handles.k=handles.k-1;
     if handles.k==1
@@ -264,7 +274,7 @@ function push_done_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 handles=guidata(hObject);
-handles.mode = '';
+handles.edit_mode = '';
 % -------------------------------------------------------------------------
 r=handles.plot.r;
 r(1,r(3,:)==1)=NaN; % deleted QRS markers
@@ -297,22 +307,27 @@ if isstruct(handles.data)
     % QRS complexes
     ecg=handles.data.data.x(:,1)';
 else
+    data = handles.data{handles.data_chan};
     handles.manualmode = 1;
     handles.count = 0;
+    
+    if handles.hb_chan ~= -1
+        hb = handles.data{handles.hb_chan}.data;
+    else
+        hb = {};
+    end;
     if isfield(handles.options, 'factor')
         factr = handles.options.factor;
     else
         factr = 1;
     end;
-    sr = handles.data{1}.header.sr;
-    ecg = handles.data{1}.data;
+    sr = data.header.sr;
+    ecg = data.data;
     r = zeros(4,numel(ecg));
-    if numel(handles.data) > 0
-        R = round(handles.data{2}.data*sr);
+    if numel(hb) > 1
+        R = round(hb*sr);
         r(1,R) = 1;
-        if isfield(handles.options, 'semi') && handles.options.semi == 1
-            handles.manualmode = 0;
-        end;
+        handles.manualmode = get(handles.cbManualMode, 'Value');
     else
         R = [];
     end;
@@ -348,9 +363,9 @@ handles.plot.sr=sr;
 % use self detected faulties
 handles.faulty = find(flag);
 
-if exist('handles.maxk','var')==0 && exist('maxk','var')
-    handles.maxk=maxk;
-end
+%if exist('handles.maxk','var')==0 && exist('maxk','var')
+handles.maxk=maxk;
+%end
 % Update handles structure
 guidata(hObject,handles);
 
@@ -430,7 +445,7 @@ end;
 function exitModus()
 handles = guidata(gca);
 set(handles.figure1, 'Pointer', 'Arrow');
-handles.mode = '';
+handles.edit_mode = '';
 guidata(gca, handles);
 
 % --- Executes on mouse press over figure background, over a disabled or
@@ -441,7 +456,7 @@ function figure1_WindowButtonDownFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 pt = get(handles.axes, 'CurrentPoint');
 
-switch handles.mode
+switch handles.edit_mode
     case 'add_qrs'
         x = pt(1);
         % -----------------------------------------------------------------
@@ -495,3 +510,190 @@ xl = xlim();
 xlim([xl(1)*2, xl(2)*2]);
 handles.winsize = handles.winsize * 2;
 guidata(hObject, handles);
+
+
+
+function edtDataFile_Callback(hObject, eventdata, handles)
+% hObject    handle to edtDataFile (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edtDataFile as text
+%        str2double(get(hObject,'String')) returns contents of edtDataFile as a double
+
+set(hObject, 'String', handles.fn);
+
+% --- Executes during object creation, after setting all properties.
+function edtDataFile_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edtDataFile (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in pbChangeFile.
+function pbChangeFile_Callback(hObject, eventdata, handles)
+% hObject    handle to pbChangeFile (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+[fname, fpath] = uigetfile({'*.mat'}, 'Select file with ECG data');
+if ~isempty(fname)
+    fn = fullfile(fpath, fname);
+    load_data_file(hObject, handles, fn);
+    handles = guidata(hObject);
+    reload_plot(hObject, handles);
+end;
+
+
+% --- Executes on selection change in ppHbChan.
+function ppHbChan_Callback(hObject, ~, handles)
+% hObject    handle to ppHbChan (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns ppHbChan contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from ppHbChan
+
+if ~isempty(handles.data)
+    contents = cellstr(get(hObject,'String'));
+    new_hb_chan = contents{get(hObject,'Value')};
+    if strcmpi(new_hb_chan, 'None')
+        handles.hb_chan = -1;
+        set(handles.rbReplaceHbChan, 'Enable', 'off');
+        set(handles.cbManualMode, 'Enable', 'off');
+        set(handles.cbManualMode, 'Value', 1);
+        handles.manualmode = 1;
+    else
+        handles.hb_chan = str2double(new_hb_chan);
+        set(handles.rbReplaceHbChan, 'Enable', 'on');
+        set(handles.cbManualMode, 'Enable', 'on');
+        handles.manualmode = 1 && get(handles.cbManualMode, 'Value');
+    end;
+    
+    reload_plot(hObject, handles);
+end;
+
+% --- Executes on selection change in ppEcgChan.
+function ppEcgChan_Callback(hObject, ~, handles)
+% hObject    handle to ppEcgChan (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns ppEcgChan contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from ppEcgChan
+
+if ~isempty(handles.data)
+    contents = cellstr(get(hObject,'String'));
+    new_ecg_chan = contents{get(hObject,'Value')};
+    handles.ecg_chan = str2double(new_ecg_chan);
+    
+    reload_plot(hObject, handles);
+end;
+
+% --- Executes during object creation, after setting all properties.
+function ppEcgChan_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to ppEcgChan (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+% --- Load Data file 
+function load_data_file(hObject, handles, fn)
+    [ ~, ~, handles.data, ~] = scr_load_data(fn);
+    ecg_chans = find(cellfun(@(x) strcmpi(x.header.chantype, 'ecg'), handles.data));
+    % set possible ecg chans
+    sel_ecg_chan = find(ecg_chans == handles.data_chan, 1, 'first');
+    if isempty(sel_ecg_chan)
+        sel_ecg_chan = 1;
+    end;
+    handles.data_chan = ecg_chans(sel_ecg_chan);
+    set(handles.ppEcgChan, 'String', ecg_chans);
+    set(handles.ppEcgChan, 'Value', sel_ecg_chan);
+    
+    hb_chans = find(cellfun(@(x) strcmpi(x.header.chantype, 'hb'), handles.data));
+    hb_chan_list = cell(1,length(hb_chans)+1);
+    hb_chan_list{1} = 'None';
+    hb_chan_list(2:end) = num2cell(hb_chans);
+    if handles.hb_chan == -1
+        sel_hb_chan = 1;
+    else
+        sel_hb_chan = find(cell2mat(hb_chan_list(2:end)) == handles.hb_chan) + 1;
+    end;
+    
+    set(handles.ppHbChan, 'String', hb_chan_list);
+    set(handles.ppHbChan, 'Value', sel_hb_chan);
+    
+    handles.hb_chan = hb_chan_list(sel_hb_chan);
+    if strcmpi(handles.hb_chan, 'None')
+        handles.hb_chan = -1;
+        set(handles.rbReplaceHbChan, 'Enable', 'off');
+    end;
+    
+    handles.fn = fn;
+    set(handles.edtDataFile, 'String', fn);
+        
+    guidata(hObject, handles);
+    
+% --- Reload plot settings
+function reload_plot(hObject, handles)
+
+if ~isempty(handles.data)
+    % set values
+    pp_set(hObject,handles);
+    handles=guidata(hObject);
+    % plot
+    handles.jo = 0;
+    pp_plot(hObject,handles);
+    handles=guidata(hObject);    
+    
+    % activate buttons accordingly
+    if handles.maxk==1
+        set(handles.push_next,'enable','off')
+        set(handles.push_last,'enable','off')
+    else
+        set(handles.push_last,'enable','off')
+    end;
+end;
+
+
+% --- Executes during object creation, after setting all properties.
+function ppHbChan_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to ppHbChan (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in cbManualMode.
+function cbManualMode_Callback(hObject, eventdata, handles)
+% hObject    handle to cbManualMode (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of cbManualMode
+handles.manualmode = get(hObject, 'Value');
+guidata(hObject, handles);
+
+% --- Executes on button press in cbFilterData.
+function cbFilterData_Callback(hObject, eventdata, handles)
+% hObject    handle to cbFilterData (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of cbFilterData
