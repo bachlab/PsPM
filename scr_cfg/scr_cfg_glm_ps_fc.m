@@ -56,3 +56,26 @@ bf.help   = {['Basis functions. Standard is to use a canonical pupil size respon
 % look for bf and replace
 b = cellfun(@(f) strcmpi(f.tag, 'bf'), glm_ps_fc.val);
 glm_ps_fc.val{b} = bf;
+
+% specific channel
+chan_def_left         = cfg_const;
+chan_def_left.name    = 'Left eye default';
+chan_def_left.tag     = 'chan_def_left';
+chan_def_left.val     = {'pupil_l'};
+chan_def_left.help    = {''};
+
+chan_def_right         = cfg_const;
+chan_def_right.name    = 'Right eye default';
+chan_def_right.tag     = 'chan_def_right';
+chan_def_right.val     = {'pupil_r'};
+chan_def_right.help    = {''};
+
+chan_def                = cfg_choice;
+chan_def.name           = 'Default';
+chan_def.tag            = 'chan_def';
+chan_def.val            = {chan_def_left};
+chan_def.values         = {chan_def_left, chan_def_right};
+
+a = cellfun(@(f) strcmpi(f.tag, 'chan'), glm_ps_fc.val);
+glm_ps_fc.val{a}.values{1} = chan_def;
+glm_ps_fc.val{a}.val{1} = chan_def;

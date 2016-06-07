@@ -41,6 +41,16 @@ end;
 model.modality = 'ps';
 model.modelspec = 'ps_fc';
 
+% set default channel (hard coded)
+if isfield(job.chan, 'chan_def')
+    % get the value of the first field
+    fields = fieldnames(job.chan.chan_def);
+    s.type = '.';
+    s.subs = fields{1};
+    model.channel = subsref(job.chan.chan_def, s);
+end
+
+
 out = scr_glm(model, options);
 if exist('out', 'var') && isfield(out, 'modelfile')
     if ~iscell(out.modelfile)
