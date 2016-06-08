@@ -34,7 +34,7 @@ function varargout = scr_ecg_editor(varargin)
 % $Id$   
 % $Rev$
 
-% Last Modified by GUIDE v2.5 06-Jun-2016 15:36:00
+% Last Modified by GUIDE v2.5 08-Jun-2016 16:27:53
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -74,10 +74,12 @@ handles.gui_mode = '';
 handles.hb_chan = -1;
 handles.data_chan = -1;
 handles.write_chan = -1;
+handles.options = struct();
 handles.fn = '';
 handles.action=[];
 handles.k=1;        % counter for the potential mislabeled qrs complexes
 handles.s=[];
+handles.s_h = [];
 handles.e=0;        % flag for the status of the ecg plot.
 handles.sts=[];       % outputvariable
 handles.R=[];
@@ -88,6 +90,7 @@ set(handles.togg_add,'Value',0);
 set(handles.togg_remove,'Value',0);
 % settings for manual mode
 handles.manualmode=0;       % default: deactivated
+set(handles.cbManualMode, 'Value', handles.manualmode);
 handles.winsize=4;          % winsize for the manual mode
 handles.data = {};
 % define filter properties (copied from scr_ecg2hb)
@@ -99,47 +102,27 @@ handles.filt.hpfreq=5;
 handles.filt.hporder=1;
 handles.filt.direction='uni';
 handles.filt.down=200;
+% plot settings
+handles.plot.factr = 1;
+handles.plot.limits.upper = 120;
+handles.plot.limits.lower = 40;
 % -------------------------------------------------------------------------
 % set color values
-handles.clr{1}=[.0627 .3059 .5451]; % blue for ecg plot
-handles.clr{2}=[0 .75 1]; % skyblue for correct ones
-handles.clr{3}=[1 .6471 0]; % dark yellow for possibly wrong ones
-handles.clr{4}=[.5412 .1686 .8863]; % violet for deleted ones
-handles.clr{5}=[0 .3922 0]; % darkgreen for added ones
+handles.clr{1}=[.0627 .3059 .5451; 0.0863 0.4510 0.8157]; % blue for ecg plot
+handles.clr{2}=[0 .75 1; 0.6 0.9020 1]; % skyblue for correct ones
+handles.clr{3}=[1 .6471 0; 1.0000 0.8588 0.6000]; % dark yellow for possibly wrong ones
+handles.clr{4}=[.5412 .1686 .8863; 0.8039 0.6471 0.9529]; % violet for deleted ones
+handles.clr{5}=[0 .3922 0; 0 0.8 0]; % darkgreen for added ones
 % -------------------------------------------------------------------------
 guidata(hObject,handles);
-% parse input
-if numel(varargin) == 0 || ~isstruct(varargin{1})
-    handles.gui_mode = 'file';
-    handles.hb_chan = -1;
-    if numel(varargin) > 2
-        handles.options = varargin{3};
-    else
-        handles.options = struct();
-    end;
-    if isfield(handles.options, 'hb')
-        handles.hb_chan = handles.options.hb;
-    end;
-    if isfield(handles.options, 'semi')
-        set(handles.cbManualMode, 'Value', ~handles.options.semi);
-    end;
-    if isfield(handles.options, 'artifact')
-        set(handles.cbArtifactEpochs, 'Value', 1);
-        load_data_artifacts(hObject, handles, handles.options.artifact);
-        handles = guidata(hObject);
-    end;
-    if numel(varargin) ~= 0
-        if numel(varargin) >= 2
-            handles.data_chan = varargin{2};
-        end;
-        load_data_file(hObject, handles, varargin{1});
-        % update handles
-        handles = guidata(hObject);
-    end;
-else
-    handles.data = varargin{1};
-    handles.gui_mode = 'inline';
-end;
+
+% load settings
+load_settings(hObject, handles, varargin{:});
+handles = guidata(hObject);
+
+% reload hb channel
+reload_hb_chan(hObject, handles);
+handles = guidata(hObject);
 
 reload_plot(hObject, handles);
 handles = guidata(hObject);
@@ -152,6 +135,12 @@ end;
 % -------------------------------------------------------------------------
 % Update handles structure
 guidata(hObject, handles);
+% -------------------------------------------------------------------------
+% set detection settings
+set(handles.edtFactor, 'String', num2str(handles.plot.factr));
+set(handles.edtUpperLimit, 'String', num2str(handles.plot.limits.upper));
+set(handles.edtLowerLimit, 'String', num2str(handles.plot.limits.lower));
+% -------------------------------------------------------------------------
 % UIWAIT makes scr_ecg2hb_qc wait for user response (see UIRESUME)
 uiwait(handles.figure1);
 % -------------------------------------------------------------------------
@@ -244,24 +233,11 @@ function push_next_Callback(hObject, eventdata, handles)
 exitModus;
 if ~handles.manualmode
     handles.k=handles.k+1;
-    % disable next button if out of bounds.
-    if handles.k==handles.maxk
-        set(handles.push_next,'enable','off')
-    end
 else % manual mode
     handles.count=handles.count+(handles.winsize-handles.winsize/4);
-    % disable next button if out of bounds.
-    if handles.count + (handles.winsize-handles.winsize/4) >= length(handles.plot.r)/handles.plot.sr
-        set(handles.push_next,'enable','off')
-    end
 end
-% enable "back"
-if strcmp(get(handles.push_last,'enable'),'off')
-    set(handles.push_last,'enable','on')
-end
-handles.jo=1;   % no changes were done. jump only.
-% update guidata
-guidata(hObject,handles)
+check_navigation_buttons(hObject, handles);
+handles.jo=1; 
 % call pp_plot
 pp_plot(hObject,handles)
 
@@ -274,27 +250,17 @@ function push_last_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % -------------------------------------------------------------------------
-handles.edit_mode = '';
+exitModus;
 if ~handles.manualmode
     handles.k=handles.k-1;
-    if handles.k==1
-        set(handles.push_last,'enable','off')
-    end
 else % manual mode
     handles.count=handles.count-(handles.winsize-handles.winsize/4);
-    if handles.count <= 0
-        set(handles.push_last,'enable','off')
-    end
 end
-% enable next
-if strcmp(get(handles.push_next,'enable'),'off')
-    set(handles.push_next,'enable','on')
-end;
-handles.jo=1;   % no changes were done. jump only.
-% update guidata
-guidata(hObject,handles)
+check_navigation_buttons(hObject, handles);
+handles.jo=1;
 % call pp_plot
 pp_plot(hObject,handles)
+
 
 % --- Executes on button press in push_done.
 function push_done_Callback(hObject, eventdata, handles)
@@ -306,13 +272,13 @@ handles.edit_mode = '';
 % -------------------------------------------------------------------------
 r=handles.plot.r;
 sr=handles.plot.sr;
+r(1,r(2,:)==1)=1;   % back to starting position
+% add mutatios
 r(1,r(3,:)==1)=NaN; % deleted QRS markers
 r(1,r(4,:)==1)=1;   % added QRS markers
-r(1,r(2,:)==1)=1;   % unchanged QRS markers
 
 % remove artifact markers
-if get(handles.cbArtifactEpochs, 'Value') ...
-        && ~isempty(handles.artifact_epochs) && numel(r) > 0
+if ~isempty(handles.artifact_epochs) && numel(r) > 0
     
     for i=1:length(handles.artifact_epochs)
         a_coord = handles.artifact_epochs(i, 1:end);
@@ -330,8 +296,7 @@ handles.sts=1;
 if strcmpi(handles.gui_mode, 'file') && numel(handles.R) > 0
     % assemble output settings
     output_settings = get(handles.rbAddChan, 'Value') + ...
-        get(handles.rbReplaceEcgChan, 'Value')*2 + ...
-        get(handles.rbReplaceHbChan, 'Value')*3;
+        get(handles.rbReplaceHbChan, 'Value')*2;
     
     % prepare outputs
     out_d = struct();
@@ -352,9 +317,6 @@ if strcmpi(handles.gui_mode, 'file') && numel(handles.R) > 0
             w_chan = 0;
         case 2
             w_action = 'replace';
-            w_chan = handles.data_chan;
-        case 3
-            w_action = 'replace';
             w_chan = handles.hb_chan;
     end;
     op = struct('channel', w_chan);
@@ -374,47 +336,92 @@ uiresume
 % delete(hObject);
 
 % --- plots the current segment
-function pp_set(hObject,handles)
-% -------------------------------------------------------------------------
+function load_settings(hObject,handles, varargin)
 
-if isstruct(handles.data)
-    % header
-    factr=handles.data.settings.outfact; % IBIs larger than mean(IBI)+(factr*std(IBI)) will
+% parse input
+if numel(varargin) == 0 || ~isstruct(varargin{1})
+    handles.gui_mode = 'file';
+        
+    if numel(varargin) > 2
+        handles.options = varargin{3};
+    end;
+    
+    if isfield(handles.options, 'hb')
+        handles.hb_chan = handles.options.hb;
+    end;
+     if isfield(handles.options, 'factor')
+        handles.plot.factr = handles.options.factor;
+    end;
+    if isfield(handles.options, 'semi')
+        handles.manualmode = ~handles.options.semi;
+    end;
+    if isfield(handles.options, 'artifact')
+        load_data_artifacts(hObject, handles, handles.options.artifact);
+        % update handles
+        handles = guidata(hObject);
+    end;
+    if isfield(handles.options, 'limits')
+        if isfield(handles.options.limits, 'lower')
+            handles.plot.limits.lower = handles.options.limits.lower;
+        end;
+        
+        if isfield(handles.options.limits, 'upper')
+            handles.plot.limits.upper = handles.options.limits.upper;
+        end;
+    end;
+    
+    if numel(varargin) >= 2
+        handles.data_chan = varargin{2};
+        load_data_file(hObject, handles, varargin{1});
+        % update handles
+        handles = guidata(hObject);
+    end;
+else
+    handles.data = varargin{1};
+    handles.gui_mode = 'inline';
+    
+    % IBIs larger than mean(IBI)+(factr*std(IBI)) will
     % be marked for checking as well as IBIs smaller
     % than mean(IBI)-(factor*std(IBI))
+    handles.plot.factr=handles.data.settings.outfact; 
     sr=handles.data.settings.filt.sr;
     % -------------------------------------------------------------------------
-    % get data from handles struct
-    r=handles.data.data.r';  % vector containing only zeros and ones where a QRS
-    % complex was found
-    R=handles.data.set.R;   % vector containing the timepoints of these QRS
     % QRS complexes
     ecg=handles.data.data.x(:,1)';
-else
-    data = handles.data{handles.data_chan};
+    
+    handles.plot.sr = sr;
+    handles.filt.sr = sr;
+    handles.plot.ecg = ecg;
     handles.manualmode = 1;
-    handles.count = 0;
+end;
 
+% -------------------------------------------------------------------------
+% output.
+handles.count = 0;
+set(handles.cbManualMode, 'Value', handles.manualmode);
+
+% Update handles structure
+guidata(hObject,handles);
+
+% --- update hb chan
+function reload_hb_chan(hObject, handles)
+
+ecg = handles.plot.ecg;
+sr = handles.plot.sr;
+
+if isstruct(handles.data)
+    R=handles.data.set.R; 
+    r=handles.data.data.r';
+    % set modification rows
+    r(3:4, :) = NaN;
+else
     if handles.hb_chan ~= -1
         hb = handles.data{handles.hb_chan}.data;
     else
         hb = {};
     end;
-    if isfield(handles.options, 'factor')
-        factr = handles.options.factor;
-    else
-        factr = 1;
-    end;
-    sr = data.header.sr;
-    handles.filt.sr = sr;
-    % filter data
-    [nsts,ecg,sr]=scr_prepdata(data.data, handles.filt);
-    if nsts == -1
-        warning('Could not filter data, will use unfiltered data.');
-        ecg = data.data;
-    end;
     r = zeros(4,numel(ecg));
-    if numel(hb) > 1
+    if numel(hb) >= 1
         R = round(hb*sr);
         r(1,R) = 1;
         handles.manualmode = get(handles.cbManualMode, 'Value');
@@ -422,84 +429,156 @@ else
         R = [];
     end;
 end;
+
+handles.plot.R = R;
+handles.plot.r = r;
+sr = handles.plot.sr;
+y=1/sr:1/sr:length(r)/sr;
+handles.plot.y = y;
+guidata(hObject, handles);
+
+
+% --- discriminate hb events
+function discriminate_hb_events(hObject, handles)
+
+up_lim = handles.plot.limits.upper;
+lw_lim = handles.plot.limits.lower;
+factr = handles.plot.factr;
+R = handles.plot.R;
+sr = handles.plot.sr;
+r = handles.plot.r;
+
 % complexes
 ibi=diff(R);            % duration of IBI intervalls
 flag=zeros(size(ibi));  % flag variable to identify potential mislabeled
-
 % -------------------------------------------------------------------------
 % create vectors for potential mislabeled qrs complexes
 flag(ibi>(mean(ibi)+(factr*std(ibi))))=1;   % too short
 flag(ibi<(mean(ibi)-(factr*std(ibi))))=1;   % too long
-flag(ibi/sr < 60/120)=1;                    % get all ibis > 120 bpm
-flag(ibi/sr > 60/40)=1;                     % get all ibis < 40 bpm
+flag(ibi/sr < 60/up_lim)=1;                    % get all ibis > 120 bpm
+flag(ibi/sr > 60/lw_lim)=1;                     % get all ibis < 40 bpm
+
+maxk=length(find(flag==1));
+% transfer settings
+r(2,R(flag==1))=1;
 
 % reset according to artifact epochs
-if get(handles.cbArtifactEpochs, 'Value') && ...
-        ~isempty(handles.artifact_epochs) && numel(R) > 0
-    for i=1:length(handles.artifact_epochs)
-        a_coord = handles.artifact_epochs(i, 1:end);
-        flag((R(2:end) > a_coord(1)*sr) & (R(2:end) < a_coord(2)*sr)) = 0;
+if ~isempty(handles.artifact_epochs) && numel(R) > 0
+    chans = [];
+    if get(handles.rbDisableArtifactDetection, 'Value')
+        chans = [2];
+    elseif get(handles.rbHideArtifactEvents, 'Value')
+        chans = [1,2];
+    end;
+        
+    if ~isempty(chans)
+        for i=1:length(handles.artifact_epochs)
+            a_coord = handles.artifact_epochs(i, 1:end);
+            start = max(1, round(a_coord(1)*handles.plot.sr));
+            stop = min(length(r), round(a_coord(2)*handles.plot.sr));
+            r(chans, start:stop) = 0;
+        end;
     end;
 end;
 
-maxk=length(find(flag==1));
-r(2,R(flag==1))=1;
-r(1,R(flag==1))=0;
+% if detection is disabled and detected as faulty both channels are empty 
+% but flag is set; in order to display the blue marker we have to reset the
+% flags in the first row.
+if get(handles.rbDisableArtifactDetection, 'Value')
+    idx = r(1,R(flag==1))==0 & r(2,R(flag==1))==0;
+    r(1,R(idx)) = 1;
+else
+    r(1,R(flag==1))=0;
+end;
+
+% make zeros NaN
 r(r==0)=NaN;
-r(3:4,:)=NaN;   % initialise for no qrs at this point and additional qrs at this point
 
-y=1/sr:1/sr:length(r)/sr;
-% -------------------------------------------------------------------------
-% output.
-handles.plot.R=R;
-handles.plot.r=r;
-handles.plot.ibi=ibi;
-handles.plot.factr=factr;
-handles.plot.y=y;
-handles.plot.ecg=ecg;
-handles.plot.sr=sr;
-handles.filt.sr=sr;
+handles.plot.ibi = ibi;
+handles.plot.r = r;
+handles.plot.R = R;
 
-% use self detected faulties
-handles.faulty = find(flag);
+if exist('handles.maxk', 'var') == 0 && exist('maxk', 'var')
+    handles.maxk = maxk;
+end;
 
-%if exist('handles.maxk','var')==0 && exist('maxk','var')
-handles.maxk=maxk;
-%end
-% Update handles structure
-guidata(hObject,handles);
+guidata(hObject, handles);
+
 
 % --- plot data
 function pp_plot(hObject,handles)
-
 % where are potential mislabeled qrs complexes?
 if any(not(isnan(handles.plot.r(2,:)))) && ~handles.manualmode
-    count=handles.plot.R(handles.faulty(handles.k))/handles.plot.sr;
+    faulties = find(handles.plot.r(2,:) == 1);
+    sample_id = faulties(handles.k);
+    count=sample_id/handles.plot.sr;
 else
     count=handles.count;
+    custom_R = find(sum(handles.plot.r,1,'omitnan')>0);
+    if count >= 0
+        % find sample_id
+        d = abs(custom_R - count*handles.plot.sr);
+        [~, idx] = min(d);
+        sample_id = custom_R(idx);
+    else
+        sample_id = 1;
+    end;
+end;
+% -------------------------------------------------------------------------
+highlight_pos = sample_id/handles.plot.sr;
+h_col_id = max(find(handles.plot.r(:,sample_id)==1))+1;
+if h_col_id > 1
+    h_col = handles.clr{h_col_id}(2,:);
+else
+    % assume a color
+    h_col = handles.clr{2}(1,:);
 end;
 % -------------------------------------------------------------------------
 if handles.jo==0 % check only if changes were done.
     % plot ecg signal
+    hp = 0;
     if handles.e==0
         hold on;
-        plot(handles.plot.y,handles.plot.ecg,'color',handles.clr{1})
+        plot(handles.plot.y,handles.plot.ecg,'color',handles.clr{1}(1,:))
+        ylim([min(handles.plot.ecg)-.01, 1])
         handles.e=1;
-    end
+    end;
     % -------------------------------------------------------------------------
     if not(isempty(handles.s))
         try
-            delete(handles.s)
-        end
-    end
+            delete(handles.s);
+        catch
+        end;
+    end;
     % -------------------------------------------------------------------------
     for k=1:size(handles.plot.r,1)
-        handles.s(k)=stem(handles.plot.y,handles.plot.r(k,:),'color',handles.clr{k+1});
-        set(handles.s(k),'linewidth',2,'MarkerFaceColor',handles.clr{k+1})
+        handles.s(k)=stem(handles.plot.y,handles.plot.r(k,:),'color',handles.clr{k+1}(1,:));
+        set(handles.s(k),'linewidth',2,'MarkerFaceColor',handles.clr{k+1}(1,:))
         sbase=get(handles.s(k),'baseline');
+        set(sbase,'BaseValue',min(handles.plot.ecg),'Visible','off');       
+    end;
+    % ---------------------------------------------------------------------
+    if ~isempty(handles.s_h)
+        try 
+            delete(handles.s_h)
+        catch
+        end;
+    end;
+    % ---------------------------------------------------------------------
+    % draw highlighted stem
+    if highlight_pos > 0
+        handles.s_h = stem(highlight_pos, 1, 'color', h_col);
+        set(handles.s_h, 'LineWidth', 2.2);
+        sbase=get(handles.s_h,'baseline');
         set(sbase,'BaseValue',min(handles.plot.ecg),'Visible','off');
-    end
-end
+        hp = 1;
+    end;
+    handles.jo = 1 & handles.e & hp;
+end;
+if ~isempty(handles.s_h)
+    set(handles.s_h, 'XData', highlight_pos, 'Color', h_col, ...
+        'MarkerFaceColor', h_col);
+end;
 % -------------------------------------------------------------------------
 if ~handles.manualmode
     xlim([count-2 count+2])
@@ -511,8 +590,34 @@ xlabel('time in seconds [s]')
 % -------------------------------------------------------------------------
 handles.count=count; % set current position.
 
+update_selected(hObject, handles);
+check_navigation_buttons(hObject, handles);
+
 % Update handles structure
 guidata(hObject,handles);
+
+% --- Update selected
+function update_selected(hObject, handles)
+lst_id = get(handles.lstEvents, 'Value');
+if handles.manualmode
+    custom_R = find(sum(handles.plot.r,1, 'omitnan'));
+    if lst_id > length(custom_R)
+        lst_id = 1;
+    end;
+    lst_count = custom_R(lst_id);
+    lst_sample = lst_count;
+    sel_sample = handles.count;
+    
+    if lst_sample ~= sel_sample
+        d = abs(custom_R-sel_sample*handles.plot.sr);
+        idx = find(d == min(d));
+        set(handles.lstEvents, 'Value', idx);
+    end;
+else
+    if lst_id ~= handles.k
+        set(handles.lstEvents, 'Value', handles.k);
+    end;
+end;
 
 % --- Executes when user attempts to close figure1.
 function figure1_CloseRequestFcn(hObject, eventdata, handles)
@@ -556,40 +661,47 @@ function figure1_WindowButtonDownFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 pt = get(handles.axes, 'CurrentPoint');
-
+no_change = 0;
 switch handles.edit_mode
     case 'add_qrs'
         x = pt(1);
         % -----------------------------------------------------------------
         % click input
-        x=round(x*handles.plot.sr);
+        x=min(max(1,round(x*handles.plot.sr)), length(handles.plot.r));
         % -----------------------------------------------------------------
         % add qrs complex at position x and remove entry from r(2,x)
         handles.plot.r(4,x)=1;
-        handles.plot.r(2,x)=NaN;
-        handles.jo=0;   % changes were done, so set flag to 0
-        % Update handles structure
-        guidata(hObject,handles);
-        % plot new
-        pp_plot(hObject,handles);
+        handles.plot.r(3,x)=NaN;
         % -----------------------------------------------------------------
     case 'remove_qrs'        % click input
         x = pt(1);
-        x=round(x*handles.plot.sr);
+        x=min(max(1,round(x*handles.plot.sr)), length(handles.plot.r));
         % -----------------------------------------------------------------
         % add qrs complex at position x and remove entry from r(2,x)
         faulty=nansum(handles.plot.r,1);
         pos=find(faulty==1);
-        [foo,ind]=min(abs(pos-x));
+        [~,ind]=min(abs(pos-x));
         b=pos(ind);
         % -----------------------------------------------------------------
         handles.plot.r(3,b)=1;
-        handles.plot.r([1 2 4],b)=NaN;
-        handles.jo=0;   % changes were done, so set flag to 0
-        % Update handles structure
-        guidata(hObject,handles);
-        % plot new
-        pp_plot(hObject,handles)
+        handles.plot.r(4,b)=NaN;
+    otherwise
+        no_change = 1;
+end;
+
+if ~no_change
+    
+    handles.jo=0;   % changes were done, so set flag to 0
+    % Update handles structure
+    guidata(hObject,handles);
+    % plot new
+    if handles.manualmode
+        handles.count = x/handles.plot.sr;
+    end;
+    pp_plot(hObject,handles)
+    
+    handles = guidata(hObject);
+    update_event_list(hObject, handles);
 end;
 
 % --- Executes on button press in zoomIn.
@@ -645,6 +757,9 @@ if ischar(fname) && ~isempty(fname)
     fn = fullfile(fpath, fname);
     load_data_file(hObject, handles, fn);
     handles = guidata(hObject);
+    % reload hb channel
+    reload_hb_chan(hObject, handles);
+    handles = guidata(hObject);
     reload_plot(hObject, handles);
 end;
 
@@ -678,7 +793,9 @@ if ~isempty(handles.data)
         set(handles.cbManualMode, 'Enable', 'on');
         handles.manualmode = 1 && get(handles.cbManualMode, 'Value');
     end;
-    
+    % reload hb channel
+    reload_hb_chan(hObject, handles);
+    handles = guidata(hObject);
     reload_plot(hObject, handles);
 end;
 
@@ -696,6 +813,10 @@ if ~isempty(handles.data)
     new_ecg_chan = contents{get(hObject,'Value')};
     handles.ecg_chan = str2double(new_ecg_chan);
     
+    % reload hb channel
+    reload_hb_chan(hObject, handles);
+    handles = guidata(hObject);
+    handles.e = 0;
     reload_plot(hObject, handles);
 end;
 
@@ -713,56 +834,73 @@ end
 
 % --- Load Data file 
 function load_data_file(hObject, handles, fn)
-    [ ~, ~, handles.data, ~] = scr_load_data(fn);
-    ecg_chans = find(cellfun(@(x) strcmpi(x.header.chantype, 'ecg'), handles.data));
-    % set possible ecg chans
-    sel_ecg_chan = find(ecg_chans == handles.data_chan, 1, 'first');
-    if isempty(sel_ecg_chan)
-        sel_ecg_chan = 1;
-    end;
-    handles.data_chan = ecg_chans(sel_ecg_chan);
-    set(handles.ppEcgChan, 'String', ecg_chans);
-    set(handles.ppEcgChan, 'Value', sel_ecg_chan);
-    
-    hb_chans = find(cellfun(@(x) strcmpi(x.header.chantype, 'hb'), handles.data));
-    hb_chan_list = cell(1,length(hb_chans)+1);
-    hb_chan_list{1} = 'None';
-    hb_chan_list(2:end) = num2cell(hb_chans);
-    if handles.hb_chan == -1
-        sel_hb_chan = 1;
-        set(handles.cbManualMode, 'Enable', 'off');
-    else
-        sel_hb_chan = find(cell2mat(hb_chan_list(2:end)) == handles.hb_chan) + 1;
-    end;
-    
-    set(handles.ppHbChan, 'String', hb_chan_list);
-    set(handles.ppHbChan, 'Value', sel_hb_chan);
-    
-    handles.hb_chan = hb_chan_list(sel_hb_chan);
-    if strcmpi(handles.hb_chan, 'None')
-        handles.hb_chan = -1;
-        set(handles.rbReplaceHbChan, 'Enable', 'off');
-    end;
-    
-    handles.fn = fn;
-    set(handles.edtDataFile, 'String', fn);
-        
-    guidata(hObject, handles);
-    
+[ ~, ~, handles.data, ~] = scr_load_data(fn);
+ecg_chans = find(cellfun(@(x) strcmpi(x.header.chantype, 'ecg'), handles.data));
+% set possible ecg chans
+sel_ecg_chan = find(ecg_chans == handles.data_chan, 1, 'first');
+if isempty(sel_ecg_chan)
+    sel_ecg_chan = 1;
+end;
+handles.data_chan = ecg_chans(sel_ecg_chan);
+set(handles.ppEcgChan, 'String', ecg_chans);
+set(handles.ppEcgChan, 'Value', sel_ecg_chan);
+
+hb_chans = find(cellfun(@(x) strcmpi(x.header.chantype, 'hb'), handles.data));
+hb_chan_list = cell(1,length(hb_chans)+1);
+hb_chan_list{1} = 'None';
+hb_chan_list(2:end) = num2cell(hb_chans);
+if handles.hb_chan == -1
+    sel_hb_chan = 1;
+    set(handles.cbManualMode, 'Enable', 'off');
+else
+    sel_hb_chan = find(cell2mat(hb_chan_list(2:end)) == handles.hb_chan) + 1;
+end;
+
+set(handles.ppHbChan, 'String', hb_chan_list);
+set(handles.ppHbChan, 'Value', sel_hb_chan);
+
+handles.hb_chan = hb_chan_list(sel_hb_chan);
+if strcmpi(handles.hb_chan, 'None')
+    handles.hb_chan = -1;
+    set(handles.rbReplaceHbChan, 'Enable', 'off');
+end;
+
+handles.fn = fn;
+set(handles.edtDataFile, 'String', fn);
+
+% filter data
+data = handles.data{handles.data_chan};
+sr = data.header.sr;
+handles.filt.sr = sr;
+% filter data
+[nsts,ecg,sr]=scr_prepdata(data.data, handles.filt);
+if nsts == -1
+    warning('Could not filter data, will use unfiltered data.');
+    ecg = data.data;
+end;
+
+handles.plot.ecg = ecg;
+handles.plot.sr = sr;
+handles.filt.sr = sr;
+
+guidata(hObject, handles);
+
 % --- Reload plot settings
 function reload_plot(hObject, handles)
 
-if ~isempty(handles.data)
+if ~isempty(handles.data)  
     % set values
-    pp_set(hObject,handles);
+    discriminate_hb_events(hObject,handles);
     handles=guidata(hObject);
+    
     % plot
     handles.jo = 0;
     pp_plot(hObject,handles);
-    handles=guidata(hObject);    
+    handles=guidata(hObject);
     
     % check nex_prev button
     check_navigation_buttons(hObject, handles);
+    update_event_list(hObject, handles);
 end;
 
 % --- Check navigation buttons
@@ -784,7 +922,7 @@ else
     if  next >= maximum
         set(handles.push_next,'enable','off');
     else
-        set(handles.push_last, 'enable', 'on');
+        set(handles.push_next, 'enable', 'on');
     end;
     
     if prev <= 0
@@ -793,6 +931,41 @@ else
         set(handles.push_last, 'enable', 'on');
     end;
 end;
+
+% --- Update event list
+function update_event_list(hObject, handles)
+
+work_r = handles.plot.r;
+if handles.manualmode
+    new_el = find(sum(work_r,1,'omitnan') >= 1);
+else
+    new_el = find(work_r(2,:)==1);
+end;
+
+new_list = cell(length(new_el),1);
+for i=1:length(new_el)
+    % find color
+    sample_id = new_el(i);
+    el = handles.plot.r(:,sample_id);
+    % original, faulty, removed, added
+    if sum(el, 1, 'omitnan') > 0
+        el_idx = find(el > 0);
+        cl = handles.clr{max(el_idx)+1}(1,:);
+    else
+        cl = handles.clr{2}(1,:);
+    end;
+    
+    t = sample_id/handles.plot.sr;
+    new_list{i} = sprintf('<html><font bgcolor="#%02s%02s%02s" color="#000000">%0.4f</font></html>',...
+        dec2hex(round(cl(1)*255)), ...
+        dec2hex(round(cl(2)*255)), ...
+        dec2hex(round(cl(3)*255)), ...
+        t);
+end;
+
+set(handles.lstEvents, 'String', new_list);
+set(handles.lstEvents, 'Value', 1);
+
 
 
 % --- Executes during object creation, after setting all properties.
@@ -818,6 +991,9 @@ function cbManualMode_Callback(hObject, eventdata, handles)
 handles.manualmode = get(hObject, 'Value');
 % check nex_prev button
 check_navigation_buttons(hObject, handles);
+% update event list
+update_event_list(hObject, handles);
+% plot 
 pp_plot(hObject, handles);
 
 
@@ -852,13 +1028,15 @@ function pbArtifactFile_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-
 [fname, fpath] = uigetfile({'*.mat'}, 'Select file with Artifact epochs');
 if ischar(fname) && ~isempty(fname)
     fn = fullfile(fpath, fname);
+    set(handles.edtArtifactFile, 'Enable', 'on');
+    set(handles.pbArtifactsDisable, 'Enable', 'on');
+
     load_data_artifacts(hObject, handles, fn);
     handles = guidata(hObject);
-    reload_plot(hObject, handles);
+    refresh_faulty(hObject, handles);
 end;
 
 % --- Load artifact epochs file
@@ -881,22 +1059,195 @@ else
 end;
 guidata(hObject, handles);
 
+% --- Executes during object creation, after setting all properties.
+function lstEvents_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to lstEvents (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
 
-% --- Executes on button press in cbArtifactEpochs.
-function cbArtifactEpochs_Callback(hObject, eventdata, handles)
-% hObject    handle to cbArtifactEpochs (see GCBO)
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in lstEvents.
+function lstEvents_Callback(hObject, eventdata, handles)
+% hObject    handle to lstEvents (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of cbArtifactEpochs
-if get(hObject, 'Value')
-    set(handles.edtArtifactFile, 'Enable', 'on');
-    set(handles.pbArtifactFile, 'Enable', 'on');
-else
-    set(handles.edtArtifactFile, 'Enable', 'off');
-    set(handles.pbArtifactFile, 'Enable', 'off');
+% Hints: contents = cellstr(get(hObject,'String')) returns lstEvents contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from lstEvents
+sel_id = get(hObject, 'Value');
+if sel_id >= 0
+    if handles.manualmode
+        % put together own
+        custom_R = find(sum(handles.plot.r, 'omitnan'));
+        if sel_id > length(custom_R)
+            sel_id = 1;
+            set(hObject, 'Value', sel_id);
+        end;
+        handles.count = custom_R(sel_id)/handles.plot.sr;
+    else
+        handles.k = sel_id;
+    end;
+    pp_plot(hObject, handles);
 end;
 
-if ~isempty(handles.artifact_epochs)
-    reload_plot(hObject, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function edtFactor_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edtFactor (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edtUpperLimit_Callback(hObject, eventdata, handles)
+% hObject    handle to edtUpperLimit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edtUpperLimit as text
+%        str2double(get(hObject,'String')) returns contents of edtUpperLimit as a double
+if isnan(str2double(get(hObject, 'String')))
+    errordlg('Value has to be numeric.');
+    set(hObject, 'String', num2str(handles.plot.limits.upper));
 end;
+
+% --- Executes during object creation, after setting all properties.
+function edtUpperLimit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edtUpperLimit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edtLowerLimit_Callback(hObject, eventdata, handles)
+% hObject    handle to edtLowerLimit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edtLowerLimit as text
+%        str2double(get(hObject,'String')) returns contents of edtLowerLimit as a double
+if isnan(str2double(get(hObject, 'String')))
+    errordlg('Value has to be numeric.');
+    set(hObject, 'String', num2str(handles.plot.limits.lower));
+end;
+
+% --- Executes during object creation, after setting all properties.
+function edtLowerLimit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edtLowerLimit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in edtApplyDetSet.
+function edtApplyDetSet_Callback(hObject, eventdata, handles)
+% hObject    handle to edtApplyDetSet (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+factr = get(handles.edtFactor, 'String');
+ul = get(handles.edtUpperLimit, 'String');
+ll = get(handles.edtLowerLimit, 'String');
+
+handles.plot.factr = str2double(factr);
+handles.plot.limits.upper = str2double(ul);
+handles.plot.limits.lower = str2double(ll);
+
+refresh_faulty(hObject, handles);
+
+% --- refresh_faulty
+function refresh_faulty(hObject, handles)
+% reset values but keep changes (3 and 4)
+handles.plot.r(1,handles.plot.r(2,:)==1) = 1;
+handles.plot.r(2,:) = NaN;
+handles.k = 1;
+handles.count = 1;
+% reload plot
+reload_plot(hObject, handles);
+
+function edtFactor_Callback(hObject, eventdata, handles)
+% hObject    handle to edtFactor (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edtFactor as text
+%        str2double(get(hObject,'String')) returns contents of edtFactor as a double
+if isnan(str2double(get(hObject, 'String')))
+    errordlg('Value has to be numeric.');
+    set(hObject, 'String', num2str(handles.plot.factr));
+end;
+
+
+% --- Executes on button press in pbArtifactsDisable.
+function pbArtifactsDisable_Callback(hObject, eventdata, handles)
+% hObject    handle to pbArtifactsDisable (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+handles.artifact_epochs = {};
+handles.artifact_fn = '';
+set(handles.edtArtifactFile, 'Enable', 'off');
+set(handles.edtArtifactFile, 'String', '');
+set(handles.pbArtifactsDisable, 'Enable', 'off');
+% refresh faulty
+refresh_faulty(hObject, handles);
+
+
+% --- Executes on button press in rbShowArtifacts.
+function rbShowArtifacts_Callback(hObject, eventdata, handles)
+% hObject    handle to rbShowArtifacts (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of rbShowArtifacts
+reload_hb_chan(hObject, handles);
+handles = guidata(hObject);
+reload_plot(hObject, handles);
+
+
+% --- Executes on button press in rbDisableArtifactDetection.
+function rbDisableArtifactDetection_Callback(hObject, eventdata, handles)
+% hObject    handle to rbDisableArtifactDetection (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of rbDisableArtifactDetection
+reload_hb_chan(hObject, handles);
+handles = guidata(hObject);
+reload_plot(hObject, handles);
+
+
+% --- Executes on button press in rbHideArtifactEvents.
+function rbHideArtifactEvents_Callback(hObject, eventdata, handles)
+% hObject    handle to rbHideArtifactEvents (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of rbHideArtifactEvents
+reload_hb_chan(hObject, handles);
+handles = guidata(hObject);
+reload_plot(hObject, handles);
