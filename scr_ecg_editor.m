@@ -92,6 +92,7 @@ set(handles.togg_remove,'Value',0);
 handles.manualmode=0;       % default: deactivated
 set(handles.cbManualMode, 'Value', handles.manualmode);
 handles.winsize=4;          % winsize for the manual mode
+handles.zoom_factor = 1;
 handles.data = {};
 % define filter properties (copied from scr_ecg2hb)
 handles.filt = struct();
@@ -106,6 +107,9 @@ handles.filt.down=200;
 handles.plot.factr = 1;
 handles.plot.limits.upper = 120;
 handles.plot.limits.lower = 40;
+handles.plot.ecg = [];
+handles.plot.r = [];
+handles.plot.sr = 1;
 % -------------------------------------------------------------------------
 % set color values
 handles.clr{1}=[.0627 .3059 .5451; 0.0863 0.4510 0.8157]; % blue for ecg plot
@@ -113,6 +117,13 @@ handles.clr{2}=[0 .75 1; 0.6 0.9020 1]; % skyblue for correct ones
 handles.clr{3}=[1 .6471 0; 1.0000 0.8588 0.6000]; % dark yellow for possibly wrong ones
 handles.clr{4}=[.5412 .1686 .8863; 0.8039 0.6471 0.9529]; % violet for deleted ones
 handles.clr{5}=[0 .3922 0; 0 0.8 0]; % darkgreen for added ones
+% -------------------------------------------------------------------------
+set(handles.edtArtifactFile, 'Enable', 'off');
+set(handles.edtArtifactFile, 'String', '');
+set(handles.pbArtifactsDisable, 'Enable', 'off');
+set(handles.rbShowArtifacts, 'Enable', 'off');
+set(handles.rbDisableArtifactDetection, 'Enable', 'off');
+set(handles.rbHideArtifactEvents, 'Enable', 'off');
 % -------------------------------------------------------------------------
 guidata(hObject,handles);
 
@@ -234,7 +245,7 @@ exitModus;
 if ~handles.manualmode
     handles.k=handles.k+1;
 else % manual mode
-    handles.count=handles.count+(handles.winsize-handles.winsize/4);
+    handles.count=handles.count+(handles.winsize/2)*handles.zoom_factor;
 end
 check_navigation_buttons(hObject, handles);
 handles.jo=1; 
@@ -254,7 +265,7 @@ exitModus;
 if ~handles.manualmode
     handles.k=handles.k-1;
 else % manual mode
-    handles.count=handles.count-(handles.winsize-handles.winsize/4);
+    handles.count=handles.count-(handles.winsize/2)*handles.zoom_factor;
 end
 check_navigation_buttons(hObject, handles);
 handles.jo=1;
@@ -392,7 +403,6 @@ else
     handles.plot.sr = sr;
     handles.filt.sr = sr;
     handles.plot.ecg = ecg;
-    handles.manualmode = 1;
 end;
 
 % -------------------------------------------------------------------------
@@ -414,15 +424,27 @@ if isstruct(handles.data)
     r=handles.data.data.r';
     % set modification rows
     r(3:4, :) = NaN;
+    handles.manualmode = 1 && get(handles.cbManualMode, 'Value');
 else
     if handles.hb_chan ~= -1
         hb = handles.data{handles.hb_chan}.data;
+        set(handles.cbManualMode, 'Enable', 'on');
+        set(handles.rbReplaceHbChan, 'Enable', 'on');
+        handles.manualmode = 1 && get(handles.cbManualMode, 'Value');
     else
+        set(handles.rbReplaceHbChan, 'Enable', 'off');
+        set(handles.cbManualMode, 'Value', 1);
+        set(handles.cbManualMode, 'Enable', 'off');
+        if get(handles.rbReplaceHbChan, 'Value')
+            set(handles.rbAddChan, 'Value', 1);
+        end;
+        handles.manualmode = 1;
+        set(handles.cbManualMode, 'Value', 1);
         hb = {};
     end;
     r = zeros(4,numel(ecg));
     if numel(hb) >= 1
-        R = round(hb*sr);
+        R = round(hb*sr)';
         r(1,R) = 1;
         handles.manualmode = get(handles.cbManualMode, 'Value');
     else
@@ -450,7 +472,8 @@ r = handles.plot.r;
 
 % complexes
 ibi=diff(R);            % duration of IBI intervalls
-flag=zeros(size(ibi));  % flag variable to identify potential mislabeled
+flag=zeros(size(ibi));% flag variable to identify potential mislabeled
+flag(end+1) = 0;
 % -------------------------------------------------------------------------
 % create vectors for potential mislabeled qrs complexes
 flag(ibi>(mean(ibi)+(factr*std(ibi))))=1;   % too short
@@ -461,6 +484,7 @@ flag(ibi/sr > 60/lw_lim)=1;                     % get all ibis < 40 bpm
 maxk=length(find(flag==1));
 % transfer settings
 r(2,R(flag==1))=1;
+r(1,R(flag==1))=0;
 
 % reset according to artifact epochs
 if ~isempty(handles.artifact_epochs) && numel(R) > 0
@@ -481,14 +505,12 @@ if ~isempty(handles.artifact_epochs) && numel(R) > 0
     end;
 end;
 
-% if detection is disabled and detected as faulty both channels are empty 
-% but flag is set; in order to display the blue marker we have to reset the
-% flags in the first row.
-if get(handles.rbDisableArtifactDetection, 'Value')
-    idx = r(1,R(flag==1))==0 & r(2,R(flag==1))==0;
+% if detection is disabled and detected as faulty then channel 1 and 
+% are empty but flag is set; in order to display the blue marker we have to 
+% reset the flags in the first row.
+idx = r(2,R)==0 & flag==1;
+if get(handles.rbDisableArtifactDetection, 'Value') && any(idx)
     r(1,R(idx)) = 1;
-else
-    r(1,R(flag==1))=0;
 end;
 
 % make zeros NaN
@@ -514,7 +536,7 @@ if any(not(isnan(handles.plot.r(2,:)))) && ~handles.manualmode
     count=sample_id/handles.plot.sr;
 else
     count=handles.count;
-    custom_R = find(sum(handles.plot.r,1,'omitnan')>0);
+    custom_R = find(nansum(handles.plot.r,1)>0);
     if count >= 0
         % find sample_id
         d = abs(custom_R - count*handles.plot.sr);
@@ -560,7 +582,8 @@ if handles.jo==0 % check only if changes were done.
     % ---------------------------------------------------------------------
     if ~isempty(handles.s_h)
         try 
-            delete(handles.s_h)
+            delete(handles.s_h);
+            handles.s_h = [];
         catch
         end;
     end;
@@ -581,10 +604,10 @@ if ~isempty(handles.s_h)
 end;
 % -------------------------------------------------------------------------
 if ~handles.manualmode
-    xlim([count-2 count+2])
+    xlim([count-2*handles.zoom_factor count+2*handles.zoom_factor])
 else
-    xlim([count-(handles.winsize-handles.winsize/4) ...
-        count+(handles.winsize-handles.winsize/4)])
+    xlim([count-(handles.winsize/2)*handles.zoom_factor ...
+        count+(handles.winsize/2)*handles.zoom_factor])
 end
 xlabel('time in seconds [s]')
 % -------------------------------------------------------------------------
@@ -600,18 +623,20 @@ guidata(hObject,handles);
 function update_selected(hObject, handles)
 lst_id = get(handles.lstEvents, 'Value');
 if handles.manualmode
-    custom_R = find(sum(handles.plot.r,1, 'omitnan'));
-    if lst_id > length(custom_R)
-        lst_id = 1;
-    end;
-    lst_count = custom_R(lst_id);
-    lst_sample = lst_count;
-    sel_sample = handles.count;
-    
-    if lst_sample ~= sel_sample
-        d = abs(custom_R-sel_sample*handles.plot.sr);
-        idx = find(d == min(d));
-        set(handles.lstEvents, 'Value', idx);
+    custom_R = find(nansum(handles.plot.r,1));
+    if ~isempty(custom_R)
+        if lst_id > length(custom_R)
+            lst_id = 1;
+        end;
+        lst_count = custom_R(lst_id);
+        lst_sample = lst_count;
+        sel_sample = handles.count;
+        
+        if lst_sample ~= sel_sample
+            d = abs(custom_R-sel_sample*handles.plot.sr);
+            idx = find(d == min(d));
+            set(handles.lstEvents, 'Value', idx);
+        end;
     end;
 else
     if lst_id ~= handles.k
@@ -709,20 +734,16 @@ function zoomIn_Callback(hObject, eventdata, handles)
 % hObject    handle to zoomIn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-xl = xlim();
-xlim([xl(1)/2, xl(2)/2]);
-handles.winsize = handles.winsize / 2;
-guidata(hObject, handles);
+handles.zoom_factor = handles.zoom_factor / 2;
+pp_plot(hObject, handles);
 
 % --- Executes on button press in zoomOut.
 function zoomOut_Callback(hObject, eventdata, handles)
 % hObject    handle to zoomOut (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-xl = xlim();
-xlim([xl(1)*2, xl(2)*2]);
-handles.winsize = handles.winsize * 2;
-guidata(hObject, handles);
+handles.zoom_factor = handles.zoom_factor * 2;
+pp_plot(hObject, handles);
 
 function edtDataFile_Callback(hObject, eventdata, handles)
 % hObject    handle to edtDataFile (see GCBO)
@@ -755,6 +776,7 @@ function pbChangeFile_Callback(hObject, eventdata, handles)
 [fname, fpath] = uigetfile({'*.mat'}, 'Select file with ECG data');
 if ischar(fname) && ~isempty(fname)
     fn = fullfile(fpath, fname);
+    %handles.hb_chan = -1;
     load_data_file(hObject, handles, fn);
     handles = guidata(hObject);
     % reload hb channel
@@ -778,20 +800,8 @@ if ~isempty(handles.data)
     new_hb_chan = contents{get(hObject,'Value')};
     if strcmpi(new_hb_chan, 'None')
         handles.hb_chan = -1;
-        set(handles.rbReplaceHbChan, 'Enable', 'off');
-        set(handles.cbManualMode, 'Enable', 'off');
-        set(handles.cbManualMode, 'Value', 1);
-        
-        if get(handles.rbReplaceHbChan, 'Value')
-            set(handles.rbAddChan, 'Value', 1);
-        end;
-        
-        handles.manualmode = 1;
     else
         handles.hb_chan = str2double(new_hb_chan);
-        set(handles.rbReplaceHbChan, 'Enable', 'on');
-        set(handles.cbManualMode, 'Enable', 'on');
-        handles.manualmode = 1 && get(handles.cbManualMode, 'Value');
     end;
     % reload hb channel
     reload_hb_chan(hObject, handles);
@@ -853,13 +863,16 @@ if handles.hb_chan == -1
     sel_hb_chan = 1;
     set(handles.cbManualMode, 'Enable', 'off');
 else
-    sel_hb_chan = find(cell2mat(hb_chan_list(2:end)) == handles.hb_chan) + 1;
+    sel_hb_chan = find(cell2mat(hb_chan_list(2:end)) == handles.hb_chan,1) + 1;
+    if isempty(sel_hb_chan)
+        sel_hb_chan = 1;
+    end;
 end;
 
 set(handles.ppHbChan, 'String', hb_chan_list);
 set(handles.ppHbChan, 'Value', sel_hb_chan);
 
-handles.hb_chan = hb_chan_list(sel_hb_chan);
+handles.hb_chan = hb_chan_list{sel_hb_chan};
 if strcmpi(handles.hb_chan, 'None')
     handles.hb_chan = -1;
     set(handles.rbReplaceHbChan, 'Enable', 'off');
@@ -915,9 +928,9 @@ else
         maximum = handles.maxk;
         prev = handles.k - 1;
     else
-        next = handles.count + (handles.winsize-handles.winsize/4);
+        next = handles.count + (handles.winsize/2)*handles.zoom_factor;
         maximum = length(handles.plot.r)/handles.plot.sr;
-        prev = handles.count - (handles.winsize-handles.winsize/4);
+        prev = handles.count - (handles.winsize/2)*handles.zoom_factor;
     end;
     if  next >= maximum
         set(handles.push_next,'enable','off');
@@ -937,7 +950,7 @@ function update_event_list(hObject, handles)
 
 work_r = handles.plot.r;
 if handles.manualmode
-    new_el = find(sum(work_r,1,'omitnan') >= 1);
+    new_el = find(nansum(work_r,1) >= 1);
 else
     new_el = find(work_r(2,:)==1);
 end;
@@ -948,7 +961,7 @@ for i=1:length(new_el)
     sample_id = new_el(i);
     el = handles.plot.r(:,sample_id);
     % original, faulty, removed, added
-    if sum(el, 1, 'omitnan') > 0
+    if nansum(el, 1) > 0
         el_idx = find(el > 0);
         cl = handles.clr{max(el_idx)+1}(1,:);
     else
@@ -1031,9 +1044,6 @@ function pbArtifactFile_Callback(hObject, eventdata, handles)
 [fname, fpath] = uigetfile({'*.mat'}, 'Select file with Artifact epochs');
 if ischar(fname) && ~isempty(fname)
     fn = fullfile(fpath, fname);
-    set(handles.edtArtifactFile, 'Enable', 'on');
-    set(handles.pbArtifactsDisable, 'Enable', 'on');
-
     load_data_artifacts(hObject, handles, fn);
     handles = guidata(hObject);
     refresh_faulty(hObject, handles);
@@ -1048,6 +1058,11 @@ if exist(fn, 'file')
             handles.artifact_epochs = art_file.epochs;
             handles.artifact_fn = fn;
             set(handles.edtArtifactFile, 'String', fn);
+            set(handles.edtArtifactFile, 'Enable', 'on');
+            set(handles.pbArtifactsDisable, 'Enable', 'on');
+            set(handles.rbShowArtifacts, 'Enable', 'on');
+            set(handles.rbDisableArtifactDetection, 'Enable', 'on');
+            set(handles.rbHideArtifactEvents, 'Enable', 'on');
         else
             warning('ID:invalid_input', 'Not a valid artifact / epoch file provided.');
         end;
@@ -1084,7 +1099,7 @@ sel_id = get(hObject, 'Value');
 if sel_id >= 0
     if handles.manualmode
         % put together own
-        custom_R = find(sum(handles.plot.r, 'omitnan'));
+        custom_R = find(nansum(handles.plot.r));
         if sel_id > length(custom_R)
             sel_id = 1;
             set(hObject, 'Value', sel_id);
@@ -1213,6 +1228,10 @@ handles.artifact_fn = '';
 set(handles.edtArtifactFile, 'Enable', 'off');
 set(handles.edtArtifactFile, 'String', '');
 set(handles.pbArtifactsDisable, 'Enable', 'off');
+%
+set(handles.rbShowArtifacts, 'Enable', 'off');
+set(handles.rbDisableArtifactDetection, 'Enable', 'off');
+set(handles.rbHideArtifactEvents, 'Enable', 'off');
 % refresh faulty
 refresh_faulty(hObject, handles);
 
