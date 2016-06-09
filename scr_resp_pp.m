@@ -89,7 +89,7 @@ filt.down      = 10;
 [sts, newresp] = scr_prepdata(resp - mean(resp), filt);
 
 % Median filter
-newresp = medfilt1(newresp, ceil(filt.sr) + 1);
+newresp = medfilt1(newresp, ceil(filt.down) + 1);
 
 % detect breathing cycles 
 % -------------------------------------------------------------------------
