@@ -50,7 +50,7 @@ function [sts, outdata] = scr_interpolate(indata, options)
 %                       written to a new file called 'i'+<old filename>.
 %                       (Default is 0)
 %       .outlier        struct() which contains the definition of outliers
-%                       and defines how to deal with tem.
+%                       and defines how to deal with them.
 %           .correction Defines how outliers should be treated.
 %                           At the moment the following options are
 %                           possible:

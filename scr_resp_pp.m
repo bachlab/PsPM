@@ -85,7 +85,7 @@ filt.lporder   = 1;
 filt.hpfreq    = .01;
 filt.hporder   = 1;
 filt.direction = 'bi';
-filt.down      = 'none';
+filt.down      = 10;
 [sts, newresp] = scr_prepdata(resp - mean(resp), filt);
 
 % Median filter

@@ -156,7 +156,6 @@ if ~strcmpi(action, 'add')
             % action replace: no multi channel option possible
             % no channel found to replace
             action = 'add';
-            warning('ID:no_matching_channels', 'No existing channel found, changing into ''add'' action.');
         else
             warning('ID:no_matching_channels', 'no channel of type ''%s'' found in the file',options.channel); return;
         end;
