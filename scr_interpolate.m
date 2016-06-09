@@ -49,6 +49,20 @@ function [sts, outdata] = scr_interpolate(indata, options)
 %                       the data was loaded from. If 1 the data will be
 %                       written to a new file called 'i'+<old filename>.
 %                       (Default is 0)
+%       .outlier        struct() which contains the definition of outliers
+%                       and defines how to deal with tem.
+%           .correction Defines how outliers should be treated.
+%                           At the moment the following options are
+%                           possible:
+%                               - 'off' do nothing [default value]
+%                               - 'remove' remove data points
+%           .limit      
+%               .upper  Defines the upper limit from which big values 
+%                       should be considered as outlier.
+%                       Default is 2.
+%               .lower  Defines the lower limit from which small values
+%                       should be considered as outlier.
+%                       Default is 0.2
 % OUTPUT:
 %       sts:            Returns the status of the function
 %                       -1: function did not work properly
@@ -93,6 +107,32 @@ try options.newfile; catch, options.newfile = 0; end;
 try options.replace_channels; catch, options.replace_channels = 0; end;
 try options.extrapolate; catch, options.extrapolate = 0; end;
 try options.dont_ask_overwrite; catch, options.dont_ask_overwrite = 0; end;
+try options.outlier; catch, options.outlier = struct(); end;
+
+% outlier default settings
+if ~isfield(options.outlier, 'correction')
+    options.outlier.correction = 'off';
+elseif ~any(strcmpi(options.outlier.correction, {'off', 'remove'}))
+    warning('ID:invalid_input', 'Outlier correction is not valid.'); return;
+end;
+
+if ~isfield(options.outlier, 'limit')
+    options.outlier.limit = struct();
+elseif ~isstruct(options.outlier.limit)
+    warning('ID:invalid_input', 'Outlier limit should be a struct.'); return;
+end;
+
+if ~isfield(options.outlier.limit, 'upper')
+    options.outlier.limit.upper = 2;
+elseif ~isnumeric(options.outlier.limit.upper)
+    warning('ID:invalid_input', 'Upper limit for outlier detection must be numeric.'); return;
+end;
+
+if ~isfield(options.outlier.limit, 'lower')
+    options.outlier.limit.lower = 0.2;
+elseif ~isnumeric(options.outlier.limit.lower)
+    warning('ID:invalid_input', 'Lower limit for outlier detection must be numeric.'); return;
+end;
 
 % check channel size
 if numel(options.channels) > 0
@@ -224,6 +264,18 @@ for d=1:numel(D)
         
         % add some other checks here if you want to filter out other data
         % features (e. g. out-of-range values)
+        
+        % perform outlier correction if enabled
+        if ~strcmpi('off', options.outlier.correction)
+            
+            outl = v <= options.outlier.limit.lower | ...
+                v >= options.outlier.limit.upper;
+            
+            switch options.outlier.correction
+                case 'remove' 
+                    v(outl) = NaN;
+            end;
+        end;
         
         filt = isnan(v);
         xq = find(filt);
