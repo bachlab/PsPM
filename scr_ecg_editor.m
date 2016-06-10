@@ -70,7 +70,8 @@ handles.output = hObject;
 % -------------------------------------------------------------------------
 % set default status for GUI
 handles.edit_mode = '';
-handles.gui_mode = '';
+handles.gui_mode = ''; % file or inline
+handles.artifact_mode = ''; % file or inline
 handles.hb_chan = -1;
 handles.data_chan = -1;
 handles.write_chan = -1;
@@ -86,6 +87,7 @@ handles.R=[];
 handles.jo=0;       % default value for jump only - 0; plot data!
 handles.artifact_fn = '';
 handles.artifact_epochs = [];
+handles.plot.artifact_layer = [];
 set(handles.togg_add,'Value',0);
 set(handles.togg_remove,'Value',0);
 % settings for manual mode
@@ -289,15 +291,9 @@ r(1,r(3,:)==1)=NaN; % deleted QRS markers
 r(1,r(4,:)==1)=1;   % added QRS markers
 
 % remove artifact markers
-if ~isempty(handles.artifact_epochs) && numel(r) > 0
-    
-    for i=1:length(handles.artifact_epochs)
-        a_coord = handles.artifact_epochs(i, 1:end);
-        r(1, round(a_coord(1)*sr):round(a_coord(2)*sr)) = NaN;
-    end;
-    
+if any(handles.plot.artifact_layer)
+    r(1, handles.plot.artifact_layer) = NaN;
 end;
-
 
 handles.R=[];
 handles.R=find(r(1,:)==1);
@@ -470,14 +466,37 @@ R = handles.plot.R;
 sr = handles.plot.sr;
 r = handles.plot.r;
 
+% build artifact layer accordingly
+% create artifact layer
+% ------------------------------------------------------------------------
+a_lay = false(1, length(r));
+for i=1:length(handles.artifact_epochs)
+    a_coord = handles.artifact_epochs(i, 1:end);
+    start = max(1, round(a_coord(1)*handles.plot.sr));
+    stop = min(length(a_lay), round(a_coord(2)*handles.plot.sr));
+    a_lay(start:stop) = 1;
+end;
+
+% reset old detections
+r(1,R) = 1;
+r(2,R) = 0;
+
 % complexes
-ibi=diff(R);            % duration of IBI intervalls
+ibi=diff(R); % duration of IBI intervalls
 flag=zeros(size(ibi));% flag variable to identify potential mislabeled
 flag(end+1) = 0;
+ibi_filter = ~a_lay(R);
+
+if get(handles.rbDisableArtifactDetection, 'Value') || ...
+        get(handles.rbHideArtifactEvents, 'Value')
+    ibi_f = ibi(ibi_filter(1:end-1));
+else
+    ibi_f = ibi;
+end;
 % -------------------------------------------------------------------------
 % create vectors for potential mislabeled qrs complexes
-flag(ibi>(mean(ibi)+(factr*std(ibi))))=1;   % too short
-flag(ibi<(mean(ibi)-(factr*std(ibi))))=1;   % too long
+flag(ibi>(mean(ibi_f)+(factr*std(ibi_f))))=1;   % too short
+flag(ibi<(mean(ibi_f)-(factr*std(ibi_f))))=1;   % too long
 flag(ibi/sr < 60/up_lim)=1;                    % get all ibis > 120 bpm
 flag(ibi/sr > 60/lw_lim)=1;                     % get all ibis < 40 bpm
 
@@ -495,13 +514,8 @@ if ~isempty(handles.artifact_epochs) && numel(R) > 0
         chans = [1,2];
     end;
         
-    if ~isempty(chans)
-        for i=1:length(handles.artifact_epochs)
-            a_coord = handles.artifact_epochs(i, 1:end);
-            start = max(1, round(a_coord(1)*handles.plot.sr));
-            stop = min(length(r), round(a_coord(2)*handles.plot.sr));
-            r(chans, start:stop) = 0;
-        end;
+    if ~isempty(chans) && any(a_lay)
+        r(chans, a_lay) = 0;
     end;
 end;
 
@@ -519,6 +533,7 @@ r(r==0)=NaN;
 handles.plot.ibi = ibi;
 handles.plot.r = r;
 handles.plot.R = R;
+handles.plot.artifact_layer = a_lay;
 
 if exist('handles.maxk', 'var') == 0 && exist('maxk', 'var')
     handles.maxk = maxk;
@@ -555,6 +570,12 @@ else
     % assume a color
     h_col = handles.clr{2}(1,:);
 end;
+
+if handles.plot.artifact_layer(sample_id)
+    h_b_col = rgb2gray(h_col);
+else 
+    h_b_col = h_col;
+end;
 % -------------------------------------------------------------------------
 if handles.jo==0 % check only if changes were done.
     % plot ecg signal
@@ -568,16 +589,38 @@ if handles.jo==0 % check only if changes were done.
     % -------------------------------------------------------------------------
     if not(isempty(handles.s))
         try
-            delete(handles.s);
+            for i = 1:length(handles.s)
+                if handles.s(i) > 0
+                    delete(handles.s(i));
+                end;
+            end;
+            handles.s = [];
         catch
+            warning('Could not properly clean up stem markers.');
         end;
     end;
     % -------------------------------------------------------------------------
-    for k=1:size(handles.plot.r,1)
-        handles.s(k)=stem(handles.plot.y,handles.plot.r(k,:),'color',handles.clr{k+1}(1,:));
-        set(handles.s(k),'linewidth',2,'MarkerFaceColor',handles.clr{k+1}(1,:))
-        sbase=get(handles.s(k),'baseline');
-        set(sbase,'BaseValue',min(handles.plot.ecg),'Visible','off');       
+    for k=1:size(handles.plot.r,1)*2
+        if mod(k, 2) == 0
+            layer = handles.plot.artifact_layer;
+            cl = handles.clr{ev_idx+1}(1,:);
+            b_cl = rgb2gray(cl);
+            ev_idx = k/2;
+        else
+            ev_idx = (k+1)/2;
+            layer = ~handles.plot.artifact_layer;
+            cl = handles.clr{ev_idx+1}(1,:);
+            b_cl = cl;
+        end;
+       
+        if any(layer)
+            handles.s(k)=stem(handles.plot.y(layer),handles.plot.r(ev_idx,layer),'color',b_cl);
+            set(handles.s(k),'linewidth',2,'MarkerFaceColor',cl, 'MarkerEdgeColor', cl);
+            sbase=get(handles.s(k),'baseline');
+            set(sbase,'BaseValue',min(handles.plot.ecg),'Visible','off');       
+        else
+            handles.s(k) = -1;
+        end;
     end;
     % ---------------------------------------------------------------------
     if ~isempty(handles.s_h)
@@ -590,8 +633,8 @@ if handles.jo==0 % check only if changes were done.
     % ---------------------------------------------------------------------
     % draw highlighted stem
     if highlight_pos > 0
-        handles.s_h = stem(highlight_pos, 1, 'color', h_col);
-        set(handles.s_h, 'LineWidth', 2.2);
+        handles.s_h = stem(highlight_pos, 1, 'color', h_b_col);
+        set(handles.s_h, 'LineWidth', 2);
         sbase=get(handles.s_h,'baseline');
         set(sbase,'BaseValue',min(handles.plot.ecg),'Visible','off');
         hp = 1;
@@ -599,8 +642,8 @@ if handles.jo==0 % check only if changes were done.
     handles.jo = 1 & handles.e & hp;
 end;
 if ~isempty(handles.s_h)
-    set(handles.s_h, 'XData', highlight_pos, 'Color', h_col, ...
-        'MarkerFaceColor', h_col);
+    set(handles.s_h, 'XData', highlight_pos, 'Color', h_b_col, ...
+        'MarkerFaceColor', h_col, 'MarkerEdgeColor', h_col);
 end;
 % -------------------------------------------------------------------------
 if ~handles.manualmode
@@ -687,6 +730,7 @@ function figure1_WindowButtonDownFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 pt = get(handles.axes, 'CurrentPoint');
 no_change = 0;
+drawnow;
 switch handles.edit_mode
     case 'add_qrs'
         x = pt(1);
@@ -698,18 +742,51 @@ switch handles.edit_mode
         handles.plot.r(4,x)=1;
         handles.plot.r(3,x)=NaN;
         % -----------------------------------------------------------------
+        
+        if handles.manualmode
+            cur_events = cellstr(get(handles.lstEvents,'String'));
+            custom_R = find(nansum(handles.plot.r) > 0);
+            
+            ev_pos = find(custom_R == x);
+            new_events = cell(length(cur_events)+1, 1);
+            if length(cur_events) >= 1
+                new_events(1:(ev_pos-1)) = cur_events(1:(ev_pos-1));
+            end;
+            
+            % set entry
+            new_events{ev_pos} = create_event_list_entry(hObject, handles, x);
+            
+            if length(cur_events) >= ev_pos
+                new_events((ev_pos+1):end) = cur_events(ev_pos:end);
+            end;
+            
+            set(handles.lstEvents, 'String', char(new_events));
+        end;
+        
     case 'remove_qrs'        % click input
         x = pt(1);
         x=min(max(1,round(x*handles.plot.sr)), length(handles.plot.r));
         % -----------------------------------------------------------------
         % add qrs complex at position x and remove entry from r(2,x)
-        faulty=nansum(handles.plot.r,1);
-        pos=find(faulty==1);
-        [~,ind]=min(abs(pos-x));
-        b=pos(ind);
+        pos_R=find(nansum(handles.plot.r,1));
+        [~,ind]=min(abs(pos_R-x));
+        b=pos_R(ind);
         % -----------------------------------------------------------------
         handles.plot.r(3,b)=1;
         handles.plot.r(4,b)=NaN;
+        
+        if handles.manualmode
+            custom_R = find(nansum(handles.plot.r) > 0);
+        else
+            custom_R = find(handles.plot.r(2, :) == 1);
+        end;
+        
+        ev_pos = find(custom_R == b,1);
+        if ~isempty(ev_pos)
+            cur_events = cellstr(get(handles.lstEvents,'String'));
+            cur_events{ev_pos} = create_event_list_entry(hObject, handles, b);
+            set(handles.lstEvents, 'String', cur_events);
+        end;
     otherwise
         no_change = 1;
 end;
@@ -722,11 +799,15 @@ if ~no_change
     % plot new
     if handles.manualmode
         handles.count = x/handles.plot.sr;
+    else
+        % find nearest k
+        pos_R = find(handles.plot.r(2,:) == 1);
+        [~, k] = min(abs(pos_R-x));
+        handles.k = k;
     end;
-    pp_plot(hObject,handles)
     
-    handles = guidata(hObject);
-    update_event_list(hObject, handles);
+    pp_plot(hObject,handles);
+    
 end;
 
 % --- Executes on button press in zoomIn.
@@ -860,11 +941,19 @@ hb_chan_list = cell(1,length(hb_chans)+1);
 hb_chan_list{1} = 'None';
 hb_chan_list(2:end) = num2cell(hb_chans);
 if handles.hb_chan == -1
-    sel_hb_chan = 1;
+    sel_hb_chan = -2;
     set(handles.cbManualMode, 'Enable', 'off');
 else
     sel_hb_chan = find(cell2mat(hb_chan_list(2:end)) == handles.hb_chan,1) + 1;
     if isempty(sel_hb_chan)
+        sel_hb_chan = -2;
+    end;
+end;
+
+if sel_hb_chan == -2
+    if length(hb_chans) == 1
+        sel_hb_chan = 2;
+    else
         sel_hb_chan = 1;
     end;
 end;
@@ -958,27 +1047,36 @@ end;
 new_list = cell(length(new_el),1);
 for i=1:length(new_el)
     % find color
-    sample_id = new_el(i);
-    el = handles.plot.r(:,sample_id);
-    % original, faulty, removed, added
-    if nansum(el, 1) > 0
-        el_idx = find(el > 0);
-        cl = handles.clr{max(el_idx)+1}(1,:);
-    else
-        cl = handles.clr{2}(1,:);
-    end;
-    
-    t = sample_id/handles.plot.sr;
-    new_list{i} = sprintf('<html><font bgcolor="#%02s%02s%02s" color="#000000">%0.4f</font></html>',...
-        dec2hex(round(cl(1)*255)), ...
-        dec2hex(round(cl(2)*255)), ...
-        dec2hex(round(cl(3)*255)), ...
-        t);
+    new_list{i} = create_event_list_entry(hObject, handles, new_el(i));    
 end;
 
 set(handles.lstEvents, 'String', new_list);
 set(handles.lstEvents, 'Value', 1);
 
+function [entry] = create_event_list_entry(hObject, handles, sample_id)
+el = handles.plot.r(:,sample_id);
+% original, faulty, removed, added
+if nansum(el, 1) > 0
+    el_idx = find(el > 0);
+    cl = handles.clr{max(el_idx)+1}(1,:);
+else
+    cl = handles.clr{2}(1,:);
+end;
+
+if handles.plot.artifact_layer(sample_id)
+    f_cl = '777777';
+else
+    f_cl = '000000';
+end;
+
+t = sample_id/handles.plot.sr;
+entry = sprintf('<html><font bgcolor="#%02s%02s%02s" color="#%06s">%0.4f</font></html>',...
+    dec2hex(round(cl(1)*255)), ...
+    dec2hex(round(cl(2)*255)), ...
+    dec2hex(round(cl(3)*255)), ...
+    f_cl, ...
+    t);
+    
 
 
 % --- Executes during object creation, after setting all properties.
@@ -1050,27 +1148,45 @@ if ischar(fname) && ~isempty(fname)
 end;
 
 % --- Load artifact epochs file
-function load_data_artifacts(hObject, handles, fn)
-if exist(fn, 'file')
-    try
-        art_file = load(fn);
-        if isfield(art_file, 'epochs')
-            handles.artifact_epochs = art_file.epochs;
-            handles.artifact_fn = fn;
-            set(handles.edtArtifactFile, 'String', fn);
-            set(handles.edtArtifactFile, 'Enable', 'on');
-            set(handles.pbArtifactsDisable, 'Enable', 'on');
-            set(handles.rbShowArtifacts, 'Enable', 'on');
-            set(handles.rbDisableArtifactDetection, 'Enable', 'on');
-            set(handles.rbHideArtifactEvents, 'Enable', 'on');
-        else
-            warning('ID:invalid_input', 'Not a valid artifact / epoch file provided.');
-        end;
-    catch
-        warning('ID:invalid_input', 'Could not load artifact file.');
+function load_data_artifacts(hObject, handles, artifacts)
+
+[sts, handles.artifact_epochs] = scr_get_timing('epochs', artifacts, 'seconds');
+
+if sts ~= -1
+   
+    set(handles.rbShowArtifacts, 'Enable', 'on');
+    set(handles.rbHideArtifactEvents, 'Enable', 'on');
+    set(handles.rbDisableArtifactDetection, 'Enable', 'on');
+    
+    if ischar(artifacts)
+        handles.artifact_mode = 'file';
+        
+        % enable
+        set(handles.edtArtifactFile, 'String', artifacts);
+        set(handles.edtArtifactFile, 'Enable', 'on');
+        set(handles.pbArtifactsDisable, 'Enable', 'on');
+        
+        % show
+        set(handles.pbArtifactFile, 'Visible', 'on');
+        set(handles.pbArtifactsDisable, 'Visible', 'on');
+        set(handles.edtArtifactFile, 'Visible', 'on');
+        handles.artifact_fn = artifacts;
+    else
+        handles.artifact_mode = 'inline';
+        
+        % disable
+        set(handles.edtArtifactFile, 'String', '');
+        set(handles.pbArtifactsDisable, 'Enable', 'off');
+        set(handles.edtArtifactFile, 'Enable', 'off');
+        
+        % hide
+        set(handles.edtArtifactFile, 'Visible', 'off');
+        set(handles.pbArtifactFile, 'Visible', 'off');
+        set(handles.pbArtifactsDisable, 'Visible', 'off');
     end;
 else
-    warning('ID:invalid_input', 'Artifact file does not exist.');
+    handles.artifact_epochs = [];
+    warning('ID:invalid_input', 'Could not load artifacts.');
 end;
 guidata(hObject, handles);
 
@@ -1223,8 +1339,9 @@ function pbArtifactsDisable_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-handles.artifact_epochs = {};
+handles.artifact_epochs = [];
 handles.artifact_fn = '';
+handles.plot.artifact_layer(:) = false;
 set(handles.edtArtifactFile, 'Enable', 'off');
 set(handles.edtArtifactFile, 'String', '');
 set(handles.pbArtifactsDisable, 'Enable', 'off');
@@ -1243,8 +1360,6 @@ function rbShowArtifacts_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of rbShowArtifacts
-reload_hb_chan(hObject, handles);
-handles = guidata(hObject);
 reload_plot(hObject, handles);
 
 
@@ -1255,8 +1370,6 @@ function rbDisableArtifactDetection_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of rbDisableArtifactDetection
-reload_hb_chan(hObject, handles);
-handles = guidata(hObject);
 reload_plot(hObject, handles);
 
 
@@ -1267,6 +1380,4 @@ function rbHideArtifactEvents_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of rbHideArtifactEvents
-reload_hb_chan(hObject, handles);
-handles = guidata(hObject);
 reload_plot(hObject, handles);
