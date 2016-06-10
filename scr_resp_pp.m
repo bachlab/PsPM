@@ -86,16 +86,16 @@ filt.hpfreq    = .01;
 filt.hporder   = 1;
 filt.direction = 'bi';
 filt.down      = 10;
-[sts, newresp] = scr_prepdata(resp - mean(resp), filt);
+[sts, newresp, newsr] = scr_prepdata(resp - mean(resp), filt);
 
 % Median filter
-newresp = medfilt1(newresp, ceil(filt.down) + 1);
+newresp = medfilt1(newresp, ceil(newsr) + 1);
 
 % detect breathing cycles 
 % -------------------------------------------------------------------------
 if strcmpi(options.systemtype, 'bellows')
     % find pos/neg zero crossings
-    respstamp = find(diff(sign(newresp)) == -2)/data{1}.header.sr;
+    respstamp = find(diff(sign(newresp)) == -2)/newsr;
 elseif strcmpi(options.systemtype, 'cushion')
     % find neg/pos zero crossings of first derivative
     diffresp = diff(newresp);
@@ -107,7 +107,7 @@ elseif strcmpi(options.systemtype, 'cushion')
     pairs = find(conv(foo(indx), [1 1]) == 2);
     zero2 = ceil(mean([indx(pairs - 1), indx(pairs)], 2));
     % combine while accouting for differentiating twice
-    respstamp = sort([zero1;zero2] + 1)/data{1}.header.sr;
+    respstamp = sort([zero1;zero2] + 1)/newsr;
 end;
 
 % exclude < 1 s IBIs 
