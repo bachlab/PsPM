@@ -326,7 +326,8 @@ if pt.settings.semi==1
         [nsts,R]=scr_ecg_editor(pt); % open gui to manually check for outliers
         if nsts~=-1 && not(isempty(R))
             pt.set.R=R;
-        else warning('Manual correction not completed. Results will not be saved to file!')
+        else
+            warning('Manual correction not completed. Results will not be saved to file!')
             sts=-1;
             return
         end

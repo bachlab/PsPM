@@ -125,17 +125,19 @@ end;
 % compute data values, interpolate and write
 % -------------------------------------------------------------------------
 for iType = 1:(numel(datatypes) - 1)
+    respdata = [];
     if datatype(iType)
         clear newdata
         % compute new data values
-        
         switch iType
             case 1
+                %rp
                 respdata = diff(respstamp);
                 o.msg.prefix = 'Respiration converted to respiration period and';
                 newdata.header.chantype = 'rp';
                 newdata.header.units = 's';
             case 2
+                %ra
                 for k = 1:(numel(respstamp) - 1)
                     win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
                     respdata(k) = range(resp(win));
@@ -144,6 +146,7 @@ for iType = 1:(numel(datatypes) - 1)
                 newdata.header.chantype = 'ra';
                 newdata.header.units = 'unknown';
             case 3
+                %rfr
                 ibi = diff(respstamp);
                 for k = 1:(numel(respstamp) - 1)
                     win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
@@ -153,6 +156,7 @@ for iType = 1:(numel(datatypes) - 1)
                 newdata.header.chantype = 'RFR';
                 newdata.header.units = 'unknown';
             case 4
+                %rs
                 o.msg.prefix = 'Respiration converted to respiration time stamps and';
                 newdata.header.chantype = 'rs';
                 newdata.header.units = 'events';
@@ -161,8 +165,12 @@ for iType = 1:(numel(datatypes) - 1)
         switch iType
             case {1, 2, 3}
                 newt = (1/sr):(1/sr):infos.duration;
-                writedata = interp1(respstamp(2:end), respdata, newt, 'linear' ,'extrap'); % assign rp/ra/RFR to following zero crossing
-                writedata(writedata < 0) = 0;                                              % 'extrap' option may introduce falsely negative values
+                if ~isempty(respdata)
+                    writedata = interp1(respstamp(2:end), respdata, newt, 'linear' ,'extrap'); % assign rp/ra/RFR to following zero crossing
+                    writedata(writedata < 0) = 0;                                              % 'extrap' option may introduce falsely negative values
+                else
+                    writedata = NaN(length(newt), 1);
+                end;
                 newdata.header.sr = sr;
             case {4}
                 writedata = respstamp;

@@ -34,7 +34,7 @@ function varargout = scr_ecg_editor(varargin)
 % $Id$   
 % $Rev$
 
-% Last Modified by GUIDE v2.5 08-Jun-2016 16:27:53
+% Last Modified by GUIDE v2.5 13-Jun-2016 16:56:07
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -76,17 +76,21 @@ handles.hb_chan = -1;
 handles.data_chan = -1;
 handles.write_chan = -1;
 handles.options = struct();
+handles.draw_selection = false;
+handles.selection = struct('p', -1, 'sh', []);
 handles.fn = '';
 handles.action=[];
 handles.k=1;        % counter for the potential mislabeled qrs complexes
 handles.s=[];
 handles.s_h = [];
 handles.e=0;        % flag for the status of the ecg plot.
+handles.plot.p = -1;
 handles.sts=[];       % outputvariable
 handles.R=[];
 handles.jo=0;       % default value for jump only - 0; plot data!
 handles.artifact_fn = '';
 handles.artifact_epochs = [];
+handles.update_selection = true;
 handles.plot.artifact_layer = [];
 set(handles.togg_add,'Value',0);
 set(handles.togg_remove,'Value',0);
@@ -112,6 +116,7 @@ handles.plot.limits.lower = 40;
 handles.plot.ecg = [];
 handles.plot.r = [];
 handles.plot.sr = 1;
+handles.plot.dynamic_R = [];
 % -------------------------------------------------------------------------
 % set color values
 handles.clr{1}=[.0627 .3059 .5451; 0.0863 0.4510 0.8157]; % blue for ecg plot
@@ -541,9 +546,11 @@ end;
 
 guidata(hObject, handles);
 
-
 % --- plot data
 function pp_plot(hObject,handles)
+% update dynamic R / make it global because its quite an expensive
+% operation
+handles.plot.dynamic_R = find(nansum(handles.plot.r));
 % where are potential mislabeled qrs complexes?
 if any(not(isnan(handles.plot.r(2,:)))) && ~handles.manualmode
     faulties = find(handles.plot.r(2,:) == 1);
@@ -551,7 +558,7 @@ if any(not(isnan(handles.plot.r(2,:)))) && ~handles.manualmode
     count=sample_id/handles.plot.sr;
 else
     count=handles.count;
-    custom_R = find(nansum(handles.plot.r,1)>0);
+    custom_R = handles.plot.dynamic_R;
     if count >= 0
         % find sample_id
         d = abs(custom_R - count*handles.plot.sr);
@@ -562,28 +569,12 @@ else
     end;
 end;
 % -------------------------------------------------------------------------
-highlight_pos = sample_id/handles.plot.sr;
-h_col_id = max(find(handles.plot.r(:,sample_id)==1))+1;
-if h_col_id > 1
-    h_col = handles.clr{h_col_id}(2,:);
-else
-    % assume a color
-    h_col = handles.clr{2}(1,:);
-end;
-
-if handles.plot.artifact_layer(sample_id)
-    h_b_col = rgb2gray(h_col);
-else 
-    h_b_col = h_col;
-end;
-% -------------------------------------------------------------------------
 if handles.jo==0 % check only if changes were done.
     % plot ecg signal
-    hp = 0;
     if handles.e==0
         hold on;
-        plot(handles.plot.y,handles.plot.ecg,'color',handles.clr{1}(1,:))
-        ylim([min(handles.plot.ecg)-.01, 1])
+        handles.plot.p = plot(handles.plot.y,handles.plot.ecg,'color',handles.clr{1}(1,:));
+        ylim([min(handles.plot.ecg)*(1-.1), max(handles.plot.ecg)*(1+.1)]);
         handles.e=1;
     end;
     % -------------------------------------------------------------------------
@@ -599,51 +590,24 @@ if handles.jo==0 % check only if changes were done.
             warning('Could not properly clean up stem markers.');
         end;
     end;
-    % -------------------------------------------------------------------------
-    for k=1:size(handles.plot.r,1)*2
-        if mod(k, 2) == 0
-            layer = handles.plot.artifact_layer;
-            cl = handles.clr{ev_idx+1}(1,:);
-            b_cl = rgb2gray(cl);
-            ev_idx = k/2;
-        else
-            ev_idx = (k+1)/2;
-            layer = ~handles.plot.artifact_layer;
-            cl = handles.clr{ev_idx+1}(1,:);
-            b_cl = cl;
-        end;
-       
-        if any(layer)
-            handles.s(k)=stem(handles.plot.y(layer),handles.plot.r(ev_idx,layer),'color',b_cl);
-            set(handles.s(k),'linewidth',2,'MarkerFaceColor',cl, 'MarkerEdgeColor', cl);
-            sbase=get(handles.s(k),'baseline');
-            set(sbase,'BaseValue',min(handles.plot.ecg),'Visible','off');       
-        else
-            handles.s(k) = -1;
-        end;
-    end;
     % ---------------------------------------------------------------------
-    if ~isempty(handles.s_h)
+    if ~isempty(handles.selection.sh)
         try 
-            delete(handles.s_h);
-            handles.s_h = [];
+            for i =1:length(handles.selection.sh)
+                delete(handles.selection.sh);
+            end;
+            handles.selection.sh = [];
         catch
         end;
     end;
     % ---------------------------------------------------------------------
-    % draw highlighted stem
-    if highlight_pos > 0
-        handles.s_h = stem(highlight_pos, 1, 'color', h_b_col);
-        set(handles.s_h, 'LineWidth', 2);
-        sbase=get(handles.s_h,'baseline');
-        set(sbase,'BaseValue',min(handles.plot.ecg),'Visible','off');
-        hp = 1;
-    end;
-    handles.jo = 1 & handles.e & hp;
+    % plot normal stems
+    handles.s = plot_stems(handles, handles.s, [1 length(handles.plot.r)], 1);
+    handles.jo = 1;
 end;
-if ~isempty(handles.s_h)
-    set(handles.s_h, 'XData', highlight_pos, 'Color', h_b_col, ...
-        'MarkerFaceColor', h_col, 'MarkerEdgeColor', h_col);
+% plot or update highlight stems
+if ~isempty(handles.plot.R)
+    handles.selection.sh = plot_stems(handles, handles.selection.sh, [sample_id, sample_id], 2);
 end;
 % -------------------------------------------------------------------------
 if ~handles.manualmode
@@ -656,34 +620,36 @@ xlabel('time in seconds [s]')
 % -------------------------------------------------------------------------
 handles.count=count; % set current position.
 
-update_selected(hObject, handles);
-check_navigation_buttons(hObject, handles);
-
 % Update handles structure
 guidata(hObject,handles);
 
+update_selected(hObject, handles);
+check_navigation_buttons(hObject, handles);
+
 % --- Update selected
 function update_selected(hObject, handles)
-lst_id = get(handles.lstEvents, 'Value');
-if handles.manualmode
-    custom_R = find(nansum(handles.plot.r,1));
-    if ~isempty(custom_R)
-        if lst_id > length(custom_R)
-            lst_id = 1;
+if handles.update_selection
+    lst_id = get(handles.lstEvents, 'Value');
+    if handles.manualmode
+        custom_R = handles.plot.dynamic_R;
+        if ~isempty(custom_R)
+            if lst_id > length(custom_R)
+                lst_id = 1;
+            end;
+            lst_count = custom_R(lst_id);
+            lst_sample = lst_count;
+            sel_sample = handles.count;
+            
+            if lst_sample ~= sel_sample
+                d = abs(custom_R-sel_sample*handles.plot.sr);
+                idx = find(d == min(d));
+                set(handles.lstEvents, 'Value', idx);
+            end;
         end;
-        lst_count = custom_R(lst_id);
-        lst_sample = lst_count;
-        sel_sample = handles.count;
-        
-        if lst_sample ~= sel_sample
-            d = abs(custom_R-sel_sample*handles.plot.sr);
-            idx = find(d == min(d));
-            set(handles.lstEvents, 'Value', idx);
+    else
+        if lst_id ~= handles.k
+            set(handles.lstEvents, 'Value', handles.k);
         end;
-    end;
-else
-    if lst_id ~= handles.k
-        set(handles.lstEvents, 'Value', handles.k);
     end;
 end;
 
@@ -728,86 +694,11 @@ function figure1_WindowButtonDownFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-pt = get(handles.axes, 'CurrentPoint');
-no_change = 0;
-drawnow;
-switch handles.edit_mode
-    case 'add_qrs'
-        x = pt(1);
-        % -----------------------------------------------------------------
-        % click input
-        x=min(max(1,round(x*handles.plot.sr)), length(handles.plot.r));
-        % -----------------------------------------------------------------
-        % add qrs complex at position x and remove entry from r(2,x)
-        handles.plot.r(4,x)=1;
-        handles.plot.r(3,x)=NaN;
-        % -----------------------------------------------------------------
-        
-        if handles.manualmode
-            cur_events = cellstr(get(handles.lstEvents,'String'));
-            custom_R = find(nansum(handles.plot.r) > 0);
-            
-            ev_pos = find(custom_R == x);
-            new_events = cell(length(cur_events)+1, 1);
-            if length(cur_events) >= 1
-                new_events(1:(ev_pos-1)) = cur_events(1:(ev_pos-1));
-            end;
-            
-            % set entry
-            new_events{ev_pos} = create_event_list_entry(hObject, handles, x);
-            
-            if length(cur_events) >= ev_pos
-                new_events((ev_pos+1):end) = cur_events(ev_pos:end);
-            end;
-            
-            set(handles.lstEvents, 'String', char(new_events));
-        end;
-        
-    case 'remove_qrs'        % click input
-        x = pt(1);
-        x=min(max(1,round(x*handles.plot.sr)), length(handles.plot.r));
-        % -----------------------------------------------------------------
-        % add qrs complex at position x and remove entry from r(2,x)
-        pos_R=find(nansum(handles.plot.r,1));
-        [~,ind]=min(abs(pos_R-x));
-        b=pos_R(ind);
-        % -----------------------------------------------------------------
-        handles.plot.r(3,b)=1;
-        handles.plot.r(4,b)=NaN;
-        
-        if handles.manualmode
-            custom_R = find(nansum(handles.plot.r) > 0);
-        else
-            custom_R = find(handles.plot.r(2, :) == 1);
-        end;
-        
-        ev_pos = find(custom_R == b,1);
-        if ~isempty(ev_pos)
-            cur_events = cellstr(get(handles.lstEvents,'String'));
-            cur_events{ev_pos} = create_event_list_entry(hObject, handles, b);
-            set(handles.lstEvents, 'String', cur_events);
-        end;
-    otherwise
-        no_change = 1;
-end;
-
-if ~no_change
-    
-    handles.jo=0;   % changes were done, so set flag to 0
-    % Update handles structure
-    guidata(hObject,handles);
-    % plot new
-    if handles.manualmode
-        handles.count = x/handles.plot.sr;
-    else
-        % find nearest k
-        pos_R = find(handles.plot.r(2,:) == 1);
-        [~, k] = min(abs(pos_R-x));
-        handles.k = k;
-    end;
-    
-    pp_plot(hObject,handles);
-    
+if strcmpi(handles.edit_mode,'remove_qrs')
+    handles.draw_selection = true;
+    pt = get(handles.axes, 'CurrentPoint');
+    handles.selection.start = pt(1,1:2);
+    guidata(hObject, handles);
 end;
 
 % --- Executes on button press in zoomIn.
@@ -833,7 +724,6 @@ function edtDataFile_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of edtDataFile as text
 %        str2double(get(hObject,'String')) returns contents of edtDataFile as a double
-
 set(hObject, 'String', handles.fn);
 
 % --- Executes during object creation, after setting all properties.
@@ -908,6 +798,10 @@ if ~isempty(handles.data)
     reload_hb_chan(hObject, handles);
     handles = guidata(hObject);
     handles.e = 0;
+    if handles.plot.p ~= -1
+        delete(handles.plot.p);
+        handles.plot.p = -1;
+    end;
     reload_plot(hObject, handles);
 end;
 
@@ -982,6 +876,11 @@ if nsts == -1
 end;
 
 handles.plot.ecg = ecg;
+handles.e = 0;
+if handles.plot.p ~= -1
+    delete(handles.plot.p);
+    handles.plot.p = -1;
+end;
 handles.plot.sr = sr;
 handles.filt.sr = sr;
 
@@ -1215,7 +1114,7 @@ sel_id = get(hObject, 'Value');
 if sel_id >= 0
     if handles.manualmode
         % put together own
-        custom_R = find(nansum(handles.plot.r));
+        custom_R = handles.plot.dynamic_R;
         if sel_id > length(custom_R)
             sel_id = 1;
             set(hObject, 'Value', sel_id);
@@ -1224,7 +1123,11 @@ if sel_id >= 0
     else
         handles.k = sel_id;
     end;
+    handles.update_selection = false;
     pp_plot(hObject, handles);
+    handles = guidata(hObject); 
+    handles.update_selection = true;
+    guidata(hObject, handles);
 end;
 
 
@@ -1381,3 +1284,222 @@ function rbHideArtifactEvents_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of rbHideArtifactEvents
 reload_plot(hObject, handles);
+
+
+% --- Executes on mouse press over figure background, over a disabled or
+% --- inactive control, or over an axes background.
+function figure1_WindowButtonUpFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+pt = get(handles.axes, 'CurrentPoint');
+no_change = 0;
+custom_R = handles.plot.dynamic_R;
+switch handles.edit_mode
+    case 'add_qrs'
+        x = pt(1);
+        % -----------------------------------------------------------------
+        % click input
+        x=min(max(1,round(x*handles.plot.sr)), length(handles.plot.r));
+        % -----------------------------------------------------------------
+        % add qrs complex at position x and remove entry from r(2,x)
+        handles.plot.r(4,x)=1;
+        handles.plot.r(3,x)=NaN;
+        % -----------------------------------------------------------------
+        
+        cur_events = cellstr(get(handles.lstEvents,'String'));
+        if handles.manualmode
+            lst_R = custom_R;
+        else
+            lst_R = find(handles.plot.r(2, :) == 1);
+        end;
+        ev_pos = min(find(lst_R >= x));
+        
+        new_events = cell(length(cur_events)+1, 1);
+        if length(cur_events) >= 1
+            new_events(1:(ev_pos-1)) = cur_events(1:(ev_pos-1));
+        end;
+        
+        % set entry
+        new_events{ev_pos} = create_event_list_entry(hObject, handles, x);
+        if length(cur_events) >= ev_pos
+            new_events((ev_pos+1):end) = cur_events(ev_pos:end);
+        end;
+        set(handles.lstEvents, 'String', char(new_events));
+        
+    case 'remove_qrs'        % click input       
+        % disable selection mode
+        handles.draw_selection = false;
+        if handles.selection.p ~= -1
+            delete(handles.selection.p);
+            handles.selection.p = -1;
+        end;
+        
+        % find start and stop positions
+        if handles.selection.start(1) < pt(1)
+            start = handles.selection.start(1)*handles.plot.sr;
+            stop = pt(1)*handles.plot.sr;
+        else
+            stop = handles.selection.start(1)*handles.plot.sr;
+            start = pt(1)*handles.plot.sr;
+        end;
+        
+        % sanitize
+        start = max(1, round(start));
+        stop = min(length(handles.plot.r), stop);
+        x = (start + stop)/2;
+        idx = find(custom_R > start & custom_R < stop);
+        
+        % set remove flag and remove add flag
+        handles.plot.r(3, custom_R(idx)) = 1;
+        handles.plot.r(4, custom_R(idx)) = NaN;
+        
+        % update lstevents
+        if handles.manualmode
+            lst_R = custom_R;
+        else
+            lst_R = find(handles.plot.r(2, :) == 1);
+        end;
+        
+        % replace selected objects
+        cur_events = cellstr(get(handles.lstEvents,'String'));
+        for i=1:length(idx)
+            ev_pos = find(lst_R == custom_R(idx(i)), 1);
+            if ~isempty(ev_pos)
+                cur_events{ev_pos} = create_event_list_entry(hObject, handles, custom_R(idx(i)));
+            end;
+        end;        
+        set(handles.lstEvents, 'String', cur_events);
+    otherwise
+        no_change = 1;
+end;
+
+if ~no_change
+    % update dynamic R
+    
+    handles.jo=0;   % changes were done, so set flag to 0
+    % Update handles structure
+    guidata(hObject,handles);
+    % plot new
+    if handles.manualmode
+        handles.count = x/handles.plot.sr;
+    else
+        % find nearest k
+        pos_R = find(handles.plot.r(2,:) == 1);
+        [~, k] = min(abs(pos_R-x));
+        handles.k = k;
+    end;
+    
+    pp_plot(hObject,handles);
+    
+end;
+
+
+% --- Executes on mouse motion over figure - except title and menu.
+function figure1_WindowButtonMotionFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if handles.draw_selection
+    pt = get(handles.axes, 'CurrentPoint');
+    pos = pt(1,1:2);
+    start = handles.selection.start;
+    
+    x = [start(1), pos(1), pos(1), start(1)];
+    y = [start(2), start(2), pos(2), pos(2)];
+    
+    if handles.selection.p ~= -1
+        p = handles.selection.p;
+        set(p, 'XData', x);
+        set(p, 'YData', y);
+    else
+        p = patch(x,y, 'white', 'FaceColor', 'none');
+        handles.selection.p = p;
+    end;
+    
+    
+    guidata(hObject, handles);
+    
+    range = [start(1)*handles.plot.sr pos(1)*handles.plot.sr];
+        
+    handles.selection.sh = plot_stems(handles, handles.selection.sh, range, 2);
+    guidata(hObject, handles);
+end;
+
+% --- Plot selection highlight
+function [stem_handles] = plot_stems(handles, stem_handles, range, cl_type)
+
+% sample ids
+if range(1) > range(2)
+    stop = range(1);
+    start = range(2);
+else
+    start = range(1);
+    stop = range(2);
+end;
+
+start = max(1, round(start));
+stop = min(length(handles.plot.r), round(stop));
+
+p_range = zeros(1, length(handles.plot.r));
+p_range(start:stop) = 1;
+
+stem_size = max(handles.plot.ecg);
+baseline = min(handles.plot.ecg);
+
+n_col = size(handles.plot.r,1);
+
+multipl_r = handles.plot.r;
+multipl_r(isnan(multipl_r)) = 0;
+p_sum = power(2, 0:(n_col-1))*multipl_r;
+p_rules = zeros(n_col, 1);
+
+% plot if and only if
+p_rules(1) = 1;
+p_rules(2) = 2;
+
+for k=1:n_col*2
+    if mod(k, 2) == 0
+        ev_idx = k/2;
+        layer = handles.plot.artifact_layer;
+        cl = handles.clr{ev_idx+1}(cl_type,:);
+        b_cl = rgb2gray(cl);
+    else
+        ev_idx = (k+1)/2;
+        layer = ~handles.plot.artifact_layer;
+        cl = handles.clr{ev_idx+1}(cl_type,:);
+        b_cl = cl;
+    end;
+    
+    layer = layer & p_range;
+    if p_rules(ev_idx) ~= 0
+        layer = layer & p_sum == p_rules(ev_idx);
+    end;
+        
+    
+    if any(layer)
+        if numel(stem_handles) < k || stem_handles(k) == -1
+            % plot stems
+            stem_handles(k)=stem(handles.plot.y(layer),...
+                handles.plot.r(ev_idx,layer)*stem_size,'color',b_cl);
+            % set stem layout
+            set(stem_handles(k),'Linewidth',2,...
+                'MarkerFaceColor',cl, 'MarkerEdgeColor', cl);
+            
+            % set baseline
+            sbase=get(stem_handles(k),'baseline');
+            set(sbase,'BaseValue',baseline,'Visible','off');
+        else
+            % update stemdata
+            set(stem_handles(k), 'XData', handles.plot.y(layer), ...
+                'YData', handles.plot.r(ev_idx,layer)*stem_size);
+        end;
+        uistack(stem_handles(k), 'top');
+    else
+        if numel(stem_handles) >= k && stem_handles(k) ~= -1
+            delete(stem_handles(k));
+        end;
+        stem_handles(k) = -1;
+    end;
+    
+end;

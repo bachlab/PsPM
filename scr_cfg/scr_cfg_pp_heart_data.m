@@ -46,15 +46,6 @@ ecg2hb_maxhr.val     = {300};
 ecg2hb_maxhr.help    = {''};
 ecg2hb_maxhr.hidden  = true;
 
-ecg2hb_peakmaxhr         = cfg_entry;
-ecg2hb_peakmaxhr.name    = 'Peak Max Heart Rate';
-ecg2hb_peakmaxhr.tag     = 'peakmaxhr';
-ecg2hb_peakmaxhr.strtype = 'r';
-ecg2hb_peakmaxhr.num     = [1 1];
-ecg2hb_peakmaxhr.val     = {250};
-ecg2hb_peakmaxhr.help    = {''};
-ecg2hb_peakmaxhr.hidden  = true;
-
 ecg2hb_semi         = cfg_menu;
 ecg2hb_semi.name    = 'Semi automatic mode';
 ecg2hb_semi.tag     = 'semi';
@@ -75,7 +66,7 @@ ecg2hb_twthresh.help = {'Threshold to perform the T wave check.'};
 ecg2hb_opt          = cfg_branch;
 ecg2hb_opt.name     = 'Options';
 ecg2hb_opt.tag      = 'opt';
-ecg2hb_opt.val      = {ecg2hb_minhr, ecg2hb_maxhr, ecg2hb_peakmaxhr, ...
+ecg2hb_opt.val      = {ecg2hb_minhr, ecg2hb_maxhr, ...
     ecg2hb_semi, ecg2hb_twthresh};
 ecg2hb_opt.help     = {''};
 

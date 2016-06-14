@@ -44,7 +44,6 @@ for i=1:numel(job.pp_type)
                 
                 opt.minhr = job.pp_type{i}.ecg2hb.opt.minhr;
                 opt.maxhr = job.pp_type{i}.ecg2hb.opt.maxhr;
-                opt.peakmaxhr = job.pp_type{i}.ecg2hb.opt.peakmaxhr;
                 opt.semi = job.pp_type{i}.ecg2hb.opt.semi;
                 opt.twthresh = job.pp_type{i}.ecg2hb.opt.twthresh;
                 
