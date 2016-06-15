@@ -1,7 +1,7 @@
-function [luminance] = scr_illum2lum(illuminance, distance, display_size, aspect)
-% scr_illum2lum converts illuminance values into luminance values
+function [luminance] = scr_convert_illum2lum(illuminance, distance, display_size, aspect)
+% SCR_CONVERT_ILLUM2LUM converts illuminance values into luminance values
 %
-% FORMAT: [luminance] = scr_illum2lum(illuminance, distance, display_size, aspect)
+% FORMAT: [luminance] = scr_convert_illum2lum(illuminance, distance, display_size, aspect)
 %
 % ARGUMENTS: 
 %   
