@@ -9,10 +9,16 @@ function [sts, infos] = scr_hb2hp(fn, sr, chan, options)
 %             beat channel); if empty (= 0 / []) will be set to default
 %             value
 %       options: optional arguments [struct]
-%           .replace - if specified and 1 when existing data should be
-%                      overwritten
-%           .cutoff  - maximum heart period which will be replaced by the
-%                      average of the surrounding values
+%           .replace        if specified and 1 when existing data should be
+%                           overwritten
+%           .limit          [struct] Specifies upper and lower limit for heart
+%                           periods. If the limit is exceeded, the values will
+%                           be ignored/removed and interpolated.
+%
+%               .upper      [numeric] Specifies the upper limit of the
+%                           heart periods in seconds. Default is 2.
+%               .lower      [numeric] Specifies the lower limit of the
+%                           heart periods in seconds. Default is 0.2.
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -28,7 +34,9 @@ global settings;
 if isempty(settings), scr_init; end;
 
 try options.replace; catch options.replace = 0; end;
-try options.cutoff; catch options.cutoff = 3; end;
+try options.limit; catch options.limit = struct(); end;
+try options.limit.upper; catch options.limit.upper = 2; end;
+try options.limit.lower; catch options.limit.lower = 0.2; end;
 
 % check input
 % -------------------------------------------------------------------------
@@ -40,9 +48,9 @@ elseif nargin < 2
     warning('No sample rate given.'); return; 
 elseif ~isnumeric(sr)
     warning('Sample rate needs to be numeric.'); return;
-elseif nargin < 3 || isempty(chan) || (chan == 0)
+elseif nargin < 3 || isempty(chan) || (isnumeric(chan) && (chan == 0))
     chan = 'hb';
-elseif ~isnumeric(chan)
+elseif ~isnumeric(chan) && ~strcmpi(chan, 'hb')
     warning('Channel number must be numeric'); return;
 end;
 
@@ -59,20 +67,10 @@ end;
 % -------------------------------------------------------------------------
 hb  = data{1}.data;
 ibi = diff(hb);
-% replace periods if they are longer than options.cutoff
-c = find(ibi > options.cutoff);
-for i = 1:numel(c)
-    if c(i) == 1
-        ibi(c(i)) = ibi(c(i)+1);
-    elseif c(i) == numel(ibi)
-        ibi(c(i)) = ibi(c(i)-1);
-    else
-        ibi(c(i)) = mean([ibi(c(i)-1),ibi(c(i)+1)]);
-    end;
-end;
+idx = find(ibi > options.limit.lower & ibi < options.limit.upper);
 hp = 1000 * ibi; % in ms
 newt = (1/sr):(1/sr):dinfos.duration;
-newhp = interp1(hb(2:end), hp, newt, 'linear' ,'extrap'); % assign hr to following heart beat 
+newhp = interp1(hb(idx+1), hp(idx), newt, 'linear' ,'extrap'); % assign hr to following heart beat 
 
 
 % save data

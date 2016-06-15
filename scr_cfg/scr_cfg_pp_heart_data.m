@@ -14,7 +14,6 @@ ecg2hb_chan_def.tag  = 'chan_def';
 ecg2hb_chan_def.val  = {0};
 ecg2hb_chan_def.help = {'First ECG channel.'};
 
-
 ecg2hb_chan_nr         = cfg_entry;
 ecg2hb_chan_nr.name    = 'Number';
 ecg2hb_chan_nr.tag     = 'chan_nr';
@@ -114,10 +113,32 @@ hb2hp_chan.help     = {'Number of Heart Beat channel (default: first Heart Beat 
 hb2hp_chan.val     = {hb2hp_chan_def};
 hb2hp_chan.values  = {hb2hp_chan_def, hb2hp_chan_nr, hb2hp_proc_chan};
 
+limit_upper         = cfg_entry;
+limit_upper.name    = 'Upper limit';
+limit_upper.tag     = 'upper';
+limit_upper.strtype = 'r';
+limit_upper.num     = [1 1];
+limit_upper.val     = {2};
+limit_upper.help    = {'Values bigger this value (in seconds) will be ignored and interpolated.'};
+
+limit_lower         = cfg_entry;
+limit_lower.name    = 'Lower limit';
+limit_lower.tag     = 'lower';
+limit_lower.strtype = 'r';
+limit_lower.num     = [1 1];
+limit_lower.val     = {.2};
+limit_lower.help    = {'Values bigger than this value (in seconds) will be ignored and interpolated.'};
+
+limit               = cfg_branch;
+limit.name          = 'Limit';
+limit.tag           = 'limit';
+limit.val           = {limit_upper, limit_lower};
+limit.help          = {'Define unrealistic values which should be ignored and interpolated.'};
+
 hb2hp               = cfg_exbranch;
 hb2hp.name          = 'Convert Heart Beat to Heart Period';
 hb2hp.tag           = 'hb2hp';
-hb2hp.val           = {hb2hp_sr, hb2hp_chan};
+hb2hp.val           = {hb2hp_sr, hb2hp_chan, limit};
 hb2hp.help          = {['Convert heart beat time stamps into interpolated ', ... 
     'heart period time series. You can use the output of the ECG to ', ... 
     'Heart beat conversion, or directly work on heart beat time stamps, ', ...
@@ -154,7 +175,7 @@ ecg2hp              = cfg_exbranch;
 ecg2hp.name         = 'Convert ECG to Heart Period';
 ecg2hp.tag          = 'ecg2hp';
 % re-use already defined variables
-ecg2hp.val          = {ecg2hb_chan,ecg2hb_opt,hb2hp_sr};
+ecg2hp.val          = {ecg2hb_chan,ecg2hb_opt,hb2hp_sr, limit};
 ecg2hp.help         = {['Convert ECG data into Heart period time series.']};
 
 pp_type             = cfg_choice;

@@ -56,6 +56,7 @@ for i=1:numel(job.pp_type)
                 sr = job.pp_type{i}.hb2hp.sr;              
                 opt = struct(); 
                 opt.replace = replace;
+                opt.limit = job.pp_type{i}.hb2hp.limit;
                 
                 [sts, winfo] = scr_hb2hp(fn, sr, chan, opt);
             case 'ecg2hp'
@@ -65,7 +66,6 @@ for i=1:numel(job.pp_type)
                 opt = struct();
                 opt.minhr = job.pp_type{i}.ecg2hp.opt.minhr;
                 opt.maxhr = job.pp_type{i}.ecg2hp.opt.maxhr;
-                opt.peakmaxhr = job.pp_type{i}.ecg2hp.opt.peakmaxhr;
                 opt.semi = job.pp_type{i}.ecg2hp.opt.semi;
                 opt.twthresh = job.pp_type{i}.ecg2hp.opt.twthresh;
                 
@@ -77,6 +77,7 @@ for i=1:numel(job.pp_type)
                 
                 % replace channel
                 opt.replace = true;
+                opt.limit = job.pp_type{i}.ecg2hp.limit;
                 % call ecg2hp
                 [sts, winfo] = scr_hb2hp(fn, sr, winfo.channel, opt);
             case 'ppu2hb'
