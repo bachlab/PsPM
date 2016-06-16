@@ -21,7 +21,7 @@ if isfield(job, 'mode')
             for i = 1:numel(conditions)
                 tm.names{i} = conditions(i).cond_name;
                 tm.onsets{i} = conditions(i).cond_onsets;
-                tm.durations{i} = conditions(i).cond_durations;
+                tm.durations{i} = conditions(i).cond_duration;
             end;
         elseif isfield(job.mode.mode_manual.conditions, 'condition_file')
             tm = job.mode.mode_manual.conditions.condition_files;

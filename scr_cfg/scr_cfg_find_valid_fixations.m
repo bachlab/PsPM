@@ -37,7 +37,7 @@ disable_fixation_validation       = cfg_const;
 disable_fixation_validation.name  = 'Disabled';
 disable_fixation_validation.tag   = 'disable_fixation_validation';
 disable_fixation_validation.val   = {0};
-disable_fixation_validation.help  = {['Validation of fixation is disabled. Only blinks ', ...
+disable_fixation_validation.help  = {['Validation of fixation is disabled. Only blinks will ', ...
     'result in invalid data points.']};
 
 %% Visual angle

@@ -27,7 +27,7 @@ sr.name    = 'Sample rate';
 sr.tag     = 'sr';
 sr.strtype = 'i';
 sr.num     = [1 1];
-sr.help    = {'Specify sample rate of the illuminance data.'};
+sr.help    = {'Specify the sample rate of the illuminance data.'};
 
 %% Duration
 duration         = cfg_entry;
@@ -95,7 +95,7 @@ bf.help    = {'Specify options for the basis functions.'};
 outdir          = cfg_files;
 outdir.name     = 'Output directory';
 outdir.tag      = 'outdir';
-outdir.help     = {'Specify directory where the .mat file with the resulting nuisance data will be written.'};
+outdir.help     = {'Specify the directory where the .mat file with the resulting nuisance data will be written.'};
 outdir.filter   = 'dir';
 outdir.num      = [1 1];
 
@@ -103,7 +103,7 @@ outdir.num      = [1 1];
 filename        = cfg_entry;
 filename.name   = 'Filename for output';
 filename.tag    = 'filename';
-filename.help   = {'Specify name for the resulting nuisance file.'};
+filename.help   = {'Specify the name for the resulting nuisance file.'};
 filename.num    = [1 Inf];
 filename.strtype = 's';
 

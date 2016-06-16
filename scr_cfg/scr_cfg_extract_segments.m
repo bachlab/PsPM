@@ -51,12 +51,11 @@ cond_onsets.help        = {['Specify a vector of onsets. The length of ', ...
 
 %% Condition durations
 cond_durations             = cfg_entry;
-cond_durations.name        = 'Durations';
-cond_durations.tag         = 'cond_durations';
+cond_durations.name        = 'Duration';
+cond_durations.tag         = 'cond_duration';
 cond_durations.strtype     = 'i';
-cond_durations.num         = [1 Inf];
-cond_durations.help         = {['If all events included in this ', ...
-    'condition have the same length specify just a single number.']};
+cond_durations.num         = [1 1];
+cond_durations.help         = {['Specify the length of the condition.']};
 
 %% Condition name
 cond_name               = cfg_entry;
