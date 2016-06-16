@@ -59,7 +59,21 @@ for k = 1:numel(import)
         import{k}.sr = 1./hdr.Fs;
         import{k}.marker = 'timestamps';
         import{k}.data = [mrk.sample];
-        import{k}.markerinfo.value = [mrk.value];
+        m_val = {mrk.value};
+        val_length = length(m_val);
+        val = cell(val_length, 1);
+        % convert empty cells into empty strings
+        for i=1:val_length
+            v = m_val{i};
+            if ~ischar(v) && isempty(v)
+                val{i} = '';
+            else
+                val{i} = v;
+            end;
+        end;
+        % convert into double
+        num_val = str2double(regexprep(val, '[^0-9]*([0-9,.]*)', '$1'));
+        import{k}.markerinfo.value = num_val;
         import{k}.markerinfo.name  = {mrk.type};
     end;
        

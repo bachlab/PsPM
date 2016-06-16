@@ -69,6 +69,7 @@ data.data = data.data(:);
 data.header.chantype = 'scr';
 data.header.units = dataunits;
 data.header.sr = import.sr;
+data.header.transfer = struct('Rs', Rs, 'offset', offset, 'c', c);
 
 % check status
 sts = 1;
