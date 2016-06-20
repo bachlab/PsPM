@@ -2,7 +2,7 @@ function scr_init
 % SCR_INIT initializes SCR by determining the path and loading settings
 % into the main workspace
 %__________________________________________________________________________
-% PsPM 3.0
+% PsPM 3.1
 % (C) 2009-2015 Dominik R Bach (WTCN, UZH)
 
 % $Id$
@@ -22,6 +22,9 @@ end;
 
 fprintf('PsPM: loading defaults ... \n');
 
+% get pspm version
+% -------------------------------------------------------------------------
+pspm_version = scr_version();
 
 % check various settings
 % -------------------------------------------------------------------------
@@ -805,5 +808,6 @@ settings.spmpath=spmpath;
 settings.matlabbatchpath=matlabbatchpath;
 settings.scrcfgpath=scrcfgpath;
 settings.signal = signal;
+settings.pspm_version = pspm_version;
 
 return;
