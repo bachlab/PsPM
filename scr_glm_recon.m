@@ -26,6 +26,14 @@ bs = glm.bf.X;
 bfno = glm.bf.bfno;
 bfdur = size(bs, 1);
 
+% for ra_fc with bf.arg == 1 take regressor difference
+% -------------------------------------------------------------------------
+if strcmpi('ra_fc', glm.modelspec) && glm.bf.args == 1
+    regdiff = 1;
+else
+    regdiff = 0;
+end;
+
 % find all non-nuisance regressors 
 % -------------------------------------------------------------------------
 n_nuis = sum(cellfun(@(c) ~isempty(c), regexpi(glm.names, '^R[0-9]*$', 'match')));
@@ -42,8 +50,12 @@ for k = 1:regno
     foo = strfind(condname{k}, ', bf');
     condname{k} = [condname{k}(1:(foo-1)), ' recon']; clear foo;
     resp(:, k) = bs * glm.stats(((k - 1) * bfno + 1):(k * bfno));
-    [~, bar] = max(abs(resp(:, k)));
-    recon{k, 1} = resp(bar, k);
+    if regdiff
+        recon{k, 1} = diff(glm.stats(((k - 1) * bfno + 1):(k * bfno)));
+    else
+        [~, bar] = max(abs(resp(:, k)));
+        recon{k, 1} = resp(bar, k);
+    end;
 end;
 
 % save
