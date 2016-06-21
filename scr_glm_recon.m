@@ -42,7 +42,7 @@ for k = 1:regno
     foo = strfind(condname{k}, ', bf');
     condname{k} = [condname{k}(1:(foo-1)), ' recon']; clear foo;
     resp(:, k) = bs * glm.stats(((k - 1) * bfno + 1):(k * bfno));
-    [foo, bar] = max(abs(resp(:, k)));
+    [~, bar] = max(abs(resp(:, k)));
     recon{k, 1} = resp(bar, k);
 end;
 

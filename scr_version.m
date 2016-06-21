@@ -21,10 +21,9 @@ function [sts, v] = scr_version(varargin)
 % $Id: $
 % $Rev: $
 
-%% include basics
+%% start
+% do not include scr_init, because scr_version is called by scr_init!!!
 % -------------------------------------------------------------------------
-global settings;
-if isempty(settings), scr_init; end;
 sts = -1;
 
 %% load startup info file
@@ -55,19 +54,22 @@ if nargin > 0
                     i = 1;
                     new_version = false;
                     v_equal = true;
-                    alphabet = char('a'+(1:26)-1);
                     while i <= steps && ~new_version
                         new_version = hex2dec(new_v_l(i)) > hex2dec(v_l(i));
                         v_equal = v_equal && (hex2dec(new_v_l(i)) == hex2dec(v_l(i)));
                         i = i + 1;
                     end;
                     
-                    new_version = v_equal && (numel(new_v_l) > numel(v_l));
+                    new_version = new_version || (v_equal && (numel(new_v_l) > numel(v_l)));
                     
                     if new_version
+                        % try to find url
+                        tk = regexpi(str, '"url": "([\w.:/_-]*)"', 'tokens');
+                        download_url = tk{1}{1};
                         fprintf('New PsPM version available:\n');
-                        fprintf('Current Version: %s\n', v);
-                        fprintf('');
+                        fprintf('Current version: %s\n', v);
+                        fprintf('Latest version: %s\n', new_v);
+                        fprintf('Available here: %s\n', download_url);
                     end;
                 else
                     warning('ID:invalid_input', 'Cannot figure out if there is a new version.'); return;

@@ -278,4 +278,14 @@ switch selected
         cfg_add_module('pspm.first_level.hp.glm_hp_e');
     case 3 
         cfg_add_module('pspm.first_level.hp.glm_hp_fc');
+    case 4
+        cfg_add_module('pspm.first_level.ps.glm_ps_fc');
+    case 5
+        cfg_add_module('pspm.first_level.resp.glm_ra_e');
+    case 6
+        cfg_add_module('pspm.first_level.resp.glm_ra_fc');
+    case 7
+        cfg_add_module('pspm.first_level.resp.glm_rp_e');
+    case 8
+        cfg_add_module('pspm.first_level.resp.glm_rfr_e');
 end;
