@@ -137,8 +137,11 @@ elseif ~islogical(options.validate_fixations) && ~isnumeric(options.validate_fix
     warning('ID:invalid_input', 'Options.validate_fixations is neither logical nor numeric.'); return;
 elseif ~iscell(options.channels) && ~ischar(options.channels) && ~isnumeric(options.channels)
     warning('ID:invalid_input', 'Options.channels should be a char, numeric or a cell of char or numeric.'); return;
-elseif iscell(options.channels) && any(~cellfun(@(x) ischar(x) || isnumeric(x), options.channels))
+elseif iscell(options.channels) && ...
+        any(~cellfun(@(x) isnumeric(x) || any(strcmpi(x, {'gaze_x', 'gaze_y', ...
+        'pupil', 'pupil_missing', 'blink'})), options.channels))
     warning('ID:invalid_input', 'Option.channels contains invalid values.');
+    return;
 elseif options.validate_fixations
     % if we land here validate_fixations fits the expected format and is
     % true. so lets check if all mandatory fields are set and then set the
@@ -311,13 +314,6 @@ for i=1:n_eyes
                         'completely set to NaN. Please reconsider your parameters.'], ...
                         new_pu{i}{j}.header.chantype);
                 end;
-                if options.interpolate
-                    % interpolate / extrapolate at the edges
-                    o.extrapolate = 1;
-                    % interpolate
-                    [~, new_pu{i}{j}.data] = scr_interpolate(new_pu{i}{j}.data, o);
-                end;
-                
                 excl_hdr = struct('chantype', ['pupil_missing_', eye], 'units', '', 'sr', new_pu{i}{j}.header.sr);
                 new_excl{i}{j} = struct('data', excl, 'header', excl_hdr);
             end;
@@ -349,9 +345,11 @@ end;
 
 if numel(new_chans) >= 1
     new_data = data;
+    chan_idx = NaN(1,numel(new_chans));
     for i = 1:numel(new_chans)
         if strcmpi(options.channel_action, 'add')
             new_data{end+1} = new_chans{i};
+            chan_idx(i) = numel(new_data);
         else
             % look for same chan_type
             chans = cellfun(@(x) strcmpi(new_chans{i}.header.chantype, x.header.chantype), new_data);
@@ -359,16 +357,25 @@ if numel(new_chans) >= 1
                 % replace the first found channel
                 idx = find(chans, 1, 'first');
                 new_data{idx}.data = new_chans{i}.data;
+                chan_idx(i) = idx;
             else
                 new_data{end+1} = new_chans{i};
+                chan_idx(i) = numel(new_data);
             end;
             
         end;
     end;
-    
+       
     file_struct.infos = infos;
     file_struct.data = new_data;
-    file_struct.options = op;
+    
+    if options.interpolate
+        % interpolate / extrapolate at the edges
+        o.extrapolate = 1;
+        o.channels = {chan_idx};
+        % interpolate
+        [~, file_struct] = scr_interpolate(file_struct, o);
+    end;
     
     [sts, ~, ~, ~] = scr_load_data(out_file, file_struct);
 else

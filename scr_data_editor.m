@@ -25,7 +25,7 @@ function varargout = scr_data_editor(varargin)
 % $Id$
 % $Rev$
 
-% Last Modified by GUIDE v2.5 02-Feb-2016 12:16:26
+% Last Modified by GUIDE v2.5 21-Jun-2016 17:00:56
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -426,96 +426,98 @@ handles = guidata(gca);
 % reset all epochs
 ResetEpochHighlight;
 
-ep = handles.epochs{epId};
-
-ep.highlighted = true;
-handles.epochs{epId} = ep;
-
-% highlight epochs
-for i=1:numel(ep.response_plots)
-    if ~isempty(ep.response_plots{i})
-        set(ep.response_plots{i}.p, 'Color', 'black', 'LineWidth', 1.5);
-    end;
-end;
-
-cur_xlim = get(handles.axData, 'xlim');
-start = cur_xlim(1);
-stop = cur_xlim(2);
-x_dist = stop-start;
-new_dist = ep.range(2)-ep.range(1);
-
-dstart = min(handles.x_data);
-dstop = max(handles.x_data);
-
-data_dist = dstop - dstart;
-
-if (x_dist < data_dist)
-    % try to set xlim
-    if (new_dist > x_dist) % zoom out
-        start = ep.range(1);
-        stop = ep.range(2);
-    else
-        % try to center data
-        offset = (x_dist-new_dist)/2;
-        start = ep.range(1) - offset;
-        stop = ep.range(2) + offset;
-        
-        if start < dstart
-            start = dstart;
-            stop = dstart+x_dist;
-        elseif stop > dstop
-            stop = dstop;
-            start = stop-x_dist;
+% is there anything to highlight?
+if numel(handles.epochs) > 0
+    ep = handles.epochs{epId};
+    ep.highlighted = true;
+    handles.epochs{epId} = ep;
+    
+    % highlight epochs
+    for i=1:numel(ep.response_plots)
+        if ~isempty(ep.response_plots{i})
+            set(ep.response_plots{i}.p, 'Color', 'black', 'LineWidth', 1.5);
         end;
-    end;  
-    set(handles.axData, 'xlim', [start,stop]);
-elseif x_dist >= data_dist
-    start = dstart;
-    stop = dstop;
-    set(handles.axData, 'xlim', [start,stop]);
-end;
-
-x_dist = stop - start;
-
-% try to set ylim
-plots = ~cellfun(@isempty, handles.plots);
-minmax = cellfun(@(x) [max(x.y_data(x.x_data >= ep.range(1)& x.x_data <= ep.range(2))), ...
-    max(x.y_data), min(x.y_data(x.x_data >= ep.range(1)& x.x_data <= ep.range(2))), min(x.y_data)], ... 
-    handles.plots(plots), 'UniformOutput', false);
-minmax = cell2mat(minmax);
-to = max(minmax(:,1));
-from = min(minmax(:,3));
-dmax = max(minmax(:,2));
-dmin = min(minmax(:,4));
-
-cur_ylim = get(handles.axData, 'ylim');
-y_dist = cur_ylim(2) - cur_ylim(1);
-new_dist = to - from;
-
-if new_dist ~= y_dist
-    if new_dist > y_dist
-        start = from;
-        stop = to;
-    elseif new_dist < y_dist 
-        if data_dist > x_dist
-            offset = (y_dist-new_dist)/2;
-            start = from - offset;
-            stop = to + offset;
-            if (stop > dmax || start < dmin) && ...
-                    (round(dmax-dmin)==round(stop-start))
-                stop = dmax;
-                start = dmin;
-            end;
+    end;
+    
+    cur_xlim = get(handles.axData, 'xlim');
+    start = cur_xlim(1);
+    stop = cur_xlim(2);
+    x_dist = stop-start;
+    new_dist = ep.range(2)-ep.range(1);
+    
+    dstart = min(handles.x_data);
+    dstop = max(handles.x_data);
+    
+    data_dist = dstop - dstart;
+    
+    if (x_dist < data_dist)
+        % try to set xlim
+        if (new_dist > x_dist) % zoom out
+            start = ep.range(1);
+            stop = ep.range(2);
         else
-            start = dmin;
-            stop = dmax;
+            % try to center data
+            offset = (x_dist-new_dist)/2;
+            start = ep.range(1) - offset;
+            stop = ep.range(2) + offset;
+            
+            if start < dstart
+                start = dstart;
+                stop = dstart+x_dist;
+            elseif stop > dstop
+                stop = dstop;
+                start = stop-x_dist;
+            end;
         end;
+        set(handles.axData, 'xlim', [start,stop]);
+    elseif x_dist >= data_dist
+        start = dstart;
+        stop = dstop;
+        set(handles.axData, 'xlim', [start,stop]);
     end;
-    set(handles.axData, 'ylim', [start,stop]);
+    
+    x_dist = stop - start;
+    
+    % try to set ylim
+    plots = ~cellfun(@isempty, handles.plots);
+    minmax = cellfun(@(x) [max(x.y_data(x.x_data >= ep.range(1)& x.x_data <= ep.range(2))), ...
+        max(x.y_data), min(x.y_data(x.x_data >= ep.range(1)& x.x_data <= ep.range(2))), min(x.y_data)], ...
+        handles.plots(plots), 'UniformOutput', false);
+    minmax = cell2mat(minmax);
+    to = max(minmax(:,1));
+    from = min(minmax(:,3));
+    dmax = max(minmax(:,2));
+    dmin = min(minmax(:,4));
+    
+    cur_ylim = get(handles.axData, 'ylim');
+    y_dist = cur_ylim(2) - cur_ylim(1);
+    new_dist = to - from;
+    
+    if new_dist ~= y_dist
+        if new_dist > y_dist
+            start = from;
+            stop = to;
+        elseif new_dist < y_dist
+            if data_dist > x_dist
+                offset = (y_dist-new_dist)/2;
+                start = from - offset;
+                stop = to + offset;
+                if (stop > dmax || start < dmin) && ...
+                        (round(dmax-dmin)==round(stop-start))
+                    stop = dmax;
+                    start = dmin;
+                end;
+            else
+                start = dmin;
+                stop = dmax;
+            end;
+        end;
+        set(handles.axData, 'ylim', [start,stop]);
+    end;
+    
+    handles.highlighted_epoch = epId;
+    guidata(gca, handles);
 end;
-
-handles.highlighted_epoch = epId;
-guidata(gca, handles);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -1175,9 +1177,9 @@ else
     set(hObject, 'String', handles.output_file);
 end;
 
-% --- Executes when selected object is changed in bgMode.
-function bgMode_SelectionChangedFcn(hObject, eventdata, handles)
-% hObject    handle to the selected object in bgMode 
+% --- Executes when selected object is changed in bgOutputFormat.
+function bgOutputFormat_SelectionChangedFcn(hObject, eventdata, handles)
+% hObject    handle to the selected object in bgOutputFormat 
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 

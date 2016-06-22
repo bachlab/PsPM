@@ -184,11 +184,8 @@ for d=1:numel(D)
     % user output ---
     if ischar(fn)
         fprintf('Interpolating %s ... \n', fn);
-    else
-        fprintf('Interpolating ... \n');
-        if isnumeric(fn)
+    elseif isnumeric(fn)
             inline_flag = 1;
-        end;
     end;
     
     % not inline data must be loaded first; check and get datafile ---
@@ -233,6 +230,7 @@ for d=1:numel(D)
         chans = {fn};
     end
         
+    interp_frac = ones(numel(chans), 1);
     for k = 1:numel(chans)
         if inline_flag
             dat = chans{k};
@@ -250,12 +248,13 @@ for d=1:numel(D)
         
         % add some other checks here if you want to filter out other data
         % features (e. g. out-of-range values)
-       
         filt = isnan(v);
         xq = find(filt);
         
-        % throw away data matching 'filt'
+        % remember how many data is being interpolated
+        interp_frac(k) = numel(xq)/numel(v);
         
+        % throw away data matching 'filt'
         x(xq) = [];
         v(xq) = [];
         
@@ -306,6 +305,16 @@ for d=1:numel(D)
         savedata.data = data;
         savedata.data(work_chans) = chans(:);
         savedata.infos = infos;
+        
+        if isfield(savedata.infos, 'history')
+            nhist = numel(savedata.infos.history);
+        else
+            nhist = 0;
+        end;
+        
+        savedata.infos.history{nhist + 1} = ['Performed interpolation: ', ...
+            sprintf('Channel %i: %.3f interpolated\n', [work_chans; interp_frac']), ...
+            ' on ', datestr(datetime('now', 'Format', 'd-MMM-y HH:mm:ss'))];
         
         if isstruct(fn)
             % check datastructure

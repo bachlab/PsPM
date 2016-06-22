@@ -28,7 +28,7 @@ function [sts, infos] = scr_write_channel(fn, newdata, action, options)
 %            .delete    ['last';'first;'all'] 
 %                       method to look for a channel when
 %                       options.channel is not an integer
-
+%
 %                       * 'last' (default) deletes last occurence of the
 %                          given chantype
 %                       * 'first' deletes the first occurence
