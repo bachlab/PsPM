@@ -185,7 +185,7 @@ for d=1:numel(D)
             chans = data(work_chans);
         else
             % no channels passed; try to search appropriate channels
-            work_chans = cellfun(@(f) ~strcmpi(f.header.units, 'events'), data);
+            work_chans = find(cellfun(@(f) ~strcmpi(f.header.units, 'events'), data))';
             chans = data(work_chans);
         end;
         
@@ -320,7 +320,7 @@ for d=1:numel(D)
                     w_action = 'add';
                 else
                     w_action = 'replace';
-                    o.channel = find(work_chans);
+                    o.channel = work_chans;
                 end;
                     
                 o.msg.prefix = 'Interpolated channel';
