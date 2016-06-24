@@ -59,7 +59,7 @@ elseif nargin > 1
 end;
 
 if td > n
-    warning('ID:invalid_input', 'Time resolution is larger than duration of the function.'); return;
+    warning('ID:invalid_input', 'Time resolution is larger than or equal to the duration of the function.'); return;
 elseif td == 0
     warning('ID:invalid_input', 'Time resolution must be larger than 0.'); return;
 elseif offset < 0 
@@ -85,15 +85,16 @@ end;
 % -------------------------------------------------------------------------
 bf_dur = n;
 
-n_bf = bf_dur/td;
+n_bf = round((bf_dur)/td);
 bs = zeros(1, n_bf);
-x2 = linspace(0,(bf_dur-offset)-td,(bf_dur-offset)/td);
-x1 = linspace(0,offset-td,offset/td);
-x = [x1, (x2+offset)];
+x2 = linspace(offset+td,bf_dur,round((bf_dur-offset)/td));
+x1 = linspace(0,offset,offset/td);
+x = [x1, x2];
+
 
 % apply gaussian: estimates for smoothed gaussian
 % -------------------------------------------------------------------------
 sg_gt = exp(-((x2).^2)./(2.*p(1).^2));
 sg_ht = exp(-x2*p(2)) + exp (-x2*p(3));
 sg_ft = conv(sg_gt, sg_ht);
-bs(round((offset+td)/td):end) = p(4) * sg_ft(1:numel(x2));
+bs(round(offset/td + 1):end) = p(4) * sg_ft(1:numel(x2));

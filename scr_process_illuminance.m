@@ -62,10 +62,7 @@ if ~isfield(options.bf, 'duration')
     options.bf.duration = 20;
 end;
 if ~isfield(options.bf, 'offset')
-    options.bf.offset = 20;
-end;
-if ~isfield(options.bf, 'dilation') 
-    options.bf.duration = 20;
+    options.bf.offset = .2;
 end;
 try options.bf.dilation; catch; options.bf.dilation = struct(); end;
 try options.bf.constriction; catch; options.bf.constriction = struct(); end;
@@ -125,6 +122,15 @@ if ~(iscell(ldata) && iscell(sr))
     else
         warning('ID:invalid_input', 'If either ldata or sr is a cell the other has to be a cell too.'); return;
     end;
+else
+    % both are cells check if content has correct format
+    if any(cellfun(@(x) ~ischar(x) && ~isnumeric(x), ldata))
+        warning('ID:invalid_input', 'Contents of ldata have to be either numeric or char.');
+        return;
+    elseif any(~cellfun(@(x) isnumeric(x), sr))
+        warning('ID:invalid_input', 'Contents of sample rate have to be numeric.');
+        return;
+    end;
 end;
 
 if ~isequal(size(ldata), size(sr))
@@ -167,8 +173,8 @@ for i = 1:w
         end;
         
         s = size(lumd);
-        if (s(1) ~= 1 && s(2) ~= 1) || ~isnumeric(lumd)
-            warning('ID:invalid_data', ['Illuminance data is not numeric ', ...
+        if (s(1) ~= 1 && s(2) ~= 1) || ~isnumeric(lumd) || isempty(lumd)
+            warning('ID:invalid_input', ['Illuminance data is empty, not numeric ', ...
                 'or not 1xn ldata{%i,%i}'], i,j); 
             return;
         elseif s(1) < s(2)
@@ -178,6 +184,10 @@ for i = 1:w
         
         lsr = sr{i,j};
         n_bf = options.bf.duration*lsr;
+        
+        if n_bf < 1 
+            warning('ID:invalid_input', 'Unrealistic combination of bf duration and sample rate.'); return;
+        end;
         
         lumd = [repmat(lumd(1),n_bf,1);lumd];
                 

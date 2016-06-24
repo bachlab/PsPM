@@ -26,6 +26,23 @@ function [data] = import_eyelink(filename)
 fileID = fopen(filename);
 datastr = textscan(fileID, '%s %s %s %s %s %s %s %s %s %s %s %s %s %s', 'delimiter', '\t'); 
 
+%% correct column lengths (sometimes the end not properly ended)
+% get lengths
+len_s = cellfun(@(x) length(x), datastr);
+min_len = min(len_s);
+if any(len_s ~= min_len)
+    warning(['Data file has different number of columns. ', ...
+        'Maybe recording hasn''t been properly ended. ',...
+        'The file will be trimmed to the shortest column.']);
+end;
+for i=1:length(datastr)
+    delta = length(datastr{i}) - min_len;
+    if delta ~= 0
+        warning('Cutting away %i row(s) in column %i.\n', [delta, i]);
+    end;
+    datastr{i} = datastr{i}(1:min_len);
+end;
+
 %% convert to normal cell (not cell of cell)
 datastr = [datastr{:}];
 
@@ -45,6 +62,10 @@ record_time = dateFields{6};
 
 %% try to find out number of recordings / sessions and split
 offsets = find(strcmpi(datastr(:,1), 'END'));
+if isempty(offsets)
+    warning('Cannot find END of file. Assuming last line of file.');
+    offsets = length(datastr(:, 1));
+end;
 onsets = [1; offsets + 1];
 
 data = cell(numel(offsets),1);

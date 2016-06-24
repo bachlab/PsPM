@@ -59,7 +59,7 @@ elseif nargin > 1
 end;
 
 if td > n
-    warning('ID:invalid_input', 'Time resolution is larger than duration of the function.'); return;
+    warning('ID:invalid_input', 'Time resolution is larger than or equal to the duration of the function.'); return;
 elseif td == 0
     warning('ID:invalid_input', 'Time resolution must be larger than 0.'); return;
 elseif offset < 0 
@@ -85,14 +85,14 @@ end;
 % -------------------------------------------------------------------------
 bf_dur = n;
 
-n_bf = bf_dur/td;
+n_bf = round((bf_dur)/td);
 bs = zeros(1, n_bf);
-x2 = linspace(0,(bf_dur-offset)-td,(bf_dur-offset)/td);
-x1 = linspace(0,offset-td,offset/td);
-x = [x1, (x2+offset)];
+x2 = linspace(offset+td,bf_dur,round((bf_dur-offset)/td));
+x1 = linspace(0,offset,round(offset/td));
+x = [x1, x2];
 
 % apply gamma function
 % -------------------------------------------------------------------------
 gl = gammaln(a);
-bs(round((offset+td)/td):end) = A * exp(log(x2).*(a-1) - gl - (x2)./b - log(b)*a);
+bs(round(offset/td + 1):end) = A * exp(log(x2).*(a-1) - gl - (x2)./b - log(b)*a);
 
