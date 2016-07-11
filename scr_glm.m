@@ -183,56 +183,6 @@ elseif ~ismember(model.norm, [0, 1])
     warning('ID:invalid_input', 'Normalisation must be specified as 0 or 1.'); return;
 end;
 
-% check filter --
-if ~isfield(model, 'filter')
-    model.filter = settings.glm(modno).filter;
-elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
-    % tested because the field is used before the call of scr_prepdata (everything else is tested there)
-    warning('ID:invalid_input', 'Filter structure needs a numeric ''down'' field.'); return;
-end;
-
-% check & get basis functions --
-basepath = [];
-if ~isfield(model, 'bf')
-    model.bf = settings.glm(modno).cbf;
-else
-    if ~isfield(model.bf, 'fhandle')
-        warning('No basis function given.');
-    elseif ischar(model.bf.fhandle)
-        [basepath, basefn, baseext] = fileparts(model.bf.fhandle);
-        model.bf.fhandle = str2func(basefn);
-    elseif ~isa(model.bf.fhandle, 'function_handle')
-        warning('Basis function must be a string or function handle.');
-    end;
-    if ~isfield(model.bf, 'args')
-        model.bf.args = [];
-    elseif ~isnumeric(model.bf.args)
-        warning('Basis function arguments must be numeric.');
-    end;
-end;
-if ~isempty(basepath), addpath(basepath); end;
-try
-    td = 1/model.filter.down;
-    
-    % model.bf.X contains the function values
-    % bf_x contains the timestamps
-    [model.bf.X, bf_x] = feval(model.bf.fhandle, [td; model.bf.args(:)]);
-catch
-    warning('ID:invalid_fhandle', 'Specified basis function %s doesn''t exist or is faulty', func2str(model.bf.fhandle)); return;
-end;
-
-% set shiftbf
-if bf_x(1) < 0
-    model.bf.shiftbf = abs(bf_x(1));
-elseif bf_x(1) > 0
-    warning('ID:invalid_basis_function', 'The first basis function timestamp is larger than 0 (not allowed).'); return;
-else
-    model.bf.shiftbf = 0;
-end;
-
-% remove path & clear local variables --
-if ~isempty(basepath), rmpath(basepath); end;
-clear basepath basefn baseext
 % check options --
 if ~isfield(options, 'overwrite')
     options.overwrite = 0;
@@ -283,6 +233,66 @@ if nFile > 1 && any(diff(sr) > 0)
 else
     fprintf('\n');
 end;
+
+% check filter --
+if ~isfield(model, 'filter')
+    model.filter = settings.glm(modno).filter;
+end;
+
+% set default model.filter.down --
+if strcmpi(model.filter.down, 'none') || ...
+        isnumeric(model.filter.down) && isnan(model.filter.down)
+    model.filter.down = min(sr);
+end;
+
+% check value of model.filter.down --
+if ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
+    % tested because the field is used before the call of scr_prepdata (everything else is tested there)
+    warning('ID:invalid_input', 'Filter struct needs field ''down'' to be numeric or ''none''.'); return;
+end;
+
+% check & get basis functions --
+basepath = [];
+if ~isfield(model, 'bf')
+    model.bf = settings.glm(modno).cbf;
+else
+    if ~isfield(model.bf, 'fhandle')
+        warning('No basis function given.');
+    elseif ischar(model.bf.fhandle)
+        [basepath, basefn, baseext] = fileparts(model.bf.fhandle);
+        model.bf.fhandle = str2func(basefn);
+    elseif ~isa(model.bf.fhandle, 'function_handle')
+        warning('Basis function must be a string or function handle.');
+    end;
+    if ~isfield(model.bf, 'args')
+        model.bf.args = [];
+    elseif ~isnumeric(model.bf.args)
+        warning('Basis function arguments must be numeric.');
+    end;
+end;
+if ~isempty(basepath), addpath(basepath); end;
+try
+    td = 1/model.filter.down;
+    
+    % model.bf.X contains the function values
+    % bf_x contains the timestamps
+    [model.bf.X, bf_x] = feval(model.bf.fhandle, [td; model.bf.args(:)]);
+catch
+    warning('ID:invalid_fhandle', 'Specified basis function %s doesn''t exist or is faulty', func2str(model.bf.fhandle)); return;
+end;
+
+% set shiftbf
+if bf_x(1) < 0
+    model.bf.shiftbf = abs(bf_x(1));
+elseif bf_x(1) > 0
+    warning('ID:invalid_basis_function', 'The first basis function timestamp is larger than 0 (not allowed).'); return;
+else
+    model.bf.shiftbf = 0;
+end;
+
+% remove path & clear local variables --
+if ~isempty(basepath), rmpath(basepath); end;
+clear basepath basefn baseext
 
 % check regressor files --
 [sts, multi] = scr_get_timing('onsets', model.timing, model.timeunits);
