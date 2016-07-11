@@ -82,7 +82,6 @@ newdata.header.chantype = 'hp';
 
 if options.replace
     action = 'replace';
-    o.channel = chan;
 else
     action = 'add';
 end;
