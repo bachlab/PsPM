@@ -34,7 +34,7 @@ function varargout = scr_ecg_editor(varargin)
 % $Id$   
 % $Rev$
 
-% Last Modified by GUIDE v2.5 13-Jun-2016 16:56:07
+% Last Modified by GUIDE v2.5 12-Jul-2016 10:07:40
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -117,6 +117,7 @@ handles.plot.ecg = [];
 handles.plot.r = [];
 handles.plot.sr = 1;
 handles.plot.dynamic_R = [];
+handles.plot.faulties = [];
 % -------------------------------------------------------------------------
 % set color values
 handles.clr{1}=[.0627 .3059 .5451; 0.0863 0.4510 0.8157]; % blue for ecg plot
@@ -131,6 +132,8 @@ set(handles.pbArtifactsDisable, 'Enable', 'off');
 set(handles.rbShowArtifacts, 'Enable', 'off');
 set(handles.rbDisableArtifactDetection, 'Enable', 'off');
 set(handles.rbHideArtifactEvents, 'Enable', 'off');
+set(handles.rbIncludeArtifactQRS, 'Enable', 'off');
+set(handles.rbExcludeArtifactQRS, 'Enable', 'off');
 % -------------------------------------------------------------------------
 guidata(hObject,handles);
 
@@ -289,14 +292,19 @@ handles=guidata(hObject);
 handles.edit_mode = '';
 % -------------------------------------------------------------------------
 r=handles.plot.r;
+% get original R from reload_hb_chan
+orig_R = handles.plot.R;
+
 sr=handles.plot.sr;
-r(1,r(2,:)==1)=1;   % back to starting position
+
+% restore all events
+r(1,orig_R) = 1;
 % add mutatios
 r(1,r(3,:)==1)=NaN; % deleted QRS markers
 r(1,r(4,:)==1)=1;   % added QRS markers
 
 % remove artifact markers
-if any(handles.plot.artifact_layer)
+if get(handles.rbExcludeArtifactQRS, 'Value') == 1 && any(handles.plot.artifact_layer)
     r(1, handles.plot.artifact_layer) = NaN;
 end;
 
@@ -471,7 +479,6 @@ R = handles.plot.R;
 sr = handles.plot.sr;
 r = handles.plot.r;
 
-% build artifact layer accordingly
 % create artifact layer
 % ------------------------------------------------------------------------
 a_lay = false(1, length(r));
@@ -505,18 +512,25 @@ flag(ibi<(mean(ibi_f)-(factr*std(ibi_f))))=1;   % too long
 flag(ibi/sr < 60/up_lim)=1;                    % get all ibis > 120 bpm
 flag(ibi/sr > 60/lw_lim)=1;                     % get all ibis < 40 bpm
 
-maxk=length(find(flag==1));
 % transfer settings
 r(2,R(flag==1))=1;
 r(1,R(flag==1))=0;
+
+% set default maxk
+maxk=length(find(flag==1));
 
 % reset according to artifact epochs
 if ~isempty(handles.artifact_epochs) && numel(R) > 0
     chans = [];
     if get(handles.rbDisableArtifactDetection, 'Value')
-        chans = [2];
+        chans = 2;
     elseif get(handles.rbHideArtifactEvents, 'Value')
         chans = [1,2];
+    end;
+    
+    % update maxk if necessary
+    if ~isempty(chans)
+        maxk = length(find(flag==1 & ibi_filter));
     end;
         
     if ~isempty(chans) && any(a_lay)
@@ -537,24 +551,25 @@ r(r==0)=NaN;
 
 handles.plot.ibi = ibi;
 handles.plot.r = r;
-handles.plot.R = R;
 handles.plot.artifact_layer = a_lay;
 
 if exist('handles.maxk', 'var') == 0 && exist('maxk', 'var')
     handles.maxk = maxk;
 end;
 
+% update dynamic R / make it global because its quite an expensive
+% operation
+handles.plot.dynamic_R = find(nansum(handles.plot.r));
+handles.plot.faulties = find(handles.plot.r(2,:) == 1);
+
 guidata(hObject, handles);
 
 % --- plot data
 function pp_plot(hObject,handles)
-% update dynamic R / make it global because its quite an expensive
-% operation
-handles.plot.dynamic_R = find(nansum(handles.plot.r));
 % where are potential mislabeled qrs complexes?
 if any(not(isnan(handles.plot.r(2,:)))) && ~handles.manualmode
-    faulties = find(handles.plot.r(2,:) == 1);
-    sample_id = faulties(handles.k);
+    fl = handles.plot.faulties;
+    sample_id = fl(handles.k);
     count=sample_id/handles.plot.sr;
 else
     count=handles.count;
@@ -890,9 +905,41 @@ guidata(hObject, handles);
 function reload_plot(hObject, handles)
 
 if ~isempty(handles.data)  
+    
+    % get selected timestamp
+    if ~handles.manualmode 
+        fl = handles.plot.faulties;
+        if ~isempty(fl)
+            count = fl(handles.k)/handles.plot.sr;
+        else
+            count = 1/handles.plot.sr;
+        end;
+    else
+        count = handles.count;
+    end;
+    
+    sel_sample = count*handles.plot.sr;
+    
     % set values
     discriminate_hb_events(hObject,handles);
     handles=guidata(hObject);
+    
+    % restore selected element
+    if ~handles.manualmode
+        fl = handles.plot.faulties;
+        [~, idx] = min(abs(fl-sel_sample));
+        handles.k = idx;
+    else
+        R = handles.plot.dynamic_R;
+        [~, idx] = min(abs(R-sel_sample));
+        handles.count = R(idx)/handles.plot.sr;
+        if isempty(handles.count)
+            handles.count = 0;
+        end;
+    end;
+    
+    % update event list
+    update_event_list(hObject, handles);
     
     % plot
     handles.jo = 0;
@@ -901,7 +948,6 @@ if ~isempty(handles.data)
     
     % check nex_prev button
     check_navigation_buttons(hObject, handles);
-    update_event_list(hObject, handles);
 end;
 
 % --- Check navigation buttons
@@ -914,19 +960,21 @@ else
     if ~handles.manualmode
         next = handles.k + 1;
         maximum = handles.maxk;
+        minimum = 1;
         prev = handles.k - 1;
     else
         next = handles.count + (handles.winsize/2)*handles.zoom_factor;
         maximum = length(handles.plot.r)/handles.plot.sr;
+        minimum = 0;
         prev = handles.count - (handles.winsize/2)*handles.zoom_factor;
     end;
-    if  next >= maximum
+    if  next > maximum
         set(handles.push_next,'enable','off');
     else
         set(handles.push_next, 'enable', 'on');
     end;
     
-    if prev <= 0
+    if prev < minimum
         set(handles.push_last, 'enable', 'off');
     else
         set(handles.push_last, 'enable', 'on');
@@ -935,12 +983,13 @@ end;
 
 % --- Update event list
 function update_event_list(hObject, handles)
-
-work_r = handles.plot.r;
 if handles.manualmode
-    new_el = find(nansum(work_r,1) >= 1);
+    new_el = handles.plot.dynamic_R;
+    [~, idx] = min(abs(new_el - handles.count*handles.plot.sr));
+    sel_el = idx;
 else
-    new_el = find(work_r(2,:)==1);
+    new_el = handles.plot.faulties;
+    sel_el = handles.k;
 end;
 
 new_list = cell(length(new_el),1);
@@ -949,8 +998,9 @@ for i=1:length(new_el)
     new_list{i} = create_event_list_entry(hObject, handles, new_el(i));    
 end;
 
-set(handles.lstEvents, 'String', new_list);
 set(handles.lstEvents, 'Value', 1);
+set(handles.lstEvents, 'String', new_list);
+set(handles.lstEvents, 'Value', sel_el);
 
 function [entry] = create_event_list_entry(hObject, handles, sample_id)
 el = handles.plot.r(:,sample_id);
@@ -1056,6 +1106,8 @@ if sts ~= -1
     set(handles.rbShowArtifacts, 'Enable', 'on');
     set(handles.rbHideArtifactEvents, 'Enable', 'on');
     set(handles.rbDisableArtifactDetection, 'Enable', 'on');
+    set(handles.rbIncludeArtifactQRS, 'Enable', 'on');
+    set(handles.rbExcludeArtifactQRS, 'Enable', 'on');
     
     if ischar(artifacts)
         handles.artifact_mode = 'file';
@@ -1077,6 +1129,8 @@ if sts ~= -1
         set(handles.edtArtifactFile, 'String', '');
         set(handles.pbArtifactsDisable, 'Enable', 'off');
         set(handles.edtArtifactFile, 'Enable', 'off');
+        set(handles.rbIncludeArtifactQRS, 'Enable', 'off');
+        set(handles.rbExcludeArtifactQRS, 'Enable', 'off');
         
         % hide
         set(handles.edtArtifactFile, 'Visible', 'off');
@@ -1252,6 +1306,8 @@ set(handles.pbArtifactsDisable, 'Enable', 'off');
 set(handles.rbShowArtifacts, 'Enable', 'off');
 set(handles.rbDisableArtifactDetection, 'Enable', 'off');
 set(handles.rbHideArtifactEvents, 'Enable', 'off');
+set(handles.rbIncludeArtifactQRS, 'Enable', 'off');
+set(handles.rbExcludeArtifactQRS, 'Enable', 'off');
 % refresh faulty
 refresh_faulty(hObject, handles);
 
