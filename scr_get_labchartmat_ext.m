@@ -80,12 +80,20 @@ for k = 1:numel(import)
         
         sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', chan, labchart.titles_block1(chan, :)); 
         
-        % get time range ---
-        samples = ~isnan(labchart.ticktimes_block1(chan, :));
+        % use ticktimes from channel 1 if ticktimes contains only one row
+        if size(labchart.ticktimes_block1,1) > 1
+            % get time range ---
+            samples = ~isnan(labchart.ticktimes_block1(chan, :));
+            % get sample rate ---
+            import{k}.sr = 1/sr(chan);
+        else
+            % get time range ---
+            samples = ~isnan(labchart.ticktimes_block1(1, :));
+            % get sample rate ---
+            import{k}.sr = 1/sr;
+        end;
         % get data
         import{k}.data = labchart.data_block1(chan, samples);
-        % get sample rate ---
-        import{k}.sr = 1/sr(chan);
         % get units ---
         import{k}.units = labchart.units_block1(chan, :);
     end;
