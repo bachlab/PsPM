@@ -39,13 +39,9 @@ function [fx, dfdx, dfdP] = f_SCR(Xt, Theta, ut, in)
 %                   row ... - ...: lower bound for SCL
 %                   row ... - ...: upper bound for SCL
 %
-% Dominik R Bach & Jean Daunizeau, 7.7.2009
-% constrained SCL changes 3.2.2010
-% last edited 1.5.2010 (fixed a bug in dfdx)
-% last edited 6.12.2011 (sigma_offset from settings)
 %__________________________________________________________________________
 % PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% (C) 2008-2015 Dominik R Bach & Jean Daunizeau (Wellcome Trust Centre for Neuroimaging)
 
 % $Id: f_SCR.m 701 2015-01-22 14:36:13Z tmoser $
 % $Rev: 701 $
@@ -94,6 +90,9 @@ if ut(2) > 0
         aTheta(k, 2) = s + sigma_offset;
         aTheta(k, 3) = exp(aTheta(k, 3));
     end;
+    if any(isinf(aTheta(:, 3)))
+        aTheta(isinf(aTheta(:, 3)), 3) = 1e200; % an arbitrary value way below realmax
+    end;
     clear sig m s
 else
     aTheta = [];
@@ -108,6 +107,9 @@ if ut(3) > 0
     eTheta(:, 1) = ut(eSCR_o) + Theta(4);
     eTheta(:, 2) = sigma;
     eTheta(:, 3) = exp(Theta((Theta_n + 3 * ut(2)) + (1:ut(3))));
+    if any(isinf(eTheta(:, 3)))
+        eTheta(isinf(eTheta(:, 3)), 3) = 1e200;
+    end;
 else
     eTheta = [];
     eSCR_o = aSCR_s(end);
@@ -211,6 +213,11 @@ if ~isempty(SCLtheta)
 end;
 
 dfdP = dt .* Jp';
+
+if any(isweird(fx(:))), error('Weird values in f_SCR'); end;
+if any(isweird(dfdx(:))), error('Weird values in f_SCR'); end;
+if any(isweird(dfdP(:))), error('Weird values in f_SCR'); end;
+
 
 return;
 

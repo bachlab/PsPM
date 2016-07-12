@@ -135,7 +135,7 @@ outinfos = struct();
 
 
 % Load Data
-[sts, ~, indata] = scr_load_data(file);
+[sts, foo, indata] = scr_load_data(file);
 if sts == -1
     warning('ID:invalid_input', 'Failed loading file %s.', file); return;
 end;

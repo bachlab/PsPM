@@ -635,7 +635,7 @@ if ~options.getrf
             rmscltrl = zeros(size(trls));
             c = 1;
             for k = 1:numel(trls)
-                if iti(trls(k)) >= (options.sclpre + options.sclpost)
+                if iti(trls(k)) > (options.sclpre + options.sclpost)
                     if trls(k) < trlno
                         scllb(c) = trlstop(trls(k)) + options.sclpost - win(1)/sr;
                         sclub(c) = trlstart(trls(k) + 1) - options.sclpre  - win(1)/sr;

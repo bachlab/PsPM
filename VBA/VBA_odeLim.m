@@ -74,7 +74,6 @@ if options.updateX0
     dgdp(dim.n_phi+dim.n_theta+1:end,:) = dxdx0*dG_dX;
 end
 
-
 % for hidden states book keeping
 out.xt = xt;
 out.dx = [zeros(dim.n_phi,dim.n);dxdTheta;dxdx0];
