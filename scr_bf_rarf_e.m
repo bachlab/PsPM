@@ -7,8 +7,8 @@ function [bs, x] = scr_bf_rarf_e(varargin)
 %
 % ARGUMENTS:
 %           td:         The time the response function should have.  
-%           bf_type:    0: (default) returns the response function only
-%                       1: returns the response function and the time
+%           bf_type:    0: returns the response function only
+%                       1: (default) returns the response function and the time
 %                          derivative
 %
 % REFERENCE
