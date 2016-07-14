@@ -33,19 +33,17 @@ for i=1:2
     rarf_e{i}        = cfg_const;
     rarf_e{i}.name   = ['RARF_E ' num2str(i-1)];
     rarf_e{i}.tag    = ['rarf_e' num2str(i-1)];
-    rarf_e{i}.val    = {i};
+    rarf_e{i}.val    = {i-1};
 end
-rarf_e{1}.help   = {'RARF_E early and late response (default).'};
-rarf_e{2}.help   = {'RARF_E early response with derivative.'};
-
+rarf_e{1}.help   = {'RARF_E without time derivative.'};
+rarf_e{2}.help   = {'RARF_E with time derivative (default).'};
 
 bf        = cfg_choice;
 bf.name   = 'Basis Function';
 bf.tag    = 'bf';
-bf.val    = {rarf_e{1}};
+bf.val    = {rarf_e{2}};
 bf.values = {rarf_e{:}};
-bf.help   = {['Basis functions. Standard is to use a canonical respiration amplitude response function ' ...
-    ' for fear conditioning (RARF_E) with early and late response for later reconstruction.']};
+bf.help   = {['Basis functions.']};
 
 % look for bf and replace
 b = cellfun(@(f) strcmpi(f.tag, 'bf'), glm_ra_e.val);

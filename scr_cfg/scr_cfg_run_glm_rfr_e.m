@@ -17,6 +17,7 @@ options = params.options;
 % basis function
 bf = fieldnames(job.bf);
 bf = bf{1};
+
 model.bf.args = subsref(job.bf, struct('type', '.', 'subs', bf));
 model.bf.fhandle = str2func('scr_bf_rfrrf_e');
 
