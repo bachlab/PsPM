@@ -25,9 +25,11 @@ end;
 
 td = varargin{1}(1);
 % other variables
+mu = 6;
+sigma = 3.23;
 
 % duration
-duration = 30;
+duration = 20;
 
 if td > duration
     warning('ID:invalid_input', 'Time resolution is larger than duration of the function.'); return;
@@ -37,8 +39,7 @@ end;
 
 
 x = (0:td:duration-td)';
-
-% ... do bf stuff
+bs = exp(-(x-mu)^2./(2*sigma^2));
 
 % orthogonalise
 bs = spm_orth(bs);

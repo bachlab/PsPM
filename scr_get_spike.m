@@ -32,8 +32,13 @@ chandata = cell(numel(chanlist), 1);
 errorflag = [];
 % read channels
 for chan = 1:numel(chanlist)
-    try [chandata{chan}, chanhead{chan}]=SONGetChannel(fid, chanlist(chan).number, 'milliseconds');
-    catch errorflag(chan)=1; chandata{chan}=[]; chanhead{chan}.title=''; end;
+    try 
+        [chandata{chan}, chanhead{chan}]=SONGetChannel(fid, chanlist(chan).number, 'milliseconds');
+    catch
+        errorflag(chan)=1; 
+        chandata{chan}=[]; 
+        chanhead{chan}.title=''; 
+    end;
 end;
 fclose(fid);
 

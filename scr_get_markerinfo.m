@@ -40,7 +40,7 @@ end;
 % extract markers: find unique type/value combinations ...
 markertype = data{1}.markerinfo.name;
 markervalue = data{1}.markerinfo.value;
-markerall = strcat(markertype', strsplit(num2str(markervalue')));
+markerall = strcat(markertype', regexp(num2str(markervalue'), '\s+', 'split'));
 markerunique = unique(markerall);
 
 % ... and write them into a struct

@@ -56,8 +56,8 @@ datastr(fheader_pos, :) = [];
 
 % try to get the record date
 datePos = strncmpi(fheader, '** DATE', 6);
-dateFields = strsplit(fheader{datePos});
-record_date = strjoin(dateFields(([3:5,length(dateFields)])));
+dateFields = regexp(fheader{datePos}, '\s+', 'split');
+record_date = strtrim(sprintf('%s ', dateFields{[3:5,length(dateFields)]}));
 record_time = dateFields{6};
 
 %% try to find out number of recordings / sessions and split
@@ -95,7 +95,7 @@ for sn = 1:numel(offsets)
     headerMsgPos = find(strncmpi(sn_data(1:dataStartPos), 'MSG', 3));
     
     for i=1:length(headerMsgPos),
-        headerFields = strsplit(sn_data{headerMsgPos(i),2});
+        headerFields = regexp(sn_data{headerMsgPos(i),2}, '\s+', 'split');
         % the second field contains the field name
         % the first field contains a timestamp
         fieldName = headerFields{2};

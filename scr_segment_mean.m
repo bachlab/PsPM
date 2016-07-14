@@ -152,8 +152,8 @@ for c = 1:n_cond
         conditions{c}.data(:,s) = subj_seg{s}{c}.mean(1:min_size);
     end;
     m = conditions{c}.data;
-    conditions{c}.mean = mean(m,2,'omitnan');
-    conditions{c}.std = std(m,0,2,'omitnan');
+    conditions{c}.mean = nanmean(m,2);
+    conditions{c}.std = nanstd(m,0,2);
     conditions{c}.sem = conditions{c}.std/sqrt(n_subjects);
     conditions{c}.name = subj_seg{s}{c}.name;
     conditions{c}.t = subj_seg{min_el}{c}.t;

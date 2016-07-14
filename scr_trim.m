@@ -171,9 +171,19 @@ for d=1:numel(D)
             % trim data
             data{k}.data=data{k}.data(newstartpoint:newendpoint);
         else                                        % event channels
-            data{k}.data(data{k}.data > endpoint) = [];
+            remove_late = data{k}.data > endpoint;
+            data{k}.data(remove_late) = [];
             data{k}.data = data{k}.data - startpoint;
-            data{k}.data(data{k}.data < 0) = [];
+            remove_early = data{k}.data < 0;
+            data{k}.data(remove_early) = [];
+            if isfield(data{k}, 'markerinfo')
+                % also trim marker info if available
+                data{k}.markerinfo.value(remove_late) = [];
+                data{k}.markerinfo.name(remove_late) = [];
+                
+                data{k}.markerinfo.value(remove_early) = [];
+                data{k}.markerinfo.name(remove_early) = [];
+            end;
         end;
         % save new file
         infos.duration = endpoint - startpoint;

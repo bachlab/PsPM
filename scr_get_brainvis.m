@@ -74,7 +74,7 @@ for k = 1:numel(import)
         % convert into double
         num_val = str2double(regexprep(val, '[^0-9]*([0-9,.]*)', '$1'));
         import{k}.markerinfo.value = num_val;
-        import{k}.markerinfo.name  = {mrk.type};
+        import{k}.markerinfo.name  = {mrk.type}';
     end;
        
 end;

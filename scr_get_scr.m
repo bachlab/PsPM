@@ -38,11 +38,20 @@ else
 end
 
 if isstruct(transferparams)
-    try c=transferparams.c;
-    catch warning('ID:no_conversion_constant', '/nNo conversion constant given'); return;
+    try 
+        c=transferparams.c; 
+    catch
+        warning('ID:no_conversion_constant', '/nNo conversion constant given'); return;
     end;
-    try Rs=transferparams.Rs; catch Rs=0; end;
-    try offset=transferparams.offset; catch offset=0; end;
+    try 
+        Rs=transferparams.Rs; 
+    catch 
+        Rs=0; end;
+    try 
+        offset=transferparams.offset; 
+    catch
+        offset=0; 
+    end;
     dataunits = 'uS';
 elseif ischar(transferparams)
     if strcmp(transferparams, 'none')

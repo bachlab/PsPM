@@ -135,6 +135,8 @@ set(handles.rbHideArtifactEvents, 'Enable', 'off');
 set(handles.rbIncludeArtifactQRS, 'Enable', 'off');
 set(handles.rbExcludeArtifactQRS, 'Enable', 'off');
 % -------------------------------------------------------------------------
+set(handles.lstEvents, 'Value', 1);
+% -------------------------------------------------------------------------
 guidata(hObject,handles);
 
 % load settings
@@ -1367,9 +1369,12 @@ switch handles.edit_mode
         if handles.manualmode
             lst_R = custom_R;
         else
-            lst_R = find(handles.plot.r(2, :) == 1);
+            lst_R = handles.plot.faulties;
         end;
         ev_pos = min(find(lst_R >= x));
+        if isempty(ev_pos)
+            ev_pos = length(lst_R) + 1;
+        end;
         
         new_events = cell(length(cur_events)+1, 1);
         if length(cur_events) >= 1
@@ -1381,7 +1386,8 @@ switch handles.edit_mode
         if length(cur_events) >= ev_pos
             new_events((ev_pos+1):end) = cur_events(ev_pos:end);
         end;
-        set(handles.lstEvents, 'String', char(new_events));
+        set(handles.lstEvents, 'String', new_events);
+        set(handles.lstEvents, 'Value', ev_pos);
         
     case 'remove_qrs'        % click input       
         % disable selection mode
@@ -1432,7 +1438,7 @@ end;
 
 if ~no_change
     % update dynamic R
-    
+    handles.plot.dynamic_R = find(nansum(handles.plot.r));
     handles.jo=0;   % changes were done, so set flag to 0
     % Update handles structure
     guidata(hObject,handles);

@@ -40,7 +40,7 @@ if isfield(job, 'eyes')
     options.eyes = job.eyes;
 end;
 
-options.channels = strsplit(job.channels);
+options.channels = regexp(job.channels, '\s+', 'split');
 % convert numbers
 num_vals = str2double(options.channels);
 nums = ~isnan(num_vals);

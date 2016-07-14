@@ -47,8 +47,8 @@ if nargin > 0
                     new_v = tk{1}{1};
                     
                     % compare versions
-                    v_l = strsplit(v, '.');
-                    new_v_l = strsplit(new_v, '.');
+                    v_l = regexp(v, '\.', 'split');
+                    new_v_l = regexp(new_v, '\.', 'split');
                     
                     steps = min(numel(v_l), numel(new_v_l));
                     i = 1;
