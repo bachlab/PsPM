@@ -16,7 +16,7 @@ function varargout = scr_ecg_editor(varargin)
 %           semi:       Defines whether to navigate between potentially
 %                       wrong hb events only (semi = 1), or between all
 %                       hb events (semi = 0 => manual mode)
-%           artifact:   Epoch file with epochs of artifacts (to be ignored)
+%           artefact:   Epoch file with epochs of artefacts (to be ignored)
 %           factor:     To what factor should potentially wrong hb events
 %                       deviate from the standard deviation. (Default: 1)
 %       
@@ -34,7 +34,7 @@ function varargout = scr_ecg_editor(varargin)
 % $Id$   
 % $Rev$
 
-% Last Modified by GUIDE v2.5 12-Jul-2016 10:07:40
+% Last Modified by GUIDE v2.5 15-Jul-2016 08:57:55
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -71,7 +71,7 @@ handles.output = hObject;
 % set default status for GUI
 handles.edit_mode = '';
 handles.gui_mode = ''; % file or inline
-handles.artifact_mode = ''; % file or inline
+handles.artefact_mode = ''; % file or inline
 handles.hb_chan = -1;
 handles.data_chan = -1;
 handles.write_chan = -1;
@@ -88,10 +88,10 @@ handles.plot.p = -1;
 handles.sts=[];       % outputvariable
 handles.R=[];
 handles.jo=0;       % default value for jump only - 0; plot data!
-handles.artifact_fn = '';
-handles.artifact_epochs = [];
+handles.artefact_fn = '';
+handles.artefact_epochs = [];
 handles.update_selection = true;
-handles.plot.artifact_layer = [];
+handles.plot.artefact_layer = [];
 set(handles.togg_add,'Value',0);
 set(handles.togg_remove,'Value',0);
 % settings for manual mode
@@ -126,14 +126,14 @@ handles.clr{3}=[1 .6471 0; 1.0000 0.8588 0.6000]; % dark yellow for possibly wro
 handles.clr{4}=[.5412 .1686 .8863; 0.8039 0.6471 0.9529]; % violet for deleted ones
 handles.clr{5}=[0 .3922 0; 0 0.8 0]; % darkgreen for added ones
 % -------------------------------------------------------------------------
-set(handles.edtArtifactFile, 'Enable', 'off');
-set(handles.edtArtifactFile, 'String', '');
-set(handles.pbArtifactsDisable, 'Enable', 'off');
-set(handles.rbShowArtifacts, 'Enable', 'off');
-set(handles.rbDisableArtifactDetection, 'Enable', 'off');
-set(handles.rbHideArtifactEvents, 'Enable', 'off');
-set(handles.rbIncludeArtifactQRS, 'Enable', 'off');
-set(handles.rbExcludeArtifactQRS, 'Enable', 'off');
+set(handles.edtArtefactFile, 'Enable', 'off');
+set(handles.edtArtefactFile, 'String', '');
+set(handles.pbArtefactsDisable, 'Enable', 'off');
+set(handles.rbShowArtefacts, 'Enable', 'off');
+set(handles.rbDisableArtefactDetection, 'Enable', 'off');
+set(handles.rbHideArtefactEvents, 'Enable', 'off');
+set(handles.rbIncludeArtefactQRS, 'Enable', 'off');
+set(handles.rbExcludeArtefactQRS, 'Enable', 'off');
 % -------------------------------------------------------------------------
 set(handles.lstEvents, 'Value', 1);
 % -------------------------------------------------------------------------
@@ -182,17 +182,17 @@ else
     varargout{1} = -1;
 end
 % -------------------------------------------------------------------------
-    if varargout{1} == -1
-        varargout{2} = [];
-    elseif not(isempty(handles.R))
-        if strcmpi(handles.gui_mode, 'inline')
-            varargout{2} = handles.R;
-        else
-            varargout{2} = handles.write_chan;
-        end;
+if varargout{1} == -1
+    varargout{2} = [];
+elseif not(isempty(handles.R))
+    if strcmpi(handles.gui_mode, 'inline')
+        varargout{2} = handles.R;
     else
-        varargout{2} = [];
+        varargout{2} = handles.write_chan;
     end;
+else
+    varargout{2} = [];
+end;
 delete(hObject);
 % -------------------------------------------------------------------------
 
@@ -305,9 +305,9 @@ r(1,orig_R) = 1;
 r(1,r(3,:)==1)=NaN; % deleted QRS markers
 r(1,r(4,:)==1)=1;   % added QRS markers
 
-% remove artifact markers
-if get(handles.rbExcludeArtifactQRS, 'Value') == 1 && any(handles.plot.artifact_layer)
-    r(1, handles.plot.artifact_layer) = NaN;
+% remove artefact markers
+if get(handles.rbExcludeArtefactQRS, 'Value') == 1 && any(handles.plot.artefact_layer)
+    r(1, handles.plot.artefact_layer) = NaN;
 end;
 
 handles.R=[];
@@ -377,8 +377,8 @@ if numel(varargin) == 0 || ~isstruct(varargin{1})
     if isfield(handles.options, 'semi')
         handles.manualmode = ~handles.options.semi;
     end;
-    if isfield(handles.options, 'artifact')
-        load_data_artifacts(hObject, handles, handles.options.artifact);
+    if isfield(handles.options, 'artefact')
+        load_data_artefacts(hObject, handles, handles.options.artefact);
         % update handles
         handles = guidata(hObject);
     end;
@@ -394,6 +394,9 @@ if numel(varargin) == 0 || ~isstruct(varargin{1})
     
     if numel(varargin) >= 2
         handles.data_chan = varargin{2};
+    end;
+    
+    if numel(varargin) >= 1
         load_data_file(hObject, handles, varargin{1});
         % update handles
         handles = guidata(hObject);
@@ -481,11 +484,11 @@ R = handles.plot.R;
 sr = handles.plot.sr;
 r = handles.plot.r;
 
-% create artifact layer
+% create artefact layer
 % ------------------------------------------------------------------------
 a_lay = false(1, length(r));
-for i=1:length(handles.artifact_epochs)
-    a_coord = handles.artifact_epochs(i, 1:end);
+for i=1:length(handles.artefact_epochs)
+    a_coord = handles.artefact_epochs(i, 1:end);
     start = max(1, round(a_coord(1)*handles.plot.sr));
     stop = min(length(a_lay), round(a_coord(2)*handles.plot.sr));
     a_lay(start:stop) = 1;
@@ -501,8 +504,8 @@ flag=zeros(size(ibi));% flag variable to identify potential mislabeled
 flag(end+1) = 0;
 ibi_filter = ~a_lay(R);
 
-if get(handles.rbDisableArtifactDetection, 'Value') || ...
-        get(handles.rbHideArtifactEvents, 'Value')
+if get(handles.rbDisableArtefactDetection, 'Value') || ...
+        get(handles.rbHideArtefactEvents, 'Value')
     ibi_f = ibi(ibi_filter(1:end-1));
 else
     ibi_f = ibi;
@@ -521,12 +524,12 @@ r(1,R(flag==1))=0;
 % set default maxk
 maxk=length(find(flag==1));
 
-% reset according to artifact epochs
-if ~isempty(handles.artifact_epochs) && numel(R) > 0
+% reset according to artefact epochs
+if ~isempty(handles.artefact_epochs) && numel(R) > 0
     chans = [];
-    if get(handles.rbDisableArtifactDetection, 'Value')
+    if get(handles.rbDisableArtefactDetection, 'Value')
         chans = 2;
-    elseif get(handles.rbHideArtifactEvents, 'Value')
+    elseif get(handles.rbHideArtefactEvents, 'Value')
         chans = [1,2];
     end;
     
@@ -544,7 +547,7 @@ end;
 % are empty but flag is set; in order to display the blue marker we have to 
 % reset the flags in the first row.
 idx = r(2,R)==0 & flag==1;
-if get(handles.rbDisableArtifactDetection, 'Value') && any(idx)
+if get(handles.rbDisableArtefactDetection, 'Value') && any(idx)
     r(1,R(idx)) = 1;
 end;
 
@@ -553,7 +556,7 @@ r(r==0)=NaN;
 
 handles.plot.ibi = ibi;
 handles.plot.r = r;
-handles.plot.artifact_layer = a_lay;
+handles.plot.artefact_layer = a_lay;
 
 if exist('handles.maxk', 'var') == 0 && exist('maxk', 'var')
     handles.maxk = maxk;
@@ -836,72 +839,74 @@ end
 
 % --- Load Data file 
 function load_data_file(hObject, handles, fn)
-[ ~, ~, handles.data, ~] = scr_load_data(fn);
-ecg_chans = find(cellfun(@(x) strcmpi(x.header.chantype, 'ecg'), handles.data));
-% set possible ecg chans
-sel_ecg_chan = find(ecg_chans == handles.data_chan, 1, 'first');
-if isempty(sel_ecg_chan)
-    sel_ecg_chan = 1;
-end;
-handles.data_chan = ecg_chans(sel_ecg_chan);
-set(handles.ppEcgChan, 'String', ecg_chans);
-set(handles.ppEcgChan, 'Value', sel_ecg_chan);
-
-hb_chans = find(cellfun(@(x) strcmpi(x.header.chantype, 'hb'), handles.data));
-hb_chan_list = cell(1,length(hb_chans)+1);
-hb_chan_list{1} = 'None';
-hb_chan_list(2:end) = num2cell(hb_chans);
-if handles.hb_chan == -1
-    sel_hb_chan = -2;
-    set(handles.cbManualMode, 'Enable', 'off');
-else
-    sel_hb_chan = find(cell2mat(hb_chan_list(2:end)) == handles.hb_chan,1) + 1;
-    if isempty(sel_hb_chan)
+[sts, ~, handles.data, ~] = scr_load_data(fn);
+if sts == 1
+    ecg_chans = find(cellfun(@(x) strcmpi(x.header.chantype, 'ecg'), handles.data));
+    % set possible ecg chans
+    sel_ecg_chan = find(ecg_chans == handles.data_chan, 1, 'first');
+    if isempty(sel_ecg_chan)
+        sel_ecg_chan = 1;
+    end;
+    handles.data_chan = ecg_chans(sel_ecg_chan);
+    set(handles.ppEcgChan, 'String', ecg_chans);
+    set(handles.ppEcgChan, 'Value', sel_ecg_chan);
+    
+    hb_chans = find(cellfun(@(x) strcmpi(x.header.chantype, 'hb'), handles.data));
+    hb_chan_list = cell(1,length(hb_chans)+1);
+    hb_chan_list{1} = 'None';
+    hb_chan_list(2:end) = num2cell(hb_chans);
+    if handles.hb_chan == -1
         sel_hb_chan = -2;
-    end;
-end;
-
-if sel_hb_chan == -2
-    if length(hb_chans) == 1
-        sel_hb_chan = 2;
+        set(handles.cbManualMode, 'Enable', 'off');
     else
-        sel_hb_chan = 1;
+        sel_hb_chan = find(cell2mat(hb_chan_list(2:end)) == handles.hb_chan,1) + 1;
+        if isempty(sel_hb_chan)
+            sel_hb_chan = -2;
+        end;
     end;
+    
+    if sel_hb_chan == -2
+        if length(hb_chans) == 1
+            sel_hb_chan = 2;
+        else
+            sel_hb_chan = 1;
+        end;
+    end;
+    
+    set(handles.ppHbChan, 'String', hb_chan_list);
+    set(handles.ppHbChan, 'Value', sel_hb_chan);
+    
+    handles.hb_chan = hb_chan_list{sel_hb_chan};
+    if strcmpi(handles.hb_chan, 'None')
+        handles.hb_chan = -1;
+        set(handles.rbReplaceHbChan, 'Enable', 'off');
+    end;
+    
+    handles.fn = fn;
+    set(handles.edtDataFile, 'String', fn);
+    
+    % filter data
+    data = handles.data{handles.data_chan};
+    sr = data.header.sr;
+    handles.filt.sr = sr;
+    % filter data
+    [nsts,ecg,sr]=scr_prepdata(data.data, handles.filt);
+    if nsts == -1
+        warning('Could not filter data, will use unfiltered data.');
+        ecg = data.data;
+    end;
+    
+    handles.plot.ecg = ecg;
+    handles.e = 0;
+    if handles.plot.p ~= -1
+        delete(handles.plot.p);
+        handles.plot.p = -1;
+    end;
+    handles.plot.sr = sr;
+    handles.filt.sr = sr;
+    
+    guidata(hObject, handles);
 end;
-
-set(handles.ppHbChan, 'String', hb_chan_list);
-set(handles.ppHbChan, 'Value', sel_hb_chan);
-
-handles.hb_chan = hb_chan_list{sel_hb_chan};
-if strcmpi(handles.hb_chan, 'None')
-    handles.hb_chan = -1;
-    set(handles.rbReplaceHbChan, 'Enable', 'off');
-end;
-
-handles.fn = fn;
-set(handles.edtDataFile, 'String', fn);
-
-% filter data
-data = handles.data{handles.data_chan};
-sr = data.header.sr;
-handles.filt.sr = sr;
-% filter data
-[nsts,ecg,sr]=scr_prepdata(data.data, handles.filt);
-if nsts == -1
-    warning('Could not filter data, will use unfiltered data.');
-    ecg = data.data;
-end;
-
-handles.plot.ecg = ecg;
-handles.e = 0;
-if handles.plot.p ~= -1
-    delete(handles.plot.p);
-    handles.plot.p = -1;
-end;
-handles.plot.sr = sr;
-handles.filt.sr = sr;
-
-guidata(hObject, handles);
 
 % --- Reload plot settings
 function reload_plot(hObject, handles)
@@ -1014,7 +1019,7 @@ else
     cl = handles.clr{2}(1,:);
 end;
 
-if handles.plot.artifact_layer(sample_id)
+if handles.plot.artefact_layer(sample_id)
     f_cl = '777777';
 else
     f_cl = '000000';
@@ -1060,20 +1065,20 @@ pp_plot(hObject, handles);
 
 
 
-function edtArtifactFile_Callback(hObject, eventdata, handles)
-% hObject    handle to edtArtifactFile (see GCBO)
+function edtArtefactFile_Callback(hObject, eventdata, handles)
+% hObject    handle to edtArtefactFile (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of edtArtifactFile as text
-%        str2double(get(hObject,'String')) returns contents of edtArtifactFile as a double
+% Hints: get(hObject,'String') returns contents of edtArtefactFile as text
+%        str2double(get(hObject,'String')) returns contents of edtArtefactFile as a double
 
-set(hObject, 'String', handles.artifact_fn);
+set(hObject, 'String', handles.artefact_fn);
 
 
 % --- Executes during object creation, after setting all properties.
-function edtArtifactFile_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edtArtifactFile (see GCBO)
+function edtArtefactFile_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edtArtefactFile (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -1084,64 +1089,63 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in pbArtifactFile.
-function pbArtifactFile_Callback(hObject, eventdata, handles)
-% hObject    handle to pbArtifactFile (see GCBO)
+% --- Executes on button press in pbArtefactFile.
+function pbArtefactFile_Callback(hObject, eventdata, handles)
+% hObject    handle to pbArtefactFile (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-[fname, fpath] = uigetfile({'*.mat'}, 'Select file with Artifact epochs');
+[fname, fpath] = uigetfile({'*.mat'}, 'Select file with Artefact epochs');
 if ischar(fname) && ~isempty(fname)
     fn = fullfile(fpath, fname);
-    load_data_artifacts(hObject, handles, fn);
+    load_data_artefacts(hObject, handles, fn);
     handles = guidata(hObject);
     refresh_faulty(hObject, handles);
 end;
 
-% --- Load artifact epochs file
-function load_data_artifacts(hObject, handles, artifacts)
+% --- Load artefact epochs file
+function load_data_artefacts(hObject, handles, artefacts)
 
-[sts, handles.artifact_epochs] = scr_get_timing('epochs', artifacts, 'seconds');
+[sts, handles.artefact_epochs] = scr_get_timing('epochs', artefacts, 'seconds');
 
 if sts ~= -1
-   
-    set(handles.rbShowArtifacts, 'Enable', 'on');
-    set(handles.rbHideArtifactEvents, 'Enable', 'on');
-    set(handles.rbDisableArtifactDetection, 'Enable', 'on');
-    set(handles.rbIncludeArtifactQRS, 'Enable', 'on');
-    set(handles.rbExcludeArtifactQRS, 'Enable', 'on');
+    set(handles.rbShowArtefacts, 'Enable', 'on');
+    set(handles.rbHideArtefactEvents, 'Enable', 'on');
+    set(handles.rbDisableArtefactDetection, 'Enable', 'on');
+    set(handles.rbIncludeArtefactQRS, 'Enable', 'on');
+    set(handles.rbExcludeArtefactQRS, 'Enable', 'on');
     
-    if ischar(artifacts)
-        handles.artifact_mode = 'file';
+    if ischar(artefacts)
+        handles.artefact_mode = 'file';
         
         % enable
-        set(handles.edtArtifactFile, 'String', artifacts);
-        set(handles.edtArtifactFile, 'Enable', 'on');
-        set(handles.pbArtifactsDisable, 'Enable', 'on');
+        set(handles.edtArtefactFile, 'String', artefacts);
+        set(handles.edtArtefactFile, 'Enable', 'on');
+        set(handles.pbArtefactsDisable, 'Enable', 'on');
         
         % show
-        set(handles.pbArtifactFile, 'Visible', 'on');
-        set(handles.pbArtifactsDisable, 'Visible', 'on');
-        set(handles.edtArtifactFile, 'Visible', 'on');
-        handles.artifact_fn = artifacts;
+        set(handles.pbArtefactFile, 'Visible', 'on');
+        set(handles.pbArtefactsDisable, 'Visible', 'on');
+        set(handles.edtArtefactFile, 'Visible', 'on');
+        handles.artefact_fn = artefacts;
     else
-        handles.artifact_mode = 'inline';
+        handles.artefact_mode = 'inline';
         
         % disable
-        set(handles.edtArtifactFile, 'String', '');
-        set(handles.pbArtifactsDisable, 'Enable', 'off');
-        set(handles.edtArtifactFile, 'Enable', 'off');
-        set(handles.rbIncludeArtifactQRS, 'Enable', 'off');
-        set(handles.rbExcludeArtifactQRS, 'Enable', 'off');
+        set(handles.edtArtefactFile, 'String', '');
+        set(handles.pbArtefactsDisable, 'Enable', 'off');
+        set(handles.edtArtefactFile, 'Enable', 'off');
+        set(handles.rbIncludeArtefactQRS, 'Enable', 'off');
+        set(handles.rbExcludeArtefactQRS, 'Enable', 'off');
         
         % hide
-        set(handles.edtArtifactFile, 'Visible', 'off');
-        set(handles.pbArtifactFile, 'Visible', 'off');
-        set(handles.pbArtifactsDisable, 'Visible', 'off');
+        set(handles.edtArtefactFile, 'Visible', 'off');
+        set(handles.pbArtefactFile, 'Visible', 'off');
+        set(handles.pbArtefactsDisable, 'Visible', 'off');
     end;
 else
-    handles.artifact_epochs = [];
-    warning('ID:invalid_input', 'Could not load artifacts.');
+    handles.artefact_epochs = [];
+    warning('ID:invalid_input', 'Could not load artefacts.');
 end;
 guidata(hObject, handles);
 
@@ -1292,55 +1296,55 @@ if isnan(str2double(get(hObject, 'String')))
 end;
 
 
-% --- Executes on button press in pbArtifactsDisable.
-function pbArtifactsDisable_Callback(hObject, eventdata, handles)
-% hObject    handle to pbArtifactsDisable (see GCBO)
+% --- Executes on button press in pbArtefactsDisable.
+function pbArtefactsDisable_Callback(hObject, eventdata, handles)
+% hObject    handle to pbArtefactsDisable (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-handles.artifact_epochs = [];
-handles.artifact_fn = '';
-handles.plot.artifact_layer(:) = false;
-set(handles.edtArtifactFile, 'Enable', 'off');
-set(handles.edtArtifactFile, 'String', '');
-set(handles.pbArtifactsDisable, 'Enable', 'off');
+handles.artefact_epochs = [];
+handles.artefact_fn = '';
+handles.plot.artefact_layer(:) = false;
+set(handles.edtArtefactFile, 'Enable', 'off');
+set(handles.edtArtefactFile, 'String', '');
+set(handles.pbArtefactsDisable, 'Enable', 'off');
 %
-set(handles.rbShowArtifacts, 'Enable', 'off');
-set(handles.rbDisableArtifactDetection, 'Enable', 'off');
-set(handles.rbHideArtifactEvents, 'Enable', 'off');
-set(handles.rbIncludeArtifactQRS, 'Enable', 'off');
-set(handles.rbExcludeArtifactQRS, 'Enable', 'off');
+set(handles.rbShowArtefacts, 'Enable', 'off');
+set(handles.rbDisableArtefactDetection, 'Enable', 'off');
+set(handles.rbHideArtefactEvents, 'Enable', 'off');
+set(handles.rbIncludeArtefactQRS, 'Enable', 'off');
+set(handles.rbExcludeArtefactQRS, 'Enable', 'off');
 % refresh faulty
 refresh_faulty(hObject, handles);
 
 
-% --- Executes on button press in rbShowArtifacts.
-function rbShowArtifacts_Callback(hObject, eventdata, handles)
-% hObject    handle to rbShowArtifacts (see GCBO)
+% --- Executes on button press in rbShowArtefacts.
+function rbShowArtefacts_Callback(hObject, eventdata, handles)
+% hObject    handle to rbShowArtefacts (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of rbShowArtifacts
+% Hint: get(hObject,'Value') returns toggle state of rbShowArtefacts
 reload_plot(hObject, handles);
 
 
-% --- Executes on button press in rbDisableArtifactDetection.
-function rbDisableArtifactDetection_Callback(hObject, eventdata, handles)
-% hObject    handle to rbDisableArtifactDetection (see GCBO)
+% --- Executes on button press in rbDisableArtefactDetection.
+function rbDisableArtefactDetection_Callback(hObject, eventdata, handles)
+% hObject    handle to rbDisableArtefactDetection (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of rbDisableArtifactDetection
+% Hint: get(hObject,'Value') returns toggle state of rbDisableArtefactDetection
 reload_plot(hObject, handles);
 
 
-% --- Executes on button press in rbHideArtifactEvents.
-function rbHideArtifactEvents_Callback(hObject, eventdata, handles)
-% hObject    handle to rbHideArtifactEvents (see GCBO)
+% --- Executes on button press in rbHideArtefactEvents.
+function rbHideArtefactEvents_Callback(hObject, eventdata, handles)
+% hObject    handle to rbHideArtefactEvents (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of rbHideArtifactEvents
+% Hint: get(hObject,'Value') returns toggle state of rbHideArtefactEvents
 reload_plot(hObject, handles);
 
 
@@ -1523,12 +1527,12 @@ p_rules(2) = 2;
 for k=1:n_col*2
     if mod(k, 2) == 0
         ev_idx = k/2;
-        layer = handles.plot.artifact_layer;
+        layer = handles.plot.artefact_layer;
         cl = handles.clr{ev_idx+1}(cl_type,:);
         b_cl = rgb2gray(cl);
     else
         ev_idx = (k+1)/2;
-        layer = ~handles.plot.artifact_layer;
+        layer = ~handles.plot.artefact_layer;
         cl = handles.clr{ev_idx+1}(cl_type,:);
         b_cl = cl;
     end;
