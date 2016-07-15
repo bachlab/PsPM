@@ -6,30 +6,44 @@ function [sts, infos] = scr_find_sounds(file, options)
 %   Arguments
 %       file : path and filename of the pspm file holding the sound
 %       options : struct with following possible values
-%           addchannel : [true/FALSE] adds a marker channel to the original
-%               file with the onset time of the detected sound events and
-%               the duration of the sound event (in markerinfo)
+%           createchannel : [true/FALSE] sound events are written as
+%               marker channel to the specified pspm file. Onset times 
+%               then correspond to marker events and duration is written 
+%               to markerinfo. Depending on channelaction the new marker 
+%               channel replaces existing marker channels or is added as 
+%               new marker channel.
+%               Be careful: May overwrite reference marker channel!!!
+%
+%           channelaction : ['add'/'replace'] define whether the new marker
+%               channel should be added or replace existing marker
+%               channels.
+%
 %           channeloutput : ['all'/'corrected'] (default: 'all') defines
 %               whether all sound markers or only sound markers which have
 %               been assigned to a marker from the trigger channel should
 %               be added as channel to the original file. 'corrected'
 %               requires enabled diagnostics, but does not force it (the
 %               option will otherwise not work).
+%
 %           diagnostics : [TRUE/false] computes the delay between trigger
 %               and displays the mean delay and standard deviation and
 %               removes triggers which could not be assigned to a trigger
 %               from existing trigger channel.
+%
 %           maxdelay : [number] Upper limit (in seconds) of the window in 
 %               which scr_find_sounds will accept sounds to belong to a
 %               marker. default is 3s.
+%
 %           mindealy : [number] Lower limit (in seconds) of the window in 
 %               which scr_find_sounds will accept sounds to belong to a
 %               marker. default is 0s.
+%
 %           plot : [true/FALSE] displays a histogramm of the 
 %               delays found and a plot with the detected sound, the
 %               trigger and the onset of the sound events. These are color
 %               coded for delay, from green (smallest delay) to red
 %               (longest). Forces the 'diagnostics' option to true.
+%
 %           resample : [integer] spline interpolates the sound by the 
 %               factor specified. (1 for no interpolation, by default). 
 %               Caution must be used when using this option. It should only
@@ -39,15 +53,19 @@ function [sts, infos] = scr_find_sounds(file, options)
 %                   waves all respecting condition 1
 %               Resampling will restore more or less the original signal
 %               and lead to more accurate timings.
+%
 %           roi : [vector of 2 floats] Region of interest for discovering
 %               sounds. Especially usefull if pairing events with triggers.
 %               Only sounds included inbetween the 2 timestamps will be
 %               considered.
+%
 %           sndchannel : [integer] number of the channel holding the sound.
 %               By default first 'snd' channel.
+%
 %           threshold : [0...1] percent of the max of the power in the
 %               signal that will be accepted as a sound event. Default is
 %               0.1.
+%
 %           trigchannel : [integer] number of the channel holding the 
 %               triggers. By default first 'marker' channel.
 %
@@ -63,7 +81,7 @@ function [sts, infos] = scr_find_sounds(file, options)
 %           .snd_markers : vector of begining of sound sound events
 %           .delays : vector of delays between markers and detected sounds. 
 %                Only available with option 'diagnostics' turned on.
-%           .channel: number of added chan, when options.addchannel == true
+%           .channel: number of added chan, when options.createchannel == true
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2015 Samuel Gerster (University of Zurich)
@@ -85,7 +103,8 @@ end
 fprintf('Processing sound in file %s\n',file);
 
 % Process options
-try options.addchannel; catch, options.addchannel = false; end;
+try options.createchannel; catch, options.createchannel = false; end;
+try options.channelaction; catch, options.channelaction = 'add'; end;
 try options.channeloutput; catch; options.channeloutput = 'all'; end;
 try options.diagnostics; catch, options.diagnostics = true; end;
 try options.maxdelay; catch, options.maxdelay = 3; end;
@@ -116,8 +135,8 @@ elseif ~isnumeric(options.sndchannel) || mod(options.sndchannel,1) || options.sn
     warning('ID:invalid_input', 'Option sndchannel is not an integer.'); sts=-1; return;
 elseif ~isnumeric(options.trigchannel) || mod(options.trigchannel,1) || options.trigchannel < 0
     warning('ID:invalid_input', 'Option trichannel is not an integer.'); sts=-1; return;
-elseif ~islogical(options.addchannel) && ~isnumeric(options.addchannel)
-    warning('ID:invalid_input', 'Option addchannel is not numeric or logical'); sts=-1; return;
+elseif ~islogical(options.createchannel) && ~isnumeric(options.createchannel)
+    warning('ID:invalid_input', 'Option createchannel is not numeric or logical'); sts=-1; return;
 elseif ~islogical(options.diagnostics) && ~isnumeric(options.diagnostics)
     warning('ID:invalid_input', 'Option diagnostics is not numeric or logical'); sts=-1; return;
 elseif ~islogical(options.plot) && ~isnumeric(options.plot)
@@ -128,7 +147,9 @@ elseif ~isnumeric(options.expectedSoundCount) || mod(options.expectedSoundCount,
     warning('ID:invalid_input', 'Option expectedSoundCount is not an integer.'); sts=-1; return;
 elseif ~isempty(options.roi) && (~length(options.roi)== 2 || ~all(isnumeric(options.roi)))
     warning('ID:invalid_input', 'Option roi must be a float vector of length 2 or 0'); sts=-1; return;
-end
+elseif ~ischar(options.channelaction) || ~ismember(options.channelaction, {'add', 'replace'})
+    warning('ID:invalid_input', 'Option createchannel must be either ''add'' or ''replace'''); return;
+end;
 
 % call it outinfos not to get confused
 outinfos = struct();
@@ -274,7 +295,7 @@ while searchForMoreSounds == true
 end
 
 %% Save as new channel
-if options.addchannel
+if options.createchannel
     % Save the new channel
     if strcmpi(options.channeloutput, 'all')
         snd_events.data = snd_re_all;
@@ -289,7 +310,7 @@ if options.addchannel
     snd_events.header.sr = 1;
     snd_events.header.chantype = 'marker';
     snd_events.header.units ='events';
-    [~, ininfos] = scr_write_channel(file, snd_events, 'add');
+    [~, ininfos] = scr_write_channel(file, snd_events, options.channelaction);
     outinfos.channel = ininfos.channel;
 end
 

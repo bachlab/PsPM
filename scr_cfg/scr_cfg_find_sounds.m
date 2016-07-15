@@ -53,11 +53,23 @@ threshold.val     = {0.1};
 threshold.help    = {['Percent of the maximum sound amplitude still being accepted ', ... 
     'as belonging to a sound (important for defining the sound onset). Default: 0.1 (= 10%)']};
 
-%% New Channel
-new_chan        = cfg_const;
-new_chan.name   = 'New Channel';
-new_chan.tag    = 'new_chan';
-new_chan.val    = {0};
+%% Channel action
+chan_action         = cfg_menu;
+chan_action.name    = 'Channel action';
+chan_action.tag     = 'channel_action';
+chan_action.val     = {'add'};
+chan_action.values  = {'add', 'replace'};
+chan_action.labels  = {'add', 'replace'};
+chan_action.help    = {['Add will append the new marker channel as ', ...
+    'additional channel to the specified PsPM file. Replace will ', ...
+    'overwrite the last marker channel of the PsPM file ', ...
+    '(be careful with reference markers).']};
+
+%% Create Channel
+new_chan        = cfg_branch;
+new_chan.name   = 'Create Channel';
+new_chan.tag    = 'create_chan';
+new_chan.val    = {chan_action};
 new_chan.help   = {['The new data channel contains by default all ', ...
     'marker onsets found in the specified data file. If you want ', ...
     'specific sounds defined by a marker, use the diagnostics option.']};
@@ -87,13 +99,26 @@ diag_output.val    = {text_only};
 diag_output.values = {text_only, hist_plot};
 diag_output.help   = {''};
 
+%% no
+no                 = cfg_const;
+no.name            = 'No';
+no.tag             = 'no';
+no.val             = {0};
+no.help            = {''};
+
+%% yes
+yes                = cfg_branch;
+yes.name           = 'Yes';
+yes.tag            = 'yes';
+yes.val            = {chan_action};
+yes.help           = {''};
+
 %% New corrected channel
-new_corrected_chan         = cfg_menu;
-new_corrected_chan.name    = 'New channel with specific sounds';
-new_corrected_chan.tag     = 'new_corrected_chan';
-new_corrected_chan.val     = {false};
-new_corrected_chan.labels  = {'No', 'Yes'};
-new_corrected_chan.values  = {false, true};
+new_corrected_chan         = cfg_choice;
+new_corrected_chan.name    = 'Create channel with specific sounds';
+new_corrected_chan.tag     = 'create_corrected_chan';
+new_corrected_chan.val     = {no};
+new_corrected_chan.values  = {no, yes};
 new_corrected_chan.help    = {['Create new data channel which contains ', ...
     'only marker onsets which could have been assigned to a ', ...
     'marker in the specified marker channel.']};

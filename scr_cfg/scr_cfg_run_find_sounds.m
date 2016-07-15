@@ -12,17 +12,18 @@ options.threshold = job.threshold;
 
 f = fieldnames(job.output);
 switch f{1}
-    case 'new_chan'
-        
-        options.addchannel = true;
+    case 'create_chan'
+        options.createchannel = true;
         options.diagnostics = false;
+        options.channelaction = job.output.create_chan.channel_action;
         [sts, infos] = scr_find_sounds(file, options);
         out = infos.channel;
         
     case 'diagnostic'
         d = job.output.diagnostic;
-        if d.new_corrected_chan
-            options.addchannel = true;
+        if isfield(d.create_corrected_chan, 'yes')
+            options.createchannel = true;
+            options.channelaction = d.create_corrected_chan.yes.channel_action;
             options.channeloutput = 'corrected';
         end;
         
