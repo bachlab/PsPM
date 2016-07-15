@@ -777,8 +777,8 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat))
         end
         
         
-        
-        unit = deblank(handles.data{handles.prop.idwave}.header.units);
+        wv_chanid = handles.prop.wavechans(handles.prop.idwave);
+        unit = deblank(handles.data{wv_chanid}.header.units);
         if strcmp(handles.prop.wave,'ecg')
             ylabel([' Amplitude [',unit,'] '],'Fontsize',14);
         elseif strcmp(handles.prop.wave,'scr')
@@ -826,7 +826,7 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat))
     end
 end
 % -------------------------------------------------------------------------
-title(sprintf(' %s ',strrep(handles.name,'_','\_')),'Fontsize',18);
+title(sprintf(' %s ',regexprep(handles.name, '([\\_])' ,'\\$1')),'Fontsize',18);
 set(handles.axes_1,'XGrid','on')
 hold off
 % -------------------------------------------------------------------------
