@@ -724,70 +724,74 @@ end;
 % --------------------------------------------------------------------
 function SelectedArea(action)
 handles = guidata(gca);
-start = handles.select.start;
-if strcmpi(action, 'highlight')
-    pt = get(handles.axData, 'CurrentPoint');
-    stop = pt(1,1:2);
-else
-    stop = handles.select.stop;
-    % turn highlight off
-    for i=1:numel(handles.plots)
-        p = handles.plots{i};
-        if ~isempty(p)
-            xd = p.x_data;
-            highlight_yd = NaN(numel(xd),1);
-            set(p.highlight_plot, 'YData', highlight_yd');
-        end;
-    end;
-end;
 
-if start(1) > stop(1)
-    x_from = stop(1);
-    x_to = start(1);
-else
-    x_from = start(1);
-    x_to = stop(1);
-end;
-
-
-sel_x = handles.x_data;
-
-switch action
-    case 'add'
-        handles.selected_data(sel_x >= x_from & sel_x <= x_to) = 1;
-    case 'remove'
-        handles.selected_data(sel_x >= x_from & sel_x <= x_to) = NaN;
-    case 'highlight'
+if isfield(handles, 'x_data')
+    
+    start = handles.select.start;
+    if strcmpi(action, 'highlight')
+        pt = get(handles.axData, 'CurrentPoint');
+        stop = pt(1,1:2);
+    else
+        stop = handles.select.stop;
+        % turn highlight off
         for i=1:numel(handles.plots)
             p = handles.plots{i};
             if ~isempty(p)
                 xd = p.x_data;
-                yd = p.y_data;
-                r = xd >= x_from & xd <= x_to;
-                if strcmpi(handles.mode, 'removeepoch')
-                	ep = findSelectedEpochs;
-                    sel_d = zeros(size(xd));
-                    
-                    for j=1:size(ep,1)
-                        sel_d(xd >= ep(j,1) & xd <= ep(j,2)) = 1;
-                    end;
-                    
-                    r = r & sel_d;
-                end;
-                
                 highlight_yd = NaN(numel(xd),1);
-                highlight_yd(r) = yd(r);
                 set(p.highlight_plot, 'YData', highlight_yd');
             end;
         end;
+    end;
+    
+    if start(1) > stop(1)
+        x_from = stop(1);
+        x_to = start(1);
+    else
+        x_from = start(1);
+        x_to = stop(1);
+    end;
+    
+    
+    sel_x = handles.x_data;
+    
+    switch action
+        case 'add'
+            handles.selected_data(sel_x >= x_from & sel_x <= x_to) = 1;
+        case 'remove'
+            handles.selected_data(sel_x >= x_from & sel_x <= x_to) = NaN;
+        case 'highlight'
+            for i=1:numel(handles.plots)
+                p = handles.plots{i};
+                if ~isempty(p)
+                    xd = p.x_data;
+                    yd = p.y_data;
+                    r = xd >= x_from & xd <= x_to;
+                    if strcmpi(handles.mode, 'removeepoch')
+                        ep = findSelectedEpochs;
+                        sel_d = zeros(size(xd));
+                        
+                        for j=1:size(ep,1)
+                            sel_d(xd >= ep(j,1) & xd <= ep(j,2)) = 1;
+                        end;
+                        
+                        r = r & sel_d;
+                    end;
+                    
+                    highlight_yd = NaN(numel(xd),1);
+                    highlight_yd(r) = yd(r);
+                    set(p.highlight_plot, 'YData', highlight_yd');
+                end;
+            end;
+    end;
+    
+    if ~strcmpi(action, 'highlight')
+        handles.select.start = [0,0];
+        handles.select.stop = [0,0];
+    end;
+    
+    guidata(gca, handles);
 end;
-
-if ~strcmpi(action, 'highlight')
-    handles.select.start = [0,0];
-    handles.select.stop = [0,0];
-end;
-
-guidata(gca, handles);
 
 % -------------------------------------------------------------------------
 function InterpolateData

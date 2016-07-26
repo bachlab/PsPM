@@ -13,6 +13,6 @@ function [cfg] = scr_cfg_pp_heart_period
 cfg        = cfg_repeat;
 cfg.name   = 'Heart period';
 cfg.tag    = 'pp_heart_period';
-cfg.values = {scr_cfg_pp_heart_data};
+cfg.values = {scr_cfg_pp_heart_data, scr_cfg_ecg_editor};
 cfg.forcestruct = true;
 cfg.help   = {'Help: Heart period preprocessing'};

@@ -31,7 +31,7 @@ function varargout = pspm(varargin)
 
 % Edit the above text to modify the response to help PsPM
 
-% Last Modified by GUIDE v2.5 24-Aug-2015 12:18:45
+% Last Modified by GUIDE v2.5 25-Jul-2016 17:05:55
 % initialise
 % -------------------------------------------------------------------------
 global settings;
@@ -167,8 +167,7 @@ function rev2_Callback(hObject, eventdata, handles)
 % hObject    handle to rev2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-scr_rev2_UI;
-% cfg_add_module('pspm.second_level.review');
+cfg_add_module('pspm.second_level.report');
 
 % --- Executes on button press in con2.
 function con2_Callback(hObject, eventdata, handles)
@@ -209,29 +208,21 @@ switch val
     case 2
         cfg_add_module('pspm.tools.rename');
     case 3
-        cfg_add_module('pspm.tools.downsample');
-    case 4
-        scr_get_markerinfo;
-    case 5
         cfg_add_module('pspm.tools.split_sessions');
-    case 6
+    case 4
         cfg_add_module('pspm.tools.artefact_rm');
-    case 7
-        cfg_add_module('pspm.tools.pp_ecg');
-    case 8
-        cfg_add_module('pspm.tools.resp_pp');
-    case 9
+    case 5
+        cfg_add_module('pspm.tools.downsample');
+    case 6
         cfg_add_module('pspm.tools.interpolate');
-    case 10
-        cfg_add_module('pspm.tools.find_sounds');
-    case 11
-        cfg_add_module('pspm.tools.process_illuminance');
-    case 12
-        cfg_add_module('pspm.tools.find_valid_fixations');
-    case 13
+    case 7
         cfg_add_module('pspm.tools.extract_segments');
-    case 14
+    case 8
         cfg_add_module('pspm.tools.segment_mean');
+    case 9
+        cfg_add_module('pspm.tools.extract_markerinfo');
+    case 10
+        scr_data_editor();
 end;
 
 % --- Executes during object creation, after setting all properties.
@@ -289,3 +280,79 @@ switch selected
     case 8
         cfg_add_module('pspm.first_level.resp.glm_rfr_e');
 end;
+
+
+% --- Executes on selection change in ppDataPreprocessing.
+function ppDataPreprocessing_Callback(hObject, eventdata, handles)
+% hObject    handle to ppDataPreprocessing (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns ppDataPreprocessing contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from ppDataPreprocessing
+
+selected = get(hObject,'Value');
+
+switch selected
+    case 1
+        cfg_add_module('pspm.data_preprocessing.pp_heart_period.pp_heart_data');
+    case 2
+        %cfg_add_module('pspm.data_preprocessing.pp_heart_period.ecg_editor');
+        scr_ecg_editor();
+    case 3
+        cfg_add_module('pspm.data_preprocessing.resp_pp');
+    case 4 
+        cfg_add_module('pspm.data_preprocessing.pp_pupil.process_illuminance');
+    case 5
+        cfg_add_module('pspm.data_preprocessing.pp_pupil.find_valid_fixations');
+    case 6
+        cfg_add_module('pspm.data_preprocessing.pp_pupil.convert_pupil_data');
+    case 7
+        cfg_add_module('pspm.data_preprocessing.pp_emg.find_sounds');
+end;
+
+
+
+% --- Executes during object creation, after setting all properties.
+function ppDataPreprocessing_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to ppDataPreprocessing (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in ppDataPreparation.
+function ppDataPreparation_Callback(hObject, eventdata, handles)
+% hObject    handle to ppDataPreparation (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns ppDataPreparation contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from ppDataPreparation
+
+selected = get(hObject,'Value');
+
+switch selected
+    case 1
+        cfg_add_module('pspm.prep.import');
+    case 2
+        cfg_add_module('pspm.prep.trim');
+end;
+
+
+% --- Executes during object creation, after setting all properties.
+function ppDataPreparation_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to ppDataPreparation (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

@@ -42,7 +42,7 @@ if isfield(labchart, 'data_block2')
     warning('LabChart files must contain one block only - concatenate on export if necessary.');
     return;
 elseif ~isfield(labchart, 'data_block1')
-    warning('This version of the export extension is not supported. Please contact SCRalyze developers.');
+    warning('This version of the export extension is not supported. Please contact PsPM developers.');
     return;
 end;
 

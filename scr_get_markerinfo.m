@@ -5,8 +5,20 @@ function [sts, markerinfo] = scr_get_markerinfo(fn, options)
 % 
 % FORMAT:
 % [sts, markerinfo] = scr_get_markerinfo(filename, options)
-%          filename: name of SCR file, if empty, you will prompted for one
-%          options.outfile: name of a file to write the markerinfo to
+% 
+%          filename:                [char] name of SCR file, if empty, 
+%                                   you will prompted for one
+%
+%          options.markerchan:      [numeric] channel id of the marker 
+%                                   channel; Default is -1 which means the 
+%                                   first found marker channel will be used
+%
+%          options.filename:        [char] name of a file to write 
+%                                   the markerinfo to; Default is empty (no
+%                                   file will be written)
+%
+%          options.overwrite:       [logical] define whether to
+%                                   overwrite existing output files or not
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -20,19 +32,50 @@ if isempty(settings), scr_init; end;
 % set output values
 sts = -1; markerinfo = [];
 
+
+if nargin <= 1
+    options = struct();
+end;
+
+if ~isfield(options, 'markerchan')
+    options.markerchan = -1;
+end;
+
+if ~isfield(options, 'filename')
+    options.filename = '';
+end;
+
+if ~isfield(options, 'overwrite')
+    options.overwrite = false;
+end;
+
+if ~isstruct(options)
+    warning('ID:invalid_input', 'Options has to be a struct.'); return;
+elseif isfield(options, 'filename') && ~ischar(options.filename)
+    warning('ID:invalid_input', 'Options.filename has to be char.'); return;
+elseif isfield(options, 'markerchan') && ~isnumeric(options.markerchan)
+    warning('ID:invalid_input', 'Options.markerchan has to be numeric.'); return;
+elseif isfield(options, 'overwrite') && ~islogical(options.overwrite)
+	warning('ID:invalid_input', 'Options.overwrite must be logical.'); return;
+end;
+
 % check input arguments
 if nargin < 1 || isempty(fn)
     fn = spm_select(1, 'mat', 'Extract markers from which file?');
 end;
 
+if options.markerchan == -1
+    options.markerchan = 'events';
+end;
+
 % get file
-[sts, infos, data] = scr_load_data(fn, 'events');
+[sts, infos, data] = scr_load_data(fn, options.markerchan);
 if sts == -1, return, end;
 
 % check markers
 if isempty(data{1}.data)
     sts = -1; 
-    warning('File %s contains no event markers', fn);
+    warning('File (%s) contains no event markers', fn);
     return;
 end;
 
@@ -54,11 +97,25 @@ for k = 1:numel(markerunique)
 end;
 
 % if necessary, write into a file
-if nargin > 1 && isfield(options, 'filename')
-    save(options.filename, 'markerinfo');
-end;
+outfn = options.filename;
+if ~isempty(outfn)
+    if exist(outfn, 'file')
+        if options.overwrite
+            write_ok = true;
+        elseif strcmpi('Yes', questdlg(sprintf('File (%s) already exists. Overwrite?', outfn)))
+            write_ok = true;
+        else
+            write_ok = false;
+        end;
+    else
+        write_ok = true;
+    end;
+    
 
-return;
+    if write_ok
+        save(outfn, 'markerinfo');
+    end;
+end;
 
 
 

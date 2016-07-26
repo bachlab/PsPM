@@ -377,7 +377,7 @@ if numel(varargin) == 0 || ~isstruct(varargin{1})
     if isfield(handles.options, 'semi')
         handles.manualmode = ~handles.options.semi;
     end;
-    if isfield(handles.options, 'artefact')
+    if isfield(handles.options, 'artefact') && ~isempty(handles.options.artefact)
         load_data_artefacts(hObject, handles, handles.options.artefact);
         % update handles
         handles = guidata(hObject);
