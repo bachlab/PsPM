@@ -10,7 +10,7 @@ datafile.name    = 'Data File';
 datafile.tag     = 'datafile';
 datafile.num     = [1 1];
 %datafile.filter  = '.*\.(mat|MAT)$';
-datafile.help    = {['Specify data file. The processed' ...
+datafile.help    = {['Specify data file. The processed ' ...
     'respiration data will be written to a new channel in this file.']};
 
 % Sample rate
@@ -118,13 +118,15 @@ plot.tag     = 'plot';
 plot.val     = {0};
 plot.labels  = {'No', 'Yes'};
 plot.values  = {0, 1};
-plot.help    = {'Creates a respiratory cycle detection plot.'};
+plot.help    = {'Specify whether a respiratory cycle detection plot ', ...
+    'should be created (Yes) or not (No) (default: No).'};
 
 options        = cfg_branch;
 options.name   = 'Options';
 options.tag    = 'options';
 options.val    = {systemtype, datatype, plot};
-options.help   = {''};
+options.help   = {['Choose for each possible process datatype either ', ...
+    'yes or no (default: yes)']};
 
 % Executable Branch
 resp_pp      = cfg_exbranch;

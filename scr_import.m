@@ -126,7 +126,7 @@ clear datafile
 datatype = find(strcmpi(datatype, {settings.import.datatypes.short}));
 
 % check number of jobs ---
-% more than one job when only on is allowed?
+% more than one job when only one is allowed?
 if (~settings.import.datatypes(datatype).multioption) && (numel(import) > 1)
     % two jobs when one is an automatically assigned marker channel?
     if ~(settings.import.datatypes(datatype).automarker && numel(import) == 2 && ...

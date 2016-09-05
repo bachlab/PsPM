@@ -8,6 +8,10 @@ if isfield(job.chan, 'chan_nr')
    options.sndchannel = job.chan.chan_nr;
 end;
 
+if isfield(job.roi, 'region')
+    options.roi = job.roi.region;
+end;
+
 options.threshold = job.threshold;
 
 f = fieldnames(job.output);
@@ -16,6 +20,7 @@ switch f{1}
         options.createchannel = true;
         options.diagnostics = false;
         options.channelaction = job.output.create_chan.channel_action;
+        
         [sts, infos] = scr_find_sounds(file, options);
         out = infos.channel;
         
@@ -29,6 +34,10 @@ switch f{1}
         
         if isfield(d.marker_chan, 'marker_nr')
             options.trigchannel = d.marker_nr;
+        end;
+        
+        if job.output.diagnostic.n_sounds > 0
+            options.expectedSoundCount = job.output.diagnostic.n_sounds;
         end;
         
         options.maxdelay = d.max_delay;

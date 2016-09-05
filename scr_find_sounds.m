@@ -72,7 +72,7 @@ function [sts, infos] = scr_find_sounds(file, options)
 %           EXPERIMENTAL, use with caution!
 %           expectedSoundCount : Checks for correct number of
 %               detected sounds. If too few are found, lowers threshhold
-%               until at least specified cound is reached. Thresh is
+%               until at least specified count is reached. Thresh is
 %               lowered by .01 until 0.05 is reached for a max of 95
 %               itterations.
 %   Outputs

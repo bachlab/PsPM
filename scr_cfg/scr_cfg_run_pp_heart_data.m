@@ -75,18 +75,26 @@ for i=1:numel(job.pp_type)
                 % call ecg2hb
                 [sts, winfo] = scr_ecg2hb(fn, chan, opt);
                 
-                % replace channel
-                opt.replace = true;
-                opt.limit = job.pp_type{i}.ecg2hp.limit;
-                % call ecg2hp
-                [sts, winfo] = scr_hb2hp(fn, sr, winfo.channel, opt);
+                if sts ~= -1
+                
+                    % replace channel
+                    opt.replace = true;
+                    opt.limit = job.pp_type{i}.ecg2hp.limit;
+                    % call ecg2hp
+                    [sts, winfo] = scr_hb2hp(fn, sr, winfo.channel, opt);
+                end;
             case 'ppu2hb'
                 opt = struct();
                 opt.replace = logical(replace);
                 [sts, winfo] = scr_ppu2hb(fn, chan, opt);
         end;
         
-        outputs{i} = winfo.channel;
+        if sts ~= -1
+            outputs{i} = winfo.channel;
+        else
+            outputs{i} = [];
+            warning('Error occured during conversion. Could not finish correctly.');
+        end;
         
     end; 
 end;

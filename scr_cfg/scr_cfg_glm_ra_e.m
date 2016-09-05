@@ -13,7 +13,7 @@ if isempty(settings), scr_init; end;
 vars = struct();
 vars.modality = 'RAR';
 vars.modspec = 'ra_e';
-vars.glmref = {};
+vars.glmref = {['Bach et al. (2016) A linear model for event-related respiration responses']};
 vars.glmhelp = '';
 
 % load default settings
