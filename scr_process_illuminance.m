@@ -18,7 +18,7 @@ function [sts, out] = scr_process_illuminance(ldata, sr, options)
 %               .constriction       
 %                   .fhandle        function handle to the constriction
 %                                   response function
-%           .fn         filename; if specified ldata{i,j} will be saved to
+%           .fn         [filename] if specified ldata{i,j} will be saved to
 %                       a file with filename options.fn{i,j} into the 
 %                       variable 'R'
 %
@@ -77,7 +77,7 @@ try options.dont_ask_overwrite; catch; options.dont_ask_overwrite = false; end;
 if nargin < 1
     warning('ID:invalid_input', 'Missing input data.'); return;
 elseif isempty(ldata)
-    warning('ID:invalid_input', 'Empty illuminance data.'); return;
+    warning('ID:missing_data', 'Empty illuminance data.'); return;
 elseif ~isnumeric(ldata) && ~ischar(ldata) && ~iscell(ldata)
     warning('ID:invalid_input', 'Illuminance data has to be numeric, a string or a cell.'); return;
 elseif nargin < 2

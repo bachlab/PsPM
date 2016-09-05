@@ -27,7 +27,7 @@ glm_rfr_e.tag = 'glm_rfr_e';
 glm_rfr_e.prog = @scr_cfg_run_glm_rfr_e;
 
 %% Basis function
-% PSRF
+% RFRRF
 rfrrf_e = cell(1, 2);
 for i=1:2
     rfrrf_e{i}        = cfg_const;

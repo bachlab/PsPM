@@ -31,7 +31,7 @@ mrk_chan.tag     = 'mrk_chan';
 mrk_chan.val  = {chan_def};
 mrk_chan.values  = {chan_def,chan_nr};
 mrk_chan.help    = {['If you have more than one marker channel, choose the reference ' ...
-    'marker channel (default: use the fist marker channel in the file).']};
+    'marker channel (default: use the first marker channel in the file).']};
 
 %% Items for reference: File
 file_from         = cfg_entry;

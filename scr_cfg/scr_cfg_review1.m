@@ -49,14 +49,14 @@ sum         = cfg_branch;
 sum.name    = 'Predicted & Observed for all trials';
 sum.tag     = 'sum';
 sum.val     = {session_nr};
-sum.help    = {'DCM for event-related responses: review summary plot of all trials. Adding a figure name saves the figure.'};
+sum.help    = {'Non-linear SCR model for event-related responses: review summary plot of all trials. Adding a figure name saves the figure.'};
 
 % SCRF
 scrf       = cfg_const;
 scrf.name  = 'SCRF';
 scrf.tag   = 'scrf';
 scrf.val   = {'scrf'};
-scrf.help  = {'DCM for event-related responses: review SCRF (useful if SCRF was estimated from the data).'};
+scrf.help  = {'Non-linear SCR model for event-related responses: review SCRF (useful if SCRF was estimated from the data).'};
 
 % Names
 names       = cfg_const;
@@ -67,7 +67,7 @@ names.help  = {'Show trial and condition names in command window.'};
 
 
 dcm         = cfg_choice;
-dcm.name    = 'DCM';
+dcm.name    = 'Non-linear model';
 dcm.tag     = 'dcm';
 dcm.values  = {inv, sum, scrf, names};
 
@@ -84,7 +84,7 @@ sf         = cfg_branch;
 sf.name    = 'SF';
 sf.tag     = 'sf';
 sf.val     = {epoch_nr};
-sf.help    = {'DCM for spontaneous fluctuations: Show inversion results for one episode.'};
+sf.help    = {'Non-linear model for spontaneous fluctuations: Show inversion results for one episode.'};
 
 %% Contrasts
 

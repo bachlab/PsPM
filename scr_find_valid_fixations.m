@@ -18,7 +18,7 @@ function [sts, out_file] = scr_find_valid_fixations(fn, options)
 %           options:            Optional values
 %               validate_fixations: tells the function whether to validate
 %                                   fixations within a range or just to
-%                                   interpolate the pupil data
+%                                   validate the data accordint to blinks
 %               box_degree:         size of boundary box given in degree
 %                                   visual angles.
 %               distance:           distance between eye and screen in mm.
@@ -91,6 +91,10 @@ sts = -1;
 out_file = '';
 
 % validate input
+if nargin < 1 
+    warning('ID:invalid_input', 'Not enough input arguments.'); return;
+end;
+
 if nargin < 2 || ~exist('options', 'var') 
     options = struct();
 end;

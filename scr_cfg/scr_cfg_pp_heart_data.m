@@ -26,6 +26,7 @@ ecg2hb_chan.name    = 'Channel';
 ecg2hb_chan.tag     = 'chan';
 ecg2hb_chan.val     = {ecg2hb_chan_def};
 ecg2hb_chan.values  = {ecg2hb_chan_def, ecg2hb_chan_nr};
+ecg2hb_chan.help    = {'Number of ECG channel (default: first ECG channel).'};
 
 ecg2hb_minhr         = cfg_entry;
 ecg2hb_minhr.name    = 'Min Heart Rate';
@@ -41,7 +42,7 @@ ecg2hb_maxhr.name    = 'Max Heart Rate';
 ecg2hb_maxhr.tag     = 'maxhr';
 ecg2hb_maxhr.strtype = 'r';
 ecg2hb_maxhr.num     = [1 1];
-ecg2hb_maxhr.val     = {300};
+ecg2hb_maxhr.val     = {200};
 ecg2hb_maxhr.help    = {''};
 ecg2hb_maxhr.hidden  = true;
 
@@ -168,7 +169,7 @@ ppu2hb              = cfg_exbranch;
 ppu2hb.name         = 'Convert PPU to Heart Beat';
 ppu2hb.tag          = 'ppu2hb';
 ppu2hb.val          = {ppu2hb_chan};
-hb2hp.help          = {['Convert Peripheral Pulse Units (PPU) to a ', ...
+ppu2hp.help          = {['Convert Peripheral Pulse Units (PPU) to ', ...
     'Heart Beat events.']};
 
 ecg2hp              = cfg_exbranch;
@@ -218,7 +219,14 @@ pp_heart_data.help = {['Convert ECG to heart beat detects QRS complexes in ', ..
     'to heart period interpolates heart beat time stamps into ', ...
     'continuous heart period data and writes to a new channel. ', ...
     'This function uses heart period rather than heart rate because heart ',...
-    'period varies linearly with ANS input into the heart.']};
+    'period varies linearly with ANS input into the heart.'], ...
+    ['Convert PPU to heart beat first creates a template from ', ...
+    'non-ambiguous heart beats. The signal is then cross correlated ', ...
+    'with the template and maxima are identified as heart beats.'], ...
+    ['Convert ECG to heart period allows to directly convert continuous ', ...
+    'ECG data into continuous heart period data. This function is a ', ...
+    'combination of the two functions "Convert ECG to heart beat" ', ...
+    'and "Convert Heart Beat to heart period".']};
 
 function vout = scr_cfg_vout_pp_heart_data(job)
 vout = cfg_dep;

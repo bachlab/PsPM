@@ -34,7 +34,7 @@ function [sts, infos] = scr_find_sounds(file, options)
 %               which scr_find_sounds will accept sounds to belong to a
 %               marker. default is 3s.
 %
-%           mindealy : [number] Lower limit (in seconds) of the window in 
+%           mindelay : [number] Lower limit (in seconds) of the window in 
 %               which scr_find_sounds will accept sounds to belong to a
 %               marker. default is 0s.
 %

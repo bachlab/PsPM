@@ -27,7 +27,7 @@ glm_ra_e.tag = 'glm_ra_e';
 glm_ra_e.prog = @scr_cfg_run_glm_ra_e;
 
 %% Basis function
-% PSRF
+% RARF
 rarf_e = cell(1, 2);
 for i=1:2
     rarf_e{i}        = cfg_const;
