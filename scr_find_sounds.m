@@ -286,7 +286,7 @@ while searchForMoreSounds == true
         searchForMoreSounds = false;
     elseif options.threshold < .05
         searchForMoreSounds = false;
-        warning('ID:MaxItteration','Not enough sounds cout be detected to match expectedSoundCount option, result is incomplete');sts=2;
+        warning('ID:MaxIteration','Not enough sounds could be detected to match expectedSoundCount option, result is incomplete');sts=2;
     else
         options.threshold = options.threshold - 0.01;
         warning('ID:BadData',sprintf('Only %d sounds detected but %d expected. threshold lowered to %3.2f',...
