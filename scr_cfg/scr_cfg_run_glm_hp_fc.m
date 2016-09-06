@@ -15,11 +15,13 @@ model = params.model;
 options = params.options;
 
 % basis function
-bf = fieldnames(job.bf);
-bf = bf{1};
-if any(strcmp(bf,{'hprf_fc0', 'hprf_fc1'}))
+rf = fieldnames(job.bf.rf);
+rf = rf{1};
+
+soa = job.bf.soa;
+if any(strcmp(rf,{'hprf_fc0', 'hprf_fc1'}))
     model.bf.fhandle = str2func('scr_bf_hprf_fc');
-    model.bf.args = job.bf.(bf);
+    model.bf.args = [job.bf.rf.(rf) soa];
 end;
 
 % set modality

@@ -29,6 +29,15 @@ glm_hp_fc.tag = 'glm_hp_fc';
 % set callback function
 glm_hp_fc.prog = @scr_cfg_run_glm_hp_fc;
 
+%% SOA
+soa         = cfg_entry;
+soa.name    = 'SOA';
+soa.tag     = 'soa';
+soa.help    = {['Specify custom SOA for response function. Tested values are 3.5s, 4s and 6s. Default: 3.5s']};
+soa.strtype = 'r';
+soa.num     = [1 1];
+soa.val     = {3.5};
+
 %% Basis function
 % HPRF
 hprf_fc = cell(1, 2);
@@ -41,13 +50,17 @@ end
 hprf_fc{1}.help   = {'HPRF_FC without derivatives.'};
 hprf_fc{2}.help   = {'HPRF_FC with time derivative (default).'};
 
-bf        = cfg_choice;
+rf        = cfg_choice;
+rf.name   = 'Function';
+rf.tag    = 'rf';
+rf.val    = {hprf_fc{2}};
+rf.values = {hprf_fc{:}};
+
+bf        = cfg_branch;
 bf.name   = 'Basis Function';
 bf.tag    = 'bf';
-bf.val    = {hprf_fc{2}};
-bf.values = {hprf_fc{:}};
-bf.help   = {['Basis functions. Standard is to use a canonical heart period response function ' ...
-    ' for fear conditioning (HPRF_FC) with time derivative for later reconstruction of the response peak.']};
+bf.val    = {rf, soa};
+bf.help   = {['Basis functions.']};
 
 % look for bf and replace
 b = cellfun(@(f) strcmpi(f.tag, 'bf'), glm_hp_fc.val);
