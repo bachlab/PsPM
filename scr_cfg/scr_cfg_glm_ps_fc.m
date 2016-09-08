@@ -28,8 +28,8 @@ glm_ps_fc.prog = @scr_cfg_run_glm_ps_fc;
 
 %% Basis function
 % PSRF
-psrf_fc = cell(1, 3);
-for i=1:3
+psrf_fc = cell(1, 4);
+for i=1:4
     psrf_fc{i}        = cfg_const;
     psrf_fc{i}.name   = ['PSRF_FC ' num2str(i-1)];
     psrf_fc{i}.tag    = ['psrf_fc' num2str(i-1)];
@@ -38,7 +38,7 @@ end
 psrf_fc{1}.help   = {'PSRF_FC CS only and without derivatives.'};
 psrf_fc{2}.help   = {'PSRF_FC CS and derivatives for CS (default).'};
 psrf_fc{3}.help    = {'PSRF_FC with CS and US. Without derivatives.'};
-
+psrf_fc{4}.help    = {'PSRF_FC with US only and without derivatives.'};
 
 bf        = cfg_choice;
 bf.name   = 'Basis Function';

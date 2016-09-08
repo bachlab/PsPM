@@ -32,6 +32,10 @@ if any(strcmp(bf,{'psrf_fc0', 'psrf_fc1', 'psrf_fc2'}))
             cs = 1;
             cs_d = 0;
             us = 1;
+        case 'psrf_fc3'
+            cs = 0;
+            cs_d = 0;
+            us = 1;
     end;
     
     model.bf.args = [cs, cs_d, us];
