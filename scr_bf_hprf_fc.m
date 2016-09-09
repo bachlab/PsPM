@@ -27,7 +27,7 @@ end;
 td = varargin{1}(1);
 if numel(varargin{1}) == 1 && nargin == 1
     d = 0;
-    soa = 0;
+    soa = 3.5;
 else
     if numel(varargin) > 1 
         va = [varargin{:}];
@@ -37,7 +37,7 @@ else
     
     if numel(va) > 1
         d = va(2);
-    else 
+    else
         d = 0;
     end;
     
