@@ -42,9 +42,8 @@ b = p(2);
 a = p(1);
 A = p(4);
 
-shift = soa + x0;
-d = 10;
 
+d = 10;
 start = 0;
 stop = d + soa;
 
@@ -54,11 +53,15 @@ if td > (stop-start)
 elseif td == 0
     warning('ID:invalid_input', 'Time resolution must be larger than 0.'); return;
 elseif soa < 2
-    warning(['The SOA is smaller than 2 but the response function has only been ', ...
-        'tested with SOA 3.5, 4 and 6. With SOA < 2 you use it at your own risk. ', ...
-        'For further information see Castegnetti et al. (2016).']);
+    soa = 2;
+    stop = d + soa;
+    warning('Changing SOA to 2s to avoid implausible values (<2s).');
+elseif soa > 8
+    warning(['SOA longer than 8s is not recommended. ', ...
+        'Use at own risk.']);
 end;
 
+shift = soa + x0;
 x = (start:td:stop-td)';
 
 % try not to use stats toolbox, but stats toolbox has very good

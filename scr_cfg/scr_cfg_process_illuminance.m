@@ -4,8 +4,8 @@ function [proc_illuminance] = scr_cfg_process_illuminance(job)
 % Matlabbatch function specifies the scr_cfg_process_illuminance.
 % 
 %__________________________________________________________________________
-% PsPM 3.0
-% (C) 2015 Tobias Moser (University of Zurich)
+% PsPM 3.1
+% (C) 2016 Tobias Moser (University of Zurich)
 
 % $Id$
 % $Rev$

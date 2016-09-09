@@ -1,5 +1,5 @@
 function outfile = scr_merge(infile1, infile2, reference, options)
-% SCR_MERGE merges two SCRalyze datafiles with different channels and
+% SCR_MERGE merges two PsPM datafiles with different channels and
 % writes it to a file with the same name as the first file, prepended 'm'. 
 % The data is aligned to file start or first marker. Data after the reference
 % are extended to the duration of the longer data file
@@ -63,6 +63,8 @@ try options.marker_chan_num, catch, options.marker_chan_num = [0 0]; end;
 % -------------------------------------------------------------------------
 for iFile = 1:numel(infile{1})
     % read input files --
+    infos = cell(2,1);
+    data = cell(2,1);
     for iNum = 1:2
         [sts, infos{iNum}, data{iNum}] = scr_load_data(infile{iNum}{iFile});
         if sts ~= 1, return; end;

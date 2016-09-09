@@ -210,18 +210,20 @@ switch val
     case 3
         cfg_add_module('pspm.tools.split_sessions');
     case 4
-        cfg_add_module('pspm.tools.artefact_rm');
+        cfg_add_module('pspm.tools.merge');
     case 5
-        cfg_add_module('pspm.tools.downsample');
+        cfg_add_module('pspm.tools.artefact_rm');
     case 6
-        cfg_add_module('pspm.tools.interpolate');
+        cfg_add_module('pspm.tools.downsample');
     case 7
-        cfg_add_module('pspm.tools.extract_segments');
+        cfg_add_module('pspm.tools.interpolate');
     case 8
-        cfg_add_module('pspm.tools.segment_mean');
+        cfg_add_module('pspm.tools.extract_segments');
     case 9
+        cfg_add_module('pspm.tools.segment_mean');
+    case 20
         cfg_add_module('pspm.tools.extract_markerinfo');
-    case 10
+    case 12
         scr_data_editor();
 end;
 

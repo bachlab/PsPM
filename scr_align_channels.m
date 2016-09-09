@@ -9,8 +9,8 @@ function [sts, data, duration]=scr_align_channels(data, induration)
 %      
 %  
 %__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% PsPM 3.1
+% (C) 2008-2016 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 % $ Id: $
 % $ Rev $
@@ -46,7 +46,7 @@ for k = 1:numel(data)
     if ~strcmp(data{k}.header.units, 'events')
         followingtime = duration - numel(data{k}.data)/data{k}.header.sr;
         if followingtime > 0
-            data{k}.data = [data{k}.data; zeros(round(followingtime*data{k}.header.sr)+1, 1)];
+            data{k}.data = [data{k}.data; zeros(round(followingtime*data{k}.header.sr), 1)];
             if followingtime > .1 
                 fprintf('\nData recordings in %s channel were non-existent %0.2f s before the last recording in one or more other channel(s).\nThis gap was padded with zeros.', data{k}.header.chantype, followingtime);
             end;
