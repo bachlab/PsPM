@@ -172,8 +172,8 @@ for d=1:numel(D)
         end;
         
         % struct get checked if structure is okay; files get loaded
-        [sts, infos, data] = scr_load_data(fn, 0);
-        if any(sts == -1)
+        [lsts, infos, data] = scr_load_data(fn, 0);
+        if any(lsts == -1)
             warning('ID:invalid_data_structure', 'Cannot load data from data');
             outdata = {};
             break;
@@ -213,64 +213,63 @@ for d=1:numel(D)
         end;
         
         if numel(find(~isnan(dat))) < 2
-            warning('ID:invalid_input','Need at least two sample points to run interpolation.');
-            return;
-        end;
-        
-        x = 1:length(dat);
-        v = dat;
-        
-        % add some other checks here if you want to filter out other data
-        % features (e. g. out-of-range values)
-        filt = isnan(v);
-        xq = find(filt);
-        
-        % remember how many data is being interpolated
-        interp_frac(k) = numel(xq)/numel(v);
-        
-        % throw away data matching 'filt'
-        x(xq) = [];
-        v(xq) = [];
-        
-        % check for overlaps
-        if numel(xq) < 1
-            e_overlap = 0;
-            s_overlap = 0;
-        else            
-            e_overlap = max(xq) > max(x);
-            s_overlap = min(xq) < min(x);
-        end;
-                
-        if s_overlap || e_overlap
-            if ~options.extrapolate
-                warning('ID:option_disabled', ['Cannot interpolate without extrapolating,', ...
-                    ' because out-of-range data overlaps at the beginning or at the end.', ...
-                    ' Either turn on extrapolation or use scr_trim to cut away ', ...
-                    'out-of-range values at the beginning or end of the data.']);
-                return;
-            elseif s_overlap && strcmpi(options.method, 'previous')
-                warning('ID:out_of_range', ['Cannot extrapolate with ', ...
-                    'method ''previous'' and overlap at the beginning.']);
-                return;
-            elseif e_overlap && strcmpi(options.method, 'next')
-                 warning('ID:out_of_range', ['Cannot extrapolate with ', ...
-                    'method ''next'' and overlap at the end.']);
-                return;
+            warning('ID:invalid_input','Need at least two sample points to run interpolation (Channel %i). Skipping.', k);
+        else
+            x = 1:length(dat);
+            v = dat;
+            
+            % add some other checks here if you want to filter out other data
+            % features (e. g. out-of-range values)
+            filt = isnan(v);
+            xq = find(filt);
+            
+            % remember how many data is being interpolated
+            interp_frac(k) = numel(xq)/numel(v);
+            
+            % throw away data matching 'filt'
+            x(xq) = [];
+            v(xq) = [];
+            
+            % check for overlaps
+            if numel(xq) < 1
+                e_overlap = 0;
+                s_overlap = 0;
             else
-               % extrapolate because of overlaps
-               vq = interp1(x, v, xq, options.method, 'extrap'); 
+                e_overlap = max(xq) > max(x);
+                s_overlap = min(xq) < min(x);
             end;
-        else
-            % no overlap
-            vq = interp1(x, v, xq, options.method);
-        end;
-
-        dat(xq) = vq;
-        
-        if inline_flag
-            chans{k} = dat;
-        else
-            chans{k}.data = dat;
+            
+            if s_overlap || e_overlap
+                if ~options.extrapolate
+                    warning('ID:option_disabled', ['Cannot interpolate without extrapolating,', ...
+                        ' because out-of-range data overlaps at the beginning or at the end.', ...
+                        ' Either turn on extrapolation or use scr_trim to cut away ', ...
+                        'out-of-range values at the beginning or end of the data.']);
+                    return;
+                elseif s_overlap && strcmpi(options.method, 'previous')
+                    warning('ID:out_of_range', ['Cannot extrapolate with ', ...
+                        'method ''previous'' and overlap at the beginning.']);
+                    return;
+                elseif e_overlap && strcmpi(options.method, 'next')
+                    warning('ID:out_of_range', ['Cannot extrapolate with ', ...
+                        'method ''next'' and overlap at the end.']);
+                    return;
+                else
+                    % extrapolate because of overlaps
+                    vq = interp1(x, v, xq, options.method, 'extrap');
+                end;
+            else
+                % no overlap
+                vq = interp1(x, v, xq, options.method);
+            end;
+            
+            dat(xq) = vq;
+            
+            if inline_flag
+                chans{k} = dat;
+            else
+                chans{k}.data = dat;
+            end;
         end;
     end;
     
