@@ -31,6 +31,7 @@ if isempty(settings), scr_init; end;
 
 % set defaults
 % -------------------------------------------------------------------------
+% p = [sigma lambda1 lambda2 a]
 p = [0.27, 2.04, 1.48, 0.004];
 n = 20;
 offset = 0.2;
