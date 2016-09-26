@@ -18,7 +18,7 @@ function [sts, out_file] = scr_find_valid_fixations(fn, options)
 %           options:            Optional values
 %               validate_fixations: tells the function whether to validate
 %                                   fixations within a range or just to
-%                                   validate the data accordint to blinks
+%                                   validate the data according to blinks
 %               box_degree:         size of boundary box given in degree
 %                                   visual angles.
 %               distance:           distance between eye and screen in mm.
@@ -26,8 +26,8 @@ function [sts, out_file] = scr_find_valid_fixations(fn, options)
 %                                   the used screen.
 %                   aspect_actual:  Actual aspect ratio of the screen.
 %                   aspect_used:    Used aspect ratio of the screen. If not
-%                                   set will function assumes aspect_used 
-%                                   equals aspect_actual.
+%                                   set function sets aspect_used 
+%                                   equal to aspect_actual.
 %                   display_size:   The size of the display in inches.
 %               fixation_point:     A nx2 vector containing x and y of the
 %                                   fixation point (in pixel). n should be 
@@ -366,12 +366,12 @@ if numel(new_chans) >= 1
                 new_data{end+1} = new_chans{i};
                 chan_idx(i) = numel(new_data);
             end;
-            
         end;
     end;
        
     file_struct.infos = infos;
     file_struct.data = new_data;
+    file_struct.options = op;
     
     if options.interpolate
         % interpolate / extrapolate at the edges
