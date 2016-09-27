@@ -71,7 +71,7 @@ function [sts, out_file] = scr_find_valid_fixations(fn, options)
 %                                   pupil, gaze_x, gaze_y, blink, 
 %                                   pupil_missing will be automatically 
 %                                   expanded to the corresponding eye. E.g.
-%                                   pupil becoms pupil_l or pupil_r 
+%                                   pupil becomes pupil_l or pupil_r 
 %                                   according to the eye which is 
 %                                   being processed.
 %                                   
@@ -189,8 +189,19 @@ elseif options.validate_fixations
     
     % Visual calulations
     vis.screen_mm       = vis.screen_inch * 25.4;
-    vis.screen_h        = ( vis.screen_aspect_actual(2) / sqrt( vis.screen_aspect_actual(1)^2 + vis.screen_aspect_actual(2)^2 )) * vis.screen_mm;
-    vis.screen_w        = vis.screen_h * vis.screen_aspect_used(1) / vis.screen_aspect_used(2);
+    
+    if vis.screen_aspect_actual(1)/vis.screen_aspect_actual(2) ...
+            > vis.screen_aspect_used(1)/vis.screen_aspect_used(2)
+        width = (1/sqrt(1+(vis.screen_aspect_actual(1)/vis.screen_aspect_actual(2))^2))*vis.screen_mm;
+        height = width*vis.screen_aspect_used(1)/vis.screen_aspect_used(2);
+    else
+        height = (1/sqrt(1+(vis.screen_aspect_actual(2)/vis.screen_aspect_actual(1))^2))*vis.screen_mm;
+        width = height*vis.screen_aspect_used(2)/vis.screen_aspect_used(1);
+    end;
+    
+    vis.screen_h = height;
+    vis.screen_w = width;
+
     vis.screen_x_res    = vis.screen_x / vis.screen_w; % in px/mm
     vis.screen_y_res    = vis.screen_y / vis.screen_h; % in px/mm
     
@@ -276,17 +287,17 @@ for i=1:n_eyes
         
         % find chars to replace
         str_chans = cellfun(@ischar, options.channels);
-        options.channels(str_chans) = regexprep(options.channels(str_chans), ...
+        channels = options.channels;
+        channels(str_chans) = regexprep(channels(str_chans), ...
             '(pupil|gaze_x|gaze_y|blink|pupil_missing)', ['$0_' eye]);
-        
         % replace strings with numbers
-        str_chan_num = options.channels(str_chans);
+        str_chan_num = channels(str_chans);
         for j=1:numel(str_chan_num)
             str_chan_num(j) = {find(cellfun(@(y) strcmpi(str_chan_num(j),...
                 y.header.chantype), data),1)};
         end;
-        options.channels(str_chans) = str_chan_num;
-        work_chans = cell2mat(options.channels);
+        channels(str_chans) = str_chan_num;
+        work_chans = cell2mat(channels);
         
         bl = cellfun(@(x) strcmpi(blink, x.header.chantype), data);
         
@@ -331,7 +342,7 @@ op.overwrite = options.overwrite;
 
 if ~isempty(options.newfile)
     [pathstr, ~, ~] = fileparts(options.newfile);
-    if exist(pathstr, 'dir')
+    if exist(pathstr, 'dir') || isempty(pathstr)
         out_file = options.newfile;
     else
         warning('ID:invalid_input', 'Path to options.newfile (%s) does not exist.', options.newfile);
