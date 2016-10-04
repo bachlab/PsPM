@@ -69,7 +69,7 @@ elseif td == 0
     warning('ID:invalid_input', 'Time resolution must be larger than 0.'); return;
 end;
 
-p_cs = [6.03 0.73 1.6 0.029];
+p_cs = [5.94 0.75 1.7 0.002];
 p_us = [1.580910440721072 1.588518509251424 2.252132280243361 us_shift];
 
 x = (0:td:duration-td)';
