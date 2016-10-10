@@ -7,8 +7,8 @@ function [sts, data]=scr_get_scr(import)
 %                   .sr 
 %                   .data
 %                   .transfer - transfer parameters, either a struct with
-%                   fields .Rs, .c, .offset, or a file containing variables
-%                   'Rs' 'c', 'offset'
+%                   fields .Rs, .c, .offset, .recsys, or a file containing 
+%                   variables 'Rs' 'c', 'offset', 'recsys'
 %  
 %__________________________________________________________________________
 % PsPM 3.0
@@ -30,13 +30,7 @@ else
     transferparams = 'none';
 end;
 
-clear c Rs offset
-if isfield(import, 'units')
-    dataunits = import.units;
-else
-    dataunits='unknown';
-end
-
+clear c Rs offset recsys
 if isstruct(transferparams)
     try 
         c=transferparams.c; 
@@ -52,10 +46,15 @@ if isstruct(transferparams)
     catch
         offset=0; 
     end;
+    try 
+        recsys=transferparams.recsys; 
+    catch
+        recsys='conductance'; 
+    end;
     dataunits = 'uS';
 elseif ischar(transferparams)
     if strcmp(transferparams, 'none')
-        c=1; Rs=0; offset=0;
+        c=1; Rs=0; offset=0; recsys='conductance';
     elseif exist(transferparams)==2
         load(transferparams);
         if ~exist('c'), warning('ID:no_conversion_constant', '/nNo conversion constant given'); return; end;
@@ -71,14 +70,14 @@ end;
 
 % convert data
 inputdata = double(import.data);
-data.data = scr_transfer_function(inputdata, c, Rs, offset);
+data.data = scr_transfer_function(inputdata, c, Rs, offset, recsys);
 data.data = data.data(:);
 
 % add header
 data.header.chantype = 'scr';
 data.header.units = dataunits;
 data.header.sr = import.sr;
-data.header.transfer = struct('Rs', Rs, 'offset', offset, 'c', c);
+data.header.transfer = struct('Rs', Rs, 'offset', offset, 'c', c, 'recsys', recsys);
 
 % check status
 sts = 1;

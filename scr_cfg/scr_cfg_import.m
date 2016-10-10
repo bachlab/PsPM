@@ -62,12 +62,22 @@ resistor.strtype = 'r';
 resistor.num     = [1 1];
 resistor.help    = {'Resistance of any resistors in series with the subject.'};
 
+recsys           = cfg_menu;
+recsys.name      = 'Recording System';
+recsys.tag       = 'recsys';
+recsys.values    = {'conductance', 'resistance'};
+recsys.labels    = {'conductance', 'resistance'};
+recsys.val       = {'conductance'};
+recsys.help      = {['Choose whether the recorded voltage (U) was ', ...
+    'calculated from ''resistance'' (R, U=R*c=c/G) or from ''conductance'' , ', ...
+    '(G, U=G*c=c/R).']};
+
 input       = cfg_branch;
 input.name  = 'Input';
 input.tag   = 'input';
-input.val   = {transf_const,offset,resistor};
+input.val   = {transf_const,offset,resistor, recsys};
 input.help  = {'Enter the transfer constants manually.'};
-
+    
 none      = cfg_const;
 none.name = 'None';
 none.tag  = 'none';

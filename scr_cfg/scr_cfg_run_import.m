@@ -55,6 +55,7 @@ for i=1:n
                 import{i}.transfer.c = job.datatype.(datatype).importtype{i}.(type{1}).transfer.input.transf_const;
                 import{i}.transfer.offset = job.datatype.(datatype).importtype{i}.(type{1}).transfer.input.offset;
                 import{i}.transfer.Rs = job.datatype.(datatype).importtype{i}.(type{1}).transfer.input.resistor;
+                import{i}.transfer.recsys = job.datatype.(datatype).importtype{i}.(type{1}).transfer.input.recsys;
             case 'none'
                 import{i}.transfer = 'none';
         end

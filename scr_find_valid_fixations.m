@@ -382,8 +382,7 @@ if numel(new_chans) >= 1
        
     file_struct.infos = infos;
     file_struct.data = new_data;
-    file_struct.options = op;
-    
+   
     if options.interpolate
         % interpolate / extrapolate at the edges
         o.extrapolate = 1;
@@ -392,6 +391,7 @@ if numel(new_chans) >= 1
         [~, file_struct] = scr_interpolate(file_struct, o);
     end;
     
+    file_struct.options = op;
     [sts, ~, ~, ~] = scr_load_data(out_file, file_struct);
 else
     warning('ID:invalid_input', 'Appearently no data was generated.');

@@ -16,7 +16,9 @@ function [bs, x] = scr_bf_ldrf_gu(varargin)
 %       p4:
 %
 % REFERENCE
-%
+% J Vis. 2016;16(3):28. doi: 10.1167/16.3.28.
+% A solid frame for the window on cognition: Modeling event-related pupil responses.
+% Korn CW, Bach DR.
 %________________________________________________________________________
 % PsPM 3.1
 % (C) 2015 Tobias Moser (University of Zurich)

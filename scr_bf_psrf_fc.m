@@ -7,7 +7,9 @@ function [bs, x] = scr_bf_psrf_fc(varargin)
 % with td = time resolution in s and d:number of derivatives (default 0)
 %
 % REFERENCE
-%
+% Christoph W. Korn, Matthias Staib, Athina Tzovara, Giuseppe Castegnetti1, 
+% and Dominik R. Bach (under review) A pupil size response model to assess 
+% fear learning
 %________________________________________________________________________
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
