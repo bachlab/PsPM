@@ -31,6 +31,13 @@ else
 end;
 
 clear c Rs offset recsys
+
+if isfield(import, 'units')
+    dataunits = import.units;
+else
+    dataunits='unknown';
+end
+
 if isstruct(transferparams)
     try 
         c=transferparams.c; 
@@ -60,6 +67,7 @@ elseif ischar(transferparams)
         if ~exist('c'), warning('ID:no_conversion_constant', '/nNo conversion constant given'); return; end;
         if ~exist('Rs'), Rs=0; end;
         if ~exist('offset'), offset=0; end;
+        if ~exist('recsys'), recsys='conductance'; end;
         dataunits = 'uS';
     else
         warning('ID:nonexistent_file', '/nTransfer file doesn''t exist'); return;
