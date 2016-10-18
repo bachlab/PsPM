@@ -30,7 +30,7 @@ inputdata = load(datafile);
 % extract individual channels
 % -------------------------------------------------------------------------
 for k = 1:numel(import)
-    channel_labels = cellfun(@(x) x.name, inputdata.channels, 'UniformOutput', 0);
+    channel_labels = cellfun(@(x) x.name, inputdata.channels, 'UniformOutput', 0)';
     % define channel number ---
     if import{k}.channel > 0
         chan = import{k}.channel;
