@@ -6,9 +6,9 @@ function scr=scr_transfer_function(data, c, Rs, offset, recsys)
 % scr=scr_transfer_function(data, c, [Rs, offset, recsys])
 % 
 % c is the transfer constant. Depending on the recording setting
-%   data = c * (total conductance in mcS)
+%   data = c * (measured total conductance in mcS)
 % or
-%   data = c * (total resistance in MOhm) = c / (total conductance in mcS)
+%   data = c * (measured total resistance in MOhm) = c / (total conductance in mcS)
 %
 % Rs, offset, recsys are optional argumens:
 %
@@ -17,7 +17,8 @@ function scr=scr_transfer_function(data, c, Rs, offset, recsys)
 % (in Ohm, default: Rs=0). 
 % 
 % Some systems have an offset (e.g. when using fiber optics in MRI, a minimum
-% pulsrate), which can also be taken into account (default: offset=0)
+% pulsrate), which can also be taken into account (default: offset=0).
+% Offset must be stated in data units.
 %
 % There are two different recording settings which have an influence on the
 % transfer function. Recsys defines in which setting the data (given in
