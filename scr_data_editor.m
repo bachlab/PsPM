@@ -710,7 +710,7 @@ switch handles.mode
             handles.select.p = 0;
         end;
         % add selected area and draw
-        guidata(gca, handles);
+        guidata(hObject, handles);
         SelectedArea(hObject, 'add');
     case 'removeepoch'
         pt = get(handles.axData, 'CurrentPoint');
@@ -720,7 +720,7 @@ switch handles.mode
             handles.select.p = 0;
         end;
         % add selected area and draw
-        guidata(gca, handles);
+        guidata(hObject, handles);
         SelectedArea(hObject, 'remove');
 end;
 
