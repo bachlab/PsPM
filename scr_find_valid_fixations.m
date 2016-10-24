@@ -34,7 +34,7 @@ function [sts, out_file] = scr_find_valid_fixations(fn, options)
 %                                   either 1 or should have the length of
 %                                   the actual data. Default is the middle
 %                                   of the screen.
-%               channel_action:     Define whether to add oder replace the
+%               channel_action:     Define whether to add or replace the
 %                                   data. Default is 'add'. Possible values
 %                                   are 'add' or 'replace'
 %               newfile:            Define new filename to store data to
@@ -330,7 +330,7 @@ for i=1:n_eyes
                         new_pu{i}{j}.header.chantype);
                 end;
                 excl_hdr = struct('chantype', ['pupil_missing_', eye], 'units', '', 'sr', new_pu{i}{j}.header.sr);
-                new_excl{i}{j} = struct('data', excl, 'header', excl_hdr);
+                new_excl{i}{j} = struct('data', double(excl), 'header', excl_hdr);
             end;
         end;
     end;
