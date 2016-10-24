@@ -3,21 +3,27 @@ function varargout = scr_data_editor(varargin)
 %
 % FORMAT: 
 %   [varargout] = scr_data_editor(varargin)
-%   [sts, outdata, outinfo] = scr_data_editor(indata, chan)
+%   [sts, out] = scr_data_editor(indata, options)
 %
 % DESCRIPTION: 
 %
 %
 % INPUT:
-%   varargin:       Can be multiple kinds of data types. In order to use
-%                   scr_data_editor() to edit acquisition data, the actual
-%                   data vector has to be passed via the varargin
-%                   argmument. The data should be 1xn or nx1 double vector.
+%   indata:             Can be multiple kinds of data types. In order to use
+%                       scr_data_editor() to edit acquisition data, the actual
+%                       data vector has to be passed via the varargin
+%                       argmument. The data should be 1xn or nx1 double vector.
+%
+%   options:
+%       .output_file:   Use output_file to specify a file the changed data
+%                       is saved to when clicking 'save' or 'apply'. Only
+%                       works in 'file' mode.
+% 
 % OUTPUT:
-%   varargout:      The output depends on the actual output type chosen in
-%                   the graphical interface. At the moment either the
-%                   interpolated data or epochs only can be chosen as
-%                   output of the function.
+%   out:                The output depends on the actual output type chosen in
+%                       the graphical interface. At the moment either the
+%                       interpolated data or epochs only can be chosen as
+%                       output of the function.
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2015 Tobias Moser (University of Zurich)
@@ -87,16 +93,30 @@ set(handles.fgDataEditor, 'WindowButtonDownFcn', @buttonDown_Callback);
 set(handles.fgDataEditor, 'WindowButtonUpFcn', @buttonUp_Callback);
 set(handles.fgDataEditor, 'WindowButtonMotionFcn', @buttonMotion_Callback);
 
+% load options
+if numel(varargin) > 1 && isstruct(varargin{2})
+    handles.options = varargin{2};
+    
+    % check if options are valid and assign accordingly
+    if isfield(handles.options, 'output_file') && ...
+        ischar(handles.options.output_file)
+        
+        handles.output_file = handles.options.output_file;
+        set(handles.edOutputFile, 'String', handles.output_file);
+    end;
+    
+end;
+
 % Update handles structure
 guidata(hObject, handles);
 
-if numel(varargin) > 0
+if numel(varargin) > 0    
     if ischar(varargin{1})
         if exist(varargin{1}, 'file')
             set(handles.pnlInput, 'Visible', 'on');
             set(handles.pnlOutput, 'Visible', 'on');
             
-            loadFromFile(varargin{1});
+            loadFromFile(hObject, varargin{1});
         else
             warning('File ''%s'' does not exist.');
         end;
@@ -107,15 +127,15 @@ if numel(varargin) > 0
         handles.data = varargin{1};
         handles.input_mode = 'raw';
         guidata(hObject, handles);
-        PlotData;
+        PlotData(hObject);
     end;
 end;
 uiwait(handles.fgDataEditor);
 
 % -------------------------------------------------------------------------
-function [sts] = CreateOutput()
+function [sts] = CreateOutput(hObject)
 
-handles = guidata(gca);
+handles = guidata(hObject);
 
 sts = -1;
 if strcmpi(handles.input_mode, 'file') && strcmpi(handles.output_file, '')
@@ -125,7 +145,7 @@ else
     switch handles.output_type
         case 'interpolate'
             % again run interpolation
-            InterpolateData;
+            InterpolateData(hObject);
             plots = ~cellfun(@isempty, handles.plots);
             interp = cellfun(@(x) get(x.interpolate, 'YData'), handles.plots(plots), 'UniformOutput', 0);
             
@@ -197,18 +217,18 @@ else
     end;
 end;
 
-guidata(gca, handles);
+guidata(hObject, handles);
 
 % --------------------------------------------------------------------
-function loadFromFile(file)
-handles = guidata(gca);
+function loadFromFile(hObject, file)
+handles = guidata(hObject);
 
 % clear epochs
 handles.selected_data(:) = NaN;
-guidata(gca, handles);
+guidata(hObject, handles);
 
-UpdateEpochList;
-handles = guidata(gca);
+UpdateEpochList(hObject);
+handles = guidata(hObject);
 
 % clear channels
 handles.channels = {};
@@ -217,7 +237,7 @@ set(handles.lbChannel, 'String', '');
 % remove plots
 for i=1:numel(handles.plots)
     if ~isempty(handles.plots{i})
-        RemovePlot(i);
+        RemovePlot(hObject, i);
     end;
 end;
 
@@ -251,13 +271,13 @@ handles.data = data;
 handles.infos = infos;
 handles.input_mode = 'file';
 handles.plots = cell(size(data));
-guidata(gca, handles);
+guidata(hObject, handles);
 
-PlotData;
+PlotData(hObject);
 
 % --------------------------------------------------------------------
-function PlotData
-handles = guidata(gca);
+function PlotData(hObject)
+handles = guidata(hObject);
 chan = {};
 % load data
 switch handles.input_mode
@@ -279,21 +299,21 @@ end;
 handles.selected_data = NaN(numel(xdata),1);
 handles.x_data = xdata;
 
-guidata(gca, handles);
+guidata(hObject, handles);
 
 if ~isempty(chan)
     np = get(handles.axData, 'NextPlot');
     action = 'replace';
     for i=1:numel(chan)
-        AddPlot(chan(i), action);
+        AddPlot(hObject, chan(i), action);
         action = 'add';
     end;   
     set(handles.axData, 'NextPlot', np);
 end;
 
 % --------------------------------------------------------------------
-function AddPlot(chan_id, action)
-handles = guidata(gca);
+function AddPlot(hObject, chan_id, action)
+handles = guidata(hObject);
 
 if isempty(action)
     action = 'replace';
@@ -347,12 +367,12 @@ for i=1:numel(handles.epochs)
 end;
 
 set(handles.axData, 'NextPlot', np);
-guidata(gca, handles);
+guidata(hObject, handles);
 
 
 % --------------------------------------------------------------------
-function RemovePlot(chan_id)
-handles = guidata(gca);
+function RemovePlot(hObject, chan_id)
+handles = guidata(hObject);
 
 if numel(handles.plots) >= chan_id
     
@@ -373,7 +393,7 @@ if numel(handles.plots) >= chan_id
     handles.plots{chan_id} = [];
 end;
 
-guidata(gca, handles);
+guidata(hObject, handles);
 
 
 % --- Outputs from this function are returned to the command line.
@@ -397,11 +417,11 @@ function lbEpochs_Callback(hObject, eventdata, handles)
 %        contents{get(hObject,'Value')} returns selected item from lbEpochs
 
 epId = get(hObject,'Value');
-HighlightEpoch(epId);
+HighlightEpoch(hObject, epId);
 
 % --------------------------------------------------------------------
-function ResetEpochHighlight
-handles = guidata(gca);
+function ResetEpochHighlight(hObject)
+handles = guidata(hObject);
 
 for i=1:numel(handles.epochs)
     if handles.epochs{i}.highlighted
@@ -417,14 +437,14 @@ for i=1:numel(handles.epochs)
     end;
 end;
 
-guidata(gca, handles);
+guidata(hObject, handles);
 
 % --------------------------------------------------------------------
-function HighlightEpoch(epId)
-handles = guidata(gca);
+function HighlightEpoch(hObject, epId)
+handles = guidata(hObject);
 
 % reset all epochs
-ResetEpochHighlight;
+ResetEpochHighlight(hObject);
 
 % is there anything to highlight?
 if numel(handles.epochs) > 0
@@ -516,7 +536,7 @@ if numel(handles.epochs) > 0
     end;
     
     handles.highlighted_epoch = epId;
-    guidata(gca, handles);
+    guidata(hObject, handles);
 end;
 
 
@@ -646,8 +666,8 @@ set(z, 'Enable', 'on');
 set(handles.tlZoomin, 'OnCallback', cb);
 
 % --------------------------------------------------------------------
-function drawSelection
-handles = guidata(gca);
+function drawSelection(hObject)
+handles = guidata(hObject);
 pt = get(handles.axData, 'CurrentPoint');
 pos = pt(1,1:2);
 start = handles.select.start;
@@ -664,23 +684,23 @@ else
     handles.select.p = p;
 end;
 
-guidata(gca, handles);
+guidata(hObject, handles);
 
 % --------------------------------------------------------------------
-function buttonDown_Callback(src, data)
+function buttonDown_Callback(hObject, data)
 % get current cursor position
-handles = guidata(gca);
+handles = guidata(hObject);
 switch handles.mode
     case {'addepoch','removeepoch'}
         pt = get(handles.axData, 'CurrentPoint');
         handles.select.start = pt(1,1:2);
 end;
-guidata(gca, handles);
+guidata(hObject, handles);
 
 % --------------------------------------------------------------------
-function buttonUp_Callback(src, data)
+function buttonUp_Callback(hObject, data)
 % get current cursor position
-handles = guidata(gca);
+handles = guidata(hObject);
 switch handles.mode 
     case 'addepoch'
         pt = get(handles.axData, 'CurrentPoint');
@@ -691,7 +711,7 @@ switch handles.mode
         end;
         % add selected area and draw
         guidata(gca, handles);
-        SelectedArea('add');
+        SelectedArea(hObject, 'add');
     case 'removeepoch'
         pt = get(handles.axData, 'CurrentPoint');
         handles.select.stop = pt(1,1:2);
@@ -701,29 +721,29 @@ switch handles.mode
         end;
         % add selected area and draw
         guidata(gca, handles);
-        SelectedArea('remove');
+        SelectedArea(hObject, 'remove');
 end;
 
-UpdateEpochList;
+UpdateEpochList(hObject);
 
 % --------------------------------------------------------------------
-function buttonMotion_Callback(src, data)
-handles = guidata(gca);
+function buttonMotion_Callback(hObject, data)
+handles = guidata(hObject);
 
 if isfield(handles, 'mode')
     switch handles.mode
         case {'addepoch', 'removeepoch'}
             if isequal(handles.select.stop,[0,0]) && ...
                     ~isequal(handles.select.start,[0,0])
-                drawSelection;
-                SelectedArea('highlight');
+                drawSelection(hObject);
+                SelectedArea(hObject, 'highlight');
             end;
     end;
 end;
 
 % --------------------------------------------------------------------
-function SelectedArea(action)
-handles = guidata(gca);
+function SelectedArea(hObject, action)
+handles = guidata(hObject);
 
 if isfield(handles, 'x_data')
     
@@ -768,7 +788,7 @@ if isfield(handles, 'x_data')
                     yd = p.y_data;
                     r = xd >= x_from & xd <= x_to;
                     if strcmpi(handles.mode, 'removeepoch')
-                        ep = findSelectedEpochs;
+                        ep = findSelectedEpochs(hObject);
                         sel_d = zeros(size(xd));
                         
                         for j=1:size(ep,1)
@@ -790,12 +810,12 @@ if isfield(handles, 'x_data')
         handles.select.stop = [0,0];
     end;
     
-    guidata(gca, handles);
+    guidata(hObject, handles);
 end;
 
 % -------------------------------------------------------------------------
-function InterpolateData
-handles = guidata(gca);
+function InterpolateData(hObject)
+handles = guidata(hObject);
 interp_state = get(handles.cbInterpolate, 'Value');
 
 if strcmpi(handles.output_type, 'interpolate')
@@ -809,7 +829,9 @@ if strcmpi(handles.output_type, 'interpolate')
                 yd(range) = NaN;
             end;
             [sts, newyd] = scr_interpolate(yd);
-            set(handles.plots{i}.interpolate, 'YData', newyd);
+            if ~isempty(newyd)
+                set(handles.plots{i}.interpolate, 'YData', newyd);
+            end;
             if interp_state == 0
                 set(handles.plots{i}.interpolate, 'Visible', 'off')
             else
@@ -827,8 +849,8 @@ else
 end;
 
 % --------------------------------------------------------------------
-function [epochs] = findSelectedEpochs()
-handles = guidata(gca);
+function [epochs] = findSelectedEpochs(hObject)
+handles = guidata(hObject);
 
 sd = handles.selected_data;
 v_pos = find(~isnan(sd));
@@ -843,11 +865,11 @@ else
 end;
     
 % --------------------------------------------------------------------
-function UpdateEpochList
-handles = guidata(gca);
+function UpdateEpochList(hObject)
+handles = guidata(hObject);
 
 if numel(handles.plots) > 0 
-    ep = findSelectedEpochs;
+    ep = findSelectedEpochs(hObject);
     epochs = handles.epochs;
     
     % add epochs if necessary
@@ -930,9 +952,9 @@ if numel(handles.plots) > 0
     set(handles.lbEpochs, 'String', names);
     
     handles.epochs = epochs;
-    guidata(gca, handles);
+    guidata(hObject, handles);
     
-    InterpolateData;
+    InterpolateData(hObject);
 end;
 
 
@@ -990,7 +1012,7 @@ else
 end;
 
 set(handles.lbEpochs, 'Value', new_ep);
-HighlightEpoch(new_ep);
+HighlightEpoch(hObject, new_ep);
 
 
 % --------------------------------------------------------------------
@@ -1008,7 +1030,7 @@ else
     new_ep = handles.highlighted_epoch - 1;
 end;
 set(handles.lbEpochs, 'Value', new_ep);
-HighlightEpoch(new_ep);
+HighlightEpoch(hObject, new_ep);
 
 
 % --- Executes on button press in pbApply.
@@ -1017,7 +1039,7 @@ function pbApply_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-if CreateOutput == 1
+if CreateOutput(hObject) == 1
     uiresume(handles.fgDataEditor);
 end;
 
@@ -1029,7 +1051,7 @@ function pbCancel_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 handles.output = {};
-guidata(gca, handles);
+guidata(hObject, handles);
 uiresume(handles.fgDataEditor);
 
 
@@ -1040,7 +1062,7 @@ function cbInterpolate_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of cbInterpolate
-InterpolateData;
+InterpolateData(hObject);
 
 % --- Executes during object creation, after setting all properties.
 function ppOutput_CreateFcn(hObject, eventdata, handles)
@@ -1082,15 +1104,15 @@ if strcmpi(handles.input_mode, 'file')
     to_remove = plots(~ismember(plots, sel));
     
     for i=1:numel(to_remove)
-        RemovePlot(to_remove(i));
+        RemovePlot(hObject, to_remove(i));
     end;
     
     for i=1:numel(to_plot)
         if ~strcmpi(handles.data{to_plot(i)}.header.units, 'events')
-            AddPlot(to_plot(i), 'add');
+            AddPlot(hObject, to_plot(i), 'add');
         end;
     end;
-    InterpolateData;
+    InterpolateData(hObject);
 end;
 
 % --- Executes during object creation, after setting all properties.
@@ -1135,7 +1157,7 @@ if file ~= 0
     fn = [path,file];
     handles.input_file = fn;
     guidata(hObject, handles);
-    loadFromFile(fn);
+    loadFromFile(hObject, fn);
 end;
 
 % --- Executes on button press in pbOpenOutputFile.
@@ -1196,7 +1218,7 @@ else
 end;
 
 guidata(hObject, handles);
-InterpolateData;
+InterpolateData(hObject);
 
 
 % --- Executes on button press in pbSaveOutput.
@@ -1204,4 +1226,4 @@ function pbSaveOutput_Callback(hObject, eventdata, handles)
 % hObject    handle to pbSaveOutput (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-CreateOutput;
+CreateOutput(hObject);
