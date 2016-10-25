@@ -221,9 +221,9 @@ switch val
         cfg_add_module('pspm.tools.extract_segments');
     case 9
         cfg_add_module('pspm.tools.segment_mean');
-    case 20
+    case 10
         cfg_add_module('pspm.tools.extract_markerinfo');
-    case 12
+    case 11
         scr_data_editor();
 end;
 
