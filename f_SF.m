@@ -26,7 +26,7 @@ function [fx, dfdx, dfdP] = f_SF(Xt, Theta, ut, in)
 % initialise
 % -------------------------------------------------------------------------
 global settings;
-if isempty(settings), scr_init; end;
+if isempty(settings), pspm_init; end;
 
 
 % settings

@@ -10,7 +10,7 @@ function [gx,dgdx,dgdPhi] = g_aSCR(Xt,Phi,ut,inG)
 % initialise
 % -------------------------------------------------------------------------
 global settings;
-if isempty(settings), scr_init; end;
+if isempty(settings), pspm_init; end;
 
 gx = Xt(1) + Xt(4) + Xt(7);
 

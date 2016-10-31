@@ -48,7 +48,7 @@ function [fx, dfdx, dfdP] = f_SCR(Xt, Theta, ut, in)
 
 % settings
 global settings
-if isempty(settings), scr_init; end;
+if isempty(settings), pspm_init; end;
 sigma = 0.3;  % std for event-related and spontaneous sudomotor input function
 sigma_SCL = 1;% std for SCL changes
 sigma_offset = settings.dcm{1}.sigma_offset; %  offset for aSCR sigma to constrain the amplitude/sd trade-off

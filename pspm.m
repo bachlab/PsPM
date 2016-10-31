@@ -35,7 +35,7 @@ function varargout = pspm(varargin)
 % initialise
 % -------------------------------------------------------------------------
 global settings;
-if isempty(settings), scr_init; end;
+if isempty(settings), pspm_init; end;
 % -------------------------------------------------------------------------
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -63,7 +63,7 @@ function PsPM_OpeningFcn(hObject, eventdata, handles, varargin)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to PsPM (see VARARGIN)
-scr_init;
+pspm_init;
 cfg_util('initcfg'); % This must be the first call to cfg_util
 cfg_ui('Visible','off'); % Create invisible batch ui
 
@@ -93,14 +93,14 @@ function PsPM_ButtonDownFcn(hObject, eventdata, handles)
 % hObject    handle to PsPM (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-scr_show_arms;
+pspm_show_arms;
 
 % --- Executes on button press in Import_data.
 function Import_data_Callback(hObject, eventdata, handles)
 % hObject    handle to Import_data (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% scr_import_UI;
+% pspm_import_UI;
 cfg_add_module('pspm.prep.import');
 
 
@@ -109,7 +109,7 @@ function Trim_data_Callback(hObject, eventdata, handles)
 % hObject    handle to Trim_data (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% scr_trim_UI;
+% pspm_trim_UI;
 cfg_add_module('pspm.prep.trim');
 
 % --- Executes on button press in dispdata.
@@ -117,7 +117,7 @@ function dispdata_Callback(hObject, eventdata, handles)
 % hObject    handle to dispdata (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% scr_disp;
+% pspm_disp;
 cfg_add_module('pspm.tools.disp');
 
 % --- Executes on button press in Export_data.
@@ -125,7 +125,7 @@ function Export_data_Callback(hObject, eventdata, handles)
 % hObject    handle to Export_data (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% scr_exp_UI;
+% pspm_exp_UI;
 cfg_add_module('pspm.first_level.export');
 
 % --- Executes on button press in rev1.
@@ -133,8 +133,8 @@ function rev1_Callback(hObject, eventdata, handles)
 % hObject    handle to rev1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-%scr_rev1_UI;
-scr_review;
+%pspm_rev1_UI;
+pspm_review;
 % cfg_add_module('pspm.first_level.review');
 
 % --- Executes on button press in con1.
@@ -142,8 +142,8 @@ function con1_Callback(hObject, eventdata, handles)
 % hObject    handle to con1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% scr_con1_UI;
-scr_contrast;
+% pspm_con1_UI;
+pspm_contrast;
 %cfg_add_module('pspm.first_level.contrast');
 
 % --- Executes on button press in DCM.
@@ -151,7 +151,7 @@ function DCM_Callback(hObject, eventdata, handles)
 % hObject    handle to DCM (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% scr_dcm_UI;
+% pspm_dcm_UI;
 cfg_add_module('pspm.first_level.scr.dcm');
 
 % --- Executes on button press in SF.
@@ -159,7 +159,7 @@ function SF_Callback(hObject, eventdata, handles)
 % hObject    handle to SF (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% scr_sf_UI;
+% pspm_sf_UI;
 cfg_add_module('pspm.first_level.scr.sf');
 
 % --- Executes on button press in rev2.
@@ -174,7 +174,7 @@ function con2_Callback(hObject, eventdata, handles)
 % hObject    handle to con2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% scr_con2_UI;
+% pspm_con2_UI;
 cfg_add_module('pspm.second_level.contrast');
 
 
@@ -190,7 +190,7 @@ function QuitGUI_Callback(hObject, eventdata, handles)
 % hObject    handle to QuitGUI (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-scr_quit; return;
+pspm_quit; return;
 
 
 % --- Executes on selection change in Other_utils.
@@ -204,7 +204,7 @@ function Other_utils_Callback(hObject, eventdata, handles)
 val = get(hObject,'Value');
 switch val
     case 1
-        scr_display;
+        pspm_display;
     case 2
         cfg_add_module('pspm.tools.rename');
     case 3
@@ -224,7 +224,7 @@ switch val
     case 10
         cfg_add_module('pspm.tools.extract_markerinfo');
     case 11
-        scr_data_editor();
+        pspm_data_editor();
 end;
 
 % --- Executes during object creation, after setting all properties.
@@ -300,7 +300,7 @@ switch selected
         cfg_add_module('pspm.data_preprocessing.pp_heart_period.pp_heart_data');
     case 2
         %cfg_add_module('pspm.data_preprocessing.pp_heart_period.ecg_editor');
-        scr_ecg_editor();
+        pspm_ecg_editor();
     case 3
         cfg_add_module('pspm.data_preprocessing.resp_pp');
     case 4 

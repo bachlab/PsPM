@@ -1,5 +1,5 @@
 %% Check the scaling of SCR/SF amplitudes in functions f_SF and f_SCR as
-% implemented in scr_sf_dcm.m and scr_dcm_inv.m
+% implemented in pspm_sf_dcm.m and pspm_dcm_inv.m
 % Dominik R Bach 09.05.2014
 % -------------------------------------------------------------------------
 % last edited 12.05.2014
@@ -7,16 +7,16 @@
 % $ Id: $%
 % $ Rev $%
 
-scr_init;
+pspm_init;
 test_scr = 0;
 test_sf = 1;
 
-% (1) check f_SCR and scr_dcm_inv: the result is a variable 'amp' that gives
+% (1) check f_SCR and pspm_dcm_inv: the result is a variable 'amp' that gives
 % the estimated SN pulse amplitude for an elicited eSCR of unit 1
 % -------------------------------------------------------------------------
 if test_scr
     
-    % parameter estimates from scr_dcm_inv
+    % parameter estimates from pspm_dcm_inv
     crftheta = log([0.1225    1.4114    1.3421    1.5339, 0, 0, 0]);
     
     % =========================================================================
@@ -64,20 +64,20 @@ if test_scr
     addpath([settings.path, 'DAVB']);
     addpath([settings.path, 'DAVB', filesep, 'subfunctions']);
     
-    dcm = scr_dcm_inv(model, options);
+    dcm = pspm_dcm_inv(model, options);
     
     amp = dcm.sn{1}.e(1).a;
     
 end;
 
 
-% (2) check f_SF and scr_sf_dcm: the result is a variable 'amp' that gives
+% (2) check f_SF and pspm_sf_dcm: the result is a variable 'amp' that gives
 % the estimated SN pulse amplitude for an elicited SF of unit 1
 % -------------------------------------------------------------------------
 if test_sf
     
-    % parameter estimates as in scr_sf_dcm
-    sftheta = scr_sf_theta;
+    % parameter estimates as in pspm_sf_dcm
+    sftheta = pspm_sf_theta;
     
     % create an file with an SF with unit 1
     theta = [sftheta(1:3), 10, log(1)];
@@ -106,7 +106,7 @@ if test_sf
     addpath([settings.path, 'DAVB', filesep, 'subfunctions']);
     options.fresp = 1/40;
     
-    dcm = scr_sf_dcm(scr, sr, options);
+    dcm = pspm_sf_dcm(scr, sr, options);
     
     
 end;

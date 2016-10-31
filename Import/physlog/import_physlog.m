@@ -3,7 +3,7 @@ function [sts, out] = import_physlog(fn)
 %   This function was written in order to provide a scanphyslog import 
 %   function in the PsPM environment. The function is kept very slim and
 %   some ideas were taken from other functions (such as the event handling
-%   bitand() from [1]). This function should be called by scr_get_physlog.
+%   bitand() from [1]). This function should be called by pspm_get_physlog.
 %
 %   [1] http://www.mathworks.com/matlabcentral/fileexchange/
 %       42100-readphilipsscanphyslog-filename--channels--skipprep-
