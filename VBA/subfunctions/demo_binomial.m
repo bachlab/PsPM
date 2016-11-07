@@ -44,7 +44,7 @@ options.DisplayWin = 0;
 options.verbose = 0;
 
 try
-    [e] = designEfficiency([],g_fname,dim,options,u,'parameters');
+    [e] = VBA_designEfficiency([],g_fname,dim,options,u,'parameters');
     disp(['Design efficiency: ',num2str(e)])
 catch
     disp('Warning: could not estimate design efficiency!')
@@ -67,7 +67,7 @@ for t=1:p
     end
 end
 
-VBA_ReDisplay(posterior,out,1)
+VBA_ReDisplay(posterior,out,1);
 
 %---- Display results ----%
-displayResults(posterior,out,y,[],[],[],phi,[],[])
+displayResults(posterior,out,y,[],[],[],phi,[],[]);

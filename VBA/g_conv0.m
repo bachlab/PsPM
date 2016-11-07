@@ -17,7 +17,7 @@ function [g,dgdx,dgdp] = g_conv0(x,P,u,in)
 %   - dgdx: [useless]
 %   - dgdp: the gradient of the system's output w.r.t. kernel parameters
 % SEE ALSO: g_convSig
-try
+try 
     K = in.K;
 catch
     K = 0;

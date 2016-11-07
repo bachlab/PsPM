@@ -1,4 +1,4 @@
-function [y,x,x0,eta,e] = simulateNLSS(n_t,f_fname,g_fname,theta,phi,u,alpha,sigma,options,x0)
+function [y,x,x0,eta,e,u] = simulateNLSS(n_t,f_fname,g_fname,theta,phi,u,alpha,sigma,options,x0,fb)
 % samples times series from sDCM generative model
 % [y,x,x0,dTime,eta,eta0] =
 % simulateNLSS(n_t,f_fname,g_fname,theta,phi,u,alpha,sigma,options,x0)
@@ -29,43 +29,64 @@ function [y,x,x0,eta,e] = simulateNLSS(n_t,f_fname,g_fname,theta,phi,u,alpha,sig
 
 % 27/03/2007: JD.
 
-% get system dimensions
-try
-    dim = options.dim;
-catch
-    dim.n_theta = length(theta);
-    dim.n_phi = length(phi);
-    dim.n_t = n_t;
-    try
-        dim.n = size(x0,1);
-    catch
-        dim.n = size(options.priors.muX0,1);
-    end
-    try
-        options.inG;
-    catch
-        options.inG = [];
-    end
-    try
-        U = u(:,1);
-    catch
-        U = [];
-    end
-    dim.p = size(feval(g_fname,zeros(dim.n,1),phi,U,options.inG),1);
-end
+% === Some verifications
 
 try
-   options.priors.a_alpha;
-   options.priors.b_alpha;
+    x0; 
+    n=numel(x0);
 catch
-    options.priors.a_alpha = 1;
-    options.priors.b_alpha = 1;
+    try
+        n = numel(options.priors.muX0);
+    catch
+        n = 0;
+    end
 end
+
+feedback =  exist('fb','var');
+if feedback
+    try
+    u(fb.indy,1);
+    u(fb.indfb,1);
+    catch
+        error('*** Simulation with feedback requires allocated inputs');   
+    end
+end
+
+
+% --- check dimensions
+options = check_struct(options, ...
+    'dim'   , struct, ...
+    'priors', struct  ...
+    ) ;
+dim = options.dim;
+
+dim = check_struct(dim, ...
+    'n_theta'  , length(theta)  , ...
+    'n_phi'    , length(phi)    , ...
+    'n'        , n     , ...
+    'n_t'      , n_t              ...
+    );
+
+try, options.inG; catch, options.inG = []; end
+try, U = u(:,1);  catch, U = zeros(size(u,1),1); end
+dim.p = size(feval(g_fname,zeros(dim.n,1),phi,U,options.inG),1);
+
+options.dim=dim;
+% --- check priors
+options.priors = check_struct(options.priors, ...
+    'a_alpha', 1, ...
+    'b_alpha', 1  ...
+    ) ;
+
 if isinf(options.priors.a_alpha) && isequal(options.priors.b_alpha,0)
     options.priors.a_alpha = 1;
     options.priors.b_alpha = 1;
 end
+
+% --- check options
 [options,u,dim] = VBA_check(zeros(dim.p,dim.n_t),u,f_fname,g_fname,dim,options);
+
+% === Prepare simulation
 
 % Get covariance structure
 iQy = options.priors.iQy;
@@ -75,10 +96,17 @@ iQx = options.priors.iQx;
 et0 = clock;
 
 % pre-allocate variables
-x = zeros(dim.n,dim.n_t);
+x   = zeros(dim.n,dim.n_t);
 eta = zeros(dim.n,dim.n_t);
-e = zeros(dim.p,dim.n_t);
-y = zeros(dim.p,dim.n_t);
+e   = zeros(dim.p,dim.n_t);
+y   = zeros(dim.p,dim.n_t);
+
+% muxer
+n_sources=numel(options.sources);
+sgi = find([options.sources(:).type]==0) ;
+
+
+% === Simulate timeseries
 
 % Initial hidden-states value
 if dim.n > 0
@@ -91,91 +119,97 @@ if dim.n > 0
         clear sQ0
     end
 else
-    x0 = [];
+    x0 = zeros(dim.n,1);
 end
 
-% Evaluate evolution function at initial conditions
-if dim.n > 0
-    x(:,1) = VBA_evalFun('f',x0,theta,u(:,1),options,dim,1);
-    if ~isinf(alpha)
-        C = VBA_getISqrtMat(iQx{1});
-        eta(:,1) = (1./sqrt(alpha))*C*randn(dim.n,1);
-        x(:,1) = x(:,1) + eta(:,1);
-    end
-end
-
-% Evaluate observation function at x(:,1)
-gt = VBA_evalFun('g',x(:,1),phi,u(:,1),options,dim,1);
-if ~options.binomial
-    if ~isinf(sigma)
-        C = VBA_getISqrtMat(iQy{1});
-        e(:,1) = (1./sqrt(sigma))*C*randn(dim.p,1);
-    end
-    y(:,1) = gt + e(:,1);
-else
-    for i=1:dim.p
-        if isbinary(gt(i))
-            y(i,1) = gt(i);
-        else
-            y(i,1) = sampleFromArbitraryP([gt(i),1-gt(i)],[1,0]',1);
-        end
-    end
-    e(:,1) = y(:,1) - gt;
-end
-
-%-- Loop over time points
+% stack X0
+x = [x0 x];
 
 % Display progress
-if options.verbose
-    fprintf(1,'Simulating SDE...')
-    fprintf(1,'%6.2f %%',0)
-end
+VBA_disp({ ...
+    'Simulating SDE...'     , ...
+	sprintf('%6.2f %%%%',0)     ...
+ }, options);
 
-for t = 2:dim.n_t
-        
-    % Evaluate evolution function at past hidden state
+%-- Loop over time points
+for t = 1:dim.n_t
+       
+    % Evaluate evolution function at past hidden state   
     if dim.n > 0
+        x(:,t+1) = VBA_evalFun('f',x(:,t),theta,u(:,t),options,dim,t) ;
         if ~isinf(alpha)
             Cx = VBA_getISqrtMat(iQx{t});
             eta(:,t) = (1./sqrt(alpha))*Cx*randn(dim.n,1);
+            x(:,t+1) = x(:,t+1) + eta(:,t);
         end
-        x(:,t) = VBA_evalFun('f',x(:,t-1),theta,u(:,t),options,dim,t) + eta(:,t);
     end
-    
+
     % Evaluate observation function at current hidden state
-    gt = VBA_evalFun('g',x(:,t),phi,u(:,t),options,dim,t);
-    if ~options.binomial
-        if ~isinf(sigma)
-            Cy = VBA_getISqrtMat(iQy{t});
-            e(:,t) = (1./sqrt(sigma))*Cy*randn(dim.p,1);
+    gt = VBA_evalFun('g',x(:,t+1),phi,u(:,t),options,dim,t);
+      
+    for i=1:n_sources
+        s_idx = options.sources(i).out;
+        switch options.sources(i).type
+            % gaussian
+            case 0 
+                sigma_i = sigma(find(sgi==i)) ;
+                if ~isinf(sigma_i)
+                	C = VBA_getISqrtMat(iQy{t,find(sgi==i)});
+                    e(s_idx,t) = (1./sqrt(sigma_i))*C*randn(length(s_idx),1);
+                end
+                y(s_idx,t) = gt(s_idx) + e(s_idx,t) ;
+            % binomial
+            case 1
+                for k=1:length(s_idx)
+                    y(s_idx(k),t) = sampleFromArbitraryP([gt(s_idx(k)),1-gt(s_idx(k))],[1,0]',1);
+                end
+        	% multinomial
+            case 2
+                resp = zeros(length(s_idx),1) ;
+                respIdx = sampleFromArbitraryP(gt(s_idx),1:length(s_idx),1) ;
+                if ~isnan(respIdx)
+                    resp(respIdx) = 1;
+                    y(s_idx,t) = resp;
+                else
+                    y(s_idx,t) = NaN;
+                end
         end
-        y(:,t) = gt + e(:,t);
-    else
-        for i=1:dim.p
-            if isbinary(gt(i))
-                y(i,t) = gt(i);
-            else
-                y(i,t) = sampleFromArbitraryP([gt(i),1-gt(i)],[1,0]',1);
-            end
-        end
-        e(:,t) = y(:,t) - gt;
+        
     end
+    e(:,t) = y(:,t) - gt;
+    
+    
+    % fill in next input with last output and feedback
+    if feedback && t < dim.n_t
+        % get feedback on system's output
+        if ~isempty(fb.h_fname)
+            u(fb.indfb,t+1) = feval(fb.h_fname,y(:,t),t,fb.inH);
+        end
+        u(fb.indy,t+1) = y(:,t);
+    end   
     
     % Display progress
-    if mod(100*t/dim.n_t,10) <1 && options.verbose
-        fprintf(1,repmat('\b',1,8))
-        fprintf(1,'%6.2f %%',floor(100*t/dim.n_t))
+    if mod(100*t/dim.n_t,10) <1 
+        VBA_disp({ ...
+            repmat('\b',1,9) ,  ...
+            sprintf('%6.2f %%%%',floor(100*t/dim.n_t)), ...
+        }, options);
     end
-    if isweird({x(:,t),y(:,t)})
+    
+    if isweird({x(:,t)}) %,y(:,t)
         break
     end
     
 end
 
+%unstack X0
+x(:,1) = [];
+
 % Display progress
-if options.verbose
-    fprintf(1,repmat('\b',1,8))
-    fprintf(1,[' OK (took ',num2str(etime(clock,et0)),' seconds).'])
-    fprintf(1,'\n')
-end
+VBA_disp({ ...
+    repmat('\b',1,9)                                        ,...
+	[' OK (took ',num2str(etime(clock,et0)),' seconds).']    ...
+ },options);
+
+
 

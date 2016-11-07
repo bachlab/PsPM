@@ -77,8 +77,7 @@ if nargin > 0
             else
                 warning('ID:invalid_input', 'Cannot check for updates.'); return;
             end;
-    end;
-            
+    end;       
 end;
 
 sts = 1;

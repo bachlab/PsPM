@@ -5,7 +5,6 @@
 
 close all
 clear variables
-clc
 
 
 
@@ -39,7 +38,7 @@ options.inF = inF;
 options.inG = inG;
 options.skipf = zeros(1,length(u));
 options.skipf(1) = 1; % apply identity mapping from x0 to x1.
-[y,x,x0,eta,e,u] = simulateNLSS_fb(length(u),f_fname,g_fname,theta,phi,u,Inf,Inf,options,x0,fb);
+[y,x,x0,eta,e,u] = simulateNLSS(length(u),f_fname,g_fname,theta,phi,u,Inf,Inf,options,x0,fb);
 
 figure
 plot(y-e,'r')
@@ -68,7 +67,7 @@ priors.b_alpha = 0;
 options.priors = priors;
 [posterior,out] = VBA_NLStateSpaceModel(y,u,f_fname,g_fname,dim,options);
 
-displayResults(posterior,out,y,x,x0,theta,phi,Inf,Inf)
+displayResults(posterior,out,y,x,x0,theta,phi,Inf,Inf);
 
 
 [ha,hf] = unwrapVBvolatileOTO(posterior,out);

@@ -2,7 +2,6 @@
 
 close all 
 clear variables
-clc
 
 % 1: create original 2D image
 [X,Y] = meshgrid(-2:.2:2, -2:.2:2);                                
@@ -43,4 +42,4 @@ figure(hf)
 subplot(2,2,3),imagesc(reshape(hg,nx,ny)),colormap(bone),colorbar,axis equal, axis tight,title('realigned image')
 subplot(2,2,4),imagesc(reshape(hg-y,nx,ny)),colormap(bone),colorbar,axis equal, axis tight,title('realigned - disaligned')
 
-displayResults(posterior,out,y,[],[],[],phi,[],sigma)
+displayResults(posterior,out,y,[],[],[],phi,[],sigma);

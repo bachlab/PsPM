@@ -227,6 +227,9 @@ if options.crfupdate
     dim.n_theta = numel(priors.muTheta);    % nb of evolution parameters
     priors.SigmaTheta = eye(dim.n_theta);
     priors.SigmaX0(1:3,1:3) = eye(3);
+    % initialise priors in correct dimensions
+    priors.iQy = cell(numel(observed), 1);
+    priors.iQx = cell(numel(observed), 1);
     for k = 1:numel(observed)  % default priors on noise covariance
         priors.iQy{k} = 1;
         priors.iQx{k} = eye(dim.n);
@@ -269,6 +272,9 @@ if numel(options.eSCR) > 1
     dim.n_theta = numel(priors.muTheta);    % nb of evolution parameters
     priors.SigmaTheta = eye(dim.n_theta);
     priors.SigmaX0(1:3,1:3) = eye(3);
+    % initialise priors in correct dimensions
+    priors.iQy = cell(numel(observed), 1);
+    priors.iQx = cell(numel(observed), 1);
     for k = 1:numel(observed)  % default priors on noise covariance
         priors.iQy{k} = 1;
         priors.iQx{k} = eye(dim.n);
@@ -316,6 +322,9 @@ if numel(options.aSCR) > 1
     priors.SigmaTheta = eye(dim.n_theta);
     priors.SigmaX0 = zeros(dim.n);
     priors.SigmaX0(1:3,1:3) = eye(3);
+    % initialise priors in correct dimensions
+    priors.iQy = cell(numel(observed), 1);
+    priors.iQx = cell(numel(observed), 1);
     for k = 1:numel(observed)  % default priors on noise covariance
         priors.iQy{k} = 1;
         priors.iQx{k} = eye(dim.n);
@@ -377,6 +386,9 @@ if (numel(options.meanSCR) > 1) && (~options.getrf)
     
     priors.SigmaX0 = zeros(dim.n);
     priors.SigmaX0(1:3,1:3) = eye(3);
+    % initialise priors in correct dimensions
+    priors.iQy = cell(numel(options.meanSCR), 1);
+    priors.iQx = cell(numel(options.meanSCR), 1);
     for k = 1:numel(options.meanSCR)  % default priors on noise covariance
         priors.iQy{k} = 1;
         priors.iQx{k} = eye(dim.n);
@@ -689,6 +701,9 @@ if ~options.getrf
             for n = [aSCR_dummyind eSCR_dummyind], priors.SigmaTheta(n, n) = 0; end;
             % set u0
             u(:, 1) = 0;
+            % initialise priors in correct dimensions
+            priors.iQy = cell(numel(y), 1);
+            priors.iQx = cell(numel(y), 1);
             % default priors on noise covariance
             for k = 1:numel(y)
                 priors.iQy{k} = 1;
@@ -791,6 +806,18 @@ if ~options.getrf
         
         % assemble results
         % =======================================================================
+        if isfield(output, 'options')
+            for i=1:length(output)
+                output(i).options = rmfield(output(i).options, 'hf');
+            end;
+        end;
+        if isfield(prior, 'output')
+            for i=1:length(prior.output)
+                if isstruct(prior.output(i).options) && isfield(prior.output(i).options, 'hf')
+                    prior.output(i).options = rmfield(prior.output(i).options, 'hf');
+                end;
+            end;
+        end;
         dcm.sn{sn}.a = aTheta;
         dcm.sn{sn}.e = eTheta;
         dcm.sn{sn}.sf = sfTheta;

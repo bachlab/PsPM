@@ -50,11 +50,11 @@ switch flag
             end
         end
         fprintf(1,['Deriving prior predictive densities: model       '])
-        for j=1:nm % loops over models
+        parfor j=1:nm % loops over models
             % get prior predictive density
             fprintf(1,repmat('\b',1,6))
             fprintf(1,[num2str(j),'/',num2str(nm),'...'])
-            [muy{j},Vy{j}] = VBA_getLaplace(u,f_fname{j},g_fname{j},dim{j},options{j});
+            [muy{j},Vy{j}] = VBA_getLaplace(u{j},f_fname{j},g_fname{j},dim{j},options{j});
         end
         
         % computes Jensen-Shannon divergence of models
@@ -75,7 +75,7 @@ switch flag
         try,binomial=options.binomial;catch,binomial=0;end
         
         % get prediced model parameter precision matrix
-        [muy,Vy,iVp] = VBA_getLaplace(u,f_fname,g_fname,dim,options);
+        [~,~,iVp] = VBA_getLaplace(u,f_fname,g_fname,dim,options,0,'skip');
         % compute the trace of predicted posterior variance
         e = -trace(VBA_inv(iVp));
         out = [];

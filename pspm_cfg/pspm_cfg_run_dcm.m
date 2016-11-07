@@ -100,7 +100,7 @@ options.sfpost = job.inv_options.sfpost;
 options.sffreq = job.inv_options.sffreq;
 options.sclpre = job.inv_options.sclpre;
 options.sclpost = job.inv_options.sclpost;
-options.aSCR_sigma_offset = job.inv_options.apspm_sigma_offset;
+options.aSCR_sigma_offset = job.inv_options.ascr_sigma_offset;
 
 options.dispwin = job.disp_options.dispwin;
 options.dispsmallwin = job.disp_options.dispsmallwin;

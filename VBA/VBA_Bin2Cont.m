@@ -31,6 +31,7 @@ p = 0:(1/ne):1;
 sg = sort(gx);
 ind = ceil(p*length(sg)) + [1,zeros(1,size(p,2)-1)];
 edges = sg(ind);
+
 stacky = zeros(ne,1);
 stdy = zeros(ne,1);
 gridg = zeros(ne,1);

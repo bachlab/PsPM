@@ -32,6 +32,9 @@ function [posterior,suffStat] = VBA_GN(y,posterior,suffStat,dim,u,options,flag)
 
 switch flag
     case 'X'
+        if options.extended
+            error('*** Stochastic multichannel VB is not yet supported !');
+        end
         indIn = options.params2update.x;
         PreviousMu = posterior.muX;
         if ~options.binomial
@@ -50,13 +53,22 @@ switch flag
     case 'Phi'
         indIn = options.params2update.phi;
         PreviousMu = posterior.muPhi(indIn);
-        if options.nmog > 1
-            fname = @VBA_Iphi_split;
+        if options.UNL % to be rationalized...
+            fname = @VBA_Iphi_UNL;
         else
-            if ~options.binomial
-                fname = @VBA_Iphi;
+            if options.extended
+                fname = @VBA_Iphi_extended;
             else
-                fname = @VBA_Iphi_binomial;
+                if options.nmog > 1
+                    if options.extended
+                        error('*** Splitted multichannel VB is not yet supported !');
+                    end
+                    fname = @VBA_Iphi_split;
+                elseif options.binomial
+                    fname = @VBA_Iphi_binomial;
+                else
+                    fname = @VBA_Iphi;
+                end
             end
         end
         s1 = 'I(<Phi>) =';
@@ -75,7 +87,7 @@ end
 
 % Get variational energy (I) and propose move (deltaMu)
 try
-    [I,Sigma,deltaMu,suffStat2] = feval(fname,PreviousMu,y,posterior,suffStat,dim,u,options);
+   [I,Sigma,deltaMu,suffStat2] = feval(fname,PreviousMu,y,posterior,suffStat,dim,u,options);
     PreviousI = I;
 catch
     VBA_disp(['Warning: could not evaluate variational energy on ',flag,'!'],options)
@@ -98,6 +110,9 @@ end
 % Regularized Gauss-Newton VB-Laplace update
 it = 0;
 stop = it>=options.GnMaxIter;
+conv = 0;
+posterior0 = posterior;
+posterior = updatePosterior(posterior,PreviousMu,Sigma,indIn,flag);
 while ~stop
     it = it+1;
     % make a move
@@ -146,6 +161,7 @@ while ~stop
                 VBA_updateDisplay(posterior,suffStat,options,y,[],'theta')
         end
         try,title(ha,[s2,': accept move ; ',str]);end
+        conv = 1;
     end
     % check convergence criterion
     if abs(rdf)<=options.GnTolFun || it==options.GnMaxIter
@@ -154,6 +170,10 @@ while ~stop
         try close(suffStat.haf); end
     end
     drawnow
+end
+if ~conv
+    suffStat.F = [suffStat.F,suffStat.F(end)];
+    posterior = posterior0;
 end
 
 

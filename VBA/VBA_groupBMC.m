@@ -80,7 +80,6 @@ if isempty(priors) || ~isfield(priors,'a') || isempty(priors.a)
             priors.a(indf) = 1/length(indf);
         end
     end
-%     priors.a = priors.a./sum(priors.a);
     options.priors = priors;
 end
 if ~isempty(options.families)
@@ -125,9 +124,8 @@ F = FE(L,posterior,priors);
 if options.DisplayWin
     out = wrapUp(L,posterior,priors,F,options);
     options.handles = VBA_displayGroupBMC(posterior,out);
-    drawnow
-end
-
+    drawnow;
+end     
 %-- enter VB iterative algorithm
 stop = 0;
 it = 1;
@@ -155,17 +153,7 @@ while ~stop
 end
 
 %-- wrap up VBA output
-out = wrapUp(L,posterior,priors,F,options);
-try
-    out.ep = VBA_ExceedanceProb(posterior.a,[],'dirichlet',0);
-    if ~isempty(out.options.families)
-        out.families.ep = VBA_ExceedanceProb(out.families.a,[],'dirichlet',0);
-    end
-catch
-    if options.verbose
-        disp('Warning: exceedance probabilities are approximated!');
-    end
-end
+out = wrapUp(L,posterior,priors,F,options,false);
 out.date = clock;
 out.dt = toc(options.tStart);
 if options.DisplayWin
@@ -197,7 +185,10 @@ end
 
 %-- subfunctions
 
-function out = wrapUp(L,posterior,priors,F,options)
+function out = wrapUp(L,posterior,priors,F,options,approx_ep)
+if ~exist('approx_ep','var')
+    approx_ep=true;
+end
 % wraps up the ou structure for display purposes
 out.dt = toc(options.tStart);
 out.options = options;
@@ -206,7 +197,11 @@ out.F = F;
 % derive first and second order moments on model frequencies:
 [out.Ef,out.Vf] = Dirichlet_moments(posterior.a);
 % derive exceedance probabilities (using Gaussian moment matching)
-out.ep = VBA_ExceedanceProb(out.Ef,out.Vf,'gaussian');
+if approx_ep
+    out.ep = VBA_ExceedanceProb(out.Ef,out.Vf,'gaussian');
+else
+    out.ep = VBA_ExceedanceProb(posterior.a,[],'dirichlet',0);
+end
 % store accuracy and entropy terms of the Free Energy
 [F,out.ELJ,out.Sqf,out.Sqm] = FE(L,posterior,priors);
 % derive Free Energy under the null:
@@ -219,12 +214,20 @@ else
     out.bor = 1/(1+exp(F-out.F0));
     [out.Fffx] = FE_ffx(L,options);
 end
+out.pxp = (1-out.bor)*out.ep + out.bor/size(L,1);
+
 % pool evidence over families
 if ~isempty(options.families)
     out.families.r = options.C'*posterior.r;
     out.families.a = options.C'*posterior.a;
     [out.families.Ef,out.families.Vf] = Dirichlet_moments(out.families.a);
     out.families.ep = VBA_ExceedanceProb(out.families.Ef,out.families.Vf,'gaussian');
+    if approx_ep
+        out.families.ep = VBA_ExceedanceProb(out.families.Ef,out.families.Vf,'gaussian');
+    else
+        out.families.ep = VBA_ExceedanceProb(out.families.a,[],'dirichlet',0);
+    end 
+    out.families.pxp = (1-out.bor)*out.families.ep + out.bor/numel(options.families);
 end
 
 

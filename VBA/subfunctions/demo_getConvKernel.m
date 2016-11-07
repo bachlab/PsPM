@@ -1,4 +1,4 @@
-% this script demonstrates how to estimate a convolution kernel from a
+% this script demonstrates how to estimate a Volterra kernel from a
 % dynamical system trajectory. In this particular example, the dynamical
 % system is in fact a Rescorla-Wagner learning agent.
 

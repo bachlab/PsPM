@@ -11,7 +11,7 @@ delta_t = 2e-1;         % integration time step (Euler method)
 f_fname = @f_lin2D;
 g_fname = @g_sigmoid;
 
-u       = [];
+u       = zeros(1,n_t);
 
 % Build options structure for temporal integration of SDE
 inF.deltat      = delta_t;
@@ -63,7 +63,7 @@ displaySimulations(y,x,eta,e)
 [posterior,out] = VBA_NLStateSpaceModel(y,u,f_fname,g_fname,dim,options);
 
 % Display results
-displayResults(posterior,out,y,x,x0,theta,phi,alpha,sigma)
+displayResults(posterior,out,y,x,x0,theta,phi,alpha,sigma);
 
 % Make predictions
 try

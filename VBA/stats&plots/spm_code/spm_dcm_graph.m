@@ -7,7 +7,7 @@ function [h,g] = spm_dcm_graph(xY,A,ha)
 % Copyright (C) 2008 Wellcome Trust Centre for Neuroimaging
  
 % Karl Friston
-% $Id: spm_dcm_graph.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
  
 try; ha; catch; ha = []; end
  

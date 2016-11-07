@@ -63,9 +63,6 @@ if str2num(v(1:3))<7.1
     verr=1;
     errmsg=sprintf('You are running PsPM on a Matlab version (%s) under which it has not been tested.\nSPM 8 functions will be automatically added to you path but may not run. 1st level GLM may not run.\nIf you encounter any other error, please contact the developers.', v);
     warning(errmsg);
-elseif str2num(v(1:3)) >= 8.4
-    errmsg=sprintf('You are using Matlab version 2014b or later. Review display of non-linear models using VBA may not work.');
-    warning(errmsg);
 end
 
 % check toolbox functions

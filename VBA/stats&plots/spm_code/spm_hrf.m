@@ -20,7 +20,7 @@ function [hrf,p] = spm_hrf(RT,P)
 % Copyright (C) 2008 Wellcome Trust Centre for Neuroimaging
 
 % Karl Friston
-% $Id: spm_hrf.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
 
 % global parameter

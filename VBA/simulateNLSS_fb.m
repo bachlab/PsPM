@@ -42,6 +42,9 @@ function [y,x,x0,eta,e,u] = simulateNLSS_fb(n_t,f_fname,g_fname,theta,phi,u,alph
 %   and feedback online)
 
 % check inputs
+
+warning('*** simulateNLSS_fb is deprecated. Please use simulateNLSS instead, with the same syntax as simulateNLSS_fb');
+
 try
     u(fb.indy,1);
     u(fb.indfb,1);
@@ -79,19 +82,19 @@ catch
     dim.p = size(feval(g_fname,zeros(dim.n,1),phi,U,options.inG),1);
 end
 
-
 % fill in options structure with defaults
 try
-   options.priors.a_alpha;
-   options.priors.b_alpha;
+    options.priors.a_alpha;
+    options.priors.b_alpha;
 catch
     options.priors.a_alpha = 1;
     options.priors.b_alpha = 1;
 end
 if isinf(options.priors.a_alpha) && isequal(options.priors.b_alpha,0)
-    options.priors.a_alpha = 1;
-    options.priors.b_alpha = 1;
+   options.priors.a_alpha = 1;
+   options.priors.b_alpha = 1;
 end
+
 [options,u,dim] = VBA_check(zeros(dim.p,dim.n_t),u,f_fname,g_fname,dim,options);
 
 % Get covariance structure

@@ -1,7 +1,7 @@
 % Q-learning demo
 % In psychological terms, motivation can be defined as the set of processes
 % that generate goals and thus determine behaviour. A goal is nothing else
-% than a “state of affairs”, to which people attribute (subjective) value.
+% than a ???state of affairs???, to which people attribute (subjective) value.
 % Empirically speaking, one can access these values by many means,
 % including subjective verbal report or decision making. These measures
 % have been used to demonstrate how value change as people learn a new
@@ -21,7 +21,6 @@
 
 close all
 clear variables
-clc
 
 
 
@@ -56,6 +55,7 @@ legend(ha,{'y: agent''s choices','p(y=1|theta,phi,m): behavioural tendency'})
 
 
 dim = struct('n',2,'n_theta',1,'n_phi',1);
+
 priors.muPhi = zeros(dim.n_phi,1);
 priors.muTheta = zeros(dim.n_theta,1);
 priors.muX0 = zeros(2,1);
@@ -80,6 +80,6 @@ o = out;
 o.u = uu;
 [kernels] = VBA_VolterraKernels(posterior,o,16);
 o.diagnostics.kernels = kernels;
-VBA_ReDisplay(posterior,o,1)
+VBA_ReDisplay(posterior,o,1);
 
 getSubplots

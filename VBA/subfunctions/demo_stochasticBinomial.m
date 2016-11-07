@@ -51,13 +51,13 @@ displaySimulations(y,x,eta,e)
 [posterior,out] = VBA_NLStateSpaceModel(y,u,f_fname,g_fname,dim,options);
 
 % Display results
-displayResults(posterior,out,y-e,x,x0,theta,phi,alpha,[])
+displayResults(posterior,out,y-e,x,x0,theta,phi,alpha,[]);
 
 % Make predictions
 try
     options = out.options;
     [xs,ys,xhat,vx,yhat,vy] = comparePredictions(...
-        n_t,theta,phi,u,alpha,sigma,options,posterior,dim);
+        n_t,theta,phi,u,alpha,[],options,posterior,dim);
 catch
     disp('------!!Unable to form predictions!!------')
 end

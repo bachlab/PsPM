@@ -70,6 +70,8 @@ options.MaxIter = 8; % to quicken inversion
 dim.n_theta         = options.inF.ind5(end);
 dim.n_phi           = (2+options.inG.n_phi).*nreg;
 dim.n               = 5*nreg;
+dim.p               = 8;
+options.dim=dim;
 
 %--- Build priors for model inversion
 indHemo = options.inF.indself+1:dim.n_theta;
@@ -200,7 +202,7 @@ displaySimulations(y,x,eta,e)
 [posterior,out] = VBA_NLStateSpaceModel(y,u,f_fname,g_fname,dim,options);
 
 % Display results
-displayResults(posterior,out,y,x,x0,theta,phi,alpha,sigma)
+displayResults(posterior,out,y,x,x0,theta,phi,alpha,sigma);
 
 % Make predictions
 try

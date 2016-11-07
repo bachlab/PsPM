@@ -111,6 +111,9 @@ priors.a_sigma = 1e5;
 priors.b_sigma = 1e1;             
 priors.a_alpha = Inf;
 priors.b_alpha = 0;
+% initialise priors in correct dimensions
+priors.iQy = cell(numel(scr), 1);
+priors.iQx = cell(numel(scr), 1);
 for k = 1:numel(scr)  % default priors on noise covariance
     priors.iQy{k} = 1;
     priors.iQx{k} = eye(dim.n);
@@ -151,9 +154,11 @@ fprintf(['\n\nEstimating model parameters for f_SF ... \t%02.0f:%02.0f:%02.0f', 
     '\n=========================================================\n'], c(4:6));
 [posterior, output] = VBA_NLStateSpaceModel(y(:)',u,f_fname,g_fname,dim,options);
 
-
 % extract parameters
 % =======================================================================
+for i=1:length(output)
+    output(i).options = rmfield(output(i).options, 'hf');
+end;
 t = posterior.muTheta(4:2:end);
 a = exp(posterior.muTheta(5:2:end) - theta(5));   % rescale
 ex = find(t < -2 | t > (numel(scr)/sr - 1)); % find SA responses the SCR peak of which is outside episode

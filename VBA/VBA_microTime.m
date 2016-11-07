@@ -1,10 +1,14 @@
 function [x,gx,microTime,sampleInd] = VBA_microTime(posterior,u,out)
 % gets micro-time time series from posterior
-
+try
+    inF = out.options.inF{1};
+catch
+    inF = out.options.inF;
+end
 options = out.options;
 try
-    dt = options.decim.*options.inF.deltat;
-    microTime = 0:options.inF.deltat:options.dim.n_t*dt;
+    dt = options.decim.*inF.deltat;
+    microTime = 0:inF.deltat:options.dim.n_t*dt;
 catch
     microTime = 0:options.dim.n_t*options.decim;
 end

@@ -19,6 +19,9 @@ if nargin < 2 || isempty(indIn)
     dq = diag(Q);
     indIn = find(~isinf(dq)&dq~=0);
 end
+% use lazy evaluation if all matrix is used
+isSub = ~all(numel(indIn) == size(Q));
+
 if nargin < 3
     replace = 0;
 else
@@ -27,12 +30,16 @@ end
 if nargin < 4
     v = 0;
 end
-subQ = full(Q(indIn,indIn));
+if isSub
+    subQ = full(Q(indIn,indIn));
+else
+    subQ = full(Q);
+end
 if replace % v-padd
     iQ = v.*ones(size(Q));
     iQ(indIn,indIn) = subQ;
 else % (p)invert Q
-    if isequal(subQ,eye(length(indIn))) % identity matrix
+    if isequal(subQ,eye(length(indIn)))   % identity matrix
         subiQ = subQ;
     elseif isequal(subQ,diag(diag(subQ))) % diagonal matrix
         tol  = max(eps(norm(diag(subQ),'inf'))*length(indIn),exp(-32)); 
@@ -43,8 +50,12 @@ else % (p)invert Q
         subiQ = inv(subQ + eye(length(indIn))*tol);
         warning on
     end
-    iQ = zeros(size(Q));
-    iQ(indIn,indIn) = subiQ;
+    if isSub
+        iQ = zeros(size(Q));
+        iQ(indIn,indIn) = subiQ;
+    else
+        iQ = subiQ;
+    end
 end
 
 

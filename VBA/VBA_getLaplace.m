@@ -1,4 +1,4 @@
-function [muy,Vy,iVp] = VBA_getLaplace(u,f_fname,g_fname,dim,options,checkVar)
+function [muy,Vy,iVp] = VBA_getLaplace(u,f_fname,g_fname,dim,options,checkVar,reduceVy)
 % returns the Laplace approximation to the prior predictive density
 % function [muy,Vy,iVp] = VBA_getLaplace(u,f_fname,g_fname,dim,options)
 % IN:
@@ -10,147 +10,183 @@ function [muy,Vy,iVp] = VBA_getLaplace(u,f_fname,g_fname,dim,options,checkVar)
 %   - checkVar: flag for eyeballing the quality of the covariance matrix
 % OUT:
 %   - muy: the 1st-order moment of the prior predictive density.
-%   - Vy: the second-order moement of the prior predictive density.
+%   - Vy: the second-order moment of the prior predictive density.
 %   - iVp: the predicted posterior precision matrix of the model parameters
 % SEE ALSO: splitLaplace
 
-try; checkVar; catch; checkVar = 0; end
+% _________________________________________________________________________
+% checks
+if ~exist('checkVar'), checkVar = 0; end
+if ~exist('reduceVy'), reduceVy = 'full'; end
 
-options.checkGrads = 0; % well, this should have been done before...
+options.checkGrads     = 0; % well, this should have been done before...
 options.priors.a_alpha = 0; % to bypass ODE transform in VBA_check.m
-options.verbose = 0; % to quicken VBA_check.m
-[options,u,dim] = VBA_check([],u,f_fname,g_fname,dim,options);
+options.verbose        = 0; % to quicken VBA_check.m
+[options,u,dim]        = VBA_check([],u,f_fname,g_fname,dim,options);
 
-% Get prior covariance matrix
-Sigma = zeros(dim.n_phi+dim.n_theta+dim.n,dim.n_phi+dim.n_theta+dim.n);
-if dim.n_phi > 0
-    Sigma(1:dim.n_phi,1:dim.n_phi) = options.priors.SigmaPhi;
-end
-if dim.n_theta > 0
-    Sigma(dim.n_phi+1:dim.n_phi+dim.n_theta,dim.n_phi+1:dim.n_phi+dim.n_theta) = options.priors.SigmaTheta;
-end
-if dim.n > 0
-    Sigma(dim.n_phi+dim.n_theta+1:end,dim.n_phi+dim.n_theta+1:end) = options.priors.SigmaX0;
-end
+get_iVp = (nargout >= 3);
 
-% pre-allocate output variables
-Vy = zeros(dim.p.*dim.n_t);
-muy = zeros(dim.p.*dim.n_t,1);
-if nargout < 3
-    get_iVp = 0;
-else
-    get_iVp = 1;
-    iVp = VBA_inv(Sigma);
+% _________________________________________________________________________
+% initialization
+
+% + memory preallocations
+muy      = zeros(dim.p.*dim.n_t,1);                                     % first moment of the predictive density
+switch reduceVy
+    case 'full'
+        Vy       = zeros(dim.p.*dim.n_t);                               % second moment of the predictive density
+        dgdp     = zeros(dim.n_phi+dim.n_theta+dim.n,dim.p*dim.n_t);    % derivatives of obs wrt to paramters
+    case 'diag'
+        Vy       = zeros(dim.p.*dim.n_t,1);   
+        dgdp     = zeros(dim.n_phi+dim.n_theta+dim.n,dim.p);            % derivatives of obs wrt to paramters
+    case 'skip'
+        Vy = NaN;
 end
 
+%x        = zeros(dim.n,1);                                             % current hidden state
+%gx       = zeros(dim.p,1);                                             % current observation
+dxdTheta = zeros(dim.n_theta,dim.n);                                    % derivatives of states wrt to theta
+dxdX0    = eye(dim.n,dim.n);                                            % derivatives of states wrt to initial state
+dF_dP    = nan(dim.n_theta,dim.n);                            
+dF_dX    = nan(dim.n,dim.n);                            
 
-% Obtain derivatives of observations wrt...
-dgdp = zeros(dim.n_phi+dim.n_theta+dim.n,dim.p*dim.n_t);
-x = zeros(dim.n,dim.n_t);
-gx = zeros(dim.p,dim.n_t);
+% + initial values
+Phi   = options.priors.muPhi;
+Theta = options.priors.muTheta;
+X0    = options.priors.muX0;
 
-% initial condition
-if dim.n > 0
-    x0 = options.priors.muX0;
-    Theta = options.priors.muTheta;
-    [x(:,1),dF_dX,dF_dP] = VBA_evalFun('f',x0,Theta,u(:,1),options,dim,1);
-    % get gradients wrt states
-    dxdx0 = dF_dX;
-    dxdTheta = dF_dP;
-end
-Phi = options.priors.muPhi;
-[gx(:,1),dG_dX,dG_dP] = VBA_evalFun('g',x(:,1),Phi,u(:,1),options,dim,1);
+Sigma = blkdiag(options.priors.SigmaPhi         , ...
+                options.priors.SigmaTheta       , ...
+                options.priors.SigmaX0          );              % prior covariance matrix
 
-% get gradients wrt to observations
-dgdp(1:dim.n_phi,1:dim.p) = dG_dP;
-if dim.n_theta > 0
-    dgdp(dim.n_phi+1:dim.n_phi+dim.n_theta,1:dim.p) = dxdTheta*dG_dX;
-end
-if dim.n > 0
-    dgdp(dim.n_phi+dim.n_theta+1:end,1:dim.p) = dxdx0*dG_dX;
-end
-muy(1:dim.p,1) = gx(:,1);
-if options.binomial
-    gx(:,1) = checkGX_binomial(gx(:,1)); % fix numerical instabilities
-    Vy(1:dim.p,1:dim.p) = diag(gx(:,1).*(1-gx(:,1)));
-    tmp = 1./gx(:,1) + 1./(1-gx(:,1));
-    if get_iVp
-        iVp = iVp + dG_dP(:,1:dim.p)*diag(tmp)*dG_dP(:,1:dim.p)';
-    end
-else
-    varY = options.priors.b_sigma./options.priors.a_sigma;
-    Qy = VBA_inv(options.priors.iQy{1});
-    Vy(1:dim.p,1:dim.p) = varY.*Qy;
-    if get_iVp
-        iVp = iVp + dgdp(:,1:dim.p)*options.priors.iQy{1}*dgdp(:,1:dim.p)'./varY;
-    end
+if get_iVp
+   iVp = VBA_inv(Sigma);                                        % predicted posterior precision matrix of the model parameters
 end
 
-for t = 2:dim.n_t
-    if dim.n > 0
-        [x(:,t),dF_dX,dF_dP] = VBA_evalFun('f',x(:,t-1),Theta,u(:,t),options,dim,t);
-        if dim.n_theta > 0
-            % Obtain derivatives of path wrt parameters...
-            dxdTheta = dF_dP + dxdTheta*dF_dX;
-        end
-        % ... and initial conditions
-        dxdx0 = dxdx0*dF_dX;
-    end
-    [gx(:,t),dG_dX,dG_dP] = VBA_evalFun('g',x(:,t),Phi,u(:,t),options,dim,t);
+gsi = find([options.sources(:).type]==0);
+
+% _________________________________________________________________________
+% integration loop
+
+% start with initial state
+x = X0;
+
+% loop over time
+for t = 1:dim.n_t
     
-    dgdp(1:dim.n_phi,1+(t-1)*dim.p:t*dim.p) = dG_dP;
-    if dim.n_theta > 0
-        dgdp(dim.n_phi+1:dim.n_phi+dim.n_theta,1+(t-1)*dim.p:t*dim.p) = dxdTheta*dG_dX;
-    end
+    % shortcuts
+    offset = dim.p*(t-1) ;
+    
+    % .....................................................................
+    % apply evolution and observation function
     if dim.n > 0
-        dgdp(dim.n_phi+dim.n_theta+1:end,1+(t-1)*dim.p:t*dim.p) = dxdx0*dG_dX;
+        [x,dF_dX,dF_dP] = VBA_evalFun('f',x,Theta,u(:,t),options,dim,t);  
     end
-    muy(dim.p*(t-1)+1:dim.p*t) = gx(:,t);
-    if options.binomial
-        % fix numerical instabilities
-        gx(:,t) = checkGX_binomial(gx(:,t));
-        Vy(dim.p*(t-1)+1:dim.p*t,dim.p*(t-1)+1:dim.p*t) = diag(gx(:,t).*(1-gx(:,t)));
-        tmp = 1./gx(:,t) + 1./(1-gx(:,t));
-        if get_iVp
-            iVp = iVp + dgdp(:,1+(t-1)*dim.p:t*dim.p)*diag(tmp)*dgdp(:,1+(t-1)*dim.p:t*dim.p)';
-        end
-    else
-        Qy = VBA_inv(options.priors.iQy{t});
-        Vy(dim.p*(t-1)+1:dim.p*t,dim.p*(t-1)+1:dim.p*t) = varY.*Qy;
-        if get_iVp
-            iVp = iVp + dgdp(:,1+(t-1)*dim.p:t*dim.p)*options.priors.iQy{t}*dgdp(:,1+(t-1)*dim.p:t*dim.p)'./varY;
+    [gx,dG_dX,dG_dP] = VBA_evalFun('g',x,Phi,u(:,t),options,dim,t);
+    
+    % .....................................................................
+    % Obtain derivatives of path wrt parameters and initial conditions
+    dxdTheta = dF_dP + dxdTheta*dF_dX;
+    dxdX0 = dxdX0*dF_dX;
+
+    % .....................................................................
+    % store first moment and parameter gradient
+    muy(offset+(1:dim.p)) = gx;
+    dgdp_t = [dG_dP ; dxdTheta*dG_dX ; dxdX0*dG_dX];
+    
+    % .....................................................................
+    % compute second moment
+    for si=1:numel(options.sources)
+        s_idx = options.sources(si).out ;
+        s_idx = s_idx(options.isYout(s_idx,t)==0);
+        
+        if ~isempty(s_idx)
+            
+            s_idx_t = offset+s_idx ;
+            
+            switch options.sources(si).type
+                case 0 % gaussian
+                    g_idx = find(gsi==si);
+                    varY = options.priors.b_sigma(g_idx)./options.priors.a_sigma(g_idx);
+                    Qy = VBA_inv(options.priors.iQy{t,g_idx});
+                    Vy_tmp = varY.*Qy;
+                    tmp = options.priors.iQy{t,g_idx}./varY ;
+                case 1 % binomial
+                    gt = gx(s_idx);
+                    Vy_tmp = diag(gt.*(1-gt));
+                    tmp = diag(1./gt + 1./(1-gt));
+                case 2 % multinomial
+                    gt = gx(s_idx);
+                    Vy_tmp = diag(gt.*(1-gt));
+                    tmp = diag(1./gt);
+            end
+            
+            % aggregate and store
+            switch reduceVy
+                case 'full'
+                	Vy(s_idx_t,s_idx_t) = Vy_tmp ;    
+                case 'diag'
+                	Vy(s_idx_t) = Vy(s_idx_t) + diag(Vy_tmp) ;
+                case 'skip'
+            end
+
+            if get_iVp
+                iVp = iVp + dgdp_t(:,s_idx)*tmp*dgdp_t(:,s_idx)';
+            end
         end
     end
+    
+    switch reduceVy
+        case 'full'
+            dgdp(:,offset+(1:dim.p)) = dgdp_t;
+        case 'diag'
+            Vy(offset+(1:dim.p)) = Vy(offset+(1:dim.p)) + diag(dgdp_t'*Sigma*dgdp_t);
+        case 'skip'
+    end
+
+    
 end
+
+% _________________________________________________________________________
 % form Laplace approximation to the covariance matrix
-Vy0 = Vy;
-Vy = Vy0 + dgdp'*Sigma*dgdp;
+switch reduceVy
+    case 'full'
+        Vy = Vy + dgdp'*Sigma*dgdp;
+    case 'diag'
+    case 'skip'
+end
+            
 
-
+% _________________________________________________________________________
+% optional display
 
 if checkVar
     in = struct('options',options);
+    
     % get micro-time time series
     theta = options.priors.muTheta;
     phi = options.priors.muPhi;
-    x0 = options.priors.muX0;
+    X0 = options.priors.muX0;
+    
     % get prior covariance structure
-    dgdtheta = numericDiff(@getObs,1,theta,phi,x0,u,in);
-    dgdphi = numericDiff(@getObs,2,theta,phi,x0,u,in);
-    dgdx0 = numericDiff(@getObs,3,theta,phi,x0,u,in);
-    Vy2 = dgdtheta'*options.priors.SigmaTheta*dgdtheta ...
-        + dgdphi'*options.priors.SigmaPhi*dgdphi ...
-        + dgdx0'*options.priors.SigmaX0*dgdx0 ...
+    dgdtheta = numericDiff(@getObs,1,theta,phi,X0,u,in);
+    dgdphi   = numericDiff(@getObs,2,theta,phi,X0,u,in);
+    dgdX0    = numericDiff(@getObs,3,theta,phi,X0,u,in);
+    
+    Vy2 = dgdtheta'*options.priors.SigmaTheta*dgdtheta  ...
+        + dgdphi'  *options.priors.SigmaPhi  *dgdphi    ...
+        + dgdX0'   *options.priors.SigmaX0   *dgdX0     ...
         + Vy0;
+    
     [hf] = VBA_displayGrads(Vy,Vy2);
 end
 
 
-function [gx] = getObs(theta,phi,x0,u,in)
-in2 = struct('muTheta',theta,'muPhi',phi,'muX0',x0);
+function [gx] = getObs(theta,phi,X0,u,in)
+in2 = struct('muTheta',theta,'muPhi',phi,'muX0',X0);
 [x,gx,microTime,sampleInd] = VBA_microTime(in2,u,in);
 gx = gx(:,sampleInd);
 gx = gx(:);
+
 
 
 

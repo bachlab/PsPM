@@ -1,4 +1,4 @@
-function [options] = prepare_fullDCM(A,B,C,D,TR,microDT,homogeneous)
+function [options] = prepare_fullDCM(A,B,C,D,TR,microDT,homogeneous,hA,hB,hC,hD,sources)
 % precalculates intermediary variables for the VB inversion of DCM for fMRI
 % function [options] = prepare_fullDCM(A,B,C,D,TR,microDT,homogeneous)
 % IN:
@@ -20,29 +20,70 @@ else
     homogeneous = ~~homogeneous;
 end
 
+if ~exist('sources','var')
+    sources(1).out=size(A,1);
+    if exist('hA','var')
+        sources(2).out=size(hA,1);
+    end
+end
+extended = numel(sources)>1;
+
 %- prepare neural evolution function parameters indices and matrices
 [inF] = prepare_dcm(A,B,C,D);
-nreg = size(A,1);
+
+dim.n = size(A,1);
+dim.n_u = size(B,2);
+
+
+%- prepare decoding function parameters indices and matrices
+if extended
+    [inF,nresp] = extend_dcm(inF,hA,hB,hC,hD,dim,sources);  
+else
+    nresp = 0;
+end
 
 %- define hemodynamic parameters indices
-inF.ind1 = [1:5:5*nreg] + inF.indself;
-inF.ind2 = [2:5:5*nreg] + inF.indself;
-inF.ind3 = [3:5:5*nreg] + inF.indself;
-inF.ind4 = [4:5:5*nreg] + inF.indself;
-inF.ind5 = [5:5:5*nreg] + inF.indself;
+nreg=dim.n;
+if extended
+    offset = inF.indhself(end);
+else
+    offset = inF.indself;
+end
+inF.ind1 = [1:5:5*nreg] + offset;
+inF.ind2 = [2:5:5*nreg] + offset;
+inF.ind3 = [3:5:5*nreg] + offset;
+inF.ind4 = [4:5:5*nreg] + offset;
+inF.ind5 = [5:5:5*nreg] + offset;
+
 
 %- define hidden states indices
-nreg = size(A,1);
 inF.n1 = 1:5:5*nreg;
 inF.n2 = 2:5:5*nreg;
 inF.n3 = 3:5:5*nreg;
 inF.n4 = 4:5:5*nreg;
 inF.n5 = 5:5:5*nreg;
+
+if extended
+    try
+        offset = inF.n5(end);
+    catch
+        offset=0;
+    end
+    inF.r =  (1:nresp) + offset;
+end
 inG.n1 = inF.n1;
 inG.n2 = inF.n2;
 inG.n3 = inF.n3;
 inG.n4 = inF.n4;
 inG.n5 = inF.n5;
+
+if extended
+    inG.r = offset+(1:nresp);        
+    for i=2:numel(sources)
+        sourceRespIdx{i-1} = sources(i).out - sources(1).out(end);
+    end
+    inG.sourceRespIdx = sourceRespIdx;
+end
 
 
 %- prepare observation function parameters indices and matrices
@@ -53,6 +94,20 @@ else
     inG.ind1 = 1;
     inG.ind2 = 2;
 end
+%- define decoding parameters indices
+if extended
+    inG.indr = inG.ind2(end) + (1:sum([sources.type]~=0));
+end
+
+% dimensions 
+dim.n_theta = inF.ind5(end);
+if extended
+    dim.n_phi = inG.indr(end);
+else
+    dim.n_phi = inG.ind2(end);
+end
+dim.p = nreg + nresp ;
+dim.n = 5*nreg+nresp;
 
 %- finalize options structure
 options.decim = max([1,ceil(TR./microDT)]);
@@ -72,6 +127,19 @@ inG.confounds.indt = [];
 inG.confounds.X0 = [];
 inG.confounds.indp = [];
 
+inF.extended=extended;
+inG.extended=extended;
+options.extended=extended;
+
+
+if extended
+    options.sources=sources;
+end
+
 options.inF = inF;
 options.inG = inG;
+
+options.dim = dim;
+
+
 

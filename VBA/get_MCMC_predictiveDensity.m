@@ -31,10 +31,10 @@ function [pX,gX,pY,gY,X,Y] = get_MCMC_predictiveDensity(f_fname,g_fname,u,n_t,op
 et0 = clock;
 
 % default sample size and histogram resolution
-try; N; catch N=1e3; end
-try; np; catch np = 50; end
-try; lx; catch lx = []; end
-try; ly; catch ly = []; end
+try, N ; catch, N  = 1e3 ; end
+try, np; catch, np = 50  ; end
+try, lx; catch, lx = []  ; end
+try, ly; catch, ly = []  ; end
 
 
 % fix precision parameters
@@ -128,7 +128,9 @@ fprintf(1,'\n')
 
 
 function [x0,theta,phi] = sampleFromPriors(options,dim)
+
 priors = options.priors;
+
 if dim.n > 0
     if ~isequal(priors.SigmaX0,zeros(size(priors.SigmaX0)))
         sV = VBA_getISqrtMat(priors.SigmaX0,0);
@@ -139,6 +141,7 @@ if dim.n > 0
 else
     x0 = [];
 end
+
 if dim.n_theta > 0
     if ~isequal(priors.SigmaTheta,zeros(size(priors.SigmaTheta)))
         sV = VBA_getISqrtMat(priors.SigmaTheta,0);
@@ -149,6 +152,7 @@ if dim.n_theta > 0
 else
     theta = [];
 end
+
 if dim.n_phi > 0
     if ~isequal(priors.SigmaPhi,zeros(size(priors.SigmaPhi)))
         sV = VBA_getISqrtMat(priors.SigmaPhi,0);

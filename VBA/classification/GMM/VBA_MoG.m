@@ -52,8 +52,36 @@ function [posterior,out] = VBA_MoG(y,K,options)
 %       .date: date (vector format)
 %       .F: history of Free Energy across VB iterations
 %       .it: # VB iterations until convergence
+%       .normalize: a structure containing the necessary information for
+%       de-normalization of the inferred class patterns, i.e.:
+%           muEta <-- diag(sqrt(diag(Q)))*muEta + repmat(m,1,dim.K);
+%           b_gamma(k) <-- = b_gamma(k).*Q;
+%       NB: this is performed automatically by VBA_projectMoG.m, when
+%       visualizing the decision boundaries.
 
-
+% First of all, deal with data normalization
+if ~isfield(options,'normalize')
+    options.normalize = 0;
+end
+y0 = y;
+if options.normalize
+    my = mean(y,2);
+    y = y - repmat(my,1,size(y,2));
+    sy = std(y,[],2);
+    if any(sy==0)
+        i0 = find(sy==0);
+        y(i0,:) = [];
+        y0(i0,:) = [];
+        my(i0) = [];
+        sy(i0) = [];
+        disp('Warning: removing 0 variance data dimensions!')
+    else
+        i0 = [];
+    end
+    y = diag(1./sy)*y;
+else
+    i0 = [];
+end
 
 % Fill in default options
 options.tStart = tic;
@@ -81,9 +109,6 @@ end
 if ~isfield(options,'init')
     options.init = 'hierarchical';
 end
-if ~isfield(options,'normalize')
-    options.normalize = 1;
-end
 
 % Fill in default priors
 if ~isfield(options,'priors')
@@ -93,11 +118,18 @@ priors = options.priors;
 if ~isfield(priors,'muEta')
     priors.muEta = zeros(dim.p,dim.K);
 end
+priors.muEta(i0,:) = [];
 if ~isfield(priors,'SigmaEta')
     priors.SigmaEta = cell(dim.K,1);
     for k=1:K
         priors.SigmaEta{k} = 1e0*eye(dim.p);
     end
+end
+suffStat.iS0 = cell(dim.K,1);
+for k=1:K
+    priors.SigmaEta{k}(i0,:) = [];
+    priors.SigmaEta{k}(:,i0) = [];
+    suffStat.iS0{k} = VBA_inv(priors.SigmaEta{k});
 end
 if ~isfield(priors,'a_gamma')
     priors.a_gamma = 1e0*ones(dim.K,1);
@@ -117,28 +149,15 @@ if options.verbose
 end
 
 % Initialization
-if options.normalize
-    y0 = y;
-    my = mean(y,2);
-    y = y - repmat(my,1,dim.n);
-    sy = std(y(:));
-    y = y./sy;
-else
-    y0 = y;
-end
 posterior = priors;
-suffStat.iS0 = cell(dim.K,1);
-for k=1:K
-    suffStat.iS0{k} = pinv(priors.SigmaEta{k});
-end
 switch options.init
     case 'hierarchical'
-        posterior.muEta = dummyHierarchical(y,K,options);
+        [posterior.muEta,Z] = dummyHierarchical(y,K,options);
     case 'prior'
         posterior.muEta = priors.muEta + eps*randn(dim.p,dim.K);
     case 'rand'
         for k=1:K
-            S = getISqrtMat(priors.SigmaEta{k},0);
+            S = VBA_getISqrtMat(priors.SigmaEta{k},0);
             posterior.muEta(:,k) = priors.muEta(:,k) + S*randn(dim.p,1);
         end
 end
@@ -158,7 +177,7 @@ posterior.z = tmp./repmat(sum(tmp,1),dim.K,1);
 F = FE(posterior,priors,suffStat,y);
 
 if options.DisplayWin
-    handles.hf = figure('name','Convergence monitoring','color',[1 1 1]);
+    handles.hf = figure('name','VBA/MoG: convergence monitoring','color',[1 1 1]);
     for i=1:8
         handles.ha(i) = subplot(3,3,i,'parent',handles.hf,'box','off');
     end
@@ -312,8 +331,10 @@ end
 
 % wrap up
 if options.normalize
-    posterior.muEta = posterior.muEta.*sy + repmat(my,1,dim.K);
-    posterior.b_gamma = posterior.b_gamma.*sy.^2;
+    out.normalize.Q = diag(sy.^2);
+    out.normalize.m = my;
+    % muEta <-- diag(sqrt(diag(Q)))*muEta + repmat(m,1,dim.K);
+    % b_gamma(i) <-- = b_gamma(i).*Q;
 end
 out.dt = toc(options.tStart);
 out.dim = dim;
@@ -334,7 +355,6 @@ if options.DisplayWin && dim.p >=2
 end
 
 if options.verbose
-    fprintf('\n')
     fprintf('---')
     fprintf('\n')
     fprintf(['Date: ',datestr(out.date),'\n'])
@@ -351,7 +371,13 @@ if options.verbose
     fprintf(['Posterior probabilities:','\n'])
     fprintf(['     - MoG: p(H1|y)= ','%4.3f','\n'],1-out.bor)
     fprintf(['     - null: p(H0|y)= ','%4.3f','\n'],out.bor)
+    fprintf('---')
     fprintf('\n')
+    if options.normalize
+        fprintf(['Warning: data has been normalized! (check out.normalize)','\n'])
+        fprintf('---')
+        fprintf('\n')
+    end
 end
 
 

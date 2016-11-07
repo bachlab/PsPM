@@ -234,7 +234,7 @@ for iFile = 1:numel(model.datafile)
                     win = [1 numel(Y{datatype(k)})];
             end;
             if any(win > numel(Y{datatype(k)}) + 1) || any(win < 0)
-                warning(sprintf('\nEpoch %2.0f outside of file %s ...', iEpoch, fname{iFile}));
+                warning(sprintf('\nEpoch %2.0f outside of file %s ...', iEpoch, model.modelfile{iFile}));
             else
                 % correct issues with using 'round'
                 win(1) = max(win(1), 1);

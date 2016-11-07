@@ -167,6 +167,7 @@ function [posterior,out] = VBA_NLStateSpaceModel(y,u,f_fname,g_fname,dim,options
 
 % JD, 26/02/2007
 
+warnStruct = warning;
 warning off
 options.tStart = tic;
 posterior = [];
@@ -186,10 +187,7 @@ if nargin == 0
     out.options = options;
     out.in = in;
     disp(out)
-    return
-elseif isweird(y)
-    disp('Error: there is a numerical trouble with provided data!')
-    return
+    return 
 end
 
 %-------------------- Initialization -------------------%
@@ -212,10 +210,15 @@ if exist('in','var')
     end
     
 else
-    
+   
     % Check input arguments consistency (and fill in priors if necessary)
     [options,u,dim] = VBA_check(y,u,f_fname,g_fname,dim,options);
     VBA_disp(' ',options)
+    
+    if isweird(y(~options.isYout))
+        disp('Error: there is a numerical trouble with provided data!')
+        return
+    end
     
     try % Initialize posterior pdf
         [posterior,suffStat,options] = VBA_Initialize(y,u,dim,options);
@@ -225,6 +228,7 @@ else
     catch e
         VBA_disp(' ',options)
         VBA_disp('Error: Program stopped during initialisation',options)
+        VBA_disp(e.message,options)
         return
     end
     
@@ -259,7 +263,6 @@ end
 if dim.n_theta > 0
     VBA_updateDisplay(posterior,suffStat,options,y,0,'theta')
 end
-
 
 %------------------------------------------------------------%
 %----------------- Main VB learning scheme ------------------%
@@ -336,5 +339,10 @@ end
 
 suffStat = VBA_Hpost(posterior,suffStat,options);
 [posterior,out] = VBA_wrapup(posterior,options,dim,suffStat,u,y,it);
+[posterior,out] = VBA_multisession_factor(posterior,out) ;
 
+% stamp toolbox version
+out.toolbox = VBA_version();
+
+warning(warnStruct);
 

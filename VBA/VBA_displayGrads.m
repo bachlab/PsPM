@@ -1,4 +1,4 @@
-function [hf] = VB_displayGrads(J,J2,flag,fname,flagFun)
+function [hf] = VBA_displayGrads(J,J2,flag,fname,flagFun)
 % eyeball the difference between two arbitrary matrices
 
 try; flag; catch; flag = ''; end

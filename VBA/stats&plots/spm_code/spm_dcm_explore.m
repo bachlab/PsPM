@@ -99,6 +99,8 @@ catch % old DCM structure
         DCM.M.IS = '?';
     end
 end
+
+% test DCM parameters
 try
     DCM = spm_dcm_test(DCM);
 catch
@@ -117,6 +119,7 @@ for i=1:ud.dim.l
 end
 ud.R2.tot =  sum(PSS)/sum(PSS+RSS);
 
+ud.Pcorr = spm_cov2corr(DCM.Cp);
 pos0 = get(0,'screenSize');
 pos = [0.51*pos0(3),0.05*pos0(4),0.45*pos0(3),0.9*pos0(4)];
 [pathstr,filename,ext] = fileparts(DCM.filename);
@@ -260,8 +263,12 @@ ind = get(hObject,'Value');
 ud = get(hf,'userdata');
 delete(setdiff(get(ud.tabs.handles.hp,'children'),ud.tabs.handles3))
 DCM = ud.DCM;
+
 x     = [1:DCM.M.N] * DCM.M.dt;
 d     = 2 / DCM.M.dt;
+
+% input effects - neuronal
+%--------------------------------------------------------------
 y = DCM.K1(:,:,ind);
 ha = subplot(2,1,1,'parent',ud.tabs.handles.hp);
 plot(ha,x,y)
@@ -272,6 +279,9 @@ title(ha,['neuronal impulse responses to input ''' DCM.U.name{ind} ''''],'fontsi
 grid(ha,'on')
 xlabel(ha,'time (seconds)')
 legend(ha,DCM.Y.name)
+
+% input effects - hemodynamic
+%--------------------------------------------------------------
 y = DCM.K1(:,:,ind);
 k = DCM.H1(:,:,ind);
 ha = subplot(2,1,2,'parent',ud.tabs.handles.hp,'nextplot','add');
@@ -460,6 +470,7 @@ end
 ud = get(hf,'userdata');
 delete(get(ud.tabs.handles2.hp,'children'))
 DCM = ud.DCM;
+%-priors-----------------------------------------------------------
 x     = [1:length(DCM.U.u)]*DCM.U.dt;
 t     = [1:length(DCM.Y.y)]*DCM.Y.dt;
 for i = 1:size(DCM.U.u,2)
@@ -521,6 +532,7 @@ delete(setdiff(get(ud.tabs.handles2.hp,'children'),ud.tabs.handles3))
 DCM = ud.DCM;
 Ep = ud.Ep;
 DCM = ud.DCM;
+%-graph------------------------------------------------------------
 x  = [1:length(DCM.y)]*DCM.Y.dt;
 ha = subplot(2,1,1,...
     'parent',ud.tabs.handles2.hp,...
@@ -542,6 +554,7 @@ grid(ha,'on')
 box(ha,'off')
 ylabel(ha,'signal change (A.U.)')
 xlabel(ha,'time (seconds)');
+
 if ud.estimated
     ha = subplot(2,1,2,...
         'parent',ud.tabs.handles2.hp,...
@@ -824,6 +837,7 @@ xlabel(ha,'time (secs)','fontsize',8)
 ylabel(ha,'residuals: e(t) = y(y) - g(x(t))','fontsize',8)
 legend(ha,str)
 set(ha,'ygrid','on','xgrid','off','box','on');
+
 ha = subplot(2,1,2,'parent',ud.tabs.handles2.hp);
 plot(ha,[-nt*TR:TR:nt*TR-1],fftshift(CR)')
 axis(ha,'tight')

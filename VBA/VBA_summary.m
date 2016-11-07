@@ -39,11 +39,16 @@ if out.options.binomial
 else
     tmp = [];
 end
+if out.options.UNL
+    so = 'un-normalized likelihood';
+else
+    so = 'observation';
+end
 if out.dim.n >= 1
     if isinf(out.options.priors.a_alpha) && isequal(out.options.priors.b_alpha,0)
-        str{4} = sprintf(['This was a deterministic dynamical system']);
+        str{4} = sprintf('This was a deterministic dynamical system');
     else
-        str{4} = sprintf(['This was a stochastic dynamical system']);
+        str{4} = sprintf('This was a stochastic dynamical system');
     end
     if isa(out.options.g_fname,'function_handle')
         gfn = func2str(out.options.g_fname);
@@ -71,7 +76,7 @@ if out.dim.n >= 1
         ffn = [ffn,' (',ffn0,')'];
     end
     str{4} = sprintf([str{4},'\n ',...
-        '    - observation function: ',gfn,tmp,'\n ',...
+        '    - ',so,' function: ',gfn,tmp,'\n ',...
         '    - evolution function: ',ffn]);
 else
     str{4} = ['The model was static (no hidden states)','\n '];
@@ -80,29 +85,60 @@ else
     else
         gfn = out.options.g_fname;
     end
-    str{4} = sprintf([str{4},'    - observation function: ',gfn,tmp]);
+    str{4} = sprintf([str{4},'    - ',so,' function: ',gfn,tmp]);
 end
-str{5} = sprintf(['Bayesian log model evidences:','\n ',...
-    '    - full model: log p(y|m) > ',num2str(F,'%4.3e'),'\n ',...
-    '    - null hypothesis: log p(y|H0) = ',num2str(LLH0,'%4.3e')]);
+str{5} = sprintf(['Bayesian log model evidences:','\n',...
+    '     - full model: log p(y|m) > ',num2str(F,'%4.3e'),'\n',...
+    '     - null hypothesis: log p(y|H0) = ',num2str(LLH0,'%4.3e')]);
 if ~out.options.OnLine && out.dim.n >= 1 && ~isinf(out.options.priors.a_alpha) && ~isequal(out.options.priors.b_alpha,0)
     Fd = out.options.init.out.F;
     str{5} = sprintf([str{5},'\n ',...
-        '    - deterministic variant: log p(y|m,eta=0) > ',num2str(Fd,'%4.3e')]);
+        '    - deterministic variant: log p(y|m,eta=0) > ',num2str(Fd,'%4.3e') ]);
 end
-if ~out.options.binomial
-    R2str = 'coefficient of determination (R2)';
-else
-    R2str = 'balanced classification accuracy';
+% str{5} = [str{5}, '\n'];
+
+R2str={'',''};
+LLstr={'',''};
+
+gsi = find([out.options.sources.type]==0);
+if ~isempty(gsi)
+    R2str{1} = ['     - coefficient of determination (R2):  ',catnum2str(out.fit.R2,gsi) '\n'];
+    LLstr{1} = ['     - log-likelihood: ',catnum2str(out.fit.LL,gsi) '\n'];
 end
-str{6} = sprintf(['Classical fit accuracy metrics:','\n ',...
-    '    - ',R2str,': ',num2str(out.fit.R2,'%4.3f'),'\n ',...
-    '    - log-likelihood: ',num2str(out.fit.LL,'%4.3e'),'\n ',...
-    '    - AIC: ',num2str(out.fit.AIC,'%4.3e'),'\n ',...
-    '    - BIC: ',num2str(out.fit.BIC,'%4.3e')]);
+bsi = find([out.options.sources.type]~=0);
+if ~isempty(bsi)
+    R2str{2} = ['     - balanced classification accuracy: ',catnum2str(out.fit.acc,bsi) '\n'];
+    LLstr{2} = ['     - log-likelihood: ',catnum2str(out.fit.LL,bsi) '\n'];
+    
+end
+R2str = [R2str{1} R2str{2}];
+LLstr = [LLstr{1} LLstr{2}];
+
+
+AICstr = ['     - AIC: ',num2str(out.fit.AIC,'%4.3e'),'\n'];
+% BICstr = ['     - BIC: ',num2str(out.fit.BIC,'%4.3e'),'\n'];
+BICstr = ['     - BIC: ',num2str(out.fit.BIC,'%4.3e')];
+
+str{6} = sprintf(['Classical fit accuracy metrics:','\n',...
+    R2str,...
+    LLstr,...
+    AICstr,...
+    BICstr]);
+
 
 if newlines
     for i=1:length(str)
-        str{i} = sprintf([str{i},'\n ']);
+        str{i} = sprintf([str{i},'\n']);
     end
 end
+
+
+function str = catnum2str(x,ind)
+str = [];
+for i=1:length(ind)
+    si=ind(i);
+    str = [str,', ',num2str(x(si),'%4.3f'),' (source #',num2str(si),')'];
+end
+str(1:2) = [];
+
+

@@ -1,5 +1,7 @@
 function [options,u,dim] = VBA_check(y,u,f_fname,g_fname,dim,options)
-% checks (and fills in default) optional inputs to VB_NLStateSpaceModel.m
+% VBA_CHECK 
+% [options,u,dim] = VBA_check(y,u,f_fname,g_fname,dim,options)
+% Checks (and fills in default) optional inputs to VBA_NLStateSpaceModel.m
 % function [options,u,dim] = VBA_check(y,u,f_fname,g_fname,dim,options)
 % This function checks the consistency of the arguments to the
 % VBA_NLStateSpaceModel.m function. Importantly, it fills in the missing
@@ -9,8 +11,9 @@ function [options,u,dim] = VBA_check(y,u,f_fname,g_fname,dim,options)
 % 0), the priors are modified to invert an ODE-like state-space model, i.e.
 % the equivalent deterministic system.
 
+%% ________________________________________________________________________
+%  check model dimension
 
-% Fills in dim structure and default input if required
 try
     dim.n;
     dim.n_theta;
@@ -18,13 +21,12 @@ try
 catch
     error('Provide dimensions of the model!')
 end
-try
-    dim.n_t;
-    dim.p;
-catch
-    dim.n_t = size(y,2);
-    dim.p = size(y,1);
-end
+
+dim = check_struct(dim, ...
+    'n_t'   , size(y,2), ...
+    'p'     , size(y,1)  ...
+);
+
 if isempty(u)
     u = zeros(0,dim.n_t);
 else
@@ -32,129 +34,78 @@ else
 end
 dim.u = size(u,1);
 
+%% ________________________________________________________________________
+%  check option structure
 
+% set defaults 
+options = check_struct(options, ...
+    'decim'      , 1     , ...     % Micro-time resolution
+    'microU'     , 0     , ...     % Micro-resolution input
+    'inF'        , []    , ...     % Optional (internal) parameters of the evolution function
+    'inG'        , []    , ...     % Optional (internal) parameters of the observation function
+    'checkGrads' , 0     , ...     % Check analytical gradients against numerical gradients
+    'updateX0'   , 1     , ...     % Flag for initial conditions update
+    'updateHP'   , 1     , ...     % Flag for hyperparameters update
+    'initHP'     , 1     , ...     % Flag for hyperparameters initialization
+    'backwardLag', 1     , ...     % time lag of the short-sighted backward-pass
+    'MaxIter'    , 32    , ...     % Maximum number of iterations
+    'MaxIterInit', 32    , ...     % Maximum number of iterations for the initialization
+    'MinIter'    , 0     , ...     % Minimum number of iterations
+    'TolFun'     , 2e-2  , ...     % Minimum change in the free energy
+    'DisplayWin' , 1     , ...     % VB display window
+    'gradF'      , 0     , ...     % Gauss-Newton ascent on free (1) or variational (0) energy
+    'GnMaxIter'  , 32    , ...     % Gauss-Newton coordinate ascent maximum number of iterations:
+    'GnTolFun'   , 1e-5  , ...     % Gauss-Newton coordinate ascent threshold on relative variational energy:
+    'GnFigs'     , 0     , ...     % Gauss-Newton inner-loops figures
+    'verbose'    , 1     , ...     % matlab window messages
+    'OnLine'     , 0     , ...     % On-line version (true when called from VBA_OnLineWrapper.m)
+    'delays'     , []    , ...     % delays
+    'binomial'   , 0     , ...     % not binomial data
+    'kernelSize' , 16    , ...     % max lag of Volterra kernels
+    'nmog'       , 1     , ...     % split-Laplace VB?
+    'UNL'        , 0     , ...     % un-normalized likelihood?
+    'UNL_width'  , 4     , ...     % for partition function estimation
+    'UNL_ng'     , 64      ...     % for partition function estimation
+) ;
 
-%--------- Check options structure ----------%
+options = check_struct(options, ...
+    'isYout'    , zeros(dim.p,dim.n_t)            , ... % excluded data
+    'skipf'     , zeros(1,dim.n_t)                , ... 
+    'sources'   , struct('type', options.binomial , ... % multisource
+                         'out' , 1:dim.p  )         ...
+) ;
+                         
+options = check_struct(options, ...
+    'extended'  , numel(options.sources)>1 || options.sources(1).type==2 ...          % multisource
+) ;
 
-% Micro-time resolution
-if ~isfield(options,'decim')
-    options.decim = 1;
-end
-% Micro-resolution input
-if ~isfield(options,'microU')
-    options.microU = 0;
-end
-% Optional (internal) parameters of the evolution function
-if ~isfield(options,'inF')
-    options.inF = [];
-end
-% Optional (internal) parameters of the observation function
-if ~isfield(options,'inG')
-    options.inG = [];
-end
-% Check analytical gradients against numerical gradients
-if ~isfield(options,'checkGrads')
-    options.checkGrads = 0;
-end
-% Flag for initial conditions update
-if ~isfield(options,'updateX0')
-    options.updateX0 = 1;
-end
-% Flag for hyperparameters update
-if ~isfield(options,'updateHP')
-    options.updateHP = 1;
-end
-% Flag for hyperparameters initialization
-if ~isfield(options,'initHP')
-    options.initHP = 1;
-end
-% time lag of the short-sighted backward-pass
-if ~isfield(options,'backwardLag')
-    options.backwardLag = 1;
-else
-    options.backwardLag = min([max([floor(round(options.backwardLag)),1]),dim.n_t]);
-end
-% Maximum number of iterations
-if ~isfield(options,'MaxIter')
-    options.MaxIter = 32;
-end
-% Maximum number of iterations for the initialization
-if ~isfield(options,'MaxIterInit')
-    options.MaxIterInit = 32;
-end
-% Minimum number of iterations
-if ~isfield(options,'MinIter')
-    options.MinIter = 0;
-end
-% Minimum change in the free energy
-if ~isfield(options,'TolFun')
-    options.TolFun = 2e-2;
-end
-% VB display window
-if ~isfield(options,'DisplayWin')
-    options.DisplayWin = 1;
-end
-% Gauss-Newton ascent on free (1) or variational (0) energy
-if ~isfield(options,'gradF')
-    options.gradF = 0;
-end
-% Gauss-Newton coordinate ascent maximum number of iterations:
-if ~isfield(options,'GnMaxIter')
-    options.GnMaxIter = 32;
-end
-% Gauss-Newton coordinate ascent threshold on relative variational energy:
-if ~isfield(options,'GnTolFun')
-    options.GnTolFun = 1e-5;
-end
-% Gauss-Newton inner-loops figures
-if ~isfield(options,'GnFigs')
-    options.GnFigs = 0;
-end
-% matlab window messages
-if ~isfield(options,'verbose')
-    options.verbose = 1;
-end
-% On-line version (true when called from VBA_OnLineWrapper.m)
-if ~isfield(options,'OnLine')
-    options.OnLine = 0;
-end
-% delays
-if ~isfield(options,'delays')
-    options.delays = [];
-end
-% binomial data
-if ~isfield(options,'binomial')
-    options.binomial = 0;
-end
-if options.binomial
-    options.ignoreMF = 1;
-    if ~isbinary(y(:))
-        error('Data should be binary!')
+options.backwardLag = min([max([floor(round(options.backwardLag)),1]),dim.n_t]);
+options.kernelSize  = min([dim.n_t,options.kernelSize]);
+
+for i=1:numel(options.sources)
+    if options.sources(i).type ~= 0 % if binomial
+        if ~isempty(y)
+            isYoutSource = options.isYout(options.sources(i).out,:);
+            ySource = y(options.sources(i).out,:);
+            if ~isbinary(ySource(~isYoutSource))
+                error('*** Data should be binary!')
+            end
+        end
     end
 end
-if ~isfield(options,'isYout')
-    options.isYout = zeros(dim.p,dim.n_t);
-end
-if ~isfield(options,'skipf')
-    options.skipf = zeros(1,dim.n_t);
-end
-if ~isfield(options,'kernelSize')
-    options.kernelSize = 16;
-end
-options.kernelSize = min([dim.n_t,options.kernelSize]);
-% split-Laplace VB?
-if ~isfield(options,'nmog')
-    options.nmog = 1;
-end
 
+% split in multisession
+[f_fname,g_fname,dim,options,u] = VBA_multisession_expand(f_fname,g_fname,dim,options,u);
 
 % Deal with micro-resolution input
 u = VBA_getU(u,options,dim,'2macro');
 VBA_disp(' ',options)
 
-%---------- Check priors -----------%
-options.params2update.phi = 1:dim.n_phi;
+%% ________________________________________________________________________
+%  check priors
+
 options.params2update.theta = 1:dim.n_theta;
+options.params2update.phi = 1:dim.n_phi;
 options.params2update.x0 = 1:dim.n;
 for t=1:dim.n_t
     options.params2update.x{t} = 1:dim.n;
@@ -176,6 +127,10 @@ if isfield(options,'priors')
         VBA_disp('---> Using default (non-informative) priors',options)
     end
     % check dimension and infinite precision priors
+    if isfield(options.priors,'a_sigma')
+        priors.a_sigma = options.priors.a_sigma(:);
+        priors.b_sigma = options.priors.b_sigma(:);
+    end
     if dim.n_theta > 0 % This finds which evolution params to update
         dpc = diag(priors.SigmaTheta);
         iz = find(dpc==0);
@@ -207,6 +162,10 @@ if isfield(options,'priors')
             end
         end
     end
+    % insure vertical priors
+    priors.muPhi=priors.muPhi(:);
+    priors.muTheta=priors.muTheta(:);
+    
 else % Build default (non-informative) priors
     priors = VBA_priors(dim,options);
 end
@@ -224,21 +183,19 @@ if ~isfield(options,'figName')
     end
 end
 
-
-
 % ensure excluded data consistency
-if ~options.binomial
-    for t=1:dim.n_t
-        diQ = diag(priors.iQy{t}).*~options.isYout(:,t);
-        options.isYout(:,t) = ~diQ;
-        priors.iQy{t} = diag(diQ)*priors.iQy{t}*diag(diQ);
-    end
+gsi = find([options.sources.type]==0);
+for i=1:numel(gsi) 
+        for t=1:dim.n_t
+            diQ = diag(priors.iQy{t,i}).*~options.isYout(options.sources(gsi(i)).out,t);
+            options.isYout(options.sources(gsi(i)).out,t) = ~diQ;
+            priors.iQy{t,i} = diag(diQ)*priors.iQy{t,i}*diag(diQ);
+        end
 end
 
 % store evolution/observation function handles
 options.f_fname = f_fname;
 options.g_fname = g_fname;
-
 
 % split-MoG sufficient statistics
 if options.nmog > 1
@@ -302,7 +259,6 @@ if dim.n > 0 && sum(options.delays(:)) > 0
     dim.n = dim.n*(max(inF.options.delays(:))+1);
 end
 
-
 % Add other inputs in the options structure:
 options.g_nout = nargout(options.g_fname);
 options.priors = priors;
@@ -313,7 +269,6 @@ if isequal(options.f_fname,@f_DCMwHRF) && isequal(options.g_fname,@g_HRF3)
     % DCM for fMRI
     [options] = VBA_check4DCM(options);
 end
-
 
 if dim.n > 0
     options.f_nout = nargout(options.f_fname);

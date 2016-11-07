@@ -22,16 +22,26 @@ function [priors] = VBA_priors(dim,options)
 %       Gamma pdf upon the stochastic innovations precision
 
 
+
+% check for sources for backward compatibility
+if ~isfield(options,'sources')
+    options.sources = struct('out',1:dim.p,'type',options.binomial);
+end
+
 % prior Gamma pdf of the measurement noise (Jeffrey)
-if ~options.binomial
-    priors.a_sigma = 1e0;
-    priors.b_sigma = 1e0;
+gsi = find([options.sources.type] == 0);
+
+if ~isempty(gsi)
+    priors.a_sigma(1:length(gsi)) = 1e0;
+    priors.b_sigma(1:length(gsi)) = 1e0;
 end
 
 % Covariance structure: measurement noise precision matrices
-priors.iQy = cell(dim.n_t,1);
+priors.iQy = cell(dim.n_t,length(gsi));
 for t=1:dim.n_t
-    priors.iQy{t} = eye(dim.p);
+    for i=1:length(gsi)
+        priors.iQy{t,i} = eye(length(options.sources(gsi(i)).out));
+    end
 end
 
 % prior Gaussian pdf of the observation parameters
@@ -52,21 +62,20 @@ else
     priors.SigmaTheta = [];
 end
 
+% prior Gaussian pdf of the hidden states
+priors.muX0 = zeros(dim.n,1);
+priors.SigmaX0 = eye(dim.n);
+    
 if dim.n > 0
-    % prior Gaussian pdf of the hidden states
-    priors.muX0 = zeros(dim.n,1);
-    priors.SigmaX0 = eye(dim.n);
     % singular prior Gamma pdf of the state noise (deterministic system)
-    priors.a_alpha = Inf;%1e0;
-    priors.b_alpha = 0;%1e0;
+    priors.a_alpha = Inf;
+    priors.b_alpha = 0;
     % Covariance structure: state noise precision matrices
     priors.iQx = cell(dim.n_t,1);
     for t=1:dim.n_t
         priors.iQx{t} = speye(dim.n);
     end
 else
-    priors.muX0 = [];
-    priors.SigmaX0 = [];
     priors.a_alpha = [];
     priors.b_alpha = [];
     priors.iQx = [];

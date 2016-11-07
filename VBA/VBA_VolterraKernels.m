@@ -14,6 +14,10 @@ function [kernels] = VBA_VolterraKernels(posterior,out,nt)
 %   - v: the estimation variance of 1st-order Volterra kernels
 %   - R2: the percentage of variance explained, for each dimension
 
+if isfield(out.options,'multisession')
+    out.u(end,:) = [];
+end
+    
 nu = size(out.u,1);
 n = out.dim.n;
 p = out.dim.p;
@@ -45,13 +49,6 @@ if isfield(out.options,'orthU') && out.options.orthU
 end
 
 % configurate kernel estimation
-if out.options.binomial
-    g_fname = @g_convSig;
-    opt.binomial = 1;
-else
-    g_fname = @g_conv0;
-    opt.binomial = 0;
-end
 [opt.inG.dgdp] = VBA_conv2glm(u,nt); % build convolution matrices
 if isfield(out.options,'detrendU') && ~~out.options.detrendU
     Trend = [];
@@ -79,8 +76,22 @@ if out.options.verbose
     fprintf(1,['Deriving 1st-order Volterra kernels... '])
     fprintf(1,'%6.2f %%',0)
 end
+isbin = zeros(p,1);
 for k = 1:p
     y = out.y(k,:)';
+    for s=1:length(out.options.sources)
+        if ismember(k,out.options.sources(s).out)
+            isbin(k) = out.options.sources(s).type;
+        end
+    end
+    if isbin(k)
+        g_fname = @g_convSig;
+        opt.binomial = 1;
+    else
+        g_fname = @g_conv0;
+        opt.binomial = 0;
+    end
+    opt.isYout = out.options.isYout(k,:)';
     [pk,ok] = VBA_NLStateSpaceModel(y,[],[],g_fname,dim,opt);
     kernels.y.R2(k) = ok.fit.R2;
     if out.options.verbose
@@ -106,6 +117,11 @@ kernels.g.m = zeros(p,nt,nu);
 kernels.g.v = zeros(p,nt,nu);
 kernels.g.R2 = zeros(p,1);
 for k = 1:p
+    if isbin(k)
+        g_fname = @g_convSig;
+    else
+        g_fname = @g_conv0;
+    end
     y = out.suffStat.gx(k,:)';
     [pk,ok] = VBA_NLStateSpaceModel(y,[],[],g_fname,dim,opt);
     kernels.g.R2(k) = ok.fit.R2;
@@ -130,10 +146,10 @@ end
 if  n <1 || isempty(out.options.f_fname)
     kernels.x = [];
     if out.options.verbose
-        fprintf(1,repmat('\b',1,8))
-        fprintf(' OK.')
-        fprintf('\n')
-    end
+      fprintf(1,repmat('\b',1,8))
+      fprintf(' OK.')
+      fprintf('\n')
+    end    
     return
 end
 g_fname = @g_conv0;

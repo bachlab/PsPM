@@ -62,7 +62,7 @@ function F = spm_Fcdf(x,v,w)
 % Copyright (C) 1992-2011 Wellcome Trust Centre for Neuroimaging
 
 % Andrew Holmes
-% $Id: spm_Fcdf.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
 
 %-Format arguments, note & check sizes

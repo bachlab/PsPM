@@ -6,8 +6,8 @@
 % is then compared to the simulated profile.
 
 
-clear all
-close all
+% clear all
+% close all
 
 % initialize simulations
 ntrials = 1024;
@@ -36,7 +36,6 @@ options.inG = in;
 options.binomial = 1;
 options.dim = dim;
 [y,x,x0,eta,e] = simulateNLSS(ntrials,[],g_fname,[],phi,u,[],[],options);
-
 
 % graphical summary of choice data
 dr = R(1,:) - R(2,:); % 1st-alternative reward minus 2nd-alternative reward
@@ -77,7 +76,7 @@ options.priors.SigmaPhi = 1e0*eye(dim.n_phi);
 options.DisplayWin = 0;
 options.verbose = 1;
 [posterior,out] = VBA_NLStateSpaceModel(y,u,[],g_fname,dim,options);
-VBA_ReDisplay(posterior,out,1)
+VBA_ReDisplay(posterior,out,1);
 
 
 % evaluate utility profile on a grid
@@ -95,6 +94,7 @@ dim = [];
 dim.n_phi = size(X,3);
 dim.n = 0;
 dim.n_theta = 0;
+options.priors = [];
 options.priors.SigmaPhi = 1e0*eye(dim.n_phi);
 options.checkGrads = 0;
 options.inG = inb;
@@ -103,7 +103,7 @@ options.DisplayWin = 0;
 options.verbose = 1;
 Eu = zeros(size(X,1),size(X,2));
 [p0,o0] = VBA_NLStateSpaceModel(y,u,[],g_fname,dim,options);
-VBA_ReDisplay(p0,o0,1)
+VBA_ReDisplay(p0,o0,1);
 for ii=1:size(X,3)
     Eu = Eu + X(:,:,ii)*p0.muPhi(ii);
 end

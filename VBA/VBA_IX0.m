@@ -1,3 +1,4 @@
+
 function [IX0,SigmaX0,deltaMuX0,suffStat] = VBA_IX0(X0,y,posterior,suffStat,dim,u,options)
 % Gauss-Newton update of initial conditions
 

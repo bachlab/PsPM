@@ -31,7 +31,6 @@ if fromPause
     return
 end
 
-
 % Display inversion status
 if ~options.OnLine
     [st,i] = dbstack;
@@ -49,6 +48,7 @@ if ~options.OnLine
                 VBA_ReDisplay(posterior,out);
             end
             out.options = rmfield(out.options,'display');
+            out.options.hf = display.hfp;
         end
         status = 'inversion';
     else
@@ -62,13 +62,11 @@ if ~options.OnLine
     end
     VBA_disp(['VB ',status,' complete (took ~',timeString,').'],options)
     if ~ifInit
-        str = VBA_summary(out);
+        str = VBA_summary(out,1);
         VBA_disp(str(setdiff(1:6,1:2)),options)
     end
     VBA_disp(' ',options)
     drawnow
 end
-
-
 
 

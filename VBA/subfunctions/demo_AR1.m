@@ -27,15 +27,17 @@ n_t = 2e2;
 dt = 1e-1;
 f_fname = @f_embedAR;  % this is an AR(1) embedding evolution function
 g_fname = @g_embedAR;  % this is an AR(1) embedding observation function
-u = [];
+u = zeros(1,n_t);
 in.opt.f_fname = @f_lin2D; % this is the native evolution function (n=2,n_theta=1)
 in.opt.g_fname = @g_Id;
+in.opt.priors.a_alpha = 1;
+in.opt.priors.b_alpha = 1;
 in.dim.n = 2;
 in.dim.n_theta = 1;
 in.dim.n_phi = 0;
 in.dim.p = 2;
 in.dim.n_t = n_t;
-[in.opt] = VBA_check([],u,in.opt.f_fname,in.opt.g_fname,in.dim,[]);
+[in.opt] = VBA_check([],u,in.opt.f_fname,in.opt.g_fname,in.dim,in.opt);
 in.opt.inF.deltat = dt;
 in.opt.inF.b = 5e-1;
 
@@ -76,6 +78,7 @@ options.dim = dim;
 
 
 % Build time series of hidden states and observations
+% [y,x,x0,eta,e] = simulateNLSS_old(n_t,f_fname,g_fname,theta,phi,u,alpha,sigma,options);
 [y,x,x0,eta,e] = simulateNLSS(n_t,f_fname,g_fname,theta,phi,u,alpha,sigma,options);
 
 % display time series of hidden states and observations
@@ -103,7 +106,7 @@ end
 [p0,o0] = VBA_NLStateSpaceModel(y,u,f_fname,g_fname,dim,options);
 
 % Display results
-displayResults(p0,o0,y-e,x(1:2,:),x0(1:2),theta,phi,alpha,sigma)
+displayResults(p0,o0,y-e,x(1:2,:),x0(1:2),theta,phi,alpha,sigma);
 
 
 

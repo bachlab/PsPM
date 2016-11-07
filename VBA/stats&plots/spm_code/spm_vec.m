@@ -11,7 +11,7 @@ function [vX] = spm_vec(varargin)
 % Copyright (C) 2008 Wellcome Trust Centre for Neuroimaging
 
 % Karl Friston
-% $Id: spm_vec.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
 % initialise X and vX
 %--------------------------------------------------------------------------

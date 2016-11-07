@@ -4,6 +4,12 @@ function VBA_updateDisplay(posterior,suffStat,options,y,it,flag)
 % This function deals with the screen display of iterative sufficient
 % statistics updates of the VBA inversion algorithm
 
+if options.extended
+    VBA_updateDisplay_extended(posterior,suffStat,options,y,it,flag);
+    %fprintf('Display extended\n');
+    return
+end
+
 F = real(suffStat.F);
 
 if ~options.DisplayWin
@@ -17,12 +23,12 @@ VBA_pause(options)
 
 % First check whether this is standard DCM or ODE limit
 if isequal(options.g_fname,@VBA_odeLim)
-    
+   
     % Rebuild posterior from dummy 'ODE' posterior
     options0 = options;
     [posterior,options,dim,suffStat] = VBA_odeLim2NLSS(posterior,options,options.dim,suffStat,[],0);
     options.display = options0.display;
-    
+   
     % Then call VBA_updateDisplay again
     if ~isempty(it)
         VBA_updateDisplay(posterior,suffStat,options,y,it,'precisions')
@@ -36,9 +42,9 @@ if isequal(options.g_fname,@VBA_odeLim)
     if dim.n_theta > 0
         VBA_updateDisplay(posterior,suffStat,options,y,it,'theta')
     end
-    
+   
     return
-    
+   
 end
 
 
@@ -60,11 +66,11 @@ if  ~options.binomial
         sigmaHat = posterior.a_sigma./posterior.b_sigma;
         var_sigma = sigmaHat./posterior.b_sigma;
     end
-% else
-%     try
-%         [stackyin,stdyin,gridgin] = VBA_Bin2Cont(gx(~options.isYout),y(~options.isYout));
-%         [stackyout,stdyout,gridgout] = VBA_Bin2Cont(gx(~~options.isYout),y(~~options.isYout));
-%     end
+else
+    try
+        [stackyin,stdyin,gridgin] = VBA_Bin2Cont(gx(~options.isYout),y(~options.isYout));
+        [stackyout,stdyout,gridgout] = VBA_Bin2Cont(gx(~~options.isYout),y(~~options.isYout));
+    end
 end
 if options.dim.n > 0
     mux = posterior.muX(:,dTime);
@@ -124,12 +130,50 @@ end
 
 
 switch flag % What piece of the model to display?
-    
-    
+   
+   
     case 'X' % Hidden-states related quantities
+       
+       
+        % update top-left subplot: predictive density
+        cla(display.ha(1))
+        if ~isempty(gx) && ~isempty(vy)
+            plot(display.ha(1),dTime,y','LineStyle',':','marker','.')
+            plotUncertainTimeSeries(gx,vy,dTime,display.ha(1));
+            set(display.ha(1),'ygrid','on','xgrid','off')
+            axis(display.ha(1),'tight')
+        end
         
-        % update fitted data display
-        displayY(y,gx,vy,options,display,dTime)
+        % update top-right subplot: predicted VS observed data
+        cla(display.ha(2))
+        if ~isempty(gx) && ~isempty(vy)
+            if  ~options.binomial
+                miy = min([gx(:);y(:)]);
+                may = max([gx(:);y(:)]);
+                plot(display.ha(2),[miy,may],[miy,may],'r')
+                gxout = gx(~~options.isYout);
+                yout = y(~~options.isYout);
+                gxin = gx(~options.isYout);
+                yin = y(~options.isYout);
+                plot(display.ha(2),gxout(:),yout(:),'r.')
+                plot(display.ha(2),gxin(:),yin(:),'k.')
+                if ~isempty(yout)
+                    legend(display.ha(2),{'','excluded','fitted'})
+                end
+            else
+                plot(display.ha(2),[0,1],[0,1],'r')
+                gridp = 0:1e-2:1;
+                plot(display.ha(2),gridp,gridp+sqrt(gridp.*(1-gridp)),'r--')
+                plot(display.ha(2),gridp,gridp-sqrt(gridp.*(1-gridp)),'r--')
+                errorbar(gridgout,stackyout,stdyout,'r.','parent',display.ha(2))
+                errorbar(gridgin,stackyin,stdyin,'k.','parent',display.ha(2))
+                if ~isempty(gridgout)
+                    legend(display.ha(2),{'','','','excluded','fitted'})
+                end
+            end
+            grid(display.ha(2),'on')
+            axis(display.ha(2),'tight')
+        end
         
         % get display indices if delay embedding
         if sum(options.delays) > 0
@@ -163,8 +207,47 @@ switch flag % What piece of the model to display?
         
     case 'phi' % Observation parameters
         
-        % update fitted data display
-        displayY(y,gx,vy,options,display,dTime)
+        
+        % update top-left subplot: predictive density
+        cla(display.ha(1))
+        plot(display.ha(1),dTime,y',':')
+        plot(display.ha(1),dTime,y','.')
+        if ~isempty(gx) && ~isempty(vy)
+            plotUncertainTimeSeries(gx,vy,dTime,display.ha(1));
+        end
+        set(display.ha(1),'ygrid','on','xgrid','off')
+        axis(display.ha(1),'tight')
+        
+        % update top-right subplot: predicted VS observed data
+        cla(display.ha(2))
+        if ~isempty(gx) && ~isempty(vy)
+            if  ~options.binomial
+                miy = min([gx(:);y(:)]);
+                may = max([gx(:);y(:)]);
+                plot(display.ha(2),[miy,may],[miy,may],'r')
+                gxout = gx(~~options.isYout);
+                yout = y(~~options.isYout);
+                gxin = gx(~options.isYout);
+                yin = y(~options.isYout);
+                plot(display.ha(2),gxout(:),yout(:),'r.')
+                plot(display.ha(2),gxin(:),yin(:),'k.')
+                if ~isempty(yout)
+                    legend(display.ha(2),{'','excluded','fitted'})
+                end
+            else
+                plot(display.ha(2),[0,1],[0,1],'r')
+                gridp = 0:1e-2:1;
+                plot(display.ha(2),gridp,gridp+sqrt(gridp.*(1-gridp)),'r--')
+                plot(display.ha(2),gridp,gridp-sqrt(gridp.*(1-gridp)),'r--')
+                errorbar(gridgout,stackyout,stdyout,'r.','parent',display.ha(2))
+                errorbar(gridgin,stackyin,stdyin,'k.','parent',display.ha(2))
+                if ~isempty(gridgout)
+                    legend(display.ha(2),{'','','','excluded','fitted'})
+                end
+            end
+            grid(display.ha(2),'on')
+            axis(display.ha(2),'tight')
+        end
         
         % update bottom-left subplot: observation parameters
         if size(dphi,2) == 1 % for on-line wrapper
@@ -181,6 +264,7 @@ switch flag % What piece of the model to display?
     case 'theta' % Evolution parameters
         
         % update bottom-right subplot: observation parameters
+        
         if size(dtheta,2) == 1 % for on-line wrapper
             dTime = 1;
         end
@@ -193,8 +277,14 @@ switch flag % What piece of the model to display?
         
     case 'precisions' % Precision hyperparameters
         
-        % update fitted data display
-        displayY(y,gx,vy,options,display,dTime)
+        % update top-left subplot: predictive density
+        cla(display.ha(1))
+        plot(display.ha(1),dTime,y',':')
+        plot(display.ha(1),dTime,y','.')
+        if ~isempty(gx) && ~isempty(vy)
+            plotUncertainTimeSeries(gx,vy,dTime,display.ha(1));
+        end
+        
         
         if options.updateHP || (isequal(it,0) && ~options.binomial)
             
@@ -239,7 +329,7 @@ switch flag % What piece of the model to display?
         
 end
 
-drawnow
+%drawnow
 
 
 %--- subfunction ---%
@@ -254,48 +344,5 @@ if ~display.OnLine
             set(display.ho,'string',['Model evidence: log p(y|m) >= ',num2str(F(end),'%4.3e')])
         end
     end
-end
-
-function [] = displayY(y,gx,vy,options,display,dTime)
-% update top-left subplot: predictive density
-cla(display.ha(1))
-plot(display.ha(1),dTime,y',':')
-plot(display.ha(1),dTime,y','.')
-if ~isempty(gx) && ~isempty(vy)
-    plotUncertainTimeSeries(gx,vy,dTime,display.ha(1));
-end
-set(display.ha(1),'ygrid','on','xgrid','off')
-axis(display.ha(1),'tight')
-% update top-right subplot: predicted VS observed data
-cla(display.ha(2))
-if ~isempty(gx) && ~isempty(vy)
-    if  ~options.binomial
-        miy = min([gx(:);y(:)]);
-        may = max([gx(:);y(:)]);
-        plot(display.ha(2),[miy,may],[miy,may],'r')
-        gxout = gx(~~options.isYout);
-        yout = y(~~options.isYout);
-        gxin = gx(~options.isYout);
-        yin = y(~options.isYout);
-        plot(display.ha(2),gxout(:),yout(:),'r.')
-        plot(display.ha(2),gxin(:),yin(:),'k.')
-        if ~isempty(yout)
-            legend(display.ha(2),{'','excluded','fitted'})
-        end
-    else
-        [stackyin,stdyin,gridgin] = VBA_Bin2Cont(gx(~options.isYout),y(~options.isYout));
-        [stackyout,stdyout,gridgout] = VBA_Bin2Cont(gx(~~options.isYout),y(~~options.isYout));
-        plot(display.ha(2),[0,1],[0,1],'r')
-        gridp = 0:1e-2:1;
-        plot(display.ha(2),gridp,gridp+sqrt(gridp.*(1-gridp)),'r--')
-        plot(display.ha(2),gridp,gridp-sqrt(gridp.*(1-gridp)),'r--')
-        errorbar(gridgout,stackyout,stdyout,'r.','parent',display.ha(2))
-        errorbar(gridgin,stackyin,stdyin,'k.','parent',display.ha(2))
-        if ~isempty(gridgout)
-            legend(display.ha(2),{'','','','excluded','fitted'})
-        end
-    end
-    grid(display.ha(2),'on')
-    axis(display.ha(2),'tight')
 end
 

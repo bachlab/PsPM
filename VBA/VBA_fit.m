@@ -8,62 +8,114 @@ function fit = VBA_fit(posterior,out)
 %       .LL: log-likelihood of the model
 %       .AIC: Akaike Information Criterion
 %       .BIC: Bayesian Informaion Criterion
-%       .R2: if data is continuous, R2 = coefficient of determination
-%       (fraction of explained variance). If data is binary, R2 = balanced
-%       classification accuracy (fraction of correctly predicted outcomes).
+%       .R2: coefficient of determination (fraction of explained variance). 
+%       .acc  balanced classification accuracy (fraction of correctly predicted outcomes).
 
 suffStat = out.suffStat;
 
-% Log-likelihood
-if ~out.options.binomial
-    v = posterior.b_sigma./posterior.a_sigma;
-    fit.LL = -0.5*out.suffStat.dy2/v;
-    fit.ny = 0;
-    for t=1:out.dim.n_t
-        ldq = VBA_logDet(out.options.priors.iQy{t}/v);
-        fit.ny = fit.ny + length(find(diag(out.options.priors.iQy{t})~=0));
-        fit.LL = fit.LL + 0.5*ldq;
+
+gsi = find([out.options.sources.type]==0);
+for i=1:length(gsi)
+    
+    si=gsi(i);
+    
+    if out.options.UNL % to be rationalized...
+        
+        fit.LL = out.suffStat.logL;
+        fit.ny = sum(1-out.options.isYout(:));
+        
+    else
+        % Log-likelihood
+        v(i) = posterior.b_sigma(i)/posterior.a_sigma(i);
+        fit.LL(si) = -0.5*out.suffStat.dy2(i)/v(i);
+        fit.ny(si) = 0;
+        for t=1:out.dim.n_t
+            ldq = VBA_logDet(out.options.priors.iQy{t,i}/v(i));
+            fit.ny(si) = fit.ny(si) + length(find(diag(out.options.priors.iQy{t,i})~=0));
+            fit.LL(si) = fit.LL(si) + 0.5*ldq;
+        end
+        fit.LL(si) = fit.LL(si) - 0.5*fit.ny(si)*log(2*pi);
+        
     end
-    fit.LL = fit.LL - 0.5*fit.ny*log(2*pi);
-else
-    fit.LL = out.suffStat.logL;
-    fit.ny = sum(1-out.options.isYout(:));
+    
+    % coefficient of determination
+%     if isfield(out.options,'sources')
+
+        idx = out.options.sources(si).out;
+        y_temp = out.y(idx,:);
+        y_temp = y_temp(out.options.isYout(idx,:) == 0);
+        
+        gx_temp = suffStat.gx(idx,:);
+        gx_temp = gx_temp(out.options.isYout(idx,:) == 0);
+        
+        SS_tot = sum((vec(y_temp)-mean(vec(y_temp))).^2);
+        SS_err = sum((vec(y_temp)-vec(gx_temp)).^2);
+        fit.R2(si) = 1-(SS_err/SS_tot);    
+%     end
+        fit.acc(si) = NaN;
+end
+
+
+
+bsi = find([out.options.sources.type]==1);
+for i=1:length(bsi)
+    si=bsi(i);
+    idx = out.options.sources(si).out;
+
+    fit.LL(si) = out.suffStat.logL(si);
+    fit.ny(si) = sum(1-vec(out.options.isYout(idx,:)));
+    
+    % balanced accuracy
+        y_temp = out.y(idx,:);
+        y_temp = y_temp(out.options.isYout(idx,:) == 0);
+        
+        gx_temp = suffStat.gx(idx,:);
+        gx_temp = gx_temp(out.options.isYout(idx,:) == 0);
+        
+        bg = gx_temp>.5; % binarized model predictions
+        tp = sum(vec(y_temp).*vec(bg)); % true positives
+        fp = sum(vec(1-y_temp).*vec(bg)); % false positives
+        fn = sum(vec(y_temp).*vec(1-bg)); % false positives
+        tn = sum(vec(1-y_temp).*vec(1-bg)); %true negatives
+        P = tp + fn;
+        N = tn + fp;
+        fit.R2(si) = (tp+tn)./(P+N);
+        fit.acc(si) = balanced_accuracy(suffStat.gx(idx,:),out.y(idx,:),out.options.isYout(idx,:));
+    
+end
+
+msi = find([out.options.sources.type]==2);
+for i=1:length(msi)
+    
+    si=msi(i);
+    fit.LL(si) = out.suffStat.logL(si);
+    
+    idx = out.options.sources(si).out;
+
+    fit.ny(si) = sum(1-any(out.options.isYout(idx,:)));
+   
+    
+    fit.R2(si) = NaN;
+    fit.acc(si) = multinomial_accuracy(suffStat.gx(idx,:),out.y(idx,:),out.options.isYout(idx,:));
+    
 end
 
 % AIC/BIC
-fit.np = 0;
+fit.ntot = 0;
 if out.dim.n_phi > 0
     indIn = out.options.params2update.phi;
-    fit.np = fit.np + length(indIn);
+    fit.ntot = fit.ntot + length(indIn);
 end
 if out.dim.n_theta > 0
     indIn = out.options.params2update.theta;
-    fit.np = fit.np + length(indIn);
+    fit.ntot = fit.ntot + length(indIn);
 end
 if out.dim.n > 0  && ~isinf(out.options.priors.a_alpha) && ~isequal(out.options.priors.b_alpha,0)
     for t=1:out.dim.n_t
         indIn = out.options.params2update.x{t};
-        fit.np = fit.np + length(indIn);
+        fit.ntot = fit.ntot + length(indIn);
     end
 end
-fit.AIC = fit.LL - fit.np;
-fit.BIC = fit.LL - 0.5*fit.np*log(fit.ny);
+fit.AIC = sum(fit.LL) - fit.ntot;
+fit.BIC = sum(fit.LL) - 0.5*fit.ntot.*log(sum(fit.ny));
 
-
-if ~out.options.binomial
-    % coefficient of determination
-    SS_tot = sum((out.y(:)-mean(out.y(:))).^2);
-    SS_err = sum((out.y(:)-suffStat.gx(:)).^2);
-    fit.R2 = 1-(SS_err/SS_tot);
-else
-    % balanced accuracy
-    bg = out.suffStat.gx>.5; % binarized model predictions
-    tp = sum(vec(out.y).*vec(bg)); % true positives
-    fp = sum(vec(1-out.y).*vec(bg)); % false positives
-    fn = sum(vec(out.y).*vec(1-bg)); % false positives
-    tn = sum(vec(1-out.y).*vec(1-bg)); %true negatives
-    P = tp + fn;
-    N = tn + fp;
-    fit.R2 = 0.5*(tp./P + tn./N);
-    fit.acc = (tp+tn)./(P+N);
-end

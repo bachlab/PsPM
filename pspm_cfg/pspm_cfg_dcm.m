@@ -420,21 +420,21 @@ sclpost.help    = {['The DCM algorithm automatically models baseline drifts in i
     'define a window after the last event in every trial in which no change of the skin conductance level will be assumed.']};
 
 % minimum dispersion (standard deviation) for flexible responses
-apspm_sigma_offset         = cfg_entry;
-apspm_sigma_offset.name    = 'Minimum Dispersion (Standard Deviation) for Flexible Responses [s]';
-apspm_sigma_offset.tag     = 'apspm_sigma_offset';
-apspm_sigma_offset.strtype = 'r';
-apspm_sigma_offset.num     = [1 1];
-apspm_sigma_offset.val     = {0.1};
-apspm_sigma_offset.help    = {['Responses in a flexible design are modeled as Gaussians with a flexible standard deviation ' ...
+ascr_sigma_offset         = cfg_entry;
+ascr_sigma_offset.name    = 'Minimum Dispersion (Standard Deviation) for Flexible Responses [s]';
+ascr_sigma_offset.tag     = 'ascr_sigma_offset';
+ascr_sigma_offset.strtype = 'r';
+ascr_sigma_offset.num     = [1 1];
+ascr_sigma_offset.val     = {0.1};
+ascr_sigma_offset.help    = {['Responses in a flexible design are modeled as Gaussians with a flexible standard deviation ' ...
     '(while fixed responses assume a fixed standard deviation). While the maximum standard deviation is limited by half ' ...
     'the window size of the response window, the minimum standard deviation can be changed by the user.']};
-apspm_sigma_offset.hidden = true;
+ascr_sigma_offset.hidden = true;
 
 inv_options         = cfg_branch;
 inv_options.name    = 'Inversion Options';
 inv_options.tag     = 'inv_options';
-inv_options.val     = {depth, sfpre, sfpost, sffreq, sclpre, sclpost, apspm_sigma_offset};
+inv_options.val     = {depth, sfpre, sfpost, sffreq, sclpre, sclpost, ascr_sigma_offset};
 inv_options.help    = {''};
 
 
