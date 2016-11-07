@@ -1369,29 +1369,29 @@ switch handles.edit_mode
         handles.plot.r(3,x)=NaN;
         % -----------------------------------------------------------------
         
-        cur_events = cellstr(get(handles.lstEvents,'String'));
         if handles.manualmode
+            cur_events = cellstr(get(handles.lstEvents,'String'));
             lst_R = custom_R;
-        else
-            lst_R = handles.plot.faulties;
-        end;
-        ev_pos = min(find(lst_R >= x));
-        if isempty(ev_pos)
-            ev_pos = length(lst_R) + 1;
+            
+            ev_pos = min(find(lst_R >= x));
+            if isempty(ev_pos)
+                ev_pos = length(lst_R) + 1;
+            end;
+            
+            new_events = cell(length(cur_events)+1, 1);
+            if length(cur_events) >= 1
+                new_events(1:(ev_pos-1)) = cur_events(1:(ev_pos-1));
+            end;
+            
+            % set entry
+            new_events{ev_pos} = create_event_list_entry(hObject, handles, x);
+            if length(cur_events) >= ev_pos
+                new_events((ev_pos+1):end) = cur_events(ev_pos:end);
+            end;
+            set(handles.lstEvents, 'String', new_events);
+            set(handles.lstEvents, 'Value', ev_pos);
         end;
         
-        new_events = cell(length(cur_events)+1, 1);
-        if length(cur_events) >= 1
-            new_events(1:(ev_pos-1)) = cur_events(1:(ev_pos-1));
-        end;
-        
-        % set entry
-        new_events{ev_pos} = create_event_list_entry(hObject, handles, x);
-        if length(cur_events) >= ev_pos
-            new_events((ev_pos+1):end) = cur_events(ev_pos:end);
-        end;
-        set(handles.lstEvents, 'String', new_events);
-        set(handles.lstEvents, 'Value', ev_pos);
         
     case 'remove_qrs'        % click input       
         % disable selection mode
