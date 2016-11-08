@@ -1,5 +1,5 @@
 function varargout = pspm_jobman(varargin)
-% Main interface for SCR Batch System
+% Main interface for PsPM Batch System
 %
 % FORMAT pspm_jobman('initcfg')
 % Initialise jobs configuration and set MATLAB path accordingly.

@@ -1,5 +1,5 @@
 function varargout = pspm_review(varargin)
-% SCR_REVIEW MATLAB code for pspm_review.fig
+% PSPM_REVIEW MATLAB code for pspm_review.fig
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2015 Gabriel Graeni (University of Zurich)
@@ -10,7 +10,7 @@ function varargout = pspm_review(varargin)
 global settings;
 if isempty(settings), pspm_init; end;
 % -------------------------------------------------------------------------
-% Last Modified by GUIDE v2.5 31-Oct-2016 16:46:23
+% Last Modified by GUIDE v2.5 08-Nov-2016 10:18:14
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -338,27 +338,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-function editSessionNr_Callback(hObject, eventdata, handles)
-% hObject    handle to editSessionNr (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of editSessionNr as text
-%        str2double(get(hObject,'String')) returns contents of editSessionNr as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function editSessionNr_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to editSessionNr (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
 % --- Executes on selection change in listModel.
 function listModel_Callback(hObject, eventdata, handles)
 % hObject    handle to listModel (see GCBO)
@@ -534,17 +513,6 @@ function editEpochNr_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
-% --- Executes when user attempts to close pspm_review.
-function pspm_review_CloseRequestFcn(hObject, eventdata, handles)
-% hObject    handle to pspm_review (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: delete(hObject) closes the figure
-delete(hObject);
-
 
 
 function editEpochNr_Callback(hObject, eventdata, handles)

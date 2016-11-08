@@ -33,7 +33,7 @@ if ~(Rect(1)>=S0(1) && Rect(1)+Rect(3)<=S0(3) && Rect(2)>=S0(2) && Rect(2)+Rect(
 end
 if nargout == 0
     set(fg, 'Position',Rect);
-    figure(fg);
+    %figure(fg);
 else
     varargout{1} = Rect;
 end
