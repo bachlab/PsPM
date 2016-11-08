@@ -18,9 +18,9 @@ function [val, sts] = resolve_deps(item, cj)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: resolve_deps.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 val1 = cell(size(item.val{1}));
 for k = 1:numel(item.val{1})
@@ -36,7 +36,7 @@ for k = 1:numel(item.val{1})
     end
     try
         val1{k} = subsref(out, item.val{1}(k).src_output);
-    catch %#ok
+    catch 
         % dependency can't be resolved, even though it should be there
         l = lasterror; %#ok
         % display source output to diagnose problems
@@ -56,11 +56,11 @@ if sts
     try
         % try concatenation along 1st dim
         val = cat(1, val1{:});
-    catch %#ok
+    catch 
         % try concatenation along 2nd dim
         try
             val = cat(2, val1{:});
-        catch %#ok
+        catch 
             % all concatenations failed, display warning
             l = lasterror; %#ok
             dstr = disp_deps(item, val1);
@@ -78,7 +78,7 @@ end
 % all collected, check subsasgn validity
 if sts
     % subsasgn_check only accepts single subscripts
-    [sts val] = subsasgn_check(item, substruct('.','val'), {val});
+    [sts, val] = subsasgn_check(item, substruct('.','val'), {val});
 end;
 if sts
     % dereference val after subsasgn_check
@@ -92,7 +92,7 @@ else
     return;
 end
 
-function dstr = disp_deps(item, val1) %#ok
+function dstr = disp_deps(item, val1) %#ok<INUSD>
 dstr = cell(numel(item.val{1})+1,1);
 dstr{1} = sprintf('In item %s:', subsref(item, substruct('.','name')));
 for k = 1:numel(item.val{1})

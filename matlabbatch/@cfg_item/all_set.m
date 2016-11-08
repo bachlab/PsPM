@@ -18,9 +18,9 @@ function ok = all_set(item)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: all_set.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 % by default, do not check input size/type etc. this is already done in
 % subsasgn
 ok = ~isempty(item.val)||item.hidden;

@@ -12,9 +12,9 @@ function str = cfg_textfill(obj, left, right, tflag)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: cfg_textfill.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 if ~ishandle(obj)
     cfg_message('matlabbatch:usage',...

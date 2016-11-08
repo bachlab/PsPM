@@ -8,9 +8,9 @@ function njob = cfg_basicio_rewrite(ojob)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: cfg_basicio_rewrite.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; 
+rev = '$Rev$'; 
 
 % new job layout has fields file_dir, var_ops, run_ops
 switch char(fieldnames(ojob))

@@ -13,9 +13,9 @@ function [fnames, defaults] = mysubs_fields
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: mysubs_fields.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
-fnames = {'tag','name','val','check','help','rewrite_job','expanded','hidden','def'};
-defaults = {'generic','Generic',{{}},'',{''},'',true,false,[]};
+fnames = {'tag','name','val','check','help','rewrite_job','expanded','hidden','def','preview'};
+defaults = {'generic','Generic',{{}},'',{''},'',true,false,[],''};

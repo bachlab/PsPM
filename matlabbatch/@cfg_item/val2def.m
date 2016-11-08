@@ -16,9 +16,9 @@ function [item, defaults] = val2def(item, defaults, funname, deftag)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: val2def.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 if isempty(item.def)
     if ~isempty(item.val) && ~isa(item.val{1},'cfg_dep')

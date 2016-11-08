@@ -25,7 +25,7 @@ function s = num2str(x, f)
 %   See also INT2STR, SPRINTF, FPRINTF, MAT2STR.
 
 %   Copyright 1984-2005 The MathWorks, Inc.
-%   $Revision: 701 $  $Date: 2006/11/11 22:45:08 $
+%   $Revision$  $Date: 2006/11/11 22:45:08 $
 %------------------------------------------------------------------------------
 % if input does not exist or is empty, throw an exception
 if nargin<1

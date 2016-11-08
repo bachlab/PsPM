@@ -42,9 +42,9 @@ function varargout = cfg_message(varargin)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: cfg_message.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 if nargin < 1 || isempty(varargin{1})
     return;
@@ -54,11 +54,6 @@ end
 msgcfg = cfg_get_defaults('msgcfg');
 msgtpl = cfg_get_defaults('msgtpl');
 msgdef = cfg_get_defaults('msgdef');
-% Helper inline functions
-ismsgid = inline('~isempty(regexp(msgidstr,''^([a-zA-Z]\w*:)+[a-zA-Z]\w*$'',''once''))',...
-                 'msgidstr');
-findcfg = inline('~cellfun(@isempty,regexp({msgcfg.identifier},msgregexp,''once''))', ...
-                 'msgcfg','msgregexp');
 % Input checks
 if ~(ischar(varargin{1}) && size(varargin{1},1) == 1) && ...
         ~(isstruct(varargin{1}) && numel(varargin{1}) == 1 && ...
@@ -254,3 +249,8 @@ if strcmp(msgcfg.level,'error') || ~strcmp(msgcfg.destination, 'none')
             error(le);
     end
 end
+% Helper functions
+function sts = ismsgid(msgidstr)
+sts = ~isempty(regexp(msgidstr,'^([a-zA-Z]\w*:)+[a-zA-Z]\w*$','once'));
+function cfg = findcfg(msgcfg, msgregexp)
+cfg = ~cellfun(@isempty,regexp({msgcfg.identifier},msgregexp,'once'));

@@ -13,9 +13,9 @@ function cj = del_in_target(sdeps, cj)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: del_in_target.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 % first, delete all immediate dependencies
 for k = 1:numel(sdeps)

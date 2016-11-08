@@ -15,7 +15,7 @@ classdef cfg_job
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: cfg_job.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
     properties (Access=private)
         c0;
@@ -68,7 +68,7 @@ classdef cfg_job
             obj.c0 = subsasgn_job(obj.c0, subs, val);
         end
         function varargout = subsref(obj, subs)
-            [ritem varargout{1:max(nargout,1)}] = subsref_job(obj.c0, subs, obj.c0);
+            [ritem, varargout{1:max(nargout,1)}] = subsref_job(obj.c0, subs, obj.c0);
             if obj.showhints || nargout == 0
                 str = showdetail(ritem);
                 fprintf('%s\n', str{:});
@@ -103,7 +103,10 @@ classdef cfg_job
         % Save the harvested job to a MATLAB script.
             [~, matlabbatch] = harvest(obj);
             str = gencode(matlabbatch);
-            fid = fopen(filename, 'w');
+            [fid, msg] = fopen(filename, 'w');
+            if fid == -1
+                cfg_message('matlabbatch:fopen', 'Failed to open ''%s'' for writing:\n%s', filename, msg);
+            end
             fprintf(fid, 'matlabbatch = %s;\n', class(obj));
             fprintf(fid, '%s\n', str{:});
             fclose(fid);

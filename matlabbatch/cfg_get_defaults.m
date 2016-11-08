@@ -14,9 +14,9 @@ function varargout = cfg_get_defaults(defstr, varargin)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: cfg_get_defaults.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 persistent local_def;
 if isempty(local_def)

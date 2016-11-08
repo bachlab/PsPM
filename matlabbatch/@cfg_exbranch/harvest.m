@@ -44,11 +44,11 @@ function [tag, val, typ, dep, chk, cj] = harvest(item, cj, dflag, rflag)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: harvest.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
-[tag val typ tdeps chk cj] = harvest(item.cfg_branch, cj, dflag, rflag);
+[tag, val, typ, tdeps, chk, cj] = harvest(item.cfg_branch, cj, dflag, rflag);
 if dflag
     dep = [];
 else
@@ -61,14 +61,16 @@ else
             cj = del_in_source(item.tdeps, cj);
         end;
         if ~isempty(tdeps)
-            [cj ntdeps cflag dflag] = add_to_source(tdeps, cj);
+            [cj, ntdeps, cflag, dflag] = add_to_source(tdeps, cj);
             item.tdeps = ntdeps;
             % need to update dependencies in this item (possibly a 2nd
             % time), otherwise changes might get lost
             if any(cflag)
                 % update tgt_input deps if necessary
                 otdeps = tdeps(~dflag);
-                item.cfg_branch = update_deps(item.cfg_branch, {otdeps(cflag).src_exbranch}, {ntdeps(cflag).src_exbranch});
+                otdeps1 = otdeps(cflag);
+                ntdeps1 = ntdeps(cflag);
+                item.cfg_branch = update_deps(item.cfg_branch, {otdeps1.src_exbranch}, {ntdeps1.src_exbranch});
             end
             if any(dflag)
                 % delete missing deps

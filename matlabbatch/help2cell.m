@@ -12,9 +12,9 @@ function cellhelp = help2cell(topic)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: help2cell.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 try
     tmphelp = textscan(help(topic),'%s', 'delimiter',char(10));

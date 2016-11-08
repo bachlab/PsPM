@@ -11,19 +11,19 @@ function out = cfg_run_file_move(job)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: cfg_run_file_move.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 action = fieldnames(job.action);
 action = action{1};
 if strcmp(action, 'delete')
     todelete = {};
     for k = 1:numel(job.files)
-        [p n e] = fileparts(job.files{k});
+        [p, n, e] = fileparts(job.files{k});
         if numel(e)>=4 && any(strcmp(e(1:4), {'.nii','.img'}))
             try
-                [p n e v] = spm_fileparts(job.files{k});
+                [p, n, e, v] = spm_fileparts(job.files{k});
                 todelete{end+1} = fullfile(p,[n '.hdr']);
                 todelete{end+1} = fullfile(p,[n '.mat']);
             end
@@ -32,7 +32,7 @@ if strcmp(action, 'delete')
     end
     if ~isempty(todelete)
         ws = warning;
-        warning off;
+        warning('off', 'MATLAB:DELETE:FileNotFound');
         delete(todelete{:});
         warning(ws);
     end
@@ -62,10 +62,10 @@ else
     end
     out.files = {};
     for k = 1:numel(job.files)
-        [p n e] = fileparts(job.files{k});
+        [p, n, e] = fileparts(job.files{k});
         if numel(e)>=4 && any(strcmp(e(1:4), {'.nii','.img'}))
             try
-                [p n e v] = spm_fileparts(job.files{k});
+                [p, n, e, v] = spm_fileparts(job.files{k});
             end
         end
         if any(strcmp(action, {'copyren','moveren'}))
@@ -87,7 +87,7 @@ else
         for l = 1:numel(nam)
             try
                 feval(cmd, fullfile(p, nam{l}), fullfile(tgt, onam{l}));
-                out.files{end+1} = fullfile(tgt, onam{l});
+                out.files{end+1,1} = fullfile(tgt, onam{l});
             end
         end
     end

@@ -8,4 +8,4 @@ mod_cfg_id = cfg_util('tag2mod_cfg_id',arg);
 cjob = cfg_util('initjob');
 mod_job_id = cfg_util('addtojob', cjob, mod_cfg_id);
 cfg_util('harvest', cjob, mod_job_id);
-cfg_ui('local_showjob', findobj(0,'tag','cfg_ui'), cjob);
+cfg_ui('local_showjob', cfg_ui, cjob);

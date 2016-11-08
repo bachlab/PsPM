@@ -27,9 +27,9 @@ function [tag, val, typ, dep, chk, cj] = harvest(item, cj, dflag, rflag)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: harvest.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 typ = class(item);
 tag = item.tag;
@@ -44,7 +44,7 @@ if ~isempty(item.val)
             val = '<UNDEFINED>';
         else
             if rflag
-                [val sts] = resolve_deps(item, cj);
+                [val, sts] = resolve_deps(item, cj);
             else
                 sts = false;
             end;

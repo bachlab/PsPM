@@ -94,4 +94,4 @@
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: matlabbatch.man 551 2014-03-18 12:59:20Z dominik_bach $
+% $Id$

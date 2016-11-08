@@ -9,9 +9,9 @@ function out = cfg_run_file_split(job)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: cfg_run_file_split.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 nosel = true(1,numel(job.files));
 for k = 1:numel(job.index)

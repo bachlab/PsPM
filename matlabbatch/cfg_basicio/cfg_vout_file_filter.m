@@ -10,9 +10,9 @@ function dep = cfg_vout_file_filter(job)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: cfg_vout_file_filter.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 dep            = cfg_dep;
 dep.sname      = sprintf('Filtered Files');
 dep.src_output = substruct('.','files');

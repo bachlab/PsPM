@@ -14,9 +14,9 @@ function [cfg, def] = cfg_mlbatch_appcfg(varargin)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: cfg_mlbatch_appcfg.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 if ~isdeployed
     % get path to this file

@@ -11,8 +11,8 @@ function ok = all_set_item(item)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: all_set_item.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 ok = (numel(item.cfg_item.val) >= item.num(1)) &&...
     (numel(item.cfg_item.val) <= item.num(2));

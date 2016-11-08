@@ -11,9 +11,9 @@ function str = showmydoc(item, indent)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: showmydoc.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 str1 = showdoc(item.cfg_item, indent);
 citems = subsref(item, substruct('.','values'));
 str2{1} = 'Some of the following options can be selected:';

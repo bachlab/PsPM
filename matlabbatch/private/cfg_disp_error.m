@@ -11,9 +11,9 @@ function varargout = cfg_disp_error(l)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: cfg_disp_error.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 if isfield(l,'stack'), % Does not always exist
     estr = cell(numel(l.stack)+1,1);
@@ -32,8 +32,13 @@ if isfield(l,'stack'), % Does not always exist
         catch
             id = '';
         end
-        estr{m+1} = sprintf('In file "%s"%s, function "%s" at line %d.', ...
-                           l.stack(m).file, id, l.stack(m).name, l.stack(m).line);
+        if usejava('desktop')
+            estr{m+1} = sprintf('In file "%s"%s, function "%s" at <a href="matlab:opentoline(''%s'', %d, 0)">line %d</a>.', ...
+                               l.stack(m).file, id, l.stack(m).name, l.stack(m).file, l.stack(m).line, l.stack(m).line);
+        else
+            estr{m+1} = sprintf('In file "%s"%s, function "%s" at line %d.', ...
+                               l.stack(m).file, id, l.stack(m).name, l.stack(m).line);
+        end
     end
 end
 estr{1} = l.message;

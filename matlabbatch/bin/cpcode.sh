@@ -27,7 +27,7 @@ CMFILES="gencode_item.m private/mysubs_fields.m"
 RCFILES="cfg2struct.m clearval.m treepart.m"
 
 for DEFILE in $DEFILES; do
-    svn status $PROJDIR/@cfg_item/$DEFILE|grep -q "^M"
+    git status -s $PROJDIR/@cfg_item/$DEFILE|grep -q "^[[:blank:]]*M"
     if [ $? -eq 0 ]; then
 	echo "Copying @cfg_item/$DEFILE to all derived classes"
 	for DC in $D1CLASSES $D2CLASSES; do
@@ -37,7 +37,7 @@ for DEFILE in $DEFILES; do
 done
 
 for DEFILE in $DE1FILES; do
-    svn status $PROJDIR/@cfg_branch/$DEFILE|grep -q "^M"
+    git status -s $PROJDIR/@cfg_branch/$DEFILE|grep -q "^[[:blank:]]*M"
     if [ $? -eq 0 ]; then
 	echo "Copying @cfg_branch/$DEFILE to all derived classes"
 	for DC in $D1CLASSES $D2CLASSES; do
@@ -47,7 +47,7 @@ for DEFILE in $DE1FILES; do
 done
 
 for INFILE in $INFILES; do
-    svn status $PROJDIR/@cfg_branch/$INFILE|grep -q "^M"
+    git status -s $PROJDIR/@cfg_branch/$INFILE|grep -q "^[[:blank:]]*M"
     if [ $? -eq 0 ]; then
 	echo "Copying @cfg_branch/$INFILE to all in-tree classes"
 	for IC in $INCLASSES; do
@@ -57,7 +57,7 @@ for INFILE in $INFILES; do
 done
 
 for BCFILE in $BCFILES; do
-    svn status $PROJDIR/@cfg_branch/$BCFILE|grep -q "^M"
+    git status -s $PROJDIR/@cfg_branch/$BCFILE|grep -q "^[[:blank:]]*M"
     if [ $? -eq 0 ]; then
 	echo "Copying @cfg_branch/$BCFILE to all choice classes"
 	for CC in $CHCLASSES; do
@@ -67,7 +67,7 @@ for BCFILE in $BCFILES; do
 done
 
 for CMFILE in $CMFILES; do
-    svn status $PROJDIR/@cfg_choice/$CMFILE|grep -q "^M"
+    git status -s $PROJDIR/@cfg_choice/$CMFILE|grep -q "^[[:blank:]]*M"
     if [ $? -eq 0 ]; then
 	echo "Copying @cfg_choice/$CMFILE to mchoice class"
 	cp $PROJDIR/@cfg_choice/$CMFILE $PROJDIR/@cfg_mchoice;
@@ -75,7 +75,7 @@ for CMFILE in $CMFILES; do
 done
 
 for RCFILE in $RCFILES; do
-    svn status $PROJDIR/@cfg_repeat/$RCFILE|grep -q "^M"
+    git status -s $PROJDIR/@cfg_repeat/$RCFILE|grep -q "^[[:blank:]]*M"
     if [ $? -eq 0 ]; then
 	echo "Copying @cfg_repeat/$RCFILE to all choice classes"
 	for CC in $CHCLASSES; do
@@ -84,7 +84,7 @@ for RCFILE in $RCFILES; do
     fi
 done
 
-svn status $PROJDIR/cfg_ui.fig|grep -q "^M"
+git status -s $PROJDIR/cfg_ui.fig|grep -q "^[[:blank:]]*M"
 if [ $? -eq 0 ]; then
     echo "Repairing cfg_ui.fig"
     $ML2009b -nodisplay -r "addpath('$PROJDIR');hgsave_pre2008a('$PROJDIR/cfg_ui.fig',true);exit"

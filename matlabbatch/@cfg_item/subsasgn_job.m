@@ -13,8 +13,8 @@ function item = subsasgn_job(item, subs, val)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: subsasgn_job.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 item = subsasgn(item, [substruct('.','val','{}',{1}) subs], val);

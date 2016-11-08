@@ -20,26 +20,26 @@ function varargout = subsref_job(item, subs, c0)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: subsref_job.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 if isempty(subs)
     varargout{1} = item;
-    [un varargout{2}] = harvest(item, c0, false, false);
+    [un, varargout{2}] = harvest(item, c0, false, false);
 else
-    [sts vind] = checksubs_job(item, subs, false);
+    [sts, vind] = checksubs_job(item, subs, false);
     if sts
         if numel(subs) == 1
             varargout{1} = item;
-            [un val] = harvest(item, c0, false, false);
+            [un, val] = harvest(item, c0, false, false);
             [varargout{2:nargout}] = cfg_callbuiltin('subsref', val, subs);
         else
             csubs = [substruct('.', treepart(item, false)) subs(1)];
             [varargout{1:nargout}] = subsref_job(subsref(item, csubs), subs(3:end), c0);
         end
     else
-        [sts vind] = checksubs_job(item, subs, true);
+        [sts, vind] = checksubs_job(item, subs, true);
         if sts
             if numel(subs) == 1
                 tn = tagnames(item, true);

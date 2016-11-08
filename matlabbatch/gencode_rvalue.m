@@ -28,9 +28,9 @@ function [str, sts] = gencode_rvalue(item, cflag)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: gencode_rvalue.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 if nargin < 2
     cflag = false;
@@ -49,6 +49,7 @@ switch class(item)
                 end
             else
                 % Create cell string, keep white space padding
+                cstr = cell(1,size(item,1));
                 for k = 1:size(item,1)
                     cstr{k} = item(k,:);
                 end
@@ -79,7 +80,7 @@ switch class(item)
         elseif ndims(item) == 2 && any(size(item) == 1) %#ok<ISMAT>
             str1 = {};
             for k = 1:numel(item)
-                [str2 sts] = gencode_rvalue(item{k}, cflag);
+                [str2, sts] = gencode_rvalue(item{k}, cflag);
                 if ~sts
                     break;
                 end
@@ -168,6 +169,21 @@ function str = genstrarray(stritem)
 % generation.
 str = strrep(stritem, '''', '''''');
 for k = 1:numel(str)
-    str{k} = sprintf('''%s''', str{k});
+    if ~any(str{k} == char(0)) &&  ~any(str{k} == char(9)) && ~any(str{k} == char(10))
+        str{k} = sprintf('''%s''', str{k});
+    else
+        % first, quote sprintf special chars % and \
+        % second, replace special characters by sprintf equivalents
+        replacements = {'%', '%%'; ...
+            '\', '\\'; ...
+            char(0), '\0'; ...
+            char(9), '\t'; ...
+            char(10), '\n'; ...
+            char(13), '\r'};
+        for cr = 1:size(replacements, 1)
+            str{k} = strrep(str{k}, replacements{cr,:});
+        end
+        str{k} = sprintf('sprintf(''%s'')', str{k});
+    end
 end
 

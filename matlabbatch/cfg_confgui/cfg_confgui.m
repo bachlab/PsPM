@@ -12,9 +12,9 @@ function menu_cfg = cfg_confgui
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: cfg_confgui.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 %% Declaration of fields
 
@@ -68,6 +68,7 @@ conf_val_single.num = [1 1];
 conf_check         = cfg_entry;
 conf_check.name    = 'Check';
 conf_check.tag     = 'check';
+conf_check.val     = {[]};
 conf_check.strtype = 'f';
 conf_check.num     = [0 Inf];
 conf_check.help    = {'Check function (handle).', ...
@@ -77,6 +78,20 @@ conf_check.help    = {'Check function (handle).', ...
     'its output should be a string that describes why input is not correct or consistent.'], ...
     ['Note that the check function will be called only if all dependencies are resolved. ', ...
     'This will usually be at the time just before the job is actually run.']};
+
+% Rewrite job
+%-----------------------------------------------------------------------
+conf_rewrite_job         = cfg_entry;
+conf_rewrite_job.name    = 'Rewrite job';
+conf_rewrite_job.tag     = 'rewrite_job';
+conf_rewrite_job.val     = {[]};
+conf_rewrite_job.strtype = 'f';
+conf_rewrite_job.num     = [0 Inf];
+conf_rewrite_job.help    = {'Rewrite job function (handle).', ...
+    ['This function will be called before a job is initialised. ', ...
+    'It can be used to upgrade an job to a new configuration layout.'], ...
+    ['Its input is the part of the job starting at the current item.' ...
+    'The output should be the modified job starting at the current item.']};
 
 % Help paragraph
 %-----------------------------------------------------------------------
@@ -245,6 +260,7 @@ conf_strtype        = cfg_menu;
 conf_strtype.name   = 'Strtype';
 conf_strtype.tag    = 'strtype';
 conf_strtype.labels = {'String (s)', ...
+                    'Multiline string (s+)', ...
                     'Evaluated (e)', ...
                     'Natural number (1..n) (n)', ...
                     'Whole number (0..n) (w)', ...
@@ -254,7 +270,7 @@ conf_strtype.labels = {'String (s)', ...
                     'Condition vector (c)', ...
                     'Contrast matrix (x)', ...
                     'Permutation (p)'}; 
-conf_strtype.values = {'s','e','n','w','i','r','f','c','x','p'};
+conf_strtype.values = {'s','s+','e','n','w','i','r','f','c','x','p'};
 conf_strtype.help   = {'Strtype field.', 'This type describes how an evaluated input should be treated. Type checking against this type will be performed during subscript assignment.'};
 
 % Extras
@@ -340,6 +356,15 @@ conf_class_files.val    = {'cfg_files'};
 conf_class_files.hidden = true;
 conf_class_files.help   = {'Hidden field that gives the hint to cfg_struct2cfg which class to create.'};
 
+% Mchoice
+%-----------------------------------------------------------------------
+conf_class_mchoice        = cfg_const;
+conf_class_mchoice.name   = 'Mchoice';
+conf_class_mchoice.tag    = 'type';
+conf_class_mchoice.val    = {'cfg_mchoice'};
+conf_class_mchoice.hidden = true;
+conf_class_mchoice.help   = {'Hidden field that gives the hint to cfg_struct2cfg which class to create.'};
+
 % Menu
 %-----------------------------------------------------------------------
 conf_class_menu        = cfg_const;
@@ -365,7 +390,7 @@ conf_class_repeat.help   = {'Hidden field that gives the hint to cfg_struct2cfg 
 conf_branch      = cfg_exbranch;
 conf_branch.name = 'Branch';
 conf_branch.tag  = 'conf_branch';
-conf_branch.val  = {conf_class_branch, conf_name, conf_tag, conf_val, conf_check, conf_help};
+conf_branch.val  = {conf_class_branch, conf_name, conf_tag, conf_val, conf_check, conf_rewrite_job, conf_help};
 conf_branch.help = help2cell('cfg_branch');
 conf_branch.prog = @cfg_cfg_pass;
 conf_branch.vout = @cfg_cfg_vout;
@@ -375,7 +400,7 @@ conf_branch.vout = @cfg_cfg_vout;
 conf_choice      = cfg_exbranch;
 conf_choice.name = 'Choice';
 conf_choice.tag  = 'conf_choice';
-conf_choice.val  = {conf_class_choice, conf_name, conf_tag, conf_values, conf_check, conf_help};
+conf_choice.val  = {conf_class_choice, conf_name, conf_tag, conf_values, conf_check, conf_rewrite_job, conf_help};
 conf_choice.help = help2cell('cfg_choice');
 conf_choice.prog = @cfg_cfg_pass;
 conf_choice.vout = @cfg_cfg_vout;
@@ -386,7 +411,7 @@ conf_const      = cfg_exbranch;
 conf_const.name = 'Const';
 conf_const.tag  = 'conf_const';
 conf_const.val  = {conf_class_const, conf_name, conf_tag, conf_val_single, ...
-                   conf_check, conf_help, conf_def};
+                   conf_check, conf_rewrite_job, conf_help, conf_def};
 conf_const.help = help2cell('cfg_const');
 conf_const.prog = @cfg_cfg_pass;
 conf_const.vout = @cfg_cfg_vout;
@@ -397,7 +422,7 @@ conf_entry      = cfg_exbranch;
 conf_entry.name = 'Entry';
 conf_entry.tag  = 'conf_entry';
 conf_entry.val  = {conf_class_entry, conf_name, conf_tag, conf_strtype, ...
-                   conf_extras, conf_num_any, conf_check, conf_help, conf_def};
+                   conf_extras, conf_num_any, conf_check, conf_rewrite_job, conf_help, conf_def};
 conf_entry.help = help2cell('cfg_entry');
 conf_entry.prog = @cfg_cfg_pass;
 conf_entry.vout = @cfg_cfg_vout;
@@ -408,7 +433,7 @@ conf_exbranch      = cfg_exbranch;
 conf_exbranch.name = 'Exbranch';
 conf_exbranch.tag  = 'conf_exbranch';
 conf_exbranch.val  = {conf_class_exbranch, conf_name, conf_tag, conf_val, ...
-                    conf_prog, conf_vout, conf_check, conf_help};
+                    conf_prog, conf_vout, conf_check, conf_rewrite_job, conf_help};
 conf_exbranch.help = help2cell('cfg_exbranch');
 conf_exbranch.prog = @cfg_cfg_pass;
 conf_exbranch.vout = @cfg_cfg_vout;
@@ -419,10 +444,20 @@ conf_files      = cfg_exbranch;
 conf_files.name = 'Files';
 conf_files.tag  = 'conf_files';
 conf_files.val  = {conf_class_files, conf_name, conf_tag, conf_filter, ...
-                   conf_ufilter, conf_dir, conf_num, conf_check, conf_help, conf_def};
+                   conf_ufilter, conf_dir, conf_num, conf_check, conf_rewrite_job, conf_help, conf_def};
 conf_files.help = help2cell('cfg_files');
 conf_files.prog = @cfg_cfg_pass;
 conf_files.vout = @cfg_cfg_vout;
+
+% Mchoice
+%-----------------------------------------------------------------------
+conf_mchoice      = cfg_exbranch;
+conf_mchoice.name = 'Mchoice';
+conf_mchoice.tag  = 'conf_mchoice';
+conf_mchoice.val  = {conf_class_mchoice, conf_name, conf_tag, conf_values, conf_check, conf_rewrite_job, conf_help};
+conf_mchoice.help = help2cell('cfg_mchoice');
+conf_mchoice.prog = @cfg_cfg_pass;
+conf_mchoice.vout = @cfg_cfg_vout;
 
 % Menu
 %-----------------------------------------------------------------------
@@ -430,7 +465,7 @@ conf_menu      = cfg_exbranch;
 conf_menu.name = 'Menu';
 conf_menu.tag  = 'conf_menu';
 conf_menu.val  = {conf_class_menu, conf_name, conf_tag, conf_labels, ...
-                  conf_values, conf_check, conf_help, conf_def};
+                  conf_values, conf_check, conf_rewrite_job, conf_help, conf_def};
 conf_menu.help = help2cell('cfg_menu');
 conf_menu.prog = @cfg_cfg_pass;
 conf_menu.vout = @cfg_cfg_vout;
@@ -442,7 +477,7 @@ conf_repeat      = cfg_exbranch;
 conf_repeat.name = 'Repeat';
 conf_repeat.tag  = 'conf_repeat';
 conf_repeat.val  = {conf_class_repeat, conf_name, conf_tag, conf_values, ...
-                    conf_num, conf_forcestruct, conf_check, conf_help};
+                    conf_num, conf_forcestruct, conf_check, conf_rewrite_job, conf_help};
 conf_repeat.help = help2cell('cfg_repeat');
 conf_repeat.prog = @cfg_cfg_pass;
 conf_repeat.vout = @cfg_cfg_vout;
@@ -550,7 +585,7 @@ menu_entry.help   = {'These items are used to enter data that will be passed to 
 menu_struct        = cfg_choice;
 menu_struct.name   = 'Tree structuring items';
 menu_struct.tag    = 'menu_struct';
-menu_struct.values = {conf_branch, conf_exbranch, conf_choice, conf_repeat};
+menu_struct.values = {conf_branch, conf_exbranch, conf_choice, conf_mchoice, conf_repeat};
 menu_struct.help   = {'These items collect data entry items and build a menu structure.'};
 
 % Root node
@@ -572,7 +607,7 @@ else
     % Transform struct into class based tree
     out.c0 = cfg_struct2cfg(varargin{1}.genobj_var);
 end
-[u1 out.djob]  = harvest(out.c0, out.c0, true, true);
+[u1, out.djob]  = harvest(out.c0, out.c0, true, true);
 
 function out = cfg_cfg_gencode(varargin)
 if isa(varargin{1}.gencode_var, 'cfg_item')
@@ -583,10 +618,13 @@ else
     out.c0 = cfg_struct2cfg(varargin{1}.gencode_var);
 end
 % Generate code
-[str tag] = gencode(out.c0,'',{});
-[p n e] = fileparts(varargin{1}.gencode_fname);
+[str, tag] = gencode(out.c0,'',{});
+[p, n, e] = fileparts(varargin{1}.gencode_fname);
 out.cfg_file{1} = fullfile(varargin{1}.gencode_dir{1}, [n '.m']);
-fid = fopen(out.cfg_file{1}, 'wt');
+[fid, msg] = fopen(out.cfg_file{1}, 'wt');
+if fid == -1
+    cfg_message('matlabbatch:fopen', 'Failed to open ''%s'' for writing:\n%s', out.cfg_file{1}, msg);
+end
 fprintf(fid, 'function %s = %s\n', tag, n);
 fprintf(fid, ...
         ['%% ''%s'' - MATLABBATCH configuration\n' ...
@@ -605,11 +643,14 @@ end
 fclose(fid);
 if varargin{1}.gencode_opts.gencode_o_def
     % Generate defaults file
-    [u1 out.djob]  = harvest(out.c0, out.c0, true, true);
-    [str dtag] = gencode(out.djob, sprintf('%s_def', tag));
+    [u1, out.djob]  = harvest(out.c0, out.c0, true, true);
+    [str, dtag] = gencode(out.djob, sprintf('%s_def', tag));
     dn = sprintf('%s_def', n);
     out.def_file{1} = fullfile(varargin{1}.gencode_dir{1}, sprintf('%s.m', dn));
-    fid = fopen(out.def_file{1}, 'wt');
+    [fid, msg] = fopen(out.def_file{1}, 'wt');
+    if fid == -1
+        cfg_message('matlabbatch:fopen', 'Failed to open ''%s'' for writing:\n%s', out.def_file{1}, msg);
+    end
     fprintf(fid, 'function %s = %s\n', dtag, dn);
     fprintf(fid, ...
         ['%% ''%s'' - MATLABBATCH defaults\n' ...
@@ -625,7 +666,10 @@ end
 if varargin{1}.gencode_opts.gencode_o_mlb
     % Generate cfg_util initialisation file
     out.mlb_file{1} = fullfile(varargin{1}.gencode_dir{1}, 'cfg_mlbatch_appcfg.m');
-    fid = fopen(out.mlb_file{1}, 'wt');
+    [fid, msg] = fopen(out.mlb_file{1}, 'wt');
+    if fid == -1
+        cfg_message('matlabbatch:fopen', 'Failed to open ''%s'' for writing:\n%s', out.mlb_file{1}, msg);
+    end
     fprintf(fid, 'function [cfg, def] = cfg_mlbatch_appcfg(varargin)\n');
     fprintf(fid, ...
         ['%% ''%s'' - MATLABBATCH cfg_util initialisation\n' ...

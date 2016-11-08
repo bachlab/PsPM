@@ -9,9 +9,9 @@ function out = cfg_run_fileparts(job)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: cfg_run_fileparts.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
-[out.p out.n out.e] = cellfun(@fileparts, job.files, 'UniformOutput', false);
+[out.p, out.n, out.e] = cellfun(@fileparts, job.files, 'UniformOutput', false);
 out.up = unique(out.p);

@@ -24,9 +24,9 @@ function [sts, val] = subsasgn_check(item,subs,val)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: subsasgn_check.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 sts = true;
 switch class(item)
@@ -47,7 +47,7 @@ switch class(item)
                     cfg_message('matlabbatch:check:help', '%s: Value must be a cell string.', subsasgn_checkstr(item,subs));
                     sts = false;
                 end
-            case {'check','def','rewrite_job'},
+            case {'check','def','rewrite_job','preview'},
                 if isempty(val)
                     val = [];
                 elseif ~subsasgn_check_funhandle(val)

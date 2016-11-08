@@ -22,13 +22,13 @@ function [str, tag, cind, ccnt] = gencode_item(item, tag, tagctx, stoptag, tropt
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: gencode_item.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 %% Parent object
 % Generate generic object
-[str tag cind ccnt] = gencode_item(item.cfg_item, tag, tagctx, stoptag, tropts);
+[str, tag, cind, ccnt] = gencode_item(item.cfg_item, tag, tagctx, stoptag, tropts);
 % Check whether to generate code - ccnt == 0 means that generic object did
 % not return code
 if (tropts.clvl > tropts.mlvl || (~isempty(tropts.stopspec) && match(item, tropts.stopspec))) || ccnt == 0

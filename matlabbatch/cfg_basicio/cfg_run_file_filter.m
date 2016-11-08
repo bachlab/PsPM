@@ -9,8 +9,8 @@ function out = cfg_run_file_filter(job)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: cfg_run_file_filter.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
-out.files = cfg_getfile('filter', job.files, job.typ, job.filter, job.frames);
+out.files = cfg_getfile('filter', job.files, job.typ, job.filter);

@@ -11,16 +11,16 @@ function sts = cfg_conftest(bch)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: cfg_conftest.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 % Load configuration
 if isfield(bch.cfg, 'cfgvar')
     c0 = bch.cfg.cfgvar;
 else
     fprintf('Loading configuration from file: ''%s''\n', bch.cfg.cfgfile{1});
-    [c0 sts] = load_var_from_fun(bch.cfg.cfgfile{1});
+    [c0, sts] = load_var_from_fun(bch.cfg.cfgfile{1});
     if ~sts
         return;
     end;
@@ -31,7 +31,7 @@ if ~isfield(bch.def, 'none')
         def = bch.def.defvar;
     else
         fprintf('Loading defaults from file: ''%s''\n', bch.def.deffile{1});
-        [def sts] = load_var_from_fun(bch.def.deffile{1});
+        [def, sts] = load_var_from_fun(bch.def.deffile{1});
         if ~sts
             return;
         end;
@@ -56,7 +56,7 @@ catch
     return;
 end;
 % Find cfg_exbranch(es)
-[exids stop cont] = list(c0, cfg_findspec({{'class','cfg_exbranch'}}), ...
+[exids, stop, cont] = list(c0, cfg_findspec({{'class','cfg_exbranch'}}), ...
                              cfg_tropts({}, 0, Inf, 0, Inf, true), {'level'});
 if isempty(exids)
     fprintf(['No cfg_exbranch items found. '...
@@ -82,7 +82,7 @@ if numel(exids) > 1
         pexids = {};
         cexids = {};
         for k = 1:numel(exids)
-            [c1exids stop] = list(subsref(c0, exids{k}), ...
+            [c1exids, stop] = list(subsref(c0, exids{k}), ...
                                   cfg_findspec({{'class','cfg_exbranch'}}), ...
                                   cfg_tropts({}, true, 0, Inf, 0, Inf));
             if numel(c1exids) > 1 % cfg_exbranch itself always
@@ -146,7 +146,7 @@ for k = 1:numel(bch.jobs)
                 cm = subsref(cj, exids{l});
             end;
             try
-                [un hjob un1 dep chk cj] = harvest(cm, cj, false, true);
+                [un, hjob, un1, dep, chk, cj] = harvest(cm, cj, false, true);
                 hsts = true;
             catch
                 hsts = false;
@@ -205,7 +205,7 @@ if ~exist(fname,'file')
     fprintf('File does not exist: ''%s''\m', fname);
     return;
 end;
-[p n e] = fileparts(fname);
+[p, n, e] = fileparts(fname);
 if ~strcmpi(e, '.m')
     fprintf('File does not have MATLAB ''.m'' extension.');
     return;

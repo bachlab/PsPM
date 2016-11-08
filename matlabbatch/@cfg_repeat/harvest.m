@@ -24,9 +24,9 @@ function [tag, val, typ, dep, chk, cj] = harvest(item, cj, dflag, rflag)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: harvest.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 typ = class(item);
 tag = gettag(item);
@@ -59,7 +59,7 @@ else
     end;
 end;
 for i=1:numel(citems),
-    [ctag cval unused cdep cchk cj] = harvest(citems{i}, cj, dflag, rflag);
+    [ctag, cval, unused, cdep, cchk, cj] = harvest(citems{i}, cj, dflag, rflag);
     if numel(item.values)==1 && isa(item.values{1},'cfg_branch') && ~item.forcestruct,
         % FIXME: don't know how to best preinit this without raising
         % warnings about incompatible assignments ...

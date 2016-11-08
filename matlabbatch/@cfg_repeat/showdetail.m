@@ -10,9 +10,9 @@ function str = showdetail(item)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: showdetail.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 str = showdetail(item.cfg_item);
 str{end+1} = 'Class  : cfg_repeat';

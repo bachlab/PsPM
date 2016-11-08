@@ -12,9 +12,9 @@ function jsubs = cfg2jobsubs(item, subs)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: cfg2jobsubs.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 % Only de-reference subscripts into .val{x} field
 if isequal(subs(1), substruct('.','val')) && strcmp(subs(2).type, '{}')

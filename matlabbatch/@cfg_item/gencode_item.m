@@ -29,9 +29,9 @@ function [str, tag, cind, ccnt] = gencode_item(item, tag, tagctx, stoptag, tropt
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: gencode_item.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 %% Class of item
 % if there are function handles in .check or .def, add their names to
@@ -100,7 +100,7 @@ if numel(item.val) > 0 && isa(item.val{1}, 'cfg_item')
         % and the tags of its children.
         ctag{k} = genvarname(subsref(item.val{k}, substruct('.','tag')), ...
                              tagctx);
-        [ccstr ctag{k} ccind cccnt] = gencode_item(item.val{k}, ctag{k}, tagctx, ...
+        [ccstr, ctag{k}, ccind, cccnt] = gencode_item(item.val{k}, ctag{k}, tagctx, ...
                                               stoptag, ctropts);
         if ~isempty(ccstr)
             % Child has returned code
@@ -130,6 +130,12 @@ if ~isempty(item.check)
     % Works only because gencode does not produce subscripts for function
     % strings
     str1 = gencode(item.check, sprintf('%s.check  ', tag), tagctx);
+    str = [str(:)' str1(:)'];
+end    
+%% Rewrite job
+% Generate rewrite_job field
+if ~isempty(item.rewrite_job)
+    str1 = gencode(item.rewrite_job, sprintf('%s.rewrite_job', tag), tagctx);
     str = [str(:)' str1(:)'];
 end    
 %% Help

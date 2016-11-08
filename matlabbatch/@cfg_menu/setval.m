@@ -14,9 +14,9 @@ function item = setval(item, val, dflag)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: setval.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 if iscell(val) && isempty(val)
     if dflag
@@ -35,9 +35,18 @@ if iscell(val) && isempty(val)
         item = subsasgn(item, substruct('.','val'), {});
     end
 else
-    val = item.values{val};
+    if ~isa(val, 'cfg_dep')
+        if isnumeric(val) && val >= 1 && val <= numel(item.values)
+            val = item.values{val};
+        else
+            cfg_message('matlabbatch:setval', ...
+                '%: unable to set value. Index must be an integer between 1 and %d.', ...
+                subsasgn_checkstr(item, substruct('.','val')), numel(item.values));
+            return
+        end
+    end
     if dflag
-        [sts val1] = subsasgn_check(item, substruct('.','val'), {val});
+        [sts, val1] = subsasgn_check(item, substruct('.','val'), {val});
         if sts
             if ~isempty(item.cfg_item.def)
                 try

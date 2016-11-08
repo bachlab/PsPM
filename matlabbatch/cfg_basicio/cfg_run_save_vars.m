@@ -10,14 +10,14 @@ function out = cfg_run_save_vars(job)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: cfg_run_save_vars.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
-[p n e] = fileparts(job.name);
+[p, n, e] = fileparts(job.name);
 out.file{1} = fullfile(job.outdir{1}, [n '.mat']);
 for k = 1:numel(job.vars)
-    svar.(job.vars(k).vname) = job.vars(k).vcont;
+    svar.(job.vars(k).vname) = job.vars(k).vcont; %#ok<STRNU>
 end;
 if job.saveasstruct
     save(out.file{1}, 'svar');

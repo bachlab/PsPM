@@ -16,20 +16,20 @@ function item = subsasgn_job(item, subs, val)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: subsasgn_job.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 if isempty(subs)
     item = initialise(item, '<DEFAULTS>', false);
     item = initialise(item, val, false);
 else
-    [sts vind] = checksubs_job(item, subs, false);
+    [sts, vind] = checksubs_job(item, subs, false);
     if sts
         citem = subsasgn_job(subsref(item, substruct('.', treepart(item, false),'{}',{vind})), subs(2:end), val);
         item  = subsasgn(item, substruct('.', treepart(item, false), '{}', {vind}), citem);
     else
-        [sts vind] = checksubs_job(item, subs, true);
+        [sts, vind] = checksubs_job(item, subs, true);
         if sts % should only be reached for cfg_(m)choice items
             citem = subsasgn_job(subsref(item, substruct('.', treepart(item, true),'{}',{vind})), subs(2:end), val);
             item  = subsasgn(item, substruct('.', treepart(item, false), '{}', {numel(item.cfg_item.val)+1}), citem);

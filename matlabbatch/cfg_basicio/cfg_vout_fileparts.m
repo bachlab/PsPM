@@ -11,9 +11,9 @@ function dep = cfg_vout_fileparts(job)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: cfg_vout_fileparts.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 dep(1)            = cfg_dep;
 dep(1).sname      = sprintf('Directories');
 dep(1).src_output = substruct('.','p');

@@ -9,9 +9,9 @@ function dep = cfg_vout_runjobs(job)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: cfg_vout_runjobs.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 dep               = cfg_dep;
 dep(1).sname      = 'Job Outputs';

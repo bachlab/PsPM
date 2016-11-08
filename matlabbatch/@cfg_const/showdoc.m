@@ -10,10 +10,10 @@ function str = showdoc(item, indent)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: showdoc.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 str = showdoc(item.cfg_item, indent);
-% str{end+1} = ['This item has a constant value which can not be modified ' ...
-%               'using the GUI.'];
+str{end+1} = ['This item has a constant value which can not be modified ' ...
+              'using the GUI.'];

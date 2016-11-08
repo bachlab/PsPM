@@ -65,7 +65,7 @@ function PsPM_OpeningFcn(hObject, eventdata, handles, varargin)
 % varargin   command line arguments to PsPM (see VARARGIN)
 pspm_init;
 cfg_util('initcfg'); % This must be the first call to cfg_util
-cfg_ui('Visible','off'); % Create invisible batch ui
+%cfg_ui('Visible','off'); % Create invisible batch ui
 
 % Choose default command line output for PsPM
 handles.output = hObject;

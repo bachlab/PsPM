@@ -12,9 +12,10 @@ function [sts, val] = subsasgn_check(item,subs,val)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: subsasgn_check.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
+
 sts = true;
 switch subs(1).subs
     case {'num'}
@@ -45,7 +46,7 @@ switch subs(1).subs
                 else
                     % don't filter for item.ufilter - this may have been
                     % overridden by user interface
-                    [val1 sts1] = cfg_getfile('filter',val{1},item.filter,'.*');
+                    [val1, sts1] = cfg_getfile('filter',val{1},item.filter,'.*');
                 end
                 if numel(val1) < item.num(1)
                     sts = false;

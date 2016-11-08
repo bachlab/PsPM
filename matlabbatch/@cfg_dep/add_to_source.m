@@ -1,4 +1,4 @@
-function [cj tdeps cflag dflag] = add_to_source(tdeps, cj)
+function [cj, tdeps, cflag, dflag] = add_to_source(tdeps, cj)
 
 % Add foreign target dependencies to own source dependencies
 % function [cj tdeps cflag dflag] = add_to_source(tdeps, cj)
@@ -18,9 +18,9 @@ function [cj tdeps cflag dflag] = add_to_source(tdeps, cj)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: add_to_source.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 found = false(size(tdeps));
 cflag = false(size(tdeps));

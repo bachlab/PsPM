@@ -11,9 +11,9 @@ function str = showdetail(item)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: showdetail.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 str{1,1} = sprintf('Name   : %s', item.name);
 str{2,1} = sprintf('Tag    : %s', gettag(item));

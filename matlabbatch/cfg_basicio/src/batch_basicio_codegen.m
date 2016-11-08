@@ -1,5 +1,5 @@
 %-----------------------------------------------------------------------
-% Job configuration created by cfg_util (rev $Rev: 701 $)
+% Job configuration created by cfg_util (rev $Rev$)
 %-----------------------------------------------------------------------
 matlabbatch{1}.menu_cfg.gencode_gen.gencode_fname = 'cfg_cfg_basicio.m';
 matlabbatch{1}.menu_cfg.gencode_gen.gencode_dir = '<UNDEFINED>';

@@ -17,12 +17,12 @@ function varargout = subsref_job(item, subs, c0)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: subsref_job.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 varargout{1} = item;
-[un val] = harvest(item, c0, false, false);
+[un, val] = harvest(item, c0, false, false);
 if isempty(subs)
     varargout{2} = val;
 else

@@ -32,9 +32,9 @@ function [str, tag, cind] = gencode(item, tag, tagctx)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: gencode.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 if nargin < 2
     tag = inputname(1);
@@ -49,7 +49,7 @@ end;
 cind = 1;
 
 % try to generate rvalue code
-[rstr sts] = gencode_rvalue(item);
+[rstr, sts] = gencode_rvalue(item);
 if sts
     lvaleq = sprintf('%s = ', tag);
     if numel(rstr) == 1
@@ -107,10 +107,10 @@ else
                 end
             elseif issparse(item)
                 % recreate sparse matrix from indices
-                [tmpi tmpj tmps] = find(item);
-                [stri tagi cindi] = gencode(tmpi);
-                [strj tagj cindj] = gencode(tmpj);
-                [strs tags cinds] = gencode(tmps);
+                [tmpi, tmpj, tmps] = find(item);
+                [stri, tagi, cindi] = gencode(tmpi);
+                [strj, tagj, cindj] = gencode(tmpj);
+                [strs, tags, cinds] = gencode(tmps);
                 str = [stri(:)' strj(:)' strs(:)'];
                 cind = cind + cindi + cindj + cinds;
                 str{end+1} = sprintf('%s = sparse(tmpi, tmpj, tmps);', tag);

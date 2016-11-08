@@ -12,13 +12,13 @@ function out = cfg_run_runjobs(job)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: cfg_run_runjobs.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 if isfield(job.save, 'savejobs')
-    [p n e] = fileparts(job.save.savejobs.outstub);
-    outfmt = fullfile(job.save.savejobs.outdir{1}, sprintf('%s_%%0%dd.m', n, ceil(log10(numel(job.inputs))+1)));
+    [p, n, e] = fileparts(job.save.savejobs.outstub);
+    outfmt = strrep(fullfile(job.save.savejobs.outdir{1}, sprintf('%s_%%0%dd.m', n, ceil(log10(numel(job.inputs))+1))), '\', '\\');
 end;
 hjobs = cell(size(job.inputs));
 sts = false(size(job.inputs));
@@ -32,7 +32,7 @@ for cr = 1:numel(job.inputs)
     end;
     sts(cr) = cfg_util('filljob', cjob, inp{:});
     if sts(cr)
-        [un hjobs{cr}] = cfg_util('harvest', cjob);
+        [un, hjobs{cr}] = cfg_util('harvest', cjob);
     end;
     if isfield(job.save, 'savejobs')
         out.jobfiles{cr} = sprintf(outfmt, cr);

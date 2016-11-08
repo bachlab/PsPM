@@ -20,9 +20,9 @@ function varargout = subsref(dep, subs)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: subsref.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 if strcmpi(subs(1).type, '()')
     % select referenced objects from input array
@@ -34,6 +34,9 @@ if strcmpi(subs(1).type, '()')
     else
         % continue, avoid recursion
         subs = subs(2:end);
+        if numel(dep) > 1
+            cfg_message('matlabbatch:subsref:cfg_dep:multisubs', 'Array indexing followed by more subscript indices might not work.');
+        end
     end
 end
 

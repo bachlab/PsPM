@@ -10,9 +10,9 @@ function varargout = cat(varargin)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: cat.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 if nargin > 2
     cfg_message('matlabbatch:cfg_item:cat', ['Concatenation of cfg_item objects is ' ...

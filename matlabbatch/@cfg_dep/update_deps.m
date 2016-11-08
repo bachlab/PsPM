@@ -10,9 +10,9 @@ function dep = update_deps(dep, oid, nid)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: update_deps.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 for k = 1:numel(dep)
     for l = 1:numel(oid)

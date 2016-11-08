@@ -19,9 +19,9 @@ function [item, inputs] = fillvals(item, inputs, infcn)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: fillvals.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 % Set item itself
 if ~all_set_item(item)
@@ -34,7 +34,7 @@ if ~all_set_item(item)
     if ~all_set_item(item) && ~isempty(infcn) && subsasgn_check_funhandle(infcn)
         sts = false;
         while ~sts && ~all_set_item(item)
-            [val sts] = feval(infcn, item);
+            [val, sts] = feval(infcn, item);
             if sts
                 for k = 1:numel(val)
                     item = setval(item, [val{k} Inf], false);
@@ -47,7 +47,7 @@ end;
 citems = subsref(item, substruct('.','val'));
 for k = 1:numel(citems)
     if ~all_set(citems{k})
-        [citems{k} inputs] = fillvals(citems{k}, inputs, infcn);
+        [citems{k}, inputs] = fillvals(citems{k}, inputs, infcn);
     end;
 end;
 item = subsasgn(item, substruct('.','val'), citems);

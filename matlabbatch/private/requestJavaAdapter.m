@@ -2,7 +2,7 @@ function result = requestJavaAdapter(object)
 %REQUESTJAVAADAPTER Support function for GUIDE
 
 %   Copyright 1984-2006 The MathWorks, Inc.
-%   $Revision: 701 $
+%   $Revision$
  
 %%%%%%%  CAUTION                                           %%%%%%%%
 %%%%%%%  This file is duplicated in both uitools and guide %%%%%%%%%

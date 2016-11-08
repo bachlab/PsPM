@@ -1,5 +1,5 @@
 %-----------------------------------------------------------------------
-% Job configuration created by cfg_util (rev $Rev: 701 $)
+% Job configuration created by cfg_util (rev $Rev$)
 %-----------------------------------------------------------------------
 matlabbatch{1}.menu_cfg.menu_entry.conf_files.type = 'cfg_files';
 matlabbatch{1}.menu_cfg.menu_entry.conf_files.name = 'Directory';

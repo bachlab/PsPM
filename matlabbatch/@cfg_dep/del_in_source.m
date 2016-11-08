@@ -10,9 +10,9 @@ function cj = del_in_source(tdeps, cj)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: del_in_source.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 for k = 1:numel(tdeps)
     sitem = subsref(cj, tdeps(k).src_exbranch); % Source item to deal with

@@ -20,9 +20,9 @@ function dep = subsasgn(dep, subs, varargin)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: subsasgn.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 persistent my_cfg_dep
 sflag = false;
@@ -70,7 +70,7 @@ if  strcmpi(subs(1).type, '.')
         val = varargin;
     end
     % Assign to fields
-    [ok val] = valcheck(subs(1).subs, val);
+    [ok, val] = valcheck(subs(1).subs, val);
     if ok
         if isempty(dep)
             dep = repmat(cfg_dep,size(val));
@@ -85,7 +85,7 @@ if sflag
     dep = odep;
 end
 
-function [ok val] = valcheck(subs, val)
+function [ok, val] = valcheck(subs, val)
 persistent local_mysubs_fields;
 if ~iscell(local_mysubs_fields)
     local_mysubs_fields = mysubs_fields;

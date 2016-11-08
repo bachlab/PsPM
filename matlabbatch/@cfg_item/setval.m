@@ -15,9 +15,9 @@ function item = setval(item, val, dflag)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: setval.m 701 2015-01-22 14:36:13Z tmoser $
+% $Id$
 
-rev = '$Rev: 701 $'; %#ok
+rev = '$Rev$'; %#ok
 
 if iscell(val) && isempty(val)
     if dflag
@@ -37,7 +37,7 @@ if iscell(val) && isempty(val)
     end
 else
     if dflag
-        [sts val1] = subsasgn_check(item, substruct('.','val'), {val});
+        [sts, val1] = subsasgn_check(item, substruct('.','val'), {val});
         if sts
             if ~isempty(item.def)
                 try
