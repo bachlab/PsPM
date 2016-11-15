@@ -735,7 +735,8 @@ defaults.get_transfer_sr=100;            % resampling rate for automatic transfe
 % -------------------------------------------------------------------------
 defaults.modalities = struct('glm', 'scr', ...
     'sf', 'scr', ...
-    'dcm', 'scr');
+    'dcm', 'scr', ...
+    'dm', 'emg');
 
 % -------------------------------------------------------------------------
 %  modality-specific GLM settings
@@ -816,7 +817,17 @@ defaults.glm(8) = ... % GLM for RFR (evoked)
     'direction', 'uni'), ...
     'default', 0);
 
-
+% -------------------------------------------------------------------------
+%  DM settings
+% -------------------------------------------------------------------------
+defaults.dm(1) = ...    
+    struct('modality', 'emg', ...                                  % modality name
+    'modelspec', 'emg', ...                                        % model specification
+    'cbf', struct('fhandle', @pspm_bf_scrf, 'args', 1), ...  % default basis function/set
+    'filter', struct('lpfreq', 5, 'lporder', 1,  ...        % default filter settings
+    'hpfreq', 0.05, 'hporder', 1, 'down', 10, ...
+    'direction', 'uni'), ...
+    'default', 1);
 % -------------------------------------------------------------------------
 %  DCM settings
 % -------------------------------------------------------------------------
@@ -838,7 +849,7 @@ defaults.dcm{2} = ...
 % -------------------------------------------------------------------------
 %  FIRST LEVEL settings
 % -------------------------------------------------------------------------
-defaults.first = {'glm', 'sf', 'dcm'}; % allowed first level model types
+defaults.first = {'glm', 'sf', 'dcm', 'dm'}; % allowed first level model types
 
 % look for settings, otherwise set defaults
 % -------------------------------------------------------------------------

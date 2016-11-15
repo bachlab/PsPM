@@ -1,17 +1,11 @@
-function glm = pspm_dm(model, options)
-% this is a hacked version of pspm_glm
-% use one-column basis functions only
-% use all required model fields, plus one field model.window. this is a scalar in seconds that
-% specifies over which time window (starting with the events specified in
-% model.timing) the model should be evaluated
-% Dominik R Bach 24.05.2016
-
-%
-% pspm_glm specifies a within subject general linear convolution model of
+function dm = pspm_dm(model, options)
+% pspm_dm specifies a within subject dictionary matching model of
 % predicted signals and calculates amplitude estimates for these responses
 %
+% this is a forked version of pspm_glm (15.11.2016)
+%
 % FORMAT:
-% glm = pspm_glm(model, options)
+% dm = pspm_dm(model, options)
 %
 % MODEL with required fields
 % model.modelfile:  a file name for the model output
@@ -23,16 +17,20 @@ function glm = pspm_dm(model, options)
 %                       and (optional) .durations and .pmod  OR
 %                   a cell array of struct
 % model.timeunits:  one of 'seconds', 'samples', 'markers'
+% model.window:     a scalar in seconds that specifies over which time 
+%                   window (starting with the events specified in
+%                   model.timing) the model should be evaluated
 %
 % optional fields
 % model.modelspec:  'scr' (default), 'hp_e', 'hp_fc'
 % model.bf:         basis function/basis set; modality specific default
 %                   with subfields .fhandle (function handle or string) and
 %                   .args (arguments, first argument sampling interval will
-%                   be added by pspm_glm). The optional subfield .shiftbf = n
+%                   be added by pspm_dm). The optional subfield .shiftbf = n
 %                   indicates that the onset of the basis function precedes
 %                   event onsets by n seconds (default: 0: used for
 %                   interpolated data channels)
+%                   IMPORTANT for DM: use one-column based basis functions ONLY. 
 % model.channel:    channel number; default: first channel of the specified modality
 % model.norm:       normalise data; default 0
 % model.filter:     filter settings; modality specific default
@@ -82,7 +80,7 @@ function glm = pspm_dm(model, options)
 %  save('testfile', 'names', 'onsets');
 %
 %
-% RETURNS a structure 'glm' which is also written to file
+% RETURNS a structure 'dm' which is also written to file
 %
 % -------------------------------------------------------------------------
 % REFERENCES:
@@ -106,27 +104,30 @@ function glm = pspm_dm(model, options)
 % Bach DR (2014).  A head-to-head comparison of SCRalyze and Ledalab, two
 % model-based methods for skin conductance analysis. Biological Psychology,
 % 103, 63-88.
+%
+% (5) Khemka S, Tzovara A, Gerster S, Quednow B and Bach DR (2016) 
+% Modeling Startle Eyeblink Electromyogram to Assess 
+% Fear Learning. Psychophysiology
+
 %__________________________________________________________________________
-% PsPM 3.0
+% PsPM 3.1
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_glm.m 261 2016-04-19 08:44:58Z tmoser $
-% $Rev: 261 $
+% $Id$
+% $Rev$
 
 % function revision
-rev = '$Rev: 261 $';
+rev = '$Rev$';
 
 % initialise & user output
 % -------------------------------------------------------------------------
 global settings;
 if isempty(settings), pspm_init; end;
-glm = struct([]); % output model structure
+dm = struct([]); % output model structure
 tmp = struct([]); % temporary model structure
 
 % check input arguments & set defaults
 % -------------------------------------------------------------------------
-
-window = model.window;
 
 % check missing input --
 if nargin<1
@@ -167,22 +168,24 @@ elseif ~ischar(model.timing) && ~iscell(model.timing) && ~isstruct(model.timing)
     warning('ID:invalid_input', 'Event onsets must be a string, cell, or struct.'); return;
 elseif ~ischar(model.timeunits) || ~ismember(model.timeunits, {'seconds', 'markers', 'samples'})
     warning('ID:invalid_input', 'Timeunits (%s) not recognised; only ''seconds'', ''markers'' and ''samples'' are supported', model.timeunits); return;
+elseif ~isnumeric(model.window) 
+    warning('ID:invalid_input', 'Window is expected to be a numeric value.')
 end;
 
 % get further input or set defaults --
 if ~isfield(model, 'modelspec')
     % load default model specification
-    model.modelspec = settings.glm(1).modelspec;
-elseif ~ismember(model.modelspec, {settings.glm.modelspec})
+    model.modelspec = settings.dm(1).modelspec;
+elseif ~ismember(model.modelspec, {settings.dm.modelspec})
     warning('ID:invalid_input', 'Unknown model specification %s.', model.modelspec); return;
 end;
-modno = find(strcmpi(model.modelspec, {settings.glm.modelspec}));
-model.modality = settings.glm(modno).modality;
+modno = find(strcmpi(model.modelspec, {settings.dm.modelspec}));
+model.modality = settings.dm(modno).modality;
 
 % check data channel --
 if ~isfield(model, 'channel')
     model.channel = model.modality; % this returns the first channel of this type
-elseif ~isnumeric(model.channel)
+elseif ~isnumeric(model.channel) && ~ismember(model.channel, {settings.chantypes.type})
     warning('ID:invalid_input', 'Channel number must be numeric.'); return;
 end;
 
@@ -193,56 +196,6 @@ elseif ~ismember(model.norm, [0, 1])
     warning('ID:invalid_input', 'Normalisation must be specified as 0 or 1.'); return;
 end;
 
-% check filter --
-if ~isfield(model, 'filter')
-    model.filter = settings.glm(modno).filter;
-elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
-    % tested because the field is used before the call of pspm_prepdata (everything else is tested there)
-    warning('ID:invalid_input', 'Filter structure needs a numeric ''down'' field.'); return;
-end;
-
-% check & get basis functions --
-basepath = [];
-if ~isfield(model, 'bf')
-    model.bf = settings.glm(modno).cbf;
-else
-    if ~isfield(model.bf, 'fhandle')
-        warning('No basis function given.');
-    elseif ischar(model.bf.fhandle)
-        [basepath, basefn, baseext] = fileparts(model.bf.fhandle);
-        model.bf.fhandle = str2func(basefn);
-    elseif ~isa(model.bf.fhandle, 'function_handle')
-        warning('Basis function must be a string or function handle.');
-    end;
-    if ~isfield(model.bf, 'args')
-        model.bf.args = [];
-    elseif ~isnumeric(model.bf.args)
-        warning('Basis function arguments must be numeric.');
-    end;
-end;
-if ~isempty(basepath), addpath(basepath); end;
-try
-    td = 1/model.filter.down;
-    
-    % model.bf.X contains the function values
-    % bf_x contains the timestamps
-    [model.bf.X, bf_x] = feval(model.bf.fhandle, [td; model.bf.args(:)]);
-catch
-    warning('ID:invalid_fhandle', 'Specified basis function %s doesn''t exist or is faulty', func2str(model.bf.fhandle)); return;
-end;
-
-% set shiftbf
-if bf_x(1) < 0
-    model.bf.shiftbf = abs(bf_x(1));
-elseif bf_x(1) > 0
-    warning('ID:invalid_basis_function', 'The first basis function timestamp is larger than 0 (not allowed).'); return;
-else
-    model.bf.shiftbf = 0;
-end;
-
-% remove path & clear local variables --
-if ~isempty(basepath), rmpath(basepath); end;
-clear basepath basefn baseext
 % check options --
 if ~isfield(options, 'overwrite')
     options.overwrite = 0;
@@ -293,6 +246,67 @@ if nFile > 1 && any(diff(sr) > 0)
 else
     fprintf('\n');
 end;
+
+% check filter --
+if ~isfield(model, 'filter')
+    model.filter = settings.dm(modno).filter;
+end;
+
+% set default model.filter.down --
+if strcmpi(model.filter.down, 'none') || ...
+        isnumeric(model.filter.down) && isnan(model.filter.down)
+    model.filter.down = min(sr);
+end;
+
+% check value of model.filter.down --
+if ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
+    % tested because the field is used before the call of pspm_prepdata (everything else is tested there)
+    warning('ID:invalid_input', 'Filter struct needs field ''down'' to be numeric or ''none''.'); return;
+end;
+
+
+% check & get basis functions --
+basepath = [];
+if ~isfield(model, 'bf')
+    model.bf = settings.dm(modno).cbf;
+else
+    if ~isfield(model.bf, 'fhandle')
+        warning('No basis function given.');
+    elseif ischar(model.bf.fhandle)
+        [basepath, basefn, baseext] = fileparts(model.bf.fhandle);
+        model.bf.fhandle = str2func(basefn);
+    elseif ~isa(model.bf.fhandle, 'function_handle')
+        warning('Basis function must be a string or function handle.');
+    end;
+    if ~isfield(model.bf, 'args')
+        model.bf.args = [];
+    elseif ~isnumeric(model.bf.args)
+        warning('Basis function arguments must be numeric.');
+    end;
+end;
+if ~isempty(basepath), addpath(basepath); end;
+try
+    td = 1/model.filter.down;
+    
+    % model.bf.X contains the function values
+    % bf_x contains the timestamps
+    [model.bf.X, bf_x] = feval(model.bf.fhandle, [td; model.bf.args(:)]);
+catch
+    warning('ID:invalid_fhandle', 'Specified basis function %s doesn''t exist or is faulty', func2str(model.bf.fhandle)); return;
+end;
+
+% set shiftbf
+if bf_x(1) < 0
+    model.bf.shiftbf = abs(bf_x(1));
+elseif bf_x(1) > 0
+    warning('ID:invalid_basis_function', 'The first basis function timestamp is larger than 0 (not allowed).'); return;
+else
+    model.bf.shiftbf = 0;
+end;
+
+% remove path & clear local variables --
+if ~isempty(basepath), rmpath(basepath); end;
+clear basepath basefn baseext
 
 % check regressor files --
 [sts, multi] = pspm_get_timing('onsets', model.timing, model.timeunits);
@@ -367,12 +381,12 @@ end
 fprintf('Preparing & inverting model ... ');
 
 % collect output model information --
-glm(1).glmfile    = model.modelfile; % this field will be removed in the future so don't use any more
-glm.modelfile     = model.modelfile;
-glm.input         = model;
-glm.input.options = options;
-glm.bf            = model.bf;
-glm.bf.bfno       = size(glm.bf.X, 2);
+dm(1).dmfile    = model.modelfile; % this field will be removed in the future so don't use any more
+dm.modelfile     = model.modelfile;
+dm.input         = model;
+dm.input.options = options;
+dm.bf            = model.bf;
+dm.bf.bfno       = size(dm.bf.X, 2);
 
 % clear local variables --
 clear sts iFile modno
@@ -513,22 +527,22 @@ else
 end;
 
 % collect data & regressors for output model --
-glm.input.data    = y;
-glm.input.sr      = sr;
-glm.Y             = Y;
-glm.M             = M;
-glm.infos.sr      = newsr;
-glm.infos.duration     = numel(glm.Y)/glm.infos.sr;
-glm.infos.durationinfo = 'duration in seconds';
-glm.timing.multi      = multi;
-glm.timing.names      = names;
-glm.timing.onsets     = onsets;
-glm.timing.durations  = durations;
-glm.timing.pmod       = pmod;
-glm.modality          = model.modality;
-glm.modelspec         = model.modelspec;
-glm.modeltype         = 'glm';
-glm.revision          = rev;
+dm.input.data    = y;
+dm.input.sr      = sr;
+dm.Y             = Y;
+dm.M             = M;
+dm.infos.sr      = newsr;
+dm.infos.duration     = numel(dm.Y)/dm.infos.sr;
+dm.infos.durationinfo = 'duration in seconds';
+dm.timing.multi      = multi;
+dm.timing.names      = names;
+dm.timing.onsets     = onsets;
+dm.timing.durations  = durations;
+dm.timing.pmod       = pmod;
+dm.modality          = model.modality;
+dm.modelspec         = model.modelspec;
+dm.modeltype         = 'dm';
+dm.revision          = rev;
 
 % clear local variables --
 clear iSn iMs ynew newonsets newdurations newmissing missingtimes
@@ -583,7 +597,7 @@ end;
 %-------------------------------------------------------------------------
 % create design matrix filter
 Xfilter = model.filter;
-Xfilter.sr = glm.infos.sr;
+Xfilter.sr = dm.infos.sr;
 Xfilter.down = 'none'; % turn off downsampling
 Xfilter.lpfreq = NaN; % turn off low pass filter
 
@@ -597,14 +611,14 @@ for iCond = 1:numel(names)
     tmp.regscalec{iCond} = [];
     iXCcol = 1;
     for iXcol = 1:size(tmp.X{iCond}, 2)
-        for iBf = 1:glm.bf.bfno
+        for iBf = 1:dm.bf.bfno
             % process each session individually
             for iSn = 1:numel(tmp.snduration)
                 % convolve
-                tmp.col{iSn, 1} = conv(tmp.X{iCond}(snonsets(iSn):snoffsets(iSn), iXcol), glm.bf.X(:,iBf));
+                tmp.col{iSn, 1} = conv(tmp.X{iCond}(snonsets(iSn):snoffsets(iSn), iXcol), dm.bf.X(:,iBf));
                 % filter design matrix w/o downsampling
                 [sts,  tmp.col{iSn, 1}] = pspm_prepdata(tmp.col{iSn, 1}, Xfilter);
-                if sts ~= 1, glm = struct([]); return; end;
+                if sts ~= 1, dm = struct([]); return; end;
                 % cut away tail
                 tmp.col{iSn, 1}((tmp.snduration(iSn) + 1):end) = [];
             end;
@@ -641,13 +655,13 @@ for iCond = 1:numel(names)
 end;
 
 % define model
-glm.X = cell2mat(tmp.XC);
-glm.regscale = cell2mat(tmp.regscalec);
-glm.names = cell(numel(names), 1);
+dm.X = cell2mat(tmp.XC);
+dm.regscale = cell2mat(tmp.regscalec);
+dm.names = cell(numel(names), 1);
 r=1;
 for iCond = 1:numel(names)
     n = numel(tmp.namec{iCond});
-    glm.names(r:(r+n-1), 1) = tmp.namec{iCond};
+    dm.names(r:(r+n-1), 1) = tmp.namec{iCond};
     r = r + n;
 end;
 
@@ -665,33 +679,33 @@ for iSn = 1:numel(model.datafile)
 end
 Rf = cell2mat(Rf(:));
 
-n = size(glm.names, 1);
+n = size(dm.names, 1);
 for iR = 1:nR
-    glm.names{n+iR, 1} = sprintf('R%01.0f', iR);
+    dm.names{n+iR, 1} = sprintf('R%01.0f', iR);
 end;
 
-glm.X = [glm.X, Rf];
-glm.regscale((end+1):(end+nR)) = 1;
+dm.X = [dm.X, Rf];
+dm.regscale((end+1):(end+nR)) = 1;
 
 % add constant(s)
 r=1;
-n = size(glm.names, 1);
+n = size(dm.names, 1);
 for iSn = 1:numel(model.datafile);
-    glm.X(r:(r+tmp.snduration(iSn)-1), end+1)=1;
-    glm.names{n+iSn, 1} = ['Constant ', num2str(iSn)];
+    dm.X(r:(r+tmp.snduration(iSn)-1), end+1)=1;
+    dm.names{n+iSn, 1} = ['Constant ', num2str(iSn)];
     r = r + tmp.snduration(iSn);
 end;
-glm.interceptno = iSn;
-glm.regscale((end+1):(end+iSn)) = 1;
+dm.interceptno = iSn;
+dm.regscale((end+1):(end+iSn)) = 1;
 
 % delete missing epochs and prepare output
-glm.YM = glm.Y;
-glm.YM(glm.M==1) = [];
-glm.Y(glm.M==1) = NaN;
-glm.XM = glm.X;
-glm.XM(glm.M==1, :) = [];
-glm.X(glm.M==1, :) = NaN;
-glm.Yhat    = NaN(size(Y));
+dm.YM = dm.Y;
+dm.YM(dm.M==1) = [];
+dm.Y(dm.M==1) = NaN;
+dm.XM = dm.X;
+dm.XM(dm.M==1, :) = [];
+dm.X(dm.M==1, :) = NaN;
+dm.Yhat    = NaN(size(Y));
 
 % clear local variables
 clear tmp Xfilter r iSn n iCond
@@ -702,49 +716,49 @@ clear tmp Xfilter r iSn n iCond
 % this is where the beef is
 
 % prepare dictionary onsets and new design matrix
-D_on = eye(ceil(window*glm.infos.sr));
-XMnew = NaN(size(glm.XM));
+D_on = eye(ceil(model.window*dm.infos.sr));
+XMnew = NaN(size(dm.XM));
 
 % go through columns 
-ncol = size(glm.XM, 2) - nR - glm.interceptno;
-glm.names(2 * ncol + (1:glm.interceptno)) = glm.names(ncol + (1:glm.interceptno));
+ncol = size(dm.XM, 2) - nR - dm.interceptno;
+dm.names(2 * ncol + (1:dm.interceptno)) = dm.names(ncol + (1:dm.interceptno));
 for iCol = 1:ncol
     % specify dictionary
     for iD = 1:size(D_on, 2)
-        foo = conv(D_on(:, iD), glm.XM(:, iCol));
-        D(iD, :) = foo(1:size(glm.XM, 1));
+        foo = conv(D_on(:, iD), dm.XM(:, iCol));
+        D(iD, :) = foo(1:size(dm.XM, 1));
     end;
     % obtain inner product and select max
-    a = D * glm.YM;
+    a = D * dm.YM;
     [mx, ind] = max(a);
-    lat(iCol) = ind/glm.infos.sr;
+    lat(iCol) = ind/dm.infos.sr;
     XMnew(:, iCol) = D(ind, :);
     % create names
-    glm.names{iCol + ncol} = [glm.names{iCol}, ' Latency'];
+    dm.names{iCol + ncol} = [dm.names{iCol}, ' Latency'];
 end;
 
 XMnew(:, iCol + 1) = 1;
 
 % replace design matrix
-glm.XMold = glm.XM;
-glm.XM = XMnew;
+dm.XMold = dm.XM;
+dm.XM = XMnew;
 
 % estimate amplitudes
-glm.stats = pinv(glm.XM)*glm.YM;           % parameter estimates
-glm.Yhat(glm.M==0) = glm.XM*glm.stats;     % predicted response
-glm.e    = glm.Y - glm.Yhat;               % residual error
-glm.EV   = 1 - (var(glm.e)/var(glm.YM));   % explained variance proportion
+dm.stats = pinv(dm.XM)*dm.YM;           % parameter estimates
+dm.Yhat(dm.M==0) = dm.XM*dm.stats;     % predicted response
+dm.e    = dm.Y - dm.Yhat;               % residual error
+dm.EV   = 1 - (var(dm.e)/var(dm.YM));   % explained variance proportion
 
 % rescale pmod parameter estimates & design matrix
 %-------------------------------------------------------------------------
-glm.X = glm.X .* repmat(glm.regscale, size(glm.X, 1), 1);
-glm.XM = glm.XM .* repmat(glm.regscale, size(glm.XM, 1), 1);
-glm.stats = glm.stats ./ glm.regscale';
+dm.X = dm.X .* repmat(dm.regscale, size(dm.X, 1), 1);
+dm.XM = dm.XM .* repmat(dm.regscale, size(dm.XM, 1), 1);
+dm.stats = dm.stats ./ dm.regscale';
 
 % add latency parameters
-glm.stats = [glm.stats(:); lat(:)];
+dm.stats = [dm.stats(:); lat(:)];
 
-savedata = struct('glm', glm);
+savedata = struct('dm', dm);
 pspm_load1(model.modelfile, 'save', savedata, options);
 
 
