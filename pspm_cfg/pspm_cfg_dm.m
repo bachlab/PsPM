@@ -339,50 +339,21 @@ overwrite.help    = {'Specify whether you want to overwrite existing mat files.'
 %% Modality dependent items
 % Basis function
 % SCRF
-for i=1:3
-    scrf{i}        = cfg_const;
-    scrf{i}.name   = ['SCRF ' num2str(i-1)];
-    scrf{i}.tag    = ['scrf' num2str(i-1)];
-    scrf{i}.val    = {i-1};
+for i=1:1
+    sebrf{i}        = cfg_const;
+    sebrf{i}.name   = ['SEBRF ' num2str(i-1)];
+    sebrf{i}.tag    = ['sebrf' num2str(i-1)];
+    sebrf{i}.val    = {i-1};
 end
-scrf{1}.help   = {'SCRF without derivatives.'};
-scrf{2}.help   = {'SCRF with time derivative (default).'};
-scrf{3}.help   = {'SCRF with time and dispersion derivative.'};
-
-%FIR
-n         = cfg_entry;
-n.name    = 'N: Number of Time Bins';
-n.tag     = 'n';
-n.strtype = 'i';
-n.num     = [1 1];
-n.help    = {'Number of time bins.'};
-
-d         = cfg_entry;
-d.name    = 'D: Duration of Time Bins';
-d.tag     = 'd';
-d.strtype = 'r';
-d.num     = [1 1];
-d.help    = {'Duration of time bins (in seconds).'};
-
-arg        = cfg_branch;
-arg.name   = 'Arguments';
-arg.tag    = 'arg';
-arg.val    = {n, d};
-arg.help   = {''};
-
-fir        = cfg_branch;
-fir.name   = 'FIR';
-fir.tag    = 'fir';
-fir.val    = {arg};
-fir.help   = {'Uninformed finite impulse response (FIR) model: specify the number and duration of time bins to be estimated.'};
+sebrf{1}.help   = {'SEBRF without derivatives.'};
 
 bf        = cfg_choice;
 bf.name   = 'Basis Function';
 bf.tag    = 'bf';
-bf.val    = {scrf{2}};
-bf.values = {scrf{:}, fir};
-bf.help   = {['Basis functions. Standard is to use a canonical skin conductance response function ' ...
-    '(SCRF) with time derivative for later reconstruction of the response peak.']};
+bf.val    = {sebrf{1}};
+bf.values = {sebrf{:}};
+bf.help   = {['Basis functions. Standard is to use a canonical startle eyeblink response function ' ...
+    '(SEBRF) without time derivative for later reconstruction of the response peak.']};
 
 % Filter settings
 % try to get default settings for filter

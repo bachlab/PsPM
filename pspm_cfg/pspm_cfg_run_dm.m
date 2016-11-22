@@ -111,12 +111,9 @@ end
 % basis function
 bf = fieldnames(job.bf);
 bf = bf{1};
-if any(strcmp(bf,{'scrf0', 'scrf1', 'scrf2'}))
-    model.bf.fhandle = str2func('pspm_bf_scrf');
+if any(strcmp(bf,{'sebrf0'}))
+    model.bf.fhandle = str2func('pspm_bf_sebrf_fc');
     model.bf.args = job.bf.(bf);
-elseif isfield(job.bf,'fir')
-    model.bf.fhandle = str2func('pspm_bf_FIR');
-    model.bf.args = [job.bf.fir.arg.n, job.bf.fir.arg.d];
 end;
 
 % window
