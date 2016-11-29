@@ -7,7 +7,13 @@ function out = pspm_cfg_run_glm_hp_e(job)
 global settings
 if isempty(settings), pspm_init; end;
 
-def_filter = settings.glm(2).filter;
+% set modality
+modality = 'hp';
+modelspec = 'hp_e';
+
+f = strcmpi({settings.glm.modelspec}, modelspec);
+def_filter = settings.glm(f).filter;
+
 params = pspm_cfg_run_glm(job, def_filter);
 
 % get parameters
@@ -25,9 +31,8 @@ elseif isfield(job.bf,'fir')
     model.bf.args = [job.bf.fir.arg.n, job.bf.fir.arg.d];
 end;
 
-% set modality
-model.modality = 'hp';
-model.modelspec = 'hp_e';
+model.modality = modality;
+model.modelspec = modelspec;
 
 out = pspm_glm(model, options);
 if exist('out', 'var') && isfield(out, 'modelfile')

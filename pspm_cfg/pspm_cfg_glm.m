@@ -390,6 +390,38 @@ bf.values = {scrf{:}, fir};
 bf.help   = {['Basis functions. Standard is to use a canonical skin conductance response function ' ...
     '(SCRF) with time derivative for later reconstruction of the response peak.']};
 
+%% Latency
+time_window          = cfg_entry;
+time_window.name     = 'Time window';
+time_window.tag      = 'time_window';
+time_window.strtype  = 'r';
+time_window.num      = [1 1];
+time_window.help     = {['In seconds, specifies over which time window ', ...
+    '(starting with the events specified in conditions) the model ', ...
+    'should be evaluated.']};
+
+fixed_latency   = cfg_const;
+fixed_latency.name = 'fixed';
+fixed_latency.tag = 'fixed';
+fixed_latency.val = {'fixed'};
+fixed_latency.help = {['']};
+
+free_latency    = cfg_branch;
+free_latency.name = 'free';
+free_latency.tag = 'free';
+free_latency.val = {time_window};
+free_latency.help = {['']};
+
+latency         = cfg_choice;
+latency.name    = 'Latency';
+latency.tag     = 'latency';
+latency.val     = {fixed_latency};
+latency.values  = {fixed_latency, free_latency};
+% is hidden per default
+latency.hidden  = true;
+latency.help    = {['Latency is either ''fixed'' or ''free''. If ', ...
+    'latency is ''free'', the model tries to estimate the best latency.']};
+
 %% Filter settings
 % try to get default settings for filter
 f = strcmpi({settings.glm.modelspec}, vars.modspec);
@@ -522,7 +554,7 @@ filter.help   = {['Specify how you want filter the ',vars.modality,' data.']};
 glm       = cfg_exbranch;
 glm.name  = 'GLM';
 glm.tag   = 'glm';
-glm.val   = {modelfile, outdir, chan, timeunits, session_rep, bf, norm, filter, overwrite};
+glm.val   = {modelfile, outdir, chan, timeunits, session_rep, latency, bf, norm, filter, overwrite};
 %glm_scr.prog  = ;
 glm.vout  = @pspm_cfg_vout_glm;
 glm.help  = {...

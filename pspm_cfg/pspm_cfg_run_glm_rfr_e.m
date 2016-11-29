@@ -7,7 +7,14 @@ function out = pspm_cfg_run_glm_rfr_e(job)
 global settings
 if isempty(settings), pspm_init; end;
 
-def_filter = settings.glm(5).filter;
+
+% set modality
+modality = 'rfr';
+modelspec = 'rfr_e';
+
+f = strcmpi({settings.glm.modelspec}, modelspec);
+def_filter = settings.glm(f).filter;
+
 params = pspm_cfg_run_glm(job, def_filter);
 
 % get parameters
@@ -21,9 +28,8 @@ bf = bf{1};
 model.bf.args = subsref(job.bf, struct('type', '.', 'subs', bf));
 model.bf.fhandle = str2func('pspm_bf_rfrrf_e');
 
-% set modality
-model.modality = 'rfr';
-model.modelspec = 'rfr_e';
+model.modality = modality;
+model.modelspec = modelspec;
 
 out = pspm_glm(model, options);
 if exist('out', 'var') && isfield(out, 'modelfile')

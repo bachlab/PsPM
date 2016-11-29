@@ -7,7 +7,13 @@ function out = pspm_cfg_run_glm_ps_fc(job)
 global settings
 if isempty(settings), pspm_init; end;
 
-def_filter = settings.glm(5).filter;
+% set modality
+modality = 'ps';
+modelspec = 'ps_fc';
+
+f = strcmpi({settings.glm.modelspec}, modelspec);
+def_filter = settings.glm(f).filter;
+
 params = pspm_cfg_run_glm(job, def_filter);
 
 % get parameters
@@ -41,10 +47,6 @@ if any(strcmp(bf,{'psrf_fc0', 'psrf_fc1', 'psrf_fc2'}))
     model.bf.args = [cs, cs_d, us];
 end;
 
-% set modality
-model.modality = 'ps';
-model.modelspec = 'ps_fc';
-
 % set default channel (hard coded)
 if isfield(job.chan, 'chan_def')
     % get the value of the first field
@@ -54,6 +56,8 @@ if isfield(job.chan, 'chan_def')
     model.channel = subsref(job.chan.chan_def, s);
 end
 
+model.modality = modality;
+model.modelspec = modelspec;
 
 out = pspm_glm(model, options);
 if exist('out', 'var') && isfield(out, 'modelfile')

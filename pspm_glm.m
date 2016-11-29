@@ -15,6 +15,11 @@ function glm = pspm_glm(model, options)
 %                       and (optional) .durations and .pmod  OR
 %                   a cell array of struct
 % model.timeunits:  one of 'seconds', 'samples', 'markers'
+% model.window:     a scalar in seconds that specifies over which time 
+%                   window (starting with the events specified in
+%                   model.timing) the model should be evaluated. Is only
+%                   required if model.latency equals 'free'. Is ignored
+%                   otherwise.
 %
 % optional fields
 % model.modelspec:  'scr' (default), 'hp_e', 'hp_fc'
@@ -39,6 +44,13 @@ function glm = pspm_glm(model, options)
 %                   regressors in a matrix variable called R. There must be
 %                   as many values for each column of R as there are data
 %                   values. SCRalyze will call these regressors R1, R2, ...
+% model.latency:    allows to specify whether latency should be 'fixed'
+%                   (default) or should be 'free'. In 'free' models an
+%                   additional dictionary matching algorithm will try to
+%                   estimate the best latency. Latencies will then be added
+%                   at the end of the output. In 'free' models the field
+%                   model.window is MANDATORY and single basis functions 
+%                   are allowed only.
 %
 % OPTIONS (optional argument)
 % options.overwrite: overwrite existing model output; default 0
@@ -98,9 +110,13 @@ function glm = pspm_glm(model, options)
 % Bach DR (2014).  A head-to-head comparison of SCRalyze and Ledalab, two
 % model-based methods for skin conductance analysis. Biological Psychology,
 % 103, 63-88.
+%
+% (5) Khemka S, Tzovara A, Gerster S, Quednow B and Bach DR (2016) 
+% Modeling Startle Eyeblink Electromyogram to Assess 
+% Fear Learning. Psychophysiology
 %__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% PsPM 3.1
+% (C) 2008-2016 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 % $Id$
 % $Rev$
@@ -148,6 +164,11 @@ if ~isfield(model, 'timing') || isempty(model.timing) || ...
     end;
 end;
 
+% set default values
+if ~isfield(model, 'latency')
+    model.latency = 'fixed';
+end;
+
 % check faulty input --
 if ~ischar(model.datafile) && ~iscell(model.datafile)
     warning('ID:invalid_input', 'Input data must be a cell or string.'); return;
@@ -157,6 +178,10 @@ elseif ~ischar(model.timing) && ~iscell(model.timing) && ~isstruct(model.timing)
     warning('ID:invalid_input', 'Event onsets must be a string, cell, or struct.'); return;
 elseif ~ischar(model.timeunits) || ~ismember(model.timeunits, {'seconds', 'markers', 'samples'})
     warning('ID:invalid_input', 'Timeunits (%s) not recognised; only ''seconds'', ''markers'' and ''samples'' are supported', model.timeunits); return;
+elseif ~ismember(model.latency, {'free', 'fixed'})
+    warning('ID:invalid_input', 'Latency should be either ''fixed'' or ''free''.'); return;
+elseif strcmpi(model.latency, 'free') && (~isnumeric(model.window) || isempty(model.window))
+    warning('ID:invalid_input', 'Window is expected to be a numeric value.'); return;
 end;
 
 % get further input or set defaults --
@@ -277,6 +302,10 @@ try
     % model.bf.X contains the function values
     % bf_x contains the timestamps
     [model.bf.X, bf_x] = feval(model.bf.fhandle, [td; model.bf.args(:)]);
+    if strcmpi(model.latency, 'free') && size(model.bf.X,2) > 1
+        warning('ID:invalid_input', ['With latency ''free'' multitple response ', ...
+            'functions are not allowed.']); return;
+    end;
 catch
     warning('ID:invalid_fhandle', 'Specified basis function %s doesn''t exist or is faulty', func2str(model.bf.fhandle)); return;
 end;
@@ -700,6 +729,37 @@ clear tmp Xfilter r iSn n iCond
 % invert model & save
 %-------------------------------------------------------------------------
 % this is where the beef is
+if strcmpi(model.latency, 'free')
+    % prepare dictionary onsets and new design matrix
+    D_on = eye(ceil(model.window*glm.infos.sr));
+    XMnew = NaN(size(glm.XM));
+    
+    % go through columns
+    ncol = size(glm.XM, 2) - nR - glm.interceptno;
+    glm.names(2 * ncol + (1:glm.interceptno)) = glm.names(ncol + (1:glm.interceptno));
+    for iCol = 1:ncol
+        % specify dictionary
+        for iD = 1:size(D_on, 2)
+            foo = conv(D_on(:, iD), glm.XM(:, iCol));
+            D(iD, :) = foo(1:size(glm.XM, 1));
+        end;
+        % obtain inner product and select max
+        a = D * glm.YM;
+        [~, ind] = max(a);
+        lat(iCol) = ind/glm.infos.sr;
+        XMnew(:, iCol) = D(ind, :);
+        % create names
+        glm.names{iCol + ncol} = [glm.names{iCol}, ' Latency'];
+    end;
+    
+    XMnew(:, iCol + 1) = 1;
+    
+    % replace design matrix
+    glm.XMold = glm.XM;
+    glm.XM = XMnew;
+end;
+
+% estimate amplitudes
 glm.stats = pinv(glm.XM)*glm.YM;           % parameter estimates
 glm.Yhat(glm.M==0) = glm.XM*glm.stats;     % predicted response
 glm.e    = glm.Y - glm.Yhat;               % residual error
@@ -710,6 +770,11 @@ glm.EV   = 1 - (var(glm.e)/var(glm.YM));   % explained variance proportion
 glm.X = glm.X .* repmat(glm.regscale, size(glm.X, 1), 1);
 glm.XM = glm.XM .* repmat(glm.regscale, size(glm.XM, 1), 1);
 glm.stats = glm.stats ./ glm.regscale';
+
+if strcmpi(model.latency, 'free')
+    % add latency parameters
+    glm.stats = [glm.stats(:); lat(:)];
+end;
 
 savedata = struct('glm', glm);
 pspm_load1(model.modelfile, 'save', savedata, options);

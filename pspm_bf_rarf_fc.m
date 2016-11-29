@@ -49,8 +49,8 @@ end;
 % can use any amplitude, since glm resizes them
 amp = 1;
 
-p_early = [2.57e7, 3.124e-4, -8.02e3 -amp];
-p_late = [3.41 1.11 7.58 amp];
+p_early = [25701021.9751273, 0.000312409767612504, -8024.33886550365, -amp];
+p_late = [3.41301736200870 1.10734203371767 7.58288130400132 amp];
 
 
 % fix value of bf_type

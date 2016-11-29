@@ -107,6 +107,13 @@ if isfield(job.chan, 'chan_nr')
     model.channel = job.chan.chan_nr;
 end
 
+if isfield(job.latency, 'free')
+    model.latency = 'free';
+    model.window = job.latency.free.time_window;
+else
+    model.latency = 'fixed';
+end;
+
 % options
 options.overwrite = job.overwrite;
 

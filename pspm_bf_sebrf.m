@@ -1,4 +1,4 @@
-function [bf, x] = pspm_bf_sebrf_fc(varargin)
+function [bf, x] = pspm_bf_sebrf(varargin)
 % pspm_bf_sebrf constructs the startle eyeblink response function 
 % consisting of gamma probability functions
 %

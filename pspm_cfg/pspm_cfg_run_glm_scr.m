@@ -7,7 +7,14 @@ function out = pspm_cfg_run_glm_scr(job)
 global settings
 if isempty(settings), pspm_init; end;
 
-def_filter = settings.glm(1).filter;
+
+% set modality
+modality = 'ra';
+modelspec = 'ra_e';
+
+f = strcmpi({settings.glm.modelspec}, modelspec);
+def_filter = settings.glm(f).filter;
+
 params = pspm_cfg_run_glm(job, def_filter);
 
 % basis function
@@ -25,9 +32,8 @@ end
 model = params.model;
 options = params.options;
 
-% set modality
-model.modality = 'scr';
-model.modelspec = 'scr';
+model.modality = modality;
+model.modelspec = modelspec;
 
 out = pspm_glm(model, options);
 if exist('out', 'var') && isfield(out, 'modelfile')
