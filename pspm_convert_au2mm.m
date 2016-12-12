@@ -7,8 +7,12 @@ function [sts, out] = pspm_convert_au2mm(fn, chan, options)
 %   [sts, out] = pspm_convert_au2mm(fn, chan, options)
 %
 % ARGUMENTS: 
-%           fn:                 a numeric vector of milimeter values
-%           chan:               distance between screen and eyes in meter
+%           fn:                 filename which contains the channels to be
+%                               converted
+%           chan:               channel id of the channel to be coverted.
+%                               Expected to be numeric. The channel should
+%                               contain diameter values recoreded with an
+%                               Eyelink system in 'ellipse' mode.
 %           options:            a struct of optional settings
 %               offset:         the offset for the linear conversion 
 %                               mm = offset + multiplicator*(arbitrary units)

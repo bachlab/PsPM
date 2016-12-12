@@ -4,7 +4,7 @@ function [sts, infos] = pspm_hb2hp(fn, sr, chan, options)
 % 
 % sts = pspm_hb2hp(fn, sr, chan, options)
 %       fn: data file name
-%       sr: sample rate for heart rate channel
+%       sr: new sample rate for heart period channel
 %       chan: number of heart beat channel (optional, default: first heart
 %             beat channel); if empty (= 0 / []) will be set to default
 %             value
