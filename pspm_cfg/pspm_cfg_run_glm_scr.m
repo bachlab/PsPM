@@ -9,8 +9,8 @@ if isempty(settings), pspm_init; end;
 
 
 % set modality
-modality = 'ra';
-modelspec = 'ra_e';
+modality = 'scr';
+modelspec = 'scr';
 
 f = strcmpi({settings.glm.modelspec}, modelspec);
 def_filter = settings.glm(f).filter;
