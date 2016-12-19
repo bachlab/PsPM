@@ -16,7 +16,7 @@ function [sts, import, sourceinfo] = pspm_get_biosemi(datafile, import)
 % -------------------------------------------------------------------------
 global settings;
 if isempty(settings), pspm_init; end;
-addpath([settings.path, 'Import', filesep, 'fieldtrip']); 
+addpath([settings.path, 'Import', filesep, 'fieldtrip', filesep, 'fileio']); 
 sourceinfo = []; sts = -1;
 
 % get external file, using fieldtrip
@@ -59,7 +59,7 @@ for k = 1:numel(import)
             import{k}.markerinfo.name = {mrk(:).type};
         else
             import{k}.data = [];
-            import{k}.marker = '';
+            import{k}.marker = 'timestamps';
             import{k}.markerinfo.value = [];
             import{k}.markerinfo.name = [];
         end;
@@ -69,7 +69,7 @@ end;
 
 % clear path and return
 % -------------------------------------------------------------------------
-rmpath([settings.path, 'Import', filesep, 'fieldtrip']); 
+rmpath([settings.path, 'Import', filesep, 'fieldtrip', filesep, 'fileio']); 
 sts = 1;
 return;
 

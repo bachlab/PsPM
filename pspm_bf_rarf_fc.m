@@ -49,7 +49,7 @@ end;
 % can use any amplitude, since glm resizes them
 amp = 1;
 
-p_early = [25701021.9751273, 0.000312409767612504, -8024.33886550365, -amp];
+p_early = [25701021.9751273, 0.000312409767612504, -8024.33886550365, amp];
 p_late = [3.41301736200870 1.10734203371767 7.58288130400132 amp];
 
 
@@ -73,6 +73,9 @@ A_l = p_late(4);
 
 g_early = A_e * gampdf(x-x0_e, a_e, b_e);
 g_late = A_l * gampdf(x-x0_l, a_l, b_l);
+
+g_early = g_early/max(g_early);
+g_late = g_late/max(g_late);
 
 if bf_type == 1
     bs = [g_early g_late];
