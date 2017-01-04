@@ -108,7 +108,7 @@ dcm = [];
 % check input arguments & set defaults
 % -------------------------------------------------------------------------
 if nargin < 1
-    warning('No data to work on.'); ofn = []; return;
+    warning('No data to work on.'); fn = []; return;
 elseif nargin < 2
     options = struct([]);
 end;
@@ -160,6 +160,7 @@ try options.getrf;   catch, options.getrf = 0;    end;
 try options.rf;      catch, options.rf = 0;       end;
 try options.nosave;  catch, options.nosave = 0;   end;
 try options.overwrite; catch, options.overwrite = 0; end;
+try options.substhresh; catch, options.substhresh = 2; end;
 if options.indrf && options.rf
     warning('RF can be provided or estimated, not both.'); return;
 end;
@@ -183,6 +184,10 @@ end;
 
 % check, get and prepare data
 % ------------------------------------------------------------------------
+
+% split into subsessions
+% colnames: iSn start stop enabled (if contains events)
+subsessions = [];
 for iSn = 1:numel(model.datafile)
     % check & load data
     [sts, infos, data] = pspm_load_data(model.datafile{iSn}, model.channel);
@@ -191,40 +196,105 @@ for iSn = 1:numel(model.datafile)
         return;
     end;
     model.filter.sr = data{1}.header.sr;
-    options.missing{iSn, 1} = isnan(data{1}.data);
-    if any(options.missing{iSn, 1} == true)
-        interpolateoptions = struct('extrapolate', 1);
-        [sts, data{1}.data] = pspm_interpolate(data{1}.data, interpolateoptions);
-        clear interpolateoptions    
+    missing = isnan(data{1}.data);
+    
+    d_miss = diff(missing)';
+    miss_start = find(d_miss == 1);
+    miss_stop = find(d_miss == -1);
+    
+    
+    if numel(miss_start) > 0 || numel(miss_stop) > 0
+        % check for blunt ends and fix
+        if isempty(miss_start)
+            miss_start = 1;
+        elseif isempty(miss_stop)
+            miss_stop = numel(d_miss);
+        end;
+        
+        if miss_start(1) > miss_stop(1)
+            miss_start = [1, miss_start];
+        end;
+        if miss_start(end) > miss_stop(end)
+            miss_stop(end + 1) = numel(d_miss);
+        end;
     end;
-    [sts, model.scr{iSn, 1}, model.sr] = pspm_prepdata(data{1}.data, model.filter);
-    if sts == -1, return; end;
+     
+    % put missing epochs together
+    miss_epochs = [miss_start', miss_stop'];
+    % look for big epochs
+    big_epochs = diff(miss_epochs, 1, 2)/data{1}.header.sr > options.substhresh;
+    
+    if any(big_epochs)
+        b_e = find(big_epochs);
+        
+        se_start = [1; miss_epochs(b_e(1:end), 2) + 1];
+        se_stop = [miss_epochs(b_e(1:end), 1)-1; numel(d_miss)];
+        
+        if se_stop(1) == 1
+            se_start = se_start(2:end);
+            se_stop = se_stop(2:end);
+        end;
+        
+        if se_start(end) > length(d_miss)
+            se_start = se_start(1:end-1);
+            se_stop = se_stop(1:end-1);
+        end;
+        
+        n_sbs = numel(se_start);
+        subsessions(end+(1:n_sbs), 1:4) = [ones(n_sbs,1), [se_start, se_stop]/data{1}.header.sr, zeros(n_sbs,1)];
+        n_miss = size(miss_epochs,1);
+        subsessions(end+(1:n_miss), 1:4) = [ones(n_miss,1), miss_epochs/data{1}.header.sr, ones(n_miss,1)];
+    else
+        subsessions(end+1,1:4) = [iSn, [1, numel(data{1}.data)]/data{1}.header.sr, zeros(n_sbs,1)];
+    end;
 end;
 
-% normalise data --
+% sort subsessions by start
+subsessions = sortrows(subsessions);
+
+% find missing values, interpolate and normalise ---
+valid_subsessions = find(subsessions(:,4) == 0);
 foo = {};
-for sn = 1:numel(model.scr)
-    foo{sn, 1} = (model.scr{sn}(:) - mean(model.scr{sn}));
+for vs = 1:numel(valid_subsessions)
+    isbSn = valid_subsessions(vs);
+    sbSn = subsessions(isbSn, :);
+    flanks = round(sbSn(2:3)*data{1}.header.sr);
+    sbSn_data = data{1}.data(flanks(1):flanks(2));
+    sbs_missing{isbSn, 1} = isnan(sbSn_data);
+    
+    if any(sbs_missing{isbSn, 1})
+        interpolateoptions = struct('extrapolate', 1);
+        [~, sbSn_data] = pspm_interpolate(sbSn_data, interpolateoptions);
+        clear interpolateoptions
+    end;
+    [sts, sbs_data{isbSn, 1}, model.sr] = pspm_prepdata(sbSn_data, model.filter);
+    if sts == -1, return; end;
+    foo{vs, 1} = (sbs_data{isbSn}(:) - mean(sbs_data{isbSn}));
 end;
+
 foo = cell2mat(foo);
 model.zfactor = std(foo(:));
-for sn = 1:numel(model.scr)
-    model.scr{sn} = (model.scr{sn}(:) - min(model.scr{sn}))/model.zfactor;
+for vs = 1:numel(valid_subsessions)
+    isbSn = valid_subsessions(vs);
+    sbs_data{isbSn} = (sbs_data{isbSn}(:) - min(sbs_data{isbSn}))/model.zfactor;
 end;
 clear foo
 
 % check & get events and group into flexible and fixed responses
 % ------------------------------------------------------------------------
+trials = {};
 for iSn = 1:numel(model.timing)
     % initialise and get timing information -- 
-    newevents{1}{iSn} = []; newevents{2}{iSn} = [];
+    sn_newevents{1} = {}; sn_newevents{2} = {};
     [sts, events] = pspm_get_timing('events', model.timing{iSn});
     if sts ~=1, return; end;
     cEvnt = [1 1];
+    % table with trial_id sbsnid
+    %trials{iSn} = [ones(size(events{1},1),1),zeros(size(events{1},1),1)];
     % split up into flexible and fixed events --
     for iEvnt = 1:numel(events)
         if size(events{iEvnt}, 2) == 2 % flex
-            newevents{1}{iSn}(:, cEvnt(1), 1:2) = events{iEvnt};
+            sn_newevents{1}{iSn}(:, cEvnt(1), 1:2) = events{iEvnt};
             % assign event names
             if iSn == 1 && isfield(options, 'eventnames') && numel(options.eventnames) == numel(events)
                 flexevntnames{cEvnt(1)} = options.eventnames{iEvnt};
@@ -234,7 +304,7 @@ for iSn = 1:numel(model.timing)
             % update counter
             cEvnt = cEvnt + [1 0];
         elseif size(events{iEvnt}, 2) == 1 % fix
-            newevents{2}{iSn}(:, cEvnt(2)) = events{iEvnt};
+            sn_newevents{2}{iSn}(:, cEvnt(2), 1) = events{iEvnt};
             % assign event names
             if iSn == 1 && isfield(options, 'eventnames') && numel(options.eventnames) == numel(events)
                 fixevntnames{cEvnt(2)} = options.eventnames{iEvnt};
@@ -254,30 +324,64 @@ for iSn = 1:numel(model.timing)
             warning('Same number of events per trial required across all sessions.'); return;
         end;
     end;
+
     % find trialstart, trialstop and shortest ITI --
-    allevents = [reshape(newevents{1}{iSn}, [size(newevents{1}{iSn}, 1), size(newevents{1}{iSn}, 2) * size(newevents{1}{iSn}, 3)]), newevents{2}{iSn}]; 
-    allevents(allevents < 0) = inf;        % exclude "dummy" events with negative onsets
-    trlstart{iSn} = min(allevents, [], 2); % first event per trial 
-    allevents(isinf(allevents)) = -inf;        % exclude "dummy" events with negative onsets
-    trlstop{iSn}  = max(allevents, [], 2); % last event of per trial
-    iti{iSn}      = [trlstart{iSn}(2:end); numel(model.scr{iSn, 1})/model.sr] - trlstop{iSn}; 
-        % ITI including session end
-    miniti(iSn)   = min(iti{iSn});  % minimum ITI
-    if miniti(iSn) < 0
-        warning('Error in event definition. Either events are outside the file, or trials overlap.'); return;
+    sn_allevents = [reshape(sn_newevents{1}{iSn}, [size(sn_newevents{1}{iSn}, 1), size(sn_newevents{1}{iSn}, 2) * size(sn_newevents{1}{iSn}, 3)]), sn_newevents{2}{iSn}];
+    sn_allevents(sn_allevents < 0) = inf;        % exclude "dummy" events with negative onsets
+    sn_trlstart{iSn} = min(sn_allevents, [], 2); % first event per trial
+    sn_allevents(isinf(sn_allevents)) = -inf;        % exclude "dummy" events with negative onsets
+    sn_trlstop{iSn}  = max(sn_allevents, [], 2); % last event of per trial
+    
+    % assign trials to subsessions
+    trls = num2cell([sn_trlstart{iSn}, sn_trlstop{iSn}],2);
+    subs = cellfun(@(x) find(x(1) > subsessions(:, 2) & x(2) < subsessions(:, 3) ... 
+        & subsessions(:, 1) == iSn), trls, 'UniformOutput', 0);
+    
+    emp_subs = cellfun(@isempty, subs);
+    if any(emp_subs)
+        subs{emp_subs} = -1;
     end;
+        
+    % find enabled and disabled trials
+    trlinfo = cellfun(@(x) x ~= -1 && subsessions(x, 4) == 0, subs, 'UniformOutput', 0);   
+    trials{iSn} = [cell2mat(trlinfo), cell2mat(subs)];
+    
+    % cycle through subsessions
+    sn_sbs = find(subsessions(:, 1) == iSn);
+    for isn_sbs=1:numel(sn_sbs)
+        sbs_id = sn_sbs(isn_sbs);
+        sbs_trls = trials{iSn}(:, 1) == 1 & trials{iSn}(:,2) == sbs_id;
+        if any(sbs_trls)
+            sbs_trlstart{sbs_id} = sn_trlstart{iSn}(sbs_trls) - subsessions(sbs_id,2);
+            sbs_trlstop{sbs_id} = sn_trlstop{iSn}(sbs_trls) - subsessions(sbs_id,2);
+            sbs_iti{sbs_id} = [sbs_trlstart{sbs_id}(2:end); numel(sbs_data{sbs_id, 1})/model.sr] - sbs_trlstop{sbs_id};
+            sbs_miniti(sbs_id) = min(sbs_iti{sbs_id});
+            sbs_newevents{1}{sbs_id} = sn_newevents{1}{iSn}(sbs_trls,:,1:2) - subsessions(sbs_id,2);
+            sbs_newevents{2}{sbs_id} = sn_newevents{2}{iSn}(sbs_trls,:,:)- subsessions(sbs_id,2);
+            
+            if sbs_miniti(iSn) < 0
+                warning('Error in event definition. Either events are outside the file, or trials overlap.'); return;
+            end;
+        end;
+    end;
+        
 end;
 
-model.trlstart =  trlstart;
-model.trlstop  =  trlstop;
-model.iti      =  iti;
-model.events   =  newevents;
+% find subsessions with events and define them to be processed
+proc_subsessions = ~cellfun(@isempty, sbs_trlstart);
+proc_miniti     =  sbs_miniti(proc_subsessions);
+model.trlstart =  sbs_trlstart(proc_subsessions);
+model.trlstop  =  sbs_trlstop(proc_subsessions);
+model.iti      =  sbs_iti(proc_subsessions);
+model.events   =  {sbs_newevents{1}(proc_subsessions), sbs_newevents{2}(proc_subsessions)};
+model.scr      =  sbs_data(proc_subsessions);
+options.missing  =  sbs_missing(proc_subsessions);
 
 % prepare data for CRF estimation and for amplitude priors
 % ------------------------------------------------------------------------
 % get average event sequence per trial --
 if nEvnt(1) > 0
-    flexseq = cell2mat(newevents{1}') - repmat(cell2mat(trlstart'), [1, size(newevents{1}{1}, 2), 2]);
+    flexseq = cell2mat(model.events{1}') - repmat(cell2mat(model.trlstart'), [1, size(model.events{1}{1}, 2), 2]);
     flexseq(flexseq < 0) = NaN;
     flexevents = [];
     % this loop serves to avoid the function nanmean which is part of the
@@ -292,7 +396,7 @@ else
     flexevents = [];
 end;
 if nEvnt(2) > 0
-    fixseq  = cell2mat(newevents{2}') - repmat(cell2mat(trlstart'), 1, size(newevents{2}{1}, 2));
+    fixseq  = cell2mat(model.events{2}') - repmat(cell2mat(model.trlstart'), 1, size(model.events{2}{1}, 2));
     fixseq(fixseq < 0) = NaN;
     fixevents = [];
     for k = 1:size(fixseq, 2)
@@ -312,24 +416,25 @@ options.fixevents  = fixevents;
 clear flexseq fixseq flexevents fixevents startevent
 
 % check ITI --
-if (options.indrf || options.getrf) && min(miniti) < 5
+if (options.indrf || options.getrf) && min(proc_miniti) < 5
     warnings{1} = ('Inter trial interval is too short to estimate individual CRF - at least 5 s needed. Standard CRF will be used instead.');
     fprintf('\n%s\n', warnings{1});
-    options.indrf = 0; 
+    options.indrf = 0;
 end;
 
 % extract PCA of last fixed response (eSCR) if last event is fixed --
-if (options.indrf || options.getrf) && (isempty(options.flexevents) || (max(options.fixevents > max(options.flexevents(:, 2), [], 2))))
+if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
+        || (max(options.fixevents > max(options.flexevents(:, 2), [], 2))))
     [foo, lastfix] = max(options.fixevents);
     % extract data
-    winsize = round(sr * min([miniti 10]));
+    winsize = round(sr * min([proc_miniti 10]));
     D = []; c = 1;
-    for iSn = 1:numel(model.scr)
-        foo = newevents{2}{iSn}(:, lastfix);
+    for isbSn = 1:numel(model.scr)
+        foo = sbs_newevents{2}{isbSn}(:, lastfix);
         foo(foo < 0) = [];
         for n = 1:size(foo, 1)
             win = ceil(sr * foo(n) + (1:winsize));
-            D(c, :) = model.scr{iSn}(win);
+            D(c, :) = model.scr{isbSn}(win);
             c = c + 1;
         end;
     end;
@@ -350,11 +455,11 @@ if (options.indrf || options.getrf) && (isempty(options.flexevents) || (max(opti
     if eSCR(ind) < 0, eSCR = -eSCR; end;
     eSCR = (eSCR - min(eSCR))/(max(eSCR) - min(eSCR));
     
-    % check for peak (zero-crossing of the smoothed derivative) after more 
+    % check for peak (zero-crossing of the smoothed derivative) after more
     % than 3 seconds (use CRF if there is none)
     der = diff(eSCR);
     der = conv(der, ones(10, 1));
-    der = der(ceil(3 * sr):end); 
+    der = der(ceil(3 * sr):end);
     if all(der > 0) || all(der < 0)
         warnings{1} = ('No peak detected in response to outcomes. Cannot individually adjust CRF. Standard CRF will be used instead.');
         fprintf('\n%s\n', warnings{1});
@@ -365,15 +470,15 @@ if (options.indrf || options.getrf) && (isempty(options.flexevents) || (max(opti
 end;
 
 % extract data from all trials
-winsize = round(model.sr * min([miniti 10]));
+winsize = round(model.sr * min([proc_miniti 10]));
 D = []; c = 1;
-for iSn = 1:numel(model.scr)
-    for n = 1:numel(trlstart{iSn})
-        win = ceil(((model.sr * trlstart{iSn}(n)):(model.sr * trlstop{iSn}(n) + winsize)));
+for isbSn = 1:numel(model.scr)
+    for n = 1:numel(model.trlstart{isbSn})
+        win = ceil(((model.sr * model.trlstart{isbSn}(n)):(model.sr * model.trlstop{isbSn}(n) + winsize)));
         % correct rounding errors
         win(win == 0) = [];
-        win(win > numel(model.scr{iSn})) = [];
-        D(c, 1:numel(win)) = model.scr{iSn}(win);
+        win(win > numel(model.scr{isbSn})) = [];
+        D(c, 1:numel(win)) = model.scr{isbSn}(win);
         c = c + 1;
     end;
 end;
@@ -383,7 +488,7 @@ clear c n
 % do PCA if required
 if (options.indrf || options.getrf) && ~isempty(options.flexevents)
     % mean SOA
-    meansoa = mean(cell2mat(trlstop') - cell2mat(trlstart'));
+    meansoa = mean(cell2mat(model.trlstop') - cell2mat(model.trlstart'));
     % mean centre
     mD = D - repmat(mean(D, 2), 1, size(D, 2));
     % PCA
@@ -407,6 +512,7 @@ options.meanSCR = (mean(D))';
 % invert DCM
 % ------------------------------------------------------------------------
 dcm = pspm_dcm_inv(model, options);
+
 
 % assemble stats & names
 % ------------------------------------------------------------------------

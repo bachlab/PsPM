@@ -23,7 +23,7 @@ warning('off', 'all'); % unfortunately the warning is not issued with an ID
 hdr = ft_read_header(datafile);
 indata = ft_read_data(datafile);
 try mrk = ft_read_event(datafile, 'detectflank', []); catch, mrk = []; end;
-warning(w_state.state, w_state.identifier);
+warning(w_state);
 
 
 % convert 3 dim to 2 dim (collapse all trials into continuous data)
