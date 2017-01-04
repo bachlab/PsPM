@@ -334,7 +334,7 @@ for iSn = 1:numel(model.timing)
     
     % assign trials to subsessions
     trls = num2cell([sn_trlstart{iSn}, sn_trlstop{iSn}],2);
-    subs = cellfun(@(x) find(x(1) > subsessions(:, 2) & x(2) < subsessions(:, 3) ... 
+    subs = cellfun(@(x) find(x(1) > subsessions(:, 2) & x(2) < (subsessions(:, 3)-options.substhresh) ... 
         & subsessions(:, 1) == iSn), trls, 'UniformOutput', 0);
     
     emp_subs = cellfun(@isempty, subs);
@@ -357,7 +357,7 @@ for iSn = 1:numel(model.timing)
             sbs_iti{sbs_id} = [sbs_trlstart{sbs_id}(2:end); numel(sbs_data{sbs_id, 1})/model.sr] - sbs_trlstop{sbs_id};
             sbs_miniti(sbs_id) = min(sbs_iti{sbs_id});
             sbs_newevents{1}{sbs_id} = sn_newevents{1}{iSn}(sbs_trls,:,1:2) - subsessions(sbs_id,2);
-            sbs_newevents{2}{sbs_id} = sn_newevents{2}{iSn}(sbs_trls,:,:)- subsessions(sbs_id,2);
+            sbs_newevents{2}{sbs_id} = sn_newevents{2}{iSn}(sbs_trls,:,:) - subsessions(sbs_id,2);
             
             if sbs_miniti(iSn) < 0
                 warning('Error in event definition. Either events are outside the file, or trials overlap.'); return;
@@ -517,13 +517,24 @@ dcm = pspm_dcm_inv(model, options);
 % assemble stats & names
 % ------------------------------------------------------------------------
 dcm.stats = [];
-cTrl = 1;
-for iSn = 1:numel(dcm.sn)
-    for iTrl = 1:numel(dcm.sn{iSn}.a)
-        dcm.stats(cTrl, :) = [dcm.sn{iSn}.a(iTrl).a(:)', dcm.sn{iSn}.a(iTrl).m(:)', ...
-            dcm.sn{iSn}.a(iTrl).s(:)', dcm.sn{iSn}.e(iTrl).a(:)' ];
-        cTrl = cTrl + 1;
+cTrl = 0;
+proc_subs_ids = find(proc_subsessions);
+for iSn = 1:numel(model.datafile)
+    trls = trials{iSn};
+    sn_sbs = find(subsessions(proc_subs_ids, 1) == iSn);
+    
+    for isbSn = 1:numel(sn_sbs)
+        sbs_id = proc_subs_ids(sn_sbs(isbSn));
+        sbs_trl = find(trls(:,2) == sbs_id);
+        offset_trl = sbs_trl + 1 - min(sbs_trl); % start counting from 1
+        dcm.stats(sbs_trl + cTrl, :) = [[dcm.sn{sn_sbs(isbSn)}.a(offset_trl).a]', ...
+            [dcm.sn{sn_sbs(isbSn)}.a(offset_trl).m]', ...
+            [dcm.sn{sn_sbs(isbSn)}.a(offset_trl).s]', ...
+            [dcm.sn{sn_sbs(isbSn)}.e(offset_trl).a]'];
     end;
+    % set disabled trials to NaN
+    dcm.stats(cTrl + find(trls(:, 1) == 0), :) = NaN;
+    cTrl = cTrl + size(trls, 1);
 end;
 dcm.names = {};
 for iEvnt = 1:numel(dcm.sn{1}.a(1).a)
