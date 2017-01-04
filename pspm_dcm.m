@@ -245,7 +245,7 @@ for iSn = 1:numel(model.datafile)
         n_miss = size(miss_epochs,1);
         subsessions(end+(1:n_miss), 1:4) = [ones(n_miss,1), miss_epochs/data{1}.header.sr, ones(n_miss,1)];
     else
-        subsessions(end+1,1:4) = [iSn, [1, numel(data{1}.data)]/data{1}.header.sr, zeros(n_sbs,1)];
+        subsessions(end+1,1:4) = [iSn, [1, numel(data{1}.data)]/data{1}.header.sr, 0];
     end;
 end;
 
