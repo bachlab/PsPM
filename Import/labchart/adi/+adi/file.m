@@ -16,7 +16,7 @@ classdef (Hidden) file < handle
         file_path  %Full path to the file from which this class was populated.
     end
     
-    properties
+    properties (Hidden)
        file_h 
     end
     

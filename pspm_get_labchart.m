@@ -36,8 +36,12 @@ for k = 1:numel(import)
     if strcmpi(import{k}.type, 'marker')
         if labchart.n_records > 0
             comments = labchart.records(1);
-            import{k}.data   = [comments.comments(:).tick_position]./comments.tick_fs;
-            import{k}.sr     = comments.tick_fs;
+            if ~isempty(comments.comments)
+                import{k}.data = [comments.comments(:).tick_position]./comments.tick_fs;
+            else
+                import{k}.data = [];
+            end;
+            import{k}.sr     = 1;
             import{k}.marker = 'timestamps';
             
             sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', k, 'Events');
