@@ -8,7 +8,7 @@ function [bs, x] = pspm_bf_psrf_fc(varargin)
 %
 % REFERENCE
 % Christoph W. Korn, Matthias Staib, Athina Tzovara, Giuseppe Castegnetti1, 
-% and Dominik R. Bach (under review) A pupil size response model to assess 
+% and Dominik R. Bach (2016) A pupil size response model to assess 
 % fear learning
 %________________________________________________________________________
 % PsPM 3.1
@@ -124,3 +124,6 @@ end;
 if cs && cs_d 
     bs(:,1:2) = spm_orth(bs(:,1:2));
 end;
+
+% normalise
+bs = bs./repmat((max(bs) - min(bs)), size(bs, 1), 1);

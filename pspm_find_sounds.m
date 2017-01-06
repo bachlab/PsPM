@@ -70,11 +70,11 @@ function [sts, infos] = pspm_find_sounds(file, options)
 %               triggers. By default first 'marker' channel.
 %
 %           EXPERIMENTAL, use with caution!
-%           expectedSoundCount : Checks for correct number of
+%           expectedSoundCount : [integer] Checks for correct number of
 %               detected sounds. If too few are found, lowers threshhold
 %               until at least specified count is reached. Thresh is
 %               lowered by .01 until 0.05 is reached for a max of 95
-%               itterations.
+%               iterations.
 %   Outputs
 %       sts : 1 on successfull completion, -1 otherwise
 %       info: struct()
@@ -143,9 +143,10 @@ elseif ~islogical(options.plot) && ~isnumeric(options.plot)
     warning('ID:invalid_input', 'Option plot is not numeric or logical'); sts=-1; return;
 elseif ~strcmpi(options.channeloutput, 'all') && ~strcmpi(options.channeloutput, 'corrected')
     warning('ID:invalid_input', 'Option channeloutput must be either ''all'' or ''corrected''.'); sts=-1; return;
-elseif ~isnumeric(options.expectedSoundCount) || mod(options.expectedSoundCount,1)
+elseif ~isnumeric(options.expectedSoundCount) || mod(options.expectedSoundCount,1) ... 
+        || options.expectedSoundCount < 0
     warning('ID:invalid_input', 'Option expectedSoundCount is not an integer.'); sts=-1; return;
-elseif ~isempty(options.roi) && (~length(options.roi)== 2 || ~all(isnumeric(options.roi)))
+elseif ~isempty(options.roi) && (length(options.roi) ~= 2 || ~all(isnumeric(options.roi) & options.roi >= 0))
     warning('ID:invalid_input', 'Option roi must be a float vector of length 2 or 0'); sts=-1; return;
 elseif ~ischar(options.channelaction) || ~ismember(options.channelaction, {'add', 'replace'})
     warning('ID:invalid_input', 'Option createchannel must be either ''add'' or ''replace'''); return;

@@ -85,3 +85,5 @@ end;
 
 % orthogonalise
 bs = spm_orth(bs);
+% normalise
+bs = bs./repmat((max(bs) - min(bs)), size(bs, 1), 1);

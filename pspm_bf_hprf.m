@@ -46,6 +46,11 @@ s=s(:,idx);
 
 for k=1:length(idx)
     bf(:,k)=gampdf(x - s(3,k), s(1,k), s(2,k));
-end
+end;
+
+% orthogonalise
+bf = spm_orth(bf);
+% normalise
+bf = bf./repmat((max(bf) - min(bf)), size(bf, 1), 1);
 
 x = x';
