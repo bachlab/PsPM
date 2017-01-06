@@ -397,17 +397,18 @@ time_window.tag      = 'time_window';
 time_window.strtype  = 'r';
 time_window.num      = [1 1];
 time_window.help     = {['In seconds, specifies over which time window ', ...
-    '(starting with the events specified in conditions) the model ', ...
-    'should be evaluated.']};
+    'latencies should be evaluated. Positive values mean that the ', ...
+    'response function is shifted to later time points, negative values ', ...
+    'that it is shifted to earlier time points.']};
 
 fixed_latency   = cfg_const;
-fixed_latency.name = 'fixed';
+fixed_latency.name = 'Fixed latency';
 fixed_latency.tag = 'fixed';
 fixed_latency.val = {'fixed'};
 fixed_latency.help = {['']};
 
 free_latency    = cfg_branch;
-free_latency.name = 'free';
+free_latency.name = 'Free latency';
 free_latency.tag = 'free';
 free_latency.val = {time_window};
 free_latency.help = {['']};
@@ -419,8 +420,11 @@ latency.val     = {fixed_latency};
 latency.values  = {fixed_latency, free_latency};
 % is hidden per default
 latency.hidden  = true;
-latency.help    = {['Latency is either ''fixed'' or ''free''. If ', ...
-    'latency is ''free'', the model tries to estimate the best latency.']};
+latency.help    = {['Latency is either ''fixed'' or ''free''. If latency is ''free''', ...
+    ', the model estimates the best latency within the given time window ', ...
+    'for each regressor (using a dictionary matching algorithm) and ', ...
+    'then inverts the GLM with these latencies. See Khemka et al. 2016 ', ...
+    'in the context of SEBR.']};
 
 %% Filter settings
 % try to get default settings for filter

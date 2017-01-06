@@ -13,7 +13,8 @@ if isempty(settings), pspm_init; end;
 vars = struct();
 vars.modality = 'RAR';
 vars.modspec = 'ra_fc';
-vars.glmref = {};
+vars.glmref = {['Castegnetti, Tzovara, Staib, Gerster, & Bach (2016) ', ...
+    'Psychophysiology  (Development of the GLM for fear-conditioned RAR)']};
 vars.glmhelp = '';
 
 % load default settings

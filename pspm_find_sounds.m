@@ -274,8 +274,12 @@ while searchForMoreSounds == true
         delays(isnan(delays)) = [];
         snd_markers(isnan(snd_markers)) = [];
         % Discard any sound event not related to a trigger
-        snd_fe = snd_fe(dsearchn(snd_re,snd_markers));
-        snd_re = snd_re(dsearchn(snd_re,snd_markers));
+        if ~isempty(snd_fe)
+            snd_fe = snd_fe(dsearchn(snd_re,snd_markers));
+        end;
+        if ~isempty(snd_re)
+            snd_re = snd_re(dsearchn(snd_re,snd_markers));
+        end;
         %% Display some diagnostics
         fprintf('%4d sound events associated with a marker found\nMean Delay : %5.1f ms\nStd dev    : %5.1f ms\n',...
             length(snd_markers),mean(delays)*1000,std(delays)*1000);
@@ -287,10 +291,10 @@ while searchForMoreSounds == true
         searchForMoreSounds = false;
     elseif options.threshold < .05
         searchForMoreSounds = false;
-        warning('ID:MaxIteration','Not enough sounds could be detected to match expectedSoundCount option, result is incomplete');sts=2;
+        warning('ID:max_iteration','Not enough sounds could be detected to match expectedSoundCount option, result is incomplete');sts=2;
     else
         options.threshold = options.threshold - 0.01;
-        warning('ID:BadData',sprintf('Only %d sounds detected but %d expected. threshold lowered to %3.2f',...
+        warning('ID:bad_data',sprintf('Only %d sounds detected but %d expected. threshold lowered to %3.2f',...
             length(snd_re),options.expectedSoundCount,options.threshold));sts=2;
     end  
 end

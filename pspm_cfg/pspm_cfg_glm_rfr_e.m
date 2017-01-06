@@ -13,7 +13,8 @@ if isempty(settings), pspm_init; end;
 vars = struct();
 vars.modality = 'RFRR';
 vars.modspec = 'rfr_e';
-vars.glmref = {['Bach et al. (2016) A linear model for event-related respiration responses']};
+vars.glmref = {['Bach, Gerster, Tzovara, & Castegnetti (2016) ', ...
+    'Psychophysiology (Development of the GLM evoked RFRR)']};
 vars.glmhelp = '';
 
 % load default settings
