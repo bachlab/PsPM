@@ -1,17 +1,32 @@
-function [sts, newdatafile] = pspm_emg_pp(varargin)
+function [sts, output] = pspm_emg_pp(fn, options)
 % pspm_emg_pp contains various preprocessing utilities for reducing noise in 
 % the emg data
-% Currently implemented: 
-% - medianfilter for SCR: newdatafile = pspm_pp('median', datafile, n, 
-%                                    channelnumber, options)
-%                           with n: number of timepoints for median filter
-% - 1st order butterworth low pass filter for SCR: newdatafile = pspm_pp('butter',
-%                               datafile, freq, channelnumber, options)
-%                           with freq: cut off frequuency (min 20 Hz)
+% 
+%   FORMAT:
+%       fn:                 [string] Path to the PsPM file which contains 
+%                           the EMG data
+%       options.
+%           mains_freq:     [integer] Frequency of mains noise to remove 
+%                           with notch filter (default: 50Hz).
 %
+%           channel:        [(cell of) numeric/string] Channels to be preprocessed.
+%                           Can be a channel id or a channel name. Either a
+%                           single value or a one dimensional cell array 
+%                           with multiple values.
+%                           Default is 'emg'.
+%
+%           output_file:    [string] File where the preprocessed data should be
+%                           stored. Default is input file.
+%
+%           channel_action: ['add'/'replace'] Defines whether data should be added ('add') or
+%                           last existing channel should be replaced ('replace').
+%                           Default is 'replace'.
+%
+%           overwrite:      [logical] Defines whether existing files should
+%                           be overwritten or not. Default is false.
 %__________________________________________________________________________
-% PsPM 3.0
-% (C) 2009-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% PsPM 3.1
+% (C) 2009-2016 Tobias Moser (University of Zurich)
 
 % $Id$   
 % $Rev$
@@ -20,24 +35,55 @@ function [sts, newdatafile] = pspm_emg_pp(varargin)
 % -------------------------------------------------------------------------
 global settings;
 if isempty(settings), pspm_init; end;
-newdatafile = [];
+output = struct();
 
-% check input arguments
+% set default values
 % -------------------------------------------------------------------------
-if nargin < 1
-    warning('ID:invalid_input', 'No input arguments. Don''t know what to do.');
-elseif nargin < 2
-    warning('ID:invalid_input', 'No datafile.'); return;
-elseif nargin < 3
-    warning('ID:invalid_input', 'No filter specs.'); return;
-else
-    fn = varargin{2};
+if nargin < 2
+    options = struct();
 end;
 
-if nargin >=5 && isstruct(varargin{5}) && isfield(varargin{5}, 'overwrite')
-    options = varargin{5};
-else
+if ~isfield(options, 'mains_freq')
+    options.mains_freq = 50;
+end;
+
+if ~isfield(options, 'channel') 
+    options.channel = 'emg';
+end;
+
+if ~isfield(options, 'output_file')
+    options.output_file = fn;
+end;
+
+if ~isfield(options, 'channel_action')
+    options.channel_action = 'replace';
+end;
+
+if ~isfield(options, 'overwrite')
     options.overwrite = 0;
+end;
+
+if ~isfield(options, 'dont_ask_overwrite')
+    options.overwrite = 0;
+end;
+
+% check values
+% -------------------------------------------------------------------------
+if ~isnumeric(options.mains_freq)
+    warning('ID:invalid_input', 'Option mains_freq must be numeric.');
+    return;
+elseif ~ischar(options.output_file) 
+    warning('ID:invalid_input', 'Option output_file must be a string.');
+    return;
+elseif ~ismember(options.channel_action, {'add', 'replace'})
+    warning('ID:invalid_input', 'Option channel_action must be either ''add'' or ''repalce''');
+    return;
+elseif ~islogical(options.overwrite) && ~isnumeric(options.overwrite)
+    warning('ID:invalid_input', 'Option overwrite must be logical or numeric');
+    return;
+elseif (~isnumeric(options.channel) && ~ischar(options.channel))  ...
+    || (iscell(options.channel) && any(cellfun(@(x) ~isnumeric(x) && ~ischar(x))))
+    warning('ID:invalid_input', '');
 end;
 
 % load data
@@ -45,60 +91,101 @@ end;
 [sts, infos, data] = pspm_load_data(fn, 0);
 if sts ~= 1, return, end;
 
-% determine channel number
+% determine channel numbers
 % -------------------------------------------------------------------------
-if nargin >= 4
-    channum = varargin{4};
-else
-    for k = 1:numel(data)
-        if strcmp(data{k}.header.chantype, 'scr')
-            channum(k) = 1;
-        end;
-    end;
-    channum = find(channum == 1);
+work_chans = options.channels;
+
+if ~iscell(work_chans)
+    work_chans = {work_chans};
 end;
 
+str_chans = find(cellfun(@(x) ischar(x), work_chans));
+chan_names = cellfun(@(x) x.header.chantype, 'UniformOutput', 0);
+
+for i = 1:numel(str_chans)
+    work_chans{i} = find(strcmpi(work_chans{i}, chan_names), 1, 'first');
+end;
 % do the job
 % -------------------------------------------------------------------------
-switch varargin{1}
-    case 'median'
-        n = varargin{3};
-        % user output
-        fprintf('Preprocess: median filtering datafile %s ...', fn);
-        for k = 1:numel(channum)
-            data{k}.data = medfilt1(data{k}.data, n);
-        end;
-        infos.pp = sprintf('median filter over %1.0f timepoints', n);
-    case 'butter'
-        freq = varargin{3};
-        if freq < 20, warning('ID:invalid_freq', 'Cut off frequency must be at least 20 Hz'); return; end;
-        % user output
-        fprintf('Preprocess: butterworth filtering datafile %s ...', fn);
-        for k = 1:numel(channum)
-            filt.sr = data{channum(k)}.header.sr;
-            filt.lpfreq = freq;
-            filt.lporder = 1;
-            filt.hpfreq = 'none';
-            filt.hporder = 0;
-            filt.down = 'none';
-            filt.direction = 'bi';
-            [sts, data{channum(k)}.data, data{channum(k)}.header.sr] = pspm_prepdata(data{channum(k)}.data, filt);
-            if sts == -1, return; end;
-        end;
-        infos.pp = sprintf('butterworth 1st order low pass filter at cutoff frequency %2.2f Hz', freq);
-    otherwise
-        warning('ID:invalid_input', 'Unknown filter option ...');
-        return;
+ndata = cell(numel(work_chans), 1);
+for k = 1:numel(work_chans)
+    ndata{k} = data{work_chans{k}};
+    % (1) 4th order Butterworth band-pass filter with cutoff frequency of 28 Hz and 250 Hz
+    filt.sr =ndata{k}.header.sr;
+    filt.lpfreq = 250;
+    filt.lporder = 4;
+    filt.hpfreq = 28;
+    filt.hporder = 4;
+    filt.down = 'none';
+    filt.direction = 'uni';
+    
+    [sts, ndata{k}.data, ndata{k}.header.sr] = pspm_prepdata(ndata{k}.data, filt);
+    if sts == -1, return; end;
+    
+    % (2) remove mains noise with notch filter
+    % design from 
+    % http://dsp.stackexchange.com/questions/1088/filtering-50hz-using-a-
+    % notch-filter-in-matlab
+    nfr = filt.sr/2;                         % Nyquist frequency
+    freqRatio = options.mains_freq/nfr;      % ratio of notch freq. to Nyquist freq.
+    nWidth = 0.1;                            % width of the notch filter
+    % Compute zeros
+    nZeros = [exp( sqrt(-1)*pi*freqRatio ), exp( -sqrt(-1)*pi*freqRatio )];
+    % Compute poles
+    nPoles = (1-nWidth) * nZeros;    
+    b = poly( nZeros ); % Get moving average filter coefficients
+    a = poly( nPoles ); % Get autoregressive filter coefficients
+    
+    % filter signal x
+    ndata{k}.data = filter(b,a,ndata{k}.data);
+
+    % (3)  rectified and smoothed 4th order Butterworth low-pass filter with 
+    % a time constant of 3 ms corresponding to a cutoff frequency of 53.05 Hz
+    filt.sr = ndata{k}.header.sr;
+    filt.lpfreq = 53.05;
+    filt.lporder = 4;
+    filt.hpfreq = 'none';
+    filt.hporder = 0;
+    filt.down = 'none';
+    filt.direction = 'uni';
+    [sts, ndata{k}.data, ndata{k}.header.sr] = pspm_prepdata(ndata{k}.data, filt);
+    if sts == -1, return; end;
 end;
 
-[pth, fn, ext] = fileparts(fn);
-newdatafile = fullfile(pth, ['m', fn, ext]);
-infos.ppdate = date;
-infos.ppfile = newdatafile;
-clear savedata
-savedata.data = data; savedata.infos = infos; 
-savedata.options = options;
-sts = pspm_load_data(newdatafile, savedata);
-fprintf(' done\n');
+% save data
+% -------------------------------------------------------------------------
+
+out_data.data = data;
+out_data.infos = infos;
+
+infos.ppdat = date;
+infos.ppfile = options.output_file;
+
+for k = 1:numel(ndata)
+    if strcmpi(options.channel_action, 'replace')
+        out_data.data{work_chans{k}} = ndata{k};
+    elseif strcmpi(options.channel_action, 'add')
+        out_data.data{end+1} = ndata{k};
+    end;
+end;
+
+
+if exist(options.output_file, 'file')
+    write_ok = false;
+    if options.overwrite
+        write_ok = true;
+    elseif ~options.dont_ask_overwrite
+        button = questdlg(sprintf('File (%s) already exists. Overwrite?', out_file), ...
+            'Overwrite existing file?', 'Yes', 'No', 'No');
+        write_ok = strcmpi(button, 'Yes');
+    end;
+else
+    write_ok = true;
+end;
+    
+if write_ok
+    [sts] = pspm_load_data(options.output_file, out_data);
+    if sts == -1, return; end;
+end;
 
 end

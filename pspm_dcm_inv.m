@@ -808,7 +808,9 @@ if ~options.getrf
         % =======================================================================
         if isfield(output, 'options')
             for i=1:length(output)
-                output(i).options = rmfield(output(i).options, 'hf');
+                if isstruct(output(i).options) && isfield(output(i).options, 'hf')
+                    output(i).options = rmfield(output(i).options, 'hf');
+                end;
             end;
         end;
         if isfield(prior, 'output')
