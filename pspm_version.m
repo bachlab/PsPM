@@ -39,9 +39,9 @@ v = tk{v_idx}{1}{1};
 if nargin > 0
     switch varargin{1}
         case 'check' % check for updates
-            [data] = webread('https://sourceforge.net/projects/pspm/best_release.json');
-            if isfield(data, 'release') && isfield(data.release, 'filename')
-                tk = regexpi(data.release.filename, '/?PsPM_([0-9.]*)\.zip', 'tokens');
+            [str, status] = urlread('https://sourceforge.net/projects/pspm/best_release.json');
+            if status == 1
+                tk = regexpi(str, '"filename": "/?PsPM_([0-9.]*)\.zip"', 'tokens');
                 % use first found version
                 if any(~cellfun('isempty', tk))
                     new_v = tk{1}{1};
