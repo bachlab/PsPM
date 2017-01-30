@@ -13,6 +13,6 @@ function [cfg] = pspm_cfg_pp_emg
 cfg        = cfg_repeat;
 cfg.name   = 'Startle EMG';
 cfg.tag    = 'pp_emg';
-cfg.values = {pspm_cfg_find_sounds};
+cfg.values = {pspm_cfg_find_sounds, pspm_cfg_pp_emg_data};
 cfg.forcestruct = true;
 cfg.help   = {'Help: EMG preprocessing'};
