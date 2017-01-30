@@ -313,6 +313,8 @@ switch selected
         cfg_add_module('pspm.data_preprocessing.pp_pupil.convert_pupil_data');
     case 7
         cfg_add_module('pspm.data_preprocessing.pp_emg.find_sounds');
+    case 8
+        cfg_add_module('pspm.data_preprocessing.pp_emg.pp_emg_data');
 end;
 
 
