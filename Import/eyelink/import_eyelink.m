@@ -94,7 +94,7 @@ for sn = 1:numel(offsets)
     % look for MSG in header section
     headerMsgPos = find(strncmpi(sn_data(1:dataStartPos), 'MSG', 3));
     
-    for i=1:length(headerMsgPos),
+    for i=1:length(headerMsgPos)
         headerFields = regexp(sn_data{headerMsgPos(i),2}, '\s+', 'split');
         % the second field contains the field name
         % the first field contains a timestamp
@@ -107,10 +107,10 @@ for sn = 1:numel(offsets)
                 data{sn}.sampleRate = str2double(headerFields{4});
                 data{sn}.eyesObserved = headerFields{7};
             case 'GAZE_COORDS'
-                data{sn}.gaze_coords.ymin = str2double(headerFields{3});
-                data{sn}.gaze_coords.xmin = str2double(headerFields{4});
-                data{sn}.gaze_coords.ymax = str2double(headerFields{5});
-                data{sn}.gaze_coords.xmax = str2double(headerFields{6});
+                data{sn}.gaze_coords.xmin = str2double(headerFields{3});
+                data{sn}.gaze_coords.ymin = str2double(headerFields{4});
+                data{sn}.gaze_coords.xmax = str2double(headerFields{5});
+                data{sn}.gaze_coords.ymax = str2double(headerFields{6});
             case 'ELCL_PROC'
                 data{sn}.elcl_proc = headerFields{3};
         end;
@@ -217,7 +217,7 @@ for sn = 1:numel(offsets)
     % header: 'time_point','x_L','y_L','pupil_L','x_R','y_R','pupil_R','blink_L','blink_R','message_gen','message_spe'
     % channels are pupil L, pupil R, x L, y L, x R, y R, blink L, blink R
     % or pupil, x, y, blink (for just one eye)
-    if strcmpi(data{sn}.eyesObserved, 'LR'),
+    if strcmpi(data{sn}.eyesObserved, 'LR')
         % pupilL, pupilR, xL, yL, xR,yR, blinkL, blinkR
         data{sn}.channels = data{sn}.raw(:, [4,7,2:3,5:6,8:9]);
         data{sn}.units = {pupilUnit, pupilUnit, 'pixel', 'pixel', 'pixel', 'pixel', 'blink', 'blink'};
@@ -234,7 +234,7 @@ for sn = 1:numel(offsets)
     
     % translate makers back into special cell structure
     markers = cell(1,3);
-    for i=1:3,
+    for i=1:3
         markers{1, i} = cell(length(data{sn}.raw), 1);
     end
     
@@ -243,7 +243,7 @@ for sn = 1:numel(offsets)
     markers{1, 1} = data{sn}.raw(:, 10);
     marker_pos = find(markers{1,1} == 1);
     
-    for i=1:length(marker_pos),
+    for i=1:length(marker_pos)
         % set to default value as long as there is no title provided
         % in the file
         markers{1, 2}{marker_pos(i)} = messages{data{sn}.raw(marker_pos(i), 11)};

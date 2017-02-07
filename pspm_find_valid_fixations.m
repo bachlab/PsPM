@@ -311,10 +311,13 @@ for i=1:n_eyes
                 gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype), data),1);
                 gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype), data),1);
                 
-                data_dev{i}(:,1) = data{gx}.data > vis.x_upper | data{gx}.data < vis.x_lower;
-                data_dev{i}(:,2) = data{gy}.data > vis.y_upper | data{gy}.data < vis.y_lower;
-                data_dev{i}(:,3) = data_dev{i}(:,1) | data_dev{i}(:,2);
+                gx_d = data{gx}.data;
+                gy_d = vis.screen_y - data{gy}.data;
                 
+                data_dev{i}(:,1) = gx_d > vis.x_upper | gx_d < vis.x_lower;
+                data_dev{i}(:,2) = gy_d > vis.y_upper | gy_d < vis.y_lower;
+                data_dev{i}(:,3) = data_dev{i}(:,1) | data_dev{i}(:,2);
+                                
                 % set fixation breaks
                 excl(data_dev{i}(:,3)) = 1;
             end;
