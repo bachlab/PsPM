@@ -226,8 +226,8 @@ elseif options.validate_fixations
         vis.fix_point(:,2) = zeros(numel(data{wv(1)}.data), 1);
         
         if isfield(options, 'fixation_point') && size(options.fixation_point,1) == 1
-            vis.fix_point(:,1) = options.fixation_point(1);
-            vis.fix_point(:,2) = options.fixation_point(2);
+            vis.fix_point(:,1) = options.fixation_point(1)/vis.res(1);
+            vis.fix_point(:,2) = options.fixation_point(2)/vis.res(2);
         else
             vis.fix_point(:,1) = 1/2;
             vis.fix_point(:,2) = 1/2;
@@ -237,8 +237,8 @@ elseif options.validate_fixations
     end;
     
     % norm vis.fix_point
-    vis.fix_point(:,1) = vis.fix_point(:,1)/vis.res(1);
-    vis.fix_point(:,2) = vis.fix_point(:,2)/vis.res(2);
+    vis.fix_point(:,1) = vis.fix_point(:,1);
+    vis.fix_point(:,2) = vis.fix_point(:,2);
     
     % box for degree visual angle (for each data point)
     vis.box_rad         = vis.box_degree * pi / 180;
