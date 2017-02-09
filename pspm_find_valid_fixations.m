@@ -33,6 +33,10 @@ function [sts, out_file] = pspm_find_valid_fixations(fn, options)
 %                                   either 1 or should have the length of
 %                                   the actual data. Default is the middle
 %                                   of the screen.
+%               plot_gaze_coords:   Define whether to plot the gaze
+%                                   coordinates for visual inspection of
+%                                   the validation process. Default is
+%                                   false.
 %               channel_action:     Define whether to add or replace the
 %                                   data. Default is 'add'. Possible values
 %                                   are 'add' or 'replace'
@@ -130,8 +134,14 @@ if ~isfield(options, 'eyes')
     options.eyes = 'all';
 end;
 
+if ~isfield(options, 'plot_gaze_coords')
+    options.plot_gaze_coords = false;
+end;
+
 if ~islogical(options.interpolate) && ~isnumeric(options.interpolate)
     warning('ID:invalid_input', 'Options.interpolate is neither logical nor numeric.'); return;
+elseif ~islogical(options.plot_gaze_coords) && ~isnumeric(options.plot_gaze_coords)
+    warning('ID:invalid_input', 'Options.plot_gaze_coords must be logical or numeric.'); return;
 elseif ~islogical(options.missing) && ~isnumeric(options.missing)
     warning('ID:invalid_input', 'Options.missing is neither logical nor numeric.'); return;
 elseif ~any(strcmpi(options.eyes, {'all', 'left', 'right'}))
@@ -164,7 +174,8 @@ elseif options.validate_fixations
             || ~isnumeric(options.screen_settings.display_size)
         warning('ID:invalid_input', ['Options.screen_settings.display_size is not set or is ', ...
             'not numeric.']); return;
-    elseif ~isnumeric(options.screen_settings.resolution) || ...
+    elseif ~isfield(options.screen_settings, 'resolution') || ...
+            ~isnumeric(options.screen_settings.resolution) || ...
             any(size(options.screen_settings.resolution) ~= [1 2])
         warning('ID:invalid_input', ['Options.screen_settings.resolutions is not ', ...
             'numeric or has the wrong size (should be 1x2)']); return;
@@ -328,13 +339,20 @@ for i=1:n_eyes
                 data_dev{i}(:,2) = gy_d > vis.y_upper | gy_d < vis.y_lower;
                 data_dev{i}(:,3) = data_dev{i}(:,1) | data_dev{i}(:,2);
                 
-                figure;
-                coord = [vis.x_upper(1) vis.y_upper(1); vis.x_upper(1) vis.y_lower(1); ...
-                    vis.x_lower(1) vis.y_lower(1); vis.x_lower(1) vis.y_upper(1); ...
-                    vis.x_upper(1) vis.y_upper(1);];
-                plot(coord(:,1), coord(:,2));
-                hold on;
-                plot(gx_d, gy_d);
+                
+                if options.plot_gaze_coords
+                    fg = figure;
+                    fh = handle(fg);
+                    ax = axes(fh, 'NextPlot', 'add');
+                    
+                    % validation box coordinates
+                    coord = [vis.x_upper(1) vis.y_upper(1); vis.x_upper(1) vis.y_lower(1); ...
+                        vis.x_lower(1) vis.y_lower(1); vis.x_lower(1) vis.y_upper(1); ...
+                        vis.x_upper(1) vis.y_upper(1);];
+                    plot(ax, gx_d, gy_d);
+                    % plot gaze coordinates
+                    plot(ax, coord(:,1), coord(:,2));
+                end;
                 
                 % set fixation breaks
                 excl(data_dev{i}(:,3)) = 1;
