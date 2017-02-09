@@ -59,22 +59,11 @@ distance.help                 = {'Distance between eyes and screen in mm.'};
 
 %% Actual aspect
 aspect_actual                      = cfg_entry;
-aspect_actual.name                 = 'Actual hardware aspect ratio';
+aspect_actual.name                 = 'Hardware aspect ratio';
 aspect_actual.tag                  = 'aspect_actual';
 aspect_actual.strtype              = 'i';
 aspect_actual.num                  = [1 2];
 aspect_actual.help                 = {'Aspect ratio of the hardware (e.g. [16 9]).'};
-
-%% Used aspect
-aspect_used                      = cfg_entry;
-aspect_used.name                 = 'Used aspect ratio';
-aspect_used.tag                  = 'aspect_used';
-aspect_used.strtype              = 'i';
-aspect_used.num                  = [1 2];
-aspect_used.help                 = {'Usually, this is the same as the ', ...
-    'actual aspect ratio. But in some cases, the used aspect ratio ', ...
-    'may differ (e.g., because the software does not support [16 9] ', ...
-    'and therefore [5 4] is set).'};
 
 %% Screen size
 screen_size                      = cfg_entry;
@@ -84,11 +73,21 @@ screen_size.strtype              = 'r';
 screen_size.num                  = [1 1];
 screen_size.help                 = {'Size of the screen in inches (diagonal).'};
 
+%% Resolution
+resolution                      = cfg_entry;
+resolution.name                 = 'Resolution';
+resolution.tag                  = 'resolution';
+resolution.strtype              = 'i';
+resolution.num                  = [1 2];
+resolution.val                  = {[1280 1024]};
+resolution.help                 = {'.'};
+
 %% Screen settings
 screen_settings                  = cfg_branch;
 screen_settings.name             = 'Screen settings';
 screen_settings.tag              = 'screen_settings';
-screen_settings.val              = {aspect_actual, aspect_used, screen_size};
+screen_settings.val              = {aspect_actual, ...
+    screen_size, resolution};
 screen_settings.help             = {'Attributes of the used screen.'};
 
 %% Default (fixation point)

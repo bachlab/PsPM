@@ -25,10 +25,9 @@ function [sts, out_file] = pspm_find_valid_fixations(fn, options)
 %               screen_settings:    Struct with the severeal settings of
 %                                   the used screen.
 %                   aspect_actual:  Actual aspect ratio of the screen.
-%                   aspect_used:    Used aspect ratio of the screen. If not
-%                                   set function sets aspect_used 
-%                                   equal to aspect_actual.
 %                   display_size:   The size of the display in inches.
+%                   resolution:     Resolution set in the software (e.g.
+%                                   cogent) used to display stimuli.
 %               fixation_point:     A nx2 vector containing x and y of the
 %                                   fixation point (in pixel). n should be 
 %                                   either 1 or should have the length of
@@ -161,20 +160,18 @@ elseif options.validate_fixations
             any(size(options.screen_settings.aspect_actual) ~= [1 2])
         warning('ID:invalid_input', ['Options.screen_settings.aspect_actual is not set, ', ...
             'is not numeric or has the wrong size (should be 1x2).']); return;
-    elseif ~isfield(options.screen_settings, 'aspect_used')
-            options.screen_settings.aspect_used = options.screen_settings.aspect_actual;
-    elseif ~isnumeric(options.screen_settings.aspect_used) ...
-            || any(size(options.screen_settings.aspect_used) ~= [1 2])
-        warning('ID:invalid_input', ['Options.screen_settings.aspect_used ', ...
-            'is not numeric or has the wrong size (should be 1x2).']); return;
     elseif ~isfield(options.screen_settings, 'display_size') ...
             || ~isnumeric(options.screen_settings.display_size)
         warning('ID:invalid_input', ['Options.screen_settings.display_size is not set or is ', ...
             'not numeric.']); return;
+    elseif ~isnumeric(options.screen_settings.resolution) || ...
+            any(size(options.screen_settings.resolution) ~= [1 2])
+        warning('ID:invalid_input', ['Options.screen_settings.resolutions is not ', ...
+            'numeric or has the wrong size (should be 1x2)']); return;
     elseif isfield(options, 'fixation_point') && (~isnumeric(options.fixation_point) || ...
             size(options.fixation_point,2) ~= 2)
         warning('ID:invalid_input', ['Options.fixation_point is not ', ...
-            'numeric, or has the wrong size (should be nx2).']); return;        
+            'numeric, or has the wrong size (should be nx2).']); return;      
     end;
     
     % Visual inputs for specifying boundaries
@@ -182,28 +179,37 @@ elseif options.validate_fixations
     vis.distance_mm     = options.distance;      % eye-to-screen distance in mm
     vis.screen_inch     = options.screen_settings.display_size;
     vis.screen_aspect_actual = options.screen_settings.aspect_actual;   % this is the ACTUAL aspect ratio of the screen
-    vis.screen_aspect_used = options.screen_settings.aspect_used;    % this is the USED   aspect ratio of the screen
-    
+     
     vis.screen_x        = infos.source.gaze_coords.xmax;     % resolution of eye-tracker: should latter be read from file
     vis.screen_y        = infos.source.gaze_coords.ymax;     % resolution of eye-tracker: should latter be read from file
+    vis.res             = options.screen_settings.resolution;
     
     % Visual calulations
     vis.screen_mm       = vis.screen_inch * 25.4;
     
-    if vis.screen_aspect_actual(1)/vis.screen_aspect_actual(2) ...
-            > vis.screen_aspect_used(1)/vis.screen_aspect_used(2)
-        width = (1/sqrt(1+(vis.screen_aspect_actual(1)/vis.screen_aspect_actual(2))^2))*vis.screen_mm;
-        height = width*vis.screen_aspect_used(1)/vis.screen_aspect_used(2);
-    else
-        height = (1/sqrt(1+(vis.screen_aspect_actual(2)/vis.screen_aspect_actual(1))^2))*vis.screen_mm;
-        width = height*vis.screen_aspect_used(2)/vis.screen_aspect_used(1);
-    end;
+    % get width and height of hardware
+    hw_fact = sqrt(vis.screen_mm^2 / sum(vis.screen_aspect_actual.^2));
+    hw_width = vis.screen_aspect_actual(1)*hw_fact;
+    hw_height = vis.screen_aspect_actual(2)*hw_fact;
     
-    vis.screen_h = height;
-    vis.screen_w = width;
+    hw_ratio = vis.screen_aspect_actual(1) / vis.screen_aspect_actual(2);
+    sw_ratio = vis.res(1) / vis.res(2);
+    
+    % calculate width and height of software set sizes
+    if hw_ratio >= sw_ratio
+        sw_height = hw_height;
+        sw_width = sw_height*sw_ratio;
+    else
+        sw_width = hw_width;
+        sw_height = sw_width/sw_ratio;
+    end;
 
-    vis.screen_x_res    = vis.screen_x / vis.screen_w; % in px/mm
-    vis.screen_y_res    = vis.screen_y / vis.screen_h; % in px/mm
+    vis.screen_h = sw_height;
+    vis.screen_w = sw_width;
+   
+
+    vis.screen_x_res    = 1 / vis.screen_w; % in 1/mm
+    vis.screen_y_res    = 1 / vis.screen_h; % in 1/mm
     
     % expand fixation_point
     if ~isfield(options, 'fixation_point') || isempty(options.fixation_point) ...
@@ -223,12 +229,16 @@ elseif options.validate_fixations
             vis.fix_point(:,1) = options.fixation_point(1);
             vis.fix_point(:,2) = options.fixation_point(2);
         else
-            vis.fix_point(:,1) = vis.screen_x/2;
-            vis.fix_point(:,2) = vis.screen_y/2;
+            vis.fix_point(:,1) = 1/2;
+            vis.fix_point(:,2) = 1/2;
         end;
     else
         vis.fix_point = options.fixation_point;
     end;
+    
+    % norm vis.fix_point
+    vis.fix_point(:,1) = vis.fix_point(:,1)/vis.res(1);
+    vis.fix_point(:,2) = vis.fix_point(:,2)/vis.res(2);
     
     % box for degree visual angle (for each data point)
     vis.box_rad         = vis.box_degree * pi / 180;
@@ -311,13 +321,21 @@ for i=1:n_eyes
                 gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype), data),1);
                 gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype), data),1);
                 
-                gx_d = data{gx}.data;
-                gy_d = vis.screen_y - data{gy}.data;
+                gx_d = data{gx}.data / vis.screen_x;
+                gy_d = (vis.screen_y - data{gy}.data)/vis.screen_y;
                 
                 data_dev{i}(:,1) = gx_d > vis.x_upper | gx_d < vis.x_lower;
                 data_dev{i}(:,2) = gy_d > vis.y_upper | gy_d < vis.y_lower;
                 data_dev{i}(:,3) = data_dev{i}(:,1) | data_dev{i}(:,2);
-                                
+                
+                figure;
+                coord = [vis.x_upper(1) vis.y_upper(1); vis.x_upper(1) vis.y_lower(1); ...
+                    vis.x_lower(1) vis.y_lower(1); vis.x_lower(1) vis.y_upper(1); ...
+                    vis.x_upper(1) vis.y_upper(1);];
+                plot(coord(:,1), coord(:,2));
+                hold on;
+                plot(gx_d, gy_d);
+                
                 % set fixation breaks
                 excl(data_dev{i}(:,3)) = 1;
             end;
