@@ -339,11 +339,10 @@ for i=1:n_eyes
                 data_dev{i}(:,2) = gy_d > vis.y_upper | gy_d < vis.y_lower;
                 data_dev{i}(:,3) = data_dev{i}(:,1) | data_dev{i}(:,2);
                 
-                
+                options.plot_gaze_coords = true;
                 if options.plot_gaze_coords
                     fg = figure;
-                    fh = handle(fg);
-                    ax = axes(fh, 'NextPlot', 'add');
+                    ax = axes(handle(fg), 'NextPlot', 'add');
                     
                     % validation box coordinates
                     coord = [vis.x_upper(1) vis.y_upper(1); vis.x_upper(1) vis.y_lower(1); ...
