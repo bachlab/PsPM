@@ -108,7 +108,7 @@ dcm = [];
 % check input arguments & set defaults
 % -------------------------------------------------------------------------
 if nargin < 1
-    warning('No data to work on.'); fn = []; return;
+    warning('ID:invalid_input', 'No data to work on.'); fn = []; return;
 elseif nargin < 2
     options = struct([]);
 end;
@@ -143,7 +143,7 @@ end;
 % check normalisation --
 if ~isfield(model, 'norm')
     model.norm = 0;
-elseif ~ismember(model.norm, [0, 1])
+elseif ~any(ismember(model.norm, [0, 1]))
     warning('ID:invalid_input', 'Normalisation must be specified as 0 or 1.'); return; 
 end;
 
@@ -154,6 +154,11 @@ elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
     warning('ID:invalid_input', 'Filter structure needs a numeric ''down'' field.'); return;
 end;
 
+if ~isstruct(options)
+    warning('ID:invalid_input', '''options'' must be a struct.');
+    return;
+end;
+
 % set and check options ---
 try options.indrf;   catch, options(1).indrf = 0;    end;
 try options.getrf;   catch, options.getrf = 0;    end;
@@ -161,11 +166,44 @@ try options.rf;      catch, options.rf = 0;       end;
 try options.nosave;  catch, options.nosave = 0;   end;
 try options.overwrite; catch, options.overwrite = 0; end;
 try options.substhresh; catch, options.substhresh = 2; end;
+try options.depth; catch, options.depth = 2; end;
+try options.sfpost; catch, options.sfpost = 5; end;
+try options.aSCR_sigma_offset; catch, options.aSCR_sigma_offset = 0.1; end;
+try options.sclpost; catch, options.sclpost = 5; end;
+try options.sclpre; catch, options.sclpre = 2; end;
+try options.sffreq; catch, options.sffreq = 0.5; end;
+try options.method; catch, options.method = 'dcm'; end;
+
+% check option fields --
+% numeric fields
+num_fields = {'depth', 'sfpre', 'sfpost', 'sffreq', 'sclpre', ...
+    'sclpost', 'aSCR_sigma_offset'};
+% logical fields
+bool_fields = {'crfupdate', 'indrf', 'getrf', 'dispwin', ...
+ 'dispsmallwin', 'nosave'};
+% cell fields
+cell_fields = {'trlnames', 'eventnames'};
+check_sts = sum([pspm_check_options('numeric', options, num_fields), ...
+    pspm_check_options('logical', options, bool_fields), ...
+    pspm_check_options('cell', options, cell_fields)]);
+
+% 
+if check_sts < 3
+    warning('ID:invalid_input', ['An error occurred while validating the input options. ', ...
+        'See earlier warnings for more information.']);
+    return;
+end;
+
+% check input of special rf field
+if options.rf ~= 0 && ~ischar(options.rf)
+    warning('ID:invalid_input', 'Field ''rf'' is neither a string nor 0.');
+    return;
+end;
+
+% check mutual exclusivity
 if options.indrf && options.rf
     warning('RF can be provided or estimated, not both.'); return;
 end;
-try options.method; catch, options.method = 'dcm'; end;
-
 
 % check files --
 if exist(model.modelfile) && options.overwrite == 0
@@ -192,7 +230,7 @@ for iSn = 1:numel(model.datafile)
     % check & load data
     [sts, infos, data] = pspm_load_data(model.datafile{iSn}, model.channel);
     if sts == -1 || isempty(data)
-        warning('No SCR data contained in file %s', model.datafile{iSn});
+        warning('ID:invalid_input', 'No SCR data contained in file %s', model.datafile{iSn});
         return;
     end;
     model.filter.sr = data{1}.header.sr;

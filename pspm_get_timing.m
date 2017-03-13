@@ -293,6 +293,11 @@ switch model
                 return;
             end;
         end;
+        r = [];
+        if isempty(intiming)
+            warning('ID:invalid_input', 'No event data given.');
+            return;
+        end;
         for k = 1:numel(intiming)
             [r(k), c] = size(intiming{k});
             if c > 2
