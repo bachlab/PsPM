@@ -1136,6 +1136,10 @@ function rbEpochs_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of rbEpochs
 
+% call manually because matlab 2012b does not yet support
+% selection changed callback
+bgOutputFormat_SelectionChangedFcn(hObject, eventdata, handles);
+
 
 % --- Executes on button press in rbInterpolate.
 function rbInterpolate_Callback(hObject, eventdata, handles)
@@ -1144,6 +1148,10 @@ function rbInterpolate_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of rbInterpolate
+
+% call manually because matlab 2012b does not yet support
+% selection changed callback
+bgOutputFormat_SelectionChangedFcn(hObject, eventdata, handles);
 
 
 % --- Executes on button press in pbOpenInputFile.
