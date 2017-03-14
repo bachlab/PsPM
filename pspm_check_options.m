@@ -43,12 +43,12 @@ for f = 1:numel(fields)
                 end;
             case 'cell'
                 if ~iscell(val)
-                    warning('ID:invalid_inputt', ['Field ''' fl ''' must be a cell.']);
+                    warning('ID:invalid_input', ['Field ''' fl ''' must be a cell.']);
                     n_errors = n_errors + 1;
                 end;
             case 'logical'
-                if ~islogical(val)
-                    warning('ID:invalid_input', ['Field ''' fl ''' must be a cell.']);
+                if ~islogical(val) && ~(isnumeric(val) && any(val == [0 1]))
+                    warning('ID:invalid_input', ['Field ''' fl ''' must be a logical.']);
                     n_errors = n_errors + 1;
                 end;
         end;

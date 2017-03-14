@@ -123,7 +123,7 @@ elseif ~isfield(model, 'timing')
 end;
 
 % check faulty input --
-if ~ischar(model.datafile) && ~iscell(model.datafile)
+if ~iscell(model.datafile) && ~ischar(model.datafile)
     warning('ID:invalid_input', 'Input data must be a cell or string.'); return;
 elseif ~ischar(model.modelfile)
     warning('ID:invalid_input', 'Output model must be a string.'); return;
@@ -171,8 +171,14 @@ try options.sfpost; catch, options.sfpost = 5; end;
 try options.aSCR_sigma_offset; catch, options.aSCR_sigma_offset = 0.1; end;
 try options.sclpost; catch, options.sclpost = 5; end;
 try options.sclpre; catch, options.sclpre = 2; end;
+try options.sfpre; catch, options.sfpre = 2; end;
 try options.sffreq; catch, options.sffreq = 0.5; end;
 try options.method; catch, options.method = 'dcm'; end;
+try options.dispwin; catch, options.dispwin = 1; end;
+try options.crfupdate; catch, options.crfupdate = 1; end;
+try options.dispsmallwin; catch, options.dispsmallwin = 0; end;
+try options.eventnames; catch, options.eventnames = {}; end;
+try options.trlnames; catch, options.trlnames = {}; end;
 
 % check option fields --
 % numeric fields
@@ -195,7 +201,7 @@ if check_sts < 3
 end;
 
 % check input of special rf field
-if options.rf ~= 0 && ~ischar(options.rf)
+if isempty(options.rf) || ((isnumeric(options.rf) && options.rf ~= 0) && (~ischar(options.rf)))
     warning('ID:invalid_input', 'Field ''rf'' is neither a string nor 0.');
     return;
 end;
@@ -226,15 +232,16 @@ end;
 % split into subsessions
 % colnames: iSn start stop enabled (if contains events)
 subsessions = [];
+data = cell(numel(model.datafile), 1);
 for iSn = 1:numel(model.datafile)
     % check & load data
-    [sts, infos, data] = pspm_load_data(model.datafile{iSn}, model.channel);
-    if sts == -1 || isempty(data)
+    [sts, ~, data{iSn}] = pspm_load_data(model.datafile{iSn}, model.channel);
+    if sts == -1 || isempty(data{iSn})
         warning('ID:invalid_input', 'No SCR data contained in file %s', model.datafile{iSn});
         return;
     end;
-    model.filter.sr = data{1}.header.sr;
-    missing = isnan(data{1}.data);
+    model.filter.sr = data{iSn}{1}.header.sr;
+    missing = isnan(data{iSn}{1}.data);
     
     d_miss = diff(missing)';
     miss_start = find(d_miss == 1);
@@ -260,7 +267,7 @@ for iSn = 1:numel(model.datafile)
     % put missing epochs together
     miss_epochs = [miss_start', miss_stop'];
     % look for big epochs
-    big_epochs = diff(miss_epochs, 1, 2)/data{1}.header.sr > options.substhresh;
+    big_epochs = diff(miss_epochs, 1, 2)/data{iSn}{1}.header.sr > options.substhresh;
     
     if any(big_epochs)
         b_e = find(big_epochs);
@@ -279,13 +286,16 @@ for iSn = 1:numel(model.datafile)
         end;
         
         n_sbs = numel(se_start);
-        subsessions(end+(1:n_sbs), 1:4) = [ones(n_sbs,1), [se_start, se_stop]/data{1}.header.sr, zeros(n_sbs,1)];
+        subsessions(end+(1:n_sbs), 1:4) = [ones(n_sbs,1)*iSn, [se_start, se_stop]/data{iSn}{1}.header.sr, zeros(n_sbs,1)];
         n_miss = size(miss_epochs,1);
-        subsessions(end+(1:n_miss), 1:4) = [ones(n_miss,1), miss_epochs/data{1}.header.sr, ones(n_miss,1)];
+        subsessions(end+(1:n_miss), 1:4) = [ones(n_miss,1)*iSn, miss_epochs/data{iSn}{1}.header.sr, ones(n_miss,1)];
     else
-        subsessions(end+1,1:4) = [iSn, [1, numel(data{1}.data)]/data{1}.header.sr, 0];
+        subsessions(end+1,1:4) = [iSn, [1, numel(data{iSn}{1}.data)]/data{iSn}{1}.header.sr, 0];
     end;
 end;
+
+% subsessions - columns:
+% iSn, start, stop, missing
 
 % sort subsessions by start
 subsessions = sortrows(subsessions);
@@ -296,8 +306,8 @@ foo = {};
 for vs = 1:numel(valid_subsessions)
     isbSn = valid_subsessions(vs);
     sbSn = subsessions(isbSn, :);
-    flanks = round(sbSn(2:3)*data{1}.header.sr);
-    sbSn_data = data{1}.data(flanks(1):flanks(2));
+    flanks = round(sbSn(2:3)*data{sbSn(1)}{1}.header.sr);
+    sbSn_data = data{sbSn(1)}{1}.data(flanks(1):flanks(2));
     sbs_missing{isbSn, 1} = isnan(sbSn_data);
     
     if any(sbs_missing{isbSn, 1})
@@ -377,7 +387,7 @@ for iSn = 1:numel(model.timing)
     
     emp_subs = cellfun(@isempty, subs);
     if any(emp_subs)
-        subs{emp_subs} = -1;
+        subs(emp_subs) = {-1};
     end;
         
     % find enabled and disabled trials
