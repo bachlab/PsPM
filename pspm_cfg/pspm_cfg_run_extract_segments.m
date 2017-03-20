@@ -23,7 +23,7 @@ if isfield(job, 'mode')
                 tm.onsets{i} = conditions(i).cond_onsets;
                 tm.durations{i} = conditions(i).cond_duration;
             end;
-        elseif isfield(job.mode.mode_manual.conditions, 'condition_file')
+        elseif isfield(job.mode.mode_manual.conditions, 'condition_files')
             tm = job.mode.mode_manual.conditions.condition_files;
         end;
         
@@ -31,6 +31,7 @@ if isfield(job, 'mode')
     
     % extract options
     options.timeunit = job.options.timeunit;
+    options.marker_chan = job.options.marker_chan;
     options.length = job.options.segment_length;
     
     % extract output

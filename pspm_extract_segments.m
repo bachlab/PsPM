@@ -33,20 +33,25 @@ function [sts, out] = pspm_extract_segments(varargin)
 %       timing:             Either a cell containing the timing settings or
 %                           a string pointing to the timing file.
 %       options:
-%           timeunit:       'seconds' (default) or 'samples'. In 'auto' 
+%           timeunit:       'seconds' (default), 'samples' or 'markers. In 'auto' 
 %                           mode the value will be ignored and taken from 
 %                           the glm model file.
 %           length:         Length of the segments in the 'timeunits'. 
 %                           If given always the same length is taken for 
 %                           segments. If not given lengths are take from 
-%                           the timing data. This argument is optional.
+%                           the timing data. This argument is optional. If
+%                           'timeunit' equals 'markers' then 'length' is
+%                           expected to be in seconds.
 %           plot:           If 1 mean values (solid) and standard error of
 %                           the mean (dashed) will be ploted. Default is 0.
 %           outputfile:     Define filename to store segments. If is equal
 %                           to '', no file will be written. Default is 0.
 %           overwrite:      Define if already existing files should be
 %                           overwritten. Default ist 0.
-%
+%           marker_chan:    Mandatory if timeunit is 'markers'. For the
+%                           function to find the appropriate timing of the
+%                           specified marker ids. Must have the same format
+%                           as data_fn.
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2008-2016 Tobias Moser (University of Zurich)
@@ -122,12 +127,25 @@ if nargin >= 2
             timing = glm.input.timing;
             chan = repmat({glm.input.channel}, size(data_fn));
             options.timeunit = glm.input.timeunits;
+            if strcmpi(options.timeunit, 'markers')
+                if isfield(glm.input.options, 'marker_chan_num')
+                    options.marker_chan = glm.input.options.marker_chan_num;
+                else
+                    warning('ID:invalid_input', ['''markers'' defined as ', ... 
+                        'timeunit, but cannot load the corresponding ', ...
+                        'marker channel information from the GLM input.']);
+                end;
+            end;
             
         otherwise
                 warning('ID:invalid_input', 'Unknown mode specified.'); return;
     end;
 else
     warning('ID:invalid_input', 'The function expects at least 2 parameters.'); return;
+end;
+
+if ~iscell(data_fn)
+    data_fn = {data_fn};
 end;
 
 if ~isstruct(options)
@@ -139,6 +157,13 @@ if ~isfield(options, 'timeunit')
     options.timeunit = 'seconds';
 else
     options.timeunit = lower(options.timeunit);
+end;
+
+% set default marker_chan
+if ~isfield(options, 'marker_chan')
+    options.marker_chan = repmat({-1}, numel(data_fn),1);
+elseif ~iscell(options.marker_chan)
+    options.marker_chan = {options.marker_chan};
 end;
 
 % set default length
@@ -167,8 +192,8 @@ if ~isfield(options, 'dont_ask_overwrite')
 end;
 
 % check mutual arguments (options)   
-if ~ismember(options.timeunit, {'seconds','samples'})
-    warning('ID:invalid_input', 'Invalid timeunit, use either ''seconds'' or ''samples'''); return;
+if ~ismember(options.timeunit, {'seconds','samples', 'markers'})
+    warning('ID:invalid_input', 'Invalid timeunit, use either ''markers'', ''seconds'' or ''samples'''); return;
 elseif ~isnumeric(options.length)
     warning('ID:invalid_input', 'options.length is not numeric.'); return;
 elseif ~isnumeric(options.plot) && ~islogical(options.plot)
@@ -179,6 +204,14 @@ elseif ~isnumeric(options.overwrite) && ~islogical(options.overwrite)
     warning('ID:invalid_input', 'Options.overwrite has to be numeric or logical.'); return;
 elseif ~isnumeric(options.dont_ask_overwrite) && ~islogical(options.dont_ask_overwrite)
     warning('ID:invalid_input', 'Options.dont_ask_overwrite has to be numeric or logical.'); return;
+elseif strcmpi(options.timeunit, 'markers') && ~all(size(data_fn) == size(options.marker_chan))
+    warning('ID:invalid_input', '''data_fn'' and ''options.marker_chan'' do not have the same size.'); return;
+elseif any(cellfun(@(x) ~strcmpi(x, 'marker') && ~isnumeric(x), options.marker_chan))
+    warning('ID:invalid_input', 'Options.marker_chan has to be numeric or ''marker''.'); return;
+elseif strcmpi(options.timeunit, 'markers') ...
+        && any(cellfun(@(x) isnumeric(x) && x <= 0, options.marker_chan))
+    warning('ID:invalid_input', ['''markers'' specified as a timeunit but ', ...
+        'no valid marker channel is defined.']); return;
 end;
 
 % load timing
@@ -207,26 +240,42 @@ end;
 for n = 1:n_sessions
     % load data
     [~, ~, data{n}] = pspm_load_data(data_fn{n}, chan{n});
+    if strcmpi(options.timeunit, 'markers')
+        % load marker channel
+        [~, ~, marker{n}] = pspm_load_data(data_fn{n}, options.marker_chan{n});
+    end;
     for c = 1:n_cond
         n_onsets = numel(multi(n).onsets{c});
         for o = 1:n_onsets
+            % determine start 
             start = multi(n).onsets{c}(o);
-            if options.length == -1
+            
+            % determine segment length
+            if options.length <= 0
                 try
-                    stop = start + multi(n).durations{c}(o);
+                    segment_length = multi(n).durations{c}(o);
                 catch
                     warning('ID:invalid_input', 'Cannot determine onset duration.'); return;
                 end;
             else
-                stop = start + options.length;
+                segment_length = options.length;
             end;
             
+            % ensure start and segment_length have the 'sample' format to 
+            % access on data
             switch options.timeunit
                 case 'seconds'
                     start = data{n}{1}.header.sr*start;
-                    stop = data{n}{1}.header.sr*stop;
+                    segment_length = segment_length*data{n}{1}.header.sr;
+                case 'markers'
+                    start = marker{n}{1}.data(start)*data{n}{1}.header.sr;
+                    segment_length = segment_length*data{n}{1}.header.sr;
             end;
             
+            % set stop
+            stop = start + segment_length;            
+            
+            % ensure start and stop have the correct format
             start = max(1,round(start));
             stop = min(numel(data{n}{1}.data), round(stop));
             
