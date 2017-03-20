@@ -210,7 +210,7 @@ if options.crfupdate
     c = clock;
     fprintf('----------------------------------------------------------\n');
     fprintf('%02.0f:%02.0f:%02.0f: Estimate CRF priors', c(4:6));
-    load([settings.path, 'Data\CRF_observed.mat']);
+    load([settings.path, 'Data' filesep 'CRF_observed.mat']);
     observed_sr = 10;
     invopt.inF.dt = 1/observed_sr;
     
