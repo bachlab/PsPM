@@ -133,10 +133,10 @@ marker_chan                = cfg_entry;
 marker_chan.name           = 'Marker channel';
 marker_chan.tag            = 'marker_chan';
 marker_chan.strtype        = 'i';
-marker_chan.num            = [1 Inf];
+marker_chan.num            = [1 1];
 marker_chan.val            = {-1};
 marker_chan.help           = {['Channel containing the markers referenced ', ...
-    'in the conditions. Only needed if Timeunit is set to ''markers''.']};
+    'in the conditions. Only needed if options ''Timeunit'' is set to ''markers''.']};
 
 %% Segment length
 segment_length          = cfg_entry;
