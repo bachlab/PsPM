@@ -245,7 +245,8 @@ switch model
                 onsetsflag = 0;
                 if numel(onsets) == 2
                     if numel(onsets{1}) == numel(onsets{2})
-                        outtiming(:, 1) = onsets{1}; outtiming(:, 2) = onsets{2};
+                        outtiming(:, 1) = onsets{1}; 
+                        outtiming(:, 2) = onsets{2};
                     else
                         filewarning = 1;
                     end;

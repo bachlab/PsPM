@@ -72,9 +72,20 @@ if uni
     data = [data(1) * ones(floor(50 * filt.sr), 1); data];
 end;
 
+lowpass_filt = false;
+
 % lowpass filt 
 % -------------------------------------------------------------------------
 if ~ischar(filt.lpfreq) && ~isnan(filt.lpfreq)
+    lowpass_filt = true;
+elseif filt.down < filt.sr
+    % if lowpass filtering is disabled and downsampling is enabled
+    % enable lpfiltering with down/2 in order to avoid creating artifacts 
+    lowpass_filt = true;
+    filt.lpfreq = filt.down/2;
+end;
+
+if lowpass_filt
     if filt.lpfreq >= nyq 
         warning('ID:no_low_pass_filtering', 'The low pass filter cutoff frequency is higher (or equal) than the nyquist frequency. The data won''t be low pass filtered!');
     else

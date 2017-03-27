@@ -22,7 +22,9 @@ function glm = pspm_glm(model, options)
 %                   otherwise.
 %
 % optional fields
-% model.modelspec:  'scr' (default), 'hp_e', 'hp_fc'
+% model.modelspec:  'scr' (default); specify the model to be used. See
+%                   pspm_init, defaults.glm() which modelspecs are possible
+%                   with glm.
 % model.bf:         basis function/basis set; modality specific default
 %                   with subfields .fhandle (function handle or string) and
 %                   .args (arguments, first argument sampling interval will
