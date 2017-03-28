@@ -83,6 +83,7 @@ elseif filt.down < filt.sr
     % enable lpfiltering with down/2 in order to avoid creating artifacts 
     lowpass_filt = true;
     filt.lpfreq = filt.down/2;
+    filt.lporder = 1;
 end;
 
 if lowpass_filt
@@ -120,7 +121,7 @@ end;
 
 % downsample
 % -------------------------------------------------------------------------
-if ~ischar(filt.down) && filt.sr ~= filt.down
+if ~ischar(filt.down) && filt.sr > filt.down
     if strcmpi(filt.lpfreq, 'none') || isnan(filt.lpfreq)
         warning('No low pass filter applied - aliasing is possible. Use a low pass filter to prevent.');
     elseif filt.down < 2 * filt.lpfreq, 

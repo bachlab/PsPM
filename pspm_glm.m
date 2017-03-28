@@ -451,7 +451,7 @@ for iSn = 1:nFile
     if ~isempty(missing{iSn})
         missingtimes = missing{iSn} * newsr;
         for iMs = 1:size(missingtimes, 1)
-            newmissing(missingtimes(iMs, 1):missingtimes(iMs, 2)) = 1;
+            newmissing(round(missingtimes(iMs, 1):missingtimes(iMs, 2))) = 1;
         end;
     end;
     % copy NaN in y data should be missing

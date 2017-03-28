@@ -16,7 +16,6 @@ function pspm_con2(modelfile, outfile, con, connames, options)
 %          option 'file' to be read from first model file. contrasts 
 %          will be numbered by default if this argument is missing or has
 %          value 'number'
-% datatype: 'glm', 'auc' or 'dcm' (default: 'any')
 % options: options.overwrite (default = 0), overwrite existing files
 % __________________________________________________________________________
 % PsPM 3.0
