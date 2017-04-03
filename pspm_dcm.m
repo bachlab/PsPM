@@ -333,7 +333,7 @@ clear foo
 trials = {};
 for iSn = 1:numel(model.timing)
     % initialise and get timing information -- 
-    sn_newevents{1} = {}; sn_newevents{2} = {};
+    sn_newevents{1}{iSn} = []; sn_newevents{2}{iSn} = [];
     [sts, events] = pspm_get_timing('events', model.timing{iSn});
     if sts ~=1, return; end;
     cEvnt = [1 1];
@@ -374,7 +374,8 @@ for iSn = 1:numel(model.timing)
     end;
 
     % find trialstart, trialstop and shortest ITI --
-    sn_allevents = [reshape(sn_newevents{1}{iSn}, [size(sn_newevents{1}{iSn}, 1), size(sn_newevents{1}{iSn}, 2) * size(sn_newevents{1}{iSn}, 3)]), sn_newevents{2}{iSn}];
+    sn_allevents = [reshape(sn_newevents{1}{iSn}, [size(sn_newevents{1}{iSn}, 1), ...
+        size(sn_newevents{1}{iSn}, 2) * size(sn_newevents{1}{iSn}, 3)]), sn_newevents{2}{iSn}];
     sn_allevents(sn_allevents < 0) = inf;        % exclude "dummy" events with negative onsets
     sn_trlstart{iSn} = min(sn_allevents, [], 2); % first event per trial
     sn_allevents(isinf(sn_allevents)) = -inf;        % exclude "dummy" events with negative onsets
@@ -394,7 +395,7 @@ for iSn = 1:numel(model.timing)
     trlinfo = cellfun(@(x) x ~= -1 && subsessions(x, 4) == 0, subs, 'UniformOutput', 0);   
     trials{iSn} = [cell2mat(trlinfo), cell2mat(subs)];
     
-    % cycle through subsessions
+    % cycle through subsessions and copy events to corresponding subsession
     sn_sbs = find(subsessions(:, 1) == iSn);
     for isn_sbs=1:numel(sn_sbs)
         sbs_id = sn_sbs(isn_sbs);
@@ -404,8 +405,16 @@ for iSn = 1:numel(model.timing)
             sbs_trlstop{sbs_id} = sn_trlstop{iSn}(sbs_trls) - subsessions(sbs_id,2);
             sbs_iti{sbs_id} = [sbs_trlstart{sbs_id}(2:end); numel(sbs_data{sbs_id, 1})/model.sr] - sbs_trlstop{sbs_id};
             sbs_miniti(sbs_id) = min(sbs_iti{sbs_id});
-            sbs_newevents{1}{sbs_id} = sn_newevents{1}{iSn}(sbs_trls,:,1:2) - subsessions(sbs_id,2);
-            sbs_newevents{2}{sbs_id} = sn_newevents{2}{iSn}(sbs_trls,:,:) - subsessions(sbs_id,2);
+            
+            sbs_newevents = cell(2,1);
+            for ievType = 1:numel(sbs_newevents)
+                if ~isempty(sn_newevents{ievType}{iSn})
+                    sbs_newevents{ievType}{sbs_id} = sn_newevents{ievType}{iSn}(sbs_trls,:,:) ...
+                        - subsessions(sbs_id,2);
+                else
+                    sbs_newevents{ievType}{sbs_id} = [];
+                end;
+            end;            
             
             if sbs_miniti(iSn) < 0
                 warning('Error in event definition. Either events are outside the file, or trials overlap.'); return;
