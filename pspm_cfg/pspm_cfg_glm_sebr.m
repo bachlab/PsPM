@@ -11,8 +11,8 @@ if isempty(settings), pspm_init; end;
 % set variables
 
 vars = struct();
-vars.modality = 'seb';
-vars.modspec = 'seb';
+vars.modality = 'sebr';
+vars.modspec = 'sebr';
 vars.glmref = { ...
         ['Khemka, Tzovara, Gerster, Quednow & Bach (2016) Psychophysiology'] ...
     };
@@ -22,11 +22,11 @@ vars.glmhelp = '';
 glm_seb = pspm_cfg_glm(vars);
 
 % set correct name
-glm_seb.name = 'GLM for SEB';
-glm_seb.tag = 'glm_seb_fc';
+glm_seb.name = 'GLM for SEBR';
+glm_seb.tag = 'glm_sebr';
 
 % set callback function
-glm_seb.prog = @pspm_cfg_run_glm_seb;
+glm_seb.prog = @pspm_cfg_run_glm_sebr;
 
 %% Basis function
 % SEBRF

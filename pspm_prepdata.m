@@ -78,7 +78,7 @@ lowpass_filt = false;
 % -------------------------------------------------------------------------
 if ~ischar(filt.lpfreq) && ~isnan(filt.lpfreq)
     lowpass_filt = true;
-elseif filt.down < filt.sr
+elseif isnumeric(filt.down) && ~isnan(filt.down) && filt.down < filt.sr
     % if lowpass filtering is disabled and downsampling is enabled
     % enable lpfiltering with down/2 in order to avoid creating artifacts 
     lowpass_filt = true;

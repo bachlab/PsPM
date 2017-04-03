@@ -8,8 +8,8 @@ global settings
 if isempty(settings), pspm_init; end;
 
 % set modality
-modality = 'seb';
-modelspec = 'seb';
+modality = 'sebr';
+modelspec = 'sebr';
 
 f = strcmpi({settings.glm.modelspec}, modelspec);
 def_filter = settings.glm(f).filter;

@@ -282,7 +282,7 @@ switch selected
     case 8
         cfg_add_module('pspm.first_level.resp.glm_rfr_e');
     case 9
-        cfg_add_module('pspm.first_level.seb.glm_seb_fc');
+        cfg_add_module('pspm.first_level.sebr.glm_sebr');
 end;
 
 

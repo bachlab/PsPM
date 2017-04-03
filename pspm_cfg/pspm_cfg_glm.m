@@ -416,7 +416,7 @@ free_latency.help = {['']};
 latency         = cfg_choice;
 latency.name    = 'Latency';
 latency.tag     = 'latency';
-latency.val     = {fixed_latency};
+latency.val     = {free_latency};
 latency.values  = {fixed_latency, free_latency};
 % is hidden per default
 latency.hidden  = true;
