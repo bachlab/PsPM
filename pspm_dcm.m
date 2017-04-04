@@ -590,14 +590,7 @@ for iSn = 1:numel(model.datafile)
             [dcm.sn{sn_sbs(isbSn)}.a(offset_trl).s]'];
         
         fix_stats = cell2mat({dcm.sn{sn_sbs(isbSn)}.e(offset_trl).a}');
-        
-        if ~isempty(flex_stats) && ~isempty(fix_stats)     
-            dcm.stats(sbs_trl + cTrl, :) = [flex_stats, fix_stats];
-        elseif ~isempty(flex_stats)
-            dcm.stats(sbs_trl + cTrl, :) = flex_stats;
-        elseif ~isempty(fix_stats)
-            dcm.stats(sbs_trl + cTrl, :) = fix_stats;
-        end;
+        dcm.stats(sbs_trl + cTrl, :) = [flex_stats, fix_stats];
     end;
     % set disabled trials to NaN
     dcm.stats(cTrl + find(trls(:, 1) == 0), :) = NaN;
