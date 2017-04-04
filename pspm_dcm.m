@@ -584,10 +584,20 @@ for iSn = 1:numel(model.datafile)
         sbs_id = proc_subs_ids(sn_sbs(isbSn));
         sbs_trl = find(trls(:,2) == sbs_id);
         offset_trl = sbs_trl + 1 - min(sbs_trl); % start counting from 1
-        dcm.stats(sbs_trl + cTrl, :) = [[dcm.sn{sn_sbs(isbSn)}.a(offset_trl).a]', ...
+        
+        flex_stats = [[dcm.sn{sn_sbs(isbSn)}.a(offset_trl).a]', ...
             [dcm.sn{sn_sbs(isbSn)}.a(offset_trl).m]', ...
-            [dcm.sn{sn_sbs(isbSn)}.a(offset_trl).s]', ...
-            [dcm.sn{sn_sbs(isbSn)}.e(offset_trl).a]'];
+            [dcm.sn{sn_sbs(isbSn)}.a(offset_trl).s]'];
+        
+        fix_stats = cell2mat({dcm.sn{sn_sbs(isbSn)}.e(offset_trl).a}');
+        
+        if ~isempty(flex_stats) && ~isempty(fix_stats)     
+            dcm.stats(sbs_trl + cTrl, :) = [flex_stats, fix_stats];
+        elseif ~isempty(flex_stats)
+            dcm.stats(sbs_trl + cTrl, :) = flex_stats;
+        elseif ~isempty(fix_stats)
+            dcm.stats(sbs_trl + cTrl, :) = fix_stats;
+        end;
     end;
     % set disabled trials to NaN
     dcm.stats(cTrl + find(trls(:, 1) == 0), :) = NaN;
