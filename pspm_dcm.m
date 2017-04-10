@@ -387,7 +387,7 @@ for iSn = 1:numel(model.timing)
         & subsessions(:, 1) == iSn), trls, 'UniformOutput', 0);
     
     emp_subs = cellfun(@isempty, subs);
-    if any(emp_subs)
+    if any(emp_subs)  
         subs(emp_subs) = {-1};
     end;
         
@@ -585,9 +585,9 @@ for iSn = 1:numel(model.datafile)
         sbs_trl = find(trls(:,2) == sbs_id);
         offset_trl = sbs_trl + 1 - min(sbs_trl); % start counting from 1
         
-        flex_stats = [[dcm.sn{sn_sbs(isbSn)}.a(offset_trl).a]', ...
-            [dcm.sn{sn_sbs(isbSn)}.a(offset_trl).m]', ...
-            [dcm.sn{sn_sbs(isbSn)}.a(offset_trl).s]'];
+        flex_stats = [cell2mat({dcm.sn{sn_sbs(isbSn)}.a(offset_trl).a}'), ...
+            cell2mat({dcm.sn{sn_sbs(isbSn)}.a(offset_trl).m}'), ...
+            cell2mat({dcm.sn{sn_sbs(isbSn)}.a(offset_trl).s}')];
         
         fix_stats = cell2mat({dcm.sn{sn_sbs(isbSn)}.e(offset_trl).a}');
     
