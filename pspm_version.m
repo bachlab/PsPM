@@ -39,9 +39,9 @@ v = tk{v_idx}{1}{1};
 if nargin > 0
     switch varargin{1}
         case 'check' % check for updates
-            [str, status] = urlread('https://sourceforge.net/projects/pspm/best_release.json');
+            [str, status] = urlread('http://pspm.sourceforge.net/');
             if status == 1
-                tk = regexpi(str, '"filename": "/?PsPM_([0-9.]*)\.zip"', 'tokens');
+                tk = regexpi(str, '<a.*href="http://sourceforge\.net/projects/pspm/files/PsPM_([0-9.]*)\.zip/download">', 'tokens');
                 % use first found version
                 if any(~cellfun('isempty', tk))
                     new_v = tk{1}{1};
@@ -64,7 +64,7 @@ if nargin > 0
                     
                     if new_version
                         % try to find url
-                        tk = regexpi(str, '"url": "([\w.:/_-]*)"', 'tokens');
+                        tk = regexpi(str, '<a.*href="(http://sourceforge\.net/projects/pspm/files/PsPM_[0-9.]*\.zip/download)">', 'tokens');
                         download_url = tk{1}{1};
                         fprintf('New PsPM version available:\n');
                         fprintf('Current version: %s\n', v);
