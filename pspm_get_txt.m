@@ -65,6 +65,11 @@ for k = 1:numel(import)
     if chan > size(data, 2), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', chan, datafile); return; end;
     
     import{k}.data = data(:, chan);
+    
+    if strcmpi(settings.chantypes(import{k}.typeno).data, 'events')
+        import{k}.marker = 'continuous';
+    end;
+    
     sourceinfo.chan{k} = sprintf('Data column %02.0', chan);
 end;
 
