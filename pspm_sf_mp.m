@@ -30,6 +30,10 @@ function out = pspm_sf_mp(scr, sr, opt)
 %           (default: read from pspm_sf_theta)
 %       - options.fresp: maximum frequency of modelled responses (default 0.5 Hz)
 %       - options.dispwin: display result window (default 1)
+%       - options.diagnostics: add further diagnostics to the output. Is
+%                              disabled if set to false. If set to true
+%                              this will add a further field 'D' to the
+%                              output struct. Default is false.
 % 
 %
 % REFERENCE
@@ -86,6 +90,11 @@ try
 catch
     opt.dispwin = 0;
 end;
+try
+    opt.diagnostics;
+catch
+    opt.diagnostics = 0;
+end;
 
 
 % inversion settings in structure S
@@ -129,7 +138,7 @@ D.D = zeros(numel(S.sfsets) * S.n + S.ntail + numel(S.tonicsets{1}) * numel(S.to
 
 % model atoms for SF tail ---
 for k = 1:S.ntail
-    D.D(k, 1:(S.nsf - S.ntail + k - 1)) = sf{1}((S.ntail - k + 2):end);
+    D.D(k, 1:min(S.n, S.nsf - S.ntail + k - 1)) = sf{1}((S.ntail - k + 2):min(S.nsf, S.ntail - k + 1 + S.n));
     D.tindx(k) = 1 - (S.ntail - k + 1) .* S.dt; 
 end;
 Dindx = k;
@@ -241,8 +250,15 @@ out.rawa = asf(sortind);
 out.n = numel(find(out.a > S.threshold));
 out.f = out.n/(numel(scr)/sr);
 out.ma = mean(out.a(out.a > S.threshold));
+
+% cleanup S.Dtemp
+S = rmfield(S, 'Dtemp');
 out.S = S;
-out.D = D;
+
+% only add field D if opt.diagnostics is set to true.
+if opt.diagnostics
+    out.D = D;
+end;
 out.ind = ind;
 out.sortind = sortind;
 out.y = y;
@@ -261,3 +277,5 @@ if opt.dispwin
     plot(D.D(ind, :)', 'b');
     plot(Yhat, 'r');
 end;
+
+
