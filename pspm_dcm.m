@@ -272,15 +272,16 @@ for iSn = 1:numel(model.datafile)
     if any(big_epochs)
         b_e = find(big_epochs);
         
+        % invert missings to sessions without nans
         se_start = [1; miss_epochs(b_e(1:end), 2) + 1];
         se_stop = [miss_epochs(b_e(1:end), 1)-1; numel(d_miss)];
         
-        if se_stop(1) == 1
+        if se_stop(1) <= se_start(1)
             se_start = se_start(2:end);
             se_stop = se_stop(2:end);
         end;
         
-        if se_start(end) > length(d_miss)
+        if se_start(end) > numel(d_miss)
             se_start = se_start(1:end-1);
             se_stop = se_stop(1:end-1);
         end;
@@ -331,6 +332,7 @@ clear foo
 % check & get events and group into flexible and fixed responses
 % ------------------------------------------------------------------------
 trials = {};
+sbs_newevents = cell(2,1);
 for iSn = 1:numel(model.timing)
     % initialise and get timing information -- 
     sn_newevents{1}{iSn} = []; sn_newevents{2}{iSn} = [];
@@ -396,9 +398,12 @@ for iSn = 1:numel(model.timing)
     trials{iSn} = [cell2mat(trlinfo), cell2mat(subs)];
     
     % cycle through subsessions and copy events to corresponding subsession
+    % --
+    % find subsessions corresponding to the current session
     sn_sbs = find(subsessions(:, 1) == iSn);
     for isn_sbs=1:numel(sn_sbs)
         sbs_id = sn_sbs(isn_sbs);
+        % trials which are enabled and have the 'current' subsession id
         sbs_trls = trials{iSn}(:, 1) == 1 & trials{iSn}(:,2) == sbs_id;
         if any(sbs_trls)
             sbs_trlstart{sbs_id} = sn_trlstart{iSn}(sbs_trls) - subsessions(sbs_id,2);
@@ -406,7 +411,6 @@ for iSn = 1:numel(model.timing)
             sbs_iti{sbs_id} = [sbs_trlstart{sbs_id}(2:end); numel(sbs_data{sbs_id, 1})/model.sr] - sbs_trlstop{sbs_id};
             sbs_miniti(sbs_id) = min(sbs_iti{sbs_id});
             
-            sbs_newevents = cell(2,1);
             for ievType = 1:numel(sbs_newevents)
                 if ~isempty(sn_newevents{ievType}{iSn})
                     sbs_newevents{ievType}{sbs_id} = sn_newevents{ievType}{iSn}(sbs_trls,:,:) ...
