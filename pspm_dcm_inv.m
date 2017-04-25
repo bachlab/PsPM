@@ -774,7 +774,7 @@ if ~options.getrf
             for k = 1:aSCRno
                 sig.G0 = aSCR_ln(k, trl);
                 aTheta(trl).m(k) = sigm(aTheta(trl).m(k), sig);
-                sig.G0 = aSCR_ln(k, trl)/2;
+                sig.G0 = aSCR_ln(k, trl)/2 - settings.dcm{1}.sigma_offset;
                 aTheta(trl).s(k) = sigm(aTheta(trl).s(k), sig) + settings.dcm{1}.sigma_offset;
             end;
             aTheta(trl).a = newzfactor .* exp(aTheta(trl).a) ./ eSCR_unit;
