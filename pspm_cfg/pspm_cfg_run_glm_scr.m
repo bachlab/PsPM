@@ -5,7 +5,7 @@ function out = pspm_cfg_run_glm_scr(job)
 % $Rev$
 
 global settings
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 
 
 % set modality
@@ -16,6 +16,10 @@ f = strcmpi({settings.glm.modelspec}, modelspec);
 def_filter = settings.glm(f).filter;
 
 params = pspm_cfg_run_glm(job, def_filter);
+
+% get parameters
+model = params.model;
+options = params.options;
 
 % basis function
 bf = fieldnames(job.bf);
@@ -28,10 +32,6 @@ elseif isfield(job.bf,'fir')
     model.bf.args = [job.bf.fir.arg.n, job.bf.fir.arg.d];
 end
 
-% get parameters
-model = params.model;
-options = params.options;
-
 model.modality = modality;
 model.modelspec = modelspec;
 
@@ -42,5 +42,5 @@ if exist('out', 'var') && isfield(out, 'modelfile')
     end
 else
     out(1).modelfile = cell(1);
-end;
+end
 
