@@ -6,8 +6,8 @@ function [sts, import, sourceinfo] = pspm_get_brainvis(datafile, import)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_get_brainvis.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % NOTE I did not have sample files, simply assumed that hdr.labels would be
 % a cell array - might have to be changed in lines 38 and 41

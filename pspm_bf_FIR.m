@@ -15,8 +15,8 @@ function [FIR, x] = pspm_bf_FIR(varargin)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_bf_FIR.m 702 2015-01-22 15:06:14Z tmoser $   
-% $Rev: 702 $
+% $Id$   
+% $Rev$
 
 % check input arguments
 if nargin==0

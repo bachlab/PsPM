@@ -9,8 +9,8 @@ function [sts, import, sourceinfo] = pspm_get_txt(datafile, import)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_get_txt.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % v005 lr  23.09.2013 added support for channel names
 % v004 lr  09.09.2013 removed bugs

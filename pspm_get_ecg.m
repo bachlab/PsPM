@@ -10,8 +10,8 @@ function [sts, data]=pspm_get_ecg(import)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_get_ecg.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % v002 29.07.2013 changed to 3.0 architecture
 % v001 08.05.2012 Dominik R Bach

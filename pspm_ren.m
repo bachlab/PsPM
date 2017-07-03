@@ -10,8 +10,8 @@ function newfilename = pspm_ren(filename, newfilename)
 %__________________________________________________________________________
 % PsPM 3.0 
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-% $Id: pspm_ren.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % v101 drb 21.10.2009 updated for v2.x
 % initialise

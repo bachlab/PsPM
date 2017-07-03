@@ -33,8 +33,8 @@ function outfile=pspm_import(datafile, datatype, import, options)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_import.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % -------------------------------------------------------------------------
 % DEVELOPERS NOTES: Structure of SCRalyze import

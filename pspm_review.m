@@ -3,8 +3,8 @@ function varargout = pspm_review(varargin)
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2015 Gabriel Graeni (University of Zurich)
-% $Id: pspm_review.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 % initialise
 % -------------------------------------------------------------------------
 global settings;

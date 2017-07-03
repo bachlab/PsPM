@@ -9,8 +9,8 @@ function [sts, glm] = pspm_glm_recon(modelfile)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_glm_recon.m 702 2015-01-22 15:06:14Z tmoser $
-% $Rev: 702 $
+% $Id$
+% $Rev$
 
 % initialise
 % -------------------------------------------------------------------------

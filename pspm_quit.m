@@ -3,8 +3,8 @@
 % PsPM 3.1
 % (C) 2008-2016 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %
-% $Id: pspm_quit.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 %
 % v109 drb 14.08.2013 removed import paths
 % v108 30.05.2013 removed fil distribution

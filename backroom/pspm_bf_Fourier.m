@@ -18,8 +18,8 @@ function [bf, x] = pspm_bf_Fourier(varargin)
 
 % v001 drb 03.08.3012
 
-% $Id: pspm_bf_Fourier.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % initialise
 % -------------------------------------------------------------------------

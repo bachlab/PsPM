@@ -4,8 +4,8 @@ function varargout = pspm(varargin)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $ 
+% $Id$
+% $Rev$ 
 
 % this code was mainly produced by GUIDE
 % PsPM_GUI M-file for PsPM_GUI.fig

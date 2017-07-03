@@ -35,8 +35,8 @@ function varargout = pspm_jobman(varargin)
 % Copyright (C) 2008 Wellcome Trust Centre for Neuroimaging
 % Copyright (C) 2008 Freiburg Brain Imaging
 
-% $Id: pspm_jobman.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % initialise
 % -------------------------------------------------------------------------

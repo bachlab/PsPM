@@ -10,8 +10,8 @@ function [sts, data]=pspm_get_resp(import)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_get_resp.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % v002 29.07.2013 changed to 3.0 architecture
 % v001 17.9.2009 Dominik R Bach

@@ -8,8 +8,8 @@ function [sts, import, sourceinfo] = pspm_get_vario(datafile, import)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_get_vario.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % v003 drb 04.08.2013 3.0 architecture
 % v002 drb 11.02.2011 comply with new pspm_import requirements

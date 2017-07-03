@@ -19,7 +19,7 @@ switch f{1}
     case 'create_chan'
         options.createchannel = true;
         options.diagnostics = false;
-        options.channelaction = job.output.create_chan.channel_action;
+        options.channel_action = job.output.create_chan.channel_action;
         
         [sts, infos] = pspm_find_sounds(file, options);
         out = infos.channel;
@@ -28,7 +28,7 @@ switch f{1}
         d = job.output.diagnostic;
         if isfield(d.create_corrected_chan, 'yes')
             options.createchannel = true;
-            options.channelaction = d.create_corrected_chan.yes.channel_action;
+            options.channel_action = d.create_corrected_chan.yes.channel_action;
             options.channeloutput = 'corrected';
         end;
         

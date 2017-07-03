@@ -36,8 +36,8 @@ function y = pspm_filtfilt(b,a,x)
 % L. Shure, T. Krauss, F. Gustafsson
 % Copyright 1988-2004 The MathWorks, Inc.
 
-% $Id: pspm_filtfilt.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % initialise
 % -------------------------------------------------------------------------

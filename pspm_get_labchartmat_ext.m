@@ -13,8 +13,8 @@ function [sts, import, sourceinfo] = pspm_get_labchartmat_ext(datafile, import)
 % PsPM 3.0
 % (C) 2011-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_get_labchartmat_ext.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % ------------------------------------------------------------------------
 % Tue Jun 08, 2010 12:25 am from

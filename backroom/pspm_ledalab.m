@@ -19,8 +19,8 @@ function [sts, outfile] = pspm_ledalab(datafile, outfile, options)
 % PsPM 3.0
 % (c) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_ledalab.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % v003 drb 16.06.2014 adapted for new SCRalyze structure
 % v002 drb 02.11.2013

@@ -6,8 +6,8 @@ function [sts, import, sourceinfo] = pspm_get_cnt(datafile, import)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_get_cnt.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % v004 drb 14.08.2013 changed for 3.0 architecture
 % v003 drb 14.08.2012 added handling of 32 bit data

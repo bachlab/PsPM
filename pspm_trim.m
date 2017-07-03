@@ -26,8 +26,8 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_trim.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % initialise
 % -------------------------------------------------------------------------
@@ -122,6 +122,11 @@ for d=1:numel(D)
         events = ndata{1}.data;
         if isempty(endmarker), endmarker = numel(events); end;
         clear nsts ninfos ndata
+        
+        if isempty(events)
+            warning('ID:marker_out_of_range', 'Marker channel is empty. Cannot use as a reference.');
+            return;
+        end;
     end;
     if any(sts == -1), newdatafile = []; break; end;
     

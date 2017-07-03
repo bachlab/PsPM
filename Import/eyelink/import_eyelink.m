@@ -257,4 +257,4 @@ for sn = 1:numel(offsets)
     data{sn}.markerinfos.name = markers{1,2};
     data{sn}.markerinfos.value = markers{1,3};
     
-end;
+end

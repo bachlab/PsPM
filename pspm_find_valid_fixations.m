@@ -89,54 +89,54 @@ function [sts, out_file] = pspm_find_valid_fixations(fn, options)
 % initialise
 % -------------------------------------------------------------------------
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 sts = -1;
 out_file = '';
 
 % validate input
 if nargin < 1 
     warning('ID:invalid_input', 'Not enough input arguments.'); return;
-end;
+end
 
 if nargin < 2 || ~exist('options', 'var') 
     options = struct();
-end;
+end
 
 % fn
 if ~ischar(fn) || ~exist(fn, 'file')
     warning('ID:invalid_input', 'File %s is not char or does not seem to exist.', fn); return;
-end;
+end
 
 % load data right away (needed if fixation point should be expanded)
 [sts, infos, data] = pspm_load_data(fn);
 if sts ~= 1
     warning('ID:invalid_input', 'An error happened, while opening the file %s.',fn); return;
-end;
+end
 
 % check validate_fixations and then the depending mandatory fields
 if ~isfield(options, 'interpolate')
     options.interpolate = false;
-end;
+end
     
 if ~isfield(options, 'missing')
     options.missing = false;
-end;
+end
     
 if ~isfield(options, 'validate_fixations')
     options.validate_fixations = false;
-end;
+end
 
 if ~isfield(options, 'channels')
     options.channels = 'pupil';
-end;
+end
 
 if ~isfield(options, 'eyes')
     options.eyes = 'all';
-end;
+end
 
 if ~isfield(options, 'plot_gaze_coords')
     options.plot_gaze_coords = false;
-end;
+end
 
 if ~islogical(options.interpolate) && ~isnumeric(options.interpolate)
     warning('ID:invalid_input', 'Options.interpolate is neither logical nor numeric.'); return;
@@ -183,7 +183,7 @@ elseif options.validate_fixations
             size(options.fixation_point,2) ~= 2)
         warning('ID:invalid_input', ['Options.fixation_point is not ', ...
             'numeric, or has the wrong size (should be nx2).']); return;      
-    end;
+    end
     
     % Visual inputs for specifying boundaries
     vis.box_degree      = options.box_degree;        % boundary of box in degree visual angles; has to be chosen by experimenter
@@ -213,7 +213,7 @@ elseif options.validate_fixations
     else
         sw_width = hw_width;
         sw_height = sw_width/sw_ratio;
-    end;
+    end
 
     vis.screen_h = sw_height;
     vis.screen_w = sw_width;
@@ -242,10 +242,10 @@ elseif options.validate_fixations
         else
             vis.fix_point(:,1) = 1/2;
             vis.fix_point(:,2) = 1/2;
-        end;
+        end
     else
         vis.fix_point = options.fixation_point;
-    end;
+    end
     
     % norm vis.fix_point
     vis.fix_point(:,1) = vis.fix_point(:,1);
@@ -260,38 +260,38 @@ elseif options.validate_fixations
     vis.x_lower         = vis.fix_point(:,1) - vis.x_bound;
     vis.y_upper         = vis.fix_point(:,2) + vis.y_bound;
     vis.y_lower         = vis.fix_point(:,2) - vis.y_bound;
-end;
+end
 
 if ~isfield(options, 'channel_action')
     options.channel_action = 'add';
 elseif sum(strcmpi(options.channel_action, {'add','replace'})) == 0
     warning('ID:invalid_input', 'Options.channel_action must be either ''add'' or ''replace''.'); return;
-end;
+end
 
 % overwrite
 if ~isfield(options, 'overwrite')
     options.overwrite = 0;
 elseif ~isnumeric(options.overwrite) && ~islogical(options.overwrite)
     warning('ID:invalid_input', 'Options.overwrite must be either numeric or logical.'); return;
-end;
+end
 
 % dont_ask_overwrite
 if ~isfield(options, 'dont_ask_overwrite')
     options.dont_ask_overwrite = 0;
 elseif ~isnumeric(options.dont_ask_overwrite) && ~islogical(options.dont_ask_overwrite)
     warning('ID:invalid_input', 'Options.dont_ask_overwrite has to be numeric or logical.');
-end;
+end
 
 % newfile
 if ~isfield(options, 'newfile')
     options.newfile = '';
 elseif ~ischar(options.newfile)
     warning('ID:invalid_input', 'Options.newfile is not char.'); return;
-end;
+end
 
 if ~iscell(options.channels)
     options.channels = {options.channels};
-end;
+end
 
 % iterate through eyes
 n_eyes = numel(infos.source.eyesObserved);
@@ -316,7 +316,7 @@ for i=1:n_eyes
         for j=1:numel(str_chan_num)
             str_chan_num(j) = {find(cellfun(@(y) strcmpi(str_chan_num(j),...
                 y.header.chantype), data),1)};
-        end;
+        end
         channels(str_chans) = str_chan_num;
         work_chans = cell2mat(channels);
         
@@ -351,11 +351,11 @@ for i=1:n_eyes
                     plot(ax, gx_d, gy_d);
                     % plot gaze coordinates
                     plot(ax, coord(:,1), coord(:,2));
-                end;
+                end
                 
                 % set fixation breaks
                 excl(data_dev{i}(:,3)) = 1;
-            end;
+            end
             
             % set excluded periods in pupil data to NaN
             new_pu{i} = {data{work_chans}};
@@ -366,13 +366,13 @@ for i=1:n_eyes
                     warning('ID:invalid_input', ['All values of channel ''%s'' ', ...
                         'completely set to NaN. Please reconsider your parameters.'], ...
                         new_pu{i}{j}.header.chantype);
-                end;
+                end
                 excl_hdr = struct('chantype', ['pupil_missing_', eye], 'units', '', 'sr', new_pu{i}{j}.header.sr);
                 new_excl{i}{j} = struct('data', double(excl), 'header', excl_hdr);
-            end;
-        end;
-    end;
-end;
+            end
+        end
+    end
+end
 
 op = struct();
 op.dont_ask_overwrite = options.dont_ask_overwrite;
@@ -384,17 +384,17 @@ if ~isempty(options.newfile)
         out_file = options.newfile;
     else
         warning('ID:invalid_input', 'Path to options.newfile (%s) does not exist.', options.newfile);
-    end;
+    end
 else
     out_file = fn;
-end;
+end
 
 % collect data
 if options.missing
     new_chans = [[new_excl{:}], [new_pu{:}]];
 else
     new_chans = [new_pu{:}];
-end;
+end
 
 if numel(new_chans) >= 1
     new_data = data;
@@ -414,9 +414,9 @@ if numel(new_chans) >= 1
             else
                 new_data{end+1} = new_chans{i};
                 chan_idx(i) = numel(new_data);
-            end;
-        end;
-    end;
+            end
+        end
+    end
        
     file_struct.infos = infos;
     file_struct.data = new_data;
@@ -427,10 +427,10 @@ if numel(new_chans) >= 1
         o.channels = {chan_idx};
         % interpolate
         [~, file_struct] = pspm_interpolate(file_struct, o);
-    end;
+    end
     
     file_struct.options = op;
     [sts, ~, ~, ~] = pspm_load_data(out_file, file_struct);
 else
     warning('ID:invalid_input', 'Appearently no data was generated.');
-end;
+end

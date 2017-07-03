@@ -81,8 +81,8 @@ end;
 
 end_hdr = false;
 
-out.record_date = datetime('now','Format','dd-MMM-yyyy');
-out.record_time = datetime('now','Format','HH:mm:ss');
+out.record_date = date;
+out.record_time = datestr(now, 'HH:MM:SS');
 
 while ~end_hdr && ~feof(fileID)
     l = fgets(fileID);
@@ -94,9 +94,8 @@ while ~end_hdr && ~feof(fileID)
         [tokens] = regexp(l, expr, 'tokens');
         % is date time
         if ~isempty(tokens)
-            out.record_date = datetime(tokens{1}{1},'Format','dd-MMM-yyyy', ... 
-                'InputFormat','dd-MM-yyyy');
-            out.record_time = datetime(tokens{1}{2},'Format','HH:mm:ss');
+            out.record_date = datestr(datenum(tokens{1}{1},'dd-mm-yyyy'), 'dd-mmm-yyyy');
+            out.record_time = tokens{1}{2};
         end;
     end;
 end;

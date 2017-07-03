@@ -17,8 +17,8 @@ function varargout = pspm_display(varargin)
 % v0.3 - Jun-2014: shortcuts added, small bugfixes
 % Last Modified by GUIDE v2.5 31-Oct-2016 16:36:19
 
-% $Id: pspm_display.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % initialise
 % -------------------------------------------------------------------------

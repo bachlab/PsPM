@@ -21,8 +21,8 @@ function theta = pspm_sf_get_theta(scr, sr, esr, fn, closewindow)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_sf_get_theta.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % v02 drb 27.4.2010 adapted for general release
 % v01 drb 30.7.2009 

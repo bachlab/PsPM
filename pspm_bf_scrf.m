@@ -14,8 +14,8 @@ function [bs, x] = pspm_bf_scrf(varargin)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_bf_scrf.m 702 2015-01-22 15:06:14Z tmoser $   
-% $Rev: 702 $
+% $Id$   
+% $Rev$
 
 % initialise
 global settings

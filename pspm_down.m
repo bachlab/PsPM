@@ -22,8 +22,8 @@ function [sts, newfile]=pspm_down(datafile, newsr, chan, options)
 % PsPM 3.0
 % (C) 2010-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_down.m 714 2015-02-05 15:10:44Z tmoser $  
-% $Rev: 714 $
+% $Id$  
+% $Rev$
 
 global settings;
 if isempty(settings), pspm_init; end;

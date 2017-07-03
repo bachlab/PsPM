@@ -27,8 +27,8 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_load_data.m 705 2015-01-26 10:45:27Z tmoser $
-% $Rev: 705 $
+% $Id$
+% $Rev$
 
 % -------------------------------------------------------------------------
 % DEVELOPERS NOTES: General structure of PsPM data files

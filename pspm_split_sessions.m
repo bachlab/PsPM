@@ -44,8 +44,8 @@ function newdatafile = pspm_split_sessions(datafile, markerchannel, options)
 % PsPM 3.1
 % (C) 2008-2015 Linus Rüttimann & Tobias Moser (University of Zurich)
 
-% $Id: pspm_split_sessions.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % -------------------------------------------------------------------------
 % DEVELOPERS NOTES: this function was completely rewritten for SCRalyze 3.0

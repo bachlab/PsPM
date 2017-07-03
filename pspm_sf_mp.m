@@ -42,8 +42,8 @@ function out = pspm_sf_mp(scr, sr, opt)
 % (C) 2008-2015 Dominik R Bach (UZH, WTCN)
 % last edited 18.08.2014
 
-% $Id: pspm_sf_mp.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % initialise
 % ------------------------------------------------------------------------

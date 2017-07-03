@@ -12,8 +12,8 @@ function auc = pspm_sf_auc(scr, sr, options)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %
-% $Id: pspm_sf_auc.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 %
 % v02 30.7.2009 drb changed sum to mean
 % v01 17.6.2009 drb

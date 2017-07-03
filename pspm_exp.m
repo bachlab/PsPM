@@ -27,8 +27,8 @@ function sts = pspm_exp(modelfile, target, statstype, delim)
 % PsPM 3.0
 % (C) 2009-2015 Dominik R Bach (WTCN, UZH)
 
-% $Id: pspm_exp.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 
 % initialise

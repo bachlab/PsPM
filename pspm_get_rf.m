@@ -18,8 +18,8 @@ function theta = pspm_get_rf(fn, events, outfile, chan, options)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %
-% $Id: pspm_get_rf.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 %
 % v005 drb 25.09.2012 added options
 % v004 drb 24.09.2012 added handling of more complex designs including aSCR

@@ -287,7 +287,7 @@ for d=1:numel(D)
         
         savedata.infos.history{nhist + 1} = ['Performed interpolation: ', ...
             sprintf('Channel %i: %.3f interpolated\n', [work_chans; interp_frac']), ...
-            ' on ', datestr(datetime('now', 'Format', 'd-MMM-y HH:mm:ss'))];
+            ' on ', datestr(now, 'dd-mmm-yyyy HH:MM:SS')];
         
         if isstruct(fn)
             % check datastructure

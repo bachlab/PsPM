@@ -9,12 +9,12 @@ function [sts, infos] = pspm_find_sounds(file, options)
 %           createchannel : [true/FALSE] sound events are written as
 %               marker channel to the specified pspm file. Onset times 
 %               then correspond to marker events and duration is written 
-%               to markerinfo. Depending on channelaction the new marker 
+%               to markerinfo. Depending on channel_action the new marker 
 %               channel replaces existing marker channels or is added as 
 %               new marker channel.
 %               Be careful: May overwrite reference marker channel!!!
 %
-%           channelaction : ['add'/'replace'] define whether the new marker
+%           channel_action : ['add'/'replace'] define whether the new marker
 %               channel should be added or replace existing marker
 %               channels.
 %
@@ -104,7 +104,7 @@ fprintf('Processing sound in file %s\n',file);
 
 % Process options
 try options.createchannel; catch, options.createchannel = false; end;
-try options.channelaction; catch, options.channelaction = 'add'; end;
+try options.channel_action; catch, options.channel_action = 'add'; end;
 try options.channeloutput; catch; options.channeloutput = 'all'; end;
 try options.diagnostics; catch, options.diagnostics = true; end;
 try options.maxdelay; catch, options.maxdelay = 3; end;
@@ -148,7 +148,7 @@ elseif ~isnumeric(options.expectedSoundCount) || mod(options.expectedSoundCount,
     warning('ID:invalid_input', 'Option expectedSoundCount is not an integer.'); sts=-1; return;
 elseif ~isempty(options.roi) && (length(options.roi) ~= 2 || ~all(isnumeric(options.roi) & options.roi >= 0))
     warning('ID:invalid_input', 'Option roi must be a float vector of length 2 or 0'); sts=-1; return;
-elseif ~ischar(options.channelaction) || ~ismember(options.channelaction, {'add', 'replace'})
+elseif ~ischar(options.channel_action) || ~ismember(options.channel_action, {'add', 'replace'})
     warning('ID:invalid_input', 'Option createchannel must be either ''add'' or ''replace'''); return;
 end;
 
@@ -315,7 +315,7 @@ if options.createchannel
     snd_events.header.sr = 1;
     snd_events.header.chantype = 'marker';
     snd_events.header.units ='events';
-    [~, ininfos] = pspm_write_channel(file, snd_events, options.channelaction);
+    [~, ininfos] = pspm_write_channel(file, snd_events, options.channel_action);
     outinfos.channel = ininfos.channel;
 end
 

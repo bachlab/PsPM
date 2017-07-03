@@ -84,8 +84,8 @@ function dcm = pspm_dcm_inv(model, options)
 % The SCR timeseries is z-transformed in pspm_dcm, and amplitude parameter  
 % estimates transformed back at the end (to standardise priors and precisions)
 
-% $Id: pspm_dcm_inv.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % initialise & say hello
 % ------------------------------------------------------------------------

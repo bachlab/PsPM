@@ -13,8 +13,8 @@ function newdatafile = pspm_pp(varargin)
 % PsPM 3.0
 % (C) 2009-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_pp.m 701 2015-01-22 14:36:13Z tmoser $   
-% $Rev: 701 $
+% $Id$   
+% $Rev$
 
 % initialise
 % -------------------------------------------------------------------------

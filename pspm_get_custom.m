@@ -12,8 +12,8 @@ function [sts, data]=pspm_get_custom(import)
 % PsPM 3.0
 % (C) 2009-2014 Tobias Moser (University of Zurich)
 
-% $Id: pspm_get_custom.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 
 global settings;

@@ -6,8 +6,8 @@ function [sts, import, sourceinfo] = pspm_get_biosemi(datafile, import)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_get_biosemi.m 701 2015-01-22 14:36:13Z tmoser $
-% $Rev: 701 $
+% $Id$
+% $Rev$
 
 % v004 drb 02.09.2013 new for 3.0 architecture
 

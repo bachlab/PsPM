@@ -13,8 +13,8 @@ function [sts, import] = pspm_get_events(import)
 % PsPM 3.0
 % (C) 2013-2015 Dominik R Bach & Tobias Moser (University of Zurich)
 %
-% $Id: pspm_get_events.m 714 2015-02-05 15:10:44Z tmoser $
-% $Rev: 714 $
+% $Id$
+% $Rev$
 
 global settings;
 if isempty(settings), pspm_init; end;

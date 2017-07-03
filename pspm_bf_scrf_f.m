@@ -14,8 +14,8 @@ function [ft, p, t] = pspm_bf_scrf_f(td, p)
 % PsPM 3.0
 % (C) 2009-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_bf_scrf_f.m 702 2015-01-22 15:06:14Z tmoser $   
-% $Rev: 702 $
+% $Id$   
+% $Rev$
 
 % initialise
 % -------------------------------------------------------------------------
