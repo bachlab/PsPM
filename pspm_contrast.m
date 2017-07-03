@@ -286,7 +286,7 @@ if testStatstype == 1
     handles.names = handles.paramnames;
 else
     handles.names = handles.condnames;
-end;
+end
 
 if strcmpi(handles.modeltype, 'dcm') && testStatstype ~= 3
     set(handles.checkboxZscored, 'Enable', 'on');
@@ -603,9 +603,10 @@ switch handles.modeltype
         if ~strcmpi(handles.modeltype, 'sf')
             set(handles.radioCond, 'Enable', 'on');
         end
-    case {'glm', 'sf'}
+    case {'glm'}
         set(handles.radioParam, 'Enable', 'on');
         set(handles.radioRecon, 'Enable', 'on');
+        set(handles.radioCond, 'Enable', 'on');
 end
         
 
