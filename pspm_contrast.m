@@ -1,17 +1,17 @@
 % create appropriate contrasts for DCM cond option
 
 function varargout = pspm_contrast(varargin)
-% SCR_CONTRAST MATLAB code for pspm_contrast.fig
-%      SCR_CONTRAST, by itself, creates a new SCR_CONTRAST or raises the existing
+% PSPM_CONTRAST MATLAB code for pspm_contrast.fig
+%      PSPM_CONTRAST, by itself, creates a new PSPM_CONTRAST or raises the existing
 %      singleton*.
 %
-%      H = SCR_CONTRAST returns the handle to a new SCR_CONTRAST or the handle to
+%      H = PSPM_CONTRAST returns the handle to a new PSPM_CONTRAST or the handle to
 %      the existing singleton*.
 %
-%      SCR_CONTRAST('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in SCR_CONTRAST.M with the given input arguments.
+%      PSPM_CONTRAST('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in PSPM_CONTRAST.M with the given input arguments.
 %
-%      SCR_CONTRAST('Property','Value',...) creates a new SCR_CONTRAST or raises the
+%      PSPM_CONTRAST('Property','Value',...) creates a new PSPM_CONTRAST or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
 %      applied to the GUI before pspm_contrast_OpeningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
@@ -24,7 +24,7 @@ function varargout = pspm_contrast(varargin)
 
 % Edit the above text to modify the response to help pspm_contrast
 
-% Last Modified by GUIDE v2.5 09-Apr-2015 14:11:27
+% Last Modified by GUIDE v2.5 03-Jul-2017 13:59:10
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -618,3 +618,12 @@ function checkboxZscored_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of checkboxZscored
+
+
+% --- Executes on button press in radioQuadEffects.
+function radioQuadEffects_Callback(hObject, eventdata, handles)
+% hObject    handle to radioQuadEffects (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of radioQuadEffects
