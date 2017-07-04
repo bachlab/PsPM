@@ -15,7 +15,7 @@ classdef cfg_job
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_job.m 380 2016-11-08 07:47:23Z tmoser $
 
     properties (Access=private)
         c0;

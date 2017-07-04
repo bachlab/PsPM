@@ -1,4 +1,8 @@
 function [out] = pspm_cfg_run_extract_segments(job)
+
+% $Id$
+% $Rev$
+
 out = {};
 options = struct();
 mode = 'auto';

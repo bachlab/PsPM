@@ -11,9 +11,9 @@ function cm = cfg_run_cm(cm, job)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_run_cm.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 if isempty(cm.vout) && ~isempty(cm.vfiles);
     cfg_message('matlabbatch:deprecated:vfiles', ...

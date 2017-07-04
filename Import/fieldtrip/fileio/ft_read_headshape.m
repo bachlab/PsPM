@@ -75,7 +75,7 @@ function [shape] = ft_read_headshape(filename, varargin)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: ft_read_headshape.m 395 2016-12-19 13:51:00Z tmoser $
 
 % get the options
 annotationfile = ft_getopt(varargin, 'annotationfile');

@@ -12,8 +12,8 @@ function fnames = mysubs_fields(dep)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: mysubs_fields.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 fnames = {'tname','tgt_exbranch','tgt_input','tgt_spec','jtsubs','sname','src_exbranch','src_output'};

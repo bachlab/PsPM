@@ -12,7 +12,7 @@ function X = spm_inv(A,TOL)
 % Copyright (C) 2008 Wellcome Trust Centre for Neuroimaging
  
 % Karl Friston
-% $Id$
+% $Id: spm_inv.m 378 2016-11-07 13:17:49Z tmoser $
  
 % check A 
 %--------------------------------------------------------------------------

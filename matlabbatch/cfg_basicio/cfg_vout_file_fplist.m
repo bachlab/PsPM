@@ -12,9 +12,9 @@ function dep = cfg_vout_file_fplist(job)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_vout_file_fplist.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 dep(1)            = cfg_dep;
 if ~ischar(job.filter) || strcmp(job.filter,'<UNDEFINED>')

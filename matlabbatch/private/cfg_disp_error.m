@@ -11,9 +11,9 @@ function varargout = cfg_disp_error(l)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_disp_error.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 if isfield(l,'stack'), % Does not always exist
     estr = cell(numel(l.stack)+1,1);

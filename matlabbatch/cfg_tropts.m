@@ -16,9 +16,9 @@ function tropts = cfg_tropts(stopspec, clvl, mlvl, cnt, mcnt, dflag)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_tropts.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 if nargin == 0
     tropts = struct('stopspec', {}, 'clvl', {}, 'mlvl', {}, 'cnt', {}, 'mcnt', {}, 'dflag', {});

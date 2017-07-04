@@ -11,9 +11,9 @@ function item = clearval(item, dflag)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: clearval.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 for k = 1:numel(item.cfg_item.val)
     item.cfg_item.val{k} = clearval(item.cfg_item.val{k}, ...

@@ -27,7 +27,7 @@ function [dat] = read_neuralynx_ttl(filename, begsample, endsample)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: read_neuralynx_ttl.m 395 2016-12-19 13:51:00Z tmoser $
 
 fid = fopen(filename, 'rb', 'ieee-le');
 

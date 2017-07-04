@@ -1,5 +1,8 @@
 function [out] = pspm_cfg_run_proc_illuminance(job)
 
+% $Id$
+% $Rev$
+
 src_file = job.lum_file{1};
 out_file = [job.outdir{1}, filesep, job.filename];
 if isempty(regexpi(out_file, '.*\.mat$'))

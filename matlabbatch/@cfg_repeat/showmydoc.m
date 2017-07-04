@@ -11,9 +11,9 @@ function str = showmydoc(item, indent)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: showmydoc.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 str1 = showdoc(item.cfg_item, indent);
 citems = subsref(item, substruct('.','values'));
 if isfinite(item.num(2))

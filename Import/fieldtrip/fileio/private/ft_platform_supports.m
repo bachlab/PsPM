@@ -222,7 +222,7 @@ function [inInterval] = matlabversion(min, max)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: ft_platform_supports.m 395 2016-12-19 13:51:00Z tmoser $
 
 % this does not change over subsequent calls, making it persistent speeds it up
 persistent curVer

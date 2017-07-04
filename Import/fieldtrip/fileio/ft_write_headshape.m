@@ -65,7 +65,7 @@ function ft_write_headshape(filename, bnd, varargin)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: ft_write_headshape.m 395 2016-12-19 13:51:00Z tmoser $
 
 fileformat    = ft_getopt(varargin, 'format', 'unknown');
 data          = ft_getopt(varargin, 'data');         % can be stored in a gifti file

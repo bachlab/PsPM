@@ -35,7 +35,7 @@ function [nev] = read_neuralynx_nev(filename, varargin)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: read_neuralynx_nev.m 395 2016-12-19 13:51:00Z tmoser $
 
 % get the optional input arguments
 flt_value        = ft_getopt(varargin, 'value');

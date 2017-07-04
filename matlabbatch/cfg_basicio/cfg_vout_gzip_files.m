@@ -10,9 +10,9 @@ function dep = cfg_vout_gzip_files(job)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_vout_gzip_files.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 dep            = cfg_dep;
 dep.sname      = 'Gzipped Files';

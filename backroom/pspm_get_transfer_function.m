@@ -28,10 +28,11 @@ function pspm_get_transfer_function(infile, outfile, Rs, Rtest, scrchan, skipval
 % graphical output is presented on the screen and to a file
 %
 %__________________________________________________________________________
-% SCRalyze 
+% PsPM 
 % (C) 2008 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $ Id: $
+% $Id$
+% $Rev$
 
 % CONSTANTS
 global settings;

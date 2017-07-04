@@ -17,7 +17,7 @@ function [Y,N,N2] = nanfft(X,N,DIM);
 %
 % see also: FFT, XCORR, NANCONV, NANFILTER
 
-%	$Id$
+%	$Id: nanfft.m 378 2016-11-07 13:17:49Z tmoser $
 %	Copyright (C) 2005,2011 by Alois Schloegl <alois.schloegl@gmail.com>		
 %       This function is part of the NaN-toolbox available at 
 %       http://pub.ist.ac.at/~schloegl/matlab/NaN/ and 

@@ -11,9 +11,9 @@ function sts = isequaltarget(dep1, dep2)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: isequaltarget.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 sts = numel(dep1) == numel(dep2);
 if sts
     for k = 1:numel(dep1)

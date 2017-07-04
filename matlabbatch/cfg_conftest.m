@@ -11,9 +11,9 @@ function sts = cfg_conftest(bch)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_conftest.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 % Load configuration
 if isfield(bch.cfg, 'cfgvar')

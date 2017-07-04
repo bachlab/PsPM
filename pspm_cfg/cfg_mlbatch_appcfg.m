@@ -9,6 +9,9 @@ function [cfg, def] = cfg_mlbatch_appcfg(varargin)
 % must be in MATLAB's path variable.
 % Created at 2013-11-07 11:21:54.
 
+% $Id$
+% $Rev$
+
 % Get path to this file and add it to MATLAB path.
 % If the configuration file is stored in another place, the path must be adjusted here.
 p = fileparts(mfilename('fullpath'));

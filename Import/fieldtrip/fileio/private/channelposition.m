@@ -27,7 +27,7 @@ function [pnt, ori, lab] = channelposition(sens)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: channelposition.m 395 2016-12-19 13:51:00Z tmoser $
 
 % remove the balancing from the sensor definition, e.g. planar gradients, 3rd-order gradients, PCA-cleaned data or ICA projections
 if isfield(sens, 'balance') && ~strcmp(sens.balance.current, 'none')

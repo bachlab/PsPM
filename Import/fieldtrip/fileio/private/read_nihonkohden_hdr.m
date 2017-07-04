@@ -36,7 +36,7 @@ function [hdr] = read_nihonkohden_hdr(filename)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: read_nihonkohden_hdr.m 395 2016-12-19 13:51:00Z tmoser $
 
 % the name of the ascii file
 fid=fopen(filename,'r');

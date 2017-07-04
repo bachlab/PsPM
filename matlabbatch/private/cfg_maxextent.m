@@ -13,9 +13,9 @@ function ext = cfg_maxextent(obj, str)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_maxextent.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 ext = zeros(size(str));
 for k = 1:numel(str)
     set(obj,'String',str(k));

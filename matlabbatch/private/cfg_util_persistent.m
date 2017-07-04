@@ -8,9 +8,9 @@ function varargout = cfg_util_persistent(varargin)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_util_persistent.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; 
+rev = '$Rev: 380 $'; 
 
 persistent c0;
 persistent jobs;

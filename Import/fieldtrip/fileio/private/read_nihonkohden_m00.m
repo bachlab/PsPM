@@ -37,7 +37,7 @@ function [dat] = read_nihonkohden_m00(filename, begsample, endsample)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: read_nihonkohden_m00.m 395 2016-12-19 13:51:00Z tmoser $
 
 hdr = read_nihonkohden_hdr(filename);
 mult = 10;% a multiplier; divide stored value by this to floats

@@ -16,9 +16,9 @@ function en = cfg_ui_disable(hObject, property)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_ui_disable.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$';  %#ok<NASGU>
+rev = '$Rev: 380 $';  %#ok<NASGU>
 en.c        = findall(hObject, property, 'on');
 en.property = property;
 set(en.c, en.property, 'off');

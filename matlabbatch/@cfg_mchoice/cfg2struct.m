@@ -12,9 +12,9 @@ function sitem = cfg2struct(item)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg2struct.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 % Get parent struct, re-classify as field 'type'
 sitem = cfg2struct(item.cfg_item);

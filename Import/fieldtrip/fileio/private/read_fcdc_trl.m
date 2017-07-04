@@ -40,7 +40,7 @@ function [trl] = read_fcdc_trl(fn)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: read_fcdc_trl.m 395 2016-12-19 13:51:00Z tmoser $
 
 fid = fopen(fn, 'rt');
 if fid<0

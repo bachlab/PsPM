@@ -19,9 +19,9 @@ function [id, stop, rtaglist] = tag2cfgsubs(item, taglist, finalspec, tropts)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: tag2cfgsubs.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 if strcmp(gettag(item), taglist{1}) && match(item, finalspec)
     id = struct('type', {}, 'subs', {});
     stop = numel(taglist) > 1 || (~isempty(tropts.stopspec) ...

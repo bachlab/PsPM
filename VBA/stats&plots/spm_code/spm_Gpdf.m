@@ -53,7 +53,7 @@ function f = spm_Gpdf(x,h,l)
 % Copyright (C) 1993-2011 Wellcome Trust Centre for Neuroimaging
 
 % Andrew Holmes
-% $Id$
+% $Id: spm_Gpdf.m 378 2016-11-07 13:17:49Z tmoser $
 
 
 %-Format arguments, note & check sizes

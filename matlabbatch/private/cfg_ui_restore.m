@@ -12,9 +12,9 @@ function cfg_ui_restore(en)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_ui_restore.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok<NASGU>
+rev = '$Rev: 380 $'; %#ok<NASGU>
 if ~isempty(en) && isstruct(en)
     sel = ishandle(en.c);
     set(en.c(sel), en.property, 'on');

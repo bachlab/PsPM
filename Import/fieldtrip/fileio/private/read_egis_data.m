@@ -37,7 +37,7 @@ function dat = read_egis_data(filename, hdr, begtrial, endtrial, chanindx)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: read_egis_data.m 395 2016-12-19 13:51:00Z tmoser $
 
 fh=fopen([filename],'r');
 if fh==-1

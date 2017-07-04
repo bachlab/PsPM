@@ -37,7 +37,7 @@ function [hdr] = read_nifti2_hdr(filename)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: read_nifti2_hdr.m 395 2016-12-19 13:51:00Z tmoser $
 
 hdr.endian = 'l';
 fid = fopen(filename, 'rb', hdr.endian);

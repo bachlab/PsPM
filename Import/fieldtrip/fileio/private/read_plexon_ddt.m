@@ -30,7 +30,7 @@ function [dat] = read_plexon_ddt(filename, begsample, endsample)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: read_plexon_ddt.m 395 2016-12-19 13:51:00Z tmoser $
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Version 100: Samples are assumed to be 12 bits.  All channels have the same NIDAQ gain, and preamp 

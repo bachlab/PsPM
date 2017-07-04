@@ -22,9 +22,9 @@ function [str, tag, cind, ccnt] = gencode_item(item, tag, tagctx, stoptag, tropt
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: gencode_item.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 %% Parent object
 % Generate generic object

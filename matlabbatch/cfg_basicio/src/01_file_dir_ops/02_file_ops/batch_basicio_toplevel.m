@@ -1,5 +1,5 @@
 %-----------------------------------------------------------------------
-% Job saved on 25-Sep-2013 15:09:26 by cfg_util (rev $Rev$)
+% Job saved on 25-Sep-2013 15:09:26 by cfg_util (rev $Rev: 380 $)
 % spm SPM - SPM12b (beta)
 % cfg_basicio BasicIO - Unknown
 % cfg_logextract LogExt - Unknown

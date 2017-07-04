@@ -28,6 +28,6 @@ function val = littleendian
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: littleendian.m 395 2016-12-19 13:51:00Z tmoser $
 
 val = (typecast(uint8([0 1]), 'uint16')==256);

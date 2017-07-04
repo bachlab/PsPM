@@ -1,5 +1,8 @@
 function [out] = pspm_cfg_run_segment_mean(job)
 
+% $Id$
+% $Rev$
+
 [path, fn, ~] = fileparts([job.output_file.file_path{1} filesep job.output_file.file_name]);
 out_file = [path filesep fn '.mat'];
 

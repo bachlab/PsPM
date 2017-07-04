@@ -29,7 +29,7 @@ function out = cfg_justify(varargin)
 % Copyright (C) 2008 Wellcome Trust Centre for Neuroimaging
 
 % John Ashburner
-% $Id$
+% $Id: cfg_justify.m 380 2016-11-08 07:47:23Z tmoser $
 
 out = {};
 

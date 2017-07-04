@@ -17,9 +17,9 @@ function varargout = subsref_job(item, subs, c0)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: subsref_job.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 varargout{1} = item;
 [un, val] = harvest(item, c0, false, false);

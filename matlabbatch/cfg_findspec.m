@@ -29,9 +29,9 @@ function spec = cfg_findspec(cellspec)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_findspec.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 if nargin == 0 || isempty(cellspec)
     spec = {};

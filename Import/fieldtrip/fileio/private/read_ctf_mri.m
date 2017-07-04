@@ -26,7 +26,7 @@ function [mri, hdr] = read_ctf_mri(filename)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: read_ctf_mri.m 395 2016-12-19 13:51:00Z tmoser $
 
 % Some versions require specifying latin1 (ISO-8859-1) character encoding.
 fid = fopen(filename, 'rb', 'ieee-be', 'ISO-8859-1');

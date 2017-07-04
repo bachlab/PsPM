@@ -27,9 +27,9 @@ function [tag, val, typ, dep, chk, cj] = harvest(item, cj, dflag, rflag)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: harvest.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 typ = class(item);
 tag = item.tag;

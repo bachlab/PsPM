@@ -14,9 +14,9 @@ function item = update_deps(item, varargin)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: update_deps.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 val = subsref(item, substruct('.','val'));
 for k = 1:numel(val)

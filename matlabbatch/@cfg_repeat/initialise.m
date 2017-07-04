@@ -21,9 +21,9 @@ function item = initialise(item, val, dflag)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: initialise.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 if strcmp(val,'<DEFAULTS>')
     item = initialise_def(item, val, dflag);

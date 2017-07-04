@@ -1,5 +1,5 @@
 %-----------------------------------------------------------------------
-% Job saved on 02-Oct-2013 13:46:16 by cfg_util (rev $Rev$)
+% Job saved on 02-Oct-2013 13:46:16 by cfg_util (rev $Rev: 380 $)
 % cfg_basicio BasicIO - Unknown
 % menu_cfg ConfGUI - Unknown
 %-----------------------------------------------------------------------

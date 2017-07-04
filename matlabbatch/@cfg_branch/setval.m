@@ -10,8 +10,8 @@ function item = setval(item, val, dflag)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: setval.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 cfg_message('matlabbatch:setval', 'Setting val{} of branch items via setval() not permitted.');

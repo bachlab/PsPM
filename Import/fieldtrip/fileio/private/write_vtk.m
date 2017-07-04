@@ -10,7 +10,7 @@ function write_vtk(fn, pnt, tri)
 
 % Copyright (C) 2002, Robert Oostenveld
 %
-% $Id$
+% $Id: write_vtk.m 395 2016-12-19 13:51:00Z tmoser $
 
 fid = fopen(fn, 'wt');
 if fid~=-1

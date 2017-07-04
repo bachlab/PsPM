@@ -33,7 +33,7 @@ function [headmodel] = ft_read_vol(filename, varargin)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: ft_read_vol.m 395 2016-12-19 13:51:00Z tmoser $
 
 % optionally get the data from the URL and make a temporary local copy
 filename = fetch_url(filename);

@@ -20,6 +20,10 @@ function [bs, x] = pspm_bf_rprf_e(varargin)
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
 
+% $Id$
+% $Rev$
+
+
 % initialise
 global settings
 if isempty(settings), pspm_init; end;

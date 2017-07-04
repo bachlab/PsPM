@@ -31,7 +31,7 @@ function [fid, sens, label, sens_label] = read_zebris(Fname_zeb,skip)
 % Copyright (C) 2008 Wellcome Trust Centre for Neuroimaging
 
 % Christophe Phillips
-% $Id$
+% $Id: read_zebris.m 395 2016-12-19 13:51:00Z tmoser $
 
 
 % checks and assigments

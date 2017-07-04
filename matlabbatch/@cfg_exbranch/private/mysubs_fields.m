@@ -11,9 +11,9 @@ function [fnames, defaults] = mysubs_fields
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: mysubs_fields.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 fnames={'prog', 'vfiles', 'modality', 'vout', 'sout', 'jout', 'tdeps', 'sdeps','chk','id'};
 defaults={{},{},{},{},[],cfg_inv_out,[],[],false,struct('subs',{},'type',{})};

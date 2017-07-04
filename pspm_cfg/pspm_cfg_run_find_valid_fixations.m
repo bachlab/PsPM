@@ -1,5 +1,8 @@
 function [out] = pspm_cfg_run_find_valid_fixations(job)
 
+% $Id$
+% $Rev$
+
 data_file = job.datafile{1};
 options = struct();
 

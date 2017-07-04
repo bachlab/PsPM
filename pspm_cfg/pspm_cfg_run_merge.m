@@ -1,5 +1,8 @@
 function [out] = pspm_cfg_run_merge(job)
 
+% $Id$
+% $Rev$
+
 % load input files
 infile1 = job.datafiles.first_file;
 infile2 = job.datafiles.second_file;

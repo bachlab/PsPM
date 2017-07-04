@@ -9,9 +9,9 @@ function out = cfg_run_mkdir(job)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_run_mkdir.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 out.dir{1} = fullfile(job.parent{1}, job.name);
 if ~exist(out.dir{1}, 'dir')

@@ -12,9 +12,9 @@ function ltop = cfg_ui_getListboxTop(obj, val, maxval)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_ui_getListboxTop.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$';  %#ok<NASGU>
+rev = '$Rev: 380 $';  %#ok<NASGU>
 
 oltop = get(obj, 'ListboxTop');
 ltop  = min([max(oltop,1), max(val-1,1), maxval]);

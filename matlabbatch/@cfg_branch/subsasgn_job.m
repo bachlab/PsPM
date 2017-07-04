@@ -16,9 +16,9 @@ function item = subsasgn_job(item, subs, val)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: subsasgn_job.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 if isempty(subs)
     item = initialise(item, '<DEFAULTS>', false);

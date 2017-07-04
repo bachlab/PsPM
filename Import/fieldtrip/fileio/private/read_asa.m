@@ -40,7 +40,7 @@ function [val] = read_asa(filename, elem, format, number, token)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: read_asa.m 395 2016-12-19 13:51:00Z tmoser $
 
 fid = fopen(filename, 'rt');
 if fid==-1

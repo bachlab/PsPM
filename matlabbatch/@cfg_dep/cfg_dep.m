@@ -40,9 +40,9 @@ function dep = cfg_dep(varargin)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_dep.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 dep = class(struct('tname','Target', ...
                    'tgt_exbranch', struct('type',{},'subs',{}), ...

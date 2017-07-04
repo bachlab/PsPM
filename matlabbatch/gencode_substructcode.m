@@ -30,9 +30,9 @@ function str = gencode_substructcode(subs, name)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: gencode_substructcode.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 ind = 1;
 if nargin < 2

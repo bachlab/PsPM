@@ -10,9 +10,9 @@ function add2 = cfg_example_add2
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_example_add2.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 %% Input Item
 input1         = cfg_entry; % This is the generic data entry item

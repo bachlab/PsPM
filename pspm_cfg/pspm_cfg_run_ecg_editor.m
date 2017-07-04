@@ -1,5 +1,8 @@
 function pspm_cfg_run_ecg_editor(job)
 
+% $Id$
+% $Rev$
+
 options = struct();
 fn = job.datafile{1};
 

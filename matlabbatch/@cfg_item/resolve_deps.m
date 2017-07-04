@@ -18,9 +18,9 @@ function [val, sts] = resolve_deps(item, cj)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: resolve_deps.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 val1 = cell(size(item.val{1}));
 for k = 1:numel(item.val{1})

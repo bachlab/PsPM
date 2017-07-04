@@ -3,6 +3,9 @@ function [params] = pspm_cfg_run_glm(job, def_filter)
 % pspm_cfg_run_glm_<modality> which then calls the pspm_glm function after
 % the appropriate parameters have been passed/changed.
 
+% $Id$
+% $Rev$
+
 global settings
 if isempty(settings), pspm_init; end;
 

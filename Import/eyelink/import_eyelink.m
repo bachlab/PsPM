@@ -9,8 +9,8 @@ function [data] = import_eyelink(filename)
 %__________________________________________________________________________
 % PsPM 3.1
 %
-% $Id$
-% $Rev$
+% $Id: import_eyelink.m 450 2017-07-03 15:17:02Z tmoser $
+% $Rev: 450 $
 
 
 %% Notes for data structure

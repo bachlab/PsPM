@@ -22,6 +22,9 @@ function [bf, x] = pspm_bf_sebrf(varargin)
 % PsPM 3.1
 % (C) 2015 Tobias Moser (University of Zurich)
 
+% $Id$
+% $Rev$
+
 % input checks 
 % -------------------------------------------------------------------------
 global settings;

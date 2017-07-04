@@ -1,5 +1,5 @@
 %-----------------------------------------------------------------------
-% Job configuration created by cfg_util (rev $Rev$)
+% Job configuration created by cfg_util (rev $Rev: 380 $)
 %-----------------------------------------------------------------------
 matlabbatch{1}.menu_cfg.menu_struct.conf_choice.type = 'cfg_choice';
 matlabbatch{1}.menu_cfg.menu_struct.conf_choice.name = 'File/Dir Operations';

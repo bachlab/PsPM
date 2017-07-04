@@ -11,9 +11,9 @@ function [newjobs, uind] = cfg_load_jobs(job)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_load_jobs.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 if ischar(job)
     filenames = cellstr(job);

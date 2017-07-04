@@ -10,9 +10,9 @@ function varargout = cfg_onscreen(fg)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_onscreen.m 382 2016-11-08 09:46:40Z tmoser $
 
-rev = '$Rev$'; 
+rev = '$Rev: 382 $'; 
 
 % save figure units - use pixels here
 units = get(fg,'Units');

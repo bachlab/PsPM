@@ -10,9 +10,9 @@ function dep = cfg_vout_file_move(job)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_vout_file_move.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 if ~isfield(job.action,'delete')
     dep = cfg_dep;

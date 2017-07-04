@@ -55,9 +55,9 @@ function [id, stop, val] = list(item, spec, tropts, fn)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: list.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 if match(item, spec)
     id = {struct('type', {}, 'subs', {})};

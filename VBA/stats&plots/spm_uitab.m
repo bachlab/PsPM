@@ -26,7 +26,7 @@ function [handles] = spm_uitab(hparent,labels,callbacks,...
 % Copyright (C) 2008 Wellcome Trust Centre for Neuroimaging
 
 % Jean Daunizeau
-% $Id$
+% $Id: spm_uitab.m 378 2016-11-07 13:17:49Z tmoser $
 
 Ntabs = length(labels);
 

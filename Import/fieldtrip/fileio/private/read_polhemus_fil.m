@@ -27,7 +27,7 @@ function [fid, sens, label] = read_polhemus_fil(Fname_pol,skip)
 % Copyright (C) 2008 Wellcome Trust Centre for Neuroimaging
 
 % Jeremie Mattout
-% $Id$
+% $Id: read_polhemus_fil.m 395 2016-12-19 13:51:00Z tmoser $
 
 % checks and assigments
 %--------------------------------------------------------------------------

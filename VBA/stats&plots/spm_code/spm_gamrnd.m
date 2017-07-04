@@ -19,7 +19,7 @@ function r = spm_gamrnd(a,b,varargin)
 % Copyright (C) 2008 Wellcome Trust Centre for Neuroimaging
 
 % Guillaume Flandin
-% $Id$
+% $Id: spm_gamrnd.m 378 2016-11-07 13:17:49Z tmoser $
 
 %-This is merely the help file for the compiled routine
 error('spm_gamrnd.c not compiled - see Makefile');

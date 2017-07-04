@@ -10,8 +10,8 @@ function out = cfg_example_run_cumsum1(job)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_example_run_cumsum1.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 out.cs = cumsum(job.a);

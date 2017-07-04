@@ -77,7 +77,7 @@ if exist(fn, 'file')
 else
     warning('ID:invalid_input', 'File ''%s'' not found.', fn);
     return;
-end;
+end
 
 end_hdr = false;
 
@@ -96,9 +96,9 @@ while ~end_hdr && ~feof(fileID)
         if ~isempty(tokens)
             out.record_date = datestr(datenum(tokens{1}{1},'dd-mm-yyyy'), 'dd-mmm-yyyy');
             out.record_time = tokens{1}{2};
-        end;
-    end;
-end;
+        end
+    end
+end
 
 fseek(fileID, 0, 'bof');
 
@@ -115,7 +115,7 @@ dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter, ...
 catch
     fclose('all');
     warning('ID:invalid_input', 'Cannot read file ''%s''.', fn); return;
-end;
+end
 fclose('all');
 
 % handle triggers
@@ -149,7 +149,7 @@ out.trigger.sr = sr;
 % convert data into double values
 for j = 1:numel(dataArray)
     dataArrayDouble(:,j) = str2double(dataArray{j});
-end;
+end
 
 dataArrayDouble(:,sum(~isnan(dataArrayDouble))==0) = [];
 

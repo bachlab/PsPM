@@ -41,7 +41,7 @@ function [varargout] = read_plexon_nex(filename, varargin)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: read_plexon_nex.m 395 2016-12-19 13:51:00Z tmoser $
 
 % parse the optional input arguments
 hdr       = ft_getopt(varargin, 'header');

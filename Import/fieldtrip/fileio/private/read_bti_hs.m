@@ -23,7 +23,7 @@ function [output, firstIndexPoint] = read_4d_hs( filename, outfile)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: read_bti_hs.m 395 2016-12-19 13:51:00Z tmoser $
 
 if nargin == 1
     outfile = [];

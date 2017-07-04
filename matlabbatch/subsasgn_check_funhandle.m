@@ -11,9 +11,9 @@ function sts = subsasgn_check_funhandle(val)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: subsasgn_check_funhandle.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 sts = isempty(val) || isa(val, 'function_handle') || ...
     (ischar(val) && (any(exist(val) == 2:6) || ~isempty(which(val))));

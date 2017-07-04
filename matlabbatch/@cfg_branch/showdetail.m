@@ -10,9 +10,9 @@ function str = showdetail(item)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: showdetail.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 str = showdetail(item.cfg_item);
 str{end+1} = 'Set the options listed as a struct:';

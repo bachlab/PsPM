@@ -21,7 +21,7 @@ function [ts] = timestamp_plexon(tsl, tsh)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: timestamp_plexon.m 395 2016-12-19 13:51:00Z tmoser $
 
 if ~isa(tsl, 'uint32')
   error('invalid input');

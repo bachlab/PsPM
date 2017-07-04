@@ -15,9 +15,9 @@ function [sts, vind] = checksubs_job(item, subs, dflag)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: checksubs_job.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 if strcmp(subs(1).type, '.')
     vind = find(strcmp(subs(1).subs, tagnames(item, dflag)),1);

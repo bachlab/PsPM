@@ -10,9 +10,9 @@ function out = cfg_run_save_vars(job)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_run_save_vars.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 [p, n, e] = fileparts(job.name);
 out.file{1} = fullfile(job.outdir{1}, [n '.mat']);

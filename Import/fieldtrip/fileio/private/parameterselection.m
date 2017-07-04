@@ -29,7 +29,7 @@ function [select] = parameterselection(param, data)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: parameterselection.m 395 2016-12-19 13:51:00Z tmoser $
 
 if ischar(param)
   param = {param};   % it should be a cell-array

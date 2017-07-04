@@ -26,7 +26,7 @@ function grad = yokogawa2grad_new(hdr)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: yokogawa2grad_new.m 395 2016-12-19 13:51:00Z tmoser $
 
 % The following line is only a safety measure: No function of the toolbox
 % is actually called in this routine.

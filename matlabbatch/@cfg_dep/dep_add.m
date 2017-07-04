@@ -9,9 +9,9 @@ function dep = dep_add(cdep, dep, ntgt_input, njtsubs)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: dep_add.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 for k = 1:numel(cdep)
     cdep(k).tgt_input = [ntgt_input cdep(k).tgt_input];

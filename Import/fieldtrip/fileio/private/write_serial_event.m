@@ -25,7 +25,7 @@ function write_serial_event(filename, event)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: write_serial_event.m 395 2016-12-19 13:51:00Z tmoser $
 
 [port, opt] = filetype_check_uri(filename);
 temp=instrfind; %% find isntruments including serial ports

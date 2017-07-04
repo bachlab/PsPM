@@ -10,9 +10,9 @@ function dep = cfg_vout_mkdir(job)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_vout_mkdir.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 dep            = cfg_dep;
 if isa(job.name, 'cfg_dep')
     dep.sname  = sprintf('Make Directory');

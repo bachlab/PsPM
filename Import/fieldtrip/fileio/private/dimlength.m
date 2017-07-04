@@ -18,7 +18,7 @@ function [n, fn] = dimlength(data, seldim, fld)
 
 % Copyright (C) 2010, Jan-Mathijs Schoffelen
 %
-% $Id$
+% $Id: dimlength.m 395 2016-12-19 13:51:00Z tmoser $
 
 if nargin<3
   fld = 'dimord';

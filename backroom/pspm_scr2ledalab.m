@@ -12,12 +12,15 @@ function [sts, outfile] = pspm_scr2ledalab(datafile, outfile, options)
 %                       options.norm: normalise data (default: no)
 %
 %__________________________________________________________________________
-% SCRalyze
+% PsPM
 % (C) 2012 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 % v003 drb 04.11.2013 allow normalisation & bugfixes
 % v002 drb 26.09.2012 fixed event import
 % v001 drb 27.08.2012
+
+% $Id$
+% $Rev$
 
 % initialise
 %--------------------------------------------------------------------------

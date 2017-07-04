@@ -88,7 +88,7 @@ function [t,sts] = cfg_getfile(varargin)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % John Ashburner and Volkmar Glauche
-% $Id$
+% $Id: cfg_getfile.m 380 2016-11-08 07:47:23Z tmoser $
 
 t = {};
 sts = false;

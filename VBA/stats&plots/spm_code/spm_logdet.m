@@ -10,7 +10,7 @@ function H = spm_logdet(C)
 % Copyright (C) 2008-2011 Wellcome Trust Centre for Neuroimaging
 
 % Karl Friston and Ged Ridgway
-% $Id$
+% $Id: spm_logdet.m 378 2016-11-07 13:17:49Z tmoser $
 
 % Note that whether sparse or full, rank deficient cases are handled in the
 % same way as in spm_logdet revision 4068, using svd on a full version of C

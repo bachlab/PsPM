@@ -9,9 +9,9 @@ function cfg = cfg_example_master
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_example_master.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 %% Collect Modules to add two Numbers
 add        = cfg_repeat; % A repeat collects a variable number of items from its .values field in its .val field

@@ -26,7 +26,7 @@ function ft_destroy_buffer
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: ft_destroy_buffer.m 395 2016-12-19 13:51:00Z tmoser $
 
 % clearing the mex file from memory will cause the function registered with
 % mexAtExit to be executed. This function will then stop the threads and

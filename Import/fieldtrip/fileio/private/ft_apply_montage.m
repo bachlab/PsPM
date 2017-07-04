@@ -64,7 +64,7 @@ function [input] = ft_apply_montage(input, montage, varargin)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: ft_apply_montage.m 395 2016-12-19 13:51:00Z tmoser $
 
 if iscell(input) && iscell(input)
   % this represents combined EEG, ECoG and/or MEG

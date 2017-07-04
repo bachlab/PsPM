@@ -45,7 +45,7 @@ function dat = read_biosemi_bdf(filename, hdr, begsample, endsample, chanindx)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: read_biosemi_bdf.m 395 2016-12-19 13:51:00Z tmoser $
 
 if nargin==1
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

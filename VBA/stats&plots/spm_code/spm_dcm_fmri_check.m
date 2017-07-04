@@ -32,7 +32,7 @@ function [DCM] = spm_dcm_fmri_check(P)
 % Copyright (C) 20012 Wellcome Trust Centre for Neuroimaging
 % Karl Friston
  
-% $Id$
+% $Id: spm_dcm_fmri_check.m 378 2016-11-07 13:17:49Z tmoser $
  
 %-Load DCM structure
 %--------------------------------------------------------------------------

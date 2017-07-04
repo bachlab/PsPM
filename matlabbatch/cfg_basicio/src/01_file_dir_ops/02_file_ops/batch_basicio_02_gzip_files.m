@@ -1,5 +1,5 @@
 %-----------------------------------------------------------------------
-% Job saved on 01-Dec-2015 13:23:09 by cfg_util (rev $Rev$)
+% Job saved on 01-Dec-2015 13:23:09 by cfg_util (rev $Rev: 380 $)
 % spm SPM - SPM12 (12.1)
 % cfg_basicio BasicIO - Unknown
 % dtijobs DTI tools - Unknown

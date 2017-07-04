@@ -1,5 +1,5 @@
 %-----------------------------------------------------------------------
-% Job configuration created by cfg_util (rev $Rev$)
+% Job configuration created by cfg_util (rev $Rev: 380 $)
 %-----------------------------------------------------------------------
 matlabbatch{1}.cfg_basicio.cfg_named_input.name = 'a';
 matlabbatch{1}.cfg_basicio.cfg_named_input.input = '<UNDEFINED>';

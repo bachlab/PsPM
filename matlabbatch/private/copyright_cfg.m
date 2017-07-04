@@ -6,6 +6,6 @@
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: copyright_cfg.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; 
+rev = '$Rev: 380 $'; 

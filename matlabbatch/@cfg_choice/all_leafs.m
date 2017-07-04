@@ -13,9 +13,9 @@ function ok = all_leafs(item)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: all_leafs.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 % Check whether the required number of val fields is present. This is
 % done in all_set_item for in-tree nodes.

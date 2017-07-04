@@ -119,9 +119,9 @@ function cfg_serial(guifcn, job, varargin)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_serial.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 cfg_message('matlabbatch:deprecated:cfg_serial', '''cfg_serial'' is deprecated. Please use cfg_util(''filljob[ui]'',...) to fill a job in serial mode.');
 if ischar(job)

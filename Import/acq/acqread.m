@@ -37,7 +37,6 @@ function [info, data] = acqread(filename)
 %    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 %    02110-1301, USA
 
-
 %% Opening file...
 
 error(nargchk(0,1,nargin))

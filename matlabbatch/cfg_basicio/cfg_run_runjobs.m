@@ -12,9 +12,9 @@ function out = cfg_run_runjobs(job)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_run_runjobs.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 if isfield(job.save, 'savejobs')
     [p, n, e] = fileparts(job.save.savejobs.outstub);

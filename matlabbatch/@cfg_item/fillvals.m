@@ -18,9 +18,9 @@ function [item, inputs] = fillvals(item, inputs, infcn)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: fillvals.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 if ~all_set_item(item)
     if ~isempty(inputs)

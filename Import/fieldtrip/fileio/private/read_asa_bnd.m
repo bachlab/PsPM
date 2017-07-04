@@ -21,7 +21,7 @@ function bnd = read_asa_bnd(fn)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: read_asa_bnd.m 395 2016-12-19 13:51:00Z tmoser $
 
 Npnt = read_asa(fn, 'NumberPositions=', '%d');
 Ntri = read_asa(fn, 'NumberPolygons=', '%d');

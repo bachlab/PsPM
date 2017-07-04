@@ -28,7 +28,7 @@ function [dat] = read_bucn_nirsdata(filename, hdr, begsample, endsample, chanind
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: read_bucn_nirsdata.m 395 2016-12-19 13:51:00Z tmoser $
 
 % initialize some variables
 nchan = numel(hdr.label);

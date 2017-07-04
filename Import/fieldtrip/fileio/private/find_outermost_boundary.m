@@ -28,7 +28,7 @@ function [outermost, inside] = find_outermost_boundary(bnd)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: find_outermost_boundary.m 395 2016-12-19 13:51:00Z tmoser $
 
 ncmp = length(bnd);
 

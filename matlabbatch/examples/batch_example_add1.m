@@ -1,5 +1,5 @@
 %-----------------------------------------------------------------------
-% Job configuration created by cfg_util (rev $Rev$)
+% Job configuration created by cfg_util (rev $Rev: 380 $)
 %-----------------------------------------------------------------------
 matlabbatch{1, 1}.cfg_toy{1, 1}.add2{1, 1}.cfg_example_add1.a = double(1);
 matlabbatch{1, 1}.cfg_toy{1, 1}.add2{1, 1}.cfg_example_add1.b = double(2);

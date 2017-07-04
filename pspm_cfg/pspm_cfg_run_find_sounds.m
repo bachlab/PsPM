@@ -1,5 +1,8 @@
 function [out] = pspm_cfg_run_find_sounds(job)
 
+% $Id$
+% $Rev$
+
 out = NaN;
 
 file = job.datafile{1};

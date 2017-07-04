@@ -18,9 +18,9 @@ function [cj, tdeps, cflag, dflag] = add_to_source(tdeps, cj)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: add_to_source.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 
 found = false(size(tdeps));
 cflag = false(size(tdeps));

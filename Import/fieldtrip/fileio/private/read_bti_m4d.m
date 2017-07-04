@@ -23,7 +23,7 @@ function [msi] = read_bti_m4d(filename)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: read_bti_m4d.m 395 2016-12-19 13:51:00Z tmoser $
 
 [p, f, x] = fileparts(filename);
 if ~strcmp(x, '.m4d')

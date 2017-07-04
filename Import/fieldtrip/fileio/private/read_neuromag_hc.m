@@ -41,7 +41,7 @@ function [hc] = read_neuromag_hc(filename)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: read_neuromag_hc.m 395 2016-12-19 13:51:00Z tmoser $
 
 % read neuromag fif file
 hdr = ft_read_header(filename, 'checkmaxfilter', false);

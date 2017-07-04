@@ -24,7 +24,7 @@ function [dat] = read_neuralynx_cds(filename, hdr, begsample, endsample, chanind
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: read_neuralynx_cds.m 395 2016-12-19 13:51:00Z tmoser $
 
 needhdr = (nargin==1);
 needdat = (nargin>=2);

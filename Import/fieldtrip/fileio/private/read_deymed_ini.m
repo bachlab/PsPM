@@ -25,7 +25,7 @@ function hdr = read_deymed_ini(filename)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: read_deymed_ini.m 395 2016-12-19 13:51:00Z tmoser $
 
 [p, f, x] = fileparts(filename);
 headerfile = fullfile(p, [f '.ini']);

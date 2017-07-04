@@ -27,7 +27,7 @@ function [dat] = ft_fetch_data(data, varargin)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: ft_fetch_data.m 395 2016-12-19 13:51:00Z tmoser $
 
 % check whether input is data
 skipcheckdata = ft_getopt(varargin, 'skipcheckdata');

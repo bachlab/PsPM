@@ -10,9 +10,9 @@ function c0 = cfg_mlbatch_root
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_mlbatch_root.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 c0      = cfg_repeat;
 c0.name = 'MATLAB Batch System';
 c0.tag  = 'matlabbatch';

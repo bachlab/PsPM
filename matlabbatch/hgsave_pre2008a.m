@@ -57,9 +57,9 @@ function outfile = hgsave_pre2008a(figname,doreplace)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: hgsave_pre2008a.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
  
 hvar = load(figname,'-mat');
 hstr = gencode(hvar);

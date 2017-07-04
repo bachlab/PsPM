@@ -21,7 +21,7 @@ function [val] = filetype_check_extension(filename, ext)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: filetype_check_extension.m 395 2016-12-19 13:51:00Z tmoser $
 
 % these are for remembering the type on subsequent calls with the same input arguments
 persistent previous_argin previous_argout

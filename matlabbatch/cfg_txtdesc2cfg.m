@@ -69,9 +69,9 @@ function cfg = cfg_txtdesc2cfg(fname)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: cfg_txtdesc2cfg.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; 
+rev = '$Rev: 380 $'; 
 
 
 % Read file

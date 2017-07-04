@@ -30,7 +30,7 @@ function [dat] = read_yokogawa_data_new(filename, hdr, begsample, endsample, cha
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: read_yokogawa_data_new.m 395 2016-12-19 13:51:00Z tmoser $
 
 if ~ft_hastoolbox('yokogawa_meg_reader')
     error('cannot determine whether Yokogawa toolbox is present');

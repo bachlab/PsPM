@@ -49,7 +49,7 @@ function ft_write_data(filename, dat, varargin)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: ft_write_data.m 395 2016-12-19 13:51:00Z tmoser $
 
 global data_queue    % for fcdc_global
 global header_queue  % for fcdc_global

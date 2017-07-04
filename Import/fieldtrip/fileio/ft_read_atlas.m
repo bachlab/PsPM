@@ -46,7 +46,7 @@ function atlas = ft_read_atlas(filename, varargin)
 %    You should have received a copy of the GNU General Public License
 %    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
+% $Id: ft_read_atlas.m 395 2016-12-19 13:51:00Z tmoser $
 
 % deal with multiple filenames
 if isa(filename, 'cell')

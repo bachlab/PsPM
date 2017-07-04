@@ -11,9 +11,9 @@ function ok = all_leafs(item)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id$
+% $Id: all_leafs.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev$'; %#ok
+rev = '$Rev: 380 $'; %#ok
 % do not check anything else than item class
 ok = isa(item, 'cfg_leaf');
 
