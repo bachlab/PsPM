@@ -59,7 +59,7 @@ else
     units = data{1}.units;
     % samplerate
     sampleRate = data{1}.sampleRate;
-end;
+end
 
 for k = 1:numel(import)
     if strcmpi(import{k}.type, 'marker')
@@ -79,8 +79,8 @@ for k = 1:numel(import)
         import{k}.data = channels(:, chan);
         import{k}.units = units{import{k}.channel};
         sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan);
-    end;
-end;
+    end
+end
 
 % extract record time and date / should be in all sessions the same
 sourceinfo.date = data{1}.record_date;

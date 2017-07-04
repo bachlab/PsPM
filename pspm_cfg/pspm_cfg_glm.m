@@ -558,7 +558,8 @@ filter.help   = {['Specify how you want filter the ',vars.modality,' data.']};
 glm       = cfg_exbranch;
 glm.name  = 'GLM';
 glm.tag   = 'glm';
-glm.val   = {modelfile, outdir, chan, timeunits, session_rep, latency, bf, norm, filter, overwrite};
+glm.val   = {modelfile, outdir, chan, timeunits, session_rep, latency, ...
+    bf, norm, filter, overwrite};
 %glm_scr.prog  = ;
 glm.vout  = @pspm_cfg_vout_glm;
 glm.help  = {...
