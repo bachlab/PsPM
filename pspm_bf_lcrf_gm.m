@@ -1,6 +1,11 @@
 function [bs, x] = pspm_bf_lcrf_gm(varargin)
 % SCR_bf_lcrf_gm  
 % Description: 
+% Gamma response function for pupil constriction.
+%
+% Pupil size models were developed with pupil size data recorded as
+% diameter values. Therefore pupil size data analysed using these models 
+% should also be in diameter.
 %
 % FORMAT: [bs, x] = pspm_bf_lcrf_gm(td, n, offset, a, b, A) 
 %     OR: [bs, x] = pspm_bf_lcrf_gm([td, n, offset, a, b, A])

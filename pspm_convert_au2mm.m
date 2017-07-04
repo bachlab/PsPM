@@ -35,7 +35,7 @@ function [sts, out] = pspm_convert_au2mm(fn, chan, options)
 % initialise
 % -------------------------------------------------------------------------
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 sts = -1;
 out = struct();
 
@@ -43,19 +43,19 @@ if ~exist('options', 'var')
     options = struct();
 elseif ~isstruct(options)
     warning('ID:invalid_input', 'options is not a struct.'); return;
-end;
+end
 
 if ~isfield(options, 'offset')
     options.offset = 0.07;
-end;
+end
 
 if ~isfield(options, 'multiplicator')
     options.multiplicator = 1/1325;
-end;
+end
 
 if ~isfield(options, 'channel_action')
     options.channel_action = 'add';
-end;
+end
     
 if ~ischar(fn)
     warning('ID:invalid_input', 'fn is not a char.'); return;
@@ -67,7 +67,7 @@ elseif ~isnumeric(options.multiplicator)
     warning('ID:invalid_input', 'options.multiplicator is not numeric.'); return;
 elseif ~any(strcmpi(options.channel_action, {'add', 'replace'}))
     warning('ID:invalid_input', 'options.channel_action must be either ''add'' or ''replace''.'); return;
-end;
+end
 
 [f_sts, infos, data] = pspm_load_data(fn, chan);
 
@@ -83,7 +83,7 @@ if f_sts == 1
         out.fn = fn;
     else
         warning('ID:invalid_input', 'Cannot convert since elcl_proc does not seem to be ''ellipse''.');
-    end;
+    end
 else
     warning('ID:invalid_input', 'Error while load data.');
-end;
+end

@@ -2,6 +2,10 @@ function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 % function to process raw lux data and transfer it into two nuisance
 % regressors (dilation and constriction) for glm
 %
+% Pupil size models were developed with pupil size data recorded as
+% diameter values. Therefore pupil size data analysed using these models 
+% should also be in diameter.
+%
 % [sts, out] = pspm_process_illuminance(ldata, sr, options)
 %   Inputs:
 %       ldata:      illuminance data as (cell of) 1x1 double or filename
@@ -40,7 +44,7 @@ function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 % initialise
 % -------------------------------------------------------------------------
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 sts = -1;
 out = {};
 
@@ -49,28 +53,28 @@ if nargin < 3
     options = struct();
 elseif ~isstruct(options)
     warning('ID:invalid_input', 'Options must be a structure.'); return;
-end;
+end
 
 % setup default values
 if ~isfield(options, 'transfer')
     options.transfer = [49.79,-1.05,-0.50]; 
-end;
+end
 if ~isfield(options, 'bf') || ~isstruct(options.bf)
     options.bf = struct();
-end;
+end
 if ~isfield(options.bf, 'duration')
     options.bf.duration = 20;
-end;
+end
 if ~isfield(options.bf, 'offset')
     options.bf.offset = .2;
-end;
-try options.bf.dilation; catch; options.bf.dilation = struct(); end;
-try options.bf.constriction; catch; options.bf.constriction = struct(); end;
-try options.bf.dilation.fhandle; catch; options.bf.dilation.fhandle = @pspm_bf_ldrf_gm; end;
-try options.bf.constriction.fhandle; catch; options.bf.constriction.fhandle = @pspm_bf_lcrf_gm; end;
-try options.fn; catch; options.fn = ''; end;
-try options.overwrite; catch; options.overwrite = false; end;
-try options.dont_ask_overwrite; catch; options.dont_ask_overwrite = false; end;
+end
+try options.bf.dilation; catch; options.bf.dilation = struct(); end
+try options.bf.constriction; catch; options.bf.constriction = struct(); end
+try options.bf.dilation.fhandle; catch; options.bf.dilation.fhandle = @pspm_bf_ldrf_gm; end
+try options.bf.constriction.fhandle; catch; options.bf.constriction.fhandle = @pspm_bf_lcrf_gm; end
+try options.fn; catch; options.fn = ''; end
+try options.overwrite; catch; options.overwrite = false; end
+try options.dont_ask_overwrite; catch; options.dont_ask_overwrite = false; end
 
 % ensure parameters are correct
 % -------------------------------------------------------------------------
@@ -108,7 +112,7 @@ elseif ~isa(options.bf.dilation.fhandle, 'function_handle')
 elseif ~isnumeric(options.transfer) || ~isequal(size(options.transfer), [1 3])
     warning('ID:invalid_input','options.transfer must be a 1x3 numeric.');
     return;
-end;
+end
 
 % if one is not a cell
 if ~(iscell(ldata) && iscell(sr))
@@ -118,10 +122,10 @@ if ~(iscell(ldata) && iscell(sr))
         sr = {sr};
         if ~isempty(options.fn)
             options.fn = {options.fn};
-        end;
+        end
     else
         warning('ID:invalid_input', 'If either ldata or sr is a cell the other has to be a cell too.'); return;
-    end;
+    end
 else
     % both are cells check if content has correct format
     if any(cellfun(@(x) ~ischar(x) && ~isnumeric(x), ldata))
@@ -130,8 +134,8 @@ else
     elseif any(~cellfun(@(x) isnumeric(x), sr))
         warning('ID:invalid_input', 'Contents of sample rate have to be numeric.');
         return;
-    end;
-end;
+    end
+end
 
 if ~isequal(size(ldata), size(sr))
     warning('ID:invalid_input', 'Dimension of ldata and sr is not the same.');
@@ -139,7 +143,7 @@ if ~isequal(size(ldata), size(sr))
 elseif ~isempty(options.fn) && ~isequal(size(ldata), size(options.fn))
     warning('ID:invalid_input', 'Dimension of ldata and options.fn is not the same.');
     return;
-end;
+end
 
 % cycle through data 
 [w, h] = size(ldata);
@@ -158,19 +162,19 @@ for i = 1:w
                         lumd = lf_vars.Lx{1,1};
                     else
                         lumd = lf_vars.Lx;
-                    end;
+                    end
                     
                 else
                     warning('ID:invalid_data_structure', 'File ''%s'' contains no variable called ''Lx''', lum_file);
                     return;
-                end;
+                end
             else
                warning('ID:non_existent_file', 'File ''%s'' does not exist.', ldata{i,j});
                return;
-            end;
+            end
         else
             lumd = ldata{i,j};
-        end;
+        end
         
         s = size(lumd);
         if (s(1) ~= 1 && s(2) ~= 1) || ~isnumeric(lumd) || isempty(lumd)
@@ -180,14 +184,14 @@ for i = 1:w
         elseif s(1) < s(2)
             % transpose data
             lumd = lumd';
-        end;
+        end
         
         lsr = sr{i,j};
         n_bf = options.bf.duration*lsr;
         
         if n_bf < 1 
             warning('ID:invalid_input', 'Unrealistic combination of bf duration and sample rate.'); return;
-        end;
+        end
         
         lumd = [repmat(lumd(1),n_bf,1);lumd];
                 
@@ -262,10 +266,10 @@ for i = 1:w
                     save_file = menu(sprintf('File (%s) already exists. Overwrite?', fn), 'yes', 'no');
                 else
                     save_file = 0;
-                end;
+                end
             else
                 save_file = 1;
-            end;
+            end
             
             if save_file
                 R = regd;
@@ -273,17 +277,17 @@ for i = 1:w
                 reg{i,j} = fn;
             else
                 reg{i,j} = regd;
-            end;
+            end
         else
             reg{i,j} = regd;
-        end;
-    end;
+        end
+    end
     
-end;
+end
 
 if isequal(size(reg),[1 1])
     reg = reg{1};
-end;
+end
 
 out = reg;
 

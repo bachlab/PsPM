@@ -24,7 +24,7 @@ function [varargout] = pspm_convert_area2diameter(varargin)
 % initialise
 % -------------------------------------------------------------------------
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 sts = -1;
 d = [];
 
@@ -35,7 +35,7 @@ if numel(varargin) == 1
     
     if ~isnumeric(area)
         warning('ID:invalid_input', 'area is not numeric'); return;
-    end;
+    end
     mode = 'vector';
 else
     fn = varargin{1};
@@ -45,21 +45,21 @@ else
         options = varargin{3};
     else
         options = struct();
-    end;
+    end
     
     if ~isfield(options, 'channel_action')
         options.channel_action = 'replace';
-    end;
+    end
     
     if ~any(strcmpi(options.channel_action, {'replace', 'add'}))
         warning('ID:invalid_input', 'options.channel_action should be either ''add'' or ''replace''.'); return;
-    end;
+    end
     
     mode = 'file';
     
     [~, ~, data] = pspm_load_data(fn, chan);
     area = data{1}.data;
-end;
+end
 
 d = 2.*sqrt(area.*pi);
 sts = 1;
@@ -72,10 +72,10 @@ if strcmpi(mode, 'file')
     % if not metric, replace area with diameter
     if strcmpi(data{1}.header.units, 'area')
         data{1}.header.units = 'diameter';
-    end;
+    end
     [~, infos] = pspm_write_channel(fn, data{1}, options.channel_action);
     varargout{2} = infos.channel;
 else
     varargout{2} = d;
-end;
+end
 varargout{1} = sts;
