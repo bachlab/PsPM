@@ -3,8 +3,8 @@ function [bs, x] = pspm_bf_ldrf_gu(varargin)
 % Description: 
 % Gaussian response function for pupil dilation.
 %
-% Pupil size models were developed with pupil size data recorded as
-% diameter values. Therefore pupil size data analysed using these models 
+% Pupil size models were developed with pupil size data recorded in
+% diameter values. Therefore pupil size data analyzed using these models 
 % should also be in diameter.
 %
 % FORMAT: [bs, x] = pspm_bf_ldrf_gu(td, n, offset, p1, p2, p3, p4) 

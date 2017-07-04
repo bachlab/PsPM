@@ -3,8 +3,8 @@ function [bs, x] = pspm_bf_ldrf_gm(varargin)
 % Description: 
 % Gamma response function for pupil dilation.
 %
-% Pupil size models were developed with pupil size data recorded as
-% diameter values. Therefore pupil size data analysed using these models 
+% Pupil size models were developed with pupil size data recorded in
+% diameter values. Therefore pupil size data analyzed using these models 
 % should also be in diameter.
 %
 % FORMAT: [bs, x] = pspm_bf_ldrf_gm(td, n, offset, a, b, A) 

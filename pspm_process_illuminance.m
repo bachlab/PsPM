@@ -2,8 +2,8 @@ function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 % function to process raw lux data and transfer it into two nuisance
 % regressors (dilation and constriction) for glm
 %
-% Pupil size models were developed with pupil size data recorded as
-% diameter values. Therefore pupil size data analysed using these models 
+% Pupil size models were developed with pupil size data recorded in
+% diameter values. Therefore pupil size data analyzed using these models 
 % should also be in diameter.
 %
 % [sts, out] = pspm_process_illuminance(ldata, sr, options)
