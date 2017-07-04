@@ -69,6 +69,9 @@ for k = 1:numel(import)
         % marker info is read and set (in this instance) but
         % imported data cannot be read at the moment (in later instances)
         import{k}.markerinfo = markerinfos;
+        
+        % use ascending flank for translation from continuous to events
+        import{k}.flank = 'ascending';
     else
         chan = import{k}.channel;
         if chan > size(channels, 2), warning('ID:channel_not_contained_in_file', 'Column %02.0f not contained in file %s.\n', chan, datafile); return; end;

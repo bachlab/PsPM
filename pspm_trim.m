@@ -32,7 +32,7 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
 % initialise
 % -------------------------------------------------------------------------
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 newdatafile = [];
 
 % check input arguments
@@ -45,13 +45,13 @@ elseif nargin<3
     warning('ID:invalid_input', 'No end point given.\n'); return;
 elseif nargin<4
     warning('ID:invalid_input', 'No reference given.\n'); return;
-end;
+end
 
 if ~((ischar(from) && strcmpi(from, 'none')) || (isnumeric(from) && numel(from) == 1)) 
     warning('ID:invalid_input', 'No valid start point given.\n'); return;
 elseif ~((ischar(to) && strcmpi(to, 'none')) || (isnumeric(to) && numel(to) == 1))
     warning('ID:invalid_input', 'No end point given'); return;
-end;
+end
 
 if strcmpi(reference, 'marker')
     getmarker = 1;
@@ -65,23 +65,23 @@ elseif isnumeric(reference) && numel(reference) == 2
     % check if reference markers are valid ---
     if startmarker < 1 || endmarker < startmarker
         warning('ID:invalid_input', 'No valid reference markers.\n'); return;
-    end;
+    end
 elseif strcmpi(reference, 'file')
     getmarker = 0;
 else
     warning('ID:invalid_input', 'Invalid reference option ''%s''', reference); return;
-end;
+end
 
 % set options ---
 try
     options.overwrite; 
 catch
     options.overwrite = 0;
-end;
+end
 
 if ~isfield(options,'marker_chan_num') || ~isnumeric(options.marker_chan_num) || numel(options.marker_chan_num) > 1
     options.marker_chan_num = 0;
-end;
+end
 
 % check data file argument --
 if ischar(datafile) || isstruct(datafile)
@@ -90,7 +90,7 @@ elseif iscell(datafile)
     D = datafile;
 else
     warning('Data file must be a char, cell, or struct.');
-end;
+end
 clear datafile
 
 % work on all data files
@@ -104,7 +104,7 @@ for d=1:numel(D)
         fprintf('Trimming ... ');
     else
         fprintf('Trimming %s ... ', datafile);
-    end;
+    end
     
     % check and get datafile ---
     [sts, infos, data] = pspm_load_data(datafile, 0);
@@ -117,18 +117,20 @@ for d=1:numel(D)
             end
         else
             [nsts, ninfos, ndata] = pspm_load_data(datafile, 'marker');
-        end;
+        end
         sts = [sts; nsts];
         events = ndata{1}.data;
-        if isempty(endmarker), endmarker = numel(events); end;
+        if isempty(endmarker), endmarker = numel(events); end
         clear nsts ninfos ndata
         
         if isempty(events)
-            warning('ID:marker_out_of_range', 'Marker channel is empty. Cannot use as a reference.');
+            warning('ID:marker_out_of_range', ...
+                'Marker channel (%i) is empty. Cannot use as a reference.', ...
+                options.marker_chan_num);
             return;
-        end;
-    end;
-    if any(sts == -1), newdatafile = []; break; end;
+        end
+    end
+    if any(sts == -1), newdatafile = []; break; end
     
     % convert from and to into time in seconds ---
     if ischar(from) % 'none'
@@ -138,41 +140,42 @@ for d=1:numel(D)
             startpoint = events(startmarker) + from;
         else         % 'file'
             startpoint = from;
-        end;
-    end;
+        end
+    end
     if ischar(to) % 'none'
-        endpoint=infos.duration;
+        endpoint = infos.duration;
     else
         if getmarker  % 'marker'
             if endmarker > numel(events)
-                warning('ID:marker_out_of_range', '\nEnd marker (%03.0f) out of file - no trimming end end.\n', endmarker);
+                warning('ID:marker_out_of_range', ...
+                    '\nEnd marker (%03.0f) out of file - no trimming end end.\n', endmarker);
                 endpoint = infos.duration;
             else
-                endpoint=events(endmarker) + to;
-            end;
+                endpoint = events(endmarker) + to;
+            end
         else          % 'file'
             endpoint = to;
-        end;
-    end;
+        end
+    end
     
     % check start and end points ---
     if (startpoint < 0)
         warning('ID:marker_out_of_range', '\nStart point (%.2f s) outside file, no trimming at start.', startpoint);
         startpoint = 0;
-    end;
+    end
     if endpoint > infos.duration
         warning('ID:marker_out_of_range', '\nEnd point (%.2f s) outside file, no trimming at end.', endpoint);
         endpoint = infos.duration;
-    end;
+    end
     
     % trim file ---
     for k = 1:numel(data)
         if ~strcmpi(data{k}.header.units, 'events') % waveform channels
             % set start and endpoint
             newstartpoint = floor(startpoint * data{k}.header.sr);
-            if newstartpoint == 0, newstartpoint = 1; end;
+            if newstartpoint == 0, newstartpoint = 1; end
             newendpoint = floor(endpoint * data{k}.header.sr);
-            if newendpoint > numel(data{k}.data), newendpoint = numel(data{k}.data); end;
+            if newendpoint > numel(data{k}.data), newendpoint = numel(data{k}.data); end
             % trim data
             data{k}.data=data{k}.data(newstartpoint:newendpoint);
         else                                        % event channels
@@ -188,13 +191,13 @@ for d=1:numel(D)
                 
                 data{k}.markerinfo.value(remove_early) = [];
                 data{k}.markerinfo.name(remove_early) = [];
-            end;
-        end;
+            end
+        end
         % save new file
         infos.duration = endpoint - startpoint;
         infos.trimdate = date;
         infos.trimpoints = [startpoint endpoint];
-    end;
+    end
     clear savedata
     savedata.data = data; savedata.infos = infos; 
     if isstruct(datafile)
@@ -206,21 +209,21 @@ for d=1:numel(D)
         savedata.infos.trimfile = newdatafile;
         savedata.options = options;
         sts = pspm_load_data(newdatafile, savedata);
-    end;
+    end
     if sts ~= 1
         warning('Trimming unsuccessful for file %s.\n', newdatafile); 
     else
         Dout{d} = newdatafile;
         % user output
         fprintf('  done.\n');
-    end;
-end;
+    end
+end
 
 % if cell array of datafiles is being processed, return cell array of
 % filenames
 if d > 1
     clear newdatafile
     newdatafile = Dout;
-end;
+end
 
 return;

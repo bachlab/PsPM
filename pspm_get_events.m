@@ -96,8 +96,8 @@ elseif strcmpi(import.marker, 'continuous')
     if ~isfield(import, 'markerinfo') && ~isempty(import.data)
         
         % determine baseline
-        v = unique(data(find(~isnan(data))));
-        for i=1:numel(v),
+        v = unique(data(~isnan(data)));
+        for i=1:numel(v)
             v(i,2) = numel(find(data == v(i,1)));
         end
         
@@ -113,7 +113,23 @@ elseif strcmpi(import.marker, 'continuous')
         % prepare values to convert them into strings
         values = num2cell(values);
         import.markerinfo.name = cellfun(@num2str, values, 'UniformOutput', false);
-    end;
+        
+        
+        % add one second of tolerance because tails are added at the
+        % beginning. and maybe sometimes values might not be exactly the
+        % same
+    elseif isfield(import, 'markerinfo') && ...
+            (numel(data) - numel(import.markerinfo.value))/import.sr < 1
+        % also translate marker info if necessary. this code was written
+        % with and for import_eyelink function. there flank = 'ascending' 
+        % has to be set to use import.data as index for the marker values.
+        
+        n_minfo = struct('value', {import.markerinfo.value(round(import.data*import.sr))}, ...
+            'name', {import.markerinfo.name(round(import.data*import.sr))});
+        
+        import.markerinfo = n_minfo;
+    end
+    
 elseif strcmpi(import.marker, 'timestamp') || strcmpi(import.marker, 'timestamps')
     import.data = import.data(:) .* import.sr;
 else
