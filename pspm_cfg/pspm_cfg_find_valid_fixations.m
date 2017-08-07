@@ -37,8 +37,7 @@ disable_fixation_validation       = cfg_const;
 disable_fixation_validation.name  = 'Disabled';
 disable_fixation_validation.tag   = 'disable_fixation_validation';
 disable_fixation_validation.val   = {0};
-disable_fixation_validation.help  = {['Validation of fixation is disabled. Only blinks will ', ...
-    'result in invalid data points.']};
+disable_fixation_validation.help  = {['Validation of fixation is disabled.']};
 
 %% Visual angle
 box_degree                      = cfg_entry;
@@ -130,8 +129,7 @@ enable_fixation_validation       = cfg_branch;
 enable_fixation_validation.name  = 'Enabled';
 enable_fixation_validation.tag   = 'enable_fixation_validation';
 enable_fixation_validation.val   = {box_degree, distance, screen_settings, fixation_point};
-enable_fixation_validation.help  = {['Validation of fixation is enabled. ', ...
-    'Blinks and invalid fixations will cause invalid data points. ']};
+enable_fixation_validation.help  = {['Validation of fixation is enabled.']};
 
 %% Validate fixations
 validate_fixations        = cfg_choice;

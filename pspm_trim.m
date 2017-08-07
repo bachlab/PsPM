@@ -124,10 +124,10 @@ for d=1:numel(D)
         clear nsts ninfos ndata
         
         if isempty(events)
-            warning('ID:marker_out_of_range', ...
-                'Marker channel (%i) is empty. Cannot use as a reference.', ...
-                options.marker_chan_num);
-            return;
+           warning('ID:marker_out_of_range', ...
+               'Marker channel (%i) is empty. Cannot use as a reference.', ...
+               options.marker_chan_num);
+           return;
         end
     end
     if any(sts == -1), newdatafile = []; break; end

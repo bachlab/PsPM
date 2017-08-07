@@ -53,8 +53,10 @@ else
     markers = cellfun(@(d) d.markers, data, 'UniformOutput', false);
     markers = vertcat(markers{:});
     % markerinfos
-    markerinfos = cellfun(@(d) d.markerinfos, data, 'UniformOutput', false);
-    markerinfos = vertcat(markerinfos{:});
+    mi = cellfun(@(d) d.markerinfos, data, 'UniformOutput', false);
+    mi = vertcat(mi{:});
+    markerinfos.name = vertcat(mi(:).name);
+    markerinfos.value = vertcat(mi(:).value);
     % units (they should be for all channels the same
     units = data{1}.units;
     % samplerate
@@ -89,6 +91,23 @@ sourceinfo.time = data{1}.record_time;
 sourceinfo.gaze_coords = data{1}.gaze_coords;
 sourceinfo.elcl_proc = data{1}.elcl_proc;
 sourceinfo.eyesObserved = data{1}.eyesObserved;
+
+% create invalid data stats
+n_data = size(data{1}.channels,1);
+
+% count invalid data
+n_inv_data = sum(isnan(data{1}.channels(:,strcmpi(data{1}.units, 'area') | ...
+    strcmpi(data{1}.units, 'diameter'))));
+
+% count blink and saccades (combined in blink channel at the moment)
+n_bns = sum(data{1}.channels(:,strcmpi(data{1}.units, 'blink')));
+
+ids = struct();
+ids.invalid_data = n_inv_data ./ [n_data n_data];
+ids.blinks_saccades = n_bns ./ n_inv_data;
+ids.other = 1 - ids.blinks_saccades;
+
+sourceinfo.invalid_data_stats = ids;
 
 % remove specific import path
 rmpath([settings.path, 'Import', filesep, 'eyelink']);
