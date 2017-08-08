@@ -265,7 +265,8 @@ for sn = 1:numel(offsets)
     % or pupil, x, y, blink, saccade (for just one eye)
     
     if strcmpi(data{sn}.eyesObserved, 'LR')
-        % pupilL, pupilR, xL, yL, xR, yR, blinkL, blinkR, saccadeL, saccadeR
+        % pupilL, pupilR, xL, yL, xR, yR, blinkL, blinkR, saccadeL,
+        % saccadeR, time
         data{sn}.channels = data{sn}.raw(:, [4,7,2:3,5:6,8:11]);
         data{sn}.units = {pupilUnit, pupilUnit, 'pixel', 'pixel', 'pixel', ...
             'pixel', 'blink', 'blink', 'saccade', 'saccade'};

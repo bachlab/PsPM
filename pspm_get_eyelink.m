@@ -44,23 +44,64 @@ if numel(data) > 1 && (any(diff(sr)) || any(~strcmp(eyesObs,eyesObs{1})))
     % units
     units = data{1}.units;
 else
-    % try to concatenate sessions
+    % try to concatenate sessions according to timing
+    sr = data{1}.sampleRate;
+    last_time = data{1}.raw(1,1);
     
-    % channels
-    channels = cellfun(@(d) d.channels, data, 'UniformOutput', false);
-    channels = vertcat(channels{:});
-    % markers
-    markers = cellfun(@(d) d.markers, data, 'UniformOutput', false);
-    markers = vertcat(markers{:});
-    % markerinfos
-    mi = cellfun(@(d) d.markerinfos, data, 'UniformOutput', false);
-    mi = vertcat(mi{:});
-    markerinfos.name = vertcat(mi(:).name);
-    markerinfos.value = vertcat(mi(:).value);
-    % units (they should be for all channels the same
+    channels = [];
+    markers = [];
+    
+    mi_value = [];
+    mi_name = {};
+    
+    n_cols = size(data{1}.channels, 2);
+    counter = 1;
+    
+    for c = 1:numel(data)
+        if sr ~= data{c}.sampleRate
+            warning('ID:invalid_input', ['File consists of multiple ', ...
+                'sessions with different sample rates: Unable to concatenate sessions.']);
+            return;
+        end
+        
+        start_time = data{c}.raw(1,1);
+        end_time = data{c}.raw(end,1);
+            
+        n_diff = start_time - last_time;
+        if n_diff > 0
+            % channels and markers
+            channels(counter:(counter+n_diff-1),1:n_cols) = NaN(n_diff, n_cols);
+            markers(counter:(counter+n_diff-1), 1) = NaN(n_diff, 1);
+            
+            % markerinfos
+            mi_value(counter:(counter+n_diff-1),1) = NaN(n_diff, 1);
+            mi_name(counter:(counter+n_diff-1), 1) = {NaN};
+            
+            counter = counter + n_diff;
+        end
+        
+        n_data = size(data{c}.channels, 1);
+        
+        % channels and markers
+        channels(counter:(counter+n_data-1),1:n_cols) = data{c}.channels;
+        markers(counter:(counter+n_data-1),1) = data{c}.markers;
+        
+        % markerinfos
+        mi_value(counter:(counter+n_data-1),1) = data{c}.markerinfos.value;
+        mi_name(counter:(counter+n_data-1),1) = data{c}.markerinfos.name;
+        
+        counter = counter + n_data;
+        last_time = end_time;
+    end
+    
+    markerinfos.name = mi_name;
+    markerinfos.value = mi_value;
+    
+    % units (they should be for all channels the same)
     units = data{1}.units;
+    
     % samplerate
-    sampleRate = data{1}.sampleRate;
+    sampleRate = sr;
 end
 
 for k = 1:numel(import)
@@ -93,14 +134,14 @@ sourceinfo.elcl_proc = data{1}.elcl_proc;
 sourceinfo.eyesObserved = data{1}.eyesObserved;
 
 % create invalid data stats
-n_data = size(data{1}.channels,1);
+n_data = size(channels,1);
 
 % count invalid data
-n_inv_data = sum(isnan(data{1}.channels(:,strcmpi(data{1}.units, 'area') | ...
+n_inv_data = sum(isnan(channels(:,strcmpi(data{1}.units, 'area') | ...
     strcmpi(data{1}.units, 'diameter'))));
 
 % count blink and saccades (combined in blink channel at the moment)
-n_bns = sum(data{1}.channels(:,strcmpi(data{1}.units, 'blink')));
+n_bns = sum(channels(:,strcmpi(data{1}.units, 'blink')) == 1);
 
 ids = struct();
 ids.invalid_data = n_inv_data ./ [n_data n_data];
