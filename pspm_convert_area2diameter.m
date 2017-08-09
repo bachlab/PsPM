@@ -31,7 +31,6 @@ function [varargout] = pspm_convert_area2diameter(varargin)
 global settings;
 if isempty(settings), pspm_init; end
 sts = -1;
-d = [];
 
 narginchk(1, 3);
 

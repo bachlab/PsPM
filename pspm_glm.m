@@ -440,7 +440,7 @@ for iSn = 1:nFile
         nan_idx = round(nan_idx*(model.filter.down/model.filter.sr));
         % sanitize ends 
         nan_idx(nan_idx < 1) = 1;
-        nan_idx(nan_idx > numel(nan_idx)) = numel(nan_idx);
+        nan_idx(nan_idx > numel(newy)) = numel(newy);
         % find duplicates
         dupli = diff(nan_idx) == 0;
         % remove duplicates
