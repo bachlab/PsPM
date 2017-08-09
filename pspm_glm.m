@@ -429,7 +429,7 @@ for iSn = 1:nFile
     % find which fields are nan after interoplation and prepdata
     nan_idx = find(isnan(oldy));
     % interpolate y data
-    [sts, oldy] = pspm_interpolate(oldy);
+    [sts, oldy] = pspm_interpolate(oldy, struct('extrapolate', 1));
     if sts ~= 1, return; end
     % filter data
     [sts, newy, newsr] = pspm_prepdata(oldy, model.filter);

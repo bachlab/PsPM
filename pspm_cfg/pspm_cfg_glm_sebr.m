@@ -59,3 +59,7 @@ glm_seb.val{b} = bf;
 % find latency and make it visible
 lat = cellfun(@(f) strcmpi(f.tag, 'latency'), glm_seb.val);
 glm_seb.val{lat}.hidden = false;
+
+% also set free latency as default
+free_lat = cellfun(@(f) strcmpi(f.tag, 'free'), glm_seb.val{lat}.values);
+glm_seb.val{lat}.val = {glm_seb.val{lat}.values{free_lat}};

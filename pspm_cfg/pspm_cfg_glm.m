@@ -20,7 +20,7 @@ function [glm] = pspm_cfg_glm(vars)
 
 % Initialise
 global settings
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 
 %% Modality undependent items
 % Datafile
@@ -416,7 +416,7 @@ free_latency.help = {['']};
 latency         = cfg_choice;
 latency.name    = 'Latency';
 latency.tag     = 'latency';
-latency.val     = {free_latency};
+latency.val     = {fixed_latency};
 latency.values  = {fixed_latency, free_latency};
 % is hidden per default
 latency.hidden  = true;
