@@ -129,7 +129,7 @@ rev = '$Rev$';
 % initialise & user output
 % -------------------------------------------------------------------------
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 glm = struct([]); % output model structure
 tmp = struct([]); % temporary model structure
 
@@ -138,10 +138,10 @@ tmp = struct([]); % temporary model structure
 
 % check missing input --
 if nargin<1
-    errmsg=sprintf('Nothing to do.'); warning('ID:invalid_input', errmsg); return;
+    errmsg='Nothing to do.'; warning('ID:invalid_input', errmsg); return;
 elseif nargin<2
     options = struct();
-end;
+end
 
 fprintf('Computing GLM: %s ...\n', model.modelfile);
 
@@ -151,7 +151,7 @@ elseif ~isfield(model, 'modelfile')
     warning('ID:invalid_input', 'No output model file specified.'); return;
 elseif ~isfield(model, 'timeunits')
     warning('ID:invalid_input', 'No timeunits specified.'); return;
-end;
+end
 
 % check whether field timing doesnt exist, field is emtpy or field is cell
 % with empty entries
@@ -163,13 +163,13 @@ if ~isfield(model, 'timing') || isempty(model.timing) || ...
             iscell(model.nuisance) && (sum(cellfun(@(f) isempty(f), model.nuisance)) == numel(model.nuisance))
         % nuisance is not set
         warning('ID:invalid_input', 'Event onsets and nuisance file are not specified. At least one of the two must be specified.'); return;
-    end;
-end;
+    end
+end
 
 % set default values
 if ~isfield(model, 'latency')
     model.latency = 'fixed';
-end;
+end
 
 % check faulty input --
 if ~ischar(model.datafile) && ~iscell(model.datafile)
@@ -184,7 +184,7 @@ elseif ~ismember(model.latency, {'free', 'fixed'})
     warning('ID:invalid_input', 'Latency should be either ''fixed'' or ''free''.'); return;
 elseif strcmpi(model.latency, 'free') && (~isnumeric(model.window) || isempty(model.window))
     warning('ID:invalid_input', 'Window is expected to be a numeric value.'); return;
-end;
+end
 
 % get further input or set defaults --
 if ~isfield(model, 'modelspec')
@@ -192,91 +192,98 @@ if ~isfield(model, 'modelspec')
     model.modelspec = settings.glm(1).modelspec;
 elseif ~ismember(model.modelspec, {settings.glm.modelspec})
     warning('ID:invalid_input', 'Unknown model specification %s.', model.modelspec); return;
-end;
+end
 modno = find(strcmpi(model.modelspec, {settings.glm.modelspec}));
 model.modality = settings.glm(modno).modality;
 
 % check data channel --
 if ~isfield(model, 'channel')
-    model.channel = model.modality; % this returns the first channel of this type
+    switch model.modality
+        case 'sebr'
+            model.channel = 'emg';
+        case 'ps'
+            model.channel = 'pupil';
+        otherwise
+            model.channel = model.modality;
+    end
 elseif ~isnumeric(model.channel) && ~ismember(model.channel, {settings.chantypes.type})
     warning('ID:invalid_input', 'Channel number must be numeric.'); return;
-end;
+end
 
 % check normalisation --
 if ~isfield(model, 'norm')
     model.norm = 0;
 elseif ~ismember(model.norm, [0, 1])
     warning('ID:invalid_input', 'Normalisation must be specified as 0 or 1.'); return;
-end;
+end
 
 % check options --
 if ~isfield(options, 'overwrite')
     options.overwrite = 0;
 elseif ~ismember(options.overwrite, [0, 1])
     options.overwrite = 0;
-end;
+end
 if ~isfield(options, 'marker_chan_num')
     options.marker_chan_num = 'marker';
 elseif ~(isnumeric(options.marker_chan_num) && numel(options.marker_chan_num)==1)
     options.marker_chan_num = 'marker';
-end;
+end
 
 % check files --
 if exist(model.modelfile, 'file') && ~(isfield(options, 'overwrite') && options.overwrite == 1)
     overwrite=menu(sprintf('Model file (%s) already exists. Overwrite?', model.modelfile), 'yes', 'no');
-    if overwrite == 2, return, end;
+    if overwrite == 2, return, end
     options.overwrite = 1;
-end;
+end
 
 if ischar(model.datafile)
     model.datafile={model.datafile};
-end;
+end
 if ischar(model.timing) || isstruct(model.timing)
     model.timing = {model.timing};
-end;
+end
 
 if ~isempty(model.timing) && (numel(model.datafile) ~= numel(model.timing))
     warning('ID:number_of_elements_dont_match', 'Session numbers of data files and event definitions do not match.'); return;
-end;
+end
 
 % check & get data --
 fprintf('Getting data ...');
 nFile = numel(model.datafile);
 for iFile = 1:nFile
     [sts, infos, data] = pspm_load_data(model.datafile{iFile}, model.channel);
-    if sts < 1, return; end;
+    if sts < 1, return; end
     y{iFile} = data{1}.data(:);
     sr(iFile) = data{1}.header.sr;
     fprintf('.');
     if any(strcmp(model.timeunits, {'marker', 'markers'}))
         [sts, infos, data] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
-        if sts < 1, return; end;
+        if sts < 1, return; end
         events{iFile} = data{1}.data * data{1}.header.sr;
-    end;
-end;
+    end
+end
 if nFile > 1 && any(diff(sr) > 0)
     fprintf('\nSample rate differs between sessions.\n')
 else
     fprintf('\n');
-end;
+end
 
 % check filter --
 if ~isfield(model, 'filter')
     model.filter = settings.glm(modno).filter;
-end;
+end
 
 % set default model.filter.down --
 if strcmpi(model.filter.down, 'none') || ...
         isnumeric(model.filter.down) && isnan(model.filter.down)
     model.filter.down = min(sr);
-end;
+end
 
 % check value of model.filter.down --
 if ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
     % tested because the field is used before the call of pspm_prepdata (everything else is tested there)
     warning('ID:invalid_input', 'Filter struct needs field ''down'' to be numeric or ''none''.'); return;
-end;
+end
 
 % check & get basis functions --
 basepath = [];
@@ -290,14 +297,14 @@ else
         model.bf.fhandle = str2func(basefn);
     elseif ~isa(model.bf.fhandle, 'function_handle')
         warning('Basis function must be a string or function handle.');
-    end;
+    end
     if ~isfield(model.bf, 'args')
         model.bf.args = [];
     elseif ~isnumeric(model.bf.args)
         warning('Basis function arguments must be numeric.');
-    end;
-end;
-if ~isempty(basepath), addpath(basepath); end;
+    end
+end
+if ~isempty(basepath), addpath(basepath); end
 try
     td = 1/model.filter.down;
     
@@ -307,10 +314,10 @@ try
     if strcmpi(model.latency, 'free') && size(model.bf.X,2) > 1
         warning('ID:invalid_input', ['With latency ''free'' multitple response ', ...
             'functions are not allowed.']); return;
-    end;
+    end
 catch
     warning('ID:invalid_fhandle', 'Specified basis function %s doesn''t exist or is faulty', func2str(model.bf.fhandle)); return;
-end;
+end
 
 % set shiftbf
 if bf_x(1) < 0
@@ -319,15 +326,15 @@ elseif bf_x(1) > 0
     warning('ID:invalid_basis_function', 'The first basis function timestamp is larger than 0 (not allowed).'); return;
 else
     model.bf.shiftbf = 0;
-end;
+end
 
 % remove path & clear local variables --
-if ~isempty(basepath), rmpath(basepath); end;
+if ~isempty(basepath), rmpath(basepath); end
 clear basepath basefn baseext
 
 % check regressor files --
 [sts, multi] = pspm_get_timing('onsets', model.timing, model.timeunits);
-if sts < 0, warning('Invalid multiple condition file'); return; end;
+if sts < 0, warning('Invalid multiple condition file'); return; end
 
 % check & get missing values --
 if ~isfield(model, 'missing')
@@ -337,19 +344,19 @@ else
         model.missing = {model.missing};
     elseif ~iscell(model.missing)
         warning('ID:invalid_input', 'Missing values must be a filename, matrix, or cell array of these.'); return;
-    end;
+    end
     if numel(model.missing) ~= nFile
         warning('ID:number_of_elements_dont_match', 'Same number of data files and missing value definitions is needed.'); return;
-    end;
+    end
     for iSn = 1:nFile
         if isempty(model.missing{iSn})
             sts = 1; missing{iSn} = [];
         else
             [sts, missing{iSn}] = pspm_get_timing('epochs', model.missing{iSn}, 'seconds');
-        end;
-        if sts == -1, return; end;
-    end;
-end;
+        end
+        if sts == -1, return; end
+    end
+end
 
 % check and get nuisance regressors
 if ~isfield(model, 'nuisance')
@@ -363,10 +370,10 @@ else
         model.nuisance = {model.nuisance};
     elseif ~iscell(model.nuisance)
         warning('ID:invalid_input', 'Nuisance regressors must be specified as char or cell of file names.'); return;
-    end;
+    end
     if numel(model.nuisance) ~= nFile
         warning('ID:number_of_elements_dont_match', 'Same number of data files and nuisance regressor files is needed.'); return;
-    end;
+    end
     
     for iSn = 1:nFile
         if isempty(model.nuisance{iSn})
@@ -378,20 +385,20 @@ else
                     R{iSn} = indata.R;
                 else
                     R{iSn} = indata;
-                end;
+                end
             catch
                 warning('ID:invalid_file_type', 'Unacceptable file format or non-existing file for nuisance file in session %01.0f', iSn); return;
-            end;
+            end
             if size(R{iSn}, 1) ~= numel(y{iSn})
                 warning('ID:number_of_elements_dont_match', 'Nuisance regressors for session %01.0f must have same number of data points as observed data.', iSn); return;
-            end;
-        end;
+            end
+        end
         if iSn == 1
             nR = size(R{iSn}, 2);
         elseif size(R{iSn}, 2) ~= nR
             warning('ID:number_of_elements_dont_match', 'Nuisance regressors for all sessions must have the same number of columns'); return;
-        end;
-    end;
+        end
+    end
 end
 
 
@@ -423,10 +430,10 @@ for iSn = 1:nFile
     nan_idx = find(isnan(oldy));
     % interpolate y data
     [sts, oldy] = pspm_interpolate(oldy);
-    if sts ~= 1, return; end;
+    if sts ~= 1, return; end
     % filter data
     [sts, newy, newsr] = pspm_prepdata(oldy, model.filter);
-    if sts ~= 1, return; end;
+    if sts ~= 1, return; end
     
     % if has been downsampled adjust nan_idx
     if numel(oldy) ~= numel(newy)
@@ -438,7 +445,7 @@ for iSn = 1:nFile
         dupli = diff(nan_idx) == 0;
         % remove duplicates
         nan_idx(dupli) = [];
-    end;
+    end
     
     % concatenate data
     Y=[Y; NaN(newsr * model.bf.shiftbf, 1); newy(:)];
@@ -452,8 +459,8 @@ for iSn = 1:nFile
         missingtimes = missing{iSn} * newsr;
         for iMs = 1:size(missingtimes, 1)
             newmissing(round(missingtimes(iMs, 1):missingtimes(iMs, 2))) = 1;
-        end;
-    end;
+        end
+    end
     % copy NaN in y data should be missing
     newmissing(nan_idx) = 1;
     
@@ -475,9 +482,9 @@ for iSn = 1:nFile
                         newonsets = round(events{iSn}(multi(iSn).onsets{n}) * newsr); % markers are timestamps in seconds
                     catch
                         warning('\nSome events in condition %01.0f were not found in the data file %s', n, model.datafile{iSn}); return;
-                    end;
+                    end
                     newdurations = multi(iSn).durations{n};
-            end;
+            end
             % get the first multiple condition definition --
             if iSn == 1
                 names{n} = multi(1).names{n};
@@ -488,26 +495,26 @@ for iSn = 1:nFile
                         pmod(n).param{p} = [];
                     end
                     pmod(n).name = multi(1).pmod(n).name;
-                end;
+                end
                 % or shift multiple condition definition --
             else
                 newonsets = newonsets + sum(tmp.snduration(1:(iSn - 1)));
-            end;
+            end
             onsets{n} = [onsets{n}; newonsets(:)];
             durations{n} = [durations{n}; newdurations(:)];
             if isfield(multi, 'pmod') && (numel(multi(1).pmod) >= n)
                 for p = 1:numel(multi(1).pmod(n).param)
                     pmod(n).param{p} = [pmod(n).param{p}; multi(iSn).pmod(n).param{p}(:)];
-                end;
-            end;
-        end;
+                end
+            end
+        end
     else
         names = {};
         onsets = {};
         durations = {};
-    end;
+    end
     
-end;
+end
 
 % normalise if desired --
 if model.norm
@@ -515,7 +522,7 @@ if model.norm
     no_nan = ~isnan(Y);
     % normalise
     Y = (Y - mean(Y(no_nan)))/std(Y(no_nan));
-end;
+end
 Y = Y(:);
 
 % collect information into tmp --
@@ -532,16 +539,16 @@ if exist('pmod', 'var')
                     tmp.pmodscale(n, p) = std(pmod(n).param{p});
                 catch
                     tmp.pmodscale(n, p) = 1;
-                end;
+                end
                 pmod(n).param{p}=(pmod(n).param{p}-mean(pmod(n).param{p}))/tmp.pmodscale(n, p);
-            end;
+            end
             % register number of pmods
             tmp.pmodno(n)=p;
-        end;
-    end;
+        end
+    end
 else
     pmod = [];
-end;
+end
 
 % collect data & regressors for output model --
 glm.input.data    = y;
@@ -576,13 +583,13 @@ for iCond = 1:numel(names)
     % if file starts with first event, set that onset to 1 instead of 0
     if any(tmp.onsets == 0)
         tmp.onsets(tmp.onsets == 0) = 1;
-    end;
+    end
     col=1;
     tmp.colnum=1+tmp.pmodno(iCond);
     tmp.X{iCond}=zeros(tmp.length, tmp.colnum);
     for k = 1:numel(tmp.onsets)
         tmp.X{iCond}(tmp.onsets(k):(tmp.onsets(k) + tmp.durations(k)), col)=1;
-    end;
+    end
     tmp.name{iCond, col}=names{iCond};
     col=col+1;
     if exist('pmod') && ~isempty(pmod)
@@ -591,13 +598,13 @@ for iCond = 1:numel(names)
                 for p=1:numel(pmod(iCond).param)
                     for k = 1:numel(tmp.onsets)
                         tmp.X{iCond}(tmp.onsets(k):(tmp.onsets(k) + tmp.durations(k)), col)=pmod(iCond).param{p}(k);
-                    end;
+                    end
                     tmp.name{iCond, col}=[names{iCond}, ' x ', pmod(iCond).name{p}];
                     tmp.regscale{iCond}(col) = tmp.pmodscale(iCond, col - 1);
                     col=col+1;
-                end;
-            end;
-        end;
+                end
+            end
+        end
         % orthogonalize pmods before convolution
         foo = spm_orth(tmp.X{iCond});
         % catch zero matrices (unclear yet why this happens, 01-Apr-2012)
@@ -606,8 +613,8 @@ for iCond = 1:numel(names)
         else
             tmp.X{iCond} = foo;
         end
-    end;
-end;
+    end
+end
 
 
 % create design matrix
@@ -635,23 +642,23 @@ for iCond = 1:numel(names)
                 tmp.col{iSn, 1} = conv(tmp.X{iCond}(snonsets(iSn):snoffsets(iSn), iXcol), glm.bf.X(:,iBf));
                 % filter design matrix w/o downsampling
                 [sts,  tmp.col{iSn, 1}] = pspm_prepdata(tmp.col{iSn, 1}, Xfilter);
-                if sts ~= 1, glm = struct([]); return; end;
+                if sts ~= 1, glm = struct([]); return; end
                 % cut away tail
                 tmp.col{iSn, 1}((tmp.snduration(iSn) + 1):end) = [];
-            end;
+            end
             tmp.XC{iCond}(:, iXCcol) = cell2mat(tmp.col);
             tmp.namec{iCond}{iXCcol, 1} = [tmp.name{iCond, iXcol}, ', bf ', num2str(iBf)];
             tmp.regscalec{iCond} = [tmp.regscalec{iCond}, tmp.regscale{iCond}(iXcol)];
             iXCcol = iXCcol + 1;
             % clear local variable
             tmp.col = {};
-        end;
-    end;
+        end
+    end
     
     % mean center
     for iXCol=1:size(tmp.XC{iCond},2)
         tmp.XC{iCond}(:,iXCol) = tmp.XC{iCond}(:,iXCol) - mean(tmp.XC{iCond}(:,iXCol));
-    end;
+    end
     
     % orthogonalize after convolution if there is more than one column per
     % condition
@@ -665,11 +672,11 @@ for iCond = 1:numel(names)
             cc = corrcoef(tmp.XC{iCond});
             for k = 2:size(cc, 1)
                 fprintf('%0.2f, ', cc(1, k));
-            end;
+            end
             fprintf('\n');
-        end;
-    end;
-end;
+        end
+    end
+end
 
 % define model
 glm.X = cell2mat(tmp.XC);
@@ -680,7 +687,7 @@ for iCond = 1:numel(names)
     n = numel(tmp.namec{iCond});
     glm.names(r:(r+n-1), 1) = tmp.namec{iCond};
     r = r + n;
-end;
+end
 
 % add nuisance regressors
 for iSn = 1:numel(model.datafile)
@@ -688,18 +695,18 @@ for iSn = 1:numel(model.datafile)
     model.filter.sr = sr(iSn);
     for iR = 1:nR
         [sts, Rf{iSn}(:, iR)]  = pspm_prepdata(R{iSn}(:, iR), model.filter);
-        if sts ~= 1, return; end;
+        if sts ~= 1, return; end
     end
     if (model.bf.shiftbf ~= 0) && ~isempty(Rf{iSn})
         Rf{iSn} = [ NaN(model.bf.shiftbf*model.filter.down, nR); Rf{iSn}];
-    end;
+    end
 end
 Rf = cell2mat(Rf(:));
 
 n = size(glm.names, 1);
 for iR = 1:nR
     glm.names{n+iR, 1} = sprintf('R%01.0f', iR);
-end;
+end
 
 glm.X = [glm.X, Rf];
 glm.regscale((end+1):(end+nR)) = 1;
@@ -707,11 +714,11 @@ glm.regscale((end+1):(end+nR)) = 1;
 % add constant(s)
 r=1;
 n = size(glm.names, 1);
-for iSn = 1:numel(model.datafile);
+for iSn = 1:numel(model.datafile)
     glm.X(r:(r+tmp.snduration(iSn)-1), end+1)=1;
     glm.names{n+iSn, 1} = ['Constant ', num2str(iSn)];
     r = r + tmp.snduration(iSn);
-end;
+end
 glm.interceptno = iSn;
 glm.regscale((end+1):(end+iSn)) = 1;
 
@@ -744,7 +751,7 @@ if strcmpi(model.latency, 'free')
         for iD = 1:size(D_on, 2)
             foo = conv(D_on(:, iD), glm.XM(:, iCol));
             D(iD, :) = foo(1:size(glm.XM, 1));
-        end;
+        end
         % obtain inner product and select max
         a = D * glm.YM;
         [~, ind] = max(a);
@@ -752,14 +759,14 @@ if strcmpi(model.latency, 'free')
         XMnew(:, iCol) = D(ind, :);
         % create names
         glm.names{iCol + ncol} = [glm.names{iCol}, ' Latency'];
-    end;
+    end
     
     XMnew(:, iCol + 1) = 1;
     
     % replace design matrix
     glm.XMold = glm.XM;
     glm.XM = XMnew;
-end;
+end
 
 % estimate amplitudes
 glm.stats = pinv(glm.XM)*glm.YM;           % parameter estimates
@@ -776,7 +783,7 @@ glm.stats = glm.stats ./ glm.regscale';
 if strcmpi(model.latency, 'free')
     % add latency parameters
     glm.stats = [glm.stats(:); lat(:)];
-end;
+end
 
 savedata = struct('glm', glm);
 pspm_load1(model.modelfile, 'save', savedata, options);

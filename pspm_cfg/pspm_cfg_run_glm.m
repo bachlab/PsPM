@@ -7,7 +7,7 @@ function [params] = pspm_cfg_run_glm(job, def_filter)
 % $Rev$
 
 global settings
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 
 model.modelfile = [job.outdir{1}, filesep, job.modelfile '.mat'];
 
@@ -115,7 +115,7 @@ if isfield(job.latency, 'free')
     model.window = job.latency.free.time_window;
 else
     model.latency = 'fixed';
-end;
+end
 
 % options
 options.overwrite = job.overwrite;

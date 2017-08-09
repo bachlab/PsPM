@@ -333,7 +333,8 @@ for i=1:n_eyes
                             'completely set to NaN. Please reconsider your parameters.'], ...
                             new_pu{i}{j}.header.chantype);
                     end
-                    excl_hdr = struct('chantype', ['pupil_missing_', eye], 'units', '', 'sr', new_pu{i}{j}.header.sr);
+                    excl_hdr = struct('chantype', ['pupil_missing_', eye],...
+                        'units', '', 'sr', new_pu{i}{j}.header.sr);
                     new_excl{i}{j} = struct('data', double(excl), 'header', excl_hdr);
                 end
             else
@@ -387,10 +388,31 @@ if numel(new_chans) >= 1
             end
         end
     end
-       
+    
+    % update chan stats (similar to pspm_get_eyelink)
+    for i = 1:numel(new_data)
+        % update nan ratio
+        n_inv = sum(isnan(new_data{i}.data));
+        n_data = numel(new_data{i}.data);
+        infos.source.chan_stats{i}.nan_ratio = n_inv/n_data; 
+    end
+    
+    % update best eye
+    eye_stat = Inf(1,numel(infos.source.eyesObserved));
+    for i = 1:numel(infos.source.eyesObserved)
+        e = lower(infos.source.eyesObserved(i));
+        e_stat = {infos.source.chan_stats{...
+            cellfun(@(x) ~isempty(regexpi(x.header.chantype, ['_' e], 'once')), new_data)}};
+        eye_stat(i) = max(cellfun(@(x) x.nan_ratio, e_stat));
+    end
+    
+    [~, min_idx] = min(eye_stat);
+    infos.source.best_eye = lower(infos.source.eyesObserved(min_idx));
+    
     file_struct.infos = infos;
     file_struct.data = new_data;   
     file_struct.options = op;
+        
     [sts, ~, ~, ~] = pspm_load_data(out_file, file_struct);
 else
     warning('ID:invalid_input', 'Appearently no data was generated.');

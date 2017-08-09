@@ -13,6 +13,12 @@ else
     markerchannel = 0;
 end
 
+if isfield(job.split_behavior, 'auto')
+    options.splitpoints = [];
+elseif isfield(job.split_behavior, 'marker')
+    options.splitpoints = job.split_behavior.marker;
+end
+
 out = pspm_split_sessions(job.datafile, markerchannel, options);
 
 if ~iscell(out)

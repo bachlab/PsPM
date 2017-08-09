@@ -13,7 +13,7 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 % initialise
 % -------------------------------------------------------------------------
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 sourceinfo = []; sts = -1;
 % add specific import path for specific import function
 addpath([settings.path, 'Import', filesep, 'eyelink']);
@@ -104,6 +104,12 @@ else
     sampleRate = sr;
 end
 
+% create invalid data stats
+n_data = size(channels,1);
+
+% count blink and saccades (combined in blink channel at the moment)
+n_bns = sum(channels(:,strcmpi(units, 'blink')) == 1);
+
 for k = 1:numel(import)
     if strcmpi(import{k}.type, 'marker')
         import{k}.marker = 'continuous';
@@ -122,6 +128,22 @@ for k = 1:numel(import)
         import{k}.data = channels(:, chan);
         import{k}.units = units{import{k}.channel};
         sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan);
+        
+        % chan specific stats
+        sourceinfo.chan_stats{k,1} = struct();
+        n_inv = sum(isnan(import{k}.data));
+        sourceinfo.chan_stats{k}.nan_ratio = n_inv/n_data;
+        
+        % which eye
+        if size(n_bns, 2) > 1
+            eye_t = regexp(import{k}.type, '.*_([lr])', 'tokens');
+            n_eye_bns = n_bns(strcmpi(eye_t{1}, {'l','r'}));
+        else
+            n_eye_bns = n_bns;
+        end
+        
+        sourceinfo.chan_stats{k}.blink_ratio = n_eye_bns / n_data;
+        sourceinfo.chan_stats{k}.other_ratio = (n_inv - n_eye_bns) / n_data;
     end
 end
 
@@ -131,24 +153,19 @@ sourceinfo.time = data{1}.record_time;
 % other record settings
 sourceinfo.gaze_coords = data{1}.gaze_coords;
 sourceinfo.elcl_proc = data{1}.elcl_proc;
-sourceinfo.eyesObserved = data{1}.eyesObserved;
+sourceinfo.eyesObserved = lower(data{1}.eyesObserved);
 
-% create invalid data stats
-n_data = size(channels,1);
+% determine best eye
+eye_stat = Inf(1,numel(sourceinfo.eyesObserved));
+for i = 1:numel(sourceinfo.eyesObserved)
+    e = lower(sourceinfo.eyesObserved(i));
+    e_stat = vertcat(sourceinfo.chan_stats{...
+        cellfun(@(x) ~isempty(regexpi(x.type, ['_' e], 'once')), import)});
+    eye_stat(i) = max([e_stat.nan_ratio]);
+end
 
-% count invalid data
-n_inv_data = sum(isnan(channels(:,strcmpi(data{1}.units, 'area') | ...
-    strcmpi(data{1}.units, 'diameter'))));
-
-% count blink and saccades (combined in blink channel at the moment)
-n_bns = sum(channels(:,strcmpi(data{1}.units, 'blink')) == 1);
-
-ids = struct();
-ids.invalid_data = n_inv_data ./ [n_data n_data];
-ids.blinks_saccades = n_bns ./ n_inv_data;
-ids.other = 1 - ids.blinks_saccades;
-
-sourceinfo.invalid_data_stats = ids;
+[~, min_idx] = min(eye_stat);
+sourceinfo.best_eye = lower(sourceinfo.eyesObserved(min_idx));
 
 % remove specific import path
 rmpath([settings.path, 'Import', filesep, 'eyelink']);

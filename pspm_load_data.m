@@ -63,7 +63,7 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 % initialise
 % -------------------------------------------------------------------------
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 
 % initialise output
 sts = -1; infos = []; data = []; filestruct=[]; gerrmsg = '';
@@ -79,19 +79,19 @@ elseif nargin < 2
 elseif isnumeric(chan) 
     if any(chan < 0)
         warning('ID:invalid_input', 'Negative channel numbers not allowed.'); return;
-    end;
+    end
 elseif ischar(chan)
     if any(~ismember(chan, [{settings.chantypes.type}, 'none', 'wave', 'events']))
-    warning('ID:invalid_channeltype', 'Unknown channel type.'); return; end;
+    warning('ID:invalid_channeltype', 'Unknown channel type.'); return; end
 elseif isstruct(chan)
     if ~(isfield(chan, 'infos') && isfield(chan, 'data'))
         warning('ID:invalid_input', 'Fields .infos and .data are required to save file.'); return;
-    end;
-    try chan.options.overwrite = (chan.options.overwrite == 1); catch, chan.options.overwrite = 0; end;
+    end
+    try chan.options.overwrite = (chan.options.overwrite == 1); catch, chan.options.overwrite = 0; end
     try chan.options.dont_ask_overwrite = (chan.options.dont_ask_overwrite == 1); catch, chan.options.dont_ask_overwrite = 0; end;
 else
     warning('ID:invalid_input', 'Unknown channel option.'); 
-end;
+end
 
 % check whether file exists ---
 if isstruct(fn)
@@ -103,8 +103,8 @@ elseif exist(fn, 'file') && isstruct(chan) && ~chan.options.overwrite && ~chan.o
         chan.options.overwrite = 1;
     else
         warning('Data not saved.\n');
-    end;
-end;
+    end
+end
 
 % check file structure
 % -------------------------------------------------------------------------
@@ -113,24 +113,24 @@ if isstruct(chan)
         data = chan.data; infos = chan.infos;
     catch
         warning('ID:invalid_input', 'Input struct is not a valid PsPM struct'); return;
-    end;
+    end
     gerrmsg = sprintf('\nData structure is invalid:');
 elseif isstruct(fn)
     try
         data = fn.data; infos = fn.infos;
     catch
         warning('ID:invalid_input', 'Input struct is not a valid PsPM struct'); return;
-    end;
+    end
 else
     gerrmsg = sprintf('Data file %s is not a valid PsPM file:\n', fn);
     try
         load(fn);
     catch
         errmsg = [gerrmsg, 'Not a matlab data file.']; warning('ID:invalid_file_type', '%s', errmsg); return;
-    end;
+    end
     % check for SCRalyze 1.x files ---
     if exist('scr', 'var'), warning('ID:SCRalyze_1_file', 'SCRalyze 1.x compatibility is discontinued'); return; end;
-end;
+end
 
 % check variables ---
 vflag = 0;
@@ -138,11 +138,11 @@ if ~exist('infos', 'var')
     vflag = 1;
 elseif ~isstruct(infos)
     vflag = 1;
-end;
+end
 
 if isempty(data) || ~iscell(data)
     vflag = 1;
-end;
+end
 
 if vflag, errmsg = [gerrmsg, 'Some variables are either missing or invalid in this file.']; warning('ID:invalid_data_structure', '%s', errmsg); return; end;
 
@@ -167,8 +167,8 @@ for k = 1:numel(data)
         nflag(k) = 1;
     elseif isempty(data{k}.data)
         warning('ID:missing_data', 'Channel %01.0f is empty.', k);
-    end;
-end;
+    end
+end
 
 if any(vflag), errmsg = [gerrmsg, sprintf('Invalid data structure for channel %01.0f.', find(vflag,1))]; warning('ID:invalid_data_structure', '%s', errmsg); return; end;
 if any(wflag), errmsg = [gerrmsg, sprintf('The data in channel %01.0f is out of the range [0, infos.duration]', find(wflag,1))]; warning('ID:invalid_data_structure', '%s', errmsg); return; end;
@@ -205,20 +205,23 @@ if ischar(chan) && ~strcmp(chan, 'none')
                 (strcmpi(chan, 'wave') && ~strcmpi(data{k}.header.units, 'events')) || ...
                 (any(strcmpi(chan, {'trigger', 'marker'})) && any(strcmpi(data{k}.header.chantype, {'trigger', 'marker'})))
             flag(k) = 1;
+        elseif strcmpi(chan, 'pupil') && isfield(infos.source, 'best_eye') && ...
+                strcmpi(['pupil_' infos.source.best_eye], data{k}.header.chantype)
+            flag(k) = 1;
         elseif strcmp(data{k}.header.chantype, chan)
             flag(k) = 1;
-        end;
-    end;
+        end
+    end
     if all(flag == 0)
         warning('ID:non_existing_channeltype', 'There are no channels of type ''%s'' in the datafile', chan); return;
     end
     data = data(flag == 1);
 elseif isnumeric(chan)
-    if chan == 0, chan = 1:numel(data); end;
+    if chan == 0, chan = 1:numel(data); end
     data = data(chan);
 elseif isstruct(chan) && ~isempty(fn) && (~exist(fn, 'file') || chan.options.overwrite == 1)
         save(fn, 'infos', 'data');
-end;
+end
 
 sts = 1;
 

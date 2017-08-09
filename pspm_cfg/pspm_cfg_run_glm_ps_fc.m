@@ -5,7 +5,7 @@ function out = pspm_cfg_run_glm_ps_fc(job)
 % $Rev$
 
 global settings
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 
 % set modality
 modality = 'ps';
@@ -42,10 +42,10 @@ if any(strcmp(bf,{'psrf_fc0', 'psrf_fc1', 'psrf_fc2'}))
             cs = 0;
             cs_d = 0;
             us = 1;
-    end;
+    end
     
     model.bf.args = [cs, cs_d, us];
-end;
+end
 
 % set default channel (hard coded)
 if isfield(job.chan, 'chan_def')
@@ -66,4 +66,4 @@ if exist('out', 'var') && isfield(out, 'modelfile')
     end
 else
     out(1).modelfile = cell(1);
-end;
+end

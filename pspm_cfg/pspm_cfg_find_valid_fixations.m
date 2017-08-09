@@ -11,7 +11,7 @@ function [find_valid_fixations] = pspm_cfg_find_valid_fixations(job)
 
 % Initialise
 global settings
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 
 %% Data file
 datafile         = cfg_files;
@@ -31,13 +31,6 @@ eyes.values         = {'all', 'left', 'right'};
 eyes.help           = {['Choose eyes which should be processed. If ''All', ...
     'eyes'' is selected, all eyes which are present in the data will ', ...
     'be processed. Otherwise only the chosen eye will be processed.']};
-
-%% Disable fixation validation
-disable_fixation_validation       = cfg_const;
-disable_fixation_validation.name  = 'Disabled';
-disable_fixation_validation.tag   = 'disable_fixation_validation';
-disable_fixation_validation.val   = {0};
-disable_fixation_validation.help  = {['Validation of fixation is disabled.']};
 
 %% Visual angle
 box_degree                      = cfg_entry;
@@ -124,35 +117,14 @@ fixation_point.values               = {fixpoint_default, fixpoint_file, fixpoint
 fixation_point.help                 = {['Point of fixation. Should be ', ...
     'given in pixels, according to the x- and y-coordinates set by the eye tracker software.']};
 
-%% Enable fixation validation
-enable_fixation_validation       = cfg_branch;
-enable_fixation_validation.name  = 'Enabled';
-enable_fixation_validation.tag   = 'enable_fixation_validation';
-enable_fixation_validation.val   = {box_degree, distance, screen_settings, fixation_point};
-enable_fixation_validation.help  = {['Validation of fixation is enabled.']};
 
 %% Validate fixations
-validate_fixations        = cfg_choice;
-validate_fixations.name   = 'Validate fixations';
-validate_fixations.tag    = 'validate_fixations';
-validate_fixations.val    = {disable_fixation_validation};
-validate_fixations.values = {disable_fixation_validation, enable_fixation_validation};
-validate_fixations.help   = {['Disable or enable validation of fixations ', ...
-    'within a given range on the screen (in degree visual angle).']};
-
-%% Enable interpolation
-enable_interpolation        = cfg_const;
-enable_interpolation.name   = 'Enabled';
-enable_interpolation.tag    = 'enable_interpolation';
-enable_interpolation.val    = {1};
-enable_interpolation.help    = {'Interpolation is enabled.'};
-
-%% Disable interpolation
-disable_interpolation        = cfg_const;
-disable_interpolation.name   = 'Disabled';
-disable_interpolation.tag    = 'disable_interpolation';
-disable_interpolation.val    = {0};
-disable_interpolation.help    = {'Interpolation is disabled.'};
+validation_settings        = cfg_branch;
+validation_settings.name   = 'Validation settings';
+validation_settings.tag    = 'validation_settings';
+validation_settings.val    = {box_degree, distance, screen_settings, fixation_point};
+validation_settings.help   = {['Settings to validate fixations within a ', ...
+    'given range on the screen (in degree visual angle).']};
 
 %% Channels
 channels                    = cfg_entry;
@@ -166,16 +138,6 @@ channels.help               = {['Enter a list of channels (numbers or names) ', 
     'Default is pupil channels. Channel names which depend on eyes will ', ...
     'automatically be expanded. E.g. pupil becomes pupil_l.']};
 
-%% Interpolate
-interpolate                 = cfg_choice;
-interpolate.name            = 'Interpolate';
-interpolate.tag             = 'interpolate';
-interpolate.values          = {enable_interpolation, disable_interpolation};
-interpolate.val             = {enable_interpolation};
-interpolate.help            = {['If interpolation is enabled NaN values ', ...
-    'during blinks and invalid fixations in the selected channels will be ', ...
-    'linearly interpolated. Otherwise NaN values remain ', ...
-    '(and the GLM function will treat these data points as missing). ']};
 
 %% Enable missing
 enable_missing        = cfg_const;
@@ -282,7 +244,7 @@ output.val              = {file_output, channel_output};
 find_valid_fixations      = cfg_exbranch;
 find_valid_fixations.name = 'Find valid fixations';
 find_valid_fixations.tag  = 'find_valid_fixations';
-find_valid_fixations.val  = {datafile, eyes, validate_fixations, channels, interpolate, missing, output};
+find_valid_fixations.val  = {datafile, eyes, validation_settings, channels, missing, output};
 find_valid_fixations.prog = @pspm_cfg_run_find_valid_fixations;
 find_valid_fixations.vout = @pspm_cfg_vout_find_valid_fixations;
 find_valid_fixations.help = {['Pupil data time series can contain missing ', ...

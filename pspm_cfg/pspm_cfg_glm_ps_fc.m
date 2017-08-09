@@ -70,11 +70,17 @@ chan_def_right.tag     = 'chan_def_right';
 chan_def_right.val     = {'pupil_r'};
 chan_def_right.help    = {''};
 
+best_eye                = cfg_const;
+best_eye.name           = 'Best eye';
+best_eye.tag            = 'best_eye';
+best_eye.val            = {'pupil'};
+best_eye.help           = {['Use eye with the fewest NaN values.']};
+
 chan_def                = cfg_choice;
 chan_def.name           = 'Default';
 chan_def.tag            = 'chan_def';
-chan_def.val            = {chan_def_left};
-chan_def.values         = {chan_def_left, chan_def_right};
+chan_def.val            = {best_eye};
+chan_def.values         = {best_eye, chan_def_left, chan_def_right};
 
 a = cellfun(@(f) strcmpi(f.tag, 'chan'), glm_ps_fc.val);
 glm_ps_fc.val{a}.values{1} = chan_def;

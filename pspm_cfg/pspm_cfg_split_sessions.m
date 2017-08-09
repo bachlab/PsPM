@@ -32,6 +32,31 @@ mrk_chan.val     = {chan_def};
 mrk_chan.values  = {chan_def, chan_nr};
 mrk_chan.help    = {['If you have more than one marker channel, choose the marker ' ...
     'channel used for splitting sessions (default: use first marker channel).']};
+%% split auto
+split_auto          = cfg_const;
+split_auto.name     = 'Automatic';
+split_auto.tag      = 'auto';
+split_auto.val      = {0};
+split_auto.help     = {['Detect sessions according to longest distances ', ...
+    'between markers.']};
+
+%% split manual
+split_manual        = cfg_entry;
+split_manual.name   = 'Marker';
+split_manual.tag    = 'marker';
+split_manual.strtype = 'i';
+split_manual.num    = [1 inf];
+split_manual.help   = {['Split sessions according to given marker id''s.']};
+
+%% Split behaviour
+split_behavior         = cfg_choice;
+split_behavior.name    = 'Split behavior';
+split_behavior.tag     = 'split_behavior';
+split_behavior.values  = {split_auto, split_manual};
+split_behavior.val     = {split_auto};
+split_behavior.help    = {['Choose whether sessions should be detected ', ...
+    'automatically or if sessions should be splitted according to ', ...
+    'given marker id''s.']};
 
 %% Overwrite file
 overwrite         = cfg_menu;
@@ -47,7 +72,7 @@ overwrite.help    = {'Overwrite existing file?'};
 split_sessions      = cfg_exbranch;
 split_sessions.name = 'Split Sessions';
 split_sessions.tag  = 'split_sessions';
-split_sessions.val  = {datafile,mrk_chan,overwrite};
+split_sessions.val  = {datafile,mrk_chan, split_behavior,overwrite};
 split_sessions.prog = @pspm_cfg_run_split_sessions;
 split_sessions.vout = @pspm_cfg_vout_split_sessions;
 split_sessions.help = {['Split sessions, defined by trains of of markers. This function ' ...

@@ -18,6 +18,8 @@ function newdatafile = pspm_split_sessions(datafile, markerchannel, options)
 % options.min_break_ratio:  Minimum for ratio 
 %                           [(session distance)/(mean marker distance)]
 %                           Default is settings.split.min_break_ratio = 3
+% options.splitpoints       Alternatively, directly specify session start
+%                           in terms of markers (vector of integer)
 % options.prefix            In seconds, how long data before start trim point 
 %                           should also be included. First marker will be
 %                           at t = options.prefix 
@@ -26,6 +28,8 @@ function newdatafile = pspm_split_sessions(datafile, markerchannel, options)
 %                           point should be included. Last marker will be
 %                           at t = duration (of session) - options.suffix
 %                           Default = 0
+% options.verbose           Tell the function to display information
+%                           about the state of processing. Default = 0
 % 
 %       REMARK for suffix and prefix: 
 %           If the session of markerchannel (and markerchannel only)
@@ -42,7 +46,7 @@ function newdatafile = pspm_split_sessions(datafile, markerchannel, options)
 %              input)
 %__________________________________________________________________________
 % PsPM 3.1
-% (C) 2008-2015 Linus Rüttimann & Tobias Moser (University of Zurich)
+% (C) 2008-2015 Linus Ruttimann & Tobias Moser (University of Zurich)
 
 % $Id$
 % $Rev$
@@ -60,31 +64,33 @@ function newdatafile = pspm_split_sessions(datafile, markerchannel, options)
 % initialise
 % -------------------------------------------------------------------------
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 newdatafile = [];
 
 % options
 % -------------------------------------------------------------------------
 if ~exist('options','var') || isempty(options) || ~isstruct(options)
     options = struct(); 
-end;
+end
 try
-    if options.overwrite ~= 1, options.overwrite = 0; end;
+    if options.overwrite ~= 1, options.overwrite = 0; end
 catch
     options.overwrite = 0;
-end;
+end
 
-try options.prefix; catch, options.prefix = 0; end;
-try options.suffix; catch, options.suffix = 0; end;
+try options.prefix; catch, options.prefix = 0; end
+try options.suffix; catch, options.suffix = 0; end
+try options.verbose; catch, options.verbose = 0; end
+try options.splitpoints; catch, options.splitpoints = []; end
 
 % maximum number of sessions (default 10)
-try options.max_sn; catch, options.max_sn = settings.split.max_sn; end;
+try options.max_sn; catch, options.max_sn = settings.split.max_sn; end
 % minimum ratio of session break to normal inter marker interval (default 3)
 try 
     options.min_break_ratio; 
 catch
     options.min_break_ratio = settings.split.min_break_ratio;
-end;
+end
 
 % check input arguments
 % -------------------------------------------------------------------------
@@ -96,7 +102,7 @@ elseif iscell(datafile)
     D = datafile;
 else
     warning('ID:invalid_input', 'Datafile needs to be a char or cell.\n'); return;
-end;
+end
 
 if nargin < 2
     markerchannel = 0;
@@ -104,7 +110,11 @@ elseif isempty(markerchannel)
     markerchannel = 0;
 elseif ~isnumeric(markerchannel)
     warning('ID:invalid_input', 'Marker channel needs to be a number.\n'); return;
-end;
+end
+
+if ~isnumeric(options.splitpoints)
+    warning('ID:invalid_input', 'options.splitpoints has to be numeric.'); return;
+end
 
 % work on all data files
 % -------------------------------------------------------------------------
@@ -114,14 +124,16 @@ for d = 1:numel(D)
     datafile=D{d};
     
     % user output ---
-    fprintf('Trimming %s ... ', datafile);
+    if options.verbose
+        fprintf('Splitting %s ... ', datafile);
+    end
 
     % check and get datafile ---
     [sts, ininfos, indata, filestruct] = pspm_load_data(datafile);
-    if sts < 0, break, end;
+    if sts < 0, break, end
     
     % define marker channel --
-    if markerchannel == 0, markerchannel = filestruct.posofmarker; end;
+    if markerchannel == 0, markerchannel = filestruct.posofmarker; end
     mrk = indata{markerchannel}.data;
        
     % get markers and define cut off ---
@@ -129,41 +141,53 @@ for d = 1:numel(D)
     
     newdatafile{d} = [];
     if min(imi)*options.min_break_ratio > max(imi)
-        fprintf('  The file won''t be trimmed. No possible timepoints for split in channel %i.\n', markerchannel);        
+        fprintf('  The file won''t be splitted. No possible timepoints for split in channel %i.\n', markerchannel);        
     elseif numel(mrk) <=  options.max_sn
-        fprintf('  The file won''t be trimmed. Not enough markers in channel %i.\n', markerchannel);
+        fprintf('  The file won''t be splitted. Not enough markers in channel %i.\n', markerchannel);
     else
         imi(1:(options.max_sn-1)) = [];
         cutoff = options.min_break_ratio * max(imi);
-            
+
         % get split points ---
-        splitpoint = find(diff(mrk) > cutoff)+1;
+        if ~isempty(options.splitpoints)
+            splitpoint = options.splitpoints;
+        else
+            splitpoint = find(diff(mrk) > cutoff)+1;
+        end
         
         for s = 1:(numel(splitpoint)+1)
             if s == 1
                 sta = 1;
             else
                 sta = splitpoint(s-1);
-            end;
-            
+            end
+
             if s > numel(splitpoint)
                 sto = numel(mrk);
             else
-                sto = splitpoint(s) - 1;
-            end;
-            
+                sto = max(1,splitpoint(s) - 1);
+            end
+
             % include last space (estimated by mean space)
-            mean_space = mean(diff(mrk(sta:sto)));
+            % do not cut immedeately after stop because there might be some
+            % relevant data within the mean space
+            
+            % add global mean space
+            if sta == sto
+                mean_space = mean(diff(mrk));
+            else
+                mean_space = mean(diff(mrk(sta:sto)));
+            end
             start_time = mrk(sta);
             stop_time = mrk(sto)+mean_space;
-            
+
             % correct starttime (we cannot go into -) ---
-            if start_time <= 0, start_time = 0; end;
+            if start_time <= 0, start_time = 0; end
             % correct stop_time if it exceeds duration of file
-            if stop_time > ininfos.duration, stop_time = ininfos.duration; end;
+            if stop_time > ininfos.duration, stop_time = ininfos.duration; end
             spp(s,:) = [start_time, stop_time];
-        end;
-        
+        end
+
         splitpoint = spp;
         
         % split file ---
@@ -179,7 +203,7 @@ for d = 1:numel(D)
             else
                 sta_p = splitpoint(sn,1) - options.prefix;
                 sta_prefix = options.prefix;
-            end;
+            end
             
             if (splitpoint(sn,2) + options.suffix) > ininfos.duration
                 sto_p = ininfos.duration;
@@ -187,7 +211,7 @@ for d = 1:numel(D)
             else
                 sto_p = splitpoint(sn,2) + options.suffix;
                 sto_suffix = options.suffix;
-            end;
+            end
             
             % update infos ---
             infos = ininfos;
@@ -222,33 +246,35 @@ for d = 1:numel(D)
                         foo(foo < 0) = [];
                         data{k}.data = foo;
                         clear foo;
-                    end;
+                    end
                 else
                     % convert from s into datapoints
                     startpoint = ceil(sta_p * data{k}.header.sr);
                     stoppoint  = floor(sto_p * data{k}.header.sr);
                     data{k}.data = indata{k}.data(startpoint:stoppoint);
-                end;
-            end;
+                end
+            end
             
             % save data ---
             if exist(newdatafile{d}{sn}, 'file') && ~options.overwrite
-                overwrite=menu(sprintf('Trimmed file (%s) already exists. Overwrite?', newdatafile{d}{sn}), 'yes', 'no');
+                overwrite=menu(sprintf('Splitted file (%s) already exists. Overwrite?', newdatafile{d}{sn}), 'yes', 'no');
                 %close gcf;
-                if overwrite == 2, continue; end;
-            end;
+                if overwrite == 2, continue; end
+            end
             save(newdatafile{d}{sn}, 'infos', 'data');
-        end;
+        end
         % User output
-        fprintf('  done.\n');
-    end;
+        if options.verbose
+            fprintf('  done.\n');
+        end
+    end
     
-end;
+end
 
 % convert newdatafile if necessary
 if d == 1
     newdatafile = newdatafile{1};
-end;
+end
 
 return;
     
