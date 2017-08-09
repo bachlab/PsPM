@@ -19,7 +19,7 @@ fclose(fid);
 clear fid
 for n = 1:numel(msg{1})
     fprintf('%s\n', msg{1}{n});
-end;
+end
 
 fprintf('PsPM: loading defaults ... \n');
 
@@ -70,7 +70,7 @@ signal = license('checkout','signal_toolbox');
 if ~signal
     errmsg='Signal processing toolbox not installed. Some filters might not be implemented.';
     warning(errmsg);
-end;
+end
 
 % check whether scralyze is on the path
 pth = fileparts(which('pspm'));
@@ -79,7 +79,7 @@ if isempty(strfind(p, pth))
     addpath(pth);
 else
     scrpath=0;
-end;
+end
 pth = [pth, fs];
 
 % check whether SPM 8 is already on path
@@ -90,19 +90,19 @@ if ~isempty (dummy)
             addspm=0;
         else
             addspm=1;
-        end;
+        end
     catch
         addspm=1;
-    end;
+    end
 else
     addspm=1;
-end;
+end
 if addspm
     addpath([pth, fs, 'SPM']);
     spmpath=1;
 else
     spmpath=0;
-end;
+end
 
 % check whether matlabbatch is already on path
 dummy=which('cfg_ui');
@@ -133,7 +133,7 @@ else
     else
         matlabbatchpath=0;
     end
-end;
+end
 
 % check whether pspm_cfg is already on path
 dummy=which('pspm_cfg');
@@ -318,8 +318,8 @@ for k = 1:numel(defaults.chantypes)
         indx(k) = 0;
     else
         indx(k) = 1;
-    end;
-end;
+    end
+end
     
 defaults.importchantypes = defaults.chantypes(indx==1);
 
@@ -855,7 +855,7 @@ if exist([pth, 'pspm_settings.mat'])
     load([pth, 'pspm_settings.mat']);
 else
     settings=defaults;
-end;
+end
 
 settings.path=pth;
 settings.scrpath=scrpath;

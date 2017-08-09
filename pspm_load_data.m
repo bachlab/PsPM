@@ -8,6 +8,8 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 %                   vector of channelnumbers - returns only these channels
 %                   'wave' - returns all waveform channels
 %                   'events' - returns all event channels
+%                   'pupil' - returns all pupil channels fitting the 'best
+%                               eye'
 %                   'channel type' - returns the respective channels
 %                       (see settings for channel types)
 %                   'none' - just checks the file

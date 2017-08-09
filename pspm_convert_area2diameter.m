@@ -1,5 +1,5 @@
 function [varargout] = pspm_convert_area2diameter(varargin)
-% SCR_CONVERT_AREA2DIAMETER converts area values into diameter
+% SCR_CONVERT_AREA2DIAMETER converts area values into diameter values
 %
 % It can work on PsPM files or on numeric vectors.
 %
@@ -9,7 +9,12 @@ function [varargout] = pspm_convert_area2diameter(varargin)
 %
 % ARGUMENTS: 
 %           fn:                 a numeric vector of milimeter values
-%           chan:               distance between screen and eyes in meter
+%           chan:               Channels which should be converted from
+%                               area to diameter. Should be either a string
+%                               representing the channels chantype or a
+%                               numeric value representing the channels id.
+%                               Multiple channels are allowed and should be
+%                               provided as cell.
 %           area:               a numeric vector of area values (the unit
 %                               is not important)
 %           options:
@@ -41,6 +46,10 @@ else
     fn = varargin{1};
     chan = varargin{2};
     
+    if ~iscell(chan)
+        chan = {chan};
+    end
+    
     if numel(varargin) == 3
         options = varargin{3};
     else
@@ -57,25 +66,29 @@ else
     
     mode = 'file';
     
-    [~, ~, data] = pspm_load_data(fn, chan);
-    area = data{1}.data;
 end
 
-d = 2.*sqrt(area.*pi);
-sts = 1;
-if strcmpi(mode, 'file')
-    data{1}.data = d;
-    % replace metric values
-    data{1}.header.units = ...
-        regexprep(data{1}.header.units, ...
+if strcmpi(mode, 'vector')
+    varargout{2} = 2.*sqrt(area.*pi);
+    sts = 1;
+elseif strcmpi(mode, 'file')
+    diam = cell(numel(chan), 1);
+    for i = 1:numel(chan)
+        [~, ~, data] = pspm_load_data(fn, chan{i});   
+        diam{i} = data{1};
+        diam{i}.data = 2.*sqrt(diam{i}.data.*pi);
+        
+        % replace metric values
+        diam{i}.header.units = ...
+            regexprep(data{1}.header.units, ...
             '(square)?(centi|milli|deci|c|m|d)?(m(et(er|re))?)(s?\^?2?)', '$2$3');
-    % if not metric, replace area with diameter
-    if strcmpi(data{1}.header.units, 'area')
-        data{1}.header.units = 'diameter';
+        % if not metric, replace area with diameter
+        if strcmpi(diam{1}.header.units, 'area')
+            diam{1}.header.units = 'diameter';
+        end
     end
-    [~, infos] = pspm_write_channel(fn, data{1}, options.channel_action);
+    [~, infos] = pspm_write_channel(fn, diam, options.channel_action);
     varargout{2} = infos.channel;
-else
-    varargout{2} = d;
+    sts = 1;
 end
 varargout{1} = sts;

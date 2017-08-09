@@ -52,12 +52,12 @@ function [sts, infos] = pspm_write_channel(fn, newdata, action, options)
 % -------------------------------------------------------------------------
 sts = -1;
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 outinfos = struct();
 
 %% load options.channel
 % -------------------------------------------------------------------------
-try options.channel; catch, options.channel = 0; end;
+try options.channel; catch, options.channel = 0; end
 
 %% Check arguments
 % -------------------------------------------------------------------------
@@ -78,17 +78,17 @@ elseif isempty(newdata)
         warning('ID:invalid_input', 'newdata is empty. Got nothing to %s.', action); return;
     elseif options.channel == 0
         warning('ID:invalid_input', 'If options.channel is 0, a newdata structure must be provided'); return;
-    end;
+    end
 elseif ~isempty(newdata) && ~isstruct(newdata) && ~iscell(newdata)
        warning('ID:invalid_input', 'newdata must either be a newdata structure or empty'); return;
-end;
+end
 
 %% Determine whether the data has the correct 'orientation' and try to fix it
 % -------------------------------------------------------------------------
 
 if isstruct(newdata)
     newdata = {newdata};
-end;
+end
 
 if ~strcmpi(action, 'delete')    
     for i=1:numel(newdata)
@@ -105,25 +105,25 @@ if ~strcmpi(action, 'delete')
                     warning('ID:invalid_data_structure', ...
                         'Passed struct (%i) seems to have the wrong format.', i);
                     return;
-                end;
-            end;
+                end
+            end
         else
             warning('ID:invalid_data_strucutre', ...
                 'Passed struct (%i) contains no ''.data'' or no ''.header'' field.', i);
             return;
-        end;
-    end;
-end;
+        end
+    end
+end
 
 %% Process other options
 % -------------------------------------------------------------------------
-try options.msg; catch, options.msg = ''; end;
-try options.delete; catch, options.delete = 'last'; end;
+try options.msg; catch, options.msg = ''; end
+try options.delete; catch, options.delete = 'last'; end
 
 %% Get data
 % -------------------------------------------------------------------------
 [nsts, infos, data] = pspm_load_data(fn);
-if nsts == -1, return; end;
+if nsts == -1, return; end
 
 %% Find channel according to action
 % -------------------------------------------------------------------------
@@ -148,8 +148,8 @@ if ~strcmpi(action, 'add')
             warning('ID:invalid_input', 'channel is larger than channel count in file'); return;
         else
             channeli = channel;
-        end;
-    end;
+        end
+    end
     
     if isempty(channeli)
         if strcmpi(action, 'replace')
@@ -158,16 +158,16 @@ if ~strcmpi(action, 'add')
             action = 'add';
         else
             warning('ID:no_matching_channels', 'no channel of type ''%s'' found in the file',options.channel); return;
-        end;
-    end;
-end;
+        end
+    end
+end
 
 if strcmpi(action, 'add')
     channeli = numel(data) + (1:numel(newdata));
     chantypes = cellfun(@(f) f.header.chantype, newdata, 'un', 0);
     fchannels = cell(numel(data) + numel(newdata),1);
     fchannels(channeli,1) = chantypes;
-end;
+end
 
 %% Manage message
 % -------------------------------------------------------------------------
@@ -178,22 +178,22 @@ else
         case 'add', v = 'added';
         case 'replace', v = 'replaced';
         case 'delete', v = 'deleted';
-    end;
+    end
     
     if isstruct(options.msg) && isfield(options.msg, 'prefix')
         prefix = options.msg.prefix;
     else
         prefix = 'Channel #%02d of type ''%s''';   
-    end;
+    end
     
     msg = '';
     for i=channeli'
         % translate prefix
         p = sprintf(prefix, i, fchannels{i});
         msg = [msg, p, sprintf(' %s on %s\n; ', v, date)];
-    end;
+    end
     msg(end-1:end)='';
-end;
+end
 
 %% Modify data according to action
 % -------------------------------------------------------------------------
@@ -201,13 +201,13 @@ if strcmpi(action, 'delete')
     data(channeli) = [];
 else
     data(channeli,1) = newdata;
-end;
+end
 
 if isfield(infos, 'history')
     nhist = numel(infos.history);
 else
     nhist = 0;
-end;
+end
 infos.history{nhist + 1} = msg;
 
 %% add infos to outinfo struct
@@ -221,7 +221,7 @@ outdata.data  = data;
 outdata.options.overwrite = 1;
 
 nsts = pspm_load_data(fn, outdata);
-if nsts == -1, return; end;
+if nsts == -1, return; end
 
 infos = outinfos;
 
