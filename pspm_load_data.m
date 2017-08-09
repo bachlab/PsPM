@@ -206,7 +206,7 @@ if ischar(chan) && ~strcmp(chan, 'none')
                 (any(strcmpi(chan, {'trigger', 'marker'})) && any(strcmpi(data{k}.header.chantype, {'trigger', 'marker'})))
             flag(k) = 1;
         elseif strcmpi(chan, 'pupil') && isfield(infos.source, 'best_eye') && ...
-                strcmpi(['pupil_' infos.source.best_eye], data{k}.header.chantype)
+                strcmpi(['pupil_' infos.source.best_eye], data{k}.header.chantype)          
             flag(k) = 1;
         elseif strcmp(data{k}.header.chantype, chan)
             flag(k) = 1;
@@ -215,7 +215,8 @@ if ischar(chan) && ~strcmp(chan, 'none')
     if all(flag == 0)
         warning('ID:non_existing_channeltype', 'There are no channels of type ''%s'' in the datafile', chan); return;
     end
-    data = data(flag == 1);
+
+    data = data(flag == 1);    
 elseif isnumeric(chan)
     if chan == 0, chan = 1:numel(data); end
     data = data(chan);

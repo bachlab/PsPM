@@ -230,7 +230,7 @@ channel_output          = cfg_choice;
 channel_output.name     = 'Channel output';
 channel_output.tag      = 'channel_output';
 channel_output.values   = {add_channel, replace_channel};
-channel_output.val      = {add_channel};
+channel_output.val      = {replace_channel};
 channel_output.help     = {['Define whether the data channels should be ', ...
     'added or replace the original data channels.']};
 

@@ -251,13 +251,13 @@ end
 fprintf('Getting data ...');
 nFile = numel(model.datafile);
 for iFile = 1:nFile
-    [sts, infos, data] = pspm_load_data(model.datafile{iFile}, model.channel);
+    [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
     if sts < 1, return; end
     y{iFile} = data{1}.data(:);
     sr(iFile) = data{1}.header.sr;
     fprintf('.');
     if any(strcmp(model.timeunits, {'marker', 'markers'}))
-        [sts, infos, data] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
+        [sts, ~, data] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
         if sts < 1, return; end
         events{iFile} = data{1}.data * data{1}.header.sr;
     end
