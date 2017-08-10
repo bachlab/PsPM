@@ -20,8 +20,9 @@ function [sts,infos] = pspm_ecg2hb(fn, chan, options)
 %                    [def. 0].
 %                ... twthresh - sets the threshold to perform the twave
 %                    check. [def. 0.36s].
-%                ... replace - specified and equals 1 when existing data 
-%                               should be replaced with modified data.
+%                ... channel_action - ['add' / 'replace'] specifies whether
+%                    existing channels should be replaced or the new data
+%                    channel should be added.
 %
 % Reference:
 % Pan J & Tomkins WJ (1985). A Real-Time QRS Detection Algorithm. IEEE
@@ -120,7 +121,7 @@ elseif ~isnumeric(chan) && ~strcmp(chan,'ecg')
         warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end;
 
-try options.replace; catch options.replace = 0; end;
+try options.channel_action; catch, options.channel_action = 'add'; end
 
 % user output
 % -------------------------------------------------------------------------
@@ -143,9 +144,9 @@ pt_debug=[];
 if nargin > 2 && exist('options', 'var')
     
     if isstruct(options)
-        if isfield(options, 'replace')
-            if ~any(options.replace == 0:1)
-                warning('ID:invalid_input', '''options.replace'' must be either 0 or 1.'); return;
+        if isfield(options, 'channel_action')
+            if ~any(strcmpi(options.channel_action, {'add', 'replace'}))
+                warning('ID:invalid_input', '''options.channel_action'' must be either ''add'' or ''replace''.'); return;
             end;             
         end
         
@@ -346,12 +347,7 @@ newdata.header.chantype = 'hb';
 % user output
 fprintf('  done.\n');
 
-
-if options.replace == 1
-    action = 'replace';
-else 
-    action = 'add';
-end;
+action = options.channel_action;
 
 o.msg.prefix = 'QRS detection with Pan & Tompkins algorithm and HB-timeseries';
 [nsts, write_info] = pspm_write_channel(fn, newdata, action, o);
