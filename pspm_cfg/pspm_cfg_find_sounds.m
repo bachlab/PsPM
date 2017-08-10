@@ -12,7 +12,7 @@ function [find_sounds] = pspm_cfg_find_sounds(job)
 
 % Initialise
 global settings
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 
 %% Select file / datafile
 datafile         = cfg_files;

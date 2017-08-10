@@ -6,19 +6,18 @@ function [sts, infos] = pspm_find_sounds(file, options)
 %   Arguments
 %       file : path and filename of the pspm file holding the sound
 %       options : struct with following possible values
-%           createchannel : [true/FALSE] sound events are written as
-%               marker channel to the specified pspm file. Onset times 
-%               then correspond to marker events and duration is written 
-%               to markerinfo. Depending on channel_action the new marker 
-%               channel replaces existing marker channels or is added as 
-%               new marker channel.
-%               Be careful: May overwrite reference marker channel!!!
+%           channel_action : ['none'/'add'/'replace'] if not set to 'none'
+%               sound events are written as marker channel to the 
+%               specified pspm file. Onset times then correspond to marker 
+%               events and duration is written to markerinfo. The
+%               values 'add' or 'replace' state whether existing marker
+%               channels should be replaced (last found marker channel will 
+%               be overwritten) or whether the new channel should be added 
+%               at the end of the data file. Default is 'none'.
+%               Be careful: May overwrite reference marker channel 
+%               when working with 'replace'!!!
 %
-%           channel_action : ['add'/'replace'] define whether the new marker
-%               channel should be added or replace existing marker
-%               channels.
-%
-%           channeloutput : ['all'/'corrected'] (default: 'all') defines
+%           channel_output : ['all'/'corrected'] (default: 'all') defines
 %               whether all sound markers or only sound markers which have
 %               been assigned to a marker from the trigger channel should
 %               be added as channel to the original file. 'corrected'
@@ -81,7 +80,7 @@ function [sts, infos] = pspm_find_sounds(file, options)
 %           .snd_markers : vector of begining of sound sound events
 %           .delays : vector of delays between markers and detected sounds. 
 %                Only available with option 'diagnostics' turned on.
-%           .channel: number of added chan, when options.createchannel == true
+%           .channel: number of added chan, when options.channel_action ~= 'none'
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2015 Samuel Gerster (University of Zurich)
@@ -92,7 +91,7 @@ function [sts, infos] = pspm_find_sounds(file, options)
 % initialise
 % -------------------------------------------------------------------------
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 
 sts=1;
 % Check argument
@@ -103,19 +102,18 @@ end
 fprintf('Processing sound in file %s\n',file);
 
 % Process options
-try options.createchannel; catch, options.createchannel = false; end;
-try options.channel_action; catch, options.channel_action = 'add'; end;
-try options.channeloutput; catch; options.channeloutput = 'all'; end;
-try options.diagnostics; catch, options.diagnostics = true; end;
-try options.maxdelay; catch, options.maxdelay = 3; end;
-try options.mindelay; catch, options.mindelay = 0; end;
-try options.plot; catch, options.plot = false; end;
-try options.resample; catch, options.resample = 1; end;
-try options.roi; catch, options.roi = []; end;
-try options.sndchannel; catch, options.sndchannel = 0; end;
-try options.threshold; catch, options.threshold = 0.1; end;
-try options.trigchannel; catch, options.trigchannel = 0; end;
-try options.expectedSoundCount; catch; options.expectedSoundCount = 0; end;
+try options.channel_action; catch, options.channel_action = 'none'; end
+try options.channel_output; catch; options.channel_output = 'all'; end
+try options.diagnostics; catch, options.diagnostics = true; end
+try options.maxdelay; catch, options.maxdelay = 3; end
+try options.mindelay; catch, options.mindelay = 0; end
+try options.plot; catch, options.plot = false; end
+try options.resample; catch, options.resample = 1; end
+try options.roi; catch, options.roi = []; end
+try options.sndchannel; catch, options.sndchannel = 0; end
+try options.threshold; catch, options.threshold = 0.1; end
+try options.trigchannel; catch, options.trigchannel = 0; end
+try options.expectedSoundCount; catch; options.expectedSoundCount = 0; end
 
 if options.plot
     options.diagnostics = true;
@@ -135,22 +133,20 @@ elseif ~isnumeric(options.sndchannel) || mod(options.sndchannel,1) || options.sn
     warning('ID:invalid_input', 'Option sndchannel is not an integer.'); sts=-1; return;
 elseif ~isnumeric(options.trigchannel) || mod(options.trigchannel,1) || options.trigchannel < 0
     warning('ID:invalid_input', 'Option trichannel is not an integer.'); sts=-1; return;
-elseif ~islogical(options.createchannel) && ~isnumeric(options.createchannel)
-    warning('ID:invalid_input', 'Option createchannel is not numeric or logical'); sts=-1; return;
 elseif ~islogical(options.diagnostics) && ~isnumeric(options.diagnostics)
     warning('ID:invalid_input', 'Option diagnostics is not numeric or logical'); sts=-1; return;
 elseif ~islogical(options.plot) && ~isnumeric(options.plot)
     warning('ID:invalid_input', 'Option plot is not numeric or logical'); sts=-1; return;
-elseif ~strcmpi(options.channeloutput, 'all') && ~strcmpi(options.channeloutput, 'corrected')
-    warning('ID:invalid_input', 'Option channeloutput must be either ''all'' or ''corrected''.'); sts=-1; return;
+elseif ~strcmpi(options.channel_output, 'all') && ~strcmpi(options.channel_output, 'corrected')
+    warning('ID:invalid_input', 'Option channel_output must be either ''all'' or ''corrected''.'); sts=-1; return;
 elseif ~isnumeric(options.expectedSoundCount) || mod(options.expectedSoundCount,1) ... 
         || options.expectedSoundCount < 0
     warning('ID:invalid_input', 'Option expectedSoundCount is not an integer.'); sts=-1; return;
 elseif ~isempty(options.roi) && (length(options.roi) ~= 2 || ~all(isnumeric(options.roi) & options.roi >= 0))
     warning('ID:invalid_input', 'Option roi must be a float vector of length 2 or 0'); sts=-1; return;
-elseif ~ischar(options.channel_action) || ~ismember(options.channel_action, {'add', 'replace'})
-    warning('ID:invalid_input', 'Option createchannel must be either ''add'' or ''replace'''); return;
-end;
+elseif ~ischar(options.channel_action) || ~ismember(options.channel_action, {'none', 'add', 'replace'})
+    warning('ID:invalid_input', 'Option channel_action must be either ''none'', ''add'' or ''replace'''); return;
+end
 
 % call it outinfos not to get confused
 outinfos = struct();
@@ -160,7 +156,7 @@ outinfos = struct();
 [sts, foo, indata] = pspm_load_data(file);
 if sts == -1
     warning('ID:invalid_input', 'Failed loading file %s.', file); return;
-end;
+end
 
 %% Sound
 % Check for existence of sound channel
@@ -174,7 +170,7 @@ elseif options.sndchannel > numel(indata)
     warning('ID:out_of_range', 'Option sndchannel is out of the data range.'); return;
 else
     snd = indata{options.sndchannel};
-end;
+end
 
 % Process Sound
 snd.data = snd.data-mean(snd.data);
@@ -188,7 +184,7 @@ if options.resample>1
 else
     t = tsnd;
     snd_pow = snd.data.^2;
-end;
+end
 % Apply simple bidirectional square filter
 snd_pow = snd_pow-min(snd_pow);
 mask = ones(round(.01*snd.header.sr),1)/round(.01*snd.header.sr);
@@ -240,7 +236,7 @@ while searchForMoreSounds == true
     snd_re(noevent_i)=[];
     snd_fe(noevent_i)=[];
 
-    % keep current snd_re for channeloutput 'all'
+    % keep current snd_re for channel_output 'all'
     snd_re_all = snd_re;
     snd_fe_all = snd_fe;
 
@@ -276,10 +272,10 @@ while searchForMoreSounds == true
         % Discard any sound event not related to a trigger
         if ~isempty(snd_fe)
             snd_fe = snd_fe(dsearchn(snd_re,snd_markers));
-        end;
+        end
         if ~isempty(snd_re)
             snd_re = snd_re(dsearchn(snd_re,snd_markers));
-        end;
+        end
         %% Display some diagnostics
         fprintf('%4d sound events associated with a marker found\nMean Delay : %5.1f ms\nStd dev    : %5.1f ms\n',...
             length(snd_markers),mean(delays)*1000,std(delays)*1000);
@@ -300,15 +296,15 @@ while searchForMoreSounds == true
 end
 
 %% Save as new channel
-if options.createchannel
+if ~strcmpi(options.channel_action, 'none')
     % Save the new channel
-    if strcmpi(options.channeloutput, 'all')
+    if strcmpi(options.channel_output, 'all')
         snd_events.data = snd_re_all;
         snd_events.markerinfo.value = snd_fe_all-snd_re_all;
     else
         snd_events.data = snd_re;
         snd_events.markerinfo.value = snd_fe-snd_re;
-    end;
+    end
     
     % marker channels have sr = 1 (because marker events are specified in
     % seconds)
@@ -333,7 +329,7 @@ if options.plot
         hist(delays*1000,10)
     else
         histogram(delays*1000, 10)
-    end;
+    end
     title('Trigger to sound delays')
     xlabel('t [ms]')
     if options.resample
