@@ -1,4 +1,4 @@
-function out = pspm_cfg_run_glm_seb(job)
+function out = pspm_cfg_run_glm_sebr(job)
 % Executes pspm_glm
 
 % $Id$

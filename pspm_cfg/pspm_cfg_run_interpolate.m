@@ -24,4 +24,4 @@ end;
 
 options.extrapolate = job.extrapolate;
 
-[sts, out] = pspm_interpolate(fn, options);
+[~, out] = pspm_interpolate(fn, options);
