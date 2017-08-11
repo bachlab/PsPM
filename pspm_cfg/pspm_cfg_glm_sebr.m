@@ -1,4 +1,4 @@
-function [glm_seb] = pspm_cfg_glm_seb
+function [glm_seb] = pspm_cfg_glm_sebr
 % GLM SEB FC
 
 % $Id$
@@ -11,7 +11,7 @@ if isempty(settings), pspm_init; end;
 % set variables
 
 vars = struct();
-vars.modality = 'sebr';
+vars.modality = 'SEBR';
 vars.modspec = 'sebr';
 vars.glmref = { ...
         ['Khemka, Tzovara, Gerster, Quednow & Bach (2016) Psychophysiology'] ...

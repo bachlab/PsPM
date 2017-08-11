@@ -13,4 +13,8 @@ options.newfile = out_file;
 options.adjust_method = job.adjust_method;
 
 [~, f_out] = pspm_segment_mean(job.segment_files, options);
-out = {f_out.file};
+if isfield(f_out, 'file')
+    out = {f_out.file};
+else
+    out = {};
+end

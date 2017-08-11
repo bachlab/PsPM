@@ -31,6 +31,6 @@ close all
 disp(' ');
 disp('Thanks for using PsPM.');
 disp('_____________________________________________________________________________________________');
-disp('PsPM 3.1 (c) 2008-2016 Dominik R. Bach');
+disp('PsPM 3.2 (c) 2008-2017 Dominik R. Bach');
 disp('University of Zurich, CH  --  University College London, UK');
     

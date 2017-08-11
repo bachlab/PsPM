@@ -165,7 +165,7 @@ for k = 1:numel(data)
         wflag(k) = 1;
     elseif ~strcmpi(data{k}.header.units, 'events') && (length(data{k}.data) < infos.duration * data{k}.header.sr - 3 || length(data{k}.data) > infos.duration * data{k}.header.sr + 3)
         wflag(k) = 1;
-    elseif ~ismember(data{k}.header.chantype, {settings.chantypes.type})
+    elseif ~ismember(lower(data{k}.header.chantype), {settings.chantypes.type})
         nflag(k) = 1;
     elseif isempty(data{k}.data)
         warning('ID:missing_data', 'Channel %01.0f is empty.', k);

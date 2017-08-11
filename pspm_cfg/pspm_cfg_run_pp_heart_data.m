@@ -99,4 +99,4 @@ for i=1:numel(job.pp_type)
     end; 
 end;
 
-out = fn;
+out = {fn};

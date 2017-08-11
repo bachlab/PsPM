@@ -33,33 +33,33 @@ function [sts, out] = pspm_segment_mean(segments, options)
 % initialise
 % -------------------------------------------------------------------------
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 sts = -1;
 out = struct();
 
 if nargin < 2
     options = struct();
-end;
+end
 
 if ~isfield(options, 'plot')
     options.plot = 0;
-end;
+end
 
 if ~isfield(options, 'newfile')
     options.newfile = '';
-end;
+end
 
 if ~isfield(options, 'overwrite')
     options.overwrite = 0;
-end;
+end
 
 if ~isfield(options, 'dont_ask_overwrite')
     options.dont_ask_overwrite = 0;
-end;
+end
 
 if ~isfield(options, 'adjust_method')
     options.adjust_method = 'none';
-end;
+end
 
 if nargin > 1 && ~isstruct(options)
     warning('ID:invalid_input', 'Options must be a struct.'); return;
@@ -69,8 +69,6 @@ elseif ~(iscell(segments) || ischar(segments)) || ...
         (iscell(segments) && any(~cellfun(@(x) iscell(x) || ischar(x), segments)))
     warning('ID:invalid_input', ['The function expects segments to be a ', ...
         'cell of cells or a cell of strings.']); return;
-elseif any(diff(cellfun(@numel, segments)))
-    warning('ID:invalid_input', 'All elements of segments must have the same length.'); return;
 elseif ~any(ismember(options.adjust_method, {'none', 'downsample', 'interpolate'}))
     warning('ID:invalid_input', 'options.adjust_method must be ''none'', ''downsample'' or ''interpolate'''); return;
 elseif ~isempty(options.newfile) && ~ischar(options.newfile)
@@ -79,7 +77,7 @@ elseif ~isnumeric(options.overwrite) && ~islogical(options.overwrite)
     warning('ID:invalid_input', 'options.overwrite has to be either numeric or logical.'); return;
 elseif ~isnumeric(options.dont_ask_overwrite) && ~islogical(options.dont_ask_overwrite)
     warning('ID:invalid_input', 'options.dont_ask_overwrite has to be either numeric or logical'); return;
-end;
+end
 
 % if files specified load them
 if ischar(segments) || (iscell(segments) && all(cellfun(@ischar, segments)))
@@ -90,17 +88,21 @@ if ischar(segments) || (iscell(segments) && all(cellfun(@ischar, segments)))
             subj_seg{i} = s.segments;
         else
             warning('ID:invalid_input', 'Cannot load segment file %s.', segments{i}); return;
-        end;
-    end;
+        end
+    end
 else
     subj_seg = segments;
-end;
+end
+
+if any(diff(cellfun(@numel, subj_seg)))
+    warning('ID:invalid_input', 'All elements of segments must have the same length.'); return;
+end
 
 n_subjects = size(subj_seg,1);
 
 if n_subjects == 1
     warning('ID:invalid_input', 'Cannot create a mean over 1 subject.'); return;
-end;
+end
 
 n_cond = size(subj_seg{1},1);
 conditions = cell(n_cond,1);
@@ -109,7 +111,8 @@ if options.plot
     fh = figure('Name', 'Condition grand mean (multiple subjects)');
     ax = axes('NextPlot', 'add');
     set(fh, 'CurrentAxes', ax);
-end;
+end
+
 legend_lb = cell(1,n_cond*3);
 for c = 1:n_cond
     sr = cellfun(@(x) size(x{c}.mean,1)/max(x{c}.t), subj_seg);
@@ -129,8 +132,8 @@ for c = 1:n_cond
                     if f > 1
                         subj_seg{i}{c}.mean = subj_seg{i}{c}.mean(1:f:end);
                         subj_seg{i}{c}.t = subj_t;
-                    end;
-                end;
+                    end
+                end
             case 'interpolate'
                 max_sr = max(sr);
                 subj = find(sr == max_sr);
@@ -140,17 +143,17 @@ for c = 1:n_cond
                     if sr(i) < max_sr
                         subj_seg{i}{c}.mean = interp1(subj_seg{i}{c}.t, subj_seg{i}{c}.mean, subj_t);
                         subj_seg{i}{c}.t = subj_t;
-                    end;
-                end;
-        end;
-    end;
+                    end
+                end
+        end
+    end
     seg_size = cellfun(@(x) size(x{c}.mean, 1), subj_seg);
     min_size = min(seg_size);
     min_el = find(seg_size == min_size,1);
     conditions{c}.data = NaN(min_size, n_subjects);
     for s = 1:n_subjects
         conditions{c}.data(:,s) = subj_seg{s}{c}.mean(1:min_size);
-    end;
+    end
     m = conditions{c}.data;
     conditions{c}.mean = nanmean(m,2);
     conditions{c}.std = nanstd(m,0,2);
@@ -171,11 +174,11 @@ for c = 1:n_cond
         legend_lb{(c-1)*3 + 1} = [nm ' AVG'];
         legend_lb{(c-1)*3 + 2} = [nm ' SEM+'];
         legend_lb{(c-1)*3 + 3} = [nm ' SEM-'];
-    end;
-end;
+    end
+end
 if options.plot
     legend(legend_lb);
-end;
+end
 out.conditions = conditions;
 
 if ~isempty(options.newfile)
@@ -188,16 +191,16 @@ if ~isempty(options.newfile)
                 options.newfile), 'Replace file?', 'Yes', 'No', 'No');
             
             write_ok = strcmpi(button, 'Yes');
-        end;
+        end
         
         if write_ok
             segment_mean = conditions;
             save(options.newfile, 'segment_mean');
-        end;
+        end
     else
         warning('ID:invalid_input', 'Path specified in options.newfile does not seem to exist.');
-    end;
+    end
     out.file = options.newfile;
-end;
+end
 sts = 1;
 

@@ -19,7 +19,9 @@ lum_file         = cfg_files;
 lum_file.name    = 'Illuminance file';
 lum_file.tag     = 'lum_file';
 lum_file.num     = [1 Inf];
-lum_file.help    = {'Select a file that contains illuminance data.'};
+lum_file.help    = {['Select a file that contains illuminance data. ', ...
+    'The file should contain a variable ''Lx'' which should be an nx1 numeric ', ...
+    'vector containing the illuminance values.']};
 
 %% Sample rate
 sr         = cfg_entry;

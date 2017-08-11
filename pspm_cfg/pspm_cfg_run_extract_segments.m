@@ -26,12 +26,12 @@ if isfield(job, 'mode')
                 tm.names{i} = conditions(i).cond_name;
                 tm.onsets{i} = conditions(i).cond_onsets;
                 tm.durations{i} = conditions(i).cond_duration;
-            end;
+            end
         elseif isfield(job.mode.mode_manual.conditions, 'condition_files')
             tm = job.mode.mode_manual.conditions.condition_files;
-        end;
+        end
         
-    end;
+    end
     
     % extract options
     options.timeunit = job.options.timeunit;
@@ -49,11 +49,11 @@ if isfield(job, 'mode')
     
     switch mode
         case 'auto'
-            pspm_extract_segments(mode, glm_file, options);
+            [~, out] = pspm_extract_segments(mode, glm_file, options);
         case 'manual'
-            pspm_extract_segments(mode, fn, chan, tm, options);
-    end;
-    
+            [~, out] = pspm_extract_segments(mode, fn, chan, tm, options);
+    end
+    out = {out.outputfile};
 else
     warning('ID:invalid_input', 'No mode specified');
-end;
+end
