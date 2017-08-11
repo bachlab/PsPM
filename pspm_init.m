@@ -847,7 +847,7 @@ defaults.dcm{2} = ...
 % -------------------------------------------------------------------------
 %  FIRST LEVEL settings
 % -------------------------------------------------------------------------
-defaults.first = {'glm', 'sf', 'dcm', 'dm'}; % allowed first level model types
+defaults.first = {'glm', 'sf', 'dcm'}; % allowed first level model types
 
 % look for settings, otherwise set defaults
 % -------------------------------------------------------------------------

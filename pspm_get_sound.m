@@ -14,7 +14,7 @@ function [sts, data]=pspm_get_sound(import)
 % $Rev$
 
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 
 % initialise status
 sts = -1;

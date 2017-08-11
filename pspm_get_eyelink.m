@@ -123,25 +123,32 @@ for k = 1:numel(import)
         % use ascending flank for translation from continuous to events
         import{k}.flank = 'ascending';
     else
-        if ~isempty(regexpi(import{k}.type, ['_([' data{1}.eyesObserved '])'], 'once'))
-            chan = import{k}.channel;
-            if chan > size(channels, 2)
+        if ~isempty(regexpi(import{k}.type, '_[lr]', 'once')) && ...
+            isempty(regexpi(import{k}.type, ['_([' data{1}.eyesObserved '])'], 'once'))
                 warning('ID:channel_not_contained_in_file', ...
-                    'Column %02.0f (%s) not contained in file %s.\n', ...
-                    chan, import{k}.type, datafile);
-                return;
-            end
-            import{k}.sr = sampleRate;
-            import{k}.data = channels(:, chan);
-            import{k}.units = units{import{k}.channel};
-            sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan);
-            
-            % chan specific stats
-            sourceinfo.chan_stats{k,1} = struct();
-            n_inv = sum(isnan(import{k}.data));
-            sourceinfo.chan_stats{k}.nan_ratio = n_inv/n_data;
-            
-            % which eye
+                ['Cannot import channel type %s, as data for this eye', ...
+                ' does not seem to be present in the datafile.'], import{k}.type);
+            return;
+        end
+        chan = import{k}.channel;
+        if chan > size(channels, 2)
+            warning('ID:channel_not_contained_in_file', ...
+                'Column %02.0f (%s) not contained in file %s.\n', ...
+                chan, import{k}.type, datafile);
+            return;
+        end
+        import{k}.sr = sampleRate;
+        import{k}.data = channels(:, chan);
+        import{k}.units = units{import{k}.channel};
+        sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan);
+        
+        % chan specific stats
+        sourceinfo.chan_stats{k,1} = struct();
+        n_inv = sum(isnan(import{k}.data));
+        sourceinfo.chan_stats{k}.nan_ratio = n_inv/n_data;
+        
+        % create statistics for eye specific channels
+        if ~isempty(regexpi(import{k}.type, '_[lr]', 'once'))
             if size(n_bns, 2) > 1
                 eye_t = regexp(import{k}.type, '.*_([lr])', 'tokens');
                 n_eye_bns = n_bns(strcmpi(eye_t{1}, {'l','r'}));
@@ -151,12 +158,7 @@ for k = 1:numel(import)
             
             sourceinfo.chan_stats{k}.blink_ratio = n_eye_bns / n_data;
             sourceinfo.chan_stats{k}.other_ratio = (n_inv - n_eye_bns) / n_data;
-        else
-            warning('ID:channel_not_contained_in_file', ...
-                ['Cannot import channel type %s, as data for this eye', ...
-                ' does not seem to be present in the datafile.'], import{k}.type);
-            return;
-        end
+        end 
     end
 end
 
