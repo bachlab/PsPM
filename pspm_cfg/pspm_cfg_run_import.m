@@ -43,24 +43,42 @@ for i=1:n
     end
     
     % Check if transfer function available
-    if isfield(job.datatype.(datatype).importtype{i}.(type{1}), 'transfer')
-        transfer = fieldnames(job.datatype.(datatype).importtype{i}.(type{1}).transfer);
+    if isfield(job.datatype.(datatype).importtype{i}.(type{1}), 'scr_transfer')
+        transfer = fieldnames(job.datatype.(datatype).importtype{i}.(type{1}).scr_transfer);
         transfer = transfer{1};
         switch transfer
             case 'file'
-                file = job.datatype.(datatype).importtype{i}.(type{1}).transfer.file;
+                file = job.datatype.(datatype).importtype{i}.(type{1}).scr_transfer.file;
                 file = file{1};
                 import{i}.transfer = file;
             case 'input'
-                import{i}.transfer.c = job.datatype.(datatype).importtype{i}.(type{1}).transfer.input.transf_const;
-                import{i}.transfer.offset = job.datatype.(datatype).importtype{i}.(type{1}).transfer.input.offset;
-                import{i}.transfer.Rs = job.datatype.(datatype).importtype{i}.(type{1}).transfer.input.resistor;
-                import{i}.transfer.recsys = job.datatype.(datatype).importtype{i}.(type{1}).transfer.input.recsys;
+                import{i}.transfer.c = job.datatype.(datatype).importtype{i}.(type{1}).scr_transfer.input.transfer_const;
+                import{i}.transfer.offset = job.datatype.(datatype).importtype{i}.(type{1}).scr_transfer.input.offset;
+                import{i}.transfer.Rs = job.datatype.(datatype).importtype{i}.(type{1}).scr_transfer.input.resistor;
+                import{i}.transfer.recsys = job.datatype.(datatype).importtype{i}.(type{1}).scr_transfer.input.recsys;
             case 'none'
                 import{i}.transfer = 'none';
         end
     end
     
+    % Check if transfer function available
+    if isfield(job.datatype.(datatype).importtype{i}.(type{1}), 'pupil_transfer')
+        transfer = fieldnames(job.datatype.(datatype).importtype{i}.(type{1}).pupil_transfer);
+        transfer = transfer{1};
+        switch transfer
+            case 'file'
+                file = job.datatype.(datatype).importtype{i}.(type{1}).pupil_transfer.file;
+                file = file{1};
+                import{i}.transfer = file;
+            case 'input'
+                import{i}.transfer.o = job.datatype.(datatype).importtype{i}.(type{1}).pupil_transfer.input.offset;
+                import{i}.transfer.m = job.datatype.(datatype).importtype{i}.(type{1}).pupil_transfer.input.multiplicator;
+            case 'none'
+                import{i}.transfer = 'none';
+            case 'default'
+                import{i}.transfer = 'default';
+        end
+    end
 end
 
 options.overwrite = job.overwrite;

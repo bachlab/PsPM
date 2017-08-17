@@ -23,6 +23,10 @@ sts = -1;
 % assign respiratory data
 data.data = import.data(:);
 
+if isfield(import, 'transfer')
+    [~, data.data] = pspm_pupil_transfer(data.data, import.transfer);
+end
+
 % add header
 data.header.chantype = 'pupil_r';
 data.header.units = import.units;

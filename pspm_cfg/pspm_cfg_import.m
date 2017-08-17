@@ -29,12 +29,12 @@ sample_rate.num     = [1 1];
 sample_rate.help    = {'Sample rate in Hz (i. e. samples per second).'};
 
 % Transfer function
-file         = cfg_files;
-file.name    = 'File';
-file.tag     = 'file';
-file.num     = [1 1];
-file.filter  = '.*\.(mat|MAT)$';
-file.help    = {['Enter the name of the .mat file that contains the ', ...
+scr_file         = cfg_files;
+scr_file.name    = 'File';
+scr_file.tag     = 'file';
+scr_file.num     = [1 1];
+scr_file.filter  = '.*\.(mat|MAT)$';
+scr_file.help    = {['Enter the name of the .mat file that contains the ', ...
     'transfer function constants. This file needs to contain the ', ...
     'following variables: ''c'' is the transfer constant: ', ...
     'data = c * (measured total conductance in mcS or total resistance ', ...
@@ -44,48 +44,48 @@ file.help    = {['Enter the name of the .mat file that contains the ', ...
     'recorded signal is proportional to measured ''resistance'' ', ...
     '(R, data=R*c=c/G) or from ''conductance'' (G, data=G*c=c/R). (conductance, resistance)']};
 
-transf_const         = cfg_entry;
-transf_const.name    = 'Transfer Constant';
-transf_const.tag     = 'transf_const';
-transf_const.strtype = 'r';
-transf_const.num     = [1 1];
-transf_const.help    = {['Constant by which the measured conductance or ', ...
+scr_transf_const         = cfg_entry;
+scr_transf_const.name    = 'Transfer Constant';
+scr_transf_const.tag     = 'transfer_const';
+scr_transf_const.strtype = 'r';
+scr_transf_const.num     = [1 1];
+scr_transf_const.help    = {['Constant by which the measured conductance or ', ...
     'resistance is multiplied to give the recorded signal ', ...
     '(and by which the signal needs to be divided to give the original ', ...
     'conductance/resistance): data = c * (measured total conductance ', ...
     'in mcS or total resistance in MOhm).']};
 
-offset         = cfg_entry;
-offset.name    = 'Offset';
-offset.tag     = 'offset';
-offset.strtype = 'r';
-offset.num     = [1 1];
-offset.help    = {'Fixed offset in data units (i. e. measured signal when ', ...
+scr_offset         = cfg_entry;
+scr_offset.name    = 'Offset';
+scr_offset.tag     = 'offset';
+scr_offset.strtype = 'r';
+scr_offset.num     = [1 1];
+scr_offset.help    = {'Fixed offset in data units (i. e. measured signal when ', ...
     'true conductance is zero, i.e. when the measurement circuit is open).'};
 
-resistor         = cfg_entry;
-resistor.name    = 'Series Resistor';
-resistor.tag     = 'resistor';
-resistor.strtype = 'r';
-resistor.num     = [1 1];
-resistor.help    = {'Resistance of any resistors in series with the ', ...
+scr_resistor         = cfg_entry;
+scr_resistor.name    = 'Series Resistor';
+scr_resistor.tag     = 'resistor';
+scr_resistor.strtype = 'r';
+scr_resistor.num     = [1 1];
+scr_resistor.help    = {'Resistance of any resistors in series with the ', ...
     'subject, given in Ohm.'};
 
-recsys           = cfg_menu;
-recsys.name      = 'Recording System';
-recsys.tag       = 'recsys';
-recsys.values    = {'conductance', 'resistance'};
-recsys.labels    = {'conductance', 'resistance'};
-recsys.val       = {'conductance'};
-recsys.help      = {['Choose whether the recorded signal is proportional ', ...
+scr_recsys           = cfg_menu;
+scr_recsys.name      = 'Recording System';
+scr_recsys.tag       = 'recsys';
+scr_recsys.values    = {'conductance', 'resistance'};
+scr_recsys.labels    = {'conductance', 'resistance'};
+scr_recsys.val       = {'conductance'};
+scr_recsys.help      = {['Choose whether the recorded signal is proportional ', ...
     'to measured ''resistance'' (R, data=R*c=c/G) or from ''conductance'' ', ...
     '(G, data=G*c=c/R).']};
 
-input       = cfg_branch;
-input.name  = 'Input';
-input.tag   = 'input';
-input.val   = {transf_const,offset,resistor, recsys};
-input.help  = {'Enter the transfer constants manually.'};
+scr_input       = cfg_branch;
+scr_input.name  = 'Input';
+scr_input.tag   = 'input';
+scr_input.val   = {scr_transf_const,scr_offset,scr_resistor, scr_recsys};
+scr_input.help  = {'Enter the transfer constants manually.'};
     
 none      = cfg_const;
 none.name = 'None';
@@ -94,12 +94,58 @@ none.val  = {true};
 none.help = {['No transfer function. Use this only if you are not interested in ' ...
     'absolute values, and if the recording settings were the same for all subjects.']};
 
-transfer         = cfg_choice;
-transfer.name    = 'Transfer Function';
-transfer.tag     = 'transfer';
-transfer.values  = {file,input,none};
-transfer.help    = {['Enter the conversion from recorded data to ', ...
+scr_transfer         = cfg_choice;
+scr_transfer.name    = 'Transfer Function';
+scr_transfer.tag     = 'scr_transfer';
+scr_transfer.values  = {scr_file,scr_input,none};
+scr_transfer.help    = {['Enter the conversion from recorded data to ', ...
     'Microsiemens or Megaohm.']};
+
+pupil_file         = cfg_files;
+pupil_file.name    = 'File';
+pupil_file.tag     = 'file';
+pupil_file.num     = [1 1];
+pupil_file.filter  = '.*\.(mat|MAT)$';
+pupil_file.help    = {['Enter the name of the .mat File which contains the ', ...
+    'conversion variables. It should contain a variable ''o'' which ', ...
+    'represents the offset. This value is added to the ', ...
+    'multiplied data. The other variable ''m'' denotes the multiplicator. ', ...
+    'Before addition of the offset to the data, the recorded ', ...
+    'data is multiplied by the value of the multiplicator.']};
+
+pupil_offset         = cfg_entry;
+pupil_offset.name    = 'Offset';
+pupil_offset.tag     = 'offset';
+pupil_offset.strtype = 'r';
+pupil_offset.num     = [1 1];
+pupil_offset.help    = {['Offset which is added to the multiplied values.']};
+
+pupil_multiplicator         = cfg_entry;
+pupil_multiplicator.name    = 'Multiplicator';
+pupil_multiplicator.tag     = 'multiplicator';
+pupil_multiplicator.strtype = 'r';
+pupil_multiplicator.num     = [1 1];
+pupil_multiplicator.help    = {['Value which is multiplicated to the measured pupil data.']};
+
+pupil_input       = cfg_branch;
+pupil_input.name  = 'Input';
+pupil_input.tag   = 'input';
+pupil_input.val   = {pupil_offset, pupil_multiplicator};
+pupil_input.help  = {'Enter the transfer values manually.'};
+
+pupil_default      = cfg_const;
+pupil_default.name = 'Default';
+pupil_default.tag  = 'default';
+pupil_default.val  = {true};
+pupil_default.help = {['Use default values obtained for 70 cm distance between ', ...
+    'screen and eye.']};
+
+pupil_transfer         = cfg_choice;
+pupil_transfer.name    = 'Transfer Function';
+pupil_transfer.tag     = 'pupil_transfer';
+pupil_transfer.values  = {pupil_default, pupil_file,pupil_input,none};
+pupil_transfer.help    = {['Enter the conversion from recorded data to Milimeter', ...
+    ' or Diameter, respectively.']};
 
 
 %% Datatype dependend items
@@ -197,9 +243,15 @@ for datatype_i=1:length(fileoptions)
             importtype_item{importtype_i}.val = [importtype_item{importtype_i}.val,{sample_rate}];
         end
         
-        % Check for transfer function
+        % Check for scr transfer function
         if strcmp(chantypes(importtype_i), 'scr')
-            importtype_item{importtype_i}.val = [importtype_item{importtype_i}.val,{transfer}];
+            importtype_item{importtype_i}.val = [importtype_item{importtype_i}.val,{scr_transfer}];
+        end
+        
+           
+        % Check for pupil transfer function
+        if any(strcmp(chantypes(importtype_i), {'pupil_l', 'pupil_r'}))
+            importtype_item{importtype_i}.val = [importtype_item{importtype_i}.val,{pupil_transfer}];
         end
         
     end

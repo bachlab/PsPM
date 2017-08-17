@@ -20,8 +20,12 @@ if isempty(settings), pspm_init; end;
 % initialise status
 sts = -1;
 
-% assign respiratory data
+% assign pupil data
 data.data = import.data(:);
+
+if isfield(import, 'transfer')
+    [~, data.data] = pspm_pupil_transfer(data.data, import.transfer);
+end
 
 % add header
 data.header.chantype = 'pupil_l';
