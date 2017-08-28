@@ -1,13 +1,22 @@
 function newdatafile = pspm_pp(varargin)
 % pspm_pp contains various preprocessing utilities for reducing noise in the
 % data. 
+%
+% INPUT:
+%   pspm_pp('median', datafile, n, channelnumber, options)
+%   pspm_pp('butter', datafile, freq, channelnumber, options)
+%   pspm_pp('simple_qa', datafile, qa, channelnumber, options)
+%
 % Currently implemented: 
-% - medianfilter for SCR: newdatafile = pspm_pp('median', datafile, n, 
-%                                    channelnumber, options)
-%                           with n: number of timepoints for median filter
-% - 1st order butterworth low pass filter for SCR: newdatafile = pspm_pp('butter',
-%                               datafile, freq, channelnumber, options)
-%                           with freq: cut off frequuency (min 20 Hz)
+%   'median':           medianfilter for SCR
+%       n:              number of timepoints for median filter
+%   'butter':           1st order butterworth low pass filter for SCR
+%       freq:           cut off frequency (min 20 Hz)
+%   'simple_qa':        Simple quality assessment for SCR
+%       qa:             A struct with quality assessment settings
+%           min:        Minimum value in microsiemens
+%           max:        Maximum value in microsiemens
+%           slope:      Maximum slope in microsiemens per second
 %
 %__________________________________________________________________________
 % PsPM 3.0
@@ -19,7 +28,7 @@ function newdatafile = pspm_pp(varargin)
 % initialise
 % -------------------------------------------------------------------------
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 newdatafile = [];
 
 % check input arguments
@@ -29,21 +38,21 @@ if nargin < 1
 elseif nargin < 2
     warning('ID:invalid_input', 'No datafile.'); return;
 elseif nargin < 3
-    warning('ID:invalid_input', 'No filter specs.'); return;
+        warning('ID:invalid_input', 'Missing filter specs.'); return;
 else
     fn = varargin{2};
-end;
+end
 
 if nargin >=5 && isstruct(varargin{5}) && isfield(varargin{5}, 'overwrite')
     options = varargin{5};
 else
     options.overwrite = 0;
-end;
+end
 
 % load data
 % -------------------------------------------------------------------------
 [sts, infos, data] = pspm_load_data(fn, 0);
-if sts ~= 1, return, end;
+if sts ~= 1, return, end
 
 % determine channel number
 % -------------------------------------------------------------------------
@@ -54,10 +63,10 @@ else
     for k = 1:numel(data)
         if strcmp(data{k}.header.chantype, 'scr')
             channum(k) = 1;
-        end;
-    end;
+        end
+    end
     channum = find(channum == 1);
-end;
+end
 
 % do the job
 % -------------------------------------------------------------------------
@@ -68,7 +77,7 @@ switch varargin{1}
         fprintf('Preprocess: median filtering datafile %s ...', fn);
         for k = 1:numel(channum)
             data{k}.data = medfilt1(data{k}.data, n);
-        end;
+        end
         infos.pp = sprintf('median filter over %1.0f timepoints', n);
     case 'butter'
         freq = varargin{3};
@@ -84,13 +93,19 @@ switch varargin{1}
             filt.down = 'none';
             filt.direction = 'bi';
             [sts, data{channum(k)}.data, data{channum(k)}.header.sr] = pspm_prepdata(data{channum(k)}.data, filt);
-            if sts == -1, return; end;
-        end;
+            if sts == -1, return; end
+        end
         infos.pp = sprintf('butterworth 1st order low pass filter at cutoff frequency %2.2f Hz', freq);
+    case 'simple_qa'
+        qa = varargin{3};
+        for k = 1:numel(channum)
+            [sts, data{k}.data] = pspm_simple_qa(data{k}.data, data{k}.header.sr, qa);
+        end
+        infos.pp = sprintf('simple scr quality assessment');
     otherwise
         warning('ID:invalid_input', 'Unknown filter option ...');
         return;
-end;
+end
 
 [pth, fn, ext] = fileparts(fn);
 newdatafile = fullfile(pth, ['m', fn, ext]);

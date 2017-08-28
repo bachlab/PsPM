@@ -17,7 +17,7 @@ function [sts, import, sourceinfo] = pspm_get_acqmat(datafile, import)
 % initialise
 % -------------------------------------------------------------------------
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 sourceinfo = []; sts = -1;
 
 % load data
@@ -33,8 +33,8 @@ for k = 1:numel(import)
         chan = import{k}.channel;
     else
         chan = pspm_find_channel(cellstr(inputdata.labels), import{k}.type);
-        if chan < 1, return; end;
-    end;
+        if chan < 1, return; end
+    end
     
     if chan > size(inputdata.labels, 1), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', chan, datafile); return; end;
 
@@ -47,11 +47,11 @@ for k = 1:numel(import)
         import{k}.sr = 1000/inputdata.isi;
     else 
         warning('\nUnsupported modality - please notify the developers.\n'); return;
-    end;
+    end
     
     if inputdata.start_sample ~= 0
         warning('\nUnsupported sampling scheme - please notify the developers.\n'); return;
-    end;
+    end
         
     % get data & data units
     import{k}.data = double(inputdata.data(:, chan));
@@ -59,8 +59,8 @@ for k = 1:numel(import)
     
     if strcmpi(settings.chantypes(import{k}.typeno).data, 'events')
         import{k}.marker = 'continuous';
-    end;
-end;
+    end
+end
 
 sts = 1;
 

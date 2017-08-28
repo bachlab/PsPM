@@ -20,6 +20,9 @@ switch filtertype
     case 'butter'
         freq = job.filtertype.(filtertype).freq;
         out = pspm_pp(filtertype, datafile, freq, channelnumber, options);
+    case 'simple_qa'
+        qa = job.filtertype.(filtertype);
+        out = pspm_pp(filtertype, datafile, qa, channelnumber, options);
 end
 
 if ~iscell(out)

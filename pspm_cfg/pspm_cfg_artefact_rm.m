@@ -40,6 +40,37 @@ butter.tag     = 'butter';
 butter.val  = {freq};
 butter.help    = {'1st Order Butterworth Low Pass Filter'};
 
+%% simple SCR quality correction
+qa_min          = cfg_entry;
+qa_min.name     = 'Minimum value';
+qa_min.tag      = 'min';
+qa_min.strtype  = 'r';
+qa_min.num      = [1 1];
+qa_min.val      = {0.05};
+qa_min.help     = {'Minimum SCR value in microsiemens.'};
+
+qa_max          = cfg_entry;
+qa_max.name     = 'Maximum value';
+qa_max.tag      = 'max';
+qa_max.strtype  = 'r';
+qa_max.num      = [1 1];
+qa_max.val      = {60};
+qa_max.help     = {'Maximum SCR value in microsiemens.'};
+
+qa_slope          = cfg_entry;
+qa_slope.name     = 'Maximum slope';
+qa_slope.tag      = 'slope';
+qa_slope.strtype  = 'r';
+qa_slope.num      = [1 1];
+qa_slope.val      = {10};
+qa_slope.help     = {'Maximum SCR slope in microsiemens per second.'};
+
+qa              = cfg_branch;
+qa.name         = 'Simple SCR quality correction';
+qa.tag          = 'simple_qa';
+qa.val          = {qa_min, qa_max, qa_slope};
+qa.help         = {'Simple SCR'};
+
 %% Data file
 datafile         = cfg_files;
 datafile.name    = 'Data File';
@@ -51,7 +82,7 @@ datafile.help    = {''};
 filtertype         = cfg_choice;
 filtertype.name    = 'Filter Type';
 filtertype.tag     = 'filtertype';
-filtertype.values  = {median,butter};
+filtertype.values  = {median,butter,qa};
 filtertype.help    = {['Currently, median and butterworth filters are implemented. A median filter is ' ...
     'recommended for short spikes, generated for example in MRI scanners by gradient switching. A butterworth ' ...
     'filter is applied in most models; check there to see whether an additional filtering is meaningful.']};
