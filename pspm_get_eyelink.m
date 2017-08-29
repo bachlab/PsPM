@@ -122,24 +122,32 @@ for k = 1:numel(import)
         
         % use ascending flank for translation from continuous to events
         import{k}.flank = 'ascending';
-    else
-        if ~isempty(regexpi(import{k}.type, '_[lr]', 'once')) && ...
-            isempty(regexpi(import{k}.type, ['_([' data{1}.eyesObserved '])'], 'once'))
-                warning('ID:channel_not_contained_in_file', ...
-                ['Cannot import channel type %s, as data for this eye', ...
-                ' does not seem to be present in the datafile.'], import{k}.type);
-            return;
-        end
+    else    
         chan = import{k}.channel;
-        if chan > size(channels, 2)
+        if ~isempty(regexpi(import{k}.type, '_[lr]', 'once')) && ...
+                isempty(regexpi(import{k}.type, ['_([' data{1}.eyesObserved '])'], 'once'))
             warning('ID:channel_not_contained_in_file', ...
-                'Column %02.0f (%s) not contained in file %s.\n', ...
-                chan, import{k}.type, datafile);
-            return;
+                ['Cannot import channel type %s, as data for this eye', ...
+                ' does not seem to be present in the datafile. ', ...
+                'Will create artificial channel with NaN values.'], import{k}.type);
+            
+            % create NaN values for this channel
+            import{k}.data = NaN(size(channels, 1),1);
+            chan = -1;
+            import{k}.units = '';
+        else
+            if chan > size(channels, 2)
+                warning('ID:channel_not_contained_in_file', ...
+                    'Column %02.0f (%s) not contained in file %s.\n', ...
+                    chan, import{k}.type, datafile);
+                return;
+            end
+            import{k}.data = channels(:, chan);
+            import{k}.units = units{chan};
         end
+        
+        
         import{k}.sr = sampleRate;
-        import{k}.data = channels(:, chan);
-        import{k}.units = units{import{k}.channel};
         sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan);
         
         % chan specific stats
