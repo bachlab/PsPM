@@ -5,7 +5,7 @@ function import_data = pspm_cfg_import
 
 % Initialise
 global settings
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 
 % Get filetype
 fileoptions={settings.import.datatypes.long};
@@ -18,7 +18,8 @@ chan_search      = cfg_const;
 chan_search.name = 'Search';
 chan_search.tag  = 'chan_search';
 chan_search.val  = {true};
-chan_search.help = {'Search for channel by its name - this only works if the channel names are unambiguous.'};
+chan_search.help = {['Search for channel by its name - this only works if the ', ...
+    'channel names are unambiguous.']};
 
 % Sample Rate
 sample_rate         = cfg_entry;
@@ -42,7 +43,7 @@ scr_file.help    = {['Enter the name of the .mat file that contains the ', ...
     'and ''offset'' any offset in the data (stated in data units, ', ...
     'usually 0) and optionally, a variable ''recsys'' to whether the ', ...
     'recorded signal is proportional to measured ''resistance'' ', ...
-    '(R, data=R*c=c/G) or from ''conductance'' (G, data=G*c=c/R). (conductance, resistance)']};
+    '(R, data=R*c=c/G) or from ''conductance'' (G, data=G*c=c/R).']};
 
 scr_transf_const         = cfg_entry;
 scr_transf_const.name    = 'Transfer Constant';

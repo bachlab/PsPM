@@ -1,7 +1,7 @@
 function [sts, output] = pspm_emg_pp(fn, options)
 % pspm_emg_pp reduces noise in emg data in 3 steps. Following
 % from the literature[1] it does the following steps:
-%   - Initial filtering:        4th order Butterworth with 28 Hz and 250 Hz 
+%   - Initial filtering:        4th order Butterworth with 50 Hz and 470 Hz 
 %                               cutoff frequencies
 %   - Remove mains noise:       50 Hz (variable) notch filter
 %   - Smoothing and rectifying: 4th order Butterworth low-pass filter with 
@@ -81,11 +81,11 @@ if sts ~= 1, return, end
 % do the job
 % -------------------------------------------------------------------------
 
-% (1) 4th order Butterworth band-pass filter with cutoff frequency of 28 Hz and 250 Hz
+% (1) 4th order Butterworth band-pass filter with cutoff frequency of 50 Hz and 470 Hz
 filt.sr = data{1}.header.sr;
-filt.lpfreq = 250;
+filt.lpfreq = 470;
 filt.lporder = 4;
-filt.hpfreq = 28;
+filt.hpfreq = 50;
 filt.hporder = 4;
 filt.down = 'none';
 filt.direction = 'uni';

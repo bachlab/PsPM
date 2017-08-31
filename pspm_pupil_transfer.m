@@ -24,7 +24,7 @@ function [sts, data] = pspm_pupil_transfer(data, transfer)
 %                               If is a struct, 
 %                               transfer.o will be taken as offset and
 %                               transfer.m will be taken as multiplicator.
-
+%
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
@@ -55,12 +55,16 @@ end
 % transfer according to input
 if isempty(tf) && strcmpi(transfer, 'default')
     [~, data] = pspm_convert_au2mm(data);
-    [~, data] = pspm_convert_area2diameter(data);
+    % conversion from area to diameter is not yet tested and relationship
+    % is not known
+    % [~, data] = pspm_convert_area2diameter(data);
 elseif isstruct(tf)
     if isfield(tf, 'o') && isfield(tf, 'm')
         options = struct('offset', tf.o, 'multiplicator', tf.m);
         [~, data] = pspm_convert_au2mm(data, options);
-        [~, data] = pspm_convert_area2diameter(data);
+        % conversion from area to diameter is not yet tested and relationship
+        % is not known
+        % [~, data] = pspm_convert_area2diameter(data);
     else
         warning('ID:invalid_input', 'The given transferparams are incomplete!');
         return;
