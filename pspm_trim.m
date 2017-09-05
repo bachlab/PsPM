@@ -102,10 +102,6 @@ clear datafile
 for d=1:numel(D)
     % determine file names ---
     datafile=D{d};
-
-    % set local endmarker back to global endmarker
-    % therefore endmarker is evaluated for each file individually
-    l_endmarker = g_endmarker;
         
     % user output ---
     if isstruct(datafile)
@@ -130,7 +126,14 @@ for d=1:numel(D)
         end
         sts = [sts; nsts];
         events = ndata{1}.data;
-        if isempty(l_endmarker), l_endmarker = numel(events); end
+
+        % set local endmarker depending on global endmarker
+        if isempty(g_endmarker)
+            l_endmarker = numel(events); 
+        else
+            l_endmarker = g_endmarker;
+        end
+
         clear nsts ninfos ndata
         
         if isempty(events)
