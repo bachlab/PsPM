@@ -66,17 +66,10 @@ for i=1:n
         transfer = fieldnames(job.datatype.(datatype).importtype{i}.(type{1}).pupil_transfer);
         transfer = transfer{1};
         switch transfer
-            case 'file'
-                file = job.datatype.(datatype).importtype{i}.(type{1}).pupil_transfer.file;
-                file = file{1};
-                import{i}.transfer = file;
-            case 'input'
-                import{i}.transfer.o = job.datatype.(datatype).importtype{i}.(type{1}).pupil_transfer.input.offset;
-                import{i}.transfer.m = job.datatype.(datatype).importtype{i}.(type{1}).pupil_transfer.input.multiplicator;
-            case 'none'
+            case 'enabled'
+                import{i}.transfer = job.datatype.(datatype).importtype{i}.(type{1}).pupil_transfer.enabled;
+            case 'disabled'
                 import{i}.transfer = 'none';
-            case 'default'
-                import{i}.transfer = 'default';
         end
     end
 end

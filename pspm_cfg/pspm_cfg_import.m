@@ -102,51 +102,30 @@ scr_transfer.values  = {scr_file,scr_input,none};
 scr_transfer.help    = {['Enter the conversion from recorded data to ', ...
     'Microsiemens or Megaohm.']};
 
-pupil_file         = cfg_files;
-pupil_file.name    = 'File';
-pupil_file.tag     = 'file';
-pupil_file.num     = [1 1];
-pupil_file.filter  = '.*\.(mat|MAT)$';
-pupil_file.help    = {['Enter the name of the .mat File which contains the ', ...
-    'conversion variables. It should contain a variable ''o'' which ', ...
-    'represents the offset. This value is added to the ', ...
-    'multiplied data. The other variable ''m'' denotes the multiplicator. ', ...
-    'Before addition of the offset to the data, the recorded ', ...
-    'data is multiplied by the value of the multiplicator.']};
 
-pupil_offset         = cfg_entry;
-pupil_offset.name    = 'Offset';
-pupil_offset.tag     = 'offset';
-pupil_offset.strtype = 'r';
-pupil_offset.num     = [1 1];
-pupil_offset.help    = {['Offset which is added to the multiplied values.']};
+pupil_disabled      = cfg_const;
+pupil_disabled.name = 'Disabled';
+pupil_disabled.tag  = 'disabled';
+pupil_disabled.val  = {1};
+pupil_disabled.help = {['Do not transfer data to physical units. ', ...
+    'Use this only if you are not interested in absolute values, ', ...
+    'and if the recording settings were the same for all subjects.']};
 
-pupil_multiplicator         = cfg_entry;
-pupil_multiplicator.name    = 'Multiplicator';
-pupil_multiplicator.tag     = 'multiplicator';
-pupil_multiplicator.strtype = 'r';
-pupil_multiplicator.num     = [1 1];
-pupil_multiplicator.help    = {['Value which is multiplicated to the measured pupil data.']};
-
-pupil_input       = cfg_branch;
-pupil_input.name  = 'Input';
-pupil_input.tag   = 'input';
-pupil_input.val   = {pupil_offset, pupil_multiplicator};
-pupil_input.help  = {'Enter the transfer values manually.'};
-
-pupil_default      = cfg_const;
-pupil_default.name = 'Default';
-pupil_default.tag  = 'default';
-pupil_default.val  = {true};
-pupil_default.help = {['Use default values obtained for 70 cm distance between ', ...
-    'screen and eye.']};
+pupil_enabled       = cfg_entry;
+pupil_enabled.name  = 'Enabled';
+pupil_enabled.tag   = 'enabled';
+pupil_enabled.strtype = 'r';
+pupil_enabled.num   = [1 1];
+pupil_enabled.val   = {700};
+pupil_enabled.help  = {'Set the distance between camera and eyes in mm.'};
 
 pupil_transfer         = cfg_choice;
 pupil_transfer.name    = 'Transfer Function';
 pupil_transfer.tag     = 'pupil_transfer';
-pupil_transfer.values  = {pupil_default, pupil_file,pupil_input,none};
-pupil_transfer.help    = {['Enter the conversion from recorded data to Milimeter', ...
-    ' or Diameter, respectively.']};
+pupil_transfer.values  = {pupil_enabled, pupil_disabled};
+pupil_transfer.help    = {['Enter the conversion from arbitrary units to ', ...
+    'physical units (mm). This is only possible if ELCL_PROC was set to ', ...
+    'ELLIPSE during acquisition.']};
 
 
 %% Datatype dependend items
@@ -154,10 +133,16 @@ datatype_item = cell(1,length(fileoptions));
 for datatype_i=1:length(fileoptions)
     
     %% Settings
-    if settings.import.datatypes(datatype_i).autosr == 1, samplerate = -1; else samplerate = 0; end;
-    multioption  = settings.import.datatypes(datatype_i).multioption; % If more than one channel can be defined
+    if settings.import.datatypes(datatype_i).autosr == 1
+        samplerate = -1; 
+    else 
+        samplerate = 0; 
+    end
+    % If more than one channel can be defined
+    multioption  = settings.import.datatypes(datatype_i).multioption; 
     description  = settings.import.datatypes(datatype_i).chandescription;
-    description  = regexprep(description,'(\<\w)','${upper($1)}'); % Capitalize description
+    % Capitalize description
+    description  = regexprep(description,'(\<\w)','${upper($1)}');
     searchoption = settings.import.datatypes(datatype_i).searchoption;
     automarker   = settings.import.datatypes(datatype_i).automarker;
     chantypes    = settings.import.datatypes(datatype_i).chantypes;

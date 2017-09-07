@@ -15,7 +15,7 @@ function [sts, data]=pspm_get_pupil_r(import)
 % $Rev$
 
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 
 % initialise status
 sts = -1;
@@ -23,8 +23,9 @@ sts = -1;
 % assign respiratory data
 data.data = import.data(:);
 
-if isfield(import, 'transfer')
-    [~, data.data] = pspm_pupil_transfer(data.data, import.transfer);
+if isfield(import, 'transfer') && ~strcmpi(import.transfer, 'none')
+    [~, data.data] = pspm_convert_au2mm(data.data, import.transfer,...
+        import.units);
 end
 
 % add header
