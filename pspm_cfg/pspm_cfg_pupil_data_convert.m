@@ -11,7 +11,7 @@ function [pp_convert] = pspm_cfg_pupil_data_convert
 
 % Initialise
 global settings
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 
 %% Datafile
 datafile         = cfg_files;
@@ -29,31 +29,6 @@ channel.strtype     = 'i';
 channel.num         = [1 1];
 channel.help        = {['Specify the channel which should be converted.']};
 
-%% Offset
-offset              = cfg_entry;
-offset.name         = 'Offset';
-offset.tag          = 'offset';
-offset.strtype      = 'r';
-offset.num          = [1 1];
-offset.val          = {[0.07]};
-offset.help         = {['']};
-
-%% Multiplicator
-multiplicator       = cfg_entry;
-multiplicator.name  = 'Multiplicator';
-multiplicator.tag   = 'multiplicator';
-multiplicator.strtype = 'r';
-multiplicator.num   = [1 1];
-multiplicator.val   = {[1/1325]};
-multiplicator.help  = {['']};
-
-%% au2mm
-au2mm               = cfg_branch;
-au2mm.name          = 'Arbitrary units to millimeter';
-au2mm.tag           = 'au2mm';
-au2mm.val           = {offset, multiplicator};
-au2mm.help          = {['']};
-
 %% area2diameter
 area2diameter       = cfg_const;
 area2diameter.name  = 'Area to diameter';
@@ -65,8 +40,8 @@ area2diameter.help  = {['']};
 mode                = cfg_choice;
 mode.name           = 'Mode';
 mode.tag            = 'mode';
-mode.val            = {au2mm};
-mode.values         = {au2mm, area2diameter};
+mode.val            = {area2diameter};
+mode.values         = {area2diameter};
 mode.help           = {['Choose conversion mode.']};
 
 %% Conversion

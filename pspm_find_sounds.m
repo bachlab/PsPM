@@ -277,7 +277,8 @@ while searchForMoreSounds == true
             snd_re = snd_re(dsearchn(snd_re,snd_markers));
         end
         %% Display some diagnostics
-        fprintf('%4d sound events associated with a marker found\nMean Delay : %5.1f ms\nStd dev    : %5.1f ms\n',...
+        fprintf(['%4d sound events associated with a marker found\n', ...
+            'Mean Delay : %5.1f ms\nStd dev    : %5.1f ms\n'],...
             length(snd_markers),mean(delays)*1000,std(delays)*1000);
 
         outinfos.delays = delays;
