@@ -23,11 +23,6 @@ sts = -1;
 % assign pupil data
 data.data = import.data(:);
 
-if isfield(import, 'transfer') && ~strcmpi(import.transfer, 'none')
-    [~, data.data] = pspm_convert_au2mm(data.data, import.transfer,...
-        import.units);
-end
-
 % add header
 data.header.chantype = 'pupil_l';
 data.header.units = import.units;

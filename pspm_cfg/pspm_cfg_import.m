@@ -103,27 +103,27 @@ scr_transfer.help    = {['Enter the conversion from recorded data to ', ...
     'Microsiemens or Megaohm.']};
 
 
-pupil_disabled      = cfg_const;
-pupil_disabled.name = 'Disabled';
-pupil_disabled.tag  = 'disabled';
-pupil_disabled.val  = {1};
-pupil_disabled.help = {['Do not transfer data to physical units. ', ...
+eyelink_disabled      = cfg_const;
+eyelink_disabled.name = 'Disabled';
+eyelink_disabled.tag  = 'disabled';
+eyelink_disabled.val  = {1};
+eyelink_disabled.help = {['Do not transfer data to physical units. ', ...
     'Use this only if you are not interested in absolute values, ', ...
     'and if the recording settings were the same for all subjects.']};
 
-pupil_enabled       = cfg_entry;
-pupil_enabled.name  = 'Enabled';
-pupil_enabled.tag   = 'enabled';
-pupil_enabled.strtype = 'r';
-pupil_enabled.num   = [1 1];
-pupil_enabled.val   = {700};
-pupil_enabled.help  = {'Set the distance between camera and eyes in mm.'};
+eyelink_enabled       = cfg_entry;
+eyelink_enabled.name  = 'Enabled';
+eyelink_enabled.tag   = 'enabled';
+eyelink_enabled.strtype = 'r';
+eyelink_enabled.num   = [1 1];
+eyelink_enabled.val   = {700};
+eyelink_enabled.help  = {'Set the distance between camera and eyes in mm.'};
 
-pupil_transfer         = cfg_choice;
-pupil_transfer.name    = 'Transfer Function';
-pupil_transfer.tag     = 'pupil_transfer';
-pupil_transfer.values  = {pupil_enabled, pupil_disabled};
-pupil_transfer.help    = {['Enter the conversion from arbitrary units to ', ...
+eyelink_transfer         = cfg_choice;
+eyelink_transfer.name    = 'Transfer Function';
+eyelink_transfer.tag     = 'eyelink_transfer';
+eyelink_transfer.values  = {eyelink_enabled, eyelink_disabled};
+eyelink_transfer.help    = {['Enter the conversion from arbitrary units to ', ...
     'physical units (mm). This is only possible if ELCL_PROC was set to ', ...
     'ELLIPSE during acquisition.']};
 
@@ -176,8 +176,7 @@ for datatype_i=1:length(fileoptions)
         'this channel by its name. Note: the channel number refers to the n-th recorded ' ...
         'channel, not to its number during acquisition (if you did not save all recorded ' ...
         'channels, these might be different for some data types).']};
-    
-    
+   
     %% Channel/Column Type Items
     importtype_item = cell(1,length(chantypes));
     for importtype_i=1:length(chantypes)
@@ -234,12 +233,6 @@ for datatype_i=1:length(fileoptions)
             importtype_item{importtype_i}.val = [importtype_item{importtype_i}.val,{scr_transfer}];
         end
         
-           
-        % Check for pupil transfer function
-        if any(strcmp(chantypes(importtype_i), {'pupil_l', 'pupil_r'}))
-            importtype_item{importtype_i}.val = [importtype_item{importtype_i}.val,{pupil_transfer}];
-        end
-        
     end
     
     importtype         = cfg_choice;
@@ -278,6 +271,12 @@ for datatype_i=1:length(fileoptions)
         datatype_item{datatype_i}.val   = {datafile,importchan};
     else
         datatype_item{datatype_i}.val   = {datafile,importtype};
+    end
+
+    % For eyelink: add pupil transfer function
+    if any(strcmp(settings.import.datatypes(datatype_i).short, 'eyelink'))
+        datatype_item{datatype_i}.val = ...
+            [datatype_item{datatype_i}.val,{eyelink_transfer}];
     end
     
 end

@@ -773,7 +773,7 @@ defaults.glm(3) = ... % GLM for HP (fear-conditioning)
     'default', 0);
 
 defaults.glm(4) = ... % GLM for PS (fear-conditioning)
-    struct('modality', 'ps', ...
+    struct('modality', 'pupil', ...
     'modelspec', 'ps_fc', ...
     'cbf', struct('fhandle', @pspm_bf_psrf_fc, 'args', 1), ...
     'filter', struct('lpfreq', NaN, 'lporder', NaN, ...
@@ -818,7 +818,7 @@ defaults.glm(8) = ... % GLM for RFR (evoked)
     'default', 0);
 
 defaults.glm(9) = ... % GLM for SEB (fear-conditioning)
-    struct('modality', 'sebr', ...                               % modality name
+    struct('modality', 'emg_pp', ...                               % modality name
     'modelspec', 'sebr', ...                                  % modality name
     'cbf', struct('fhandle', @pspm_bf_sebrf, 'args', 1), ...  % default basis function/set
     'filter', struct('lpfreq', NaN, 'lporder', NaN,  ...        % default filter settings

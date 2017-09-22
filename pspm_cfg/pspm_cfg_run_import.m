@@ -61,16 +61,18 @@ for i=1:n
         end
     end
     
-    % Check if transfer function available
-    if isfield(job.datatype.(datatype).importtype{i}.(type{1}), 'pupil_transfer')
-        transfer = fieldnames(job.datatype.(datatype).importtype{i}.(type{1}).pupil_transfer);
-        transfer = transfer{1};
-        switch transfer
-            case 'enabled'
-                import{i}.transfer = job.datatype.(datatype).importtype{i}.(type{1}).pupil_transfer.enabled;
-            case 'disabled'
-                import{i}.transfer = 'none';
-        end
+end
+
+
+% Check if transfer function available
+if isfield(job.datatype.(datatype), 'eyelink_transfer')
+    transfer = fieldnames(job.datatype.(datatype).eyelink_transfer);
+    transfer = transfer{1};
+    switch transfer
+        case 'enabled'
+            import{i}.eyelink_transfer = job.datatype.(datatype).eyelink_transfer.enabled;
+        case 'disabled'
+            import{i}.eyelink_transfer = 'none';
     end
 end
 

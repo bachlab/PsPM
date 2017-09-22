@@ -198,14 +198,7 @@ model.modality = settings.glm(modno).modality;
 
 % check data channel --
 if ~isfield(model, 'channel')
-    switch model.modality
-        case 'sebr'
-            model.channel = 'emg';
-        case 'ps'
-            model.channel = 'pupil';
-        otherwise
-            model.channel = model.modality;
-    end
+    model.channel = model.modality;
 elseif ~isnumeric(model.channel) && ~ismember(model.channel, {settings.chantypes.type})
     warning('ID:invalid_input', 'Channel number must be numeric.'); return;
 end

@@ -154,6 +154,16 @@ for k = 1:numel(import)
         sourceinfo.chan_stats{k,1} = struct();
         n_inv = sum(isnan(import{k}.data));
         sourceinfo.chan_stats{k}.nan_ratio = n_inv/n_data;
+
+        % check for transfer if import type is a pupil
+        if ~isempty(regexpi(import{k}.type, 'pupil')) && ...
+            isfield(import{k}, 'eyelink_transfer') && ...
+            ~strcmpi(import{k}.eyelink_transfer, 'none')
+
+                % transfer pupil data according to transfer settings
+                [~, import{k}.data] = pspm_convert_au2mm(import{k}.data, ...
+                    import{k}.eyelink_transfer, import{k}.units);
+        end
         
         % create statistics for eye specific channels
         if ~isempty(regexpi(import{k}.type, '_[lr]', 'once'))

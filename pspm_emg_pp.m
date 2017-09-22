@@ -126,6 +126,8 @@ filt.direction = 'uni';
 [sts, data{1}.data, data{1}.header.sr] = pspm_prepdata(abs(data{1}.data), filt);
 if sts == -1, return; end
 
+% change channel type to emg_pp to match sebr modality
+data{1}.header.chantype = 'emg_pp';
 
 % save data
 % -------------------------------------------------------------------------
