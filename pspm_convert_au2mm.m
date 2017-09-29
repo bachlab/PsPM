@@ -176,11 +176,11 @@ switch mode
                 ~isnumeric(options.multiplicator)
             switch lower(data{1}.header.units)
                 case 'area'
-                    m = 0.11659;
+                    m = 0.12652;
                     % remove quadratic term
                     d = sqrt(d);
                 case 'diameter'
-                    m = 0.00079482;
+                    m = 0.00087743;
                 otherwise
                     warning('ID:invalid_input', ['Cannot set multiplicator', ...
                         ' because unit of data is invalid.'])

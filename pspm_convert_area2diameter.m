@@ -60,7 +60,8 @@ else
     end
     
     if ~any(strcmpi(options.channel_action, {'replace', 'add'}))
-        warning('ID:invalid_input', 'options.channel_action should be either ''add'' or ''replace''.'); return;
+        warning('ID:invalid_input', ['options.channel_action should ', ...
+            'be either ''add'' or ''replace''.']); return;
     end
     
     mode = 'file';
@@ -80,7 +81,8 @@ elseif strcmpi(mode, 'file')
         % replace metric values
         diam{i}.header.units = ...
             regexprep(data{1}.header.units, ...
-            '(square)?(centi|milli|deci|c|m|d)?(m(et(er|re))?)(s?\^?2?)', '$2$3');
+            '(square)?(centi|milli|deci|c|m|d)?(m(et(er|re))?)(s?\^?2?)', ...
+                '$2$3');
         % if not metric, replace area with diameter
         if strcmpi(diam{1}.header.units, 'area')
             diam{1}.header.units = 'diameter';

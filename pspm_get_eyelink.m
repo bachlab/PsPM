@@ -157,12 +157,12 @@ for k = 1:numel(import)
 
         % check for transfer if import type is a pupil
         if ~isempty(regexpi(import{k}.type, 'pupil')) && ...
-            isfield(import{k}, 'eyelink_transfer') && ...
-            ~strcmpi(import{k}.eyelink_transfer, 'none')
+            isfield(import{k}, 'eyelink_trackdist') && ...
+            ~strcmpi(import{k}.eyelink_trackdist, 'none')
 
                 % transfer pupil data according to transfer settings
                 [~, import{k}.data] = pspm_convert_au2mm(import{k}.data, ...
-                    import{k}.eyelink_transfer, import{k}.units);
+                    import{k}.eyelink_trackdist, import{k}.units);
         end
         
         % create statistics for eye specific channels

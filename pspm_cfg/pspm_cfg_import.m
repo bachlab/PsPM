@@ -119,11 +119,11 @@ eyelink_enabled.num   = [1 1];
 eyelink_enabled.val   = {700};
 eyelink_enabled.help  = {'Set the distance between camera and eyes in mm.'};
 
-eyelink_transfer         = cfg_choice;
-eyelink_transfer.name    = 'Transfer Function';
-eyelink_transfer.tag     = 'eyelink_transfer';
-eyelink_transfer.values  = {eyelink_enabled, eyelink_disabled};
-eyelink_transfer.help    = {['Enable if the data should be converted from ', ...
+eyelink_trackdist         = cfg_choice;
+eyelink_trackdist.name    = 'Eyetracker distance';
+eyelink_trackdist.tag     = 'eyelink_trackdist';
+eyelink_trackdist.values  = {eyelink_enabled, eyelink_disabled};
+eyelink_trackdist.help    = {['Enable if the data should be converted from ', ...
     'arbitrary units to physical units (mm). This is only possible if ', ...
     'ELCL_PROC was set to ELLIPSE during acquisition.']};
 
@@ -276,7 +276,7 @@ for datatype_i=1:length(fileoptions)
     % For eyelink: add pupil transfer function
     if any(strcmp(settings.import.datatypes(datatype_i).short, 'eyelink'))
         datatype_item{datatype_i}.val = ...
-            [datatype_item{datatype_i}.val,{eyelink_transfer}];
+            [datatype_item{datatype_i}.val,{eyelink_trackdist}];
     end
     
 end

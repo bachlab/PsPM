@@ -64,15 +64,15 @@ for i=1:n
 end
 
 
-% Check if transfer function available
-if isfield(job.datatype.(datatype), 'eyelink_transfer')
-    transfer = fieldnames(job.datatype.(datatype).eyelink_transfer);
+% Check if eytracker distance is available
+if isfield(job.datatype.(datatype), 'eyelink_trackdist')
+    transfer = fieldnames(job.datatype.(datatype).eyelink_trackdist);
     transfer = transfer{1};
     switch transfer
         case 'enabled'
-            import{i}.eyelink_transfer = job.datatype.(datatype).eyelink_transfer.enabled;
+            import{i}.eyelink_trackdist = job.datatype.(datatype).eyelink_trackdist.enabled;
         case 'disabled'
-            import{i}.eyelink_transfer = 'none';
+            import{i}.eyelink_trackdist = 'none';
     end
 end
 
