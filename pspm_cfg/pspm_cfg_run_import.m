@@ -66,13 +66,11 @@ end
 
 % Check if eytracker distance is available
 if isfield(job.datatype.(datatype), 'eyelink_trackdist')
-    transfer = fieldnames(job.datatype.(datatype).eyelink_trackdist);
-    transfer = transfer{1};
-    switch transfer
-        case 'enabled'
-            import{i}.eyelink_trackdist = job.datatype.(datatype).eyelink_trackdist.enabled;
-        case 'disabled'
-            import{i}.eyelink_trackdist = 'none';
+    transfer = job.datatype.(datatype).eyelink_trackdist;
+    if transfer > 0
+        import{i}.eyelink_trackdist = transfer;
+    else
+        import{i}.eyelink_trackdist = 'none';
     end
 end
 

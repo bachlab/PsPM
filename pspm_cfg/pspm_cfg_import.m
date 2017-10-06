@@ -102,30 +102,17 @@ scr_transfer.values  = {scr_file,scr_input,none};
 scr_transfer.help    = {['Enter the conversion from recorded data to ', ...
     'Microsiemens or Megaohm.']};
 
-
-eyelink_disabled      = cfg_const;
-eyelink_disabled.name = 'Disabled';
-eyelink_disabled.tag  = 'disabled';
-eyelink_disabled.val  = {1};
-eyelink_disabled.help = {['Do not transfer data to physical units. ', ...
-    'Use this only if you are not interested in absolute values, ', ...
-    'and if the recording settings were the same for all subjects.']};
-
-eyelink_enabled       = cfg_entry;
-eyelink_enabled.name  = 'Enabled';
-eyelink_enabled.tag   = 'enabled';
-eyelink_enabled.strtype = 'r';
-eyelink_enabled.num   = [1 1];
-eyelink_enabled.val   = {700};
-eyelink_enabled.help  = {'Set the distance between camera and eyes in mm.'};
-
-eyelink_trackdist         = cfg_choice;
+eyelink_trackdist         = cfg_entry;
 eyelink_trackdist.name    = 'Eyetracker distance';
 eyelink_trackdist.tag     = 'eyelink_trackdist';
-eyelink_trackdist.values  = {eyelink_enabled, eyelink_disabled};
-eyelink_trackdist.help    = {['Enable if the data should be converted from ', ...
-    'arbitrary units to physical units (mm). This is only possible if ', ...
-    'ELCL_PROC was set to ELLIPSE during acquisition.']};
+eyelink_trackdist.val     = {-1};
+eyelink_trackdist.num     = [1 1];
+eyelink_trackdist.strtype = 'r';
+eyelink_trackdist.help    = {['Distance between eyetracker camera and ', ...
+    'recorded eyes in mm. Disabled if equal to -1 (use only if you are ', ...
+    'interested in relative values). If enabled (> 0) the data will be ', ...
+    'converted from arbitrary units to physical units (mm). This is ', ...
+    'only possible if ELCL_PROC was set to ELLIPSE during acquisition.']};
 
 
 %% Datatype dependend items
