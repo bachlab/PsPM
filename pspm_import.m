@@ -21,6 +21,11 @@ function outfile=pspm_import(datafile, datatype, import, options)
 %              OR 'none', when no conversion is required
 %              (c and optional Rs and offset, see pspm_transfer_function for
 %              more information)
+%           - .eyelink_trackdist: distance in mm between eyetracker and
+%              the participants' eyes. If is a numeric value the data in a pupil
+%              channel obtained with an eyelink eyetracking system are 
+%              converted from arbitrary units to mm. If value is 'none'
+%              the conversion is disabled. (only for Eyelink imports)
 %           - .denoise: for marker channels in CED spike format (recorded 
 %              as 'level'), filters out markers duration longer than the 
 %              value given here (in ms) 

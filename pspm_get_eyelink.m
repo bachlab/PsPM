@@ -3,6 +3,18 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 % files. 
 %
 % FORMAT: [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import);
+%          import: import job structure with 
+%                   - mandatory fields:
+%                       .sr
+%                       .data
+%                   - optional fields:
+%                       .eyelink_trackdist: 
+%                           the distance between camera and 
+%                           recorded eye in mm. Disabled if 'none'. If
+%                           is a numeric value, causes the conversion
+%                           from arbitrary units to mm according to the
+%                           set distance.
+%
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2015 Tobias Moser (University of Zurich)
