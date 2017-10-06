@@ -103,7 +103,7 @@ scr_transfer.help    = {['Enter the conversion from recorded data to ', ...
     'Microsiemens or Megaohm.']};
 
 eyelink_trackdist         = cfg_entry;
-eyelink_trackdist.name    = 'Eyetracker distance';
+eyelink_trackdist.name    = 'Eyetracker distance (in mm)';
 eyelink_trackdist.tag     = 'eyelink_trackdist';
 eyelink_trackdist.val     = {-1};
 eyelink_trackdist.num     = [1 1];

@@ -163,6 +163,9 @@ for k = 1:numel(import)
                 % transfer pupil data according to transfer settings
                 [~, import{k}.data] = pspm_convert_au2mm(import{k}.data, ...
                     import{k}.eyelink_trackdist, import{k}.units);
+
+                % set new unit to mm
+                import{k}.units = 'mm';
         end
         
         % create statistics for eye specific channels
