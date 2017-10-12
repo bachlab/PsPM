@@ -28,6 +28,10 @@ function dcm = pspm_dcm(model, options)
 %                    events with negative onsets
 %
 % and optional fields
+% model.substhresh  minimum duration (in seconds) of NaN periods to 
+%                   cause splitting up into subsessions which get 
+%                   evaluated independently (excluding NaN values).
+%                   default is 2.
 % model.filter:     filter settings; modality specific default
 % model.channel:    channel number; default: first SCR channel
 % model.norm:       normalise data; default 0 (i. e. data are normalised
@@ -74,10 +78,11 @@ function dcm = pspm_dcm(model, options)
 % in SN units such that an eSCR SN pulse with 1 unit amplitude causes an eSCR
 % with 1 mcS amplitude
 %
-% pspm_dcm can handle NaN values in data channels. These are disregarded
-% during model inversion, and trials containing NaNs are interpolated for
-% averages and principal response components. It is not recommended to use
-% this feature for missing data epochs with a duration of > 1-2 s
+% pspm_dcm can handel NaN values in data channels. According to the field 
+% model.substhresh, data around NaN periods (> model.substhresh) are split
+% into subsessions which then get evaluated independently. There is no change
+% to the structure of the result. NaN periods smaller than model.substhresh 
+% are interpolated for averages and principal response components.
 %
 % REFERENCE: (1) Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010).
 %            Dynamic causal modelling of anticipatory skin conductance 

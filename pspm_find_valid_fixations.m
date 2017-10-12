@@ -20,7 +20,8 @@ function [sts, out_file] = pspm_find_valid_fixations(fn, options)
 %               screen_settings:    Struct with the severeal settings of
 %                                   the used screen.
 %                   aspect_actual:  Actual aspect ratio of the screen.
-%                   display_size:   The size of the display in inches.
+%                   display_size:   The size (diameter) of the display 
+%                                   in inches.
 %                   resolution:     Resolution set in the software (e.g.
 %                                   cogent) used to display stimuli.
 %               fixation_point:     A nx2 vector containing x and y of the
