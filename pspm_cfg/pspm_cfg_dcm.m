@@ -157,16 +157,67 @@ condition_rep.help    = {['Optional: Specify the conditions that the individual 
     'is not used for the parameter estimation of the DCM routine, but it allows you to later access the ' ...
     'conditions in the contrast manager.']};
 
+% Missing epochs
+no_epochs         = cfg_const;
+no_epochs.name    = 'No Missing Epochs';
+no_epochs.tag     = 'no_epochs';
+no_epochs.val     = {0};
+no_epochs.help    = {['Missing epochs are detected automatically ', ...
+    'according to the data option ''Subsession threshold''.']};
+
+epochfile         = cfg_files;
+epochfile.name    = 'Missing Epoch File';
+epochfile.tag     = 'epochfile';
+epochfile.num     = [1 1];
+epochfile.filter  = '.*\.(mat|MAT|txt|TXT)$';
+epochfile.help    = {['Indicate an epoch file specifying the start and ', ...
+    'end points of missing epochs (m). The mat file has to contain a ', ...
+    'variable ''epochs'', which is an m x 2 array, where m is the number of' ...
+    ' missing epochs. The first column marks the start points ', ...
+    'of the epochs that are excluded from the ' ...
+    'analysis and the second column the end points.']};
+
+epochentry         = cfg_entry;
+epochentry.name    = 'Enter Missing Epochs Manually';
+epochentry.tag     = 'epochentry';
+epochentry.strtype = 'i';
+epochentry.num     = [Inf 2];
+epochentry.help    = {['Enter the start and end points of missing epochs ', ...
+    '(m) manually.'], ['Specify an m x 2 array, where m is the number ', ...
+    'of missing epochs. The first column marks the ' ...
+    'start points of the epochs that are excluded from the analysis ', ...
+    'and the second column the end points.']};
+
+epochs        = cfg_choice;
+epochs.name   = 'Define Missing Epochs';
+epochs.tag    = 'epochs';
+epochs.values = {epochfile, epochentry};
+epochs.help   = {['Define the start and end points of the missing ', ...
+    'epochs either as epoch files or manually. Start and end ', ...
+    'points have to be defined in seconds starting from the ', ...
+    'beginning of the session.']};
+
+missing        = cfg_choice;
+missing.name   = 'Missing Epochs';
+missing.tag    = 'missing';
+missing.val    = {no_epochs};
+missing.values = {no_epochs, epochs};
+missing.help   = {['Indicate epochs in your data in which the ', ...
+    'signal is missing or corrupted (e.g., due to artifacts). ', ...
+    'Data around missing epochs are split into subsessions and ', ...
+    'are evaluated independently. NaN periods within the ', ...
+    'evaluated subsessions will be interpolated for averages ', ...
+    'and principal response components.']};
 
 % Sessions
 session        = cfg_branch;
 session.name   = 'Session';
 session.tag    = 'session';
-session.val    = {datafile, timing, condition_rep};
+session.val    = {datafile, timing, condition_rep, missing};
 session.help   = {''};
 
 session_rep         = cfg_repeat;
-session_rep.name    = 'Data & Design';
+session_rep.name    = 'Data & design';
 session_rep.tag     = 'session_rep';
 session_rep.values  = {session};
 session_rep.num     = [1 Inf];
@@ -278,7 +329,7 @@ direction.val     = {'bi'};
 direction.labels  = {'Unidirectional', 'Bidirectional'};
 direction.values  = {'uni', 'bi'};
 direction.help    = {['A unidirectional filter is applied twice in the forward direction. ' ...
-    'A ‘bidirectional’ filter is applied once in the forward direction and once in the ' ...
+    'A ''bidirectional'' filter is applied once in the forward direction and once in the ' ...
     'backward direction to correct the temporal shift due to filtering in forward direction.']};
 
 filter_edit        = cfg_branch;
@@ -301,10 +352,22 @@ filter.val    = {filter_def};
 filter.values = {filter_def, filter_edit};
 filter.help   = {'Specify how you want filter the SCR data.'};
 
+substhresh          = cfg_entry;
+substhresh.name     = 'Subsession threshold';
+substhresh.tag      = 'substhresh';
+substhresh.val      = {2};
+substhresh.strtype  = 'r';
+substhresh.num      = [1 1];
+substhresh.help     = {['Specify the minimum duration (in seconds) ', ...
+    'of NaN periods to be considered as missing epochs. Data around ', ...
+    'missing epochs is then split into subsessions, which are ', ...
+    'evaluated independently. This setting is ignored for sessions ', ...
+    'having set missing epochs manually.']};
+
 data_options         = cfg_branch;
 data_options.name    = 'Data Options';
 data_options.tag     = 'data_options';
-data_options.val     = {norm, filter};
+data_options.val     = {norm, filter, substhresh};
 data_options.help    = {''};
 
 

@@ -326,7 +326,7 @@ for iSn = 1:numel(model.datafile)
         % disable offset for predefined missing epochs
         session_offset = 0;
     end
-
+    
     if any(ignore_epochs)
         i_e = find(ignore_epochs);
         
@@ -367,7 +367,7 @@ for iSn = 1:numel(model.datafile)
         % missing epochs
         n_miss = sum(ignore_epochs);
         subsessions(end+(1:n_miss), 1:5) = [ones(n_miss,1)*iSn, ...
-            miss_epochs(ignore_epochs,:)/data{iSn}{1}.header.sr, ...
+            miss_epochs(i_e,:)/data{iSn}{1}.header.sr, ...
             ones(n_miss,1), ...
             ones(n_miss,1)*session_offset];
     else
@@ -485,12 +485,11 @@ for iSn = 1:numel(model.timing)
     subs = cellfun(@(x) find(x(1) > subsessions(:,2) & ...
         x(2) < (subsessions(:,3)-subsessions(:,5)) ... 
         & subsessions(:, 1) == iSn), trls, 'UniformOutput', 0);
-    
+
     emp_subs = cellfun(@isempty, subs);
     if any(emp_subs)  
         subs(emp_subs) = {-1};
     end
-        
     % find enabled and disabled trials
     trlinfo = cellfun(@(x) x ~= -1 && subsessions(x, 4) == 0, subs, ...
         'UniformOutput', 0);   

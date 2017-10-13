@@ -52,6 +52,17 @@ for iSession=1:nrSession
             options.trlnames{1,iSession}{indexNr} = job.session(iSession).condition(iCond).name;
         end
     end
+
+    % missing epochs
+    if isfield(job.session(iSession).missing,'epochs')
+        if isfield(job.session(iSession).missing.epochs,'epochfile')
+            model.missing{1,iSession} = job.session(iSession).missing.epochs.epochfile{1};
+        else
+            model.missing{1,iSession} = job.session(iSession).missing.epochs.epochentry;
+        end
+    elseif isfield(job.session(iSession).missing, 'no_epochs')
+        model.missing{1,iSession} = [];
+    end
 end
 model.datafile = datafile;
 model.timing = timing;
@@ -81,6 +92,9 @@ if ~isfield(job.data_options.filter,'def')
     filter.direction = job.data_options.filter.edit.direction; % sampling rate
     model.filter = filter;
 end
+
+% subsession threshold
+options.substresh = job.data_options.substhresh;
 
 
 % channel number
