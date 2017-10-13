@@ -94,7 +94,7 @@ if ~isfield(job.data_options.filter,'def')
 end
 
 % subsession threshold
-options.substresh = job.data_options.substhresh;
+model.substresh = job.data_options.substhresh;
 
 
 % channel number

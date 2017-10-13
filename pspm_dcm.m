@@ -33,6 +33,10 @@ function dcm = pspm_dcm(model, options)
 %                   specify a cell array for multiple input files. This
 %                   must always be specified in SECONDS.
 %                   Default: no missing values
+% model.substhresh: minimum duration (in seconds) of NaN periods to 
+%                   cause splitting up into subsessions which get 
+%                   evaluated independently (excluding NaN values).
+%                   default is 2. Will be ignored if model.missing is set.
 % model.filter:     filter settings; modality specific default
 % model.channel:    channel number; default: first SCR channel
 % model.norm:       normalise data; default 0 (i. e. data are normalised
@@ -47,10 +51,6 @@ function dcm = pspm_dcm(model, options)
 % - options.getrf: only estimate RF, do not do trial-wise DCM
 % - options.rf: call an external file to provide response function (for use
 %               when this is previously estimated by pspm_get_rf)
-% - options.substhresh: minimum duration (in seconds) of NaN periods to 
-%                       cause splitting up into subsessions which get 
-%                       evaluated independently (excluding NaN values).
-%                       default is 2. Will be ignored if model.missing is set.
 %
 % inversion options
 % - options.depth: no of trials to invert at the same time (default: 2)
@@ -85,10 +85,10 @@ function dcm = pspm_dcm(model, options)
 %
 % pspm_dcm can handle NaN values in data channels. Either by specifying 
 % missing epochs manually using model.missing or by detecting missing epochs
-% automatically using the field options.substhresh: According to model.missing
-% or options.substhresh data around detected or predefined NaN periods are split
+% automatically using the field model.substhresh: According to model.missing
+% or model.substhresh data around detected or predefined NaN periods are split
 % into subsessions which then get evaluated independently. There is no change
-% to the structure of the result. NaN periods smaller than options.substhresh 
+% to the structure of the result. NaN periods smaller than model.substhresh 
 % or not defined in model.missing are interpolated for averages and 
 % principal response components.
 %
@@ -158,7 +158,15 @@ if ~isfield(model, 'norm')
     model.norm = 0;
 elseif ~any(ismember(model.norm, [0, 1]))
     warning('ID:invalid_input', 'Normalisation must be specified as 0 or 1.'); return; 
-end;
+end
+
+% check substhresh --
+if ~isfield(model, 'substhresh')
+    model.substhresh = 2;
+elseif ~isnumeric(model.substhresh)
+    warning('ID:invalid_input', 'Subsession threshold must be numeric.'); 
+    return;
+end
 
 % check filter --
 if ~isfield(model, 'filter')
@@ -178,7 +186,6 @@ try options.getrf;   catch, options.getrf = 0;    end
 try options.rf;      catch, options.rf = 0;       end
 try options.nosave;  catch, options.nosave = 0;   end
 try options.overwrite; catch, options.overwrite = 0; end
-try options.substhresh; catch, options.substhresh = 2; end
 try options.depth; catch, options.depth = 2; end
 try options.sfpost; catch, options.sfpost = 5; end
 try options.aSCR_sigma_offset; catch, options.aSCR_sigma_offset = 0.1; end
@@ -314,10 +321,10 @@ for iSn = 1:numel(model.datafile)
         % classify if epoch should be considered
         % true for duration > substhresh and for missing epochs
         ignore_epochs = diff(miss_epochs, 1, 2)/data{iSn}{1}.header.sr > ...
-            options.substhresh;
+            model.substhresh;
 
         % use offset for detected subsessions
-        session_offset = options.substhresh;
+        session_offset = model.substhresh;
     else
         % use missing epochs as specified by file
         miss_epochs = missing{iSn}*data{iSn}{1}.header.sr;
