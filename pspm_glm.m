@@ -32,7 +32,8 @@ function glm = pspm_glm(model, options)
 %                   indicates that the onset of the basis function precedes
 %                   event onsets by n seconds (default: 0: used for
 %                   interpolated data channels)
-% model.channel:    channel number; default: first channel of the specified modality
+% model.channel:    channel number; default: first channel of the specified 
+%                   modality
 % model.norm:       normalise data; default 0
 % model.filter:     filter settings; modality specific default
 % model.missing:    allows to specify missing (e. g. artefact) epochs in

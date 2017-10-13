@@ -28,10 +28,11 @@ function dcm = pspm_dcm(model, options)
 %                    events with negative onsets
 %
 % and optional fields
-% model.substhresh  minimum duration (in seconds) of NaN periods to 
-%                   cause splitting up into subsessions which get 
-%                   evaluated independently (excluding NaN values).
-%                   default is 2.
+% model.missing:    allows to specify missing (e. g. artefact) epochs in
+%                   the data file. See pspm_get_timing for epoch definition;
+%                   specify a cell array for multiple input files. This
+%                   must always be specified in SECONDS.
+%                   Default: no missing values
 % model.filter:     filter settings; modality specific default
 % model.channel:    channel number; default: first SCR channel
 % model.norm:       normalise data; default 0 (i. e. data are normalised
@@ -46,6 +47,10 @@ function dcm = pspm_dcm(model, options)
 % - options.getrf: only estimate RF, do not do trial-wise DCM
 % - options.rf: call an external file to provide response function (for use
 %               when this is previously estimated by pspm_get_rf)
+% - options.substhresh: minimum duration (in seconds) of NaN periods to 
+%                       cause splitting up into subsessions which get 
+%                       evaluated independently (excluding NaN values).
+%                       default is 2. Will be ignored if model.missing is set.
 %
 % inversion options
 % - options.depth: no of trials to invert at the same time (default: 2)
@@ -78,11 +83,14 @@ function dcm = pspm_dcm(model, options)
 % in SN units such that an eSCR SN pulse with 1 unit amplitude causes an eSCR
 % with 1 mcS amplitude
 %
-% pspm_dcm can handel NaN values in data channels. According to the field 
-% model.substhresh, data around NaN periods (> model.substhresh) are split
+% pspm_dcm can handle NaN values in data channels. Either by specifying 
+% missing epochs manually using model.missing or by detecting missing epochs
+% automatically using the field options.substhresh: According to model.missing
+% or options.substhresh data around detected or predefined NaN periods are split
 % into subsessions which then get evaluated independently. There is no change
-% to the structure of the result. NaN periods smaller than model.substhresh 
-% are interpolated for averages and principal response components.
+% to the structure of the result. NaN periods smaller than options.substhresh 
+% or not defined in model.missing are interpolated for averages and 
+% principal response components.
 %
 % REFERENCE: (1) Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010).
 %            Dynamic causal modelling of anticipatory skin conductance 
@@ -165,25 +173,25 @@ if ~isstruct(options)
 end;
 
 % set and check options ---
-try options.indrf;   catch, options(1).indrf = 0;    end;
-try options.getrf;   catch, options.getrf = 0;    end;
-try options.rf;      catch, options.rf = 0;       end;
-try options.nosave;  catch, options.nosave = 0;   end;
-try options.overwrite; catch, options.overwrite = 0; end;
-try options.substhresh; catch, options.substhresh = 2; end;
-try options.depth; catch, options.depth = 2; end;
-try options.sfpost; catch, options.sfpost = 5; end;
-try options.aSCR_sigma_offset; catch, options.aSCR_sigma_offset = 0.1; end;
-try options.sclpost; catch, options.sclpost = 5; end;
-try options.sclpre; catch, options.sclpre = 2; end;
-try options.sfpre; catch, options.sfpre = 2; end;
-try options.sffreq; catch, options.sffreq = 0.5; end;
-try options.method; catch, options.method = 'dcm'; end;
-try options.dispwin; catch, options.dispwin = 1; end;
-try options.crfupdate; catch, options.crfupdate = 1; end;
-try options.dispsmallwin; catch, options.dispsmallwin = 0; end;
-try options.eventnames; catch, options.eventnames = {}; end;
-try options.trlnames; catch, options.trlnames = {}; end;
+try options.indrf;   catch, options(1).indrf = 0;    end
+try options.getrf;   catch, options.getrf = 0;    end
+try options.rf;      catch, options.rf = 0;       end
+try options.nosave;  catch, options.nosave = 0;   end
+try options.overwrite; catch, options.overwrite = 0; end
+try options.substhresh; catch, options.substhresh = 2; end
+try options.depth; catch, options.depth = 2; end
+try options.sfpost; catch, options.sfpost = 5; end
+try options.aSCR_sigma_offset; catch, options.aSCR_sigma_offset = 0.1; end
+try options.sclpost; catch, options.sclpost = 5; end
+try options.sclpre; catch, options.sclpre = 2; end
+try options.sfpre; catch, options.sfpre = 2; end
+try options.sffreq; catch, options.sffreq = 0.5; end
+try options.method; catch, options.method = 'dcm'; end
+try options.dispwin; catch, options.dispwin = 1; end
+try options.crfupdate; catch, options.crfupdate = 1; end
+try options.dispsmallwin; catch, options.dispsmallwin = 0; end
+try options.eventnames; catch, options.eventnames = {}; end
+try options.trlnames; catch, options.trlnames = {}; end
 
 % check option fields --
 % numeric fields
@@ -200,36 +208,54 @@ check_sts = sum([pspm_check_options('numeric', options, num_fields), ...
 
 % 
 if check_sts < 3
-    warning('ID:invalid_input', ['An error occurred while validating the input options. ', ...
-        'See earlier warnings for more information.']);
+    warning('ID:invalid_input', ['An error occurred while validating the ', ...
+        'input options. See earlier warnings for more information.']);
     return;
-end;
+end
 
 % check input of special rf field
-if isempty(options.rf) || ((isnumeric(options.rf) && options.rf ~= 0) && (~ischar(options.rf)))
+if isempty(options.rf) || ...
+        ((isnumeric(options.rf) && options.rf ~= 0) && (~ischar(options.rf)))
     warning('ID:invalid_input', 'Field ''rf'' is neither a string nor 0.');
     return;
-end;
+end
 
 % check mutual exclusivity
 if options.indrf && options.rf
     warning('RF can be provided or estimated, not both.'); return;
-end;
+end
 
 % check files --
-if exist(model.modelfile) && options.overwrite == 0
-    overwrite=menu(sprintf('Model file (%s) already exists. Overwrite?', model.modelfile), 'yes', 'no');
-    if overwrite == 2, return, end;
-end;
+if exist(model.modelfile, 'file') && options.overwrite == 0
+    overwrite=menu(sprintf('Model file (%s) already exists. Overwrite?', ...
+        model.modelfile), 'yes', 'no');
+    if overwrite == 2, return, end
+end
 
 if ischar(model.datafile)
     model.datafile = {model.datafile};
     model.timing   = {model.timing};
-end;
+end
 
-if numel(model.datafile) ~= numel(model.timing)
-    warning('ID:number_of_elements_dont_match', 'Session numbers of data files and event definitions do not match.'); return;
-end;
+nFile = numel(model.datafile);
+if ~isfield(model, 'missing')
+    model.missing = cell(nFile, 1);
+elseif ischar(model.missing) || isnumeric(model.missing)
+    model.missing = {model.missing};
+elseif ~iscell(model.missing)
+    warning('ID:invalid_input', ['Missing values must be a filename, ', ...
+        'matrix, or cell array of these.']); return;
+end
+
+if nFile ~= numel(model.timing)
+    warning('ID:number_of_elements_dont_match', ['Session numbers of data ', ...
+        'files and event definitions do not match.']); return;
+end
+
+if numel(model.missing) ~= nFile
+    warning('ID:number_of_elements_dont_match', ['Same number of data ', ...
+        'files and missing value definitions is needed.']); return;
+end
 
 % check, get and prepare data
 % ------------------------------------------------------------------------
@@ -238,67 +264,118 @@ end;
 % colnames: iSn start stop enabled (if contains events)
 subsessions = [];
 data = cell(numel(model.datafile), 1);
+missing = cell(nFile, 1);
 for iSn = 1:numel(model.datafile)
     % check & load data
     [sts, ~, data{iSn}] = pspm_load_data(model.datafile{iSn}, model.channel);
     if sts == -1 || isempty(data{iSn})
-        warning('ID:invalid_input', 'No SCR data contained in file %s', model.datafile{iSn});
+        warning('ID:invalid_input', 'No SCR data contained in file %s', ...
+            model.datafile{iSn});
         return;
-    end;
+    end
+
+    % load existing missing data (if defined)
+    if ~isempty(model.missing{iSn})
+        [~, missing{iSn}] = pspm_get_timing('epochs', ...
+            model.missing{iSn}, 'seconds');
+    else
+        missing{iSn} = [];
+    end
     model.filter.sr = data{iSn}{1}.header.sr;
-    missing = isnan(data{iSn}{1}.data);
-    
-    d_miss = diff(missing)';
-    miss_start = find(d_miss == 1);
-    miss_stop = find(d_miss == -1);
-    
-    
-    if numel(miss_start) > 0 || numel(miss_stop) > 0
-        % check for blunt ends and fix
-        if isempty(miss_start)
-            miss_start = 1;
-        elseif isempty(miss_stop)
-            miss_stop = numel(d_miss);
-        end;
+
+    % try to find missing epochs according to subsession threshold
+    n_data = size(data{iSn}{1}.data,1);
+    if isempty(missing{iSn})
+        nan_epochs = isnan(data{iSn}{1}.data);
         
-        if miss_start(1) > miss_stop(1)
-            miss_start = [1, miss_start];
-        end;
-        if miss_start(end) > miss_stop(end)
-            miss_stop(end + 1) = numel(d_miss);
-        end;
-    end;
-     
-    % put missing epochs together
-    miss_epochs = [miss_start', miss_stop'];
-    % look for big epochs
-    big_epochs = diff(miss_epochs, 1, 2)/data{iSn}{1}.header.sr > options.substhresh;
-    
-    if any(big_epochs)
-        b_e = find(big_epochs);
+        d_nan_ep = diff(nan_epochs)';
+        nan_ep_start = find(d_nan_ep == 1);
+        nan_ep_stop = find(d_nan_ep == -1);
+
+        if numel(nan_ep_start) > 0 || numel(nan_ep_stop) > 0
+            % check for blunt ends and fix
+            if isempty(nan_ep_start)
+                nan_ep_start = 1;
+            elseif isempty(nan_ep_stop)
+                nan_ep_stop = numel(d_nan_ep);
+            end
+            
+            if nan_ep_start(1) > nan_ep_stop(1)
+                nan_ep_start = [1, nan_ep_start];
+            end
+            if nan_ep_start(end) > nan_ep_stop(end)
+                nan_ep_stop(end + 1) = numel(d_nan_ep);
+            end
+        end
+         
+        % put missing epochs together
+        miss_epochs = [nan_ep_start', nan_ep_stop'];
+
+        % classify if epoch should be considered
+        % true for duration > substhresh and for missing epochs
+        ignore_epochs = diff(miss_epochs, 1, 2)/data{iSn}{1}.header.sr > ...
+            options.substhresh;
+
+        % use offset for detected subsessions
+        session_offset = options.substhresh;
+    else
+        % use missing epochs as specified by file
+        miss_epochs = missing{iSn}*data{iSn}{1}.header.sr;
+        ignore_epochs = ones(size(miss_epochs,1),1);
+
+        % disable offset for predefined missing epochs
+        session_offset = 0;
+    end
+
+    if any(ignore_epochs)
+        i_e = find(ignore_epochs);
         
         % invert missings to sessions without nans
-        se_start = [1; miss_epochs(b_e(1:end), 2) + 1];
-        se_stop = [miss_epochs(b_e(1:end), 1)-1; numel(d_miss)];
-        
+        se_start = [1; miss_epochs(i_e(1:end), 2) + 1];
+        se_stop = [miss_epochs(i_e(1:end), 1)-1; n_data];
+
+        % throw away first session if stop is 
+        % earlier than start (can happen because stop - 1)
+        % is used
         if se_stop(1) <= se_start(1)
             se_start = se_start(2:end);
             se_stop = se_stop(2:end);
-        end;
-        
-        if se_start(end) > numel(d_miss)
+        end
+       
+        % throw away last session if start (+1) overlaps
+        % n_data
+        if se_start(end) > n_data
             se_start = se_start(1:end-1);
             se_stop = se_stop(1:end-1);
-        end;
-        
+        end
+       
+        % subsessions header --
+        % =====================
+        % 1 session_id 
+        % 2 start_time (s)
+        % 3 stop_time (s)
+        % 4 missing 
+        % 5 session_offset
+
         n_sbs = numel(se_start);
-        subsessions(end+(1:n_sbs), 1:4) = [ones(n_sbs,1)*iSn, [se_start, se_stop]/data{iSn}{1}.header.sr, zeros(n_sbs,1)];
-        n_miss = size(miss_epochs,1);
-        subsessions(end+(1:n_miss), 1:4) = [ones(n_miss,1)*iSn, miss_epochs/data{iSn}{1}.header.sr, ones(n_miss,1)];
+        % enabled subsessions
+        subsessions(end+(1:n_sbs), 1:5) = [ones(n_sbs,1)*iSn, ...
+            [se_start, se_stop]/data{iSn}{1}.header.sr, ...
+            zeros(n_sbs,1), ...
+            ones(n_sbs,1)*session_offset];
+        
+        % missing epochs
+        n_miss = sum(ignore_epochs);
+        subsessions(end+(1:n_miss), 1:5) = [ones(n_miss,1)*iSn, ...
+            miss_epochs(ignore_epochs,:)/data{iSn}{1}.header.sr, ...
+            ones(n_miss,1), ...
+            ones(n_miss,1)*session_offset];
     else
-        subsessions(end+1,1:4) = [iSn, [1, numel(data{iSn}{1}.data)]/data{iSn}{1}.header.sr, 0];
-    end;
-end;
+        subsessions(end+1,1:5) = [iSn, ...
+            [1, numel(data{iSn}{1}.data)]/data{iSn}{1}.header.sr, 0, ...
+            session_offset];
+    end
+end
 
 % subsessions - columns:
 % iSn, start, stop, missing
@@ -320,118 +397,149 @@ for vs = 1:numel(valid_subsessions)
         interpolateoptions = struct('extrapolate', 1);
         [~, sbSn_data] = pspm_interpolate(sbSn_data, interpolateoptions);
         clear interpolateoptions
-    end;
+    end
     [sts, sbs_data{isbSn, 1}, model.sr] = pspm_prepdata(sbSn_data, model.filter);
-    if sts == -1, return; end;
+    if sts == -1, return; end
     foo{vs, 1} = (sbs_data{isbSn}(:) - mean(sbs_data{isbSn}));
-end;
+end
 
 foo = cell2mat(foo);
 model.zfactor = std(foo(:));
 for vs = 1:numel(valid_subsessions)
     isbSn = valid_subsessions(vs);
     sbs_data{isbSn} = (sbs_data{isbSn}(:) - min(sbs_data{isbSn}))/model.zfactor;
-end;
+end
 clear foo
 
 % check & get events and group into flexible and fixed responses
 % ------------------------------------------------------------------------
 trials = {};
+n_sbs = size(subsessions, 1);
 sbs_newevents = cell(2,1);
+sbs_trlstart = cell(1,n_sbs);
+sbs_trlstop = cell(1,n_sbs);
+sbs_iti= cell(1,n_sbs);
+sbs_miniti = zeros(1,n_sbs);
 for iSn = 1:numel(model.timing)
     % initialise and get timing information -- 
     sn_newevents{1}{iSn} = []; sn_newevents{2}{iSn} = [];
     [sts, events] = pspm_get_timing('events', model.timing{iSn});
-    if sts ~=1, return; end;
+    if sts ~=1, return; end
     cEvnt = [1 1];
     % table with trial_id sbsnid
-    %trials{iSn} = [ones(size(events{1},1),1),zeros(size(events{1},1),1)];
     % split up into flexible and fixed events --
     for iEvnt = 1:numel(events)
         if size(events{iEvnt}, 2) == 2 % flex
             sn_newevents{1}{iSn}(:, cEvnt(1), 1:2) = events{iEvnt};
             % assign event names
-            if iSn == 1 && isfield(options, 'eventnames') && numel(options.eventnames) == numel(events)
+            if iSn == 1 && isfield(options, 'eventnames') ...
+                    && numel(options.eventnames) == numel(events)
                 flexevntnames{cEvnt(1)} = options.eventnames{iEvnt};
             elseif iSn == 1
-                flexevntnames{cEvnt(1)} = sprintf('Flexible response # %1.0f',cEvnt(1)); 
-            end;
+                flexevntnames{cEvnt(1)} = ...
+                    sprintf('Flexible response # %1.0f',cEvnt(1)); 
+            end
             % update counter
             cEvnt = cEvnt + [1 0];
         elseif size(events{iEvnt}, 2) == 1 % fix
             sn_newevents{2}{iSn}(:, cEvnt(2), 1) = events{iEvnt};
             % assign event names
-            if iSn == 1 && isfield(options, 'eventnames') && numel(options.eventnames) == numel(events)
+            if iSn == 1 && isfield(options, 'eventnames') && ...
+                    numel(options.eventnames) == numel(events)
                 fixevntnames{cEvnt(2)} = options.eventnames{iEvnt};
             elseif iSn == 1
-                fixevntnames{cEvnt(2)} = sprintf('Fixed response # %1.0f',cEvnt(2)); 
-            end;
+                fixevntnames{cEvnt(2)} = ...
+                    sprintf('Fixed response # %1.0f',cEvnt(2)); 
+            end
             % update counter
             cEvnt = cEvnt + [0 1];
-        end;
-    end;
+        end
+    end
     cEvnt = cEvnt - [1, 1];
     % check number of events across sessions -- 
     if iSn == 1
         nEvnt = cEvnt;
     else
         if any(cEvnt ~= nEvnt)
-            warning('Same number of events per trial required across all sessions.'); return;
-        end;
-    end;
+            warning(['Same number of events per trial required ', ...
+                'across all sessions.']); return;
+        end
+    end
 
     % find trialstart, trialstop and shortest ITI --
-    sn_allevents = [reshape(sn_newevents{1}{iSn}, [size(sn_newevents{1}{iSn}, 1), ...
-        size(sn_newevents{1}{iSn}, 2) * size(sn_newevents{1}{iSn}, 3)]), sn_newevents{2}{iSn}];
-    sn_allevents(sn_allevents < 0) = inf;        % exclude "dummy" events with negative onsets
-    sn_trlstart{iSn} = min(sn_allevents, [], 2); % first event per trial
-    sn_allevents(isinf(sn_allevents)) = -inf;        % exclude "dummy" events with negative onsets
-    sn_trlstop{iSn}  = max(sn_allevents, [], 2); % last event of per trial
+    sn_allevents = [reshape(sn_newevents{1}{iSn}, ...
+        [size(sn_newevents{1}{iSn}, 1), ...
+        size(sn_newevents{1}{iSn}, 2) * size(sn_newevents{1}{iSn}, 3)]), ...
+        sn_newevents{2}{iSn}];
+    % exclude "dummy" events with negative onsets
+    sn_allevents(sn_allevents < 0) = inf;
+    % first event per trial
+    sn_trlstart{iSn} = min(sn_allevents, [], 2);
+    % exclude "dummy" events with negative onsets
+    sn_allevents(isinf(sn_allevents)) = -inf;
+    % last event of per trial
+    sn_trlstop{iSn}  = max(sn_allevents, [], 2);
     
     % assign trials to subsessions
     trls = num2cell([sn_trlstart{iSn}, sn_trlstop{iSn}],2);
-    subs = cellfun(@(x) find(x(1) > subsessions(:, 2) & x(2) < (subsessions(:, 3)-options.substhresh) ... 
+    subs = cellfun(@(x) find(x(1) > subsessions(:,2) & ...
+        x(2) < (subsessions(:,3)-subsessions(:,5)) ... 
         & subsessions(:, 1) == iSn), trls, 'UniformOutput', 0);
     
     emp_subs = cellfun(@isempty, subs);
     if any(emp_subs)  
         subs(emp_subs) = {-1};
-    end;
+    end
         
     % find enabled and disabled trials
-    trlinfo = cellfun(@(x) x ~= -1 && subsessions(x, 4) == 0, subs, 'UniformOutput', 0);   
+    trlinfo = cellfun(@(x) x ~= -1 && subsessions(x, 4) == 0, subs, ...
+        'UniformOutput', 0);   
     trials{iSn} = [cell2mat(trlinfo), cell2mat(subs)];
-    
     % cycle through subsessions and copy events to corresponding subsession
     % --
     % find subsessions corresponding to the current session
     sn_sbs = find(subsessions(:, 1) == iSn);
-    for isn_sbs=1:numel(sn_sbs)
-        sbs_id = sn_sbs(isn_sbs);
-        % trials which are enabled and have the 'current' subsession id
-        sbs_trls = trials{iSn}(:, 1) == 1 & trials{iSn}(:,2) == sbs_id;
-        if any(sbs_trls)
-            sbs_trlstart{sbs_id} = sn_trlstart{iSn}(sbs_trls) - subsessions(sbs_id,2);
-            sbs_trlstop{sbs_id} = sn_trlstop{iSn}(sbs_trls) - subsessions(sbs_id,2);
-            sbs_iti{sbs_id} = [sbs_trlstart{sbs_id}(2:end); numel(sbs_data{sbs_id, 1})/model.sr] - sbs_trlstop{sbs_id};
-            sbs_miniti(sbs_id) = min(sbs_iti{sbs_id});
-            
-            for ievType = 1:numel(sbs_newevents)
-                if ~isempty(sn_newevents{ievType}{iSn})
-                    sbs_newevents{ievType}{sbs_id} = sn_newevents{ievType}{iSn}(sbs_trls,:,:) ...
-                        - subsessions(sbs_id,2);
-                else
-                    sbs_newevents{ievType}{sbs_id} = [];
-                end;
-            end;            
-            
-            if sbs_miniti(iSn) < 0
-                warning('Error in event definition. Either events are outside the file, or trials overlap.'); return;
-            end;
-        end;
-    end;
-        
-end;
+    if any(trials{iSn})
+        for isn_sbs=1:numel(sn_sbs)
+            sbs_id = sn_sbs(isn_sbs);
+            % trials which are enabled and have the 'current' subsession id
+            sbs_trls = trials{iSn}(:, 1) == 1 & trials{iSn}(:,2) == sbs_id;
+            if any(sbs_trls)
+                sbs_trlstart{sbs_id} = sn_trlstart{iSn}(sbs_trls) - ...
+                    subsessions(sbs_id,2);
+                sbs_trlstop{sbs_id} = sn_trlstop{iSn}(sbs_trls) - ...
+                    subsessions(sbs_id,2);
+                sbs_iti{sbs_id} = [sbs_trlstart{sbs_id}(2:end); ...
+                    numel(sbs_data{sbs_id, 1})/model.sr] - sbs_trlstop{sbs_id};
+                sbs_miniti(sbs_id) = min(sbs_iti{sbs_id});
+                
+                for ievType = 1:numel(sbs_newevents)
+                    if ~isempty(sn_newevents{ievType}{iSn})
+                        sbs_newevents{ievType}{sbs_id} = ...
+                            sn_newevents{ievType}{iSn}(sbs_trls,:,:) ...
+                            - subsessions(sbs_id,2);
+                    else
+                        sbs_newevents{ievType}{sbs_id} = [];
+                    end
+                end
+                
+                if sbs_miniti(iSn) < 0
+                    warning(['Error in event definition. Either events are ', ...
+                        'outside the file, or trials overlap.']); return;
+                end
+            end
+        end
+    else
+        warning('Could not find any enabled trial for file ''%s''', ...
+            model.datafile{iSn});
+    end
+end
+
+if isempty(sbs_trlstart) 
+    warning('ID:invalid_input', ['In all files there is not a ', ...
+        'single subsession to be processed.']);
+    return;
+end
 
 % find subsessions with events and define them to be processed
 proc_subsessions = ~cellfun(@isempty, sbs_trlstart);
@@ -439,7 +547,8 @@ proc_miniti     =  sbs_miniti(proc_subsessions);
 model.trlstart =  sbs_trlstart(proc_subsessions);
 model.trlstop  =  sbs_trlstop(proc_subsessions);
 model.iti      =  sbs_iti(proc_subsessions);
-model.events   =  {sbs_newevents{1}(proc_subsessions), sbs_newevents{2}(proc_subsessions)};
+model.events   =  {sbs_newevents{1}(proc_subsessions), ...
+    sbs_newevents{2}(proc_subsessions)};
 model.scr      =  sbs_data(proc_subsessions);
 options.missing  =  sbs_missing(proc_subsessions);
 

@@ -118,7 +118,7 @@ if numel(varargin) > 0
             
             loadFromFile(hObject, varargin{1});
         else
-            warning('File ''%s'' does not exist.');
+            warning('File ''%s'' does not exist.', varargin{1});
         end;
     elseif isnumeric(varargin{1})
         set(handles.pnlInput, 'Visible', 'off');

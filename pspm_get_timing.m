@@ -53,7 +53,6 @@ function [sts, outtiming] = pspm_get_timing(model, intiming, vararg)
 %     for 'param'
 % -------------------------------------------------------------------------
 
-
 % initialise & define output
 % -------------------------------------------------------------------------
 global settings
