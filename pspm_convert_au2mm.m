@@ -16,7 +16,7 @@ function [sts, out] = pspm_convert_au2mm(varargin)
 %                               Expected to be numeric. The channel should
 %                               contain diameter values recoreded with an
 %                               Eyelink system in 'ellipse' mode.
-%           distance:           distance between camera and eyes
+%           distance:           distance between camera and eyes in mm
 %           record_method:      either 'area' or 'diameter', tells the function
 %                               what the format of the recorded data is
 %                               only required if data is a numeric vector

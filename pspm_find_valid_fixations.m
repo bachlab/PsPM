@@ -93,13 +93,15 @@ end
 
 % fn
 if ~ischar(fn) || ~exist(fn, 'file')
-    warning('ID:invalid_input', 'File %s is not char or does not seem to exist.', fn); return;
+    warning('ID:invalid_input', ['File %s is not char or does not ', ...
+        'seem to exist.'], fn); return;
 end
 
 % load data right away (needed if fixation point should be expanded)
 [sts, infos, data] = pspm_load_data(fn);
 if sts ~= 1
-    warning('ID:invalid_input', 'An error happened, while opening the file %s.',fn); return;
+    warning('ID:invalid_input', ['An error happened, while ', ...
+        'opening the file %s.'],fn); return;
 end
 
 % check validate_fixations and then the depending mandatory fields  
@@ -120,52 +122,76 @@ if ~isfield(options, 'plot_gaze_coords')
 end
 
 if ~islogical(options.plot_gaze_coords) && ~isnumeric(options.plot_gaze_coords)
-    warning('ID:invalid_input', 'Options.plot_gaze_coords must be logical or numeric.'); return;
+    warning('ID:invalid_input', ['Options.plot_gaze_coords must ', ...
+        'be logical or numeric.']); 
+    return;
 elseif ~islogical(options.missing) && ~isnumeric(options.missing)
-    warning('ID:invalid_input', 'Options.missing is neither logical nor numeric.'); return;
+    warning('ID:invalid_input', ['Options.missing is neither logical ', ...
+        'nor numeric.']); 
+    return;
 elseif ~any(strcmpi(options.eyes, {'all', 'left', 'right'}))
-    warning('ID:invalid_input', 'Options.eyes must be either ''all'', ''left'' or ''right''.'); return;
-elseif ~iscell(options.channels) && ~ischar(options.channels) && ~isnumeric(options.channels)
-    warning('ID:invalid_input', 'Options.channels should be a char, numeric or a cell of char or numeric.'); return;
+    warning('ID:invalid_input', ['Options.eyes must be either ''all'', ', ...
+        '''left'' or ''right''.']);
+    return;
+elseif ~iscell(options.channels) && ~ischar(options.channels) && ...
+        ~isnumeric(options.channels)
+    warning('ID:invalid_input', ['Options.channels should be a char, ', ...
+        'numeric or a cell of char or numeric.']); 
+    return;
 elseif iscell(options.channels) && ...
-        any(~cellfun(@(x) isnumeric(x) || any(strcmpi(x, {'gaze_x', 'gaze_y', ...
+        any(~cellfun(@(x) isnumeric(x) ||any(strcmpi(x, {'gaze_x', 'gaze_y', ...
         'pupil', 'pupil_missing'})), options.channels))
     warning('ID:invalid_input', 'Option.channels contains invalid values.');
     return;
 elseif ~isfield(options, 'box_degree') || ~isnumeric(options.box_degree)
-    warning('ID:invalid_input', 'Options.box_degree is not set or is not numeric.'); return;
+    warning('ID:invalid_input', ['Options.box_degree is not set or ', ...
+        'is not numeric.']); 
+    return;
 elseif ~isfield(options, 'distance') || ~isnumeric(options.distance)
-    warning('ID:invalid_input', 'Options.distance is not set or not numeric.'); return;
+    warning('ID:invalid_input', 'Options.distance is not set or not numeric.'); 
+    return;
 elseif ~isfield(options, 'screen_settings') || ~isstruct(options.screen_settings)
-    warning('ID:invalid_input', 'Options.screen_settings is not set or not struct.'); return;
+    warning('ID:invalid_input', ['Options.screen_settings is not ', ...
+        'set or not struct.']); return;
 elseif ~isfield(options.screen_settings, 'aspect_actual') || ...
         ~isnumeric(options.screen_settings.aspect_actual) || ...
         any(size(options.screen_settings.aspect_actual) ~= [1 2])
-    warning('ID:invalid_input', ['Options.screen_settings.aspect_actual is not set, ', ...
-        'is not numeric or has the wrong size (should be 1x2).']); return;
+    warning('ID:invalid_input', ['Options.screen_settings.aspect_actual ', ...
+        'is not set, ', ...
+        'is not numeric or has the wrong size (should be 1x2).']); 
+    return;
 elseif ~isfield(options.screen_settings, 'display_size') ...
         || ~isnumeric(options.screen_settings.display_size)
-    warning('ID:invalid_input', ['Options.screen_settings.display_size is not set or is ', ...
-        'not numeric.']); return;
+    warning('ID:invalid_input', ['Options.screen_settings.display_size is ', ...
+        'not set or is not numeric.']); 
+    return;
 elseif ~isfield(options.screen_settings, 'resolution') || ...
         ~isnumeric(options.screen_settings.resolution) || ...
         any(size(options.screen_settings.resolution) ~= [1 2])
     warning('ID:invalid_input', ['Options.screen_settings.resolutions is not ', ...
-        'numeric or has the wrong size (should be 1x2)']); return;
-elseif isfield(options, 'fixation_point') && (~isnumeric(options.fixation_point) || ...
+        'numeric or has the wrong size (should be 1x2)']); 
+    return;
+elseif isfield(options, 'fixation_point') && ...
+        (~isnumeric(options.fixation_point) || ...
         size(options.fixation_point,2) ~= 2)
     warning('ID:invalid_input', ['Options.fixation_point is not ', ...
-        'numeric, or has the wrong size (should be nx2).']); return;
+        'numeric, or has the wrong size (should be nx2).']); 
+    return;
 end
 
 % Visual inputs for specifying boundaries
-vis.box_degree      = options.box_degree;        % boundary of box in degree visual angles; has to be chosen by experimenter
-vis.distance_mm     = options.distance;      % eye-to-screen distance in mm
+% boundary of box in degree visual angles; has to be chosen by experimenter
+vis.box_degree      = options.box_degree;        
+% eye-to-screen distance in mm
+vis.distance_mm     = options.distance;     
 vis.screen_inch     = options.screen_settings.display_size;
-vis.screen_aspect_actual = options.screen_settings.aspect_actual;   % this is the ACTUAL aspect ratio of the screen
+% this is the ACTUAL aspect ratio of the screen
+vis.screen_aspect_actual = options.screen_settings.aspect_actual;
 
-vis.screen_x        = infos.source.gaze_coords.xmax;     % resolution of eye-tracker: should latter be read from file
-vis.screen_y        = infos.source.gaze_coords.ymax;     % resolution of eye-tracker: should latter be read from file
+% resolution of eye-tracker: should latter be read from file
+vis.screen_x        = infos.source.gaze_coords.xmax;
+% resolution of eye-tracker: should latter be read from file
+vis.screen_y        = infos.source.gaze_coords.ymax;
 vis.res             = options.screen_settings.resolution;
 
 % Visual calulations
@@ -180,18 +206,28 @@ hw_ratio = vis.screen_aspect_actual(1) / vis.screen_aspect_actual(2);
 sw_ratio = vis.res(1) / vis.res(2);
 
 % calculate width and height of software set sizes
+% 
 if hw_ratio >= sw_ratio
+    % software height corresponds to hardware height
     sw_height = hw_height;
+    % calculate software width from software height and
+    % software aspect ratio
     sw_width = sw_height*sw_ratio;
 else
+    % software width corresponds to hardware width
     sw_width = hw_width;
+    % calculate software height from software width and
+    % software aspect ratio
     sw_height = sw_width/sw_ratio;
 end
 
+% width and height in mm
 vis.screen_h = sw_height;
 vis.screen_w = sw_width;
 
-
+% normalise for further caluclation
+% because eyetracker software also has own resolution
+% (check eyeytracker data file header)
 vis.screen_x_res    = 1 / vis.screen_w; % in 1/mm
 vis.screen_y_res    = 1 / vis.screen_h; % in 1/mm
 
@@ -219,10 +255,6 @@ if ~isfield(options, 'fixation_point') || isempty(options.fixation_point) ...
 else
     vis.fix_point = options.fixation_point;
 end
-
-% norm vis.fix_point
-vis.fix_point(:,1) = vis.fix_point(:,1);
-vis.fix_point(:,2) = vis.fix_point(:,2);
 
 % box for degree visual angle (for each data point)
 vis.box_rad         = vis.box_degree * pi / 180;
