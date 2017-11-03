@@ -84,8 +84,8 @@ elseif strcmpi(mode, 'file')
             '(square)?(centi|milli|deci|c|m|d)?(m(et(er|re))?)(s?\^?2?)', ...
                 '$2$3');
         % if not metric, replace area with diameter
-        if strcmpi(diam{1}.header.units, 'area')
-            diam{1}.header.units = 'diameter';
+        if strcmpi(diam{1}.header.units, 'area units')
+            diam{1}.header.units = 'diameter units';
         end
     end
     [~, infos] = pspm_write_channel(fn, diam, options.channel_action);

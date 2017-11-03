@@ -7,6 +7,8 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 %                   - mandatory fields:
 %                       .sr
 %                       .data
+%                       the field .channel will be ignored. The id will be
+%                       determined according to the channel type. 
 %                   - optional fields:
 %                       .eyelink_trackdist: 
 %                           the distance between camera and 
@@ -14,6 +16,10 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 %                           is a numeric value, causes the conversion
 %                           from arbitrary units to mm according to the
 %                           set distance.
+% 
+% In this function, channels related to eyes will not produce an error, if 
+% they do not exist. Instead they will produce an empty channel (a channel 
+% with NaN values only).
 %
 %__________________________________________________________________________
 % PsPM 3.0
@@ -135,7 +141,19 @@ for k = 1:numel(import)
         % use ascending flank for translation from continuous to events
         import{k}.flank = 'ascending';
     else    
-        chan = import{k}.channel;
+        % determine chan id from chantype - eyelink specific
+        % thats why channel ids will be ignored!
+        if strcmpi(data{1}.eyesObserved, 'LR') 
+            chan_struct = {'pupil_l', 'pupil_r', 'gaze_x_l', 'gaze_y_l', ...
+                'gaze_x_r', 'gaze_y_r'};
+        else
+            eye_obs = lower(data{1}.eyesObserved);
+            chan_struct = {['pupil_' eye_obs], ['gaze_x_' eye_obs], ...
+                ['gaze_y_' eye_obs]};
+        end
+
+        chan = find(strcmpi(chan_struct, import{k}.type));
+
         if ~isempty(regexpi(import{k}.type, '_[lr]', 'once')) && ...
                 isempty(regexpi(import{k}.type, ['_([' data{1}.eyesObserved '])'], 'once'))
             warning('ID:channel_not_contained_in_file', ...

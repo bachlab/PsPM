@@ -175,11 +175,11 @@ switch mode
         if ~isfield(options, 'multiplicator') || ...
                 ~isnumeric(options.multiplicator)
             switch lower(data{1}.header.units)
-                case 'area'
+                case 'area units'
                     m = 0.12652;
                     % remove quadratic term
                     d = sqrt(d);
-                case 'diameter'
+                case 'diameter units'
                     m = 0.00087743;
                 otherwise
                     warning('ID:invalid_input', ['Cannot set multiplicator', ...

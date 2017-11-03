@@ -86,7 +86,7 @@ for sn = 1:numel(offsets)
     %% try to read some header information
     % read the PUPIL unit
     pupilPos = strncmpi(sn_data, 'PUPIL', 5);
-    pupilUnit = lower(sn_data{pupilPos,2});
+    pupilUnit = [lower(sn_data{pupilPos,2}) ' units'];
 
     % header stops where the data section starts
     dataStartPos = dataFields(1);
@@ -278,8 +278,6 @@ for sn = 1:numel(offsets)
         % cwk: set blinks to NaN
         data{sn}.channels( data{sn}.channels(:,7) == 1, [1,3:4] ) = NaN;
         data{sn}.channels( data{sn}.channels(:,8) == 1, [2,5:6] ) = NaN;
-        
-        
     else
         % pupil, x, y, blink
         data{sn}.channels = data{sn}.raw(:,[4 2:3 8 10]);

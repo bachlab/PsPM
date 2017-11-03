@@ -2,6 +2,8 @@ function [sts, out_file] = pspm_find_valid_fixations(fn, options)
 % pspm_find_valid_fixaitons takes a file with data from eyelink recordings
 % and filters out invalid fixations. Gaze values outside of a defined range
 % are set to NaN, which can later be interpolated using pspm_interpolate.
+% The function will create a timeseries with NaN values during invalid fixations
+% (as defined by the parameters).
 %
 % With two options it is possible to tell the function whether to add or
 % replace the channels and to tell whether the function should create a new
