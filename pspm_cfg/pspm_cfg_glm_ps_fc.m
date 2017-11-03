@@ -6,7 +6,7 @@ function [glm_ps_fc] = pspm_cfg_glm_ps_fc
 
 % Initialise
 global settings
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 
 % set variables
 
@@ -59,16 +59,16 @@ glm_ps_fc.val{b} = bf;
 
 % specific channel
 chan_def_left         = cfg_const;
-chan_def_left.name    = 'Left eye default';
+chan_def_left.name    = 'First left eye';
 chan_def_left.tag     = 'chan_def_left';
 chan_def_left.val     = {'pupil_l'};
-chan_def_left.help    = {''};
+chan_def_left.help    = {'Use first left eye channel.'};
 
 chan_def_right         = cfg_const;
-chan_def_right.name    = 'Right eye default';
+chan_def_right.name    = 'First right eye';
 chan_def_right.tag     = 'chan_def_right';
 chan_def_right.val     = {'pupil_r'};
-chan_def_right.help    = {''};
+chan_def_right.help    = {'Use first right eye channel.'};
 
 best_eye                = cfg_const;
 best_eye.name           = 'Best eye';

@@ -32,8 +32,14 @@ function glm = pspm_glm(model, options)
 %                   indicates that the onset of the basis function precedes
 %                   event onsets by n seconds (default: 0: used for
 %                   interpolated data channels)
-% model.channel:    channel number; default: first channel of the specified 
-%                   modality
+% model.channel:    channel number or channel type. if a channel type is 
+%                   specified the first channel matching the given type will
+%                   be used. 
+%                   SPECIAL: if 'pupil' is specified the function
+%                   tries to find the pupil channel for the eye matching the 
+%                   field infos.source.best_eye in the PsPM file. 
+%                   DEFAULT: first channel of the specified modality
+%                            (for PSR this is 'pupil')
 % model.norm:       normalise data; default 0
 % model.filter:     filter settings; modality specific default
 % model.missing:    allows to specify missing (e. g. artefact) epochs in
