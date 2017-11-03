@@ -7,8 +7,9 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 %                   - mandatory fields:
 %                       .sr
 %                       .data
-%                       the field .channel will be ignored. The id will be
-%                       determined according to the channel type. 
+%                       except for custom channels, the field .channel will 
+%                       be ignored. The id will be determined according to 
+%                       the channel type. 
 %                   - optional fields:
 %                       .eyelink_trackdist: 
 %                           the distance between camera and 
@@ -23,7 +24,7 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 %
 %__________________________________________________________________________
 % PsPM 3.0
-% (C) 2008-2015 Tobias Moser (University of Zurich)
+% (C) 2008-2017 Tobias Moser (University of Zurich)
 
 % $Id$
 % $Rev$
@@ -129,7 +130,16 @@ n_data = size(channels,1);
 n_bns = sum(channels(:,strcmpi(units, 'blink')) == 1);
 
 for k = 1:numel(import)
-    
+
+    if ~any(strcmpi(import{k}.type, ...
+            settings.import.datatypes(strcmpi('eyelink', ...
+            {settings.import.datatypes.short})).chantypes))
+        warning('ID:channel_not_contained_in_file', ...
+            'Channel type ''%s'' is not supported.\n', ...
+            import{k}.type);
+        return;
+    end
+
     if strcmpi(import{k}.type, 'marker')
         import{k}.marker = 'continuous';
         import{k}.sr     = sampleRate;
@@ -152,7 +162,11 @@ for k = 1:numel(import)
                 ['gaze_y_' eye_obs]};
         end
 
-        chan = find(strcmpi(chan_struct, import{k}.type));
+        if strcmpi(import{k}.type, 'custom')
+            chan = import{k}.channel;
+        else
+            chan = find(strcmpi(chan_struct, import{k}.type), 1, 'first');
+        end
 
         if ~isempty(regexpi(import{k}.type, '_[lr]', 'once')) && ...
                 isempty(regexpi(import{k}.type, ['_([' data{1}.eyesObserved '])'], 'once'))
@@ -189,13 +203,14 @@ for k = 1:numel(import)
         if ~isempty(regexpi(import{k}.type, 'pupil')) && ...
             isfield(import{k}, 'eyelink_trackdist') && ...
             ~strcmpi(import{k}.eyelink_trackdist, 'none')
+            
+            record_method = regexprep(import{k}.units, '(.*) .*', '$1');
+            % transfer pupil data according to transfer settings
+            [~, import{k}.data] = pspm_convert_au2mm(import{k}.data, ...
+                import{k}.eyelink_trackdist, record_method);
 
-                % transfer pupil data according to transfer settings
-                [~, import{k}.data] = pspm_convert_au2mm(import{k}.data, ...
-                    import{k}.eyelink_trackdist, import{k}.units);
-
-                % set new unit to mm
-                import{k}.units = 'mm';
+            % set new unit to mm
+            import{k}.units = 'mm';
         end
         
         % create statistics for eye specific channels
