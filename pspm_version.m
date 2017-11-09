@@ -46,7 +46,6 @@ if nargin > 0
                 if any(~cellfun('isempty', tk))
                     new_v = tk{1}{1};
                     
-                    keyboard;
                     % compare versions
                     v_l = regexp(v, '\.', 'split');
                     new_v_l = regexp(new_v, '\.', 'split');
