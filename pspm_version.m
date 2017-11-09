@@ -46,22 +46,26 @@ if nargin > 0
                 if any(~cellfun('isempty', tk))
                     new_v = tk{1}{1};
                     
+                    keyboard;
                     % compare versions
                     v_l = regexp(v, '\.', 'split');
                     new_v_l = regexp(new_v, '\.', 'split');
                     
-                    steps = min(numel(v_l), numel(new_v_l));
-                    i = 1;
-                    new_version = false;
-                    v_equal = true;
-                    while i <= steps && ~new_version
-                        new_version = hex2dec(new_v_l(i)) > hex2dec(v_l(i));
-                        v_equal = v_equal && (hex2dec(new_v_l(i)) == hex2dec(v_l(i)));
-                        i = i + 1;
-                    end;
+                    comp_vers = zeros(max(numel(v_l), numel(new_v_l)),2);
+                    comp_vers(1:numel(v_l), 1) = hex2dec(v_l);
+                    comp_vers(1:numel(new_v_l), 2) = hex2dec(new_v_l);
+
+                    d_v = diff(comp_vers, 1, 2);
                     
-                    new_version = new_version || (v_equal && (numel(new_v_l) > numel(v_l)));
-                    
+                    smaller = d_v < 0;
+                    bigger = d_v > 0;
+
+                    if any(smaller) && any(bigger)
+                        new_version = find(smaller,1) > find(bigger,1);
+                    else
+                        new_version = any(bigger);
+                    end
+
                     if new_version
                         % try to find url
                         tk = regexpi(str, '<a.*href="(http://sourceforge\.net/projects/pspm/files/PsPM_[0-9.]*\.zip/download)">', 'tokens');
@@ -70,14 +74,14 @@ if nargin > 0
                         fprintf('Current version: %s\n', v);
                         fprintf('Latest version: %s\n', new_v);
                         fprintf('Available here: %s\n', download_url);
-                    end;
+                    end
                 else
                     warning('ID:invalid_input', 'Cannot figure out if there is a new version.'); return;
-                end;
+                end
             else
-                warning('ID:invalid_input', 'Cannot check for updates.'); return;
-            end;
-    end;       
-end;
+                warning('ID:invalid_input', 'Cannot check for updates.'); return
+            end
+    end
+end
 
 sts = 1;
