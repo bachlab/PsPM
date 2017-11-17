@@ -121,10 +121,6 @@ if strcmpi(mode, 'data') && strcmpi(record_method, '') && ...
     return;
 end
 
-if ~isfield(options, 'reference_distance')
-    options.reference_distance = 700;
-end
-
 if ~isfield(options, 'channel_action')
     options.channel_action = 'add';
 end
@@ -139,8 +135,8 @@ elseif ~isnumeric(data)
 elseif ~isnumeric(distance)
     warning('ID:invalid_input', 'distance is not numeric.'); 
     return;
-elseif ~isnumeric(chan)
-    warning('ID:invalid_input', 'chan is not numeric.'); 
+elseif ~isnumeric(chan) && ~ischar(chan)
+    warning('ID:invalid_input', 'chan must be numeric or a string.'); 
     return;
 elseif ~isempty(record_method) && ...
         ~any(strcmpi(record_method, {'area', 'diameter'}))
@@ -153,7 +149,7 @@ elseif ~any(strcmpi(options.channel_action, {'add', 'replace'}))
     return;
 end
 
-%% do conversion
+%% try to load data
 switch mode
     case 'file'
         [f_sts, infos, data] = pspm_load_data(fn, chan);
@@ -163,62 +159,75 @@ switch mode
             return;
         end
         d = data{1}.data;
-        
-        if ~isfield(infos.source, 'elcl_proc') || ...
-                ~strcmpi(infos.source.elcl_proc, 'ellipse')
-            warning('ID:invalid_input', ['Cannot convert since ', ...
-                'elcl_proc does not seem to be ''ellipse''.']);
-            return;
-        end
-
-        % use default multiplicator if multiplicator is not set properly
-        if ~isfield(options, 'multiplicator') || ...
-                ~isnumeric(options.multiplicator)
-            switch lower(data{1}.header.units)
-                case 'area units'
-                    m = 0.12652;
-                    % remove quadratic term
-                    d = sqrt(d);
-                case 'diameter units'
-                    m = 0.00087743;
-                otherwise
-                    warning('ID:invalid_input', ['Cannot set multiplicator', ...
-                        ' because unit of data is invalid.'])
-                    return;
-            end
-        else
-            m = options.multiplicator;
-        end
-        
+        % set multiplicator field according to 
+        % data units
+        conv_field = regexprep(data{1}.header.units, '(.*) units', '$1');
     case 'data'
         d = data;
-        if ~strcmpi(record_method, '')
-            switch lower(record_method)
-                case 'area'
-                    m = 0.11659;
-                    % remove quadratic term
-                    d = sqrt(d);
-                case 'diameter'
-                    m = 0.00079482;
-                otherwise
-                    warning('ID:invalid_input', ['Cannot set multiplicator', ...
-                        ' because ''record_method'' is invalid.'])
-                    return;
-            end
-        elseif isfield(options, 'multiplicator') && ...
-                isnumeric(options.multiplicator)
-            m = options.multiplicator;
-        else
-            warning('ID:invalid_input', ['Cannot set multiplicator', ...
-                ' because ''options.multiplicator'' and ''record_method'' ', ...
-                'are invalid.']);
-            return;
-        end
+        conv_field = record_method;
 end
 
+%% set conversion values
+% load default conversion values
+if ~isfield(options, 'multiplicator') || ...
+    ~isfield(options, 'reference_distance')
 
-d = m*(d*distance/options.reference_distance);
+    keyboard;
 
+    % load conversion values
+    % from file and as backup use hardcoded values
+    if exist('pspm_convert.mat', 'file')
+        convert = load('pspm_convert.mat');
+    else
+        % use default values
+        convert = struct('au2mm', ...
+            struct(...
+            'area', struct('multiplicator', 0.12652, ...
+                'reference_distance', 700), ...
+            'diameter', struct('multiplicator', 0.00087743, ...
+                'reference_distance', 700)) ...
+        );
+    end
+
+    if any(strcmp(conv_field, fieldnames(convert.au2mm)))
+        % get conversion struct
+        conv_struct = subsref(convert.au2mm, struct('type', '.', ...
+            'subs', conv_field));
+
+        % set values
+        m = conv_struct.multiplicator;
+        ref_dist = conv_struct.reference_distance;
+    else
+        warning('ID:invalid_input', 'Cannot load default multiplicator value.');
+        return;
+    end
+end
+
+% set to option if is set and numeric
+if isfield(options, 'reference_distance')
+    if ~isnumeric(options.reference_distance)
+        warning('ID:invalid_input', ...
+            'options.reference_distance must be numeric.');
+        return;
+    else
+        ref_dist = options.reference_distance;
+    end
+end
+
+% set to according option if set and numeric
+if isfield(options, 'multiplicator')
+    if ~isnumeric(options.multiplicator)
+        warning('ID:invalid_input', 'options.multiplicator must be numeric.');
+        return;
+    else
+        m = options.multiplicator;
+    end
+end
+
+%% convert
+d = m*(d*distance/ref_dist);
+
+%% create output
 switch mode
     case 'file'
         data{1}.data = d;
@@ -231,3 +240,5 @@ switch mode
     case 'data'
         out = d;
 end
+
+sts = 1;
