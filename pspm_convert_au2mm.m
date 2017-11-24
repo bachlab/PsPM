@@ -172,8 +172,6 @@ end
 if ~isfield(options, 'multiplicator') || ...
     ~isfield(options, 'reference_distance')
 
-    keyboard;
-
     % load conversion values
     % from file and as backup use hardcoded values
     if exist('pspm_convert.mat', 'file')

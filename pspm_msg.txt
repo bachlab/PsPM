@@ -1,7 +1,7 @@
 $___________________________________________________________________________
 Welcome to PsPM - PsychoPhysiological Modelling
 (incorporating SCRalyze)
-Version 4.0 (12.12.2017)
+Version 4.0 (24.11.2017)
 $
 ------------------------------------------
 (c) 2008-2017 

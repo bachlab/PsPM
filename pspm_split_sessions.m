@@ -141,9 +141,9 @@ for d = 1:numel(D)
     
     newdatafile{d} = [];
     if min(imi)*options.min_break_ratio > max(imi)
-        fprintf('  The file won''t be splitted. No possible timepoints for split in channel %i.\n', markerchannel);        
+        fprintf('  The file won''t be split. No possible timepoints for split in channel %i.\n', markerchannel);        
     elseif numel(mrk) <=  options.max_sn
-        fprintf('  The file won''t be splitted. Not enough markers in channel %i.\n', markerchannel);
+        fprintf('  The file won''t be split. Not enough markers in channel %i.\n', markerchannel);
     else
         imi(1:(options.max_sn-1)) = [];
         cutoff = options.min_break_ratio * max(imi);
@@ -257,7 +257,7 @@ for d = 1:numel(D)
             
             % save data ---
             if exist(newdatafile{d}{sn}, 'file') && ~options.overwrite
-                overwrite=menu(sprintf('Splitted file (%s) already exists. Overwrite?', newdatafile{d}{sn}), 'yes', 'no');
+                overwrite=menu(sprintf('Split file (%s) already exists. Overwrite?', newdatafile{d}{sn}), 'yes', 'no');
                 %close gcf;
                 if overwrite == 2, continue; end
             end
