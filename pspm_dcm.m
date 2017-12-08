@@ -299,7 +299,6 @@ for iSn = 1:numel(model.datafile)
         nan_ep_start = find(d_nan_ep == 1);
         nan_ep_stop = find(d_nan_ep == -1);
 
-        keyboard;
         if numel(nan_ep_start) > 0 || numel(nan_ep_stop) > 0
             % check for blunt ends and fix
             if isempty(nan_ep_start)
