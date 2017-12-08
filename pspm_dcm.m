@@ -299,6 +299,7 @@ for iSn = 1:numel(model.datafile)
         nan_ep_start = find(d_nan_ep == 1);
         nan_ep_stop = find(d_nan_ep == -1);
 
+        keyboard;
         if numel(nan_ep_start) > 0 || numel(nan_ep_stop) > 0
             % check for blunt ends and fix
             if isempty(nan_ep_start)
@@ -351,7 +352,7 @@ for iSn = 1:numel(model.datafile)
        
         % throw away last session if start (+1) overlaps
         % n_data
-        if se_start(end) > n_data
+        if se_start(end) >= n_data
             se_start = se_start(1:end-1);
             se_stop = se_stop(1:end-1);
         end
