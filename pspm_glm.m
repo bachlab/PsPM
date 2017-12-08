@@ -277,6 +277,8 @@ end
 if strcmpi(model.filter.down, 'none') || ...
         isnumeric(model.filter.down) && isnan(model.filter.down)
     model.filter.down = min(sr);
+else
+    model.filter.down = min([sr model.filter.down]);
 end
 
 % check value of model.filter.down --

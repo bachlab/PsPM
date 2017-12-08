@@ -22,7 +22,7 @@ function newdatafile = pspm_split_sessions(datafile, markerchannel, options)
 %                           in terms of markers (vector of integer)
 % options.prefix            In seconds, how long data before start trim point 
 %                           should also be included. First marker will be
-%                           at t = options.prefix 
+%                           at t = -options.prefix 
 %                           Default = 0
 % options.suffix            In seconds, how long data after the end trim
 %                           point should be included. Last marker will be
@@ -36,7 +36,7 @@ function newdatafile = pspm_split_sessions(datafile, markerchannel, options)
 %           overlaps with other sessions (after prefix time and suffix time 
 %           have been added) the markers of the overlapping session will 
 %           not be in the current session. But then the markers will start 
-%           at t=prefix and not at t=0. This only applies for the 
+%           at t=-prefix and not at t=0. This only applies for the 
 %           markerchannel and in other channels the overlap data will be 
 %           included.
 %
@@ -57,8 +57,7 @@ function newdatafile = pspm_split_sessions(datafile, markerchannel, options)
 % simple algorithm now that simply defines a cut off in inter-marker
 % intervals 
 %
-% Was rewritten in PsPM 3.1 also in order to either have the first marker
-% at t=0 or at a defined time point.
+% Was rewritten in PsPM 3.1 also in order to either have the first marker at t=0 or at a defined time point.
 % -------------------------------------------------------------------------
 
 % initialise
@@ -197,11 +196,11 @@ for d = 1:numel(D)
             newdatafile{d}{sn} = fullfile(p, sprintf('%s_sn%02.0f%s', f, sn, ex));
             
             % adjust split points according to prefix and suffix ---
-            if (splitpoint(sn,1) - options.prefix) < 0
-                sta_p = 0.001;
-                sta_prefix = splitpoint(sn,1);
+            if (splitpoint(sn,1) + options.prefix) < 0
+                sta_p = 0;
+                sta_prefix = sta_p - splitpoint(sn,1);
             else
-                sta_p = splitpoint(sn,1) - options.prefix;
+                sta_p = splitpoint(sn,1) + options.prefix;
                 sta_prefix = options.prefix;
             end
             
@@ -228,13 +227,13 @@ for d = 1:numel(D)
                 % assign data
                 if strcmp(data{k}.header.units, 'events')
                     if k == markerchannel
-                        startpoint = sta_p + sta_prefix;
+                        startpoint = sta_p - sta_prefix;
                         stoppoint = sto_p - sto_suffix;
                         foo = indata{k}.data;
                         foo(foo > stoppoint) = [];
                         foo = foo - startpoint;
                         foo(foo < 0) = [];
-                        foo = foo + sta_prefix;
+                        foo = foo - sta_prefix;
                         data{k}.data = foo;
                         clear foo;
                     else
@@ -249,8 +248,9 @@ for d = 1:numel(D)
                     end
                 else
                     % convert from s into datapoints
-                    startpoint = ceil(sta_p * data{k}.header.sr);
-                    stoppoint  = floor(sto_p * data{k}.header.sr);
+                    startpoint = max(1, ceil(sta_p * data{k}.header.sr));
+                    stoppoint  = min(floor(sto_p * data{k}.header.sr), ...
+                        numel(indata{k}.data));
                     data{k}.data = indata{k}.data(startpoint:stoppoint);
                 end
             end
