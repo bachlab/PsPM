@@ -26,7 +26,7 @@ function [sts, newfile]=pspm_down(datafile, newsr, chan, options)
 % $Rev$
 
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 sts = -1;
 
 % check input arguments
@@ -39,7 +39,7 @@ elseif newsr < 10
     errmsg='This function does not support downsampling to frequencies below 10 Hz.';
     warning('ID:rate_below_minimum', errmsg);
     return;
-end;
+end
     
 if nargin < 3 || isempty(chan)
     chan = 0;
@@ -54,8 +54,8 @@ elseif ischar(chan)
         chan = 0;
     else
         warning('ID:invalid_input', 'Channel argument must be a number, or ''all''.'); return;
-    end;
-end;
+    end
+end
 
 if nargin == 4 && ~isstruct(options)
     warning('ID:invalid_input','options has to be a struct'); 
@@ -66,10 +66,10 @@ end
 % set options
 % -------------------------------------------------------------------------
 try
-    if options.overwrite ~= 1, options.overwrite = 0; end;
+    if options.overwrite ~= 1, options.overwrite = 0; end
 catch
     options.overwrite = 0;
-end;
+end
 
 
 % convert datafile to cell for convenience
@@ -78,7 +78,7 @@ if iscell(datafile)
     D=datafile;
 else
     D={datafile};
-end;
+end
 clear datafile
 
 % work on all data files
@@ -88,27 +88,31 @@ for d=1:numel(D)
     datafile=D{d};
     
     % check and get datafile
-    [sts infos data] = pspm_load_data(datafile, 0);
-    if sts == -1, continue; end;
+    [lsts infos data] = pspm_load_data(datafile, 0);
+    if lsts == -1, continue; end
     
     if any(chan > numel(data))
-        warning('Datafile %s contains only %i channels. At least one selected channel is inexistent', datafile, numel(data)); return;
+        warning(['Datafile %s contains only %i channels. ', ...
+            'At least one selected channel is inexistent'], ...
+            datafile, numel(data)); 
+        return;
     end
     
     % set channels
     if chan == 0
         chan = 1:numel(data);
-    end;
+    end
     
     % make outputfile
     [p f ex]=fileparts(datafile);
     newfile=fullfile(p, ['d', f, ex]);
     
-    if exist(newfile)==2 && ~options.overwrite
-        overwrite=menu(sprintf('New file (%s) already exists. Overwrite?', newfile), 'yes', 'no');
+    if exist(newfile, 'file')==2 && ~options.overwrite
+        overwrite=menu(sprintf('New file (%s) already exists. Overwrite?', ...
+            newfile), 'yes', 'no');
         %close gcf;
-        if overwrite==2, return; end;
-    end;
+        if overwrite==2, return; end
+    end
     
     % user output
     fprintf('Downsampling %s ... ', datafile);
@@ -117,7 +121,8 @@ for d=1:numel(D)
     for k = chan
         % leave event channels alone
         if strcmpi(data{k}.header.units, 'events')
-            fprintf('\nNo downsampling for event channel %2.0f in datafile %s ...', k, datafile);
+            fprintf(['\nNo downsampling for event channel %2.0f in ', ...
+                'datafile %s ...'], k, datafile);
         else
             filt.sr = data{k}.header.sr;
             filt.lpfreq = newsr/2;
@@ -126,18 +131,18 @@ for d=1:numel(D)
             filt.hporder = 0;
             filt.direction = 'bi';
             filt.down = newsr;
-            [sts, foo, sr] = pspm_prepdata(data{k}.data, filt);
+            [lsts, foo, sr] = pspm_prepdata(data{k}.data, filt);
             data{k}.data = foo;
             data{k}.header.sr = sr;
-        end;
-    end;
+        end
+    end
     
     [pth nfn ext] = fileparts(newfile);
     infos.downsampledfile = [nfn ext];
     save(newfile, 'infos', 'data');
     Dout{d}=newfile;
   
-end;
+end
 
 % user output
 fprintf('  done.\n');
@@ -147,7 +152,7 @@ fprintf('  done.\n');
 if d>1
     clear newdatafile
     newfile=Dout;
-end;
+end
 
 sts = 1;
 

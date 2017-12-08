@@ -34,7 +34,7 @@ function [sts, outdata, newsr] = pspm_prepdata(data, filt)
 % -------------------------------------------------------------------------
 global settings;
 if isempty(settings), pspm_init; end;
-sts = 1;
+sts = -1;
 newsr = 0;
 outdata = data;
 
@@ -56,8 +56,9 @@ elseif ((~isnumeric(filt.lpfreq) && (~ischar(filt.lpfreq) || ~strcmpi(filt.lpfre
         (~isnumeric(filt.down)   && (~ischar(filt.down  ) || ~strcmpi(filt.down, 'none'))) || ... 
         ~ischar(filt.direction)   || ~isnumeric(filt.sr) || ...
         ~any(strcmpi(filt.direction, {'uni', 'bi'})))
-    warning('ID:invalid_input', 'filt structure has misspecified fields.'); return;
-end;
+    warning('ID:invalid_input', 'filt structure has misspecified fields.'); 
+    return;
+end
 uni = strcmpi(filt.direction, 'uni');
 
 % prepare data
@@ -70,7 +71,7 @@ data = data(:);
 % if unidirectional, append data to avoid filter ringing --
 if uni
     data = [data(1) * ones(floor(50 * filt.sr), 1); data];
-end;
+end
 
 lowpass_filt = false;
 
@@ -84,55 +85,55 @@ elseif isnumeric(filt.down) && ~isnan(filt.down) && filt.down < filt.sr
     lowpass_filt = true;
     filt.lpfreq = filt.down/2;
     filt.lporder = 1;
-end;
+end
 
 if lowpass_filt
     if filt.lpfreq >= nyq 
         warning('ID:no_low_pass_filtering', 'The low pass filter cutoff frequency is higher (or equal) than the nyquist frequency. The data won''t be low pass filtered!');
     else
-        [sts, filt.b, filt.a]=pspm_butter(filt.lporder, filt.lpfreq/nyq, 'low');
-        if sts == -1, return; end;
+        [lsts, filt.b, filt.a]=pspm_butter(filt.lporder, filt.lpfreq/nyq, 'low');
+        if lsts == -1, return; end
         if uni
             data = filter(filt.b, filt.a, data);
             data = filter(filt.b, filt.a, data);
         else
             data = pspm_filtfilt(filt.b, filt.a, data);
-        end;
-    end;
-end;
+        end
+    end
+end
 
 % highpass filt
 % -------------------------------------------------------------------------
 if ~ischar(filt.hpfreq) && ~isnan(filt.hpfreq)
-    [sts, filt.b, filt.a]=pspm_butter(filt.hporder, filt.hpfreq/nyq, 'high');
-    if sts == -1, return; end;
+    [lsts, filt.b, filt.a]=pspm_butter(filt.hporder, filt.hpfreq/nyq, 'high');
+    if lsts == -1, return; end
     if uni
         data = filter(filt.b, filt.a, data);
         data = filter(filt.b, filt.a, data);
     else
         data = pspm_filtfilt(filt.b, filt.a, data);
-    end;
-end;
+    end
+end
 
 % if uni, remove dummy data
 if uni
     data = data((floor(50 * filt.sr) + 1):end); 
-end;
+end
 
 % downsample
 % -------------------------------------------------------------------------
 if ~ischar(filt.down) && filt.sr > filt.down
     if strcmpi(filt.lpfreq, 'none') || isnan(filt.lpfreq)
         warning('No low pass filter applied - aliasing is possible. Use a low pass filter to prevent.');
-    elseif filt.down < 2 * filt.lpfreq, 
+    elseif filt.down < 2 * filt.lpfreq
         filt.down = 2 * filt.lpfreq; 
         warning('ID:freq_change', 'Sampling rate was changed to %01.2f Hz to prevent aliasing', filt.down)
-    end; 
+    end
     freqratio = filt.sr/filt.down;
     if freqratio == ceil(freqratio) % NB isinteger might not work for some values
         % to avoid toolbox use, but only works for integer sr ratios
-        [sts, data] = pspm_downsample(data, freqratio);
-        if sts == -1, errmsg = 'for an unknown reason in pspm_downsample.'; end;
+        [lsts, data] = pspm_downsample(data, freqratio);
+        if lsts == -1, errmsg = 'for an unknown reason in pspm_downsample.'; end
         newsr = filt.down;
     elseif settings.signal 
          % this filts the data on the way, which does not really matter
@@ -148,19 +149,19 @@ if ~ischar(filt.down) && filt.sr > filt.down
              data = resample(data, altdownsr, altsr);
              newsr = filt.sr * altdownsr/altsr;
              warning('ID:nonint_sr', 'Note that the new sampling rate is a non-integer number.');
-        end;
+        end
     else
-        sts = -1; errmsg = 'because signal processing toolbox is not installed and downsampling ratio is non-integer.';
-    end;
-    if sts == -1
+        lsts = -1; errmsg = 'because signal processing toolbox is not installed and downsampling ratio is non-integer.';
+    end
+    if lsts == -1
         warning('ID:downsampling_failed', sprintf('\nDownsampling failed %s', errmsg)); return;
-    end;
+    end
 else
     newsr = filt.sr;
-end;
+end
 
 outdata = data;
-
+sts = 1;
 return;
 
 
