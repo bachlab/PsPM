@@ -250,25 +250,6 @@ switch model
                     end
                 end
             end
-            % check and combine information from multiple sessions
-            if iFile > 1
-                if numel(in.names) ~= numel(outtiming(1).names)
-                    warning('ID:number_of_elements_dont_match', ...
-                        ['Number of conditions in sessions 1 and %i ', ...
-                        'don''t match (%i and %i)'], iFile, ...
-                        numel(outtiming(1).names), numel(in.names{iCond})); ...
-                        return;
-                end
-                for iCond = 1:numel(in.names)
-                    if ~strcmpi(outtiming(1).names{iCond}, in.names{iCond})
-                        warning('ID:event_names_dont_match', ...
-                            ['Event names in sessions 1 and %i don''t ', ...
-                            'match (%s and %s)'], iFile, ...
-                            outtiming(1).names{iCond}, in.names{iCond}); 
-                        return;
-                    end
-                end
-            end
             outtiming(iFile).names     = in.names;
             outtiming(iFile).onsets    = in.onsets;
             outtiming(iFile).durations = in.durations;

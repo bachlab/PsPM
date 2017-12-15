@@ -22,7 +22,7 @@ function [sts, out_file] = pspm_find_valid_fixations(fn, options)
 %               screen_settings:    Struct with the severeal settings of
 %                                   the used screen.
 %                   aspect_actual:  Actual aspect ratio of the screen.
-%                   display_size:   The size (diameter) of the display 
+%                   display_size:   The size (diagonal) of the display 
 %                                   in inches.
 %                   resolution:     Resolution set in the software (e.g.
 %                                   cogent) used to display stimuli.
@@ -347,8 +347,10 @@ for i=1:n_eyes
                     set(ax, 'Parent', handle(fg));
                     
                     % validation box coordinates
-                    coord = [vis.x_upper(1) vis.y_upper(1); vis.x_upper(1) vis.y_lower(1); ...
-                        vis.x_lower(1) vis.y_lower(1); vis.x_lower(1) vis.y_upper(1); ...
+                    coord = [vis.x_upper(1) vis.y_upper(1); ...
+                        vis.x_upper(1) vis.y_lower(1); ...
+                        vis.x_lower(1) vis.y_lower(1); ...
+                        vis.x_lower(1) vis.y_upper(1); ...
                         vis.x_upper(1) vis.y_upper(1);];
                     plot(ax, gx_d, gy_d);
                     % plot gaze coordinates
