@@ -48,6 +48,9 @@ function [sts, outtiming] = pspm_get_timing(model, intiming, vararg)
 % PsPM
 % (1) 'durations' is optional - default is 0
 % (2) 'durations' must be 0 if onsets are specified by markers
+% (3) 'poly' is an optional field in pmods - default is 1. Polynomial
+%     values larger than 1 are expanded here and returned as additional cells
+%     for 'param'
 % -------------------------------------------------------------------------
 
 % initialise & define output
@@ -209,11 +212,14 @@ switch model
                 elseif ~isfield(in.pmod, 'param') || ~isfield(in.pmod, 'name')
                     warning('%sFields are missing in pmod structure', errmsg); 
                     return;
+                elseif ~isfield(in.pmod, 'poly')
+                    in.pmod(1).poly{1} = [];
                 end
                 % define new pmod struct with expanded polynomials
                 in.pmodnew = struct('name', {}, 'param', {});
                 % check individual pmods and expand polynomials
                 for iPmod = 1:numel(in.pmod)
+                    iParamNew = 1;
                     for iParam = 1:numel(in.pmod(iPmod).param)
                         if numel(in.onsets{iPmod}) ~= ...
                                 numel(in.pmod(iPmod).param{iParam})
@@ -225,6 +231,21 @@ switch model
                                 numel(in.onsets{iPmod}), ...
                                 numel(in.pmod(iPmod).param{iParam}));
                             return;
+                        end
+                        % set polynomial order if not specified
+                        if ~iscell(in.pmod(iPmod).poly) || ...
+                                numel(in.pmod(iPmod).poly) < iParam || ...
+                                isempty(in.pmod(iPmod).poly{iParam})
+                            in.pmod(iPmod).poly{iParam} = 1;
+                        end
+                        % expand
+                        for iPoly = 1:in.pmod(iPmod).poly{iParam}
+                            in.pmodnew(iPmod).param{iParamNew} = ...
+                                (in.pmod(iPmod).param{iParam}).^iPoly;
+                            in.pmodnew(iPmod).name{iParamNew}  = ...
+                                sprintf('%s^%d', ...
+                                in.pmod(iPmod).name{iParam}, iPoly);
+                            iParamNew = iParamNew + 1;
                         end
                     end
                 end
@@ -238,7 +259,7 @@ switch model
         end
         
         % clear local variables
-        clear iParam iCond iFile iPmod
+        clear iParam iParamNew iCond iFile iPmod
         
 
 % Epoch information for SF and GLM (model.missing)

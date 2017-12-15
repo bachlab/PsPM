@@ -87,6 +87,7 @@ function glm = pspm_glm(model, options)
 %       condition
 %   - param: cell array of vectors for each parameter for this condition,
 %       containing as many numbers as there are onsets
+%   - poly (optional, default 1): specifies the polynomial degree
 %
 % e.g. produce a simple multiple condition file by typing
 %  names = {'condition a', 'condition b'};
