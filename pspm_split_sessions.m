@@ -57,7 +57,8 @@ function newdatafile = pspm_split_sessions(datafile, markerchannel, options)
 % simple algorithm now that simply defines a cut off in inter-marker
 % intervals 
 %
-% Was rewritten in PsPM 3.1 also in order to either have the first marker at t=0 or at a defined time point.
+% Was rewritten in PsPM 3.1 also in order to either have the first marker 
+% at t=0 or at a defined time point.
 % -------------------------------------------------------------------------
 
 % initialise
@@ -100,7 +101,17 @@ elseif ischar(datafile)
 elseif iscell(datafile)
     D = datafile;
 else
-    warning('ID:invalid_input', 'Datafile needs to be a char or cell.\n'); return;
+    warning('ID:invalid_input', 'Datafile needs to be a char or cell.\n'); 
+    return;
+end
+
+% check if prefix is positiv and suffix is negative
+if options.prefix > 0
+    warning('ID:invalid_input', 'Prefix must be negative.'); 
+    return;
+elseif options.suffix < 0
+    warning('ID:invalid_input', 'Suffix must be positive.');
+    return;
 end
 
 if nargin < 2
@@ -135,25 +146,26 @@ for d = 1:numel(D)
     if markerchannel == 0, markerchannel = filestruct.posofmarker; end
     mrk = indata{markerchannel}.data;
        
-    % get markers and define cut off ---
-    imi = sort(diff(mrk), 'descend');
-    
     newdatafile{d} = [];
-    if min(imi)*options.min_break_ratio > max(imi)
-        fprintf('  The file won''t be split. No possible timepoints for split in channel %i.\n', markerchannel);        
-    elseif numel(mrk) <=  options.max_sn
-        fprintf('  The file won''t be split. Not enough markers in channel %i.\n', markerchannel);
-    else
-        imi(1:(options.max_sn-1)) = [];
-        cutoff = options.min_break_ratio * max(imi);
+    if isempty(options.splitpoints) 
+        % get markers and define cut off ---
+        imi = sort(diff(mrk), 'descend');
 
-        % get split points ---
-        if ~isempty(options.splitpoints)
-            splitpoint = options.splitpoints;
-        else
-            splitpoint = find(diff(mrk) > cutoff)+1;
+        if min(imi)*options.min_break_ratio > max(imi)
+            fprintf('  The file won''t be split. No possible timepoints for split in channel %i.\n', markerchannel);        
+        elseif numel(mrk) <=  options.max_sn
+            fprintf('  The file won''t be split. Not enough markers in channel %i.\n', markerchannel);
         end
         
+        imi(1:(options.max_sn-1)) = [];
+        cutoff = options.min_break_ratio * max(imi);
+        splitpoint = find(diff(mrk) > cutoff)+1;
+    else
+        splitpoint = options.splitpoints;
+    end
+
+
+    if ~isempty(splitpoint)
         for s = 1:(numel(splitpoint)+1)
             if s == 1
                 sta = 1;
