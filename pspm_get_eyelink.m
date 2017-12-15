@@ -211,6 +211,14 @@ for k = 1:numel(import)
 
             % set new unit to mm
             import{k}.units = 'mm';
+
+        % store data range in header for gaze channels
+        elseif ~isempty(regexpi(import{k}.type, 'gaze_x_'))
+            import{k}.range = [data{1}.gaze_coords.xmin ...
+                data{1}.gaze_coords.xmax];
+        elseif ~isempty(regexpi(import{k}.type, 'gaze_y_'))
+            import{k}.range = [data{1}.gaze_coords.ymin ...
+                data{1}.gaze_coords.ymax];
         end
         
         % create statistics for eye specific channels

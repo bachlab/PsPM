@@ -27,6 +27,7 @@ data.data = import.data(:);
 data.header.chantype = 'gaze_y_l';
 data.header.units = import.units;
 data.header.sr = import.sr;
+data.header.range = import.range;
 
 % check status
 sts = 1;

@@ -6,7 +6,7 @@ function [sts, infos] = pspm_write_channel(fn, newdata, action, options)
 % and pspm_rewrite_channel. 
 %
 % [sts, infos] = pspm_write_channel(fn, newdata, action, options)
-%   fn: data file name
+%   fn:      data file name
 %
 %   newdata: [struct()/empty]
 %            is either a new data struct or a cell array of new data

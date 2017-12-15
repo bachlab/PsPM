@@ -42,12 +42,10 @@ for iSession=1:nrSession
                 for iPmod=1:nrPmod
                     model.timing{iSession,1}.pmod(1,iCond).name{1,iPmod} = job.session(iSession).data_design.condition(iCond).pmod(iPmod).name;
                     model.timing{iSession,1}.pmod(1,iCond).param{1,iPmod} = job.session(iSession).data_design.condition(iCond).pmod(iPmod).param;
-                    model.timing{iSession,1}.pmod(1,iCond).poly{1,iPmod} = job.session(iSession).data_design.condition(iCond).pmod(iPmod).poly;
                 end
             else
                 model.timing{iSession,1}.pmod(1,iCond).name = [];
                 model.timing{iSession,1}.pmod(1,iCond).param = [];
-                model.timing{iSession,1}.pmod(1,iCond).poly = [];
             end
         end
     end

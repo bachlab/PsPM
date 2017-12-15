@@ -112,7 +112,6 @@ condfile.help    = {['Create a file with the following variables:'],
     ['  * name: cell array of names for each parametric modulator for this condition'],
     ['  * param: cell array of vectors for each parameter for this condition, '...
     'containing as many numbers as there are onsets'],
-    ['  * poly (optional, default 1): specifies the polynomial degree'],
     [' – e.g. produce a simple multiple condition file by typing: '...
     'names = {''condition a'', ''condition b''}; onsets = {[1 2 3], [4 5 6]}; '... 
     'save(''testfile'', ''names'', ''onsets'');']};
@@ -143,18 +142,6 @@ param.strtype = 'r';
 param.num     = [1 Inf];
 param.help    = {'Specify a vector with the same length as the vector for onsets.'};
 
-% Polynomial degree
-poly= cfg_entry;
-poly.name    = 'Polynomial Degree';
-poly.tag     = 'poly';
-poly.strtype = 'r';
-poly.num     = [1 1];
-poly.val     = {1};
-poly.help    = {['Specify an exponent that is applied to the parametric modulator. A value of 1 ' ...
-    'leaves the parametric modulator unchanged and thus corresponds to a linear change over the ' ...
-    'values of the parametric modulator (first-order). Higher order modulation introduces further ' ...
-    'columns that contain the non-linear parametric modulators [e.g., second-order: (squared), third-order (cubed), etc].']};
-
 % Name
 pmodname         = cfg_entry;
 pmodname.name    = 'Name';
@@ -166,7 +153,7 @@ pmodname.help    = {'Specify the name of the parametric modulator.'};
 pmod         = cfg_branch;
 pmod.name    = 'Parametric Modulator';
 pmod.tag     = 'pmod';
-pmod.val     = {pmodname, poly, param};
+pmod.val     = {pmodname, param};
 pmod.help    = {''};
 
 pmod_rep         = cfg_repeat;
