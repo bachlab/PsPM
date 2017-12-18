@@ -147,7 +147,8 @@ else
             % again run interpolation
             InterpolateData(hObject);
             plots = ~cellfun(@isempty, handles.plots);
-            interp = cellfun(@(x) get(x.interpolate, 'YData'), handles.plots(plots), 'UniformOutput', 0);
+            interp = cellfun(@(x) get(x.interpolate, 'YData'), ...
+                handles.plots(plots), 'UniformOutput', 0);
             
             if strcmpi(handles.input_mode, 'file')
                 channels = find(plots);
@@ -158,7 +159,7 @@ else
                 % replace interpolated data
                 for i=1:numel(channels)
                   newd.data{i}.data = interp{i}';
-                end;
+                end
                 write_file = 1;
                 write_success = 0;
                 disp_success = 1;
@@ -168,29 +169,32 @@ else
                         'Add or replace channels?', 'Add channels', ...
                         'Replace file', 'Cancel', 'Cancel');    
                     if strcmpi(button, 'Add channels')
-                        [write_success, ~] = pspm_write_channel(out_file, newd.data(plots), 'add');
+                        [write_success, ~] = pspm_write_channel(out_file, ...
+                            newd.data(plots), 'add');
                         write_file = 0;
                     elseif strcmpi(button, 'Cancel')
                         disp_success = 0;
                         write_file = 0;
-                    end;
-                end;
+                    end
+                end
                 
                 if write_file
                     newd.options.overwrite = 1;
                     [write_success, ~, ~] = pspm_load_data(out_file, newd);
                     if disp_success
                         if write_success
-                            helpdlg('File successfully written.','File successfully written.');
+                            helpdlg('File successfully written.',...
+                                'File successfully written.');
                         else
-                            errordlg('Could not write file correctly.','Error while saving file.');
-                        end;
-                    end;
-                end;
+                            errordlg('Could not write file correctly.',...
+                                'Error while saving file.');
+                        end
+                    end
+                end
                         
             else
                 handles.output = interp;
-            end;
+            end
             sts = 1;
         case 'epochs'
             ep = cellfun(@(x) x.range', handles.epochs, 'UniformOutput', 0);
@@ -198,24 +202,26 @@ else
             
             if strcmpi(handles.input_mode, 'file')
                 if exist(out_file, 'file')
-                    button = questdlg(sprintf('File (%s) already exists. Overwrite?', out_file), 'Add channels?', 'Yes', 'No', 'No');
+                    button = questdlg(sprintf(...
+                        'File (%s) already exists. Overwrite?', out_file), ...
+                        'Add channels?', 'Yes', 'No', 'No');
                     write_ok = strcmpi(button, 'Yes');
                 else
                     write_ok = true;
-                end;
+                end
                 
                 if write_ok
                     save(out_file, 'epochs');
-                end;
+                end
             else
                 handles.output = epochs;
-            end;
+            end
             sts = 1;
         otherwise
             handles.output = {};
             sts = 1;
-    end;
-end;
+    end
+end
 
 guidata(hObject, handles);
 
