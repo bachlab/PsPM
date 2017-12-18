@@ -13,6 +13,11 @@ for i=1:numel(job.conversion)
     if isfield(job.conversion(i).mode, 'area2diameter')
         pspm_convert_area2diameter(fn, chan, options);
     end
+    if isfield(job.conversion(i).mode, 'pixel2centimeter')
+        width = job.conversion(i).mode.pixel2centimeter.width;
+        height = job.conversion(i).mode.pixel2centimeter.height;
+        pspm_convert_pixel2cm(fn, chan, width, height, options);
+    end
 end
 
 out = 1;

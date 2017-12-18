@@ -1,4 +1,4 @@
-function [pp_convert] = pspm_cfg__data_convert
+function [pp_convert] = pspm_cfg_data_convert
 % function [pp_convert] = pspm_cfg_data_convert(job)
 %
 % Matlabbatch function for conversion functions of data
@@ -26,8 +26,9 @@ channel             = cfg_entry;
 channel.name        = 'Channel';
 channel.tag         = 'channel';
 channel.strtype     = 'i';
-channel.num         = [1 1];
-channel.help        = {['Specify the channel which should be converted.']};
+channel.num         = [1 Inf];
+channel.help        = {['Specify the channel which should be converted.', ...
+    'If 0, functions are executed on all channels.']};
 
 %% area2diameter
 area2diameter       = cfg_const;
@@ -36,12 +37,37 @@ area2diameter.tag   = 'area2diameter';
 area2diameter.val   = {'area2diameter'};
 area2diameter.help  = {['']};
 
+%% width
+width = cfg_entry;
+width.name = 'Width';
+width.tag = 'width';
+width.strtype = 'r';
+width.num = [1 1];
+width.help = {['Width of the display window in centimeter.']};
+
+%% height
+height = cfg_entry;
+height.name = 'Height';
+height.tag = 'height';
+height.strtype = 'r';
+height.num = [1 1];
+height.help = {['Height of the display window in centimeter.']};
+
+%% pixel2centimeter
+pixel2centimeter = cfg_branch;
+pixel2centimeter.name = 'Pixel to centimeter';
+pixel2centimeter.tag = 'pixel2centimeter';
+pixel2centimeter.val = {width, height};
+pixel2centimeter.help = {['Convert pupil gaze coordinates from ', ...
+    'pixel values to centimeter values. This is needed to validate ', ...
+    'fixations with degree visual angle.']};
+
 %% Mode
 mode                = cfg_choice;
 mode.name           = 'Mode';
 mode.tag            = 'mode';
 mode.val            = {area2diameter};
-mode.values         = {area2diameter};
+mode.values         = {area2diameter, pixel2centimeter};
 mode.help           = {['Choose conversion mode.']};
 
 %% Conversion

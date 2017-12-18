@@ -46,7 +46,7 @@ else
     chan = varargin{2};
     
     if ~iscell(chan)
-        chan = {chan};
+        chan = num2cell(chan);
     end
     
     if numel(varargin) == 3

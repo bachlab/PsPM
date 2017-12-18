@@ -1,17 +1,19 @@
-function [sts, out] = pspm_convert_gaze_coords(fn, options)
-% Allows to transfer the pupil data from pixel to different centimeter.
+function [sts, out] = pspm_convert_pixel2cm(fn, chan, width, height, options)
+% Allows to transfer gaze data from pixel to centimeter. This facilitates the
+% use of pspm_find_valid_fixations() which needs data in centimeter values.
 %
 % Usage:
-%   [sts, outdata] = pspm_convert_gaze_coords(indata, options)
+%   [sts, out] = pspm_convert_pixel2cm(fn, chan, width, height, options)
 %       
 % Arguments:
 %
-%   fn:                         Filename to convert..
+%   fn:                         File to convert.
+%   chan:                       On which subset of channels should the conversion
+%                               be done. Supports all values which can be passed
+%                               to pspm_load_data().
+%   width:                      Width in centimeter of the display window.
+%   height:                     Height in centimeter of the display window.
 %   options:                    Options struct
-%       width:                  Width in centimeter of the display window.
-%                               Default is 15 cm.
-%       height:                 Height in centimeter of the display window.
-%                               Default is 15 cm.
 %       channel_action:         'add', 'replace' new channels.
 %       
 % Return values:
@@ -30,17 +32,15 @@ global settings;
 if isempty(settings), pspm_init; end
 sts = -1;
 
+
+if nargin < 4
+    warning('ID:invalid_input', 'Not enough arguments.');
+    return;
+end
+
 % try to set default values
 if ~exist('options', 'var')
     options = struct();
-end
-
-if ~isfield(options, 'width') 
-    options.width = 15;
-end
-
-if ~isfield(options, 'height') 
-    options.height = 15;
 end
 
 if ~isfield(options, 'channel_action') 
@@ -52,26 +52,26 @@ end
 if ~isstruct(options) 
     warning('ID:invalid_input', 'Options must be a struct.');
     return;
-elseif ~isnumeric(options.width)
-    warning('ID:invalid_input', 'Options.width must be numeric');
+elseif ~isnumeric(width)
+    warning('ID:invalid_input', 'Width must be numeric');
     return;
-elseif ~isnumeric(options.height)
-    warning('ID:invalid_input', 'Options.height must be numeric');
+elseif ~isnumeric(height)
+    warning('ID:invalid_input', 'Height must be numeric');
     return;
 end
 
 % load data to convert
-[lsts, ~, data] = pspm_load_data(fn);
+[lsts, ~, data] = pspm_load_data(fn, chan);
 if lsts ~= 1 
     warning('ID:invalid_input', 'Could not load input data correctly.');
     return;
 end
 
-% find pupil channels
-pup_idx = cellfun(@(x) ~isempty(...
+% find gaze channels
+gaze_idx = cellfun(@(x) ~isempty(...
     regexp(x.header.chantype, 'gaze_[x|y]_[r|l]', 'once')), data);
 
-gaze_chans = data(pup_idx);
+gaze_chans = data(gaze_idx);
 n_chans = numel(gaze_chans);
 
 % do conversion
@@ -80,10 +80,10 @@ for c = 1:n_chans
     if strcmpi(chan.header.units, 'pixel')
 
         % pick conversion factor according to channel type x / y coord
-        if ~isempty(regexp(chan.header.chantype, 'gaze_x_'))
-            fact = options.width;
+        if ~isempty(regexp(chan.header.chantype, 'gaze_x_', 'once'))
+            fact = width;
         else
-            fact = options.height;
+            fact = height;
         end
 
         % convert according to range

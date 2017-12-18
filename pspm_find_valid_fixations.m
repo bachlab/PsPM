@@ -1,9 +1,10 @@
-function [sts, out_file] = pspm_find_valid_fixations(fn, options)
+function [sts, out_file] = pspm_find_valid_fixations(fn, box_degree, ...
+    distance, options)
 % pspm_find_valid_fixaitons takes a file with data from eyelink recordings
-% and filters out invalid fixations. Gaze values outside of a defined range
-% are set to NaN, which can later be interpolated using pspm_interpolate.
-% The function will create a timeseries with NaN values during invalid fixations
-% (as defined by the parameters).
+% which has been converted to centimeter and filters out invalid fixations.
+% Gaze values outside of a defined range are set to NaN, which can later 
+% be interpolated using pspm_interpolate. The function will create a timeseries 
+% with NaN values during invalid fixations (as defined by the parameters).
 %
 % With two options it is possible to tell the function whether to add or
 % replace the channels and to tell whether the function should create a new
@@ -14,23 +15,26 @@ function [sts, out_file] = pspm_find_valid_fixations(fn, options)
 %
 % ARGUMENTS: 
 %           fn:                 The actual data file containing the eyelink
-%                               recording.
+%                               recording with gaze data converted to cm.
+%           box_degree:         size of boundary box given in degree
+%                               visual angles.
+%           distance:           distance between eye and screen in cm.
 %           options:            Optional values
-%               box_degree:         size of boundary box given in degree
-%                                   visual angles.
-%               distance:           distance between eye and screen in mm.
-%               screen_settings:    Struct with the severeal settings of
-%                                   the used screen.
-%                   aspect_actual:  Actual aspect ratio of the screen.
-%                   display_size:   The size (diagonal) of the display 
-%                                   in inches.
-%                   resolution:     Resolution set in the software (e.g.
-%                                   cogent) used to display stimuli.
 %               fixation_point:     A nx2 vector containing x and y of the
-%                                   fixation point (in pixel). n should be 
+%                                   fixation point (with resepect to the 
+%                                   given resolution). n should be 
 %                                   either 1 or should have the length of
 %                                   the actual data. Default is the middle
-%                                   of the screen.
+%                                   of the screen. If resolution is not defined
+%                                   the values are given in percent. Therefore
+%                                   [0.5 0.5] would correspond to the middle of 
+%                                   the screen. Default is [0.5 0.5]
+%               resolution:         Resolution with which the fixation point
+%                                   is defined (Maximum value of the x and y
+%                                   coordinates). This can be the resolution
+%                                   set in cogent (e.g. [1280 1024]) or the 
+%                                   width and height of the screen in cm 
+%                                   (e.g. [50 30]). Default is [1 1].
 %               plot_gaze_coords:   Define whether to plot the gaze
 %                                   coordinates for visual inspection of
 %                                   the validation process. Default is
@@ -71,7 +75,7 @@ function [sts, out_file] = pspm_find_valid_fixations(fn, options)
 %                                   
 %               
 %__________________________________________________________________________
-% PsPM 3.1
+% PsPM 4.0
 % (C) 2016 Tobias Moser (University of Zurich)
 
 % $Id$
@@ -85,7 +89,7 @@ sts = -1;
 out_file = '';
 
 % validate input
-if nargin < 1 
+if nargin < 3
     warning('ID:invalid_input', 'Not enough input arguments.'); return;
 end
 
@@ -109,6 +113,10 @@ end
 % check validate_fixations and then the depending mandatory fields  
 if ~isfield(options, 'missing')
     options.missing = false;
+end
+
+if ~isfield(options, 'resolution')
+    options.resolution = [1 1];
 end
     
 if ~isfield(options, 'channels')
@@ -145,33 +153,12 @@ elseif iscell(options.channels) && ...
         'pupil', 'pupil_missing'})), options.channels))
     warning('ID:invalid_input', 'Option.channels contains invalid values.');
     return;
-elseif ~isfield(options, 'box_degree') || ~isnumeric(options.box_degree)
-    warning('ID:invalid_input', ['Options.box_degree is not set or ', ...
+elseif ~isnumeric(box_degree)
+    warning('ID:invalid_input', ['box_degree is not set or ', ...
         'is not numeric.']); 
     return;
-elseif ~isfield(options, 'distance') || ~isnumeric(options.distance)
-    warning('ID:invalid_input', 'Options.distance is not set or not numeric.'); 
-    return;
-elseif ~isfield(options, 'screen_settings') || ~isstruct(options.screen_settings)
-    warning('ID:invalid_input', ['Options.screen_settings is not ', ...
-        'set or not struct.']); return;
-elseif ~isfield(options.screen_settings, 'aspect_actual') || ...
-        ~isnumeric(options.screen_settings.aspect_actual) || ...
-        any(size(options.screen_settings.aspect_actual) ~= [1 2])
-    warning('ID:invalid_input', ['Options.screen_settings.aspect_actual ', ...
-        'is not set, ', ...
-        'is not numeric or has the wrong size (should be 1x2).']); 
-    return;
-elseif ~isfield(options.screen_settings, 'display_size') ...
-        || ~isnumeric(options.screen_settings.display_size)
-    warning('ID:invalid_input', ['Options.screen_settings.display_size is ', ...
-        'not set or is not numeric.']); 
-    return;
-elseif ~isfield(options.screen_settings, 'resolution') || ...
-        ~isnumeric(options.screen_settings.resolution) || ...
-        any(size(options.screen_settings.resolution) ~= [1 2])
-    warning('ID:invalid_input', ['Options.screen_settings.resolutions is not ', ...
-        'numeric or has the wrong size (should be 1x2)']); 
+elseif ~isnumeric(distance)
+    warning('ID:invalid_input', 'distance is not set or not numeric.'); 
     return;
 elseif isfield(options, 'fixation_point') && ...
         (~isnumeric(options.fixation_point) || ...
@@ -179,94 +166,53 @@ elseif isfield(options, 'fixation_point') && ...
     warning('ID:invalid_input', ['Options.fixation_point is not ', ...
         'numeric, or has the wrong size (should be nx2).']); 
     return;
+elseif isfield(options, 'resolution') && (~isnumeric(options.resolution) || ...
+        ~all(size(options.resolution) == [1 2]))
+    warning('ID:invalid_input', ['Options.fixation_point is not ', ...
+        'numeric, or has the wrong size (should be 1x2).']); 
+    return;
+elseif isfield(options, 'fixation_point') &&  ...
+    ~all(options.fixation_point < options.resolution)
+    warning('ID:out_of_range', ['Some fixation points are larger than ', ...
+        'the range given. Ensure fixation points are within the given ', ...
+        'resolution.']);
+    return;
+elseif distance > 100
+    warning('ID:obsolete_function', ...
+        ['Screen distance is larger than 100 cm. Please ensure the distance',...
+        ' is in centimeters, as we recently changed this.']);
 end
-
-% Visual inputs for specifying boundaries
-% boundary of box in degree visual angles; has to be chosen by experimenter
-vis.box_degree      = options.box_degree;        
-% eye-to-screen distance in mm
-vis.distance_mm     = options.distance;     
-vis.screen_inch     = options.screen_settings.display_size;
-% this is the ACTUAL aspect ratio of the screen
-vis.screen_aspect_actual = options.screen_settings.aspect_actual;
-
-% resolution of eye-tracker: should latter be read from file
-vis.screen_x        = infos.source.gaze_coords.xmax;
-% resolution of eye-tracker: should latter be read from file
-vis.screen_y        = infos.source.gaze_coords.ymax;
-vis.res             = options.screen_settings.resolution;
-
-% Visual calulations
-vis.screen_mm       = vis.screen_inch * 25.4;
-
-% get width and height of hardware
-hw_fact = sqrt(vis.screen_mm^2 / sum(vis.screen_aspect_actual.^2));
-hw_width = vis.screen_aspect_actual(1)*hw_fact;
-hw_height = vis.screen_aspect_actual(2)*hw_fact;
-
-hw_ratio = vis.screen_aspect_actual(1) / vis.screen_aspect_actual(2);
-sw_ratio = vis.res(1) / vis.res(2);
-
-% calculate width and height of software set sizes
-% 
-if hw_ratio >= sw_ratio
-    % software height corresponds to hardware height
-    sw_height = hw_height;
-    % calculate software width from software height and
-    % software aspect ratio
-    sw_width = sw_height*sw_ratio;
-else
-    % software width corresponds to hardware width
-    sw_width = hw_width;
-    % calculate software height from software width and
-    % software aspect ratio
-    sw_height = sw_width/sw_ratio;
-end
-
-% width and height in mm
-vis.screen_h = sw_height;
-vis.screen_w = sw_width;
-
-% normalise for further caluclation
-% because eyetracker software also has own resolution
-% (check eyeytracker data file header)
-vis.screen_x_res    = 1 / vis.screen_w; % in 1/mm
-vis.screen_y_res    = 1 / vis.screen_h; % in 1/mm
 
 % expand fixation_point
 if ~isfield(options, 'fixation_point') || isempty(options.fixation_point) ...
         || size(options.fixation_point,1) == 1
+
     % set fixation point default or expand to data size
     % find first wave channel
     ct = cellfun(@(x) x.header.chantype, data, 'UniformOutput', false);
     chan_data = cellfun(@(x) ...
-        settings.chantypes(find(strcmpi({settings.chantypes.type}, x))).data, ...
+        settings.chantypes(strcmpi({settings.chantypes.type}, x)).data, ...
         ct, 'UniformOutput', false);
     wv = find(strcmpi(chan_data, 'wave'));
-    % set default to middle of screen
-    vis.fix_point(:,1) = zeros(numel(data{wv(1)}.data), 1);
-    vis.fix_point(:,2) = zeros(numel(data{wv(1)}.data), 1);
+
+    % initialize fix_point
+    fix_point(:,1) = zeros(numel(data{wv(1)}.data), 1);
+    fix_point(:,2) = zeros(numel(data{wv(1)}.data), 1);
     
     if isfield(options, 'fixation_point') && size(options.fixation_point,1) == 1
-        vis.fix_point(:,1) = options.fixation_point(1)/vis.res(1);
-        vis.fix_point(:,2) = options.fixation_point(2)/vis.res(2);
+        % normalize values according to resolution
+        fix_point = options.fixation_point ./ options.resolution;
     else
-        vis.fix_point(:,1) = 1/2;
-        vis.fix_point(:,2) = 1/2;
+        fix_point(:,:) = 0.5;
     end
 else
-    vis.fix_point = options.fixation_point;
+    % normalized values
+    fix_point = options.fixation_point ./ options.resolution;
 end
 
 % box for degree visual angle (for each data point)
-vis.box_rad         = vis.box_degree * pi / 180;
-vis.box_mm          = 2 * vis.distance_mm * tan( vis.box_rad / 2);
-vis.x_bound         = vis.box_mm * vis.screen_x_res;
-vis.y_bound         = vis.box_mm * vis.screen_y_res;
-vis.x_upper         = vis.fix_point(:,1) + vis.x_bound;
-vis.x_lower         = vis.fix_point(:,1) - vis.x_bound;
-vis.y_upper         = vis.fix_point(:,2) + vis.y_bound;
-vis.y_lower         = vis.fix_point(:,2) - vis.y_bound;
+box_rad = box_degree * pi / 180;
+box_cm = 2 * distance * tan( box_rad / 2);
 
 if ~isfield(options, 'channel_action')
     options.channel_action = 'add';
@@ -329,16 +275,31 @@ for i=1:n_eyes
             % always use first found channel
             excl = false(size(data{1}.data,1),1);
             
-            gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype), data),1);
-            gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype), data),1);
-            
+            gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
+                strcmpi('cm', x.header.units), data),1);
+            gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
+                strcmpi('cm', x.header.units), data),1);
+
             if ~isempty(gx) && ~isempty(gy)
+                % get channel specific data range
+                x_range = data{gx}.header.range;
+                y_range = data{gy}.header.range;
                 
-                gx_d = data{gx}.data / vis.screen_x;
-                gy_d = (vis.screen_y - data{gy}.data)/vis.screen_y;
-                
-                data_dev{i}(:,1) = gx_d > vis.x_upper | gx_d < vis.x_lower;
-                data_dev{i}(:,2) = gy_d > vis.y_upper | gy_d < vis.y_lower;
+                % normalize recorded data to compare with normalized
+                % fixation points and box degree
+                gx_d = (data{gx}.data - x_range(1)) / diff(x_range);
+                gy_d = (data{gy}.data - y_range(1)) / diff(y_range);
+
+                % also invert y coordinate
+                gy_d = 1 - gy_d;
+
+                % calculate limits from box_degree with respect to range
+                x_lim = (box_cm - x_range(1)) / diff(x_range);
+                y_lim = (box_cm - y_range(1)) / diff(y_range);
+
+                % find data outside of box_degree
+                data_dev{i}(:,1) = abs(gx_d - fix_point(:, 1)) > x_lim;
+                data_dev{i}(:,2) = abs(gy_d - fix_point(:, 2)) > y_lim;
                 data_dev{i}(:,3) = data_dev{i}(:,1) | data_dev{i}(:,2);
                 
                 if options.plot_gaze_coords
@@ -347,11 +308,16 @@ for i=1:n_eyes
                     set(ax, 'Parent', handle(fg));
                     
                     % validation box coordinates
-                    coord = [vis.x_upper(1) vis.y_upper(1); ...
-                        vis.x_upper(1) vis.y_lower(1); ...
-                        vis.x_lower(1) vis.y_lower(1); ...
-                        vis.x_lower(1) vis.y_upper(1); ...
-                        vis.x_upper(1) vis.y_upper(1);];
+                    x_point = fix_point(1,1);
+                    y_point = fix_point(1,2);
+
+                    coord = repmat([x_point y_point], 5, 1) + ...
+                        [x_lim y_lim; ...
+                        x_lim -y_lim; ...
+                        -x_lim -y_lim; ...
+                        -x_lim y_lim; ...
+                        x_lim y_lim];
+
                     plot(ax, gx_d, gy_d);
                     % plot gaze coordinates
                     plot(ax, coord(:,1), coord(:,2));
@@ -375,8 +341,10 @@ for i=1:n_eyes
                     new_excl{i}{j} = struct('data', double(excl), 'header', excl_hdr);
                 end
             else
-                warning('ID:invalid_input', ['Cannot find gaze channels: ', ...
-                    'Unable to perform gaze validation.']);
+                warning('ID:invalid_input', ['Unable to perform gaze ', ...
+                    'validation. Cannot find gaze channels with centimeter ',...
+                    'values. Maybe you need to convert them with ', ...
+                    'pspm_convert_pixel2cm()']);
             end
         end
     end

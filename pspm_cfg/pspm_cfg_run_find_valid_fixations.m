@@ -6,16 +6,9 @@ function [out] = pspm_cfg_run_find_valid_fixations(job)
 data_file = job.datafile{1};
 options = struct();
     
-options.box_degree = job.validation_settings.box_degree;
-options.distance = job.validation_settings.distance;
-
-options.screen_settings = struct();
-options.screen_settings.aspect_actual = ...
-    job.validation_settings.screen_settings.aspect_actual;
-options.screen_settings.resolution = ...
-    job.validation_settings.screen_settings.resolution;
-options.screen_settings.display_size = ...
-    job.validation_settings.screen_settings.screen_size;
+box_degree = job.validation_settings.box_degree;
+distance = job.validation_settings.distance;
+options.resolution = job.validation_settings.resolution;
 
 if isfield(job.validation_settings.fixation_point, 'fixpoint')
     options.fixation_point = ...
@@ -56,4 +49,5 @@ elseif isfield(job.output_settings.channel_output, 'replace_channel')
     options.channel_action = 'replace';
 end
 
-[~, out{1}] = pspm_find_valid_fixations(data_file, options);
+[~, out{1}] = pspm_find_valid_fixations(data_file, box_degree, ...
+    distance, options);

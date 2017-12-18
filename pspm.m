@@ -310,7 +310,7 @@ switch selected
     case 5
         cfg_add_module('pspm.data_preprocessing.pp_pupil.find_valid_fixations');
     case 6
-        cfg_add_module('pspm.data_preprocessing.pp_pupil.convert_pupil_data');
+        cfg_add_module('pspm.tools.convert_data');
     case 7
         cfg_add_module('pspm.data_preprocessing.pp_emg.find_sounds');
     case 8

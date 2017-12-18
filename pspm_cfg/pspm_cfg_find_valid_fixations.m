@@ -17,8 +17,8 @@ datafile         = cfg_files;
 datafile.name    = 'Data File';
 datafile.tag     = 'datafile';
 datafile.num     = [1 Inf];
-datafile.help    = {['Specify the PsPM datafile containing the imported ', ...
-    'eye tracking data.']};
+datafile.help    = {['Specify the PsPM datafile containing the gaze ', ...
+    ' recordings in centimeter.']};
 
 %% Eyes
 eyes                = cfg_menu;
@@ -46,23 +46,8 @@ distance.name                 = 'Distance';
 distance.tag                  = 'distance';
 distance.strtype              = 'i';
 distance.num                  = [1 1];
-distance.help                 = {'Distance between eyes and screen in mm.'};
+distance.help                 = {'Distance between eyes and screen in cm.'};
 
-%% Actual aspect
-aspect_actual                      = cfg_entry;
-aspect_actual.name                 = 'Hardware aspect ratio';
-aspect_actual.tag                  = 'aspect_actual';
-aspect_actual.strtype              = 'i';
-aspect_actual.num                  = [1 2];
-aspect_actual.help                 = {'Aspect ratio of the hardware (e.g. [16 9]).'};
-
-%% Screen size
-screen_size                      = cfg_entry;
-screen_size.name                 = 'Screen size';
-screen_size.tag                  = 'screen_size';
-screen_size.strtype              = 'r';
-screen_size.num                  = [1 1];
-screen_size.help                 = {'Size of the screen in inches (diagonal).'};
 
 %% Resolution
 resolution                      = cfg_entry;
@@ -71,15 +56,11 @@ resolution.tag                  = 'resolution';
 resolution.strtype              = 'i';
 resolution.num                  = [1 2];
 resolution.val                  = {[1280 1024]};
-resolution.help                 = {'.'};
+resolution.help                 = {['Resolution to which the fixation ', ...
+    'point refers (maximum value of the x- and y-coordinates). This can ', ...
+    'be the resolution set in cogent / psychtoolbox (e.g. [1280 1024]) ', ...
+    'or the width and height of the screen in centimeter (e.g. [50 40]).']};
 
-%% Screen settings
-screen_settings                  = cfg_branch;
-screen_settings.name             = 'Screen settings';
-screen_settings.tag              = 'screen_settings';
-screen_settings.val              = {aspect_actual, ...
-    screen_size, resolution};
-screen_settings.help             = {'Attributes of the used screen.'};
 
 %% Default (fixation point)
 fixpoint_default                = cfg_const;
@@ -96,7 +77,8 @@ fixpoint_file.tag     = 'fixpoint_file';
 fixpoint_file.num     = [1 1];
 fixpoint_file.help    = {['.mat file containing a variable F with an ', ...
     'n x 2 matrix. N should have the length of the recorded data and each ', ...
-    'row should define the fixation point for the respective recorded data row.']};
+    'row should define the fixation point for the respective ', ...
+    'recorded data row.']};
 
 %% Point
 fixpoint                = cfg_entry;
@@ -105,23 +87,25 @@ fixpoint.tag            = 'fixpoint';
 fixpoint.strtype        = 'r';
 fixpoint.num            = [1 2];
 fixpoint.help           = {['If the fixation point does not change ', ...
-    'during the acquisition, specify x- and y-coordinates of the constant fixation point.']};
+    'during the acquisition, specify x- and y-coordinates of the ', ...
+    'constant fixation point.']};
 
 %% Fixation point
 fixation_point                      = cfg_choice;
 fixation_point.name                 = 'Fixation point';
 fixation_point.tag                  = 'fixation_point';
 fixation_point.val                  = {fixpoint_default};
-fixation_point.values               = {fixpoint_default, fixpoint_file, fixpoint};
-fixation_point.help                 = {['Point of fixation. Should be ', ...
-    'given in pixels, according to the x- and y-coordinates set by the eye tracker software.']};
+fixation_point.values               = {fixpoint_default, fixpoint_file, ...
+    fixpoint};
+fixation_point.help                 = {['X- and y-coordinates for the point',...
+    'of fixation. Should be given with respect to the given resolution.']};
 
 
 %% Validate fixations
 validation_settings        = cfg_branch;
 validation_settings.name   = 'Validation settings';
 validation_settings.tag    = 'validation_settings';
-validation_settings.val    = {box_degree, distance, screen_settings, fixation_point};
+validation_settings.val    = {box_degree, distance, resolution, fixation_point};
 validation_settings.help   = {['Settings to validate fixations within a ', ...
     'given range on the screen (in degree visual angle).']};
 
@@ -132,7 +116,8 @@ channels.tag                = 'channels';
 channels.strtype            = 's';
 channels.num                = [1 Inf];
 channels.val                = {'pupil'};
-channels.help               = {['Enter a list of channels (numbers or names) ', ...
+channels.help               = {['Enter a list of channels ', ...
+    '(numbers or names)', ...
     'to work on. ', ...
     'Default is pupil channels. Channel names which depend on eyes will ', ...
     'automatically be expanded. E.g. pupil becomes pupil_l.']};
@@ -212,7 +197,8 @@ add_channel             = cfg_const;
 add_channel.name        = 'Add channel';
 add_channel.tag         = 'add_channel';
 add_channel.val         = {1};
-add_channel.help        = {['New data channels will be added at the end of the file.']};
+add_channel.help        = {['New data channels will be added at ', ...
+    'the end of the file.']};
 
 %% Replace channel
 replace_channel             = cfg_const;
