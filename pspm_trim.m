@@ -24,7 +24,8 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
 %                                    not in the additional markers which are
 %                                    within the offset. therefore set this
 %                                    option to 1 to drop markers which lie in
-%                                    the offset. default is 0.
+%                                    the offset. this is for event channels
+%                                    only. default is 0.
 %
 % RETURNS a filename for the updated file, a cell array of filenames, a
 % struct with fields .data and .infos or a cell array of structs
@@ -226,7 +227,7 @@ for d=1:numel(D)
                 newendpoint = numel(data{k}.data); end
             % trim data
             data{k}.data=data{k}.data(newstartpoint:newendpoint);
-        else                                        % event channels
+        else % event channels
             if options.drop_offset_markers 
                 newendpoint = sto_p;
                 newstartpoint = sta_p;
@@ -239,6 +240,11 @@ for d=1:numel(D)
             data{k}.data = data{k}.data - newstartpoint;
             remove_early = data{k}.data < 0;
             data{k}.data(remove_early) = [];
+            
+            % move to match data if offset markers should be dropped
+            if options.drop_offset_markers
+                data{k}.data = data{k}.data - sta_offset;
+            end
             if isfield(data{k}, 'markerinfo')
                 % also trim marker info if available
                 data{k}.markerinfo.value(remove_late) = [];
