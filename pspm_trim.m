@@ -18,6 +18,13 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
 % options:  options.overwrite:       overwrite existing files by default
 %           options.marker_chan_num: marker channel number - if undefined 
 %                                     or 0, first marker channel is used
+%           options.drop_offset_markers: 
+%                                    if offsets are set in the reference, you
+%                                    might be interested in only the data, but
+%                                    not in the additional markers which are
+%                                    within the offset. therefore set this
+%                                    option to 1 to drop markers which lie in
+%                                    the offset. default is 0.
 %
 % RETURNS a filename for the updated file, a cell array of filenames, a
 % struct with fields .data and .infos or a cell array of structs
@@ -87,6 +94,11 @@ if ~isfield(options,'marker_chan_num') || ...
     options.marker_chan_num = 0;
 end
 
+if ~isfield(options, 'drop_offset_markers') || ...
+        ~isnumeric(options.drop_offset_markers)
+    options.drop_offset_markers = 0;
+end
+
 % check data file argument --
 if ischar(datafile) || isstruct(datafile)
     D = {datafile};
@@ -147,58 +159,84 @@ for d=1:numel(D)
     
     % convert from and to into time in seconds ---
     if ischar(from) % 'none'
-        startpoint = 0;
+        sta_p = 0;
+        sta_offset = 0;
     else
         if getmarker % 'marker'
-            startpoint = events(startmarker) + from;
+            sta_p = events(startmarker);
+            sta_offset = from;
         else         % 'file'
-            startpoint = from;
+            sta_p = from;
+            sta_offset = 0;
         end
     end
     if ischar(to) % 'none'
-        endpoint = infos.duration;
+        sto_p = infos.duration;
+        sto_offset = 0;
     else
         if getmarker  % 'marker'
             if l_endmarker > numel(events)
                 warning('ID:marker_out_of_range', ...
                     ['\nEnd marker (%03.0f) out of file - no ', ...
                    'trimming end end.\n'], g_endmarker);
-                endpoint = infos.duration;
+                sto_p = infos.duration;
+                sto_offset = 0;
             else
-                endpoint = events(l_endmarker) + to;
+                sto_p = events(l_endmarker);
+                sto_offset = to;
             end
         else          % 'file'
-            endpoint = to;
+            sto_p = to;
+            sto_offset = 0;
         end
     end
     
     % check start and end points ---
-    if (startpoint < 0)
+    if ((sta_p + sta_offset) < 0)
         warning('ID:marker_out_of_range', ['\nStart point (%.2f s) outside', ...
-            ' file, no trimming at start.'], startpoint);
-        startpoint = 0;
+            ' file, no trimming at start.'], (sta_p + sta_offset));
+
+        if (sta_p > 0)
+            sta_offset = -sta_p;
+        else
+            sta_p = 0;
+            sta_offset = 0;
+        end
     end
-    if endpoint > infos.duration
+    if (sto_p + sto_offset) > infos.duration
         warning('ID:marker_out_of_range', ['\nEnd point (%.2f s) outside ', ...
-            'file, no trimming at end.'], endpoint);
-        endpoint = infos.duration;
+            'file, no trimming at end.'], (sto_p + sto_offset));
+
+        if (sto_p > infos.duration) 
+            sto_p = infos.duration;
+            sto_offset = 0;
+        else
+            sto_offset = infos.duration - sto_p;
+        end
     end
     
     % trim file ---
     for k = 1:numel(data)
         if ~strcmpi(data{k}.header.units, 'events') % waveform channels
             % set start and endpoint
-            newstartpoint = floor(startpoint * data{k}.header.sr);
+            newstartpoint = floor((sta_p + sta_offset) * data{k}.header.sr);
             if newstartpoint == 0, newstartpoint = 1; end
-            newendpoint = floor(endpoint * data{k}.header.sr);
+            newendpoint = floor((sto_p + sto_offset) * data{k}.header.sr);
             if newendpoint > numel(data{k}.data), ...
                 newendpoint = numel(data{k}.data); end
             % trim data
             data{k}.data=data{k}.data(newstartpoint:newendpoint);
         else                                        % event channels
-            remove_late = data{k}.data > endpoint;
+            if options.drop_offset_markers 
+                newendpoint = sto_p;
+                newstartpoint = sta_p;
+            else
+                newendpoint = sto_p + sto_offset;
+                newstartpoint = sta_p + sta_offset;
+            end
+            remove_late = data{k}.data > newendpoint;
             data{k}.data(remove_late) = [];
-            data{k}.data = data{k}.data - startpoint;
+            data{k}.data = data{k}.data - newstartpoint;
             remove_early = data{k}.data < 0;
             data{k}.data(remove_early) = [];
             if isfield(data{k}, 'markerinfo')
@@ -211,9 +249,9 @@ for d=1:numel(D)
             end
         end
         % save new file
-        infos.duration = endpoint - startpoint;
+        infos.duration = (sto_p + sto_offset) - (sta_p + sta_offset);
         infos.trimdate = date;
-        infos.trimpoints = [startpoint endpoint];
+        infos.trimpoints = [(sta_p + sta_offset) (sto_p + sto_offset)];
     end
     clear savedata
     savedata.data = data; savedata.infos = infos; 
