@@ -502,9 +502,14 @@ for iSn = 1:nFile
                     newdurations = round(multi(iSn).durations{n} * newsr);
                 case 'markers'
                     try
-                        newonsets = round(events{iSn}(multi(iSn).onsets{n}) * newsr); % markers are timestamps in seconds
+                        % markers are timestamps in seconds
+                        newonsets = round(events{iSn}(multi(iSn).onsets{n}) ...
+                            * newsr);
+                        
                     catch
-                        warning('\nSome events in condition %01.0f were not found in the data file %s', n, model.datafile{iSn}); return;
+                        warning(['\nSome events in condition %01.0f were ', ...
+                            'not found in the data file %s'], n, ...
+                            model.datafile{iSn}); return;
                     end
                     newdurations = multi(iSn).durations{n};
             end
@@ -519,10 +524,14 @@ for iSn = 1:nFile
                     end
                     pmod(name_idx).name = multi(iSn).pmod(n).name;
                 end
-                % or shift multiple condition definition --
-            else
+
+            end
+
+            % shift conditions for sessions not being the first
+            if iSn > 1
                 newonsets = newonsets + sum(tmp.snduration(1:(iSn - 1)));
             end
+
             onsets{name_idx} = [onsets{name_idx}; newonsets(:)];
             durations{name_idx} = [durations{name_idx}; newdurations(:)];
             if isfield(multi, 'pmod') && (numel(multi(iSn).pmod) >= n)
