@@ -38,10 +38,10 @@ if sts == -1, return; end;
 % prepare
 % ------------------------------------------------------------------------
 
-tmp.X = ones(size(glm.X));
+tmp.X = NaN(size(glm.X));
 for c=1:size(glm.X,2)
-    tmp.X(glm.M==0,c)=glm.XM(:,c)/std(glm.XM(:,c));
-end;
+    tmp.X(glm.M==0,c)=glm.XM(:,c)/std(glm.XM(:));
+end
 [~, filename, ~]=fileparts(modelfile);
 filename=[filename, '.mat'];
 XTick=1:1:size(glm.X,2);
