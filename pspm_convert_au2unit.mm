@@ -1,11 +1,12 @@
-function [sts, out] = pspm_convert_au2mm(varargin)
-% SCR_CONVERT_AU2MM converts arbitrary unit values to milimeter values. It
+function [sts, out] = pspm_convert_au2unit(varargin)
+% SCR_CONVERT_AU2UNIT converts arbitrary unit values to unit values. It
 % works on a PsPM file and is able to replace a channel or add the data as
 % a new channel.
 %
 % FORMAT: 
-%   [sts, out] = pspm_convert_au2mm(fn, chan, distance, options)
-%   [sts, out] = pspm_convert_au2mm(data, distance, record_method, options)
+%   [sts, out] = pspm_convert_au2unit(fn, chan, unit, distance, options)
+%   [sts, out] = pspm_convert_au2unit(data, unit, distance, record_method, 
+%                                     options)
 %
 % ARGUMENTS: 
 %           fn:                 filename which contains the channels to be
@@ -16,7 +17,10 @@ function [sts, out] = pspm_convert_au2mm(varargin)
 %                               Expected to be numeric. The channel should
 %                               contain diameter values recoreded with an
 %                               Eyelink system in 'ellipse' mode.
-%           distance:           distance between camera and eyes in mm
+%           unit:               To which unit the data should be converted.
+%                               possible values are mm, cm, dm, m, in, inches
+%           distance:           distance between camera and eyes in units as
+%                               specified in the parameter unit
 %           record_method:      either 'area' or 'diameter', tells the function
 %                               what the format of the recorded data is
 %                               only required if data is a numeric vector
@@ -30,10 +34,17 @@ function [sts, out] = pspm_convert_au2mm(varargin)
 %               
 %               => If multiplicator and offset are not set default values
 %               are taken for a screen distance of 0.7 meters.
+
+%               reference_unit:     reference unit with which the multiplicator 
+%                                   and reference_distance values were obtained
+%                                   and what the output unit is once the model
+%                                   has been applied.
+%                                   possible values are mm, cm, dm, m, in, 
+%                                   inches
 %
-%               channel_action: tell the function whether to replace the
-%                               converted channel or add the converted
-%                               channel.
+%               channel_action:     tell the function whether to replace the
+%                                   converted channel or add the converted
+%                                   channel.
 %               
 %__________________________________________________________________________
 % PsPM 3.1
@@ -64,10 +75,14 @@ else
                 'given. Don''t know what to do.']);
             return;
         elseif nargin < 3
+            warning('ID:invalid_input','''unit'' is required.');
+            return;
+        elseif nargin < 4
             warning('ID:invalid_input','''distance'' is required.');
             return;
         else
-            distance = varargin{3};
+            unit = varargin{3};
+            distance = varargin{4};
             chan = varargin{2};
             record_method = '';
             opt_idx = 4;
@@ -77,13 +92,17 @@ else
         mode = 'data';
         data = varargin{1};
         if nargin < 2
-            warning('ID:invalid_input','''distance'' is required.');
+            warning('ID:invalid_input','''unit'' is required.');
             return;
         elseif nargin < 3
+            warning('ID:invalid_input','''distance'' is required.');
+            return;
+        elseif nargin < 4
             warning('ID:invalid_input',['''record_method'' or ', ...
                 '''options.m'' is required.']);
             return;
         else
+            unit = varargin{2};
             distance = varargin{2};
             fn = '';
             chan = -1;
@@ -168,6 +187,11 @@ switch mode
 end
 
 %% set conversion values
+
+ref_dist = NaN;
+ref_unit = '';
+m = NaN;
+
 % load default conversion values
 if ~isfield(options, 'multiplicator') || ...
     ~isfield(options, 'reference_distance')
@@ -178,23 +202,26 @@ if ~isfield(options, 'multiplicator') || ...
         convert = load('pspm_convert.mat');
     else
         % use default values
-        convert = struct('au2mm', ...
+        convert = struct('au2unit', ...
             struct(...
             'area', struct('multiplicator', 0.12652, ...
-                'reference_distance', 700), ...
+                'reference_distance', 700, ...
+                'reference_unit', 'mm'), ...
             'diameter', struct('multiplicator', 0.00087743, ...
-                'reference_distance', 700)) ...
+                'reference_distance', 700, ...
+                'reference_unit', 'mm')) ...
         );
     end
 
-    if any(strcmp(conv_field, fieldnames(convert.au2mm)))
+    if any(strcmp(conv_field, fieldnames(convert.au2unit)))
         % get conversion struct
-        conv_struct = subsref(convert.au2mm, struct('type', '.', ...
+        conv_struct = subsref(convert.au2unit, struct('type', '.', ...
             'subs', conv_field));
 
         % set values
         m = conv_struct.multiplicator;
         ref_dist = conv_struct.reference_distance;
+        ref_unit = conv_struct.reference_unit;
     else
         warning('ID:invalid_input', 'Cannot load default multiplicator value.');
         return;
@@ -222,14 +249,43 @@ if isfield(options, 'multiplicator')
     end
 end
 
+% set to according option if set and char
+if isfield(options, 'reference_unit')
+    if ~isnumeric(options.reference_unit)
+        warning('ID:invalid_input', 'options.reference_unit must be char.');
+        return;
+    else
+        ref_unit = options.reference_unit;
+    end
+end
+
+% ensure reference settings are set
+if isnan(ref_dist) || isnan(m) || isempty(ref_unit)
+    warning('ID:invalid_input', ...
+        ['Reference settings are incomplete. ', ...
+        'Please specify them completely in options, or ensure ', ...
+        'pspm_convert.mat is existing.']);
+    return;
+end
+
+
 %% convert
+
+% ensure the distance has the same unit as specified in the reference_unit
+% therefore ref_dist does not need to be converted as this should already
+% be in the reference_unit.
+[~, distance] = pspm_convert_unit(distance, unit, options.reference_unit);
+
 d = m*(d*distance/ref_dist);
+
+% convert data from reference_unit to unit
+[~, d] = pspm_convert_unit(d, options.reference_unit, unit);
 
 %% create output
 switch mode
     case 'file'
         data{1}.data = d;
-        data{1}.header.units = 'mm';
+        data{1}.header.units = unit;
         [f_sts, f_info] = pspm_write_channel(fn, data{1},...
             options.channel_action);
         sts = f_sts;
@@ -237,6 +293,6 @@ switch mode
         out.fn = fn;
     case 'data'
         out = d;
+        sts = 1;
 end
 
-sts = 1;
