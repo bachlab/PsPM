@@ -8,6 +8,7 @@ options = struct();
     
 box_degree = job.validation_settings.box_degree;
 distance = job.validation_settings.distance;
+unit = job.validation_settings.unit;
 options.resolution = job.validation_settings.resolution;
 
 if isfield(job.validation_settings.fixation_point, 'fixpoint')
@@ -50,4 +51,4 @@ elseif isfield(job.output_settings.channel_output, 'replace_channel')
 end
 
 [~, out{1}] = pspm_find_valid_fixations(data_file, box_degree, ...
-    distance, options);
+    distance, unit, options);

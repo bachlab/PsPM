@@ -85,7 +85,7 @@ else
             distance = varargin{4};
             chan = varargin{2};
             record_method = '';
-            opt_idx = 4;
+            opt_idx = 5;
         end
         
     elseif isnumeric(varargin{1})
@@ -103,15 +103,15 @@ else
             return;
         else
             unit = varargin{2};
-            distance = varargin{2};
+            distance = varargin{3};
             fn = '';
             chan = -1;
-            if isstruct(varargin{3})
-                opt_idx = 3;
+            if isstruct(varargin{4})
+                opt_idx = 4;
                 record_method = '';
             else
-                opt_idx = 4;
-                record_method = varargin{3};
+                opt_idx = 5;
+                record_method = varargin{4};
             end
         end
         
@@ -122,7 +122,6 @@ else
     end
     
 end
-
 
 %% set default values
 if ~exist('options', 'var')
@@ -274,12 +273,12 @@ end
 % ensure the distance has the same unit as specified in the reference_unit
 % therefore ref_dist does not need to be converted as this should already
 % be in the reference_unit.
-[~, distance] = pspm_convert_unit(distance, unit, options.reference_unit);
+[~, distance] = pspm_convert_unit(distance, unit, ref_unit);
 
 d = m*(d*distance/ref_dist);
 
 % convert data from reference_unit to unit
-[~, d] = pspm_convert_unit(d, options.reference_unit, unit);
+[~, d] = pspm_convert_unit(d, ref_unit, unit);
 
 %% create output
 switch mode

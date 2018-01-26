@@ -1,7 +1,7 @@
 function [sts, out_file] = pspm_find_valid_fixations(fn, box_degree, ...
-    distance, options)
+    distance, unit, options)
 % pspm_find_valid_fixaitons takes a file with data from eyelink recordings
-% which has been converted to centimeter and filters out invalid fixations.
+% which has been converted to length units and filters out invalid fixations.
 % Gaze values outside of a defined range are set to NaN, which can later 
 % be interpolated using pspm_interpolate. The function will create a timeseries 
 % with NaN values during invalid fixations (as defined by the parameters).
@@ -11,14 +11,16 @@ function [sts, out_file] = pspm_find_valid_fixations(fn, box_degree, ...
 % file or overwrite the file given in fn.
 %
 % FORMAT: 
-%   [sts, out_file] = pspm_find_valid_fixations(fn, options)
+%   [sts, out_file] = pspm_find_valid_fixations(fn, box_degree, distance, 
+%                                               unit, options)
 %
 % ARGUMENTS: 
 %           fn:                 The actual data file containing the eyelink
 %                               recording with gaze data converted to cm.
 %           box_degree:         size of boundary box given in degree
 %                               visual angles.
-%           distance:           distance between eye and screen in cm.
+%           distance:           distance between eye and screen in length units.
+%           unit:               unit in which distance is given.
 %           options:            Optional values
 %               fixation_point:     A nx2 vector containing x and y of the
 %                                   fixation point (with resepect to the 
@@ -160,6 +162,9 @@ elseif ~isnumeric(box_degree)
 elseif ~isnumeric(distance)
     warning('ID:invalid_input', 'distance is not set or not numeric.'); 
     return;
+elseif ~ischar(unit)
+    warning('ID:invalid_input', 'unit should be a char');
+    return;
 elseif isfield(options, 'fixation_point') && ...
         (~isnumeric(options.fixation_point) || ...
         size(options.fixation_point,2) ~= 2)
@@ -177,10 +182,6 @@ elseif isfield(options, 'fixation_point') &&  ...
         'the range given. Ensure fixation points are within the given ', ...
         'resolution.']);
     return;
-elseif distance > 100
-    warning('ID:obsolete_function', ...
-        ['Screen distance is larger than 100 cm. Please ensure the distance',...
-        ' is in centimeters, as we recently changed this.']);
 end
 
 % expand fixation_point
@@ -212,7 +213,7 @@ end
 
 % box for degree visual angle (for each data point)
 box_rad = box_degree * pi / 180;
-box_cm = 2 * distance * tan( box_rad / 2);
+box_length = 2 * distance * tan( box_rad / 2);
 
 if ~isfield(options, 'channel_action')
     options.channel_action = 'add';
@@ -276,14 +277,17 @@ for i=1:n_eyes
             excl = false(size(data{1}.data,1),1);
             
             gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
-                strcmpi('cm', x.header.units), data),1);
+                ~strcmpi('pixel', x.header.units), data),1);
             gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
-                strcmpi('cm', x.header.units), data),1);
+                ~strcmpi('pixel', x.header.units), data),1);
 
             if ~isempty(gx) && ~isempty(gy)
                 % get channel specific data range
                 x_range = data{gx}.header.range;
                 y_range = data{gy}.header.range;
+
+                x_unit = data{gx}.header.units;
+                y_unit = data{gy}.header.units;
                 
                 % normalize recorded data to compare with normalized
                 % fixation points and box degree
@@ -293,9 +297,12 @@ for i=1:n_eyes
                 % also invert y coordinate
                 gy_d = 1 - gy_d;
 
+                box_length_x = pspm_convert_unit(box_length, unit, x_unit);
+                box_length_y = pspm_convert_unit(box_length, unit, y_unit);
+
                 % calculate limits from box_degree with respect to range
-                x_lim = (box_cm - x_range(1)) / diff(x_range);
-                y_lim = (box_cm - y_range(1)) / diff(y_range);
+                x_lim = (box_length_x - x_range(1)) / diff(x_range);
+                y_lim = (box_length_y - y_range(1)) / diff(y_range);
 
                 % find data outside of box_degree
                 data_dev{i}(:,1) = abs(gx_d - fix_point(:, 1)) > x_lim;
@@ -342,9 +349,9 @@ for i=1:n_eyes
                 end
             else
                 warning('ID:invalid_input', ['Unable to perform gaze ', ...
-                    'validation. Cannot find gaze channels with centimeter ',...
-                    'values. Maybe you need to convert them with ', ...
-                    'pspm_convert_pixel2cm()']);
+                    'validation. Cannot find gaze channels with length ',...
+                    'unit values. Maybe you need to convert them with ', ...
+                    'pspm_convert_pixel2unit()']);
             end
         end
     end

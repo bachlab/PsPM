@@ -43,7 +43,7 @@ width.name = 'Width';
 width.tag = 'width';
 width.strtype = 'r';
 width.num = [1 1];
-width.help = {['Width of the display window in centimeter.']};
+width.help = {['Width of the display window.']};
 
 %% height
 height = cfg_entry;
@@ -51,15 +51,24 @@ height.name = 'Height';
 height.tag = 'height';
 height.strtype = 'r';
 height.num = [1 1];
-height.help = {['Height of the display window in centimeter.']};
+height.help = {['Height of the display window.']};
 
-%% pixel2centimeter
-pixel2centimeter = cfg_branch;
-pixel2centimeter.name = 'Pixel to centimeter';
-pixel2centimeter.tag = 'pixel2centimeter';
-pixel2centimeter.val = {width, height};
-pixel2centimeter.help = {['Convert pupil gaze coordinates from ', ...
-    'pixel values to centimeter values. This is needed to validate ', ...
+%% length unit
+length_unit         = cfg_menu;
+length_unit.name    = 'Length unit';
+length_unit.tag     = 'length_unit';
+length_unit.values  = {'mm', 'cm', 'm', 'inches'};
+length_unit.labels  = {'mm', 'cm', 'm', 'inches'};
+length_unit.val     = {'mm'};
+length_unit.help    = {['Unit in which height and width are set.']};
+
+%% pixel2unit
+pixel2unit = cfg_branch;
+pixel2unit.name = 'Pixel to unit';
+pixel2unit.tag = 'pixel2unit';
+pixel2unit.val = {width, height, length_unit};
+pixel2unit.help = {['Convert pupil gaze coordinates from ', ...
+    'pixel values to unit values. This is needed to validate ', ...
     'fixations with degree visual angle.']};
 
 %% Mode
@@ -67,7 +76,7 @@ mode                = cfg_choice;
 mode.name           = 'Mode';
 mode.tag            = 'mode';
 mode.val            = {area2diameter};
-mode.values         = {area2diameter, pixel2centimeter};
+mode.values         = {area2diameter, pixel2unit};
 mode.help           = {['Choose conversion mode.']};
 
 %% Conversion

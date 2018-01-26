@@ -64,9 +64,11 @@ for i=1:n
     % Check if eytracker distance is available
     if ~isempty(regexpi(type, 'pupil')) && ...
             isfield(job.datatype.(datatype), 'eyelink_trackdist')
-        transfer = job.datatype.(datatype).eyelink_trackdist;
+            transfer = job.datatype.(datatype).eyelink_trackdist;
+            distance_unit = job.datatype.(datatype).distance_unit;
         if transfer > 0
             import{i}.eyelink_trackdist = transfer;
+            import{i}.distance_unit = distance_unit;
         else
             import{i}.eyelink_trackdist = 'none';
         end

@@ -103,17 +103,26 @@ scr_transfer.help    = {['Enter the conversion from recorded data to ', ...
     'Microsiemens or Megaohm.']};
 
 eyelink_trackdist         = cfg_entry;
-eyelink_trackdist.name    = 'Eyetracker distance (in mm)';
+eyelink_trackdist.name    = 'Eyetracker distance';
 eyelink_trackdist.tag     = 'eyelink_trackdist';
 eyelink_trackdist.val     = {-1};
 eyelink_trackdist.num     = [1 1];
 eyelink_trackdist.strtype = 'r';
 eyelink_trackdist.help    = {['Distance between eyetracker camera and ', ...
-    'recorded eyes in mm. Disabled if 0 or less (use only if you are ', ...
-    'interested in relative values), then pupil data will remain ', ...
-    'unchanged. If enabled (> 0) the data will be converted from ', ...
-    'arbitrary units to diameter (mm). This is only possible if ELCL_PROC ', ...
-    'was set to ELLIPSE during acquisition.']};
+    'recorded eyes. Disabled if 0 or less (use only if you are interested ', ...
+    'in relative values), then pupil data will remain unchanged. If ', ...
+    'enabled (> 0) the data will be converted from arbitrary units to ', ...
+    'diameter. This is only possible if ELCL_PROC was set to ELLIPSE ', ...
+    'during acquisition.']};
+
+distance_unit           = cfg_menu;
+distance_unit.name      = 'Distance unit';
+distance_unit.tag       = 'distance_unit';
+distance_unit.values    = {'mm', 'cm', 'm', 'inches'};
+distance_unit.labels    = {'mm', 'cm', 'm', 'inches'};
+distance_unit.val       = {'mm'};
+distance_unit.help      = {['The unit in which the eyetracker distance ', ...
+    'is given and to which the pupil data should be converted.']};
 
 
 %% Datatype dependend items
@@ -264,7 +273,7 @@ for datatype_i=1:length(fileoptions)
     % For eyelink: add pupil transfer function
     if any(strcmp(settings.import.datatypes(datatype_i).short, 'eyelink'))
         datatype_item{datatype_i}.val = ...
-            [datatype_item{datatype_i}.val,{eyelink_trackdist}];
+            [datatype_item{datatype_i}.val,{eyelink_trackdist, distance_unit}];
     end
     
 end

@@ -13,10 +13,13 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 %                   - optional fields:
 %                       .eyelink_trackdist: 
 %                           the distance between camera and 
-%                           recorded eye in mm. Disabled if 'none'. If
+%                           recorded eye. Disabled if 'none'. If
 %                           is a numeric value, causes the conversion
-%                           from arbitrary units to mm according to the
-%                           set distance.
+%                           from arbitrary units to distance unit according 
+%                           to the set distance.
+%                       .distance_unit:
+%                           the unit to which the data should be converted and
+%                           in which eyelink_trackdist is given
 % 
 % In this function, channels related to eyes will not produce an error, if 
 % they do not exist. Instead they will produce an empty channel (a channel 
@@ -206,11 +209,12 @@ for k = 1:numel(import)
             
             record_method = regexprep(import{k}.units, '(.*) .*', '$1');
             % transfer pupil data according to transfer settings
-            [~, import{k}.data] = pspm_convert_au2mm(import{k}.data, ...
+            [~, import{k}.data] = pspm_convert_au2unit(...
+                import{k}.data, import{k}.distance_unit, ...
                 import{k}.eyelink_trackdist, record_method);
 
             % set new unit to mm
-            import{k}.units = 'mm';
+            import{k}.units = import{k}.distance_unit;
 
         % store data range in header for gaze channels
         elseif ~isempty(regexpi(import{k}.type, 'gaze_x_'))
