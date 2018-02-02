@@ -288,7 +288,7 @@ for i=1:n_eyes
 
                 x_unit = data{gx}.header.units;
                 y_unit = data{gy}.header.units;
-                
+
                 % normalize recorded data to compare with normalized
                 % fixation points and box degree
                 gx_d = (data{gx}.data - x_range(1)) / diff(x_range);
@@ -297,8 +297,8 @@ for i=1:n_eyes
                 % also invert y coordinate
                 gy_d = 1 - gy_d;
 
-                box_length_x = pspm_convert_unit(box_length, unit, x_unit);
-                box_length_y = pspm_convert_unit(box_length, unit, y_unit);
+                [~, box_length_x] = pspm_convert_unit(box_length, unit, x_unit);
+                [~, box_length_y] = pspm_convert_unit(box_length, unit, y_unit);
 
                 % calculate limits from box_degree with respect to range
                 x_lim = (box_length_x - x_range(1)) / diff(x_range);

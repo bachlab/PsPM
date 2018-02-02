@@ -44,7 +44,7 @@ box_degree.help                 = {['Range of valid fixations (around a ', ...
 distance                      = cfg_entry;
 distance.name                 = 'Distance';
 distance.tag                  = 'distance';
-distance.strtype              = 'i';
+distance.strtype              = 'r';
 distance.num                  = [1 1];
 distance.help                 = {['Distance between eyes and screen in ', ...
     'length units.']};
