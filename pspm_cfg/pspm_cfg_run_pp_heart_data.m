@@ -42,13 +42,17 @@ for i=1:numel(job.pp_type)
                 % copy options
                 opt = struct();
                 
-                opt.minhr = job.pp_type{i}.ecg2hb.opt.minhr;
-                opt.maxhr = job.pp_type{i}.ecg2hb.opt.maxhr;
+                opt.minHR = job.pp_type{i}.ecg2hb.opt.minhr;
+                opt.maxHR = job.pp_type{i}.ecg2hb.opt.maxhr;
                 opt.semi = job.pp_type{i}.ecg2hb.opt.semi;
                 opt.twthresh = job.pp_type{i}.ecg2hb.opt.twthresh;
                 
                 % set replace
-                opt.replace = replace;
+                if replace
+                    opt.channel_action = 'replace';
+                else
+                    opt.channel_action = 'add';
+                end
                 
                 % call function
                 [sts, winfo] = pspm_ecg2hb(fn, chan, opt);
