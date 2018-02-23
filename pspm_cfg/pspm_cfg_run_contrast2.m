@@ -13,7 +13,7 @@ else
 end
 
 % outfile
-outfile = [job.outdir{1} '\'  job.filename '.mat'];
+outfile = [job.outdir{1} filesep  job.filename '.mat'];
 
 % connames & con
 connames = fieldnames(job.def_con_name);

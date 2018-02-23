@@ -60,8 +60,14 @@ if t.type==1
                 hold on;
         fig(1).err(c)=errorbar(c, m(c), s(c), 'LineStyle', 'none', 'Color', [0 0 0], 'LineWidth', 3);
     end;
-	set(fig(1).ax(1).h, 'XTick', [1:numel(con)], 'XTickLabel', t.names(con), 'YLim',[YMin, YMax], 'YTick', [], 'FontWeight', 'Bold', 'FontSize', 14);
-    set(get(fig(1).ax(1).h, 'YLabel'), 'String', 'Parameter mean (arbitrary units)', 'FontSize', 18, 'FontWeight', 'Bold');
+	set(fig(1).ax(1).h, 'XTick', [1:numel(con)], ...
+        'XTickLabel', t.names(con), 'YLim',[YMin, YMax], ...
+        'YTick', [], 'TickLabelInterpreter', 'none', ...
+        'XTickLabelRotation', 25, ...
+        'FontWeight', 'Bold', 'FontSize', 14);
+    set(get(fig(1).ax(1).h, 'YLabel'), ...
+        'String', 'Parameter mean (arbitrary units)', ...
+        'FontSize', 18, 'FontWeight', 'Bold');
 end;
 
 % display files and tables
@@ -106,6 +112,6 @@ elseif t.type==2
 end;  
 disp(' ');
 disp('__________________________________________________________________________________');
-disp('SCRalyze (c) Dominik R. Bach, Wellcome Trust Centre for Neuroimaging, UCL London UK');
+disp('PsPM (c) Dominik R. Bach, Wellcome Trust Centre for Neuroimaging, UCL London UK');
    
 return;
