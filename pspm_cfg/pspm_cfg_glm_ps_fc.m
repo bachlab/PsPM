@@ -33,7 +33,7 @@ glm_ps_fc.prog = @pspm_cfg_run_glm_ps_fc;
 
 %% Basis function
 % PSRF
-psrf_fc = cell(1, 4);
+psrf_fc = cell(1, 5);
 for i=1:4
     psrf_fc{i}        = cfg_const;
     psrf_fc{i}.name   = ['PSRF_FC ' num2str(i-1)];
@@ -44,6 +44,16 @@ psrf_fc{1}.help   = {'PSRF_FC CS only and without derivatives.'};
 psrf_fc{2}.help   = {'PSRF_FC CS and derivatives for CS (default).'};
 psrf_fc{3}.help    = {'PSRF_FC with CS and US. Without derivatives.'};
 psrf_fc{4}.help    = {'PSRF_FC with US only and without derivatives.'};
+
+% add erlang response function
+psrf_fc{5} = cfg_const;
+psrf_fc{5}.name = 'PSRF_ERL';
+psrf_fc{5}.tag = 'psrf_erl';
+psrf_fc{5}.val = {4};
+psrf_fc{5}.help = {'PSRF_ERL use a Erlang response funcation according to', ...
+    ['Hoeks, B., & Levelt, W.J.M. (1993). Pupillary Dilation as a Measure ', ...
+    'of Attention - a Quantitative System-Analysis. Behavior Research ', ...
+    'Methods Instruments & Computers, 25, 16-26.']};
 
 bf        = cfg_choice;
 bf.name   = 'Basis Function';

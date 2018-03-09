@@ -45,6 +45,9 @@ if any(strcmp(bf,{'psrf_fc0', 'psrf_fc1', 'psrf_fc2'}))
     end
     
     model.bf.args = [cs, cs_d, us];
+elseif strcmp(bf, 'psrf_erl')
+    model.bf.fhandle = str2func('pspm_bf_psrf_erl');
+    model.bf.args = [];
 end
 
 % set default channel (hard coded)
