@@ -76,7 +76,7 @@ elseif strcmpi(mode, 'file')
     for i = 1:numel(chan)
         [~, ~, data] = pspm_load_data(fn, chan{i});   
         diam{i} = data{1};
-        diam{i}.data = 2.*sqrt(diam{i}.data.*pi);
+        diam{i}.data = 2.*sqrt(diam{i}.data./pi);
         
         % replace metric values
         diam{i}.header.units = ...
