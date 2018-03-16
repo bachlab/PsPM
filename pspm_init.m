@@ -66,7 +66,8 @@ if str2num(v(1:3))<7.1
 end
 
 % check toolbox functions
-signal = license('checkout','signal_toolbox');
+tboxes = ver;
+signal = any(strcmp({tboxes.Name}, 'Signal Processing Toolbox'));
 if ~signal
     errmsg='Signal processing toolbox not installed. Some filters might not be implemented.';
     warning(errmsg);

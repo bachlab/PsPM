@@ -60,7 +60,6 @@ if isempty(settings), pspm_init; end
 sts = -1;
 out = struct();
 
-
 %% load alternating inputs
 if nargin < 1 
     warning('ID:invalid_input', 'No arguments given. Don''t know what to do.');
@@ -176,12 +175,12 @@ switch mode
             warning('ID:invalid_input', 'Error while load data.');
             return;
         end
-        d = data{1}.data;
+        convert_data = data{1}.data;
         % set multiplicator field according to 
         % data units
         conv_field = regexprep(data{1}.header.units, '(.*) units', '$1');
     case 'data'
-        d = data;
+        convert_data = data;
         conv_field = record_method;
 end
 
@@ -205,10 +204,12 @@ if ~isfield(options, 'multiplicator') || ...
             struct(...
             'area', struct('multiplicator', 0.12652, ...
                 'reference_distance', 700, ...
-                'reference_unit', 'mm'), ...
+                'reference_unit', 'mm', ...
+                'square_root', 1), ...
             'diameter', struct('multiplicator', 0.00087743, ...
                 'reference_distance', 700, ...
-                'reference_unit', 'mm')) ...
+                'reference_unit', 'mm', ...
+                'square_root', 0)) ...
         );
     end
 
@@ -221,6 +222,10 @@ if ~isfield(options, 'multiplicator') || ...
         m = conv_struct.multiplicator;
         ref_dist = conv_struct.reference_distance;
         ref_unit = conv_struct.reference_unit;
+
+        if conv_struct.square_root 
+            convert_data = sqrt(convert_data);
+        end
     else
         warning('ID:invalid_input', 'Cannot load default multiplicator value.');
         return;
@@ -275,15 +280,15 @@ end
 % be in the reference_unit.
 [~, distance] = pspm_convert_unit(distance, unit, ref_unit);
 
-d = m*(d*distance/ref_dist);
+convert_data = m*(convert_data*distance/ref_dist);
 
 % convert data from reference_unit to unit
-[~, d] = pspm_convert_unit(d, ref_unit, unit);
+[~, convert_data] = pspm_convert_unit(convert_data, ref_unit, unit);
 
 %% create output
 switch mode
     case 'file'
-        data{1}.data = d;
+        data{1}.data = convert_data;
         data{1}.header.units = unit;
         [f_sts, f_info] = pspm_write_channel(fn, data{1},...
             options.channel_action);
@@ -291,7 +296,7 @@ switch mode
         out.chan = f_info.channel;
         out.fn = fn;
     case 'data'
-        out = d;
+        out = convert_data;
         sts = 1;
 end
 

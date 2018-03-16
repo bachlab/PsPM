@@ -51,7 +51,9 @@ if t.type==1
     YMin=YMin+0.2*YMin;
     if YMin>0, YMin=0; end;
     if YMax<0, YMax=-0.2*YMin; end;
-    fig(1).h=figure('Position', [50 50 max([600, numel(con)*200]) 600],'PaperPositionMode', 'auto', 'PaperOrientation', 'Portrait', 'InvertHardCopy', 'off', 'Color', 'w', 'Name', 'Parameter estimates');
+    fig(1).h=figure('Position', [50 50 max([600, numel(con)*200]) 600],...
+        'PaperPositionMode', 'auto', 'PaperOrientation', 'Portrait', ...
+        'InvertHardCopy', 'off', 'Color', 'w', 'Name', 'Parameter estimates');
     fig(1).ax(1).h=axes('Position', [0.1 0.1 0.8 0.8]);
     m=mean(t.beta(:,con)); s=std(t.beta(:,con))/sqrt(size(t.beta,1));
     for c=1:numel(con)
