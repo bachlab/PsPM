@@ -69,7 +69,7 @@ else
 end
 
 if strcmpi(mode, 'vector')
-    varargout{2} = 2.*sqrt(area.*pi);
+    varargout{2} = 2.*sqrt(area./pi);
     sts = 1;
 elseif strcmpi(mode, 'file')
     diam = cell(numel(chan), 1);
