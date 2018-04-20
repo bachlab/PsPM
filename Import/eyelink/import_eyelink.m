@@ -25,6 +25,8 @@ function [data] = import_eyelink(filename)
 % determine number of header lines
 fileID = fopen(filename);
 datastr = textscan(fileID, '%s %s %s %s %s %s %s %s %s %s %s %s %s %s', 'delimiter', '\t'); 
+fclose(fileID);
+
 
 %% correct column lengths (sometimes the end not properly ended)
 % get lengths
@@ -69,19 +71,28 @@ end
 onsets = [1; offsets + 1];
 
 data = cell(numel(offsets),1);
-
 for sn = 1:numel(offsets)
     data{sn} = struct(); 
     data{sn}.record_date = record_date;
     data{sn}.record_time = record_time;
        
     sn_data = datastr(onsets(sn):offsets(sn), :);
-    % convert data to numeric
-    datanum = str2double(sn_data(:, 1:7));
-    
-    % if NaN in first column put NaN in all others
-    datanum(isnan(datanum(:,1)),:) = NaN;
-    dataFields = find(~isnan(datanum(:, 1)));
+
+    % find data rows
+    dataFields = find(~cellfun(@isempty, regexp(sn_data(:,1), '^[0-9]')));
+    % concatenate strings and replace/interpret dots with NaN values
+    str_data = strrep(join(sn_data(:,:)), ' . ', ' NaN ');
+
+    % allocate
+    datanum = NaN(size(sn_data,1), 7);
+
+    % convert numeric rows to numeric
+    for i_data_row = 1:numel(dataFields)
+        n_row = dataFields(i_data_row);
+        data_num_row = sscanf(str_data{n_row}, '%f');
+        n_col = min(7, numel(data_num_row));
+        datanum(n_row,1:n_col) = data_num_row(1:n_col);
+    end
 
     %% try to read some header information
     % read the PUPIL unit
@@ -141,7 +152,7 @@ for sn = 1:numel(offsets)
     end
     
     %% add saccade information as extra colum to relevant data
-    ep_offset =  floor( 0.05 * data{sn}.sampleRate ); % possibility to remove more; correponds to 10 points for sr of 500
+    ep_offset = floor( 0.05 * data{sn}.sampleRate ); % possibility to remove more; correponds to 10 points for sr of 500
     
     % cycle through eyes
     for i=1:numel(data{sn}.eyesObserved)
@@ -170,34 +181,38 @@ for sn = 1:numel(offsets)
                 % the following steps are done because some epochs do not
                 % start or end correctly, so these cases have to be
                 % catched.
-                
-                
-                % if offset added overlaps at the end and at the beginning
-                if ignore_str_pos{j}{ep_stop}(k) + ep_offset > size( datanum, 1 ) ...
-                        && ignore_str_pos{j}{ep_start}(k) - ep_offset <= 0
+
+                if k > numel(ignore_str_pos{j}{ep_stop})
+                    stop_pos = size(datanum, 1);
+                else;
+                    stop_pos = ignore_str_pos{j}{ep_stop}(k) + ep_offset;
+                end
+
+                start_pos = ignore_str_pos{j}{ep_start}(k) - ep_offset;
+
+                if stop_pos > size( datanum, 1 ) && start_pos <= 0
                     
                     % everything is a blink
                     datanum(1 : end, idx) = 1;
                     
-                % if overlaps at the end but not at the beginning (partly 
-                % excluded because checked before)
-                elseif ignore_str_pos{j}{ep_stop}(k) + ep_offset > size( datanum, 1 )
+                % if end is not in the data or overlaps at the end but not at
+                % the beginning (partly excluded because checked before)
+                elseif stop_pos > size( datanum, 1 )
                     
                     % from ep_start until end everything is a epoch
-                    datanum(ignore_str_pos{j}{ep_start}(k) - ep_offset : end, idx) = 1;
+                    datanum(start_pos : end, idx) = 1;
                     
                 % if overlaps at the beginning but not at the end
-                elseif ignore_str_pos{j}{ep_start}(k) - ep_offset <= 0
+                elseif start_pos <= 0
                     
                     % everything until ep_end is a epoch
-                    datanum(1 : ignore_str_pos{j}{ep_stop}(k) + ep_offset, idx) = 1;
+                    datanum(1 : stop_pos, idx) = 1;
                     
                 else
                     
                     % otherwhise just marke from ep_start to ep_stop as
                     % epoch
-                    datanum(ignore_str_pos{j}{ep_start}(k) - ep_offset : ...
-                        ignore_str_pos{j}{ep_stop}(k) + ep_offset, idx) = 1;
+                    datanum(start_pos : stop_pos, idx) = 1;
                 end
             end
             
