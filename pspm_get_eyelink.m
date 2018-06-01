@@ -130,7 +130,28 @@ end
 n_data = size(channels,1);
 
 % count blink and saccades (combined in blink channel at the moment)
-n_bns = sum(channels(:,strcmpi(units, 'blink')) == 1);
+blink_idx = find(strcmpi(units, 'blink'));
+saccade_idx = find(strcmpi(units, 'saccade'));
+
+%assumption that whenever blink_idx has more than one entry saccade will
+%... have also more than one entry
+
+bns_chans = [blink_idx saccade_idx];
+for i_bns = 1:numel(bns_chans)
+    channels(isnan(channels(:, bns_chans(i_bns))), bns_chans(i_bns)) = 0;
+end
+
+
+if size(blink_idx,2)>1
+    bns1 = sum(channels(:,blink_idx(1))| channels(:,saccade_idx(1)));
+    bns2 = sum(channels(:,blink_idx(2))| channels(:,saccade_idx(2)));
+    n_bns = [bns1 , bns2];
+else
+    bns1 = sum(channels(:,blink_idx(1))| channels(:,saccade_idx(1)));
+    n_bns = bns1;
+end
+
+
 
 for k = 1:numel(import)
 
@@ -158,11 +179,11 @@ for k = 1:numel(import)
         % thats why channel ids will be ignored!
         if strcmpi(data{1}.eyesObserved, 'LR') 
             chan_struct = {'pupil_l', 'pupil_r', 'gaze_x_l', 'gaze_y_l', ...
-                'gaze_x_r', 'gaze_y_r'};
+                'gaze_x_r', 'gaze_y_r','blink_l','blink_r','saccade_l','saccade_r'};
         else
             eye_obs = lower(data{1}.eyesObserved);
             chan_struct = {['pupil_' eye_obs], ['gaze_x_' eye_obs], ...
-                ['gaze_y_' eye_obs]};
+                ['gaze_y_' eye_obs], ['blink_' eye_obs],['saccade_' eye_obs]};
         end
 
         if strcmpi(import{k}.type, 'custom')

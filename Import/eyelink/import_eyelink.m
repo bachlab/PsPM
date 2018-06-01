@@ -184,7 +184,7 @@ for sn = 1:numel(offsets)
 
                 if k > numel(ignore_str_pos{j}{ep_stop})
                     stop_pos = size(datanum, 1);
-                else;
+                else
                     stop_pos = ignore_str_pos{j}{ep_stop}(k) + ep_offset;
                 end
 
@@ -286,23 +286,12 @@ for sn = 1:numel(offsets)
         data{sn}.units = {pupilUnit, pupilUnit, 'pixel', 'pixel', 'pixel', ...
             'pixel', 'blink', 'blink', 'saccade', 'saccade'};
         
-        % combine saccade and blink channels
-        data{sn}.channels(:, 7) = data{sn}.channels(:, 7) | data{sn}.channels(:, 9);
-        data{sn}.channels(:, 8) = data{sn}.channels(:, 8) | data{sn}.channels(:, 10);
         
-        % cwk: set blinks to NaN
-        data{sn}.channels( data{sn}.channels(:,7) == 1, [1,3:4] ) = NaN;
-        data{sn}.channels( data{sn}.channels(:,8) == 1, [2,5:6] ) = NaN;
     else
         % pupil, x, y, blink
         data{sn}.channels = data{sn}.raw(:,[4 2:3 8 10]);
         data{sn}.units = {pupilUnit, 'pixel', 'pixel', 'blink', 'saccade'};
         
-        % combine saccade and blink channels
-        data{sn}.channels(:, 4) = data{sn}.channels(:, 4) | data{sn}.channels(:, 5);
-        
-        % cwk: set blinks to NaN
-        data{sn}.channels( data{sn}.channels(:,4) == 1, [1:3] ) = NaN;
     end
     
     % translate makers back into special cell structure
