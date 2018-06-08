@@ -19,7 +19,7 @@ function [sts, out] = pspm_extract_segments(varargin)
 %   ARGUMENTS:
 %       mode:               Tells the function in which mode get the
 %                           settings from. Either 'manual' or 'auto'.
-%       glm:                Path to the glm file. 
+%       glm:                Path to the glm file or a glm structure.
 %       data_fn:            Path or cell of paths to data files from which
 %                           the segments should be extracted. Each file
 %                           will be treated as session. Onset values are
@@ -52,6 +52,10 @@ function [sts, out] = pspm_extract_segments(varargin)
 %                           function to find the appropriate timing of the
 %                           specified marker ids. Must have the same format
 %                           as data_fn.
+%           nan_output:     This option defines wheather the user wants to
+%                           output the NaN percentages. If so,  we values 
+%                           can be printed on the screen or written to a 
+%                           created file. Otherwise the option is set to'none'.
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2008-2016 Tobias Moser (University of Zurich)
@@ -111,11 +115,17 @@ if nargin >= 2
         case 'auto'
             
             glm_file = varargin{2};
-            if ~ischar(glm_file) || ~exist(glm_file, 'file')
-                warning('ID:invalid_input', 'GLM file is not a string or does not exist.'); return;
-            end;
-            
-            [~, glm, ~] = pspm_load1(glm_file, 'all');
+            %case distinction on the type of the glm argument
+            %if it is a path we need to load the glm structure into
+            %function 
+            if ~isstruct(glm_file)
+                if ~ischar(glm_file) || ~exist(glm_file, 'file')
+                    warning('ID:invalid_input', 'GLM file is not a string or does not exist.'); return;
+                end;
+                [~, glm, ~] = pspm_load1(glm_file, 'all');
+            else
+                glm = glm_file;
+            end
                         
             if nargin == 3
                 options = varargin{3};
@@ -190,6 +200,11 @@ end;
 if ~isfield(options, 'dont_ask_overwrite')
     options.dont_ask_overwrite = 0;
 end;
+
+%set default ouput_nan
+if ~isfield(options, 'nan_output')
+    options.nan_output = 'none';
+end
 
 % check mutual arguments (options)   
 if ~ismember(options.timeunit, {'seconds','samples', 'markers'})
@@ -288,16 +303,22 @@ for n = 1:n_sessions
 end;
 
 for c=1:n_cond
-    % create mean
+    %% create statistics for each condition 
     m = segments{c}.data;
     segments{c}.name = multi(1).names{c};
+    % create mean
     segments{c}.mean = nanmean(m,2);
+    
     segments{c}.std = nanstd(m,0,2);
     segments{c}.sem = segments{c}.std./sqrt(n_onsets*n_sessions);
+    segments{c}.trial_nan_percent = sum(isnan(m))/size(m,1);
+    segments{c}.total_nan_percent = sum(sum(isnan(m)))/numel(m);
+ %   segments{c}.total_nan_percent = mean(segments{c}.trial_nan_percent);
+
     
     sr = data{1}{1}.header.sr;
     segments{c}.t = linspace(sr^-1, numel(segments{c}.mean)/sr, numel(segments{c}.mean))';
-    
+    %% create plot per condition
     if options.plot
         p = plot(ax, segments{c}.t, segments{c}.mean, '-', ...
             segments{c}.t, segments{c}.mean + segments{c}.sem, '-', ...
@@ -313,6 +334,41 @@ for c=1:n_cond
         legend_lb{(c-1)*3 + 3} = [multi(1).names{c} ' SEM-'];
     end;
 end;
+
+%% nan_output 
+%create matix with values
+trials_nan = cell2mat(cellfun(@(x) x.trial_nan_percent,segments,'un',0))';
+%round trails_nan
+trails_nan_rounded = round(trials_nan,4);
+%indicates nr of trials
+trials_nr = size(trails_nan_rounded,1);
+%create mean of NaN percentage per condition
+mean_trials_nan = mean(trails_nan_rounded);
+trials_nan_out = [trails_nan_rounded;mean_trials_nan];
+%define names of rows in table
+r_names = strsplit(num2str(1:trials_nr));
+r_names{end+1} = 'total';
+%create table with the right format
+trials_nan_output = array2table(trials_nan_out,'VariableNames', multi(1).names, 'RowNames', r_names');
+switch options.nan_output
+    case 'screen'
+        disp(trials_nan_output);
+    case 'none'
+    otherwise
+        %print Nan-Value in file
+        %expect the path to file in options.nan_output
+        %find information about file  
+        [path, name, ext ]= fileparts(options.nan_output);
+        if 7 == exist(path, 'dir')
+            %if the file already exists, we overwrite the file with the
+            %data. Otherwise we create a new file and save the data
+            writetable(trials_nan_output, options.nan_output,'WriteRowNames', true ,'Delimiter', '\t');
+        else
+            warning('ID:invalid_input', 'Path does not exist'); return;
+        end 
+end
+
+%%
 
 out.segments = segments;
 

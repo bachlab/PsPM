@@ -65,6 +65,11 @@ function glm = pspm_glm(model, options)
 % options.overwrite: overwrite existing model output; default 0
 % options.marker_chan_num: marker channel number; default first marker
 %                          channel
+% options.exclude_missing: used to exclude evaluations, which do not hold
+%                          certain conditions.
+%                          This field can contains two values, if it is set:
+%                          "segment_length" and "cutoff"  
+%                           
 %
 % TIMING - multiple condition file(s) or struct variable(s):
 % The structure is equivalent to SPM2/5/8/12 (www.fil.ion.ucl.ac.uk/spm),
@@ -818,6 +823,32 @@ if strcmpi(model.latency, 'free')
     glm.stats = [glm.stats(:); lat(:)];
 end
 
+% call pspm_extract_segments if options.exclude_misssing is set
+% verify that both fields are set
+% when pspm_extract_segments returns set fields in glm 
+% glm.stats_missing holds the percentage of NaNs per condition 
+% glm.stats_exclude holds boolean for each condition to indicate if the
+% cutoff holds
+if isfield(options,'exclude_missing')
+    if isfield(options.exclude_missing, 'segment_length') && isfield(options.exclude_missing,'cutoff')
+        [sts,segments] = pspm_extract_segments('auto', glm, struct('length', options.exclude_missing.segment_length));
+        if sts == -1
+            warning('ID:invalid_input', 'call of pspm_extract_segments failed '); return;
+        end
+        
+        nan_percentages = cellfun(@(x) x.total_nan_percent,segments.segments, 'un',0);
+        glm.stats_missing = cell2mat(nan_percentages);
+        glm.stats_exclude = glm.stats_missing > options.exclude_missing.cutoff;   
+    else
+        warning('ID:invalid_input', 'To call pspm_extract_segments both "segment_length" and "cutoff" must be defined in options.exclude missing'); return;
+    end
+end
+
+
+
+
+
+% save data
 savedata = struct('glm', glm);
 pspm_load1(model.modelfile, 'save', savedata, options);
 
