@@ -141,16 +141,8 @@ for i_bns = 1:numel(bns_chans)
     channels(isnan(channels(:, bns_chans(i_bns))), bns_chans(i_bns)) = 0;
 end
 
-
-if size(blink_idx,2)>1
-    bns1 = sum(channels(:,blink_idx(1))| channels(:,saccade_idx(1)));
-    bns2 = sum(channels(:,blink_idx(2))| channels(:,saccade_idx(2)));
-    n_bns = [bns1 , bns2];
-else
-    bns1 = sum(channels(:,blink_idx(1))| channels(:,saccade_idx(1)));
-    n_bns = bns1;
-end
-
+n_blink = sum (channels(:,blink_idx));
+n_saccade= sum (channels(:,saccade_idx));
 
 
 for k = 1:numel(import)
@@ -248,15 +240,21 @@ for k = 1:numel(import)
         
         % create statistics for eye specific channels
         if ~isempty(regexpi(import{k}.type, '_[lr]', 'once'))
-            if size(n_bns, 2) > 1
+            if size(n_blink, 2) > 1
                 eye_t = regexp(import{k}.type, '.*_([lr])', 'tokens');
-                n_eye_bns = n_bns(strcmpi(eye_t{1}, {'l','r'}));
+                n_eye_blink = n_blink(strcmpi(eye_t{1}, {'l','r'}));
             else
-                n_eye_bns = n_bns;
+                n_eye_blink = n_blink;
             end
+            sourceinfo.chan_stats{k}.blink_ratio = n_eye_blink / n_data;
             
-            sourceinfo.chan_stats{k}.blink_ratio = n_eye_bns / n_data;
-            sourceinfo.chan_stats{k}.other_ratio = (n_inv - n_eye_bns) / n_data;
+            if size(n_saccade, 2) > 1
+                eye_t = regexp(import{k}.type, '.*_([lr])', 'tokens');
+                n_eye_saccade = n_saccade(strcmpi(eye_t{1}, {'l','r'}));
+            else
+                n_eye_saccade = n_saccade;
+            end
+            sourceinfo.chan_stats{k}.saccade_ratio = n_eye_saccade / n_data;
         end 
     end
 end
