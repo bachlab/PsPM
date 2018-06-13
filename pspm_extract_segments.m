@@ -251,7 +251,19 @@ if options.plot
     legend_lb = cell(n_cond*3,1);
 end;
 
+%% get trial idx 
+all_onsets = cell2mat(multi(1).onsets);
+[sorted,s_idx] = sort(all_onsets);
+sorted_idx = arrayfun(@(x) find(x == sorted), all_onsets);
+start_idx = cumsum(cellfun(@(x) numel(x), multi(1).onsets));
+start_idx = [1 start_idx(1:end-1)+1];
+stop_idx = cumsum(cellfun(@(x) numel(x), multi(1).onsets));
+for i=1:n_cond
+    segments{i}.trial_idx = sorted_idx(start_idx(i):stop_idx(i));
+end
 
+
+%% save data in segments
 for n = 1:n_sessions
     % load data
     [~, ~, data{n}] = pspm_load_data(data_fn{n}, chan{n});

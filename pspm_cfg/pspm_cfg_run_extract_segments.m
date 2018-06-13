@@ -38,6 +38,18 @@ if isfield(job, 'mode')
     options.marker_chan = job.options.marker_chan;
     options.length = job.options.segment_length;
     
+    field_name_nan_output = fieldnames(job.options.nan_output);
+    switch field_name_nan_output{1}
+        case 'nan_none'
+            options.nan_output = 'none';
+        case 'nan_screen'
+            options.nan_output = 'screen';
+        case 'nan_output_file'
+            file_name = job.options.nan_output.nan_output_file.nan_file;
+            file_path = job.options.nan_output.nan_output_file.nan_path;
+            options.nan_output = filepath(file_path,file_path, file_name);
+    end
+    
     % extract output
     options.overwrite = job.output.overwrite;
     options.plot = job.output.plot;

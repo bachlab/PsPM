@@ -147,12 +147,51 @@ segment_length.num      = [1 1];
 segment_length.val      = {-1};
 segment_length.help     = {['Length of segments. If set (= enabled) ', ...
     'durations in conditions will be ignored (-1 = disabled).']};
+%% Outputfile for nan-percentage 
+nan_file                = cfg_entry;
+nan_file.name           = 'File name';
+nan_file.tag            = 'nan_file';
+nan_file.strtype        = 's';
+nan_file.num            = [1 Inf];
+nan_file.help           = {['The name of the file to which the ', ...
+    'NaN output should be written']};
 
+nan_path                = cfg_files;
+nan_path.name           = 'Path to File';
+nan_path.tag            = 'nan_path';
+nan_path.filter         = 'dir';
+nan_path.help           = {['Path where the NaN output file should ', ...
+    'be written.']};
+
+nan_output_file         = cfg_branch;
+nan_output_file.name    = 'File output';
+nan_output_file.tag     = 'nan_output_file';
+nan_output_file.val     = {nan_file, nan_path};
+nan_output_file.help    = {['Write NaN output to file.']};
+
+nan_none                = cfg_const;
+nan_none.name           = 'none';
+nan_none.tag            = 'nan_none';
+nan_none.val            = {'none'};
+nan_none.help           = {'No output.'};
+
+nan_screen              = cfg_const;
+nan_screen.name         = 'Screen';
+nan_screen.tag          = 'nan_screen';
+nan_screen.val          = {'screen'};
+nan_screen.help         = {'Output to screen.'};
+
+%% NaN output 
+nan_output              = cfg_choice;
+nan_output.name         = 'NaN-output'; 
+nan_output.tag          = 'nan_output';
+nan_output.val          = {nan_none};
+nan_output.values       = {nan_none, nan_screen, nan_output_file};
 %% Options
 options                 = cfg_branch;
 options.name            = 'Options';
 options.tag             = 'options';
-options.val             = {timeunit, segment_length, marker_chan};
+options.val             = {timeunit, segment_length, marker_chan, nan_output};
 options.help            = {['Change values of optional settings.']};
 
 %% File path
