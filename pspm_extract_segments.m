@@ -348,20 +348,27 @@ for c=1:n_cond
 end;
 
 %% nan_output 
+%count number of trials
+trials_nr_per_cond = cellfun(@(x) size(x.trial_idx,2),segments,'un',0);
+trials_nr = cell2mat(trials_nr_per_cond);
+trials_nr = sum(trials_nr);
+
 %create matix with values
-trials_nan = cell2mat(cellfun(@(x) x.trial_nan_percent,segments,'un',0))';
-%round trails_nan
-trails_nan_rounded = round(trials_nan,4);
-%indicates nr of trials
-trials_nr = size(trails_nan_rounded,1);
-%create mean of NaN percentage per condition
-mean_trials_nan = mean(trails_nan_rounded);
-trials_nan_out = [trails_nan_rounded;mean_trials_nan];
+trials_nan(1:(trials_nr+1),1:n_cond) = NaN;
+for i=1:n_cond
+    nan_idx_length = size(segments{i}.trial_idx,2);
+    for j = 1:nan_idx_length
+        nan_perc = segments{i}.trial_nan_percent(j);
+        trials_nan(segments{i}.trial_idx(j),i) = nan_perc;
+    end
+    trials_nan(trials_nr+1,i) = segments{i}.total_nan_percent;
+end
+
 %define names of rows in table
 r_names = strsplit(num2str(1:trials_nr));
 r_names{end+1} = 'total';
 %create table with the right format
-trials_nan_output = array2table(trials_nan_out,'VariableNames', multi(1).names, 'RowNames', r_names');
+trials_nan_output = array2table(trials_nan,'VariableNames', multi(1).names, 'RowNames', r_names');
 switch options.nan_output
     case 'screen'
         disp(trials_nan_output);
@@ -374,7 +381,9 @@ switch options.nan_output
         if 7 == exist(path, 'dir')
             %if the file already exists, we overwrite the file with the
             %data. Otherwise we create a new file and save the data
-            writetable(trials_nan_output, options.nan_output,'WriteRowNames', true ,'Delimiter', '\t');
+            new_file_base = sprintf('%s.csv', name);
+            output_file = fullfile(path,new_file_base);
+            writetable(trials_nan_output, output_file,'WriteRowNames', true ,'Delimiter', '\t');
         else
             warning('ID:invalid_input', 'Path does not exist'); return;
         end 

@@ -68,7 +68,7 @@ function glm = pspm_glm(model, options)
 % options.exclude_missing: used to exclude evaluations, which do not hold
 %                          certain conditions.
 %                          This field can contains two values, if it is set:
-%                          "segment_length" and "cutoff"  
+%                          'segment_length' and 'cutoff'  
 %                           
 %
 % TIMING - multiple condition file(s) or struct variable(s):

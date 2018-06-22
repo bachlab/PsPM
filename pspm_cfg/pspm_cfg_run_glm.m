@@ -119,6 +119,14 @@ end
 
 % options
 options.overwrite = job.overwrite;
+% set option to create stats exclude if set
+if isfield(job.exclude_missing,'exclude_missing_yes')
+    length = job.exclude_missing.exclude_missing_yes.segment_length;
+    cut = job.exclude_missing.exclude_missing_yes.cutoff;
+    options.exclude_missing = struct('segment_length',length ,'cutoff', cut);
+end
+
+
 
 params.model = model;
 params.options = options;

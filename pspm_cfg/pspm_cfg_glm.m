@@ -297,40 +297,79 @@ timeunits.help    = {['Indicate the time units on which the specification of the
     'beginning of the original recordings e. g. if data were trimmed.']};
 
 % Normalize
-norm         = cfg_menu;
-norm.name    = 'Normalize';
-norm.tag     = 'norm';
-norm.val     = {false};
-norm.labels  = {'No', 'Yes'};
-norm.values  = {false, true};
-norm.help    = {['Specify if you want to z-normalize the ', vars.modality, ' data for each subject. For within-subjects ' ...
+norm              = cfg_menu;
+norm.name         = 'Normalize';
+norm.tag          = 'norm';
+norm.val          = {false};
+norm.labels       = {'No', 'Yes'};
+norm.values       = {false, true};
+norm.help         = {['Specify if you want to z-normalize the ', vars.modality, ' data for each subject. For within-subjects ' ...
     'designs, this is highly recommended, but for between-subjects designs it needs to be set to "no". ']};
 
 % Channel
-chan_def         = cfg_const;
-chan_def.name    = 'Default';
-chan_def.tag     = 'chan_def';
-chan_def.val     = {0};
-chan_def.help    = {''};
+chan_def          = cfg_const;
+chan_def.name     = 'Default';
+chan_def.tag      = 'chan_def';
+chan_def.val      = {0};
+chan_def.help     = {''};
 
-chan_nr         = cfg_entry;
-chan_nr.name    = 'Number';
-chan_nr.tag     = 'chan_nr';
-chan_nr.strtype = 'i';
-chan_nr.num     = [1 1];
-chan_nr.help    = {''};
+chan_nr           = cfg_entry;
+chan_nr.name      = 'Number';
+chan_nr.tag       = 'chan_nr';
+chan_nr.strtype   = 'i';
+chan_nr.num       = [1 1];
+chan_nr.help      = {''};
 
-chan         = cfg_choice;
-chan.name    = [vars.modality, ' Channel'];
-chan.tag     = 'chan';
-chan.val     = {chan_def};
-chan.values  = {chan_def,chan_nr};
+chan              = cfg_choice;
+chan.name         = [vars.modality, ' Channel'];
+chan.tag          = 'chan';
+chan.val          = {chan_def};
+chan.values       = {chan_def,chan_nr};
 chan.help    = {['Indicate the channel containing the ', vars.modality, ' data.'], ['By default ' ...
     'the first ', vars.modality ,' channel is assumed to contain the data for this model.'], ...
     ['If the first ', vars.modality, ' channel does not contain the data for this', ...
     ' model (e. g. there are two ', vars.modality, ' channels), ' ...
     'indicate the the channel number (within the ', vars.modality, ...
     ' file) that contains the data for this model.']};
+
+%settings if Create Stats Exclude = yes
+excl_segment_length         = cfg_entry;
+excl_segment_length.name    = 'Segment length';
+excl_segment_length.tag     = 'segment_length';  
+excl_segment_length.strtype = 'i';
+excl_segment_length.num     = [1 1];
+excl_segment_length.help    = {['Specify the length of the segments.']};
+
+excl_cutoff         = cfg_entry;
+excl_cutoff.name    = 'Cutoff';
+excl_cutoff.tag     = 'cutoff';  
+excl_cutoff.strtype = 'r';
+excl_cutoff.num     = [1 1];
+excl_cutoff.help    = {['Specify the length of the segments.']};
+
+exclude_missing_yes      = cfg_branch;
+exclude_missing_yes.name = 'Settings for stats exclude';
+exclude_missing_yes.tag  = 'exclude_missing_yes';
+exclude_missing_yes.val  = {excl_segment_length,excl_cutoff};
+exclude_missing_yes.help = {'Need to define the segment length and a cutoff value to do the statistics.'};
+
+%settings if Create Stats Exclude = no
+excl_no                  = cfg_const;
+excl_no.name             = 'No';
+excl_no.tag              = 'excl_no';
+excl_no.val              = {'No'};
+excl_no.help             = {'No statistics created.'};
+
+%Create Stats Exclude 
+exclude_missing          = cfg_choice;
+exclude_missing.name     = 'Create Stats Exclude';
+exclude_missing.tag      = 'exclude_missing';
+exclude_missing.val      = {excl_no};
+exclude_missing.values   = {excl_no, exclude_missing_yes};
+exclude_missing.help   = {['Option to create statistics over the conditions.'],... 
+       ['The statistics contains the ratio of the NaN-values overall trials for each'], ...
+       ['condition and whether this ratio exceeds a cutoff value, i.e whether the'], ...
+       ['condition should be excluded for the evaluation.']};
 
 % Overwrite File
 overwrite         = cfg_menu;
@@ -559,7 +598,7 @@ glm       = cfg_exbranch;
 glm.name  = 'GLM';
 glm.tag   = 'glm';
 glm.val   = {modelfile, outdir, chan, timeunits, session_rep, latency, ...
-    bf, norm, filter, overwrite};
+    bf, norm, filter,exclude_missing, overwrite};
 %glm_scr.prog  = ;
 glm.vout  = @pspm_cfg_vout_glm;
 glm.help  = {...

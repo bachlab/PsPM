@@ -46,8 +46,8 @@ if isfield(job, 'mode')
             options.nan_output = 'screen';
         case 'nan_output_file'
             file_name = job.options.nan_output.nan_output_file.nan_file;
-            file_path = job.options.nan_output.nan_output_file.nan_path;
-            options.nan_output = filepath(file_path,file_path, file_name);
+            file_path = job.options.nan_output.nan_output_file.nan_path{1};
+            options.nan_output = fullfile(file_path, file_name);
     end
     
     % extract output

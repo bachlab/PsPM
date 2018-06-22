@@ -187,6 +187,7 @@ nan_output.name         = 'NaN-output';
 nan_output.tag          = 'nan_output';
 nan_output.val          = {nan_none};
 nan_output.values       = {nan_none, nan_screen, nan_output_file};
+nan_output.help         = {'Option to visulaize the percentages of NaN values of each trial and over all trials  per condition'};
 %% Options
 options                 = cfg_branch;
 options.name            = 'Options';
