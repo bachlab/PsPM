@@ -75,13 +75,18 @@ for sn = 1:numel(offsets)
     data{sn} = struct(); 
     data{sn}.record_date = record_date;
     data{sn}.record_time = record_time;
-       
+     
+    % convert to single cell array (one cell per line)
     sn_data = datastr(onsets(sn):offsets(sn), :);
+    str_data = cell(size(sn_data, 1), 1);
+    for iline = 1:size(str_data, 1)
+        str_data{iline} = sprintf('%s ', sn_data{iline,:});
+    end
+    % concatenate strings and replace/interpret dots with NaN values
+    str_data = strrep(str_data, ' . ', ' NaN ');
 
     % find data rows
     dataFields = find(~cellfun(@isempty, regexp(sn_data(:,1), '^[0-9]')));
-    % concatenate strings and replace/interpret dots with NaN values
-    str_data = strrep(join(sn_data(:,:)), ' . ', ' NaN ');
 
     % allocate
     datanum = NaN(size(sn_data,1), 7);

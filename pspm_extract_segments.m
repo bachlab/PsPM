@@ -126,7 +126,7 @@ if nargin >= 2
             else
                 glm = glm_file;
             end
-                        
+              
             if nargin == 3
                 options = varargin{3};
             else
