@@ -173,7 +173,7 @@ end;
 if ~isfield(options, 'marker_chan')
     options.marker_chan = repmat({-1}, numel(data_fn),1);
 elseif ~iscell(options.marker_chan)
-    options.marker_chan = {options.marker_chan};
+    options.marker_chan = repmat({options.marker_chan}, size(data_fn));
 end;
 
 % set default length
@@ -252,7 +252,9 @@ if options.plot
 end;
 
 %% get trial idx 
-all_onsets = cell2mat(multi(1).onsets);
+all_onsets = cell2mat(cellfun(@(x) ...
+    reshape(x, [min(size(x)), max(size(x))]), multi(1).onsets, ...
+    'un', 0));
 [sorted,s_idx] = sort(all_onsets);
 sorted_idx = arrayfun(@(x) find(x == sorted), all_onsets);
 start_idx = cumsum(cellfun(@(x) numel(x), multi(1).onsets));
