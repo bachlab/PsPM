@@ -134,6 +134,7 @@ if nargin >= 2
             end;
                         
             data_fn = glm.input.datafile;
+            n_file = numel(data_fn);
             timing = glm.input.timing;
             chan = repmat({glm.input.channel}, size(data_fn));
             options.timeunit = glm.input.timeunits;
@@ -231,11 +232,56 @@ end;
 
 % load timing
 [~, multi]  = pspm_get_timing('onsets', timing, options.timeunit);
-
-% set size of segments according to first entry of timing
+%% set size of segments according to first entry of timing
 n_sessions = numel(data_fn);
-% all sessions should have the same number of onsets (conditions)
-n_cond = numel(multi(1).names);
+
+%% not all sessions should have the same number of onsets (conditions)
+% create a new multi structure which contains all conditions and their
+% timings
+% prepare timing variables
+comb_onsets = {};
+comb_names = {};
+comb_durations = {};
+comb_sessions = {};
+comb_cond_nr = {};
+
+%get all different conditions names in multi 
+if ~isempty(multi)
+    for iSn = 1:n_file
+        for n = 1:numel(multi(iSn).names)
+            multi_onsets_n = multi(iSn).onsets{n};
+            length_m_o_n = max(size(multi_onsets_n));
+            multi_duration_n = multi(iSn).durations{n};
+            length_m_d_n = max(size(multi_duration_n));
+            
+            % look for index
+            name_idx = find(strcmpi(comb_names, multi(iSn).names(n)));
+            if numel(name_idx) > 1
+                warning(['Name was found multiple times, ', ...
+                    'will take first occurence.']);
+                name_idx = name_idx(1);
+            elseif numel(name_idx) == 0
+                % append
+                name_idx = numel(comb_names) + 1;
+            end
+            % add new condition name to list
+            if numel(comb_names) < name_idx
+                comb_names{name_idx} = multi(iSn).names{n};
+                comb_onsets{name_idx} = multi_onsets_n;
+                comb_durations{name_idx} = multi_duration_n;
+                comb_sessions{name_idx}(1:length_m_o_n) = iSn;
+                comb_cond_nr{name_idx}(1:length_m_o_n) = name_idx;
+            elseif numel(comb_names) >= name_idx && 0 < name_idx
+                comb_onsets{name_idx}(end+1:end+length_m_o_n) = multi_onsets_n;
+                comb_durations{name_idx}(end+1:end+length_m_d_n)= multi_duration_n;
+                comb_sessions{name_idx}(end+1:end+length_m_o_n) = iSn;
+                comb_cond_nr{name_idx}(end+1:end+length_m_o_n) = name_idx;
+            end
+        end
+    end
+end
+% number of conditions 
+n_cond = numel(comb_names);
 segments = cell(n_cond,1);
 
 if options.plot
@@ -252,16 +298,24 @@ if options.plot
 end;
 
 %% get trial idx 
-all_onsets = cell2mat(cellfun(@(x) ...
-    reshape(x, [min(size(x)), max(size(x))]), multi(1).onsets, ...
-    'un', 0));
-[sorted,s_idx] = sort(all_onsets);
-sorted_idx = arrayfun(@(x) find(x == sorted), all_onsets);
-start_idx = cumsum(cellfun(@(x) numel(x), multi(1).onsets));
-start_idx = [1 start_idx(1:end-1)+1];
-stop_idx = cumsum(cellfun(@(x) numel(x), multi(1).onsets));
+all_sessions = cell2mat(cellfun(@(x)reshape(x, [min(size(x)), max(size(x))]),comb_sessions,'un', 0));
+all_cond_nr =cell2mat(cellfun(@(x)reshape(x, [min(size(x)), max(size(x))]),comb_cond_nr,'un', 0));
+all_onsets  = cell2mat(cellfun(@(x)reshape(x, [min(size(x)), max(size(x))]),comb_onsets,'un', 0));
+all_dur = cell2mat(cellfun(@(x)reshape(x, [min(size(x)), max(size(x))]),comb_durations,'un', 0));
+all_sess_ons =[all_onsets' , all_sessions'];
+all_dur_cond = [all_dur', all_cond_nr'];
+%all_sess_ons_cond = [all_onsets' , all_sessions', all_cond_nr'];
+sorted_session = sortrows(all_sess_ons,[2 1]);
+
+sorted_idx(1:size(all_cond_nr,2)) = 0;
+for k = 1: size(all_cond_nr,2)
+    a = all_sess_ons(k,:);
+    b = find(all(a == sorted_session,2));
+    sorted_idx(k)= b;
+end
+all_sess_ons_cond_idx = [all_onsets' , all_sessions', all_cond_nr',sorted_idx'];
 for i=1:n_cond
-    segments{i}.trial_idx = sorted_idx(start_idx(i):stop_idx(i));
+    segments{i}.trial_idx = all_sess_ons_cond_idx(all_sess_ons_cond_idx(:,3) == i, 4);
 end
 
 
@@ -273,16 +327,26 @@ for n = 1:n_sessions
         % load marker channel
         [~, ~, marker{n}] = pspm_load_data(data_fn{n}, options.marker_chan{n});
     end;
-    for c = 1:n_cond
-        n_onsets = numel(multi(n).onsets{c});
-        for o = 1:n_onsets
+    cond_in_session = numel(multi(n).names);
+    for c = 1:cond_in_session
+         cond_idx = find(strcmpi(comb_names,multi(n).names{c}));
+         onsets_cond = all_sess_ons_cond_idx(all_sess_ons_cond_idx(:,3) == cond_idx , 1:2);
+         n_onsets = size(onsets_cond,1);
+         session_onsets = find(onsets_cond(:,2) == n);
+         n_session_onsets = numel(session_onsets);
+         durations_cond = all_dur_cond(all_dur_cond(:,2)==cond_idx ,1);
+         for o = 1:n_session_onsets
+             onset_index = session_onsets(o);
             % determine start 
-            start = multi(n).onsets{c}(o);
+            start = onsets_cond(onset_index);
             
             % determine segment length
             if options.length <= 0
                 try
-                    segment_length = multi(n).durations{c}(o);
+                    segment_length = durations_cond(onset_index);
+                    warning('ID:invalid_input', 'Cannot determine onset duration. Durations is set to 0.'); return;
+                    if segment_length==0
+                    end    
                 catch
                     warning('ID:invalid_input', 'Cannot determine onset duration.'); return;
                 end;
@@ -308,18 +372,19 @@ for n = 1:n_sessions
             start = max(1,round(start));
             stop = min(numel(data{n}{1}.data), round(stop));
             
-            if ~isfield(segments{c}, 'data')
-                segments{c}.data = NaN((stop-start), n_onsets*n_sessions);
+            if ~isfield(segments{cond_idx}, 'data')
+                segments{cond_idx}.data = NaN((stop-start),n_onsets);
             end;
-            segments{c}.data(1:(stop-start), (o+(n-1)*n_onsets)) = data{n}{1}.data(start:(stop-1));
+            segments{cond_idx}.data(1:(stop-start), onset_index) = ...
+                data{n}{1}.data(start:(stop-1));
         end;
     end;
 end;
 
+ %% create statistics for each condition 
 for c=1:n_cond
-    %% create statistics for each condition 
     m = segments{c}.data;
-    segments{c}.name = multi(1).names{c};
+    segments{c}.name = comb_names{c};
     % create mean
     segments{c}.mean = nanmean(m,2);
     
@@ -343,34 +408,37 @@ for c=1:n_cond
         set(p(2), 'Color', color);
         set(p(3), 'Color', color);
         
-        legend_lb{(c-1)*3 + 1} = [multi(1).names{c} ' AVG'];
-        legend_lb{(c-1)*3 + 2} = [multi(1).names{c} ' SEM+'];
-        legend_lb{(c-1)*3 + 3} = [multi(1).names{c} ' SEM-'];
+        legend_lb{(c-1)*3 + 1} = [comb_names{c} ' AVG'];
+        legend_lb{(c-1)*3 + 2} = [comb_names{c} ' SEM+'];
+        legend_lb{(c-1)*3 + 3} = [comb_names{c} ' SEM-'];
     end;
 end;
 
 %% nan_output 
 %count number of trials
-trials_nr_per_cond = cellfun(@(x) size(x.trial_idx,2),segments,'un',0);
+trials_nr_per_cond = cellfun(@(x) size(x.trial_idx',2),segments,'un',0);
 trials_nr = cell2mat(trials_nr_per_cond);
-trials_nr = sum(trials_nr);
+trials_nr_sum = sum(trials_nr);
 
 %create matix with values
-trials_nan(1:(trials_nr+1),1:n_cond) = NaN;
+trials_nan(1:(trials_nr_sum+1),1:n_cond) = NaN;
 for i=1:n_cond
-    nan_idx_length = size(segments{i}.trial_idx,2);
+     nan_idx_length = trials_nr(i);
+%    nan_idx_length = size(segments{i}.trial_idx,2);
     for j = 1:nan_idx_length
         nan_perc = segments{i}.trial_nan_percent(j);
         trials_nan(segments{i}.trial_idx(j),i) = nan_perc;
     end
-    trials_nan(trials_nr+1,i) = segments{i}.total_nan_percent;
+    trials_nan(trials_nr_sum+1,i) = segments{i}.total_nan_percent;
 end
 
 %define names of rows in table
-r_names = strsplit(num2str(1:trials_nr));
+r_names = strsplit(num2str(1:trials_nr_sum));
 r_names{end+1} = 'total';
+%valriable Names
+var_names = cellfun(@(x)regexprep(x, '[^a-zA-Z0-9]', '_'), comb_names, 'un',0);
 %create table with the right format
-trials_nan_output = array2table(trials_nan,'VariableNames', multi(1).names, 'RowNames', r_names');
+trials_nan_output = array2table(trials_nan,'VariableNames', var_names, 'RowNames', r_names');
 switch options.nan_output
     case 'screen'
         disp(trials_nan_output);
