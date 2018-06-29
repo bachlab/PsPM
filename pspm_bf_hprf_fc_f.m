@@ -33,8 +33,19 @@ if nargin < 2
 end;
 
 if nargin < 3
-    % former parameters [256389.754969900,0.00225906399760227,-574.596030378357,82.7785576729272]
-    p=[43.2180170215633,0.195621916215104,-6.9671,81.0383536117737];
+    % table 2 row 3 in Castegnetti et al. 2016
+    %p=[43.2180170215633,0.195621916215104,-6.9671,81.0383536117737];
+
+    % table 2 row 4 in Castegnetti et al. 2016
+    % col 3: -3.86 - 3.5 = -7.3600
+    p=[48.5, 0.182, -7.3600, 1];
+
+    % col 4 is different to the published parameter because here
+    % soa will be added later in the code therefore soa is subtracted 
+    % before
+
+    % amplitude does not matter because it will be downscaled to 1 by the
+    % calling function
 end;
 
 x0 = p(3);
