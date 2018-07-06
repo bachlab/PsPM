@@ -145,15 +145,16 @@ if nargin >= 2
             timing = model_strc.input.timing;
             chan = repmat({model_strc.input.channel}, size(data_fn));
             
-            
-            options.timeunit = glm.input.timeunits;
-            if strcmpi(options.timeunit, 'markers')
-                if isfield(glm.input.options, 'marker_chan_num')
-                    options.marker_chan = glm.input.options.marker_chan_num;
-                else
-                    warning('ID:invalid_input', ['''markers'' defined as ', ... 
-                        'timeunit, but cannot load the corresponding ', ...
-                        'marker channel information from the GLM input.']);
+            if strcmpi(model_strc.modeltype,'glm')
+                options.timeunit = model_strc.input.timeunits;
+                if strcmpi(options.timeunit, 'markers')
+                    if isfield(model_strc.input.options, 'marker_chan_num')
+                        options.marker_chan = model_strc.input.options.marker_chan_num;
+                    else
+                        warning('ID:invalid_input', ['''markers'' defined as ', ...
+                            'timeunit, but cannot load the corresponding ', ...
+                            'marker channel information from the GLM input.']);
+                    end;
                 end;
             end;
             
@@ -179,11 +180,13 @@ else
     options.timeunit = lower(options.timeunit);
 end;
 
-% set default marker_chan
-if ~isfield(options, 'marker_chan')
-    options.marker_chan = repmat({-1}, numel(data_fn),1);
-elseif ~iscell(options.marker_chan)
-    options.marker_chan = repmat({options.marker_chan}, size(data_fn));
+% set default marker_chan, if it is a glm struct 
+if strcmpi(model_strc.modeltype,'glm')
+    if ~isfield(options, 'marker_chan')
+        options.marker_chan = repmat({-1}, numel(data_fn),1);
+    elseif ~iscell(options.marker_chan)
+        options.marker_chan = repmat({options.marker_chan}, size(data_fn));
+    end;
 end;
 
 % set default length
@@ -231,20 +234,60 @@ elseif ~isnumeric(options.dont_ask_overwrite) && ~islogical(options.dont_ask_ove
     warning('ID:invalid_input', 'Options.dont_ask_overwrite has to be numeric or logical.'); return;
 elseif strcmpi(options.timeunit, 'markers') && ~all(size(data_fn) == size(options.marker_chan))
     warning('ID:invalid_input', '''data_fn'' and ''options.marker_chan'' do not have the same size.'); return;
-elseif any(cellfun(@(x) ~strcmpi(x, 'marker') && ~isnumeric(x), options.marker_chan))
-    warning('ID:invalid_input', 'Options.marker_chan has to be numeric or ''marker''.'); return;
-elseif strcmpi(options.timeunit, 'markers') ...
+elseif strcmpi(model_strc.modeltype,'glm')
+     if any(cellfun(@(x) ~strcmpi(x, 'marker') && ~isnumeric(x), options.marker_chan))
+       warning('ID:invalid_input', 'Options.marker_chan has to be numeric or ''marker''.'); return;
+     elseif strcmpi(options.timeunit, 'markers') ...
         && any(cellfun(@(x) isnumeric(x) && x <= 0, options.marker_chan))
     warning('ID:invalid_input', ['''markers'' specified as a timeunit but ', ...
         'no valid marker channel is defined.']); return;
+    end;
 end;
 
-% load timing
-[~, multi]  = pspm_get_timing('onsets', timing, options.timeunit);
 %% set size of segments according to first entry of timing
 n_sessions = numel(data_fn);
 
-%% not all sessions should have the same number of onsets (conditions)
+% load timing
+if strcmpi(model_strc.modeltype,'glm')
+    [~, multi]  = pspm_get_timing('onsets', timing, options.timeunit);
+else
+    % want to map the informations of dcm ito a multi
+    cond_names = unique(model_strc.trlnames);
+    if numel(cond_names)== numel(model_strc.trlnames)
+        cond_names = {'all_cond'};
+    end;
+    
+    
+    point=1;
+    for i= 1:n_sessions
+        nr_trials_in_sess = size(model_strc.input.trlstart{i},1);
+        if(numel(cond_names)>1)
+            multi(i).names = unique(model_strc.trlnames(point:point+nr_trials_in_sess-1,:))';
+          % we define the segment_length as min(intertrial-interval)+
+%                 % min(trialoffset - trialonset)
+%                 min_iti = min(model_strc.input.iti);
+%                 min_trl_interval = min(cell2mat(model_strc.input.trlstop) - (model_strc.input.trlstart));
+%                 segment_length = min_iti + min_trl_interval; 
+            for j=1: numel(cond_names)
+                idx_start = point;
+                idx_stop = point+nr_trials_in_sess-1;
+                cond_name = cond_names{j};
+                cond_idx = find(strcmpi(cond_name, multi(i).names));
+                idx_of_name = find(strcmpi(cond_name,model_strc.trlnames));
+                idx_of_name = idx_of_name(idx_start <= idx_of_name);
+                idx_of_name = idx_of_name(idx_stop >= idx_of_name)- point +1;
+                multi(i).onsets{cond_idx}= model_strc.input.trlstart{i}(idx_of_name);
+            end
+        else
+            multi(i).names = {'all_cond'};
+            multi(i).onsets = model_strc.input.trlstart{i};
+        end 
+        point= point+nr_trials_in_sess;
+    end;
+end;
+
+
+%% not all sessions have the same number of conditions
 % create a new multi structure which contains all conditions and their
 % timings
 % prepare timing variables
@@ -256,7 +299,7 @@ comb_cond_nr = {};
 
 %get all different conditions names in multi 
 if ~isempty(multi)
-    for iSn = 1:n_file
+    for iSn = 1:n_sessions
         for n = 1:numel(multi(iSn).names)
             multi_onsets_n = multi(iSn).onsets{n};
             length_m_o_n = max(size(multi_onsets_n));
@@ -350,17 +393,26 @@ for n = 1:n_sessions
             start = onsets_cond(onset_index);
             
             % determine segment length
+            % here we need to distinguish a glm struct from a dcm struct
+%             if strcmpi(model_strc.modeltype,'dcm')
+%                 % we define the segment_length as min(intertrial-interval)+
+%                 % min(trialoffset - trialonset)
+%                 min_iti = min(model_strc.input.iti);
+%                 min_trl_interval = min(cell2mat(model_strc.input.trlstop) - (model_strc.input.trlstart));
+%                 segment_length = min_iti + min_trl_interval;
+%             else
             if options.length <= 0
-                try
-                    segment_length = durations_cond(onset_index);
-                    warning('ID:invalid_input', 'Cannot determine onset duration. Durations is set to 0.'); return;
-                    if segment_length==0
-                    end    
-                catch
-                    warning('ID:invalid_input', 'Cannot determine onset duration.'); return;
+                    try
+                        segment_length = durations_cond(onset_index);
+                        if segment_length==0
+                            warning('ID:invalid_input', 'Cannot determine onset duration. Durations is set to 0.'); return;
+                        end
+                    catch
+                        warning('ID:invalid_input', 'Cannot determine onset duration.'); return;
+                    end;
+                else
+                    segment_length = options.length;
                 end;
-            else
-                segment_length = options.length;
             end;
             
             % ensure start and segment_length have the 'sample' format to 

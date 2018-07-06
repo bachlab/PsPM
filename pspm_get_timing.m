@@ -1,5 +1,5 @@
 function [sts, outtiming] = pspm_get_timing(model, intiming, vararg)
-% SCR_GET_TIMING is a shared function to read timing information from
+% PSPM_GET_TIMING is a shared function to read timing information from
 % different formats and align with a number of files. Time units (seconds,
 % samples, markers) are not changed. 
 %
