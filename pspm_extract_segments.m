@@ -1,7 +1,7 @@
 function [sts, out] = pspm_extract_segments(varargin)
 % Function in order to extract segments of a certain length after defined
-% onsets and create mean over segments in order to compare data within a
-% sigle recording.
+% onsets and create summary statistics (mean, SD, SEM, % NaN) over these 
+% segments 
 %
 % The function supports either manual setting of data files, channels,
 % timing and timeunits or automatic extraction from a glm model file.
@@ -52,12 +52,12 @@ function [sts, out] = pspm_extract_segments(varargin)
 %                           function to find the appropriate timing of the
 %                           specified marker ids. Must have the same format
 %                           as data_fn.
-%           nan_output:     This option defines wheather the user wants to
+%           nan_output:     This option defines whether the user wants to
 %                           output the NaN percentages. If so,  we values 
 %                           can be printed on the screen or written to a 
 %                           created file. Otherwise the option is set to'none'.
 %__________________________________________________________________________
-% PsPM 3.1
+% PsPM 4.2
 % (C) 2008-2016 Tobias Moser (University of Zurich)
 
 % $Id$
