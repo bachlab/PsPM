@@ -15,11 +15,13 @@ function [sts, out] = pspm_extract_segments(varargin)
 %   FORMAT:
 %       [sts, segments] = pspm_extract_segments('manual', data_fn, chan, timing, options)
 %       [sts, segments] = pspm_extract_segments('auto', glm, options)
+%       [sts, segments] = pspm_extract_segments('auto', dcm, options)
 %
 %   ARGUMENTS:
 %       mode:               Tells the function in which mode get the
 %                           settings from. Either 'manual' or 'auto'.
 %       glm:                Path to the glm file or a glm structure.
+%       dcm:                Path to the dcm file or a dcm structure.
 %       data_fn:            Path or cell of paths to data files from which
 %                           the segments should be extracted. Each file
 %                           will be treated as session. Onset values are
@@ -35,13 +37,16 @@ function [sts, out] = pspm_extract_segments(varargin)
 %       options:
 %           timeunit:       'seconds' (default), 'samples' or 'markers. In 'auto' 
 %                           mode the value will be ignored and taken from 
-%                           the glm model file.
+%                           the glm model file or the dcm model file.
 %           length:         Length of the segments in the 'timeunits'. 
-%                           If given always the same length is taken for 
-%                           segments. If not given lengths are take from 
-%                           the timing data. This argument is optional. If
+%                           If given the same length is taken for 
+%                           segments for glm structure. If not given lengths 
+%                           are take from the timing data. This argument is optional. If
 %                           'timeunit' equals 'markers' then 'length' is
 %                           expected to be in seconds.
+%                           For dcm structures the option length will be
+%                           ignored and length will be set from timing
+%                           data.
 %           plot:           If 1 mean values (solid) and standard error of
 %                           the mean (dashed) will be ploted. Default is 0.
 %           outputfile:     Define filename to store segments. If is equal
@@ -53,9 +58,11 @@ function [sts, out] = pspm_extract_segments(varargin)
 %                           specified marker ids. Must have the same format
 %                           as data_fn.
 %           nan_output:     This option defines whether the user wants to
-%                           output the NaN percentages. If so,  we values 
-%                           can be printed on the screen or written to a 
-%                           created file. Otherwise the option is set to'none'.
+%                           output the NaN ratios of the trials for each condition.
+%                           If so,  we values can be printed on the screen 
+%                           (on MATLAB command window) or written to a created file.
+%                           The field can be set to 'screen', 'File Output'or
+%                           'none'. 'none' is the default value. 
 %__________________________________________________________________________
 % PsPM 4.2
 % (C) 2008-2016 Tobias Moser (University of Zurich)
@@ -114,17 +121,17 @@ if nargin >= 2
 
         case 'auto'
             
-            glm_file = varargin{2};
+            struct_file = varargin{2};
             %case distinction on the type of the glm argument
             %if it is a path we need to load the glm structure into
             %function 
-            if ~isstruct(glm_file)
-                if ~ischar(glm_file) || ~exist(glm_file, 'file')
+            if ~isstruct(struct_file)
+                if ~ischar(struct_file) || ~exist(struct_file, 'file')
                     warning('ID:invalid_input', 'GLM file is not a string or does not exist.'); return;
                 end;
-                [~, glm, ~] = pspm_load1(glm_file, 'all');
+                [~, model_strc, ~] = pspm_load1(struct_file, 'all');
             else
-                glm = glm_file;
+                model_strc = struct_file;
             end
               
             if nargin == 3
@@ -133,10 +140,12 @@ if nargin >= 2
                 options = struct();
             end;
                         
-            data_fn = glm.input.datafile;
+            data_fn = model_strc.input.datafile;
             n_file = numel(data_fn);
-            timing = glm.input.timing;
-            chan = repmat({glm.input.channel}, size(data_fn));
+            timing = model_strc.input.timing;
+            chan = repmat({model_strc.input.channel}, size(data_fn));
+            
+            
             options.timeunit = glm.input.timeunits;
             if strcmpi(options.timeunit, 'markers')
                 if isfield(glm.input.options, 'marker_chan_num')
