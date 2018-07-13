@@ -1,5 +1,5 @@
 function [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, ...
-    height, options)
+    height, distance, options)
 % Allows to transfer gaze data from pixel to units. This facilitates the
 % use of pspm_find_valid_fixations() which needs data in unit values.
 %
@@ -14,11 +14,18 @@ function [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, ...
 %                               to pspm_load_data(). The will only work on
 %                               gaze-channels. Other channels specified will be
 %                               ignored.
-%   unit:                       length unit in which height and width are given
-%                               and to which the measurements should be
-%                               converted
-%   width:                      Width of the display window.
-%   height:                     Height of the display window.
+%   unit:                       unit  to which the measurements should be
+%                               converted. 
+%                               The value can contain any length unit or
+%                               'degree'. In this case the coesponding data
+%                               is firstly convertet into 'cm ' and
+%                               afterward the visual angle are computet.
+%   width:                      Width of the display window. Unit is 'cm'
+%                               if 'degree' is chosen, otherwise 'unit'. 
+%   height:                     Height of the display window. Unit is 'cm'
+%                               if 'degree' is chosen, otherwise 'unit'.
+%   distance:                   distance between eye and screen in length units.
+%                               Unit is 'cm' if 'degree' is chosen, otherwise 'unit'.
 %   options:                    Options struct
 %       channel_action:         'add', 'replace' new channels.
 %       
@@ -82,36 +89,56 @@ gaze_idx = cellfun(@(x) ~isempty(...
 
 gaze_chans = data(gaze_idx);
 n_chans = numel(gaze_chans);
+visual_angle_chan;
 
-% do conversion
+%diffenrentiate which units to which unit to convert 
+if strcmpi(unit,'degree')
+    %unit_out = unit;
+    unit_h_w_d = 'cm';
+else 
+    %unit_out = unit;
+    unit_h_w_d = unit;
+end;
+
+% do conversion for normal length units and for degree unit
 for c = 1:n_chans
     chan = gaze_chans{c};
     if strcmpi(chan.header.units, 'pixel')
-
+        
         % pick conversion factor according to channel type x / y coord
         if ~isempty(regexp(chan.header.chantype, 'gaze_x_', 'once'))
             fact = width;
         else
             fact = height;
-        end
-
+        end;
+        
         % convert according to range
         chan.data = (chan.data-chan.header.range(1)) ...
-            / diff(chan.header.range) * fact;
-
+            ./ diff(chan.header.range) * fact;
+        
         % convert range
         chan.header.range = (chan.header.range-chan.header.range(1)) ...
             ./ diff(chan.header.range) * fact;
-
-        chan.header.units = unit;
+        
+        chan.header.units = unit_h_w_d;
     else
         warning('ID:invalid_input', ['Not converting (%s) because ', ...
             'input data is not in pixel.'], chan.header.chantype);
-    end
-
-    % replace data 
+    end;
+    % replace data
     gaze_chans{c} = chan;
-end
+end;
+
+if strcmpi(unit,'degree')
+    for c = 1:n_chans
+        chan = gaze_chans{c};
+        if strcmpi(chan.header.units,unit_h_w_d);
+            [sts, chan] = pspm_compute_visual_angle(chan, distance,unit_h_w_d);
+        end;
+        % replace data
+        gaze_chans{c} = chan;
+    end;
+end;
 
 [lsts, outinfo] = pspm_write_channel(fn, gaze_chans, options.channel_action);
 if lsts ~= 1
