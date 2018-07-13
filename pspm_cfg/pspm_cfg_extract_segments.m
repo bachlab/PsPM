@@ -98,17 +98,20 @@ mode_manual.help        = {['Specify all the settings manually.']};
 
 %% GLM file
 glm_file                = cfg_files;
-glm_file.name           = 'GLM file';
+glm_file.name           = 'GLM or DCM file';
 glm_file.tag            = 'glm_file';
 glm_file.num            = [1 1];
-glm_file.help           = {['Choose GLM file to extract the required information.']};
+glm_file.help           = {['Choose GLM or DCM file to extract the required information.']};
 
 %% Automatic mode
 mode_automatic          = cfg_branch;
-mode_automatic.name     = 'Automatically read from GLM';
+mode_automatic.name     = 'Automatically read from GLM or DCM';
 mode_automatic.tag      = 'mode_automatic';
 mode_automatic.val      = {glm_file};
-mode_automatic.help     = {['Extracts all relevant information from a GLM file.']};
+mode_automatic.help     = {['Extracts all relevant information from a GLM or']...
+                           ['DCM file. To distinguish between conditions in a']...
+                           ['DCM, trialnames must be specified in the DCM definition ']...
+                           ['(before running it)']};
 
 %% Mode
 extract_mode            = cfg_choice;
