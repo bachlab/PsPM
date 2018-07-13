@@ -16,7 +16,7 @@ for i=1:numel(job.conversion)
     if isfield(job.conversion(i).mode, 'pixel2unit')
         width = job.conversion(i).mode.pixel2unit.width;
         height = job.conversion(i).mode.pixel2unit.height;
-        unit = job.conversion(i).mode.pixel2unit.length_unit;
+        unit = job.conversion(i).mode.pixel2unit.unit;
         pspm_convert_pixel2unit(fn, chan, unit, width, height, options);
     end
 end

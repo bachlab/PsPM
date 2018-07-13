@@ -43,7 +43,8 @@ width.name = 'Width';
 width.tag = 'width';
 width.strtype = 'r';
 width.num = [1 1];
-width.help = {['Width of the display window.']};
+width.help = {['Width of the display window. Unit is `cm` if `degree` is chosen, ',...
+                'otherwise `unit`.']};
 
 %% height
 height = cfg_entry;
@@ -51,25 +52,31 @@ height.name = 'Height';
 height.tag = 'height';
 height.strtype = 'r';
 height.num = [1 1];
-height.help = {['Height of the display window.']};
+height.help = {['Height of the display window. Unit is `cm` if `degree` is chosen, ',...
+                'otherwise `unit`.']};
 
-%% length unit
-length_unit         = cfg_menu;
-length_unit.name    = 'Length unit';
-length_unit.tag     = 'length_unit';
-length_unit.values  = {'mm', 'cm', 'm', 'inches'};
-length_unit.labels  = {'mm', 'cm', 'm', 'inches'};
-length_unit.val     = {'mm'};
-length_unit.help    = {['Unit in which height and width are set.']};
+%% unit
+unit         = cfg_menu;
+unit.name    = 'Unit';
+unit.tag     = 'unit';
+unit.values  = {'mm', 'cm', 'm', 'inches','degree'};
+unit.labels  = {'mm', 'cm', 'm', 'inches','degree'};
+unit.val     = {'mm'};
+unit.help    = {['Unit to which the measurements should be converted. ',...
+                     'The value can contain any length unit (mm, cm, inches, etc.) or `degree`. ',...
+                     'In this case the corresponding data is firstly converted',...
+                     ' into `cm` and afterwards the visual angles are computed for each data point.']};
 
 %% pixel2unit
 pixel2unit = cfg_branch;
 pixel2unit.name = 'Pixel to unit';
 pixel2unit.tag = 'pixel2unit';
-pixel2unit.val = {width, height, length_unit};
+pixel2unit.val = {width, height, unit};
 pixel2unit.help = {['Convert pupil gaze coordinates from ', ...
-    'pixel values to unit values. This is needed to validate ', ...
-    'fixations with degree visual angle.']};
+                   'pixel values to unit values. The unit values',... ,
+                   'can be normal length units or the unit `degree`. ',...
+                   'The normal length units are needed to validate ', ...
+                   'fixations with degree visual angle.']};
 
 %% Mode
 mode                = cfg_choice;
