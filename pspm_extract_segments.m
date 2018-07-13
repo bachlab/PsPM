@@ -261,13 +261,15 @@ else
     point=1;
     for i= 1:n_sessions
         nr_trials_in_sess = size(model_strc.input.trlstart{i},1);
+        
+        min_iti = min(model_strc.input.iti{i});
+        min_trl_interval = min(model_strc.input.trlstop{i} - model_strc.input.trlstart{i});
+        durations(1:nr_trials_in_sess) = min_iti + min_trl_interval;
+        
         if(numel(cond_names)>1)
-            multi(i).names = unique(model_strc.trlnames(point:point+nr_trials_in_sess-1,:))';
-          % we define the segment_length as min(intertrial-interval)+
-%                 % min(trialoffset - trialonset)
-%                 min_iti = min(model_strc.input.iti);
-%                 min_trl_interval = min(cell2mat(model_strc.input.trlstop) - (model_strc.input.trlstart));
-%                 segment_length = min_iti + min_trl_interval; 
+            multi(i).names = unique(model_strc.trlnames(point:point+nr_trials_in_sess-1))';
+            % we define the segment_length as min(intertrial-interval)+
+            % min(trialoffset - trialonset) 
             for j=1: numel(cond_names)
                 idx_start = point;
                 idx_stop = point+nr_trials_in_sess-1;
@@ -277,10 +279,12 @@ else
                 idx_of_name = idx_of_name(idx_start <= idx_of_name);
                 idx_of_name = idx_of_name(idx_stop >= idx_of_name)- point +1;
                 multi(i).onsets{cond_idx}= model_strc.input.trlstart{i}(idx_of_name);
+                multi(i).durations{cond_idx}= durations(1:numel(idx_of_name));
             end
         else
             multi(i).names = {'all_cond'};
             multi(i).onsets = model_strc.input.trlstart{i};
+            multi(1).durations{1} = durations;
         end 
         point= point+nr_trials_in_sess;
     end;
@@ -381,41 +385,32 @@ for n = 1:n_sessions
     end;
     cond_in_session = numel(multi(n).names);
     for c = 1:cond_in_session
-         cond_idx = find(strcmpi(comb_names,multi(n).names{c}));
-         onsets_cond = all_sess_ons_cond_idx(all_sess_ons_cond_idx(:,3) == cond_idx , 1:2);
-         n_onsets = size(onsets_cond,1);
-         session_onsets = find(onsets_cond(:,2) == n);
-         n_session_onsets = numel(session_onsets);
-         durations_cond = all_dur_cond(all_dur_cond(:,2)==cond_idx ,1);
-         for o = 1:n_session_onsets
-             onset_index = session_onsets(o);
-            % determine start 
+        cond_idx = find(strcmpi(comb_names,multi(n).names{c}));
+        onsets_cond = all_sess_ons_cond_idx(all_sess_ons_cond_idx(:,3) == cond_idx , 1:2);
+        n_onsets = size(onsets_cond,1);
+        session_onsets = find(onsets_cond(:,2) == n);
+        n_session_onsets = numel(session_onsets);
+        durations_cond = all_dur_cond(all_dur_cond(:,2)==cond_idx ,1);
+        for o = 1:n_session_onsets
+            onset_index = session_onsets(o);
+            % determine start
             start = onsets_cond(onset_index);
-            
-            % determine segment length
-            % here we need to distinguish a glm struct from a dcm struct
-%             if strcmpi(model_strc.modeltype,'dcm')
-%                 % we define the segment_length as min(intertrial-interval)+
-%                 % min(trialoffset - trialonset)
-%                 min_iti = min(model_strc.input.iti);
-%                 min_trl_interval = min(cell2mat(model_strc.input.trlstop) - (model_strc.input.trlstart));
-%                 segment_length = min_iti + min_trl_interval;
-%             else
+           
             if options.length <= 0
-                    try
-                        segment_length = durations_cond(onset_index);
-                        if segment_length==0
-                            warning('ID:invalid_input', 'Cannot determine onset duration. Durations is set to 0.'); return;
-                        end
-                    catch
-                        warning('ID:invalid_input', 'Cannot determine onset duration.'); return;
-                    end;
-                else
-                    segment_length = options.length;
+                try
+                    segment_length = durations_cond(onset_index);
+                    if segment_length==0
+                        warning('ID:invalid_input', 'Cannot determine onset duration. Durations is set to 0.'); return;
+                    end
+                catch
+                    warning('ID:invalid_input', 'Cannot determine onset duration.'); return;
                 end;
+            else
+                segment_length = options.length;
             end;
             
-            % ensure start and segment_length have the 'sample' format to 
+            
+            % ensure start and segment_length have the 'sample' format to
             % access on data
             switch options.timeunit
                 case 'seconds'
@@ -427,7 +422,7 @@ for n = 1:n_sessions
             end;
             
             % set stop
-            stop = start + segment_length;            
+            stop = start + segment_length;
             
             % ensure start and stop have the correct format
             start = max(1,round(start));
@@ -497,7 +492,9 @@ end
 r_names = strsplit(num2str(1:trials_nr_sum));
 r_names{end+1} = 'total';
 %valriable Names
-var_names = cellfun(@(x)regexprep(x, '[^a-zA-Z0-9]', '_'), comb_names, 'un',0);
+var_names = cellfun(@(x)regexprep( x, '[+]' , '_plus'), comb_names, 'un',0);
+var_names = cellfun(@(x)regexprep( x, '[-]' , '_minus'), var_names, 'un',0);
+var_names = cellfun(@(x)regexprep( x, '[^a-zA-Z0-9]' , '_'), var_names, 'un',0);
 %create table with the right format
 trials_nan_output = array2table(trials_nan,'VariableNames', var_names, 'RowNames', r_names');
 switch options.nan_output
