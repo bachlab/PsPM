@@ -1,23 +1,29 @@
 function [sts, outtiming] = pspm_get_timing(model, intiming, vararg)
 % PSPM_GET_TIMING is a shared function to read timing information from
 % different formats and align with a number of files. Time units (seconds,
-% samples, markers) are not changed. 
+% samples, markers) are not changed.
 %
 % FORMAT:
 % [sts, multi]  = pspm_get_timing('onsets', intiming, timeunits)
 % [sts, epochs] = pspm_get_timing('epochs', epochs, timeunits)
 % [sts, events] = pspm_get_timing('events', events)
-% 
+%
 % for recursive calls also:
 % [sts, epochs] = pspm_get_timing('file', filename)
-% 
+%
 % onsets: for defining event onsets for multiple conditions (e. g. GLM)
 %      intiming is - a multiple condition file name (single session) OR
 %                  - a cell array of multiple condition file names OR
-%                  - a struct (single session) with fields .names, .onsets, 
-%                       and (optional) .durations and .pmod  OR
+%                  - a struct (single session) with fields .names, .onsets,
+%                       and (optional) .durations, .pmod and .marker_cond .marker_cond_chan OR
+%                       If .marker_cond is set to one, then the onsets
+%                       should be set according to the values held in the
+%                       marker channel(id of channel), which is indicated
+%                       in .marker_cond_chan or the first marker channel
+%                       Otherwise .names and .onsets are used
 %                  - a cell array of struct
-%       if timeunits are 'samples' or 'markers', all onsets must be integer
+%
+%      if timeunits are 'samples' or 'markers', all onsets must be integer
 %
 % epochs: for defining data epochs (e. g. analysis of SF, missing epochs in GLM)
 %         epochs can be one of the following
@@ -38,7 +44,7 @@ function [sts, outtiming] = pspm_get_timing(model, intiming, vararg)
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2009-2015 Dominik R Bach (WTCN, UZH)
-% 
+%
 % $Id$
 % $Rev$
 
@@ -105,12 +111,12 @@ switch model
             end
         end
         
-% timing information for GLM (SPM style files with some slight variations)
-% -------------------------------------------------------------------------
+        % timing information for GLM (SPM style files with some slight variations)
+        % -------------------------------------------------------------------------
     case 'onsets'
         sts = -1;
         multi = [];
-        errmsg = 'Multiple condition information invalid: ';
+        errmsg = 'Multiple condition information invalid:';
         if ~iscell(intiming)
             tmp = intiming;
             clear intiming;
@@ -121,31 +127,62 @@ switch model
             % load regressor information from file if necessary --
             if ischar(intiming{iFile})
                 [sts, in] = pspm_get_timing('file', intiming{iFile});
+                %need to distinct if in comes from file or from manual
+                %struct 
+                in_from_file = 1;
                 if sts < 1, return; end
             elseif isstruct(intiming{iFile})
                 in = intiming{iFile};
+                in_from_file = 0;
             else
                 warning('The elements of intiming must be structs or filenames');
                 return;
             end
             
             % check regressor information --
+            if ~isfield(in, 'marker_cond')
+                in.marker_cond = 0;
             % check whether all fields are present and in correct format:
+            elseif ~isfield(in, 'marker_cond_chan')
+                in.marker_cond_chan = 0;
+            end
+            
+            % if falg to take the onsets from marker is set and the
+            % structure is loades from a file 
+            if  in.marker_cond ~= 0
+                if in_from_file
+                    if in.marker_cond_chan == 0
+                        marker_chan = find(cellfun(@(x) strcmpi('marker', x.header.chantype),in.data),1);
+                    else
+                        marker_chan = in.marker_cond_chan;
+                    end
+                    
+                    in.names = unique(in.data{marker_chan}.markerinfo.name);
+                    in.onsets = in.data{marker_chan}.markerinfo.values;
+                else
+                    warning('ID:invalid_input', ['To extract the onsets from'],...
+                        ['a marker channel, the input structure must be a file.']); return;
+                end
+                
+            end
+            
             if ~isfield(in, 'names') || ~isfield(in, 'onsets')
                 warning('%sNo names or onsets.', errmsg); return;
             end
+            
             if ~isfield(in, 'durations')
                 in.durations = num2cell(zeros(numel(in.names), 1));
             end
+            
             if ~iscell(in.names)||~iscell(in.onsets)
-                warning('%sNames and onsets need to be cell arrays', errmsg); 
+                warning('%sNames and onsets need to be cell arrays', errmsg);
                 return;
             end
             % check number of conditions:
             if numel(in.names)~=numel(in.onsets)
                 warning(['%sNumber of event names (%d) does ', ...
                     'not match the number of onsets (%d).'],...
-                    errmsg, numel(in.names), numel(in.onsets)); 
+                    errmsg, numel(in.names), numel(in.onsets));
                 return;
             elseif numel(in.names)~=numel(in.durations)
                 warning(['%sNumber of event names (%d) does not match ', ...
@@ -153,10 +190,11 @@ switch model
                     errmsg, numel(in.onsets),numel(in.durations));
                 return;
             end
+            
             % check number of events and non-allowed values per condition:
             for iCond = 1:numel(in.names)
                 if ~((isvector(in.onsets{iCond}) && ...
-                        isnumeric(in.onsets{iCond})) || ... 
+                        isnumeric(in.onsets{iCond})) || ...
                         (isempty(in.onsets{iCond}) && ...
                         ~strcmp('', in.onsets{iCond})))
                     warning('ID:no_numeric_vector', ...
@@ -177,14 +215,14 @@ switch model
                 end
                 if any(in.onsets{iCond}) < 0
                     warning(['%sCondition "%s" contains onset values ', ...
-                        'smaller than zero'], errmsg, in.names{iCond}); 
+                        'smaller than zero'], errmsg, in.names{iCond});
                     return;
                 end
                 if any(strcmpi(timeunits, {'samples', 'markers'})) && ...
                         any(in.onsets{iCond} ~= ceil(in.onsets{iCond}))
                     warning(['%sCondition "%s" contains non-integer ', ...
                         'onset values but is defined in %s'], ...
-                        errmsg, in.names{iCond}, timeunits); 
+                        errmsg, in.names{iCond}, timeunits);
                     return;
                 end
                 if strcmpi(timeunits, 'markers') && any(in.durations{iCond} ~= 0)
@@ -203,14 +241,14 @@ switch model
             if isfield(in, 'pmod')
                 % check consistency and add field
                 if ~isstruct(in.pmod)
-                    warning('%sPmod must be a struct variable.', errmsg); 
+                    warning('%sPmod must be a struct variable.', errmsg);
                     return;
                 elseif numel(in.pmod) > numel(in.names)
                     warning(['%sNumber of parametric modulators (%d) ', ...
                         'does not match the number of onsets (%d).'],...
                         errmsg, numel(in.pmod),numel(in.onsets)); return;
                 elseif ~isfield(in.pmod, 'param') || ~isfield(in.pmod, 'name')
-                    warning('%sFields are missing in pmod structure', errmsg); 
+                    warning('%sFields are missing in pmod structure', errmsg);
                     return;
                 elseif ~isfield(in.pmod, 'poly')
                     in.pmod(1).poly{1} = [];
@@ -261,7 +299,7 @@ switch model
         % clear local variables
         clear iParam iParamNew iCond iFile iPmod
         
-
+        
 % Epoch information for SF and GLM (model.missing)
 % ------------------------------------------------------------------------
     case 'epochs'
@@ -276,7 +314,7 @@ switch model
                 onsetsflag = 0;
                 if numel(onsets) == 2
                     if numel(onsets{1}) == numel(onsets{2})
-                        outtiming(:, 1) = onsets{1}; 
+                        outtiming(:, 1) = onsets{1};
                         outtiming(:, 2) = onsets{2};
                     else
                         filewarning = 1;
@@ -296,7 +334,7 @@ switch model
             outtiming = intiming;
         end
         
-        % check epoch information -- 
+        % check epoch information --
         if isnumeric(outtiming) && ismatrix(outtiming)
             if size(outtiming, 2) ~= 2
                 warning(['Epochs must be specified by a e x 2 vector', ...
@@ -312,11 +350,11 @@ switch model
             warning('ID:no_integers', ['Non-integer epoch definition when ', ...
                 'time units are ''%s'''], timeunits); return;
         end
-            
-
+        
+        
 % Event information for DCM
 % ------------------------------------------------------------------------
-    case('events')  
+    case('events')
         if ~iscell(intiming)
             % recursive call to retrieve file
             [sts, in] = pspm_get_timing('file', intiming);

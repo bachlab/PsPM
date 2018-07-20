@@ -89,7 +89,7 @@ gaze_idx = cellfun(@(x) ~isempty(...
 
 gaze_chans = data(gaze_idx);
 n_chans = numel(gaze_chans);
-visual_angle_chan;
+
 
 %diffenrentiate which units to which unit to convert 
 if strcmpi(unit,'degree')
