@@ -5,6 +5,7 @@ function [sts, outtiming] = pspm_get_timing(model, intiming, vararg)
 %
 % FORMAT:
 % [sts, multi]  = pspm_get_timing('onsets', intiming, timeunits)
+% [sts, events] = pspm_get_timing('markervalues', markerinfos, markervalues, names)
 % [sts, epochs] = pspm_get_timing('epochs', epochs, timeunits)
 % [sts, events] = pspm_get_timing('events', events)
 %
@@ -25,6 +26,15 @@ function [sts, outtiming] = pspm_get_timing(model, intiming, vararg)
 %
 %      if timeunits are 'samples' or 'markers', all onsets must be integer
 %
+% markervalues: for defining onsets for multiple conditions (e.g. GLM) from 
+%               entries in markerinfos:
+%               - markerinfos as loaded from a marker channel
+%               - if markervalues is a vector of numeric, it creates 
+%                 conditions from the entries in markerinfos.value
+%               - if markervalues is a cell array of char, it creates 
+%                 conditions from the entries in markerinfos.name
+%               - names: cell array of condition names
+%
 % epochs: for defining data epochs (e. g. analysis of SF, missing epochs in GLM)
 %         epochs can be one of the following
 %               - an SPM style onset file with two event types: onset &
@@ -41,6 +51,8 @@ function [sts, outtiming] = pspm_get_timing(model, intiming, vararg)
 %               - a cell array with multiple one and two column vectors for
 %                   fully flexible DCMs that must all have the same number of
 %                   rows
+%
+%               
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2009-2015 Dominik R Bach (WTCN, UZH)
@@ -299,6 +311,26 @@ switch model
         % clear local variables
         clear iParam iParamNew iCond iFile iPmod
         
+% create GLM file from markerinfo
+% ------------------------------------------------------------------------
+    % LAURE: PLEASE GENERATE INPUT CHECKS ABOVE
+    case 'markerinfo'
+        markerinfo = intiming;
+        markervalue = vararg{1};
+        nCond = numel(markervalue);
+        
+        intiming = struct('names', {names}, 'onsets', {cell(nCond, 1)});
+        
+        for iCond = 1:nCond        
+            if isnumeric(markervalue)
+                intiming.onsets{iCond} = find(markerinfo.value == markervalue(iCond));
+            elseif iscell(markervalue)
+                intiming.onsets{iCond} = find(strcmpi(markervalue{iCond}, markerinfo.name) == 1);
+            end
+            % LAURE: give screen output
+        end
+        
+        [sts, outtiming]  = pspm_get_timing('onsets', intiming, 'marker');
         
 % Epoch information for SF and GLM (model.missing)
 % ------------------------------------------------------------------------
