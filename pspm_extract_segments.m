@@ -118,6 +118,9 @@ if nargin >= 2
             if ~iscell(chan)
                 chan = {chan};
             end;
+            
+            % set flag to indicate 'manual'
+            manual_chosen =1;
 
         case 'auto'
             
@@ -158,6 +161,8 @@ if nargin >= 2
                 end;
             end;
             
+            manual_chosen =0;
+            
         otherwise
                 warning('ID:invalid_input', 'Unknown mode specified.'); return;
     end;
@@ -181,7 +186,7 @@ else
 end;
 
 % set default marker_chan, if it is a glm struct 
-if strcmpi(model_strc.modeltype,'glm')
+if  (manual_chosen ==1) || strcmpi(model_strc.modeltype,'glm')
     if ~isfield(options, 'marker_chan')
         options.marker_chan = repmat({-1}, numel(data_fn),1);
     elseif ~iscell(options.marker_chan)
@@ -234,7 +239,7 @@ elseif ~isnumeric(options.dont_ask_overwrite) && ~islogical(options.dont_ask_ove
     warning('ID:invalid_input', 'Options.dont_ask_overwrite has to be numeric or logical.'); return;
 elseif strcmpi(options.timeunit, 'markers') && ~all(size(data_fn) == size(options.marker_chan))
     warning('ID:invalid_input', '''data_fn'' and ''options.marker_chan'' do not have the same size.'); return;
-elseif strcmpi(model_strc.modeltype,'glm')
+elseif (manual_chosen ==1) ||  strcmpi(model_strc.modeltype,'glm')
      if any(cellfun(@(x) ~strcmpi(x, 'marker') && ~isnumeric(x), options.marker_chan))
        warning('ID:invalid_input', 'Options.marker_chan has to be numeric or ''marker''.'); return;
      elseif strcmpi(options.timeunit, 'markers') ...
@@ -248,7 +253,7 @@ end;
 n_sessions = numel(data_fn);
 
 % load timing
-if strcmpi(model_strc.modeltype,'glm')
+if (manual_chosen ==1) || strcmpi(model_strc.modeltype,'glm')
     [~, multi]  = pspm_get_timing('onsets', timing, options.timeunit);
 else
     % want to map the informations of dcm ito a multi
