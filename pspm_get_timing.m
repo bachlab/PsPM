@@ -1,4 +1,4 @@
-function [sts, outtiming] = pspm_get_timing(model, intiming, vararg)
+function [sts, outtiming] = pspm_get_timing(varargin)
 % PSPM_GET_TIMING is a shared function to read timing information from
 % different formats and align with a number of files. Time units (seconds,
 % samples, markers) are not changed.
@@ -34,6 +34,8 @@ function [sts, outtiming] = pspm_get_timing(model, intiming, vararg)
 %               - if markervalues is a cell array of char, it creates 
 %                 conditions from the entries in markerinfos.name
 %               - names: cell array of condition names
+%                 Be aware that conditions get the names in the order
+%                 indicated by names.
 %
 % epochs: for defining data epochs (e. g. analysis of SF, missing epochs in GLM)
 %         epochs can be one of the following
@@ -84,11 +86,15 @@ if nargin < 2
     warning('ID:invalid_input', 'No input. I don''t know what to do.');
     return;
 else
-    if ~ismember(model, {'onsets', 'epochs', 'events', 'file'})
-        warning('ID:invalid_input', 'Invalid input. I don''t know what to do.');
-        return;
-    end
+    model = varargin{1};
+    intiming = varargin{2};
 end
+
+if ~ismember(model, {'onsets', 'epochs', 'events','markervalues', 'file'})
+    warning('ID:invalid_input', 'Invalid input. I don''t know what to do.');
+    return;
+end
+
 
 
 switch model
@@ -96,7 +102,7 @@ switch model
         if nargin < 3
             warning('ID:invalid_input', 'Time units unspecified'); return;
         else
-            timeunits = vararg;
+            timeunits = varargin{3};
         end
 end
 
@@ -314,9 +320,22 @@ switch model
 % create GLM file from markerinfo
 % ------------------------------------------------------------------------
     % LAURE: PLEASE GENERATE INPUT CHECKS ABOVE
-    case 'markerinfo'
+    case 'markervalues'
+        
+        if nargin < 4
+            warning('ID:invalid_input', 'not enough arguments'); return;
+        end
+        
         markerinfo = intiming;
-        markervalue = vararg{1};
+        markervalue = varargin{3};
+        names = varargin{4};
+        
+        if ~isnumeric(markervalue) && ~iscell(markervalue)
+            warning('ID:invalid_input', 'markervalue must be of type numeric or cell array '); return;
+        elseif numel(names)~= numel(markervalue)
+            warning('ID:invalid_input', 'markervalue and names must have the same amount of elements.'); return;
+        end 
+        
         nCond = numel(markervalue);
         
         intiming = struct('names', {names}, 'onsets', {cell(nCond, 1)});
@@ -324,10 +343,15 @@ switch model
         for iCond = 1:nCond        
             if isnumeric(markervalue)
                 intiming.onsets{iCond} = find(markerinfo.value == markervalue(iCond));
+                marker_value = markervalue(iCond);
+                marker_value = int2str(marker_value);
             elseif iscell(markervalue)
                 intiming.onsets{iCond} = find(strcmpi(markervalue{iCond}, markerinfo.name) == 1);
+                marker_value = markervalue{iCond};
             end
-            % LAURE: give screen output
+            % give screen output: "n marker with value xx for condition xx found"
+            n_marker = numel (intiming.onsets{iCond});
+            fprintf('  %i markers with value %s for condition %s found. \n',n_marker, marker_value,names{iCond});
         end
         
         [sts, outtiming]  = pspm_get_timing('onsets', intiming, 'marker');

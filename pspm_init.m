@@ -873,14 +873,14 @@ defaults.glm(9) = ... % GLM for SEB (fear-conditioning)
     'direction', 'uni'), ...
     'default', 1);
 
-% defaults.glm(10) = ... % GLM for XXX
-%     struct('modality', 'hp', ...                               % modality name
-%     'modelspec', 'hp_f', ...                                  % modality name
-%     'cbf', struct('fhandle', @pspm_bf_hprf_f, 'args', 1), ...  % default basis function/set
-%     'filter', struct('lpfreq', NaN, 'lporder', NaN,  ...        % default filter settings
-%     'hpfreq', NaN, 'hporder', NaN, 'down', 1000, ...
-%     'direction', 'uni'), ...
-%     'default', 1);
+defaults.glm(10) = ... % GLM for Scanpath-speed
+    struct('modality', 'sps', ...                               % modality name
+    'modelspec', 'sps', ...                                  % modality name
+    'cbf', struct('fhandle', @pspm_bf_spsrf_box, 'args', 1), ...  % default basis function/set
+    'filter', struct('lpfreq', NaN, 'lporder', NaN,  ...        % default filter settings
+    'hpfreq', NaN, 'hporder', NaN, 'down', 1000, ...
+    'direction', 'uni'), ...
+    'default', 1);
 
 % -------------------------------------------------------------------------
 %  DCM settings
