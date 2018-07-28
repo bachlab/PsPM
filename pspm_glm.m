@@ -65,10 +65,12 @@ function glm = pspm_glm(model, options)
 % options.overwrite: overwrite existing model output; default 0
 % options.marker_chan_num: marker channel number; default first marker
 %                          channel
-% options.exclude_missing: used to exclude evaluations, which do not hold
-%                          certain conditions.
-%                          This field can contains two values, if it is set:
-%                          'segment_length' and 'cutoff'  
+% options.exclude_missing: marks trials during which NaN percentage exceeds
+%                          a cutoff value. Requires two subfields: 
+%                          'segment_length' (in s after onset) and 'cutoff'
+%                          (in % NaN per segment). Results are written into
+%                          model structure as fields .stats_missing and 
+%                           .stats_exclude but not used further.
 %                           
 %
 % TIMING - multiple condition file(s) or struct variable(s):
@@ -110,22 +112,22 @@ function glm = pspm_glm(model, options)
 % rapid event-related skin conductance responses. Journal of Neuroscience
 % Methods, 184, 224-234.
 %
-% (2) Canonical response function, and GLM assumptions for SCR:
+% (2) SCR: Canonical response function, and GLM assumptions:
 % Bach DR, Flandin G, Friston KJ, Dolan RJ (2010). Modelling event-related
 % skin conductance responses. International Journal of Psychophysiology,
 % 75, 349-356.
 %
-% (3) Fine-tuning of filters and response functions:
+% (3) Fine-tuning of SCR CLM:
 % Bach DR, Friston KJ, Dolan RJ (2013). An improved algorithm for
 % model-based analysis of evoked skin conductance responses. Biological
 % Psychology, 94, 490-497.
 %
-% (4) Further validation and comparison with Ledalab:
+% (4) SCR GLM validation and comparison with Ledalab:
 % Bach DR (2014).  A head-to-head comparison of SCRalyze and Ledalab, two
 % model-based methods for skin conductance analysis. Biological Psychology,
 % 103, 63-88.
 %
-% (5) Khemka S, Tzovara A, Gerster S, Quednow B and Bach DR (2016) 
+% (5) SEBR GLM: Khemka S, Tzovara A, Gerster S, Quednow B and Bach DR (2017) 
 % Modeling Startle Eyeblink Electromyogram to Assess 
 % Fear Learning. Psychophysiology
 %__________________________________________________________________________
@@ -321,7 +323,7 @@ try
     % bf_x contains the timestamps
     [model.bf.X, bf_x] = feval(model.bf.fhandle, [td; model.bf.args(:)]);
     if strcmpi(model.latency, 'free') && size(model.bf.X,2) > 1
-        warning('ID:invalid_input', ['With latency ''free'' multitple response ', ...
+        warning('ID:invalid_input', ['With latency ''free'' multiple response ', ...
             'functions are not allowed.']); return;
     end
 catch

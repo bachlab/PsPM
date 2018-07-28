@@ -864,10 +864,10 @@ defaults.glm(8) = ... % GLM for RFR (evoked)
     'direction', 'uni'), ...
     'default', 0);
 
-defaults.glm(9) = ... % GLM for SEB (fear-conditioning)
+defaults.glm(9) = ... % GLM for SEBR (fear-conditioning)
     struct('modality', 'emg_pp', ...                               % modality name
     'modelspec', 'sebr', ...                                  % modality name
-    'cbf', struct('fhandle', @pspm_bf_sebrf, 'args', 1), ...  % default basis function/set
+    'cbf', struct('fhandle', @pspm_bf_sebrf, 'args', 0), ...  % default basis function/set
     'filter', struct('lpfreq', NaN, 'lporder', NaN,  ...        % default filter settings
     'hpfreq', NaN, 'hporder', NaN, 'down', 1000, ...
     'direction', 'uni'), ...
