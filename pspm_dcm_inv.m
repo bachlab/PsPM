@@ -25,6 +25,8 @@ function dcm = pspm_dcm_inv(model, options)
 % model.norm:       normalise data; default 0 (i. e. data are normalised
 %                   during inversion but results transformed back into raw 
 %                   data units)
+% model.constrained: constrained model for flexible responses which have 
+%                   have fixed dispersion (0.3 s SD) but flexible latency
 %
 % OPTIONS with optional fields
 %
@@ -107,6 +109,7 @@ try model.trlstart; catch, warning('Trial starts not defined.'); return; end;
 try model.trlstop; catch, warning('Trial ends not defined.'); return; end;
 try model.iti; catch, warning('ITIs not defined.'); return; end;
 try model.norm; catch, model.norm = 0; end;
+try model.constrained; catch, model.constrained = 0; end
 try options.eSCR; catch, options.eSCR = 0; end;
 try options.aSCR; catch, options.aSCR = 0; end;
 try options.meanSCR; catch, options.meanSCR = 0; end;
@@ -129,6 +132,7 @@ try invopt.GnFigs = options.dispsmallwin; catch, invopt.GnFigs = 0; end;
 sftheta = pspm_sf_theta;
 sf_unit = 1./exp(sftheta(5));
 sftheta = sftheta(1:3);
+fixedSD = 0.3;
 
 % CRF priors generated on 27.04.2010 --
 % numeric values given in log(parameter space) such that these 
@@ -172,7 +176,11 @@ eSCRno = size(model.events{2}{1}, 2);
 
 % aSCR priors --
 prior.aTheta.m = zeros(1, aSCRno);
-prior.aTheta.s = zeros(1, aSCRno);
+if model.constrained
+    prior.aTheta.s = 100 * ones(1, aSCRno);
+else
+    prior.aTheta.s = zeros(1, aSCRno);
+end
 prior.aTheta.a = log(0.25) * ones(1, aSCRno);
 
 % shorten variable names --
@@ -278,7 +286,7 @@ if numel(options.eSCR) > 1
     for k = 1:numel(observed)  % default priors on noise covariance
         priors.iQy{k} = 1;
         priors.iQx{k} = eye(dim.n);
-    end;
+    end
     invopt.priors = priors;
     % estimate
     [post, out] = VBA_NLStateSpaceModel(observed(:)',u,f_fname,g_fname,dim,invopt);
@@ -369,7 +377,11 @@ if (numel(options.meanSCR) > 1) && (~options.getrf)
     for k = 1:aSCRno
         u(5 + k, :)                 = options.flexevents(k, 1);
         u(5 + aSCRno + k, :)        = options.flexevents(k, 2);            % aSCR mean upper bound
-        u(5 + 2 * aSCRno + k, :)    = diff(options.flexevents(k, :))/2;    % aSCR SD upper bound
+        if model.constrained
+            u(5 + 2 * aSCRno + k, :)    = fixedSD - settings.dcm{1}.sigma_offset;    % aSCR SD upper bound
+        else            
+            u(5 + 2 * aSCRno + k, :)    = diff(options.flexevents(k, :))/2 - settings.dcm{1}.sigma_offset;    % aSCR SD upper bound
+        end
     end;
     for k = 1:eSCRno
         u(5 + 3 * aSCRno + k, :)    = options.fixevents(k);                % eSCR onset
@@ -382,7 +394,13 @@ if (numel(options.meanSCR) > 1) && (~options.getrf)
     priors.SigmaTheta = eye(dim.n_theta);
     
     % output function parameters are now fixed
-    for n = 1:theta_n, priors.SigmaTheta(n, n) = 0; end;
+    for n = 1:theta_n, priors.SigmaTheta(n, n) = 0; end
+    
+    % if model constrained, flexible response dispersion is fixed
+    if model.constrained
+        aSCRindx = theta_n + 3 * ((1:aSCRno) - 1) + 2;
+        for n = 1:theta_n, priors.SigmaTheta(n, n) = 0; end
+    end
     
     priors.SigmaX0 = zeros(dim.n);
     priors.SigmaX0(1:3,1:3) = eye(3);
@@ -566,8 +584,12 @@ if ~options.getrf
                 foo(aSCR_dummy == 1) = 0.1;
                 u(5 + u(2, 1) + (1:u(2, 1)), :) = repmat(foo(:), 1, size(u, 2));
                 aSCR_ln(1:aSCRno, trl) = foo(:, 1); % save first trial for transformation of parameter values into seconds
-                % - get aSCR SD upper bound (zero for dummy events)
-                u(5 + 2 * u(2, 1) + (1:u(2, 1)), :) = repmat(foo(:)/2, 1, size(u, 2)) - settings.dcm{1}.sigma_offset;
+                % - get aSCR SD upper bound (zero for dummy events, fixed SD for constrained models)
+                if model.constrained
+                    u(5 + 2 * u(2, 1) + (1:u(2, 1)), :) = repmat(fixedSD, numel(foo), size(u, 2)) - settings.dcm{1}.sigma_offset;
+                else
+                    u(5 + 2 * u(2, 1) + (1:u(2, 1)), :) = repmat(foo(:)/2, 1, size(u, 2)) - settings.dcm{1}.sigma_offset;
+                end
                 % tidy up
                 clear aSCR_on foo aSCR_dummy
             else
@@ -696,9 +718,17 @@ if ~options.getrf
             % allow no uncertainty for previous SCL change
             if trl > 1
                 priors.SigmaTheta((end-1):end, (end-1):end) = zeros(2);
-            end;
+            end
             % allow no uncertainty for dummy events
             for n = [aSCR_dummyind eSCR_dummyind], priors.SigmaTheta(n, n) = 0; end;
+            % allow no uncertainty for aSCR dispersion of model is
+            % constrained
+            if model.constrained                                     
+                 aSCR_ind = theta_n  + (1:3:(3 * aSCRno * adepth)) + 1;  
+                 for n = aSCR_ind                                                
+                     priors.SigmaTheta(n, n) = 0;                       
+                 end                        
+            end  
             % set u0
             u(:, 1) = 0;
             % initialise priors in correct dimensions
@@ -774,7 +804,11 @@ if ~options.getrf
             for k = 1:aSCRno
                 sig.G0 = aSCR_ln(k, trl);
                 aTheta(trl).m(k) = sigm(aTheta(trl).m(k), sig);
-                sig.G0 = aSCR_ln(k, trl)/2 - settings.dcm{1}.sigma_offset;
+                if model.constrained
+                    sig.G0 = fixedSD - settings.dcm{1}.sigma_offset;
+                else
+                    sig.G0 = aSCR_ln(k, trl)/2 - settings.dcm{1}.sigma_offset;
+                end
                 aTheta(trl).s(k) = sigm(aTheta(trl).s(k), sig) + settings.dcm{1}.sigma_offset;
             end;
             aTheta(trl).a = newzfactor .* exp(aTheta(trl).a) ./ eSCR_unit;
@@ -803,7 +837,7 @@ if ~options.getrf
         
         % tidy up
         clear sig
-        
+
         % assemble results
         % =======================================================================
         if isfield(output, 'options')

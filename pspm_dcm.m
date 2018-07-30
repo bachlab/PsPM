@@ -42,6 +42,8 @@ function dcm = pspm_dcm(model, options)
 % model.norm:       normalise data; default 0 (i. e. data are normalised
 %                   during inversion but results transformed back into raw 
 %                   data units)
+% model.constrained: constrained model for flexible responses which have 
+%                   have fixed dispersion (0.3 s SD) but flexible latency
 %
 % OPTIONS with optional fields:
 % response function options
@@ -160,6 +162,13 @@ elseif ~any(ismember(model.norm, [0, 1]))
     warning('ID:invalid_input', 'Normalisation must be specified as 0 or 1.'); return; 
 end
 
+% check constrained model --
+if ~isfield(model, 'constrained')
+    model.constrained = 0;
+elseif ~any(ismember(model.constrained, [0, 1]))
+    warning('ID:invalid_input', 'Constrained model must be specified as 0 or 1.'); return; 
+end
+
 % check substhresh --
 if ~isfield(model, 'substhresh')
     model.substhresh = 2;
@@ -195,8 +204,8 @@ try options.sfpre; catch, options.sfpre = 2; end
 try options.sffreq; catch, options.sffreq = 0.5; end
 try options.method; catch, options.method = 'dcm'; end
 try options.dispwin; catch, options.dispwin = 1; end
-try options.crfupdate; catch, options.crfupdate = 1; end
 try options.dispsmallwin; catch, options.dispsmallwin = 0; end
+try options.crfupdate; catch, options.crfupdate = 0; end
 try options.eventnames; catch, options.eventnames = {}; end
 try options.trlnames; catch, options.trlnames = {}; end
 
