@@ -34,8 +34,8 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %               - if markervalues is a cell array of char, it creates 
 %                 conditions from the entries in markerinfos.name
 %               - names: cell array of condition names
-%                 Be aware that conditions get the names in the order
-%                 indicated by names.
+%                 The order of conditions in 'names' and 'markervalues'
+%                 must match
 %
 % epochs: for defining data epochs (e. g. analysis of SF, missing epochs in GLM)
 %         epochs can be one of the following
@@ -319,7 +319,6 @@ switch model
         
 % create GLM file from markerinfo
 % ------------------------------------------------------------------------
-    % LAURE: PLEASE GENERATE INPUT CHECKS ABOVE
     case 'markervalues'
         
         if nargin < 4
