@@ -5,7 +5,7 @@ function [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, ...
 %
 % Usage:
 %   [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, height, options)
-%       
+%
 % Arguments:
 %
 %   fn:                         File to convert.
@@ -13,25 +13,25 @@ function [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, ...
 %                               be done. Supports all values which can be passed
 %                               to pspm_load_data(). The will only work on
 %                               gaze-channels. Other channels specified will be
-%                               ignored.
+%                               ignored.(For conversion into 'degree' there must be the same amount for gane_x channels as gaze_y channels)
 %   unit:                       unit  to which the measurements should be
-%                               converted. 
+%                               converted.
 %                               The value can contain any length unit or
 %                               'degree'. In this case the corresponding data
 %                               is firstly convertet into 'cm' and
 %                               afterwards the visual angles are computed.
-%   width:                      Width of the display window. Unit is 'cm'
-%                               if 'degree' is chosen, otherwise 'unit'. 
-%   height:                     Height of the display window. Unit is 'cm'
+%   width:                      Width of the display window. Unit is 'mm'
+%                               if 'degree' is chosen, otherwise 'unit'.
+%   height:                     Height of the display window. Unit is 'mm'
 %                               if 'degree' is chosen, otherwise 'unit'.
 %   distance:                   distance between eye and screen in length units.
-%                               Unit is 'cm' if 'degree' is chosen, otherwise 'unit'.
+%                               Unit is mm' if 'degree' is chosen, otherwise 'unit'.
 %   options:                    Options struct
 %       channel_action:         'add', 'replace' new channels.
-%       
+%
 % Return values:
 %
-%   sts:                        Status determining whether the execution was 
+%   sts:                        Status determining whether the execution was
 %                               successfull (sts == 1) or not (sts == -1)
 %   out:                        Output struct
 %       .channel                Id of the added channels.
@@ -52,17 +52,15 @@ if nargin < 4
 end
 
 % try to set default values
-if ~exist('options', 'var')
+if ~isstruct('options')
     options = struct();
-end
-
-if ~isfield(options, 'channel_action') 
+elseif ~isfield(options, 'channel_action')
     options.channel_action = 'add';
 end
 
 
 % do value checks
-if ~isstruct(options) 
+if ~isstruct(options)
     warning('ID:invalid_input', 'Options must be a struct.');
     return;
 elseif ~isnumeric(width)
@@ -74,11 +72,21 @@ elseif ~isnumeric(height)
 elseif ~ischar(unit)
     warning('ID:invalid_input', 'Unit must be a char.');
     return;
+elseif ~isnumeric(chan)
+    warning('ID:invalid_input', 'Channels must be indicated by their ID nummber.');
+    return;
 end
 
+% number of channels given must be even or 0 if unit 'degree' is given
+if strcmpi(unit,'degree')
+    if mod(numel(chan),2)~=0 && chan~=0
+        warning('ID:invalid_input', 'Need an even number of channels or the value 0 to convert to degrees');
+        return;
+    end
+end
 % load data to convert
 [lsts, ~, data] = pspm_load_data(fn, chan);
-if lsts ~= 1 
+if lsts ~= 1
     warning('ID:invalid_input', 'Could not load input data correctly.');
     return;
 end
@@ -91,11 +99,11 @@ gaze_chans = data(gaze_idx);
 n_chans = numel(gaze_chans);
 
 
-%diffenrentiate which units to which unit to convert 
+%diffenrentiate which units to which unit to convert
 if strcmpi(unit,'degree')
     %unit_out = unit;
-    unit_h_w_d = 'cm';
-else 
+    unit_h_w_d = 'mm';
+else
     %unit_out = unit;
     unit_h_w_d = unit;
 end;
@@ -127,17 +135,7 @@ for c = 1:n_chans
     end;
     % replace data
     gaze_chans{c} = chan;
-end;
-
-if strcmpi(unit,'degree')
-    for c = 1:n_chans
-        chan = gaze_chans{c};
-        if strcmpi(chan.header.units,unit_h_w_d);
-            [sts, chan] = pspm_compute_visual_angle(chan, distance,unit_h_w_d);
-        end;
-        % replace data
-        gaze_chans{c} = chan;
-    end;
+    
 end;
 
 [lsts, outinfo] = pspm_write_channel(fn, gaze_chans, options.channel_action);
@@ -145,6 +143,11 @@ if lsts ~= 1
     warning('ID:invalid_input', 'Could not write converted data.');
     return;
 end
+
+if strcmpi(unit,'degree')
+    [lsts, outinfo] = pspm_compute_visual_angle(fn,chan,width, heigth, distance,unit_h_w_d,options.channel_action);
+end;
+
 
 sts = 1;
 out = outinfo;

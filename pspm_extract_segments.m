@@ -222,6 +222,11 @@ end;
 %set default ouput_nan
 if ~isfield(options, 'nan_output')
     options.nan_output = 'none';
+elseif strcmpi( options.nan_output,'')
+        [path, name, ext ]= fileparts(options.nan_output);
+            if 7 ~= exist(path, 'dir')
+                 warning('ID:invalid_input', 'Path for nan_output does not exist'); return;
+            end
 end
 
 % check mutual arguments (options)   
@@ -475,53 +480,52 @@ for c=1:n_cond
     end;
 end;
 
-%% nan_output 
-%count number of trials
-trials_nr_per_cond = cellfun(@(x) size(x.trial_idx',2),segments,'un',0);
-trials_nr = cell2mat(trials_nr_per_cond);
-trials_nr_sum = sum(trials_nr);
-
-%create matix with values
-trials_nan(1:(trials_nr_sum+1),1:n_cond) = NaN;
-for i=1:n_cond
-     nan_idx_length = trials_nr(i);
-%    nan_idx_length = size(segments{i}.trial_idx,2);
-    for j = 1:nan_idx_length
-        nan_perc = segments{i}.trial_nan_percent(j);
-        trials_nan(segments{i}.trial_idx(j),i) = nan_perc;
+%% nan_output
+if ~strcmpi(options.nan_output,'none')
+    %count number of trials
+    trials_nr_per_cond = cellfun(@(x) size(x.trial_idx',2),segments,'un',0);
+    trials_nr = cell2mat(trials_nr_per_cond);
+    trials_nr_sum = sum(trials_nr);
+    
+    %create matix with values
+    trials_nan(1:(trials_nr_sum+1),1:n_cond) = NaN;
+    for i=1:n_cond
+        nan_idx_length = trials_nr(i);
+        %    nan_idx_length = size(segments{i}.trial_idx,2);
+        for j = 1:nan_idx_length
+            nan_perc = segments{i}.trial_nan_percent(j);
+            trials_nan(segments{i}.trial_idx(j),i) = nan_perc;
+        end
+        trials_nan(trials_nr_sum+1,i) = segments{i}.total_nan_percent;
     end
-    trials_nan(trials_nr_sum+1,i) = segments{i}.total_nan_percent;
-end
-
-%define names of rows in table
-r_names = strsplit(num2str(1:trials_nr_sum));
-r_names{end+1} = 'total';
-%valriable Names
-var_names = cellfun(@(x)regexprep( x, '[+]' , '_plus'), comb_names, 'un',0);
-var_names = cellfun(@(x)regexprep( x, '[-]' , '_minus'), var_names, 'un',0);
-var_names = cellfun(@(x)regexprep( x, '[^a-zA-Z0-9]' , '_'), var_names, 'un',0);
-%create table with the right format
-trials_nan_output = array2table(trials_nan,'VariableNames', var_names, 'RowNames', r_names');
-switch options.nan_output
-    case 'screen'
-        disp(trials_nan_output);
-    case 'none'
-    otherwise
-        %print Nan-Value in file
-        %expect the path to file in options.nan_output
-        %find information about file  
-        [path, name, ext ]= fileparts(options.nan_output);
-        if 7 == exist(path, 'dir')
+    
+    %define names of rows in table
+    r_names = strsplit(num2str(1:trials_nr_sum));
+    r_names{end+1} = 'total';
+    %valriable Names
+    var_names = cellfun(@(x)regexprep( x, '[+]' , '_plus'), comb_names, 'un',0);
+    var_names = cellfun(@(x)regexprep( x, '[-]' , '_minus'), var_names, 'un',0);
+    var_names = cellfun(@(x)regexprep( x, '[^a-zA-Z0-9]' , '_'), var_names, 'un',0);
+    %create table with the right format
+    trials_nan_output = array2table(trials_nan,'VariableNames', var_names, 'RowNames', r_names');
+    switch options.nan_output
+        case 'screen'
+            disp(trials_nan_output);
+        case 'none'
+        otherwise
+            %print Nan-Value in file
+            %expect the path to file in options.nan_output
+            %find information about file
+            [path, name, ext ]= fileparts(options.nan_output);
+            
             %if the file already exists, we overwrite the file with the
             %data. Otherwise we create a new file and save the data
             new_file_base = sprintf('%s.csv', name);
             output_file = fullfile(path,new_file_base);
             writetable(trials_nan_output, output_file,'WriteRowNames', true ,'Delimiter', '\t');
-        else
-            warning('ID:invalid_input', 'Path does not exist'); return;
-        end 
+            
+    end
 end
-
 %%
 
 out.segments = segments;

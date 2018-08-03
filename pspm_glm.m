@@ -13,8 +13,11 @@ function glm = pspm_glm(model, options)
 %                   a cell array of multiple condition file names OR
 %                   a struct (single session) with fields .names, .onsets,
 %                       and (optional) .durations and .pmod  OR
+%                   a cell array of struct OR
+%                   a struct with fields 'markerinfos', 'markervalues,
+%                   'names' OR
 %                   a cell array of struct
-% model.timeunits:  one of 'seconds', 'samples', 'markers'
+% model.timeunits:  one of 'seconds', 'samples', 'markers', 'markervalues'
 % model.window:     a scalar in seconds that specifies over which time 
 %                   window (starting with the events specified in
 %                   model.timing) the model should be evaluated. Is only
@@ -192,7 +195,7 @@ elseif ~ischar(model.modelfile)
     warning('ID:invalid_input', 'Output model must be a string.'); return;
 elseif ~ischar(model.timing) && ~iscell(model.timing) && ~isstruct(model.timing)
     warning('ID:invalid_input', 'Event onsets must be a string, cell, or struct.'); return;
-elseif ~ischar(model.timeunits) || ~ismember(model.timeunits, {'seconds', 'markers', 'samples'})
+elseif ~ischar(model.timeunits) || ~ismember(model.timeunits, {'seconds', 'markers', 'samples','markervalues'})
     warning('ID:invalid_input', 'Timeunits (%s) not recognised; only ''seconds'', ''markers'' and ''samples'' are supported', model.timeunits); return;
 elseif ~ismember(model.latency, {'free', 'fixed'})
     warning('ID:invalid_input', 'Latency should be either ''fixed'' or ''free''.'); return;
@@ -263,10 +266,13 @@ for iFile = 1:nFile
     y{iFile} = data{1}.data(:);
     sr(iFile) = data{1}.header.sr;
     fprintf('.');
-    if any(strcmp(model.timeunits, {'marker', 'markers'}))
+    if any(strcmp(model.timeunits, {'marker', 'markers','markervalues'}))
         [sts, ~, data] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
         if sts < 1, return; end
         events{iFile} = data{1}.data * data{1}.header.sr;
+        if strcmp(model.timeunits,'markervalues')
+            model.intiming{iFile}.markerinfo = data{1}.markerinfo;
+        end 
     end
 end
 if nFile > 1 && any(diff(sr) > 0)
@@ -342,6 +348,12 @@ end
 % remove path & clear local variables --
 if ~isempty(basepath), rmpath(basepath); end
 clear basepath basefn baseext
+
+% if timeunits are 'markervalues' the timings must be set from the
+% markerchannel for each session need to adapt 
+% % % % % % if strcmpi(timeunits,'markervalues')
+% % % % % %     
+% % % % % % end 
 
 % check regressor files --
 [sts, multi] = pspm_get_timing('onsets', model.timing, model.timeunits);
