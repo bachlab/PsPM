@@ -364,10 +364,24 @@ substhresh.help     = {['Specify the minimum duration (in seconds) ', ...
     'evaluated independently. This setting is ignored for sessions ', ...
     'having set missing epochs manually.']};
 
+% constrained model 
+constrained_model       = cfg_entry;
+constrained_model.name  ='Constrained model';
+constrained_model.tag   ='constr_model';
+constrained_model.val   = {0};
+constrained_model.strtype = 'i';
+constrained_model.num   = [1 1];
+constrained_model.help = {['This option can be set to one if the flexible ', ...
+                           'responses have fixed dispersion (0.3 s SD) but', ...
+                           'flexible latency.', ...
+                           ' If the option is set, the value must be 0 or 1.',...
+                           ' The default value is 0']};
+
+
 data_options         = cfg_branch;
 data_options.name    = 'Data Options';
 data_options.tag     = 'data_options';
-data_options.val     = {norm, filter, substhresh};
+data_options.val     = {norm, filter, substhresh,constrained_model};
 data_options.help    = {''};
 
 

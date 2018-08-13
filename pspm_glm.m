@@ -239,6 +239,15 @@ elseif ~(isnumeric(options.marker_chan_num) && numel(options.marker_chan_num)==1
     options.marker_chan_num = 'marker';
 end
 
+if isfield(options,'exclude_missing')
+    if ~(isfield(options.exclude_missing, 'segment_length') && ...
+            isfield(options.exclude_missing,'cutoff'))
+        warning('ID:invalid_input', 'To extract the NaN-values segment-length and cutoff must be set'); return;
+    elseif ~(isnumeric(options.exclude_missing.segment_length) && isnumeric(options.exclude_missing.cutoff))
+        warning('ID:invalid_input', 'To extract the NaN-values segment-length and cutoff must be numeric values.'); return;
+    end 
+end
+
 % check files --
 if exist(model.modelfile, 'file') && ~(isfield(options, 'overwrite') && options.overwrite == 1)
     overwrite=menu(sprintf('Model file (%s) already exists. Overwrite?', model.modelfile), 'yes', 'no');
@@ -844,27 +853,19 @@ end
 % glm.stats_exclude holds boolean for each condition to indicate if the
 % cutoff holds
 if isfield(options,'exclude_missing')
-    if isfield(options.exclude_missing, 'segment_length') && ...
-            isfield(options.exclude_missing,'cutoff')
-        [sts,segments] = pspm_extract_segments('auto', glm, ...
-            struct('length', options.exclude_missing.segment_length));
-        if sts == -1
-            warning('ID:invalid_input', 'call of pspm_extract_segments failed');
-            return;
-        end
-        
-        nan_percentages = cellfun(@(x) x.total_nan_percent,segments.segments, ... 
-            'un',0);
-        glm.stats_missing = cell2mat(nan_percentages);
-        glm.stats_exclude = glm.stats_missing > options.exclude_missing.cutoff;
-    else
-        warning('ID:invalid_input', ['To call pspm_extract_segments both ', ...'
-            '"segment_length" and "cutoff" must be defined in ', ...
-            'options.exclude missing']); return;
+    
+    [sts,segments] = pspm_extract_segments('auto', glm, ...
+        struct('length', options.exclude_missing.segment_length));
+    if sts == -1
+        warning('ID:invalid_input', 'call of pspm_extract_segments failed');
+        return;
     end
+    
+    nan_percentages = cellfun(@(x) x.total_nan_percent,segments.segments, ...
+        'un',0);
+    glm.stats_missing = cell2mat(nan_percentages);
+    glm.stats_exclude = glm.stats_missing > options.exclude_missing.cutoff;
 end
-
-
 
 
 

@@ -1,18 +1,13 @@
 function [bs, x] = pspm_bf_spsrf_box( td, soa )
 % pspm_bf_spsrf_box basis function dependent on SOA 
-%   Detailed explanation goes here
-% Description: 
-%
-% FORMAT: [bf p] = pspm_bf_hprf_f(td, soa)
-% with  td = time resolution in s
 
-%
-% REFERENCE
+% FORMAT: [bf p] = pspm_bf_spsrf_box(td, soa)
+% with  td = time resolution in s
 %
 %________________________________________________________________________
 % PsPM 4.0
 
-% initialise
+% initialize
 global settings
 if isempty(settings), pspm_init; end;
 
@@ -23,8 +18,6 @@ end;
 
 if nargin < 2
     soa = 3.5;
-else 
-    
 end;
 
 

@@ -30,6 +30,13 @@ for iSession=1:nrSession
         model.timing = {};
     elseif isfield(job.session(iSession).data_design,'condfile')
         model.timing{iSession,1} = job.session(iSession).data_design.condfile{1};
+    elseif isfield(job.session(iSession).data_design,'marker_cond')
+        if isfield(job.session(iSession).data_design.marker_cond.marker_values,'marker_values_names')
+            model.timing{iSession,1}.markervalues = strsplit(job.session(iSession).data_design.marker_cond.marker_values.marker_values_names{1});
+        else
+            model.timing{iSession,1}.markervalues = job.session(iSession).data_design.marker_cond.marker_values.marker_values_val;
+        end
+        model.timing{iSession,1}.names  = strsplit(job.session(iSession).data_design.marker_cond.cond_names{1});
     else
         nrCond = size(job.session(iSession).data_design.condition,2);
         for iCond=1:nrCond

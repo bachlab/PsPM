@@ -43,7 +43,7 @@ width.name = 'Width';
 width.tag = 'width';
 width.strtype = 'r';
 width.num = [1 1];
-width.help = {['Width of the display window. Unit is `cm` if `degree` is chosen, ',...
+width.help = {['Width of the display window. Unit is `mm` if `degree` is chosen, ',...
                 'otherwise `unit`.']};
 
 %% height
@@ -52,7 +52,7 @@ height.name = 'Height';
 height.tag = 'height';
 height.strtype = 'r';
 height.num = [1 1];
-height.help = {['Height of the display window. Unit is `cm` if `degree` is chosen, ',...
+height.help = {['Height of the display window. Unit is `mm` if `degree` is chosen, ',...
                 'otherwise `unit`.']};
 
 %% unit
@@ -65,7 +65,7 @@ unit.val     = {'mm'};
 unit.help    = {['Unit to which the measurements should be converted. ',...
                      'The value can contain any length unit (mm, cm, inches, etc.) or `degree`. ',...
                      'In this case the corresponding data is firstly converted',...
-                     ' into `cm` and afterwards the visual angles are computed for each data point.']};
+                     ' into `mm` and afterwards the visual angles are computed for each data point.']};
 
 %% pixel2unit
 pixel2unit = cfg_branch;

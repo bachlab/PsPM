@@ -96,6 +96,8 @@ end
 % subsession threshold
 model.substresh = job.data_options.substhresh;
 
+%constrained model 
+model.constrained = job.data_options.constr_model;
 
 % channel number
 if isfield(job.chan, 'chan_nr')

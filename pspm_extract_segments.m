@@ -222,7 +222,7 @@ end;
 %set default ouput_nan
 if ~isfield(options, 'nan_output')
     options.nan_output = 'none';
-elseif strcmpi( options.nan_output,'')
+elseif ~strcmpi( options.nan_output,'screen')
         [path, name, ext ]= fileparts(options.nan_output);
             if 7 ~= exist(path, 'dir')
                  warning('ID:invalid_input', 'Path for nan_output does not exist'); return;

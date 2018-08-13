@@ -212,6 +212,50 @@ condition_rep.values  = {condition};
 condition_rep.num     = [1 Inf];
 condition_rep.help    = {'Specify the conditions that you want to include in your design matrix.'};
 
+% markervalues vector of numbers 
+marker_values_val         = cfg_entry;
+marker_values_val.name    = 'Values for conditions';
+marker_values_val.tag     = 'marker_values_val';
+marker_values_val.strtype = 'r';
+marker_values_val.num     = [1 Inf];
+marker_values_val.val     = {0};
+marker_values_val.help    = {'Specify the values for the conditions.'};
+
+% markervalues cell array of strings
+marker_values_names         = cfg_entry; 
+marker_values_names.name    = 'Names for conditions';
+marker_values_names.tag     = 'marker_values_names';
+marker_values_names.strtype = 's+';
+marker_values_names.num     = [1 Inf];
+marker_values_names.help    = {'Specify the names for the conditions.',...
+                               ' Separate each name by a whitespace.'};
+
+% condition values for marker based conditions
+marker_values        = cfg_choice;  
+marker_values.name   = 'Condition-defining values/names ';
+marker_values.tag    = 'marker_values';
+marker_values.values = {marker_values_val, marker_values_names};
+marker_values.help   = {'Specify the values or names for the conditions.'};
+
+% condition names for marker based conditions 
+cond_names         = cfg_entry;
+cond_names.name    = 'Name';
+cond_names.tag     = 'cond_names';
+cond_names.strtype = 's+';
+cond_names.num     = [1 Inf];
+cond_names.help    = {'Specify the names of the conditions in the same order', ...
+                      ' as the conditioning-defining values/names.',...
+                      ' Separate each name by a whitespace.'};
+
+% condition from marker
+marker_cond        = cfg_branch;
+marker_cond.name   = 'Define conditions from distinct values/names of event markers '; 
+marker_cond.tag    = 'marker_cond';
+marker_cond.val    = {marker_values, cond_names};
+marker_cond.help   = {'This option defines event onsets according to the values or',...
+                     ' names of events stored in a marker channel. These names/values',...
+                     ' are imported for some data types.'};
+% no condition 
 no_condition        = cfg_const;
 no_condition.name   = 'No condition';
 no_condition.tag    = 'no_condition';
@@ -223,7 +267,7 @@ no_condition.help   = {['If there is no condition, it is mandatory to ', ...
 timing         = cfg_choice;
 timing.name    = 'Design';
 timing.tag     = 'data_design';
-timing.values  = {condfile, condition_rep, no_condition};
+timing.values  = {condfile, condition_rep, marker_cond ,no_condition};
 timing.help    = {['Specify the timing of the events within the design matrix. Timing can '...
     'be specified in ‘seconds’, ‘markers’ or ‘samples’ with respect to the beginning of the ' ...
     'data file. See ‘Time Units’ settings. Conditions can be specified manually or by using ' ...
@@ -338,14 +382,15 @@ excl_segment_length.name    = 'Segment length';
 excl_segment_length.tag     = 'segment_length';  
 excl_segment_length.strtype = 'i';
 excl_segment_length.num     = [1 1];
-excl_segment_length.help    = {['Specify the length of the segments.']};
+excl_segment_length.help    = {['Length of segments after each event onset over',...
+                                ' which the NaN-ratio is computed.']};
 
 excl_cutoff         = cfg_entry;
 excl_cutoff.name    = 'Cutoff';
 excl_cutoff.tag     = 'cutoff';  
 excl_cutoff.strtype = 'r';
 excl_cutoff.num     = [1 1];
-excl_cutoff.help    = {['Specify the length of the segments.']};
+excl_cutoff.help    = {['Maximum NaN ratio for a condition to be accepted for further analysis.']};
 
 exclude_missing_yes      = cfg_branch;
 exclude_missing_yes.name = 'Settings for stats exclude';
@@ -362,14 +407,15 @@ excl_no.help             = {'No statistics created.'};
 
 %Create Stats Exclude 
 exclude_missing          = cfg_choice;
-exclude_missing.name     = 'Create Stats Exclude';
+exclude_missing.name     = 'Create information on missing data values';
 exclude_missing.tag      = 'exclude_missing';
 exclude_missing.val      = {excl_no};
 exclude_missing.values   = {excl_no, exclude_missing_yes};
-exclude_missing.help   = {['Option to create statistics over the conditions.'],... 
-       ['The statistics contains the ratio of the NaN-values overall trials for each'], ...
-       ['condition and whether this ratio exceeds a cutoff value, i.e whether the'], ...
-       ['condition should be excluded for the evaluation.']};
+exclude_missing.help   = {'Option to extract information over missing values in each',...
+                          ' condition of the GLM. This option extractes the ratio of NaN-values',...
+                          ' over all trials for each condition, and whether this ratio exceeds',...
+                          ' a cutoff value. The information is stored in the GLM structure and',...
+                          ' will be used in future releases for excluding vales during extraction and first-level contrasts'};
 
 % Overwrite File
 overwrite         = cfg_menu;

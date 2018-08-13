@@ -66,12 +66,21 @@ if ~any(strcmpi(options.eyes, {'all', 'left', 'right'}))
     return;
 end;
 
+
 % load data to evaluate
 [lsts, infos, data] = pspm_load_data(fn, channels);
 if lsts ~= 1
     warning('ID:invalid_input', 'Could not load input data correctly.');
     return;
 end;
+% first interpolate NaN-values
+options_temp = struct('overwirte',1,'replace_channels',1);
+[bsts,outdata]=pspm_interpolate(data,options_temp);
+if bsts ~= 1
+    warning('ID:invalid_input', 'Could not load interpolate data correctly.');
+    return;
+end
+data = outdata;
 
 %iterate through eyes
 n_eyes = numel(infos.source.eyesObserved);
