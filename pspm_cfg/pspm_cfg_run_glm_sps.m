@@ -28,10 +28,10 @@ soa = job.bf.soa;
 
 if any(strcmpi(rf,{'spsrf_box'}))
     model.bf.fhandle = str2func('pspm_bf_spsrf_box');
-    model.bf.args = [job.bf.rf.(rf) soa];
+    model.bf.args = [soa];
 elseif any(strcmpi(rf,{'spsrf_gamma'}))
     model.bf.fhandle = str2func('pspm_bf_spsrf_gamma');
-    model.bf.args = [job.bf.rf.(rf) soa];
+    model.bf.args = [soa];
 end;
 
 model.modality = modality;

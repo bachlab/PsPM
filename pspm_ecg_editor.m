@@ -631,10 +631,26 @@ if ~isempty(handles.plot.R)
 end;
 % -------------------------------------------------------------------------
 if ~handles.manualmode
-    xlim([count-2*handles.zoom_factor count+2*handles.zoom_factor])
+    xlim([count-2*handles.zoom_factor count+2*handles.zoom_factor]);
+%     if handles.k ==1
+%         start_idx = 1;
+%         stop_idx = sample_id;
+%     elseif handles.k == numel(fl)
+%         start_idx = sample_id;
+%         stop_idx = numel(handles.plot.ecg);
+%     else 
+%         start_idx = fl(handles.k -1);
+%         stop_idx = sample_id;
+%     end
+%     ylim([(min(handles.plot.ecg(start_idx:stop_idx))* 1.1) ...
+%           (max(handles.plot.ecg(start_idx:stop_idx))* 1.1)]);
 else
     xlim([count-(handles.winsize/2)*handles.zoom_factor ...
-        count+(handles.winsize/2)*handles.zoom_factor])
+        count+(handles.winsize/2)*handles.zoom_factor]);
+%     ylim([min(handles.plot.ecg(count-(handles.winsize/2)* ...
+%         handles.zoom_factor : count+(handles.winsize/2)*handles.zoom_factor)) ...
+%         * 1.1 , max(handles.plot.ecg(count-(handles.winsize/2)* ...
+%         handles.zoom_factor : count+(handles.winsize/2)*handles.zoom_factor)) * 1.1]);
 end
 xlabel('time in seconds [s]')
 % -------------------------------------------------------------------------
