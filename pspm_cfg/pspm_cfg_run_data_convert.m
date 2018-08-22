@@ -19,6 +19,10 @@ for i=1:numel(job.conversion)
         unit = job.conversion(i).mode.pixel2unit.unit;
         pspm_convert_pixel2unit(fn, chan, unit, width, height, options);
     end
+    if isfield(job.conversion(i).mode, 'visangle2sps')
+        eyes = job.conversion(i).mode.visangle2sps.eyes;
+        pspm_convert_visangle2sps(fn,struct('chans',chan,'eyes',eyes));
+    end 
 end
 
 out = 1;
