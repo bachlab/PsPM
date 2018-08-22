@@ -62,10 +62,7 @@ unit.tag     = 'unit';
 unit.values  = {'mm', 'cm', 'm', 'inches','degree'};
 unit.labels  = {'mm', 'cm', 'm', 'inches','degree'};
 unit.val     = {'mm'};
-unit.help    = {['Unit to which the measurements should be converted. ',...
-                     'The value can contain any length unit (mm, cm, inches, etc.) or `degree`. ',...
-                     'In this case the corresponding data is firstly converted',...
-                     ' into `mm` and afterwards the visual angles are computed for each data point.']};
+unit.help    = {'Unit into which the measurements should be converted.'};
 
 %% pixel2unit
 pixel2unit = cfg_branch;
@@ -74,16 +71,40 @@ pixel2unit.tag = 'pixel2unit';
 pixel2unit.val = {width, height, unit};
 pixel2unit.help = {['Convert pupil gaze coordinates from ', ...
                    'pixel values to unit values. The unit values',... ,
-                   'can be normal length units or the unit `degree`. ',...
-                   'The normal length units are needed to validate ', ...
+                   'can be length units or unit `degree`(i.e. visual angle). ',...
+                   'In this case the data is first converted into length units ',...
+                   'and afterwards into visual angles. ',...
+                   'Visual angle is expressed in spherical coordinates.',...
+                   'Length units are needed to validate ', ...
                    'fixations with degree visual angle.']};
+               
+%% Eyes
+eyes                = cfg_menu;
+eyes.name           = 'Eyes';
+eyes.tag            = 'eyes';
+eyes.val            = {'all'};
+eyes.labels         = {'All eyes', 'Left eye', 'Right eye'};
+eyes.values         = {'all', 'left', 'right'};
+eyes.help           = {['Choose eyes which should be processed. If ''All', ...
+    'eyes'' is selected, all eyes which are present in the data will ', ...
+    'be processed. Otherwise only the chosen eye will be processed.']};
 
+%% Visualangle to scanpath speed
+visangle2sps        = cfg_branch;
+visangle2sps.name   = 'Visualangle to scanpath speed';
+visangle2sps.tag    = 'visangle2sps';
+visangle2sps.val    = {eyes};
+visangle2sps.help   = {['Takes paires of channels with gaze data in spherical',...
+                       ' coordinates (i.e. visual angle) and computes scanpath speed',...
+                       ' (i.e. scalar distance per second). Saves result into a ',...
+                       'new channel with channeltype ''sps'' (scanpath speed)']};
+               
 %% Mode
 mode                = cfg_choice;
 mode.name           = 'Mode';
 mode.tag            = 'mode';
 mode.val            = {area2diameter};
-mode.values         = {area2diameter, pixel2unit};
+mode.values         = {area2diameter, pixel2unit, visangle2sps};
 mode.help           = {['Choose conversion mode.']};
 
 %% Conversion
