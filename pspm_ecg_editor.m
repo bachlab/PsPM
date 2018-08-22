@@ -65,10 +65,12 @@ function pspm_ecg_editor_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to pspm_ecg2hb_qc (see VARARGIN)
 
+set(hObject,'Resize','on');
 % Choose default command line output for pspm_ecg2hb_qc
 handles.output = hObject;
 % -------------------------------------------------------------------------
 % set default status for GUI
+
 handles.edit_mode = '';
 handles.gui_mode = ''; % file or inline
 handles.artefact_mode = ''; % file or inline
@@ -108,6 +110,7 @@ handles.filt.lporder=1;
 handles.filt.hpfreq=5;
 handles.filt.hporder=1;
 handles.filt.direction='uni';
+
 handles.filt.down=200;
 % plot settings
 handles.plot.factr = 1;
@@ -631,26 +634,29 @@ if ~isempty(handles.plot.R)
 end;
 % -------------------------------------------------------------------------
 if ~handles.manualmode
-    xlim([count-2*handles.zoom_factor count+2*handles.zoom_factor]);
-%     if handles.k ==1
-%         start_idx = 1;
-%         stop_idx = sample_id;
-%     elseif handles.k == numel(fl)
-%         start_idx = sample_id;
-%         stop_idx = numel(handles.plot.ecg);
-%     else 
-%         start_idx = fl(handles.k -1);
-%         stop_idx = sample_id;
-%     end
-%     ylim([(min(handles.plot.ecg(start_idx:stop_idx))* 1.1) ...
-%           (max(handles.plot.ecg(start_idx:stop_idx))* 1.1)]);
+    left_border  = count-2*handles.zoom_factor;
+    right_border = count+2*handles.zoom_factor;
+    xlim([left_border right_border]);
+    if left_border<=0
+       left_border=1; 
+    elseif right_border<=0
+       right_border=1; 
+    end
+    y_lower_boud = min(handles.plot.ecg(round(left_border*handles.plot.sr):round(right_border*handles.plot.sr)));
+    y_upper_boud = max(handles.plot.ecg(round(left_border*handles.plot.sr):round(right_border*handles.plot.sr)));
+    ylim([y_lower_boud y_upper_boud]);
 else
-    xlim([count-(handles.winsize/2)*handles.zoom_factor ...
-        count+(handles.winsize/2)*handles.zoom_factor]);
-%     ylim([min(handles.plot.ecg(count-(handles.winsize/2)* ...
-%         handles.zoom_factor : count+(handles.winsize/2)*handles.zoom_factor)) ...
-%         * 1.1 , max(handles.plot.ecg(count-(handles.winsize/2)* ...
-%         handles.zoom_factor : count+(handles.winsize/2)*handles.zoom_factor)) * 1.1]);
+    left_border  = count-(handles.winsize/2)*handles.zoom_factor;
+    right_border = count+(handles.winsize/2)*handles.zoom_factor;
+    xlim([left_border right_border]);
+    if left_border<=0
+       left_border=1; 
+    elseif right_border<=0
+       right_border=1; 
+    end
+    y_lower_boud = min(handles.plot.ecg(round(left_border*handles.plot.sr):round(right_border*handles.plot.sr)));
+    y_upper_boud = max(handles.plot.ecg(round(left_border*handles.plot.sr):round(right_border*handles.plot.sr)));
+    ylim([y_lower_boud y_upper_boud]);
 end
 xlabel('time in seconds [s]')
 % -------------------------------------------------------------------------

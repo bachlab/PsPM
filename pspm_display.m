@@ -79,6 +79,7 @@ handles.prop.wavechans=[];
 handles.prop.eventchans=[];
 handles.prop.axis=[];
 handles.name=[];
+set(hObject,'Resize','on');
 % -------------------------------------------------------------------------
 
 if(numel(varargin)) == 1
