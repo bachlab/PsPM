@@ -54,7 +54,6 @@ end
 % try to set default values
 if ~isstruct('options')
     options = struct();
-elseif ~isfield(options, 'channel_action')
     options.channel_action = 'add';
 end
 
@@ -128,6 +127,8 @@ for c = 1:n_chans
         chan.header.range = (chan.header.range-chan.header.range(1)) ...
             ./ diff(chan.header.range) * fact;
         
+        
+        
         chan.header.units = unit_h_w_d;
     else
         warning('ID:invalid_input', ['Not converting (%s) because ', ...
@@ -145,7 +146,8 @@ if lsts ~= 1
 end
 
 if strcmpi(unit,'degree')
-    [lsts, outinfo] = pspm_compute_visual_angle(fn,chan,width, heigth, distance,unit_h_w_d,options.channel_action);
+    options.channel_action = 'replace';
+    [lsts, outinfo] = pspm_compute_visual_angle(fn,0,width, height, distance,unit_h_w_d,options);
 end;
 
 

@@ -73,14 +73,6 @@ if lsts ~= 1
     warning('ID:invalid_input', 'Could not load input data correctly.');
     return;
 end;
-% first interpolate NaN-values
-options_temp = struct('overwirte',1,'replace_channels',1);
-[bsts,outdata]=pspm_interpolate(data,options_temp);
-if bsts ~= 1
-    warning('ID:invalid_input', 'Could not load interpolate data correctly.');
-    return;
-end
-data = outdata;
 
 %iterate through eyes
 n_eyes = numel(infos.source.eyesObserved);
@@ -104,6 +96,21 @@ for i=1:n_eyes
             lon = data{gx}.data;
             lat = data{gy}.data;
             
+            % first interpolate longitude to evict NaN-values
+            [bsts,outdata]=pspm_interpolate(lon);
+            if bsts ~= 1
+                warning('ID:invalid_input', 'Could not load interpolate longitude data correctly.');
+                return;
+            end
+            lon = outdata;
+            
+            % first interpolate latitude to evict NaN-values
+            [bsts,outdata]=pspm_interpolate(lat);
+            if bsts ~= 1
+                warning('ID:invalid_input', 'Could not load interpolate latitude data correctly.');
+                return;
+            end
+            lat = outdata;
             
             %compare if length are the same
             N = numel(lon);
@@ -112,20 +119,23 @@ for i=1:n_eyes
                 return;
             end;
             
+            %convert lon and lat into radians 
+            lon = deg2rad(lon);
+            lat = deg2rad(lat);
             % compute distances
             arclen = zeros(length(lat),1);
-   
+            % compute distances
+            az = zeros(length(lat),1);
+            
             for k = 2:length(lat)
-                lat_diff = abs(lat(k-1)-lat(k));
                 lon_diff = abs(lon(k-1)-lon(k));
-                a = (sin(lat_diff/2))^2 + cos(lat(k-1))* cos(lat(k))*(sin(lon_diff/2))^2;
-                arclen(i) = 2 * atan2(sqrt(a),sqrt(1 - a));
+                arclen(k) = atan(sqrt(((cos(lat(k))*sin(lon_diff))^2)+(((cos(lat(k-1))*sin(lat(k)))-(sin(lat(k-1))*cos(lat(k))*cos(lon_diff)))^2))/((sin(lat(k-1))*sin(lat(k)))+(cos(lat(k-1))*cos(lat(k))*cos(lon_diff))));
             end
             % create new channel with data holding distances
             dist_channel.header.chantype = 'sps';
             dist_channel.header.sr = data{gx}.header.sr;
             dist_channel.header.units = 'degree';
-            dist_channel.data = arclen;
+            dist_channel.data = rad2deg(arclen);
             
             [lsts, outinfo] = pspm_write_channel(fn, dist_channel, 'add');
             

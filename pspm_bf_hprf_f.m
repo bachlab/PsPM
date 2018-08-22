@@ -19,12 +19,8 @@ if isempty(settings), pspm_init; end;
 % check input arguments
 if nargin < 1
    errmsg='No sampling interval stated'; warning('ID:invalid_input',errmsg); return;
-end;
-
-if nargin < 2
-    soa = 3.5;
-else 
-    
+elseif nargin < 2
+    soa = 3.5; 
 end;
 
 d = 30;

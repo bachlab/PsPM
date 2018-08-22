@@ -32,11 +32,9 @@ sts = -1;
 if nargin < 6
     warning('ID:invalid_input', 'Not enough arguments.');
     return;
-elseif ~isstruct('options')
+elseif ~isstruct(options)
     options = struct();
-elseif ~isfield(options, 'channel_action')
     options.channel_action = 'add';
-    
 end;
 
 % check types of arguments
@@ -60,7 +58,7 @@ end;
 
 %iterate through eyes
 n_eyes = numel(infos.source.eyesObserved);
-r =1;
+p=1;
 for i=1:n_eyes
     
     eye = lower(infos.source.eyesObserved(i));
@@ -76,8 +74,8 @@ for i=1:n_eyes
     
     if ~isempty(gx) && ~isempty(gy)
         
-        visual_angl_chans{r} = data{gx};
-        visual_angl_chans{r+1} = data{gy};
+        visual_angl_chans{p} = data{gx};
+        visual_angl_chans{p+1} = data{gy};
         
         % get channel specific data
         gx_d = data{gx}.data;
@@ -102,15 +100,15 @@ for i=1:n_eyes
         lat = rad2deg(elevation);% convert radians into degrees
         lon = rad2deg(azimuth);
         
-        visual_angl_chans{r}.data = lon;
-        visual_angl_chans{r}.header.units = 'degrees';
-        visual_angl_chans{r}.range = [0,max(visual_angl_chans{r}.data)];
+        visual_angl_chans{p}.data = lon;
+        visual_angl_chans{p}.header.units = 'degree';
+        visual_angl_chans{p}.header.range = [0,max(visual_angl_chans{p}.data)];
         
-        visual_angl_chans{r+1}.data = lat;
-        visual_angl_chans{r+1}.header.units = 'degrees';
-        visual_angl_chans{r+1}.range = [0,max(visual_angl_chans{r+1}.data)];
+        visual_angl_chans{p+1}.data = lat;
+        visual_angl_chans{p+1}.header.units = 'degree';
+        visual_angl_chans{p+1}.header.range = [0,max(visual_angl_chans{p+1}.data)];
         
-        r=r+2;
+        p=p+2;
     else
         pfrintf('%s eye does not contain gaze_x and gaze_y data.\n',eye);
         warning('ID:invalid_input','not enough data to compute visual angle for that eye');
