@@ -49,7 +49,8 @@ spsrf_gamma = cfg_const;
 spsrf_gamma.name = 'Gammafunction';
 spsrf_gamma.tag = 'spsrf_gamma';
 spsrf_gamma.val = {'spsrf_gamma'};
-spsrf_gamma.help = {['SPSRF with gammafunction.']};
+spsrf_gamma.help = {['SPSRF with gammafunction.',...
+                   ' Use gamma probability density function to model the scanpath speed. ']};
 
 rf        = cfg_choice;
 rf.name   = 'Function';

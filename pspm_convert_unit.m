@@ -51,5 +51,5 @@ from_fact = converter.length(from_idx).factor;
 to_fact = converter.length(to_idx).factor;
 
 converted = data*from_fact/to_fact;
-
+sts = 1;
 end

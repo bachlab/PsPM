@@ -106,8 +106,8 @@ if ~ischar(fn) || ~exist(fn, 'file')
 end
 
 % load data right away (needed if fixation point should be expanded)
-[sts, infos, data] = pspm_load_data(fn);
-if sts ~= 1
+[msts, infos, data] = pspm_load_data(fn);
+if msts ~= 1
     warning('ID:invalid_input', ['An error happened, while ', ...
         'opening the file %s.'],fn); return;
 end
@@ -276,18 +276,60 @@ for i=1:n_eyes
             % always use first found channel
             excl = false(size(data{1}.data,1),1);
             
-            gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
-                ~strcmpi('pixel', x.header.units), data),1);
-            gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
-                ~strcmpi('pixel', x.header.units), data),1);
+            gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype),data),1); 
+%             & ...
+%                 ~strcmpi('pixel', x.header.units), data),1);
+            gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype), data),1); 
+%             & ...
+%                 ~strcmpi('pixel', x.header.units), data),1);
 
             if ~isempty(gx) && ~isempty(gy)
+               
                 % get channel specific data range
                 x_range = data{gx}.header.range;
                 y_range = data{gy}.header.range;
 
                 x_unit = data{gx}.header.units;
                 y_unit = data{gy}.header.units;
+
+
+                % change box_length to appropriate unit 
+                if ~strcmpi(unit,x_unit)
+                    if strcmpi('pixel',x_unit)
+                        %change box_length to pixel 
+                        if ~strcmpi(unit,'mm')
+                            [nsts,box_length] = pspm_convert_unit(box_length,unit,'mm');
+                            if nsts ~= 1
+                            warning('ID:invalid_input', 'Conversion of box_length unit failed'); return;
+                            end
+                            unit = 'mm';
+                        end
+                        x_box_length = box_length * 3.7795275591;
+                    else
+                        [nsts,x_box_length] = pspm_convert_unit(box_length,unit,x_unit);
+                        if nsts ~= 1
+                            warning('ID:invalid_input', 'Conversion of box_length unit failed'); return;
+                        end 
+                    end 
+                end
+                
+                if ~strcmpi(unit,y_unit)
+                    if strcmpi('pixel',y_unit)
+                        %change box_length to pixel 
+                         if ~strcmpi(unit,'mm')
+                            [nsts,box_length] = pspm_convert_unit(box_length,unit,'mm');
+                            if nsts ~= 1
+                            warning('ID:invalid_input', 'Conversion of box_length unit failed'); return;
+                            end
+                        end
+                        y_box_length = box_length * 3.7795275591;
+                    else
+                        [nsts,y_box_length] = pspm_convert_unit(box_length,unit,y_unit);
+                        if nsts ~= 1
+                            warning('ID:invalid_input', 'Conversion of box_length unit failed'); return;
+                        end 
+                    end 
+                end
 
                 % normalize recorded data to compare with normalized
                 % fixation points and box degree
@@ -297,12 +339,9 @@ for i=1:n_eyes
                 % also invert y coordinate
                 gy_d = 1 - gy_d;
 
-                [~, box_length_x] = pspm_convert_unit(box_length, unit, x_unit);
-                [~, box_length_y] = pspm_convert_unit(box_length, unit, y_unit);
-
                 % calculate limits from box_degree with respect to range
-                x_lim = (box_length_x - x_range(1)) / diff(x_range);
-                y_lim = (box_length_y - y_range(1)) / diff(y_range);
+                x_lim = (x_box_length - x_range(1)) / diff(x_range);
+                y_lim = (y_box_length - y_range(1)) / diff(y_range);
 
                 % find data outside of box_degree
                 data_dev{i}(:,1) = abs(gx_d - fix_point(:, 1)) > x_lim;
