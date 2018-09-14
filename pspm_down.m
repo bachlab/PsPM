@@ -1,12 +1,12 @@
 function [sts, newfile]=pspm_down(datafile, newsr, chan, options)
 %
-% SCR_DOWN downsamples a SCRalyze dataset to the desired new sample rate
+% pspm_down downsamples a PsPm dataset to the desired new sample rate
 % this function applies anti-aliasing filtering at 1/2 of the new sample
 % rate. The data will be written to a new file, the original name will be
 % prepended with 'd'
 %
 % FORMAT:
-% [STS, NEWFILE] = SCR_DOWN(datafile, newsr, chan, options)
+% [STS, NEWFILE] = pspm_down(datafile, newsr, chan, options)
 %
 % INPUT: 
 %   datafile:   can be a name, or for convenience, a cell array of filenames

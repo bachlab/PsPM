@@ -1,5 +1,5 @@
 function [sts, out] = pspm_convert_au2unit(varargin)
-% SCR_CONVERT_AU2UNIT converts arbitrary unit values to unit values. It
+% pspm_convert_au2unit converts arbitrary unit values to unit values. It
 % works on a PsPM file and is able to replace a channel or add the data as
 % a new channel.
 %

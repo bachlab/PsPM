@@ -1,9 +1,9 @@
 function varargout = pspm_data_editor(varargin)
-% SCR_DATA_EDITOR MATLAB code for pspm_data_editor.fig
+% pspm_data_editor MATLAB code for pspm_data_editor.fig
 %
 % FORMAT: 
 %   [varargout] = pspm_data_editor(varargin)
-%   [sts, out] = pspm_data_editor(indata, options)
+%   [sts, out]  = pspm_data_editor(indata, options)
 %
 % DESCRIPTION: 
 %

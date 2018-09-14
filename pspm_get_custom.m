@@ -1,10 +1,10 @@
 function [sts, data]=pspm_get_custom(import)
-% SCR_GET_CUSTOM is a common function for importing custom data
+% pspm_get_custom is a common function for importing custom data
 % in this case the function was made for the blink-data in the 
 % pspm_get_eyelink function
 %
 % FORMAT:
-%   [sts, data]=pspm_get_custom(import)
+%   [sts, data]= pspm_get_custom(import)
 %   with import.data: column vector of waveform data
 %        import.sr: sample rate
 %  

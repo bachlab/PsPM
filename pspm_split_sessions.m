@@ -1,5 +1,5 @@
 function newdatafile = pspm_split_sessions(datafile, markerchannel, options)
-% SCR_SPLIT_SESSIONS splits experimental sessions/blocks, based on
+% pspm_split_sessions splits experimental sessions/blocks, based on
 % regularly incoming markers, for example volume or slice markers from an
 % MRI scanner (equivalent to the 'scanner' option during import in previous
 % versions of PsPM and SCRalyze)

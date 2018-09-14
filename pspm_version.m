@@ -1,5 +1,5 @@
 function [sts, v] = pspm_version(varargin)
-% SCR_VERSION returns the current pspm version and checks if there is an
+% pspm_version returns the current pspm version and checks if there is an
 % update available.
 %   
 %   Note: The term 'version' is a reserved keyword and should not be used

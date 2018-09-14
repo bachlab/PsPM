@@ -1,10 +1,10 @@
 function outfile=pspm_import(datafile, datatype, import, options)
 
-% SCR_IMPORT imports scr data from different formats and writes them to a
+% pspm_import imports scr data from different formats and writes them to a
 %       file to the same path
 %
 % FORMAT:
-% OUTFILE=SCR_IMPORT(datafile, datatype, import, options)
+% OUTFILE = pspm_import(datafile, datatype, import, options)
 %
 % datafile: file containing the scr data, or cell array of files
 % datatype: supported datatypes are defined in pspm_init (see manual)

@@ -1,5 +1,5 @@
 function [sts, outdata] = pspm_interpolate(indata, options)
-% SCR_INTERPOLATE
+% pspm_interpolate
 % 
 % FORMAT: 
 % [sts, outdata] = pspm_interpolate(indata, options)

@@ -1,8 +1,8 @@
 function [sts, data]=pspm_get_ecg(import)
-% SCR_GET_ECP is a common function for importing continuous ECG data
+% pspm_get_ecg is a common function for importing continuous ECG data
 %
 % FORMAT:
-%   [sts, data]=pspm_get_ecg(data, import)
+%   [sts, data]= pspm_get_ecg(data, import)
 %   with data: column vector of waveform data
 %        import: import job structure with mandatory fields .data and .sr
 %  

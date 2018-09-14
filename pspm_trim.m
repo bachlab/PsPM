@@ -1,9 +1,9 @@
 function newdatafile = pspm_trim(datafile, from, to, reference, options)
-% SCR_TRIM cuts an SCR dataset to the limits set with the parameters 'from'
+% pspm_trim cuts an SCR dataset to the limits set with the parameters 'from'
 % and 'to' and writes it to a file with a prepended 't'
 %
 % FORMAT:
-% NEWDATAFILE = SCR_TRIM (DATAFILE, FROM, TO, REFERENCE, options)
+% NEWDATAFILE = pspm_trim (datafile, from, to, reference, options)
 %
 % datafile: a file name, a cell array of filenames, a struct with
 %           fields .data and .infos or a cell array of structs

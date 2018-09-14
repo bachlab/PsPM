@@ -3,7 +3,7 @@ function pspm_con2(modelfile, outfile, con, connames, options)
 % and two-sample t-tests are implemented.
 % 
 % FORMAT: 
-% SCR_CON2(MODELFILE, OUTFILE, CON, CONNAMES, [DATATYPE], [OPTIONS])
+% pspm_con2(modelfile, outfile, con, connames, [datatype], [options])
 % 
 % modelfile: a cell array of modelfiles for a one-sample t-tests, or a 2x1
 %           array of cell arrays with modelfiles for a two-sample t-test

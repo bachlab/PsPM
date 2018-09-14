@@ -1,8 +1,8 @@
 function [sts, data]=pspm_get_ppu(import)
-% SCR_GET_PPU is a common function for importing PPU data
+% pspm_get_ppu is a common function for importing PPU data
 %
 % FORMAT:
-%   [sts, data]=pspm_get_ppu(import)
+%   [sts, data]= pspm_get_ppu(import)
 %   with import.data: column vector of waveform data
 %        import.sr: sample rate
 %  

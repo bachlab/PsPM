@@ -1,12 +1,12 @@
 function [sts, markerinfo] = pspm_get_markerinfo(fn, options)
-% pspm_get_markerinfo extracts markerinfo from SCRalyze files that contain
+% pspm_get_markerinfo extracts markerinfo from PsPm files that contain
 % such information (typically after import of EEG-style data files, e. g.
 % BrainVision or NeuroScan)
 % 
 % FORMAT:
 % [sts, markerinfo] = pspm_get_markerinfo(filename, options)
 % 
-%          filename:                [char] name of SCR file, if empty, 
+%          filename:                [char] name of PsPM file, if empty, 
 %                                   you will prompted for one
 %
 %          options.markerchan:      [numeric] channel id of the marker 

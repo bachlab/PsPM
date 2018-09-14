@@ -1,5 +1,5 @@
 function wavedata=pspm_pulse_convert(pulsedata, resamplingrate, samplingrate) 
-% SCR_PULSE_CONVERT converts pulsed data into a data waveform, assuming
+% pspm_pulse_convert converts pulsed data into a data waveform, assuming
 % milliseconds as time unit and a resamplingrate in Hz given as input argument
 % This function is designed for data from CED spike, recorded by CED Micro
 % 1401. These data should not normally exceed pulse frequencies of 10 kHz, 
@@ -9,7 +9,7 @@ function wavedata=pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
 % resolution of the 1401 and more likely to be a technical glitch. These
 % time stamps are filtered out before re-sampling.
 % FORMAT:
-% wavedata=pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
+% wavedata = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
 %           with pulsedata: timestamps in ms
 %                resamplingrate: for interpolation
 %                samplingrate: to be downsampled to

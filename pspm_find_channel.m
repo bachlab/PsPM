@@ -1,13 +1,12 @@
 function chan = pspm_find_channel(headercell, chantype)
-% SCR_FIND_CHANNEL searches a cell arrays of channel headers and
+% pspm_find_channel searches a cell arrays of channel headers and
 % finds the channel that matches the desired type. 
 %
-% FORMAT:
-% chan = pspm_find_channel(headercell, chantype)
-%       headercell: cell array of names (e.g. from acq import)
-%       chantype: an allowed channel type (char) (or a cell array of
-%                 possible channel names for operations on non-allowed 
-%                 input channel types)
+% FORMAT:  chan = pspm_find_channel(headercell, chantype)
+%          headercell: cell array of names (e.g. from acq import)
+%          chantype: an allowed channel type (char) (or a cell array of
+%                    possible channel names for operations on non-allowed 
+%                    input channel types)
 %
 % RETURNS:
 % the channel number (not physical channel number) that matches namestrings

@@ -1,9 +1,9 @@
 function [bs, x] = pspm_bf_scrf(varargin)
-% SCR_infbs constructs an informed basis set with a biexponentially 
+% pspm_bf_scrf constructs an informed basis set with a biexponentially 
 % modified gaussian function and derivatives to time and dispersion
 %
-% FORMAT: [bs, x] = SCR_BF_SCRF(TD, D) 
-%     OR: [bs, x] = SCR_BF_SCRF([TD, D]) 
+% FORMAT: [bs, x] = pspm_bf_scrf(TD, D) 
+%     OR: [bs, x] = pspm_bf_scrf([TD, D]) 
 % with td = time resolution in s and d:number of derivatives (default 0)
 %
 % REFERENCE

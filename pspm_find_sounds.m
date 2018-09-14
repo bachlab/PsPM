@@ -1,9 +1,9 @@
 function [sts, infos] = pspm_find_sounds(file, options)
-%SCR_FIND_SOUNDS finds and if required analyzes sound events in a pspm file.
+%pspm_find_sounds finds and if required analyzes sound events in a pspm file.
 % A sound is accepted as event if it is longer than 10 ms and events are
 % recognized as different if they are at least 50 ms appart.
-% [sts, infos] = pspm_find_sounds(file,options)
-%   Arguments
+% FORMAT: [sts, infos] = pspm_find_sounds(file,options)
+% ARGUMENTS:
 %       file : path and filename of the pspm file holding the sound
 %       options : struct with following possible values
 %           channel_action : ['none'/'add'/'replace'] if not set to 'none'

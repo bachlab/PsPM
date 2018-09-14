@@ -1,8 +1,8 @@
 function [sts, data]=pspm_get_pupil(import)
-% SCR_GET_PUPIL is a common function for importing pupil data
+% pspm_get_pupil is a common function for importing pupil data
 %
 % FORMAT:
-%   [sts, data]=pspm_get_pupil(import)
+%   [sts, data]= pspm_get_pupil(import)
 %   with import.data: column vector of waveform data
 %        import.sr: sample rate
 %  

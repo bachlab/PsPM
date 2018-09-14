@@ -1,7 +1,8 @@
 function [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, ...
     height, distance, options)
-% Allows to transfer gaze data from pixel to units. This facilitates the
-% use of pspm_find_valid_fixations() which needs data in unit values.
+% pspm_convert_pixel2unit allows to transfer gaze data from pixel to units. 
+% This facilitates the use of pspm_find_valid_fixations() which needs data 
+% in unit values.
 %
 % Usage:
 %   [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, height, options)

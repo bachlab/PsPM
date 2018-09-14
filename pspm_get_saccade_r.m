@@ -1,5 +1,5 @@
 function [sts, data]=pspm_get_saccade_r(import)
-% PSPM_GET_SACCADE_R is a common function for importing eyelink data
+% pspm_get_saccade_r is a common function for importing eyelink data
 % (saccade_r data)
 %
 % FORMAT:

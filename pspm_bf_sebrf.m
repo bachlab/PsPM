@@ -2,7 +2,8 @@ function [bf, x] = pspm_bf_sebrf(varargin)
 % pspm_bf_sebrf constructs the startle eyeblink response function 
 % consisting of gamma probability functions
 %
-% FORMAT: [bf, x] = pspm_bf_sebrf(td, d, g) or pspm_bf_sebrf([td, d, g])
+% FORMAT:   [bf, x] = pspm_bf_sebrf(td, d, g) 
+%        or [bf, x] = pspm_bf_sebrf([td, d, g])
 %
 % with  td = time resolution in s and 
 %       d  = whether first derivative should be included (1) or 

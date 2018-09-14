@@ -1,8 +1,8 @@
 function [sts, data]=pspm_get_hb(import)
-% SCR_GET_HB is a common function for importing heart beat data
+% pspm_get_hb is a common function for importing heart beat data
 %
 % FORMAT:
-% function [sts, data]=pspm_get_hb(import)
+% function [sts, data]= pspm_get_hb(import)
 %               import: import job structure with mandatory fields 
 %                  .data
 %                  .marker ('timestamps', 'continuous')

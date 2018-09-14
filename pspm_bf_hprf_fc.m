@@ -1,9 +1,9 @@
 function [bs, x] = pspm_bf_hprf_fc(varargin)
-% SCR_bf_hprf_fc  
+% pspm_bf_hprf_fc  
 % Description: 
 %
-% FORMAT: [bs, x] = SCR_BF_HPRF_FC(TD, D, soa) 
-%     OR: [bs, x] = SCR_BF_HPRF_FC([TD, D, soa]) 
+% FORMAT: [bs, x] = pspm_bf_hprf_fc(TD, D, soa) 
+%     OR: [bs, x] = pspm_bf_hprf_fc([TD, D, soa]) 
 % with td = time resolution in s and d:number of derivatives (default 0)
 %
 % REFERENCE

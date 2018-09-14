@@ -1,5 +1,5 @@
 function [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,unit,options)
-% PSPM_COMPUTE_VISUAL_ANGLE computes from gaze data the corresponding
+% pspm_compute_visual_angle computes from gaze data the corresponding
 % visual angle (for each data point)
 
 % FORMAT:

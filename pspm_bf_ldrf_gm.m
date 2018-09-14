@@ -1,5 +1,5 @@
 function [bs, x] = pspm_bf_ldrf_gm(varargin)
-% SCR_bf_ldrf_gm  
+% pspm_bf_ldrf_gm  
 % Description: 
 % Gamma response function for pupil dilation.
 %

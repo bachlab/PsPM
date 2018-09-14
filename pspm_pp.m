@@ -76,7 +76,8 @@ switch varargin{1}
         % user output
         fprintf('Preprocess: median filtering datafile %s ...', fn);
         for k = 1:numel(channum)
-            data{k}.data = medfilt1(data{k}.data, n);
+            curr_chan = channum(k);
+            data{curr_chan}.data = medfilt1(data{curr_chan}.data, n);
         end
         infos.pp = sprintf('median filter over %1.0f timepoints', n);
     case 'butter'
@@ -85,21 +86,23 @@ switch varargin{1}
         % user output
         fprintf('Preprocess: butterworth filtering datafile %s ...', fn);
         for k = 1:numel(channum)
-            filt.sr = data{channum(k)}.header.sr;
+            curr_chan = channum(k);
+            filt.sr = data{curr_chan}.header.sr;
             filt.lpfreq = freq;
             filt.lporder = 1;
             filt.hpfreq = 'none';
             filt.hporder = 0;
             filt.down = 'none';
             filt.direction = 'bi';
-            [sts, data{channum(k)}.data, data{channum(k)}.header.sr] = pspm_prepdata(data{channum(k)}.data, filt);
+            [sts, data{curr_chan}.data, data{curr_chan}.header.sr] = pspm_prepdata(data{curr_chan}.data, filt);
             if sts == -1, return; end
         end
         infos.pp = sprintf('butterworth 1st order low pass filter at cutoff frequency %2.2f Hz', freq);
     case 'simple_qa'
         qa = varargin{3};
         for k = 1:numel(channum)
-            [sts, data{k}.data] = pspm_simple_qa(data{k}.data, data{k}.header.sr, qa);
+            curr_chan = channum(k);
+            [sts, data{curr_chan}.data] = pspm_simple_qa(data{curr_chan}.data, data{curr_chan}.header.sr, qa);
         end
         infos.pp = sprintf('simple scr quality assessment');
     otherwise

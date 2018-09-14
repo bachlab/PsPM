@@ -1,7 +1,7 @@
 function [bf, x ,p] = pspm_bf_hprf(td,p)
-% SCR_bf_hprf: heart period response function
+% pspm_bf_hprf: heart period response function
 % (scaled gamma functions)
-% FORMAT: [bf, x, p] = SCR_bf_hprf(td, p)
+% FORMAT: [bf, x, p] = pspm_bf_hprf(td, p)
 % with  td = time resolution in s
 %       p = '3' vs '4' basis function solution 
 % REFERENCE

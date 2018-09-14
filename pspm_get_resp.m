@@ -1,5 +1,5 @@
 function [sts, data]=pspm_get_resp(import)
-% SCR_GET_RESP is a common function for importing respiration data
+% pspm_get_resp is a common function for importing respiration data
 %
 % FORMAT:
 %   [sts, data]=pspm_get_resp(import)

@@ -1,5 +1,5 @@
 function out = pspm_sf_dcm(scr, sr, opt)
-% Dynamic causal modelling for SF of the skin conductance
+% pspm_sf_dcm does dynamic causal modelling for SF of the skin conductance
 % uses f_SF and g_Id
 % 
 % the input data is assumed to be in mcS, and sampling rate in Hz

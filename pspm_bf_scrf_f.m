@@ -1,11 +1,11 @@
 function [ft, p, t] = pspm_bf_scrf_f(td, p)
-% SCR_bf_crf: canonical skin conductance response function 
+% pspm_bf_scrf_f: canonical skin conductance response function 
 % (exponentially modified gaussian, EMG)
-% FORMAT: [bf p] = SCR_bf_scrf_f(td, p)
-% with  td = time resolution in s
-%       p(1): time to peak
-%       p(2): variance of rise defining gaussian
-%       P(3:4): decay constants
+% FORMAT: [bf p] = pspm_bf_scrf_f(td, p)
+%         with  td    : time resolution in s
+%               p(1)  : time to peak
+%               p(2)  : variance of rise defining gaussian
+%               p(3:4): decay constants
 % 
 % REFERENCE
 % Bach DR, Flandin G, Friston KJ, Dolan RJ (2010). Modelling event-related skin 

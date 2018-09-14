@@ -1,4 +1,4 @@
-% SCR_QUIT clears settings, removes paths & closes figures
+% pspm_quit clears settings, removes paths & closes figures
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2008-2016 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

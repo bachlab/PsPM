@@ -1,5 +1,5 @@
 function [bs, x] = pspm_bf_lcrf_gm(varargin)
-% SCR_bf_lcrf_gm  
+% pspm_bf_lcrf_gm  
 % Description: 
 % Gamma response function for pupil constriction.
 %

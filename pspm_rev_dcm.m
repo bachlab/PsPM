@@ -3,7 +3,7 @@ function pspm_rev_dcm(dcm, job, sn, trl)
 % This function displays DCM results post hoc. It is meant to be called by
 % pspm_review only
 % Work in progress. More jobs to be implemented.
-% FORMAT: SCR_REV_DCM(FILENAME, JOB, SN, TRL)
+% FORMAT: pspm_rev_dcm(FILENAME, JOB, SN, TRL)
 %   job: 'inv' - show inversion results, input argument session & trial number
 %        'sf'  - same for SF, input argument episode number
 %        'sum' - show trial-by-trial summary, input argument session

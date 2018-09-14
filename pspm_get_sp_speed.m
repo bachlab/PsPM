@@ -1,5 +1,5 @@
 function [sts, data] = pspm_get_sp_speed(import )
-% PSPM_GET_SP_SPEED is a comon function for importing eyelink data (distances
+% pspm_get_sp_speed is a comon function for importing eyelink data (distances
 % between following data points)
 %
 % FORMAT:

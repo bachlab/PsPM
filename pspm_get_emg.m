@@ -1,8 +1,8 @@
 function [sts, data]=pspm_get_emg(import)
-% SCR_GET_EMG is a common function for importing EMG data
+% pspm_get_emg is a common function for importing EMG data
 %
 % FORMAT:
-%   [sts, data]=pspm_get_emg(import)
+%   [sts, data]= pspm_get_emg(import)
 %   with import.data: column vector of waveform data
 %        import.sr: sample rate
 %  

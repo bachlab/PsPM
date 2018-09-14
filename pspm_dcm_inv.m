@@ -1,14 +1,14 @@
 function dcm = pspm_dcm_inv(model, options)
-% SCR_DCM_INV does trial-by-trial inversion of a DCM for skin conductance
-% created by SCR_DCM. This includes estimating trial by trial estimates of
+% pspm_dcm_inv does trial-by-trial inversion of a DCM for skin conductance
+% created by pspm_dcm. This includes estimating trial by trial estimates of
 % sympathetic arousal as well as estimation of the impulse response
 % function, if required.
 %
-% Whether the IR is estimated from the data or not is determined by SCR_DCM
+% Whether the IR is estimated from the data or not is determined by
+% pspm_dcm
 % and passed to the inversion routine in the options.
 %
-% FORMAT:
-% dcm = pspm_dcm_inv(model, options)
+% FORMAT:       dcm = pspm_dcm_inv(model, options)
 % 
 % MODEL with required fields:
 % model.scr:        cell array of normalised and min-adjusted time series 
@@ -28,7 +28,7 @@ function dcm = pspm_dcm_inv(model, options)
 % model.constrained: constrained model for flexible responses which have 
 %                   have fixed dispersion (0.3 s SD) but flexible latency
 %
-% OPTIONS with optional fields
+% OPTIONS with optional fields:
 %
 % response function options
 % - options.eSCR: contains the data to estimate RF from

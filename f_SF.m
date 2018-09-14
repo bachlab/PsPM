@@ -1,5 +1,5 @@
 function [fx, dfdx, dfdP] = f_SF(Xt, Theta, ut, in)
-% f_aSCR implements a biophysically informed, phenomenological forward model
+% f_SF implements a biophysically informed, phenomenological forward model
 % for spontaneous fluctuations of the skin conductance
 %
 % output function: third order differential equation the parameters of

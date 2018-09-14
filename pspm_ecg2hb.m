@@ -3,26 +3,25 @@ function [sts,infos] = pspm_ecg2hb(fn, chan, options)
 % writes them as heart beat channel into the datafile. This function
 % implements the algorithm by Pan & Tompkins (1985) with some adjustments.
 %
-% Format:
-% sts = pspm_ecg2hb(fn, chan,options)
-%       fn: data file name
-%       chan: number of ECG channel (optional, default: first ECG
-%             channel) if is empty (= 0 / []) then default channel will be
-%             used
-%       options: ... semi - activates the semi automatic mode, allowing the
+% Format:   sts = pspm_ecg2hb(fn, chan,options)
+%                 fn: data file name
+%                 chan: number of ECG channel (optional, default: first ECG
+%                 channel) if is empty (= 0 / []) then default channel will be
+%                 used
+%           options: ... semi - activates the semi automatic mode, allowing the
 %                           handcorrection of all IBIs that fulfill:
 %                           >/< mean(ibi) +/- 3 * std(ibi) [def. 1].
-%                ... minHR - sets minimal HR [def. 20bpm].
-%                ... maxHR - sets maximal HR [def. 200bpm].
-%                ... debugmode - runs the algorithm in debugmode
-%                    (additional results in debug variable 'infos.pt_debug')
-%                    and plots a graph that allows quality checks
-%                    [def. 0].
-%                ... twthresh - sets the threshold to perform the twave
-%                    check. [def. 0.36s].
-%                ... channel_action - ['add' / 'replace'] specifies whether
-%                    existing channels should be replaced or the new data
-%                    channel should be added.
+%                    ... minHR - sets minimal HR [def. 20bpm].
+%                    ... maxHR - sets maximal HR [def. 200bpm].
+%                    ... debugmode - runs the algorithm in debugmode
+%                        (additional results in debug variable 'infos.pt_debug')
+%                        and plots a graph that allows quality checks
+%                        [def. 0].
+%                    ... twthresh - sets the threshold to perform the twave
+%                        check. [def. 0.36s].
+%                    ... channel_action - ['add' / 'replace'] specifies whether
+%                        existing channels should be replaced or the new data
+%                        channel should be added.
 %
 % Reference:
 % Pan J & Tomkins WJ (1985). A Real-Time QRS Detection Algorithm. IEEE

@@ -12,7 +12,7 @@ function [sts, output] = pspm_emg_pp(fn, options)
 % it will either replace the existing channel or add it as new channel to
 % the provided file.
 %
-%   FORMAT:
+%   FORMAT:  [sts, output] = pspm_emg_pp(fn, options)
 %       fn:                 [string] Path to the PsPM file which contains 
 %                           the EMG data
 %       options.

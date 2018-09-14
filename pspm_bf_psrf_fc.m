@@ -1,9 +1,9 @@
 function [bs, x] = pspm_bf_psrf_fc(varargin)
-% SCR_bf_psrf_fc
+% pspm_bf_psrf_fc
 % Description: 
 %
-% FORMAT: [bs, x] = SCR_BF_PSRF_FC(TD, cs, cs_d, us, us_shift)
-%         [bs, x] = SCR_BF_PSRF_FC([TD, cs, cs_d, us, us_shift])
+% FORMAT: [bs, x] = pspm_bf_psrf_fc(TD, cs, cs_d, us, us_shift)
+%         [bs, x] = pspm_bf_psrf_fc([TD, cs, cs_d, us, us_shift])
 % with td = time resolution in s and d:number of derivatives (default 0)
 %
 % REFERENCE

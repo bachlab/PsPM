@@ -1,5 +1,5 @@
 function auc = pspm_sf_auc(scr, sr, options)
-% SCR_SF_AUC returns the integral/area under the curve of an SCR time series
+% pspm_sf_auc returns the integral/area under the curve of an SCR time series
 
 % FORMAT:
 % auc = pspm_sf_auc(scr)

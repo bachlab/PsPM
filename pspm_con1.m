@@ -1,9 +1,9 @@
 function pspm_con1(modelfile, connames, convec, datatype, deletecon, options)
-% SCR_CON1 creates contrasts on the first level (i.e. within one dataset)
+% pspm_con1 creates contrasts on the first level (i.e. within one dataset)
 % and saves them to the modelfile to be accessed later
 %
 % FORMAT:
-% SCR_CON1 (MODELFILE, CONNAMES, CONVEC, [DATATYPE, DELETECON, OPTIONS])
+% pspm_con1 (modelfile, connames, convec, [datatype, deletecon, options])
 %
 % modelfile: a filename, or cell array of filenames
 % connames: a cell array of names for the desired contrasts

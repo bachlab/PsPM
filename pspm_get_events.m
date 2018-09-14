@@ -1,5 +1,5 @@
 function [sts, import] = pspm_get_events(import)
-% SCR_GET_EVENTS processes events for different event channel types
+% pspm_get_events processes events for different event channel types
 % FORMAT: [sts, data] = pspm_get_events(import)
 %               import: import job structure with mandatory fields 
 %                  .data

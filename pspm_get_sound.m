@@ -1,5 +1,5 @@
 function [sts, data]=pspm_get_sound(import)
-% SCR_GET_SOUND is a common function for importing sound data
+% pspm_get_sound is a common function for importing sound data
 %
 % FORMAT:
 %   [sts, data]=pspm_get_sound(import)

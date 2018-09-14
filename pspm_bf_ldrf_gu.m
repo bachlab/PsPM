@@ -1,5 +1,5 @@
 function [bs, x] = pspm_bf_ldrf_gu(varargin)
-% SCR_bf_ldrf_gu  
+% pspm_bf_ldrf_gu  
 % Description: 
 % Gaussian response function for pupil dilation.
 %

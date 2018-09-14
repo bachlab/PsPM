@@ -1,5 +1,5 @@
 function [sts, data] = pspm_get_marker(import)
-% SCR_GET_MARKER gets the marker channel for different data types
+% pspm_get_marker gets the marker channel for different data types
 % FORMAT: [sts, data] = pspm_get_marker(import)
 %               import: import job structure with mandatory fields 
 %                  .data

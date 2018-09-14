@@ -1,5 +1,5 @@
 function [sts, outdata, newsr] = pspm_prepdata(data, filt)
-% This is a shared SCRalyze function for twofold butterworth filting and 
+% pspm_prepdata is a shared PsPM function for twofold butterworth filting and 
 % downsampling raw data "on the fly". This data is usually stored in 
 % results files rather than data files. 
 %

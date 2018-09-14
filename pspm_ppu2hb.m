@@ -1,10 +1,11 @@
 function [ sts, outinfo ] = pspm_ppu2hb( fn,chan,options )
-%PSPM_PPU2HB Converts a pulse oxymeter channel to heartbeats and adds it as
+%pspm_ppu2hb Converts a pulse oxymeter channel to heartbeats and adds it as
 %a new channel
 %   First a template is generated from non ambiguous heartbeats. The ppu
 %   signal is then cross correlated with the template and maximas are
 %   identified as heartbeat maximas and a heartbeat channel is then
 %   generated from these.
+%   Format: [ sts, outinfo ] = pspm_ppu2hb( fn,chan,options )
 %   Inputs :
 %       fn : file name with path
 %       chan : ppu channel number

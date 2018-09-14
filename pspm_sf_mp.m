@@ -1,5 +1,5 @@
 function out = pspm_sf_mp(scr, sr, opt)
-% Inversion of a DCM for SF of the skin conductance, using a matching
+% pspm_sf_mp does the inversion of a DCM for SF of the skin conductance, using a matching
 % pursuit algorithm, and f_SF for the forward model
 % 
 % the input data is assumed to be in mcS, and sampling rate in Hz

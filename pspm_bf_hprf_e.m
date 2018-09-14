@@ -1,5 +1,5 @@
 function [bf, x, b] = pspm_bf_hprf_e(varargin)
-% pspm_bf_hprf constructs the heart period response function consisting of 
+% pspm_bf_hprf_e constructs the heart period response function consisting of 
 % modified Gaussian functions
 %
 % FORMAT: [bf, x, b] = pspm_bf_hprf_e(td, b) or pspm_bf_hprf_e([td, b])

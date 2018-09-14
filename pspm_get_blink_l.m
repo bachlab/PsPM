@@ -1,9 +1,9 @@
 function [sts, data]=pspm_get_blink_l(import)
-% PSPM_GET_BLINK_L is a common function for importing eyelink data
+% pspm_get_blink_l is a common function for importing eyelink data
 % (blink_l data)
 %
 % FORMAT:
-%   [sts, data]=pspm_get_blink_l(import)
+%   [sts, data]= pspm_get_blink_l(import)
 %   with import.data: column vector of waveform data
 %        import.sr: sample rate
 %  

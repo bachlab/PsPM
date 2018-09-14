@@ -1,9 +1,9 @@
 function [bs, x] = pspm_bf_rarf_fc(varargin)
-% SCR_BF_RARF_FC
+% pspm_bf_rarf_fc
 % Description: 
 %
-% FORMAT: [bs, x] = SCR_BF_RARF_FC(td, bf_type) 
-%     OR: [bs, x] = SCR_BF_RARF_FC([td, bf_type]) 
+% FORMAT: [bs, x] = pspm_bf_rarf_fc(td, bf_type) 
+%     OR: [bs, x] = pspm_bf_rarf_fc([td, bf_type]) 
 %
 % ARGUMENTS:
 %           td:         The time the response function should have.   

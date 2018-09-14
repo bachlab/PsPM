@@ -2,7 +2,7 @@ function [bs, x] = pspm_bf_spsrf_box( td, soa )
 % pspm_bf_spsrf_box basis function dependent on SOA 
 
 % FORMAT: [bf p] = pspm_bf_spsrf_box(td, soa)
-% with  td = time resolution in s
+%         with  td: time resolution in s
 %
 %________________________________________________________________________
 % PsPM 4.0

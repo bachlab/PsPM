@@ -1,5 +1,5 @@
 function dcm = pspm_dcm(model, options)
-% SCR_DCM sets up a DCM for skin conductance, prepares and normalises the 
+% pspm_dcm sets up a DCM for skin conductance, prepares and normalises the 
 % data, passes it over to the model inversion routine, and saves both the 
 % forward model and its inversion
 %
@@ -10,9 +10,9 @@ function dcm = pspm_dcm(model, options)
 % both are estimated for each individual trial. Flexible responses can for
 % example be anticipatory, decision-related, or evoked with unknown onset.
 %
-% FORMAT dcm = pspm_dcm(model, options)
+% FORMAT:    dcm = pspm_dcm(model, options)
 %
-% MODEL with required fields
+% MODEL with required fields:
 % model.modelfile:  a file name for the model output
 % model.datafile:   a file name (single session) OR
 %                   a cell array of file names

@@ -1,8 +1,8 @@
 function [fx, x, p] = pspm_bf_hprf_fc_f(td, soa, p)
-% SCR_bf_hprf_fc_f
+% pspm_bf_hprf_fc_f
 % Description: 
 %
-% FORMAT: [bf p] = SCR_bf_hprf_fc_f(td, soa, p)
+% FORMAT: [bf p] = pspm_bf_hprf_fc_f(td, soa, p)
 % with  td = time resolution in s
 %       p(1): a
 %       p(2): b

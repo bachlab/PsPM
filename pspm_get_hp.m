@@ -1,8 +1,8 @@
 function [sts, data]=pspm_get_hp(import)
-% SCR_GET_HP is a common function for importing heart period data
+% pspm_get_hp is a common function for importing heart period data
 %
 % FORMAT:
-%   [sts, data]=pspm_get_hp(import)
+%   [sts, data]= pspm_get_hp(import)
 %   with data: column vector of waveform data with interpolated heart 
 %               period data in ms
 %        import: import job structure with mandatory fields .data and .sr

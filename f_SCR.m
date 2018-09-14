@@ -1,5 +1,5 @@
 function [fx, dfdx, dfdP] = f_SCR(Xt, Theta, ut, in)
-% f_aSCR implements a phenomenological forward model for anticipatory and 
+% f_SCR implements a phenomenological forward model for anticipatory and 
 % event-related skin conductance responses, taking into account spontaneous
 % fluctuations [SF] in the absence of experimental input, and slow baseline
 % [SCL] changes between experimental inputs that might not be completely

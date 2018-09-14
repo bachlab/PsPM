@@ -1,5 +1,5 @@
 function outfile = pspm_merge(infile1, infile2, reference, options)
-% SCR_MERGE merges two PsPM datafiles with different channels and
+% pspm_merge merges two PsPM datafiles with different channels and
 % writes it to a file with the same name as the first file, prepended 'm'. 
 % The data is aligned to file start or first marker. Data after the reference
 % are extended to the duration of the longer data file

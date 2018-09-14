@@ -1,5 +1,5 @@
 function outfile = pspm_sf(model, options)
-% SCR_SF is a wrapper function for analysis of tonic SC measures.
+% pspm_sf is a wrapper function for analysis of tonic SC measures.
 %
 % FORMAT:
 % outfile = pspm_sf(model, options)

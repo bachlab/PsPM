@@ -1,5 +1,5 @@
 function [theta, sr] = pspm_sf_theta
-% Parameter values for skin conductance response function f_SF
+% pspm_sf_theta returns parameter values for skin conductance response function f_SF
 % Estimated on 29-Jul-2009
 % theta1, theta2, theta3: ODE parameters
 % theta4: delay parameter, should be the same as for aSCR model as there is

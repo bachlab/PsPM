@@ -1,5 +1,5 @@
 function [sts, converted] = pspm_convert_unit(data, from, to)
-% PSPM_CONVERT_UNIT is a function to convert between different units
+% pspm_convert_unit is a function to convert between different units
 % currently only length units are possible.
 %
 % FORMAT:

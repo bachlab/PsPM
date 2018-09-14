@@ -1,9 +1,9 @@
 function [sts, glm] = pspm_glm_recon(modelfile)
-% this function reconstructs the estimated responses and measures its peak.
+% pspm_glm_recon reconstructs the estimated responses and measures its peak.
 % Reconstructed responses are written into the field glm.resp, and 
 % reconstructed response peaks into the field glm.recon in original GLM file
 %
-% FORMAT: [sts, glm] = PSPM_GLM_RECON(GLMFILE)
+% FORMAT: [sts, glm] = pspm_glm_recon(glmfile)
 %
 %__________________________________________________________________________
 % PsPM 3.0

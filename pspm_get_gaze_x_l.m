@@ -1,9 +1,9 @@
 function [sts, data]=pspm_get_gaze_x_l(import)
-% SCR_GET_GAZE_X_L is a common function for importing eyelink data
+% pspm_get_gaze_x_l is a common function for importing eyelink data
 % (gaze_x_l data)
 %
 % FORMAT:
-%   [sts, data]=pspm_get_gaze_x_l(import)
+%   [sts, data]= pspm_get_gaze_x_l(import)
 %   with import.data: column vector of waveform data
 %        import.sr: sample rate
 %  

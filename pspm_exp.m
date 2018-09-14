@@ -1,11 +1,10 @@
 function sts = pspm_exp(modelfile, target, statstype, delim)
-% SCR_EXP exports first level statistics from one or several first-level
+% pspm_exp exports first level statistics from one or several first-level
 % models. The output is organised as a matrix with rows for observations
 % (first-level models) and columns for statistics (must be the same for all
 % models)
 %
-% FORMAT:
-% pspm_exp(modelfile, target, statstype)
+% FORMAT:   pspm_exp(modelfile, target, statstype)
 %
 % mandatory argument
 % modelfile: a filename, or cell array of filenames

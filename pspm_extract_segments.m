@@ -1,7 +1,7 @@
 function [sts, out] = pspm_extract_segments(varargin)
-% Function in order to extract segments of a certain length after defined
-% onsets and create summary statistics (mean, SD, SEM, % NaN) over these 
-% segments 
+% pspm_extract_segments. Function in order to extract segments of a certain 
+% length after defined onsets and create summary statistics 
+% (mean, SD, SEM, % NaN) over these segments 
 %
 % The function supports either manual setting of data files, channels,
 % timing and timeunits or automatic extraction from a glm model file.

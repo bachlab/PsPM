@@ -1,5 +1,5 @@
 function pspm_init
-% SCR_INIT initializes SCR by determining the path and loading settings
+% pspm_init initializes PsPM by determining the path and loading settings
 % into the main workspace
 %__________________________________________________________________________
 % PsPM 3.1

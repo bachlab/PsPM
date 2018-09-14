@@ -1,6 +1,7 @@
 function [sts, import, sourceinfo] = pspm_get_acqmat(datafile, import)
 % pspm_get_acqmat is the main function for import of exported 
 % biopac/acknowledge files, version 4.0 or higher (tested on 4.2.0)
+%
 % FORMAT: [sts, import, sourceinfo] = pspm_get_acqmat(datafile, import);
 %
 % This function is based on sample files, not on proper documentation of the

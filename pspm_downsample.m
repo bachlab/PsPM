@@ -1,7 +1,8 @@
 function [sts data] = pspm_downsample(data, freqratio)
-% This function implements a simple downsample routine for users who
+% pspm_downsample implements a simple downsample routine for users who
 % don't have the Matlab Signal Processing Toolbox installed
-% FORMAT [sts data] = pspm_downsample(data, freqratio)
+%
+% FORMAT:  [sts data] = pspm_downsample(data, freqratio)
 % returns sts = -1 if the frequency ratio is not an integer
 %
 %__________________________________________________________________________

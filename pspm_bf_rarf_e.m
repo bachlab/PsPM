@@ -1,9 +1,9 @@
 function [bs, x] = pspm_bf_rarf_e(varargin)
-% SCR_BF_RARF_E
+% pspm_bf_rarf_e
 % Description: 
 %
-% FORMAT: [bs, x] = SCR_BF_RARF_E(td, bf_type)
-%       [bs, x] = SCR_BF_RARF_E([td, bf_type])
+% FORMAT: [bs, x] = pspm_bf_rarf_e(td, bf_type)
+%       [bs, x] = pspm_bf_rarf_e([td, bf_type])
 %
 % ARGUMENTS:
 %           td:         The time the response function should have.  
