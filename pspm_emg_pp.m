@@ -41,6 +41,7 @@ function [sts, output] = pspm_emg_pp(fn, options)
 % -------------------------------------------------------------------------
 global settings;
 if isempty(settings), pspm_init; end
+sts =-1;
 output = struct();
 
 % set default values
@@ -75,8 +76,8 @@ end
 
 % load data
 % -------------------------------------------------------------------------
-[sts, infos, data] = pspm_load_data(fn, options.channel);
-if sts ~= 1, return, end
+[lsts, infos, data] = pspm_load_data(fn, options.channel);
+if lsts ~= 1, return, end
 
 % do the job
 % -------------------------------------------------------------------------
@@ -90,8 +91,8 @@ filt.hporder = 4;
 filt.down = 'none';
 filt.direction = 'uni';
 
-[sts, data{1}.data, data{1}.header.sr] = pspm_prepdata(data{1}.data, filt);
-if sts == -1, return; end
+[lsts, data{1}.data, data{1}.header.sr] = pspm_prepdata(data{1}.data, filt);
+if lsts == -1, return; end
 
 % (2) remove mains noise with notch filter
 % design from
@@ -123,16 +124,16 @@ filt.down = 'none';
 filt.direction = 'uni';
 
 % rectify before with abs()
-[sts, data{1}.data, data{1}.header.sr] = pspm_prepdata(abs(data{1}.data), filt);
-if sts == -1, return; end
+[lsts, data{1}.data, data{1}.header.sr] = pspm_prepdata(abs(data{1}.data), filt);
+if lsts == -1, return; end
 
 % change channel type to emg_pp to match sebr modality
 data{1}.header.chantype = 'emg_pp';
 
 % save data
 % -------------------------------------------------------------------------
-[sts, outinfos] = pspm_write_channel(fn, data{1}, options.channel_action);
-if sts ~= 1, return; end
+[lsts, outinfos] = pspm_write_channel(fn, data{1}, options.channel_action);
+if lsts ~= 1, return; end
 
 output.channel = outinfos.channel;
 sts = 1;

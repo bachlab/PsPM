@@ -88,11 +88,14 @@ elseif isnumeric(filt.down) && ~isnan(filt.down) && filt.down < filt.sr
 end
 
 if lowpass_filt
-    if filt.lpfreq >= nyq 
+    if filt.lpfreq >= nyq
         warning('ID:no_low_pass_filtering', 'The low pass filter cutoff frequency is higher (or equal) than the nyquist frequency. The data won''t be low pass filtered!');
     else
         [lsts, filt.b, filt.a]=pspm_butter(filt.lporder, filt.lpfreq/nyq, 'low');
-        if lsts == -1, return; end
+        if lsts == -1
+            warning('ID:invalid_input', 'call of pspm_butter failed');
+            return;
+        end
         if uni
             data = filter(filt.b, filt.a, data);
             data = filter(filt.b, filt.a, data);
@@ -106,7 +109,10 @@ end
 % -------------------------------------------------------------------------
 if ~ischar(filt.hpfreq) && ~isnan(filt.hpfreq)
     [lsts, filt.b, filt.a]=pspm_butter(filt.hporder, filt.hpfreq/nyq, 'high');
-    if lsts == -1, return; end
+    if lsts == -1
+        warning('ID:invalid_input', 'call of pspm_butter failed');
+        return;
+    end
     if uni
         data = filter(filt.b, filt.a, data);
         data = filter(filt.b, filt.a, data);

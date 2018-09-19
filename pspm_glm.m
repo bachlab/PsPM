@@ -277,10 +277,13 @@ for iFile = 1:nFile
     fprintf('.');
     if any(strcmp(model.timeunits, {'marker', 'markers','markervalues'}))
         [sts, ~, data] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
-        if sts < 1, return; end
+        if sts < 1
+            warning('ID:invalid_input', ['Could not load the specified markerchannel']); 
+            return;
+        end
         events{iFile} = data{1}.data * data{1}.header.sr;
         if strcmp(model.timeunits,'markervalues')
-            model.intiming{iFile}.markerinfo = data{1}.markerinfo;
+            model.timing{iFile}.markerinfo = data{1}.markerinfo;
         end 
     end
 end
@@ -357,16 +360,13 @@ end
 % remove path & clear local variables --
 if ~isempty(basepath), rmpath(basepath); end
 clear basepath basefn baseext
-
-% if timeunits are 'markervalues' the timings must be set from the
-% markerchannel for each session need to adapt 
-% % % % % % if strcmpi(timeunits,'markervalues')
-% % % % % %     
-% % % % % % end 
+ 
 
 % check regressor files --
 [sts, multi] = pspm_get_timing('onsets', model.timing, model.timeunits);
-if sts < 0, warning('Invalid multiple condition file'); return; end
+if sts < 0
+    warning('ID:invalid_input', 'Failed to call pspm_get_timing'); return;
+end
 
 % check & get missing values --
 if ~isfield(model, 'missing')
@@ -386,7 +386,7 @@ else
         else
             [sts, missing{iSn}] = pspm_get_timing('epochs', model.missing{iSn}, 'seconds');
         end
-        if sts == -1, return; end
+        if sts == -1, warning('ID:invalid_input', 'Failed to call pspm_get_timing'); return; end
     end
 end
 
@@ -468,10 +468,10 @@ for iSn = 1:nFile
     nan_idx = find(isnan(oldy));
     % interpolate y data
     [sts, oldy] = pspm_interpolate(oldy, struct('extrapolate', 1));
-    if sts ~= 1, return; end
+    if sts ~= 1, warning('ID:invalid_input', 'Failed to interpolate y data'); return; end
     % filter data
     [sts, newy, newsr] = pspm_prepdata(oldy, model.filter);
-    if sts ~= 1, return; end
+    if sts ~= 1, warning('ID:invalid_input', 'Failed to filter data'); return; end
     
     % if has been downsampled adjust nan_idx
     if numel(oldy) ~= numel(newy)
@@ -703,7 +703,7 @@ for iCond = 1:numel(names)
                 tmp.col{iSn, 1} = conv(tmp.X{iCond}(snonsets(iSn):snoffsets(iSn), iXcol), glm.bf.X(:,iBf));
                 % filter design matrix w/o downsampling
                 [sts,  tmp.col{iSn, 1}] = pspm_prepdata(tmp.col{iSn, 1}, Xfilter);
-                if sts ~= 1, glm = struct([]); return; end
+                if sts ~= 1, glm = struct([]);warning('ID:invalid_input', 'Failed to filter data');return; end
                 % cut away tail
                 tmp.col{iSn, 1}((tmp.snduration(iSn) + 1):end) = [];
             end
@@ -756,7 +756,7 @@ for iSn = 1:numel(model.datafile)
     model.filter.sr = sr(iSn);
     for iR = 1:nR
         [sts, Rf{iSn}(:, iR)]  = pspm_prepdata(R{iSn}(:, iR), model.filter);
-        if sts ~= 1, return; end
+        if sts ~= 1,warning('ID:invalid_input', 'Failed to filter data'); return; end
     end
     if (model.bf.shiftbf ~= 0) && ~isempty(Rf{iSn})
         Rf{iSn} = [ NaN(model.bf.shiftbf*model.filter.down, nR); Rf{iSn}];
@@ -871,7 +871,11 @@ end
 
 % save data
 savedata = struct('glm', glm);
-pspm_load1(model.modelfile, 'save', savedata, options);
+[sts, data, mdltype] = pspm_load1(model.modelfile, 'save', savedata, options);
+if sts == -1
+    warning('ID:invalid_input', 'call of pspm_load1 failed');
+    return;
+end
 
 
 % user output

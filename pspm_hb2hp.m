@@ -57,7 +57,10 @@ end;
 % get data
 % -------------------------------------------------------------------------
 [nsts, dinfos, data] = pspm_load_data(fn, chan);
-if nsts == -1, return; end;
+if nsts == -1
+    warning('ID:invalid_input', 'call of pspm_load_data failed');
+    return; 
+end;
 if numel(data) > 1
     fprintf('There is more than one heart beat channel in the data file. Only the first of these will be analysed.');
     data = data(1);
@@ -87,7 +90,10 @@ else
 end;
 o.msg.prefix = 'Heart beat converted to heart period and';
 [sts, winfos] = pspm_write_channel(fn, newdata, action, o);
-if nsts == -1, return; end;
+if nsts == -1
+    warning('ID:invalid_input', 'call of pspm_write_channel failed');
+    return; 
+end;
 infos.channel = winfos.channel;
 
 sts = 1;

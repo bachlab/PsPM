@@ -2,7 +2,7 @@ function pspm_rev2(modelfile, con)
 % pspm_rev2 is a tool for reviewing & reporting a second level design
 % 
 % FORMAT:
-% SCR_REV2(MODELFILE, {CON})
+% pspm_rev2(MODELFILE, {CON})
 % 
 % optional argument: con indicates the contrasts that you wish to be
 % reported

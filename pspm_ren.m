@@ -1,9 +1,9 @@
 function newfilename = pspm_ren(filename, newfilename)
 
-% SCR_REN renames an SCR datafile and updates the infos field
+% pspm_ren renames an SCR datafile and updates the infos field
 %
 % FORMAT:
-% NEWFILENAME = SCR_REN(FILENAME, NEWFILENAME)
+% NEWFILENAME = pspm_ren(FILENAME, NEWFILENAME)
 % 
 % FILENAME can be a name, or for convenience, a cell array of filenames  
 % 
@@ -65,7 +65,10 @@ for f = 1:numel(filename)
     end;
     fnfn = fullfile(pth, [nfn, ext]);
     [sts, infos, data] = pspm_load_data(fn);
-    if sts == -1, break; end;
+    if sts == -1
+        warning('ID:invalid_input', 'Could not load data properly.');
+        return;
+    end;
     infos.rendate = date;
     infos.newname = [nfn ext];
     save(fnfn, 'infos', 'data');

@@ -27,10 +27,14 @@ function [sts, data]=pspm_get_hb(import)
 % -------------------------------------------------------------------------
 global settings;
 if isempty(settings), pspm_init; end;
+sts =-1;
 
 % get data
 % -------------------------------------------------------------------------
-[sts, import] = pspm_get_events(import);
+[bsts, import] = pspm_get_events(import);
+if bsts~=1
+    warning('ID:invalid_input', 'Call of pspm_get_events failed.'); return;
+end
 data.data = import.data;
 
 % add header
@@ -38,5 +42,5 @@ data.data = import.data;
 data.header.chantype = 'hb';
 data.header.units = 'events';
 data.header.sr = 1;
-
+sts =1;
 return;

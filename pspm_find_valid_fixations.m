@@ -2,19 +2,19 @@ function [sts, out_file] = pspm_find_valid_fixations(fn, box_degree, ...
     distance, unit, options)
 % pspm_find_valid_fixaitons takes a file with data from eyelink recordings
 % which has been converted to length units and filters out invalid fixations.
-% Gaze values outside of a defined range are set to NaN, which can later 
-% be interpolated using pspm_interpolate. The function will create a timeseries 
+% Gaze values outside of a defined range are set to NaN, which can later
+% be interpolated using pspm_interpolate. The function will create a timeseries
 % with NaN values during invalid fixations (as defined by the parameters).
 %
 % With two options it is possible to tell the function whether to add or
 % replace the channels and to tell whether the function should create a new
 % file or overwrite the file given in fn.
 %
-% FORMAT: 
-%   [sts, out_file] = pspm_find_valid_fixations(fn, box_degree, distance, 
+% FORMAT:
+%   [sts, out_file] = pspm_find_valid_fixations(fn, box_degree, distance,
 %                                               unit, options)
 %
-% ARGUMENTS: 
+% ARGUMENTS:
 %           fn:                 The actual data file containing the eyelink
 %                               recording with gaze data converted to cm.
 %           box_degree:         size of boundary box given in degree
@@ -23,19 +23,19 @@ function [sts, out_file] = pspm_find_valid_fixations(fn, box_degree, ...
 %           unit:               unit in which distance is given.
 %           options:            Optional values
 %               fixation_point:     A nx2 vector containing x and y of the
-%                                   fixation point (with resepect to the 
-%                                   given resolution). n should be 
+%                                   fixation point (with resepect to the
+%                                   given resolution). n should be
 %                                   either 1 or should have the length of
 %                                   the actual data. Default is the middle
 %                                   of the screen. If resolution is not defined
 %                                   the values are given in percent. Therefore
-%                                   [0.5 0.5] would correspond to the middle of 
+%                                   [0.5 0.5] would correspond to the middle of
 %                                   the screen. Default is [0.5 0.5]
 %               resolution:         Resolution with which the fixation point
 %                                   is defined (Maximum value of the x and y
 %                                   coordinates). This can be the resolution
-%                                   set in cogent (e.g. [1280 1024]) or the 
-%                                   width and height of the screen in cm 
+%                                   set in cogent (e.g. [1280 1024]) or the
+%                                   width and height of the screen in cm
 %                                   (e.g. [50 30]). Default is [1 1].
 %               plot_gaze_coords:   Define whether to plot the gaze
 %                                   coordinates for visual inspection of
@@ -53,7 +53,7 @@ function [sts, out_file] = pspm_find_valid_fixations(fn, box_degree, ...
 %                                   channel will be written containing
 %                                   information about the validated data.
 %                                   Data points equal to 1 describe epochs
-%                                   which have been discriminated as 
+%                                   which have been discriminated as
 %                                   invalid during validation. Data points
 %                                   equal to 0 describe epochs of valid
 %                                   data (= no blink & valid fixation).
@@ -68,14 +68,14 @@ function [sts, out_file] = pspm_find_valid_fixations(fn, box_degree, ...
 %                                   Default is 'pupil'. A char or numeric
 %                                   value or a cell array of char or
 %                                   numerics is expected. Channel names
-%                                   pupil, gaze_x, gaze_y, 
-%                                   pupil_missing will be automatically 
+%                                   pupil, gaze_x, gaze_y,
+%                                   pupil_missing will be automatically
 %                                   expanded to the corresponding eye. E.g.
-%                                   pupil becomes pupil_l or pupil_r 
-%                                   according to the eye which is 
+%                                   pupil becomes pupil_l or pupil_r
+%                                   according to the eye which is
 %                                   being processed.
-%                                   
-%               
+%
+%
 %__________________________________________________________________________
 % PsPM 4.0
 % (C) 2016 Tobias Moser (University of Zurich)
@@ -95,7 +95,7 @@ if nargin < 3
     warning('ID:invalid_input', 'Not enough input arguments.'); return;
 end
 
-if nargin < 2 || ~exist('options', 'var') 
+if nargin < 2 || ~exist('options', 'var')
     options = struct();
 end
 
@@ -112,7 +112,7 @@ if msts ~= 1
         'opening the file %s.'],fn); return;
 end
 
-% check validate_fixations and then the depending mandatory fields  
+% check validate_fixations and then the depending mandatory fields
 if ~isfield(options, 'missing')
     options.missing = false;
 end
@@ -120,7 +120,7 @@ end
 if ~isfield(options, 'resolution')
     options.resolution = [1 1];
 end
-    
+
 if ~isfield(options, 'channels')
     options.channels = 'pupil';
 end
@@ -135,11 +135,11 @@ end
 
 if ~islogical(options.plot_gaze_coords) && ~isnumeric(options.plot_gaze_coords)
     warning('ID:invalid_input', ['Options.plot_gaze_coords must ', ...
-        'be logical or numeric.']); 
+        'be logical or numeric.']);
     return;
 elseif ~islogical(options.missing) && ~isnumeric(options.missing)
     warning('ID:invalid_input', ['Options.missing is neither logical ', ...
-        'nor numeric.']); 
+        'nor numeric.']);
     return;
 elseif ~any(strcmpi(options.eyes, {'all', 'left', 'right'}))
     warning('ID:invalid_input', ['Options.eyes must be either ''all'', ', ...
@@ -148,7 +148,7 @@ elseif ~any(strcmpi(options.eyes, {'all', 'left', 'right'}))
 elseif ~iscell(options.channels) && ~ischar(options.channels) && ...
         ~isnumeric(options.channels)
     warning('ID:invalid_input', ['Options.channels should be a char, ', ...
-        'numeric or a cell of char or numeric.']); 
+        'numeric or a cell of char or numeric.']);
     return;
 elseif iscell(options.channels) && ...
         any(~cellfun(@(x) isnumeric(x) ||any(strcmpi(x, {'gaze_x', 'gaze_y', ...
@@ -157,10 +157,10 @@ elseif iscell(options.channels) && ...
     return;
 elseif ~isnumeric(box_degree)
     warning('ID:invalid_input', ['box_degree is not set or ', ...
-        'is not numeric.']); 
+        'is not numeric.']);
     return;
 elseif ~isnumeric(distance)
-    warning('ID:invalid_input', 'distance is not set or not numeric.'); 
+    warning('ID:invalid_input', 'distance is not set or not numeric.');
     return;
 elseif ~ischar(unit)
     warning('ID:invalid_input', 'unit should be a char');
@@ -169,15 +169,15 @@ elseif isfield(options, 'fixation_point') && ...
         (~isnumeric(options.fixation_point) || ...
         size(options.fixation_point,2) ~= 2)
     warning('ID:invalid_input', ['Options.fixation_point is not ', ...
-        'numeric, or has the wrong size (should be nx2).']); 
+        'numeric, or has the wrong size (should be nx2).']);
     return;
 elseif isfield(options, 'resolution') && (~isnumeric(options.resolution) || ...
         ~all(size(options.resolution) == [1 2]))
     warning('ID:invalid_input', ['Options.fixation_point is not ', ...
-        'numeric, or has the wrong size (should be 1x2).']); 
+        'numeric, or has the wrong size (should be 1x2).']);
     return;
 elseif isfield(options, 'fixation_point') &&  ...
-    ~all(options.fixation_point < options.resolution)
+        ~all(options.fixation_point < options.resolution)
     warning('ID:out_of_range', ['Some fixation points are larger than ', ...
         'the range given. Ensure fixation points are within the given ', ...
         'resolution.']);
@@ -187,7 +187,7 @@ end
 % expand fixation_point
 if ~isfield(options, 'fixation_point') || isempty(options.fixation_point) ...
         || size(options.fixation_point,1) == 1
-
+    
     % set fixation point default or expand to data size
     % find first wave channel
     ct = cellfun(@(x) x.header.chantype, data, 'UniformOutput', false);
@@ -195,7 +195,7 @@ if ~isfield(options, 'fixation_point') || isempty(options.fixation_point) ...
         settings.chantypes(strcmpi({settings.chantypes.type}, x)).data, ...
         ct, 'UniformOutput', false);
     wv = find(strcmpi(chan_data, 'wave'));
-
+    
     % initialize fix_point
     fix_point(:,1) = zeros(numel(data{wv(1)}.data), 1);
     fix_point(:,2) = zeros(numel(data{wv(1)}.data), 1);
@@ -254,7 +254,7 @@ data_dev = cell(n_eyes,1);
 
 for i=1:n_eyes
     eye = lower(infos.source.eyesObserved(i));
-    if strcmpi(options.eyes, 'all') || strcmpi(options.eyes(1), eye)   
+    if strcmpi(options.eyes, 'all') || strcmpi(options.eyes(1), eye)
         gaze_x = ['gaze_x_', eye];
         gaze_y = ['gaze_y_', eye];
         
@@ -271,78 +271,39 @@ for i=1:n_eyes
         end
         channels(str_chans) = str_chan_num;
         work_chans = cell2mat(channels);
-                
+        
         if numel(work_chans) >= 1
             % always use first found channel
             excl = false(size(data{1}.data,1),1);
             
-            gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype),data),1); 
-%             & ...
-%                 ~strcmpi('pixel', x.header.units), data),1);
-            gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype), data),1); 
-%             & ...
-%                 ~strcmpi('pixel', x.header.units), data),1);
-
+            gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
+                ~strcmpi('pixel', x.header.units), data),1);
+            gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
+                ~strcmpi('pixel', x.header.units), data),1);
+            
             if ~isempty(gx) && ~isempty(gy)
-               
                 % get channel specific data range
                 x_range = data{gx}.header.range;
                 y_range = data{gy}.header.range;
-
+                
                 x_unit = data{gx}.header.units;
                 y_unit = data{gy}.header.units;
-
-
-                % change box_length to appropriate unit 
-                if ~strcmpi(unit,x_unit)
-                    if strcmpi('pixel',x_unit)
-                        %change box_length to pixel 
-                        if ~strcmpi(unit,'mm')
-                            [nsts,box_length] = pspm_convert_unit(box_length,unit,'mm');
-                            if nsts ~= 1
-                            warning('ID:invalid_input', 'Conversion of box_length unit failed'); return;
-                            end
-                            unit = 'mm';
-                        end
-                        x_box_length = box_length * 3.7795275591;
-                    else
-                        [nsts,x_box_length] = pspm_convert_unit(box_length,unit,x_unit);
-                        if nsts ~= 1
-                            warning('ID:invalid_input', 'Conversion of box_length unit failed'); return;
-                        end 
-                    end 
-                end
                 
-                if ~strcmpi(unit,y_unit)
-                    if strcmpi('pixel',y_unit)
-                        %change box_length to pixel 
-                         if ~strcmpi(unit,'mm')
-                            [nsts,box_length] = pspm_convert_unit(box_length,unit,'mm');
-                            if nsts ~= 1
-                            warning('ID:invalid_input', 'Conversion of box_length unit failed'); return;
-                            end
-                        end
-                        y_box_length = box_length * 3.7795275591;
-                    else
-                        [nsts,y_box_length] = pspm_convert_unit(box_length,unit,y_unit);
-                        if nsts ~= 1
-                            warning('ID:invalid_input', 'Conversion of box_length unit failed'); return;
-                        end 
-                    end 
-                end
-
                 % normalize recorded data to compare with normalized
                 % fixation points and box degree
                 gx_d = (data{gx}.data - x_range(1)) / diff(x_range);
                 gy_d = (data{gy}.data - y_range(1)) / diff(y_range);
-
+                
                 % also invert y coordinate
                 gy_d = 1 - gy_d;
-
+                
+                [~, box_length_x] = pspm_convert_unit(box_length, unit, x_unit);
+                [~, box_length_y] = pspm_convert_unit(box_length, unit, y_unit);
+                
                 % calculate limits from box_degree with respect to range
-                x_lim = (x_box_length - x_range(1)) / diff(x_range);
-                y_lim = (y_box_length - y_range(1)) / diff(y_range);
-
+                x_lim = (box_length_x - x_range(1)) / diff(x_range);
+                y_lim = (box_length_y - y_range(1)) / diff(y_range);
+                
                 % find data outside of box_degree
                 data_dev{i}(:,1) = abs(gx_d - fix_point(:, 1)) > x_lim;
                 data_dev{i}(:,2) = abs(gy_d - fix_point(:, 2)) > y_lim;
@@ -356,14 +317,14 @@ for i=1:n_eyes
                     % validation box coordinates
                     x_point = fix_point(1,1);
                     y_point = fix_point(1,2);
-
+                    
                     coord = repmat([x_point y_point], 5, 1) + ...
                         [x_lim y_lim; ...
                         x_lim -y_lim; ...
                         -x_lim -y_lim; ...
                         -x_lim y_lim; ...
                         x_lim y_lim];
-
+                    
                     plot(ax, gx_d, gy_d);
                     % plot gaze coordinates
                     plot(ax, coord(:,1), coord(:,2));
@@ -445,7 +406,7 @@ if numel(new_chans) >= 1
         % update nan ratio
         n_inv = sum(isnan(new_data{i}.data));
         n_data = numel(new_data{i}.data);
-        infos.source.chan_stats{i}.nan_ratio = n_inv/n_data; 
+        infos.source.chan_stats{i}.nan_ratio = n_inv/n_data;
     end
     
     % update best eye
@@ -461,9 +422,9 @@ if numel(new_chans) >= 1
     infos.source.best_eye = lower(infos.source.eyesObserved(min_idx));
     
     file_struct.infos = infos;
-    file_struct.data = new_data;   
+    file_struct.data = new_data;
     file_struct.options = op;
-        
+    
     [sts, ~, ~, ~] = pspm_load_data(out_file, file_struct);
 else
     warning('ID:invalid_input', 'Appearently no data was generated.');

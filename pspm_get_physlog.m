@@ -46,8 +46,8 @@ addpath([settings.path, 'Import', filesep, 'physlog']);
 
 % load data with specific function
 % -------------------------------------------------------------------------
-[sts, out] = import_physlog(datafile);
-if sts ~= 1
+[bsts, out] = import_physlog(datafile);
+if bsts ~= 1
     warning('ID:invalid_input', 'Physlog import was not successfull');
     return;
 end;

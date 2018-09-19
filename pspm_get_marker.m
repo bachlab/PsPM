@@ -20,10 +20,15 @@ function [sts, data] = pspm_get_marker(import)
 
 global settings;
 if isempty(settings), pspm_init; end;
+sts =-1;
 
 % get data
 % -------------------------------------------------------------------------
-[sts, import] = pspm_get_events(import);
+[bsts, import] = pspm_get_events(import);
+if bsts~=1
+    warning('ID:invalid_input','Call of pspm_get_events failed');
+    return;
+end
 data.data = import.data;
 
 % add marker info
@@ -37,5 +42,5 @@ end;
 data.header.chantype = 'marker';
 data.header.units = 'events';
 data.header.sr = 1;
-
+sts =1;
 return;

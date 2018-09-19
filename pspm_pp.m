@@ -52,7 +52,10 @@ end
 % load data
 % -------------------------------------------------------------------------
 [sts, infos, data] = pspm_load_data(fn, 0);
-if sts ~= 1, return, end
+if sts ~= 1,
+    warning('ID:invalid_input', 'call of pspm_load_data failed');
+    return;
+end
 
 % determine channel number
 % -------------------------------------------------------------------------
@@ -95,7 +98,10 @@ switch varargin{1}
             filt.down = 'none';
             filt.direction = 'bi';
             [sts, data{curr_chan}.data, data{curr_chan}.header.sr] = pspm_prepdata(data{curr_chan}.data, filt);
-            if sts == -1, return; end
+            if sts == -1
+                warning('ID:invalid_input', 'call of pspm_prepdata failed');
+                return;
+            end
         end
         infos.pp = sprintf('butterworth 1st order low pass filter at cutoff frequency %2.2f Hz', freq);
     case 'simple_qa'
@@ -103,6 +109,10 @@ switch varargin{1}
         for k = 1:numel(channum)
             curr_chan = channum(k);
             [sts, data{curr_chan}.data] = pspm_simple_qa(data{curr_chan}.data, data{curr_chan}.header.sr, qa);
+            if sts == -1
+                warning('ID:invalid_input', 'call of pspm_simple_qa failed in round %s',k);
+                return;
+            end
         end
         infos.pp = sprintf('simple scr quality assessment');
     otherwise

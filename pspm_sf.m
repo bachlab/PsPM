@@ -164,7 +164,10 @@ if strcmpi(model.timeunits, 'whole');
 else
     for iSn = 1:numel(model.datafile)
         [sts, epochs{iSn}] = pspm_get_timing('epochs', model.timing{iSn}, model.timeunits);
-        if sts == -1, return; end;
+        if sts == -1
+             warning('ID:invalid_input', 'Call of pspm_get_timing failed.');
+             return; 
+        end;
     end;
 end;
 
@@ -199,6 +202,10 @@ for iFile = 1:numel(model.datafile)
     Y{1} = data{1}.data; sr(1) = data{1}.header.sr;
     model.filter.sr = sr(1); 
     [sts, Y{2}, sr(2)] = pspm_prepdata(data{1}.data, model.filter);
+    if sts == -1
+        warning('ID:invalid_input', 'Call of pspm_prepdata failed.');
+        return;
+    end;
     % check data units --
     if ~strcmpi(data{1}.header.units, 'uS') && any(strcmpi('dcm', method))
         fprintf('\nYour data units are stored as %s, and the method will apply an amplitude threshold in uS. Please check your results.\n', ...
@@ -208,12 +215,24 @@ for iFile = 1:numel(model.datafile)
     if any(strcmp(model.timeunits, {'marker', 'markers'}))
         if options.marker_chan_num
             [nsts, ninfos, ndata] = pspm_load_data(datafile, options.marker_chan_num);
+            if nsts == -1
+                warning('ID:invalid_input', 'Could not load data');
+                return;
+            end;
             if ~strcmp(ndata{1}.header.chantype, 'marker')
                 warning('ID:invalid_option', 'Channel %i is no marker channel. The first marker channel in the file is used instead', options.marker_chan_num);
                 [nsts, ninfos, ndata] = pspm_load_data(datafile, 'marker');
+                if nsts == -1
+                    warning('ID:invalid_input', 'Could not load data');
+                    return;
+                end;
             end
         else
             [nsts, ninfos, ndata] = pspm_load_data(datafile, 'marker');
+            if nsts == -1
+                warning('ID:invalid_input', 'Could not load data');
+                return;
+            end;
         end;
         events = data{1}.data;
     end;

@@ -67,7 +67,10 @@ for iFile = 1:numel(infile{1})
     data = cell(2,1);
     for iNum = 1:2
         [sts, infos{iNum}, data{iNum}] = pspm_load_data(infile{iNum}{iFile});
-        if sts ~= 1, return; end;
+        if sts ~= 1
+            warning('ID:invalid_input', 'call of pspm_load_data failed');
+            return; 
+        end;
     end;
     % for marker alignment, trim data before first marker --
     if strcmpi(reference, 'marker')
@@ -80,7 +83,10 @@ for iFile = 1:numel(infile{1})
     end;
     % put together and cut away data from the end --
     [sts, data, duration] = pspm_align_channels([data{1}; data{2}]);
-    if sts ~= 1, return; end;
+    if sts ~= 1
+        warning('ID:invalid_input', 'call of pspm_align_channels failed');
+        return;
+    end;
     % collect infos --
     oldinfos = infos; infos = struct([]);
     infos(1).duration = duration;

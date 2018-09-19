@@ -103,8 +103,8 @@ end;
 % load & check data --
 usenames = 1;
 for iFile = 1:numel(modelfile)
-    [sts, data(iFile), modeltype{iFile}] = pspm_load1(modelfile{iFile}, statstype);
-    if sts == -1, return; end;
+    [lsts, data(iFile), modeltype{iFile}] = pspm_load1(modelfile{iFile}, statstype);
+    if lsts == -1, return; end;
     if iFile > 1
         if ~strcmpi(modeltype{iFile}, modeltype{1})
             warning('First level files must use the same model (File 1: %s, File %2.0f: %s)', ...

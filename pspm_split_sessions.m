@@ -140,7 +140,10 @@ for d = 1:numel(D)
 
     % check and get datafile ---
     [sts, ininfos, indata, filestruct] = pspm_load_data(datafile);
-    if sts < 0, break, end
+    if sts == -1
+        warning('ID:invalid_input', 'Could not load data');
+        return;
+    end;
     
     % define marker channel --
     if markerchannel == 0, markerchannel = filestruct.posofmarker; end

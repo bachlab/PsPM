@@ -57,13 +57,13 @@ else
     newscrt = (1/resamplingrate):(1/resamplingrate):(max(scrt));    % create new timepoint vector
     % note: for speed and memory, use linear interpolation, at high rsr there
     % shouldn't be any advantage of more accurate interpolation
-    newscr = interp1(scrt(2:end), scr, newscrt, 'linear', 'extrap');   % interpolate with resampling rate 
+    newscr = interp1(scrt(2:end), scr, newscrt, 'linear', 'extrap');   % interpolate with resampling rate
     wavedata = newscr'*1000;          % transpose into one column and convert into correct time unit
     % put back into correct timeunits (seconds)
     resamplingrate = 1000 * resamplingrate;
     % substitute missing samplingrate
     if nargin < 3, samplingrate = resamplingrate; end;
-    % convert 
+    % convert
     if samplingrate < resamplingrate
         filt.lpfreq = 0.5 * samplingrate;
         filt.lporder = 1;
@@ -73,6 +73,10 @@ else
         filt.down = samplingrate;
         filt.sr = resamplingrate;
         [sts, wavedata] = pspm_prepdata(wavedata, filt);
+        if sts ~= 1
+            warning('ID:invalid_input', 'call of pspm_prepdata failed');
+            return;
+        end;
     end;
 end;
 

@@ -61,7 +61,10 @@ fprintf('Heartbeat detection for %s ... \n', fn);
 % get data
 % -------------------------------------------------------------------------
 [nsts, ~, data] = pspm_load_data(fn, chan);
-if nsts == -1, return; end
+if nsts == -1
+    warning('ID:invalid_input', 'call of pspm_load_data failed');
+    return;
+end
 if numel(data) > 1
     fprintf('There is more than one PPU channel in the data file. Only the first of these will be analysed.');
     data = data(1);

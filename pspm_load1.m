@@ -253,7 +253,7 @@ switch action
         else
             for iCond = 1:numel(indata.(mdltype).condnames)
                 condindx = strcmpi(indata.(mdltype).condnames{iCond}, indata.(mdltype).trlnames);
-                data.stats(iCond, :) = mean(indata.(mdltype).stats(condindx, :), 1);
+                data.stats(iCond, :) = nanmean(indata.(mdltype).stats(condindx, :), 1);
             end;
             data.names = indata.(mdltype).names;
             data.trlnames = indata.(mdltype).trlnames;

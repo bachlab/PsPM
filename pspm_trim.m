@@ -5,14 +5,14 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
 % FORMAT:
 % NEWDATAFILE = pspm_trim (datafile, from, to, reference, options)
 %
-% datafile: a file name, a cell array of filenames, a struct with
-%           fields .data and .infos or a cell array of structs
-% from and to: either numbers, or 'none'
-% reference: 'marker': from and to are set in seconds with 
+% datafile:     a file name, a cell array of filenames, a struct with
+%               fields .data and .infos or a cell array of structs
+% from and to:  either numbers, or 'none'
+% reference:    'marker': from and to are set in seconds with 
 %                         respect to the first and last scanner/marker pulse
-%            'file':    from and to are set in seconds with respect to start
+%               'file':   from and to are set in seconds with respect to start
 %                         of datafile 
-%            a 2-element vector: from and to are set in seconds with
+%               a 2-element vector: from and to are set in seconds with
 %                         respect to the two markers defined here
 %
 % options:  options.overwrite:       overwrite existing files by default

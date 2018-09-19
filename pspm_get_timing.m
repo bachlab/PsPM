@@ -82,13 +82,15 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 % -------------------------------------------------------------------------
 global settings
 if isempty(settings), pspm_init; end
-sts = -1; outtiming = []; filewarning = 0;
+ outtiming = []; filewarning = 0;
+ sts = -1;
 
 
 % check input
 % ------------------------------------------------------------------------
 if nargin < 2
     warning('ID:invalid_input', 'No input. I don''t know what to do.');
+    
     return;
 else
     model = varargin{1};
@@ -97,6 +99,7 @@ end
 
 if ~ismember(model, {'onsets', 'epochs', 'events', 'file'})
     warning('ID:invalid_input', 'Invalid input. I don''t know what to do.');
+    
     return;
 end
 
@@ -105,25 +108,9 @@ end
 switch model
     case {'onsets', 'epochs'}
         if nargin < 3
-            warning('ID:invalid_input', 'Time units unspecified'); return;
+            warning('ID:invalid_input', 'Time units unspecified');  return;
         else
             timeunits = varargin{3};
-            %             if strcmpi(timeunits,'markervalues')
-            %                 if numel(intiming) < 3
-            %                     warning('ID:invalid_input', 'not enough arguments to set timing for markervalues'); return;
-            %                 end
-            %
-            %                 if ~isfield(intiming,'markerinfo')
-            %                     warning('ID:invalid_input', 'need to pass markerinfo'); return;
-            %                     if ~isstruct(intimin{1})
-            %                          warning('ID:invalid_input', 'markerinfo must be a struct'); return;
-            %                     end
-            %                 elseif ~isfield(intiming,'markervalues')
-            %                     warning('ID:invalid_input', 'need to set values for the marker'); return;
-            %                 elseif ~isfield(intiming,'names')
-            %                     warning('ID:invalid_input', 'need to pass markerinfo'); return;
-            %                 end
-            %           end
         end
 end
 
@@ -133,9 +120,9 @@ end
 switch model
     case 'file'
         if ~ischar(intiming)
-            warning('Specify file name as char with ''file'' option.'); return;
+            warning('Specify file name as char with ''file'' option.');  return;
         elseif ~exist(intiming, 'file')
-            warning('File (%s) doesn''t exist', intiming); return;
+            warning('File (%s) doesn''t exist', intiming);  return;
         else
             [pth, fn, ext] = fileparts(intiming);
             switch ext
@@ -154,7 +141,7 @@ switch model
         if ~strcmpi(timeunits,'markervalues')
             % timing information for GLM (SPM style files with some slight variations)
             % -------------------------------------------------------------------------
-            sts = -1;
+            
             multi = [];
             errmsg = 'Multiple condition information invalid:';
             if ~iscell(intiming)
@@ -173,6 +160,7 @@ switch model
                     in = intiming{iFile};
                 else
                     warning('The elements of intiming must be structs or filenames');
+                    
                     return;
                 end
                 
@@ -180,7 +168,8 @@ switch model
                 % check whether all fields are present and in correct format:
                 
                 if ~isfield(in, 'names') || ~isfield(in, 'onsets')
-                    warning('%sNo names or onsets.', errmsg); return;
+                    warning('%sNo names or onsets.', errmsg); 
+                    return;
                 end
                 
                 if ~isfield(in, 'durations')
@@ -189,6 +178,7 @@ switch model
                 
                 if ~iscell(in.names)||~iscell(in.onsets)
                     warning('%sNames and onsets need to be cell arrays', errmsg);
+                    
                     return;
                 end
                 % check number of conditions:
@@ -196,11 +186,13 @@ switch model
                     warning(['%sNumber of event names (%d) does ', ...
                         'not match the number of onsets (%d).'],...
                         errmsg, numel(in.names), numel(in.onsets));
+                    
                     return;
                 elseif numel(in.names)~=numel(in.durations)
                     warning(['%sNumber of event names (%d) does not match ', ...
                         'the number of durations (%d).'], ...
                         errmsg, numel(in.onsets),numel(in.durations));
+                    
                     return;
                 end
                 
@@ -248,6 +240,7 @@ switch model
                     if any(in.durations{iCond} < 0)
                         warning(['%sConditions "%s% contains ', ...
                             'negative durations.'], errmsg, in.names{iCond});
+                         return;
                     end
                 end
                 % check pmods:
@@ -255,11 +248,12 @@ switch model
                     % check consistency and add field
                     if ~isstruct(in.pmod)
                         warning('%sPmod must be a struct variable.', errmsg);
+                        
                         return;
                     elseif numel(in.pmod) > numel(in.names)
                         warning(['%sNumber of parametric modulators (%d) ', ...
                             'does not match the number of onsets (%d).'],...
-                            errmsg, numel(in.pmod),numel(in.onsets)); return;
+                            errmsg, numel(in.pmod),numel(in.onsets));  return;
                     elseif ~isfield(in.pmod, 'param') || ~isfield(in.pmod, 'name')
                         warning('%sFields are missing in pmod structure', errmsg);
                         return;
@@ -281,6 +275,7 @@ switch model
                                     in.pmod(iPmod).name{iParam}, ...
                                     numel(in.onsets{iPmod}), ...
                                     numel(in.pmod(iPmod).param{iParam}));
+                                
                                 return;
                             end
                             % set polynomial order if not specified
@@ -327,12 +322,12 @@ switch model
                 if isstruct(intiming{iMarker})
                     in = intiming{iMarker};
                 else
-                    warning('ID:invalid_input','The elements of intiming must be structs or filenames');
+                    warning('ID:invalid_input','The elements of intiming must be structs or filenames'); 
                     return;
                 end
                 
                 if ~isfield(in, 'markerinfo')
-                     warning('ID:invalid_input', 'markerinfo must be a field in the struct'); return;
+                     warning('ID:invalid_input', 'markerinfo must be a field in the struct');  return;
                 elseif ~isfield(in, 'markervalues')
                      warning('ID:invalid_input', 'markervalues must be a field in the struct'); return;
                 elseif ~isfield(in, 'names')
@@ -401,6 +396,7 @@ switch model
             if filewarning
                 warning('File %s is not a valid epochs or onsets file', ...
                     intiming);
+                
                 return;
             end
         else
@@ -411,17 +407,17 @@ switch model
         if isnumeric(outtiming) && ismatrix(outtiming)
             if size(outtiming, 2) ~= 2
                 warning(['Epochs must be specified by a e x 2 vector', ...
-                    'of onset/offsets.']); return;
+                    'of onset/offsets.']);  return;
             end
         else
-            warning('Unknown epoch definition format.'); return;
+            warning('Unknown epoch definition format.');  return;
         end
         
         % check time units --
         if any(strcmpi(timeunits, {'samples', 'markers'})) && ...
                 ~all(outtiming(:) == ceil(outtiming(:)))
             warning('ID:no_integers', ['Non-integer epoch definition when ', ...
-                'time units are ''%s'''], timeunits); return;
+                'time units are ''%s'''], timeunits);  return;
         end
         
         
@@ -436,12 +432,14 @@ switch model
                 intiming = in.events;
             else
                 warning('File must contain a variable called ''events''.');
+                
                 return;
             end
         end
         r = [];
         if isempty(intiming)
             warning('ID:invalid_input', 'No event data given.');
+            
             return;
         end
         for k = 1:numel(intiming)
@@ -449,12 +447,14 @@ switch model
             if c > 2
                 warning('ID:invalid_vector_size', ...
                     'Only one- and two-column vectors are allowed.');
+                
                 return;
             end
         end
         if any(r ~= r(1))
             warning('ID:invalid_vector_size', ...
                 'All vectors must have the same number of rows.');
+            
             return;
         end
         outtiming = intiming;

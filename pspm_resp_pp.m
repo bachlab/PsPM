@@ -68,7 +68,10 @@ end;
 % get data
 % -------------------------------------------------------------------------
 [nsts, infos, data] = pspm_load_data(fn, chan);
-if nsts == -1, return; end;
+if nsts == -1
+    warning('ID:invalid_input', 'Could not load data properly.');
+    return;
+end;
 if numel(data) > 1
     fprintf('There is more than one respiration channel in the data file. Only the first of these will be analysed.');
     data = data(1);

@@ -20,8 +20,11 @@ sts = -1;
 
 % get GLM & basis functions
 % -------------------------------------------------------------------------
-[sts, glm] = pspm_load1(modelfile, 'all', 'glm');
-if sts ~= 1, return; end
+[bsts, glm] = pspm_load1(modelfile, 'all', 'glm');
+if bsts ~= 1
+    warning('ID:invalid_input', 'call of pspm_load1 failed');
+    return; 
+end
 bs = glm.bf.X;
 bfno = glm.bf.bfno;
 bfdur = size(bs, 1);
@@ -63,4 +66,5 @@ end
 glm.recon = recon;
 glm.resp  = resp;
 glm.reconnames = condname(:);
+sts =1;
 save(modelfile, 'glm');

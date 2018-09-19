@@ -65,17 +65,17 @@ for iSession=1:nrSession
     else
         model.nuisance{iSession,1} = [];
     end
-%     if ~isfield(job.session(iSession).nuisance,'no_nuisance')
-%         model.nuisance{iSession,1} = job.session(iSession).nuisance.nuisancefile{1};
-%     else
-%         model.nuisance{iSession,1} = [];
-%     end
     
 end
 
 % timeunits
-model.timeunits = fieldnames(job.timeunits);
-model.timeunits = model.timeunits{1};
+if isfield(job.session(iSession).data_design,'marker_cond')
+    model.timeunits = 'markervalues';
+else
+    model.timeunits = fieldnames(job.timeunits);
+    model.timeunits = model.timeunits{1};
+end
+
 
 % marker channel
 if isfield(job.timeunits, 'markers')

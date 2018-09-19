@@ -93,7 +93,7 @@ function [sts, infos] = pspm_find_sounds(file, options)
 global settings;
 if isempty(settings), pspm_init; end
 
-sts=1;
+sts = -1;
 % Check argument
 if ~exist(file,'file')
     warning('ID:file_not_found', 'File %s was not found. Aborted.',file); return;
@@ -120,30 +120,30 @@ if options.plot
 end
 
 if ~isnumeric(options.resample) || mod(options.resample,1) || options.resample<1
-    warning('ID:invalid_input', 'Option resample is not an integer or negative.'); sts=-1; return;
+    warning('ID:invalid_input', 'Option resample is not an integer or negative.'); return;
 elseif ~isnumeric(options.mindelay) || options.mindelay < 0
-    warning('ID:invalid_input', 'Option mindelay is not a number or negative.'); sts=-1; return;
+    warning('ID:invalid_input', 'Option mindelay is not a number or negative.');  return;
 elseif ~isnumeric(options.maxdelay) || options.maxdelay < 0
-    warning('ID:invalid_input', 'Option maxdelay is not a number or negative.'); sts=-1; return;
+    warning('ID:invalid_input', 'Option maxdelay is not a number or negative.');  return;
 elseif options.maxdelay < options.mindelay
-    warning('ID:invalid_input','mindelay is larger than mindelay.'); sts=-1; return;
+    warning('ID:invalid_input','mindelay is larger than mindelay.');  return;
 elseif ~isnumeric(options.threshold) || options.threshold < 0
-    warning('ID:invalid_input', 'Option threshold is not a number or negative.'); sts=-1; return;
+    warning('ID:invalid_input', 'Option threshold is not a number or negative.');  return;
 elseif ~isnumeric(options.sndchannel) || mod(options.sndchannel,1) || options.sndchannel < 0
-    warning('ID:invalid_input', 'Option sndchannel is not an integer.'); sts=-1; return;
+    warning('ID:invalid_input', 'Option sndchannel is not an integer.');  return;
 elseif ~isnumeric(options.trigchannel) || mod(options.trigchannel,1) || options.trigchannel < 0
-    warning('ID:invalid_input', 'Option trichannel is not an integer.'); sts=-1; return;
+    warning('ID:invalid_input', 'Option trichannel is not an integer.');  return;
 elseif ~islogical(options.diagnostics) && ~isnumeric(options.diagnostics)
-    warning('ID:invalid_input', 'Option diagnostics is not numeric or logical'); sts=-1; return;
+    warning('ID:invalid_input', 'Option diagnostics is not numeric or logical');  return;
 elseif ~islogical(options.plot) && ~isnumeric(options.plot)
-    warning('ID:invalid_input', 'Option plot is not numeric or logical'); sts=-1; return;
+    warning('ID:invalid_input', 'Option plot is not numeric or logical');  return;
 elseif ~strcmpi(options.channel_output, 'all') && ~strcmpi(options.channel_output, 'corrected')
-    warning('ID:invalid_input', 'Option channel_output must be either ''all'' or ''corrected''.'); sts=-1; return;
+    warning('ID:invalid_input', 'Option channel_output must be either ''all'' or ''corrected''.');  return;
 elseif ~isnumeric(options.expectedSoundCount) || mod(options.expectedSoundCount,1) ... 
         || options.expectedSoundCount < 0
-    warning('ID:invalid_input', 'Option expectedSoundCount is not an integer.'); sts=-1; return;
+    warning('ID:invalid_input', 'Option expectedSoundCount is not an integer.');  return;
 elseif ~isempty(options.roi) && (length(options.roi) ~= 2 || ~all(isnumeric(options.roi) & options.roi >= 0))
-    warning('ID:invalid_input', 'Option roi must be a float vector of length 2 or 0'); sts=-1; return;
+    warning('ID:invalid_input', 'Option roi must be a float vector of length 2 or 0');  return;
 elseif ~ischar(options.channel_action) || ~ismember(options.channel_action, {'none', 'add', 'replace'})
     warning('ID:invalid_input', 'Option channel_action must be either ''none'', ''add'' or ''replace'''); return;
 end
@@ -153,8 +153,8 @@ outinfos = struct();
 
 
 % Load Data
-[sts, foo, indata] = pspm_load_data(file);
-if sts == -1
+[lsts, foo, indata] = pspm_load_data(file);
+if lsts == -1
     warning('ID:invalid_input', 'Failed loading file %s.', file); return;
 end
 
@@ -163,7 +163,7 @@ end
 if ~options.sndchannel
     sndi = find(strcmpi(cellfun(@(x) x.header.chantype,indata,'un',0),'snd'),1);
     if ~any(sndi)
-        warning('ID:no_sound_chan', 'No sound channel found. Aborted'); sts=-1; return;
+        warning('ID:no_sound_chan', 'No sound channel found. Aborted');  return;
     end
     snd = indata{sndi};
 elseif options.sndchannel > numel(indata)
@@ -246,10 +246,10 @@ while searchForMoreSounds == true
         if ~options.trigchannel
             mkri = find(strcmpi(cellfun(@(x) x.header.chantype,indata,'un',0),'marker'),1);
             if ~any(mkri)
-                warning('ID:no_marker_chan', 'No marker channel found. Aborted'); sts=-1; return;
+                warning('ID:no_marker_chan', 'No marker channel found. Aborted');  return;
             end
         elseif options.trigchannel > numel(indata)
-            warning('ID:out_of_range', 'Option trigchannel is out of the data range.'); sts=-1; return;     
+            warning('ID:out_of_range', 'Option trigchannel is out of the data range.');  return;     
         else
             mkri=options.trigchannel;
         end
@@ -356,7 +356,7 @@ if options.plot
     legend('Detected sound','Trigger','Sound onset')
     hold off
 end
-
+sts =1;
 infos = outinfos;
 
 end

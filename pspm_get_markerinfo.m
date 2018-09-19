@@ -69,8 +69,8 @@ if options.markerchan == -1
 end;
 
 % get file
-[sts, infos, data] = pspm_load_data(fn, options.markerchan);
-if sts == -1, return, end;
+[bsts, infos, data] = pspm_load_data(fn, options.markerchan);
+if bsts == -1, return, end;
 
 % check markers
 if isempty(data{1}.data)
