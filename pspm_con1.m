@@ -104,7 +104,10 @@ for iFn =1:numel(modelfile)
 
     % retrieve stats --
     [sts, data, mdltype] = pspm_load1(modelfile{iFn}, datatype, '', load1_options);
-    if sts == -1, return; end;
+    if sts == -1
+        warning('ID:invalid_input', 'Could not retrieve stats'); 
+        return;
+    end;
     % create con structure or retrieve existing contrasts --
     if deletecon == 1
         con = []; conno = 0; 

@@ -191,6 +191,11 @@ for i=1:length(plotNr)
                 legend(glm.reconnames); legend boxoff;
                 fig(5).title=get(fig(5).ax(1).h, 'Title');
                 set(fig(5).ax(1).h, 'TickDir', 'out', 'YTick',[],  'FontWeight', 'Bold', 'FontSize', 10,  'TickLength', [0.005 0.025]);
+                xlim = get(fig(5).ax(1).h, 'XTick');
+                xlim = xlim ./ glm.input.sr;
+                xlim = arrayfun(@(x)num2str(x), xlim);
+                XLim = num2cell(xlim);
+                set(fig(5).ax(1).h, 'XTickLabel',XLim);
                 set(fig(5).title, 'String', sprintf('Estimated responses per condition: %s', filename), 'FontWeight', 'Bold', 'FontSize', 14, 'Interpreter', 'none');
                 
         end

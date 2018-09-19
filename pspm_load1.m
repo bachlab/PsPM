@@ -224,8 +224,13 @@ end;
 if options.zscored
     if strcmpi(mdltype, 'dcm') && ...
         (strcmpi(action, 'cond') || strcmpi(action, 'stats'))
-        
-        indata.(mdltype).stats = zscore(indata.(mdltype).stats);
+        %ignore all stats with NaN values
+        if sum(isnan(indata.(mdltype).stats))~=0
+            temp = indata.(mdltype).stats(~isnan(isnan(indata.(mdltype).stats)));
+            indata.(mdltype).stats = zscore(temp);
+        else
+            indata.(mdltype).stats = zscore(indata.(mdltype).stats);
+        end
         data.zscored = 1;
     else
         data.zscored = 0;
