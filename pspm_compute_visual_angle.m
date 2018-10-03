@@ -60,58 +60,81 @@ end;
 n_eyes = numel(infos.source.eyesObserved);
 p=1;
 for i=1:n_eyes
-    
     eye = lower(infos.source.eyesObserved(i));
-    gaze_x = ['gaze_x_', eye];
-    gaze_y = ['gaze_y_', eye];
-    
-    % always use first found channel
-    
-    gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
-        strcmpi('mm', x.header.units), data),1);
-    gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
-        strcmpi('mm', x.header.units), data),1);
-    
-    if ~isempty(gx) && ~isempty(gy)
+    if strcmpi(options.eyes, 'all') || strcmpi(options.eyes(1), eye)
+        gaze_x = ['gaze_x_', eye];
+        gaze_y = ['gaze_y_', eye];
         
-        visual_angl_chans{p} = data{gx};
-        visual_angl_chans{p+1} = data{gy};
+        % find chars to replace
+        str_chans = cellfun(@ischar, options.channels);
+        channels = options.channels;
+        channels(str_chans) = regexprep(channels(str_chans), ...
+            '(pupil|gaze_x|gaze_y|pupil_missing)', ['$0_' eye]);
+        % replace strings with numbers
+        str_chan_num = channels(str_chans);
+        for j=1:numel(str_chan_num)
+            str_chan_num(j) = {find(cellfun(@(y) strcmpi(str_chan_num(j),...
+                y.header.chantype), data),1)};
+        end
+        channels(str_chans) = str_chan_num;
+        work_chans = cell2mat(channels);
         
-        % get channel specific data
-        gx_d = data{gx}.data;
-        gy_d = data{gy}.data;
-        
-        N = numel(gx_d);
-        if N~=numel(gy_d)
-            warning('ID:invalid_input', 'length of data in gaze_x and gaze_y is not the same');
-            return;
+        if numel(work_chans) >= 1
+            
+            % always use first found channel
+            
+            gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
+                strcmpi('mm', x.header.units), data),1);
+            gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
+                strcmpi('mm', x.header.units), data),1);
+            
+            if ~isempty(gx) && ~isempty(gy)
+                
+                visual_angl_chans{p} = data{gx};
+                visual_angl_chans{p+1} = data{gy};
+                
+                % get channel specific data
+                gx_d = data{gx}.data;
+                gy_d = data{gy}.data;
+                gy_d = data{gy}.header.range(2)-gy_d;
+                
+                N = numel(gx_d);
+                if N~=numel(gy_d)
+                    warning('ID:invalid_input', 'length of data in gaze_x and gaze_y is not the same');
+                    return;
+                end;
+                
+                % move (0,0) into center of the screen
+                gx_d = gx_d - width/2;
+                gy_d = gy_d - height/2;
+                
+                %compute visual angle for gaze_x and gaze_y
+                s_x = gx_d; % x axis in spherical coordinates
+                s_y = distance * ones(numel(gx_d),1);% y axis in spherical coordinates, actually is the radial from participant to the screen
+                s_z = gy_d;  % z axis in spherical coordinates, actually is y axis on the screen
+                [azimuth, elevation, r]= cart2sph(s_x,s_y,s_z);% convert cartesian to spherical coordinates in radians, azimuth = longitude, elevation = latitude
+                
+                lat = rad2deg(elevation);% convert radians into degrees
+                lon = rad2deg(azimuth);
+                
+                visual_angl_chans{p}.data = lon;
+                visual_angl_chans{p}.header.units = 'degree';
+                visual_angl_chans{p}.header.range = [0,max(visual_angl_chans{p}.data)];
+                
+                visual_angl_chans{p+1}.data = lat;
+                visual_angl_chans{p+1}.header.units = 'degree';
+                visual_angl_chans{p+1}.header.range = [0,max(visual_angl_chans{p+1}.data)];
+                
+                p=p+2;
+            else
+                pfrintf('%s eye does not contain gaze_x and gaze_y data.\n',eye);
+                warning('ID:invalid_input','not enough data to compute visual angle for that eye');
+            end;
+        else 
+            warning('ID:invalid_input', ['Unable to perform gaze ', ...
+                    'validation. There must be a pupil channel. Eventually ', ...
+                    'only gaze channels have been imported.']);
         end;
-        
-        % move (0,0) into center of the screen
-        gx_d = gx_d - width/2;
-        gy_d = gy_d - height/2;
-        
-        %compute visual angle for gaze_x and gaze_y
-        s_x = gx_d; % x axis in spherical coordinates
-        s_y = distance * ones(numel(gx_d),1);% y axis in spherical coordinates, actually is the radial from participant to the screen
-        s_z = gy_d;  % z axis in spherical coordinates, actually is y axis on the screen
-        [azimuth, elevation, r]= cart2sph(s_x,s_y,s_z);% convert cartesian to spherical coordinates in radians, azimuth = longitude, elevation = latitude
-        
-        lat = rad2deg(elevation);% convert radians into degrees
-        lon = rad2deg(azimuth);
-        
-        visual_angl_chans{p}.data = lon;
-        visual_angl_chans{p}.header.units = 'degree';
-        visual_angl_chans{p}.header.range = [0,max(visual_angl_chans{p}.data)];
-        
-        visual_angl_chans{p+1}.data = lat;
-        visual_angl_chans{p+1}.header.units = 'degree';
-        visual_angl_chans{p+1}.header.range = [0,max(visual_angl_chans{p+1}.data)];
-        
-        p=p+2;
-    else
-        pfrintf('%s eye does not contain gaze_x and gaze_y data.\n',eye);
-        warning('ID:invalid_input','not enough data to compute visual angle for that eye');
     end;
 end;
 

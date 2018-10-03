@@ -1,4 +1,4 @@
-function [sts, out_file] = pspm_find_valid_fixations(fn, box_degree, ...
+function [sts, out_file] = pspm_find_valid_fixations(fn, circle_degree, ...
     distance, unit, options)
 % pspm_find_valid_fixaitons takes a file with data from eyelink recordings
 % which has been converted to length units and filters out invalid fixations.
@@ -17,7 +17,7 @@ function [sts, out_file] = pspm_find_valid_fixations(fn, box_degree, ...
 % ARGUMENTS:
 %           fn:                 The actual data file containing the eyelink
 %                               recording with gaze data converted to cm.
-%           box_degree:         size of boundary box given in degree
+%           circle_degree:      size of boundary circle given in degree
 %                               visual angles.
 %           distance:           distance between eye and screen in length units.
 %           unit:               unit in which distance is given.
@@ -155,8 +155,8 @@ elseif iscell(options.channels) && ...
         'pupil', 'pupil_missing'})), options.channels))
     warning('ID:invalid_input', 'Option.channels contains invalid values.');
     return;
-elseif ~isnumeric(box_degree)
-    warning('ID:invalid_input', ['box_degree is not set or ', ...
+elseif ~isnumeric(circle_degree)
+    warning('ID:invalid_input', ['circle_degree is not set or ', ...
         'is not numeric.']);
     return;
 elseif ~isnumeric(distance)
@@ -182,6 +182,14 @@ elseif isfield(options, 'fixation_point') &&  ...
         'the range given. Ensure fixation points are within the given ', ...
         'resolution.']);
     return;
+end
+
+%change distance to 'mm'
+if ~strcmpi(distance,'mm')
+    [nsts,distance] = pspm_convert_unit(distance,unit ,'mm');
+    if nsts~=1
+        warning('ID:invalid_input', 'Failed to convert distance to mm.');
+    end
 end
 
 % expand fixation_point
@@ -210,10 +218,8 @@ else
     % normalized values
     fix_point = options.fixation_point ./ options.resolution;
 end
-
-% box for degree visual angle (for each data point)
-box_rad = box_degree * pi / 180;
-box_length = 2 * distance * tan( box_rad / 2);
+% calculate radius araund de fixation points
+%-----------------------------------------------------
 
 if ~isfield(options, 'channel_action')
     options.channel_action = 'add';
@@ -246,11 +252,11 @@ if ~iscell(options.channels)
     options.channels = {options.channels};
 end
 
+
 % iterate through eyes
 n_eyes = numel(infos.source.eyesObserved);
 new_pu = cell(n_eyes, 1);
 new_excl = cell(n_eyes, 1);
-data_dev = cell(n_eyes,1);
 
 for i=1:n_eyes
     eye = lower(infos.source.eyesObserved(i));
@@ -274,7 +280,6 @@ for i=1:n_eyes
         
         if numel(work_chans) >= 1
             % always use first found channel
-            excl = false(size(data{1}.data,1),1);
             
             gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
                 ~strcmpi('pixel', x.header.units), data),1);
@@ -282,32 +287,65 @@ for i=1:n_eyes
                 ~strcmpi('pixel', x.header.units), data),1);
             
             if ~isempty(gx) && ~isempty(gy)
-                % get channel specific data range
-                x_range = data{gx}.header.range;
-                y_range = data{gy}.header.range;
-                
+                % we choose to convert the data in whatevercase to 'mm'
                 x_unit = data{gx}.header.units;
                 y_unit = data{gy}.header.units;
                 
-                % normalize recorded data to compare with normalized
-                % fixation points and box degree
-                gx_d = (data{gx}.data - x_range(1)) / diff(x_range);
-                gy_d = (data{gy}.data - y_range(1)) / diff(y_range);
+                if ~strcmpi(x_unit,'mm')
+                    [nsts,x_data] = pspm_convert_unit(data{gy}.data, x_unit, 'mm');
+                    [msts,x_range] = pspm_convert_unit(data{gy}.header.range', x_unit, 'mm');
+                    if nsts~=1 || msts~=1
+                        warning('ID:invalid_input', 'Failed to convert data.');
+                    end
+                else
+                    x_data = data{gx}.data;
+                    x_range = data{gx}.header.range;
+                end
+                if ~strcmpi(y_unit,'mm')
+                    [nsts,y_data] = pspm_convert_unit(data{gy}.data, x_unit, 'mm');
+                    [msts,y_range] = pspm_convert_unit(data{gy}.header.range', x_unit, 'mm');
+                    if nsts~=1 || msts~=1
+                        warning('ID:invalid_input', 'Failed to convert data.');
+                    end
+                else
+                    y_data = data{gy}.data;
+                    y_range = data{gy}.header.range;
+                end
+                % need to invert the y_data because of the different (0,0)
+                % point of the eyetracker
+                y_data = y_range(2)-y_data;
                 
-                % also invert y coordinate
-                gy_d = 1 - gy_d;
+                % adapt the normalized fixation points to the
+                % korresponding range of the data
+                fix_point_temp(:,1) = x_range(1)+ fix_point(:,1)* diff(x_range);
+                fix_point_temp(:,2) = y_range(1)+ fix_point(:,2)* diff(y_range);
                 
-                [~, box_length_x] = pspm_convert_unit(box_length, unit, x_unit);
-                [~, box_length_y] = pspm_convert_unit(box_length, unit, y_unit);
+                % calculate the middlepoint of the display 
+                middlepoint= [x_range(1)+ diff(x_range)/2, ...
+                              x_range(1)+ diff(x_range)/2]; 
                 
-                % calculate limits from box_degree with respect to range
-                x_lim = (box_length_x - x_range(1)) / diff(x_range);
-                y_lim = (box_length_y - y_range(1)) / diff(y_range);
+                % caluculate the visual angle of the fixation points
+                % according to the right range
                 
-                % find data outside of box_degree
-                data_dev{i}(:,1) = abs(gx_d - fix_point(:, 1)) > x_lim;
-                data_dev{i}(:,2) = abs(gy_d - fix_point(:, 2)) > y_lim;
-                data_dev{i}(:,3) = data_dev{i}(:,1) | data_dev{i}(:,2);
+                dist = middlepoint - fix_point_temp;
+                dist = 2* (sqrt(dist(:,1).^2 + dist(:,2).^2));
+                angle_of_fix = 2 * atan(dist/(2*distance));
+                angle_of_fix = rad2deg(angle_of_fix);
+                
+                % find for each fixation point the right radius 
+                tot_angle = angle_of_fix + circle_degree;
+                tot_angle = deg2rad(tot_angle);
+                radius = distance * tan(tot_angle/2);
+                radius = radius - dist;
+                
+                % calculate for ech point distance to fixationpoint
+                gaze_data = [x_data,y_data];
+                dist_fix_gaze = fix_point_temp - gaze_data;
+                dist_fix_gaze = (sqrt(dist_fix_gaze(:,1).^2 + dist_fix_gaze(:,2).^2));
+                
+                % compare calculated distance to accepted radius
+                excl = dist_fix_gaze > radius;
+
                 
                 if options.plot_gaze_coords
                     fg = figure;
@@ -329,9 +367,7 @@ for i=1:n_eyes
                     % plot gaze coordinates
                     plot(ax, coord(:,1), coord(:,2));
                 end
-                
-                % set fixation breaks
-                excl(data_dev{i}(:,3)) = 1;
+               
                 
                 % set excluded periods in pupil data to NaN
                 new_pu{i} = {data{work_chans}};
@@ -353,6 +389,10 @@ for i=1:n_eyes
                     'unit values. Maybe you need to convert them with ', ...
                     'pspm_convert_pixel2unit()']);
             end
+        else 
+            warning('ID:invalid_input', ['Unable to perform gaze ', ...
+                    'validation. There must be a pupil channel. Eventually ', ...
+                    'only gaze channels have been imported.']);
         end
     end
 end
