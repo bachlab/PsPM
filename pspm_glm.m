@@ -366,7 +366,9 @@ clear basepath basefn baseext
 [sts, multi] = pspm_get_timing('onsets', model.timing, model.timeunits);
 if sts < 0
     warning('ID:invalid_input', 'Failed to call pspm_get_timing'); return;
-end
+elseif strcmpi(model.timeunits,'markervalues')
+    model.timeunits = 'markers';
+end 
 
 % check & get missing values --
 if ~isfield(model, 'missing')

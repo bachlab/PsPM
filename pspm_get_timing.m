@@ -364,7 +364,7 @@ switch model
                     fprintf('  %i markers with value %s for condition %s found. \n',n_marker, marker_value,names{iCond});
                 end
             end
-            [sts1, outtiming]  = pspm_get_timing('onsets', intiming, 'marker');
+            [sts1, outtiming]  = pspm_get_timing('onsets', intiming, 'markers');
         end
         
         

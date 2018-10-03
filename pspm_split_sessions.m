@@ -32,13 +32,11 @@ function newdatafile = pspm_split_sessions(datafile, markerchannel, options)
 %                           about the state of processing. Default = 0
 % 
 %       REMARK for suffix and prefix: 
-%           If the session of markerchannel (and markerchannel only)
-%           overlaps with other sessions (after prefix time and suffix time 
-%           have been added) the markers of the overlapping session will 
-%           not be in the current session. But then the markers will start 
-%           at t=-prefix and not at t=0. This only applies for the 
-%           markerchannel and in other channels the overlap data will be 
-%           included.
+%           The prefix and  suffix intervals will only be applied to data -
+%           channels. Markers in those intervals are ignored.Only markers 
+%           within the splitpoints will be considered for each session to 
+%           avoid dupplication of markers.
+%
 %
 % OUTPUT:
 % newdatafile: cell array of filenames for the individual sessions (char 
