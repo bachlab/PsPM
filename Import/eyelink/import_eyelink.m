@@ -108,7 +108,6 @@ for sn = 1:numel(offsets)
     
     % look for MSG in header section
     headerMsgPos = find(strncmpi(sn_data(1:dataStartPos), 'MSG', 3));
-    
     for i=1:length(headerMsgPos)
         headerFields = regexp(sn_data{headerMsgPos(i),2}, '\s+', 'split');
         % the second field contains the field name

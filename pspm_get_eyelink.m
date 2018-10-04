@@ -88,8 +88,10 @@ else
         
         start_time = data{c}.raw(1,1);
         end_time = data{c}.raw(end,1);
-            
-        n_diff = start_time - last_time;
+
+        % time stamps are in miliseconds. if sampling rate different
+        % then we have to correct for that otherwise break is too small/large
+        n_diff = round((start_time - last_time)*sr/1000);
         if n_diff > 0
             % channels and markers
             channels(counter:(counter+n_diff-1),1:n_cols) = NaN(n_diff, n_cols);
@@ -125,6 +127,7 @@ else
     % samplerate
     sampleRate = sr;
 end
+
 
 % create invalid data stats
 n_data = size(channels,1);
