@@ -483,15 +483,15 @@ end;
 %% nan_output
 if ~strcmpi(options.nan_output,'none')
     %count number of trials
-    trials_nr_per_cond = cellfun(@(x) size(x.trial_idx',2),segments,'un',0);
+    trials_nr_per_cond = cellfun(@(x) size(x.trial_idx',1),segments,'un',0);
     trials_nr = cell2mat(trials_nr_per_cond);
     trials_nr_sum = sum(trials_nr);
     
     %create matix with values
     trials_nan(1:(trials_nr_sum+1),1:n_cond) = NaN;
     for i=1:n_cond
-        nan_idx_length = trials_nr(i);
-        %    nan_idx_length = size(segments{i}.trial_idx,2);
+        %nan_idx_length = trials_nr(i);
+        nan_idx_length = size(segments{i}.trial_idx,1);
         for j = 1:nan_idx_length
             nan_perc = segments{i}.trial_nan_percent(j);
             trials_nan(segments{i}.trial_idx(j),i) = nan_perc;

@@ -3,26 +3,26 @@ function newdatafile = pspm_split_sessions(datafile, markerchannel, options)
 % regularly incoming markers, for example volume or slice markers from an
 % MRI scanner (equivalent to the 'scanner' option during import in previous
 % versions of PsPM and SCRalyze)
-% 
-% FORMAT: 
+%
+% FORMAT:
 % newdatafile = pspm_split_sessions(datafile, markerchannel, options)
-% 
+%
 % INPUT:
 % datafile:                 a file name, or cell array of file names
 % markerchannel (optional): number of the channel that contains the
 %                           relevant markers
-% options  
+% options
 % options.overwrite:        overwrite existing files by default
 % options.max_sn:           Define the maximum of sessions to look for.
 %                           Default is settings.split.max_sn = 10
-% options.min_break_ratio:  Minimum for ratio 
+% options.min_break_ratio:  Minimum for ratio
 %                           [(session distance)/(mean marker distance)]
 %                           Default is settings.split.min_break_ratio = 3
 % options.splitpoints       Alternatively, directly specify session start
 %                           in terms of markers (vector of integer)
-% options.prefix            In seconds, how long data before start trim point 
+% options.prefix            In seconds, how long data before start trim point
 %                           should also be included. First marker will be
-%                           at t = -options.prefix 
+%                           at t = -options.prefix
 %                           Default = 0
 % options.suffix            In seconds, how long data after the end trim
 %                           point should be included. Last marker will be
@@ -30,16 +30,16 @@ function newdatafile = pspm_split_sessions(datafile, markerchannel, options)
 %                           Default = 0
 % options.verbose           Tell the function to display information
 %                           about the state of processing. Default = 0
-% 
-%       REMARK for suffix and prefix: 
+%
+%       REMARK for suffix and prefix:
 %           The prefix and  suffix intervals will only be applied to data -
-%           channels. Markers in those intervals are ignored.Only markers 
-%           within the splitpoints will be considered for each session to 
+%           channels. Markers in those intervals are ignored.Only markers
+%           within the splitpoints will be considered for each session to
 %           avoid dupplication of markers.
 %
 %
 % OUTPUT:
-% newdatafile: cell array of filenames for the individual sessions (char 
+% newdatafile: cell array of filenames for the individual sessions (char
 %              input), or cell array of cell arrays of filenames (cell
 %              input)
 %__________________________________________________________________________
@@ -53,9 +53,9 @@ function newdatafile = pspm_split_sessions(datafile, markerchannel, options)
 % DEVELOPERS NOTES: this function was completely rewritten for SCRalyze 3.0
 % and does not take into account slice numbers any more. It is a very
 % simple algorithm now that simply defines a cut off in inter-marker
-% intervals 
+% intervals
 %
-% Was rewritten in PsPM 3.1 also in order to either have the first marker 
+% Was rewritten in PsPM 3.1 also in order to either have the first marker
 % at t=0 or at a defined time point.
 % -------------------------------------------------------------------------
 
@@ -68,7 +68,7 @@ newdatafile = [];
 % options
 % -------------------------------------------------------------------------
 if ~exist('options','var') || isempty(options) || ~isstruct(options)
-    options = struct(); 
+    options = struct();
 end
 try
     if options.overwrite ~= 1, options.overwrite = 0; end
@@ -84,8 +84,8 @@ try options.splitpoints; catch, options.splitpoints = []; end
 % maximum number of sessions (default 10)
 try options.max_sn; catch, options.max_sn = settings.split.max_sn; end
 % minimum ratio of session break to normal inter marker interval (default 3)
-try 
-    options.min_break_ratio; 
+try
+    options.min_break_ratio;
 catch
     options.min_break_ratio = settings.split.min_break_ratio;
 end
@@ -99,13 +99,13 @@ elseif ischar(datafile)
 elseif iscell(datafile)
     D = datafile;
 else
-    warning('ID:invalid_input', 'Datafile needs to be a char or cell.\n'); 
+    warning('ID:invalid_input', 'Datafile needs to be a char or cell.\n');
     return;
 end
 
 % check if prefix is positiv and suffix is negative
 if options.prefix > 0
-    warning('ID:invalid_input', 'Prefix must be negative.'); 
+    warning('ID:invalid_input', 'Prefix must be negative.');
     return;
 elseif options.suffix < 0
     warning('ID:invalid_input', 'Suffix must be positive.');
@@ -135,7 +135,7 @@ for d = 1:numel(D)
     if options.verbose
         fprintf('Splitting %s ... ', datafile);
     end
-
+    
     % check and get datafile ---
     [sts, ininfos, indata, filestruct] = pspm_load_data(datafile);
     if sts == -1
@@ -146,14 +146,14 @@ for d = 1:numel(D)
     % define marker channel --
     if markerchannel == 0, markerchannel = filestruct.posofmarker; end
     mrk = indata{markerchannel}.data;
-       
+    
     newdatafile{d} = [];
-    if isempty(options.splitpoints) 
+    if isempty(options.splitpoints)
         % get markers and define cut off ---
         imi = sort(diff(mrk), 'descend');
-
+        
         if min(imi)*options.min_break_ratio > max(imi)
-            fprintf('  The file won''t be split. No possible timepoints for split in channel %i.\n', markerchannel);        
+            fprintf('  The file won''t be split. No possible timepoints for split in channel %i.\n', markerchannel);
         elseif numel(mrk) <=  options.max_sn
             fprintf('  The file won''t be split. Not enough markers in channel %i.\n', markerchannel);
         end
@@ -164,8 +164,8 @@ for d = 1:numel(D)
     else
         splitpoint = options.splitpoints;
     end
-
-
+    
+    
     if ~isempty(splitpoint)
         for s = 1:(numel(splitpoint)+1)
             if s == 1
@@ -173,13 +173,13 @@ for d = 1:numel(D)
             else
                 sta = splitpoint(s-1);
             end
-
+            
             if s > numel(splitpoint)
                 sto = numel(mrk);
             else
                 sto = max(1,splitpoint(s) - 1);
             end
-
+            
             % include last space (estimated by mean space)
             % do not cut immedeately after stop because there might be some
             % relevant data within the mean space
@@ -192,14 +192,14 @@ for d = 1:numel(D)
             end
             start_time = mrk(sta);
             stop_time = mrk(sto)+mean_space;
-
+            
             % correct starttime (we cannot go into -) ---
             if start_time <= 0, start_time = 0; end
             % correct stop_time if it exceeds duration of file
             if stop_time > ininfos.duration, stop_time = ininfos.duration; end
             spp(s,:) = [start_time, stop_time];
         end
-
+        
         splitpoint = spp;
         
         % split file ---
@@ -243,11 +243,24 @@ for d = 1:numel(D)
                         startpoint = sta_p - sta_prefix;
                         stoppoint = sto_p - sto_suffix;
                         foo = indata{k}.data;
+                        foo_idx = find(foo<=stoppoint & foo>=startpoint);
                         foo(foo > stoppoint) = [];
                         foo = foo - startpoint;
                         foo(foo < 0) = [];
                         foo = foo - sta_prefix;
                         data{k}.data = foo;
+                        if isfield(indata{k},'makerinfo')
+                            if isfield(indata{k}.makerinfo, 'value')
+                                foo_markervalues = indata{k}.makerinfo.value;
+                                foo_markervalues = foo_markervalues(foo_idx);
+                                data{k}.markerinfo.value = foo_markervalues;
+                            end
+                            if isfield(indata{k}.makerinfo, 'name')
+                                foo_markernames = indata{k}.makerinfo.name;
+                                foo_markernames = foo_markernames(foo_idx);
+                                data{k}.markerinfo.name = foo_markernames;
+                            end
+                        end
                         clear foo;
                     else
                         startpoint = sta_p;
@@ -290,6 +303,6 @@ if d == 1
 end
 
 return;
-    
-    
-    
+
+
+
