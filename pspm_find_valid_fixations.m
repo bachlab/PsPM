@@ -1,5 +1,4 @@
-function [sts, out_file] = pspm_find_valid_fixations(fn, circle_degree, ...
-    distance, unit, options)
+function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 % pspm_find_valid_fixaitons takes a file with data from eyelink recordings
 % which has been converted to length units and filters out invalid fixations.
 % Gaze values outside of a defined range are set to NaN, which can later
@@ -11,16 +10,24 @@ function [sts, out_file] = pspm_find_valid_fixations(fn, circle_degree, ...
 % file or overwrite the file given in fn.
 %
 % FORMAT:
-%   [sts, out_file] = pspm_find_valid_fixations(fn, box_degree, distance,
+%   [sts, out_file] = pspm_find_valid_fixations(fn, bitmap, options)
+%   [sts, out_file] = pspm_find_valid_fixations(fn, circle_degree, distance,
 %                                               unit, options)
 %
 % ARGUMENTS:
 %           fn:                 The actual data file containing the eyelink
 %                               recording with gaze data converted to cm.
+%           bitmap:             A nxm matrix representing the display
+%                               window and holding for each poisition a
+%                               one, where a gaze value is taken into
+%                               account. If there exists gaze data at a
+%                               point with a zero value in the bitmap
+%                               the corresponding data is set to NaN.
 %           circle_degree:      size of boundary circle given in degree
 %                               visual angles.
 %           distance:           distance between eye and screen in length units.
 %           unit:               unit in which distance is given.
+%           
 %           options:            Optional values
 %               fixation_point:     A nx2 vector containing x and y of the
 %                                   fixation point (with resepect to the
@@ -91,12 +98,51 @@ sts = -1;
 out_file = '';
 
 % validate input
-if nargin < 3
-    warning('ID:invalid_input', 'Not enough input arguments.'); return;
+if numel(varargin) < 1
+    warning('ID:invalid_input', ['Not enough input arguments.', ...
+        ' You have to either pass a bitmap or circle_degree, distance and unit',...
+        ' to compute the valid fixations']); return;
 end
 
-if nargin < 2 || ~exist('options', 'var')
-    options = struct();
+%get imput arguments and check if correct values
+if numel(varargin{1}) > 1
+    mode = 'bitmap';
+    bitmap = varargin{1};
+    if ~ismatrix(bitmap) || (~isnumeric(bitmap) && ~islogical(bitmap))
+        warning('ID:invalid_input', ['The bitmap must be a matrix and must',...
+            ' contain numeric or logical values.']); return;
+    end
+    if numel(varargin) < 2
+        options = struct();
+    else
+        options = varargin{2};
+    end
+else
+    mode = 'fixation';
+    if numel(varargin) < 3
+        warning('ID:invalid_input', ['Not enough input arguments.', ...
+            ' You have to set circle_degree, distance and unit',...
+            ' to compute the valid fixations']); return;
+    end
+    circle_degree = varargin{1};
+    distance = varargin{2};
+    unit = varargin{3};
+    if numel(varargin) < 4
+        options = struct();
+    else
+        options = varargin{4};
+    end
+    if ~isnumeric(circle_degree)
+        warning('ID:invalid_input', ['circle_degree is not set or ', ...
+            'is not numeric.']);
+        return;
+    elseif ~isnumeric(distance)
+        warning('ID:invalid_input', 'distance is not set or not numeric.');
+        return;
+    elseif ~ischar(unit)
+        warning('ID:invalid_input', 'unit should be a char');
+        return;
+    end
 end
 
 % fn
@@ -117,7 +163,7 @@ if ~isfield(options, 'missing')
     options.missing = false;
 end
 
-if ~isfield(options, 'resolution')
+if strcmpi(mode,'fixation')&& ~isfield(options, 'resolution')
     options.resolution = [1 1];
 end
 
@@ -155,17 +201,7 @@ elseif iscell(options.channels) && ...
         'pupil', 'pupil_missing'})), options.channels))
     warning('ID:invalid_input', 'Option.channels contains invalid values.');
     return;
-elseif ~isnumeric(circle_degree)
-    warning('ID:invalid_input', ['circle_degree is not set or ', ...
-        'is not numeric.']);
-    return;
-elseif ~isnumeric(distance)
-    warning('ID:invalid_input', 'distance is not set or not numeric.');
-    return;
-elseif ~ischar(unit)
-    warning('ID:invalid_input', 'unit should be a char');
-    return;
-elseif isfield(options, 'fixation_point') && ...
+elseif strcmpi(mode,'fixation')&& isfield(options, 'fixation_point') && ...
         (~isnumeric(options.fixation_point) || ...
         size(options.fixation_point,2) ~= 2)
     warning('ID:invalid_input', ['Options.fixation_point is not ', ...
@@ -176,7 +212,7 @@ elseif isfield(options, 'resolution') && (~isnumeric(options.resolution) || ...
     warning('ID:invalid_input', ['Options.fixation_point is not ', ...
         'numeric, or has the wrong size (should be 1x2).']);
     return;
-elseif isfield(options, 'fixation_point') &&  ...
+elseif strcmpi(mode,'fixation')&& isfield(options, 'fixation_point') &&  ...
         ~all(options.fixation_point < options.resolution)
     warning('ID:out_of_range', ['Some fixation points are larger than ', ...
         'the range given. Ensure fixation points are within the given ', ...
@@ -185,39 +221,48 @@ elseif isfield(options, 'fixation_point') &&  ...
 end
 
 %change distance to 'mm'
-if ~strcmpi(distance,'mm')
-    [nsts,distance] = pspm_convert_unit(distance,unit ,'mm');
-    if nsts~=1
-        warning('ID:invalid_input', 'Failed to convert distance to mm.');
+if strcmpi(mode,'fixation')
+    if ~strcmpi(distance,'mm')
+        [nsts,distance] = pspm_convert_unit(distance,unit ,'mm');
+        if nsts~=1
+            warning('ID:invalid_input', 'Failed to convert distance to mm.');
+        end
     end
 end
 
 % expand fixation_point
-if ~isfield(options, 'fixation_point') || isempty(options.fixation_point) ...
-        || size(options.fixation_point,1) == 1
-    
-    % set fixation point default or expand to data size
-    % find first wave channel
-    ct = cellfun(@(x) x.header.chantype, data, 'UniformOutput', false);
-    chan_data = cellfun(@(x) ...
-        settings.chantypes(strcmpi({settings.chantypes.type}, x)).data, ...
-        ct, 'UniformOutput', false);
-    wv = find(strcmpi(chan_data, 'wave'));
-    
-    % initialize fix_point
-    fix_point(:,1) = zeros(numel(data{wv(1)}.data), 1);
-    fix_point(:,2) = zeros(numel(data{wv(1)}.data), 1);
-    
-    if isfield(options, 'fixation_point') && size(options.fixation_point,1) == 1
-        % normalize values according to resolution
-        fix_point = options.fixation_point ./ options.resolution;
+if strcmpi(mode,'fixation')
+    if ~isfield(options, 'fixation_point') || isempty(options.fixation_point) ...
+            || size(options.fixation_point,1) == 1
+        
+        % set fixation point default or expand to data size
+        % find first wave channel
+        ct = cellfun(@(x) x.header.chantype, data, 'UniformOutput', false);
+        chan_data = cellfun(@(x) ...
+            settings.chantypes(strcmpi({settings.chantypes.type}, x)).data, ...
+            ct, 'UniformOutput', false);
+        wv = find(strcmpi(chan_data, 'wave'));
+        
+        % initialize fix_point
+        fix_point(:,1) = zeros(numel(data{wv(1)}.data), 1);
+        fix_point(:,2) = zeros(numel(data{wv(1)}.data), 1);
+        
+        if isfield(options, 'fixation_point') && size(options.fixation_point,1) == 1
+            % normalize values according to resolution
+            fix_point = options.fixation_point ./ options.resolution;
+        else
+            fix_point(:,:) = 0.5;
+        end
     else
-        fix_point(:,:) = 0.5;
+        % normalized values
+        fix_point = options.fixation_point ./ options.resolution;
     end
 else
-    % normalized values
-    fix_point = options.fixation_point ./ options.resolution;
+    [xlim,ylim] = size(bitmap);
+    map_x_range = [1,xlim];
+    map_y_range = [1,ylim];
 end
+
 % calculate radius araund de fixation points
 %-----------------------------------------------------
 
@@ -315,57 +360,113 @@ for i=1:n_eyes
                 % point of the eyetracker
                 y_data = y_range(2)-y_data;
                 
-                % adapt the normalized fixation points to the
-                % korresponding range of the data
-                fix_point_temp(:,1) = x_range(1)+ fix_point(:,1)* diff(x_range);
-                fix_point_temp(:,2) = y_range(1)+ fix_point(:,2)* diff(y_range);
-                
-                % calculate the middlepoint of the display 
-                middlepoint= [x_range(1)+ diff(x_range)/2, ...
-                              x_range(1)+ diff(x_range)/2]; 
-                
-                % caluculate the visual angle of the fixation points
-                % according to the right range
-                
-                dist = middlepoint - fix_point_temp;
-                dist = 2* (sqrt(dist(:,1).^2 + dist(:,2).^2));
-                angle_of_fix = 2 * atan(dist/(2*distance));
-                angle_of_fix = rad2deg(angle_of_fix);
-                
-                % find for each fixation point the right radius 
-                tot_angle = angle_of_fix + circle_degree;
-                tot_angle = deg2rad(tot_angle);
-                radius = distance * tan(tot_angle/2);
-                radius = radius - dist;
-                
-                % calculate for ech point distance to fixationpoint
-                gaze_data = [x_data,y_data];
-                dist_fix_gaze = fix_point_temp - gaze_data;
-                dist_fix_gaze = (sqrt(dist_fix_gaze(:,1).^2 + dist_fix_gaze(:,2).^2));
-                
-                % compare calculated distance to accepted radius
-                excl = dist_fix_gaze > radius;
+                % distinguish the validation method
+                switch mode
+                    case 'bitmap'
+                        % nr of data points
+                        N = numel(x_data);
 
-                
-                if options.plot_gaze_coords
-                    fg = figure;
-                    ax = axes('NextPlot', 'add');
-                    set(ax, 'Parent', handle(fg));
-                    
-                    % validation box coordinates
-                    x_point = fix_point(1,1);
-                    y_point = fix_point(1,2);
-                    
-                    coord = repmat([x_point y_point], 5, 1) + ...
-                        [x_lim y_lim; ...
-                        x_lim -y_lim; ...
-                        -x_lim -y_lim; ...
-                        -x_lim y_lim; ...
-                        x_lim y_lim];
-                    
-                    plot(ax, gx_d, gy_d);
-                    % plot gaze coordinates
-                    plot(ax, coord(:,1), coord(:,2));
+                        % change bitmap to logical
+                        bitmap = logical(bitmap);
+                        
+                        % normalize recorded data to adjust to right range
+                        % of the bitmap
+                        x_data = (x_data - x_range(1))/diff(x_range);
+                        y_data = (y_data - y_range(1))/diff(y_range);
+                        
+                        %adapt to bitmap range
+                        x_data = map_x_range(1)+ x_data * diff(map_x_range);
+                        y_data = map_y_range(1)+ y_data * diff(map_y_range);
+                        
+                        %round gaze data such that we can use them as
+                        %indexed
+                        x_data = round(x_data);
+                        y_data = round(y_data);
+                        
+                        %set all gaze values which are out oof the display
+                        %window range to NaN
+                        x_data(x_data > map_x_range(2) | x_data < map_x_range(1)) = NaN;
+                        y_data(y_data > map_y_range(2) | y_data < map_y_range(1)) = NaN;
+                        
+                        %only take gaze coordinates which both aren't NaNs
+                        valid_gaze_idx = find(~isnan(x_data) & ~isnan(y_data));
+                        valid_gaze = [x_data(valid_gaze_idx),y_data(valid_gaze_idx)];
+                        
+                        val= zeros(N,1);
+                        for k=1:numel(valid_gaze_idx)
+                            val(valid_gaze_idx(k)) = bitmap(valid_gaze(k,1),valid_gaze(k,2));
+                        end
+                        val = logical(val);
+                        excl = ~val;
+                        
+                        if options.plot_gaze_coords
+                            fg = figure;
+                            ax = axes('NextPlot', 'add');
+                            set(ax, 'Parent', handle(fg));
+                            
+                            % plot gaze coordinates
+                            mi=min(min(x_data),min(y_data));
+                            ma=max(max(x_data),max(y_data));
+                            axis([mi ma mi ma]);
+                            imshow(bitmap);
+                            hold on;
+                            plot(ax, x_data, y_data);
+                            
+                        end
+                        
+                    case 'fixation'
+                        % adapt the normalized fixation points to the
+                        % korresponding range of the data
+                        fix_point_temp(:,1) = x_range(1)+ fix_point(:,1)* diff(x_range);
+                        fix_point_temp(:,2) = y_range(1)+ fix_point(:,2)* diff(y_range);
+                        
+                        % calculate the middlepoint of the display
+                        middlepoint= [x_range(1)+ diff(x_range)/2, ...
+                                      y_range(1)+ diff(y_range)/2];
+                        
+                        % caluculate the visual angle of the fixation points
+                        % according to the right range
+                        
+                        dist = middlepoint - fix_point_temp;
+                        dist = sqrt(dist(:,1).^2 + dist(:,2).^2);
+                        angle_of_fix = 2 * atan(dist/distance);
+                        angle_of_fix = rad2deg(angle_of_fix);
+                        
+                        % find for each fixation point the right radius
+                        tot_angle = angle_of_fix + circle_degree;
+                        tot_angle = deg2rad(tot_angle);
+                        radius = distance * tan(tot_angle/2);
+                        radius = radius - dist;
+                        
+                        % calculate for ech point distance to fixationpoint
+                        gaze_data = [x_data,y_data];
+                        dist_fix_gaze = fix_point_temp - gaze_data;
+                        dist_fix_gaze = (sqrt(dist_fix_gaze(:,1).^2 + dist_fix_gaze(:,2).^2));
+                        
+                        % compare calculated distance to accepted radius
+                        excl = dist_fix_gaze > radius;
+                        
+                        if options.plot_gaze_coords
+                            fg = figure;
+                            ax = axes('NextPlot', 'add');
+                            set(ax, 'Parent', handle(fg));
+                            
+                            % validation middlepoint
+                            x_point = fix_point_temp(1,1);
+                            y_point = fix_point_temp(1,2);
+                            
+                            %for the circle around the first fixation point
+                            th = 0:pi/50:2*pi;
+                            x_unit = radius(1) * cos(th) + x_point;
+                            y_unit = radius(1) * sin(th) + y_point;
+                            
+                            % plot gaze coordinates
+                            mi=min(min(x_data),min(y_data));
+                            ma=max(max(x_data),max(y_data));
+                            axis([mi ma mi ma]);
+                            plot(ax, x_data, y_data);
+                            plot(x_unit, y_unit);
+                        end
                 end
                
                 
