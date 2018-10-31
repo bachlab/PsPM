@@ -62,15 +62,93 @@ dateFields = regexp(fheader{datePos}, '\s+', 'split');
 record_date = strtrim(sprintf('%s ', dateFields{[3:5,length(dateFields)]}));
 record_time = dateFields{6};
 
-%% try to find out number of recordings / sessions and split
+%% find all markers in the data set 
+% define data parts
 offsets = find(strcmpi(datastr(:,1), 'END'));
 if isempty(offsets)
     warning('Cannot find END of file. Assuming last line of file.');
     offsets = length(datastr(:, 1));
 end
 onsets = [1; offsets + 1];
+%data = cell(numel(offsets),1);
+data = cell(numel(offsets)+1,1);
 
-data = cell(numel(offsets),1);
+% get whole data
+sn_data  = datastr;
+str_data = cell(size(sn_data, 1), 1);
+for iline = 1:size(str_data, 1)
+    str_data{iline} = sprintf('%s ', sn_data{iline,:});
+end
+% concatenate strings and replace/interpret dots with NaN values
+str_data = strrep(str_data, ' . ', ' NaN ');
+
+% find data rows
+dataFields = find(~cellfun(@isempty, regexp(sn_data(:,1), '^[0-9]')));
+
+% allocate
+datanum = NaN(size(sn_data,1), 7);
+
+% convert numeric rows to numeric
+for i_data_row = 1:numel(dataFields)
+    n_row = dataFields(i_data_row);
+    data_num_row = sscanf(str_data{n_row}, '%f');
+    n_col = min(7, numel(data_num_row));
+    datanum(n_row,1:n_col) = data_num_row(1:n_col);
+end
+
+% extract messages that indicate a marker
+num_parts = numel(offsets);
+dataFiels_pp = cell(num_parts,1);
+start_data_idx = zeros(num_parts,1);
+msg_pos = cell(num_parts,1);
+messages = cell(num_parts,1);
+
+for k=1:num_parts
+    dataFiels_pp{k} = dataFields(dataFields>= onsets(k) & dataFields <= offsets(k));
+    start_data_idx(k) = dataFiels_pp{k}(1);
+    msg_pos{k} = find(strncmpi(sn_data(start_data_idx(k):offsets(k)), 'MSG', 3));
+    msg_pos{k} = msg_pos{k} +start_data_idx(k)-1;
+    tmp_msg_str = sn_data(msg_pos{k},2);
+    messages{k} = unique(regexprep(tmp_msg_str, '[0-9]+\s(.*)', '$1'));
+end
+
+% those are the messages we are looking for
+marker_msg = unique(cat(1,messages{:}));
+
+% get all messages
+all_messages = strncmpi(sn_data, 'MSG', 3);
+all_msg_idx = find(all_messages);
+all_msg = sn_data(all_messages,2);
+all_msg_info = cellfun(@(x) regexp(x, '\s+', 'split'),all_msg,'UniformOutput',0);
+all_msg = cellfun(@(x) x{2},all_msg_info,'UniformOutput',0);
+correct_markers = cell2mat(cellfun(@(x) ismember(x,marker_msg),all_msg,'UniformOutput',0));
+correct_markers_idx = all_msg_idx(logical(correct_markers));
+correct_markers_info = all_msg_info(logical(correct_markers));
+
+% we want to construct a struct that holds all the markers (time, value, name)
+all_markers = struct();
+all_markers.times = cell2mat(cellfun(@(x) str2double(x{1}),correct_markers_info,'UniformOutput',0));
+all_markers.vals  = zeros(size(correct_markers_idx,1),1);
+all_markers.names = cell(size(correct_markers_idx,1),1);
+
+% calculate the marker values. These correspoond to the marker message
+% index
+% also set the markernames
+for k = 1:size(marker_msg,1)
+    for m = 1:size(correct_markers_idx,1)
+        s = regexp(sn_data{correct_markers_idx(m),2}, ...
+            strcat('[0-9]\s',marker_msg(k)), 'once');
+        if s{1} > 0
+            all_markers.vals(m) = k;
+            all_markers.names{m} = marker_msg{k};
+        end
+    end
+end
+
+data{numel(offsets)+1} = all_markers;
+
+%% try to find out number of recordings / sessions and split
+
 for sn = 1:numel(offsets)
     data{sn} = struct(); 
     data{sn}.record_date = record_date;

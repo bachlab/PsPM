@@ -50,6 +50,9 @@ data = import_eyelink(datafile);
 % -------------------------------------------------------------------------
 
 % ensure sessions have the same samplerate
+%separate marker_data from real data
+all_markers = data{numel(data)};
+data = data(1:numel(data)-1);
 sr = cell2mat(cellfun(@(d) d.sampleRate, data, 'UniformOutput', false));
 eyesObs = cellfun(@(d) d.eyesObserved, data, 'UniformOutput', false);
 if numel(data) > 1 && (any(diff(sr)) || any(~strcmp(eyesObs,eyesObs{1})))
@@ -78,7 +81,7 @@ else
     
     n_cols = size(data{1}.channels, 2);
     counter = 1;
-    
+   
     for c = 1:numel(data)
         if sr ~= data{c}.sampleRate
             warning('ID:invalid_input', ['File consists of multiple ', ...
@@ -93,14 +96,26 @@ else
         % then we have to correct for that otherwise break is too small/large
         n_diff = round((start_time - last_time)*sr/1000);
         if n_diff > 0
+            
             % channels and markers
             channels(counter:(counter+n_diff-1),1:n_cols) = NaN(n_diff, n_cols);
-            markers(counter:(counter+n_diff-1), 1) = NaN(n_diff, 1);
+            markers(counter:(counter+n_diff-1), 1) = zeros(n_diff,1);
             
             % markerinfos
-            mi_value(counter:(counter+n_diff-1),1) = NaN(n_diff, 1);
-            mi_name(counter:(counter+n_diff-1), 1) = {NaN};
+            mi_value(counter:(counter+n_diff-1),1) = zeros(n_diff,1);
+            mi_name(counter:(counter+n_diff-1), 1) = {'0'};
             
+            % find if there are markers in the breaks
+            break_markers_idx = all_markers.times>=last_time & all_markers.times<=start_time;
+            tmp_times = all_markers.times(break_markers_idx);
+            tmp_vals  = all_markers.vals(break_markers_idx);
+            tmp_names = all_markers.names(break_markers_idx);
+            
+            % calculate, weher to insert missing markers
+            tmp_marker_idx = round((tmp_times- last_time)*sr/1000)-1 + counter;
+            markers(tmp_marker_idx,1) = 1;
+            mi_value(tmp_marker_idx,1) = tmp_vals;
+            mi_name(tmp_marker_idx,1) = tmp_names;
             counter = counter + n_diff;
         end
         
