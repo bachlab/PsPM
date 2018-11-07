@@ -301,10 +301,16 @@ if ~strcmpi(options.channel_action, 'none')
     % Save the new channel
     if strcmpi(options.channel_output, 'all')
         snd_events.data = snd_re_all;
-        snd_events.markerinfo.value = snd_fe_all-snd_re_all;
+        vals = snd_fe_all-snd_re_all;
+        snd_events.markerinfo.value = vals;
+        vals_cell =num2cell(vals);
+        snd_events.markerinfo.name = cellfun(@(x) num2str(x),vals_cell,'UniformOutput',0);
     else
         snd_events.data = snd_re;
-        snd_events.markerinfo.value = snd_fe-snd_re;
+        vals =snd_fe-snd_re;
+        snd_events.markerinfo.value = vals;
+        vals_cell =num2cell(vals);
+        snd_events.markerinfo.name = cellfun(@(x) num2str(x),vals_cell,'UniformOutput',0);
     end
     
     % marker channels have sr = 1 (because marker events are specified in
