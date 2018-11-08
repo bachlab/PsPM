@@ -824,7 +824,8 @@ if strcmpi(model.latency, 'free')
         glm.names{iCol + ncol} = [glm.names{iCol}, ' Latency'];
     end
     
-    XMnew(:, iCol + 1) = 1;
+    % add nuisance regressors (if any) and session intercepts
+    XMnew(:, (iCol + 1):end) = XM(:, (iCol + 1):end);
     
     % replace design matrix
     glm.XMold = glm.XM;
