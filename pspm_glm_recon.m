@@ -7,7 +7,7 @@ function [sts, glm] = pspm_glm_recon(modelfile)
 %
 %__________________________________________________________________________
 % PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% (C) 2008-2018 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 % $Id$
 % $Rev$
@@ -55,6 +55,8 @@ for k = 1:regno
     resp(:, k) = bs * glm.stats(((k - 1) * bfno + 1):(k * bfno));
     if regdiff
         recon(k, 1) = diff(glm.stats(((k - 1) * bfno + 1):(k * bfno)));
+    elseif bfno == 1
+        recon(k, 1) = glm.stats(k);
     else
         [~, bar] = max(abs(resp(:, k)));
         recon(k, 1) = resp(bar, k);
