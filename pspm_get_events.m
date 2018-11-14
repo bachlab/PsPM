@@ -85,6 +85,7 @@ elseif strcmpi(import.marker, 'continuous')
         % otherwise output a warning
         import.data = mean([lo2hi, hi2lo], 2)./import.sr;
         mPos = mean([lo2hi, hi2lo],2);
+        mPos = mPos+2;
     else
         fprintf('\n');
         warning('Different number of hi2lo and lo2hi transitions in marker channel - please choose ascending or descending flank.');
