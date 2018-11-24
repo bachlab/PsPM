@@ -26,6 +26,14 @@ elseif isfield(job.ref,'ref_any_mrk')
     if isfield(job.ref.ref_any_mrk.mrk_chan,'chan_nr')
         options.marker_chan_num = job.ref.ref_any_mrk.mrk_chan.chan_nr;
     end
+elseif isfield(job.ref,'ref_mrk_vals')
+    from =job.ref.ref_mrk_vals.from.mrksec;
+    to =job.ref.ref_mrk_vals.to.mrksec;
+    ref = {job.ref.ref_mrk_vals.from.mrval,...
+        job.ref.ref_mrk_vals.to.mrval};
+    if isfield(job.ref.ref_mrk_vals.mrk_chan,'chan_nr')
+        options.marker_chan_num = job.ref.ref_mrk_vals.mrk_chan.chan_nr;
+    end
 else
     error('Reference invalid');
 end

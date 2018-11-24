@@ -104,6 +104,53 @@ ref_any_mrk_to.tag     = 'to';
 ref_any_mrk_to.val     = {any_mrk_to_nr,any_mrk_to};
 ref_any_mrk_to.help    = {'Choose marker number and trimming point in seconds after this marker.'};
 
+%% Items for reference: Marker according to vales or names
+
+mrk_vals_from_name         = cfg_entry;
+mrk_vals_from_name.name    = 'First marker with value or name x';
+mrk_vals_from_name.tag     = 'mrval';
+mrk_vals_from_name.strtype = 's';
+mrk_vals_from_name.help    = {'Either choose a numeric marker value or a marker name.'};
+
+mrk_vals_to_name         = cfg_entry;
+mrk_vals_to_name.name    = 'First marker with value or name y';
+mrk_vals_to_name.tag     = 'mrval';
+mrk_vals_to_name.strtype = 's';
+mrk_vals_from_name.help    = {'Either choose a numeric marker value or a marker name.'};
+
+mrk_vals_from         = cfg_entry;
+mrk_vals_from.name    = 'Seconds after first marker with value/name x';
+mrk_vals_from.tag     = 'mrksec';
+mrk_vals_from.strtype = 'r';
+mrk_vals_from.num     = [1 1];
+mrk_vals_from.help    = {'Choose a positive (after this marker) or negative (before this marker) value.'};
+
+mrk_vals_to         = cfg_entry;
+mrk_vals_to.name    = 'Seconds after first marker with value/name y';
+mrk_vals_to.tag     = 'mrksec';
+mrk_vals_to.strtype = 'r';
+mrk_vals_to.num     = [1 1];
+mrk_vals_to.help    = {'Choose a positive (after this marker) or negative (before this marker) value.'};
+
+
+ref_mrk_vals_from         = cfg_branch;
+ref_mrk_vals_from.name    = 'From';
+ref_mrk_vals_from.tag     = 'from';
+ref_mrk_vals_from.val     = {mrk_vals_from_name,mrk_vals_from};
+ref_mrk_vals_from.help    = {'Choose value or name used to  find the first',...
+                             ' marker with that value/name. This will be the from',...
+                             ' marker. Choose the trimming point in seconds',...
+                             ' after this marker.'};
+
+ref_mrk_vals_to         = cfg_branch;
+ref_mrk_vals_to.name    = 'To';
+ref_mrk_vals_to.tag     = 'to';
+ref_mrk_vals_to.val     = {mrk_vals_to_name,mrk_vals_to};
+ref_mrk_vals_to.help    = {'Choose value or name used to  find the first',...
+                           ' marker with that value/name. This will be the to',...
+                           ' marker. Choose the trimming point in seconds',...
+                           ' after this marker.'};
+
 %% Reference
 ref_file         = cfg_branch;
 ref_file.name    = 'File';
@@ -124,13 +171,20 @@ ref_any_mrk.val     = {ref_any_mrk_from,ref_any_mrk_to,mrk_chan};
 ref_any_mrk.help    = {['Trim from xx seconds after any marker of your choice to xx ' ...
     'seconds after any marker of your choice.']};
 
+ref_mrk_vals         = cfg_branch;
+ref_mrk_vals.name    = 'Marker according to vales or names';
+ref_mrk_vals.tag     = 'ref_mrk_vals';
+ref_mrk_vals.val     = {ref_mrk_vals_from,ref_mrk_vals_to,mrk_chan};
+ref_mrk_vals.help    = {['Trim from xx seconds after first marker with value or name yy  to xx ' ...
+    'seconds after first marker of value or name zz.']};
 %% Reference Choice
 ref         = cfg_choice;
 ref.name    = 'Reference';
 ref.tag     = 'ref';
-ref.values  = {ref_file,ref_fl_mrk,ref_any_mrk};
+ref.values  = {ref_file,ref_fl_mrk,ref_any_mrk,ref_mrk_vals};
 ref.help    = {['Choose your reference for trimming: file start, first/last marker, ' ...
-    'or a user-defined marker. All trimming is defined in seconds after this reference ' ...
+    'or a user-defined marker (specifying the marker nr. or the value/name a marker must hold).'...
+    ' All trimming is defined in seconds after this reference ' ...
     '- choose negative values if you want to trim before the reference.']};
 
 %% Overwrite file
