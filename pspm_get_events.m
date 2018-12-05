@@ -68,7 +68,7 @@ elseif strcmpi(import.marker, 'continuous')
     % lo2hi should be minima
     % hi2lo should be maxima
     lo2hi = temp(1+find(d(temp(2:end-1)-2) > 0))-3;
-    hi2lo = temp(1+find(d(temp(2:end-1)-2) < 0))-3;
+    hi2lo = temp(1+find(d(temp(2:end-1)-2) < 0))-4;
 
     if isempty(lo2hi) && isempty(hi2lo)
         fprintf('\n');
@@ -78,14 +78,14 @@ elseif strcmpi(import.marker, 'continuous')
         import.data = lo2hi./import.sr; 
         mPos = lo2hi+3; 
     elseif isfield(import, 'flank') && strcmpi(import.flank, 'descending')
-        import.data = hi2lo./import.sr;
+        import.data = (hi2lo+1)./import.sr;
         mPos = hi2lo+2;
     elseif numel(lo2hi) == numel(hi2lo)
         % only use mean if amount of minima corresponds to amount of maxima
         % otherwise output a warning
         import.data = mean([lo2hi, hi2lo], 2)./import.sr;
         mPos = mean([lo2hi, hi2lo],2);
-        mPos = mPos+2;
+        mPos = mPos+3;
     else
         fprintf('\n');
         warning('Different number of hi2lo and lo2hi transitions in marker channel - please choose ascending or descending flank.');
