@@ -83,6 +83,30 @@ else
 end
 pth = [pth, fs];
 
+% check if SPM Software is on the current Path
+% Dialog Window open to ask whether to remove program from the path or quit
+% pspm_init. Default is to quit pspm_init
+all_paths = regexpi(p,';','split');
+spm_paths_idx = cell2mat(cellfun(@(x) isempty(regexpi(x,'\<spm')),all_paths,'UniformOutput',0));
+all_paths_spm = all_paths(~spm_paths_idx);
+pspm_paths_idx = cell2mat(cellfun(@(x) isempty(regexpi(x,'pspm')),all_paths_spm,'UniformOutput',0));
+all_paths_spm = all_paths_spm(pspm_paths_idx);
+if ~isempty(all_paths_spm)
+    % remove the SPM from path
+    if strcmp(questdlg(sprintf(['The software SPM is currently on your MATLAB search path.\n\n' ...
+            'Do you want to remove the folders belonging to SPM from your MATLAB search path in order to avoid potential ' ...
+            'issues with PsPM?']), ...
+            'Interference with SPM software', ...
+            'Yes', 'No', 'No'), 'Yes')
+        cellfun(@(x) rmpath(x),all_paths_spm,'UniformOutput',0);
+    else
+        % quit pspm_init
+        errmsg=['Start of PsPM had to be quit, because of interference with the software SPM, which was on your MATLAB search path.',...
+                ' To run PsPM be sure to remove the folders of SPM from your MATLAB search path.'];
+        error(errmsg);
+    end
+end
+
 % check whether SPM 8 is already on path
 dummy=which('spm');
 if ~isempty (dummy)
