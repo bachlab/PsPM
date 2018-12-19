@@ -75,7 +75,6 @@ function [sts, out] = pspm_extract_segments(varargin)
 global settings;
 if isempty(settings), pspm_init; end;
 sts = -1;
-out = struct();
 
 if nargin >= 2
     switch varargin{1}
@@ -528,7 +527,7 @@ if ~strcmpi(options.nan_output,'none')
 end
 %%
 
-out.segments = segments;
+out = segments;
 
 if ~isempty(options.outputfile)
     % ensure correct file suffix

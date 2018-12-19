@@ -254,6 +254,10 @@ switch action
             condindx = 1:(indata.glm.bf.bfno):(numel(indata.glm.stats)-indata.glm.interceptno);
             data.stats = indata.glm.stats(condindx);
             data.names = indata.glm.names(condindx);
+            if isfield(indata.glm,'stats_missing')&& isfield(indata.glm,'stats_exclude')
+                data.stats_missing = indata.glm.stats_missing;
+                data.stats_exclude = indata.glm.stats_exclude;
+            end
             clear condindx
         else
             for iCond = 1:numel(indata.(mdltype).condnames)

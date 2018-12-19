@@ -825,7 +825,7 @@ if strcmpi(model.latency, 'free')
     end
     
     % add nuisance regressors (if any) and session intercepts
-    XMnew(:, (iCol + 1):end) = XM(:, (iCol + 1):end);
+    XMnew(:, (iCol + 1):end) = glm.XM(:, (iCol + 1):end);
     
     % replace design matrix
     glm.XMold = glm.XM;
@@ -864,7 +864,7 @@ if isfield(options,'exclude_missing')
         return;
     end
     
-    nan_percentages = cellfun(@(x) x.total_nan_percent,segments.segments, ...
+    nan_percentages = cellfun(@(x) x.total_nan_percent,segments, ...
         'un',0);
     glm.stats_missing = cell2mat(nan_percentages);
     glm.stats_exclude = glm.stats_missing > options.exclude_missing.cutoff;

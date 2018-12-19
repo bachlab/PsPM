@@ -21,6 +21,7 @@ function sts = pspm_exp(modelfile, target, statstype, delim)
 %            reconstructs estimated response from all basis functions
 %            and export the peak of the estimated response
 % delim:     delimiter for output file (default: tab)
+% 
 %
 %__________________________________________________________________________
 % PsPM 3.0
@@ -121,7 +122,17 @@ for iFile = 1:numel(modelfile)
 end;
 
 % create output data --
+% cond_exclude = false;
+
 for iFile = 1:numel(data)
+%     if isfield(data(iFile),'stats_exclude')
+%         corr_cond_idx = find(data(iFile).stats_exclude);
+%         if ~isempty(corr_cond_idx)
+%             cond_exclude = true;
+%             outdata(iFile, :) = data(iFile).stats(~corr_cond_idx);
+%             continue;
+%         end
+%     end
     outdata(iFile, :) = data(iFile).stats(:);
 end;
 
@@ -129,7 +140,11 @@ end;
 if ~usenames
     outnames = {'Model files have different parameter names - name output suppressed.'};
 elseif strcmpi(modeltype{1}, 'GLM')
-    outnames = data(1).names;
+%     if cond_exclude 
+%         outnames = data(1).names(~data(1).stats_exclude);
+%     else
+        outnames = data(1).names;
+%     end
 else
     if strcmpi(statstype, 'stats')
         trlnames = data(1).trlnames;
