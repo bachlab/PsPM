@@ -4,7 +4,7 @@ function sts = pspm_exp(modelfile, options)
 % (first-level models) and columns for statistics (must be the same for all
 % models)
 %
-% FORMAT:   pspm_exp(modelfil, options)
+% FORMAT:   pspm_exp(modelfile, options)
 %
 % mandatory argument
 % modelfile: a filename, or cell array of filenames
@@ -21,12 +21,10 @@ function sts = pspm_exp(modelfile, options)
 %                    reconstructs estimated response from all basis functions
 %                    and export the peak of the estimated response
 % options.delim:     delimiter for output file (default: tab)
-% options.excl_cond: When 'cond' chosen as statstype, excl_cond in an option 
-%                    that excules conditions with too many NaN values. This 
-%                    option can only be set, when the modelfile, or the files 
-%                    in the cell array, are glm models and have given a cutoff 
-%                    value for the creation of the glm models. Must be a 
-%                    boolean value: true or false. default value: false
+% options.exclude_missing: 
+%                    exclude parameters from conditions with too many NaN values. 
+%                    This option can only be used for GLM files when exclude_missing
+%                    was set during model setup. Otherwise this argument is ignored (Default: 0). 
 %
 %__________________________________________________________________________
 % PsPM 3.0
