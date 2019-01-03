@@ -35,13 +35,42 @@ target.tag     = 'target';
 target.values  = {screen, filename};
 target.help    = {'Export to screen or to file?'};
 
+% Parameter
+param         = cfg_const;
+param.name    = 'param';
+param.tag     = 'param';
+param.val     = {'param'};
+param.help    = {''};
+
+% exclude option
+excl_op           = cfg_menu;
+excl_op.name    = 'Exclude condtitions with too many NaN';
+excl_op.tag     = 'excl_op';
+excl_op.val     = {false};
+excl_op.labels  = {'No', 'Yes'};
+excl_op.values  = {false, true};
+excl_op.help  ={['If you choose yes only statistics of conditions are ',...
+                 'show which have a NaN-ration according to cutoff value, ',...
+                 'which was introduced when creating the model. Otherwise ',...
+                 'all statistics are shown.']};
+% Condition
+cond          =  cfg_branch;
+cond.name     = 'cond';
+cond.tag      = 'cond';
+cond.val      = {excl_op};
+cond.help     = {''};
+% Reconstructed
+recon         = cfg_const;
+recon.name    = 'recon';
+recon.tag     = 'recon';
+recon.val     = {'recon'};
+recon.help    = {''};
+
 % Datatype
-datatype        = cfg_menu;
+datatype        = cfg_choice;
 datatype.name   = 'Stats type';
 datatype.tag    = 'datatype';
-datatype.val    = {'param'};
-datatype.labels = {'param','cond','recon'};
-datatype.values = {'param','cond','recon'};
+datatype.values = {param,cond,recon};
 datatype.help   = {['Normally, all parameter estimates are exported. For GLM, you can choose to ' ...
     'only export the first basis function per condition, or the reconstructed response per condition. ' ...
     'For DCM, you can specify contrasts based on conditions as well. This will average within conditions. ', ...

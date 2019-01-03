@@ -1,27 +1,32 @@
-function sts = pspm_exp(modelfile, target, statstype, delim)
+function sts = pspm_exp(modelfile, options)
 % pspm_exp exports first level statistics from one or several first-level
 % models. The output is organised as a matrix with rows for observations
 % (first-level models) and columns for statistics (must be the same for all
 % models)
 %
-% FORMAT:   pspm_exp(modelfile, target, statstype)
+% FORMAT:   pspm_exp(modelfil, options)
 %
 % mandatory argument
 % modelfile: a filename, or cell array of filenames
 %
-% optional arguments
-% target: 'screen' (default), or a name of an output text file
-% statstype: 'param', 'cond', 'recon'
-%   'param': export all parameter estimates (default)
-%   'cond':  GLM - contrasts formulated in terms of conditions,
-%            automatically detects number of basis functions and
-%            uses only the first one (i.e. without derivatives)
-%            other models - contrasts based on unique trial names
-%   'recon': export all conditions in a GLM,
-%            reconstructs estimated response from all basis functions
-%            and export the peak of the estimated response
-% delim:     delimiter for output file (default: tab)
-% 
+% OPTIONS with optional fields
+% options.target: 'screen' (default), or a name of an output text file
+% options.statstype: 'param', 'cond', 'recon'
+%           'param': export all parameter estimates (default)
+%            'cond': GLM - contrasts formulated in terms of conditions,
+%                    automatically detects number of basis functions and
+%                    uses only the first one (i.e. without derivatives)
+%                    other models - contrasts based on unique trial names
+%           'recon': export all conditions in a GLM,
+%                    reconstructs estimated response from all basis functions
+%                    and export the peak of the estimated response
+% options.delim:     delimiter for output file (default: tab)
+% options.excl_cond: When 'cond' chosen as statstype, excl_cond in an option 
+%                    that excules conditions with too many NaN values. This 
+%                    option can only be set, when the modelfile, or the files 
+%                    in the cell array, are glm models and have given a cutoff 
+%                    value for the creation of the glm models. Must be a 
+%                    boolean value: true or false. default value: false
 %
 %__________________________________________________________________________
 % PsPM 3.0
@@ -44,14 +49,30 @@ if nargin < 1
     warning('ID:invalid_input',errmsg); 
     return;
 elseif nargin < 2
-    target='screen';
+    %if no options are given, built options struct with default values
+    options = struct();
 end;
-if nargin < 3
+
+if ~isfield(options,'target')
+    target = 'screen';
+else
+    target = options.target;
+end
+if ~isfield(options,'statstype')
     statstype = 'param';
-end;
-if nargin < 4
+else
+    statstype = options.statstype;
+end
+if ~isfield(options,'delim')
     delim = '\t';
-end;
+else
+    delim = options.delim;
+end
+if ~isfield(options,'excl_cond')
+    excl_cond = false;
+else
+    excl_cond = options.excl_cond;
+end
 
 % check model file argument (actual files are checked below) --
 if ischar(modelfile)
@@ -99,13 +120,25 @@ if ~ischar(delim)
     warning('ID:invalid_input', 'Delimiter must be a char'); return;
 end;
 
+% check excl_cond --
+if ~islogical(excl_cond)
+    warning('ID:invalid_input', ['To activate the option to exculde',...
+            'conditions with too many NaN values, you must pass a boolean',...
+            ' as fifth argument']); return;
+end;
+
 % get data
 % -------------------------------------------------------------------------
 % load & check data --
 usenames = 1;
+excl_stats_contained = false(numel(modelfile),1);
 for iFile = 1:numel(modelfile)
     [lsts, data(iFile), modeltype{iFile}] = pspm_load1(modelfile{iFile}, statstype);
     if lsts == -1, return; end;
+    % set flag to indicate if exclude statistics are contained
+    if isfield(data(iFile),'stats_exclude') && isfield(data(iFile),'stats_missing')
+        excl_stats_contained(iFile) = true;
+    end
     if iFile > 1
         if ~strcmpi(modeltype{iFile}, modeltype{1})
             warning('First level files must use the same model (File 1: %s, File %2.0f: %s)', ...
@@ -122,29 +155,23 @@ for iFile = 1:numel(modelfile)
 end;
 
 % create output data --
-% cond_exclude = false;
-
+% if excl_cond & any exclude stats available: set condition stats to NaN
+% according to the exclude stat
 for iFile = 1:numel(data)
-%     if isfield(data(iFile),'stats_exclude')
-%         corr_cond_idx = find(data(iFile).stats_exclude);
-%         if ~isempty(corr_cond_idx)
-%             cond_exclude = true;
-%             outdata(iFile, :) = data(iFile).stats(~corr_cond_idx);
-%             continue;
-%         end
-%     end
     outdata(iFile, :) = data(iFile).stats(:);
-end;
+    if excl_stats_contained(iFile)&& excl_cond
+        corr_cond_idx = find(data(iFile).stats_exclude);
+        if~isempty(corr_cond_idx)
+           outdata(iFile, corr_cond_idx) = nan;
+        end
+    end
+end
 
 % create output names --
 if ~usenames
     outnames = {'Model files have different parameter names - name output suppressed.'};
 elseif strcmpi(modeltype{1}, 'GLM')
-%     if cond_exclude 
-%         outnames = data(1).names(~data(1).stats_exclude);
-%     else
-        outnames = data(1).names;
-%     end
+    outnames = data(1).names;
 else
     if strcmpi(statstype, 'stats')
         trlnames = data(1).trlnames;
