@@ -245,6 +245,11 @@ switch action
     case 'stats'
         data.stats = indata.(mdltype).stats;
         data.names = indata.(mdltype).names;
+        if isfield(indata.(mdltype),'stats_missing')&& isfield(indata.(mdltype),'stats_exclude')
+            data.stats_missing = indata.(mdltype).stats_missing;
+            data.stats_exclude = indata.(mdltype).stats_exclude;
+            data.stats_exclude_names = indata.(mdltype).stats_exclude_names;
+        end
         if ~strcmpi(mdltype, 'glm')
             data.trlnames = indata.(mdltype).trlnames;
             data.condnames = indata.(mdltype).condnames;
@@ -257,6 +262,7 @@ switch action
             if isfield(indata.glm,'stats_missing')&& isfield(indata.glm,'stats_exclude')
                 data.stats_missing = indata.glm.stats_missing;
                 data.stats_exclude = indata.glm.stats_exclude;
+                data.stats_exclude_names = indata.glm.stats_exclude_names;
             end
             clear condindx
         else
@@ -276,6 +282,11 @@ switch action
             end;
             data.stats = indata.glm.recon;
             data.names = indata.glm.reconnames;
+            if isfield(indata.glm,'stats_missing')&& isfield(indata.glm,'stats_exclude')
+                data.stats_missing = indata.glm.stats_missing;
+                data.stats_exclude = indata.glm.stats_exclude;
+                data.stats_exclude_names = indata.glm.stats_exclude_names;
+            end
         else
             warning('ID:invalid_input', '%s. ''recon'' option only defined for GLM files', errmsg);
         end;

@@ -868,6 +868,9 @@ if isfield(options,'exclude_missing')
         'un',0);
     glm.stats_missing = cell2mat(nan_percentages);
     glm.stats_exclude = glm.stats_missing > options.exclude_missing.cutoff;
+    glm.stats_exclude_names = cellfun(@(x) x.name,segments, ...
+        'un',0);
+    glm.stats_exclude_names = glm.stats_exclude_names(glm.stats_exclude);
 end
 
 

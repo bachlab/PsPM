@@ -151,20 +151,6 @@ for iFile = 1:numel(modelfile)
     end;
 end;
 
-% create output data --
-% if exclude_missing & any exclude stats available: set condition stats to NaN
-% according to the exclude stat
-for iFile = 1:numel(data)
-    outdata(iFile, :) = data(iFile).stats(:);
-    length_out = numel(outdata(iFile, :));
-    if excl_stats_contained(iFile)&& exclude_missing
-        corr_cond_idx = find(data(iFile).stats_exclude);
-        if~isempty(corr_cond_idx)
-           outdata(iFile, corr_cond_idx(1:length_out)) = nan;
-        end
-    end
-end
-
 % create output names --
 if ~usenames
     outnames = {'Model files have different parameter names - name output suppressed.'};
@@ -185,6 +171,30 @@ else
         end;
     end;
 end;
+
+% create output data --
+% if exclude_missing & any exclude stats available: set condition stats to NaN
+% according to the exclude stat
+for iFile = 1:numel(data)
+    outdata(iFile, :) = data(iFile).stats(:);
+    length_out = numel(outdata(iFile, :));
+    if excl_stats_contained(iFile)&& exclude_missing
+        corr_cond_idx = find(data(iFile).stats_exclude);
+        if any(strcmpi(statstype, {'stats','recon'}))
+            idx_stats=cellfun(@(x) find(not(cellfun('isempty',strfind(outnames,x)))),data(iFile).stats_exclude_names,'UniformOutput',0);
+            idx_stats_name=cell2mat(idx_stats);
+            idx_stats_name = reshape(idx_stats_name,numel(idx_stats_name),1);
+            corr_cond_idx =zeros(length_out,1);
+            corr_cond_idx(idx_stats_name) = 1;
+            corr_cond_idx=logical(corr_cond_idx');
+        end
+        if~isempty(corr_cond_idx)
+           outdata(iFile, corr_cond_idx) = nan;
+        end
+    end
+end
+
+
 
 % create stats description --
 if strcmpi(statstype, 'stats')
