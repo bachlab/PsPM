@@ -15,17 +15,10 @@ else
 end
 
 % datatype
-% datatype = job.datatype;
-if isfield(job.datatype,'param')
-   datatype = job.datatype.param;
-   excl_cond = false;
-elseif isfield(job.datatype,'cond')
-    datatype = 'cond';
-    excl_cond = job.datatype.cond.excl_op;
-else
-   datatype = job.datatype.recon;
-   excl_cond = false;
-end
+datatype = job.datatype;
+
+% exclude conditions with too many NaN 
+exclude_missing = job.exclude_missing;
 
 % delimiter
 delimfield = fieldnames(job.delim);
@@ -36,6 +29,6 @@ options = struct();
 options.target    = target;
 options.statstype = datatype;
 options.delim     = delim;
-options.excl_cond = excl_cond;
+options.exclude_missing = exclude_missing;
 
 pspm_exp(modelfile, options);

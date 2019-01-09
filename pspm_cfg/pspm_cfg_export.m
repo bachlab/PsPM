@@ -35,42 +35,13 @@ target.tag     = 'target';
 target.values  = {screen, filename};
 target.help    = {'Export to screen or to file?'};
 
-% Parameter
-param         = cfg_const;
-param.name    = 'param';
-param.tag     = 'param';
-param.val     = {'param'};
-param.help    = {''};
-
-% exclude option
-excl_op           = cfg_menu;
-excl_op.name    = 'Exclude condtitions with too many NaN';
-excl_op.tag     = 'excl_op';
-excl_op.val     = {false};
-excl_op.labels  = {'No', 'Yes'};
-excl_op.values  = {false, true};
-excl_op.help  ={['If you choose yes only statistics of conditions are ',...
-                 'show which have a NaN-ration according to cutoff value, ',...
-                 'which was introduced when creating the model. Otherwise ',...
-                 'all statistics are shown.']};
-% Condition
-cond          =  cfg_branch;
-cond.name     = 'cond';
-cond.tag      = 'cond';
-cond.val      = {excl_op};
-cond.help     = {''};
-% Reconstructed
-recon         = cfg_const;
-recon.name    = 'recon';
-recon.tag     = 'recon';
-recon.val     = {'recon'};
-recon.help    = {''};
-
 % Datatype
-datatype        = cfg_choice;
+datatype        = cfg_menu;
 datatype.name   = 'Stats type';
 datatype.tag    = 'datatype';
-datatype.values = {param,cond,recon};
+datatype.val    = {'param'};
+datatype.labels = {'param','cond','recon'};
+datatype.values = {'param','cond','recon'};
 datatype.help   = {['Normally, all parameter estimates are exported. For GLM, you can choose to ' ...
     'only export the first basis function per condition, or the reconstructed response per condition. ' ...
     'For DCM, you can specify contrasts based on conditions as well. This will average within conditions. ', ...
@@ -83,6 +54,17 @@ datatype.help   = {['Normally, all parameter estimates are exported. For GLM, yo
     ['- Reconstructed: Export all conditions in a GLM, reconstructs estimated response ' ...
     'from all basis functions and export the peak of the estimated response.'], ''};
 
+%Exclude conditions with too many NaN
+exclude_missing         = cfg_menu;
+exclude_missing.name    = 'Exclude condtitions with too many NaN';
+exclude_missing.tag     = 'exclude_missing';
+exclude_missing.val     = {false};
+exclude_missing.labels  = {'No', 'Yes'};
+exclude_missing.values  = {false, true};
+exclude_missing.help  ={['Exclude parameters from conditions with too many NaN ',...
+                 'values. This option can only be used for GLM file for ',...
+                 'which the corresponding option was used during model ',...
+                 'setup. Otherwise this argument is ignored.']};
 % Delimiter
 tab         = cfg_const;
 tab.name    = 'Tab';
@@ -127,6 +109,6 @@ delim.help   =  {''};
 export      = cfg_exbranch;
 export.name = 'Export Statistics';
 export.tag  = 'export';
-export.val  = {modelfile, datatype, target, delim};
+export.val  = {modelfile, datatype, exclude_missing, target, delim};
 export.prog = @pspm_cfg_run_export;
 export.help = {'Export statistics to a file for further analysis in statistical software, or to the screen.'};

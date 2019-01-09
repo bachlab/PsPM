@@ -66,10 +66,10 @@ if ~isfield(options,'delim')
 else
     delim = options.delim;
 end
-if ~isfield(options,'excl_cond')
-    excl_cond = false;
+if ~isfield(options,'exclude_missing')
+    exclude_missing = 0;
 else
-    excl_cond = options.excl_cond;
+    exclude_missing = options.exclude_missing;
 end
 
 % check model file argument (actual files are checked below) --
@@ -118,11 +118,10 @@ if ~ischar(delim)
     warning('ID:invalid_input', 'Delimiter must be a char'); return;
 end;
 
-% check excl_cond --
-if ~islogical(excl_cond)
-    warning('ID:invalid_input', ['To activate the option to exculde',...
-            'conditions with too many NaN values, you must pass a boolean',...
-            ' as fifth argument']); return;
+% check exclude_missing --
+if exclude_missing~=0 && exclude_missing~=1
+    warning('ID:invalid_input', ['The value of options.exclude_missing ',...
+            'must be either 0 or 1']); return;
 end;
 
 % get data
@@ -153,14 +152,15 @@ for iFile = 1:numel(modelfile)
 end;
 
 % create output data --
-% if excl_cond & any exclude stats available: set condition stats to NaN
+% if exclude_missing & any exclude stats available: set condition stats to NaN
 % according to the exclude stat
 for iFile = 1:numel(data)
     outdata(iFile, :) = data(iFile).stats(:);
-    if excl_stats_contained(iFile)&& excl_cond
+    length_out = numel(outdata(iFile, :));
+    if excl_stats_contained(iFile)&& exclude_missing
         corr_cond_idx = find(data(iFile).stats_exclude);
         if~isempty(corr_cond_idx)
-           outdata(iFile, corr_cond_idx) = nan;
+           outdata(iFile, corr_cond_idx(1:length_out)) = nan;
         end
     end
 end
