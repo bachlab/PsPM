@@ -180,7 +180,7 @@ for iFile = 1:numel(data)
     length_out = numel(outdata(iFile, :));
     if excl_stats_contained(iFile)&& exclude_missing
         corr_cond_idx = find(data(iFile).stats_exclude);
-        if any(strcmpi(statstype, {'stats','recon'}))
+        if any(strcmpi(statstype, {'stats','recon'})) && ~isempty(data(iFile).stats_exclude_names)
             idx_stats=cellfun(@(x) find(not(cellfun('isempty',strfind(outnames,x)))),data(iFile).stats_exclude_names,'UniformOutput',0);
             idx_stats_name=cell2mat(idx_stats);
             idx_stats_name = reshape(idx_stats_name,numel(idx_stats_name),1);
