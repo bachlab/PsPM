@@ -219,7 +219,7 @@ if ~isfield(options, 'dont_ask_overwrite')
 end;
 
 %set default ouput_nan
-if ~isfield(options, 'nan_output')
+if ~isfield(options, 'nan_output')|| strcmpi(options.nan_output, 'none')
     options.nan_output = 'none';
 elseif ~strcmpi( options.nan_output,'screen')
         [path, name, ext ]= fileparts(options.nan_output);
@@ -376,6 +376,9 @@ sorted_idx(1:size(all_cond_nr,2)) = 0;
 for k = 1: size(all_cond_nr,2)
     a = all_sess_ons(k,:);
     b = find(all(a == sorted_session,2));
+    if numel(b)~=1
+        sorted_idx(k)= b;
+    end
     sorted_idx(k)= b;
 end
 all_sess_ons_cond_idx = [all_onsets' , all_sessions', all_cond_nr',sorted_idx'];
