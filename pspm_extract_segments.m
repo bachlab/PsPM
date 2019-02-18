@@ -258,9 +258,22 @@ n_sessions = numel(data_fn);
 
 % load timing
 if (manual_chosen ==1) || strcmpi(model_strc.modeltype,'glm')
+    % old version
+    %     [~, multi]  = pspm_get_timing('onsets', timing, options.timeunit);
+    
+    
+    % version for David  REMOVE IF IT IS CORRECT
+    
     [~, multi]  = pspm_get_timing('onsets', timing, options.timeunit);
+    if strcmpi(options.timeunit, 'markers')
+        temp = multi;
+        clear multi;
+        for k=1:n_sessions
+            multi(k) = temp;
+        end
+    end
 else
-    % want to map the informations of dcm ito a multi
+    % want to map the informations of dcm into a multi
     cond_names = unique(model_strc.trlnames);
     if numel(cond_names)== numel(model_strc.trlnames)
         cond_names = {'all_cond'};
@@ -552,7 +565,7 @@ if ~isempty(options.outputfile)
     
     if write_ok
         save(outfile, 'segments');
-        out.outputfile = outfile;
+%         out.outputfile = outfile;
     end;
 end;
 

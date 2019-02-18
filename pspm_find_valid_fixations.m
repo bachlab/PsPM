@@ -337,8 +337,8 @@ for i=1:n_eyes
                 y_unit = data{gy}.header.units;
                 
                 if ~strcmpi(x_unit,'mm')
-                    [nsts,x_data] = pspm_convert_unit(data{gy}.data, x_unit, 'mm');
-                    [msts,x_range] = pspm_convert_unit(data{gy}.header.range', x_unit, 'mm');
+                    [nsts,x_data] = pspm_convert_unit(data{gx}.data, x_unit, 'mm');
+                    [msts,x_range] = pspm_convert_unit(data{gx}.header.range', x_unit, 'mm');
                     if nsts~=1 || msts~=1
                         warning('ID:invalid_input', 'Failed to convert data.');
                     end
@@ -347,8 +347,8 @@ for i=1:n_eyes
                     x_range = data{gx}.header.range;
                 end
                 if ~strcmpi(y_unit,'mm')
-                    [nsts,y_data] = pspm_convert_unit(data{gy}.data, x_unit, 'mm');
-                    [msts,y_range] = pspm_convert_unit(data{gy}.header.range', x_unit, 'mm');
+                    [nsts,y_data] = pspm_convert_unit(data{gy}.data, y_unit, 'mm');
+                    [msts,y_range] = pspm_convert_unit(data{gy}.header.range', y_unit, 'mm');
                     if nsts~=1 || msts~=1
                         warning('ID:invalid_input', 'Failed to convert data.');
                     end
@@ -416,7 +416,7 @@ for i=1:n_eyes
                         
                     case 'fixation'
                         % adapt the normalized fixation points to the
-                        % korresponding range of the data
+                        % corresponding range of the data
                         fix_point_temp(:,1) = x_range(1)+ fix_point(:,1)* diff(x_range);
                         fix_point_temp(:,2) = y_range(1)+ fix_point(:,2)* diff(y_range);
                         
