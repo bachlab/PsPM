@@ -19,7 +19,7 @@ function [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, ...
 %                               converted.
 %                               The value can contain any length unit or
 %                               'degree'. In this case the corresponding data
-%                               is firstly convertet into 'cm' and
+%                               is firstly convertet into 'mm' and
 %                               afterwards the visual angles are computed.
 %   width:                      Width of the display window. Unit is 'mm'
 %                               if 'degree' is chosen, otherwise 'unit'.

@@ -14,7 +14,8 @@ datafile.tag     = 'datafile';
 datafile.num     = [1 1];
 datafile.filter  = '.*\.(mat|MAT)$';
 datafile.help    = {['Add the data file containing the SCR data (and potential marker information). '...
-    'If you have trimmed your data, add the file containing the trimmed data.']};
+    'If you have trimmed your data, add the file containing the trimmed data.'],...
+    ' ',settings.datafilehelp};
 
 %% Output directory
 outdir         = cfg_files;

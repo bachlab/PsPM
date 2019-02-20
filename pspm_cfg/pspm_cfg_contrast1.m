@@ -4,6 +4,9 @@ function contrast = pspm_cfg_contrast1
 % $Id$
 % $Rev$
 
+% Initialise
+global settings
+if isempty(settings), pspm_init; end
 
 % Select File
 modelfile         = cfg_files;
@@ -11,7 +14,8 @@ modelfile.name    = 'Model File(s)';
 modelfile.tag     = 'modelfile';
 modelfile.num     = [1 Inf];
 modelfile.filter  = '.*\.(mat|MAT)$';
-modelfile.help    = {'Specify the model file for which to compute contrasts.'};
+modelfile.help    = {'Specify the model file for which to compute contrasts.',...
+                     ' ',settings.datafilehelp};
 
 % Contrast name
 conname         = cfg_entry;

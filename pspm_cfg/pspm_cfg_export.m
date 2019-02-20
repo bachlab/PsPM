@@ -4,6 +4,10 @@ function export = pspm_cfg_export
 % $Id$
 % $Rev$
 
+% Initialise
+global settings
+if isempty(settings), pspm_init; end
+
 
 % Select File
 modelfile         = cfg_files;
@@ -11,7 +15,8 @@ modelfile.name    = 'Model File(s)';
 modelfile.tag     = 'modelfile';
 modelfile.num     = [1 Inf];
 modelfile.filter  = '.*\.(mat|MAT)$';
-modelfile.help    = {'Specify file from which to export statistics.'};
+modelfile.help    = {'Specify file from which to export statistics.',...
+                      ' ',settings.datafilehelp};
 
 
 % Screen

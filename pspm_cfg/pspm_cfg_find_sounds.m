@@ -20,7 +20,7 @@ datafile.name    = 'Data File';
 datafile.tag     = 'datafile';
 datafile.num     = [1 Inf];
 datafile.help    = {['Specify the PsPM datafile containing the imported ', ...
-    'startle sound data.']};
+    'startle sound data.'],' ',settings.datafilehelp };
 
 %% Channel
 chan_def         = cfg_const;

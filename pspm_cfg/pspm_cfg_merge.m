@@ -21,7 +21,8 @@ first_file.tag      = 'first_file';
 first_file.num      = [1 Inf];
 first_file.help     = {['Specify the first of the two files to be ', ...
     'merged. This can be one file or a set of files. The output file ', ...
-    'will have the name of the first file prepended with an ''m''.']};
+    'will have the name of the first file prepended with an ''m''.'],...
+    ' ',settings.datafilehelp};
 
 %% Second file
 second_file         = cfg_files;
@@ -30,7 +31,7 @@ second_file.tag     = 'second_file';
 second_file.num     = [1 Inf];
 second_file.help    = {['Specify the second of the two files to be merged. ', ...
     'This can be one file or a set of files. This set must have the same ', ...
-    'length as the set defined as first file(s).']};
+    'length as the set defined as first file(s).'],' ',settings.datafilehelp};
 
 %% Data files
 datafiles           = cfg_branch;

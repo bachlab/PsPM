@@ -4,6 +4,10 @@ function resp_pp = pspm_cfg_resp_pp
 % $Id$
 % $Rev$
 
+% Initialise
+global settings
+if isempty(settings), pspm_init; end
+
 % Data File
 datafile         = cfg_files;
 datafile.name    = 'Data File';
@@ -11,7 +15,8 @@ datafile.tag     = 'datafile';
 datafile.num     = [1 1];
 %datafile.filter  = '.*\.(mat|MAT)$';
 datafile.help    = {['Specify data file. The processed ' ...
-    'respiration data will be written to a new channel in this file.']};
+    'respiration data will be written to a new channel in this file.'],...
+    ' ',settings.datafilehelp};
 
 % Sample rate
 sr         = cfg_entry;

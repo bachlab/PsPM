@@ -3,6 +3,10 @@ function pp_heart_data = pspm_cfg_pp_heart_data
 % $Id$
 % $Rev$
 
+% Initialise
+global settings
+if isempty(settings), pspm_init; end
+
 % Preprocess ECG data
 % Data File
 datafile         = cfg_files;
@@ -10,7 +14,7 @@ datafile.name    = 'Data File';
 datafile.tag     = 'datafile';
 datafile.num     = [1 1];
 %datafile.filter  = '.*\.(mat|MAT)$';
-datafile.help    = {'Specify data file.'};
+datafile.help    = {'Specify data file.',' ',settings.datafilehelp};
 
 ecg2hb_chan_def      = cfg_const;
 ecg2hb_chan_def.name = 'Default';

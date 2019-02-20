@@ -4,13 +4,18 @@ function review = pspm_cfg_review1
 % $Id$
 % $Rev$
 
+% Initialise
+global settings
+if isempty(settings), pspm_init; end
+
 %% Data File Selector
 modelfile         = cfg_files;
 modelfile.name    = 'Model File';
 modelfile.tag     = 'modelfile';
 modelfile.num     = [1 1];
 modelfile.filter  = '.*\.(mat|MAT)$';
-modelfile.help    = {'Choose model file to review.'};
+modelfile.help    = {'Choose model file to review.',...
+                     ' ',settings.datafilehelp};
 
 %% GLM    
 glm         = cfg_menu;

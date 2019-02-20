@@ -3,13 +3,17 @@ function split_sessions = pspm_cfg_split_sessions
 % $Id$
 % $Rev$
 
+% Initialise
+global settings
+if isempty(settings), pspm_init; end
+
 %% Data file
 datafile         = cfg_files;
 datafile.name    = 'Data File';
 datafile.tag     = 'datafile';
 datafile.num     = [1 Inf];
 %datafile.filter  = '\.(mat|MAT)$';
-datafile.help    = {''};
+datafile.help    = {settings.datafilehelp};
 
 %% Marker channel
 chan_def         = cfg_const;

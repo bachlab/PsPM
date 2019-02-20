@@ -20,7 +20,7 @@ datafile.name           = 'Data files';
 datafile.tag            = 'datafiles';
 datafile.num            = [1 Inf];
 datafile.help           = {['PsPM files from which data segments should ', ...
-    'be extracted.']};
+    'be extracted.'],' ',settings.datafilehelp};
 
 %% Channel
 channel                 = cfg_entry;
@@ -101,7 +101,8 @@ glm_file                = cfg_files;
 glm_file.name           = 'GLM or DCM file';
 glm_file.tag            = 'glm_file';
 glm_file.num            = [1 1];
-glm_file.help           = {['Choose GLM or DCM file to extract the required information.']};
+glm_file.help           = {['Choose GLM or DCM file to extract the required information.'],...
+                            ' ',settings.datafilehelp};
 
 %% Automatic mode
 mode_automatic          = cfg_branch;

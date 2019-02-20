@@ -21,7 +21,7 @@ lum_file.tag     = 'lum_file';
 lum_file.num     = [1 Inf];
 lum_file.help    = {['Select a file that contains illuminance data. ', ...
     'The file should contain a variable ''Lx'' which should be an n x 1 numeric ', ...
-    'vector containing the illuminance values.']};
+    'vector containing the illuminance values.'],' ',settings.datafilehelp};
 
 %% Sample rate
 sr         = cfg_entry;

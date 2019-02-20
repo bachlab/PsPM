@@ -16,12 +16,7 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %      intiming is - a multiple condition file name (single session) OR
 %                  - a cell array of multiple condition file names OR
 %                  - a struct (single session) with fields .names, .onsets,
-%                       and (optional) .durations, .pmod and .marker_cond .marker_cond_chan OR
-%                       If .marker_cond is set to one, then the onsets
-%                       should be set according to the values held in the
-%                       marker channel(id of channel), which is indicated
-%                       in .marker_cond_chan or the first marker channel
-%                       Otherwise .names and .onsets are used
+%                       and (optional) .durations and .pmod 
 %                  - a cell array of struct
 %                  - a struct with fields 'markerinfos', 'markervalues,
 %                   'names' OR

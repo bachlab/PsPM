@@ -3,13 +3,16 @@ function trim = pspm_cfg_trim
 % $Id$
 % $Rev$
 
+% Initialise
+global settings
+if isempty(settings), pspm_init; end
 
 %% Select file
 datafile         = cfg_files;
 datafile.name    = 'Data File(s)';
 datafile.tag     = 'datafile';
 datafile.num     = [1 Inf];
-datafile.help    = {'Select datafile.'};
+datafile.help    = {'Select datafile.',' ',settings.datafilehelp};
 
 %% Marker channel number
 chan_def         = cfg_const;

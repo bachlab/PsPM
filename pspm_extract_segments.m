@@ -258,14 +258,10 @@ n_sessions = numel(data_fn);
 
 % load timing
 if (manual_chosen ==1) || strcmpi(model_strc.modeltype,'glm')
-    % old version
-    %     [~, multi]  = pspm_get_timing('onsets', timing, options.timeunit);
-    
-    
-    % version for David  REMOVE IF IT IS CORRECT
-    
     [~, multi]  = pspm_get_timing('onsets', timing, options.timeunit);
-    if strcmpi(options.timeunit, 'markers')
+    % If the timeunit is markers, the multi struct holds for every session. 
+    % Thus we need as many replicas as there are sessions
+    if strcmpi(options.timeunit, 'markers') && (manual_chosen ==1) 
         temp = multi;
         clear multi;
         for k=1:n_sessions
@@ -541,9 +537,8 @@ if ~strcmpi(options.nan_output,'none')
             
     end
 end
-%%
-
-out = segments;
+%% set output and save segments into file
+out.segments = segments;
 
 if ~isempty(options.outputfile)
     % ensure correct file suffix
@@ -565,7 +560,7 @@ if ~isempty(options.outputfile)
     
     if write_ok
         save(outfile, 'segments');
-%         out.outputfile = outfile;
+        out.outputfile = outfile;
     end;
 end;
 

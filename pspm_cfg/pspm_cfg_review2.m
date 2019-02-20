@@ -4,13 +4,18 @@ function review = pspm_cfg_review2
 % $Id$
 % $Rev$
 
+% Initialise
+global settings
+if isempty(settings), pspm_init; end
+
 %% Data File Selector
 modelfile         = cfg_files;
 modelfile.name    = 'Model File';
 modelfile.tag     = 'modelfile';
 modelfile.num     = [1 1];
 modelfile.filter  = '.*\.(mat|MAT)$';
-modelfile.help    = {'Specify 2nd level model file.'};
+modelfile.help    = {'Specify 2nd level model file.',...
+                     ' ',settings.datafilehelp };
 
 %% Contrast Vector
 con         = cfg_entry;

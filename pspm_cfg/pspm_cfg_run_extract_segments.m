@@ -65,7 +65,8 @@ if isfield(job, 'mode')
         case 'manual'
             [~, out] = pspm_extract_segments(mode, fn, chan, tm, options);
     end
-%     out = {out.outputfile};
+    
+    out = {out.outputfile};
 else
     warning('ID:invalid_input', 'No mode specified');
 end

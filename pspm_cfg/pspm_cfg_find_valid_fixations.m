@@ -18,7 +18,7 @@ datafile.name    = 'Data File';
 datafile.tag     = 'datafile';
 datafile.num     = [1 Inf];
 datafile.help    = {['Specify the PsPM datafile containing the gaze ', ...
-    ' recordings in length units.']};
+    ' recordings in length units.'],' ',settings.datafilehelp};
 
 %% Eyes
 eyes                = cfg_menu;

@@ -20,7 +20,7 @@ segment_files.name              = 'Segment files';
 segment_files.tag               = 'segment_files';
 segment_files.num               = [1 Inf];
 segment_files.help              = {['Specify the segment files which have been ', ...
-    'created with the ''extact segment'' function.']};
+    'created with the ''extact segment'' function.'],' ',settings.datafilehelp};
 
 %% File path
 file_path                       = cfg_files;

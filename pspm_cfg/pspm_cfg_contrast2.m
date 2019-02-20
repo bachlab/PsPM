@@ -4,6 +4,9 @@ function contrast = pspm_cfg_contrast2
 % $Id$
 % $Rev$
 
+% Initialise
+global settings
+if isempty(settings), pspm_init; end
 
 % Select File
 modelfile         = cfg_files;
@@ -11,21 +14,23 @@ modelfile.name    = 'Model File(s)';
 modelfile.tag     = 'modelfile';
 modelfile.num     = [2 Inf];
 modelfile.filter  = '.*\.(mat|MAT)$';
-modelfile.help    = {''};
+modelfile.help    = {settings.datafilehelp};
 
 modelfile1         = cfg_files;
 modelfile1.name    = 'Model File(s) 1';
 modelfile1.tag     = 'modelfile1';
 modelfile1.num     = [2 Inf];
 modelfile1.filter  = '.*\.(mat|MAT)$';
-modelfile1.help    = {'Model files for group 1.'};
+modelfile1.help    = {'Model files for group 1.',...
+                      ' ',settings.datafilehelp};
 
 modelfile2         = cfg_files;
 modelfile2.name    = 'Model File(s) 2';
 modelfile2.tag     = 'modelfile2';
 modelfile2.num     = [2 Inf];
 modelfile2.filter  = '.*\.(mat|MAT)$';
-modelfile2.help    = {'Model files for group 2.'};
+modelfile2.help    = {'Model files for group 2.',...
+                      ' ',settings.datafilehelp};
 
 % One sample
 one_sample         = cfg_branch;

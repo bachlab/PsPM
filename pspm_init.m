@@ -929,6 +929,16 @@ defaults.dcm{2} = ...
 % -------------------------------------------------------------------------
 defaults.first = {'glm', 'sf', 'dcm'}; % allowed first level model types
 
+% -------------------------------------------------------------------------
+% Data/module file helptext settings 
+% -------------------------------------------------------------------------
+
+defaults.datafilehelp = ['In case data/model file(s) are chosen via the ',...
+                         'dependency button, make sure the number of output ',...
+                         'files of the preceding module corresponds with the ',...
+                         'allowed number of input files for this module.'];
+
+% -------------------------------------------------------------------------
 % look for settings, otherwise set defaults
 % -------------------------------------------------------------------------
 if exist([pth, 'pspm_settings.mat'])
@@ -946,4 +956,3 @@ settings.signal = signal;
 settings.pspm_version = pspm_vers;
 
 return;
-ex

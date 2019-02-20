@@ -4,13 +4,17 @@ function downsample = pspm_cfg_downsample
 % $Id$
 % $Rev$
 
+% Initialise
+global settings
+if isempty(settings), pspm_init; end
+
 % Data File
 datafile         = cfg_files;
 datafile.name    = 'Data File(s)';
 datafile.tag     = 'datafile';
 datafile.num     = [1 Inf];
 datafile.filter  = '.*\.(mat|MAT)$';
-datafile.help    = {'Name of the data files to be downsampled.'};
+datafile.help    = {'Name of the data files to be downsampled.',' ',settings.datafilehelp};
 
 % Channels to downsample
 all_chan         = cfg_const;

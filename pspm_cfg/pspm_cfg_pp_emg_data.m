@@ -5,6 +5,10 @@ function [pp_emg] = pspm_cfg_pp_emg_data
 % $Id$
 % $Rev$
 
+% Initialise
+global settings
+if isempty(settings), pspm_init; end
+
 % Data File
 datafile         = cfg_files;
 datafile.name    = 'Data File';
@@ -12,7 +16,7 @@ datafile.tag     = 'datafile';
 datafile.num     = [1 1];
 %datafile.filter  = '.*\.(mat|MAT)$';
 datafile.help    = {['Specify the PsPM datafile containing ', ...
-    'the EMG data channel.']};
+    'the EMG data channel.'],' ',settings.datafilehelp};
 
 % Custom channel
 cust_chan                = cfg_entry;

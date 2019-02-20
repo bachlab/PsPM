@@ -3,13 +3,18 @@ function data_editor = pspm_cfg_data_editor
 % $Id$
 % $Rev$
 
+% Initialise
+global settings
+if isempty(settings), pspm_init; end
+
 %% Data file
 datafile         = cfg_files;
 datafile.name    = 'Data File';
 datafile.tag     = 'datafile';
 datafile.num     = [1 Inf];
 %datafile.filter  = '\.(mat|MAT)$';
-datafile.help    = {'Specify the PsPM datafile to be edited.'};
+datafile.help    = {'Specify the PsPM datafile to be edited.',...
+                    ' ',settings.datafilehelp};
 
 %% file name
 file_name        = cfg_entry;

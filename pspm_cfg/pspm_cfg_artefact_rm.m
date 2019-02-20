@@ -3,6 +3,10 @@ function artefact_rm = pspm_cfg_artefact_rm
 % $Id$
 % $Rev$
 
+% Initialise
+global settings
+if isempty(settings), pspm_init; end
+
 %% Global items
 chan_nr         = cfg_entry;
 chan_nr.name    = 'Channel Number';
@@ -77,7 +81,7 @@ datafile.name    = 'Data File';
 datafile.tag     = 'datafile';
 datafile.num     = [1 1];
 %datafile.filter  = '\.mat$';
-datafile.help    = {''};
+datafile.help    = {settings.datafilehelp};
 
 filtertype         = cfg_choice;
 filtertype.name    = 'Filter Type';

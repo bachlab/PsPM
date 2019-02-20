@@ -31,7 +31,8 @@ datafile.num     = [1 1];
 datafile.filter  = '.*\.(mat|MAT)$';
 datafile.help    = {['Add the data file containing the ', vars.modality, ...
     ' data (and potential marker information). '...
-    'If you have trimmed your data, add the file containing the trimmed data.']};
+    'If you have trimmed your data, add the file containing the trimmed data.'],...
+    ' ',settings.datafilehelp};
 
 % Modelfile name
 modelfile         = cfg_entry;

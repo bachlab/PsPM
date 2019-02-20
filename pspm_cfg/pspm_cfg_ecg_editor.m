@@ -3,13 +3,18 @@ function ecg_editor = pspm_cfg_ecg_editor
 % $Id$
 % $Rev$
 
+% Initialise
+global settings
+if isempty(settings), pspm_init; end
+
 %% Data file
 datafile         = cfg_files;
 datafile.name    = 'Data File';
 datafile.tag     = 'datafile';
 datafile.num     = [1 Inf];
 %datafile.filter  = '\.(mat|MAT)$';
-datafile.help    = {'Specify the PsPM datafile containing the ECG data'};
+datafile.help    = {'Specify the PsPM datafile containing the ECG data',...
+                    ' ',settings.datafilehelp};
 
 %% Default channel
 chan_def         = cfg_const;

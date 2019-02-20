@@ -863,7 +863,7 @@ if isfield(options,'exclude_missing')
         warning('ID:invalid_input', 'call of pspm_extract_segments failed');
         return;
     end
-    
+    segments = segments.segments;
     nan_percentages = cellfun(@(x) x.total_nan_percent,segments, ...
         'un',0);
     glm.stats_missing = cell2mat(nan_percentages);

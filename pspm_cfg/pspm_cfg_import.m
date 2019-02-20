@@ -257,7 +257,7 @@ for datatype_i=1:length(fileoptions)
     else
         datafile.filter  = ['.*\.(' ext '|' upper(ext) ')$'];
     end
-    datafile.help    = {''};
+    datafile.help    = {settings.datafilehelp} ;
     
     datatype_item{datatype_i}       = cfg_branch;
     datatype_item{datatype_i}.name  = fileoptions{datatype_i};

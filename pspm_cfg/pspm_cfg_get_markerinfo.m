@@ -3,13 +3,18 @@ function markerinfo = pspm_cfg_get_markerinfo
 % $Id$
 % $Rev$
 
+% Initialise
+global settings
+if isempty(settings), pspm_init; end
+
 %% Data file
 datafile         = cfg_files;
 datafile.name    = 'Data File';
 datafile.tag     = 'datafile';
 datafile.num     = [1 Inf];
 %datafile.filter  = '\.(mat|MAT)$';
-datafile.help    = {'Specify the PsPM datafile containing a marker channel with a markerinfo field.'};
+datafile.help    = {['Specify the PsPM datafile containing a marker channel ',...
+                     'with a markerinfo field.'],' ',settings.datafilehelp};
 
 %% Marker channel
 chan_def         = cfg_const;

@@ -12,7 +12,7 @@ datafile         = cfg_files;
 datafile.name    = 'Data File(s)';
 datafile.tag     = 'datafiles';
 datafile.num     = [1 Inf];
-datafile.help    = {'Select data files.'};
+datafile.help    = {'Select data files.',' ',settings.datafilehelp};
 
 %% Extrapolate
 extrapolate      = cfg_menu;

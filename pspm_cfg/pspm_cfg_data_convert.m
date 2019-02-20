@@ -19,7 +19,7 @@ datafile.name    = 'Data File';
 datafile.tag     = 'datafile';
 datafile.num     = [1 1];
 datafile.help    = {['Specify the PsPM datafile containing the channels ', ...
-    'to be converted.']};
+    'to be converted.'],' ',settings.datafilehelp};
 
 %% Channel
 channel             = cfg_entry;
