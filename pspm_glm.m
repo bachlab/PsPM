@@ -367,6 +367,10 @@ clear basepath basefn baseext
 if sts < 0
     warning('ID:invalid_input', 'Failed to call pspm_get_timing'); return;
 elseif strcmpi(model.timeunits,'markervalues')
+    nr_multi = numel(multi);
+    for n_m = 1:nr_multi
+     model.timing{n_m} = multi(n_m);
+    end 
     model.timeunits = 'markers';
 end 
 
@@ -855,6 +859,8 @@ end
 % glm.stats_missing holds the percentage of NaNs per condition 
 % glm.stats_exclude holds boolean for each condition to indicate if the
 % cutoff holds
+% glm.stats_exclude_names holds the names of the conditions to be excluded
+
 if isfield(options,'exclude_missing')
     
     [sts,segments] = pspm_extract_segments('auto', glm, ...

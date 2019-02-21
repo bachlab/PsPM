@@ -175,7 +175,7 @@ ref_any_mrk.help    = {['Trim from xx seconds after any marker of your choice to
     'seconds after any marker of your choice.']};
 
 ref_mrk_vals         = cfg_branch;
-ref_mrk_vals.name    = 'Marker according to vales or names';
+ref_mrk_vals.name    = 'Marker according to values or names';
 ref_mrk_vals.tag     = 'ref_mrk_vals';
 ref_mrk_vals.val     = {ref_mrk_vals_from,ref_mrk_vals_to,mrk_chan};
 ref_mrk_vals.help    = {['Trim from xx seconds after first marker with value or name yy  to xx ' ...

@@ -283,7 +283,17 @@ sourceinfo.time = data{1}.record_time;
 % other record settings
 sourceinfo.gaze_coords = data{1}.gaze_coords;
 sourceinfo.elcl_proc = data{1}.elcl_proc;
-sourceinfo.eyesObserved = lower(data{1}.eyesObserved);
+
+% only imported eyes should be stated in eyesObserved 
+left_occurance = any(cell2mat(cellfun(@(x) ~isempty(regexpi(x.type, '_l', 'once')), import,'UniformOutput',0)));
+right_occurance = any(cell2mat(cellfun(@(x) ~isempty(regexpi(x.type, '_r', 'once')), import,'UniformOutput',0)));
+if left_occurance && right_occurance
+    sourceinfo.eyesObserved = 'lr';
+elseif left_occurance && ~right_occurance
+    sourceinfo.eyesObserved = 'l';
+else
+    sourceinfo.eyesObserved = 'r';
+end
 
 % determine best eye
 eye_stat = Inf(1,numel(sourceinfo.eyesObserved));
