@@ -1,4 +1,3 @@
-/92/92
 function [sts] = pspm_remove_epochs(datafile, channel, epochfile, options)
 % pspm_remove_epochs sets epochs of data to NaN
 %

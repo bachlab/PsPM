@@ -311,7 +311,8 @@ end;
 
 %% not all sessions have the same number of conditions
 % create a new multi structure which contains all conditions and their
-% timings
+% timings. There are multiple cases: sessions with missing conditions and
+% sessions which contain empty 
 % prepare timing variables
 comb_onsets = {};
 comb_names = {};
@@ -319,14 +320,25 @@ comb_durations = {};
 comb_sessions = {};
 comb_cond_nr = {};
 
-%get all different conditions names in multi 
+% get all different conditions names in multi
+% 
 if ~isempty(multi)
     for iSn = 1:n_sessions
+        if numel(multi(iSn).names)~= numel(multi(iSn).onsets)
+            str = sprintf('session %d: nr. of indicated conditions does not correspond with numer of available onset-arrays',iSn); 
+            warning('ID:invalid_input', str);
+            return;
+        end
         for n = 1:numel(multi(iSn).names)
             multi_onsets_n = multi(iSn).onsets{n};
             length_m_o_n = max(size(multi_onsets_n));
-            multi_duration_n = multi(iSn).durations{n};
-            length_m_d_n = max(size(multi_duration_n));
+            if ~isempty(multi_onsets_n)
+                multi_duration_n = multi(iSn).durations{n};
+                length_m_d_n = max(size(multi_duration_n));
+            else
+                multi_duration_n = [];
+                length_m_d_n = 0;
+            end
             
             % look for index
             name_idx = find(strcmpi(comb_names, multi(iSn).names(n)));
@@ -346,10 +358,18 @@ if ~isempty(multi)
                 comb_sessions{name_idx}(1:length_m_o_n) = iSn;
                 comb_cond_nr{name_idx}(1:length_m_o_n) = name_idx;
             elseif numel(comb_names) >= name_idx && 0 < name_idx
-                comb_onsets{name_idx}(end+1:end+length_m_o_n) = multi_onsets_n;
-                comb_durations{name_idx}(end+1:end+length_m_d_n)= multi_duration_n;
-                comb_sessions{name_idx}(end+1:end+length_m_o_n) = iSn;
-                comb_cond_nr{name_idx}(end+1:end+length_m_o_n) = name_idx;
+                if isempty(comb_onsets{name_idx})
+                    comb_onsets{name_idx} = multi_onsets_n;
+                    comb_durations{name_idx}= multi_duration_n;
+                    comb_sessions{name_idx}(1:length_m_o_n) = iSn;
+                    comb_cond_nr{name_idx}(1:length_m_o_n) = name_idx;
+                else
+                    comb_onsets{name_idx}(end+1:end+length_m_o_n) = multi_onsets_n;
+                    comb_durations{name_idx}(end+1:end+length_m_d_n)= multi_duration_n;
+                    comb_sessions{name_idx}(end+1:end+length_m_o_n) = iSn;
+                    comb_cond_nr{name_idx}(end+1:end+length_m_o_n) = name_idx;
+                end
+                
             end
         end
     end
@@ -371,7 +391,7 @@ if options.plot
     legend_lb = cell(n_cond*3,1);
 end;
 
-%% get trial idx 
+%% This section gives each trial over all session a uniquie identifier.
 all_sessions = cell2mat(cellfun(@(x)reshape(x, [min(size(x)), max(size(x))]),comb_sessions,'un', 0));
 all_cond_nr =cell2mat(cellfun(@(x)reshape(x, [min(size(x)), max(size(x))]),comb_cond_nr,'un', 0));
 all_onsets  = cell2mat(cellfun(@(x)reshape(x, [min(size(x)), max(size(x))]),comb_onsets,'un', 0));
@@ -381,14 +401,23 @@ all_dur_cond = [all_dur', all_cond_nr'];
 %all_sess_ons_cond = [all_onsets' , all_sessions', all_cond_nr'];
 sorted_session = sortrows(all_sess_ons,[2 1]);
 
+% find idx. the function throws a warning if a specific condition and a
+% specific session contains multiple identical onsets 
 sorted_idx(1:size(all_cond_nr,2)) = 0;
 for k = 1: size(all_cond_nr,2)
     a = all_sess_ons(k,:);
     b = find(all(a == sorted_session,2));
-    if numel(b)~=1
+    nr_found = numel(b);
+    if sorted_idx(k)~=0
+        continue;
+    elseif nr_found ~=1
+        warning(sprintf('Condition nr. %d in session %d contains multiple identical onsets. The segment will hold identical trials.',a(2),all_cond_nr(k)));
+        idx_found = all(a == all_sess_ons,2);
+        sorted_idx(idx_found)= b;
+    else
         sorted_idx(k)= b;
     end
-    sorted_idx(k)= b;
+
 end
 all_sess_ons_cond_idx = [all_onsets' , all_sessions', all_cond_nr',sorted_idx'];
 for i=1:n_cond
