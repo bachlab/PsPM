@@ -55,6 +55,19 @@ height.num = [1 1];
 height.help = {['Height of the display window. Unit is `mm` if `degree` is chosen, ',...
                 'otherwise `unit`.']};
 
+%% screen distance (Only needed if unit degree is chosen)
+% distance = cfg_entry;
+% distance.name = 'Screen distance';
+% distance.tag = 'distance';
+% distance.strtype = 's';
+% distance.help = {['dasdfdas.']};
+% 
+% degree = cfg_branch;
+% degree.name = 'degree';
+% degree.tag = 'degree';
+% degree.val = {distance};
+% degree.help    = {'Enter distance to screen in ''mm.'''};
+
 %% unit
 unit         = cfg_menu;
 unit.name    = 'Unit';

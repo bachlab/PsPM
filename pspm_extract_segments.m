@@ -321,11 +321,12 @@ comb_sessions = {};
 comb_cond_nr = {};
 
 % get all different conditions names in multi
-% 
 if ~isempty(multi)
     for iSn = 1:n_sessions
+        % nuber of names must always correspond with the number of onset
+        % arrays for a specific session 
         if numel(multi(iSn).names)~= numel(multi(iSn).onsets)
-            str = sprintf('session %d: nr. of indicated conditions does not correspond with numer of available onset-arrays',iSn); 
+            str = sprintf('session %d: nr. of indicated conditions [through names] does not correspond with number of available onset-arrays',iSn); 
             warning('ID:invalid_input', str);
             return;
         end
@@ -523,7 +524,7 @@ end;
 %% nan_output
 if ~strcmpi(options.nan_output,'none')
     %count number of trials
-    trials_nr_per_cond = cellfun(@(x) size(x.trial_idx',1),segments,'un',0);
+    trials_nr_per_cond = cellfun(@(x) size(x.trial_idx,1),segments,'un',0);
     trials_nr = cell2mat(trials_nr_per_cond);
     trials_nr_sum = sum(trials_nr);
     
@@ -550,6 +551,11 @@ if ~strcmpi(options.nan_output,'none')
     trials_nan_output = array2table(trials_nan,'VariableNames', var_names, 'RowNames', r_names');
     switch options.nan_output
         case 'screen'
+            fprintf(['\nThe following tabel shows for each condition the NaN-ratio ',...
+                    'in the different trials.\nA NaN-value in the table indicates ',...
+                    'that a trial does not correspond to the condition.\n',...
+                    'The last value indicates the average Nan-ratio over all trials ',...
+                    'belonging to this condition.\n\n']);
             disp(trials_nan_output);
         case 'none'
         otherwise
@@ -560,9 +566,16 @@ if ~strcmpi(options.nan_output,'none')
             
             %if the file already exists, we overwrite the file with the
             %data. Otherwise we create a new file and save the data
-            new_file_base = sprintf('%s.csv', name);
+%             new_file_base = sprintf('%s.csv', name);
+            new_file_base = sprintf('%s.txt', name);
             output_file = fullfile(path,new_file_base);
+            fprintf(['\nThe table in file (%s)shows for each condition the NaN-ratio ',...
+                    'in the different trials.\nA NaN-value in the table indicates ',...
+                    'that a trial does not correspond to the condition.\n',...
+                    'The last value indicates the average Nan-ratio over all trials ',...
+                    'belonging to this condition.\n\n'],new_file_base);
             writetable(trials_nan_output, output_file,'WriteRowNames', true ,'Delimiter', '\t');
+            
             
     end
 end

@@ -15,8 +15,7 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 %                               data to be converted
 %           chan:               channel id of the channel to be coverted.
 %                               Expected to be numeric. The channel should
-%                               contain diameter values recoreded with an
-%                               Eyelink system in 'ellipse' mode.
+%                               contain area or diameter unit values.
 %           unit:               To which unit the data should be converted.
 %                               possible values are mm, cm, dm, m, in, inches
 %           distance:           distance between camera and eyes in units as
