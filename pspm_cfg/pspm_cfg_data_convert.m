@@ -56,17 +56,15 @@ height.help = {['Height of the display window. Unit is `mm` if `degree` is chose
                 'otherwise `unit`.']};
 
 %% screen distance (Only needed if unit degree is chosen)
-% distance = cfg_entry;
-% distance.name = 'Screen distance';
-% distance.tag = 'distance';
-% distance.strtype = 's';
-% distance.help = {['dasdfdas.']};
-% 
-% degree = cfg_branch;
-% degree.name = 'degree';
-% degree.tag = 'degree';
-% degree.val = {distance};
-% degree.help    = {'Enter distance to screen in ''mm.'''};
+distance = cfg_entry;
+distance.name = 'Screen distance';
+distance.tag = 'distance';
+distance.strtype = 'r';
+distance.num = [1 1];
+distance.val = {-1};
+distance.help = {['Distance between eye and screen in length units. ',...
+                  'Unit is ''mm'' if ''degree'' is chosen. For other ',...
+                  'conversions this field is ignored,i.e default value ''-1''.']};
 
 %% unit
 unit         = cfg_menu;
@@ -81,7 +79,7 @@ unit.help    = {'Unit into which the measurements should be converted.'};
 pixel2unit = cfg_branch;
 pixel2unit.name = 'Pixel to unit';
 pixel2unit.tag = 'pixel2unit';
-pixel2unit.val = {width, height, unit};
+pixel2unit.val = {width, height,distance,unit};
 pixel2unit.help = {['Convert pupil gaze coordinates from ', ...
                    'pixel values to unit values. The unit values',... ,
                    'can be length units or unit `degree`(i.e. visual angle). ',...

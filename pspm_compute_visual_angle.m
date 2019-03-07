@@ -15,9 +15,13 @@ function [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,u
 %               width:          Width of the display window. Unit is 'unit'.
 %               height:         Height of the display window. Unit is 'unit'.
 %               distance:       distance between eye and screen in length units.
-%               unit:           unit in which distance is given.
+%               unit:           unit in which width, height and distance are given.
 %               options:        Options struct
 %                  channel_action: 'add', 'replace' new channels.
+%                  eyes:           Define on which eye the operations
+%                                  should be performed. Possible values
+%                                  are: 'left', 'right', 'all'. Default is
+%                                  'all'.
 % RETURN VALUES sts
 %               sts:            Status determining whether the execution was
 %                               successfull (sts == 1) or not (sts == -1)
@@ -32,7 +36,7 @@ sts = -1;
 if nargin < 6
     warning('ID:invalid_input', 'Not enough arguments.');
     return;
-elseif ~isstruct(options)
+elseif ~exist('options','var')
     options = struct();
     options.channel_action = 'add';
 end;
@@ -40,14 +44,35 @@ end;
 % check types of arguments
 if ~ischar(fn) || ~exist(fn, 'file')
     warning('ID:invalid_input', ['File %s is not char or does not ', ...
-        'seem to exist.'], fn); return;
+        'seem to exist.'], fn); 
+    return;
+elseif ~isnumeric(chan)
+    warning('ID:invalid_input', 'Channels must be indicated by their ID nummber.');
+    return;    
+elseif ~isnumeric(width)
+    warning('ID:invalid_input', 'Width must be numeric.');
+    return;
+elseif ~isnumeric(height)
+    warning('ID:invalid_input', 'Height must be numeric.');
+    return;   
 elseif ~isnumeric(distance)
     warning('ID:invalid_input', 'distance is not set or not numeric.');
     return;
 elseif ~ischar(unit)
     warning('ID:invalid_input', 'unit should be a char');
     return;
+elseif ~isstruct(options)
+    warning('ID:invalid_input', 'Options must be a struct.');
+    return;
 end;
+
+%set more defaults
+if ~isfield(options, 'eyes')
+    options.eyes = 'all';
+end
+if ~isfield(options, 'channels')
+    options.channels = {'pupil'};
+end
 
 % load data to evaluate
 [lsts, infos, data] = pspm_load_data(fn,chan);
@@ -117,13 +142,17 @@ for i=1:n_eyes
                 lat = rad2deg(elevation);% convert radians into degrees
                 lon = rad2deg(azimuth);
                 
+                % azimuth angle of gaze points
+                % longitude (azimuth angle from positive x axis in horizontal plane) of gaze points
                 visual_angl_chans{p}.data = lon;
                 visual_angl_chans{p}.header.units = 'degree';
-                visual_angl_chans{p}.header.range = [0,max(visual_angl_chans{p}.data)];
+                visual_angl_chans{p}.header.range = [min(visual_angl_chans{p}.data),max(visual_angl_chans{p}.data)];
                 
+                % elevation angle of gaze points,
+                % latitude (elevation angle from horizontal plane) of gaze points
                 visual_angl_chans{p+1}.data = lat;
                 visual_angl_chans{p+1}.header.units = 'degree';
-                visual_angl_chans{p+1}.header.range = [0,max(visual_angl_chans{p+1}.data)];
+                visual_angl_chans{p+1}.header.range = [min(visual_angl_chans{p}.data),max(visual_angl_chans{p+1}.data)];
                 
                 p=p+2;
             else

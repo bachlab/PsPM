@@ -26,7 +26,9 @@ function [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, ...
 %   height:                     Height of the display window. Unit is 'mm'
 %                               if 'degree' is chosen, otherwise 'unit'.
 %   distance:                   distance between eye and screen in length units.
-%                               Unit is mm' if 'degree' is chosen, otherwise 'unit'.
+%                               Unit is 'mm' if 'degree' is chosen. For
+%                               other conversions this field is ignored,
+%                               i.e default value '-1'
 %   options:                    Options struct
 %       channel_action:         'add', 'replace' new channels.
 %
@@ -47,13 +49,14 @@ if isempty(settings), pspm_init; end
 sts = -1;
 
 
-if nargin < 4
+if nargin < 6
     warning('ID:invalid_input', 'Not enough arguments.');
     return;
 end
 
 % try to set default values
-if ~isstruct('options')
+%if no options are set 
+if ~exist('options','var')
     options = struct();
     options.channel_action = 'add';
 end
@@ -69,6 +72,9 @@ elseif ~isnumeric(width)
 elseif ~isnumeric(height)
     warning('ID:invalid_input', 'Height must be numeric.');
     return;
+elseif ~isnumeric(distance)
+    warning('ID:invalid_input', 'Screen distance must be numeric.');
+    return;
 elseif ~ischar(unit)
     warning('ID:invalid_input', 'Unit must be a char.');
     return;
@@ -81,6 +87,10 @@ end
 if strcmpi(unit,'degree')
     if mod(numel(chan),2)~=0 && chan~=0
         warning('ID:invalid_input', 'Need an even number of channels or the value 0 to convert to degrees');
+        return;
+    end
+    if distance<=0
+        warning('ID:invalid_input', 'The screen distance must be a non-negative number.\n CONVERSION FAILED');
         return;
     end
 end

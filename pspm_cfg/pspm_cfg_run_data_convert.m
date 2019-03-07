@@ -16,10 +16,12 @@ for i=1:numel(job.conversion)
     if isfield(job.conversion(i).mode, 'pixel2unit')
         width = job.conversion(i).mode.pixel2unit.width;
         height = job.conversion(i).mode.pixel2unit.height;
+        distance = job.conversion(i).mode.pixel2unit.distance;
         unit = job.conversion(i).mode.pixel2unit.unit;
-        pspm_convert_pixel2unit(fn, chan, unit, width, height, options);
+        pspm_convert_pixel2unit(fn, chan, unit, width, height,distance, options);
     end
     if isfield(job.conversion(i).mode, 'visangle2sps')
+        options.chans = chan;
         options.eyes = job.conversion(i).mode.visangle2sps.eyes;
         pspm_convert_visangle2sps(fn,options);
     end 

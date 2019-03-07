@@ -360,6 +360,7 @@ for i=1:n_eyes
                 % point of the eyetracker
                 y_data = y_range(2)-y_data;
                 
+                % ASSUMPTION: Y_DATA AND X_DATA GAZE CHANNELS IN UNIT 'MM'
                 % distinguish the validation method
                 switch mode
                     case 'bitmap'
