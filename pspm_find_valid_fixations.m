@@ -37,7 +37,9 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %                                   of the screen. If resolution is not defined
 %                                   the values are given in percent. Therefore
 %                                   [0.5 0.5] would correspond to the middle of
-%                                   the screen. Default is [0.5 0.5]
+%                                   the screen. Default is [0.5 0.5]. Only
+%                                   taken into account if there is no
+%                                   bitmap.
 %               resolution:         Resolution with which the fixation point
 %                                   is defined (Maximum value of the x and y
 %                                   coordinates). This can be the resolution

@@ -1,3 +1,4 @@
+
 function [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,unit,options)
 % pspm_compute_visual_angle computes from gaze data the corresponding
 % visual angle (for each data point)
@@ -142,17 +143,29 @@ for i=1:n_eyes
                 lat = rad2deg(elevation);% convert radians into degrees
                 lon = rad2deg(azimuth);
                 
+                %compute visual angle for range 
+                r_x = [-width/2,width/2,0,0]';
+                r_y = distance * ones(numel(r_x),1);
+                r_z = [0,0,-height/2,height/2]';
+                [x_range_sp, y_range_sp,r_range]= cart2sph(r_x,r_y,r_z);
+                x_range_sp = rad2deg(x_range_sp);
+                y_range_sp = rad2deg(y_range_sp);
+                
                 % azimuth angle of gaze points
                 % longitude (azimuth angle from positive x axis in horizontal plane) of gaze points
                 visual_angl_chans{p}.data = lon;
                 visual_angl_chans{p}.header.units = 'degree';
-                visual_angl_chans{p}.header.range = [min(visual_angl_chans{p}.data),max(visual_angl_chans{p}.data)];
+                visual_angl_chans{p}.header.range = [x_range_sp(1),x_range_sp(2)];
+%                 visual_angl_chans{p}.header.r = r;
+%                 visual_angl_chans{p}.header.r_range = r_range;
                 
                 % elevation angle of gaze points,
                 % latitude (elevation angle from horizontal plane) of gaze points
                 visual_angl_chans{p+1}.data = lat;
                 visual_angl_chans{p+1}.header.units = 'degree';
-                visual_angl_chans{p+1}.header.range = [min(visual_angl_chans{p}.data),max(visual_angl_chans{p+1}.data)];
+                visual_angl_chans{p+1}.header.range = [y_range_sp(3),y_range_sp(4)];
+%                 visual_angl_chans{p+1}.header.r = r;
+%                 visual_angl_chans{p+1}.header.r_range = r_range;
                 
                 p=p+2;
             else
