@@ -119,6 +119,29 @@ validation_settings.val    = {box_degree, distance, unit, resolution, fixation_p
 validation_settings.help   = {['Settings to validate fixations within a ', ...
     'given range on the screen (in degree visual angle).']};
 
+%% Validate on bitmap
+bitmap         = cfg_files;
+bitmap.name    = 'Bitmap file';
+bitmap.tag     = 'bitmap_file';
+bitmap.num     = [1 1];
+bitmap.help    = {['.mat file containing a variable bitmap with an n x m ',...
+                   'matrix. The matrix bitmap represents the display ',...
+                   '(n = height and m = width) and holds for each position ',...
+                   'a 1, where a gaze point is valid, and a 0 otherwise.',... 
+                   'Gaze data at invalid positions (indicated by bitmap or ',...
+                   'outside the display) are set to NaN.']};
+
+%% Validation method
+
+val_method        = cfg_choice;
+val_method.name   = 'Validation method';
+val_method.tag    = 'val_method';
+val_method.values = {validation_settings,bitmap};
+val_method.help   = {['You can either validate the data by indicating a ',...
+                      'range on the screen (in degree visual angle) and ',...
+                      'fixation point(s) or by passing a bitmap representing ',... 
+                      'the screen and holding a 1 for all the fixations ',...
+                      'that are valid.']};
 %% Channels
 channels                    = cfg_entry;
 channels.name               = 'Channels';
@@ -228,18 +251,28 @@ channel_output.values   = {add_channel, replace_channel};
 channel_output.val      = {replace_channel};
 channel_output.help     = {['Define whether the data channels should be ', ...
     'added or replace the original data channels.']};
+%% plot_gaze_coords
+plot_gaze_coords           = cfg_menu;
+plot_gaze_coords.name      = 'Plot gaze coords and fixation point(s)';
+plot_gaze_coords.tag       = 'plot_gaze_coords';
+plot_gaze_coords.val       = {false};
+plot_gaze_coords.labels    = {'No', 'Yes'};
+plot_gaze_coords.values    = {false, true};
+plot_gaze_coords.help      = {['Define whether to plot the gaze coordinates ',...
+                               'for visual inspection of the validation ',...
+                               'process. Default is false.']};
 
 %% Output settings
 output                  = cfg_branch;
 output.name             = 'Output settings';
 output.tag              = 'output_settings';
-output.val              = {file_output, channel_output};
+output.val              = {file_output, channel_output,plot_gaze_coords};
 
 %% Executable branch
 find_valid_fixations      = cfg_exbranch;
 find_valid_fixations.name = 'Find valid fixations';
 find_valid_fixations.tag  = 'find_valid_fixations';
-find_valid_fixations.val  = {datafile, eyes, validation_settings, channels, missing, output};
+find_valid_fixations.val  = {datafile, eyes, val_method, channels, missing, output};
 find_valid_fixations.prog = @pspm_cfg_run_find_valid_fixations;
 find_valid_fixations.vout = @pspm_cfg_vout_find_valid_fixations;
 find_valid_fixations.help = {['Pupil data time series can contain missing ', ...

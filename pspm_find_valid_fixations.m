@@ -45,7 +45,9 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %                                   coordinates). This can be the resolution
 %                                   set in cogent (e.g. [1280 1024]) or the
 %                                   width and height of the screen in cm
-%                                   (e.g. [50 30]). Default is [1 1].
+%                                   (e.g. [50 30]). Default is [1 1]. Only
+%                                   taken into account if there is no
+%                                   bitmap.
 %               plot_gaze_coords:   Define whether to plot the gaze
 %                                   coordinates for visual inspection of
 %                                   the validation process. Default is
@@ -260,7 +262,7 @@ if strcmpi(mode,'fixation')
         fix_point = options.fixation_point ./ options.resolution;
     end
 else
-    [xlim,ylim] = size(bitmap);
+    [ylim,xlim] = size(bitmap);
     map_x_range = [1,xlim];
     map_y_range = [1,ylim];
 end
@@ -327,18 +329,25 @@ for i=1:n_eyes
         
         if numel(work_chans) >= 1
             % always use first found channel
-            
-            gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
-                ~strcmpi('pixel', x.header.units), data),1);
-            gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
-                ~strcmpi('pixel', x.header.units), data),1);
+            switch mode
+                case 'bitmap'
+                    gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
+                        ~strcmpi(x.header.units,'degree'), data),1);
+                    gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
+                        ~strcmpi(x.header.units,'degree'), data),1);
+                case 'fixation'
+                    gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
+                        ~strcmpi(x.header.units,{'pixel','degree'}), data),1);
+                    gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
+                        ~strcmpi(x.header.units,{'pixel','degree'}), data),1);
+            end
             
             if ~isempty(gx) && ~isempty(gy)
                 % we choose to convert the data in whatevercase to 'mm'
                 x_unit = data{gx}.header.units;
                 y_unit = data{gy}.header.units;
                 
-                if ~strcmpi(x_unit,'mm')
+                if ~strcmpi(x_unit,'mm')&& strcmpi(mode,'fixation')
                     [nsts,x_data] = pspm_convert_unit(data{gx}.data, x_unit, 'mm');
                     [msts,x_range] = pspm_convert_unit(data{gx}.header.range', x_unit, 'mm');
                     if nsts~=1 || msts~=1
@@ -348,7 +357,7 @@ for i=1:n_eyes
                     x_data = data{gx}.data;
                     x_range = data{gx}.header.range;
                 end
-                if ~strcmpi(y_unit,'mm')
+                if ~strcmpi(y_unit,'mm')&& strcmpi(mode,'fixation')
                     [nsts,y_data] = pspm_convert_unit(data{gy}.data, y_unit, 'mm');
                     [msts,y_range] = pspm_convert_unit(data{gy}.header.range', y_unit, 'mm');
                     if nsts~=1 || msts~=1
@@ -362,7 +371,6 @@ for i=1:n_eyes
                 % point of the eyetracker
                 y_data = y_range(2)-y_data;
                 
-                % ASSUMPTION: Y_DATA AND X_DATA GAZE CHANNELS IN UNIT 'MM'
                 % distinguish the validation method
                 switch mode
                     case 'bitmap'
@@ -386,7 +394,7 @@ for i=1:n_eyes
                         x_data = round(x_data);
                         y_data = round(y_data);
                         
-                        %set all gaze values which are out oof the display
+                        %set all gaze values which are out of the display
                         %window range to NaN
                         x_data(x_data > map_x_range(2) | x_data < map_x_range(1)) = NaN;
                         y_data(y_data > map_y_range(2) | y_data < map_y_range(1)) = NaN;
@@ -397,7 +405,7 @@ for i=1:n_eyes
                         
                         val= zeros(N,1);
                         for k=1:numel(valid_gaze_idx)
-                            val(valid_gaze_idx(k)) = bitmap(valid_gaze(k,1),valid_gaze(k,2));
+                            val(valid_gaze_idx(k)) = bitmap(valid_gaze(k,2),valid_gaze(k,1));
                         end
                         val = logical(val);
                         excl = ~val;
@@ -413,7 +421,7 @@ for i=1:n_eyes
                             axis([mi ma mi ma]);
                             imshow(bitmap);
                             hold on;
-                            plot(ax, x_data, y_data);
+                            scatter(ax, x_data, y_data);
                             
                         end
                         
