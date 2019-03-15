@@ -225,6 +225,8 @@ switch val
         cfg_add_module('pspm.tools.extract_markerinfo');
     case 11
         pspm_data_editor();
+    case 12
+        cfg_add_module('pspm.tools.convert_data');
 end;
 
 % --- Executes during object creation, after setting all properties.
