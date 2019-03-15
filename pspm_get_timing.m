@@ -115,9 +115,9 @@ end
 switch model
     case 'file'
         if ~ischar(intiming)
-            warning('Specify file name as char with ''file'' option.');  return;
+            warning('ID:invalid_input','Specify file name as char with ''file'' option.');  return;
         elseif ~exist(intiming, 'file')
-            warning('File (%s) doesn''t exist', intiming);  return;
+            warning('ID:nonexistent_file', 'File (%s) doesn''t exist', intiming);  return;
         else
             [pth, fn, ext] = fileparts(intiming);
             switch ext
@@ -154,8 +154,7 @@ switch model
                 elseif isstruct(intiming{iFile})
                     in = intiming{iFile};
                 else
-                    warning('The elements of intiming must be structs or filenames');
-                    
+                    warning('ID:invalid_input','The elements of intiming must be structs or filenames');
                     return;
                 end
                 
@@ -163,7 +162,7 @@ switch model
                 % check whether all fields are present and in correct format:
                 
                 if ~isfield(in, 'names') || ~isfield(in, 'onsets')
-                    warning('%sNo names or onsets.', errmsg); 
+                    warning('ID:invalid_input','%sNo names or onsets.', errmsg); 
                     return;
                 end
                 
@@ -172,19 +171,19 @@ switch model
                 end
                 
                 if ~iscell(in.names)||~iscell(in.onsets)
-                    warning('%sNames and onsets need to be cell arrays', errmsg);
+                    warning('ID:invalid_input','%sNames and onsets need to be cell arrays', errmsg);
                     
                     return;
                 end
                 % check number of conditions:
                 if numel(in.names)~=numel(in.onsets)
-                    warning(['%sNumber of event names (%d) does ', ...
+                    warning('ID:number_of_elements_dont_match',['%sNumber of event names (%d) does ', ...
                         'not match the number of onsets (%d).'],...
                         errmsg, numel(in.names), numel(in.onsets));
                     
                     return;
                 elseif numel(in.names)~=numel(in.durations)
-                    warning(['%sNumber of event names (%d) does not match ', ...
+                    warning('ID:number_of_elements_dont_match',['%sNumber of event names (%d) does not match ', ...
                         'the number of durations (%d).'], ...
                         errmsg, numel(in.onsets),numel(in.durations));
                     
@@ -207,33 +206,33 @@ switch model
                         in.durations{iCond} = repmat(in.durations{iCond}, ...
                             numel(in.onsets{iCond}), 1);
                     elseif (numel(in.onsets{iCond}) ~= numel(in.durations{iCond}))
-                        warning(['%sCondition "%s" - Number of event onsets ', ...
+                        warning('ID:number_of_elements_dont_match',['%sCondition "%s" - Number of event onsets ', ...
                             '(%d) does not match the number of durations (%d).'],...
                             errmsg, in.names{iCond}, numel(in.onsets{iCond}),...
                             numel(in.durations{iCond}));
                         return;
                     end
-                    if any(in.onsets{iCond}) < 0
-                        warning(['%sCondition "%s" contains onset values ', ...
+                    if any(in.onsets{iCond}<0)
+                        warning('ID:invalid_input',['%sCondition "%s" contains onset values ', ...
                             'smaller than zero'], errmsg, in.names{iCond});
                         return;
                     end
                     if any(strcmpi(timeunits, {'samples', 'markers'})) && ...
                             any(in.onsets{iCond} ~= ceil(in.onsets{iCond}))
-                        warning(['%sCondition "%s" contains non-integer ', ...
+                        warning('ID:invalid_input',['%sCondition "%s" contains non-integer ', ...
                             'onset values but is defined in %s'], ...
                             errmsg, in.names{iCond}, timeunits);
                         return;
                     end
                     if strcmpi(timeunits, 'markers') && any(in.durations{iCond} ~= 0)
-                        warning(['%sCondition "%s" contains non-zero ', ...
+                        warning('ID:invalid_input',['%sCondition "%s" contains non-zero ', ...
                             'durations - this is not allowed for marker time ', ...
                             'units. Please use ''samples'' or ', ...
                             '''seconds'' instead.'], errmsg, in.names{iCond});
                         return;
                     end
                     if any(in.durations{iCond} < 0)
-                        warning(['%sConditions "%s% contains ', ...
+                        warning('ID:invalid_input',['%sConditions "%s% contains ', ...
                             'negative durations.'], errmsg, in.names{iCond});
                          return;
                     end

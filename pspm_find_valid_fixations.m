@@ -137,16 +137,18 @@ else
         options = varargin{4};
     end
     if ~isnumeric(circle_degree)
-        warning('ID:invalid_input', ['circle_degree is not set or ', ...
-            'is not numeric.']);
+        warning('ID:invalid_input', ['Circle_degree is not numeric.']);
         return;
     elseif ~isnumeric(distance)
-        warning('ID:invalid_input', 'distance is not set or not numeric.');
+        warning('ID:invalid_input', 'Distance is not set or not numeric.');
         return;
     elseif ~ischar(unit)
-        warning('ID:invalid_input', 'unit should be a char');
+        warning('ID:invalid_input', 'Unit should be a char.');
         return;
-    end
+    elseif ~isstruct(options)
+        warning('ID:invalid_input', 'Options must be a struct.');
+        return;
+    end 
 end
 
 % fn
@@ -337,9 +339,9 @@ for i=1:n_eyes
                         ~strcmpi(x.header.units,'degree'), data),1);
                 case 'fixation'
                     gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
-                        ~strcmpi(x.header.units,{'pixel','degree'}), data),1);
+                        ~strcmpi(x.header.units,'degree') & ~strcmpi(x.header.units,'pixel'),data),1);
                     gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
-                        ~strcmpi(x.header.units,{'pixel','degree'}), data),1);
+                        ~strcmpi(x.header.units,'degree')& ~strcmpi(x.header.units,'pixel'),data),1);
             end
             
             if ~isempty(gx) && ~isempty(gy)
