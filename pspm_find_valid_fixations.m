@@ -369,13 +369,12 @@ for i=1:n_eyes
                     y_data = data{gy}.data;
                     y_range = data{gy}.header.range;
                 end
-                % need to invert the y_data because of the different (0,0)
-                % point of the eyetracker
-                y_data = y_range(2)-y_data;
                 
                 % distinguish the validation method
                 switch mode
                     case 'bitmap'
+                        % NOTE: the data of y is not inverted sind the
+                        % matrix has the same (0,0) as the gaze channels
                         % nr of data points
                         N = numel(x_data);
 
@@ -418,16 +417,20 @@ for i=1:n_eyes
                             set(ax, 'Parent', handle(fg));
                             
                             % plot gaze coordinates
-                            mi=min(min(x_data),min(y_data));
-                            ma=max(max(x_data),max(y_data));
-                            axis([mi ma mi ma]);
+%                             mi=min(min(x_data),min(y_data));
+%                             ma=max(max(x_data),max(y_data));
+%                             axis([mi ma mi ma]);
                             imshow(bitmap);
                             hold on;
-                            scatter(ax, x_data, y_data);
+                            scatter( x_data, y_data);
                             
                         end
                         
                     case 'fixation'
+                        % need to invert the y_data because of the different (0,0)
+                        % point of the eyetracker
+                        y_data = y_range(2)-y_data;
+                        
                         % adapt the normalized fixation points to the
                         % corresponding range of the data
                         fix_point_temp(:,1) = x_range(1)+ fix_point(:,1)* diff(x_range);
@@ -442,13 +445,13 @@ for i=1:n_eyes
                         
                         dist = middlepoint - fix_point_temp;
                         dist = sqrt(dist(:,1).^2 + dist(:,2).^2);
-                        angle_of_fix = 2 * atan(dist/distance);
+                        angle_of_fix = 2 * atan(dist/(2*distance));
                         angle_of_fix = rad2deg(angle_of_fix);
                         
                         % find for each fixation point the right radius
                         tot_angle = angle_of_fix + circle_degree;
                         tot_angle = deg2rad(tot_angle);
-                        radius = distance * tan(tot_angle/2);
+                        radius = 2*distance * tan(tot_angle/2);
                         radius = radius - dist;
                         
                         % calculate for ech point distance to fixationpoint
