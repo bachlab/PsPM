@@ -64,8 +64,8 @@ function [sts, out] = pspm_extract_segments(varargin)
 %                           The field can be set to 'screen', 'File Output'or
 %                           'none'. 'none' is the default value. 
 %__________________________________________________________________________
-% PsPM 4.2
-% (C) 2008-2016 Tobias Moser (University of Zurich)
+% PsPM 4.3
+% (C) 2008-2018 Tobias Moser (University of Zurich)
 
 % $Id$
 % $Rev$
