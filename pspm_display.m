@@ -764,7 +764,10 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat))
             if strcmp(handles.prop.event,'extra')
                 MARKER(marker,1)=min(wave)-.5;
             elseif strcmp(handles.prop.event,'integrated')
-                MARKER(marker,1)=wave(marker,1);
+                temp=wave(marker,1);
+                median_non_nan_vals = median(temp,'omitnan');
+                MARKER(marker,1)=temp;
+                MARKER(isnan(MARKER))=median_non_nan_vals;
             end
             
             MARKER(MARKER==0)=NaN;

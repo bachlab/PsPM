@@ -1,13 +1,13 @@
 function [sts, out] = pspm_extract_segments(varargin)
-% pspm_extract_segments. Function in order to extract segments of a certain 
-% length after defined onsets and create summary statistics 
-% (mean, SD, SEM, % NaN) over these segments 
+% pspm_extract_segments. Function in order to extract segments of a certain
+% length after defined onsets and create summary statistics
+% (mean, SD, SEM, % NaN) over these segments
 %
 % The function supports either manual setting of data files, channels,
 % timing and timeunits or automatic extraction from a glm model file.
 %
 % The segments variable returned will be a cx1 cell where c corresponds to
-% the number of conditions. Each element contains a struct with 
+% the number of conditions. Each element contains a struct with
 % fields data, mean, std and sem (std of the mean).
 % The field data is a nxo*s vector where n is number of data points and o*s
 % corresponds to the onsets multiplied by the sessions.
@@ -35,12 +35,12 @@ function [sts, out] = pspm_extract_segments(varargin)
 %       timing:             Either a cell containing the timing settings or
 %                           a string pointing to the timing file.
 %       options:
-%           timeunit:       'seconds' (default), 'samples' or 'markers. In 'auto' 
-%                           mode the value will be ignored and taken from 
+%           timeunit:       'seconds' (default), 'samples' or 'markers. In 'auto'
+%                           mode the value will be ignored and taken from
 %                           the glm model file or the dcm model file.
-%           length:         Length of the segments in the 'timeunits'. 
-%                           If given the same length is taken for 
-%                           segments for glm structure. If not given lengths 
+%           length:         Length of the segments in the 'timeunits'.
+%                           If given the same length is taken for
+%                           segments for glm structure. If not given lengths
 %                           are take from the timing data. This argument is optional. If
 %                           'timeunit' equals 'markers' then 'length' is
 %                           expected to be in seconds.
@@ -59,10 +59,10 @@ function [sts, out] = pspm_extract_segments(varargin)
 %                           as data_fn.
 %           nan_output:     This option defines whether the user wants to
 %                           output the NaN ratios of the trials for each condition.
-%                           If so,  we values can be printed on the screen 
+%                           If so,  we values can be printed on the screen
 %                           (on MATLAB command window) or written to a created file.
 %                           The field can be set to 'screen', 'File Output'or
-%                           'none'. 'none' is the default value. 
+%                           'none'. 'none' is the default value.
 %__________________________________________________________________________
 % PsPM 4.3
 % (C) 2008-2018 Tobias Moser (University of Zurich)
@@ -92,7 +92,7 @@ if nargin >= 2
             else
                 options = struct();
             end;
-                                                
+            
             % expand chan if necessary
             if iscell(data_fn) && isnumeric(chan) ...
                     && numel(chan) == 1
@@ -100,10 +100,14 @@ if nargin >= 2
             end;
             
             % check if specific arguments are correct
-            if ~ischar(data_fn) && (iscell(data_fn) && any(~cellfun(@ischar, data_fn)))
-                warning('ID:invalid_input', 'data_fn has to be a string or a cell array of strings.'); return;
-            elseif ~isnumeric(chan) && (iscell(chan) && any(~cellfun(@isnumeric, chan)))
-                warning('ID:invalid_input', 'chan has to be numeric or a cell array of numerics.'); return;
+            if ~ischar(data_fn)
+                if (iscell(data_fn) && any(~cellfun(@ischar, data_fn))) ||~iscell(data_fn)
+                    warning('ID:invalid_input', 'data_fn has to be a string or a cell array of strings.'); return;
+                end
+            elseif ~isnumeric(chan)
+                if(iscell(chan) && any(~cellfun(@isnumeric, chan))) || ~iscell(chan)
+                    warning('ID:invalid_input', 'chan has to be numeric or a cell array of numerics.'); return;
+                end
             elseif strcmpi(class(data_fn), class(chan)) && (iscell(chan) && (numel(chan) ~= numel(data_fn)))
                 warning('ID:invalid_input', 'data_fn and chan must correspond in number of elements.'); return;
             elseif strcmpi(class(data_fn), class(timing)) && (iscell(timing) && (numel(timing) ~= numel(data_fn)))
@@ -120,13 +124,13 @@ if nargin >= 2
             
             % set flag to indicate 'manual'
             manual_chosen =1;
-
+            
         case 'auto'
             
             struct_file = varargin{2};
             %case distinction on the type of the glm argument
             %if it is a path we need to load the glm structure into
-            %function 
+            %function
             if ~isstruct(struct_file)
                 if ~ischar(struct_file) || ~exist(struct_file, 'file')
                     warning('ID:invalid_input', 'GLM file is not a string or does not exist.'); return;
@@ -135,13 +139,13 @@ if nargin >= 2
             else
                 model_strc = struct_file;
             end
-              
+            
             if nargin == 3
                 options = varargin{3};
             else
                 options = struct();
             end;
-                        
+            
             data_fn = model_strc.input.datafile;
             n_file = numel(data_fn);
             timing = model_strc.input.timing;
@@ -163,7 +167,7 @@ if nargin >= 2
             manual_chosen =0;
             
         otherwise
-                warning('ID:invalid_input', 'Unknown mode specified.'); return;
+            warning('ID:invalid_input', 'Unknown mode specified.'); return;
     end;
 else
     warning('ID:invalid_input', 'The function expects at least 2 parameters.'); return;
@@ -184,7 +188,7 @@ else
     options.timeunit = lower(options.timeunit);
 end;
 
-% set default marker_chan, if it is a glm struct 
+% set default marker_chan, if it is a glm struct
 if  (manual_chosen ==1) || strcmpi(model_strc.modeltype,'glm')
     if ~isfield(options, 'marker_chan')
         options.marker_chan = repmat({-1}, numel(data_fn),1);
@@ -222,13 +226,13 @@ end;
 if ~isfield(options, 'nan_output')|| strcmpi(options.nan_output, 'none')
     options.nan_output = 'none';
 elseif ~strcmpi( options.nan_output,'screen')
-        [path, name, ext ]= fileparts(options.nan_output);
-            if 7 ~= exist(path, 'dir')
-                 warning('ID:invalid_input', 'Path for nan_output does not exist'); return;
-            end
+    [path, name, ext ]= fileparts(options.nan_output);
+    if 7 ~= exist(path, 'dir')
+        warning('ID:invalid_input', 'Path for nan_output does not exist'); return;
+    end
 end
 
-% check mutual arguments (options)   
+% check mutual arguments (options)
 if ~ismember(options.timeunit, {'seconds','samples', 'markers'})
     warning('ID:invalid_input', 'Invalid timeunit, use either ''markers'', ''seconds'' or ''samples'''); return;
 elseif ~isnumeric(options.length)
@@ -244,12 +248,12 @@ elseif ~isnumeric(options.dont_ask_overwrite) && ~islogical(options.dont_ask_ove
 elseif strcmpi(options.timeunit, 'markers') && ~all(size(data_fn) == size(options.marker_chan))
     warning('ID:invalid_input', '''data_fn'' and ''options.marker_chan'' do not have the same size.'); return;
 elseif (manual_chosen ==1) ||  strcmpi(model_strc.modeltype,'glm')
-     if any(cellfun(@(x) ~strcmpi(x, 'marker') && ~isnumeric(x), options.marker_chan))
-       warning('ID:invalid_input', 'Options.marker_chan has to be numeric or ''marker''.'); return;
-     elseif strcmpi(options.timeunit, 'markers') ...
-        && any(cellfun(@(x) isnumeric(x) && x <= 0, options.marker_chan))
-    warning('ID:invalid_input', ['''markers'' specified as a timeunit but ', ...
-        'no valid marker channel is defined.']); return;
+    if any(cellfun(@(x) ~strcmpi(x, 'marker') && ~isnumeric(x), options.marker_chan))
+        warning('ID:invalid_input', 'Options.marker_chan has to be numeric or ''marker''.'); return;
+    elseif strcmpi(options.timeunit, 'markers') ...
+            && any(cellfun(@(x) isnumeric(x) && x <= 0, options.marker_chan))
+        warning('ID:invalid_input', ['''markers'' specified as a timeunit but ', ...
+            'no valid marker channel is defined.']); return;
     end;
 end;
 
@@ -259,9 +263,9 @@ n_sessions = numel(data_fn);
 % load timing
 if (manual_chosen ==1) || strcmpi(model_strc.modeltype,'glm')
     [~, multi]  = pspm_get_timing('onsets', timing, options.timeunit);
-    % If the timeunit is markers, the multi struct holds for every session. 
+    % If the timeunit is markers, the multi struct holds for every session.
     % Thus we need as many replicas as there are sessions
-    if strcmpi(options.timeunit, 'markers') && (manual_chosen ==1) 
+    if strcmpi(options.timeunit, 'markers') && (manual_chosen ==1)
         temp = multi;
         clear multi;
         for k=1:n_sessions
@@ -287,7 +291,7 @@ else
         if(numel(cond_names)>1)
             multi(i).names = unique(model_strc.trlnames(point:point+nr_trials_in_sess-1))';
             % we define the segment_length as min(intertrial-interval)+
-            % min(trialoffset - trialonset) 
+            % min(trialoffset - trialonset)
             for j=1: numel(cond_names)
                 idx_start = point;
                 idx_stop = point+nr_trials_in_sess-1;
@@ -303,7 +307,7 @@ else
             multi(i).names = {'all_cond'};
             multi(i).onsets = model_strc.input.trlstart{i};
             multi(1).durations{1} = durations;
-        end 
+        end
         point= point+nr_trials_in_sess;
     end;
 end;
@@ -312,7 +316,7 @@ end;
 %% not all sessions have the same number of conditions
 % create a new multi structure which contains all conditions and their
 % timings. There are multiple cases: sessions with missing conditions and
-% sessions which contain empty 
+% sessions which contain empty
 % prepare timing variables
 comb_onsets = {};
 comb_names = {};
@@ -324,9 +328,9 @@ comb_cond_nr = {};
 if ~isempty(multi)
     for iSn = 1:n_sessions
         % nuber of names must always correspond with the number of onset
-        % arrays for a specific session 
+        % arrays for a specific session
         if numel(multi(iSn).names)~= numel(multi(iSn).onsets)
-            str = sprintf('session %d: nr. of indicated conditions [through names] does not correspond with number of available onset-arrays',iSn); 
+            str = sprintf('session %d: nr. of indicated conditions [through names] does not correspond with number of available onset-arrays',iSn);
             warning('ID:invalid_input', str);
             return;
         end
@@ -375,7 +379,7 @@ if ~isempty(multi)
         end
     end
 end
-% number of conditions 
+% number of conditions
 n_cond = numel(comb_names);
 segments = cell(n_cond,1);
 
@@ -403,7 +407,7 @@ all_dur_cond = [all_dur', all_cond_nr'];
 sorted_session = sortrows(all_sess_ons,[2 1]);
 
 % find idx. the function throws a warning if a specific condition and a
-% specific session contains multiple identical onsets 
+% specific session contains multiple identical onsets
 sorted_idx(1:size(all_cond_nr,2)) = 0;
 for k = 1: size(all_cond_nr,2)
     a = all_sess_ons(k,:);
@@ -418,7 +422,7 @@ for k = 1: size(all_cond_nr,2)
     else
         sorted_idx(k)= b;
     end
-
+    
 end
 all_sess_ons_cond_idx = [all_onsets' , all_sessions', all_cond_nr',sorted_idx'];
 for i=1:n_cond
@@ -446,7 +450,7 @@ for n = 1:n_sessions
             onset_index = session_onsets(o);
             % determine start
             start = onsets_cond(onset_index);
-           
+            
             if options.length <= 0
                 try
                     segment_length = durations_cond(onset_index);
@@ -488,7 +492,7 @@ for n = 1:n_sessions
     end;
 end;
 
- %% create statistics for each condition 
+%% create statistics for each condition
 for c=1:n_cond
     m = segments{c}.data;
     segments{c}.name = comb_names{c};
@@ -499,8 +503,8 @@ for c=1:n_cond
     segments{c}.sem = segments{c}.std./sqrt(n_onsets*n_sessions);
     segments{c}.trial_nan_percent = sum(isnan(m))/size(m,1);
     segments{c}.total_nan_percent = sum(sum(isnan(m)))/numel(m);
- %   segments{c}.total_nan_percent = mean(segments{c}.trial_nan_percent);
-
+    %   segments{c}.total_nan_percent = mean(segments{c}.trial_nan_percent);
+    
     
     sr = data{1}{1}.header.sr;
     segments{c}.t = linspace(sr^-1, numel(segments{c}.mean)/sr, numel(segments{c}.mean))';
@@ -552,10 +556,10 @@ if ~strcmpi(options.nan_output,'none')
     switch options.nan_output
         case 'screen'
             fprintf(['\nThe following tabel shows for each condition the NaN-ratio ',...
-                    'in the different trials.\nA NaN-value in the table indicates ',...
-                    'that a trial does not correspond to the condition.\n',...
-                    'The last value indicates the average Nan-ratio over all trials ',...
-                    'belonging to this condition.\n\n']);
+                'in the different trials.\nA NaN-value in the table indicates ',...
+                'that a trial does not correspond to the condition.\n',...
+                'The last value indicates the average Nan-ratio over all trials ',...
+                'belonging to this condition.\n\n']);
             disp(trials_nan_output);
         case 'none'
         otherwise
@@ -566,14 +570,14 @@ if ~strcmpi(options.nan_output,'none')
             
             %if the file already exists, we overwrite the file with the
             %data. Otherwise we create a new file and save the data
-%             new_file_base = sprintf('%s.csv', name);
+            %             new_file_base = sprintf('%s.csv', name);
             new_file_base = sprintf('%s.txt', name);
             output_file = fullfile(path,new_file_base);
             fprintf(['\nThe table in file (%s)shows for each condition the NaN-ratio ',...
-                    'in the different trials.\nA NaN-value in the table indicates ',...
-                    'that a trial does not correspond to the condition.\n',...
-                    'The last value indicates the average Nan-ratio over all trials ',...
-                    'belonging to this condition.\n\n'],new_file_base);
+                'in the different trials.\nA NaN-value in the table indicates ',...
+                'that a trial does not correspond to the condition.\n',...
+                'The last value indicates the average Nan-ratio over all trials ',...
+                'belonging to this condition.\n\n'],new_file_base);
             writetable(trials_nan_output, output_file,'WriteRowNames', true ,'Delimiter', '\t');
             
             
@@ -588,7 +592,7 @@ if ~isempty(options.outputfile)
     outfile = [pt filesep fn '.mat'];
     write_ok = 0;
     if exist(outfile, 'file')
-        if options.overwrite 
+        if options.overwrite
             write_ok = 1;
         elseif ~options.dont_ask_overwrite
             button = questdlg(sprintf('File (%s) already exists. Replace file?', ...

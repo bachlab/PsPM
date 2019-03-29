@@ -43,7 +43,7 @@ gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Callback',   []);
                             
 if nargin && ischar(varargin{1}) && ... 
-        (numel(regexp(varargin{1}, [filesep])) == 0)
+        (numel(regexp(fullfile(varargin{1}), [filesep])) == 0)
         gui_State.gui_Callback = str2func(varargin{1});
 end
 
