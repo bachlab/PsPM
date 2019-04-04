@@ -228,7 +228,7 @@ end
 
 %change distance to 'mm'
 if strcmpi(mode,'fixation')
-    if ~strcmpi(distance,'mm')
+    if ~strcmpi(unit,'mm')
         [nsts,distance] = pspm_convert_unit(distance,unit ,'mm');
         if nsts~=1
             warning('ID:invalid_input', 'Failed to convert distance to mm.');

@@ -143,7 +143,7 @@ for i=1:length(plotNr)
                 k = 1;
                 for j=1:length(timing.onsets)
                    if j > cl
-                       m = floor(j/cl);
+                       m = floor((j-0.1)/cl);
                        color = corder(j - m*cl, :);
                    else
                        color = corder(j,:);
