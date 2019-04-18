@@ -85,7 +85,14 @@ for i=1:length(plotNr)
                 
                 % display regressornames
                 % calculate width of a square
-                ns = numel(glm.names);
+                ns = size(cormat,1);
+                pat = '^Constant';
+                idx_const = cell2mat(cellfun(@(x)~isempty(regexpi(x,pat)),glm.names,'UniformOutput',0));  
+                idx_const = find(idx_const);
+                nr_const = numel(idx_const);
+                legend_names = glm.names(1:ns-nr_const);
+                legend_names(end+1:end+nr_const) = glm.names(end-(nr_const-1):end);
+                
                 YLim = get(fig(2).ax(1).h, 'YLim');
                 sy = diff(YLim) / ns;
                 XLim = get(fig(2).ax(1).h, 'XLim');
@@ -116,7 +123,7 @@ for i=1:length(plotNr)
                        'LineWidth', 1.5);
                    
                    % draw text
-                   fig(2).ax(1).t(j) = text(0.2, j*sy+0.4, glm.names(j));
+                   fig(2).ax(1).t(j) = text(0.2, j*sy+0.4, legend_names(j));
                    set(fig(2).ax(1).t(j), ...
                         'Color', color, ...
                         'FontSize', 7.5, ...
@@ -175,9 +182,19 @@ for i=1:length(plotNr)
                 set(gca, 'LineWidth', 1.2);
                 hold off;
             case 4
+                % have to prepare the names such that SEBR works correct
+                cormat=abs(corrcoef(glm.XM));
+                ns = size(cormat,1);
+                pat = '^Constant';
+                idx_const = cell2mat(cellfun(@(x)~isempty(regexpi(x,pat)),glm.names,'UniformOutput',0));  
+                idx_const = find(idx_const);
+                nr_const = numel(idx_const);
+                legend_names = glm.names(1:ns-nr_const);
+                legend_names(end+1:end+nr_const) = glm.names(end-(nr_const-1):end);
+                
                 fprintf('Regressors for %s:\n---------------------------------------\n', glm.glmfile);
-                for n=1:numel(glm.names)
-                    fprintf('Regressor %d: %s\n',n,glm.names{n});
+                for n=1:numel(legend_names)
+                    fprintf('Regressor %d: %s\n',n,legend_names{n});
                 end;
                 fprintf('---------------------------------------\n');
                 fig(4).h = [];
