@@ -221,6 +221,9 @@ if ischar(chan) && ~strcmp(chan, 'none')
     data = data(flag == 1);    
 elseif isnumeric(chan)
     if chan == 0, chan = 1:numel(data); end
+    if any(chan > numel(data))
+        warning('ID:invalid_input', 'Input channel number(s) are greater than the number of channels in the data'); return;
+    end
     data = data(chan);
 elseif isstruct(chan) && ~isempty(fn) && (~exist(fn, 'file') || chan.options.overwrite == 1)
         save(fn, 'infos', 'data');
