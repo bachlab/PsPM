@@ -460,7 +460,7 @@ while pt.set.tstart+pt.set.tmax <= pt.settings.n
             end
             
             if k==3
-                if pt.set.R(end)-pt.set.R(end-1)>0
+                if numel(pt.set.R) < 2 || pt.set.R(end)-pt.set.R(end-1)>0
                     [PEAKI,posPEAKI]=max(pt.data.pt_peaks(invl,2));
                     [pt.set]=update_set(PEAKI,pt.set,CSE(1,:));
                     [PEAKF,posPEAKF]=max(pt.data.pt_peaks(invl,1));
