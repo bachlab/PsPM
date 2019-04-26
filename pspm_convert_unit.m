@@ -7,7 +7,7 @@ function [sts, converted] = pspm_convert_unit(data, from, to)
 %
 % ARGUMENTS:
 %   data:               The data which should be converted. Must be a numeric 
-%                       n x 1 vector.
+%                       array of any shape.
 %   from:               Unit of the input vector.
 %   to:                 Unit of the output vector.
 % 
@@ -30,7 +30,7 @@ converted = [];
 converter = struct('length', ...
     struct(...
         'value', {'mm', 'cm', 'dm', 'm', 'km', 'in', 'inches'}, ...
-        'factor', {10^-3, 10^-2, 10^-1, 1, 10^3, 10^-2/2.54, 10^-2/2.54}...
+        'factor', {10^-3, 10^-2, 10^-1, 1, 10^3, 2.54e-2, 2.54e-2}...
 ));
 
 % input checks
@@ -38,9 +38,10 @@ converter = struct('length', ...
 if ~isnumeric(data)
     warning('ID:invalid_input', 'Data is not numeric.'); 
     return;
-elseif ~any(ismember(from, {converter.length.value})) ...
-        || ~any(ismember(to, {converter.length.value}))
-    warning('ID:invalid_input', 'Invalid untis specified in from or to.')
+elseif ~(isstr(from) && isstr(to) && all(ismember({from, to}, {converter.length.value})))
+    valid_units_str = join({converter.length.value}, ', ');
+    valid_units_str = valid_units_str{1};
+    warning('ID:invalid_input', 'Both units must be string and must be one of %s.\n', valid_units_str);
     return;
 end
 
