@@ -54,13 +54,10 @@ for k = 1:numel(import)
         import{k}.sr = double(1000 * 1./header.dSampleTime); % acqread returns the sampling time in milliseconds
     end;
     
-    % get data ---
-    % this returns the same y scaling as in the original matlab export
-    % provided in acqKnowledge - note there is a corresponding field
-    % dVoltOffset/dVoltScale but it is not entirely clear from the documentation
-    % what this field contains (the description is Volts/division, so
-    % probably this is for display purpose only)
-    import{k}.data = (double(inputdata{chan}) - header.dAmplOffset(chan)) * header.dAmplScale(chan);
+    % acqread function returns the signal without any processing. scale and offset parameters
+    % provided an .acq files are meant to apply a linear transformation to each x_i.
+    % See https://www.mathworks.com/matlabcentral/fileexchange/16023-acqread
+    import{k}.data = header.dAmplScale(chan) * double(inputdata{chan}) + header.dAmplOffset(chan);
     
     if strcmpi(settings.chantypes(import{k}.typeno).data, 'events')
         import{k}.marker = 'continuous';
