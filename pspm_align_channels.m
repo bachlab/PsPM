@@ -25,7 +25,13 @@ if isempty(settings), pspm_init; end;
 
 % check input arguments
 % -------------------------------------------------------------------------
-if nargin < 2, induration = 0; end;
+if nargin == 2
+    if ~(isnumeric(induration) && numel(induration) == 1)
+        warning('ID:invalid_input', 'induration must be a numeric scalar'); return;
+    end
+else
+    induration = 0;
+end
 
 
 for k = 1:numel(data)
