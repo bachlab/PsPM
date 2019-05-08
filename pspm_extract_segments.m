@@ -293,6 +293,7 @@ elseif strcmpi(model_strc.modeltype, 'glm')
     multi = model_strc.timing.multi;
     input_data = model_strc.input.data;
     sampling_rates = model_strc.input.sr;
+    filtered_sr = model_strc.input.filter.down; 
 else
     % want to map the informations of dcm into a multi
     cond_names = unique(model_strc.trlnames);
@@ -495,6 +496,7 @@ for session_idx = 1:n_sessions
         assert(numel(onset_write_indices_in_cond_and_session) == num_onsets);
 
         for onset_idx = 1:num_onsets
+            % in case of glm, start is a signal index to filtered Y data.
             start = onsets_cond(onset_idx);
             
             if options.length <= 0
@@ -516,12 +518,16 @@ for session_idx = 1:n_sessions
                 case 'seconds'
                     segment_length = segment_length*sr;
                     if manual_chosen == 1 || strcmpi(model_strc.modeltype, 'dcm')
-                        start = start*sr;
+                        start = start * sr;
+                    else
+                        start = start * sr / filtered_sr;
                     end
                 case 'markers'
                     segment_length = segment_length*sr;
                     if manual_chosen == 1 || strcmpi(model_strc.modeltype, 'dcm')
                         start = marker(start)*sr;
+                    else
+                        start = start * sr / filtered_sr;
                     end
             end;
             
