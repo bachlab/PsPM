@@ -257,31 +257,48 @@ elseif (manual_chosen ==1) ||  strcmpi(model_strc.modeltype,'glm')
     end;
 end;
 
-%% set size of segments according to first entry of timing
-n_sessions = numel(data_fn);
+if manual_chosen == 1 || strcmpi(model_strc.modeltype, 'glm')
+    n_sessions = numel(data_fn);
+else
+    n_sessions = numel(model_strc.input.scr);
+end
 
 % load timing
-if (manual_chosen ==1) || strcmpi(model_strc.modeltype,'glm')
+if manual_chosen == 1
     [~, multi]  = pspm_get_timing('onsets', timing, options.timeunit);
     % If the timeunit is markers, the multi struct holds for every session.
     % Thus we need as many replicas as there are sessions
-    if strcmpi(options.timeunit, 'markers') && (manual_chosen ==1)
+    if strcmpi(options.timeunit, 'markers')
         temp = multi;
         clear multi;
         for k=1:n_sessions
             multi(k) = temp;
         end
     end
+    input_data = {};
+    sampling_rates = [];
+    marker_data = {};
+    for i=1:numel(data_fn)
+        [sts, ~, data] = pspm_load_data(data_fn{i}, chan{i});
+        assert(sts == 1);
+        input_data{end + 1} = data{1}.data;
+        sampling_rates(end + 1) = data{1}.header.sr;
+        if strcmpi(options.timeunit, 'markers')
+            [sts, ~, data] = pspm_load_data(data_fn{i}, options.marker_chan{i});
+            assert(sts == 1);
+            marker_data{end + 1} = data;
+        end
+    end
+elseif strcmpi(model_strc.modeltype, 'glm')
+    multi = model_strc.timing.multi;
+    input_data = model_strc.input.data;
+    sampling_rates = model_strc.input.sr;
 else
     % want to map the informations of dcm into a multi
     cond_names = unique(model_strc.trlnames);
-    if numel(cond_names)== numel(model_strc.trlnames)
-        cond_names = {'all_cond'};
-    end;
-    
     
     point=1;
-    for i= 1:n_sessions
+    for i = 1:n_sessions
         nr_trials_in_sess = size(model_strc.input.trlstart{i},1);
         
         min_iti = min(model_strc.input.iti{i});
@@ -297,6 +314,9 @@ else
                 idx_stop = point+nr_trials_in_sess-1;
                 cond_name = cond_names{j};
                 cond_idx = find(strcmpi(cond_name, multi(i).names));
+                if isempty(cond_idx)
+                    continue
+                end
                 idx_of_name = find(strcmpi(cond_name,model_strc.trlnames));
                 idx_of_name = idx_of_name(idx_start <= idx_of_name);
                 idx_of_name = idx_of_name(idx_stop >= idx_of_name)- point +1;
@@ -310,6 +330,11 @@ else
         end
         point= point+nr_trials_in_sess;
     end;
+    input_data = model_strc.input.scr;
+    sampling_rates = model_strc.input.sr;
+    if numel(sampling_rates) == 1
+        sampling_rates = repmat(sampling_rates, n_sessions, 1);
+    end
 end;
 
 
@@ -329,7 +354,7 @@ if ~isempty(multi)
     for iSn = 1:n_sessions
         % nuber of names must always correspond with the number of onset
         % arrays for a specific session
-        if numel(multi(iSn).names)~= numel(multi(iSn).onsets)
+        if numel(multi(iSn).names) ~=  numel(multi(iSn).onsets)
             str = sprintf('session %d: nr. of indicated conditions [through names] does not correspond with number of available onset-arrays',iSn);
             warning('ID:invalid_input', str);
             return;
@@ -429,31 +454,52 @@ for i=1:n_cond
     segments{i}.trial_idx = all_sess_ons_cond_idx(all_sess_ons_cond_idx(:,3) == i, 4);
 end
 
+n_onsets_in_cond = {};
+for c = 1:n_cond
+    n_onsets_in_cond{c} = sum(all_cond_nr == c);
+end
 
+% TODO: Create three different versions of this function instead of branching all the time?
+% IMO there are enough different data loading and processing logic that should separate these
+% methods to different functions.
 %% save data in segments
-for n = 1:n_sessions
+num_prev_conds = 0;
+if manual_chosen == 1 || strcmpi(model_strc.modeltype, 'dcm')
+    onsets = [];
+    durations = [];
+    for i = 1:n_sessions
+        onsets = [onsets, multi(i).onsets];
+        durations = [durations, multi(i).durations];
+    end
+else
+    onsets = model_strc.timing.onsets;
+    durations = model_strc.timing.durations;
+end
+for session_idx = 1:n_sessions
+    sr = sampling_rates(session_idx);
     % load data
-    [~, ~, data{n}] = pspm_load_data(data_fn{n}, chan{n});
-    if strcmpi(options.timeunit, 'markers')
-        % load marker channel
-        [~, ~, marker{n}] = pspm_load_data(data_fn{n}, options.marker_chan{n});
-    end;
-    cond_in_session = numel(multi(n).names);
-    for c = 1:cond_in_session
-        cond_idx = find(strcmpi(comb_names,multi(n).names{c}));
-        onsets_cond = all_sess_ons_cond_idx(all_sess_ons_cond_idx(:,3) == cond_idx , 1:2);
-        n_onsets = size(onsets_cond,1);
-        session_onsets = find(onsets_cond(:,2) == n);
-        n_session_onsets = numel(session_onsets);
-        durations_cond = all_dur_cond(all_dur_cond(:,2)==cond_idx ,1);
-        for o = 1:n_session_onsets
-            onset_index = session_onsets(o);
-            % determine start
-            start = onsets_cond(onset_index);
+    session_data = input_data{session_idx};
+    if manual_chosen == 1 && strcmpi(options.timeunit, 'markers')
+        marker = marker_data{n};
+    end
+    num_conds_in_session = numel(multi(session_idx).names);
+    for c = 1:num_conds_in_session
+        cond_idx = find(strcmpi(comb_names, multi(session_idx).names{c}));
+        all_onset_sessions_in_cond = all_sess_ons_cond_idx(all_sess_ons_cond_idx(:, 3) == cond_idx, 2);
+        onset_write_indices_in_cond_and_session = find(all_onset_sessions_in_cond == session_idx);
+
+        idx_to_timing = num_prev_conds + c;
+        onsets_cond = onsets{idx_to_timing};
+        durations_cond = durations{idx_to_timing};
+        num_onsets = numel(onsets_cond);
+        assert(numel(onset_write_indices_in_cond_and_session) == num_onsets);
+
+        for onset_idx = 1:num_onsets
+            start = onsets_cond(onset_idx);
             
             if options.length <= 0
                 try
-                    segment_length = durations_cond(onset_index);
+                    segment_length = durations_cond(onset_idx);
                     if segment_length==0
                         warning('ID:invalid_input', 'Cannot determine onset duration. Durations is set to 0.'); return;
                     end
@@ -463,17 +509,20 @@ for n = 1:n_sessions
             else
                 segment_length = options.length;
             end;
-            
-            
+
             % ensure start and segment_length have the 'sample' format to
             % access on data
             switch options.timeunit
                 case 'seconds'
-                    start = data{n}{1}.header.sr*start;
-                    segment_length = segment_length*data{n}{1}.header.sr;
+                    segment_length = segment_length*sr;
+                    if manual_chosen == 1 || strcmpi(model_strc.modeltype, 'dcm')
+                        start = start*sr;
+                    end
                 case 'markers'
-                    start = marker{n}{1}.data(start)*data{n}{1}.header.sr;
-                    segment_length = segment_length*data{n}{1}.header.sr;
+                    segment_length = segment_length*sr;
+                    if manual_chosen == 1 || strcmpi(model_strc.modeltype, 'dcm')
+                        start = marker(start)*sr;
+                    end
             end;
             
             % set stop
@@ -481,15 +530,17 @@ for n = 1:n_sessions
             
             % ensure start and stop have the correct format
             start = max(1,round(start));
-            stop = min(numel(data{n}{1}.data), round(stop));
+            stop = min(numel(session_data), round(stop));
             
             if ~isfield(segments{cond_idx}, 'data')
-                segments{cond_idx}.data = NaN((stop-start),n_onsets);
+                segments{cond_idx}.data = NaN((stop-start), n_onsets_in_cond{cond_idx});
             end;
-            segments{cond_idx}.data(1:(stop-start), onset_index) = ...
-                data{n}{1}.data(start:(stop-1));
+
+            onset_write_idx = onset_write_indices_in_cond_and_session(onset_idx);
+            segments{cond_idx}.data(1:(stop-start), onset_write_idx) = session_data(start:(stop-1));
         end;
     end;
+    num_prev_conds = num_prev_conds + num_conds_in_session;
 end;
 
 %% create statistics for each condition
@@ -500,13 +551,13 @@ for c=1:n_cond
     segments{c}.mean = nanmean(m,2);
     
     segments{c}.std = nanstd(m,0,2);
-    segments{c}.sem = segments{c}.std./sqrt(n_onsets*n_sessions);
+    segments{c}.sem = segments{c}.std./sqrt(n_onsets_in_cond{c}*n_sessions);
     segments{c}.trial_nan_percent = sum(isnan(m))/size(m,1);
     segments{c}.total_nan_percent = sum(sum(isnan(m)))/numel(m);
     %   segments{c}.total_nan_percent = mean(segments{c}.trial_nan_percent);
     
     
-    sr = data{1}{1}.header.sr;
+    sr = sampling_rates(1);  % TODO: assuming sampling rates in all sessions are equal?
     segments{c}.t = linspace(sr^-1, numel(segments{c}.mean)/sr, numel(segments{c}.mean))';
     %% create plot per condition
     if options.plot
