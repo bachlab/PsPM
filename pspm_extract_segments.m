@@ -518,15 +518,18 @@ for session_idx = 1:n_sessions
                 case 'seconds'
                     segment_length = segment_length*sr;
                     if manual_chosen == 1 || strcmpi(model_strc.modeltype, 'dcm')
+                        % TODO: what happens if data is downsampled in DCM? Check DCM trlstart-stop variables
+                        % to see if they refer to original or filtered data. We assume the former here.
                         start = start * sr;
                     else
                         start = start * sr / filtered_sr;
                     end
                 case 'markers'
                     segment_length = segment_length*sr;
-                    if manual_chosen == 1 || strcmpi(model_strc.modeltype, 'dcm')
+                    if manual_chosen == 1
                         start = marker(start)*sr;
                     else
+                        assert(~strcmpi(model_strc.modeltype, 'dcm'));
                         start = start * sr / filtered_sr;
                     end
             end;
@@ -541,6 +544,10 @@ for session_idx = 1:n_sessions
             if ~isfield(segments{cond_idx}, 'data')
                 segments{cond_idx}.data = NaN((stop-start), n_onsets_in_cond{cond_idx});
             end;
+            if (stop - start) > size(segments{cond_idx}.data, 1)
+                last_row = size(segments{cond_idx}.data, 1);
+                segments{cond_idx}.data(last_row + 1 : (stop - start)) = NaN;
+            end
 
             onset_write_idx = onset_write_indices_in_cond_and_session(onset_idx);
             segments{cond_idx}.data(1:(stop-start), onset_write_idx) = session_data(start:(stop-1));
