@@ -534,12 +534,14 @@ for session_idx = 1:n_sessions
                     end
             end;
             
-            % set stop
-            stop = start + segment_length;
-            
-            % ensure start and stop have the correct format
-            start = max(1,round(start));
-            stop = min(numel(session_data), round(stop));
+            start = max(1, round(start));
+            stop = min(numel(session_data) + 1, start + round(segment_length));
+            % % set stop
+            % stop = start + segment_length;
+            % 
+            % % ensure start and stop have the correct format
+            % start = max(1,round(start));
+            % stop = min(numel(session_data), round(stop));
             
             if ~isfield(segments{cond_idx}, 'data')
                 segments{cond_idx}.data = NaN((stop-start), n_onsets_in_cond{cond_idx});
@@ -564,7 +566,7 @@ for c=1:n_cond
     segments{c}.mean = nanmean(m,2);
     
     segments{c}.std = nanstd(m,0,2);
-    segments{c}.sem = segments{c}.std./sqrt(n_onsets_in_cond{c}*n_sessions);
+    segments{c}.sem = segments{c}.std./sqrt(n_onsets_in_cond{c});
     segments{c}.trial_nan_percent = sum(isnan(m))/size(m,1);
     segments{c}.total_nan_percent = sum(sum(isnan(m)))/numel(m);
     %   segments{c}.total_nan_percent = mean(segments{c}.trial_nan_percent);
