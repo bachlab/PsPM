@@ -553,7 +553,7 @@ for session_idx = 1:n_sessions
             end;
             if (stop - start) > size(segments{cond_idx}.data, 1)
                 last_row = size(segments{cond_idx}.data, 1);
-                segments{cond_idx}.data(last_row + 1 : (stop - start)) = NaN;
+                segments{cond_idx}.data(last_row + 1 : (stop - start), :) = NaN;
             end
 
             onset_write_idx = onset_write_indices_in_cond_and_session(onset_idx);
