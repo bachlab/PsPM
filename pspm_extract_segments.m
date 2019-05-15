@@ -297,6 +297,11 @@ elseif strcmpi(model_strc.modeltype, 'glm')
 else
     % want to map the informations of dcm into a multi
     cond_names = unique(model_strc.trlnames);
+
+    if numel(cond_names) == numel(model_strc.trlnames)
+        model_strc.trlnames(:) = {'all_cond'};
+        cond_names(:) = {'all_cond'};
+    end
     
     point=1;
     for i = 1:n_sessions
