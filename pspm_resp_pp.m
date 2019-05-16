@@ -107,8 +107,9 @@ elseif strcmpi(options.systemtype, 'cushion')
     zero1 = find(foo == 2);   
     % find zero crossings that stay at zero for a while
     indx = find(foo ~= 0);
-    pairs = find(conv(foo(indx), [1 1]) == 2);
-    zero2 = ceil(mean([indx(pairs - 1), indx(pairs)], 2));
+    neighbour_sums = conv(foo(indx), [1 1], 'valid');
+    pairs = find(neighbour_sums == 2);
+    zero2 = ceil(mean([indx(pairs + 1), indx(pairs)], 2));
     % combine while accouting for differentiating twice
     respstamp = sort([zero1;zero2] + 1)/newsr;
 end;
