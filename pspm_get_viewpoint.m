@@ -1,4 +1,4 @@
-function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import, eyecamera_size)
+function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
     % pspm_get_viewpoint is the main function for import of Arrington Research
     % ViewPoint EyeTracker files. 
     %
@@ -17,6 +17,8 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import, eyecam
     %
     %                          The given channel type has to be recorded in all of
     %                          the sessions contained in the datafile.
+    %                       .eyecamera_width: Width of the EyeCamera window in pixels.
+    %                       .eyecamera_height: Height of the EyeCamera window in pixels.
     %                  - optional fields:
     %                      .channel:
     %                          If .type is custom, the index of the channel to import
@@ -24,10 +26,6 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import, eyecam
     %                      .distance_unit:
     %                          the unit to which the data should be converted.
     %                          (Default: mm)
-    %          eyecamera_size: structure with
-    %                  - mandatory fields:
-    %                      .width:  Width of the EyeCamera window in pixels.
-    %                      .height: Height of the EyeCamera window in pixels.
     %__________________________________________________________________________
     %
     % (C) 2019 Eshref Yozdemir (University of Zurich)
@@ -71,7 +69,7 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import, eyecam
             import{k} = import_marker_chan(import{k}, markers, mi_values, mi_names, sampling_rate);
         else
             [import{k}, chan_id] = import_data_chan(import{k}, data_concat, eyes_observed, chan_struct, units, sampling_rate);
-            import{k} = convert_data_chan(import{k}, viewing_dist, screen_size, eyecamera_size);
+            import{k} = convert_data_chan(import{k}, viewing_dist, screen_size, import{k}.eyecamera_width, import{k}.eyecamera_height);
             sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan_id);
             sourceinfo.chan_stats{k,1} = struct();
             n_nan = sum(isnan(import{k}.data));
@@ -264,13 +262,12 @@ function [import_cell, chan_id] = import_data_chan(import_cell, data_concat, eye
     import_cell.sr = sampling_rate;
 end
 
-function import_cell = convert_data_chan(import_cell, viewing_dist, screen_size, eyecamera_size)
+function import_cell = convert_data_chan(import_cell, viewing_dist, screen_size, eyecamera_width, eyecamera_height)
     chantype = import_cell.type;
     is_pupil_chan = ~isempty(regexpi(chantype, 'pupil'));
     is_gaze_x_chan = ~isempty(regexpi(chantype, 'gaze_x_'));
     is_gaze_y_chan = ~isempty(regexpi(chantype, 'gaze_y_'));
     if is_pupil_chan
-        eyecamera_width = eyecamera_size.width;
         import_cell.data = import_cell.data * eyecamera_width;
         target_unit = import_cell.distance_unit;
         viewing_dist = pspm_convert_unit(viewing_dist, 'mm', target_unit);

@@ -123,6 +123,27 @@ distance_unit.val       = {'mm'};
 distance_unit.help      = {['The unit in which the eyetracker distance ', ...
     'is given and to which the pupil data should be converted.']};
 
+viewpoint_distance_unit           = cfg_menu;
+viewpoint_distance_unit.name      = 'Distance unit';
+viewpoint_distance_unit.tag       = 'viewpoint_distance_unit';
+viewpoint_distance_unit.values    = {'mm', 'cm', 'm', 'inches'};
+viewpoint_distance_unit.labels    = {'mm', 'cm', 'm', 'inches'};
+viewpoint_distance_unit.val       = {'mm'};
+viewpoint_distance_unit.help      = {['The unit to which the pupil data should be converted.']};
+
+viewpoint_eyecamera_width = cfg_entry;
+viewpoint_eyecamera_width.name = 'EyeCamera Width (px)';
+viewpoint_eyecamera_width.tag = 'viewpoint_eyecamera_width';
+viewpoint_eyecamera_width.val = {320};
+viewpoint_eyecamera_width.num = [1 1];
+viewpoint_eyecamera_width.help = {['Width of EyeCamera window in pixels']};
+
+viewpoint_eyecamera_height = cfg_entry;
+viewpoint_eyecamera_height.name = 'EyeCamera Height (px)';
+viewpoint_eyecamera_height.tag = 'viewpoint_eyecamera_height';
+viewpoint_eyecamera_height.val = {240};
+viewpoint_eyecamera_height.num = [1 1];
+viewpoint_eyecamera_height.help = {['Height of EyeCamera window in pixels']};
 
 %% Datatype dependend items
 datatype_item = cell(1,length(fileoptions));
@@ -273,6 +294,11 @@ for datatype_i=1:length(fileoptions)
     if any(strcmp(settings.import.datatypes(datatype_i).short, 'eyelink'))
         datatype_item{datatype_i}.val = ...
             [datatype_item{datatype_i}.val,{eyelink_trackdist, distance_unit}];
+    end
+
+    if any(strcmpi(settings.import.datatypes(datatype_i).short, 'viewpoint'))
+        datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, ...
+            {viewpoint_distance_unit, viewpoint_eyecamera_width, viewpoint_eyecamera_height}];
     end
     
 end

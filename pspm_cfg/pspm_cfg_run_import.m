@@ -75,6 +75,12 @@ for i=1:n
             import{i}.distance_unit = '';
         end
     end
+
+    if ~isempty(regexpi(type, 'pupil')) && isfield(job.datatype.(datatype), 'viewpoint_distance_unit')
+        import{i}.distance_unit = job.datatype.(datatype).viewpoint_distance_unit;
+        import{i}.eyecamera_width = job.datatype.(datatype).viewpoint_eyecamera_width;
+        import{i}.eyecamera_height = job.datatype.(datatype).viewpoint_eyecamera_height;
+    end
     
 end
 
