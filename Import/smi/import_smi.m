@@ -396,42 +396,34 @@ function [data] = import_smi(varargin)
                         stop_pos = min(size(datanum, 1), ignore_str_pos{j}{ep_stop}(k));
                         datanum(start_pos : stop_pos, idx) = 1;
                     end
-                    columns{idx + 1} = [ignore_names{j}, ' ', upper(data{sn}.eyesObserved(i))];
+                    columns{idx + 1} = [upper(data{sn}.eyesObserved(i)), ' ', ignore_names{j}];
                 end
             end
         end
 
         %% messages
+        data{sn}.markers = [];
+        data{sn}.markerinfos.values = [];
+        data{sn}.markerinfos.name = {};
         val_msg_idx = cell2mat(msgs(3, :)) == sn;
         if ~isempty(val_msg_idx)
             msg_times_in_sn = cell2mat(msgs(1, :));
             msg_times_in_sn = msg_times_in_sn(val_msg_idx);
-            msg_indices_in_sn = bsearch(times, msg_times_in_sn);
+            data{sn}.markers = msg_times_in_sn;
 
-            % get only valid positions and shift according to the onset
-            str_gen_pos = msg_indices_in_sn - sess_beg_end(sn);
-
-            % retrieve message strings from current session
             msg_str =  msgs(4, val_msg_idx);
             msg_str_idx = cell2mat(cellfun(@(x) find(x==':',1,'first'),msg_str,'UniformOutput',0));
             for u=1:length(msg_str_idx)
                 msg_str{u} = msg_str{u}(msg_str_idx(u)+2:end);
             end
-            % look for uniqueness of messages
-            messages = ['No msg in samples' unique(msg_str)];
+            data{sn}.markerinfos.name = msg_str;
 
-            str_spe_pos = ones(size(datanum, 1), 1);
-            for j = 2:numel(messages)
-                for m = 1:numel(str_gen_pos)
-                    if contains(sn_data{str_gen_pos(m), 4}, messages{j})
-                        str_spe_pos(str_gen_pos(m)) = j;
-                    end
-                end
+            messages = unique(msg_str);
+            msg_indices_in_uniq = [];
+            for i = 1:numel(msg_str)
+                msg_indices_in_uniq(end + 1) = find(strcmpi(msg_str{i}, messages));
             end
-
-            % add messages in colums of datanum
-            datanum(str_gen_pos, end+1) = 1;
-            datanum(:, end+1) = str_spe_pos;
+            data{sn}.markerinfos.values = msg_indices_in_uniq;
         end
 
         %% remove lines containing NaN (i.e. pure text lines) so that lines have a time interpretation
@@ -459,10 +451,10 @@ function [data] = import_smi(varargin)
 
 
             if event_ex
-                blinkL = size(data{sn}.raw,2)-5;
-                blinkR = size(data{sn}.raw,2)-4;
-                saccadeL = size(data{sn}.raw,2)-3;
-                saccadeR = size(data{sn}.raw,2)-2;
+                blinkL = size(data{sn}.raw,2)-3;
+                blinkR = size(data{sn}.raw,2)-2;
+                saccadeL = size(data{sn}.raw,2)-1;
+                saccadeR = size(data{sn}.raw,2);
 
                 if POR_available
                     channel_indices = [pupil_channels,xL,yL,xR,yR,POR_xL,POR_yL,POR_xR,POR_yR,blinkL,blinkR,saccadeL,saccadeR];
@@ -471,15 +463,15 @@ function [data] = import_smi(varargin)
                     %here we need to distinguish the pupil recording method:
                     %Bounding Box or Area based
                     if length(pupil_channels)==2
-                        data{sn}.units = {pupilUnit,pupilUnit, 'pixel', 'pixel', 'pixel', ...
-                            'pixel','mm','mm','mm','mm','blink', 'blink', 'saccade', 'saccade'};
+                        data{sn}.units = {pupilUnit,pupilUnit, 'px', 'px', 'px', ...
+                            'px','px','px','px','px','blink', 'blink', 'saccade', 'saccade'};
                         % set blinks to NaN
                         data{sn}.channels( (data{sn}.channels(:,11)| data{sn}.channels(:, 13)) == 1, [1,3:4,7:8] ) = NaN;
                         data{sn}.channels( (data{sn}.channels(:,12)| data{sn}.channels(:, 14)) == 1, [2,5:6,9:10] ) = NaN;
                         data{sn}.POR_channels_idx = [7,8,9,10];
                     else
-                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'], [pupilUnit,' x'],[pupilUnit,' y'], 'pixel', 'pixel', 'pixel', ...
-                            'pixel','mm','mm','mm','mm', 'blink', 'blink', 'saccade', 'saccade'};
+                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'], [pupilUnit,' x'],[pupilUnit,' y'], 'px', 'px', 'px', ...
+                            'px','px','px','px','px', 'blink', 'blink', 'saccade', 'saccade'};
                         % set blinks to NaN
                         data{sn}.channels( (data{sn}.channels(:,13)| data{sn}.channels(:, 15)) == 1, [1:2,5:6,9:10] ) = NaN;
                         data{sn}.channels( (data{sn}.channels(:,14)| data{sn}.channels(:, 16)) == 1, [3:4,7:8,11:12] ) = NaN;
@@ -493,14 +485,14 @@ function [data] = import_smi(varargin)
                     %here we need to distinguish the pupil recording method:
                     %Bounding Box or Area based
                     if length(pupil_channels)==2
-                        data{sn}.units = {pupilUnit,pupilUnit, 'pixel', 'pixel', 'pixel', ...
-                            'pixel', 'blink', 'blink', 'saccade', 'saccade'};
+                        data{sn}.units = {pupilUnit,pupilUnit, 'px', 'px', 'px', ...
+                            'px', 'blink', 'blink', 'saccade', 'saccade'};
                         % set blinks to NaN
                         data{sn}.channels( (data{sn}.channels(:,7)| data{sn}.channels(:, 9)) == 1, [1,3:4] ) = NaN;
                         data{sn}.channels( (data{sn}.channels(:,8)| data{sn}.channels(:, 10)) == 1, [2,5:6] ) = NaN;
                     else
-                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'], [pupilUnit,' x'],[pupilUnit,' y'], 'pixel', 'pixel', 'pixel', ...
-                            'pixel', 'blink', 'blink', 'saccade', 'saccade'};
+                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'], [pupilUnit,' x'],[pupilUnit,' y'], 'px', 'px', 'px', ...
+                            'px', 'blink', 'blink', 'saccade', 'saccade'};
                         % set blinks to NaN
                         data{sn}.channels( (data{sn}.channels(:,9)| data{sn}.channels(:, 11)) == 1, [1:2,5:6] ) = NaN;
                         data{sn}.channels( (data{sn}.channels(:,10)| data{sn}.channels(:, 12)) == 1, [3:4,7:8] ) = NaN;
@@ -516,12 +508,12 @@ function [data] = import_smi(varargin)
                     %here we need to distinguish the pupil recording method:
                     %Bounding Box or Area based
                     if length(pupil_channels)==2
-                        data{sn}.units = {pupilUnit,pupilUnit, 'pixel', 'pixel', 'pixel', ...
-                            'pixel','mm','mm','mm','mm'};
+                        data{sn}.units = {pupilUnit,pupilUnit, 'px', 'px', 'px', ...
+                            'px','px','px','px','px'};
                         data{sn}.POR_channels_idx = [7,8,9,10];
                     else
-                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'],[pupilUnit,' x'],[pupilUnit,' y'], 'pixel', 'pixel', 'pixel', ...
-                            'pixel','mm','mm','mm','mm'};
+                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'],[pupilUnit,' x'],[pupilUnit,' y'], 'px', 'px', 'px', ...
+                            'px','px','px','px','px'};
                         data{sn}.POR_channels_idx = [9,10,11,12];
                     end
                 else
@@ -531,11 +523,11 @@ function [data] = import_smi(varargin)
                     %here we need to distinguish the pupil recording method:
                     %Bounding Box or Area based
                     if length(pupil_channels)==2
-                        data{sn}.units = {pupilUnit,pupilUnit, 'pixel', 'pixel', 'pixel', ...
-                            'pixel'};
+                        data{sn}.units = {pupilUnit,pupilUnit, 'px', 'px', 'px', ...
+                            'px'};
                     else
-                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'],[pupilUnit,' x'],[pupilUnit,' y'], 'pixel', 'pixel', 'pixel', ...
-                            'pixel'};
+                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'],[pupilUnit,' x'],[pupilUnit,' y'], 'px', 'px', 'px', ...
+                            'px'};
                     end
                 end
             end
@@ -565,12 +557,12 @@ function [data] = import_smi(varargin)
                     %here we need to distinguish the pupil recording method:
                     %Bounding Box or Area based
                     if length(pupil_channels)==1
-                        data{sn}.units = {pupilUnit, 'pixel', 'pixel','mm','mm','blink', 'saccade'};
+                        data{sn}.units = {pupilUnit, 'px', 'px','px','px','blink', 'saccade'};
                         % set blinks to NaN
                         data{sn}.channels( (data{sn}.channels(:,6)| data{sn}.channels(:, 7)) == 1, 1:5 ) = NaN;
                         data{sn}.POR_channels_idx = [4,5];
                     else
-                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'], 'pixel', 'pixel','mm','mm', 'blink', 'saccade'};
+                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'], 'px', 'px','px','px', 'blink', 'saccade'};
                         % set blinks to NaN
                         data{sn}.channels( (data{sn}.channels(:,7)| data{sn}.channels(:, 8)) == 1, 1:6 ) = NaN;
                         data{sn}.POR_channels_idx = [5,6];
@@ -582,11 +574,11 @@ function [data] = import_smi(varargin)
                     %here we need to distinguish the pupil recording method:
                     %Bounding Box or Area based
                     if length(pupil_channels)==1
-                        data{sn}.units = {pupilUnit, 'pixel', 'pixel', 'blink', 'saccade'};
+                        data{sn}.units = {pupilUnit, 'px', 'px', 'blink', 'saccade'};
                         % set blinks to NaN
                         data{sn}.channels( (data{sn}.channels(:,4)| data{sn}.channels(:, 5)) == 1, [1:3] ) = NaN;
                     else
-                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'], 'pixel', 'pixel', 'blink', 'saccade'};
+                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'], 'px', 'px', 'blink', 'saccade'};
                         % set blinks to NaN
                         data{sn}.channels( (data{sn}.channels(:,5)| data{sn}.channels(:, 6)) == 1, [1:4] ) = NaN;
                     end
@@ -598,10 +590,10 @@ function [data] = import_smi(varargin)
                     data{sn}.channels = data{sn}.raw(:, channel_indices);
                     data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
                     if length(tmp)==1
-                        data{sn}.units = {pupilUnit, 'pixel', 'pixel','mm','mm'};
+                        data{sn}.units = {pupilUnit, 'px', 'px','px','px'};
                         data{sn}.POR_channels_idx = [4,5];
                     else
-                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'], 'pixel', 'pixel','mm','mm'};
+                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'], 'px', 'px','px','px'};
                         data{sn}.POR_channels_idx = [5,6];
                     end
                 else
@@ -611,39 +603,13 @@ function [data] = import_smi(varargin)
                     %here we need to distinguish the pupil recording method:
                     %Bounding Box or Area based;
                     if length(tmp)==1
-                        data{sn}.units = {pupilUnit, 'pixel', 'pixel'};
+                        data{sn}.units = {pupilUnit, 'px', 'px'};
                     else
-                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'], 'pixel', 'pixel'};
+                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'], 'px', 'px'};
                     end
                 end
             end
-
-
         end
-        % translate makers back into special cell structure
-        markers = cell(1,3);
-        for i=1:3
-            markers{1, i} = cell(length(data{sn}.raw), 1);
-        end
-
-        markers{1,2}(:) = {'0'};
-        markers{1,3} = zeros( length(datanum), 1);
-        markers{1, 1} = datanum(:, size(datanum,2) - 1);
-        marker_pos = find(markers{1,1} == 1);
-
-        for i=1:length(marker_pos)
-            % set to default value as long as there is no title provided
-            % in the file
-            markers{1, 2}{marker_pos(i)} = messages{datanum(marker_pos(i), size(datanum, 2))};
-            % there is no actual value
-            % value has to be numeric
-            markers{1, 3}(marker_pos(i)) = datanum(marker_pos(i), size(datanum, 2));
-        end
-
-        % return markers
-        data{sn}.markers = markers{1,1};
-        data{sn}.markerinfos.name = markers{1,2};
-        data{sn}.markerinfos.value = markers{1,3};
     end
     rmpath(bsearch_path);
 end
