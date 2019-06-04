@@ -27,11 +27,7 @@ function [data] = import_smi(varargin)
     if numel(varargin)==1
         sample_file = varargin{1};
         % check for the existence of sample_file
-        if exist(sample_file,'file')
-            warning(['Import_SMI will only return, pupil data. ',...
-                'No information about blinks, saccades or will be generated. ',...
-                'In order to generate this information, you have to pass an event file.']);
-        else
+        if ~exist(sample_file,'file')
             error('ID:invalid_input', 'Passed sample_file does not exist.');
         end
     elseif numel(varargin)==2
@@ -66,11 +62,6 @@ function [data] = import_smi(varargin)
     % (can be variable depending recodrings)
     columns = strsplit(fline_sample, '\t');
     POR_available = any(cell2mat(cellfun(@(x) contains(x,'POR'),columns,'uniformoutput',false)));
-    if ~POR_available
-        warning('ID:invalid_input', ['Passed sample_file does not contain eye ',...
-            'position data mapped to the calibration area. The data will ',...
-            'contain only raw data for the eye-position. No range for the data available.']);
-    end
 
     %% process header informations
     % record time
@@ -255,9 +246,10 @@ function [data] = import_smi(varargin)
         % save all messages in variable
         msgs = cell(numel(messageCols), numel(msg_idx));
         for i=1:numel(msg_idx)
-            for j = 1:4
-                msgs{j, i} = datastr(msg_idx(i), j);
-            end
+            msgs{1, i} = str2num(datastr{msg_idx(i), 1});
+            msgs{2, i} = datastr{msg_idx(i), 2};
+            msgs{3, i} = str2num(datastr{msg_idx(i), 3});
+            msgs{4, i} = datastr{msg_idx(i), 4};
         end
     end
 
@@ -276,25 +268,27 @@ function [data] = import_smi(varargin)
     for sn = 1:n_sessions
         data{sn} = struct();
         sn_data = datastr(sess_beg_end(sn) + 1:sess_beg_end(sn + 1), :);
-        temp = sn_data;
-        temp(:,idx_of_type)=[];
+
+        msg_mask = strcmpi(sn_data(:, idx_of_type), 'MSG');
+        sn_data(:, idx_of_type) = {'1'};
+        sn_data(msg_mask, idx_of_type) = {'2'};
 
         % convert to single cell array (one cell per line)
-        str_data = cell(size(temp, 1), 1);
+        str_data = cell(size(sn_data, 1), 1);
         for iline = 1:size(str_data, 1)
-            str_data{iline} = sprintf('%s ', temp{iline,:});
+            str_data{iline} = sprintf('%s ', sn_data{iline,:});
         end
 
         % concatenate strings and replace/interpret dots with NaN values
         str_data = strrep(str_data, ' . ', ' NaN ');
 
-        %     datanum = str2double(temp);
-        datanum = NaN(size(temp,1), size(temp,2));
+        %     datanum = str2double(sn_data);
+        datanum = NaN(size(sn_data,1), size(sn_data,2));
 
         % convert numeric rows to numeric
-        for n_row = 1:size(temp,1)
+        for n_row = 1:size(sn_data,1)
             data_num_row = sscanf(str_data{n_row}, '%f');
-            n_cols = min(size(temp,2),numel(data_num_row));
+            n_cols = min(size(sn_data,2),numel(data_num_row));
             datanum(n_row,1:n_cols) = data_num_row(1:n_cols);
         end
 
@@ -428,10 +422,9 @@ function [data] = import_smi(varargin)
 
         %% remove lines containing NaN (i.e. pure text lines) so that lines have a time interpretation
         data{sn}.raw = datanum;
-        data{sn}.raw(isnan(datanum(:,3)),:) = [];
+        data{sn}.raw(isnan(datanum(:,4)),:) = [];
         % save column heder of raw data
         raw_columns = columns;
-        raw_columns(2) = [];
         data{sn}.raw_columns = raw_columns;
 
         if strcmpi(data{sn}.eyesObserved, 'LR')
