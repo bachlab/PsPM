@@ -10,10 +10,9 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
     %                          Type of the channel. Must be one of pupil_l, pupil_r,
     %                          gaze_x_l, gaze_y_l, gaze_x_r, gaze_y_r, marker, custom.
     %
-    %                          TODO: blink_l, blink_r, saccade_l, saccade_r.
-    %
     %                          Right eye corresponds to eye A in ViewPoint; left eye
-    %                          corresponds to eye B.
+    %                          corresponds to eye B. However, when there is only one
+    %                          eye in the data and in user input, they are matched.
     %
     %                          The given channel type has to be recorded in all of
     %                          the sessions contained in the datafile.
@@ -69,7 +68,7 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
             import{k} = import_marker_chan(import{k}, markers, mi_values, mi_names, sampling_rate);
         else
             [import{k}, chan_id] = import_data_chan(import{k}, data_concat, eyes_observed, chan_struct, units, sampling_rate);
-            import{k} = convert_data_chan(import{k}, viewing_dist, screen_size, import{k}.eyecamera_width, import{k}.eyecamera_height);
+            %import{k} = convert_data_chan(import{k}, viewing_dist, screen_size, import{k}.eyecamera_width, import{k}.eyecamera_height);
             sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan_id);
             sourceinfo.chan_stats{k,1} = struct();
             n_nan = sum(isnan(import{k}.data));
@@ -161,6 +160,9 @@ function assert_all_chantypes_are_in_imported_data(data, datafile, import)
     % parts will be filled with NaNs.
     for k = 1:numel(import)
         input_type = import{k}.type;
+        if strcmpi(input_type, 'marker') || strcmpi(input_type, 'custom')
+            continue;
+        end
         data_contains_type = false;
         for i = 1:numel(data)
             session_channels = data{i}.channels_header;
