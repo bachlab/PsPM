@@ -61,7 +61,7 @@ function [data] = import_smi(varargin)
     % last line of the header descibes the columns contained in the importfile
     % (can be variable depending recodrings)
     columns = strsplit(fline_sample, '\t');
-    POR_available = any(cell2mat(cellfun(@(x) contains(x,'POR'),columns,'uniformoutput',false)));
+    POR_available = any(contains(columns,'POR'));
 
     %% process header informations
     % record time
@@ -193,11 +193,11 @@ function [data] = import_smi(varargin)
 
     %% get pupil method and units
     % mapped pupil diameter [mm]
-    MD = find(cell2mat(cellfun(@(x) contains(x,'Mapped Diameter'),columns,'UniformOutput',0)));
+    MD = find(contains(columns,'Mapped Diameter'));
     % pupil area in [mm] or [px]
-    A  = find(cell2mat(cellfun(@(x) contains(x,'Area'),columns,'UniformOutput',0)));
+    A  = find(contains(columns,'Area'));
     % pupil diameter in [mm] or [px] -> area based or bounding box
-    D  = find(cell2mat(cellfun(@(x) contains(x,'Dia'),columns,'UniformOutput',0)));
+    D  = find(contains(columns,'Dia'));
     % always try to use mapped diameter dirst
     if ~isempty(MD)
         pupilUnit = 'diameter in mm';
@@ -219,9 +219,6 @@ function [data] = import_smi(varargin)
             pupil_channels=D;
         end
     end
-    % later we remove the Type column, thus the column indicies are shifted by
-    % one
-    pupil_channels=pupil_channels-1;
 
     %% get all messages - if Event file is given take messages of event file otherwise read from file
 
@@ -390,7 +387,7 @@ function [data] = import_smi(varargin)
                         stop_pos = min(size(datanum, 1), ignore_str_pos{j}{ep_stop}(k));
                         datanum(start_pos : stop_pos, idx) = 1;
                     end
-                    columns{idx + 1} = [upper(data{sn}.eyesObserved(i)), ' ', ignore_names{j}];
+                    columns{idx} = [upper(data{sn}.eyesObserved(i)), ' ', ignore_names{j}];
                 end
             end
         end
@@ -432,15 +429,15 @@ function [data] = import_smi(varargin)
             % saccadeR
             % get idx of different channel
             if POR_available
-                POR_xL = find(cell2mat(cellfun(@(x)contains(x,'L POR X'),data{sn}.raw_columns,'UniformOutput',0)),1);
-                POR_yL = find(cell2mat(cellfun(@(x)contains(x,'L POR Y'),data{sn}.raw_columns,'UniformOutput',0)),1);
-                POR_xR = find(cell2mat(cellfun(@(x)contains(x,'R POR X'),data{sn}.raw_columns,'UniformOutput',0)),1);
-                POR_yR = find(cell2mat(cellfun(@(x)contains(x,'R POR Y'),data{sn}.raw_columns,'UniformOutput',0)),1);
+                POR_xL = find(contains(data{sn}.raw_columns,'L POR X'), 1);
+                POR_yL = find(contains(data{sn}.raw_columns,'L POR Y'), 1);
+                POR_xR = find(contains(data{sn}.raw_columns,'R POR X'), 1);
+                POR_yR = find(contains(data{sn}.raw_columns,'R POR Y'), 1);
             end
-            xL = find(cell2mat(cellfun(@(x)contains(x,'L Raw X'),data{sn}.raw_columns,'UniformOutput',0)),1);
-            yL = find(cell2mat(cellfun(@(x)contains(x,'L Raw Y'),data{sn}.raw_columns,'UniformOutput',0)),1);
-            xR = find(cell2mat(cellfun(@(x)contains(x,'R Raw X'),data{sn}.raw_columns,'UniformOutput',0)),1);
-            yR = find(cell2mat(cellfun(@(x)contains(x,'R Raw Y'),data{sn}.raw_columns,'UniformOutput',0)),1);
+            xL = find(contains(data{sn}.raw_columns,'L Raw X'), 1);
+            yL = find(contains(data{sn}.raw_columns,'L Raw Y'), 1);
+            xR = find(contains(data{sn}.raw_columns,'R Raw X'), 1);
+            yR = find(contains(data{sn}.raw_columns,'R Raw Y'), 1);
 
 
             if event_ex
@@ -527,11 +524,11 @@ function [data] = import_smi(varargin)
         else
             % get idx of channels
             if POR_available
-                POR_x = find(cell2mat(cellfun(@(x)contains(x,'POR X'),data{sn}.raw_columns,'UniformOutput',0)),1);
-                POR_y = find(cell2mat(cellfun(@(x)contains(x,'POR Y'),data{sn}.raw_columns,'UniformOutput',0)),1);
+                POR_x = find(contains(data{sn}.raw_columns,'POR X'), 1);
+                POR_y = find(contains(data{sn}.raw_columns,'POR Y'), 1);
             end
-            x = find(cell2mat(cellfun(@(x)contains(x,'Raw X'),data{sn}.raw_columns,'UniformOutput',0)),1);
-            y = find(cell2mat(cellfun(@(x)contains(x,'Raw Y'),data{sn}.raw_columns,'UniformOutput',0)),1);
+            x = find(contains(data{sn}.raw_columns,'Raw X'), 1);
+            y = find(contains(data{sn}.raw_columns,'Raw Y'), 1);
 
 
             if event_ex

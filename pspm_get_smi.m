@@ -50,6 +50,9 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     if isfield(datafile, 'event_file')
         data = import_smi(datafile.sample_file, datafile.event_file);
     else
+        warning(['get_smi will only read pupil and/or gaze data. ',...
+            'No information about blinks or saccades will be generated. ',...
+            'In order to generate this information you have to specify an event file.']);
         data = import_smi(datafile.sample_file);
     end
     if numel(data) > 1
@@ -61,46 +64,64 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     assert_all_chantypes_are_in_imported_data(data, datafile.sample_file, import);
     [data_concat, markers, mi_values, mi_names] = concat_sessions(data);
 
-    sampling_rate = compute_sampling_rate(data{1});
+    sampling_rate = data{1}.sampleRate;
     eyes_observed = lower(data{1}.eyesObserved);
-    chan_struct = cellfun(@(x) smi_header_to_pspm_header(x), data{1}.channels_columns, 'UniformOutput', false);
     units = data{1}.units;
-    screen_size = data{1}.stimulus_dimension;
+    chan_struct = data{1}.channels_columns;
+    raw_columns = data{1}.raw_columns;
+    screen_size_mm = data{1}.stimulus_dimension;
+    screen_size_px = [data{1}.gaze_coords.xmax, data{1}.gaze_coords.ymax];
     viewing_dist = data{1}.head_distance;
     num_import_cells = numel(import);
     for k = 1:num_import_cells
-        if strcmpi(import{k}.type, 'marker')
-            import{k} = import_marker_chan(import{k}, markers, mi_values, mi_names, sampling_rate);
+        chantype = lower(import{k}.type);
+        chantype_has_L_or_R = ~isempty(regexpi(chantype, '_[lr]', 'once'));
+        chantype_hasnt_eyes_obs = isempty(regexpi(chantype, ['_([' eyes_observed '])'], 'once'));
+        if chantype_has_L_or_R && chantype_hasnt_eyes_obs
+            error('ID:channel_not_contained_in_file', ...
+                ['Cannot import channel type %s, as data for this eye',
+            ' does not seem to be present in the datafile. ', ...
+                'Will create artificial channel with NaN values.'], import_cell.type);
+
+            import{k}.data = NaN(size(data_concat, 1), 1);
+            chan_id = -1;
+            import{k}.units = '';
+        elseif strcmpi(chantype, 'marker')
+            [import{k}, chan_id] = import_marker_chan(import{k}, markers, mi_values, mi_names, sampling_rate);
+        elseif contains(chantype, 'pupil')
+            [import{k}, chan_id] = import_pupil_chan(import{k}, data_concat, viewing_dist, raw_columns, chan_struct, units, sampling_rate);
+        elseif contains(chantype, 'gaze')
+            [import{k}, chan_id] = import_gaze_chan(import{k}, data_concat, screen_size_px, screen_size_mm, raw_columns, chan_struct, sampling_rate);
+        elseif contains(chantype, 'blink') || contains(chantype, 'saccade')
+            [import{k}, chan_id] = import_blink_or_saccade_chan(import{k}, data_concat, raw_columns, chan_struct, units, sampling_rate);
+        elseif strcmpi(chantype, 'custom')
+            [import{k}, chan_id] = import_custom_chan(import{k}, data_concat, raw_columns, chan_struct, units, sampling_rate);
         else
-            [import{k}, chan_id] = import_data_chan(import{k}, data_concat, eyes_observed, chan_struct, units, sampling_rate);
-            %import{k} = convert_data_chan(import{k}, viewing_dist, screen_size, import{k}.eyecamera_width, import{k}.eyecamera_height);
-            sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan_id);
-            sourceinfo.chan_stats{k,1} = struct();
-            n_nan = sum(isnan(import{k}.data));
-            n_data = numel(import{k}.data);
-            sourceinfo.chan_stats{k}.nan_ratio = n_nan / n_data;
+            error('ID:pspm_error', 'This branch should not have been taken. Please report this error to PsPM dev team');
         end
+        sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan_id);
+        sourceinfo.chan_stats{k,1} = struct();
+        n_nan = sum(isnan(import{k}.data));
+        n_data = numel(import{k}.data);
+        sourceinfo.chan_stats{k}.nan_ratio = n_nan / n_data;
     end
 
     sourceinfo.date = data{1}.record_date;
     sourceinfo.time = data{1}.record_time;
-    sourceinfo.screenSize = screen_size;
-    sourceinfo.viewingDistance = viewing_dist;
-    sourceinfo.eyesObserved = eyes_observed;
+    sourceinfo.screen_size_mm = screen_size_mm;
+    sourceinfo.screen_size_px = screen_size_px;
+    sourceinfo.viewing_distance_mm = viewing_dist;
+    sourceinfo.eyes_observed = eyes_observed;
     sourceinfo.best_eye = eye_with_smaller_nan_ratio(import, eyes_observed);
 
     rmpath([settings.path, 'Import', filesep, 'smi']);
     sts = 1;
 end
 
-function sr = compute_sampling_rate(data_cell)
-    sr = data_cell.sampleRate;
-end
-
 function assert_same_sample_rate(data)
     sample_rates = [];
     for i = 1:numel(data)
-        sample_rates(end + 1) = compute_sampling_rate(data{i});
+        sample_rates(end + 1) = data{i}.sampleRate;
     end
     if any(diff(sample_rates))
         sample_rates_str = sprintf('%d ', sample_rates);
@@ -163,28 +184,34 @@ function assert_all_chantypes_are_supported(settings, import)
     end
 end
 
+function expect_list = map_pspm_header_to_smi_headers(pspm_chantype)
+    type_parts = split(pspm_chantype, '_');
+    if strcmpi(type_parts{1}, 'pupil')
+        which_eye = upper(type_parts{2});
+        expect_list = {[which_eye ' Dia'], [which_eye ' Dia X'], [which_eye ' Area'], [which_eye ' Mapped Diameter']};
+    elseif strcmpi(type_parts{1}, 'gaze')
+        coord = upper(type_parts{2});
+        which_eye = upper(type_parts{3});
+        expect_list = {[which_eye ' POR ' coord]};
+    elseif strcmpi(type_parts{1}, 'blink')
+        which_eye = upper(type_parts{2});
+        expect_list = {[which_eye, ' Blink']};
+    elseif strcmpi(type_parts{1}, 'saccade')
+        which_eye = upper(type_parts{2});
+        expect_list = {[which_eye ' Saccade']};
+    end
+end
+
 function assert_all_chantypes_are_in_imported_data(data, sample_file, import)
     % Assert that all given input channels are contained in at least one of the
     % imported sessions. They don't have to be in all the sessions; the remaining
     % parts will be filled with NaNs.
     for k = 1:numel(import)
-        input_type = import{k}.type;
-        type_parts = split(input_type, '_');
-        data_contains_type = false;
-        if strcmpi(type_parts{1}, 'pupil')
-            which_eye = type_parts{2};
-            expect_list = {[which_eye ' Dia'], [which_eye ' Area'], [which_eye ' Mapped Diameter']};
-        elseif strcmpi(type_parts{1}, 'gaze')
-            coord = type_parts{2};
-            which_eye = type_parts{3};
-            expect_list = {[which_eye ' Raw ' coord]};
-        elseif strcmpi(type_parts{1}, 'blink')
-            which_eye = type_parts{2};
-            expect_list = {[which_eye, ' Blink']};
-        elseif strcmpi(type_parts{1}, 'saccade')
-            which_eye = type_parts{2};
-            expect_list = {[which_eye ' Saccade']};
+        if strcmpi(import{k}.type, 'marker') || strcmpi(import{k}.type, 'custom')
+            continue
         end
+        expect_list = map_pspm_header_to_smi_headers(import{k}.type);
+        data_contains_type = false;
         for i = 1:numel(data)
             session_channels = data{i}.channels_columns;
             for j = 1:numel(expect_list)
@@ -192,13 +219,17 @@ function assert_all_chantypes_are_in_imported_data(data, sample_file, import)
             end
         end
         if ~data_contains_type
-            error_msg = sprintf('Channel type %s is not in the given sample_file %s', input_type, sample_file);
+            expect_list_str = sprintf('"%s", ', expect_list{:});
+            expect_list_str = expect_list_str(1:end-2);
+            error_msg = sprintf(['Channel type %s is not in the given sample_file %s.' ...
+                ' For channel type %s, we searched for %s channel(s)'], ...
+                input_type, sample_file, input_type, expect_list_str);
             error('ID:channel_not_contained_in_file', error_msg);
         end
     end
 end
 
-function import_cell = import_marker_chan(import_cell, markers, mi_values, mi_names, sampling_rate)
+function [import_cell, chan_id] = import_marker_chan(import_cell, markers, mi_values, mi_names, sampling_rate)
     import_cell.marker = 'continuous';
     import_cell.sr     = sampling_rate;
     import_cell.data   = markers;
@@ -206,62 +237,118 @@ function import_cell = import_marker_chan(import_cell, markers, mi_values, mi_na
     markerinfo.values = mi_values;
     import_cell.markerinfo = markerinfo;
     import_cell.flank = 'ascending';
+    chan_id = -1;
 end
 
-function [import_cell, chan_id] = import_data_chan(import_cell, data_concat, eyes_observed, chan_struct, units, sampling_rate)
-    n_data = size(data_concat, 1);
-    if strcmpi(import_cell.type, 'custom')
-        chan_id = import_cell.channel;
-    else
-        chan_id = find(strcmpi(chan_struct, import_cell.type), 1, 'first');
-    end
+function [import_cell, chan_id] = import_pupil_chan(import_cell, data_concat, viewing_dist, raw_columns, chan_struct, units, sampling_rate)
+    smi_headers = map_pspm_header_to_smi_headers(import_cell.type);
 
-    chantype_has_L_or_R = ~isempty(regexpi(import_cell.type, '_[lr]', 'once'));
-    chantype_hasnt_eyes_obs = isempty(regexpi(import_cell.type, ['_([' eyes_observed '])'], 'once'));
-    if chantype_has_L_or_R && chantype_hasnt_eyes_obs
-        error('ID:channel_not_contained_in_file', ...
-            ['Cannot import channel type %s, as data for this eye',
-        ' does not seem to be present in the datafile. ', ...
-            'Will create artificial channel with NaN values.'], import_cell.type);
-
-        import_cell.data = NaN(n_data, 1);
-        chan_id = -1;
-        import_cell.units = '';
+    % try mapped diameter method first
+    mapped_diam_header = smi_headers(contains(smi_headers, 'Mapped Diameter'));
+    mapped_diam_idx_in_data = find(contains(chan_struct, mapped_diam_header));
+    if ~isempty(mapped_diam_idx_in_data)
+        import_cell.data = data_concat(:, mapped_diam_idx_in_data);
+        chan_id_concat = mapped_diam_idx_in_data;
     else
-        import_cell.data = data_concat(:, chan_id);
-        import_cell.units = units{chan_id};
+        % check if there is any channel in mm
+        all_channels = [];
+        for i = 1:numel(smi_headers)
+            possible_pupil_indices = find(contains(chan_struct, smi_headers{i}));
+            all_channels = [all_channels possible_pupil_indices];
+        end
+        all_channels = unique(all_channels);
+        channel_indices_in_mm = find(contains(units(all_channels), 'mm'));
+        all_channels_in_mm = all_channels(channel_indices_in_mm);
+        if ~isempty(all_channels_in_mm)
+            % prefer diameter to area
+            mm_units = units(all_channels_in_mm);
+            mm_diameter_indices = find(contains(mm_units, 'diameter'));
+            if ~isempty(mm_diameter_indices)
+                chan_id_concat = all_channels_in_mm(mm_diameter_indices(1));
+                import_cell.data = data_concat(:, chan_id_concat);
+            else
+                chan_id_concat = all_channels_in_mm(1);
+                area_mm2 = data_concat(:, chan_id_concat);
+                import_cell.data = (2 / sqrt(pi)) * sqrt(area_mm2);
+            end
+        else
+            % prefer diameter to area
+            all_channels_in_px = all_channels;
+            px_units = units(all_channels_in_px);
+            px_diameter_indices = find(contains(px_units, 'diameter'));
+            if ~isempty(px_diameter_indices)
+                chan_id_concat = all_channels_in_px(px_diameter_indices(1));
+                dia_px = data_concat(:, chan_id_concat);
+                % TODO: validate conversion coefficients
+                import_cell.data = pspm_convert_au2unit(dia_px, 'mm', viewing_dist, 'diameter', 0.00087743, 0.0, 700, 'mm');
+            else
+                chan_id_concat = all_channels_in_px(1);
+                area_px2 = data_concat(:, chan_id_concat);
+                % TODO: validate conversion coefficients
+                import_cell.data = pspm_convert_au2unit(area_px2, 'mm', viewing_dist, 'area', 0.12652, 0.0, 700, 'mm');
+            end
+        end
     end
+    chan_id = find(contains(raw_columns, chan_struct{chan_id_concat}));
+    import_cell.units = 'mm';
     import_cell.sr = sampling_rate;
 end
 
-function import_cell = convert_data_chan(import_cell, viewing_dist, screen_size, eyecamera_width, eyecamera_height)
-    chantype = import_cell.type;
-    is_pupil_chan = ~isempty(regexpi(chantype, 'pupil'));
-    is_gaze_x_chan = ~isempty(regexpi(chantype, 'gaze_x_'));
-    is_gaze_y_chan = ~isempty(regexpi(chantype, 'gaze_y_'));
-    if is_pupil_chan
-        import_cell.data = import_cell.data * eyecamera_width;
-        target_unit = import_cell.distance_unit;
-        viewing_dist = pspm_convert_unit(viewing_dist, 'mm', target_unit);
-        [~, import_cell.data] = pspm_convert_au2unit(import_cell.data, target_unit, viewing_dist, 'diameter');
-        import_cell.units = target_unit;
-    elseif is_gaze_x_chan
-        % normalized to mm
-        xmin = screen_size.xmin;
-        xmax = screen_size.xmax;
-        import_cell.range = [xmin xmax];
-        import_cell.data = import_cell.data * (xmax - xmin) + xmin;
-        import_cell.units = 'mm';
-    elseif is_gaze_y_chan
-        % normalized to mm
-        ymin = screen_size.ymin;
-        ymax = screen_size.ymax;
-        import_cell.range = [ymin ymax];
-        import_cell.data = import_cell.data * (ymax - ymin) + ymin;
-        import_cell.units = 'mm';
+function [import_cell, chan_id] = import_gaze_chan(import_cell, data_concat, screen_size_px, screen_size_mm, raw_columns, chan_struct, sampling_rate)
+    smi_headers = map_pspm_header_to_smi_headers(import_cell.type);
+    % in case of gaze, there is only one possible header
+    smi_header = smi_headers{1};
+
+    chan_id_concat = find(contains(chan_struct, smi_header), 1, 'first');
+    gaze_px = data_concat(:, chan_id_concat);
+
+    if contains(lower(smi_header), ' x')
+        n_pixels_along_axis = screen_size_px(1);
+        axis_len_mm = screen_size_mm(1);
+    elseif contains(lower(smi_header), ' y')
+        n_pixels_along_axis = screen_size_px(2);
+        axis_len_mm = screen_size_mm(2);
     else
-        error('ID:invalid_imported_data', sprintf('Imported data contains an unsupported data channel: %s', chantype));
+        error('ID:pspm_error', 'This branch should not have been taken. Please report this error to PsPM dev team');
     end
+
+    ratio = gaze_px / n_pixels_along_axis;
+    chan_id = find(contains(raw_columns, chan_struct{chan_id_concat}));
+    import_cell.data = ratio * axis_len_mm;
+    import_cell.units = 'mm';
+    import_cell.sr = sampling_rate;
+end
+
+function [import_cell, chan_id] = import_blink_or_saccade_chan(import_cell, data_concat, raw_columns, chan_struct, units, sampling_rate)
+    smi_headers = map_pspm_header_to_smi_headers(import_cell.type);
+    % in case of blink/saccade, there is only one possible header
+    smi_header = smi_headers{1};
+
+    chan_id_concat = find(contains(chan_struct, smi_header), 1, 'first');
+    chan_id = -1;
+    import_cell.data = data_concat(:, chan_id_concat);
+    import_cell.units = units{chan_id_concat};
+    import_cell.sr = sampling_rate;
+end
+
+function [import_cell, chan_id] = import_custom_chan(import_cell, data_concat, raw_columns, chan_struct, units, sampling_rate)
+    n_cols = size(raw_columns, 2);
+    chan_id = import_cell.channel;
+    if chan_id < 1
+        error('ID:invalid_input', sprintf('Custom channel id %d is less than 1', chan_id));
+    end
+    if chan_id > n_cols
+        error('ID:invalid_input', sprintf('Custom channel id (%d) is greater than number of columns (%d) in sample file', chan_id, n_cols));
+    end
+    custom_channel_header = raw_columns{chan_id};
+    chan_id_in_concat = find(strcmpi(custom_channel_header, chan_struct));
+    if isempty(chan_id_in_concat)
+        error('ID:invalid_input', sprintf('Custom channel %s cannot be imported using get_smi', custom_channel_header));
+    end
+    import_cell.data = data_concat(:, chan_id_in_concat);
+    import_cell.units = units{chan_id_in_concat};
+    import_cell.data_header = chan_struct{chan_id_in_concat};
+    import_cell.sr = sampling_rate;
 end
 
 function [data_concat, markers, mi_values, mi_names] = concat_sessions(data)
@@ -284,7 +371,7 @@ function [data_concat, markers, mi_values, mi_names] = concat_sessions(data)
 
     microsecond_col_idx = 1;
     n_cols = size(data{1}.channels, 2);
-    sr = compute_sampling_rate(data{1});
+    sr = data{1}.sampleRate;
     last_time = data{1}.raw(1, microsecond_col_idx);
     microsec_to_sec = 1e-6;
 
@@ -330,53 +417,5 @@ function best_eye = eye_with_smaller_nan_ratio(import, eyes_observed)
         else
             best_eye = 'r';
         end
-    end
-end
-
-function [header] = smi_header_to_pspm_header(header)
-    % Convert SMI header format to PsPM header format
-    parts = split(header);
-    which_eye = lower(parts{1});
-    datatype = lower(parts{2});
-
-    sts = true;
-    if numel(parts) == 2
-        if strcmpi(datatype, 'blink')
-            header = ['blink_', which_eye];
-        elseif strcmpi(datatype, 'saccade')
-            header = ['saccade_', which_eye];
-        else
-            sts = false;
-        end
-    elseif numel(parts) == 3
-        if strcmpi(datatype, 'dia')
-            header = ['pupil_', which_eye];
-        elseif strcmpi(datatype, 'area')
-            header = ['pupil_', which_eye];
-        else
-            sts = false;
-        end
-    elseif numel(parts) == 4
-        if strcmpi(datatype, 'raw')
-            axis = lower(parts{3});
-            header = ['gaze_', axis, '_', which_eye];
-        elseif strcmpi(datatype, 'dia')
-            axis = lower(parts{3});
-            if strcmpi(axis, 'x')
-                header = ['pupil_', which_eye];
-            end
-        elseif strcmpi(datatype, 'mapped')
-            header = ['pupil_', which_eye];
-        elseif strcmpi(datatype, 'por')
-            axis = lower(parts{3});
-            header = ['gaze_', axis, '_', which_eye];
-        else
-            sts = false;
-        end
-    else
-        sts = false;
-    end
-    if ~sts
-        error('ID:invalid_data_structure', sprintf('Samples file contain an unexpected data header %s', header));
     end
 end
