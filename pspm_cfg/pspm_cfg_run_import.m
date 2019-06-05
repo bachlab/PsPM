@@ -62,24 +62,29 @@ for i=1:n
     end
 
     % Check if eytracker distance is available
-    if ~isempty(regexpi(type, 'pupil')) && ...
-            isfield(job.datatype.(datatype), 'eyelink_trackdist')
-        transfer = job.datatype.(datatype).eyelink_trackdist;
-        distance_unit = job.datatype.(datatype).distance_unit;
+    if ~isempty(regexpi(type, 'pupil'))
+        if isfield(job.datatype.(datatype), 'eyelink_trackdist')
+            transfer = job.datatype.(datatype).eyelink_trackdist;
+            distance_unit = job.datatype.(datatype).distance_unit;
 
-        if transfer > 0
-            import{i}.eyelink_trackdist = transfer;
-            import{i}.distance_unit = distance_unit;
-        else
-            import{i}.eyelink_trackdist = 'none';
-            import{i}.distance_unit = '';
+            if transfer > 0
+                import{i}.eyelink_trackdist = transfer;
+                import{i}.distance_unit = distance_unit;
+            else
+                import{i}.eyelink_trackdist = 'none';
+                import{i}.distance_unit = '';
+            end
         end
-    end
 
-    if ~isempty(regexpi(type, 'pupil')) && isfield(job.datatype.(datatype), 'viewpoint_distance_unit')
-        import{i}.distance_unit = job.datatype.(datatype).viewpoint_distance_unit;
-        import{i}.eyecamera_width = job.datatype.(datatype).viewpoint_eyecamera_width;
-        import{i}.eyecamera_height = job.datatype.(datatype).viewpoint_eyecamera_height;
+        if isfield(job.datatype.(datatype), 'viewpoint_distance_unit')
+            import{i}.distance_unit = job.datatype.(datatype).viewpoint_distance_unit;
+            import{i}.eyecamera_width = job.datatype.(datatype).viewpoint_eyecamera_width;
+            import{i}.eyecamera_height = job.datatype.(datatype).viewpoint_eyecamera_height;
+        end
+
+        if isfield(job.datatype.(datatype), 'smi_target_unit')
+            import{i}.target_unit = job.datatype.(datatype).smi_target_unit;
+        end
     end
     
 end

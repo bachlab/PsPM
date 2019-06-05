@@ -184,14 +184,23 @@ end;
 % loop through data files
 % -------------------------------------------------------------------------
 for d = 1:numel(D)
-    fprintf('Importing %s ...', D{d});
     % pass over to import function if datafile exists, otherwise next file
-    if exist(D{d}, 'file')
+    file_exists = true;
+    filename_in_msg = D{d};
+    if iscell(D{d})
+        filename_in_msg = D{d}{1};
+        for i = 1:numel(D{d})
+            file_exists = file_exists && exist(D{d}{i}, 'file');
+        end
+    else
+        file_exists = exist(D{d}, 'file');
+    end
+    if file_exists
         [sts, import, sourceinfo] = feval(settings.import.datatypes(datatype).funct, D{d}, import);
     else
-        sts = -1; warning('ID:nonexistent_file', '\nDatafile (%s) doesn''t exist', D{d});
-    end;
-    if sts == -1, fprintf('\nImport unsuccesful for file %s.\n', D{d}); break; end;
+        sts = -1; warning('ID:nonexistent_file', '\nDatafile (%s) doesn''t exist', filename_in_msg);
+    end
+    if sts == -1, fprintf('\nImport unsuccesful for file %s.\n', filename_in_msg); break; end;
     
     % split blocks if necessary ---
     if iscell(sourceinfo)
@@ -213,10 +222,10 @@ for d = 1:numel(D)
         end;
         
         if any(sts == -1), fprintf('\nData conversion unsuccesful for job %02.0f file %s.\n', ...
-                find(sts == -1), D{d}); break; end;
+                find(sts == -1), filename_in_msg); break; end;
         
         % collect infos and save ---
-        [pth, fn, ext]     = fileparts(D{d});
+        [pth, fn, ext]     = fileparts(filename_in_msg);
         infos.source = sourceinfo{blk};
         infos.source.type = settings.import.datatypes(datatype).long;
         infos.source.file = D{d};

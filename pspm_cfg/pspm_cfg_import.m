@@ -145,6 +145,14 @@ viewpoint_eyecamera_height.val = {240};
 viewpoint_eyecamera_height.num = [1 1];
 viewpoint_eyecamera_height.help = {['Height of EyeCamera window in pixels']};
 
+smi_target_distance_unit           = cfg_menu;
+smi_target_distance_unit.name      = 'Target unit';
+smi_target_distance_unit.tag       = 'smi_target_unit';
+smi_target_distance_unit.values    = {'mm', 'cm', 'm', 'inches'};
+smi_target_distance_unit.labels    = {'mm', 'cm', 'm', 'inches'};
+smi_target_distance_unit.val       = {'mm'};
+smi_target_distance_unit.help      = {['The unit to which the data should be converted.']};
+
 %% Datatype dependend items
 datatype_item = cell(1,length(fileoptions));
 for datatype_i=1:length(fileoptions)
@@ -279,6 +287,25 @@ for datatype_i=1:length(fileoptions)
         datafile.filter  = ['.*\.(' ext '|' upper(ext) ')$'];
     end
     datafile.help    = {settings.datafilehelp} ;
+
+    if any(strcmpi(settings.import.datatypes(datatype_i).short, 'smi'))
+        input_file = cfg_files;
+        input_file.name = 'Sample and optional Event Files';
+        input_file.num = [1 2];
+        input_file.tag = 'datafile';
+        if strcmpi(ext, 'any')
+            event_file.filter ='.*';
+        else
+            event_file.filter  = ['.*\.(' ext '|' upper(ext) ')$'];
+        end
+
+        datafile         = cfg_repeat;
+        datafile.name    = 'Data File(s)';
+        datafile.tag     = 'datafile';
+        datafile.num     = [1 Inf];
+        datafile.help    = {settings.datafilehelp} ;
+        datafile.values  = {input_file};
+    end
     
     datatype_item{datatype_i}       = cfg_branch;
     datatype_item{datatype_i}.name  = fileoptions{datatype_i};
@@ -301,6 +328,9 @@ for datatype_i=1:length(fileoptions)
             {viewpoint_distance_unit, viewpoint_eyecamera_width, viewpoint_eyecamera_height}];
     end
     
+    if any(strcmpi(settings.import.datatypes(datatype_i).short, 'smi'))
+        datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {smi_target_distance_unit}];
+    end
 end
 
 %% Data type

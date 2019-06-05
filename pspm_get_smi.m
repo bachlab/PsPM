@@ -3,13 +3,15 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     % iView X EyeTracker files. 
     %
     % FORMAT: [sts, import, sourceinfo] = pspm_get_smi(datafile, import);
-    %          datafile: Structure with
-    %                  - mandatory fields:
-    %                      .sample_file:
-    %                          File containing the eye measurements, stored in ASCII format.
-    %                  - optional fields:
-    %                      .event_file:
-    %                          File containing the blink/saccade events, stored in ASCII format.
+    %          datafile: String or cell array of strings. The size of the cell array can be 1 or 2.
+    %
+    %                    If datafile is string, it must be the path to the sample file containing
+    %                    eye measuremnts. The file must be stored in ASCII format.
+    %
+    %                    If datafile is a cell array, the first element must be the path to the
+    %                    sample file defined above. The optional second string in the cell array
+    %                    can be the event file containing blink/saccade events. The file must be
+    %                    stored in ASCII format.
     %
     %          import: import job structure with 
     %                  - mandatory fields:
@@ -20,11 +22,18 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     %
     %                          The given channel type has to be recorded in all of
     %                          the sessions contained in the datafile.
+    %
+    %                          Specified custom channels must correspond to some form of
+    %                          pupil/gaze/blink/saccade/marker channels. In addition,
+    %                          when the channel type is custom, no postprocessing/conversion
+    %                          is performed by pspm_get_smi and the channel is returned directly
+    %                          as it is in the given datafile.
+    %
     %                  - optional fields:
     %                      .channel:
     %                          If .type is custom, the index of the channel to import
     %                          must be specified using this option.
-    %                      .distance_unit:
+    %                      .target_unit:
     %                          the unit to which the data should be converted.
     %                          (Default: mm)
     %__________________________________________________________________________
@@ -40,20 +49,21 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
         import = {import};
     end
     for i = 1:numel(import)
-        if ~isfield(import{i}, 'distance_unit')
-            import{i}.distance_unit = 'mm';
+        if ~isfield(import{i}, 'target_unit')
+            import{i}.target_unit = 'mm';
         end
     end
 
+    assert_proper_datafile_format(datafile);
     assert_custom_import_channels_has_channel_field(import);
     assert_all_chantypes_are_supported(settings, import);
-    if isfield(datafile, 'event_file')
-        data = import_smi(datafile.sample_file, datafile.event_file);
+    if numel(datafile) == 2
+        data = import_smi(datafile{1}, datafile{2});
     else
         warning(['get_smi will only read pupil and/or gaze data. ',...
             'No information about blinks or saccades will be generated. ',...
             'In order to generate this information you have to specify an event file.']);
-        data = import_smi(datafile.sample_file);
+        data = import_smi(datafile{1});
     end
     if numel(data) > 1
         assert_same_sample_rate(data);
@@ -61,7 +71,7 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
         assert_sessions_are_one_after_another(data);
     end
 
-    assert_all_chantypes_are_in_imported_data(data, datafile.sample_file, import);
+    assert_all_chantypes_are_in_imported_data(data, datafile{1}, import);
     [data_concat, markers, mi_values, mi_names] = concat_sessions(data);
 
     sampling_rate = data{1}.sampleRate;
@@ -90,8 +100,14 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
             [import{k}, chan_id] = import_marker_chan(import{k}, markers, mi_values, mi_names, sampling_rate);
         elseif contains(chantype, 'pupil')
             [import{k}, chan_id] = import_pupil_chan(import{k}, data_concat, viewing_dist, raw_columns, chan_struct, units, sampling_rate);
+            if ~strcmp(import{k}.units, import{k}.target_unit)
+                [~, import{k}.data] = pspm_convert_unit(import{k}.data, import{k}.units, import{k}.target_unit);
+            end
         elseif contains(chantype, 'gaze')
             [import{k}, chan_id] = import_gaze_chan(import{k}, data_concat, screen_size_px, screen_size_mm, raw_columns, chan_struct, sampling_rate);
+            if ~strcmp(import{k}.units, import{k}.target_unit)
+                [~, import{k}.data] = pspm_convert_unit(import{k}.data, import{k}.units, import{k}.target_unit);
+            end
         elseif contains(chantype, 'blink') || contains(chantype, 'saccade')
             [import{k}, chan_id] = import_blink_or_saccade_chan(import{k}, data_concat, raw_columns, chan_struct, units, sampling_rate);
         elseif strcmpi(chantype, 'custom')
@@ -116,6 +132,36 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
 
     rmpath([settings.path, 'Import', filesep, 'smi']);
     sts = 1;
+end
+
+function assert_proper_datafile_format(datafile)
+    if ~is_proper_datafile_format(datafile)
+        error('ID:invalid_input', 'Given datafile is not valid. Please check the documentation');
+    end
+end
+
+function proper = is_proper_datafile_format(datafile)
+    if ~isstr(datafile) && ~iscell(datafile)
+        proper = false;
+        return;
+    end
+    if isstr(datafile)
+        proper = true;
+        return;
+    end
+    if numel(datafile) ~= 1 && numel(datafile) ~= 2
+        proper = false;
+        return;
+    end
+    if ~isstr(datafile{1})
+        proper = false;
+        return;
+    end
+    if numel(datafile) == 2 && ~isstr(datafile{2})
+        proper = false;
+        return;
+    end
+    proper = true;
 end
 
 function assert_same_sample_rate(data)
@@ -280,12 +326,12 @@ function [import_cell, chan_id] = import_pupil_chan(import_cell, data_concat, vi
                 chan_id_concat = all_channels_in_px(px_diameter_indices(1));
                 dia_px = data_concat(:, chan_id_concat);
                 % TODO: validate conversion coefficients
-                import_cell.data = pspm_convert_au2unit(dia_px, 'mm', viewing_dist, 'diameter', 0.00087743, 0.0, 700, 'mm');
+                [~, import_cell.data] = pspm_convert_au2unit(dia_px, 'mm', viewing_dist, 'diameter', 0.00087743, 0.0, 700, 'mm');
             else
                 chan_id_concat = all_channels_in_px(1);
                 area_px2 = data_concat(:, chan_id_concat);
                 % TODO: validate conversion coefficients
-                import_cell.data = pspm_convert_au2unit(area_px2, 'mm', viewing_dist, 'area', 0.12652, 0.0, 700, 'mm');
+                [~, import_cell.data] = pspm_convert_au2unit(area_px2, 'mm', viewing_dist, 'area', 0.12652, 0.0, 700, 'mm');
             end
         end
     end
