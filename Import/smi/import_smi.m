@@ -221,35 +221,7 @@ function [data] = import_smi(varargin)
         rmpath(toolbox_path);
     end
 
-    %% get pupil method and units
-    % mapped pupil diameter [mm]
-    MD = find(contains(columns,'Mapped Diameter'));
-    % pupil area in [mm] or [px]
-    A  = find(contains(columns,'Area'));
-    % pupil diameter in [mm] or [px] -> area based or bounding box
-    D  = find(contains(columns,'Dia'));
-    % always try to use mapped diameter dirst
-    if ~isempty(MD)
-        pupilUnit = 'diameter in mm';
-        pupil_channels = MD;
-    elseif ~isempty(A)
-        pupilUnit = get_pupil_unit(columns{A(1)},'area');
-        pupil_channels = A;
-    else
-        %check if area based diameter
-        if length(D)==3||length(D)==6
-            pupilUnit = get_pupil_unit(columns{D(3)},'diameter');
-            if length(D)==3
-                pupil_channels = D(3);
-            else
-                pupil_channels = D([3,6]);
-            end
-        else % safe diameter as 2 columns which hold width and heigth of bouding box
-            pupilUnit = get_pupil_unit(columns{D(1)},'diameter');
-            pupil_channels=D;
-        end
-    end
-
+    [pupil_channels, pupil_units] = get_pupil_channels(columns);
     %% get all messages - if Event file is given take messages of event file otherwise read from file
 
     messageCols = {'Time','Type','Trial','Text'};
@@ -267,7 +239,9 @@ function [data] = import_smi(varargin)
             msgs{4, i} = usr_events.Description{i};
         end
     else
-        for i=1:numel(msg_lines)
+        nr_events = numel(msg_lines);
+        msgs = cell(4, nr_events);
+        for i=1:nr_events
             C = textscan(msg_lines{i}, '%f%s%f%s', 'Delimiter', '\t');
             msgs{1, i} = C{1};
             msgs{2, i} = C{2}{1};
@@ -451,77 +425,26 @@ function [data] = import_smi(varargin)
 
                 if POR_available
                     channel_indices = [pupil_channels,xL,yL,xR,yR,POR_xL,POR_yL,POR_xR,POR_yR,blinkL,blinkR,saccadeL,saccadeR];
-                    data{sn}.channels = data{sn}.raw(:, channel_indices);
-                    data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
-                    %here we need to distinguish the pupil recording method:
-                    %Bounding Box or Area based
-                    if length(pupil_channels)==2
-                        data{sn}.units = {pupilUnit,pupilUnit, 'px', 'px', 'px', ...
-                            'px','px','px','px','px','blink', 'blink', 'saccade', 'saccade'};
-                        % set blinks to NaN
-                        data{sn}.channels( (data{sn}.channels(:,11)| data{sn}.channels(:, 13)) == 1, [1,3:4,7:8] ) = NaN;
-                        data{sn}.channels( (data{sn}.channels(:,12)| data{sn}.channels(:, 14)) == 1, [2,5:6,9:10] ) = NaN;
-                        data{sn}.POR_channels_idx = [7,8,9,10];
-                    else
-                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'], [pupilUnit,' x'],[pupilUnit,' y'], 'px', 'px', 'px', ...
-                            'px','px','px','px','px', 'blink', 'blink', 'saccade', 'saccade'};
-                        % set blinks to NaN
-                        data{sn}.channels( (data{sn}.channels(:,13)| data{sn}.channels(:, 15)) == 1, [1:2,5:6,9:10] ) = NaN;
-                        data{sn}.channels( (data{sn}.channels(:,14)| data{sn}.channels(:, 16)) == 1, [3:4,7:8,11:12] ) = NaN;
-                        data{sn}.POR_channels_idx = [9,10,11,12];
-                    end
+                    data{sn}.units = {pupil_units{:}, 'px', 'px', 'px', 'px','px','px','px','px','blink', 'blink', 'saccade', 'saccade'};
                 else
                     channel_indices = [pupil_channels,xL,yL,xR,yR,blinkL,blinkR,saccadeL,saccadeR];
-                    data{sn}.channels = data{sn}.raw(:, channel_indices);
-                    data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
-
-                    %here we need to distinguish the pupil recording method:
-                    %Bounding Box or Area based
-                    if length(pupil_channels)==2
-                        data{sn}.units = {pupilUnit,pupilUnit, 'px', 'px', 'px', ...
-                            'px', 'blink', 'blink', 'saccade', 'saccade'};
-                        % set blinks to NaN
-                        data{sn}.channels( (data{sn}.channels(:,7)| data{sn}.channels(:, 9)) == 1, [1,3:4] ) = NaN;
-                        data{sn}.channels( (data{sn}.channels(:,8)| data{sn}.channels(:, 10)) == 1, [2,5:6] ) = NaN;
-                    else
-                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'], [pupilUnit,' x'],[pupilUnit,' y'], 'px', 'px', 'px', ...
-                            'px', 'blink', 'blink', 'saccade', 'saccade'};
-                        % set blinks to NaN
-                        data{sn}.channels( (data{sn}.channels(:,9)| data{sn}.channels(:, 11)) == 1, [1:2,5:6] ) = NaN;
-                        data{sn}.channels( (data{sn}.channels(:,10)| data{sn}.channels(:, 12)) == 1, [3:4,7:8] ) = NaN;
-                    end
+                    data{sn}.units = {pupil_units{:}, 'px', 'px', 'px', 'px', 'blink', 'blink', 'saccade', 'saccade'};
                 end
+                data{sn}.channels = data{sn}.raw(:, channel_indices);
+                data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
+                data{sn}.channels = set_datarows_corresponding_to_blink_saccade_to_nan(data{sn}.channels, data{sn}.channels_columns);
 
             else
                 if POR_available
                     channel_indices = [pupil_channels,xL,yL,xR,yR,POR_xL,POR_yL,POR_xR,POR_yR];
+                    data{sn}.units = {pupil_units{:}, 'px', 'px', 'px', 'px', 'px', 'px', 'px', 'px'};
                     data{sn}.channels = data{sn}.raw(:, channel_indices);
                     data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
-
-                    %here we need to distinguish the pupil recording method:
-                    %Bounding Box or Area based
-                    if length(pupil_channels)==2
-                        data{sn}.units = {pupilUnit,pupilUnit, 'px', 'px', 'px', ...
-                            'px','px','px','px','px'};
-                        data{sn}.POR_channels_idx = [7,8,9,10];
-                    else
-                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'],[pupilUnit,' x'],[pupilUnit,' y'], 'px', 'px', 'px', ...
-                            'px','px','px','px','px'};
-                        data{sn}.POR_channels_idx = [9,10,11,12];
-                    end
                 else
                     channel_indices = [pupil_channels,xL,yL,xR,yR];
+                    data{sn}.units = {pupil_units{:}, 'px', 'px', 'px', 'px'};
                     data{sn}.channels = data{sn}.raw(:, channel_indices);
                     data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
-                    %here we need to distinguish the pupil recording method:
-                    %Bounding Box or Area based
-                    if length(pupil_channels)==2
-                        data{sn}.units = {pupilUnit,pupilUnit, 'px', 'px', 'px', ...
-                            'px'};
-                    else
-                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'],[pupilUnit,' x'],[pupilUnit,' y'], 'px', 'px', 'px', ...
-                            'px'};
-                    end
                 end
             end
         else
@@ -533,73 +456,34 @@ function [data] = import_smi(varargin)
             x = find(contains(data{sn}.raw_columns,'Raw X'), 1);
             y = find(contains(data{sn}.raw_columns,'Raw Y'), 1);
 
-
             if event_ex
                 %distinguish eyes
-                if strcmpi(data{sn}.eyesObserved, 'L')
-                    blink = size(data{sn}.raw,2)-5;
-                    saccade = size(data{sn}.raw,2)-3;
-                else
-                    blink = size(data{sn}.raw,2)-4;
-                    saccade = size(data{sn}.raw,2)-2;
-                end
+                blink = size(data{sn}.raw, 2)-1;
+                saccade = size(data{sn}.raw, 2);
                 if POR_available
                     channel_indices = [pupil_channels,x,y,POR_x,POR_y,blink,saccade];
+                    data{sn}.units = {pupil_units{:}, 'px', 'px', 'px', 'px', 'blink', 'saccade'};
                     data{sn}.channels = data{sn}.raw(:, channel_indices);
                     data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
-                    %here we need to distinguish the pupil recording method:
-                    %Bounding Box or Area based
-                    if length(pupil_channels)==1
-                        data{sn}.units = {pupilUnit, 'px', 'px','px','px','blink', 'saccade'};
-                        % set blinks to NaN
-                        data{sn}.channels( (data{sn}.channels(:,6)| data{sn}.channels(:, 7)) == 1, 1:5 ) = NaN;
-                        data{sn}.POR_channels_idx = [4,5];
-                    else
-                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'], 'px', 'px','px','px', 'blink', 'saccade'};
-                        % set blinks to NaN
-                        data{sn}.channels( (data{sn}.channels(:,7)| data{sn}.channels(:, 8)) == 1, 1:6 ) = NaN;
-                        data{sn}.POR_channels_idx = [5,6];
-                    end
+                    data{sn}.channels = set_datarows_corresponding_to_blink_saccade_to_nan(data{sn}.channels, data{sn}.channels_columns);
                 else
                     channel_indices = [pupil_channels,x,y,blink,saccade];
+                    data{sn}.units = {pupil_units{:}, 'px', 'px', 'blink', 'saccade'};
                     data{sn}.channels = data{sn}.raw(:, channel_indices);
                     data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
-                    %here we need to distinguish the pupil recording method:
-                    %Bounding Box or Area based
-                    if length(pupil_channels)==1
-                        data{sn}.units = {pupilUnit, 'px', 'px', 'blink', 'saccade'};
-                        % set blinks to NaN
-                        data{sn}.channels( (data{sn}.channels(:,4)| data{sn}.channels(:, 5)) == 1, [1:3] ) = NaN;
-                    else
-                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'], 'px', 'px', 'blink', 'saccade'};
-                        % set blinks to NaN
-                        data{sn}.channels( (data{sn}.channels(:,5)| data{sn}.channels(:, 6)) == 1, [1:4] ) = NaN;
-                    end
+                    data{sn}.channels = set_datarows_corresponding_to_blink_saccade_to_nan(data{sn}.channels, data{sn}.channels_columns);
                 end
-
             else
                 if POR_available
                     channel_indices = [pupil_channels,x,y,POR_x,POR_y];
                     data{sn}.channels = data{sn}.raw(:, channel_indices);
                     data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
-                    if length(tmp)==1
-                        data{sn}.units = {pupilUnit, 'px', 'px','px','px'};
-                        data{sn}.POR_channels_idx = [4,5];
-                    else
-                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'], 'px', 'px','px','px'};
-                        data{sn}.POR_channels_idx = [5,6];
-                    end
+                    data{sn}.units = {pupil_units{:}, 'px', 'px', 'px', 'px'};
                 else
                     channel_indices = [pupil_channels,x,y];
                     data{sn}.channels = data{sn}.raw(:, channel_indices);
                     data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
-                    %here we need to distinguish the pupil recording method:
-                    %Bounding Box or Area based;
-                    if length(tmp)==1
-                        data{sn}.units = {pupilUnit, 'px', 'px'};
-                    else
-                        data{sn}.units = {[pupilUnit,' x'],[pupilUnit,' y'], 'px', 'px'};
-                    end
+                    data{sn}.units = {pupil_units{:}, 'px', 'px'};
                 end
             end
         end
@@ -638,12 +522,61 @@ function [s_idx,end_idx]=get_idx(time_vec,s_vec,end_vec)
     end
 end
 
-function [unit] = get_pupil_unit(str,dia_or_area)
-    idx =  regexpi(str, '[');
-    unit = str(idx+1:end-1);
-    if contains(unit,'px')
-        unit = [dia_or_area, ' units'];
-    else
-        unit = [dia_or_area, ' in ',unit];
+function [pupil_channels, pupil_units] = get_pupil_channels(columns)
+    header_names_units = {...
+        {'L Dia X [px]', 'px'},...
+        {'L Dia X [mm]', 'mm'},...
+        {'L Dia Y [px]', 'px'},...
+        {'L Dia Y [mm]', 'mm'},...
+        {'L Dia [px]', 'px'},...
+        {'L Dia [mm]', 'mm'},...
+        {'L Area [px', 'px2'},...
+        {'L Area [mm', 'mm2'},...
+        {'L Mapped Diameter [mm]', 'mm'},...
+        {'R Dia X [px]', 'px'},...
+        {'R Dia X [mm]', 'mm'},...
+        {'R Dia Y [px]', 'px'},...
+        {'R Dia Y [mm]', 'mm'},...
+        {'R Dia [px]', 'px'},...
+        {'R Dia [mm]', 'mm'},...
+        {'R Area [px', 'px2'},...
+        {'R Area [mm', 'mm2'},...
+        {'R Mapped Diameter [mm]', 'mm'}...
+    };
+    pupil_channels = [];
+    pupil_units = {};
+    for i = 1:numel(header_names_units)
+        idx = find(contains(columns, header_names_units{i}{1}));
+        if ~isempty(idx)
+            pupil_channels(end + 1) = idx;
+            pupil_units{end + 1} = header_names_units{i}{2};
+        end
+    end
+end
+
+function [data] = set_datarows_corresponding_to_blink_saccade_to_nan(data, column_names)
+    blink_l_col = find(strcmp(column_names, 'L Blink'));
+    blink_r_col = find(strcmp(column_names, 'R Blink'));
+    saccade_l_col = find(strcmp(column_names, 'L Saccade'));
+    saccade_r_col = find(strcmp(column_names, 'R Saccade'));
+    
+    blink_l = logical(data(:, blink_l_col));
+    blink_r = logical(data(:, blink_r_col));
+    saccade_l = logical(data(:, saccade_l_col));
+    saccade_r = logical(data(:, saccade_r_col));
+    
+    left_data_cols = contains(column_names, 'L ') & ~contains(column_names, 'Blink') & ~contains(column_names, 'Saccade');
+    right_data_cols = contains(column_names, 'R ') & ~contains(column_names, 'Blink') & ~contains(column_names, 'Saccade');
+    if ~isempty(blink_l_col)
+        data(blink_l, left_data_cols) = NaN;
+    end
+    if ~isempty(saccade_l_col)
+        data(saccade_l, left_data_cols) = NaN;
+    end
+    if ~isempty(blink_r_col)
+        data(blink_r, right_data_cols) = NaN;
+    end
+    if ~isempty(saccade_r_col)
+        data(saccade_r, right_data_cols) = NaN;
     end
 end
