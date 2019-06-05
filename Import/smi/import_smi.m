@@ -46,21 +46,35 @@ function [data] = import_smi(varargin)
         error('ID:invalid_input', 'import SMI has too many input arguments.');
     end
     %% open sample_file
-    fileID_sample = fopen(sample_file, 'rt');
-    fline_sample = fgetl(fileID_sample);
-    %% get sample_file header
-    headr_ctr = 1;
-    header_sample{headr_ctr} = fline_sample;
-    while contains(fline_sample,'##')
-        headr_ctr = headr_ctr + 1;
-        fline_sample = fgetl(fileID_sample);
-        header_sample{headr_ctr} = fline_sample;
+    all_text = fileread(sample_file);
+    backn = sprintf('\n');
+    backr = sprintf('\r');
+    tab = sprintf('\t');
+    has_backr = ~isempty(find(all_text == backr, 1, 'first'));
+    if has_backr
+        back_off = 3;
+    else
+        back_off = 2;
+    end
+    line_begs = strfind(all_text, backn);
+    line_begs = [1, line_begs + 1];
+
+    header_sample = {};
+    line_ctr = 1;
+    curr_line = all_text(line_begs(line_ctr) : line_begs(line_ctr + 1) - back_off);
+    while contains(curr_line, '##')
+        header_sample{end + 1} = curr_line;
+        line_ctr = line_ctr + 1;
+        curr_line = all_text(line_begs(line_ctr) : line_begs(line_ctr + 1) - back_off);
     end
     header_sample = header_sample';
+    line_begs = line_begs(line_ctr + 1 : end);
+    all_text = all_text(line_begs(1) : end);
+    line_begs = line_begs - line_begs(1) + 1;
     %% check columns of data
     % last line of the header descibes the columns contained in the importfile
     % (can be variable depending recodrings)
-    columns = strsplit(fline_sample, '\t');
+    columns = strsplit(curr_line, tab);
     POR_available = any(contains(columns,'POR'));
 
     %% process header informations
@@ -127,13 +141,29 @@ function [data] = import_smi(varargin)
     head_distance_unit = hd_field{4}(2:3);
 
     %% get data part of sample file
-    % create right fomart for import
-    formatSpec = repmat('%s',1,numel(columns));
-    %read in sample_file
-    datastr = textscan(fileID_sample,formatSpec , 'delimiter', '\t');
-    fclose(fileID_sample);
-    % data part
-    datastr = [datastr{:}];
+    msg_field_indices = strfind(all_text, sprintf('\tMSG\t'));
+    comment_indices = [];
+    msg_lines = {};
+    for i = 1:numel(msg_field_indices)
+        b = msg_field_indices(i);
+        while all_text(b) ~= backn
+            b = b - 1;
+        end
+        e = msg_field_indices(i);
+        while all_text(e) ~= backn
+            e = e + 1;
+        end
+        comment_indices(end + 1 : end + 2) = [b + 1, b + 2];
+        msg_lines{end + 1} = all_text(b + 1 : e - back_off + 1);
+    end
+    all_text(comment_indices) = '/';
+
+    formatSpec = ['%f%*s', repmat('%f', 1, numel(columns) - 2)];
+    C = textscan(all_text, formatSpec, 'Delimiter', '\t', 'CollectOutput', 1, 'TreatAsEmpty', '.', 'CommentStyle', '//');
+    datanum = C{1};
+    clear C;
+    clear all_text;
+    datanum = [datanum(:, 1), ones(size(datanum, 1), 1), datanum(:, 2:end)];
 
     %% open events_file, get events, and events header
     if event_ex
@@ -237,57 +267,30 @@ function [data] = import_smi(varargin)
             msgs{4, i} = usr_events.Description{i};
         end
     else
-        msg_idx =cell2mat(cellfun(@(x)strcmpi(x,messageKeyword),datastr(:,idx_of_type),'UniformOutput',0));
-        % get idx of messages
-        msg_idx = find(msg_idx);
-        % save all messages in variable
-        msgs = cell(numel(messageCols), numel(msg_idx));
-        for i=1:numel(msg_idx)
-            msgs{1, i} = str2num(datastr{msg_idx(i), 1});
-            msgs{2, i} = datastr{msg_idx(i), 2};
-            msgs{3, i} = str2num(datastr{msg_idx(i), 3});
-            msgs{4, i} = datastr{msg_idx(i), 4};
+        for i=1:numel(msg_lines)
+            C = textscan(msg_lines{i}, '%f%s%f%s', 'Delimiter', '\t');
+            msgs{1, i} = C{1};
+            msgs{2, i} = C{2}{1};
+            msgs{3, i} = C{3};
+            msgs{4, i} = C{4}{1};
         end
     end
 
     %% find number of recordings / sessions and split
     idx_of_trials = strcmpi(columns,'Trial');
-    trials =cell2mat(cellfun(@(x)str2double(x),datastr(:,idx_of_trials),'UniformOutput',0));
+    trials = datanum(:, idx_of_trials);
     trial_changepoints = find(diff(trials));
     n_sessions = 1 + numel(trial_changepoints);
     if isempty(trial_changepoints)
-        sess_beg_end = [0 numel(datastr(:, 1))];
+        sess_beg_end = [0 numel(datanum(:, 1))];
     else
-        sess_beg_end = [0 trial_changepoints' numel(datastr(:, 1))];
+        sess_beg_end = [0 trial_changepoints' numel(datanum(:, 1))];
     end
     data = cell(n_sessions, 1);
     %% convert data, compute blink, saccade and messages
     for sn = 1:n_sessions
         data{sn} = struct();
-        sn_data = datastr(sess_beg_end(sn) + 1:sess_beg_end(sn + 1), :);
-
-        msg_mask = strcmpi(sn_data(:, idx_of_type), 'MSG');
-        sn_data(:, idx_of_type) = {'1'};
-        sn_data(msg_mask, idx_of_type) = {'2'};
-
-        % convert to single cell array (one cell per line)
-        str_data = cell(size(sn_data, 1), 1);
-        for iline = 1:size(str_data, 1)
-            str_data{iline} = sprintf('%s ', sn_data{iline,:});
-        end
-
-        % concatenate strings and replace/interpret dots with NaN values
-        str_data = strrep(str_data, ' . ', ' NaN ');
-
-        %     datanum = str2double(sn_data);
-        datanum = NaN(size(sn_data,1), size(sn_data,2));
-
-        % convert numeric rows to numeric
-        for n_row = 1:size(sn_data,1)
-            data_num_row = sscanf(str_data{n_row}, '%f');
-            n_cols = min(size(sn_data,2),numel(data_num_row));
-            datanum(n_row,1:n_cols) = data_num_row(1:n_cols);
-        end
+        sn_datanum = datanum(sess_beg_end(sn) + 1:sess_beg_end(sn + 1), :);
 
         data{sn}.record_date  = dateFields{3};
         data{sn}.record_time  = dateFields{4};
@@ -306,7 +309,7 @@ function [data] = import_smi(varargin)
         data{sn}.gaze_coords.ymax = ymax;
         data{sn}.calibration_points=calibration_points;
 
-        times = datanum(:, 1);
+        times = sn_datanum(:, 1);
         %% if even_file is given, include blinkes and saccades
         if event_ex
             Blinks = eventsRaw.(event_fields{blinks_idx});
@@ -381,11 +384,11 @@ function [data] = import_smi(varargin)
                         ep_start = 3;
                         ep_stop = 4;
                     end
-                    idx = size(datanum, 2) + 1;
+                    idx = size(sn_datanum, 2) + 1;
                     for k = 1:length(ignore_str_pos{j}{ep_start})
                         start_pos = max(1, ignore_str_pos{j}{ep_start}(k));
-                        stop_pos = min(size(datanum, 1), ignore_str_pos{j}{ep_stop}(k));
-                        datanum(start_pos : stop_pos, idx) = 1;
+                        stop_pos = min(size(sn_datanum, 1), ignore_str_pos{j}{ep_stop}(k));
+                        sn_datanum(start_pos : stop_pos, idx) = 1;
                     end
                     columns{idx} = [upper(data{sn}.eyesObserved(i)), ' ', ignore_names{j}];
                 end
@@ -418,8 +421,8 @@ function [data] = import_smi(varargin)
         end
 
         %% remove lines containing NaN (i.e. pure text lines) so that lines have a time interpretation
-        data{sn}.raw = datanum;
-        data{sn}.raw(isnan(datanum(:,4)),:) = [];
+        data{sn}.raw = sn_datanum;
+        data{sn}.raw(isnan(sn_datanum(:,4)),:) = [];
         % save column heder of raw data
         raw_columns = columns;
         data{sn}.raw_columns = raw_columns;
