@@ -29,6 +29,14 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     %                          is performed by pspm_get_smi and the channel is returned directly
     %                          as it is in the given datafile.
     %
+    %                          The gaze values returned are in the given target_unit.
+    %                          (x, y) = (0, 0) coordinate represents the top left
+    %                          corner of the whole stimulus window. x coordinates grow
+    %                          towards right and y coordinates grow towards bottom. The
+    %                          gaze coordinates can be negative or larger than screen
+    %                          size. These correspond to gaze positions outside the
+    %                          screen.
+    %
     %                  - optional fields:
     %                      .channel:
     %                          If .type is custom, the index of the channel to import
@@ -36,6 +44,17 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     %                      .target_unit:
     %                          the unit to which the data should be converted.
     %                          (Default: mm)
+    %
+    %                  - Each import structure will get the following output fields:
+    %                      .data:
+    %                          Data channel corresponding to the input channel type or
+    %                          custom channel id.
+    %                      .units:
+    %                          Units of the channel.
+    %                      .sr:
+    %                          Sampling rate.
+    %                      .chan_id:
+    %                          Channel index of the imported channel in the raw data columns.
     %__________________________________________________________________________
     %
     % (C) 2019 Eshref Yozdemir (University of Zurich)
@@ -49,11 +68,16 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
         import = {import};
     end
     for i = 1:numel(import)
-        if ~isfield(import{i}, 'target_unit')
+        not_custom = ~strcmpi(import{i}.type, 'custom');
+        not_marker = ~strcmpi(import{i}.type, 'marker');
+        if ~isfield(import{i}, 'target_unit') && not_custom && not_marker
             import{i}.target_unit = 'mm';
         end
     end
 
+    if isstr(datafile)
+        datafile = {datafile};
+    end
     assert_proper_datafile_format(datafile);
     assert_custom_import_channels_has_channel_field(import);
     assert_all_chantypes_are_supported(settings, import);
@@ -100,14 +124,8 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
             [import{k}, chan_id] = import_marker_chan(import{k}, markers, mi_values, mi_names, sampling_rate);
         elseif contains(chantype, 'pupil')
             [import{k}, chan_id] = import_pupil_chan(import{k}, data_concat, viewing_dist, raw_columns, chan_struct, units, sampling_rate);
-            if ~strcmp(import{k}.units, import{k}.target_unit)
-                [~, import{k}.data] = pspm_convert_unit(import{k}.data, import{k}.units, import{k}.target_unit);
-            end
         elseif contains(chantype, 'gaze')
             [import{k}, chan_id] = import_gaze_chan(import{k}, data_concat, screen_size_px, screen_size_mm, raw_columns, chan_struct, sampling_rate);
-            if ~strcmp(import{k}.units, import{k}.target_unit)
-                [~, import{k}.data] = pspm_convert_unit(import{k}.data, import{k}.units, import{k}.target_unit);
-            end
         elseif contains(chantype, 'blink') || contains(chantype, 'saccade')
             [import{k}, chan_id] = import_blink_or_saccade_chan(import{k}, data_concat, raw_columns, chan_struct, units, sampling_rate);
         elseif strcmpi(chantype, 'custom')
@@ -141,12 +159,8 @@ function assert_proper_datafile_format(datafile)
 end
 
 function proper = is_proper_datafile_format(datafile)
-    if ~isstr(datafile) && ~iscell(datafile)
+    if ~iscell(datafile)
         proper = false;
-        return;
-    end
-    if isstr(datafile)
-        proper = true;
         return;
     end
     if numel(datafile) ~= 1 && numel(datafile) ~= 2
@@ -336,7 +350,10 @@ function [import_cell, chan_id] = import_pupil_chan(import_cell, data_concat, vi
         end
     end
     chan_id = find(contains(raw_columns, chan_struct{chan_id_concat}));
-    import_cell.units = 'mm';
+    if ~strcmp('mm', import_cell.target_unit)
+        [~, import_cell.data] = pspm_convert_unit(import_cell.data, 'mm', import_cell.target_unit);
+    end
+    import_cell.units = import_cell.target_unit;
     import_cell.sr = sampling_rate;
 end
 
@@ -361,7 +378,10 @@ function [import_cell, chan_id] = import_gaze_chan(import_cell, data_concat, scr
     ratio = gaze_px / n_pixels_along_axis;
     chan_id = find(contains(raw_columns, chan_struct{chan_id_concat}));
     import_cell.data = ratio * axis_len_mm;
-    import_cell.units = 'mm';
+    if ~strcmp('mm', import_cell.target_unit)
+        [~, import_cell.data] = pspm_convert_unit(import_cell.data, 'mm', import_cell.target_unit);
+    end
+    import_cell.units = import_cell.target_unit;
     import_cell.sr = sampling_rate;
 end
 
