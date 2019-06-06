@@ -78,8 +78,6 @@ for i=1:n
 
         if isfield(job.datatype.(datatype), 'viewpoint_target_unit')
             import{i}.target_unit = job.datatype.(datatype).viewpoint_target_unit;
-            import{i}.eyecamera_width = job.datatype.(datatype).viewpoint_eyecamera_width;
-            import{i}.eyecamera_height = job.datatype.(datatype).viewpoint_eyecamera_height;
         end
 
         if isfield(job.datatype.(datatype), 'smi_target_unit')

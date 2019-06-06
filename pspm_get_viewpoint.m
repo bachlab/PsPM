@@ -76,17 +76,22 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
         end
     end
 
-    assert_custom_import_channels_has_channel_field(import);
-    assert_all_chantypes_are_supported(settings, import);
-    data = import_viewpoint(datafile);
+    if ~assert_custom_import_channels_has_channel_field(import); return; end;
+    if ~assert_all_chantypes_are_supported(settings, import); return; end;
+    try
+        data = import_viewpoint(datafile);
+    catch err
+        warning(err.identifier, err.message);
+        return;
+    end
     if numel(data) > 1
-        assert_same_sample_rate(data);
-        assert_same_eyes_observed(data);
-        assert_sessions_are_one_after_another(data);
+        if ~assert_same_sample_rate(data); return; end;
+        if ~assert_same_eyes_observed(data); return; end;
+        if ~assert_sessions_are_one_after_another(data); return; end;
     end
 
     data = map_viewpoint_eyes_to_left_right(data, import);
-    assert_all_chantypes_are_in_imported_data(data, datafile, import);
+    if ~assert_all_chantypes_are_in_imported_data(data, datafile, import); return; end;
     [data_concat, markers, mi_values, mi_names] = concat_sessions(data);
 
     sampling_rate = compute_sampling_rate(data{1}.channels(:, 1));
@@ -138,7 +143,8 @@ function sr = compute_sampling_rate(seconds_channel)
     sr = round(median(1 ./ diff(seconds_channel)));
 end
 
-function assert_same_sample_rate(data)
+function proper = assert_same_sample_rate(data)
+    proper = true;
     sample_rates = [];
     for i = 1:numel(data)
         sample_rates(end + 1) = compute_sampling_rate(data{i}.channels(:, 1));
@@ -147,11 +153,14 @@ function assert_same_sample_rate(data)
         sample_rates_str = sprintf('%d ', sample_rates);
         error_msg = sprintf(['Cannot concatenate multiple sessions with', ...
             ' different sample rates. Found sample rates: %s'], sample_rates_str);
-        error('ID:invalid_data_structure', error_msg);
+        warning('ID:invalid_data_structure', error_msg);
+        proper = false;
+        return;
     end
 end
 
-function assert_same_eyes_observed(data)
+function proper = assert_same_eyes_observed(data)
+    proper = true;
     eyes_observed = cellfun(@(x) x.eyesObserved, data, 'UniformOutput', false);
     eyes_observed = cell2mat(eyes_observed);
 
@@ -166,44 +175,56 @@ function assert_same_eyes_observed(data)
 
     if any(diff(eyes_observed)) || ~same_headers
         error_msg = 'Cannot concatenate multiple sessions with different eye observation or channel headers';
-        error('ID:invalid_data_structure', error_msg);
+        warning('ID:invalid_data_structure', error_msg);
+        proper = false;
+        return;
     end
 end
 
-function assert_sessions_are_one_after_another(data)
+function proper = assert_sessions_are_one_after_another(data)
+    proper = true;
     seconds_concat = cell2mat(cellfun(@(x) x.channels(:, 1), data, 'UniformOutput', false));
     neg_diff_indices = find(diff(seconds_concat) < 0);
     if ~isempty(neg_diff_indices)
         first_neg_idx = neg_diff_indices(1);
         error_msg = sprintf('Cannot concatenate multiple sessions with decreasing timesteps: samples %d and %d', first_neg_idx, first_neg_idx + 1);
-        error('ID:invalid_data_structure', error_msg);
+        warning('ID:invalid_data_structure', error_msg);
+        proper = false;
+        return;
     end
 end
 
-function assert_custom_import_channels_has_channel_field(import)
+function proper = assert_custom_import_channels_has_channel_field(import)
+    proper = true;
     for i = 1:numel(import)
         if strcmpi(import{i}.type, 'custom') && ~isfield(import{i}, 'channel')
-            error('ID:invalid_imported_data', sprintf('Custom channel in import{%d} has no channel id to import', i));
+            warning('ID:invalid_imported_data', sprintf('Custom channel in import{%d} has no channel id to import', i));
+            proper = false;
+            return;
         end
     end
 end
 
-function assert_all_chantypes_are_supported(settings, import)
+function proper = assert_all_chantypes_are_supported(settings, import)
+    proper = true;
     viewpoint_idx = find(strcmpi('viewpoint', {settings.import.datatypes.short}));
     viewpoint_types = settings.import.datatypes(viewpoint_idx).chantypes;
     for k = 1:numel(import)
         input_type = import{k}.type;
         if ~any(strcmpi(input_type, viewpoint_types))
             error_msg = sprintf('Channel %s is not a ViewPoint supported type', input_type);
-            error('ID:channel_not_contained_in_file', error_msg);
+            warning('ID:channel_not_contained_in_file', error_msg);
+            proper = false;
+            return;
         end
     end
 end
 
-function assert_all_chantypes_are_in_imported_data(data, datafile, import)
+function proper = assert_all_chantypes_are_in_imported_data(data, datafile, import)
     % Assert that all given input channels are contained in at least one of the
     % imported sessions. They don't have to be in all the sessions; the remaining
     % parts will be filled with NaNs.
+    proper = true;
     for k = 1:numel(import)
         input_type = import{k}.type;
         if strcmpi(input_type, 'marker') || strcmpi(input_type, 'custom')
@@ -216,7 +237,9 @@ function assert_all_chantypes_are_in_imported_data(data, datafile, import)
         end
         if ~data_contains_type
             error_msg = sprintf('Channel type %s is not in the given datafile %s', input_type, datafile);
-            error('ID:channel_not_contained_in_file', error_msg);
+            warning('ID:channel_not_contained_in_file', error_msg);
+            proper = false;
+            return;
         end
     end
 end
@@ -285,22 +308,24 @@ function import_cell = import_marker_chan(import_cell, markers, mi_values, mi_na
 end
 
 function [import_cell, chan_id] = import_custom_chan(import_cell, data_concat, channel_indices, raw_columns, chan_struct, units, sampling_rate)
-    n_cols = size(raw_columns, 2);
+    n_raw_cols = size(raw_columns, 2);
+    n_concat_rows = size(data_concat, 1);
     chan_id = import_cell.channel;
     if chan_id < 1
         error('ID:invalid_input', sprintf('Custom channel id %d is less than 1', chan_id));
     end
-    if chan_id > n_cols
-        error('ID:invalid_input', sprintf('Custom channel id (%d) is greater than number of columns (%d) in sample file', chan_id, n_cols));
+    if chan_id > n_raw_cols || ~ismember(chan_id, channel_indices)
+        warning('ID:invalid_input', sprintf(['Custom channel id (%d) cannot be imported using get_viewpoint.'...
+            ' Creating a channel with NaNs'], chan_id));
+        import_cell.data = NaN(n_concat_rows, 1);
+        import_cell.units = 'N/A';
+        import_cell.data_header = 'N/A';
+    else
+        chan_id_in_concat = find(channel_indices == chan_id);
+        import_cell.data = data_concat(:, chan_id_in_concat);
+        import_cell.units = units{chan_id_in_concat};
+        import_cell.data_header = chan_struct{chan_id_in_concat};
     end
-    custom_channel_header = raw_columns{chan_id};
-    if ~ismember(chan_id, channel_indices)
-        error('ID:invalid_input', sprintf('Custom channel %s cannot be imported using get_viewpoint', custom_channel_header));
-    end
-    chan_id_in_concat = find(channel_indices == chan_id);
-    import_cell.data = data_concat(:, chan_id_in_concat);
-    import_cell.units = units{chan_id_in_concat};
-    import_cell.data_header = chan_struct{chan_id_in_concat};
     import_cell.sr = sampling_rate;
 end
 
@@ -311,14 +336,14 @@ function [import_cell, chan_id] = import_data_chan(import_cell, data_concat, eye
     chantype_has_L_or_R = ~isempty(regexpi(import_cell.type, '_[lr]', 'once'));
     chantype_hasnt_eyes_obs = isempty(regexpi(import_cell.type, ['_([' eyes_observed '])'], 'once'));
     if chantype_has_L_or_R && chantype_hasnt_eyes_obs
-        error('ID:channel_not_contained_in_file', ...
+        warning('ID:channel_not_contained_in_file', ...
             ['Cannot import channel type %s, as data for this eye',
         ' does not seem to be present in the datafile. ', ...
             'Will create artificial channel with NaN values.'], import_cell.type);
 
         import_cell.data = NaN(n_data, 1);
         chan_id = -1;
-        import_cell.units = '';
+        import_cell.units = 'N/A';
     else
         import_cell.data = data_concat(:, chan_id_in_concat);
         import_cell.units = units{chan_id_in_concat};

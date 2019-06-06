@@ -37,7 +37,7 @@ function [data] = import_viewpoint(filepath)
 
     % check for the existence of file
     if ~exist(filepath,'file')
-        warning('ID:invalid_input', 'Passed file does not exist.'); return;
+        error('ID:invalid_input', 'Passed file does not exist.');
     end
 
     %% open sample_file

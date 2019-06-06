@@ -78,24 +78,29 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     if isstr(datafile)
         datafile = {datafile};
     end
-    assert_proper_datafile_format(datafile);
-    assert_custom_import_channels_has_channel_field(import);
-    assert_all_chantypes_are_supported(settings, import);
-    if numel(datafile) == 2
-        data = import_smi(datafile{1}, datafile{2});
-    else
-        warning(['get_smi will only read pupil and/or gaze data. ',...
-            'No information about blinks or saccades will be generated. ',...
-            'In order to generate this information you have to specify an event file.']);
-        data = import_smi(datafile{1});
+    if ~assert_proper_datafile_format(datafile); return; end;
+    if ~assert_custom_import_channels_has_channel_field(import); return; end;
+    if ~assert_all_chantypes_are_supported(settings, import); return; end;
+    try
+        if numel(datafile) == 2
+            data = import_smi(datafile{1}, datafile{2});
+        else
+            warning(['get_smi will only read pupil and/or gaze data. ',...
+                'No information about blinks or saccades will be generated. ',...
+                'In order to generate this information you have to specify an event file.']);
+            data = import_smi(datafile{1});
+        end
+    catch err
+        warning(err.identifier, err.message);
+        return;
     end
     if numel(data) > 1
-        assert_same_sample_rate(data);
-        assert_same_eyes_observed(data);
-        assert_sessions_are_one_after_another(data);
+        if ~assert_same_sample_rate(data); return; end;
+        if ~assert_same_eyes_observed(data); return; end;
+        if ~assert_sessions_are_one_after_another(data); return; end;
     end
 
-    assert_all_chantypes_are_in_imported_data(data, datafile{1}, import);
+    if ~assert_all_chantypes_are_in_imported_data(data, datafile{1}, import); return; end;
     [data_concat, markers, mi_values, mi_names] = concat_sessions(data);
 
     sampling_rate = data{1}.sampleRate;
@@ -112,10 +117,10 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
         chantype_has_L_or_R = ~isempty(regexpi(chantype, '_[lr]', 'once'));
         chantype_hasnt_eyes_obs = isempty(regexpi(chantype, ['_([' eyes_observed '])'], 'once'));
         if chantype_has_L_or_R && chantype_hasnt_eyes_obs
-            error('ID:channel_not_contained_in_file', ...
+            warning('ID:channel_not_contained_in_file', ...
                 ['Cannot import channel type %s, as data for this eye',
             ' does not seem to be present in the datafile. ', ...
-                'Will create artificial channel with NaN values.'], import_cell.type);
+                'Will create artificial channel with NaN values.'], import_cell.type); return;
 
             import{k}.data = NaN(size(data_concat, 1), 1);
             chan_id = -1;
@@ -131,7 +136,7 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
         elseif strcmpi(chantype, 'custom')
             [import{k}, chan_id] = import_custom_chan(import{k}, data_concat, raw_columns, chan_struct, units, sampling_rate);
         else
-            error('ID:pspm_error', 'This branch should not have been taken. Please report this error to PsPM dev team');
+            warning('ID:pspm_error', 'This branch should not have been taken. Please report this error to PsPM dev team'); return;
         end
         sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan_id);
         sourceinfo.chan_stats{k,1} = struct();
@@ -152,13 +157,15 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     sts = 1;
 end
 
-function assert_proper_datafile_format(datafile)
-    if ~is_proper_datafile_format(datafile)
-        error('ID:invalid_input', 'Given datafile is not valid. Please check the documentation');
+function proper = assert_proper_datafile_format(datafile)
+    proper = is_proper_datafile_format(datafile);
+    if ~proper
+        warning('ID:invalid_input', 'Given datafile is not valid. Please check the documentation');
     end
 end
 
 function proper = is_proper_datafile_format(datafile)
+    proper = true;
     if ~iscell(datafile)
         proper = false;
         return;
@@ -175,10 +182,10 @@ function proper = is_proper_datafile_format(datafile)
         proper = false;
         return;
     end
-    proper = true;
 end
 
-function assert_same_sample_rate(data)
+function proper = assert_same_sample_rate(data)
+    proper = true;
     sample_rates = [];
     for i = 1:numel(data)
         sample_rates(end + 1) = data{i}.sampleRate;
@@ -187,7 +194,9 @@ function assert_same_sample_rate(data)
         sample_rates_str = sprintf('%d ', sample_rates);
         error_msg = sprintf(['Cannot concatenate multiple sessions with', ...
             ' different sample rates. Found sample rates: %s'], sample_rates_str);
-        error('ID:invalid_data_structure', error_msg);
+        warning('ID:invalid_data_structure', error_msg);
+        proper = false;
+        return;
     end
 end
 
@@ -201,7 +210,8 @@ function equal = all_strs_in_cell_array_are_equal(cell_arr)
     end
 end
 
-function assert_same_eyes_observed(data)
+function proper = assert_same_eyes_observed(data)
+    proper = true;
     eyes_observed = cellfun(@(x) x.eyesObserved, data, 'UniformOutput', false);
     same_eyes = all_strs_in_cell_array_are_equal(eyes_observed);
 
@@ -210,36 +220,47 @@ function assert_same_eyes_observed(data)
 
     if ~(same_eyes && same_headers)
         error_msg = 'Cannot concatenate multiple sessions with different eye observation or channel headers';
-        error('ID:invalid_data_structure', error_msg);
+        warning('ID:invalid_data_structure', error_msg);
+        proper = false;
+        return;
     end
 end
 
-function assert_sessions_are_one_after_another(data)
+function proper = assert_sessions_are_one_after_another(data)
+    proper = true;
     timesteps_concat = cell2mat(cellfun(@(x) x.raw(:, 1), data, 'UniformOutput', false));
     neg_diff_indices = find(diff(timesteps_concat) < 0);
     if ~isempty(neg_diff_indices)
         first_neg_idx = neg_diff_indices(1);
         error_msg = sprintf('Cannot concatenate multiple sessions with decreasing timesteps: samples %d and %d', first_neg_idx, first_neg_idx + 1);
-        error('ID:invalid_data_structure', error_msg);
+        warning('ID:invalid_data_structure', error_msg);
+        proper = false;
+        return;
     end
 end
 
-function assert_custom_import_channels_has_channel_field(import)
+function proper = assert_custom_import_channels_has_channel_field(import)
+    proper = true;
     for i = 1:numel(import)
         if strcmpi(import{i}.type, 'custom') && ~isfield(import{i}, 'channel')
-            error('ID:invalid_imported_data', sprintf('Custom channel in import{%d} has no channel id to import', i));
+            warning('ID:invalid_imported_data', sprintf('Custom channel in import{%d} has no channel id to import', i));
+            proper = false;
+            return;
         end
     end
 end
 
-function assert_all_chantypes_are_supported(settings, import)
-    viewpoint_idx = find(strcmpi('viewpoint', {settings.import.datatypes.short}));
+function proper = assert_all_chantypes_are_supported(settings, import)
+    proper = true;
+    viewpoint_idx = find(strcmpi('smi', {settings.import.datatypes.short}));
     viewpoint_types = settings.import.datatypes(viewpoint_idx).chantypes;
     for k = 1:numel(import)
         input_type = import{k}.type;
         if ~any(strcmpi(input_type, viewpoint_types))
             error_msg = sprintf('Channel %s is not a ViewPoint supported type', input_type);
-            error('ID:channel_not_contained_in_file', error_msg);
+            warning('ID:channel_not_contained_in_file', error_msg);
+            proper = false;
+            return;
         end
     end
 end
@@ -262,15 +283,17 @@ function expect_list = map_pspm_header_to_smi_headers(pspm_chantype)
     end
 end
 
-function assert_all_chantypes_are_in_imported_data(data, sample_file, import)
+function proper = assert_all_chantypes_are_in_imported_data(data, sample_file, import)
     % Assert that all given input channels are contained in at least one of the
     % imported sessions. They don't have to be in all the sessions; the remaining
     % parts will be filled with NaNs.
+    proper = true;
     for k = 1:numel(import)
         if strcmpi(import{k}.type, 'marker') || strcmpi(import{k}.type, 'custom')
             continue
         end
-        expect_list = map_pspm_header_to_smi_headers(import{k}.type);
+        input_type = import{k}.type;
+        expect_list = map_pspm_header_to_smi_headers(input_type);
         data_contains_type = false;
         for i = 1:numel(data)
             session_channels = data{i}.channels_columns;
@@ -284,7 +307,9 @@ function assert_all_chantypes_are_in_imported_data(data, sample_file, import)
             error_msg = sprintf(['Channel type %s is not in the given sample_file %s.' ...
                 ' For channel type %s, we searched for %s channel(s)'], ...
                 input_type, sample_file, input_type, expect_list_str);
-            error('ID:channel_not_contained_in_file', error_msg);
+            warning('ID:channel_not_contained_in_file', error_msg);
+            proper = false;
+            return;
         end
     end
 end
@@ -382,6 +407,7 @@ function [import_cell, chan_id] = import_gaze_chan(import_cell, data_concat, scr
         [~, import_cell.data] = pspm_convert_unit(import_cell.data, 'mm', import_cell.target_unit);
     end
     import_cell.units = import_cell.target_unit;
+    import_cell.range = [0 axis_len_mm];
     import_cell.sr = sampling_rate;
 end
 
