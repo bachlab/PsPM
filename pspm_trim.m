@@ -1,5 +1,5 @@
 function newdatafile = pspm_trim(datafile, from, to, reference, options)
-% pspm_trim cuts an SCR dataset to the limits set with the parameters 'from'
+% pspm_trim cuts an PsPM dataset to the limits set with the parameters 'from'
 % and 'to' and writes it to a file with a prepended 't'
 %
 % FORMAT:

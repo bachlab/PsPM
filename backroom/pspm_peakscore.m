@@ -1,4 +1,4 @@
-function pspm_peakscore(datafile, regfile, modelfile, timeunits, normalize, chan, options)
+    function pspm_peakscore(datafile, regfile, modelfile, timeunits, normalize, chan, options)
 
 % pspm_peakscore calculates event-related responses by scoring the peak
 % response against a pre-stimulus baseline. The input is similar to
