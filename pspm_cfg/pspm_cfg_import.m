@@ -123,35 +123,21 @@ distance_unit.val       = {'mm'};
 distance_unit.help      = {['The unit in which the eyetracker distance ', ...
     'is given and to which the pupil data should be converted.']};
 
-viewpoint_distance_unit           = cfg_menu;
-viewpoint_distance_unit.name      = 'Distance unit';
-viewpoint_distance_unit.tag       = 'viewpoint_distance_unit';
-viewpoint_distance_unit.values    = {'mm', 'cm', 'm', 'inches'};
-viewpoint_distance_unit.labels    = {'mm', 'cm', 'm', 'inches'};
-viewpoint_distance_unit.val       = {'mm'};
-viewpoint_distance_unit.help      = {['The unit to which the pupil data should be converted.']};
+viewpoint_target_unit           = cfg_menu;
+viewpoint_target_unit.name      = 'Target unit';
+viewpoint_target_unit.tag       = 'viewpoint_target_unit';
+viewpoint_target_unit.values    = {'mm', 'cm', 'm', 'inches'};
+viewpoint_target_unit.labels    = {'mm', 'cm', 'm', 'inches'};
+viewpoint_target_unit.val       = {'mm'};
+viewpoint_target_unit.help      = {['The unit to which the gaze data should be converted.']};
 
-viewpoint_eyecamera_width = cfg_entry;
-viewpoint_eyecamera_width.name = 'EyeCamera Width (px)';
-viewpoint_eyecamera_width.tag = 'viewpoint_eyecamera_width';
-viewpoint_eyecamera_width.val = {320};
-viewpoint_eyecamera_width.num = [1 1];
-viewpoint_eyecamera_width.help = {['Width of EyeCamera window in pixels']};
-
-viewpoint_eyecamera_height = cfg_entry;
-viewpoint_eyecamera_height.name = 'EyeCamera Height (px)';
-viewpoint_eyecamera_height.tag = 'viewpoint_eyecamera_height';
-viewpoint_eyecamera_height.val = {240};
-viewpoint_eyecamera_height.num = [1 1];
-viewpoint_eyecamera_height.help = {['Height of EyeCamera window in pixels']};
-
-smi_target_distance_unit           = cfg_menu;
-smi_target_distance_unit.name      = 'Target unit';
-smi_target_distance_unit.tag       = 'smi_target_unit';
-smi_target_distance_unit.values    = {'mm', 'cm', 'm', 'inches'};
-smi_target_distance_unit.labels    = {'mm', 'cm', 'm', 'inches'};
-smi_target_distance_unit.val       = {'mm'};
-smi_target_distance_unit.help      = {['The unit to which the data should be converted.']};
+smi_target_unit           = cfg_menu;
+smi_target_unit.name      = 'Target unit';
+smi_target_unit.tag       = 'smi_target_unit';
+smi_target_unit.values    = {'mm', 'cm', 'm', 'inches'};
+smi_target_unit.labels    = {'mm', 'cm', 'm', 'inches'};
+smi_target_unit.val       = {'mm'};
+smi_target_unit.help      = {['The unit to which the data should be converted.']};
 
 %% Datatype dependend items
 datatype_item = cell(1,length(fileoptions));
@@ -320,16 +306,15 @@ for datatype_i=1:length(fileoptions)
     % For eyelink: add pupil transfer function
     if any(strcmp(settings.import.datatypes(datatype_i).short, 'eyelink'))
         datatype_item{datatype_i}.val = ...
-            [datatype_item{datatype_i}.val,{eyelink_trackdist, distance_unit}];
+            [datatype_item{datatype_i}.val, {eyelink_trackdist, distance_unit}];
     end
 
     if any(strcmpi(settings.import.datatypes(datatype_i).short, 'viewpoint'))
-        datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, ...
-            {viewpoint_distance_unit, viewpoint_eyecamera_width, viewpoint_eyecamera_height}];
+        datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {viewpoint_target_unit}];
     end
     
     if any(strcmpi(settings.import.datatypes(datatype_i).short, 'smi'))
-        datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {smi_target_distance_unit}];
+        datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {smi_target_unit}];
     end
 end
 

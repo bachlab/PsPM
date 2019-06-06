@@ -76,8 +76,8 @@ for i=1:n
             end
         end
 
-        if isfield(job.datatype.(datatype), 'viewpoint_distance_unit')
-            import{i}.distance_unit = job.datatype.(datatype).viewpoint_distance_unit;
+        if isfield(job.datatype.(datatype), 'viewpoint_target_unit')
+            import{i}.target_unit = job.datatype.(datatype).viewpoint_target_unit;
             import{i}.eyecamera_width = job.datatype.(datatype).viewpoint_eyecamera_width;
             import{i}.eyecamera_height = job.datatype.(datatype).viewpoint_eyecamera_height;
         end
