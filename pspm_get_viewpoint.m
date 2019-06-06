@@ -16,15 +16,46 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
     %
     %                          The given channel type has to be recorded in all of
     %                          the sessions contained in the datafile.
-    %                       .eyecamera_width: Width of the EyeCamera window in pixels.
-    %                       .eyecamera_height: Height of the EyeCamera window in pixels.
+    %
+    %                          The pupil diameter values returned by get_viewpoint are
+    %                          normalized ratio values reported by Viewpoint Eyetracker
+    %                          software. This is the ratio of the horizontal pupil
+    %                          diameter to the eyecamera window width.
+    %
+    %                          The gaze values returned are in the given target_unit.
+    %                          (x, y) = (0, 0) coordinate represents the top left
+    %                          corner of the whole stimulus window. x coordinates grow
+    %                          towards right and y coordinates grow towards bottom. The
+    %                          gaze coordinates can be negative or larger than screen
+    %                          size. These correspond to gaze positions outside the
+    %                          screen.
+    %
+    %                          Specified custom channels must correspond to some form of
+    %                          pupil/gaze channels. In addition, when the channel
+    %                          type is custom, no postprocessing/conversion is performed
+    %                          by pspm_get_viewponit and the channel is returned directly as
+    %                          it is in the given datafile.
+    %
     %                  - optional fields:
     %                      .channel:
     %                          If .type is custom, the index of the channel to import
-    %                          must be specified using this option.
-    %                      .distance_unit:
-    %                          the unit to which the data should be converted.
-    %                          (Default: mm)
+    %                          must be specified using this option. This value must be
+    %                          the channel index of the desired channel in the raw data columns.
+    %                      .target_unit:
+    %                          the unit to which the gaze data should be converted. This option
+    %                          has no effect for pupil diameter channel since that is always
+    %                          returned as ratio. (Default: mm)
+    %
+    %                  - Each import structure will get the following output fields:
+    %                      .data:
+    %                          Data channel corresponding to the input channel type or
+    %                          custom channel id.
+    %                      .units:
+    %                          Units of the channel.
+    %                      .sr:
+    %                          Sampling rate.
+    %                      .chan_id:
+    %                          Channel index of the imported channel in the raw data columns.
     %__________________________________________________________________________
     %
     % (C) 2019 Eshref Yozdemir (University of Zurich)
@@ -38,8 +69,10 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
         import = {import};
     end
     for i = 1:numel(import)
-        if ~isfield(import{i}, 'distance_unit')
-            import{i}.distance_unit = 'mm';
+        not_custom = ~strcmpi(import{i}.type, 'custom');
+        not_marker = ~strcmpi(import{i}.type, 'marker');
+        if ~isfield(import{i}, 'target_unit') && not_custom && not_marker
+            import{i}.target_unit = 'mm';
         end
     end
 
@@ -59,6 +92,8 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
     sampling_rate = compute_sampling_rate(data{1}.channels(:, 1));
     eyes_observed = lower(data{1}.eyesObserved);
     chan_struct = data{1}.channels_header;
+    raw_columns = data{1}.dataraw_header;
+    channel_indices = data{1}.channel_indices;
     units = data{1}.channels_units;
     screen_size = data{1}.screenSize;
     viewing_dist = data{1}.ViewingDistance;
@@ -67,8 +102,19 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
         if strcmpi(import{k}.type, 'marker')
             import{k} = import_marker_chan(import{k}, markers, mi_values, mi_names, sampling_rate);
         else
-            [import{k}, chan_id] = import_data_chan(import{k}, data_concat, eyes_observed, chan_struct, units, sampling_rate);
-            %import{k} = convert_data_chan(import{k}, viewing_dist, screen_size, import{k}.eyecamera_width, import{k}.eyecamera_height);
+            if strcmpi(import{k}.type, 'custom')
+                [import{k}, chan_id] = import_custom_chan(import{k}, data_concat, channel_indices, raw_columns, chan_struct, units, sampling_rate);
+            else
+                [import{k}, chan_id] = import_data_chan(import{k}, data_concat, eyes_observed, channel_indices, chan_struct, units, sampling_rate);
+                chantype = import{k}.type;
+                is_gaze_x_chan = ~isempty(regexpi(chantype, 'gaze_x_'));
+                is_gaze_y_chan = ~isempty(regexpi(chantype, 'gaze_y_'));
+                if is_gaze_x_chan
+                    import{k} = convert_gaze_chan(import{k}, screen_size.xmin, screen_size.xmax);
+                elseif is_gaze_y_chan
+                    import{k} = convert_gaze_chan(import{k}, screen_size.ymin, screen_size.ymax);
+                end
+            end
             sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan_id);
             sourceinfo.chan_stats{k,1} = struct();
             n_nan = sum(isnan(import{k}.data));
@@ -238,13 +284,29 @@ function import_cell = import_marker_chan(import_cell, markers, mi_values, mi_na
     import_cell.flank = 'ascending';
 end
 
-function [import_cell, chan_id] = import_data_chan(import_cell, data_concat, eyes_observed, chan_struct, units, sampling_rate)
-    n_data = size(data_concat, 1);
-    if strcmpi(import_cell.type, 'custom')
-        chan_id = import_cell.channel;
-    else
-        chan_id = find(strcmpi(chan_struct, import_cell.type), 1, 'first');
+function [import_cell, chan_id] = import_custom_chan(import_cell, data_concat, channel_indices, raw_columns, chan_struct, units, sampling_rate)
+    n_cols = size(raw_columns, 2);
+    chan_id = import_cell.channel;
+    if chan_id < 1
+        error('ID:invalid_input', sprintf('Custom channel id %d is less than 1', chan_id));
     end
+    if chan_id > n_cols
+        error('ID:invalid_input', sprintf('Custom channel id (%d) is greater than number of columns (%d) in sample file', chan_id, n_cols));
+    end
+    custom_channel_header = raw_columns{chan_id};
+    if ~ismember(chan_id, channel_indices)
+        error('ID:invalid_input', sprintf('Custom channel %s cannot be imported using get_viewpoint', custom_channel_header));
+    end
+    chan_id_in_concat = find(channel_indices == chan_id);
+    import_cell.data = data_concat(:, chan_id_in_concat);
+    import_cell.units = units{chan_id_in_concat};
+    import_cell.data_header = chan_struct{chan_id_in_concat};
+    import_cell.sr = sampling_rate;
+end
+
+function [import_cell, chan_id] = import_data_chan(import_cell, data_concat, eyes_observed, channel_indices, chan_struct, units, sampling_rate)
+    n_data = size(data_concat, 1);
+    chan_id_in_concat = find(strcmpi(chan_struct, import_cell.type), 1, 'first');
 
     chantype_has_L_or_R = ~isempty(regexpi(import_cell.type, '_[lr]', 'once'));
     chantype_hasnt_eyes_obs = isempty(regexpi(import_cell.type, ['_([' eyes_observed '])'], 'once'));
@@ -258,40 +320,20 @@ function [import_cell, chan_id] = import_data_chan(import_cell, data_concat, eye
         chan_id = -1;
         import_cell.units = '';
     else
-        import_cell.data = data_concat(:, chan_id);
-        import_cell.units = units{chan_id};
+        import_cell.data = data_concat(:, chan_id_in_concat);
+        import_cell.units = units{chan_id_in_concat};
+        chan_id = channel_indices(chan_id_in_concat);
     end
     import_cell.sr = sampling_rate;
 end
 
-function import_cell = convert_data_chan(import_cell, viewing_dist, screen_size, eyecamera_width, eyecamera_height)
-    chantype = import_cell.type;
-    is_pupil_chan = ~isempty(regexpi(chantype, 'pupil'));
-    is_gaze_x_chan = ~isempty(regexpi(chantype, 'gaze_x_'));
-    is_gaze_y_chan = ~isempty(regexpi(chantype, 'gaze_y_'));
-    if is_pupil_chan
-        import_cell.data = import_cell.data * eyecamera_width;
-        target_unit = import_cell.distance_unit;
-        viewing_dist = pspm_convert_unit(viewing_dist, 'mm', target_unit);
-        [~, import_cell.data] = pspm_convert_au2unit(import_cell.data, target_unit, viewing_dist, 'diameter');
-        import_cell.units = target_unit;
-    elseif is_gaze_x_chan
-        % normalized to mm
-        xmin = screen_size.xmin;
-        xmax = screen_size.xmax;
-        import_cell.range = [xmin xmax];
-        import_cell.data = import_cell.data * (xmax - xmin) + xmin;
-        import_cell.units = 'mm';
-    elseif is_gaze_y_chan
-        % normalized to mm
-        ymin = screen_size.ymin;
-        ymax = screen_size.ymax;
-        import_cell.range = [ymin ymax];
-        import_cell.data = import_cell.data * (ymax - ymin) + ymin;
-        import_cell.units = 'mm';
-    else
-        error('ID:invalid_imported_data', sprintf('Imported data contains an unsupported data channel: %s', chantype));
+function import_cell = convert_gaze_chan(import_cell, mincoord, maxcoord)
+    import_cell.range = [mincoord maxcoord];
+    import_cell.data = import_cell.data * (maxcoord - mincoord) + mincoord;
+    if ~strcmp('mm', import_cell.target_unit)
+        [~, import_cell.data] = pspm_convert_unit(import_cell.data, 'mm', import_cell.target_unit);
     end
+    import_cell.units = import_cell.target_unit;
 end
 
 function [data_concat, markers, mi_values, mi_names] = concat_sessions(data)

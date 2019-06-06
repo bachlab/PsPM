@@ -24,7 +24,7 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     %                          the sessions contained in the datafile.
     %
     %                          Specified custom channels must correspond to some form of
-    %                          pupil/gaze/blink/saccade/marker channels. In addition,
+    %                          pupil/gaze channels. In addition,
     %                          when the channel type is custom, no postprocessing/conversion
     %                          is performed by pspm_get_smi and the channel is returned directly
     %                          as it is in the given datafile.
