@@ -37,6 +37,19 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     %                          size. These correspond to gaze positions outside the
     %                          screen.
     %
+    %                          Since there are multiple ways to specify pupil size in SMI files,
+    %                          pspm_get_smi selects the channel according to the following
+    %                          precendence order (earlier items have precedence):
+    %                            1. Mapped Diameter mm
+    %                            2. Dia X
+    %                              1. mm
+    %                              2. px
+    %                            3. Dia
+    %                              1. mm2
+    %                              2. px2
+    %                          Regardless of the selected channel, the values are first converted 
+    %                          to mm, then to the desired unit specified in target_unit.
+    %
     %                  - optional fields:
     %                      .channel:
     %                          If .type is custom, the index of the channel to import
