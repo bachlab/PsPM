@@ -1,6 +1,6 @@
 % pspm_quit clears settings, removes paths & closes figures
 %__________________________________________________________________________
-% PsPM 4.0.3
+% PsPM 4.1.0
 % (C) 2008-2019 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %
 % $Id$
@@ -21,9 +21,11 @@ if isempty(settings), pspm_init; end;
 fs = filesep;
 if settings.scrpath, rmpath(settings.path), end;
 
-rmpath([settings.path, 'VBA']); 
-rmpath([settings.path, 'VBA', fs, 'subfunctions']); 
-rmpath([settings.path, 'VBA', fs, 'stats&plots']); 
+if any(contains(settings.path, 'VBA'))
+    rmpath([settings.path, 'VBA']); 
+    rmpath([settings.path, 'VBA', fs, 'subfunctions']); 
+    rmpath([settings.path, 'VBA', fs, 'stats&plots']); 
+end
 
 clear settings
 close all
