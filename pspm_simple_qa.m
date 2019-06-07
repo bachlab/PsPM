@@ -66,7 +66,8 @@ end
 % create filters
 d = NaN(size(data));
 range_filter = data < options.max & data > options.min;
-slope_filter = [1; (abs(diff(data)*sr) < options.slope)];
+slope_filter = true(size(data));
+slope_filter(2:end) = abs(diff(data)*sr) < options.slope;
 
 % combine filters
 filt = range_filter & slope_filter;

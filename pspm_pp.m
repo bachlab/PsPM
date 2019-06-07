@@ -17,7 +17,14 @@ function newdatafile = pspm_pp(varargin)
 %           min:        Minimum value in microsiemens
 %           max:        Maximum value in microsiemens
 %           slope:      Maximum slope in microsiemens per second
+%__________________________________________________________________________
 %
+% References: For 'simple_qa' method, refer to:
+%
+% I. R. Kleckner et al., "Simple, Transparent, and Flexible Automated Quality
+% Assessment Procedures for Ambulatory Electrodermal Activity Data," in IEEE
+% Transactions on Biomedical Engineering, vol. 65, no. 7, pp. 1460-1467,
+% July 2018.
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2009-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -37,11 +44,20 @@ if nargin < 1
     warning('ID:invalid_input', 'No input arguments. Don''t know what to do.');
 elseif nargin < 2
     warning('ID:invalid_input', 'No datafile.'); return;
-elseif nargin < 3
-        warning('ID:invalid_input', 'Missing filter specs.'); return;
-else
-    fn = varargin{2};
 end
+method = varargin{1};
+supported_methods = {'median', 'butter', 'simple_qa'};
+if ~any(strcmp(method, supported_methods))
+    methods_str = sprintf('%s ', supported_methods{:});
+    warning('ID:invalid_input', sprintf('Preprocessing method must be one of %s', methods_str)); return;
+end
+if nargin < 3
+    if strcmp(method, 'median') || strcmp(method, 'butter')
+        warning('ID:invalid_input', 'Missing filter specs.'); return;
+    end
+end
+
+fn = varargin{2};
 
 if nargin >=5 && isstruct(varargin{5}) && isfield(varargin{5}, 'overwrite')
     options = varargin{5};
@@ -73,7 +89,7 @@ end
 
 % do the job
 % -------------------------------------------------------------------------
-switch varargin{1}
+switch method
     case 'median'
         n = varargin{3};
         % user output
@@ -105,7 +121,11 @@ switch varargin{1}
         end
         infos.pp = sprintf('butterworth 1st order low pass filter at cutoff frequency %2.2f Hz', freq);
     case 'simple_qa'
-        qa = varargin{3};
+        if nargin < 3
+            qa = struct();
+        else
+            qa = varargin{3};
+        end
         for k = 1:numel(channum)
             curr_chan = channum(k);
             [sts, data{curr_chan}.data] = pspm_simple_qa(data{curr_chan}.data, data{curr_chan}.header.sr, qa);
