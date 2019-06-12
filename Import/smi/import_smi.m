@@ -451,10 +451,10 @@ function [data] = import_smi(varargin)
 
                 if POR_available
                     channel_indices = [pupil_channels,xL,yL,xR,yR,POR_xL,POR_yL,POR_xR,POR_yR,blinkL,blinkR,saccadeL,saccadeR];
-                    data{sn}.units = {pupil_units{:}, 'px', 'px', 'px', 'px','px','px','px','px','blink', 'blink', 'saccade', 'saccade'};
+                    data{sn}.units = {pupil_units{:}, 'pixel', 'pixel', 'pixel', 'pixel','pixel','pixel','pixel','pixel','blink', 'blink', 'saccade', 'saccade'};
                 else
                     channel_indices = [pupil_channels,xL,yL,xR,yR,blinkL,blinkR,saccadeL,saccadeR];
-                    data{sn}.units = {pupil_units{:}, 'px', 'px', 'px', 'px', 'blink', 'blink', 'saccade', 'saccade'};
+                    data{sn}.units = {pupil_units{:}, 'pixel', 'pixel', 'pixel', 'pixel', 'blink', 'blink', 'saccade', 'saccade'};
                 end
                 data{sn}.channels = data{sn}.raw(:, channel_indices);
                 data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
@@ -463,12 +463,12 @@ function [data] = import_smi(varargin)
             else
                 if POR_available
                     channel_indices = [pupil_channels,xL,yL,xR,yR,POR_xL,POR_yL,POR_xR,POR_yR];
-                    data{sn}.units = {pupil_units{:}, 'px', 'px', 'px', 'px', 'px', 'px', 'px', 'px'};
+                    data{sn}.units = {pupil_units{:}, 'pixel', 'pixel', 'pixel', 'pixel', 'pixel', 'pixel', 'pixel', 'pixel'};
                     data{sn}.channels = data{sn}.raw(:, channel_indices);
                     data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
                 else
                     channel_indices = [pupil_channels,xL,yL,xR,yR];
-                    data{sn}.units = {pupil_units{:}, 'px', 'px', 'px', 'px'};
+                    data{sn}.units = {pupil_units{:}, 'pixel', 'pixel', 'pixel', 'pixel'};
                     data{sn}.channels = data{sn}.raw(:, channel_indices);
                     data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
                 end
@@ -488,13 +488,13 @@ function [data] = import_smi(varargin)
                 saccade = size(data{sn}.raw, 2);
                 if POR_available
                     channel_indices = [pupil_channels,x,y,POR_x,POR_y,blink,saccade];
-                    data{sn}.units = {pupil_units{:}, 'px', 'px', 'px', 'px', 'blink', 'saccade'};
+                    data{sn}.units = {pupil_units{:}, 'pixel', 'pixel', 'pixel', 'pixel', 'blink', 'saccade'};
                     data{sn}.channels = data{sn}.raw(:, channel_indices);
                     data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
                     data{sn}.channels = set_datarows_corresponding_to_blink_saccade_to_nan(data{sn}.channels, data{sn}.channels_columns);
                 else
                     channel_indices = [pupil_channels,x,y,blink,saccade];
-                    data{sn}.units = {pupil_units{:}, 'px', 'px', 'blink', 'saccade'};
+                    data{sn}.units = {pupil_units{:}, 'pixel', 'pixel', 'blink', 'saccade'};
                     data{sn}.channels = data{sn}.raw(:, channel_indices);
                     data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
                     data{sn}.channels = set_datarows_corresponding_to_blink_saccade_to_nan(data{sn}.channels, data{sn}.channels_columns);
@@ -504,12 +504,12 @@ function [data] = import_smi(varargin)
                     channel_indices = [pupil_channels,x,y,POR_x,POR_y];
                     data{sn}.channels = data{sn}.raw(:, channel_indices);
                     data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
-                    data{sn}.units = {pupil_units{:}, 'px', 'px', 'px', 'px'};
+                    data{sn}.units = {pupil_units{:}, 'pixel', 'pixel', 'pixel', 'pixel'};
                 else
                     channel_indices = [pupil_channels,x,y];
                     data{sn}.channels = data{sn}.raw(:, channel_indices);
                     data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
-                    data{sn}.units = {pupil_units{:}, 'px', 'px'};
+                    data{sn}.units = {pupil_units{:}, 'pixel', 'pixel'};
                 end
             end
         end
@@ -550,22 +550,22 @@ end
 
 function [pupil_channels, pupil_units] = get_pupil_channels(columns)
     header_names_units = {...
-        {'L Dia X [px]', 'px'},...
+        {'L Dia X [px]', 'pixel'},...
         {'L Dia X [mm]', 'mm'},...
-        {'L Dia Y [px]', 'px'},...
+        {'L Dia Y [px]', 'pixel'},...
         {'L Dia Y [mm]', 'mm'},...
-        {'L Dia [px]', 'px'},...
+        {'L Dia [px]', 'pixel'},...
         {'L Dia [mm]', 'mm'},...
-        {'L Area [px', 'px2'},...
+        {'L Area [px', 'pixel2'},...
         {'L Area [mm', 'mm2'},...
         {'L Mapped Diameter [mm]', 'mm'},...
-        {'R Dia X [px]', 'px'},...
+        {'R Dia X [px]', 'pixel'},...
         {'R Dia X [mm]', 'mm'},...
-        {'R Dia Y [px]', 'px'},...
+        {'R Dia Y [px]', 'pixel'},...
         {'R Dia Y [mm]', 'mm'},...
-        {'R Dia [px]', 'px'},...
+        {'R Dia [px]', 'pixel'},...
         {'R Dia [mm]', 'mm'},...
-        {'R Area [px', 'px2'},...
+        {'R Area [px', 'pixel2'},...
         {'R Area [mm', 'mm2'},...
         {'R Mapped Diameter [mm]', 'mm'}...
     };

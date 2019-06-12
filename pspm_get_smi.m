@@ -43,10 +43,10 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     %                            1. Mapped Diameter (mm)
     %                            2. Dia X (mm)
     %                            3. Dia (mm2)
-    %                            4. Dia X (px)
-    %                            5. Dia (px2)
-    %                          If a px/px2 channels is chosen, it is NOT converted to a mm/mm2
-    %                          channel. It is returned as it is. In mm2/px2 case, the pupil is
+    %                            4. Dia X (pixel)
+    %                            5. Dia (pixel2)
+    %                          If a pixel/pixel2 channels is chosen, it is NOT converted to a mm/mm2
+    %                          channel. It is returned as it is. In mm2/pixel2 case, the pupil is
     %                          assumed to be a circle. Therefore, diameter d from area a is
     %                          calculated as 2*sqrt(a/pi).
     %
@@ -396,7 +396,7 @@ function [import_cell, chan_id] = import_pupil_chan(import_cell, data_concat, vi
                 area_px2 = data_concat(:, chan_id_concat);
                 import_cell.data = (2 / sqrt(pi)) * sqrt(area_px2);
             end
-            import_cell.units = 'px';
+            import_cell.units = 'pixel';
         end
     end
     chan_id = find(contains(raw_columns, chan_struct{chan_id_concat}));
@@ -425,7 +425,7 @@ function [import_cell, chan_id] = import_gaze_chan(import_cell, data_concat, scr
 
     if n_pixels_along_axis == -1
         import_cell.data = gaze_px;
-        import_cell.units = 'px';
+        import_cell.units = 'pixel';
         import_cell.range = [0, calib_area_px(axis_id)];
     else
         mm_over_px = axis_len_mm / n_pixels_along_axis;
