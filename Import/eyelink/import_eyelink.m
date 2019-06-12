@@ -180,7 +180,7 @@ for sn = 1:numel(offsets)
     %% try to read some header information
     % read the PUPIL unit
     pupilPos = strncmpi(sn_data, 'PUPIL', 5);
-    pupilUnit = [lower(sn_data{pupilPos,2}) ' units'];
+    pupilUnit = ['arbitrary ' lower(sn_data{pupilPos,2}) ' units'];
     % header stops where the data section starts
     dataStartPos = dataFields(1);
     
