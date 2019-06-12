@@ -3,8 +3,9 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 % works on a PsPM file and is able to replace a channel or add the data as
 % a new channel.
 %
-% Given arbitrary unit values are converted using a multiplicator A, an offset B,
-% recording distance D given in unit and reference distance Dref given in ref_unit.
+% Given arbitrary unit values are converted using a recording distance D given in
+% 'unit', a reference distance Dref given in 'reference_unit', a multiplicator A given
+% in 'reference_unit', an offset B given in 'reference_unit'.
 % Before applying the conversion, the function takes the square root of the input
 % data if the recording method is area. This is performed to always return linear
 % units.
@@ -12,15 +13,15 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 % Using the given variables, the following calculations are performed:
 %
 %    0. Take square root of data if recording is 'area'.
-%    1. Let from unit to ref_unit converted recording distance be Dconv.
-%    2. x <-- (A*Dconv/Dref) * (x + B).
+%    1. Let from unit to reference_unit converted recording distance be Dconv.
+%    2. x <-- A*(Dconv/Dref)*x + B
 %    3. Convert x from ref_unit to unit.
 %
 % FORMAT: 
 %   [sts, out] = pspm_convert_au2unit(fn, chan, unit, distance, multiplicator,
-%                                     offset, reference_distance, options)
+%                                     offset, reference_distance, reference_unit, options)
 %   [sts, out] = pspm_convert_au2unit(data, unit, distance, record_method,
-%                                     multiplicator, offset, reference_distance, options)
+%                                     multiplicator, offset, reference_distance, reference_unit, options)
 %
 % ARGUMENTS: 
 %           fn:                 filename which contains the channels to be
@@ -236,7 +237,7 @@ end
 
 [~, distance] = pspm_convert_unit(distance, unit, reference_unit);
 
-convert_data = (multiplicator * distance / reference_distance) * (convert_data + offset);
+convert_data = (multiplicator * (distance / reference_distance) * convert_data) + offset;
 
 % convert data from reference_unit to unit
 [~, convert_data] = pspm_convert_unit(convert_data, reference_unit, unit);

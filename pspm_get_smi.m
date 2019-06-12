@@ -40,13 +40,11 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     %                          Since there are multiple ways to specify pupil size in SMI files,
     %                          pspm_get_smi selects the channel according to the following
     %                          precendence order (earlier items have precedence):
-    %                            1. Mapped Diameter mm
-    %                            2. Dia X
-    %                              1. mm
-    %                              2. px
-    %                            3. Dia
-    %                              1. mm2
-    %                              2. px2
+    %                            1. Mapped Diameter (mm)
+    %                            2. Dia X (mm)
+    %                            3. Dia (mm2)
+    %                            4. Dia X (px)
+    %                            5. Dia (px2)
     %                          If a px/px2 channels is chosen, it is NOT converted to a mm/mm2
     %                          channel. It is returned as it is. In mm2/px2 case, the pupil is
     %                          assumed to be a circle. Therefore, diameter d from area a is
