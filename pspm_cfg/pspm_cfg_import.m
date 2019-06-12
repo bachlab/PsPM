@@ -139,6 +139,14 @@ smi_target_unit.labels    = {'mm', 'cm', 'm', 'inches'};
 smi_target_unit.val       = {'mm'};
 smi_target_unit.help      = {['The unit to which the data should be converted.']};
 
+smi_stimulus_resolution           = cfg_entry;
+smi_stimulus_resolution.name      = 'Stimulus Resolution';
+smi_stimulus_resolution.tag       = 'smi_stimulus_resolution';
+smi_stimulus_resolution.val       = {[-1 -1]};
+smi_stimulus_resolution.num       = [1 2];
+smi_stimulus_resolution.help      = {['The resolution of the stimulus window. This field is required' ...
+                                      'to perform px to mm conversions for gaze channels']};
+
 %% Datatype dependend items
 datatype_item = cell(1,length(fileoptions));
 for datatype_i=1:length(fileoptions)
@@ -314,7 +322,7 @@ for datatype_i=1:length(fileoptions)
     end
     
     if any(strcmpi(settings.import.datatypes(datatype_i).short, 'smi'))
-        datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {smi_target_unit}];
+        datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {smi_target_unit, smi_stimulus_resolution}];
     end
 end
 

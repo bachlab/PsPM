@@ -82,6 +82,7 @@ for i=1:n
 
         if isfield(job.datatype.(datatype), 'smi_target_unit')
             import{i}.target_unit = job.datatype.(datatype).smi_target_unit;
+            import{i}.stimulus_resolution = job.datatype.(datatype).smi_stimulus_resolution;
         end
     end
     

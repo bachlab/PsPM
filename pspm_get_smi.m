@@ -31,11 +31,11 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     %
     %                          The gaze values returned are in the given target_unit.
     %                          (x, y) = (0, 0) coordinate represents the top left
-    %                          corner of the whole stimulus window. x coordinates grow
+    %                          corner of the calibration area. x coordinates grow
     %                          towards right and y coordinates grow towards bottom. The
-    %                          gaze coordinates can be negative or larger than screen
-    %                          size. These correspond to gaze positions outside the
-    %                          screen.
+    %                          gaze coordinates can be negative or larger than calibration
+    %                          area axis length. These correspond to gaze positions outside the
+    %                          calibration area.
     %
     %                          Since there are multiple ways to specify pupil size in SMI files,
     %                          pspm_get_smi selects the channel according to the following
@@ -47,15 +47,24 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     %                            3. Dia
     %                              1. mm2
     %                              2. px2
-    %                          Regardless of the selected channel, the values are first converted 
-    %                          to mm, then to the desired unit specified in target_unit.
+    %                          If a px/px2 channels is chosen, it is NOT converted to a mm/mm2
+    %                          channel. It is returned as it is. In mm2/px2 case, the pupil is
+    %                          assumed to be a circle. Therefore, diameter d from area a is
+    %                          calculated as 2*sqrt(a/pi).
     %
     %                  - optional fields:
     %                      .channel:
     %                          If .type is custom, the index of the channel to import
     %                          must be specified using this option.
+    %                      .stimulus_resolution:
+    %                          An array of length 2 storing the screen resolution of the whole
+    %                          stimulus window in pixels. This resolution is required in order to
+    %                          perform pixel to mm conversions. If not given, no manual conversion
+    %                          is performed by get_smi and all the values are returned as they are
+    %                          in the datafile.
     %                      .target_unit:
-    %                          the unit to which the data should be converted.
+    %                          the unit to which the gaze data should be converted. Used only if
+    %                          stimulus_resolution is specified.
     %                          (Default: mm)
     %
     %                  - Each import structure will get the following output fields:
@@ -85,6 +94,10 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
         not_marker = ~strcmpi(import{i}.type, 'marker');
         if ~isfield(import{i}, 'target_unit') && not_custom && not_marker
             import{i}.target_unit = 'mm';
+        end
+        is_gaze = contains(lower(import{i}.type), 'gaze');
+        if is_gaze && ~isfield(import{i}, 'stimulus_resolution')
+            import{i}.stimulus_resolution = [-1 -1];
         end
     end
 
@@ -122,7 +135,7 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     chan_struct = data{1}.channels_columns;
     raw_columns = data{1}.raw_columns;
     screen_size_mm = data{1}.stimulus_dimension;
-    screen_size_px = [data{1}.gaze_coords.xmax, data{1}.gaze_coords.ymax];
+    calib_area_px = [data{1}.gaze_coords.xmax, data{1}.gaze_coords.ymax];
     viewing_dist = data{1}.head_distance;
     num_import_cells = numel(import);
     for k = 1:num_import_cells
@@ -143,7 +156,7 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
         elseif contains(chantype, 'pupil')
             [import{k}, chan_id] = import_pupil_chan(import{k}, data_concat, viewing_dist, raw_columns, chan_struct, units, sampling_rate);
         elseif contains(chantype, 'gaze')
-            [import{k}, chan_id] = import_gaze_chan(import{k}, data_concat, screen_size_px, screen_size_mm, raw_columns, chan_struct, sampling_rate);
+            [import{k}, chan_id] = import_gaze_chan(import{k}, data_concat, screen_size_mm, calib_area_px, raw_columns, chan_struct, sampling_rate);
         elseif contains(chantype, 'blink') || contains(chantype, 'saccade')
             [import{k}, chan_id] = import_blink_or_saccade_chan(import{k}, data_concat, raw_columns, chan_struct, units, sampling_rate);
         elseif strcmpi(chantype, 'custom')
@@ -161,7 +174,7 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     sourceinfo.date = data{1}.record_date;
     sourceinfo.time = data{1}.record_time;
     sourceinfo.screen_size_mm = screen_size_mm;
-    sourceinfo.screen_size_px = screen_size_px;
+    sourceinfo.calib_area_px = calib_area_px;
     sourceinfo.viewing_distance_mm = viewing_dist;
     sourceinfo.eyes_observed = eyes_observed;
     sourceinfo.best_eye = eye_with_smaller_nan_ratio(import, eyes_observed);
@@ -347,6 +360,7 @@ function [import_cell, chan_id] = import_pupil_chan(import_cell, data_concat, vi
     if ~isempty(mapped_diam_idx_in_data)
         import_cell.data = data_concat(:, mapped_diam_idx_in_data);
         chan_id_concat = mapped_diam_idx_in_data;
+        import_cell.units = 'mm';
     else
         % check if there is any channel in mm
         all_channels = [];
@@ -369,6 +383,7 @@ function [import_cell, chan_id] = import_pupil_chan(import_cell, data_concat, vi
                 area_mm2 = data_concat(:, chan_id_concat);
                 import_cell.data = (2 / sqrt(pi)) * sqrt(area_mm2);
             end
+            import_cell.units = 'mm';
         else
             % prefer diameter to area
             all_channels_in_px = all_channels;
@@ -377,25 +392,21 @@ function [import_cell, chan_id] = import_pupil_chan(import_cell, data_concat, vi
             if ~isempty(px_diameter_indices)
                 chan_id_concat = all_channels_in_px(px_diameter_indices(1));
                 dia_px = data_concat(:, chan_id_concat);
-                % TODO: validate conversion coefficients
-                [~, import_cell.data] = pspm_convert_au2unit(dia_px, 'mm', viewing_dist, 'diameter', 0.00087743, 0.0, 700, 'mm');
+                import_cell.data = dia_px;
             else
                 chan_id_concat = all_channels_in_px(1);
                 area_px2 = data_concat(:, chan_id_concat);
-                % TODO: validate conversion coefficients
-                [~, import_cell.data] = pspm_convert_au2unit(area_px2, 'mm', viewing_dist, 'area', 0.12652, 0.0, 700, 'mm');
+                import_cell.data = (2 / sqrt(pi)) * sqrt(area_px2);
             end
+            import_cell.units = 'px';
         end
     end
     chan_id = find(contains(raw_columns, chan_struct{chan_id_concat}));
-    if ~strcmp('mm', import_cell.target_unit)
-        [~, import_cell.data] = pspm_convert_unit(import_cell.data, 'mm', import_cell.target_unit);
-    end
-    import_cell.units = import_cell.target_unit;
     import_cell.sr = sampling_rate;
 end
 
-function [import_cell, chan_id] = import_gaze_chan(import_cell, data_concat, screen_size_px, screen_size_mm, raw_columns, chan_struct, sampling_rate)
+function [import_cell, chan_id] = import_gaze_chan(import_cell, data_concat, screen_size_mm, calib_area_px, raw_columns, chan_struct, sampling_rate)
+    screen_size_px = import_cell.stimulus_resolution;
     smi_headers = map_pspm_header_to_smi_headers(import_cell.type);
     % in case of gaze, there is only one possible header
     smi_header = smi_headers{1};
@@ -404,23 +415,29 @@ function [import_cell, chan_id] = import_gaze_chan(import_cell, data_concat, scr
     gaze_px = data_concat(:, chan_id_concat);
 
     if contains(lower(smi_header), ' x')
-        n_pixels_along_axis = screen_size_px(1);
-        axis_len_mm = screen_size_mm(1);
+        axis_id = 1;
     elseif contains(lower(smi_header), ' y')
-        n_pixels_along_axis = screen_size_px(2);
-        axis_len_mm = screen_size_mm(2);
+        axis_id = 2;
     else
         error('ID:pspm_error', 'This branch should not have been taken. Please report this error to PsPM dev team');
     end
 
-    ratio = gaze_px / n_pixels_along_axis;
-    chan_id = find(contains(raw_columns, chan_struct{chan_id_concat}));
-    import_cell.data = ratio * axis_len_mm;
-    if ~strcmp('mm', import_cell.target_unit)
+    n_pixels_along_axis = screen_size_px(axis_id);
+    axis_len_mm = screen_size_mm(axis_id);
+
+    if n_pixels_along_axis == -1
+        import_cell.data = gaze_px;
+        import_cell.units = 'px';
+        import_cell.range = [0, calib_area_px(axis_id)];
+    else
+        mm_over_px = axis_len_mm / n_pixels_along_axis;
+        import_cell.data = gaze_px * mm_over_px;
         [~, import_cell.data] = pspm_convert_unit(import_cell.data, 'mm', import_cell.target_unit);
+        [~, rangemax] = pspm_convert_unit(calib_area_px(axis_id) * mm_over_px, 'mm', import_cell.target_unit);
+        import_cell.range = [0, rangemax];
+        import_cell.units = import_cell.target_unit;
     end
-    import_cell.units = import_cell.target_unit;
-    import_cell.range = [0 axis_len_mm];
+    chan_id = find(contains(raw_columns, chan_struct{chan_id_concat}));
     import_cell.sr = sampling_rate;
 end
 
