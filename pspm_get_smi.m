@@ -20,8 +20,8 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     %                          gaze_x_l, gaze_y_l, gaze_x_r, gaze_y_r, blink_l, blink_r,
     %                          saccade_l, saccade_r, marker, custom.
     %
-    %                          The given channel type has to be recorded in all of
-    %                          the sessions contained in the datafile.
+    %                          If the given channel type does not exist in the given datafile,
+    %                          it will be filled with NaNs and a warning will be emitted.
     %
     %                          Specified custom channels must correspond to some form of
     %                          pupil/gaze channels. In addition,

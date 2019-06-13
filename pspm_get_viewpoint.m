@@ -15,8 +15,9 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
     %                          corresponds to eye B. However, when there is only one
     %                          eye in the data and in user input, they are matched.
     %
-    %                          The given channel type has to be recorded in all of
-    %                          the sessions contained in the datafile.
+    %                          If the given channel type does not exist in the given
+    %                          datafile, it will be filled with NaNs and a warning will
+    %                          be emitted.
     %
     %                          The pupil diameter values returned by get_viewpoint are
     %                          normalized ratio values reported by Viewpoint Eyetracker
