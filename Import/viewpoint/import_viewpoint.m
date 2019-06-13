@@ -57,6 +57,7 @@ function [data] = import_viewpoint(filepath)
         data{sn}.channels = channels(begidx : endidx, :);
         data{sn}.channels_header = chan_info.channels_header;
         data{sn}.channels_units = chan_info.channels_units;
+        data{sn}.channel_indices = chan_info.col_idx;
         data{sn}.eyesObserved = file_info.eyesObserved;
         data{sn}.viewingDistance = file_info.viewingDistance;
         data{sn}.screenSize = file_info.screenSize;
@@ -150,6 +151,7 @@ function [columns, column_ids, line_ctr] = parse_header(str, line_ctr, linefeeds
     column_ids = {};
     curr_line = str(linefeeds(line_ctr) + 1 : linefeeds(line_ctr + 1) - 1 - has_backr);
     tab = sprintf('\t');
+    n_feeds = numel(linefeeds);
     while ~startsWith(curr_line, '10')
         if startsWith(curr_line, '6')
             parts = split(curr_line, tab);
@@ -159,6 +161,9 @@ function [columns, column_ids, line_ctr] = parse_header(str, line_ctr, linefeeds
             columns = parts(2 : end);
         end
         line_ctr = line_ctr + 1;
+        if line_ctr + 1 > n_feeds
+            error('ID:invalid_input_file', 'Passed input file does not have data');
+        end
         curr_line = str(linefeeds(line_ctr) + 1 : linefeeds(line_ctr + 1) - 1 - has_backr);
     end
 end
@@ -286,13 +291,13 @@ function [channels, marker, chan_info] = parse_messages(messages, channels, mark
         channels(:, curr_n_cols + 2) = saccades_A;
         chan_info.channels_header = [chan_info.channels_header; 'blink_A'; 'saccade_A'];
         chan_info.channels_units = [chan_info.channels_units; 'blink'; 'saccade'];
-        chan_info.col_idx = [chan_info.col_idx; curr_n_cols + 1; curr_n_cols + 2];
+        chan_info.col_idx = [chan_info.col_idx; -1; -1];
         if strcmp(eyesObserved, 'AB')
             channels(:, curr_n_cols + 3) = blinks_B;
             channels(:, curr_n_cols + 4) = saccades_B;
             chan_info.channels_header = [chan_info.channels_header; 'blink_B'; 'saccade_B'];
             chan_info.channels_units = [chan_info.channels_units; 'blink'; 'saccade'];
-            chan_info.col_idx = [chan_info.col_idx; curr_n_cols + 3; curr_n_cols + 4];
+            chan_info.col_idx = [chan_info.col_idx; -1; -1];
         end
     end
 end

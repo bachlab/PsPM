@@ -8,7 +8,8 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
     %                  - mandatory fields:
     %                      .type:
     %                          Type of the channel. Must be one of pupil_l, pupil_r,
-    %                          gaze_x_l, gaze_y_l, gaze_x_r, gaze_y_r, marker, custom.
+    %                          gaze_x_l, gaze_y_l, gaze_x_r, gaze_y_r, blink_l, blink_r,
+    %                          saccade_l, saccade_r, marker, custom.
     %
     %                          Right eye corresponds to eye A in ViewPoint; left eye
     %                          corresponds to eye B. However, when there is only one
@@ -35,6 +36,12 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
     %                          type is custom, no postprocessing/conversion is performed
     %                          by pspm_get_viewponit and the channel is returned directly as
     %                          it is in the given datafile.
+    %
+    %                          Blinks and saccades are read and can be imported if they are
+    %                          included in the given datafile as asynchronous messages. This
+    %                          corresponds to "Include Events in File" option in ViewPoint
+    %                          EyeTracker software. For a given eye, pupil and gaze values
+    %                          corresponding to blinks/saccades for that eye are set to NaN.
     %
     %                  - optional fields:
     %                      .channel:
@@ -69,9 +76,9 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
         import = {import};
     end
     for i = 1:numel(import)
-        not_custom = ~strcmpi(import{i}.type, 'custom');
-        not_marker = ~strcmpi(import{i}.type, 'marker');
-        if ~isfield(import{i}, 'target_unit') && not_custom && not_marker
+        is_pupil = contains(lower(import{i}.type), 'pupil');
+        is_gaze = contains(lower(import{i}.type), 'gaze');
+        if ~isfield(import{i}, 'target_unit') && (is_pupil || is_gaze)
             import{i}.target_unit = 'mm';
         end
     end
@@ -91,8 +98,7 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
     end
 
     data = map_viewpoint_eyes_to_left_right(data, import);
-    if ~assert_all_chantypes_are_in_imported_data(data, datafile, import); return; end;
-    [data_concat, markers, mi_values, mi_names] = concat_sessions(data);
+    [data_concat, markers, mi_names] = concat_sessions(data);
 
     sampling_rate = compute_sampling_rate(data{1}.channels(:, 1));
     eyes_observed = lower(data{1}.eyesObserved);
@@ -101,24 +107,39 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
     channel_indices = data{1}.channel_indices;
     units = data{1}.channels_units;
     screen_size = data{1}.screenSize;
-    viewing_dist = data{1}.ViewingDistance;
+    viewing_dist = data{1}.viewingDistance;
+
+    data_concat = set_blink_saccade_rows_to_nan(data_concat, chan_struct);
+
     num_import_cells = numel(import);
     for k = 1:num_import_cells
+        import{k}.data = [];
+        chan_id = NaN;
+        import{k}.units = 'N/A';
         if strcmpi(import{k}.type, 'marker')
-            import{k} = import_marker_chan(import{k}, markers, mi_values, mi_names, sampling_rate);
+            import{k} = import_marker_chan(import{k}, markers, mi_names, sampling_rate);
         else
             if strcmpi(import{k}.type, 'custom')
                 [import{k}, chan_id] = import_custom_chan(import{k}, data_concat, channel_indices, raw_columns, chan_struct, units, sampling_rate);
             else
                 [import{k}, chan_id] = import_data_chan(import{k}, data_concat, eyes_observed, channel_indices, chan_struct, units, sampling_rate);
-                chantype = import{k}.type;
-                is_gaze_x_chan = ~isempty(regexpi(chantype, 'gaze_x_'));
-                is_gaze_y_chan = ~isempty(regexpi(chantype, 'gaze_y_'));
-                if is_gaze_x_chan
-                    import{k} = convert_gaze_chan(import{k}, screen_size.xmin, screen_size.xmax);
-                elseif is_gaze_y_chan
-                    import{k} = convert_gaze_chan(import{k}, screen_size.ymin, screen_size.ymax);
+                if ~isnan(chan_id)
+                    chantype = import{k}.type;
+                    is_gaze_x_chan = ~isempty(regexpi(chantype, 'gaze_x_'));
+                    is_gaze_y_chan = ~isempty(regexpi(chantype, 'gaze_y_'));
+                    if is_gaze_x_chan
+                        import{k} = convert_gaze_chan(import{k}, screen_size.xmin, screen_size.xmax);
+                    elseif is_gaze_y_chan
+                        import{k} = convert_gaze_chan(import{k}, screen_size.ymin, screen_size.ymax);
+                    end
                 end
+            end
+            if isempty(import{k}.data)
+                import{k}.data = NaN(size(data_concat, 1), 1); 
+                warning('ID:channel_not_contained_in_file', ...
+                    sprintf(['Cannot import channel type %s, as data for this eye', ...
+                     ' does not seem to be present in the datafile. ', ...
+                     'Will create artificial channel with NaN values.'], import{k}.type));
             end
             sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan_id);
             sourceinfo.chan_stats{k,1} = struct();
@@ -220,30 +241,6 @@ function proper = assert_all_chantypes_are_supported(settings, import)
     end
 end
 
-function proper = assert_all_chantypes_are_in_imported_data(data, datafile, import)
-    % Assert that all given input channels are contained in at least one of the
-    % imported sessions. They don't have to be in all the sessions; the remaining
-    % parts will be filled with NaNs.
-    proper = true;
-    for k = 1:numel(import)
-        input_type = import{k}.type;
-        if strcmpi(input_type, 'marker') || strcmpi(input_type, 'custom')
-            continue;
-        end
-        data_contains_type = false;
-        for i = 1:numel(data)
-            session_channels = data{i}.channels_header;
-            data_contains_type = data_contains_type || any(strcmpi(input_type, session_channels));
-        end
-        if ~data_contains_type
-            error_msg = sprintf('Channel type %s is not in the given datafile %s', input_type, datafile);
-            warning('ID:channel_not_contained_in_file', error_msg);
-            proper = false;
-            return;
-        end
-    end
-end
-
 function data = map_viewpoint_eyes_to_left_right(data, import)
     % Map eye A to right eye, eye B to left eye.
     for i = 1:numel(data)
@@ -265,7 +262,8 @@ function data = map_viewpoint_eyes_to_left_right(data, import)
         elseif strcmpi(data{i}.eyesObserved, 'ab')
             data{i}.eyesObserved = 'RL';
         else
-            error('ID:invalid_imported_data', 'eyesObserved field in imported data has a value different than A and/or B');
+            warning('ID:invalid_imported_data', 'eyesObserved field in imported data has a value different than A and/or B');
+            return;
         end
     end
     % If import has only left eye and data only right eye, map data right eye to left
@@ -297,12 +295,11 @@ function data = map_viewpoint_eyes_to_left_right(data, import)
     end
 end
 
-function import_cell = import_marker_chan(import_cell, markers, mi_values, mi_names, sampling_rate)
+function import_cell = import_marker_chan(import_cell, markers, mi_names, sampling_rate)
     import_cell.marker = 'continuous';
     import_cell.sr     = sampling_rate;
     import_cell.data   = markers;
     markerinfo.names = mi_names;
-    markerinfo.values = mi_values;
     import_cell.markerinfo = markerinfo;
     import_cell.flank = 'ascending';
 end
@@ -312,14 +309,13 @@ function [import_cell, chan_id] = import_custom_chan(import_cell, data_concat, c
     n_concat_rows = size(data_concat, 1);
     chan_id = import_cell.channel;
     if chan_id < 1
-        error('ID:invalid_input', sprintf('Custom channel id %d is less than 1', chan_id));
+        warning('ID:invalid_input', sprintf('Custom channel id %d is less than 1', chan_id));
+        return;
     end
     if chan_id > n_raw_cols || ~ismember(chan_id, channel_indices)
         warning('ID:invalid_input', sprintf(['Custom channel id (%d) cannot be imported using get_viewpoint.'...
             ' Creating a channel with NaNs'], chan_id));
-        import_cell.data = NaN(n_concat_rows, 1);
-        import_cell.units = 'N/A';
-        import_cell.data_header = 'N/A';
+        return;
     else
         chan_id_in_concat = find(channel_indices == chan_id);
         import_cell.data = data_concat(:, chan_id_in_concat);
@@ -335,15 +331,9 @@ function [import_cell, chan_id] = import_data_chan(import_cell, data_concat, eye
 
     chantype_has_L_or_R = ~isempty(regexpi(import_cell.type, '_[lr]', 'once'));
     chantype_hasnt_eyes_obs = isempty(regexpi(import_cell.type, ['_([' eyes_observed '])'], 'once'));
-    if chantype_has_L_or_R && chantype_hasnt_eyes_obs
-        warning('ID:channel_not_contained_in_file', ...
-            ['Cannot import channel type %s, as data for this eye',
-        ' does not seem to be present in the datafile. ', ...
-            'Will create artificial channel with NaN values.'], import_cell.type);
-
-        import_cell.data = NaN(n_data, 1);
-        chan_id = -1;
-        import_cell.units = 'N/A';
+    if (chantype_has_L_or_R && chantype_hasnt_eyes_obs) || isempty(chan_id_in_concat)
+        chan_id = NaN;
+        return;
     else
         import_cell.data = data_concat(:, chan_id_in_concat);
         import_cell.units = units{chan_id_in_concat};
@@ -361,7 +351,7 @@ function import_cell = convert_gaze_chan(import_cell, mincoord, maxcoord)
     import_cell.units = import_cell.target_unit;
 end
 
-function [data_concat, markers, mi_values, mi_names] = concat_sessions(data)
+function [data_concat, markers, mi_names] = concat_sessions(data)
     % Concatenate multiple sessions into contiguous arrays, inserting NaN or N/A fields
     % in between two sessions when there is a time gap.
     %
@@ -371,12 +361,10 @@ function [data_concat, markers, mi_values, mi_names] = concat_sessions(data)
     %               timesteps. If end and begin of consecutive channels are far apart,
     %               NaNs are inserted.
     % markers     : Array of marker seconds, formed by simply concatening data{i}.marker.times.
-    % mi_values   : Array of marker values, formed by simply concatening data{i}.marker.values.
     % mi_names    : Array of marker names, formed by simply concatening data{i}.marker.names.
     %
     data_concat = [];
     markers = [];
-    mi_values = [];
     mi_names = {};
 
     second_col_idx = 1;
@@ -399,7 +387,6 @@ function [data_concat, markers, mi_values, mi_names] = concat_sessions(data)
 
         data_concat(end + 1:(end + n_data_in_session), 1:n_cols) = data{c}.channels;
         markers(end + 1:(end + n_markers_in_session), 1) = data{c}.marker.times;
-        mi_values(end + 1:(end + n_markers_in_session),1) = data{c}.marker.values;
         mi_names(end + 1:(end + n_markers_in_session),1) = data{c}.marker.names;
 
         last_time = end_time;
@@ -426,5 +413,33 @@ function best_eye = eye_with_smaller_nan_ratio(import, eyes_observed)
         else
             best_eye = 'r';
         end
+    end
+end
+
+function data = set_blink_saccade_rows_to_nan(data, chan_struct)
+    chan_struct = lower(chan_struct);
+    blink_l_col = find(strcmp(chan_struct, 'blink_l'));
+    blink_r_col = find(strcmp(chan_struct, 'blink_r'));
+    saccade_l_col = find(strcmp(chan_struct, 'saccade_l'));
+    saccade_r_col = find(strcmp(chan_struct, 'saccade_r'));
+    
+    blink_l = logical(data(:, blink_l_col));
+    blink_r = logical(data(:, blink_r_col));
+    saccade_l = logical(data(:, saccade_l_col));
+    saccade_r = logical(data(:, saccade_r_col));
+    
+    left_data_cols = contains(chan_struct, '_l') & ~contains(chan_struct, 'blink') & ~contains(chan_struct, 'saccade');
+    right_data_cols = contains(chan_struct, '_r') & ~contains(chan_struct, 'blink') & ~contains(chan_struct, 'saccade');
+    if ~isempty(blink_l_col)
+        data(blink_l, left_data_cols) = NaN;
+    end
+    if ~isempty(saccade_l_col)
+        data(saccade_l, left_data_cols) = NaN;
+    end
+    if ~isempty(blink_r_col)
+        data(blink_r, right_data_cols) = NaN;
+    end
+    if ~isempty(saccade_r_col)
+        data(saccade_r, right_data_cols) = NaN;
     end
 end
