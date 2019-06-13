@@ -5,7 +5,7 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 %
 % Given arbitrary unit values are converted using a recording distance D given in
 % 'unit', a reference distance Dref given in 'reference_unit', a multiplicator A given
-% in 'reference_unit', an offset B given in 'reference_unit'.
+% in 'reference_unit'.
 % Before applying the conversion, the function takes the square root of the input
 % data if the recording method is area. This is performed to always return linear
 % units.
@@ -19,9 +19,9 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 %
 % FORMAT: 
 %   [sts, out] = pspm_convert_au2unit(fn, chan, unit, distance, multiplicator,
-%                                     offset, reference_distance, reference_unit, options)
+%                                     reference_distance, reference_unit, options)
 %   [sts, out] = pspm_convert_au2unit(data, unit, distance, record_method,
-%                                     multiplicator, offset, reference_distance, reference_unit, options)
+%                                     multiplicator, reference_distance, reference_unit, options)
 %
 % ARGUMENTS: 
 %           fn:                 filename which contains the channels to be
@@ -38,8 +38,6 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 %           record_method:      either 'area' or 'diameter', tells the function
 %                               what the format of the recorded data is
 %           multiplicator:      the multiplicator in the linear conversion.
-%           offset:             the offset in the linear conversion. Offset must be given
-%                               in arbitrary units same as input data.
 %           reference_distance: distance at which the multiplicator value
 %                               was obtained, as specified in the parameter unit.
 %                               The values will be proportionally translated to
@@ -90,12 +88,9 @@ else
             warning('ID:invalid_input', '''multiplicator'' is required.');
             return;
         elseif nargin < 6
-            warning('ID:invalid_input', '''offset'' is required.');
-            return;
-        elseif nargin < 7
             warning('ID:invalid_input', '''reference_distance'' is required.');
             return;
-        elseif nargin < 8
+        elseif nargin < 7
             warning('ID:invalid_input', '''reference_unit'' is required.');
             return;
         else
@@ -103,9 +98,8 @@ else
             distance = varargin{4};
             chan = varargin{2};
             multiplicator = varargin{5};
-            offset = varargin{6};
-            reference_distance = varargin{7};
-            reference_unit = varargin{8};
+            reference_distance = varargin{6};
+            reference_unit = varargin{7};
             record_method = '';
             opt_idx = 9;
         end
@@ -125,9 +119,6 @@ else
             warning('ID:invalid_input', '''multiplicator'' is required.');
             return;
         elseif nargin < 6
-            warning('ID:invalid_input', '''offset'' is required.');
-            return;
-        elseif nargin < 7
             warning('ID:invalid_input', '''reference_distance'' is required.');
             return;
         elseif nargin < 7
@@ -140,9 +131,8 @@ else
             chan = -1;
             record_method = varargin{4};
             multiplicator = varargin{5};
-            offset = varargin{6};
-            reference_distance = varargin{7};
-            reference_unit = varargin{8};
+            reference_distance = varargin{6};
+            reference_unit = varargin{7};
             opt_idx = 9;
         end
     end
@@ -172,11 +162,6 @@ end
 
 if ~isnumeric(multiplicator)
     warning('ID:invalid_input', 'multiplicator must be a numeric value');
-    return;
-end
-
-if ~isnumeric(offset)
-    warning('ID:invalid_input', 'offset must be a numeric value');
     return;
 end
 
@@ -237,7 +222,7 @@ end
 
 [~, distance] = pspm_convert_unit(distance, unit, reference_unit);
 
-convert_data = (multiplicator * (distance / reference_distance) * convert_data) + offset;
+convert_data = multiplicator * (distance / reference_distance) * convert_data;
 
 % convert data from reference_unit to unit
 [~, convert_data] = pspm_convert_unit(convert_data, reference_unit, unit);
