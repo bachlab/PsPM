@@ -124,7 +124,6 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
         if ~assert_sessions_are_one_after_another(data); return; end;
     end
 
-    if ~assert_all_chantypes_are_in_imported_data(data, datafile{1}, import); return; end;
     [data_concat, markers, mi_values, mi_names] = concat_sessions(data);
 
     sampling_rate = data{1}.sampleRate;
@@ -137,18 +136,14 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     viewing_dist = data{1}.head_distance;
     num_import_cells = numel(import);
     for k = 1:num_import_cells
+        import{k}.data = [];
+        chan_id = NaN;
+        import{k}.units = 'N/A';
         chantype = lower(import{k}.type);
         chantype_has_L_or_R = ~isempty(regexpi(chantype, '_[lr]', 'once'));
         chantype_hasnt_eyes_obs = isempty(regexpi(chantype, ['_([' eyes_observed '])'], 'once'));
         if chantype_has_L_or_R && chantype_hasnt_eyes_obs
-            warning('ID:channel_not_contained_in_file', ...
-                ['Cannot import channel type %s, as data for this eye',
-            ' does not seem to be present in the datafile. ', ...
-                'Will create artificial channel with NaN values.'], import_cell.type); return;
-
-            import{k}.data = NaN(size(data_concat, 1), 1);
-            chan_id = -1;
-            import{k}.units = '';
+            % no import
         elseif strcmpi(chantype, 'marker')
             [import{k}, chan_id] = import_marker_chan(import{k}, markers, mi_values, mi_names, sampling_rate);
         elseif contains(chantype, 'pupil')
@@ -161,6 +156,13 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
             [import{k}, chan_id] = import_custom_chan(import{k}, data_concat, raw_columns, chan_struct, units, sampling_rate);
         else
             warning('ID:pspm_error', 'This branch should not have been taken. Please report this error to PsPM dev team'); return;
+        end
+        if isempty(import{k}.data)
+            import{k}.data = NaN(size(data_concat, 1), 1); 
+            warning('ID:channel_not_contained_in_file', ...
+                sprintf(['Cannot import channel type %s, as data for this eye', ...
+                 ' does not seem to be present in the datafile. ', ...
+                 'Will create artificial channel with NaN values.'], import{k}.type));
         end
         sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan_id);
         sourceinfo.chan_stats{k,1} = struct();
@@ -307,37 +309,6 @@ function expect_list = map_pspm_header_to_smi_headers(pspm_chantype)
     end
 end
 
-function proper = assert_all_chantypes_are_in_imported_data(data, sample_file, import)
-    % Assert that all given input channels are contained in at least one of the
-    % imported sessions. They don't have to be in all the sessions; the remaining
-    % parts will be filled with NaNs.
-    proper = true;
-    for k = 1:numel(import)
-        if strcmpi(import{k}.type, 'marker') || strcmpi(import{k}.type, 'custom')
-            continue
-        end
-        input_type = import{k}.type;
-        expect_list = map_pspm_header_to_smi_headers(input_type);
-        data_contains_type = false;
-        for i = 1:numel(data)
-            session_channels = data{i}.channels_columns;
-            for j = 1:numel(expect_list)
-                data_contains_type = data_contains_type || any(contains(lower(session_channels), lower(expect_list{j})));
-            end
-        end
-        if ~data_contains_type
-            expect_list_str = sprintf('"%s", ', expect_list{:});
-            expect_list_str = expect_list_str(1:end-2);
-            error_msg = sprintf(['Channel type %s is not in the given sample_file %s.' ...
-                ' For channel type %s, we searched for %s channel(s)'], ...
-                input_type, sample_file, input_type, expect_list_str);
-            warning('ID:channel_not_contained_in_file', error_msg);
-            proper = false;
-            return;
-        end
-    end
-end
-
 function [import_cell, chan_id] = import_marker_chan(import_cell, markers, mi_values, mi_names, sampling_rate)
     import_cell.marker = 'continuous';
     import_cell.sr     = sampling_rate;
@@ -360,43 +331,48 @@ function [import_cell, chan_id] = import_pupil_chan(import_cell, data_concat, vi
         chan_id_concat = mapped_diam_idx_in_data;
         import_cell.units = 'mm';
     else
-        % check if there is any channel in mm
         all_channels = [];
         for i = 1:numel(smi_headers)
             possible_pupil_indices = find(contains(chan_struct, smi_headers{i}));
             all_channels = [all_channels possible_pupil_indices];
         end
         all_channels = unique(all_channels);
-        channel_indices_in_mm = find(contains(units(all_channels), 'mm'));
-        all_channels_in_mm = all_channels(channel_indices_in_mm);
-        if ~isempty(all_channels_in_mm)
-            % prefer diameter to area
-            mm_units = units(all_channels_in_mm);
-            mm_diameter_indices = find(contains(mm_units, 'diameter'));
-            if ~isempty(mm_diameter_indices)
-                chan_id_concat = all_channels_in_mm(mm_diameter_indices(1));
-                import_cell.data = data_concat(:, chan_id_concat);
-            else
-                chan_id_concat = all_channels_in_mm(1);
-                area_mm2 = data_concat(:, chan_id_concat);
-                import_cell.data = (2 / sqrt(pi)) * sqrt(area_mm2);
-            end
-            import_cell.units = 'mm';
+        if isempty(all_channels)
+            chan_id = NaN;
+            return;
         else
-            % prefer diameter to area
-            all_channels_in_px = all_channels;
-            px_units = units(all_channels_in_px);
-            px_diameter_indices = find(contains(px_units, 'diameter'));
-            if ~isempty(px_diameter_indices)
-                chan_id_concat = all_channels_in_px(px_diameter_indices(1));
-                dia_px = data_concat(:, chan_id_concat);
-                import_cell.data = dia_px;
+            % check if there is any channel in mm
+            channel_indices_in_mm = find(contains(units(all_channels), 'mm'));
+            all_channels_in_mm = all_channels(channel_indices_in_mm);
+            if ~isempty(all_channels_in_mm)
+                % prefer diameter to area
+                mm_units = units(all_channels_in_mm);
+                mm_diameter_indices = find(contains(mm_units, 'diameter'));
+                if ~isempty(mm_diameter_indices)
+                    chan_id_concat = all_channels_in_mm(mm_diameter_indices(1));
+                    import_cell.data = data_concat(:, chan_id_concat);
+                else
+                    chan_id_concat = all_channels_in_mm(1);
+                    area_mm2 = data_concat(:, chan_id_concat);
+                    import_cell.data = (2 / sqrt(pi)) * sqrt(area_mm2);
+                end
+                import_cell.units = 'mm';
             else
-                chan_id_concat = all_channels_in_px(1);
-                area_px2 = data_concat(:, chan_id_concat);
-                import_cell.data = (2 / sqrt(pi)) * sqrt(area_px2);
+                % prefer diameter to area
+                all_channels_in_px = all_channels;
+                px_units = units(all_channels_in_px);
+                px_diameter_indices = find(contains(px_units, 'diameter'));
+                if ~isempty(px_diameter_indices)
+                    chan_id_concat = all_channels_in_px(px_diameter_indices(1));
+                    dia_px = data_concat(:, chan_id_concat);
+                    import_cell.data = dia_px;
+                else
+                    chan_id_concat = all_channels_in_px(1);
+                    area_px2 = data_concat(:, chan_id_concat);
+                    import_cell.data = (2 / sqrt(pi)) * sqrt(area_px2);
+                end
+                import_cell.units = 'pixel';
             end
-            import_cell.units = 'pixel';
         end
     end
     chan_id = find(contains(raw_columns, chan_struct{chan_id_concat}));
@@ -410,6 +386,10 @@ function [import_cell, chan_id] = import_gaze_chan(import_cell, data_concat, scr
     smi_header = smi_headers{1};
 
     chan_id_concat = find(contains(chan_struct, smi_header), 1, 'first');
+    if isempty(chan_id_concat)
+        chan_id = NaN;
+        return;
+    end
     gaze_px = data_concat(:, chan_id_concat);
 
     if contains(lower(smi_header), ' x')
@@ -445,6 +425,10 @@ function [import_cell, chan_id] = import_blink_or_saccade_chan(import_cell, data
     smi_header = smi_headers{1};
 
     chan_id_concat = find(contains(chan_struct, smi_header), 1, 'first');
+    if isempty(chan_id_concat)
+        chan_id = NaN;
+        return;
+    end
     chan_id = -1;
     import_cell.data = data_concat(:, chan_id_concat);
     import_cell.units = units{chan_id_concat};
@@ -455,15 +439,18 @@ function [import_cell, chan_id] = import_custom_chan(import_cell, data_concat, r
     n_cols = size(raw_columns, 2);
     chan_id = import_cell.channel;
     if chan_id < 1
-        error('ID:invalid_input', sprintf('Custom channel id %d is less than 1', chan_id));
+        warning('ID:invalid_input', sprintf('Custom channel id %d is less than 1', chan_id));
+        return
     end
     if chan_id > n_cols
-        error('ID:invalid_input', sprintf('Custom channel id (%d) is greater than number of columns (%d) in sample file', chan_id, n_cols));
+        warning('ID:invalid_input', sprintf('Custom channel id (%d) is greater than number of columns (%d) in sample file', chan_id, n_cols));
+        return;
     end
     custom_channel_header = raw_columns{chan_id};
     chan_id_in_concat = find(strcmpi(custom_channel_header, chan_struct));
     if isempty(chan_id_in_concat)
-        error('ID:invalid_input', sprintf('Custom channel %s cannot be imported using get_smi', custom_channel_header));
+        warning('ID:invalid_input', sprintf('Custom channel %s cannot be imported using get_smi', custom_channel_header));
+        return;
     end
     import_cell.data = data_concat(:, chan_id_in_concat);
     import_cell.units = units{chan_id_in_concat};
