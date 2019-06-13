@@ -139,13 +139,14 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
         import{k}.data = [];
         chan_id = NaN;
         import{k}.units = 'N/A';
+        import{k}.sr = sampling_rate;
         chantype = lower(import{k}.type);
         chantype_has_L_or_R = ~isempty(regexpi(chantype, '_[lr]', 'once'));
         chantype_hasnt_eyes_obs = isempty(regexpi(chantype, ['_([' eyes_observed '])'], 'once'));
         if chantype_has_L_or_R && chantype_hasnt_eyes_obs
             % no import
         elseif strcmpi(chantype, 'marker')
-            [import{k}, chan_id] = import_marker_chan(import{k}, markers, mi_values, mi_names, sampling_rate);
+            [import{k}, chan_id] = import_marker_chan(import{k}, markers, mi_values, mi_names, size(data_concat, 1), sampling_rate);
         elseif contains(chantype, 'pupil')
             [import{k}, chan_id] = import_pupil_chan(import{k}, data_concat, viewing_dist, raw_columns, chan_struct, units, sampling_rate);
         elseif contains(chantype, 'gaze')
@@ -309,14 +310,17 @@ function expect_list = map_pspm_header_to_smi_headers(pspm_chantype)
     end
 end
 
-function [import_cell, chan_id] = import_marker_chan(import_cell, markers, mi_values, mi_names, sampling_rate)
+function [import_cell, chan_id] = import_marker_chan(import_cell, markers, mi_values, mi_names, n_rows, sampling_rate)
     import_cell.marker = 'continuous';
-    import_cell.sr     = sampling_rate;
-    import_cell.data   = markers;
-    markerinfo.names = mi_names;
-    markerinfo.values = mi_values;
-    import_cell.markerinfo = markerinfo;
     import_cell.flank = 'ascending';
+    import_cell.sr     = sampling_rate;
+    import_cell.data = false(n_rows, 1);
+    marker_indices = 1 + markers * sampling_rate;
+    import_cell.data(int64(marker_indices)) = true;
+    import_cell.units = 'unknown';
+    markerinfo.name = mi_names;
+    markerinfo.value = mi_values;
+    import_cell.markerinfo = markerinfo;
     chan_id = -1;
 end
 
@@ -468,8 +472,8 @@ function [data_concat, markers, mi_values, mi_names] = concat_sessions(data)
     %               timesteps. If end and begin of consecutive channels are far apart,
     %               NaNs are inserted.
     % markers     : Array of marker seconds, formed by simply concatening data{i}.marker.times.
-    % mi_values   : Array of marker values, formed by simply concatening data{i}.marker.values.
-    % mi_names    : Array of marker names, formed by simply concatening data{i}.marker.names.
+    % mi_values   : Array of marker values, formed by simply concatening data{i}.marker.value.
+    % mi_names    : Array of marker names, formed by simply concatening data{i}.marker.name.
     %
     data_concat = [];
     markers = [];
@@ -496,8 +500,8 @@ function [data_concat, markers, mi_values, mi_names] = concat_sessions(data)
         n_markers_in_session = numel(data{c}.markerinfos.name);
 
         data_concat(end + 1:(end + n_data_in_session), 1:n_cols) = data{c}.channels;
-        markers(end + 1:(end + n_markers_in_session), 1) = data{c}.markers';
-        mi_values(end + 1:(end + n_markers_in_session),1) = data{c}.markerinfos.values';
+        markers(end + 1:(end + n_markers_in_session), 1) = data{c}.markers' * microsec_to_sec;
+        mi_values(end + 1:(end + n_markers_in_session),1) = data{c}.markerinfos.value';
         mi_names(end + 1:(end + n_markers_in_session),1) = data{c}.markerinfos.name';
 
         last_time = end_time;

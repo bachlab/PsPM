@@ -25,7 +25,7 @@ function [data] = import_viewpoint(filepath)
     %                           - xmax: x coordinate of bottom right corner of screen in milimeters.
     %                           - ymax: y coordinate of bottom right corner of screen in milimeters.
     %                       marker: Structure with fields
-    %                           - names: Cell array of marker names.
+    %                           - name: Cell array of marker name.
     %                           - pos: Indices of markers in time column.
     %                           - times: Seconds of markers.
     %                       record_date: Recording date
@@ -66,7 +66,8 @@ function [data] = import_viewpoint(filepath)
 
         markers_in_sess = marker(begidx : endidx);
         nonempty_indices = find(cell2mat(cellfun(@(x) ~isempty(x), markers_in_sess, 'UniformOutput', 0)));
-        data{sn}.marker.names = markers_in_sess(nonempty_indices);
+        data{sn}.marker.name = markers_in_sess(nonempty_indices);
+        data{sn}.marker.value = (-1) * ones('like', nonempty_indices);
         data{sn}.marker.pos = nonempty_indices;
         data{sn}.marker.times = data{sn}.channels(nonempty_indices, 1);
     end

@@ -191,6 +191,8 @@ function [data] = import_smi(varargin)
     clear C;
     clear all_text;
     datanum = [datanum(:, 1), ones(size(datanum, 1), 1), datanum(:, 2:end)];
+    experiment_begin_time = datanum(1, 1);
+    datanum(:, 1) = datanum(:, 1) - experiment_begin_time;
 
     %% open events_file, get events, and events header
     if event_ex
@@ -260,7 +262,7 @@ function [data] = import_smi(varargin)
         nr_events = length(usr_events.Trial);
         msgs = cell(4, nr_events);
         for i=1:nr_events
-            msgs{1, i} = usr_events.Start(i);
+            msgs{1, i} = usr_events.Start(i) - experiment_begin_time;
             msgs{2, i} = usr_events.EventType{i};
             msgs{3, i} = usr_events.Trial(i);
             msgs{4, i} = usr_events.Description{i};
@@ -270,7 +272,7 @@ function [data] = import_smi(varargin)
         msgs = cell(4, nr_events);
         for i=1:nr_events
             C = textscan(msg_lines{i}, '%f%s%f%s', 'Delimiter', '\t');
-            msgs{1, i} = C{1};
+            msgs{1, i} = C{1} - experiment_begin_time;
             msgs{2, i} = C{2}{1};
             msgs{3, i} = C{3};
             msgs{4, i} = C{4}{1};
@@ -397,7 +399,7 @@ function [data] = import_smi(varargin)
 
         %% messages
         data{sn}.markers = [];
-        data{sn}.markerinfos.values = [];
+        data{sn}.markerinfos.value = [];
         data{sn}.markerinfos.name = {};
         val_msg_idx = cell2mat(msgs(3, :)) == sn;
         if ~isempty(val_msg_idx)
@@ -417,7 +419,7 @@ function [data] = import_smi(varargin)
             for i = 1:numel(msg_str)
                 msg_indices_in_uniq(end + 1) = find(strcmpi(msg_str{i}, messages));
             end
-            data{sn}.markerinfos.values = msg_indices_in_uniq;
+            data{sn}.markerinfos.value = msg_indices_in_uniq;
         end
 
         %% remove lines containing NaN (i.e. pure text lines) so that lines have a time interpretation

@@ -134,7 +134,7 @@ elseif strcmpi(import.marker, 'continuous')
 elseif strcmpi(import.marker, 'timestamp') || strcmpi(import.marker, 'timestamps')
     import.data = import.data(:) .* import.sr;
 else
-    warning('ID:invalid_field_content', 'The value of ''marker'' must either be ''continious'' or ''timestamps'''); return;
+    warning('ID:invalid_field_content', 'The value of ''marker'' must either be ''continuous'' or ''timestamps'''); return;
 end;
 
 % set status

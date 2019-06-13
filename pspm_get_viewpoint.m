@@ -99,7 +99,7 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
     end
 
     data = map_viewpoint_eyes_to_left_right(data, import);
-    [data_concat, markers, mi_names] = concat_sessions(data);
+    [data_concat, markers, mi_names, mi_values] = concat_sessions(data);
 
     sampling_rate = compute_sampling_rate(data{1}.channels(:, 1));
     eyes_observed = lower(data{1}.eyesObserved);
@@ -117,22 +117,21 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
         import{k}.data = [];
         chan_id = NaN;
         import{k}.units = 'N/A';
+        import{k}.sr = sampling_rate;
         if strcmpi(import{k}.type, 'marker')
-            import{k} = import_marker_chan(import{k}, markers, mi_names, sampling_rate);
+            import{k} = import_marker_chan(import{k}, markers, mi_names, mi_values, size(data_concat, 1), sampling_rate);
         else
             if strcmpi(import{k}.type, 'custom')
                 [import{k}, chan_id] = import_custom_chan(import{k}, data_concat, channel_indices, raw_columns, chan_struct, units, sampling_rate);
             else
                 [import{k}, chan_id] = import_data_chan(import{k}, data_concat, eyes_observed, channel_indices, chan_struct, units, sampling_rate);
-                if ~isnan(chan_id)
-                    chantype = import{k}.type;
-                    is_gaze_x_chan = ~isempty(regexpi(chantype, 'gaze_x_'));
-                    is_gaze_y_chan = ~isempty(regexpi(chantype, 'gaze_y_'));
-                    if is_gaze_x_chan
-                        import{k} = convert_gaze_chan(import{k}, screen_size.xmin, screen_size.xmax);
-                    elseif is_gaze_y_chan
-                        import{k} = convert_gaze_chan(import{k}, screen_size.ymin, screen_size.ymax);
-                    end
+                chantype = import{k}.type;
+                is_gaze_x_chan = ~isempty(regexpi(chantype, 'gaze_x_'));
+                is_gaze_y_chan = ~isempty(regexpi(chantype, 'gaze_y_'));
+                if is_gaze_x_chan
+                    import{k} = convert_gaze_chan(import{k}, screen_size.xmin, screen_size.xmax);
+                elseif is_gaze_y_chan
+                    import{k} = convert_gaze_chan(import{k}, screen_size.ymin, screen_size.ymax);
                 end
             end
             if isempty(import{k}.data)
@@ -296,13 +295,17 @@ function data = map_viewpoint_eyes_to_left_right(data, import)
     end
 end
 
-function import_cell = import_marker_chan(import_cell, markers, mi_names, sampling_rate)
+function import_cell = import_marker_chan(import_cell, markers, mi_names, mi_values, n_rows, sampling_rate)
     import_cell.marker = 'continuous';
-    import_cell.sr     = sampling_rate;
-    import_cell.data   = markers;
-    markerinfo.names = mi_names;
-    import_cell.markerinfo = markerinfo;
     import_cell.flank = 'ascending';
+    import_cell.sr     = sampling_rate;
+    import_cell.data = false(n_rows, 1);
+    marker_indices = 1 + markers * sampling_rate;
+    import_cell.data(int64(marker_indices)) = true;
+    import_cell.units = 'unknown';
+    markerinfo.name = mi_names;
+    markerinfo.value = mi_values;
+    import_cell.markerinfo = markerinfo;
 end
 
 function [import_cell, chan_id] = import_custom_chan(import_cell, data_concat, channel_indices, raw_columns, chan_struct, units, sampling_rate)
@@ -352,7 +355,7 @@ function import_cell = convert_gaze_chan(import_cell, mincoord, maxcoord)
     import_cell.units = import_cell.target_unit;
 end
 
-function [data_concat, markers, mi_names] = concat_sessions(data)
+function [data_concat, markers, mi_names, mi_values] = concat_sessions(data)
     % Concatenate multiple sessions into contiguous arrays, inserting NaN or N/A fields
     % in between two sessions when there is a time gap.
     %
@@ -362,11 +365,13 @@ function [data_concat, markers, mi_names] = concat_sessions(data)
     %               timesteps. If end and begin of consecutive channels are far apart,
     %               NaNs are inserted.
     % markers     : Array of marker seconds, formed by simply concatening data{i}.marker.times.
-    % mi_names    : Array of marker names, formed by simply concatening data{i}.marker.names.
+    % mi_names    : Array of marker names, formed by simply concatening data{i}.marker.name.
+    % mi_values   : Array of marker values, formed by simply concatening data{i}.marker.value.
     %
     data_concat = [];
     markers = [];
     mi_names = {};
+    mi_values = [];
 
     second_col_idx = 1;
     n_cols = size(data{1}.channels, 2);
@@ -388,7 +393,8 @@ function [data_concat, markers, mi_names] = concat_sessions(data)
 
         data_concat(end + 1:(end + n_data_in_session), 1:n_cols) = data{c}.channels;
         markers(end + 1:(end + n_markers_in_session), 1) = data{c}.marker.times;
-        mi_names(end + 1:(end + n_markers_in_session),1) = data{c}.marker.names;
+        mi_values(end + 1:(end + n_markers_in_session),1) = data{c}.marker.value;
+        mi_names(end + 1:(end + n_markers_in_session),1) = data{c}.marker.name;
 
         last_time = end_time;
     end
