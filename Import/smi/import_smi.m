@@ -43,7 +43,7 @@ function [data] = import_smi(varargin)
     %
     % (C) 2019 Laure Ciernik
     % Function uses import function from the GazeVisToolbox �.
-    bsearch_path = fullfile(fileparts(which('import_smi')), 'bsearch');
+    bsearch_path = fullfile(fileparts(which('import_smi')), '..', '..', 'backroom', 'bsearch');
     addpath(bsearch_path);
 
     if isempty(varargin)

@@ -13,10 +13,12 @@ function [data] = import_viewpoint(filepath)
     %                       dataraw: Cell array containing raw data columns.
     %                       dataraw_header: Column headers of each raw data column.
     %                       channels: Matrix (timestep x n_cols) of relevant PsPM columns.
+    %                                 Currently, time, pupil, gaze, blink and saccade channels
+    %                                 are imported.
     %                       channels_header: Column headers of each channels column.
     %                       channels_units: Units of each channels column.
     %                       eyesObserved: Either A or AB, denoting observed eyes in datafile.
-    %                       ViewingDistance: Viewing distance in milimeters.
+    %                       viewingDistance: Viewing distance in milimeters.
     %                       screenSize: Structure with fields
     %                           - xmin: x coordinate of top left corner of screen in milimeters.
     %                           - ymin: y coordinate of top left corner of screen in milimeters.
@@ -26,304 +28,271 @@ function [data] = import_viewpoint(filepath)
     %                           - names: Cell array of marker names.
     %                           - pos: Indices of markers in time column.
     %                           - times: Seconds of markers.
-    %                           - mod: Marker mod (sync or async)
     %                       record_date: Recording date
     %                       record_time: Recording time
     %
     %__________________________________________________________________________
     %
     % (C) 2019 Laure Ciernik
-    % Function inspired by GazeAlyze ©.
+    % Function inspired by GazeAlyze ï¿½.. Most parts rewritten by Eshref Yozdemir to handle
+    % newer ViewPoint files.
+    bsearch_path = fullfile(fileparts(which('import_viewpoint')), '..', '..', 'backroom', 'bsearch');
+    addpath(bsearch_path);
 
-    % check for the existence of file
     if ~exist(filepath,'file')
         error('ID:invalid_input', 'Passed file does not exist.');
     end
 
-    %% open sample_file
-    fID = fopen(filepath);
-    fline = fgetl(fID);
-    %% get header
-    headr_ctr = 1;
-    max_len=0;
-    idx_max=0;
-    while ~startsWith(fline,'10') || headr_ctr<24
-        str = strsplit(fline,'\t');
-        if length(str)>max_len && ~startsWith(str{1},'10')
-            max_len=length(str);
-            idx_max=headr_ctr;
-        end
-        headr_ctr = headr_ctr + 1;
-        fline = fgetl(fID);
+    [dataraw, marker, messages, chan_info, file_info] = parse_viewpoint_file(filepath);
+
+    channels = dataraw(:, chan_info.col_idx);
+    [channels, marker, chan_info] = parse_messages(messages, channels, marker, chan_info, file_info.eyesObserved);
+
+    sess_beg_indices = [find(contains(marker, '+')); size(dataraw, 1) + 1];
+    for sn = 1:numel(sess_beg_indices) - 1
+        begidx = sess_beg_indices(sn);
+        endidx = sess_beg_indices(sn + 1) - 1;
+        data{sn}.dataraw = dataraw(begidx : endidx, :);
+        data{sn}.dataraw_header = chan_info.read_numeric_columns';
+        data{sn}.channels = channels(begidx : endidx, :);
+        data{sn}.channels_header = chan_info.channels_header;
+        data{sn}.channels_units = chan_info.channels_units;
+        data{sn}.eyesObserved = file_info.eyesObserved;
+        data{sn}.viewingDistance = file_info.viewingDistance;
+        data{sn}.screenSize = file_info.screenSize;
+        data{sn}.record_date = file_info.record_date;
+        data{sn}.record_time = file_info.record_time;
+
+        markers_in_sess = marker(begidx : endidx);
+        nonempty_indices = find(cell2mat(cellfun(@(x) ~isempty(x), markers_in_sess, 'UniformOutput', 0)));
+        data{sn}.marker.names = markers_in_sess(nonempty_indices);
+        data{sn}.marker.pos = nonempty_indices;
+        data{sn}.marker.times = data{sn}.channels(nonempty_indices, 1);
     end
-    headr_ctr=headr_ctr-1;
-    formatSpec = repmat('%s',1,max_len);
-    frewind(fID);
-    header = textscan(fID,formatSpec,headr_ctr);
-    header=[header{:}];
-    %% process header (insert in data struct later)
-    % Date
-    [idx,idy] = find(cell2mat(cellfun(@(x) strncmpi(x,'TimeValues',10),header,'UniformOutput',0)));
-    record_date =[header(idx,idy+3),header(idx,idy+2),header(idx,idy+1)];
-    record_date = cellfun(@(x) [x,'.'],record_date,'UniformOutput', false);
-    record_date{end}=record_date{end}(1:4);
-    record_date = [record_date{:}];
-    % Time
-    record_time =header{idx+1,idy+5};
-    % gaze information
-    [idx,idy] = find(cell2mat(cellfun(@(x) strncmpi(x,'ScreenSize',10),header,'UniformOutput',0)));
-    screenSize.xmin=0;
-    screenSize.ymin=0;
-    screenSize.xmax= str2double(header{idx,idy+1});
-    screenSize.ymax= str2double(header{idx,idy+2});
-
-    % eyetracker distance
-    [idx,idy] = find(cell2mat(cellfun(@(x) strncmpi(x,'ViewingDistance',15),header,'UniformOutput',0)));
-    ViewingDistance = str2double(header{idx,idy+1});
-
-    % eyes observed and fix order of getting data
-    columns= header(idx_max,2:end);
-    Eye_A = cell2mat(cellfun(@(x)startsWith(x,'A'),columns,'UniformOutput',false));
-    Eye_B = cell2mat(cellfun(@(x)startsWith(x,'B'),columns,'UniformOutput',false));
-    if any(Eye_A)&& any(Eye_B)
-        eyesObserved = 'AB';
-        col_idx =[2,3,7,16,4,5,13,14];
-        channels_header = {'Time','pupil_A','pupil_B','gaze_x_A','gaze_y_A','gaze_x_B','gaze_y_B'};
-        channels_units = {'seconds','ratio','ratio','ratio','ratio','ratio','ratio'};
-    else
-        eyesObserved = 'A';
-        col_idx = [2,3,7,4,5];
-        channels_header = {'Time','pupil_A','gaze_x_A','gaze_y_A'};
-        channels_units = {'seconds','ratio','ratio','ratio'};
-    end
-    %% get data columns
-    % remember position where data recording start
-    pos = ftell(fID);
-    % get type and total time columns
-    type_time = textscan(fID, '%d8%f32%*[^\n]');
-    tag_type = type_time{1};
-    tot_time = type_time{1,2};
-
-    % look for asynchronous marker
-    async_mrk = tag_type==12;
-    async_sn = tag_type==2;
-    % get 3rd column for potential asynchronous marker
-    fseek(fID,pos,'bof');
-    markval = textscan(fID, '%*d8%*f32%s%*[^\n]');
-
-    % set file pointer back to beginning of data
-    fseek(fID,pos,'bof');
-    %% find nr.of columns and specify their units
-    data_format ='%f';
-    for i=1:numel(columns)
-        tmp = columns{i};
-        if contains(tmp,{'RI','STR','MRK'})
-            data_format = [data_format ' %s'];
-
-        else
-            data_format = [data_format ' %f'];
-        end
-    end
-
-    %% distinguish reading method based on synchronous or asynchronous methods.
-    % In the asynchronous setting no existance of MRK column
-    % session starts are indicated by '+' and session  stop by '='
-    % for each method we have to separate the sessions:
-    % - synchronous: session indicator are stored in the MRK channel.
-    % - asynchronous: session indicator are stored in data lines with tag 2
-    % First need to find the session, then iterate over session and save the data
-    if isempty(find(async_mrk,1))
-        % get whole data
-        datastr = textscan(fID, data_format);
-        data_len = size(datastr{1,3},1);
-        % get marker column to split the sessions
-        mrk = find(cell2mat(cellfun(@(x) strncmpi(x,'MRK',3),columns,'UniformOutput',0)));
-        mrk=mrk+1;
-        marker_col = datastr(mrk);
-        marker_col= [marker_col{:}];
-        % set file pointer back to beginning of data
-        fseek(fID,pos,'bof');
-        % get onsets
-        idx_onsets = cell2mat(cellfun(@(x)contains(x,'+'), marker_col,'uniformoutput',0));
-        % get offsets
-        idx_offsets = cell2mat(cellfun(@(x)contains(x,'='), marker_col,'uniformoutput',0));
-        on_offsets = get_onsets_offset_pair(idx_onsets,idx_offsets);
-        nr_sn = size(on_offsets,1);
-        data = cell(nr_sn,1);
-        % iterate over sessions and read in data
-        for sn = 1:nr_sn
-            % fix maker mode
-            data{sn}.marker.mod = 'sync';
-            % add header information to data
-            data{sn}.record_date      = record_date;
-            data{sn}.record_time      = record_time;
-            data{sn}.screenSize       = screenSize;
-            data{sn}.ViewingDistance  = ViewingDistance;
-            data{sn}.eyesObserved     = eyesObserved;
-            data{sn}.channels_header  = channels_header;
-            data{sn}.channels_units   = channels_units;
-
-            % get start and stop
-            onset  = on_offsets(sn,1);
-            offset = on_offsets(sn,2);
-
-            % save the raw data (all columns) in the data struct
-            data{sn}.dataraw = cell(size(datastr));
-            for k=1:length(datastr)
-                data{sn}.dataraw{k} = datastr{k}(onset:offset,:);
-            end
-            sn_length = size(data{sn}.dataraw{1},1);
-            data{sn}.dataraw_header = header(idx_max+1,2:end);
-
-            % get pupil and gaze data channels (time channels included)
-            channels = data{sn}.dataraw(:,col_idx);
-            data{sn}.channels=[channels{:}];
-            idx_0 = find(data{sn}.channels(:,1)==0);
-            if ~isempty(idx_0)
-                idx_0(idx_0==1) = [];
-                data{sn}.channels(idx_0,1) = data{sn}.channels(idx_0-1,1) + (data{sn}.channels(idx_0-1,2)/1000);
-            end
-            data{sn}.channels(:,2)=[];
-            col_idx(2) = [];
-            col_idx = col_idx - 1;
-            data{sn}.channel_indices = col_idx;
-            % Find all markers in marker column and save the value, the occurence
-            % time and the the positions
-            MRK=[];
-            for l=mrk:size(data{sn}.dataraw,2)
-                MRK = strcat(MRK,data{sn}.dataraw{1,l}(1:sn_length));
-            end
-            markIndxall = find(~strcmp(MRK,''));
-            data{sn}.marker.names=MRK(markIndxall);
-            names=unique(data{sn}.marker.names);
-            % only take valid markers, i.e., markers without starting/ending
-            % value
-            % 0 in values  marker, includes starting or ending
-            val_names = cell2mat(cellfun(@(x)~any(contains(x,{'=','+'})),names,'uniformoutput',false));
-            val_names=names(val_names);
-            data{sn}.marker.values=zeros(length(data{sn}.marker.names),1);
-            for k=1:length(val_names)
-                for l=1:length(markIndxall)
-                    if strcmpi(val_names{k},data{sn}.marker.names{l})
-                        data{sn}.marker.values(l)=k;
-                    end
-                end
-            end
-            data{sn}.marker.pos = markIndxall;
-            %timepoints of all markers
-            data{sn}.marker.times = data{sn}.channels(markIndxall,1);
-            % delete type column of dataraw
-            data{sn}.dataraw(1)=[];
-        end
-    else
-        % safe asynchronous marker values and times. The values are saved in
-        % the third column of the data
-        marker_col=markval{1};
-        % get onsets
-        idx_onsets = cell2mat(cellfun(@(x)contains(x,'+'), marker_col,'uniformoutput',0));
-        % get offsets
-        idx_offsets = cell2mat(cellfun(@(x)contains(x,'='), marker_col,'uniformoutput',0));
-        on_offsets = get_onsets_offset_pair(idx_onsets,idx_offsets);
-        nr_sn = size(on_offsets,1);
-        data = cell(nr_sn,1);
-
-        for sn=1:nr_sn
-            % helper row counter for textscan
-            row_counter = 0;
-            % fix maker mode
-            data{sn}.marker.mod = 'async';
-            % add header information to data
-            data{sn}.record_date      = record_date;
-            data{sn}.record_time      = record_time;
-            data{sn}.screenSize       = screenSize;
-            data{sn}.ViewingDistance  = ViewingDistance;
-            data{sn}.eyesObserved     = eyesObserved;
-            data{sn}.channels_header  = channels_header;
-            data{sn}.channels_units   = channels_units;
-
-            % get start and stop
-            onset  = on_offsets(sn,1);
-            offset = on_offsets(sn,2);
-            sn_length = offset-onset +1;
-
-            % create mask for valid marker in this session
-            val_data = zeros(length(marker_col),1);
-            val_data(onset:offset)=1;
-            val_mrk = (async_mrk | async_sn) & val_data;
-            data{sn}.marker.names  = marker_col(val_mrk);
-            data{sn}.marker.times  = tot_time(val_mrk);
-            data{sn}.marker.pos    = val_mrk;
-            % set for each valid marker an ID
-            names=unique(data{sn}.marker.names);
-            val_names = cell2mat(cellfun(@(x)~any(contains(x,{'=','+'})),names,'uniformoutput',false));
-            val_names=names(val_names);
-            data{sn}.marker.values=zeros(length(data{sn}.marker.names),1);
-            for k=1:length(val_names)
-                for l=1:length(data{sn}.marker.names)
-                    if strcmpi(val_names{k},data{sn}.marker.names{l})
-                        data{sn}.marker.values(l)=k;
-                    end
-                end
-            end
-            % find data sections between asynchronous markers in this session
-            good_mrk = find(val_mrk);
-            datsect=diff(good_mrk);
-            % set file pointer to correct location, i.e. to beginning of
-            % session
-            textscan(fID,data_format,onset-1);
-            % scipping onset marker
-            textscan(fID, '%*[^\n]',1);
-            % get first data segment
-            datastr = textscan(fID,data_format,datsect(1)-1);
-            % scipping marker
-            textscan(fID, '%*[^\n]',1);
-            for i=2:length(datsect)
-                helper  = textscan(fID, data_format,datsect(i)-1);
-                for j = 1:length(datastr)
-                    datastr{:,j} = [datastr{:,j};helper{:,j}];
-                end
-                textscan(fID, '%*[^\n]',1);
-            end
-            % save the raw data (all columns) in the data struct
-            data{sn}.dataraw = datastr;
-            data{sn}.dataraw_header = header(idx_max+1,2:end);
-            channels = data{sn}.dataraw(:,col_idx);
-            % get pupil and gaze data channels (time channels included)
-            data{sn}.channels=[channels{:}];
-            idx_0 = find(data{sn}.channels(:,1)==0);
-            if ~isempty(idx_0)
-                idx_0(idx_0==1) = [];
-                data{sn}.channels(idx_0,1) = data{sn}.channels(idx_0-1,1) + (data{sn}.channels(idx_0-1,2)/1000);
-            end
-            data{sn}.channels(:,2)=[];
-            col_idx(2) = [];
-            col_idx = col_idx - 1;
-            data{sn}.channel_indices = col_idx;
-        end
-    end
-    fclose(fID);
+    rmpath(bsearch_path);
 end
 
-function [idx_on_offsets] = get_onsets_offset_pair(onsets,offsets)
-    % input checks
-    if ~any(onsets)
-        idx_onsets = 1;
-    else
-        idx_onsets = find(onsets);
+function [dataraw, marker, messages, chan_info, file_info] = parse_viewpoint_file(filepath)
+    % read file
+    str = fileread(filepath);
+    has_backr = ~isempty(find(str == sprintf('\r'), 1, 'first'));
+    linefeeds = [0, strfind(str, sprintf('\n'))];
+
+    line_ctr = 1;
+    [file_info, line_ctr] = parse_metadata(str, line_ctr, linefeeds, has_backr);
+    [columns, column_ids, line_ctr] = parse_header(str, line_ctr, linefeeds, has_backr);
+
+    eyesObserved = 'A';
+    if any(startsWith(column_ids, 'B'))
+        eyesObserved = 'AB';
     end
-    if ~any(offsets)
-        idx_offsets = length(offsets);
-    else
-        idx_offsets = find(offsets);
+
+    [col_idx, channels_header, channels_units] = pspm_chans_in_file(column_ids, eyesObserved);
+    [msg_linenums, messages] = get_msg_lines(str, linefeeds, has_backr);
+
+    linefeeds = linefeeds(line_ctr : end);
+    str = str(linefeeds(1) + 1 : end);
+    msg_linenums = msg_linenums - line_ctr + 1;
+    linefeeds = linefeeds - linefeeds(1);
+
+    [read_numeric_columns, fmt_str] = get_columns_to_read(column_ids);
+
+    for msg_line = msg_linenums
+        begidx = linefeeds(msg_line) + 1;
+        str(begidx : begidx + 1) = '/';
     end
-    idx_on_offsets = zeros(length(idx_onsets),2);
-    for i=1:length(idx_onsets)
-        idx_on_offsets(i,1) = idx_onsets(i);
-        tmp = find(idx_onsets(i)<idx_offsets,1);
-        if isempty(tmp)
-            idx_on_offsets(i,2) = length(offsets);
-            continue
+    C = textscan(str, fmt_str, 'Delimiter', '\t', 'CollectOutput', 1, 'CommentStyle', '//');
+    dataraw = C{1};
+    marker = C{2};
+
+    file_info.columns = columns;
+    file_info.column_ids = column_ids;
+    file_info.eyesObserved = eyesObserved;
+    chan_info.read_numeric_columns = read_numeric_columns;
+    chan_info.col_idx = col_idx;
+    chan_info.channels_header = channels_header;
+    chan_info.channels_units = channels_units;
+end
+
+function [file_info, line_ctr] = parse_metadata(str, line_ctr, linefeeds, has_backr)
+    file_info.record_date = '00.00.0000';
+    file_info.record_time = '00:00:00';
+    file_info.viewingDistance = -1;
+    file_info.screenSize.xmin = 0;
+    file_info.screenSize.xmax = -1;
+    file_info.screenSize.ymin = 0;
+    file_info.screenSize.ymax = -1;
+    curr_line = str(linefeeds(line_ctr) + 1 : linefeeds(line_ctr + 1) - 1 - has_backr);
+    tab = sprintf('\t');
+    while startsWith(curr_line, '3')
+        if contains(curr_line, 'TimeStamp')
+            parts = split(curr_line, tab);
+            date_part = parts{3};
+            date_fmt = 'eeee, MMMM d, yyyy, hh:mm:ss a';
+            date = datetime(date_part, 'InputFormat', date_fmt);
+            file_info.record_date = sprintf('%.2d.%.2d.%.2d', date.Day, date.Month, date.Year);
+            file_info.record_time = sprintf('%.2d:%.2d:%.2d', date.Hour, date.Minute, date.Second);
+        elseif contains(curr_line, 'ScreenSize')
+            parts = split(curr_line, tab);
+            file_info.screenSize.xmax = str2double(parts{3});
+            file_info.screenSize.ymax = str2double(parts{4});
+        elseif contains(curr_line, 'ViewingDistance')
+            parts = split(curr_line, tab);
+            file_info.viewingDistance = str2double(parts{3});
         end
-        idx_on_offsets(i,2) = idx_offsets(tmp);
+        line_ctr = line_ctr + 1;
+        curr_line = str(linefeeds(line_ctr) + 1 : linefeeds(line_ctr + 1) - 1 - has_backr);
+    end
+end
+
+function [columns, column_ids, line_ctr] = parse_header(str, line_ctr, linefeeds, has_backr)
+    columns = {};
+    column_ids = {};
+    curr_line = str(linefeeds(line_ctr) + 1 : linefeeds(line_ctr + 1) - 1 - has_backr);
+    tab = sprintf('\t');
+    while ~startsWith(curr_line, '10')
+        if startsWith(curr_line, '6')
+            parts = split(curr_line, tab);
+            column_ids = parts(2 : end);
+        elseif startsWith(curr_line, '5')
+            parts = split(curr_line, tab);
+            columns = parts(2 : end);
+        end
+        line_ctr = line_ctr + 1;
+        curr_line = str(linefeeds(line_ctr) + 1 : linefeeds(line_ctr + 1) - 1 - has_backr);
+    end
+end
+
+function [col_idx, channels_header, channels_units] = pspm_chans_in_file(column_ids, eyesObserved)
+    total_time_index = find(strcmp(column_ids, 'ATT'));
+    col_idx = [total_time_index];
+    channels_header = {'Time'};
+    channels_units = {'seconds'};
+    for which_eye = eyesObserved
+        pupil_width_index = find(strcmp(column_ids, [which_eye 'PW']));
+        gaze_col_indices = find(strcmp(column_ids, [which_eye 'LX']) | strcmp(column_ids, [which_eye 'LY']));
+        corrected_gaze_col_indices = find(strcmp(column_ids, [which_eye 'CX']) | strcmp(column_ids, [which_eye 'CY']));
+        pupil_dia_index = find(strcmp(column_ids, [which_eye 'PD']));
+
+        n_prev_cols = numel(col_idx);
+        col_idx = [col_idx; pupil_width_index; gaze_col_indices];
+        channels_header = [channels_header; ['pupil_' which_eye]; ['gaze_x_' which_eye]; ['gaze_y_' which_eye]];
+        channels_units = [channels_units; 'ratio'; 'ratio'; 'ratio'];
+
+        if ~isempty(pupil_dia_index)
+            col_idx(n_prev_cols + 1) = pupil_dia_index;
+            channels_units{n_prev_cols + 1} = 'mm';
+        end
+
+        if ~isempty(corrected_gaze_col_indices)
+            if numel(gaze_col_indices) ~= numel(corrected_gaze_col_indices)
+                error('ID:invalid_datafile', ['Your viewpoint datafile does not conform to the standards.'
+                    ' Please make sure you use a standard datafile']);
+            end
+            col_idx(n_prev_cols + 2 : n_prev_cols + numel(corrected_gaze_col_indices)) = corrected_gaze_col_indices;
+        end
+    end
+end
+
+function [msg_linenums, messages] = get_msg_lines(str, linefeeds, has_backr)
+    data_beg_indices = strfind(str, sprintf('\n10\t'));
+    datalines = [bsearch(linefeeds, data_beg_indices), numel(linefeeds)];
+    n_message_lines = max(0, diff(datalines) - 1);
+    datalines_msg_beg_indices = find(n_message_lines > 0);
+    msg_beg_lines = int32(datalines(datalines_msg_beg_indices) + 1);
+    msg_end_lines = int32(datalines(datalines_msg_beg_indices) + n_message_lines(datalines_msg_beg_indices));
+    msg_linenums = [];
+    for i = 1:numel(msg_beg_lines)
+        msg_linenums(end + 1 : end + 1 + msg_end_lines(i) - msg_beg_lines(i)) = msg_beg_lines(i) : msg_end_lines(i);
+    end
+
+    messages = {};
+    for msg_line = msg_linenums
+        begidx = linefeeds(msg_line) + 1;
+        endidx = linefeeds(msg_line + 1) - 1 - has_backr;
+        messages{end + 1} = str(begidx : endidx);
+    end
+end
+
+function [read_numeric_columns, fmt_str] = get_columns_to_read(column_ids)
+    read_numeric_columns = ['TYPE'; column_ids];
+    fmt_array = cell(1, numel(read_numeric_columns));
+    fmt_array(:) = {'%f'};
+    region_indices = find(endsWith(read_numeric_columns, 'RI'));
+    marker_index = find(strcmp(read_numeric_columns, 'MRK'));
+    str_index = find(strcmp(read_numeric_columns, 'STR'));
+
+    fmt_array{1} = '%*f';
+    indices_to_remove = [1];
+    fmt_array(region_indices) = {'%*s'};
+    indices_to_remove = [indices_to_remove; region_indices];
+    fmt_array{marker_index} = '%s';
+    indices_to_remove = [indices_to_remove; marker_index];
+    if ~isempty(str_index)
+        fmt_array{str_index} = '%*s';
+        indices_to_remove = [indices_to_remove; str_index];
+    end
+    read_numeric_columns(indices_to_remove) = [];
+    fmt_str = join(fmt_array, '\t');
+    fmt_str = fmt_str{1};
+end
+
+function [channels, marker, chan_info] = parse_messages(messages, channels, marker, chan_info, eyesObserved)
+    has_messages = ~isempty(messages);
+    tab = sprintf('\t');
+    if has_messages
+        blinks_A = false(size(channels, 1), 1);
+        blinks_B = false(size(channels, 1), 1);
+        saccades_A = false(size(channels, 1), 1);
+        saccades_B = false(size(channels, 1), 1);
+        timecol = channels(:, 1);
+        for msgline = messages
+            parts = split(msgline, tab);
+            msg_type = str2num(parts{1});
+            if msg_type == 2 || msg_type == 12
+                timestamp = str2double(parts{2});
+                msg = parts{3};
+                insert_idx = bsearch(timecol, timestamp);
+                if timecol(insert_idx) == timestamp
+                    marker{insert_idx} = msg;
+                end
+            elseif msg_type == 14
+                continue;
+            elseif (contains(msgline, 'Saccade') || contains(msgline, 'Blink')) && endsWith(msgline, 'sec')
+                timestamp = str2double(parts{2});
+                msg = parts{3};
+                forbeg_idx = strfind(msg, ' for ');
+                secbeg_idx = forbeg_idx + strfind(msg(forbeg_idx + 1 : end), ' ') + 1;
+                secend_idx = secbeg_idx + strfind(msg(secbeg_idx + 1 : end), ' ') - 1;
+                duration = str2double(msg(secbeg_idx : secend_idx));
+                beg_timestamp = round(timestamp - duration, 4);
+
+                index_of_beg_timestamp = bsearch(timecol, beg_timestamp);
+                index_of_curr_timestamp = bsearch(timecol, timestamp);
+
+                if contains(msgline, 'A:Saccade')
+                    saccades_A(index_of_beg_timestamp : index_of_curr_timestamp - 1) = true;
+                elseif contains(msgline, 'B:Saccade')
+                    saccades_B(index_of_beg_timestamp : index_of_curr_timestamp - 1) = true;
+                elseif contains(msgline, 'A:Blink')
+                    blinks_A(index_of_beg_timestamp : index_of_curr_timestamp - 1) = true;
+                else
+                    blinks_B(index_of_beg_timestamp : index_of_curr_timestamp - 1) = true;
+                end
+            end
+        end
+        curr_n_cols = size(channels, 2);
+        channels(:, curr_n_cols + 1) = blinks_A;
+        channels(:, curr_n_cols + 2) = saccades_A;
+        chan_info.channels_header = [chan_info.channels_header; 'blink_A'; 'saccade_A'];
+        chan_info.channels_units = [chan_info.channels_units; 'blink'; 'saccade'];
+        chan_info.col_idx = [chan_info.col_idx; curr_n_cols + 1; curr_n_cols + 2];
+        if strcmp(eyesObserved, 'AB')
+            channels(:, curr_n_cols + 3) = blinks_B;
+            channels(:, curr_n_cols + 4) = saccades_B;
+            chan_info.channels_header = [chan_info.channels_header; 'blink_B'; 'saccade_B'];
+            chan_info.channels_units = [chan_info.channels_units; 'blink'; 'saccade'];
+            chan_info.col_idx = [chan_info.col_idx; curr_n_cols + 3; curr_n_cols + 4];
+        end
     end
 end
