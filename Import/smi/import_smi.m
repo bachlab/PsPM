@@ -201,6 +201,10 @@ function [data] = import_smi(varargin)
         addpath(toolbox_path);
         % get events from event file
         [eventsRaw,smiParams2] = ReadSmiEvents_custom(events_file);
+        eventsRaw.Blinks.Start = max(0, eventsRaw.Blinks.Start - experiment_begin_time);
+        eventsRaw.Blinks.End = max(0, eventsRaw.Blinks.End - experiment_begin_time);
+        eventsRaw.Saccades.Start = max(0, eventsRaw.Saccades.Start - experiment_begin_time);
+        eventsRaw.Saccades.End = max(0, eventsRaw.Saccades.End - experiment_begin_time);
 
         % get right format
         % get names of fields
