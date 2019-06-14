@@ -44,7 +44,7 @@ addpath([settings.path, 'Import', filesep, 'eyelink']);
 reference_distance = 700;
 reference_unit = 'mm';
 diameter_multiplicator = 0.00087743;
-area_multiplicator = 0.12652;
+area_multiplicator = 0.119;
 
 % load data with specific function
 % -------------------------------------------------------------------------
