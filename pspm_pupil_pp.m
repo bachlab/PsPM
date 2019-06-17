@@ -38,7 +38,7 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
     %               custom_settings: Settings structure to modify the preprocessing
     %                                steps. Default settings structure can be obtained
     %                                by calling pspm_pupil_pp_options function.
-    %                                (Default: Result of pspm_pupil_pp_options)
+    %                                (Default: See <a href="matlab:help pspm_pupil_pp_options">pspm_pupil_pp_options</a>)
     %
     %               segments:        Structure with the following fields:
     %                   start:
@@ -160,8 +160,11 @@ function [sts, smooth_signal] = preprocess(data, custom_settings, plot_data)
         smooth_signal.header.valid_samples.valid_percentage = model.leftPupil_ValidSamples.validFraction;
 
         smooth_signal.data = model.leftPupil_ValidSamples.signal.pupilDiameter;
-        n_missing_at_the_end = desired_output_samples - numel(smooth_signal.data);
-        smooth_signal.data(end + 1 : end + n_missing_at_the_end) = NaN;
+        sec_between_upsampled_samples = 1 / new_sr;
+        n_missing_at_the_beg = round(model.leftPupil_ValidSamples.signal.t(1) / sec_between_upsampled_samples);
+        n_missing_at_the_end = desired_output_samples - numel(smooth_signal.data) - n_missing_at_the_beg;
+
+        smooth_signal.data = [NaN(n_missing_at_the_beg, 1) ; smooth_signal.data ; NaN(n_missing_at_the_end, 1)];
 
         if plot_data
             model.plotData();
@@ -175,6 +178,6 @@ function [sts, smooth_signal] = preprocess(data, custom_settings, plot_data)
 
     rmpath(libpath{:});
     if sts == 0
-        sts = 1
+        sts = 1;
     end
 end

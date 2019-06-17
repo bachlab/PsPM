@@ -33,7 +33,8 @@ function [sts, default_settings] = pspm_pupil_pp_options()
     % from other samples.
     %
     % raw.islandFilter_islandSeperation_ms:  Minimum distance used to consider samples
-    %                                        'separated'. (Default: 40 ms)
+    %                                        'separated'.
+    %                                        (Default: 40 ms)
     %
     % raw.islandFilter_minIslandWidth_ms:    Minimum temporal width required to still
     %                                        consider a sample island valid.  If the
@@ -88,11 +89,6 @@ function [sts, default_settings] = pspm_pupil_pp_options()
     %
     % raw.residualsFilter_passes:            Number of passes the deviation filter makes.
     %                                        (Default: 4)
-    %
-    % After each pass, all input samples that are outide of the threshold,
-    % which is the multiple stated below of the median, are removed. Note
-    % that all input samples are considered (including samples which may
-    % have been rejected by the previous deviation filter passes).
     %
     % raw.residualsFilter_MadMultiplier:     The multiplier used when defining the
     %                                        threshold.  Threshold equals this multiplier
