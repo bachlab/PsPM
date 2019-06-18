@@ -1,13 +1,13 @@
-function [sts, pupil_corrected] = pspm_pupil_correct(pupil_mm, gaze_x_mm, gaze_y_mm, geometry_setup)
+function [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm, geometry_setup)
     % pspm_pupil_correct performs pupil foreshortening error (PFE) correction for
     % arbitrary eye tracker measurements according to equations (3) and (4) in [1].
     %  
     %   FORMAT:
-    %       [sts, pupil_corrected] = pspm_pupil_correct(pupil_mm, gaze_x_mm, gaze_y_mm, geometry_setup)
+    %       [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm, geometry_setup)
     %
     %   INPUT:
-    %       pupil_mm:        Numeric array containing pupil diameter.
-    %                        (Unit: mm)
+    %       pupil:           Numeric array containing pupil diameter.
+    %                        (Unit: any unit)
     %
     %       gaze_x_mm:       Numeric array containing gaze x positions.
     %                        (Unit: mm)
@@ -68,12 +68,12 @@ function [sts, pupil_corrected] = pspm_pupil_correct(pupil_mm, gaze_x_mm, gaze_y
 
     % input checks
     % -------------------------------------------------------------------------
-    same_sizes = all(size(pupil_mm) == size(gaze_x_mm)) && all(size(gaze_x_mm) == size(gaze_y_mm));
+    same_sizes = all(size(pupil) == size(gaze_x_mm)) && all(size(gaze_x_mm) == size(gaze_y_mm));
     if ~same_sizes
         warning('ID:invalid_input', 'All input arrays must have the same sizes');
         return;
     end
-    if ~any(ismember(size(pupil_mm), 1))
+    if ~any(ismember(size(pupil), 1))
         warning('ID:invalid_input', 'All input arrays must be 1D');
         return;
     end
@@ -92,9 +92,9 @@ function [sts, pupil_corrected] = pspm_pupil_correct(pupil_mm, gaze_x_mm, gaze_y
 
     % correction
     % -------------------------------------------------------------------------
-    is_rowvec = size(pupil_mm, 1) == 1;
+    is_rowvec = size(pupil, 1) == 1;
     if is_rowvec
-        pupil_mm = pupil_mm';
+        pupil = pupil';
         gaze_x_mm = gaze_x_mm';
         gaze_y_mm = gaze_y_mm';
     end
@@ -108,7 +108,7 @@ function [sts, pupil_corrected] = pspm_pupil_correct(pupil_mm, gaze_x_mm, gaze_y
     T = bsxfun(@rdivide, T, vecnorm(T, 2, 2));
 
     cosine = T*c;
-    pupil_corrected = pupil_mm ./ sqrt(cosine);
+    pupil_corrected = pupil ./ sqrt(cosine);
 
     if is_rowvec
         pupil_corrected = pupil_corrected';
