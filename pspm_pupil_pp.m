@@ -4,9 +4,9 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
     % uses a modified version of [2]. The modified version with a list of
     % changes from the original is shipped with PsPM under pupil-size directory.
     %  
-    % Once the data is preprocessed, according to the option 'channel_action',
-    % it will either replace the existing channel or add it as new channel to
-    % the provided file.
+    % Once the pupil data is preprocessed, according to the option 'channel_action',
+    % it will either replace an existing preprocessed pupil channel or add it as new
+    % channel to the provided file.
     %
     %   FORMAT:  [sts, out_channel] = pspm_pupil_pp(fn)
     %            [sts, out_channel] = pspm_pupil_pp(fn, options)
@@ -17,8 +17,32 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
     %           Optional:
     %               channel:         [numeric/string] Channel ID to be preprocessed.
     %                                (Default: 'pupil')
-    %                                For the chosen channel type, a preprocessed channel
-    %                                will be added whose type has an extra '_pp' suffix.
+    %
+    %                                Preprocessing raw eye data:
+    %                                The best eye is processed when channel is 'pupil'.
+    %                                In order to process a specific eye, use 'pupil_l' or
+    %                                'pupil_r'. 
+    %
+    %                                Preprocessing previously processed data:
+    %                                Pupil channels created from other preprocessing steps
+    %                                can be further processed by this function. To enable
+    %                                this, pass one of 'pupil_l_pp' or 'pupil_r_pp'.
+    %                                There is no best eye selection in this mode.
+    %                                Hence, the type of the channel must be given exactly.
+    %
+    %                                Finally, a channel can be specified by its
+    %                                index in the given PsPM data structure. It will be
+    %                                preprocessed as long as it is a valid pupil channel.
+    %
+    %                                If channel is specified as a string and there are
+    %                                multiple channels with the exact same type, only the
+    %                                last one will be processed. This is normally not the
+    %                                case with raw data channels; however, there may be
+    %                                multiple preprocessed channels with same type if 'add'
+    %                                channel_action was previously used. This feature can
+    %                                be combined with 'add' channel_action to create
+    %                                preprocessing histories where the result of each step
+    %                                is stored as a separate channel. 
     %
     %                                .data field of the preprocessed channel contains
     %                                the smoothed, upsampled signal that is the result
@@ -30,9 +54,26 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
     %                                usual information of PsPM channels. This valid sample
     %                                info is stored in .header.valid_samples field.
     %
-    %               channel_action:  ['add'/'replace'] Defines whether preprocessed
-    %                                data should be added ('add') or the corresponding
-    %                                preprocessed channel should be replaced ('replace').
+    %               channel_combine: [numeric/string] Channel ID to be used for computing
+    %                                the mean pupil signal.
+    %                                (Default: 'none')
+    %
+    %                                The input format is exactly the same as the .channel
+    %                                field. However, the eye specified in this channel
+    %                                must be different than the one specified in .channel
+    %                                field.
+    %
+    %                                By default, this channel is not used. Only specify
+    %                                it if you want to combine left and right pupil eye
+    %                                signals. When specified, the type of the output channel
+    %                                is 'pupil_lr_pp'.
+    %
+    %               channel_action:  ['add'/'replace'] Defines whether corrected data
+    %                                should be added or the corresponding preprocessed
+    %                                channel should be replaced. Note that 'replace' mode
+    %                                does not replace the raw data channel, but a previously
+    %                                stored preprocessed channel with a '_pp' suffix at the
+    %                                end of its type.
     %                                (Default: 'replace')
     %
     %               custom_settings: Settings structure to modify the preprocessing
@@ -73,7 +114,9 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
     if ~isfield(options, 'channel_action')
         options.channel_action = 'replace';
     end
-
+    if ~isfield(options, 'channel_combine')
+        options.channel_combine = 'none';
+    end
     if ~isfield(options, 'plot_data')
         options.plot_data = false;
     end
@@ -88,80 +131,130 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
         warning('ID:invalid_input', 'Option channel_action must be either ''add'' or ''replace''');
         return;
     end
-    if ~isnumeric(options.channel) && ~ischar(options.channel)
-        warning('ID:invalid_input', 'Option channel must be a string or numeric');
-        return;
-    end
-    if ischar(options.channel) && ~strcmpi(options.channel, 'pupil')
-        warning('ID:invalid_input', 'Option channel must be an integer or ''pupil''');
-        return;
-    end
 
     % load
     % -------------------------------------------------------------------------
-    [lsts, infos, data] = pspm_load_data(fn, options.channel);
+    is_combined = ~strcmp(options.channel_combine, 'none');
+
+    [lsts, data] = load_pupil(fn, options.channel);
     if lsts ~= 1; return; end;
-    chantype = data{1}.header.chantype;
-    unit = data{1}.header.units;
-    if ~strcmpi(chantype, 'pupil_l') && ~strcmpi(chantype, 'pupil_r')
-        warning('ID:invalid_input', sprintf('Loaded chantype %s does not correspond to a pupil channel', chantype));
-        return;
+    if is_combined
+        [lsts, data_combine] = load_pupil(fn, options.channel_combine);
+        if lsts ~= 1; return; end;
+        if strcmp(get_eye(data{1}.header.chantype), get_eye(data_combine{1}.header.chantype))
+            warning('ID:invalid_input', 'options.channel and options.channel_combine must specify different eyes');
+            return;
+        end
+        if data{1}.header.sr ~= data_combine{1}.header.sr
+            warning('ID:invalid_input', 'options.channel and options.channel_combine data have different sampling rate');
+            return;
+        end
+        if ~strcmp(data{1}.header.units, data_combine{1}.header.units)
+            warning('ID:invalid_input', 'options.channel and options.channel_combine data have different units');
+            return;
+        end
+        if numel(data{1}.data) ~= numel(data_combine{1}.data)
+            warning('ID:invalid_input', 'options.channel and options.channel_combine data have different lengths');
+            return;
+        end
+    else
+        data_combine{1}.data = [];
     end
 
     % preprocess
     % -------------------------------------------------------------------------
-    [psts, smooth_signal] = preprocess(data, options.custom_settings, options.plot_data);
+    [lsts, smooth_signal] = preprocess(data, data_combine, options.custom_settings, options.plot_data);
+    if lsts ~= 1; return; end;
 
     % save
     % -------------------------------------------------------------------------
     [lsts, out_id] = pspm_write_channel(fn, smooth_signal, options.channel_action);
     if lsts ~= 1; return; end;
-    out_channel = out_id.channel;
 
-    sts = psts;
+    out_channel = out_id.channel;
+    sts = 1;
 end
 
-function [sts, smooth_signal] = preprocess(data, custom_settings, plot_data)
+function [sts, smooth_signal] = preprocess(data, data_combine, custom_settings, plot_data)
     sts = 0;
 
+    % definitions
+    % -------------------------------------------------------------------------
+    combining = ~isempty(data_combine{1}.data);
+    data_is_left = strcmpi(get_eye(data{1}.header.chantype), 'l');
     n_samples = numel(data{1}.data);
     sr = data{1}.header.sr;
     diameter.t_ms = linspace(0, 1000 * n_samples / sr, n_samples)';
-    diameter.L = data{1}.data;
+
+    if data_is_left
+        diameter.L = data{1}.data;
+        diameter.R = data_combine{1}.data;
+    else
+        diameter.L = data_combine{1}.data;
+        diameter.R = data{1}.data;
+    end
     if size(diameter.L, 1) == 1
         diameter.L = diameter.L';
     end
-    diameter.R = [];
+    if size(diameter.R, 1) == 1
+        diameter.R = diameter.R';
+    end
     zeroTime_ms = 0;
     segmentStart = [];
     segmentEnd = [];
     segmentName = {};
     segmentTable = table(segmentStart, segmentEnd, segmentName);
-
-    libbase_path = fullfile(fileparts(which('pspm_pupil_pp')), 'pupil-size', 'code');
-    libpath = {fullfile(libbase_path, 'dataModels'), fullfile(libbase_path, 'helperFunctions')};
-    addpath(libpath{:});
-
     new_sr = custom_settings.valid.interp_upsamplingFreq;
     upsampling_factor = new_sr / sr;
     desired_output_samples = int32(upsampling_factor * numel(data{1}.data));
 
+    % load lib
+    % -------------------------------------------------------------------------
+    libbase_path = fullfile(fileparts(which('pspm_pupil_pp')), 'pupil-size', 'code');
+    libpath = {fullfile(libbase_path, 'dataModels'), fullfile(libbase_path, 'helperFunctions')};
+    addpath(libpath{:});
+
+    % filtering
+    % -------------------------------------------------------------------------
     model = PupilDataModel(data{1}.header.units, diameter, segmentTable, zeroTime_ms, custom_settings);
     model.filterRawData();
-    smooth_signal.header.chantype = [data{1}.header.chantype '_pp'];
+    if combining
+        smooth_signal.header.chantype = 'pupil_lr_pp';
+    else
+        smooth_signal.header.chantype = [data{1}.header.chantype '_pp'];
+    end
     smooth_signal.header.units = data{1}.header.units;
     smooth_signal.header.sr = new_sr;
 
     try
         model.processValidSamples();
 
-        smooth_signal.header.valid_samples.data = model.leftPupil_ValidSamples.samples.pupilDiameter;
-        smooth_signal.header.valid_samples.sample_indices = find(model.leftPupil_RawData.isValid);
-        smooth_signal.header.valid_samples.valid_percentage = model.leftPupil_ValidSamples.validFraction;
+        if combining
+            validsamples_obj = model.meanPupil_ValidSamples;
 
-        smooth_signal.data = model.leftPupil_ValidSamples.signal.pupilDiameter;
+            smooth_signal.header.valid_samples.data_l = model.leftPupil_ValidSamples.samples.pupilDiameter;
+            smooth_signal.header.valid_samples.sample_indices_l = model.leftPupil_RawData.isValid;
+            smooth_signal.header.valid_samples.valid_percentage_l = model.leftPupil_ValidSamples.validFraction;
+            smooth_signal.header.valid_samples.data_r = model.rightPupil_ValidSamples.samples.pupilDiameter;
+            smooth_signal.header.valid_samples.sample_indices_r = model.rightPupil_RawData.isValid;
+            smooth_signal.header.valid_samples.valid_percentage_r = model.rightPupil_ValidSamples.validFraction;
+        else
+            if data_is_left
+                validsamples_obj = model.leftPupil_ValidSamples;
+                rawdata_obj = model.leftPupil_RawData;
+            else
+                validsamples_obj = model.rightPupil_ValidSamples;
+                rawdata_obj = model.rightPupil_RawData;
+            end
+
+            smooth_signal.header.valid_samples.data = validsamples_obj.samples.pupilDiameter;
+            smooth_signal.header.valid_samples.sample_indices = find(rawdata_obj.isValid);
+            smooth_signal.header.valid_samples.valid_percentage = validsamples_obj.validFraction;
+        end
+
+        smooth_signal.data = validsamples_obj.signal.pupilDiameter;
         sec_between_upsampled_samples = 1 / new_sr;
-        n_missing_at_the_beg = round(model.leftPupil_ValidSamples.signal.t(1) / sec_between_upsampled_samples);
+        n_missing_at_the_beg = round(validsamples_obj.signal.t(1) / sec_between_upsampled_samples);
         n_missing_at_the_end = desired_output_samples - numel(smooth_signal.data) - n_missing_at_the_beg;
 
         smooth_signal.data = [NaN(n_missing_at_the_beg, 1) ; smooth_signal.data ; NaN(n_missing_at_the_end, 1)];
@@ -180,4 +273,33 @@ function [sts, smooth_signal] = preprocess(data, custom_settings, plot_data)
     if sts == 0
         sts = 1;
     end
+end
+
+function eyestr = get_eye(pupil_chantype)
+    indices = strfind(pupil_chantype, '_');
+    if numel(indices) == 1
+        begidx = indices(1) + 1;
+        endidx = numel(pupil_chantype);
+    else
+        begidx = indices(1) + 1;
+        endidx = indices(2) - 1;
+    end
+    eyestr = pupil_chantype(begidx : endidx);
+end
+
+function [sts, data_cell] = load_pupil(fn, chan)
+    sts = -1;
+    [lsts, infos, data_cell] = pspm_load_data(fn, chan);
+    if lsts ~= 1; return; end;
+    if numel(data_cell) > 1
+        warning('ID:multiple_channels', ['There is more than one channel'...
+            ' with type %s in the data file.\n'...
+            ' We will process only the last one.\n'], chan);
+        data_cell = data_cell(end);
+    end
+    if ~contains(data_cell{1}.header.chantype, 'pupil')
+        warning('ID:invalid_input', sprintf('Loaded chantype %s does not correspond to a pupil channel', data_cell{1}.header.chantype));
+        return;
+    end
+    sts = 1;
 end
