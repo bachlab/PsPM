@@ -1,5 +1,5 @@
 function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
-    % pspm_pupil_correct performs pupil foreshortening error (PFE) correction specifically
+    % pspm_pupil_correct_eyelink performs pupil foreshortening error (PFE) correction specifically
     % for Eyelink recorded and imported data following the steps described in [1]. For
     % details of the exact scaling, see <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>.
     %

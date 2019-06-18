@@ -1,6 +1,13 @@
 function [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm, geometry_setup)
     % pspm_pupil_correct performs pupil foreshortening error (PFE) correction for
     % arbitrary eye tracker measurements according to equations (3) and (4) in [1].
+    % In particular,
+    %
+    % 1. Target points (T_x, T_y, T_z) are calculated using gaze x and y positions at each timestep
+    % 2. Cosine of the oblique angle is computed using the dot products of unitary vectors
+    % corresponding to camera C and target T.
+    % 3. Diameter values are scaled using 1/sqrt(cos). Hence, the corrected pupil values
+    % are at least as big as the input pupil values.
     %  
     %   FORMAT:
     %       [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm, geometry_setup)
@@ -52,7 +59,7 @@ function [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm
     %
     %   OUTPUT:
     %       pupil_corrected: PFE corrected pupil data.
-    %                        (Unit: mm)
+    %                        (Unit: unit of the input pupil data)
     %
     % [1] Hayes, Taylor R., and Alexander A. Petrov. "Mapping and correcting the
     %     influence of gaze position on pupil size measurements." Behavior
