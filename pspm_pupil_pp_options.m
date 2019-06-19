@@ -132,7 +132,7 @@ function [sts, default_settings] = pspm_pupil_pp_options()
     %
     % valid.LpFilt_order:                    Filter order of the lowpass filter used during
     %                                        final smoothing.
-    %                                        (Default: 4 Hz)
+    %                                        (Default: 4)
     %
     % valid.interp_maxGap:                   Maximum gap in the used (valid) raw samples to
     %                                        interpolate over. Sections that were

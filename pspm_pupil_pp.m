@@ -81,10 +81,22 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
     %                                by calling pspm_pupil_pp_options function.
     %                                (Default: See <a href="matlab:help pspm_pupil_pp_options">pspm_pupil_pp_options</a>)
     %
-    %               segments:        Structure with the following fields:
-    %                   start:
-    %                   end:
-    %                   name:
+    %               segments:        Statistics about user defined segments can be
+    %                                calculated.  When specified, segments will be
+    %                                stored in .header.segments field.
+    %
+    %                                segments must be a cell array of structures.
+    %                                Each structure must have the the following
+    %                                fields:
+    %
+    %                   start:       Starting time of the segment
+    %                                (Unit: second)
+    %
+    %                   end:         Ending time of the segment
+    %                                (Unit: second)
+    %
+    %                   name:        Name of the segment. Segment will be stored by this
+    %                                name.
     %
     %               plot_data:       Plot the preprocessing steps if true.
     %                                (Default: false)
@@ -124,12 +136,21 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
         [lsts, options.custom_settings] = pspm_pupil_pp_options();
         if lsts ~= 1; return; end;
     end
+    if ~isfield(options, 'segments')
+        options.segments = {};
+    end
 
     % input checks
     % -------------------------------------------------------------------------
     if ~ismember(options.channel_action, {'add', 'replace'})
         warning('ID:invalid_input', 'Option channel_action must be either ''add'' or ''replace''');
         return;
+    end
+    for seg = options.segments
+        if ~isfield(seg{1}, 'start') || ~isfield(seg{1}, 'end') || ~isfield(seg{1}, 'name')
+            warning('ID:invalid_input', 'Each segment structure must have .start, .end and .name fields');
+            return;
+        end
     end
 
     % load
@@ -163,7 +184,7 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
 
     % preprocess
     % -------------------------------------------------------------------------
-    [lsts, smooth_signal] = preprocess(data, data_combine, options.custom_settings, options.plot_data);
+    [lsts, smooth_signal] = preprocess(data, data_combine, options.segments, options.custom_settings, options.plot_data);
     if lsts ~= 1; return; end;
 
     % save
@@ -175,7 +196,7 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
     sts = 1;
 end
 
-function [sts, smooth_signal] = preprocess(data, data_combine, custom_settings, plot_data)
+function [sts, smooth_signal] = preprocess(data, data_combine, segments, custom_settings, plot_data)
     sts = 0;
 
     % definitions
@@ -199,10 +220,9 @@ function [sts, smooth_signal] = preprocess(data, data_combine, custom_settings, 
     if size(diameter.R, 1) == 1
         diameter.R = diameter.R';
     end
-    zeroTime_ms = 0;
-    segmentStart = [];
-    segmentEnd = [];
-    segmentName = {};
+    segmentStart = cell2mat(cellfun(@(x) x.start, segments, 'uni', false))';
+    segmentEnd = cell2mat(cellfun(@(x) x.end, segments, 'uni', false))';
+    segmentName = cellfun(@(x) x.name, segments, 'uni', false)';
     segmentTable = table(segmentStart, segmentEnd, segmentName);
     new_sr = custom_settings.valid.interp_upsamplingFreq;
     upsampling_factor = new_sr / sr;
@@ -216,19 +236,23 @@ function [sts, smooth_signal] = preprocess(data, data_combine, custom_settings, 
 
     % filtering
     % -------------------------------------------------------------------------
-    model = PupilDataModel(data{1}.header.units, diameter, segmentTable, zeroTime_ms, custom_settings);
+    model = PupilDataModel(data{1}.header.units, diameter, segmentTable, 0, custom_settings);
     model.filterRawData();
     if combining
         smooth_signal.header.chantype = 'pupil_lr_pp';
+    elseif endsWith(data{1}.header.chantype, '_pp')
+        smooth_signal.header.chantype = data{1}.header.chantype; 
     else
         smooth_signal.header.chantype = [data{1}.header.chantype '_pp'];
     end
     smooth_signal.header.units = data{1}.header.units;
     smooth_signal.header.sr = new_sr;
+    smooth_signal.header.segments = segments;
 
     try
+        % store signal and valid samples
+        % ------------------------------
         model.processValidSamples();
-
         if combining
             validsamples_obj = model.meanPupil_ValidSamples;
 
@@ -253,11 +277,21 @@ function [sts, smooth_signal] = preprocess(data, data_combine, custom_settings, 
         end
 
         smooth_signal.data = validsamples_obj.signal.pupilDiameter;
-        sec_between_upsampled_samples = 1 / new_sr;
-        n_missing_at_the_beg = round(validsamples_obj.signal.t(1) / sec_between_upsampled_samples);
-        n_missing_at_the_end = desired_output_samples - numel(smooth_signal.data) - n_missing_at_the_beg;
+        smooth_signal.data = complete_with_nans(smooth_signal.data, validsamples_obj.signal.t(1), ...
+            new_sr, desired_output_samples);
 
-        smooth_signal.data = [NaN(n_missing_at_the_beg, 1) ; smooth_signal.data ; NaN(n_missing_at_the_end, 1)];
+        % store segment information
+        % -------------------------
+        seg_results = model.analyzeSegments();
+        seg_results = seg_results{1};
+        if combining
+            seg_eyes = {'left', 'right', 'mean'};
+        elseif data_is_left
+            seg_eyes = {'left'};
+        else
+            seg_eyes = {'right'};
+        end
+        smooth_signal.header.segments = store_segment_stats(smooth_signal.header.segments, seg_results, seg_eyes);
 
         if plot_data
             model.plotData();
@@ -302,4 +336,35 @@ function [sts, data_cell] = load_pupil(fn, chan)
         return;
     end
     sts = 1;
+end
+
+function segments = store_segment_stats(segments, seg_results, seg_eyes)
+    stat_columns = {...
+        'Pupil_SmoothSig_meanDiam', ...
+        'Pupil_SmoothSig_minDiam', ...
+        'Pupil_SmoothSig_maxDiam', ...
+        'Pupil_SmoothSig_missingDataPercent', ...
+        'Pupil_SmoothSig_sampleCount', ...
+        'Pupil_ValidSamples_meanDiam', ...
+        'Pupil_ValidSamples_minDiam', ...
+        'Pupil_ValidSamples_maxDiam', ...
+        'Pupil_ValidSamples_validPercent', ...
+        'Pupil_ValidSamples_sampleCount', ...
+    };
+    for eyestr = seg_eyes
+        for colstr = stat_columns
+            eyecolstr = [eyestr{1} colstr{1}];
+            col = seg_results.(eyecolstr);
+            for i = 1:numel(segments)
+                segments{i}.(eyecolstr) = col(i);
+            end
+        end
+    end
+end
+
+function data = complete_with_nans(data, t_beg, sr, output_samples)
+    sec_between_upsampled_samples = 1 / sr;
+    n_missing_at_the_beg = round(t_beg / sec_between_upsampled_samples);
+    n_missing_at_the_end = output_samples - numel(data) - n_missing_at_the_beg;
+    data = [NaN(n_missing_at_the_beg, 1) ; data ; NaN(n_missing_at_the_end, 1)];
 end
