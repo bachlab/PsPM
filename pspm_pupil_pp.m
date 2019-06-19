@@ -282,16 +282,18 @@ function [sts, smooth_signal] = preprocess(data, data_combine, segments, custom_
 
         % store segment information
         % -------------------------
-        seg_results = model.analyzeSegments();
-        seg_results = seg_results{1};
-        if combining
-            seg_eyes = {'left', 'right', 'mean'};
-        elseif data_is_left
-            seg_eyes = {'left'};
-        else
-            seg_eyes = {'right'};
+        if ~isempty(segments)
+            seg_results = model.analyzeSegments();
+            seg_results = seg_results{1};
+            if combining
+                seg_eyes = {'left', 'right', 'mean'};
+            elseif data_is_left
+                seg_eyes = {'left'};
+            else
+                seg_eyes = {'right'};
+            end
+            smooth_signal.header.segments = store_segment_stats(smooth_signal.header.segments, seg_results, seg_eyes);
         end
-        smooth_signal.header.segments = store_segment_stats(smooth_signal.header.segments, seg_results, seg_eyes);
 
         if plot_data
             model.plotData();
@@ -363,6 +365,9 @@ function segments = store_segment_stats(segments, seg_results, seg_eyes)
 end
 
 function data = complete_with_nans(data, t_beg, sr, output_samples)
+    % Complete the given data that possibly has missing samples at the
+    % beginning and at the end. The amount of missing samples is determined
+    % by sampling rate and the data beginning second t_beg.
     sec_between_upsampled_samples = 1 / sr;
     n_missing_at_the_beg = round(t_beg / sec_between_upsampled_samples);
     n_missing_at_the_end = output_samples - numel(data) - n_missing_at_the_beg;
