@@ -71,6 +71,13 @@
 %                             to
 %                               [~,imax]=max(weights' .* ccorr(anarrowrange));
 %                             so that a regular expectation is calculated.
+%                           - Remove the second
+%                               kTEO.k = 1;
+%                             line right before constructing TEO.
+%                           - Add ecg_lowcutoff and ecg_highcutoff.
+%                           - Make all algorithm parameters modifiable using
+%                             keyword arguments.
+%                           - Remove number of input argument checks
 
 %%
 function r_peaks = amri_eeg_rpeak(ecg,varargin)
@@ -95,6 +102,9 @@ kTEO.k         = 1;             % frequency selector
 kTEO.lowcutoff = 8;             % low cutoff
 kTEO.highcutoff= 40;            % high cutoff
 
+ecg_lowcutoff  = 0.5;
+ecg_highcutoff = 40;
+
 thres.mincc    = 0.5;           % cross corr to the template
 thres.maxrpa   = 3;             % max relative peak amplitude
 thres.minrpa   = 0.4;           % min relative peak amplitude
@@ -107,11 +117,6 @@ flag_verbose   = 0;             % 1|0, whether print out information
 %% ************************************************************************
 % Collect keyword-value pairs
 % *************************************************************************
-
-if (nargin> 2 && rem(nargin,2) == 1)
-    printf('amri_eeg_cbc(): Even number of input arguments???')
-    return
-end
 
 for i = 1:2:size(varargin,2) % for each Keyword
     Keyword = varargin{i};
@@ -126,6 +131,17 @@ for i = 1:2:size(varargin,2) % for each Keyword
         end
     elseif strcmpi(Keyword,'whatisy')
         whatisy=Value;
+    elseif strcmpi(Keyword, 'teoparams')
+        kTEO.k = Value(1);
+        kTEO.lowcutoff = Value(2);
+        kTEO.highcutoff = Value(3);
+    elseif strcmpi(Keyword, 'ecgcutoff')
+        ecg_lowcutoff = Value(1);
+        ecg_highcutoff = Value(2);
+    elseif strcmpi(Keyword, 'mincc')
+        thres.mincc = Value(1);
+    elseif strcmpi(Keyword, 'minrpa')
+        thres.minrpa = Value(1);
     end
 end
 
@@ -138,11 +154,10 @@ end
 
 % bandpass filtering from 10 to 40 Hz, in order to suppress T-waves
 if strcmpi(filter_method,'ifft')
-    ecg.data = amri_sig_filtfft(ecg.data,ecg.srate,0.5,40);
+    ecg.data = amri_sig_filtfft(ecg.data,ecg.srate, ecg_lowcutoff, ecg_highcutoff);
     E = amri_sig_filtfft(ecg.data,ecg.srate,kTEO.lowcutoff,kTEO.highcutoff); 
 end
 
-kTEO.k=1;
 % construct a complex lead by k-Teager energy operator
 if flag_verbose>0
     fprintf(['amri_eeg_rpeak(): construct k-TEO complex (k=' ...
