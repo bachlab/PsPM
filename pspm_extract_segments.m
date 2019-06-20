@@ -433,7 +433,6 @@ all_cond_nr =cell2mat(cellfun(@(x)reshape(x, [min(size(x)), max(size(x))]),comb_
 all_onsets  = cell2mat(cellfun(@(x)reshape(x, [min(size(x)), max(size(x))]),comb_onsets,'un', 0));
 all_dur = cell2mat(cellfun(@(x)reshape(x, [min(size(x)), max(size(x))]),comb_durations,'un', 0));
 all_sess_ons =[all_onsets' , all_sessions'];
-all_dur_cond = [all_dur', all_cond_nr'];
 %all_sess_ons_cond = [all_onsets' , all_sessions', all_cond_nr'];
 sorted_session = sortrows(all_sess_ons,[2 1]);
 
@@ -470,16 +469,13 @@ end
 % methods to different functions.
 %% save data in segments
 num_prev_conds = 0;
-if manual_chosen == 1 || strcmpi(model_strc.modeltype, 'dcm')
-    onsets = [];
-    durations = [];
-    for i = 1:n_sessions
-        onsets = [onsets, multi(i).onsets];
-        durations = [durations, multi(i).durations];
+onsets = {};
+durations = {};
+for i = 1:n_sessions
+    for j = 1:numel(multi(i).onsets)
+        onsets{end + 1} = multi(i).onsets{j};
+        durations{end + 1} = multi(i).durations{j};
     end
-else
-    onsets = model_strc.timing.onsets;
-    durations = model_strc.timing.durations;
 end
 for session_idx = 1:n_sessions
     sr = sampling_rates(session_idx);
