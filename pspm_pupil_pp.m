@@ -157,10 +157,11 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
     % -------------------------------------------------------------------------
     is_combined = ~strcmp(options.channel_combine, 'none');
 
-    [lsts, data] = load_pupil(fn, options.channel);
+    addpath(pspm_path('backroom'));
+    [lsts, data] = pspm_load_single_chan(fn, options.channel, 'last', 'pupil');
     if lsts ~= 1; return; end;
     if is_combined
-        [lsts, data_combine] = load_pupil(fn, options.channel_combine);
+        [lsts, data_combine] = pspm_load_singe_chan(fn, options.channel_combine, 'last', 'pupil');
         if lsts ~= 1; return; end;
         if strcmp(get_eye(data{1}.header.chantype), get_eye(data_combine{1}.header.chantype))
             warning('ID:invalid_input', 'options.channel and options.channel_combine must specify different eyes');
@@ -181,6 +182,7 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
     else
         data_combine{1}.data = [];
     end
+    rmpath(pspm_path('backroom'));
 
     % preprocess
     % -------------------------------------------------------------------------
@@ -230,7 +232,7 @@ function [sts, smooth_signal] = preprocess(data, data_combine, segments, custom_
 
     % load lib
     % -------------------------------------------------------------------------
-    libbase_path = fullfile(fileparts(which('pspm_pupil_pp')), 'pupil-size', 'code');
+    libbase_path = pspm_path('pupil-size', 'code');
     libpath = {fullfile(libbase_path, 'dataModels'), fullfile(libbase_path, 'helperFunctions')};
     addpath(libpath{:});
 
@@ -321,23 +323,6 @@ function eyestr = get_eye(pupil_chantype)
         endidx = indices(2) - 1;
     end
     eyestr = pupil_chantype(begidx : endidx);
-end
-
-function [sts, data_cell] = load_pupil(fn, chan)
-    sts = -1;
-    [lsts, infos, data_cell] = pspm_load_data(fn, chan);
-    if lsts ~= 1; return; end;
-    if numel(data_cell) > 1
-        warning('ID:multiple_channels', ['There is more than one channel'...
-            ' with type %s in the data file.\n'...
-            ' We will process only the last one.\n'], chan);
-        data_cell = data_cell(end);
-    end
-    if ~contains(data_cell{1}.header.chantype, 'pupil')
-        warning('ID:invalid_input', sprintf('Loaded chantype %s does not correspond to a pupil channel', data_cell{1}.header.chantype));
-        return;
-    end
-    sts = 1;
 end
 
 function segments = store_segment_stats(segments, seg_results, seg_eyes)
