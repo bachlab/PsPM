@@ -65,6 +65,12 @@
 % 0.12 - 07/31/2013 - ZMLIU - use TEO or ECG for rr-interval estimation
 %                           - better acorr gives more reliable estimation
 %                           - option to use TEO or ECG for r peak detection
+% 0.13 - 20/06/2019 - esref - Modify interface to remove EEG related things
+%                           - Change lines 
+%                               [~,imax]=max(weights.*ccorr(anarrowrange));
+%                             to
+%                               [~,imax]=max(weights' .* ccorr(anarrowrange));
+%                             so that a regular expectation is calculated.
 
 %%
 function r_peaks = amri_eeg_rpeak(ecg,varargin)
