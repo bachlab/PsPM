@@ -1,0 +1,16 @@
+amri_eeg_rpeak.m
+----------------
+
+* Changed the interface of amri_eeg_rpeak function to only take the ECG
+signal as input and simply return rpeak indices as output.
+
+* Changed lines containing
+
+    [~,imax]=max(weights.*ccorr(anarrowrange));
+
+to
+
+    [~,imax]=max(weights' .* ccorr(anarrowrange));
+
+so that it computes an expectation (as required?) and not an outer product
+due to mismatched row and column vectors.
