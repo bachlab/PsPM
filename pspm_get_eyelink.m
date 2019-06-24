@@ -108,8 +108,8 @@ else
             markers(counter:(counter+n_diff-1), 1) = zeros(n_diff,1);
             
             % markerinfos
-            mi_value(counter:(counter+n_diff-1),1) = zeros(n_diff,1);
-            mi_name(counter:(counter+n_diff-1), 1) = {'0'};
+            mi_value(end + 1 : end + n_diff, 1) = zeros(n_diff,1);
+            mi_name( end + 1 : end + n_diff, 1) = {'0'};
             
             % find if there are markers in the breaks
             break_markers_idx = all_markers.times>=last_time & all_markers.times<=start_time;
@@ -132,8 +132,9 @@ else
         markers(counter:(counter+n_data-1),1) = data{c}.markers;
         
         % markerinfos
-        mi_value(counter:(counter+n_data-1),1) = data{c}.markerinfos.value;
-        mi_name(counter:(counter+n_data-1),1) = data{c}.markerinfos.name;
+        n_markers = numel(data{c}.markerinfos.value);
+        mi_value(end + 1 : end + n_markers, 1) = data{c}.markerinfos.value;
+        mi_name( end + 1 : end + n_markers, 1) = data{c}.markerinfos.name;
         
         counter = counter + n_data;
         last_time = end_time;
@@ -243,7 +244,8 @@ for k = 1:numel(import)
         if ~isempty(regexpi(import{k}.type, 'pupil'))
             if isfield(import{k}, 'eyelink_trackdist') && ...
                     isnumeric(import{k}.eyelink_trackdist) && ...
-                    import{k}.eyelink_trackdist > 0
+                    import{k}.eyelink_trackdist > 0 && ...
+                    ~isempty(import{k}.units)
                 parts = split(import{k}.units);
                 record_method = lower(parts{2});
                 % transfer pupil data according to transfer settings

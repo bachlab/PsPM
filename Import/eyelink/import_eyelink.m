@@ -1,408 +1,445 @@
-function [data] = import_eyelink(filename)
-% 
-% FORMAT:
-% data = import_eyelink(filename)
-%   filename:   path to the file which contains the recorded eyelink data 
-%               in asc file format
-%
-% (C) Christoph Korn & Tobias Moser (University of Zurich)
-%__________________________________________________________________________
-% PsPM 3.1
-%
-% $Id: import_eyelink.m 450 2017-07-03 15:17:02Z tmoser $
-% $Rev: 450 $
-
-
-%% Notes for data structure
-% in col 1    : 'SFIX', 'EFIX', 'SSAC', 'ESAC', 'SBLINK', 'EBLINK', 'END', 'INPUT', 'MSG'
-% in col 2/3/4: 'L', 'C', 'R', ' .', 'SAMPLES', 'EVENTS' 
-% if you have less columns in textscan it will break some very long lines &
-% have more lines than there are!
-
-
-%% open file with all colums as %s to get messages etc
-
-% determine number of header lines
-fileID = fopen(filename);
-datastr = textscan(fileID, '%s %s %s %s %s %s %s %s %s %s %s %s %s %s', 'delimiter', '\t'); 
-fclose(fileID);
-
-
-%% correct column lengths (sometimes the end not properly ended)
-% get lengths
-len_s = cellfun(@(x) length(x), datastr);
-min_len = min(len_s);
-if any(len_s ~= min_len)
-    warning(['Data file has different number of columns. ', ...
-        'Maybe recording hasn''t been properly ended. ',...
-        'The file will be trimmed to the shortest column.']);
-end
-for i=1:length(datastr)
-    delta = length(datastr{i}) - min_len;
-    if delta ~= 0
-        warning('Cutting away %i row(s) in column %i.\n', [delta, i]);
-    end
-    datastr{i} = datastr{i}(1:min_len);
-end
-
-%% convert to normal cell (not cell of cell)
-datastr = [datastr{:}];
-
-%% process file header
-% cut away file header
-fheader_pos = strncmpi(datastr(:,1), '**', 2);
-fheader = datastr(fheader_pos, :);
-
-% remove header from datastr
-datastr(fheader_pos, :) = [];
-
-% try to get the record date
-datePos = strncmpi(fheader, '** DATE', 6);
-dateFields = regexp(fheader{datePos}, '\s+', 'split');
-record_date = strtrim(sprintf('%s ', dateFields{[3:5,length(dateFields)]}));
-record_time = dateFields{6};
-
-%% find all markers in the data set 
-% define data parts
-offsets = find(strcmpi(datastr(:,1), 'END'));
-if isempty(offsets)
-    warning('Cannot find END of file. Assuming last line of file.');
-    offsets = length(datastr(:, 1));
-end
-onsets = [1; offsets + 1];
-%data = cell(numel(offsets),1);
-data = cell(numel(offsets)+1,1);
-
-% get whole data
-sn_data  = datastr;
-str_data = cell(size(sn_data, 1), 1);
-for iline = 1:size(str_data, 1)
-    str_data{iline} = sprintf('%s ', sn_data{iline,:});
-end
-% concatenate strings and replace/interpret dots with NaN values
-str_data = strrep(str_data, ' . ', ' NaN ');
-
-% find data rows
-dataFields = find(~cellfun(@isempty, regexp(sn_data(:,1), '^[0-9]')));
-
-% allocate
-datanum = NaN(size(sn_data,1), 7);
-
-% convert numeric rows to numeric
-for i_data_row = 1:numel(dataFields)
-    n_row = dataFields(i_data_row);
-    data_num_row = sscanf(str_data{n_row}, '%f');
-    n_col = min(7, numel(data_num_row));
-    datanum(n_row,1:n_col) = data_num_row(1:n_col);
-end
-
-% extract messages that indicate a marker
-num_parts = numel(offsets);
-dataFiels_pp = cell(num_parts,1);
-start_data_idx = zeros(num_parts,1);
-msg_pos = cell(num_parts,1);
-messages = cell(num_parts,1);
-
-for k=1:num_parts
-    dataFiels_pp{k} = dataFields(dataFields>= onsets(k) & dataFields <= offsets(k));
-    start_data_idx(k) = dataFiels_pp{k}(1);
-    msg_pos{k} = find(strncmpi(sn_data(start_data_idx(k):offsets(k)), 'MSG', 3));
-    msg_pos{k} = msg_pos{k} +start_data_idx(k)-1;
-    tmp_msg_str = sn_data(msg_pos{k},2);
-    messages{k} = unique(regexprep(tmp_msg_str, '[0-9]+\s(.*)', '$1'));
-end
-
-% those are the messages we are looking for
-marker_msg = unique(cat(1,messages{:}));
-
-% get all messages
-all_messages = strncmpi(sn_data, 'MSG', 3);
-all_msg_idx = find(all_messages);
-all_msg = sn_data(all_messages,2);
-all_msg_info = cellfun(@(x) regexp(x, '\s+', 'split'),all_msg,'UniformOutput',0);
-all_msg = cellfun(@(x) x{2},all_msg_info,'UniformOutput',0);
-correct_markers = cell2mat(cellfun(@(x) ismember(x,marker_msg),all_msg,'UniformOutput',0));
-correct_markers_idx = all_msg_idx(logical(correct_markers));
-correct_markers_info = all_msg_info(logical(correct_markers));
-
-% we want to construct a struct that holds all the markers (time, value, name)
-all_markers = struct();
-all_markers.times = cell2mat(cellfun(@(x) str2double(x{1}),correct_markers_info,'UniformOutput',0));
-all_markers.vals  = zeros(size(correct_markers_idx,1),1);
-all_markers.names = cell(size(correct_markers_idx,1),1);
-
-% calculate the marker values. These correspoond to the marker message
-% index
-% also set the markernames
-for k = 1:size(marker_msg,1)
-    for m = 1:size(correct_markers_idx,1)
-        s = regexp(sn_data{correct_markers_idx(m),2}, ...
-            strcat('[0-9]\s',marker_msg(k)), 'once');
-        if s{1} > 0
-            all_markers.vals(m) = k;
-            all_markers.names{m} = marker_msg{k};
-        end
-    end
-end
-
-data{numel(offsets)+1} = all_markers;
-
-%% try to find out number of recordings / sessions and split
-
-for sn = 1:numel(offsets)
-    data{sn} = struct(); 
-    data{sn}.record_date = record_date;
-    data{sn}.record_time = record_time;
-     
-    % convert to single cell array (one cell per line)
-    sn_data = datastr(onsets(sn):offsets(sn), :);
-    str_data = cell(size(sn_data, 1), 1);
-    for iline = 1:size(str_data, 1)
-        str_data{iline} = sprintf('%s ', sn_data{iline,:});
-    end
-    % concatenate strings and replace/interpret dots with NaN values
-    str_data = strrep(str_data, ' . ', ' NaN ');
-
-    % find data rows
-    dataFields = find(~cellfun(@isempty, regexp(sn_data(:,1), '^[0-9]')));
-
-    % allocate
-    datanum = NaN(size(sn_data,1), 7);
-
-    % convert numeric rows to numeric
-    for i_data_row = 1:numel(dataFields)
-        n_row = dataFields(i_data_row);
-        data_num_row = sscanf(str_data{n_row}, '%f');
-        n_col = min(7, numel(data_num_row));
-        datanum(n_row,1:n_col) = data_num_row(1:n_col);
-    end
-
-    %% try to read some header information
-    % read the PUPIL unit
-    pupilPos = strncmpi(sn_data, 'PUPIL', 5);
-    pupilUnit = ['arbitrary ' lower(sn_data{pupilPos,2}) ' units'];
-    % header stops where the data section starts
-    dataStartPos = dataFields(1);
-    
-    % look for MSG in header section
-    headerMsgPos = find(strncmpi(sn_data(1:dataStartPos), 'MSG', 3));
-    for i=1:length(headerMsgPos)
-        headerFields = regexp(sn_data{headerMsgPos(i),2}, '\s+', 'split');
-        % the second field contains the field name
-        % the first field contains a timestamp
-        fieldName = headerFields{2};
-        switch fieldName
-            case 'RECCFG'
-                % this field contains the samplerate #4
-                % and whether both eyes or just one have been recorded #7
-                % which is either LR or L or R
-                data{sn}.sampleRate = str2double(headerFields{4});
-                data{sn}.eyesObserved = headerFields{7};
-            case 'GAZE_COORDS'
-                data{sn}.gaze_coords.xmin = str2double(headerFields{3});
-                data{sn}.gaze_coords.ymin = str2double(headerFields{4});
-                data{sn}.gaze_coords.xmax = str2double(headerFields{5});
-                data{sn}.gaze_coords.ymax = str2double(headerFields{6});
-            case 'ELCL_PROC'
-                data{sn}.elcl_proc = headerFields{3};
-        end
-    end
-    
-    % remove MSG headers not to identify them as other MSG
-    sn_data(headerMsgPos,:) = [];
-    
-    %% identify saccades/blinks
-    % note: blinks are always surrounded by saccades, therefore use saccades
-    % find L and R saccades
-    % saccades = {'SSACC L','ESACC L','SSACC R','ESACC R'};
-    ignore_epochs = {{'SBLINK L','EBLINK L','SBLINK R','EBLINK R'}, ...
-        {'SSACC L','ESACC L','SSACC R','ESACC R'}};
-    
-    ignore_str_match = cell(size(ignore_epochs));
-    ignore_str_pos = cell(size(ignore_epochs));
-    for i = 1:numel(ignore_str_match)
-        ignore_str_match{i} = zeros(size(sn_data,1),size(ignore_epochs{i},2));
-        for j = 1:size(ignore_str_match{i},2)
-            ignore_str_match{i}(:,j) = strncmp(ignore_epochs{i}{j}, sn_data(:,1), ...
-                length(ignore_epochs{i}{j})); %% LAST NUMBER GIVES NUMBER OF CHARACTERS
-        end
-        ignore_str_pos{i} = cell(1,size(ignore_epochs{i},2));
-        for j = 1:size(ignore_epochs{i},2)
-            ignore_str_pos{i}{j} = find(ignore_str_match{i}(:,j));
-        end
-    end
-    
-    %% add saccade information as extra colum to relevant data
-    ep_offset = floor( 0.05 * data{sn}.sampleRate ); % possibility to remove more; correponds to 10 points for sr of 500
-    
-    % cycle through eyes
-    for i=1:numel(data{sn}.eyesObserved)
-        
-        % cycle through epoch types (saccades and blinks)
-        for j = 1:numel(ignore_str_pos)
-            
-            % for later use when saccades and blinks should be separated
-            idx_corr = 2*(j-1);
-            
-            % set indexes according to eye being processed
-            if strcmpi(data{sn}.eyesObserved(i), 'L')
-                eye_corr = 0;
-                idx = 8 + idx_corr;
-            else
-                eye_corr = 2;
-                idx = 9 + idx_corr;
-            end
-            
-            % where to look for start and stop idx
-            ep_start = 1 + eye_corr;
-            ep_stop = 2 + eye_corr;
-           
-            for k = 1:length(ignore_str_pos{j}{ep_start})
-                
-                % the following steps are done because some epochs do not
-                % start or end correctly, so these cases have to be
-                % catched.
-
-                if k > numel(ignore_str_pos{j}{ep_stop})
-                    stop_pos = size(datanum, 1);
-                else
-                    stop_pos = ignore_str_pos{j}{ep_stop}(k) + ep_offset;
-                end
-
-                start_pos = ignore_str_pos{j}{ep_start}(k) - ep_offset;
-
-                if stop_pos > size( datanum, 1 ) && start_pos <= 0
-                    
-                    % everything is a blink
-                    datanum(1 : end, idx) = 1;
-                    
-                % if end is not in the data or overlaps at the end but not at
-                % the beginning (partly excluded because checked before)
-                elseif stop_pos > size( datanum, 1 )
-                    
-                    % from ep_start until end everything is a epoch
-                    datanum(start_pos : end, idx) = 1;
-                    
-                % if overlaps at the beginning but not at the end
-                elseif start_pos <= 0
-                    
-                    % everything until ep_end is a epoch
-                    datanum(1 : stop_pos, idx) = 1;
-                    
-                else
-                    
-                    % otherwhise just marke from ep_start to ep_stop as
-                    % epoch
-                    datanum(start_pos : stop_pos, idx) = 1;
-                end
-            end
-            
-        end
-    end
-    
-    %% identify messages
-    % translate MSG into double
-    % look for general (gen) positions of MSG fields
-    % look for specific (spe) MSG text and add it to a additional column to the
-    % gen pos
-    
-    % the MSG text is also translated into double and later translated back
-    % into a text. for this purpose messages is used.
-    str_gen = strncmp('MSG', sn_data(:,1), 3);
-    str_gen_pos = find(str_gen);
-    msg_str = sn_data(str_gen_pos,2);
-    messages = unique(regexprep(msg_str, '[0-9]+\s(.*)', '$1'));
-    
-    % we assume each MSG has a specific text message
-    str_spe_pos = zeros(length(str_gen_pos), 1);
-    for j = 1:size(messages,1)
-        for m = 1:size(str_gen_pos,1)
-            %s = regexp(datastr{1,2}{str_gen_pos(m,1),1}, ...
-            s = regexp(sn_data{str_gen_pos(m,1),2}, ...
-                strcat('[0-9]\s',messages(j)), 'once');
-            if s{1} > 0
-                str_spe_pos(str_gen_pos(m,1),1) = j;
-            end
-        end
-    end
-    
-    %% add message information as extra colum to relevant data
-    % has to be added in next line (which is not a text line --> to do)
-    % HERE: correction
-    % 1.    check whether elements of vector of messages_plus_1 are also members of
-    %       the vector containing NaN
-    % 2.    loop (with increasing relevant positions by 1) until there are no members left
-    
-    str_NaN = find(isnan(datanum(:,1)));
-    str_gen_pos_plus = str_gen_pos + 1;
-    
-    
-    lia_sum = 1; % name comes from ismember help
-    while lia_sum ~= 0
-        lia = ismember(str_gen_pos_plus, str_NaN);
-        lia_sum = sum(lia);
-        str_gen_pos_plus(lia) = str_gen_pos_plus(lia) + 1;
-    end
-    
-    datanum(str_gen_pos_plus, 12) = 1;
-    datanum(str_gen_pos_plus, 13) = str_spe_pos(str_gen_pos,1);
-    
-    %% remove lines starting with NaN (i.e. pure text lines) so that lines have a time interpretation
-    data{sn}.raw = datanum;
-    data{sn}.raw(isnan(datanum(:,1)),:) = [];
-    
-    % header: 'time_point','x_L','y_L','pupil_L','x_R','y_R',
-    %         'pupil_R','blink_L','blink_R','saccades_L','saccades_R',
-    %         'message_gen','message_spe'
+function [data] = import_eyelink(filepath)
+    % import_eyelink is the function for importing Eyelink 1000 .asc files to usual
+    % PsPM structure.
     %
-    % channels are: pupil L, pupil R, x L, y L, x R, y R, blink L, blink R,
-    %               saccades L, saccades R
+    % FORMAT: [data] = import_eyelink(filepath)
+    %             filepath: Path to the file which contains the recorded Eyelink
+    %                       data in ASCII format (.asc).
     %
-    % or pupil, x, y, blink, saccade (for just one eye)
-    
-    if strcmpi(data{sn}.eyesObserved, 'LR')
-        % pupilL, pupilR, xL, yL, xR, yR, blinkL, blinkR, saccadeL,
-        % saccadeR
-        data{sn}.channels = data{sn}.raw(:, [4,7,2:3,5:6,8:11]);
-        data{sn}.units = {pupilUnit, pupilUnit, 'pixel', 'pixel', 'pixel', ...
-            'pixel', 'blink', 'blink', 'saccade', 'saccade'};
-         
-        % set blinks to NaN
-        data{sn}.channels( (data{sn}.channels(:,7)| data{sn}.channels(:, 9)) == 1, [1,3:4] ) = NaN;
-        data{sn}.channels( (data{sn}.channels(:,8)| data{sn}.channels(:, 10)) == 1, [2,5:6] ) = NaN;
+    %             data: Output cell array of structures. Each entry in the cell array
+    %                   corresponds to one recording session in the datafile.
+    %                   Each of these structures have the following entries:
+    %
+    %                       raw: Matrix containing raw data columns.
+    %                       channels: Matrix (timestep x n_cols) of relevant PsPM columns.
+    %                                 Currently, time, pupil, gaze, blink and saccade channels
+    %                                 are imported.
+    %                       channels_header: Column headers of each channels column.
+    %                       units: Units of each channels column.
+    %                       eyesObserved: Either A or AB, denoting observed eyes in datafile.
+    %                       gaze_coords: Structure with fields
+    %                           - xmin: x coordinate of top left corner of screen in pixels.
+    %                           - ymin: y coordinate of top left corner of screen in pixels.
+    %                           - xmax: x coordinate of bottom right corner of screen in pixels.
+    %                           - ymax: y coordinate of bottom right corner of screen in pixels.
+    %                       markers: Array of the same size as data columns. An entry is 1 if there is
+    %                                marker at that time.
+    %                       markerinfos: Structure with the following fields:
+    %                           - name: Cell array of marker name.
+    %                           - value: Index of the marker name to an array containing
+    %                                    unique marker names.
+    %                       elcl_proc: Pupil tracking algorithm. (ellipse or centroid)
+    %                       record_date: Recording date
+    %                       record_time: Recording time
+    %
+    %__________________________________________________________________________
+    %
+    % (C) 2019 Eshref Yozdemir
+
+    if ~exist(filepath,'file')
+        error('ID:invalid_input', sprintf('Passed file %s does not exist.', filepath));
+    end
+
+    % parse datafile
+    % --------------
+    bsearch_path = pspm_path('backroom', 'bsearch');
+    addpath(bsearch_path);
+    [dataraw, messages, chan_info, file_info] = parse_eyelink_file(filepath);
+    markers_sess = {};
+    for i = 1:numel(messages)
+        [dataraw{i}, markers_sess{i}, chan_info{i}] = parse_messages(messages{i}, dataraw{i}, chan_info{i});
+    end
+    rmpath(bsearch_path);
+
+    % write outputs
+    % -------------
+    markers_sess = create_marker_val_fields(markers_sess);
+    for sn = 1:numel(dataraw)
+        data{sn}.raw = dataraw{sn};
+        data{sn}.channels = data{sn}.raw(:, chan_info{sn}.col_idx);
+        data{sn}.channels_header = chan_info{sn}.channels_header;
+        data{sn}.units = chan_info{sn}.channels_units;
+
+        data{sn}.channels = set_blinks_saccades_to_nan(data{sn}.channels, chan_info{sn}.channels_header);
+
+        data{sn}.sampleRate = chan_info{sn}.sr;
+        data{sn}.eyesObserved = chan_info{sn}.eyesObserved;
+
+        data{sn}.record_date = file_info.record_date;
+        data{sn}.record_time = file_info.record_time;
+
+        data{sn}.gaze_coords.xmin = chan_info{sn}.xmin;
+        data{sn}.gaze_coords.ymin = chan_info{sn}.ymin;
+        data{sn}.gaze_coords.xmax = chan_info{sn}.xmax;
+        data{sn}.gaze_coords.ymax = chan_info{sn}.ymax;
+        data{sn}.elcl_proc = chan_info{sn}.elcl_proc;
+
+        data{sn}.markers = markers_sess{sn}.markers;
+        data{sn}.markerinfos.name = markers_sess{sn}.names;
+        data{sn}.markerinfos.value = markers_sess{sn}.vals;
+    end
+    data{end + 1} = combine_markers(markers_sess);
+end
+
+function [dataraw, messages, chan_info, file_info] = parse_eyelink_file(filepath)
+    % Parse an eyelink file and return all the relevant information in four variables:
+    % dataraw: Cell array of matrices containing raw data columns for each session.
+    % messages: All the messages in the file, including blinks/saccades.
+    % chan_info: Cell array of struct holding info about each session.
+    % file_info: Struct holding info about the whole file.
+
+    str = fileread(filepath);
+    has_backr = ~isempty(find(str == sprintf('\r'), 1, 'first'));
+    linefeeds = [0, strfind(str, sprintf('\n'))];
+
+    line_ctr = 1;
+    [file_info, line_ctr] = parse_metadata(str, line_ctr, linefeeds, has_backr);
+
+    while isempty(str(linefeeds(line_ctr) + 1 : linefeeds(line_ctr + 1) - 1 - has_backr))
+        line_ctr = line_ctr + 1;
+    end
+
+    linefeeds = linefeeds(line_ctr : end);
+    str = str(linefeeds(1) + 1 : end);
+    linefeeds = linefeeds - linefeeds(1);
+    line_ctr = 1;
+
+    [msg_linenums, messages] = get_msg_lines(str, linefeeds, has_backr);
+    [msg_linenums, messages] = split_messages_to_sessions(msg_linenums, messages);
+    chan_info = parse_session_headers(messages);
+    % TODO: assert that session configs are the same
+    chan_info = pspm_chans_in_file(chan_info);
+
+    for i = 1:numel(msg_linenums)
+        for msg_line = msg_linenums{i}
+            begidx = linefeeds(msg_line) + 1;
+            str(begidx : begidx + 1) = '/';
+        end
+    end
+
+    session_data_beg_end_indices = [];
+    for i = 1:numel(chan_info)
+        linenums_i = msg_linenums{i};
+        msg_line_diff = diff(linenums_i);
+        msg_indices_jump_idx = find(msg_line_diff > 1, 1, 'first');
+        first_dataline_idx = linenums_i(msg_indices_jump_idx) + 1;
+        session_data_beg_end_indices(end + 1) = first_dataline_idx;
+    end
+    session_data_beg_end_indices = [session_data_beg_end_indices numel(linefeeds)];
+
+    for i = 1:numel(chan_info)
+        first_dataline_idx = session_data_beg_end_indices(i);
+        first_dataline = str(linefeeds(first_dataline_idx) + 1 : linefeeds(first_dataline_idx + 1) - 1 - has_backr);
+        fmt_str = infer_format_from_eyelink_dataline(first_dataline, chan_info{i}.track_mode);
+
+        strbeg = linefeeds(session_data_beg_end_indices(i)) + 1;
+        strend = linefeeds(session_data_beg_end_indices(i + 1)) - 1 - has_backr;
+
+        C = textscan(str(strbeg : strend), fmt_str, ...
+            'Delimiter', '\t', ...
+            'CollectOutput', 1, ...
+            'CommentStyle', '//', ...
+            'TreatAsEmpty', '.');
+        dataraw{i} = C{1};
+    end
+end
+
+function [file_info, line_ctr] = parse_metadata(str, line_ctr, linefeeds, has_backr)
+    file_info.record_date = '00.00.0000';
+    file_info.record_time = '00:00:00';
+    curr_line = str(linefeeds(line_ctr) + 1 : linefeeds(line_ctr + 1) - 1 - has_backr);
+    tab = sprintf('\t');
+    while startsWith(curr_line, '**')
+        if contains(curr_line, 'DATE')
+            colon_idx = strfind(curr_line, ':');
+            date_part = curr_line(colon_idx + 1 : end);
+            date_fmt = 'eee MMM d HH:mm:ss yyyy';
+            date = datetime(date_part, 'InputFormat', date_fmt);
+            file_info.record_date = sprintf('%.2d.%.2d.%.2d', date.Day, date.Month, date.Year);
+            file_info.record_time = sprintf('%.2d:%.2d:%.2d', date.Hour, date.Minute, date.Second);
+        end
+        line_ctr = line_ctr + 1;
+        curr_line = str(linefeeds(line_ctr) + 1 : linefeeds(line_ctr + 1) - 1 - has_backr);
+    end
+end
+
+function chan_info = pspm_chans_in_file(chan_info)
+    for i = 1:numel(chan_info)
+        pupil_mode = chan_info{i}.diam_vals;
+        eyesObserved = chan_info{i}.eyesObserved;
+
+        pupil_unit = ['arbitrary ' lower(pupil_mode) ' units'];
+        if strcmpi(eyesObserved, 'l')
+            chan_info{i}.channels_header = {'pupil_l', 'gaze_x_l', 'gaze_y_l'};
+            chan_info{i}.channels_units = {pupil_unit, 'pixel', 'pixel'};
+            chan_info{i}.col_idx = [4, 2, 3];
+        elseif strcmpi(eyesObserved, 'r')
+            chan_info{i}.channels_header = {'pupil_r', 'gaze_x_r', 'gaze_y_r'};
+            chan_info{i}.channels_units = {pupil_unit, 'pixel', 'pixel'};
+            chan_info{i}.col_idx = [4, 2, 3];
+        elseif strcmpi(eyesObserved, 'lr') || strcmpi(eyesObserved, 'rl')
+            chan_info{i}.channels_header = {'pupil_l', 'pupil_r', 'gaze_x_l', 'gaze_y_l', 'gaze_x_r', 'gaze_y_r'};
+            chan_info{i}.channels_units = {pupil_unit, pupil_unit, 'pixel', 'pixel', 'pixel', 'pixel'};
+            chan_info{i}.col_idx = [4, 7, 2, 3, 5, 6];
+        else
+            error('ID:pspm_error', 'This branch should not have been taken. Please contact PsPM dev team');
+        end
+    end
+end
+
+function [msg_linenums, messages] = get_msg_lines(str, linefeeds, has_backr)
+    % Extract messages from a string holding all the content of the file
+    linebeg_indices = linefeeds(1 : end - 1) + 1;
+    linebegs = int32(str(linebeg_indices));
+    ord_A = int32('A');
+    ord_Z = int32('Z');
+    msg_linenums = find(linebegs >= ord_A & linebegs <= ord_Z);
+
+    messages = {};
+    for msg_line = msg_linenums
+        begidx = linefeeds(msg_line) + 1;
+        endidx = linefeeds(msg_line + 1) - 1 - has_backr;
+        messages{end + 1} = str(begidx : endidx);
+    end
+end
+
+function [dataraw, markers, chan_info] = parse_messages(messages, dataraw, chan_info)
+    % Find blinks/saccades and non-Eyelink messages in the file.
+    markers = struct();
+    if isempty(messages)
+        return;
+    end
+    eyes = lower(chan_info.eyesObserved);
+    tab = sprintf('\t');
+    if contains(eyes, 'l')
+        blinks_L = false(size(dataraw, 1), 1);
+        saccades_L = false(size(dataraw, 1), 1);
+    end
+    if contains(eyes, 'r')
+        blinks_R = false(size(dataraw, 1), 1);
+        saccades_R = false(size(dataraw, 1), 1);
+    end
+
+    sblink_indices = find(startsWith(messages, 'SBLINK'));
+    eblink_indices = find(startsWith(messages, 'EBLINK'));
+    ssacc_indices = find(startsWith(messages, 'SSACC'));
+    esacc_indices = find(startsWith(messages, 'ESACC'));
+    msg_indices = startsWith(messages, 'MSG');
+    for name = {'RECCFG', 'ELCLCFG', 'GAZE_COORDS', 'THRESHOLDS', 'ELCL_', 'PUPIL_DATA_TYPE', '!MODE'}
+        msg_indices = msg_indices & ~contains(messages, name);
+    end
+    msg_indices = find(msg_indices);
+
+    timecol = dataraw(:, 1);
+    session_end_time = timecol(end);
+
+    [messages, eblink_indices] = balance_starts_and_ends(sblink_indices, eblink_indices, messages, 'EBLINK', session_end_time);
+    [messages, esacc_indices] = balance_starts_and_ends(ssacc_indices, esacc_indices, messages, 'ESACC', session_end_time);
+
+    % set blink and saccade events
+    ignore_at_edges_offset = floor(0.05 * chan_info.sr);
+    for idx = [eblink_indices esacc_indices]
+        msgline = messages{idx};
+        parts = split(msgline);
+
+        msgtype = parts{1};
+        which_eye = lower(parts{2});
+        start_time = str2num(parts{3});
+        end_time = str2num(parts{4});
+
+        index_of_beg = max(1, bsearch(timecol, start_time) - ignore_at_edges_offset);
+        index_of_end = min(size(dataraw, 1), bsearch(timecol, end_time) + ignore_at_edges_offset);
+        if strcmp(msgtype, 'ESACC') && which_eye == 'l'
+            saccades_L(index_of_beg : index_of_end) = true;
+        elseif strcmp(msgtype, 'ESACC') && which_eye == 'r'
+            saccades_R(index_of_beg : index_of_end) = true;
+        elseif strcmp(msgtype, 'EBLINK') && which_eye == 'l'
+            blinks_L(index_of_beg : index_of_end) = true;
+        elseif strcmp(msgtype, 'EBLINK') && which_eye == 'r'
+            blinks_R(index_of_beg : index_of_end) = true;
+        end
+    end
+
+    % construct markers
+    markers.markers = false(size(dataraw, 1), 1);
+    markers.times = [];
+    markers.names = {};
+    for idx = msg_indices
+        msgline = messages{idx};
+        parts = split(msgline);
+        time = str2num(parts{2});
+        markers.markers(bsearch(timecol, time)) = true;
+        markers.times(end + 1, 1) = time;
+        markers.names{end + 1, 1} = parts{3};
+    end
+
+    % set data columns
+    if contains(eyes, 'l')
+        chan_info.col_idx(end + 1) = size(dataraw, 2) + 1;
+        chan_info.channels_header{end + 1} = 'blink_l';
+        chan_info.channels_units{end + 1} = 'blink';
+        dataraw(:, end + 1) = blinks_L;
+    end
+    if contains(eyes, 'r')
+        chan_info.col_idx(end + 1) = size(dataraw, 2) + 1;
+        chan_info.channels_header{end + 1} = 'blink_r';
+        chan_info.channels_units{end + 1} = 'blink';
+        dataraw(:, end + 1) = blinks_R;
+    end
+    if contains(eyes, 'l')
+        chan_info.col_idx(end + 1) = size(dataraw, 2) + 1;
+        chan_info.channels_header{end + 1} = 'saccade_l';
+        chan_info.channels_units{end + 1} = 'saccade';
+        dataraw(:, end + 1) = saccades_L;
+    end
+    if contains(eyes, 'r')
+        chan_info.col_idx(end + 1) = size(dataraw, 2) + 1;
+        chan_info.channels_header{end + 1} = 'saccade_r';
+        chan_info.channels_units{end + 1} = 'saccade';
+        dataraw(:, end + 1) = saccades_R;
+    end
+end
+
+function [msg_linenums_split, messages_split] = split_messages_to_sessions(msg_linenums, messages)
+    start_indices = [0 find(startsWith(messages, 'START'))];
+    reccfg_indices = find(contains(messages, 'RECCFG'));
+
+    split_indices = [];
+    if numel(reccfg_indices) > numel(start_indices)
+        for i = 1:numel(start_indices) - 1
+            candidates = find(reccfg_indices > start_indices(i) & reccfg_indices < start_indices(i + 1));
+            split_indices(end + 1) = reccfg_indices(candidates(1));
+        end
     else
-        % pupil, x, y, blink
-        data{sn}.channels = data{sn}.raw(:,[4 2:3 8 10]);
-        data{sn}.units = {pupilUnit, 'pixel', 'pixel', 'blink', 'saccade'};
-       
-        
-        % set blinks to NaN
-        data{sn}.channels( (data{sn}.channels(:,4)| data{sn}.channels(:, 5)) == 1, [1:3] ) = NaN;
+        split_indices = reccfg_indices;
     end
-    
-    % translate makers back into special cell structure
-    markers = cell(1,3);
-    for i=1:3
-        markers{1, i} = cell(length(data{sn}.raw), 1);
+    split_indices = [split_indices numel(messages) + 1];
+
+    for i = 1:numel(split_indices) - 1
+        begidx = split_indices(i);
+        endidx = split_indices(i + 1) - 1;
+        messages_split{i} = messages(begidx : endidx);
+        msg_linenums_split{i} = msg_linenums(begidx : endidx);
     end
-    
-    markers{1,2}(:) = {'0'};
-    markers{1,3} = zeros( length(data{sn}.raw), 1);
-    markers{1, 1} = data{sn}.raw(:, 12);
-    marker_pos = find(markers{1,1} == 1);
-    
-    for i=1:length(marker_pos)
-        % set to default value as long as there is no title provided
-        % in the file
-        markers{1, 2}{marker_pos(i)} = messages{data{sn}.raw(marker_pos(i), 13)};
-        % there is no actual value
-        % value has to be numeric
-        markers{1, 3}(marker_pos(i)) = data{sn}.raw(marker_pos(i), 13);
+end
+
+function chan_info = parse_session_headers(messages)
+    prev_n_messages = 0;
+    pupil_str = sprintf('PUPIL\t');
+    for sess_idx = 1:numel(messages)
+        i = 1;
+        while true
+            msg = messages{sess_idx}{i};
+            parts = split(msg);
+
+            if startsWith(msg, 'START')
+                chan_info{sess_idx}.start_time = str2num(parts{2});
+                chan_info{sess_idx}.start_msg_idx = prev_n_messages + i;
+            elseif contains(msg, 'GAZE_COORDS')
+                parts = split(msg);
+                coords = cellfun(@str2num, parts(4:end));
+                chan_info{sess_idx}.xmin = coords(1);
+                chan_info{sess_idx}.ymin = coords(2);
+                chan_info{sess_idx}.xmax = coords(3);
+                chan_info{sess_idx}.ymax = coords(4);
+            elseif contains(msg, 'ELCL_PROC')
+                parts = split(msg);
+                chan_info{sess_idx}.elcl_proc = lower(parts{4});
+            elseif contains(msg, 'RECCFG')
+                parts = split(msg);
+                chan_info{sess_idx}.track_mode = parts{4};
+                chan_info{sess_idx}.sr = str2num(parts{5});
+                chan_info{sess_idx}.eyesObserved = parts{8};
+            elseif contains(msg, pupil_str)
+                parts = split(msg);
+                chan_info{sess_idx}.diam_vals = lower(parts{2});
+                break;
+            end
+            i = i + 1;
+            prev_n_messages = prev_n_messages + numel(messages{sess_idx});
+        end
     end
+end
+
+function fmt = infer_format_from_eyelink_dataline(first_dataline, track_mode)
+    % Infer the textscan format to use for a session from a sample dataline in
+    % that session.
+    tab = sprintf('\t');
+    parts = split(first_dataline, tab);
+    fmt = repmat(['%f' tab], 1, numel(parts));
+    fmt = fmt(1 : end - 1); % get rid of last tab
+    if strcmpi(track_mode, 'CR')
+        fmt = [fmt(1 : end - 2) '%*s'];
+    end
+end
+
+function [messages, end_indices] = balance_starts_and_ends(beg_indices, end_indices, messages, event_name, session_end_time)
+    % If for some reason there are more event beginnings than ends, insert
+    % pseudo event ends that correspond to session end times.
+    if numel(beg_indices) > numel(end_indices)
+        extra = setdiff(beg_indices, end_indices);
+        for idx = extra
+            parts = split(messages{idx});
+            which_eye = parts{2}
+            beg_time = str2num(parts{3});
+            end_time = session_end_time;
+
+            messages{end + 1} = sprintf('%s %c %d (ADDED BY PSPM)', event_name, which_eye, end_time);
+            end_indices(end + 1) = numel(messages);
+        end
+    end
+end
+
+function data = set_blinks_saccades_to_nan(data, column_names)
+    blink_l_col = find(strcmpi(column_names, 'blink_l'));
+    blink_r_col = find(strcmpi(column_names, 'blink_r'));
+    saccade_l_col = find(strcmpi(column_names, 'saccade_l'));
+    saccade_r_col = find(strcmpi(column_names, 'saccade_r'));
     
-    % return markers
-    data{sn}.markers = markers{1,1};
-    data{sn}.markerinfos.name = markers{1,2};
-    data{sn}.markerinfos.value = markers{1,3};
-    
+    blink_l = logical(data(:, blink_l_col));
+    blink_r = logical(data(:, blink_r_col));
+    saccade_l = logical(data(:, saccade_l_col));
+    saccade_r = logical(data(:, saccade_r_col));
+
+    left_data_cols = contains(column_names, '_l') & ~contains(column_names, 'blink') & ~contains(column_names, 'saccade');
+    right_data_cols = contains(column_names, '_r') & ~contains(column_names, 'blink') & ~contains(column_names, 'saccade');
+    if ~isempty(blink_l_col)
+        data(blink_l, left_data_cols) = NaN;
+    end
+    if ~isempty(saccade_l_col)
+        data(saccade_l, left_data_cols) = NaN;
+    end
+    if ~isempty(blink_r_col)
+        data(blink_r, right_data_cols) = NaN;
+    end
+    if ~isempty(saccade_r_col)
+        data(saccade_r, right_data_cols) = NaN;
+    end
+end
+
+function markers_sess = create_marker_val_fields(markers_sess)
+    all_marker_names = {};
+    for i = 1:numel(markers_sess)
+        all_marker_names = [all_marker_names; markers_sess{i}.names];
+    end
+    unique_names = unique(all_marker_names);
+    for i = 1:numel(markers_sess)
+        markers_sess{i}.vals = [];
+        [~, markers_sess{i}.vals] = ismember(markers_sess{i}.names, unique_names);
+    end
+end
+
+function all_markers_struct = combine_markers(markers_sess)
+    all_markers_struct = struct();
+    all_marker_names = {};
+    for i = 1:numel(markers_sess)
+        all_marker_names = [all_marker_names; markers_sess{i}.names];
+    end
+    all_markers_struct.times = [];
+    all_markers_struct.vals = [];
+    all_markers_struct.names = all_marker_names;
+    for i = 1:numel(markers_sess)
+        all_markers_struct.times = [all_markers_struct.times; markers_sess{i}.times];
+        all_markers_struct.vals = [all_markers_struct.vals; markers_sess{i}.vals];
+    end
 end
