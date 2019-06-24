@@ -93,7 +93,7 @@ function [dataraw, marker, messages, chan_info, file_info] = parse_viewpoint_fil
     [msg_linenums, messages] = get_msg_lines(str, linefeeds, has_backr);
 
     linefeeds = linefeeds(line_ctr : end);
-    str = str(linefeeds(1) + 1 : end);
+    str = str(linefeeds(1) + 1 + has_backr : end);
     msg_linenums = msg_linenums - line_ctr + 1;
     linefeeds = linefeeds - linefeeds(1);
 
