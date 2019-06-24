@@ -1,8 +1,9 @@
-function [data] = import_eyelink(filepath)
+function [data] = import_eyelink(filepath, ignore_at_edges_offset)
     % import_eyelink is the function for importing Eyelink 1000 .asc files to usual
     % PsPM structure.
     %
     % FORMAT: [data] = import_eyelink(filepath)
+    %         [data] = import_eyelink(filepath, ignore_at_edges_offset)
     %             filepath: Path to the file which contains the recorded Eyelink
     %                       data in ASCII format (.asc).
     %
@@ -31,6 +32,11 @@ function [data] = import_eyelink(filepath)
     %                       elcl_proc: Pupil tracking algorithm. (ellipse or centroid)
     %                       record_date: Recording date
     %                       record_time: Recording time
+    %             ignore_at_edges_offset: Multiplicator used to determine the number samples to ignore to
+    %                                     the left and to the right of each blink and saccade period.
+    %                                     This value is multiplied by the sampling rate of the corresponding
+    %                                     session to determine the ignored sample count.
+    %                                     (Default: 0)
     %
     %__________________________________________________________________________
     %
@@ -38,6 +44,11 @@ function [data] = import_eyelink(filepath)
 
     if ~exist(filepath,'file')
         error('ID:invalid_input', sprintf('Passed file %s does not exist.', filepath));
+    end
+    if nargin < 2
+        ignore_at_edges_offset = 0
+    elseif ~isnumeric(ignore_at_edges_offset) || ignore_at_edges_offset < 0 || mod(ignore_at_edges_offset, 1) ~= 0
+        error('ID:invalid_input', 'ignore_at_edges_offset must be a nonnegative integer');
     end
 
     % parse datafile
@@ -47,7 +58,7 @@ function [data] = import_eyelink(filepath)
     [dataraw, messages, chan_info, file_info] = parse_eyelink_file(filepath);
     markers_sess = {};
     for i = 1:numel(messages)
-        [dataraw{i}, markers_sess{i}, chan_info{i}] = parse_messages(messages{i}, dataraw{i}, chan_info{i});
+        [dataraw{i}, markers_sess{i}, chan_info{i}] = parse_messages(messages{i}, dataraw{i}, chan_info{i}, ignore_at_edges_offset);
     end
     rmpath(bsearch_path);
 
@@ -203,7 +214,7 @@ function [msg_linenums, messages] = get_msg_lines(str, linefeeds, has_backr)
     end
 end
 
-function [dataraw, markers, chan_info] = parse_messages(messages, dataraw, chan_info)
+function [dataraw, markers, chan_info] = parse_messages(messages, dataraw, chan_info, ignore_at_edges_offset)
     % Find blinks/saccades and non-Eyelink messages in the file.
     markers = struct();
     if isempty(messages)
@@ -237,7 +248,7 @@ function [dataraw, markers, chan_info] = parse_messages(messages, dataraw, chan_
     [messages, esacc_indices] = balance_starts_and_ends(ssacc_indices, esacc_indices, messages, 'ESACC', session_end_time);
 
     % set blink and saccade events
-    ignore_at_edges_offset = floor(0.05 * chan_info.sr);
+    ep_offset = floor(ignore_at_edges_offset * chan_info.sr);
     for idx = [eblink_indices esacc_indices]
         msgline = messages{idx};
         parts = split(msgline);
@@ -247,8 +258,8 @@ function [dataraw, markers, chan_info] = parse_messages(messages, dataraw, chan_
         start_time = str2num(parts{3});
         end_time = str2num(parts{4});
 
-        index_of_beg = max(1, bsearch(timecol, start_time) - ignore_at_edges_offset);
-        index_of_end = min(size(dataraw, 1), bsearch(timecol, end_time) + ignore_at_edges_offset);
+        index_of_beg = max(1, bsearch(timecol, start_time) - ep_offset);
+        index_of_end = min(size(dataraw, 1), bsearch(timecol, end_time) + ep_offset);
         if strcmp(msgtype, 'ESACC') && which_eye == 'l'
             saccades_L(index_of_beg : index_of_end) = true;
         elseif strcmp(msgtype, 'ESACC') && which_eye == 'r'
@@ -270,7 +281,7 @@ function [dataraw, markers, chan_info] = parse_messages(messages, dataraw, chan_
         time = str2num(parts{2});
         markers.markers(bsearch(timecol, time)) = true;
         markers.times(end + 1, 1) = time;
-        markers.names{end + 1, 1} = parts{3};
+        markers.names{end + 1, 1} = cell2mat(join(parts(3:end), ' '));
     end
 
     % set data columns
@@ -365,11 +376,17 @@ function fmt = infer_format_from_eyelink_dataline(first_dataline, track_mode)
     % Infer the textscan format to use for a session from a sample dataline in
     % that session.
     tab = sprintf('\t');
-    parts = split(first_dataline, tab);
-    fmt = repmat(['%f' tab], 1, numel(parts));
-    fmt = fmt(1 : end - 1); % get rid of last tab
-    if strcmpi(track_mode, 'CR')
-        fmt = [fmt(1 : end - 2) '%*s'];
+    parts = split(first_dataline);
+    fmt = '%f';
+    for i = 2:numel(parts)
+        if numel(parts{i}) == 1
+            partfmt = '%f';
+        elseif all(parts{i} == '.') || any(parts{i} >= 'A' & parts{i} <= 'Z') || any(parts{i} >= 'a' & parts{i} <= 'z')
+            partfmt = '%*s';
+        else
+            partfmt = '%f';
+        end
+        fmt = [fmt tab partfmt];
     end
 end
 
