@@ -48,7 +48,7 @@ area_multiplicator = 0.119;
 
 % load data with specific function
 % -------------------------------------------------------------------------
-data = import_eyelink(datafile);
+data = import_eyelink(datafile, 0.05);
 
 % iterate through data and fill up channel list as long as there is no
 % marker channel. if there is any marker channel, the settings accordingly
