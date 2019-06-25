@@ -33,7 +33,6 @@ msg = textscan(fid, '%s', 'Delimiter', '$');
 tk =regexp(msg{1},'^Version ([0-9A-Za-z\.]*) .*', 'tokens');
 v_idx = find(~cellfun('isempty', tk), 1, 'first');
 v = tk{v_idx}{1}{1};
-v = '3.5.0';
 
 %% check if there is an input action given
 % -------------------------------------------------------------------------
