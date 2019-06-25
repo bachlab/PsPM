@@ -77,9 +77,13 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
     %                                (Default: 'replace')
     %
     %               custom_settings: Settings structure to modify the preprocessing
-    %                                steps. Default settings structure can be obtained
-    %                                by calling pspm_pupil_pp_options function.
-    %                                (Default: See <a href="matlab:help pspm_pupil_pp_options">pspm_pupil_pp_options</a>)
+    %                                steps. If not specified, the default settings structure
+    %                                obtained from <a href="matlab:help pspm_pupil_pp_options">pspm_pupil_pp_options</a>
+    %                                will be used. To modify certain fields of this structure,
+    %                                you only need to specify those fields in custom_settings.
+    %                                For example, to modify settings.raw.PupilMin, you need to
+    %                                create a struct with a field .raw.PupilMin .
+    %                                (Default: See pspm_pupil_pp_options above)
     %
     %               segments:        Statistics about user defined segments can be
     %                                calculated.  When specified, segments will be
@@ -132,10 +136,12 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
     if ~isfield(options, 'plot_data')
         options.plot_data = false;
     end
-    if ~isfield(options, 'custom_settings')
-        [lsts, options.custom_settings] = pspm_pupil_pp_options();
-        if lsts ~= 1; return; end;
+    [lsts, default_settings] = pspm_pupil_pp_options();
+    if lsts ~= 1; return; end;
+    if isfield(options, 'custom_settings')
+        default_settings = assign_fields_recursively(default_settings, options.custom_settings);
     end
+    options.custom_settings = default_settings;
     if ~isfield(options, 'segments')
         options.segments = {};
     end
@@ -357,4 +363,17 @@ function data = complete_with_nans(data, t_beg, sr, output_samples)
     n_missing_at_the_beg = round(t_beg / sec_between_upsampled_samples);
     n_missing_at_the_end = output_samples - numel(data) - n_missing_at_the_beg;
     data = [NaN(n_missing_at_the_beg, 1) ; data ; NaN(n_missing_at_the_end, 1)];
+end
+
+function out_struct = assign_fields_recursively(out_struct, in_struct)
+    % Assign all fields of in_struct to out_struct recursively, overwriting when necessary.
+    fnames = fieldnames(in_struct);
+    for i = 1:numel(fnames)
+        name = fnames{i};
+        if isstruct(in_struct.(name)) && isfield(out_struct, name)
+            out_struct.(name) = assign_fields_recursively(out_struct.(name), in_struct.(name));
+        else
+            out_struct.(name) = in_struct.(name);
+        end
+    end
 end
