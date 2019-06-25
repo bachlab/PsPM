@@ -33,6 +33,7 @@ msg = textscan(fid, '%s', 'Delimiter', '$');
 tk =regexp(msg{1},'^Version ([0-9A-Za-z\.]*) .*', 'tokens');
 v_idx = find(~cellfun('isempty', tk), 1, 'first');
 v = tk{v_idx}{1}{1};
+v = '3.5.0';
 
 %% check if there is an input action given
 % -------------------------------------------------------------------------
@@ -41,7 +42,10 @@ if nargin > 0
         case 'check' % check for updates
             [str, status] = urlread('http://pspm.sourceforge.net/');
             if status == 1
-                tk = regexpi(str, '<a.*href="http://sourceforge\.net/projects/pspm/files/PsPM_([0-9.]*)\.zip/download">', 'tokens');
+                begidx = strfind(str, 'Current version');
+                endidx = begidx + strfind(str(begidx : end), sprintf('\n'));
+                endidx = endidx(1);
+                tk = regexpi(str(begidx : endidx), '(\d+\.\d+\.\d+)', 'tokens');
                 % use first found version
                 if any(~cellfun('isempty', tk))
                     new_v = tk{1}{1};
@@ -66,13 +70,10 @@ if nargin > 0
                     end
 
                     if new_version
-                        % try to find url
-                        tk = regexpi(str, '<a.*href="(http://sourceforge\.net/projects/pspm/files/PsPM_[0-9.]*\.zip/download)">', 'tokens');
-                        download_url = tk{1}{1};
-                        fprintf('New PsPM version available:\n');
-                        fprintf('Current version: %s\n', v);
-                        fprintf('Latest version: %s\n', new_v);
-                        fprintf('Available here: %s\n', download_url);
+                        warning('ID:old_version',...
+                            ['\nNew PsPM version available.\n',...
+                             sprintf('Current version: %s\n', v),...
+                             sprintf('Latest version : %s\n', new_v)]);
                     end
                 else
                     warning('ID:invalid_input', 'Cannot figure out if there is a new version.'); return;
