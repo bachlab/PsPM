@@ -47,8 +47,8 @@ function [data] = import_eyelink(filepath, ignore_at_edges_offset)
     end
     if nargin < 2
         ignore_at_edges_offset = 0
-    elseif ~isnumeric(ignore_at_edges_offset) || ignore_at_edges_offset < 0 || mod(ignore_at_edges_offset, 1) ~= 0
-        error('ID:invalid_input', 'ignore_at_edges_offset must be a nonnegative integer');
+    elseif ~isnumeric(ignore_at_edges_offset) || ignore_at_edges_offset < 0
+        error('ID:invalid_input', 'ignore_at_edges_offset must be a nonnegative number');
     end
 
     % parse datafile
