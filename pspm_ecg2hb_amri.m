@@ -1,5 +1,5 @@
-function [sts, out_channel] = pspm_ecg2hb_fmri(fn, options)
-    % pspm_ecg2hb_fmri performs R-peak detection from an ECG signal using the steps
+function [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
+    % pspm_ecg2hb_amri performs R-peak detection from an ECG signal using the steps
     % decribed in R-peak detection section of [1]. This function uses a modified
     % version of the amri_eeg_rpeak.m code that can be obtained from [2]. Modified
     % version with a list of changes made is shipped with PsPM under amri_eegfmri
@@ -9,8 +9,8 @@ function [sts, out_channel] = pspm_ecg2hb_fmri(fn, options)
     % it will either replace an existing heartbeat channel or add it as a new
     % channel to the provided file.
     %
-    %   FORMAT:  [sts, out_channel] = pspm_ecg2hb_fmri(fn)
-    %            [sts, out_channel] = pspm_ecg2hb_fmri(fn, options)
+    %   FORMAT:  [sts, out_channel] = pspm_ecg2hb_amri(fn)
+    %            [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
     %
     %       fn:                      [string] Path to the PsPM file which contains 
     %                                the pupil data.
@@ -39,7 +39,7 @@ function [sts, out_channel] = pspm_ecg2hb_fmri(fn, options)
     %                                maximal autocorrelation will be used.
     %                                (Default: 'auto')
     %
-    %               heartbeat_rate:  [numeric] Minimum and maximum heartbeat rates (BPM)
+    %               hrrange:         [numeric] Minimum and maximum heartbeat rates (BPM)
     %                                to use in the algorithm. Must be a numeric array of
     %                                length 2, i.e. [min_bpm max_bpm].
     %                                (Default: [20 200])
@@ -115,8 +115,8 @@ function [sts, out_channel] = pspm_ecg2hb_fmri(fn, options)
     if ~isfield(options, 'signal_to_use')
         options.signal_to_use = 'auto';
     end
-    if ~isfield(options, 'heartbeat_rate')
-        options.heartbeat_rate = [20 200];
+    if ~isfield(options, 'hrrange')
+        options.hrrange = [20 200];
     end
     if ~isfield(options, 'ecg_bandpass')
         options.ecg_bandpass = [0.5 40];
@@ -144,8 +144,8 @@ function [sts, out_channel] = pspm_ecg2hb_fmri(fn, options)
         warning('ID:invalid_input', 'Option signal_to_use must be one of ''ecg'',''teo'' or ''auto''');
         return;
     end
-    if ~isnumeric(options.heartbeat_rate) || any(options.heartbeat_rate <= 0)
-        warning('ID:invalid_input', 'Option heartbeat_rate must contain positive numbers');
+    if ~isnumeric(options.hrrange) || any(options.hrrange <= 0)
+        warning('ID:invalid_input', 'Option hrrange must contain positive numbers');
         return;
     end
     if ~isnumeric(options.ecg_bandpass) || any(options.ecg_bandpass <= 0)
@@ -183,7 +183,7 @@ function [sts, out_channel] = pspm_ecg2hb_fmri(fn, options)
     ecg.srate = data{1}.header.sr;
     heartbeats{1}.data = amri_eeg_rpeak(ecg, ...
         'WhatIsY', options.signal_to_use, ...
-        'PulseRate', options.heartbeat_rate, ...
+        'PulseRate', options.hrrange, ...
         'TEOParams', [options.teo_order options.teo_bandpass], ...
         'ECGcutoff', options.ecg_bandpass, ...
         'mincc', options.min_cross_corr, ...

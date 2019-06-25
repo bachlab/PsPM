@@ -79,10 +79,106 @@ ecg2hb_opt.val      = {ecg2hb_minhr, ecg2hb_maxhr, ...
 ecg2hb_opt.help     = {''};
 
 ecg2hb              = cfg_exbranch;
-ecg2hb.name         = 'Convert ECG to Heart Beat';
+ecg2hb.name         = 'Convert ECG to Heart Beat (Pan & Tompkins)';
 ecg2hb.tag          = 'ecg2hb';
-ecg2hb.help         = {'Convert ECG data into Heart beat time stamps.'};
+ecg2hb.help         = {'Convert ECG data into Heart beat time stamps using Pan & Tompkins algorithm'};
 ecg2hb.val          = {ecg2hb_chan, ecg2hb_opt};
+
+ecg2hb_amri_chan_def      = cfg_const;
+ecg2hb_amri_chan_def.name = 'Default';
+ecg2hb_amri_chan_def.tag  = 'chan_def';
+ecg2hb_amri_chan_def.val  = {'ecg'};
+ecg2hb_amri_chan_def.help = {'Last ECG channel.'};
+
+ecg2hb_amri_chan_nr         = cfg_entry;
+ecg2hb_amri_chan_nr.name    = 'Number';
+ecg2hb_amri_chan_nr.tag     = 'chan_nr';
+ecg2hb_amri_chan_nr.strtype = 'i';
+ecg2hb_amri_chan_nr.num     = [1 1];
+ecg2hb_amri_chan_nr.help    = {'Channel ID of the ECG channel in the given PsPM file'};
+
+ecg2hb_amri_chan         = cfg_choice;
+ecg2hb_amri_chan.name    = 'Channel';
+ecg2hb_amri_chan.tag     = 'chan';
+ecg2hb_amri_chan.val     = {ecg2hb_amri_chan_def};
+ecg2hb_amri_chan.values  = {ecg2hb_amri_chan_def, ecg2hb_amri_chan_nr};
+ecg2hb_amri_chan.help    = {'ID of ECG channel (default: last ECG channel).'};
+
+ecg2hb_amri_signal_to_use         = cfg_menu;
+ecg2hb_amri_signal_to_use.name    = 'Signal to use';
+ecg2hb_amri_signal_to_use.tag     = 'signal_to_use';
+ecg2hb_amri_signal_to_use.val     = {'auto'};
+ecg2hb_amri_signal_to_use.values  = {'ecg', 'teo', 'auto'};
+ecg2hb_amri_signal_to_use.labels  = {'Filtered ECG signal', 'Filtered and TEO applied ECG signal',...
+    'Choose automatically based on autocorrelation'};
+ecg2hb_amri_signal_to_use.help    = {'Which signal to feed to the core heartbeat detection procedure.'};
+
+ecg2hb_amri_hrrange         = cfg_entry;
+ecg2hb_amri_hrrange.name    = 'Feasible heartrate range';
+ecg2hb_amri_hrrange.tag     = 'hrrange';
+ecg2hb_amri_hrrange.strtype = 'r';
+ecg2hb_amri_hrrange.num     = [1 2];
+ecg2hb_amri_hrrange.val     = {[20 200]};
+ecg2hb_amri_hrrange.help    = {'Define the minimum and maximum possible heartrates for your data'};
+
+ecg2hb_amri_ecg_bandpass         = cfg_entry;
+ecg2hb_amri_ecg_bandpass.name    = 'ECG bandpass filter';
+ecg2hb_amri_ecg_bandpass.tag     = 'ecg_bandpass';
+ecg2hb_amri_ecg_bandpass.strtype = 'r';
+ecg2hb_amri_ecg_bandpass.num     = [1 2];
+ecg2hb_amri_ecg_bandpass.val     = {[0.5 40]};
+ecg2hb_amri_ecg_bandpass.help    = {'Define the cutoff frequencies for bandpass filter applied to raw ECG signal'};
+
+ecg2hb_amri_teo_bandpass         = cfg_entry;
+ecg2hb_amri_teo_bandpass.name    = 'TEO bandpass filter';
+ecg2hb_amri_teo_bandpass.tag     = 'teo_bandpass';
+ecg2hb_amri_teo_bandpass.strtype = 'r';
+ecg2hb_amri_teo_bandpass.num     = [1 2];
+ecg2hb_amri_teo_bandpass.val     = {[8 40]};
+ecg2hb_amri_teo_bandpass.help    = {['Define the cutoff frequencies for bandpass filter applied to filtered ECG',...
+    ' signal before applying TEO']};
+
+ecg2hb_amri_teo_order         = cfg_entry;
+ecg2hb_amri_teo_order.name    = 'TEO order';
+ecg2hb_amri_teo_order.tag     = 'teo_order';
+ecg2hb_amri_teo_order.strtype = 'r';
+ecg2hb_amri_teo_order.num     = [1 1];
+ecg2hb_amri_teo_order.val     = {1};
+ecg2hb_amri_teo_order.help    = {'Define the order of TEO'};
+
+ecg2hb_amri_min_cross_corr         = cfg_entry;
+ecg2hb_amri_min_cross_corr.name    = 'Minimum cross correlation';
+ecg2hb_amri_min_cross_corr.tag     = 'min_cross_corr';
+ecg2hb_amri_min_cross_corr.strtype = 'r';
+ecg2hb_amri_min_cross_corr.num     = [1 1];
+ecg2hb_amri_min_cross_corr.val     = {0.5};
+ecg2hb_amri_min_cross_corr.help    = {['Define the minimum cross correlation between a candidate R-peak',...
+    ' and the found template such that the candidate is classified as an R-peak']};
+
+ecg2hb_amri_min_relative_amplitude         = cfg_entry;
+ecg2hb_amri_min_relative_amplitude.name    = 'Minimum relative amplitude';
+ecg2hb_amri_min_relative_amplitude.tag     = 'min_relative_amplitude';
+ecg2hb_amri_min_relative_amplitude.strtype = 'r';
+ecg2hb_amri_min_relative_amplitude.num     = [1 1];
+ecg2hb_amri_min_relative_amplitude.val     = {0.4};
+ecg2hb_amri_min_relative_amplitude.help    = {['Define the minimum relative amplitude of a candidate R-peak',...
+    ' such that it is classified as an R-peak']};
+
+ecg2hb_amri_opt      = cfg_branch;
+ecg2hb_amri_opt.name = 'Options';
+ecg2hb_amri_opt.tag  = 'opt';
+ecg2hb_amri_opt.val  = {ecg2hb_amri_signal_to_use, ecg2hb_amri_hrrange, ...
+    ecg2hb_amri_ecg_bandpass, ecg2hb_amri_teo_bandpass, ecg2hb_amri_teo_order,...
+    ecg2hb_amri_min_cross_corr, ecg2hb_amri_min_relative_amplitude};
+ecg2hb_amri_opt.help = {'Define various options that change the procedure''s behaviour'};
+
+ecg2hb_amri         = cfg_exbranch;
+ecg2hb_amri.name    = 'Convert ECG to Heart Beat (AMRI)';
+ecg2hb_amri.tag     = 'ecg2hb_amri';
+ecg2hb_amri.help    = {['Convert ECG data into Heart beat time stamps using the algorithm by AMRI. The algorithm',...
+    ' performs template matching to classify candidate R-peaks after filtering the',...
+    ' data and applying Teager Enery Operator (TEO)']};
+ecg2hb_amri.val     = {ecg2hb_amri_chan, ecg2hb_amri_opt};
 
 hb2hp_sr            = cfg_entry;
 hb2hp_sr.name       = 'Sample rate';
@@ -191,7 +287,7 @@ ecg2hp.help         = {['Convert ECG data into Heart period time series.']};
 pp_type             = cfg_choice;
 pp_type.name        = 'Type of preprocessing';
 pp_type.tag         = 'pp_type';
-pp_type.values      = {ecg2hb, hb2hp, ppu2hb, ecg2hp};
+pp_type.values      = {ecg2hb, ecg2hb_amri, hb2hp, ppu2hb, ecg2hp};
 pp_type.help        = {'Specify the type of preprocessing.'};
 
 pp                  = cfg_repeat;
@@ -219,12 +315,15 @@ pp_heart_data.tag  = 'pp_heart_data';
 pp_heart_data.val  = {datafile, pp, replace_chan};
 pp_heart_data.prog = @pspm_cfg_run_pp_heart_data;
 pp_heart_data.vout = @pspm_cfg_vout_pp_heart_data;
-pp_heart_data.help = {['Convert ECG to heart beat detects QRS complexes in ', ...
+pp_heart_data.help = {['Convert ECG to heart beat using Pan & Tompkins detects QRS complexes in ', ...
     'ECG data and write timestamps of detected R spikes into a new ', ...
     'heart beat channel. This function uses an algorithm adapted from ', ...
     'Pan & Tompkins (1985). Hidden options for minimum and maximum heart ', ...
     'rate become visible when the job is saved as a script and ', ...
-    'should only be used if the algorithm fails.'], ['Convert Heart Beat ', ...
+    'should only be used if the algorithm fails.'], ['Convert ECG to heart beat using ',...
+    'AMRI algorithm similarly detects QRS complexes in ECG data. This function uses the algorithm ',...
+    'described in Liu, Zhongming, et al. "Statistical feature extraction for artifact removal ',...
+    'from concurrent fMRI-EEG recordings." Neuroimage 59.3 (2012): 2073-2087.'], ['Convert Heart Beat ', ...
     'to heart period interpolates heart beat time stamps into ', ...
     'continuous heart period data and writes to a new channel. ', ...
     'This function uses heart period rather than heart rate because heart ',...

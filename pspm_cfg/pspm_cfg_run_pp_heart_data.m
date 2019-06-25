@@ -56,6 +56,16 @@ for i=1:numel(job.pp_type)
                 
                 % call function
                 [sts, winfo] = pspm_ecg2hb(fn, chan, opt);
+            case 'ecg2hb_amri'
+                opt = pp_field.opt;
+                if replace
+                    opt.channel_action = 'replace';
+                else
+                    opt.channel_action = 'add';
+                end
+                opt.channel = chan;
+                winfo = struct();
+                [sts, winfo.channel] = pspm_ecg2hb_amri(fn, opt);
             case 'hb2hp'
                 sr = job.pp_type{i}.hb2hp.sr;              
                 opt = struct(); 
