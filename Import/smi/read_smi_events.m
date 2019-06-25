@@ -59,22 +59,22 @@ function out = read_smi_events(filepath)
     [markernum, msg, blink_l, blink_r, sacc_l, sacc_r] = parse_events(str, linefeeds, has_backr, header_struct);
     rmpath(bsearch_path);
 
-    out.blink_l.trial = blink_l(find(strcmpi(header_struct.blink_names, 'Trial')));
-    out.blink_l.start = blink_l(find(strcmpi(header_struct.blink_names, 'Start')));
-    out.blink_l.end = blink_l(find(strcmpi(header_struct.blink_names, 'End')));
-    out.blink_r.trial = blink_r(find(strcmpi(header_struct.blink_names, 'Trial')));
-    out.blink_r.start = blink_r(find(strcmpi(header_struct.blink_names, 'Start')));
-    out.blink_r.end = blink_r(find(strcmpi(header_struct.blink_names, 'End')));
+    out.blink_l.trial = blink_l(:, find(strcmpi(header_struct.blink_names, 'Trial')));
+    out.blink_l.start = blink_l(:, find(strcmpi(header_struct.blink_names, 'Start')));
+    out.blink_l.end = blink_l(:, find(strcmpi(header_struct.blink_names, 'End')));
+    out.blink_r.trial = blink_r(:, find(strcmpi(header_struct.blink_names, 'Trial')));
+    out.blink_r.start = blink_r(:, find(strcmpi(header_struct.blink_names, 'Start')));
+    out.blink_r.end = blink_r(:, find(strcmpi(header_struct.blink_names, 'End')));
 
-    out.sacc_l.trial = sacc_l(find(strcmpi(header_struct.sacc_names, 'Trial')));
-    out.sacc_l.start = sacc_l(find(strcmpi(header_struct.sacc_names, 'Start')));
-    out.sacc_l.end = sacc_l(find(strcmpi(header_struct.sacc_names, 'End')));
-    out.sacc_r.trial = sacc_r(find(strcmpi(header_struct.sacc_names, 'Trial')));
-    out.sacc_r.start = sacc_r(find(strcmpi(header_struct.sacc_names, 'Start')));
-    out.sacc_r.end = sacc_r(find(strcmpi(header_struct.sacc_names, 'End')));
+    out.sacc_l.trial = sacc_l(:, find(strcmpi(header_struct.sacc_names, 'Trial')));
+    out.sacc_l.start = sacc_l(:, find(strcmpi(header_struct.sacc_names, 'Start')));
+    out.sacc_l.end = sacc_l(:, find(strcmpi(header_struct.sacc_names, 'End')));
+    out.sacc_r.trial = sacc_r(:, find(strcmpi(header_struct.sacc_names, 'Trial')));
+    out.sacc_r.start = sacc_r(:, find(strcmpi(header_struct.sacc_names, 'Start')));
+    out.sacc_r.end = sacc_r(:, find(strcmpi(header_struct.sacc_names, 'End')));
 
-    out.marker.trial = markernum(find(strcmpi(header_struct.marker_names, 'Trial')));
-    out.marker.start = markernum(find(strcmpi(header_struct.marker_names, 'Start')));
+    out.marker.trial = markernum(:, find(strcmpi(header_struct.marker_names, 'Trial')));
+    out.marker.start = markernum(:, find(strcmpi(header_struct.marker_names, 'Start')));
     out.marker.msg = msg;
 end
 
@@ -103,8 +103,8 @@ function [out, line_ctr] = parse_header(str, line_ctr, linefeeds, has_backr)
 
             if contains(curr_line, 'Table Header for Saccades')
                 found(1) = true;
-                out.saccade_fmt = fmt;
-                out.saccade_names = names;
+                out.sacc_fmt = fmt;
+                out.sacc_names = names;
             else
                 found(2) = true;
                 out.blink_fmt = fmt;
@@ -175,7 +175,7 @@ function [markernum, messages, blink_l, blink_r, sacc_l, sacc_r] = parse_events(
     blink_l = blinknum(blink_left_mask, :);
     blink_r = blinknum(~blink_left_mask, :);
 
-    C = textscan(sacc_str, header_struct.saccade_fmt, ...
+    C = textscan(sacc_str, header_struct.sacc_fmt, ...
         'Delimiter', '\t', ...
         'CollectOutput', 1);
     saccnum = C{1};

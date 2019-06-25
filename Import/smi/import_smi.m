@@ -42,10 +42,6 @@ function [data] = import_smi(varargin)
     %__________________________________________________________________________
     %
     % (C) 2019 Laure Ciernik
-    % Function uses import function from the GazeVisToolbox �.
-    bsearch_path = fullfile(fileparts(which('import_smi')), '..', '..', 'backroom', 'bsearch');
-    addpath(bsearch_path);
-
     if isempty(varargin)
         error('ID:invalid_input', 'import_SMI.m needs at least one input sample_file.');
     end
@@ -196,90 +192,37 @@ function [data] = import_smi(varargin)
 
     %% open events_file, get events, and events header
     if event_ex
-        % add the toolbox used for the event evaluation onto the search path
-        toolbox_path = fullfile(fileparts(which('import_smi')), 'GazeVisToolbox');
-        addpath(toolbox_path);
         % get events from event file
-        [eventsRaw,smiParams2] = ReadSmiEvents_custom(events_file);
-        eventsRaw.Blinks.Start = max(0, eventsRaw.Blinks.Start - experiment_begin_time);
-        eventsRaw.Blinks.End = max(0, eventsRaw.Blinks.End - experiment_begin_time);
-        eventsRaw.Saccades.Start = max(0, eventsRaw.Saccades.Start - experiment_begin_time);
-        eventsRaw.Saccades.End = max(0, eventsRaw.Saccades.End - experiment_begin_time);
-
-        % get right format
-        % get names of fields
-        event_fields = fieldnames(eventsRaw);
-        % find idx of Blinks and Saccade fields
-        blinks_idx = cell2mat(cellfun(@(x)strcmpi(x,'Blinks'),event_fields,'UniformOutput',0));
-        saccade_idx= cell2mat(cellfun(@(x)strcmpi(x,'Saccades'),event_fields,'UniformOutput',0));
-
-        % get field names of Blink and Saccade struct
-        blink_fields =fieldnames(eventsRaw.(event_fields{blinks_idx}));
-        saccade_fields=fieldnames(eventsRaw.(event_fields{saccade_idx}));
-
-        % find idx of trial column in Blink and Saccade struct
-        trial_blinks_idx = cell2mat(cellfun(@(x)strcmpi(x,'Trial'),blink_fields,'UniformOutput',0));
-        trial_saccade_idx= cell2mat(cellfun(@(x)strcmpi(x,'Trial'),saccade_fields,'UniformOutput',0));
-
-        % get trial column of Blinks and Saccade -> used later line 273/274
-        trial_ids_blink_sess = eventsRaw.(event_fields{blinks_idx}).(blink_fields{trial_blinks_idx});
-        trial_ids_sacc_sess = eventsRaw.(event_fields{saccade_idx}).(blink_fields{trial_saccade_idx});
-
-        if strcmpi(eyesObserved,'LR')
-            %find left eye blinks
-            L_idx = cell2mat(cellfun(@(x)~isempty(regexp(x,'L')),eventsRaw.(event_fields{blinks_idx}).(blink_fields{1}),'UniformOutput',0));
-            %find right eye blinks
-            R_idx = cell2mat(cellfun(@(x)~isempty(regexp(x,'R')),eventsRaw.(event_fields{blinks_idx}).(blink_fields{1}),'UniformOutput',0));
-            %find blinks on both eyes
-            B_idx = cell2mat(cellfun(@(x) length(regexp(x,'B'))==2,eventsRaw.(event_fields{blinks_idx}).(blink_fields{1}),'UniformOutput',0));
-            %include the blinks of both eyes in separeted channels
-            L_blink_idx = L_idx;
-            L_blink_idx(B_idx)=true;
-            R_blink_idx = R_idx;
-            R_blink_idx(B_idx)=true;
-            %find left eye saccades
-            L_idx = cell2mat(cellfun(@(x)~isempty(regexp(x,'L')),eventsRaw.(event_fields{saccade_idx}).(saccade_fields{1}),'UniformOutput',0));
-            %find right eye saccades
-            R_idx = cell2mat(cellfun(@(x)~isempty(regexp(x,'R')),eventsRaw.(event_fields{saccade_idx}).(saccade_fields{1}),'UniformOutput',0));
-            %find saccades on both eyes
-            B_idx = cell2mat(cellfun(@(x)~isempty(regexp(x,'B')),eventsRaw.(event_fields{saccade_idx}).(saccade_fields{1}),'UniformOutput',0));
-            %include the saccades of both eyes in separeted channels
-            L_saccades_idx = L_idx;
-            L_saccades_idx(B_idx)=true;
-            R_saccades_idx = R_idx;
-            R_saccades_idx(B_idx)=true;
+        eventsRaw = read_smi_events(events_file);
+        % subtract experiment begin offset
+        for name = {'blink_l', 'blink_r', 'sacc_l', 'sacc_r'}
+            keyname = name{1};
+            eventsRaw.(keyname).start = max(0, eventsRaw.(keyname).start - experiment_begin_time);
+            eventsRaw.(keyname).end = max(0, eventsRaw.(keyname).end - experiment_begin_time);
         end
-
-        % remove toolbox from path
-        rmpath(toolbox_path);
+        eventsRaw.marker.start = max(0, eventsRaw.marker.start - experiment_begin_time);
     end
 
     [pupil_channels, pupil_units] = get_pupil_channels(columns);
     %% get all messages - if Event file is given take messages of event file otherwise read from file
 
-    messageCols = {'Time','Type','Trial','Text'};
-    messageKeyword = 'MSG';
-    idx_of_type = strcmpi(columns,'Type');
+    messageCols = {'Time','Trial','Text'};
     if event_ex
-        event_idx = cell2mat(cellfun(@(x)strcmpi(x,'UserEvents'),event_fields,'UniformOutput',0));
-        usr_events = eventsRaw.(event_fields{event_idx});
-        nr_events = length(usr_events.Trial);
-        msgs = cell(4, nr_events);
+        nr_events = numel(eventsRaw.marker.msg);
+        msgs = cell(3, nr_events);
         for i=1:nr_events
-            msgs{1, i} = usr_events.Start(i) - experiment_begin_time;
-            msgs{2, i} = usr_events.EventType{i};
-            msgs{3, i} = usr_events.Trial(i);
-            msgs{4, i} = usr_events.Description{i};
+            msgs{1, i} = eventsRaw.marker.start(i);
+            msgs{2, i} = eventsRaw.marker.trial(i);
+            msgs{3, i} = eventsRaw.marker.msg{i};
         end
     else
         nr_events = numel(msg_lines);
-        msgs = cell(4, nr_events);
+        msgs = cell(3, nr_events);
         for i=1:nr_events
-            C = textscan(msg_lines{i}, '%f%s%f%s', 'Delimiter', '\t');
+            C = textscan(msg_lines{i}, '%f%*s%f%s', 'Delimiter', '\t');
             msgs{1, i} = C{1} - experiment_begin_time;
-            msgs{2, i} = C{2}{1};
-            msgs{3, i} = C{3};
-            msgs{4, i} = C{4}{1};
+            msgs{2, i} = C{2};
+            msgs{3, i} = C{3}{1};
         end
     end
 
@@ -295,6 +238,9 @@ function [data] = import_smi(varargin)
     end
     data = cell(n_sessions, 1);
     %% convert data, compute blink, saccade and messages
+
+    bsearch_path = fullfile(fileparts(which('import_smi')), '..', '..', 'backroom', 'bsearch');
+    addpath(bsearch_path);
     for sn = 1:n_sessions
         data{sn} = struct();
         sn_datanum = datanum(sess_beg_end(sn) + 1:sess_beg_end(sn + 1), :);
@@ -318,12 +264,10 @@ function [data] = import_smi(varargin)
         times = sn_datanum(:, 1);
         %% if even_file is given, include blinkes and saccades
         if event_ex
-            Blinks = eventsRaw.(event_fields{blinks_idx});
-            Saccades = eventsRaw.(event_fields{saccade_idx});
-
-            %take only blinks and saccades in correct trial
-            b_trial_sess = trial_ids_blink_sess == sn;
-            s_trial_sess = trial_ids_sacc_sess  == sn;
+            blink_l_trial_sess = eventsRaw.blink_l.trial == sn;
+            blink_r_trial_sess = eventsRaw.blink_r.trial == sn;
+            sacc_l_trial_sess = eventsRaw.sacc_l.trial == sn;
+            sacc_r_trial_sess = eventsRaw.sacc_r.trial == sn;
 
             % store the indicies in right format
             % ignore_str_pos = { {start_blink_l,end_blink_l,start_blink_r,end_blink_r},
@@ -333,50 +277,41 @@ function [data] = import_smi(varargin)
             ignore_str_pos{2}=cell(4,1);
 
             if strcmpi(eyesObserved,'LR')
-                %take into account, which blinks and saccades belong to which
-                %eye
-                val_blink_l   = b_trial_sess & L_blink_idx;
-                val_blink_r   = b_trial_sess & R_blink_idx;
-                val_saccade_l = s_trial_sess & L_saccades_idx;
-                val_saccade_r = s_trial_sess & R_saccades_idx;
-
                 % alwas add the time of the beginning of the current trial
                 % since the measured start and end times are relative to the
                 % time of the beginning ot the current trial
 
-                start_blink_l = Blinks.Start(val_blink_l);%+time;
-                end_blink_l = Blinks.End(val_blink_l);%+time;
+                start_blink_l = eventsRaw.blink_l.start(blink_l_trial_sess);%+time;
+                end_blink_l = eventsRaw.blink_l.end(blink_l_trial_sess);%+time;
                 [ignore_str_pos{1}{1},ignore_str_pos{1}{2}]=get_idx(times,start_blink_l,end_blink_l);
 
-                start_blink_r = Blinks.Start(val_blink_r);%+time;
-                end_blink_r = Blinks.End(val_blink_r);%+time;
+                start_blink_r = eventsRaw.blink_r.start(blink_r_trial_sess);%+time;
+                end_blink_r = eventsRaw.blink_r.end(blink_r_trial_sess);%+time;
                 [ignore_str_pos{1}{3},ignore_str_pos{1}{4}]=get_idx(times,start_blink_r,end_blink_r);
 
-                start_saccade_l = Saccades.Start(val_saccade_l);%+time;
-                end_saccade_l = Saccades.End(val_saccade_l);%+time;
+                start_saccade_l = eventsRaw.sacc_l.start(sacc_l_trial_sess);%+time;
+                end_saccade_l = eventsRaw.sacc_l.end(sacc_l_trial_sess);%+time;
                 [ignore_str_pos{2}{1},ignore_str_pos{2}{2}]=get_idx(times,start_saccade_l,end_saccade_l);
 
-                start_saccade_r = Saccades.Start(val_saccade_r);%+time;
-                end_saccade_r = Saccades.End(val_saccade_r);%+time;
+                start_saccade_r = eventsRaw.sacc_r.start(sacc_r_trial_sess);%+time;
+                end_saccade_r = eventsRaw.sacc_r.end(sacc_r_trial_sess);%+time;
                 [ignore_str_pos{2}{3},ignore_str_pos{2}{4}]=get_idx(times,start_saccade_r,end_saccade_r);
 
 
-            else% always add the time of the beginning of the current trial
-                % since the measured start and end times are relative to the
-                % time of the beginning ot the current trial
-                start_blink = Blinks.Start(b_trial_sess);%+time;
-                end_blink = Blinks.End(b_trial_sess)+time;
-
-                start_saccade = Saccades.Start(s_trial_sess);%+time;
-                end_saccade = Saccades.End(s_trial_sess);%+time;
-
-                if strcmpi(eyesObserved,'L')
-                    [ignore_str_pos{1}{1},ignore_str_pos{1}{2}]=get_idx(times,start_blink,end_blink);
-                    [ignore_str_pos{2}{1},ignore_str_pos{2}{2}]=get_idx(times,start_saccade,end_saccade);
-                else
-                    [ignore_str_pos{1}{3},ignore_str_pos{1}{4}]=get_idx(times,start_blink,end_blink);
-                    [ignore_str_pos{2}{3},ignore_str_pos{2}{4}]=get_idx(times,start_saccade,end_saccade);
-                end
+            elseif strcmpi(eyesObserved, 'L')
+                start_blink = eventsRaw.blink_l.start(blink_l_trial_sess);%+time;
+                end_blink = eventsRaw.blink_l.end(blink_l_trial_sess)+time;
+                start_saccade = eventsRaw.sacc_l.start(sacc_l_trial_sess);%+time;
+                end_saccade = eventsRaw.sacc_l.end(sacc_l_trial_sess);%+time;
+                [ignore_str_pos{1}{1},ignore_str_pos{1}{2}]=get_idx(times,start_blink,end_blink);
+                [ignore_str_pos{2}{1},ignore_str_pos{2}{2}]=get_idx(times,start_saccade,end_saccade);
+            else
+                start_blink = eventsRaw.blink_r.start(blink_r_trial_sess);%+time;
+                end_blink = eventsRaw.blink_r.end(blink_r_trial_sess)+time;
+                start_saccade = eventsRaw.sacc_r.start(sacc_r_trial_sess);%+time;
+                end_saccade = eventsRaw.sacc_r.end(sacc_r_trial_sess);%+time;
+                [ignore_str_pos{1}{3},ignore_str_pos{1}{4}]=get_idx(times,start_blink,end_blink);
+                [ignore_str_pos{2}{3},ignore_str_pos{2}{4}]=get_idx(times,start_saccade,end_saccade);
             end
 
             % add blinks and saccades to datanum
@@ -405,13 +340,13 @@ function [data] = import_smi(varargin)
         data{sn}.markers = [];
         data{sn}.markerinfos.value = [];
         data{sn}.markerinfos.name = {};
-        val_msg_idx = cell2mat(msgs(3, :)) == sn;
+        val_msg_idx = cell2mat(msgs(2, :)) == sn;
         if ~isempty(val_msg_idx)
             msg_times_in_sn = cell2mat(msgs(1, :));
             msg_times_in_sn = msg_times_in_sn(val_msg_idx);
             data{sn}.markers = msg_times_in_sn;
 
-            msg_str =  msgs(4, val_msg_idx);
+            msg_str =  msgs(3, val_msg_idx);
             msg_str_idx = cell2mat(cellfun(@(x) find(x==':',1,'first'),msg_str,'UniformOutput',0));
             for u=1:length(msg_str_idx)
                 msg_str{u} = msg_str{u}(msg_str_idx(u)+2:end);
