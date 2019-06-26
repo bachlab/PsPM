@@ -281,7 +281,8 @@ function [pupil_pp] = pspm_cfg_pupil_preprocess(job)
     segments_rep.tag = 'segments_rep';
     segments_rep.values = {segments};
     segments_rep.num = [0 Inf];
-    segments_rep.help = {'Define segments to calculate statistics'};
+    segments_rep.help = {['Define segments to calculate statistics on. These segments will be stored ',...
+        'in the output channel and also will be show if plotting is enabled']};
 
     % define plot_data
     % ------------------------------------------------------
@@ -301,7 +302,7 @@ function [pupil_pp] = pspm_cfg_pupil_preprocess(job)
     pupil_pp.val  = {datafile, channel, channel_combine, channel_action, sett, segments_rep, plot_data};
     pupil_pp.prog = @pspm_cfg_run_pupil_preprocess;
     pupil_pp.vout = @pspm_cfg_vout_pupil_preprocess;
-    pupil_pp.help = {['Pupil preprocessing according to the reference article.'],...
+    pupil_pp.help = {['Pupil data preprocessing according to the reference article.'],...
         ['Reference: ',...
         'Kret, Mariska E., and Elio E. Sjak-Shie. "Preprocessing pupil size data: Guidelines and code." ',...
         'Behavior research methods (2018): 1-7.']};

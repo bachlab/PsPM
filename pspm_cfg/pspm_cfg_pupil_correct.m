@@ -18,13 +18,13 @@ function [pupil_correct] = pspm_cfg_pupil_correct(job)
     screen_size_px.name = 'Screen resolution';
     screen_size_px.tag  = 'screen_size_px';
     screen_size_px.num  = [1 2];
-    screen_size_px.help = {'Specify screen resolution (width x height) in pixels'};
+    screen_size_px.help = {'Specify screen resolution ([width height]) in pixels'};
 
     screen_size_mm      = cfg_entry;
     screen_size_mm.name = 'Screen size';
     screen_size_mm.tag  = 'screen_size_mm';
     screen_size_mm.num  = [1 2];
-    screen_size_mm.help = {'Specify screen size (width x height) in milimeters'};
+    screen_size_mm.help = {'Specify screen size ([width height]) in milimeters'};
 
     C_x      = cfg_entry;
     C_x.name = 'C_x';
@@ -42,7 +42,7 @@ function [pupil_correct] = pspm_cfg_pupil_correct(job)
     C_z.name = 'C_z';
     C_z.tag  = 'C_z';
     C_z.num  = [1 1];
-    C_z.help = {'Eye to camera distance if they are on the same x and y coordinates. (Unit: milimeters)'};
+    C_z.help = {'Eye to camera Euclidean distance if they are on the same x and y coordinates. (Unit: milimeters)'};
 
     S_x      = cfg_entry;
     S_x.name = 'S_x';
@@ -73,7 +73,7 @@ function [pupil_correct] = pspm_cfg_pupil_correct(job)
     auto_mode.tag  = 'auto';
     auto_mode.val  = {C_z_auto};
     auto_mode.help = {['In auto mode, you need to enter C_z value. Other values will be set using ',...
-        'the optimized parameters in reference paper.']};
+        'the optimized parameters in reference paper which you can find in method help text.']};
 
     manual_mode = cfg_branch;
     manual_mode.name = 'Manual mode';

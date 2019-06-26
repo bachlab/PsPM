@@ -102,7 +102,7 @@ ecg2hb_amri_chan.name    = 'Channel';
 ecg2hb_amri_chan.tag     = 'chan';
 ecg2hb_amri_chan.val     = {ecg2hb_amri_chan_def};
 ecg2hb_amri_chan.values  = {ecg2hb_amri_chan_def, ecg2hb_amri_chan_nr};
-ecg2hb_amri_chan.help    = {'ID of ECG channel (default: last ECG channel).'};
+ecg2hb_amri_chan.help    = {'ID of ECG channel in the PsPM file (default: last ECG channel).'};
 
 ecg2hb_amri_signal_to_use         = cfg_menu;
 ecg2hb_amri_signal_to_use.name    = 'Signal to use';
@@ -111,7 +111,10 @@ ecg2hb_amri_signal_to_use.val     = {'auto'};
 ecg2hb_amri_signal_to_use.values  = {'ecg', 'teo', 'auto'};
 ecg2hb_amri_signal_to_use.labels  = {'Filtered ECG signal', 'Filtered and TEO applied ECG signal',...
     'Choose automatically based on autocorrelation'};
-ecg2hb_amri_signal_to_use.help    = {'Which signal to feed to the core heartbeat detection procedure.'};
+ecg2hb_amri_signal_to_use.help    = {['Which signal to feed to the core heartbeat detection procedure. ',...
+    '''ecg'' corresponds to filtered ECG signal. ''teo'' corresponds to the signal obtained by filtering ',...
+    'the ECG signal even more and applying the Teager Enery Operator. ''auto'' option picks the one of ',...
+    'these two options that results in higher autocorrelation']};
 
 ecg2hb_amri_hrrange         = cfg_entry;
 ecg2hb_amri_hrrange.name    = 'Feasible heartrate range';
@@ -127,7 +130,7 @@ ecg2hb_amri_ecg_bandpass.tag     = 'ecg_bandpass';
 ecg2hb_amri_ecg_bandpass.strtype = 'r';
 ecg2hb_amri_ecg_bandpass.num     = [1 2];
 ecg2hb_amri_ecg_bandpass.val     = {[0.5 40]};
-ecg2hb_amri_ecg_bandpass.help    = {'Define the cutoff frequencies for bandpass filter applied to raw ECG signal'};
+ecg2hb_amri_ecg_bandpass.help    = {'Define the cutoff frequencies (Hz) for bandpass filter applied to raw ECG signal'};
 
 ecg2hb_amri_teo_bandpass         = cfg_entry;
 ecg2hb_amri_teo_bandpass.name    = 'TEO bandpass filter';
@@ -135,7 +138,7 @@ ecg2hb_amri_teo_bandpass.tag     = 'teo_bandpass';
 ecg2hb_amri_teo_bandpass.strtype = 'r';
 ecg2hb_amri_teo_bandpass.num     = [1 2];
 ecg2hb_amri_teo_bandpass.val     = {[8 40]};
-ecg2hb_amri_teo_bandpass.help    = {['Define the cutoff frequencies for bandpass filter applied to filtered ECG',...
+ecg2hb_amri_teo_bandpass.help    = {['Define the cutoff frequencies (Hz) for bandpass filter applied to filtered ECG',...
     ' signal before applying TEO']};
 
 ecg2hb_amri_teo_order         = cfg_entry;
@@ -144,7 +147,8 @@ ecg2hb_amri_teo_order.tag     = 'teo_order';
 ecg2hb_amri_teo_order.strtype = 'r';
 ecg2hb_amri_teo_order.num     = [1 1];
 ecg2hb_amri_teo_order.val     = {1};
-ecg2hb_amri_teo_order.help    = {'Define the order of TEO'};
+ecg2hb_amri_teo_order.help    = {['Define the order k of TEO. Note that for signal x(t),'],...
+    ['TEO[x(t); k] = x(t)x(t) - x(t-k)x(t+k)']};
 
 ecg2hb_amri_min_cross_corr         = cfg_entry;
 ecg2hb_amri_min_cross_corr.name    = 'Minimum cross correlation';
@@ -177,7 +181,9 @@ ecg2hb_amri.name    = 'Convert ECG to Heart Beat (AMRI)';
 ecg2hb_amri.tag     = 'ecg2hb_amri';
 ecg2hb_amri.help    = {['Convert ECG data into Heart beat time stamps using the algorithm by AMRI. The algorithm',...
     ' performs template matching to classify candidate R-peaks after filtering the',...
-    ' data and applying Teager Enery Operator (TEO)']};
+    ' data and applying Teager Enery Operator (TEO)'],...
+    ['Reference: Liu, Zhongming, et al. "Statistical feature extraction for artifact removal ',...
+    'from concurrent fMRI-EEG recordings." Neuroimage 59.3 (2012): 2073-2087.']};
 ecg2hb_amri.val     = {ecg2hb_amri_chan, ecg2hb_amri_opt};
 
 hb2hp_sr            = cfg_entry;
