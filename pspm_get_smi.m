@@ -275,7 +275,7 @@ function proper = assert_custom_import_channels_has_channel_field(import)
     proper = true;
     for i = 1:numel(import)
         if strcmpi(import{i}.type, 'custom') && ~isfield(import{i}, 'channel')
-            warning('ID:invalid_imported_data', sprintf('Custom channel in import{%d} has no channel id to import', i));
+            warning('ID:invalid_input', sprintf('Custom channel in import{%d} has no channel id to import', i));
             proper = false;
             return;
         end
@@ -289,7 +289,7 @@ function proper = assert_all_chantypes_are_supported(settings, import)
     for k = 1:numel(import)
         input_type = import{k}.type;
         if ~any(strcmpi(input_type, viewpoint_types))
-            error_msg = sprintf('Channel %s is not a ViewPoint supported type', input_type);
+            error_msg = sprintf('Channel %s is not an SMI supported type', input_type);
             warning('ID:channel_not_contained_in_file', error_msg);
             proper = false;
             return;
