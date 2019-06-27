@@ -1,9 +1,8 @@
-function [data] = import_eyelink(filepath, ignore_at_edges_offset)
+function [data] = import_eyelink(filepath)
     % import_eyelink is the function for importing Eyelink 1000 .asc files to usual
     % PsPM structure.
     %
     % FORMAT: [data] = import_eyelink(filepath)
-    %         [data] = import_eyelink(filepath, ignore_at_edges_offset)
     %             filepath: Path to the file which contains the recorded Eyelink
     %                       data in ASCII format (.asc).
     %
@@ -32,23 +31,12 @@ function [data] = import_eyelink(filepath, ignore_at_edges_offset)
     %                       elcl_proc: Pupil tracking algorithm. (ellipse or centroid)
     %                       record_date: Recording date
     %                       record_time: Recording time
-    %             ignore_at_edges_offset: Multiplicator used to determine the number samples to ignore to
-    %                                     the left and to the right of each blink and saccade period.
-    %                                     This value is multiplied by the sampling rate of the corresponding
-    %                                     session to determine the ignored sample count.
-    %                                     (Default: 0)
-    %
     %__________________________________________________________________________
     %
     % (C) 2019 Eshref Yozdemir
 
     if ~exist(filepath,'file')
         error('ID:invalid_input', sprintf('Passed file %s does not exist.', filepath));
-    end
-    if nargin < 2
-        ignore_at_edges_offset = 0
-    elseif ~isnumeric(ignore_at_edges_offset) || ignore_at_edges_offset < 0
-        error('ID:invalid_input', 'ignore_at_edges_offset must be a nonnegative number');
     end
 
     % parse datafile
@@ -58,7 +46,7 @@ function [data] = import_eyelink(filepath, ignore_at_edges_offset)
     [dataraw, messages, chan_info, file_info] = parse_eyelink_file(filepath);
     markers_sess = {};
     for i = 1:numel(messages)
-        [dataraw{i}, markers_sess{i}, chan_info{i}] = parse_messages(messages{i}, dataraw{i}, chan_info{i}, ignore_at_edges_offset);
+        [dataraw{i}, markers_sess{i}, chan_info{i}] = parse_messages(messages{i}, dataraw{i}, chan_info{i});
     end
     rmpath(bsearch_path);
 
@@ -70,8 +58,6 @@ function [data] = import_eyelink(filepath, ignore_at_edges_offset)
         data{sn}.channels = data{sn}.raw(:, chan_info{sn}.col_idx);
         data{sn}.channels_header = chan_info{sn}.channels_header;
         data{sn}.units = chan_info{sn}.channels_units;
-
-        data{sn}.channels = set_blinks_saccades_to_nan(data{sn}.channels, chan_info{sn}.channels_header);
 
         data{sn}.sampleRate = chan_info{sn}.sr;
         data{sn}.eyesObserved = chan_info{sn}.eyesObserved;
@@ -214,7 +200,7 @@ function [msg_linenums, messages] = get_msg_lines(str, linefeeds, has_backr)
     end
 end
 
-function [dataraw, markers, chan_info] = parse_messages(messages, dataraw, chan_info, ignore_at_edges_offset)
+function [dataraw, markers, chan_info] = parse_messages(messages, dataraw, chan_info)
     % Find blinks/saccades and non-Eyelink messages in the file.
     markers = struct();
     if isempty(messages)
@@ -248,7 +234,6 @@ function [dataraw, markers, chan_info] = parse_messages(messages, dataraw, chan_
     [messages, esacc_indices] = balance_starts_and_ends(ssacc_indices, esacc_indices, messages, 'ESACC', session_end_time);
 
     % set blink and saccade events
-    ep_offset = floor(ignore_at_edges_offset * chan_info.sr);
     for idx = [eblink_indices esacc_indices]
         msgline = messages{idx};
         parts = split(msgline);
@@ -258,8 +243,8 @@ function [dataraw, markers, chan_info] = parse_messages(messages, dataraw, chan_
         start_time = str2num(parts{3});
         end_time = str2num(parts{4});
 
-        index_of_beg = max(1, bsearch(timecol, start_time) - ep_offset);
-        index_of_end = min(size(dataraw, 1), bsearch(timecol, end_time) + ep_offset);
+        index_of_beg = bsearch(timecol, start_time);
+        index_of_end = bsearch(timecol, end_time);
         if strcmp(msgtype, 'ESACC') && which_eye == 'l'
             saccades_L(index_of_beg : index_of_end) = true;
         elseif strcmp(msgtype, 'ESACC') && which_eye == 'r'
@@ -404,33 +389,6 @@ function [messages, end_indices] = balance_starts_and_ends(beg_indices, end_indi
             messages{end + 1} = sprintf('%s %c %d (ADDED BY PSPM)', event_name, which_eye, end_time);
             end_indices(end + 1) = numel(messages);
         end
-    end
-end
-
-function data = set_blinks_saccades_to_nan(data, column_names)
-    blink_l_col = find(strcmpi(column_names, 'blink_l'));
-    blink_r_col = find(strcmpi(column_names, 'blink_r'));
-    saccade_l_col = find(strcmpi(column_names, 'saccade_l'));
-    saccade_r_col = find(strcmpi(column_names, 'saccade_r'));
-    
-    blink_l = logical(data(:, blink_l_col));
-    blink_r = logical(data(:, blink_r_col));
-    saccade_l = logical(data(:, saccade_l_col));
-    saccade_r = logical(data(:, saccade_r_col));
-
-    left_data_cols = contains(column_names, '_l') & ~contains(column_names, 'blink') & ~contains(column_names, 'saccade');
-    right_data_cols = contains(column_names, '_r') & ~contains(column_names, 'blink') & ~contains(column_names, 'saccade');
-    if ~isempty(blink_l_col)
-        data(blink_l, left_data_cols) = NaN;
-    end
-    if ~isempty(saccade_l_col)
-        data(saccade_l, left_data_cols) = NaN;
-    end
-    if ~isempty(blink_r_col)
-        data(blink_r, right_data_cols) = NaN;
-    end
-    if ~isempty(saccade_r_col)
-        data(saccade_r, right_data_cols) = NaN;
     end
 end
 
