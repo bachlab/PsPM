@@ -298,7 +298,7 @@ for i=1:fix(length(Y)/(5*iri))
         if i==fix(length(Y)/(5*iri)) 
             % if outlier exists even after reaching the last segment
             % exclude the outlier time points in the last segment
-            printf('eeg_gac(): no template is found');
+            fprintf('eeg_gac(): no template is found');
             timerange(outliers)=[];
         end
     end

@@ -277,13 +277,13 @@ function [channels, marker, chan_info] = parse_messages(messages, channels, mark
                 index_of_curr_timestamp = bsearch(timecol, timestamp);
 
                 if contains(msgline, 'A:Saccade')
-                    saccades_A(index_of_beg_timestamp : index_of_curr_timestamp - 1) = true;
+                    saccades_A(index_of_beg_timestamp : index_of_curr_timestamp) = true;
                 elseif contains(msgline, 'B:Saccade')
-                    saccades_B(index_of_beg_timestamp : index_of_curr_timestamp - 1) = true;
+                    saccades_B(index_of_beg_timestamp : index_of_curr_timestamp) = true;
                 elseif contains(msgline, 'A:Blink')
-                    blinks_A(index_of_beg_timestamp : index_of_curr_timestamp - 1) = true;
+                    blinks_A(index_of_beg_timestamp : index_of_curr_timestamp) = true;
                 else
-                    blinks_B(index_of_beg_timestamp : index_of_curr_timestamp - 1) = true;
+                    blinks_B(index_of_beg_timestamp : index_of_curr_timestamp) = true;
                 end
             end
         end
