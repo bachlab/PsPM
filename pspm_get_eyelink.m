@@ -6,10 +6,12 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 %          import: import job structure with 
 %                   - mandatory fields:
 %                       .sr
+%
 %                       .data
 %                       except for custom channels, the field .channel will 
 %                       be ignored. The id will be determined according to 
 %                       the channel type. 
+%
 %                   - optional fields:
 %                       .eyelink_trackdist: 
 %                           A numeric value representing the distance between
@@ -17,9 +19,27 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 %                           If it is a positive numeric value, causes the
 %                           conversion from arbitrary units to distance unit
 %                           according to the set distance.
+%
 %                       .distance_unit:
 %                           the unit to which the data should be converted and
 %                           in which eyelink_trackdist is given
+%
+%                       .blink_saccade_edge_discard_factor:
+%                           Factor used to determine the number of
+%                           samples right before and right after a blink/saccade
+%                           period to discard. This value is multiplied by the
+%                           sampling rate of the recording to determine the
+%                           number of samples to discard from one end. Therefore,
+%                           for each blink/saccade period, 2*this_value*SR many
+%                           samples are discarded in total, and effectively
+%                           blink/saccade period is extended.
+%
+%                           This value also corresponds to the duration of
+%                           samples to discard on one end in seconds. For example,
+%                           when it is 0.01, we discard 10 ms worth of data on
+%                           each end of every blink/saccade period.
+%                           (Default: 0.05)
+%                           
 % 
 % In this function, channels related to eyes will not produce an error, if 
 % they do not exist. Instead they will produce an empty channel (a channel 
@@ -40,7 +60,18 @@ sourceinfo = []; sts = -1;
 % add specific import path for specific import function
 addpath([settings.path, 'Import', filesep, 'eyelink']);
 
+if ~isfield(options, 'blink_saccade_edge_discard_factor')
+    options.blink_saccade_edge_discard_factor = 0.05;
+end
+
+if ~isnumeric(options.blink_saccade_edge_discard_factor) || ...
+        options.blink_saccade_edge_discard_factor < 0
+    warning('ID:invalid_input', 'Edge discard factor must be a positive number');
+    return;
+end
+
 % transfer options
+% -------------------------------------------------------------------------
 reference_distance = 700;
 reference_unit = 'mm';
 diameter_multiplicator = 0.00087743;
@@ -48,7 +79,7 @@ area_multiplicator = 0.119;
 
 % load data with specific function
 % -------------------------------------------------------------------------
-data = import_eyelink(datafile, 0.05);
+data = import_eyelink(datafile, options.blink_saccade_edge_discard_factor);
 
 % iterate through data and fill up channel list as long as there is no
 % marker channel. if there is any marker channel, the settings accordingly
