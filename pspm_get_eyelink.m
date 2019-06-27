@@ -86,6 +86,7 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
     % expand blink/saccade channels with offset
     % set data channels with blinks/saccades to NaN
     % -------------------------------------------------------------------------
+    addpath(pspm_path('backroom'));
     for i = 1:numel(data)-1
         if strcmpi(data{i}.eyesObserved, 'l')
             mask_chans = {'blink_l', 'saccade_l'};
@@ -100,8 +101,9 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
             mask_chans, ...
             import{i}.blink_saccade_edge_discard_factor * data{i}.sampleRate ...
         );
-        data{i}.channels = set_blinks_saccades_to_nan(data{i}.channels, data{i}.channels_header, mask_chans);
+        data{i}.channels = set_blinks_saccades_to_nan(data{i}.channels, data{i}.channels_header, mask_chans, @(x) endsWith(x, '_l'));
     end
+    rmpath(pspm_path('backroom'));
 
     % iterate through data and fill up channel list as long as there is no
     % marker channel. if there is any marker channel, the settings accordingly
@@ -417,34 +419,5 @@ function mask = expand_mask(mask, offset)
         begidx = min(ndata, idx + 1);
         endidx = min(ndata, idx + offset);
         mask(begidx : endidx) = true;
-    end
-end
-
-function data = set_blinks_saccades_to_nan(data, column_names, mask_chans)
-    col_ids = [];
-    for chan = mask_chans
-        col_ids(end + 1) = find(strcmpi(column_names, chan{1}));
-    end
-    maskmat_left = [];
-    maskmat_right = [];
-    for i = 1:numel(col_ids)
-        idx = col_ids(i);
-        chan = mask_chans{i};
-        if endsWith(chan, '_l')
-            maskmat_left(:, end + 1) = data(:, idx);
-        else
-            maskmat_right(:, end + 1) = data(:, idx);
-        end
-    end
-    maskmat_left = logical(maskmat_left);
-    maskmat_right = logical(maskmat_right);
-
-    left_data_cols = contains(column_names, '_l') & ~contains(column_names, 'blink') & ~contains(column_names, 'saccade');
-    right_data_cols = contains(column_names, '_r') & ~contains(column_names, 'blink') & ~contains(column_names, 'saccade');
-    for i = 1:size(maskmat_left, 2)
-        data(maskmat_left(:, i), left_data_cols) = NaN;
-    end
-    for i = 1:size(maskmat_right, 2)
-        data(maskmat_right(:, i), right_data_cols) = NaN;
     end
 end

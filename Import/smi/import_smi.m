@@ -397,7 +397,6 @@ function [data] = import_smi(varargin)
                 end
                 data{sn}.channels = data{sn}.raw(:, channel_indices);
                 data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
-                data{sn}.channels = set_datarows_corresponding_to_blink_saccade_to_nan(data{sn}.channels, data{sn}.channels_columns);
 
             else
                 if POR_available
@@ -430,13 +429,11 @@ function [data] = import_smi(varargin)
                     data{sn}.units = {pupil_units{:}, 'pixel', 'pixel', 'pixel', 'pixel', 'blink', 'saccade'};
                     data{sn}.channels = data{sn}.raw(:, channel_indices);
                     data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
-                    data{sn}.channels = set_datarows_corresponding_to_blink_saccade_to_nan(data{sn}.channels, data{sn}.channels_columns);
                 else
                     channel_indices = [pupil_channels,x,y,blink,saccade];
                     data{sn}.units = {pupil_units{:}, 'pixel', 'pixel', 'blink', 'saccade'};
                     data{sn}.channels = data{sn}.raw(:, channel_indices);
                     data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
-                    data{sn}.channels = set_datarows_corresponding_to_blink_saccade_to_nan(data{sn}.channels, data{sn}.channels_columns);
                 end
             else
                 if POR_available
@@ -516,32 +513,5 @@ function [pupil_channels, pupil_units] = get_pupil_channels(columns)
             pupil_channels(end + 1) = idx;
             pupil_units{end + 1} = header_names_units{i}{2};
         end
-    end
-end
-
-function [data] = set_datarows_corresponding_to_blink_saccade_to_nan(data, column_names)
-    blink_l_col = find(strcmp(column_names, 'L Blink'));
-    blink_r_col = find(strcmp(column_names, 'R Blink'));
-    saccade_l_col = find(strcmp(column_names, 'L Saccade'));
-    saccade_r_col = find(strcmp(column_names, 'R Saccade'));
-    
-    blink_l = logical(data(:, blink_l_col));
-    blink_r = logical(data(:, blink_r_col));
-    saccade_l = logical(data(:, saccade_l_col));
-    saccade_r = logical(data(:, saccade_r_col));
-    
-    left_data_cols = contains(column_names, 'L ') & ~contains(column_names, 'Blink') & ~contains(column_names, 'Saccade');
-    right_data_cols = contains(column_names, 'R ') & ~contains(column_names, 'Blink') & ~contains(column_names, 'Saccade');
-    if ~isempty(blink_l_col)
-        data(blink_l, left_data_cols) = NaN;
-    end
-    if ~isempty(saccade_l_col)
-        data(saccade_l, left_data_cols) = NaN;
-    end
-    if ~isempty(blink_r_col)
-        data(blink_r, right_data_cols) = NaN;
-    end
-    if ~isempty(saccade_r_col)
-        data(saccade_r, right_data_cols) = NaN;
     end
 end

@@ -114,7 +114,16 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
     screen_size = data{1}.screenSize;
     viewing_dist = data{1}.viewingDistance;
 
-    data_concat = set_blink_saccade_rows_to_nan(data_concat, chan_struct);
+    addpath(pspm_path('backroom'));
+    if strcmpi(eyes_observed, 'l')
+        mask_chans = {'blink_l', 'saccade_l'};
+    elseif strcmpi(eyes_observed, 'r')
+        mask_chans = {'blink_r', 'saccade_r'};
+    else
+        mask_chans = {'blink_l', 'blink_r', 'saccade_l', 'saccade_r'};
+    end
+    data_concat = set_blinks_saccades_to_nan(data_concat, chan_struct, mask_chans, @(x) endsWith(x, '_l'));
+    rmpath(pspm_path('backroom'));
 
     num_import_cells = numel(import);
     for k = 1:num_import_cells
@@ -424,33 +433,5 @@ function best_eye = eye_with_smaller_nan_ratio(import, eyes_observed)
         else
             best_eye = 'r';
         end
-    end
-end
-
-function data = set_blink_saccade_rows_to_nan(data, chan_struct)
-    chan_struct = lower(chan_struct);
-    blink_l_col = find(strcmp(chan_struct, 'blink_l'));
-    blink_r_col = find(strcmp(chan_struct, 'blink_r'));
-    saccade_l_col = find(strcmp(chan_struct, 'saccade_l'));
-    saccade_r_col = find(strcmp(chan_struct, 'saccade_r'));
-    
-    blink_l = logical(data(:, blink_l_col));
-    blink_r = logical(data(:, blink_r_col));
-    saccade_l = logical(data(:, saccade_l_col));
-    saccade_r = logical(data(:, saccade_r_col));
-    
-    left_data_cols = contains(chan_struct, '_l') & ~contains(chan_struct, 'blink') & ~contains(chan_struct, 'saccade');
-    right_data_cols = contains(chan_struct, '_r') & ~contains(chan_struct, 'blink') & ~contains(chan_struct, 'saccade');
-    if ~isempty(blink_l_col)
-        data(blink_l, left_data_cols) = NaN;
-    end
-    if ~isempty(saccade_l_col)
-        data(saccade_l, left_data_cols) = NaN;
-    end
-    if ~isempty(blink_r_col)
-        data(blink_r, right_data_cols) = NaN;
-    end
-    if ~isempty(saccade_r_col)
-        data(saccade_r, right_data_cols) = NaN;
     end
 end

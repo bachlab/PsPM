@@ -131,10 +131,25 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
 
     [data_concat, markers, mi_values, mi_names] = concat_sessions(data);
 
-    sampling_rate = data{1}.sampleRate;
-    eyes_observed = lower(data{1}.eyesObserved);
-    units = data{1}.units;
+    addpath(pspm_path('backroom'));
     chan_struct = data{1}.channels_columns;
+    eyes_observed = lower(data{1}.eyesObserved);
+    if strcmpi(eyes_observed, 'l')
+        mask_chans = {'L Blink', 'L Saccade'};
+    elseif strcmpi(eyes_observed, 'r')
+        mask_chans = {'R Blink', 'R Saccade'};
+    else
+        mask_chans = {'L Blink', 'L Saccade', 'R Blink', 'R Saccade'};
+    end
+    data_concat = set_blinks_saccades_to_nan(...
+        data_concat,...
+        chan_struct,...
+        mask_chans,...
+        @(x) contains(x, 'L '));
+    rmpath(pspm_path('backroom'));
+
+    sampling_rate = data{1}.sampleRate;
+    units = data{1}.units;
     raw_columns = data{1}.raw_columns;
     screen_size_mm = data{1}.stimulus_dimension;
     calib_area_px = [data{1}.gaze_coords.xmax, data{1}.gaze_coords.ymax];
