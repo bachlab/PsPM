@@ -84,6 +84,10 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
         end
     end
 
+    if ~isstr(datafile)
+        warning('ID:invalid_input', 'datafile must be a string');
+        return;
+    end
     if ~assert_custom_import_channels_has_channel_field(import); return; end;
     if ~assert_all_chantypes_are_supported(settings, import); return; end;
     try
@@ -219,7 +223,7 @@ function proper = assert_custom_import_channels_has_channel_field(import)
     proper = true;
     for i = 1:numel(import)
         if strcmpi(import{i}.type, 'custom') && ~isfield(import{i}, 'channel')
-            warning('ID:invalid_imported_data', sprintf('Custom channel in import{%d} has no channel id to import', i));
+            warning('ID:invalid_input', sprintf('Custom channel in import{%d} has no channel id to import', i));
             proper = false;
             return;
         end
