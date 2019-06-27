@@ -108,6 +108,11 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     try
         if numel(datafile) == 2
             data = import_smi(datafile{1}, datafile{2});
+            experiment_begin_time = data{1}.raw(1, 1);
+            for i = 1:numel(data)
+                data{i}.raw(:, 1) = data{i}.raw(:, 1) - experiment_begin_time;
+                data{i}.markers = max(0, data{i}.markers - experiment_begin_time);
+            end
         else
             warning(['get_smi will only read pupil and/or gaze data. ',...
                 'No information about blinks or saccades will be generated. ',...

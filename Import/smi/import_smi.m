@@ -33,7 +33,7 @@ function [data] = import_smi(varargin)
     %                           - ymin: y coordinate of top left corner of screen in pixels.
     %                           - xmax: x coordinate of bottom right corner of screen in pixels.
     %                           - ymax: y coordinate of bottom right corner of screen in pixels.
-    %                       marker: Times of markers.
+    %                       markers: Times of markers.
     %                       markerinfos: Structure with fields
     %                           - names: Cell array of marker names.
     %                       record_date: Recording date
@@ -187,8 +187,6 @@ function [data] = import_smi(varargin)
     clear C;
     clear all_text;
     datanum = [datanum(:, 1), ones(size(datanum, 1), 1), datanum(:, 2:end)];
-    experiment_begin_time = datanum(1, 1);
-    datanum(:, 1) = datanum(:, 1) - experiment_begin_time;
 
     %% open events_file, get events, and events header
     if event_ex
@@ -197,10 +195,10 @@ function [data] = import_smi(varargin)
         % subtract experiment begin offset
         for name = {'blink_l', 'blink_r', 'sacc_l', 'sacc_r'}
             keyname = name{1};
-            eventsRaw.(keyname).start = max(0, eventsRaw.(keyname).start - experiment_begin_time);
-            eventsRaw.(keyname).end = max(0, eventsRaw.(keyname).end - experiment_begin_time);
+            eventsRaw.(keyname).start = eventsRaw.(keyname).start;
+            eventsRaw.(keyname).end = eventsRaw.(keyname).end;
         end
-        eventsRaw.marker.start = max(0, eventsRaw.marker.start - experiment_begin_time);
+        eventsRaw.marker.start = eventsRaw.marker.start;
     end
 
     [pupil_channels, pupil_units] = get_pupil_channels(columns);
@@ -220,7 +218,7 @@ function [data] = import_smi(varargin)
         msgs = cell(3, nr_events);
         for i=1:nr_events
             C = textscan(msg_lines{i}, '%f%*s%f%s', 'Delimiter', '\t');
-            msgs{1, i} = C{1} - experiment_begin_time;
+            msgs{1, i} = C{1};
             msgs{2, i} = C{2};
             msgs{3, i} = C{3}{1};
         end
