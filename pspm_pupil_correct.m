@@ -75,12 +75,16 @@ function [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm
 
     % input checks
     % -------------------------------------------------------------------------
+    if ~isnumeric(pupil) || ~isnumeric(gaze_x_mm) || ~isnumeric(gaze_y_mm)
+        warning('ID:invalid_input', 'All of pupil, gaze_x_mm, gaze_y_mm must be numeric');
+        return;
+    end
     same_sizes = all(size(pupil) == size(gaze_x_mm)) && all(size(gaze_x_mm) == size(gaze_y_mm));
     if ~same_sizes
         warning('ID:invalid_input', 'All input arrays must have the same sizes');
         return;
     end
-    if ~any(ismember(size(pupil), 1))
+    if ~any(ismember(size(pupil), 1)) || ~any(ismember(size(gaze_x_mm), 1)) || ~any(ismember(size(gaze_y_mm), 1))
         warning('ID:invalid_input', 'All input arrays must be 1D');
         return;
     end
@@ -106,8 +110,8 @@ function [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm
         gaze_y_mm = gaze_y_mm';
     end
 
-    T = [gaze_x_mm - geometry_setup.S_x, ...
-         gaze_y_mm - geometry_setup.S_y, ...
+    T = [geometry_setup.S_x + gaze_x_mm, ...
+         geometry_setup.S_y - gaze_y_mm, ...
          repmat(geometry_setup.S_z, size(gaze_x_mm, 1), 1)];
     c = [geometry_setup.C_x; geometry_setup.C_y; geometry_setup.C_z];
 
