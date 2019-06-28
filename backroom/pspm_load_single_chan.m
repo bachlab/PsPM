@@ -32,7 +32,7 @@ function [sts, data_cell] = pspm_load_single_chan(fn, chan, which_of_many, desir
     end
     chantype = data_cell{1}.header.chantype;
     if ~contains(chantype, desired_type_substr)
-        warning('ID:invalid_input', sprintf('Loaded chantype %s does not correspond to ecg channel', chantype));
+        warning('ID:invalid_input', sprintf('Loaded chantype %s does not correspond to a %s channel', chantype, desired_type_substr));
         return;
     end
     sts = 1;

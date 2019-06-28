@@ -167,7 +167,7 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
     [lsts, data] = pspm_load_single_chan(fn, options.channel, 'last', 'pupil');
     if lsts ~= 1; return; end;
     if is_combined
-        [lsts, data_combine] = pspm_load_singe_chan(fn, options.channel_combine, 'last', 'pupil');
+        [lsts, data_combine] = pspm_load_single_chan(fn, options.channel_combine, 'last', 'pupil');
         if lsts ~= 1; return; end;
         if strcmp(get_eye(data{1}.header.chantype), get_eye(data_combine{1}.header.chantype))
             warning('ID:invalid_input', 'options.channel and options.channel_combine must specify different eyes');
@@ -213,7 +213,7 @@ function [sts, smooth_signal] = preprocess(data, data_combine, segments, custom_
     data_is_left = strcmpi(get_eye(data{1}.header.chantype), 'l');
     n_samples = numel(data{1}.data);
     sr = data{1}.header.sr;
-    diameter.t_ms = linspace(0, 1000 * n_samples / sr, n_samples)';
+    diameter.t_ms = linspace(0, 1000 * (n_samples-1) / sr, n_samples)';
 
     if data_is_left
         diameter.L = data{1}.data;
@@ -234,7 +234,7 @@ function [sts, smooth_signal] = preprocess(data, data_combine, segments, custom_
     segmentTable = table(segmentStart, segmentEnd, segmentName);
     new_sr = custom_settings.valid.interp_upsamplingFreq;
     upsampling_factor = new_sr / sr;
-    desired_output_samples = int32(upsampling_factor * numel(data{1}.data));
+    desired_output_samples = round(upsampling_factor * numel(data{1}.data));
 
     % load lib
     % -------------------------------------------------------------------------
