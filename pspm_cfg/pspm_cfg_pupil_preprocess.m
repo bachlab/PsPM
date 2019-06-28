@@ -139,7 +139,7 @@ function [pupil_pp] = pspm_cfg_pupil_preprocess(job)
     gapPadding_forward.tag = 'gapPadding_forward';
     gapPadding_forward.num = [1 1];
     gapPadding_forward.val = {50};
-    gapPadding_forward.help = {'The section right after the start of a gap within which samples are to be rejected.'};
+    gapPadding_forward.help = {'The section right after the end of a gap within which samples are to be rejected.'};
 
     residualsFilter_passes = cfg_entry;
     residualsFilter_passes.name = 'Deviation filter passes';
@@ -170,7 +170,7 @@ function [pupil_pp] = pspm_cfg_pupil_preprocess(job)
     residualsFilter_lowpassCF.tag = 'residualsFilter_interpFs';
     residualsFilter_lowpassCF.num = [1 1];
     residualsFilter_lowpassCF.val = {100};
-    residualsFilter_lowpassCF.help = {'Fs for first order Butterworth filter.'};
+    residualsFilter_lowpassCF.help = {'Cutoff frequency for first order Butterworth filter.'};
 
     keepFilterData = cfg_menu;
     keepFilterData.name = 'Store intermediate steps';
