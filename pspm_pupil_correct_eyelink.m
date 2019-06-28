@@ -105,6 +105,14 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
     if isempty(settings), pspm_init; end
     sts = -1;
 
+    % default values
+    % -------------------------------------------------------------------------
+    all_fieldnames = {'C_x', 'C_y', 'C_z', 'S_x', 'S_y', 'S_z'};
+    default_params = containers.Map('KeyType', 'double', 'ValueType', 'any');
+    default_params(495) = [103, -215, 495, -142, 206, 736];
+    default_params(525) = [165, -239, 525, -87, 140, 851];
+    default_params(625) = [183, -230, 625, -76, 156, 937];
+
     % input checks
     % -------------------------------------------------------------------------
     if ~isfield(options, 'screen_size_px')
@@ -115,12 +123,12 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
         warning('ID:invalid_input', 'options struct must contain ''screen_size_mm''');
         return;
     end
-    if ~isnumeric(options.screen_size_px)
-        warning('ID:invalid_input', 'options.screen_size_px must be numeric');
+    if ~isnumeric(options.screen_size_px) || ~all(size(options.screen_size_px) == [1 2]) || any(options.screen_size_px <= 0)
+        warning('ID:invalid_input', 'options.screen_size_px must be a numeric array of size [1 2]');
         return;
     end
-    if ~isnumeric(options.screen_size_mm)
-        warning('ID:invalid_input', 'options.screen_size_mm must be numeric');
+    if ~isnumeric(options.screen_size_mm) || ~all(size(options.screen_size_mm) == [1 2]) || any(options.screen_size_mm <= 0)
+        warning('ID:invalid_input', 'options.screen_size_mm must be a numeric array of size [1 2]');
         return;
     end
     if ~isfield(options, 'mode')
@@ -139,6 +147,14 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
         warning('ID:invalid_input', 'options.C_z must be numeric');
         return;
     end
+    if strcmp(options.mode, 'manual')
+        for field = all_fieldnames
+            if ~isfield(options, field{1})
+                warning('ID:invalid_input', 'In manual mode, options must contain all geometry parameters');
+                return;
+            end
+        end
+    end
 
     % create default arguments
     % --------------------------------------------------------------
@@ -155,11 +171,6 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
         options.channel = 'pupil';
     end
 
-    all_fieldnames = {'C_x', 'C_y', 'C_z', 'S_x', 'S_y', 'S_z'};
-    default_params = containers.Map('KeyType', 'double', 'ValueType', 'any');
-    default_params(495) = [103, -215, 495, -142, 206, 736];
-    default_params(525) = [165, -239, 525, -87, 140, 851];
-    default_params(625) = [183, -230, 625, -76, 156, 937];
     if strcmpi(options.mode, 'auto')
         if ismember(options.C_z, cell2mat(keys(default_params)))
             for i = 1:numel(all_fieldnames)
@@ -185,6 +196,10 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
         pupil_data = pupil_data(end);
     end;
     old_chantype = pupil_data{1}.header.chantype;
+    if ~contains(old_chantype, 'pupil')
+        warning('ID:invalid_input', 'Specified channel is not a pupil channel');
+        return;
+    end
 
     is_left = contains(old_chantype, '_l');
     is_both = contains(old_chantype, '_lr');
@@ -229,6 +244,6 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
     [lsts, out_id] = pspm_write_channel(fn, pupil_data, options.channel_action, o);
     if lsts ~= 1; return; end;
 
-    out_channel = out_id;
+    out_channel = out_id.channel;
     sts = 1;
 end
