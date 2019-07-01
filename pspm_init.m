@@ -135,7 +135,12 @@ if isempty (dummy)
     addpath([pth, fs, 'matlabbatch']);
     matlabbatchpath=1;
 else
-    m = regexpi(dummy, 'spm[0-9]+\\matlabbatch\\cfg_ui.m');
+    if strcmp(fs, '/')
+        fs_regex = '/';
+    else
+        fs_regex = '\\';
+    end
+    m = regexpi(dummy, ['spm[0-9]+' fs_regex 'matlabbatch' fs_regex 'cfg_ui.m']);
     if ~isempty(m)
         if strcmp(questdlg(sprintf(['Matlabbatch from SPM and its config folder are currently on your MATLAB search path.\n\n' ...
                 'Do you want to remove these folders temporarily from your MATLAB search path in order to avoid potential ' ...
