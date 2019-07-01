@@ -1,0 +1,472 @@
+\documentclass[english]{article}
+\usepackage[LGR,T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\pagestyle{headings}
+\usepackage{color}
+\usepackage{babel}
+\usepackage{float}
+\usepackage{calc}
+\usepackage{textcomp}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{esint}
+\usepackage[unicode=true]
+ {hyperref}
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+\DeclareRobustCommand{\greektext}{%
+  \fontencoding{LGR}\selectfont\def\encodingdefault{LGR}}
+\DeclareRobustCommand{\textgreek}[1]{\leavevmode{\greektext #1}}
+\ProvideTextCommand{\~}{LGR}[1]{\char126#1}
+
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+%% A simple dot to overcome graphicx limitations
+\newcommand{\lyxdot}{.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+\numberwithin{equation}{section}
+\numberwithin{figure}{section}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\usepackage{stmaryrd}
+\definecolor{colKeys}{rgb}{0,0,1}
+\definecolor{colIdentifier}{rgb}{0,0,0}
+\definecolor{colComments}{rgb}{0.53, 0.66, 0.42}
+\definecolor{colString}{rgb}{0.87, 0.36, 0.51}
+\definecolor{barColor}{rgb}{0.43, 0.5, 0.5}
+% Added by lyx2lyx
+\renewcommand{\textendash}{--}
+\renewcommand{\textemdash}{---}
+
+\makeatother
+
+\usepackage{listings}
+\lstset{language=Matlab,
+float=hbp,
+basicstyle={\footnotesize\ttfamily},
+identifierstyle={\color{colIdentifier}},
+keywordstyle={\color{colKeys}},
+stringstyle={\color{colString}},
+commentstyle={\itshape\color{colComments}},
+columns=fixed,
+tabsize=2,
+extendedchars=true,
+showspaces=false,
+showstringspaces=false,
+captionpos=t,
+backgroundcolor={\color{white}},
+framexleftmargin=1pt,
+frame=l}
+\renewcommand{\lstlistingname}{Listing}
+\title{PsPM 4.1.1 Release notes}
+
+\begin{document}
+\maketitle
+\date
+\pagebreak
+
+\section{PsPM Version 3.0}
+
+\subsection*{Import}
+
+\subsubsection*{New data types were implemented}
+\begin{itemize}
+\item Noldus Observer compatible 
+\item Eyelink
+\end{itemize}
+
+\subsubsection*{Untested data types}
+
+CNT data import has not been not tested -- please contact the developers
+with sample data files. 
+
+\subsection*{Filtering for SCR models}
+
+Previous versions of PsPM have used a bi-directional high pass filter
+of 0.0159 for all SCR analyses. We have recently shown a better predictive
+validity for GLM with a unidirectional filter of 0.05 Hz \cite{Bach:2013aa}.
+This also implies that different filters are used for different models.
+These are now set as defaults, and the way the default settings are
+implemented has changed. It is now possible to alter the filter settings
+in the model definition, although we discourage this.
+
+\subsection*{New SF method}
+
+A matching pursuit algorithm is now implemented to approximate the
+number of spontaneous fluctuations (SF) in skin conductance \cite{Bach:2015aa}.
+
+\subsection*{General linear modelling (GLM)}
+
+\subsubsection*{Parametric modulators}
+
+Parametric modulators (pmods) are z-normalised before being entered
+into the design matrix. This is to account for possibly very large
+or very small numbers -- a badly scaled design matrix can cause induced
+instability in the inversion. The parameter estimates of the pmods
+were not transformed back in previous versions, i. e. the parameter
+estimates of the pmods were independent of the scaling of the pmods.
+This is appropriate as long as they are the same for all datasets,
+or if analysis is done strictly on a within-subject level. Some researchers
+have reported designs in which inference was to be drawn on parameter
+estimates of pmods on a between-group level, and where the pmods systematically
+differed between these groups. To account for this possibility, the
+parameter estimates are now transformed back, such that they refer
+to the pmods in their original scaling/units. 
+
+\subsubsection*{Parametric confounds}
+
+Previous versions of PsPM contained an option to include a parametric
+modulator across all event types, to account for confounds across
+all conditions. For example, in an experiment with 5 conditions, one
+could have included 5 regressors, plus one reaction time confound
+across all events, without including an associated regressor that
+contains the event onsets for all these events. This option was removed. 
+
+\subsubsection*{Design matrix filtering}
+
+Previous versions of PsPM filtered the design matrix after orthogonalisation
+of basis sets. This can introduce unwanted dependencies between regressors.
+PsPM 3.0 filters the regressors first, then orthogonalises the basis
+sets.
+
+\subsection*{File format}
+
+Some minor changes have been made to the data format. In particular,
+marker channels from previous versions can not be read with the current
+version - such data files have to be re-imported. Model files have
+changed drastically, and model files from previous versions can not
+be read with the current version of the software.
+
+\subsection*{VB inversion}
+
+The VBA toolbox (\url{http://mbb-team.github.io/VBA-toolbox/}) was
+updated in October 2014 \cite{Daunizeau:2014aa}. This update incorporates
+bugfixes in this toolbox and slightly changed the model estimates
+in our test models. In terms of predictive validity, we noted that
+there was no consistent benefit of the old or new version of this
+code (Figure \ref{fig:VBA}).
+
+\begin{figure}
+\includegraphics[scale=0.85]{Figures/Comparison_VBA}\caption{Model comparison between old and new versions of the VBA toolbox,
+based on two delay fear conditioning datasets. The log Bayes factor
+quantifies the difference between negative log likelihood (nLL) of
+parameter estimates obtained from model inversion using the old and
+new version of VBA. A difference in nLL above 3 indicates significant
+differences in model evidence which is not exceeded for either data
+set. Analysis and figure contributed by Matthias Staib. \label{fig:VBA}}
+\end{figure}
+
+
+\section{PsPM Version 3.0.1}
+
+\subsection*{Import}
+
+\subsubsection*{New data types were implemented}
+\begin{itemize}
+\item DATAQ Windaq (no ActiveX needed)
+\item European Data Format (EDF)
+\end{itemize}
+
+\subsection*{Tools}
+
+'Preprocess respiration traces' replaces 'Convert Respiration to Respiration
+Period'. It supports conversions into the following datatypes:
+\begin{itemize}
+\item Respiration preriod (old funtionality)
+\item Respiration amplitude
+\item Respiration line length
+\item Respiration time stamp
+\end{itemize}
+
+\subsection*{First level contrast}
+
+\subsubsection*{Z-score parameter estimates}
+
+The function \texttt{pspm\_con1} now supports z-scoring trial-by-trial
+parameter estimates. If selected, all parameter estimates for the
+same event type, across all trials, will be z-scored before computing
+the contrast. This option is currently only available for non-linear
+models.
+
+\subsection*{Review first level model}
+
+Next to the regressors on the x- and y-axes, orthogonality plots newly
+display regressor names along the y-axes. 
+
+\section{PsPM Version 3.0.2}
+
+\subsection*{GLM}
+
+Problem with multiple sessions in Design matrix fixed.
+
+\section{PsPM Version 3.1}
+
+\subsection*{General linear modelling (GLM)}
+
+\subsubsection*{New modalities}
+
+For the first time in PsPM, we introduce models for data types other
+than SCR:
+\begin{itemize}
+\item GLM for evoked HPR
+\item GLM for fear-conditioned HPR
+\item GLM for evoked RA
+\item GLM for fear-conditioned RA
+\item GLM for evoked RFR
+\item GLM for evoked RP
+\item GLM for fear-conditioned PS
+\end{itemize}
+
+\subsection*{Tools \& Data preprocessing}
+
+Tools are split up into Tools \& Data preprocessing. The content of
+each section is listed below. New functions are written in \textcolor{green}{green}.
+
+\subsubsection*{Tools}
+\begin{itemize}
+\item Display data
+\item Rename file
+\item Split sessions
+\item Artefact removal
+\item Downsample data
+\item Interpolate missing data
+\item \textcolor{green}{Extract segments}
+\item \textcolor{green}{Segment mean}
+\end{itemize}
+
+\subsubsection*{Data preprocessing}
+\begin{itemize}
+\item \textcolor{green}{Preprocess heart data}
+\item \textcolor{green}{Preprocess respiration data}
+\item \textcolor{green}{Prepare illuminance GLM}
+\item \textcolor{green}{Find valid fixations}
+\item \textcolor{green}{Convert pupil data}
+\item \textcolor{green}{Find startle sound onsets}
+\end{itemize}
+
+\subsection*{Data preparation}
+
+\subsubsection*{Import}
+
+Support for Philips Scanphyslog files and for bioread-converted AcqKnowledge
+files has been added to the import function.
+
+\section{PsPM Version 4.0}
+
+\subsection*{Change from scr\_ to pspm\_}
+
+The prefix scr\_ has been exchanged with pspm\_. This applies to all
+functions contained in PsPM.
+
+\subsection*{Updated toolboxes}
+
+Matlabbatch (\url{https://git.code.sf.net/p/matlabbatch/code-git})
+and the VBA toolbox (\url{https://github.com/MBB-team/VBA-toolbox})
+were updated to the latest available versions (08.11.2016). The updated
+VBA version fully supports newer Matlab versions and warning messages
+in Matlab 2014 and newer do not appear anymore (during PsPM startup).
+In terms of predictive validity, we noted that there was no consistent
+benefit of the old or new version of this code (Figure \ref{fig:VBA_compare_3.2}).
+
+\begin{figure}
+%\includegraphics[bb = 0 0 200 100, draft, type=eps]{Figures/Comparison_VBA_3.2.png}
+
+\caption{\label{fig:VBA_compare_3.2}Model comparison between old and new versions
+of the VBA toolbox, based on one delay fear conditioning dataset (Dataset
+2, see earlier comparison). The log Bayes factor quantifies the difference
+between negative log likelihood (nLL) of parameter estimates obtained
+from model inversion using the old and new version of VBA. A difference
+in nLL above 3 indicates significant differences in model evidence
+which is not exceeded for the used dataset.}
+
+\end{figure}
+
+
+\subsection*{Subsessions in DCM models}
+
+Until now, long periods of NaN values (which are just disregarded)
+could cause problems for inversion of DCMs. These periods are now
+split (according to threshold value) into subsessions. The subsessions
+will be evaluated independently, while at the end the results will
+be stacked together. Therefore the output-format will not change and
+should be compatible with earlier releases.
+
+\subsection*{Import}
+
+\subsubsection*{New import function for Labchart files}
+
+The new import function allows direct import of raw labchart files
+without exporting them to a suitable format (as was required to date).
+The function is only available on Windows systems.
+
+\subsection*{General linear modeling (GLM)}
+
+\subsubsection*{New modalities}
+\begin{itemize}
+\item Startle eyeblink for EMG (SEB)
+\end{itemize}
+
+\subsection*{Pupil Models}
+\begin{itemize}
+\item Blink channels were removed. Periods during blinks and saccades are
+set to NaN already in the import function. This applies to all channels
+of the respective eye. Accordingly, blink validation functionality
+was removed in the function pspm\_find\_valid\_fixations. If needed,
+blinks and saccades can be imported as custom channels using channel
+ids 7-10 (two eyes) or 4-5 (one eye), while blinks and left eye come
+first.
+\item Importing pupil channels now allows direct specification of a transfer
+function to convert arbitrary units to mm. 
+\item Importing of eyes which have not been recorded creates channels containing
+NaN values, so that the same import batches can be used for groups
+of subjects, even if one eye is missing in some of them.
+\item Sessions in eyelink files (caused by interruption of recording) will
+be concatenated according to the timing variable.
+\item In pspm\_find\_valid\_fixations 
+\begin{itemize}
+\item the use of software aspect ratio was replaced by resolution. This
+allows to correctly map the gaze coordinates to the shapes mapped
+by the stimulus software.
+\item gaze coordinates can be plotted in order to verify the validation
+settings.
+\item interpolation option was removed and should now be used independently.
+\end{itemize}
+\end{itemize}
+
+\subsection*{Minor changes \& Bugfixes}
+\begin{itemize}
+\item Version-Check bug during startup is now fixed.
+\item Markerinfos will now according to marker channels be converted to
+an event-based format.
+\item The data editor (pspm\_data\_editor) now allows to specify an output
+file using the command line.
+\item pspm\_split\_sessions additionally allows to specify marker ids at
+which the file should split.
+\item Artefact correction was extended with a further function (Simple SCR
+quality correction).
+\item Convert pupil data becomes convert data and currently only allows
+area to diameter conversion (arbitrary units to mm is integrated in
+the import function)
+\end{itemize}
+
+\section{PsPM Version 4.0.1}
+
+\subsection*{Bugfixes}
+\begin{itemize}
+\item Fix not working options in Matlabbatch module 'Preprocess heart data'
+\end{itemize}
+
+\section{PsPM Version 4.0.2}
+
+\subsection*{Bugfixes}
+\begin{itemize}
+\item Fix error when calling 'Convert data' from GUI
+\item Fix taking square root if pupil data is recorded in AREA
+\end{itemize}
+
+\section{PsPM Version 4.1.0}
+
+\subsection*{New Functions}
+\begin{itemize}
+\item pspm\_convert\_pixel2unit: Allows to transfer gaze data from pixel
+to units. This facilitates the use of pspm\_find\_valid\_fixations
+which needs data in unit values.
+\item pspm\_compute\_visual\_angle: Computes visual angle from gaze data.
+\item pspm\_convert\_visangle2sps: Convert visual angles from Eyelink to
+Scanpath speed.
+\item pspm\_bf\_spsrf\_box: SPSRF basis function with box car.
+\item pspm\_bf\_spsrf\_gamma: SPSRF basis function with gamma function.
+\end{itemize}
+
+\subsection*{New Features}
+\begin{itemize}
+\item pspm\_extract\_segments supports DCM files/structures.
+\item GLM for SPS.
+\item pspm\_find\_valid\_fixations can now take a bitmap as input.
+\item A new way to trim data: Start and end times can be chosen according
+to marker name or value.
+\item A new function to import SMI iView X EyeTracker files into PsPM.
+\item A new function to import ViewPoint EyeTracker files into PsPM.
+\end{itemize}
+
+\subsection*{Changes}
+\begin{itemize}
+\item pspm\_find\_valid\_fixations now computes a circle around the fixation
+points when run in fixations mode.
+\end{itemize}
+
+\subsection*{Bugfixes}
+\begin{itemize}
+\item Heart period response function (bf\_hprf) coefficients are fixed according
+to the manual
+\item pspm\_extract\_segments bugfixes:
+\begin{itemize}
+\item Fix bugs related to conditions appearing in different sessions.
+\end{itemize}
+\item pspm\_get\_eyelink now imports markers between two recording sessions
+(previously these markers were ``lost'')
+\item pspm\_compute\_visual\_angle: Fix bug in range computation.
+\item pspm\_ecg2hb: Fix out of bounds error occurring for highly noisy data
+with many outliers.
+\item pspm\_get\_acq: Fix incorrect linear transformation during ACQ import.
+\item pspm\_convert\_unit: Fix incorrect transformations between metric
+units and inches.
+\item pspm\_resp\_pp: Fix out of bounds error during convolution in cushion
+mode.
+\item pspm\_pp in 'simple\_qa' mode now uses the default values specified
+in pspm\_simple\_qa.
+\item Various further bugfixes.
+\end{itemize}
+
+\subsection*{Improvements}
+\begin{itemize}
+\item Blink and saccade channels can be imported with PsPM Eyelink import.
+\item GLM structure holds the missing data percentage of each condition
+after segment extraction. Further, the decision to exclude conditions
+can be made depending on the percentage of missing data.
+\item pspm\_extract\_segments now works both with GLM files and already
+loaded structures
+\item PsPM now checks if SPM is already in MATLAB path. If so, user is asked
+to remove it from path before initializing PsPM.
+\item pspm\_load1 now returns statistics about conditions with high NaN
+ratios.
+\item pspm\_extract\_segments now is able to use data stored in GLM/DCM
+structures instead of relying the existence of original data files.
+\item Multiple new tests to validate the correctness of the functions.
+\end{itemize}
+
+\section{PsPM Version 4.1.1}
+
+This is a hotfix release that fixes a few issues with 4.1.0 release.
+
+\subsection*{Changes}
+\begin{itemize}
+\item pspm\_get\_eyelink now uses the scaling factor from \cite{Hayes:2015a}
+for area based arbitrary units to milimeters conversion.
+\item pspm\_get\_smi does not perform pixel to milimeters conversion for
+pupil data anymore. Pupil values are returned as is in pixel units.
+\item pspm\_get\_smi performs pixel to milimeters conversion for gaze data
+only if the stimulus resolution in pixels are given as an extra option.
+\end{itemize}
+
+\subsection*{Improvements}
+\begin{itemize}
+\item pspm\_get\_viewpoint is now able to import blink and saccade channels
+from sample files as well. In order to enable this feature, event
+files must be stored asynchronously in the datafile. See ViewPoint
+EyeTracker section in this manual for further information.
+\end{itemize}
+
+\section{References}
+
+\bibliographystyle{pnas2009}
+\bibliography{PsPM}
+
+\end{document}
