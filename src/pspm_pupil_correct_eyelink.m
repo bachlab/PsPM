@@ -240,7 +240,12 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
     if ~endsWith(old_chantype, '_pp')
         pupil_data{1}.header.chantype = [old_chantype '_pp'];
     end
-    o.msg.prefix = sprintf('PFE correction on %s channel', old_chantype);
+    channel_str = num2str(options.channel);
+    o.msg.prefix = sprintf(...
+        'PFE correction :: Input channel: %s -- Input chantype: %s -- Output chantype: %s --', ...
+        channel_str, ...
+        old_chantype, ...
+        pupil_data{1}.header.chantype);
     [lsts, out_id] = pspm_write_channel(fn, pupil_data, options.channel_action, o);
     if lsts ~= 1; return; end;
 

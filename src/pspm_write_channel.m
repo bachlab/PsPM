@@ -45,8 +45,8 @@ function [sts, infos] = pspm_write_channel(fn, newdata, action, options)
 % PsPM 3.0
 % (C) 2015 Dominik Bach, Samuel Gerster, Tobias Moser (UZH)
 
-% $Id$
-% $Rev$
+% $Id: pspm_write_channel.m 513 2017-12-15 15:49:13Z tmoser $
+% $Rev: 513 $
 
 %% Initialise & user output
 % -------------------------------------------------------------------------
@@ -183,13 +183,14 @@ else
     if isstruct(options.msg) && isfield(options.msg, 'prefix')
         prefix = options.msg.prefix;
     else
-        prefix = 'Channel #%02d of type ''%s''';   
+        prefix = '';
     end
+    prefix = [prefix ' Output channel ID: #%02d --'];
     
     msg = '';
     for i=channeli'
         % translate prefix
-        p = sprintf(prefix, i, fchannels{i});
+        p = sprintf(prefix, i);
         msg = [msg, p, sprintf(' %s on %s\n; ', v, date)];
     end
     msg(end-1:end)='';

@@ -218,8 +218,10 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
             warning('ID:invalid_input', 'options.channel and options.channel_combine data have different lengths');
             return;
         end
+        old_chantype = sprintf('%s and %s', data{1}.header.chantype, data_combine{1}.header.chantype);
     else
         data_combine{1}.data = [];
+        old_chantype = data{1}.header.chantype;
     end
     rmpath(pspm_path('backroom'));
 
@@ -230,7 +232,13 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
 
     % save
     % -------------------------------------------------------------------------
-    [lsts, out_id] = pspm_write_channel(fn, smooth_signal, options.channel_action);
+    channel_str = num2str(options.channel);
+    o.msg.prefix = sprintf(...
+        'Pupil preprocessing :: Input channel: %s -- Input chantype: %s -- Output chantype: %s --', ...
+        channel_str, ...
+        old_chantype, ...
+        smooth_signal.header.chantype);
+    [lsts, out_id] = pspm_write_channel(fn, smooth_signal, options.channel_action, o);
     if lsts ~= 1; return; end;
 
     out_channel = out_id.channel;

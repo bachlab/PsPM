@@ -34,8 +34,8 @@ function [sts, output] = pspm_emg_pp(fn, options)
 % PsPM 3.1
 % (C) 2009-2016 Tobias Moser (University of Zurich)
 
-% $Id$   
-% $Rev$
+% $Id: pspm_emg_pp.m 596 2018-09-19 12:26:52Z lciernik $   
+% $Rev: 596 $
 
 % initialise
 % -------------------------------------------------------------------------
@@ -128,11 +128,18 @@ filt.direction = 'uni';
 if lsts == -1, return; end
 
 % change channel type to emg_pp to match sebr modality
+old_chantype = data{1}.header.chantype;
 data{1}.header.chantype = 'emg_pp';
 
 % save data
 % -------------------------------------------------------------------------
-[lsts, outinfos] = pspm_write_channel(fn, data{1}, options.channel_action);
+channel_str = num2str(options.channel);
+o.msg.prefix = sprintf(...
+    'EMG preprocessing :: Input channel: %s -- Input chantype: %s -- Output chantype: %s --', ...
+    channel_str, ...
+    old_chantype, ...
+    data{1}.header.chantype);
+[lsts, outinfos] = pspm_write_channel(fn, data{1}, options.channel_action, o);
 if lsts ~= 1, return; end
 
 output.channel = outinfos.channel;

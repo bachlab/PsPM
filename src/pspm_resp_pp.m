@@ -20,8 +20,8 @@ function sts = pspm_resp_pp(fn, sr, chan, options)
 % PsPM 3.0
 % (C) 2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
+% $Id: pspm_resp_pp.m 663 2019-05-16 15:41:03Z esrefo $
+% $Rev: 663 $
 
 
 % initialise & user output
@@ -68,6 +68,7 @@ end;
 % get data
 % -------------------------------------------------------------------------
 [nsts, infos, data] = pspm_load_data(fn, chan);
+old_chantype = data{1}.header.chantype;
 if nsts == -1
     warning('ID:invalid_input', 'Could not load data properly.');
     return;
@@ -133,12 +134,13 @@ for iType = 1:(numel(datatypes) - 1)
     if datatype(iType)
         clear newdata
         % compute new data values
+            
         switch iType
             case 1
                 %rp
                 respdata = diff(respstamp);
-                o.msg.prefix = 'Respiration converted to respiration period and';
                 newdata.header.chantype = 'rp';
+                action_msg = 'Respiration converted to respiration period';
                 newdata.header.units = 's';
             case 2
                 %ra
@@ -146,8 +148,8 @@ for iType = 1:(numel(datatypes) - 1)
                     win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
                     respdata(k) = range(resp(win));
                 end;
-                o.msg.prefix = 'Respiration converted to respiration amplitude and';
                 newdata.header.chantype = 'ra';
+                action_msg = 'Respiration converted to respiration amplitude';
                 newdata.header.units = 'unknown';
             case 3
                 %rfr
@@ -156,15 +158,23 @@ for iType = 1:(numel(datatypes) - 1)
                     win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
                     respdata(k) = range(resp(win))/ibi(k);
                 end;
-                o.msg.prefix = 'Respiration converted to rfr and';
                 newdata.header.chantype = 'rfr';
+                action_msg = 'Respiration converted to rfr';
                 newdata.header.units = 'unknown';
             case 4
                 %rs
-                o.msg.prefix = 'Respiration converted to respiration time stamps and';
                 newdata.header.chantype = 'rs';
+                action_msg = 'Respiration converted to respiration time stamps';
                 newdata.header.units = 'events';
         end;
+        channel_str = num2str(chan);
+        o.msg.prefix = sprintf(...
+            'Respiration preprocessing :: Input channel: %s -- Input chantype: %s -- Output channel: %s -- Action: %s --', ...
+            channel_str, ...
+            old_chantype, ...
+            newdata.header.chantype, ...
+            action_msg);
+
         % interpolate
         switch iType
             case {1, 2, 3}
