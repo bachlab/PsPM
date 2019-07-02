@@ -33,11 +33,11 @@ function [pupil_pp] = pspm_cfg_pupil_preprocess(job)
         'will be corrected.']};
 
     channel  = cfg_choice;
-    channel.name = 'Channel to correct';
+    channel.name = 'Primary channel to preprocess';
     channel.tag = 'channel';
     channel.values = {chan_def, chan_nr};
     channel.val = {chan_def};
-    channel.help = {'Choose the channel to correct.'};
+    channel.help = {'Choose the primary channel to preprocess.'};
 
     % define channel_combine
     % ------------------------------------------------------
@@ -51,11 +51,13 @@ function [pupil_pp] = pspm_cfg_pupil_preprocess(job)
         'will be used.']};
 
     channel_combine  = cfg_choice;
-    channel_combine.name = 'Channel to combine';
+    channel_combine.name = 'Secondary channel to preprocess and combine';
     channel_combine.tag = 'channel_combine';
     channel_combine.values = {chancomb_def, chan_nr};
     channel_combine.val = {chancomb_def};
-    channel_combine.help = {'Choose the channel to combine with main channel in order to create a preprocessed mean channel'};
+    channel_combine.help = {['Choose the secondary channel to preprocess using the exact same steps. Afterwards this ', ...
+        'channel will be combined with primary channel in order to create a preprocessed mean channel. Note that the ', ...
+        'recorded eye in secondary channel must be different than the recorded eye in primary channel']};
 
     % define channel_action
     % ------------------------------------------------------
@@ -302,8 +304,8 @@ function [pupil_pp] = pspm_cfg_pupil_preprocess(job)
     pupil_pp.val  = {datafile, channel, channel_combine, channel_action, sett, segments_rep, plot_data};
     pupil_pp.prog = @pspm_cfg_run_pupil_preprocess;
     pupil_pp.vout = @pspm_cfg_vout_pupil_preprocess;
-    pupil_pp.help = {['Pupil data preprocessing according to the reference article. Please refer to PsPM',...
-        ' manual or the reference article for an explanation of preprocessing steps.'],...
+    pupil_pp.help = {['Pupil data preprocessing according to the reference article. Please refer to reference article',...
+        ' or pupil preprocessing user guide section in PsPM manual for an explanation of preprocessing steps.'],...
         ['Reference: ',...
         'Kret, Mariska E., and Elio E. Sjak-Shie. "Preprocessing pupil size data: Guidelines and code." ',...
         'Behavior research methods (2018): 1-7.']};

@@ -73,13 +73,16 @@ function [pupil_correct] = pspm_cfg_pupil_correct(job)
     auto_mode.tag  = 'auto';
     auto_mode.val  = {C_z_auto};
     auto_mode.help = {['In auto mode, you need to enter C_z value. Other values will be set using ',...
-        'the optimized parameters in reference paper which you can find in method help text.']};
+        'the optimized parameters in reference paper which you can find in method help text. Note that you ',...
+        'can use auto mode only if your eye-camera-screen geometry setup matches exactly one of the setups ',...
+        'given in the reference paper. For more information about these setups, please refer to reference article ',...
+        'or pupil correction user guide section in PsPM manual.']};
 
     manual_mode = cfg_branch;
     manual_mode.name = 'Manual mode';
     manual_mode.tag = 'manual';
     manual_mode.val = {C_x, C_y, C_z, S_x, S_y, S_z};
-    manual_mode.help = {'In manual mode, you need to enter all values defining the geometry'};
+    manual_mode.help = {'In manual mode, you need to enter all values defining the eye-camera-screen geometry'};
 
     mode = cfg_choice;
     mode.name = 'Correction mode';
