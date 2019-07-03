@@ -36,12 +36,17 @@ function glm = pspm_glm(model, options)
 %                   event onsets by n seconds (default: 0: used for
 %                   interpolated data channels)
 % model.channel:    channel number or channel type. if a channel type is 
-%                   specified the first channel matching the given type will
-%                   be used. 
-%                   SPECIAL: if 'pupil' is specified the function
-%                   tries to find the pupil channel for the eye matching the 
-%                   field infos.source.best_eye in the PsPM file. 
-%                   DEFAULT: first channel of the specified modality
+%                   specified the LAST channel matching the given type will
+%                   be used. The rationale for this is that, in general channels
+%                   later in the channel list are preprocessed/filtered versions
+%                   of raw channels.
+%                   SPECIAL: if 'pupil' is specified the function uses the
+%                   last pupil channel returned by <a href="matlab:help pspm_load_data">pspm_load_data</a>.
+%                   pspm_load_data loads 'pupil' channels according to a specific
+%                   precedence order described in its documentation. In a nutshell,
+%                   it prefers preprocessed channels and channels from the best eye
+%                   to other pupil channels.
+%                   DEFAULT: last channel of the specified modality
 %                            (for PSR this is 'pupil')
 % model.norm:       normalise data; default 0
 % model.filter:     filter settings; modality specific default
@@ -66,7 +71,7 @@ function glm = pspm_glm(model, options)
 %
 % OPTIONS (optional argument)
 % options.overwrite: overwrite existing model output; default 0
-% options.marker_chan_num: marker channel number; default first marker
+% options.marker_chan_num: marker channel number; default last marker
 %                          channel
 % options.exclude_missing: marks trials during which NaN percentage exceeds
 %                          a cutoff value. Requires two subfields: 
@@ -137,11 +142,11 @@ function glm = pspm_glm(model, options)
 % PsPM 3.1
 % (C) 2008-2016 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
+% $Id: pspm_glm.m 627 2019-02-21 16:51:46Z lciernik $
+% $Rev: 627 $
 
 % function revision
-rev = '$Rev$';
+rev = '$Rev: 627 $';
 
 % initialise & user output
 % -------------------------------------------------------------------------
@@ -272,8 +277,8 @@ nFile = numel(model.datafile);
 for iFile = 1:nFile
     [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
     if sts < 1, return; end
-    y{iFile} = data{1}.data(:);
-    sr(iFile) = data{1}.header.sr;
+    y{iFile} = data{end}.data(:);
+    sr(iFile) = data{end}.header.sr;
     fprintf('.');
     if any(strcmp(model.timeunits, {'marker', 'markers','markervalues'}))
         [sts, ~, data] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
@@ -281,9 +286,9 @@ for iFile = 1:nFile
             warning('ID:invalid_input', ['Could not load the specified markerchannel']); 
             return;
         end
-        events{iFile} = data{1}.data * data{1}.header.sr;
+        events{iFile} = data{end}.data * data{end}.header.sr;
         if strcmp(model.timeunits,'markervalues')
-            model.timing{iFile}.markerinfo = data{1}.markerinfo;
+            model.timing{iFile}.markerinfo = data{end}.markerinfo;
         end 
     end
 end

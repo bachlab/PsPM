@@ -4,15 +4,29 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
     %
     % FORMAT: [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
     %           fn: filename, or struct with fields .infos, .data
-    %           chan:   0 or empty - returns all channels
-    %                   vector of channelnumbers - returns only these channels
-    %                   'wave' - returns all waveform channels
-    %                   'events' - returns all event channels
-    %                   'pupil' - returns all pupil channels fitting the 'best
-    %                               eye'
-    %                   'channel type' - returns the respective channels
+    %           chan: One of the below options:
+    %
+    %               0 or empty - returns all channels
+    %
+    %               vector of channelnumbers - returns only these channels
+    %
+    %               'wave' - returns all waveform channels
+    %
+    %               'events' - returns all event channels
+    %
+    %               'pupil' - goes through the below precedence order and
+    %                         loads all the channels corresponding to the earliest
+    %                         option:
+    %
+    %                         1. Combined pupil channels (by definition also preprocessed)
+    %                         2. Preprocessed pupil channels corresponding to best eye
+    %                         3. Preprocessed pupil channels
+    %                         4. Best eye pupil channels
+    %
+    %               'channel type' - returns the respective channels
     %                       (see settings for channel types)
-    %                   'none' - just checks the file
+    %
+    %               'none' - just checks the file
     %                   a struct with fields .infos, .data, .options - checks 
     %                      and saves file
     %
@@ -29,8 +43,8 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
     % PsPM 3.0
     % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-    % $Id: pspm_load_data.m 646 2019-04-25 11:48:57Z esrefo $
-    % $Rev: 646 $
+    % $Id: pspm_load_data.m 779 2019-07-03 09:24:26Z esrefo $
+    % $Rev: 779 $
 
     % -------------------------------------------------------------------------
     % DEVELOPERS NOTES: General structure of PsPM data files

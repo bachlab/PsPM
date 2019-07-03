@@ -5,8 +5,8 @@ function pspm_init
 % PsPM 3.1
 % (C) 2009-2015 Dominik R Bach (WTCN, UZH)
 
-% $Id$
-% $Rev$
+% $Id: pspm_init.m 774 2019-07-01 08:35:43Z esrefo $
+% $Rev: 774 $
 
 clc
 
@@ -373,7 +373,7 @@ defaults.chantypes(29) = ...
 defaults.chantypes(30) = ...
     struct('type', 'sps', ...
     'description', 'Scanpath speed', ...
-    'import', @pspm_get_sp_s, ...
+    'import', @pspm_get_sp_speed, ...
     'data', 'wave');
 
 % documented
