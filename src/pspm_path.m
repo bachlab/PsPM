@@ -1,6 +1,6 @@
 function path_to_folder = pspm_path(varargin)
     % pspm_path is an operating system agnostic function that returns the path
-    % folders under root PsPM directory. This function is mainly used during
+    % of folders under root PsPM directory. This function is mainly used during
     % directory imports to call functions from libraries or folders that are not
     % added to path by default (such as backroom folder for utility functions).
     %
