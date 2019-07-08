@@ -89,7 +89,7 @@ function [pupil_correct] = pspm_cfg_pupil_correct(job)
     mode.name = 'Correction mode';
     mode.tag = 'mode';
     mode.values = {auto_mode, manual_mode};
-    mode.val = {auto_mode};
+    mode.val = {manual_mode};
     mode.help = {'Choose the correction mode'};
 
     chan_nr = cfg_entry;
