@@ -300,7 +300,7 @@ function [pupil_pp] = pspm_cfg_pupil_preprocess(job)
     % ------------------------------------------------------
     pupil_pp      = cfg_exbranch;
     pupil_pp.name = 'Pupil preprocessing';
-    pupil_pp.tag  = 'pupil_pp';
+    pupil_pp.tag  = 'pupil_preprocess';
     pupil_pp.val  = {datafile, channel, channel_combine, channel_action, sett, segments_rep, plot_data};
     pupil_pp.prog = @pspm_cfg_run_pupil_preprocess;
     pupil_pp.vout = @pspm_cfg_vout_pupil_preprocess;

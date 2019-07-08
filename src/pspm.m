@@ -4,8 +4,8 @@ function varargout = pspm(varargin)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$ 
+% $Id: pspm.m 636 2019-03-15 07:56:42Z lciernik $
+% $Rev: 636 $ 
 
 % this code was mainly produced by GUIDE
 % PsPM_GUI M-file for PsPM_GUI.fig
@@ -312,10 +312,14 @@ switch selected
     case 5
         cfg_add_module('pspm.data_preprocessing.pp_pupil.find_valid_fixations');
     case 6
-        cfg_add_module('pspm.tools.convert_data');
+        cfg_add_module('pspm.data_preprocessing.pp_pupil.pupil_correct');
     case 7
-        cfg_add_module('pspm.data_preprocessing.pp_emg.find_sounds');
+        cfg_add_module('pspm.data_preprocessing.pp_pupil.pupil_preprocess');
     case 8
+        cfg_add_module('pspm.tools.convert_data');
+    case 9
+        cfg_add_module('pspm.data_preprocessing.pp_emg.find_sounds');
+    case 10
         cfg_add_module('pspm.data_preprocessing.pp_emg.pp_emg_data');
 end;
 
