@@ -1,16 +1,31 @@
 function data_mat = set_blinks_saccades_to_nan(data_mat, column_names, mask_chans, fn_is_left)
     % set_blinks_saccades_to_nan sets data rows corresponding to blink/saccade periods to NaN values.
-    % This is performed for each eye separately.
+    % This is performed for each eye separately. The function assumes that channel names for blink
+    % channels contain 'blink' in them. Similarly, channel names for saccade channels must contain
+    % 'saccade'.
     %
     % Inputs
     % ------
-    % data_mat: Matrix containing both data and blink/saccade columns.
+    % data_mat: Matrix containing both data and blink/saccade columns. All the columns in data_mat
+    %           are assumed to belong to either left or to right eye. Example columns are pupil_l,
+    %           gaze_x_r, etc.
     % column_names: Name of each column in the input data_mat.
     % mask_chans: Names of blink and saccade channels.
-    % fn_is_left: Function that takes a channel name as input and returns true if the channel
+    % fn_is_left: Function that takes a LOWERCASED channel name as input and returns true if the channel
     %             name belongs to left eye. Otherwise, it returns false.
     %
+    % Output
+    % ------
+    % data_mat: Same data matrix data_mat except that
+    % 
+    %   - all elements in left data columns (except blink/saccade) that correspond to left
+    %     blink or saccade rows are set to NaN
+    %
+    %   - all elements in right data columns (except blink/saccade) that correspond to right
+    %     blink or saccade rows are set to NaN
+    %
     column_names = cellfun(@(x) lower(x), column_names, 'uni', 0);
+    mask_chans = cellfun(@(x) lower(x), mask_chans, 'uni', 0);
 
     col_ids = [];
     for chan = mask_chans
