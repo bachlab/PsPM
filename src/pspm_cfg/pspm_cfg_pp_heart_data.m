@@ -1,7 +1,7 @@
 function pp_heart_data = pspm_cfg_pp_heart_data
 
-% $Id$
-% $Rev$
+% $Id: pspm_cfg_pp_heart_data.m 753 2019-06-26 12:11:12Z esrefo $
+% $Rev: 753 $
 
 % Initialise
 global settings
@@ -179,9 +179,9 @@ ecg2hb_amri_opt.help = {'Define various options that change the procedure''s beh
 ecg2hb_amri         = cfg_exbranch;
 ecg2hb_amri.name    = 'Convert ECG to Heart Beat (AMRI)';
 ecg2hb_amri.tag     = 'ecg2hb_amri';
-ecg2hb_amri.help    = {['Convert ECG data into Heart beat time stamps using the algorithm by AMRI. The algorithm',...
+ecg2hb_amri.help    = {['Convert ECG data into heart beat time stamps using the algorithm by AMRI. The algorithm',...
     ' performs template matching to classify candidate R-peaks after filtering the',...
-    ' data and applying Teager Enery Operator (TEO)'],...
+    ' data and applying Teager Energy Operator (TEO)'],...
     ['Reference: Liu, Zhongming, et al. "Statistical feature extraction for artifact removal ',...
     'from concurrent fMRI-EEG recordings." Neuroimage 59.3 (2012): 2073-2087.']};
 ecg2hb_amri.val     = {ecg2hb_amri_chan, ecg2hb_amri_opt};

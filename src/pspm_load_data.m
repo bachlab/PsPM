@@ -1,5 +1,5 @@
 function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
-    % pspm_load_data checks and returns the structure of PsPM 3.x and 
+    % pspm_load_data checks and returns the structure of PsPM 3-4.x and 
     % SCRalyze 2.x data files - SCRalyze 1.x is not supported
     %
     % FORMAT: [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
@@ -15,13 +15,16 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
     %               'events' - returns all event channels
     %
     %               'pupil' - goes through the below precedence order and
-    %                         loads all the channels corresponding to the earliest
-    %                         option:
+    %                         loads all channels corresponding to the first
+    %                         existing option:
     %
     %                         1. Combined pupil channels (by definition also preprocessed)
     %                         2. Preprocessed pupil channels corresponding to best eye
     %                         3. Preprocessed pupil channels
     %                         4. Best eye pupil channels
+    %
+    %                         Note that if there is only one eye in the datafile,
+    %                         that eye is defined as the best eye.
     %
     %               'channel type' - returns the respective channels
     %                       (see settings for channel types)
@@ -43,8 +46,8 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
     % PsPM 3.0
     % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-    % $Id: pspm_load_data.m 779 2019-07-03 09:24:26Z esrefo $
-    % $Rev: 779 $
+    % $Id: pspm_load_data.m 781 2019-07-06 15:46:18Z dominik_bach $
+    % $Rev: 781 $
 
     % -------------------------------------------------------------------------
     % DEVELOPERS NOTES: General structure of PsPM data files

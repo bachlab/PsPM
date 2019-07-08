@@ -7001,6 +7001,7 @@ reference "subsec:ECG-editor"
 \end_inset
 
 ) for further information.
+ 
 \end_layout
 
 \begin_layout Subsubsection*
@@ -7051,7 +7052,17 @@ Convert ECG to Heart Beat (AMRI)
 \end_layout
 
 \begin_layout Standard
-Convert ECG data into heart beat timestamps using AMRI algorithm.
+Convert ECG data into heart beat timestamps using AMRI algorithm 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "liu2012statistical"
+literal "false"
+
+\end_inset
+
+.
+ The algorithm performs template matching to classify candidate R-peaks
+ after filtering the data and applying Teager Energy Operator (TEO).
 \end_layout
 
 \begin_layout Paragraph*
@@ -8271,6 +8282,38 @@ Related function:
 pspm_pupil_correct, pspm_pupil_correct_eyelink
 \end_layout
 
+\begin_layout Paragraph*
+
+\series medium
+Perform pupil foreshortening error correction using the equations described
+ in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Hayes:2015a"
+literal "false"
+
+\end_inset
+
+.
+ To perform correction, we define the coordinate system centered on the
+ pupil.
+ In this system, 
+\begin_inset Formula $x$
+\end_inset
+
+ coordinates grow towards right for a person looking forward in an axis
+ perpendicular to the screen.
+ 
+\begin_inset Formula $y$
+\end_inset
+
+ coordinates grow upwards and 
+\begin_inset Formula $z$
+\end_inset
+
+ coordinates grow towards the screen.
+\end_layout
+
 \begin_layout Subsubsection*
 Data file
 \end_layout
@@ -8304,7 +8347,11 @@ Choose the correction method:
 \end_layout
 
 \begin_layout Itemize
-auto: In auto mode, you need to enter C_z value.
+auto: In auto mode, you need to enter 
+\begin_inset Formula $C_{z}$
+\end_inset
+
+ value.
  Other values will be set using the optimized parameters in reference paper.
  
 \series bold
@@ -8509,7 +8556,7 @@ Related function:
 pspm_pupil_pp, pspm_pupil_pp_options
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Subparagraph*
 
 \series medium
 Pupil size preprocessing using the steps described in 
@@ -8520,7 +8567,7 @@ literal "false"
 
 \end_inset
 
- can be performed.
+.
  This function allows users to preprocess two eyes simultaneously and average
  them in addition to offering single eye preprocessing.
  Further, users can define segments on which statistics such as min, max,
