@@ -67,8 +67,8 @@ function [sts, out] = pspm_extract_segments(varargin)
 % PsPM 4.3
 % (C) 2008-2018 Tobias Moser (University of Zurich)
 
-% $Id$
-% $Rev$
+% $Id: pspm_extract_segments.m 733 2019-06-20 12:47:45Z esrefo $
+% $Rev: 733 $
 
 % initialise
 % -------------------------------------------------------------------------
@@ -482,7 +482,7 @@ for session_idx = 1:n_sessions
     % load data
     session_data = input_data{session_idx};
     if manual_chosen == 1 && strcmpi(options.timeunit, 'markers')
-        marker = marker_data{n};
+        marker = marker_data{session_idx};
     end
     num_conds_in_session = numel(multi(session_idx).names);
     for c = 1:num_conds_in_session
@@ -497,9 +497,6 @@ for session_idx = 1:n_sessions
         assert(numel(onset_write_indices_in_cond_and_session) == num_onsets);
 
         for onset_idx = 1:num_onsets
-            % in case of glm, start is a signal index to filtered Y data.
-            start = onsets_cond(onset_idx);
-            
             if options.length <= 0
                 try
                     segment_length = durations_cond(onset_idx);
@@ -515,24 +512,21 @@ for session_idx = 1:n_sessions
 
             % ensure start and segment_length have the 'sample' format to
             % access on data
+            start = onsets_cond(onset_idx);
             switch options.timeunit
                 case 'seconds'
                     segment_length = segment_length*sr;
-                    if manual_chosen == 1 || strcmpi(model_strc.modeltype, 'dcm')
-                        % TODO: what happens if data is downsampled in DCM? Check DCM trlstart-stop variables
-                        % to see if they refer to original or filtered data. We assume the former here.
-                        start = start * sr;
-                    else
-                        start = start * sr / filtered_sr;
-                    end
+                    start = start * sr;
                 case 'markers'
                     segment_length = segment_length*sr;
                     if manual_chosen == 1
-                        start = marker(start)*sr;
+                        start = marker(start) * sr;
                     else
-                        assert(~strcmpi(model_strc.modeltype, 'dcm'));
-                        start = start * sr / filtered_sr;
+                        start = start * sr;
                     end
+                    assert(~strcmpi(model_strc.modeltype, 'dcm'));
+                case 'samples'
+                    start = start * sr / filtered_sr;
             end;
             
             start = max(1, round(start));
