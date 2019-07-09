@@ -45,8 +45,8 @@ function [sts, infos] = pspm_write_channel(fn, newdata, action, options)
 % PsPM 3.0
 % (C) 2015 Dominik Bach, Samuel Gerster, Tobias Moser (UZH)
 
-% $Id: pspm_write_channel.m 513 2017-12-15 15:49:13Z tmoser $
-% $Rev: 513 $
+% $Id: pspm_write_channel.m 777 2019-07-02 09:09:18Z esrefo $
+% $Rev: 777 $
 
 %% Initialise & user output
 % -------------------------------------------------------------------------
@@ -183,7 +183,7 @@ else
     if isstruct(options.msg) && isfield(options.msg, 'prefix')
         prefix = options.msg.prefix;
     else
-        prefix = '';
+        prefix = 'Generic undocumented operation :: ';
     end
     prefix = [prefix ' Output channel ID: #%02d --'];
     
@@ -191,7 +191,7 @@ else
     for i=channeli'
         % translate prefix
         p = sprintf(prefix, i);
-        msg = [msg, p, sprintf(' %s on %s\n; ', v, date)];
+        msg = [msg, p, sprintf(' %s on %s', v, date)];
     end
     msg(end-1:end)='';
 end
