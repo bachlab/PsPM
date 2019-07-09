@@ -647,12 +647,10 @@ classdef pspm_glm_test < matlab.unittest.TestCase
             Y =Y1 + Y2 +Y3;
             if nan_percent >0
                 nr_samples = size(Y,1);
-                nr_nan_toadd = nan_percent *  nr_samples;
-                idx_replace = unique(round(nr_samples* rand(nr_nan_toadd,1)));
-                idx_replace = max(1, idx_replace);
-                idx_replace = min(nr_samples, idx_replace);
+                nr_nan_toadd = round(nan_percent *  nr_samples);
+                idx_replace = randsample(nr_samples, nr_nan_toadd);
                 Y(idx_replace) = NaN;
-                new_nan_percent = size(idx_replace,1)/nr_samples;
+                new_nan_percent = sum(isnan(Y))/nr_samples;
                 
             else
                 new_nan_percent = nan_percent;
@@ -668,7 +666,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
             this.verifyEqual(length(glm.stats_missing),exptected_number_of_conditions, sprintf('test_extract_missing: glm.stats_missing does not have the expected number (%i) of elements', exptected_number_of_conditions));
             this.verifyEqual(length(glm.stats_exclude),exptected_number_of_conditions, sprintf('test_extract_missing: glm.stats_exclude does not have the expected number (%i) of elements', exptected_number_of_conditions));
             
-            this.verifyTrue((abs(mean(glm.stats_missing)-new_nan_percent)<0.01), sprintf('test_extract_missing: mean of glm.stats_missing does not correspond to expected nan_percentage (%i)', new_nan_percent));
+            this.verifyTrue((abs(mean(glm.stats_missing)-new_nan_percent)<0.01), sprintf('test_extract_missing: mean of glm.stats_missing (%i) does not correspond to expected nan_percentage (%i)', mean(glm.stats_missing), new_nan_percent));
             
             check_values = glm.stats_missing > cutoff;
             this.verifyTrue(all(glm.stats_exclude == check_values), sprintf('test_extract_missing: glm.stats_exclude does not exclude the right conditions'));

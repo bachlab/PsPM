@@ -302,7 +302,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
                  seg_len = glm.timing.multi.durations{i} * sr;
                  onset_i = glm.timing.multi.onsets{i};
                  for j = 1:numel(onset_i)
-                     onset = round(onset_i(j) * sr / newsr);
+                     onset = round(onset_i(j) * sr);
                      all_vecs = [all_vecs, input_data(onset : onset + seg_len - 1)];
                  end
                  expected_mean = nanmean(all_vecs, 2);
@@ -375,7 +375,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
                 seg_len = glm.timing.multi.durations{i} * sr;
                 onset_i = glm.timing.multi.onsets{i};
                 for j = 1:numel(onset_i)
-                    onset = round(onset_i(j) * sr / newsr);
+                    onset = round(onset_i(j) * sr);
                     all_vecs = [all_vecs, input_data(onset : onset + seg_len - 1)];
                 end
                 expected_mean = nanmean(all_vecs, 2);
