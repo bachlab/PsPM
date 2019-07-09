@@ -20,8 +20,8 @@ function sts = pspm_resp_pp(fn, sr, chan, options)
 % PsPM 3.0
 % (C) 2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_resp_pp.m 663 2019-05-16 15:41:03Z esrefo $
-% $Rev: 663 $
+% $Id: pspm_resp_pp.m 790 2019-07-09 10:24:23Z esrefo $
+% $Rev: 790 $
 
 
 % initialise & user output
@@ -33,17 +33,17 @@ if isempty(settings), pspm_init; end;
 % check input
 % -------------------------------------------------------------------------
 if nargin < 1
-    warning('No input. Don''t know what to do.'); return;
+    warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
 elseif ~ischar(fn)
-    warning('Need file name string as first input.'); return;
+    warning('ID:invalid_input', 'Need file name string as first input.'); return;
 elseif nargin < 2
-    warning('No sample rate given.'); return; 
+    warning('ID:invalid_input', 'No sample rate given.'); return; 
 elseif ~isnumeric(sr)
-    warning('Sample rate needs to be numeric.'); return;
+    warning('ID:invalid_input', 'Sample rate needs to be numeric.'); return;
 elseif nargin < 3 || isempty(chan) || (chan == 0)
     chan = 'resp';
 elseif ~isnumeric(chan)
-    warning('Channel number must be numeric'); return;
+    warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end;
 
 try options.systemtype; catch, options.systemtype = 'bellows'; end;
@@ -53,9 +53,9 @@ try options.diagnostics; catch, options.diagnostics = 0; end;
 try options.replace; catch, options.replace = 0; end;
 
 if ~ischar(options.systemtype) || sum(strcmpi(options.systemtype, {'bellows', 'cushion'})) == 0
-    warning('Unknown system type.'); return;
+    warning('ID:invalid_input', 'Unknown system type.'); return;
 elseif ~iscell(options.datatype) 
-    warning('Unknown data type.'); return;
+    warning('ID:invalid_input', 'Unknown data type.'); return;
 else 
     datatypes = {'rp', 'ra', 'rfr', 'rs', 'all'};
     datatype = zeros(5, 1);
