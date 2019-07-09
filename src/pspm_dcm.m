@@ -106,11 +106,11 @@ function dcm = pspm_dcm(model, options)
 % PsPM 3.0
 % (c) 2010-2015 Dominik R Bach (WTCN, UZH)
 
-% $Id$  
-% $Rev$
+% $Id: pspm_dcm.m 592 2018-09-14 09:01:41Z lciernik $  
+% $Rev: 592 $
 
 % function revision
-rev = '$Rev$';
+rev = '$Rev: 592 $';
 
 % initialise & set output
 % ------------------------------------------------------------------------
@@ -526,7 +526,7 @@ for iSn = 1:numel(model.timing)
                     subsessions(sbs_id,2);
                 sbs_iti{sbs_id} = [sbs_trlstart{sbs_id}(2:end); ...
                     numel(sbs_data{sbs_id, 1})/model.sr] - sbs_trlstop{sbs_id};
-                sbs_miniti(sbs_id) = min(sbs_iti{sbs_id});
+                sbs_miniti(sbs_id) = min(sbs_iti{sbs_id}(1 : end - 1));
                 
                 for ievType = 1:numel(sbs_newevents)
                     if ~isempty(sn_newevents{ievType}{iSn})
@@ -617,58 +617,65 @@ if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
         || (max(options.fixevents > max(options.flexevents(:, 2), [], 2))))
     [foo, lastfix] = max(options.fixevents);
     % extract data
-    winsize = round(sr * min([proc_miniti 10]));
+    winsize = round(model.sr * min([proc_miniti 10]));
     D = []; c = 1;
+    valid_newevents = sbs_newevents{2}(proc_subsessions);
     for isbSn = 1:numel(model.scr)
-        foo = sbs_newevents{2}{isbSn}(:, lastfix);
+        scr_sess = model.scr{isbSn};
+        foo = valid_newevents{isbSn}(:, lastfix);
         foo(foo < 0) = [];
         for n = 1:size(foo, 1)
-            win = ceil(sr * foo(n) + (1:winsize));
-            D(c, :) = model.scr{isbSn}(win);
+            win = ceil(model.sr * foo(n) + (1:winsize));
+            row = get_data_after_trial_filling_with_nans_when_necessary(scr_sess, win, n, isbSn, sbs_iti, proc_miniti);
+            D(c, 1:numel(row)) = row;
             c = c + 1;
         end;
     end;
     clear c k n
-    
-    % mean centre
-    mD = D - repmat(mean(D, 2), 1, size(D, 2));
-    
-    % PCA
-    [u s]=svd(mD', 0);
-    [p,n] = size(mD);
-    s = diag(s);
-    comp = u .* repmat(s',n,1);
-    eSCR = comp(:, 1);
-    eSCR = eSCR - eSCR(1);
-    foo = min([numel(eSCR), 50]);
-    [mx ind] = max(abs(eSCR(1:foo)));
-    if eSCR(ind) < 0, eSCR = -eSCR; end;
-    eSCR = (eSCR - min(eSCR))/(max(eSCR) - min(eSCR));
-    
-    % check for peak (zero-crossing of the smoothed derivative) after more
-    % than 3 seconds (use CRF if there is none)
-    der = diff(eSCR);
-    der = conv(der, ones(10, 1));
-    der = der(ceil(3 * sr):end);
-    if all(der > 0) || all(der < 0)
-        warnings{1} = ('No peak detected in response to outcomes. Cannot individually adjust CRF. Standard CRF will be used instead.');
-        fprintf('\n%s\n', warnings{1});
-        options.indrf = 0;
+    if isempty(find(isnan(D(:))))
+        % mean centre
+        mD = D - repmat(mean(D, 2), 1, size(D, 2));
+        
+        % PCA
+        [u s]=svd(mD', 0);
+        [p,n] = size(mD);
+        s = diag(s);
+        comp = u .* repmat(s',n,1);
+        eSCR = comp(:, 1);
+        eSCR = eSCR - eSCR(1);
+        foo = min([numel(eSCR), 50]);
+        [mx ind] = max(abs(eSCR(1:foo)));
+        if eSCR(ind) < 0, eSCR = -eSCR; end;
+        eSCR = (eSCR - min(eSCR))/(max(eSCR) - min(eSCR));
+        
+        % check for peak (zero-crossing of the smoothed derivative) after more
+        % than 3 seconds (use CRF if there is none)
+        der = diff(eSCR);
+        der = conv(der, ones(10, 1));
+        der = der(ceil(3 * model.sr):end);
+        if all(der > 0) || all(der < 0)
+            warnings{1} = ('No peak detected in response to outcomes. Cannot individually adjust CRF. Standard CRF will be used instead.');
+            fprintf('\n%s\n', warnings{1});
+            options.indrf = 0;
+        else
+            options.eSCR = eSCR;
+        end;
     else
-        options.eSCR = eSCR;
-    end;
+        warning('ID:invalid_input', 'Due to NaNs after some trial endings, PCA could not be computed');
+    end
 end;
 
 % extract data from all trials
 winsize = round(model.sr * min([proc_miniti 10]));
 D = []; c = 1;
 for isbSn = 1:numel(model.scr)
+    scr_sess = model.scr{isbSn};
     for n = 1:numel(model.trlstart{isbSn})
         win = ceil(((model.sr * model.trlstart{isbSn}(n)):(model.sr * model.trlstop{isbSn}(n) + winsize)));
         % correct rounding errors
         win(win == 0) = [];
-        win(win > numel(model.scr{isbSn})) = [];
-        D(c, 1:numel(win)) = model.scr{isbSn}(win);
+        row = get_data_after_trial_filling_with_nans_when_necessary(scr_sess, win, n, isbSn, sbs_iti, proc_miniti);
+        D(c, 1:numel(row)) = row;
         c = c + 1;
     end;
 end;
@@ -677,23 +684,27 @@ clear c n
 
 % do PCA if required
 if (options.indrf || options.getrf) && ~isempty(options.flexevents)
-    % mean SOA
-    meansoa = mean(cell2mat(model.trlstop') - cell2mat(model.trlstart'));
-    % mean centre
-    mD = D - repmat(mean(D, 2), 1, size(D, 2));
-    % PCA
-    [u s c]=svd(mD', 0);
-    [p,n] = size(mD);
-    s = diag(s);
-    comp = u .* repmat(s',n,1);
-    aSCR = comp(:, 1);
-    aSCR = aSCR - aSCR(1);
-    foo = min([numel(aSCR), (round(model.sr * meansoa) + 50)]);
-    [mx ind] = max(abs(aSCR(1:foo)));
-    if aSCR(ind) < 0, aSCR = -aSCR; end;
-    aSCR = (aSCR - min(aSCR))/(max(aSCR) - min(aSCR));
-    clear u s c p n s comp mx ind mD
-    options.aSCR = aSCR;
+    if isempty(find(isnan(D(:))))
+        % mean SOA
+        meansoa = mean(cell2mat(model.trlstop') - cell2mat(model.trlstart'));
+        % mean centre
+        mD = D - repmat(mean(D, 2), 1, size(D, 2));
+        % PCA
+        [u s c]=svd(mD', 0);
+        [p,n] = size(mD);
+        s = diag(s);
+        comp = u .* repmat(s',n,1);
+        aSCR = comp(:, 1);
+        aSCR = aSCR - aSCR(1);
+        foo = min([numel(aSCR), (round(model.sr * meansoa) + 50)]);
+        [mx ind] = max(abs(aSCR(1:foo)));
+        if aSCR(ind) < 0, aSCR = -aSCR; end;
+        aSCR = (aSCR - min(aSCR))/(max(aSCR) - min(aSCR));
+        clear u s c p n s comp mx ind mD
+        options.aSCR = aSCR;
+    else
+        warning('ID:invalid_input', 'Due to NaNs after some trial endings, PCA could not be computed');
+    end
 end;
 
 % get mean response
@@ -772,4 +783,25 @@ if ~options.nosave
     save(model.modelfile, 'dcm');
 end;
 
-return;
+end
+
+function datacol = get_data_after_trial_filling_with_nans_when_necessary(scr_sess, win, n, isbSn, sbs_iti, proc_miniti)
+    % Try to get all the data elements after the end of the trial n in session isbSn. Indices of the elements
+    % to return are stored in win. In case these indices are larger than size of scr_sess{isbSn}, then fill the
+    % rest of the data with NaN values.
+    datacol = NaN(1, numel(win));
+    num_indices_outside_scr = win(end) - numel(scr_sess);
+    if num_indices_outside_scr > 0
+        warning('ID:too_short_ITI',...
+            sprintf(...
+                ['Trial %d in session %d has ITI %f; but we use %f seconds',...
+                ' after each trial. Filling the rest with NaNs'],...
+                n, isbSn, sbs_iti{isbSn}(n), proc_miniti(isbSn)...
+        ));
+        win(end - num_indices_outside_scr + 1 : end) = [];
+        datacol(1:numel(win)) = scr_sess(win);
+        datacol(numel(win) + 1 : end) = NaN;
+    else
+        datacol(1:numel(win)) = scr_sess(win);
+    end
+end
