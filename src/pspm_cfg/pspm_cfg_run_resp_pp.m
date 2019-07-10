@@ -1,8 +1,8 @@
 function out = pspm_cfg_run_resp_pp(job)
 % Executes pspm_resp_pp
 
-% $Id$
-% $Rev$
+% $Id: pspm_cfg_run_resp_pp.m 450 2017-07-03 15:17:02Z tmoser $
+% $Rev: 450 $
 
 % sample rate
 sr = job.sr;
@@ -31,7 +31,7 @@ for i = 1:numel(f)
     end;
 end;
 
-options.replace = job.replace_chan;
+options.channel_action = job.channel_action;
 
 sts = pspm_resp_pp(job.datafile{1}, sr, chan, options);
 

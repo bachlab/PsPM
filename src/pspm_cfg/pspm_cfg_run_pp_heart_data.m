@@ -2,11 +2,11 @@ function out = pspm_cfg_run_pp_heart_data(job)
 % Preprocess heart data 
 %
 %
-% $Id$
-% $Rev$
+% $Id: pspm_cfg_run_pp_heart_data.m 746 2019-06-25 09:19:33Z esrefo $
+% $Rev: 746 $
 
 fn = job.datafile{1};
-replace = job.replace_chan;
+channel_action = job.channel_action;
 
 outputs = cell(size(job.pp_type));
 
@@ -46,30 +46,20 @@ for i=1:numel(job.pp_type)
                 opt.maxHR = job.pp_type{i}.ecg2hb.opt.maxhr;
                 opt.semi = job.pp_type{i}.ecg2hb.opt.semi;
                 opt.twthresh = job.pp_type{i}.ecg2hb.opt.twthresh;
-                
-                % set replace
-                if replace
-                    opt.channel_action = 'replace';
-                else
-                    opt.channel_action = 'add';
-                end
+                opt.channel_action = channel_action;
                 
                 % call function
                 [sts, winfo] = pspm_ecg2hb(fn, chan, opt);
             case 'ecg2hb_amri'
                 opt = pp_field.opt;
-                if replace
-                    opt.channel_action = 'replace';
-                else
-                    opt.channel_action = 'add';
-                end
+                opt.channel_action = channel_action;
                 opt.channel = chan;
                 winfo = struct();
                 [sts, winfo.channel] = pspm_ecg2hb_amri(fn, opt);
             case 'hb2hp'
                 sr = job.pp_type{i}.hb2hp.sr;              
                 opt = struct(); 
-                opt.replace = replace;
+                opt.channel_action = channel_action;
                 opt.limit = job.pp_type{i}.hb2hp.limit;
                 
                 [sts, winfo] = pspm_hb2hp(fn, sr, chan, opt);
@@ -84,7 +74,7 @@ for i=1:numel(job.pp_type)
                 opt.twthresh = job.pp_type{i}.ecg2hp.opt.twthresh;
                 
                 % set replace
-                opt.replace = replace;
+                opt.channel_action = channel_action;
                 
                 % call ecg2hb
                 [sts, winfo] = pspm_ecg2hb(fn, chan, opt);
@@ -92,14 +82,14 @@ for i=1:numel(job.pp_type)
                 if sts ~= -1
                 
                     % replace channel
-                    opt.replace = true;
+                    opt.channel_action = 'replace';
                     opt.limit = job.pp_type{i}.ecg2hp.limit;
                     % call ecg2hp
                     [sts, winfo] = pspm_hb2hp(fn, sr, winfo.channel, opt);
                 end;
             case 'ppu2hb'
                 opt = struct();
-                opt.replace = logical(replace);
+                opt.channel_action = channel_action;
                 [sts, winfo] = pspm_ppu2hb(fn, chan, opt);
         end;
         

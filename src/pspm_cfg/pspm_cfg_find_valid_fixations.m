@@ -5,8 +5,8 @@ function [find_valid_fixations] = pspm_cfg_find_valid_fixations(job)
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
 
-% $Id$
-% $Rev$
+% $Id: pspm_cfg_find_valid_fixations.m 635 2019-03-14 10:14:50Z lciernik $
+% $Rev: 635 $
 
 % Initialise
 global settings
@@ -225,32 +225,16 @@ file_output.val         = {overwrite_original};
 file_output.help        = {['Write data to a new file or overwrite ',...
     'original data file.']};
 
-%% Add channel
-add_channel             = cfg_const;
-add_channel.name        = 'Add channel';
-add_channel.tag         = 'add_channel';
-add_channel.val         = {1};
-add_channel.help        = {['New data channels will be added at ', ...
-    'the end of the file.']};
+% define channel_action
+% ------------------------------------------------------
+channel_action = cfg_menu;
+channel_action.name = 'Channel action';
+channel_action.tag  = 'channel_action';
+channel_action.values = {'add', 'replace'};
+channel_action.labels = {'Add', 'Replace'};
+channel_action.val = {'add'};
+channel_action.help = {'Choose whether to add the new channels or replace a channel previously added by this method.'};
 
-%% Replace channel
-replace_channel             = cfg_const;
-replace_channel.name        = 'Replace channel';
-replace_channel.tag         = 'replace_channel';
-replace_channel.val         = {1};
-replace_channel.help        = {['The function tries to replace the ', ...
-    'existing data channels. If there is no existing data channel found, ', ...
-    'the new channel will be added at the end of the file (this very likely ', ...
-    'applies to the new missing data channels).']};
-
-%% Channel output
-channel_output          = cfg_choice;
-channel_output.name     = 'Channel output';
-channel_output.tag      = 'channel_output';
-channel_output.values   = {add_channel, replace_channel};
-channel_output.val      = {replace_channel};
-channel_output.help     = {['Define whether the data channels should be ', ...
-    'added or replace the original data channels.']};
 %% plot_gaze_coords
 plot_gaze_coords           = cfg_menu;
 plot_gaze_coords.name      = 'Plot gaze coords and fixation point(s)';
@@ -266,7 +250,7 @@ plot_gaze_coords.help      = {['Define whether to plot the gaze coordinates ',..
 output                  = cfg_branch;
 output.name             = 'Output settings';
 output.tag              = 'output_settings';
-output.val              = {file_output, channel_output,plot_gaze_coords};
+output.val              = {file_output, channel_action, plot_gaze_coords};
 
 %% Executable branch
 find_valid_fixations      = cfg_exbranch;

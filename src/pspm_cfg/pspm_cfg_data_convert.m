@@ -6,8 +6,8 @@ function [pp_convert] = pspm_cfg_data_convert
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
 
-% $Id$
-% $Rev$
+% $Id: pspm_cfg_data_convert.m 635 2019-03-14 10:14:50Z lciernik $
+% $Rev: 635 $
 
 % Initialise
 global settings
@@ -146,7 +146,7 @@ conversion.help     = {['']};
 chan_action         = cfg_menu;
 chan_action.name    = 'Channel action';
 chan_action.tag     = 'channel_action';
-chan_action.val     = {'replace'};
+chan_action.val     = {'add'};
 chan_action.values  = {'replace', 'add'};
 chan_action.labels  = {'Replace channel', 'Add channel'};
 chan_action.help    = {['Choose whether to ''replace'' the given channel ', ... 

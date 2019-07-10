@@ -1,7 +1,7 @@
 function pp_heart_data = pspm_cfg_pp_heart_data
 
-% $Id: pspm_cfg_pp_heart_data.m 753 2019-06-26 12:11:12Z esrefo $
-% $Rev: 753 $
+% $Id: pspm_cfg_pp_heart_data.m 784 2019-07-08 08:16:46Z esrefo $
+% $Rev: 784 $
 
 % Initialise
 global settings
@@ -304,21 +304,21 @@ pp.num              = [1 Inf];
 pp.help             = {['Add different preprocessing steps here. ', ...
     'The converted data will be written into a new channel in the same file.']};
 
-replace_chan        = cfg_menu;
-replace_chan.name   = 'Replace output channel';
-replace_chan.tag    = 'replace_chan';
-replace_chan.val    = {0};
-replace_chan.labels = {'No', 'Yes'};
-replace_chan.values = {0, 1};
-replace_chan.help   = {['Replace existing conversion(s) with new ', ...
-    'converted data. If no conversion exists, (a) new channel(s) ',...
-    'will be created.']};
+% define channel_action
+% ------------------------------------------------------
+channel_action = cfg_menu;
+channel_action.name = 'Channel action';
+channel_action.tag  = 'channel_action';
+channel_action.values = {'add', 'replace'};
+channel_action.labels = {'Add', 'Replace'};
+channel_action.val = {'replace'};
+channel_action.help = {'Choose whether to add the new channels or replace a channel previously added by this method.'};
 
 % Executable Branch
 pp_heart_data      = cfg_exbranch;
 pp_heart_data.name = 'Preprocess heart data';
 pp_heart_data.tag  = 'pp_heart_data';
-pp_heart_data.val  = {datafile, pp, replace_chan};
+pp_heart_data.val  = {datafile, pp, channel_action};
 pp_heart_data.prog = @pspm_cfg_run_pp_heart_data;
 pp_heart_data.vout = @pspm_cfg_vout_pp_heart_data;
 pp_heart_data.help = {['Convert ECG to heart beat using Pan & Tompkins detects QRS complexes in ', ...

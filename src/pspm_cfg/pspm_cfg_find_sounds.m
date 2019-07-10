@@ -7,8 +7,8 @@ function [find_sounds] = pspm_cfg_find_sounds(job)
 % PsPM 3.0
 % (C) 2015 Tobias Moser (University of Zurich)
 
-% $Id$
-% $Rev$
+% $Id: pspm_cfg_find_sounds.m 626 2019-02-20 16:14:40Z lciernik $
+% $Rev: 626 $
 
 % Initialise
 global settings
@@ -80,7 +80,7 @@ roi.help            = {['Region of interest for discovering sounds. ', ...
 chan_action         = cfg_menu;
 chan_action.name    = 'Channel action';
 chan_action.tag     = 'channel_action';
-chan_action.val     = {'add'};
+chan_action.val     = {'replace'};
 chan_action.values  = {'add', 'replace'};
 chan_action.labels  = {'add', 'replace'};
 chan_action.help    = {['Add will append the new marker channel as ', ...

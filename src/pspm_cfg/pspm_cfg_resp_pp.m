@@ -1,8 +1,8 @@
 function resp_pp = pspm_cfg_resp_pp
 % Coversion of continuous respiration data various respiration data types
 
-% $Id$
-% $Rev$
+% $Id: pspm_cfg_resp_pp.m 626 2019-02-20 16:14:40Z lciernik $
+% $Rev: 626 $
 
 % Initialise
 global settings
@@ -49,15 +49,15 @@ chan.val     = {chan_def};
 chan.values  = {chan_def,chan_nr};
 chan.help    = {'Number of respiration channel (default: first respiration channel).'};
 
-replace_chan        = cfg_menu;
-replace_chan.name   = 'Replace output channel';
-replace_chan.tag    = 'replace_chan';
-replace_chan.val    = {0};
-replace_chan.labels = {'No', 'Yes'};
-replace_chan.values = {0, 1};
-replace_chan.help   = {['Replace existing conversion(s) with new ', ...
-    'converted data. If no conversion exists, (a) new channel(s) ',...
-    'will be created.']};
+% define channel_action
+% ------------------------------------------------------
+channel_action = cfg_menu;
+channel_action.name = 'Channel action';
+channel_action.tag  = 'channel_action';
+channel_action.values = {'add', 'replace'};
+channel_action.labels = {'Add', 'Replace'};
+channel_action.val = {'add'};
+channel_action.help = {'Choose whether to add the new channels or replace a channel previously added by this method.'};
 
 
 stype_bellows      = cfg_const;
@@ -137,7 +137,7 @@ options.help   = {['Choose for each possible process datatype either ', ...
 resp_pp      = cfg_exbranch;
 resp_pp.name = 'Preprocess respiration data';
 resp_pp.tag  = 'resp_pp';
-resp_pp.val  = {datafile,sr,chan, replace_chan ,options};
+resp_pp.val  = {datafile,sr,chan, channel_action ,options};
 resp_pp.prog = @pspm_cfg_run_resp_pp;
 resp_pp.vout = @pspm_cfg_vout_resp_pp;
 resp_pp.help = {['Convert continuous respiration traces into interpolated ', ...

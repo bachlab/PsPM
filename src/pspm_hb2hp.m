@@ -13,8 +13,6 @@ function [sts, infos] = pspm_hb2hp(fn, sr, chan, options)
 %                           should be added or the corresponding preprocessed
 %                           channel should be replaced.
 %                           (Default: 'replace')
-%           .replace        if specified and 1 when existing data should be
-%                           overwritten
 %           .limit          [struct] Specifies upper and lower limit for heart
 %                           periods. If the limit is exceeded, the values will
 %                           be ignored/removed and interpolated.
@@ -27,8 +25,8 @@ function [sts, infos] = pspm_hb2hp(fn, sr, chan, options)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_hb2hp.m 596 2018-09-19 12:26:52Z lciernik $
-% $Rev: 596 $
+% $Id: pspm_hb2hp.m 794 2019-07-10 15:00:47Z esrefo $
+% $Rev: 794 $
 
 
 % initialise & user output

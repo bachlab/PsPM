@@ -1,7 +1,7 @@
 function [out] = pspm_cfg_run_find_valid_fixations(job)
 
-% $Id$
-% $Rev$
+% $Id: pspm_cfg_run_find_valid_fixations.m 635 2019-03-14 10:14:50Z lciernik $
+% $Rev: 635 $
 
 data_file = job.datafile{1};
 options = struct();
@@ -60,11 +60,7 @@ elseif isfield(job.output_settings.file_output, 'overwrite_original')
     options.overwrite = 1;
 end
 
-if isfield(job.output_settings.channel_output, 'add_channel')
-    options.channel_action = 'add';
-elseif isfield(job.output_settings.channel_output, 'replace_channel')
-    options.channel_action = 'replace';
-end
+options.channel_action = job.output_settings.channel_action;
 
 options.plot_gaze_coords = job.output_settings.plot_gaze_coords;
 

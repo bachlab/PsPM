@@ -119,7 +119,7 @@ function [pupil_correct] = pspm_cfg_pupil_correct(job)
     channel_action.tag  = 'channel_action';
     channel_action.values = {'add', 'replace'};
     channel_action.labels = {'Add', 'Replace'};
-    channel_action.val = {'replace'};
+    channel_action.val = {'add'};
     channel_action.help = {'Choose whether to add the corrected channel or replace a previously corrected channel.'};
 
     %% Executable branch
