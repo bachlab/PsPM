@@ -7254,12 +7254,13 @@ Number of Peripheral pulse oximetry channel (default: first Peripheral pulse
 \end_layout
 
 \begin_layout Subsubsection*
-Replace output channel
+Channel action
 \end_layout
 
 \begin_layout Standard
-Replace existing conversion(s) with new converted data.
- If no conversion exists, (a) new channel(s) will be created (default: No).
+Choose whether to add the new channels or replace a channel previously added
+ by this method.
+ (default: replace)
 \end_layout
 
 \begin_layout Subsection
@@ -7840,12 +7841,13 @@ Specify whether a respiratory cycle detection plot should be created (Yes)
 \end_layout
 
 \begin_layout Subsubsection*
-Replace output channel
+Channel action
 \end_layout
 
 \begin_layout Standard
-Replace existing conversion(s) with new converted data.
- If no conversion exists, (a) new channel(s) will be created (default: No).
+Choose whether to add the new channels or replace a channel previously added
+ by this method.
+ (default: add)
 \end_layout
 
 \begin_layout Subsection
@@ -8242,23 +8244,13 @@ File name: Name of new file.
 
 \end_deeper
 \begin_layout Paragraph*
-Channel output
+Channel action
 \end_layout
 
 \begin_layout Standard
-Define whether the data channels should be added or replace the original
- data channels.
-\end_layout
-
-\begin_layout Itemize
-Add channel: New data channels will be added at the end of the file.
-\end_layout
-
-\begin_layout Itemize
-Replace channel: The function tries to replace the existing data channels.
- If there is no existing data channel found, the new channel will be added
- at the end of the file (this very likely applies to the new missing data
- channels).
+Choose whether to add the new channels or replace a channel previously added
+ by this method.
+ (default: add)
 \end_layout
 
 \begin_layout Subsection
@@ -8533,6 +8525,7 @@ add: Add a new preprocessed channel to the PsPM file.
 replace: Replace previously existing preprocessed channel.
  If no preprocessed channel exists, this option behaves the same way as
  add option.
+ (default)
 \end_layout
 
 \begin_layout Subsection
@@ -8701,6 +8694,7 @@ add: Add a new preprocessed channel to the PsPM file.
 replace: Replace a previously existing preprocessed channel.
  If no preprocessed channel exists, this option behaves the same way as
  add option.
+ (default)
 \end_layout
 
 \begin_layout Subsubsection*
@@ -9003,7 +8997,7 @@ Channel action
 \begin_layout Standard
 Choose whether to ‘replace’ the given channel or ‘add’ the converted data
  as a new channel.
- 
+ (default: replace)
 \end_layout
 
 \begin_layout Subsection
@@ -9243,7 +9237,7 @@ Channel action
 Defines whether the processed data should be added as a new channel or replace
  the last existing channel of the same data type.
  After preprocessing the data will be stored as 'emg_pp' channel.
- 
+ (default: add)
 \end_layout
 
 \begin_layout Section
