@@ -19,9 +19,10 @@ function [sts,infos] = pspm_ecg2hb(fn, chan, options)
 %                        [def. 0].
 %                    ... twthresh - sets the threshold to perform the twave
 %                        check. [def. 0.36s].
-%                    ... channel_action - ['add' / 'replace'] specifies whether
-%                        existing channels should be replaced or the new data
-%                        channel should be added.
+%                    ... channel_action - ['add'/'replace'] Defines whether
+%                        the new channel should be added or the previous
+%                        outputs of this function should be replaced.
+%                        (Default: 'replace')
 %
 % Reference:
 % Pan J & Tomkins WJ (1985). A Real-Time QRS Detection Algorithm. IEEE
@@ -31,8 +32,8 @@ function [sts,infos] = pspm_ecg2hb(fn, chan, options)
 % (C) 2013-2015 Philipp C Paulus & Dominik R Bach
 % (Technische Universitaet Dresden, University of Zurich)
 
-% $Id$
-% $Rev$
+% $Id: pspm_ecg2hb.m 644 2019-04-25 11:35:02Z esrefo $
+% $Rev: 644 $
 
 % -------------------------------------------------------------------------
 % DEVELOPERS NOTES: Changes from the original Pan & Tompkins algorithm
@@ -120,7 +121,7 @@ elseif ~isnumeric(chan) && ~strcmp(chan,'ecg')
         warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end;
 
-try options.channel_action; catch, options.channel_action = 'add'; end
+try options.channel_action; catch, options.channel_action = 'replace'; end
 
 % user output
 % -------------------------------------------------------------------------

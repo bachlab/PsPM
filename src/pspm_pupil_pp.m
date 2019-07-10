@@ -107,7 +107,7 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
     %                                does not replace the raw data channel, but a previously
     %                                stored preprocessed channel with a '_pp' suffix at the
     %                                end of its type.
-    %                                (Default: 'replace')
+    %                                (Default: 'add')
     %
     %               custom_settings: Settings structure to modify the preprocessing
     %                                steps. If not specified, the default settings structure
@@ -161,7 +161,7 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
         options.channel = 'pupil';
     end
     if ~isfield(options, 'channel_action')
-        options.channel_action = 'replace';
+        options.channel_action = 'add';
     end
     if ~isfield(options, 'channel_combine')
         options.channel_combine = 'none';

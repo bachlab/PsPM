@@ -39,11 +39,10 @@ function [sts, outdata] = pspm_interpolate(indata, options)
 %                       interpolate all continuous data channels. This
 %                       works only on files or structs.
 %                       (Default is empty).
-%       .replace_channels: If 1, the original channels will be replaced
-%                       with the interpolated data. Otherwise the 
-%                       interpolated data will be added as new channel to 
-%                       the same file. Only works for filenames passed in 
-%                       indata and if newfile is 0 (Default is 0).
+%       .channel_action ['add'/'replace'] Defines whether the interpolated
+%                       data should be added or the corresponding channel
+%                       should be replaced.
+%                       (Default: 'add')
 %       .newfile:       This is only possible if data is loaded from a file.
 %                       If 0 the data will be added to the file where
 %                       the data was loaded from. If 1 the data will be
@@ -62,8 +61,8 @@ function [sts, outdata] = pspm_interpolate(indata, options)
 % PsPM 3.0
 % (C) 2015 Tobias Moser (University of Zurich)
 
-% $Id$
-% $Rev$
+% $Id: pspm_interpolate.m 592 2018-09-14 09:01:41Z lciernik $
+% $Rev: 592 $
 
 % initialise
 % -------------------------------------------------------------------------
@@ -90,7 +89,7 @@ try options.overwrite; catch, options.overwrite = 0; end;
 try options.method; catch, options.method = 'linear'; end;
 try options.channels; catch, options.channels = []; end;
 try options.newfile; catch, options.newfile = 0; end;
-try options.replace_channels; catch, options.replace_channels = 0; end;
+try options.channel_action; catch, options.channel_action = 'add'; end;
 try options.extrapolate; catch, options.extrapolate = 0; end;
 try options.dont_ask_overwrite; catch, options.dont_ask_overwrite = 0; end;
 
@@ -121,11 +120,11 @@ elseif ~islogical(options.dont_ask_overwrite) && ~isnumeric(options.dont_ask_ove
 elseif ~islogical(options.extrapolate) && ~isnumeric(options.extrapolate)
     warning('ID:invalid_input', 'options.extrapolate must be numeric or logical');
     return;
+elseif ~any(strcmpi(options.channel_action, {'add', 'replace'}))
+    warning('ID:invalid_input', 'options.channel_action can only be ''add'' or ''replace''');
+    return;
 elseif ~islogical(options.overwrite) && ~isnumeric(options.overwrite)
     warning('ID:invalid_input', 'options.overwrite must be numeric or logical');
-    return;
-elseif ~islogical(options.replace_channels) && ~isnumeric(options.replace_channels)
-    warning('ID:invalid_input', 'options.replace_channels must be numeric or logical');
     return;
 end;
 
@@ -315,15 +314,12 @@ for d=1:numel(D)
                 o = struct();
                 
                 % add to existing file 
-                if ~options.replace_channels
-                    w_action = 'add';
-                else
-                    w_action = 'replace';
+                if strcmp(options.channel_action, 'replace')
                     o.channel = work_chans;
                 end;
                     
                 o.msg.prefix = 'Interpolated channel';
-                [sts, infos] = pspm_write_channel(fn, savedata.data(work_chans), w_action, o);
+                [sts, infos] = pspm_write_channel(fn, savedata.data(work_chans), options.channel_action, o);
                 
                 % added channel ids are in infos.channel
                 outdata{d} = infos.channel;

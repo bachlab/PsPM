@@ -13,6 +13,10 @@ function [ sts, outinfo ] = pspm_ppu2hb( fn,chan,options )
 %           diagnostics : [true/FALSE] displays some debugging information
 %           replace     : [true/FALSE] replace existing heartbeat channel.
 %                         If multiple channels are present, replaces last.
+%           channel_action ['add'/'replace'] Defines whether the interpolated
+%                          data should be added or the corresponding channel
+%                          should be replaced.
+%                          (Default: 'replace')
 %           lsm         : [integer] large spikes mode compensates for
 %                         large spikes while generating template by
 %                         removing the [integer] largest percentile of 
@@ -21,8 +25,8 @@ function [ sts, outinfo ] = pspm_ppu2hb( fn,chan,options )
 % PsPM 3.1
 % (C) 2016 Samuel Gerster (University of Zurich), Tobias Moser (University of Zurich)
 
-% $Id$
-% $Rev$
+% $Id: pspm_ppu2hb.m 596 2018-09-19 12:26:52Z lciernik $
+% $Rev: 596 $
 
 
 % initialise
@@ -48,9 +52,7 @@ end
 % Display diagnostic plots? default is "false"
 try if ~islogical(options.diagnostics),options.diagnostics = false;end
     catch, options.diagnostics = false; end
-% Replace existing heartbeat channel? default is "false"
-try if ~islogical(options.replace),options.replace = false;end
-    catch, options.replace = false; end
+try options.channel_action; catch, options.channel_action = 'replace'; end;
 try if ~isnumeric(options.lsm),options.lsm = 0;end
     catch, options.lsm = 0; end
 
@@ -183,14 +185,7 @@ write_options = struct();
 write_options.msg = msg;
 
 % Replace last existing channel or save as new channel
-if options.replace
-    write_action = 'replace';
-else
-    write_action = 'add';
-end;
-
-% Replace last existing channel or save as new channel
-[nsts, nout] = pspm_write_channel(fn,newdata,write_action, write_options);    
+[nsts, nout] = pspm_write_channel(fn, newdata, options.channel_action, write_options);    
 
 % user output
 fprintf('  done.\n');

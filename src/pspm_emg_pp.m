@@ -23,9 +23,10 @@ function [sts, output] = pspm_emg_pp(fn, options)
 %                           Can be a channel ID or a channel name.
 %                           Default is 'emg'.
 %
-%           channel_action: ['add'/'replace'] Defines whether data should be added ('add') or
-%                           last existing channel should be replaced ('replace').
-%                           Default is 'replace'.
+%           channel_action:  ['add'/'replace'] Defines whether the new channel
+%                            should be added or the previous outputs of this
+%                            function should be replaced.
+%                            (Default: 'add')
 %
 % [1] Khemka S, Tzovara A, Gerster S, Quednow BB, Bach DR (2016).
 %     Modeling Startle Eyeblink Electromyogram to Assess Fear Learning. 
@@ -34,8 +35,8 @@ function [sts, output] = pspm_emg_pp(fn, options)
 % PsPM 3.1
 % (C) 2009-2016 Tobias Moser (University of Zurich)
 
-% $Id: pspm_emg_pp.m 596 2018-09-19 12:26:52Z lciernik $   
-% $Rev: 596 $
+% $Id: pspm_emg_pp.m 777 2019-07-02 09:09:18Z esrefo $   
+% $Rev: 777 $
 
 % initialise
 % -------------------------------------------------------------------------

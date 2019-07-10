@@ -18,7 +18,10 @@ function [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,u
 %               distance:       distance between eye and screen in length units.
 %               unit:           unit in which width, height and distance are given.
 %               options:        Options struct
-%                  channel_action: 'add', 'replace' new channels.
+%               channel_action:  ['add'/'replace'] Defines whether the new channels
+%                                should be added or the previous outputs of this function
+%                                should be replaced.
+%                                (Default: 'add')
 %                  eyes:           Define on which eye the operations
 %                                  should be performed. Possible values
 %                                  are: 'left', 'right', 'all'. Default is

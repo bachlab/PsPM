@@ -30,7 +30,10 @@ function [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, ...
 %                               other conversions this field is ignored,
 %                               i.e default value '-1'
 %   options:                    Options struct
-%       channel_action:         'add', 'replace' new channels.
+%       .channel_action:        ['add'/'replace'] Defines whether the new channel
+%                               should be added or the previous outputs of this
+%                               function should be replaced.
+%                               (Default: 'add')
 %
 % Return values:
 %

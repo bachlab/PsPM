@@ -88,7 +88,7 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
     %                                replace raw data channels. It replaces a previously
     %                                stored preprocessed channel with a '_pp' suffix at the
     %                                end of its type.
-    %                                (Default: 'replace')
+    %                                (Default: 'add')
     %
     %   OUTPUT:
     %       out_channel:             Channel index of the stored output channel.
@@ -164,7 +164,7 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
             return;
         end
     else
-        options.channel_action = 'replace';
+        options.channel_action = 'add';
     end
 
     if ~isfield(options, 'channel')

@@ -9,6 +9,10 @@ function [sts, infos] = pspm_hb2hp(fn, sr, chan, options)
 %             beat channel); if empty (= 0 / []) will be set to default
 %             value
 %       options: optional arguments [struct]
+%           channel_action: ['add'/'replace'] Defines whether heart rate signal
+%                           should be added or the corresponding preprocessed
+%                           channel should be replaced.
+%                           (Default: 'replace')
 %           .replace        if specified and 1 when existing data should be
 %                           overwritten
 %           .limit          [struct] Specifies upper and lower limit for heart
@@ -23,8 +27,8 @@ function [sts, infos] = pspm_hb2hp(fn, sr, chan, options)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
+% $Id: pspm_hb2hp.m 596 2018-09-19 12:26:52Z lciernik $
+% $Rev: 596 $
 
 
 % initialise & user output
@@ -33,7 +37,7 @@ sts = -1;
 global settings;
 if isempty(settings), pspm_init; end;
 
-try options.replace; catch options.replace = 0; end;
+try option.channel_action; catch options.channel_action = 'replace'; end;
 try options.limit; catch options.limit = struct(); end;
 try options.limit.upper; catch options.limit.upper = 2; end;
 try options.limit.lower; catch options.limit.lower = 0.2; end;
@@ -83,13 +87,8 @@ newdata.header.sr = sr;
 newdata.header.units = 'ms';
 newdata.header.chantype = 'hp';
 
-if options.replace
-    action = 'replace';
-else
-    action = 'add';
-end;
 o.msg.prefix = 'Heart beat converted to heart period and';
-[sts, winfos] = pspm_write_channel(fn, newdata, action, o);
+[sts, winfos] = pspm_write_channel(fn, newdata, options.channel_action, o);
 if nsts == -1
     warning('ID:invalid_input', 'call of pspm_write_channel failed');
     return; 

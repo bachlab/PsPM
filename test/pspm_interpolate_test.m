@@ -237,8 +237,8 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
             options = struct('dont_ask_overwrite', 'bla');
             this.verifyWarning(@() pspm_interpolate(valid_data, options), 'ID:invalid_input');
             
-            % invalid replace_channels
-            options = struct('replace_channels', 'bla');
+            % invalid channel_action
+            options = struct('channel_action', 'bla');
             this.verifyWarning(@() pspm_interpolate(valid_data, options), 'ID:invalid_input');
             
             % try to interpolate an events channel
@@ -484,7 +484,11 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
             [data, opt_chans] = generate_data(this, 'file', 2, 'center', ...
                 {{'scr', 'scr', 'scr'}, [1,2,3]} , false);
             
-            options = struct('replace_channels', replace_channels);
+            if replace_channels
+                options = struct('channel_action', 'replace');
+            else
+                options = struct('channel_action', 'add');
+            end
             % call function
             [sts, outdata] = this.verifyWarningFree(@() pspm_interpolate(data, options));
             

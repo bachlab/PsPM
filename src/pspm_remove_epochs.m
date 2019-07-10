@@ -16,8 +16,10 @@ function [sts] = pspm_remove_epochs(datafile, channel, epochfile, options)
 %                               this parameter is passed to pspm_get_timing().
 %   timeunits:                  timeunit of the epochfile.
 %   options:
-%       channel_action:         'add' or 'replace' existing channels.
-%                               Default: 'add'
+%       .channel_action ['add'/'replace'] Defines whether the new channels
+%                       should be added or the corresponding channel
+%                       should be replaced.
+%                       (Default: 'add')
 %
 % OUTPUT:
 %__________________________________________________________________________

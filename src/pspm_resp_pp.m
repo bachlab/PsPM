@@ -14,6 +14,10 @@ function sts = pspm_resp_pp(fn, sr, chan, options)
 %                .datatype - a cell array with any of 'rp', 'ra', 'rfr',
 %                'rs', 'all' (default)
 %                .plot - 1 creates a respiratory cycle detection plot
+%                .channel_action ['add'/'replace'] Defines whether the new channels
+%                                should be added or the corresponding channel
+%                                should be replaced.
+%                                (Default: 'add')
 %                .replace - specified an equals 1 when existing data should
 %                be replaced with modified data.
 %__________________________________________________________________________
@@ -51,6 +55,7 @@ try options.datatype; catch, options.datatype = {'rp', 'ra', 'rfr', 'rs'}; end;
 try options.plot; catch, options.plot = 0; end;
 try options.diagnostics; catch, options.diagnostics = 0; end;
 try options.replace; catch, options.replace = 0; end;
+try options.channel_action; catch, options.channel_action = 'add'; end;
 
 if ~ischar(options.systemtype) || sum(strcmpi(options.systemtype, {'bellows', 'cushion'})) == 0
     warning('ID:invalid_input', 'Unknown system type.'); return;
@@ -121,10 +126,10 @@ ibi = diff(respstamp);
 indx = find(ibi < 1);
 respstamp(indx + 1) = [];
 
-if options.replace == 1 && numel(find(datatype == 1)) > 1
+if strcmp(options.channel_action, 'replace') && numel(find(datatype == 1)) > 1
     % replace makes no sense
-    warning('ID:invalid_input', 'More than one datatype defined. Replacing data makes no sense. Resetting ''options.replace'' to 0.');
-    options.replace = 0;
+    warning('ID:invalid_input', 'More than one datatype defined. Replacing data makes no sense. Resetting ''options.channel_action'' to ''add''.');
+    options.channel_action = 'add';
 end;
 
 % compute data values, interpolate and write
@@ -192,12 +197,7 @@ for iType = 1:(numel(datatypes) - 1)
         end;
         % write
         newdata.data = writedata(:);
-        if options.replace == 1          
-        	action = 'replace';
-        else
-            action = 'add';
-        end;
-        nsts = pspm_write_channel(fn, newdata, action, o);
+        nsts = pspm_write_channel(fn, newdata, options.channel_action, o);
         if nsts == -1, return; end;
     end;
 end;

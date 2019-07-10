@@ -47,16 +47,17 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 %                               Possible values are mm, cm, dm, m, in, inches
 %           
 %           options:            a struct of optional settings
-%               channel_action:     tell the function whether to replace the
-%                                   converted channel or add the converted
-%                                   channel. (Default: add)
+%               channel_action:  ['add'/'replace'] Defines whether the new channel
+%                                should be added or the previous outputs of this
+%                                function should be replaced.
+%                                (Default: 'add')
 %               
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
 
-% $Id$
-% $Rev$
+% $Id: pspm_convert_au2unit.m 707 2019-06-14 07:23:41Z esrefo $
+% $Rev: 707 $
 
 % initialise
 % -------------------------------------------------------------------------
