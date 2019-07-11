@@ -94,6 +94,32 @@ function dcm = pspm_dcm(model, options)
 % or not defined in model.missing are interpolated for averages and 
 % principal response components.
 %
+% pspm_dcm calculates the inter-trial intervals as the duration between the end
+% of a trial and the start of the next one. ITI value for the last trial in a
+% session is calculated as the duration between the end of the last trial and the
+% end of the whole session. Since this value may differ significantly from the
+% regular ITI duration values, it is not used when computing the minimum ITI
+% duration of a session.
+%
+% Minimum of session specific min ITI values is used
+%   1. when computing mean SCR signal
+%   2. when computing the PCA from all the trials in all the sessions.
+%
+% In case of case (2), after each trial, all the samples in
+% the period with duration equal to the just mentioned overall min ITI value is
+% used as a row of the input matrix. Since this minimum does not use the
+% min ITI value of the last trial in each session, the sample period may be longer
+% than the ITI value of the last trial. In such a case, pspm_dcm
+% is not able to compute the PCA and emits a warning.
+%
+% The rationale behind this behaviour is that we observed that ITI value of the
+% last trial in a session might be much smaller than the usual ITI values. For
+% example, this can happen when a long missing data section starts very soon after
+% the beginning of a trial. If this very small ITI value is used to define the
+% sample periods after each trial, nearly all the trials use much less than
+% available amount of samples in both case (1) and (2). Instead, we aim to use as
+% much data as possible in (1), and perform (2) only if this edge case is not present.
+%
 % REFERENCE: (1) Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010).
 %            Dynamic causal modelling of anticipatory skin conductance 
 %            changes. Biological Psychology, 85(1), 163-70
@@ -106,11 +132,11 @@ function dcm = pspm_dcm(model, options)
 % PsPM 3.0
 % (c) 2010-2015 Dominik R Bach (WTCN, UZH)
 
-% $Id: pspm_dcm.m 592 2018-09-14 09:01:41Z lciernik $  
-% $Rev: 592 $
+% $Id: pspm_dcm.m 792 2019-07-09 11:48:39Z esrefo $  
+% $Rev: 792 $
 
 % function revision
-rev = '$Rev: 592 $';
+rev = '$Rev: 792 $';
 
 % initialise & set output
 % ------------------------------------------------------------------------
@@ -708,7 +734,7 @@ if (options.indrf || options.getrf) && ~isempty(options.flexevents)
 end;
 
 % get mean response
-options.meanSCR = (mean(D))';
+options.meanSCR = (nanmean(D))';
 
 % invert DCM
 % ------------------------------------------------------------------------
