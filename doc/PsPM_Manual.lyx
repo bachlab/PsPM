@@ -10749,9 +10749,66 @@ Enter Missing Epochs Manually: Enter the start and end points of missing
  Specify an m x 2 array, where m is the number of missing epochs.
  The first column marks the start points of the epochs that are excluded
  from the analysis and the second column the end points.
+ 
 \end_layout
 
 \end_deeper
+\begin_layout Standard
+
+\shape italic
+Note: pspm_dcm calculates the inter-trial intervals as the duration between
+ the end of a trial and the start of the next one.
+ ITI value for the last trial in a session is calculated as the duration
+ between the end of the last trial and the end of the whole session.
+ Since this value may differ significantly from the regular ITI duration
+ values, it is not used when computing the minimum ITI duration of a session.
+\end_layout
+
+\begin_layout Standard
+
+\shape italic
+Minimum of session specific min ITI values is used 
+\end_layout
+
+\begin_layout Enumerate
+
+\shape italic
+when computing mean SCR signal
+\end_layout
+
+\begin_layout Enumerate
+
+\shape italic
+when computing the PCA from all the trials in all the sessions.
+\end_layout
+
+\begin_layout Standard
+
+\shape italic
+In case of case (2), after each trial, all the samples in the period with
+ duration equal to the just mentioned overall min ITI value is used as a
+ row of the input matrix.
+ Since this minimum does not use the min ITI value of the last trial in
+ each session, the sample period may be longer than the ITI value of the
+ last trial.
+ In such a case, pspm_dcm is not able to compute the PCA and emits a warning.
+\end_layout
+
+\begin_layout Standard
+
+\shape italic
+The rationale behind this behaviour is that we observed that ITI value of
+ the last trial in a session might be much smaller than the usual ITI values.
+ For example, this can happen when a long missing data section starts very
+ soon after the beginning of a trial.
+ If this very small ITI value is used to define the sample periods after
+ each trial, nearly all the trials use much less than available amount of
+ samples in both case (1) and (2).
+ Instead, we aim to use as much data as possible in (1), and perform (2)
+ only if this edge case is not present.
+ 
+\end_layout
+
 \begin_layout Subsubsection*
 Data Options
 \end_layout
