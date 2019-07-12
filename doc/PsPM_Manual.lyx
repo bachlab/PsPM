@@ -9289,13 +9289,46 @@ Modality specific Channel
 
 \begin_layout Standard
 Indicate the channel containing the modality specific data.
- By default the first modality specific channel is assumed to contain the
- data for this model.
- If the first modality specific channel does not contain the data for this
+ By default the 
+\series bold
+last
+\series default
+ modality specific channel is assumed to contain the data for this model.
+ If the last modality specific channel does not contain the data for this
  model (e.
  g.
  there are two modality specific channels), indicate the channel number
  (within the modality specific file) that contains the data for this model.
+\end_layout
+
+\begin_layout Standard
+Note: If modality is pupil, the function loads the channels according to
+ a precedence order and then uses the last channel among all these loaded
+ ones.
+ The precedence order is given below:
+\end_layout
+
+\begin_layout Enumerate
+Combined pupil channels (by definition also preprocessed): These channels
+ are constructed by averaging the data from both left and right eye after
+ performing pupil preprocessing on both of these channels.
+\end_layout
+
+\begin_layout Enumerate
+Preprocessed pupil channels corresponding to best eye: Best eye is defined
+ as the channel having less amount of missing data.
+ If there is only one eye in PsPM file, then that eye is defined as the
+ best eye.
+\end_layout
+
+\begin_layout Enumerate
+Preprocessed pupil channels: In case there are two eyes and the best eye
+ channel is not preprocessed, then PsPM prefers the preprocessed channel.
+\end_layout
+
+\begin_layout Enumerate
+Best eye pupil channels: When there is no preprocessed channels, PsPM prefers
+ the best eye channel.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -18187,26 +18220,45 @@ New Functions
 \end_layout
 
 \begin_layout Itemize
-pspm_convert_pixel2unit: Allows to transfer gaze data from pixel to units.
+
+\family typewriter
+pspm_convert_pixel2unit
+\family default
+: Allows to transfer gaze data from pixel to units.
  This facilitates the use of pspm_find_valid_fixations which needs data
  in unit values.
 \end_layout
 
 \begin_layout Itemize
-pspm_compute_visual_angle: Computes visual angle from gaze data.
+
+\family typewriter
+pspm_compute_visual_angle
+\family default
+: Computes visual angle from gaze data.
 \end_layout
 
 \begin_layout Itemize
-pspm_convert_visangle2sps: Convert visual angles from Eyelink to Scanpath
- speed.
+
+\family typewriter
+pspm_convert_visangle2sps
+\family default
+: Convert visual angles from Eyelink to Scanpath speed.
 \end_layout
 
 \begin_layout Itemize
-pspm_bf_spsrf_box: SPSRF basis function with box car.
+
+\family typewriter
+pspm_bf_spsrf_box
+\family default
+: SPSRF basis function with box car.
 \end_layout
 
 \begin_layout Itemize
-pspm_bf_spsrf_gamma: SPSRF basis function with gamma function.
+
+\family typewriter
+pspm_bf_spsrf_gamma
+\family default
+: SPSRF basis function with gamma function.
 \end_layout
 
 \begin_layout Subsection*
@@ -18214,7 +18266,11 @@ New Features
 \end_layout
 
 \begin_layout Itemize
-pspm_extract_segments supports DCM files/structures.
+
+\family typewriter
+pspm_extract_segments
+\family default
+ supports DCM files/structures.
 \end_layout
 
 \begin_layout Itemize
@@ -18222,7 +18278,11 @@ GLM for SPS.
 \end_layout
 
 \begin_layout Itemize
-pspm_find_valid_fixations can now take a bitmap as input.
+
+\family typewriter
+pspm_find_valid_fixations
+\family default
+ can now take a bitmap as input.
 \end_layout
 
 \begin_layout Itemize
@@ -18243,8 +18303,12 @@ Changes
 \end_layout
 
 \begin_layout Itemize
-pspm_find_valid_fixations now computes a circle around the fixation points
- when run in fixations mode.
+
+\family typewriter
+pspm_find_valid_fixations
+\family default
+ now computes a circle around the fixation points when run in fixations
+ mode.
 \end_layout
 
 \begin_layout Subsection*
@@ -18257,7 +18321,11 @@ Heart period response function (bf_hprf) coefficients are fixed according
 \end_layout
 
 \begin_layout Itemize
-pspm_extract_segments bugfixes:
+
+\family typewriter
+pspm_extract_segments
+\family default
+ bugfixes:
 \end_layout
 
 \begin_deeper
@@ -18267,8 +18335,12 @@ Fix bugs related to conditions appearing in different sessions.
 
 \end_deeper
 \begin_layout Itemize
-pspm_get_eyelink now imports markers between two recording sessions (previously
- these markers were 
+
+\family typewriter
+pspm_get_eyelink
+\family default
+ now imports markers between two recording sessions (previously these markers
+ were 
 \begin_inset Quotes eld
 \end_inset
 
@@ -18280,30 +18352,55 @@ lost
 \end_layout
 
 \begin_layout Itemize
-pspm_compute_visual_angle: Fix bug in range computation.
+
+\family typewriter
+pspm_compute_visual_angle
+\family default
+: Fix bug in range computation.
 \end_layout
 
 \begin_layout Itemize
-pspm_ecg2hb: Fix out of bounds error occurring for highly noisy data with
- many outliers.
+
+\family typewriter
+pspm_ecg2hb
+\family default
+: Fix out of bounds error occurring for highly noisy data with many outliers.
 \end_layout
 
 \begin_layout Itemize
-pspm_get_acq: Fix incorrect linear transformation during ACQ import.
+
+\family typewriter
+pspm_get_acq
+\family default
+: Fix incorrect linear transformation during ACQ import.
 \end_layout
 
 \begin_layout Itemize
-pspm_convert_unit: Fix incorrect transformations between metric units and
- inches.
+
+\family typewriter
+pspm_convert_unit
+\family default
+: Fix incorrect transformations between metric units and inches.
 \end_layout
 
 \begin_layout Itemize
-pspm_resp_pp: Fix out of bounds error during convolution in cushion mode.
+
+\family typewriter
+pspm_resp_pp
+\family default
+: Fix out of bounds error during convolution in cushion mode.
 \end_layout
 
 \begin_layout Itemize
-pspm_pp in 'simple_qa' mode now uses the default values specified in pspm_simple
-_qa.
+
+\family typewriter
+pspm_pp
+\family default
+ in 'simple_qa' mode now uses the default values specified in 
+\family typewriter
+pspm_simple_qa
+\family default
+.
 \end_layout
 
 \begin_layout Itemize
@@ -18326,8 +18423,11 @@ GLM structure holds the missing data percentage of each condition after
 \end_layout
 
 \begin_layout Itemize
-pspm_extract_segments now works both with GLM files and already loaded structure
-s
+
+\family typewriter
+pspm_extract_segments
+\family default
+ now works both with GLM files and already loaded structures
 \end_layout
 
 \begin_layout Itemize
@@ -18336,12 +18436,20 @@ PsPM now checks if SPM is already in MATLAB path.
 \end_layout
 
 \begin_layout Itemize
-pspm_load1 now returns statistics about conditions with high NaN ratios.
+
+\family typewriter
+pspm_load1
+\family default
+ now returns statistics about conditions with high NaN ratios.
 \end_layout
 
 \begin_layout Itemize
-pspm_extract_segments now is able to use data stored in GLM/DCM structures
- instead of relying the existence of original data files.
+
+\family typewriter
+pspm_extract_segments
+\family default
+ now is able to use data stored in GLM/DCM structures instead of relying
+ the existence of original data files.
 \end_layout
 
 \begin_layout Itemize
@@ -18361,7 +18469,11 @@ Changes
 \end_layout
 
 \begin_layout Itemize
-pspm_get_eyelink now uses the scaling factor from 
+
+\family typewriter
+pspm_get_eyelink
+\family default
+ now uses the scaling factor from 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Hayes:2015a"
@@ -18373,8 +18485,11 @@ literal "false"
 \end_layout
 
 \begin_layout Itemize
-pspm_get_smi does not perform pixel to milimeters conversion for pupil data
- anymore.
+
+\family typewriter
+pspm_get_smi
+\family default
+ does not perform pixel to milimeters conversion for pupil data anymore.
  Pupil values are returned as is in pixel units.
 \end_layout
 
@@ -18388,11 +18503,142 @@ Improvements
 \end_layout
 
 \begin_layout Itemize
-pspm_get_viewpoint is now able to import blink and saccade channels from
- sample files as well.
+
+\family typewriter
+pspm_get_viewpoint
+\family default
+ is now able to import blink and saccade channels from sample files as well.
  In order to enable this feature, event files must be stored asynchronously
  in the datafile.
  See ViewPoint EyeTracker section in this manual for further information.
+\end_layout
+
+\begin_layout Section
+PsPM Version 4.2.0
+\end_layout
+
+\begin_layout Subsection*
+New Functions
+\end_layout
+
+\begin_layout Itemize
+A new pupil data preprocessing function
+\end_layout
+
+\begin_layout Itemize
+A new pupil foreshortening error correction function
+\end_layout
+
+\begin_layout Itemize
+A new QRS detection algorithm for fMRI environments
+\end_layout
+
+\begin_layout Subsection*
+New Features
+\end_layout
+
+\begin_layout Itemize
+Previously, Eyelink import used to discard 50 ms worth of samples from each
+ side of every blink or saccade period.
+ This behaviour is preserved; however, sample discard duration can now be
+ set by the user.
+\end_layout
+
+\begin_layout Itemize
+Channel processing functions now store extensive historical data in PsPM
+ files.
+ This data can be printed in table format using the new utility 
+\family typewriter
+function pspm_format_history_from_file
+\end_layout
+
+\begin_layout Itemize
+Pupil channel is now loaded according to a new precedence order.
+ Refer to GLM documentation in this manual to learn more.
+\end_layout
+
+\begin_layout Subsection*
+Changes
+\end_layout
+
+\begin_layout Itemize
+Eyelink import now returns times and dates in a slightly different format.
+\end_layout
+
+\begin_layout Itemize
+Newest version of PsPM is now obtained from the version string in pspm.sourceforg
+e.net, not from the download link zip file name
+\end_layout
+
+\begin_layout Itemize
+GLM now uses the 
+\series bold
+LAST
+\series default
+ channel of a specified modality in a PsPM file.
+\end_layout
+
+\begin_layout Itemize
+Nonlinear SCR model (DCM) now does not use the inter-trial interval duration
+ value (ITI) of the last trial when computing session specific minimum ITI
+ values.
+ Previously, using these last ITI values would lead to abnormally small
+ overall min ITI values in some input files, thereby causing the inference
+ and PCA sections to use less data for all trials.
+ Now, we prevent this from happening.
+\end_layout
+
+\begin_layout Subsection*
+Bugfixes
+\end_layout
+
+\begin_layout Itemize
+Fix a bug in 
+\family typewriter
+pspm_extract_segments
+\family default
+ where trial onsets were not assigned to conditions correctly
+\end_layout
+
+\begin_layout Itemize
+Fix a bug in Viewpoint import where files in DOS format were being parsed
+ incorrectly
+\end_layout
+
+\begin_layout Itemize
+Fix a bug in Eyelink import where blink/saccade periods where misaligned,
+ causing the function to discard useful data and return noise instead
+\end_layout
+
+\begin_layout Subsection*
+Improvements
+\end_layout
+
+\begin_layout Itemize
+New utility functions to make PsPM more compatible across different operating
+ systems
+\end_layout
+
+\begin_layout Itemize
+An optimized Eyelink import function that is significantly faster and more
+ efficient than previous versions
+\end_layout
+
+\begin_layout Itemize
+An optimized SMI event import function that is significantly faster than
+ the previous version
+\end_layout
+
+\begin_layout Itemize
+Multiple new tests to validate the correctness of the functions
+\end_layout
+
+\begin_layout Itemize
+API unification: Now all preprocessing functions use 
+\family typewriter
+channel_action
+\family default
+ variable to choose what to do with the new channel.
 \end_layout
 
 \begin_layout Part
@@ -18411,23 +18657,6 @@ SCRalyze versions 1-2 were developed at the FIL, Wellcome Trust Centre for
  a personal grant to Dominik R.
  Bach, and by the Wellcome Trust with a programme grant to Raymond J.
  Dolan.
- 
-\begin_inset VSpace defskip
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-SCRalyze included a number of SPM functions.
- For import of spike data, PsPM makes use of the SON library written by
- Malcolm Lidierth at King's College London, and of functions provided by
- the SPM physiology toolbox, written by Chloe Hutton and Eric Featherstone
- at the FIL.
- Biopac AcqKnowledge import uses a routine created by Sebastien Authier
- and Vincent Finnerty at the University of Montreal.
- The DCM inversion uses a variational Bayesian inversion scheme written
- by Jean Daunizeau.
  
 \end_layout
 
@@ -18483,6 +18712,97 @@ Christoph Korn: PSM models
 
 \begin_layout Itemize
 Saurabh Khemka: GLM for SEBR
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Some PsPM functions depend on external scripts/libraries implemented by
+ other groups:
+\end_layout
+
+\begin_layout Itemize
+For import of spike data, PsPM makes use of the SON library written by Malcolm
+ Lidierth at King's College London, and of functions provided by the SPM
+ physiology toolbox, written by Chloe Hutton and Eric Featherstone at the
+ FIL.
+\end_layout
+
+\begin_layout Itemize
+Biopac AcqKnowledge import uses a routine created by Sebastien Authier and
+ Vincent Finnerty at the University of Montreal.
+\end_layout
+
+\begin_layout Itemize
+The DCM inversion uses a variational Bayesian inversion scheme written by
+ Jean Daunizeau.
+\end_layout
+
+\begin_layout Itemize
+Pupil preprocessing uses external scripts adapted from the code at 
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset CommandInset href
+LatexCommand href
+name "https://github.com/ElioS-S/pupil-size"
+target "https://github.com/ElioS-S/pupil-size"
+literal "false"
+
+\end_inset
+
+.
+ The original reference is 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "kret2018preprocessing"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+Pupil foreshortening error correction implements the method proposed in
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Hayes:2015a"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+QRS detection for fMRI environment uses external scripts adapted from the
+ code at 
+\begin_inset CommandInset href
+LatexCommand href
+name "https://www.amri.ninds.nih.gov/software.html"
+target "https://www.amri.ninds.nih.gov/software.html"
+literal "false"
+
+\end_inset
+
+.
+ The original reference is 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "liu2012statistical"
+literal "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Part
