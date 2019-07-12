@@ -220,14 +220,9 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
     [lsts, infos, gaze_y_data] = pspm_load_data(fn, gaze_y_chan);
     if lsts ~= 1; return; end
 
-    gaze_x_px = gaze_x_data{1}.data;
-    gaze_y_px = gaze_y_data{1}.data;
+    gaze_x_mm = get_gaze_in_mm(gaze_x_data{1}.data, gaze_x_data{1}.header.units, options.screen_size_mm(1), options.screen_size_px(1));
+    gaze_y_mm = get_gaze_in_mm(gaze_y_data{1}.data, gaze_y_data{1}.header.units, options.screen_size_mm(2), options.screen_size_px(2));
     pupil = pupil_data{1}.data;
-
-    % conversion
-    % -------------------------------------------------------------------------
-    gaze_x_mm = gaze_x_px * (options.screen_size_mm(1) / options.screen_size_px(1));
-    gaze_y_mm = gaze_y_px * (options.screen_size_mm(2) / options.screen_size_px(2));
 
     % correction
     % -------------------------------------------------------------------------
@@ -251,4 +246,12 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 
     out_channel = out_id.channel;
     sts = 1;
+end
+
+function gaze_mm = get_gaze_in_mm(gaze_data, units, side_mm, side_px)
+    if strcmp(units, 'pixel')
+        gaze_mm = gaze_data * (side_mm / side_px);
+    else
+        [~, gaze_mm] = pspm_convert_unit(gaze_data, units, 'mm');
+    end
 end
