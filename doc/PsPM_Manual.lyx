@@ -8306,6 +8306,18 @@ literal "false"
  coordinates grow towards the screen.
 \end_layout
 
+\begin_layout Standard
+In order to perform PFE, we need both pupil and gaze data.
+ If the gaze data in the given file is in pixels, we need information about
+ the screen dimensions and resolution to calculate the pixel to milimeter
+ ratio.
+ On the other hand, if the gaze data is in mm, cm, inches, etc., there is
+ no need to enter any screen size related information.
+ If the gaze data is in pixels and screen information is not given, the
+ function emits a warning and exits early.
+ 
+\end_layout
+
 \begin_layout Subsubsection*
 Data file
 \end_layout
@@ -8320,6 +8332,7 @@ Screen resolution
 
 \begin_layout Standard
 Specify screen resolution ([width height]) in pixels.
+ Screen resolution is required only if at least one gaze channel is in pixels.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -8328,6 +8341,7 @@ Screen size
 
 \begin_layout Standard
 Specify screen size ([width height]) in milimeters.
+ Screen size is required only if at least one gaze channel is in pixels.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -18015,7 +18029,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename Figures/Comparison_VBA_3.2.png
+	filename Figures/Comparison_VBA.PNG
 	lyxscale 75
 
 \end_inset
@@ -18741,6 +18755,18 @@ Biopac AcqKnowledge import uses a routine created by Sebastien Authier and
 \begin_layout Itemize
 The DCM inversion uses a variational Bayesian inversion scheme written by
  Jean Daunizeau.
+\end_layout
+
+\begin_layout Itemize
+Some SCR quality control functions use the method described in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Kleckner:2017a"
+literal "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Itemize
