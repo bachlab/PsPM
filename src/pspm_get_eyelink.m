@@ -49,8 +49,8 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
     % PsPM 3.0
     % (C) 2008-2017 Tobias Moser (University of Zurich)
 
-    % $Id$
-    % $Rev$
+    % $Id: pspm_get_eyelink.m 802 2019-08-23 08:07:30Z esrefo $
+    % $Rev: 802 $
 
     % initialise
     % -------------------------------------------------------------------------
@@ -409,13 +409,15 @@ function mask = expand_mask(mask, offset)
     indices_to_expand_towards_left = find(diffmask == 1) + 1;
     indices_to_expand_towards_right = find(diffmask == (-1));
 
-    for idx = indices_to_expand_towards_left
-        begidx = max(1, idx - 1);
-        endidx = max(1, idx - offset);
+    for ii = 1:numel(indices_to_expand_towards_left)
+        idx = indices_to_expand_towards_left(ii);
+        begidx = max(1, idx - offset);
+        endidx = max(1, idx - 1);
         mask(begidx : endidx) = true;
     end
     ndata = numel(mask);
-    for idx = indices_to_expand_towards_right
+    for ii = 1:numel(indices_to_expand_towards_right)
+        idx = indices_to_expand_towards_right(ii);
         begidx = min(ndata, idx + 1);
         endidx = min(ndata, idx + offset);
         mask(begidx : endidx) = true;
