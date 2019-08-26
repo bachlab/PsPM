@@ -38,7 +38,14 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
     %                           samples to discard on one end in seconds. For example,
     %                           when it is 0.01, we discard 10 ms worth of data on
     %                           each end of every blink/saccade period.
-    %                           (Default: 0.05)
+    %
+    %                           The default value has been changed to 0 in PsPM revision
+    %                           r803 to reduce the amount of discarded data. Note that
+    %                           this might result in noisy samples around blink/saccade
+    %                           points. Therefore, it is highly recommended to perform
+    %                           pupil size data preprocessing using pspm_pupil_pp and
+    %                           gaze data filtering using pspm_find_valid_fixations.
+    %                           (Default: 0)
     %                           
     % 
     % In this function, channels related to eyes will not produce an error, if 
@@ -49,8 +56,8 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
     % PsPM 3.0
     % (C) 2008-2017 Tobias Moser (University of Zurich)
 
-    % $Id: pspm_get_eyelink.m 802 2019-08-23 08:07:30Z esrefo $
-    % $Rev: 802 $
+    % $Id: pspm_get_eyelink.m 803 2019-08-26 08:00:45Z esrefo $
+    % $Rev: 803 $
 
     % initialise
     % -------------------------------------------------------------------------

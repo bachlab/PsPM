@@ -5851,6 +5851,61 @@ The length unit in which the eyetracker distance is given.
  It can be mm, cm, m or inches.
 \end_layout
 
+\begin_layout Subparagraph*
+Blink/Saccade Edge Discard
+\end_layout
+
+\begin_layout Standard
+Samples surrounding a blink or saccade period may be noisy.
+ For this reason, Eyelink import provides a parameter that allows users
+ to specify the amount of samples they want to discard on each side of every
+ blink and saccade period.
+ This value is multiplied by the sampling rate of the recording to determine
+ the number of samples to discard from one end.
+ Therefore, for each blink/saccade period, 
+\begin_inset Formula $2\cdot factor\cdot F_{sampling}$
+\end_inset
+
+ many samples are discarded in total, and effectively blink/saccade period
+ is extended.
+\end_layout
+
+\begin_layout Standard
+This value also corresponds to the duration of samples to discard on one
+ end in seconds.
+ For example, when it is 0.01, we discard 10 ms worth of data on each end
+ of every blink/saccade period.
+\end_layout
+
+\begin_layout Standard
+The default value has been changed to 0 in PsPM revision r803 to reduce
+ the amount of discarded data.
+ Note that this might result in noisy samples around blink/saccade points.
+ Therefore, it is highly recommended to perform pupil size data preprocessing
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Pupil-Preprocessing"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and gaze data filtering 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Find-valid-fixations"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ 
+\end_layout
+
 \begin_layout Paragraph*
 SMI (SensoMotoric Instruments)
 \end_layout
@@ -18602,6 +18657,12 @@ Nonlinear SCR model (DCM) now does not use the inter-trial interval duration
  Now, we prevent this from happening.
 \end_layout
 
+\begin_layout Itemize
+Eyelink import parameter blink/saccade edge discard factor default value
+ has been set to 0.
+ This means no extra samples are discarded around blinks/saccades.
+\end_layout
+
 \begin_layout Subsection*
 Bugfixes
 \end_layout
@@ -18635,7 +18696,7 @@ New utility functions to make PsPM more compatible across different operating
 
 \begin_layout Itemize
 An optimized Eyelink import function that is significantly faster and more
- efficient than previous versions
+ memory efficient than previous versions
 \end_layout
 
 \begin_layout Itemize
