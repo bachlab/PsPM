@@ -65,7 +65,7 @@ backgroundcolor={\color{white}},
 framexleftmargin=1pt,
 frame=l}
 \renewcommand{\lstlistingname}{Listing}
-\title{PsPM 4.1.1 Release notes}
+\title{PsPM 4.2.0 Release notes}
 
 \begin{document}
 \maketitle
@@ -462,6 +462,70 @@ only if the stimulus resolution in pixels are given as an extra option.
 from sample files as well. In order to enable this feature, event
 files must be stored asynchronously in the datafile. See ViewPoint
 EyeTracker section in this manual for further information.
+\end{itemize}
+
+\section{PsPM Version 4.2.0}
+
+\subsection*{New Functions}
+\begin{itemize}
+\item A new pupil data preprocessing function
+\item A new pupil foreshortening error correction function
+\item A new QRS detection algorithm for fMRI environments
+\end{itemize}
+
+\subsection*{New Features}
+\begin{itemize}
+\item Previously, Eyelink import used to discard 50 ms worth of samples
+from each side of every blink or saccade period. This behaviour is
+preserved; however, sample discard duration can now be set by the
+user.
+\item Channel processing functions now store extensive historical data in
+PsPM files. This data can be printed in table format using the new
+utility \texttt{function pspm\_format\_history\_from\_file}
+\item Pupil channel is now loaded according to a new precedence order. Refer
+to GLM documentation in this manual to learn more.
+\end{itemize}
+
+\subsection*{Changes}
+\begin{itemize}
+\item Eyelink import now returns times and dates in a slightly different
+format.
+\item Newest version of PsPM is now obtained from the version string in
+pspm.sourceforge.net, not from the download link zip file name
+\item GLM now uses the \textbf{LAST} channel of a specified modality in
+a PsPM file.
+\item Nonlinear SCR model (DCM) now does not use the inter-trial interval
+duration value (ITI) of the last trial when computing session specific
+minimum ITI values. Previously, using these last ITI values would
+lead to abnormally small overall min ITI values in some input files,
+thereby causing the inference and PCA sections to use less data for
+all trials. Now, we prevent this from happening.
+\item Eyelink import parameter blink/saccade edge discard factor default
+value has been set to 0. This means no extra samples are discarded
+around blinks/saccades.
+\end{itemize}
+
+\subsection*{Bugfixes}
+\begin{itemize}
+\item Fix a bug in \texttt{pspm\_extract\_segments} where trial onsets were
+not assigned to conditions correctly
+\item Fix a bug in Viewpoint import where files in DOS format were being
+parsed incorrectly
+\item Fix a bug in Eyelink import where blink/saccade periods where misaligned,
+causing the function to discard useful data and return noise instead
+\end{itemize}
+
+\subsection*{Improvements}
+\begin{itemize}
+\item New utility functions to make PsPM more compatible across different
+operating systems
+\item An optimized Eyelink import function that is significantly faster
+and more memory efficient than previous versions
+\item An optimized SMI event import function that is significantly faster
+than the previous version
+\item Multiple new tests to validate the correctness of the functions
+\item API unification: Now all preprocessing functions use \texttt{channel\_action}
+variable to choose what to do with the new channel.
 \end{itemize}
 
 \section{References}
