@@ -18831,7 +18831,8 @@ literal "false"
 \end_layout
 
 \begin_layout Itemize
-Pupil preprocessing uses external scripts adapted from the code at 
+Pupil preprocessing uses external scripts adapted from the implementations
+ by Mariska Kret and Elio Sjak-Shie at 
 \begin_inset Newline newline
 \end_inset
 
@@ -18866,12 +18867,13 @@ literal "false"
 
 \end_inset
 
-.
+ by Taylor Hayes and Alexander Petrov.
 \end_layout
 
 \begin_layout Itemize
 QRS detection for fMRI environment uses external scripts adapted from the
- code at 
+ code by Zhongming Liu, Jacco A de Zwart, Peter van Gelderen, Li-Wei Kuo,
+ and Jeff H Duyn at 
 \begin_inset CommandInset href
 LatexCommand href
 name "https://www.amri.ninds.nih.gov/software.html"
