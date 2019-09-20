@@ -67,9 +67,10 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
     % add specific import path for specific import function
     addpath([settings.path, 'Import', filesep, 'eyelink']);
 
+    default_blink_saccade_discard_factor = 0;
     for i = 1:numel(import)
         if ~isfield(import{i}, 'blink_saccade_edge_discard_factor')
-            import{i}.blink_saccade_edge_discard_factor = 0.05;
+            import{i}.blink_saccade_edge_discard_factor = default_blink_saccade_discard_factor;
         end
 
         if ~isnumeric(import{i}.blink_saccade_edge_discard_factor) || ...
@@ -102,11 +103,17 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
         else
             mask_chans = {'blink_l', 'blink_r', 'saccade_l', 'saccade_r'};
         end
+        expand_factor = 0;
+        if i <= numel(import)
+            expand_factor = import{i}.blink_saccade_edge_discard_factor;
+        else
+            expand_factor = default_blink_saccade_discard_factor;
+        end
         data{i}.channels = expand_mask_chans(...
             data{i}.channels, ...
             data{i}.channels_header, ...
             mask_chans, ...
-            import{i}.blink_saccade_edge_discard_factor * data{i}.sampleRate ...
+            expand_factor * data{i}.sampleRate ...
         );
         data{i}.channels = set_blinks_saccades_to_nan(data{i}.channels, data{i}.channels_header, mask_chans, @(x) endsWith(x, '_l'));
     end
