@@ -84,9 +84,8 @@ function [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
     %
     %       out_channel:             Channel ID of the preprocessed output. Output will
     %                                be written to a 'heartbeat' channel to the given PsPM
-    %                                file. .data field contains a logic vector of same
-    %                                length as the input ECG channel in which a true value
-    %                                (1) indicates an R-peak.
+    %                                file. .data field contains the timestamps of heartbeats
+    %                                in seconds.
     %
     % [1] Liu, Zhongming, et al. "Statistical feature extraction for artifact
     %     removal from concurrent fMRI-EEG recordings." Neuroimage 59.3 (2012):
@@ -181,7 +180,7 @@ function [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
     addpath(pspm_path('amri_eegfmri'));
     ecg.data = data{1}.data;
     ecg.srate = data{1}.header.sr;
-    heartbeats{1}.data = amri_eeg_rpeak(ecg, ...
+    rpeak_logic_vec = amri_eeg_rpeak(ecg, ...
         'WhatIsY', options.signal_to_use, ...
         'PulseRate', options.hrrange, ...
         'TEOParams', [options.teo_order options.teo_bandpass], ...
@@ -189,6 +188,7 @@ function [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
         'mincc', options.min_cross_corr, ...
         'minrpa', options.min_relative_amplitude ...
     );
+    heartbeats{1}.data = find(rpeak_logic_vec) / ecg.srate;
     rmpath(pspm_path('amri_eegfmri'));
 
     % save
