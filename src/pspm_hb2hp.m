@@ -25,8 +25,8 @@ function [sts, infos] = pspm_hb2hp(fn, sr, chan, options)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_hb2hp.m 794 2019-07-10 15:00:47Z esrefo $
-% $Rev: 794 $
+% $Id: pspm_hb2hp.m 810 2019-09-20 07:45:27Z esrefo $
+% $Rev: 810 $
 
 
 % initialise & user output
@@ -75,7 +75,13 @@ ibi = diff(hb);
 idx = find(ibi > options.limit.lower & ibi < options.limit.upper);
 hp = 1000 * ibi; % in ms
 newt = (1/sr):(1/sr):dinfos.duration;
-newhp = interp1(hb(idx+1), hp(idx), newt, 'linear' ,'extrap'); % assign hr to following heart beat 
+try
+    newhp = interp1(hb(idx+1), hp(idx), newt, 'linear' ,'extrap'); % assign hr to following heart beat 
+catch
+    warning('ID:too_strict_limits', ['Interpolation failed because there wasn''t enough heartbeats within the ',...
+                                    'required period limits. Filling the heart period channel with NaNs.']);
+    newhp = NaN(1, size(newt, 2));
+end
 
 
 % save data
