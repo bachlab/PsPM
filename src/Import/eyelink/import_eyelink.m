@@ -76,6 +76,41 @@ function [data] = import_eyelink(filepath)
         data{sn}.markerinfos.value = markers_sess{sn}.vals;
     end
     data{end + 1} = combine_markers(markers_sess);
+
+    session_end_times = calc_session_end_times(messages);
+    for i = 1:numel(data) - 1
+        [data{i}.markers, data{i}.markerinfos] = remove_markers_beyond_end(...
+            data{i}.markers, data{i}.markerinfos, markers_sess{i}.times, session_end_times{i});
+    end
+end
+
+function [markers_out, markerinfos_out] = remove_markers_beyond_end(markers, markerinfos, markertimes, sess_end_time)
+    mask = markertimes <= sess_end_time;
+
+    marker_indices = find(markers);
+    markers_out = markers;
+    if any(~mask)
+        markers_out(marker_indices(end)) = 0;
+    end
+
+    markerinfos_out = markerinfos;
+    markerinfos_out.name = markerinfos_out.name(mask);
+    markerinfos_out.value = markerinfos_out.value(mask);
+end
+
+function session_end_times = calc_session_end_times(session_messages)
+    out = {};
+    for i = 1:numel(session_messages)
+        for j = 1:numel(session_messages{i})
+            msg = session_messages{i}{j};
+            if strcmp(msg(1:3), 'END')
+                parts = strsplit(msg);
+                out{end + 1} = str2num(parts{2});
+                break
+            end
+        end
+    end
+    session_end_times = out;
 end
 
 function [dataraw, messages, chan_info, file_info] = parse_eyelink_file(filepath)
