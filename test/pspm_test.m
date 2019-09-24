@@ -76,7 +76,8 @@ chantype_suite = [  TestSuite.fromClass(?pspm_get_ecg_test), ...
                     TestSuite.fromClass(?pspm_get_resp_test), ...
                     TestSuite.fromClass(?pspm_get_scr_test)];
 
-full_suite = [suite, import_suite, chantype_suite];
+%full_suite = [suite, import_suite, chantype_suite];
+full_suite = [chantype_suite];
 
 % run tests
 % -------------------------------------------------------------------------
@@ -84,3 +85,7 @@ full_suite = [suite, import_suite, chantype_suite];
 addpath(pth);
 pspm_init;
 stats = run(full_suite)
+n_failed = sum([stats.Failed]);
+success = n_failed == 0;
+exit_code = 1 - success;
+quit(exit_code);
