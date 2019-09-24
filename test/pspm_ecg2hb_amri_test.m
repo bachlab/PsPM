@@ -23,9 +23,6 @@ classdef pspm_ecg2hb_amri_test < pspm_testcase
             load(this.input_filename);
 
             this.verifyEqual(data{out_channel}.header.chantype, 'hb');
-
-            ecg_chan_indices = find(cell2mat(cellfun(@(x) strcmp(x.header.chantype, 'ecg'), data, 'uni', false)));
-            this.verifyEqual(numel(data{ecg_chan_indices(end)}.data), numel(data{out_channel}.data));
         end
     end
 
