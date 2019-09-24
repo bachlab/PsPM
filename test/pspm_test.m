@@ -87,5 +87,12 @@ pspm_init;
 stats = run(full_suite)
 n_failed = sum([stats.Failed]);
 success = n_failed == 0;
+
+if success
+    display('pspm_test: All tests have passed!');
+else
+    display('pspm_test: Some tests have failed!');
+end
+
 exit_code = 1 - success;
 quit(exit_code);
