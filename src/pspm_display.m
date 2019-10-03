@@ -687,17 +687,6 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat))
         
         switch handles.prop.wave
             case 'ecg'
-                filt.sr=sr.wave;
-                filt.lpfreq=15;
-                filt.lporder=1;
-                filt.hpfreq=5;
-                filt.hporder=1;
-                filt.direction='uni';
-                filt.down='none';
-                % filter ecg in order to display it without artifacts
-                [sts,wave,foo]=pspm_prepdata(wave,filt);
-                if sts == -1, fprintf('Displaying unfiltered data.\n'); end;
-                 
             case 'hr'
             case 'hp'
             case 'scr'
