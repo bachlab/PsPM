@@ -3,7 +3,7 @@ classdef pspm_prepdata_test < matlab.unittest.TestCase
 % unittest class for the pspm_prepdata function
 %__________________________________________________________________________
 % SCRalyze TestEnvironment
-% (C) 2013 Linus Rüttimann (University of Zurich)
+% (C) 2013 Linus Rï¿½ttimann (University of Zurich)
     
     properties
     end
@@ -41,6 +41,7 @@ classdef pspm_prepdata_test < matlab.unittest.TestCase
             
             data = rand(100, 1);
             
+            this.verifyWarning(@()pspm_prepdata([1 NaN 3]), 'ID:invalid_input'); %NaN values in data
             this.verifyWarning(@()pspm_prepdata([1 2 3]), 'ID:invalid_input');   
             this.verifyWarning(@()pspm_prepdata(data, filt), 'ID:invalid_input');  %missing hporder field
             filt.hporder = 1;

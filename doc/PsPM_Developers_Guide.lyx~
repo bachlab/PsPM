@@ -16562,7 +16562,7 @@ Expected warning
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_prepdata([1 NaN 3], filt) [NaN values in data]
+pspm_prepdata([1 NaN 3], filt) [no NaN values]
 \end_layout
 
 \end_inset
