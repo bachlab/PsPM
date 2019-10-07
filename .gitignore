@@ -1,0 +1,12 @@
+pkg/
+src/
+test/
+doc/
+.github/
+ImportTestData/
+.bundle/
+vendor/
+LICENSE.txt
+README.md
+.jekyll-cache/
+_site/
