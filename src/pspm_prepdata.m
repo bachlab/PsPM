@@ -44,6 +44,9 @@ if nargin < 2
     warning('ID:invalid_input', 'Nothing to do.'); return;
 elseif ~isnumeric(data)
     warning('ID:invalid_input', 'Data must be numeric.'); return;
+elseif any(isnan(data))
+    data = data(~isnan(data));
+    warning('ID:invalid_input', 'Data contains NaN values. Function will ignore NaN.');
 elseif (~isfield(filt, 'lpfreq') || ~isfield(filt, 'lporder') || ...
         ~isfield(filt, 'hpfreq') || ~isfield(filt, 'hporder') || ...
         ~isfield(filt, 'down')   || ~isfield(filt, 'direction') || ...
