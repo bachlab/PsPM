@@ -41,7 +41,7 @@ outdata = data;
 % check input for NaN values
 % -------------------------------------------------------------------------
 if any(isnan(data))
-    warning('ID:invalid_input', 'Data contains NaN values.');
+    warning('ID:invalid_input', 'Data contains NaN values.'); return;
 end
 
 % check input
