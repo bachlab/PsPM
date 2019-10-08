@@ -6,7 +6,7 @@ layout: default
 ---
 
 
-| [Software](_posts/2019-10-08-software.md) | [Documentation](_posts/2019-10-08-documentation.md) | [Courses](_posts/2019-10-08-courses.md) | [Open Data](_posts/2019-10-08-opendata.md) | [Bachlab](http://bachlab.org/) | [News](_posts/2019-10-08-news.md) |
+| [Software](PsPM/2019/10/08/software.html) | [Documentation](PsPM/2019/10/08/documentation.html) | [Courses](PsPM/2019/10/08/courses.html) | [Open Data](PsPM/2019/10/08/opendata.html) | [Bachlab](http://bachlab.org/) | [News](PsPM/2019/10/08/news.html) |
 
 
 **Current version: PsPM 4.2.0, released on 16.09.2019**
