@@ -27,9 +27,7 @@ twitter_username: bachlab_uzh
 github_username:  bachlab
 
 # Build settings
-theme: minima
-plugins:
-  - jekyll-feed
+theme: jekyll-theme-modernist
 
 # Exclude from processing.
 # The following items will not be processed, by default.
