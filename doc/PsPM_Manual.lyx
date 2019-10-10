@@ -10818,7 +10818,7 @@ Missing epochs
 Indicate epochs in your data in which the signal is missing or corrupted
  (e.g., due to artifacts).
  Data around missing epochs are split into subsessions and are evaluated
- independently.
+ independently if the missing epoch is at least as long as subsession threshold.
  NaN periods within the evaluated subsessions will be interpolated for averages
  and principal response components.
 \end_layout

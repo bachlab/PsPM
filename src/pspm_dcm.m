@@ -36,7 +36,7 @@ function dcm = pspm_dcm(model, options)
 % model.substhresh: minimum duration (in seconds) of NaN periods to 
 %                   cause splitting up into subsessions which get 
 %                   evaluated independently (excluding NaN values).
-%                   default is 2. Will be ignored if model.missing is set.
+%                   default is 2.
 % model.filter:     filter settings; modality specific default
 % model.channel:    channel number; default: first SCR channel
 % model.norm:       normalise data; default 0 (i. e. data are normalised
@@ -363,7 +363,7 @@ for iSn = 1:numel(model.datafile)
     else
         % use missing epochs as specified by file
         miss_epochs = missing{iSn}*data{iSn}{1}.header.sr;
-        ignore_epochs = ones(size(miss_epochs,1),1);
+        ignore_epochs = diff(miss_epochs, 1, 2) / data{iSn}{1}.header.sr > model.substhresh;
 
         % disable offset for predefined missing epochs
         session_offset = 0;
