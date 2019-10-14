@@ -39,9 +39,15 @@ if isempty(settings), pspm_init; end;
 
 % check input arguments
 if nargin<1
-    errmsg='No data given.'; warning(errmsg);
+    errmsg='No data given.'; warning(errmsg); return;
 elseif nargin<2
-    errmsg='No transfer constant given'; warning(errmsg);
+    errmsg='No transfer constant given.'; warning(errmsg); return;
+elseif ~isnumeric(c)
+    warning('ID:invalid_input','The parameter ''c'' has to be numeric.'); return;
+elseif ~isnumeric(Rs)
+    warning('ID:invalid_input','The parameter ''Rs'' has to be numeric.'); return;
+elseif ~isnumeric(offset)
+    warning('ID:invalid_input','The parameter ''offset'' has to be numeric.'); return;
 elseif nargin<3
     Rs=0; offset=0;
 elseif nargin<4
