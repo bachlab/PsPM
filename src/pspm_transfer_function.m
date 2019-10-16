@@ -44,14 +44,14 @@ elseif nargin<2
     warning('ID:invalid_input','No transfer constant given.'); return;
 elseif ~isnumeric(c)
     warning('ID:invalid_input','The parameter ''c'' has to be numeric.'); return;
-elseif exist('Rs','var') && ~isnumeric(Rs)
-    warning('ID:invalid_input','The parameter ''Rs'' has to be numeric.'); return;
-elseif exist('offset','var') && ~isnumeric(offset)
-    warning('ID:invalid_input','The parameter ''offset'' has to be numeric.'); return;
 elseif nargin<3
     Rs=0; offset=0;
+elseif ~isnumeric(Rs)
+    warning('ID:invalid_input','The parameter ''Rs'' has to be numeric.'); return;
 elseif nargin<4
     offset=0;
+elseif ~isnumeric(offset)
+    warning('ID:invalid_input','The parameter ''offset'' has to be numeric.'); return;
 elseif nargin < 5
     recsys = 'conductance';
 end;
