@@ -49,6 +49,13 @@ function [data] = import_viewpoint(filepath)
     [channels, marker, chan_info] = parse_messages(messages, channels, marker, chan_info, file_info.eyesObserved);
 
     sess_beg_indices = [find(contains(marker, '+')); size(dataraw, 1) + 1];
+
+    % After setting the beginning index we delete all ',','+','=' form markers array
+    NotMarkers = [',','+','=']; 
+    for nmkr=1:size(NotMarkers,2)
+       marker = strrep(marker,NotMarkers(nmkr),'');
+    end
+
     for sn = 1:numel(sess_beg_indices) - 1
         begidx = sess_beg_indices(sn);
         endidx = sess_beg_indices(sn + 1) - 1;
