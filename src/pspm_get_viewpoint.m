@@ -309,6 +309,18 @@ function data = map_viewpoint_eyes_to_left_right(data, import)
 end
 
 function import_cell = import_marker_chan(import_cell, markers, mi_names, mi_values, n_rows, sampling_rate)
+    % Put here all characters which do not belong to markers
+    % they have to be separated by a '|'
+    % '=' has a special threatment because we do not want to delete 'CS+'
+    non_markers = [',','|','(?<!\w)(+)','|','='];
+    
+    mi_names = regexprep(mi_names,non_markers,'');
+    non_empty = find(~cellfun('isempty',mi_names));
+    
+    mi_names = mi_names(non_empty,1); 
+    markers = markers(non_empty,1);     % Not sure if that has to be modified as well or not!
+    mi_values = mi_values(non_empty,1); % Not sure if that has to be modified as well or not !
+
     import_cell.marker = 'continuous';
     import_cell.flank = 'ascending';
     import_cell.sr     = sampling_rate;
