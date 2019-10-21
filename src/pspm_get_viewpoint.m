@@ -309,9 +309,8 @@ function data = map_viewpoint_eyes_to_left_right(data, import)
 end
 
 function import_cell = import_marker_chan(import_cell, markers, mi_names, mi_values, n_rows, sampling_rate)
-    % Put here all characters which do not belong to markers
-    % they have to be separated by a '|'
-    % '=' has a special threatment because we do not want to delete 'CS+'
+    % Put here all characters which do not belong to markers. 
+    % They have to be separated by a '|'
     non_markers = [',','|','+','|','='];
     
     mi_names_tmp = regexprep(mi_names,non_markers,'');
