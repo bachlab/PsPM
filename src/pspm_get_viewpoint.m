@@ -312,14 +312,14 @@ function import_cell = import_marker_chan(import_cell, markers, mi_names, mi_val
     % Put here all characters which do not belong to markers
     % they have to be separated by a '|'
     % '=' has a special threatment because we do not want to delete 'CS+'
-    non_markers = [',','|','(?<!\w)(+)','|','='];
+    non_markers = [',','|','+','|','='];
     
-    mi_names = regexprep(mi_names,non_markers,'');
-    non_empty = find(~cellfun('isempty',mi_names));
+    mi_names_tmp = regexprep(mi_names,non_markers,'');
+    non_empty = find(~cellfun('isempty',mi_names_tmp));
     
     mi_names = mi_names(non_empty,1); 
-    markers = markers(non_empty,1);     % Not sure if that has to be modified as well or not!
-    mi_values = mi_values(non_empty,1); % Not sure if that has to be modified as well or not !
+    markers = markers(non_empty,1);     
+    mi_values = mi_values(non_empty,1);
 
     import_cell.marker = 'continuous';
     import_cell.flank = 'ascending';
