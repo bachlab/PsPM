@@ -217,7 +217,9 @@ end
 
 function proper = assert_sessions_are_one_after_another(data)
     proper = true;
-    seconds_concat = cell2mat(cellfun(@(x) x.channels(:, 1), data, 'UniformOutput', false));
+    cell_of_second_arrays = cellfun(@(x) x.channels(:, 1), data, 'UniformOutput', false);
+    cell_of_second_arrays = cell_of_second_arrays';
+    seconds_concat = cell2mat(cell_of_second_arrays);
     neg_diff_indices = find(diff(seconds_concat) < 0);
     if ~isempty(neg_diff_indices)
         first_neg_idx = neg_diff_indices(1);
