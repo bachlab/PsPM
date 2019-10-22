@@ -408,8 +408,9 @@ function [data_concat, markers, mi_names, mi_values] = concat_sessions(data)
         start_time = data{c}.channels(1, second_col_idx);
         end_time = data{c}.channels(end, second_col_idx);
 
-        n_missing = round((start_time - last_time) * sr);
-        if n_missing > 0
+        time_diff = start_time - last_time;
+        if time_diff > 1.5 * (1 / sr)
+            n_missing = round(time_diff * sr);
             curr_len = size(data_concat, 1);
             data_concat(end + 1:(end + n_missing), 1:n_cols) = NaN(n_missing, n_cols);
         end
