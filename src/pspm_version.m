@@ -39,8 +39,8 @@ v = tk{v_idx}{1}{1};
 if nargin > 0
     switch varargin{1}
         case 'check' % check for updates
-            [str, status] = urlread('http://pspm.sourceforge.net/');
-            if status == 1
+            try
+                str = webread('http://pspm.sourceforge.net/');
                 begidx = strfind(str, 'Current version');
                 endidx = begidx + strfind(str(begidx : end), sprintf('\n'));
                 endidx = endidx(1);
@@ -77,7 +77,7 @@ if nargin > 0
                 else
                     warning('ID:invalid_input', 'Cannot figure out if there is a new version.'); return;
                 end
-            else
+            catch
                 warning('ID:invalid_input', 'Cannot check for updates.'); return
             end
     end
