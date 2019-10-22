@@ -309,6 +309,17 @@ function data = map_viewpoint_eyes_to_left_right(data, import)
 end
 
 function import_cell = import_marker_chan(import_cell, markers, mi_names, mi_values, n_rows, sampling_rate)
+    % Put here all characters which do not belong to markers. 
+    % They have to be separated by a '|'
+    non_markers = [',','|','+','|','='];
+    
+    mi_names_tmp = regexprep(mi_names,non_markers,'');
+    non_empty = find(~cellfun('isempty',mi_names_tmp));
+    
+    mi_names = mi_names(non_empty,1); 
+    markers = markers(non_empty,1);     
+    mi_values = mi_values(non_empty,1);
+
     import_cell.marker = 'continuous';
     import_cell.flank = 'ascending';
     import_cell.sr     = sampling_rate;
