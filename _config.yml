@@ -1,8 +1,6 @@
 ### Site info:
 title: PsPM
-tagline: Another Jekyll theme, Freshman twenty-first
-author: Lijia Yu
-email: yu@lijiayu.net
+tagline: A matlab suite for Psycho Physiological Modelling
 description: "A matlab suite for Pyscho Physiological Modelling"
 baseurl: "" # the subpath of your site, e.g. /blog/
 url: "" # the base hostname & protocol for your site
@@ -11,7 +9,6 @@ locale: en_US
 ### Personal info and site tools info:
 twitter_username: baclab_uzh
 github_username:  bachlab
-favicon:     "/images/favicon.ico"
 
 ### Site setting:
 ShowContactInfo: "True" # Personal Info (twitter,github,email) can be seen on aboutme-sidebar, those info only shown where ShowContactInfo == True
