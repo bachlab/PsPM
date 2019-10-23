@@ -51,7 +51,7 @@ if isempty(settings), pspm_init; end;
 if n>1 && m>1
     y = zeros(size(x));
     for i=1:n
-        y(:,i) = spm_filtfilt(b,a,x(:,i));
+        y(:,i) = pspm_filtfilt(b,a,x(:,i));
     end
     return
 end
@@ -68,7 +68,7 @@ if na < nfilt, a(nfilt)=0; end
 
 nfact = 3*(nfilt-1);
 if len <= nfact
-    error('Data must have length more than 3 times filter order.');
+    warning('ID:invalid_input','Data must have length more than 3 times filter order.'); return;
 end
 
 % Use sparse matrix to solve system of linear equations for initial 
