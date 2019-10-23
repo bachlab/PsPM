@@ -1,3 +1,9 @@
+---
+layout: default
+title: Open Data
+permalink: /opendata/
+---
+
 # Open Data
 We are proud to make all our psychophysiology data publicly available. If you are interested in a particular data set and don't see it in the table, then we are in the process of curating the data. You are welcome to contact us if you require access to these data.
 

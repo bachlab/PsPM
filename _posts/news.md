@@ -1,3 +1,9 @@
+---
+layout: default
+title: News
+permalink: /news/
+---
+
 # News
 ### 16.09.2019
 

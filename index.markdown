@@ -5,10 +5,6 @@
 layout: page
 ---
 
-
-| [Software](2019/10/08/software.html) | [Documentation](2019/10/08/documentation.html) | [Courses](2019/10/08/courses.html) | [Open Data](2019/10/08/opendata.html) | [Bachlab](http://bachlab.org/) | [News](2019/10/08/news.html) |
-
-
 **Current version: PsPM 4.2.0, released on 16.09.2019**
 
 <img src="http://bachlab.org/wp-content/uploads/2019/09/PsPM_Website_Figure_1.jpg" alt="drawing">

@@ -1,3 +1,9 @@
+---
+layout: default
+title: Documentation
+permalink: /documentation/
+---
+
 # Documentation
 ![](http://bachlab.org/wp-content/uploads/2019/09/PsPM_Website_Figure_2.png)
  **PsPM** provides a principled approach to

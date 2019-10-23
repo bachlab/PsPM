@@ -1,3 +1,9 @@
+---
+layout: default
+title: Software
+permalink: /software/
+---
+
 # Software
 
 ## [Download latest PsPM version](https://github.com/bachlab/PsPM/releases)

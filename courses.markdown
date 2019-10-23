@@ -1,3 +1,9 @@
+---
+layout: default
+title: Courses
+permalink: /courses/
+---
+
 # Courses
 ## Upcoming PsPM course
 There are **regular PsPM courses**. To check for updates, have a look on our [news site](news.html), on [bachlab news](http://bachlab.org/news), or follow [bachlab on twitter](http://twitter.com/bachlab_uzh).
