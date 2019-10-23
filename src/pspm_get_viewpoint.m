@@ -217,7 +217,9 @@ end
 
 function proper = assert_sessions_are_one_after_another(data)
     proper = true;
-    seconds_concat = cell2mat(cellfun(@(x) x.channels(:, 1), data, 'UniformOutput', false));
+    cell_of_second_arrays = cellfun(@(x) x.channels(:, 1), data, 'UniformOutput', false);
+    cell_of_second_arrays = cell_of_second_arrays';
+    seconds_concat = cell2mat(cell_of_second_arrays);
     neg_diff_indices = find(diff(seconds_concat) < 0);
     if ~isempty(neg_diff_indices)
         first_neg_idx = neg_diff_indices(1);
@@ -406,8 +408,9 @@ function [data_concat, markers, mi_names, mi_values] = concat_sessions(data)
         start_time = data{c}.channels(1, second_col_idx);
         end_time = data{c}.channels(end, second_col_idx);
 
-        n_missing = round((start_time - last_time) * sr);
-        if n_missing > 0
+        time_diff = start_time - last_time;
+        if time_diff > 1.5 * (1 / sr)
+            n_missing = round(time_diff * sr);
             curr_len = size(data_concat, 1);
             data_concat(end + 1:(end + n_missing), 1:n_cols) = NaN(n_missing, n_cols);
         end
