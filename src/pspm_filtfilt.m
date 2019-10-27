@@ -47,6 +47,11 @@ if isempty(settings), pspm_init; end;
 
 % Check input data
 %--------------------------------------------------------------------------
+
+if nargin < 3
+    warning('ID:invalid_input','Not enough parameters were specified.'); return;
+end
+
 [m,n] = size(x);
 if n>1 && m>1
     y = zeros(size(x));
