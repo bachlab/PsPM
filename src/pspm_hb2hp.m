@@ -94,7 +94,8 @@ newdata.header.chantype = 'hp';
 
 o.msg.prefix = 'Heart beat converted to heart period and';
 try
-    [~,winfos] = pspm_write_channel(fn, newdata, options.channel_action, o);
+    [nsts,winfos] = pspm_write_channel(fn, newdata, options.channel_action, o);
+    if nsts == -1, return; end
 catch
     warning('ID:invalid_input', 'call of pspm_write_channel failed');
     return; 
