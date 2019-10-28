@@ -45,17 +45,10 @@ elseif strcmpi(import.marker, 'continuous')
     end
     
     % add more data in order to prevent deleting values with diff
-    head = NaN;
-    if data(1)~=0
-        head = -round(1000*rand(1));
-        while ismember(head,data)
-            head = -round(1000*rand(1));
-        end
-    end
-    data = [NaN; head; head; data; 0; NaN; NaN;];
+    data = [NaN; 0; 0; data; 0; 0; NaN;];
     % store information about finite and infinite in vector
     % used to reduce temp vector to relevant data
-    finite = (data~=head)&(~isnan(data));
+    finite = ~isnan(data);
     % initialize temp array and transpose to have a vertical vector
     temp = (1:numel(data)).';
     
