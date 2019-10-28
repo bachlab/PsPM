@@ -45,7 +45,7 @@ elseif strcmpi(import.marker, 'continuous')
     end
     
     % add more data in order to prevent deleting values with diff
-    data = [NaN; 0; 0; data; 0; 0; NaN;];
+    data = [0; 0; 0; data; 0; 0; NaN;];
     % store information about finite and infinite in vector
     % used to reduce temp vector to relevant data
     finite = ~isnan(data);
