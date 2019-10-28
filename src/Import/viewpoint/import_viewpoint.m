@@ -48,7 +48,17 @@ function [data] = import_viewpoint(filepath)
     channels = dataraw(:, chan_info.col_idx);
     [channels, marker, chan_info] = parse_messages(messages, channels, marker, chan_info, file_info.eyesObserved);
 
-    sess_beg_indices = [find(contains(marker, '+')); size(dataraw, 1) + 1];
+    sess_beg_indices = [];
+    marker_indices = find(cellfun(@(x) ~isempty(x), marker));
+    for i = 1:numel(marker_indices)
+        idx = marker_indices(i);
+        marker_str = marker{idx};
+        char_eq = (marker_str == '+') + (marker_str == '=') + (marker_str == ',');
+        if sum(char_eq) == numel(marker_str)
+            sess_beg_indices(end + 1) = idx;
+        end
+    end
+    sess_beg_indices(end + 1) = size(dataraw, 1) + 1;
     
     for sn = 1:numel(sess_beg_indices) - 1
         begidx = sess_beg_indices(sn);
