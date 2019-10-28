@@ -48,7 +48,7 @@ elseif strcmpi(import.marker, 'continuous')
     head = NaN;
     if data(1)~=0
         head = -round(1000*rand(1));
-        while ismember(head_tail,data)
+        while ismember(head,data)
             head = -round(1000*rand(1));
         end
     end
