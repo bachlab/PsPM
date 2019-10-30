@@ -70,6 +70,9 @@ nfact = 3*(nfilt-1);
 if len <= nfact
     error('Data must have length more than 3 times filter order.');
 end
+if nfilt == 1
+    y=x; return
+end
 
 % Use sparse matrix to solve system of linear equations for initial 
 % conditions zi are the steady-state states of the filter b(z)/a(z) in the
