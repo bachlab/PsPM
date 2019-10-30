@@ -5,11 +5,11 @@ any revisions (commits) that implement/fix something new in the release branch, 
 don't merge these branches back to trunk. Therefore, it is sensible to create the
 release branch after making absolutely sure that no new stuff will be implemented.
 
-- [ ] Update version number & date in
-  - [ ] `pspm_msg`
-  - [ ] `pspm_quit`
+- [x] Update version number & date in
+  - [x] `pspm_msg`
+  - [x] `pspm_quit`
   - [ ] `pspm.fig`: Load `pspm.fig` into MATLAB, update `fig.Children(9).String` and save back to `pspm.fig`
-  - [ ] Manual and Developers Guide: front pages
+  - [x] Manual and Developers Guide: front pages
 - [ ] Make sure both manuals are updated
 - [ ] Add release notes section of the new version to manual (at the end)
 - [ ] Get the manual reviewed
