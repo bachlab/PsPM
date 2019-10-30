@@ -18583,7 +18583,7 @@ pspm_get_viewpoint
 \end_layout
 
 \begin_layout Section
-PsPM Version 4.2.0
+PsPM Version 4.2.1
 \end_layout
 
 \begin_layout Subsection*
@@ -18591,39 +18591,11 @@ New Functions
 \end_layout
 
 \begin_layout Itemize
-A new pupil data preprocessing function
-\end_layout
-
-\begin_layout Itemize
-A new pupil foreshortening error correction function
-\end_layout
-
-\begin_layout Itemize
-A new QRS detection algorithm for fMRI environments
+Three new tests (pspm_hb2hp_test.m, pspm_filtfilt_test.m, pspm_butter_test.m)
 \end_layout
 
 \begin_layout Subsection*
 New Features
-\end_layout
-
-\begin_layout Itemize
-Previously, Eyelink import used to discard 50 ms worth of samples from each
- side of every blink or saccade period.
- This behaviour is preserved; however, sample discard duration can now be
- set by the user.
-\end_layout
-
-\begin_layout Itemize
-Channel processing functions now store extensive historical data in PsPM
- files.
- This data can be printed in table format using the new utility 
-\family typewriter
-function pspm_format_history_from_file
-\end_layout
-
-\begin_layout Itemize
-Pupil channel is now loaded according to a new precedence order.
- Refer to GLM documentation in this manual to learn more.
 \end_layout
 
 \begin_layout Subsection*
@@ -18631,20 +18603,25 @@ Changes
 \end_layout
 
 \begin_layout Itemize
-Eyelink import now returns times and dates in a slightly different format.
+
+\family typewriter
+pspm_display
+\family default
+ and 
+\family typewriter
+pspm_ecg_editor
+\family default
+ do not perform filtering anymore.
 \end_layout
 
 \begin_layout Itemize
-Newest version of PsPM is now obtained from the version string in pspm.sourceforg
-e.net, not from the download link zip file name
-\end_layout
-
-\begin_layout Itemize
-GLM now uses the 
-\series bold
-LAST
-\series default
- channel of a specified modality in a PsPM file.
+When
+\family typewriter
+ pspm_dcm
+\family default
+ is run on an experiment with 40 trials, 20 of which are reinforced CS+
+ trials, it now analyzes all input trials and do not split sessions into
+ many subsessions.
 \end_layout
 
 \begin_layout Itemize
@@ -18670,50 +18647,85 @@ Bugfixes
 \begin_layout Itemize
 Fix a bug in 
 \family typewriter
-pspm_extract_segments
+pspm_hb2hp
 \family default
- where trial onsets were not assigned to conditions correctly
+ where the function crashed when there is no heartbeat left after lower
+ and upper bound filtering of the heartbeat periods
 \end_layout
 
 \begin_layout Itemize
-Fix a bug in Viewpoint import where files in DOS format were being parsed
- incorrectly
+Fix a bug in 
+\family typewriter
+import_eyelink
+\family default
+ which imported more markers than the number of markers in the actual .asc
+ file
 \end_layout
 
 \begin_layout Itemize
-Fix a bug in Eyelink import where blink/saccade periods where misaligned,
- causing the function to discard useful data and return noise instead
+Fix a bug in 
+\family typewriter
+pspm_display
+\family default
+ which crashed when trying to plot ECG signal that contains NaN
+\end_layout
+
+\begin_layout Itemize
+Fix a bug in 
+\family typewriter
+pspm_prepdata
+\family default
+ which returned only NaN when input signal contained some NaN values
+\end_layout
+
+\begin_layout Itemize
+Fix a bug in 
+\family typewriter
+pspm_version
+\family default
+ which crashed when MATLAB was invoked with 
+\family typewriter
+-nojvm
+\end_layout
+
+\begin_layout Itemize
+Fix a bug in 
+\family typewriter
+pspm_get_viewpoint
+\family default
+ which returned '+,=,+' lines in the marker list and which crashed when
+ given a viewpoint data file containing multiple sessions separated with
+ '+,=' type of markers
+\end_layout
+
+\begin_layout Itemize
+Fix a bug in 
+\family typewriter
+import_viewpoint
+\family default
+ which created a new session for every marker containing a '+' somewhere,
+ e.g.: 'CS+'
+\end_layout
+
+\begin_layout Itemize
+Fix a bug in 
+\family typewriter
+pspm_get_events
+\family default
+ which was not able to locate a marker if it occured on the first or last
+ sample in a given datafile
+\end_layout
+
+\begin_layout Itemize
+Fix a bug in 
+\family typewriter
+pspm_filtfilt
+\family default
+ which crashed when the filter parameters were of dimension one
 \end_layout
 
 \begin_layout Subsection*
 Improvements
-\end_layout
-
-\begin_layout Itemize
-New utility functions to make PsPM more compatible across different operating
- systems
-\end_layout
-
-\begin_layout Itemize
-An optimized Eyelink import function that is significantly faster and more
- memory efficient than previous versions
-\end_layout
-
-\begin_layout Itemize
-An optimized SMI event import function that is significantly faster than
- the previous version
-\end_layout
-
-\begin_layout Itemize
-Multiple new tests to validate the correctness of the functions
-\end_layout
-
-\begin_layout Itemize
-API unification: Now all preprocessing functions use 
-\family typewriter
-channel_action
-\family default
- variable to choose what to do with the new channel.
 \end_layout
 
 \begin_layout Part
