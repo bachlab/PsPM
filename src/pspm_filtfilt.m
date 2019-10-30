@@ -70,8 +70,8 @@ nfact = 3*(nfilt-1);
 if len <= nfact
     error('Data must have length more than 3 times filter order.');
 end
-if na == 1
-    warning('ID:invalid_input','The filter parameters ''a'' must be of dimension 2.'); return;
+if nfilt == 1
+    y=x; return
 end
 
 % Use sparse matrix to solve system of linear equations for initial 
