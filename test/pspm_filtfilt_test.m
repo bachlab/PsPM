@@ -12,9 +12,6 @@ classdef pspm_filtfilt_test < matlab.unittest.TestCase
             % Verify no input
             this.verifyWarning(@() pspm_filtfilt(), 'ID:invalid_input');
             
-            % Verify that 'a' isn't of dimension 1
-            this.verifyWarning(@() pspm_filtfilt(1,1,[1:10]), 'ID:invalid_input');
-            
             % Verify that data must have length more than 3 times filter order.
             this.verifyWarning(@() pspm_filtfilt([1:10],[1:20],[1:10]), 'ID:invalid_input');
              
