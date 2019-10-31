@@ -5042,7 +5042,17 @@ You can find and download the PsPM package at the following URL:
 \end_layout
 
 \begin_layout Standard
-http://pspm.sourceforge.net/ 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://bachlab.org/pspm
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5317,7 +5327,18 @@ bioread-converted Biopac AcqKnowledge (any version)
 \begin_layout Standard
 Loads mat files which have been converted using the bioread tool acq2mat.
  Bioread can be installed using pip (installed by python) or can be downloaded
- and installed manually from here https://github.com/njvack/bioread.
+ and installed manually from here 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/njvack/bioread
+\end_layout
+
+\end_inset
+
+.
  It requires python and the python libraries numpy and scipy.
  
 \end_layout
@@ -5425,7 +5446,17 @@ EyeLink
 EDF_Access_API
 \backslash
 ).
- Otherwise there is a Data viewer, available at http://www.sr-research.com/dv.html
+ Otherwise there is a Data viewer, available at 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://www.sr-research.com/dv.html
+\end_layout
+
+\end_inset
+
  (registration needed), which installs a utility called 'Visual EDF2ASC'.
  This also allows the conversion and does not require a license.
  The composition of channels depends on the acquisition settings.
@@ -17376,7 +17407,18 @@ To justify our continued effort in the face of tight resources, we ask you
 \begin_inset Quotes eld
 \end_inset
 
-Data were analysed using PsPM [version number], available at pspm.sourceforge.net.
+Data were analysed using PsPM [version number], available at 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://bachlab.org/pspm
+\end_layout
+
+\end_inset
+
+.
 \begin_inset Quotes erd
 \end_inset
 
