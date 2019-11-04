@@ -129,8 +129,8 @@ If you have comments on or error corrections to this documentation, please
  send them to the PsPM team or post them on: 
 \begin_inset CommandInset href
 LatexCommand href
-name "pspm.sourceforge.net"
-target "http://pspm.sourceforge.net"
+name "bachlab.org/pspm"
+target "http://bachlab.org/pspm"
 literal "false"
 
 \end_inset
@@ -18657,13 +18657,8 @@ pspm_ecg_editor
 \end_layout
 
 \begin_layout Itemize
-When
-\family typewriter
- pspm_dcm
-\family default
- is run on an experiment with 40 trials, 20 of which are reinforced CS+
- trials, it now analyzes all input trials and do not split sessions into
- many subsessions.
+Treatment of missing data in DCM is now the same regardless of whether they
+ are specified as NaN or via model.missing
 \end_layout
 
 \begin_layout Itemize
