@@ -65,7 +65,7 @@ backgroundcolor={\color{white}},
 framexleftmargin=1pt,
 frame=l}
 \renewcommand{\lstlistingname}{Listing}
-\title{PsPM 4.2.0 Release notes}
+\title{PsPM 4.2.1 Release notes}
 
 \begin{document}
 \maketitle
@@ -527,6 +527,50 @@ than the previous version
 \item API unification: Now all preprocessing functions use \texttt{channel\_action}
 variable to choose what to do with the new channel.
 \end{itemize}
+
+\section{PsPM Version 4.2.1}
+
+\subsection*{New Functions}
+\begin{itemize}
+\item Three new tests (pspm\_hb2hp\_test.m, pspm\_filtfilt\_test.m, pspm\_butter\_test.m)
+\end{itemize}
+
+\subsection*{Changes}
+\begin{itemize}
+\item \texttt{pspm\_display} and \texttt{pspm\_ecg\_editor} do not perform
+filtering anymore.
+\item Treatment of missing data in DCM is now the same regardless of whether
+they are specified as NaN or via model.missing
+\item Eyelink import parameter blink/saccade edge discard factor default
+value has been set to 0. This means no extra samples are discarded
+around blinks/saccades.
+\end{itemize}
+
+\subsection*{Bugfixes}
+\begin{itemize}
+\item Fix a bug in \texttt{pspm\_hb2hp} where the function crashed when
+there is no heartbeat left after lower and upper bound filtering of
+the heartbeat periods
+\item Fix a bug in \texttt{import\_eyelink} which imported more markers
+than the number of markers in the actual .asc file
+\item Fix a bug in \texttt{pspm\_display} which crashed when trying to plot
+ECG signal that contains NaN
+\item Fix a bug in \texttt{pspm\_prepdata} which returned only NaN when
+input signal contained some NaN values
+\item Fix a bug in \texttt{pspm\_version} which crashed when MATLAB was
+invoked with \texttt{-nojvm}
+\item Fix a bug in \texttt{pspm\_get\_viewpoint} which returned '+,=,+'
+lines in the marker list and which crashed when given a viewpoint
+data file containing multiple sessions separated with '+,=' type of
+markers
+\item Fix a bug in \texttt{import\_viewpoint} which created a new session
+for every marker containing a '+' somewhere, e.g.: 'CS+'
+\item Fix a bug in \texttt{pspm\_get\_events} which was not able to locate
+a marker if it occured on the first or last sample in a given datafile
+\item Fix a bug in \texttt{pspm\_filtfilt} which crashed when the filter
+parameters were of dimension one
+\end{itemize}
+
 
 \section{References}
 

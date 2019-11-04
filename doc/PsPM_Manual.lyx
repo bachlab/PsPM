@@ -18788,17 +18788,7 @@ pspm_ecg_editor
 
 \begin_layout Itemize
 Treatment of missing data in DCM is now the same regardless of whether they
- are specified as NaN or via model.missing
-\end_layout
-
-\begin_layout Itemize
-Nonlinear SCR model (DCM) now does not use the inter-trial interval duration
- value (ITI) of the last trial when computing session specific minimum ITI
- values.
- Previously, using these last ITI values would lead to abnormally small
- overall min ITI values in some input files, thereby causing the inference
- and PCA sections to use less data for all trials.
- Now, we prevent this from happening.
+ are specified as NaN or via model.missing.
 \end_layout
 
 \begin_layout Itemize
