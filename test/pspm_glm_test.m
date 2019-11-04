@@ -8,8 +8,8 @@ classdef pspm_glm_test < matlab.unittest.TestCase
     properties (TestParameter)
         shiftbf = {0, 5};
         norm = {0, 1};
-        cutoff = {0, .5, 1};
-        nan_percent = {0,.25,.5,.75,1};
+        cutoff = {0, .5, .95};
+        nan_percent = {0,.25,.5,.75,.95};
     end;
         
     methods (Test)       
