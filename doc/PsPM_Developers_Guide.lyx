@@ -98,7 +98,7 @@ Developer's Guide
 
 \begin_layout Standard
 \align center
-Version 4.2.0
+Version 4.2.1
 \end_layout
 
 \begin_layout Standard
@@ -124,8 +124,8 @@ If you have comments on or error corrections to this documentation, please
  send them to the PsPM team or post them on: 
 \begin_inset CommandInset href
 LatexCommand href
-name "pspm.sourceforge.net"
-target "http://pspm.sourceforge.net"
+name "bachlab.org/pspm"
+target "http://bachlab.org/pspm"
 literal "false"
 
 \end_inset
@@ -145,8 +145,8 @@ literal "false"
 
 \size larger
 Dominik R Bach, Giuseppe Castegnetti, Laure Ciernik, Samuel Gerster, Saurabh
- Khemka, Christoph Korn, Tobias Moser, Philipp C Paulus, Matthias Staib,
- Eshref Yozdemir and collaborators
+ Khemka, Christoph Korn, Tobias Moser, Philipp C Paulus, Ivan Rojkov, Matthias
+ Staib, Eshref Yozdemir and collaborators
 \size default
 
 \begin_inset Newline newline
@@ -6137,6 +6137,161 @@ Description: In each of these cases check if the returned channels have
 \end_layout
 
 \begin_layout Subsection
+Testcases: pspm_butter
+\end_layout
+
+\begin_layout Subsubsection
+Information
+\end_layout
+
+\begin_layout Standard
+Testclass: pspm_butter_test 
+\begin_inset Newline newline
+\end_inset
+
+Function: [sts, b, a] = pspm_butter(order, freqratio, pass)
+\end_layout
+
+\begin_layout Subsubsection
+Testcases
+\end_layout
+
+\begin_layout Subsubsection*
+Invalid input
+\end_layout
+
+\begin_layout Standard
+Function name: invalid_input(this) 
+\begin_inset Newline newline
+\end_inset
+
+Description: Checks for warnings, if the input arguments are invalid and
+ if the Signal processing toolbox is installed.
+ 
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+Tests: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Input
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Expected warning
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pspm_butter() [no input]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID:invalid_input
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pspm_butter(1,1,'abc') [pass not equal to 'high' or 'low']
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID:invalid_input
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pspm_butter(2,1) ['Signal processing toolbox is missing' #1]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID:toolbox_missing
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pspm_butter(1,1) ['Signal processing toolbox is missing' #2]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID:toolbox_missing
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
 Testcases: pspm_bf_test
 \end_layout
 
@@ -7197,6 +7352,121 @@ Time between end of recording and last data point
 
 \begin_layout Plain Layout
 < 60s
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Testcases: pspm_filtfilt
+\end_layout
+
+\begin_layout Subsubsection
+Information
+\end_layout
+
+\begin_layout Standard
+Testclass: pspm_filtfilt_test 
+\begin_inset Newline newline
+\end_inset
+
+Function: y = pspm_filtfilt(b,a,x)
+\end_layout
+
+\begin_layout Subsubsection
+Testcases
+\end_layout
+
+\begin_layout Subsubsection*
+Invalid input
+\end_layout
+
+\begin_layout Standard
+Function name: invalid_input(this) 
+\begin_inset Newline newline
+\end_inset
+
+Description: Checks for warnings, if the input arguments are invalid.
+ 
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+Tests: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Input
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Expected warning
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pspm_filtfilt() [no input]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID:invalid_input
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pspm_filtfilt([1:10],[1:20],[1:10]) [data length less than 3 times filter
+ order]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID:invalid_input
 \end_layout
 
 \end_inset
@@ -12640,6 +12910,240 @@ glm vector stats_exclude has the appropriate length according to the number
 \begin_layout Itemize
 glm vector stats_exclude contains the expected condistion which should be
  excluded 
+\end_layout
+
+\begin_layout Subsection
+Testcases: pspm_hb2hp
+\end_layout
+
+\begin_layout Subsubsection
+Information
+\end_layout
+
+\begin_layout Standard
+Testclass: pspm_hb2hp_test 
+\begin_inset Newline newline
+\end_inset
+
+Function: [sts, infos] = pspm_hb2hp(fn, sr, chan, options)
+\end_layout
+
+\begin_layout Subsubsection
+Testcases
+\end_layout
+
+\begin_layout Subsubsection*
+Invalid input
+\end_layout
+
+\begin_layout Standard
+Function name: invalid_input(this) 
+\begin_inset Newline newline
+\end_inset
+
+Description: Checks for warnings, if the input arguments are invalid.
+ 
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+Tests: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="9" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Input
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Expected warning
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pspm_hb2hp() [no input]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID:invalid_input
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pspm_hb2hp(2) [not a string filename]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID:invalid_input
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pspm_hb2hp('abc') [no sample rate]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID:invalid_input
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pspm_hb2hp('abc','abc') [not a string sample rate]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID:invalid_input
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pspm_hb2hp('abc',2,'abc') [not a numeric chanel]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID:invalid_input
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pspm_hb2hp(files{1},100) [call of pspm_load_data fails]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID:invalid_input
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pspm_hb2hp(files{2}, 100) [not enough points for interp1]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID:too_strict_limits
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pspm_hb2hp(files{3},100,[],options) [pspm_write_channel fails]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID:invalid_input
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -21110,7 +21614,7 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
--
+X
 \end_layout
 
 \end_inset
@@ -21119,7 +21623,7 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
--
+X
 \end_layout
 
 \end_inset
@@ -22060,7 +22564,7 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
--
+x
 \end_layout
 
 \end_inset
@@ -22069,7 +22573,7 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
--
+x
 \end_layout
 
 \end_inset
@@ -24150,7 +24654,7 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
--
+x
 \end_layout
 
 \end_inset
@@ -24159,7 +24663,7 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
--
+x
 \end_layout
 
 \end_inset

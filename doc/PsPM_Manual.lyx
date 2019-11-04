@@ -103,7 +103,7 @@ PsPM: Psychophysiological Modelling
 
 \begin_layout Standard
 \align center
-Version 4.2.0
+Version 4.2.1
 \end_layout
 
 \begin_layout Standard
@@ -129,8 +129,8 @@ If you have comments on or error corrections to this documentation, please
  send them to the PsPM team or post them on: 
 \begin_inset CommandInset href
 LatexCommand href
-name "pspm.sourceforge.net"
-target "http://pspm.sourceforge.net"
+name "bachlab.org/pspm"
+target "http://bachlab.org/pspm"
 literal "false"
 
 \end_inset
@@ -150,8 +150,8 @@ literal "false"
 
 \size larger
 Dominik R Bach, Giuseppe Castegnetti, Laure Ciernik, Samuel Gerster, Saurabh
- Khemka, Christoph Korn, Tobias Moser, Philipp C Paulus, Matthias Staib,
- Eshref Yozdemir, and collaborators
+ Khemka, Christoph Korn, Tobias Moser, Philipp C Paulus, Ivan Rojkov, Matthias
+ Staib, Eshref Yozdemir and collaborators
 \size default
 
 \begin_inset Newline newline
@@ -5042,7 +5042,17 @@ You can find and download the PsPM package at the following URL:
 \end_layout
 
 \begin_layout Standard
-http://pspm.sourceforge.net/ 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://bachlab.org/pspm
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5317,7 +5327,18 @@ bioread-converted Biopac AcqKnowledge (any version)
 \begin_layout Standard
 Loads mat files which have been converted using the bioread tool acq2mat.
  Bioread can be installed using pip (installed by python) or can be downloaded
- and installed manually from here https://github.com/njvack/bioread.
+ and installed manually from here 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/njvack/bioread
+\end_layout
+
+\end_inset
+
+.
  It requires python and the python libraries numpy and scipy.
  
 \end_layout
@@ -5425,7 +5446,17 @@ EyeLink
 EDF_Access_API
 \backslash
 ).
- Otherwise there is a Data viewer, available at http://www.sr-research.com/dv.html
+ Otherwise there is a Data viewer, available at 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://www.sr-research.com/dv.html
+\end_layout
+
+\end_inset
+
  (registration needed), which installs a utility called 'Visual EDF2ASC'.
  This also allows the conversion and does not require a license.
  The composition of channels depends on the acquisition settings.
@@ -17376,7 +17407,18 @@ To justify our continued effort in the face of tight resources, we ask you
 \begin_inset Quotes eld
 \end_inset
 
-Data were analysed using PsPM [version number], available at pspm.sourceforge.net.
+Data were analysed using PsPM [version number], available at 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://bachlab.org/pspm
+\end_layout
+
+\end_inset
+
+.
 \begin_inset Quotes erd
 \end_inset
 
@@ -18714,6 +18756,139 @@ API unification: Now all preprocessing functions use
 channel_action
 \family default
  variable to choose what to do with the new channel.
+\end_layout
+
+\begin_layout Section
+PsPM Version 4.2.1
+\end_layout
+
+\begin_layout Subsection*
+New Functions
+\end_layout
+
+\begin_layout Itemize
+Three new tests (pspm_hb2hp_test.m, pspm_filtfilt_test.m, pspm_butter_test.m)
+\end_layout
+
+\begin_layout Subsection*
+Changes
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_display
+\family default
+ and 
+\family typewriter
+pspm_ecg_editor
+\family default
+ do not perform filtering anymore.
+\end_layout
+
+\begin_layout Itemize
+Treatment of missing data in DCM is now the same regardless of whether they
+ are specified as NaN or via model.missing
+\end_layout
+
+\begin_layout Itemize
+Nonlinear SCR model (DCM) now does not use the inter-trial interval duration
+ value (ITI) of the last trial when computing session specific minimum ITI
+ values.
+ Previously, using these last ITI values would lead to abnormally small
+ overall min ITI values in some input files, thereby causing the inference
+ and PCA sections to use less data for all trials.
+ Now, we prevent this from happening.
+\end_layout
+
+\begin_layout Itemize
+Eyelink import parameter blink/saccade edge discard factor default value
+ has been set to 0.
+ This means no extra samples are discarded around blinks/saccades.
+\end_layout
+
+\begin_layout Subsection*
+Bugfixes
+\end_layout
+
+\begin_layout Itemize
+Fix a bug in 
+\family typewriter
+pspm_hb2hp
+\family default
+ where the function crashed when there is no heartbeat left after lower
+ and upper bound filtering of the heartbeat periods
+\end_layout
+
+\begin_layout Itemize
+Fix a bug in 
+\family typewriter
+import_eyelink
+\family default
+ which imported more markers than the number of markers in the actual .asc
+ file
+\end_layout
+
+\begin_layout Itemize
+Fix a bug in 
+\family typewriter
+pspm_display
+\family default
+ which crashed when trying to plot ECG signal that contains NaN
+\end_layout
+
+\begin_layout Itemize
+Fix a bug in 
+\family typewriter
+pspm_prepdata
+\family default
+ which returned only NaN when input signal contained some NaN values
+\end_layout
+
+\begin_layout Itemize
+Fix a bug in 
+\family typewriter
+pspm_version
+\family default
+ which crashed when MATLAB was invoked with 
+\family typewriter
+-nojvm
+\end_layout
+
+\begin_layout Itemize
+Fix a bug in 
+\family typewriter
+pspm_get_viewpoint
+\family default
+ which returned '+,=,+' lines in the marker list and which crashed when
+ given a viewpoint data file containing multiple sessions separated with
+ '+,=' type of markers
+\end_layout
+
+\begin_layout Itemize
+Fix a bug in 
+\family typewriter
+import_viewpoint
+\family default
+ which created a new session for every marker containing a '+' somewhere,
+ e.g.: 'CS+'
+\end_layout
+
+\begin_layout Itemize
+Fix a bug in 
+\family typewriter
+pspm_get_events
+\family default
+ which was not able to locate a marker if it occured on the first or last
+ sample in a given datafile
+\end_layout
+
+\begin_layout Itemize
+Fix a bug in 
+\family typewriter
+pspm_filtfilt
+\family default
+ which crashed when the filter parameters were of dimension one
 \end_layout
 
 \begin_layout Part

@@ -1,6 +1,6 @@
 % pspm_quit clears settings, removes paths & closes figures
 %__________________________________________________________________________
-% PsPM 4.2.0
+% PsPM 4.2.1
 % (C) 2008-2019 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %
 % $Id: pspm_quit.m 805 2019-09-16 07:12:08Z esrefo $
@@ -33,6 +33,6 @@ close all
 disp(' ');
 disp('Thanks for using PsPM.');
 disp('_____________________________________________________________________________________________');
-disp('PsPM 4.2.0 (c) 2008-2019 Dominik R. Bach');
+disp('PsPM 4.2.1 (c) 2008-2019 Dominik R. Bach');
 disp('University of Zurich, CH  --  University College London, UK');
     
