@@ -10,8 +10,8 @@ function [sts, outdata, newsr] = pspm_prepdata(data, filt)
 %       .sr        - current sample rate in Hz 
 %       .lpfreq    - low pass filt frequency or 'none' 
 %       .lporder   - low pass filt order
-%       .hpfreq    - high pass filt frequency or 'none'
 %       .hporder   - high pass filt order
+%       .hpfreq    - high pass filt frequency or 'none'
 %       .direction - filt direction
 %       .down      - sample rate in Hz after downsampling or 'none'
 %
@@ -37,6 +37,12 @@ if isempty(settings), pspm_init; end;
 sts = -1;
 newsr = 0;
 outdata = data;
+
+% check input for NaN values
+% -------------------------------------------------------------------------
+if any(isnan(data))
+    warning('ID:invalid_input', 'Data contains NaN values.'); return;
+end
 
 % check input
 % -------------------------------------------------------------------------

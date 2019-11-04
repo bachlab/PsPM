@@ -3,7 +3,7 @@ classdef pspm_get_events_test < matlab.unittest.TestCase
 % unittest class for the pspm_get_events function
 %__________________________________________________________________________
 % SCRalyze TestEnvironment
-% (C) 2013 Linus Rüttimann (University of Zurich)
+% (C) 2013 Linus Rï¿½ttimann (University of Zurich)
   
     methods
         function check = checkFlankChange(this, positions, data)
@@ -70,7 +70,8 @@ classdef pspm_get_events_test < matlab.unittest.TestCase
             [sts, rimport] = pspm_get_events(import);
             this.verifyEqual(sts, 1);
             this.verifyTrue(length(rimport.data) == length(rimport.markerinfo.value));
-            this.verifyTrue(length(rimport.data) == length(d));
+            %if we invert the signal, number of markers denoted by high signals is one more!
+            this.verifyTrue(length(rimport.data) == length(d) + 1);
             import.data = -1 * import.data;
             
             import.flank = 'ascending';

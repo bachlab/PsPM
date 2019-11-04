@@ -102,16 +102,6 @@ set(handles.cbManualMode, 'Value', handles.manualmode);
 handles.winsize=4;          % winsize for the manual mode
 handles.zoom_factor = 1;
 handles.data = {};
-% define filter properties (copied from pspm_ecg2hb)
-handles.filt = struct();
-handles.filt.sr=0; % to be set
-handles.filt.lpfreq=15;
-handles.filt.lporder=1;
-handles.filt.hpfreq=5;
-handles.filt.hporder=1;
-handles.filt.direction='uni';
-
-handles.filt.down=200;
 % plot settings
 handles.plot.factr = 1;
 handles.plot.limits.upper = 120;
@@ -418,7 +408,6 @@ else
     ecg=handles.data.data.x(:,1)';
     
     handles.plot.sr = sr;
-    handles.filt.sr = sr;
     handles.plot.ecg = ecg;
 end;
 
@@ -908,15 +897,8 @@ if sts == 1
     set(handles.edtDataFile, 'String', fn);
     
     % filter data
-    data = handles.data{handles.data_chan};
-    sr = data.header.sr;
-    handles.filt.sr = sr;
-    % filter data
-    [nsts,ecg,sr]=pspm_prepdata(data.data, handles.filt);
-    if nsts == -1
-        warning('Could not filter data, will use unfiltered data.');
-        ecg = data.data;
-    end;
+    ecg = handles.data{handles.data_chan}.data;
+    sr = handles.data{handles.data_chan}.header.sr;
     
     handles.plot.ecg = ecg;
     handles.e = 0;
@@ -925,7 +907,6 @@ if sts == 1
         handles.plot.p = -1;
     end;
     handles.plot.sr = sr;
-    handles.filt.sr = sr;
     
     guidata(hObject, handles);
 end;

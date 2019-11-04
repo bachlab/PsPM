@@ -39,13 +39,19 @@ if isempty(settings), pspm_init; end;
 
 % check input arguments
 if nargin<1
-    errmsg='No data given.'; warning(errmsg);
+    warning('ID:invalid_input','No data given.'); return;
 elseif nargin<2
-    errmsg='No transfer constant given'; warning(errmsg);
+    warning('ID:invalid_input','No transfer constant given.'); return;
+elseif ~isnumeric(c)
+    warning('ID:invalid_input','The parameter ''c'' has to be numeric.'); return;
 elseif nargin<3
     Rs=0; offset=0;
+elseif ~isnumeric(Rs)
+    warning('ID:invalid_input','The parameter ''Rs'' has to be numeric.'); return;
 elseif nargin<4
     offset=0;
+elseif ~isnumeric(offset)
+    warning('ID:invalid_input','The parameter ''offset'' has to be numeric.'); return;
 elseif nargin < 5
     recsys = 'conductance';
 end;

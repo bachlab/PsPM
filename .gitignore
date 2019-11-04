@@ -1,1 +1,8 @@
 ImportTestData
+.bundle/
+.jekyll-cache/
+Gemfile
+Gemfile.lock
+_site/
+vendor/
+*.lyx~

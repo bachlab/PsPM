@@ -35,25 +35,26 @@ sts = -1;
 global settings;
 if isempty(settings), pspm_init; end;
 
-try option.channel_action; catch options.channel_action = 'replace'; end;
-try options.limit; catch options.limit = struct(); end;
-try options.limit.upper; catch options.limit.upper = 2; end;
-try options.limit.lower; catch options.limit.lower = 0.2; end;
+if ~exist('options','var'), options = struct(); end;
+if ~isfield(options,'channel_action'), options.channel_action = 'replace'; end;  
+if ~isfield(options,'limit'), options.limit = struct(); end;
+if ~isfield(options.limit,'upper'), options.limit.upper = 2; end;
+if ~isfield(options.limit,'lower'), options.limit.lower = 0.2; end;
 
 % check input
 % -------------------------------------------------------------------------
 if nargin < 1
-    warning('No input. Don''t know what to do.'); return;
+    warning('ID:invalid_input','No input. Don''t know what to do.'); return;
 elseif ~ischar(fn)
-    warning('Need file name string as first input.'); return;
+    warning('ID:invalid_input','Need file name string as first input.'); return;
 elseif nargin < 2
-    warning('No sample rate given.'); return; 
+    warning('ID:invalid_input','No sample rate given.'); return; 
 elseif ~isnumeric(sr)
-    warning('Sample rate needs to be numeric.'); return;
+    warning('ID:invalid_input','Sample rate needs to be numeric.'); return;
 elseif nargin < 3 || isempty(chan) || (isnumeric(chan) && (chan == 0))
     chan = 'hb';
 elseif ~isnumeric(chan) && ~strcmpi(chan, 'hb')
-    warning('Channel number must be numeric'); return;
+    warning('ID:invalid_input','Channel number must be numeric'); return;
 end;
 
 % get data
@@ -92,8 +93,10 @@ newdata.header.units = 'ms';
 newdata.header.chantype = 'hp';
 
 o.msg.prefix = 'Heart beat converted to heart period and';
-[sts, winfos] = pspm_write_channel(fn, newdata, options.channel_action, o);
-if nsts == -1
+try
+    [nsts,winfos] = pspm_write_channel(fn, newdata, options.channel_action, o);
+    if nsts == -1, return; end
+catch
     warning('ID:invalid_input', 'call of pspm_write_channel failed');
     return; 
 end;
