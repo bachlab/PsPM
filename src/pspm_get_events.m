@@ -44,6 +44,13 @@ elseif strcmpi(import.marker, 'continuous')
         data = data';
     end
     
+    possible_values = unique(data);
+    min_values_indices = data == min(possible_values);
+    max_values_indices = data == max(possible_values);
+    data_orig = data;
+    data = (data + min(possible_values)) / (max(possible_values) - min(possible_values));
+    data(min_values_indices) = 0;
+    data(max_values_indices) = 1;
     % add more data in order to prevent deleting values with diff
     data = [0; 0; 0; data; 0; 0; NaN;];
     % store information about finite and infinite in vector
@@ -97,9 +104,9 @@ elseif strcmpi(import.marker, 'continuous')
     if ~isfield(import, 'markerinfo') && ~isempty(import.data)
         
         % determine baseline
-        v = unique(data(~isnan(data)));
+        v = unique(data_orig(~isnan(data_orig)));
         for i=1:numel(v)
-            v(i,2) = numel(find(data == v(i,1)));
+            v(i,2) = numel(find(data_orig == v(i,1)));
         end
         
         % ascending sorting: most frequent value is at the end of this
@@ -108,7 +115,7 @@ elseif strcmpi(import.marker, 'continuous')
         baseline = v(end, 1);
         
         % we are interested in the delta -> remove "baseline offset"
-        values = data(round(mPos)) - baseline;
+        values = data_orig(round(mPos) - 3) - baseline;
         import.markerinfo.value = values;
         
         % prepare values to convert them into strings
