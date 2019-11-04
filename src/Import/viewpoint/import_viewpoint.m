@@ -54,7 +54,7 @@ function [data] = import_viewpoint(filepath)
         idx = marker_indices(i);
         marker_str = marker{idx};
         char_eq = (marker_str == '+') + (marker_str == '=') + (marker_str == ',');
-        if sum(char_eq) == numel(marker_str)
+        if sum(char_eq) == numel(marker_str) && sum(marker_str == '+') > 0
             sess_beg_indices(end + 1) = idx;
         end
     end
