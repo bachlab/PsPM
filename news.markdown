@@ -6,6 +6,10 @@ permalink: /news/
 
 # News
 
+### 04.11.2019
+
+PsPM 4.2.1 released - including new tests and changes in PsPM functions as well as multiple bugfixes correcting 4.2.0 release. Thanks to everybody involved!
+
 ---
 
 ### 16.09.2019
