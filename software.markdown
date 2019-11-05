@@ -20,10 +20,14 @@ permalink: /software/
 * Start the GUI by typing "pspm" in the matlab command line
 
 ## Help
-* [FAQ](faq.html)
-* [Sourceforge help forum](https://sourceforge.net/p/pspm/discussion/help/)
+* [FAQ](faq.markdown)
+
+* [Help forum](https://github.com/bachlab/PsPM/issues)
 * [Bug reports](https://github.com/bachlab/PsPM/issues)
-* [Bug reports (*old versions until 4.1*)](https://sourceforge.net/p/pspm/discussion/bugs/)
+* [Feature requests](https://github.com/bachlab/PsPM/issues)
+
+* [Sourceforge help forum (*old versions until 4.2.0*)](https://sourceforge.net/p/pspm/discussion/help/)
+* [Sourceforge bug reports (*old versions until 4.1.0*)](https://sourceforge.net/p/pspm/discussion/bugs/)
 
 ## Tutorial datasets
 * [Download GLM dataset](https://github.com/bachlab/PsPM-tutorial-datasets/releases/download/tutorial-datasets/Tutorial_dataset_GLM.zip)
