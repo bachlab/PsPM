@@ -40,7 +40,7 @@ if nargin > 0
     switch varargin{1}
         case 'check' % check for updates
             try
-                str = webread('http://pspm.sourceforge.net/');
+                str = webread('https://bachlab.github.io/PsPM/');
                 begidx = strfind(str, 'Current version');
                 endidx = begidx + strfind(str(begidx : end), sprintf('\n'));
                 endidx = endidx(1);
