@@ -257,8 +257,8 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
             % imported data cannot be read at the moment (in later instances)
             import{k}.markerinfo = markerinfos;
 
-            % use ascending flank for translation from continuous to events
-            import{k}.flank = 'ascending';
+            % use 'all' flank for translation from continuous to events
+            import{k}.flank = 'all';
         else    
             % determine chan id from chantype - eyelink specific
             % thats why channel ids will be ignored!
