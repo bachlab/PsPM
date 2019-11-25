@@ -6,7 +6,7 @@ function [sts, import] = pspm_get_events(import)
 %                  .marker ('timestamps', 'continuous')
 %                  .sr (timestamps: timeunits in seconds, continuous: sample rate in 1/seconds)
 %                  and optional field
-%                  .flank ('ascending', 'descending', 'both': optional field for
+%                  .flank ('ascending', 'descending', 'both', 'all': optional field for
 %                   continuous channels; default: both)
 %           returns event timestamps in seconds in import.data
 %__________________________________________________________________________
@@ -81,6 +81,10 @@ elseif strcmpi(import.marker, 'continuous')
         fprintf('\n');
         warning('No markers, or problem with TTL channel.');
         import.data = [];
+    elseif isfield(import,'flank') && strcmpi(import.flank, 'all')
+        allMrk = find(import.data);
+        import.data = allMrk./import.sr;
+        mPos = allMrk+3;
     elseif isfield(import, 'flank') && strcmpi(import.flank, 'ascending')
         import.data = lo2hi./import.sr; 
         mPos = lo2hi+3; 
