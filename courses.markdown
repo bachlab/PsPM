@@ -8,7 +8,7 @@ permalink: /courses/
 ## Upcoming PsPM course
 There are **regular PsPM courses**. To check for updates, have a look on our [news site](news.html), on [bachlab news](http://bachlab.org/news), or follow [bachlab on twitter](http://twitter.com/bachlab_uzh).
 
-**Next PsPM course: [30.3.2020 EMHFC 2020 Bochum (workshop on pupil size measurements)](https://emhfc.blogs.uni-hamburg.de/pre-conference-seminars/) **
+**Next PsPM course: [30.3.2020 EMHFC 2020 Bochum (workshop on pupil size measurements)](https://emhfc.blogs.uni-hamburg.de/pre-conference-seminars/)**
 
 ## Course slides
 * [PsPM Overview](http://bachlab.org/wp-content/uploads/2019/12/02_Overview_Bach.pdf) (Dominik R. Bach)
