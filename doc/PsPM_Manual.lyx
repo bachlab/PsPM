@@ -13606,6 +13606,8 @@ literal "true"
  that included two short breaks.
  SCR data were recorded using a 0.5 V coupler, optical (wave to pulse) transducer
 , and CED Spike, with a minimum sampling rate of 100 Hz.
+ Be aware that this example uses functions from the MATLAB Signal Processing
+ Toolbox, make sure to have it installed before starting the tutorial.
 \end_layout
 
 \begin_layout Subsection
