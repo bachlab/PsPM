@@ -18,6 +18,17 @@ Fear conditioning data sets are provided in a standardised format to facilitate 
 
 <tr>
 	<td>
+		<a title="PsPM-AOB: Eye tracker (including pupillometry) measurements from auditory oddball tasks" href="https://doi.org/10.5281/zenodo.3608706" target="_blank"><b>PsPM-AOB</b></a>
+	</td>
+	<td>
+		<a title="Christoph W. Korn &amp Dominik R. Bach (2016) A solid frame for the window on cognition: Modeling event-related pupil responses. Journal of Vision , 16:28, pp 1–16." href="https://doi.org/10.1167/16.3.28">A solid frame for the window on cognition: Modeling event-related pupil responses</a>
+	</td>
+	<td>
+	</td>
+</tr>
+
+<tr>
+	<td>
 		<a title="PsPM-BAER: Skin conductance fluctuations in a public speaking paradigm with a repeated-measures design" href="https://doi.org/10.5281/zenodo.269654" target="_blank"><b>PsPM-BAER</b></a>
 	</td>
 	<td>
@@ -79,6 +90,17 @@ Fear conditioning data sets are provided in a standardised format to facilitate 
 
 <tr>
 	<td>
+		<a title="PsPM-FSS6B: SCR and PSR measurements in a delay fear conditioning task with somatosensory CS and electrical US" href="https://doi.org/10.5281/zenodo.3601251" target="_blank"><b>PsPM-FSS6B</b></a>
+	</td>
+	<td>
+		<a title="Christoph W. Korn &amp Matthias Staib &amp Athina Tzovara &amp Giuseppe Castegnetti &amp Dominik R. Bach (2017) A pupil size response model to assess fear learning. Psychophysiology, 54:3, pp 330-343" href="https://doi.org/10.1111/psyp.12801" target="_blank">A pupil size response model to assess fear learning</a>
+	</td>
+	<td>
+	</td>
+</tr>
+
+<tr>
+	<td>
 		<a title="PsPM-HRA1: Skin conductance responses in fear conditioning with visual CS and electrical US" href="https://doi.org/10.5281/zenodo.321641" target="_blank"><b>PsPM-HRA1</b></a>
 	</td>
 	<td>
@@ -94,10 +116,10 @@ Fear conditioning data sets are provided in a standardised format to facilitate 
 		<a title="PsPM-HRM_IAPS: SCR, ECG and respiration measurement in response to aversive/arousing/neutral IAPS pictures" href="https://doi.org/10.5281/zenodo.2592194" target="_blank"><b>PsPM-HRM_IAPS</b></a>
 	</td>
 	<td>
-		<a title="Philipp C. Paulus & Giuseppe Castegnetti & Dominik R. Bach (2016) Modeling event-related heart period responses. Psychophysiology, 53:6, pp 837-846" href="https://doi.org/10.1111/psyp.12622" target="_blank">Modeling event-related heart period responses</a>
+		<a title="Philipp C. Paulus &amp Giuseppe Castegnetti &amp Dominik R. Bach (2016) Modeling event-related heart period responses. Psychophysiology, 53:6, pp 837-846" href="https://doi.org/10.1111/psyp.12622" target="_blank">Modeling event-related heart period responses</a>
 	</td>
 	<td>
-		<a title="Dominik R. Bach & Samuel Gerster & Athina Tzovara & Giuseppe Castegnetti (2016) A linear model for event-related respiration responses. Journal of Neuroscience Methods, 270, pp 147-155" href="https://doi.org/10.1016/j.jneumeth.2016.06.001" target="_blank">A linear model for event-related respiration responses</a>
+		<a title="Dominik R. Bach &amp Samuel Gerster &amp Athina Tzovara &amp Giuseppe Castegnetti (2016) A linear model for event-related respiration responses. Journal of Neuroscience Methods, 270, pp 147-155" href="https://doi.org/10.1016/j.jneumeth.2016.06.001" target="_blank">A linear model for event-related respiration responses</a>
 	</td>
 </tr>
 
@@ -282,7 +304,7 @@ Fear conditioning data sets are provided in a standardised format to facilitate 
 		<a title="PsPM-SMD: SCR, EMG, ECG, and respiration measurement in response to auditory startle probes" href="https://doi.org/10.5281/zenodo.3430920" target="_blank"><b>PsPM-SMD</b></a>
 	</td>
 	<td>
-		<a title="Saurabh Khemka & Athina Tzovara & Samuel Gerster & Boris B. Quednow & Dominik R. Bach (2016) Modeling startle eyeblink electromyogram to assess fear learning. Psychophysiology, 54:2, pp 204-214" href="https://doi.org/10.1111/psyp.12775" target="_blank"> Modeling startle eyeblink electromyogram to assess fear learning</a>
+		<a title="Saurabh Khemka &amp Athina Tzovara &amp Samuel Gerster &amp Boris B. Quednow &amp Dominik R. Bach (2016) Modeling startle eyeblink electromyogram to assess fear learning. Psychophysiology, 54:2, pp 204-214" href="https://doi.org/10.1111/psyp.12775" target="_blank"> Modeling startle eyeblink electromyogram to assess fear learning</a>
 	</td>
 	<td></td>
 </tr>
@@ -305,11 +327,11 @@ Fear conditioning data sets are provided in a standardised format to facilitate 
 		<a title="PsPM-trSP1: SCR, and heart beat measurement in response to aversive/neutral IAPS pictures while subjected to auditory distractors" href="https://doi.org/10.5281/zenodo.3515884" target="_blank"><b>PsPM-trSP1</b></a>
 	</td>
 	<td>
-		<a title="Dominik R. Bach & Karl J. Friston & Raymond J. Dolan (2013) An improved algorithm for model-based analysis of evoked skin conductance responses. Biological Psychology, 94:3, pp 490-497" href="https://doi.org/10.1016/j.biopsycho.2013.09.010" target="_blank">An improved algorithm for model-based analysis of evoked skin conductance responses</a>
+		<a title="Dominik R. Bach &amp Karl J. Friston &amp Raymond J. Dolan (2013) An improved algorithm for model-based analysis of evoked skin conductance responses. Biological Psychology, 94:3, pp 490-497" href="https://doi.org/10.1016/j.biopsycho.2013.09.010" target="_blank">An improved algorithm for model-based analysis of evoked skin conductance responses</a>
 	</td>
 	<td>
 		<a title="Dominik R. Bach (2014) A head-to-head comparison of SCRalyze and Ledalab, two model-based methods for skin conductance analysis. Biological Psychology, 103, pp 63-68" href="https://doi.org/10.1016/j.biopsycho.2014.08.006" target="_blank">A head-to-head comparison of SCRalyze and Ledalab, two model-based methods for skin conductance analysis</a><br />
-		<a title="Dominik R. Bach & Erich Seifritz & Raymond J. Dolan (2015) Temporally Unpredictable Sounds Exert a Context-Dependent Influence on Evaluation of Unrelated Images. PLoS One, 10:6, pp 1-14" href="https://doi.org/10.1371/journal.pone.0131065" target="_blank">Temporally Unpredictable Sounds Exert a Context-Dependent Influence on Evaluation of Unrelated Images</a>
+		<a title="Dominik R. Bach &amp Erich Seifritz &amp Raymond J. Dolan (2015) Temporally Unpredictable Sounds Exert a Context-Dependent Influence on Evaluation of Unrelated Images. PLoS One, 10:6, pp 1-14" href="https://doi.org/10.1371/journal.pone.0131065" target="_blank">Temporally Unpredictable Sounds Exert a Context-Dependent Influence on Evaluation of Unrelated Images</a>
 	</td>
 </tr>
 
@@ -318,11 +340,36 @@ Fear conditioning data sets are provided in a standardised format to facilitate 
 		<a title="PsPM-trSP2: SCR measurement in response to aversive/arousing/neutral IAPS pictures while subjected to auditory distractors" href="https://doi.org/10.5281/zenodo.3515939" target="_blank"><b>PsPM-trSP2</b></a>
 	</td>
 	<td>
-		<a title="Dominik R. Bach & Karl J. Friston & Raymond J. Dolan (2013) An improved algorithm for model-based analysis of evoked skin conductance responses. Biological Psychology, 94:3, pp 490-497" href="https://doi.org/10.1016/j.biopsycho.2013.09.010" target="_blank">An improved algorithm for model-based analysis of evoked skin conductance responses</a>
+		<a title="Dominik R. Bach &amp Karl J. Friston &amp Raymond J. Dolan (2013) An improved algorithm for model-based analysis of evoked skin conductance responses. Biological Psychology, 94:3, pp 490-497" href="https://doi.org/10.1016/j.biopsycho.2013.09.010" target="_blank">An improved algorithm for model-based analysis of evoked skin conductance responses</a>
 	</td>
 	<td>
 		<a title="Dominik R. Bach (2014) A head-to-head comparison of SCRalyze and Ledalab, two model-based methods for skin conductance analysis. Biological Psychology, 103, pp 63-68" href="https://doi.org/10.1016/j.biopsycho.2014.08.006" target="_blank">A head-to-head comparison of SCRalyze and Ledalab, two model-based methods for skin conductance analysis</a><br />
-		<a title="Dominik R. Bach & Erich Seifritz & Raymond J. Dolan (2015) Temporally Unpredictable Sounds Exert a Context-Dependent Influence on Evaluation of Unrelated Images. PLoS One, 10:6, pp 1-14" href="https://doi.org/10.1371/journal.pone.0131065" target="_blank">Temporally Unpredictable Sounds Exert a Context-Dependent Influence on Evaluation of Unrelated Images</a>
+		<a title="Dominik R. Bach &amp Erich Seifritz &amp Raymond J. Dolan (2015) Temporally Unpredictable Sounds Exert a Context-Dependent Influence on Evaluation of Unrelated Images. PLoS One, 10:6, pp 1-14" href="https://doi.org/10.1371/journal.pone.0131065" target="_blank">Temporally Unpredictable Sounds Exert a Context-Dependent Influence on Evaluation of Unrelated Images</a>
+	</td>
+</tr>
+
+<tr>
+	<td>
+		<a title="PsPM-trSP3: SCR measurement in response to aversive/arousing/neutral IAPS pictures while subjected to auditory distractors" href="https://doi.org/10.5281/zenodo.3611484" target="_blank"><b>PsPM-trSP3</b></a>
+	</td>
+	<td>
+		<a title="Dominik R. Bach &amp Karl J. Friston &amp Raymond J. Dolan (2013) An improved algorithm for model-based analysis of evoked skin conductance responses. Biological Psychology, 94:3, pp 490-497" href="https://doi.org/10.1016/j.biopsycho.2013.09.010" target="_blank">An improved algorithm for model-based analysis of evoked skin conductance responses</a>
+	</td>
+	<td>
+		<a title="Dominik R. Bach (2014) A head-to-head comparison of SCRalyze and Ledalab, two model-based methods for skin conductance analysis. Biological Psychology, 103, pp 63-68" href="https://doi.org/10.1016/j.biopsycho.2014.08.006" target="_blank">A head-to-head comparison of SCRalyze and Ledalab, two model-based methods for skin conductance analysis</a><br />
+		<a title="Dominik R. Bach &amp Erich Seifritz &amp Raymond J. Dolan (2015) Temporally Unpredictable Sounds Exert a Context-Dependent Influence on Evaluation of Unrelated Images. PLoS One, 10:6, pp 1-14" href="https://doi.org/10.1371/journal.pone.0131065" target="_blank">Temporally Unpredictable Sounds Exert a Context-Dependent Influence on Evaluation of Unrelated Images</a>
+	</td>
+</tr>
+
+<tr>
+	<td>
+		<a title="PsPM-trSP4: SCR measurement in response to face photographs withangry, neutral, and fearful expression while subjected to auditory distractors" href="https://doi.org/10.5281/zenodo.3611490" target="_blank"><b>PsPM-trSP4</b></a>
+	</td>
+	<td>
+		<a title="Dominik R. Bach (2014) A head-to-head comparison of SCRalyze and Ledalab, two model-based methods for skin conductance analysis. Biological Psychology, 103, pp 63-68" href="https://doi.org/10.1016/j.biopsycho.2014.08.006" target="_blank">A head-to-head comparison of SCRalyze and Ledalab, two model-based methods for skin conductance analysis</a><br />
+	</td>
+	<td>
+		<a title="Dominik R. Bach &amp Erich Seifritz &amp Raymond J. Dolan (2015) Temporally Unpredictable Sounds Exert a Context-Dependent Influence on Evaluation of Unrelated Images. PLoS One, 10:6, pp 1-14" href="https://doi.org/10.1371/journal.pone.0131065" target="_blank">Temporally Unpredictable Sounds Exert a Context-Dependent Influence on Evaluation of Unrelated Images</a>
 	</td>
 </tr>
 
