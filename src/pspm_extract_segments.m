@@ -99,8 +99,8 @@ function [sts, out] = pspm_extract_segments(varargin)
                 
                 % check data_fn variable (and creation of data_raw if needed)
                 if ~ischar(data_fn) && ~isnumeric(data_fn)
-                    if ~iscell(data_fn) || (any(~cellfun(@ischar, data_fn)) ...
-                                            || any(~cellfun(@isnumeric, data_fn)))
+                    if ~iscell(data_fn) || ~xor(any(~cellfun(@ischar, data_fn)), ...
+                                                any(~cellfun(@isnumeric, data_fn)))
                         warning('ID:invalid_input', 'Data must be a filename, a cell array of filenames or a cell array of raw data.'); return;
                     elseif ischar(data_fn{1})
                         is_raw_data = false; % flag to indicate that filenames are used
@@ -123,7 +123,7 @@ function [sts, out] = pspm_extract_segments(varargin)
                     if ~is_raw_data
                         chan = repmat({chan}, size(data_fn));
                     else
-                        sr = repmat({chan}, size(data_fn));
+                        sr = repmat({chan}, size(data_raw));
                         clear chan
                     end
                 else
@@ -217,18 +217,20 @@ function [sts, out] = pspm_extract_segments(varargin)
     end;
     
     % set default marker_chan, if it is a glm struct
-    if  (manual_chosen == 1) || strcmpi(model_strc.modeltype,'glm')
-        if ~isfield(options, 'marker_chan')
-            options.marker_chan = repmat({-1}, numel(data_fn),1);
-        elseif ~iscell(options.marker_chan)
-            options.marker_chan = repmat({options.marker_chan}, size(data_fn));
+    if (manual_chosen == 1) || strcmpi(model_strc.modeltype,'glm')        
+        if is_raw_data % distinguish btw raw and non raw data
+            if ~isfield(options, 'marker_chan')
+                options.marker_chan = repmat({-1}, numel(data_raw),1);
+            elseif ~iscell(options.marker_chan)
+                options.marker_chan = repmat({options.marker_chan}, size(data_raw));
+            end;
+        else
+            if ~isfield(options, 'marker_chan')
+                options.marker_chan = repmat({-1}, numel(data_fn),1);
+            elseif ~iscell(options.marker_chan)
+                options.marker_chan = repmat({options.marker_chan}, size(data_fn));
+            end;
         end;
-    elseif  (manual_chosen == 1) || strcmpi(model_strc.modeltype,'glm')
-        if ~isfield(options, 'marker_chan')
-            options.marker_chan = repmat({-1}, numel(data_fn),1);
-        elseif ~iscell(options.marker_chan)
-            options.marker_chan = repmat({options.marker_chan}, size(data_fn));
-        end
     end;
     
     % set default length
@@ -291,11 +293,13 @@ function [sts, out] = pspm_extract_segments(varargin)
         end;
     end;
     
-    if manual_chosen == 1 || strcmpi(model_strc.modeltype, 'glm')
+    if (manual_chosen == 1 || strcmpi(model_strc.modeltype, 'glm')) && is_raw_data
+        n_sessions = numel(data_raw);
+    elseif (manual_chosen == 1 || strcmpi(model_strc.modeltype, 'glm'))
         n_sessions = numel(data_fn);
     else
         n_sessions = numel(model_strc.input.scr);
-    end
+    end;
     
     % load timing
     if manual_chosen == 1
@@ -312,16 +316,21 @@ function [sts, out] = pspm_extract_segments(varargin)
         input_data = {};
         sampling_rates = [];
         marker_data = {};
-        for i=1:numel(data_fn)
-            [sts, ~, data] = pspm_load_data(data_fn{i}, chan{i});
-            assert(sts == 1);
-            input_data{end + 1} = data{1}.data;
-            sampling_rates(end + 1) = data{1}.header.sr;
-            if strcmpi(options.timeunit, 'markers')
-                [sts, ~, data] = pspm_load_data(data_fn{i}, options.marker_chan{i});
+        if ~is_raw_data
+            for i=1:numel(data_fn)
+                [sts, ~, data] = pspm_load_data(data_fn{i}, chan{i});
                 assert(sts == 1);
-                marker_data{end + 1} = data;
+                input_data{end + 1} = data{1}.data;
+                sampling_rates(end + 1) = data{1}.header.sr;
+                if strcmpi(options.timeunit, 'markers')
+                    [sts, ~, data] = pspm_load_data(data_fn{i}, options.marker_chan{i});
+                    assert(sts == 1);
+                    marker_data{end + 1} = data;
+                end
             end
+        else % in case of raw data, just take it as input_data ans sampling rates
+            input_data = data_raw;
+            sampling_rates = [sr{:}];
         end
     elseif strcmpi(model_strc.modeltype, 'glm')
         multi = model_strc.timing.multi;

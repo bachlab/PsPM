@@ -966,14 +966,14 @@ defaults.glm(10) = ... % GLM for Scanpath-speed
     'direction', 'uni'), ...
     'default', 1);
 
-defaults.glm(11) = ... % GLM for Scanpath-length                        % Maybe we should do as for hp_e and hp_fc ?
-    struct('modality', 'spl', ...                                       % modality name
-    'modelspec', 'spl', ...                                             % model specification
-    'cbf', struct('fhandle', @pspm_something, 'args', dontknowyet ), ...% default basis function/set (to be created)
-    'filter', struct('lpfreq', 50, 'lporder', 1, ...                    % default filter settings (to be confirmed) 
-        'hpfreq', NaN, 'hporder', NaN, 'down', 100, ...
-        'direction', 'bi'), ...
-    'default', 0);
+% defaults.glm(11) = ... % GLM for Scanpath-length                        % Maybe we should do as for hp_e and hp_fc ?
+%     struct('modality', 'spl', ...                                       % modality name
+%     'modelspec', 'spl', ...                                             % model specification
+%     'cbf', struct('fhandle', @pspm_something, 'args', dontknowyet ), ...% default basis function/set (to be created)
+%     'filter', struct('lpfreq', 50, 'lporder', 1, ...                    % default filter settings (to be confirmed) 
+%         'hpfreq', NaN, 'hporder', NaN, 'down', 100, ...
+%         'direction', 'bi'), ...
+%     'default', 0);
 
 % -------------------------------------------------------------------------
 %  DCM settings
