@@ -42,6 +42,8 @@ function [sts, out] = pspm_extract_segments(varargin)
     %           timeunit:       'seconds' (default), 'samples' or 'markers. In 'auto'
     %                           mode the value will be ignored and taken from
     %                           the glm model file or the dcm model file.
+    %                           In the case of raw data the timeunit should
+    %                           be seconds.
     %           length:         Length of the segments in the 'timeunits'.
     %                           If given the same length is taken for
     %                           segments for glm structure. If not given lengths
@@ -212,24 +214,18 @@ function [sts, out] = pspm_extract_segments(varargin)
     % set default timeunit
     if ~isfield(options, 'timeunit')
         options.timeunit = 'seconds';
+    elseif ~strcmpi(options.timeunit,'seconds') && manual_chosen == 1 && is_raw_data
+        warning('ID:invalid_input','In case of raw data, the timeunit variable should be ''seconds''.')
     else
         options.timeunit = lower(options.timeunit);
     end;
     
-    % set default marker_chan, if it is a glm struct
-    if (manual_chosen == 1) || strcmpi(model_strc.modeltype,'glm')        
-        if is_raw_data % distinguish btw raw and non raw data
-            if ~isfield(options, 'marker_chan')
-                options.marker_chan = repmat({-1}, numel(data_raw),1);
-            elseif ~iscell(options.marker_chan)
-                options.marker_chan = repmat({options.marker_chan}, size(data_raw));
-            end;
-        else
-            if ~isfield(options, 'marker_chan')
-                options.marker_chan = repmat({-1}, numel(data_fn),1);
-            elseif ~iscell(options.marker_chan)
-                options.marker_chan = repmat({options.marker_chan}, size(data_fn));
-            end;
+    % set default marker_chan, if it is a glm struct (only for non raw data)
+    if ((manual_chosen == 1 && ~is_raw_data) || strcmpi(model_strc.modeltype,'glm'))
+        if ~isfield(options, 'marker_chan')
+            options.marker_chan = repmat({-1}, numel(data_fn),1);
+        elseif ~iscell(options.marker_chan)
+            options.marker_chan = repmat({options.marker_chan}, size(data_fn));
         end;
     end;
     
@@ -293,9 +289,9 @@ function [sts, out] = pspm_extract_segments(varargin)
         end;
     end;
     
-    if (manual_chosen == 1 || strcmpi(model_strc.modeltype, 'glm')) && is_raw_data
+    if manual_chosen == 1 && is_raw_data
         n_sessions = numel(data_raw);
-    elseif (manual_chosen == 1 || strcmpi(model_strc.modeltype, 'glm'))
+    elseif manual_chosen == 1 || strcmpi(model_strc.modeltype, 'glm')
         n_sessions = numel(data_fn);
     else
         n_sessions = numel(model_strc.input.scr);
