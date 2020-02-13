@@ -73,37 +73,10 @@ function output = pspm_pfm(model, options)
 %                        before fitting the model, i.e. setting the first
 %                        peak at 1.
 %                        DEFAULT: 0 (not normalize) 
-%
-%    model.missing:      allows to specify missing (e. g. artefact) epochs in
-%      (not used)        the data file. See pspm_get_timing for epoch definition;
-%                        specify a cell array for multiple input files. This
-%                        must always be specified in SECONDS.
-%                        Default: no missing values
-%    model.nuisance:     allows to specify nuisance regressors. Must be a file
-%      (not used)        name; the file is either a .txt file containing the
-%                        regressors in columns, or a .mat file containing the
-%                        regressors in a matrix variable called R. There must be
-%                        as many values for each column of R as there are data
-%                        values. SCRalyze will call these regressors R1, R2, ...
-%    model.latency:      allows to specify whether latency should be 'fixed'
-%      (not used)        (default) or should be 'free'. In 'free' models an
-%                        additional dictionary matching algorithm will try to
-%                        estimate the best latency. Latencies will then be added
-%                        at the end of the output. In 'free' models the field
-%                        model.window is MANDATORY and single basis functions 
-%                        are allowed only.
-% 
 % 
 % OPTIONS can contain: (optional argument)
 %     options.overwrite:       overwrite existing model output; 
-%                              DEFAULT: 0
-%     options.exclude_missing: marks trials during which NaN percentage exceeds
-%      (not used)              a cutoff value. Requires two subfields: 
-%                              'segment_length' (in s after onset) and 'cutoff'
-%                              (in % NaN per segment). Results are written into
-%                              model structure as fields .stats_missing and 
-%                               .stats_exclude but not used further.
-%                           
+%                              DEFAULT: 0                           
 %
 % TIMING - multiple condition file(s) or struct variable(s):
 % The structure is equivalent to SPM2/5/8/12 (www.fil.ion.ucl.ac.uk/spm),
