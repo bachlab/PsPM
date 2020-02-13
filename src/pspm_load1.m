@@ -159,19 +159,19 @@ elseif ~isfield(indata.(mdltype), 'modality')
     % --------------------------------------------
     % return
     indata.(mdltype).modality = settings.modalities.(mdltype);
-elseif ~isfield(indata.(mdltype), 'stats')
+elseif ~strcmpi(mdltype, 'pfm') && ~isfield(indata.(mdltype), 'stats')
     warning('ID:invalid_data_structure', '%sNo stats contained in file.', errmsg); return;
 elseif ~isfield(indata.(mdltype), 'names')
     warning('ID:invalid_data_structure', '%sNo names contained in file.', errmsg); return;
-elseif ~strcmpi(mdltype, 'glm') && ~isfield(indata.(mdltype), 'trlnames')
+elseif ~strcmpi(mdltype, 'pfm') && ~strcmpi(mdltype, 'glm') && ~isfield(indata.(mdltype), 'trlnames')
         warning('ID:invalid_data_structure', '%sNo trial names contained in file.', errmsg); return;
-elseif strcmpi(mdltype, 'glm') && size(indata.(mdltype).stats, 1) ~= numel(indata.(mdltype).stats)
+elseif ~strcmpi(mdltype, 'pfm') && strcmpi(mdltype, 'glm') && size(indata.(mdltype).stats, 1) ~= numel(indata.(mdltype).stats)
         warning('ID:invalid_data_structure', '%sGLM stats should be a n x 1 vector.', errmsg); return;
-elseif strcmpi(mdltype, 'glm') && numel(indata.(mdltype).names) ~= numel(indata.(mdltype).stats)
+elseif ~strcmpi(mdltype, 'pfm') && strcmpi(mdltype, 'glm') && numel(indata.(mdltype).names) ~= numel(indata.(mdltype).stats)
         warning('ID:invalid_data_structure', '%sNumbers of names and parameters do not match.', errmsg); return;
-elseif ~strcmpi(mdltype, 'glm') && numel(indata.(mdltype).names) ~= size(indata.(mdltype).stats, 2)
+elseif ~strcmpi(mdltype, 'pfm') && ~strcmpi(mdltype, 'glm') && numel(indata.(mdltype).names) ~= size(indata.(mdltype).stats, 2)
         warning('ID:invalid_data_strucutre', '%sNumbers of names and parameters do not match.', errmsg); return;
-elseif ~strcmpi(mdltype, 'glm') && numel(indata.(mdltype).trlnames) ~= size(indata.(mdltype).stats,1)
+elseif ~strcmpi(mdltype, 'pfm') && ~strcmpi(mdltype, 'glm') && numel(indata.(mdltype).trlnames) ~= size(indata.(mdltype).stats,1)
         warning('ID:invalid_data_structure', '%sNumbers of trial names and parameters do not match.', errmsg); return;
 end;
 
@@ -212,9 +212,9 @@ else
     reconflag = 1;
 end;
 
-% if not glm
+% if not glm, nor pfm
 % create condition names --
-if ~strcmpi(mdltype, 'glm')
+if ~strcmpi(mdltype, 'glm') && ~strcmpi(mdltype, 'pfm')
     indata.(mdltype).condnames = unique(indata.(mdltype).trlnames);
 end;
 

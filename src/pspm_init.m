@@ -859,8 +859,9 @@ defaults.get_transfer_sr=100;            % resampling rate for automatic transfe
 % default modalities
 % -------------------------------------------------------------------------
 defaults.modalities = struct('glm', 'scr', ...
-    'sf', 'scr', ...
-    'dcm', 'scr');
+                             'sf', 'scr', ...
+                             'dcm', 'scr', ...
+                             'pfm', 'pupil');
 
 % -------------------------------------------------------------------------
 %  modality-specific GLM settings
@@ -978,9 +979,28 @@ defaults.dcm{2} = ...
 
 
 % -------------------------------------------------------------------------
+%  PFM settings
+% -------------------------------------------------------------------------
+% DEVELOPERS NOTES: currently this is being used for PFM for pupil data.
+% Further modalities and models can be implemented.
+% -------------------------------------------------------------------------
+defaults.pfm(1) = struct( ...
+    'modality', 'dilatation', ...                                                   % modality name
+    'cbf', struct('fhandle', @pspm_bf_ldrf_gm, 'args', [2.40 ; 0.29 ; 0.77]), ...   % basis function & default parameters
+    'filter', struct('lpfreq', 'none', 'lporder', 0,  ...                           % default filter
+    'hpfreq', 'none', 'hporder', 0, 'down', 0, 'direction', 'bi'));
+
+defaults.pfm(2) = struct( ...
+    'modality', 'constriction', ...
+    'cbf', struct('fhandle', @pspm_bf_lcrf_gm, 'args', [3.24 ; 0.18 ; 0.43]), ...
+    'filter', struct('lpfreq', 'none', 'lporder', 0,  ...
+    'hpfreq', 'none', 'hporder', 0, 'down', 0, 'direction', 'bi'));
+
+
+% -------------------------------------------------------------------------
 %  FIRST LEVEL settings
 % -------------------------------------------------------------------------
-defaults.first = {'glm', 'sf', 'dcm'}; % allowed first level model types
+defaults.first = {'glm', 'sf', 'dcm', 'pfm'}; % allowed first level model types
 
 % -------------------------------------------------------------------------
 % Data/module file helptext settings 
