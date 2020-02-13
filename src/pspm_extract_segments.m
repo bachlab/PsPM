@@ -65,7 +65,7 @@ function [sts, out] = pspm_extract_segments(varargin)
     %                           as data_fn.
     %                           If timeunit is 'markers' and raw data are
     %                           given then this parameter should be an
-    %                           numeric array of marker data.
+    %                           cell array of numeric array of marker data.
     %           nan_output:     This option defines whether the user wants to
     %                           output the NaN ratios of the trials for each condition.
     %                           If so,  we values can be printed on the screen
