@@ -14,7 +14,6 @@ function [sts, out] = pspm_extract_segments(varargin)
     %
     %   FORMAT:
     %       [sts, segments] = pspm_extract_segments('manual', data_fn, chan, timing, options)
-    %       [sts, segments] = pspm_extract_segments('manual', data_raw, sr, timing, options)
     %       [sts, segments] = pspm_extract_segments('auto', glm, options)
     %       [sts, segments] = pspm_extract_segments('auto', dcm, options)
     %
@@ -27,23 +26,18 @@ function [sts, out] = pspm_extract_segments(varargin)
     %                           the segments should be extracted. Each file
     %                           will be treated as session. Onset values are
     %                           averaged through conditions and sessions.
-    %       data_raw:           Numeric raw data or a cell array of numeric raw data.
     %       chan:               Channel number or cell of channel numbers which
     %                           defines which channel should be taken to
     %                           extract the segments. Chan should correspond to
     %                           data_fn and should have the same length. If
     %                           data_fn is a cell and chan is a single number,
     %                           the number will be taken for all files.
-    %       sr:                 Array of sampling rates (same dimension as data_raw)
-    %                           or one sample rate if all the data have the same one.
     %       timing:             Either a cell containing the timing settings or
     %                           a string pointing to the timing file.
     %       options:
-    %           timeunit:       'seconds' (default), 'samples' or 'markers'. In 'auto'
+    %           timeunit:       'seconds' (default), 'samples' or 'markers. In 'auto'
     %                           mode the value will be ignored and taken from
     %                           the glm model file or the dcm model file.
-    %                           In the case of raw data the timeunit should
-    %                           be seconds.
     %           length:         Length of the segments in the 'timeunits'.
     %                           If given the same length is taken for
     %                           segments for glm structure. If not given lengths
@@ -63,9 +57,6 @@ function [sts, out] = pspm_extract_segments(varargin)
     %                           function to find the appropriate timing of the
     %                           specified marker ids. Must have the same format
     %                           as data_fn.
-    %                           If timeunit is 'markers' and raw data are
-    %                           given then this parameter should be an
-    %                           numeric array of marker data.
     %           nan_output:     This option defines whether the user wants to
     %                           output the NaN ratios of the trials for each condition.
     %                           If so,  we values can be printed on the screen
@@ -79,19 +70,8 @@ function [sts, out] = pspm_extract_segments(varargin)
     % $Id: pspm_extract_segments.m 733 2019-06-20 12:47:45Z esrefo $
     % $Rev: 733 $
     
+    % initialise
     % -------------------------------------------------------------------------
-    % DEVELOPERS NOTES: 
-    %   This function uses three different flags encoded in the variable
-    %   "manual_chosen", it can take the following values: 
-    %       - manual_chosen = 0  ---> it means the function runs in auto mode
-    %       - manual_chosen = 1  ---> it means the function runs in manual mode
-    %                                 but the given data are not raw but
-    %                                 filenames
-    %       - manual_chosen = 2  ---> it means the function runs in manual mode
-    %                                 and with raw data.
-    %   Search FLAG to see where these flags are set.
-    % -------------------------------------------------------------------------
-    
     global settings;
     if isempty(settings), pspm_init; end;
     sts = -1;
@@ -100,8 +80,8 @@ function [sts, out] = pspm_extract_segments(varargin)
         switch varargin{1}
             case 'manual'
                 if nargin < 4
-                    warning('ID:invalid_input', 'Mode ''manual'' expects at least 4 arguments.'); return;
-                end
+                    warning('ID:invalid_input', 'Mode ''auto'' expects at least 4 arguments.'); return;
+                end;
                 
                 data_fn = varargin{2};
                 chan = varargin{3};
@@ -111,60 +91,39 @@ function [sts, out] = pspm_extract_segments(varargin)
                     options = varargin{5};
                 else
                     options = struct();
-                end
+                end;
                 
-                % check data_fn variable (and creation of data_raw if needed)
-                if ~ischar(data_fn) && ~isnumeric(data_fn)
-                    if ~iscell(data_fn) || ~xor(any(~cellfun(@ischar, data_fn)), ...
-                                                any(~cellfun(@isnumeric, data_fn)))
-                        warning('ID:invalid_input', 'Data must be a filename, a cell array of filenames or a cell array of raw data.'); return;
-                    elseif ischar(data_fn{1})
-                        manual_chosen = 1;          % set FLAG to indicate 'manual with not raw data'
-                    elseif isnumeric(data_fn{1})
-                        data_raw = data_fn;
-                        manual_chosen = 2;          % set FLAG to indicate 'manual with raw data'
-                        clear data_fn
-                    end
-                elseif ischar(data_fn)
-                    data_fn = {data_fn};
-                    manual_chosen = 1;              % set FLAG to indicate 'manual with not raw data'
-                elseif isnumeric(data_fn)
-                    data_raw = {data_fn};
-                    manual_chosen = 2;              % set FLAG to indicate 'manual with raw data'
-                    clear data_fn
-                end
+                % expand chan if necessary
+                if iscell(data_fn) && isnumeric(chan) ...
+                        && numel(chan) == 1
+                    chan = repmat({chan}, size(data_fn));
+                end;
                 
-                % check chan variable (and creation of sr if needed)
-                if isnumeric(chan) && numel(chan) == 1
-                    if manual_chosen == 1
-                        chan = repmat({chan}, size(data_fn));
-                    else
-                        sr = repmat({chan}, size(data_raw));
-                        clear chan
+                % check if specific arguments are correct
+                if ~ischar(data_fn)
+                    if (iscell(data_fn) && any(~cellfun(@ischar, data_fn))) ||~iscell(data_fn)
+                        warning('ID:invalid_input', 'data_fn has to be a string or a cell array of strings.'); return;
                     end
-                else
-                    if ~iscell(chan) || (any(~cellfun(@isnumeric, chan)) &&  manual_chosen == 1)
+                elseif ~isnumeric(chan)
+                    if(iscell(chan) && any(~cellfun(@isnumeric, chan))) || ~iscell(chan)
                         warning('ID:invalid_input', 'chan has to be numeric or a cell array of numerics.'); return;
-                    elseif ~iscell(chan) || (any(~cellfun(@isnumeric, chan)) &&  manual_chosen == 2)
-                        warning('ID:invalid_input', 'sr has to be numeric or a cell array of numerics.'); return;
-                    elseif manual_chosen == 2
-                        sr = chan;
                     end
-                end
+                elseif strcmpi(class(data_fn), class(chan)) && (iscell(chan) && (numel(chan) ~= numel(data_fn)))
+                    warning('ID:invalid_input', 'data_fn and chan must correspond in number of elements.'); return;
+                elseif strcmpi(class(data_fn), class(timing)) && (iscell(timing) && (numel(timing) ~= numel(data_fn)))
+                    warning('ID:invalid_input', 'data_fn and timing must correspond in number of elements.'); return;
+                end;
                 
-                if manual_chosen == 1
-                    if strcmpi(class(data_fn), class(chan)) && (numel(chan) ~= numel(data_fn))
-                        warning('ID:invalid_input', 'data_fn and chan must correspond in number of elements.'); return;
-                    elseif strcmpi(class(data_fn), class(timing)) && (iscell(timing) && (numel(timing) ~= numel(data_fn)))
-                        warning('ID:invalid_input', 'data_fn and timing must correspond in number of elements.'); return;
-                    end
-                else
-                    if strcmpi(class(data_raw), class(sr)) && (numel(sr) ~= numel(data_raw))
-                        warning('ID:invalid_input', 'data_fn and chan must correspond in number of elements.'); return;
-                    elseif strcmpi(class(data_raw), class(timing)) && (numel(timing) ~= numel(data_raw))
-                        warning('ID:invalid_input', 'data_fn and timing must correspond in number of elements.'); return;
-                    end
-                end
+                % fix format of data_fn and chan if necessary
+                if ~iscell(data_fn)
+                    data_fn = {data_fn};
+                end;
+                if ~iscell(chan)
+                    chan = {chan};
+                end;
+                
+                % set flag to indicate 'manual'
+                manual_chosen =1;
                 
             case 'auto'
                 
@@ -205,7 +164,7 @@ function [sts, out] = pspm_extract_segments(varargin)
                     end;
                 end;
                 
-                manual_chosen = 0;      % set FLAG to indicate 'not manual', i.e. 'auto'
+                manual_chosen =0;
                 
             otherwise
                 warning('ID:invalid_input', 'Unknown mode specified.'); return;
@@ -214,7 +173,7 @@ function [sts, out] = pspm_extract_segments(varargin)
         warning('ID:invalid_input', 'The function expects at least 2 parameters.'); return;
     end;
     
-    if (manual_chosen == 0) && ~iscell(data_fn)
+    if ~iscell(data_fn)
         data_fn = {data_fn};
     end;
     
@@ -229,8 +188,8 @@ function [sts, out] = pspm_extract_segments(varargin)
         options.timeunit = lower(options.timeunit);
     end;
     
-    % set default marker_chan, if it is a glm struct (only for non-raw data)
-    if manual_chosen == 1 || (manual_chosen == 0 && strcmpi(model_strc.modeltype,'glm'))
+    % set default marker_chan, if it is a glm struct
+    if  (manual_chosen ==1) || strcmpi(model_strc.modeltype,'glm')
         if ~isfield(options, 'marker_chan')
             options.marker_chan = repmat({-1}, numel(data_fn),1);
         elseif ~iscell(options.marker_chan)
@@ -286,13 +245,9 @@ function [sts, out] = pspm_extract_segments(varargin)
         warning('ID:invalid_input', 'Options.overwrite has to be numeric or logical.'); return;
     elseif ~isnumeric(options.dont_ask_overwrite) && ~islogical(options.dont_ask_overwrite)
         warning('ID:invalid_input', 'Options.dont_ask_overwrite has to be numeric or logical.'); return;
-    elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 2 && ~isfield(options,'marker_chan')
-        warning('ID:invalid_input','''markers'' specified as a timeunit but nothing was specified in ''options.marker_chan''')
-    elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 2 && ~all(size(data_raw) == size(options.marker_chan)) 
-        warning('ID:invalid_input', '''data_raw'' and ''options.marker_chan'' do not have the same size.'); return;
-    elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 1 && ~all(size(data_fn) == size(options.marker_chan))
+    elseif strcmpi(options.timeunit, 'markers') && ~all(size(data_fn) == size(options.marker_chan))
         warning('ID:invalid_input', '''data_fn'' and ''options.marker_chan'' do not have the same size.'); return;
-    elseif manual_chosen == 1 || (manual_chosen == 0 && strcmpi(model_strc.modeltype,'glm'))
+    elseif (manual_chosen ==1) ||  strcmpi(model_strc.modeltype,'glm')
         if any(cellfun(@(x) ~strcmpi(x, 'marker') && ~isnumeric(x), options.marker_chan))
             warning('ID:invalid_input', 'Options.marker_chan has to be numeric or ''marker''.'); return;
         elseif strcmpi(options.timeunit, 'markers') ...
@@ -302,16 +257,14 @@ function [sts, out] = pspm_extract_segments(varargin)
         end;
     end;
     
-    if manual_chosen == 2
-        n_sessions = numel(data_raw);
-    elseif manual_chosen == 1 || strcmpi(model_strc.modeltype, 'glm')
+    if manual_chosen == 1 || strcmpi(model_strc.modeltype, 'glm')
         n_sessions = numel(data_fn);
     else
         n_sessions = numel(model_strc.input.scr);
-    end;
+    end
     
     % load timing
-    if manual_chosen ~= 0
+    if manual_chosen == 1
         [~, multi]  = pspm_get_timing('onsets', timing, options.timeunit);
         % If the timeunit is markers, the multi struct holds for every session.
         % Thus we need as many replicas as there are sessions
@@ -325,22 +278,16 @@ function [sts, out] = pspm_extract_segments(varargin)
         input_data = {};
         sampling_rates = [];
         marker_data = {};
-        if manual_chosen == 1
-            for i=1:numel(data_fn)
-                [sts, ~, data] = pspm_load_data(data_fn{i}, chan{i});
+        for i=1:numel(data_fn)
+            [sts, ~, data] = pspm_load_data(data_fn{i}, chan{i});
+            assert(sts == 1);
+            input_data{end + 1} = data{1}.data;
+            sampling_rates(end + 1) = data{1}.header.sr;
+            if strcmpi(options.timeunit, 'markers')
+                [sts, ~, data] = pspm_load_data(data_fn{i}, options.marker_chan{i});
                 assert(sts == 1);
-                input_data{end + 1} = data{1}.data;
-                sampling_rates(end + 1) = data{1}.header.sr;
-                if strcmpi(options.timeunit, 'markers')
-                    [sts, ~, data] = pspm_load_data(data_fn{i}, options.marker_chan{i});
-                    assert(sts == 1);
-                    marker_data{end + 1} = data{1,1}.data;
-                end
+                marker_data{end + 1} = data;
             end
-        elseif manual_chosen == 2
-            input_data = data_raw;
-            sampling_rates = [sr{:}];
-            if strcmpi(options.timeunit, 'markers'), marker_data = options.marker_chan; end;
         end
     elseif strcmpi(model_strc.modeltype, 'glm')
         multi = model_strc.timing.multi;
@@ -534,7 +481,7 @@ function [sts, out] = pspm_extract_segments(varargin)
         sr = sampling_rates(session_idx);
         % load data
         session_data = input_data{session_idx};
-        if manual_chosen ~= 0 && strcmpi(options.timeunit, 'markers')
+        if manual_chosen == 1 && strcmpi(options.timeunit, 'markers')
             marker = marker_data{session_idx};
         end
         num_conds_in_session = numel(multi(session_idx).names);
@@ -572,18 +519,14 @@ function [sts, out] = pspm_extract_segments(varargin)
                         start = start * sr;
                     case 'markers'
                         segment_length = segment_length*sr;
-                        if manual_chosen ~= 0
+                        if manual_chosen == 1
                             start = marker(start) * sr;
                         else
                             start = start * sr;
-                            assert(~strcmpi(model_strc.modeltype, 'dcm'));
                         end
+                        assert(~strcmpi(model_strc.modeltype, 'dcm'));
                     case 'samples'
-                        if manual_chosen ~= 0
-                            start = start;
-                        else
-                            start = start * sr / filtered_sr;
-                        end;
+                        start = start * sr / filtered_sr;
                 end;
                 
                 start = max(1, round(start));
