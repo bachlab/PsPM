@@ -105,7 +105,7 @@ for i=1:n_eyes
             % get channel specific data
             gx_d = data{gx}.data;
             gy_d = data{gy}.data;
-            gy_d = data{gy}.header.range(2)-gy_d;
+%             gy_d = data{gy}.header.range(2)-gy_d;                         <----- need an explanation for that
 
             N = numel(gx_d);
             if N~=numel(gy_d)
