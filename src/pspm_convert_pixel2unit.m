@@ -135,11 +135,11 @@ for c = 1:n_chans
         
         % convert according to range
         chan.data = (chan.data-chan.header.range(1)) ...
-            ./ diff(chan.header.range) * fact;
+                    * fact ./ (diff(chan.header.range) + 1);
         
         % convert range
         chan.header.range = (chan.header.range-chan.header.range(1)) ...
-            ./ diff(chan.header.range) * fact;
+                            * fact ./ (diff(chan.header.range) + 1);
         
         
         
