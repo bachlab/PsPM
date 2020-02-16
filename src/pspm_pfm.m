@@ -1,13 +1,14 @@
 function output = pspm_pfm(model, options)
 % PFM stands for Pupil Fitting Model and allows to fit models to the puipil
-% data. To do that the function starts by extracting segments of given
-% length, averages them over all subjects and finally fits an LTI model.
-% For now, the input function is only a gamma pdf and the basis function 
-% could be `pspm_bf_lcrf_gm` or `pspm_bf_ldrf_gm` depending on the
-% modality.
-% This is the fist version of pfm, in a future version the user will be able
-% to choose any input function and any basis function.
-% 
+% data. The function starts by extracting and averaging signal segments of 
+% length `model.window` from each data file individually, then averages 
+% these mean segments and finally fits an LTI model.
+% The fitting process is a residual least square minimisation where the
+% predicted value is calculated as following:
+%          Y_predicted = input_function (*) basis_function
+% with (*) represents a convolution. Only parameters of the input
+% function are optimised.
+%
 % MODEL is made of:
 % - REQUIRED FIELDS:
 %    model.modelfile:    a file name for the model output
@@ -32,13 +33,25 @@ function output = pspm_pfm(model, options)
 %    model.modality:     a char equal to 'constriction' or 'dilatation'
 %                        corresponding to the fitted model.
 %                        DEFAULT: 'dilatation'
-%    model.x0:           allows to specify initial parameters used in the
-%                        fitting process. It must be a numeric array [a b A]
-%                        with the three parameters of a gamma distribution 
-%                        where:  - a : shape parameter
-%                                - b : scale parameter
-%                                - A : amplitude
-%                        DEFAUT: same as in the basis function.
+%    model.bf:           basis function/basis set with required subfields: 
+%                           .fhandle : function handle or string
+%                           .args    : arguments; the first two arguments
+%                                      (time resolution and duration)
+%                                      will be added by pspm_pupil_model.
+%                        DEFAULT: specified by the modality
+%    model.if:           input function (function which will be fitted) 
+%                        with required subfields: 
+%                           .fhandle : function handle or string
+%                           .arg     : initial arguments, numeric array
+%                           .lb      : lower bounds, numeric array of the
+%                                      same size as .arg
+%                           .ub      : upper bounds, numeric array of the
+%                                      same size as .arg
+%                        If an argument should not be fitted, set the 
+%                        corresponding value of .lb and .ub to the same
+%                        value as .arg. For unbounded parameters set -Inf
+%                        or/and Inf respectively.
+%                        DEFAULT: specified by the modality
 %    model.channel:      allows to specify channel number or channel type.
 %                        If there is only one element specified, this element
 %                        will be applied to each datafile.
@@ -57,8 +70,6 @@ function output = pspm_pfm(model, options)
 %                        has to be positive and smaller than model.window.
 %                        If no baseline specified, data will be baselined
 %                        wrt. the first datapoint.
-%                        The baseline parameter corresponds as well to the
-%                        offset parameter of the basis function.
 %                        DEFAULT: 0
 %    model.marker_chan:  marker channel number OR
 %                        a cell array of marker channel number of
@@ -178,16 +189,64 @@ elseif ~ismember(model.modality, {settings.pfm.modality})
     warning('ID:invalid_input', 'Unknown model specification %s.', model.modality); return;
 end
 modno = strcmpi(model.modality, {settings.pfm.modality});
-model.bf = settings.pfm(modno).cbf;
 
-% Checking the x0 parameter
-if ~isfield(model, 'x0')
-    model.x0 = model.bf.args;
-elseif ~isnumeric(model.x0) || size(model.x0(:),1)~=3
-    warning('ID:invalid_input','Initial parameters (''model.x0'') must be numeric with 3 elements.'); return
+% Checking the basis function
+if ~isfield(model, 'bf')
+    model.bf = settings.pfm(modno).cbf;
 else
-    model.x0 = model.x0(:);
+    if ~isfield(model.bf, 'fhandle')
+        warning('No basis function given.'); return;
+    elseif ischar(model.bf.fhandle)
+        [~, basefn,~] = fileparts(model.bf.fhandle);
+        model.bf.fhandle = str2func(basefn);
+        clear basefn
+    elseif ~isa(model.bf.fhandle, 'function_handle')
+        warning('Basis function must be a string or function handle.'); return;
+    end
+    if ~isfield(model.bf, 'args')
+        model.bf.args = [];
+    elseif ~isnumeric(model.bf.args)
+        warning('Basis function arguments must be numeric.');
+    end
 end
+model.bf.args = model.bf.args(:).';
+
+% Checking the input function
+if ~isfield(model, 'if')
+    model.if = settings.pfm(modno).cif;
+else    
+    if ~isfield(model.if, 'fhandle')
+        warning('No input function given.'); return;
+    elseif ischar(model.if.fhandle)
+        [~, basefn,~] = fileparts(model.if.fhandle);
+        model.if.fhandle = str2func(basefn);
+        clear basefn
+    elseif ~isa(model.bf.fhandle, 'function_handle')
+        warning('Basis function must be a string or function handle.'); return;
+    end
+    if ~isfield(model.if,'args') || isempty(model.if.args) || ~isnumeric(model.if.args)
+        warning('ID:invalid_input',['Arguments for the input',...
+                ' function must be a non-empty numeric array.']); return;
+    end
+    if ~isfield(model.if,'lb') || ~isnumeric(model.if.lb) ...
+            || any(size(model.if.lb)~=size(model.if.args))
+        warning('ID:invalid_input',['The lower bounds for the input function',...
+                ' must be a numeric array of the same size than ''model.if.arg''.']); return;
+    end
+    if ~isfield(model.if,'ub') || ~isnumeric(model.if.ub) ...
+            || any(size(model.if.ub)~=size(model.if.args))
+        warning('ID:invalid_input',['The upper bounds for the input function',...
+                ' must be a numeric array of the same size than ''model.if.arg''.']); return;
+    end
+    if any(model.if.lb > model.if.ub) || any(model.if.lb > model.if.args) ...
+            || any(model.if.args > model.if.ub)
+        warning('ID:invalid_input',['Input function''s parameters are inconsistent.',...
+                ' They must respect: model.if.lb <= model.if.arg <= model.if.ub.']); return;
+    end
+end
+model.if.args = model.if.args(:).';
+model.if.lb = model.if.lb(:).';
+model.if.ub = model.if.ub(:).';
 
 % Checking data channel
 chan_war_msg = ['Channel number must be a unique number,', ...
@@ -310,7 +369,7 @@ end
 fprintf('Computing Pupil Model: %s \n', model.modelfile);
 
 nExpCond = numel(model.timing{1}.names);     % number of experimental conditions
-nFile = numel(model.datafile);      % number of files
+nFile = numel(model.datafile);               % number of files
 
 % Loading data and sr
 fprintf('Getting data .');
@@ -359,17 +418,6 @@ if nFile > 1 && any(diff(sr) > 0)
     end
 else
     fprintf('\n');
-end
-
-% Loading basis functions    
-fprintf('Getting the basis function ...\n');
-if ~isfield(model.bf, 'fhandle')
-    warning('No basis function given.');
-elseif ischar(model.bf.fhandle)
-    [~, basefn,~] = fileparts(model.bf.fhandle);
-    model.bf.fhandle = str2func(basefn);
-elseif ~isa(model.bf.fhandle, 'function_handle')
-    warning('Basis function must be a string or function handle.');
 end
 
 %%%%%%%% Zscoring the data %%%%%%%%
@@ -496,7 +544,6 @@ for i=1:nExpCond
     
     n = model.window;
     td = n / length(Y);
-    model.bf.offset = 0.2;
     
     % Extending the size of the data vector in order to do the fitting,
     % because if size(Y)=[n 1], the convolution would produce a vector of
@@ -504,22 +551,26 @@ for i=1:nExpCond
     Y = [ Y ; zeros(size(Y,1)-1,size(Y,2))];
     
     % Creating an anonymous function
-    fun = @(x) norm(Y-conv(model.bf.fhandle([td;n;0;x]),model.bf.fhandle(td,n,model.bf.offset)).',2)^2;
+    fun = @(x) norm(Y-conv(model.if.fhandle([td,n,x]),model.bf.fhandle([td, n, model.bf.args])).',2)^2;
 
     % minimization
     warning off all
-    [fitted{1,i}.optarg, fitted{1,i}.fval, sts] = fminsearch(fun,model.x0,options); 
+    [~, fitted{1,i}.optargs, fitted{1,i}.fval, sts] = evalc('fmincon(fun,model.if.args,[],[],[],[],model.if.lb,model.if.ub)');
     warning on all
     if sts == 0 
-        warning('ID:fminsearch',['During the fitting process, ''fminsearch'' exceeded', ...
-                                 ' the number of iterations or the number of function evaluations.', ...
-                                 'Try to change the initial arguments to improve the fitting.'])
+        warning('ID:fmincon',['During the fitting process, ''fmincon'' exceeded', ...
+                              ' the number of iterations or the number of function evaluations.', ...
+                              ' Try to change the initial arguments and bounds to improve the fitting.'])
     elseif sts == -1
-        warning('ID:fminsearch',['During the fitting process, ''fminsearch''', ...
-                                 'was terminated by the basis function.']);
+        warning('ID:fmincon',['During the fitting process, ''fmincon''', ...
+                              ' was terminated by an output function or a plot.']);
+    elseif sts == -2
+        warning('ID:fmincon',['During the fitting process, ''fmincon''', ...
+                              ' haven''t found any feasible point.']);
+    
     end
     
-    fitted{1,i}.data = conv(model.bf.fhandle([td;n;0;fitted{1,i}.optarg]),model.bf.fhandle(td,n,model.bf.offset)).'; 
+    fitted{1,i}.data = conv(model.if.fhandle([td,n,fitted{1,i}.optargs]),model.bf.fhandle([td, n, model.bf.args])).'; 
     % Cutting away tail
     Y = mean{1,i}.data; 
     fitted{1,i}.data(size(Y,1)+1:end) = [];
@@ -535,6 +586,7 @@ pfm.input         = model;
 pfm.input.options = options;
 pfm.input.sr      = num2cell(oldsr(:).');
 pfm.bf            = model.bf;
+pfm.if            = model.if;
 
 % Collecting fitting data
 tmp_mean = [mean{1,:}];
@@ -559,7 +611,7 @@ tmp_fitted = [fitted{1,:}];
 pfm.fit.Y         = {tmp_fitted.data};
 pfm.fit.X         = {tmp_mean.t};
 pfm.fit.rss       = {tmp_fitted.fval};  % RSS (residual sum square)
-pfm.fit.args      = {tmp_fitted.optarg};
+pfm.fit.args      = {tmp_fitted.optargs};
 pfm.fit.sr        = num2cell(sr(:).');
 
 pfm.infos.duration     = model.window;
