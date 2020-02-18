@@ -101,4 +101,4 @@ x = [x1, x2];
 % apply gamma function
 % -------------------------------------------------------------------------
 gl = gammaln(a);
-bs(round(offset/td + 1):end) = A * exp(log(x2).*(a-1) - gl - (x2)./b - log(b)*a);
+bs(round(offset/td + 1):end) = A * exp(log(x2-offset).*(a-1) - gl - (x2-offset)./b - log(b)*a);
