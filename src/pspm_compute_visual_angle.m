@@ -123,16 +123,22 @@ for i=1:n_eyes
             gx_d = gx_d - width/2;
             gy_d = gy_d - height/2;
 
-            %compute visual angle for gaze_x and gaze_y
-            s_x = gx_d;                                     % x axis in cartesian coordinates
-            s_y = distance * ones(numel(gx_d),1);           % y axis in cartesian coordinates, actually the distance from participant to the screen
-            s_z = gy_d;                                     % z axis in spherical coordinates, actually the y axis of the screen
-            [azimuth, elevation, ~]= cart2sph(s_x,s_y,s_z); % convert cartesian to spherical coordinates in radians, azimuth = longitude, elevation = latitude
-
-            lat = rad2deg(elevation);   % convert radians into degrees
+            % compute visual angle for gaze_x and gaze_y data:
+            % 1) x axis in cartesian coordinates
+            s_x = gx_d;                                     
+            % 2) y axis in cartesian coordinates, actually the distance from participant to the screen
+            s_y = distance * ones(numel(gx_d),1);           
+            % 3) z axis in spherical coordinates, actually the y axis of the screen
+            s_z = gy_d;                                     
+            % 4) convert cartesian to spherical coordinates in radians, 
+            %    where azimuth = longitude, elevation = latitude
+            %    the center of spherical coordinates are the eyes of the subject
+            [azimuth, elevation, ~]= cart2sph(s_x,s_y,s_z); 
+            % 5) convert radians into degrees
+            lat = rad2deg(elevation);   
             lon = rad2deg(azimuth);
 
-            %compute visual angle for range 
+            % compute visual angle for the range (same procedure)
             r_x = [-width/2,width/2,0,0]';
             r_y = distance * ones(numel(r_x),1);
             r_z = [0,0,-height/2,height/2]';
@@ -145,16 +151,16 @@ for i=1:n_eyes
             visual_angl_chans{p}.data = lon;
             visual_angl_chans{p}.header.units = 'degree';
             visual_angl_chans{p}.header.range = [x_range_sp(1),x_range_sp(2)];
-%                 visual_angl_chans{p}.header.r = r;
-%                 visual_angl_chans{p}.header.r_range = r_range;
+            %      visual_angl_chans{p}.header.r = r;                % radial coordinates omitted
+            %      visual_angl_chans{p}.header.r_range = r_range;    % radial coordinates omitted
 
             % elevation angle of gaze points,
             % latitude (elevation angle from horizontal plane) of gaze points
             visual_angl_chans{p+1}.data = lat;
             visual_angl_chans{p+1}.header.units = 'degree';
             visual_angl_chans{p+1}.header.range = [y_range_sp(3),y_range_sp(4)];
-%                 visual_angl_chans{p+1}.header.r = r;
-%                 visual_angl_chans{p+1}.header.r_range = r_range;
+            %      visual_angl_chans{p+1}.header.r = r;              % radial coordinates omitted
+            %      visual_angl_chans{p+1}.header.r_range = r_range;  % radial coordinates omitted
 
             p=p+2;
         else
