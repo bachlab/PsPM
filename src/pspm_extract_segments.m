@@ -34,8 +34,9 @@ function [sts, out] = pspm_extract_segments(varargin)
     %                           data_fn and should have the same length. If
     %                           data_fn is a cell and chan is a single number,
     %                           the number will be taken for all files.
-    %       sr:                 Array of sampling rates (same dimension as data_raw)
-    %                           or one sample rate if all the data have the same one.
+    %       sr:                 Array of sampling rates of same dimension as 
+    %                           the cell array data_raw or one sample rate
+    %                           if all the data have the same one.
     %       timing:             Either a cell containing the timing settings or
     %                           a string pointing to the timing file.
     %       options:
@@ -258,11 +259,6 @@ function [sts, out] = pspm_extract_segments(varargin)
         options.overwrite = 0;
     end;
     
-    % dont_ask_overwrite
-    if ~isfield(options, 'dont_ask_overwrite')
-        options.dont_ask_overwrite = 0;
-    end;
-    
     %set default ouput_nan
     if ~isfield(options, 'nan_output')|| strcmpi(options.nan_output, 'none')
         options.nan_output = 'none';
@@ -284,8 +280,6 @@ function [sts, out] = pspm_extract_segments(varargin)
         warning('ID:invalid_input', 'options.outputfile has to be a string.'); return;
     elseif ~isnumeric(options.overwrite) && ~islogical(options.overwrite)
         warning('ID:invalid_input', 'Options.overwrite has to be numeric or logical.'); return;
-    elseif ~isnumeric(options.dont_ask_overwrite) && ~islogical(options.dont_ask_overwrite)
-        warning('ID:invalid_input', 'Options.dont_ask_overwrite has to be numeric or logical.'); return;
     elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 2 && ~isfield(options,'marker_chan')
         warning('ID:invalid_input','''markers'' specified as a timeunit but nothing was specified in ''options.marker_chan''')
     elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 2 && ~all(size(data_raw) == size(options.marker_chan)) 
@@ -712,7 +706,7 @@ function [sts, out] = pspm_extract_segments(varargin)
         if exist(outfile, 'file')
             if options.overwrite
                 write_ok = 1;
-            elseif ~options.dont_ask_overwrite
+            else
                 button = questdlg(sprintf('File (%s) already exists. Replace file?', ...
                     outfile), 'Replace file?', 'Yes', 'No', 'No');
                 
