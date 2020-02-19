@@ -20,13 +20,13 @@ function [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,u
 %       distance:           distance between eye and screen in length units.
 %       unit:               unit in which width, height and distance are given.
 %       options:            
-%         - channel_action: ['add'/'replace'] Defines whether the new channels
+%         .channel_action:  ['add'/'replace'] Defines whether the new channels
 %                           should be added or the previous outputs of this function
 %                           should be replaced.
 %                           Default: 'add'
-%         - eyes:           Define on which eye the operations
+%         .eyes:            Define on which eye the operations
 %                           should be performed. Possible values
-%                           are: 'l', 'r', 'lr'. 
+%                           are: 'l', 'r', 'lr', 'rl'. 
 %                           Default: 'lr'
 %                                  
 % RETURN VALUES sts
@@ -73,21 +73,21 @@ elseif ~isstruct(options)
     return;
 end;
 
-%set more defaults
-if ~isfield(options, 'eyes')
-    options.eyes = 'lr';
-elseif ~strcmpi(options.eyes,'l') && ~strcmpi(options.eyes,'r') ...
-    && ~strcmpi(options.eyes,'lr') && ~strcmpi(options.eyes,'rl')
-    warning('ID:invalid_input', '''options.eyes'' must be equal to ''l'', ''r'' or ''lr''.'); 
-    return;
-end
-
 % load data to evaluate
 [lsts, infos, data] = pspm_load_data(fn,chan);
 if lsts ~= 1
     warning('ID:invalid_input', 'Could not load input data correctly.');
     return;
 end;
+
+%set more defaults
+if ~isfield(options, 'eyes')
+    options.eyes = 'lr';
+elseif ~any(strcmpi(options.eyes, {'l', 'r', 'rl', 'lr'}))
+    warning('ID:invalid_input', ['''options.eyes'' must be ', ...
+                                 'equal to ''l'', ''r'', ''rl'' or ''lr''.']); 
+    return;
+end
 
 %iterate through eyes
 n_eyes = numel(infos.source.eyesObserved);
@@ -170,10 +170,17 @@ for i=1:n_eyes
 
             p=p+2;
         else
-            fprintf('%s eye does not contain gaze_x and gaze_y data.\n',eye);
-            warning('ID:invalid_input','Not enough data to compute visual angle for that eye.');
+            fails{i} = sprintf('There are no channels gaze_x and gaze_y for eyes ''%s''.',eye);
         end;
     end;
+end;
+
+if p==1
+    for i = 1:numel(fails)
+        disp(fails{i})
+    end
+    warning('ID:invalid_input','Not enough data to compute visual angle.');
+    return;
 end;
 
 [lsts, outinfo] = pspm_write_channel(fn, visual_angl_chans, options.channel_action);

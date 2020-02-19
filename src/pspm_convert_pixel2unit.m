@@ -113,7 +113,10 @@ gaze_idx = cellfun(@(x) ~isempty(...
 
 gaze_chans = data(gaze_idx);
 n_chans = numel(gaze_chans);
-
+if n_chans == 0
+    warning('ID:invalid_input','No gaze channels found, nothing to do.')
+    return;
+end
 
 %diffenrentiate which units to which unit to convert
 if strcmpi(unit,'degree')
