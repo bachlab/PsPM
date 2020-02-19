@@ -985,7 +985,7 @@ defaults.dcm{2} = ...
 % Further modalities and models can be implemented.
 % -------------------------------------------------------------------------
 defaults.pfm(1) = struct( ...
-    'modality', 'dilatation', ...                                                       % modality name
+    'modality', 'dilation', ...                                                       % modality name
     'cbf', struct('fhandle', @pspm_bf_ldrf_gm, 'args', [0.2, 2.40 , 0.29 , 0.77]), ...  % basis function & default parameters
     'cif', struct('fhandle', @pspm_bf_ldrf_gm, 'args', [0, 2.76 , 0.09 , 0.31], ...     % input function & default parameters
                   'lb', [0,0,0,0], 'ub', [0,Inf,Inf,Inf]), ...                          % & the lower/upper bounds

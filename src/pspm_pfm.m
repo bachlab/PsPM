@@ -30,9 +30,9 @@ function output = pspm_pfm(model, options)
 %                        window should be specified in 'seconds'.
 %
 % - OPTIONAL FIELDS:
-%    model.modality:     a char equal to 'constriction' or 'dilatation'
+%    model.modality:     a char equal to 'constriction' or 'dilation'
 %                        corresponding to the fitted model.
-%                        DEFAULT: 'dilatation'
+%                        DEFAULT: 'dilation'
 %    model.bf:           basis function/basis set with required subfields: 
 %                           .fhandle : function handle or string
 %                           .args    : arguments; the first two arguments
