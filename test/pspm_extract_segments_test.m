@@ -181,7 +181,8 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
              this.verifyWarning(@() pspm_extract_segments('manual',fn,0), 'ID:invalid_input');
              
              % wrong input elements
-             this.verifyWarning(@() pspm_extract_segments('manual',[0.1,2],0,timing), 'ID:invalid_input');
+             this.verifyWarning(@() pspm_extract_segments('manual',struct('a',10),0,timing), 'ID:invalid_input');
+             this.verifyWarning(@() pspm_extract_segments('manual',[1,3],logical(32),timing), 'ID:invalid_input');
              this.verifyWarning(@() pspm_extract_segments('manual',fn,'a',timing), 'ID:invalid_input');
              this.verifyWarning(@() pspm_extract_segments('manual',fn,{'a'},timing), 'ID:invalid_input');
              
