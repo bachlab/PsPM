@@ -13586,8 +13586,8 @@ Here, we analyze SCR data using a general linear model (GLM).
  downloaded from 
 \begin_inset CommandInset href
 LatexCommand href
-name "https://sourceforge.net/projects/pspm/files/Tutorial_dataset_GLM.zip/download"
-target "https://sourceforge.net/projects/pspm/files/Tutorial_dataset_GLM.zip/download"
+name "https://bachlab.github.io/PsPM/software/"
+target "https://bachlab.github.io/PsPM/software/"
 literal "false"
 
 \end_inset
@@ -14664,8 +14664,8 @@ The example data set comprises SCR data from 20 participants, with 40 trials
  each, which can be downloaded from 
 \begin_inset CommandInset href
 LatexCommand href
-name "pspm.sourceforge.net"
-target "http://pspm.sourceforge.net"
+name "https://bachlab.github.io/PsPM/software/"
+target "https://bachlab.github.io/PsPM/software/"
 literal "false"
 
 \end_inset
