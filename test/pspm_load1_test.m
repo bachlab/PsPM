@@ -41,38 +41,40 @@ classdef pspm_load1_test < matlab.unittest.TestCase
             model.timeunits = 'seconds';
             
             for i=1:length(settings.first)
-                mbn = ['model_', settings.first{i}];
-                
-                fn_ok = false;
-                j = 0;
-                while fn_ok == false
-                    mfn = [mbn, num2str(j), '.mat'];
-                    if exist(mfn, 'file') == false, fn_ok = true; end
-                    j = j+1;
-                end
-                j = j-1;
-                dfn = ['dummy_',settings.first{i}, num2str(j), '.mat'];
-            
-                switch settings.first{i}
+                if ~strcmpi(settings.first{i},'pfm')
+                    mbn = ['model_', settings.first{i}];
                     
-                    case 'glm'
-                        model.timing{1}.names = {'a';'b';'c'};
-                        model.timing{1}.onsets = {[10, 20, 30], ...
-                            [15, 25, 35], [18, 28, 38]};                      
-                    otherwise 
-                        model.timing{1} = [10,20; 23,38; 40,70;];
-                                                
-                        model.condition{1}.name = {'a';'b'};
-                        model.condition{1}.index = [1;2];
-                end
+                    fn_ok = false;
+                    j = 0;
+                    while fn_ok == false
+                        mfn = [mbn, num2str(j), '.mat'];
+                        if exist(mfn, 'file') == false, fn_ok = true; end
+                        j = j+1;
+                    end
+                    j = j-1;
+                    dfn = ['dummy_',settings.first{i}, num2str(j), '.mat'];
                 
-                model.modelfile = mfn;
-                this.modelfiles{i} = mfn;
-                this.dummyfiles{i} = dfn;
+                    switch settings.first{i}
+                        
+                        case 'glm'
+                            model.timing{1}.names = {'a';'b';'c'};
+                            model.timing{1}.onsets = {[10, 20, 30], ...
+                                [15, 25, 35], [18, 28, 38]};                      
+                        otherwise 
+                            model.timing{1} = [10,20; 23,38; 40,70;];
+                                                    
+                            model.condition{1}.name = {'a';'b'};
+                            model.condition{1}.index = [1;2];
+                    end
+                    
+                    model.modelfile = mfn;
+                    this.modelfiles{i} = mfn;
+                    this.dummyfiles{i} = dfn;
 
-                fh = str2func(['pspm_', settings.first{i}]);
-                fh(model);
-                copyfile(this.modelfiles{i}, this.dummyfiles{i});
+                    fh = str2func(['pspm_', settings.first{i}]);
+                    fh(model);
+                    copyfile(this.modelfiles{i}, this.dummyfiles{i});
+                end
             end
         end
     end
