@@ -7,26 +7,28 @@ function [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,u
 % FORMAT:
 %        [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,unit,options)
 %
-% ARGUMENTS:    fn:             The actual data file containing the eyelink
-%                               recording with gaze data
-%               chan:           On which subset of channels should the conversion
-%                               be done. Supports all values which can be passed
-%                               to pspm_load_data(). The will only work on
-%                               gaze-channels. Other channels specified will be
-%                               ignored.
-%               width:          Width of the display window. Unit is 'unit'.
-%               height:         Height of the display window. Unit is 'unit'.
-%               distance:       distance between eye and screen in length units.
-%               unit:           unit in which width, height and distance are given.
-%               options:        Options struct
-%               channel_action:  ['add'/'replace'] Defines whether the new channels
-%                                should be added or the previous outputs of this function
-%                                should be replaced.
-%                                (Default: 'add')
-%                  eyes:           Define on which eye the operations
-%                                  should be performed. Possible values
-%                                  are: 'left', 'right', 'all'. Default is
-%                                  'all'.
+% ARGUMENTS:
+%       fn:                 The actual data file containing the eyelink
+%                           recording with gaze data
+%       chan:               On which subset of channels should the conversion
+%                           be done. Supports all values which can be passed
+%                           to pspm_load_data(). The will only work on
+%                           gaze-channels. Other channels specified will be
+%                           ignored.
+%       width:              Width of the display window. Unit is 'unit'.
+%       height:             Height of the display window. Unit is 'unit'.
+%       distance:           distance between eye and screen in length units.
+%       unit:               unit in which width, height and distance are given.
+%       options:            
+%         - channel_action: ['add'/'replace'] Defines whether the new channels
+%                           should be added or the previous outputs of this function
+%                           should be replaced.
+%                           Default: 'add'
+%         - eyes:           Define on which eye the operations
+%                           should be performed. Possible values
+%                           are: 'l', 'r', 'lr'. 
+%                           Default: 'lr'
+%                                  
 % RETURN VALUES sts
 %               sts:            Status determining whether the execution was
 %                               successfull (sts == 1) or not (sts == -1)
@@ -73,7 +75,11 @@ end;
 
 %set more defaults
 if ~isfield(options, 'eyes')
-    options.eyes = 'all';
+    options.eyes = 'lr';
+elseif ~strcmpi(options.eyes,'l') && ~strcmpi(options.eyes,'r') ...
+    && ~strcmpi(options.eyes,'lr') && ~strcmpi(options.eyes,'rl')
+    warning('ID:invalid_input', '''options.eyes'' must be equal to ''l'', ''r'' or ''lr''.'); 
+    return;
 end
 
 % load data to evaluate
@@ -88,7 +94,7 @@ n_eyes = numel(infos.source.eyesObserved);
 p=1;
 for i=1:n_eyes
     eye = lower(infos.source.eyesObserved(i));
-    if strcmpi(options.eyes, 'all') || strcmpi(options.eyes(1), eye)
+    if contains(options.eyes, eye)
         gaze_x = ['gaze_x_', eye];
         gaze_y = ['gaze_y_', eye];
             
