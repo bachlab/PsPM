@@ -17,20 +17,21 @@ function output = pspm_pfm(model, options)
 %    model.timing:       a multiple condition file name (single session) OR
 %                        a cell array of multiple condition file names OR
 %                        a struct (single session) with fields .names, .onsets,
-%                            and (optional) .durations and .pmod  OR
+%                             and (optional) .durations OR
 %                        a cell array of struct OR
 %                        a struct with fields 'markerinfos', 'markervalues',
 %                            'names' OR
 %                        a cell array of struct
-%    model.timeunits:     a char equal to 'seconds', 'samples' or 'markers'
-%    model.window:       a scalar in 'timeunit' that specifies over which time 
-%                        window (starting with the events specified in
-%                        model.timing) the model should be evaluated. 
+%    model.timeunits:    a char array equal to 'seconds', 'samples' or 'markers'
+%    model.window:       a scalar in model.timeunits as unit that specifies  
+%                        over which time window (starting with the events 
+%                        specified in model.timing) the model should 
+%                        be evaluated. 
 %                        For model.timeunits == 'markers', the unit of the
 %                        window should be specified in 'seconds'.
 %
 % - OPTIONAL FIELDS:
-%    model.modality:     a char equal to 'constriction' or 'dilation'
+%    model.modality:     a char array equal to 'constriction' or 'dilation'
 %                        corresponding to the fitted model.
 %                        DEFAULT: 'dilation'
 %    model.bf:           basis function/basis set with required subfields: 
@@ -90,35 +91,28 @@ function output = pspm_pfm(model, options)
 %                              DEFAULT: 0                           
 %
 % TIMING - multiple condition file(s) or struct variable(s):
-% The structure is equivalent to SPM2/5/8/12 (www.fil.ion.ucl.ac.uk/spm),
-% such that SPM files can be used.
-% The file contains the following variables:
-% - names: a cell array of string for the names of the experimental
-%   conditions
-% - onsets: a cell array of number vectors for the onsets of events for
-%   each experimental condition, expressed in seconds, marker numbers, or
-%   samples, as specified in timeunits
-% - durations (optional, default 0): a cell array of vectors for the
-%   duration of each event. You need to use 'seconds' or 'samples' as time
-%   units
-% - pmod: this is used to specify regressors that specify how responses in
-%   an experimental condition depend on a parameter to model the effect
-%   e.g. of habituation, reaction times, or stimulus ratings.
-%   pmod is a struct array corresponding to names and onsets and containing
-%   the fields
-%   - name: cell array of names for each parametric modulator for this
-%       condition
-%   - param: cell array of vectors for each parameter for this condition,
-%       containing as many numbers as there are onsets
-%   - poly (optional, default 1): specifies the polynomial degree
-%
-% e.g. produce a simple multiple condition file by typing
-%  names = {'condition a', 'condition b'};
-%  onsets = {[1 2 3], [4 5 6]};
-%  save('testfilcircle_degreee', 'names', 'onsets');
-%
+%    The structure is equivalent to SPM2/5/8/12 (www.fil.ion.ucl.ac.uk/spm),
+%    such that SPM files can be used.
+%    The file contains the following variables:
+%    - names: a cell array of string for the names of the experimental
+%      conditions
+%    - onsets: a cell array of number vectors for the onsets of events for
+%      each experimental condition, expressed in seconds, marker numbers, or
+%      samples, as specified in timeunits
+%    - durations (optional, default 0): a cell array of vectors for the
+%      duration of each event. You need to use 'seconds' or 'samples' as time
+%      units
+%    e.g. produce a simple multiple condition file by typing
+%      names = {'condition a', 'condition b'};
+%      onsets = {[1 2 3], [4 5 6]};
+%      save('testfilcircle_degreee', 'names', 'onsets');
 %
 % RETURNS a structure 'pfm' which is also written to file
+%
+% REFERENCE
+% J Vis. 2016;16(3):28. doi: 10.1167/16.3.28.
+% A solid frame for the window on cognition: Modeling event-related pupil responses.
+% Korn CW, Bach DR.
 %________________________________________________________________________
 % PsPM 4.2
 % (C) 2020 Ivan Rojkov (University of Zurich)
