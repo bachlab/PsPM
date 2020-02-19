@@ -340,7 +340,7 @@ clear std_cond_war_msg tmp_ind
 %Checking norm
 if ~isfield(model, 'norm')
     model.norm = 0;
-elseif ~ismember(model.zscore, [0, 1])
+elseif ~ismember(model.norm, [0, 1])
     warning('ID:invalid_input', '''model.zscore'' has to be 0 or 1.'); return;
 end
 
@@ -362,12 +362,12 @@ end
 
 fprintf('Computing Pupil Model: %s \n', model.modelfile);
 
-nExpCond = numel(model.timing{1}.names);     % number of experimental conditions
-nFile = numel(model.datafile);               % number of files
+n_exp_cond = numel(model.timing{1}.names);      % number of experimental conditions
+n_file = numel(model.datafile);                 % number of files
 
 % Loading data and sr
 fprintf('Getting data .');
-for iFile = 1:nFile
+for iFile = 1:n_file
     if iscell(model.channel)
         [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel{iFile});
     else 
@@ -401,7 +401,7 @@ end
 oldsr = sr;
 
 % Checking if the sampling rate is the same for all samples.
-if nFile > 1 && any(diff(sr) > 0)
+if n_file > 1 && any(diff(sr) > 0)
     if ~model.filter.applied_filt || ...                                    % if no filter where specified
        (isnumeric(model.filter.down) && model.filter.down > min(sr)) ||...  % if filter.down is less than the minimal sr
        strcmpi(model.filter.down,'none')                                    % if filter.down is none
@@ -417,8 +417,8 @@ end
 %%%%%%%% Zscoring the data %%%%%%%%
 if model.zscore
     fprintf('Zscoring ...\n')
-    nFile = numel(model.datafile);
-    for iFile = 1:nFile
+    n_file = numel(model.datafile);
+    for iFile = 1:n_file
       % NANZSCORE found in src/VBA/stats&plots
       [y{iFile},~,~] = nanzscore(y{iFile});
     end
@@ -432,7 +432,7 @@ extrsgopt.timeunit = model.timeunits;
 extrsgopt.length = model.window;       % segments of 'model.window' time unit long
 extrsgopt.plot = 0;                    % do not plot mean value and std 
 
-for k=1:nFile
+for k=1:n_file
    if strcmpi(model.timeunits, 'markers')
        extrsgopt.marker_chan = markers(k);
    end
@@ -440,12 +440,12 @@ for k=1:nFile
    [lsts, s] = pspm_extract_segments('manual', y(k), sr(k), model.timing(k), extrsgopt);
    if lsts<1, warning('ID:error_extract_segments','An error occured in pspm_extract_segments.'); return; end
    
-   for i=1:nExpCond
+   for i=1:n_exp_cond
         tmp_data.mean = s.segments{i,1}.mean;
         tmp_data.std = s.segments{i,1}.std;
         tmp_data.sem = s.segments{i,1}.sem;
         tmp_data.t = s.segments{i,1}.t;
-        % a cell array of struct and of size (nFile x nExpCond) where each 
+        % a cell array of struct and of size (n_file x n_exp_cond) where each 
         % line correspond to a given file and each column to an 
         % experimental condition
         segm{k,i} = tmp_data;
@@ -459,8 +459,8 @@ clear extrsg tmp_data s lsts
 % if a filter was specified or if the data differ in sr
 if model.filter.applied_filt
     fprintf('Filtering ...\n')
-    for i = 1:nExpCond
-        for k = 1:nFile
+    for i = 1:n_exp_cond
+        for k = 1:n_file
             
             model.filter.sr = sr(k);
             
@@ -498,7 +498,7 @@ if exist('std_exp_cond','var')
     std_exp_cond.sem = nanmean([tmp_data.sem],2);
 end
 
-for i=1:nExpCond
+for i=1:n_exp_cond
     
     tmp_data = [segm{:,i}];
     
@@ -533,7 +533,7 @@ end
 %%%%%%%% Fitting the model %%%%%%%%
 fprintf('Fitting ...\n')
 
-for i=1:nExpCond    
+for i=1:n_exp_cond    
     Y = mean{1,i}.data; 
     
     n = model.window;
