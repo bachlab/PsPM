@@ -1,7 +1,9 @@
 function [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,unit,options)
 % pspm_compute_visual_angle computes from gaze data the corresponding
-% visual angle (for each data point)
-
+% visual angle (for each data point). The convention used here is that the
+% origin of coordinate system for gaze data is at the bottom left corner of
+% the screen.
+% 
 % FORMAT:
 %        [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,unit,options)
 %
@@ -122,19 +124,19 @@ for i=1:n_eyes
             gy_d = gy_d - height/2;
 
             %compute visual angle for gaze_x and gaze_y
-            s_x = gx_d; % x axis in spherical coordinates
-            s_y = distance * ones(numel(gx_d),1);% y axis in spherical coordinates, actually is the radial from participant to the screen
-            s_z = gy_d;  % z axis in spherical coordinates, actually is y axis on the screen
-            [azimuth, elevation, r]= cart2sph(s_x,s_y,s_z);% convert cartesian to spherical coordinates in radians, azimuth = longitude, elevation = latitude
+            s_x = gx_d;                                     % x axis in cartesian coordinates
+            s_y = distance * ones(numel(gx_d),1);           % y axis in cartesian coordinates, actually the distance from participant to the screen
+            s_z = gy_d;                                     % z axis in spherical coordinates, actually the y axis of the screen
+            [azimuth, elevation, ~]= cart2sph(s_x,s_y,s_z); % convert cartesian to spherical coordinates in radians, azimuth = longitude, elevation = latitude
 
-            lat = rad2deg(elevation);% convert radians into degrees
+            lat = rad2deg(elevation);   % convert radians into degrees
             lon = rad2deg(azimuth);
 
             %compute visual angle for range 
             r_x = [-width/2,width/2,0,0]';
             r_y = distance * ones(numel(r_x),1);
             r_z = [0,0,-height/2,height/2]';
-            [x_range_sp, y_range_sp,r_range]= cart2sph(r_x,r_y,r_z);
+            [x_range_sp, y_range_sp,~]= cart2sph(r_x,r_y,r_z);
             x_range_sp = rad2deg(x_range_sp);
             y_range_sp = rad2deg(y_range_sp);
 
