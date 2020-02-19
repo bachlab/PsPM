@@ -161,8 +161,8 @@ end
 
 if strcmpi(unit,'degree')
     options.channel_action = 'replace';
-    [~, lsts, outinfo] = evalc(['pspm_compute_visual_angle(fn,outinfo.channel,'...
-                               'width, height, distance,unit_h_w_d,options)']);
+    [lsts, outinfo] = pspm_compute_visual_angle(fn,outinfo.channel, ...
+                            width, height, distance,unit_h_w_d,options);
     if lsts < 1 
         warning('ID:compute_visual_angle_err',...
                 'An error occured during the computation of the visual angle.'); 
