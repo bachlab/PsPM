@@ -534,22 +534,26 @@ end
 fprintf('Fitting ...\n')
 
 for i=1:n_exp_cond    
-    Y = mean{1,i}.data; 
+    raw_y = mean{1,i}.data; 
     
     n = model.window;
-    td = n / length(Y);
+    td = n / length(raw_y);
     
     % Extending the size of the data vector in order to do the fitting,
-    % because if size(Y)=[n 1], the convolution would produce a vector of
-    % size [2*n-1 1] so we have to adjust Y accordingly. 
-    Y = [ Y ; zeros(size(Y,1)-1,size(Y,2))];
+    % because if size(raw_y)=[n 1], the convolution would produce a vector of
+    % size [2*n-1 1] so we have to extend the size of the data vector. 
+    conv_y = [ raw_y ; zeros(size(raw_y,1)-1,size(raw_y,2))];
     
-    % Creating an anonymous function
-    fun = @(x) norm(Y-conv(model.if.fhandle([td,n,x]),model.bf.fhandle([td, n, model.bf.args])).',2)^2;
+    % Predicted signal (LTI model)
+    predicted_y = @(x) conv(model.if.fhandle([td,n,x]),model.bf.fhandle([td, n, model.bf.args])).';
 
-    % minimization
+    % Residual Sum Square (RSS) calculation (basically error btw conv_y and predicted_y)
+    RSS = @(x) norm(conv_y - predicted_y(x), 2)^2;
+
+    % Minimization of RSS 
     warning off all
-    [~, fitted{1,i}.optargs, fitted{1,i}.fval, sts] = evalc('fmincon(fun,model.if.args,[],[],[],[],model.if.lb,model.if.ub)');
+    [~, fitted{1,i}.optargs, fitted{1,i}.fval, sts, fmincon_output] = ...
+            evalc('fmincon(RSS,model.if.args,[],[],[],[],model.if.lb,model.if.ub)');
     warning on all
     if sts == 0 
         warning('ID:fmincon',['During the fitting process, ''fmincon'' exceeded', ...
@@ -558,16 +562,20 @@ for i=1:n_exp_cond
     elseif sts == -1
         warning('ID:fmincon',['During the fitting process, ''fmincon''', ...
                               ' was terminated by an output function or a plot.']);
+        fprintf('Here is the output of fmincon:\n');
+        disp(fmincon_output);
     elseif sts == -2
         warning('ID:fmincon',['During the fitting process, ''fmincon''', ...
                               ' haven''t found any feasible point.']);
-    
+        fprintf('Here is the output of fmincon:\n');
+        disp(fmincon_output);
     end
     
-    fitted{1,i}.data = conv(model.if.fhandle([td,n,fitted{1,i}.optargs]),model.bf.fhandle([td, n, model.bf.args])).'; 
+    % Calculating the predicted signal that will be included in the output structure
+    fitted{1,i}.data = predicted_y(fitted{1,i}.optargs); 
     % Cutting away tail
-    Y = mean{1,i}.data; 
-    fitted{1,i}.data(size(Y,1)+1:end) = [];
+    tmp_y = mean{1,i}.data; 
+    fitted{1,i}.data(size(tmp_y,1)+1:end) = [];
     
 end
 
