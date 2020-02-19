@@ -34,8 +34,9 @@ function [sts, out] = pspm_extract_segments(varargin)
     %                           data_fn and should have the same length. If
     %                           data_fn is a cell and chan is a single number,
     %                           the number will be taken for all files.
-    %       sr:                 Array of sampling rates (same dimension as data_raw)
-    %                           or one sample rate if all the data have the same one.
+    %       sr:                 Array of sampling rates of same dimension as 
+    %                           the cell array data_raw or one sample rate
+    %                           if all the data have the same one.
     %       timing:             Either a cell containing the timing settings or
     %                           a string pointing to the timing file.
     %       options:
@@ -65,7 +66,11 @@ function [sts, out] = pspm_extract_segments(varargin)
     %                           as data_fn.
     %                           If timeunit is 'markers' and raw data are
     %                           given then this parameter should be an
+<<<<<<< HEAD
     %                           numeric array of marker data.
+=======
+    %                           cell array of numeric array of marker data.
+>>>>>>> d278181... Merge pull request #83 from bachlab/issue/extract_segm
     %           nan_output:     This option defines whether the user wants to
     %                           output the NaN ratios of the trials for each condition.
     %                           If so,  we values can be printed on the screen
@@ -258,11 +263,14 @@ function [sts, out] = pspm_extract_segments(varargin)
         options.overwrite = 0;
     end;
     
+<<<<<<< HEAD
     % dont_ask_overwrite
     if ~isfield(options, 'dont_ask_overwrite')
         options.dont_ask_overwrite = 0;
     end;
     
+=======
+>>>>>>> d278181... Merge pull request #83 from bachlab/issue/extract_segm
     %set default ouput_nan
     if ~isfield(options, 'nan_output')|| strcmpi(options.nan_output, 'none')
         options.nan_output = 'none';
@@ -284,8 +292,11 @@ function [sts, out] = pspm_extract_segments(varargin)
         warning('ID:invalid_input', 'options.outputfile has to be a string.'); return;
     elseif ~isnumeric(options.overwrite) && ~islogical(options.overwrite)
         warning('ID:invalid_input', 'Options.overwrite has to be numeric or logical.'); return;
+<<<<<<< HEAD
     elseif ~isnumeric(options.dont_ask_overwrite) && ~islogical(options.dont_ask_overwrite)
         warning('ID:invalid_input', 'Options.dont_ask_overwrite has to be numeric or logical.'); return;
+=======
+>>>>>>> d278181... Merge pull request #83 from bachlab/issue/extract_segm
     elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 2 && ~isfield(options,'marker_chan')
         warning('ID:invalid_input','''markers'' specified as a timeunit but nothing was specified in ''options.marker_chan''')
     elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 2 && ~all(size(data_raw) == size(options.marker_chan)) 
@@ -616,6 +627,7 @@ function [sts, out] = pspm_extract_segments(varargin)
         segments{c}.name = comb_names{c};
         % create mean
         segments{c}.mean = nanmean(m,2);
+<<<<<<< HEAD
         
         segments{c}.std = nanstd(m,0,2);
         segments{c}.sem = segments{c}.std./sqrt(n_onsets_in_cond{c});
@@ -624,6 +636,16 @@ function [sts, out] = pspm_extract_segments(varargin)
         %   segments{c}.total_nan_percent = mean(segments{c}.trial_nan_percent);
         
         
+=======
+        
+        segments{c}.std = nanstd(m,0,2);
+        segments{c}.sem = segments{c}.std./sqrt(n_onsets_in_cond{c});
+        segments{c}.trial_nan_percent = sum(isnan(m))/size(m,1);
+        segments{c}.total_nan_percent = sum(sum(isnan(m)))/numel(m);
+        %   segments{c}.total_nan_percent = mean(segments{c}.trial_nan_percent);
+        
+        
+>>>>>>> d278181... Merge pull request #83 from bachlab/issue/extract_segm
         sr = sampling_rates(1);  % TODO: assuming sampling rates in all sessions are equal?
         segments{c}.t = linspace(sr^-1, numel(segments{c}.mean)/sr, numel(segments{c}.mean))';
         %% create plot per condition
@@ -712,7 +734,11 @@ function [sts, out] = pspm_extract_segments(varargin)
         if exist(outfile, 'file')
             if options.overwrite
                 write_ok = 1;
+<<<<<<< HEAD
             elseif ~options.dont_ask_overwrite
+=======
+            else
+>>>>>>> d278181... Merge pull request #83 from bachlab/issue/extract_segm
                 button = questdlg(sprintf('File (%s) already exists. Replace file?', ...
                     outfile), 'Replace file?', 'Yes', 'No', 'No');
                 
