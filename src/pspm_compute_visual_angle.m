@@ -1,31 +1,34 @@
-
 function [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,unit,options)
 % pspm_compute_visual_angle computes from gaze data the corresponding
-% visual angle (for each data point)
-
+% visual angle (for each data point). The convention used here is that the
+% origin of coordinate system for gaze data is at the bottom left corner of
+% the screen.
+% 
 % FORMAT:
 %        [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,unit,options)
 %
-% ARGUMENTS:    fn:             The actual data file containing the eyelink
-%                               recording with gaze data
-%               chan:           On which subset of channels should the conversion
-%                               be done. Supports all values which can be passed
-%                               to pspm_load_data(). The will only work on
-%                               gaze-channels. Other channels specified will be
-%                               ignored.
-%               width:          Width of the display window. Unit is 'unit'.
-%               height:         Height of the display window. Unit is 'unit'.
-%               distance:       distance between eye and screen in length units.
-%               unit:           unit in which width, height and distance are given.
-%               options:        Options struct
-%               channel_action:  ['add'/'replace'] Defines whether the new channels
-%                                should be added or the previous outputs of this function
-%                                should be replaced.
-%                                (Default: 'add')
-%                  eyes:           Define on which eye the operations
-%                                  should be performed. Possible values
-%                                  are: 'left', 'right', 'all'. Default is
-%                                  'all'.
+% ARGUMENTS:
+%       fn:                 The actual data file containing the eyelink
+%                           recording with gaze data
+%       chan:               On which subset of channels should the conversion
+%                           be done. Supports all values which can be passed
+%                           to pspm_load_data(). The will only work on
+%                           gaze-channels. Other channels specified will be
+%                           ignored.
+%       width:              Width of the display window. Unit is 'unit'.
+%       height:             Height of the display window. Unit is 'unit'.
+%       distance:           distance between eye and screen in length units.
+%       unit:               unit in which width, height and distance are given.
+%       options:            
+%         .channel_action:  ['add'/'replace'] Defines whether the new channels
+%                           should be added or the previous outputs of this function
+%                           should be replaced.
+%                           Default: 'add'
+%         .eyes:            Define on which eye the operations
+%                           should be performed. Possible values
+%                           are: 'l', 'r', 'lr', 'rl'. 
+%                           Default: 'lr'
+%                                  
 % RETURN VALUES sts
 %               sts:            Status determining whether the execution was
 %                               successfull (sts == 1) or not (sts == -1)
@@ -70,14 +73,6 @@ elseif ~isstruct(options)
     return;
 end;
 
-%set more defaults
-if ~isfield(options, 'eyes')
-    options.eyes = 'all';
-end
-if ~isfield(options, 'channels')
-    options.channels = {'pupil'};
-end
-
 % load data to evaluate
 [lsts, infos, data] = pspm_load_data(fn,chan);
 if lsts ~= 1
@@ -85,102 +80,107 @@ if lsts ~= 1
     return;
 end;
 
+%set more defaults
+if ~isfield(options, 'eyes')
+    options.eyes = 'lr';
+elseif ~any(strcmpi(options.eyes, {'l', 'r', 'rl', 'lr'}))
+    warning('ID:invalid_input', ['''options.eyes'' must be ', ...
+                                 'equal to ''l'', ''r'', ''rl'' or ''lr''.']); 
+    return;
+end
+
 %iterate through eyes
 n_eyes = numel(infos.source.eyesObserved);
 p=1;
 for i=1:n_eyes
     eye = lower(infos.source.eyesObserved(i));
-    if strcmpi(options.eyes, 'all') || strcmpi(options.eyes(1), eye)
+    if contains(options.eyes, eye)
         gaze_x = ['gaze_x_', eye];
         gaze_y = ['gaze_y_', eye];
-        
-        % find chars to replace
-        str_chans = cellfun(@ischar, options.channels);
-        channels = options.channels;
-        channels(str_chans) = regexprep(channels(str_chans), ...
-            '(pupil|gaze_x|gaze_y|pupil_missing)', ['$0_' eye]);
-        % replace strings with numbers
-        str_chan_num = channels(str_chans);
-        for j=1:numel(str_chan_num)
-            str_chan_num(j) = {find(cellfun(@(y) strcmpi(str_chan_num(j),...
-                y.header.chantype), data),1)};
-        end
-        channels(str_chans) = str_chan_num;
-        work_chans = cell2mat(channels);
-        
-        if numel(work_chans) >= 1
             
-            % always use first found channel
+        % always use first found channel
+
+        gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
+            strcmpi('mm', x.header.units), data),1);
+        gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
+            strcmpi('mm', x.header.units), data),1);
             
-            gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
-                strcmpi('mm', x.header.units), data),1);
-            gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
-                strcmpi('mm', x.header.units), data),1);
+        if ~isempty(gx) && ~isempty(gy)
+
+            visual_angl_chans{p} = data{gx};
+            visual_angl_chans{p+1} = data{gy};
+
+            % get channel specific data
+            gx_d = data{gx}.data;
+            gy_d = data{gy}.data;
             
-            if ~isempty(gx) && ~isempty(gy)
-                
-                visual_angl_chans{p} = data{gx};
-                visual_angl_chans{p+1} = data{gy};
-                
-                % get channel specific data
-                gx_d = data{gx}.data;
-                gy_d = data{gy}.data;
-                gy_d = data{gy}.header.range(2)-gy_d;
-                
-                N = numel(gx_d);
-                if N~=numel(gy_d)
-                    warning('ID:invalid_input', 'length of data in gaze_x and gaze_y is not the same');
-                    return;
-                end;
-                
-                % move (0,0) into center of the screen
-                gx_d = gx_d - width/2;
-                gy_d = gy_d - height/2;
-                
-                %compute visual angle for gaze_x and gaze_y
-                s_x = gx_d; % x axis in spherical coordinates
-                s_y = distance * ones(numel(gx_d),1);% y axis in spherical coordinates, actually is the radial from participant to the screen
-                s_z = gy_d;  % z axis in spherical coordinates, actually is y axis on the screen
-                [azimuth, elevation, r]= cart2sph(s_x,s_y,s_z);% convert cartesian to spherical coordinates in radians, azimuth = longitude, elevation = latitude
-                
-                lat = rad2deg(elevation);% convert radians into degrees
-                lon = rad2deg(azimuth);
-                
-                %compute visual angle for range 
-                r_x = [-width/2,width/2,0,0]';
-                r_y = distance * ones(numel(r_x),1);
-                r_z = [0,0,-height/2,height/2]';
-                [x_range_sp, y_range_sp,r_range]= cart2sph(r_x,r_y,r_z);
-                x_range_sp = rad2deg(x_range_sp);
-                y_range_sp = rad2deg(y_range_sp);
-                
-                % azimuth angle of gaze points
-                % longitude (azimuth angle from positive x axis in horizontal plane) of gaze points
-                visual_angl_chans{p}.data = lon;
-                visual_angl_chans{p}.header.units = 'degree';
-                visual_angl_chans{p}.header.range = [x_range_sp(1),x_range_sp(2)];
-%                 visual_angl_chans{p}.header.r = r;
-%                 visual_angl_chans{p}.header.r_range = r_range;
-                
-                % elevation angle of gaze points,
-                % latitude (elevation angle from horizontal plane) of gaze points
-                visual_angl_chans{p+1}.data = lat;
-                visual_angl_chans{p+1}.header.units = 'degree';
-                visual_angl_chans{p+1}.header.range = [y_range_sp(3),y_range_sp(4)];
-%                 visual_angl_chans{p+1}.header.r = r;
-%                 visual_angl_chans{p+1}.header.r_range = r_range;
-                
-                p=p+2;
-            else
-                pfrintf('%s eye does not contain gaze_x and gaze_y data.\n',eye);
-                warning('ID:invalid_input','not enough data to compute visual angle for that eye');
+            % The convention is that the origin of the screen is in the bottom 
+            % left corner, so the following line is not needed a priori, but I 
+            % leave it anyway just in case :
+            % gy_d = data{gy}.header.range(2)-gy_d; 
+
+            N = numel(gx_d);
+            if N~=numel(gy_d)
+                warning('ID:invalid_input', 'length of data in gaze_x and gaze_y is not the same');
+                return;
             end;
-        else 
-            warning('ID:invalid_input', ['Unable to perform gaze ', ...
-                    'validation. There must be a pupil channel. Eventually ', ...
-                    'only gaze channels have been imported.']);
+                
+            % move (0,0) into center of the screen
+            gx_d = gx_d - width/2;
+            gy_d = gy_d - height/2;
+
+            % compute visual angle for gaze_x and gaze_y data:
+            % 1) x axis in cartesian coordinates
+            s_x = gx_d;                                     
+            % 2) y axis in cartesian coordinates, actually the distance from participant to the screen
+            s_y = distance * ones(numel(gx_d),1);           
+            % 3) z axis in spherical coordinates, actually the y axis of the screen
+            s_z = gy_d;                                     
+            % 4) convert cartesian to spherical coordinates in radians, 
+            %    where azimuth = longitude, elevation = latitude
+            %    the center of spherical coordinates are the eyes of the subject
+            [azimuth, elevation, ~]= cart2sph(s_x,s_y,s_z); 
+            % 5) convert radians into degrees
+            lat = rad2deg(elevation);   
+            lon = rad2deg(azimuth);
+
+            % compute visual angle for the range (same procedure)
+            r_x = [-width/2,width/2,0,0]';
+            r_y = distance * ones(numel(r_x),1);
+            r_z = [0,0,-height/2,height/2]';
+            [x_range_sp, y_range_sp,~]= cart2sph(r_x,r_y,r_z);
+            x_range_sp = rad2deg(x_range_sp);
+            y_range_sp = rad2deg(y_range_sp);
+
+            % azimuth angle of gaze points
+            % longitude (azimuth angle from positive x axis in horizontal plane) of gaze points
+            visual_angl_chans{p}.data = lon;
+            visual_angl_chans{p}.header.units = 'degree';
+            visual_angl_chans{p}.header.range = [x_range_sp(1),x_range_sp(2)];
+            %      visual_angl_chans{p}.header.r = r;                % radial coordinates omitted
+            %      visual_angl_chans{p}.header.r_range = r_range;    % radial coordinates omitted
+
+            % elevation angle of gaze points,
+            % latitude (elevation angle from horizontal plane) of gaze points
+            visual_angl_chans{p+1}.data = lat;
+            visual_angl_chans{p+1}.header.units = 'degree';
+            visual_angl_chans{p+1}.header.range = [y_range_sp(3),y_range_sp(4)];
+            %      visual_angl_chans{p+1}.header.r = r;              % radial coordinates omitted
+            %      visual_angl_chans{p+1}.header.r_range = r_range;  % radial coordinates omitted
+
+            p=p+2;
+        else
+            fails{i} = sprintf('There are no channels gaze_x and gaze_y for eyes ''%s''.',eye);
         end;
     end;
+end;
+
+if p==1
+    for i = 1:numel(fails)
+        disp(fails{i})
+    end
+    warning('ID:invalid_input','Not enough data to compute visual angle.');
+    return;
 end;
 
 [lsts, outinfo] = pspm_write_channel(fn, visual_angl_chans, options.channel_action);
