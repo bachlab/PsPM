@@ -2,7 +2,9 @@ function [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, ...
     height, distance, options)
 % pspm_convert_pixel2unit allows to transfer gaze data from pixel to units. 
 % This facilitates the use of pspm_find_valid_fixations() which needs data 
-% in unit values.
+% in unit values. The convention used here is that the center of coordinate in 
+% the desired units would be set to at the center of the [0,0] pixel which is
+% in the bottom left corner of the screen.
 %
 % Usage:
 %   [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, height, options)
@@ -14,7 +16,8 @@ function [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, ...
 %                               be done. Supports all values which can be passed
 %                               to pspm_load_data(). The will only work on
 %                               gaze-channels. Other channels specified will be
-%                               ignored.(For conversion into 'degree' there must be the same amount for gane_x channels as gaze_y channels)
+%                               ignored.(For conversion into 'degree' there must be
+%                               the same amount of gane_x as gaze_y channels)
 %   unit:                       unit  to which the measurements should be
 %                               converted.
 %                               The value can contain any length unit or
@@ -110,7 +113,10 @@ gaze_idx = cellfun(@(x) ~isempty(...
 
 gaze_chans = data(gaze_idx);
 n_chans = numel(gaze_chans);
-
+if n_chans == 0
+    warning('ID:invalid_input','No gaze channels found, nothing to do.')
+    return;
+end
 
 %diffenrentiate which units to which unit to convert
 if strcmpi(unit,'degree')
@@ -128,21 +134,23 @@ for c = 1:n_chans
         
         % pick conversion factor according to channel type x / y coord
         if ~isempty(regexp(chan.header.chantype, 'gaze_x_', 'once'))
-            fact = width;
+            screen_length = width;
         else
-            fact = height;
+            screen_length = height;
         end;
         
-        % convert according to range
-        chan.data = (chan.data-chan.header.range(1)) ...
-            ./ diff(chan.header.range) * fact;
+        % length per pixel along width or height
+        lenght_per_pixel = screen_length ./ (diff(chan.header.range) + 1);
+
+        % baseline data in pixels wrt. the range (i.e. pixels of interest)
+        pixel_index = chan.data-chan.header.range(1);
+        % convert indices into coordinates in the units of interests
+        chan.data = pixel_index * lenght_per_pixel ;
         
-        % convert range
-        chan.header.range = (chan.header.range-chan.header.range(1)) ...
-            ./ diff(chan.header.range) * fact;
+        % same procedure for the range (baseline + conversion)
+        chan.header.range = (chan.header.range-chan.header.range(1)) * lenght_per_pixel ;
         
-        
-        
+        % writting the new units into the structure
         chan.header.units = unit_h_w_d;
     else
         warning('ID:invalid_input', ['Not converting (%s) because ', ...
@@ -161,7 +169,13 @@ end
 
 if strcmpi(unit,'degree')
     options.channel_action = 'replace';
-    [lsts, outinfo] = pspm_compute_visual_angle(fn,0,width, height, distance,unit_h_w_d,options);
+    [lsts, outinfo] = pspm_compute_visual_angle(fn,outinfo.channel, ...
+                            width, height, distance,unit_h_w_d,options);
+    if lsts < 1 
+        warning('ID:compute_visual_angle_err',...
+                'An error occured during the computation of the visual angle.'); 
+        return; 
+    end;
 end;
 
 
