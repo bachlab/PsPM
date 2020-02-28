@@ -8,7 +8,7 @@ permalink: /news/
 
 ### 28.02.2020
 
-We are running the next full PsPM workshop on [30.6.-01.07.2020 ESCAN 2020](http://www.escan2020.eu/) in Budapest. This 2-day workshop will include theoretical and practical sessions on eyetracking (pupillometry and gaze analysis), SCR, ECG, respiration and startle-eyeblink measurement. Training will be adapted to participant's previous exposure to PsPM, SPM or Matlab. Participants are welcome to bring along specific questions on PsPM, or experiments that they are planning to analyse with PsPM.
+We are running the next full PsPM workshop on 30.6.-01.07.2020 at [ESCAN 2020](http://www.escan2020.eu/) in Budapest. This 2-day workshop will include theoretical and practical sessions on eyetracking (pupillometry and gaze analysis), SCR, ECG, respiration and startle-eyeblink measurement. Training will be adapted to participant's previous exposure to PsPM, SPM or Matlab. Participants are welcome to bring along specific questions on PsPM, or experiments that they are planning to analyse with PsPM.
 
 
 ### 04.11.2019
