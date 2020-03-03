@@ -1,7 +1,7 @@
 ### Site info:
 title: PsPM
 tagline: A matlab suite for Psycho Physiological Modelling
-description: "A matlab suite for Pyscho Physiological Modelling"
+description: "A matlab suite for Psycho Physiological Modelling"
 baseurl: "/PsPM" # the subpath of your site, e.g. /blog/
 url: "" # the base hostname & protocol for your site
 locale: en_US
