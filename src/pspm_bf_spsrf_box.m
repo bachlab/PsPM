@@ -1,4 +1,4 @@
-function [bs, x] = pspm_bf_spsrf_box( td, soa )
+function [bs, x] = pspm_bf_spsrf_box(td, soa)
 % pspm_bf_spsrf_box basis function dependent on SOA 
 
 % FORMAT: [bf p] = pspm_bf_spsrf_box(td, soa)
@@ -23,8 +23,8 @@ end;
 
 %create boder of interval
 stop = soa;
-start = soa-2;
-start_idx = floor(start/td);
+start = soa - 2;
+start_idx = floor(start/td)+1;
 if start_idx ==0
     start_idx = start_idx+1;
 end 
