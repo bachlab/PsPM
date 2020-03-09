@@ -1,6 +1,9 @@
-function [bs, x] = pspm_bf_spsrf_box( td, soa )
+function [bs, x] = pspm_bf_spsrf_box(varargin)
 % pspm_bf_spsrf_box basis function dependent on SOA 
-
+%
+% FORMAT: [bs, x] = pspm_bf_spsrf_box(td, soa) 
+%     OR: [bs, x] = pspm_bf_spsrf_box([td, soa])
+%
 % FORMAT: [bf p] = pspm_bf_spsrf_box(td, soa)
 %         with  td: time resolution in s
 %
@@ -12,19 +15,22 @@ global settings
 if isempty(settings), pspm_init; end;
 
 % check input arguments
-if nargin < 1
-   errmsg='No sampling interval stated'; warning('ID:invalid_input',errmsg); return;
-end;
-
-if nargin < 2
-    soa = 3.5;
+if nargin==0
+    errmsg='No sampling interval stated'; warning('ID:invalid_input', errmsg); return;
+elseif nargin == 1
+    n_el = numel(varargin{1});
+    td = varargin{1}(1);
+    if n_el > 1, soa = varargin{1}(2); else , soa=3.5; end;
+elseif nargin > 1
+    td = varargin{1};
+    soa = varargin{2};
 end;
 
 
 %create boder of interval
 stop = soa;
-start = soa-2;
-start_idx = floor(start/td);
+start = soa - 2;
+start_idx = floor(start/td)+1;
 if start_idx ==0
     start_idx = start_idx+1;
 end 
