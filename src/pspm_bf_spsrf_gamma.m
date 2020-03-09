@@ -22,7 +22,7 @@ if nargin < 1
 end;
 
 if nargin < 2
-    soa = 3.5;
+    soa = 3;
 end;
 
 if nargin < 3
