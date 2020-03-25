@@ -18965,34 +18965,79 @@ Changes
 \end_layout
 
 \begin_layout Itemize
-pspm_version has a new url and thus do not send any warning about version
- checks anymore.
+
+\family typewriter
+pspm_version
+\family default
+ has a new url and thus do not send any warning about version checks anymore.
 \end_layout
 
 \begin_layout Itemize
-import_eyelink do not import markers which are outside the session end time
- (END marker).
+
+\family typewriter
+import_eyelink
+\family default
+ do not import markers which are outside the session end time (
+\family typewriter
+END
+\family default
+ marker).
 \end_layout
 
 \begin_layout Itemize
-import_eyelink sends a warning whenever two markers have the same timestamp.
+
+\family typewriter
+import_eyelink
+\family default
+ sends a warning whenever two markers have the same timestamp.
 \end_layout
 
 \begin_layout Itemize
-In pspm_get_eyelink, import.flank set to 'all'.
+In 
+\family typewriter
+pspm_get_eyelink
+\family default
+, 
+\family typewriter
+import.flank
+\family default
+ set to 
+\family typewriter
+'all'
+\family default
+.
 \end_layout
 
 \begin_layout Itemize
-The test of pspm_extract_segments was adapted to the new feature.
+The test of 
+\family typewriter
+pspm_extract_segments
+\family default
+ was adapted to the new feature.
 \end_layout
 
 \begin_layout Itemize
-Suppress redundancy in pspm_compute_visual_angle.
+Suppress redundancy in 
+\family typewriter
+pspm_compute_visual_angle
+\family default
+.
 \end_layout
 
 \begin_layout Itemize
-pspm_bf_spsrf_box and pspm_bf_spsrf_gamma were adapted to the new feature
- in pspm_glm.
+
+\family typewriter
+pspm_bf_spsrf_box
+\family default
+ and 
+\family typewriter
+pspm_bf_spsrf_gamma
+\family default
+ were adapted to the new feature in 
+\family typewriter
+pspm_glm
+\family default
+.
 \end_layout
 
 \begin_layout Subsection*
@@ -19000,12 +19045,23 @@ Bugfixes
 \end_layout
 
 \begin_layout Itemize
-Fix a bux in bf_lcrf_gm and bf_ldrf_gm where the offset was wrongly implemented.
+Fix a bux in 
+\family typewriter
+pspm_bf_lcrf_gm
+\family default
+ and 
+\family typewriter
+pspm_bf_ldrf_gm
+\family default
+ where the offset was wrongly implemented.
 \end_layout
 
 \begin_layout Itemize
-Fix a bug in pspm_compute_visual_angle where there was an error in the conversio
-n factor of pixels wrt.
+Fix a bug in 
+\family typewriter
+pspm_compute_visual_angle
+\family default
+ where there was an error in the conversion factor of pixels wrt.
  to mm.
 \end_layout
 
