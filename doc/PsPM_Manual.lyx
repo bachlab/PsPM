@@ -18883,6 +18883,121 @@ pspm_filtfilt
  which crashed when the filter parameters were of dimension one
 \end_layout
 
+\begin_layout Section
+PsPM Version 4.3.0
+\end_layout
+
+\begin_layout Subsection*
+New Functions
+\end_layout
+
+\begin_layout Itemize
+A new pupil fitting model function 
+\family typewriter
+pspm_pfm
+\family default
+ .
+\end_layout
+
+\begin_layout Subsection*
+New Features
+\end_layout
+
+\begin_layout Itemize
+In 
+\family typewriter
+pspm_get_events
+\family default
+, 
+\family typewriter
+import.flank
+\family default
+ can be now set to 
+\family typewriter
+'all'
+\family default
+ what would import all markers and data related to them.
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_display 
+\family default
+allows now to display pupil size units and the gaze x & y coordinate units
+ on the y-axis.
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_extract_segments 
+\family default
+can be used now with raw data and thus be called easily within another function.
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_glm 
+\family default
+has a new option (
+\family typewriter
+model.centering
+\family default
+) which controls whenever mean centering is applied to convoluted X data
+ or not.
+\end_layout
+
+\begin_layout Subsection*
+Changes
+\end_layout
+
+\begin_layout Itemize
+pspm_version has a new url and thus do not send any warning about version
+ checks anymore.
+\end_layout
+
+\begin_layout Itemize
+import_eyelink do not import markers which are outside the session end time
+ (END marker).
+\end_layout
+
+\begin_layout Itemize
+import_eyelink sends a warning whenever two markers have the same timestamp.
+\end_layout
+
+\begin_layout Itemize
+In pspm_get_eyelink, import.flank set to 'all'.
+\end_layout
+
+\begin_layout Itemize
+The test of pspm_extract_segments was adapted to the new feature.
+\end_layout
+
+\begin_layout Itemize
+Suppress redundancy in pspm_compute_visual_angle.
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_spsrf_box and pspm_bf_spsrf_gamma were adapted to the new feature
+ in pspm_glm.
+\end_layout
+
+\begin_layout Subsection*
+Bugfixes
+\end_layout
+
+\begin_layout Itemize
+Fix a bux in bf_lcrf_gm and bf_ldrf_gm where the offset was wrongly implemented.
+\end_layout
+
+\begin_layout Itemize
+Fix a bug in pspm_compute_visual_angle where there was an error in the conversio
+n factor of pixels wrt.
+ to mm.
+\end_layout
+
 \begin_layout Part
 Acknowledgements
 \end_layout
