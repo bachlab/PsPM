@@ -7996,7 +7996,7 @@ Tests:
 
 
 \begin_inset Tabular
-<lyxtabular version="3" rows="9" columns="2">
+<lyxtabular version="3" rows="10" columns="2">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="6cm">
 <column alignment="center" valignment="top">
@@ -8066,6 +8066,26 @@ ID:invalid_input
 
 \begin_layout Plain Layout
 pspm_extract_segments('manual',fn,0)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID:invalid_input
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pspm_extract_segments('manual',struct('a',10),0,timing)
 \end_layout
 
 \end_inset

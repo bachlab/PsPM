@@ -10,9 +10,9 @@ release branch after making absolutely sure that no new stuff will be implemente
   - [x] `pspm_quit`
   - [x] `pspm.fig`: Load `pspm.fig` into MATLAB, update `fig.Children(9).String` and save back to `pspm.fig`
   - [x] Manual and Developers Guide: front pages
-- [ ] Make sure both manuals are updated
-- [ ] Add release notes section of the new version to manual (at the end)
-- [ ] Get the manual reviewed
+- [x] Make sure both manuals are updated
+- [x] Add release notes section of the new version to manual (at the end)
+- [x] Get the manual reviewed
 - [ ] Create manual and dev guide PDFs using `lyx`
 - [ ] Check if underscores and dashes are visible in newly added manual sections
 - [ ] Create svn branch
