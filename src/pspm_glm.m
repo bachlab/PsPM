@@ -69,7 +69,7 @@ function glm = pspm_glm(model, options)
 %                   model.window is MANDATORY and single basis functions 
 %                   are allowed only.
 % model.centering:  if set to 0 the function would not perform the 
-%                   mean centering of the convolved X data.
+%                   mean centering of the convoluted X data.
 %                   Default: 1
 %
 % OPTIONS (optional argument)

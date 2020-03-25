@@ -9766,6 +9766,17 @@ ts designs it needs to be set to false.
 \end_layout
 
 \begin_layout Subsubsection*
+Centering
+\end_layout
+
+\begin_layout Standard
+Specify if you want to mean centering the convoluted X data.
+ By default this centering is applied to every model but for some specific
+ cases such as some scanpath length analysis it has to be set to 0 (i.e.
+ False).
+\end_layout
+
+\begin_layout Subsubsection*
 Filter Settings
 \end_layout
 
