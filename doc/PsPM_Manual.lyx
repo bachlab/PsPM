@@ -13153,6 +13153,75 @@ Duration: Specify the length of the condition.
 \end_deeper
 \end_deeper
 \end_deeper
+\begin_layout Itemize
+
+\series bold
+Raw:
+\series default
+ Specify all the settings manually (i.e.
+ choose manual mode) and provide raw data
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\shape italic
+Data
+\shape default
+: Numeric raw data or a cell array of numeric raw data.
+\end_layout
+
+\begin_layout Itemize
+
+\shape italic
+Sampling rate
+\shape default
+: One sampling rate or an array of sampling rates of the corresponding 
+\shape italic
+Data
+\shape default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\shape italic
+Conditions
+\shape default
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Condition files: Should be in the format of the conditions defined in a
+ GLM model.
+ Required fields are names, onsets, duration.
+\end_layout
+
+\begin_layout Itemize
+Enter conditions manually: Specify the conditions that you want to include
+ in your design matrix.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Name: Specify the name of the condition.
+\end_layout
+
+\begin_layout Itemize
+Onsets: Specify a vector of onsets.
+ The length of the vector corresponds to the number of events included in
+ this condition.
+ Onsets have to be indicated in the specified time unit (‘seconds’, ‘samples’).
+\end_layout
+
+\begin_layout Itemize
+Duration: Specify the length of the condition.
+\end_layout
+
+\end_deeper
+\end_deeper
+\end_deeper
 \begin_layout Subsubsection*
 Options
 \end_layout
