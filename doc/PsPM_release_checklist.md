@@ -13,15 +13,16 @@ release branch after making absolutely sure that no new stuff will be implemente
 - [x] Make sure both manuals are updated
 - [x] Add release notes section of the new version to manual (at the end)
 - [x] Get the manual reviewed
-- [ ] Create manual and dev guide PDFs using `lyx`
-- [ ] Check if underscores and dashes are visible in newly added manual sections
-- [ ] Create svn branch
-- [ ] Delete `.asv` files if there are any (?)
-- [ ] Create zip of the new branch
-- [ ] Make sure zip doesn't contain any svn related files. As a sanity check, the zip file
+- [x] Create manual and dev guide PDFs using `lyx`
+- [x] Check if underscores and dashes are visible in newly added manual sections
+- [x] Create git branch
+- [x] Delete `.asv` files if there are any (?)
+- [x] Create zip of the new branch
+- [x] Make sure zip doesn't contain any svn related files. As a sanity check, the zip file
 should be roughly the same size as the previous version zip files (maybe slightly larger but not much)
-- [ ] Update screenshot in Sourceforge
-- [ ] Upload zip to sourceforge
-  - [ ] Make sure the newly added zip file is the default download (click on (i) icon)
-- [ ] Add release message to pspm.sourceforge.net
-- [ ] Add release message to lab webpage
+- [ ] Create a release on GitHub
+- [ ] Upload zip to GitHub
+  - [ ] Make sure the newly added zip file is the default download
+- [ ] Add release message to GitHub
+- [ ] Change release number on lab webpage (gh-pages branch)
+- [ ] Add release message to lab webpage (gh-pages branch)
