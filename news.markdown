@@ -8,7 +8,7 @@ permalink: /news/
 ### 30.03.2020 COVID-19 news
 All planned PsPM workshops have been cancelled/postponed by the organisers due to the uncertainty around the COVID-19 pandemic. 
 
-We are offering a free live-online PsPM course between 06 April and 14 May 2020. More details [on our course pages](courses/). Participants are welcome to bring along specific questions on PsPM, or experiments that they are planning to analyse with PsPM.
+We are offering a free live-online PsPM course between 06 April and 14 May 2020. More details [on our course pages](https://bachlab.github.io/PsPM/courses/). Participants are welcome to bring along specific questions on PsPM, or experiments that they are planning to analyse with PsPM.
 
 ### 28.02.2020
 
