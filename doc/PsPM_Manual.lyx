@@ -12357,13 +12357,13 @@ Data navigation
 \begin_layout Standard
 Data navigation can be done by zooming (
 \begin_inset Graphics
-	filename icons/button_zoom.PNG
+	filename Figures/icons/button_zoom.PNG
 
 \end_inset
 
 ) and panning (
 \begin_inset Graphics
-	filename icons/button_pan.PNG
+	filename Figures/icons/button_pan.PNG
 
 \end_inset
 
@@ -12390,7 +12390,7 @@ Add epochs
 \begin_layout Standard
 New epochs can be added by clicking the 'add epoch' button (
 \begin_inset Graphics
-	filename icons/button_add_epoch.PNG
+	filename Figures/icons/button_add_epoch.PNG
 
 \end_inset
 
@@ -12409,7 +12409,7 @@ Remove epochs
 \begin_layout Standard
 Existing epochs can be removed by clicking the 'remove epoch' button (
 \begin_inset Graphics
-	filename icons/button_remove_epoch.PNG
+	filename Figures/icons/button_remove_epoch.PNG
 
 \end_inset
 
@@ -12428,7 +12428,7 @@ Epoch navigation
 In order to navigate between epochs it is either possible to use the epoch
  list on the right side or the two epoch navigation buttons (
 \begin_inset Graphics
-	filename icons/button_navigate_epochs.PNG
+	filename Figures/icons/button_navigate_epochs.PNG
 
 \end_inset
 
