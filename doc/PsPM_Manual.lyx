@@ -18968,18 +18968,6 @@ PsPM Version 4.3.0
 \end_layout
 
 \begin_layout Subsection*
-New Functions
-\end_layout
-
-\begin_layout Itemize
-A new pupil fitting model function 
-\family typewriter
-pspm_pfm
-\family default
- .
-\end_layout
-
-\begin_layout Subsection*
 New Features
 \end_layout
 
