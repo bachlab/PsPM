@@ -149,7 +149,7 @@ function [sts, default_settings] = pspm_pupil_pp_options()
     if isempty(settings), pspm_init; end
     sts = -1;
 
-    libbase_path = fullfile(fileparts(which('pspm_pupil_pp_options')), 'pupil-size', 'code');
+    libbase_path = pspm_path('ext','pupil-size', 'code');
     libpath = {fullfile(libbase_path, 'dataModels'), fullfile(libbase_path, 'helperFunctions')};
     addpath(libpath{:});
 

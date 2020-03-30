@@ -36,7 +36,7 @@ function [data] = import_viewpoint(filepath)
     % (C) 2019 Laure Ciernik
     % Function inspired by GazeAlyze �.. Most parts rewritten by Eshref Yozdemir to handle
     % newer ViewPoint files.
-    bsearch_path = fullfile(fileparts(which('import_viewpoint')), '..', '..', 'backroom', 'bsearch');
+    bsearch_path = pspm_path('ext', 'bsearch');
     addpath(bsearch_path);
 
     if ~exist(filepath,'file')

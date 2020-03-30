@@ -71,7 +71,7 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
     global settings;
     if isempty(settings), pspm_init; end
     sourceinfo = []; sts = -1;
-    addpath([settings.path, 'Import', filesep, 'viewpoint']);
+    addpath(pspm_path('src','Import','viewpoint')); 
 
     if ~iscell(import)
         import = {import};
@@ -114,7 +114,7 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
     screen_size = data{1}.screenSize;
     viewing_dist = data{1}.viewingDistance;
 
-    addpath(pspm_path('backroom'));
+    addpath(pspm_path('src','backroom'));
     if strcmpi(eyes_observed, 'l')
         mask_chans = {'blink_l', 'saccade_l'};
     elseif strcmpi(eyes_observed, 'r')
@@ -123,7 +123,7 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
         mask_chans = {'blink_l', 'blink_r', 'saccade_l', 'saccade_r'};
     end
     data_concat = set_blinks_saccades_to_nan(data_concat, chan_struct, mask_chans, @(x) endsWith(x, '_l'));
-    rmpath(pspm_path('backroom'));
+    rmpath(pspm_path('src','backroom'));
 
     num_import_cells = numel(import);
     for k = 1:num_import_cells
@@ -169,7 +169,7 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
     sourceinfo.eyesObserved = eyes_observed;
     sourceinfo.best_eye = eye_with_smaller_nan_ratio(import, eyes_observed);
 
-    rmpath([settings.path, 'Import', filesep, 'viewpoint']);
+    rmpath(pspm_path('src','Import','viewpoint')); 
     sts = 1;
 end
 

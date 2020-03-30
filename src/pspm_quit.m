@@ -21,10 +21,10 @@ if isempty(settings), pspm_init; end;
 fs = filesep;
 if settings.scrpath, rmpath(settings.path), end;
 
-if any(contains(settings.path, 'VBA'))
-    rmpath([settings.path, 'VBA']); 
-    rmpath([settings.path, 'VBA', fs, 'subfunctions']); 
-    rmpath([settings.path, 'VBA', fs, 'stats&plots']); 
+if any(contains(path, 'VBA'))
+    rmpath(pspm_path('ext','VBA')); 
+    rmpath(pspm_path('ext','VBA','subfunctions')); 
+    rmpath(pspm_path('ext','VBA','stats&plots')); 
 end
 
 clear settings

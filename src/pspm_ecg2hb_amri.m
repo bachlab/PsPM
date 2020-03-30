@@ -170,14 +170,14 @@ function [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
 
     % load
     % -------------------------------------------------------------------------
-    addpath(pspm_path('backroom'));
+    addpath(pspm_path('src','backroom'));
     [lsts, data] = pspm_load_single_chan(fn, options.channel, 'last', 'ecg');
     if lsts ~= 1; return; end;
-    rmpath(pspm_path('backroom'));
+    rmpath(pspm_path('src','backroom'));
 
     % process
     % -------------------------------------------------------------------------
-    addpath(pspm_path('amri_eegfmri'));
+    addpath(pspm_path('ext','amri_eegfmri'));
     ecg.data = data{1}.data;
     ecg.srate = data{1}.header.sr;
     rpeak_logic_vec = amri_eeg_rpeak(ecg, ...
@@ -189,7 +189,7 @@ function [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
         'minrpa', options.min_relative_amplitude ...
     );
     heartbeats{1}.data = find(rpeak_logic_vec) / ecg.srate;
-    rmpath(pspm_path('amri_eegfmri'));
+    rmpath(pspm_path('ext','amri_eegfmri'));
 
     % save
     % -------------------------------------------------------------------------

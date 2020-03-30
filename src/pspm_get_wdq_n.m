@@ -23,7 +23,7 @@ function [sts, import, sourceinfo]  = pspm_get_wdq_n(datafile, import)
 global settings;
 if isempty(settings), pspm_init; end;
 sourceinfo = []; sts = -1;
-addpath([settings.path, 'Import', filesep, 'nwdq']);
+addpath(pspm_path('src','Import','nwdq')); 
 
 % get external file, using Dataq functions
 % -------------------------------------------------------------------------
@@ -48,7 +48,7 @@ end;
 
 % clear path and return
 % -------------------------------------------------------------------------
-rmpath([settings.path, 'Import', filesep, 'nwdq']);
+rmpath(pspm_path('src','Import','nwdq')); 
 sts = 1;
 return;
 
