@@ -18,37 +18,37 @@ In the following course program, clickable links to each course day will appear 
 
 14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200406T1400)) Starter tutorial: [opening Matlab & PsPM, PsPM GUI, data import, Troubleshooting](https://zoom.us/j/270812037) (Filip Melinscak)
 
-* Thursday 9 April 2020
+**Thursday 9 April 2020**
 
 13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1300)) Lecture: LTI & GLM (Dominik R Bach)
 
 14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1400)) Tutorial: GLM GUI, GLM review (Dominik R Bach)
 
-* Thursday 16 April 2020
+**Thursday 16 April 2020**
 
 13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200416T1300)) Lecture: SCR (Dominik R Bach)
 
 14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200416T1400)) Tutorial: Non-linear SCR model, SCR quality control (Dominik R Bach)
 
-* Thursday 23 April 2020
+**Thursday 23 April 2020**
 
 13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200423T1300)) Lecture: Pupil models (Christoph W. Korn)
 
 14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200423T1400)) Tutorial: pre-processing pupil data, luminance model, fear-conditioning model (Christoph W. Korn)
 
-* Thursday 30 April 2020
+**Thursday 30 April 2020**
 
 13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200430T1300)) Lecture: HPR (Philipp C. Paulus)
 
 14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200430T1400)) Tutorial: workflow automation 1 – looping over batch jobs and matlab coding (Filip Melinscak)
  
-* Thursday 7 May 2020
+**Thursday 7 May 2020**
 
 13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200507T1300)) Lecture: Respiration, startle eyeblink
 
 14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200507T1400)) Tutorial: workflow automation – calling functions directly and matlab coding (Filip Melinscak)
 
-* Thursday 14 May 2020
+**Thursday 14 May 2020**
 
 13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200514T1300))Lecture: Fear conditioning – comparison of models, scanpath length, new developments (Yanfang Xia)
 
