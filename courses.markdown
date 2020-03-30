@@ -8,11 +8,50 @@ permalink: /courses/
 ## Upcoming PsPM course
 There are **regular PsPM courses**. To check for updates, have a look on our [news site](news.html), on [bachlab news](http://bachlab.org/news), or follow [bachlab on twitter](http://twitter.com/bachlab_uzh).
 
-**Next PsPM courses:** 
+**Live-online PsPM course**
+Because of course cancellations during the COVID-19 pandemics, we offer a live-online PsPM course and tutorial between 6 April and 14 May 2020. 
 
-[30.3.2020 EMHFC 2020 Bochum (workshop on pupil size measurements)](https://emhfc.blogs.uni-hamburg.de/pre-conference-seminars/)
+All sessions take place via zoom. Attendees may need to download and install the Zoom software in advance of joining the meeting: https://zoom.us 
 
-[30.6.-01.07.2020 ESCAN 2020 Budapest (full 2-day PsPM satellite workshop with practical training)](http://www.escan2020.eu/)
+The Zoom channel will be available for people to join 15 minutes before each meeting. To maintain bandwidth and avoid problems with audio, please could attendees ensure their video is switched off after joining the meeting, and that their microphone is muted when they are not speaking. In the Q&A, please use the "raise hand" functionality in Zoom to let the chair know you have a question (https://www.youtube.com/watch?v=5e8eg4_rgwg).
+
+In the following course program, clickable links to each session are provided after the previous session ended.
+
+Monday 6 April 2020
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200406T1300)) Lecture: [PsPM preliminaries: retrodictive validity & why do we need this?](https://zoom.us/j/348981833)
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200406T1400)) Starter tutorial: [opening Matlab & PsPM, PsPM GUI, data import, Troubleshooting](https://zoom.us/j/270812037)
+
+Thursday 9 April 2020
+13.00 UTC Lecture: LTI & GLM
+14.00 UTC Tutorial: GLM GUI, GLM review
+
+Thursday 16 April 2020
+13.00 UTC Lecture: SCR
+14.00 UTC Tutorial: Non-linear SCR model, SCR quality control
+
+Thursday 23 April 2020
+13.00 UTC Lecture: Pupil models
+14.00 UTC Tutorial: pre-processing pupil data, luminance model, fear-conditioning model
+
+Thursday 30 April 2020
+13.00 UTC Lecture: HPR
+14.00 UTC Tutorial: workflow automation 1 – looping over batch jobs and matlab coding
+
+Thursday 7 May 2020
+13.00 UTC Lecture: Respiration, startle eyeblink
+14.00 UTC Tutorial: workflow automation – calling functions directly and matlab coding
+
+Thursday 14 May 2020
+13.00 UTC Lecture: Fear conditioning – comparison of models, scanpath length, new developments
+14.00 UTC Tutorial: Preprocessing cardiac, respiratory and startle data, open Q&A
+
+
+
+**Cancelled PsPM courses due to COVID-19 pandemic:** 
+
+[30.3.2020 **- cancelled due to COVID-19 pandemic -** EMHFC 2020 Bochum (workshop on pupil size measurements)](https://emhfc.blogs.uni-hamburg.de/pre-conference-seminars/)
+
+[30.6.-01.07.2020 **- cancelled due to COVID-19 pandemic -** ESCAN 2020 Budapest (full 2-day PsPM satellite workshop with practical training)](http://www.escan2020.eu/)
 
 ## Course slides
 * [PsPM Overview](http://bachlab.org/wp-content/uploads/2019/12/02_Overview_Bach.pdf) (Dominik R. Bach)
