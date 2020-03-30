@@ -8,9 +8,9 @@ permalink: /courses/
 
 ## Live-online PsPM course spring 2020
 
-Because of course cancellations during the COVID-19 pandemics, we offer a live-online PsPM course and tutorial between 6 April and 14 May 2020. 
+Because of course cancellations during the COVID-19 pandemics, we offer a live-online PsPM course and tutorial between 6 April and 14 May 2020. Each course day contains a 1-h lecture on a given topic, and a 1-h pop-in tutorial on a related or different topics. Lectures and tutorials can be attended individually or in succession. Participants are invited to bring their questions and data to the tutorials. 
 
-In the following course program, clickable links to each course day will appear after the previous course day ended.
+In the following course program, clickable links to each course day will appear after the previous course day ended. Details on how to participate, and suggested preparation, are found at the end of the program.
 
 **Monday 6 April 2020**
 
@@ -57,6 +57,13 @@ In the following course program, clickable links to each course day will appear 
 All sessions take place via zoom. Attendees may need to download and install the Zoom software in advance of joining the meeting: https://zoom.us 
 
 The Zoom channel will be available for people to join 15 minutes before each meeting. To maintain bandwidth and avoid problems with audio, please could attendees ensure their video is switched off after joining the meeting, and that their microphone is muted when they are not speaking. In the Q&A, please use the "raise hand" functionality in Zoom to let the chair know you have a question (https://www.youtube.com/watch?v=5e8eg4_rgwg).
+
+For the tutorials, we suggest that participants install Matlab and PsPM on their computers, download the provided data sets, and try to replicate the instructors' demonstrations. Useful links:
+
+* [Download latest PsPM version](https://bachlab.github.io/PsPM/software/)
+* [Download GLM dataset](https://github.com/bachlab/PsPM-tutorial-datasets/releases/download/tutorial-datasets/Tutorial_dataset_GLM.zip)
+* [Download non-linear model dataset](https://github.com/bachlab/PsPM-tutorial-datasets/releases/download/tutorial-datasets/Tutorial_dataset_DCM.zip)
+* [PsPM overview paper](https://doi.org/10.1111/psyp.13209) ([open version](https://discovery.ucl.ac.uk/id/eprint/10070115/))
 
 ## Upcoming PsPM courses
 There are **regular PsPM courses**. To check for updates, have a look on our [news site](news.html), on [bachlab news](http://bachlab.org/news), or follow [bachlab on twitter](http://twitter.com/bachlab_uzh).
