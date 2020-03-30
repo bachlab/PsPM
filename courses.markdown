@@ -66,7 +66,7 @@ For the tutorials, we suggest that participants install Matlab and PsPM on their
 * [PsPM overview paper](https://doi.org/10.1111/psyp.13209) ([open version](https://discovery.ucl.ac.uk/id/eprint/10070115/))
 
 ## Upcoming PsPM courses
-There are **regular PsPM courses**. To check for updates, have a look on our [news site](news.html), on [bachlab news](http://bachlab.org/news), or follow [bachlab on twitter](http://twitter.com/bachlab_uzh).
+There are **regular PsPM courses**. To check for updates, have a look on our [news site](https://bachlab.github.io/PsPM/news/), on [bachlab news](http://bachlab.org/news), or follow [bachlab on twitter](http://twitter.com/bachlab_uzh).
 
 **The following courses were cancelled by the organisers due to COVID-19 pandemic:** 
 
