@@ -65,7 +65,7 @@ backgroundcolor={\color{white}},
 framexleftmargin=1pt,
 frame=l}
 \renewcommand{\lstlistingname}{Listing}
-\title{PsPM 4.2.1 Release notes}
+\title{PsPM 4.3.0 Release notes}
 
 \begin{document}
 \maketitle
@@ -571,6 +571,47 @@ a marker if it occured on the first or last sample in a given datafile
 parameters were of dimension one
 \end{itemize}
 
+\section{PsPM Version 4.3.0}
+
+\subsection*{New Features}
+\begin{itemize}
+\item In \texttt{pspm\_get\_events}, \texttt{import.flank} can be now set
+to \texttt{'all'} what would import all markers and data related to
+them.
+\item \texttt{pspm\_display }allows now to display pupil size units and
+the gaze x \& y coordinate units on the y-axis.
+\item \texttt{pspm\_extract\_segments }can be used now with raw data and
+thus be called easily within another function.
+\item \texttt{pspm\_glm }has a new option (\texttt{model.centering}) which
+controls whenever mean centering is applied to convoluted X data or
+not.
+\end{itemize}
+
+\subsection*{Changes}
+\begin{itemize}
+\item \texttt{pspm\_version} has a new url and thus do not send any warning
+about version checks anymore.
+\item \texttt{import\_eyelink} do not import markers which are outside the
+session end time (\texttt{END} marker).
+\item \texttt{import\_eyelink} sends a warning whenever two markers have
+the same timestamp.
+\item In \texttt{pspm\_get\_eyelink}, \texttt{import.flank} set to \texttt{'all'}.
+\item The test of \texttt{pspm\_extract\_segments} was adapted to the new
+feature.
+\item Suppress redundancy in \texttt{pspm\_compute\_visual\_angle}.
+\item \texttt{pspm\_bf\_spsrf\_box} and \texttt{pspm\_bf\_spsrf\_gamma}
+were adapted to the new feature in \texttt{pspm\_glm}.
+\item External functions and libraries were regrouped in one folder called
+\texttt{ext.}
+\end{itemize}
+
+\subsection*{Bugfixes}
+\begin{itemize}
+\item Fix a bux in \texttt{pspm\_bf\_lcrf\_gm} and \texttt{pspm\_bf\_ldrf\_gm}
+where the offset was wrongly implemented.
+\item Fix a bug in \texttt{pspm\_compute\_visual\_angle} where there was
+an error in the conversion factor of pixels wrt. to mm.
+\end{itemize}
 
 \section{References}
 
