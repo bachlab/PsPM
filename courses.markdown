@@ -6,59 +6,59 @@ permalink: /courses/
 
 # Courses
 
-## Live-online PsPM course
+## Live-online PsPM course spring 2020
 
 Because of course cancellations during the COVID-19 pandemics, we offer a live-online PsPM course and tutorial between 6 April and 14 May 2020. 
 
 In the following course program, clickable links to each course day will appear after the previous course day ended.
 
-* Monday 6 April 2020
+**Monday 6 April 2020**
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200406T1300)) Lecture: [PsPM preliminaries: retrodictive validity & why do we need this?](https://zoom.us/j/348981833)
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200406T1300)) Lecture: [PsPM preliminaries: retrodictive validity & why do we need this?](https://zoom.us/j/348981833) (Dominik R Bach)
 
-14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200406T1400)) Starter tutorial: [opening Matlab & PsPM, PsPM GUI, data import, Troubleshooting](https://zoom.us/j/270812037)
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200406T1400)) Starter tutorial: [opening Matlab & PsPM, PsPM GUI, data import, Troubleshooting](https://zoom.us/j/270812037) (Filip Melinscak)
 
 * Thursday 9 April 2020
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1300)) Lecture: LTI & GLM
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1300)) Lecture: LTI & GLM (Dominik R Bach)
 
-14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1400)) Tutorial: GLM GUI, GLM review
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1400)) Tutorial: GLM GUI, GLM review (Dominik R Bach)
 
 * Thursday 16 April 2020
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200416T1300)) Lecture: SCR
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200416T1300)) Lecture: SCR (Dominik R Bach)
 
-14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200416T1400)) Tutorial: Non-linear SCR model, SCR quality control
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200416T1400)) Tutorial: Non-linear SCR model, SCR quality control (Dominik R Bach)
 
 * Thursday 23 April 2020
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200423T1300)) Lecture: Pupil models
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200423T1300)) Lecture: Pupil models (Christoph W. Korn)
 
-14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200423T1400)) Tutorial: pre-processing pupil data, luminance model, fear-conditioning model
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200423T1400)) Tutorial: pre-processing pupil data, luminance model, fear-conditioning model (Christoph W. Korn)
 
 * Thursday 30 April 2020
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200430T1300)) Lecture: HPR
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200430T1300)) Lecture: HPR (Philipp C. Paulus)
 
-14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200430T1400)) Tutorial: workflow automation 1 – looping over batch jobs and matlab coding
-
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200430T1400)) Tutorial: workflow automation 1 – looping over batch jobs and matlab coding (Filip Melinscak)
+ 
 * Thursday 7 May 2020
 
 13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200507T1300)) Lecture: Respiration, startle eyeblink
 
-14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200507T1400)) Tutorial: workflow automation – calling functions directly and matlab coding
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200507T1400)) Tutorial: workflow automation – calling functions directly and matlab coding (Filip Melinscak)
 
 * Thursday 14 May 2020
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200514T1300))Lecture: Fear conditioning – comparison of models, scanpath length, new developments
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200514T1300))Lecture: Fear conditioning – comparison of models, scanpath length, new developments (Yanfang Xia)
 
-14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200514T1400))Tutorial: Preprocessing cardiac, respiratory and startle data, open Q&A
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200514T1400))Tutorial: Preprocessing cardiac, respiratory and startle data, open Q&A (Dominik R Bach)
 
 All sessions take place via zoom. Attendees may need to download and install the Zoom software in advance of joining the meeting: https://zoom.us 
 
 The Zoom channel will be available for people to join 15 minutes before each meeting. To maintain bandwidth and avoid problems with audio, please could attendees ensure their video is switched off after joining the meeting, and that their microphone is muted when they are not speaking. In the Q&A, please use the "raise hand" functionality in Zoom to let the chair know you have a question (https://www.youtube.com/watch?v=5e8eg4_rgwg).
 
-## Upcoming PsPM course
+## Upcoming PsPM courses
 There are **regular PsPM courses**. To check for updates, have a look on our [news site](news.html), on [bachlab news](http://bachlab.org/news), or follow [bachlab on twitter](http://twitter.com/bachlab_uzh).
 
 **The following courses were cancelled by the organisers due to COVID-19 pandemic:** 
