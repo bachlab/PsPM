@@ -19097,6 +19097,12 @@ pspm_glm
 .
 \end_layout
 
+\begin_layout Itemize
+External functions and libraries were regrouped in one folder called 
+\family typewriter
+ext.
+\end_layout
+
 \begin_layout Subsection*
 Bugfixes
 \end_layout
