@@ -14,7 +14,7 @@ classdef set_blinks_saccades_to_nan_test < matlab.unittest.TestCase
 
     methods(TestClassSetup)
         function add(this)
-            addpath(pspm_path('backroom'));
+            addpath(pspm_path('src','backroom'));
         end
     end
 
@@ -87,7 +87,7 @@ classdef set_blinks_saccades_to_nan_test < matlab.unittest.TestCase
 
     methods(TestClassTeardown)
         function remove(this)
-            addpath(pspm_path('backroom'));
+            addpath(pspm_path('src','backroom'));
         end
     end
 end
