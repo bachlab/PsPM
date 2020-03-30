@@ -65,7 +65,7 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
     if isempty(settings), pspm_init; end
     sourceinfo = []; sts = -1;
     % add specific import path for specific import function
-    addpath(pspm_path('src','Import','eyelink')); 
+    addpath(pspm_path('Import','eyelink')); 
     default_blink_saccade_discard_factor = 0;
     for i = 1:numel(import)
         if ~isfield(import{i}, 'blink_saccade_edge_discard_factor')
@@ -93,7 +93,7 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
     % expand blink/saccade channels with offset
     % set data channels with blinks/saccades to NaN
     % -------------------------------------------------------------------------
-    addpath(pspm_path('src','backroom'));
+    addpath(pspm_path('backroom'));
     for i = 1:numel(data)-1
         if strcmpi(data{i}.eyesObserved, 'l')
             mask_chans = {'blink_l', 'saccade_l'};
@@ -116,7 +116,7 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
         );
         data{i}.channels = set_blinks_saccades_to_nan(data{i}.channels, data{i}.channels_header, mask_chans, @(x) endsWith(x, '_l'));
     end
-    rmpath(pspm_path('src','backroom'));
+    rmpath(pspm_path('backroom'));
 
     % iterate through data and fill up channel list as long as there is no
     % marker channel. if there is any marker channel, the settings accordingly
@@ -404,7 +404,7 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
     sourceinfo.best_eye = lower(sourceinfo.eyesObserved(min_idx));
 
     % remove specific import path
-    rmpath(pspm_path('src','Import','eyelink'));
+    rmpath(pspm_path('Import','eyelink'));
 
     sts = 1;
     return;

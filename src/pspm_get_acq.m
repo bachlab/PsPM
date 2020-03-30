@@ -19,7 +19,7 @@ function [sts, import, sourceinfo] = pspm_get_acq(datafile, import)
 global settings;
 if isempty(settings), pspm_init; end;
 sourceinfo = []; sts = -1;
-addpath(pspm_path('src','Import','acq')); 
+addpath(pspm_path('Import','acq')); 
 
 
 % load data but suppress output
@@ -66,7 +66,7 @@ end;
 
 % clear path and return
 % -------------------------------------------------------------------------
-rmpath(pspm_path('src','Import','acq')); 
+rmpath(pspm_path('Import','acq')); 
 sts = 1;
 return;
 

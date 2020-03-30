@@ -5,7 +5,7 @@ classdef import_smi_test < matlab.unittest.TestCase
     % (C) 2019 Eshref Yozdemir (University of Zurich)
 
     properties (Constant)
-        funcpath = pspm_path('src','Import', 'smi');
+        funcpath = pspm_path('Import', 'smi');
         sample_file = fullfile('ImportTestData', 'smi', 'smi_data_2.txt');
         event_file = fullfile('ImportTestData', 'smi', 'smi_data_2_events.txt');
     end

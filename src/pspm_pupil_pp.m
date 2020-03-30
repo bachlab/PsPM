@@ -196,7 +196,7 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
     % -------------------------------------------------------------------------
     is_combined = ~strcmp(options.channel_combine, 'none');
 
-    addpath(pspm_path('src','backroom'));
+    addpath(pspm_path('backroom'));
     [lsts, data] = pspm_load_single_chan(fn, options.channel, 'last', 'pupil');
     if lsts ~= 1; return; end;
     if is_combined
@@ -223,7 +223,7 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
         data_combine{1}.data = [];
         old_chantype = data{1}.header.chantype;
     end
-    rmpath(pspm_path('src','backroom'));
+    rmpath(pspm_path('backroom'));
 
     % preprocess
     % -------------------------------------------------------------------------

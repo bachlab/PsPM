@@ -5,7 +5,7 @@ classdef import_eyelink_test < matlab.unittest.TestCase
     % (C) 2019 Eshref Yozdemir (University of Zurich)
 
     properties
-        funcpath = pspm_path('src','Import', 'eyelink');
+        funcpath = pspm_path('Import', 'eyelink');
         files = {['ImportTestData' filesep 'eyelink' filesep 'S114_s2_short.asc'],...
                  ['ImportTestData' filesep 'eyelink' filesep 'example_data.asc'],...
                  ['ImportTestData' filesep 'eyelink' filesep 'u_sc4b31_short.asc']};

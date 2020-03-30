@@ -170,10 +170,10 @@ function [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
 
     % load
     % -------------------------------------------------------------------------
-    addpath(pspm_path('src','backroom'));
+    addpath(pspm_path('backroom'));
     [lsts, data] = pspm_load_single_chan(fn, options.channel, 'last', 'ecg');
     if lsts ~= 1; return; end;
-    rmpath(pspm_path('src','backroom'));
+    rmpath(pspm_path('backroom'));
 
     % process
     % -------------------------------------------------------------------------

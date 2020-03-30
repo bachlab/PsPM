@@ -23,7 +23,7 @@ sourceinfo = []; sts = -1;
 
 % add path
 % -------------------------------------------------------------------------
-addpath(pspm_path('src','Import','labchart','adi'));
+addpath(pspm_path('Import','labchart','adi'));
 % load & check data
 % -------------------------------------------------------------------------
 [labchart] = adi.readFile(datafile);
@@ -120,5 +120,5 @@ end
 delete(labchart.file_h);
 % clear path and return
 % -------------------------------------------------------------------------
-rmpath(pspm_path('src','Import','labchart','adi'));
+rmpath(pspm_path('Import','labchart','adi'));
 sts = 1;

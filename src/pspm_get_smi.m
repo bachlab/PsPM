@@ -82,7 +82,7 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     global settings;
     if isempty(settings), pspm_init; end
     sourceinfo = []; sts = -1;
-    addpath(pspm_path('src','Import','smi'));
+    addpath(pspm_path('Import','smi'));
 
     if ~iscell(import)
         import = {import};
@@ -131,7 +131,7 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
 
     [data_concat, markers, mi_values, mi_names] = concat_sessions(data);
 
-    addpath(pspm_path('src','backroom'));
+    addpath(pspm_path('backroom'));
     chan_struct = data{1}.channels_columns;
     eyes_observed = lower(data{1}.eyesObserved);
     if strcmpi(eyes_observed, 'l')
@@ -146,7 +146,7 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
         chan_struct,...
         mask_chans,...
         @(x) contains(x, 'L '));
-    rmpath(pspm_path('src','backroom'));
+    rmpath(pspm_path('backroom'));
 
     sampling_rate = data{1}.sampleRate;
     units = data{1}.units;
@@ -200,7 +200,7 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     sourceinfo.eyes_observed = eyes_observed;
     sourceinfo.best_eye = eye_with_smaller_nan_ratio(import, eyes_observed);
 
-    rmpath(pspm_path('src','Import','smi'));
+    rmpath(pspm_path('Import','smi'));
     sts = 1;
 end
 

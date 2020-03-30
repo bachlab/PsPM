@@ -23,5 +23,5 @@ function path_to_folder = pspm_path(varargin)
         error('ID:invalid_input', 'All inputs to pspm_path must be string');
     end
     pspm_root_path = fileparts(which('pspm_path'));
-    path_to_folder = fullfile(pspm_root_path(1:end-4), varargin{:});
+    path_to_folder = fullfile(pspm_root_path, varargin{:});
 end

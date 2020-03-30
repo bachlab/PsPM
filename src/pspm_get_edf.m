@@ -14,7 +14,7 @@ function [sts, import, sourceinfo] = pspm_get_edf(datafile, import)
 global settings;
 if isempty(settings), pspm_init; end;
 sourceinfo = []; sts = -1;
-addpath(pspm_path('src','Import','fieldtrip','fileio')); 
+addpath(pspm_path('Import','fieldtrip','fileio')); 
 
 % get data
 % -------------------------------------------------------------------------
@@ -73,6 +73,6 @@ end;
 
 % clear path and return
 % -------------------------------------------------------------------------
-rmpath(pspm_path('src','Import','fieldtrip','fileio')); 
+rmpath(pspm_path('Import','fieldtrip','fileio')); 
 sts = 1;
 return;

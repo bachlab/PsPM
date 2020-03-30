@@ -168,7 +168,7 @@ end
 % check whether pspm_cfg is already on path
 dummy=which('pspm_cfg');
 if isempty (dummy)
-    addpath(pspm_path('src','pspm_cfg'));
+    addpath(pspm_path('pspm_cfg'));
     scrcfgpath=1;
 else
     scrcfgpath=0;
