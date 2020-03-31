@@ -44,7 +44,7 @@ In the following course program, clickable links to each course day will appear 
  
 **Thursday 7 May 2020**
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200507T1300)) Lecture: Respiration, startle eyeblink
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200507T1300)) Lecture: Respiration, startle eyeblink (Dominik R Bach)
 
 14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200507T1400)) Tutorial: workflow automation – calling functions directly and matlab coding (Filip Melinscak)
 
@@ -54,9 +54,9 @@ In the following course program, clickable links to each course day will appear 
 
 14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200514T1400))Tutorial: Preprocessing cardiac, respiratory and startle data, open Q&A (Dominik R Bach)
 
-All sessions take place via zoom. Attendees may need to download and install the Zoom software in advance of joining the meeting: https://zoom.us 
+All sessions take place via zoom. Attendees may need to download and install the Zoom software in advance of joining the meeting: [https://zoom.us](https://zoom.us) 
 
-The Zoom channel will be available for people to join 15 minutes before each meeting. To maintain bandwidth and avoid problems with audio, please could attendees ensure their video is switched off after joining the meeting, and that their microphone is muted when they are not speaking. In the Q&A, please use the "raise hand" functionality in Zoom to let the chair know you have a question (https://www.youtube.com/watch?v=5e8eg4_rgwg).
+The Zoom channel will be available for people to join 15 minutes before each meeting. To maintain bandwidth and avoid problems with audio, please could attendees ensure their video is switched off after joining the meeting, and that their microphone is muted when they are not speaking. In the Q&A, please use the "raise hand" functionality in Zoom to let the chair know you have a question ([see here for demonstration](https://www.youtube.com/watch?v=5e8eg4_rgwg)).
 
 For the tutorials, we suggest that participants install Matlab and PsPM on their computers, download the provided data sets, and try to replicate the instructors' demonstrations. Useful links:
 
