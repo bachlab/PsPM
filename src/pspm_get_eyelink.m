@@ -65,8 +65,7 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
     if isempty(settings), pspm_init; end
     sourceinfo = []; sts = -1;
     % add specific import path for specific import function
-    addpath([settings.path, 'Import', filesep, 'eyelink']);
-
+    addpath(pspm_path('Import','eyelink')); 
     default_blink_saccade_discard_factor = 0;
     for i = 1:numel(import)
         if ~isfield(import{i}, 'blink_saccade_edge_discard_factor')
@@ -257,8 +256,8 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
             % imported data cannot be read at the moment (in later instances)
             import{k}.markerinfo = markerinfos;
 
-            % use ascending flank for translation from continuous to events
-            import{k}.flank = 'ascending';
+            % use 'all' flank for translation from continuous to events
+            import{k}.flank = 'all';
         else    
             % determine chan id from chantype - eyelink specific
             % thats why channel ids will be ignored!
@@ -405,7 +404,7 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
     sourceinfo.best_eye = lower(sourceinfo.eyesObserved(min_idx));
 
     % remove specific import path
-    rmpath([settings.path, 'Import', filesep, 'eyelink']);
+    rmpath(pspm_path('Import','eyelink'));
 
     sts = 1;
     return;

@@ -41,7 +41,7 @@ function [data] = import_eyelink(filepath)
 
     % parse datafile
     % --------------
-    bsearch_path = pspm_path('backroom', 'bsearch');
+    bsearch_path = pspm_path('ext', 'bsearch');
     addpath(bsearch_path);
     [dataraw, messages, chan_info, file_info] = parse_eyelink_file(filepath);
     markers_sess = {};
@@ -299,9 +299,14 @@ function [dataraw, markers, chan_info] = parse_messages(messages, dataraw, chan_
         msgline = messages{idx};
         parts = split(msgline);
         time = str2num(parts{2});
-        markers.markers(bsearch(timecol, time)) = true;
-        markers.times(end + 1, 1) = time;
-        markers.names{end + 1, 1} = cell2mat(join(parts(3:end), ' '));
+        if ismember(time,markers.times)
+            warning('ID:markers_with_same_timestamp',['PsPM found markers with same timestamps.',...
+                                                    'Only the first one will be imported.'])
+        elseif time <= session_end_time
+            markers.markers(bsearch(timecol, time)) = true;
+            markers.times(end + 1, 1) = time;
+            markers.names{end + 1, 1} = cell2mat(join(parts(3:end), ' '));
+        end
     end
 
     % set data columns

@@ -102,8 +102,8 @@ if test_sf
     scr = Y;
     sr  = 10;
     global settings
-    addpath([settings.path, 'DAVB']);
-    addpath([settings.path, 'DAVB', filesep, 'subfunctions']);
+    addpath(pspm_path('ext','VBA'));
+    addpath(pspm_path('ext','VBA','subfunctions'));
     options.fresp = 1/40;
     
     dcm = pspm_sf_dcm(scr, sr, options);

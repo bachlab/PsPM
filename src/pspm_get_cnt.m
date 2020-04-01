@@ -18,7 +18,7 @@ function [sts, import, sourceinfo] = pspm_get_cnt(datafile, import)
 % -------------------------------------------------------------------------
 global settings;
 if isempty(settings), pspm_init; end;
-addpath([settings.path, 'Import', filesep, 'fieldtrip', filesep, 'fileio']); 
+addpath(pspm_path('Import','fieldtrip','fileio')); 
 sourceinfo = []; sts = -1;
 
 % get external file, using fieldtrip
@@ -76,7 +76,7 @@ end;
 
 % clear path and return
 % -------------------------------------------------------------------------
-rmpath([settings.path, 'Import', filesep, 'fieldtrip', filesep, 'fileio']); 
+rmpath(pspm_path('Import','fieldtrip','fileio')); 
 sts = 1;
 return;
 

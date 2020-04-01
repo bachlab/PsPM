@@ -1,4 +1,10 @@
 ## PsPM
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/bachlab/PsPM)](https://github.com/bachlab/PsPM/releases)
+[![GitHub Release Date](https://img.shields.io/github/release-date/bachlab/PsPM)](https://github.com/bachlab/PsPM/releases)
+[![Build Status](https://sphinx.bli.uzh.ch/jenkins/buildStatus/icon?job=PsPM)](https://github.com/bachlab/PsPM)
+[![Website](https://img.shields.io/website?down_color=lightgrey&down_message=offline&up_color=green&up_message=online&url=https%3A%2F%2Fbachlab.github.io%2FPsPM)](https://bachlab.github.io/PsPM)
+[![License](https://img.shields.io/github/license/bachlab/PsPM)](https://www.gnu.org/licenses/gpl-3.0)
+
 **PsPM** stands for PsychoPhysiological Modelling. It is a powerful matlab toolbox for model-based analysis of psychophysiological signals, for example SCR, ECG, respiration, pupil size, or startle eye-blink EMG. Currently, **PsPM** implements models for all of these modalities, and we are working towards further models, for example, for skin potential and ocular scan path length.
 
 A **PsPM** allows inferring a psychological variable from observable physiological data. For example, associative memory can be inferred from observed skin conductance responses (SCR). This allows for quantitative description of hidden processes, increases the temporal resolution of analysis, and suppresses noise.

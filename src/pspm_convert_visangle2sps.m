@@ -19,8 +19,8 @@ function [ sts, out ] = pspm_convert_visangle2sps(fn, options)
 %                              found gaze data channels with type 'degree'
 %                  eyes:       Define on which eye the operations
 %                              should be performed. Possible values
-%                              are: 'left', 'right', 'all'. Default is
-%                               'all'.
+%                              are: 'l', 'r', 'lr', 'rl'. 
+%                              Default: 'lr'
 %
 %   OUTPUT:
 %   sts:                        Status determining whether the execution was
@@ -38,7 +38,7 @@ if nargin<1
     warning('ID:invalid_input', 'Nothing to do.'); return;
 elseif nargin<2
     channels = 0;
-    options = struct('eyes','all');
+    options = struct('eyes','lr');
 end
 if isfield(options, 'chans')
     channels = options.chans;
@@ -50,27 +50,20 @@ else
     channels = 0;
 end
 
+% option.eyes
 if ~isfield(options, 'eyes')
-    options.eyes = 'all';
+    options.eyes = 'lr';
+elseif ~any(strcmpi(options.eyes, {'l', 'r', 'rl', 'lr'}))
+    warning('ID:invalid_input', ['''options.eyes'' must be either ''l'', ', ...
+                                 '''r'', ''rl'' or ''lr''.']);
+    return;
 end;
-if ~isfield(options, 'channels')
-    options.channels = {'pupil'};
-end
 
 % fn
 if ~ischar(fn) || ~exist(fn, 'file')
     warning('ID:invalid_input', ['File %s is not char or does not ', ...
         'seem to exist.'], fn); return;
 end;
-
-
-
-if ~any(strcmpi(options.eyes, {'all', 'left', 'right'}))
-    warning('ID:invalid_input', ['Options.eyes must be either ''all'', ', ...
-        '''left'' or ''right''.']);
-    return;
-end;
-
 
 % load data to evaluate
 [lsts, infos, data] = pspm_load_data(fn, channels);
@@ -84,7 +77,7 @@ n_eyes = numel(infos.source.eyesObserved);
 
 for i=1:n_eyes
     eye = lower(infos.source.eyesObserved(i));
-    if strcmpi(options.eyes, 'all') || strcmpi(options.eyes(1), eye)
+    if contains(options.eyes, eye)
         gaze_x = ['gaze_x_', eye];
         gaze_y = ['gaze_y_', eye];
         

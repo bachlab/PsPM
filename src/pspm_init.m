@@ -123,7 +123,7 @@ else
     addspm=1;
 end
 if addspm
-    addpath([pth, fs, 'SPM']);
+    addpath(pspm_path('ext','SPM'));
     spmpath=1;
 else
     spmpath=0;
@@ -132,7 +132,7 @@ end
 % check whether matlabbatch is already on path
 dummy=which('cfg_ui');
 if isempty (dummy)
-    addpath([pth, fs, 'matlabbatch']);
+    addpath(pspm_path('ext','matlabbatch'));
     matlabbatchpath=1;
 else
     if strcmp(fs, '/')
@@ -155,7 +155,7 @@ else
                 [config_dir,~,~] = fileparts(dummy);
                 rmpath(config_dir);
             end
-            addpath([pth, fs, 'matlabbatch']);
+            addpath(pspm_path('ext','matlabbatch'));
             matlabbatchpath=1;
         else
             matlabbatchpath=0;
@@ -168,16 +168,16 @@ end
 % check whether pspm_cfg is already on path
 dummy=which('pspm_cfg');
 if isempty (dummy)
-    addpath([pth, fs, 'pspm_cfg']);
+    addpath(pspm_path('pspm_cfg'));
     scrcfgpath=1;
 else
     scrcfgpath=0;
 end
 
 % add VBA because this is used in various functions
-addpath([pth, 'VBA']);
-addpath([pth, 'VBA', fs, 'subfunctions']);
-addpath([pth, 'VBA', fs, 'stats&plots']);
+addpath(pspm_path('ext','VBA'));
+addpath(pspm_path('ext','VBA','subfunctions'));
+addpath(pspm_path('ext','VBA','stats&plots'));
 
 
 % -------------------------------------------------------------------------

@@ -782,6 +782,12 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat))
             ylabel(' Interpolated IBI [ms] ','Fontsize',14)
         elseif strcmp(handles.prop.wave,'pupil')
             ylabel(' size in arbitrary units ','Fontsize',14)
+        elseif contains(handles.prop.wave,'pupil')
+            ylabel([' Pupil size [',unit,'] '],'Fontsize',14)
+        elseif contains(handles.prop.wave,'gaze') && contains(handles.prop.wave,'x')
+            ylabel([' Gaze x coordinate [',unit,'] '],'Fontsize',14)
+        elseif contains(handles.prop.wave,'gaze') && contains(handles.prop.wave,'y')
+            ylabel([' Gaze y coordinate [',unit,'] '],'Fontsize',14)
         else ylabel([' unknown unit [',unit,'] '],'Fontsize',14)
         end
         
