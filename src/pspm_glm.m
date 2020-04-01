@@ -68,12 +68,9 @@ function glm = pspm_glm(model, options)
 %                   at the end of the output. In 'free' models the field
 %                   model.window is MANDATORY and single basis functions 
 %                   are allowed only.
-% model.centering:  if set to 0 the function would not perform the 
-%                   mean centering of the convoluted X data.
-%                   Default: 1
 %
 % OPTIONS (optional argument)
-% options.overwrite:       overwrite existing model output; default 0
+% options.overwrite: overwrite existing model output; default 0
 % options.marker_chan_num: marker channel number; default last marker
 %                          channel
 % options.exclude_missing: marks trials during which NaN percentage exceeds
@@ -81,7 +78,8 @@ function glm = pspm_glm(model, options)
 %                          'segment_length' (in s after onset) and 'cutoff'
 %                          (in % NaN per segment). Results are written into
 %                          model structure as fields .stats_missing and 
-%                           .stats_exclude but not used further.                           
+%                           .stats_exclude but not used further.
+%                           
 %
 % TIMING - multiple condition file(s) or struct variable(s):
 % The structure is equivalent to SPM2/5/8/12 (www.fil.ion.ucl.ac.uk/spm),
@@ -232,13 +230,6 @@ if ~isfield(model, 'norm')
     model.norm = 0;
 elseif ~ismember(model.norm, [0, 1])
     warning('ID:invalid_input', 'Normalisation must be specified as 0 or 1.'); return;
-end
-
-% check mean centering --
-if ~isfield(model,'centering')
-    model.centering = 1;
-elseif ~ismember(model.centering, [0, 1])
-    model.centering = 1;
 end
 
 % check options --
@@ -736,13 +727,11 @@ for iCond = 1:numel(names)
         end
     end
     
-    % mean centering
-    if model.centering
-        for iXCol=1:size(tmp.XC{iCond},2)
-            tmp.XC{iCond}(:,iXCol) = tmp.XC{iCond}(:,iXCol) - mean(tmp.XC{iCond}(:,iXCol));
-        end
+    % mean center
+    for iXCol=1:size(tmp.XC{iCond},2)
+        tmp.XC{iCond}(:,iXCol) = tmp.XC{iCond}(:,iXCol) - mean(tmp.XC{iCond}(:,iXCol));
     end
-
+    
     % orthogonalize after convolution if there is more than one column per
     % condition
     if size(tmp.XC{iCond}, 2) > 1
