@@ -10,16 +10,20 @@ permalink: /news/
 
 PsPM 4.3.0 released - including few new features and changes (in particular in the way PsPM imports markers from Eyelink files) as well as bugfixes correcting the 4.2.1 release. Thanks to everybody involved!
 
+---
 
 ### 30.03.2020 COVID-19 news
 All planned PsPM workshops have been cancelled/postponed by the organisers due to the uncertainty around the COVID-19 pandemic. 
 
 We are offering a free live-online PsPM course between 06 April and 14 May 2020. More details [on our course pages](https://bachlab.github.io/PsPM/courses/). Participants are welcome to bring along specific questions on PsPM, or experiments that they are planning to analyse with PsPM.
 
+---
+
 ### 28.02.2020
 
 We are running the next full PsPM workshop on 30.6.-01.07.2020 at [ESCAN 2020](http://www.escan2020.eu/) in Budapest. This 2-day workshop will include theoretical and practical sessions on eyetracking (pupillometry and gaze analysis), SCR, ECG, respiration and startle-eyeblink measurement. Training will be adapted to participant's previous exposure to PsPM, SPM or Matlab. Participants are welcome to bring along specific questions on PsPM, or experiments that they are planning to analyse with PsPM.
 
+---
 
 ### 04.11.2019
 
