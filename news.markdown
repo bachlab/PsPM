@@ -5,6 +5,12 @@ permalink: /news/
 ---
 
 # News
+
+### 01.04.2020
+
+PsPM 4.3.0 released - including few new features and changes (in particular in the way PsPM imports markers from Eyelink files) as well as bugfixes correcting the 4.2.1 release. Thanks to everybody involved!
+
+
 ### 30.03.2020 COVID-19 news
 All planned PsPM workshops have been cancelled/postponed by the organisers due to the uncertainty around the COVID-19 pandemic. 
 
