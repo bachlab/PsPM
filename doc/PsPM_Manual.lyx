@@ -19004,19 +19004,6 @@ pspm_extract_segments
 can be used now with raw data and thus be called easily within another function.
 \end_layout
 
-\begin_layout Itemize
-
-\family typewriter
-pspm_glm 
-\family default
-has a new option (
-\family typewriter
-model.centering
-\family default
-) which controls whenever mean centering is applied to convoluted X data
- or not.
-\end_layout
-
 \begin_layout Subsection*
 Changes
 \end_layout
@@ -19071,30 +19058,6 @@ The test of
 pspm_extract_segments
 \family default
  was adapted to the new feature.
-\end_layout
-
-\begin_layout Itemize
-Suppress redundancy in 
-\family typewriter
-pspm_compute_visual_angle
-\family default
-.
-\end_layout
-
-\begin_layout Itemize
-
-\family typewriter
-pspm_bf_spsrf_box
-\family default
- and 
-\family typewriter
-pspm_bf_spsrf_gamma
-\family default
- were adapted to the new feature in 
-\family typewriter
-pspm_glm
-\family default
-.
 \end_layout
 
 \begin_layout Itemize
