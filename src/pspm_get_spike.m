@@ -17,7 +17,7 @@ function [sts, import, sourceinfo] = pspm_get_spike(datafile, import)
 global settings;
 if isempty(settings), pspm_init; end;
 sourceinfo = []; sts = -1;
-addpath([settings.path, 'Import', filesep, 'SON']);
+addpath(pspm_path('Import','SON'));
 
 % get external file, using SON library
 % -------------------------------------------------------------------------
@@ -127,6 +127,6 @@ end;
 
 % clear path and return
 % -------------------------------------------------------------------------
-rmpath([settings.path, 'Import', filesep, 'SON']);
+rmpath(pspm_path('Import','SON'));
 sts = 1;
 return;

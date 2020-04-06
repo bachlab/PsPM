@@ -38,7 +38,7 @@ function out = read_smi_events(filepath)
     %__________________________________________________________________________
     %
     % (C) 2019 Eshref Yozdemir
-    bsearch_path = pspm_path('backroom', 'bsearch');
+    bsearch_path = pspm_path('ext', 'bsearch');
     addpath(bsearch_path);
 
     if ~exist(filepath,'file')

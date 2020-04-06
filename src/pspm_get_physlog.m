@@ -42,7 +42,7 @@ global settings;
 if isempty(settings), pspm_init; end;
 sourceinfo = []; sts = -1;
 % add specific import path for specific import function
-addpath([settings.path, 'Import', filesep, 'physlog']);
+addpath(pspm_path('Import','physlog'));
 
 % load data with specific function
 % -------------------------------------------------------------------------
@@ -76,7 +76,7 @@ sourceinfo.date = out.record_date;
 sourceinfo.time = out.record_time;
 
 % remove specific import path
-rmpath([settings.path, 'Import', filesep, 'physlog']);
+rmpath(pspm_path('Import','physlog'));
 
 sts = 1;
 return;

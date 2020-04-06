@@ -237,7 +237,7 @@ function [data] = import_smi(varargin)
     data = cell(n_sessions, 1);
     %% convert data, compute blink, saccade and messages
 
-    bsearch_path = fullfile(fileparts(which('import_smi')), '..', '..', 'backroom', 'bsearch');
+    bsearch_path = pspm_path('ext', 'bsearch');
     addpath(bsearch_path);
     for sn = 1:n_sessions
         data{sn} = struct();
