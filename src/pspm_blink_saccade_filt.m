@@ -51,6 +51,10 @@ function [sts, out_channel] = pspm_blink_saccade_filt(fn, discard_factor, option
         options.channel_action = 'add';
     end
 
+    if ~isnumeric(discard_factor)
+        warning('ID:invalid_input', 'discard_factor must be numeric');
+        return;
+    end
     if ~ismember(options.channel_action, {'add', 'replace'})
         warning('ID:invalid_input', 'Option channel_action must be either ''add'' or ''replace''');
         return;
