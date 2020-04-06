@@ -24,29 +24,6 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
     %                           the unit to which the data should be converted and
     %                           in which eyelink_trackdist is given
     %
-    %                       .blink_saccade_edge_discard_factor:
-    %                           Factor used to determine the number of
-    %                           samples right before and right after a blink/saccade
-    %                           period to discard. This value is multiplied by the
-    %                           sampling rate of the recording to determine the
-    %                           number of samples to discard from one end. Therefore,
-    %                           for each blink/saccade period, 2*this_value*SR many
-    %                           samples are discarded in total, and effectively
-    %                           blink/saccade period is extended.
-    %
-    %                           This value also corresponds to the duration of
-    %                           samples to discard on one end in seconds. For example,
-    %                           when it is 0.01, we discard 10 ms worth of data on
-    %                           each end of every blink/saccade period.
-    %
-    %                           The default value has been changed to 0 in PsPM revision
-    %                           r803 to reduce the amount of discarded data. Note that
-    %                           this might result in noisy samples around blink/saccade
-    %                           points. Therefore, it is highly recommended to perform
-    %                           pupil size data preprocessing using pspm_pupil_pp and
-    %                           gaze data filtering using pspm_find_valid_fixations.
-    %                           (Default: 0)
-    %                           
     % 
     % In this function, channels related to eyes will not produce an error, if 
     % they do not exist. Instead they will produce an empty channel (a channel 
@@ -91,9 +68,6 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
     % -------------------------------------------------------------------------
     data = import_eyelink(datafile);
 
-    % expand blink/saccade channels with offset
-    % set data channels with blinks/saccades to NaN
-    % -------------------------------------------------------------------------
     addpath(pspm_path('backroom'));
     for i = 1:numel(data)-1
         if strcmpi(data{i}.eyesObserved, 'l')
@@ -103,19 +77,11 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
         else
             mask_chans = {'blink_l', 'blink_r', 'saccade_l', 'saccade_r'};
         end
-        expand_factor = 0;
-        if i <= numel(import)
-            expand_factor = import{i}.blink_saccade_edge_discard_factor;
-        else
-            expand_factor = default_blink_saccade_discard_factor;
-        end
-        data{i}.channels = expand_mask_chans(...
-            data{i}.channels, ...
-            data{i}.channels_header, ...
-            mask_chans, ...
-            expand_factor * data{i}.sampleRate ...
+        data{i}.channels = set_blinks_saccades_to_nan(...
+            data{i}.channels,...
+            data{i}.channels_header,...
+            mask_chans...
         );
-        data{i}.channels = set_blinks_saccades_to_nan(data{i}.channels, data{i}.channels_header, mask_chans, @(x) endsWith(x, '_l'));
     end
     rmpath(pspm_path('backroom'));
 
@@ -409,31 +375,4 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 
     sts = 1;
     return;
-end
-
-function data = expand_mask_chans(data, column_names, mask_chans, offset)
-    for chan = mask_chans
-        col_idx = find(strcmpi(column_names, chan{1}));
-        data(:, col_idx) = expand_mask(data(:, col_idx), offset);
-    end
-end
-
-function mask = expand_mask(mask, offset)
-    diffmask = diff(mask);
-    indices_to_expand_towards_left = find(diffmask == 1) + 1;
-    indices_to_expand_towards_right = find(diffmask == (-1));
-
-    for ii = 1:numel(indices_to_expand_towards_left)
-        idx = indices_to_expand_towards_left(ii);
-        begidx = max(1, idx - offset);
-        endidx = max(1, idx - 1);
-        mask(begidx : endidx) = true;
-    end
-    ndata = numel(mask);
-    for ii = 1:numel(indices_to_expand_towards_right)
-        idx = indices_to_expand_towards_right(ii);
-        begidx = min(ndata, idx + 1);
-        endidx = min(ndata, idx + offset);
-        mask(begidx : endidx) = true;
-    end
 end
