@@ -14,15 +14,15 @@ In the following course program, clickable links to each course day will appear 
 
 **Monday 6 April 2020**
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200406T1300)) Lecture: [PsPM preliminaries: retrodictive validity & why do we need this?](https://zoom.us/j/348981833) (Dominik R Bach)
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200406T1300)) Lecture: PsPM preliminaries: retrodictive validity & why do we need this? (Dominik R Bach)
 
-14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200406T1400)) Starter tutorial: [opening Matlab & PsPM, PsPM GUI, data import, Troubleshooting](https://zoom.us/j/270812037) (Filip Melinscak)
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200406T1400)) Starter tutorial: opening Matlab & PsPM, PsPM GUI, data import, Troubleshooting (Filip Melinscak)
 
 **Thursday 9 April 2020**
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1300)) Lecture: LTI & GLM (Dominik R Bach)
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1300)) [Lecture: LTI & GLM] (https://zoom.us/j/428248760) (Dominik R Bach)
 
-14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1400)) Tutorial: GLM GUI, GLM review (Dominik R Bach)
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1400)) [Tutorial: GLM GUI, GLM review](https://zoom.us/j/772732496) (Dominik R Bach)
 
 **Thursday 16 April 2020**
 
