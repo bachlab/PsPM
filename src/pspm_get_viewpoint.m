@@ -71,7 +71,7 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
     global settings;
     if isempty(settings), pspm_init; end
     sourceinfo = []; sts = -1;
-    addpath([settings.path, 'Import', filesep, 'viewpoint']);
+    addpath(pspm_path('Import','viewpoint')); 
 
     if ~iscell(import)
         import = {import};
@@ -169,7 +169,7 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
     sourceinfo.eyesObserved = eyes_observed;
     sourceinfo.best_eye = eye_with_smaller_nan_ratio(import, eyes_observed);
 
-    rmpath([settings.path, 'Import', filesep, 'viewpoint']);
+    rmpath(pspm_path('Import','viewpoint')); 
     sts = 1;
 end
 

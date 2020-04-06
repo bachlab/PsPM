@@ -20,7 +20,7 @@ function [sts, import, sourceinfo] = pspm_get_vario(datafile, import)
 global settings;
 if isempty(settings), pspm_init; end;
 sourceinfo = []; sts = -1;
-addpath([settings.path, 'Import', filesep, 'vario']); 
+addpath(pspm_path('Import','vario')); 
 
 % get data
 % -------------------------------------------------------------------------
@@ -63,7 +63,7 @@ end;
 
 % clear path and return
 % -------------------------------------------------------------------------
-rmpath([settings.path, 'Import', filesep, 'vario']); 
+rmpath(pspm_path('Import','vario')); 
 sts = 1;
 return;
 

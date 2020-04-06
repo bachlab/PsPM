@@ -103,7 +103,7 @@ PsPM: Psychophysiological Modelling
 
 \begin_layout Standard
 \align center
-Version 4.2.1
+Version 4.3.0
 \end_layout
 
 \begin_layout Standard
@@ -9766,6 +9766,17 @@ ts designs it needs to be set to false.
 \end_layout
 
 \begin_layout Subsubsection*
+Centering
+\end_layout
+
+\begin_layout Standard
+Specify if you want to mean centering the convoluted X data.
+ By default this centering is applied to every model but for some specific
+ cases such as some scanpath length analysis it has to be set to 0 (i.e.
+ False).
+\end_layout
+
+\begin_layout Subsubsection*
 Filter Settings
 \end_layout
 
@@ -12357,13 +12368,13 @@ Data navigation
 \begin_layout Standard
 Data navigation can be done by zooming (
 \begin_inset Graphics
-	filename icons/button_zoom.PNG
+	filename Figures/icons/button_zoom.PNG
 
 \end_inset
 
 ) and panning (
 \begin_inset Graphics
-	filename icons/button_pan.PNG
+	filename Figures/icons/button_pan.PNG
 
 \end_inset
 
@@ -12390,7 +12401,7 @@ Add epochs
 \begin_layout Standard
 New epochs can be added by clicking the 'add epoch' button (
 \begin_inset Graphics
-	filename icons/button_add_epoch.PNG
+	filename Figures/icons/button_add_epoch.PNG
 
 \end_inset
 
@@ -12409,7 +12420,7 @@ Remove epochs
 \begin_layout Standard
 Existing epochs can be removed by clicking the 'remove epoch' button (
 \begin_inset Graphics
-	filename icons/button_remove_epoch.PNG
+	filename Figures/icons/button_remove_epoch.PNG
 
 \end_inset
 
@@ -12428,7 +12439,7 @@ Epoch navigation
 In order to navigate between epochs it is either possible to use the epoch
  list on the right side or the two epoch navigation buttons (
 \begin_inset Graphics
-	filename icons/button_navigate_epochs.PNG
+	filename Figures/icons/button_navigate_epochs.PNG
 
 \end_inset
 
@@ -13101,6 +13112,75 @@ Data files
 Channel
 \shape default
 : Channel in specified data file from which the segments should be extracted.
+\end_layout
+
+\begin_layout Itemize
+
+\shape italic
+Conditions
+\shape default
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Condition files: Should be in the format of the conditions defined in a
+ GLM model.
+ Required fields are names, onsets, duration.
+\end_layout
+
+\begin_layout Itemize
+Enter conditions manually: Specify the conditions that you want to include
+ in your design matrix.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Name: Specify the name of the condition.
+\end_layout
+
+\begin_layout Itemize
+Onsets: Specify a vector of onsets.
+ The length of the vector corresponds to the number of events included in
+ this condition.
+ Onsets have to be indicated in the specified time unit (‘seconds’, ‘samples’).
+\end_layout
+
+\begin_layout Itemize
+Duration: Specify the length of the condition.
+\end_layout
+
+\end_deeper
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+Raw:
+\series default
+ Specify all the settings manually (i.e.
+ choose manual mode) and provide raw data
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\shape italic
+Data
+\shape default
+: Numeric raw data or a cell array of numeric raw data.
+\end_layout
+
+\begin_layout Itemize
+
+\shape italic
+Sampling rate
+\shape default
+: One sampling rate or an array of sampling rates of the corresponding 
+\shape italic
+Data
+\shape default
+.
 \end_layout
 
 \begin_layout Itemize
@@ -18881,6 +18961,134 @@ Fix a bug in
 pspm_filtfilt
 \family default
  which crashed when the filter parameters were of dimension one
+\end_layout
+
+\begin_layout Section
+PsPM Version 4.3.0
+\end_layout
+
+\begin_layout Subsection*
+New Features
+\end_layout
+
+\begin_layout Itemize
+In 
+\family typewriter
+pspm_get_events
+\family default
+, 
+\family typewriter
+import.flank
+\family default
+ can be now set to 
+\family typewriter
+'all'
+\family default
+ what would import all markers and data related to them.
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_display 
+\family default
+allows now to display pupil size units and the gaze x & y coordinate units
+ on the y-axis.
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_extract_segments 
+\family default
+can be used now with raw data and thus be called easily within another function.
+\end_layout
+
+\begin_layout Subsection*
+Changes
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_version
+\family default
+ has a new url and thus do not send any warning about version checks anymore.
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+import_eyelink
+\family default
+ do not import markers which are outside the session end time (
+\family typewriter
+END
+\family default
+ marker).
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+import_eyelink
+\family default
+ sends a warning whenever two markers have the same timestamp.
+\end_layout
+
+\begin_layout Itemize
+In 
+\family typewriter
+pspm_get_eyelink
+\family default
+, 
+\family typewriter
+import.flank
+\family default
+ set to 
+\family typewriter
+'all'
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+The test of 
+\family typewriter
+pspm_extract_segments
+\family default
+ was adapted to the new feature.
+\end_layout
+
+\begin_layout Itemize
+External functions and libraries were regrouped in one folder called 
+\family typewriter
+ext.
+\end_layout
+
+\begin_layout Subsection*
+Bugfixes
+\end_layout
+
+\begin_layout Itemize
+Fix a bux in 
+\family typewriter
+pspm_bf_lcrf_gm
+\family default
+ and 
+\family typewriter
+pspm_bf_ldrf_gm
+\family default
+ where the offset was wrongly implemented.
+\end_layout
+
+\begin_layout Itemize
+Fix a bug in 
+\family typewriter
+pspm_compute_visual_angle
+\family default
+ where there was an error in the conversion factor of pixels wrt.
+ to mm.
 \end_layout
 
 \begin_layout Part

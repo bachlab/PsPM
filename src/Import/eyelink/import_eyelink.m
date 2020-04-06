@@ -41,7 +41,7 @@ function [data] = import_eyelink(filepath)
 
     % parse datafile
     % --------------
-    bsearch_path = pspm_path('backroom', 'bsearch');
+    bsearch_path = pspm_path('ext', 'bsearch');
     addpath(bsearch_path);
     [dataraw, messages, chan_info, file_info] = parse_eyelink_file(filepath);
     markers_sess = {};
