@@ -21,7 +21,7 @@ function [sts, import, sourceinfo] = pspm_get_brainvis(datafile, import)
 global settings;
 if isempty(settings), pspm_init; end;
 sourceinfo = []; sts = -1;
-addpath([settings.path, 'Import', filesep, 'fieldtrip' filesep 'fileio']); 
+addpath(pspm_path('Import','fieldtrip','fileio')); 
 
 % get data
 % -------------------------------------------------------------------------
@@ -81,7 +81,7 @@ end;
 
 % clear path and return
 % -------------------------------------------------------------------------
-rmpath([settings.path, 'Import', filesep, 'fieldtrip', filesep, 'fileio']); 
+rmpath(pspm_path('Import','fieldtrip','fileio')); 
 sts = 1;
 return;
 

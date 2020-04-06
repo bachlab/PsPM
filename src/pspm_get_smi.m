@@ -82,7 +82,7 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     global settings;
     if isempty(settings), pspm_init; end
     sourceinfo = []; sts = -1;
-    addpath([settings.path, 'Import', filesep, 'smi']);
+    addpath(pspm_path('Import','smi'));
 
     if ~iscell(import)
         import = {import};
@@ -200,7 +200,7 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     sourceinfo.eyes_observed = eyes_observed;
     sourceinfo.best_eye = eye_with_smaller_nan_ratio(import, eyes_observed);
 
-    rmpath([settings.path, 'Import', filesep, 'smi']);
+    rmpath(pspm_path('Import','smi'));
     sts = 1;
 end
 

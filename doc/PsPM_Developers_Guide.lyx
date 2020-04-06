@@ -98,7 +98,7 @@ Developer's Guide
 
 \begin_layout Standard
 \align center
-Version 4.2.1
+Version 4.3.0
 \end_layout
 
 \begin_layout Standard
@@ -7996,7 +7996,7 @@ Tests:
 
 
 \begin_inset Tabular
-<lyxtabular version="3" rows="9" columns="2">
+<lyxtabular version="3" rows="10" columns="2">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="6cm">
 <column alignment="center" valignment="top">
@@ -8074,7 +8074,7 @@ pspm_extract_segments('manual',fn,0)
 \begin_inset Text
 
 \begin_layout Plain Layout
-ID:invalid_inpu
+ID:invalid_input
 \end_layout
 
 \end_inset
@@ -8085,7 +8085,27 @@ ID:invalid_inpu
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_extract_segments('manual',[0.1,2],0,timing)
+pspm_extract_segments('manual',struct('a',10),0,timing)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID:invalid_input
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pspm_extract_segments('manual',[1,3],logical(32),timing)
 \end_layout
 
 \end_inset

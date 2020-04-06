@@ -279,7 +279,7 @@ function [sts, smooth_signal] = preprocess(data, data_combine, segments, custom_
 
     % load lib
     % -------------------------------------------------------------------------
-    libbase_path = pspm_path('pupil-size', 'code');
+    libbase_path = pspm_path('ext','pupil-size', 'code');
     libpath = {fullfile(libbase_path, 'dataModels'), fullfile(libbase_path, 'helperFunctions')};
     addpath(libpath{:});
 
