@@ -75,7 +75,7 @@ There are **regular PsPM courses**. To check for updates, have a look on our [ne
 [30.6.-01.07.2020 **- cancelled due to COVID-19 pandemic -** ESCAN 2020 Budapest (full 2-day PsPM satellite workshop with practical training)](http://www.escan2020.eu/)
 
 ## Course slides
-* [PsPM Overview](http://bachlab.org/wp-content/uploads/2019/12/02_Overview_Bach.pdf) (Dominik R. Bach)
+* [PsPM Overview](http://bachlab.org/wp-content/uploads/2020/04/01_Overview_Bach.pdf) (Dominik R. Bach)
 * [LTI & GLM](http://bachlab.org/wp-content/uploads/2019/12/03_LTI_GLM_Bach.pdf) (Dominik R. Bach)
 * [SCR models](http://bachlab.org/wp-content/uploads/2019/12/04_SCR_Bach.pdf) (Dominik R. Bach)
 * [Pupil size models](http://bachlab.org/wp-content/uploads/2019/09/05_PSR_Korn.pdf) (Christoph W. Korn)
