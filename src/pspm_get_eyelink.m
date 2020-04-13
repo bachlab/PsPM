@@ -25,6 +25,12 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
     %                           in which eyelink_trackdist is given
     %
     %                       .blink_saccade_edge_discard_factor:
+    %                           DEPRECATED: This option is deprecated, and will be
+    %                           removed in the next API breaking PsPM release. Please
+    %                           change your codes to use the new
+    %                           pspm_blink_saccade_filt function if you rely on this
+    %                           functionality.
+    %
     %                           Factor used to determine the number of
     %                           samples right before and right after a blink/saccade
     %                           period to discard. This value is multiplied by the
@@ -70,6 +76,10 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
     for i = 1:numel(import)
         if ~isfield(import{i}, 'blink_saccade_edge_discard_factor')
             import{i}.blink_saccade_edge_discard_factor = default_blink_saccade_discard_factor;
+        else
+            warning('ID:deprecated', ['pspm_get_eyelink: blink_saccade_edge_discard_factor argument is DEPRECATED.'...
+                'Please change your code to use the new pspm_blink_saccade_filt function if you rely on this'...
+                'functionality.']);
         end
 
         if ~isnumeric(import{i}.blink_saccade_edge_discard_factor) || ...
@@ -108,13 +118,12 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
         else
             expand_factor = default_blink_saccade_discard_factor;
         end
-        data{i}.channels = expand_mask_chans(...
+        data{i}.channels = blink_saccade_filtering(...
             data{i}.channels, ...
             data{i}.channels_header, ...
             mask_chans, ...
             expand_factor * data{i}.sampleRate ...
         );
-        data{i}.channels = set_blinks_saccades_to_nan(data{i}.channels, data{i}.channels_header, mask_chans, @(x) endsWith(x, '_l'));
     end
     rmpath(pspm_path('backroom'));
 
@@ -408,31 +417,4 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 
     sts = 1;
     return;
-end
-
-function data = expand_mask_chans(data, column_names, mask_chans, offset)
-    for chan = mask_chans
-        col_idx = find(strcmpi(column_names, chan{1}));
-        data(:, col_idx) = expand_mask(data(:, col_idx), offset);
-    end
-end
-
-function mask = expand_mask(mask, offset)
-    diffmask = diff(mask);
-    indices_to_expand_towards_left = find(diffmask == 1) + 1;
-    indices_to_expand_towards_right = find(diffmask == (-1));
-
-    for ii = 1:numel(indices_to_expand_towards_left)
-        idx = indices_to_expand_towards_left(ii);
-        begidx = max(1, idx - offset);
-        endidx = max(1, idx - 1);
-        mask(begidx : endidx) = true;
-    end
-    ndata = numel(mask);
-    for ii = 1:numel(indices_to_expand_towards_right)
-        idx = indices_to_expand_towards_right(ii);
-        begidx = min(ndata, idx + 1);
-        endidx = min(ndata, idx + offset);
-        mask(begidx : endidx) = true;
-    end
 end
