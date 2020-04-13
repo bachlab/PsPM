@@ -50,9 +50,9 @@ In the following course program, clickable links to each course day will appear 
 
 **Thursday 14 May 2020**
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200514T1300))Lecture: Fear conditioning – comparison of models, scanpath length, new developments (Yanfang Xia)
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200514T1300)) Lecture: Fear conditioning – comparison of models, scanpath length, new developments (Yanfang Xia)
 
-14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200514T1400))Tutorial: Preprocessing cardiac, respiratory and startle data, open Q&A (Dominik R Bach)
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200514T1400)) Tutorial: Preprocessing cardiac, respiratory and startle data, open Q&A (Dominik R Bach)
 
 All sessions take place via zoom. Attendees may need to download and install the Zoom software in advance of joining the meeting: [https://zoom.us](https://zoom.us) 
 
@@ -76,8 +76,8 @@ There are **regular PsPM courses**. To check for updates, have a look on our [ne
 
 ## Course slides
 * [PsPM Overview](http://bachlab.org/wp-content/uploads/2020/04/01_Overview_Bach.pdf) (Dominik R. Bach)
-* [LTI & GLM](http://bachlab.org/wp-content/uploads/2019/12/03_LTI_GLM_Bach.pdf) (Dominik R. Bach)
-* [SCR models](http://bachlab.org/wp-content/uploads/2019/12/04_SCR_Bach.pdf) (Dominik R. Bach)
+* [LTI & GLM](http://bachlab.org/wp-content/uploads/2020/04/02_LTI_GLM_Bach.pdf) (Dominik R. Bach)
+* [SCR models](http://bachlab.org/wp-content/uploads/2020/04/03_SCR_Bach.pdf) (Dominik R. Bach)
 * [Pupil size models](http://bachlab.org/wp-content/uploads/2019/09/05_PSR_Korn.pdf) (Christoph W. Korn)
 * [Heart period models](http://bachlab.org/wp-content/uploads/2019/09/06_HPR_Paulus.pdf) (Philipp C. Paulus)
 * [Respiration & startle eye blink models](http://bachlab.org/wp-content/uploads/2019/09/07_RAR-SEBR_Bach.pdf) (Dominik R. Bach)
