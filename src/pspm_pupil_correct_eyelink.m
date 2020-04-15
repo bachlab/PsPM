@@ -217,6 +217,15 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
     [lsts, infos, gaze_y_data] = pspm_load_data(fn, gaze_y_chan);
     if lsts ~= 1; return; end
 
+    if numel(gaze_x_data) > 1
+        warning('ID:multiple_channels', 'There are more than one gaze x channel. We will use the last one');
+        gaze_x_data = gaze_x_data(end:end);
+    end
+    if numel(gaze_y_data) > 1
+        warning('ID:multiple_channels', 'There are more than one gaze y channel. We will use the last one');
+        gaze_y_data = gaze_y_data(end:end);
+    end
+
     % conditionally mandatory input checks
     % -------------------------------------------------------------------------
     if strcmp(gaze_x_data{1}.header.units, 'pixel') || strcmp(gaze_y_data{1}.header.units, 'pixel')
