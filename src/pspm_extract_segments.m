@@ -613,8 +613,8 @@ function [sts, out] = pspm_extract_segments(varargin)
         
         segments{c}.std = nanstd(m,0,2);
         segments{c}.sem = segments{c}.std./sqrt(n_onsets_in_cond{c});
-        segments{c}.trial_nan_percent = sum(isnan(m))/size(m,1);
-        segments{c}.total_nan_percent = sum(sum(isnan(m)))/numel(m);
+        segments{c}.trial_nan_percent = 100.0 * sum(isnan(m))/size(m,1);
+        segments{c}.total_nan_percent = 100.0 * sum(sum(isnan(m)))/numel(m);
         %   segments{c}.total_nan_percent = mean(segments{c}.trial_nan_percent);
         
         
