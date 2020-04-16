@@ -28,7 +28,7 @@ In the following course program, clickable links to each course day will appear 
 
 13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200416T1300)) [Lecture: SCR](https://uzh.zoom.us/j/441825619) (Dominik R Bach) ** new zoom meeting ID **
 
-14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200416T1400)) [Tutorial: Non-linear SCR model, SCR quality control](https://zoom.us/j/772732496) (Dominik R Bach) 
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200416T1400)) [Tutorial: Non-linear SCR model, SCR quality control](https://uzh.zoom.us/j/173309911) (Dominik R Bach) ** new zoom meeting ID **
 
 **Thursday 23 April 2020**
 
