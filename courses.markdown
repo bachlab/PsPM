@@ -14,7 +14,7 @@ In the following course program, clickable links to each course day will appear 
 
 **Monday 6 April 2020**
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200406T1300)) Lecture: PsPM preliminaries: retrodictive validity & why do we need this? (Dominik R Bach)
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200406T1300)) [Lecture: PsPM preliminaries: retrodictive validity & why do we need this? (Dominik R Bach)](https://liveuclac-my.sharepoint.com/:v:/g/personal/skgtbdo_ucl_ac_uk/EYmsFZk_v6pDgxPx5mSKBbYB8cpGhg4_d_WifA0uEvM5Mg?e=n1EPFu)
 
 14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200406T1400)) Starter tutorial: opening Matlab & PsPM, PsPM GUI, data import, Troubleshooting (Filip Melinscak)
 
@@ -74,8 +74,8 @@ There are **regular PsPM courses**. To check for updates, have a look on our [ne
 
 [30.6.-01.07.2020 **- cancelled due to COVID-19 pandemic -** ESCAN 2020 Budapest (full 2-day PsPM satellite workshop with practical training)](http://www.escan2020.eu/)
 
-## Course slides
-* [PsPM Overview](http://bachlab.org/wp-content/uploads/2020/04/01_Overview_Bach.pdf) (Dominik R. Bach)
+## Course slides & webcasts
+* PsPM Overview: [Slides](http://bachlab.org/wp-content/uploads/2020/04/01_Overview_Bach.pdf) | [Webcast]((https://liveuclac-my.sharepoint.com/:v:/g/personal/skgtbdo_ucl_ac_uk/EYmsFZk_v6pDgxPx5mSKBbYB8cpGhg4_d_WifA0uEvM5Mg?e=n1EPFu)) (Dominik R. Bach)
 * [LTI & GLM](http://bachlab.org/wp-content/uploads/2020/04/02_LTI_GLM_Bach.pdf) (Dominik R. Bach)
 * [SCR models](http://bachlab.org/wp-content/uploads/2020/04/03_SCR_Bach.pdf) (Dominik R. Bach)
 * [Pupil size models](http://bachlab.org/wp-content/uploads/2019/09/05_PSR_Korn.pdf) (Christoph W. Korn)
