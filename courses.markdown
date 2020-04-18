@@ -8,13 +8,15 @@ permalink: /courses/
 
 ## Live-online PsPM course spring 2020
 
-Because of course cancellations during the COVID-19 pandemics, we offer a live-online PsPM course and tutorial between 6 April and 14 May 2020. Each course day contains a 1-h lecture on a given topic, and a 1-h pop-in tutorial on a related or different topics. Lectures and tutorials can be attended individually or in succession. Participants are invited to bring their questions and data to the tutorials. 
+Because of course cancellations during the COVID-19 pandemic, we offer a live-online PsPM course and tutorial between 6 April and 14 May 2020. Each course day contains a 1-h lecture on a given topic, and a 1-h pop-in tutorial on a related or different topics. Lectures and tutorials can be attended individually or in succession. Participants are invited to bring their questions and data to the tutorials. 
 
 In the following course program, clickable links to each course day will appear after the previous course day ended. Details on how to participate, and suggested preparation, are found at the end of the program.
 
+Edited recordings of some lectures are available at the bottom of the page.
+
 **Monday 6 April 2020**
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200406T1300)) [Lecture: PsPM preliminaries: retrodictive validity & why do we need this? (Dominik R Bach)]
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200406T1300)) [Lecture: PsPM preliminaries: retrodictive validity & why do we need this? (Dominik R Bach)](https://liveuclac-my.sharepoint.com/:v:/g/personal/skgtbdo_ucl_ac_uk/EWVll0K2fyhDnfXrHAIkF1wBkxkPRKzUrNYd33NjEZSyZg?e=B7JvdI)
 
 14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200406T1400)) Starter tutorial: opening Matlab & PsPM, PsPM GUI, data import, Troubleshooting (Filip Melinscak)
 
@@ -75,7 +77,7 @@ There are **regular PsPM courses**. To check for updates, have a look on our [ne
 [30.6.-01.07.2020 **- cancelled due to COVID-19 pandemic -** ESCAN 2020 Budapest (full 2-day PsPM satellite workshop with practical training)](http://www.escan2020.eu/)
 
 ## Course slides & webcasts
-* PsPM Overview: [Slides](http://bachlab.org/wp-content/uploads/2020/04/01_Overview_Bach.pdf) | [Webcast] (Dominik R. Bach)
+* PsPM Overview: [Slides](http://bachlab.org/wp-content/uploads/2020/04/01_Overview_Bach.pdf) - [Webcast](https://liveuclac-my.sharepoint.com/:v:/g/personal/skgtbdo_ucl_ac_uk/EWVll0K2fyhDnfXrHAIkF1wBkxkPRKzUrNYd33NjEZSyZg?e=B7JvdI) (Dominik R. Bach)
 * [LTI & GLM](http://bachlab.org/wp-content/uploads/2020/04/02_LTI_GLM_Bach.pdf) (Dominik R. Bach)
 * [SCR models](http://bachlab.org/wp-content/uploads/2020/04/03_SCR_Bach.pdf) (Dominik R. Bach)
 * [Pupil size models](http://bachlab.org/wp-content/uploads/2019/09/05_PSR_Korn.pdf) (Christoph W. Korn)
