@@ -22,7 +22,7 @@ Edited recordings of some lectures are available at the bottom of the page.
 
 **Thursday 9 April 2020**
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1300)) Lecture: LTI & GLM (Dominik R Bach)
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1300)) [Lecture: LTI & GLM (Dominik R Bach)](https://liveuclac-my.sharepoint.com/:v:/g/personal/skgtbdo_ucl_ac_uk/ETIj4c70sf1JhHTVULus75gB-DDbhvh0P05qdo2cGXo6FQ?e=nKB3xK)
 
 14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1400)) Tutorial: GLM GUI, GLM review (Dominik R Bach)
 
@@ -77,12 +77,12 @@ There are **regular PsPM courses**. To check for updates, have a look on our [ne
 [30.6.-01.07.2020 **- cancelled due to COVID-19 pandemic -** ESCAN 2020 Budapest (full 2-day PsPM satellite workshop with practical training)](http://www.escan2020.eu/)
 
 ## Course slides & webcasts
-* PsPM Overview: [Slides](http://bachlab.org/wp-content/uploads/2020/04/01_Overview_Bach.pdf) - [Webcast](https://liveuclac-my.sharepoint.com/:v:/g/personal/skgtbdo_ucl_ac_uk/EWVll0K2fyhDnfXrHAIkF1wBkxkPRKzUrNYd33NjEZSyZg?e=B7JvdI) (Dominik R. Bach)
-* [LTI & GLM](http://bachlab.org/wp-content/uploads/2020/04/02_LTI_GLM_Bach.pdf) (Dominik R. Bach)
-* [SCR models](http://bachlab.org/wp-content/uploads/2020/04/03_SCR_Bach.pdf) (Dominik R. Bach)
-* [Pupil size models](http://bachlab.org/wp-content/uploads/2019/09/05_PSR_Korn.pdf) (Christoph W. Korn)
-* [Heart period models](http://bachlab.org/wp-content/uploads/2019/09/06_HPR_Paulus.pdf) (Philipp C. Paulus)
-* [Respiration & startle eye blink models](http://bachlab.org/wp-content/uploads/2019/09/07_RAR-SEBR_Bach.pdf) (Dominik R. Bach)
+* 01 PsPM Overview: [Slides](http://bachlab.org/wp-content/uploads/2020/04/01_Overview_Bach.pdf) - [Webcast](https://liveuclac-my.sharepoint.com/:v:/g/personal/skgtbdo_ucl_ac_uk/EWVll0K2fyhDnfXrHAIkF1wBkxkPRKzUrNYd33NjEZSyZg?e=B7JvdI) (Dominik R. Bach)
+* 02 LTI & GLM: [Slides](http://bachlab.org/wp-content/uploads/2020/04/02_LTI_GLM_Bach.pdf) - [Webcast](https://liveuclac-my.sharepoint.com/:v:/g/personal/skgtbdo_ucl_ac_uk/ETIj4c70sf1JhHTVULus75gB-DDbhvh0P05qdo2cGXo6FQ?e=nKB3xK) (Dominik R. Bach)
+* 03 [SCR models](http://bachlab.org/wp-content/uploads/2020/04/03_SCR_Bach.pdf) (Dominik R. Bach)
+* 04 [Pupil size models](http://bachlab.org/wp-content/uploads/2019/09/05_PSR_Korn.pdf) (Christoph W. Korn)
+* 05 [Heart period models](http://bachlab.org/wp-content/uploads/2019/09/06_HPR_Paulus.pdf) (Philipp C. Paulus)
+* 06 [Respiration & startle eye blink models](http://bachlab.org/wp-content/uploads/2019/09/07_RAR-SEBR_Bach.pdf) (Dominik R. Bach)
 
 ## Past PsPM courses
 * **13. November 2019:** [Universität Göttingen](https://www.uni-goettingen.de/de/509586.html)
