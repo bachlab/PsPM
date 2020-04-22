@@ -6,13 +6,15 @@ permalink: /courses/
 
 # Courses
 
+
+Course materials are available at the bottom of the page and on our [SwitchTube channel](https://tube.switch.ch/channels/13e2563b?order=alphabetical&view=list).
+
+
 ## Live-online PsPM course spring 2020
 
 Because of course cancellations during the COVID-19 pandemic, we offer a live-online PsPM course and tutorial between 6 April and 14 May 2020. Each course day contains a 1-h lecture on a given topic, and a 1-h pop-in tutorial on a related or different topics. Lectures and tutorials can be attended individually or in succession. Participants are invited to bring their questions and data to the tutorials. 
 
 In the following course program, clickable links to each course day will appear after the previous course day ended. Details on how to participate, and suggested preparation, are found at the end of the program.
-
-Edited recordings of some lectures are available at the bottom of the page and on our [SwitchTube channel](https://tube.switch.ch/channels/13e2563b?order=alphabetical&view=list).
 
 **Monday 6 April 2020**
 
@@ -84,6 +86,7 @@ There are **regular PsPM courses**. To check for updates, have a look on our [ne
 * **29-30 May 2018:** [Pre-conference workshop, Psychology & Brain, Gießen](https://www.pug2018.de/Giessen/?page_id=1549)
 
 ## Course slides & webcasts
+
 All course webcasts are hosted on our [SwitchTube channel](https://tube.switch.ch/channels/13e2563b?order=alphabetical&view=list).
 
 * 01 PsPM Overview: [Slides](http://bachlab.org/wp-content/uploads/2020/04/01_Overview_Bach.pdf) (Dominik R. Bach)
