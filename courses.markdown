@@ -16,13 +16,13 @@ Edited recordings of some lectures are available at the bottom of the page.
 
 **Monday 6 April 2020**
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200406T1300)) [Lecture: PsPM preliminaries: retrodictive validity & why do we need this? (Dominik R Bach)](https://liveuclac-my.sharepoint.com/:v:/g/personal/skgtbdo_ucl_ac_uk/EWVll0K2fyhDnfXrHAIkF1wBkxkPRKzUrNYd33NjEZSyZg?e=B7JvdI)
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200406T1300)) [Lecture: PsPM preliminaries: retrodictive validity & why do we need this? (Dominik R Bach)](https://tube.switch.ch/videos/2856b404)
 
 14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200406T1400)) Starter tutorial: opening Matlab & PsPM, PsPM GUI, data import, Troubleshooting (Filip Melinscak)
 
 **Thursday 9 April 2020**
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1300)) [Lecture: LTI & GLM (Dominik R Bach)](https://liveuclac-my.sharepoint.com/:v:/g/personal/skgtbdo_ucl_ac_uk/ETIj4c70sf1JhHTVULus75gB-DDbhvh0P05qdo2cGXo6FQ?e=nKB3xK)
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1300)) [Lecture: LTI & GLM (Dominik R Bach)](https://tube.switch.ch/videos/3e7f5595)
 
 14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1400)) Tutorial: GLM GUI, GLM review (Dominik R Bach)
 
@@ -78,7 +78,9 @@ There are **regular PsPM courses**. To check for updates, have a look on our [ne
 
 ## Course slides & webcasts
 * 01 PsPM Overview: [Slides](http://bachlab.org/wp-content/uploads/2020/04/01_Overview_Bach.pdf) - [Webcast](https://liveuclac-my.sharepoint.com/:v:/g/personal/skgtbdo_ucl_ac_uk/EWVll0K2fyhDnfXrHAIkF1wBkxkPRKzUrNYd33NjEZSyZg?e=B7JvdI) (Dominik R. Bach)
-* 02 LTI & GLM: [Slides](http://bachlab.org/wp-content/uploads/2020/04/02_LTI_GLM_Bach.pdf) - [Webcast](https://liveuclac-my.sharepoint.com/:v:/g/personal/skgtbdo_ucl_ac_uk/ETIj4c70sf1JhHTVULus75gB-DDbhvh0P05qdo2cGXo6FQ?e=nKB3xK) (Dominik R. Bach)
+<iframe width="640" height="360" src="https://tube.switch.ch/embed/2856b404" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+* 02 LTI & GLM: [Slides](http://bachlab.org/wp-content/uploads/2020/04/02_LTI_GLM_Bach.pdf) - [Webcast](https://tube.switch.ch/videos/3e7f5595) (Dominik R. Bach)
+<iframe width="640" height="360" src="https://tube.switch.ch/embed/3e7f5595" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 * 03 [SCR models](http://bachlab.org/wp-content/uploads/2020/04/03_SCR_Bach.pdf) (Dominik R. Bach)
 * 04 [Pupil size models](http://bachlab.org/wp-content/uploads/2019/09/05_PSR_Korn.pdf) (Christoph W. Korn)
 * 05 [Heart period models](http://bachlab.org/wp-content/uploads/2019/09/06_HPR_Paulus.pdf) (Philipp C. Paulus)
