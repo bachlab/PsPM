@@ -89,18 +89,18 @@ There are **regular PsPM courses**. To check for updates, have a look on our [ne
 
 All course webcasts are hosted on our [SwitchTube channel](https://tube.switch.ch/channels/13e2563b?order=alphabetical&view=list).
 
-* 01 PsPM Overview: [Slides](http://bachlab.org/wp-content/uploads/2020/04/01_Overview_Bach.pdf) (Dominik R. Bach)
+* **01 PsPM Overview:** [Slides](http://bachlab.org/wp-content/uploads/2020/04/01_Overview_Bach.pdf) (Dominik R. Bach)
 
 <iframe width="640" height="360" src="https://tube.switch.ch/embed/2856b404" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-* 02 LTI & GLM: [Slides](http://bachlab.org/wp-content/uploads/2020/04/02_LTI_GLM_Bach.pdf) (Dominik R. Bach)
+* **02 LTI & GLM:** [Slides](http://bachlab.org/wp-content/uploads/2020/04/02_LTI_GLM_Bach.pdf) (Dominik R. Bach)
 
 <iframe width="640" height="360" src="https://tube.switch.ch/embed/3e7f5595" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-* 03 [SCR models](http://bachlab.org/wp-content/uploads/2020/04/03_SCR_Bach.pdf) (Dominik R. Bach)
+* **03 SCR models:** [Slides](http://bachlab.org/wp-content/uploads/2020/04/03_SCR_Bach.pdf) (Dominik R. Bach)
 
 <iframe width="640" height="360" src="https://tube.switch.ch/embed/6780f498" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-* 04 [Pupil size models](http://bachlab.org/wp-content/uploads/2019/09/05_PSR_Korn.pdf) (Christoph W. Korn)
-* 05 [Heart period models](http://bachlab.org/wp-content/uploads/2019/09/06_HPR_Paulus.pdf) (Philipp C. Paulus)
-* 06 [Respiration & startle eye blink models](http://bachlab.org/wp-content/uploads/2019/09/07_RAR-SEBR_Bach.pdf) (Dominik R. Bach)
+* **04 Pupil size models:** [Slides](http://bachlab.org/wp-content/uploads/2019/09/05_PSR_Korn.pdf) (Christoph W. Korn)
+* **05 Heart period models:** [Slides](http://bachlab.org/wp-content/uploads/2019/09/06_HPR_Paulus.pdf) (Philipp C. Paulus)
+* **06 Respiration & startle eye blink models:** [Slides](http://bachlab.org/wp-content/uploads/2019/09/07_RAR-SEBR_Bach.pdf) (Dominik R. Bach)
