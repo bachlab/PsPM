@@ -12,7 +12,7 @@ Because of course cancellations during the COVID-19 pandemic, we offer a live-on
 
 In the following course program, clickable links to each course day will appear after the previous course day ended. Details on how to participate, and suggested preparation, are found at the end of the program.
 
-Edited recordings of some lectures are available at the bottom of the page.
+Edited recordings of some lectures are available at the bottom of the page and on our [SwitchTube channel](https://tube.switch.ch/channels/13e2563b?order=alphabetical&view=list).
 
 **Monday 6 April 2020**
 
@@ -28,7 +28,7 @@ Edited recordings of some lectures are available at the bottom of the page.
 
 **Thursday 16 April 2020**
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200416T1300)) [Lecture: SCR] (Dominik R Bach)
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200416T1300)) [Lecture: SCR (Dominik R Bach)](https://tube.switch.ch/videos/6780f498)
 
 14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200416T1400)) [Tutorial: Non-linear SCR model, SCR quality control] (Dominik R Bach) 
 
@@ -76,18 +76,28 @@ There are **regular PsPM courses**. To check for updates, have a look on our [ne
 
 [30.6.-01.07.2020 **- cancelled due to COVID-19 pandemic -** ESCAN 2020 Budapest (full 2-day PsPM satellite workshop with practical training)](http://www.escan2020.eu/)
 
-## Course slides & webcasts
-* 01 PsPM Overview: [Slides](http://bachlab.org/wp-content/uploads/2020/04/01_Overview_Bach.pdf) - [Webcast](https://liveuclac-my.sharepoint.com/:v:/g/personal/skgtbdo_ucl_ac_uk/EWVll0K2fyhDnfXrHAIkF1wBkxkPRKzUrNYd33NjEZSyZg?e=B7JvdI) (Dominik R. Bach)
-<iframe width="640" height="360" src="https://tube.switch.ch/embed/2856b404" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-* 02 LTI & GLM: [Slides](http://bachlab.org/wp-content/uploads/2020/04/02_LTI_GLM_Bach.pdf) - [Webcast](https://tube.switch.ch/videos/3e7f5595) (Dominik R. Bach)
-<iframe width="640" height="360" src="https://tube.switch.ch/embed/3e7f5595" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-* 03 [SCR models](http://bachlab.org/wp-content/uploads/2020/04/03_SCR_Bach.pdf) (Dominik R. Bach)
-* 04 [Pupil size models](http://bachlab.org/wp-content/uploads/2019/09/05_PSR_Korn.pdf) (Christoph W. Korn)
-* 05 [Heart period models](http://bachlab.org/wp-content/uploads/2019/09/06_HPR_Paulus.pdf) (Philipp C. Paulus)
-* 06 [Respiration & startle eye blink models](http://bachlab.org/wp-content/uploads/2019/09/07_RAR-SEBR_Bach.pdf) (Dominik R. Bach)
 
 ## Past PsPM courses
 * **13. November 2019:** [Universität Göttingen](https://www.uni-goettingen.de/de/509586.html)
 * **2 July 2019:** [Aegina Summer School on Social Cognition 2019](https://philosophy.sas.ac.uk/aegina-summer-school-social-cognition-2019)
 * **5-6 June 2019:** [Max Planck Institute for Human Cognitive and Brain Sciences Leipzig](https://imprs-neurocom.mpg.de/805103/introduction-to-psychophysiological-modelling-pspm)
 * **29-30 May 2018:** [Pre-conference workshop, Psychology & Brain, Gießen](https://www.pug2018.de/Giessen/?page_id=1549)
+
+## Course slides & webcasts
+All course webcasts are hosted on our [SwitchTube channel](https://tube.switch.ch/channels/13e2563b?order=alphabetical&view=list).
+
+* 01 PsPM Overview: [Slides](http://bachlab.org/wp-content/uploads/2020/04/01_Overview_Bach.pdf) (Dominik R. Bach)
+
+<iframe width="640" height="360" src="https://tube.switch.ch/embed/2856b404" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+* 02 LTI & GLM: [Slides](http://bachlab.org/wp-content/uploads/2020/04/02_LTI_GLM_Bach.pdf) (Dominik R. Bach)
+
+<iframe width="640" height="360" src="https://tube.switch.ch/embed/3e7f5595" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+* 03 [SCR models](http://bachlab.org/wp-content/uploads/2020/04/03_SCR_Bach.pdf) (Dominik R. Bach)
+
+<iframe width="640" height="360" src="https://tube.switch.ch/embed/6780f498" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+* 04 [Pupil size models](http://bachlab.org/wp-content/uploads/2019/09/05_PSR_Korn.pdf) (Christoph W. Korn)
+* 05 [Heart period models](http://bachlab.org/wp-content/uploads/2019/09/06_HPR_Paulus.pdf) (Philipp C. Paulus)
+* 06 [Respiration & startle eye blink models](http://bachlab.org/wp-content/uploads/2019/09/07_RAR-SEBR_Bach.pdf) (Dominik R. Bach)
