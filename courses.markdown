@@ -26,7 +26,7 @@ In the following course program, clickable links to each course day will appear 
 
 13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1300)) [Lecture: LTI & GLM (Dominik R Bach)](https://tube.switch.ch/videos/3e7f5595)
 
-14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1400)) [Tutorial: GLM GUI, GLM review (Dominik R Bach)](tube.switch.ch/videos/0418dfa6)
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1400)) [Tutorial: GLM GUI, GLM review (Dominik R Bach)](https://tube.switch.ch/videos/0418dfa6)
 
 **Thursday 16 April 2020**
 
