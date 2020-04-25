@@ -26,7 +26,7 @@ In the following course program, clickable links to each course day will appear 
 
 13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1300)) [Lecture: LTI & GLM (Dominik R Bach)](https://tube.switch.ch/videos/3e7f5595)
 
-14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1400)) Tutorial: GLM GUI, GLM review (Dominik R Bach)
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200409T1400)) [Tutorial: GLM GUI, GLM review (Dominik R Bach)](tube.switch.ch/videos/0418dfa6)
 
 **Thursday 16 April 2020**
 
@@ -36,15 +36,15 @@ In the following course program, clickable links to each course day will appear 
 
 **Thursday 23 April 2020**
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200423T1300)) [Lecture: Pupil models](https://uzh.zoom.us/j/93360197583) (Christoph W. Korn)
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200423T1300)) Lecture: Pupil models (Christoph W. Korn)
 
-14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200423T1400)) [Tutorial: pre-processing pupil data, luminance model, fear-conditioning model](https://uzh.zoom.us/j/93360197583) (Christoph W. Korn)
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200423T1400)) Tutorial: pre-processing pupil data, luminance model, fear-conditioning model (Christoph W. Korn)
 
 **Thursday 30 April 2020**
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200430T1300)) Lecture: HPR (Philipp C. Paulus)
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200430T1300)) [Lecture: HPR (Philipp C. Paulus)](https://uzh.zoom.us/j/98156813403?pwd=WXVuRERvQ0JUY0RZTjZ0MlJtTHJ1UT09) (Meeting-ID: 981 5681 3403 - Passwort: 063056)
 
-14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200430T1400)) Tutorial: workflow automation 1 – looping over batch jobs and matlab coding (Filip Melinscak)
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200430T1400)) [Tutorial: workflow automation 1 – looping over batch jobs and matlab coding (Filip Melinscak)](https://uzh.zoom.us/j/95443243718?pwd=L1RwS25INklmMmtFVE5ZcUdjeGRZQT09) (Meeting-ID: 954 4324 3718 - Passwort: 073555)
  
 **Thursday 7 May 2020**
 
@@ -104,3 +104,7 @@ All course webcasts are hosted on our [SwitchTube channel](https://tube.switch.c
 * **04 Pupil size models:** [Slides](http://bachlab.org/wp-content/uploads/2019/09/05_PSR_Korn.pdf) (Christoph W. Korn)
 * **05 Heart period models:** [Slides](http://bachlab.org/wp-content/uploads/2019/09/06_HPR_Paulus.pdf) (Philipp C. Paulus)
 * **06 Respiration & startle eye blink models:** [Slides](http://bachlab.org/wp-content/uploads/2019/09/07_RAR-SEBR_Bach.pdf) (Dominik R. Bach)
+
+* **Tutorial 2: GLM**
+
+<iframe width="640" height="360" src="https://tube.switch.ch/embed/0418dfa6" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
