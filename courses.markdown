@@ -44,7 +44,7 @@ In the following course program, clickable links to each course day will appear 
 
 13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200430T1300)) [Lecture: HPR (Philipp C. Paulus)](https://uzh.zoom.us/j/98156813403?pwd=WXVuRERvQ0JUY0RZTjZ0MlJtTHJ1UT09) (Meeting-ID: 981 5681 3403 - Passwort: 063056)
 
-14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200430T1400)) [Tutorial: workflow automation 1 – looping over batch jobs and matlab coding (Filip Melinscak)](https://uzh.zoom.us/j/95443243718?pwd=L1RwS25INklmMmtFVE5ZcUdjeGRZQT09) (Meeting-ID: 954 4324 3718 - Passwort: 073555)
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200430T1400)) [Tutorial: workflow automation 1 – looping over batch jobs and matlab coding (Filip Melinscak)](https://uzh.zoom.us/j/95443243718?pwd=L1RwS25INklmMmtFVE5ZcUdjeGRZQT09) (Meeting-ID: 954 4324 3718 - Passwort: 073555) ([slides](https://docs.google.com/presentation/d/1LsaEB3MozxvxJVSfZUQdXBhJ6BjEkqLeFf_0nZiD4Zc/edit?usp=sharing), [tutorial files](https://drive.google.com/open?id=1na1wGlCaDZLreLtEi1iEj1Y5Glqd4mFP))
  
 **Thursday 7 May 2020**
 
