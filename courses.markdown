@@ -42,10 +42,10 @@ In the following course program, clickable links to each course day will appear 
 
 **Thursday 30 April 2020**
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200430T1300)) [Lecture: HPR (Philipp C. Paulus)]
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200430T1300)) Lecture: HPR (Philipp C. Paulus)
 
 
-14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200430T1400)) [Tutorial: workflow automation 1 – looping over batch jobs and matlab coding (Filip Melinscak)]
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200430T1400)) Tutorial: workflow automation 1 – looping over batch jobs and matlab coding (Filip Melinscak)
  
 **Thursday 7 May 2020**
 
@@ -110,10 +110,10 @@ All course webcasts are hosted on our [SwitchTube channel](https://tube.switch.c
 
 <iframe width="640" height="360" src="https://tube.switch.ch/embed/0418dfa6" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-* **Tutorial 3: non-linear SCR model and artefact control **
+* **Tutorial 3: non-linear SCR model and artefact control**
 
 <iframe width="640" height="360" src="https://tube.switch.ch/embed/2d4c0680" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-* **Tutorial 5: Workflow automation I **
+* **Tutorial 5: Workflow automation I**
 * [Slides](https://docs.google.com/presentation/d/1LsaEB3MozxvxJVSfZUQdXBhJ6BjEkqLeFf_0nZiD4Zc/edit?usp=sharing)
 * [Tutorial files](https://drive.google.com/open?id=1na1wGlCaDZLreLtEi1iEj1Y5Glqd4mFP)
