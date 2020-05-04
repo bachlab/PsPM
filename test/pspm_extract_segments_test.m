@@ -147,8 +147,8 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
                 control_data{i}.cond_name         = cond_names{i};
                 control_data{i}.mean              = cond_trial_mean{i};
                 control_data{i}.std               = cond_trial_std{i};
-                control_data{i}.trial_nan_percent = cond_nan_trial{i};
-                control_data{i}.total_nan_percent = cond_nan_total{i};
+                control_data{i}.trial_nan_percent = cond_nan_trial{i}*100;
+                control_data{i}.total_nan_percent = cond_nan_total{i}*100;
             end
         end
     end
@@ -217,7 +217,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
                  this.verifyEqual(seg.name,control.cond_name);
                  this.verifyEqual(seg.mean,control.mean);
                  this.verifyEqual(seg.std,control.std);
-                 this.verifyEqual(seg.trial_nan_percent,control.trial_nan_percent);
+                 this.verifyTrue(all(abs(seg.trial_nan_percent-control.trial_nan_percent)<1e-12));
                  this.verifyTrue(abs(seg.total_nan_percent-control.total_nan_percent)<1e-12);
              end
          end
@@ -247,7 +247,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
                  this.verifyEqual(seg.name,control.cond_name);
                  this.verifyEqual(seg.mean,control.mean);
                  this.verifyEqual(seg.std,control.std);
-                 this.verifyEqual(seg.trial_nan_percent,control.trial_nan_percent);
+                 this.verifyTrue(all(abs(seg.trial_nan_percent-control.trial_nan_percent)<1e-12));
                  this.verifyTrue(abs(seg.total_nan_percent-control.total_nan_percent)<1e-12);
              end
          end
