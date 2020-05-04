@@ -75,7 +75,8 @@ function [sts, out_channel] = pspm_blink_saccade_filt(fn, discard_factor, option
     mask_chans = {};
     for i = 1:numel(data)
         chantype = data{i}.header.chantype;
-        if startsWith(chantype, 'blink') || startsWith(chantype, 'saccade')
+        if strncmp(chantype, 'blink', numel('blink')) || ...
+           strncmp(chantype, 'saccade', numel('saccade'))
             mask_chans{end + 1} = chantype;
             data_mat{end + 1} = data{i}.data;
             column_names{end + 1} = chantype;
@@ -84,7 +85,9 @@ function [sts, out_channel] = pspm_blink_saccade_filt(fn, discard_factor, option
     n_mask_chans = numel(data_mat);
     for i = 1:numel(data_user)
         chantype = data_user{i}.header.chantype;
-        should_add = options.channel ~= 0 || startsWith(chantype, 'pupil') || startsWith(chantype, 'gaze');
+        should_add = options.channel ~= 0 || ...
+                     strncmp(chantype, 'pupil', numel('pupil')) || ...
+                     strncmp(chantype, 'gaze', numel('gaze'));
         if should_add
             data_mat{end + 1} = data_user{i}.data;
             column_names{end + 1} = data_user{i}.header.chantype;
