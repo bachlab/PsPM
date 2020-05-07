@@ -51,7 +51,7 @@ In the following course program, clickable links to each course day will appear 
 
 13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200507T1300)) [Lecture: Respiration, startle eyeblink (Dominik R Bach)](https://uzh.zoom.us/j/95957960803?pwd=QVI0NzBxSUgyUXhURGoxbHdWQTRWZz09) (Meeting-ID: 959 5796 0803 - Passwort: 041235)
 
-14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200507T1400)) [Tutorial: workflow automation – calling functions directly and matlab coding (Filip Melinscak)](https://uzh.zoom.us/j/95957960803?pwd=QVI0NzBxSUgyUXhURGoxbHdWQTRWZz09) (Meeting-ID: 959 5796 0803 - Passwort: 041235)
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200507T1400)) [Tutorial: workflow automation – calling functions directly and matlab coding (Filip Melinscak)](https://uzh.zoom.us/j/95957960803?pwd=QVI0NzBxSUgyUXhURGoxbHdWQTRWZz09) (Meeting-ID: 959 5796 0803 - Passwort: 041235) ([slides](https://docs.google.com/presentation/d/1YuNKejeTsCrpURCYGjCTf0_m62dsVh9Z9xu05JRnpfw/edit?usp=sharing), [tutorial files](https://drive.google.com/open?id=1g5Wnmu1ghUtNWo9vMWv52WTL4qNi8N88))
 
 **Thursday 14 May 2020**
 
