@@ -36,7 +36,7 @@ In the following course program, clickable links to each course day will appear 
 
 **Thursday 23 April 2020**
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200423T1300)) Lecture: Pupil models (Christoph W. Korn)
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200423T1300)) [Lecture: Pupil models (Christoph W. Korn)](https://tube.switch.ch/videos/d64ac1d2)
 
 14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200423T1400)) Tutorial: pre-processing pupil data, luminance model, fear-conditioning model (Christoph W. Korn)
 
@@ -49,15 +49,15 @@ In the following course program, clickable links to each course day will appear 
  
 **Thursday 7 May 2020**
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200507T1300)) [Lecture: Respiration, startle eyeblink (Dominik R Bach)](https://uzh.zoom.us/j/95957960803?pwd=QVI0NzBxSUgyUXhURGoxbHdWQTRWZz09) (Meeting-ID: 959 5796 0803 - Passwort: 041235)
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200507T1300)) Lecture: Respiration, startle eyeblink (Dominik R Bach) 
 
-14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200507T1400)) [Tutorial: workflow automation – calling functions directly and matlab coding (Filip Melinscak)](https://uzh.zoom.us/j/95957960803?pwd=QVI0NzBxSUgyUXhURGoxbHdWQTRWZz09) (Meeting-ID: 959 5796 0803 - Passwort: 041235) ([slides](https://docs.google.com/presentation/d/1YuNKejeTsCrpURCYGjCTf0_m62dsVh9Z9xu05JRnpfw/edit?usp=sharing), [tutorial files](https://drive.google.com/open?id=1g5Wnmu1ghUtNWo9vMWv52WTL4qNi8N88))
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200507T1400)) Tutorial: workflow automation – calling functions directly and matlab coding (Filip Melinscak) ([slides](https://docs.google.com/presentation/d/1YuNKejeTsCrpURCYGjCTf0_m62dsVh9Z9xu05JRnpfw/edit?usp=sharing), [tutorial files](https://drive.google.com/open?id=1g5Wnmu1ghUtNWo9vMWv52WTL4qNi8N88))
 
 **Thursday 14 May 2020**
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200514T1300)) Lecture: Fear conditioning – comparison of models, scanpath length, new developments (Yanfang Xia)
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200514T1300)) [Lecture: Fear conditioning – comparison of models, scanpath length, new developments (Yanfang Xia)](https://uzh.zoom.us/j/98247284517?pwd=RjNxQTJ2MDZGeE1iM091V2lHaEJCZz09) (Meeting-ID: 982 4728 4517 - Password: 071094)
 
-14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200514T1400)) Tutorial: Preprocessing cardiac, respiratory and startle data, open Q&A (Dominik R Bach)
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200514T1400)) [Tutorial: Preprocessing cardiac, respiratory and startle data, open Q&A (Dominik R Bach)](https://uzh.zoom.us/j/98247284517?pwd=RjNxQTJ2MDZGeE1iM091V2lHaEJCZz09) (Meeting-ID: 982 4728 4517 - Password: 071094)
 
 All sessions take place via zoom. Attendees may need to download and install the Zoom software in advance of joining the meeting: [https://zoom.us](https://zoom.us) 
 
@@ -102,8 +102,12 @@ All course webcasts are hosted on our [SwitchTube channel](https://tube.switch.c
 
 <iframe width="640" height="360" src="https://tube.switch.ch/embed/6780f498" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-* **04 Pupil size models:** [Slides](http://bachlab.org/wp-content/uploads/2019/09/05_PSR_Korn.pdf) (Christoph W. Korn)
+* **04 Pupil size models:** [Slides](http://bachlab.org/04_pupil_korn) (Christoph W. Korn)
+
+<iframe width="640" height="360" src="https://tube.switch.ch/embed/d64ac1d2" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
 * **05 Heart period models:** [Slides](http://bachlab.org/wp-content/uploads/2019/09/06_HPR_Paulus.pdf) (Philipp C. Paulus)
+
 * **06 Respiration & startle eye blink models:** [Slides](http://bachlab.org/wp-content/uploads/2019/09/07_RAR-SEBR_Bach.pdf) (Dominik R. Bach)
 
 * **Tutorial 2: GLM**
@@ -117,3 +121,7 @@ All course webcasts are hosted on our [SwitchTube channel](https://tube.switch.c
 * **Tutorial 5: Workflow automation I**
 * [Slides](https://docs.google.com/presentation/d/1LsaEB3MozxvxJVSfZUQdXBhJ6BjEkqLeFf_0nZiD4Zc/edit?usp=sharing)
 * [Tutorial files](https://drive.google.com/open?id=1na1wGlCaDZLreLtEi1iEj1Y5Glqd4mFP)
+
+* **Tutorial 6: Workflow automation II**
+* [Slides](https://docs.google.com/presentation/d/1YuNKejeTsCrpURCYGjCTf0_m62dsVh9Z9xu05JRnpfw/edit?usp=sharing)
+* [Tutorial files](https://drive.google.com/open?id=1g5Wnmu1ghUtNWo9vMWv52WTL4qNi8N88))
