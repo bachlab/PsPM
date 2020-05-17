@@ -49,7 +49,7 @@ In the following course program, clickable links to each course day will appear 
  
 **Thursday 7 May 2020**
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200507T1300)) Lecture: Respiration, startle eyeblink (Dominik R Bach) 
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200507T1300)) [Lecture: Respiration, startle eyeblink (Dominik R Bach)](https://tube.switch.ch/videos/00cf2b02)
 
 14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200507T1400)) Tutorial: workflow automation – calling functions directly and matlab coding (Filip Melinscak) ([slides](https://docs.google.com/presentation/d/1YuNKejeTsCrpURCYGjCTf0_m62dsVh9Z9xu05JRnpfw/edit?usp=sharing), [tutorial files](https://drive.google.com/open?id=1g5Wnmu1ghUtNWo9vMWv52WTL4qNi8N88))
 
@@ -57,7 +57,7 @@ In the following course program, clickable links to each course day will appear 
 
 13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200514T1300)) Lecture: Fear conditioning – comparison of models, scanpath length, new developments (Yanfang Xia)
 
-14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200514T1400)) Tutorial: Preprocessing cardiac, respiratory and startle data, open Q&A (Dominik R Bach)
+14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200514T1400)) [Tutorial: Preprocessing cardiac, respiratory and startle data, open Q&A (Dominik R Bach)](tube.switch.ch/videos/65d9dab0)
 
 All sessions take place via zoom. Attendees may need to download and install the Zoom software in advance of joining the meeting: [https://zoom.us](https://zoom.us) 
 
@@ -108,7 +108,9 @@ All course webcasts are hosted on our [SwitchTube channel](https://tube.switch.c
 
 * **05 Heart period models:** [Slides](http://bachlab.org/wp-content/uploads/2019/09/06_HPR_Paulus.pdf) (Philipp C. Paulus)
 
-* **06 Respiration & startle eye blink models:** [Slides](http://bachlab.org/wp-content/uploads/2019/09/07_RAR-SEBR_Bach.pdf) (Dominik R. Bach)
+* **06 Respiration & startle eye blink models:** [Slides](http://bachlab.org/06_rar_sebr_bach) (Dominik R. Bach)
+
+<iframe width="640" height="360" src="https://tube.switch.ch/embed/00cf2b02" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 * **Tutorial 2: GLM** (Dominik R Bach)
 
@@ -129,3 +131,8 @@ All course webcasts are hosted on our [SwitchTube channel](https://tube.switch.c
 * **Tutorial 6: Workflow automation II** (Filip Melinscak)
 * [Slides](https://docs.google.com/presentation/d/1YuNKejeTsCrpURCYGjCTf0_m62dsVh9Z9xu05JRnpfw/edit?usp=sharing)
 * [Tutorial files](https://drive.google.com/open?id=1g5Wnmu1ghUtNWo9vMWv52WTL4qNi8N88))
+
+* **Tutorial 7: cardiac, respiration, and eyeblink EMG pre-processing** (Dominik R Bach)
+
+<iframe width="640" height="360" src="https://tube.switch.ch/embed/65d9dab0" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
