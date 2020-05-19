@@ -106,7 +106,7 @@ All course webcasts are hosted on our [SwitchTube channel](https://tube.switch.c
 
 <iframe width="640" height="360" src="https://tube.switch.ch/embed/d64ac1d2" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-* **05 Heart period models:** [Slides](http://bachlab.org/wp-content/uploads/2019/09/06_HPR_Paulus.pdf) (Philipp C. Paulus)
+* **05 Heart period models:** [Slides](http://bachlab.org/05_hpr_paulus) (Philipp C. Paulus)
 
 * **06 Respiration & startle eye blink models:** [Slides](http://bachlab.org/06_rar_sebr_bach) (Dominik R. Bach)
 
