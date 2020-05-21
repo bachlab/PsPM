@@ -55,7 +55,7 @@ In the following course program, clickable links to each course day will appear 
 
 **Thursday 14 May 2020**
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200514T1300)) Lecture: Fear conditioning – comparison of models, scanpath length, new developments (Yanfang Xia)
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200514T1300)) [Lecture: Fear conditioning – comparison of models, scanpath length, new developments (Yanfang Xia)](https://tube.switch.ch/videos/debe5229)
 
 14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200514T1400)) [Tutorial: Preprocessing cardiac, respiratory and startle data, open Q&A (Dominik R Bach)](tube.switch.ch/videos/65d9dab0)
 
@@ -111,6 +111,9 @@ All course webcasts are hosted on our [SwitchTube channel](https://tube.switch.c
 * **06 Respiration & startle eye blink models:** [Slides](http://bachlab.org/06_rar_sebr_bach) (Dominik R. Bach)
 
 <iframe width="640" height="360" src="https://tube.switch.ch/embed/00cf2b02" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+* **07 Measuring fear conditioning with PsPM:** [Slides](http://bachlab.org/07_fear_conditioning_xia)
+
+<iframe width="640" height="360" src="https://tube.switch.ch/embed/debe5229" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 * **Tutorial 2: GLM** (Dominik R Bach)
 
