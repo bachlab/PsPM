@@ -651,6 +651,7 @@ function [info]=pp_plot(handles)
 % ---Initialise------------------------------------------------------------
 marker=[];
 hbeat=[];
+events=[]; % any other marker channels
 wave=[];
 
 % get eventchan info
@@ -662,6 +663,8 @@ if not(isempty(handles.prop.eventchans)) && not(handles.prop.eventchans(handles.
     end
 elseif not(isempty(handles.prop.eventchans)) && not(handles.prop.eventchans(handles.prop.idevent)==0) && strcmp(handles.data{handles.prop.eventchans(handles.prop.idevent),1}.header.chantype,'hb')
     hbeat=handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
+else
+    events=handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
 end
 
 % get wave chan info
@@ -672,7 +675,7 @@ end
 
 %   plotting if no channel is selected
 % -------------------------------------------------------------------------
-if isempty(marker) && isempty(wave) && isempty(hbeat)
+if isempty(marker) && isempty(wave) && isempty(hbeat) && isempty(events)
     hold off
     x=1;
     y=1;
@@ -680,7 +683,7 @@ if isempty(marker) && isempty(wave) && isempty(hbeat)
     text(x,y,'   nothing to display - please select channel   ','FontSize',20,'BackgroundColor','k',...
         'Color','w','HorizontalAlignment','Center','VerticalAlignment',...
         'Middle')
-elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat))
+elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(isempty(events))
     
     % ---prepare ecg-----------------------------------------------------------
     if not(isempty(handles.prop.wave))  % only if there is wave info
@@ -767,6 +770,21 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat))
                 set(hbase,'BaseValue',base(2),'Visible','off');
             else set(hbase,'BaseValue',base(1),'Visible','off');
             end
+        elseif not(isempty(events))
+            
+            R=zeros(size(wave));
+            R(R==0)=NaN;
+            
+            if not(isempty(events))
+                events=round(events*sr.wave);
+            else
+                warning('The event channel is empty. Plotting not possible');
+            end
+            
+            R(events,1)=max(base(1));
+            hold on ; h=stem(y,R,'r');
+            hbase=get(h,'Baseline');
+            set(hbase,'Basevalue',base(2));
         end
         
         
@@ -804,15 +822,21 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat))
         %   plotting if only event channel is selected
         % -------------------------------------------------------------------------
         
-    elseif isempty(wave) && (not(isempty(hbeat)) || not(isempty(marker)))
-        if strcmp(handles.prop.event,'hb')
+    elseif isempty(wave) && (not(isempty(hbeat)) || not(isempty(marker)) || not(isempty(events)))
+        if not(isempty(hbeat))
             MARKER=diff(hbeat);
             plot(MARKER,'ro')
             ylabel('duration of ibi [s]','Fontsize',14)
         elseif strcmp(handles.prop.event,'extra') || strcmp(handles.prop.event,'integrated')
             MARKER=diff(marker);
             stem(MARKER,'r')
-        else MARKER=[];
+            ylabel('inter-marker duration [s]','Fontsize',14)
+        elseif not(isempty(events))
+            MARKER=diff(events);
+            plot(MARKER,'ro')
+            ylabel('inter-event duration [s]','Fontsize',14)
+        else
+            MARKER=[];
         end
         
         xlabel('Time in seconds [s] ','Fontsize',16);
@@ -820,7 +844,10 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat))
             legend('marker')
         elseif strcmp(handles.prop.event,'hb')
             legend('heartbeats')
-        else legend('unknown marker')
+        elseif not(isempty(events))
+            legend([handles.prop.event,' events'])
+        else
+            legend('unknown events')
         end
     end
 end
