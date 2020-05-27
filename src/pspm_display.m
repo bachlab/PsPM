@@ -663,7 +663,7 @@ if not(isempty(handles.prop.eventchans)) && not(handles.prop.eventchans(handles.
     end
 elseif not(isempty(handles.prop.eventchans)) && not(handles.prop.eventchans(handles.prop.idevent)==0) && strcmp(handles.data{handles.prop.eventchans(handles.prop.idevent),1}.header.chantype,'hb')
     hbeat=handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
-else
+elseif not(isempty(handles.prop.eventchans)) && not(handles.prop.eventchans(handles.prop.idevent)==0)
     events=handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
 end
 
