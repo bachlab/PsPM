@@ -42,8 +42,7 @@ In the following course program, clickable links to each course day will appear 
 
 **Thursday 30 April 2020**
 
-13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200430T1300)) Lecture: HPR (Philipp C. Paulus)
-
+13.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200430T1300)) [Lecture: HPR (Philipp C. Paulus)](https://tube.switch.ch/videos/7fdd2a18)
 
 14.00 UTC ([other timezones](https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200430T1400)) Tutorial: workflow automation 1 – looping over batch jobs and matlab coding (Filip Melinscak)
  
@@ -108,9 +107,12 @@ All course webcasts are hosted on our [SwitchTube channel](https://tube.switch.c
 
 * **05 Heart period models:** [Slides](http://bachlab.org/05_hpr_paulus) (Philipp C. Paulus)
 
+<iframe width="640" height="360" src="https://tube.switch.ch/embed/7fdd2a18" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
 * **06 Respiration & startle eye blink models:** [Slides](http://bachlab.org/06_rar_sebr_bach) (Dominik R. Bach)
 
 <iframe width="640" height="360" src="https://tube.switch.ch/embed/00cf2b02" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
 * **07 Measuring fear conditioning with PsPM:** [Slides](http://bachlab.org/07_fear_conditioning_xia)
 
 <iframe width="640" height="360" src="https://tube.switch.ch/embed/debe5229" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
