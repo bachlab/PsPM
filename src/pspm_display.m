@@ -659,12 +659,18 @@ if not(isempty(handles.prop.eventchans)) && not(handles.prop.eventchans(handles.
     marker=handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
     if get(handles.radio_extra,'Value')==1
         handles.prop.event='extra';
-    else    handles.prop.event='integrated';
+    else
+        handles.prop.event='integrated';
     end
 elseif not(isempty(handles.prop.eventchans)) && not(handles.prop.eventchans(handles.prop.idevent)==0) && strcmp(handles.data{handles.prop.eventchans(handles.prop.idevent),1}.header.chantype,'hb')
     hbeat=handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
 elseif not(isempty(handles.prop.eventchans)) && not(handles.prop.eventchans(handles.prop.idevent)==0)
     events=handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
+    if get(handles.radio_extra,'Value')==1
+        handles.prop.event='extra';
+    else
+        handles.prop.event='integrated';
+    end
 end
 
 % get wave chan info
@@ -743,7 +749,7 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(
                 
             end
             
-        elseif strcmp(handles.prop.event,'integrated') || strcmp(handles.prop.event,'extra')
+        elseif not(isempty(marker))
             
             marker=round(marker*sr.wave);
             if marker(1,1)==0
@@ -772,19 +778,31 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(
             end
         elseif not(isempty(events))
             
-            R=zeros(size(wave));
-            R(R==0)=NaN;
+            events=round(events*sr.wave);
             
-            if not(isempty(events))
-                events=round(events*sr.wave);
-            else
-                warning('The event channel is empty. Plotting not possible');
+            EVENTS = zeros(size(wave));
+                        
+            if strcmp(handles.prop.event,'extra')
+                EVENTS(events,1)=min(wave)-.5;
+            elseif strcmp(handles.prop.event,'integrated')
+                temp=wave(events,1);
+                median_non_nan_vals = median(temp,'omitnan');
+                EVENTS(events,1)=temp;
+                EVENTS(isnan(EVENTS))=median_non_nan_vals;
             end
             
-            R(events,1)=max(base(1));
-            hold on ; h=stem(y,R,'r');
+            EVENTS(EVENTS==0) = NaN;
+            
+            %EVENTS(events,1)=max(base(1));
+            hold on ; h=stem(y,EVENTS,'r');
             hbase=get(h,'Baseline');
-            set(hbase,'Basevalue',base(2));
+            
+            %set(hbase,'Basevalue',base(2));
+            if strcmp(handles.prop.event,'extra')
+                set(hbase,'BaseValue',base(2),'Visible','off');
+            else
+                set(hbase,'BaseValue',base(1),'Visible','off');
+            end
         end
         
         
@@ -977,7 +995,7 @@ handles.prop.event=handles.prop.event{handles.prop.idevent,1};
 if handles.prop.idevent==1 || strcmp(handles.prop.event,'hb') || handles.prop.idwave==1
     set(handles.radio_int,'Enable','Off');
     set(handles.radio_extra,'Enable','Off');
-elseif not(handles.prop.idevent==1) && strcmp(handles.prop.event,'marker')
+else
     set(handles.radio_int,'Enable','On');
     set(handles.radio_extra,'Enable','On');
 end
