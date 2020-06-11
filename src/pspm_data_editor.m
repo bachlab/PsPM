@@ -1287,6 +1287,8 @@ function pbOpenMissingEpochFile_Callback(hObject, eventdata, handles)
 if file ~= 0
     handles.epoch_file = file;
     epochs = load(file).epochs;
+
+    % for each ep add an area as if drawn by the user and add to epoch list
     for ep = epochs'
         handles.select.start = [ ep(1), 0.5 ];
         handles.select.stop = [ ep(2), 0.5 ];
