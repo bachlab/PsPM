@@ -31,7 +31,7 @@ function varargout = pspm_data_editor(varargin)
 % $Id$
 % $Rev$
 
-% Last Modified by GUIDE v2.5 21-Jun-2016 17:00:56
+% Last Modified by GUIDE v2.5 11-Jun-2020 12:26:13
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1241,3 +1241,60 @@ function pbSaveOutput_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 CreateOutput(hObject);
+
+
+
+function edOpenMissingEpochFilePath_Callback(hObject, eventdata, handles)
+% hObject    handle to edOpenMissingEpochFilePath (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edOpenMissingEpochFilePath as text
+%        str2double(get(hObject,'String')) returns contents of edOpenMissingEpochFilePath as a double
+if isempty(handles.epoch_file)
+    set(hObject, 'String', 'No input specified');
+else
+    set(hObject, 'String', handles.epoch_file);
+end;
+
+% --- Executes during object creation, after setting all properties.
+function edOpenMissingEpochFilePath_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edOpenMissingEpochFilePath (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- If Enable == 'on', executes on mouse press in 5 pixel border.
+% --- Otherwise, executes on mouse press in 5 pixel border or over edOpenMissingEpochFilePath.
+function edOpenMissingEpochFilePath_ButtonDownFcn(hObject, eventdata, handles)
+% hObject    handle to edOpenMissingEpochFilePath (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pbOpenMissingEpochFile.
+function pbOpenMissingEpochFile_Callback(hObject, eventdata, handles)
+% hObject    handle to pbOpenMissingEpochFile (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[file, path] = uigetfile('*.mat', 'Select missing epoch file');
+if file ~= 0
+    handles.epoch_file = file;
+    epochs = load(file).epochs;
+    for ep = epochs'
+        handles.select.start = [ ep(1), 0.5 ];
+        handles.select.stop = [ ep(2), 0.5 ];
+        handles.select.p = 0;
+        guidata(hObject, handles);
+        SelectedArea(hObject, 'add');
+        UpdateEpochList(hObject);
+        handles = guidata(hObject);
+        guidata(hObject, handles);
+    end
+end
