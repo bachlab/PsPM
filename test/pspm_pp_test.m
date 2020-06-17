@@ -96,8 +96,6 @@ classdef pspm_pp_test < matlab.unittest.TestCase
         function simple_qa_test(this)
             %generate testdata
             channels{1}.chantype = 'scr';
-            channels{2}.chantype = 'hb';
-            channels{3}.chantype = 'scr';
             
             fn = 'missing_epochs_test_generated_data.mat';
             pspm_testdata_gen(channels, 10, fn);
