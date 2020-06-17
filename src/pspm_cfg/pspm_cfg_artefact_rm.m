@@ -69,7 +69,7 @@ qa_slope.num      = [1 1];
 qa_slope.val      = {10};
 qa_slope.help     = {'Maximum SCR slope in microsiemens per second.'};
 
-qa_missing_epochs_no_filename          = cfg_entry;
+qa_missing_epochs_no_filename          = cfg_const;
 qa_missing_epochs_no_filename.name     = 'Do not write to file';
 qa_missing_epochs_no_filename.tag      = 'no_missing_epochs';
 qa_missing_epochs_no_filename.val      = {0};
@@ -80,7 +80,7 @@ qa_missing_epochs_filename_path.name     = 'Write to filename';
 qa_missing_epochs_filename_path.tag      = 'missing_epochs_filename_path';
 qa_missing_epochs_filename_path.strtype  = 's';
 qa_missing_epochs_filename_path.num      = [ 1 Inf ];
-qa_missing_epochs_filename_path.help     = {'Filename to store artefact epochs.'};
+qa_missing_epochs_filename_path.help     = {'Filename to store artefact epochs. Provide only the name and not extension, the file will be stored as a .mat file'};
 
 qa_missing_epochs_filename         = cfg_choice;
 qa_missing_epochs_filename.name    = 'Missing epochs file';
