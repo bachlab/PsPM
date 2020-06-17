@@ -38,7 +38,7 @@ function [sts, b, a] = pspm_butter(order, freqratio, pass)
     if settings.signal
          [b, a]=butter(order, freqratio, pass);
     else
-        load('pspm_butter.mat');
+        filt = load('pspm_butter.mat').filt;
         switch pass
             case 'low'
                 f = filt{1};
