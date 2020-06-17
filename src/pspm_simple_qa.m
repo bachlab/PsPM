@@ -63,6 +63,8 @@ elseif ~isnumeric(options.max)
     warning('ID:invalid_input', 'Argument ''options.max'' must be numeric.'); return;
 elseif ~isnumeric(options.slope)
     warning('ID:invalid_input', 'Argument ''options.slope'' must be numeric.'); return;
+elseif isfield(options, 'missing_epochs_filename') && ~ischar(options.missing_epochs_filename)
+    warning('ID:invalid_input', 'Argument ''options.missing_epochs_filename'' must be char array.'); return;
 end
 
 % create filters
