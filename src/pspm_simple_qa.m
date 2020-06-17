@@ -8,14 +8,16 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 %   [sts, out] = pspm_simple_qa(data, sr, options)
 %
 % ARGUMENTS:
-%       data:                   A numeric vector. Data should be in
-%                               microsiemens.
-%       sr:                     Samplerate of the data. This is needed to
-%                               determine the slopes unit.
-%       options:                A struct with algorithm specific settings.
-%           min:                Minimum value in microsiemens (default: 0.05).
-%           max:                Maximum value in microsiemens (default: 60).
-%           slope:              Maximum slope in microsiemens per sec (default: 10).
+%       data:                           A numeric vector. Data should be in
+%                                       microsiemens.
+%       sr:                             Samplerate of the data. This is needed to
+%                                       determine the slopes unit.
+%       options:                        A struct with algorithm specific settings.
+%           min:                        Minimum value in microsiemens (default: 0.05).
+%           max:                        Maximum value in microsiemens (default: 60).
+%           slope:                      Maximum slope in microsiemens per sec (default: 10).
+%           missing_epochs_filename:    If provided will create a .mat file with the missing epochs,
+%                                       e.g. abc will create abc.mat
 %__________________________________________________________________________
 % PsPM 3.2
 % (C) 2009-2017 Tobias Moser (University of Zurich)
