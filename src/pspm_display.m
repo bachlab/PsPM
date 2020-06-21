@@ -664,6 +664,11 @@ if not(isempty(handles.prop.eventchans)) && not(handles.prop.eventchans(handles.
     end
 elseif not(isempty(handles.prop.eventchans)) && not(handles.prop.eventchans(handles.prop.idevent)==0) && strcmp(handles.data{handles.prop.eventchans(handles.prop.idevent),1}.header.chantype,'hb')
     hbeat=handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
+    if get(handles.radio_extra,'Value')==1
+        handles.prop.event='extra';
+    else
+        handles.prop.event='integrated';
+    end
 elseif not(isempty(handles.prop.eventchans)) && not(handles.prop.eventchans(handles.prop.idevent)==0)
     events=handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
     if get(handles.radio_extra,'Value')==1
@@ -728,25 +733,42 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(
         base(1)=min(wave)-.1*min(wave);
         base(2)=min(wave)-(max(wave)-min(wave));
         
-        if strcmp(handles.prop.event,'hb')
-            R=zeros(size(wave));
-            R(R==0)=NaN;
+        if not(isempty(hbeat))
+
+            hbeat=round(hbeat*sr.wave);
             
-            if not(isempty(hbeat))
-                hbeat=round(hbeat*sr.wave);
-            else
-                warning('No information on heartbeats. Plotting not possible');
+            HBEAT = zeros(size(wave));
+            
+            if strcmp(handles.prop.event,'extra')
+                HBEAT(hbeat,1)=min(wave)-.5;
+            elseif strcmp(handles.prop.event,'integrated')                
+                temp=wave(hbeat,1);
+                median_non_nan_vals = median(temp,'omitnan');
+                HBEAT(hbeat,1)=temp;
+                HBEAT(isnan(HBEAT))=median_non_nan_vals;
             end
             
-            if strcmp(handles.prop.wave,'ecg')
-                R(hbeat,1)=max(wave);
-                hold on ; stem(y,R,'r')
-            else
-                R(hbeat,1)=max(base(1));
-                hold on ; h=stem(y,R,'r');
-                hbase=get(h,'Baseline');
-                set(hbase,'Basevalue',base(2));
-                
+            HBEAT(HBEAT==0) = NaN;
+            
+            % Old implementation:
+%             if strcmp(handles.prop.wave,'ecg')
+%                 HBEAT(hbeat,1)=max(wave);
+%                 hold on ; stem(y,HBEAT,'r')
+%             else
+%                 HBEAT(hbeat,1)=max(base(1));
+%                 hold on ; h=stem(y,HBEAT,'r');
+%                 hbase=get(h,'Baseline');
+%                 set(hbase,'Basevalue',base(2));
+%                 
+%             end
+
+            hold on ; h=stem(y,HBEAT,'ro');
+            hbase=get(h,'Baseline');
+
+            if strcmp(handles.prop.event,'extra')
+                set(hbase,'BaseValue',base(2),'Visible','off');
+            elseif strcmp(handles.prop.event,'integrated')
+                set(hbase,'BaseValue',base(1),'Visible','off');
             end
             
         elseif not(isempty(marker))
@@ -774,7 +796,8 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(
             
             if strcmp(handles.prop.event,'extra')
                 set(hbase,'BaseValue',base(2),'Visible','off');
-            else set(hbase,'BaseValue',base(1),'Visible','off');
+            elseif strcmp(handles.prop.event,'integrated')
+                set(hbase,'BaseValue',base(1),'Visible','off');
             end
         elseif not(isempty(events))
             
@@ -800,7 +823,7 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(
             %set(hbase,'Basevalue',base(2));
             if strcmp(handles.prop.event,'extra')
                 set(hbase,'BaseValue',base(2),'Visible','off');
-            else
+            elseif strcmp(handles.prop.event,'integrated')
                 set(hbase,'BaseValue',base(1),'Visible','off');
             end
         end
@@ -828,13 +851,17 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(
         end
         
         xlabel(' Time in seconds [s] ','Fontsize',16);
-        
-        if (strcmp(handles.prop.event,'integrated')||strcmp(handles.prop.event,'extra')) && not(strcmp(handles.prop.wave,'none'))
+
+        if not(isempty(marker))
             legend(handles.prop.wave,'marker')
-        elseif not(strcmp(handles.prop.event,'none')) && not(strcmp(handles.prop.wave,'none'))
-            legend(handles.prop.wave,handles.prop.event)
+        elseif not(isempty(hbeat))
+            legend(handles.prop.wave,'heartbeats')
+        elseif not(isempty(events))
+            legend(handles.prop.wave,[handles.event_listbox.String{handles.prop.idevent},' events'])
         elseif not(strcmp(handles.prop.event,'none')) && not(strcmp(handles.prop.wave,'none'))
             legend(handles.prop.wave)
+        else
+            legend(handles.prop.wave,'unknown events')
         end
         
         %   plotting if only event channel is selected
@@ -858,12 +885,12 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(
         end
         
         xlabel('Time in seconds [s] ','Fontsize',16);
-        if strcmp(handles.prop.event,'integrated') || strcmp(handles.prop.event,'extra')
+        if not(isempty(marker))
             legend('marker')
-        elseif strcmp(handles.prop.event,'hb')
+        elseif not(isempty(hbeat))
             legend('heartbeats')
         elseif not(isempty(events))
-            legend([handles.prop.event,' events'])
+            legend([handles.event_listbox.String{handles.prop.idevent},' events'])
         else
             legend('unknown events')
         end
@@ -992,7 +1019,7 @@ handles.prop.event=get(handles.event_listbox,'String');
 handles.prop.event=handles.prop.event{handles.prop.idevent,1};
 % ---deactivate marker buttons if necessary--------------------------------
 
-if handles.prop.idevent==1 || strcmp(handles.prop.event,'hb') || handles.prop.idwave==1
+if handles.prop.idevent==1 || handles.prop.idwave==1
     set(handles.radio_int,'Enable','Off');
     set(handles.radio_extra,'Enable','Off');
 else
