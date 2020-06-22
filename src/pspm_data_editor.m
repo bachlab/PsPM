@@ -1286,7 +1286,7 @@ function pbOpenMissingEpochFile_Callback(hObject, eventdata, handles)
 [file, path] = uigetfile('*.mat', 'Select missing epoch file');
 if file ~= 0
     handles.epoch_file = file;
-    epochs = load(file).epochs;
+    epochs = load([ path, file ]).epochs;
 
     % for each ep add an area as if drawn by the user and add to epoch list
     for ep = epochs'
