@@ -861,7 +861,7 @@ handles = guidata(hObject);
 sd = handles.selected_data;
 v_pos = find(~isnan(sd));
 xd = handles.x_data;
-if numel(v_pos)>1
+if numel(v_pos)>=1
     epoch_end = xd([v_pos(find(diff(v_pos) > 1)); v_pos(end)]);
     epoch_start = xd(v_pos([1;find(diff(v_pos) > 1)+1]));
     
