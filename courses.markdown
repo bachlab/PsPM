@@ -17,7 +17,7 @@ There are **regular PsPM courses**. To check for updates, have a look on our [ne
 
 ## Past PsPM courses
 * **30.6.-01.07.2020** [ESCAN 2020 Budapest (full 2-day PsPM satellite workshop with practical training)](http://www.escan2020.eu/) (postponed due to COVID-19 pandemic) 
-* **6. April - 14. May 2020*** Live online course (see course recordings and slides below)
+* **6. April - 14. May 2020** Live online course (see course recordings and slides below)
 * **30. March 2020** [EMHFC 2020 Bochum (workshop on pupil size measurements)](https://emhfc.blogs.uni-hamburg.de/pre-conference-seminars/) (cancelled due to COVID-19 pandemic)
 * **13. November 2019:** [Universität Göttingen](https://www.uni-goettingen.de/de/509586.html)
 * **2 July 2019:** [Aegina Summer School on Social Cognition 2019](https://philosophy.sas.ac.uk/aegina-summer-school-social-cognition-2019)
@@ -74,7 +74,7 @@ All course webcasts are hosted on our [SwitchTube channel](https://tube.switch.c
 
 * **Tutorial 6: Workflow automation II** (Filip Melinscak)
 * [Slides](https://docs.google.com/presentation/d/1YuNKejeTsCrpURCYGjCTf0_m62dsVh9Z9xu05JRnpfw/edit?usp=sharing)
-* [Tutorial files](https://drive.google.com/open?id=1g5Wnmu1ghUtNWo9vMWv52WTL4qNi8N88))
+* [Tutorial files](https://drive.google.com/open?id=1g5Wnmu1ghUtNWo9vMWv52WTL4qNi8N88)
 
 * **Tutorial 7: cardiac, respiration, and eyeblink EMG pre-processing** (Dominik R Bach)
 
