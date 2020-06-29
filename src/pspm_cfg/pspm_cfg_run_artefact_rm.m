@@ -22,6 +22,9 @@ switch filtertype
         out = pspm_pp(filtertype, datafile, freq, channelnumber, options);
     case 'simple_qa'
         qa = job.filtertype.(filtertype);
+        if isfield(qa.missing_epochs, 'missing_epochs_filename_path')
+            qa.missing_epochs_filename = qa.missing_epochs.missing_epochs_filename_path;
+        end
         out = pspm_pp(filtertype, datafile, qa, channelnumber, options);
 end
 

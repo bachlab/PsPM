@@ -18,6 +18,10 @@ function varargout = pspm_data_editor(varargin)
 %       .output_file:   Use output_file to specify a file the changed data
 %                       is saved to when clicking 'save' or 'apply'. Only
 %                       works in 'file' mode.
+%       .epoch_file:    Use epoch_file to specify a .mat file to import epoch data
+%                       .mat file must be a struct with an 'epoch' field
+%                       and a e x 2 matrix of epoch on- and offsets
+%                       (n: number of epochs)    
 % 
 % OUTPUT:
 %   out:                The output depends on the actual output type chosen in
@@ -31,7 +35,7 @@ function varargout = pspm_data_editor(varargin)
 % $Id$
 % $Rev$
 
-% Last Modified by GUIDE v2.5 21-Jun-2016 17:00:56
+% Last Modified by GUIDE v2.5 23-Jun-2020 14:11:46
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -103,13 +107,19 @@ if numel(varargin) > 1 && isstruct(varargin{2})
         
         handles.output_file = handles.options.output_file;
         set(handles.edOutputFile, 'String', handles.output_file);
-    end;
+    end
+
+    if isfield(handles.options, 'epoch_file') && ...
+        ischar(handles.options.epoch_file)
+        
+        handles.epoch_file = handles.options.epoch_file;
+        set(handles.edOpenMissingEpochFilePath, 'String', handles.epoch_file);
+    end
     
 end;
 
 % Update handles structure
 guidata(hObject, handles);
-
 if numel(varargin) > 0    
     if ischar(varargin{1})
         if exist(varargin{1}, 'file')
@@ -122,12 +132,21 @@ if numel(varargin) > 0
         end;
     elseif isnumeric(varargin{1})
         set(handles.pnlInput, 'Visible', 'off');
-        set(handles.pnlOutput, 'Visible', 'off');
         
         handles.data = varargin{1};
         handles.input_mode = 'raw';
         guidata(hObject, handles);
         PlotData(hObject);
+
+        if isfield(handles, 'options') && isfield(handles.options, 'output_file')
+            set(handles.pnlOutput, 'Visible', 'off');
+        end
+        if isfield(handles, 'options') && isfield(handles.options, 'epoch_file')
+            set(handles.pnlEpoch, 'Visible', 'off');
+            handles = guidata(hObject);
+            add_epochs(hObject, handles)
+        end
+
     end;
 end;
 uiwait(handles.fgDataEditor);
@@ -752,7 +771,6 @@ function SelectedArea(hObject, action)
 handles = guidata(hObject);
 
 if isfield(handles, 'x_data')
-    
     start = handles.select.start;
     if strcmpi(action, 'highlight')
         pt = get(handles.axData, 'CurrentPoint');
@@ -861,7 +879,7 @@ handles = guidata(hObject);
 sd = handles.selected_data;
 v_pos = find(~isnan(sd));
 xd = handles.x_data;
-if numel(v_pos)>1
+if numel(v_pos)>=1
     epoch_end = xd([v_pos(find(diff(v_pos) > 1)); v_pos(end)]);
     epoch_start = xd(v_pos([1;find(diff(v_pos) > 1)+1]));
     
@@ -1241,3 +1259,63 @@ function pbSaveOutput_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 CreateOutput(hObject);
+
+
+
+function edOpenMissingEpochFilePath_Callback(hObject, eventdata, handles)
+% hObject    handle to edOpenMissingEpochFilePath (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edOpenMissingEpochFilePath as text
+%        str2double(get(hObject,'String')) returns contents of edOpenMissingEpochFilePath as a double
+if isempty(handles.epoch_file)
+    set(hObject, 'String', 'No input specified');
+else
+    set(hObject, 'String', handles.epoch_file);
+end;
+
+% --- Executes during object creation, after setting all properties.
+function edOpenMissingEpochFilePath_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edOpenMissingEpochFilePath (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- If Enable == 'on', executes on mouse press in 5 pixel border.
+% --- Otherwise, executes on mouse press in 5 pixel border or over edOpenMissingEpochFilePath.
+function edOpenMissingEpochFilePath_ButtonDownFcn(hObject, eventdata, handles)
+% hObject    handle to edOpenMissingEpochFilePath (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pbOpenMissingEpochFile.
+function pbOpenMissingEpochFile_Callback(hObject, eventdata, handles)
+% hObject    handle to pbOpenMissingEpochFile (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[file, path] = uigetfile('*.mat', 'Select missing epoch file');
+if file ~= 0
+    handles.epoch_file = [ path, file ];
+    add_epochs(hObject, handles);
+end
+
+function handles = add_epochs(hObject, handles)
+E = load(handles.epoch_file, 'epochs');
+epochs = E.epochs';
+% for each ep add an area as if drawn by the user and add to epoch list
+for ep = epochs
+    handles.select.start = [ ep(1), 0.5 ];
+    handles.select.stop = [ ep(2), 0.5 ];
+    handles.select.p = 0;
+    guidata(hObject, handles);
+    SelectedArea(hObject, 'add');
+    UpdateEpochList(hObject);
+end
