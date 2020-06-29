@@ -38,12 +38,12 @@ function [sts, b, a] = pspm_butter(order, freqratio, pass)
     if settings.signal
          [b, a]=butter(order, freqratio, pass);
     else
-        load('pspm_butter.mat');
+        F = load('pspm_butter.mat', 'filt');
         switch pass
             case 'low'
-                f = filt{1};
+                f = F.filt{1};
             case 'high'
-                f = filt{2};
+                f = F.filt{2};
         end;
         d = abs([f.freqratio] - freqratio);
         n = find(d < .0001);
