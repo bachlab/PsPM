@@ -181,7 +181,7 @@ function [file_info, line_ctr] = parse_metadata(str, line_ctr, linefeeds, has_ba
     file_info.record_time = '00:00:00';
     curr_line = str(linefeeds(line_ctr) + 1 : linefeeds(line_ctr + 1) - 1 - has_backr);
     tab = sprintf('\t');
-    while startsWith(curr_line, '**')
+    while strncmp(curr_line, '**', numel('**'))
         if contains(curr_line, 'DATE')
             colon_idx = strfind(curr_line, ':');
             date_part = curr_line(colon_idx + 1 : end);
@@ -252,11 +252,11 @@ function [dataraw, markers, chan_info] = parse_messages(messages, dataraw, chan_
         saccades_R = false(size(dataraw, 1), 1);
     end
 
-    sblink_indices = find(startsWith(messages, 'SBLINK'));
-    eblink_indices = find(startsWith(messages, 'EBLINK'));
-    ssacc_indices = find(startsWith(messages, 'SSACC'));
-    esacc_indices = find(startsWith(messages, 'ESACC'));
-    msg_indices = startsWith(messages, 'MSG');
+    sblink_indices = find(strncmp(messages, 'SBLINK', numel('SBLINK')));
+    eblink_indices = find(strncmp(messages, 'EBLINK', numel('EBLINK')));
+    ssacc_indices = find(strncmp(messages, 'SSACC', numel('SSACC')));
+    esacc_indices = find(strncmp(messages, 'ESACC', numel('ESACC')));
+    msg_indices = strncmp(messages, 'MSG', numel('MSG'));
     for name = {'RECCFG', 'ELCLCFG', 'GAZE_COORDS', 'THRESHOLDS', 'ELCL_', 'PUPIL_DATA_TYPE', '!MODE'}
         msg_indices = msg_indices & ~contains(messages, name);
     end
@@ -337,7 +337,7 @@ function [dataraw, markers, chan_info] = parse_messages(messages, dataraw, chan_
 end
 
 function [msg_linenums_split, messages_split] = split_messages_to_sessions(msg_linenums, messages)
-    start_indices = [0 find(startsWith(messages, 'START'))];
+    start_indices = [0 find(strncmp(messages, 'START', numel('START')))];
     reccfg_indices = find(contains(messages, 'RECCFG'));
 
     split_indices = [];
@@ -368,7 +368,7 @@ function chan_info = parse_session_headers(messages)
             msg = messages{sess_idx}{i};
             parts = split(msg);
 
-            if startsWith(msg, 'START')
+            if strncmp(msg, 'START',numel('START'))
                 chan_info{sess_idx}.start_time = str2num(parts{2});
                 chan_info{sess_idx}.start_msg_idx = prev_n_messages + i;
             elseif contains(msg, 'GAZE_COORDS')

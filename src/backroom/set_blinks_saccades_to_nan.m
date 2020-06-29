@@ -28,7 +28,7 @@ function data_mat = set_blinks_saccades_to_nan(data_mat, column_names, mask_chan
     %   - all elements in right data columns (except blink/saccade) that correspond to right
     %     blink or saccade rows are set to NaN
     if nargin == 3
-        fn_is_left = @(x) endsWith(x, '_l');
+        fn_is_left = @(x) strcmp(x(end-1:end), '_l');
     end
 
     column_names = cellfun(@(x) lower(x), column_names, 'uni', 0);

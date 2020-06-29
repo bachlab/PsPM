@@ -46,21 +46,21 @@ classdef import_eyelink_test < matlab.unittest.TestCase
                 is_dataline = ~isempty(str2num(parts{1}));
                 is_msgline = strcmp(parts{1}, 'MSG') && (contains(tline, 'CS') || contains(tline, 'US') || contains(tline, 'TS'));
 
-                if startsWith(tline, 'SBLINK L')
+                if strncmp(tline, 'SBLINK L', numel('SBLINK L'))
                     blink_l = true;
-                elseif startsWith(tline, 'SBLINK R')
+                elseif strncmp(tline, 'SBLINK R', numel('SBLINK R'))
                     blink_r = true;
-                elseif startsWith(tline, 'EBLINK L')
+                elseif strncmp(tline, 'EBLINK L', numel('EBLINK L'))
                     blink_l = false;
-                elseif startsWith(tline, 'EBLINK R')
+                elseif strncmp(tline, 'EBLINK R', numel('EBLINK R'))
                     blink_r = false;
-                elseif startsWith(tline, 'SSACC L')
+                elseif strncmp(tline, 'SSACC L', numel('SSACC L'))
                     sacc_l = true;
-                elseif startsWith(tline, 'SSACC R')
+                elseif strncmp(tline, 'SSACC R', numel('SSACC R'))
                     sacc_r = true;
-                elseif startsWith(tline, 'ESACC L')
+                elseif strncmp(tline, 'ESACC L', numel('ESACC L'))
                     sacc_l = false;
-                elseif startsWith(tline, 'ESACC R')
+                elseif strncmp(tline, 'ESACC R', numel('ESACC R'))
                     sacc_r = false;
                 end
 

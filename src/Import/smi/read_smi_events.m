@@ -141,7 +141,7 @@ function [out, line_ctr] = parse_header(str, line_ctr, linefeeds, has_backr)
     while true
         if isempty(curr_line)
             go_forward = 1;
-        elseif startsWith(curr_line, 'Table Header for')
+        elseif strncmp(curr_line, 'Table Header for', numel('Table Header for'))
             go_forward = 2;
         else
             break

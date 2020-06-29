@@ -1,6 +1,6 @@
 function [out_data_mat] = blink_saccade_filtering(data_mat, column_names, mask_chans, n_samples, fn_is_left)
     if nargin == 4
-        fn_is_left = @(x) endsWith(x, '_l');
+        fn_is_left = @(x) strcmp(x(end-1:end), '_l');
     end
 
     out_data_mat = expand_mask_chans(data_mat, column_names, mask_chans, n_samples);
