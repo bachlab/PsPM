@@ -69,10 +69,30 @@ qa_slope.num      = [1 1];
 qa_slope.val      = {10};
 qa_slope.help     = {'Maximum SCR slope in microsiemens per second.'};
 
+qa_missing_epochs_no_filename          = cfg_const;
+qa_missing_epochs_no_filename.name     = 'Do not write to file';
+qa_missing_epochs_no_filename.tag      = 'no_missing_epochs';
+qa_missing_epochs_no_filename.val      = {0};
+qa_missing_epochs_no_filename.help     = {'Do not store artefacts epochs to file'};
+
+qa_missing_epochs_filename_path          = cfg_entry;
+qa_missing_epochs_filename_path.name     = 'Write to filename';
+qa_missing_epochs_filename_path.tag      = 'missing_epochs_filename_path';
+qa_missing_epochs_filename_path.strtype  = 's';
+qa_missing_epochs_filename_path.num      = [ 1 Inf ];
+qa_missing_epochs_filename_path.help     = {'Filename to store artefact epochs. Provide only the name and not extension, the file will be stored as a .mat file'};
+
+qa_missing_epochs_filename         = cfg_choice;
+qa_missing_epochs_filename.name    = 'Missing epochs file';
+qa_missing_epochs_filename.tag     = 'missing_epochs';
+qa_missing_epochs_filename.val     = {qa_missing_epochs_no_filename};
+qa_missing_epochs_filename.values  = {qa_missing_epochs_no_filename, qa_missing_epochs_filename_path};
+qa_missing_epochs_filename.help    = {'Artefact epochs file behaviour'};
+
 qa              = cfg_branch;
 qa.name         = 'Simple SCR quality correction';
 qa.tag          = 'simple_qa';
-qa.val          = {qa_min, qa_max, qa_slope};
+qa.val          = {qa_min, qa_max, qa_slope, qa_missing_epochs_filename};
 qa.help         = {['Simple SCR quality correction. See I. R. Kleckner et al.,"Simple, Transparent, and' ...
     'Flexible Automated Quality Assessment Procedures for Ambulatory Electrodermal Activity Data," in ' ...
     'IEEE Transactions on Biomedical Engineering, vol. 65, no. 7, pp. 1460-1467, July 2018.']};
