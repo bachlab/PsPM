@@ -78,6 +78,8 @@ switch job
             data = [y(win), yhat(win)];
             subplot(f.r, f.c, n);
             plot(data);
+            xt = get(gca, 'XTick');
+            set(gca, 'XTickLabel', xt * dcm.input.sr);
             set(gca, 'YLim', [min(yhat), max(yhat)]);
         end;
         
