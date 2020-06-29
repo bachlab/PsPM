@@ -737,30 +737,15 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(
 
             hbeat=round(hbeat*sr.wave);
             
-            HBEAT = zeros(size(wave));
+            HBEAT = nan(size(wave));
             
             if strcmp(handles.prop.event,'extra')
                 HBEAT(hbeat,1)=min(wave)-.5;
-            elseif strcmp(handles.prop.event,'integrated')                
+            elseif strcmp(handles.prop.event,'integrated')
                 temp=wave(hbeat,1);
-                median_non_nan_vals = median(temp,'omitnan');
+                temp(isnan(temp)) = median(temp,'omitnan');
                 HBEAT(hbeat,1)=temp;
-                HBEAT(isnan(HBEAT))=median_non_nan_vals;
             end
-            
-            HBEAT(HBEAT==0) = NaN;
-            
-            % Old implementation:
-%             if strcmp(handles.prop.wave,'ecg')
-%                 HBEAT(hbeat,1)=max(wave);
-%                 hold on ; stem(y,HBEAT,'r')
-%             else
-%                 HBEAT(hbeat,1)=max(base(1));
-%                 hold on ; h=stem(y,HBEAT,'r');
-%                 hbase=get(h,'Baseline');
-%                 set(hbase,'Basevalue',base(2));
-%                 
-%             end
 
             hold on ; h=stem(y,HBEAT,'ro');
             hbase=get(h,'Baseline');
@@ -778,19 +763,17 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(
                 marker(1,1)=1;
             end
             marker=marker(marker~=0);
-            MARKER=zeros(size(wave));
+            MARKER=nan(size(wave));
             
             
             if strcmp(handles.prop.event,'extra')
                 MARKER(marker,1)=min(wave)-.5;
             elseif strcmp(handles.prop.event,'integrated')
                 temp=wave(marker,1);
-                median_non_nan_vals = median(temp,'omitnan');
+                temp(isnan(temp)) = median(temp,'omitnan');
                 MARKER(marker,1)=temp;
-                MARKER(isnan(MARKER))=median_non_nan_vals;
             end
             
-            MARKER(MARKER==0)=NaN;
             hold on ; h=stem(y,MARKER,'ro');
             hbase=get(h,'Baseline');
             
@@ -802,25 +785,20 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(
         elseif not(isempty(events))
             
             events=round(events*sr.wave);
-            
-            EVENTS = zeros(size(wave));
-                        
+
+            EVENTS = nan(size(wave));
+
             if strcmp(handles.prop.event,'extra')
                 EVENTS(events,1)=min(wave)-.5;
             elseif strcmp(handles.prop.event,'integrated')
                 temp=wave(events,1);
-                median_non_nan_vals = median(temp,'omitnan');
+                temp(isnan(temp)) = median(temp,'omitnan');
                 EVENTS(events,1)=temp;
-                EVENTS(isnan(EVENTS))=median_non_nan_vals;
             end
             
-            EVENTS(EVENTS==0) = NaN;
-            
-            %EVENTS(events,1)=max(base(1));
             hold on ; h=stem(y,EVENTS,'r');
             hbase=get(h,'Baseline');
             
-            %set(hbase,'Basevalue',base(2));
             if strcmp(handles.prop.event,'extra')
                 set(hbase,'BaseValue',base(2),'Visible','off');
             elseif strcmp(handles.prop.event,'integrated')
@@ -872,7 +850,7 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(
             MARKER=diff(hbeat);
             plot(MARKER,'ro')
             ylabel('duration of ibi [s]','Fontsize',14)
-        elseif strcmp(handles.prop.event,'extra') || strcmp(handles.prop.event,'integrated')
+        elseif not(isempty(marker))
             MARKER=diff(marker);
             stem(MARKER,'r')
             ylabel('inter-marker duration [s]','Fontsize',14)
