@@ -8,15 +8,17 @@ function newdatafile = pspm_pp(varargin)
 %   pspm_pp('simple_qa', datafile, qa, channelnumber, options)
 %
 % Currently implemented: 
-%   'median':           medianfilter for SCR
-%       n:              number of timepoints for median filter
-%   'butter':           1st order butterworth low pass filter for SCR
-%       freq:           cut off frequency (min 20 Hz)
-%   'simple_qa':        Simple quality assessment for SCR
-%       qa:             A struct with quality assessment settings
-%           min:        Minimum value in microsiemens
-%           max:        Maximum value in microsiemens
-%           slope:      Maximum slope in microsiemens per second
+%   'median':                           medianfilter for SCR
+%       n:                              number of timepoints for median filter
+%   'butter':                           1st order butterworth low pass filter for SCR
+%       freq:                           cut off frequency (min 20 Hz)
+%   'simple_qa':                        Simple quality assessment for SCR
+%       qa:                             A struct with quality assessment settings
+%           min:                        Minimum value in microsiemens
+%           max:                        Maximum value in microsiemens
+%           slope:                      Maximum slope in microsiemens per second
+%           missing_epochs_filename:    If provided will create a .mat file with the missing epochs,
+%                                       e.g. abc will create abc.mat
 %__________________________________________________________________________
 %
 % References: For 'simple_qa' method, refer to:
