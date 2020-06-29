@@ -22,7 +22,7 @@ classdef set_blinks_saccades_to_nan_test < matlab.unittest.TestCase
         function test_only_left_eye(this)
             column_names = {'blink_l', 'saccade_l', 'pupil_l', 'gaze_x_l', 'gaze_y_l'};
             mask_chans = {'blink_l', 'saccade_l'};
-            fn_is_left = @(channame) endsWith(channame, 'l');
+            fn_is_left = @(channame) strcmp(channame(end), 'l');
             data = [false(100, 2), randn(100, 3)];
 
             for i = 1:4
@@ -42,7 +42,7 @@ classdef set_blinks_saccades_to_nan_test < matlab.unittest.TestCase
         function test_only_right_eye(this)
             column_names = {'pupil_r', 'gaze_x_r', 'gaze_y_r', 'blink_r', 'saccade_r'};
             mask_chans = {'blink_r', 'saccade_r'};
-            fn_is_left = @(channame) endsWith(channame, 'l');
+            fn_is_left = @(channame) strcmp(channame(end), 'l');
             data = [randn(100, 3), false(100, 2)];
 
             for i = 1:4
@@ -63,7 +63,7 @@ classdef set_blinks_saccades_to_nan_test < matlab.unittest.TestCase
             column_names = {'Pupil L', 'Pupil R', 'Gaze X L', 'Gaze X R', 'Gaze Y L',...
                 'Gaze Y R', 'Blink L', 'Blink R', 'Saccade L', 'Saccade R'};
             mask_chans = {'Blink L', 'Blink R', 'Saccade L', 'Saccade R'};
-            fn_is_left = @(channame) endsWith(channame, ' l');
+            fn_is_left = @(channame) strcmp(channame(end-1:end), ' l');
             data = [randn(100, 6), false(100, 4)];
 
             for i = 1:4

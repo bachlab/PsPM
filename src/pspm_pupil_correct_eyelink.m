@@ -264,7 +264,7 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
     % save data
     % -------------------------------------------------------------------------
     pupil_data{1}.data = pupil_corrected;
-    if ~endsWith(old_chantype, '_pp')
+    if ~strcmp(old_chantype(end-2:end), '_pp')
         pupil_data{1}.header.chantype = [old_chantype '_pp'];
     end
     channel_str = num2str(options.channel);

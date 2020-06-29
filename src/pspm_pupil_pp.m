@@ -289,7 +289,7 @@ function [sts, smooth_signal] = preprocess(data, data_combine, segments, custom_
     model.filterRawData();
     if combining
         smooth_signal.header.chantype = 'pupil_lr_pp';
-    elseif endsWith(data{1}.header.chantype, '_pp')
+    elseif strcmp(data{1}.header.chantype(end-2:end), '_pp')
         smooth_signal.header.chantype = data{1}.header.chantype; 
     else
         smooth_signal.header.chantype = [data{1}.header.chantype '_pp'];
