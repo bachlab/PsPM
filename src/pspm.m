@@ -285,6 +285,8 @@ switch selected
         cfg_add_module('pspm.first_level.resp.glm_rfr_e');
     case 9
         cfg_add_module('pspm.first_level.sebr.glm_sebr');
+    case 10
+        cfg_add_module('pspm.first_level.sps.glm_sps');
 end;
 
 
