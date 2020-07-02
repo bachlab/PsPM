@@ -10170,8 +10170,8 @@ SOA
 
 \begin_layout Standard
 Specify custom SOA for response function.
- Tested values are 3.5s, 4s and 6s.
- Default: 3.5s
+ Tested values are 3.5 s, 4 s and 6 s.
+ Default: 3.5 s
 \end_layout
 
 \begin_layout Subsection
@@ -10650,19 +10650,33 @@ Basis functions for the peripheral model.
 \end_layout
 
 \begin_layout Paragraph*
-SPSRF_BOX
+Average scanpath speed
 \end_layout
 
 \begin_layout Standard
-SPSRF with normal boxfunction (default).
+This option implements a boxcar function over the SOA, and yields the average
+ scan path speed over that interval (i.e.
+ the scan path length over that interval, divided by the SOA).
+ (default).
 \end_layout
 
 \begin_layout Paragraph*
-SPSRF_GAMMA
+SPSRF_FC
 \end_layout
 
 \begin_layout Standard
-SEBRF with gammafunction.
+This option implements a gamma function for fear-conditioned scan path speed
+ responses, time-locked to the end of the CS-US interval.
+\end_layout
+
+\begin_layout Paragraph*
+SOA
+\end_layout
+
+\begin_layout Standard
+Specify custom SOA for response function.
+ Tested values are 3.5 s and 4 s.
+ Default: 3.5 s
 \end_layout
 
 \begin_layout Subsection
