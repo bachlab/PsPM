@@ -1,12 +1,12 @@
 function [ sts, out ] = pspm_convert_visangle2sps(fn, options)
-%   pspm_convert_visangle2sp_speed takes a file with data from eyelink recordings
+%   pspm_convert_visangle2sps takes a file with data from eyelink recordings
 %   and computes by time units normalized distances bewteen visual angle data.
 %   It saves the result into a new channel with chaneltype 'sps' (Scanpath speed).
 %   It is important that pspm_convert_visangle2sps only takes channels
 %   which are in visual angle.
 
 %   FORMAT:
-%     [ sts, out ] = pspm_convert_visangle2sp_speed(fn, options)
+%     [ sts, out ] = pspm_convert_visangle2sps(fn, options)
 %   ARGUMENTS:
 %              fn:             The actual data file containing the eyelink
 %                              recording with gaze data
