@@ -5029,6 +5029,155 @@ model each trial as separate event type such that the response latency can
 \end_layout
 
 \end_deeper
+\begin_layout Section
+Scanpath speed (SPS) model
+\end_layout
+
+\begin_layout Subsection
+General 
+\end_layout
+
+\begin_layout Standard
+Various salient stimuli, e.g.
+ threat-conditioned cues, capture overt attention in a bottom-up process
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "schutz:2011"
+literal "false"
+
+\end_inset
+
+, as shown in multiple stimulus competition paradigms using aversive cues.
+ This yields a possibility to assess threat memory by overt attention.
+ In cue competition paradigms, overt attention is usually measured as gaze
+ patterns; for example, fixation duration, saccade initiation latency, and
+ number of erroneous saccades.
+ Here, we implement a model that captures gaze patterns during exclusive
+ presentation of a single cue, by assessing scanpath speed, the length of
+ scanpath per time unit, quantified as degree visual angle per second 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "xia:2020"
+literal "false"
+
+\end_inset
+
+.
+ In our publication, we refer to scanpath length, which is the integral
+ of scanpath speed over time.
+ Since we used constant cue presentation times in our publication, average
+ scanpath speed and scanpath length were identical up to a multiplicative
+ constant.
+\end_layout
+
+\begin_layout Subsection
+Model for fear-conditioned SPS 
+\end_layout
+
+\begin_layout Standard
+Scanpath speed/length allow differentiating CS+ and CS- in fear-conditioning
+ paradigms with visual cues, and without fixation instructions or fixation
+ cross.
+ PsPM implements two simple models that build on the GLM inversion algorithm
+ (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:General-linear-convolution"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ The first model is to compute average scanpath speed during a 2-s time
+ window before US (shock) delivery.
+ This was validated on three independent samples in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "xia:2020"
+literal "false"
+
+\end_inset
+
+.
+ The model is implemented with a simple boxcar response function without
+ mean-centering and is the default option.
+ Parameter estimates can be interpreted as average scan path speed per second,
+ and if they are multiplied with 2 then the resulting values can be interpreted
+ as scan path length during the 2 s preceding the US.
+ We also implement a gamma RF that describes the shape of the scanpath speed
+ during the CS-US interval better than the boxcar function, but did not
+ yield higher retrodictive validity in inferring the CS-/+ difference.
+ This RF was fitted to the data of 21 participants and validated in an independe
+nt sample; it is described by a gamma probability density function: 
+\begin_inset Formula 
+\[
+y=\frac{A}{\mu^{k}\Gamma(k)}(t-t_{0})^{k-1}e^{-\frac{t-t_{0}}{\mu}}
+\]
+
+\end_inset
+
+ with parameters 
+\begin_inset Formula $k=10.0913,µ=0.4213,t0=-1.9020+(SOA–3)$
+\end_inset
+
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "xia:2020"
+literal "false"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Subsection
+Data preconditioning 
+\end_layout
+
+\begin_layout Standard
+PsPM provides procedures to import scan path speed directly.
+ More commonly, it is convenient to import gaze coordinates in pixels, distance
+ units, or visual angle, and convert them to scanpath speed.
+ This requires interpolation of missing values which is done automatically.
+ Conversion from pixels to mm or visual angle in degree is also possible.
+ No filtering or smoothing is required for both RF during model inversion
+ with GLM.
+\end_layout
+
+\begin_layout Subsection
+Recommendations
+\end_layout
+
+\begin_layout Itemize
+Experimental design:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+use visual cues during fear conditioning and avoid fixation guides.
+\end_layout
+
+\begin_layout Itemize
+use a SOA longer than 2 s.
+ Tested SOAs are 3.0 s and 3.5 s.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Model setup:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+use the default boxcar function and specify custom SOA.
+\end_layout
+
+\end_deeper
 \begin_layout Part
 User Guide
 \end_layout
@@ -10654,9 +10803,9 @@ Average scanpath speed
 \end_layout
 
 \begin_layout Standard
-This option implements a boxcar function over the SOA, and yields the average
- scan path speed over that interval (i.e.
- the scan path length over that interval, divided by the SOA).
+This option implements a boxcar function over 2 s in the end of the SOA,
+ and yields the averaged scan path speed over that interval (i.e.
+ the scan path length over that interval, divided by 2 s).
  (default).
 \end_layout
 
@@ -10675,7 +10824,7 @@ SOA
 
 \begin_layout Standard
 Specify custom SOA for response function.
- Tested values are 3.5 s and 4 s.
+ Tested values are 3.0 s and 3.5 s.
  Default: 3.5 s
 \end_layout
 
