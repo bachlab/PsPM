@@ -14,7 +14,7 @@ function [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, ...
 %   fn:                         File to convert.
 %   chan:                       On which subset of channels should the conversion
 %                               be done. Supports all values which can be passed
-%                               to pspm_load_data(). The will only work on
+%                               to pspm_load_data(). This will only work on
 %                               gaze-channels. Other channels specified will be
 %                               ignored.(For conversion into 'degree' there must be
 %                               the same amount of gane_x as gaze_y channels)
@@ -22,7 +22,7 @@ function [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, ...
 %                               converted.
 %                               The value can contain any length unit or
 %                               'degree'. In this case the corresponding data
-%                               is firstly convertet into 'mm' and
+%                               is firstly converted into 'mm' and
 %                               afterwards the visual angles are computed.
 %   width:                      Width of the display window. Unit is 'mm'
 %                               if 'degree' is chosen, otherwise 'unit'.
