@@ -1,6 +1,6 @@
 function [ sts, out ] = pspm_convert_visangle2sps(fn, options)
 %   pspm_convert_visangle2sps takes a file with data from eyelink recordings
-%   and computes by time units normalized distances bewteen visual angle data.
+%   and computes by seconds normalized distances bewteen visual angle data.
 %   It saves the result into a new channel with chaneltype 'sps' (Scanpath speed).
 %   It is important that pspm_convert_visangle2sps only takes channels
 %   which are in visual angle.
@@ -127,7 +127,7 @@ for i=1:n_eyes
                 arclen(k) = atan(sqrt(((cos(lat(k))*sin(lon_diff))^2)+(((cos(lat(k-1))*sin(lat(k)))-(sin(lat(k-1))*cos(lat(k))*cos(lon_diff)))^2))/((sin(lat(k-1))*sin(lat(k)))+(cos(lat(k-1))*cos(lat(k))*cos(lon_diff))));
             end
             % create new channel with data holding distances
-            dist_channel.data = rad2deg(arclen);
+            dist_channel.data = rad2deg(arclen) .* data{gx}.header.sr;
             dist_channel.header.chantype = 'sps';
             dist_channel.header.sr = data{gx}.header.sr;
             dist_channel.header.units = 'degree';
