@@ -5131,7 +5131,11 @@ literal "false"
 
 \end_inset
 
-.
+, where 
+\begin_inset Formula $SOA$
+\end_inset
+
+ is the duration of the interval between CS onset and US onset in seconds.
  
 \end_layout
 
@@ -10803,7 +10807,7 @@ Average scanpath speed
 \end_layout
 
 \begin_layout Standard
-This option implements a boxcar function over 2 s in the end of the SOA,
+This option implements a boxcar function over 2 s before the US time point,
  and yields the averaged scan path speed over that interval (i.e.
  the scan path length over that interval, divided by 2 s).
  (default).
