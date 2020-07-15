@@ -65,8 +65,8 @@ distance.help = {['Distance between eye and screen in length units. ',...
 from         = cfg_menu;
 from.name    = 'From';
 from.tag     = 'from';
-from.values  = {'mm', 'cm', 'm', 'inches', 'degree'};
-from.labels  = {'mm', 'cm', 'm', 'inches', 'degree'};
+from.values  = { 'pixel', 'mm', 'cm', 'm', 'inches', 'degree'};
+from.labels  = { 'pixel', 'mm', 'cm', 'm', 'inches', 'degree'};
 from.val     = {'mm'};
 from.help    = {'Unit into which the measurements should be converted from.'};
 

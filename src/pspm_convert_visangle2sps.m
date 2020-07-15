@@ -91,23 +91,10 @@ for i=1:n_eyes
             % get channel specific data
             lon = data{gx}.data;
             lat = data{gy}.data;
-%             lat = data{gy}.header.range(2)-lat;
-            
-            % first interpolate longitude to evict NaN-values
-            [bsts,outdata]=pspm_interpolate(lon);
-            if bsts ~= 1
-                warning('ID:invalid_input', 'Could not load interpolate longitude data correctly.');
+            if sum(isnan(lon)) > 0 || sum(isnan(lat)) > 0
+                warning('ID:invalid_input', 'cannot calculate sps from data with NaN values, check gaze degree data for NaNs');
                 return;
             end
-            lon = outdata;
-            
-            % first interpolate latitude to evict NaN-values
-            [bsts,outdata]=pspm_interpolate(lat);
-            if bsts ~= 1
-                warning('ID:invalid_input', 'Could not load interpolate latitude data correctly.');
-                return;
-            end
-            lat = outdata;
             
             %compare if length are the same
             N = numel(lon);
