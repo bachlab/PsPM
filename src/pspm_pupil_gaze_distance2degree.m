@@ -1,4 +1,4 @@
-function [sts, out] = pspm_pupil_gaze_distance2degree(fn, from, height, width, distance)
+function [sts, out] = pspm_pupil_gaze_distance2degree(fn, from, height, width, distance, options)
 %   pspm_pupil_gaze_distance2degree takes a file with pixel or length unit gaze data
 %   and converts to scanpath speed. Data will automatically be interpolated if NaNs exist
 %   Conversion will be attempted for any gaze data present in the provided unit.
@@ -20,6 +20,9 @@ function [sts, out] = pspm_pupil_gaze_distance2degree(fn, from, height, width, d
 %       width:           Width of the screen in the units chosen in the 'from' parameter
 %
 %       distance:        Subject distance from the screen in the units chosen in the 'from' parameter
+% 
+%       options:
+%         channel_action:   Channel action for sps data, add / replace existing sps data
 %
 %   OUTPUT:
 %     sts:               Status determining whether the execution was
@@ -28,10 +31,17 @@ function [sts, out] = pspm_pupil_gaze_distance2degree(fn, from, height, width, d
 %       .channel           Id of the added channels.
 
 
+sts = -1;
+out = [];
 % distance to degree conversion
 [lsts, infos, data] = pspm_load_data(fn,0);
 
 dataIdx = find(cellfun(@(c) strncmp(c.header.chantype, 'gaze_', numel('gaze_')) & strcmp(c.header.units, from), data));
+
+if (length(dataIdx) < 1)
+  warning('ID:invalid_input', 'no gaze data found with the units provided')
+  return;
+end
 
 for d = dataIdx'
   if (strcmp(from, 'pixel'))

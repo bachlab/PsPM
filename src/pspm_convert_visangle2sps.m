@@ -8,20 +8,23 @@ function [ sts, out ] = pspm_convert_visangle2sps(fn, options)
 %   FORMAT:
 %     [ sts, out ] = pspm_convert_visangle2sps(fn, options)
 %   ARGUMENTS:
-%              fn:             The actual data file containing the eyelink
-%                              recording with gaze data
+%              fn:                  The actual data file containing the eyelink
+%                                   recording with gaze data
 %              options.
-%                  chans:      On which subset of the channels the visual
-%                              angles between the data point should be
-%                              computed             .
-%                              If no channels are given then the function
-%                              computes the scanpath speed of the first
-%                              found gaze data channels with type 'degree'
-%                  eyes:       Define on which eye the operations
-%                              should be performed. Possible values
-%                              are: 'l', 'r', 'lr', 'rl'. 
-%                              Default: 'lr'
-%
+%                  chans:           On which subset of the channels the visual
+%                                   angles between the data point should be
+%                                   computed             .
+%                                   If no channels are given then the function
+%                                   computes the scanpath speed of the first
+%                                   found gaze data channels with type 'degree'
+%                  eyes:            Define on which eye the operations
+%                                   should be performed. Possible values
+%                                   are: 'l', 'r', 'lr', 'rl'. 
+%                                   Default: 'lr'
+%                  .channel_action:  ['add'/'replace'] Defines whether the new channels
+%                                   should be added or the previous outputs of this function
+%                                   should be replaced.
+%                                   Default: 'add'
 %   OUTPUT:
 %   sts:                        Status determining whether the execution was
 %                               successfull (sts == 1) or not (sts == -1)
@@ -38,7 +41,6 @@ if nargin<1
     warning('ID:invalid_input', 'Nothing to do.'); return;
 elseif nargin<2
     channels = 0;
-    options = struct('eyes','lr');
 end
 if isfield(options, 'chans')
     channels = options.chans;
@@ -56,6 +58,14 @@ if ~isfield(options, 'eyes')
 elseif ~any(strcmpi(options.eyes, {'l', 'r', 'rl', 'lr'}))
     warning('ID:invalid_input', ['''options.eyes'' must be either ''l'', ', ...
                                  '''r'', ''rl'' or ''lr''.']);
+    return;
+end;
+
+% option.channel_action
+if ~isfield(options, 'channel_action')
+    options.channel_action = 'add';
+elseif ~any(strcmpi(options.channel_action, {'add', 'replace'}))
+    warning('ID:invalid_input', ['''options.channel_action'' must be either ''add'' or ''replace''.']);
     return;
 end;
 
@@ -124,7 +134,7 @@ for i=1:n_eyes
             dist_channel.header.units = 'degree';
             
             
-            [lsts, outinfo] = pspm_write_channel(fn, dist_channel, 'add');
+            [lsts, outinfo] = pspm_write_channel(fn, dist_channel, options.channel_action);
             
             if lsts ~= 1
                 warning('ID:invalid_input', '~Distance channel could not be written');

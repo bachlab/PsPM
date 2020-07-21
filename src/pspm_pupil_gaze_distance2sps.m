@@ -19,6 +19,7 @@ function [sts, out] = pspm_pupil_gaze_distance2sps(fn, from, height, width, dist
 %       width:              Width of the screen in the units chosen in the 'from' parameter
 %
 %       distance:           Subject distance from the screen in the units chosen in the 'from' parameter
+% 
 %       options:
 %         channel_action:   Channel action for sps data, add / replace existing sps data
 %
@@ -40,7 +41,7 @@ end
 
   
 if (~strcmp(from, 'mm'))
-  [lsts, infos, data] = pspm_load_data(fn)
+  [lsts, infos, data] = pspm_load_data(fn);
   dataIdx = find(cellfun(@(c) strncmp(c.header.chantype, 'gaze_', numel('gaze_')) & strcmp(c.header.units, from), data));
   for d = dataIdx'
     if strcmp(from, 'pixel')
