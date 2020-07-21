@@ -108,14 +108,18 @@ for i=1:n_eyes
             lat = deg2rad(lat);
             % compute distances
             arclen = zeros(length(lat),1);
+
+            % Haversine
+            lat_diff = (lat(2:end) - lat(1:end - 1)) / 2;
+            lon_diff = (lon(2:end) - lon(1:end - 1)) / 2;
+
+            theta = sin(lat_diff).^2 + cos(lat(1:end - 1)) .* cos(lat(2:end)) .* sin(lon_diff).^2;
+
+            arclen(2:end) = 2 * atan2(sqrt(theta),sqrt(1 - theta));
             
-            for k = 2:length(lat)
-                lon_diff = abs(lon(k-1)-lon(k));
-                arclen(k) = atan(sqrt(((cos(lat(k))*sin(lon_diff))^2)+(((cos(lat(k-1))*sin(lat(k)))-(sin(lat(k-1))*cos(lat(k))*cos(lon_diff)))^2))/((sin(lat(k-1))*sin(lat(k)))+(cos(lat(k-1))*cos(lat(k))*cos(lon_diff))));
-            end
             % create new channel with data holding distances
             dist_channel.data = rad2deg(arclen) .* data{gx}.header.sr;
-            dist_channel.header.chantype = 'sps';
+            dist_channel.header.chantype = strcat('sps_', eye);
             dist_channel.header.sr = data{gx}.header.sr;
             dist_channel.header.units = 'degree';
             

@@ -50,47 +50,54 @@ height.help = {['Height of the display window. Unit is `mm` if `degree` is chose
                 'otherwise `unit`.']};
 
 %% screen distance (Only needed if unit degree is chosen)
-distance = cfg_entry;
-distance.name = 'Screen distance';
-distance.tag = 'distance';
-distance.strtype = 'r';
-distance.num = [1 1];
-distance.val = {-1};
-distance.help = {['Distance between eye and screen in length units. ',...
+screen_distance = cfg_entry;
+screen_distance.name = 'Screen distance';
+screen_distance.tag = 'screen_distance';
+screen_distance.strtype = 'r';
+screen_distance.num = [1 1];
+screen_distance.val = {-1};
+screen_distance.help = {['Distance between eye and screen in length units. ',...
                   'Unit is ''mm'' if ''degree'' is chosen. For other ',...
                   'conversions this field is ignored,i.e default value ''-1''.']};
 
 
 %% From
 from         = cfg_menu;
-from.name    = 'From';
+from.name    = 'From distance unit';
 from.tag     = 'from';
-from.values  = { 'pixel', 'mm', 'cm', 'm', 'inches', 'degree'};
-from.labels  = { 'pixel', 'mm', 'cm', 'm', 'inches', 'degree'};
+from.values  = { 'pixel', 'mm', 'cm', 'm', 'inches' };
+from.labels  = { 'pixel', 'mm', 'cm', 'm', 'inches' };
 from.val     = {'mm'};
-from.help    = {'Unit into which the measurements should be converted from.'};
+from.help    = {'Distance unit from which the measurements should be converted.'};
 
-%% To
-to         = cfg_menu;
-to.name    = 'to';
-to.tag     = 'to';
-to.values  = {'mm', 'cm', 'm', 'inches', 'degree', 'sps'};
-to.labels  = {'mm', 'cm', 'm', 'inches', 'degree', 'scan path speed'};
-to.val     = {'mm'};
-to.help    = {'Unit into which the measurements should convert to.'};
 
-%% Conversion
-conversion          = cfg_branch;
-conversion.name     = 'Conversion';
-conversion.tag      = 'conversion';
-conversion.val      = {channel, width, height, distance, from, to};
-conversion.help     = {['Choose channel and conversion information']};
+%% Conversions
+distance2sps         = cfg_branch;
+distance2sps.name    = 'Distance to scan path speed conversion';
+distance2sps.tag     = 'distance2sps';
+distance2sps.val     = {channel, width, height, screen_distance, from };
+distance2sps.help    = {['Choose channel and conversion information']};
+
+distance2degree         = cfg_branch;
+distance2degree.name    = 'Distance to degree conversion';
+distance2degree.tag     = 'distance2degree';
+distance2degree.val     = {channel, width, height, screen_distance, from };
+distance2degree.help    = {['Choose channel and conversion information']};
+
+degree2sps         = cfg_const;
+degree2sps.name    = 'Degree to scan path speed conversion';
+degree2sps.tag     = 'degree2sps';
+degree2sps.val     = { 1 };
+degree2sps.help    = {['Convert degree gaze data to scan path speed.', ...
+'This conversion will find the degree unit gaze data from the file automatically.', ...
+'The gaze data must not contain any NaN values.']};
+
 
 %% Conversions
 conversions         = cfg_repeat;
 conversions.name    = 'Conversion list';
 conversions.tag     = 'conversions';
-conversions.values  = {conversion};
+conversions.values  = {distance2degree, distance2sps, degree2sps };
 conversions.num     = [1 Inf];
 conversion.help     = {['']};
 

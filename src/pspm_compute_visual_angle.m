@@ -110,11 +110,15 @@ for i=1:n_eyes
             visual_angl_chans{p} = data{gx};
             visual_angl_chans{p+1} = data{gy};
 
-            interpolate_options = struct('extrapolate', 1);
-
-            % interpolate channel specific data
-            [ sts_x, gx_d ] = pspm_interpolate(data{gx}.data, interpolate_options);
-            [ sts_x, gy_d ] = pspm_interpolate(data{gy}.data, interpolate_options);
+            % interpolate channel specific data if required
+            if (isfield(options, 'interpolate') && options.interpolate)
+                interpolate_options = struct('extrapolate', 1);
+                [ sts_x, gx_d ] = pspm_interpolate(data{gx}.data, interpolate_options);
+                [ sts_x, gy_d ] = pspm_interpolate(data{gy}.data, interpolate_options);
+            else
+                [ sts_x, gx_d ] = data{gx}.data;
+                [ sts_x, gy_d ] = data{gy}.data;
+            end
 
             % The convention is that the origin of the screen is in the bottom 
             % left corner, so the following line is not needed a priori, but I 
