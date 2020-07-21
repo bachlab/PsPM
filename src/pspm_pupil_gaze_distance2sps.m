@@ -1,4 +1,4 @@
-function [sts, out] = pspm_pupil_gaze_distance2sps(fn, from, height, width, distance)
+function [sts, out] = pspm_pupil_gaze_distance2sps(fn, from, height, width, distance, options)
 %   pspm_pupil_gaze_distance2sps takes a file with pixel or length unit gaze data
 %   and converts to scanpath speed. Data will automatically be interpolated if NaNs exist
 %   Conversion will be attempted for any gaze data present in the provided unit.
@@ -9,17 +9,18 @@ function [sts, out] = pspm_pupil_gaze_distance2sps(fn, from, height, width, dist
 %       [sts, out] = pspm_pupil_gaze_distance2sps(fn, from, height, width, distance, options)
 %
 %   INPUT:
-%       fn:              The actual data file gaze data
+%       fn:                 The actual data file gaze data
 %
-%       from:            Distance unit to convert from.
-%                        pixel, mm, cm, m, inches
-%                        (Unit: mm)
+%       from:               Distance unit to convert from.
+%                           pixel, mm, cm, m, inches
 %
-%       height:          Height of the screen in the units chosen in the 'from' parameter
+%       height:             Height of the screen in the units chosen in the 'from' parameter
 %
-%       width:           Width of the screen in the units chosen in the 'from' parameter
+%       width:              Width of the screen in the units chosen in the 'from' parameter
 %
-%       distance:        Subject distance from the screen in the units chosen in the 'from' parameter
+%       distance:           Subject distance from the screen in the units chosen in the 'from' parameter
+%       options:
+%         channel_action:   Channel action for sps data, add / replace existing sps data
 %
 %   OUTPUT:
 %     sts:               Status determining whether the execution was
@@ -27,32 +28,59 @@ function [sts, out] = pspm_pupil_gaze_distance2sps(fn, from, height, width, dist
 %     out:               Output struct
 %       .channel           Id of the added channels.
 
+global settings;
+if isempty(settings), pspm_init; end
+sts = -1;
+
+
+
+if (nargin < 6)
+  options = struct('channel_action', 'add');
+end
+
+  
 if (~strcmp(from, 'mm'))
   [lsts, infos, data] = pspm_load_data(fn)
   dataIdx = find(cellfun(@(c) strncmp(c.header.chantype, 'gaze_', numel('gaze_')) & strcmp(c.header.units, from), data));
   for d = dataIdx'
     if strcmp(from, 'pixel')
-      options.channel_action = 'add';
-      pspm_convert_pixel2unit(fn, d, 'mm', width, height, distance, options)
+      pixel2unit_options.channel_action = 'replace';
+      [ sts ] = pspm_convert_pixel2unit(fn, d, 'mm', width, height, distance, pixel2unit_options);
+      if (sts < 1)
+        warning('ID:invalid_input', 'Could not convert pixels to mm');
+        return;
+      end
+
     else
-      [sts, out ] = pspm_convert_unit(data{d}.data, from, 'mm')
+      [sts, out ] = pspm_convert_unit(data{d}.data, from, 'mm');
+      if (sts < 1)
+        warning('ID:invalid_input', 'Could not perform temporary conversion to mm');
+        return;
+      end;
+
+
       temp_channel = data;
       temp_channel.data = out;
       temp_channel.header.units = "mm";
       [lsts, outinfo] = pspm_write_channel(fn, temp_channel, 'add');
+      if (lsts < 1)
+        warning('ID:invalid_input', 'Could not write temporary mm data channels');
+        return;
+      end;
+
+
     end
   end
 end
 
-% write to file with channel action
-options.channel_action = 'replace';
-
 visual_angle_options = options;
 % interpolate the distance data before conversion when ultimately targetting sps
 visual_angle_options.interpolate = 1;
-[sts, out] = pspm_compute_visual_angle(fn,0, ...
-  width, height, distance, 'mm',visual_angle_options);
+[sts, out] = pspm_compute_visual_angle(fn, 0, width, height, distance, 'mm', visual_angle_options);
 
-[sts, out] = pspm_convert_visangle2sps(fn,options);
+if (sts < 1)
+  warning('ID:invalid_input', 'Could not convert distance data to degrees');
+  return;
+end;
 
-out = 1;
+[sts, out] = pspm_convert_visangle2sps(fn, options);
