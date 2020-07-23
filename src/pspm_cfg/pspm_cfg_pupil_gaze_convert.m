@@ -94,11 +94,11 @@ degree2sps.help    = {['Convert degree gaze data to scan path speed.', ...
 
 
 %% Conversions
-conversions         = cfg_repeat;
-conversions.name    = 'Conversion list';
-conversions.tag     = 'conversions';
-conversions.values  = {distance2degree, distance2sps, degree2sps };
-conversions.num     = [1 Inf];
+conversion         = cfg_choice;
+conversion.name    = 'Conversion Type';
+conversion.tag     = 'conversion';
+conversion.val     = {distance2degree};
+conversion.values  = {distance2degree, distance2sps, degree2sps };
 conversion.help     = {['']};
 
 %% Channel action
@@ -115,7 +115,7 @@ chan_action.help    = {['Choose whether to ''replace'' the given channel ', ...
 pp_pupil_gaze_convert        = cfg_exbranch;
 pp_pupil_gaze_convert.name   = 'Pupil gaze convert';
 pp_pupil_gaze_convert.tag    = 'pupil_gaze_convert';
-pp_pupil_gaze_convert.val    = {datafile, conversions, chan_action};
+pp_pupil_gaze_convert.val    = {datafile, conversion, chan_action};
 pp_pupil_gaze_convert.prog   = @pspm_cfg_run_pupil_gaze_convert;
 pp_pupil_gaze_convert.help   = {['Provides conversion functions for the specified ', ...
     'data (e.g. pupil gaze data).']};

@@ -58,17 +58,21 @@ classdef pspm_pupil_gaze_distance2degree_test < matlab.unittest.TestCase
             this.verifyLength(this.get_gaze_and_unit(data, 'degree'), 0);
 
             [sts, out_channel] = pspm_pupil_gaze_distance2degree(...
-              this.fn, 'pixel', width, height, distance, struct('channel_action', channel_action));
+              this.fn, from, width, height, distance, struct('channel_action', channel_action));
             load(this.fn);
+
+            if (strcmp(channel_action, 'add'));
+              data_length = data_length + 4;
+            end;
             
-            this.verifyEqual(length(data), data_length + 4);
+            this.verifyEqual(length(data), data_length);
             data_length = length(data);
 
             this.verifyLength(this.get_gaze_and_unit(data, 'degree'), 4);
             this.verifyEqual(sts, 1);
 
             [sts, out_channel] = pspm_pupil_gaze_distance2degree(...
-              this.fn, 'pixel', 323, 232, 600, struct('channel_action', channel_action));
+              this.fn, from, width, height, distance, struct('channel_action', channel_action));
             load(this.fn);
 
             if (strcmp(channel_action, 'add'));

@@ -19,5 +19,15 @@ Further features are simple programming of add-ons for import and modelling of n
 
 **PsPM** incorporates the previous software package SCRalyze and offers all features of SCRalyze plus many more. If you started working on a project with SCRalyze and want to continue, you can still find previous software versions, help, and resources on http://scralyze.sourceforge.net.
 
+## Developer Documentation
+
+### Code Structure
+The software is used in two ways, by using the defined matlab functions or via the GUIDE application interface. The GUIDE app includes a batch editor, which uses matlabbatch.
+
+The code relating to the matlabbatch config is found in pspm_cfg, the entire matlabbatch configuration suite is built from pspm_cfg/pspm_cfg.m. Matlabbatch allows the declaration of a UI structure with things like menus, branchs, field entries, valid values etc. Most `pspm_cfg_x_y_z.m` files have an accompanying `pspm_cfg_run_x_y_z.m` file, the run `pspm_cfg_run_x_y_z.m` files take the selections from the `pspm_cfg_x_y_z.m` config and then provide them to other pspm functions. The `pspm_cfg_run_x_y_z.m` file middleware allows for the matlabbatch system to be used, whilst also keeping neat, usable, and more general pspm core functions.
+
+The PSPM software typically creates and maintains a model file for a users model, as such many of the functions in pspm treat model files as first class citizens. It is typical for a function to inclue a filename as an argument, and for the function to load that data, perform it's purpose, then return a result or write back to the file with a status output.
+
+
 ## License
 **PsPM** is provided under the GNU General Public License (c) Dominik R. Bach, University of Zurich and University College London
