@@ -32,56 +32,70 @@ function [sts, out] = pspm_pupil_gaze_distance2sps(fn, from, height, width, dist
 global settings;
 if isempty(settings), pspm_init; end
 sts = -1;
+out = [];
 
+% distance to degree conversion
+[sts, infos, data] = pspm_load_data(fn,0);
 
+eyes.l = find(cellfun(@(c) ~isempty(regexp(c.header.chantype, 'gaze_[x|y]_l', 'once'))...
+   && strcmp(c.header.units, from), data));
+eyes.r = find(cellfun(@(c) ~isempty(regexp(c.header.chantype, 'gaze_[x|y]_r', 'once'))...
+   && strcmp(c.header.units, from), data));
 
-if (nargin < 6)
-  options = struct('channel_action', 'add');
+if (length(eyes.l) < 1 && length(eyes.r) < 1)
+  warning('ID:invalid_input', 'no gaze data found with the units provided')
+  return;
 end
 
-  
-if (~strcmp(from, 'mm'))
-  [lsts, infos, data] = pspm_load_data(fn);
-  dataIdx = find(cellfun(@(c) strncmp(c.header.chantype, 'gaze_', numel('gaze_')) & strcmp(c.header.units, from), data));
-  for d = dataIdx'
-    if strcmp(from, 'pixel')
-      pixel2unit_options.channel_action = 'replace';
-      [ sts ] = pspm_convert_pixel2unit(fn, d, 'mm', width, height, distance, pixel2unit_options);
-      if (sts < 1)
-        warning('ID:invalid_input', 'Could not convert pixels to mm');
-        return;
-      end
+for gaze_eye = fieldnames(eyes)'
+  for d = eyes.(gaze_eye{1})'
+    sr =  data{d}.header.sr;
+    if ~isempty(regexp(data{d}.header.chantype, 'gaze_x_', 'once'))
+      lon_chan = data{d};
+
+      if (strcmp(from, 'pixel'));
+        data_x = pixel_conversion(data{d}.data, width, data{d}.header.range);
+      else;
+        [ sts, data_x ] = pspm_convert_unit(data{d}.data, from, 'mm');
+      end;
 
     else
-      [sts, out ] = pspm_convert_unit(data{d}.data, from, 'mm');
-      if (sts < 1)
-        warning('ID:invalid_input', 'Could not perform temporary conversion to mm');
-        return;
+      lat_chan = data{d};
+
+      if (strcmp(from, 'pixel'));
+        data_y = pixel_conversion(data{d}.data, height, data{d}.header.range);
+      else;
+        [ sts, data_y ] = pspm_convert_unit(data{d}.data, from, 'mm');
       end;
-
-
-      temp_channel = data;
-      temp_channel.data = out;
-      temp_channel.header.units = "mm";
-      [lsts, outinfo] = pspm_write_channel(fn, temp_channel, 'add');
-      if (lsts < 1)
-        warning('ID:invalid_input', 'Could not write temporary mm data channels');
-        return;
-      end;
-
-
-    end
+    end;
   end
+
+  options.interpolate = 1;
+  try;
+    [ lat, lon, lat_range, lon_range ] = pspm_compute_visual_angle_1(data_x, data_y, width, height, distance, options);
+  catch;
+    warning('ID:invalid_input', 'Could not convert distance data to degrees');
+    return;
+  end;
+    
+
+  arclen = pspm_convert_visangle2sps_1(lat, lon);
+  dist_channel.data = arclen .* sr;
+  dist_channel.header.chantype = strcat('sps_', gaze_eye{1});
+  dist_channel.header.sr = sr;
+  dist_channel.header.units = 'degree';
+  
+  [sts, outinfo] = pspm_write_channel(fn, dist_channel, options.channel_action);
+
+end
 end
 
-visual_angle_options = options;
-% interpolate the distance data before conversion when ultimately targetting sps
-visual_angle_options.interpolate = 1;
-[sts, out] = pspm_compute_visual_angle(fn, 0, width, height, distance, 'mm', visual_angle_options);
 
-if (sts < 1)
-  warning('ID:invalid_input', 'Could not convert distance data to degrees');
-  return;
-end;
-
-[sts, out] = pspm_convert_visangle2sps(fn, options);
+% CODE SAME AS IN pspm_pixel2unit
+function out = pixel_conversion(data, screen_length, interest_range)
+  length_per_pixel = screen_length ./ (diff(interest_range) + 1);
+  % baseline data in pixels wrt. the range (i.e. pixels of interest)
+  pixel_index = data-interest_range(1);
+  % convert indices into coordinates in the units of interests
+  out = pixel_index * length_per_pixel;
+end

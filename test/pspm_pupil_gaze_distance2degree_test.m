@@ -1,5 +1,5 @@
-classdef pspm_pupil_gaze_distance2sps_test < matlab.unittest.TestCase
-% pspm_pupil_gaze_distance2sps_test 
+classdef pspm_pupil_gaze_distance2degree_test < matlab.unittest.TestCase
+% pspm_pupil_gaze_distance2degree_test 
 % unittest class for the pspm_pupil_gaze_distance2sps_test function
 
 
@@ -42,6 +42,7 @@ classdef pspm_pupil_gaze_distance2sps_test < matlab.unittest.TestCase
 
     methods (Test)
         function from_pixel(this, from, channel_action)
+            % test with width 200mm, height 100mm and 2 pixel per mm
             load(this.fn);
             width = 323;
             height = 232;
@@ -53,34 +54,32 @@ classdef pspm_pupil_gaze_distance2sps_test < matlab.unittest.TestCase
               this.verifyLength(this.get_gaze_and_unit(data, from), 4);
             end;
 
-
             data_length = length(data);
-            this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_l'), data)), 0);
-            this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_r'), data)), 0);
+            this.verifyLength(this.get_gaze_and_unit(data, 'degree'), 0);
 
-            [sts, out_channel] = pspm_pupil_gaze_distance2sps(...
-              this.fn, from, width, height, distance, struct('channel_action', channel_action));
+            [sts, out_channel] = pspm_pupil_gaze_distance2degree(...
+              this.fn, 'pixel', width, height, distance, struct('channel_action', channel_action));
             load(this.fn);
-
-            this.verifyLength(data, data_length + 2);
+            
+            this.verifyEqual(length(data), data_length + 4);
             data_length = length(data);
 
-            this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_l'), data)), 1);
-            this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_r'), data)), 1);
+            this.verifyLength(this.get_gaze_and_unit(data, 'degree'), 4);
+            this.verifyEqual(sts, 1);
 
-            [sts, out_channel] = pspm_pupil_gaze_distance2sps(...
-              this.fn, from, width, height, distance, struct('channel_action', channel_action));
+            [sts, out_channel] = pspm_pupil_gaze_distance2degree(...
+              this.fn, 'pixel', 323, 232, 600, struct('channel_action', channel_action));
             load(this.fn);
 
-            expected_data_length = data_length;
             if (strcmp(channel_action, 'add'));
-              expected_data_length = expected_data_length + 2;
+              data_length = data_length + 4;
             end;
 
-            this.verifyLength(data, expected_data_length);
+            this.verifyEqual(length(data), data_length);
             this.verifyEqual(sts, 1);
 
         end
+      
     end
 
 end

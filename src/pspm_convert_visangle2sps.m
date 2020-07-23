@@ -101,38 +101,21 @@ for i=1:n_eyes
             % get channel specific data
             lon = data{gx}.data;
             lat = data{gy}.data;
-            if sum(isnan(lon)) > 0 || sum(isnan(lat)) > 0
-                warning('ID:invalid_input', 'cannot calculate sps from data with NaN values, check gaze degree data for NaNs');
-                return;
+            
+            try:
+                arclen = pspm_convert_visangle2sps_1(lat, lon);
+            catch err
+                warning('ID:invalid_input', 'Could not calculate sps from gaze data');
+                return
             end
-            
-            %compare if length are the same
-            N = numel(lon);
-            if N~=numel(lat)
-                warning('ID:invalid_input', 'length of data in gaze_x and gaze_y is not the same');
-                return;
-            end;
-            
-            %convert lon and lat into radians
-            lon = deg2rad(lon);
-            lat = deg2rad(lat);
-            % compute distances
-            arclen = zeros(length(lat),1);
 
-            % Haversine
-            lat_diff = (lat(2:end) - lat(1:end - 1)) / 2;
-            lon_diff = (lon(2:end) - lon(1:end - 1)) / 2;
 
-            theta = sin(lat_diff).^2 + cos(lat(1:end - 1)) .* cos(lat(2:end)) .* sin(lon_diff).^2;
-
-            arclen(2:end) = 2 * atan2(sqrt(theta),sqrt(1 - theta));
-            
             % create new channel with data holding distances
             dist_channel.data = rad2deg(arclen) .* data{gx}.header.sr;
             dist_channel.header.chantype = strcat('sps_', eye);
             dist_channel.header.sr = data{gx}.header.sr;
             dist_channel.header.units = 'degree';
-            
+
             
             [lsts, outinfo] = pspm_write_channel(fn, dist_channel, options.channel_action);
             
