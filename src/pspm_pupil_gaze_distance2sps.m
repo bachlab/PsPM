@@ -72,14 +72,14 @@ for gaze_eye = fieldnames(eyes)'
 
   options.interpolate = 1;
   try;
-    [ lat, lon, lat_range, lon_range ] = pspm_compute_visual_angle_1(data_x, data_y, width, height, distance, options);
+    [ lat, lon, lat_range, lon_range ] = pspm_compute_visual_angle_core(data_x, data_y, width, height, distance, options);
   catch;
     warning('ID:invalid_input', 'Could not convert distance data to degrees');
     return;
   end;
     
 
-  arclen = pspm_convert_visangle2sps_1(lat, lon);
+  arclen = pspm_convert_visangle2sps_core(lat, lon);
   dist_channel.data = arclen .* sr;
   dist_channel.header.chantype = strcat('sps_', gaze_eye{1});
   dist_channel.header.sr = sr;

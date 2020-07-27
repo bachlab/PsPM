@@ -71,7 +71,7 @@ for gaze_eye = [ lIdx, rIdx ]
   end
 
   try;
-    [ lat, lon, lat_range, lon_range ] = pspm_compute_visual_angle_1(data_x, data_y, width, height, distance, options);
+    [ lat, lon, lat_range, lon_range ] = pspm_compute_visual_angle_core(data_x, data_y, width, height, distance, options);
   catch;
     warning('ID:invalid_input', 'Could not convert distance data to degrees');
     return;

@@ -111,7 +111,7 @@ for i=1:n_eyes
             visual_angl_chans{p+1} = data{gy};
 
             try;
-                [ lat, lon, lat_range, lon_range ] = pspm_compute_visual_angle_1(data{gx}.data, data{gy}.data, width, height, distance, options);
+                [ lat, lon, lat_range, lon_range ] = pspm_compute_visual_angle_core(data{gx}.data, data{gy}.data, width, height, distance, options);
             catch;
                 warning('ID:invalid_input', 'Could not convert distance data to degrees');
                 return;

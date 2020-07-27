@@ -103,7 +103,7 @@ for i=1:n_eyes
             lat = data{gy}.data;
             
             try:
-                arclen = pspm_convert_visangle2sps_1(lat, lon);
+                arclen = pspm_convert_visangle2sps_core(lat, lon);
             catch err
                 warning('ID:invalid_input', 'Could not calculate sps from gaze data');
                 return
@@ -116,7 +116,7 @@ for i=1:n_eyes
             dist_channel.header.sr = data{gx}.header.sr;
             dist_channel.header.units = 'degree';
 
-            
+
             [lsts, outinfo] = pspm_write_channel(fn, dist_channel, options.channel_action);
             
             if lsts ~= 1
