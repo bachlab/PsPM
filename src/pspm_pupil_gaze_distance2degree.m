@@ -3,27 +3,30 @@ function [sts, out] = pspm_pupil_gaze_distance2degree(fn, from, height, width, d
 %   and converts to scanpath speed. Data will automatically be interpolated if NaNs exist
 %   Conversion will be attempted for any gaze data present in the provided unit.
 %   i.e. if only a left eye's data is provided the speed will only be calculated for that eye.
-%   The function may add intermediary conversions, e.g. a conversion from pixel will result in an intermediary mm conversion
 %
 %   FORMAT:
 %       [sts, out] = pspm_pupil_gaze_distance2degree(fn, from, height, width, distance, options)
 %
 %   INPUT:
-%       fn:              The actual data file gaze data
+%       fn:                 The actual data file gaze data
 %
-%       from:            Distance unit to convert from.
-%                        pixel, mm, cm, m, inches
-%                        (Unit: mm)
+%       from:               Distance unit to convert from.
+%                           pixel, mm, cm, m, inches
 %
-%       height:          Height of the screen in the units chosen in the 'from' parameter
+%       height:             Height of the screen in the units chosen in the 'from' parameter
 %
-%       width:           Width of the screen in the units chosen in the 'from' parameter
+%       width:              Width of the screen in the units chosen in the 'from' parameter
 %
-%       distance:        Subject distance from the screen in the units chosen in the 'from' parameter
+%       distance:           Subject distance from the screen in the units chosen in the 'from' parameter
 % 
 %       options:
 %         channel_action:   Channel action for sps data, add / replace existing sps data
-%         interpolate:   Boolean, interpolate the distance data before converting to degrees
+%                           Default: add
+%                           IMPORTANT: Replace will overwrite gaze data in any unit,
+%                           so a pixel gaze_x_l channel will be overwritten by a degree gaze_x_l channel.
+%
+%         interpolate:      Boolean, interpolate the distance data before converting to degrees.
+%                           Default: true
 %
 %   OUTPUT:
 %     sts:               Status determining whether the execution was
@@ -31,9 +34,53 @@ function [sts, out] = pspm_pupil_gaze_distance2degree(fn, from, height, width, d
 %     out:               Output struct
 %       .channel           Id of the added channels.
 
+% Number of arguments validation
+if nargin < 5;
+  warning('ID:invalid_input','Not enough input arguments.'); return;
+elseif nargin < 6;
+  options = struct();
+end
+
+% Options defaults
+if ~isfield(options, 'interpolate');
+  options.interpolate = 1;
+end
+
+if ~isfield(options, 'channel_action');
+  options.channel_action = 'add';
+end
+
+% Input argument validation
+
+if ~ismember(from, { 'pixel', 'mm', 'cm', 'inches', 'm' })
+  warning('ID:invalid_input', 'from unit must be "pixel", "mm", "cm", "inches", "m"');
+  return;
+end;
+
+if ~isnumeric(height)
+  warning('ID:invalid_input', 'height must be numeric');
+  return;
+end;
+
+if ~isnumeric(width)
+  warning('ID:invalid_input', 'width must be numeric');
+  return;
+end;
+
+if ~isnumeric(distance)
+  warning('ID:invalid_input', 'distance must be numeric');
+  return;
+end;
+
 
 sts = -1;
 out = [];
+
+
+
+
+
+
 % distance to degree conversion
 [lsts, infos, data] = pspm_load_data(fn,0);
 

@@ -41,6 +41,15 @@ classdef pspm_pupil_gaze_distance2sps_test < matlab.unittest.TestCase
     
 
     methods (Test)
+
+        function validations(this)
+          this.verifyWarning(@() pspm_pupil_gaze_distance2sps(this.fn, "not_a_unit", 111, 222, 333),  'ID:invalid_input');
+          this.verifyWarning(@() pspm_pupil_gaze_distance2sps(this.fn, "pixel", 'not_a_number', 222, 333),  'ID:invalid_input');
+          this.verifyWarning(@() pspm_pupil_gaze_distance2sps(this.fn, "not_a_unit", 111, 'not_a_number', 333),  'ID:invalid_input');
+          this.verifyWarning(@() pspm_pupil_gaze_distance2sps(this.fn, "not_a_unit", 111, 222, 'not_a_number'),  'ID:invalid_input');
+        end
+
+
         function from_pixel(this, from, channel_action)
             load(this.fn);
             width = 323;

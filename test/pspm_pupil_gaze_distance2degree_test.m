@@ -41,6 +41,14 @@ classdef pspm_pupil_gaze_distance2degree_test < matlab.unittest.TestCase
     
 
     methods (Test)
+
+        function validations(this)
+          this.verifyWarning(@() pspm_pupil_gaze_distance2degree(this.fn, "not_a_unit", 111, 222, 333),  'ID:invalid_input');
+          this.verifyWarning(@() pspm_pupil_gaze_distance2degree(this.fn, "pixel", 'not_a_number', 222, 333),  'ID:invalid_input');
+          this.verifyWarning(@() pspm_pupil_gaze_distance2degree(this.fn, "not_a_unit", 111, 'not_a_number', 333),  'ID:invalid_input');
+          this.verifyWarning(@() pspm_pupil_gaze_distance2degree(this.fn, "not_a_unit", 111, 222, 'not_a_number'),  'ID:invalid_input');
+        end
+
         function from_pixel(this, from, channel_action)
             % test with width 200mm, height 100mm and 2 pixel per mm
             load(this.fn);
@@ -71,16 +79,24 @@ classdef pspm_pupil_gaze_distance2degree_test < matlab.unittest.TestCase
             this.verifyLength(this.get_gaze_and_unit(data, 'degree'), 4);
             this.verifyEqual(sts, 1);
 
-            [sts, out_channel] = pspm_pupil_gaze_distance2degree(...
-              this.fn, from, width, height, distance, struct('channel_action', channel_action));
-            load(this.fn);
 
-            if (strcmp(channel_action, 'add'));
-              data_length = data_length + 4;
-            end;
+            % When using replace, the distance gaze data will have been overwritten so the function fails
+            if (strcmp(channel_action, 'add'))
+                [sts, out_channel] = pspm_pupil_gaze_distance2degree(...
+                  this.fn, from, width, height, distance, struct('channel_action', channel_action));
+                load(this.fn);
 
-            this.verifyEqual(length(data), data_length);
-            this.verifyEqual(sts, 1);
+                if (strcmp(channel_action, 'add'));
+                  data_length = data_length + 4;
+                end;
+
+                this.verifyEqual(length(data), data_length);
+                this.verifyEqual(sts, 1);
+            else
+                [ sts ] = this.verifyWarning(@() pspm_pupil_gaze_distance2degree(...
+                  this.fn, from, width, height, distance, struct('channel_action', channel_action)), 'ID:invalid_input');
+                this.verifyEqual(sts, -1);
+            end
 
         end
       

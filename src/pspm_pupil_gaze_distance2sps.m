@@ -29,6 +29,43 @@ function [sts, out] = pspm_pupil_gaze_distance2sps(fn, from, height, width, dist
 %     out:               Output struct
 %       .channel           Id of the added channels.
 
+
+% Number of arguments validation
+if nargin < 5;
+  warning('ID:invalid_input','Not enough input arguments.'); return;
+elseif nargin < 6;
+  options = struct();
+end
+
+% Options defaults
+if ~isfield(options, 'channel_action');
+  options.channel_action = 'add';
+end
+
+
+% Input argument validation
+
+if ~ismember(from, { 'pixel', 'mm', 'cm', 'inches', 'm' })
+  warning('ID:invalid_input', 'from unit must be "pixel", "mm", "cm", "inches", "m"');
+  return;
+end;
+
+if ~isnumeric(height)
+  warning('ID:invalid_input', 'height must be numeric');
+  return;
+end;
+
+if ~isnumeric(width)
+  warning('ID:invalid_input', 'width must be numeric');
+  return;
+end;
+
+if ~isnumeric(distance)
+  warning('ID:invalid_input', 'distance must be numeric');
+  return;
+end;
+
+
 global settings;
 if isempty(settings), pspm_init; end
 sts = -1;
