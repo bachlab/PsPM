@@ -233,7 +233,11 @@ end
 
 
 function matches = match_channel(existing_channels, exisiting_units, channel)
-    matches = find(...
-        strcmpi(channel.header.chantype, existing_channels)...
-        & (repmat(~isfield(channel.header, 'units'), length(exisiting_units), 1) | strcmpi(channel.header.units, exisiting_units)),1,'last');
+    if isfield(channel.header, 'units')
+        matches = find(...
+            strcmpi(channel.header.chantype, existing_channels)...
+            & strcmpi(channel.header.units, exisiting_units),1,'last');
+    else
+        matches = find(strcmpi(channel.header.chantype, existing_channels) ,1,'last');
+    end
 end
