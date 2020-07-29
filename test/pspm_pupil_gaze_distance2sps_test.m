@@ -4,7 +4,7 @@ classdef pspm_pupil_gaze_distance2sps_test < matlab.unittest.TestCase
 
 
     properties
-        raw_input_filename = fullfile('../', 'ImportTestData', 'eyelink', 'S114_s2.asc');
+        raw_input_filename = fullfile('ImportTestData', 'eyelink', 'S114_s2.asc');
         fn = '';
     end
 
