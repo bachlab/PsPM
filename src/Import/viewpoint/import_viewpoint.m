@@ -114,7 +114,7 @@ function [dataraw, marker, messages, chan_info, file_info] = parse_viewpoint_fil
         begidx = linefeeds(msg_line) + 1;
         str(begidx : begidx + 1) = '/';
     end
-    C = textscan(str, fmt_str, 'Delimiter', '\t', 'CollectOutput', 1, 'CommentStyle', '//');
+    C = textscan(str, fmt_str, 'CollectOutput', 1, 'CommentStyle', '//');
     dataraw = C{1};
     marker = C{2};
 

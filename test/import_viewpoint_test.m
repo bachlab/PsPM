@@ -83,7 +83,7 @@ classdef import_viewpoint_test < matlab.unittest.TestCase
             % ---------------------------------------------------------------------------
             msg_counter = 1;
             for line = datalines
-                parts = split(line, sprintf('\t'));
+                parts = strsplit(line{1},'\t');
                 msg = parts{marker_index};
                 if ~isempty(msg)
                     tbeg = to_num(parts{2});
