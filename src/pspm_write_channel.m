@@ -124,6 +124,7 @@ try options.delete; catch, options.delete = 'last'; end
 % -------------------------------------------------------------------------
 [nsts, infos, data] = pspm_load_data(fn);
 if nsts == -1, return; end
+importdata = data;
 
 %% Find channel according to action
 % -------------------------------------------------------------------------
@@ -139,8 +140,9 @@ if ~strcmpi(channel_action, 'add')
             channeli = find(strcmpi(options.channel,fchannels),1,options.delete);
         end
     elseif options.channel == 0
-        channeli = cellfun(@(x) find(strcmpi(x.header.chantype, fchannels),1,'last'), ... 
-            newdata, 'UniformOutput', 0);
+        funits = cellfun(@(x) x.header.units, data,'UniformOutput',0);
+        % if the chantype matches, and unit matches if one is provided
+        channeli = cellfun(@(n) match_channel(fchannels, funits, n), newdata, 'UniformOutput', 0);
         channeli = cell2mat(channeli);
     else
         channel = options.channel;
@@ -227,4 +229,11 @@ if nsts == -1, return; end
 infos = outinfos;
 
 sts = 1;
+end
+
+
+function matches = match_channel(existing_channels, exisiting_units, channel)
+    matches = find(...
+        strcmpi(channel.header.chantype, existing_channels)...
+        & (repmat(~isfield(channel.header, 'units'), length(exisiting_units), 1) | strcmpi(channel.header.units, exisiting_units)),1,'last');
 end

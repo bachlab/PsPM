@@ -1,6 +1,6 @@
 classdef pspm_pupil_gaze_distance2degree_test < matlab.unittest.TestCase
 % pspm_pupil_gaze_distance2degree_test 
-% unittest class for the pspm_pupil_gaze_distance2sps_test function
+% unittest class for the pspm_pupil_gaze_distance2degree_test function
 
 
     properties
@@ -68,35 +68,23 @@ classdef pspm_pupil_gaze_distance2degree_test < matlab.unittest.TestCase
             [sts, out_channel] = pspm_pupil_gaze_distance2degree(...
               this.fn, from, width, height, distance, struct('channel_action', channel_action));
             load(this.fn);
-
-            if (strcmp(channel_action, 'add'));
-              data_length = data_length + 4;
-            end;
             
-            this.verifyEqual(length(data), data_length);
+            this.verifyEqual(length(data), data_length + 4);
             data_length = length(data);
 
             this.verifyLength(this.get_gaze_and_unit(data, 'degree'), 4);
             this.verifyEqual(sts, 1);
 
+            [sts, out_channel] = pspm_pupil_gaze_distance2degree(...
+              this.fn, from, width, height, distance, struct('channel_action', channel_action));
+            load(this.fn);
 
-            % When using replace, the distance gaze data will have been overwritten so the function fails
-            if (strcmp(channel_action, 'add'))
-                [sts, out_channel] = pspm_pupil_gaze_distance2degree(...
-                  this.fn, from, width, height, distance, struct('channel_action', channel_action));
-                load(this.fn);
+            if (strcmp(channel_action, 'add'));
+              data_length = data_length + 4;
+            end;
 
-                if (strcmp(channel_action, 'add'));
-                  data_length = data_length + 4;
-                end;
-
-                this.verifyEqual(length(data), data_length);
-                this.verifyEqual(sts, 1);
-            else
-                [ sts ] = this.verifyWarning(@() pspm_pupil_gaze_distance2degree(...
-                  this.fn, from, width, height, distance, struct('channel_action', channel_action)), 'ID:invalid_input');
-                this.verifyEqual(sts, -1);
-            end
+            this.verifyEqual(length(data), data_length);
+            this.verifyEqual(sts, 1);
 
         end
       
