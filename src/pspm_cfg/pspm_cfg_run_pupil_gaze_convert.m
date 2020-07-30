@@ -13,11 +13,11 @@ if (isfield(job.conversion, 'degree2sps'))
 
 elseif (isfield(job.conversion, 'distance2sps'))
   args = job.conversion.distance2sps;
-  [sts, out] = pspm_pupil_gaze_distance2sps(fn, args.from, args.height, args.width, args.screen_distance, options);
+  [sts, out] = pspm_pupil_gaze_distance_conversion(fn, 'sps', args.from, args.height, args.width, args.screen_distance, options);
 
 elseif (isfield(job.conversion, 'distance2degree'))
   args = job.conversion.distance2degree;
-  [ sts, out ] = pspm_pupil_gaze_distance2degree(fn, args.from, args.height, args.width, args.screen_distance, options);
+  [ sts, out ] = pspm_pupil_gaze_distance_conversion(fn, 'degree', args.from, args.height, args.width, args.screen_distance, options);
 end
 
 

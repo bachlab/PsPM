@@ -1,4 +1,4 @@
-function [sts, out] = pspm_pupil_gaze_distance2sps(fn, from, height, width, distance, options)
+function [sts, out] = pspm_pupil_gaze_distance2sps(fn, target, from, height, width, distance, options)
 %   pspm_pupil_gaze_distance2sps takes a file with pixel or length unit gaze data
 %   and converts to scanpath speed. Data will automatically be interpolated if NaNs exist
 %   Conversion will be attempted for any gaze data present in the provided unit.
@@ -10,6 +10,8 @@ function [sts, out] = pspm_pupil_gaze_distance2sps(fn, from, height, width, dist
 %
 %   INPUT:
 %       fn:                 The actual data file gaze data
+% 
+%       target:             target unit of conversion. degree | sps
 %
 %       from:               Distance unit to convert from.
 %                           pixel, mm, cm, m, inches
@@ -31,9 +33,9 @@ function [sts, out] = pspm_pupil_gaze_distance2sps(fn, from, height, width, dist
 
 
 % Number of arguments validation
-if nargin < 5;
+if nargin < 6;
   warning('ID:invalid_input','Not enough input arguments.'); return;
-elseif nargin < 6;
+elseif nargin < 7;
   options = struct();
 end
 
@@ -44,6 +46,10 @@ end
 
 
 % Input argument validation
+if ~ismember(target, { 'degree', 'sps' })
+  warning('ID:invalid_input', 'from unit must be "pixel", "mm", "cm", "inches", "m"');
+  return;
+end;
 
 if ~ismember(from, { 'pixel', 'mm', 'cm', 'inches', 'm' })
   warning('ID:invalid_input', 'from unit must be "pixel", "mm", "cm", "inches", "m"');
@@ -71,7 +77,7 @@ if isempty(settings), pspm_init; end
 sts = -1;
 out = [];
 
-% distance to degree conversion
+% distance to sps conversion
 [sts, infos, data] = pspm_load_data(fn,0);
 
 eyes.l = find(cellfun(@(c) ~isempty(regexp(c.header.chantype, 'gaze_[x|y]_l', 'once'))...
@@ -107,22 +113,38 @@ for gaze_eye = fieldnames(eyes)'
     end;
   end
 
-  options.interpolate = 1;
+  if strcmp(target, 'sps')
+    options.interpolate = 1;
+  end
+
   try;
     [ lat, lon, lat_range, lon_range ] = pspm_compute_visual_angle_core(data_x, data_y, width, height, distance, options);
   catch;
     warning('ID:invalid_input', 'Could not convert distance data to degrees');
     return;
   end;
-    
 
-  arclen = pspm_convert_visangle2sps_core(lat, lon);
-  dist_channel.data = arclen .* sr;
-  dist_channel.header.chantype = strcat('sps_', gaze_eye{1});
-  dist_channel.header.sr = sr;
-  dist_channel.header.units = 'degree';
-  
-  [sts, outinfo] = pspm_write_channel(fn, dist_channel, options.channel_action);
+
+  if strcmp(target, 'degree')
+    lat_chan.data = lat;
+    lat_chan.header.units = 'degree';
+    lat_chan.header.range = lat_range;
+
+    lon_chan.data = lon;
+    lon_chan.header.units = 'degree';
+    lon_chan.header.range = lon_chan;
+
+    [sts, out] = pspm_write_channel(fn, { lat_chan, lon_chan }, options.channel_action);
+  elseif strcmp(target, 'sps')
+      
+    arclen = pspm_convert_visangle2sps_core(lat, lon);
+    dist_channel.data = arclen .* sr;
+    dist_channel.header.chantype = strcat('sps_', gaze_eye{1});
+    dist_channel.header.sr = sr;
+    dist_channel.header.units = 'degree';
+    
+    [sts, outinfo] = pspm_write_channel(fn, dist_channel, options.channel_action);
+  end
 
 end
 end
