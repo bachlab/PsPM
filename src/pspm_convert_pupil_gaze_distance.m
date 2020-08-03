@@ -1,12 +1,12 @@
-function [sts, out] = pspm_pupil_gaze_distance2sps(fn, target, from, height, width, distance, options)
-%   pspm_pupil_gaze_distance2sps takes a file with pixel or length unit gaze data
+function [sts, out] = pspm_convert_pupil_gaze_distance(fn, target, from, width, height, distance, options)
+%   pspm_convert_pupil_gaze_distance takes a file with pixel or length unit gaze data
 %   and converts to scanpath speed. Data will automatically be interpolated if NaNs exist
 %   Conversion will be attempted for any gaze data present in the provided unit.
 %   i.e. if only a left eye's data is provided the speed will only be calculated for that eye.
 %   The function may add intermediary conversions, e.g. a conversion from pixel will result in an intermediary mm conversion
 %
 %   FORMAT:
-%       [sts, out] = pspm_pupil_gaze_distance2sps(fn, from, height, width, distance, options)
+%       [sts, out] = pspm_convert_pupil_gaze_distance(fn, from, width, height, distance, options)
 %
 %   INPUT:
 %       fn:                 The actual data file gaze data
@@ -15,10 +15,10 @@ function [sts, out] = pspm_pupil_gaze_distance2sps(fn, target, from, height, wid
 %
 %       from:               Distance unit to convert from.
 %                           pixel, mm, cm, m, inches
+% 
+%       width:              Width of the screen in the units chosen in the 'from' parameter
 %
 %       height:             Height of the screen in the units chosen in the 'from' parameter
-%
-%       width:              Width of the screen in the units chosen in the 'from' parameter
 %
 %       distance:           Subject distance from the screen in the units chosen in the 'from' parameter
 % 
@@ -47,27 +47,27 @@ end
 
 % Input argument validation
 if ~ismember(target, { 'degree', 'sps' })
-  warning('ID:invalid_input', 'from unit must be "pixel", "mm", "cm", "inches", "m"');
+  warning('ID:invalid_input:target', 'target conversion must be sps or degree');
   return;
 end;
 
 if ~ismember(from, { 'pixel', 'mm', 'cm', 'inches', 'm' })
-  warning('ID:invalid_input', 'from unit must be "pixel", "mm", "cm", "inches", "m"');
+  warning('ID:invalid_input:from', 'from unit must be "pixel", "mm", "cm", "inches", "m"');
   return;
 end;
 
 if ~isnumeric(height)
-  warning('ID:invalid_input', 'height must be numeric');
+  warning('ID:invalid_input:height', 'height must be numeric');
   return;
 end;
 
 if ~isnumeric(width)
-  warning('ID:invalid_input', 'width must be numeric');
+  warning('ID:invalid_input:width', 'width must be numeric');
   return;
 end;
 
 if ~isnumeric(distance)
-  warning('ID:invalid_input', 'distance must be numeric');
+  warning('ID:invalid_input:distance', 'distance must be numeric');
   return;
 end;
 
