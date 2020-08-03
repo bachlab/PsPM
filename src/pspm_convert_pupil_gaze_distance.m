@@ -97,7 +97,7 @@ for gaze_eye = fieldnames(eyes)'
       lon_chan = data{d};
 
       if (strcmp(from, 'pixel'));
-        data_x = pixel_conversion(data{d}.data, width, data{d}.header.range);
+        data_x = pixel_conversion(data{d}.data, width, data{d}.header.range) / width;
       else;
         [ sts, data_x ] = pspm_convert_unit(data{d}.data, from, 'mm');
       end;
@@ -106,7 +106,7 @@ for gaze_eye = fieldnames(eyes)'
       lat_chan = data{d};
 
       if (strcmp(from, 'pixel'));
-        data_y = pixel_conversion(data{d}.data, height, data{d}.header.range);
+        data_y = pixel_conversion(data{d}.data, height, data{d}.header.range) / height;
       else;
         [ sts, data_y ] = pspm_convert_unit(data{d}.data, from, 'mm');
       end;
@@ -118,7 +118,7 @@ for gaze_eye = fieldnames(eyes)'
   end
 
   try;
-    [ lat, lon, lat_range, lon_range ] = pspm_compute_visual_angle_core(data_x, data_y, width, height, distance, options);
+    [ lat, lon, lat_range, lon_range ] = pspm_compute_visual_angle_core(data_x, data_y, 1, 1, distance, options);
   catch;
     warning('ID:invalid_input', 'Could not convert distance data to degrees');
     return;

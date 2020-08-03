@@ -6069,7 +6069,7 @@ The default value has been changed to 0 in PsPM revision r803 to reduce
  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "subsec:Pupil-Preprocessing"
+reference "subsec:Pupil-Size-Preprocessing"
 plural "false"
 caps "false"
 noprefix "false"
@@ -8782,10 +8782,10 @@ replace: Replace previously existing preprocessed channel.
 \end_layout
 
 \begin_layout Subsection
-Pupil Preprocessing 
+Pupil Size Preprocessing 
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:Pupil-Preprocessing"
+name "subsec:Pupil-Size-Preprocessing"
 
 \end_inset
 
@@ -9491,6 +9491,117 @@ Defines whether the processed data should be added as a new channel or replace
  the last existing channel of the same data type.
  After preprocessing the data will be stored as 'emg_pp' channel.
  (default: add)
+\end_layout
+
+\begin_layout Subsection
+Pupil Gaze Preprocessing 
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Pupil-Gaze-Preprocessing"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\shape italic
+Related function:
+\shape default
+ 
+\family typewriter
+pspm_convert_pupil_gaze_distance
+\end_layout
+
+\begin_layout Standard
+Convert gaze data from degree or distance units such as pixels or mm into
+ degree data or scanpath speed.
+ The gaze data must be oriented such that the point 0,0 relates the bottom-left
+ of the screen, and the maximal x and y points relate to the top-right of
+ the screen.
+ These functions do not accept input channels, they will seacrch the provided
+ data file for channels with the gaze_[x|y]_[l|r] chantype in the specified
+ from unit.
+\end_layout
+
+\begin_layout Subsubsection*
+Data file
+\end_layout
+
+\begin_layout Standard
+Specify the PsPM datafile containing the pupil and gaze recordings.
+\end_layout
+
+\begin_layout Subsubsection*
+Conversion
+\end_layout
+
+\begin_layout Paragraph*
+Degree To Scanpath Speed
+\end_layout
+
+\begin_layout Standard
+Convert existing degree data to scanpath speed, stored as chantype: sps_[l|r]
+\end_layout
+
+\begin_layout Paragraph*
+Distance To Degree
+\end_layout
+
+\begin_layout Standard
+Convert distance x/y coordinate data to degrees stored as chantype: gaze_[x|y]_[
+l|r], unit: degree
+\end_layout
+
+\begin_layout Standard
+From - unit to covert from, [ pixel, mm, cm, inches, m ]
+\end_layout
+
+\begin_layout Standard
+Width - The width of the screen in mm
+\end_layout
+
+\begin_layout Standard
+Height - The height of the screen in mm
+\end_layout
+
+\begin_layout Standard
+Distance - The distance to the screen from the subjects eyes, in mm
+\end_layout
+
+\begin_layout Paragraph*
+Distance To Scanpath Speed
+\end_layout
+
+\begin_layout Standard
+Convert distance x/y coordinate data to scanpath speed, stored as chantype:
+ sps_[l|r]
+\end_layout
+
+\begin_layout Standard
+From - unit to covert from, [ pixel, mm, cm, inches, m ]
+\end_layout
+
+\begin_layout Standard
+Width - The width of the screen in mm
+\end_layout
+
+\begin_layout Standard
+Height - The height of the screen in mm
+\end_layout
+
+\begin_layout Standard
+Distance - The distance to the screen from the subjects eyes, in mm
+\end_layout
+
+\begin_layout Subsubsection*
+Channel Action
+\end_layout
+
+\begin_layout Standard
+Defines whether the processed data should be added as a new channel or replace
+ the last existing channel of the same chantype and unit.
 \end_layout
 
 \begin_layout Section

@@ -1,6 +1,6 @@
-classdef pspm_pupil_gaze_distance_conversion_test < matlab.unittest.TestCase
-% pspm_pupil_gaze_distance2sps_test 
-% unittest class for the pspm_pupil_gaze_distance2sps_test function
+classdef pspm_convert_pupil_gaze_distance_test < matlab.unittest.TestCase
+% pspm_convert_pupil_gaze_distance_test 
+% unittest class for the pspm_convert_pupil_gaze_distance_test function
 
 
     properties
@@ -44,10 +44,10 @@ classdef pspm_pupil_gaze_distance_conversion_test < matlab.unittest.TestCase
     methods (Test)
 
         function validations(this, target)
-          this.verifyWarning(@() pspm_pupil_gaze_distance_conversion(this.fn, target, "not_a_unit", 111, 222, 333),  'ID:invalid_input');
-          this.verifyWarning(@() pspm_pupil_gaze_distance_conversion(this.fn, target, "pixel", 'not_a_number', 222, 333),  'ID:invalid_input');
-          this.verifyWarning(@() pspm_pupil_gaze_distance_conversion(this.fn, target, "not_a_unit", 111, 'not_a_number', 333),  'ID:invalid_input');
-          this.verifyWarning(@() pspm_pupil_gaze_distance_conversion(this.fn, target, "not_a_unit", 111, 222, 'not_a_number'),  'ID:invalid_input');
+          this.verifyWarning(@() pspm_convert_pupil_gaze_distance(this.fn, target, "not_a_unit", 111, 222, 333),  'ID:invalid_input');
+          this.verifyWarning(@() pspm_convert_pupil_gaze_distance(this.fn, target, "pixel", 'not_a_number', 222, 333),  'ID:invalid_input');
+          this.verifyWarning(@() pspm_convert_pupil_gaze_distance(this.fn, target, "not_a_unit", 111, 'not_a_number', 333),  'ID:invalid_input');
+          this.verifyWarning(@() pspm_convert_pupil_gaze_distance(this.fn, target, "not_a_unit", 111, 222, 'not_a_number'),  'ID:invalid_input');
         end
 
 
@@ -71,7 +71,7 @@ classdef pspm_pupil_gaze_distance_conversion_test < matlab.unittest.TestCase
               this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_r'), data)), 0);
             end
 
-            [sts, out_channel] = pspm_pupil_gaze_distance_conversion(...
+            [sts, out_channel] = pspm_convert_pupil_gaze_distance(...
               this.fn, target, from, width, height, distance, struct('channel_action', channel_action));
             load(this.fn);
 
@@ -90,7 +90,7 @@ classdef pspm_pupil_gaze_distance_conversion_test < matlab.unittest.TestCase
               this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_r'), data)), 1);
             end
 
-            [sts, out_channel] = pspm_pupil_gaze_distance_conversion(...
+            [sts, out_channel] = pspm_convert_pupil_gaze_distance(...
               this.fn,target, from, width, height, distance, struct('channel_action', channel_action));
             load(this.fn);
 

@@ -37,8 +37,7 @@ width.name = 'Width';
 width.tag = 'width';
 width.strtype = 'r';
 width.num = [1 1];
-width.help = {['Width of the display window. Unit is `mm` if `degree` is chosen, ',...
-                'otherwise `unit`.']};
+width.help = {['Width of the display window. Unit is `mm`.']};
 
 %% height
 height = cfg_entry;
@@ -46,8 +45,7 @@ height.name = 'Height';
 height.tag = 'height';
 height.strtype = 'r';
 height.num = [1 1];
-height.help = {['Height of the display window. Unit is `mm` if `degree` is chosen, ',...
-                'otherwise `unit`.']};
+height.help = {['Height of the display window. Unit is `mm`.']};
 
 %% screen distance (Only needed if unit degree is chosen)
 screen_distance = cfg_entry;
@@ -56,9 +54,7 @@ screen_distance.tag = 'screen_distance';
 screen_distance.strtype = 'r';
 screen_distance.num = [1 1];
 screen_distance.val = {-1};
-screen_distance.help = {['Distance between eye and screen in length units. ',...
-                  'Unit is ''mm'' if ''degree'' is chosen. For other ',...
-                  'conversions this field is ignored,i.e default value ''-1''.']};
+screen_distance.help = {['Distance between eye and screen in mm units. ']};
 
 
 %% From
