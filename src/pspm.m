@@ -318,10 +318,14 @@ switch selected
     case 7
         cfg_add_module('pspm.data_preprocessing.pp_pupil.pupil_preprocess');
     case 8
-        cfg_add_module('pspm.tools.convert_data');
+        cfg_add_module('pspm.data_preprocessing.pupil_size_convert');
     case 9
-        cfg_add_module('pspm.data_preprocessing.pp_emg.find_sounds');
+        cfg_add_module('pspm.data_preprocessing.pupil_gaze_convert');
     case 10
+        cfg_add_module('pspm.tools.convert_data');
+    case 11
+        cfg_add_module('pspm.data_preprocessing.pp_emg.find_sounds');
+    case 12
         cfg_add_module('pspm.data_preprocessing.pp_emg.pp_emg_data');
 end;
 

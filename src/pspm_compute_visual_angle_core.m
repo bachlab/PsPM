@@ -46,7 +46,7 @@ if N~=numel(gy_d)
     warning('ID:invalid_input', 'length of data in gaze_x and gaze_y is not the same');
     return;
 end;
-    
+
 % move (0,0) into center of the screen
 gx_d = gx_d - width/2;
 gy_d = gy_d - height/2;

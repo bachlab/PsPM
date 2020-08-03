@@ -3,7 +3,6 @@ function [sts, out] = pspm_convert_pupil_gaze_distance(fn, target, from, width, 
 %   and converts to scanpath speed. Data will automatically be interpolated if NaNs exist
 %   Conversion will be attempted for any gaze data present in the provided unit.
 %   i.e. if only a left eye's data is provided the speed will only be calculated for that eye.
-%   The function may add intermediary conversions, e.g. a conversion from pixel will result in an intermediary mm conversion
 %
 %   FORMAT:
 %       [sts, out] = pspm_convert_pupil_gaze_distance(fn, from, width, height, distance, options)
@@ -97,7 +96,7 @@ for gaze_eye = fieldnames(eyes)'
       lon_chan = data{d};
 
       if (strcmp(from, 'pixel'));
-        data_x = pixel_conversion(data{d}.data, width, data{d}.header.range) / width;
+        data_x = pixel_conversion(data{d}.data, width, data{d}.header.range);
       else;
         [ sts, data_x ] = pspm_convert_unit(data{d}.data, from, 'mm');
       end;
@@ -106,7 +105,7 @@ for gaze_eye = fieldnames(eyes)'
       lat_chan = data{d};
 
       if (strcmp(from, 'pixel'));
-        data_y = pixel_conversion(data{d}.data, height, data{d}.header.range) / height;
+        data_y = pixel_conversion(data{d}.data, height, data{d}.header.range);
       else;
         [ sts, data_y ] = pspm_convert_unit(data{d}.data, from, 'mm');
       end;
@@ -118,7 +117,7 @@ for gaze_eye = fieldnames(eyes)'
   end
 
   try;
-    [ lat, lon, lat_range, lon_range ] = pspm_compute_visual_angle_core(data_x, data_y, 1, 1, distance, options);
+    [ lat, lon, lat_range, lon_range ] = pspm_compute_visual_angle_core(data_x, data_y, width, height, distance, options);
   catch;
     warning('ID:invalid_input', 'Could not convert distance data to degrees');
     return;
@@ -138,7 +137,7 @@ for gaze_eye = fieldnames(eyes)'
   elseif strcmp(target, 'sps')
       
     arclen = pspm_convert_visangle2sps_core(lat, lon);
-    dist_channel.data = arclen .* sr;
+    dist_channel.data = rad2deg(arclen) .* sr;
     dist_channel.header.chantype = strcat('sps_', gaze_eye{1});
     dist_channel.header.sr = sr;
     dist_channel.header.units = 'degree';

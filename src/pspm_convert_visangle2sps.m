@@ -35,6 +35,7 @@ function [ sts, out ] = pspm_convert_visangle2sps(fn, options)
 global settings;
 if isempty(settings), pspm_init; end;
 sts = -1;
+out = []
 
 % check missing input --
 if nargin<1
@@ -102,9 +103,9 @@ for i=1:n_eyes
             lon = data{gx}.data;
             lat = data{gy}.data;
             
-            try:
+            try
                 arclen = pspm_convert_visangle2sps_core(lat, lon);
-            catch err
+            catch
                 warning('ID:invalid_input', 'Could not calculate sps from gaze data');
                 return
             end
