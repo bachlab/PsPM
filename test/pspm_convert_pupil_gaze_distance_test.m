@@ -65,7 +65,6 @@ classdef pspm_convert_pupil_gaze_distance_test < matlab.unittest.TestCase
               load(this.fn);
               this.verifyLength(this.get_gaze_and_unit(data, from), 4);
             end;
-            force_test_fail_needs_to_be_removed
 
             data_length = length(data);
             if strcmp(target, 'degree')
