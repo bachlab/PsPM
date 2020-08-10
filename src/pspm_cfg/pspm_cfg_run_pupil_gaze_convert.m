@@ -19,6 +19,3 @@ elseif isfield(job.conversion, 'distance2degree')
   args = job.conversion.distance2degree;
   [ sts, out ] = pspm_convert_pupil_gaze_distance(fn, 'degree', args.from, args.width, args.height, args.screen_distance, options);
 end
-
-
-out = 1;
