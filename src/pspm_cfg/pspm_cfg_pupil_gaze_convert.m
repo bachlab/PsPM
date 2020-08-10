@@ -21,15 +21,6 @@ datafile.num     = [1 1];
 datafile.help    = {['Specify the PsPM datafile containing the channels ', ...
     'to be converted.'],' ',settings.datafilehelp};
 
-%% Channel
-channel             = cfg_entry;
-channel.name        = 'Channel';
-channel.tag         = 'channel';
-channel.strtype     = 'i';
-channel.num         = [1 Inf];
-channel.help        = {['Specify the channel which should be converted.', ...
-    'If 0, functions are executed on all channels.']};
-
 
 %% width
 width = cfg_entry;
@@ -54,7 +45,7 @@ screen_distance.tag = 'screen_distance';
 screen_distance.strtype = 'r';
 screen_distance.num = [1 1];
 screen_distance.val = {-1};
-screen_distance.help = {['Distance between eye and screen in mm units. ']};
+screen_distance.help = {['Distance between eye and screen. Unit is `mm` ']};
 
 
 %% From
@@ -71,14 +62,14 @@ from.help    = {'Distance unit from which the measurements should be converted.'
 distance2sps         = cfg_branch;
 distance2sps.name    = 'Distance to scan path speed conversion';
 distance2sps.tag     = 'distance2sps';
-distance2sps.val     = {channel, width, height, screen_distance, from };
-distance2sps.help    = {['Choose channel and conversion information']};
+distance2sps.val     = {width, height, screen_distance, from };
+distance2sps.help    = {['Choose conversion information']};
 
 distance2degree         = cfg_branch;
 distance2degree.name    = 'Distance to degree conversion';
 distance2degree.tag     = 'distance2degree';
-distance2degree.val     = {channel, width, height, screen_distance, from };
-distance2degree.help    = {['Choose channel and conversion information']};
+distance2degree.val     = {width, height, screen_distance, from };
+distance2degree.help    = {['Choose conversion information']};
 
 degree2sps         = cfg_const;
 degree2sps.name    = 'Degree to scan path speed conversion';
