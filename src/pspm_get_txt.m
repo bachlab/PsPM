@@ -29,7 +29,14 @@ sourceinfo = []; sts = -1;
 % load & check data
 % -------------------------------------------------------------------------
 fid = fopen(datafile);
-channel_names = textscan(fgetl(fid), '%s');
+
+if nargin == 3
+    channel_names = textscan(fgetl(fid), '%s',  'Delimiter', delimiter);
+else
+    channel_names = textscan(fgetl(fid), '%s');
+end
+
+
 channel_names = channel_names{1};
 fclose(fid);
 fline = str2double(channel_names);
@@ -42,7 +49,7 @@ if ~any(isnan(fline)) %no headerline
 
 elseif all(isnan(fline)) %headerline
     fid = fopen(datafile);
-    formatSpec = repmat('%f', 1, numel(channel_names))
+    formatSpec = repmat('%f', 1, numel(channel_names));
 
     % if delimiter provided
     if nargin == 3;
