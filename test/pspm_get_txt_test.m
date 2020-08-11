@@ -67,7 +67,7 @@ classdef pspm_get_txt_test < pspm_get_superclass
             end
             fclose(fid);
 
-            %testcase 4 (dsv with custom delimiter (|) and no header)
+            %testcase 4 (delimiter separated value with custom delimiter (|))
             %--------------------------------------------------------------
             this.testcases{4}.pth = 'testdatafile132435.psv';
             
