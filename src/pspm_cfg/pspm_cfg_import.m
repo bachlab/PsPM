@@ -175,6 +175,12 @@ smi_stimulus_resolution.num       = [1 2];
 smi_stimulus_resolution.help      = {['The resolution of the stimulus window. This field is required' ...
                                       'to perform px to mm conversions for gaze channels']};
 
+delimiter           = cfg_entry;
+delimiter.name      = 'Delimiter';
+delimiter.tag       = 'delimiter';
+delimiter.strtype   = 's'
+delimiter.help      = {['The delimiter to be used for file reading, leave blank to ']};
+
 %% Datatype dependend items
 datatype_item = cell(1,length(fileoptions));
 for datatype_i=1:length(fileoptions)
@@ -353,6 +359,10 @@ for datatype_i=1:length(fileoptions)
     
     if any(strcmpi(settings.import.datatypes(datatype_i).short, 'smi'))
         datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {smi_target_unit, smi_stimulus_resolution}];
+    end
+
+    if any(strcmpi(settings.import.datatypes(datatype_i).short, 'dsv'))
+        datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {delimiter}];
     end
 end
 

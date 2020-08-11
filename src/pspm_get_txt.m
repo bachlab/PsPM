@@ -1,10 +1,11 @@
-function [sts, import, sourceinfo] = pspm_get_txt(datafile, import)
+function [sts, import, sourceinfo] = pspm_get_txt(datafile, import, delimiter)
 % pspm_get_txt is the main function for import of text files
 %
 % FORMAT: [sts, import, sourceinfo] = pspm_get_txt(datafile, import);
 %       datafile: a .txt-file containing numerical data (with any
 %                 delimiter) and optionally the channel names in the first
 %                 line.
+%       delimiter: optional, if provided will use string as the delimiter for the file read
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -31,17 +32,24 @@ fid = fopen(datafile);
 channel_names = textscan(fgetl(fid), '%s');
 channel_names = channel_names{1};
 fclose(fid);
-
 fline = str2double(channel_names);
 if ~any(isnan(fline)) %no headerline
-    data = dlmread(datafile);
+    if nargin == 3;
+        data = dlmread(datafile, delimiter);
+    else;
+        data = dlmread(datafile);
+    end;
+
 elseif all(isnan(fline)) %headerline
     fid = fopen(datafile);
-    formatSpec = '';
-    for i=1:numel(channel_names)
-        formatSpec = [formatSpec '%f'];
-    end
-    data = textscan(fid, formatSpec, 'HeaderLines', 1);
+    formatSpec = repmat('%f', 1, numel(channel_names))
+
+    % if delimiter provided
+    if nargin == 3;
+        data = textscan(fid, formatSpec, 'HeaderLines', 1, 'Delimiter', delimiter);
+    else;
+        data = textscan(fid, formatSpec, 'HeaderLines', 1);
+    end;
     data = cell2mat(data);
     fclose(fid);
 else
@@ -49,7 +57,6 @@ else
 end
 
 if isempty(data), warning('An error occured while reading a textfile.\n'); return; end;
-    
 
 % select desired channels
 % -------------------------------------------------------------------------

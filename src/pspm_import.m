@@ -32,7 +32,9 @@ function outfile=pspm_import(datafile, datatype, import, options)
 %              Can be one of the following units:'mm', 'cm', 'm','inches'.
 %           - .denoise: for marker channels in CED spike format (recorded 
 %              as 'level'), filters out markers duration longer than the 
-%              value given here (in ms) 
+%              value given here (in ms)
+%           - .delimiter: for delimiter separated values, value used as delimiter for file read
+% 
 % options:  options.overwrite - overwrite existing files by default
 %
 % RETURNS
@@ -196,7 +198,11 @@ for d = 1:numel(D)
         file_exists = exist(D{d}, 'file');
     end
     if file_exists
-        [sts, import, sourceinfo] = feval(settings.import.datatypes(datatype).funct, D{d}, import);
+        if isfield(options, 'delimiter')
+            [sts, import, sourceinfo] = feval(settings.import.datatypes(datatype).funct, D{d}, import, options.delimiter);
+        else
+            [sts, import, sourceinfo] = feval(settings.import.datatypes(datatype).funct, D{d}, import);
+        end
     else
         sts = -1; warning('ID:nonexistent_file', '\nDatafile (%s) doesn''t exist', filename_in_msg);
     end
