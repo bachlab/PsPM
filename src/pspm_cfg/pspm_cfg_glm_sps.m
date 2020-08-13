@@ -75,16 +75,16 @@ glm_sps.val{b} = bf;
 
 % specific channel
 chan_def_left         = cfg_const;
-chan_def_left.name    = 'First left eye';
+chan_def_left.name    = 'Last left eye';
 chan_def_left.tag     = 'chan_def_left';
 chan_def_left.val     = {'pupil_l'};
-chan_def_left.help    = {'Use first left eye channel.'};
+chan_def_left.help    = {'Use last left eye channel.'};
 
 chan_def_right         = cfg_const;
-chan_def_right.name    = 'First right eye';
+chan_def_right.name    = 'Last right eye';
 chan_def_right.tag     = 'chan_def_right';
 chan_def_right.val     = {'pupil_r'};
-chan_def_right.help    = {'Use first right eye channel.'};
+chan_def_right.help    = {'Use last right eye channel.'};
 
 best_eye                = cfg_const;
 best_eye.name           = 'Best eye';
