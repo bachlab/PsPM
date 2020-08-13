@@ -77,6 +77,7 @@ classdef pspm_convert_gaze_distance_test < matlab.unittest.TestCase
             [sts, out_channel] = this.verifyWarningFree(@() pspm_convert_gaze_distance(...
               this.fn, target, from, width, height, distance, struct('channel_action', channel_action)));
             load(this.fn);
+            this.verifyTrue(length(out_channel.channel) > 0);
 
             extra = 2;
             if strcmp(target, 'degree')

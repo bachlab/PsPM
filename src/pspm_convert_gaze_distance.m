@@ -148,7 +148,7 @@ for gaze_eye = fieldnames(eyes)'
     dist_channel.header.sr = sr;
     dist_channel.header.units = 'degree';
     
-    [sts, outinfo] = pspm_write_channel(fn, dist_channel, options.channel_action);
+    [sts, out] = pspm_write_channel(fn, dist_channel, options.channel_action);
   end
 
 end
