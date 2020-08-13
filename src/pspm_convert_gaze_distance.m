@@ -1,35 +1,46 @@
-function [sts, out] = pspm_convert_pupil_gaze_distance(fn, target, from, width, height, distance, options)
-%   pspm_convert_pupil_gaze_distance takes a file with pixel or length unit gaze data
-%   and converts to scanpath speed. Data will automatically be interpolated if NaNs exist
-%   Conversion will be attempted for any gaze data present in the provided unit.
-%   i.e. if only a left eye's data is provided the speed will only be calculated for that eye.
+function [sts, out] = pspm_convert_gaze_distance(fn, target, from, width, height, distance, options)
+% pspm_convert_gaze_distance takes a file with pixel or length unit gaze data
+% and converts to scanpath speed. Data will automatically be interpolated if NaNs exist
+% Conversion will be attempted for any gaze data present in the provided unit.
+% i.e. if only a left eye's data is provided the speed will only be calculated for that eye.
 %
-%   FORMAT:
-%       [sts, out] = pspm_convert_pupil_gaze_distance(fn, from, width, height, distance, options)
+% FORMAT:
+%     [sts, out] = pspm_convert_gaze_distance(fn, from, width, height, distance, options)
 %
-%   INPUT:
-%       fn:                 The actual data file gaze data
+% ARGUMENTS:
+%     fn:                 The actual data file gaze data
 % 
-%       target:             target unit of conversion. degree | sps
+%     target:             target unit of conversion. degree | sps
 %
-%       from:               Distance unit to convert from.
-%                           pixel, mm, cm, m, inches
+%     from:               Distance unit to convert from.
+%                         pixel, mm, cm, m, inches
 % 
-%       width:              Width of the screen in the units chosen in the 'from' parameter
+%     width:              Width of the screen in the units chosen in the 'from' parameter
 %
-%       height:             Height of the screen in the units chosen in the 'from' parameter
+%     height:             Height of the screen in the units chosen in the 'from' parameter
 %
-%       distance:           Subject distance from the screen in the units chosen in the 'from' parameter
+%     distance:           Subject distance from the screen in the units chosen in the 'from' parameter
 % 
-%       options:
-%         channel_action:   Channel action for sps data, add / replace existing sps data
+%     options:
+%       channel_action:   Channel action for sps data, add / replace existing sps data
 %
-%   OUTPUT:
-%     sts:               Status determining whether the execution was
-%                        successfull (sts == 1) or not (sts == -1)
-%     out:               Output struct
-%       .channel           Id of the added channels.
+% OUTPUT:
+%   sts:               Status determining whether the execution was
+%                      successfull (sts == 1) or not (sts == -1)
+%   out:               Output struct
+%     .channel           Id of the added channels.
+%__________________________________________________________________________
+% PsPM 4.3.1
+% (C) 2020 Sam Maxwell (University College London)
 
+% $Id: pspm_convert_gaze_distance.m 1 2020-08-13 12:28:08Z sammaxwellxyz $
+% $Rev: 1 $
+
+% initialise
+% -----------------------------------------------------------------------------
+global settings;
+if isempty(settings), pspm_init; end
+sts = -1;
 
 % Number of arguments validation
 if nargin < 6;
@@ -70,11 +81,6 @@ if ~isnumeric(distance)
   return;
 end;
 
-
-global settings;
-if isempty(settings), pspm_init; end
-sts = -1;
-out = [];
 
 % distance to sps conversion
 [sts, infos, data] = pspm_load_data(fn,0);
