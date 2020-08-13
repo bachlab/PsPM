@@ -99,10 +99,10 @@ chan_action.help    = {['Choose whether to ''replace'' the given channel ', ...
     'or ''add'' the converted data as a new channel.']};
 
 %% Executable branch
-pp_pupil_gaze_convert        = cfg_exbranch;
-pp_pupil_gaze_convert.name   = 'Pupil gaze convert';
-pp_pupil_gaze_convert.tag    = 'pupil_gaze_convert';
-pp_pupil_gaze_convert.val    = {datafile, conversion, chan_action};
-pp_pupil_gaze_convert.prog   = @pspm_cfg_run_pupil_gaze_convert;
-pp_pupil_gaze_convert.help   = {['Provides conversion functions for the specified ', ...
-    'data (e.g. pupil gaze data).']};
+pp_gaze_convert        = cfg_exbranch;
+pp_gaze_convert.name   = 'Gaze convert';
+pp_gaze_convert.tag    = 'gaze_convert';
+pp_gaze_convert.val    = {datafile, conversion, chan_action};
+pp_gaze_convert.prog   = @pspm_cfg_run_gaze_convert;
+pp_gaze_convert.help   = {['Provides conversion functions for the specified ', ...
+    'data (e.g. gaze data).']};
