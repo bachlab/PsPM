@@ -320,7 +320,7 @@ switch selected
     case 8
         cfg_add_module('pspm.data_preprocessing.pupil_size_convert');
     case 9
-        cfg_add_module('pspm.data_preprocessing.pupil_gaze_convert');
+        cfg_add_module('pspm.data_preprocessing.gaze_convert');
     case 10
         cfg_add_module('pspm.tools.convert_data');
     case 11

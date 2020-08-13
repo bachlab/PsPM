@@ -1,5 +1,5 @@
-function [pp_pupil_gaze_convert] = pspm_cfg_data_convert
-% function [pp_pupil_gaze_convert] = pspm_cfg_data_convert(job)
+function [pp_gaze_convert] = pspm_cfg_data_convert
+% function [pp_gaze_convert] = pspm_cfg_data_convert(job)
 %
 % Matlabbatch function for conversion functions of data
 %__________________________________________________________________________
