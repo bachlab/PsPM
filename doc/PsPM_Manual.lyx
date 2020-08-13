@@ -9494,10 +9494,10 @@ Defines whether the processed data should be added as a new channel or replace
 \end_layout
 
 \begin_layout Subsection
-Pupil Gaze Preprocessing 
+Gaze Preprocessing 
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:Pupil-Gaze-Preprocessing"
+name "subsec:Gaze-Preprocessing"
 
 \end_inset
 
@@ -9511,7 +9511,7 @@ Related function:
 \shape default
  
 \family typewriter
-pspm_convert_pupil_gaze_distance
+pspm_convert_gaze_distance
 \end_layout
 
 \begin_layout Standard
@@ -9530,7 +9530,7 @@ Data file
 \end_layout
 
 \begin_layout Standard
-Specify the PsPM datafile containing the pupil and gaze recordings.
+Specify the PsPM datafile containing the gaze recordings.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -9554,19 +9554,19 @@ Convert distance x/y coordinate data to degrees stored as chantype: gaze_[x|y]_[
 l|r], unit: degree
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 From - unit to covert from, [ pixel, mm, cm, inches, m ]
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 Width - The width of the screen in mm
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 Height - The height of the screen in mm
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 Distance - The distance to the screen from the subjects eyes, in mm
 \end_layout
 
@@ -9579,19 +9579,19 @@ Convert distance x/y coordinate data to scanpath speed, stored as chantype:
  sps_[l|r]
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 From - unit to covert from, [ pixel, mm, cm, inches, m ]
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 Width - The width of the screen in mm
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 Height - The height of the screen in mm
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 Distance - The distance to the screen from the subjects eyes, in mm
 \end_layout
 
