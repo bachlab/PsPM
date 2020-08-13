@@ -35,7 +35,6 @@ function [ sts, out ] = pspm_convert_visangle2sps(fn, options)
 global settings;
 if isempty(settings), pspm_init; end;
 sts = -1;
-out = []
 
 % check missing input --
 if nargin<1
