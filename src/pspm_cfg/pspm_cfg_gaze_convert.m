@@ -79,13 +79,38 @@ degree2sps.help    = {['Convert degree gaze data to scan path speed.', ...
 'This conversion will find the degree unit gaze data from the file automatically.', ...
 'The gaze data must not contain any NaN values.']};
 
+%% unit
+unit         = cfg_menu;
+unit.name    = 'Unit';
+unit.tag     = 'unit';
+unit.values  = {'mm', 'cm', 'm', 'inches'};
+unit.labels  = {'mm', 'cm', 'm', 'inches'};
+unit.val     = {'mm'};
+unit.help    = {'Unit into which the measurements should be converted.'};
+
+%% Channel
+channel             = cfg_entry;
+channel.name        = 'Channel';
+channel.tag         = 'channel';
+channel.strtype     = 'i';
+channel.num         = [1 Inf];
+channel.help        = {['Specify the channel which should be converted.', ...
+    'If 0, conversion will be attmepted on all channels']};
+
+pixel2unit = cfg_branch;
+pixel2unit.name = 'Pixel to unit';
+pixel2unit.tag = 'pixel2unit';
+pixel2unit.val = {width, height,screen_distance,unit, channel};
+pixel2unit.help = {['Convert pupil gaze coordinates from pixel values ',...
+                    'to distance unit values']};
+
 
 %% Conversions
 conversion         = cfg_choice;
 conversion.name    = 'Conversion Type';
 conversion.tag     = 'conversion';
 conversion.val     = {distance2degree};
-conversion.values  = {distance2degree, distance2sps, degree2sps };
+conversion.values  = {distance2degree, distance2sps, degree2sps,pixel2unit };
 conversion.help     = {['']};
 
 %% Channel action

@@ -11,6 +11,10 @@ if isfield(job.conversion, 'degree2sps')
   % do degree to sps conversion
   [sts, out] = pspm_convert_visangle2sps(fn, options);
 
+elseif isfield(job.conversion, 'pixel2unit')
+  args = job.conversion.pixel2unit;
+  [sts, out] = pspm_convert_pixel2unit(fn, args.channel, args.unit, args.width, args.height, args.screen_distance, options);
+
 elseif isfield(job.conversion, 'distance2sps')
   args = job.conversion.distance2sps;
   [sts, out] = pspm_convert_gaze_distance(fn, 'sps', args.from, args.width, args.height, args.screen_distance, options);
