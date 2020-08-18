@@ -127,9 +127,14 @@ for i=1:n_eyes
             out(i) = outinfo;
             
         else
+            eye_word = 'right';
+            if strcmp(eye, 'l')
+                eye_word = 'left';
+            end
+
             warning('ID:invalid_input', ['Unable to perform visangle2', ...
                 'sps. Cannot find gaze channels with degree ',...
-                'unit values. Maybe you need to convert them with ', ...
+                'unit values for ', eye_word, ' eye. Maybe you need to convert them with ', ...
                 'pspm_convert_pixel2unit()']);
         end;
     end;
