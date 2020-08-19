@@ -9,8 +9,8 @@ fn = job.datafile{1};
 options = struct('channel_action', channel_action);
 if isfield(job.conversion, 'degree2sps')
   % do degree to sps conversion
+  options.eyes = job.conversion.degree2sps.eyes;
   [sts, out] = pspm_convert_visangle2sps(fn, options);
-
 elseif isfield(job.conversion, 'pixel2unit')
   args = job.conversion.pixel2unit;
   [sts, out] = pspm_convert_pixel2unit(fn, args.channel, args.unit, args.width, args.height, args.screen_distance, options);

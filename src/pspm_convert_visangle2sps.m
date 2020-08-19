@@ -60,7 +60,6 @@ elseif ~any(strcmpi(options.eyes, {'l', 'r', 'rl', 'lr'}))
                                  '''r'', ''rl'' or ''lr''.']);
     return;
 end;
-
 % option.channel_action
 if ~isfield(options, 'channel_action')
     options.channel_action = 'add';

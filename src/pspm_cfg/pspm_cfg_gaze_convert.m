@@ -71,10 +71,21 @@ distance2degree.tag     = 'distance2degree';
 distance2degree.val     = {width, height, screen_distance, from };
 distance2degree.help    = {['Choose conversion information']};
 
-degree2sps         = cfg_const;
+%% Eyes
+eyes                = cfg_menu;
+eyes.name           = 'Eyes';
+eyes.tag            = 'eyes';
+eyes.val            = {'all'};
+eyes.labels         = {'All eyes', 'Left eye', 'Right eye'};
+eyes.values         = {'lr', 'l', 'r'};
+eyes.help           = {['Choose eyes which should be processed. If ''All', ...
+    'eyes'' is selected, all eyes which are present in the data will ', ...
+    'be processed. Otherwise only the chosen eye will be processed.']};
+
+degree2sps         = cfg_branch;
 degree2sps.name    = 'Degree to scan path speed conversion';
 degree2sps.tag     = 'degree2sps';
-degree2sps.val     = { 1 };
+degree2sps.val     = {eyes};
 degree2sps.help    = {['Convert degree gaze data to scan path speed.', ...
 'This conversion will find the degree unit gaze data from the file automatically.', ...
 'The gaze data must not contain any NaN values.']};
