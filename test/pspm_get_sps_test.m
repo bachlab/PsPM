@@ -13,8 +13,6 @@ classdef pspm_get_sps_test < matlab.unittest.TestCase
             import.units = 'degree';
             import.range = [ 0, 1];            
 
-            this.verifyWarning(@() pspm_get_sps(import, 'not_an_eye'), 'ID:invalid_input');
-
             [ sts, out ] = this.verifyWarningFree(@() pspm_get_sps(import));
             this.verifyEqual(sts, 1);
             this.verifyEqual(out.header.chantype, 'sps');
