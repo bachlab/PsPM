@@ -19,19 +19,13 @@ classdef pspm_get_sps_test < matlab.unittest.TestCase
             this.verifyEqual(sts, 1);
             this.verifyEqual(out.header.chantype, 'sps');
 
-            [ sts, out ] = this.verifyWarningFree(@() pspm_get_sps(import, 'l'));
+            [ sts, out ] = this.verifyWarningFree(@() pspm_get_sps_l(import));
             this.verifyEqual(sts, 1);
             this.verifyEqual(out.header.chantype, 'sps_l');
 
-            [ sts, out ] = this.verifyWarningFree(@() pspm_get_sps(import, 'r'));
+            [ sts, out ] = this.verifyWarningFree(@() pspm_get_sps_r(import));
             this.verifyEqual(sts, 1);
             this.verifyEqual(out.header.chantype, 'sps_r');
-
-
-            %  test partial application
-            sps_l = @(x) pspm_get_sps(x, 'l');
-            [ sts, out ] = this.verifyWarningFree(@() sps_l(import));
-            this.verifyEqual(out.header.chantype, 'sps_l');
 
         end
         
