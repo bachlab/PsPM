@@ -24,7 +24,7 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 %                                       likely do not want to consider this to be filtered.
 %                                       A value of 0.1 would filter oscillatory behaviour with threshold less than 0.1v but not greater
 %                                       Default: 0 - ie will take no effect on filter
-%           data_island_threshold:      A float in seconds to determine the maximum length of unfiltered data between eopchs
+%           data_island_threshold:      A float in seconds to determine the maximum length of unfiltered data between epochs
 %                                       
 %__________________________________________________________________________
 % PsPM 3.2

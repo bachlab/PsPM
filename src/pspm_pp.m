@@ -25,6 +25,7 @@ function newdatafile = pspm_pp(varargin)
 %                                       likely do not want to consider this to be filtered.
 %                                       A value of 0.1 would filter oscillatory behaviour with threshold less than 0.1v but not greater
 %                                       Default: 0 - ie will take no effect on filter
+%           data_island_threshold:      A float in seconds to determine the maximum length of unfiltered data between epochs
 %__________________________________________________________________________
 %
 % References: For 'simple_qa' method, refer to:

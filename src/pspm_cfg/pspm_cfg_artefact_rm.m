@@ -103,11 +103,21 @@ qa_deflection_threshold.help     = {['Define an threshold in original data units
     'Default: 0 - will take no effect on filter', ...
 };
 
+qa_data_island_threshold          = cfg_entry;
+qa_data_island_threshold.name     = 'data_island threshold';
+qa_data_island_threshold.tag      = 'data_island_threshold';
+qa_data_island_threshold.strtype  = 'r';
+qa_data_island_threshold.num      = [1 1];
+qa_data_island_threshold.val      = {0};
+qa_data_island_threshold.help     = {[ 'A float in seconds to determine the maximum length of unfiltered data between epochs.', ...
+    ' If an island exists for less than the threshold it will also be filtered'
+]};
+
 
 qa              = cfg_branch;
 qa.name         = 'Simple SCR quality correction';
 qa.tag          = 'simple_qa';
-qa.val          = {qa_min, qa_max, qa_slope, qa_missing_epochs_filename, qa_deflection_threshold};
+qa.val          = {qa_min, qa_max, qa_slope, qa_missing_epochs_filename, qa_deflection_threshold, qa_data_island_threshold};
 qa.help         = {['Simple SCR quality correction. See I. R. Kleckner et al.,"Simple, Transparent, and' ...
     'Flexible Automated Quality Assessment Procedures for Ambulatory Electrodermal Activity Data," in ' ...
     'IEEE Transactions on Biomedical Engineering, vol. 65, no. 7, pp. 1460-1467, July 2018.']};
