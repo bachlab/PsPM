@@ -24,6 +24,7 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 %                                       likely do not want to consider this to be filtered.
 %                                       A value of 0.1 would filter oscillatory behaviour with threshold less than 0.1v but not greater
 %                                       Default: 0 - ie will take no effect on filter
+%           data_island_threshold:      A float in seconds to determine the maximum length of unfiltered data between eopchs
 %                                       
 %__________________________________________________________________________
 % PsPM 3.2
@@ -59,6 +60,10 @@ end
 
 if ~isfield(options, 'deflection_threshold')
     options.deflection_threshold = 0;
+end
+
+if ~isfield(options, 'data_island_threshold')
+    options.data_island_threshold = nan;
 end
 
 % sanity checks
@@ -98,6 +103,14 @@ end
 
 % combine filters
 filt = range_filter & slope_filter;
+
+if data_island_threshold > 0;
+    changes = [true, diff(filt) ~= 0, true]; %value change
+    repetion_count = diff(find(d)); % Number of repetitions
+    reps = repelem(repetion_count, repetion_count);
+    % filter out if value repeated over data_island_threshold in seconds
+    filt(reps < data_island_threshold * sr) = 1;
+end;
 d(filt) = data(filt);
 
 % write epochs to mat if missing_epochs_filename option is present
