@@ -18,6 +18,13 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 %           slope:                      Maximum slope in microsiemens per sec (default: 10).
 %           missing_epochs_filename:    If provided will create a .mat file with the missing epochs,
 %                                       e.g. abc will create abc.mat
+%           deflection_amplitude:       Define an amplitude in original data units for a slope to pass to be considerd in the filter.
+%                                       This is useful, for example, with oscillatory wave data
+%                                       The slope may be steep due to a jump between voltages but we
+%                                       likely do not want to consider this to be filtered.
+%                                       A value of 0.1 would filter oscillatory behaviour with amplitude less than 0.1v but not greater
+%                                       Default: 0 - ie will take no effect on filter
+%                                       
 %__________________________________________________________________________
 % PsPM 3.2
 % (C) 2009-2017 Tobias Moser (University of Zurich)
@@ -50,6 +57,10 @@ if ~isfield(options, 'slope')
     options.slope = 10;
 end
 
+if ~isfield(options, 'deflection_amplitude')
+    options.deflection_amplitude = 0;
+end
+
 % sanity checks
 if ~isnumeric(data)
     warning('ID:invalid_input', 'Argument ''data'' must be numeric.'); return;
@@ -71,7 +82,32 @@ end
 d = NaN(size(data));
 range_filter = data < options.max & data > options.min;
 slope_filter = true(size(data));
-slope_filter(2:end) = abs(diff(data)*sr) < options.slope;
+diff_data = diff(data);
+slope_filter(2:end) = abs(diff_data*sr) < options.slope;
+
+if (options.deflection_amplitude ~= 0);
+
+    block_on = find(diff(slope_filter) == -1) + 1;
+    block_off = find(diff(slope_filter) == 1);
+
+    % ends on
+    if (block_on(end) > block_off(end))
+        block_off(end + 1) = length(data);
+    end
+
+    % starts on
+    if (block_on(1) > block_off(1))
+        block_on = [ 1; block_on ];
+    end
+
+    slope_epochs = [ block_on, block_off ];
+    for r = slope_epochs';
+        if range(data(r(1):r(2))) < options.deflection_amplitude;
+            slope_filter(r(1):r(2)) = 1;
+        end;
+    end;
+
+end
 
 % combine filters
 filt = range_filter & slope_filter;
@@ -79,31 +115,27 @@ d(filt) = data(filt);
 
 % write epochs to mat if missing_epochs_filename option is present
 if isfield(options, 'missing_epochs_filename')
-    epochs = collect_epochs(filt, sr);
+    if length(find(filt == 0)) > 0
+        epoch_on = find(diff(filt) == -1) + 1;
+        epoch_off = find(diff(filt) == 1);
+        % ends on
+        if (epoch_on(end) > epoch_off(end))
+            epoch_off(end + 1) = length(data);
+        end
+
+        % starts on
+        if (epoch_on(1) > epoch_off(1))
+            epoch_on = [ 1; epoch_on ];
+        end
+
+        epochs = [ epoch_on, epoch_off ];
+    else;
+        epochs = [];
+    end;
     save(options.missing_epochs_filename, 'epochs');
 end
 
 out = d;
 sts = 1;
 
-end
-
-% construct epochs using filt 0 as offset and 1 as onset
-function epochs = collect_epochs(filt, sr)
-    epochs = [];
-    epoch_start = NaN;
-    for i = 1:numel(filt)
-        if ~filt(i) && isnan(epoch_start)
-            epoch_start = (i - 1) / sr;
-        end
-        if (filt(i) && ~isnan(epoch_start))
-            new_epoch = [ epoch_start, (i - 1) / sr ];
-            epochs = [ epochs; new_epoch ];
-            epoch_start = NaN;
-        end
-    end
-    if ~isnan(epoch_start)
-        new_epoch = [ epoch_start, numel(filt) / sr ];
-        epochs = [ epochs; new_epoch ];
-    end
 end
