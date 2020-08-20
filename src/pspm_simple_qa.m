@@ -104,12 +104,12 @@ end
 % combine filters
 filt = range_filter & slope_filter;
 
-if data_island_threshold > 0;
+if options.data_island_threshold > 0;
     changes = [true, diff(filt) ~= 0, true]; %value change
     repetion_count = diff(find(d)); % Number of repetitions
     reps = repelem(repetion_count, repetion_count);
     % filter out if value repeated over data_island_threshold in seconds
-    filt(reps < data_island_threshold * sr) = 1;
+    filt(reps < options.data_island_threshold * sr) = 1;
 end;
 d(filt) = data(filt);
 
@@ -131,9 +131,10 @@ end
 function epochs = filter_to_epochs(filt)
 epoch_on = find(diff(filt) == -1) + 1;
 epoch_off = find(diff(filt) == 1);
+
 % ends on
 if (epoch_on(end) > epoch_off(end))
-    epoch_off(end + 1) = length(data);
+    epoch_off(end + 1) = length(filt);
 end
 
 % starts on
