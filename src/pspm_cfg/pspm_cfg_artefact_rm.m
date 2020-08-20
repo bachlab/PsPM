@@ -89,10 +89,25 @@ qa_missing_epochs_filename.val     = {qa_missing_epochs_no_filename};
 qa_missing_epochs_filename.values  = {qa_missing_epochs_no_filename, qa_missing_epochs_filename_path};
 qa_missing_epochs_filename.help    = {'Artefact epochs file behaviour'};
 
+qa_deflection_threshold          = cfg_entry;
+qa_deflection_threshold.name     = 'Deflection threshold';
+qa_deflection_threshold.tag      = 'deflection_threshold';
+qa_deflection_threshold.strtype  = 'r';
+qa_deflection_threshold.num      = [1 1];
+qa_deflection_threshold.val      = {0};
+qa_deflection_threshold.help     = {['Define an threshold in original data units for a slope to pass to be considerd in the filter. ', ...
+    'This is useful, for example, with oscillatory wave data. ', ...
+    'The slope may be steep due to a jump between voltages but we ', ...
+    'likely do not want to consider this to be filtered. ', ...
+    'A value of 0.1 would filter oscillatory behaviour with threshold less than 0.1v but not greater.' ],...
+    'Default: 0 - will take no effect on filter', ...
+};
+
+
 qa              = cfg_branch;
 qa.name         = 'Simple SCR quality correction';
 qa.tag          = 'simple_qa';
-qa.val          = {qa_min, qa_max, qa_slope, qa_missing_epochs_filename};
+qa.val          = {qa_min, qa_max, qa_slope, qa_missing_epochs_filename, qa_deflection_threshold};
 qa.help         = {['Simple SCR quality correction. See I. R. Kleckner et al.,"Simple, Transparent, and' ...
     'Flexible Automated Quality Assessment Procedures for Ambulatory Electrodermal Activity Data," in ' ...
     'IEEE Transactions on Biomedical Engineering, vol. 65, no. 7, pp. 1460-1467, July 2018.']};
