@@ -1,27 +1,30 @@
 function [ sts, out ] = pspm_convert_visangle2sps(fn, options)
-%   pspm_convert_visangle2sp_speed takes a file with data from eyelink recordings
-%   and computes by time units normalized distances bewteen visual angle data.
+%   pspm_convert_visangle2sps takes a file with data from eyelink recordings
+%   and computes by seconds normalized distances bewteen visual angle data.
 %   It saves the result into a new channel with chaneltype 'sps' (Scanpath speed).
 %   It is important that pspm_convert_visangle2sps only takes channels
 %   which are in visual angle.
 
 %   FORMAT:
-%     [ sts, out ] = pspm_convert_visangle2sp_speed(fn, options)
+%     [ sts, out ] = pspm_convert_visangle2sps(fn, options)
 %   ARGUMENTS:
-%              fn:             The actual data file containing the eyelink
-%                              recording with gaze data
+%              fn:                  The actual data file containing the eyelink
+%                                   recording with gaze data
 %              options.
-%                  chans:      On which subset of the channels the visual
-%                              angles between the data point should be
-%                              computed             .
-%                              If no channels are given then the function
-%                              computes the scanpath speed of the first
-%                              found gaze data channels with type 'degree'
-%                  eyes:       Define on which eye the operations
-%                              should be performed. Possible values
-%                              are: 'l', 'r', 'lr', 'rl'. 
-%                              Default: 'lr'
-%
+%                  chans:           On which subset of the channels the visual
+%                                   angles between the data point should be
+%                                   computed             .
+%                                   If no channels are given then the function
+%                                   computes the scanpath speed of the first
+%                                   found gaze data channels with type 'degree'
+%                  eyes:            Define on which eye the operations
+%                                   should be performed. Possible values
+%                                   are: 'l', 'r', 'lr', 'rl'. 
+%                                   Default: 'lr'
+%                  .channel_action:  ['add'/'replace'] Defines whether the new channels
+%                                   should be added or the previous outputs of this function
+%                                   should be replaced.
+%                                   Default: 'add'
 %   OUTPUT:
 %   sts:                        Status determining whether the execution was
 %                               successfull (sts == 1) or not (sts == -1)
@@ -38,7 +41,6 @@ if nargin<1
     warning('ID:invalid_input', 'Nothing to do.'); return;
 elseif nargin<2
     channels = 0;
-    options = struct('eyes','lr');
 end
 if isfield(options, 'chans')
     channels = options.chans;
@@ -56,6 +58,13 @@ if ~isfield(options, 'eyes')
 elseif ~any(strcmpi(options.eyes, {'l', 'r', 'rl', 'lr'}))
     warning('ID:invalid_input', ['''options.eyes'' must be either ''l'', ', ...
                                  '''r'', ''rl'' or ''lr''.']);
+    return;
+end;
+% option.channel_action
+if ~isfield(options, 'channel_action')
+    options.channel_action = 'add';
+elseif ~any(strcmpi(options.channel_action, {'add', 'replace'}))
+    warning('ID:invalid_input', ['''options.channel_action'' must be either ''add'' or ''replace''.']);
     return;
 end;
 
@@ -91,49 +100,23 @@ for i=1:n_eyes
             % get channel specific data
             lon = data{gx}.data;
             lat = data{gy}.data;
-%             lat = data{gy}.header.range(2)-lat;
             
-            % first interpolate longitude to evict NaN-values
-            [bsts,outdata]=pspm_interpolate(lon);
-            if bsts ~= 1
-                warning('ID:invalid_input', 'Could not load interpolate longitude data correctly.');
-                return;
+            try
+                arclen = pspm_convert_visangle2sps_core(lat, lon);
+            catch
+                warning('ID:invalid_input', 'Could not calculate sps from gaze data');
+                return
             end
-            lon = outdata;
-            
-            % first interpolate latitude to evict NaN-values
-            [bsts,outdata]=pspm_interpolate(lat);
-            if bsts ~= 1
-                warning('ID:invalid_input', 'Could not load interpolate latitude data correctly.');
-                return;
-            end
-            lat = outdata;
-            
-            %compare if length are the same
-            N = numel(lon);
-            if N~=numel(lat)
-                warning('ID:invalid_input', 'length of data in gaze_x and gaze_y is not the same');
-                return;
-            end;
-            
-            %convert lon and lat into radians
-            lon = deg2rad(lon);
-            lat = deg2rad(lat);
-            % compute distances
-            arclen = zeros(length(lat),1);
-            
-            for k = 2:length(lat)
-                lon_diff = abs(lon(k-1)-lon(k));
-                arclen(k) = atan(sqrt(((cos(lat(k))*sin(lon_diff))^2)+(((cos(lat(k-1))*sin(lat(k)))-(sin(lat(k-1))*cos(lat(k))*cos(lon_diff)))^2))/((sin(lat(k-1))*sin(lat(k)))+(cos(lat(k-1))*cos(lat(k))*cos(lon_diff))));
-            end
+
+
             % create new channel with data holding distances
-            dist_channel.data = rad2deg(arclen);
-            dist_channel.header.chantype = 'sps';
+            dist_channel.data = rad2deg(arclen) .* data{gx}.header.sr;
+            dist_channel.header.chantype = strcat('sps_', eye);
             dist_channel.header.sr = data{gx}.header.sr;
             dist_channel.header.units = 'degree';
-            
-            
-            [lsts, outinfo] = pspm_write_channel(fn, dist_channel, 'add');
+
+
+            [lsts, outinfo] = pspm_write_channel(fn, dist_channel, options.channel_action);
             
             if lsts ~= 1
                 warning('ID:invalid_input', '~Distance channel could not be written');
@@ -143,8 +126,9 @@ for i=1:n_eyes
             out(i) = outinfo;
             
         else
+            if strcmpi(eye,'r'), eye_long='right'; else, eye_long='left'; end
             warning('ID:invalid_input', ['Unable to perform visangle2', ...
-                'sps. Cannot find gaze channels with degree ',...
+                'sps for the ',eye_long,' eye. Cannot find gaze channels with degree ',...
                 'unit values. Maybe you need to convert them with ', ...
                 'pspm_convert_pixel2unit()']);
         end;
