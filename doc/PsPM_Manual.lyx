@@ -103,7 +103,7 @@ PsPM: Psychophysiological Modelling
 
 \begin_layout Standard
 \align center
-Version 4.3.0
+Version 4.4.0
 \end_layout
 
 \begin_layout Standard
@@ -19367,6 +19367,66 @@ pspm_compute_visual_angle
 \family default
  where there was an error in the conversion factor of pixels wrt.
  to mm.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+PsPM Version 4.4.0
+\end_layout
+
+\begin_layout Subsection*
+New Features
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_data_editor
+\family default
+ supports loading in an epoch file, and 
+\family typewriter
+pspm_pp (simple_qa)
+\family default
+ now supports an output file for the epochs of data that is filtered out.
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_convert_gaze_distance 
+\family default
+introduced to allow converting from distance units to degrees and scanpath
+ speed.
+ The accompanying GUI editor is availble under 'Gaze Convert' in the data
+ processing section.
+\end_layout
+
+\begin_layout Subsection*
+Changes
+\end_layout
+
+\begin_layout Itemize
+The data convert functionality in tools is now split into the Gaze Convert
+ and Pupil Size convert in Data preprocessing.
+\end_layout
+
+\begin_layout Subsection*
+Bugfixes
+\end_layout
+
+\begin_layout Itemize
+DCM plot XTick is now scaled by sample rate.
+\end_layout
+
+\begin_layout Itemize
+Correct index offset when dealing with the descending flank for continuous
+ markers
 \end_layout
 
 \begin_layout Part
