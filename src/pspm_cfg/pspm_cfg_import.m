@@ -229,15 +229,15 @@ for datatype_i=1:length(fileoptions)
     flank_option        = cfg_menu;
     flank_option.name   = 'Flank of the event impulses to import';
     flank_option.tag    = 'flank_option';
-    flank_option.values = {'ascending', 'ascending', 'all', 'both'};
-    flank_option.labels = {'ascending', 'ascending', 'both', 'middle'};
-    flank_option.val    = {'both'};
+    flank_option.values = {'ascending', 'descending', 'all', 'both', 'default'};
+    flank_option.labels = {'ascending', 'descending', 'both', 'middle', 'default'};
+    flank_option.val    = {'default'};
     flank_option.help   = {['The flank option specifies which of the rising edge(ascending), ', ...
         'falling edge(descending), both edges or their mean(middle) of a marker impulse should ', ...
         'be imported into the marker channel. The default option is to select the middle of ', ...
         'the impulse, some exceptions are Eyelink, ViewPoint and SensoMotoric Instruments data ', ...
-        'for which the default are respectively ''both'', ''ascending'',''ascending''. ',...
-        'If the numbers of rising and falling edges differ, PsPM will throw an error.']};
+        'for which the default are respectively ''both'', ''ascending'', ''ascending''. ',...
+        'If the numbers of rising and falling edges differ, PsPM will throw an error. ']};
    
     %% Channel/Column Type Items
     importtype_item = cell(1,length(chantypes));

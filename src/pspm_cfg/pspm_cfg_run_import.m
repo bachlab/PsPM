@@ -43,8 +43,11 @@ for i=1:n
     end
     
     % Check if flank option is available
-    if isfield(job.datatype.(datatype).importtype{i}.(type{1}), 'flank_option')
+    if isfield(job.datatype.(datatype).importtype{i}.(type{1}), 'flank_option') && ...
+       ~strcmp(job.datatype.(datatype).importtype{i}.(type{1}).flank_option, 'default')
+   
         import{i}.flank = job.datatype.(datatype).importtype{i}.(type{1}).flank_option;
+   
     end
     
     % Check if transfer function available
