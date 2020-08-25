@@ -19407,6 +19407,14 @@ introduced to allow converting from distance units to degrees and scanpath
  processing section.
 \end_layout
 
+\begin_layout Itemize
+Add the posibility to select the flank in the 
+\family typewriter
+Import
+\family default
+ module of the GUI of PsPM.
+\end_layout
+
 \begin_layout Subsection*
 Changes
 \end_layout
