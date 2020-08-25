@@ -607,6 +607,56 @@ where the offset was wrongly implemented.
 an error in the conversion factor of pixels wrt. to mm.
 \end{itemize}
 
+\section{PsPM Version 4.4.0}
+
+\subsection*{New Features}
+\begin{itemize}
+\item \texttt{pspm\_data\_editor} supports loading in an epoch file, and
+\texttt{pspm\_pp (simple\_qa)} now supports an output file for the
+epochs of data that is filtered out.
+\item \texttt{pspm\_convert\_gaze\_distance }introduced to allow converting
+from distance units to degrees and scanpath speed. The accompanying
+GUI editor is availble under 'Gaze Convert' in the data processing
+section.
+\end{itemize}
+
+\subsection*{Changes}
+\begin{itemize}
+\item The data convert functionality in tools is now split into the Gaze
+Convert and Pupil Size convert in Data preprocessing.
+\item Factor out blink/saccade edge filtering logic out of \texttt{pspm\_get\_eyelink}
+to \texttt{pspm\_blink\_saccade\_filt}.
+\item Deprecate edge filtering functionality in \texttt{pspm\_get\_eyelink}.
+\item Make \texttt{pspm\_pupil\_correct\_eyelink} use the last gaze channel
+when there are multiple gaze x (similarly y) channels in the file.
+\item Make \texttt{pspm\_extract\_segments} return NaN percentages and not
+ratios.
+\end{itemize}
+
+\subsection*{Bugfixes}
+\begin{itemize}
+\item DCM plot XTick is now scaled by sample rate.
+\item Correct index offset when dealing with the descending flank for continuous
+markers.
+\item Allow \texttt{pspm\_display} to plot any type of marker channels.
+\item Fix \texttt{pspm\_display} behaviour when user tries to load data
+with less channels than the data he/she is curretly displaying.
+\item Fix \texttt{pspm\_split\_sessions} behaviour when the intertrial interval
+in the data is random. Add an option \texttt{randomITI} (0 or 1) which
+in the latter case it forces the function to evaluate the mean marker
+distance using all the markers and not per session. Default value:
+0.
+\item Remove \texttt{startsWith} and \texttt{endsWith} from all functions
+for a better backward compatibility.
+\end{itemize}
+
+
+
+
+
+
+
+
 \section{References}
 
 \bibliographystyle{pnas2009}
