@@ -98,7 +98,7 @@ Developer's Guide
 
 \begin_layout Standard
 \align center
-Version 4.3.0
+Version 4.4.0
 \end_layout
 
 \begin_layout Standard
@@ -24238,7 +24238,7 @@ Eshref Yozdemir
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_get_sp_speed
+pspm_get_sps
 \end_layout
 
 \end_inset

@@ -10,6 +10,7 @@ if isempty(settings), pspm_init; end
 % Get filetype
 fileoptions={settings.import.datatypes.long};
 chantypesDescription = {settings.chantypes.description};
+chantypesData = {settings.chantypes.data};
 
 
 %% Predefined struct
@@ -178,7 +179,7 @@ smi_stimulus_resolution.help      = {['The resolution of the stimulus window. Th
 delimiter           = cfg_entry;
 delimiter.name      = 'Delimiter';
 delimiter.tag       = 'delimiter';
-delimiter.strtype   = 's'
+delimiter.strtype   = 's';
 delimiter.help      = {['The delimiter to be used for file reading, leave blank to use any whitespace character.']};
 
 %% Datatype dependend items
@@ -229,6 +230,20 @@ for datatype_i=1:length(fileoptions)
         'this channel by its name. Note: the channel number refers to the n-th recorded ' ...
         'channel, not to its number during acquisition (if you did not save all recorded ' ...
         'channels, these might be different for some data types).']};
+    
+    %% Flank option for 'event' channel types
+    flank_option        = cfg_menu;
+    flank_option.name   = 'Flank of the event impulses to import';
+    flank_option.tag    = 'flank_option';
+    flank_option.values = {'ascending', 'descending', 'all', 'both', 'default'};
+    flank_option.labels = {'ascending', 'descending', 'both', 'middle', 'default'};
+    flank_option.val    = {'default'};
+    flank_option.help   = {['The flank option specifies which of the rising edge(ascending), ', ...
+        'falling edge(descending), both edges or their mean(middle) of a marker impulse should ', ...
+        'be imported into the marker channel. The default option is to select the middle of ', ...
+        'the impulse, some exceptions are Eyelink, ViewPoint and SensoMotoric Instruments data ', ...
+        'for which the default are respectively ''both'', ''ascending'', ''ascending''. ',...
+        'If the numbers of rising and falling edges differ, PsPM will throw an error. ']};
    
     %% Channel/Column Type Items
     importtype_item = cell(1,length(chantypes));
@@ -274,7 +289,12 @@ for datatype_i=1:length(fileoptions)
             end
         end
         
-        importtype_item{importtype_i}.val = {chan_nr};
+        if strcmp(chantypesData{chantypesDescIdx}, 'events')
+            importtype_item{importtype_i}.val = {chan_nr,flank_option};
+        else
+            importtype_item{importtype_i}.val = {chan_nr};
+        end
+        
         
         % Check for sample rate
         if samplerate == 0

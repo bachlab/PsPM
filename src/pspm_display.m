@@ -411,10 +411,17 @@ if not(sts==0)
     handles.name=filename;
     guidata(hObject, handles);
     
+    % ---set wave and event channel value to none ---------------------
+    handles.prop.wave='none';
+    set(handles.wave_listbox,'Value',1)
+    
+    handles.prop.event='none';
+    set(handles.event_listbox,'Value',1)
+    
     % ---add text to wave listbox--------------------------------------
     
     listitems{1,1}='none';
-    handles.prop.wavechans(1)=0;
+    handles.prop.wavechans(1)=0;   
     j=2;
     for k=1:length(handles.data)
         if any(strcmp(handles.data{k,1}.header.chantype,handles.prop.setwave))
@@ -836,10 +843,10 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(
             legend(handles.prop.wave,'heartbeats')
         elseif not(isempty(events))
             legend(handles.prop.wave,[handles.event_listbox.String{handles.prop.idevent},' events'])
-        elseif not(strcmp(handles.prop.event,'none')) && not(strcmp(handles.prop.wave,'none'))
-            legend(handles.prop.wave)
-        else
+        elseif not(strcmp(handles.prop.event,'none'))
             legend(handles.prop.wave,'unknown events')
+        else 
+            legend(handles.prop.wave)
         end
         
         %   plotting if only event channel is selected

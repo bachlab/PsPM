@@ -103,7 +103,7 @@ PsPM: Psychophysiological Modelling
 
 \begin_layout Standard
 \align center
-Version 4.3.0
+Version 4.4.0
 \end_layout
 
 \begin_layout Standard
@@ -150,8 +150,8 @@ literal "false"
 
 \size larger
 Dominik R Bach, Giuseppe Castegnetti, Laure Ciernik, Samuel Gerster, Saurabh
- Khemka, Christoph Korn, Tobias Moser, Philipp C Paulus, Ivan Rojkov, Matthias
- Staib, Eshref Yozdemir and collaborators
+ Khemka, Christoph Korn, Samuel Maxwell, Tobias Moser, Philipp C Paulus,
+ Ivan Rojkov, Matthias Staib, Eshref Yozdemir and collaborators
 \size default
 
 \begin_inset Newline newline
@@ -5029,6 +5029,159 @@ model each trial as separate event type such that the response latency can
 \end_layout
 
 \end_deeper
+\begin_layout Section
+Scanpath speed (SPS) model
+\end_layout
+
+\begin_layout Subsection
+General 
+\end_layout
+
+\begin_layout Standard
+Various salient stimuli, e.g.
+ threat-conditioned cues, capture overt attention in a bottom-up process
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "schutz:2011"
+literal "false"
+
+\end_inset
+
+, as shown in multiple stimulus competition paradigms using aversive cues.
+ This yields a possibility to assess threat memory by overt attention.
+ In cue competition paradigms, overt attention is usually measured as gaze
+ patterns; for example, fixation duration, saccade initiation latency, and
+ number of erroneous saccades.
+ Here, we implement a model that captures gaze patterns during exclusive
+ presentation of a single cue, by assessing scanpath speed, the length of
+ scanpath per time unit, quantified as degree visual angle per second 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "xia:2020"
+literal "false"
+
+\end_inset
+
+.
+ In our publication, we refer to scanpath length, which is the integral
+ of scanpath speed over time.
+ Since we used constant cue presentation times in our publication, average
+ scanpath speed and scanpath length were identical up to a multiplicative
+ constant.
+\end_layout
+
+\begin_layout Subsection
+Model for fear-conditioned SPS 
+\end_layout
+
+\begin_layout Standard
+Scanpath speed/length allow differentiating CS+ and CS- in fear-conditioning
+ paradigms with visual cues, and without fixation instructions or fixation
+ cross.
+ PsPM implements two simple models that build on the GLM inversion algorithm
+ (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:General-linear-convolution"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ The first model is to compute average scanpath speed during a 2-s time
+ window before US (shock) delivery.
+ This was validated on three independent samples in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "xia:2020"
+literal "false"
+
+\end_inset
+
+.
+ The model is implemented with a simple boxcar response function without
+ mean-centering and is the default option.
+ Parameter estimates can be interpreted as average scan path speed per second,
+ and if they are multiplied with 2 then the resulting values can be interpreted
+ as scan path length during the 2 s preceding the US.
+ We also implement a gamma RF that describes the shape of the scanpath speed
+ during the CS-US interval better than the boxcar function, but did not
+ yield higher retrodictive validity in inferring the CS-/+ difference.
+ This RF was fitted to the data of 21 participants and validated in an independe
+nt sample; it is described by a gamma probability density function: 
+\begin_inset Formula 
+\[
+y=\frac{A}{\mu^{k}\Gamma(k)}(t-t_{0})^{k-1}e^{-\frac{t-t_{0}}{\mu}}
+\]
+
+\end_inset
+
+ with parameters 
+\begin_inset Formula $k=10.0913,µ=0.4213,t0=-1.9020+(SOA–3)$
+\end_inset
+
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "xia:2020"
+literal "false"
+
+\end_inset
+
+, where 
+\begin_inset Formula $SOA$
+\end_inset
+
+ is the duration of the interval between CS onset and US onset in seconds.
+ 
+\end_layout
+
+\begin_layout Subsection
+Data preconditioning 
+\end_layout
+
+\begin_layout Standard
+PsPM provides procedures to import scan path speed directly.
+ More commonly, it is convenient to import gaze coordinates in pixels, distance
+ units, or visual angle, and convert them to scanpath speed.
+ This requires interpolation of missing values which is done automatically.
+ Conversion from pixels to mm or visual angle in degree is also possible.
+ No filtering or smoothing is required for both RF during model inversion
+ with GLM.
+\end_layout
+
+\begin_layout Subsection
+Recommendations
+\end_layout
+
+\begin_layout Itemize
+Experimental design:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+use visual cues during fear conditioning and avoid fixation guides.
+\end_layout
+
+\begin_layout Itemize
+use a SOA longer than 2 s.
+ Tested SOAs are 3.0 s and 3.5 s.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Model setup:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+use the default boxcar function and specify custom SOA.
+\end_layout
+
+\end_deeper
 \begin_layout Part
 User Guide
 \end_layout
@@ -5916,7 +6069,7 @@ The default value has been changed to 0 in PsPM revision r803 to reduce
  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "subsec:Pupil-Preprocessing"
+reference "subsec:Pupil-Size-Preprocessing"
 plural "false"
 caps "false"
 noprefix "false"
@@ -8629,10 +8782,10 @@ replace: Replace previously existing preprocessed channel.
 \end_layout
 
 \begin_layout Subsection
-Pupil Preprocessing 
+Pupil Size Preprocessing 
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:Pupil-Preprocessing"
+name "subsec:Pupil-Size-Preprocessing"
 
 \end_inset
 
@@ -9338,6 +9491,117 @@ Defines whether the processed data should be added as a new channel or replace
  the last existing channel of the same data type.
  After preprocessing the data will be stored as 'emg_pp' channel.
  (default: add)
+\end_layout
+
+\begin_layout Subsection
+Gaze Preprocessing 
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Gaze-Preprocessing"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\shape italic
+Related function:
+\shape default
+ 
+\family typewriter
+pspm_convert_gaze_distance
+\end_layout
+
+\begin_layout Standard
+Convert gaze data from degree or distance units such as pixels or mm into
+ degree data or scanpath speed.
+ The gaze data must be oriented such that the point 0,0 relates the bottom-left
+ of the screen, and the maximal x and y points relate to the top-right of
+ the screen.
+ These functions do not accept input channels, they will seacrch the provided
+ data file for channels with the gaze_[x|y]_[l|r] chantype in the specified
+ from unit.
+\end_layout
+
+\begin_layout Subsubsection*
+Data file
+\end_layout
+
+\begin_layout Standard
+Specify the PsPM datafile containing the gaze recordings.
+\end_layout
+
+\begin_layout Subsubsection*
+Conversion
+\end_layout
+
+\begin_layout Paragraph*
+Degree To Scanpath Speed
+\end_layout
+
+\begin_layout Standard
+Convert existing degree data to scanpath speed, stored as chantype: sps_[l|r]
+\end_layout
+
+\begin_layout Paragraph*
+Distance To Degree
+\end_layout
+
+\begin_layout Standard
+Convert distance x/y coordinate data to degrees stored as chantype: gaze_[x|y]_[
+l|r], unit: degree
+\end_layout
+
+\begin_layout Itemize
+From - unit to covert from, [ pixel, mm, cm, inches, m ]
+\end_layout
+
+\begin_layout Itemize
+Width - The width of the screen in mm
+\end_layout
+
+\begin_layout Itemize
+Height - The height of the screen in mm
+\end_layout
+
+\begin_layout Itemize
+Distance - The distance to the screen from the subjects eyes, in mm
+\end_layout
+
+\begin_layout Paragraph*
+Distance To Scanpath Speed
+\end_layout
+
+\begin_layout Standard
+Convert distance x/y coordinate data to scanpath speed, stored as chantype:
+ sps_[l|r]
+\end_layout
+
+\begin_layout Itemize
+From - unit to covert from, [ pixel, mm, cm, inches, m ]
+\end_layout
+
+\begin_layout Itemize
+Width - The width of the screen in mm
+\end_layout
+
+\begin_layout Itemize
+Height - The height of the screen in mm
+\end_layout
+
+\begin_layout Itemize
+Distance - The distance to the screen from the subjects eyes, in mm
+\end_layout
+
+\begin_layout Subsubsection*
+Channel Action
+\end_layout
+
+\begin_layout Standard
+Defines whether the processed data should be added as a new channel or replace
+ the last existing channel of the same chantype and unit.
 \end_layout
 
 \begin_layout Section
@@ -10170,8 +10434,8 @@ SOA
 
 \begin_layout Standard
 Specify custom SOA for response function.
- Tested values are 3.5s, 4s and 6s.
- Default: 3.5s
+ Tested values are 3.5 s, 4 s and 6 s.
+ Default: 3.5 s
 \end_layout
 
 \begin_layout Subsection
@@ -10650,19 +10914,33 @@ Basis functions for the peripheral model.
 \end_layout
 
 \begin_layout Paragraph*
-SPSRF_BOX
+Average scanpath speed
 \end_layout
 
 \begin_layout Standard
-SPSRF with normal boxfunction (default).
+This option implements a boxcar function over 2 s before the US time point,
+ and yields the averaged scan path speed over that interval (i.e.
+ the scan path length over that interval, divided by 2 s).
+ (default).
 \end_layout
 
 \begin_layout Paragraph*
-SPSRF_GAMMA
+SPSRF_FC
 \end_layout
 
 \begin_layout Standard
-SEBRF with gammafunction.
+This option implements a gamma function for fear-conditioned scan path speed
+ responses, time-locked to the end of the CS-US interval.
+\end_layout
+
+\begin_layout Paragraph*
+SOA
+\end_layout
+
+\begin_layout Standard
+Specify custom SOA for response function.
+ Tested values are 3.0 s and 3.5 s.
+ Default: 3.5 s
 \end_layout
 
 \begin_layout Subsection
@@ -19089,6 +19367,155 @@ pspm_compute_visual_angle
 \family default
  where there was an error in the conversion factor of pixels wrt.
  to mm.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+PsPM Version 4.4.0
+\end_layout
+
+\begin_layout Subsection*
+New Features
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_data_editor
+\family default
+ supports loading in an epoch file, and 
+\family typewriter
+pspm_pp (simple_qa)
+\family default
+ now supports an output file for the epochs of data that is filtered out.
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_convert_gaze_distance 
+\family default
+introduced to allow converting from distance units to degrees and scanpath
+ speed.
+ The accompanying GUI editor is availble under 'Gaze Convert' in the data
+ processing section.
+\end_layout
+
+\begin_layout Itemize
+Add the posibility to select the flank in the 
+\family typewriter
+Import
+\family default
+ module of the GUI of PsPM.
+\end_layout
+
+\begin_layout Subsection*
+Changes
+\end_layout
+
+\begin_layout Itemize
+The data convert functionality in tools is now split into the Gaze Convert
+ and Pupil Size convert in Data preprocessing.
+\end_layout
+
+\begin_layout Itemize
+Factor out blink/saccade edge filtering logic out of 
+\family typewriter
+pspm_get_eyelink
+\family default
+ to 
+\family typewriter
+pspm_blink_saccade_filt
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+Deprecate edge filtering functionality in 
+\family typewriter
+pspm_get_eyelink
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+Make 
+\family typewriter
+pspm_pupil_correct_eyelink
+\family default
+ use the last gaze channel when there are multiple gaze x (similarly y)
+ channels in the file.
+\end_layout
+
+\begin_layout Itemize
+Make 
+\family typewriter
+pspm_extract_segments
+\family default
+ return NaN percentages and not ratios.
+\end_layout
+
+\begin_layout Subsection*
+Bugfixes
+\end_layout
+
+\begin_layout Itemize
+DCM plot XTick is now scaled by sample rate.
+\end_layout
+
+\begin_layout Itemize
+Correct index offset when dealing with the descending flank for continuous
+ markers.
+\end_layout
+
+\begin_layout Itemize
+Allow 
+\family typewriter
+pspm_display
+\family default
+ to plot any type of marker channels.
+\end_layout
+
+\begin_layout Itemize
+Fix 
+\family typewriter
+pspm_display
+\family default
+ behaviour when user tries to load data with less channels than the data
+ he/she is curretly displaying.
+\end_layout
+
+\begin_layout Itemize
+Fix 
+\family typewriter
+pspm_split_sessions
+\family default
+ behaviour when the intertrial interval in the data is random.
+ Add an option 
+\family typewriter
+randomITI
+\family default
+ (0 or 1) which in the latter case it forces the function to evaluate the
+ mean marker distance using all the markers and not per session.
+ Default value: 0.
+\end_layout
+
+\begin_layout Itemize
+Remove 
+\family typewriter
+startsWith
+\family default
+ and 
+\family typewriter
+endsWith
+\family default
+ from all functions for a better backward compatibility.
 \end_layout
 
 \begin_layout Part
