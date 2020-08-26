@@ -19518,6 +19518,14 @@ endsWith
  from all functions for a better backward compatibility.
 \end_layout
 
+\begin_layout Itemize
+Fix bug in 
+\family typewriter
+pspm_trim
+\family default
+ which was wrongly defining the starting trimming point index.
+\end_layout
+
 \begin_layout Part
 Acknowledgements
 \end_layout
