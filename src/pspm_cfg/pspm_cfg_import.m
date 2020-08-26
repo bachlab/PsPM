@@ -178,7 +178,7 @@ smi_stimulus_resolution.help      = {['The resolution of the stimulus window. Th
 delimiter           = cfg_entry;
 delimiter.name      = 'Delimiter';
 delimiter.tag       = 'delimiter';
-delimiter.strtype   = 's'
+delimiter.strtype   = 's';
 delimiter.help      = {['The delimiter to be used for file reading, leave blank to ']};
 
 %% Datatype dependend items
