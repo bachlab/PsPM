@@ -15,6 +15,7 @@ function outfile = pspm_testdata_gen(channels, duration, filename)
 %           - .chantype: 'scr', 'hr', 'hb', 'resp', 'trigger', 'scanner'
 %           and optional fields:
 %           if .chantype is 'scr' or 'hr' (continuous channels):
+%           - .units: units to write to channel, defaults to 'unknown' for continuous and 'events' for event data
 %           - .sr: sampling rate for waveform (default value is 100Hz)
 %           - .freq: frequencey of the waveform (default value is 1Hz)
 %           - .noise: (default: 0) if 1 will add random normally 
@@ -90,6 +91,9 @@ cont_channels{2} = 'hr';
 cont_channels{3} = 'resp';
 cont_channels{4} = 'snd';
 
+% regex expression for scr OR hr OR resp OR snd OR gaze with x/y and r/l
+cont_channels_regex = '^(scr|hr|resp|snd|gaze_[x|y]_[r|l])$';
+
 % Eventbased Channels
 event_channels{1} = 'hb';
 event_channels{2} = 'rs';
@@ -112,7 +116,7 @@ for k = 1:numel(channels)
     
     if ~isfield(channels{k}, 'chantype')
         warning('No type given for channels job %2.0f', k); outfile = cell(0); return;
-    elseif any(strcmp(channels{k}.chantype, cont_channels))
+    elseif regexp(channels{k}.chantype, cont_channels_regex)
         %default values
         if ~isfield(channels{k}, 'freq')
             channels{k}.freq = 1;
@@ -121,7 +125,13 @@ for k = 1:numel(channels)
             channels{k}.noise = 0;
         end
         outfile.data{k,1}.header = channels{k};
-        outfile.data{k,1}.header.units = 'unknown';
+
+        if isfield(channels{k}, 'units')
+            outfile.data{k,1}.header.units = channels{k}.units;
+        else
+            outfile.data{k,1}.header.units = 'unknown';
+        end
+
         outfile.data{k,1}.header.chantype = channels{k}.chantype;
         
         %Generate sinewaveform 
@@ -188,7 +198,13 @@ for k = 1:numel(channels)
         end
         
         outfile.data{k,1}.header = channels{k};
-        outfile.data{k,1}.header.units = 'events';
+
+        if isfield(channels{k}, 'units')
+            outfile.data{k,1}.header.units = channels{k}.units;
+        else
+            outfile.data{k,1}.header.units = 'events';
+        end
+
         outfile.data{k,1}.header.chantype = channels{k}.chantype;
         outfile.data{k,1}.data = ev_data;
         

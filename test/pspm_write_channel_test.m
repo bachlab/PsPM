@@ -26,6 +26,8 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
             c{1}.chantype = 'scr';
             c{2}.chantype = 'marker';
             c{3}.chantype = 'scr';
+            c{4}.chantype = 'gaze_x_l';
+            c{4}.units = 'mm';
             data_settings.channels = c;
             data_settings.sr = 100;
             data_settings.duration = 500;
@@ -206,6 +208,39 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
             
             % check if has been replaced           
             this.verifyWarningFree(@() this.verify_write(new, old, gen_data, 'replace', outinfos));
+        end;
+
+        function test_replace_units(this)
+            % change channel setting and regenerate data
+            c{1}.chantype = 'gaze_x_l';
+            c{1}.units = 'mm';
+            c{1}.sr = 20;
+            gen_data = pspm_testdata_gen(c, 500);
+            
+            % load file before
+            [~, old.infos, old.data] = pspm_load_data(this.testdatafile);
+
+            % channel should exist -> should actually replace
+            [~, outinfos] = this.verifyWarningFree(@() pspm_write_channel(this.testdatafile, gen_data.data{1}, 'replace'));
+
+            % load changed data
+            [~, new.infos, new.data] = pspm_load_data(this.testdatafile);
+            
+            % check if has been replaced           
+            this.verifyWarningFree(@() this.verify_write(new, old, gen_data, 'replace', outinfos));
+
+            % change units
+            gen_data.data{1}.header.units = 'degree';
+            [~, outinfos] = this.verifyWarningFree(@() pspm_write_channel(this.testdatafile, gen_data.data{1}, 'replace'));
+            [~, post_unit_change.infos, post_unit_change.data] = pspm_load_data(this.testdatafile);
+
+            % should be one more channel as degrees did not exist 
+            this.verifyEqual(length(post_unit_change.data), length(new.data) + 1);
+
+            % assert one mm gaze channel and one degree gaze channel
+            this.verifyEqual(length(find(cellfun(@(c) strcmp(c.header.units, 'mm') && strcmp(c.header.chantype, 'gaze_x_l'), post_unit_change.data))), 1);
+            this.verifyEqual(length(find(cellfun(@(c) strcmp(c.header.units, 'degree') && strcmp(c.header.chantype, 'gaze_x_l'), post_unit_change.data))), 1);
+
         end;
 
         function test_delete_single(this)

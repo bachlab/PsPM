@@ -323,7 +323,10 @@ function import_cell = import_marker_chan(import_cell, markers, mi_names, mi_val
     mi_values = mi_values(non_empty,1);
 
     import_cell.marker = 'continuous';
-    import_cell.flank = 'ascending';
+    % by default use 'ascending' flank for ViewPoint data
+    if ~isfield(import_cell,'flank')
+        import_cell.flank = 'ascending';
+    end
     import_cell.sr     = sampling_rate;
     import_cell.data = false(n_rows, 1);
     marker_indices = 1 + markers * sampling_rate;
