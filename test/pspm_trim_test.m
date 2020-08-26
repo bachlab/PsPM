@@ -237,7 +237,7 @@ classdef pspm_trim_test < matlab.unittest.TestCase
             nfrom = exp_val.data{filestruct.posofmarker}.data(1)+from;
             nto = exp_val.data{filestruct.posofmarker}.data(end)+to;
             
-            startpoint = floor(testCase.sr * nfrom);
+            startpoint = ceil(testCase.sr * nfrom)+1;
             endpoint = floor(testCase.sr * nto);
             
             for k=1:length(testCase.cont_channels)
@@ -288,7 +288,7 @@ classdef pspm_trim_test < matlab.unittest.TestCase
             from = 2.1;
             to = exp_val.infos.duration - 2.5;
             
-            startpoint = floor(testCase.sr * from);
+            startpoint = ceil(testCase.sr * from)+1;
             endpoint = floor(testCase.sr * to);
             
             for k=1:length(testCase.cont_channels)
@@ -345,7 +345,7 @@ classdef pspm_trim_test < matlab.unittest.TestCase
             nfrom = exp_val.data{filestruct.posofmarker}.data(num(1))+from;
             nto = exp_val.data{filestruct.posofmarker}.data(num(2))+to;
             
-            startpoint = floor(testCase.sr * nfrom);
+            startpoint = ceil(testCase.sr * nfrom)+1;
             endpoint = floor(testCase.sr * nto);
             
             for k=1:length(testCase.cont_channels)
