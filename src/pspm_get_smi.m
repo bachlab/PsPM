@@ -332,7 +332,10 @@ end
 
 function [import_cell, chan_id] = import_marker_chan(import_cell, markers, mi_values, mi_names, n_rows, sampling_rate)
     import_cell.marker = 'continuous';
-    import_cell.flank = 'ascending';
+    % by default use 'ascending' flank for SMI data
+    if ~isfield(import_cell,'flank')
+        import_cell.flank = 'ascending';
+    end
     import_cell.sr     = sampling_rate;
     import_cell.data = false(n_rows, 1);
     marker_indices = 1 + markers * sampling_rate;
