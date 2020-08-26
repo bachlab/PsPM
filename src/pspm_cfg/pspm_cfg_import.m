@@ -179,7 +179,7 @@ delimiter           = cfg_entry;
 delimiter.name      = 'Delimiter';
 delimiter.tag       = 'delimiter';
 delimiter.strtype   = 's'
-delimiter.help      = {['The delimiter to be used for file reading, leave blank to ']};
+delimiter.help      = {['The delimiter to be used for file reading, leave blank to use any whitespace character.']};
 
 %% Datatype dependend items
 datatype_item = cell(1,length(fileoptions));
