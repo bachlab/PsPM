@@ -133,7 +133,7 @@ elseif strcmpi(import.marker, 'continuous')
     elseif isfield(import, 'markerinfo') && ...
             (numel(data) - numel(import.markerinfo.value))/import.sr < 1
         % also translate marker info if necessary. this code was written
-        % with and for import_eyelink function. there flank = 'ascending' 
+        % with and for import_eyelink function. there flank = 'all' 
         % has to be set to use import.data as index for the marker values.
         
         n_minfo = struct('value', {import.markerinfo.value(round(import.data*import.sr))}, ...

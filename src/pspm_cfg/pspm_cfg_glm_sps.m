@@ -30,7 +30,9 @@ glm_sps.prog = @pspm_cfg_run_glm_sps;
 soa         = cfg_entry;
 soa.name    = 'SOA';
 soa.tag     = 'soa';
-soa.help    = {['Specify custom SOA for response function. Tested values are 3.5s, 4s and 6s. Default: 3.5s']};
+soa.help    = {['Specify custom SOA for response function.', ...
+ 'Tested values are 3.5 s and 4 s.', ...
+ 'Default: 3.5 s']};
 soa.strtype = 'r';
 soa.num     = [1 1];
 soa.val     = {3.5};
@@ -39,18 +41,21 @@ soa.val     = {3.5};
 % SPS
 % bf = boxfunction
 spsrf_box = cfg_const;
-spsrf_box.name = 'Boxfunction';
+spsrf_box.name = 'Average scanpath speed';
 spsrf_box.tag = 'spsrf_box';
 spsrf_box.val = {'spsrf_box'};
-spsrf_box.help = {['SPSRF with boxfunction. (default)']};
+spsrf_box.help = {['This option implements a boxcar function over the SOA, and yields the average ',...
+ 'scan path speed over that interval (i.e.', ...
+ 'the scan path length over that interval, divided by the SOA).', ...
+ '(default).']};
 
 % bf = gammafunction
 spsrf_gamma = cfg_const;
-spsrf_gamma.name = 'Gammafunction';
+spsrf_gamma.name = 'SPSRF_FC';
 spsrf_gamma.tag = 'spsrf_gamma';
 spsrf_gamma.val = {'spsrf_gamma'};
-spsrf_gamma.help = {['SPSRF with gammafunction.',...
-                   ' Use gamma probability density function to model the scanpath speed. ']};
+spsrf_gamma.help = {['This option implements a gamma function for fear-conditioned scan path speed', ...
+ 'responses, time-locked to the end of the CS-US interval.']};
 
 rf        = cfg_choice;
 rf.name   = 'Function';
@@ -67,3 +72,32 @@ bf.help   = {['Basis functions.']};
 % look for bf and replace
 b = cellfun(@(f) strcmpi(f.tag, 'bf'), glm_sps.val);
 glm_sps.val{b} = bf;
+
+% specific channel
+chan_def_left         = cfg_const;
+chan_def_left.name    = 'Last left eye';
+chan_def_left.tag     = 'chan_def_left';
+chan_def_left.val     = {'pupil_l'};
+chan_def_left.help    = {'Use last left eye channel.'};
+
+chan_def_right         = cfg_const;
+chan_def_right.name    = 'Last right eye';
+chan_def_right.tag     = 'chan_def_right';
+chan_def_right.val     = {'pupil_r'};
+chan_def_right.help    = {'Use last right eye channel.'};
+
+best_eye                = cfg_const;
+best_eye.name           = 'Best eye';
+best_eye.tag            = 'best_eye';
+best_eye.val            = {'pupil'};
+best_eye.help           = {['Use eye with the fewest NaN values.']};
+
+chan_def                = cfg_choice;
+chan_def.name           = 'Default';
+chan_def.tag            = 'chan_def';
+chan_def.val            = {best_eye};
+chan_def.values         = {best_eye, chan_def_left, chan_def_right};
+
+a = cellfun(@(f) strcmpi(f.tag, 'chan'), glm_sps.val);
+glm_sps.val{a}.values{1} = chan_def;
+glm_sps.val{a}.val{1} = chan_def;
