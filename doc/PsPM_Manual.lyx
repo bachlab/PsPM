@@ -103,7 +103,7 @@ PsPM: Psychophysiological Modelling
 
 \begin_layout Standard
 \align center
-Version 4.3.0
+Version 4.4.0
 \end_layout
 
 \begin_layout Standard
@@ -150,8 +150,8 @@ literal "false"
 
 \size larger
 Dominik R Bach, Giuseppe Castegnetti, Laure Ciernik, Samuel Gerster, Saurabh
- Khemka, Christoph Korn, Tobias Moser, Philipp C Paulus, Ivan Rojkov, Matthias
- Staib, Eshref Yozdemir and collaborators
+ Khemka, Christoph Korn, Samuel Maxwell, Tobias Moser, Philipp C Paulus,
+ Ivan Rojkov, Matthias Staib, Eshref Yozdemir and collaborators
 \size default
 
 \begin_inset Newline newline
@@ -19367,6 +19367,155 @@ pspm_compute_visual_angle
 \family default
  where there was an error in the conversion factor of pixels wrt.
  to mm.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+PsPM Version 4.4.0
+\end_layout
+
+\begin_layout Subsection*
+New Features
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_data_editor
+\family default
+ supports loading in an epoch file, and 
+\family typewriter
+pspm_pp (simple_qa)
+\family default
+ now supports an output file for the epochs of data that is filtered out.
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_convert_gaze_distance 
+\family default
+introduced to allow converting from distance units to degrees and scanpath
+ speed.
+ The accompanying GUI editor is availble under 'Gaze Convert' in the data
+ processing section.
+\end_layout
+
+\begin_layout Itemize
+Add the posibility to select the flank in the 
+\family typewriter
+Import
+\family default
+ module of the GUI of PsPM.
+\end_layout
+
+\begin_layout Subsection*
+Changes
+\end_layout
+
+\begin_layout Itemize
+The data convert functionality in tools is now split into the Gaze Convert
+ and Pupil Size convert in Data preprocessing.
+\end_layout
+
+\begin_layout Itemize
+Factor out blink/saccade edge filtering logic out of 
+\family typewriter
+pspm_get_eyelink
+\family default
+ to 
+\family typewriter
+pspm_blink_saccade_filt
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+Deprecate edge filtering functionality in 
+\family typewriter
+pspm_get_eyelink
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+Make 
+\family typewriter
+pspm_pupil_correct_eyelink
+\family default
+ use the last gaze channel when there are multiple gaze x (similarly y)
+ channels in the file.
+\end_layout
+
+\begin_layout Itemize
+Make 
+\family typewriter
+pspm_extract_segments
+\family default
+ return NaN percentages and not ratios.
+\end_layout
+
+\begin_layout Subsection*
+Bugfixes
+\end_layout
+
+\begin_layout Itemize
+DCM plot XTick is now scaled by sample rate.
+\end_layout
+
+\begin_layout Itemize
+Correct index offset when dealing with the descending flank for continuous
+ markers.
+\end_layout
+
+\begin_layout Itemize
+Allow 
+\family typewriter
+pspm_display
+\family default
+ to plot any type of marker channels.
+\end_layout
+
+\begin_layout Itemize
+Fix 
+\family typewriter
+pspm_display
+\family default
+ behaviour when user tries to load data with less channels than the data
+ he/she is curretly displaying.
+\end_layout
+
+\begin_layout Itemize
+Fix 
+\family typewriter
+pspm_split_sessions
+\family default
+ behaviour when the intertrial interval in the data is random.
+ Add an option 
+\family typewriter
+randomITI
+\family default
+ (0 or 1) which in the latter case it forces the function to evaluate the
+ mean marker distance using all the markers and not per session.
+ Default value: 0.
+\end_layout
+
+\begin_layout Itemize
+Remove 
+\family typewriter
+startsWith
+\family default
+ and 
+\family typewriter
+endsWith
+\family default
+ from all functions for a better backward compatibility.
 \end_layout
 
 \begin_layout Part
