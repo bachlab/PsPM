@@ -84,10 +84,6 @@ for i=1:n
             end
         end
 
-        if isfield(job.datatype.(datatype), 'eyelink_edge_discard_factor')
-            import{i}.blink_saccade_edge_discard_factor = job.datatype.(datatype).eyelink_edge_discard_factor;
-        end
-
         if isfield(job.datatype.(datatype), 'viewpoint_target_unit')
             import{i}.target_unit = job.datatype.(datatype).viewpoint_target_unit;
         end
