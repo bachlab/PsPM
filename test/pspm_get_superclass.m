@@ -47,12 +47,7 @@ classdef (Abstract) pspm_get_superclass < pspm_testcase
             fprintf('\n');
             
             for k = 1:numel(this.testcases)
-
-                if (isfield(this.testcases{k}, 'extra_args'))
-                    [sts, import, sourceinfo] = this.fhandle(this.testcases{k}.pth, this.testcases{k}.import,this.testcases{k}.extra_args{1});
-                else;
-                    [sts, import, sourceinfo] = this.fhandle(this.testcases{k}.pth, this.testcases{k}.import);
-                end;
+                [sts, import, sourceinfo] = this.fhandle(this.testcases{k}.pth, this.testcases{k}.import);
             
                 this.verifyEqual(sts, 1, sprintf('Status is negativ in testcase %i', k));
                               
