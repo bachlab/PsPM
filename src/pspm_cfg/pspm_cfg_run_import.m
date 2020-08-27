@@ -98,7 +98,7 @@ for i=1:n
         end
 
         if isfield(job.datatype.(datatype), 'delimiter')
-            options.delimiter = job.datatype.(datatype).delimiter;
+            import{i}.delimiter = job.datatype.(datatype).delimiter;
         end
     end
     

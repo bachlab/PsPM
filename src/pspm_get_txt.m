@@ -1,11 +1,14 @@
-function [sts, import, sourceinfo] = pspm_get_txt(datafile, import, delimiter)
+function [sts, import, sourceinfo] = pspm_get_txt(datafile, import)
 % pspm_get_txt is the main function for import of text files
 %
 % FORMAT: [sts, import, sourceinfo] = pspm_get_txt(datafile, import);
-%       datafile: a .txt-file containing numerical data (with any
-%                 delimiter) and optionally the channel names in the first
-%                 line.
-%       delimiter: optional, if provided will use string as the delimiter for the file read
+%       datafile:   a .txt-file containing numerical data (with any
+%                   delimiter) and optionally the channel names in the first
+%                   line.
+%       import:     import job structure
+%                   If a delimiter is to be used, provide a delimiter field and value on the first import cell
+%                   for example, such that import{1}.delimiter == ','
+%               
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -30,8 +33,8 @@ sourceinfo = []; sts = -1;
 % -------------------------------------------------------------------------
 fid = fopen(datafile);
 
-if nargin == 3
-    channel_names = textscan(fgetl(fid), '%s',  'Delimiter', delimiter);
+if isfield(import{1}, 'delimiter')
+    channel_names = textscan(fgetl(fid), '%s',  'Delimiter', import{1}.delimiter);
 else
     channel_names = textscan(fgetl(fid), '%s');
 end
@@ -52,8 +55,8 @@ elseif all(isnan(fline)) %headerline
     formatSpec = repmat('%f', 1, numel(channel_names));
 
     % if delimiter provided
-    if nargin == 3;
-        data = textscan(fid, formatSpec, 'HeaderLines', 1, 'Delimiter', delimiter);
+    if isfield(import{1}, 'delimiter')
+        data = textscan(fid, formatSpec, 'HeaderLines', 1, 'Delimiter', import{1}.delimiter);
     else;
         data = textscan(fid, formatSpec, 'HeaderLines', 1);
     end;

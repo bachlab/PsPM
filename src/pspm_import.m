@@ -33,9 +33,9 @@ function outfile=pspm_import(datafile, datatype, import, options)
 %           - .denoise: for marker channels in CED spike format (recorded 
 %              as 'level'), filters out markers duration longer than the 
 %              value given here (in ms)
+%           - .delimiter: for delimiter separated values, value used as delimiter for file read
 % 
 % options:  options.overwrite - overwrite existing files by default
-%           options.delimiter - for delimiter separated values, value used as delimiter for file read
 %
 % RETURNS
 % a .mat file (or cell array of files) on the input file path containing scr
@@ -198,11 +198,7 @@ for d = 1:numel(D)
         file_exists = exist(D{d}, 'file');
     end
     if file_exists
-        if isfield(options, 'delimiter')
-            [sts, import, sourceinfo] = feval(settings.import.datatypes(datatype).funct, D{d}, import, options.delimiter);
-        else
-            [sts, import, sourceinfo] = feval(settings.import.datatypes(datatype).funct, D{d}, import);
-        end
+        [sts, import, sourceinfo] = feval(settings.import.datatypes(datatype).funct, D{d}, import);
     else
         sts = -1; warning('ID:nonexistent_file', '\nDatafile (%s) doesn''t exist', filename_in_msg);
     end

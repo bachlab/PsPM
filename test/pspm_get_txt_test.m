@@ -50,11 +50,10 @@ classdef pspm_get_txt_test < pspm_get_superclass
             %--------------------------------------------------------------
             this.testcases{3}.pth = 'testdatafile132435.csv';
             
-            this.testcases{3}.import{1} = struct('type', 'scr'   , 'channel', 0, 'sr', 100);
-            this.testcases{3}.import{2} = struct('type', 'ecg'   , 'channel', 0, 'sr', 100);
-            this.testcases{3}.import{3} = struct('type', 'hr'    , 'channel', 0, 'sr', 100);
-            this.testcases{3}.import{4} = struct('type', 'resp'  , 'channel', 0, 'sr', 100);
-            this.testcases{3}.extra_args = { ',' };
+            this.testcases{3}.import{1} = struct('type', 'scr'   , 'channel', 0, 'sr', 100, 'delimiter', ',');
+            this.testcases{3}.import{2} = struct('type', 'ecg'   , 'channel', 0, 'sr', 100, 'delimiter', ',');
+            this.testcases{3}.import{3} = struct('type', 'hr'    , 'channel', 0, 'sr', 100, 'delimiter', ',');
+            this.testcases{3}.import{4} = struct('type', 'resp'  , 'channel', 0, 'sr', 100, 'delimiter', ',');
             
             %generate testdata
             header = {'scr' 'ecg' 'heart' 'resp'};
@@ -71,11 +70,10 @@ classdef pspm_get_txt_test < pspm_get_superclass
             %--------------------------------------------------------------
             this.testcases{4}.pth = 'testdatafile132435.psv';
             
-            this.testcases{4}.import{1} = struct('type', 'scr'   , 'channel', 0, 'sr', 100);
-            this.testcases{4}.import{2} = struct('type', 'ecg'   , 'channel', 0, 'sr', 100);
-            this.testcases{4}.import{3} = struct('type', 'hr'    , 'channel', 0, 'sr', 100);
-            this.testcases{4}.import{4} = struct('type', 'resp'  , 'channel', 0, 'sr', 100);
-            this.testcases{4}.extra_args = { '|' };
+            this.testcases{4}.import{1} = struct('type', 'scr'   , 'channel', 0, 'sr', 100, 'delimiter', '|');
+            this.testcases{4}.import{2} = struct('type', 'ecg'   , 'channel', 0, 'sr', 100, 'delimiter', '|');
+            this.testcases{4}.import{3} = struct('type', 'hr'    , 'channel', 0, 'sr', 100, 'delimiter', '|');
+            this.testcases{4}.import{4} = struct('type', 'resp'  , 'channel', 0, 'sr', 100, 'delimiter', '|');
 
             %generate testdata
             header = {'scr' 'ecg' 'heart' 'resp'};
