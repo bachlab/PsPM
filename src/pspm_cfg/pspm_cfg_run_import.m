@@ -84,10 +84,6 @@ for i=1:n
             end
         end
 
-        if isfield(job.datatype.(datatype), 'eyelink_edge_discard_factor')
-            import{i}.blink_saccade_edge_discard_factor = job.datatype.(datatype).eyelink_edge_discard_factor;
-        end
-
         if isfield(job.datatype.(datatype), 'viewpoint_target_unit')
             import{i}.target_unit = job.datatype.(datatype).viewpoint_target_unit;
         end
@@ -95,6 +91,10 @@ for i=1:n
         if isfield(job.datatype.(datatype), 'smi_target_unit')
             import{i}.target_unit = job.datatype.(datatype).smi_target_unit;
             import{i}.stimulus_resolution = job.datatype.(datatype).smi_stimulus_resolution;
+        end
+
+        if isfield(job.datatype.(datatype), 'delimiter')
+            import{i}.delimiter = job.datatype.(datatype).delimiter;
         end
     end
     
