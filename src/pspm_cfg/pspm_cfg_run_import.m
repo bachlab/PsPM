@@ -92,6 +92,10 @@ for i=1:n
             import{i}.target_unit = job.datatype.(datatype).smi_target_unit;
             import{i}.stimulus_resolution = job.datatype.(datatype).smi_stimulus_resolution;
         end
+
+        if isfield(job.datatype.(datatype), 'delimiter')
+            import{i}.delimiter = job.datatype.(datatype).delimiter;
+        end
     end
     
 end

@@ -19518,6 +19518,19 @@ endsWith
  from all functions for a better backward compatibility.
 \end_layout
 
+\begin_layout Section
+PsPM Version 5.0.0
+\end_layout
+
+\begin_layout Subsection*
+New Features
+\end_layout
+
+\begin_layout Itemize
+New DSV (delimiter separated values) option for imports as well as a CSV
+ import function.
+\end_layout
+
 \begin_layout Part
 Acknowledgements
 \end_layout
