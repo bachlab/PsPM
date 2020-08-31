@@ -96,6 +96,19 @@ for i=1:n
         if isfield(job.datatype.(datatype), 'delimiter')
             import{i}.delimiter = job.datatype.(datatype).delimiter;
         end
+        
+        if isfield(job.datatype.(datatype), 'header_lines')
+            import{i}.header_lines = job.datatype.(datatype).header_lines;
+        end
+        
+        if isfield(job.datatype.(datatype), 'channel_names_line')
+            import{i}.channel_names_line = job.datatype.(datatype).channel_names_line;
+        end
+        
+        if isfield(job.datatype.(datatype), 'exclude_columns')
+            import{i}.exclude_columns = job.datatype.(datatype).exclude_columns;
+        end
+        
     end
     
 end
