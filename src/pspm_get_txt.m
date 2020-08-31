@@ -6,9 +6,43 @@ function [sts, import, sourceinfo] = pspm_get_txt(datafile, import)
 %                   delimiter) and optionally the channel names in the first
 %                   line.
 %       import:     import job structure
-%                   If a delimiter is to be used, provide a delimiter field and value on the first import cell
-%                   for example, such that import{1}.delimiter == ','
-%               
+%                   - recommended fields:
+%                       .type:
+%                           A char array corresponding to a valid PsPM data
+%                           type, see `pspm_init.m` for more details.
+%                       .channel:
+%                           A numeric value representing the column number
+%                           of the corresponding numerical data.   
+%                   - optional fields:
+%                       .delimiter: 
+%                           A char array corresponding to the delimiter
+%                           used in the datafile to delimit data columns.
+%                           To be used it should be specified on the first 
+%                           import cell, e.g.: 
+%                               import{1}.delimiter == ','
+%                           Default: ' ' (white-space).
+%                       .header_lines:
+%                           A numeric value corresponding to the number of 
+%                           header lines. Which means the data start on
+%                           line number: "header_lines + 1".
+%                           To be used it should be specified on the first 
+%                           import cell, e.g.: 
+%                               import{1}.header_lines == 3
+%                           Default: 0.
+%                       .channel_names_line:
+%                           A numeric value corresponding to the line
+%                           number where the channel names are specified.
+%                           To be used it should be specified on the first 
+%                           import cell, e.g.: 
+%                               import{1}.channel_names_line == 2
+%                           Default: 0.
+%                       .exclude_columns:
+%                           A numeric value corresponding to the number of
+%                           columns to exclude starting from the left.
+%                           To be used it should be specified on the first 
+%                           import cell, e.g.: 
+%                               import{1}.exclude_columns == 2
+%                           Default: 0.
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -29,43 +63,64 @@ global settings;
 if isempty(settings), pspm_init; end;
 sourceinfo = []; sts = -1;
 
-% load & check data
+% check import structure options
+% -------------------------------------------------------------------------
+if ~isfield(import{1}, 'delimiter')
+   delim = ' ';
+elseif ~ischar(import{1}.delimiter)
+   warning('ID:invalid_input','The ''delimiter'' option should be a char array.')
+   return;
+else
+   delim = import{1}.delimiter;
+end
+
+if ~isfield(import{1}, 'header_lines')
+   header_lines = 0;
+elseif ~isnumeric(import{1}.header_lines)
+   warning('ID:invalid_input','The ''header_lines'' option should be a numeric value.')
+   return;
+else
+   header_lines = import{1}.header_lines;
+end
+
+if ~isfield(import{1}, 'channel_names_line')
+   channel_names_line = 0;
+elseif ~isnumeric(import{1}.channel_names_line)
+   warning('ID:invalid_input','The ''channel_names_line'' option should be a numeric value.')
+   return;
+else
+   channel_names_line = import{1}.channel_names_line;
+end
+
+if ~isfield(import{1}, 'exclude_columns')
+   exclude_columns = 0;
+elseif ~isnumeric(import{1}.exclude_columns)
+   warning('ID:invalid_input','The ''exclude_columns'' option should be a numeric value.')
+   return;
+else
+   exclude_columns = import{1}.exclude_columns;
+end
+
+% read channel names
 % -------------------------------------------------------------------------
 fid = fopen(datafile);
 
-if isfield(import{1}, 'delimiter')
-    channel_names = textscan(fgetl(fid), '%s',  'Delimiter', import{1}.delimiter);
-else
-    channel_names = textscan(fgetl(fid), '%s');
+% go to the specific line to read the channel names
+if channel_names_line ~= 0
+    for k=1:channel_names_line-1
+      fgetl(fid); % read and dump
+    end
 end
 
-
+channel_names = textscan(fgetl(fid), '%s',  'Delimiter', delim);
 channel_names = channel_names{1};
+
 fclose(fid);
-fline = str2double(channel_names);
-if ~any(isnan(fline)) %no headerline
-    if nargin == 3;
-        data = dlmread(datafile, delimiter);
-    else;
-        data = dlmread(datafile);
-    end;
 
-elseif all(isnan(fline)) %headerline
-    fid = fopen(datafile);
-    formatSpec = repmat('%f', 1, numel(channel_names));
+% load & check data
+% -------------------------------------------------------------------------
 
-    % if delimiter provided
-    if isfield(import{1}, 'delimiter')
-        data = textscan(fid, formatSpec, 'HeaderLines', 1, 'Delimiter', import{1}.delimiter);
-    else;
-        data = textscan(fid, formatSpec, 'HeaderLines', 1);
-    end;
-    data = cell2mat(data);
-    fclose(fid);
-else
-    warning('The format of %s is not supported', datafile); return;
-end
-
+data = dlmread(datafile, delim, header_lines, exclude_columns);
 if isempty(data), warning('An error occured while reading a textfile.\n'); return; end;
 
 % select desired channels
@@ -74,16 +129,21 @@ for k = 1:numel(import)
     % define channel number
     if import{k}.channel > 0
         chan = import{k}.channel;
-    else
+    elseif channel_names_line ~= 0
         chan = pspm_find_channel(channel_names, import{k}.type);
         if chan < 1, return; end;
-    end;
+    else
+        warning('ID:invalid_input', ...
+                ['Neiter ''channel'' nor ''channel_names_line'' options were specified.', ...
+                 ' Not able to import the data.'])
+    end
     
     if chan > size(data, 2), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', chan, datafile); return; end;
     
     import{k}.data = data(:, chan);
     
-    if strcmpi(settings.chantypes(import{k}.typeno).data, 'events')
+    typeno = ~cellfun(@isempty,strfind({settings.chantypes.type},import{k}.type));
+    if strcmpi(settings.chantypes(typeno).data, 'events')
         import{k}.marker = 'continuous';
     end;
     
