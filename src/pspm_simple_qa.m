@@ -19,16 +19,21 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 %           missing_epochs_filename:    If provided will create a .mat file with the missing epochs,
 %                                       e.g. abc will create abc.mat
 %           deflection_threshold:       Define an threshold in original data units for a slope to pass to be considerd in the filter.
-%                                       This is useful, for example, with oscillatory wave data
+%                                       This is useful, for example, with oscillatory wave data due to limited A/D bandwidth
 %                                       The slope may be steep due to a jump between voltages but we
 %                                       likely do not want to consider this to be filtered.
 %                                       A value of 0.1 would filter oscillatory behaviour with threshold less than 0.1v but not greater
 %                                       Default: 0 - ie will take no effect on filter
-%           data_island_threshold:      A float in seconds to determine the maximum length of unfiltered data between epochs
+%           data_island_threshold:      A float in seconds to determine the maximum length of data between NaN epochs. Islands of data
+%                                       shorter than this threshold will be removed. Default: 0 - no effect on filter
+%           expand_epochs:              A float in seconds to determine by how much data on the flanks of artefact epochs will be removed.
+%                                       Default: 0.5 s
+%           
 %                                       
 %__________________________________________________________________________
-% PsPM 3.2
-% (C) 2009-2017 Tobias Moser (University of Zurich)
+% PsPM 5.0
+% 2009-2017 Tobias Moser (University of Zurich)
+% 2020 Samuel Maxwell & Dominik Bach (UCL)
 
 % $Id: pspm_pp.m 450 2017-07-03 15:17:02Z tmoser $   
 % $Rev: 450 $
@@ -66,6 +71,10 @@ if ~isfield(options, 'data_island_threshold')
     options.data_island_threshold = nan;
 end
 
+if ~isfield(options, 'expand_epochs')
+    options.expand_epochs = 0;
+end
+
 % sanity checks
 if ~isnumeric(data)
     warning('ID:invalid_input', 'Argument ''data'' must be numeric.'); return;
@@ -90,36 +99,60 @@ slope_filter = true(size(data));
 diff_data = diff(data);
 slope_filter(2:end) = abs(diff_data*sr) < options.slope;
 
-if (options.deflection_threshold ~= 0);
+if (options.deflection_threshold ~= 0)
 
     slope_epochs = filter_to_epochs(slope_filter);
-    for r = slope_epochs';
-        if range(data(r(1):r(2))) < options.deflection_threshold;
+    for r = slope_epochs'
+        if range(data(r(1):r(2))) < options.deflection_threshold
             slope_filter(r(1):r(2)) = 1;
-        end;
-    end;
+        end
+    end
 
 end
 
 % combine filters
 filt = range_filter & slope_filter;
 
-if options.data_island_threshold > 0;
-    changes = [true, diff(filt) ~= 0, true]; %value change
-    repetion_count = diff(find(d)); % Number of repetitions
-    reps = repelem(repetion_count, repetion_count);
-    % filter out if value repeated over data_island_threshold in seconds
-    filt(reps < options.data_island_threshold * sr) = 1;
-end;
+% find data islands and expand artefact islands
+if options.data_island_threshold > 0 || options.expand_epochs > 0
+    
+    % work out data epochs
+    data_epochs = filter_to_epochs(1-filt); % gives data (rather than artefact) epochs
+
+    if options.expand_epochs > 0
+        % remove data epochs too short to be shortened
+        epoch_duration = diff(data_epochs, 1, 2);
+        data_epochs(epoch_duration < 2 * ceil(options.expand_epochs * sr), :) = [];
+        % shorten data epochs
+        data_epochs(:, 1) = data_epochs(:, 1) + ceil(options.expand_epochs * sr);
+        data_epochs(:, 2) = data_epochs(:, 2) - ceil(options.expand_epochs * sr);
+    end
+    
+    % correct possibly negative values
+    data_epochs(data_epochs(:, 2) < 1, 2) = 1;
+    
+    if options.data_island_threshold > 0
+        epoch_duration = diff(data_epochs, 1, 2);
+        data_epochs(epoch_duration < options.data_island_threshold * sr, :) = [];
+    end
+    
+    
+    % write back into data
+    index(data_epochs(:, 1)) = 1;
+    index(data_epochs(:, 2)) = -1; 
+    filt = (cumsum(index(:)) == 1); % (thanks Jan: https://www.mathworks.com/matlabcentral/answers/324955-replace-multiple-intervals-in-array-with-nan-no-loops)
+end    
+    
+
 d(filt) = data(filt);
 
 % write epochs to mat if missing_epochs_filename option is present
 if isfield(options, 'missing_epochs_filename')
-    if length(find(filt == 0)) > 0
+    if ~isempty(find(filt == 0, 1))
         epochs = filter_to_epochs(filt);
-    else;
+    else
         epochs = [];
-    end;
+    end
     save(options.missing_epochs_filename, 'epochs');
 end
 
