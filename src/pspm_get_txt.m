@@ -46,16 +46,7 @@ function [sts, import, sourceinfo] = pspm_get_txt(datafile, import)
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-
-% $Id$
-% $Rev$
-
-% v005 lr  23.09.2013 added support for channel names
-% v004 lr  09.09.2013 removed bugs
-% v003 drb 31.07.2013 changed for 3.0 architecture
-% v002 drb 11.02.2011 comply with new pspm_import requirements
-% v001 drb 16.9.2009
-
+% (c) 2020 Ivan Rojkov (UZH) - added dsv support
 
 % initialise
 % -------------------------------------------------------------------------
