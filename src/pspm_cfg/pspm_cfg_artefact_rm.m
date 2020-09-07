@@ -89,38 +89,48 @@ qa_missing_epochs_filename.val     = {qa_missing_epochs_no_filename};
 qa_missing_epochs_filename.values  = {qa_missing_epochs_no_filename, qa_missing_epochs_filename_path};
 qa_missing_epochs_filename.help    = {'Artefact epochs file behaviour'};
 
-qa_deflection_threshold          = cfg_entry;
-qa_deflection_threshold.name     = 'Deflection threshold';
-qa_deflection_threshold.tag      = 'deflection_threshold';
-qa_deflection_threshold.strtype  = 'r';
-qa_deflection_threshold.num      = [1 1];
-qa_deflection_threshold.val      = {0};
-qa_deflection_threshold.help     = {['Define an threshold in original data units for a slope to pass to be considerd in the filter. ', ...
-    'This is useful, for example, with oscillatory wave data. ', ...
-    'The slope may be steep due to a jump between voltages but we ', ...
-    'likely do not want to consider this to be filtered. ', ...
-    'A value of 0.1 would filter oscillatory behaviour with threshold less than 0.1v but not greater.' ],...
-    'Default: 0 - will take no effect on filter', ...
-};
+qa_deflection_threshold         = cfg_entry;
+qa_deflection_threshold.name    = 'Deflection threshold';
+qa_deflection_threshold.tag     = 'deflection_threshold';
+qa_deflection_threshold.strtype = 'r';
+qa_deflection_threshold.num     = [1 1];
+qa_deflection_threshold.val     = {0};
+qa_deflection_threshold.help    = {['Define an threshold in original data units for a slope to pass to be considerd in the filter. ', ...
+                                    'This is useful, for example, with oscillatory wave data. ', ...
+                                    'The slope may be steep due to a jump between voltages but we ', ...
+                                    'likely do not want to consider this to be filtered. ', ...
+                                    'A value of 0.1 would filter oscillatory behaviour with threshold less than 0.1v but not greater.' ],...
+                                    'Default: 0 - will take no effect on filter', ...
+                                  };
 
-qa_data_island_threshold          = cfg_entry;
-qa_data_island_threshold.name     = 'data_island threshold';
-qa_data_island_threshold.tag      = 'data_island_threshold';
-qa_data_island_threshold.strtype  = 'r';
-qa_data_island_threshold.num      = [1 1];
-qa_data_island_threshold.val      = {0};
-qa_data_island_threshold.help     = {[ 'A float in seconds to determine the maximum length of unfiltered data between epochs.', ...
-    ' If an island exists for less than the threshold it will also be filtered'
-]};
+qa_data_island_threshold         = cfg_entry;
+qa_data_island_threshold.name    = 'Data island threshold';
+qa_data_island_threshold.tag     = 'data_island_threshold';
+qa_data_island_threshold.strtype = 'r';
+qa_data_island_threshold.num     = [1 1];
+qa_data_island_threshold.val     = {0};
+qa_data_island_threshold.help    = {[ 'A float in seconds to determine the maximum length of unfiltered data between epochs.', ...
+                                      ' If an island exists for less than the threshold it will also be filtered'
+                                    ]};
+                                
+qa_expand_epochs         = cfg_entry;
+qa_expand_epochs.name    = 'Expand epochs';
+qa_expand_epochs.tag     = 'expand_epochs';
+qa_expand_epochs.strtype = 'r';
+qa_expand_epochs.num     = [1 1];
+qa_expand_epochs.val     = {0.5};
+qa_expand_epochs.help    = {'A float in seconds to determine by how much data on the flanks of artefact epochs will be removed.', ...
+                            'Default: 0.5 s', ...
+                           };
 
 
 qa              = cfg_branch;
 qa.name         = 'Simple SCR quality correction';
 qa.tag          = 'simple_qa';
-qa.val          = {qa_min, qa_max, qa_slope, qa_missing_epochs_filename, qa_deflection_threshold, qa_data_island_threshold};
+qa.val          = {qa_min, qa_max, qa_slope, qa_missing_epochs_filename, qa_deflection_threshold, qa_data_island_threshold,qa_expand_epochs};
 qa.help         = {['Simple SCR quality correction. See I. R. Kleckner et al.,"Simple, Transparent, and' ...
-    'Flexible Automated Quality Assessment Procedures for Ambulatory Electrodermal Activity Data," in ' ...
-    'IEEE Transactions on Biomedical Engineering, vol. 65, no. 7, pp. 1460-1467, July 2018.']};
+                    'Flexible Automated Quality Assessment Procedures for Ambulatory Electrodermal Activity Data," in ' ...
+                    'IEEE Transactions on Biomedical Engineering, vol. 65, no. 7, pp. 1460-1467, July 2018.']};
 
 %% Data file
 datafile         = cfg_files;
@@ -138,6 +148,14 @@ filtertype.help    = {['Currently, median and butterworth filters are implemente
     'recommended for short spikes, generated for example in MRI scanners by gradient switching. A butterworth ' ...
     'filter is applied in most models; check there to see whether an additional filtering is meaningful.']};
 
+%% Output directory
+outdir         = cfg_files;
+outdir.name    = 'Output Directory';
+outdir.tag     = 'outdir';
+outdir.filter  = 'dir';
+outdir.num     = [1 1];
+outdir.help    = {'Specify directory where the mat file with ..... will be written.'};
+
 %% Overwrite file
 overwrite         = cfg_menu;
 overwrite.name    = 'Overwrite Existing File';
@@ -151,7 +169,7 @@ overwrite.help    = {'Overwrite existing file?'};
 artefact_rm      = cfg_exbranch;
 artefact_rm.name = 'Artefact Removal';
 artefact_rm.tag  = 'artefact_rm';
-artefact_rm.val  = {datafile,chan_nr,filtertype,overwrite};
+artefact_rm.val  = {datafile,outdir,chan_nr,filtertype,overwrite};
 artefact_rm.prog = @pspm_cfg_run_artefact_rm;
 artefact_rm.vout = @pspm_cfg_vout_artefact;
 artefact_rm.help = {['This module offers a few basic artefact removal functions. Currently, ' ...

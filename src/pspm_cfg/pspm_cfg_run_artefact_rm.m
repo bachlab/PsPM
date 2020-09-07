@@ -21,10 +21,31 @@ switch filtertype
         freq = job.filtertype.(filtertype).freq;
         out = pspm_pp(filtertype, datafile, freq, channelnumber, options);
     case 'simple_qa'
-        qa = job.filtertype.(filtertype);
-        if isfield(qa.missing_epochs, 'missing_epochs_filename_path')
-            qa.missing_epochs_filename = qa.missing_epochs.missing_epochs_filename_path;
+        qa_job = job.filtertype.(filtertype);
+        
+        % Option structure sent to pspm_simple_qa
+        qa = struct();
+        
+        % Check if missing_epochs is defined
+        if isfield(qa_job.missing_epochs, 'missing_epochs_filename_path')
+            qa.missing_epochs_filename = qa_job.missing_epochs.missing_epochs_filename_path;
         end
+        
+        % Check if deflection_threshold is defined
+        if isfield(qa_job, 'deflection_threshold') && qa_job.deflection_threshold~=0
+            qa.deflection_threshold = qa_job.deflection_threshold;
+        end
+        
+        % Check if data_island_threshold is defined
+        if isfield(qa_job, 'data_island_threshold') && qa_job.data_island_threshold~=0
+            qa.data_island_threshold = qa_job.data_island_threshold;
+        end
+        
+        % Check if expand_epochs is defined
+        if isfield(qa_job, 'expand_epochs') && qa_job.expand_epochs~=0.5
+            qa.expand_epochs = qa_job.expand_epochs;
+        end
+        
         out = pspm_pp(filtertype, datafile, qa, channelnumber, options);
 end
 
