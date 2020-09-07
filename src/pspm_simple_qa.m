@@ -73,7 +73,7 @@ if ~isfield(options, 'data_island_threshold')
 end
 
 if ~isfield(options, 'expand_epochs')
-    options.expand_epochs = 0;
+    options.expand_epochs = 0.5;
 end
 
 % sanity checks
@@ -112,7 +112,7 @@ slope_filter = true(size(data));
 diff_data = diff(data);
 slope_filter(2:end) = abs(diff_data*sr) < options.slope;
 
-if (options.deflection_threshold ~= 0)
+if (options.deflection_threshold ~= 0) && ~all(slope_filter==1)
 
     slope_epochs = filter_to_epochs(slope_filter);
     for r = slope_epochs'
