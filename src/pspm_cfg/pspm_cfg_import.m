@@ -152,7 +152,30 @@ delimiter           = cfg_entry;
 delimiter.name      = 'Delimiter';
 delimiter.tag       = 'delimiter';
 delimiter.strtype   = 's';
-delimiter.help      = {['The delimiter to be used for file reading, leave blank to use any whitespace character.']};
+delimiter.help      = {'The delimiter to be used for file reading, leave blank to use any whitespace character.'};
+
+header_lines           = cfg_entry;
+header_lines.name      = 'Header lines';
+header_lines.tag       = 'header_lines';
+header_lines.strtype   = 'r';
+header_lines.val       = {1};
+header_lines.help      = {'The number of lines used by the header. By default 1.'};
+
+channel_names_line         = cfg_entry;
+channel_names_line.name    = 'Channel names line';
+channel_names_line.tag     = 'channel_names_line';
+channel_names_line.strtype = 'r';
+channel_names_line.val     = {1};
+channel_names_line.help    = {'The line number where the channel/column names are specified. By default 1.'};
+
+exclude_columns           = cfg_entry;
+exclude_columns.name      = 'Exclude columns';
+exclude_columns.tag       = 'exclude_columns';
+exclude_columns.strtype   = 'r';
+exclude_columns.val       = {0};
+exclude_columns.help      = {['The number of columns which have to be excluded for the importing. By default 0. ',...
+                              'It is usefull if the first columns have non numeric data (e.g. timestamps). ', ...
+                              'Be aware that if you exclude some columns you have to adapt the channel number.']};
 
 %% Datatype dependend items
 datatype_item = cell(1,length(fileoptions));
@@ -352,9 +375,17 @@ for datatype_i=1:length(fileoptions)
     if any(strcmpi(settings.import.datatypes(datatype_i).short, 'smi'))
         datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {smi_target_unit, smi_stimulus_resolution}];
     end
-
+    
+    if any(strcmpi(settings.import.datatypes(datatype_i).short, 'txt'))
+        datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {header_lines,channel_names_line,exclude_columns}];
+    end
+    
+    if any(strcmpi(settings.import.datatypes(datatype_i).short, 'csv'))
+        datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {header_lines,channel_names_line,exclude_columns}];
+    end
+    
     if any(strcmpi(settings.import.datatypes(datatype_i).short, 'dsv'))
-        datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {delimiter}];
+        datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {delimiter,header_lines,channel_names_line,exclude_columns}];
     end
 end
 
