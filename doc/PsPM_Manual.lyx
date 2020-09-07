@@ -19548,19 +19548,11 @@ endsWith
 \end_layout
 
 \begin_layout Itemize
-Correct the trimming indices in 
+Fix bug in 
 \family typewriter
 pspm_trim
 \family default
- (replace 
-\family typewriter
-floor
-\family default
- by 
-\family typewriter
-ceil
-\family default
-).
+ which was wrongly defining the starting trimming point index.
 \end_layout
 
 \begin_layout Part
