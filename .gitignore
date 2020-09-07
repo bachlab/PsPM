@@ -1,3 +1,4 @@
+# Ignore different folders
 ImportTestData
 .bundle/
 .jekyll-cache/
@@ -5,4 +6,7 @@ Gemfile
 Gemfile.lock
 _site/
 vendor/
+
+# Ignore all the temporary files
 *.lyx~
+*.m~
