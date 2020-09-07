@@ -19,6 +19,13 @@ function newdatafile = pspm_pp(varargin)
 %           slope:                      Maximum slope in microsiemens per second
 %           missing_epochs_filename:    If provided will create a .mat file with the missing epochs,
 %                                       e.g. abc will create abc.mat
+%           deflection_threshold:       Define an threshold in original data units for a slope to pass to be considerd in the filter.
+%                                       This is useful, for example, with oscillatory wave data
+%                                       The slope may be steep due to a jump between voltages but we
+%                                       likely do not want to consider this to be filtered.
+%                                       A value of 0.1 would filter oscillatory behaviour with threshold less than 0.1v but not greater
+%                                       Default: 0 - ie will take no effect on filter
+%           data_island_threshold:      A float in seconds to determine the maximum length of unfiltered data between epochs
 %__________________________________________________________________________
 %
 % References: For 'simple_qa' method, refer to:
