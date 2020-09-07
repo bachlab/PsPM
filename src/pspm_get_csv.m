@@ -16,4 +16,4 @@ function [sts, import, sourceinfo] = pspm_get_csv(datafile, import)
 % $Rev$
 
 import = cellfun(@(c) setfield(c, 'delimiter', ','), import, 'UniformOutput', false);
-[sts, import, sourceinfo] = pspm_get_text(datafile, import);
+[sts, import, sourceinfo] = pspm_get_txt(datafile, import);
