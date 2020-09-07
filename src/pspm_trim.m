@@ -262,12 +262,16 @@ for d=1:numel(D)
     % trim file ---
     for k = 1:numel(data)
         if ~strcmpi(data{k}.header.units, 'events') % waveform channels
-            % set start and endpoint
-            newstartpoint = floor((sta_p + sta_offset) * data{k}.header.sr);
+            % set start point (`ceil` for protect against having duration < data*sr,  
+            % the "+1" is here because of matlabs convention to start indices from 1)
+            newstartpoint = ceil((sta_p + sta_offset) * data{k}.header.sr)+1;
             if newstartpoint == 0, newstartpoint = 1; end
+            
+            % set end point
             newendpoint = floor((sto_p + sto_offset) * data{k}.header.sr);
             if newendpoint > numel(data{k}.data), ...
                     newendpoint = numel(data{k}.data); end
+            
             % trim data
             data{k}.data=data{k}.data(newstartpoint:newendpoint);
         else % event channels
