@@ -75,27 +75,80 @@ qa_missing_epochs_no_filename.tag      = 'no_missing_epochs';
 qa_missing_epochs_no_filename.val      = {0};
 qa_missing_epochs_no_filename.help     = {'Do not store artefacts epochs to file'};
 
-qa_missing_epochs_filename_path          = cfg_entry;
-qa_missing_epochs_filename_path.name     = 'Write to filename';
-qa_missing_epochs_filename_path.tag      = 'missing_epochs_filename_path';
-qa_missing_epochs_filename_path.strtype  = 's';
-qa_missing_epochs_filename_path.num      = [ 1 Inf ];
-qa_missing_epochs_filename_path.help     = {'Filename to store artefact epochs. Provide only the name and not extension, the file will be stored as a .mat file'};
+qa_missing_epochs_file_name          = cfg_entry;
+qa_missing_epochs_file_name.name     = 'File name';
+qa_missing_epochs_file_name.tag      = 'filename';
+qa_missing_epochs_file_name.strtype  = 's';
+qa_missing_epochs_file_name.num      = [ 1 Inf ];
+qa_missing_epochs_file_name.help     = {['Specify the name of the file where to store artefact epochs. ',...
+                                         'Provide only the name and not the extension, the file will be stored as a .mat file']};
 
-qa_missing_epochs_filename         = cfg_choice;
-qa_missing_epochs_filename.name    = 'Missing epochs file';
-qa_missing_epochs_filename.tag     = 'missing_epochs';
-qa_missing_epochs_filename.val     = {qa_missing_epochs_no_filename};
-qa_missing_epochs_filename.values  = {qa_missing_epochs_no_filename, qa_missing_epochs_filename_path};
-qa_missing_epochs_filename.help    = {'Artefact epochs file behaviour'};
+qa_missing_epochs_file_path         = cfg_files;
+qa_missing_epochs_file_path.name    = 'Output Directory';
+qa_missing_epochs_file_path.tag     = 'outdir';
+qa_missing_epochs_file_path.filter  = 'dir';
+qa_missing_epochs_file_path.num     = [1 1];
+qa_missing_epochs_file_path.help    = {'Specify the directory where the .mat file with artefact epochs will be written.'};
+
+qa_missing_epochs_file      = cfg_exbranch;
+qa_missing_epochs_file.name = 'Write to filename';
+qa_missing_epochs_file.tag  = 'write_to_file';
+qa_missing_epochs_file.val  = {qa_missing_epochs_file_name, qa_missing_epochs_file_path};
+qa_missing_epochs_file.help = {['If you choose to store the artefact epochs please specify a filename ',...
+                                'as well as an output directory. When giving the filename do not specify ',...
+                                'any extension, the artefact epochs will be stored as .mat file.']};
+
+qa_missing_epochs         = cfg_choice;
+qa_missing_epochs.name    = 'Missing epochs file';
+qa_missing_epochs.tag     = 'missing_epochs';
+qa_missing_epochs.val     = {qa_missing_epochs_no_filename};
+qa_missing_epochs.values  = {qa_missing_epochs_no_filename, qa_missing_epochs_file};
+qa_missing_epochs.help    = {'Specify if you want to store the artefact epochs in a separate file of not.', ...
+                             'Default: artefact epochs are not stored.'};
+
+qa_deflection_threshold         = cfg_entry;
+qa_deflection_threshold.name    = 'Deflection threshold';
+qa_deflection_threshold.tag     = 'deflection_threshold';
+qa_deflection_threshold.strtype = 'r';
+qa_deflection_threshold.num     = [1 1];
+qa_deflection_threshold.val     = {0.1};
+qa_deflection_threshold.help    = {['Define an threshold in original data units for a slope to pass to be considerd in the filter. ', ...
+                                    'This is useful, for example, with oscillatory wave data. ', ...
+                                    'The slope may be steep due to a jump between voltages but we ', ...
+                                    'likely do not want to consider this to be filtered. ', ...
+                                    'A value of 0.1 would filter oscillatory behaviour with threshold less than 0.1v but not greater.' ],...
+                                    'Default: 0.1', ...
+                                  };
+
+qa_data_island_threshold         = cfg_entry;
+qa_data_island_threshold.name    = 'Data island threshold';
+qa_data_island_threshold.tag     = 'data_island_threshold';
+qa_data_island_threshold.strtype = 'r';
+qa_data_island_threshold.num     = [1 1];
+qa_data_island_threshold.val     = {0};
+qa_data_island_threshold.help    = {['A float in seconds to determine the maximum length of unfiltered data between epochs.', ...
+                                     ' If an island exists for less than the threshold it will also be filtered'], ...
+                                    'Default: 0 s - will take no effect on filter', ...
+                                    };
+                                
+qa_expand_epochs         = cfg_entry;
+qa_expand_epochs.name    = 'Expand epochs';
+qa_expand_epochs.tag     = 'expand_epochs';
+qa_expand_epochs.strtype = 'r';
+qa_expand_epochs.num     = [1 1];
+qa_expand_epochs.val     = {0.5};
+qa_expand_epochs.help    = {'A float in seconds to determine by how much data on the flanks of artefact epochs will be removed.', ...
+                            'Default: 0.5 s', ...
+                           };
+
 
 qa              = cfg_branch;
 qa.name         = 'Simple SCR quality correction';
 qa.tag          = 'simple_qa';
-qa.val          = {qa_min, qa_max, qa_slope, qa_missing_epochs_filename};
+qa.val          = {qa_min, qa_max, qa_slope, qa_missing_epochs, qa_deflection_threshold, qa_data_island_threshold,qa_expand_epochs};
 qa.help         = {['Simple SCR quality correction. See I. R. Kleckner et al.,"Simple, Transparent, and' ...
-    'Flexible Automated Quality Assessment Procedures for Ambulatory Electrodermal Activity Data," in ' ...
-    'IEEE Transactions on Biomedical Engineering, vol. 65, no. 7, pp. 1460-1467, July 2018.']};
+                    'Flexible Automated Quality Assessment Procedures for Ambulatory Electrodermal Activity Data," in ' ...
+                    'IEEE Transactions on Biomedical Engineering, vol. 65, no. 7, pp. 1460-1467, July 2018.']};
 
 %% Data file
 datafile         = cfg_files;

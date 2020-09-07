@@ -13111,7 +13111,7 @@ Missing epochs filename: Name of the .mat file where the missing epochs will
 \begin_layout Itemize
 Deflection threshold: Amplitude threshold which excludes epochs from the
  filter if the overall deflection over this epoch is below it.
- Default: 0 (no threshold).
+ Default: 0.1 .
 \end_layout
 
 \begin_layout Itemize
