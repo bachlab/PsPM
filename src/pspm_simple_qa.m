@@ -89,8 +89,20 @@ elseif ~isnumeric(options.max)
     warning('ID:invalid_input', 'Argument ''options.max'' must be numeric.'); return;
 elseif ~isnumeric(options.slope)
     warning('ID:invalid_input', 'Argument ''options.slope'' must be numeric.'); return;
-elseif isfield(options, 'missing_epochs_filename') && ~ischar(options.missing_epochs_filename)
-    warning('ID:invalid_input', 'Argument ''options.missing_epochs_filename'' must be char array.'); return;
+elseif isfield(options, 'missing_epochs_filename')
+    if ~ischar(options.missing_epochs_filename)
+        warning('ID:invalid_input', 'Argument ''options.missing_epochs_filename'' must be char array.'); return;
+    end
+    
+    [pth, ~, ext] = fileparts(options.missing_epochs_filename);
+    if ~isempty(pth) && exist(pth,'dir')~=7
+        warning('ID:invalid_input','Please specify a valid output directory if you want to save artefact epochs.')
+        return;
+    end
+    if ~isempty(ext)
+        warning('ID:invalid_input','Please specify a valid filename (without extension) if you want to save artefact epochs.')
+        return;
+    end
 end
 
 % create filters
@@ -154,6 +166,7 @@ if isfield(options, 'missing_epochs_filename')
     else
         epochs = [];
     end
+
     save(options.missing_epochs_filename, 'epochs');
 end
 
