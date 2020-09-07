@@ -23,7 +23,7 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 %                                       The slope may be steep due to a jump between voltages but we
 %                                       likely do not want to consider this to be filtered.
 %                                       A value of 0.1 would filter oscillatory behaviour with threshold less than 0.1v but not greater
-%                                       Default: 0 - ie will take no effect on filter
+%                                       Default: 0.1
 %           data_island_threshold:      A float in seconds to determine the maximum length of data between NaN epochs. Islands of data
 %                                       shorter than this threshold will be removed. 
 %                                       Default: 0 s - no effect on filter
@@ -65,7 +65,7 @@ if ~isfield(options, 'slope')
 end
 
 if ~isfield(options, 'deflection_threshold')
-    options.deflection_threshold = 0;
+    options.deflection_threshold = 0.1;
 end
 
 if ~isfield(options, 'data_island_threshold')
