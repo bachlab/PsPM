@@ -8,7 +8,7 @@ release branch after making absolutely sure that no new stuff will be implemente
 - [ ] Update version number & date in
   - [ ] `pspm_msg`
   - [ ] `pspm_quit`
-  - [ ] `pspm.fig`: Load `pspm.fig` into MATLAB, update `fig.Children(9).String` and save back to `pspm.fig`
+  - [ ] `pspm.fig`: Load `pspm.fig` into MATLAB using `openfig`, update `fig.Children(9).String` and save back to `pspm.fig`
   - [ ] Manual and Developers Guide: front pages
 - [ ] Make sure both manuals are updated
 - [ ] Add release notes section of the new version to manual (at the end) and release_notes.tex
