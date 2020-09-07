@@ -102,7 +102,9 @@ classdef pspm_pp_test < matlab.unittest.TestCase
             
             %filter one channel
             missing_epoch_filename = 'missing_epochs_test_out';
-            qa = struct('missing_epochs_filename', missing_epoch_filename);
+            qa = struct('missing_epochs_filename', missing_epoch_filename, ...
+                        'deflection_threshold', 0, ...
+                        'expand_epochs', 0 );
             newfile = pspm_pp('simple_qa', fn, qa);
             
             [sts, infos, data, filestruct] = pspm_load_data(newfile, 'none');
