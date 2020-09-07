@@ -13009,7 +13009,7 @@ Related function:
 \shape default
  
 \family typewriter
-pspm_pp
+pspm_pp, pspm_prepdata, pspm_simple_qa
 \end_layout
 
 \begin_layout Standard
@@ -13101,6 +13101,30 @@ Maximum slope: Maximum slope in
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Itemize
+Missing epochs filename: Name of the .mat file where the missing epochs will
+ be stored.
+\end_layout
+
+\begin_layout Itemize
+Deflection threshold: Amplitude threshold which excludes epochs from the
+ filter if the overall deflection over this epoch is below it.
+ Default: 0 (no threshold).
+\end_layout
+
+\begin_layout Itemize
+Island threshold: Duration threshold (seconds) which determines the maximum
+ length of data between NaN epochs.
+ Islands of data shorter than this threshold will be removed.
+ Default: 0 s (no threshold).
+\end_layout
+
+\begin_layout Itemize
+Expand epochs: Duration threshold (seconds) which determines by how much
+ data on the flanks of artefact epochs will be removed.
+ Default: 0.5 s.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -19369,15 +19393,8 @@ pspm_compute_visual_angle
  to mm.
 \end_layout
 
-\begin_layout Standard
-\begin_inset Separator plain
-\end_inset
-
-
-\end_layout
-
 \begin_layout Section
-PsPM Version 4.4.0
+PsPM Version 5.0.0
 \end_layout
 
 \begin_layout Subsection*
@@ -19391,7 +19408,7 @@ pspm_data_editor
 \family default
  supports loading in an epoch file, and 
 \family typewriter
-pspm_pp (simple_qa)
+pspm_pp (pspm_simple_qa)
 \family default
  now supports an output file for the epochs of data that is filtered out.
 \end_layout
@@ -19413,6 +19430,11 @@ Add the posibility to select the flank in the
 Import
 \family default
  module of the GUI of PsPM.
+\end_layout
+
+\begin_layout Itemize
+Add the posibility to import DSV (delimiter separated values) as well as
+ CSV (comma separated values) data files.
 \end_layout
 
 \begin_layout Subsection*
@@ -19524,19 +19546,6 @@ Fix bug in
 pspm_trim
 \family default
  which was wrongly defining the starting trimming point index.
-\end_layout
-
-\begin_layout Section
-PsPM Version 5.0.0
-\end_layout
-
-\begin_layout Subsection*
-New Features
-\end_layout
-
-\begin_layout Itemize
-New DSV (delimiter separated values) option for imports as well as a CSV
- import function.
 \end_layout
 
 \begin_layout Part
