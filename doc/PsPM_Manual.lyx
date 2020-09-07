@@ -19402,30 +19402,39 @@ New Features
 \end_layout
 
 \begin_layout Itemize
-
+Allow 
 \family typewriter
 pspm_data_editor
 \family default
- supports loading in an epoch file, and 
-\family typewriter
-pspm_pp (pspm_simple_qa)
-\family default
- now supports an output file for the epochs of data that is filtered out.
+ to load an epoch file.
 \end_layout
 
 \begin_layout Itemize
-
+Allow 
 \family typewriter
-pspm_convert_gaze_distance 
+pspm_simple_qa
 \family default
-introduced to allow converting from distance units to degrees and scanpath
- speed.
- The accompanying GUI editor is availble under 'Gaze Convert' in the data
- processing section.
+ to store the epochs of data that are filtered out into an output 
+\family typewriter
+.mat
+\family default
+ file.
+ The accompanying GUI editor is available under 'Artefact removal' in the
+ tools section.
 \end_layout
 
 \begin_layout Itemize
-Add the posibility to select the flank in the 
+Allow 
+\family typewriter
+pspm_convert_gaze_distance
+\family default
+ to convert from distance units to degrees or scanpath speed.
+ The accompanying GUI editor is available under 'Gaze Convert' in the data
+ preprocessing section.
+\end_layout
+
+\begin_layout Itemize
+Add the possibility to select the flank in the 
 \family typewriter
 Import
 \family default
@@ -19433,7 +19442,7 @@ Import
 \end_layout
 
 \begin_layout Itemize
-Add the posibility to import DSV (delimiter separated values) as well as
+Add the possibility to import DSV (delimiter separated values) as well as
  CSV (comma separated values) data files.
 \end_layout
 
@@ -19442,8 +19451,8 @@ Changes
 \end_layout
 
 \begin_layout Itemize
-The data convert functionality in tools is now split into the Gaze Convert
- and Pupil Size convert in Data preprocessing.
+Split the data convert functionality in tools into the 'Gaze Convert' and
+ 'Pupil Size convert' in the data preprocessing section.
 \end_layout
 
 \begin_layout Itemize
@@ -19488,7 +19497,7 @@ Bugfixes
 \end_layout
 
 \begin_layout Itemize
-DCM plot XTick is now scaled by sample rate.
+Scale DCM plot XTick by sample rate.
 \end_layout
 
 \begin_layout Itemize
@@ -19510,7 +19519,7 @@ Fix
 pspm_display
 \family default
  behaviour when user tries to load data with less channels than the data
- he/she is curretly displaying.
+ he/she is currently displaying.
 \end_layout
 
 \begin_layout Itemize
