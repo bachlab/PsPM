@@ -26,7 +26,7 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 %                                       Default: 0 - ie will take no effect on filter
 %           data_island_threshold:      A float in seconds to determine the maximum length of data between NaN epochs. Islands of data
 %                                       shorter than this threshold will be removed. 
-%                                       Default: 0 - no effect on filter
+%                                       Default: 0 s - no effect on filter
 %           expand_epochs:              A float in seconds to determine by how much data on the flanks of artefact epochs will be removed.
 %                                       Default: 0.5 s
 %           

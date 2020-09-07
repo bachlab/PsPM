@@ -109,9 +109,10 @@ qa_data_island_threshold.tag     = 'data_island_threshold';
 qa_data_island_threshold.strtype = 'r';
 qa_data_island_threshold.num     = [1 1];
 qa_data_island_threshold.val     = {0};
-qa_data_island_threshold.help    = {[ 'A float in seconds to determine the maximum length of unfiltered data between epochs.', ...
-                                      ' If an island exists for less than the threshold it will also be filtered'
-                                    ]};
+qa_data_island_threshold.help    = {['A float in seconds to determine the maximum length of unfiltered data between epochs.', ...
+                                     ' If an island exists for less than the threshold it will also be filtered'], ...
+                                    'Default: 0 s - will take no effect on filter', ...
+                                    };
                                 
 qa_expand_epochs         = cfg_entry;
 qa_expand_epochs.name    = 'Expand epochs';
