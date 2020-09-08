@@ -19414,6 +19414,16 @@ Allow
 \family typewriter
 pspm_simple_qa
 \family default
+ to suppress classification of discretisation oscillations as artefacts,
+ to expand artefact windows, and to automatically remove small data islands
+ embedded in artefacts.
+\end_layout
+
+\begin_layout Itemize
+Allow 
+\family typewriter
+pspm_simple_qa
+\family default
  to store the epochs of data that are filtered out into an output 
 \family typewriter
 .mat

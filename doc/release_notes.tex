@@ -65,7 +65,7 @@ backgroundcolor={\color{white}},
 framexleftmargin=1pt,
 frame=l}
 \renewcommand{\lstlistingname}{Listing}
-\title{PsPM 4.3.0 Release notes}
+\title{PsPM 5.0.0 Release notes}
 
 \begin{document}
 \maketitle
@@ -612,6 +612,7 @@ an error in the conversion factor of pixels wrt. to mm.
 \subsection*{New Features}
 \begin{itemize}
 \item Allow \texttt{pspm\_data\_editor} to load an epoch file.
+\item Allow \texttt{pspm\_simple\_qa} to suppress classification of discretisation oscillations as artefacts, to expand artefact windows, and to automatically remove small data islands embedded in artefacts.
 \item Allow \texttt{pspm\_simple\_qa} to store the epochs of data that are
 filtered out into an output \texttt{.mat} file. The accompanying GUI
 editor is available under 'Artefact removal' in the tools section.
