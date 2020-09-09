@@ -6,6 +6,12 @@ permalink: /news/
 
 # News
 
+### 09.09.2020
+
+PsPM 5.0.0 released - including several new features such as new options in SCR quality correction, the possibility to convert gaze distances to scanpath speed or the possibility to import data from DSV (delimiter separated values) file format. This release also includes several changes (e.g. deprecate edge filtering functionality) as well as some bugfixes.
+
+---
+
 ### 01.04.2020
 
 PsPM 4.3.0 released - including few new features and changes (in particular in the way PsPM imports markers from Eyelink files) as well as bugfixes correcting the 4.2.1 release. Thanks to everybody involved!
