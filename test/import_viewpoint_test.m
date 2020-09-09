@@ -56,7 +56,8 @@ classdef import_viewpoint_test < matlab.unittest.TestCase
             for i = 1:numel(eventlines)
                 line = eventlines{i};
                 parts = split(line, sprintf('\t'));
-                if any(startsWith(parts{3}, {'A:Blink', 'A:Saccade', 'B:Blink', 'B:Saccade'})) && endsWith(parts{3}, 'sec')
+                if any(strncmp(parts{3}, {'A:Blink', 'A:Saccade', 'B:Blink', 'B:Saccade'},numel(parts{3})))...
+                   && strcmp(parts{3}(end-2:end), 'sec')
                     tend = to_num(parts{2});
 
                     foridx = strfind(line, 'for');
@@ -67,13 +68,13 @@ classdef import_viewpoint_test < matlab.unittest.TestCase
                     begidx = find(timecol == tbeg);
                     endidx = find(timecol == tend);
 
-                    if startsWith(parts{3}, 'A:Blink')
+                    if strncmp(parts{3}, 'A:Blink', numel('A:Blink'))
                         this.verifyTrue(all(data{1}.channels(begidx : endidx, blink_A_chan) == 1));
-                    elseif startsWith(parts{3}, 'B:Blink')
+                    elseif strncmp(parts{3}, 'B:Blink', numel('B:Blink'))
                         this.verifyTrue(all(data{1}.channels(begidx : endidx, blink_B_chan) == 1));
-                    elseif startsWith(parts{3}, 'A:Saccade')
+                    elseif strncmp(parts{3}, 'A:Saccade', numel('A:Saccade'))
                         this.verifyTrue(all(data{1}.channels(begidx : endidx, sacc_A_chan) == 1));
-                    elseif startsWith(parts{3}, 'B:Saccade')
+                    elseif strncmp(parts{3}, 'B:Saccade', numel('B:Saccade'))
                         this.verifyTrue(all(data{1}.channels(begidx : endidx, sacc_B_chan) == 1));
                     end
                 end
@@ -82,7 +83,7 @@ classdef import_viewpoint_test < matlab.unittest.TestCase
             % ---------------------------------------------------------------------------
             msg_counter = 1;
             for line = datalines
-                parts = split(line, sprintf('\t'));
+                parts = strsplit(line{1},'\t');
                 msg = parts{marker_index};
                 if ~isempty(msg)
                     tbeg = to_num(parts{2});
@@ -126,13 +127,13 @@ function [datalines, eventlines, header] = read_datafile(fn, n_lines_before_data
     end
     header = fgetl(fid);
     tline = fgetl(fid);
-    while ~startsWith(tline, '10')
+    while ~strncmp(tline, '10', 2)
         tline = fgetl(fid);
     end
     datalines = {};
     eventlines = {};
     while isstr(tline)
-        if startsWith(tline, '10')
+        if strncmp(tline, '10', 2)
             datalines{end + 1} = tline;
         else
             eventlines{end + 1} = tline;

@@ -1,6 +1,7 @@
 function [bs, t] = pspm_bf_spsrf_gamma(varargin)
-% pspm_bf_spsrf_box basis function with a total duration of 10 seconds
-% and a shift of (SOA-3) seconds (see reference).
+% pspm_bf_spsrf_gamma constructs a gamma probability density function for
+% scanpath speed responses with a total duration of 10 seconds and a shift
+% of (SOA - 3) seconds. 
 % 
 %   FORMAT: [bf p] = pspm_bf_spsrf_gamma(td,soa,p) OR
 %           [bf p] = pspm_bf_spsrf_gamma([td,soa,p])
@@ -9,7 +10,11 @@ function [bs, t] = pspm_bf_spsrf_gamma(varargin)
 %                 p(2) = x0
 %                 p(3) = a
 %                 p(4) = b
-%          
+%
+% REFERENCE
+% (1) Xia Y, Melinscak F, Bach DR (2020) 
+% Saccadic Scanpath Length: An Index for Human Threat Conditioning
+% Behavioral Research Methods (submitted)
 %________________________________________________________________________
 % PsPM 4.0
 

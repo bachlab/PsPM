@@ -42,6 +42,14 @@ for i=1:n
         import{i}.sr = job.datatype.(datatype).importtype{i}.(type{1}).sample_rate;
     end
     
+    % Check if flank option is available
+    if isfield(job.datatype.(datatype).importtype{i}.(type{1}), 'flank_option') && ...
+       ~strcmp(job.datatype.(datatype).importtype{i}.(type{1}).flank_option, 'default')
+   
+        import{i}.flank = job.datatype.(datatype).importtype{i}.(type{1}).flank_option;
+   
+    end
+    
     % Check if transfer function available
     if isfield(job.datatype.(datatype).importtype{i}.(type{1}), 'scr_transfer')
         transfer = fieldnames(job.datatype.(datatype).importtype{i}.(type{1}).scr_transfer);
@@ -76,10 +84,6 @@ for i=1:n
             end
         end
 
-        if isfield(job.datatype.(datatype), 'eyelink_edge_discard_factor')
-            import{i}.blink_saccade_edge_discard_factor = job.datatype.(datatype).eyelink_edge_discard_factor;
-        end
-
         if isfield(job.datatype.(datatype), 'viewpoint_target_unit')
             import{i}.target_unit = job.datatype.(datatype).viewpoint_target_unit;
         end
@@ -88,6 +92,23 @@ for i=1:n
             import{i}.target_unit = job.datatype.(datatype).smi_target_unit;
             import{i}.stimulus_resolution = job.datatype.(datatype).smi_stimulus_resolution;
         end
+
+        if isfield(job.datatype.(datatype), 'delimiter')
+            import{i}.delimiter = job.datatype.(datatype).delimiter;
+        end
+        
+        if isfield(job.datatype.(datatype), 'header_lines')
+            import{i}.header_lines = job.datatype.(datatype).header_lines;
+        end
+        
+        if isfield(job.datatype.(datatype), 'channel_names_line')
+            import{i}.channel_names_line = job.datatype.(datatype).channel_names_line;
+        end
+        
+        if isfield(job.datatype.(datatype), 'exclude_columns')
+            import{i}.exclude_columns = job.datatype.(datatype).exclude_columns;
+        end
+        
     end
     
 end

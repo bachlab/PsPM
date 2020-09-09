@@ -1,5 +1,7 @@
 function [bs, x] = pspm_bf_spsrf_box(varargin)
-% pspm_bf_spsrf_box basis function dependent on SOA 
+% pspm_bf_spsrf_box constructs a boxcar function to produce the averaged
+% scanpath speed over a 2-s time window in the end of SOA, which equals 
+% to scanpath length over a 2-s time window divided by 2/s
 %
 % FORMAT: [bs, x] = pspm_bf_spsrf_box(td, soa) 
 %     OR: [bs, x] = pspm_bf_spsrf_box([td, soa])
@@ -7,6 +9,10 @@ function [bs, x] = pspm_bf_spsrf_box(varargin)
 % FORMAT: [bf p] = pspm_bf_spsrf_box(td, soa)
 %         with  td: time resolution in s
 %
+% REFERENCE
+% (1) Xia Y, Melinscak F, Bach DR (2020) 
+% Saccadic Scanpath Length: An Index for Human Threat Conditioning
+% Behavioral Research Methods (submitted)
 %________________________________________________________________________
 % PsPM 4.0
 
@@ -27,7 +33,7 @@ elseif nargin > 1
 end;
 
 
-%create boder of interval
+% create border of interval
 stop = soa;
 start = soa-2;
 start_idx = floor(start/td);

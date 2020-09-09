@@ -96,7 +96,7 @@ function [dataraw, marker, messages, chan_info, file_info] = parse_viewpoint_fil
     [columns, column_ids, line_ctr] = parse_header(str, line_ctr, linefeeds, has_backr);
 
     eyesObserved = 'A';
-    if any(startsWith(column_ids, 'B'))
+    if any(strncmp(column_ids, 'B', numel('B')))
         eyesObserved = 'AB';
     end
 
@@ -114,7 +114,7 @@ function [dataraw, marker, messages, chan_info, file_info] = parse_viewpoint_fil
         begidx = linefeeds(msg_line) + 1;
         str(begidx : begidx + 1) = '/';
     end
-    C = textscan(str, fmt_str, 'Delimiter', '\t', 'CollectOutput', 1, 'CommentStyle', '//');
+    C = textscan(str, fmt_str, 'CollectOutput', 1, 'CommentStyle', '//');
     dataraw = C{1};
     marker = C{2};
 
@@ -137,7 +137,7 @@ function [file_info, line_ctr] = parse_metadata(str, line_ctr, linefeeds, has_ba
     file_info.screenSize.ymax = -1;
     curr_line = str(linefeeds(line_ctr) + 1 : linefeeds(line_ctr + 1) - 1 - has_backr);
     tab = sprintf('\t');
-    while startsWith(curr_line, '3')
+    while strncmp(curr_line, '3', numel('3'))
         if contains(curr_line, 'TimeStamp')
             parts = split(curr_line, tab);
             date_part = parts{3};
@@ -164,11 +164,11 @@ function [columns, column_ids, line_ctr] = parse_header(str, line_ctr, linefeeds
     curr_line = str(linefeeds(line_ctr) + 1 : linefeeds(line_ctr + 1) - 1 - has_backr);
     tab = sprintf('\t');
     n_feeds = numel(linefeeds);
-    while ~startsWith(curr_line, '10')
-        if startsWith(curr_line, '6')
+    while ~strncmp(curr_line, '10', numel('10'))
+        if strncmp(curr_line, '6', numel('6'))
             parts = split(curr_line, tab);
             column_ids = parts(2 : end);
-        elseif startsWith(curr_line, '5')
+        elseif strncmp(curr_line, '5',numel('5'))
             parts = split(curr_line, tab);
             columns = parts(2 : end);
         end
@@ -235,7 +235,7 @@ function [read_numeric_columns, fmt_str] = get_columns_to_read(column_ids)
     read_numeric_columns = ['TYPE'; column_ids];
     fmt_array = cell(1, numel(read_numeric_columns));
     fmt_array(:) = {'%f'};
-    region_indices = find(endsWith(read_numeric_columns, 'RI'));
+    region_indices = find(~cellfun(@isempty,regexp(read_numeric_columns,'RI$')));
     marker_index = find(strcmp(read_numeric_columns, 'MRK'));
     str_index = find(strcmp(read_numeric_columns, 'STR'));
 
@@ -275,7 +275,9 @@ function [channels, marker, chan_info] = parse_messages(messages, channels, mark
                 end
             elseif msg_type == 14
                 continue;
-            elseif (contains(msgline, 'Saccade') || contains(msgline, 'Blink')) && endsWith(msgline, 'sec')
+            elseif (contains(msgline, 'Saccade') || ...
+                   contains(msgline, 'Blink')) && ...
+                   ~isempty(regexp(msgline,'sec$'))
                 timestamp = str2double(parts{2});
                 msg = parts{3};
                 forbeg_idx = strfind(msg, ' for ');

@@ -11,8 +11,12 @@ function data_mat = set_blinks_saccades_to_nan(data_mat, column_names, mask_chan
     %           gaze_x_r, etc.
     % column_names: Name of each column in the input data_mat.
     % mask_chans: Names of blink and saccade channels.
+    %
+    % Optional Inputs
+    % ---------------
     % fn_is_left: Function that takes a LOWERCASED channel name as input and returns true if the channel
-    %             name belongs to left eye. Otherwise, it returns false.
+    %             name belongs to left eye. Otherwise, it returns false. By default, this function checks
+    %             if the channel name ends with '_l'.
     %
     % Output
     % ------
@@ -23,7 +27,10 @@ function data_mat = set_blinks_saccades_to_nan(data_mat, column_names, mask_chan
     %
     %   - all elements in right data columns (except blink/saccade) that correspond to right
     %     blink or saccade rows are set to NaN
-    %
+    if nargin == 3
+        fn_is_left = @(x) strcmp(x(end-1:end), '_l');
+    end
+
     column_names = cellfun(@(x) lower(x), column_names, 'uni', 0);
     mask_chans = cellfun(@(x) lower(x), mask_chans, 'uni', 0);
 

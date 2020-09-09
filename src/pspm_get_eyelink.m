@@ -24,28 +24,6 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
     %                           the unit to which the data should be converted and
     %                           in which eyelink_trackdist is given
     %
-    %                       .blink_saccade_edge_discard_factor:
-    %                           Factor used to determine the number of
-    %                           samples right before and right after a blink/saccade
-    %                           period to discard. This value is multiplied by the
-    %                           sampling rate of the recording to determine the
-    %                           number of samples to discard from one end. Therefore,
-    %                           for each blink/saccade period, 2*this_value*SR many
-    %                           samples are discarded in total, and effectively
-    %                           blink/saccade period is extended.
-    %
-    %                           This value also corresponds to the duration of
-    %                           samples to discard on one end in seconds. For example,
-    %                           when it is 0.01, we discard 10 ms worth of data on
-    %                           each end of every blink/saccade period.
-    %
-    %                           The default value has been changed to 0 in PsPM revision
-    %                           r803 to reduce the amount of discarded data. Note that
-    %                           this might result in noisy samples around blink/saccade
-    %                           points. Therefore, it is highly recommended to perform
-    %                           pupil size data preprocessing using pspm_pupil_pp and
-    %                           gaze data filtering using pspm_find_valid_fixations.
-    %                           (Default: 0)
     %                           
     % 
     % In this function, channels related to eyes will not produce an error, if 
@@ -66,18 +44,6 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
     sourceinfo = []; sts = -1;
     % add specific import path for specific import function
     addpath(pspm_path('Import','eyelink')); 
-    default_blink_saccade_discard_factor = 0;
-    for i = 1:numel(import)
-        if ~isfield(import{i}, 'blink_saccade_edge_discard_factor')
-            import{i}.blink_saccade_edge_discard_factor = default_blink_saccade_discard_factor;
-        end
-
-        if ~isnumeric(import{i}.blink_saccade_edge_discard_factor) || ...
-                import{i}.blink_saccade_edge_discard_factor < 0
-            warning('ID:invalid_input', 'Edge discard factor must be a positive number');
-            return;
-        end
-    end
 
     % transfer options
     % -------------------------------------------------------------------------
@@ -103,18 +69,13 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
             mask_chans = {'blink_l', 'blink_r', 'saccade_l', 'saccade_r'};
         end
         expand_factor = 0;
-        if i <= numel(import)
-            expand_factor = import{i}.blink_saccade_edge_discard_factor;
-        else
-            expand_factor = default_blink_saccade_discard_factor;
-        end
-        data{i}.channels = expand_mask_chans(...
+
+        data{i}.channels = blink_saccade_filtering(...
             data{i}.channels, ...
             data{i}.channels_header, ...
             mask_chans, ...
             expand_factor * data{i}.sampleRate ...
         );
-        data{i}.channels = set_blinks_saccades_to_nan(data{i}.channels, data{i}.channels_header, mask_chans, @(x) endsWith(x, '_l'));
     end
     rmpath(pspm_path('backroom'));
 
@@ -256,8 +217,10 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
             % imported data cannot be read at the moment (in later instances)
             import{k}.markerinfo = markerinfos;
 
-            % use 'all' flank for translation from continuous to events
-            import{k}.flank = 'all';
+            % by default use 'all' flank for translation from continuous to events
+            if ~isfield(import{k},'flank')
+                import{k}.flank = 'all';
+            end
         else    
             % determine chan id from chantype - eyelink specific
             % thats why channel ids will be ignored!
@@ -408,31 +371,4 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 
     sts = 1;
     return;
-end
-
-function data = expand_mask_chans(data, column_names, mask_chans, offset)
-    for chan = mask_chans
-        col_idx = find(strcmpi(column_names, chan{1}));
-        data(:, col_idx) = expand_mask(data(:, col_idx), offset);
-    end
-end
-
-function mask = expand_mask(mask, offset)
-    diffmask = diff(mask);
-    indices_to_expand_towards_left = find(diffmask == 1) + 1;
-    indices_to_expand_towards_right = find(diffmask == (-1));
-
-    for ii = 1:numel(indices_to_expand_towards_left)
-        idx = indices_to_expand_towards_left(ii);
-        begidx = max(1, idx - offset);
-        endidx = max(1, idx - 1);
-        mask(begidx : endidx) = true;
-    end
-    ndata = numel(mask);
-    for ii = 1:numel(indices_to_expand_towards_right)
-        idx = indices_to_expand_towards_right(ii);
-        begidx = min(ndata, idx + 1);
-        endidx = min(ndata, idx + offset);
-        mask(begidx : endidx) = true;
-    end
 end

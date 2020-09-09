@@ -30,6 +30,10 @@ function newdatafile = pspm_split_sessions(datafile, markerchannel, options)
 %                           Default = 0
 % options.verbose           Tell the function to display information
 %                           about the state of processing. Default = 0
+% options.randomITI         Tell the function to use all the markers to
+%                           evaluate the mean distance between them.
+%                           Usefull for random ITI since it reduce the
+%                           variance. Default = 0
 %
 %       REMARK for suffix and prefix:
 %           The prefix and  suffix intervals will only be applied to data -
@@ -90,6 +94,8 @@ catch
     options.min_break_ratio = settings.split.min_break_ratio;
 end
 
+try options.randomITI; catch, options.randomITI = 0; end
+
 % check input arguments
 % -------------------------------------------------------------------------
 if nargin < 1
@@ -122,6 +128,10 @@ end
 
 if ~isnumeric(options.splitpoints)
     warning('ID:invalid_input', 'options.splitpoints has to be numeric.'); return;
+end
+
+if ~isnumeric(options.randomITI) || ~ismember(options.randomITI, [0, 1])
+    warning('ID:invalid_input', 'options.randomITI has to be numeric and equal to 0 or 1.'); return;
 end
 
 % work on all data files
@@ -185,7 +195,7 @@ for d = 1:numel(D)
             % relevant data within the mean space
             
             % add global mean space
-            if sta == sto
+            if sta == sto || options.randomITI
                 mean_space = mean(diff(mrk));
             else
                 mean_space = mean(diff(mrk(sta:sto)));

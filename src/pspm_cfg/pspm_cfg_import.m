@@ -10,6 +10,7 @@ if isempty(settings), pspm_init; end
 % Get filetype
 fileoptions={settings.import.datatypes.long};
 chantypesDescription = {settings.chantypes.description};
+chantypesData = {settings.chantypes.data};
 
 
 %% Predefined struct
@@ -114,34 +115,6 @@ eyelink_trackdist.help    = {['Distance between eyetracker camera and ', ...
     'enabled (> 0) the data will be converted from arbitrary units to ', ...
     'length units.']};
 
-eyelink_edge_discard_factor         = cfg_entry;
-eyelink_edge_discard_factor.name    = 'Blink/saccade discard factor';
-eyelink_edge_discard_factor.tag     = 'eyelink_edge_discard_factor';
-eyelink_edge_discard_factor.val     = {0};
-eyelink_edge_discard_factor.num     = [1 1];
-eyelink_edge_discard_factor.strtype = 'r';
-eyelink_edge_discard_factor.help    = {['Factor used to determine the number of', ...
-    ' samples right before and right after a blink/saccade', ...
-    ' period to discard. This value is multiplied by the', ...
-    ' sampling rate of the recording to determine the', ...
-    ' number of samples to discard from one end. Therefore,', ...
-    ' for each blink/saccade period, 2*this_value*SR many', ...
-    ' samples are discarded in total, and effectively', ...
-    ' blink/saccade period is extended.'], ...
-
-    ['This value also corresponds to the duration of', ...
-    ' samples to discard on one end in seconds. For example,', ...
-    ' when it is 0.01, we discard 10 ms worth of data on', ...
-    ' each end of every blink/saccade period.'] ...
-
-    ['The default value has been changed to 0 in PsPM revision', ...
-    ' r803 to reduce the amount of discarded data. Note that', ...
-    ' this might result in noisy samples around blink/saccade', ...
-    ' points. Therefore, it is highly recommended to perform', ...
-    ' pupil size data preprocessing and gaze data filtering by', ...
-    ' finding valid fixations.'] ...
-};
-
 distance_unit           = cfg_menu;
 distance_unit.name      = 'Distance unit';
 distance_unit.tag       = 'distance_unit';
@@ -174,6 +147,35 @@ smi_stimulus_resolution.val       = {[-1 -1]};
 smi_stimulus_resolution.num       = [1 2];
 smi_stimulus_resolution.help      = {['The resolution of the stimulus window. This field is required' ...
                                       'to perform px to mm conversions for gaze channels']};
+
+delimiter           = cfg_entry;
+delimiter.name      = 'Delimiter';
+delimiter.tag       = 'delimiter';
+delimiter.strtype   = 's';
+delimiter.help      = {'The delimiter to be used for file reading, leave blank to use any whitespace character.'};
+
+header_lines           = cfg_entry;
+header_lines.name      = 'Header lines';
+header_lines.tag       = 'header_lines';
+header_lines.strtype   = 'r';
+header_lines.val       = {1};
+header_lines.help      = {'The number of lines used by the header. By default 1.'};
+
+channel_names_line         = cfg_entry;
+channel_names_line.name    = 'Channel names line';
+channel_names_line.tag     = 'channel_names_line';
+channel_names_line.strtype = 'r';
+channel_names_line.val     = {1};
+channel_names_line.help    = {'The line number where the channel/column names are specified. By default 1.'};
+
+exclude_columns           = cfg_entry;
+exclude_columns.name      = 'Exclude columns';
+exclude_columns.tag       = 'exclude_columns';
+exclude_columns.strtype   = 'r';
+exclude_columns.val       = {0};
+exclude_columns.help      = {['The number of columns which have to be excluded for the importing. By default 0. ',...
+                              'It is usefull if the first columns have non numeric data (e.g. timestamps). ', ...
+                              'Be aware that if you exclude some columns you have to adapt the channel number.']};
 
 %% Datatype dependend items
 datatype_item = cell(1,length(fileoptions));
@@ -223,6 +225,20 @@ for datatype_i=1:length(fileoptions)
         'this channel by its name. Note: the channel number refers to the n-th recorded ' ...
         'channel, not to its number during acquisition (if you did not save all recorded ' ...
         'channels, these might be different for some data types).']};
+    
+    %% Flank option for 'event' channel types
+    flank_option        = cfg_menu;
+    flank_option.name   = 'Flank of the event impulses to import';
+    flank_option.tag    = 'flank_option';
+    flank_option.values = {'ascending', 'descending', 'all', 'both', 'default'};
+    flank_option.labels = {'ascending', 'descending', 'both', 'middle', 'default'};
+    flank_option.val    = {'default'};
+    flank_option.help   = {['The flank option specifies which of the rising edge(ascending), ', ...
+        'falling edge(descending), both edges or their mean(middle) of a marker impulse should ', ...
+        'be imported into the marker channel. The default option is to select the middle of ', ...
+        'the impulse, some exceptions are Eyelink, ViewPoint and SensoMotoric Instruments data ', ...
+        'for which the default are respectively ''both'', ''ascending'', ''ascending''. ',...
+        'If the numbers of rising and falling edges differ, PsPM will throw an error. ']};
    
     %% Channel/Column Type Items
     importtype_item = cell(1,length(chantypes));
@@ -268,7 +284,12 @@ for datatype_i=1:length(fileoptions)
             end
         end
         
-        importtype_item{importtype_i}.val = {chan_nr};
+        if strcmp(chantypesData{chantypesDescIdx}, 'events')
+            importtype_item{importtype_i}.val = {chan_nr,flank_option};
+        else
+            importtype_item{importtype_i}.val = {chan_nr};
+        end
+        
         
         % Check for sample rate
         if samplerate == 0
@@ -344,7 +365,7 @@ for datatype_i=1:length(fileoptions)
     % Refactor this part by even possibly dividing pspm_cfg_import to several files.
     if any(strcmp(settings.import.datatypes(datatype_i).short, 'eyelink'))
         datatype_item{datatype_i}.val = ...
-            [datatype_item{datatype_i}.val, {eyelink_trackdist, eyelink_edge_discard_factor, distance_unit}];
+            [datatype_item{datatype_i}.val, {eyelink_trackdist, distance_unit}];
     end
 
     if any(strcmpi(settings.import.datatypes(datatype_i).short, 'viewpoint'))
@@ -353,6 +374,18 @@ for datatype_i=1:length(fileoptions)
     
     if any(strcmpi(settings.import.datatypes(datatype_i).short, 'smi'))
         datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {smi_target_unit, smi_stimulus_resolution}];
+    end
+    
+    if any(strcmpi(settings.import.datatypes(datatype_i).short, 'txt'))
+        datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {header_lines,channel_names_line,exclude_columns}];
+    end
+    
+    if any(strcmpi(settings.import.datatypes(datatype_i).short, 'csv'))
+        datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {header_lines,channel_names_line,exclude_columns}];
+    end
+    
+    if any(strcmpi(settings.import.datatypes(datatype_i).short, 'dsv'))
+        datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {delimiter,header_lines,channel_names_line,exclude_columns}];
     end
 end
 

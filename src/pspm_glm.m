@@ -68,6 +68,10 @@ function glm = pspm_glm(model, options)
 %                   at the end of the output. In 'free' models the field
 %                   model.window is MANDATORY and single basis functions 
 %                   are allowed only.
+% model.centering:  if set to 0 the function would not perform the 
+%                   mean centering of the convolved X data. For example, to
+%                   invert SPS model, set centering to 0.
+%                   Default: 1
 %
 % OPTIONS (optional argument)
 % options.overwrite: overwrite existing model output; default 0

@@ -411,10 +411,17 @@ if not(sts==0)
     handles.name=filename;
     guidata(hObject, handles);
     
+    % ---set wave and event channel value to none ---------------------
+    handles.prop.wave='none';
+    set(handles.wave_listbox,'Value',1)
+    
+    handles.prop.event='none';
+    set(handles.event_listbox,'Value',1)
+    
     % ---add text to wave listbox--------------------------------------
     
     listitems{1,1}='none';
-    handles.prop.wavechans(1)=0;
+    handles.prop.wavechans(1)=0;   
     j=2;
     for k=1:length(handles.data)
         if any(strcmp(handles.data{k,1}.header.chantype,handles.prop.setwave))
@@ -651,6 +658,7 @@ function [info]=pp_plot(handles)
 % ---Initialise------------------------------------------------------------
 marker=[];
 hbeat=[];
+events=[]; % any other marker channels
 wave=[];
 
 % get eventchan info
@@ -658,10 +666,23 @@ if not(isempty(handles.prop.eventchans)) && not(handles.prop.eventchans(handles.
     marker=handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
     if get(handles.radio_extra,'Value')==1
         handles.prop.event='extra';
-    else    handles.prop.event='integrated';
+    else
+        handles.prop.event='integrated';
     end
 elseif not(isempty(handles.prop.eventchans)) && not(handles.prop.eventchans(handles.prop.idevent)==0) && strcmp(handles.data{handles.prop.eventchans(handles.prop.idevent),1}.header.chantype,'hb')
     hbeat=handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
+    if get(handles.radio_extra,'Value')==1
+        handles.prop.event='extra';
+    else
+        handles.prop.event='integrated';
+    end
+elseif not(isempty(handles.prop.eventchans)) && not(handles.prop.eventchans(handles.prop.idevent)==0)
+    events=handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
+    if get(handles.radio_extra,'Value')==1
+        handles.prop.event='extra';
+    else
+        handles.prop.event='integrated';
+    end
 end
 
 % get wave chan info
@@ -672,7 +693,7 @@ end
 
 %   plotting if no channel is selected
 % -------------------------------------------------------------------------
-if isempty(marker) && isempty(wave) && isempty(hbeat)
+if isempty(marker) && isempty(wave) && isempty(hbeat) && isempty(events)
     hold off
     x=1;
     y=1;
@@ -680,7 +701,7 @@ if isempty(marker) && isempty(wave) && isempty(hbeat)
     text(x,y,'   nothing to display - please select channel   ','FontSize',20,'BackgroundColor','k',...
         'Color','w','HorizontalAlignment','Center','VerticalAlignment',...
         'Middle')
-elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat))
+elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(isempty(events))
     
     % ---prepare ecg-----------------------------------------------------------
     if not(isempty(handles.prop.wave))  % only if there is wave info
@@ -719,53 +740,76 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat))
         base(1)=min(wave)-.1*min(wave);
         base(2)=min(wave)-(max(wave)-min(wave));
         
-        if strcmp(handles.prop.event,'hb')
-            R=zeros(size(wave));
-            R(R==0)=NaN;
+        if not(isempty(hbeat))
+
+            hbeat=round(hbeat*sr.wave);
             
-            if not(isempty(hbeat))
-                hbeat=round(hbeat*sr.wave);
-            else
-                warning('No information on heartbeats. Plotting not possible');
+            HBEAT = nan(size(wave));
+            
+            if strcmp(handles.prop.event,'extra')
+                HBEAT(hbeat,1)=min(wave)-.5;
+            elseif strcmp(handles.prop.event,'integrated')
+                temp=wave(hbeat,1);
+                temp(isnan(temp)) = median(temp,'omitnan');
+                HBEAT(hbeat,1)=temp;
+            end
+
+            hold on ; h=stem(y,HBEAT,'ro');
+            hbase=get(h,'Baseline');
+
+            if strcmp(handles.prop.event,'extra')
+                set(hbase,'BaseValue',base(2),'Visible','off');
+            elseif strcmp(handles.prop.event,'integrated')
+                set(hbase,'BaseValue',base(1),'Visible','off');
             end
             
-            if strcmp(handles.prop.wave,'ecg')
-                R(hbeat,1)=max(wave);
-                hold on ; stem(y,R,'r')
-            else
-                R(hbeat,1)=max(base(1));
-                hold on ; h=stem(y,R,'r');
-                hbase=get(h,'Baseline');
-                set(hbase,'Basevalue',base(2));
-                
-            end
-            
-        elseif strcmp(handles.prop.event,'integrated') || strcmp(handles.prop.event,'extra')
+        elseif not(isempty(marker))
             
             marker=round(marker*sr.wave);
             if marker(1,1)==0
                 marker(1,1)=1;
             end
             marker=marker(marker~=0);
-            MARKER=zeros(size(wave));
+            MARKER=nan(size(wave));
             
             
             if strcmp(handles.prop.event,'extra')
                 MARKER(marker,1)=min(wave)-.5;
             elseif strcmp(handles.prop.event,'integrated')
                 temp=wave(marker,1);
-                median_non_nan_vals = median(temp,'omitnan');
+                temp(isnan(temp)) = median(temp,'omitnan');
                 MARKER(marker,1)=temp;
-                MARKER(isnan(MARKER))=median_non_nan_vals;
             end
             
-            MARKER(MARKER==0)=NaN;
             hold on ; h=stem(y,MARKER,'ro');
             hbase=get(h,'Baseline');
             
             if strcmp(handles.prop.event,'extra')
                 set(hbase,'BaseValue',base(2),'Visible','off');
-            else set(hbase,'BaseValue',base(1),'Visible','off');
+            elseif strcmp(handles.prop.event,'integrated')
+                set(hbase,'BaseValue',base(1),'Visible','off');
+            end
+        elseif not(isempty(events))
+            
+            events=round(events*sr.wave);
+
+            EVENTS = nan(size(wave));
+
+            if strcmp(handles.prop.event,'extra')
+                EVENTS(events,1)=min(wave)-.5;
+            elseif strcmp(handles.prop.event,'integrated')
+                temp=wave(events,1);
+                temp(isnan(temp)) = median(temp,'omitnan');
+                EVENTS(events,1)=temp;
+            end
+            
+            hold on ; h=stem(y,EVENTS,'r');
+            hbase=get(h,'Baseline');
+            
+            if strcmp(handles.prop.event,'extra')
+                set(hbase,'BaseValue',base(2),'Visible','off');
+            elseif strcmp(handles.prop.event,'integrated')
+                set(hbase,'BaseValue',base(1),'Visible','off');
             end
         end
         
@@ -792,35 +836,48 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat))
         end
         
         xlabel(' Time in seconds [s] ','Fontsize',16);
-        
-        if (strcmp(handles.prop.event,'integrated')||strcmp(handles.prop.event,'extra')) && not(strcmp(handles.prop.wave,'none'))
+
+        if not(isempty(marker))
             legend(handles.prop.wave,'marker')
-        elseif not(strcmp(handles.prop.event,'none')) && not(strcmp(handles.prop.wave,'none'))
-            legend(handles.prop.wave,handles.prop.event)
-        elseif not(strcmp(handles.prop.event,'none')) && not(strcmp(handles.prop.wave,'none'))
+        elseif not(isempty(hbeat))
+            legend(handles.prop.wave,'heartbeats')
+        elseif not(isempty(events))
+            legend(handles.prop.wave,[handles.event_listbox.String{handles.prop.idevent},' events'])
+        elseif not(strcmp(handles.prop.event,'none'))
+            legend(handles.prop.wave,'unknown events')
+        else 
             legend(handles.prop.wave)
         end
         
         %   plotting if only event channel is selected
         % -------------------------------------------------------------------------
         
-    elseif isempty(wave) && (not(isempty(hbeat)) || not(isempty(marker)))
-        if strcmp(handles.prop.event,'hb')
+    elseif isempty(wave) && (not(isempty(hbeat)) || not(isempty(marker)) || not(isempty(events)))
+        if not(isempty(hbeat))
             MARKER=diff(hbeat);
             plot(MARKER,'ro')
             ylabel('duration of ibi [s]','Fontsize',14)
-        elseif strcmp(handles.prop.event,'extra') || strcmp(handles.prop.event,'integrated')
+        elseif not(isempty(marker))
             MARKER=diff(marker);
             stem(MARKER,'r')
-        else MARKER=[];
+            ylabel('inter-marker duration [s]','Fontsize',14)
+        elseif not(isempty(events))
+            MARKER=diff(events);
+            plot(MARKER,'ro')
+            ylabel('inter-event duration [s]','Fontsize',14)
+        else
+            MARKER=[];
         end
         
         xlabel('Time in seconds [s] ','Fontsize',16);
-        if strcmp(handles.prop.event,'integrated') || strcmp(handles.prop.event,'extra')
+        if not(isempty(marker))
             legend('marker')
-        elseif strcmp(handles.prop.event,'hb')
+        elseif not(isempty(hbeat))
             legend('heartbeats')
-        else legend('unknown marker')
+        elseif not(isempty(events))
+            legend([handles.event_listbox.String{handles.prop.idevent},' events'])
+        else
+            legend('unknown events')
         end
     end
 end
@@ -947,10 +1004,10 @@ handles.prop.event=get(handles.event_listbox,'String');
 handles.prop.event=handles.prop.event{handles.prop.idevent,1};
 % ---deactivate marker buttons if necessary--------------------------------
 
-if handles.prop.idevent==1 || strcmp(handles.prop.event,'hb') || handles.prop.idwave==1
+if handles.prop.idevent==1 || handles.prop.idwave==1
     set(handles.radio_int,'Enable','Off');
     set(handles.radio_extra,'Enable','Off');
-elseif not(handles.prop.idevent==1) && strcmp(handles.prop.event,'marker')
+else
     set(handles.radio_int,'Enable','On');
     set(handles.radio_extra,'Enable','On');
 end

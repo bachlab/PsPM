@@ -32,7 +32,9 @@ function outfile=pspm_import(datafile, datatype, import, options)
 %              Can be one of the following units:'mm', 'cm', 'm','inches'.
 %           - .denoise: for marker channels in CED spike format (recorded 
 %              as 'level'), filters out markers duration longer than the 
-%              value given here (in ms) 
+%              value given here (in ms)
+%           - .delimiter: for delimiter separated values, value used as delimiter for file read
+% 
 % options:  options.overwrite - overwrite existing files by default
 %
 % RETURNS
