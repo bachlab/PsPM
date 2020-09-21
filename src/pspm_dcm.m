@@ -545,7 +545,7 @@ for iSn = 1:numel(model.timing)
             sbs_id = sn_sbs(isn_sbs);
             % trials which are enabled and have the 'current' subsession id
             sbs_trls = trials{iSn}(:, 1) == 1 & trials{iSn}(:,2) == sbs_id;
-            if any(sbs_trls)
+            if sum(sbs_trls)>1
                 sbs_trlstart{sbs_id} = sn_trlstart{iSn}(sbs_trls) - ...
                     subsessions(sbs_id,2);
                 sbs_trlstop{sbs_id} = sn_trlstop{iSn}(sbs_trls) - ...
@@ -652,7 +652,7 @@ if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
         foo(foo < 0) = [];
         for n = 1:size(foo, 1)
             win = ceil(model.sr * foo(n) + (1:winsize));
-            row = get_data_after_trial_filling_with_nans_when_necessary(scr_sess, win, n, isbSn, sbs_iti, proc_miniti);
+            row = get_data_after_trial_filling_with_nans_when_necessary(scr_sess, win, n, isbSn, model.iti, proc_miniti);
             D(c, 1:numel(row)) = row;
             c = c + 1;
         end;
@@ -700,7 +700,7 @@ for isbSn = 1:numel(model.scr)
         win = ceil(((model.sr * model.trlstart{isbSn}(n)):(model.sr * model.trlstop{isbSn}(n) + winsize)));
         % correct rounding errors
         win(win == 0) = [];
-        row = get_data_after_trial_filling_with_nans_when_necessary(scr_sess, win, n, isbSn, sbs_iti, proc_miniti);
+        row = get_data_after_trial_filling_with_nans_when_necessary(scr_sess, win, n, isbSn, model.iti, proc_miniti);
         D(c, 1:numel(row)) = row;
         c = c + 1;
     end;
