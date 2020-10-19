@@ -5,6 +5,11 @@ function [bf, x ,p] = pspm_bf_hprf(td,p)
 % with  td = time resolution in s
 %       p = '3' vs '4' basis function solution 
 % REFERENCE
+% Comment test blablabla
+%
+%
+%
+%
 %
 %__________________________________________________________________________
 % PsPM 3.0
