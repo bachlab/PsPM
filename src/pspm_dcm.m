@@ -234,6 +234,7 @@ try options.dispsmallwin; catch, options.dispsmallwin = 0; end
 try options.crfupdate; catch, options.crfupdate = 0; end
 try options.eventnames; catch, options.eventnames = {}; end
 try options.trlnames; catch, options.trlnames = {}; end
+try options.lasttrl; catch, options.lasttrl = 7; end
 
 % check option fields --
 % numeric fields
@@ -581,6 +582,26 @@ if isempty(sbs_trlstart)
         'single subsession to be processed.']);
     return;
 end
+
+% Remove the trial that has insufficient information
+sbs_data_out = sbs_data;
+flag_valid = ~cellfun(@isempty, sbs_trlstart);
+error_log = zeros(size(sbs_iti));
+% Do processing in the index of valid sessions
+idx_session = nonzeros((1:size(sbs_data,1)).*flag_valid);
+for i_session = idx_session'
+    % Find the position of the target trial in proc_subsessions
+    % Check the interval since the start of the last trial
+    error_log(i_session)=sum(sbs_iti{i_session}<options.lasttrl);
+    if error_log(i_session) > 0
+        i_trial = length(sbs_iti{i_session});
+        last_trl_start = sbs_trlstart{i_session};
+        last_trl_start = last_trl_start(i_trial)*model.sr;
+        last_trl_stop = numel(sbs_data{i_session,1});
+        sbs_data_out{i_session,1}(last_trl_start:last_trl_stop) = [];
+    end
+end
+sbs_data = sbs_data_out;
 
 % find subsessions with events and define them to be processed
 proc_subsessions = ~cellfun(@isempty, sbs_trlstart);
