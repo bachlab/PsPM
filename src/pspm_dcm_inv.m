@@ -163,7 +163,7 @@ if isfield(options, 'rf')
     elseif isnumeric(options.rf)
         theta = options.rf;
     else
-        warning('Unknown RF format (must be file name or numeric).');
+        warning('Unknown RF format (must be file name or numeric).'); return;
     end;
     if numel(theta) ~= theta_n
         warning('Wrong number of parameters specified.'); return; 
