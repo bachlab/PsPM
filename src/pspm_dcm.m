@@ -77,6 +77,12 @@ function dcm = pspm_dcm(model, options)
 % - options.eventnames: cell array of names for individual events, in the
 %   order they are specified in the model.timing array - to be used for
 %   display and export only
+%
+% filtering options
+% - options.lasttrl: a cut-off value set for the interval since the start
+%   of the last trial. Default as 7s. The last trials with insufficient
+%   information (less than 7s) will be removed. Can be set as infinity to
+%   ignore this filtering.
 % 
 % OUTPUT:   fn - name of the model file
 %           dcm - model struct
@@ -589,19 +595,26 @@ end
 
 % Remove the trial that has insufficient information
 sbs_data_out = sbs_data;
+% Find the index of only valid sessions
 flag_valid = ~cellfun(@isempty, sbs_trlstart);
+% Initialise the record of filtered trials
 error_log = zeros(size(sbs_iti));
 % Do processing in the index of valid sessions
 idx_session = nonzeros((1:size(sbs_data,1)).*flag_valid);
 for i_session = idx_session'
-    % Find the position of the target trial in proc_subsessions
     % Check the interval since the start of the last trial
-    error_log(i_session)=sum(sbs_iti{i_session}<options.lasttrl);
+    error_log(i_session)=sbs_iti{i_session}(end)<options.lasttrl;
+    % Remove the last trial if the interval since the start of the last
+    % trial is less than 7s
     if error_log(i_session) > 0
         i_trial = length(sbs_iti{i_session});
+        % Find the position of the target trial in proc_subsessions
         last_trl_start = sbs_trlstart{i_session};
+        % Convert from time (s) to data points
         last_trl_start = last_trl_start(i_trial)*model.sr;
+        % Get the end of the data in this sesstion
         last_trl_stop = numel(sbs_data{i_session,1});
+        % Remove the elememts since the start of the last trial
         sbs_data_out{i_session,1}(last_trl_start:last_trl_stop) = [];
     end
 end
