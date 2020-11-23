@@ -175,7 +175,6 @@ for d = 1:numel(D)
         splitpoint = options.splitpoints;
     end
     
-    
     if ~isempty(splitpoint)
         for s = 1:(numel(splitpoint)+1)
             if s == 1
@@ -259,14 +258,14 @@ for d = 1:numel(D)
                         foo(foo < 0) = [];
                         foo = foo - sta_prefix;
                         data{k}.data = foo;
-                        if isfield(indata{k},'makerinfo')
-                            if isfield(indata{k}.makerinfo, 'value')
-                                foo_markervalues = indata{k}.makerinfo.value;
+                        if isfield(indata{k},'markerinfo')
+                            if isfield(indata{k}.markerinfo, 'value')
+                                foo_markervalues = indata{k}.markerinfo.value;
                                 foo_markervalues = foo_markervalues(foo_idx);
                                 data{k}.markerinfo.value = foo_markervalues;
                             end
-                            if isfield(indata{k}.makerinfo, 'name')
-                                foo_markernames = indata{k}.makerinfo.name;
+                            if isfield(indata{k}.markerinfo, 'name')
+                                foo_markernames = indata{k}.markerinfo.name;
                                 foo_markernames = foo_markernames(foo_idx);
                                 data{k}.markerinfo.name = foo_markernames;
                             end
