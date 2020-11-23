@@ -142,9 +142,12 @@ rev = '$Rev: 792 $';
 % ------------------------------------------------------------------------
 global settings;
 if isempty(settings), pspm_init; end;
-warnings = {};
 
 dcm = [];
+
+% cell array which saves all the warnings which are not followed
+% by a `return` function
+warnings = {};
 
 % check input arguments & set defaults
 % -------------------------------------------------------------------------
@@ -574,6 +577,7 @@ for iSn = 1:numel(model.timing)
     else
         warning('Could not find any enabled trial for file ''%s''', ...
             model.datafile{iSn});
+        [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
     end
 end
 
@@ -654,15 +658,15 @@ clear flexseq fixseq flexevents fixevents startevent
 
 % check ITI --
 if (options.indrf || options.getrf) && min(proc_miniti) < 5
-    warnings{1} = ('Inter trial interval is too short to estimate individual CRF - at least 5 s needed. Standard CRF will be used instead.');
-    fprintf('\n%s\n', warnings{1});
+    warning('Inter trial interval is too short to estimate individual CRF - at least 5 s needed. Standard CRF will be used instead.');
+    [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
     options.indrf = 0;
 end;
 
 % extract PCA of last fixed response (eSCR) if last event is fixed --
 if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
         || (max(options.fixevents > max(options.flexevents(:, 2), [], 2))))
-    [foo, lastfix] = max(options.fixevents);
+    [ ~ , lastfix] = max(options.fixevents);
     % extract data
     winsize = round(model.sr * min([proc_miniti 10]));
     D = []; c = 1;
@@ -673,7 +677,7 @@ if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
         foo(foo < 0) = [];
         for n = 1:size(foo, 1)
             win = ceil(model.sr * foo(n) + (1:winsize));
-            row = get_data_after_trial_filling_with_nans_when_necessary(scr_sess, win, n, isbSn, model.iti, proc_miniti);
+            [row,warnings] = get_data_after_trial_filling_with_nans_when_necessary(scr_sess, win, n, isbSn, model.iti, proc_miniti, warnings);
             D(c, 1:numel(row)) = row;
             c = c + 1;
         end;
@@ -701,14 +705,15 @@ if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
         der = conv(der, ones(10, 1));
         der = der(ceil(3 * model.sr):end);
         if all(der > 0) || all(der < 0)
-            warnings{1} = ('No peak detected in response to outcomes. Cannot individually adjust CRF. Standard CRF will be used instead.');
-            fprintf('\n%s\n', warnings{1});
+            warning('ID:PCA_eSCR','No peak detected in response to outcomes. Cannot individually adjust CRF. Standard CRF will be used instead.');
+            [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
             options.indrf = 0;
         else
             options.eSCR = eSCR;
         end;
     else
         warning('ID:invalid_input', 'Due to NaNs after some trial endings, PCA could not be computed');
+        [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
     end
 end;
 
@@ -721,7 +726,7 @@ for isbSn = 1:numel(model.scr)
         win = ceil(((model.sr * model.trlstart{isbSn}(n)):(model.sr * model.trlstop{isbSn}(n) + winsize)));
         % correct rounding errors
         win(win == 0) = [];
-        row = get_data_after_trial_filling_with_nans_when_necessary(scr_sess, win, n, isbSn, model.iti, proc_miniti);
+        [row,warnings] = get_data_after_trial_filling_with_nans_when_necessary(scr_sess, win, n, isbSn, model.iti, proc_miniti, warnings);
         D(c, 1:numel(row)) = row;
         c = c + 1;
     end;
@@ -751,6 +756,7 @@ if (options.indrf || options.getrf) && ~isempty(options.flexevents)
         options.aSCR = aSCR;
     else
         warning('ID:invalid_input', 'Due to NaNs after some trial endings, PCA could not be computed');
+        [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
     end
 end;
 
@@ -760,7 +766,6 @@ options.meanSCR = (nanmean(D))';
 % invert DCM
 % ------------------------------------------------------------------------
 dcm = pspm_dcm_inv(model, options);
-
 
 % assemble stats & names
 % ------------------------------------------------------------------------
@@ -832,7 +837,7 @@ end;
 
 end
 
-function datacol = get_data_after_trial_filling_with_nans_when_necessary(scr_sess, win, n, isbSn, sbs_iti, proc_miniti)
+function [datacol, warnings] = get_data_after_trial_filling_with_nans_when_necessary(scr_sess, win, n, isbSn, sbs_iti, proc_miniti, warnings)
     % Try to get all the data elements after the end of the trial n in session isbSn. Indices of the elements
     % to return are stored in win. In case these indices are larger than size of scr_sess{isbSn}, then fill the
     % rest of the data with NaN values.
@@ -845,6 +850,7 @@ function datacol = get_data_after_trial_filling_with_nans_when_necessary(scr_ses
                 ' after each trial. Filling the rest with NaNs'],...
                 n, isbSn, sbs_iti{isbSn}(n), proc_miniti(isbSn)...
         ));
+        [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
         win(end - num_indices_outside_scr + 1 : end) = [];
         datacol(1:numel(win)) = scr_sess(win);
         datacol(numel(win) + 1 : end) = NaN;
