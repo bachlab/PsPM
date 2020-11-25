@@ -15,5 +15,5 @@ vendor/
 .DS_Store
 
 # Ignore all the MATLAB files
-.MATLABDriveTag
-.asv
+*.MATLABDriveTag
+*.asv

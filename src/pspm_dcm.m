@@ -79,7 +79,7 @@ function dcm = pspm_dcm(model, options)
 %   display and export only
 %
 % filtering options
-% - options.lasttrl: a cut-off value set for the interval since the start
+% - options.trialfilter: a cut-off value set for the interval since the start
 %   of the last trial. Default as 7s. The last trials with insufficient
 %   information (less than 7s) will be removed. Can be set as infinity to
 %   ignore this filtering.
@@ -243,7 +243,7 @@ try options.dispsmallwin; catch, options.dispsmallwin = 0; end
 try options.crfupdate; catch, options.crfupdate = 0; end
 try options.eventnames; catch, options.eventnames = {}; end
 try options.trlnames; catch, options.trlnames = {}; end
-try options.lasttrl; catch, options.lasttrl = 7; end
+try options.trialfilter; catch, options.trialfilter = 7; end
 
 % check option fields --
 % numeric fields
@@ -603,7 +603,7 @@ error_log = zeros(size(sbs_iti));
 idx_session = nonzeros((1:size(sbs_data,1)).*flag_valid);
 for i_session = idx_session'
     % Check the interval since the start of the last trial
-    error_log(i_session)=sbs_iti{i_session}(end)<options.lasttrl;
+    error_log(i_session)=sbs_iti{i_session}(end)<options.trialfilter;
     % Remove the last trial if the interval since the start of the last
     % trial is less than 7s
     if error_log(i_session) > 0
@@ -843,6 +843,7 @@ dcm.warnings = warnings;
 dcm.modeltype = 'dcm';
 dcm.modality = settings.modalities.dcm;
 dcm.revision = rev;
+dcm.lasttrialfilter = error_log; % recorded the sessions that have last trial filtered
 
 if ~options.nosave
     save(model.modelfile, 'dcm');
