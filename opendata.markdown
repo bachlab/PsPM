@@ -43,6 +43,17 @@ Fear conditioning data sets are provided in a standardised format to facilitate 
 
 <tr>
 	<td>
+		<a title="PsPM-CogSF: SCR, ECG and respiration measurements during mental arithmetic, attention, and rest" href="https://doi.org/10.5281/zenodo.3900168" target="_blank"><b>PsPM-CogSF</b></a>
+	</td>
+	<td>
+		<a title="Dominik R. Bach & Matthias Staib (2015) A matching pursuit algorithm for inferring tonic sympathetic arousal from spontaneous skin conductance fluctuations. Psychophysiology, 52:8, pp 1106-1112." href="https://doi.org/10.1111/psyp.12434">A matching pursuit algorithm for inferring tonic sympathetic arousal from spontaneous skin conductance fluctuations</a>
+	</td>
+	<td>
+	</td>
+</tr>
+
+<tr>
+	<td>
 		<a title="PsPM-DoxMemP: SCR, ECG and respiration measurements in a delay fear conditioning task with visual CS and electrical US." href="https://doi.org/10.5281/zenodo.1887738" target="_blank"><b>PsPM-DoxMemP</b></a>
 	</td>
 	<td>
@@ -72,6 +83,17 @@ Fear conditioning data sets are provided in a standardised format to facilitate 
 		<a title="Dominik R Bach &amp; Monika Näf &amp; Markus Deutschmann &amp; Shiva K. Tyagarajan &amp; Boris B. Quednow (2019) Threat memory reminder under matrix metalloproteinase 9 inhibitor doxycycline globally reduces subsequent memory plasticity. Journal of Neuroscience, 1285-19" href="https://dx.doi.org/10.1523/JNEUROSCI.1285-19.2019 " target="_blank">Threat memory reminder under matrix metalloproteinase 9 inhibitor doxycycline globally reduces subsequent memory plasticity</a>
 	</td>
 	<td></td>
+</tr>
+
+<tr>
+	<td>
+		<a title="PsPM-EWO: Eye tracker (including pupillometry) measurements from emotional-words tasks" href="https://doi.org/10.5281/zenodo.4147043" target="_blank"><b>PsPM-EWO</b></a>
+	</td>
+	<td>
+		<a title="Christoph W. Korn &amp Dominik R. Bach (2016) A solid frame for the window on cognition: Modeling event-related pupil responses. Journal of Vision , 16:28, pp 1–16." href="https://doi.org/10.1167/16.3.28">A solid frame for the window on cognition: Modeling event-related pupil responses</a>
+	</td>
+	<td>
+	</td>
 </tr>
 
 <tr>
@@ -120,6 +142,17 @@ Fear conditioning data sets are provided in a standardised format to facilitate 
 	</td>
 	<td>
 		<a title="Dominik R. Bach &amp Samuel Gerster &amp Athina Tzovara &amp Giuseppe Castegnetti (2016) A linear model for event-related respiration responses. Journal of Neuroscience Methods, 270, pp 147-155" href="https://doi.org/10.1016/j.jneumeth.2016.06.001" target="_blank">A linear model for event-related respiration responses</a>
+	</td>
+</tr>
+
+<tr>
+	<td>
+		<a title="PsPM-HRM5: SCR, ECG and respiration measurements in response to positive/negative IAPS pictures, and neutral/aversive sounds" href="https://doi.org/10.5281/zenodo.3860807" target="_blank"><b>PsPM-HRM5</b></a>
+	</td>
+	<td>
+		<a title="Philipp C. Paulus & Giuseppe Castegnetti & Dominik R. Bach (2016) Modeling event-related heart period responses. Psychophysiology, 53:6, pp 837-846." href="https://doi.org/10.1111/psyp.12622">Modeling event‐related heart period responses</a>
+	</td>
+	<td>
 	</td>
 </tr>
 
@@ -186,7 +219,9 @@ Fear conditioning data sets are provided in a standardised format to facilitate 
 	<td>
 		<a title="Dominik R. Bach &amp; Samuel Gerster &amp; Athina Tzovara &amp; Giuseppe Castegnetti (2016) A linear model for event-related respiration responses. Journal of Neuroscience Methods, 270, pp 147-155" href="https://doi.org/10.1016/j.jneumeth.2016.06.001" target="_blank">A linear model for event-related respiration responses</a>
 	</td>
-	<td></td>
+	<td>
+		<a title="Christoph W. Korn &amp Dominik R. Bach (2016) A solid frame for the window on cognition: Modeling event-related pupil responses. Journal of Vision , 16:28, pp 1–16." href="https://doi.org/10.1167/16.3.28">A solid frame for the window on cognition: Modeling event-related pupil responses</a>
+	</td>
 </tr>
 
 <tr>
@@ -201,6 +236,17 @@ Fear conditioning data sets are provided in a standardised format to facilitate 
 
 <tr>
 	<td>
+		<a title="PsPM-SC2F: SCR, ECG, PPU and respiration measurements from a delay fear conditioning task with auditory CS, performed during MRI scanning" href="https://doi.org/10.5281/zenodo.4045656" target="_blank"><b>PsPM-SC2F</b></a>
+	</td>
+	<td>
+		<a title="Matthias Staib & Dominik R. Bach (2018) Stimulus-invariant auditory cortex threat encoding during fear conditioning with simple and complex sounds. NeuroImage, 166, pp 276-284, Elsevier Science." href="https://doi.org/10.1016/j.neuroimage.2017.11.009">Stimulus-invariant auditory cortex threat encoding during fear conditioning with simple and complex sounds</a>
+	</td>
+	<td>
+	</td>
+</tr>
+
+<tr>
+	<td>
 		<a title="PsPM-SC4B: SCR, ECG, EMG, PSR and respiration measurements in a delay fear conditioning task with auditory CS and electrical US" href="https://doi.org/10.5281/zenodo.1039580" target="_blank"><b>PsPM-SC4B</b></a>
 	</td>
 	<td>
@@ -208,6 +254,28 @@ Fear conditioning data sets are provided in a standardised format to facilitate 
 	</td>
 	<td>
 		<a title="Christoph W. Korn &amp; Matthias Staib &amp; Athina Tzovara &amp; Giuseppe Castegnetti &amp; Dominik R. Bach (2017) A pupil size response model to assess fear learning. Psychophysiology, 54:3, pp 330-343." href="https://dx.doi.org/10.1111/psyp.12801" target="_blank">A pupil size response model to assess fear learning</a><br /><a href="https://doi.org/10.1016/j.neuroimage.2017.11.009">Stimulus-invariant auditory cortex threat encoding during fear conditioning with simple and complex sounds</a>
+	</td>
+</tr>
+
+<tr>
+	<td>
+		<a title="PsPM-SCBD: Skin conductance response from a delay fear conditioning task with auditory CS (monophones/triads)" href="https://doi.org/10.5281/zenodo.4115079" target="_blank"><b>PsPM-SCBD</b></a>
+	</td>
+	<td>
+		<a title="Matthias Staib & Giuseppe Castegnetti & Dominik R. Bach (2015) Optimising a model-based approach to inferring fear learning from skin conductance responses. Journal of Neuroscience Methods, 255, pp 131-138." href="https://doi.org/10.1016/j.jneumeth.2015.08.009">Optimising a model-based approach to inferring fear learning from skin conductance responses</a>
+	</td>
+	<td>
+	</td>
+</tr>
+
+<tr>
+	<td>
+		<a title="PsPM-SCB2D: Skin conductance response from a delay fear conditioning task with auditory CS (monophones/triads)" href="https://doi.org/10.5281/zenodo.4071223" target="_blank"><b>PsPM-SCB2D</b></a>
+	</td>
+	<td>
+		<a title="Matthias Staib & Aslan Abivardi & Dominik R. Bach (2019) Primary auditory cortex representation of fear-conditioned musical sounds. Human Brain Mapping, 41:4, pp 882-891, Wiley Periodicals, Inc." href="https://doi.org/10.1002/hbm.24846">Primary auditory cortex representation of fear-conditioned musical sounds</a>
+	</td>
+	<td>
 	</td>
 </tr>
 
@@ -301,12 +369,34 @@ Fear conditioning data sets are provided in a standardised format to facilitate 
 
 <tr>
 	<td>
+		<a title="PsPM-SF: SCR, ECG, PPU and respiration measurements from a delay fear conditioning task with auditory CS (monophones/triads), performed during MRI scanning" href="https://doi.org/10.5281/zenodo.4059297" target="_blank"><b>PsPM-SF</b></a>
+	</td>
+	<td>
+		<a title="Matthias Staib & Aslan Abivardi & Dominik R. Bach (2019) Primary auditory cortex representation of fear-conditioned musical sounds. Human Brain Mapping, 41:4, pp 882-891, Wiley Periodicals, Inc." href="https://doi.org/10.1002/hbm.24846">Primary auditory cortex representation of fear-conditioned musical sounds</a>
+	</td>
+	<td>
+	</td>
+</tr>
+
+<tr>
+	<td>
 		<a title="PsPM-SMD: SCR, EMG, ECG, and respiration measurement in response to auditory startle probes" href="https://doi.org/10.5281/zenodo.3430920" target="_blank"><b>PsPM-SMD</b></a>
 	</td>
 	<td>
 		<a title="Saurabh Khemka &amp Athina Tzovara &amp Samuel Gerster &amp Boris B. Quednow &amp Dominik R. Bach (2016) Modeling startle eyeblink electromyogram to assess fear learning. Psychophysiology, 54:2, pp 204-214" href="https://doi.org/10.1111/psyp.12775" target="_blank"> Modeling startle eyeblink electromyogram to assess fear learning</a>
 	</td>
 	<td></td>
+</tr>
+
+<tr>
+	<td>
+		<a title="PsPM-SSNA_1-2: Sudomotor Nerve Activity and Skin Conductance Response to 1: Aversive Sounds and 2: Auditory Oddballs" href="https://doi.org/10.5281/zenodo.3865363" target="_blank"><b>PsPM-SSNA_1-2</b></a>
+	</td>
+	<td>
+		<a title="Samuel Gerster & Barbara Namer & Mikael Elam & Dominik R. Bach (2017) Testing a linear time invariant model for skin conductance responses by intraneural recording and stimulation. Psychophysiology, 55:2, pp 1-10." href=" https://doi.org/10.1111/psyp.12986">Testing a linear time invariant model for skin conductance responses by intraneural recording and stimulation</a>
+	</td>
+	<td>
+	</td>
 </tr>
 
 <tr>
@@ -375,6 +465,17 @@ Fear conditioning data sets are provided in a standardised format to facilitate 
 
 <tr>
 	<td>
+		<a title="PsPM-VC1F: SCR, ECG, PPU, respiration and pupil measurements delay from a fear conditioning task with visual CS, performed during MRI scanning" href="https://doi.org/10.5281/zenodo.3980837" target="_blank"><b>PsPM-VC1F</b></a>
+	</td>
+	<td>
+		<a title="Giuseppe Castegnetti & Athina Tzovara & Matthias Staib & Samuel Gerster & Dominik R. Bach (2017) Assessing fear learning via conditioned respiratory amplitude responses. Psychophysiology, 54:2, pp 215-223." href="https://doi.org/10.1111/psyp.12778">Assessing fear learning via conditioned respiratory amplitude responses</a>
+	</td>
+	<td>
+	</td>
+</tr>
+
+<tr>
+	<td>
 		<a title="PsPM-VC7B: SCR, ECG, EMG, PSR and respiration measurements in a delay fear conditioning task with visual CS and electrical US" href="https://doi.org/10.5281/zenodo.1211610" target="_blank"><b>PsPM-VC7B</b></a>
 	</td>
 	<td>
@@ -383,6 +484,17 @@ Fear conditioning data sets are provided in a standardised format to facilitate 
 	<td></td>
 </tr>
 
+<tr>
+	<td>
+		<a title="PsPM-VIS: SCR, ECG, respiration and eyetracker measurements in a delay fear conditioning task with visual CS and electrical US" href="https://doi.org/10.5281/zenodo.3667714" target="_blank"><b>PsPM-VIS</b></a>
+	</td>
+	<td>
+		<a title="Yanfang Xia & Filip Melinscak & Dominik R. Bach (2020) Saccadic Scanpath Length: An Index for Human Threat Conditioning. Under review." href="https://doi.org/10.31234/osf.io/qtpve">Saccadic Scanpath Length: An Index for Human Threat Conditioning</a>
+	</td>
+	<td>
+	</td>
+</tr>
+
 </tbody>
 </table>
-All data sets are hosted on [zenodo](https://zenodo.org/)
+All data sets are hosted on [Zenodo](https://zenodo.org/)
