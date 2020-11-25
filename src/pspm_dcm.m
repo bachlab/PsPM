@@ -628,6 +628,7 @@ model.trlstop  =  sbs_trlstop(proc_subsessions);
 model.iti      =  sbs_iti(proc_subsessions);
 model.events   =  {sbs_newevents{1}(proc_subsessions), ...
     sbs_newevents{2}(proc_subsessions)};
+model.lasttrlfiltered = error_log; % recorded the sessions that have last trial filtered
 model.scr      =  sbs_data(proc_subsessions);
 options.missing  =  sbs_missing(proc_subsessions);
 
@@ -843,7 +844,6 @@ dcm.warnings = warnings;
 dcm.modeltype = 'dcm';
 dcm.modality = settings.modalities.dcm;
 dcm.revision = rev;
-dcm.lasttrialfilter = error_log; % recorded the sessions that have last trial filtered
 
 if ~options.nosave
     save(model.modelfile, 'dcm');
