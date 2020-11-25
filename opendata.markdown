@@ -401,6 +401,20 @@ Fear conditioning data sets are provided in a standardised format to facilitate 
 
 <tr>
 	<td>
+		<a title="PsPM-SSNA_3: Skin conductance response to stimulation of the peripheral median nerve with electrical impulses" href="https://doi.org/10.5281/zenodo.3891581" target="_blank"><b>PsPM-SSNA_3</b></a>
+	</td>
+	<td>
+		<a title="Klaus Kirnö & Masanari Kunimoto & Stefan Lundin & Mikael Elam & B. Gunnar Wallin (1991) Can Galvanic Skin Response Be Used as a Quantitative Estimate of Sympathetic Nerve Activity in Regional Anesthesia?. Anesthesia & Analgesia, 73:2, pp 138-142." href="https://doi.org/10.1213/00000539-199108000-00006">Can Galvanic Skin Response Be Used as a Quantitative Estimate of Sympathetic Nerve Activity in Regional Anesthesia?</a>
+	</td>
+	<td>
+		<a title="Masanari Kunimoto & Klaus Kirnö & Mikael Elam & B. Gunnar Wallin (1991) Neuroeffector characteristics of sweat glands in the human hand activated by regular neural stimuli. The Journal of Physiology, 442." href="https://doi.org/10.1113/jphysiol.1991.sp018799">Neuroeffector characteristics of sweat glands in the human hand activated by regular neural stimuli</a>
+		<br />
+		<a title="Samuel Gerster & Barbara Namer & Mikael Elam & Dominik R. Bach (2017) Testing a linear time invariant model for skin conductance responses by intraneural recording and stimulation. Psychophysiology, 55:2, pp 1-10." href="https://doi.org/10.1111/psyp.12986">Testing a linear time invariant model for skin conductance responses by intraneural recording and stimulation</a>
+	</td>
+</tr>
+
+<tr>
+	<td>
 		<a title="PsPM-TC: SCR, ECG, EMG and respiration measurements in a discriminant trace fear conditioning task with visual CS and electrical US." href="https://doi.org/10.5281/zenodo.1404810" target="_blank"><b>PsPM-TC</b></a>
 	</td>
 	<td>
@@ -489,7 +503,7 @@ Fear conditioning data sets are provided in a standardised format to facilitate 
 		<a title="PsPM-VIS: SCR, ECG, respiration and eyetracker measurements in a delay fear conditioning task with visual CS and electrical US" href="https://doi.org/10.5281/zenodo.3667714" target="_blank"><b>PsPM-VIS</b></a>
 	</td>
 	<td>
-		<a title="Yanfang Xia & Filip Melinscak & Dominik R. Bach (2020) Saccadic Scanpath Length: An Index for Human Threat Conditioning. Under review." href="https://doi.org/10.31234/osf.io/qtpve">Saccadic Scanpath Length: An Index for Human Threat Conditioning</a>
+		<a title="Yanfang Xia & Filip Melinscak & Dominik R. Bach (2020) Saccadic scanpath length: an index for human threat conditioning. Behav Res Methods. " href="https://doi.org/10.3758/s13428-020-01490-5">Saccadic scanpath length: an index for human threat conditioning.</a>
 	</td>
 	<td>
 	</td>
