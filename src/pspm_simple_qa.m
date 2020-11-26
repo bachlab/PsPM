@@ -29,6 +29,9 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 %                                       Default: 0 s - no effect on filter
 %           expand_epochs:              A float in seconds to determine by how much data on the flanks of artefact epochs will be removed.
 %                                       Default: 0.5 s
+%			change_data:				A boolean value to choose whether to change the data or not
+%										Default: true
+%			artefact_epochs_filename:	If provided to save the artefact epoches, a string as the file name of the .mat
 %           
 %                                       
 %__________________________________________________________________________
@@ -76,6 +79,10 @@ if ~isfield(options, 'expand_epochs')
     options.expand_epochs = 0.5;
 end
 
+if ~isfield(options, 'change_data')
+    options.change_data = true;
+end
+
 % sanity checks
 if ~isnumeric(data)
     warning('ID:invalid_input', 'Argument ''data'' must be numeric.'); return;
@@ -93,8 +100,20 @@ elseif isfield(options, 'missing_epochs_filename')
     if ~ischar(options.missing_epochs_filename)
         warning('ID:invalid_input', 'Argument ''options.missing_epochs_filename'' must be char array.'); return;
     end
-    
     [pth, ~, ext] = fileparts(options.missing_epochs_filename);
+    if ~isempty(pth) && exist(pth,'dir')~=7
+        warning('ID:invalid_input','Please specify a valid output directory if you want to save missing epochs.')
+        return;
+    end
+    if ~isempty(ext)
+        warning('ID:invalid_input','Please specify a valid filename (without extension) if you want to save missing epochs.')
+        return;
+    end
+elseif isfield(options, 'artefact_epochs_filename')
+    if ~ischar(options.artefact_epochs_filename)
+        warning('ID:invalid_input', 'Argument ''options.artefact_epochs_filename'' must be char array.'); return;
+    end
+    [pth, ~, ext] = fileparts(options.artefact_epochs_filename);
     if ~isempty(pth) && exist(pth,'dir')~=7
         warning('ID:invalid_input','Please specify a valid output directory if you want to save artefact epochs.')
         return;
@@ -166,28 +185,37 @@ if isfield(options, 'missing_epochs_filename')
     else
         epochs = [];
     end
-
     save(options.missing_epochs_filename, 'epochs');
 end
 
-out = d;
+% write epochs to mat if artefact_epochs_filename option is present
+if isfield(options, 'artefact_epochs_filename')
+    epochs = filter_to_epochs(filt);
+    save(options.artefact_epochs_filename, 'epochs');
+end
+
+if options.change_data
+	out = d;
+else
+	out = data;
+end
 sts = 1;
 
 end
 
 function epochs = filter_to_epochs(filt)
-epoch_on = find(diff(filt) == -1) + 1;
-epoch_off = find(diff(filt) == 1);
+	epoch_on = find(diff(filt) == -1) + 1;
+	epoch_off = find(diff(filt) == 1);
 
-% ends on
-if (epoch_on(end) > epoch_off(end))
-    epoch_off(end + 1) = length(filt);
-end
+	% ends on
+	if (epoch_on(end) > epoch_off(end))
+		epoch_off(end + 1) = length(filt);
+	end
 
-% starts on
-if (epoch_on(1) > epoch_off(1))
-    epoch_on = [ 1; epoch_on ];
-end
+	% starts on
+	if (epoch_on(1) > epoch_off(1))
+    	epoch_on = [ 1; epoch_on ];
+	end
 
-epochs = [ epoch_on, epoch_off ];
+	epochs = [ epoch_on, epoch_off ];
 end
