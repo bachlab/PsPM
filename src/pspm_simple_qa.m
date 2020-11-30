@@ -29,6 +29,8 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 %                                       Default: 0 s - no effect on filter
 %           expand_epochs:              A float in seconds to determine by how much data on the flanks of artefact epochs will be removed.
 %                                       Default: 0.5 s
+%           clipping_step_size:			A numerical value specifying the step size in moving average algorithm for detecting clipping
+%			clipping_threshold:			A float between 0 and 1 specifying the proportion of local maximum in a step
 %           
 %                                       
 %__________________________________________________________________________
@@ -176,18 +178,34 @@ sts = 1;
 end
 
 function epochs = filter_to_epochs(filt)
-epoch_on = find(diff(filt) == -1) + 1;
-epoch_off = find(diff(filt) == 1);
+	epoch_on = find(diff(filt) == -1) + 1;
+	epoch_off = find(diff(filt) == 1);
 
-% ends on
-if (epoch_on(end) > epoch_off(end))
-    epoch_off(end + 1) = length(filt);
+	% ends on
+	if (epoch_on(end) > epoch_off(end))
+		epoch_off(end + 1) = length(filt);
+	end
+
+	% starts on
+	if (epoch_on(1) > epoch_off(1))
+		epoch_on = [ 1; epoch_on ];
+	end
+
+	epochs = [ epoch_on, epoch_off ];
 end
 
-% starts on
-if (epoch_on(1) > epoch_off(1))
-    epoch_on = [ 1; epoch_on ];
-end
-
-epochs = [ epoch_on, epoch_off ];
+function interval_clipping = detect_clipping(data, step_size, window_size, threshold)
+	l_data = length(data);
+	index_window_starter = 1:step_size:(l_data-mod((l_data-window_size),step_size)-window_size)/step_size;
+	index_clipping = zeros(1,length(index_window_starter));
+	for window_starter in index_window_starter
+		data_oi = data((window_starter+1):(window_starter+window_size))
+		data_oi_local_max = max(data_oi);
+		if sum(data_oi==data_oi_local_max)/length(data_oi) > threshold
+			index_clipping[find(index_window_starter==window_starter)] = 1;
+		end
+	end
+	interval_clipping = [kron(index_clipping,ones(1,window_size)), ...
+	zeros(1,length(step_size)), ...
+	zeros(1,mod((l_data-window_size))];
 end

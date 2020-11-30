@@ -10,5 +10,5 @@ vendor/
 # Ignore all the temporary files
 *.lyx~
 *.m~
-.DS_Store
-.MATLABDriveTag
+*.DS_Store
+*.MATLABDriveTag
