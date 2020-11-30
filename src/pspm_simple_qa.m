@@ -196,16 +196,16 @@ end
 
 function interval_clipping = detect_clipping(data, step_size, window_size, threshold)
 	l_data = length(data);
-	index_window_starter = 1:step_size:(l_data-mod((l_data-window_size),step_size)-window_size)/step_size;
+	index_window_starter = 1:step_size:(l_data-mod((l_data-window_size),step_size)-window_size-step_size+1);
 	index_clipping = zeros(1,length(index_window_starter));
-	for window_starter in index_window_starter
-		data_oi = data((window_starter+1):(window_starter+window_size))
+	for window_starter = index_window_starter
+		data_oi = data((window_starter+1):(window_starter+window_size));
 		data_oi_local_max = max(data_oi);
 		if sum(data_oi==data_oi_local_max)/length(data_oi) > threshold
-			index_clipping[find(index_window_starter==window_starter)] = 1;
+			index_clipping(find(index_window_starter==window_starter)) = 1;
 		end
 	end
 	interval_clipping = [kron(index_clipping,ones(1,window_size)), ...
 	zeros(1,length(step_size)), ...
-	zeros(1,mod((l_data-window_size))];
+	zeros(1,mod((l_data-window_size),step_size))];
 end
