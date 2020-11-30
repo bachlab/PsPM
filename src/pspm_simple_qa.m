@@ -29,9 +29,10 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 %                                       Default: 0 s - no effect on filter
 %           expand_epochs:              A float in seconds to determine by how much data on the flanks of artefact epochs will be removed.
 %                                       Default: 0.5 s
-%			change_data:				A boolean value to choose whether to change the data or not
-%										Default: true
-%			artefact_epochs_filename:	If provided to save the artefact epoches, a string as the file name of the .mat
+%			change_data:				A numerical value to choose whether to change the data or not
+%										Default: 1 (true)
+%			artefact_epochs_filename:	If provided to save the artefact epoches, a string as the filename. The file will be saved as
+%										artefact_epochs_filename.mat
 %           
 %                                       
 %__________________________________________________________________________
@@ -80,7 +81,7 @@ if ~isfield(options, 'expand_epochs')
 end
 
 if ~isfield(options, 'change_data')
-    options.change_data = true;
+    options.change_data = 1;
 end
 
 % sanity checks
@@ -122,6 +123,12 @@ elseif isfield(options, 'artefact_epochs_filename')
         warning('ID:invalid_input','Please specify a valid filename (without extension) if you want to save artefact epochs.')
         return;
     end
+end
+if options.change_data == 0 && ~isfield(options, 'artefact_epochs_filename')
+    warning('The artefact epochs will not be recorded as no artefact epoch files are expected to be saved and the data are expected to be unchanged')
+end
+if options.change_data == 1 && isfield(options, 'artefact_epochs_filename')
+    warning('The artefact epochs will be duplicately recorded as artefact epoch files are expected to be saved and the data are expected to be changed')
 end
 
 % create filters
@@ -194,7 +201,7 @@ if isfield(options, 'artefact_epochs_filename')
     save(options.artefact_epochs_filename, 'epochs');
 end
 
-if options.change_data
+if options.change_data == 1
 	out = d;
 else
 	out = data;
