@@ -173,7 +173,7 @@ if isfield(options, 'filename_epochs')
     else
         epochs = [];
     end
-    save(options.filename_epochs, 'epochs');
+    % save(options.filename_epochs, 'epochs');
 end
 
 if options.change_data == 1
