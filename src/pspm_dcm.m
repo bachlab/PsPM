@@ -1,91 +1,87 @@
 function dcm = pspm_dcm(model, options)
 % pspm_dcm sets up a DCM for skin conductance, prepares and normalises the 
 % data, passes it over to the model inversion routine, and saves both the 
-% forward model and its inversion
+% forward model and its inversion.
 %
-% Both flexible-latency (within a response window) and fixed-latency 
-% (evoked after a specified event) responses can be modelled. For fixed
-% responses, delay and dispersion are assumed to be constant (either
-% pre-determined or estimated from the data), while for flexible responses,
-% both are estimated for each individual trial. Flexible responses can for
-% example be anticipatory, decision-related, or evoked with unknown onset.
+% Both flexible-latency (within a response window) and fixed-latency (evoked after a specified event) responses can be modelled. 
+% For fixed responses, delay and dispersion are assumed to be constant (either pre-determined or estimated from the data), 
+%  while for flexible responses, both are estimated for each individual trial. 
+% Flexible responses can for example be anticipatory, decision-related, or evoked with unknown onset.
 %
-% FORMAT:    dcm = pspm_dcm(model, options)
+% FORMAT
+%	dcm = pspm_dcm(model, options)
 %
-% MODEL with required fields:
-% model.modelfile:  a file name for the model output
-% model.datafile:   a file name (single session) OR
-%                   a cell array of file names
-% model.timing:     a file name/cell array of events (single session) OR
-%                   a cell array of file names/cell arrays
-%                   When specifying file names, each file must be a *.mat 
-%                      file that contain a cell variable called 'events' 
-%                   Each cell should contain either one column 
-%                      (fixed response) or two columns (flexible response). 
-%                   All matrices in the array need to have the same number 
-%                    of rows, i.e. the event structure must be the same for 
-%                    every trial. If this is not the case, include "dummy" 
-%                    events with negative onsets
+% ARGUMENTS
+%	MODEL
+%		Required fields
+%			model.modelfile:	A file name for the model output.
+%			model.datafile:		A file name (single session) OR a cell array of file names.
+%			model.timing:		A file name/cell array of events (single session) OR a cell array of file names/cell arrays.
+%								When specifying file names, each file must be a *.mat file that contain a cell variable called 'events'.
+%								Each cell should contain either one column (fixed response) or two columns (flexible response). 
+%								All matrices in the array need to have the same number of rows,
+%									i.e. the event structure must be the same for every trial.
+%								If this is not the case, include "dummy" events with negative onsets.
+%		Optional fields
+%			model.missing:		Allows to specify missing (e. g. artefact) epochs in the data file. 
+%								See pspm_get_timing for epoch definition; specify a cell array for multiple input files.
+%								This must always be specified in SECONDS.
+%								Default: no missing values
+%			model.substhresh:	Minimum duration (in seconds) of NaN periods to cause splitting up into subsessions which get 
+%									evaluated independently (excluding NaN values).
+%								Default: 2.
+%			model.filter:		Filter settings.
+%								Modality specific default.
+%			model.channel:		Channel number.
+%								Default: first SCR channel
+%			model.norm:			Normalise data.
+%								i.e. Data are normalised during inversion but results transformed back into raw data units.
+%								Default: 0. 
+% 			model.constrained:	Constrained model for flexible responses which have fixed dispersion (0.3 s SD) but flexible latency.
 %
-% and optional fields
-% model.missing:    allows to specify missing (e. g. artefact) epochs in
-%                   the data file. See pspm_get_timing for epoch definition;
-%                   specify a cell array for multiple input files. This
-%                   must always be specified in SECONDS.
-%                   Default: no missing values
-% model.substhresh: minimum duration (in seconds) of NaN periods to 
-%                   cause splitting up into subsessions which get 
-%                   evaluated independently (excluding NaN values).
-%                   default is 2.
-% model.filter:     filter settings; modality specific default
-% model.channel:    channel number; default: first SCR channel
-% model.norm:       normalise data; default 0 (i. e. data are normalised
-%                   during inversion but results transformed back into raw 
-%                   data units)
-% model.constrained: constrained model for flexible responses which have 
-%                   have fixed dispersion (0.3 s SD) but flexible latency
-%
-% OPTIONS with optional fields:
-% response function options
-% - options.crfupdate: update CRF priors to observed SCRF, or use
-%                      pre-estimated priors (default)
-% - options.indrf: estimate the response function from the data (default 0)
-% - options.getrf: only estimate RF, do not do trial-wise DCM
-% - options.rf: call an external file to provide response function (for use
-%               when this is previously estimated by pspm_get_rf)
-%
-% inversion options
-% - options.depth: no of trials to invert at the same time (default: 2)
-% - options.sfpre: sf-free window before first event (default 2 s)
-% - options.sfpost: sf-free window after last event (default 5 s)
-% - options.sffreq: maximum frequency of SF in ITIs (default 0.5/s)
-% - options.sclpre: scl-change-free window before first event (default 2 s)
-% - options.sclpost: scl-change-free window after last event (default 5 s)
-% - options.aSCR_sigma_offset: minimum dispersion (standard deviation) for
-%   flexible responses (default 0.1 s)
-%
-% display options
-% - options.dispwin: display progress window (default 1)
-% - options.dispsmallwin: display intermediate windows (default 0);
-%
-% output options
-% - options.nosave: don't save dcm structure (e. g. used by pspm_get_rf)
-%
-% naming options
-% - options.trlnames: cell array of names for individual trials, is used for
-%   contrast manager only (e. g. condition descriptions)
-% - options.eventnames: cell array of names for individual events, in the
-%   order they are specified in the model.timing array - to be used for
-%   display and export only
-%
-% filtering options
-% - options.trialfilter: a cut-off value set for the interval since the start
-%   of the last trial. Default as 7s. The last trials with insufficient
-%   information (less than 7s) will be removed. Can be set as infinity to
-%   ignore this filtering.
+%	OPTIONS (all optional fields)
+% 		Response function options
+%			options.crfupdate:	Update CRF priors to observed SCRF, or use pre-estimated priors (default)
+%			options.indrf:		Estimate the response function from the data.
+%								Default: 0.
+%			options.getrf:		Only estimate RF, do not do trial-wise DCM
+%			options.rf:			Call an external file to provide response function (for use when this is previously estimated by pspm_get_rf)
+%		Inversion options
+%			options.depth:		No of trials to invert at the same time.
+%								Default: 2.
+%			options.sfpre:		sf-free window before first event.
+%								Default: 2s.
+%			options.sfpost:		sf-free window after last event.
+%								Default: 5s.
+%			options.sffreq:		maximum frequency of SF in ITIs.
+%								Default: 0.5/s.
+%			options.sclpre:		scl-change-free window before first event.
+%								Default: 2s.
+%			options.sclpost:	scl-change-free window after last event.
+%								Default: 5s.
+%			options.aSCR_sigma_offset: Minimum dispersion (standard deviation) for flexible responses.
+%								Default: 0.1s.
+%		Display options
+%			options.dispwin:	Display progress window.
+%								Default: 1.
+%			options.dispsmallwin: display intermediate windows.
+%								Default: 0.
+%		Output options
+%			options.nosave:		Don't save dcm structure (e.g. used by pspm_get_rf)
+%		Naming options
+%			options.trlnames:	Cell array of names for individual trials,
+%									is used for contrast manager only (e.g. condition descriptions)
+%			options.eventnames: Cell array of names for individual events,
+%									in the order they are specified in the model.timing array - to be used for display and export only
+%		Filtering options
+%			options.trialfilter:A cut-off value set for the interval since the start of the last trial.
+%								The last trials with insufficient information (less than 7s) will be removed.
+%								Can be set as infinity to ignore this filtering.
+%								Default as 7s.
 % 
-% OUTPUT:   fn - name of the model file
-%           dcm - model struct
+% OUTPUT
+%	fn:		Name of the model file.
+%	dcm:	Model struct.
 %
 % Output units: all timeunits are in seconds; eSCR and aSCR amplitude are
 % in SN units such that an eSCR SN pulse with 1 unit amplitude causes an eSCR
@@ -100,12 +96,9 @@ function dcm = pspm_dcm(model, options)
 % or not defined in model.missing are interpolated for averages and 
 % principal response components.
 %
-% pspm_dcm calculates the inter-trial intervals as the duration between the end
-% of a trial and the start of the next one. ITI value for the last trial in a
-% session is calculated as the duration between the end of the last trial and the
-% end of the whole session. Since this value may differ significantly from the
-% regular ITI duration values, it is not used when computing the minimum ITI
-% duration of a session.
+% pspm_dcm calculates the inter-trial intervals as the duration between the end of a trial and the start of the next one. 
+% ITI value for the last trial in a session is calculated as the duration between the end of the last trial and the end of the whole session. 
+% Since this value may differ significantly from the regular ITI duration values, it is not used when computing the minimum ITI duration of a session.
 %
 % Minimum of session specific min ITI values is used
 %   1. when computing mean SCR signal
@@ -144,7 +137,7 @@ function dcm = pspm_dcm(model, options)
 % function revision
 rev = '$Rev: 792 $';
 
-% initialise & set output
+%% Initialise & set output
 % ------------------------------------------------------------------------
 global settings;
 if isempty(settings), pspm_init; end;
@@ -155,14 +148,13 @@ dcm = [];
 % by a `return` function
 warnings = {};
 
-% check input arguments & set defaults
+%% Check input arguments & set defaults
 % -------------------------------------------------------------------------
 if nargin < 1
     warning('ID:invalid_input', 'No data to work on.'); fn = []; return;
 elseif nargin < 2
     options = struct([]);
 end;
-
 
 if ~isfield(model, 'datafile')
     warning('ID:invalid_input', 'No input data file specified.'); return;
@@ -188,7 +180,6 @@ if ~isfield(model, 'channel')
 elseif ~isnumeric(model.channel)
     warning('ID:invalid_input', 'Channel number must be numeric.'); return;
 end;
-
 
 % check normalisation --
 if ~isfield(model, 'norm')
@@ -309,7 +300,7 @@ if numel(model.missing) ~= nFile
         'files and missing value definitions is needed.']); return;
 end
 
-% check, get and prepare data
+%% Check, get and prepare data
 % ------------------------------------------------------------------------
 
 % split into subsessions
@@ -463,7 +454,7 @@ for vs = 1:numel(valid_subsessions)
 end
 clear foo
 
-% check & get events and group into flexible and fixed responses
+%% Check & get events and group into flexible and fixed responses
 % ------------------------------------------------------------------------
 trials = {};
 n_sbs = size(subsessions, 1);
@@ -632,7 +623,7 @@ model.lasttrlfiltered = error_log; % recorded the sessions that have last trial 
 model.scr      =  sbs_data(proc_subsessions);
 options.missing  =  sbs_missing(proc_subsessions);
 
-% prepare data for CRF estimation and for amplitude priors
+%% Prepare data for CRF estimation and for amplitude priors
 % ------------------------------------------------------------------------
 % get average event sequence per trial --
 if nEvnt(1) > 0
@@ -777,11 +768,11 @@ end;
 % get mean response
 options.meanSCR = (nanmean(D))';
 
-% invert DCM
+%% Invert DCM
 % ------------------------------------------------------------------------
 dcm = pspm_dcm_inv(model, options);
 
-% assemble stats & names
+%% Assemble stats & names
 % ------------------------------------------------------------------------
 dcm.stats = [];
 cTrl = 0;
@@ -834,7 +825,7 @@ else
     end;
 end;
 
-% assemble input and save
+%% Assemble input and save
 % ------------------------------------------------------------------------
 dcm.dcmname = model.modelfile; % this field will be removed in the future
 dcm.modelfile = model.modelfile;
