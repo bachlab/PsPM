@@ -16,5 +16,4 @@ vendor/
 
 # Ignore MATLAB sync files
 .MATLABDriveTag
-.github/ISSUE_TEMPLATE/.MATLABDriveTag
-*.asv
+.asv
