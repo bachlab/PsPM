@@ -15,5 +15,5 @@ vendor/
 *.DS_Store
 
 # Ignore MATLAB sync files
-.MATLABDriveTag
-.asv
+*.asv
+*.MATLABDriveTag
