@@ -176,6 +176,7 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 		save(options.filename_epochs, 'epochs');
 	end
 
+	% Change data if options.change_data is set positive
 	if options.change_data == 1
 		out = data_changed;
 	else
