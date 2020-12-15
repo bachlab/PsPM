@@ -17,3 +17,4 @@ vendor/
 # Ignore MATLAB sync files
 *.asv
 *.MATLABDriveTag
+*.mat
