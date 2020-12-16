@@ -23,7 +23,7 @@ classdef pspm_pp_test < matlab.unittest.TestCase
             % perform the other tests with invalid input data
             this.verifyWarning(@()pspm_pp('foo', fn, 100), 'ID:invalid_input');
             this.verifyWarning(@()pspm_pp('butter', fn, 19), 'ID:invalid_freq');
-            this.verifyWarning(@()pspm_pp('simple_qa', fn, struct('filename_epochs', 1)), 'ID:invalid_input');
+            this.verifyWarning(@()pspm_pp('simple_qa', fn, struct('missing_epochs_filename', 1)), 'ID:invalid_input');
         end
         
         function median_test(this)

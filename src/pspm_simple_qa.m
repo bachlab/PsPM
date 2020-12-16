@@ -13,7 +13,7 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 	%		min:                        Minimum value in microsiemens (default: 0.05).
 	%		max:                        Maximum value in microsiemens (default: 60).
 	%		slope:                      Maximum slope in microsiemens per sec (default: 10).
-	%		filename_epochs:			If provided will create a .mat file saving the epochs if it exists.
+	%		missing_epochs_filename:	If provided will create a .mat file saving the epochs if it exists.
 	%									The path can be specified, but if not the file will be saved in the current folder.
 	%									For instance, abc will create abc.mat
 	%		deflection_threshold:       Define an threshold in original data units for a slope to pass to be considerd in the filter.
@@ -98,11 +98,11 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 		warning('ID:invalid_input', 'Argument ''options.max'' must be numeric.'); return;
 	elseif ~isnumeric(options.slope)
 		warning('ID:invalid_input', 'Argument ''options.slope'' must be numeric.'); return;
-	elseif isfield(options, 'filename_epochs')
-		if ~ischar(options.filename_epochs)
-			warning('ID:invalid_input', 'Argument ''options.filename_epochs'' must be char array.'); return;
+	elseif isfield(options, 'missing_epochs_filename')
+		if ~ischar(options.missing_epochs_filename)
+			warning('ID:invalid_input', 'Argument ''options.missing_epochs_filename'' must be char array.'); return;
 		end
-		[pth, ~, ext] = fileparts(options.filename_epochs);
+		[pth, ~, ext] = fileparts(options.missing_epochs_filename);
 		if ~isempty(pth) && exist(pth,'dir')~=7
 			warning('ID:invalid_input','Please specify a valid output directory if you want to save missing epochs.');
 			return;
@@ -112,7 +112,7 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 			return;
 		end
 	end
-	if options.change_data == 0 && ~isfield(options, 'filename_epochs')
+	if options.change_data == 0 && ~isfield(options, 'missing_epochs_filename')
 		warning('No changes will be recorded, as epochs are expected to be dismissed and data are expected to be unchanged');
 	end
 
@@ -166,14 +166,14 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 	end
 	data_changed(filt) = data(filt);
 
-	%% Write epochs to mat if filename_epochs option is present
-	if isfield(options, 'filename_epochs')
+	%% Write epochs to mat if missing_epochs_filename option is present
+	if isfield(options, 'missing_epochs_filename')
 		if ~isempty(find(filt == 0, 1))
 			epochs = filter_to_epochs(filt);
 		else
 			epochs = [];
 		end
-		save(options.filename_epochs, 'epochs');
+		save(options.missing_epochs_filename, 'epochs');
 	end
 
 	% Change data if options.change_data is set positive
