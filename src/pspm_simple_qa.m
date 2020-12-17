@@ -107,13 +107,9 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 			warning('ID:invalid_input','Please specify a valid output directory if you want to save missing epochs.');
 			return;
 		end
-		if ~isempty(ext)
-			warning('ID:invalid_input','Please specify a valid filename (without extension) if you want to save missing epochs.');
-			return;
-		end
 	end
 	if options.change_data == 0 && ~isfield(options, 'missing_epochs_filename')
-		warning('No changes will be recorded, as epochs are expected to be dismissed and data are expected to be unchanged');
+		warning('This procedure leads to no output, according to the selected options.');
 	end
 
 	%% Create filters
