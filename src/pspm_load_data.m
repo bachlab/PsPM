@@ -126,15 +126,15 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
     elseif ~isstruct(chan) && ~exist(fn, 'file')
         warning('ID:nonexistent_file', 'Data file (%s) doesn''t exist', fn); return;
     elseif exist(fn, 'file') && isstruct(chan) && ~chan.options.overwrite && ~chan.options.dont_ask_overwrite
-        %overwrite = menu(sprintf('File (%s) already exists. Overwrite?', fn), 'yes', 'no');
-        %if overwrite == 1
-        %    chan.options.overwrite = 1;
-        %else
-        %    chan.options.overwrite = 0;
-        %    warning('Data not saved.\n');
-        %end
-        chan.options.overwrite = 1;
-        warning('Data overwritten');
+        overwrite = menu(sprintf('File (%s) already exists. Overwrite?', fn), 'yes', 'no');
+        if overwrite == 1
+            chan.options.overwrite = 1;
+        else
+            chan.options.overwrite = 0;
+            warning('Data not saved.\n');
+        end
+        %chan.options.overwrite = 1;
+        %warning('Data overwritten');
     end
 
     % check file structure
