@@ -12,8 +12,9 @@ vendor/
 *.m~
 
 # Ignore all the macOS files
-.DS_Store
+*.DS_Store
 
 # Ignore all the MATLAB files
 *.MATLABDriveTag
 *.asv
+*.mat
