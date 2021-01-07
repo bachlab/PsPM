@@ -50,6 +50,9 @@ function newdatafile = pspm_split_sessions(datafile, markerchannel, options)
 % PsPM 3.1
 % (C) 2008-2015 Linus Ruttimann & Tobias Moser (University of Zurich)
 
+% PsPM 5.0
+% Updating: use pspm_trim
+
 % $Id$
 % $Rev$
 
