@@ -48,6 +48,10 @@ function [sts, outdata] = pspm_interpolate(indata, options)
 %                       the data was loaded from. If 1 the data will be
 %                       written to a new file called 'i'+<old filename>.
 %                       (Default is 0)
+%       .trim_nan       Set to 1 to trim the out-of-range values at the end
+%                       of data and use the remaining non-zero for
+%                       interpolating
+%                       (Default is 1)
 % OUTPUT:
 %       sts:            Returns the status of the function
 %                       -1: function did not work properly
@@ -67,7 +71,7 @@ function [sts, outdata] = pspm_interpolate(indata, options)
 % initialise
 % -------------------------------------------------------------------------
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 % will return a cell of the same size as the indata
 outdata = {};
 sts = -1;
@@ -77,21 +81,22 @@ sts = -1;
 if nargin<1
     warning('ID:missing_data', 'No data.\n'); 
     return;
-end;
+end
 
 if isempty(indata)
     warning('ID:missing_data', 'Input data is empty, nothing to do.');
     return;
-end;
+end
 
 % set options ---
-try options.overwrite; catch, options.overwrite = 0; end;
-try options.method; catch, options.method = 'linear'; end;
-try options.channels; catch, options.channels = []; end;
-try options.newfile; catch, options.newfile = 0; end;
-try options.channel_action; catch, options.channel_action = 'add'; end;
-try options.extrapolate; catch, options.extrapolate = 0; end;
-try options.dont_ask_overwrite; catch, options.dont_ask_overwrite = 0; end;
+try options.overwrite; catch, options.overwrite = 0; end
+try options.method; catch, options.method = 'linear'; end
+try options.channels; catch, options.channels = []; end
+try options.newfile; catch, options.newfile = 0; end
+try options.channel_action; catch, options.channel_action = 'add'; end
+try options.extrapolate; catch, options.extrapolate = 0; end
+try options.dont_ask_overwrite; catch, options.dont_ask_overwrite = 0; end
+try options.trim_nan; catch, options.trim_nan = 1; end
 
 % check channel size
 if numel(options.channels) > 0
@@ -100,8 +105,8 @@ if numel(options.channels) > 0
         return;
     elseif (numel(options.channels) == 1) && ~iscell(options.channels)
         options.channels = {options.channels};
-    end;
-end;
+    end
+end
 
 % check if valid data in options
 if ~ismember(options.method, {'linear', 'nearest', 'next', 'previous', 'spline', 'pchip', 'cubic'})
@@ -126,7 +131,10 @@ elseif ~any(strcmpi(options.channel_action, {'add', 'replace'}))
 elseif ~islogical(options.overwrite) && ~isnumeric(options.overwrite)
     warning('ID:invalid_input', 'options.overwrite must be numeric or logical');
     return;
-end;
+    elseif ~islogical(options.trim_nan) && ~isnumeric(options.trim_nan)
+    warning('ID:invalid_input', 'options.trim_nan must be numeric or logical');
+    return;
+end
 
 % check data file argument --
 if ischar(indata) || isstruct(indata) || isnumeric(indata)
@@ -139,11 +147,11 @@ elseif iscell(indata) ...
 else
     warning('ID:invalid_input', 'Data must be either char, numeric, struct or cell array of char, numeric or struct.');
     return;
-end;
+end
 
 if iscell(indata)
     outdata = cell(size(D));
-end;
+end
 
 % work on all data files
 % -------------------------------------------------------------------------
@@ -159,7 +167,7 @@ for d=1:numel(D)
         fprintf('Interpolating %s ... \n', fn);
     elseif isnumeric(fn)
             inline_flag = 1;
-    end;
+    end
     
     % not inline data must be loaded first; check and get datafile ---
     if ~inline_flag
@@ -168,7 +176,7 @@ for d=1:numel(D)
             warning('ID:nonexistent_file', 'The file ''%s'' does not exist.', [fn]);
             outdata = {};
             return;
-        end;
+        end
         
         % struct get checked if structure is okay; files get loaded
         [lsts, infos, data] = pspm_load_data(fn, 0);
@@ -176,7 +184,7 @@ for d=1:numel(D)
             warning('ID:invalid_data_structure', 'Cannot load data from data');
             outdata = {};
             break;
-        end;
+        end
 
         if numel(options.channels) > 0 && numel(options.channels{d}) > 0
             % channels passed; try to get appropriate channels
@@ -186,19 +194,19 @@ for d=1:numel(D)
             % no channels passed; try to search appropriate channels
             work_chans = find(cellfun(@(f) ~strcmpi(f.header.units, 'events'), data))';
             chans = data(work_chans);
-        end;
+        end
         
         % sanity check chans should be a cell
         if ~iscell(chans) && numel(chans) == 1
             chans = {chans};
-        end;
+        end
         
         % look for event channels
         ev = cellfun(@(f) strcmpi(f.header.units, 'events'), chans);
         if any(ev)
             warning('ID:invalid_channeltype', 'Cannot interpolate event channels.');
             return;
-        end;
+        end
     else
         chans = {fn};
     end
@@ -209,11 +217,22 @@ for d=1:numel(D)
             dat = chans{k};
         else
             dat = chans{k}.data;
-        end;
+        end
         
         if numel(find(~isnan(dat))) < 2
             warning('ID:invalid_input','Need at least two sample points to run interpolation (Channel %i). Skipping.', k);
         else
+            
+            if options.trim_nan == 1
+                if isnan(dat(end))
+                    % trim the nan at the end
+                    id_nan = find(isnan(dat));
+                    id_nan_changed = find(diff(id_nan)-1)+1;
+                    id_nan_last = id_nan(id_nan_changed(end));
+                end
+                dat_remaining = dat(id_nan_last:end);
+                dat(id_nan_last:end) = [];
+            end
             x = 1:length(dat);
             v = dat;
             
@@ -236,7 +255,7 @@ for d=1:numel(D)
             else
                 e_overlap = max(xq) > max(x);
                 s_overlap = min(xq) < min(x);
-            end;
+            end
             
             if s_overlap || e_overlap
                 if ~options.extrapolate
@@ -256,21 +275,24 @@ for d=1:numel(D)
                 else
                     % extrapolate because of overlaps
                     vq = interp1(x, v, xq, options.method, 'extrap');
-                end;
+                end
             else
                 % no overlap
                 vq = interp1(x, v, xq, options.method);
-            end;
+            end
             
             dat(xq) = vq;
+            
+            % add the last nans to preserve the length
+            dat = [dat;dat_remaining];
             
             if inline_flag
                 chans{k} = dat;
             else
                 chans{k}.data = dat;
-            end;
-        end;
-    end;
+            end
+        end
+    end
     
     if ~inline_flag 
         clear savedata
@@ -282,7 +304,7 @@ for d=1:numel(D)
             nhist = numel(savedata.infos.history);
         else
             nhist = 0;
-        end;
+        end
         
         savedata.infos.history{nhist + 1} = ['Performed interpolation: ', ...
             sprintf('Channel %i: %.3f interpolated\n', [work_chans; interp_frac']), ...
@@ -309,32 +331,32 @@ for d=1:numel(D)
                 
                 if sts == 1
                     outdata{d} = newdatafile;
-                end;
+                end
             else
                 o = struct();
                 
                 % add to existing file 
                 if strcmp(options.channel_action, 'replace')
                     o.channel = work_chans;
-                end;
+                end
                     
                 o.msg.prefix = 'Interpolated channel';
                 [sts, infos] = pspm_write_channel(fn, savedata.data(work_chans), options.channel_action, o);
                 
                 % added channel ids are in infos.channel
                 outdata{d} = infos.channel;
-            end;
-        end;
+            end
+        end
     else
         outdata{d} = chans{1};
-    end;
+    end
    
-end;
+end
 
 % format output same as input
 if (numel(outdata) == 1) && ~iscell(indata)
     outdata = outdata{1};
-end;
+end
 
 sts = 1;
 
