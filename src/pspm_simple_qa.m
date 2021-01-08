@@ -57,7 +57,7 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 	%% initialise
 	global settings;
 	if isempty(settings)
-		pspm_init; 
+		pspm_init;
 	end
 	out = [];
 	sts = -1;
