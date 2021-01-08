@@ -4,7 +4,7 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 	% Rule 2:       Absolute slope of value change must be less than 10 microsiemens per second
 	%
 	% FORMAT:
-	%	[sts, out] = pspm_simple_qa(data, sr, options)
+	%   [sts, out] = pspm_simple_qa(data, sr, options)
 	%
 	% INPUT ARGUMENTS:
 	%	data:                           A numeric vector. Data should be in microsiemens.
@@ -28,7 +28,10 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 	%									Default: 0.5 s
 	%		change_data:				A numerical value to choose whether to change the data or not
 	%									Default: 1 (true)
-	%
+	%		clipping_step_size:			A numerical value specifying the step size in moving average algorithm for detecting clipping
+	%		clipping_threshold:			A float between 0 and 1 specifying the proportion of local maximum in a step
+	%		clipping_filename:			If provided will create a .mat file with the clipping,
+	%                                   e.g. abc will create abc.mat
 	% OUTPUT ARGUMENTS:
 	%	sts:							?
 	%	out:							The final output of the processed data.
@@ -47,14 +50,14 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 	% PsPM 5.0
 	% 2009-2017 Tobias Moser (University of Zurich)
 	% 2020 Samuel Maxwell & Dominik Bach (UCL)
-
+	% 2021 Dadi Zhao (UCL)
 	% $Id: pspm_pp.m 450 2017-07-03 15:17:02Z tmoser $
 	% $Rev: 450 $
 
-	%% Initialise
+	%% initialise
 	global settings;
 	if isempty(settings)
-		pspm_init;
+		pspm_init; 
 	end
 	out = [];
 	sts = -1;
@@ -84,6 +87,15 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 	if ~isfield(options, 'change_data')
 		options.change_data = 1;
 	end
+	if ~isfield(options, 'clipping_step_size')
+		options.clipping_step_size = 1000;
+	end
+	if ~isfield(options, 'clipping_n_window')
+		options.clipping_n_window = 5;
+	end
+	if ~isfield(options, 'clipping_threshold')
+		options.clipping_threshold = 0.8;
+	end
 
 	%% Sanity checks
 	if ~isnumeric(data)
@@ -110,6 +122,11 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 	end
 	if options.change_data == 0 && ~isfield(options, 'missing_epochs_filename')
 		warning('This procedure leads to no output, according to the selected options.');
+	end
+		
+	if isfield(options, 'clipping_filename')
+		data_clipping_detected = detect_clipping(data, options.clipping_step_size, options.clipping_n_window, options.clipping_threshold);
+		save(options.clipping_filename, 'data_clipping_detected');
 	end
 
 	%% Create filters
@@ -197,4 +214,34 @@ function epochs = filter_to_epochs(filt)	% Return the start and end points of th
 		epoch_on = 1;
 	end
 	epochs = [ epoch_on, epoch_off ];
+end
+
+function interval_clipping = detect_clipping(data, step_size, n_window, threshold) % test clipping
+	l_data = length(data);
+	window_size = n_window * step_size;
+	index_window_starter = 1:step_size:(l_data-mod((l_data-window_size),step_size)-window_size-step_size+1);
+	index_clipping = zeros(1,length(index_window_starter));
+	for window_starter = index_window_starter
+		data_oi_front = data((window_starter+1):(window_starter+window_size));
+		data_oi_front_max = max(data_oi_front);
+		if sum(data_oi_front==data_oi_front_max)/length(data_oi_front) > threshold
+			index_clipping(index_window_starter==window_starter) = 1;
+		end
+		if window_starter > window_size
+			data_oi_back = data((window_starter+1-+window_size):(window_starter));
+			data_oi_back_max = max(data_oi_front);
+			if sum(data_oi_back==data_oi_back_max)/length(data_oi_back) > threshold
+				index_clipping(index_window_starter==window_starter) = 1;
+			end
+		end
+	end
+	interval_clipping = [kron(index_clipping,ones(1,window_size)), ...
+	zeros(1,length(step_size)), ...
+	zeros(1,mod((l_data-window_size),step_size))];
+	interval_clipping = downsample(interval_clipping,n_window);
+	if length(interval_clipping) > l_data
+		interval_clipping((l_data+1):end) = [];
+	elseif length(interval_clipping) < l_data
+		interval_clipping((end+1):l_data) = 0;
+	end
 end
