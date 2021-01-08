@@ -31,7 +31,7 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 	%                                       Default: 0.5 s
 	%           clipping_step_size:			A numerical value specifying the step size in moving average algorithm for detecting clipping
 	%			clipping_threshold:			A float between 0 and 1 specifying the proportion of local maximum in a step
-    %			clipping_filename:			If provided will create a .mat file with the clipping,
+	%			clipping_filename:			If provided will create a .mat file with the clipping,
 	%                                       e.g. abc will create abc.mat
 	%
 	%
@@ -39,195 +39,203 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 	% PsPM 5.0
 	% 2009-2017 Tobias Moser (University of Zurich)
 	% 2020 Samuel Maxwell & Dominik Bach (UCL)
-
+	% 2021 Dadi Zhao (UCL)
 	% $Id: pspm_pp.m 450 2017-07-03 15:17:02Z tmoser $
 	% $Rev: 450 $
 
 	% initialise
 	% -------------------------------------------------------------------------
 	global settings;
-	if isempty(settings), pspm_init; end
-		out = [];
-		sts = -1;
+	if isempty(settings)
+		pspm_init; 
+	end
+	out = [];
+	sts = -1;
 
+	% set default values
+	if ~exist('options', 'var')
+		options = struct();
+	end
+	if ~isfield(options, 'min')
+		options.min = 0.05;
+	end
+	if ~isfield(options, 'max')
+		options.max = 60;
+	end
+	if ~isfield(options, 'slope')
+		options.slope = 10;
+	end
+	if ~isfield(options, 'deflection_threshold')
+		options.deflection_threshold = 0.1;
+	end
+	if ~isfield(options, 'data_island_threshold')
+		options.data_island_threshold = nan;
+	end
+	if ~isfield(options, 'expand_epochs')
+		options.expand_epochs = 0.5;
+	end
+	if ~isfield(options, 'change_data')
+		options.change_data = 1;
+	end
+	if ~isfield(options, 'clipping_step_size')
+		options.clipping_step_size = 1000;
+	end
+	if ~isfield(options, 'clipping_n_window')
+		options.clipping_n_window = 5;
+	end
+	if ~isfield(options, 'clipping_threshold')
+		options.clipping_threshold = 0.8;
+	end
 
-		% set default values
-		if ~exist('options', 'var')
-			options = struct();
+	% sanity checks
+	if ~isnumeric(data)
+		warning('ID:invalid_input', 'Argument ''data'' must be numeric.'); return;
+	elseif ~isnumeric(sr)
+		warning('ID:invalid_input', 'Argument ''sr'' must be numeric.'); return;
+	elseif ~any(size(data) > 1)
+		warning('ID:invalid_input', 'Argument ''data'' should contain > 1 data points.'); return;
+	elseif ~isnumeric(options.min)
+		warning('ID:invalid_input', 'Argument ''options.min'' must be numeric.'); return;
+	elseif ~isnumeric(options.max)
+		warning('ID:invalid_input', 'Argument ''options.max'' must be numeric.'); return;
+	elseif ~isnumeric(options.slope)
+		warning('ID:invalid_input', 'Argument ''options.slope'' must be numeric.'); return;
+	elseif isfield(options, 'missing_epochs_filename')
+		if ~ischar(options.missing_epochs_filename)
+			warning('ID:invalid_input', 'Argument ''options.missing_epochs_filename'' must be char array.'); return;
 		end
-
-		if ~isfield(options, 'min')
-			options.min = 0.05;
+		[pth, ~, ext] = fileparts(options.missing_epochs_filename);
+		if ~isempty(pth) && exist(pth,'dir')~=7
+			warning('ID:invalid_input','Please specify a valid output directory if you want to save artefact epochs.')
+			return;
 		end
+	end
+	if options.change_data == 0 && ~isfield(options, 'missing_epochs_filename')
+		warning('This procedure leads to no output, according to the selected options.');
+	end
+		
+	if isfield(options, 'clipping_filename')
+		data_clipping_detected = detect_clipping(data, options.clipping_step_size, options.clipping_n_window, options.clipping_threshold);
+		save(options.clipping_filename, 'data_clipping_detected');
+	end
 
-		if ~isfield(options, 'max')
-			options.max = 60;
-		end
+	% create filters
+	data_changed = NaN(size(data));
+	filt_range = data < options.max & data > options.min;
+	filt_slope = true(size(data));
+	filt_slope(2:end) = abs(diff(data)*sr) < options.slope;
 
-		if ~isfield(options, 'slope')
-			options.slope = 10;
-		end
-
-		if ~isfield(options, 'deflection_threshold')
-			options.deflection_threshold = 0.1;
-		end
-
-		if ~isfield(options, 'data_island_threshold')
-			options.data_island_threshold = nan;
-		end
-
-		if ~isfield(options, 'expand_epochs')
-			options.expand_epochs = 0.5;
-		end
-
-		% sanity checks
-		if ~isnumeric(data)
-			warning('ID:invalid_input', 'Argument ''data'' must be numeric.'); return;
-		elseif ~isnumeric(sr)
-			warning('ID:invalid_input', 'Argument ''sr'' must be numeric.'); return;
-		elseif ~any(size(data) > 1)
-			warning('ID:invalid_input', 'Argument ''data'' should contain > 1 data points.'); return;
-		elseif ~isnumeric(options.min)
-			warning('ID:invalid_input', 'Argument ''options.min'' must be numeric.'); return;
-		elseif ~isnumeric(options.max)
-			warning('ID:invalid_input', 'Argument ''options.max'' must be numeric.'); return;
-		elseif ~isnumeric(options.slope)
-			warning('ID:invalid_input', 'Argument ''options.slope'' must be numeric.'); return;
-		elseif isfield(options, 'missing_epochs_filename')
-			if ~ischar(options.missing_epochs_filename)
-				warning('ID:invalid_input', 'Argument ''options.missing_epochs_filename'' must be char array.'); return;
+	if (options.deflection_threshold ~= 0) && ~all(filt_slope==1)
+		slope_epochs = filter_to_epochs(filt_slope);
+		for r = slope_epochs'
+			if range(data(r(1):r(2))) < options.deflection_threshold
+				filt_slope(r(1):r(2)) = 1;
 			end
-    
-			[pth, ~, ext] = fileparts(options.missing_epochs_filename);
-			if ~isempty(pth) && exist(pth,'dir')~=7
-				warning('ID:invalid_input','Please specify a valid output directory if you want to save artefact epochs.')
-				return;
-			end
-			if ~isempty(ext)
-				warning('ID:invalid_input','Please specify a valid filename (without extension) if you want to save artefact epochs.')
-				return;
-			end
-        end
-
-		step_size = 1000;
-		n_window = 5;
-		threshold = 0.8;
-		data_clipping_detected = detect_clipping(data, step_size, n_window, threshold);
-        
-        if isfield(options, 'clipping_filename')
-			save(options.clipping_filename, 'data_clipping_detected');
-        end
-
-		% create filters
-		d = NaN(size(data));
-		range_filter = data < options.max & data > options.min;
-		slope_filter = true(size(data));
-		diff_data = diff(data);
-		slope_filter(2:end) = abs(diff_data*sr) < options.slope;
-
-		if (options.deflection_threshold ~= 0) && ~all(slope_filter==1)
-    
-			slope_epochs = filter_to_epochs(slope_filter);
-			for r = slope_epochs'
-				if range(data(r(1):r(2))) < options.deflection_threshold
-					slope_filter(r(1):r(2)) = 1;
-				end
-			end
-    
 		end
+	end
 
-		% combine filters
-		filt = range_filter & slope_filter;
+	% combine filters
+	filt = filt_range & filt_slope;
 
-		% find data islands and expand artefact islands
+	% find data islands and expand artefact islands
+	if isempty(find(filt==0, 1))
+		warning('Epoch was empty based on the current settings.');
+	else
 		if options.data_island_threshold > 0 || options.expand_epochs > 0
     
 			% work out data epochs
-			data_epochs = filter_to_epochs(1-filt); % gives data (rather than artefact) epochs
+			filt_epochs = filter_to_epochs(1-filt); % gives data (rather than artefact) epochs
     
 			if options.expand_epochs > 0
 				% remove data epochs too short to be shortened
-				epoch_duration = diff(data_epochs, 1, 2);
-				data_epochs(epoch_duration < 2 * ceil(options.expand_epochs * sr), :) = [];
+				epoch_duration = diff(filt_epochs, 1, 2);
+				filt_epochs(epoch_duration < 2 * ceil(options.expand_epochs * sr), :) = [];
 				% shorten data epochs
-				data_epochs(:, 1) = data_epochs(:, 1) + ceil(options.expand_epochs * sr);
-				data_epochs(:, 2) = data_epochs(:, 2) - ceil(options.expand_epochs * sr);
+				filt_epochs(:, 1) = filt_epochs(:, 1) + ceil(options.expand_epochs * sr);
+				filt_epochs(:, 2) = filt_epochs(:, 2) - ceil(options.expand_epochs * sr);
 			end
     
 			% correct possibly negative values
-			data_epochs(data_epochs(:, 2) < 1, 2) = 1;
+			filt_epochs(filt_epochs(:, 2) < 1, 2) = 1;
     
 			if options.data_island_threshold > 0
-				epoch_duration = diff(data_epochs, 1, 2);
-				data_epochs(epoch_duration < options.data_island_threshold * sr, :) = [];
-            end
+				epoch_duration = diff(filt_epochs, 1, 2);
+				filt_epochs(epoch_duration < options.data_island_threshold * sr, :) = [];
+			end
     
 			% write back into data
-			index(data_epochs(:, 1)) = 1;
-			index(data_epochs(:, 2)) = -1;
+			index(filt_epochs(:, 1)) = 1;
+			index(filt_epochs(:, 2)) = -1;
 			filt = (cumsum(index(:)) == 1); % (thanks Jan: https://www.mathworks.com/matlabcentral/answers/324955-replace-multiple-intervals-in-array-with-nan-no-loops)
-        end
-
-		d(filt) = data(filt);
-
-		% write epochs to mat if missing_epochs_filename option is present
-		if isfield(options, 'missing_epochs_filename')
-			if ~isempty(find(filt == 0, 1))
-				epochs = filter_to_epochs(filt);
-			else
-				epochs = [];
-            end
-			save(options.missing_epochs_filename, 'epochs');
 		end
-
-		out = d;
-		sts = 1;
-
 	end
 
-	function epochs = filter_to_epochs(filt)
-		epoch_on = find(diff(filt) == -1) + 1;
-		epoch_off = find(diff(filt) == 1);
+	data_changed(filt) = data(filt);
 
-		% ends on
-		if (epoch_on(end) > epoch_off(end))
-			epoch_off(end + 1) = length(filt);
+	% write epochs to mat if missing_epochs_filename option is present
+	if isfield(options, 'missing_epochs_filename')
+		if ~isempty(find(filt == 0, 1))
+			epochs = filter_to_epochs(filt);
+		else
+			epochs = [];
 		end
-
-		% starts on
-		if (epoch_on(1) > epoch_off(1))
-			epoch_on = [ 1; epoch_on ];
-		end
-
-		epochs = [ epoch_on, epoch_off ];
+		save(options.missing_epochs_filename, 'epochs');
 	end
 
-	function interval_clipping = detect_clipping(data, step_size, n_window, threshold) % test clipping
-		l_data = length(data);
-		window_size = n_window * step_size;
-		index_window_starter = 1:step_size:(l_data-mod((l_data-window_size),step_size)-window_size-step_size+1);
-		index_clipping = zeros(1,length(index_window_starter));
-		for window_starter = index_window_starter
-			data_oi_front = data((window_starter+1):(window_starter+window_size));
-			data_oi_front_max = max(data_oi_front);
-			if sum(data_oi_front==data_oi_front_max)/length(data_oi_front) > threshold
-				index_clipping(find(index_window_starter==window_starter)) = 1;
+	% Change data if options.change_data is set positive
+	if options.change_data == 1
+		out = data_changed;
+	else
+		out = data;
+	end
+	sts = 1;
+
+end
+
+function epochs = filter_to_epochs(filt)	% Return the start and end points of the excluded interval
+	epoch_on = find(diff(filt) == -1) + 1;	% Return the start points of the excluded interval
+	epoch_off = find(diff(filt) == 1);		% Return the end points of the excluded interval
+	if ~isempty(epoch_on) && ~isempty(epoch_off)
+		if (epoch_on(end) > epoch_off(end))     % ends on
+			epoch_off(end + 1) = length(filt);	% Include the end point of the whole data sequence
+		end
+		if (epoch_on(1) > epoch_off(1))         % starts on
+			epoch_on = [ 1; epoch_on ];			% Include the start point of the whole data sequence
+		end
+	elseif ~isempty(epoch_on) && isempty(epoch_off)
+		epoch_off = length(filt);
+	elseif isempty(epoch_on) && ~isempty(epoch_off)
+		epoch_on = 1;
+	end
+	epochs = [ epoch_on, epoch_off ];
+end
+
+function interval_clipping = detect_clipping(data, step_size, n_window, threshold) % test clipping
+	l_data = length(data);
+	window_size = n_window * step_size;
+	index_window_starter = 1:step_size:(l_data-mod((l_data-window_size),step_size)-window_size-step_size+1);
+	index_clipping = zeros(1,length(index_window_starter));
+	for window_starter = index_window_starter
+		data_oi_front = data((window_starter+1):(window_starter+window_size));
+		data_oi_front_max = max(data_oi_front);
+		if sum(data_oi_front==data_oi_front_max)/length(data_oi_front) > threshold
+			index_clipping(index_window_starter==window_starter) = 1;
+		end
+		if window_starter > window_size
+			data_oi_back = data((window_starter+1-+window_size):(window_starter));
+			data_oi_back_max = max(data_oi_front);
+			if sum(data_oi_back==data_oi_back_max)/length(data_oi_back) > threshold
+				index_clipping(index_window_starter==window_starter) = 1;
 			end
-			if window_starter > window_size
-				data_oi_back = data((window_starter+1-+window_size):(window_starter));
-				data_oi_back_max = max(data_oi_front);
-				if sum(data_oi_back==data_oi_back_max)/length(data_oi_back) > threshold
-					index_clipping(find(index_window_starter==window_starter)) = 1;
-				end
-			end
-		end
-		interval_clipping = [kron(index_clipping,ones(1,window_size)), ...
-		zeros(1,length(step_size)), ...
-		zeros(1,mod((l_data-window_size),step_size))];
-		interval_clipping = downsample(interval_clipping,n_window);
-		if length(interval_clipping) > l_data
-			interval_clipping((l_data+1):end) = [];
-		elseif length(interval_clipping) < l_data
-			interval_clipping((end+1):l_data) = 0;
 		end
 	end
+	interval_clipping = [kron(index_clipping,ones(1,window_size)), ...
+	zeros(1,length(step_size)), ...
+	zeros(1,mod((l_data-window_size),step_size))];
+	interval_clipping = downsample(interval_clipping,n_window);
+	if length(interval_clipping) > l_data
+		interval_clipping((l_data+1):end) = [];
+	elseif length(interval_clipping) < l_data
+		interval_clipping((end+1):l_data) = 0;
+	end
+end
