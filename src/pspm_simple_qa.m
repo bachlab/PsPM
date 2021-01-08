@@ -31,6 +31,8 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 	%                                       Default: 0.5 s
 	%           clipping_step_size:			A numerical value specifying the step size in moving average algorithm for detecting clipping
 	%			clipping_threshold:			A float between 0 and 1 specifying the proportion of local maximum in a step
+    %			clipping_filename:			If provided will create a .mat file with the clipping,
+	%                                       e.g. abc will create abc.mat
 	%
 	%
 	%__________________________________________________________________________
@@ -105,13 +107,16 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 				warning('ID:invalid_input','Please specify a valid filename (without extension) if you want to save artefact epochs.')
 				return;
 			end
-		end
-
+        end
 
 		step_size = 1000;
 		n_window = 5;
 		threshold = 0.8;
 		data_clipping_detected = detect_clipping(data, step_size, n_window, threshold);
+        
+        if isfield(options, 'clipping_filename')
+			save(options.clipping_filename, 'data_clipping_detected');
+        end
 
 		% create filters
 		d = NaN(size(data));
@@ -155,18 +160,15 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 			if options.data_island_threshold > 0
 				epoch_duration = diff(data_epochs, 1, 2);
 				data_epochs(epoch_duration < options.data_island_threshold * sr, :) = [];
-			end
-    
+            end
     
 			% write back into data
 			index(data_epochs(:, 1)) = 1;
 			index(data_epochs(:, 2)) = -1;
 			filt = (cumsum(index(:)) == 1); % (thanks Jan: https://www.mathworks.com/matlabcentral/answers/324955-replace-multiple-intervals-in-array-with-nan-no-loops)
-		end
-
+        end
 
 		d(filt) = data(filt);
-
 
 		% write epochs to mat if missing_epochs_filename option is present
 		if isfield(options, 'missing_epochs_filename')
@@ -174,8 +176,7 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 				epochs = filter_to_epochs(filt);
 			else
 				epochs = [];
-			end
-    
+            end
 			save(options.missing_epochs_filename, 'epochs');
 		end
 
