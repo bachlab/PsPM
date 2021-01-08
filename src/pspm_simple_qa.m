@@ -1,39 +1,50 @@
 function [sts, out] = pspm_simple_qa(data, sr, options)
 	% pspm_simple_qa applies simple SCR quality assessment rulesets
 	% Rule 1:       Microsiemens values must be within range (0.05 to 60)
-	% Rule 2:       Absolute slope of value change must be less than 10
-	%               microsiemens per second
+	% Rule 2:       Absolute slope of value change must be less than 10 microsiemens per second
 	%
 	% FORMAT:
 	%   [sts, out] = pspm_simple_qa(data, sr, options)
 	%
-	% ARGUMENTS:
-	%       data:                           A numeric vector. Data should be in
-	%                                       microsiemens.
-	%       sr:                             Samplerate of the data. This is needed to
-	%                                       determine the slopes unit.
-	%       options:                        A struct with algorithm specific settings.
-	%           min:                        Minimum value in microsiemens (default: 0.05).
-	%           max:                        Maximum value in microsiemens (default: 60).
-	%           slope:                      Maximum slope in microsiemens per sec (default: 10).
-	%           missing_epochs_filename:    If provided will create a .mat file with the missing epochs,
-	%                                       e.g. abc will create abc.mat
-	%           deflection_threshold:       Define an threshold in original data units for a slope to pass to be considerd in the filter.
-	%                                       This is useful, for example, with oscillatory wave data due to limited A/D bandwidth
-	%                                       The slope may be steep due to a jump between voltages but we
-	%                                       likely do not want to consider this to be filtered.
-	%                                       A value of 0.1 would filter oscillatory behaviour with threshold less than 0.1v but not greater
-	%                                       Default: 0.1
-	%           data_island_threshold:      A float in seconds to determine the maximum length of data between NaN epochs. Islands of data
-	%                                       shorter than this threshold will be removed.
-	%                                       Default: 0 s - no effect on filter
-	%           expand_epochs:              A float in seconds to determine by how much data on the flanks of artefact epochs will be removed.
-	%                                       Default: 0.5 s
-	%           clipping_step_size:			A numerical value specifying the step size in moving average algorithm for detecting clipping
-	%			clipping_threshold:			A float between 0 and 1 specifying the proportion of local maximum in a step
-	%			clipping_filename:			If provided will create a .mat file with the clipping,
-	%                                       e.g. abc will create abc.mat
+	% INPUT ARGUMENTS:
+	%	data:                           A numeric vector. Data should be in microsiemens.
+	%	sr:                             Samplerate of the data. This is needed to determine the slopes unit.
+	%	options:                        A struct with algorithm specific settings.
+	%		min:                        Minimum value in microsiemens (default: 0.05).
+	%		max:                        Maximum value in microsiemens (default: 60).
+	%		slope:                      Maximum slope in microsiemens per sec (default: 10).
+	%		missing_epochs_filename:	If provided will create a .mat file saving the epochs if it exists.
+	%									The path can be specified, but if not the file will be saved in the current folder.
+	%									For instance, abc will create abc.mat
+	%		deflection_threshold:       Define an threshold in original data units for a slope to pass to be considerd in the filter.
+	%									This is useful, for example, with oscillatory wave data due to limited A/D bandwidth.
+	%									The slope may be steep due to a jump between voltages but we likely do not want to consider this to be filtered.
+	%									A value of 0.1 would filter oscillatory behaviour with threshold less than 0.1v but not greater
+	%									Default: 0.1
+	%		data_island_threshold:      A float in seconds to determine the maximum length of data between NaN epochs.
+	%									Islands of data shorter than this threshold will be removed.
+	%									Default: 0 s - no effect on filter
+	%		expand_epochs:              A float in seconds to determine by how much data on the flanks of artefact epochs will be removed.
+	%									Default: 0.5 s
+	%		change_data:				A numerical value to choose whether to change the data or not
+	%									Default: 1 (true)
+	%		clipping_step_size:			A numerical value specifying the step size in moving average algorithm for detecting clipping
+	%		clipping_threshold:			A float between 0 and 1 specifying the proportion of local maximum in a step
+	%		clipping_filename:			If provided will create a .mat file with the clipping,
+	%                                   e.g. abc will create abc.mat
+	% OUTPUT ARGUMENTS:
+	%	sts:							?
+	%	out:							The final output of the processed data.
+	%									Can be the changed to the data with epochs removed if options.change_data is set to be positive.
 	%
+	% FUNCTIONS:
+	%	filter_to_epochs:				Return the start and end points of epoches (2D array) by the given filter (1D array).
+	%
+	% KEY VARIABLES:
+	%	filt: 							A filtering array consisting of 0 and 1 for selecting data whose y and slope are both within the range of interest.
+	%	filt_epochs:					A filtering array consisting of 0 and 1 for selecting epochs.
+	%	filt_range: 					A filtering array consisting of 0 and 1 for selecting data within the range of interest.
+	%	filt_slope: 					A filtering array consisting of 0 and 1 for selecting data whose slope is within the range of interest.
 	%
 	%__________________________________________________________________________
 	% PsPM 5.0
@@ -43,8 +54,7 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 	% $Id: pspm_pp.m 450 2017-07-03 15:17:02Z tmoser $
 	% $Rev: 450 $
 
-	% initialise
-	% -------------------------------------------------------------------------
+	%% initialise
 	global settings;
 	if isempty(settings)
 		pspm_init; 
@@ -52,7 +62,7 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 	out = [];
 	sts = -1;
 
-	% set default values
+	%% Set default values
 	if ~exist('options', 'var')
 		options = struct();
 	end
@@ -87,7 +97,7 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 		options.clipping_threshold = 0.8;
 	end
 
-	% sanity checks
+	%% Sanity checks
 	if ~isnumeric(data)
 		warning('ID:invalid_input', 'Argument ''data'' must be numeric.'); return;
 	elseif ~isnumeric(sr)
@@ -106,7 +116,7 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 		end
 		[pth, ~, ext] = fileparts(options.missing_epochs_filename);
 		if ~isempty(pth) && exist(pth,'dir')~=7
-			warning('ID:invalid_input','Please specify a valid output directory if you want to save artefact epochs.')
+			warning('ID:invalid_input','Please specify a valid output directory if you want to save missing epochs.');
 			return;
 		end
 	end
@@ -119,33 +129,31 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 		save(options.clipping_filename, 'data_clipping_detected');
 	end
 
-	% create filters
+	%% Create filters
 	data_changed = NaN(size(data));
 	filt_range = data < options.max & data > options.min;
 	filt_slope = true(size(data));
 	filt_slope(2:end) = abs(diff(data)*sr) < options.slope;
-
 	if (options.deflection_threshold ~= 0) && ~all(filt_slope==1)
 		slope_epochs = filter_to_epochs(filt_slope);
-		for r = slope_epochs'
+		for r = slope_epochs' 
 			if range(data(r(1):r(2))) < options.deflection_threshold
 				filt_slope(r(1):r(2)) = 1;
 			end
 		end
 	end
-
 	% combine filters
 	filt = filt_range & filt_slope;
 
-	% find data islands and expand artefact islands
+	%% Find data islands and expand artefact islands
 	if isempty(find(filt==0, 1))
 		warning('Epoch was empty based on the current settings.');
 	else
 		if options.data_island_threshold > 0 || options.expand_epochs > 0
-    
+        
 			% work out data epochs
 			filt_epochs = filter_to_epochs(1-filt); % gives data (rather than artefact) epochs
-    
+        
 			if options.expand_epochs > 0
 				% remove data epochs too short to be shortened
 				epoch_duration = diff(filt_epochs, 1, 2);
@@ -154,25 +162,24 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 				filt_epochs(:, 1) = filt_epochs(:, 1) + ceil(options.expand_epochs * sr);
 				filt_epochs(:, 2) = filt_epochs(:, 2) - ceil(options.expand_epochs * sr);
 			end
-    
+        
 			% correct possibly negative values
 			filt_epochs(filt_epochs(:, 2) < 1, 2) = 1;
-    
+        
 			if options.data_island_threshold > 0
 				epoch_duration = diff(filt_epochs, 1, 2);
 				filt_epochs(epoch_duration < options.data_island_threshold * sr, :) = [];
 			end
-    
+        
 			% write back into data
 			index(filt_epochs(:, 1)) = 1;
 			index(filt_epochs(:, 2)) = -1;
 			filt = (cumsum(index(:)) == 1); % (thanks Jan: https://www.mathworks.com/matlabcentral/answers/324955-replace-multiple-intervals-in-array-with-nan-no-loops)
 		end
 	end
-
 	data_changed(filt) = data(filt);
 
-	% write epochs to mat if missing_epochs_filename option is present
+	%% Write epochs to mat if missing_epochs_filename option is present
 	if isfield(options, 'missing_epochs_filename')
 		if ~isempty(find(filt == 0, 1))
 			epochs = filter_to_epochs(filt);
@@ -189,7 +196,6 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 		out = data;
 	end
 	sts = 1;
-
 end
 
 function epochs = filter_to_epochs(filt)	% Return the start and end points of the excluded interval
