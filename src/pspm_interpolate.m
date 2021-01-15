@@ -68,6 +68,8 @@ function [sts, outdata] = pspm_interpolate(indata, options)
 % $Id: pspm_interpolate.m 592 2018-09-14 09:01:41Z lciernik $
 % $Rev: 592 $
 
+% update 15 Jan 2021
+
 % initialise
 % -------------------------------------------------------------------------
 global settings;
