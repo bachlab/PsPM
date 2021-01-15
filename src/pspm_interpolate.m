@@ -234,9 +234,10 @@ for d=1:numel(D)
                    indices_nan = find(isnan(dat));
                    indices_nan_starter = find(diff(find(isnan(dat)))-1, 1, 'last')+1; 
                    start_id_nan_end = indices_nan(indices_nan_starter);
+                   dat_remaining = dat(start_id_nan_end:end);
+                   dat(start_id_nan_end:end)=[]; % remove such nan for the following processing
                 end
-                dat_remaining = dat(start_id_nan_end:end);
-                dat(start_id_nan_end:end)=[]; % remove such nan for the following processing
+                
             end
             
             
