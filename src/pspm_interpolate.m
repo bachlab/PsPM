@@ -255,7 +255,7 @@ function [sts, outdata] = pspm_interpolate(indata, options)
 						dat_remaining = dat(start_id_nan_end:end);
 						dat(start_id_nan_end:end) = []; % remove such nan for the following processing
 					else
-						dat_remaining = [];
+						dat_remaining = []; % if no data was NaN at the end, add nothing
 					end
                 
 				end
