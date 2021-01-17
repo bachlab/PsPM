@@ -245,7 +245,7 @@ for d=1:numel(D)
                     %    ' Either turn on extrapolation or use pspm_trim to cut away ', ...
                     %    'out-of-range values at the beginning or end of the data.']);
                     %return;
-					warning('Extrapolating was forced because interpolate without extrapolating cannot be done');
+					warning('ID:option_disabled', ['Extrapolating was forced because interpolate without extrapolating cannot be done']);
 					vq = interp1(x, v, xq, options.method, 'extrap');
 					return;
 					
