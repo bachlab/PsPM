@@ -1,10 +1,10 @@
-function [sts, out] = pspm_simple_qa(data, sr, options)
-	% pspm_simple_qa applies simple SCR quality assessment rulesets
+function [sts, out] = pspm_scr_pp(data, sr, options)
+	% pspm_scr_pp applies simple SCR quality assessment rulesets
 	% Rule 1:       Microsiemens values must be within range (0.05 to 60)
 	% Rule 2:       Absolute slope of value change must be less than 10 microsiemens per second
 	%
 	% FORMAT:
-	%	[sts, out] = pspm_simple_qa(data, sr, options)
+	%	[sts, out] = pspm_scr_pp(data, sr, options)
 	%
 	% INPUT ARGUMENTS:
 	%	data:                           A numeric vector. Data should be in microsiemens.
@@ -21,7 +21,7 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 	%									The slope may be steep due to a jump between voltages but we likely do not want to consider this to be filtered.
 	%									A value of 0.1 would filter oscillatory behaviour with threshold less than 0.1v but not greater
 	%									Default: 0.1
-	%		data_island_threshold:      A float in seconds to determine the maximum length of data between NaN epochs.
+	%		data_island_threshold:      A pspm_scr_ppfloat in seconds to determine the maximum length of data between NaN epochs.
 	%									Islands of data shorter than this threshold will be removed.
 	%									Default: 0 s - no effect on filter
 	%		expand_epochs:              A float in seconds to determine by how much data on the flanks of artefact epochs will be removed.
