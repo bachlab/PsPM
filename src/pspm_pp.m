@@ -5,14 +5,14 @@ function newdatafile = pspm_pp(varargin)
 % INPUT:
 %   pspm_pp('median', datafile, n, channelnumber, options)
 %   pspm_pp('butter', datafile, freq, channelnumber, options)
-%   pspm_pp('simple_qa', datafile, qa, channelnumber, options)
+%   pspm_pp('scr_pp', datafile, qa, channelnumber, options)
 %
 % Currently implemented: 
 %   'median':                           medianfilter for SCR
 %       n:                              number of timepoints for median filter
 %   'butter':                           1st order butterworth low pass filter for SCR
 %       freq:                           cut off frequency (min 20 Hz)
-%   'simple_qa':                        Simple quality assessment for SCR
+%   'scr_pp':                        Simple quality assessment for SCR
 %       qa:                             A struct with quality assessment settings
 %           min:                        Minimum value in microsiemens
 %           max:                        Maximum value in microsiemens
@@ -28,7 +28,7 @@ function newdatafile = pspm_pp(varargin)
 %           data_island_threshold:      A float in seconds to determine the maximum length of unfiltered data between epochs
 %__________________________________________________________________________
 %
-% References: For 'simple_qa' method, refer to:
+% References: For 'scr_pp' method, refer to:
 %
 % I. R. Kleckner et al., "Simple, Transparent, and Flexible Automated Quality
 % Assessment Procedures for Ambulatory Electrodermal Activity Data," in IEEE
@@ -55,7 +55,7 @@ elseif nargin < 2
     warning('ID:invalid_input', 'No datafile.'); return;
 end
 method = varargin{1};
-supported_methods = {'median', 'butter', 'simple_qa'};
+supported_methods = {'median', 'butter', 'scr_pp'};
 if ~any(strcmp(method, supported_methods))
     methods_str = sprintf('%s ', supported_methods{:});
     warning('ID:invalid_input', sprintf('Preprocessing method must be one of %s', methods_str)); return;
@@ -129,7 +129,7 @@ switch method
             end
         end
         infos.pp = sprintf('butterworth 1st order low pass filter at cutoff frequency %2.2f Hz', freq);
-    case 'simple_qa'
+    case 'scr_pp'
         if nargin < 3
             qa = struct();
         else
@@ -137,9 +137,9 @@ switch method
         end
         for k = 1:numel(channum)
             curr_chan = channum(k);
-            [sts, data{curr_chan}.data] = pspm_simple_qa(data{curr_chan}.data, data{curr_chan}.header.sr, qa);
+            [sts, data{curr_chan}.data] = pspm_scr_pp(data{curr_chan}.data, data{curr_chan}.header.sr, qa);
             if sts == -1
-                warning('ID:invalid_input', 'call of pspm_simple_qa failed in round %s',k);
+                warning('ID:invalid_input', 'call of pspm_scr_pp failed in round %s',k);
                 return;
             end
         end
