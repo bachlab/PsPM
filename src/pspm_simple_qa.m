@@ -217,7 +217,7 @@ end
 epochs = [ epoch_on, epoch_off ];
 end
 
-function interval_clipping = detect_clipping(data, step_size, n_window, threshold) % test clipping
+function interval_clipping = detect_clipping(data, step_size, n_window, threshold)
 l_data = length(data);
 window_size = n_window * step_size;
 index_window_starter = 1:step_size:(l_data-mod((l_data-window_size),step_size)-window_size-step_size+1);
