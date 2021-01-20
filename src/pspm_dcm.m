@@ -602,7 +602,7 @@ for i_session = idx_session'
         % Find the position of the target trial in proc_subsessions
         last_trl_start = sbs_trlstart{i_session};
         % Convert from time (s) to data points
-        last_trl_start = last_trl_start(i_trial)*model.sr;
+        last_trl_start = ceil(last_trl_start(i_trial)*model.sr);
         % Get the end of the data in this sesstion
         last_trl_stop = numel(sbs_data{i_session,1});
         % Remove the elememts since the start of the last trial
