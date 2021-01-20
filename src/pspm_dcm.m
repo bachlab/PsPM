@@ -272,7 +272,7 @@ end
 if exist(model.modelfile, 'file') && options.overwrite == 0
     overwrite=menu(sprintf('Model file (%s) already exists. Overwrite?', ...
         model.modelfile), 'yes', 'no');
-    if overwrite == 2, return, end
+    if overwrite == 2, return; end
 end
 
 if ischar(model.datafile)
