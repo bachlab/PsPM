@@ -177,7 +177,7 @@ end;
 % check data channel --
 if ~isfield(model, 'channel')
     model.channel = 'scr'; % this returns the first SCR channel 
-elseif ~isnumeric(model.channel)
+elseif ~isnumeric(model.channel) && ~strcmp(model.channel,'scr')
     warning('ID:invalid_input', 'Channel number must be numeric.'); return;
 end;
 
