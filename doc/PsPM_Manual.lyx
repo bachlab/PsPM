@@ -11233,8 +11233,8 @@ The rationale behind this behaviour is that we observed that ITI value of
 \begin_layout Standard
 
 \shape italic
-In PsPM 5.1.0, pspm_dcm can determine the last trails that is less than the
- given cut-off (defaylt as 7s).
+In PsPM 5.1.0, pspm_dcm can determine the last trials that is less than the
+ given cut-off value (default as 7s).
 \end_layout
 
 \begin_layout Subsubsection*
