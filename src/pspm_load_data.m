@@ -116,7 +116,7 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
             chan.options.dont_ask_overwrite = (chan.options.dont_ask_overwrite == 1);
         catch
             chan.options.dont_ask_overwrite = 0;
-        end;
+        end
     else
         warning('ID:invalid_input', 'Unknown channel option.'); 
     end
@@ -126,14 +126,15 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
     elseif ~isstruct(chan) && ~exist(fn, 'file')
         warning('ID:nonexistent_file', 'Data file (%s) doesn''t exist', fn); return;
     elseif exist(fn, 'file') && isstruct(chan) && ~chan.options.overwrite && ~chan.options.dont_ask_overwrite
-        %overwrite = menu(sprintf('File (%s) already exists. Overwrite?', fn), 'yes', 'no');
-        %if overwrite == 1
-        %    chan.options.overwrite = 1;
-        %else
-        %    warning('Data not saved.\n');
-        %end
-		chan.options.overwrite = 1;
-		warning('Data overwritten.\n'); % Need to be updated in the future
+        overwrite = menu(sprintf('File (%s) already exists. Overwrite?', fn), 'yes', 'no');
+        if overwrite == 1
+            chan.options.overwrite = 1;
+        else
+            chan.options.overwrite = 0;
+            warning('Data not saved.\n');
+        end
+        %chan.options.overwrite = 1;
+        %warning('Data overwritten');
     end
 
     % check file structure
