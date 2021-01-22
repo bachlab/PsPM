@@ -605,7 +605,7 @@ for i_session = idx_session'
     % Check the interval since the start of the last trial
     error_log(i_session)=sbs_iti{i_session}(end)<options.trialfilter;
     % Remove the last trial if the interval since the start of the last
-    % trial is less than 7s
+    % trial is less than options.trialfilter
     if error_log(i_session) > 0
         i_trial = length(sbs_iti{i_session});
         % Find the position of the target trial in proc_subsessions
