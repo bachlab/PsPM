@@ -74,10 +74,15 @@ function dcm = pspm_dcm(model, options)
 %			options.eventnames: Cell array of names for individual events,
 %									in the order they are specified in the model.timing array - to be used for display and export only
 %		Filtering options
-%			options.trialfilter:A cut-off value set for the interval since the start of the last trial.
+%			options.lsttrlcut:  A cut-off value set for the interval since the start of the last trial.
 %								The last trials with insufficient information (less than 7s) will be removed.
 %								Can be set as infinity to ignore this filtering.
 %								Default as 7s.
+%			options.lsttrlkeep: A numeric value to choose whether to keep the filtered last trial. 
+%                               If set to 0, the last trial will be removed if it is less than the cut-off.
+%                               Default as 1 (to keep the last trial).
+%			options.lsttrlpath: The path of the file for saving the interval of filtered last interval.
+%                               Default as empty (not to save anything).
 % 
 % OUTPUT
 %	fn:		Name of the model file.
@@ -234,7 +239,8 @@ try options.dispsmallwin; catch, options.dispsmallwin = 0; end
 try options.crfupdate; catch, options.crfupdate = 0; end
 try options.eventnames; catch, options.eventnames = {}; end
 try options.trlnames; catch, options.trlnames = {}; end
-try options.trialfilter; catch, options.trialfilter = 7; end
+try options.lsttrlcut; catch, options.lsttrlcut = 7; end
+try options.lsttrlkeep; catch, options.lsttrlkeep = 1; end
 
 % check option fields --
 % numeric fields
@@ -594,7 +600,7 @@ error_log = zeros(size(sbs_iti));
 idx_session = nonzeros((1:size(sbs_data,1)).*flag_valid);
 for i_session = idx_session'
     % Check the interval since the start of the last trial
-    error_log(i_session)=sbs_iti{i_session}(end)<options.trialfilter;
+    error_log(i_session)=sbs_iti{i_session}(end)<options.lsttrlcut;
     % Remove the last trial if the interval since the start of the last
     % trial is less than 7s
     if error_log(i_session) > 0
@@ -609,7 +615,17 @@ for i_session = idx_session'
         sbs_data_out{i_session,1}(last_trl_start:last_trl_stop) = [];
     end
 end
-sbs_data = sbs_data_out;
+index_last_trial = [zeros(1,(last_trl_start-1)), ones(1,(last_trl_stop-last_trl_start+1))];
+if ~options.lsttrlkeep
+	sbs_data = sbs_data_out;
+else
+	if ischar(options.lsttrlpath)
+		save(options.lsttrlpath,index_last_trial);
+	else
+		warning('ID:invalid_input', 'Last trial filtering not saved')
+	end
+end
+
 
 % find subsessions with events and define them to be processed
 proc_subsessions = ~cellfun(@isempty, sbs_trlstart);
