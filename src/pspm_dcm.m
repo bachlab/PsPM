@@ -598,6 +598,7 @@ flag_valid = ~cellfun(@isempty, sbs_trlstart);
 error_log = zeros(size(sbs_iti));
 % Do processing in the index of valid sessions
 idx_session = nonzeros((1:size(sbs_data,1)).*flag_valid);
+index_last_trial = zeros(length(idx_session'),numel(sbs_data{i_session,1}))
 for i_session = idx_session'
     % Check the interval since the start of the last trial
     error_log(i_session)=sbs_iti{i_session}(end)<options.lsttrlcut;
@@ -613,9 +614,10 @@ for i_session = idx_session'
         last_trl_stop = numel(sbs_data{i_session,1});
         % Remove the elememts since the start of the last trial
         sbs_data_out{i_session,1}(last_trl_start:last_trl_stop) = [];
+		index_last_trial[i_session,:] = [zeros(1,(last_trl_start-1)), ones(1,(last_trl_stop-last_trl_start+1))];
     end
 end
-index_last_trial = [zeros(1,(last_trl_start-1)), ones(1,(last_trl_stop-last_trl_start+1))];
+
 if ~options.lsttrlkeep
 	sbs_data = sbs_data_out;
 else
