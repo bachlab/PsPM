@@ -78,11 +78,6 @@ function dcm = pspm_dcm(model, options)
 %								The last trials with insufficient information (less than 7s) will be removed.
 %								Can be set as infinity to ignore this filtering.
 %								Default as 7s.
-%			options.lsttrlkeep: A numeric value to choose whether to keep the filtered last trial. 
-%                               If set to 0, the last trial will be removed if it is less than the cut-off.
-%                               Default as 1 (to keep the last trial).
-%			options.lsttrlpath: The path of the file for saving the interval of filtered last interval.
-%                               Default as empty (not to save anything).
 % 
 % OUTPUT
 %	fn:		Name of the model file.
@@ -240,7 +235,6 @@ try options.crfupdate; catch, options.crfupdate = 0; end
 try options.eventnames; catch, options.eventnames = {}; end
 try options.trlnames; catch, options.trlnames = {}; end
 try options.lsttrlcut; catch, options.lsttrlcut = 7; end
-try options.lsttrlkeep; catch, options.lsttrlkeep = 1; end
 
 % check option fields --
 % numeric fields
@@ -590,8 +584,6 @@ if isempty(sbs_trlstart)
     return;
 end
 
-% Remove the trial that has insufficient information
-sbs_data_out = sbs_data;
 % Find the index of only valid sessions
 flag_valid = ~cellfun(@isempty, sbs_trlstart);
 % Initialise the record of filtered trials
@@ -612,20 +604,8 @@ for i_session = idx_session'
         last_trl_start = ceil(last_trl_start(i_trial)*model.sr);
         % Get the end of the data in this sesstion
         last_trl_stop = numel(sbs_data{i_session,1});
-        % Remove the elememts since the start of the last trial
-        sbs_data_out{i_session,1}(last_trl_start:last_trl_stop) = [];
 		index_last_trial(i_session,:) = [zeros(1,(last_trl_start-1)), ones(1,(last_trl_stop-last_trl_start+1))];
     end
-end
-
-if ~options.lsttrlkeep
-	sbs_data = sbs_data_out;
-else
-	if isfield(options, 'lsttrlpath')
-		save(options.lsttrlpath,index_last_trial);
-	else
-		warning('ID:invalid_input', 'Last trial filtering not saved')
-	end
 end
 
 
@@ -821,6 +801,8 @@ for iSn = 1:numel(model.datafile)
     end;
     % set disabled trials to NaN
     dcm.stats(cTrl + find(trls(:, 1) == 0), :) = NaN;
+    % set last trial that does not contain sufficient information to NaN
+    dcm.stats(cell2mat(model.iti)<options.lsttrlcut, :) = NaN;
     cTrl = cTrl + size(trls, 1);
 end;
 dcm.names = {};
