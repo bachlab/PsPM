@@ -802,7 +802,7 @@ for iSn = 1:numel(model.datafile)
     % set disabled trials to NaN
     dcm.stats(cTrl + find(trls(:, 1) == 0), :) = NaN;
     % set last trial that does not contain sufficient information to NaN
-    dcm.stats(cell2mat(model.iti)<options.lsttrlcut, :) = NaN;
+    %dcm.stats(cell2mat(model.iti)<options.lsttrlcut, :) = NaN;
     cTrl = cTrl + size(trls, 1);
 end;
 dcm.names = {};
