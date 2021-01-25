@@ -74,10 +74,12 @@ function dcm = pspm_dcm(model, options)
 %			options.eventnames: Cell array of names for individual events,
 %									in the order they are specified in the model.timing array - to be used for display and export only
 %		Filtering options
-%			options.lsttrlcut:  A cut-off value set for the interval since the start of the last trial.
-%								The last trials with insufficient information (less than 7s) will be removed.
-%								Can be set as infinity to ignore this filtering.
-%								Default as 7s.
+%			options.lsttrlcut:  If there fewer data after the end of the
+%                               last trial in a session than this cutoff value (in s), then estimated
+%                               parameters from this trial will be assumed inestimable and set to NaN after the
+%                               inversion. This value can be set as inf to always retain
+%                               parameters from the last trial. 
+%                               Default: 7 s
 % 
 % OUTPUT
 %	fn:		Name of the model file.
@@ -671,7 +673,7 @@ if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
         || (max(options.fixevents > max(options.flexevents(:, 2), [], 2))))
     [ ~ , lastfix] = max(options.fixevents);
     % extract data
-    winsize = round(model.sr * min([proc_miniti 10]));
+    winsize = floor(model.sr * min([proc_miniti 10]));
     D = []; c = 1;
     valid_newevents = sbs_newevents{2}(proc_subsessions);
     for isbSn = 1:numel(model.scr)
@@ -721,7 +723,7 @@ if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
 end;
 
 % extract data from all trials
-winsize = round(model.sr * min([proc_miniti 10]));
+winsize = floor(model.sr * min([proc_miniti 10]));
 D = []; c = 1;
 for isbSn = 1:numel(model.scr)
     scr_sess = model.scr{isbSn};
