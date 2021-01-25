@@ -11228,7 +11228,13 @@ The rationale behind this behaviour is that we observed that ITI value of
  samples in both case (1) and (2).
  Instead, we aim to use as much data as possible in (1), and perform (2)
  only if this edge case is not present.
- 
+\end_layout
+
+\begin_layout Standard
+
+\shape italic
+In PsPM 5.1.0, pspm_dcm can determine the last trials that is less than the
+ given cut-off value (default as 7s).
 \end_layout
 
 \begin_layout Subsubsection*

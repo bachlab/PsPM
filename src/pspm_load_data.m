@@ -116,7 +116,7 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
             chan.options.dont_ask_overwrite = (chan.options.dont_ask_overwrite == 1);
         catch
             chan.options.dont_ask_overwrite = 0;
-        end;
+        end
     else
         warning('ID:invalid_input', 'Unknown channel option.'); 
     end
@@ -130,8 +130,11 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
         if overwrite == 1
             chan.options.overwrite = 1;
         else
+            chan.options.overwrite = 0;
             warning('Data not saved.\n');
         end
+        %chan.options.overwrite = 1;
+        %warning('Data overwritten');
     end
 
     % check file structure
