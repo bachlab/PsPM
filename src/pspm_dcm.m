@@ -27,6 +27,11 @@ function dcm = pspm_dcm(model, options)
 %								See pspm_get_timing for epoch definition; specify a cell array for multiple input files.
 %								This must always be specified in SECONDS.
 %								Default: no missing values
+%			model.lasttrialcutoff:  If there fewer data after the end of then last trial in a session than this cutoff value (in s), then estimated
+%                               parameters from this trial will be assumed inestimable and set to NaN after the
+%                               inversion. This value can be set as inf to always retain
+%                               parameters from the last trial. 
+%                               Default: 7 s
 %			model.substhresh:	Minimum duration (in seconds) of NaN periods to cause splitting up into subsessions which get 
 %									evaluated independently (excluding NaN values).
 %								Default: 2.
@@ -38,6 +43,7 @@ function dcm = pspm_dcm(model, options)
 %								i.e. Data are normalised during inversion but results transformed back into raw data units.
 %								Default: 0. 
 % 			model.constrained:	Constrained model for flexible responses which have fixed dispersion (0.3 s SD) but flexible latency.
+
 %
 %	OPTIONS (all optional fields)
 % 		Response function options
@@ -73,13 +79,7 @@ function dcm = pspm_dcm(model, options)
 %									is used for contrast manager only (e.g. condition descriptions)
 %			options.eventnames: Cell array of names for individual events,
 %									in the order they are specified in the model.timing array - to be used for display and export only
-%		Filtering options
-%			options.lsttrlcut:  If there fewer data after the end of the
-%                               last trial in a session than this cutoff value (in s), then estimated
-%                               parameters from this trial will be assumed inestimable and set to NaN after the
-%                               inversion. This value can be set as inf to always retain
-%                               parameters from the last trial. 
-%                               Default: 7 s
+
 % 
 % OUTPUT
 %	fn:		Name of the model file.
@@ -236,7 +236,7 @@ try options.dispsmallwin; catch, options.dispsmallwin = 0; end
 try options.crfupdate; catch, options.crfupdate = 0; end
 try options.eventnames; catch, options.eventnames = {}; end
 try options.trlnames; catch, options.trlnames = {}; end
-try options.lsttrlcut; catch, options.lsttrlcut = 7; end
+try model.lasttrialcutoff; catch, model.lasttrialcutoff = 7; end
 
 % check option fields --
 % numeric fields
@@ -595,7 +595,7 @@ idx_session = nonzeros((1:size(sbs_data,1)).*flag_valid);
 index_last_trial = zeros(length(idx_session'),numel(sbs_data{1,1}));
 for i_session = idx_session'
     % Check the interval since the start of the last trial
-    error_log(i_session)=sbs_iti{i_session}(end)<options.lsttrlcut;
+    error_log(i_session)=sbs_iti{i_session}(end)<model.lasttrialcutoff;
     % Remove the last trial if the interval since the start of the last
     % trial is less than options.trialfilter
     if error_log(i_session) > 0
@@ -805,7 +805,7 @@ for iSn = 1:numel(model.datafile)
     dcm.stats(cTrl + find(trls(:, 1) == 0), :) = NaN;
     % set last trial that does not contain sufficient information to NaN
     iti_mat = cell2mat(model.iti);
-    if sum(iti_mat(end)<options.lsttrlcut)>0
+    if sum(iti_mat(end)<model.lasttrialcutoff)>0
         dcm.stats(end, :) = NaN;
     end
     cTrl = cTrl + size(trls, 1);
