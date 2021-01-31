@@ -391,6 +391,18 @@ substhresh.help     = {['Specify the minimum duration (in seconds) ', ...
     'evaluated independently. This setting is ignored for sessions ', ...
     'having set missing epochs manually.']};
 
+lasttrialfiltering      = cfg_entry;
+lasttrialfiltering.name = 'Last trial filtering';
+lasttrialfiltering.tag  = 'lasttrialfiltering';
+lasttrialfiltering.val  = {7};
+lasttrialfiltering.strtype  = 'r';
+lasttrialfiltering.num      = [1 1];
+lasttrialfiltering.help = {['Specifiy a cut-off value (in seconds) ',...
+    'for filtering the last trials. Last trials that do not contain ',...
+    'sufficient information will be recorded. The output will not ',...
+    'be affected. The default cut-off value for the last trials is '...
+    'set to be 7s.']};
+
 % constrained model 
 constrained_model       = cfg_entry;
 constrained_model.name  ='Constrained model';
@@ -408,7 +420,7 @@ constrained_model.help = {['This option can be set to one if the flexible ', ...
 data_options         = cfg_branch;
 data_options.name    = 'Data Options';
 data_options.tag     = 'data_options';
-data_options.val     = {norm, filter, substhresh,constrained_model};
+data_options.val     = {norm, filter, substhresh, lasttrialfiltering, constrained_model};
 data_options.help    = {''};
 
 
