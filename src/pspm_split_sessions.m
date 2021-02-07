@@ -52,7 +52,6 @@ function [newdatafile, newepochfile] = pspm_split_sessions_try(datafile, markerc
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2008-2015 Linus Ruttimann & Tobias Moser (University of Zurich)
-% 2021 Juliana Sporrer (UCL) 
 
 % $Id$
 % $Rev$
@@ -166,23 +165,23 @@ for d = 1:numel(D)
     
     if options.missing
         % makes sure the epochs are in seconds and not empty
-        [~, epochs] = pspm_get_timing('epochs', options.missing, 'seconds');
+        [~, missing] = pspm_get_timing('epochs', options.missing, 'seconds');
         
-        if ~isempty(epochs)             
+        if ~isempty(missing)             
             [sts, ~, datascr] = pspm_load_data(datafile, 'scr');
             if sts == -1, warning('ID:invalid_input', 'Could not load SCR data'); return; end
             srscr = datascr{1}.header.sr;
             
             % convert epochs in sec to datapoints
-            if any(epochs > ininfos.duration) 
+            if any(missing > ininfos.duration) 
                 warning('ID:invalid_input', 'Epochs provided are in datapoints not in seconds'); 
             else    
-                epochs = round(epochs*srscr);
+                missing = round(missing*srscr);
             end 
             
             indx = zeros(size(datascr{1}.data));
-            indx(epochs(:, 1)+1) = 1;
-            indx(epochs(:, 2)) = -1;
+            indx(missing(:, 1)+1) = 1;
+            indx(missing(:, 2)) = -1;
             dp_epochs = (cumsum(indx(:)) == 1);
         end 
                 
@@ -254,7 +253,7 @@ for d = 1:numel(D)
             [p, f, ex] = fileparts(datafile);
             newdatafile{d}{sn} = fullfile(p, sprintf('%s_sn%02.0f%s', f, sn, ex));
             
-            if options.missing & ~isempty(epochs)
+            if options.missing & ~isempty(missing)
                 [p_epochs, f_epochs, ex_epochs] = fileparts(options.missing);
                 newepochfile{d}{sn} = fullfile(p_epochs, sprintf('%s_sn%02.0f%s', f_epochs, sn, ex_epochs));
             end
@@ -332,16 +331,16 @@ for d = 1:numel(D)
                 end
             end
             
-            if options.missing & ~isempty(epochs) 
+            if options.missing & ~isempty(missing) 
                 % convert from s into datapoints
                 startpoint = max(1, ceil(sta_p * srscr));
                 stoppoint  = min(floor(sto_p * srscr), numel(datascr{1}.data));
-                newepochs = dp_epochs(startpoint:stoppoint);
+                epochs = dp_epochs(startpoint:stoppoint);
                 
                 % Return the start points of the excluded interval
-                epoch_on = strfind(newepochs.', [0 1]);	
+                epoch_on = strfind(epochs.', [0 1]);	
                 % Return the end points of the excluded interval
-                epoch_off = strfind(newepochs.', [1 0]); 
+                epoch_off = strfind(epochs.', [1 0]); 
 
                 % if the epochs is in the middle of 2 blocks 
                 if numel(epoch_off) < numel(epoch_on) 
@@ -351,8 +350,8 @@ for d = 1:numel(D)
                 end 
                 
                 % convert back to seconds 
-                newepochs = [epoch_on.', epoch_off.']/srscr;
-                save(newepochfile{d}{sn}, 'newepochs');
+                epochs = [epoch_on.', epoch_off.']/srscr;
+                save(newepochfile{d}{sn}, 'epochs');
             end 
             
             % save data ---
