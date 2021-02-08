@@ -191,8 +191,8 @@ end
 % Write clippings to mat if clipping_filename option is present
 if isfield(options, 'clipping_filename')
     clipping = detect_clipping(data, options.clipping_step_size, options.clipping_n_window, options.clipping_threshold);
-    clipping_interval = downsample(clipping, sr);
-    save(options.clipping_filename, 'clipping_interval');
+    %clipping_interval = downsample(clipping, sr);
+    %save(options.clipping_filename, 'clipping_interval');
 end
 
 % Change data if options.change_data is set positive
