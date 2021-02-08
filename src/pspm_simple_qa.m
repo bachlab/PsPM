@@ -33,7 +33,8 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 %		clipping_filename:			If provided will create a .mat file with the clipping,
 %                                   e.g. abc will create abc.mat
 % OUTPUT ARGUMENTS:
-%	sts:							?
+%	sts:							An integer (1 or -1) indicating the status of data modification
+%                                   Default: -1 (not modified)
 %	out:							The final output of the processed data.
 %									Can be the changed to the data with epochs removed if options.change_data is set to be positive.
 %
@@ -125,11 +126,6 @@ if options.change_data == 0 && ~isfield(options, 'missing_epochs_filename')
     warning('This procedure leads to no output, according to the selected options.');
 end
 
-if isfield(options, 'clipping_filename')
-    data_clipping_detected = detect_clipping(data, options.clipping_step_size, options.clipping_n_window, options.clipping_threshold);
-    save(options.clipping_filename, 'data_clipping_detected');
-end
-
 %% Create filters
 data_changed = NaN(size(data));
 filt_range = data < options.max & data > options.min;
@@ -137,7 +133,7 @@ filt_slope = true(size(data));
 filt_slope(2:end) = abs(diff(data)*sr) < options.slope;
 if (options.deflection_threshold ~= 0) && ~all(filt_slope==1)
     slope_epochs = filter_to_epochs(filt_slope);
-    for r = slope_epochs'
+    for r = transpose(slope_epochs)
         if range(data(r(1):r(2))) < options.deflection_threshold
             filt_slope(r(1):r(2)) = 1;
         end
@@ -180,14 +176,22 @@ else
 end
 data_changed(filt) = data(filt);
 
-%% Write epochs to mat if missing_epochs_filename option is present
+% Write epochs to mat if missing_epochs_filename option is present
 if isfield(options, 'missing_epochs_filename')
     if ~isempty(find(filt == 0, 1))
         epochs = filter_to_epochs(filt);
     else
         epochs = [];
     end
-    save(options.missing_epochs_filename, 'epochs');
+    epochs_interval = epochs / sr;
+    save(options.missing_epochs_filename, 'epochs_interval');
+end
+
+% Write clippings to mat if clipping_filename option is present
+if isfield(options, 'clipping_filename')
+    clipping = detect_clipping(data, options.clipping_step_size, options.clipping_n_window, options.clipping_threshold);
+    clipping_interval = clipping / sr;
+    save(options.clipping_filename, 'clipping_interval');
 end
 
 % Change data if options.change_data is set positive
@@ -200,36 +204,35 @@ sts = 1;
 end
 
 function epochs = filter_to_epochs(filt)	% Return the start and end points of the excluded interval
-epoch_on = find(diff(filt) == -1) + 1;	% Return the start points of the excluded interval
-epoch_off = find(diff(filt) == 1);		% Return the end points of the excluded interval
-if ~isempty(epoch_on) && ~isempty(epoch_off)
-    if (epoch_on(end) > epoch_off(end))     % ends on
-        epoch_off = [epoch_off; length(filt)];	% Include the end point of the whole data sequence
+    epoch_on = find(diff(filt) == -1) + 1;	% Return the start points of the excluded interval
+    epoch_off = find(diff(filt) == 1);		% Return the end points of the excluded interval
+    if ~isempty(epoch_on) && ~isempty(epoch_off)
+        if (epoch_on(end) > epoch_off(end))     % ends on
+            epoch_off = [epoch_off; length(filt)];	% Include the end point of the whole data sequence
+        end
+        if (epoch_on(1) > epoch_off(1))         % starts on
+            epoch_on = [ 1; epoch_on ];			% Include the start point of the whole data sequence
+        end
+    elseif ~isempty(epoch_on) && isempty(epoch_off)
+        epoch_off = length(filt);
+    elseif isempty(epoch_on) && ~isempty(epoch_off)
+        epoch_on = 1;
     end
-    if (epoch_on(1) > epoch_off(1))         % starts on
-        epoch_on = [ 1; epoch_on ];			% Include the start point of the whole data sequence
-    end
-elseif ~isempty(epoch_on) && isempty(epoch_off)
-    epoch_off = length(filt);
-elseif isempty(epoch_on) && ~isempty(epoch_off)
-    epoch_on = 1;
-end
-epochs = [ epoch_on, epoch_off ];
+    epochs = [ epoch_on, epoch_off ];
 end
 
-function interval_clipping = detect_clipping(data, step_size, n_window, threshold)
-l_data = length(data);
-window_size = n_window * step_size;
-index_window_starter = 1:step_size:(l_data-mod((l_data-window_size),step_size)-window_size-step_size+1);
-index_clipping = zeros(1,l_data);
-for window_starter = index_window_starter
-    data_oi_front = data((window_starter+1):(window_starter+window_size));
-    data_oi_front_max = max(data_oi_front);
-    if sum(data_oi_front==data_oi_front_max)/length(data_oi_front) > threshold
-        index_clip_pred = 1:length(data_oi_front);
-        index_clip_pred = window_starter + [0,index_clip_pred(data_oi_front==data_oi_front_max)];
-        index_clipping(index_clip_pred) = 1;
+function index_clipping = detect_clipping(data, step_size, n_window, threshold)
+    l_data = length(data);
+    window_size = n_window * step_size;
+    index_window_starter = 1:step_size:(l_data-mod((l_data-window_size),step_size)-window_size-step_size+1);
+    index_clipping = zeros(1,l_data);
+    for window_starter = index_window_starter
+        data_oi_front = data((window_starter+1):(window_starter+window_size));
+        data_oi_front_max = max(data_oi_front);
+        if sum(data_oi_front==data_oi_front_max)/length(data_oi_front) > threshold
+            index_clip_pred = 1:length(data_oi_front);
+            index_clip_pred = window_starter + [0,index_clip_pred(data_oi_front==data_oi_front_max)];
+            index_clipping(index_clip_pred) = 1;
+        end
     end
-end
-interval_clipping = index_clipping;
 end
