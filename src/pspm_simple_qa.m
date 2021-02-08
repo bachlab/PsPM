@@ -180,18 +180,18 @@ data_changed(filt) = data(filt);
 if isfield(options, 'missing_epochs_filename')
     if ~isempty(find(filt == 0, 1))
         epochs = filter_to_epochs(filt);
-        %epochs_interval = downsample(epochs, sr);
+        epochs_interval = downsample(epochs, sr);
         %save(options.missing_epochs_filename, 'epochs_interval');
     else
         % epochs = [];
-        warning('No epochs detected.');
+        %warning('No epochs detected.');
     end
 end
 
 % Write clippings to mat if clipping_filename option is present
 if isfield(options, 'clipping_filename')
     clipping = detect_clipping(data, options.clipping_step_size, options.clipping_n_window, options.clipping_threshold);
-    %clipping_interval = downsample(clipping, sr);
+    clipping_interval = downsample(clipping, sr);
     %save(options.clipping_filename, 'clipping_interval');
 end
 
