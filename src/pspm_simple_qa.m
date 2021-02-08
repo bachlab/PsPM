@@ -33,7 +33,8 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 %		clipping_filename:			If provided will create a .mat file with the clipping,
 %                                   e.g. abc will create abc.mat
 % OUTPUT ARGUMENTS:
-%	sts:							?
+%	sts:							An integer (1 or -1) indicating the status of data modification
+%                                   Default: -1 (not modified)
 %	out:							The final output of the processed data.
 %									Can be the changed to the data with epochs removed if options.change_data is set to be positive.
 %
@@ -200,36 +201,35 @@ sts = 1;
 end
 
 function epochs = filter_to_epochs(filt)	% Return the start and end points of the excluded interval
-epoch_on = find(diff(filt) == -1) + 1;	% Return the start points of the excluded interval
-epoch_off = find(diff(filt) == 1);		% Return the end points of the excluded interval
-if ~isempty(epoch_on) && ~isempty(epoch_off)
-    if (epoch_on(end) > epoch_off(end))     % ends on
-        epoch_off = [epoch_off; length(filt)];	% Include the end point of the whole data sequence
+    epoch_on = find(diff(filt) == -1) + 1;	% Return the start points of the excluded interval
+    epoch_off = find(diff(filt) == 1);		% Return the end points of the excluded interval
+    if ~isempty(epoch_on) && ~isempty(epoch_off)
+        if (epoch_on(end) > epoch_off(end))     % ends on
+            epoch_off = [epoch_off; length(filt)];	% Include the end point of the whole data sequence
+        end
+        if (epoch_on(1) > epoch_off(1))         % starts on
+            epoch_on = [ 1; epoch_on ];			% Include the start point of the whole data sequence
+        end
+    elseif ~isempty(epoch_on) && isempty(epoch_off)
+        epoch_off = length(filt);
+    elseif isempty(epoch_on) && ~isempty(epoch_off)
+        epoch_on = 1;
     end
-    if (epoch_on(1) > epoch_off(1))         % starts on
-        epoch_on = [ 1; epoch_on ];			% Include the start point of the whole data sequence
-    end
-elseif ~isempty(epoch_on) && isempty(epoch_off)
-    epoch_off = length(filt);
-elseif isempty(epoch_on) && ~isempty(epoch_off)
-    epoch_on = 1;
-end
-epochs = [ epoch_on, epoch_off ];
+    epochs = [ epoch_on, epoch_off ];
 end
 
-function interval_clipping = detect_clipping(data, step_size, n_window, threshold)
-l_data = length(data);
-window_size = n_window * step_size;
-index_window_starter = 1:step_size:(l_data-mod((l_data-window_size),step_size)-window_size-step_size+1);
-index_clipping = zeros(1,l_data);
-for window_starter = index_window_starter
-    data_oi_front = data((window_starter+1):(window_starter+window_size));
-    data_oi_front_max = max(data_oi_front);
-    if sum(data_oi_front==data_oi_front_max)/length(data_oi_front) > threshold
-        index_clip_pred = 1:length(data_oi_front);
-        index_clip_pred = window_starter + [0,index_clip_pred(data_oi_front==data_oi_front_max)];
-        index_clipping(index_clip_pred) = 1;
+function index_clipping = detect_clipping(data, step_size, n_window, threshold)
+    l_data = length(data);
+    window_size = n_window * step_size;
+    index_window_starter = 1:step_size:(l_data-mod((l_data-window_size),step_size)-window_size-step_size+1);
+    index_clipping = zeros(1,l_data);
+    for window_starter = index_window_starter
+        data_oi_front = data((window_starter+1):(window_starter+window_size));
+        data_oi_front_max = max(data_oi_front);
+        if sum(data_oi_front==data_oi_front_max)/length(data_oi_front) > threshold
+            index_clip_pred = 1:length(data_oi_front);
+            index_clip_pred = window_starter + [0,index_clip_pred(data_oi_front==data_oi_front_max)];
+            index_clipping(index_clip_pred) = 1;
+        end
     end
-end
-interval_clipping = index_clipping;
 end
