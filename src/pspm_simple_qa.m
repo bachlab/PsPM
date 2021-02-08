@@ -183,15 +183,15 @@ if isfield(options, 'missing_epochs_filename')
     else
         epochs = [];
     end
-    %epochs_interval = epochs / sr;
-    save(options.missing_epochs_filename, 'epochs');
+    epochs_interval = downsample(epochs, sr);
+    save(options.missing_epochs_filename, 'epochs_interval');
 end
 
 % Write clippings to mat if clipping_filename option is present
 if isfield(options, 'clipping_filename')
     clipping = detect_clipping(data, options.clipping_step_size, options.clipping_n_window, options.clipping_threshold);
-    %clipping_interval = clipping / sr;
-    save(options.clipping_filename, 'clipping');
+    clipping_interval = downsample(clipping, sr);
+    save(options.clipping_filename, 'clipping_interval');
 end
 
 % Change data if options.change_data is set positive
