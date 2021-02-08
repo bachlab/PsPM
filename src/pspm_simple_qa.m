@@ -186,10 +186,11 @@ data_changed(filt) = data(filt);
 if isfield(options, 'missing_epochs_filename')
     if ~isempty(find(filt == 0, 1))
         epochs = filter_to_epochs(filt);
+        epochs_interval = downsample (epochs, sr);
     else
-        epochs = [];
+        epochs_interval = [];
     end
-    save(options.missing_epochs_filename, 'epochs');
+    save(options.missing_epochs_filename, 'epochs_interval');
 end
 
 % Change data if options.change_data is set positive
