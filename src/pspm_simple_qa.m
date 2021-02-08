@@ -181,7 +181,7 @@ if isfield(options, 'missing_epochs_filename')
     if ~isempty(find(filt == 0, 1))
         epochs = filter_to_epochs(filt);
         epochs_interval = downsample(epochs, sr);
-        save(options.missing_epochs_filename, 'epochs_interval');
+        %save(options.missing_epochs_filename, 'epochs_interval');
     else
         % epochs = [];
         warning('No epochs detected.');
