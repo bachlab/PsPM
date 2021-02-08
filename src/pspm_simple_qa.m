@@ -126,13 +126,6 @@ if options.change_data == 0 && ~isfield(options, 'missing_epochs_filename')
     warning('This procedure leads to no output, according to the selected options.');
 end
 
-% Write clippings to mat if clipping_filename option is present
-if isfield(options, 'clipping_filename')
-    clipping = detect_clipping(data, options.clipping_step_size, options.clipping_n_window, options.clipping_threshold);
-    clipping_interval = clipping / sr;
-    save(options.clipping_filename, 'clipping_interval');
-end
-
 %% Create filters
 data_changed = NaN(size(data));
 filt_range = data < options.max & data > options.min;
@@ -183,15 +176,22 @@ else
 end
 data_changed(filt) = data(filt);
 
-%% Write epochs to mat if missing_epochs_filename option is present
+% Write epochs to mat if missing_epochs_filename option is present
 if isfield(options, 'missing_epochs_filename')
     if ~isempty(find(filt == 0, 1))
         epochs = filter_to_epochs(filt);
     else
         epochs = [];
     end
-    epochs_interval = epochs / sr;
-    save(options.missing_epochs_filename, 'epochs_interval');
+    %epochs_interval = epochs / sr;
+    save(options.missing_epochs_filename, 'epochs');
+end
+
+% Write clippings to mat if clipping_filename option is present
+if isfield(options, 'clipping_filename')
+    clipping = detect_clipping(data, options.clipping_step_size, options.clipping_n_window, options.clipping_threshold);
+    %clipping_interval = clipping / sr;
+    save(options.clipping_filename, 'clipping');
 end
 
 % Change data if options.change_data is set positive
