@@ -176,10 +176,11 @@ data_changed(filt) = data(filt);
 
 %% Write epochs to mat if missing_epochs_filename option is present
 if isfield(options, 'missing_epochs_filename')
-    epoch_clipping = detect_clipping(data, options.clipping_step_size, options.clipping_n_window, options.clipping_threshold);
+    clipping = detect_clipping(data, options.clipping_step_size, options.clipping_n_window, options.clipping_threshold);
+    epochs_clip = filter_to_epochs(1-clipping);
     if ~isempty(find(filt == 0, 1))
         epochs = filter_to_epochs(filt);
-        epochs = epochs | epoch_clipping;
+        epochs = [epochs; epochs_clip];
     else
         epochs = [];
     end
