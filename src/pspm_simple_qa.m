@@ -143,7 +143,7 @@ filt_clipping = detect_clipping(data, options.clipping_step_size, options.clippi
 
 % combine filters
 filt = filt_range & filt_slope;
-filt = filt & (1-filt_clipping)
+filt = filt & (1-filt_clipping);
 
 %% Find data islands and expand artefact islands
 if isempty(find(filt==0, 1))
@@ -221,7 +221,7 @@ function index_clipping = detect_clipping(data, step_size, n_window, threshold)
     l_data = length(data);
     window_size = n_window * step_size;
     index_window_starter = 1:step_size:(l_data-mod((l_data-window_size),step_size)-window_size-step_size+1);
-    index_clipping = zeros(1,l_data);
+    index_clipping = zeros(l_data,1);
     for window_starter = index_window_starter
         data_oi_front = data((window_starter+1):(window_starter+window_size));
         data_oi_front_max = max(data_oi_front);
