@@ -26,15 +26,15 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 %									Default: 0 s - no effect on filter
 %		expand_epochs:              A float in seconds to determine by how much data on the flanks of artefact epochs will be removed.
 %									Default: 0.5 s
+%		clipping_step_size:			A numerical value specifying the step size in moving average algorithm for detecting clipping
+%									Default: 2
+%		clipping_threshold:			A float between 0 and 1 specifying the proportion of local maximum in a step
+%									Default: 0.1
 %		change_data:				A numerical value to choose whether to change the data or not
 %									Default: 1 (true)
-%		clipping_step_size:			A numerical value specifying the step size in moving average algorithm for detecting clipping
-%		clipping_threshold:			A float between 0 and 1 specifying the proportion of local maximum in a step
-%		clipping_filename:			If provided will create a .mat file with the clipping,
-%                                   e.g. abc will create abc.mat
+%
 % OUTPUT ARGUMENTS:
-%	sts:							An integer (1 or -1) indicating the status of data modification
-%                                   Default: -1 (not modified)
+%	sts:							?
 %	out:							The final output of the processed data.
 %									Can be the changed to the data with epochs removed if options.change_data is set to be positive.
 %
@@ -126,12 +126,6 @@ if options.change_data == 0 && ~isfield(options, 'missing_epochs_filename')
     warning('This procedure leads to no output, according to the selected options.');
 end
 
-if isfield(options, 'clipping_filename')
-    clipping = detect_clipping(data, options.clipping_step_size, options.clipping_n_window, options.clipping_threshold);
-    clipping_interval = downsample(clipping, sr);
-    save(options.clipping_filename, 'clipping_interval');
-end
-
 %% Create filters
 data_changed = NaN(size(data));
 filt_range = data < options.max & data > options.min;
@@ -145,8 +139,11 @@ if (options.deflection_threshold ~= 0) && ~all(filt_slope==1)
         end
     end
 end
+filt_clipping = detect_clipping(data, options.clipping_step_size, options.clipping_n_window, options.clipping_threshold);
+
 % combine filters
 filt = filt_range & filt_slope;
+filt = filt & (1-filt_clipping)
 
 %% Find data islands and expand artefact islands
 if isempty(find(filt==0, 1))
@@ -186,6 +183,7 @@ data_changed(filt) = data(filt);
 if isfield(options, 'missing_epochs_filename')
     if ~isempty(find(filt == 0, 1))
         epochs = filter_to_epochs(filt);
+		epochs = epochs / sr; %convert into integers
     else
         epochs = [];
     end
