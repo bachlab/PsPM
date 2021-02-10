@@ -183,7 +183,7 @@ data_changed(filt) = data(filt);
 if isfield(options, 'missing_epochs_filename')
     if ~isempty(find(filt == 0, 1))
         epochs = filter_to_epochs(filt);
-		epochs = epochs / sr; %convert into integers
+		epochs = epochs / sr; %convert into seconds
     else
         epochs = [];
     end
