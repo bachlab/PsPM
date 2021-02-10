@@ -34,7 +34,7 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 %									Default: 1 (true)
 %
 % OUTPUT ARGUMENTS:
-%	sts:							?
+%	sts:							Status indicating whether the output data has been changed.
 %	out:							The final output of the processed data.
 %									Can be the changed to the data with epochs removed if options.change_data is set to be positive.
 %
