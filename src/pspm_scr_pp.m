@@ -1,10 +1,10 @@
 function [sts, out] = pspm_scr_pp(data, sr, options)
-% pspm_scr_pp applies simple SCR quality assessment rulesets
+% pspm_simple_qa applies simple SCR quality assessment rulesets
 % Rule 1:       Microsiemens values must be within range (0.05 to 60)
 % Rule 2:       Absolute slope of value change must be less than 10 microsiemens per second
 %
 % FORMAT:
-%   [sts, out] = pspm_scr_pp(data, sr, options)
+%   [sts, out] = pspm_simple_qa(data, sr, options)
 %
 % INPUT ARGUMENTS:
 %	data:                           A numeric vector. Data should be in microsiemens.
@@ -204,7 +204,7 @@ epoch_on = find(diff(filt) == -1) + 1;	% Return the start points of the excluded
 epoch_off = find(diff(filt) == 1);		% Return the end points of the excluded interval
 if ~isempty(epoch_on) && ~isempty(epoch_off)
     if (epoch_on(end) > epoch_off(end))     % ends on
-        epoch_off(end + 1) = length(filt);	% Include the end point of the whole data sequence
+        epoch_off = [epoch_off; length(filt)];	% Include the end point of the whole data sequence
     end
     if (epoch_on(1) > epoch_off(1))         % starts on
         epoch_on = [ 1; epoch_on ];			% Include the start point of the whole data sequence
