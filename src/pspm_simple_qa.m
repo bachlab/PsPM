@@ -34,7 +34,7 @@ function [sts, out] = pspm_simple_qa(data, sr, options)
 %									Default: 1 (true)
 %
 % OUTPUT ARGUMENTS:
-%	sts:							?
+%	sts:							Status indicating whether the output data has been changed.
 %	out:							The final output of the processed data.
 %									Can be the changed to the data with epochs removed if options.change_data is set to be positive.
 %
@@ -183,7 +183,7 @@ data_changed(filt) = data(filt);
 if isfield(options, 'missing_epochs_filename')
     if ~isempty(find(filt == 0, 1))
         epochs = filter_to_epochs(filt);
-		epochs = epochs / sr; %convert into integers
+		epochs = epochs / sr; %convert into seconds
     else
         epochs = [];
     end
