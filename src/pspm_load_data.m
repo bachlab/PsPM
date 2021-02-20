@@ -126,14 +126,17 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
     elseif ~isstruct(chan) && ~exist(fn, 'file')
         warning('ID:nonexistent_file', 'Data file (%s) doesn''t exist', fn); return;
     elseif exist(fn, 'file') && isstruct(chan) && ~chan.options.overwrite && ~chan.options.dont_ask_overwrite
-        overwrite = menu(sprintf('File (%s) already exists. Overwrite?', fn), 'yes', 'no');
-		chan.options.overwrite = 1; % Set an initial value for Jenkins testing when no human user is there
-        if overwrite == 1
-            chan.options.overwrite = 1;
-        else
-            chan.options.overwrite = 0;
-            warning('Data not saved.\n');
-        end
+        [overwrite, overwrite_tf] = listdlg(sprintf('File (%s) already exists. Overwrite?', fn), {'yes', 'no'});
+		if overwrite_tf == 1 % user has made a selection
+        	if overwrite == 1
+            	chan.options.overwrite = 1;
+        	else
+            	chan.options.overwrite = 0;
+            	warning('Data not saved.\n');
+        	end
+		else
+			chan.options.overwrite = 1; % default to overwrite
+		end
         %chan.options.overwrite = 1;
         %warning('Data overwritten');
     end
