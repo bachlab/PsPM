@@ -11228,7 +11228,13 @@ The rationale behind this behaviour is that we observed that ITI value of
  samples in both case (1) and (2).
  Instead, we aim to use as much data as possible in (1), and perform (2)
  only if this edge case is not present.
- 
+\end_layout
+
+\begin_layout Standard
+
+\shape italic
+In PsPM 5.1.0, pspm_dcm can determine the last trials that is less than the
+ given cut-off value (default as 7s).
 \end_layout
 
 \begin_layout Subsubsection*
@@ -11353,6 +11359,28 @@ Specify the minimum duration (in seconds) of NaN periods to be considered
  Data around missing epochs is then split into subsessions, which are evaluated
  independently.
  This setting is ignored for sessions having set missing epochs manually.
+\end_layout
+
+\begin_layout Paragraph*
+Last trial cutoff [s] (default: 7s)
+\end_layout
+
+\begin_layout Standard
+Define a cutoff value for using the parameters estimated from the last trial.
+ If there are fewer data after the end of the last trial in a session than
+ the given cutoff value (in second), the estimated parameters from this
+ trial will be assumed inestimable and set to 
+\shape italic
+NaN
+\shape default
+ after the inversion.
+ This value can be set as 
+\shape italic
+inf
+\shape default
+ to always retain the parameters in the last trial.
+ The default value for this field is 7 s, corresponding to the time at which
+ the canonical SCRF has decayed to around 80% of its peak value.
 \end_layout
 
 \begin_layout Paragraph*
