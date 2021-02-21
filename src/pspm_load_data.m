@@ -126,7 +126,7 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
     elseif ~isstruct(chan) && ~exist(fn, 'file')
         warning('ID:nonexistent_file', 'Data file (%s) doesn''t exist', fn); return;
     elseif exist(fn, 'file') && isstruct(chan) && ~chan.options.overwrite && ~chan.options.dont_ask_overwrite
-        [overwrite, overwrite_tf] = listdlg(sprintf('File (%s) already exists. Overwrite?', fn), {'yes', 'no'});
+        [overwrite, overwrite_tf] = listdlg(['File (%s) already exists. Overwrite?', fn], {'yes', 'no'});
 		if overwrite_tf == 1 % user has made a selection
         	if overwrite == 1
             	chan.options.overwrite = 1;
