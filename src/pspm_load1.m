@@ -219,7 +219,8 @@ end;
 % if not glm, nor pfm
 % create condition names --
 if ~strcmpi(mdltype, 'glm') && ~strcmpi(mdltype, 'pfm')
-    indata.(mdltype).condnames = unique(indata.(mdltype).trlnames);
+    indata.(mdltype).condnames = ...
+        unique(indata.(mdltype).trlnames(cellfun(@ischar,indata.(mdltype).trlnames)));
 end;
 
 % retrieve file contents
