@@ -126,9 +126,12 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
     elseif ~isstruct(chan) && ~exist(fn, 'file')
         warning('ID:nonexistent_file', 'Data file (%s) doesn''t exist', fn); return;
     elseif exist(fn, 'file') && isstruct(chan) && ~chan.options.overwrite && ~chan.options.dont_ask_overwrite
-        
-        msg = ['File already exists. Overwrite?', newline, 'Existing file: ',fn];
-        overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'No'); % default as No
+        if feature('ShowFigureWindows')
+            msg = ['File already exists. Overwrite?', newline, 'Existing file: ',fn];
+            overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'No'); % default as No
+        else
+            overwrite = 'No';
+        end
         if strcmp(overwrite, 'Yes')
             chan.options.overwrite = 1;
         else
