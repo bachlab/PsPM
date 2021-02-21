@@ -272,9 +272,9 @@ end
 
 % check files --
 if exist(model.modelfile, 'file') && options.overwrite == 0
-    overwrite=menu(sprintf('Model file (%s) already exists. Overwrite?', ...
-        model.modelfile), 'yes', 'no');
-    if overwrite == 2, return; end
+    msg = ['Model file already exists. Overwrite?', newline, 'Existing file: ',model.modelfile];
+    overwrite=questdlg(msg, 'File already exists', 'Yes', 'No', 'No');
+    if strcmp(overwrite, 'No'), return; end
 end
 
 if ischar(model.datafile)
