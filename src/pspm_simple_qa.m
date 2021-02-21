@@ -1,4 +1,4 @@
-function [sts, out] = pspm_scr_pp(data, sr, options)
+function [sts, out] = pspm_simple_qa(data, sr, options)
 % pspm_simple_qa applies simple SCR quality assessment rulesets
 % Rule 1:       Microsiemens values must be within range (0.05 to 60)
 % Rule 2:       Absolute slope of value change must be less than 10 microsiemens per second
@@ -26,14 +26,15 @@ function [sts, out] = pspm_scr_pp(data, sr, options)
 %									Default: 0 s - no effect on filter
 %		expand_epochs:              A float in seconds to determine by how much data on the flanks of artefact epochs will be removed.
 %									Default: 0.5 s
+%		clipping_step_size:			A numerical value specifying the step size in moving average algorithm for detecting clipping
+%									Default: 2
+%		clipping_threshold:			A float between 0 and 1 specifying the proportion of local maximum in a step
+%									Default: 0.1
 %		change_data:				A numerical value to choose whether to change the data or not
 %									Default: 1 (true)
-%		clipping_step_size:			A numerical value specifying the step size in moving average algorithm for detecting clipping
-%		clipping_threshold:			A float between 0 and 1 specifying the proportion of local maximum in a step
-%		clipping_filename:			If provided will create a .mat file with the clipping,
-%                                   e.g. abc will create abc.mat
+%
 % OUTPUT ARGUMENTS:
-%	sts:							?
+%	sts:							Status indicating whether the output data has been changed.
 %	out:							The final output of the processed data.
 %									Can be the changed to the data with epochs removed if options.change_data is set to be positive.
 %
@@ -125,11 +126,6 @@ if options.change_data == 0 && ~isfield(options, 'missing_epochs_filename')
     warning('This procedure leads to no output, according to the selected options.');
 end
 
-if isfield(options, 'clipping_filename')
-    data_clipping_detected = detect_clipping(data, options.clipping_step_size, options.clipping_n_window, options.clipping_threshold);
-    save(options.clipping_filename, 'data_clipping_detected');
-end
-
 %% Create filters
 data_changed = NaN(size(data));
 filt_range = data < options.max & data > options.min;
@@ -137,14 +133,17 @@ filt_slope = true(size(data));
 filt_slope(2:end) = abs(diff(data)*sr) < options.slope;
 if (options.deflection_threshold ~= 0) && ~all(filt_slope==1)
     slope_epochs = filter_to_epochs(filt_slope);
-    for r = slope_epochs'
+    for r = transpose(slope_epochs)
         if range(data(r(1):r(2))) < options.deflection_threshold
             filt_slope(r(1):r(2)) = 1;
         end
     end
 end
+filt_clipping = detect_clipping(data, options.clipping_step_size, options.clipping_n_window, options.clipping_threshold);
+
 % combine filters
 filt = filt_range & filt_slope;
+filt = filt & (1-filt_clipping);
 
 %% Find data islands and expand artefact islands
 if isempty(find(filt==0, 1))
@@ -184,6 +183,7 @@ data_changed(filt) = data(filt);
 if isfield(options, 'missing_epochs_filename')
     if ~isempty(find(filt == 0, 1))
         epochs = filter_to_epochs(filt);
+		epochs = epochs / sr; %convert into seconds
     else
         epochs = [];
     end
@@ -200,36 +200,35 @@ sts = 1;
 end
 
 function epochs = filter_to_epochs(filt)	% Return the start and end points of the excluded interval
-epoch_on = find(diff(filt) == -1) + 1;	% Return the start points of the excluded interval
-epoch_off = find(diff(filt) == 1);		% Return the end points of the excluded interval
-if ~isempty(epoch_on) && ~isempty(epoch_off)
-    if (epoch_on(end) > epoch_off(end))     % ends on
-        epoch_off = [epoch_off; length(filt)];	% Include the end point of the whole data sequence
+    epoch_on = find(diff(filt) == -1) + 1;	% Return the start points of the excluded interval
+    epoch_off = find(diff(filt) == 1);		% Return the end points of the excluded interval
+    if ~isempty(epoch_on) && ~isempty(epoch_off)
+        if (epoch_on(end) > epoch_off(end))     % ends on
+            epoch_off = [epoch_off; length(filt)];	% Include the end point of the whole data sequence
+        end
+        if (epoch_on(1) > epoch_off(1))         % starts on
+            epoch_on = [ 1; epoch_on ];			% Include the start point of the whole data sequence
+        end
+    elseif ~isempty(epoch_on) && isempty(epoch_off)
+        epoch_off = length(filt);
+    elseif isempty(epoch_on) && ~isempty(epoch_off)
+        epoch_on = 1;
     end
-    if (epoch_on(1) > epoch_off(1))         % starts on
-        epoch_on = [ 1; epoch_on ];			% Include the start point of the whole data sequence
-    end
-elseif ~isempty(epoch_on) && isempty(epoch_off)
-    epoch_off = length(filt);
-elseif isempty(epoch_on) && ~isempty(epoch_off)
-    epoch_on = 1;
-end
-epochs = [ epoch_on, epoch_off ];
+    epochs = [ epoch_on, epoch_off ];
 end
 
-function interval_clipping = detect_clipping(data, step_size, n_window, threshold)
-l_data = length(data);
-window_size = n_window * step_size;
-index_window_starter = 1:step_size:(l_data-mod((l_data-window_size),step_size)-window_size-step_size+1);
-index_clipping = zeros(1,l_data);
-for window_starter = index_window_starter
-    data_oi_front = data((window_starter+1):(window_starter+window_size));
-    data_oi_front_max = max(data_oi_front);
-    if sum(data_oi_front==data_oi_front_max)/length(data_oi_front) > threshold
-        index_clip_pred = 1:length(data_oi_front);
-        index_clip_pred = window_starter + [0,index_clip_pred(data_oi_front==data_oi_front_max)];
-        index_clipping(index_clip_pred) = 1;
+function index_clipping = detect_clipping(data, step_size, n_window, threshold)
+    l_data = length(data);
+    window_size = n_window * step_size;
+    index_window_starter = 1:step_size:(l_data-mod((l_data-window_size),step_size)-window_size-step_size+1);
+    index_clipping = zeros(l_data,1);
+    for window_starter = index_window_starter
+        data_oi_front = data((window_starter+1):(window_starter+window_size));
+        data_oi_front_max = max(data_oi_front);
+        if sum(data_oi_front==data_oi_front_max)/length(data_oi_front) > threshold
+            index_clip_pred = 1:length(data_oi_front);
+            index_clip_pred = window_starter + [0,index_clip_pred(data_oi_front==data_oi_front_max)];
+            index_clipping(index_clip_pred) = 1;
+        end
     end
-end
-interval_clipping = index_clipping;
 end
