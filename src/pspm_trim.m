@@ -18,17 +18,19 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
 %                         respect to the first two markers having the value
 %                         held in the cell array
 %
-% options:  options.overwrite:       overwrite existing files by default
-%           options.marker_chan_num: marker channel number - if undefined
-%                                     or 0, first marker channel is used
+% options:  options.overwrite:          overwrite existing files by default
+%           options.marker_chan_num:    marker channel number - if undefined
+%                                       or 0, first marker channel is used
 %           options.drop_offset_markers:
-%                                    if offsets are set in the reference, you
-%                                    might be interested in only the data, but
-%                                    not in the additional markers which are
-%                                    within the offset. therefore set this
-%                                    option to 1 to drop markers which lie in
-%                                    the offset. this is for event channels
-%                                    only. default is 0.
+%                                       if offsets are set in the reference, you
+%                                       might be interested in only the data, but
+%                                       not in the additional markers which are
+%                                       within the offset. therefore set this
+%                                       option to 1 to drop markers which lie in
+%                                       the offset. this is for event channels
+%                                       only. default is 0.
+%           options.verbose:            Tell the function to display information
+%                                       about the state of processing. Default = 0
 %
 % RETURNS a filename for the updated file, a cell array of filenames, a
 % struct with fields .data and .infos or a cell array of structs
@@ -92,11 +94,8 @@ else
 end
 
 % set options ---
-try
-    options.overwrite;
-catch
-    options.overwrite = 0;
-end
+try options.overwrite;  catch,  options.overwrite = 0;  end
+try options.verbose;    catch,  options.verbose = 0;    end
 
 if ~isfield(options,'marker_chan_num') || ...
         ~isnumeric(options.marker_chan_num) || ...
@@ -126,10 +125,12 @@ for d=1:numel(D)
     datafile=D{d};
     
     % user output ---
-    if isstruct(datafile)
-        fprintf('Trimming ... ');
-    else
-        fprintf('Trimming %s ... ', datafile);
+    if options.verbose
+        if isstruct(datafile)
+            fprintf('Trimming ... ');
+        else
+            fprintf('Trimming %s ... ', datafile);
+        end
     end
     
     % check and get datafile ---
@@ -324,7 +325,9 @@ for d=1:numel(D)
     else
         Dout{d} = newdatafile;
         % user output
-        fprintf('  done.\n');
+        if options.verbose
+            fprintf('  done.\n');
+        end
     end
 end
 
