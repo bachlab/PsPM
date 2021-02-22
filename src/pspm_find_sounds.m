@@ -332,9 +332,9 @@ while searchForMoreSounds == true
             end
         end
         delays(isnan(delays)) = [];
-        if isempty(delays)
-            warning('ID:out_of_range', 'Too strict max delay was set, no results would be generated.');
-        end
+        %if isempty(delays)
+        %    warning('ID:out_of_range', 'Too strict max delay was set, no results would be generated.');
+        %end
         snd_markers(isnan(snd_markers)) = [];
         % Discard any sound event not related to a trigger
         if ~isempty(snd_fe)
