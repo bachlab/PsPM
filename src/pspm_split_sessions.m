@@ -28,8 +28,6 @@ function newdatafile = pspm_split_sessions(datafile, markerchannel, options)
 %                           point should be included. Last marker will be
 %                           at t = duration (of session) - options.suffix
 %                           Default = 0
-% options.verbose           Tell the function to display information
-%                           about the state of processing. Default = 0
 % options.randomITI         Tell the function to use all the markers to
 %                           evaluate the mean distance between them.
 %                           Usefull for random ITI since it reduce the
@@ -85,7 +83,6 @@ end
 
 try options.prefix; catch, options.prefix = 0; end
 try options.suffix; catch, options.suffix = 0; end
-try options.verbose; catch, options.verbose = 0; end
 try options.splitpoints; catch, options.splitpoints = []; end
 
 % maximum number of sessions (default 10)
@@ -143,11 +140,6 @@ for d = 1:numel(D)
     
     % determine file names ---
     datafile=D{d};
-    
-    % user output ---
-    if options.verbose
-        fprintf('Splitting %s ... ', datafile);
-    end
     
     % check and get datafile ---
     [sts, ininfos, indata, filestruct] = pspm_load_data(datafile);
@@ -300,10 +292,6 @@ for d = 1:numel(D)
                 if overwrite == 2, continue; end
             end
             save(newdatafile{d}{sn}, 'infos', 'data');
-        end
-        % User output
-        if options.verbose
-            fprintf('  done.\n');
         end
     end
     

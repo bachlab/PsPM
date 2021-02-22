@@ -5,45 +5,37 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
 % FORMAT:
 % NEWDATAFILE = pspm_trim (datafile, from, to, reference, options)
 %
-% datafile:     a file name, a cell array of filenames, a struct with
-%               fields .data and .infos or a cell array of structs
+% INPUT:
+% datafile:     a file name, a cell array of filenames, a struct with fields .data and .infos or a cell array of structs
 % from and to:  either numbers, or 'none'
-% reference:    'marker': from and to are set in seconds with
-%                         respect to the first and last scanner/marker pulse
-%               'file':   from and to are set in seconds with respect to start
-%                         of datafile
-%               a 2-element vector: from and to are set in seconds with
-%                         respect to the two markers defined here
-%               a 2-elemtn cell-array: from and to are set in seconds with
-%                         respect to the first two markers having the value
-%                         held in the cell array
+% reference:    'marker': from and to are set in seconds with respect to the first and last scanner/marker pulse
+%               'file':   from and to are set in seconds with respect to start of datafile
+%               a 2-element vector: from and to are set in seconds with respect to the two markers defined here
+%               a 2-elemtn cell-array: from and to are set in seconds with respect to the first two markers having the value held in the cell array
 %
 % options:  options.overwrite:          overwrite existing files by default
-%           options.marker_chan_num:    marker channel number - if undefined
-%                                       or 0, first marker channel is used
+%           options.marker_chan_num:    marker channel number - if undefined or 0, first marker channel is used
 %           options.drop_offset_markers:
-%                                       if offsets are set in the reference, you
-%                                       might be interested in only the data, but
-%                                       not in the additional markers which are
-%                                       within the offset. therefore set this
-%                                       option to 1 to drop markers which lie in
-%                                       the offset. this is for event channels
-%                                       only. default is 0.
-%           options.verbose:            Tell the function to display information
-%                                       about the state of processing. Default = 0
+%                                       if offsets are set in the reference, you might be interested in only the data, but not in the additional 
+%                                       markers which are within the offset. therefore set this option to 1 to drop markers which lie in
+%                                       the offset. this is for event channels only. 
+%                                       Default: 0.
+%           options.verbose:            Tell the function to display information about the state of processing.
+%                                       Default: 0.
 %
-% RETURNS a filename for the updated file, a cell array of filenames, a
-% struct with fields .data and .infos or a cell array of structs
+% RETURNS a filename for the updated file, a cell array of filenames, a struct with fields .data and .infos or a cell array of structs
 %
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%
+% PsPM 5.1
+% Revised and modified in 2021: Dadi Zhao (UCL)
 
 % $Id$
 % $Rev$
 
-% initialise
-% -------------------------------------------------------------------------
+%% Initialise
 global settings;
 if isempty(settings), pspm_init; end
 newdatafile = [];
