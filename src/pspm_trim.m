@@ -133,7 +133,8 @@ for d=1:numel(D)
     end
     
     % check and get datafile ---
-    [sts, infos, data] = pspm_load_data(datafile, 0);
+    [sts, infos, data, filestruct] = pspm_load_data(datafile, 0);
+    markerchannel = filestruct.posofmarker;
     if getmarker
         if options.marker_chan_num
             [nsts, ~, ndata] = pspm_load_data(datafile, options.marker_chan_num);
