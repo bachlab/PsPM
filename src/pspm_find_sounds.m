@@ -114,6 +114,7 @@ try options.sndchannel; catch, options.sndchannel = 0; end
 try options.threshold; catch, options.threshold = 0.1; end
 try options.trigchannel; catch, options.trigchannel = 0; end
 try options.expectedSoundCount; catch; options.expectedSoundCount = 0; end
+try options.snd_in_snd; catch; options.snd_in_snd = false; end
 
 if options.plot
     options.diagnostics = true;
@@ -209,15 +210,16 @@ loc_snd_pow(~roi_mask) = 0;
 searchForMoreSounds = true;
 while searchForMoreSounds == true
     clear snd_pres
-    thresh = max(loc_snd_pow)*options.threshold;
-    snd_pres(loc_snd_pow>thresh) = 1;
-    snd_pres(loc_snd_pow<=thresh) = 0;
+    thresh_l = max(loc_snd_pow)*options.threshold;
+    snd_pres(loc_snd_pow>thresh_l) = 1;
+    snd_pres(loc_snd_pow<=thresh_l) = 0;
     % Convert detected sounds into events. If pulses are separated by less than
     % 50ms, combine into one event.
     mask = ones(round(0.05*snd.header.sr*options.resample),1);
     n_pad = length(mask)-1;
     c = conv(snd_pres,mask)>0;
     snd_pres = (c(1:end-n_pad) & c(n_pad+1:end));
+    
     % Find rising and falling edges
     snd_re = t(conv([1,-1],snd_pres(1:end-1)+0)>0);
     % Find falling edges
@@ -235,6 +237,68 @@ while searchForMoreSounds == true
     noevent_i = find((snd_fe-snd_re)<0.01);
     snd_re(noevent_i)=[];
     snd_fe(noevent_i)=[];
+    
+    % find sound in sound
+    if isstruct(options.snd_in_snd)
+        % look for sound bursts of specific length option.snd_in_snd.width
+        % within previously found sounds
+        
+        % go through all detected events
+        clear snd_re_l snd_fe_l;
+        for i_re = 1:length(snd_re)
+            % if the detected sound is too small to be a possible snd in
+            % snd ignore and continue for loop
+            if (snd_fe(i_re) - snd_re(i_re)) < options.snd_in_snd.max_width
+                continue
+            end
+            
+            % get event's sound power, remoce DC component and normalize
+            loc_snd_pow_l = loc_snd_pow(t>snd_re(i_re) & t<snd_fe(i_re));
+            loc_snd_pow_l = loc_snd_pow_l-mean(loc_snd_pow_l);
+            loc_snd_pow_l = loc_snd_pow_l/range(loc_snd_pow_l);
+            % create time vector
+            t_l = t(t>snd_re(i_re) & t<snd_fe(i_re));
+            
+            thresh_l = options.snd_in_snd.threshold;
+            snd_pres_l = [];
+            snd_pres_l(loc_snd_pow_l>thresh_l) = 1;
+            snd_pres_l(loc_snd_pow_l<=thresh_l) = 0;
+            % Convert detected sounds into events. If pulses are separated by less than
+            % 10ms, combine into one event.
+            mask_l = ones(round(0.01*snd.header.sr*options.resample),1);
+            n_pad_l = length(mask_l)-1;
+            c_l = conv(snd_pres_l,mask_l)>0;
+            snd_pres_l = (c_l(1:end-n_pad_l) & c_l(n_pad_l+1:end));
+            
+            % Find rising and falling edges
+            if sum(snd_pres_l)>0
+                snd_re_l(i_re) = t_l(conv([1,-1],snd_pres_l(1:end-1)+0)>0); %#ok<*AGROW>
+                % Find falling edges
+                snd_fe_l(i_re) = t_l(conv([1,-1],snd_pres_l(1:end-1)+0)<0);
+            else
+                snd_re_l(i_re)=NaN;
+                snd_fe_l(i_re)=NaN;
+            end
+        end
+        snd_re_l(isnan(snd_re_l))=[];
+        snd_fe_l(isnan(snd_fe_l))=[];
+        if numel(snd_re_l) ~= 0 && numel(snd_fe_l) ~= 0
+            % Start with a rising and end with a falling edge
+            if snd_re_l(1)>snd_fe_l(1)
+                snd_re_l = snd_re_l(2:end);
+            end
+            if snd_fe_l(end) < snd_re_l(end)
+                snd_fe_l = snd_fe_l(1:end-1);
+            end
+        end
+        % discard empty fields
+        snd_re_l(snd_re_l==0)=[];
+        snd_fe_l(snd_fe_l==0)=[];
+        
+        % assigne new values
+        snd_re = snd_re_l';
+        snd_fe = snd_fe_l';
+    end
 
     % keep current snd_re for channel_output 'all'
     snd_re_all = snd_re;
