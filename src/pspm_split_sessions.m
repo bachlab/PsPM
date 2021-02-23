@@ -288,12 +288,12 @@ for d = 1:numel(D)
                     
                     
 %                     % Testing trim
-%                     options.overwrite = 1;
-%                     options.verbose = 1;
-%                     options.drop_offset_markers = 1;
-%                     reference = [sta_p, sto_p];
-%                     options.marker_chan_num = d;
-%                     newdatafile{d}{sn} = pspm_trim(datafile, startpoint, stoppoint, reference, options);
+                     options.overwrite = 1;
+                     options.verbose = 1;
+                     options.drop_offset_markers = 1;
+                     reference = [sta_p, sto_p];
+                     options.marker_chan_num = d;
+                     newdatafile{d}{sn} = pspm_trim(datafile, startpoint, stoppoint, reference, options);
                 end
             end
             
