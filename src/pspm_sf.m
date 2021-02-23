@@ -193,9 +193,9 @@ for iFile = 1:numel(model.datafile)
     % check whether model file exists --
     if exist(model.modelfile{iFile}) == 2 && ~options.overwrite
         if feature('ShowFigureWindows')
-        overwrite=menu(sprintf('Output file (%s) already exists. Overwrite?', model.modelfile{iFile}), 'yes', 'no');
+            overwrite=menu(sprintf('Output file (%s) already exists. Overwrite?', model.modelfile{iFile}), 'yes', 'no');
         else
-        overwrite = 1;
+            overwrite = 1;
         end
         % close gcf;
         if overwrite == 2, continue; end;

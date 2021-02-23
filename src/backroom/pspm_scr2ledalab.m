@@ -102,8 +102,8 @@ fileinfo.log     = {'Created by SCRalyze for use with Ledalab 3.44.'};
 % check output file & save data
 %--------------------------------------------------------------------------
 if exist(outfile, 'file') == 2 && options.overwrite ~= 1
-    feature('ShowFigureWindows')
-        overwrite=menu(sprintf('Importfile (%s) already exists. Overwrite?', outfile), 'yes', 'no');   
+    if feature('ShowFigureWindows')
+        overwrite = menu(sprintf('Importfile (%s) already exists. Overwrite?', outfile), 'yes', 'no');   
     else
         overwrite = 1;
     end             

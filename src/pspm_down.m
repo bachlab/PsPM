@@ -109,11 +109,11 @@ for d=1:numel(D)
     
     if exist(newfile, 'file')==2 && ~options.overwrite
         if feature('ShowFigureWindows')
-        overwrite=menu(sprintf('New file (%s) already exists. Overwrite?', ...
+            overwrite=menu(sprintf('New file (%s) already exists. Overwrite?', ...
             newfile), 'yes', 'no');
-            else
+        else
             overwrite = 1;
-            end
+        end
         %close gcf;
         if overwrite==2, return; end
     end
