@@ -263,7 +263,11 @@ for i = 1:w
                 if options.overwrite
                     save_file = 1;
                 elseif ~options.dont_ask_overwrite
-                    save_file = menu(sprintf('File (%s) already exists. Overwrite?', fn), 'yes', 'no');
+                    feature('ShowFigureWindows')
+                        save_file = menu(sprintf('File (%s) already exists. Overwrite?', fn), 'yes', 'no');
+                    else
+                        save_file = 0;
+                    end
                 else
                     save_file = 0;
                 end

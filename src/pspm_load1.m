@@ -98,7 +98,11 @@ if exist(fn, 'file')
     if strcmpi(action, 'save')
         if ~options.overwrite
             if ~options.dont_ask_overwrite
-                overwrite = menu(sprintf('File (%s) already exists. Overwrite?', fn), 'yes', 'no');
+                if feature('ShowFigureWindows')
+                    overwrite = menu(sprintf('File (%s) already exists. Overwrite?', fn), 'yes', 'no');
+                else
+                    overwrite = 1;
+                end
                 if overwrite ~=2
                     warning('ID:not_saving_data', 'Data not saved.\n'); return;
                 end;

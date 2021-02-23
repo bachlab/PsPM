@@ -292,7 +292,11 @@ for d = 1:numel(D)
             
             % save data ---
             if exist(newdatafile{d}{sn}, 'file') && ~options.overwrite
-                overwrite=menu(sprintf('Split file (%s) already exists. Overwrite?', newdatafile{d}{sn}), 'yes', 'no');
+                if feature('ShowFigureWindows')
+                    overwrite=menu(sprintf('Split file (%s) already exists. Overwrite?', newdatafile{d}{sn}), 'yes', 'no');
+                else
+                    overwrite = 1;
+                end
                 %close gcf;
                 if overwrite == 2, continue; end
             end

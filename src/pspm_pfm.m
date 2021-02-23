@@ -352,7 +352,11 @@ elseif ~ismember(options.overwrite, [0, 1])
 end
 
 if exist(model.modelfile, 'file') && ~(isfield(options, 'overwrite') && options.overwrite == 1)
-    overwrite=menu(sprintf('Model file (%s) already exists. Overwrite?', model.modelfile), 'yes', 'no');
+	if feature('ShowFigureWindows')
+    	overwrite = menu(sprintf('Model file (%s) already exists. Overwrite?', model.modelfile), 'yes', 'no');
+    else 
+    	overwrite = 1;
+    end
     if overwrite == 2, return, end
     options.overwrite = 1;
 end

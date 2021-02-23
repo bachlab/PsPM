@@ -272,8 +272,12 @@ end
 
 % check files --
 if exist(model.modelfile, 'file') && options.overwrite == 0
+	if feature('ShowFigureWindows')
     overwrite=menu(sprintf('Model file (%s) already exists. Overwrite?', ...
         model.modelfile), 'yes', 'no');
+        else
+        overwrite = 1;
+        end
     if overwrite == 2, return; end
 end
 

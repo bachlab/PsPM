@@ -105,8 +105,11 @@ if file_exist
     if options.overwrite 
         write_ok = true;
     elseif ~options.dont_ask_overwrite
-        ov = menu(sprintf('File (%s) already exists. Overwrite?', ...
-            options.output_file), 'yes', 'no');
+        if feature('ShowFigureWindows')
+            ov = menu(sprintf('File (%s) already exists. Overwrite?', options.output_file), 'yes', 'no');
+        else
+            ov = 1;
+        end
         write_ok = ov == 1;
     end;
 else
