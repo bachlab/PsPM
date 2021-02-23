@@ -110,7 +110,7 @@ elseif iscell(datafile)
 else
     warning('ID:invalid_input', 'Data file must be a char, cell, or struct.');
 end
-clear datafile
+%clear datafile
 
 % check if prefix is positiv and suffix is negative
 if options.prefix > 0
@@ -291,7 +291,8 @@ for d = 1:numel(D)
                     options.verbose = 1;
                     options.drop_offset_markers = 1;
                     reference = [sta_p, sto_p];
-                    data{k}.data = pspm_trim(indata{k}.data, startpoint, stoppoint, reference, options);
+                    options.marker_chan_num = d;
+                    data_trim_testing = pspm_trim(datafile, startpoint, stoppoint, reference, options);
                 end
             end
             

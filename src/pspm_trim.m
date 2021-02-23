@@ -85,6 +85,9 @@ else
 end
 
 %% Set options
+if ~exist('options','var') || isempty(options) || ~isstruct(options)
+    options = struct();
+end
 try options.overwrite;  catch,  options.overwrite = 0;  end
 try options.verbose;    catch,  options.verbose = 0;    end
 
