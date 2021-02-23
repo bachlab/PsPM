@@ -283,16 +283,16 @@ for d = 1:numel(D)
                     startpoint = max(1, ceil(sta_p * data{k}.header.sr));
                     stoppoint  = min(floor(sto_p * data{k}.header.sr), ...
                         numel(indata{k}.data));
-                    % data{k}.data = indata{k}.data(startpoint:stoppoint);
+                    data{k}.data = indata{k}.data(startpoint:stoppoint);
                     
                     
-                    % Testing trim
-                    options.overwrite = 1;
-                    options.verbose = 1;
-                    options.drop_offset_markers = 1;
-                    reference = [sta_p, sto_p];
-                    options.marker_chan_num = d;
-                    newdatafile{d}{sn} = pspm_trim(datafile, startpoint, stoppoint, reference, options);
+%                     % Testing trim
+%                     options.overwrite = 1;
+%                     options.verbose = 1;
+%                     options.drop_offset_markers = 1;
+%                     reference = [sta_p, sto_p];
+%                     options.marker_chan_num = d;
+%                     newdatafile{d}{sn} = pspm_trim(datafile, startpoint, stoppoint, reference, options);
                 end
             end
             
