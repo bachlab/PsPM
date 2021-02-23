@@ -103,15 +103,16 @@ fileinfo.log     = {'Created by SCRalyze for use with Ledalab 3.44.'};
 %--------------------------------------------------------------------------
 if exist(outfile, 'file') == 2 && options.overwrite ~= 1
     if feature('ShowFigureWindows')
-        overwrite = menu(sprintf('Importfile (%s) already exists. Overwrite?', outfile), 'yes', 'no');   
+        msg = ['Imported file already exists. Overwrite?', newline, 'Existing file: ',outfile];
+        overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'No'); % default not to overwrite by users 
     else
-        overwrite = 1;
+        overwrite = 'No'; % default not to overwrite on Jenkins
     end             
     close gcf;
 else
-    overwrite = 1;
+    overwrite = 'Yes';
 end;
-if overwrite == 2
+if strcmp(overwrite, 'No')
     warning('Data discarded ...');
     return;
 else

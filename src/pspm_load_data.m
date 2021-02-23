@@ -127,11 +127,12 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
         warning('ID:nonexistent_file', 'Data file (%s) doesn''t exist', fn); return;
     elseif exist(fn, 'file') && isstruct(chan) && ~chan.options.overwrite && ~chan.options.dont_ask_overwrite
         if feature('ShowFigureWindows')
-            overwrite = menu(sprintf('File (%s) already exists. Overwrite?', fn), 'yes', 'no');
+            msg = ['File already exists. Overwrite?', newline, 'Existing file: ',fn];
+            overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default to overwrite by users 
         else 
-            overwrite = 1
+            overwrite = 'Yes'; % default to overwrite on Jenkins
         end
-        if overwrite == 1
+        if strcmp(overwrite, 'Yes')
             chan.options.overwrite = 1;
         else
             chan.options.overwrite = 0;

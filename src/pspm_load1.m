@@ -99,11 +99,12 @@ if exist(fn, 'file')
         if ~options.overwrite
             if ~options.dont_ask_overwrite
                 if feature('ShowFigureWindows')
-                    overwrite = menu(sprintf('File (%s) already exists. Overwrite?', fn), 'yes', 'no');
+                    msg = ['File already exists. Overwrite?', newline, 'Existing file: ',fn];
+                    overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default to overwrite by users 
                 else
-                    overwrite = 1;
+                    overwrite = 'Yes'; % default to overwrite on Jenkins
                 end
-                if overwrite ~=2
+                if strcmp(overwrite, 'No')
                     warning('ID:not_saving_data', 'Data not saved.\n'); return;
                 end;
             else

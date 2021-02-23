@@ -193,12 +193,15 @@ for iFile = 1:numel(model.datafile)
     % check whether model file exists --
     if exist(model.modelfile{iFile}) == 2 && ~options.overwrite
         if feature('ShowFigureWindows')
-            overwrite=menu(sprintf('Output file (%s) already exists. Overwrite?', model.modelfile{iFile}), 'yes', 'no');
+            msg = ['Output file already exists. Overwrite?', newline, 'Existing file: ',model.modelfile{iFile}];
+            overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default to overwrite by users
         else
-            overwrite = 1;
+            overwrite = 'Yes'; % default to overwrite on Jenkins
         end
         % close gcf;
-        if overwrite == 2, continue; end;
+        if strcmp(overwrite, 'No')
+            continue; 
+        end
     end;
     % get and filter data --
     [sts, infos, data] = pspm_load_data(model.datafile{iFile}, model.channel);

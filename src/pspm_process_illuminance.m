@@ -264,8 +264,11 @@ for i = 1:w
                     save_file = 1;
                 elseif ~options.dont_ask_overwrite
                     if feature('ShowFigureWindows')
-                        save_file = menu(sprintf('File (%s) already exists. Overwrite?', fn), 'yes', 'no');
+                        msg = ['File already exists. Overwrite?', newline, 'Existing file: ', fn];
+                        overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'No'); % default not to overwrite by users 
+                        save_file = find(strcmp(['No', 'Yes'], overwrite)-1;
                     else
+                        overwrite = 'No'; % default not to overwrite on Jenkins
                         save_file = 0;
                     end
                 else

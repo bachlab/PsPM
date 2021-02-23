@@ -109,13 +109,15 @@ for d=1:numel(D)
     
     if exist(newfile, 'file')==2 && ~options.overwrite
         if feature('ShowFigureWindows')
-            overwrite=menu(sprintf('New file (%s) already exists. Overwrite?', ...
-            newfile), 'yes', 'no');
+            msg = ['New file already exists. Overwrite?', newline, 'Existing file: ',options.output_file];
+            overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default to overwrite by users
         else
-            overwrite = 1;
+            overwrite = 'Yes'; % default to overwrite on Jenkins
         end
         %close gcf;
-        if overwrite==2, return; end
+        if strcmp(overwrite,'No') 
+            return; 
+        end
     end
     
     % user output
