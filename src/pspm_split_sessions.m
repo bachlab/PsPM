@@ -292,15 +292,19 @@ for d = 1:numel(D)
                     options.drop_offset_markers = 1;
                     reference = [sta_p, sto_p];
                     options.marker_chan_num = d;
-                    data_trim_testing = pspm_trim(datafile, startpoint, stoppoint, reference, options);
+                    newdatafile{d}{sn} = pspm_trim(datafile, startpoint, stoppoint, reference, options);
                 end
             end
             
             % save data ---
             if exist(newdatafile{d}{sn}, 'file') && ~options.overwrite
-                overwrite=menu(sprintf('Split file (%s) already exists. Overwrite?', newdatafile{d}{sn}), 'yes', 'no');
-                %close gcf;
-                if overwrite == 2, continue; end
+                if feature('ShowFigureWindows')
+                    msg = ['Split file already exists. Overwrite?', newline, 'Existing file: ',newdatafile{d}{sn}];
+                    overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes');
+                else
+                    overwrite = 'Yes';
+                end
+                if strcmp(overwrite, 'No'), continue; end
             end
             save(newdatafile{d}{sn}, 'infos', 'data');
         end
