@@ -30,7 +30,7 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %
 % PsPM 5.1
-% Revised and modified in 2021: Dadi Zhao (UCL)
+% Updated in 2021: Dadi Zhao (UCL)
 
 % $Id$
 % $Rev$
@@ -40,8 +40,7 @@ global settings;
 if isempty(settings), pspm_init; end
 newdatafile = [];
 
-% check input arguments
-% -------------------------------------------------------------------------
+%% Check input arguments
 if nargin<1
     warning('ID:invalid_input', 'No data.\n'); return;
 elseif nargin<2
@@ -85,7 +84,7 @@ else
     return;
 end
 
-% set options ---
+%% Set options
 try options.overwrite;  catch,  options.overwrite = 0;  end
 try options.verbose;    catch,  options.verbose = 0;    end
 
@@ -100,19 +99,18 @@ if ~isfield(options, 'drop_offset_markers') || ...
     options.drop_offset_markers = 0;
 end
 
-% check data file argument --
+% check data file argument
 if ischar(datafile) || isstruct(datafile)
     D = {datafile};
 elseif iscell(datafile)
     D = datafile;
 else
-    warning('Data file must be a char, cell, or struct.');
+    warning('ID:invalid_input', 'Data file must be a char, cell, or struct.');
 end
 clear datafile
 
-% work on all data files
-% -------------------------------------------------------------------------
-for d=1:numel(D)
+%% Work on all data files
+for d = 1:numel(D)
     % determine file names ---
     datafile=D{d};
     
@@ -126,8 +124,7 @@ for d=1:numel(D)
     end
     
     % check and get datafile ---
-    [sts, infos, data, filestruct] = pspm_load_data(datafile, 0);
-    markerchannel = filestruct.posofmarker;
+    [sts, infos, data] = pspm_load_data(datafile, 0);
     if getmarker
         if options.marker_chan_num
             [nsts, ~, ndata] = pspm_load_data(datafile, options.marker_chan_num);
