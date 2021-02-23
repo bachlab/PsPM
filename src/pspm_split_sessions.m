@@ -28,12 +28,12 @@ function newdatafile = pspm_split_sessions(datafile, markerchannel, options)
 %                           point should be included. Last marker will be
 %                           at t = duration (of session) - options.suffix
 %                           Default = 0
+% options.verbose           Tell the function to display information
+%                           about the state of processing. Default = 0
 % options.randomITI         Tell the function to use all the markers to
 %                           evaluate the mean distance between them.
 %                           Usefull for random ITI since it reduce the
 %                           variance. Default = 0
-% options.verbose:          Tell the function to display information about the state of processing.
-%                           Default: 0.
 %
 %       REMARK for suffix and prefix:
 %           The prefix and  suffix intervals will only be applied to data -
@@ -49,9 +49,6 @@ function newdatafile = pspm_split_sessions(datafile, markerchannel, options)
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2008-2015 Linus Ruttimann & Tobias Moser (University of Zurich)
-%
-% PsPM 5.1
-% Revised and modified in 2021: Dadi Zhao (UCL)
 
 % $Id$
 % $Rev$
@@ -66,17 +63,14 @@ function newdatafile = pspm_split_sessions(datafile, markerchannel, options)
 % at t=0 or at a defined time point.
 % -------------------------------------------------------------------------
 
-%% Initialise
+% initialise
+% -------------------------------------------------------------------------
 global settings;
 if isempty(settings), pspm_init; end
 newdatafile = [];
 
-%% Check input arguments
-if nargin<1
-    warning('ID:invalid_input', 'No data.\n'); return;
-end
-
-%% Set options
+% options
+% -------------------------------------------------------------------------
 if ~exist('options','var') || isempty(options) || ~isstruct(options)
     options = struct();
 end
@@ -86,10 +80,10 @@ catch
     options.overwrite = 0;
 end
 
-try options.prefix;     catch,  options.prefix = 0;         end
-try options.suffix;     catch,  options.suffix = 0;         end
-try options.splitpoints;catch,  options.splitpoints = [];   end
-try options.verbose;    catch,  options.verbose = 0;        end
+try options.prefix; catch, options.prefix = 0; end
+try options.suffix; catch, options.suffix = 0; end
+try options.verbose; catch, options.verbose = 0; end
+try options.splitpoints; catch, options.splitpoints = []; end
 
 % maximum number of sessions (default 10)
 try options.max_sn; catch, options.max_sn = settings.split.max_sn; end
@@ -102,15 +96,18 @@ end
 
 try options.randomITI; catch, options.randomITI = 0; end
 
-% check data file argument
-if ischar(datafile) || isstruct(datafile)
+% check input arguments
+% -------------------------------------------------------------------------
+if nargin < 1
+    warning('ID:invalid_input', 'No data file(s).\n'); return;
+elseif ischar(datafile)
     D = {datafile};
 elseif iscell(datafile)
     D = datafile;
 else
-    warning('ID:invalid_input', 'Data file must be a char, cell, or struct.');
+    warning('ID:invalid_input', 'Datafile needs to be a char or cell.\n');
+    return;
 end
-%clear datafile
 
 % check if prefix is positiv and suffix is negative
 if options.prefix > 0
@@ -137,11 +134,17 @@ if ~isnumeric(options.randomITI) || ~ismember(options.randomITI, [0, 1])
     warning('ID:invalid_input', 'options.randomITI has to be numeric and equal to 0 or 1.'); return;
 end
 
-%% Work on all data files
+% work on all data files
+% -------------------------------------------------------------------------
 for d = 1:numel(D)
     
     % determine file names ---
     datafile=D{d};
+    
+    % user output ---
+    if options.verbose
+        fprintf('Splitting %s ... ', datafile);
+    end
     
     % check and get datafile ---
     [sts, ininfos, indata, filestruct] = pspm_load_data(datafile);
@@ -284,29 +287,20 @@ for d = 1:numel(D)
                     stoppoint  = min(floor(sto_p * data{k}.header.sr), ...
                         numel(indata{k}.data));
                     data{k}.data = indata{k}.data(startpoint:stoppoint);
-                    
-                    
-%                     % Testing trim
-%                     options.overwrite = 1;
-%                     options.verbose = 1;
-%                     options.drop_offset_markers = 1;
-%                     reference = [sta_p, sto_p];
-%                     options.marker_chan_num = d;
-%                     newdatafile{d}{sn} = pspm_trim(datafile, startpoint, stoppoint, reference, options);
                 end
             end
             
             % save data ---
             if exist(newdatafile{d}{sn}, 'file') && ~options.overwrite
-                if feature('ShowFigureWindows')
-                    msg = ['Split file already exists. Overwrite?', newline, 'Existing file: ',newdatafile{d}{sn}];
-                    overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes');
-                else
-                    overwrite = 'Yes';
-                end
-                if strcmp(overwrite, 'No'), continue; end
+                overwrite=menu(sprintf('Split file (%s) already exists. Overwrite?', newdatafile{d}{sn}), 'yes', 'no');
+                %close gcf;
+                if overwrite == 2, continue; end
             end
             save(newdatafile{d}{sn}, 'infos', 'data');
+        end
+        % User output
+        if options.verbose
+            fprintf('  done.\n');
         end
     end
     
@@ -319,5 +313,4 @@ end
 
 return;
 
-% Testing MATLAB licence
 
