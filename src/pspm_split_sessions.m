@@ -109,6 +109,7 @@ elseif iscell(datafile)
     D = datafile;
 else
     warning('ID:invalid_input', 'Data file must be a char, cell, or struct.');
+	return;
 end
 %clear datafile
 
