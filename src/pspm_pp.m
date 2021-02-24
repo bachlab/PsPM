@@ -159,5 +159,4 @@ savedata.options = options;
 sts = pspm_load_data(newdatafile, savedata);
 fprintf(' done\n');
 
-return;
-
+return
