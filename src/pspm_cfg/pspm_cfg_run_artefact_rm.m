@@ -62,9 +62,34 @@ switch filtertype
             qa.expand_epochs = qa_job.expand_epochs;
         end
         
-        out = pspm_pp(filtertype, datafile, qa, channelnumber, options);
-end
+        % out = pspm_pp(filtertype, datafile, qa, channelnumber, options);
+        
+        [sts, infos, data] = pspm_load_data(datafile, 0);
+        if sts ~= 1,
+            warning('ID:invalid_input', 'call of pspm_load_data failed');
+            return;
+        end
+        
+        for k = 1:numel(channum)
+            curr_chan = channum(k);
+            [sts, data{curr_chan}.data] = pspm_scr_pp(data{curr_chan}.data, data{curr_chan}.header.sr, qa);
+            if sts == -1
+                warning('ID:invalid_input', 'call of pspm_scr_pp failed in round %s',k);
+                return;
+            end
+        end
+        infos.pp = sprintf('simple scr quality assessment');
+        
+        [pth, fn, ext] = fileparts(datafile);
+        newdatafile = fullfile(pth, ['m', fn, ext]);
+        infos.ppdate = date;
+        infos.ppfile = newdatafile;
+        clear savedata
+        savedata.data = data; savedata.infos = infos; 
+        savedata.options = options;
+        sts = pspm_load_data(newdatafile, savedata);
+        fprintf(' done\n');
 
-if ~iscell(out)
-    out = {out};
+if ~iscell(newdatafile)
+    newdatafile = {newdatafile};
 end
