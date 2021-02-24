@@ -20,7 +20,7 @@ switch filtertype
     case 'butter'
         freq = job.filtertype.(filtertype).freq;
         out = pspm_pp(filtertype, datafile, freq, channelnumber, options);
-    case 'simple_qa'
+    case 'scr_pp'
         qa_job = job.filtertype.(filtertype);
         
         % Option structure sent to pspm_simple_qa
@@ -62,6 +62,11 @@ switch filtertype
             qa.expand_epochs = qa_job.expand_epochs;
         end
         
+        % Check if data will be changed
+        if ~isfield(options, 'change_data')
+            options.change_data = 1;
+        end
+        
         % out = pspm_pp(filtertype, datafile, qa, channelnumber, options);
         newdatafile = [];
         [sts, infos, data] = pspm_load_data(datafile, 0);
@@ -79,16 +84,21 @@ switch filtertype
         end
         infos.pp = sprintf('simple scr quality assessment');
         
-        [pth, fn, ext] = fileparts(datafile);
-        newdatafile = fullfile(pth, ['m', fn, ext]);
-        infos.ppdate = date;
-        infos.ppfile = newdatafile;
-        clear savedata
-        savedata.data = data;
-        savedata.infos = infos; 
-        savedata.options = options;
-        sts = pspm_load_data(newdatafile, savedata);
-        fprintf(' done\n');
+        % save data only if change_data is set to 1
+        if qa.change_data != 1
+            continue
+        else
+            [pth, fn, ext] = fileparts(datafile);
+            newdatafile = fullfile(pth, ['m', fn, ext]);
+            infos.ppdate = date;
+            infos.ppfile = newdatafile;
+            clear savedata
+            savedata.data = data;
+            savedata.infos = infos; 
+            savedata.options = options;
+            sts = pspm_load_data(newdatafile, savedata);
+            fprintf(' done\n');
+        end
 
 if ~iscell(newdatafile)
     newdatafile = {newdatafile};

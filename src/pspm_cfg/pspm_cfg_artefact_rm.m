@@ -144,7 +144,7 @@ qa_expand_epochs.help    = {'A float in seconds to determine by how much data on
 
 qa              = cfg_branch;
 qa.name         = 'Simple SCR quality correction';
-qa.tag          = 'simple_qa';
+qa.tag          = 'scr_pp';
 qa.val          = {qa_min, qa_max, qa_slope, qa_missing_epochs, qa_deflection_threshold, qa_data_island_threshold,qa_expand_epochs};
 qa.help         = {['Simple SCR quality correction. See I. R. Kleckner et al.,"Simple, Transparent, and' ...
                     'Flexible Automated Quality Assessment Procedures for Ambulatory Electrodermal Activity Data," in ' ...
