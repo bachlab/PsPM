@@ -63,13 +63,12 @@ switch filtertype
         end
         
         % out = pspm_pp(filtertype, datafile, qa, channelnumber, options);
-        
+        newdatafile = [];
         [sts, infos, data] = pspm_load_data(datafile, 0);
         if sts ~= 1,
             warning('ID:invalid_input', 'call of pspm_load_data failed');
             return;
         end
-        
         for k = 1:numel(channum)
             curr_chan = channum(k);
             [sts, data{curr_chan}.data] = pspm_scr_pp(data{curr_chan}.data, data{curr_chan}.header.sr, qa);
@@ -85,7 +84,8 @@ switch filtertype
         infos.ppdate = date;
         infos.ppfile = newdatafile;
         clear savedata
-        savedata.data = data; savedata.infos = infos; 
+        savedata.data = data;
+        savedata.infos = infos; 
         savedata.options = options;
         sts = pspm_load_data(newdatafile, savedata);
         fprintf(' done\n');
