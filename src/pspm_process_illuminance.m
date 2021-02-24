@@ -297,6 +297,4 @@ if isequal(size(reg),[1 1])
 end
 
 out = reg;
-
 sts = 1;
-
