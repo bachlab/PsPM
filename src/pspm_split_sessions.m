@@ -295,11 +295,14 @@ for d = 1:numel(D)
             if exist(newdatafile{d}{sn}, 'file') && ~options.overwrite
                 if feature('ShowFigureWindows')
                     msg = ['Split file already exists. Overwrite?', newline, 'Existing file: ',newdatafile{d}{sn}];
-                    overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes');
+                    overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default to overwrite
                 else
-                    overwrite = 'Yes';
+                    overwrite = 'Yes'; % default to overwrite on Jenkins
                 end
-                if strcmp(overwrite, 'No'), continue; end
+                %close gcf;
+                if strcmp(overwrite, 'No')
+                    continue;
+                end
             end
             
             save(newdatafile{d}{sn}, 'infos', 'data');
