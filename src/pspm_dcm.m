@@ -272,13 +272,13 @@ end
 
 % check files --
 if exist(model.modelfile, 'file') && options.overwrite == 0
-	if feature('ShowFigureWindows')
-    overwrite=menu(sprintf('Model file (%s) already exists. Overwrite?', ...
-        model.modelfile), 'yes', 'no');
-        else
-        overwrite = 1;
-        end
-    if overwrite == 2, return; end
+	msg = ['Model file already exists. Overwrite?', newline, 'Existing file: ',model.modelfile];
+    if feature('ShowFigureWindows')
+        overwrite=questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default as Yes (to overwrite)
+    else
+        overwrite = 'Yes'; % default as Yes (to overwrite)
+    end
+    if strcmp(overwrite, 'No'), return; end
 end
 
 if ischar(model.datafile)
@@ -770,7 +770,7 @@ if (options.indrf || options.getrf) && ~isempty(options.flexevents)
 end;
 
 % get mean response
-options.meanSCR = (nanmean(D))';
+options.meanSCR = transpose(nanmean(D));
 
 %% Invert DCM
 % ------------------------------------------------------------------------
