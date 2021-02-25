@@ -138,8 +138,6 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
             chan.options.overwrite = 0;
             warning('Data not saved.\n');
         end
-        %chan.options.overwrite = 1;
-        %warning('Data overwritten');
     end
 
     % check file structure
