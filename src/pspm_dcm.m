@@ -272,7 +272,7 @@ end
 
 % check files --
 if exist(model.modelfile, 'file') && options.overwrite == 0
-	msg = ['Model file already exists. Overwrite?', newline, 'Existing file: ',model.modelfile];
+    msg = ['Model file already exists. Overwrite?', newline, 'Existing file: ',model.modelfile];
     if feature('ShowFigureWindows')
         overwrite=questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default as Yes (to overwrite)
     else
