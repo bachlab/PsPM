@@ -770,7 +770,7 @@ if (options.indrf || options.getrf) && ~isempty(options.flexevents)
 end;
 
 % get mean response
-options.meanSCR = (nanmean(D))';
+options.meanSCR = transpose(nanmean(D));
 
 %% Invert DCM
 % ------------------------------------------------------------------------
