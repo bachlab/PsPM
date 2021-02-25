@@ -265,8 +265,15 @@ end
 
 % check files --
 if exist(model.modelfile, 'file') && ~(isfield(options, 'overwrite') && options.overwrite == 1)
-    overwrite=menu(sprintf('Model file (%s) already exists. Overwrite?', model.modelfile), 'yes', 'no');
-    if overwrite == 2, return, end
+	if feature('ShowFigureWindows')
+		msg = ['Model file already exists. Overwrite?', newline, 'Existing file: ',model.modelfile];
+    	overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default to overwrite by users 
+    else
+    	overwrite = 'Yes'; % default to overwrite on Jenkins
+    end
+    if strcmp(overwrite, 'No')
+    	return;
+    end
     options.overwrite = 1;
 end
 
