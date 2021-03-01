@@ -1,4 +1,4 @@
-function [newdatafile, newepochfile] = pspm_split_sessions_try(datafile, markerchannel, options)
+function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchannel, options)
 % pspm_split_sessions splits experimental sessions/blocks, based on
 % regularly incoming markers, for example volume or slice markers from an
 % MRI scanner (equivalent to the 'scanner' option during import in previous
