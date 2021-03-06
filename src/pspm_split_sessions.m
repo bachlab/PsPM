@@ -194,13 +194,14 @@ for d = 1:numel(D)
             % relevant data within the mean space
             
             % add global mean space
-            if sta == sto || options.randomITI
-                mean_space = mean(diff(mrk));
-            else
-                mean_space = mean(diff(mrk(sta:sto)));
-            end
-            start_time = mrk(sta);
-            stop_time = mrk(sto)+mean_space;
+%             if sta == sto || options.randomITI
+%                 mean_space = mean(diff(mrk));
+%             else
+%                 mean_space = mean(diff(mrk(sta:sto)));
+%             end
+%             start_time = mrk(sta);
+%             stop_time = mrk(sto)+mean_space;
+            stop_time = mrk(sto);
             
             % correct starttime (we cannot go into -) ---
             if start_time <= 0, start_time = 0; end
