@@ -176,6 +176,9 @@ for d = 1:numel(D)
     end
     
     if ~isempty(splitpoint)
+        
+        suffix = zeros(1,(numel(splitpoint)+1));% initialise
+        
         for s = 1:(numel(splitpoint)+1)
             if s == 1
                 sta = 1;
@@ -195,13 +198,23 @@ for d = 1:numel(D)
             
             % add global mean space
             %if sta == sto || options.randomITI
-            %    mean_space = mean(diff(mrk));
+            %   mean_space = mean(diff(mrk));
             %else
-            %    mean_space = mean(diff(mrk(sta:sto)));
+            %   mean_space = mean(diff(mrk(sta:sto)));
             %end
-            mean_space = 0;
             start_time = mrk(sta);
-            stop_time = mrk(sto);%+mean_space;
+            %stop_time = mrk(sto)+mean_space;
+            stop_time = mrk(sto);
+            
+            if options.suffix == 0
+                if sta == sto || options.randomITI
+                    suffix(s) = mean(diff(mrk));
+                else
+                    suffix(s) = mean(diff(mrk(sta:sto)));
+                end
+            else
+                suffix(s) = options.suffix;
+            end
             
             % correct starttime (we cannot go into -) ---
             if start_time <= 0, start_time = 0; end
@@ -229,10 +242,9 @@ for d = 1:numel(D)
             
             if (splitpoint(sn,2) + options.suffix) > ininfos.duration
                 sto_p = ininfos.duration;
-                sto_suffix = ininfos.duration - splitpoint(sn,2);
+                suffix(sn) = ininfos.duration - splitpoint(sn,2);
             else
-                sto_p = splitpoint(sn,2) + options.suffix;
-                sto_suffix = options.suffix;
+                sto_p = splitpoint(sn,2) + suffix(sn);
             end
             
             % update infos ---
@@ -251,7 +263,7 @@ for d = 1:numel(D)
                 if strcmp(data{k}.header.units, 'events')
                     if k == markerchannel
                         startpoint = sta_p - sta_prefix;
-                        stoppoint = sto_p - sto_suffix;
+                        stoppoint = sto_p - suffix(sn);
                         foo = indata{k}.data;
                         foo_idx = find(foo<=stoppoint & foo>=startpoint);
                         foo(foo > stoppoint) = [];
@@ -319,6 +331,4 @@ if d == 1
     newdatafile = newdatafile{1};
 end
 
-return;
-
-
+return
