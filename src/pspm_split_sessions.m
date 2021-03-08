@@ -199,6 +199,7 @@ for d = 1:numel(D)
             %else
             %    mean_space = mean(diff(mrk(sta:sto)));
             %end
+            mean_space = 0;
             start_time = mrk(sta);
             stop_time = mrk(sto);%+mean_space;
             
