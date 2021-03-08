@@ -105,9 +105,13 @@ if file_exist
     if options.overwrite 
         write_ok = true;
     elseif ~options.dont_ask_overwrite
-        ov = menu(sprintf('File (%s) already exists. Overwrite?', ...
-            options.output_file), 'yes', 'no');
-        write_ok = ov == 1;
+        if feature('ShowFigureWindows')
+            msg = ['File already exists. Overwrite?', newline, 'Existing file: ',options.output_file];
+    	    ov = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default to overwrite by users
+        else
+            ov = 'Yes'; % default to overwrite on Jenkins
+        end
+        write_ok = strcmp(ov,'Yes');
     end;
 else
     write_ok = true;
