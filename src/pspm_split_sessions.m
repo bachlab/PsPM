@@ -176,6 +176,8 @@ for d = 1:numel(D)
     end
     
     if ~isempty(splitpoint)
+        
+        suffix = zeros(1,(numel(splitpoint)+1));% initialise
         for s = 1:(numel(splitpoint)+1)
             if s == 1
                 sta = 1;
@@ -194,14 +196,25 @@ for d = 1:numel(D)
             % relevant data within the mean space
             
             % add global mean space
-            if sta == sto || options.randomITI
-                mean_space = mean(diff(mrk));
-            else
-                mean_space = mean(diff(mrk(sta:sto)));
-            end
+            %if sta == sto || options.randomITI
+            %    mean_space = mean(diff(mrk));
+            %else
+            %    mean_space = mean(diff(mrk(sta:sto)));
+            %end
             start_time = mrk(sta);
             % stop_time = mrk(sto)+mean_space;
             stop_time = mrk(sto);
+            
+            if options.suffix == 0
+                if sta == sto || options.randomITI
+                    suffix(s) = mean(diff(mrk));
+                else
+                    suffix(s) = mean(diff(mrk(sta:sto)));
+                end
+            else
+                suffix(s) = options.suffix;
+            end
+
             
             % correct starttime (we cannot go into -) ---
             if start_time <= 0, start_time = 0; end
