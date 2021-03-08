@@ -331,7 +331,4 @@ if d == 1
     newdatafile = newdatafile{1};
 end
 
-return;
-
-
-
+return
