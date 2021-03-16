@@ -1,4 +1,4 @@
-function [pp_emg] = pspm_cfg_pp_emg_data
+function [pp_scr] = pspm_cfg_pp_scr_data
 % function to process emg data which leads to emg_proc data
 % 
 
@@ -72,13 +72,13 @@ options.val         = {chan, mains, chan_action};
 options.help        = {['']};
 
 % Executable Branch
-pp_emg = cfg_exbranch;
-pp_emg.name = 'Preprocess startle eyeblink EMG';
-pp_emg.tag  = 'pp_emg_data';
-pp_emg.val  = {datafile, options};
-pp_emg.prog = @pspm_cfg_run_pp_emg_data;
-pp_emg.vout = @pspm_cfg_vout_pp_emg_data;
-pp_emg.help = {['Preprocess startle eyeblink EMG data for further ', ...
+pp_scr = cfg_exbranch;
+pp_scr.name = 'Preprocess SCR quality assessment';
+pp_scr.tag  = 'pp_scr_data';
+pp_scr.val  = {datafile, options};
+pp_scr.prog = @pspm_cfg_run_pp_scr_data;
+pp_scr.vout = @pspm_cfg_vout_pp_scr_data;
+pp_scr.help = {['Preprocess startle eyeblink EMG data for further ', ...
     'analysis. Noise in EMG data will be removed in three steps: ', ...
     'Initially the data is filtered with a 4th order Butterworth filter ', ...
     'with cutoff frequencies 50 Hz and 470 Hz. Then, Mains frequency ', ...
@@ -91,7 +91,7 @@ pp_emg.help = {['Preprocess startle eyeblink EMG data for further ', ...
     'startle eyeblink GLM.'], ...
     'References:', 'Khemka, Tzovara, Quednow & Bach (2016) Psychophysiology'};
 
-function vout = pspm_cfg_vout_pp_emg_data(~)
+function vout = pspm_cfg_vout_pp_scr_data(~)
 vout = cfg_dep;
 vout.sname      = 'Output Channel';
 vout.tgt_spec = cfg_findspec({{'class','cfg_entry'}});

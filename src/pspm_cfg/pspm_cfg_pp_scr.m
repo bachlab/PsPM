@@ -13,7 +13,7 @@ function [cfg] = pspm_cfg_pp_scr
 cfg        = cfg_repeat;
 cfg.name   = 'SCR quality assessment';
 cfg.tag    = 'pp_scr';
-cfg.values = {pspm_cfg_pp_emg_data}; % To be changed
+cfg.values = {pspm_cfg_pp_scr_data}; % To be changed
 cfg.forcestruct = true;
 cfg.help   = {'Help: SCR preprocessing'}; % To be changed
 
