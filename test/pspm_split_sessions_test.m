@@ -211,4 +211,3 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
     end
     
 end
-
