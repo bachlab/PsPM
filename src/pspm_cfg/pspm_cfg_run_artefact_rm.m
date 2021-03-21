@@ -82,7 +82,7 @@ switch filtertype
                 return;
             end
         end
-        infos.pp = sprintf('simple scr quality assessment');
+        infos.pp = sprintf('Preprocessing SCR');
         
         % save data only if change_data is set to 1
         if qa.change_data != 1

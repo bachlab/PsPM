@@ -1,4 +1,4 @@
-function [pp_gaze_convert] = pspm_cfg_data_convert
+function [pp_gaze_convert] = pspm_cfg_gaze_convert
 % function [pp_gaze_convert] = pspm_cfg_data_convert(job)
 %
 % Matlabbatch function for conversion functions of data
@@ -6,7 +6,7 @@ function [pp_gaze_convert] = pspm_cfg_data_convert
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
 
-% $Id: pspm_cfg_data_convert.m 635 2019-03-14 10:14:50Z lciernik $
+% $Id: pspm_cfg_gaze_convert.m 635 2019-03-14 10:14:50Z lciernik $
 % $Rev: 635 $
 
 % Initialise
