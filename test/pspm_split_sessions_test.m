@@ -142,7 +142,7 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
                     end
                     
                     if i ~= numel(newdatafile)
-                        this.verifyEqual(d{3}.data(end), info.duration - (suffix + mean(diff(d{3}.data))), 'RelTol', 10^-2);
+                        this.verifyEqual(d{3}.data(end), info.duration - (suffix + mean(diff(d{3}.data))), 'RelTol', 5*10^-2);
                     end
                     % remove file
                     delete(newdatafile{i});

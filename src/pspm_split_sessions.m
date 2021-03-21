@@ -281,7 +281,7 @@ for d = 1:numel(D)
                 sta_prefix = options.prefix;
             end
             
-            if (splitpoint(sn,2) + options.suffix) > ininfos.duration
+            if (splitpoint(sn,2) + suffix(sn)) > ininfos.duration
                 sto_p = ininfos.duration;
                 suffix(sn) = ininfos.duration - splitpoint(sn,2);
             else
