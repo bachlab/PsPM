@@ -10,4 +10,11 @@ vendor/
 # Ignore all the temporary files
 *.lyx~
 *.m~
-.DS_Store
+
+# Ignore all the macOS files
+*.DS_Store
+
+# Ignore all the MATLAB files
+*.MATLABDriveTag
+*.asv
+*.mat
