@@ -93,47 +93,47 @@ classdef pspm_pp_test < matlab.unittest.TestCase
         end
 
 
-        function simple_qa_test(this)
-            %generate testdata
-            channels{1}.chantype = 'scr';
-            
-            fn = 'missing_epochs_test_generated_data.mat';
-            pspm_testdata_gen(channels, 10, fn);
-            
-            %filter one channel
-            missing_epoch_filename = 'missing_epochs_test_out';
-            qa = struct('missing_epochs_filename', missing_epoch_filename, ...
-                        'deflection_threshold', 0, ...
-                        'expand_epochs', 0 );
-            newfile = pspm_pp('simple_qa', fn, qa);
-            
-            [sts, infos, data, filestruct] = pspm_load_data(newfile, 'none');
-                        
-            this.verifyTrue(sts == 1, 'the returned file couldn''t be loaded');
-            this.verifyTrue(filestruct.numofchan == numel(channels), 'the returned file contains not as many channels as the inputfile');
-            
-            delete(newfile);
-
-            out = load(missing_epoch_filename);
-            this.verifySize(out.epochs, [ 10, 2 ], 'the written epochs are not of the correct size')   
-            delete(string(missing_epoch_filename) + ".mat");
-
-
-            %no missing epochs filename option
-            newfile = pspm_pp('simple_qa', fn);
-            
-            [sts, infos, data, filestruct] = pspm_load_data(newfile, 'none');
-                        
-            this.verifyTrue(sts == 1, 'the returned file couldn''t be loaded');
-            this.verifyTrue(filestruct.numofchan == numel(channels), 'the returned file contains not as many channels as the inputfile');
-            
-            delete(newfile);
-            % test no file exists when not provided
-            this.verifyError(@()load('missing_epochs_test_out'), 'MATLAB:load:couldNotReadFile');
-
-            %delete testdata
-            delete(fn);
-        end
+%        function simple_qa_test(this)
+%            %generate testdata
+%            channels{1}.chantype = 'scr';
+%            
+%            fn = 'missing_epochs_test_generated_data.mat';
+%            pspm_testdata_gen(channels, 10, fn);
+%            
+%            %filter one channel
+%            missing_epoch_filename = 'missing_epochs_test_out';
+%            qa = struct('missing_epochs_filename', missing_epoch_filename, ...
+%                        'deflection_threshold', 0, ...
+%                        'expand_epochs', 0 );
+%            newfile = pspm_pp('simple_qa', fn, qa);
+%            
+%            [sts, infos, data, filestruct] = pspm_load_data(newfile, 'none');
+%                        
+%            this.verifyTrue(sts == 1, 'the returned file couldn''t be loaded');
+%            this.verifyTrue(filestruct.numofchan == numel(channels), 'the returned file contains not as many channels as the inputfile');
+%            
+%            delete(newfile);
+%
+%            out = load(missing_epoch_filename);
+%            this.verifySize(out.epochs, [ 10, 2 ], 'the written epochs are not of the correct size')   
+%            delete(string(missing_epoch_filename) + ".mat");
+%
+%
+%            %no missing epochs filename option
+%            newfile = pspm_pp('simple_qa', fn);
+%            
+%            [sts, infos, data, filestruct] = pspm_load_data(newfile, 'none');
+%                        
+%            this.verifyTrue(sts == 1, 'the returned file couldn''t be loaded');
+%            this.verifyTrue(filestruct.numofchan == numel(channels), 'the returned file contains not as many channels as the inputfile');
+%            
+%            delete(newfile);
+%            % test no file exists when not provided
+%            this.verifyError(@()load('missing_epochs_test_out'), 'MATLAB:load:couldNotReadFile');
+%
+%            %delete testdata
+%            delete(fn);
+%        end
 
         
         function overwrite_test(this)
