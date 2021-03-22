@@ -137,7 +137,7 @@ switch method
         end
         for k = 1:numel(channum)
             curr_chan = channum(k);
-            [sts, data{curr_chan}.data] = pspm_scr_pp(data{curr_chan}.data, data{curr_chan}.header.sr, qa);
+            [sts, data{curr_chan}.data] = pspm_scr_pp(data{curr_chan}.data, data{curr_chan}.header.sr);
             if sts == -1
                 warning('ID:invalid_input', 'call of pspm_scr_pp failed in round %s',k);
                 return;
