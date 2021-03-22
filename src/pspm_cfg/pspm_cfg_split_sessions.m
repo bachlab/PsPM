@@ -62,6 +62,15 @@ split_behavior.help    = {['Choose whether sessions should be detected ', ...
     'automatically or if sessions should be split according to ', ...
     'given marker id''s.']};
 
+%% Missing epoches
+missing      = cfg_files;
+missing.name = 'Missing Epoch File';
+missing.tag  = 'missing_epoch_file';
+missing.num  = [1 Inf];
+missing.help = {['Add missing epochs file for SCR data, which will ',...
+    'be split. The input must be a filename containing missing ',...
+    'epochs in seconds.']};
+
 %% Overwrite file
 overwrite         = cfg_menu;
 overwrite.name    = 'Overwrite Existing File';
@@ -76,7 +85,7 @@ overwrite.help    = {'Overwrite existing file?'};
 split_sessions      = cfg_exbranch;
 split_sessions.name = 'Split Sessions';
 split_sessions.tag  = 'split_sessions';
-split_sessions.val  = {datafile,mrk_chan, split_behavior,overwrite};
+split_sessions.val  = {datafile,missing,mrk_chan,split_behavior,overwrite};
 split_sessions.prog = @pspm_cfg_run_split_sessions;
 split_sessions.vout = @pspm_cfg_vout_split_sessions;
 split_sessions.help = {['Split sessions, defined by trains of of markers. This function ' ...

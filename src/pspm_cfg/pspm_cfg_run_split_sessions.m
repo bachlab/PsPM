@@ -19,6 +19,10 @@ elseif isfield(job.split_behavior, 'marker')
     options.splitpoints = job.split_behavior.marker;
 end
 
+if isfield(job.missing)
+    options.missing = job.missing;
+end
+
 out = pspm_split_sessions(job.datafile, markerchannel, options);
 
 if ~iscell(out)
