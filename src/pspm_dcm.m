@@ -808,7 +808,11 @@ for iSn = 1:numel(model.datafile)
     % set disabled trials to NaN
     dcm.stats(cTrl + find(trls(:, 1) == 0), :) = NaN;
     % set last trial that does not contain sufficient information to NaN
-    iti_mat = cell2mat(model.iti);
+    % iti_mat = cell2mat(model.iti);
+    iti_mat = [];
+    for i_model_iti = 1:length(model.iti)
+        iti_mat = [iti_mat; model.iti{i_model_iti}];
+    end
     if sum(iti_mat(end)<model.lasttrialcutoff)>0
         dcm.stats(end, :) = NaN;
     end
