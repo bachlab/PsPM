@@ -151,7 +151,8 @@ resp_pp.help = {['Convert continuous respiration traces into interpolated ', ...
     'excursion per respiration cycle, divided by the cycle period. ', ...
     'Converted data are written into new channel(s).']};
 
-function vout = pspm_cfg_vout_resp_pp(job)
+function vout = pspm_cfg_vout_resp_pp()
+%function vout = pspm_cfg_vout_resp_pp(job)
 vout = cfg_dep;
 vout.sname      = 'Output File';
 vout.tgt_spec = cfg_findspec({{'class','cfg_files'}});
