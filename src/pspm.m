@@ -95,6 +95,18 @@ function PsPM_ButtonDownFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 pspm_show_arms;
 
+function PsPM_ButtonDownFcnHelp(hObject, eventdata, handles)
+% hObject    handle to PsPM (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+pspm_show_help_doc;
+
+function PsPM_ButtonDownFcnForum(hObject, eventdata, handles)
+% hObject    handle to PsPM (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+pspm_show_forum;
+
 % --- Executes on button press in Import_data.
 function Import_data_Callback(hObject, eventdata, handles)
 % hObject    handle to Import_data (see GCBO)
