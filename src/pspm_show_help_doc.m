@@ -1,6 +1,4 @@
 function pspm_show_help_doc
-% Happy Easter!
-%__________________________________________________________________________
 % PsPM 5.1
 % (C) 2008-2021 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %
