@@ -49,11 +49,14 @@ if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
 
-if nargout
-    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
-else
-    gui_mainfcn(gui_State, varargin{:});
-end
+% if nargout
+%     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+% else
+%     gui_mainfcn(gui_State, varargin{:});
+% end
+
+appdesigner(pspm_App)
+
 % End initialization code - DO NOT EDIT
 
 % --- Executes just before PsPM is made visible.
