@@ -64,25 +64,26 @@ split_behavior.help    = {['Choose whether sessions should be detected ', ...
 
 %% Missing epochs
 miss_epoch_false          = cfg_const;
-miss_epoch_false.name     = 'No';
+miss_epoch_false.name     = 'Do not add';
 miss_epoch_false.tag      = 'no';
 miss_epoch_false.val      = {0};
-miss_epoch_false.help     = {'No missing epochs were added.'};
+miss_epoch_false.help     = {'No missing epochs will be added.'};
 
 miss_epoch_true          = cfg_files;
-miss_epoch_true.name     = 'Yes, define file path';
+miss_epoch_true.name     = 'Add, define the file path';
 miss_epoch_true.tag      = 'path';
 miss_epoch_true.num      = [1 Inf];
-miss_epoch_true.help     = {'Selected missing epochs were used for spliting.'};
+miss_epoch_true.help     = {'Selected missing epochs will used for ',...
+    'spliting. ', 'The input must be a filename containing missing ',...
+    'epochs in seconds.'};
 
 missing_epoch         = cfg_choice;
 missing_epoch.name    = 'Missing epoch';
 missing_epoch.tag     = 'missing_epoch';
 missing_epoch.values  = {miss_epoch_false, miss_epoch_true};
 missing_epoch.val     = {miss_epoch_false};
-missing_epoch.help = {['Add missing epochs file for SCR data, which will ',...
-    'be split. The input must be a filename containing missing ',...
-    'epochs in seconds. ','Leave blank if not used.']};
+missing_epoch.help = {['Whether to add missing epochs file for SCR data,'...
+    'which will be split.']};
 
 %% Overwrite file
 overwrite         = cfg_menu;
