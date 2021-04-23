@@ -62,29 +62,27 @@ split_behavior.help    = {['Choose whether sessions should be detected ', ...
     'automatically or if sessions should be split according to ', ...
     'given marker id''s.']};
 
-%% Missing epoche files
-missing      = cfg_files;
-missing.name = 'Missing Epoch File';
-missing.tag  = 'missing_epoch_file';
-missing.num  = [1 Inf];
-missing.help = {['Add missing epochs file for SCR data, which will ',...
+%% Missing epochs
+miss_epoch_false          = cfg_const;
+miss_epoch_false.name     = 'No';
+miss_epoch_false.tag      = 'no';
+miss_epoch_false.val      = {0};
+miss_epoch_false.help     = {'No missing epochs were added.'};
+
+miss_epoch_true          = cfg_files;
+miss_epoch_true.name     = 'Yes, define file path';
+miss_epoch_true.tag      = 'path';
+miss_epoch_true.num      = [1 Inf];
+miss_epoch_true.help     = {'Selected missing epochs were used for spliting.'};
+
+missing_epoch         = cfg_choice;
+missing_epoch.name    = 'Missing epoch';
+missing_epoch.tag     = 'missing_epoch';
+missing_epoch.values  = {miss_epoch_false, miss_epoch_true};
+missing_epoch.val     = {miss_epoch_false};
+missing_epoch.help = {['Add missing epochs file for SCR data, which will ',...
     'be split. The input must be a filename containing missing ',...
     'epochs in seconds. ','Leave blank if not used.']};
-
-%% missing switch file
-%missing_switch         = cfg_choice;
-%missing_switch.name    = 'Add missing epochs';
-%missing_switch.tag     = 'add_missing_epochs';
-%missing_switch.val     = {false};
-%missing_switch.values  = {false, missing};
-%missing_switch.values  = {missing};
-%missing_switch.help    = {'test'};
-
-options        = cfg_branch;
-options.name   = 'Options';
-options.tag    = 'options';
-options.val    = {missing};
-options.help   = {'Optional parameters'};
 
 %% Overwrite file
 overwrite         = cfg_menu;
@@ -100,7 +98,7 @@ overwrite.help    = {'Overwrite existing file?'};
 split_sessions      = cfg_exbranch;
 split_sessions.name = 'Split Sessions';
 split_sessions.tag  = 'split_sessions';
-split_sessions.val  = {datafile,mrk_chan,split_behavior,options,overwrite};
+split_sessions.val  = {datafile,mrk_chan,split_behavior,missing_epoch,overwrite};
 split_sessions.prog = @pspm_cfg_run_split_sessions;
 split_sessions.vout = @pspm_cfg_vout_split_sessions;
 split_sessions.help = {['Split sessions, defined by trains of of markers. This function ' ...

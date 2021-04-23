@@ -6,6 +6,11 @@ function out = pspm_cfg_run_split_sessions(job)
 
 options = struct;
 options.overwrite = job.overwrite;
+if isfield(job.missing_epoch,'path')
+    options.missing = job.missing_epoch.path{1,1};
+else
+    options.missing = 0;
+end
 
 if isfield(job.mrk_chan,'chan_nr')
     markerchannel = job.mrk_chan.chan_nr;
@@ -19,9 +24,6 @@ elseif isfield(job.split_behavior, 'marker')
     options.splitpoints = job.split_behavior.marker;
 end
 
-if isfield(job.missing)
-    options.missing = job.missing;
-end
 
 out = pspm_split_sessions(job.datafile, markerchannel, options);
 
