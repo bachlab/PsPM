@@ -116,7 +116,8 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
     end
 
 
-    % check data file argument
+    % 1.3 Handle data files
+    % 1.3.1 check data file argument
     if ischar(datafile) || isstruct(datafile)
         D = {datafile};
     elseif iscell(datafile)
@@ -125,13 +126,14 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
         warning('ID:invalid_input', 'Data file must be a char, cell, or struct.');
         return;
     end
-    %clear datafile
+    % 1.3.2 clear datafile
     if options.missing
         if ~ischar(options.missing)
             warning('ID:invalid_input', 'Missing epochs file needs to be a char or cell.\n');
         end
     end
-    % check if prefix is positiv and suffix is negative
+
+    % 1.4 Check if prefix is positiv and suffix is negative
     if options.prefix > 0
         warning('ID:invalid_input', 'Prefix must be negative.');
         return;
@@ -158,15 +160,16 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 
     %% 2 Work on all data files
     for d = 1:numel(D)
-        % determine file names ---
+
+        % 2.1 Obtrain data
         datafile = D{d};
-        % check and get datafile ---
         [sts, ininfos, indata, filestruct] = pspm_load_data(datafile);
         if sts == -1
             warning('ID:invalid_input', 'Could not load data');
             return;
         end
 
+        % 2.2 Handle missing epochs
         if options.missing
             % makes sure the epochs are in seconds and not empty
             [~, missing] = pspm_get_timing('epochs', options.missing, 'seconds');
@@ -190,16 +193,18 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
             end
         end
 
-        % define marker channel --
+        % 2.3 Handle markers
+
+        % 2.3.1 Define marker channel
         if markerchannel == 0
             markerchannel = filestruct.posofmarker;
         end
         mrk = indata{markerchannel}.data;
-
         newdatafile{d} = [];
         newepochfile{d} = [];
+
+        % 2.3.2 Get markers and define cut off
         if isempty(options.splitpoints)
-            % get markers and define cut off ---
             imi = sort(diff(mrk), 'descend');
             if min(imi)*options.min_break_ratio > max(imi)
                 fprintf('  The file won''t be split. No possible timepoints for split in channel %i.\n', markerchannel);
@@ -229,9 +234,8 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
                 end
                 % include last space (estimated by mean space)
                 % do not cut immedeately after stop because there might be some
-                % relevant data within the mean space
-
-                % add global mean space
+                % relevant data within the mean space.
+                % Add global mean space
                 %if sta == sto || options.randomITI
                 %   mean_space = mean(diff(mrk));
                 %else
@@ -240,7 +244,6 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
                 start_time = mrk(sta);
                 %stop_time = mrk(sto)+mean_space;
                 stop_time = mrk(sto);
-
                 if options.suffix == 0
                     if sta == sto || options.randomITI
                         suffix(s) = mean(diff(mrk));
@@ -250,7 +253,6 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
                 else
                     suffix(s) = options.suffix;
                 end
-
                 % correct starttime (we cannot go into -) ---
                 if start_time <= 0
                     start_time = 0;
@@ -262,9 +264,12 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
                 spp(s,:) = [start_time, stop_time];
             end
             splitpoint = spp;
-            % split file ---
+
+
+            % 2.4 Split files
             for sn = 1:size(splitpoint,1)
-                % determine filename ---
+
+                % 2.4.1 Determine filename
                 [p, f, ex] = fileparts(datafile);
                 newdatafile{d}{sn} = fullfile(p, sprintf('%s_sn%02.0f%s', f, sn, ex));
 
@@ -273,7 +278,7 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
                     newepochfile{d}{sn} = fullfile(p_epochs, sprintf('%s_sn%02.0f%s', f_epochs, sn, ex_epochs));
                 end
 
-                % adjust split points according to prefix and suffix ---
+                % 2.4.2 Adjust split points according to prefix and suffix
                 if (splitpoint(sn,1) + options.prefix) < 0
                     sta_p = 0;
                     sta_prefix = sta_p - splitpoint(sn,1);
@@ -289,14 +294,14 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
                     sto_p = splitpoint(sn,2) + suffix(sn);
                 end
 
-                % update infos ---
+                % 2.4.3 Update infos
                 infos = ininfos;
                 infos.duration = sto_p - sta_p;
                 infos.splitdate = date;
                 infos.splitsn = sprintf('Session %02.0f', sn);
                 infos.splitfile = newdatafile{d}{sn};
 
-                % split data ---
+                % 2.4.4 Split data
                 data = cell(numel(indata),1);
                 for k = 1:numel(indata)
                     % assign header
@@ -339,32 +344,24 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
                     else
                         % convert from s into datapoints
                         startpoint = max(1, ceil(sta_p * data{k}.header.sr));
-                        stoppoint  = min(floor(sto_p * data{k}.header.sr), ...
-                        numel(indata{k}.data));
+                        stoppoint  = min(floor(sto_p * data{k}.header.sr), umel(indata{k}.data));
                         data{k}.data = indata{k}.data(startpoint:stoppoint);
                     end
                 end
 
-                if options.missing & ~isempty(missing)
-                    % convert from s into datapoints
-                    startpoint = max(1, ceil(sta_p * srscr));
+                if options.missing && ~isempty(missing)
+
+                    startpoint = max(1, ceil(sta_p * srscr)); % convert from s into datapoints
                     stoppoint  = min(floor(sto_p * srscr), numel(datascr{1}.data));
                     epochs = dp_epochs(startpoint:stoppoint);
-
-                    % Return the start points of the excluded interval
-                    epoch_on = strfind(epochs.', [0 1]);
-                    % Return the end points of the excluded interval
-                    epoch_off = strfind(epochs.', [1 0]);
-
-                    % if the epochs is in the middle of 2 blocks
-                    if numel(epoch_off) < numel(epoch_on)
+                    epoch_on = strfind(epochs.', [0 1]); % Return the start points of the excluded interval
+                    epoch_off = strfind(epochs.', [1 0]); % Return the end points of the excluded interval
+                    if numel(epoch_off) < numel(epoch_on) % if the epochs is in the middle of 2 blocks
                         epoch_off(end+1) = stoppoint;
                     elseif numel(epoch_on) < numel(epoch_off)
                         epoch_on = [1, epoch_on];
                     end
-
-                    % convert back to seconds
-                    epochs = [epoch_on.', epoch_off.']/srscr;
+                    epochs = [epoch_on.', epoch_off.']/srscr; % convert back to seconds
                     save(newepochfile{d}{sn}, 'epochs');
                 end
 
