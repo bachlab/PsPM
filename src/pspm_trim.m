@@ -1,4 +1,4 @@
-function newdatafile = pspm_trim(datafile, from, to, reference, options)
+function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
 % pspm_trim cuts an PsPM dataset to the limits set with the parameters 'from'
 % and 'to' and writes it to a file with a prepended 't'
 %
@@ -58,11 +58,11 @@ elseif nargin<4
     warning('ID:invalid_input', 'No reference given.\n'); return;
 end
 
-if ~((ischar(from) && strcmpi(from, 'none')) ...
-        || (isnumeric(from) && numel(from) == 1))
+if ~((ischar(pt_start) && strcmpi(pt_start, 'none')) ...
+        || (isnumeric(pt_start) && numel(pt_start) == 1))
     warning('ID:invalid_input', 'No valid start point given.\n'); return;
-elseif ~((ischar(to) && strcmpi(to, 'none')) ...
-        || (isnumeric(to) && numel(to) == 1))
+elseif ~((ischar(pt_end) && strcmpi(pt_end, 'none')) ...
+        || (isnumeric(pt_end) && numel(pt_end) == 1))
     warning('ID:invalid_input', 'No end point given'); return;
 end
 
@@ -202,19 +202,19 @@ for d=1:numel(D)
     if any(sts == -1), newdatafile = []; break; end
     
     % convert from and to into time in seconds ---
-    if ischar(from) % 'none'
+    if ischar(pt_start) % 'none'
         sta_p = 0;
         sta_offset = 0;
     else
         if getmarker % 'marker'
             sta_p = events(startmarker);
-            sta_offset = from;
+            sta_offset = pt_start;
         else         % 'file'
-            sta_p = from;
+            sta_p = pt_start;
             sta_offset = 0;
         end
     end
-    if ischar(to) % 'none'
+    if ischar(pt_end) % 'none'
         sto_p = infos.duration;
         sto_offset = 0;
     else
@@ -227,10 +227,10 @@ for d=1:numel(D)
                 sto_offset = 0;
             else
                 sto_p = events(l_endmarker);
-                sto_offset = to;
+                sto_offset = pt_end;
             end
         else          % 'file'
-            sto_p = to;
+            sto_p = pt_end;
             sto_offset = 0;
         end
     end
