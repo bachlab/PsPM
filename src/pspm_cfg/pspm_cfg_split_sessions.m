@@ -62,6 +62,29 @@ split_behavior.help    = {['Choose whether sessions should be detected ', ...
     'automatically or if sessions should be split according to ', ...
     'given marker id''s.']};
 
+%% Missing epochs
+miss_epoch_false          = cfg_const;
+miss_epoch_false.name     = 'No missing epochs file';
+miss_epoch_false.tag      = 'no';
+miss_epoch_false.val      = {0};
+miss_epoch_false.help     = {'No missing epochs file to be processed.'};
+
+miss_epoch_true          = cfg_files;
+miss_epoch_true.name     = 'Add missing epochs file';
+miss_epoch_true.tag      = 'name';
+miss_epoch_true.num      = [1 Inf];
+miss_epoch_true.help     = {['The selected missing epochs file will be ',...
+    'split as well.'], ['The input must be the name of a file containing missing ',...
+    'epochs in seconds.']};
+
+missing_epoch         = cfg_choice;
+missing_epoch.name    = 'Missing epoch';
+missing_epoch.tag     = 'missing_epochs_file';
+missing_epoch.values  = {miss_epoch_false, miss_epoch_true};
+missing_epoch.val     = {miss_epoch_false};
+missing_epoch.help = {['A missing epochs file can be added here '...
+    'and will be split in the same way as the PsPM data file.']};
+
 %% Overwrite file
 overwrite         = cfg_menu;
 overwrite.name    = 'Overwrite Existing File';
@@ -76,7 +99,7 @@ overwrite.help    = {'Overwrite existing file?'};
 split_sessions      = cfg_exbranch;
 split_sessions.name = 'Split Sessions';
 split_sessions.tag  = 'split_sessions';
-split_sessions.val  = {datafile,mrk_chan, split_behavior,overwrite};
+split_sessions.val  = {datafile,mrk_chan,split_behavior,missing_epoch,overwrite};
 split_sessions.prog = @pspm_cfg_run_split_sessions;
 split_sessions.vout = @pspm_cfg_vout_split_sessions;
 split_sessions.help = {['Split sessions, defined by trains of of markers. This function ' ...
@@ -85,6 +108,7 @@ split_sessions.help = {['Split sessions, defined by trains of of markers. This f
     'breaks in these marker sequences. The individual sessions will be written to new files ' ...
     'with a suffix ''_sn'', and the session number. You can choose a marker channel if several were recorded.']};
 
+% function vout = pspm_cfg_vout_split_sessions(job)
 function vout = pspm_cfg_vout_split_sessions(job)
 vout = cfg_dep;
 vout.sname      = 'Output File(s)';

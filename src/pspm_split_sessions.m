@@ -205,6 +205,7 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
                 fprintf('  The file won''t be split. No possible timepoints for split in channel %i.\n', markerchannel);
             elseif numel(mrk) <=  options.max_sn
                 fprintf('  The file won''t be split. Not enough markers in channel %i.\n', markerchannel);
+
             end
 
             imi(1:(options.max_sn-1)) = [];
