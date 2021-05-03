@@ -113,10 +113,11 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
             g_endmarker = reference(2);
             % check if reference markers are valid ---
             if startmarker < 1 || g_endmarker < startmarker
-                warning('ID:invalid_input', 'No valid reference markers.\n'); return;
+                warning('ID:invalid_input', 'No valid reference markers.\n');
+                return;
             end
         else
-            warning('ID:invalid_input', 'Invalid reference option ''%s'', should contain only two elements'); return;
+            warning('ID:invalid_input', 'Invalid reference option ''%s'', should contain only two elements', reference);
             return;
         end
     case 'cell'
@@ -149,19 +150,21 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
     end
 
     %% 2 Work on all data
-    for d = 1:numel(D)
+    for i_D = 1:numel(D)
 
-        % 2.1 Obtain file name
-        datafile = D{d};
+        % 2.1 Obtain essential file info
+        datafile = D{i_D}; % Obtain file name
         if isstruct(datafile)
             fprintf('Trimming ... ');
         else
             fprintf('Trimming %s ... ', datafile);
         end
-
-        % 2.2 Check and get datafile
         [sts, infos, data] = pspm_load_data(datafile, 0);
-        if getmarker
+
+        % 2.2 Calculate markers if needed
+        if getmarker == 1
+
+            % 2.2.1 Verify the markers
             if options.marker_chan_num
                 [nsts, ~, ndata] = pspm_load_data(datafile, options.marker_chan_num);
                 if ~strcmp(ndata{1}.header.chantype, 'marker')
@@ -175,190 +178,187 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
             end
             sts = [sts; nsts];
             events = ndata{1}.data;
-
             if isempty(events)
-                warning('ID:marker_out_of_range', ...
-                'Marker channel (%i) is empty. Cannot use as a reference.', ...
-                options.marker_chan_num);
+                warning('ID:marker_out_of_range', 'Marker channel (%i) is empty. Cannot use as a reference.', options.marker_chan_num);
                 return;
             end
 
-            % caluculate marker idx if specified by marker values or markernames
+            % 2.2.2 Caluculate marker idx if specified by marker values or markernames
             if calculate_idx
                 % get idx of starting marker
                 try_num_start = str2num(startmarker_vals);
                 if ~isempty(try_num_start)
                     startmarker = find(ndata{1}.markerinfo.value == try_num_start,1);
-
                 elseif ischar(startmarker_vals)
                     startmarker = find(strcmpi(ndata{1}.markerinfo.name,startmarker_vals),1);
                 else
-                    warning('ID:invalid_input', ...
-                    'The value or name of the starting marker must be numeric or a string');
+                    warning('ID:invalid_input', 'The value or name of the starting marker must be numeric or a string');
                     return;
                 end
-                %get idx of ending marker
+                % get idx of ending marker
                 try_num_end = str2num(g_endmarker_vals);
                 if ~isempty(try_num_end)
                     g_endmarker = find(ndata{1}.markerinfo.value == try_num_end,1);
                 elseif ischar(g_endmarker_vals)
                     g_endmarker = find(strcmpi(ndata{1}.markerinfo.name,g_endmarker_vals),1);
                 else
-                    warning('ID:invalid_input', ...
-                    'The value or name of the ending marker must be numeric or a string');
+                    warning('ID:invalid_input', 'The value or name of the ending marker must be numeric or a string');
                     return;
                 end
-
                 % check if the markers are valid
                 if startmarker < 1 || g_endmarker < startmarker
                     warning('ID:invalid_input', 'No valid reference markers.\n'); return;
                 end
             end
 
-            % set local endmarker depending on global endmarker
+            % 2.2.3 set local endmarker depending on global endmarker
             if isempty(g_endmarker)
                 l_endmarker = numel(events);
             else
                 l_endmarker = g_endmarker;
             end
-
             clear nsts ninfos ndata
-
-
         end
-        if any(sts == -1), newdatafile = []; break; end
 
-            % convert from and to into time in seconds ---
-            if ischar(pt_start) % 'none'
-                sta_p = 0;
+        if any(sts == -1)
+            newdatafile = [];
+            break;
+        end
+
+        % convert from and to into time in seconds ---
+        if ischar(pt_start) % 'none'
+            sta_p = 0;
+            sta_offset = 0;
+        else
+            if getmarker % 'marker'
+                sta_p = events(startmarker);
+                sta_offset = pt_start(i_D);
+            else         % 'file'
+                sta_p = pt_start(i_D);
                 sta_offset = 0;
-            else
-                if getmarker % 'marker'
-                    sta_p = events(startmarker);
-                    sta_offset = pt_start;
-                else         % 'file'
-                    sta_p = pt_start;
-                    sta_offset = 0;
-                end
             end
-            if ischar(pt_end) % 'none'
-                sto_p = infos.duration;
-                sto_offset = 0;
-            else
-                if getmarker  % 'marker'
-                    if l_endmarker > numel(events)
-                        warning('ID:marker_out_of_range', ...
-                        ['\nEnd marker (%03.0f) out of file - no ', ...
-                        'trimming end end.\n'], g_endmarker);
-                        sto_p = infos.duration;
-                        sto_offset = 0;
-                    else
-                        sto_p = events(l_endmarker);
-                        sto_offset = pt_end;
-                    end
-                else          % 'file'
-                    sto_p = pt_end;
-                    sto_offset = 0;
-                end
-            end
-
-            % check start and end points ---
-            if ((sta_p + sta_offset) < 0)
-                warning('ID:marker_out_of_range', ['\nStart point (%.2f s) outside', ...
-                ' file, no trimming at start.'], (sta_p + sta_offset));
-
-                if (sta_p > 0)
-                    sta_offset = -sta_p;
-                else
-                    sta_p = 0;
-                    sta_offset = 0;
-                end
-            end
-            if (sto_p + sto_offset) > infos.duration
-                warning('ID:marker_out_of_range', ['\nEnd point (%.2f s) outside ', ...
-                'file, no trimming at end.'], (sto_p + sto_offset));
-
-                if (sto_p > infos.duration)
+        end
+        if ischar(pt_end) % 'none'
+            sto_p = infos.duration;
+            sto_offset = 0;
+        else
+            if getmarker  % 'marker'
+                if l_endmarker > numel(events)
+                    warning('ID:marker_out_of_range', ...
+                    ['\nEnd marker (%03.0f) out of file - no ', ...
+                    'trimming end end.\n'], g_endmarker);
                     sto_p = infos.duration;
                     sto_offset = 0;
                 else
-                    sto_offset = infos.duration - sto_p;
+                    sto_p = events(l_endmarker);
+                    sto_offset = pt_end(i_D);
+                end
+            else          % 'file'
+                sto_p = pt_end(i_D);
+                sto_offset = 0;
+            end
+        end
+
+        % check start and end points ---
+        if ((sta_p + sta_offset) < 0)
+            warning('ID:marker_out_of_range', ['\nStart point (%.2f s) outside', ...
+            ' file, no trimming at start.'], (sta_p + sta_offset));
+
+            if (sta_p > 0)
+                sta_offset = -sta_p;
+            else
+                sta_p = 0;
+                sta_offset = 0;
+            end
+        end
+        if (sto_p + sto_offset) > infos.duration
+            warning('ID:marker_out_of_range', ['\nEnd point (%.2f s) outside ', ...
+            'file, no trimming at end.'], (sto_p + sto_offset));
+
+            if (sto_p > infos.duration)
+                sto_p = infos.duration;
+                sto_offset = 0;
+            else
+                sto_offset = infos.duration - sto_p;
+            end
+        end
+
+        % trim file ---
+        for k = 1:numel(data)
+            if ~strcmpi(data{k}.header.units, 'events') % waveform channels
+                % set start point (`ceil` for protect against having duration < data*sr,
+                % the "+1" is here because of matlabs convention to start indices from 1)
+                newstartpoint = ceil((sta_p + sta_offset) * data{k}.header.sr)+1;
+                if newstartpoint == 0
+                    newstartpoint = 1;
+                end
+
+                % set end point
+                newendpoint = floor((sto_p + sto_offset) * data{k}.header.sr);
+                if newendpoint > numel(data{k}.data), ...
+                    newendpoint = numel(data{k}.data);
+                end
+
+                % trim data
+                data{k}.data=data{k}.data(newstartpoint:newendpoint);
+            else % event channels
+                if options.drop_offset_markers
+                    newendpoint = sto_p;
+                    newstartpoint = sta_p;
+                else
+                    newendpoint = sto_p + sto_offset;
+                    newstartpoint = sta_p + sta_offset;
+                end
+                remove_late = data{k}.data > newendpoint;
+                data{k}.data(remove_late) = [];
+                data{k}.data = data{k}.data - newstartpoint;
+                remove_early = data{k}.data < 0;
+                data{k}.data(remove_early) = [];
+
+                % move to match data if offset markers should be dropped
+                if options.drop_offset_markers
+                    data{k}.data = data{k}.data - sta_offset;
+                end
+                if isfield(data{k}, 'markerinfo')
+                    % also trim marker info if available
+                    data{k}.markerinfo.value(remove_late) = [];
+                    data{k}.markerinfo.name(remove_late) = [];
+
+                    data{k}.markerinfo.value(remove_early) = [];
+                    data{k}.markerinfo.name(remove_early) = [];
                 end
             end
+            % save new file
+            infos.duration = (sto_p + sto_offset) - (sta_p + sta_offset);
+            infos.trimdate = date;
+            infos.trimpoints = [(sta_p + sta_offset) (sto_p + sto_offset)];
+        end
+        clear savedata
+        savedata.data = data; savedata.infos = infos;
+        if isstruct(datafile)
+            sts = pspm_load_data(savedata, 'none');
+            newdatafile = savedata;
+        else
+            [pth, fn, ext] = fileparts(datafile);
+            newdatafile    = fullfile(pth, ['t', fn, ext]);
+            savedata.infos.trimfile = newdatafile;
+            savedata.options = options;
+            sts = pspm_load_data(newdatafile, savedata);
+        end
+        if sts ~= 1
+            warning('Trimming unsuccessful for file %s.\n', newdatafile);
+        else
+            Dout{i_D} = newdatafile;
+            % user output
+            fprintf('  done.\n');
+        end
+    end
 
-            % trim file ---
-            for k = 1:numel(data)
-                if ~strcmpi(data{k}.header.units, 'events') % waveform channels
-                    % set start point (`ceil` for protect against having duration < data*sr,
-                    % the "+1" is here because of matlabs convention to start indices from 1)
-                    newstartpoint = ceil((sta_p + sta_offset) * data{k}.header.sr)+1;
-                    if newstartpoint == 0, newstartpoint = 1; end
+    % if cell array of datafiles is being processed, return cell array of
+    % filenames
+    if i_D > 1
+        clear newdatafile
+        newdatafile = Dout;
+    end
 
-                        % set end point
-                        newendpoint = floor((sto_p + sto_offset) * data{k}.header.sr);
-                        if newendpoint > numel(data{k}.data), ...
-                            newendpoint = numel(data{k}.data); end
-
-                            % trim data
-                            data{k}.data=data{k}.data(newstartpoint:newendpoint);
-                        else % event channels
-                            if options.drop_offset_markers
-                                newendpoint = sto_p;
-                                newstartpoint = sta_p;
-                            else
-                                newendpoint = sto_p + sto_offset;
-                                newstartpoint = sta_p + sta_offset;
-                            end
-                            remove_late = data{k}.data > newendpoint;
-                            data{k}.data(remove_late) = [];
-                            data{k}.data = data{k}.data - newstartpoint;
-                            remove_early = data{k}.data < 0;
-                            data{k}.data(remove_early) = [];
-
-                            % move to match data if offset markers should be dropped
-                            if options.drop_offset_markers
-                                data{k}.data = data{k}.data - sta_offset;
-                            end
-                            if isfield(data{k}, 'markerinfo')
-                                % also trim marker info if available
-                                data{k}.markerinfo.value(remove_late) = [];
-                                data{k}.markerinfo.name(remove_late) = [];
-
-                                data{k}.markerinfo.value(remove_early) = [];
-                                data{k}.markerinfo.name(remove_early) = [];
-                            end
-                        end
-                        % save new file
-                        infos.duration = (sto_p + sto_offset) - (sta_p + sta_offset);
-                        infos.trimdate = date;
-                        infos.trimpoints = [(sta_p + sta_offset) (sto_p + sto_offset)];
-                    end
-                    clear savedata
-                    savedata.data = data; savedata.infos = infos;
-                    if isstruct(datafile)
-                        sts = pspm_load_data(savedata, 'none');
-                        newdatafile = savedata;
-                    else
-                        [pth, fn, ext] = fileparts(datafile);
-                        newdatafile    = fullfile(pth, ['t', fn, ext]);
-                        savedata.infos.trimfile = newdatafile;
-                        savedata.options = options;
-                        sts = pspm_load_data(newdatafile, savedata);
-                    end
-                    if sts ~= 1
-                        warning('Trimming unsuccessful for file %s.\n', newdatafile);
-                    else
-                        Dout{d} = newdatafile;
-                        % user output
-                        fprintf('  done.\n');
-                    end
-                end
-
-                % if cell array of datafiles is being processed, return cell array of
-                % filenames
-                if d > 1
-                    clear newdatafile
-                    newdatafile = Dout;
-                end
-
-                return;
+    return;
