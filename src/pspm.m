@@ -35,9 +35,7 @@ function varargout = pspm(varargin)
 % initialise
 % -------------------------------------------------------------------------
 global settings;
-if isempty(settings)
-    pspm_init;
-end
+if isempty(settings), pspm_init; end
 % -------------------------------------------------------------------------
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;

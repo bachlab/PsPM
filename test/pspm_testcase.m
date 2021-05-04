@@ -7,7 +7,8 @@ classdef pspm_testcase < matlab.unittest.TestCase
     % (C) 2017 Tobias Moser (University of Zurich)
     
     methods(TestClassSetup)
-        function setup_path(this)
+        % function setup_path(this)
+        function setup_path()
             
             % using test data
             global testdatafolderpth
@@ -32,6 +33,7 @@ classdef pspm_testcase < matlab.unittest.TestCase
             % if there is the ImportTestData folder, but it should not be
             % encouraged, because all activities shall happen under the
             % folder of PsPM.
+            
             if ~any(strcmpi('ImportTestData', d))
                 r = menu(sprintf('Couldn''t find the ImportTestData folder. Please select it...'), 'Ok', 'Cancel');
                 if r==1
