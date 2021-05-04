@@ -76,11 +76,19 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
     clear datafile
 
     % 1.4 Verify the start and end points
-    if ~((ischar(pt_start) && strcmpi(pt_start, 'none')) || (isnumeric(pt_start) && numel(pt_start) ~= 1 && numel(pt_start) ~= numel(D)))
+    if ~( ...
+            (ischar(pt_start) && strcmpi(pt_start, 'none')) || ...
+            (isnumeric(pt_start) && numel(pt_start) == 1) || ...
+            (isnumeric(pt_start) && numel(pt_start) == numel(D)) ...
+            )
         warning('ID:invalid_input', 'No valid start point given.\n');
         return;
     end
-    if ~((ischar(pt_end) && strcmpi(pt_end, 'none')) || (isnumeric(pt_end) && numel(pt_end) ~= 1 && numel(pt_end) ~= numel(D)))
+    if ~( ...
+            (ischar(pt_end) && strcmpi(pt_end, 'none')) || ...
+            (isnumeric(pt_end) && numel(pt_end) == 1) || ...
+            (isnumeric(pt_end) && numel(pt_end) == numel(D)) ...
+            )
         warning('ID:invalid_input', 'No end point given');
         return;
     end
@@ -123,8 +131,8 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
     case 'cell'
         if numel(reference) == 2
             getmarker = 1;
-            startmarker_vals = reference{1};
-            g_endmarker_vals = reference{2};
+            marker_sta_vals = reference{1};
+            marker_end_vals = reference{2};
             calculate_idx = true;
         else
             warning('ID:invalid_input', 'Invalid reference option ''%s'', should contain only two elements', reference);
@@ -186,21 +194,21 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
             % 2.2.2 Caluculate marker idx if specified by marker values or markernames
             if calculate_idx
                 % get idx of starting marker
-                try_num_start = str2num(startmarker_vals);
+                try_num_start = str2double(marker_sta_vals);
                 if ~isempty(try_num_start)
                     startmarker = find(ndata{1}.markerinfo.value == try_num_start,1);
-                elseif ischar(startmarker_vals)
-                    startmarker = find(strcmpi(ndata{1}.markerinfo.name,startmarker_vals),1);
+                elseif ischar(marker_sta_vals)
+                    startmarker = find(strcmpi(ndata{1}.markerinfo.name,marker_sta_vals),1);
                 else
                     warning('ID:invalid_input', 'The value or name of the starting marker must be numeric or a string');
                     return;
                 end
                 % get idx of ending marker
-                try_num_end = str2num(g_endmarker_vals);
+                try_num_end = str2double(marker_end_vals);
                 if ~isempty(try_num_end)
                     g_endmarker = find(ndata{1}.markerinfo.value == try_num_end,1);
-                elseif ischar(g_endmarker_vals)
-                    g_endmarker = find(strcmpi(ndata{1}.markerinfo.name,g_endmarker_vals),1);
+                elseif ischar(marker_end_vals)
+                    g_endmarker = find(strcmpi(ndata{1}.markerinfo.name,marker_end_vals),1);
                 else
                     warning('ID:invalid_input', 'The value or name of the ending marker must be numeric or a string');
                     return;
@@ -220,12 +228,13 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
             clear nsts ninfos ndata
         end
 
+        % 2.2.4 Break program if data was not loaded successfully
         if any(sts == -1)
             newdatafile = [];
             break;
         end
 
-        % convert from and to into time in seconds ---
+        % 2.3 Convert pt_start and pt_end from time points into seconds
         if ischar(pt_start) % 'none'
             sta_p = 0;
             sta_offset = 0;
@@ -259,11 +268,10 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
             end
         end
 
-        % check start and end points ---
+        % 2.4 Check start and end points
         if ((sta_p + sta_offset) < 0)
             warning('ID:marker_out_of_range', ['\nStart point (%.2f s) outside', ...
             ' file, no trimming at start.'], (sta_p + sta_offset));
-
             if (sta_p > 0)
                 sta_offset = -sta_p;
             else
@@ -274,7 +282,6 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
         if (sto_p + sto_offset) > infos.duration
             warning('ID:marker_out_of_range', ['\nEnd point (%.2f s) outside ', ...
             'file, no trimming at end.'], (sto_p + sto_offset));
-
             if (sto_p > infos.duration)
                 sto_p = infos.duration;
                 sto_offset = 0;
@@ -283,7 +290,7 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
             end
         end
 
-        % trim file ---
+        % 2.5 Trim file
         for k = 1:numel(data)
             if ~strcmpi(data{k}.header.units, 'events') % waveform channels
                 % set start point (`ceil` for protect against having duration < data*sr,
@@ -292,13 +299,11 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
                 if newstartpoint == 0
                     newstartpoint = 1;
                 end
-
                 % set end point
                 newendpoint = floor((sto_p + sto_offset) * data{k}.header.sr);
                 if newendpoint > numel(data{k}.data), ...
                     newendpoint = numel(data{k}.data);
                 end
-
                 % trim data
                 data{k}.data=data{k}.data(newstartpoint:newendpoint);
             else % event channels
@@ -334,7 +339,10 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
             infos.trimpoints = [(sta_p + sta_offset) (sto_p + sto_offset)];
         end
         clear savedata
-        savedata.data = data; savedata.infos = infos;
+        
+        % 2.6 Save data
+        savedata.data = data;
+        savedata.infos = infos;
         if isstruct(datafile)
             sts = pspm_load_data(savedata, 'none');
             newdatafile = savedata;
