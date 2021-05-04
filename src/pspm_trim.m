@@ -68,8 +68,10 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
     % 1.3 Verify the data file
     if ischar(datafile) || isstruct(datafile)
         D = {datafile};
+        Dout = D; % the output cell
     elseif iscell(datafile)
         D = datafile;
+        Dout = D; % the output cell
     else
         warning('Data file must be a char, cell, or struct.');
     end
@@ -354,6 +356,7 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
             sts = pspm_load_data(newdatafile, savedata);
         end
         if sts ~= 1
+            Dout{i_D} = ' ';
             warning('Trimming unsuccessful for file %s.\n', newdatafile);
         else
             Dout{i_D} = newdatafile;
@@ -362,8 +365,9 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
         end
     end
 
-    % if cell array of datafiles is being processed, return cell array of
-    % filenames
+    % 3 Return value
+    % if cell array of datafiles is being processed, 
+    % return cell array of filenames
     if i_D > 1
         clear newdatafile
         newdatafile = Dout;
