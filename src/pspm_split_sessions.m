@@ -160,7 +160,7 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
     for d = 1:numel(D)
 
         % 2.1 Obtain data
-        datafile=D{d};
+        datafile = D{d};
         if options.verbose
             fprintf('Splitting %s ... ', datafile);
         end
@@ -211,9 +211,7 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
                 fprintf('  The file won''t be split. No possible timepoints for split in channel %i.\n', markerchannel);
             elseif numel(mrk) <=  options.max_sn
                 fprintf('  The file won''t be split. Not enough markers in channel %i.\n', markerchannel);
-
             end
-
             imi(1:(options.max_sn-1)) = [];
             cutoff = options.min_break_ratio * max(imi);
             splitpoint = find(diff(mrk) > cutoff)+1;
@@ -345,14 +343,18 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
                         end
                     else
                         % convert from s into datapoints
-                        startpoint = max(1, ceil(sta_p * data{k}.header.sr));
-                        stoppoint  = min(floor(sto_p * data{k}.header.sr), numel(indata{k}.data));
-                        data{k}.data = indata{k}.data(startpoint:stoppoint);
+                        %startpoint = max(1, ceil(sta_p * data{k}.header.sr));
+                        %stoppoint  = min(floor(sto_p * data{k}.header.sr), numel(indata{k}.data));
+                        %data{k}.data = indata{k}.data(startpoint:stoppoint);
+
+                        data{k} = pspm_trim(indata{k}, sta_p, sto_p, 'marker')
+
+
                     end
                 end
 
+                % 2.4.5 Split Epochs
                 if options.missing && ~isempty(missing)
-
                     startpoint = max(1, ceil(sta_p * srscr)); % convert from s into datapoints
                     stoppoint  = min(floor(sto_p * srscr), numel(datascr{1}.data));
                     epochs = dp_epochs(startpoint:stoppoint);
