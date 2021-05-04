@@ -76,45 +76,43 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 
     % 1.1 Check input arguments
     if nargin<1
-        warning('ID:invalid_input', 'No data.\n'); return;
+        warning('ID:invalid_input', 'No data.\n');
+        return;
     end
 
     % 1.2 Set options
     if ~exist('options','var') || isempty(options) || ~isstruct(options)
         options = struct();
     end
-    if exist('options.overwrite','var')==0
+    if ~exist('options.overwrite','var')
         options.overwrite = 0;
     elseif options.overwrite ~= 1
         options.overwrite = 0;
     end
-    if exist('options.prefix','var')==0
+    try options.prefix; catch
         options.prefix = 0;
     end
-    if exist('options.suffix','var')==0
+    try options.suffix; catch
         options.suffix = 0;
     end
-    if exist('options.verbose','var')==0
+    try options.verbose; catch
         options.verbose = 0;
     end
-    if exist('options.splitpoints','var')==0
+    try options.splitpoints; catch
         options.splitpoints = [];
     end
-    if exist('options.missing','var')==0
+    try options.missing; catch
         options.missing = 0;
     end
-    if exist('options.max_sn','var')==0
-        % maximum number of sessions (default 10)
-        options.max_sn = settings.split.max_sn;
-    end
-    if exist('options.min_break_ratio','var')==0
-        % minimum ratio of session break to normal inter marker interval (default 3)
-        options.min_break_ratio = settings.split.min_break_ratio;
-    end
-    if exist('options.randomITI','var')==0
+    try options.randomITI; catch
         options.randomITI = 0;
     end
-
+    try options.max_sn; catch
+        options.max_sn = settings.split.max_sn; % maximum number of sessions (default 10)
+    end
+    try options.min_break_ratio; catch
+        options.min_break_ratio = settings.split.min_break_ratio; % minimum ratio of session break to normal inter marker interval (default 3)
+    end
 
     % 1.3 Handle data files
     % 1.3.1 check data file argument
@@ -161,8 +159,11 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
     %% 2 Work on all data files
     for d = 1:numel(D)
 
-        % 2.1 Obtrain data
-        datafile = D{d};
+        % 2.1 Obtain data
+        datafile=D{d};
+        if options.verbose
+            fprintf('Splitting %s ... ', datafile);
+        end
         [sts, ininfos, indata, filestruct] = pspm_load_data(datafile);
         if sts == -1
             warning('ID:invalid_input', 'Could not load data');
@@ -345,7 +346,7 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
                     else
                         % convert from s into datapoints
                         startpoint = max(1, ceil(sta_p * data{k}.header.sr));
-                        stoppoint  = min(floor(sto_p * data{k}.header.sr), umel(indata{k}.data));
+                        stoppoint  = min(floor(sto_p * data{k}.header.sr), numel(indata{k}.data));
                         data{k}.data = indata{k}.data(startpoint:stoppoint);
                     end
                 end

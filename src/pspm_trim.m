@@ -7,7 +7,7 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
     %
     % datafile:     a file name, a cell array of filenames, a struct with
     %               fields .data and .infos or a cell array of structs
-    % from and to:  either numbers, or 'none'
+    % pt_start and pt_end:  either numbers, or 'none'
     % reference:    'marker': from and to are set in seconds with
     %                         respect to the first and last scanner/marker pulse
     %               'file':   from and to are set in seconds with respect to start
@@ -80,18 +80,18 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
 
     % 1.4 Verify the start and end points
     if ~( ...
-            (ischar(pt_start) && strcmpi(pt_start, 'none')) || ...
-            (isnumeric(pt_start) && numel(pt_start) == 1) || ...
-            (isnumeric(pt_start) && numel(pt_start) == numel(D)) ...
-            )
+        (ischar(pt_start) && strcmpi(pt_start, 'none')) || ...
+        (isnumeric(pt_start) && numel(pt_start) == 1) || ...
+        (isnumeric(pt_start) && numel(pt_start) == numel(D)) ...
+        )
         warning('ID:invalid_input', 'No valid start point given.\n');
         return;
     end
     if ~( ...
-            (ischar(pt_end) && strcmpi(pt_end, 'none')) || ...
-            (isnumeric(pt_end) && numel(pt_end) == 1) || ...
-            (isnumeric(pt_end) && numel(pt_end) == numel(D)) ...
-            )
+        (ischar(pt_end) && strcmpi(pt_end, 'none')) || ...
+        (isnumeric(pt_end) && numel(pt_end) == 1) || ...
+        (isnumeric(pt_end) && numel(pt_end) == numel(D)) ...
+        )
         warning('ID:invalid_input', 'No end point given');
         return;
     end
@@ -342,7 +342,7 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
             infos.trimpoints = [(sta_p + sta_offset) (sto_p + sto_offset)];
         end
         clear savedata
-        
+
         % 2.6 Save data
         savedata.data = data;
         savedata.infos = infos;
@@ -367,7 +367,7 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
     end
 
     % 3 Return value
-    % if cell array of datafiles is being processed, 
+    % if cell array of datafiles is being processed,
     % return cell array of filenames
     if i_D > 1
         clear newdatafile
