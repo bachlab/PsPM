@@ -7,12 +7,9 @@ classdef pspm_testcase < matlab.unittest.TestCase
     % (C) 2017 Tobias Moser (University of Zurich)
 
     methods(TestClassSetup)
-        % function setup_path(this)
         function setup_path(this)
-
             % using test data
             global testdatafolderpth
-
             if ~isempty(testdatafolderpth)
                 cd(testdatafolderpth);
                 return;
