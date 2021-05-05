@@ -1,5 +1,5 @@
 function pspm_test(varargin)
-    %% pspm_test is a wrapper script for testing all testable functions in one 
+    %% pspm_test is a wrapper script for testing all testable functions in one
     % - to be used before any release.
     %
     % quit_after_tests : [bool]
@@ -10,6 +10,7 @@ function pspm_test(varargin)
     %__________________________________________________________________________
     % PsPM TestEnvironment
     % (C) 2013 Dominik Bach & Linus Ruettimann (University of Zurich)
+    % Updated 2021 Teddy Chao (WCHN, UCL)
 
     % imports
     % -------------------------------------------------------------------------
@@ -103,19 +104,19 @@ function pspm_test(varargin)
     [pth, fn, ext] = fileparts(which('pspm_test.m'));
     addpath(pth);
     pspm_init;
-    stats = run(full_suite)
+    stats = run(full_suite);
     n_failed = sum([stats.Failed]);
     success = n_failed == 0;
 
     if success
-        display('pspm_test: All tests have passed!');
+        fprintf('pspm_test: All tests have passed!');
     else
-        display('pspm_test: Some tests have failed!');
+        fprintf('pspm_test: Some tests have failed!');
     end
 
-    display('===TEST_STATISTICS_BEGIN===');
+    fprintf('===TEST_STATISTICS_BEGIN===');
     display(format_test_results(stats));
-    display('===TEST_STATISTICS_END===');
+    fprintf('===TEST_STATISTICS_END===');
     if quit_after_tests
         exit_code = 1 - success;
         quit(exit_code);
