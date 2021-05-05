@@ -1,9 +1,11 @@
-% pspm_App is the updated main GUI for PsPM
+% pspm_App is the updated modern GUI for PsPM
+% pspm_App is currently a beta version
 %__________________________________________________________________________
-% PsPM 6.0
-% (C) 2008-2021 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% PsPM 5.1
+% (C) 2008-2021 Dominik R Bach (Wellcome Centre for Human Neuroimaging)
 
-% Updated by Teddy Chao
+% Updated by Teddy Chao (Wellcome Centre for Human Neuroimaging)
+
 
 global settings
 if isempty(settings)
