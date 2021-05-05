@@ -1,11 +1,11 @@
 function varargout = pspm(varargin)
 % PsPM is the main GUI for PsPM
 %__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% PsPM 5.1
+% (C) 2008-2015 Dominik R Bach (Wellcome Centre for Human Neuroimaging)
 
 % $Id: pspm.m 636 2019-03-15 07:56:42Z lciernik $
-% $Rev: 636 $ 
+% $Rev: 636 $
 
 % this code was mainly produced by GUIDE
 % PsPM_GUI M-file for PsPM_GUI.fig
@@ -78,7 +78,7 @@ guidata(hObject, handles);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = PsPM_OutputFcn(hObject, eventdata, handles) 
+function varargout = PsPM_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -271,7 +271,7 @@ switch selected
         cfg_add_module('pspm.first_level.scr.glm_scr');
     case 2
         cfg_add_module('pspm.first_level.hp.glm_hp_e');
-    case 3 
+    case 3
         cfg_add_module('pspm.first_level.hp.glm_hp_fc');
     case 4
         cfg_add_module('pspm.first_level.ps.glm_ps_fc');
@@ -309,7 +309,7 @@ switch selected
         pspm_ecg_editor();
     case 3
         cfg_add_module('pspm.data_preprocessing.resp_pp');
-    case 4 
+    case 4
         cfg_add_module('pspm.data_preprocessing.pp_pupil.process_illuminance');
     case 5
         cfg_add_module('pspm.data_preprocessing.pp_pupil.find_valid_fixations');
