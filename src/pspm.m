@@ -2,7 +2,7 @@ function varargout = pspm(varargin)
 % PsPM is the main GUI for PsPM
 %__________________________________________________________________________
 % PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Centre for Human Neuroimaging)
+% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 % $Id: pspm.m 636 2019-03-15 07:56:42Z lciernik $
 % $Rev: 636 $
