@@ -1,8 +1,8 @@
 function varargout = pspm(varargin)
 % PsPM is the main GUI for PsPM
 %__________________________________________________________________________
-% PsPM 5.1
-% (C) 2008-2015 Dominik R Bach (Wellcome Centre for Human Neuroimaging)
+% PsPM 3.0
+% (C) 2008-2021 Dominik R Bach (Wellcome Centre for Human Neuroimaging)
 
 % $Id: pspm.m 636 2019-03-15 07:56:42Z lciernik $
 % $Rev: 636 $
@@ -31,7 +31,7 @@ function varargout = pspm(varargin)
 
 % Edit the above text to modify the response to help PsPM
 
-% Last Modified by GUIDE v2.5 25-Jul-2016 17:05:55
+% Last Modified by Teddy Chao v5.1 06-May-2021 00:54:00
 % initialise
 % -------------------------------------------------------------------------
 global settings;
