@@ -11,7 +11,7 @@ function pspm_test(varargin)
     % PsPM TestEnvironment
     % (C) 2013 Dominik Bach & Linus Ruettimann (University of Zurich)
     % Updated Teddy Chao (WCHN, UCL)
-    
+
     % imports
     % -------------------------------------------------------------------------
     import matlab.unittest.TestSuite;
@@ -109,14 +109,14 @@ function pspm_test(varargin)
     success = n_failed == 0;
 
     if success
-        fprintf('pspm_test: All tests have passed!');
+        display('pspm_test: All tests have passed!');
     else
-        fprintf('pspm_test: Some tests have failed!');
+        display('pspm_test: Some tests have failed!');
     end
 
-    fprintf('===TEST_STATISTICS_BEGIN===');
+    display('===TEST_STATISTICS_BEGIN===');
     display(format_test_results(stats)); % seems not able to be replaced with fprintf
-    fprintf('===TEST_STATISTICS_END===');
+    display('===TEST_STATISTICS_END===');
     if quit_after_tests
         exit_code = 1 - success;
         quit(exit_code);
