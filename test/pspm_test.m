@@ -108,14 +108,14 @@ function pspm_test(varargin)
     success = n_failed == 0;
 
     if success
-        display('pspm_test: All tests have passed!');
+        fprintf('pspm_test: All tests have passed!');
     else
-        display('pspm_test: Some tests have failed!');
+        fprintf('pspm_test: Some tests have failed!');
     end
 
-    display('===TEST_STATISTICS_BEGIN===');
-    display(format_test_results(stats));
-    display('===TEST_STATISTICS_END===');
+    fprintf('===TEST_STATISTICS_BEGIN===');
+    display(format_test_results(stats)); % seems not able to be replaced with fprintf
+    fprintf('===TEST_STATISTICS_END===');
     if quit_after_tests
         exit_code = 1 - success;
         quit(exit_code);
