@@ -12,6 +12,6 @@ function pspm_show_help_doc
 %     pspm_init; 
 % end
 
-web('http://pspm.sourceforge.net', '-browser')
+web('https://raw.githubusercontent.com/bachlab/PsPM/develop/doc/PsPM_Manual.pdf', '-browser')
 
 return
