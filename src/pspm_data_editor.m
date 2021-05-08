@@ -1076,7 +1076,10 @@ function pbCancel_Callback(hObject, eventdata, handles)
 
 handles.output = {};
 guidata(hObject, handles);
+if isfield(handles, 'fgDataEditor')
 uiresume(handles.fgDataEditor);
+end
+
 
 
 % --- Executes on button press in cbInterpolate.
@@ -1109,7 +1112,10 @@ function fgDataEditor_CloseRequestFcn(hObject, eventdata, handles)
 
 % Hint: delete(hObject) closes the figure
 handles.output = {};
+if isfield(handles, 'fgDataEditor')
 uiresume(handles.fgDataEditor);
+end
+delete(hObject)
 
 
 % --- Executes on selection change in lbChannel.
