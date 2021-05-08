@@ -1109,8 +1109,10 @@ function fgDataEditor_CloseRequestFcn(hObject, eventdata, handles)
 
 % Hint: delete(hObject) closes the figure
 handles.output = {};
-uiresume(handles.fgDataEditor);
-
+if isfield(handles, 'fgDataEditor')
+    uiresume(handles.fgDataEditor);
+end
+delete(hObject);
 
 % --- Executes on selection change in lbChannel.
 function lbChannel_Callback(hObject, eventdata, handles)
