@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Migration Report for <code>pspm</code></title>
+    <title>Migration Report for <code>pspm_review</code></title>
     <style type="text/css">
         html body {
             height: 100%;
@@ -92,17 +92,17 @@
 </head>
 <body>
     <div class="reportTitle">
-        <h1>Migration Report for <code>pspm</code></h1>
+        <h1>Migration Report for <code>pspm_review</code></h1>
     </div>
     <div class="reportBody">
         <section>
             <h3>Your GUIDE app was migrated to App Designer and some action is required.</h3>
             <h2>Migration Results</h2>
             <ul class="childHasIcon">
-                <li class="success"><b>pspm_App.mlapp</b> file created</li>
-                <li class="success"><b>389</b> lines of code analyzed in pspm.m</li>
-                <li class="success"><b>23</b> components created and initialized</li>
-                <li class="success"><b>19</b> callbacks and utility functions configured and enabled to function in App Designer</li>
+                <li class="success"><b>pspm_review_App.mlapp</b> file created</li>
+                <li class="success"><b>525</b> lines of code analyzed in pspm_review.m</li>
+                <li class="success"><b>27</b> components created and initialized</li>
+                <li class="success"><b>25</b> callbacks and utility functions configured and enabled to function in App Designer</li>
             </ul>
         </section>
         <section>
@@ -110,15 +110,11 @@
     <table>
         <tr>
             <th>Functionality</th>
-            <th>GUIDE Tag</th>
+            <th>GUIDE Line #</th>
             <th>Details</th>
         </tr>
-        <tr><td><code>ButtonDownFcn</code></td><td><div class=""><code>DCM</code></div>
-<div class=""><code>PsPM</code></div>
-<div class=""><code>QuitGUI</code></div>
-<div class="hidden"><code>SF</code></div>
-<div class="showMore"><a href="#" onclick="toggleShowMore(this); return false;">Show more (1)</a></div>
-<div class="showMore hidden"><a href="#" onclick="toggleShowMore(this); return false;">Show less</a></div></td><td rowspan="1"><div>This callback property for the component(s) is not supported in App Designer and was not migrated.</div><div class="detailsWorkaround"><span class="detailsWorkaroundHeader">Action:</span><span class="detailsWorkaroundText">Determine if this functionality is critical to your app before continuing because there is no workaround.</span></div></tr>
+        <tr><td><code>findobj</code></td><td><div class=""><a href="matlab:opentoline('/Users/Teddy/GitHub/PsPM/src/pspm_review.m', 432)">line 432</a></div></td><td rowspan="2"><div>Using <code>findobj</code>, <code>findall</code> or <code>gcbo</code> to locate a <code>UIControl</code> object requires updates to your code.</div><div class="detailsWorkaround"><span class="detailsWorkaroundHeader">Action:</span><span class="detailsWorkaroundText">Access your app component using the <code>handles</code> structure instead, or update your code to use the associated App Designer component. For more details, see <a href="matlab:helpview(fullfile(docroot,'matlab', 'creating_guis', 'differences-between-app-designer-and-guide.html#mw_25ffdeb6-b752-4df7-9d65-92c43f132e78'));">GUIDE Migration Strategies</a>.</span></div></tr>
+<tr><td><code>findall</code></td><td><div class=""><a href="matlab:opentoline('/Users/Teddy/GitHub/PsPM/src/pspm_review.m', 60)">line 60</a></div></td></tr>
     </table>
 </section>
         <section>

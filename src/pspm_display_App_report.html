@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Migration Report for <code>pspm</code></title>
+    <title>Migration Report for <code>pspm_display</code></title>
     <style type="text/css">
         html body {
             height: 100%;
@@ -92,17 +92,17 @@
 </head>
 <body>
     <div class="reportTitle">
-        <h1>Migration Report for <code>pspm</code></h1>
+        <h1>Migration Report for <code>pspm_display</code></h1>
     </div>
     <div class="reportBody">
         <section>
             <h3>Your GUIDE app was migrated to App Designer and some action is required.</h3>
             <h2>Migration Results</h2>
             <ul class="childHasIcon">
-                <li class="success"><b>pspm_App.mlapp</b> file created</li>
-                <li class="success"><b>389</b> lines of code analyzed in pspm.m</li>
-                <li class="success"><b>23</b> components created and initialized</li>
-                <li class="success"><b>19</b> callbacks and utility functions configured and enabled to function in App Designer</li>
+                <li class="success"><b>pspm_display_App.mlapp</b> file created</li>
+                <li class="success"><b>1048</b> lines of code analyzed in pspm_display.m</li>
+                <li class="success"><b>32</b> components created and initialized</li>
+                <li class="success"><b>18</b> callbacks and utility functions configured and enabled to function in App Designer</li>
             </ul>
         </section>
         <section>
@@ -113,12 +113,10 @@
             <th>GUIDE Tag</th>
             <th>Details</th>
         </tr>
-        <tr><td><code>ButtonDownFcn</code></td><td><div class=""><code>DCM</code></div>
-<div class=""><code>PsPM</code></div>
-<div class=""><code>QuitGUI</code></div>
-<div class="hidden"><code>SF</code></div>
-<div class="showMore"><a href="#" onclick="toggleShowMore(this); return false;">Show more (1)</a></div>
-<div class="showMore hidden"><a href="#" onclick="toggleShowMore(this); return false;">Show less</a></div></td><td rowspan="1"><div>This callback property for the component(s) is not supported in App Designer and was not migrated.</div><div class="detailsWorkaround"><span class="detailsWorkaroundHeader">Action:</span><span class="detailsWorkaroundText">Determine if this functionality is critical to your app before continuing because there is no workaround.</span></div></tr>
+        <tr><td><code>radiobutton</code></td><td><div class=""><code>radio_extra</code></div>
+<div class=""><code>radio_int</code></div></td><td rowspan="1"><div>Invalid parent for radio button. Set the parent to a button group.</div><div class="detailsWorkaround"><span class="detailsWorkaroundHeader">Action:</span><span class="detailsWorkaroundText">Recreate the radio button in a button group in App Designer. Alternatively, consider replacing the radio button with a state button or a check box.</span></div></tr>
+<tr><td><code>Callback</code></td><td><div class=""><code>radio_extra</code></div>
+<div class=""><code>radio_int</code></div></td><td rowspan="1"><div>Callbacks for radio and toggle buttons must be added to a parent button group.</div><div class="detailsWorkaround"><span class="detailsWorkaroundHeader">Action:</span><span class="detailsWorkaroundText">Use the <code>SelectionChangedFcn</code> callback of the parent button group.</span></div></tr>
     </table>
 </section>
         <section>
