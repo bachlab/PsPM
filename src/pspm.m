@@ -31,7 +31,7 @@ function varargout = pspm(varargin)
 
 % Edit the above text to modify the response to help PsPM
 
-% Last Modified by GUIDE v2.5 25-Jul-2016 17:05:55
+% Last Modified by GUIDE v2.5 07-May-2021 19:10:37
 % initialise
 % -------------------------------------------------------------------------
 global settings;
@@ -374,3 +374,19 @@ function ppDataPreparation_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in pushbutton24.
+function pushbutton24_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton24 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+pspm_show_help_doc();
+
+
+% --- Executes on button press in pushbutton25.
+function pushbutton25_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton25 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+pspm_show_forum();

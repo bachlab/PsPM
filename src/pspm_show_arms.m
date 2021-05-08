@@ -8,10 +8,11 @@ function pspm_show_arms
 % $Rev$
 
 % v001 drb 3.11.2009 
-global settings;
-if isempty(settings), pspm_init; end;
+%global settings;
+%if isempty(settings), pspm_init; end;
+pf = pspm_path('CologneCoatOfArms.jpg');
 
-pf = [settings.path, 'CologneCoatOfArms.jpg'];
+%pf = [settings.path, 'CologneCoatOfArms.jpg'];
 P = imread(pf);
 figure('Position', [40 40 300 400], 'MenuBar', 'none', 'Name', 'Viva Colonia', 'Color', 'k');
 image(P);
