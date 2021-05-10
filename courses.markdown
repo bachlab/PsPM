@@ -13,7 +13,7 @@ Course videocasts and slides are available at the bottom of the page and on our 
 ## Upcoming PsPM courses
 There are **regular PsPM courses**. To check for updates, have a look on our [news site](https://bachlab.github.io/PsPM/news/), on [bachlab news](http://bachlab.org/news), or follow [bachlab on twitter](http://twitter.com/bachlab_uzh).
 
-* **22.-23. July 2021** [ESCAN 2021 Budapest (full 2-day PsPM satellite workshop with practical training)](http://www.escan2020.eu/) 
+* **21.-22. July 2021** [ESCAN 2021 Budapest (online 1.5-day PsPM satellite workshop with practical training)](http://www.escan2020.eu/) (This was moved by one day from the originally planned dates after the decision to hold ESCAN 2021 as a virtual conference only)
 
 ## Past PsPM courses
 * **30.6.-01.07.2020** [ESCAN 2020 Budapest (full 2-day PsPM satellite workshop with practical training)](http://www.escan2020.eu/) (postponed due to COVID-19 pandemic) 
