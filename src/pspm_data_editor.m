@@ -429,7 +429,7 @@ function varargout = pspm_data_editor_OutputFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % UIWAIT makes pspm_data_editor wait for user response (see UIRESUME)
-varargout{1} = handles.output;
+handles.lbEpochsvarargout{1} = handles.output;
 delete(hObject);
 
 % --- Executes on selection change in lbEpochs.
@@ -964,6 +964,8 @@ if numel(handles.plots) > 0
     
     
     names = cellfun(@(x) x.name, epochs, 'UniformOutput', 0);
+    % add the new names to the current list
+    names = [handles.lbEpochs.String;names];
     sel_ep = get(handles.lbEpochs, 'Value');
     if sel_ep > numel(names)
         sel_ep = max(numel(names), 1);
