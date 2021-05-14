@@ -1,4 +1,4 @@
-function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
+function newdatafile = pspm_trim(datafile, from, to, reference, options)
     % pspm_trim cuts an PsPM dataset to the limits set with the parameters 'from'
     % and 'to' and writes it to a file with a prepended 't'
     %
@@ -79,26 +79,26 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
 
     % 1.4 Verify the start and end points
     if ~( ...
-            (ischar(pt_start) && strcmpi(pt_start, 'none')) || ...
-            (isnumeric(pt_start) && numel(pt_start) == 1) || ...
-            (isnumeric(pt_start) && numel(pt_start) == numel(D)) ...
+            (ischar(from) && strcmpi(from, 'none')) || ...
+            (isnumeric(from) && numel(from) == 1) || ...
+            (isnumeric(from) && numel(from) == numel(D)) ...
             )
         warning('ID:invalid_input', 'No valid start point given.\n');
         return;
     end
     if ~( ...
-            (ischar(pt_end) && strcmpi(pt_end, 'none')) || ...
-            (isnumeric(pt_end) && numel(pt_end) == 1) || ...
-            (isnumeric(pt_end) && numel(pt_end) == numel(D)) ...
+            (ischar(to) && strcmpi(to, 'none')) || ...
+            (isnumeric(to) && numel(to) == 1) || ...
+            (isnumeric(to) && numel(to) == numel(D)) ...
             )
         warning('ID:invalid_input', 'No end point given');
         return;
     end
-    if numel(pt_start) == 1
-        pt_start = ones(1,numel(D)) * pt_start;
+    if numel(from) == 1
+        from = ones(1,numel(D)) * from;
     end
-    if numel(pt_end) == 1
-        pt_end = ones(1,numel(D)) * pt_end;
+    if numel(to) == 1
+        to = ones(1,numel(D)) * to;
     end
 
     % 1.5 Verify reference
@@ -236,20 +236,20 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
             break;
         end
 
-        % 2.3 Convert pt_start and pt_end from time points into seconds
-        if ischar(pt_start) % 'none'
+        % 2.3 Convert from and to from time points into seconds
+        if ischar(from) % 'none'
             sta_p = 0;
             sta_offset = 0;
         else
             if getmarker % 'marker'
                 sta_p = events(startmarker);
-                sta_offset = pt_start(i_D);
+                sta_offset = from(i_D);
             else         % 'file'
-                sta_p = pt_start(i_D);
+                sta_p = from(i_D);
                 sta_offset = 0;
             end
         end
-        if ischar(pt_end) % 'none'
+        if ischar(to) % 'none'
             sto_p = infos.duration;
             sto_offset = 0;
         else
@@ -262,10 +262,10 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
                     sto_offset = 0;
                 else
                     sto_p = events(l_endmarker);
-                    sto_offset = pt_end(i_D);
+                    sto_offset = to(i_D);
                 end
             else          % 'file'
-                sto_p = pt_end(i_D);
+                sto_p = to(i_D);
                 sto_offset = 0;
             end
         end
@@ -341,7 +341,7 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
             infos.trimpoints = [(sta_p + sta_offset) (sto_p + sto_offset)];
         end
         clear savedata
-        
+
         % 2.6 Save data
         savedata.data = data;
         savedata.infos = infos;
@@ -366,7 +366,7 @@ function newdatafile = pspm_trim(datafile, pt_start, pt_end, reference, options)
     end
 
     % 3 Return value
-    % if cell array of datafiles is being processed, 
+    % if cell array of datafiles is being processed,
     % return cell array of filenames
     if i_D > 1
         clear newdatafile
