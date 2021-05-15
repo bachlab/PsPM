@@ -2245,6 +2245,8 @@ switch headerformat
     if strcmp(fallback, 'biosig') && ft_hastoolbox('BIOSIG', 1)
       hdr = read_biosig_header(filename);
     else
+        disp(['Please confirm the imported BrainVision files include ',...
+            'vhdr/vmrk/vabs files.'])
       error('unsupported header format "%s"', headerformat);
     end
     
