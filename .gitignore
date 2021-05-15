@@ -18,5 +18,5 @@ vendor/
 *.MATLABDriveTag
 *.asv
 *.mat
-*pspm_App_report.html
+*.html
 !pspm_App.mat
