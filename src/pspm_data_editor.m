@@ -65,9 +65,10 @@ end
 % --- Executes just before pspm_data_editor is made visible.
 function pspm_data_editor_OpeningFcn(hObject, eventdata, handles, varargin)
     % This function has no output args, see OutputFcn.
-    % hObject    handle to figure
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
+    % Variables
+    %   hObject    handle to figure
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
     % varargin   command line arguments to pspm_data_editor (see VARARGIN)
 
     % initialise
@@ -151,12 +152,12 @@ function pspm_data_editor_OpeningFcn(hObject, eventdata, handles, varargin)
                 set(handles.pnlEpoch, 'Visible', 'off');
             end
         end
-        
+
         if isfield(handles, 'options') && isfield(handles.options, 'epoch_file')
                 handles = guidata(hObject);
-                add_epochs(hObject, handles)
+                Add_Epochs(hObject, handles)
         end
-            
+
     end
     uiwait(handles.fgDataEditor);
 end
@@ -436,13 +437,13 @@ function RemovePlot(hObject, chan_id)
 end
 
 
-% --- Outputs from this function are returned to the command line.
+% Outputs from this function are returned to the command line.
 function varargout = pspm_data_editor_OutputFcn(hObject, eventdata, handles)
     % varargout  cell array for returning output args (see VARARGOUT);
-    % hObject    handle to figure
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
-
+    % Variables
+    %   hObject    handle to figure
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
     % UIWAIT makes pspm_data_editor wait for user response (see UIRESUME)
     handles.lbEpochsvarargout{1} = handles.output;
     delete(hObject);
@@ -450,18 +451,16 @@ end
 
 % --- Executes on selection change in lbEpochs.
 function lbEpochs_Callback(hObject, eventdata, handles)
-    % hObject    handle to lbEpochs (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
-
+    % Variables
+    %   hObject    handle to lbEpochs (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
     % Hints: contents = cellstr(get(hObject,'String')) returns lbEpochs contents as cell array
     %        contents{get(hObject,'Value')} returns selected item from lbEpochs
-
     epId = get(hObject,'Value');
     HighlightEpoch(hObject, epId);
 end
 
-% --------------------------------------------------------------------
 function ResetEpochHighlight(hObject)
     handles = guidata(hObject);
 
@@ -482,22 +481,14 @@ function ResetEpochHighlight(hObject)
     guidata(hObject, handles);
 end
 
-
-% --------------------------------------------------------------------
 function HighlightEpoch(hObject, epId)
     handles = guidata(hObject);
-
-    % reset all epochs
-    ResetEpochHighlight(hObject);
-
-    % is there anything to highlight?
-    if numel(handles.epochs) > 0
+    ResetEpochHighlight(hObject); % reset all epochs
+    if numel(handles.epochs) > 0 % is there anything to highlight?
         ep = handles.epochs{epId};
         ep.highlighted = true;
         handles.epochs{epId} = ep;
-
-        % highlight epochs
-        for i=1:numel(ep.response_plots)
+        for i = 1:numel(ep.response_plots) % highlight epochs
             if ~isempty(ep.response_plots{i})
                 set(ep.response_plots{i}.p, 'Color', 'black', 'LineWidth', 1.5);
             end
@@ -587,9 +578,10 @@ end
 
 % --- Executes during object creation, after setting all properties.
 function lbEpochs_CreateFcn(hObject, eventdata, handles)
-    % hObject    handle to lbEpochs (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    empty - handles not created until after all CreateFcns called
+    % Variables
+    %   hObject    handle to lbEpochs (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    empty - handles not created until after all CreateFcns called
 
     % Hint: listbox controls usually have a white background on Windows.
     %       See ISPC and COMPUTER.
@@ -598,28 +590,28 @@ function lbEpochs_CreateFcn(hObject, eventdata, handles)
     end
 end
 
-% --- Executes during object creation, after setting all properties.
+% Executes during object creation, after setting all properties.
 function fgDataEditor_CreateFcn(hObject, eventdata, handles)
-    % hObject    handle to fgDataEditor (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    empty - handles not created until after all CreateFcns called
+    % Variables
+    %   hObject    handle to fgDataEditor (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    empty - handles not created until after all CreateFcns called
 end
 
-
-% --------------------------------------------------------------------
 function tlCursor_ClickedCallback(hObject, eventdata, handles)
-    % hObject    handle to tlCursor (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
-
+    % Variables
+    %   hObject    handle to tlCursor (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
     set(gcf, 'Pointer', 'arrow');
 end
 
 % --------------------------------------------------------------------
 function tlAddEpoch_OffCallback(hObject, eventdata, handles)
-    % hObject    handle to tlAddEpoch (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
+    % Variables
+    %   hObject    handle to tlAddEpoch (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
 
     handles.mode = 'default';
 
@@ -636,9 +628,10 @@ end
 
 % --------------------------------------------------------------------
 function tlAddEpoch_OnCallback(hObject, eventdata, handles)
-    % hObject    handle to tlAddEpoch (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
+    % Variables
+    %   hObject    handle to tlAddEpoch (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
 
     set(handles.tlRemoveEpoch, 'State', 'off');
     set(handles.tlZoomin, 'State', 'off');
@@ -661,9 +654,10 @@ end
 
 % --------------------------------------------------------------------
 function tlRemoveEpoch_OffCallback(hObject, eventdata, handles)
-    % hObject    handle to tlRemoveEpoch (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
+    % Variables
+    %   hObject    handle to tlRemoveEpoch (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
 
     handles.mode = 'default';
     set(gcf,'Pointer','arrow');
@@ -673,9 +667,10 @@ end
 
 % --------------------------------------------------------------------
 function tlRemoveEpoch_OnCallback(hObject, eventdata, handles)
-    % hObject    handle to tlRemoveEpoch (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
+    % Variables
+    %   hObject    handle to tlRemoveEpoch (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
 
     set(handles.tlAddEpoch, 'State', 'off');
     set(handles.tlZoomin, 'State', 'off');
@@ -697,9 +692,10 @@ end
 
 % --------------------------------------------------------------------
 function tlZoomin_OnCallback(hObject, eventdata, handles)
-    % hObject    handle to tlZoomin (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
+    % Variables
+    %   hObject    handle to tlZoomin (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
 
     set(handles.tlRemoveEpoch, 'State', 'off');
     set(handles.tlAddEpoch, 'State', 'off');
@@ -964,7 +960,7 @@ function UpdateEpochList(hObject)
                 hold off;
 
                 epochs{numel(epochs) + 1} = struct( ...
-                'name', sprintf('%d-%d', ep(i,1), ep(i,2)) , ...
+                'name', sprintf('%d -- %d', ep(i,1), ep(i,2)) , ...
                 'range', ep(i, 1:2), ...
                 'highlighted', false, ...
                 'response_plots', {response_plots} ...
@@ -1024,9 +1020,10 @@ end
 
 % --------------------------------------------------------------------
 function tlNavigate_OffCallback(hObject, eventdata, handles)
-    % hObject    handle to tlNavigate (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
+    % Variables
+    %   hObject    handle to tlNavigate (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
 
     pan off;
 end
@@ -1034,9 +1031,10 @@ end
 
 % --------------------------------------------------------------------
 function tlNavigate_OnCallback(hObject, eventdata, handles)
-    % hObject    handle to tlNavigate (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
+    % Variables
+    %   hObject    handle to tlNavigate (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
     set(handles.tlRemoveEpoch, 'State', 'off');
     set(handles.tlZoomin, 'State', 'off');
     set(handles.tlZoomout, 'State', 'off');
@@ -1048,9 +1046,10 @@ end
 
 % --------------------------------------------------------------------
 function tlZoomout_OnCallback(hObject, eventdata, handles)
-    % hObject    handle to tlZoomout (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
+    % Variables
+    %   hObject    handle to tlZoomout (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
     set(handles.tlRemoveEpoch, 'State', 'off');
     set(handles.tlZoomin, 'State', 'off');
     set(handles.tlAddEpoch, 'State', 'off');
@@ -1066,9 +1065,10 @@ end
 
 % --------------------------------------------------------------------
 function tlNext_ClickedCallback(hObject, eventdata, handles)
-    % hObject    handle to tlNext (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
+    % Variables
+    %   hObject    handle to tlNext (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
 
 
     if handles.highlighted_epoch == -1 || ...
@@ -1084,9 +1084,10 @@ end
 
 % --------------------------------------------------------------------
 function tlPrevious_ClickedCallback(hObject, eventdata, handles)
-    % hObject    handle to tlPrevious (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
+    % Variables
+    %   hObject    handle to tlPrevious (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
 
     if handles.highlighted_epoch == -1 || ...
         handles.highlighted_epoch == 1 || ...
@@ -1103,9 +1104,10 @@ end
 
 % --- Executes on button press in pbApply.
 function pbApply_Callback(hObject, eventdata, handles)
-    % hObject    handle to pbApply (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
+    % Variables
+    %   hObject    handle to pbApply (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
 
     if CreateOutput(hObject) == 1
         uiresume(handles.fgDataEditor);
@@ -1115,9 +1117,10 @@ end
 
 % --- Executes on button press in pbCancel.
 function pbCancel_Callback(hObject, eventdata, handles)
-    % hObject    handle to pbCancel (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
+    % Variables
+    %   hObject    handle to pbCancel (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
 
     handles.output = {};
     guidata(hObject, handles);
@@ -1130,9 +1133,10 @@ end
 
 % --- Executes on button press in cbInterpolate.
 function cbInterpolate_Callback(hObject, eventdata, handles)
-    % hObject    handle to cbInterpolate (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
+    % Variables
+    %   hObject    handle to cbInterpolate (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
 
     % Hint: get(hObject,'Value') returns toggle state of cbInterpolate
     InterpolateData(hObject);
@@ -1140,9 +1144,10 @@ end
 
 % --- Executes during object creation, after setting all properties.
 function ppOutput_CreateFcn(hObject, eventdata, handles)
-    % hObject    handle to ppOutput (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    empty - handles not created until after all CreateFcns called
+    % Variables
+    %   hObject    handle to ppOutput (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    empty - handles not created until after all CreateFcns called
 
     % Hint: popupmenu controls usually have a white background on Windows.
     %       See ISPC and COMPUTER.
@@ -1154,9 +1159,10 @@ end
 
 % --- Executes when user attempts to close fgDataEditor.
 function fgDataEditor_CloseRequestFcn(hObject, eventdata, handles)
-    % hObject    handle to fgDataEditor (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
+    % Variables
+    %   hObject    handle to fgDataEditor (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
 
     % Hint: delete(hObject) closes the figure
     handles.output = {};
@@ -1169,9 +1175,10 @@ end
 
 % --- Executes on selection change in lbChannel.
 function lbChannel_Callback(hObject, eventdata, handles)
-    % hObject    handle to lbChannel (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
+    % Variables
+    %   hObject    handle to lbChannel (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
 
     % Hints: contents = cellstr(get(hObject,'String')) returns lbChannel contents as cell array
     %        contents{get(hObject,'Value')} returns selected item from lbChannel
@@ -1197,9 +1204,10 @@ end
 
 % --- Executes during object creation, after setting all properties.
 function lbChannel_CreateFcn(hObject, eventdata, handles)
-    % hObject    handle to lbChannel (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    empty - handles not created until after all CreateFcns called
+    % Variables
+    %   hObject    handle to lbChannel (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    empty - handles not created until after all CreateFcns called
 
     % Hint: listbox controls usually have a white background on Windows.
     %       See ISPC and COMPUTER.
@@ -1211,9 +1219,10 @@ end
 
 % --- Executes on button press in rbEpochs.
 function rbEpochs_Callback(hObject, eventdata, handles)
-    % hObject    handle to rbEpochs (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
+    % Variables
+    %   hObject    handle to rbEpochs (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
 
     % Hint: get(hObject,'Value') returns toggle state of rbEpochs
 
@@ -1225,9 +1234,10 @@ end
 
 % --- Executes on button press in rbInterpolate.
 function rbInterpolate_Callback(hObject, eventdata, handles)
-    % hObject    handle to rbInterpolate (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
+    % Variables
+    %   hObject    handle to rbInterpolate (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
 
     % Hint: get(hObject,'Value') returns toggle state of rbInterpolate
 
@@ -1237,12 +1247,12 @@ function rbInterpolate_Callback(hObject, eventdata, handles)
 end
 
 
-% --- Executes on button press in pbOpenInputFile.
+% Executes on button press in pbOpenInputFile.
 function pbOpenInputFile_Callback(hObject, eventdata, handles)
-    % hObject    handle to pbOpenInputFile (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
-
+    % Variables
+    %   hObject    handle to pbOpenInputFile (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
     [file, path] = uigetfile('*.mat', 'Select input file');
     if file ~= 0
         fn = [path,file];
@@ -1252,12 +1262,12 @@ function pbOpenInputFile_Callback(hObject, eventdata, handles)
     end
 end
 
-% --- Executes on button press in pbOpenOutputFile.
+% Executes on button press in pbOpenOutputFile.
 function pbOpenOutputFile_Callback(hObject, eventdata, handles)
-    % hObject    handle to pbOpenOutputFile (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
-
+    % Variables
+    %   hObject    handle to pbOpenOutputFile (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
     [file, path] = uiputfile('*.mat', 'Select output file');
     if file ~= 0
         fn = [path,file];
@@ -1269,10 +1279,10 @@ end
 
 
 function edOpenFilePath_Callback(hObject, eventdata, handles)
-    % hObject    handle to edOpenFilePath (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
-
+    % Variables
+    %   hObject    handle to edOpenFilePath (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
     % Hints: get(hObject,'String') returns contents of edOpenFilePath as text
     %        str2double(get(hObject,'String')) returns contents of edOpenFilePath as a double
     if isempty(handles.input_file)
@@ -1285,10 +1295,10 @@ end
 
 
 function edOutputFile_Callback(hObject, eventdata, handles)
-    % hObject    handle to edOutputFile (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
-
+    % Variables
+    %   hObject    handle to edOutputFile (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
     % Hints: get(hObject,'String') returns contents of edOutputFile as text
     %        str2double(get(hObject,'String')) returns contents of edOutputFile as a double
     if isempty(handles.output_file)
@@ -1300,10 +1310,10 @@ end
 
 % --- Executes when selected object is changed in bgOutputFormat.
 function bgOutputFormat_SelectionChangedFcn(hObject, eventdata, handles)
-    % hObject    handle to the selected object in bgOutputFormat
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
-
+    % Variables
+    %   hObject    handle to the selected object in bgOutputFormat
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
     if get(handles.rbInterpolate, 'Value')
         set(handles.cbInterpolate, 'Enable', 'on');
         handles.output_type = 'interpolate';
@@ -1311,27 +1321,26 @@ function bgOutputFormat_SelectionChangedFcn(hObject, eventdata, handles)
         set(handles.cbInterpolate, 'Enable', 'off');
         handles.output_type = 'epochs';
     end
-
     guidata(hObject, handles);
     InterpolateData(hObject);
 end
 
 
-% --- Executes on button press in pbSaveOutput.
+
 function pbSaveOutput_Callback(hObject, eventdata, handles)
-    % hObject    handle to pbSaveOutput (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
+    % --- Executes on button press in pbSaveOutput.
+    % Variables
+    %   hObject    handle to pbSaveOutput (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
     CreateOutput(hObject);
 end
 
-
-
 function edOpenMissingEpochFilePath_Callback(hObject, eventdata, handles)
-    % hObject    handle to edOpenMissingEpochFilePath (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
-
+    % Variables
+    %   hObject    handle to edOpenMissingEpochFilePath (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
     % Hints: get(hObject,'String') returns contents of edOpenMissingEpochFilePath as text
     %        str2double(get(hObject,'String')) returns contents of edOpenMissingEpochFilePath as a double
     if isempty(handles.epoch_file)
@@ -1341,11 +1350,12 @@ function edOpenMissingEpochFilePath_Callback(hObject, eventdata, handles)
     end
 end
 
-% --- Executes during object creation, after setting all properties.
 function edOpenMissingEpochFilePath_CreateFcn(hObject, eventdata, handles)
-    % hObject    handle to edOpenMissingEpochFilePath (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    empty - handles not created until after all CreateFcns called
+    % --- Executes during object creation, after setting all properties.
+    % Variables
+    %   hObject    handle to edOpenMissingEpochFilePath (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    empty - handles not created until after all CreateFcns called
 
     % Hint: edit controls usually have a white background on Windows.
     %       See ISPC and COMPUTER.
@@ -1354,33 +1364,32 @@ function edOpenMissingEpochFilePath_CreateFcn(hObject, eventdata, handles)
     end
 end
 
-
-% --- If Enable == 'on', executes on mouse press in 5 pixel border.
-% --- Otherwise, executes on mouse press in 5 pixel border or over edOpenMissingEpochFilePath.
 function edOpenMissingEpochFilePath_ButtonDownFcn(hObject, eventdata, handles)
-    % hObject    handle to edOpenMissingEpochFilePath (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
+    % --- If Enable == 'on', executes on mouse press in 5 pixel border.
+    % --- Otherwise, executes on mouse press in 5 pixel border or over edOpenMissingEpochFilePath.
+    % Variables
+    %   hObject    handle to edOpenMissingEpochFilePath (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
 end
 
-
-% --- Executes on button press in pbOpenMissingEpochFile.
 function pbOpenMissingEpochFile_Callback(hObject, eventdata, handles)
-    % hObject    handle to pbOpenMissingEpochFile (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
+    % Executes on button press in pbOpenMissingEpochFile.
+    % Variables
+    %   hObject    handle to pbOpenMissingEpochFile (see GCBO)
+    %   eventdata  reserved - to be defined in a future version of MATLAB
+    %   handles    structure with handles and user data (see GUIDATA)
     [file, path] = uigetfile('*.mat', 'Select missing epoch file');
     if file ~= 0
         handles.epoch_file = [ path, file ];
-        handles = add_epochs(hObject, handles);
+        handles = Add_Epochs(hObject, handles);
     end
 end
 
-function handles = add_epochs(hObject, handles)
+function handles = Add_Epochs(hObject, handles)
     E = load(handles.epoch_file, 'epochs');
     epochs = E.epochs';
-    % for each ep add an area as if drawn by the user and add to epoch list
-    for ep = epochs
+    for ep = epochs % for each ep add an area as if drawn by the user and add to epoch list
         handles = guidata(hObject);
         handles.select.start = [ ep(1), 0.5 ];
         handles.select.stop = [ ep(2), 0.5 ];
