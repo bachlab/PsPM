@@ -149,11 +149,14 @@ function pspm_data_editor_OpeningFcn(hObject, eventdata, handles, varargin)
             end
             if isfield(handles, 'options') && isfield(handles.options, 'epoch_file')
                 set(handles.pnlEpoch, 'Visible', 'off');
+            end
+        end
+        
+        if isfield(handles, 'options') && isfield(handles.options, 'epoch_file')
                 handles = guidata(hObject);
                 add_epochs(hObject, handles)
-            end
-
         end
+            
     end
     uiwait(handles.fgDataEditor);
 end
