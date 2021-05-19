@@ -62,22 +62,20 @@ function varargout = pspm_data_editor(varargin)
 end
 % End initialization code - DO NOT EDIT
 
-% --- Executes just before pspm_data_editor is made visible.
-function pspm_data_editor_OpeningFcn(hObject, eventdata, handles, varargin)
-    % This function has no output args, see OutputFcn.
+function pspm_data_editor_OpeningFcn(hObject, ~, handles, varargin)
+    % Feature
+    %   Executes just before pspm_data_editor is made visible.
+    %   This function has no output args, see OutputFcn.
     % Variables
     %   hObject    handle to figure
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    structure with handles and user data (see GUIDATA)
-    % varargin   command line arguments to pspm_data_editor (see VARARGIN)
-
-    % initialise
-    % -------------------------------------------------------------------------
-    global settings;
+    % Varargin
+    %   command line arguments to pspm_data_editor (see VARARGIN)
+    global settings; % initialise
     if isempty(settings)
         pspm_init;
     end
-
     if get(handles.rbInterpolate, 'Value')
         set(handles.cbInterpolate, 'Enable', 'on');
         handles.output_type = 'interpolate';
@@ -85,7 +83,6 @@ function pspm_data_editor_OpeningFcn(hObject, eventdata, handles, varargin)
         set(handles.cbInterpolate, 'Enable', 'off');
         handles.output_type = 'epochs';
     end
-
     % Choose default command line output for pspm_data_editor
     handles.output = {};
     handles.mode = 'default';
@@ -94,57 +91,42 @@ function pspm_data_editor_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.selected_data = [];
     handles.epochs = {};
     handles.highlighted_epoch = -1;
-
     handles.data = {};
     handles.input_mode = '';
     handles.input_file = '';
     handles.output_file = '';
-
     set(handles.fgDataEditor, 'WindowButtonDownFcn', @buttonDown_Callback);
     set(handles.fgDataEditor, 'WindowButtonUpFcn', @buttonUp_Callback);
     set(handles.fgDataEditor, 'WindowButtonMotionFcn', @buttonMotion_Callback);
-
-    % load options
-    if numel(varargin) > 1 && isstruct(varargin{2})
+    if numel(varargin) > 1 && isstruct(varargin{2}) % load options
         handles.options = varargin{2};
-
-        % check if options are valid and assign accordingly
-        if isfield(handles.options, 'output_file') && ...
+        if isfield(handles.options, 'output_file') && ... % check if options are valid and assign accordingly
             ischar(handles.options.output_file)
-
             handles.output_file = handles.options.output_file;
             set(handles.edOutputFile, 'String', handles.output_file);
         end
-
         if isfield(handles.options, 'epoch_file') && ...
             ischar(handles.options.epoch_file)
-
             handles.epoch_file = handles.options.epoch_file;
             set(handles.edOpenMissingEpochFilePath, 'String', handles.epoch_file);
         end
-
     end
-
-    % Update handles structure
-    guidata(hObject, handles);
+    guidata(hObject, handles); % Update handles structure
     if numel(varargin) > 0
         if ischar(varargin{1})
             if exist(varargin{1}, 'file')
                 set(handles.pnlInput, 'Visible', 'on');
                 set(handles.pnlOutput, 'Visible', 'on');
-
                 loadFromFile(hObject, varargin{1});
             else
                 warning('File ''%s'' does not exist.', varargin{1});
             end
         elseif isnumeric(varargin{1})
             set(handles.pnlInput, 'Visible', 'off');
-
             handles.data = varargin{1};
             handles.input_mode = 'raw';
             guidata(hObject, handles);
             PlotData(hObject);
-
             if isfield(handles, 'options') && isfield(handles.options, 'output_file')
                 set(handles.pnlOutput, 'Visible', 'off');
             end
@@ -152,21 +134,16 @@ function pspm_data_editor_OpeningFcn(hObject, eventdata, handles, varargin)
                 set(handles.pnlEpoch, 'Visible', 'off');
             end
         end
-
         if isfield(handles, 'options') && isfield(handles.options, 'epoch_file')
                 handles = guidata(hObject);
                 Add_Epochs(hObject, handles)
         end
-
     end
     uiwait(handles.fgDataEditor);
 end
 
-% -------------------------------------------------------------------------
 function [sts] = CreateOutput(hObject)
-
     handles = guidata(hObject);
-
     sts = -1;
     if strcmpi(handles.input_mode, 'file') && strcmpi(handles.output_file, '')
         msgbox('No output file specified. Cannot create output.','Error','error');
@@ -174,24 +151,19 @@ function [sts] = CreateOutput(hObject)
         out_file = handles.output_file;
         switch handles.output_type
         case 'interpolate'
-            % again run interpolation
-            InterpolateData(hObject);
+            InterpolateData(hObject); % again run interpolation
             plots = ~cellfun(@isempty, handles.plots);
             interp = cellfun(@(x) get(x.interpolate, 'YData'), ...
             handles.plots(plots), 'UniformOutput', 0);
-
             if strcmpi(handles.input_mode, 'file')
                 channels = find(plots);
-
                 newd.data = handles.data;
                 newd.infos = handles.infos;
-
-                % replace interpolated data
-                for i=1:numel(channels)
+                for i=1:numel(channels) % replace interpolated data
                     newd.data{i}.data = interp{i}';
                 end
                 write_file = 1;
-                write_success = 0;
+                % Used to have a variable write_success = 0 here
                 disp_success = 1;
                 if exist(out_file, 'file')
                     button = questdlg(sprintf(['File (%s) already exists. ', ...
@@ -199,7 +171,7 @@ function [sts] = CreateOutput(hObject)
                     'Add or replace channels?', 'Add channels', ...
                     'Replace file', 'Cancel', 'Cancel');
                     if strcmpi(button, 'Add channels')
-                        [write_success, ~] = pspm_write_channel(out_file, ...
+                        [~, ~] = pspm_write_channel(out_file, ...
                         newd.data(plots), 'add');
                         write_file = 0;
                     elseif strcmpi(button, 'Cancel')
@@ -207,7 +179,6 @@ function [sts] = CreateOutput(hObject)
                         write_file = 0;
                     end
                 end
-
                 if write_file
                     newd.options.overwrite = 1;
                     [write_success, ~, ~] = pspm_load_data(out_file, newd);
@@ -221,7 +192,6 @@ function [sts] = CreateOutput(hObject)
                         end
                     end
                 end
-
             else
                 handles.output = interp;
             end
@@ -229,7 +199,6 @@ function [sts] = CreateOutput(hObject)
         case 'epochs'
             ep = cellfun(@(x) x.range', handles.epochs, 'UniformOutput', 0);
             epochs = cell2mat(ep)';
-
             if strcmpi(handles.input_mode, 'file')
                 if exist(out_file, 'file')
                     button = questdlg(sprintf(...
@@ -239,7 +208,6 @@ function [sts] = CreateOutput(hObject)
                 else
                     write_ok = true;
                 end
-
                 if write_ok
                     save(out_file, 'epochs');
                 end
@@ -252,43 +220,29 @@ function [sts] = CreateOutput(hObject)
             sts = 1;
         end
     end
-
     guidata(hObject, handles);
 end
 
-% --------------------------------------------------------------------
 function loadFromFile(hObject, file)
     handles = guidata(hObject);
-
-    % clear epochs
-    handles.selected_data(:) = NaN;
+    handles.selected_data(:) = NaN; % clear epochs
     guidata(hObject, handles);
-
     UpdateEpochList(hObject);
     handles = guidata(hObject);
-
-    % clear channels
-    handles.channels = {};
+    handles.channels = {}; % clear channels
     set(handles.lbChannel, 'String', '');
-
-    % remove plots
-    for i=1:numel(handles.plots)
+    for i=1:numel(handles.plots) % remove plots
         if ~isempty(handles.plots{i})
             RemovePlot(hObject, i);
         end
     end
-
-    % load file
-    [sts, infos, data] = pspm_load_data(file);
+    [~, infos, data] = pspm_load_data(file); % load file
     channels = cellfun(@(x) {x.header.chantype,x.header.units}, data, 'UniformOutput', 0);
-
     set(handles.edOpenFilePath, 'String', file);
-
-    % format channels
-    corder = get(handles.fgDataEditor, 'defaultAxesColorOrder');
+    corder = get(handles.fgDataEditor, 'defaultAxesColorOrder'); % format channels
     cl = length(corder)-2;
     disp_names = cell(numel(channels), 1);
-    for i=1:numel(channels)
+    for i = 1:numel(channels)
         if strcmpi(channels{i}(2), 'events')
             disp_names{i} = sprintf('<html><font color="#DDDDDD">%s</font></html>', channels{i}{1});
         else
@@ -301,27 +255,21 @@ function loadFromFile(hObject, file)
             channels{i}{1});
         end
     end
-
     set(handles.lbChannel, 'String', disp_names);
-
     handles.data = data;
     handles.infos = infos;
     handles.input_mode = 'file';
     handles.plots = cell(size(data));
     guidata(hObject, handles);
-
     PlotData(hObject);
 end
 
-% --------------------------------------------------------------------
 function PlotData(hObject)
     handles = guidata(hObject);
     chan = {};
-    % load data
-    switch handles.input_mode
+    switch handles.input_mode % load data
     case 'file'
-        % get highest sample rate
-        sr = max(cellfun(@(x) x.header.sr, handles.data));
+        sr = max(cellfun(@(x) x.header.sr, handles.data)); % get highest sample rate
         xdata = (0:sr^-1:handles.infos.duration)';
         chan_id = get(handles.lbChannel, 'Value');
         if ~any(numel(handles.data) < chan_id)
@@ -333,12 +281,9 @@ function PlotData(hObject)
         xdata = (1:numel(handles.data))';
         chan = 1;
     end
-
     handles.selected_data = NaN(numel(xdata),1);
     handles.x_data = xdata;
-
     guidata(hObject, handles);
-
     if ~isempty(chan)
         np = get(handles.axData, 'NextPlot');
         action = 'replace';
@@ -350,19 +295,15 @@ function PlotData(hObject)
     end
 end
 
-% --------------------------------------------------------------------
 function AddPlot(hObject, chan_id, action)
     handles = guidata(hObject);
-
     if isempty(action)
         action = 'replace';
     end
-
     np = get(handles.axData, 'NextPlot');
     set(handles.axData, 'NextPlot', action);
     corder = get(handles.fgDataEditor, 'defaultAxesColorOrder');
     cl = length(corder)-2;
-
     m = floor((chan_id-0.1)/cl);
     color = corder(chan_id - m*cl, :);
     if strcmpi(handles.input_mode, 'file')
@@ -377,11 +318,10 @@ function AddPlot(hObject, chan_id, action)
             xdata(end:end+n_diff) = start_from:sr^-1:(start_from+n_diff*sr^-1);
         end
     else
-        xdata = 1:numel(handles.data)';
+        xdata = 1:numel(handles.data); % used to have a transpose here, but seems a little irrelational
         ydata = handles.data;
         sr = 1;
     end
-
     p = plot(xdata,ydata, 'Color', color);
     set(handles.axData, 'NextPlot', 'add');
     NaN_data = NaN(numel(xdata),1);
@@ -393,53 +333,45 @@ function AddPlot(hObject, chan_id, action)
     handles.plots{chan_id}.highlight_plot = plot(xdata,NaN_data, 'LineWidth', 1.5, 'Color', corder(end,:));
     handles.plots{chan_id}.interpolate = plot(xdata,NaN_data, 'LineWidth', 0.5, 'Color', corder(end-1,:), 'LineStyle', '--');
     uistack(handles.plots{chan_id}.interpolate, 'bottom');
-
-    % add response plots
-    for i=1:numel(handles.epochs)
+    for i=1:numel(handles.epochs) % add response plots
         rp_x = handles.plots{chan_id}.x_data;
         rp_y = NaN(1,numel(handles.plots{chan_id}.x_data));
         range = rp_x > handles.epochs{i}.range(1) & rp_x < handles.epochs{i}.range(2);
         rp_y(range) = handles.plots{chan_id}.y_data(range);
-
         p = plot(rp_x, rp_y, 'Color', 'green', 'Parent', handles.plots{chan_id}.sel_container);
         handles.epochs{i}.response_plots{chan_id} = struct('p', p);
     end
-
     set(handles.axData, 'NextPlot', np);
     guidata(hObject, handles);
 end
 
-
-% --------------------------------------------------------------------
 function RemovePlot(hObject, chan_id)
     handles = guidata(hObject);
-
     if numel(handles.plots) >= chan_id
-
-        % remove response plots
-        for i=1:numel(handles.epochs)
+        for i = 1:numel(handles.epochs) % remove response plots
             if numel(handles.epochs{i}.response_plots) >= chan_id ...
                 && ~isempty(handles.epochs{i}.response_plots{chan_id})
                 delete(handles.epochs{i}.response_plots{chan_id}.p);
                 handles.epochs{i}.response_plots{chan_id} = [];
             end
         end
-
         delete(handles.plots{chan_id}.data_plot);
         delete(handles.plots{chan_id}.sel_container);
         delete(handles.plots{chan_id}.highlight_plot);
         delete(handles.plots{chan_id}.interpolate);
-        % empty entry
-        handles.plots{chan_id} = [];
+        handles.plots{chan_id} = []; % empty entry
     end
-
     guidata(hObject, handles);
 end
 
-
-% Outputs from this function are returned to the command line.
-function varargout = pspm_data_editor_OutputFcn(hObject, eventdata, handles)
-    % varargout  cell array for returning output args (see VARARGOUT);
+function pspm_data_editor_OutputFcn(hObject, ~, handles)
+    % Comments
+    %   It used to be function varargout = pspm_data_editor_OutputFcn(hObject, ~, handles)
+    %   Where the varargout seems not modified?
+    % Feature
+    %   Outputs from this function are returned to the command line.
+    % Varargout
+    %   cell array for returning output args (see VARARGOUT);
     % Variables
     %   hObject    handle to figure
     %   eventdata  reserved - to be defined in a future version of MATLAB
@@ -449,21 +381,22 @@ function varargout = pspm_data_editor_OutputFcn(hObject, eventdata, handles)
     delete(hObject);
 end
 
-% --- Executes on selection change in lbEpochs.
-function lbEpochs_Callback(hObject, eventdata, handles)
+function lbEpochs_Callback(hObject, ~, ~)
+    % Feature
+    %   Executes on selection change in lbEpochs.
     % Variables
     %   hObject    handle to lbEpochs (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    structure with handles and user data (see GUIDATA)
-    % Hints: contents = cellstr(get(hObject,'String')) returns lbEpochs contents as cell array
-    %        contents{get(hObject,'Value')} returns selected item from lbEpochs
+    % Hints
+    %   contents = cellstr(get(hObject,'String')) returns lbEpochs contents as cell array
+    %	contents{get(hObject,'Value')} returns selected item from lbEpochs
     epId = get(hObject,'Value');
     HighlightEpoch(hObject, epId);
 end
 
 function ResetEpochHighlight(hObject)
     handles = guidata(hObject);
-
     for i=1:numel(handles.epochs)
         if handles.epochs{i}.highlighted
             for j=1:numel(handles.epochs{i}.response_plots)
@@ -477,7 +410,6 @@ function ResetEpochHighlight(hObject)
             handles.epochs{i}.highlighted = false;
         end
     end
-
     guidata(hObject, handles);
 end
 
@@ -493,18 +425,14 @@ function HighlightEpoch(hObject, epId)
                 set(ep.response_plots{i}.p, 'Color', 'black', 'LineWidth', 1.5);
             end
         end
-
         cur_xlim = get(handles.axData, 'xlim');
         start = cur_xlim(1);
         stop = cur_xlim(2);
         x_dist = stop-start;
         new_dist = ep.range(2)-ep.range(1);
-
         dstart = min(handles.x_data);
         dstop = max(handles.x_data);
-
         data_dist = dstop - dstart;
-
         if (x_dist < data_dist)
             % try to set xlim
             if (new_dist > x_dist) % zoom out
@@ -515,7 +443,6 @@ function HighlightEpoch(hObject, epId)
                 offset = (x_dist-new_dist)/2;
                 start = ep.range(1) - offset;
                 stop = ep.range(2) + offset;
-
                 if start < dstart
                     start = dstart;
                     stop = dstart+x_dist;
@@ -530,9 +457,7 @@ function HighlightEpoch(hObject, epId)
             stop = dstop;
             set(handles.axData, 'xlim', [start,stop]);
         end
-
         x_dist = stop - start;
-
         % try to set ylim
         plots = ~cellfun(@isempty, handles.plots);
         minmax = cellfun(@(x) [max(x.y_data(x.x_data >= ep.range(1)& x.x_data <= ep.range(2))), ...
@@ -543,11 +468,9 @@ function HighlightEpoch(hObject, epId)
         from = min(minmax(:,3));
         dmax = max(minmax(:,2));
         dmin = min(minmax(:,4));
-
         cur_ylim = get(handles.axData, 'ylim');
         y_dist = cur_ylim(2) - cur_ylim(1);
         new_dist = to - from;
-
         if new_dist ~= y_dist
             if new_dist > y_dist
                 start = from;
@@ -569,36 +492,36 @@ function HighlightEpoch(hObject, epId)
             end
             set(handles.axData, 'ylim', [start,stop]);
         end
-
         handles.highlighted_epoch = epId;
         guidata(hObject, handles);
     end
 end
 
-
-% --- Executes during object creation, after setting all properties.
-function lbEpochs_CreateFcn(hObject, eventdata, handles)
+function lbEpochs_CreateFcn(hObject, ~, ~)
+    % Feature
+    %   Executes during object creation, after setting all properties.
     % Variables
     %   hObject    handle to lbEpochs (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    empty - handles not created until after all CreateFcns called
-
-    % Hint: listbox controls usually have a white background on Windows.
-    %       See ISPC and COMPUTER.
+    % Hint
+    %   listbox controls usually have a white background on Windows.
+    %	See ISPC and COMPUTER.
     if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
 end
 
-% Executes during object creation, after setting all properties.
-function fgDataEditor_CreateFcn(hObject, eventdata, handles)
+function fgDataEditor_CreateFcn(~, ~, ~)
+    % Feature
+    %   Executes during object creation, after setting all properties.
     % Variables
     %   hObject    handle to fgDataEditor (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    empty - handles not created until after all CreateFcns called
 end
 
-function tlCursor_ClickedCallback(hObject, eventdata, handles)
+function tlCursor_ClickedCallback(~, ~, ~)
     % Variables
     %   hObject    handle to tlCursor (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
@@ -606,103 +529,77 @@ function tlCursor_ClickedCallback(hObject, eventdata, handles)
     set(gcf, 'Pointer', 'arrow');
 end
 
-% --------------------------------------------------------------------
-function tlAddEpoch_OffCallback(hObject, eventdata, handles)
+function tlAddEpoch_OffCallback(hObject, ~, handles)
     % Variables
     %   hObject    handle to tlAddEpoch (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    structure with handles and user data (see GUIDATA)
-
     handles.mode = 'default';
-
-    % change to crosshair
-    set(gcf,'Pointer','arrow');
-
+    set(gcf,'Pointer','arrow'); % change to crosshair
     handles.select.start = [0,0];
     handles.select.stop = [0,0];
     handles.select.p = 0;
-
     guidata(hObject, handles);
 end
 
-
-% --------------------------------------------------------------------
-function tlAddEpoch_OnCallback(hObject, eventdata, handles)
+function tlAddEpoch_OnCallback(hObject, ~, handles)
     % Variables
     %   hObject    handle to tlAddEpoch (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    structure with handles and user data (see GUIDATA)
-
     set(handles.tlRemoveEpoch, 'State', 'off');
     set(handles.tlZoomin, 'State', 'off');
     set(handles.tlZoomout, 'State', 'off');
     set(handles.tlNavigate, 'State', 'off');
     pan off;
     zoom off;
-
     handles.mode = 'addepoch';
-
-    % change to crosshair
-    set(gcf,'Pointer','crosshair');
-
+    set(gcf,'Pointer','crosshair'); % change to crosshair
     handles.select.start = [0,0];
     handles.select.stop = [0,0];
     handles.select.p = 0;
     guidata(hObject, handles);
 end
 
-
-% --------------------------------------------------------------------
-function tlRemoveEpoch_OffCallback(hObject, eventdata, handles)
+function tlRemoveEpoch_OffCallback(hObject, ~, handles)
     % Variables
     %   hObject    handle to tlRemoveEpoch (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    structure with handles and user data (see GUIDATA)
-
     handles.mode = 'default';
     set(gcf,'Pointer','arrow');
     guidata(hObject, handles);
 end
 
-
-% --------------------------------------------------------------------
-function tlRemoveEpoch_OnCallback(hObject, eventdata, handles)
+function tlRemoveEpoch_OnCallback(hObject, ~, handles)
     % Variables
     %   hObject    handle to tlRemoveEpoch (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    structure with handles and user data (see GUIDATA)
-
     set(handles.tlAddEpoch, 'State', 'off');
     set(handles.tlZoomin, 'State', 'off');
     set(handles.tlZoomout, 'State', 'off');
     set(handles.tlNavigate, 'State', 'off');
     pan off;
     zoom off;
-
     handles.mode = 'removeepoch';
-
-    % change to crosshair
-    set(gcf,'Pointer','crosshair');
-
+    set(gcf,'Pointer','crosshair'); % change to crosshair
     handles.select.start = [0,0];
     handles.select.stop = [0,0];
     handles.select.p = 0;
     guidata(hObject, handles);
 end
 
-% --------------------------------------------------------------------
-function tlZoomin_OnCallback(hObject, eventdata, handles)
+function tlZoomin_OnCallback(~, ~, handles)
     % Variables
     %   hObject    handle to tlZoomin (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    structure with handles and user data (see GUIDATA)
-
     set(handles.tlRemoveEpoch, 'State', 'off');
     set(handles.tlAddEpoch, 'State', 'off');
     set(handles.tlZoomout, 'State', 'off');
     set(handles.tlNavigate, 'State', 'off');
     pan off;
-
     z = zoom;
     set(z, 'Motion', 'horizontal');
     set(z, 'Direction', 'in');
@@ -714,16 +611,13 @@ function tlZoomin_OnCallback(hObject, eventdata, handles)
     set(handles.tlZoomin, 'OnCallback', cb);
 end
 
-% --------------------------------------------------------------------
 function drawSelection(hObject)
     handles = guidata(hObject);
     pt = get(handles.axData, 'CurrentPoint');
     pos = pt(1,1:2);
     start = handles.select.start;
-
     x = [start(1), pos(1), pos(1), start(1)];
     y = [start(2), start(2), pos(2), pos(2)];
-
     if handles.select.p ~= 0
         p = handles.select.p;
         set(p, 'XData', x);
@@ -732,14 +626,14 @@ function drawSelection(hObject)
         p = patch(x,y, 'white', 'FaceColor', 'none');
         handles.select.p = p;
     end
-
     guidata(hObject, handles);
 end
 
-% --------------------------------------------------------------------
-function buttonDown_Callback(hObject, data)
-    % get current cursor position
-    handles = guidata(hObject);
+function buttonDown_Callback(hObject, ~)
+    % Comment
+    %   Used to be "buttonDown_Callback(hObject, data)", but the variable
+    %   data seems to be not used.
+    handles = guidata(hObject); % get current cursor position
     switch handles.mode
     case {'addepoch','removeepoch'}
         pt = get(handles.axData, 'CurrentPoint');
@@ -748,8 +642,10 @@ function buttonDown_Callback(hObject, data)
     guidata(hObject, handles);
 end
 
-% --------------------------------------------------------------------
-function buttonUp_Callback(hObject, data)
+function buttonUp_Callback(hObject, ~)
+    % Comment
+    %   Used to be "buttonUp_Callback(hObject, data)", but the variable
+    %   data seems to be not used.
     % get current cursor position
     handles = guidata(hObject);
     switch handles.mode
@@ -760,8 +656,7 @@ function buttonUp_Callback(hObject, data)
             delete(handles.select.p);
             handles.select.p = 0;
         end
-        % add selected area and draw
-        guidata(hObject, handles);
+        guidata(hObject, handles); % add selected area and draw
         SelectedArea(hObject, 'add');
     case 'removeepoch'
         pt = get(handles.axData, 'CurrentPoint');
@@ -770,18 +665,17 @@ function buttonUp_Callback(hObject, data)
             delete(handles.select.p);
             handles.select.p = 0;
         end
-        % add selected area and draw
-        guidata(hObject, handles);
+        guidata(hObject, handles); % add selected area and draw
         SelectedArea(hObject, 'remove');
     end
-
     UpdateEpochList(hObject);
 end
 
-% --------------------------------------------------------------------
-function buttonMotion_Callback(hObject, data)
+function buttonMotion_Callback(hObject, ~)
+    % Comment
+    %   Used to be "buttonMotion_Callback(hObject, data)", but the variable
+    %   data seems to be not used.
     handles = guidata(hObject);
-
     if isfield(handles, 'mode')
         switch handles.mode
         case {'addepoch', 'removeepoch'}
@@ -794,10 +688,8 @@ function buttonMotion_Callback(hObject, data)
     end
 end
 
-% --------------------------------------------------------------------
 function SelectedArea(hObject, action)
     handles = guidata(hObject);
-
     if isfield(handles, 'x_data')
         start = handles.select.start;
         if strcmpi(action, 'highlight')
@@ -805,8 +697,7 @@ function SelectedArea(hObject, action)
             stop = pt(1,1:2);
         else
             stop = handles.select.stop;
-            % turn highlight off
-            for i=1:numel(handles.plots)
+            for i = 1:numel(handles.plots) % turn highlight off
                 p = handles.plots{i};
                 if ~isempty(p)
                     xd = p.x_data;
@@ -816,7 +707,6 @@ function SelectedArea(hObject, action)
             end
         end
     end
-
     if start(1) > stop(1)
         x_from = stop(1);
         x_to = start(1);
@@ -824,10 +714,7 @@ function SelectedArea(hObject, action)
         x_from = start(1);
         x_to = stop(1);
     end
-
-
     sel_x = handles.x_data;
-
     switch action
     case 'add'
         handles.selected_data(sel_x >= x_from & sel_x <= x_to) = 1;
@@ -843,45 +730,37 @@ function SelectedArea(hObject, action)
                 if strcmpi(handles.mode, 'removeepoch')
                     ep = findSelectedEpochs(hObject);
                     sel_d = zeros(size(xd));
-
                     for j=1:size(ep,1)
                         sel_d(xd >= ep(j,1) & xd <= ep(j,2)) = 1;
                     end
-
                     r = r & sel_d;
                 end
-
                 highlight_yd = NaN(numel(xd),1);
                 highlight_yd(r) = yd(r);
                 set(p.highlight_plot, 'YData', highlight_yd');
             end
         end
     end
-
     if ~strcmpi(action, 'highlight')
         handles.select.start = [0,0];
         handles.select.stop = [0,0];
     end
-
     guidata(hObject, handles);
 end
 
-% -------------------------------------------------------------------------
 function InterpolateData(hObject)
     handles = guidata(hObject);
     interp_state = get(handles.cbInterpolate, 'Value');
-
     if strcmpi(handles.output_type, 'interpolate')
         for i=1:numel(handles.plots)
             if ~isempty(handles.plots{i})
                 xd = handles.plots{i}.x_data;
                 yd = handles.plots{i}.y_data;
-
                 for j = 1:numel(handles.epochs)
                     range = xd >= handles.epochs{j}.range(1) & xd <= handles.epochs{j}.range(2);
                     yd(range) = NaN;
                 end
-                [sts, newyd] = pspm_interpolate(yd);
+                [~, newyd] = pspm_interpolate(yd);
                 if ~isempty(newyd)
                     set(handles.plots{i}.interpolate, 'YData', newyd);
                 end
@@ -903,33 +782,26 @@ function InterpolateData(hObject)
     guidata(hObject, handles)
 end
 
-% --------------------------------------------------------------------
-function [epochs] = findSelectedEpochs(hObject)
+function epochs = findSelectedEpochs(hObject)
     handles = guidata(hObject);
-
     sd = handles.selected_data;
     v_pos = find(~isnan(sd));
     xd = handles.x_data;
     if numel(v_pos)>=1
         epoch_end = xd([v_pos(find(diff(v_pos) > 1)); v_pos(end)]);
         epoch_start = xd(v_pos([1;find(diff(v_pos) > 1)+1]));
-
         epochs = [epoch_start, epoch_end];
     else
         epochs = [];
     end
 end
 
-% --------------------------------------------------------------------
 function UpdateEpochList(hObject)
     handles = guidata(hObject);
-
     if numel(handles.plots) > 0
         ep = findSelectedEpochs(hObject);
         epochs = handles.epochs;
-
-        % add epochs if necessary
-        for i=1:size(ep,1)
+        for i=1:size(ep,1) % add epochs if necessary
             response_plots = cell(numel(handles.plots),1);
             k = 1;
             epochFound = false;
@@ -939,9 +811,7 @@ function UpdateEpochList(hObject)
                 end
                 k = k+1;
             end
-
-            % add epoch if not found
-            if ~epochFound
+            if ~epochFound % add epoch if not found
                 hold on;
                 for j=1:numel(handles.plots)
                     if ~isempty(handles.plots{j})
@@ -951,14 +821,11 @@ function UpdateEpochList(hObject)
                         sto = ep(i,2);
                         r = rp_x >= sta & rp_x <= sto;
                         rp_y(r) = handles.plots{j}.y_data(r);
-
-
                         p = plot(rp_x, rp_y, 'Color', 'green', 'Parent', handles.plots{j}.sel_container);
                         response_plots{j} = struct('p', p, 'p_id', j);
                     end
                 end
                 hold off;
-
                 epochs{numel(epochs) + 1} = struct( ...
                 'name', sprintf('%d -- %d', ep(i,1), ep(i,2)) , ...
                 'range', ep(i, 1:2), ...
@@ -967,9 +834,7 @@ function UpdateEpochList(hObject)
                 );
             end
         end
-
-        % remove epochs if necessary
-        if numel(epochs) ~= size(ep,1)
+        if numel(epochs) ~= size(ep,1) % remove epochs if necessary
             i = 1;
             while i <= numel(epochs)
                 epochFound = false;
@@ -980,7 +845,6 @@ function UpdateEpochList(hObject)
                     end
                     k = k+1;
                 end
-
                 if ~epochFound
                     for j=1:numel(epochs{i}.response_plots)
                         if ~isempty(epochs{i}.response_plots{j})
@@ -993,11 +857,10 @@ function UpdateEpochList(hObject)
                 end
             end
         end
-
-
-        names = cellfun(@(x) x.name, epochs, 'UniformOutput', 0);
-        % add the new names to the current list
-        % names = [handles.lbEpochs.String;names];
+        names = cellfun(@(x) x.name, epochs, 'UniformOutput', 0); % add the new names to the current list
+        % Used to have a line
+        %   names = [handles.lbEpochs.String;names];
+        % here, but seems not necessary
         sel_ep = get(handles.lbEpochs, 'Value');
         if sel_ep > numel(names)
             sel_ep = max(numel(names), 1);
@@ -1008,29 +871,21 @@ function UpdateEpochList(hObject)
             set(handles.lbEpochs, 'Value', sel_ep);
         end
         set(handles.lbEpochs, 'String', names);
-
         handles.epochs = epochs;
         guidata(hObject, handles);
-
         InterpolateData(hObject);
-        a = guidata(hObject);
     end
 end
 
-
-% --------------------------------------------------------------------
-function tlNavigate_OffCallback(hObject, eventdata, handles)
+function tlNavigate_OffCallback(~, ~, ~)
     % Variables
     %   hObject    handle to tlNavigate (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    structure with handles and user data (see GUIDATA)
-
     pan off;
 end
 
-
-% --------------------------------------------------------------------
-function tlNavigate_OnCallback(hObject, eventdata, handles)
+function tlNavigate_OnCallback(~, ~, handles)
     % Variables
     %   hObject    handle to tlNavigate (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
@@ -1043,9 +898,7 @@ function tlNavigate_OnCallback(hObject, eventdata, handles)
     pan on;
 end
 
-
-% --------------------------------------------------------------------
-function tlZoomout_OnCallback(hObject, eventdata, handles)
+function tlZoomout_OnCallback(~, ~, handles)
     % Variables
     %   hObject    handle to tlZoomout (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
@@ -1055,44 +908,35 @@ function tlZoomout_OnCallback(hObject, eventdata, handles)
     set(handles.tlAddEpoch, 'State', 'off');
     set(handles.tlNavigate, 'State', 'off');
     pan off;
-
     z = zoom;
     set(z, 'Motion', 'horizontal');
     set(z, 'Direction', 'out');
     set(z, 'Enable', 'on');
 end
 
-
-% --------------------------------------------------------------------
-function tlNext_ClickedCallback(hObject, eventdata, handles)
+function tlNext_ClickedCallback(hObject, ~, handles)
     % Variables
     %   hObject    handle to tlNext (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    structure with handles and user data (see GUIDATA)
-
-
     if handles.highlighted_epoch == -1 || ...
         handles.highlighted_epoch >= numel(handles.epochs)
         new_ep = 1;
     else
         new_ep = handles.highlighted_epoch + 1;
     end
-
     set(handles.lbEpochs, 'Value', new_ep);
     HighlightEpoch(hObject, new_ep);
 end
 
-% --------------------------------------------------------------------
-function tlPrevious_ClickedCallback(hObject, eventdata, handles)
+function tlPrevious_ClickedCallback(hObject, ~, handles)
     % Variables
     %   hObject    handle to tlPrevious (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    structure with handles and user data (see GUIDATA)
-
     if handles.highlighted_epoch == -1 || ...
         handles.highlighted_epoch == 1 || ...
         handles.highlighted_epoch > numel(handles.epochs)
-
         new_ep = numel(handles.epochs);
     else
         new_ep = handles.highlighted_epoch - 1;
@@ -1101,27 +945,25 @@ function tlPrevious_ClickedCallback(hObject, eventdata, handles)
     HighlightEpoch(hObject, new_ep);
 end
 
-
-% --- Executes on button press in pbApply.
-function pbApply_Callback(hObject, eventdata, handles)
+function pbApply_Callback(hObject, ~, handles)
+    % Feature
+    %   Executes on button press in pbApply.
     % Variables
     %   hObject    handle to pbApply (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    structure with handles and user data (see GUIDATA)
-
     if CreateOutput(hObject) == 1
         uiresume(handles.fgDataEditor);
     end
 end
 
-
-% --- Executes on button press in pbCancel.
-function pbCancel_Callback(hObject, eventdata, handles)
+function pbCancel_Callback(hObject, ~, handles)
+    % Feature
+    %	Executes on button press in pbCancel.
     % Variables
     %   hObject    handle to pbCancel (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    structure with handles and user data (see GUIDATA)
-
     handles.output = {};
     guidata(hObject, handles);
     if isfield(handles, 'fgDataEditor')
@@ -1129,42 +971,42 @@ function pbCancel_Callback(hObject, eventdata, handles)
     end
 end
 
-
-
-% --- Executes on button press in cbInterpolate.
-function cbInterpolate_Callback(hObject, eventdata, handles)
+function cbInterpolate_Callback(hObject, ~, ~)
+    % Feature
+    %   Executes on button press in cbInterpolate.
     % Variables
     %   hObject    handle to cbInterpolate (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    structure with handles and user data (see GUIDATA)
-
-    % Hint: get(hObject,'Value') returns toggle state of cbInterpolate
+    % Hint
+    %   get(hObject,'Value') returns toggle state of cbInterpolate
     InterpolateData(hObject);
 end
 
-% --- Executes during object creation, after setting all properties.
-function ppOutput_CreateFcn(hObject, eventdata, handles)
+function ppOutput_CreateFcn(hObject, ~, ~)
+    % Feature
+    %   Executes during object creation, after setting all properties.
     % Variables
     %   hObject    handle to ppOutput (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    empty - handles not created until after all CreateFcns called
-
-    % Hint: popupmenu controls usually have a white background on Windows.
+    % Hint
+    %   popupmenu controls usually have a white background on Windows.
     %       See ISPC and COMPUTER.
     if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
 end
 
-
-% --- Executes when user attempts to close fgDataEditor.
-function fgDataEditor_CloseRequestFcn(hObject, eventdata, handles)
+function fgDataEditor_CloseRequestFcn(hObject, ~, handles)
+    % Feature
+    %   Executes when user attempts to close fgDataEditor.
     % Variables
     %   hObject    handle to fgDataEditor (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    structure with handles and user data (see GUIDATA)
-
-    % Hint: delete(hObject) closes the figure
+    % Hint
+    %   delete(hObject) closes the figure
     handles.output = {};
     if isfield(handles, 'fgDataEditor')
         uiresume(handles.fgDataEditor);
@@ -1172,27 +1014,24 @@ function fgDataEditor_CloseRequestFcn(hObject, eventdata, handles)
     delete(hObject)
 end
 
-
-% --- Executes on selection change in lbChannel.
-function lbChannel_Callback(hObject, eventdata, handles)
+function lbChannel_Callback(hObject, ~, handles)
+    % Feature
+    %   Executes on selection change in lbChannel.
     % Variables
     %   hObject    handle to lbChannel (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    structure with handles and user data (see GUIDATA)
-
-    % Hints: contents = cellstr(get(hObject,'String')) returns lbChannel contents as cell array
-    %        contents{get(hObject,'Value')} returns selected item from lbChannel
-
+    % Hints
+    %   contents = cellstr(get(hObject,'String')) returns lbChannel contents as cell array
+    %	contents{get(hObject,'Value')} returns selected item from lbChannel
     if strcmpi(handles.input_mode, 'file')
         plots = find(cellfun(@(x) ~isempty(x), handles.plots));
         sel = get(hObject, 'Value');
         to_plot = sel(~ismember(sel, plots));
         to_remove = plots(~ismember(plots, sel));
-
         for i=1:numel(to_remove)
             RemovePlot(hObject, to_remove(i));
         end
-
         for i=1:numel(to_plot)
             if ~strcmpi(handles.data{to_plot(i)}.header.units, 'events')
                 AddPlot(hObject, to_plot(i), 'add');
@@ -1202,53 +1041,52 @@ function lbChannel_Callback(hObject, eventdata, handles)
     end
 end
 
-% --- Executes during object creation, after setting all properties.
-function lbChannel_CreateFcn(hObject, eventdata, handles)
+function lbChannel_CreateFcn(hObject, ~, ~)
+    % Feature
+    %   Executes during object creation, after setting all properties.
     % Variables
     %   hObject    handle to lbChannel (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    empty - handles not created until after all CreateFcns called
-
-    % Hint: listbox controls usually have a white background on Windows.
-    %       See ISPC and COMPUTER.
+    % Hint
+    %   listbox controls usually have a white background on Windows.
+    %	See ISPC and COMPUTER.
     if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
 end
 
-
-% --- Executes on button press in rbEpochs.
 function rbEpochs_Callback(hObject, eventdata, handles)
+    % Feature
+    %   Executes on button press in rbEpochs.
     % Variables
     %   hObject    handle to rbEpochs (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    structure with handles and user data (see GUIDATA)
-
-    % Hint: get(hObject,'Value') returns toggle state of rbEpochs
-
+    % Hint
+    %   get(hObject,'Value') returns toggle state of rbEpochs
     % call manually because matlab 2012b does not yet support
     % selection changed callback
     bgOutputFormat_SelectionChangedFcn(hObject, eventdata, handles);
 end
 
-
-% --- Executes on button press in rbInterpolate.
 function rbInterpolate_Callback(hObject, eventdata, handles)
+    % Feature
+    %   Executes on button press in rbInterpolate.
     % Variables
     %   hObject    handle to rbInterpolate (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    structure with handles and user data (see GUIDATA)
-
-    % Hint: get(hObject,'Value') returns toggle state of rbInterpolate
-
+    % Hint
+    %   get(hObject,'Value') returns toggle state of rbInterpolate
     % call manually because matlab 2012b does not yet support
     % selection changed callback
     bgOutputFormat_SelectionChangedFcn(hObject, eventdata, handles);
 end
 
-
-% Executes on button press in pbOpenInputFile.
-function pbOpenInputFile_Callback(hObject, eventdata, handles)
+function pbOpenInputFile_Callback(hObject, ~, handles)
+    % Feature
+    %	Executes on button press in pbOpenInputFile.
     % Variables
     %   hObject    handle to pbOpenInputFile (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
@@ -1262,8 +1100,9 @@ function pbOpenInputFile_Callback(hObject, eventdata, handles)
     end
 end
 
-% Executes on button press in pbOpenOutputFile.
-function pbOpenOutputFile_Callback(hObject, eventdata, handles)
+function pbOpenOutputFile_Callback(hObject, ~, handles)
+    % Feature
+    %   Executes on button press in pbOpenOutputFile.
     % Variables
     %   hObject    handle to pbOpenOutputFile (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
@@ -1277,8 +1116,7 @@ function pbOpenOutputFile_Callback(hObject, eventdata, handles)
     end
 end
 
-
-function edOpenFilePath_Callback(hObject, eventdata, handles)
+function edOpenFilePath_Callback(hObject, ~, handles)
     % Variables
     %   hObject    handle to edOpenFilePath (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
@@ -1292,9 +1130,7 @@ function edOpenFilePath_Callback(hObject, eventdata, handles)
     end
 end
 
-
-
-function edOutputFile_Callback(hObject, eventdata, handles)
+function edOutputFile_Callback(hObject, ~, handles)
     % Variables
     %   hObject    handle to edOutputFile (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
@@ -1308,8 +1144,9 @@ function edOutputFile_Callback(hObject, eventdata, handles)
     end
 end
 
-% --- Executes when selected object is changed in bgOutputFormat.
-function bgOutputFormat_SelectionChangedFcn(hObject, eventdata, handles)
+function bgOutputFormat_SelectionChangedFcn(hObject, ~, handles)
+    % Feature
+    %   Executes when selected object is changed in bgOutputFormat.
     % Variables
     %   hObject    handle to the selected object in bgOutputFormat
     %   eventdata  reserved - to be defined in a future version of MATLAB
@@ -1325,10 +1162,9 @@ function bgOutputFormat_SelectionChangedFcn(hObject, eventdata, handles)
     InterpolateData(hObject);
 end
 
-
-
-function pbSaveOutput_Callback(hObject, eventdata, handles)
-    % --- Executes on button press in pbSaveOutput.
+function pbSaveOutput_Callback(hObject, ~, ~)
+    % Feature
+    %   Executes on button press in pbSaveOutput.
     % Variables
     %   hObject    handle to pbSaveOutput (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
@@ -1336,13 +1172,14 @@ function pbSaveOutput_Callback(hObject, eventdata, handles)
     CreateOutput(hObject);
 end
 
-function edOpenMissingEpochFilePath_Callback(hObject, eventdata, handles)
+function edOpenMissingEpochFilePath_Callback(hObject, ~, handles)
     % Variables
     %   hObject    handle to edOpenMissingEpochFilePath (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    structure with handles and user data (see GUIDATA)
-    % Hints: get(hObject,'String') returns contents of edOpenMissingEpochFilePath as text
-    %        str2double(get(hObject,'String')) returns contents of edOpenMissingEpochFilePath as a double
+    % Hints
+    %   get(hObject,'String') returns contents of edOpenMissingEpochFilePath as text
+    %	str2double(get(hObject,'String')) returns contents of edOpenMissingEpochFilePath as a double
     if isempty(handles.epoch_file)
         set(hObject, 'String', 'No input specified');
     else
@@ -1350,31 +1187,34 @@ function edOpenMissingEpochFilePath_Callback(hObject, eventdata, handles)
     end
 end
 
-function edOpenMissingEpochFilePath_CreateFcn(hObject, eventdata, handles)
-    % --- Executes during object creation, after setting all properties.
+function edOpenMissingEpochFilePath_CreateFcn(hObject, ~, ~)
+    % Feature
+    %   Executes during object creation, after setting all properties.
     % Variables
     %   hObject    handle to edOpenMissingEpochFilePath (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    empty - handles not created until after all CreateFcns called
-
-    % Hint: edit controls usually have a white background on Windows.
-    %       See ISPC and COMPUTER.
+    % Hint
+    %   edit controls usually have a white background on Windows.
+    %	See ISPC and COMPUTER.
     if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
 end
 
-function edOpenMissingEpochFilePath_ButtonDownFcn(hObject, eventdata, handles)
-    % --- If Enable == 'on', executes on mouse press in 5 pixel border.
-    % --- Otherwise, executes on mouse press in 5 pixel border or over edOpenMissingEpochFilePath.
+function edOpenMissingEpochFilePath_ButtonDownFcn(~, ~, ~)
+    % Feature
+    %   If Enable == 'on', executes on mouse press in 5 pixel border.
+    %   Otherwise, executes on mouse press in 5 pixel border or over edOpenMissingEpochFilePath.
     % Variables
     %   hObject    handle to edOpenMissingEpochFilePath (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
     %   handles    structure with handles and user data (see GUIDATA)
 end
 
-function pbOpenMissingEpochFile_Callback(hObject, eventdata, handles)
-    % Executes on button press in pbOpenMissingEpochFile.
+function pbOpenMissingEpochFile_Callback(hObject, ~, handles)
+    % Feature
+    %   Executes on button press in pbOpenMissingEpochFile.
     % Variables
     %   hObject    handle to pbOpenMissingEpochFile (see GCBO)
     %   eventdata  reserved - to be defined in a future version of MATLAB
@@ -1382,11 +1222,14 @@ function pbOpenMissingEpochFile_Callback(hObject, eventdata, handles)
     [file, path] = uigetfile('*.mat', 'Select missing epoch file');
     if file ~= 0
         handles.epoch_file = [ path, file ];
-        handles = Add_Epochs(hObject, handles);
+        Add_Epochs(hObject, handles); 
     end
 end
 
-function handles = Add_Epochs(hObject, handles)
+function Add_Epochs(hObject, handles)
+    % Comment
+    %   handles seems to be modified in Add_Epochs
+    %   I changed it into a void function
     E = load(handles.epoch_file, 'epochs');
     epochs = E.epochs';
     for ep = epochs % for each ep add an area as if drawn by the user and add to epoch list
