@@ -5,7 +5,7 @@ function varargout = pspm(varargin)
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 % $Id: pspm.m 636 2019-03-15 07:56:42Z lciernik $
-% $Rev: 636 $ 
+% $Rev: 636 $
 
 % this code was mainly produced by GUIDE
 % PsPM_GUI M-file for PsPM_GUI.fig
@@ -31,7 +31,7 @@ function varargout = pspm(varargin)
 
 % Edit the above text to modify the response to help PsPM
 
-% Last Modified by GUIDE v2.5 25-Jul-2016 17:05:55
+% Last Modified by GUIDE v2.5 07-May-2021 19:10:37
 % initialise
 % -------------------------------------------------------------------------
 global settings;
@@ -78,7 +78,7 @@ guidata(hObject, handles);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = PsPM_OutputFcn(hObject, eventdata, handles) 
+function varargout = PsPM_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -271,7 +271,7 @@ switch selected
         cfg_add_module('pspm.first_level.scr.glm_scr');
     case 2
         cfg_add_module('pspm.first_level.hp.glm_hp_e');
-    case 3 
+    case 3
         cfg_add_module('pspm.first_level.hp.glm_hp_fc');
     case 4
         cfg_add_module('pspm.first_level.ps.glm_ps_fc');
@@ -309,7 +309,7 @@ switch selected
         pspm_ecg_editor();
     case 3
         cfg_add_module('pspm.data_preprocessing.resp_pp');
-    case 4 
+    case 4
         cfg_add_module('pspm.data_preprocessing.pp_pupil.process_illuminance');
     case 5
         cfg_add_module('pspm.data_preprocessing.pp_pupil.find_valid_fixations');
@@ -374,3 +374,19 @@ function ppDataPreparation_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in pushbutton24.
+function pushbutton24_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton24 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+pspm_show_help_doc();
+
+
+% --- Executes on button press in pushbutton25.
+function pushbutton25_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton25 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+pspm_show_forum();

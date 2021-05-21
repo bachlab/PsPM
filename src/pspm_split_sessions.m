@@ -50,9 +50,7 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2008-2015 Linus Ruttimann & Tobias Moser (University of Zurich)
-%
-% PsPM 5.1
-% Revised and modified in 2021: Dadi Zhao (Wellcome Centre for Human Neuroimaging)
+% Updated 2021 Teddy Chao (WCHN)
 
 % $Id$
 % $Rev$
@@ -158,13 +156,12 @@ end
 
 %% 2 Work on all data files
 for d = 1:numel(D)
-    
     % 2.1 Obtain data
     datafile = D{d};
     if options.verbose
         fprintf('Splitting %s ... ', datafile);
     end
-    [sts, ininfos, indata, filestruct] = pspm_load_data(datafile);
+    [sts, ininfos, indata, filestruct] = pspm_load_data(datafile); % check and get datafile ---
     if sts == -1
         warning('ID:invalid_input', 'Could not load data');
         return;
@@ -174,6 +171,7 @@ for d = 1:numel(D)
     if options.missing
         % makes sure the epochs are in seconds and not empty
         [~, missing] = pspm_get_timing('epochs', options.missing, 'seconds');
+        
         if ~isempty(missing)
             [sts, ~, datascr] = pspm_load_data(datafile, 'scr');
             if sts == -1
@@ -181,8 +179,7 @@ for d = 1:numel(D)
                 return;
             end
             srscr = datascr{1}.header.sr;
-            % convert epochs in sec to datapoints
-            if any(missing > ininfos.duration)
+            if any(missing > ininfos.duration) % convert epochs in sec to datapoints
                 warning('ID:invalid_input', 'Epochs provided are in datapoints not in seconds');
             else
                 missing = round(missing*srscr);
@@ -226,7 +223,7 @@ for d = 1:numel(D)
             else
                 sta = splitpoint(s-1);
             end
-            
+
             if s > numel(splitpoint)
                 sto = numel(mrk);
             else
@@ -265,19 +262,18 @@ for d = 1:numel(D)
         end
         splitpoint = spp;
         
-        
         % 2.4 Split files
         for sn = 1:size(splitpoint,1)
             
             % 2.4.1 Determine filename
             [p, f, ex] = fileparts(datafile);
             newdatafile{d}{sn} = fullfile(p, sprintf('%s_sn%02.0f%s', f, sn, ex));
-            
+
             if options.missing && ~isempty(missing)
                 [p_epochs, f_epochs, ex_epochs] = fileparts(options.missing);
                 newepochfile{d}{sn} = fullfile(p_epochs, sprintf('%s_sn%02.0f%s', f_epochs, sn, ex_epochs));
             end
-            
+
             % 2.4.2 Adjust split points according to prefix and suffix
             if (splitpoint(sn,1) + options.prefix) < 0
                 sta_p = 0;
@@ -286,7 +282,7 @@ for d = 1:numel(D)
                 sta_p = splitpoint(sn,1) + options.prefix;
                 sta_prefix = options.prefix;
             end
-            
+
             if (splitpoint(sn,2) + suffix(sn)) > ininfos.duration
                 sto_p = ininfos.duration;
                 suffix(sn) = ininfos.duration - splitpoint(sn,2);
@@ -356,7 +352,7 @@ for d = 1:numel(D)
             
             % 2.4.5 Split Epochs
             if options.missing && ~isempty(missing)
-                startpoint = max(1, ceil(sta_p * srscr)); % convert from s into datapoints
+                startpoint = max(1, ceil(sta_p * srscr)); % convert from seconds into datapoints
                 stoppoint  = min(floor(sto_p * srscr), numel(datascr{1}.data));
                 epochs = dp_epochs(startpoint:stoppoint);
                 epoch_on = strfind(epochs.', [0 1]); % Return the start points of the excluded interval
@@ -369,7 +365,6 @@ for d = 1:numel(D)
                 epochs = [epoch_on.', epoch_off.']/srscr; % convert back to seconds
                 save(newepochfile{d}{sn}, 'epochs');
             end
-            
             % save data ---
             if exist(newdatafile{d}{sn}, 'file') && ~options.overwrite
                 if feature('ShowFigureWindows')
@@ -411,5 +406,4 @@ if d == 1
         newepochfile = newepochfile{1};
     end
 end
-
 return
