@@ -33,31 +33,36 @@ classdef pspm_testcase < matlab.unittest.TestCase
             % folder of PsPM.
             
             if ~any(strcmpi('ImportTestData', d))
-                r = menu(sprintf('Couldn''t find the ImportTestData folder.'), 'Select it', 'Generate it', 'Cancel');
-                if r==1
-                    [pathstr,folder] = fileparts(uigetdir(pwd, 'Couldn''t find the ImportTestData folder. Please select it...'));
-                    if strcmp(folder,'ImportTestData')
-                        testdatafolderpth = pathstr;
-                        cd(pathstr);
-                    else
-                        while ~strcmp(folder,'ImportTestData')
-                            r = menu(sprintf('The name of the selected folder is not ''ImportTestData''. Please select the correct folder...'), 'Ok', 'Cancel');
-                            if r~=1
-                                return;
-                            end
-                            
+                if feature('ShowFigureWindows')
+                    msg = 'Couldn''t find the ImportTestData folder.';
+                    r = questdlg(msg, 'Warning', 'Select', 'Generate', 'Cancel', 'Generate');
+                    % r = menu(sprintf('Couldn''t find the ImportTestData folder.'), 'Select it', 'Generate it', 'Cancel');
+                    switch r
+                        case 'Select'
                             [pathstr,folder] = fileparts(uigetdir(pwd, 'Couldn''t find the ImportTestData folder. Please select it...'));
                             if strcmp(folder,'ImportTestData')
                                 testdatafolderpth = pathstr;
                                 cd(pathstr);
-                                return;
+                            else
+                                while ~strcmp(folder,'ImportTestData')
+                                    r = menu(sprintf('The name of the selected folder is not ''ImportTestData''. Please select the correct folder...'), 'Ok', 'Cancel');
+                                    if r~=1
+                                        return;
+                                    end
+                                    
+                                    [pathstr,folder] = fileparts(uigetdir(pwd, 'Couldn''t find the ImportTestData folder. Please select it...'));
+                                    if strcmp(folder,'ImportTestData')
+                                        testdatafolderpth = pathstr;
+                                        cd(pathstr);
+                                        return;
+                                    end
+                                end
                             end
-                        end
+                        case 'Generate'
+                            mkdir 'ImportTestData'
+                        case 'Cancel'
+                            return
                     end
-                elseif r==2
-                    mkdir 'ImportTestData'
-                else
-                    return
                 end
             end
         end
