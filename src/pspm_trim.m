@@ -7,7 +7,7 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
     %
     % datafile:     a file name, a cell array of filenames, a struct with
     %               fields .data and .infos or a cell array of structs
-    % pt_start and pt_end:  either numbers, or 'none'
+    % from and to:  either numbers, or 'none'
     % reference:    'marker': from and to are set in seconds with
     %                         respect to the first and last scanner/marker pulse
     %               'file':   from and to are set in seconds with respect to start

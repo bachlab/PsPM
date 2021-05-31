@@ -339,14 +339,15 @@ for d = 1:numel(D)
                     end
                 else
                     % convert from s into datapoints
-                    startpoint = max(1, ceil(sta_p * data{k}.header.sr));
-                    stoppoint  = min(floor(sto_p * data{k}.header.sr), numel(indata{k}.data));
-                    data{k}.data = indata{k}.data(startpoint:stoppoint);
+                    %startpoint = max(1, ceil(sta_p * data{k}.header.sr));
+                    %stoppoint  = min(floor(sto_p * data{k}.header.sr), numel(indata{k}.data));
+                    %data{k}.data = indata{k}.data(startpoint:stoppoint);
                     
-                    %temp1 = struct;
-                    %temp1.data = indata(k);
-                    %temp1.infos = ininfos;
-                    %data{k}.data = pspm_trim(temp1, sta_p, sto_p, 'file');
+                    temp1 = struct;
+                    temp1.data = indata(k);
+                    temp1.infos = ininfos;
+                    trimmed_struct = pspm_trim(temp1, sta_p, sto_p, 'file');
+                    data{k}.data = trimmed_struct.data{1,1}.data;
                 end
             end
             
