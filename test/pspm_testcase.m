@@ -15,14 +15,14 @@ classdef pspm_testcase < matlab.unittest.TestCase
                 cd(testdatafolderpth);
                 return;
             end
-
+            
             path = fileparts(mfilename('fullpath')); %Path of this class
             cd(path);
             cd ..
-
+            
             d = dir;
             d = {d.name};
-
+            
             %if ~any(strcmpi('ImportTestData', d))
             %    cd ..
             %    d = dir;
@@ -31,9 +31,9 @@ classdef pspm_testcase < matlab.unittest.TestCase
             % if there is the ImportTestData folder, but it should not be
             % encouraged, because all activities shall happen under the
             % folder of PsPM.
-
+            
             if ~any(strcmpi('ImportTestData', d))
-                r = menu(sprintf('Couldn''t find the ImportTestData folder. Please select it...'), 'Ok', 'Cancel');
+                r = menu(sprintf('Couldn''t find the ImportTestData folder.'), 'Select it', 'Generate it', 'Cancel');
                 if r==1
                     [pathstr,folder] = fileparts(uigetdir(pwd, 'Couldn''t find the ImportTestData folder. Please select it...'));
                     if strcmp(folder,'ImportTestData')
@@ -45,7 +45,7 @@ classdef pspm_testcase < matlab.unittest.TestCase
                             if r~=1
                                 return;
                             end
-
+                            
                             [pathstr,folder] = fileparts(uigetdir(pwd, 'Couldn''t find the ImportTestData folder. Please select it...'));
                             if strcmp(folder,'ImportTestData')
                                 testdatafolderpth = pathstr;
@@ -54,6 +54,8 @@ classdef pspm_testcase < matlab.unittest.TestCase
                             end
                         end
                     end
+                elseif r==2
+                    mkdir 'ImportTestData'
                 else
                     return
                 end

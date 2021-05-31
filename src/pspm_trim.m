@@ -372,5 +372,5 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
         clear newdatafile
         newdatafile = Dout;
     end
-
-    return;
+    return
+end

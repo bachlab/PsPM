@@ -101,22 +101,23 @@ function pspm_test(varargin)
 
     % run tests
     % -------------------------------------------------------------------------
-    [pth, fn, ext] = fileparts(which('pspm_test.m'));
+    % [pth, fn, ext] = fileparts(which('pspm_test.m'));
+    [pth, ~, ~] = fileparts(which('pspm_test.m'));
     addpath(pth);
     pspm_init;
-    stats = run(full_suite)
+    stats = run(full_suite);
     n_failed = sum([stats.Failed]);
     success = n_failed == 0;
 
     if success
-        display('pspm_test: All tests have passed!');
+        disp('pspm_test: All tests have passed!');
     else
-        display('pspm_test: Some tests have failed!');
+        disp('pspm_test: Some tests have failed!');
     end
 
-    display('===TEST_STATISTICS_BEGIN===');
+    disp('===TEST_STATISTICS_BEGIN===');
     display(format_test_results(stats)); % seems not able to be replaced with fprintf
-    display('===TEST_STATISTICS_END===');
+    disp('===TEST_STATISTICS_END===');
     if quit_after_tests
         exit_code = 1 - success;
         quit(exit_code);
