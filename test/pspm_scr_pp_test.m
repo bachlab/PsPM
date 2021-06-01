@@ -45,13 +45,11 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
             this.verifyTrue(sts == 1, 'the returned file couldn''t be loaded');
             % Verify out
             this.verifyTrue(logical(prod(size(out)==size(data{1,1}.data))), 'the output has a different size');
-            delete(out);
             
             % Verifying the situation without no missing epochs filename option
             [~, out] = pspm_scr_pp(data{1,1}.data, sr);
             % Verify out
             this.verifyTrue(logical(prod(size(out)==size(data{1,1}.data))), 'the output has a different size');
-            delete(out);
             
             % test no file exists when not provided
             % this.verifyError(@()load('missing_epochs_test_out'), 'MATLAB:load:couldNotReadFile');
