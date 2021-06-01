@@ -44,7 +44,7 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
     %                          marker channel exists)
     %__________________________________________________________________________
     % PsPM 3.0
-    % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+    % (C) 2008-2015 Dominik R Bach (Wellcome Centre for Human Neuroimaging)
 
     % $Id: pspm_load_data.m 781 2019-07-06 15:46:18Z dominik_bach $
     % $Rev: 781 $

@@ -144,7 +144,6 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
         warning('ID:invalid_input', 'Invalid reference option ''%s'', should be a character, a number, or a cell', reference);
         return;
     end
-
     % 1.6 Set options
     if ~exist('options.overwrite','var')
         options.overwrite = 0;
