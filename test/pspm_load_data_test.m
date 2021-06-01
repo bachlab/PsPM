@@ -34,7 +34,9 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
             end
             
             pspm_testdata_gen(channels,10,pspm_load_data_test.fn);
-            if ~exist(pspm_load_data_test.fn, 'file'), warning('the testdata could not be generated'), end;
+            if ~exist(pspm_load_data_test.fn, 'file')
+                warning('the testdata could not be generated');
+            end
         end
     end
     
