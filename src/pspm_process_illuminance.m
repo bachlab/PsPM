@@ -183,7 +183,7 @@ for i = 1:w
             return;
         elseif s(1) < s(2)
             % transpose data
-            lumd = lumd';
+            lumd = transpose(lumd);
         end
         
         lsr = sr{i,j};
