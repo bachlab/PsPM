@@ -35,9 +35,8 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
     %
     %__________________________________________________________________________
     % PsPM 3.0
-    % (C) 2008-2015 Dominik R Bach (Wellcome Centre for Human Neuroimaging)
-    % PsPM 5.0
-    % Updated by Teddy Chao (Wellcome Centre for Human Neuroimaging)
+    % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+
     % $Id$
     % $Rev$
 
@@ -80,18 +79,18 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
 
     % 1.4 Verify the start and end points
     if ~( ...
-        (ischar(from) && strcmpi(from, 'none')) || ...
-        (isnumeric(from) && numel(from) == 1) || ...
-        (isnumeric(from) && numel(from) == numel(D)) ...
-        )
+            (ischar(from) && strcmpi(from, 'none')) || ...
+            (isnumeric(from) && numel(from) == 1) || ...
+            (isnumeric(from) && numel(from) == numel(D)) ...
+            )
         warning('ID:invalid_input', 'No valid start point given.\n');
         return;
     end
     if ~( ...
-        (ischar(to) && strcmpi(to, 'none')) || ...
-        (isnumeric(to) && numel(to) == 1) || ...
-        (isnumeric(to) && numel(to) == numel(D)) ...
-        )
+            (ischar(to) && strcmpi(to, 'none')) || ...
+            (isnumeric(to) && numel(to) == 1) || ...
+            (isnumeric(to) && numel(to) == numel(D)) ...
+            )
         warning('ID:invalid_input', 'No end point given');
         return;
     end
@@ -145,7 +144,6 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
         warning('ID:invalid_input', 'Invalid reference option ''%s'', should be a character, a number, or a cell', reference);
         return;
     end
-
     % 1.6 Set options
     if ~exist('options.overwrite','var')
         options.overwrite = 0;
@@ -237,7 +235,7 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
             break;
         end
 
-        % 2.3 Convert pt_start and pt_end from time points into seconds
+        % 2.3 Convert from and to from time points into seconds
         if ischar(from) % 'none'
             sta_p = 0;
             sta_offset = 0;
@@ -365,7 +363,7 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
             fprintf('  done.\n');
         end
     end
-    
+
     % 3 Return value
     % if cell array of datafiles is being processed,
     % return cell array of filenames
@@ -373,5 +371,5 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
         clear newdatafile
         newdatafile = Dout;
     end
-
-    return;
+    return
+end
