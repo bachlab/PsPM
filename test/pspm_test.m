@@ -101,7 +101,7 @@ function pspm_test(varargin)
 
     % run tests
     % -------------------------------------------------------------------------
-    %[pth, fn, ext] = fileparts(which('pspm_test.m'));
+    % [pth, fn, ext] = fileparts(which('pspm_test.m'));
     [pth, ~, ~] = fileparts(which('pspm_test.m'));
     addpath(pth);
     pspm_init;

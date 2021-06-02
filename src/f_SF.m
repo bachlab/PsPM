@@ -42,7 +42,7 @@ try
     sigma = in.sigma;  % std for event-related sudomotor input function
 catch
     sigma = 0.3;
-end;
+end
 
 Xt = Xt(:);
 Theta = Theta(:)';
