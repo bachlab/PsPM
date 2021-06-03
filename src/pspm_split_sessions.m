@@ -377,24 +377,10 @@ for d = 1:numel(D)
                 %close gcf;
                 if strcmp(overwrite, 'No')
                     continue;
+                else
+                    save(newdatafile{d}{sn}, 'infos', 'data');
                 end
             end
-            
-            save(newdatafile{d}{sn}, 'infos', 'data');
-            
-            % Testing trim
-            %                      options.overwrite = 1;
-            %                      options.verbose = 1;
-            %                      options.drop_offset_markers = 1;
-            %                      reference = [sta_p, sto_p];
-            %                      options.marker_chan_num = d;
-            %                      printf('Testing pspm_split_sessions');
-            %                      printf(datafile);
-            %                      printf(['start point = ', startpoint]);
-            %                      printf(['stop point = ', stoppoint]);
-            %                      printf(['reference =', reference[1], ', ', reference[2]);
-            %                      newdatafile{d}{sn} = pspm_trim(datafile, startpoint, stoppoint, reference, options);
-            
             
         end
     end

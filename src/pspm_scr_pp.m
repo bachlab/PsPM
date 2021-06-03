@@ -1,6 +1,6 @@
-function [sts, out] = pspm_scr_pp(data, sr, options)
+function [sts, out] = pspm_scr_pp(datafile, sr, options)
 % pspm_scr_pp applies simple skin conductance response (SCR) quality assessment rulesets
-% 
+%
 % Rule 1:       Microsiemens values must be within range (0.05 to 60)
 % Rule 2:       Absolute slope of value change must be less than 10 microsiemens per second
 %
@@ -8,7 +8,7 @@ function [sts, out] = pspm_scr_pp(data, sr, options)
 %   [sts, out] = pspm_scr_pp(data, sr, options)
 %
 % INPUT ARGUMENTS:
-%	data:                           A numeric vector. Data should be in microsiemens.
+%	datafile:                       a file name, or cell array of file names
 %	sr:                             Samplerate of the data. This is needed to determine the slopes unit.
 %	options:                        A struct with algorithm specific settings.
 %		min:                        Minimum value in microsiemens (default: 0.05).
@@ -64,6 +64,7 @@ if isempty(settings)
 end
 out = [];
 sts = -1;
+outdata = [];
 
 %% Set default values
 if ~exist('options', 'var')
@@ -101,12 +102,16 @@ if ~isfield(options, 'clipping_threshold')
 end
 
 %% Sanity checks
-if ~isnumeric(data)
-    warning('ID:invalid_input', 'Argument ''data'' must be numeric.'); return;
-elseif ~isnumeric(sr)
+if ischar(datafile) || isstruct(datafile)
+    data_source = {datafile};
+elseif iscell(datafile)
+    data_source = datafile;
+else
+    warning('ID:invalid_input', 'Data file must be a char, cell, or struct.');
+    return;
+end
+if ~isnumeric(sr)
     warning('ID:invalid_input', 'Argument ''sr'' must be numeric.'); return;
-elseif ~any(size(data) > 1)
-    warning('ID:invalid_input', 'Argument ''data'' should contain > 1 data points.'); return;
 elseif ~isnumeric(options.min)
     warning('ID:invalid_input', 'Argument ''options.min'' must be numeric.'); return;
 elseif ~isnumeric(options.max)
@@ -117,7 +122,7 @@ elseif isfield(options, 'missing_epochs_filename')
     if ~ischar(options.missing_epochs_filename)
         warning('ID:invalid_input', 'Argument ''options.missing_epochs_filename'' must be char array.'); return;
     end
-    [pth, ~, ext] = fileparts(options.missing_epochs_filename);
+    [pth, ~, ~] = fileparts(options.missing_epochs_filename);
     if ~isempty(pth) && exist(pth,'dir')~=7
         warning('ID:invalid_input','Please specify a valid output directory if you want to save missing epochs.');
         return;
@@ -127,109 +132,122 @@ if options.change_data == 0 && ~isfield(options, 'missing_epochs_filename')
     warning('This procedure leads to no output, according to the selected options.');
 end
 
-%% Create filters
-data_changed = NaN(size(data));
-filt_range = data < options.max & data > options.min;
-filt_slope = true(size(data));
-filt_slope(2:end) = abs(diff(data)*sr) < options.slope;
-if (options.deflection_threshold ~= 0) && ~all(filt_slope==1)
-    slope_epochs = filter_to_epochs(filt_slope);
-    for r = transpose(slope_epochs)
-        if range(data(r(1):r(2))) < options.deflection_threshold
-            filt_slope(r(1):r(2)) = 1;
+for d = 1:numel(data_source)
+    outdata{d} = [];
+    [sts, ininfos, indata, ~] = pspm_load_data(data_source{d}); % check and get datafile ---
+    if sts == -1
+        warning('ID:invalid_input', 'Could not load data');
+        return;
+    end
+    if ~any(size(indata) > 1)
+        warning('ID:invalid_input', 'Argument ''data'' should contain > 1 data points.');
+        return;
+    end
+    %% Create filters
+    data_changed = NaN(size(indata));
+    filt_range = indata < options.max & indata > options.min;
+    filt_slope = true(size(indata));
+    filt_slope(2:end) = abs(diff(indata)*sr) < options.slope;
+    if (options.deflection_threshold ~= 0) && ~all(filt_slope==1)
+        slope_epochs = filter_to_epochs(filt_slope);
+        for r = transpose(slope_epochs)
+            if range(indata(r(1):r(2))) < options.deflection_threshold
+                filt_slope(r(1):r(2)) = 1;
+            end
         end
     end
-end
-filt_clipping = detect_clipping(data, options.clipping_step_size, options.clipping_n_window, options.clipping_threshold);
-
-% combine filters
-filt = filt_range & filt_slope;
-filt = filt & (1-filt_clipping);
-
-%% Find data islands and expand artefact islands
-if isempty(find(filt==0, 1))
-    warning('Epoch was empty based on the current settings.');
-else
-    if options.data_island_threshold > 0 || options.expand_epochs > 0
-        
-        % work out data epochs
-        filt_epochs = filter_to_epochs(1-filt); % gives data (rather than artefact) epochs
-        
-        if options.expand_epochs > 0
-            % remove data epochs too short to be shortened
-            epoch_duration = diff(filt_epochs, 1, 2);
-            filt_epochs(epoch_duration < 2 * ceil(options.expand_epochs * sr), :) = [];
-            % shorten data epochs
-            filt_epochs(:, 1) = filt_epochs(:, 1) + ceil(options.expand_epochs * sr);
-            filt_epochs(:, 2) = filt_epochs(:, 2) - ceil(options.expand_epochs * sr);
-        end
-        
-        % correct possibly negative values
-        filt_epochs(filt_epochs(:, 2) < 1, 2) = 1;
-        
-        if options.data_island_threshold > 0
-            epoch_duration = diff(filt_epochs, 1, 2);
-            filt_epochs(epoch_duration < options.data_island_threshold * sr, :) = [];
-        end
-        
-        % write back into data
-        index(filt_epochs(:, 1)) = 1;
-        index(filt_epochs(:, 2)) = -1;
-        filt = (cumsum(index(:)) == 1); % (thanks Jan: https://www.mathworks.com/matlabcentral/answers/324955-replace-multiple-intervals-in-array-with-nan-no-loops)
-    end
-end
-data_changed(filt) = data(filt);
-
-%% Write epochs to mat if missing_epochs_filename option is present
-if isfield(options, 'missing_epochs_filename')
-    if ~isempty(find(filt == 0, 1))
-        epochs = filter_to_epochs(filt);
-		epochs = epochs / sr; %convert into seconds
+    filt_clipping = detect_clipping(indata, options.clipping_step_size, options.clipping_n_window, options.clipping_threshold);
+    
+    % combine filters
+    filt = filt_range & filt_slope;
+    filt = filt & (1-filt_clipping);
+    
+    %% Find data islands and expand artefact islands
+    if isempty(find(filt==0, 1))
+        warning('Epoch was empty based on the current settings.');
     else
-        epochs = [];
+        if options.data_island_threshold > 0 || options.expand_epochs > 0
+            
+            % work out data epochs
+            filt_epochs = filter_to_epochs(1-filt); % gives data (rather than artefact) epochs
+            
+            if options.expand_epochs > 0
+                % remove data epochs too short to be shortened
+                epoch_duration = diff(filt_epochs, 1, 2);
+                filt_epochs(epoch_duration < 2 * ceil(options.expand_epochs * sr), :) = [];
+                % shorten data epochs
+                filt_epochs(:, 1) = filt_epochs(:, 1) + ceil(options.expand_epochs * sr);
+                filt_epochs(:, 2) = filt_epochs(:, 2) - ceil(options.expand_epochs * sr);
+            end
+            
+            % correct possibly negative values
+            filt_epochs(filt_epochs(:, 2) < 1, 2) = 1;
+            
+            if options.data_island_threshold > 0
+                epoch_duration = diff(filt_epochs, 1, 2);
+                filt_epochs(epoch_duration < options.data_island_threshold * sr, :) = [];
+            end
+            
+            % write back into data
+            index(filt_epochs(:, 1)) = 1;
+            index(filt_epochs(:, 2)) = -1;
+            filt = (cumsum(index(:)) == 1); % (thanks Jan: https://www.mathworks.com/matlabcentral/answers/324955-replace-multiple-intervals-in-array-with-nan-no-loops)
+        end
     end
-    save(options.missing_epochs_filename, 'epochs');
+    data_changed(filt) = indata(filt);
+    
+    %% Write epochs to mat if missing_epochs_filename option is present
+    if isfield(options, 'missing_epochs_filename')
+        if ~isempty(find(filt == 0, 1))
+            epochs = filter_to_epochs(filt);
+            epochs = epochs / sr; %convert into seconds
+        else
+            epochs = [];
+        end
+        save(options.missing_epochs_filename, 'epochs');
+    end
+    
+    % Change data if options.change_data is set positive
+    if options.change_data == 1
+        out = data_changed;
+        sts = 1;
+        save(outdata{d}, 'ininfos', 'out');
+    else
+        sts = -1;
+    end
 end
-
-% Change data if options.change_data is set positive
-if options.change_data == 1
-    out = data_changed;
-else
-    out = data;
-end
-sts = 1;
 end
 
 function epochs = filter_to_epochs(filt)	% Return the start and end points of the excluded interval
-    epoch_on = find(diff(filt) == -1) + 1;	% Return the start points of the excluded interval
-    epoch_off = find(diff(filt) == 1);		% Return the end points of the excluded interval
-    if ~isempty(epoch_on) && ~isempty(epoch_off)
-        if (epoch_on(end) > epoch_off(end))     % ends on
-            epoch_off = [epoch_off; length(filt)];	% Include the end point of the whole data sequence
-        end
-        if (epoch_on(1) > epoch_off(1))         % starts on
-            epoch_on = [ 1; epoch_on ];			% Include the start point of the whole data sequence
-        end
-    elseif ~isempty(epoch_on) && isempty(epoch_off)
-        epoch_off = length(filt);
-    elseif isempty(epoch_on) && ~isempty(epoch_off)
-        epoch_on = 1;
+epoch_on = find(diff(filt) == -1) + 1;	% Return the start points of the excluded interval
+epoch_off = find(diff(filt) == 1);		% Return the end points of the excluded interval
+if ~isempty(epoch_on) && ~isempty(epoch_off)
+    if (epoch_on(end) > epoch_off(end))     % ends on
+        epoch_off = [epoch_off; length(filt)];	% Include the end point of the whole data sequence
     end
-    epochs = [ epoch_on, epoch_off ];
+    if (epoch_on(1) > epoch_off(1))         % starts on
+        epoch_on = [ 1; epoch_on ];			% Include the start point of the whole data sequence
+    end
+elseif ~isempty(epoch_on) && isempty(epoch_off)
+    epoch_off = length(filt);
+elseif isempty(epoch_on) && ~isempty(epoch_off)
+    epoch_on = 1;
+end
+epochs = [ epoch_on, epoch_off ];
 end
 
 function index_clipping = detect_clipping(data, step_size, n_window, threshold)
-    l_data = length(data);
-    window_size = n_window * step_size;
-    index_window_starter = 1:step_size:(l_data-mod((l_data-window_size),step_size)-window_size-step_size+1);
-    index_clipping = zeros(l_data,1);
-    for window_starter = index_window_starter
-        data_oi_front = data((window_starter+1):(window_starter+window_size));
-        data_oi_front_max = max(data_oi_front);
-        if sum(data_oi_front==data_oi_front_max)/length(data_oi_front) > threshold
-            index_clip_pred = 1:length(data_oi_front);
-            index_clip_pred = window_starter + [0,index_clip_pred(data_oi_front==data_oi_front_max)];
-            index_clipping(index_clip_pred) = 1;
-        end
+l_data = length(data);
+window_size = n_window * step_size;
+index_window_starter = 1:step_size:(l_data-mod((l_data-window_size),step_size)-window_size-step_size+1);
+index_clipping = zeros(l_data,1);
+for window_starter = index_window_starter
+    data_oi_front = data((window_starter+1):(window_starter+window_size));
+    data_oi_front_max = max(data_oi_front);
+    if sum(data_oi_front==data_oi_front_max)/length(data_oi_front) > threshold
+        index_clip_pred = 1:length(data_oi_front);
+        index_clip_pred = window_starter + [0,index_clip_pred(data_oi_front==data_oi_front_max)];
+        index_clipping(index_clip_pred) = 1;
     end
+end
 end
