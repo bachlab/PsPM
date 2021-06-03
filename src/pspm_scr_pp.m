@@ -49,10 +49,10 @@ function [sts, out] = pspm_scr_pp(data, sr, options)
 %	filt_slope: 					A filtering array consisting of 0 and 1 for selecting data whose slope is within the range of interest.
 %
 %__________________________________________________________________________
-% PsPM 5.0
+% PsPM 5.1
 % 2009-2017 Tobias Moser (University of Zurich)
 % 2020 Samuel Maxwell & Dominik Bach (UCL)
-% 2021 Dadi Zhao (UCL)
+% 2021 Teddy Chao (WCHN, UCL)
 
 % $Id: pspm_pp.m 450 2017-07-03 15:17:02Z tmoser $
 % $Rev: 450 $
