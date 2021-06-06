@@ -136,8 +136,8 @@ end
 
 for d = 1:numel(data_source)
     % out{d} = [];
-    [sts, ininfos, indata, ~] = pspm_load_data(data_source{d}); % check and get datafile ---
-    indata = indata{1,1}.data;
+    [sts, ininfos, indatas, ~] = pspm_load_data(data_source{d}); % check and get datafile ---
+    indata = indatas{1,1}.data;
     if sts == -1
         warning('ID:invalid_input', 'Could not load data');
         return;
@@ -212,11 +212,20 @@ for d = 1:numel(data_source)
     
     % Change data if options.change_data is set positive
     if options.change_data == 1
-        outdata = data_changed;
         sts = 1;
-        save(out{d}, 'ininfos', 'outdata');
+        data = indatas;
+        data{1,1}.data = data_changed;
+        infos = ininfos;
+        save(out{d}, 'data', 'infos');
+        clear data
+        clear infos
     else
         sts = -1;
+        data = indatas;
+        infos = ininfos;
+        save(out{d}, 'data', 'infos');
+        clear data
+        clear infos
     end
 end
 end

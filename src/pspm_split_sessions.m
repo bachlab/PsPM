@@ -380,6 +380,8 @@ for d = 1:numel(D)
                 else
                     save(newdatafile{d}{sn}, 'infos', 'data');
                 end
+            else
+                save(newdatafile{d}{sn}, 'infos', 'data');
             end
             
         end
