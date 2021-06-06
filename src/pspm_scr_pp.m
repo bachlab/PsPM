@@ -135,18 +135,18 @@ if options.change_data == 0 && ~isfield(options, 'missing_epochs_filename')
 end
 
 for d = 1:numel(data_source)
-    outdata{d} = [];
+    out{d} = [];
     [sts, ininfos, indata, ~] = pspm_load_data(data_source{d}); % check and get datafile ---
     if sts == -1
         warning('ID:invalid_input', 'Could not load data');
         return;
     end
-    if ~any(size(indata) > 1)
+    if ~any(size(indata{1,1}.data) > 1)
         warning('ID:invalid_input', 'Argument ''data'' should contain > 1 data points.');
         return;
     end
     %% Create filters
-    data_changed = NaN(size(indata));
+    data_changed = NaN(size(indata{1,1}.data));
     filt_range = indata < options.max & indata > options.min;
     filt_slope = true(size(indata));
     filt_slope(2:end) = abs(diff(indata)*sr) < options.slope;
