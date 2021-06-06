@@ -135,7 +135,7 @@ if options.change_data == 0 && ~isfield(options, 'missing_epochs_filename')
 end
 
 for d = 1:numel(data_source)
-    out{d} = [];
+    % out{d} = [];
     [sts, ininfos, indata, ~] = pspm_load_data(data_source{d}); % check and get datafile ---
     indata = indata{1,1}.data;
     if sts == -1
@@ -212,9 +212,9 @@ for d = 1:numel(data_source)
     
     % Change data if options.change_data is set positive
     if options.change_data == 1
-        out = data_changed;
+        outdata = data_changed;
         sts = 1;
-        save(outdata{d}, 'ininfos', 'out');
+        save(out{d}, 'ininfos', 'outdata');
     else
         sts = -1;
     end
