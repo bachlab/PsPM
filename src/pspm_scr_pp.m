@@ -36,7 +36,7 @@ function [sts, out] = pspm_scr_pp(datafile, sr, options)
 %
 % OUTPUT ARGUMENTS:
 %	sts:							Status indicating whether the output data has been changed.
-%	out:							The final output of the processed data.
+%	out:							The path to the  output of the final processed data.
 %									Can be the changed to the data with epochs removed if options.change_data is set to be positive.
 %
 % FUNCTIONS:
@@ -104,8 +104,10 @@ end
 %% Sanity checks
 if ischar(datafile) || isstruct(datafile)
     data_source = {datafile};
+    out = {datafile};
 elseif iscell(datafile)
     data_source = datafile;
+    out = datafile;
 else
     warning('ID:invalid_input', 'Data file must be a char, cell, or struct.');
     return;
