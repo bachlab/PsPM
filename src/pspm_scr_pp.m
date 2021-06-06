@@ -137,16 +137,17 @@ end
 for d = 1:numel(data_source)
     out{d} = [];
     [sts, ininfos, indata, ~] = pspm_load_data(data_source{d}); % check and get datafile ---
+    indata = indata{1,1}.data;
     if sts == -1
         warning('ID:invalid_input', 'Could not load data');
         return;
     end
-    if ~any(size(indata{1,1}.data) > 1)
+    if ~any(size(indata) > 1)
         warning('ID:invalid_input', 'Argument ''data'' should contain > 1 data points.');
         return;
     end
     %% Create filters
-    data_changed = NaN(size(indata{1,1}.data));
+    data_changed = NaN(size(indata));
     filt_range = indata < options.max & indata > options.min;
     filt_slope = true(size(indata));
     filt_slope(2:end) = abs(diff(indata)*sr) < options.slope;
