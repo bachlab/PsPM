@@ -105,9 +105,9 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
             this.verifyEqual(numel(newdatafile), nsessions);
             
             for i = 1:numel(newdatafile)
-                [~, ~, d] = pspm_load_data(newdatafile{i});
-                this.verifyEqual(d{3}.data(1), 0);
                 if exist(newdatafile{i}, 'file')
+                [~, ~, d] = pspm_load_data(newdatafile{i});
+                    this.verifyEqual(d{3}.data(1), 0);
                     delete(newdatafile{i});
                 end
             end
