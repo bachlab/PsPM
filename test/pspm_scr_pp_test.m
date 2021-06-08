@@ -29,7 +29,7 @@ function scr_pp_test(this)
     %generate testdata
     channels{1}.chantype = 'scr';
     sr = 10;
-    pspm_testdata_gen(channels, sr, this.fn);
+    
 
     %filter one channel
     options1 = struct('deflection_threshold', 0, ...
@@ -44,17 +44,20 @@ function scr_pp_test(this)
     'deflection_threshold', 0, ...
     'expand_epochs', 0);
 
+    pspm_testdata_gen(channels, sr, this.fn);
     [sts, ~, ~, filestruct] = pspm_load_data(this.fn, 'none');
     this.verifyTrue(sts == 1, 'the returned file couldn''t be loaded');
     this.verifyTrue(filestruct.numofchan == numel(channels), 'the returned file contains not as many channels as the inputfile');
 
     % Verifying the situation without no missing epochs filename option and add the epochs to the file
+    pspm_testdata_gen(channels, sr, this.fn);
     [~, out] = pspm_scr_pp(this.fn, sr, options1);
-    [sts_out, ~, ~, filestruct_out] = pspm_load_data(out{1}, 'none');
+    [sts_out, ~, ~, ~] = pspm_load_data(out{1}, 'none');
     % Verify out
     this.verifyTrue(sts_out == 1, 'the returned file couldn''t be loaded');
 
     % Verifying the situation without no missing epochs filename option and replace the data in the file
+    pspm_testdata_gen(channels, sr, this.fn);
     [~, out] = pspm_scr_pp(this.fn, sr, options2);
     [sts_out, ~, ~, filestruct_out] = pspm_load_data(out{1}, 'none');
     % Verify out
@@ -62,13 +65,13 @@ function scr_pp_test(this)
     this.verifyTrue(filestruct_out.numofchan == numel(channels), 'the output has a different size');
 
     % Verifying the situation with missing epochs filename option
+    pspm_testdata_gen(channels, sr, this.fn);
     [~, out] = pspm_scr_pp(this.fn, sr, options3);
     [sts_out, ~, ~, filestruct_out] = pspm_load_data(out{1}, 'none');
-    [sts_missing, ~, ~, filestruct_missing] = pspm_load_data('test_missing.mat', 'none');
     % Verify out
     this.verifyTrue(sts_out == 1, 'the returned file couldn''t be loaded');
     this.verifyTrue(filestruct_out.numofchan == numel(channels), 'the output has a different size');
-    this.verifyTrue(sts_missing == 1, 'the returned missing epoch file couldn''t be loaded');
+    % may need to verify epochs...
 
     % test no file exists when not provided
     % this.verifyError(@()load('missing_epochs_test_out'), 'MATLAB:load:couldNotReadFile');
