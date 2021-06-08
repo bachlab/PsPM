@@ -33,9 +33,12 @@ function [sts, out] = pspm_scr_pp(datafile, sr, options)
 %									Default: 0.1
 %		change_data:				A numerical value to choose whether to change the data or not
 %									Default: 1 (true)
+%       channel_action:             ['add'/'replace'] Defines whether the new channel should be added or the previous outputs of this
+%                                   function should be replaced.
+%                                   (Default: 'add')
 %
 % OUTPUT ARGUMENTS:
-%	sts:							Status indicating whether the output data has been changed.
+%	sts:							Status indicating whether the program is running as expected.
 %	out:							The path to the  output of the final processed data.
 %									Can be the changed to the data with epochs removed if options.change_data is set to be positive.
 %
@@ -63,7 +66,7 @@ if isempty(settings)
     pspm_init;
 end
 out = [];
-sts = -1;
+sts = 1;
 outdata = [];
 
 %% Set default values
@@ -100,6 +103,9 @@ end
 if ~isfield(options, 'clipping_threshold')
     options.clipping_threshold = 0.1;
 end
+if ~isfield(options, 'channel_action')
+    options.channel_action = 'add';
+end
 
 %% Sanity checks
 if ischar(datafile) || isstruct(datafile)
@@ -133,16 +139,22 @@ end
 if options.change_data == 0 && ~isfield(options, 'missing_epochs_filename')
     warning('This procedure leads to no output, according to the selected options.');
 end
+if ~ismember(options.channel_action, {'add', 'replace'})
+    warning('ID:invalid_input', 'Option channel_action must be either ''add'' or ''repalce''');
+    return;
+end
 
 for d = 1:numel(data_source)
     % out{d} = [];
-    [sts, ininfos, indatas, ~] = pspm_load_data(data_source{d}); % check and get datafile ---
+    [sts_loading, ininfos, indatas, ~] = pspm_load_data(data_source{d}); % check and get datafile ---
+    sts = sts_loading * sts;
     indata = indatas{1,1}.data;
-    if sts == -1
+    if sts_loading == -1
         warning('ID:invalid_input', 'Could not load data');
         return;
     end
     if ~any(size(indata) > 1)
+        sts = -1;
         warning('ID:invalid_input', 'Argument ''data'' should contain > 1 data points.');
         return;
     end
@@ -199,34 +211,40 @@ for d = 1:numel(data_source)
     end
     data_changed(filt) = indata(filt);
     
+    % Compute epochs
+    if ~isempty(find(filt == 0, 1))
+        epochs = filter_to_epochs(filt);
+        epochs = epochs / sr; %convert into seconds
+    else
+        epochs = [];
+    end
+        
     %% Write epochs to mat if missing_epochs_filename option is present
     if isfield(options, 'missing_epochs_filename')
-        if ~isempty(find(filt == 0, 1))
-            epochs = filter_to_epochs(filt);
-            epochs = epochs / sr; %convert into seconds
-        else
-            epochs = [];
-        end
         save(options.missing_epochs_filename, 'epochs');
+    else
+        [sts_write, ~] = pspm_write_channel(out{d}, data{1,1}.data, options.channel_action);
+        if sts_write == -1
+            sts = -1;
+            warning('Epochs were not written to the original file successfully.');
+        end
     end
     
-    % Change data if options.change_data is set positive
-    if options.change_data == 1
-        sts = 1;
-        data = indatas;
-        data{1,1}.data = data_changed;
-        infos = ininfos;
-        save(out{d}, 'data', 'infos');
-        clear data
-        clear infos
-    else
-        sts = -1;
-        data = indatas;
-        infos = ininfos;
-        save(out{d}, 'data', 'infos');
-        clear data
-        clear infos
-    end
+%     % Change data if options.change_data is set positive
+%     if options.change_data == 1
+%         data = indatas;
+%         data{1,1}.data = data_changed;
+%         infos = ininfos;
+%         save(out{d}, 'data', 'infos');
+%         clear data
+%         clear infos
+%     else
+%         data = indatas;
+%         infos = ininfos;
+%         save(out{d}, 'data', 'infos');
+%         clear data
+%         clear infos
+%     end
 end
 end
 

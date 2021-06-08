@@ -60,7 +60,7 @@ if ~isfield(options, 'channel')
 end
 
 if ~isfield(options, 'channel_action')
-    options.channel_action = 'replace';
+    options.channel_action = 'add';
 end
 
 % check values
