@@ -14,8 +14,9 @@ function [sts, out] = pspm_scr_pp(datafile, sr, options)
 %		min:                        Minimum value in microsiemens (default: 0.05).
 %		max:                        Maximum value in microsiemens (default: 60).
 %		slope:                      Maximum slope in microsiemens per sec (default: 10).
-%		missing_epochs_filename:	If provided will create a .mat file saving the epochs if it exists.
+%		missing_epochs_filename:	If provided will create a .mat file saving the epochs.
 %									The path can be specified, but if not the file will be saved in the current folder.
+%                                   If saving to the missing epochs file, no data in the original datafile will be changed.
 %									For instance, abc will create abc.mat
 %		deflection_threshold:       Define an threshold in original data units for a slope to pass to be considerd in the filter.
 %									This is useful, for example, with oscillatory wave data due to limited A/D bandwidth.
@@ -223,7 +224,7 @@ for d = 1:numel(data_source)
     if isfield(options, 'missing_epochs_filename')
         save(options.missing_epochs_filename, 'epochs');
     else
-        [sts_write, ~] = pspm_write_channel(out{d}, data{1,1}.data, options.channel_action);
+        [sts_write, ~] = pspm_write_channel(out{d}, indatas{1,1}.data, options.channel_action);
         if sts_write == -1
             sts = -1;
             warning('Epochs were not written to the original file successfully.');
