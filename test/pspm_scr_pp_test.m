@@ -53,7 +53,6 @@ function scr_pp_test(this)
     [sts_out, ~, ~, filestruct_out] = pspm_load_data(out{1}, 'none');
     % Verify out
     this.verifyTrue(sts_out == 1, 'the returned file couldn''t be loaded');
-    this.verifyTrue(filestruct_out.numofchan == numel(channels), 'the output has a different size');
 
     % Verifying the situation without no missing epochs filename option and replace the data in the file
     [~, out] = pspm_scr_pp(this.fn, sr, options2);
