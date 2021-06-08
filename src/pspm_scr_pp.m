@@ -224,7 +224,7 @@ for d = 1:numel(data_source)
     if isfield(options, 'missing_epochs_filename')
         save(options.missing_epochs_filename, 'epochs');
     else
-        [sts_write, ~] = pspm_write_channel(out{d}, indatas{1,1}.data, options.channel_action);
+        [sts_write, ~] = pspm_write_channel(out{d}, indatas{1,1}, options.channel_action);
         if sts_write == -1
             sts = -1;
             warning('Epochs were not written to the original file successfully.');
