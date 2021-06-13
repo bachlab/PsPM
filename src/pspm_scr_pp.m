@@ -151,11 +151,11 @@ for d = 1:numel(data_source)
     end
     indata = indatas{1,1}.data;
     if ~isfield(indatas{1,1}.header, 'sr')
-        warning('ID:invalid_input', 'Input data header must contain the field sr.');
+        warning('ID:invalid_input', 'Input data header must contain the field sample rate (sr).');
         return;
     end
     sr = indatas{1,1}.header.sr; % return sampling frequency from the input data
-    
+
     if ~any(size(indata) > 1)
         sts = -1;
         warning('ID:invalid_input', 'Argument ''data'' should contain > 1 data points.');
@@ -175,20 +175,20 @@ for d = 1:numel(data_source)
         end
     end
     filt_clipping = detect_clipping(indata, options.clipping_step_size, options.clipping_n_window, options.clipping_threshold);
-    
+
     % combine filters
     filt = filt_range & filt_slope;
     filt = filt & (1-filt_clipping);
-    
+
     %% Find data islands and expand artefact islands
     if isempty(find(filt==0, 1))
         warning('Epoch was empty based on the current settings.');
     else
         if options.data_island_threshold > 0 || options.expand_epochs > 0
-            
+
             % work out data epochs
             filt_epochs = filter_to_epochs(1-filt); % gives data (rather than artefact) epochs
-            
+
             if options.expand_epochs > 0
                 % remove data epochs too short to be shortened
                 epoch_duration = diff(filt_epochs, 1, 2);
@@ -197,15 +197,15 @@ for d = 1:numel(data_source)
                 filt_epochs(:, 1) = filt_epochs(:, 1) + ceil(options.expand_epochs * sr);
                 filt_epochs(:, 2) = filt_epochs(:, 2) - ceil(options.expand_epochs * sr);
             end
-            
+
             % correct possibly negative values
             filt_epochs(filt_epochs(:, 2) < 1, 2) = 1;
-            
+
             if options.data_island_threshold > 0
                 epoch_duration = diff(filt_epochs, 1, 2);
                 filt_epochs(epoch_duration < options.data_island_threshold * sr, :) = [];
             end
-            
+
             % write back into data
             index(filt_epochs(:, 1)) = 1;
             index(filt_epochs(:, 2)) = -1;
@@ -213,7 +213,7 @@ for d = 1:numel(data_source)
         end
     end
     data_changed(filt) = indata(filt);
-    
+
     % Compute epochs
     if ~isempty(find(filt == 0, 1))
         epochs = filter_to_epochs(filt);
@@ -221,7 +221,7 @@ for d = 1:numel(data_source)
     else
         epochs = [];
     end
-        
+
     %% Save data
     if isfield(options, 'missing_epochs_filename')
         save(options.missing_epochs_filename, 'epochs');
