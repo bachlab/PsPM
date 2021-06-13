@@ -67,7 +67,6 @@ if isempty(settings)
 end
 out = [];
 sts = 1;
-outdata = [];
 
 %% Set default values
 if ~exist('options', 'var')
