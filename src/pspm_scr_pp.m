@@ -103,7 +103,7 @@ if ~isfield(options, 'clipping_threshold')
     options.clipping_threshold = 0.1;
 end
 if ~isfield(options, 'channel_action')
-    options.channel_action = 'add';
+    options.channel_action = 'replace';
 end
 
 %% Sanity checks
