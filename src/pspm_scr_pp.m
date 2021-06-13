@@ -1,15 +1,14 @@
-function [sts, out] = pspm_scr_pp(datafile, sr, options)
+function [sts, out] = pspm_scr_pp(datafile, options)
 % pspm_scr_pp applies simple skin conductance response (SCR) quality assessment rulesets
 %
 % Rule 1:       Microsiemens values must be within range (0.05 to 60)
 % Rule 2:       Absolute slope of value change must be less than 10 microsiemens per second
 %
 % FORMAT:
-%   [sts, out] = pspm_scr_pp(data, sr, options)
+%   [sts, out] = pspm_scr_pp(data, options)
 %
 % INPUT ARGUMENTS:
 %	datafile:                       a file name, or cell array of file names
-%	sr:                             Samplerate of the data. This is needed to determine the slopes unit.
 %	options:                        A struct with algorithm specific settings.
 %		min:                        Minimum value in microsiemens (default: 0.05).
 %		max:                        Maximum value in microsiemens (default: 60).
@@ -119,9 +118,7 @@ else
     warning('ID:invalid_input', 'Data file must be a char, cell, or struct.');
     return;
 end
-if ~isnumeric(sr)
-    warning('ID:invalid_input', 'Argument ''sr'' must be numeric.'); return;
-elseif ~isnumeric(options.min)
+if ~isnumeric(options.min)
     warning('ID:invalid_input', 'Argument ''options.min'' must be numeric.'); return;
 elseif ~isnumeric(options.max)
     warning('ID:invalid_input', 'Argument ''options.max'' must be numeric.'); return;
@@ -147,13 +144,19 @@ end
 
 for d = 1:numel(data_source)
     % out{d} = [];
-    [sts_loading, ininfos, indatas, ~] = pspm_load_data(data_source{d}); % check and get datafile ---
+    [sts_loading, ~, indatas, ~] = pspm_load_data(data_source{d}); % check and get datafile ---
     sts = sts_loading * sts;
-    indata = indatas{1,1}.data;
     if sts_loading == -1
         warning('ID:invalid_input', 'Could not load data');
         return;
     end
+    indata = indatas{1,1}.data;
+    if ~isfield(indatas{1,1}.header, 'sr')
+        warning('ID:invalid_input', 'Input data header must contain the field sr.');
+        return;
+    end
+    sr = indatas{1,1}.header.sr; % return sampling frequency from the input data
+    
     if ~any(size(indata) > 1)
         sts = -1;
         warning('ID:invalid_input', 'Argument ''data'' should contain > 1 data points.');
@@ -220,32 +223,21 @@ for d = 1:numel(data_source)
         epochs = [];
     end
         
-    %% Write epochs to mat if missing_epochs_filename option is present
+    %% Save data
     if isfield(options, 'missing_epochs_filename')
         save(options.missing_epochs_filename, 'epochs');
+        % Write epochs to mat if missing_epochs_filename option is present
     else
-        [sts_write, ~] = pspm_write_channel(out{d}, indatas{1,1}, options.channel_action);
+        % If not save epochs, save the changed data to the original data as
+        % a new channel or replace the old data
+        data_to_write = indatas{1,1};
+        data_to_write.data = data_changed;
+        [sts_write, ~] = pspm_write_channel(out{d}, data_to_write, options.channel_action);
         if sts_write == -1
             sts = -1;
             warning('Epochs were not written to the original file successfully.');
         end
     end
-    
-%     % Change data if options.change_data is set positive
-%     if options.change_data == 1
-%         data = indatas;
-%         data{1,1}.data = data_changed;
-%         infos = ininfos;
-%         save(out{d}, 'data', 'infos');
-%         clear data
-%         clear infos
-%     else
-%         data = indatas;
-%         infos = ininfos;
-%         save(out{d}, 'data', 'infos');
-%         clear data
-%         clear infos
-%     end
 end
 end
 
