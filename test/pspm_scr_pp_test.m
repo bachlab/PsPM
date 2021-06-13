@@ -42,7 +42,7 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
                 'deflection_threshold', 0, ...
                 'expand_epochs', 0);
             
-            pspm_testdata_gen(channels, this.fn);
+            pspm_testdata_gen(channels, this.duration, this.fn);
             [sts, ~, ~, filestruct] = pspm_load_data(this.fn, 'none');
             this.verifyTrue(sts == 1, 'the returned file couldn''t be loaded');
             this.verifyTrue(filestruct.numofchan == numel(channels), 'the returned file contains not as many channels as the inputfile');
