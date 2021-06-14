@@ -35,7 +35,7 @@ function varargout = pspm(varargin)
 % initialise
 % -------------------------------------------------------------------------
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 % -------------------------------------------------------------------------
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -57,7 +57,7 @@ end
 % End initialization code - DO NOT EDIT
 
 % --- Executes just before PsPM is made visible.
-function PsPM_OpeningFcn(hObject, eventdata, handles, varargin)
+function PsPM_OpeningFcn(hObject, ~, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -78,7 +78,7 @@ guidata(hObject, handles);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = PsPM_OutputFcn(hObject, eventdata, handles)
+function varargout = PsPM_OutputFcn(~, ~, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -89,14 +89,14 @@ varargout{1} = handles.output;
 
 % --- If Enable == 'on', executes on mouse press in 5 pixel border.
 % --- Otherwise, executes on mouse press in 5 pixel border or over PsPM.
-function PsPM_ButtonDownFcn(hObject, eventdata, handles)
+function PsPM_ButtonDownFcn(~, ~, ~)
 % hObject    handle to PsPM (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 pspm_show_arms;
 
 % --- Executes on button press in Import_data.
-function Import_data_Callback(hObject, eventdata, handles)
+function Import_data_Callback(~, ~, ~)
 % hObject    handle to Import_data (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -105,7 +105,7 @@ cfg_add_module('pspm.prep.import');
 
 
 % --- Executes on button press in Trim_data.
-function Trim_data_Callback(hObject, eventdata, handles)
+function Trim_data_Callback(~, ~, ~)
 % hObject    handle to Trim_data (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -113,7 +113,7 @@ function Trim_data_Callback(hObject, eventdata, handles)
 cfg_add_module('pspm.prep.trim');
 
 % --- Executes on button press in dispdata.
-function dispdata_Callback(hObject, eventdata, handles)
+function dispdata_Callback(~, ~, ~)
 % hObject    handle to dispdata (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -121,7 +121,7 @@ function dispdata_Callback(hObject, eventdata, handles)
 cfg_add_module('pspm.tools.disp');
 
 % --- Executes on button press in Export_data.
-function Export_data_Callback(hObject, eventdata, handles)
+function Export_data_Callback(~, ~, ~)
 % hObject    handle to Export_data (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -129,7 +129,7 @@ function Export_data_Callback(hObject, eventdata, handles)
 cfg_add_module('pspm.first_level.export');
 
 % --- Executes on button press in rev1.
-function rev1_Callback(hObject, eventdata, handles)
+function rev1_Callback(~, ~, ~)
 % hObject    handle to rev1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -138,7 +138,7 @@ pspm_review;
 % cfg_add_module('pspm.first_level.review');
 
 % --- Executes on button press in con1.
-function con1_Callback(hObject, eventdata, handles)
+function con1_Callback(~, ~, ~)
 % hObject    handle to con1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -147,7 +147,7 @@ pspm_contrast;
 %cfg_add_module('pspm.first_level.contrast');
 
 % --- Executes on button press in DCM.
-function DCM_Callback(hObject, eventdata, handles)
+function DCM_Callback(~, ~, ~)
 % hObject    handle to DCM (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -155,7 +155,7 @@ function DCM_Callback(hObject, eventdata, handles)
 cfg_add_module('pspm.first_level.scr.dcm');
 
 % --- Executes on button press in SF.
-function SF_Callback(hObject, eventdata, handles)
+function SF_Callback(~, ~, ~)
 % hObject    handle to SF (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -163,30 +163,29 @@ function SF_Callback(hObject, eventdata, handles)
 cfg_add_module('pspm.first_level.scr.sf');
 
 % --- Executes on button press in rev2.
-function rev2_Callback(hObject, eventdata, handles)
+function rev2_Callback(~, ~, ~)
 % hObject    handle to rev2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 cfg_add_module('pspm.second_level.report');
 
 % --- Executes on button press in con2.
-function con2_Callback(hObject, eventdata, handles)
+function con2_Callback(~, ~, ~)
 % hObject    handle to con2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % pspm_con2_UI;
 cfg_add_module('pspm.second_level.contrast');
 
-
 % --- Executes on button press in batch_pushbutton.
-function batch_pushbutton_Callback(hObject, eventdata, handles)
+function batch_pushbutton_Callback(~, ~, ~)
 % hObject    handle to batch_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 cfg_ui;
 
 % --- Executes on button press in QuitGUI.
-function QuitGUI_Callback(hObject, eventdata, handles)
+function QuitGUI_Callback(~, ~, ~)
 % hObject    handle to QuitGUI (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -194,11 +193,10 @@ pspm_quit; return;
 
 
 % --- Executes on selection change in Other_utils.
-function Other_utils_Callback(hObject, eventdata, handles)
+function Other_utils_Callback(hObject, ~, ~)
 % hObject    handle to Other_utils (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
 % Hints: contents = get(hObject,'String') returns Other_utils contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from Other_utils
 val = get(hObject,'Value');
@@ -227,10 +225,10 @@ switch val
         pspm_data_editor();
     case 12
         cfg_add_module('pspm.tools.convert_data');
-end;
+end
 
 % --- Executes during object creation, after setting all properties.
-function Other_utils_CreateFcn(hObject, eventdata, handles)
+function Other_utils_CreateFcn(hObject, ~, ~)
 % hObject    handle to Other_utils (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -243,7 +241,7 @@ end
 
 
 % --- Executes during object creation, after setting all properties.
-function GLM_CreateFcn(hObject, eventdata, handles)
+function GLM_CreateFcn(hObject, ~, ~)
 % hObject    handle to GLM (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -256,7 +254,7 @@ end
 
 
 % --- Executes on selection change in GLM.
-function GLM_Callback(hObject, eventdata, handles)
+function GLM_Callback(hObject, ~, ~)
 % hObject    handle to GLM (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -287,11 +285,11 @@ switch selected
         cfg_add_module('pspm.first_level.sebr.glm_sebr');
     case 10
         cfg_add_module('pspm.first_level.sps.glm_sps');
-end;
+end
 
 
 % --- Executes on selection change in ppDataPreprocessing.
-function ppDataPreprocessing_Callback(hObject, eventdata, handles)
+function ppDataPreprocessing_Callback(hObject, ~, ~)
 % hObject    handle to ppDataPreprocessing (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -300,7 +298,6 @@ function ppDataPreprocessing_Callback(hObject, eventdata, handles)
 %        contents{get(hObject,'Value')} returns selected item from ppDataPreprocessing
 
 selected = get(hObject,'Value');
-
 switch selected
     case 1
         cfg_add_module('pspm.data_preprocessing.pp_heart_period.pp_heart_data');
@@ -321,18 +318,18 @@ switch selected
         cfg_add_module('pspm.data_preprocessing.pupil_size_convert');
     case 9
         cfg_add_module('pspm.data_preprocessing.gaze_convert');
-    %case 10
-    %    cfg_add_module('pspm.tools.convert_data');
     case 10
         cfg_add_module('pspm.data_preprocessing.pp_emg.find_sounds');
     case 11
         cfg_add_module('pspm.data_preprocessing.pp_emg.pp_emg_data');
-end;
+    case 12
+        cfg_add_module('pspm.data_preprocessing.pp_scr');%pp_scr
+end
 
 
 
 % --- Executes during object creation, after setting all properties.
-function ppDataPreprocessing_CreateFcn(hObject, eventdata, handles)
+function ppDataPreprocessing_CreateFcn(hObject, ~, ~)
 % hObject    handle to ppDataPreprocessing (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -345,7 +342,7 @@ end
 
 
 % --- Executes on selection change in ppDataPreparation.
-function ppDataPreparation_Callback(hObject, eventdata, handles)
+function ppDataPreparation_Callback(hObject, ~, ~)
 % hObject    handle to ppDataPreparation (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -360,11 +357,11 @@ switch selected
         cfg_add_module('pspm.prep.import');
     case 2
         cfg_add_module('pspm.prep.trim');
-end;
+end
 
 
 % --- Executes during object creation, after setting all properties.
-function ppDataPreparation_CreateFcn(hObject, eventdata, handles)
+function ppDataPreparation_CreateFcn(hObject, ~, ~)
 % hObject    handle to ppDataPreparation (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -377,7 +374,7 @@ end
 
 
 % --- Executes on button press in pushbutton24.
-function pushbutton24_Callback(hObject, eventdata, handles)
+function pushbutton24_Callback(~, ~, ~)
 % hObject    handle to pushbutton24 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -385,7 +382,7 @@ pspm_show_help_doc();
 
 
 % --- Executes on button press in pushbutton25.
-function pushbutton25_Callback(hObject, eventdata, handles)
+function pushbutton25_Callback(~, ~, ~)
 % hObject    handle to pushbutton25 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)

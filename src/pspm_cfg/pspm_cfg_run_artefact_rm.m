@@ -37,5 +37,5 @@ switch filtertype
         if isfield(scr_job, 'expand_epochs'), scr.expand_epochs = scr_job.expand_epochs; end % Check if expand_epochs is defined
         if isfield(scr_job, 'change_data'), scr_job.change_data = scr_job.change_data; else, scr_job.change_data = "replace"; end % Check if data will be changed
 
-        [sts, out] = pspm_scr_pp(datafile, scr);
+        [~, out] = pspm_scr_pp(datafile, scr);
 end
