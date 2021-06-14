@@ -163,7 +163,7 @@ function artefact_rm = pspm_cfg_artefact_rm
     filtertype         = cfg_choice;
     filtertype.name    = 'Filter Type';
     filtertype.tag     = 'filtertype';
-    filtertype.values  = {median,butter,scr_pp};
+    filtertype.values  = {median,butter};
     filtertype.help    = {['Currently, median and butterworth filters are implemented. A median filter is ' ...
     'recommended for short spikes, generated for example in MRI scanners by gradient switching. A butterworth ' ...
     'filter is applied in most models; check there to see whether an additional filtering is meaningful.']};

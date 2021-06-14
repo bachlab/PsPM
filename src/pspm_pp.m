@@ -5,7 +5,6 @@ function newdatafile = pspm_pp(varargin)
 % INPUT:
 %   pspm_pp('median', datafile, n, channelnumber, options)
 %   pspm_pp('butter', datafile, freq, channelnumber, options)
-%   pspm_pp('simple_qa', datafile, qa, channelnumber, options)
 %
 % Currently implemented:
 %   'median':                           medianfilter for SCR
@@ -115,21 +114,6 @@ switch method
             end
         end
         infos.pp = sprintf('butterworth 1st order low pass filter at cutoff frequency %2.2f Hz', freq);
-%    case 'simple_qa'
-%        if nargin < 3
-%            qa = struct();
-%        else
-%            qa = varargin{3};
-%        end
-%        for k = 1:numel(channum)
-%            curr_chan = channum(k);
-%            [sts, data{curr_chan}.data] = pspm_scr_pp(data{curr_chan}.data, data{curr_chan}.header.sr);
-%            if sts == -1
-%                warning('ID:invalid_input', 'call of pspm_scr_pp failed in round %s',k);
-%                return;
-%            end
-%        end
-%        infos.pp = sprintf('preprocessing SCR');
     otherwise
         warning('ID:invalid_input', 'Unknown filter option ...');
         return;
