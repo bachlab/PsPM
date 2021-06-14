@@ -35,7 +35,7 @@ switch filtertype
         if isfield(scr_job, 'deflection_threshold'), scr.deflection_threshold = scr_job.deflection_threshold; end % Check if deflection_threshold is defined
         if isfield(scr_job, 'data_island_threshold'), scr.data_island_threshold = scr_job.data_island_threshold; end % Check if data_island_threshold is defined
         if isfield(scr_job, 'expand_epochs'), scr.expand_epochs = scr_job.expand_epochs; end % Check if expand_epochs is defined
-        if ~isfield(options, 'change_data'), options.change_data = 1; end % Check if data will be changed
+        if isfield(scr_job, 'change_data'), scr_job.change_data = scr_job.change_data; else, scr_job.change_data = "replace"; end % Check if data will be changed
 
         [sts, out] = pspm_scr_pp(datafile, scr);
 end
