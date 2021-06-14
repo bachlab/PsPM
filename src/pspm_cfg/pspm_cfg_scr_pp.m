@@ -1,6 +1,6 @@
 function [pp_scr] = pspm_cfg_scr_pp
 % function for pre processing (PP) skin conductance response (SCR)
-% 
+%
 
 % $Id$
 % $Rev$
@@ -69,16 +69,12 @@ options.val         = {chan, mains, chan_action};
 options.help        = {['Help (TBD).']};
 
 % Executable Branch
-pp_scr = cfg_exbranch;
-pp_scr.name = 'Preprocessing SCR';
-pp_scr.tag  = 'pp_scr';
-pp_scr.val  = {datafile, options};
-pp_scr.prog = @pspm_cfg_run_pp_scr;
-pp_scr.vout = @pspm_cfg_vout_pp_scr;
-pp_scr.help = {'Help (TBD).'};
+pp_scr              = cfg_exbranch;
+pp_scr.name         = 'Preprocessing SCR';
+pp_scr.tag          = 'pp_scr';
+pp_scr.val          = {datafile, options};
+pp_scr.prog         = @pspm_cfg_run_scr_pp;
+pp_scr.vout         = @pspm_cfg_vout_scr_pp;
+pp_scr.help         = {'Help (TBD).'};
 
-function vout = pspm_cfg_vout_pp_scr(~)
-vout = cfg_dep;
-vout.sname      = 'Output Channel';
-vout.tgt_spec = cfg_findspec({{'class','cfg_entry'}});
-vout.src_output = substruct('()',{':'});
+end
