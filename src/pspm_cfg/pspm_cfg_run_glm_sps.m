@@ -37,6 +37,14 @@ end;
 model.modality = modality;
 model.modelspec = modelspec;
 
+if isfield(job.chan.chan_def, 'chan_def_left')
+    model.channel = 'pupil_l';
+elseif isfield(job.chan.chan_def, 'chan_def_right')
+    model.channel = 'pupil_r';
+else
+    model.channel = 'pupil';
+end
+
 out = pspm_glm(model, options);
 if exist('out', 'var') && isfield(out, 'modelfile')
     if ~iscell(out.modelfile)
