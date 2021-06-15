@@ -92,12 +92,12 @@ function [pp_scr] = pspm_cfg_pp_scr
     scr_deflection_threshold.num     = [1 1];
     scr_deflection_threshold.val     = {0.1};
     scr_deflection_threshold.help    = {['Define an threshold in original data units for a slope to pass to be considerd in the filter. ', ...
-                                        'This is useful, for example, with oscillatory wave data. ', ...
-                                        'The slope may be steep due to a jump between voltages but we ', ...
-                                        'likely do not want to consider this to be filtered. ', ...
-                                        'A value of 0.1 would filter oscillatory behaviour with threshold less than 0.1v but not greater.' ],...
-                                        'Default: 0.1', ...
-                                      };
+    'This is useful, for example, with oscillatory wave data. ', ...
+    'The slope may be steep due to a jump between voltages but we ', ...
+    'likely do not want to consider this to be filtered. ', ...
+    'A value of 0.1 would filter oscillatory behaviour with threshold less than 0.1v but not greater.' ],...
+    'Default: 0.1', ...
+    };
 
     scr_data_island_threshold         = cfg_entry;
     scr_data_island_threshold.name    = 'Data island threshold';
@@ -106,9 +106,9 @@ function [pp_scr] = pspm_cfg_pp_scr
     scr_data_island_threshold.num     = [1 1];
     scr_data_island_threshold.val     = {0};
     scr_data_island_threshold.help    = {['A float in seconds to determine the maximum length of unfiltered data between epochs.', ...
-                                         ' If an island exists for less than the threshold it will also be filtered'], ...
-                                        'Default: 0 s - will take no effect on filter', ...
-                                        };
+    ' If an island exists for less than the threshold it will also be filtered'], ...
+    'Default: 0 s - will take no effect on filter', ...
+    };
 
     scr_expand_epochs         = cfg_entry;
     scr_expand_epochs.name    = 'Expand epochs';
@@ -117,8 +117,8 @@ function [pp_scr] = pspm_cfg_pp_scr
     scr_expand_epochs.num     = [1 1];
     scr_expand_epochs.val     = {0.5};
     scr_expand_epochs.help    = {'A float in seconds to determine by how much data on the flanks of artefact epochs will be removed.', ...
-                                'Default: 0.5 s', ...
-                               };
+    'Default: 0.5 s', ...
+    };
 
     % Custom channel
     cust_chan                = cfg_entry;
@@ -144,15 +144,31 @@ function [pp_scr] = pspm_cfg_pp_scr
     chan.help               = {['Channel ID of the channel containing the ', ...
     'unprocessed SCR data.']};
 
-    % Mains frequency
-    mains                   = cfg_entry;
-    mains.name              = 'Mains frequency';
-    mains.tag               = 'mains_freq';
-    mains.strtype           = 'r';
-    mains.num               = [1 1];
-    mains.val               = {50};
-    mains.help              = {['The frequency of the alternating current (AC)',...
-    ' which will be filtered out using bandstop filter.']};
+
+
+    % Step size for clipping detection
+    clipping_step_size                   = cfg_entry;
+    clipping_step_size.name              = 'Step size for clipping detection';
+    clipping_step_size.tag               = 'clipping_step_size';
+    clipping_step_size.strtype           = 'r';
+    clipping_step_size.num               = [1 1];
+    clipping_step_size.val               = {2};
+    clipping_step_size.help              = {['A numerical value specifying the step size in moving average algorithm for detecting clipping']};
+
+    % Threshold for clipping detection
+    clipping_threshold                   = cfg_entry;
+    clipping_threshold.name              = 'Threshold for clipping detection';
+    clipping_threshold.tag               = 'clipping_threshold';
+    clipping_threshold.strtype           = 'r';
+    clipping_threshold.num               = [1 1];
+    clipping_threshold.val               = {0.1};
+    clipping_threshold.help              = {['A float between 0 and 1 specifying the proportion of local maximum in a step']};
+
+    clipping_detection         = cfg_exbranch;
+    clipping_detection.name    = 'Clipping detection';
+    clipping_detection.tag     = 'clipping_detection';
+    clipping_detection.val     = {clipping_step_size, clipping_threshold};
+    clipping_detection.help    = {'Specify parameters for clipping detection.'};
 
     % Channel action
     chan_action             = cfg_menu;
@@ -160,7 +176,7 @@ function [pp_scr] = pspm_cfg_pp_scr
     chan_action.tag         = 'chan_action';
     chan_action.values      = {'add', 'replace'};
     chan_action.labels      = {'Add', 'Replace'};
-    chan_action.val         = {'add'};
+    chan_action.val         = {'replace'};
     chan_action.help        = {help_chan};
 
     % Executable Branch
@@ -175,12 +191,14 @@ function [pp_scr] = pspm_cfg_pp_scr
                             scr_data_island_threshold, ...
                             scr_expand_epochs, ...
                             chan, ...
-                            mains, ...
+                            clipping_detection, ...
                             missing_epochs, ...
-                            chan_action};
+                            chan_action,...
+                            };
     pp_scr.prog         = @pspm_cfg_run_scr_pp;
     pp_scr.vout         = @pspm_cfg_vout_scr_pp;
-    pp_scr.help         = {['Preprocessing SCR. See I. R. Kleckner et al., "Simple, Transparent, and' ...
+    pp_scr.help         = {'Pre processing (PP) skin conductance response (SCR).',...
+    ['See I. R. Kleckner et al., "Simple, Transparent, and' ...
     'Flexible Automated Quality Assessment Procedures for Ambulatory Electrodermal Activity Data," in ' ...
     'IEEE Transactions on Biomedical Engineering, vol. 65, no. 7, pp. 1460--1467, July 2018.']};
 
