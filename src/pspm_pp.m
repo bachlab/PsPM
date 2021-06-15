@@ -13,12 +13,6 @@ function newdatafile = pspm_pp(varargin)
 %       freq:                           cut off frequency (min 20 Hz)
 %__________________________________________________________________________
 %
-% References: For 'simple_qa' method, refer to:
-%
-% I. R. Kleckner et al., "Simple, Transparent, and Flexible Automated Quality
-% Assessment Procedures for Ambulatory Electrodermal Activity Data," in IEEE
-% Transactions on Biomedical Engineering, vol. 65, no. 7, pp. 1460-1467,
-% July 2018.
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2009-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

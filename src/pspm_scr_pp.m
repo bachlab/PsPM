@@ -1,8 +1,11 @@
 function [sts, out] = pspm_scr_pp(datafile, options)
-% pspm_scr_pp applies simple skin conductance response (SCR) quality assessment rulesets
+% pspm_scr_pp applies simple skin conductance response (SCR) artefact
+% rejection rules
 %
-% Rule 1:       Microsiemens values must be within range (0.05 to 60)
-% Rule 2:       Absolute slope of value change must be less than 10 microsiemens per second
+% Rule 1:       Reject values outside range (default 0.05 to 60 uS)
+% Rule 2:       Reject slopes higher than a cutoff (default 10 uS/s)
+% Rule 3:       Reject clipping epochs
+% Rule 4:       Reject data islands shorter than a cutoff (default 0 s)
 %
 % FORMAT:
 %   [sts, out] = pspm_scr_pp(data, options)
@@ -13,14 +16,10 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %		min:                        Minimum value in microsiemens (default: 0.05).
 %		max:                        Maximum value in microsiemens (default: 60).
 %		slope:                      Maximum slope in microsiemens per sec (default: 10).
-%		missing_epochs_filename:	If provided will create a .mat file saving the epochs.
-%									The path can be specified, but if not the file will be saved in the current folder.
-%                                   If saving to the missing epochs file, no data in the original datafile will be changed.
-%									For instance, abc will create abc.mat
 %		deflection_threshold:       Define an threshold in original data units for a slope to pass to be considerd in the filter.
 %									This is useful, for example, with oscillatory wave data due to limited A/D bandwidth.
 %									The slope may be steep due to a jump between voltages but we likely do not want to consider this to be filtered.
-%									A value of 0.1 would filter oscillatory behaviour with threshold less than 0.1v but not greater
+%									A value of 0.1 would reject steep slopes with an overall deflection of uS but not smaller greater than 0.1 
 %									Default: 0.1
 %		data_island_threshold:      A float in seconds to determine the maximum length of data between NaN epochs.
 %									Islands of data shorter than this threshold will be removed.
@@ -31,10 +30,14 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %									Default: 2
 %		clipping_threshold:			A float between 0 and 1 specifying the proportion of local maximum in a step
 %									Default: 0.1
-%		change_data:				A numerical value to choose whether to change the data or not
+%		missing_epochs_filename:	If provided will create a .mat file saving the epochs.
+%									The path can be specified, but if not the file will be saved in the current folder.
+%                                   If saving to the missing epochs file, no data in the original datafile will be changed.
+%									For instance, abc will create abc.mat
+%		change_data:				A numerical value to choose whether to change rejected data to NaN or not
 %									Default: 1 (true)
-%       channel_action:             ['add'/'replace'] Defines whether the new channel should be added or the previous outputs of this
-%                                   function should be replaced.
+%       channel_action:             ['add'/'replace'] Defines whether a new channel should be added or previous data of this
+%                                   type should be replaced.
 %                                   (Default: 'add')
 %
 % OUTPUT ARGUMENTS:
@@ -51,7 +54,15 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %	filt_range: 					A filtering array consisting of 0 and 1 for selecting data within the range of interest.
 %	filt_slope: 					A filtering array consisting of 0 and 1 for selecting data whose slope is within the range of interest.
 %
-%__________________________________________________________________________
+%_
+% REFERENCES 
+% For rules 1-2, refer to:
+%
+% I. R. Kleckner et al., "Simple, Transparent, and Flexible Automated Quality
+% Assessment Procedures for Ambulatory Electrodermal Activity Data," in IEEE
+% Transactions on Biomedical Engineering, vol. 65, no. 7, pp. 1460-1467,
+% July 2018.
+%________________________________________________________________________
 % PsPM 5.1
 % 2009-2017 Tobias Moser (University of Zurich)
 % 2020 Samuel Maxwell & Dominik Bach (UCL)
