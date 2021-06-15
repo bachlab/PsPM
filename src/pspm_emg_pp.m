@@ -26,7 +26,7 @@ function [sts, output] = pspm_emg_pp(fn, options)
 %           channel_action:  ['add'/'replace'] Defines whether the new channel
 %                            should be added or the previous outputs of this
 %                            function should be replaced.
-%                            (Default: 'add')
+%                            (Default: 'rplace')
 %
 % [1] Khemka S, Tzovara A, Gerster S, Quednow BB, Bach DR (2016).
 %     Modeling Startle Eyeblink Electromyogram to Assess Fear Learning. 

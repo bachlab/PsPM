@@ -337,7 +337,7 @@ for iSn = 1:numel(model.datafile)
     if isempty(missing{iSn})
         nan_epochs = isnan(data{iSn}{1}.data);
         
-        d_nan_ep = diff(nan_epochs)';
+        d_nan_ep = transpose(diff(nan_epochs));
         nan_ep_start = find(d_nan_ep == 1);
         nan_ep_stop = find(d_nan_ep == -1);
 
