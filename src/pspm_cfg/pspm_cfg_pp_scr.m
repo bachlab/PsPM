@@ -152,7 +152,7 @@ function [pp_scr] = pspm_cfg_pp_scr
     clipping_step_size.strtype           = 'r';
     clipping_step_size.num               = [1 1];
     clipping_step_size.val               = {2};
-    clipping_step_size.help              = {['A numerical value specifying the step size in moving average algorithm for detecting clipping']};
+    clipping_step_size.help              = {['A numerical value specifying the step size in moving average algorithm for detecting clipping'], ...
                                             'Default: 2 s'};
 
     % Threshold for clipping detection
