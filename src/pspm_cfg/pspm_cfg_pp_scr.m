@@ -60,7 +60,8 @@ function [pp_scr] = pspm_cfg_pp_scr
     missing_epochs_file_name.strtype  = 's';
     missing_epochs_file_name.num      = [ 1 Inf ];
     missing_epochs_file_name.help     = {['Specify the name of the file where to store artefact epochs. ',...
-    'Provide only the name and not the extension, the file will be stored as a .mat file']};
+                                        'Provide only the name and not the extension, ',...
+                                        'the file will be stored as a .mat file']};
 
     missing_epochs_file_path         = cfg_files;
     missing_epochs_file_path.name    = 'Output Directory';
@@ -74,8 +75,8 @@ function [pp_scr] = pspm_cfg_pp_scr
     missing_epochs_file.tag  = 'write_to_file';
     missing_epochs_file.val  = {missing_epochs_file_name, missing_epochs_file_path};
     missing_epochs_file.help = {['If you choose to store the artefact epochs please specify a filename ',...
-    'as well as an output directory. When giving the filename do not specify ',...
-    'any extension, the artefact epochs will be stored as .mat file.']};
+                                'as well as an output directory. When giving the filename do not specify ',...
+                                'any extension, the artefact epochs will be stored as .mat file.']};
 
     missing_epochs         = cfg_choice;
     missing_epochs.name    = 'Missing epochs file';
@@ -83,7 +84,7 @@ function [pp_scr] = pspm_cfg_pp_scr
     missing_epochs.val     = {missing_epochs_no_filename};
     missing_epochs.values  = {missing_epochs_no_filename, missing_epochs_file};
     missing_epochs.help    = {'Specify if you want to store the artefact epochs in a separate file of not.', ...
-    'Default: artefact epochs are not stored.'};
+                            'Default: artefact epochs are not stored.'};
 
     scr_deflection_threshold         = cfg_entry;
     scr_deflection_threshold.name    = 'Deflection threshold';
@@ -92,12 +93,12 @@ function [pp_scr] = pspm_cfg_pp_scr
     scr_deflection_threshold.num     = [1 1];
     scr_deflection_threshold.val     = {0.1};
     scr_deflection_threshold.help    = {['Define an threshold in original data units for a slope to pass to be considerd in the filter. ', ...
-    'This is useful, for example, with oscillatory wave data. ', ...
-    'The slope may be steep due to a jump between voltages but we ', ...
-    'likely do not want to consider this to be filtered. ', ...
-    'A value of 0.1 would filter oscillatory behaviour with threshold less than 0.1v but not greater.' ],...
-    'Default: 0.1', ...
-    };
+                                        'This is useful, for example, with oscillatory wave data. ', ...
+                                        'The slope may be steep due to a jump between voltages but we ', ...
+                                        'likely do not want to consider this to be filtered. ', ...
+                                        'A value of 0.1 would filter oscillatory behaviour with threshold less than 0.1v but not greater.' ],...
+                                        'Default: 0.1', ...
+                                        };
 
     scr_data_island_threshold         = cfg_entry;
     scr_data_island_threshold.name    = 'Data island threshold';
@@ -105,10 +106,10 @@ function [pp_scr] = pspm_cfg_pp_scr
     scr_data_island_threshold.strtype = 'r';
     scr_data_island_threshold.num     = [1 1];
     scr_data_island_threshold.val     = {0};
-    scr_data_island_threshold.help    = {['A float in seconds to determine the maximum length of unfiltered data between epochs.', ...
-    ' If an island exists for less than the threshold it will also be filtered'], ...
-    'Default: 0 s - will take no effect on filter', ...
-    };
+    scr_data_island_threshold.help    = {['A float in seconds to determine the maximum length of unfiltered data between epochs. ', ...
+                                        'If an island exists for less than the threshold it will also be filtered'], ...
+                                        'Default: 0 s - will take no effect on filter', ...
+                                        };
 
     scr_expand_epochs         = cfg_entry;
     scr_expand_epochs.name    = 'Expand epochs';
@@ -117,8 +118,8 @@ function [pp_scr] = pspm_cfg_pp_scr
     scr_expand_epochs.num     = [1 1];
     scr_expand_epochs.val     = {0.5};
     scr_expand_epochs.help    = {'A float in seconds to determine by how much data on the flanks of artefact epochs will be removed.', ...
-    'Default: 0.5 s', ...
-    };
+                                'Default: 0.5 s', ...
+                                };
 
     % Custom channel
     cust_chan                = cfg_entry;
@@ -141,9 +142,7 @@ function [pp_scr] = pspm_cfg_pp_scr
     chan.tag                = 'channel';
     chan.val                = {first_chan};
     chan.values             = {first_chan, cust_chan};
-    chan.help               = {['Channel ID of the channel containing the ', ...
-    'unprocessed SCR data.']};
-
+    chan.help               = {['Channel ID of the channel containing the unprocessed SCR data.']};
 
 
     % Step size for clipping detection
@@ -154,6 +153,7 @@ function [pp_scr] = pspm_cfg_pp_scr
     clipping_step_size.num               = [1 1];
     clipping_step_size.val               = {2};
     clipping_step_size.help              = {['A numerical value specifying the step size in moving average algorithm for detecting clipping']};
+                                            'Default: 2 s'};
 
     % Threshold for clipping detection
     clipping_threshold                   = cfg_entry;
@@ -162,7 +162,8 @@ function [pp_scr] = pspm_cfg_pp_scr
     clipping_threshold.strtype           = 'r';
     clipping_threshold.num               = [1 1];
     clipping_threshold.val               = {0.1};
-    clipping_threshold.help              = {['A float between 0 and 1 specifying the proportion of local maximum in a step']};
+    clipping_threshold.help              = {['A float between 0 and 1 specifying the proportion of local maximum in a step'],...
+                                            'Default: 0.1'};
 
     clipping_detection         = cfg_exbranch;
     clipping_detection.name    = 'Clipping detection';
