@@ -151,7 +151,7 @@ literal "false"
 \size larger
 Dominik R Bach, Giuseppe Castegnetti, Laure Ciernik, Samuel Gerster, Saurabh
  Khemka, Christoph Korn, Samuel Maxwell, Tobias Moser, Philipp C Paulus,
- Ivan Rojkov, Matthias Staib, Eshref Yozdemir and collaborators
+ Ivan Rojkov, Matthias Staib, Eshref Yozdemir, Dadi Zhao and collaborators
 \size default
 
 \begin_inset Newline newline
@@ -19600,7 +19600,7 @@ Acknowledgements
 \end_layout
 
 \begin_layout Standard
-SCRalyze versions 1-2 were developed at the FIL, Wellcome Trust Centre for
+SCRalyze versions 1-2 were developed at the FIL, Wellcome Centre for Human
  Neuroimaging, University College London, under the auspices of Karl J.
  Friston and Raymond J.
  Dolan.
