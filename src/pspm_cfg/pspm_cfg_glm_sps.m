@@ -1,12 +1,17 @@
 function [glm_sps] = pspm_cfg_glm_sps
 % GLM SPS
+% This function applies to the glm model for the modality ScanPath Speed (sps) only
 
-% $Id: pspm_cfg_glm_hp_fc.m 404 2017-01-06 14:02:02Z tmoser $
+% $Id: pspm_cfg_glm_sps.m 404 2017-01-06 14:02:02Z tmoser $
 % $Rev: 404 $
+
+% Updated by Teddy (WCHN)
 
 % Initialise
 global settings
-if isempty(settings), pspm_init; end;
+if isempty(settings)
+    pspm_init; 
+end
 
 % set variables
 
@@ -77,20 +82,20 @@ glm_sps.val{b} = bf;
 chan_def_left         = cfg_const;
 chan_def_left.name    = 'Last left eye';
 chan_def_left.tag     = 'chan_def_left';
-chan_def_left.val     = {'pupil_l'};
-chan_def_left.help    = {'Use last left eye channel.'};
+chan_def_left.val     = {'sps_l'};
+chan_def_left.help    = {'Use the last sps channel from left eye.'};
 
 chan_def_right         = cfg_const;
 chan_def_right.name    = 'Last right eye';
 chan_def_right.tag     = 'chan_def_right';
-chan_def_right.val     = {'pupil_r'};
-chan_def_right.help    = {'Use last right eye channel.'};
+chan_def_right.val     = {'sps_r'};
+chan_def_right.help    = {'Use the last sps channel from right eye.'};
 
 best_eye                = cfg_const;
 best_eye.name           = 'Best eye';
 best_eye.tag            = 'best_eye';
-best_eye.val            = {'pupil'};
-best_eye.help           = {['Use eye with the fewest NaN values.']};
+best_eye.val            = {'sps'};
+best_eye.help           = {'Use the sps data from the eye with fewest NaN values.'};
 
 chan_def                = cfg_choice;
 chan_def.name           = 'Default';
