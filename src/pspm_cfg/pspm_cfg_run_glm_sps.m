@@ -37,8 +37,6 @@ end;
 model.modality = modality;
 model.modelspec = modelspec;
 
-<<<<<<< Updated upstream
-=======
 if isfield(job.chan.chan_def, 'chan_def_left')
     model.channel = 'sps_l';
 elseif isfield(job.chan.chan_def, 'chan_def_right')
@@ -47,7 +45,6 @@ else
     model.channel = 'sps';
 end
 
->>>>>>> Stashed changes
 out = pspm_glm(model, options);
 if exist('out', 'var') && isfield(out, 'modelfile')
     if ~iscell(out.modelfile)
