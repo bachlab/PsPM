@@ -12862,7 +12862,7 @@ Related function:
 \shape default
  
 \family typewriter
-pspm_split_sessions
+pspm_split_sessions, pspm_trim
 \end_layout
 
 \begin_layout Standard
@@ -19593,6 +19593,178 @@ Fix bug in
 pspm_trim
 \family default
  which was wrongly defining the starting trimming point index.
+\end_layout
+
+\begin_layout Section
+PsPM Version 5.1.0
+\end_layout
+
+\begin_layout Subsection*
+New Features
+\end_layout
+
+\begin_layout Subsubsection*
+General
+\end_layout
+
+\begin_layout Itemize
+PsPM now has an improved GUI with a more eye-friendly colour and typeface.
+\end_layout
+
+\begin_layout Itemize
+PsPM now has an alternative GUI built by using .mlapp, which shows consistent
+ a more modern appearance across different platforms.
+\end_layout
+
+\begin_layout Subsubsection*
+pspm_scr_pp
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_scr_pp
+\family default
+ replaces the classic 
+\family typewriter
+pspm_simple_qa
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_scr_pp
+\family default
+ now allows users to detect clipping, where the results can be exported
+ together with the original outcome.
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_scr_pp
+\family default
+ now allows users to just write artefact epochs and leave data unchanged.
+\end_layout
+
+\begin_layout Subsection*
+Changes
+\end_layout
+
+\begin_layout Subsubsection*
+General
+\end_layout
+
+\begin_layout Itemize
+Dialogs have been rewritten for avoiding endless loops.
+\end_layout
+
+\begin_layout Itemize
+
+\shape italic
+Pre-processing
+\shape default
+ menu has been reconstructed, where 
+\shape italic
+pupil size convert
+\shape default
+ and 
+\shape italic
+gaze convert
+\shape default
+ are now under 
+\shape italic
+pupil and eye tracking
+\shape default
+.
+\end_layout
+
+\begin_layout Itemize
+PsPM now always generates test data inside the PsPM folder.
+\end_layout
+
+\begin_layout Subsubsection*
+pspm_interpolate
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_interpolate
+\family default
+ now process data ending with 
+\family typewriter
+NaN
+\family default
+ well without throwing warnings.
+\end_layout
+
+\begin_layout Subsubsection*
+pspm_find_sounds
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_find_sounds
+\family default
+ now throws warning when some data was excluded due to the strict parameter
+ setting.
+\end_layout
+
+\begin_layout Subsubsection*
+pspm_split_sessions
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_split_sessions
+\family default
+ is now using 
+\family typewriter
+pspm_trim
+\family default
+ for processing data.
+\end_layout
+
+\begin_layout Subsection*
+Bugfixes
+\end_layout
+
+\begin_layout Subsubsection*
+pspm_glm
+\end_layout
+
+\begin_layout Itemize
+A bug that leads to the failure of selecting left/right eye has been fixed.
+\end_layout
+
+\begin_layout Subsubsection*
+pspm_load1 and pspm_dcm
+\end_layout
+
+\begin_layout Itemize
+A bug that leads to the failure of exporting statistics has been fixed.
+\end_layout
+
+\begin_layout Subsubsection*
+pspm_resp_pp
+\end_layout
+
+\begin_layout Itemize
+A bug that leads to the failure of opening batch for respiration data processing
+ has been fixed.
+\end_layout
+
+\begin_layout Subsubsection*
+pspm_scr_pp
+\end_layout
+
+\begin_layout Itemize
+A bug that leads to incorrect matrix construction has been fixed.
 \end_layout
 
 \begin_layout Part
