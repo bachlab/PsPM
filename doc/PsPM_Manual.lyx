@@ -115,11 +115,7 @@ Version 5.1.0
 
 \begin_layout Standard
 \align center
-
-\size larger
 by the PsPM team
-\size default
-
 \begin_inset Foot
 status open
 
@@ -147,13 +143,9 @@ literal "false"
 
 \begin_layout Standard
 \align center
-
-\size larger
 Dominik R Bach, Giuseppe Castegnetti, Laure Ciernik, Samuel Gerster, Saurabh
  Khemka, Christoph Korn, Samuel Maxwell, Tobias Moser, Philipp C Paulus,
  Ivan Rojkov, Matthias Staib, Eshref Yozdemir, Dadi Zhao and collaborators
-\size default
-
 \begin_inset Newline newline
 \end_inset
 
@@ -9604,6 +9596,126 @@ Defines whether the processed data should be added as a new channel or replace
  the last existing channel of the same chantype and unit.
 \end_layout
 
+\begin_layout Subsection
+Preprocessing SCR 
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Pre-processing SCR"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\shape italic
+Related function:
+\shape default
+ 
+\family typewriter
+pspm_scr_pp
+\end_layout
+
+\begin_layout Standard
+Applies skin conductance response (SCR) preprocessing for the given data.
+ The function applies to two rules: (1) microsiemens values must be within
+ range (0.05 to 60), (2) Absolute slope of value change must be less than
+ 10 microsiemens per second.
+ 
+\end_layout
+
+\begin_layout Paragraph*
+Data file
+\end_layout
+
+\begin_layout Standard
+Specify a file name or a cell array of file names.
+\end_layout
+
+\begin_layout Paragraph*
+Parameters
+\end_layout
+
+\begin_layout Itemize
+Minimum value: Minimum SCR value in 
+\begin_inset Formula $μS$
+\end_inset
+
+, default as 0.05
+\begin_inset Formula $μS$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+Maximum value: Maximum SCR value in 
+\begin_inset Formula $μS$
+\end_inset
+
+, default as 60
+\begin_inset Formula $μS$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+Maximum slope: Maximum slope in 
+\begin_inset Formula $\frac{μS}{s}$
+\end_inset
+
+, default as 10
+\begin_inset Formula $\frac{μS}{s}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+Missing epochs filename: Name of the .mat file where the missing epochs will
+ be stored.
+\end_layout
+
+\begin_layout Itemize
+Deflection threshold: Amplitude threshold which excludes epochs from the
+ filter if the overall deflection over this epoch is below it.
+ Default: 0.1 .
+\end_layout
+
+\begin_layout Itemize
+Island threshold: Duration threshold (seconds) which determines the maximum
+ length of data between NaN epochs.
+ Islands of data shorter than this threshold will be removed.
+ Default: 0 s (no threshold).
+\end_layout
+
+\begin_layout Itemize
+Expand epochs: Duration threshold (seconds) which determines by how much
+ data on the flanks of artefact epochs will be removed.
+ Default: 0.5 s.
+\end_layout
+
+\begin_layout Itemize
+clipping_step_size: the step size in moving average algorithm for detecting
+ clipping, default as 2.
+\end_layout
+
+\begin_layout Itemize
+clipping_threshold: the proportion of local maximum in a step, default as
+ 0.1.
+\end_layout
+
+\begin_layout Paragraph
+Channel action
+\end_layout
+
+\begin_layout Standard
+Defines whether the new channel should be added or the previous outputs
+ of this function should be replaced, default as replaced.
+\end_layout
+
 \begin_layout Section
 First level
 \end_layout
@@ -13037,13 +13149,12 @@ Related function:
 \shape default
  
 \family typewriter
-pspm_pp, pspm_prepdata, pspm_simple_qa
+pspm_pp, pspm_prepdata
 \end_layout
 
 \begin_layout Standard
 This module offers a few basic artifact removal functions.
- Currently, median, butterworth filters as well as a simple SCR quality
- correction method 
+ Currently, median, and butterworth filters 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Kleckner:2017a"
@@ -13101,58 +13212,6 @@ Butterworth Low pass Filter
 
 \begin_layout Itemize
 Cutoff Frequency: Cutoff frequency has to be at least 20Hz.
-\end_layout
-
-\begin_layout Paragraph*
-Simple SCR quality correction
-\end_layout
-
-\begin_layout Itemize
-Minimum value: Minimum SCR value in 
-\begin_inset Formula $μS$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Itemize
-Maximum value: Maximum SCR value in 
-\begin_inset Formula $μS$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Itemize
-Maximum slope: Maximum slope in 
-\begin_inset Formula $\frac{μS}{s}$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Itemize
-Missing epochs filename: Name of the .mat file where the missing epochs will
- be stored.
-\end_layout
-
-\begin_layout Itemize
-Deflection threshold: Amplitude threshold which excludes epochs from the
- filter if the overall deflection over this epoch is below it.
- Default: 0.1 .
-\end_layout
-
-\begin_layout Itemize
-Island threshold: Duration threshold (seconds) which determines the maximum
- length of data between NaN epochs.
- Islands of data shorter than this threshold will be removed.
- Default: 0 s (no threshold).
-\end_layout
-
-\begin_layout Itemize
-Expand epochs: Duration threshold (seconds) which determines by how much
- data on the flanks of artefact epochs will be removed.
- Default: 0.5 s.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -18017,15 +18076,19 @@ Comparison of different measures: Xia Y, Gurkina A & Bach DR (2019).
 Release notes
 \end_layout
 
-\begin_layout Section
-PsPM Version 3.0
+\begin_layout Section*
+PsPM Version 3
 \end_layout
 
 \begin_layout Subsection*
-Import
+Version 3.0
 \end_layout
 
 \begin_layout Subsubsection*
+Import
+\end_layout
+
+\begin_layout Paragraph*
 New data types were implemented
 \end_layout
 
@@ -18037,7 +18100,7 @@ Noldus Observer compatible
 Eyelink
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph*
 Untested data types
 \end_layout
 
@@ -18047,7 +18110,7 @@ CNT data import has not been not tested – please contact the developers
  
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Filtering for SCR models
 \end_layout
 
@@ -18071,7 +18134,7 @@ literal "true"
  although we discourage this.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 New SF method
 \end_layout
 
@@ -18088,11 +18151,11 @@ literal "true"
 .
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 General linear modelling (GLM)
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Parametric modulators
 \end_layout
 
@@ -18116,7 +18179,7 @@ Parametric modulators (pmods) are z-normalised before being entered into
  
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph*
 Parametric confounds
 \end_layout
 
@@ -18131,7 +18194,7 @@ Previous versions of PsPM contained an option to include a parametric modulator
  
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph*
 Design matrix filtering
 \end_layout
 
@@ -18142,7 +18205,7 @@ Previous versions of PsPM filtered the design matrix after orthogonalisation
  PsPM 3.0 filters the regressors first, then orthogonalises the basis sets.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 File format
 \end_layout
 
@@ -18154,7 +18217,7 @@ Some minor changes have been made to the data format.
  can not be read with the current version of the software.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 VB inversion
 \end_layout
 
@@ -18237,15 +18300,15 @@ name "fig:VBA"
 
 \end_layout
 
-\begin_layout Section
-PsPM Version 3.0.1
-\end_layout
-
 \begin_layout Subsection*
-Import
+Version 3.0.1
 \end_layout
 
 \begin_layout Subsubsection*
+Import
+\end_layout
+
+\begin_layout Paragraph*
 New data types were implemented
 \end_layout
 
@@ -18257,7 +18320,7 @@ DATAQ Windaq (no ActiveX needed)
 European Data Format (EDF)
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Paragraph*
 Tools
 \end_layout
 
@@ -18283,11 +18346,11 @@ Respiration line length
 Respiration time stamp
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 First level contrast
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph*
 Z-score parameter estimates
 \end_layout
 
@@ -18302,7 +18365,7 @@ pspm_con1
  This option is currently only available for non-linear models.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Paragraph*
 Review first level model
 \end_layout
 
@@ -18312,11 +18375,11 @@ Next to the regressors on the x- and y-axes, orthogonality plots newly display
  
 \end_layout
 
-\begin_layout Section
-PsPM Version 3.0.2
+\begin_layout Subsection*
+Version 3.0.2
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 GLM
 \end_layout
 
@@ -18324,15 +18387,15 @@ GLM
 Problem with multiple sessions in Design matrix fixed.
 \end_layout
 
-\begin_layout Section
-PsPM Version 3.1
-\end_layout
-
 \begin_layout Subsection*
-General linear modelling (GLM)
+Version 3.1
 \end_layout
 
 \begin_layout Subsubsection*
+General linear modelling (GLM)
+\end_layout
+
+\begin_layout Paragraph*
 New modalities
 \end_layout
 
@@ -18369,7 +18432,7 @@ GLM for evoked RP
 GLM for fear-conditioned PS
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Tools & Data preprocessing
 \end_layout
 
@@ -18383,7 +18446,7 @@ green
 .
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph*
 Tools
 \end_layout
 
@@ -18423,7 +18486,7 @@ Extract segments
 Segment mean
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph*
 Data preprocessing
 \end_layout
 
@@ -18463,11 +18526,11 @@ Convert pupil data
 Find startle sound onsets
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Data preparation
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph*
 Import
 \end_layout
 
@@ -18476,11 +18539,15 @@ Support for Philips Scanphyslog files and for bioread-converted AcqKnowledge
  files has been added to the import function.
 \end_layout
 
-\begin_layout Section
-PsPM Version 4.0
+\begin_layout Section*
+PsPM Version 4
 \end_layout
 
 \begin_layout Subsection*
+Version 4.0
+\end_layout
+
+\begin_layout Subsubsection*
 Change from scr_ to pspm_
 \end_layout
 
@@ -18489,7 +18556,7 @@ The prefix scr_ has been exchanged with pspm_.
  This applies to all functions contained in PsPM.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Updated toolboxes
 \end_layout
 
@@ -18579,7 +18646,7 @@ Model comparison between old and new versions of the VBA toolbox, based
 
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Subsessions in DCM models
 \end_layout
 
@@ -18593,11 +18660,11 @@ Until now, long periods of NaN values (which are just disregarded) could
  earlier releases.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Import
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph*
 New import function for Labchart files
 \end_layout
 
@@ -18607,11 +18674,11 @@ The new import function allows direct import of raw labchart files without
  The function is only available on Windows systems.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 General linear modeling (GLM)
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph*
 New modalities
 \end_layout
 
@@ -18619,7 +18686,7 @@ New modalities
 Startle eyeblink for EMG (SEB)
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Pupil Models
 \end_layout
 
@@ -18672,7 +18739,7 @@ interpolation option was removed and should now be used independently.
 \end_layout
 
 \end_deeper
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Minor changes & Bugfixes
 \end_layout
 
@@ -18706,11 +18773,11 @@ Convert pupil data becomes convert data and currently only allows area to
  function)
 \end_layout
 
-\begin_layout Section
-PsPM Version 4.0.1
+\begin_layout Subsection*
+Version 4.0.1
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Bugfixes
 \end_layout
 
@@ -18718,11 +18785,11 @@ Bugfixes
 Fix not working options in Matlabbatch module 'Preprocess heart data'
 \end_layout
 
-\begin_layout Section
-PsPM Version 4.0.2
+\begin_layout Subsection*
+Version 4.0.2
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Bugfixes
 \end_layout
 
@@ -18734,11 +18801,11 @@ Fix error when calling 'Convert data' from GUI
 Fix taking square root if pupil data is recorded in AREA
 \end_layout
 
-\begin_layout Section
-PsPM Version 4.1.0
+\begin_layout Subsection*
+Version 4.1.0
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 New Functions
 \end_layout
 
@@ -18784,7 +18851,7 @@ pspm_bf_spsrf_gamma
 : SPSRF basis function with gamma function.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 New Features
 \end_layout
 
@@ -18821,7 +18888,7 @@ A new function to import SMI iView X EyeTracker files into PsPM.
 A new function to import ViewPoint EyeTracker files into PsPM.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Paragraph*
 Changes
 \end_layout
 
@@ -18834,7 +18901,7 @@ pspm_find_valid_fixations
  mode.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Bugfixes
 \end_layout
 
@@ -18930,7 +18997,7 @@ pspm_simple_qa
 Various further bugfixes.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Improvements
 \end_layout
 
@@ -18979,15 +19046,15 @@ pspm_extract_segments
 Multiple new tests to validate the correctness of the functions.
 \end_layout
 
-\begin_layout Section
-PsPM Version 4.1.1
+\begin_layout Subsection*
+Version 4.1.1
 \end_layout
 
 \begin_layout Standard
 This is a hotfix release that fixes a few issues with 4.1.0 release.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Changes
 \end_layout
 
@@ -19021,7 +19088,7 @@ pspm_get_smi performs pixel to milimeters conversion for gaze data only
  if the stimulus resolution in pixels are given as an extra option.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Improvements
 \end_layout
 
@@ -19036,11 +19103,11 @@ pspm_get_viewpoint
  See ViewPoint EyeTracker section in this manual for further information.
 \end_layout
 
-\begin_layout Section
-PsPM Version 4.2.0
+\begin_layout Subsection*
+Version 4.2.0
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 New Functions
 \end_layout
 
@@ -19056,7 +19123,7 @@ A new pupil foreshortening error correction function
 A new QRS detection algorithm for fMRI environments
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 New Features
 \end_layout
 
@@ -19080,7 +19147,7 @@ Pupil channel is now loaded according to a new precedence order.
  Refer to GLM documentation in this manual to learn more.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Changes
 \end_layout
 
@@ -19117,7 +19184,7 @@ Eyelink import parameter blink/saccade edge discard factor default value
  This means no extra samples are discarded around blinks/saccades.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Bugfixes
 \end_layout
 
@@ -19139,7 +19206,7 @@ Fix a bug in Eyelink import where blink/saccade periods where misaligned,
  causing the function to discard useful data and return noise instead
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Improvements
 \end_layout
 
@@ -19170,11 +19237,11 @@ channel_action
  variable to choose what to do with the new channel.
 \end_layout
 
-\begin_layout Section
-PsPM Version 4.2.1
+\begin_layout Subsection*
+Version 4.2.1
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Paragraph*
 New Functions
 \end_layout
 
@@ -19182,7 +19249,7 @@ New Functions
 Three new tests (pspm_hb2hp_test.m, pspm_filtfilt_test.m, pspm_butter_test.m)
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Changes
 \end_layout
 
@@ -19209,7 +19276,7 @@ Eyelink import parameter blink/saccade edge discard factor default value
  This means no extra samples are discarded around blinks/saccades.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Bugfixes
 \end_layout
 
@@ -19293,11 +19360,11 @@ pspm_filtfilt
  which crashed when the filter parameters were of dimension one
 \end_layout
 
-\begin_layout Section
-PsPM Version 4.3.0
+\begin_layout Subsection*
+Version 4.3.0
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 New Features
 \end_layout
 
@@ -19334,7 +19401,7 @@ pspm_extract_segments
 can be used now with raw data and thus be called easily within another function.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Changes
 \end_layout
 
@@ -19396,7 +19463,7 @@ External functions and libraries were regrouped in one folder called
 ext.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Bugfixes
 \end_layout
 
@@ -19421,11 +19488,15 @@ pspm_compute_visual_angle
  to mm.
 \end_layout
 
-\begin_layout Section
-PsPM Version 5.0.0
+\begin_layout Section*
+PsPM Version 5
 \end_layout
 
 \begin_layout Subsection*
+Version 5.0.0
+\end_layout
+
+\begin_layout Subsubsection*
 New Features
 \end_layout
 
@@ -19484,7 +19555,7 @@ Add the possibility to import DSV (delimiter separated values) as well as
  CSV (comma separated values) data files.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Changes
 \end_layout
 
@@ -19530,7 +19601,7 @@ pspm_extract_segments
  return NaN percentages and not ratios.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsubsection*
 Bugfixes
 \end_layout
 
@@ -19595,16 +19666,12 @@ pspm_trim
  which was wrongly defining the starting trimming point index.
 \end_layout
 
-\begin_layout Section
-PsPM Version 5.1.0
-\end_layout
-
 \begin_layout Subsection*
-New Features
+Version 5.1.0
 \end_layout
 
 \begin_layout Subsubsection*
-General
+New Features
 \end_layout
 
 \begin_layout Itemize
@@ -19617,9 +19684,14 @@ PsPM now has an alternative GUI built by using .mlapp, which shows consistent
 \end_layout
 
 \begin_layout Subsubsection*
+New Functions
+\end_layout
+
+\begin_layout Itemize
 pspm_scr_pp
 \end_layout
 
+\begin_deeper
 \begin_layout Itemize
 
 \family typewriter
@@ -19649,14 +19721,16 @@ pspm_scr_pp
  now allows users to just write artefact epochs and leave data unchanged.
 \end_layout
 
-\begin_layout Subsection*
+\end_deeper
+\begin_layout Subsubsection*
 Changes
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Itemize
 General
 \end_layout
 
+\begin_deeper
 \begin_layout Itemize
 Dialogs have been rewritten for avoiding endless loops.
 \end_layout
@@ -19685,10 +19759,12 @@ pupil and eye tracking
 PsPM now always generates test data inside the PsPM folder.
 \end_layout
 
-\begin_layout Subsubsection*
+\end_deeper
+\begin_layout Itemize
 pspm_interpolate
 \end_layout
 
+\begin_deeper
 \begin_layout Itemize
 
 \family typewriter
@@ -19701,10 +19777,12 @@ NaN
  well without throwing warnings.
 \end_layout
 
-\begin_layout Subsubsection*
+\end_deeper
+\begin_layout Itemize
 pspm_find_sounds
 \end_layout
 
+\begin_deeper
 \begin_layout Itemize
 
 \family typewriter
@@ -19714,10 +19792,12 @@ pspm_find_sounds
  setting.
 \end_layout
 
-\begin_layout Subsubsection*
+\end_deeper
+\begin_layout Itemize
 pspm_split_sessions
 \end_layout
 
+\begin_deeper
 \begin_layout Itemize
 
 \family typewriter
@@ -19730,43 +19810,52 @@ pspm_trim
  for processing data.
 \end_layout
 
-\begin_layout Subsection*
+\end_deeper
+\begin_layout Subsubsection*
 Bugfixes
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Itemize
 pspm_glm
 \end_layout
 
+\begin_deeper
 \begin_layout Itemize
 A bug that leads to the failure of selecting left/right eye has been fixed.
 \end_layout
 
-\begin_layout Subsubsection*
+\end_deeper
+\begin_layout Itemize
 pspm_load1 and pspm_dcm
 \end_layout
 
+\begin_deeper
 \begin_layout Itemize
 A bug that leads to the failure of exporting statistics has been fixed.
 \end_layout
 
-\begin_layout Subsubsection*
+\end_deeper
+\begin_layout Itemize
 pspm_resp_pp
 \end_layout
 
+\begin_deeper
 \begin_layout Itemize
 A bug that leads to the failure of opening batch for respiration data processing
  has been fixed.
 \end_layout
 
-\begin_layout Subsubsection*
+\end_deeper
+\begin_layout Itemize
 pspm_scr_pp
 \end_layout
 
+\begin_deeper
 \begin_layout Itemize
 A bug that leads to incorrect matrix construction has been fixed.
 \end_layout
 
+\end_deeper
 \begin_layout Part
 Acknowledgements
 \end_layout
