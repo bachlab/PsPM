@@ -77,19 +77,19 @@ glm_sps.val{b} = bf;
 chan_def_left         = cfg_const;
 chan_def_left.name    = 'Last left eye';
 chan_def_left.tag     = 'chan_def_left';
-chan_def_left.val     = {'pupil_l'};
+chan_def_left.val     = {'sps_l'};
 chan_def_left.help    = {'Use last left eye channel.'};
 
 chan_def_right         = cfg_const;
 chan_def_right.name    = 'Last right eye';
 chan_def_right.tag     = 'chan_def_right';
-chan_def_right.val     = {'pupil_r'};
+chan_def_right.val     = {'sps_r'};
 chan_def_right.help    = {'Use last right eye channel.'};
 
 best_eye                = cfg_const;
 best_eye.name           = 'Best eye';
 best_eye.tag            = 'best_eye';
-best_eye.val            = {'pupil'};
+best_eye.val            = {'sps'};
 best_eye.help           = {['Use eye with the fewest NaN values.']};
 
 chan_def                = cfg_choice;
