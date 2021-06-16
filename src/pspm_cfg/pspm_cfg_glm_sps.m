@@ -1,12 +1,17 @@
 function [glm_sps] = pspm_cfg_glm_sps
 % GLM SPS
+% This function applies to the glm model for the modality ScanPath Speed (sps) only
 
-% $Id: pspm_cfg_glm_hp_fc.m 404 2017-01-06 14:02:02Z tmoser $
+% $Id: pspm_cfg_glm_sps.m 404 2017-01-06 14:02:02Z tmoser $
 % $Rev: 404 $
+
+% Updated by Teddy (WCHN)
 
 % Initialise
 global settings
-if isempty(settings), pspm_init; end;
+if isempty(settings)
+    pspm_init; 
+end
 
 % set variables
 
