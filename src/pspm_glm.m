@@ -25,9 +25,12 @@ function glm = pspm_glm(model, options)
 %                   otherwise.
 %
 % optional fields
-% model.modelspec:  'scr' (default); specify the model to be used. See
-%                   pspm_init, defaults.glm() which modelspecs are possible
+% model.modelspec:  'scr' (default); specify the model to be used. 
+%                   See pspm_init, defaults.glm() which modelspecs are possible
 %                   with glm.
+% model.modality:   specify the modality to be processed.
+%                   When model.modality is set to be sps, the model.channel
+%                   should be set among sps_l, sps_r, or defaultly sps.
 % model.bf:         basis function/basis set; modality specific default
 %                   with subfields .fhandle (function handle or string) and
 %                   .args (arguments, first argument sampling interval will
@@ -46,6 +49,8 @@ function glm = pspm_glm(model, options)
 %                   precedence order described in its documentation. In a nutshell,
 %                   it prefers preprocessed channels and channels from the best eye
 %                   to other pupil channels.
+%                   SPECIAL: for the modality "sps", the model.channel
+%                   accepts only "sps_l", "sps_r", or "sps".
 %                   DEFAULT: last channel of the specified modality
 %                            (for PSR this is 'pupil')
 % model.norm:       normalise data; default 0
