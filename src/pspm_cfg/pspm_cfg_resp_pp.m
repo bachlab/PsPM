@@ -162,21 +162,21 @@ function resp_pp = pspm_cfg_resp_pp
         else
             chan = '';
         end
-        options.plot = job.options.plot;
+        resp_pp_options.plot = job.options.plot;
         if isfield(job.options.systemtype, 'bellows')
-            options.systemtype = 'bellows';
+            resp_pp_options.systemtype = 'bellows';
         else
-            options.systemtype = 'cushion';
+            resp_pp_options.systemtype = 'cushion';
         end
         f = fields(job.options.datatype);
-        options.datatype = {};
+        resp_pp_options.datatype = {};
         for i = 1:numel(f)
             if job.options.datatype.(f{i}) == 1
-                options.datatype = [options.datatype, f{i}];
+                resp_pp_options.datatype = [resp_pp_options.datatype, f{i}];
             end
         end
-        options.channel_action = job.channel_action;
-        sts = pspm_resp_pp(job.datafile{1}, sr, chan, options);
+        resp_pp_options.channel_action = job.channel_action;
+        sts = pspm_resp_pp(job.datafile{1}, sr, chan, resp_pp_options);
         out = job.datafile;
     end
 
