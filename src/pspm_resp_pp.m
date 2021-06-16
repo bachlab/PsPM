@@ -32,7 +32,7 @@ function sts = pspm_resp_pp(fn, sr, chan, options)
 % -------------------------------------------------------------------------
 sts = -1;
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 
 % check input
 % -------------------------------------------------------------------------
@@ -48,14 +48,14 @@ elseif nargin < 3 || isempty(chan) || (chan == 0)
     chan = 'resp';
 elseif ~isnumeric(chan)
     warning('ID:invalid_input', 'Channel number must be numeric'); return;
-end;
+end
 
-try options.systemtype; catch, options.systemtype = 'bellows'; end;
-try options.datatype; catch, options.datatype = {'rp', 'ra', 'rfr', 'rs'}; end;
-try options.plot; catch, options.plot = 0; end;
-try options.diagnostics; catch, options.diagnostics = 0; end;
-try options.replace; catch, options.replace = 0; end;
-try options.channel_action; catch, options.channel_action = 'add'; end;
+try options.systemtype; catch, options.systemtype = 'bellows'; end
+try options.datatype; catch, options.datatype = {'rp', 'ra', 'rfr', 'rs'}; end
+try options.plot; catch, options.plot = 0; end
+try options.diagnostics; catch, options.diagnostics = 0; end
+try options.replace; catch, options.replace = 0; end
+try options.channel_action; catch, options.channel_action = 'add'; end
 
 if ~ischar(options.systemtype) || sum(strcmpi(options.systemtype, {'bellows', 'cushion'})) == 0
     warning('ID:invalid_input', 'Unknown system type.'); return;
@@ -66,9 +66,9 @@ else
     datatype = zeros(5, 1);
     for k = 1:numel(options.datatype)
         datatype(strcmpi(options.datatype{k}, datatypes)) = 1;
-    end;
-    if datatype(end), datatype(1:end) = 1; end;
-end;
+    end
+    if datatype(end), datatype(1:end) = 1; end
+end
 
 % get data
 % -------------------------------------------------------------------------
@@ -77,11 +77,11 @@ old_chantype = data{1}.header.chantype;
 if nsts == -1
     warning('ID:invalid_input', 'Could not load data properly.');
     return;
-end;
+end
 if numel(data) > 1
     fprintf('There is more than one respiration channel in the data file. Only the first of these will be analysed.');
     data = data(1);
-end;
+end
 resp = data{1}.data;
 
 % filter mean-centred data
@@ -118,7 +118,7 @@ elseif strcmpi(options.systemtype, 'cushion')
     zero2 = ceil(mean([indx(pairs + 1), indx(pairs)], 2));
     % combine while accouting for differentiating twice
     respstamp = sort([zero1;zero2] + 1)/newsr;
-end;
+end
 
 % exclude < 1 s IBIs 
 % -------------------------------------------------------------------------
@@ -130,7 +130,7 @@ if strcmp(options.channel_action, 'replace') && numel(find(datatype == 1)) > 1
     % replace makes no sense
     warning('ID:invalid_input', 'More than one datatype defined. Replacing data makes no sense. Resetting ''options.channel_action'' to ''add''.');
     options.channel_action = 'add';
-end;
+end
 
 % compute data values, interpolate and write
 % -------------------------------------------------------------------------
@@ -152,7 +152,7 @@ for iType = 1:(numel(datatypes) - 1)
                 for k = 1:(numel(respstamp) - 1)
                     win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
                     respdata(k) = range(resp(win));
-                end;
+                end
                 newdata.header.chantype = 'ra';
                 action_msg = 'Respiration converted to respiration amplitude';
                 newdata.header.units = 'unknown';
@@ -162,7 +162,7 @@ for iType = 1:(numel(datatypes) - 1)
                 for k = 1:(numel(respstamp) - 1)
                     win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
                     respdata(k) = range(resp(win))/ibi(k);
-                end;
+                end
                 newdata.header.chantype = 'rfr';
                 action_msg = 'Respiration converted to rfr';
                 newdata.header.units = 'unknown';
@@ -171,7 +171,7 @@ for iType = 1:(numel(datatypes) - 1)
                 newdata.header.chantype = 'rs';
                 action_msg = 'Respiration converted to respiration time stamps';
                 newdata.header.units = 'events';
-        end;
+        end
         channel_str = num2str(chan);
         o.msg.prefix = sprintf(...
             'Respiration preprocessing :: Input channel: %s -- Input chantype: %s -- Output channel: %s -- Action: %s --', ...
@@ -189,18 +189,18 @@ for iType = 1:(numel(datatypes) - 1)
                     writedata(writedata < 0) = 0;                                              % 'extrap' option may introduce falsely negative values
                 else
                     writedata = NaN(length(newt), 1);
-                end;
+                end
                 newdata.header.sr = sr;
             case {4}
                 writedata = respstamp;
                 newdata.header.sr = 1;
-        end;
+        end
         % write
         newdata.data = writedata(:);
         nsts = pspm_write_channel(fn, newdata, options.channel_action, o);
-        if nsts == -1, return; end;
-    end;
-end;
+        if nsts == -1, return; end
+    end
+end
 
 % create diagnostic plot for detection/interpolation
 % -------------------------------------------------------------------------
@@ -218,6 +218,6 @@ if options.plot
     indx = (diff(respstamp)<1)|(diff(respstamp)>10);
     stem(respstamp(indx), 2*ones(size(respstamp(indx))), 'Marker', 'none', 'Color', 'r', 'LineWidth', 4);
     stem(respstamp, ones(size(respstamp)), 'Marker', 'o', 'Color', 'b');
-end;
+end
 
 sts = 1;

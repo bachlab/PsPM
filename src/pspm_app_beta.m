@@ -6,14 +6,9 @@
 
 % Updated by Teddy Chao (Wellcome Centre for Human Neuroimaging)
 
-
 global settings
 if isempty(settings)
     pspm_init;
 end
-
-% appdesigner(pspm_App);
-% pf = pspm_path('pspm_App.mlapp');
-% appdesigner(pf);
 
 pspm_App;
