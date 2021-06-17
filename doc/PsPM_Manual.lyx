@@ -145,7 +145,8 @@ literal "false"
 \align center
 Dominik R Bach, Giuseppe Castegnetti, Laure Ciernik, Samuel Gerster, Saurabh
  Khemka, Christoph Korn, Samuel Maxwell, Tobias Moser, Philipp C Paulus,
- Ivan Rojkov, Matthias Staib, Eshref Yozdemir, Dadi Zhao and collaborators
+ Ivan Rojkov, Matthias Staib, Yanfang Xia, Eshref Yozdemir, Dadi Zhao and
+ collaborators
 \begin_inset Newline newline
 \end_inset
 
@@ -19927,6 +19928,10 @@ Christoph Korn: PSM models
 
 \begin_layout Itemize
 Saurabh Khemka: GLM for SEBR
+\end_layout
+
+\begin_layout Itemize
+Yanfang Xia: GLM for ScanPath Speed
 \end_layout
 
 \begin_layout Standard

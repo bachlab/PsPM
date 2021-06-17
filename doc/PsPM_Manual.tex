@@ -4,7 +4,7 @@
 \usepackage[LGR,T1]{fontenc}
 \pagestyle{headings}
 \usepackage{color}
-\usepackage{babel}
+\usepackage[british,UKenglish]{babel}
 \usepackage{float}
 \usepackage{calc}
 \usepackage{textcomp}
@@ -17,11 +17,9 @@
 \usepackage[unicode=true]
  {hyperref}
  
- \usepackage{fontspec,xltxtra,xunicode}
-\defaultfontfeatures{Mapping=tex-text}
-\setromanfont[Mapping=tex-text]{Adobe Garamond Pro}
-\setsansfont[Scale=MatchLowercase,Mapping=tex-text]{PT Sans}
-\setmonofont[Scale=MatchLowercase]{Courier Prime}
+\usepackage[cmintegrals,cmbraces]{newtxmath}
+\usepackage{ebgaramond-maths}
+\usepackage[T1]{fontenc}
 
 \makeatletter
 
@@ -86,13 +84,13 @@ Version 5.1.0
 
 \begin{center}
 by the PsPM team\footnote{\noindent If you have comments on or error corrections to this documentation,
-please send them to the PsPM team or post them on: \href{http://bachlab.org/pspm}{bachlab.org/pspm}}{\Large{}:}{\Large\par}
+please send them to the PsPM team, raise an issue on \href{https://github.com/bachlab/PsPM}{GitHub} or post them on: \href{http://bachlab.org/pspm}{bachlab.org/pspm}}{\Large{}:}{\Large\par}
 \par\end{center}
 
 \begin{center}
 Dominik R Bach, Giuseppe Castegnetti, Laure Ciernik, Samuel Gerster,
 Saurabh Khemka, Christoph Korn, Samuel Maxwell, Tobias Moser, Philipp
-C Paulus, Ivan Rojkov, Matthias Staib, Eshref Yozdemir, Dadi Zhao
+C Paulus, Ivan Rojkov, Matthias Staib, Yanfang Xia, Eshref Yozdemir, Dadi Zhao
 and collaborators\\
 \par\end{center}
 \newpage
@@ -718,8 +716,7 @@ part of the Gamma distribution was estimated to be one, resulting
 in a Gaussian smoothed exponential function.%
 \end{minipage}}
 
-\paragraph*{\medskip{}
-Formulation for non-linear models}
+\paragraph*{Formulation for non-linear models}
 
 An alternative formulation is provided for non-linear models which
 require a definition of the SCRF in the form of an inhomogeneous ordinary
@@ -773,8 +770,6 @@ the ODE becomes:
 %
 \end{minipage}} 
 
-\paragraph*{\medskip{}
-}
 
 \subsection{Neural model and model inversion}
 
@@ -1186,7 +1181,7 @@ and 6 s \cite{Castegnetti:2016ab}.
 
 \subsection{Data Conditioning}
 
-\subsubsection{QRS detection \label{subsec:QRS-detection}}
+\subsubsection{QRS detection}\label{subsec:QRS-detection}
 
 PsPM uses a modified offline version of the Pan \& Tompkins \cite{Pan:1985aa}
 QRS detection algorithm. The algorithm analyses slope, amplitude,
@@ -1770,6 +1765,8 @@ or smoothing is required for both RF during model inversion with GLM.
 \end{itemize}
 \end{itemize}
 
+\clearpage
+\newpage
 \part{User Guide}
 
 \section{Installation}
@@ -1789,11 +1786,14 @@ is a string of the file location on your hard drive, e.g.
 
 Do not add subfolders of the PsPM directory to the matlab path.
 
-Type \texttt{pspm} in the command line to start the package. Alternatively,
-each function can be called individually from the command line. In
-that case, you can use \texttt{pspm\_init} to load the settings, and
-\texttt{pspm\_quit} to remove PsPM subfunctions from the path and
-delete the settings. 
+\section{Start the package}
+Type \texttt{pspm} in the command line to start the package.
+This will open the classic GUI of PsPM, which contains the main functions for processing.
+A modern GUI in development is available by typing \texttt{pspm\_app\_beta} in the command line.
+Both the two commands will call the main screen of PsPM GUI.
+
+If a specified function is needed, it can be called individually from the command line.
+In that case, you can use \texttt{pspm\_init} to load the settings, and \texttt{pspm\_quit} to remove PsPM subfunctions from the path and delete the settings. 
 
 PsPM requires Matlab 2009a or higher. 
 
@@ -5472,6 +5472,8 @@ The tab delimiter in the exported files is not correctly interpreted
 by text editors like MS Word. Nonetheless, the data can be imported
 into softwares such as Excel or SPSS.
 
+\clearpage
+\newpage
 \part{Tutorial}
 
 \textit{Contributed by Christoph Korn \& Matthias Staib.}
@@ -6407,8 +6409,9 @@ estimates we can export them to the screen or to a file. \end{par}
 pspm_exp(modelfile, 'screen', 'param');
 \end{lstlisting}
 
-
-\part{How to reference PsPM}
+\clearpage
+\newpage
+\part{How to Reference PsPM}
 
 To justify our continued effort in the face of tight resources, we
 ask you acknowledge PsPM when you use it: ``Data were analysed using
@@ -7164,6 +7167,8 @@ processing has been fixed.
 \end{itemize}
 \end{itemize}
 
+\clearpage
+\newpage
 \part{Acknowledgements}
 
 SCRalyze versions 1-2 were developed at the FIL, Wellcome Centre for
@@ -7177,14 +7182,12 @@ with a programme grant to Raymond J. Dolan.
 
 \medskip{}
 
-PsPM 3.0 was developed at the University of Zurich, funded by the
-University of Zurich and by the Swiss National Science Foundation
-with a project grant. The Matlabbatch GUI was written by Gabriel Gr\"{a}ni
-at University of Zurich. Help texts and tutorial were developed by
-Christoph Korn and Matthias Staib. The data display was written by
-Philipp C Paulus, University of Dresden. The test environment was
-contributed by Linus R\"{u}ttimann, and extended by Tobias Moser,
-both University of Zurich.
+PsPM 3.0 was developed at the University of Zurich, funded by the University of Zurich and by the Swiss National Science Foundation with a project grant. 
+The Matlab-batch GUI was written by Gabriel Gr\"{a}ni at University of Zurich. 
+Help texts and tutorial were developed by Christoph Korn and Matthias Staib.
+The GUI was maintained and improved by Dadi Zhao, University College London.
+The data display was written by Philipp C Paulus, University of Dresden.
+The test environment was contributed by Linus R\"{u}ttimann, and extended by Tobias Moser, both University of Zurich.
 
 \medskip{}
 
@@ -7197,6 +7200,7 @@ are:
 \item Giuseppe Castegnetti: GLM for fear-conditioned HPR and RAR
 \item Christoph Korn: PSM models
 \item Saurabh Khemka: GLM for SEBR
+\item Yanfang Xia: GLM for SPS
 \end{itemize}
 %
 Some PsPM functions depend on external scripts/libraries implemented
@@ -7223,6 +7227,8 @@ Kuo, and Jeff H Duyn at \href{https://www.amri.ninds.nih.gov/software.html}{http
 The original reference is \cite{liu2012statistical}.
 \end{itemize}
 
+\clearpage
+\newpage
 \part{References}
 
 \bibliographystyle{pnas2009}

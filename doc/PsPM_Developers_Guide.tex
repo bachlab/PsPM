@@ -1,0 +1,4761 @@
+%% LyX 2.3.6 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english]{article}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{color}
+\usepackage[british,UKenglish]{babel}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{bbding}
+\usepackage{rotating}
+\usepackage{setspace}
+\usepackage[unicode=true]
+ {hyperref}
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\definecolor{colKeys}{rgb}{0,0,1}
+\definecolor{colIdentifier}{rgb}{0,0,0}
+\definecolor{colComments}{rgb}{0.53, 0.66, 0.42}
+\definecolor{colString}{rgb}{0.87, 0.36, 0.51}
+\definecolor{barColor}{rgb}{0.43, 0.5, 0.5}
+% Added by lyx2lyx
+\renewcommand{\textendash}{--}
+\renewcommand{\textemdash}{---}
+\usepackage[cmintegrals,cmbraces]{newtxmath}
+\usepackage{ebgaramond-maths}
+\usepackage[T1]{fontenc}
+\makeatother
+
+\usepackage{listings}
+\lstset{language=Matlab,
+float=hbp,
+basicstyle={\footnotesize\ttfamily},
+identifierstyle={\color{colIdentifier}},
+keywordstyle={\color{colKeys}},
+stringstyle={\color{colString}},
+commentstyle={\itshape\color{colComments}},
+columns=fixed,
+tabsize=2,
+extendedchars=true,
+showspaces=false,
+showstringspaces=false,
+captionpos=t,
+backgroundcolor={\color{white}},
+framexleftmargin=1pt,
+frame=l}
+\renewcommand{\lstlistingname}{Listing}
+
+\begin{document}
+\title{PsPM: Psychophysiological Modelling}
+\title{Developer's Guide}
+\maketitle
+\begin{center}
+Version 5.1.0
+\par\end{center}
+
+\medskip{}
+
+\begin{center}
+by the PsPM team\footnote{\noindent If you have comments on or error corrections to this documentation,
+please send them to the PsPM team or post them on: \href{http://bachlab.org/pspm}{bachlab.org/pspm}}{\Large{}:}{\Large\par}
+\par\end{center}
+
+\begin{center}
+Dominik R Bach, Giuseppe Castegnetti, Laure Ciernik, Samuel Gerster,
+Saurabh Khemka, Christoph Korn, Samuel Maxwell, Tobias Moser, Philipp
+C Paulus, Ivan Rojkov, Matthias Staib, Eshref Yozdemir, Dadi Zhao
+and collaborators\\
+\par\end{center}
+\clearpage
+\newpage{}
+\tableofcontents{}
+\newpage{}
+
+\section{General}
+
+\subsection{Data files: General structure }
+
+In PsPM the data is saved in mat-files. Each file contains two variables: 
+\begin{itemize}
+\item \texttt{infos} A struct variable with general infos 
+\item \texttt{data} A cell array with a cell for each channel. 
+\end{itemize}
+The cells contain a struct with channel specific infos and data. The
+structs have the mandatory fields: 
+\begin{itemize}
+\item \texttt{infos.duration} (in seconds)
+\item \texttt{data\{n\}.header} 
+
+\begin{itemize}
+\item \texttt{data\{n\}.header.chantype} (as defined in the settings) 
+\item \texttt{data\{n\}.header.sr} (sample rate in 1/second, or timestamp
+units in seconds) 
+\item \texttt{data\{n\}.header.units} (data units, or \textquoteleft events\textquoteright ) 
+\item \texttt{data\{n\}.data} (actual data) 
+\end{itemize}
+\end{itemize}
+Additionally, a typical file contains the optional infos: 
+\begin{itemize}
+\item \texttt{infos.sourcefile }
+\item \texttt{infos.importfile }
+\item \texttt{infos.importdate }
+\item \texttt{infos.sourcetype }
+\item \texttt{infos.recdate }
+\item \texttt{infos.rectime }
+\end{itemize}
+Some data manipulation functions (in particular, pspm\_trim) update
+infos to record some file history. 
+
+\subsection{How to add a new import data type}
+
+\subsubsection{Add function}
+
+\begin{singlespace}
+\noindent Function name: pspm\_get\_xxx (where xxx is the data type
+name). \\
+\\
+Format: \\
+
+\noindent \texttt{{[}sts, import, sourceinfo{]} = pspm\_get\_xxx(datafile,
+import)}~\\
+\texttt{}~\\
+The function needs to take an import job and add, for each job, fields 
+\end{singlespace}
+\begin{itemize}
+\item .data - the actual data for this channel (column vector) 
+\item .sr - the sample rate for this channel (only if .autosr enabled in
+pspm\_init) 
+\end{itemize}
+\noindent optional fields 
+\begin{itemize}
+\item .marker - for marker channels (timestamps or continuous, see pspm\_get\_marker) 
+\item .markerinfo -- optional, see pspm\_get\_marker 
+\item .minfreq - minimum frequency for pulse channels 
+\item .units - if data units are defined by the recording software 
+\item sts: -1 if import is unsuccessful 
+\end{itemize}
+\noindent sourceinfo: contains information on the source file, with
+field 
+\begin{itemize}
+\item .chan - a cell of string descriptions of the imported source channels,
+e. g. names, or numbers any optional fields that will be added to
+infos.source (e. g. recording date \& time, and others)\texttt{ }
+\end{itemize}
+Notes for multiple blocks: file formats that support multiple block
+storage within one file can return cell arrays import\{1:blkno\} and
+sourceinfo\{1:blkno\}; PsPM will save individual files for each block,
+with a filename 'pspm\_fn\_blk0x.mat'.
+
+\subsubsection{Add information to settings}
+
+The file pspm\_init contains a block that defines possible import
+data types. Add a new field here\\
+
+\noindent \texttt{}
+\begin{lstlisting}
+% Description of data type 
+% --------------------------------------------- 
+defaults.import.datatypes(1) = ... 
+struct('short', 'xxx', ... % short name for internal purposes 
+'long', 'Datatype description', ... % long name for GUI 
+'ext', '*', ... % data file extension 
+'funct', @pspm_get_xxx, ... % import function 
+'chantypes', {{defaults.chantypes.type}}, ... % allowed channel types 
+'chandescription', 'channel', ... % description of channels for GUI 
+'multioption', 1, ... % import of multiple channels for GUI 
+'searchoption', 1, ... % allow channel name search for GUI 
+'automarker', 0, ... % marker not stored in separate channel 
+'autosr', 1); % sample rate automatically assigned
+\end{lstlisting}
+
+Good to know: 
+\begin{itemize}
+\item the \textquotedblleft long\textquotedblright{} definition is used
+in the GUI -- make sure it\textquoteright s readable 
+\item if no event channels can be imported, change .chantypes 
+\item if channels have searchable names in the import file, set .searchoption
+= 1
+\item if no channel number needs to be assigned for the marker channel,
+set .automarker = 1
+\item if sample rate is contained in import file and determined during import,
+set .autosr = 1
+\item if you need external functions -- put them into a folder in the \textquoteleft import\textquoteright{}
+subdirectory and add/remove this path within the pspm\_get\_xxx function
+\end{itemize}
+
+\subsection{How to add a new channel type}
+
+\subsubsection{Add function}
+
+Function name: pspm\_get\_xxx (where xxx is the channel type)\\
+\\
+Format:\\
+\\
+\texttt{{[}sts, data{]} = pspm\_get\_channeltype(import)}~\\
+\texttt{}~\\
+data: data cell of structure readable by pspm\_load\_data \\
+\\
+Good to know: for event channels, use the function pspm\_get\_events
+to convert various event formats into time stamps (see pspm\_get\_marker
+or pspm\_get\_hb as an example) 
+
+\subsubsection{Add information to settings}
+
+Add information on the new channel type and import function to\\
+\\
+\texttt{}
+\begin{lstlisting}
+defaults.chantypes(k).type = 'xxx';% channel type name 
+defaults.chantypes(k).import = @pspm_get_xxx; % conversion function
+defaults.chantypes(k).data = 'xxx'; % wave or events 
+\end{lstlisting}
+
+
+\subsection{How to add a new GLM type}
+
+\subsubsection{Add information to settings (Example SCR)}
+
+\texttt{}
+\begin{lstlisting}
+defaults.glm(1) = ... 
+struct('modality', 'scr', ... % modality name 
+'cbf', struct('fhandle', @pspm_bf_scrf, 'args', 1), ... 
+% default basis function/set
+'filter', struct('lpfreq', 5, 'lporder', 1, ... 
+'hpfreq', 0.05, 'hporder', 1, 'down', 10, 'direction', 'uni')); 
+% default filter settings 
+\end{lstlisting}
+
+
+\subsubsection{Add default basis function}
+
+Function name: pspm\_bf\_xxx \\
+\\
+Function arguments: vector of arguments, first element is time resolution,
+further arguments as defined in defaults.glm(n).cbf.args 
+
+\subsection{Warning IDs in PsPM}
+
+\subsubsection{General}
+\begin{itemize}
+\item invalid\_input
+\item invalid\_channeltype
+\item nonexistent\_file
+\item channel\_not\_contained\_in\_file
+\item obsolete\_function
+\item not\_allowed\_channeltype
+\item invalid\_data\_structure
+\item no\_matching\_channels
+\item unknown\_action
+\item missing\_data
+\item out\_of\_range
+\end{itemize}
+
+\subsubsection{Function specific}
+
+pspm\_load1
+\begin{itemize}
+\item not\_saving\_data
+\end{itemize}
+pspm\_interpolate
+\begin{itemize}
+\item option\_disabled
+\end{itemize}
+pspm\_trim
+\begin{itemize}
+\item marker\_out\_of\_range
+\end{itemize}
+pspm\_find\_channel
+\begin{itemize}
+\item multiple\_matching\_channels
+\end{itemize}
+pspm\_find\_sounds
+\begin{itemize}
+\item no\_marker\_chan
+\item no\_sound\_chan
+\end{itemize}
+pspm\_get\_scr
+\begin{itemize}
+\item no\_conversion\_constant
+\end{itemize}
+pspm\_pp
+\begin{itemize}
+\item invalid\_freq
+\end{itemize}
+pspm\_prepdata
+\begin{itemize}
+\item no\_low\_pass\_filtering
+\item downsampling\_failed
+\item nonint\_sr 
+\end{itemize}
+pspm\_get\_timing
+\begin{itemize}
+\item invalid\_vector\_size
+\item event\_names\_dont\_match
+\item no\_numeric\_vector
+\item no\_integers 
+\end{itemize}
+pspm\_down
+\begin{itemize}
+\item rate\_below\_minimum
+\end{itemize}
+
+\section{List of data formats}
+
+\subsection{Supported Channel types}
+
+\begin{tabular}{|>{\centering}p{3.6cm}||c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline 
+Data format & \begin{turn}{90}
+SCR
+\end{turn} & \begin{turn}{90}
+ECG
+\end{turn} & \begin{turn}{90}
+Heart Rate
+\end{turn} & \begin{turn}{90}
+Heart Beat
+\end{turn} & \begin{turn}{90}
+Heart Period
+\end{turn} & \begin{turn}{90}
+Respiration
+\end{turn} & \begin{turn}{90}
+Pupil Size
+\end{turn} & \begin{turn}{90}
+Marker
+\end{turn} & \begin{turn}{90}
+Custom
+\end{turn} & \begin{turn}{90}
+Sound channel
+\end{turn} & \begin{turn}{90}
+Pulse oxymeter
+\end{turn} & \begin{turn}{90}
+Gaze x/y, l/r
+\end{turn}\tabularnewline
+\hline 
+\hline 
+CED Spike & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{}\tabularnewline
+\hline 
+Matlab & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{}\tabularnewline
+\hline 
+Text & \Checkmark{} & \Checkmark{} & \Checkmark{} &  & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{}\tabularnewline
+\hline 
+Biopach AcqKnowledge ($\leq$ v3.9.0) & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{}\tabularnewline
+\hline 
+Biopac AcqKnowledge (exported) & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{}\tabularnewline
+\hline 
+Labchart (any Version, Windows only) & \Checkmark{} & \Checkmark{} & \Checkmark{} &  & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{}\tabularnewline
+\hline 
+Labchart exported 
+
+($\leq$ v7.1) & \Checkmark{} & \Checkmark{} & \Checkmark{} &  & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{}\tabularnewline
+\hline 
+Labchart exported 
+
+($\geq$ v7.2) & \Checkmark{} & \Checkmark{} & \Checkmark{} &  & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{}\tabularnewline
+\hline 
+VarioPort & \Checkmark{} & \Checkmark{} & \Checkmark{} &  & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{}\tabularnewline
+\hline 
+Biograph Infiniti (exported) & \Checkmark{} &  &  & \Checkmark{} &  & \Checkmark{} &  &  &  &  &  & \tabularnewline
+\hline 
+Mindmedia Biotrace (exported) & \Checkmark{} & \Checkmark{} & \Checkmark{} &  & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{}\tabularnewline
+\hline 
+Brain Vision & \Checkmark{} & \Checkmark{} & \Checkmark{} &  & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{}\tabularnewline
+\hline 
+Windaq (wdq) & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} &  & \Checkmark{}\tabularnewline
+\hline 
+Observer XT compatible & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{}\tabularnewline
+\hline 
+NeuroScan & \Checkmark{} & \Checkmark{} & \Checkmark{} &  & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{}\tabularnewline
+\hline 
+BioSemi & \Checkmark{} & \Checkmark{} & \Checkmark{} &  & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{}\tabularnewline
+\hline 
+Eyelink &  &  &  &  &  &  & \Checkmark{} & \Checkmark{} & \Checkmark{} &  &  & \Checkmark{}\tabularnewline
+\hline 
+European Data Format & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{}\tabularnewline
+\hline 
+Philips Scanphyslog &  & \Checkmark{} &  &  &  & \Checkmark{} &  & \Checkmark{} & \Checkmark{} &  & \Checkmark{} & \tabularnewline
+\hline 
+SMI &  &  &  &  &  &  & \Checkmark{} & \Checkmark{} & \Checkmark{} &  &  & \Checkmark{}\tabularnewline
+\hline 
+ViewPoint &  &  &  &  &  &  & \Checkmark{} & \Checkmark{} & \Checkmark{} &  &  & \Checkmark{}\tabularnewline
+\hline 
+\end{tabular}
+
+\subsection{Further settings}
+
+\begin{tabular}{|>{\centering}p{3.6cm}||c|c|>{\centering}p{2.2cm}|c|c|c|c|}
+\hline 
+Data format & Datatype & \begin{turn}{90}
+File extension
+\end{turn} & Manufacturer & \begin{turn}{90}
+Import multiple channels
+\end{turn} & \begin{turn}{90}
+Search channel names
+\end{turn} & \begin{turn}{90}
+Automarker
+\end{turn} & \begin{turn}{90}
+Ask for sampling rate
+\end{turn}\tabularnewline
+\hline 
+\hline 
+CED Spike & spike & .smr & CED & \Checkmark{} & \Checkmark{} &  & \tabularnewline
+\hline 
+Matlab & mat & .mat &  & \Checkmark{} &  &  & \Checkmark{}\tabularnewline
+\hline 
+Text & txt & .txt &  & \Checkmark{} & \Checkmark{} &  & \tabularnewline
+\hline 
+Biopach AcqKnowledge ($\leq$ v3.9.0) & acq & .acq & Biopac & \Checkmark{} & \Checkmark{} &  & \tabularnewline
+\hline 
+Biopac AcqKnowledge (exported) & acqmat & .mat & Biopac & \Checkmark{} & \Checkmark{} &  & \tabularnewline
+\hline 
+Labchart (any Version, Windows only) & labchart & .adicht & ADInstruments & \Checkmark{} & \Checkmark{} & \Checkmark{} & \tabularnewline
+\hline 
+Labchart exported 
+
+($\leq$ v7.1) & labchartmat\_ext & .mat & ADInstruments & \Checkmark{} & \Checkmark{} & \Checkmark{} & \Checkmark{}\tabularnewline
+\hline 
+Labchart exported 
+
+($\geq$ v7.2) & labchartmat\_in & .mat & ADInstruments & \Checkmark{} &  & \Checkmark{} & \tabularnewline
+\hline 
+VarioPort & vario & .vpd & Becker MediTec & \Checkmark{} & \Checkmark{} & \Checkmark{} & \tabularnewline
+\hline 
+Biograph Infiniti (exported) & biograph & .txt & Thought Technology &  &  &  & \tabularnewline
+\hline 
+Mindmedia Biotrace (exported) & biotrace & .txt & MindMedia &  &  & \Checkmark{} & \tabularnewline
+\hline 
+Brain Vision & brainvision & .eeg & BrainProducts & \Checkmark{} & \Checkmark{} & \Checkmark{} & \tabularnewline
+\hline 
+Windaq (wdq) & windaq & .wdq & Dataq & \Checkmark{} &  &  & \tabularnewline
+\hline 
+Observer XT compatible & observer & .any & Noldus & \Checkmark{} & \Checkmark{} &  & \tabularnewline
+\hline 
+NeuroScan & cnt & .cnt &  & \Checkmark{} & \Checkmark{} & \Checkmark{} & \tabularnewline
+\hline 
+BioSemi & biosemi & .bdf &  & \Checkmark{} & \Checkmark{} & \Checkmark{} & \tabularnewline
+\hline 
+Eyelink & txt & .asc &  & \Checkmark{} &  & \Checkmark{} & \tabularnewline
+\hline 
+European Data Format & edf & .edf & European Data Format & \Checkmark{} & \Checkmark{} & \Checkmark{} & \tabularnewline
+\hline 
+Philips Scanphyslog & txt & .log & Philips & \Checkmark{} &  &  & \tabularnewline
+\hline 
+SMI & txt & .txt & SensoMotoric Instruments & \Checkmark{} & \Checkmark{} & \Checkmark{} & \tabularnewline
+\hline 
+ViewPoint & txt & .txt & Arrington Research & \Checkmark{} & \Checkmark{} & \Checkmark{} & \tabularnewline
+\hline 
+\end{tabular}
+
+Note: Automarkers means no channel number has to be specified because
+markers are always at the same place.
+
+\section{GUI}
+
+\textit{Contributed by Gabriel Gräni.}
+
+\subsection{Matlabbatch: Getting started}
+\begin{enumerate}
+\item Add the trunk folder to the matlab path
+\item Type pspm\_init into the command window (after the execution of the
+command the folders pspm\_cfg and matlabbatch should be added to the
+matlab path)
+\item Start matlabbatch by the typing cfg\_ui into the command window
+\item If the item PsPM exists in the menu bar of matlabbatch you can skip
+steps 5 to 7 and continue at step 8
+\item Select --> File --> Add Application
+\item Navigate to the folder pspm\_cfg on the left hand side of the window
+and select the file pspm\_cfg.m on the right hand side --> Press
+the button Done
+\item A new item, called PsPM, will appear in the upper menu bar.
+\item By selecting PsPM the desired action can be selected (at the moment,
+there is only Data Preparation --> \{Import, Trim\} available) 
+\end{enumerate}
+
+\subsubsection{Example Function: Trim}
+
+This example demonstrates how matlabbatch can be used to execute a
+function. For all other functions matlabbatch behaves in the same
+manner.
+\begin{itemize}
+\item Select a file by pressing the Select Files Button (under Datafile)
+\item Select Reference and choose an item in the lower part of the window
+\item Fill in the desired values in the fields which are marked with \textquotedbl <-X\textquotedbl{}
+\item After you have chosen a file and filled in all values correctly, you
+will see a green arrow on the upper left part of the window
+\item By pressing on the green arrow the selected file will be trimmed according
+to the filled in values 
+\end{itemize}
+
+\subsection{Matlabbatch: How to}
+
+\subsubsection{Preliminaries}
+\begin{itemize}
+\item Add folder of matlabbatch to the matlab path
+\item Add first application and then load the batch in order to execute
+a function 
+\end{itemize}
+
+\subsubsection{Some notes for creating a new application}
+\begin{itemize}
+\item Leafs (items) are specified first
+\item Assigning child items to .val or .values fields of their parent items
+\item Root node of a tree is specified last
+\item Some examples of items: 
+
+\begin{itemize}
+\item cfg\_item: \\
+\texttt{}
+\begin{lstlisting}
+item1= cfg_item; % Defines generic configuration item 
+item1.name= 'Def 1'; % The display name 
+item1.tag = 'def1'; % The name appearing in the harvested job 
+% structure. This name must be unique 
+% among all items in the val field of the 
+% superior node 
+item1.val = {true}; % Value of item (optional) 
+item1.help = {'Help...'}; % Help text 
+\end{lstlisting}
+\item cfg\_entry: \\
+\texttt{}
+\begin{lstlisting}
+entry1 = cfg_entry; % Defines entry configuration item 
+entry1.name = 'Input'; 
+entry1.tag = 'input'; 
+entry1.strtye = 'r'; % Type of values which can be entered 
+entry1.num = [1 1]; % Expected dimension of the input 
+entry1.help = {'Help...'}; 
+\end{lstlisting}
+\item cfg\_choice: \\
+\texttt{}
+\begin{lstlisting}
+choice = cfg_item; % Defines choice configuration item 
+choice.name = 'Choice';
+choice.tag = 'choice';
+choice.values = {item1, entry1}; % Defines which items will be 
+% selectable in the choice menu. 
+choice.help = {'Help...'}; 
+\end{lstlisting}
+\item cfg\_exbranch: \\
+\texttt{}
+\begin{lstlisting}
+fct = cfg_exbranch; % Defines the branch that has information 
+% about how to run this module fct.name = 'Trim'; 
+fct.tag = 'trim'; 
+fct.val = {choice}; % The items that belong to this branch. 
+% All items must be filled before this 
+% branch can run or produce virtual 
+% outputs 
+\end{lstlisting}
+\texttt{}~\\
+\texttt{}
+\begin{lstlisting}
+fct.prog = @cfg_run_fct; % A function handle that will be called 
+% with the harvested job to run the 
+% computation 
+trim.vout = @cfg_vout_fct; % A function handle that will be 
+% called with the harvested job to 
+% determine virtual outputs 
+trim.help = {Help...'}; 
+\end{lstlisting}
+\item There exists a number of other item classes. Here is a list of the
+most important classes: cfg\_item, cfg\_entry, cfg\_choice, cfg\_menu,
+cfg\_exbranch, cfg\_files, cfg\_branch, cfg\_repeat\\
+\\
+For more information call the help function in matlab (e.g. help help
+cfg\_item)
+\end{itemize}
+\item Note:\\
+The inputs to each module have to be described in a tree-like structure.\\
+During data entry, there is no way to change the tree structure based
+on input data. Add application to the configuration tree by default
+\end{itemize}
+
+\subsubsection{Add application to the configuration tree by default}
+
+In the following it is shown how an application can be added to the
+menu bar of matlabbatch by default (without adding it every time matlabbatch
+is started)
+\begin{itemize}
+\item Start matlabbatch and add the appliaction cfg\_confgui in the folder
+matlabbatch/cfg\_confgui 
+\item Put Generate code into the Module list by selecting ConfGUI --> Generate
+code in the menu bar
+\item Fill out all the input fields on the right side: 
+
+\begin{itemize}
+\item Output filename: This file will contain the whole menu structure,
+validity constraints and links to run time code of the appliaction.
+\item Output directory: All files which are created by the ConfGUI will
+be stored into this directory (chose a directory which is added to
+the matlab path)
+\item Root node of config: Name of the root node of the appliaction's configuration
+tree
+\item Options: 
+
+\begin{enumerate}
+\item Create Defaults File: Yes
+\item Create mlbatch\_appcfg File: Yes
+\item Create Code for addpath(): No 
+\end{enumerate}
+\end{itemize}
+\item Finally press the green arrow on the upper left side of the batch
+editor
+\item As no error occurred 3 new files (\{Output filename\}.m, \{Output
+filename\}\_def.m, cfg\_mlbatch\_appcfg.m) should be created and added
+into the folder \{Output directory\}.
+\item Each time matlabbatch is started, it will search for any cfg\_mlbatch\_appcfg.m
+file (this file contains the names of the configuration files) and
+will add the corresponding application to the batch editor. 
+\end{itemize}
+
+\subsubsection{Add modules to module list}
+
+Example: Module Import and Trim will be added to the module list\texttt{}~\\
+\texttt{}~\\
+\texttt{}
+\begin{lstlisting}
+arg1 = 'scr.prep.import_data'; 
+arg2 = 'scr.prep.trim'; 
+mod_cfg_id1 = cfg_util('tag2mod_cfg_id',arg1); 
+mod_cfg_id2 = cfg_util('tag2mod_cfg_id',arg2); 
+cjob = cfg_util('initjob'); 
+mod_job_id1 = cfg_util('addtojob', cjob, mod_cfg_id1); 
+mod_job_id2 = cfg_util('addtojob', cjob, mod_cfg_id2); 
+cfg_util('harvest', cjob, mod_job_id1); 
+cfg_util('harvest', cjob, mod_job_id2); 
+cfg_ui('local_showjob', cfg_ui, cjob); 
+\end{lstlisting}
+
+
+\subsubsection{Changes}
+\begin{itemize}
+\item In the function private/cfg\_onscreen at line 36 figure(fg); is commented
+out in order to prevent the appearance of the GUI for a short time
+if the function cfg\_ui('Visible', 'off') is called.
+\end{itemize}
+
+\subsection{Matlabbatch: changing help texts and fieldnames }
+
+\subsubsection{File structure of matlabbatch GUI}
+
+There exist two files per function: 1 configuration file and 1 run
+file. The configuration file defines the structure of the corresponding
+function in the matlabbatch GUI whereas the run file firstly gathers
+all entered values and secondly calls the corresponding SCR function.
+Both types of files are located in the subfolder pspm\_cfg. The name
+of a configuration or a run file consists of two parts. The prefix
+of a configuration filename is called pspm\_cfg\_ whereas the filename
+of a run file begins with pspm\_cfg\_run. The second part of the filename
+is named after the function name (eg. for the function pspm\_import.m
+-> pspm\_cfg\_import.m, pspm\_cfg\_run\_import.m).
+
+\subsubsection{Edit help texts and fieldname}
+
+In order to change any help text or fieldname in a matlabbatch GUI
+function the corresponding configuration file has to be opened. For
+each item in a matlabbatch GUI function a struct variable which contains
+several struct fields is defined in the configuration file. 
+\begin{itemize}
+\item Help text The field .help defines the help text of the item which
+can be edited in order to change the help text. As soon as matlabbatch
+has been closed and opened again, the changes in the help text will
+be visible in matlabbatch GUI.
+\item Fieldname The fieldname of an matlabbatch GUI item is defined by the
+struct field .tag . In case a fieldname of an item should be changed
+be careful to verify if no other item, which has the same root node,
+hold the same fieldname. Otherwise matlabbatch will not work properly.
+After the fieldname of an item has been changed the run file (pspm\_cfg\_run\_functionname.m)
+of the corresponding function has to be adapted as well in order to
+ensure that the function call in the run file is done properly.
+\end{itemize}
+
+\subsection{Recommendations for GUI development}
+
+\subsubsection{Mlapp}
+
+Mlapp is the new format for developing GUI in Matlab. The old GUIDE
+based GUI will lose support from Mathworks in a future release. Therefore,
+it is recommended to move from the old GUIDE to the new Mlapp.
+
+The .mlapp file can be created natively through the new Matlab GUI
+guide. Alternatively, it can be generated by converting the classic
+GUIDE based .fig file through the feature \textit{migration}.
+
+\subsubsection{Style}
+
+The new GUI is currently using the colour \#7f2534 for stylishing.
+The main typeface for UI design is Verdana, which is supported in
+Windows, macOS and Linux.
+
+\section{Test Environment}
+
+\textit{Contributed by Linus Rüttimann \& Tobias Moser.}
+
+\subsection{Unittest: General implementation}
+
+In PsPM the Matlab Unit Testing Framework is used for testing of functions.
+For each tested function there is a Matlab class with the name \textquoteleft functionname\_test\textquoteright ,
+which contains the unittests for that specific function. Additionally
+there is a documentation page for each of the test classes, where
+information about the unittests can be found.\\
+\\
+To run the unittests of a test class, an object of the class has to
+be created:\\
+\\
+testCase = functionname\_test\\
+\\
+where \textquoteleft testCase\textquoteright{} is an arbitrary object
+name and \textquoteleft funtionname\_test\textquoteright{} is the
+name of a test class. Then all the unittest that are contained in
+the test class can be run with: \\
+\\
+testCase.run\\
+\\
+A specific unittest can be run with:\\
+\\
+testCase.run(\textquoteleft unittest\_name\textquoteright )\\
+\\
+Remember that a new test class object must be generated each time
+the test class has been changed.
+
+\subsection{Parameterized test classes}
+
+Parmeterized test classes is a feature provided by the Matlab test
+case class. A test class is parameterized when it has 
+\begin{itemize}
+\item Test parameters defined (within the property section)
+\item Test methods implementing the defined test parameters
+\end{itemize}
+Each function implementing test parameters will be called multiple
+times with each possible parameter combination (which is determined
+by Matlab). Thus parameterized classes allow to write single tests
+for different parameter combinations. If one of the following test
+cases is a parameterized test class, it will be mentioned accordingly.
+
+\subsection{Testcases: pspm\_align\_channels\_test}
+
+\subsubsection{Information}
+
+Testclass: pspm\_align\_channels\_test\\
+Function: {[}sts, data, duration{]} = pspm\_align\_channels(data,
+induration)
+
+\subsubsection{Setup}
+
+This test uses data stored in \texttt{ImportTestData/ecg2hb/tpspm\_s102\_s1.mat}
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input}
+
+Function name: invalid\_input(this)\\
+Description: Checks for warnings given invalid inputs.
+
+\subsubsection*{Lower optional duration}
+
+Function name: lower\_optional\_duration(this)\\
+Description: Passes an optional duration that is less than the maximum
+duration of all channels in the input to pspm\_align\_channels.\\
+\\
+Tests:
+\begin{enumerate}
+\item Assert that lower optional duration has no effect on the output.
+\item Check if all of the returned channels have the same duration.
+\end{enumerate}
+
+\subsubsection*{Same optional duration}
+
+Function name: same\_optional\_duration(this)\\
+Description: Passes an optional duration that is equal to the maximum
+duration of all channels in the input to pspm\_align\_channels and
+does the exact same checks as in lower duration case.
+
+\subsubsection*{Higher optional duration}
+
+Function name: higher\_optional\_duration(this)\\
+Description: Passes an optional duration that is higher than the maximum
+duration of all channels.\\
+\\
+Tests:
+\begin{enumerate}
+\item Assert that durations of all returned channels is the same as the
+passed optional duration.
+\end{enumerate}
+
+\subsubsection*{Max duration is passed in marker channel}
+
+Function name: max\_duration\_is\_given\_in\_events(this)\\
+Description: Passes the maximum duration in marker channel to pspm\_align\_channels.\\
+\\
+Tests:
+\begin{enumerate}
+\item Assert that all returned channels are aligned to the maximum duration
+passed in marker channel.
+\end{enumerate}
+
+\subsubsection*{Various case checks}
+
+Function names:
+\begin{enumerate}
+\item only\_one\_channel\_longer\_others\_same(this)
+\item only\_one\_channel\_shorter\_others\_same(this)
+\item increasing\_channel\_lengths(this)
+\item two\_same\_others\_shorter(this)
+\end{enumerate}
+Description: In each of these cases check if the returned channels
+have the same duration that is equal to the maximum duration of all
+input channels.
+
+\subsection{Testcases: pspm\_butter}
+
+\subsubsection{Information}
+
+Testclass: pspm\_butter\_test \\
+Function: {[}sts, b, a{]} = pspm\_butter(order, freqratio, pass)
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input}
+
+Function name: invalid\_input(this) \\
+Description: Checks for warnings, if the input arguments are invalid
+and if the Signal processing toolbox is installed. \\
+\\
+Tests: 
+
+\begin{tabular}{|c|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+pspm\_butter() {[}no input{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_butter(1,1,'abc') {[}pass not equal to 'high' or 'low'{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_butter(2,1) {[}'Signal processing toolbox is missing' \#1{]} & ID:toolbox\_missing\tabularnewline
+\hline 
+pspm\_butter(1,1) {[}'Signal processing toolbox is missing' \#2{]} & ID:toolbox\_missing\tabularnewline
+\hline 
+\end{tabular}
+
+\subsection{Testcases: pspm\_bf\_test}
+
+\subsubsection{Information}
+
+Testclass: pspm\_bf\_test\\
+Function: {[}bs, x{]} = pspm\_bf\_<specific function name>
+
+\subsubsection{Setup}
+
+This test class is parameterized.
+
+\subsubsection*{Method setup parameters}
+
+These parameters define which function should be tested\textbf{.}\\
+\begin{tabular}{|c|>{\raggedright}p{10cm}|}
+\hline 
+\textbf{Basis function} & Specifies the basis functions to test (without the 'pspm\_bf\_' prefix).
+The current basis function to test is then called via this.bf();\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Test parameters}
+
+These are parameters which define what kind of data or option should
+be passed to each basis function.\\
+\begin{tabular}{|c|>{\raggedright}p{10cm}|}
+\hline 
+\textbf{Time res log} & Specifies for the basic test different time resolutions (argument
+'td') which a basis function should be able to handle (as long as
+td <= duration). The values are logarithmic and have to be translated
+before passed to the basis function.\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input}
+
+Function name: invalid\_input(this) \\
+Description: Checks for warnings, if the input arguments are invalid.
+\\
+\\
+Tests: \\
+\begin{tabular}{|>{\centering}p{6cm}|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+this.bf() {[}no parameters{]} & ID:invalid\_input\tabularnewline
+\hline 
+this.bf(dur+1) {[}pass 'td' > duration of function{]} & ID:invalid\_input\tabularnewline
+\hline 
+this.bf(0) {[}invalid time resolution{]} & ID:invalid\_input\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Basic}
+
+Function name: test\_basic(this, time\_res\_log)\\
+Description: Test for different requirements to verify whether the
+current basis function is valid or not.\\
+\\
+Tests:
+\begin{enumerate}
+\item Test with td = 0.1, verify that no warning is issued and determine
+the duration
+\item Test with td = 0.01 and check if the new duration is equal to the
+duration calculated before.
+\item Test if function runs through without warning and that the time vector
+begins at <= 0.
+\item Test if the function runs through without warning with td = 10\textasciicircum time\_res\_log
+(as long as td < duration)
+\end{enumerate}
+
+\subsection{Testcases: pspm\_convert\_unit}
+
+\subsubsection{Information}
+
+Testclass: pspm\_convert\_unit\_test\\
+Function: {[}sts, converted{]} = pspm\_convert\_unit(data, from, to)
+
+\subsubsection{Setup}
+
+\subsubsection*{Constants}
+\begin{itemize}
+\item inch\_to\_cm = 2.54
+\end{itemize}
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input}
+
+Function name: invalid\_input(testCase)\\
+Description: Pass invalid from or to metrics and check if warnings
+are issued.
+
+\subsubsection*{Valid input}
+
+Function name: valid\_input(this)\\
+Description: Pass various valid inputs and compare results to manually
+calculated ones.\\
+\\
+Tests:
+\begin{enumerate}
+\item If empty input data is passed, result is also empty.
+\item Convert single cm value to m.
+\item Various unit conversion checks:
+\begin{enumerate}
+\item Conversion between same units (cm to cm)
+\item mm to km and km to mm conversions
+\item inch to cm conversions
+\end{enumerate}
+\item Negative value conversions
+\item Convert single dimensional array with multiple elements.
+\item Convert each element in 3D array.
+\end{enumerate}
+
+\subsection{Testcases: pspm\_ecg2hb}
+
+\subsubsection{Information}
+
+Testclass: pspm\_ecg2hb\_test \\
+\\
+Function: {[}sts,pt\_debug{]} = pspm\_ecg2hb(fn, chan, options)
+
+\subsubsection{Setup}
+
+\subsubsection*{Constants}
+\begin{itemize}
+\item testdata\{0\}.chan\_struct = struct('nr', 1, 'name', 'ecg');
+\item testdata\{0\}.filename = 'ImportTestData\textbackslash ecg2hb\textbackslash test\_ecg77.mat';
+\item testdata\{0\}.num\_channels = 1
+\item testdata\{1\}.chan\_struct = struct('nr', 3, 'name', 'ecg');
+\item testdata\{1\}.filename = 'ImportTestData\textbackslash ecg2hb\textbackslash tpspm\_s102\_s1.mat';
+\item testdata\{1\}.num\_channels = 5
+\item backup\_suffix = '\_backup';
+\item options = struct('semi', 0);
+\end{itemize}
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input arguments}
+
+Function name: invalid\_input(this)\\
+\\
+Description: Pass invalid input arguments and check if the warnings
+are as expected.\\
+\\
+Tests: \\
+\\
+\begin{tabular}{|>{\centering}p{10cm}||>{\centering}p{5cm}|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+pspm\_ecg2hb() {[}no arguments{]} & ID:invalid\_input \tabularnewline
+\hline 
+\hline 
+pspm\_ecg2hb(1) {[}invalid file name{]} & ID:invalid\_input\tabularnewline
+\hline 
+\hline 
+pspm\_ecg2hb(this.fn, 'bla') {[}invalid channel (text){]} & ID:invalid\_input \tabularnewline
+\hline 
+\hline 
+pspm\_ecg2hb(this.fn, 1) {[}invalid channel type{]} & ID:not\_allowed\_channeltype\tabularnewline
+\hline 
+\hline 
+o.twthresh = 'bla'; pspm\_ecg2hb(this.fn, this.chan.nr, o) {[}invalid
+twthresh (text){]} & ID:invalid\_input \tabularnewline
+\hline 
+\hline 
+o.minHR = 202; pspm\_ecg2hb(this.fn, this.chan.nr, o) {[}invalid minHR
+(> default\_maxHR){]} & ID:invalid\_input \tabularnewline
+\hline 
+\hline 
+o.minHR = 202; o.maxHR = 19; pspm\_ecg2hb(this.fn, this.chan.nr, o)
+{[}invalid minHR > maxHR{]} & ID:invalid\_input \tabularnewline
+\hline 
+\hline 
+o.maxHR = 19; pspm\_ecg2hb(this.fn, this.chan.nr, o) {[}invalid maxHR
+(< default\_minHR){]} & ID:invalid\_input \tabularnewline
+\hline 
+\hline 
+o.debugmode = 5; pspm\_ecg2hb(this.fn, this.chan.nr, o) {[}invalid
+debugmode (not in {[}0,1{]}){]} & ID:invalid\_input \tabularnewline
+\hline 
+\hline 
+o.semi = 5; pspm\_ecg2hb(this.fn, this.chan.nr, o) {[}invalid semi
+(not in {[}0,1{]}){]} & ID:invalid\_input \tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Valid input arguments}
+
+Function name: valid\_input(this)\\
+\\
+Description: Pass valid input arguments and check if there are no
+warnings.\\
+\\
+Tests: \\
+\\
+\begin{tabular}{|c|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+pspm\_ecg2hb(this.fn, this.chan.nr, this.options) & -\tabularnewline
+\hline 
+pspm\_ecg2hb(this.fn, this.chan.name, this.options) & -\tabularnewline
+\hline 
+this.test\_added\_data() & -\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection{Other Methods}
+
+\subsubsection*{Test for added data}
+
+Function name: test\_added\_data()\\
+\\
+Description: Check if added hb channels show an expected behaviour.\\
+\\
+Tests (for each channel):\\
+\\
+\begin{tabular}{|c|c|}
+\hline 
+Tested Value & Expected Value\tabularnewline
+\hline 
+\hline 
+Sampling rate & 1\tabularnewline
+\hline 
+Unit & 'events'\tabularnewline
+\hline 
+Channel type & 'hb'\tabularnewline
+\hline 
+Amount of data points in data & > 1\tabularnewline
+\hline 
+Heartbeat indices are monotonically increasing & True\tabularnewline
+\hline 
+Maximum number of heartbeats per second & < 5\tabularnewline
+\hline 
+Data is distributed equally (standard deviation) & < 2s\tabularnewline
+\hline 
+Time between end of recording and last data point & < 60s\tabularnewline
+\hline 
+\end{tabular}
+
+\subsection{Testcases: pspm\_filtfilt}
+
+\subsubsection{Information}
+
+Testclass: pspm\_filtfilt\_test \\
+Function: y = pspm\_filtfilt(b,a,x)
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input}
+
+Function name: invalid\_input(this) \\
+Description: Checks for warnings, if the input arguments are invalid.
+\\
+\\
+Tests: 
+
+\begin{tabular}{|c|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+pspm\_filtfilt() {[}no input{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_filtfilt({[}1:10{]},{[}1:20{]},{[}1:10{]}) {[}data length less
+than 3 times filter order{]} & ID:invalid\_input\tabularnewline
+\hline 
+\end{tabular}
+
+\subsection{Testcases: pspm\_find\_channel}
+
+\subsubsection{Information}
+
+Testclass: pspm\_find\_channel\_test \\
+\\
+Function: chan = pspm\_find\_channel(headercell, chantype) 
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input arguments}
+
+Function name: invalid\_inputargs(this) \\
+\\
+Description: Checks for warnings, if the input arguments are invalid.
+\\
+\\
+Setup: \\
+\\
+\texttt{headercell = \{'heart', 'scr', 'pupil'\};}\\
+\\
+Tests: \\
+\\
+\begin{tabular}{|c|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+pspm\_find\_channel('str','scr') {[}no headercell{]} & ID:invalid\_input \tabularnewline
+\hline 
+pspm\_find\_channel(headercell, 'str') & ID:not\_allowed\_channeltype\tabularnewline
+\hline 
+pspm\_find\_channel(headercell, 4) {[}no string chantype{]} & ID:invalid\_input\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Valid Input Arguments}
+
+Function name: valid\_inputargs(this) \\
+\\
+Description: Checks for correct return value if the input arguments
+are valid \\
+\\
+Setup: \\
+\\
+\texttt{headercell = \{'heart', 'scr', 'pupil', 'mark', 'gsr', 'eda'\};}\\
+\\
+Tests: \\
+\\
+\begin{tabular}{|>{\centering}p{6cm}|c|>{\centering}p{6cm}|}
+\hline 
+Input & Exp. Output & Expected warning\tabularnewline
+\hline 
+\hline 
+pspm\_find\_channel(headercell, 'pupil') & 3 & \tabularnewline
+\hline 
+pspm\_find\_channel(headercell, 'resp') & 0 & ID:no\_matching\_channels\tabularnewline
+\hline 
+pspm\_find\_channel(headercell, 'scr') & -1 & ID:multiple\_matching\_channels\tabularnewline
+\hline 
+pspm\_find\_channel(headercell, \{'mark', 'str', 'bla'\}) & 4 & \tabularnewline
+\hline 
+pspm\_find\_channel(headercell, \{'call', 'str', 'me'\}) & 0 & no matching channel, but no warning\tabularnewline
+\hline 
+pspm\_find\_channel(headercell, \{'scr', 'gsr', 'eda'\}) & -1 & multiple matching channels, but no warning\tabularnewline
+\hline 
+\end{tabular}
+
+\subsection{Testcases: pspm\_extract\_segments}
+
+\subsubsection{Information}
+
+Testclass: pspm\_extract\_segments\_test\\
+Function: {[}sts, out{]} = pspm\_extract\_segments(varargin)
+
+\subsubsection{Setup}
+
+This test class is parameterized. For manual mode tests, the test
+data is generated by the function itself and when needed, files will
+be written to testdatafile<variable\_nr>.mat. For auto mode tests,
+the test data must be in \texttt{ImportTestData/fitted\_models} folder
+with names as specified in the tests.
+
+\subsubsection*{Test parameters}
+
+These are parameters which define what kind of data should be passed
+to \texttt{pspm\_extract\_segments} in auto mode tests and which options
+should be set.
+\begin{itemize}
+\item nan\_output: This option defines whether the user wants to output
+the NaN ratios of the trials for each condition. If so, we values
+can be printed on the screen (on MATLAB command window) or written
+to a created file.
+\item nan\_ratio: Defines ratio of NaN values in the generated test data
+\item nr\_trail: Number of trails in the generated test data
+\end{itemize}
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input}
+
+Function name: invalid\_input(this) \\
+Description: Checks for warnings, if the input arguments are invalid.
+
+Tests: \\
+\begin{tabular}{|>{\centering}p{6cm}|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+pspm\_extract\_segments() & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_extract\_segments('a','b') & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_extract\_segments('manual',fn,0) & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_extract\_segments('manual',struct('a',10),0,timing) & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_extract\_segments('manual',{[}1,3{]},logical(32),timing) & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_extract\_segments('manual',fn,'a',timing) & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_extract\_segments('manual',fn,\{'a'\},timing) & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_extract\_segments('auto',\{1\}) & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_extract\_segments('auto','some') & ID:invalid\_input\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Test manual mode with indicated length}
+
+Function name: test\_manual\_length(this,nr\_trial,nan\_ratio)\\
+Desctiption: Checks for equality of produced segments by pspm\_extract\_segments
+with manually computed segments\\
+\\
+Tests:
+\begin{enumerate}
+\item Generate segments form test data.
+\item Test if function call wirked WarningFree
+\item Test if variable 'segments' existis in output
+\item Test if correct number of segments were produced
+\item Test each segment holds correct data 
+\end{enumerate}
+
+\subsubsection*{Test manual mode with durations}
+
+Function name: test\_manual\_duration(this,nr\_trial,nan\_ratio)\\
+Desctiption: Checks for equality of produced segments by pspm\_extract\_segments
+with manually computed segments\\
+\\
+Tests:
+\begin{enumerate}
+\item Generate segments form test data.
+\item Test if function call wirked WarningFree
+\item Test if variable 'segments' existis in output
+\item Test if correct number of segments were produced
+\item Test each segment holds correct data
+\end{enumerate}
+
+\subsubsection*{Test auto mode with GLM using marker onsets}
+
+Function name: \texttt{test\_auto\_mode\_glm\_with\_markers(this)}\\
+Description: Runs \texttt{pspm\_extract\_segments} with a particular
+GLM model stored in \texttt{ImportTestData/fitted\_models} and compares
+the results to manually calculated results.\\
+\\
+Tests:
+\begin{enumerate}
+\item Test if length of the returned cell array (from now on called \texttt{segments})
+is the same as the number of conditions
+\item Test if shape of data arrays in each element of \texttt{segments}
+agrees with the passed durations and number of onsets.
+\item Test if \texttt{segments.trial\_idx} agrees with input data.
+\item Test if statistics calculated manually from \texttt{segments.data}
+is the same as \texttt{segments.mean} and \texttt{segments.std}.
+\item Compute each statistic field in each element of \texttt{segments}
+manually using the input data and compare the results to \texttt{segments}.
+\end{enumerate}
+
+\subsubsection*{Test auto mode with GLM using second onsets}
+
+Function name: \texttt{test\_auto\_mode\_glm\_with\_seconds(this)}\\
+Description: Do the exact same tests as in \texttt{test\_auto\_mode\_glm\_with\_markers}
+but this time using seconds to specify onsets.
+
+\subsubsection*{Test auto mode with DCM}
+
+Note: Since in DCM case onsets are calculated using trial start and
+end seconds of DCM trials, there is no second/marker distinction in
+DCM test.\\
+Function name: \texttt{test\_auto\_mode\_dcm(this)}\\
+Description: Runs \texttt{pspm\_extract\_segments} with a particular
+DCM model stored in \texttt{ImportTestData/fitted\_models} and compares
+the results to manually calculated results. In order to get meaningful
+condition statistic information this test function assigns the same
+trial name to certain groups of trials.\\
+\\
+Tests: Do the exact same tests as in \texttt{test\_auto\_mode\_glm\_with\_markers}
+by adapting the computation steps to DCM case.
+
+\subsection{Testcases: pspm\_find\_sounds}
+
+\subsubsection{Information}
+
+Testclass: pspm\_find\_sounds\_test\\
+Function: {[}sts, infos{]} = pspm\_find\_sounds(file, options)
+
+\subsubsection{Setup}
+
+This test class is parameterized. The test data is generated by the
+function itself and when needed, files will be written to testdatafile<variable\_nr>.mat.
+
+\subsubsection*{Test parameters}
+
+These are parameters which define what kind of data should be passed
+to pspm\_find\_sounds and which options should be set.\\
+\begin{tabular}{|c|>{\raggedright}p{10cm}|}
+\hline 
+\textbf{Channel output} & Specifies whether 'all' found markers or only 'corrected' markers
+should be returned.\tabularnewline
+\hline 
+\textbf{Max delay} & Varies the max delay option and defines how far away a marker at most
+can be.\tabularnewline
+\hline 
+\textbf{Min delay} & Varies the min delay option and defines how far away a marker at least
+should be.\tabularnewline
+\hline 
+\textbf{Threshold} & Defines the minimum size of a marker to be recognized as a marker
+event. Passed in percent of the maximum amplitude of the recorded
+data.\tabularnewline
+\hline 
+\textbf{Resample} & Defines whether the function should resample (and interpolate) the
+data to a higher sample rate in order to get more exact marker findings.\tabularnewline
+\hline 
+\textbf{Channel action} & Defines whether a newly created marker channel should replace the
+existing marker channel or should be added as a new marker channel.\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input}
+
+Function name: invalid\_input(this) \\
+Description: Checks for warnings, if the input arguments are invalid.
+\\
+\\
+Tests: \\
+\begin{tabular}{|>{\centering}p{6cm}|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+pspm\_find\_sounds('') & ID:file\_not\_found\tabularnewline
+\hline 
+pspm\_find\_sounds(fn) {[}invalid pspm file{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_sounds(fn) {[}pspm file without a 'snd' channel{]} & ID:no\_sound\_chan\tabularnewline
+\hline 
+pspm\_find\_sounds(fn, o) {[}invalid values for positive integer fields{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_sounds(fn, o) {[}invalid values for positive numeric fields{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_sounds(fn, o) {[}invalid values for logic fields{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_sounds(fn, o) {[}invalid channel ids for channel fields{]} & ID:out\_of\_range\tabularnewline
+\hline 
+pspm\_find\_sounds(fn, o) {[}enabled diagnostics without a marker
+channel{]} & ID:no\_marker\_chan\tabularnewline
+\hline 
+pspm\_find\_sounds(fn, o) {[}invalid values for channelaction{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_sounds(fn, o) {[}invalid values for roi{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_sounds(fn, o) {[}maxdelay < mindelay{]} & ID:invalid\_input\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Test add channel}
+
+Function name: test\_add\_channel(this, channeloutput, max\_delay,
+resample, channelaction)\\
+Description: Test add channel with different options. Diagnostics
+is always enabled, Channel output, Max delay, Resample and Channel
+action are varied. Once pspm\_find\_sounds is complete, the function
+tests if the returned data has the expected format.\\
+\\
+Tests:
+\begin{enumerate}
+\item Generate data with channel 'snd' and 'marker'; and count amount of
+reference markers
+\item Set
+
+\begin{enumerate}
+\item options according to test parameters
+\item diagnostics to 1
+\end{enumerate}
+\item Test if function runs through without warning
+\item Test if returned data has the correct format
+\item Test if channels has been added or replaced
+\item Test if added channel has correct amount of data
+\end{enumerate}
+
+\subsubsection*{Test region count}
+
+Function name: test\_region\_count(this)\\
+Description: Test region of interest in combination with expected
+sound count.\\
+\\
+Tests:
+\begin{enumerate}
+\item Generate data with channel 'snd' and 'marker'
+\item Test if function finds the function finds all markers in the whole
+file
+\item Test if function finds all the markers in the whole file with initial
+threshold 1
+\item Test if function finds half of the markers in half of the file
+\end{enumerate}
+
+\subsubsection*{Test threshold}
+
+Function name: test\_threshold(this, threshold)\\
+Description: Vary the threshold option and test whether the functions
+returnes the expected data.\\
+\\
+Tests:
+\begin{enumerate}
+\item Generate data with channel 'snd' and 'marker'
+\item Set
+
+\begin{enumerate}
+\item threshold according to test parameter
+\item diagnostics to 1
+\end{enumerate}
+\item Test if function runs through without warning
+\item Test if returned data has the correct format
+\end{enumerate}
+
+\subsubsection*{Test plot}
+
+Function name: test\_plot(this, threshold)\\
+Description: Test if the plot functions returne the expected data
+and runs through without warning.\\
+\\
+Tests:
+\begin{enumerate}
+\item Generate data with channel 'snd' and 'marker'
+\item Set
+
+\begin{enumerate}
+\item plot to 1
+\item diagnostics to 1
+\end{enumerate}
+\item Test if function runs through without warning
+\item Test if returned data has the correct format
+\end{enumerate}
+
+\subsection{Testcases: pspm\_find\_valid\_fixations}
+
+\subsubsection{Information}
+
+Testclass: pspm\_find\_valid\_fixations\_test\\
+Function: {[}sts, out\_file{]} = pspm\_find\_valid\_fixations(fn,
+options)
+
+\subsubsection{Setup}
+
+This test class is parameterized. The test data is generated by the
+function itself and when needed, files will be written to testdatafile<variable\_nr>.mat.
+
+\paragraph*{Test parameters}
+
+These are parameters which define what kind of data should be passed
+to pspm\_find\_valid\_fixations and which options should be set.\\
+\begin{tabular}{|c|>{\raggedright}p{10cm}|}
+\hline 
+\textbf{Distance} & Used for gaze validation; defines the distance between eyes and screen.\tabularnewline
+\hline 
+\textbf{Aspect used} & Used for gaze validation; defines the aspect ratio set in the software.\tabularnewline
+\hline 
+\textbf{Aspect actual} & Used for gaze validation; defines the aspect ratio of the hardware.\tabularnewline
+\hline 
+\textbf{Screen size} & Used for gaze validation; defines the size of the screen in inches.\tabularnewline
+\hline 
+\textbf{Eyes} & Is used for data generation and tells the function for which eyes
+data should be generated.\tabularnewline
+\hline 
+\textbf{Channel action} & Defines whether to 'add' or 'replace' existing channels.\tabularnewline
+\hline 
+\textbf{Newfile} & Defines whether to create a new file or extend the existing file.\tabularnewline
+\hline 
+\textbf{Overwrite} & Defines whether to overwrite the existing file or not.\tabularnewline
+\hline 
+\textbf{Interpolate} & Defines whether to interpolate NaN values in validated channels or
+not.\tabularnewline
+\hline 
+\textbf{Missing} & Defines whether to create a channel which holds information about
+which positions have been set to NaN (and may have been interpolated
+afterwards).\tabularnewline
+\hline 
+\textbf{Work eye} & Defines which eyes should be used for fixation validation.\tabularnewline
+\hline 
+\textbf{Work chans} & Defines which channels should be set to NaN during invalid fixations.\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input}
+
+Function name: invalid\_input(this) \\
+Description: Checks for warnings, if the input arguments are invalid.
+\\
+\\
+Tests: \\
+\begin{tabular}{|>{\centering}p{6cm}|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+pspm\_find\_valid\_fixations() & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_valid\_fixations('a') & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_valid\_fixations(fn, options) {[}invalid options.validate\_fixations{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_valid\_fixations(fn, options) {[}invalid options.box\_degree{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_valid\_fixations(fn, options) {[}invalid options.screen\_settings{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_valid\_fixations(fn, options) {[}missing fields for options.screen\_settings{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_valid\_fixations(fn, options) {[}invalid options.aspect\_actual{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_valid\_fixations(fn, options) {[}invalid options.aspect\_used{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_valid\_fixations(fn, options) {[}invalid options.bitmap{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_valid\_fixations(fn, options) {[}invalid options.display\_size{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_valid\_fixations(fn, options) {[}invalid options.display\_size{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_valid\_fixations(fn, options) {[}invalid options.fixation\_point{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_valid\_fixations(fn, options) {[}invalid options.channel\_action{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_valid\_fixations(fn, options) {[}invalid options.newfile{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_valid\_fixations(fn, options) {[}invalid options.overwrite{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_valid\_fixations(fn, options) {[}invalid options.interpolate{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_valid\_fixations(fn, options) {[}invalid options.missing{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_valid\_fixations(fn, options) {[}invalid eyes{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_find\_valid\_fixations(fn, options) {[}invalid options.channels{]} & ID:invalid\_input\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Test work chans}
+
+Function name: test\_work\_chans(this, work\_chans)\\
+Description: Tests whether the option 'channels' actually works on
+the specified channels or not.\\
+\\
+Tests:
+\begin{enumerate}
+\item Generate data with distance 500, aspect\_used 16:9, aspect\_actual
+4:3, screen\_size 20 and eyes 'lr'
+\item Set options with
+
+\begin{enumerate}
+\item overwrite = 1
+\item channels = work\_chans
+\item channel\_action = 'add'
+\end{enumerate}
+\item Test if function runs through without warning
+\item Test if sts equals 1
+\item Test if specified work\_chans are added as new processed channels
+\end{enumerate}
+
+\subsubsection*{Test work eye}
+
+Function name: test\_work\_eye(this, work\_eye)\\
+Description: Test whether the option 'eyes' actually works on the
+specified eyes or not.\\
+\\
+Tests:
+\begin{enumerate}
+\item Generate data with distance 500, aspect\_used 16:9, aspect\_actual
+4:3, screen\_size 20 and eyes 'lr'
+\item Set options with
+
+\begin{enumerate}
+\item overwrite = 1
+\item eyes = work\_eye
+\item channel\_action = 'add'
+\end{enumerate}
+\item Test if function runs through without warning
+\item Test if sts equals 1
+\item Test if specified eyes have been processed accordingly and test if
+not specified eyes have ignored.
+\end{enumerate}
+
+\subsubsection*{Test missing}
+
+Function name: test\_missing(this, missing)\\
+Description: Test whether for each a a new missing channel is created
+if missing is specified as true.\\
+\\
+Tests:
+\begin{enumerate}
+\item Generate data with distance 500, aspect\_used 16:9, aspect\_actual
+4:3, screen\_size 20 and eyes 'lr'
+\item Set options with
+
+\begin{enumerate}
+\item overwrite = 1
+\item missing = missing
+\item channel\_action = 'add'
+\end{enumerate}
+\item Test if function runs through without warning
+\item Test if sts equals 1
+\item Depending on the status of 'missing' test if there are any missing
+channels or if there is no missing channel
+\end{enumerate}
+
+\subsubsection*{Test interpolate}
+
+Function name: test\_interpolate(this, interpolate)\\
+Description: Test whether data is interpolated during periods which
+are set to NaN by the function.\\
+\\
+Tests:
+\begin{enumerate}
+\item Generate data with distance 500, aspect\_used 16:9, aspect\_actual
+4:3, screen\_size 20 and eyes 'lr'
+\item Set options with
+
+\begin{enumerate}
+\item overwrite = 1
+\item interpolate = interpolate
+\item channel\_action = 'add'
+\end{enumerate}
+\item Test if function runs through without warning
+\item Test if sts equals 1
+\item Depending on the status of 'interpolate' test whether there are some
+NaN values or if NaN periods have been interpolated accordingly.
+\end{enumerate}
+
+\subsubsection*{Test overwrite}
+
+Function name: test\_overwrite(this, overwrite)\\
+Description: Test if files are overwritten, if specified with 'overwrite'
+option.\\
+\\
+Tests:
+\begin{enumerate}
+\item Generate data with distance 500, aspect\_used 16:9, aspect\_actual
+4:3, screen\_size 20 and eyes 'lr'
+\item Set options with
+
+\begin{enumerate}
+\item overwrite = 1
+\item interpolate = interpolate
+\item channel\_action = 'add'
+\end{enumerate}
+\item Test if function runs through without warning
+\item Test if sts equals 1
+\item Test if file has been overwritten or not (tests, if there are any
+new channels).
+\end{enumerate}
+
+\subsubsection*{Test channel action}
+
+Function name: test\_channel\_action(this, channel\_action)\\
+Description: Test if channels are added or replaced (according to
+channel\_action).\\
+\\
+Tests:
+\begin{enumerate}
+\item Generate data with distance 500, aspect\_used 16:9, aspect\_actual
+4:3, screen\_size 20 and eyes 'lr'
+\item Set options with
+
+\begin{enumerate}
+\item overwrite = 1
+\item channel\_action = channel\_action
+\end{enumerate}
+\item Test if function runs through without warning
+\item Test if sts equals 1
+\item Test if channels have been added or replaced (tests, if there are
+any new channels).
+\end{enumerate}
+
+\subsubsection*{Test newfile}
+
+Function name: test\_newfile(this, newfile)\\
+Description: Test whether the output is written to a newfile or to
+the input file.\\
+\\
+Tests:
+\begin{enumerate}
+\item Generate data with distance 500, aspect\_used 16:9, aspect\_actual
+4:3, screen\_size 20 and eyes 'lr'
+\item Set options with
+
+\begin{enumerate}
+\item overwrite = 1
+\item if newfile enabled
+\begin{enumerate}
+\item search for new file name
+\item set options.newfile to new file name
+\end{enumerate}
+\item if newfile is disabled, set options.newfile to ''
+\end{enumerate}
+\item Test if function runs through without warning
+\item Test if sts equals 1
+\item Test if returned outputfile equals the specified newfile or not (depending
+on the value of 'newfile')
+\end{enumerate}
+
+\subsubsection*{Test gaze validation}
+
+Function name: test\_gaze\_validation(this, distance, screen\_size,
+aspect\_actual, aspect\_used, eyes)\\
+Description: Test whether gaze validation is done correctly.\\
+\\
+Tests:
+\begin{enumerate}
+\item Generate data with the according function parameters
+\item Iterate to returned degree values generated by the generation function
+
+\begin{enumerate}
+\item set function options
+\begin{enumerate}
+\item overewrite = 1
+\item validate\_fixation =1
+\item screen\_settings and distance to function call settings
+\item missing = 1
+\end{enumerate}
+\item depending on the specified degree, test whether function runs through
+without warnings or not
+\item load outputfile and test if (according to degree expectation) gaze
+validation has been done or not
+\end{enumerate}
+\end{enumerate}
+
+\subsubsection*{Test bitmap validtion}
+
+Function name: test\_bitmap\_validation(this, distance, resolution,
+eyes)\\
+Description: Test whether bitmap validation is done correctly.\\
+\\
+Tests:
+\begin{enumerate}
+\item Generate data with the according function parameters
+\item Iterate to returned bitmaps generated by the generation function
+
+\begin{enumerate}
+\item set function options
+\begin{enumerate}
+\item missing = 1
+\end{enumerate}
+\item ddepending on the specified number of valid fixations in the bitmap,
+test whether function runs through without warnings or not
+\item load outputfile and test if (according to bitmap expectation) bitmap
+validation has been done or not
+\end{enumerate}
+\end{enumerate}
+
+\subsection{Testcases: pspm\_get\_ecg}
+
+\subsubsection{Information}
+
+Testclass: pspm\_get\_ecg\_test \\
+Function: {[}sts, data{]} = pspm\_get\_ecg(import) 
+
+\subsubsection{Testcases}
+
+\subsubsection*{Test}
+
+Function name: test(this) \\
+Description: Test if all fields are returned correctly \\
+\\
+Tests: 
+\begin{enumerate}
+\item Test if \textquoteleft sts\textquoteright{} is equal 1.
+\item Test if data.data is equal import.data
+\item Test if data.header.chantype is \textquoteleft ecg\textquoteright{}
+\item Test if data.header.units is equal import.units
+\item Test if data.header.sr is equal import.sr 
+\end{enumerate}
+
+\subsection{Testcases: pspm\_get\_events}
+
+\subsubsection{Information}
+
+Testclass: pspm\_get\_events\_test \\
+Function: {[}sts, import{]} = pspm\_get\_events(import) 
+
+\subsubsection{Testcases}
+
+\subsubsection*{Check warnings}
+
+Function name: check\_warnings(this) \\
+Description: Checks for warnings, if the field \textquoteleft .markers\textquoteright{}
+is missing or contains invalid content. \\
+\\
+Tests: 
+
+\begin{tabular}{|c|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+Missing marker field & ID:nonexistent\_field\tabularnewline
+\hline 
+import.marker = \textquoteleft foo\textquoteright{} & ID:invalid\_field\_content\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Timestamps}
+
+Function name: timestamps(this) \\
+Description: Checks for correct output if the input is timestamp data
+\\
+\\
+Tests:
+\begin{enumerate}
+\item Test if \textquoteleft sts\textquoteright{} is equal 1.
+\item Test if the length of the output data is equal to the length of the
+input data 
+\end{enumerate}
+
+\subsubsection*{Continuous}
+
+Function name: continuous(this) \\
+Description: Checks for correct output if the input is continuous
+data \\
+\\
+Tests:
+\begin{enumerate}
+\item Perform three tests with different settings
+
+Tests:
+\begin{enumerate}
+\item Test if \textquoteleft sts\textquoteright{} is equal 1.
+\item Test if the length of the field 'markerinfo' is equal to the length
+of the output data.
+\item Test if the length of the output data is equal to the expected number
+of pulses in the input data.
+\end{enumerate}
+Settings:
+\begin{enumerate}
+\item flank = \textquoteleft both\textquoteright{} (default)
+\item flank = 'both' \& data offset 50
+\item flank = \textquoteleft ascending\textquoteright{}
+\item flank = \textquoteleft descending\textquoteright{}
+\item inverted input signal
+\item signal with angular flanks 
+\item check with
+\end{enumerate}
+\item Additional test for setting (b): Test if data offset has been removed
+in the output data.
+\item Additional test for setting (c) and (d): Test if positions returned
+by output data correspond to flank changes in the input data.
+\item Test if markerinfo is not set if it has been set before.
+\end{enumerate}
+
+\subsection{Testcases: pspm\_get\_eyelink}
+
+\subsubsection{Information}
+
+Testclass: pspm\_get\_eyelink\_test \\
+Function: {[}sts, data{]} = pspm\_get\_eyelink(import) 
+
+\subsubsection{Methods}
+
+\subsubsection*{set\_import\_values}
+
+Function : {[}import\_struct, channel typles{]} = set\_import\_values(this)\\
+Description: Helperfunction, which creates an import data set and
+the expected channel data set 
+
+\subsubsection*{verify\_basic\_data\_structure}
+
+Function name: verify\_basic\_data\_structure(this, data, sourceinfo,
+channel\_types)\\
+Description: Tests if the returned data structure is valid and match
+a given expected pattern.\\
+\\
+Tests:
+\begin{enumerate}
+\item Test if all channels are numeric
+\item Test if recorded time and date have a valid format
+\item Test if blink channels have correct unit
+\item Test if pupil channels have either 'diameter' or 'area' as unit
+\item Test if channels labeled with 'position' have unit 'pixel'
+\item Test if channels labeled with 'blink' have unit 'blink'
+\end{enumerate}
+
+\subsubsection{Testcases}
+
+\subsubsection*{test\_multi\_session}
+
+Function name: test\_multi\_session(this)\\
+Description: Test if the returned data structure fits into the pattern
+of a multi session data set.\\
+\\
+Tests:
+\begin{enumerate}
+\item Calls 'set\_import\_values(this)' to get import data set and expected
+channel data set 
+\item passses returned sets to 'verify\_basic\_data\_structure()'
+\end{enumerate}
+
+\subsubsection*{test\_two\_eyes}
+
+Function name: test\_two\_eyes(this)\\
+Description: Test if the returned data structure fits into the pattern
+of a two eyes data set.\\
+\\
+Tests:
+\begin{enumerate}
+\item Calls 'set\_import\_values(this)' to get import data set and expected
+channel data set 
+\item passes returned sets to 'verify\_basic\_data\_structure()'
+\end{enumerate}
+
+\subsubsection*{test\_one\_eye}
+
+Function name: test\_one\_eye(this)\\
+Description: Test if the returned data structure fits into the pattern
+of a one eye data set.\\
+\\
+Tests:
+\begin{enumerate}
+\item Creates an import data set and the expected channel data set an pass
+it to 'verify\_basic\_data\_structure()'
+\end{enumerate}
+
+\subsubsection*{test\_track\_dist}
+
+Function name: test\_track\_dist(this)\\
+Description: Test if the returned data structure fits into the pattern
+of a two eyes data with eyelink\_trackdist set.\\
+\\
+Tests:
+\begin{enumerate}
+\item Calls 'set\_import\_values(this)' to get import data set and expected
+channel data set 
+\item owerwrites some import data and channel data
+\item pass returned sets to 'verify\_basic\_data\_structure()'
+\end{enumerate}
+
+\subsection{Testcases: pspm\_get\_hb}
+
+\subsubsection{Information}
+
+Testclass: pspm\_get\_hb\_test \\
+Function: {[}sts, data{]} = pspm\_get\_hb(import) 
+
+\subsubsection{Testcases}
+
+\subsubsection*{Test}
+
+Function name: test(this) \\
+Description: Test if all fields are returned correctly \\
+\\
+Tests:
+\begin{enumerate}
+\item Test if \textquoteleft sts\textquoteright{} is equal 1.
+\item Test if data.data is equal import.data
+\item Test if data.header.chantype is \textquoteleft hb\textquoteright{}
+\item Test if data.header.units is \textquoteleft events\textquoteright{}
+\item Test if data.header.sr is 1 
+\end{enumerate}
+
+\subsection{Testcases: pspm\_get\_hr}
+
+\subsubsection{Information}
+
+Testclass: pspm\_get\_hr\_test \\
+Function: {[}sts, data{]} = pspm\_get\_hr(import) 
+
+\subsubsection{Testcases}
+
+\subsubsection*{Test}
+
+Function name: test(this) \\
+Description: Test if all fields are returned correctly \\
+\\
+Tests:
+\begin{enumerate}
+\item Test if \textquoteleft sts\textquoteright{} is equal 1.
+\item Test if data.data is equal import.data
+\item Test if data.header.chantype is \textquoteleft hr\textquoteright{}
+\item Test if data.header.units is equal import.units
+\item Test if data.header.sr is equal import.sr 
+\end{enumerate}
+
+\subsection{Testcases: pspm\_get\_marker}
+
+\subsubsection{Information}
+
+Testclass: pspm\_get\_marker\_test \\
+Function: {[}sts, data{]} = pspm\_get\_marker(import) 
+
+\subsubsection{Testcases}
+
+\subsubsection*{Test}
+
+Function name: test(this) \\
+Description: Test if all fields are returned correctly \\
+\\
+Tests:
+\begin{enumerate}
+\item Test if \textquoteleft sts\textquoteright{} is equal 1.
+\item Test if data.data is equal import.data
+\item Test if data.header.chantype is \textquoteleft marker\textquoteright{}
+\item Test if data.header.units is \textquoteleft events\textquoteright{}
+\item Test if data.header.sr is 1 
+\end{enumerate}
+
+\subsection{Testcases: pspm\_get\_pupil}
+
+\subsubsection{Information}
+
+Testclass: pspm\_get\_pupil\_test \\
+Function: {[}sts, data{]} = pspm\_get\_pupil(import) 
+
+\subsubsection{Testcases}
+
+\subsubsection*{Test}
+
+Function name: test(this) \\
+Description: Test if all fields are returned correctly \\
+\\
+Tests:
+\begin{enumerate}
+\item Test if \textquoteleft sts\textquoteright{} is equal 1.
+\item Test if data.data is equal import.data
+\item Test if data.header.chantype is \textquoteleft pupil\textquoteright{}
+\item Test if data.header.units is equal import.units
+\item Test if data.header.sr is equal import.sr 
+\end{enumerate}
+
+\subsection{Testcases: pspm\_get\_resp}
+
+\subsubsection{Information}
+
+Testclass: pspm\_get\_resp\_test \\
+Function: {[}sts, data{]} = pspm\_get\_resp(import) 
+
+\subsubsection{Testcases}
+
+\subsubsection*{Test}
+
+Function name: test(this) \\
+Description: Test if all fields are returned correctly \\
+\\
+Tests:
+\begin{enumerate}
+\item Test if \textquoteleft sts\textquoteright{} is equal 1.
+\item Test if data.data is equal import.data
+\item Test if data.header.chantype is \textquoteleft resp\textquoteright{}
+\item Test if data.header.units is equal import.units
+\item Test if data.header.sr is equal import.sr 
+\end{enumerate}
+
+\subsection{Testcases: pspm\_get\_scr}
+
+\subsubsection{Information}
+
+Testclass: pspm\_get\_scr\_test \\
+Function: {[}sts, data{]} = pspm\_get\_scr(import) 
+
+\subsubsection{Testcases}
+
+There are three test functions. One for the case that no transfer
+parameters are defined, one for the case that the transfer parameters
+are defined in a struct and one for the case that they are defined
+in a .mat file. They are all performing the following tests, plus
+eventually some individual tests\\
+\\
+Tests:
+\begin{enumerate}
+\item Test if \textquoteleft sts\textquoteright{} is equal 1.
+\item Test if the field data.data exists
+\item Test if the field data.data is not empty
+\item Test if the field data.header.units exists
+\item Test if the field data.header.sr exists
+\item Test if the field data.header.chantype exists
+\item Test if data.header.sr is equal import.sr
+\item Test if data.header.chantype is \textquoteleft scr\textquoteright{} 
+\end{enumerate}
+
+\subsubsection*{No transfer parameters}
+
+Function name: no\_transferparams(testCase) \\
+Description: Test if all fields are returned correctly, if no transfer
+parameters are defined. \\
+\\
+Additional Tests: \\
+\\
+No additional tests 
+
+\subsubsection*{Struct transfer parameters}
+
+Function name: stuct\_transferparams(testCase) \\
+Description: Test if all fields are returned correctly, if the transfer
+parameters are defined in a struct. \\
+\\
+Additional Tests:
+\begin{enumerate}
+\item Check for warning if the conversion constant (import.transfer.c) is
+not defined
+\item Checks that there are no warnings if import.transfer.Rs or import.transfer.offset
+is not defined. 
+\end{enumerate}
+
+\subsubsection*{File transfer parameters}
+
+Function name: file\_transferparams(testCase) \\
+Description: Test if all fields are returned correctly, if the transfer
+parameters are defined in a .mat file. \\
+\\
+Additional Tests:
+\begin{enumerate}
+\item Check for warning if the transfer parameter file doesn\textquoteright t
+exist. 
+\end{enumerate}
+
+\subsection{Testcases: pspm\_get\_timing}
+
+\subsubsection{Information}
+
+Testclass: pspm\_get\_timing\_test \\
+Function: \\
+{[}sts, multi{]} = pspm\_get\_timing('onsets', intiming, timeunits)
+\\
+{[}sts, events{]} = pspm\_get\_timing('markervalues', markerinfo,
+names)\\
+{[}sts, epochs{]} = pspm\_get\_timing('epochs', epochs) \\
+{[}sts, events{]} = pspm\_get\_timing('events', events)\\
+
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input arguments}
+
+Function name: invalid\_inputargs(this) \\
+Description: Checks for warnings, if the input arguments are invalid.
+\\
+\\
+Tests: 
+
+\begin{tabular}{|>{\centering}p{6cm}|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+pspm\_get\_timing('epochs') {[}missing input var{]} & ID:invalid\_input \tabularnewline
+\hline 
+pspm\_get\_timing('onsets', 'str') {[}no timeunits var{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_get\_timing('foo') {[}unknown format{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_get\_timing('onsets', intiming, 'samples') {[}two sessions with
+nonmatching number of conditions{]} & ID:number\_of\_elements\_dont\_match\tabularnewline
+\hline 
+pspm\_get\_timing('onsets', intiming, 'samples') {[}two sessions with
+nonmatching condition names{]} & ID:event\_names\_dont\_match\tabularnewline
+\hline 
+pspm\_get\_timing('onsets', intiming, 'samples') {[}intiming.onsets\{1\}
+is no numeric vector{]} & ID:no\_numeric\_vector\tabularnewline
+\hline 
+pspm\_get\_timing('epochs', fn\_mat, 'samples') {[}epochs is not an
+integer array{]} & ID:no\_integers\tabularnewline
+\hline 
+pspm\_get\_timing('markervalues', markerinfo) {[}no markervalue and
+no name {]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_get\_timing('markervalues', markerinfo, markervalue, names)
+{[}markervalue is not of numeric type nor a cell array{]}  & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_get\_timing('markervalues', markerinfo, markervalue, names)
+{[}markervalue and names are not of the same length{]} & ID:invalid\_input\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Case Epochs}
+
+Function name: case\_epochs(this) \\
+Description: Checks the function in \textquoteleft epochs\textquoteright{}
+mode. \\
+Function: {[}sts, epochs{]} = pspm\_get\_timing('epochs', epochs) 
+
+\subsubsection*{Test 1 (matfile input)}
+
+Input: mat file with variable: epochs = {[}1 4; 2 5; 3 6{]} \\
+\\
+Check if sts==1 and if the return value is equal the input array. 
+
+\subsubsection*{Test 2 (spm input)}
+
+Input: mat file with variable: onsets\{1\} = {[}1 2 3{]}';onsets\{2\}
+= {[}4 5 6{]}'; \\
+\\
+Check if sts==1 and if the return value is equal {[}onsets\{1\}, onsets\{2\}{]}. 
+
+\subsubsection*{Test 3 (textfile input)}
+
+Input: textfile with variable: epochs = {[}1 4; 2 5; 3 6{]} \\
+\\
+Check if sts==1 and if the return value is equal the input array. 
+
+\subsubsection*{Test 4 (matrix input)}
+
+Input: matrix: epochs = {[}1 4; 2 5; 3 6{]} \\
+\\
+Check if sts==1 and if the return value is equal the input array. 
+
+\subsubsection*{Case onsets}
+
+Function name: case\_onsets(this) \\
+Description: Checks the function in \textquoteleft onsets\textquoteright{}
+mode. \\
+Function: {[}sts, multi{]} = pspm\_get\_timing('onsets', intiming,
+timeunits) 
+
+\subsubsection*{Test 1}
+
+Input: mat file with the variables: \\
+names = \{'name1', 'name2'\}; \\
+onsets = \{{[}1 2{]}, {[}3 4{]}\}; \\
+pmod.name = \{'name3', 'name4'\}; \\
+pmod.param = \{{[}2 3{]}, {[}4 5{]}\}; \\
+pmod.poly = \{2, 2\}; \\
+save(fn\_mat, 'names', 'onsets', 'pmod'); \\
+\\
+Function call: \\
+{[}sts, outtiming{]} = pspm\_get\_timing('onsets', fn\_mat, 'samples');\\
+\\
+Tests: \\
+Check if sts==1, if onsets and names are unchanged and if \\
+outtiming.pmod.param == \{{[}2 3{]}, {[}4 9{]}, {[}4 5{]}, {[}16 25{]}\} 
+
+\subsubsection*{Test 2}
+
+Input: \\
+mat file with the variables: names = \{'name1', 'name2'\}; \\
+onsets = \{{[}1 2 3{]}, {[}3 4 5{]}\}; durations = \{{[}3 4 5{]}',
+{[}5 6 7{]}'\}; \\
+pmod.name = \{'name3', 'name4'\}; \\
+pmod.param = \{{[}2 3 4{]}, {[}4 5 6{]}\}; \\
+pmod.poly = \{2, 1\};\\
+\\
+Function call: \\
+{[}sts, outtiming{]} = pspm\_get\_timing('onsets', fn\_mat, 'samples');\\
+\\
+Tests: \\
+Check if sts==1, if onsets,names and durations are unchanged and if
+\\
+outtiming.pmod.param == \{{[}2 3 4{]}, {[}4 9 16{]}, {[}4 5 6{]}\} 
+
+\subsubsection*{Case events}
+
+Function name: case\_events(this) \\
+Description: Checks the function in \textquoteleft events\textquoteright{}
+mode. \\
+Function: {[}sts, epochs{]} = pspm\_get\_timing('events', events)
+\\
+\\
+Check the function if input is a one element cell array and a multiple
+element cell array. Check for warnings (ID:invalid\_vector\_size)
+if elements have more than two columns and if not all elements have
+the same number of rows.
+
+\subsection{Testcases: pspm\_get\_<datatype>}
+
+\subsubsection{Information}
+
+The datatype import functions are all tested in a similar way. The
+individual testclasses must inherit the class \textquoteleft pspm\_get\_superclass\textquoteright ,
+from which they inherit the main test function \textquoteleft valid\_datafile\textquoteright .
+They also have to implement the property \textquoteleft fhandle\textquoteright ,
+which is a function handle to the specific import function. \\
+\\
+The tests are performed with the sampledata files that are listed
+in the SampleDataMasterList.docx file (as at 18.11.2013). \\
+\\
+Superclass: pspm\_get\_superclass\\
+\\
+Testclasses: pspm\_get\_acq\_test \\
+pspm\_get\_acqmat\_test \\
+pspm\_get\_biograph\_test \\
+pspm\_get\_biosemi\_test \\
+pspm\_get\_biotrace\_test \\
+pspm\_get\_brainvis\_test\\
+pspm\_get\_edf\\
+pspm\_get\_labchartmat\_ext\_test \\
+pspm\_get\_labchartmat\_in\_test \\
+pspm\_get\_mat\_test \\
+pspm\_get\_obs\_test \\
+pspm\_get\_spike\_test \\
+pspm\_get\_superclass \\
+pspm\_get\_txt\_test \\
+pspm\_get\_vario\_test\\
+pspm\_get\_eyelink\_test\\
+\\
+Function: {[}sts, import, sourceinfo{]} = pspm\_get\_<datatype>(datafile,
+import) 
+
+\subsubsection{Notes}
+
+\subsubsection{Setup}
+
+\subsubsection*{define testcases}
+
+In this method the testcases are defined and the testdata is generated
+(if needed). Each testcase is a cell in the cellarray \textquoteleft testcases\textquoteright .
+Each testcase has the following fields:
+\begin{itemize}
+\item .pth: the path to the samplefile
+\item .import: the input variable
+\end{itemize}
+For datatypes which support blocks there has to be an additional field:
+\begin{itemize}
+\item .numofblocks 
+\end{itemize}
+
+\subsubsection{Testcases}
+
+\subsubsection*{Valid datafile}
+
+Function name: valid\_datafile(this) \\
+\\
+Description: The main test function, for tests with valid inputdata.
+It tests all testcases equally. \\
+\\
+Tests:
+\begin{enumerate}
+\item Test if \textquoteleft sts\textquoteright{} is equal 1.
+\item If the datatype supports blocks, test if the number of blocks is correct.
+\item Test if number of elements of the returned \textquoteleft import\textquoteright{}
+variable is correct.
+\item Test if each importjob has a field \textquoteleft data\textquoteright ,
+that is a numeric vector.
+\item Test if each importjob has a field \textquoteleft sr\textquoteright ,
+that is a number.
+\item Test if each importjob has a field \textquoteleft type\textquoteright .
+\item Test if all event importjobs have a field \textquoteleft marker\textquoteright .
+\item Test if all importjobs have duration below 1h.
+\item Test if all importjobs have a samplerate between 1 and 10000 for continuous
+channels or between 10\textasciicircum -6 and 1 for timestamp channels. 
+\end{enumerate}
+
+\subsubsection*{invalid datafile}
+
+Function name: invalid\_datafile(this) \\
+Description: The main test function, for tests with invalid inputdata.
+\\
+\\
+Tests: \\
+\\
+If the datatype supports multiple channels: Check for warning when
+trying to import a channel, that is not contained in the file ('ID:channel\_not\_contained\_in\_file'). 
+
+\subsection{Testcases: pspm\_get\_acq}
+
+In this section we describe the testcases specific to pspm\_get\_acq
+apart from generic pspm\_get tests.
+
+\subsubsection{Information}
+
+Testclass: pspm\_get\_acq\_test\\
+Function: {[}tss, import, sourceinfo{]} = pspm\_get\_acq(datafile,
+import)
+
+\subsubsection{Testcases}
+
+\subsubsection*{get\_acq should return the exact same data as Acqknowledge exported
+mat file}
+
+Function name: get\_acq\_returns\_same\_data\_as\_acqknowledge\_exported\_mat(this)\\
+Description: The data obtained by using pspm\_get\_acq should be identical
+with the data obtained by using export .mat file functionality in
+Acqknowledge software.\\
+\\
+Tests:
+\begin{enumerate}
+\item Load data stored in \texttt{ImportTestData/acq/impedance\_acq.acq}
+and \texttt{ImportTestData/acq/impedance\_mat.mat} separately. Then
+compare the first channel of \texttt{impedance\_mat} with the first
+channel of data obtained by calling \texttt{pspm\_get\_acq} on \texttt{impedance\_acq}.
+\end{enumerate}
+
+\subsection{Testcases: pspm\_glm}
+
+\subsubsection{Information}
+
+Testclass: pspm\_glm\_test \\
+Function: glm = pspm\_glm(model, options) \\
+\\
+There are seven testcase functions. One invalid input arguments test
+and test 1 to 6. Tests 1 to 5 are of the same kind. There are one
+or multiple testcases per test function, have a look at the testcase
+description for more information. In these tests only Kronecker delta
+functions are used as basis functions, furthermore all conditions,
+pmods and nuisance regressors are pairwise orthogonal. The data is
+also not down sampled and not filtered. With these limitations it\textquoteright s
+easy to calculate the data vectors and the expected stats. For each
+testcase it is then tested:
+\begin{itemize}
+\item If numel(glm.names) has the expected value.
+\item If numel(glm.stats) has the expected value.
+\item If glm.stats has the expected value (with a tolerance of 1\%).
+\end{itemize}
+In test 6 the default basis functions are used, and not all conditions
+and pmods are orthogonal. The data is down sampled and low and high
+pass filtered. In exchange the stats are not tested for correct values,
+just for the correct number of elements. The properties 'shiftbf'
+and 'norm' are TestParameters, which means that this testclass is
+parameterized. All functions implmementing these parameters (Test
+1 to Test 5) are called several times with all the different values
+and combinations of the mentioned parameters.
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input arguments}
+
+Function name: invalid\_input (this) \\
+Description: Checks for warnings, if the input arguments are invalid.
+\\
+\\
+Tests:\\
+\\
+\begin{tabular}{|>{\centering}p{6cm}|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+pspm\_glm(model) {[}no timeunits field{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_glm(model) {[}no timeunits var{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_glm(model) with model.timeunits = \textquoteleft foo\textquoteright{}
+{[}no valid timeunits field{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_glm(model) with model.timing = zeros(10,2) {[}no valid timing
+field{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_glm(model) with model.modality = 'foo' {[}no valid modality
+field{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_glm(model) with model.channel = 'scr' {[}no valid channel field{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_glm(model) with model.norm = 'no' {[}no valid norm field{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_glm(model) with model.filt.down = 'none' {[}filt.down is not
+numeric{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_glm(model) with model.bf.fhandle = 'foohandle' {[}non existing
+bf{]} & ID:invalid\_fhandle\tabularnewline
+\hline 
+pspm\_glm(model) with numel(model.datafile) != numel(model.timing) & ID:number\_of\_elements\_dont\_match\tabularnewline
+\hline 
+pspm\_glm(model) with model.missing is struct {[}non valid missing
+field{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_glm(model) with numel(model.datafile) != numel(model.missing) & ID:number\_of\_elements\_dont\_match\tabularnewline
+\hline 
+pspm\_glm(model) with model.nuisance is struct {[}non valid nuisance
+field{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_glm(model) with numel(model.datafile) != numel(model.nuisance) & ID:number\_of\_elements\_dont\_match\tabularnewline
+\hline 
+pspm\_glm(model) with no R variable in the nuisance file & ID:invalid\_input\tabularnewline
+\hline 
+\multicolumn{1}{|>{\centering}p{4cm}|}{pspm\_glm(model) with R variable in the nuisance file that has not
+the same length as the datafile} & ID:number\_of\_elements\_dont\_match\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Test 1}
+
+Function name: test1(this, shiftbf) \\
+Description: Basic test with one basis function, one session, no nuisance
+regressors, no missings and one condition. Timeunits are seconds.
+\\
+\\
+Testcases:
+\begin{enumerate}
+\item no pmods
+\item one pmod
+\item two pmods 
+\end{enumerate}
+
+\subsubsection*{Test 2}
+
+Function name: test2(this, shiftbf) \\
+Description: Test with one basis function, one session, no nuisance
+regressors, no missings and two conditions. Timeunits are seconds.
+\\
+\\
+Testcases:
+\begin{enumerate}
+\item no pmods
+\item first condition: no pmods; second condition: one pmod
+\item first condition: one pmod; second condition: two pmods 
+\end{enumerate}
+
+\subsubsection*{Test 3}
+
+Function name: test3(this, shiftbf) \\
+Description: Test with one basis function, one session, two nuisance
+regressors (1Hz cosinus, 1Hz sinus), no missings, one condition and
+no pmods. Timeunits are seconds. \\
+\\
+Testcases: \\
+\\
+Only one testcase. 
+
+\subsubsection*{Test 4}
+
+Function name: test4(this, shiftbf) \\
+Description: Test with one basis function, two sessions, no nuisance
+regressors, no missings and one condition. \\
+\\
+Testcases:
+\begin{enumerate}
+\item timeunits are seconds
+\item timeunits are samples
+\item timeunits are markers 
+\end{enumerate}
+
+\subsubsection*{Test 5}
+
+Function name: test5(this, shiftbf) \\
+Description: Test with two basis functions, one session, no nuisance
+regressors and one condition. Timeunits are seconds. \\
+\\
+Testcases:
+\begin{enumerate}
+\item no missings
+\item with missings 
+\end{enumerate}
+
+\subsubsection*{Test 6}
+
+Function name: test6(this) \\
+Description: Test with default basis function and non-orthogonal conditions
+and pmods \\
+\\
+Testcase: \\
+\\
+Default basis functions, no nuisance regressors, no missings, two
+sessions and two conditions. Timeunits are seconds.
+\begin{itemize}
+\item first condition: two pmods (with pmod(1).poly\{1\} = 2 and pmod(1).poly\{2\}
+= 3)
+\item second condition: no pmods 
+\end{itemize}
+
+\subsubsection*{Test7:}
+
+Function name: test\_extract\_missing(this, cutoff, nan\_percent)\\
+Description: Test with one basis function, one session, no nuisance
+regressors, no missings and three conditions. Timeunits are seconds.
+\\
+\\
+Testcases: for all combinations of the test parameters cutoff and
+nan\_percent
+\begin{itemize}
+\item glm vector stats\_missing has the appropriate length according to
+the number of conditions
+\item percentages in glm vector stats\_missing contains the expected value
+\item glm vector stats\_exclude has the appropriate length according to
+the number of conditions
+\item glm vector stats\_exclude contains the expected condistion which should
+be excluded 
+\end{itemize}
+
+\subsection{Testcases: pspm\_hb2hp}
+
+\subsubsection{Information}
+
+Testclass: pspm\_hb2hp\_test \\
+Function: {[}sts, infos{]} = pspm\_hb2hp(fn, sr, chan, options)
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input}
+
+Function name: invalid\_input(this) \\
+Description: Checks for warnings, if the input arguments are invalid.
+\\
+\\
+Tests: 
+
+\begin{tabular}{|c|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+pspm\_hb2hp() {[}no input{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_hb2hp(2) {[}not a string filename{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_hb2hp('abc') {[}no sample rate{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_hb2hp('abc','abc') {[}not a string sample rate{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_hb2hp('abc',2,'abc') {[}not a numeric chanel{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_hb2hp(files\{1\},100) {[}call of pspm\_load\_data fails{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_hb2hp(files\{2\}, 100) {[}not enough points for interp1{]} & ID:too\_strict\_limits\tabularnewline
+\hline 
+pspm\_hb2hp(files\{3\},100,{[}{]},options) {[}pspm\_write\_channel
+fails{]} & ID:invalid\_input\tabularnewline
+\hline 
+\end{tabular}
+
+\subsection{Testcases: pspm\_import}
+
+\subsubsection{Information}
+
+Testclass: pspm\_import\_test \\
+Function: outfile = pspm\_import(datafile, datatype, import, options) 
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input arguments}
+
+Function name: invalid\_inputargs(ths) \\
+Description: Checks for warnings, if the input arguments are invalid.
+\\
+\\
+Tests: \\
+\\
+\begin{tabular}{|c|>{\centering}p{6cm}|c|}
+\hline 
+Test No. & Input & Expected warning\tabularnewline
+\hline 
+\hline 
+1 & pspm\_import(datafile, datatype) {[}no import variable{]} & ID:invalid\_input \tabularnewline
+\hline 
+2 & pspm\_import(datafile, datatype, \textquoteleft foo\textquoteright )
+{[}no cell/struct import var.{]} & ID:invalid\_input\tabularnewline
+\hline 
+3 & pspm\_import(datafile, \textquoteleft foo\textquoteright , import)
+{[}invalid channeltype{]} & ID:invalid\_channeltype\tabularnewline
+\hline 
+4 & pspm\_import(5, datatype, import) {[}no char filename{]} & ID:invalid\_input\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Invalid import variable structure}
+
+Function name: invalid\_import\_struct(this) \\
+Description: Checks for warnings, if the structure of the import variable
+is invalid. \\
+\\
+Tests: \\
+\\
+\begin{tabular}{|c|c|c|}
+\hline 
+Test No. & Input & Expected warning\tabularnewline
+\hline 
+\hline 
+1 & Multiple channel, though not supported & ID:invalid\_import\_struct\tabularnewline
+\hline 
+2 & Not allowed channeltype & ID:invalid\_import\_struct\tabularnewline
+\hline 
+3 & No sr given, though autosr is not supported & ID:invalid\_import\_struct\tabularnewline
+\hline 
+4 & Nonexistent file & ID:nonexistent\_file\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{One datafile}
+
+Function name: one\_datafile(this) \\
+Description: Checks the function, if datafile is a string (import
+of one datafile) and all inputs are correct. The outfile is checked
+with the pspm\_load\_data function. The tests are performed with a
+spike samplefile and a labchartmat\_in samplefile (to check the handling
+of blocks). 
+
+\subsubsection*{Multiple datafiles}
+
+Function name: multiple\_datafiles(this) \\
+Description: Checks the function, if datafile is a cell array of strings
+(import of multiple datafiles) and all inputs are correct. The outfiles
+are tested with the pspm\_load\_data function. 
+
+\subsection{Testcases: pspm\_interpolate}
+
+\subsubsection{Information}
+
+Testclass: pspm\_interpolate\_test\\
+Function: {[}sts, outdata{]} = pspm\_interpolate(indata, options)
+
+\subsubsection{Setup}
+
+This test class is parameterized. The test data is generated by the
+function itself and when needed, files will be written to datafile<variable\_nr>.mat.
+
+\subsubsection*{Test parameters}
+
+These are parameters which define what kind of data should be passed
+to pspm\_interpolate and which options should be set.\\
+\begin{tabular}{|c|>{\raggedright}p{10cm}|}
+\hline 
+\textbf{Amount} & Specifies how many elements indata (for pspm\_interpolate) should
+have.\tabularnewline
+\hline 
+\textbf{Datatype} & Specifies what type of data should be generated.
+\begin{itemize}
+\item struct - a valid data struct will be generated
+\item inline - a numeric vector will be generated
+\item file - a valid scr file will be generated
+\item all - all types will sequentially be generated until amount is reached
+\end{itemize}
+\tabularnewline
+\hline 
+\textbf{Chans} & If datatype is not inline this specifies how many and which type of
+data channels the generated data should have. In a second field it
+also defines which of these channels should be interpolated (this
+will be passed later in options.channels).\tabularnewline
+\hline 
+\textbf{Nan method} & Specifies how NaN values will be put into the data.
+\begin{itemize}
+\item start - range is 1+offset:<random number before the center>
+\item center - range is <radnom number before the center>:<random number
+after the center>
+\item end - range is <random number after the center>:end-offset
+\end{itemize}
+The offset is 1 if 'extrap' is not defined. This is needed because
+if there is no data at the end or beginning of the data, the function
+is unable to interpolate (unless extrapolation is activated).\tabularnewline
+\hline 
+\textbf{Extrap} & Is either true or false and activates or deactivates the extrapolation.\tabularnewline
+\hline 
+\textbf{Interp method} & Specifies the interpolation method.\tabularnewline
+\hline 
+\textbf{Newfile} & True or false and tells the function to either create a file or add
+the data as new channel.\tabularnewline
+\hline 
+\textbf{Overwrite} & True or false and tells the function to either overwrite an existing
+file or not.\tabularnewline
+\hline 
+\textbf{Replace channel} & True or false and tells the function to either replace the given channels
+with the interpolated data or to add the interpolated data as new
+channel.\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input}
+
+Function name: invalid\_input(this) \\
+Description: Checks for warnings, if the input arguments are invalid.
+\\
+\\
+Tests: \\
+\\
+\begin{tabular}{|c|>{\centering}p{6cm}|c|}
+\hline 
+Test No. & Input & Expected warning\tabularnewline
+\hline 
+\hline 
+1 & pspm\_interpolate() {[}no arguments{]} & ID:missing\_data\tabularnewline
+\hline 
+2 & pspm\_interpolate(\{\{\}\}) {[}data is not char, struct, numeric{]} & ID:invalid\_input\tabularnewline
+\hline 
+3 & pspm\_interpolate(\{\}) {[}data empty{]} & ID:missing\_data\tabularnewline
+\hline 
+4 & pspm\_interpolate(struct()) {[}invalid struct{]} & ID:invalid\_data\_structure\tabularnewline
+\hline 
+5 & pspm\_interpolate(invalid\_data) {[}file which does not exist{]} & ID:nonexistent\_file\tabularnewline
+\hline 
+6 & pspm\_interpolate(valid\_data, options) {[}options.channels is larger
+than valid\_data{]} & ID:invalid\_input\tabularnewline
+\hline 
+7 & pspm\_interpolate(valid\_data, options) {[}options.channels is not
+numeric{]} & ID:invalid\_input\tabularnewline
+\hline 
+8 & pspm\_interpolate(valid\_data, options) {[}options.method is invalid{]} & ID:invalid\_input\tabularnewline
+\hline 
+9 & pspm\_interpolate(valid\_data, options) {[}options.newfile is invalid{]} & ID:invalid\_input\tabularnewline
+\hline 
+10 & pspm\_interpolate(valid\_data, options) {[}options.extrapolate is
+invalid{]} & ID:invalid\_input\tabularnewline
+\hline 
+11 & pspm\_interpolate(valid\_data, options) {[}options.overwrite is invalid{]} & ID:invalid\_input\tabularnewline
+\hline 
+12 & pspm\_interpolate(valid\_data, options) {[}options.dont\_ask\_overwrite
+is invalid{]} & ID:invalid\_input\tabularnewline
+\hline 
+13 & pspm\_interpolate(valid\_data, options) {[}options.replace\_channels
+is invalid{]} & ID:invalid\_input\tabularnewline
+\hline 
+14 & pspm\_interpolate(invalid\_data, options) {[}try to interpolate an
+events channel{]} & ID:invalid\_channeltype\tabularnewline
+\hline 
+15 & pspm\_interpolate(invalid\_data) {[}try to interpolate with nan from
+beginning and without extrapolation{]} & ID:option\_disabled\tabularnewline
+\hline 
+16 & pspm\_interpolate(invalid\_data, options) {[}try to interpolate with
+nan from beginning and with extrapolation{]} & ID:out\_of\_range\tabularnewline
+\hline 
+17 & pspm\_interpolate(invalid\_data) {[}try to interpolate with nan from
+end and without extrapolation{]} & ID:option\_disabled\tabularnewline
+\hline 
+18 & pspm\_interpolate(invalid\_data, options) {[}try to interpolate with
+nan from end and with extrapolation{]} & ID:out\_of\_range\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Test datatypes}
+
+Function name: test\_datatypes(this, datatype, amount, chans) \\
+Description: Tries to interpolate with different datatypes, amount
+of data, channels.\\
+\\
+Tests: 
+\begin{enumerate}
+\item Generate data with datatype, amount, 'center', chans, false
+\item Test if function issues no warnings
+\item Test if sts is 1
+\item Test if size of outdata equals the size of the data
+\item Test if channels to be interpolated have no more NaNs
+\item Test if channels not to be interpolated still contain NaNs
+\end{enumerate}
+
+\subsubsection*{Test interpolation variations}
+
+Function name: test\_interpolation\_variations(this, interp\_method,
+extrap, nan\_method) \\
+Description: Tries to interpolate with different interpolation methods
+while varying options.extrapolate and the nan\_method.\\
+\\
+Tests: 
+\begin{enumerate}
+\item Generate data with 'inline', 1, nan\_method, \{\{'scr'\}, {[}{]}\},
+extrap
+\item Test if function issues no warnings
+\item Test if sts is 1
+\item Test if size of outdata equals the size of the data
+\item Test if data has no more NaNs
+\end{enumerate}
+\textbf{\textit{Special case:}} When extrapolation is on and nan\_method
+is 'start' and interp\_method is 'previous' or nan\_method is 'end'
+and interp\_method is 'next'. This should issue a warning because
+this is not possible (e.g. interpolate with previous value when first
+NaN value is at the beginning of the data set).
+\begin{enumerate}
+\item Generate data as above
+\item Test if function issues a warning.
+\end{enumerate}
+
+\subsubsection*{Test no nan}
+
+Function name: test\_no\_nan(this) \\
+Description: Test whether function works even if there is nothing
+to interpolate.\\
+\\
+Tests:
+\begin{enumerate}
+\item Generate data struct() with pspm\_test\_data\_gen()
+\item Test if function issues no warnings
+\item Test if sts is 1
+\item Test if size of outdata equals the size of data
+\item Test if outdata equals data
+\item Test if data has no NaNs
+\end{enumerate}
+
+\subsubsection*{Test write}
+
+Function name: test\_write(this, newfile) \\
+Description: Vary the option newfile and test whether new file is
+created correctly or data is correctly added to a new channel.\\
+\\
+Tests:
+\begin{enumerate}
+\item Generate data with 'file', 2, 'center', \{\{'scr', 'scr', 'scr'\},
+{[}1,3{]}\} , false
+\item Test if function issues no warnings
+\item Test if sts is 1
+\item Test if size of outdata equals the size of data
+\item Test if outdata does not equal data
+\end{enumerate}
+New files only:
+\begin{enumerate}
+\item Test if new file exists
+\item Load old and new file and test if size of data is equal
+\item Verify that interpolated channels in the new file are NaN free
+\end{enumerate}
+Added to existing file only:
+\begin{enumerate}
+\item Test if all returned values are numeric (new channel ids)
+\item Verify that the added channels are NaN free
+\item Test if added channels match the size of the original data channels
+\end{enumerate}
+
+\subsubsection*{Test overwrite}
+
+Function name: test\_overwrite(this, overwrite) \\
+Description: Vary overwrite and test whether files are overwritten
+or not.\\
+\\
+Tests: 
+\begin{enumerate}
+\item Generate data with 'file', 2, 'center', \{\{'scr', 'scr', 'scr'\},
+{[}1,2,3{]}\}, false
+\item Create files with expected filenames
+\item Test if function issues no warning
+\item Test if sts is 1
+\item According to overwrite test if file has been overwritten or not
+\end{enumerate}
+
+\subsubsection*{Test replace channel}
+
+Function name: test\_replace\_channel(this, replace\_channels)\\
+Description: Vary replace\_channel and test wether channels are overwritten
+or not.\\
+\\
+Tests:
+\begin{enumerate}
+\item Generate data with 'file', 2, 'center', \{\{'scr', 'scr', 'scr'\},
+{[}1,2,3{]}\} , false
+\item Test if function issues no warnings
+\item Test if sts is 1
+\item Test if size of outdata equals the size of data
+\item Test if outdata does not equal data
+\item According to replace\_channel test whether returned channel ids correspond
+to replaced channels or correspond to added channels.
+\end{enumerate}
+
+\subsubsection{Other methods}
+
+\subsubsection*{Generate data}
+
+Has all of the Test parameters as parameter implemented and accordingly
+generates the data. It calls put nan to insert NaN values into the
+data. The generated data is returned as data to the calling function.
+Also all return values are stored in the property testdata (for cleanup
+data).
+
+\subsubsection*{Cleanup data}
+
+Sits in MethodTeardown and is called once the test class has finished
+all tests. It then removes all the datafiles which can be found in
+the property 'testdata'.
+
+\subsubsection*{Verify NaN free}
+
+Helper function to verify whether the data is NaN free or not. It
+copes with two states. Either a channel should have been interpolated,
+then it shouldn't contain any NaN values or a channel should not have
+been interpolated, then the channel should still contain NaN values.
+
+\subsection{Testcases: pspm\_load1}
+
+\subsubsection{Information}
+
+Testclass: pspm\_load1\_test\\
+Function: {[}sts, data, mdltype{]} = pspm\_load1(fn, action, savedata,
+options)
+
+\subsubsection{Setup}
+
+The datafile fn is referring to a datafile which was generated with
+pspm\_load1\_test.generate\_testdata(this). The function is part of
+the test object and generates models for all of the available model
+types (defined in settings.first). The models are created with data
+generated with pspm\_testdata\_gen. Two files belong to each model:
+model\_<modeltype><variable nr.>.mat (fn) and dummy\_<modeltype><variable\_nr>.mat
+(dfn). The model file on the one hand is the actual model file while
+on the other hand, the dummy file is a copy of the model file, used
+by the test to manipulate the test data.
+
+\subsubsection*{Generated aquisition data (pspm\_testdata\_gen)}
+
+\texttt{data\{1\}.chantype = 'scr'; }~\\
+\texttt{data\{2\}.chantype = 'hb';}~\\
+\texttt{}~\\
+The duration of the channels is 100s.
+
+\subsubsection*{Generated GLM model}
+
+\texttt{model.timing\{1\}.names = \{'a';'b';'c'\}; }~\\
+\texttt{model.timing\{1\}.onsets = \{{[}10, 20, 30{]}, {[}15, 25,
+35{]}, {[}18, 28, 38{]}\}; }
+
+\subsubsection*{Generated DCM \& SF model}
+
+\texttt{model.timing\{1\} = {[}10,20; 23,38; 40,70;{]}; }~\\
+\texttt{model.condition\{1\}.name = \{'a';'b'\}; }~\\
+\texttt{model.condition\{1\}.index = {[}1;2{]};}
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid model structure (general)}
+
+Function: invalid\_model\_tructure\_general(this)\\
+Description: Tries to pass invalid data structures, and tests for
+certain warnings. Applys to all available modeltypes.\\
+\\
+Tests: \\
+\\
+\begin{tabular}{|c|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+empty model file & ID:invalid\_data\_structure\tabularnewline
+\hline 
+missing field 'modelfile' & ID:invalid\_data\_structure\tabularnewline
+\hline 
+missing field 'modeltype' & ID:invalid\_data\_structure\tabularnewline
+\hline 
+missing field 'modality' & ID:invalid\_data\_structure\tabularnewline
+\hline 
+missing field 'stats' & ID:invalid\_data\_structure\tabularnewline
+\hline 
+missing field 'names' & ID:invalid\_data\_structure\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Invalid model structure (specific)}
+
+Function: invalid\_model\_structure\_general(this)\\
+Description: Tries to pass invalid data structures, and tests for
+certain warnings. Model specific.\\
+\\
+Tests for GLM:\\
+\\
+\begin{tabular}{|c|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+field 'stats' is not an n x 1 vector & ID:invalid\_data\_structure\tabularnewline
+\hline 
+unequal amount of numbers and parameters in field 'stats' & ID:invalid\_data\_structure\tabularnewline
+\hline 
+options.zscored = 1 \& action = 'cond' & ID:invalid\_input\tabularnewline
+\hline 
+\end{tabular}\\
+\\
+Tests for DCM \& SF:\\
+\\
+\begin{tabular}{|c|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+unequal size for fields in 'trlnames' and rows in 'stats' & ID:invalid\_data\_structure\tabularnewline
+\hline 
+missing field 'trlnames' & ID:invalid\_data\_structure\tabularnewline
+\hline 
+unequal size for fields in 'names' and columns in 'stats' & ID:invalid\_data\_structure\tabularnewline
+\hline 
+action = 'recon' & ID:invalid\_input\tabularnewline
+\hline 
+\end{tabular}\\
+\\
+Tests for DCM:\\
+\\
+\begin{tabular}{|c|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+options.zscored = 1 \& pspm\_load1(dfn, 'none', \{\}, options) & ID:invalid\_input\tabularnewline
+\hline 
+options.zscored = 1 \& pspm\_load1(dfn, 'cond', \{\}, options) & -\tabularnewline
+\hline 
+options.zscored = 1 \& pspm\_load1(dfn, 'stats', \{\}, options) & -\tabularnewline
+\hline 
+\end{tabular}\\
+\\
+Tests for GLM \& SF:\\
+\\
+\begin{tabular}{|c|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+options.zscored = 1 \& pspm\_load1(dfn, 'cond', \{\}, options) & ID:invalid\_input\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Action 'none'}
+
+Function: test\_action\_none(this)\\
+Description: Test for all modeltypes if action 'none' matches the
+expected behaviour.\\
+\\
+Tests:
+\begin{enumerate}
+\item Basic function test
+\item Test if returned data is empty.
+\end{enumerate}
+
+\subsubsection*{Action 'stats'}
+
+Function: test\_action\_stats(this)\\
+Description: Test for all modeltypes if action 'stats' matches the
+expected behaviour.\\
+\\
+Tests for all:
+\begin{enumerate}
+\item Basic function test
+\item Returned data contains field 'stats'
+\item Returned data contains field 'names'
+\end{enumerate}
+Tests for DCM \& SF:
+\begin{enumerate}
+\item Returned data contains field 'trlnames'
+\item Returned data contains field 'condnames'
+\end{enumerate}
+
+\subsubsection*{Action 'cond'}
+
+Function: test\_action\_cond(this)\\
+Description: Test for all modeltypes if action 'cond' matches the
+expected behaviour.\\
+\\
+Tests for all:
+\begin{enumerate}
+\item Basic function test
+\item Returned data contains field 'stats'
+\item Returned data contains field 'names'
+\end{enumerate}
+Tests for DCM \& SF:
+\begin{enumerate}
+\item Returned data contains field 'trlnames'
+\item Returned data contains field 'condnames'
+\end{enumerate}
+
+\subsubsection*{Action 'recon'}
+
+Function: test\_action\_recon(this)\\
+Description: Test for all modeltypes if action 'recon' matches the
+expected behaviour.\\
+\\
+Tests for GLM:
+\begin{enumerate}
+\item Basic function test
+\item Returned data contains field 'stats'
+\item Returned data contains field 'names'
+\end{enumerate}
+Tests for DCM \& SF already done in specific structure test.
+
+\subsubsection*{Action 'savecon'}
+
+Function: test\_action\_savecon(this)\\
+Description: Test for all modeltypes if action 'savecon' matches the
+expected behaviour. Generates a number, passes it within the 'savecon'
+struct and tests if the number is returned correctly.\\
+\\
+Tests:
+\begin{enumerate}
+\item Basic function test
+\item Returned data contains field 'con'
+\item Field 'con' contains field 'test'
+\item Field 'con.test' is equal to the randomly generated number
+\end{enumerate}
+
+\subsubsection*{Action 'con'}
+
+Function: test\_action\_con(this)\\
+Description: Test for all modeltypes if action 'con' matches the expected
+behaviour. Tests if the in 'savecon' generated field test is still
+returned.\\
+\\
+Tests:
+\begin{enumerate}
+\item Basic function test
+\item Returned data contains field 'con'
+\item Field 'con' contains field 'test'.
+\end{enumerate}
+
+\subsubsection*{Action 'all'}
+
+Function: test\_action\_all(this)\\
+Description: Test for all modeltypes if action 'all' matches the expected
+behaviour.\\
+\\
+Tests:
+\begin{enumerate}
+\item Basic function test
+\item Returned data is not empty.
+\end{enumerate}
+
+\subsubsection*{Action 'save'}
+
+Function: test\_action\_save(this)\\
+Description: Test for all modeltypes if action 'save' matches the
+expected behaviour. Test with options.overwrite = 1. Generates random
+number and writes it into field 'test' in model structure. \\
+\\
+Tests:
+\begin{enumerate}
+\item Basic function test
+\item Model structure contains field 'test'
+\item Field 'test' in model structure equals to the randomly generated number.
+\end{enumerate}
+
+\subsubsection*{Options}
+
+Function: test\_options(this)\\
+Description: Test for all modeltypes if options passed with options
+structure cause the expected behaviour. Does also work with a randomly
+generated number in <model struct>.test to test whether the data is
+written or not. \\
+\\
+Tests for all: 
+\begin{enumerate}
+\item dont\_ask\_overwrite = 1 \& overwrite = 0 returns warning ID:not\_saving\_data
+and field 'test' in model struct does not match generated number
+\item dont\_ask\_overwrite = 1 \& overwrite = 1 field 'test' in returned
+model struct does match generated number
+\end{enumerate}
+Tests for DCM (with dont\_ask\_overwrite = 1 \& overwrite = 1):
+\begin{enumerate}
+\item zscored = 0 \& action = 'stats'
+
+\begin{enumerate}
+\item Basic function test
+\item Returned data.stats is not zscored
+\end{enumerate}
+\item zscored = 1 \& action = 'stats'
+
+\begin{enumerate}
+\item Basic function test
+\item Returned data.stats is zscored
+\end{enumerate}
+\item zscored = 0 \& action = 'cond'
+
+\begin{enumerate}
+\item Basic function test
+\item Returned data is different when callng with zscroed = 1 \& action
+= 'cond' (should not zscore, when not specified)
+\end{enumerate}
+\end{enumerate}
+
+\subsubsection{Other methods}
+
+\subsubsection*{Remove testdata}
+
+Removes all the test data generated by the test class. It is called
+once the class is finished with testing. 
+
+\subsubsection*{Basic function test}
+
+Is called in each test after the tested function has been called.
+It does two checks:
+\begin{itemize}
+\item Returned modeltype matches the modeltype stored in the returned model
+structure
+\item Returned status (sts) equals 1
+\end{itemize}
+
+\subsection{Testcases: pspm\_load\_data}
+
+\subsubsection{Information}
+
+Testclass: pspm\_load\_data\_test \\
+Function: {[}sts, infos, data, filestruct{]} = pspm\_load\_data(fn,
+chan) 
+
+\subsubsection{Setup}
+
+If not otherwise declared, the input variable fn is referring to a
+datafile which was generated with pspm\_testdata\_gen and consists
+out of the following channels: \\
+\\
+\texttt{data\{1\}.chantype = 'scr'; }~\\
+\texttt{data\{2\}.chantype = 'marker'; }~\\
+\texttt{data\{3\}.chantype = 'hr'; }~\\
+\texttt{data\{4\}.chantype = 'hb'; }~\\
+\texttt{data\{5\}.chantype = 'marker'; }~\\
+\texttt{data\{6\}.chantype = 'resp'; }~\\
+\texttt{data\{7\}.chantype = 'scr';}\\
+\\
+The duration of the channels is 10s. 
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input arguments}
+
+Function name: invalid\_inputargs(testCase) \\
+Description: Checks for warnings, if the input arguments are invalid.
+\\
+\\
+Tests: \\
+\\
+\begin{tabular}{|c|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+pspm\_load\_data {[}no filename{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_load\_data(1) {[}no char filename{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_load\_data(fn, -1) {[}neg. channel no{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_load\_data(fn, \textquoteleft foobar\textquoteright ) {[}no
+allowed ch type{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_load\_data(fn, foo) {[}missing field in foo struct{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_load\_data(fn, \{1\}) {[}invalid channel option{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_load\_data(struct) {[}struct has no infos field{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_load\_data(fn, 250) {[}nonexisting channel{]} & ID:invalid\_input\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Invalid datafile}
+
+Function name: invalid\_datafile(testCase) \\
+Description: Checks for warnings, if the datafile is invalid. \\
+\\
+Tests: \\
+\\
+\begin{tabular}{|c|>{\centering}p{6cm}|c|}
+\hline 
+Test No. & Input & Expected warning\tabularnewline
+\hline 
+\hline 
+1 & non-existent datafile & ID:nonexistent\_file\tabularnewline
+\hline 
+2 & missing \textquoteleft infos\textquoteright{} variable & ID:invalid\_data\_structure\tabularnewline
+\hline 
+3 & missing \textquoteleft data\textquoteright{} variable & ID:invalid\_data\_structure\tabularnewline
+\hline 
+4 & missing \textquoteleft data\textquoteright{} field in \textquoteleft data\{2\}\textquoteright{} & ID:invalid\_data\_structure\tabularnewline
+\hline 
+5 & missing \textquoteleft header\textquoteright{} field \textquoteleft data\{3\}\textquoteright{} & ID:invalid\_data\_structure\tabularnewline
+\hline 
+6 & missing \textquoteleft sr\textquoteright{} field in \textquoteleft data\{7\}.header\textquoteright{} & ID:invalid\_data\_structure\tabularnewline
+\hline 
+7 & data\{4\} is a nx2 vector (instead of a nx1 vector) & ID:invalid\_data\_structure\tabularnewline
+\hline 
+8 & the length of data\{1\}.data is incompatible with the duration & ID:invalid\_data\_structure\tabularnewline
+\hline 
+9 & An entry of data\{2\}.data is larger than \textquoteleft duration\textquoteright{} & ID:invalid\_data\_structure\tabularnewline
+\hline 
+10 & data\{5\} has an non-existent chantype (\textquoteleft scanner\textquoteright ) & ID:invalid\_data\_structure\tabularnewline
+\hline 
+11 & duplicates (9) with struct chan input & ID:invalid\_data\_structure\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Return all channels }
+
+Function name: valid\_datafile\_0(testCase) \\
+Description: Checks the function, if all channels shall be returned
+(chan = 0). 
+
+\subsubsection*{Return all channels (struct input) }
+
+Function name: valid\_datafile\_1(testCase) \\
+Description: Checks the function, if all channels shall be returned
+(chan = 0) and the input is a struct. 
+
+\subsubsection*{Return one channel}
+
+Function name: valid\_datafile\_2(testCase) \\
+Description: Checks the function, if only one channel shall be returned
+(chan = 2). 
+
+\subsubsection*{Return one channel}
+
+Function name: valid\_datafile\_3(testCase) \\
+Description: Checks the function, if multiple channels shall be returned
+(chan = {[}3 5{]}). 
+
+\subsubsection*{Return scr channels}
+
+Function name: valid\_datafile\_4(testCase) \\
+Description: Checks the function, if only the scr channels shall be
+returned. 
+
+\subsubsection*{Return event channels}
+
+Function name: valid\_datafile\_5(testCase) \\
+Description: Checks the function, if only the event channels shall
+be returned. 
+
+\subsubsection*{Save data }
+
+Function name: valid\_datafile\_6(testCase) \\
+Description: Checks the function, if data is to be saved (chan struct). 
+
+\subsection{Testcases: pspm\_pp}
+
+\subsubsection{Information}
+
+Testclass: pspm\_pp\_test \\
+Function: newfile = pspm\_pp('median', datafile, n, channelnumber)
+or newfile = pspm\_pp('butter', datafile, freq, channelnumber) 
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input}
+
+Function name: invalid\_input(this) \\
+Description: Checks for warnings, if the input arguments are invalid.
+\\
+\\
+Tests: 
+
+\begin{tabular}{|c|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+pspm\_pp('butter', 'file') {[}no freq{]} & ID:invalid\_input \tabularnewline
+\hline 
+pspm\_pp('foo', 'file', 100) {[}no valid first argument{]} & ID:invalid\_input \tabularnewline
+\hline 
+pspm\_pp('butter', 'file', 19) {[}freq below 20{]} & ID:invalid\_input \tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Median test}
+
+Function name: median\_test(this) \\
+Description: Checks medianfilter functionality \\
+\\
+Setup: \\
+\\
+Testfile with 3 channels (scr, hb, scr).\\
+\\
+Tests:
+\begin{enumerate}
+\item Filter one channel {[}Input: newfile = pspm\_pp('median', testfile,
+50, 3){]} 
+
+i. Check if sts == 1, when data is loaded with pspm\_load\_data. 
+
+ii. Check if newfile has the same number of channels as testfile
+\item Filter multiple channel {[}Input: newfile = pspm\_pp('median', testfile,
+50){]} 
+
+i. Check if sts == 1, when data is loaded with pspm\_load\_data. 
+
+ii. Check if newfile has the same number of channels as testfile 
+\end{enumerate}
+
+\subsubsection*{Butterworth filter test}
+
+Function name: butter\_test(this) \\
+Description: Checks Butterworth filter functionality \\
+\\
+Setup: \\
+\\
+Testfile with 3 channels (scr, hb, scr). \\
+\\
+Tests:
+\begin{enumerate}
+\item Filter one channel {[}Input: newfile = pspm\_pp('butter', testfile,
+40, 3){]} 
+
+i. Check if sts == 1, when data is loaded with pspm\_load\_data. 
+
+ii. Check if newfile has the same number of channels as testfile
+\item Filter multiple channel {[}Input: newfile = pspm\_pp('butter', testfile,
+40){]} 
+
+i. Check if sts == 1, when data is loaded with pspm\_load\_data. 
+
+ii. Check if newfile has the same number of channels as testfile 
+\end{enumerate}
+
+\subsection{Testcases: pspm\_prepdata}
+
+\subsubsection{Information}
+
+Testclass: pspm\_prepdata\_test \\
+Function: {[}sts, outdata, newsr{]} = pspm\_prepdata(data, filt) 
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input}
+
+Function name: invalid\_input(this) \\
+Description: Checks for warnings, if the input arguments are invalid.
+\\
+\\
+Tests: 
+
+\begin{tabular}{|c|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+pspm\_prepdata({[}1 NaN 3{]}, filt) {[}NaN values in data{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_prepdata({[}1 2 3{]}) {[}no filt variable{]} & ID:invalid\_input \tabularnewline
+\hline 
+pspm\_prepdata(data, filt) {[}filt has no hporder field{]} & ID:invalid\_input \tabularnewline
+\hline 
+pspm\_prepdata('foo', filt) {[}no numeric data{]} & ID:invalid\_input \tabularnewline
+\hline 
+pspm\_prepdata(data, filt) {[}with lpfreq = 'foo' (not valid){]} & ID:invalid\_input \tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Hipassfilter test}
+
+Function name: hipassfilter\_test(this) \\
+Description: Checks hipassfilter functionality (without downsampling)
+\\
+\\
+Setup: \\
+data = rand(1000,1);\\
+\\
+filt.sr = 100; \\
+filt.lpfreq = 'none'; \\
+filt.lporder = 1; \\
+filt.hpfreq = 20; \\
+filt.hporder = 1; \\
+filt.down = 'none';\\
+\\
+Tests:
+\begin{enumerate}
+\item Unidirectional tests {[}filt.direction = \textquoteleft uni\textquoteright {]}
+
+i. Check if sts == 1 
+
+ii. Check if newsr == filt.sr 
+
+iii. Check if outdata is empty 
+
+iv. Check if length(outdata) == length(data) 
+\item Unidirectional tests {[}filt.direction = \textquoteleft bi\textquoteright {]}
+
+i. Check if sts == 1 
+
+ii. Check if newsr == filt.sr 
+
+iii. Check if outdata is empty 
+
+iv. Check if length(outdata) == length(data) 
+\end{enumerate}
+
+\subsubsection*{Lowpassfilter test}
+
+Function name: lowpassfilter\_test(this) \\
+Description: Checks hipassfilter functionality (without downsampling)
+\\
+\\
+Setup: \\
+data = rand(1000,1);\\
+filt.sr = 100; \\
+filt.lpfreq = 40; \\
+filt.lporder = 1; \\
+filt.hpfreq = 'none'; \\
+filt.hporder = 1; \\
+filt.down = 'none';\\
+\\
+Tests: \\
+\\
+Same tests as in hipassfilter\_test. Additionally there is a check
+for a warning if filt.lpfreq is higher (or equal) than the nyquist
+frequency: 
+
+\begin{tabular}{|c|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+pspm\_prepdata(data, filt) {[}filt.sr = 100; filt.lpfreq = 60{]} & ID:no\_low\_pass\_filtering\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Bandpassfilter test}
+
+Function name: bandpassfilter\_test(this) \\
+Description: Checks bandpassfilter functionality (without downsampling)
+\\
+\\
+Setup: \\
+data = rand(1000,1);\\
+filt.sr = 200;\\
+filt.lpfreq = 99; \\
+filt.lporder = 1; \\
+filt.hpfreq = 20; \\
+filt.hporder = 1; \\
+filt.down = 'none';\\
+\\
+Tests: Same tests as in hipassfilter\_test. 
+
+\subsubsection*{Integer samplerate ratio downsampling test}
+
+Function name: int\_sr\_ratio\_downsample\_test(this) \\
+Description: Checks downsampling functionality, if the ratio between
+filt.sr and filt.down is an integer. \\
+\\
+Setup: \\
+\\
+ratio = 2; \%ratio between filt.sr and filt.down\\
+\\
+filt.down = 100; \\
+filt.sr = ratio \\
+filt.down; filt.lpfreq = 40; \\
+filt.lporder = 1; \\
+filt.hpfreq = 'none'; \\
+filt.hporder = 1; \\
+filt.direction = 'uni';\\
+\\
+data = rand(filt.sr {*} 10,1);\\
+\\
+Tests:
+\begin{enumerate}
+\item Check if sts == 1
+\item Check if newsr == filt.down
+\item Check if outdata is empty
+\item Check if ratio{*}length(outdata) == length(data) 
+\end{enumerate}
+
+\subsection{Testcases: pspm\_process\_illuminance}
+
+\subsubsection{Information}
+
+Testclass: pspm\_process\_illuminance\_test\\
+Function: {[}sts, out{]} = pspm\_process\_illuminance(ldata, sr, options)
+
+\subsubsection{Setup}
+
+This test class is parameterized. The test data is generated by the
+function itself and when needed, files will be written to datafile<variable\_nr>.mat.
+
+\subsubsection*{Test parameters}
+
+These are parameters which define what kind of data should be passed
+to pspm\_process\_illuminance and which options should be set.\\
+\begin{tabular}{|c|>{\raggedright}p{10cm}|}
+\hline 
+\textbf{bf\_dur} & Defines the duration of the basis function.\tabularnewline
+\hline 
+\textbf{bf\_offset} & Defines the offset of the basis function.\tabularnewline
+\hline 
+\textbf{dur} & Defines the duration of the generated dataset.\tabularnewline
+\hline 
+\textbf{sr} & Defines the samplerate of the generated dataset.\tabularnewline
+\hline 
+\textbf{n\_times} & Defines how many datasets should be generated.\tabularnewline
+\hline 
+\textbf{mode} & Defines the whether the dataset should be written to a file, kept
+as inline variable or should be a mix of both. Can be either 'file',
+'inline' or 'mixed'\tabularnewline
+\hline 
+\textbf{overwrite} & Defines whether existing files should be overwritten or not.\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input}
+
+Function name: invalid\_input(this) \\
+Description: Checks for warnings, if the input arguments are invalid.
+\\
+\\
+Tests: \\
+\\
+\begin{tabular}{|c|>{\centering}p{6cm}|c|}
+\hline 
+Test No. & Input & Expected warning\tabularnewline
+\hline 
+\hline 
+1 & pspm\_process\_illuminance() {[}no arguments{]} & ID:invalid\_input\tabularnewline
+\hline 
+2 & pspm\_process\_illuminance({[}{]}) {[}empty data{]} & ID:missing\_data\tabularnewline
+\hline 
+3 & pspm\_process\_illuminance(1:10) {[}missing samplerate{]} & ID:invalid\_input\tabularnewline
+\hline 
+4 & pspm\_process\_illuminance(1:10, 'a') {[}invalid ssamplerate{]} & ID:invalid\_input\tabularnewline
+\hline 
+5 & pspm\_process\_illuminance(\{1:10\}, 1) {[}cell, no cell{]} & ID:invalid\_input\tabularnewline
+\hline 
+6 & pspm\_process\_illuminance(1:10, \{1\}) {[}no cell, cell{]} & ID:invalid\_input\tabularnewline
+\hline 
+7 & pspm\_process\_illuminance(\{1:10, 10:10\}, \{1\}) {[}different sized
+cells{]} & ID:invalid\_input\tabularnewline
+\hline 
+8 & pspm\_process\_illuminance(\{1:10, 'a'\},\{1,2\}) {[}invalid file{]} & ID:non\_existent\_file\tabularnewline
+\hline 
+9 & pspm\_process\_illuminance(\{1:10, 1:10\}, \{1, 'a'\}) {[}invalid
+samplerate{]} & ID:invalid\_input\tabularnewline
+\hline 
+10 & pspm\_process\_illuminance(\{1:10\}, \{1\}, 'o') {[}wrong options{]} & ID:invalid\_input\tabularnewline
+\hline 
+11 & pspm\_process\_illuminance(\{1:10\}, \{1\}, opt){[}wrong transfer
+settings{]} & ID:invalid\_input\tabularnewline
+\hline 
+12 & pspm\_process\_illuminance(\{1:10\}, \{1\}, opt){[}wrong duration{]} & ID:invalid\_input\tabularnewline
+\hline 
+13 & pspm\_process\_illuminance(\{1:10\}, \{1\}, opt){[}wrong offset{]} & ID:invalid\_input\tabularnewline
+\hline 
+14 & pspm\_process\_illuminance(\{1:10\}, \{1\}, opt){[}wrong outputfile{]} & ID:invalid\_input\tabularnewline
+\hline 
+15 & pspm\_process\_illuminance(\{1:10\}, \{1\}, opt){[}format of ldata
+and opt.fn differs{]} & ID:invalid\_input\tabularnewline
+\hline 
+16 & pspm\_process\_illuminance(\{1:10\}, \{1\}, opt){[}opt.overwrite is
+not boolean{]} & ID:invalid\_input\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Test options}
+
+Function name: test\_options(this, sr, dur, bf\_dur, bf\_offset) \\
+Description: Tries out different combination options to process the
+generated illuminance data.\\
+\\
+Tests: 
+\begin{enumerate}
+\item Generate data with sr and dur
+\item Set options according to bf\_dur and bf\_offset
+\item Set expected warning according to sr{*}dur and sr{*}bf\_dur
+\begin{enumerate}
+\item expect empty data if sr{*}dur < 1
+\item expect invalid\_input if sr{*}bf\_dur < 1
+\item otherwise expect no warning
+\end{enumerate}
+\item Test if issued warning equals expected warning
+\item Test if sts equals expected value
+\item Test if amount of data elements of input and output data is equal
+\end{enumerate}
+
+\subsubsection*{Test multi}
+
+Function name: test\_multi(this, n\_times, mode) \\
+Description: Generates n sets of illuminance data and passes it to
+pspm\_process\_illuminance.\\
+\\
+Tests: 
+\begin{enumerate}
+\item Generate data with 10 (sr), 100 (dur), n\_times (amount), mode
+\item Test if pspm\_process\_illuminance issues no warning
+\item Test if sts is 1
+\item For n\_times == 1, test if out has 10{*}100 data points
+\item for n\_times \ \textasciitilde = 1, test if output has same size
+as input
+\end{enumerate}
+
+\subsubsection*{Test overwrite}
+
+Function name: test\_overwrite(this, overwrite) \\
+Description: Generate illuminance file and test overwrite behaviour.\\
+\\
+Tests: 
+\begin{enumerate}
+\item Generate data with 10 (sr), 100 (dur), 1 (amount), 'file'
+\item Test if pspm\_process\_illuminance issues no warning
+\item Test if sts equals 1
+\item Test if existing file was overwriten or not
+\end{enumerate}
+
+\subsubsection{Other methods}
+
+\subsubsection*{Generate lx}
+
+Has some of the Test parameters as parameter implemented and accordingly
+generates the lx data. According to the calling arguments the output
+is a cell of files and data vectors. All generated files will be stored
+in the property 'datafiles'. They will be removed once all tests have
+finished.
+
+\subsubsection*{Cleanup}
+
+Located in MethodTeardown and is called once the test class has finished
+all tests. It then removes all the datafiles which can be found in
+the property 'datafiles'.
+
+\subsection{Testcases: pspm\_pulse\_convert}
+
+\subsubsection{Information}
+
+Testclass: pspm\_pulse\_convert\_test\\
+Function: wavedata = pspm\_pulse\_convert(pulsedata, resamplingrate,
+samplingrate)
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input}
+
+Function name: invalid\_input(testCase)\\
+Description: Pass invalid input arguments and test if the error message
+is correct.\\
+\\
+Tests:
+
+\begin{tabular}{|c|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+pspm\_pulse\_convert() & ID:invalid\_input \tabularnewline
+\hline 
+pspm\_pulse\_convert(10\textasciicircum -3 {*} (1:10000)') & ID:invalid\_input \tabularnewline
+\hline 
+pspm\_pulse\_convert(10\textasciicircum -3 {*} (1:10000)', 10000) & ID:invalid\_input\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Valid input}
+
+Function name: valid\_input(testCase)\\
+Description: Pass generated, valid data and test if function issues
+no warning.\\
+\\
+Tests:
+\begin{enumerate}
+\item Test function without downsampling the data
+\item Test function with downsampling the data
+\end{enumerate}
+
+\subsection{Testcases: pspm\_ren}
+
+\subsubsection{Information}
+
+Testclass: pspm\_ren\_test \\
+Function: out\_newfilename = pspm\_ren(filename, newfilename) 
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input}
+
+Function name: invalid\_input (this) \\
+Description: Checks for warnings, if the input arguments are invalid.\\
+\\
+Tests: 
+
+\begin{tabular}{|c|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+pspm\_ren('fn') {[}no newfilename{]} & ID:invalid\_input \tabularnewline
+\hline 
+pspm\_ren(\{'fn1', 'fn2'\}, \{'rfn1', 'rfn2', 'rfn3'\}) {[}non same
+size cell arrays{]} & ID:invalid\_input \tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Char Valid Input}
+
+Function name: char\_valid\_input (this) \\
+Description: Checks the function if the input variables are of type
+char. It uses pspm\_load\_data to check the files. \\
+\\
+Tests:
+\begin{enumerate}
+\item Check if out\_newefilename = newfilename
+\item Check if sts==1 (of pspm\_load\_data output)
+\item Check if the field \textquoteleft infos.rendata\textquoteright{} exists
+\item Check if the field \textquoteleft infos.newname\textquoteright{} exists
+\item Check if the original file has been deleted 
+\end{enumerate}
+
+\subsubsection*{Cell Valid Input}
+
+Function name: cell\_valid\_input (this) \\
+Description: Checks the function if the input variables are of type
+cell. It uses pspm\_load\_data to check the files. \\
+\\
+Tests: \\
+\\
+The inputs are two-element cell arrays. For both elements the same
+tests as in the char\_valid\_input function are performed individually.
+
+\subsection{Testcases: pspm\_resp\_pp}
+
+\subsubsection{Information}
+
+Testclass: pspm\_resp\_pp\_test\\
+Function: sts = pspm\_resp\_pp(fn, sr, chan, options)\\
+
+
+\subsubsection{Testcases}
+
+\subsubsection*{Regression Test against Revision r660}
+
+Function name: compare\_results\_to\_results\_obtained\_from\_r660\_version(this)\\
+Description: In r660, there was a bug found in pspm\_resp\_pp that
+caused it to crash with index out of bounds error on inputs containing
+some edgecase. This test specifically checks whether the fixed version
+returns the same results as the version before the bugfix on data
+that didn't cause a crash.\\
+\\
+Tests:
+\begin{enumerate}
+\item Check if the returned channel types have the same name and ordering
+\item Check if the returned data is the same
+\end{enumerate}
+
+\subsection{Testcases: pspm\_split\_sessions}
+
+\subsubsection{Information}
+
+Testclass: pspm\_split\_sessions\_test \\
+Properties: expected\_number\_of\_files = 3; \\
+Function: newdatafile = pspm\_split\_sessions(datafile, markerchannel,
+options) 
+
+\subsubsection{Setup}
+
+For the tests a testdatafile with three channels is used (duration
+is 100s). The markerchannel data is: \\
+\\
+data = {[}1 4 9 12 30 31 34 41 43 59 65 72 74 80 89 96{]}' \\
+\\
+Hence if MAXSN=10 \& BRK2NORM=3 (default values) the datafiles should
+be split into 3 files. If different values are being used, update
+the property \textquoteleft expected\_number\_of\_files\textquoteright{}
+of the testclass object accordingly. 
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input}
+
+Function name: invalid\_input (this) \\
+Description: Checks for warnings, if the input arguments are invalid.\\
+\\
+Tests: 
+
+\begin{tabular}{|c|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+pspm\_split\_sessions() {[}no filename{]} & ID:invalid\_input \tabularnewline
+\hline 
+pspm\_split\_sessions (2) {[}no string filename{]} & ID:invalid\_input \tabularnewline
+\hline 
+pspm\_split\_sessions (\textquoteleft fn\textquoteright , \textquoteleft foo\textquoteright )
+{[}no numeric marker channel no.{]} & ID:invalid\_input \tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{One datafile}
+
+Function name: one\_datafile(this) \\
+Description: Checks the function if the variable \textquoteleft datafile\textquoteright{}
+is of type char (one datafile). The markerchannel number is not assigned
+explicitly.\\
+\\
+Tests:
+\begin{enumerate}
+\item Check if the file has been split into \textquoteleft expected\_number\_of\_files\textquoteright{}
+files For each output file the following tests are performed:
+\item Check if sts == 1, when data is loaded with pspm\_load\_data.
+\item Check if number of channels is correct.
+\item Check it the field infos.slitdate exists
+\item Check if the field infos.splitsn exists
+\item Check if the field infos.splitfile exists. 
+\end{enumerate}
+
+\subsubsection*{Multiple datafiles}
+
+Function name: multiple\_datafiles(this) \\
+Description: Checks the function if the variable \textquoteleft datafile\textquoteright{}
+is of type cell (two datafiles). The markerchannel number is assigned
+explicitly.\\
+\\
+Tests: \\
+\\
+For both datafiles the same tests as in the one\_datafile function
+are performed individually. Additionally it is tested if the number
+of input files does match the number of output files. 
+
+\subsection{Testcases: pspm\_trim}
+
+\subsubsection{Information}
+
+Testclass: pspm\_trim\_test \\
+Function: newdatafile=pspm\_trim(datafile, from, to, reference, options) 
+
+\subsubsection{Setup}
+
+If not otherwise declared, the input variable fn is referring to a
+datafile which was generated with pspm\_testdata\_gen and consists
+of the following channels: \\
+\\
+data\{1\}.chantype = 'scr'; \\
+data\{2\}.chantype = 'marker'; \\
+data\{3\}.chantype = 'hr'; \\
+data\{4\}.chantype = 'hb'; \\
+data\{5\}.chantype = 'marker'; \\
+data\{6\}.chantype = 'resp'; \\
+data\{7\}.chantype = 'scr';\\
+\\
+The duration of the data recording is 10s. 
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input arguments }
+
+Function name: invalid\_inputargs(testCase) \\
+Description: Checks for warnings, if the input arguments are invalid.
+\\
+\\
+Tests: \\
+\begin{tabular}{|>{\centering}p{6cm}|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+pspm\_trim(testCase.fn, {[}1 2{]}, 5, 'marker') {[}invalid from parameter{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_trim(testCase.fn, 0, 'bla', 'marker') {[}invalid to parameter{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_trim(testCase.fn, 0, '{[}{]}', 'marker') {[}invalid to parameter{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_trim(fn, 0, 5) {[}no reference{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_trim(fn, 0, 5, 6) {[}no char or 2-element numeric reference{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_trim(fn, 0, 5, \textquoteleft bla\textquoteright ) {[}invalid
+char reference{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_trim(fn, 0, 5, {[}-1 5{]}) {[}invalid numeric start reference{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_trim(fn, 0, 5, {[}5 4{]}) {[}invalid numeric start/end reference{]} & ID:invalid\_input\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection{Reference = \textquoteleft marker\textquoteright{} tests}
+
+Function name: marker\_tests(testCase) \\
+Description: A wrapper function for tests with reference = \textquoteleft marker\textquoteright .
+It executes the methods markertest\_k, where the testcases are defined. 
+
+\subsubsection*{markertest\_1}
+
+Description: from and to are set so that the trimming points are out
+of the range {[}0,duration{]}. Hence the data should not be trimmed.
+\\
+\\
+Expected warning: ID: marker\_out\_of\_range \\
+\\
+Input: pspm\_trim(fn, -20, 20, \textquoteright marker\textquoteright ) 
+
+\subsubsection*{markertest\_2 }
+
+Description: from and to are set so that the trimming points are exactly
+(0, duration). Hence the data should not be trimmed. \\
+\\
+Input: from = -1 {*} marker(1) to = duration - marker(end) pspm\_trim(fn,
+from, to, \textquoteright marker\textquoteright ) 
+
+\subsubsection*{markertest\_3 }
+
+Description: from and to are set so that the trimming points in the
+range {[}0,duration{]}. \\
+\\
+Input: pspm\_trim(fn, 1, -2, \textquoteright marker\textquoteright ) 
+
+\subsubsection{Reference = \textquoteleft file\textquoteright{} tests}
+
+Function name: file\_tests(testCase) \\
+\\
+Description: A wrapper function for tests with reference = \textquoteleft file\textquoteright .
+It executes the methods filetest\_k, where the testcases are defined. 
+
+\subsubsection*{filetest\_1}
+
+Description: from and to are set so that the trimming points are out
+of the range {[}0,duration{]}. Hence the data should not be trimmed.
+\\
+\\
+Expected warning: ID: marker\_out\_of\_range \\
+\\
+Input: pspm\_trim(fn, -12.5, 50, \textquoteright marker\textquoteright ) 
+
+\subsubsection*{filetest\_2}
+
+Description: from and to are set so that the trimming points are exactly
+(0, duration). Hence the data should not be trimmed. \\
+\\
+Input: pspm\_trim(fn, 0 , duration, \textquoteright marker\textquoteright ) 
+
+\subsubsection*{filetest\_3}
+
+Description: from and to are set so that the trimming points in the
+range {[}0,duration{]}. \\
+\\
+Input: pspm\_trim(fn,2.1, duration -- 2.5, \textquoteright marker\textquoteright ) 
+
+\subsubsection*{Numeric reference tests}
+
+Function name: num\_tests(testCase) \\
+Description: A wrapper function for tests with reference = {[}a b{]}
+(a, b are two integers with a<b). It executes the methods markertest\_k,
+where the testcases are defined. 
+
+\subsubsection*{numtest\_1}
+
+Description: from and to are set so that the trimming points are out
+of the range {[}0,duration{]}. Hence the data should not be trimmed.
+\\
+\\
+Expected warning: ID: marker\_out\_of\_range \\
+\\
+Input: pspm\_trim(fn, -20, 20, {[}2 14{]}) 
+
+\subsubsection*{numtest\_2}
+
+Description: from and to are set so that the trimming points are exactly
+(0, duration). Hence the data should not be trimmed. \\
+\\
+Input: from = -1 {*} marker(3) to = duration - marker(8) pspm\_trim(fn,
+from, to, {[}3 8{]}) 
+
+\subsubsection*{numtest\_3}
+
+Description: from and to are set so that the trimming points in the
+range {[}0,duration{]}. \\
+\\
+Input: pspm\_trim(fn, -1.5, 2, {[}2 7{]}) 
+
+\subsubsection*{numtest\_4}
+
+Description: Second reference point is out of the marker range; from
+is set to \textquoteleft none\textquoteright . Hence the data should
+not be trimmed. \\
+\\
+Expected warning: ID: marker\_out\_of\_range \\
+\\
+Input: pspm\_trim(fn, \textquoteleft none\textquoteright , 0, {[}1
+(numel(marker) + 1){]}) 
+
+\subsubsection*{Multiple file reference tests}
+
+Function name: multiple\_files(testCase) \\
+\\
+Description: The input variable datafile is either a cell array of
+two filenames or a cell array of two stucts. In both cases it is tested
+whether the return value is also a cell array of two filenames and
+whether both files are trimmed correctly. 
+
+\subsubsection*{Options tests}
+
+\subsubsection*{Marker channel number option}
+
+Function name: marker\_chan\_num\_option\_test(testCase) \\
+\\
+Description: Tests if the option marker\_chan\_num is working correctly.
+There are two tests: Test 1: Checks for a warning if the selected
+channel is no marker channel. Test 2: Checks if the selected channel
+is actually used. 
+
+\subsection{Testcases: pspm\_write\_channel}
+
+\subsubsection{Information}
+
+Testclass: pspm\_write\_channel\_test \\
+Function: {[}sts{]} = pspm\_write\_channel(fn, newdata, action, options)
+
+\subsubsection{Setup}
+
+\subsubsection*{Testdatafile}
+
+The testdatafile is a class property. It is generated by the function
+generate\_testdatafile() once the test class is setup. Changes made
+by a test to the testdatafile won't be reverted. Thus some test functions
+rely on the changes made by another test function. Therefore the functions
+may not work properly if called individually.
+
+\paragraph*{Structure (created with generate\_testdatafile())}
+
+\texttt{data\{1\}.chantype = 'scr'; }~\\
+\texttt{data\{2\}.chantype = 'marker';}~\\
+\texttt{data\{3\}.chantype = 'scr'; }~\\
+\texttt{}~\\
+The sampling rate is 100 Hz and the duration is 500s.
+
+\subsubsection{Testcases}
+
+\subsubsection*{Invalid input}
+
+Function name: invalid\_input(this) \\
+Description: Checks for warnings, if the input arguments are invalid.
+\\
+\\
+Tests: \\
+\begin{tabular}{|>{\centering}p{6cm}|c|}
+\hline 
+Input & Expected warning\tabularnewline
+\hline 
+\hline 
+pspm\_write\_channel() {[}no parameter{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_write\_channel(1) {[}fn is a number{]} & ID:invalid\_input\tabularnewline
+\hline 
+pspm\_write\_channel('some\_file', {[}{]}) {[}no action passed{]} & ID:unknown\_action\tabularnewline
+\hline 
+pspm\_write\_channel('some\_file', {[}{]}, '') {[}empty action passed{]} & ID:unknown\_action\tabularnewline
+\hline 
+options.channel = 'some invalid channel'
+
+pspm\_write\_channel('some\_file', {[}{]}, 'add', options) {[}invalid
+channel{]} & ID:invalid\_input\tabularnewline
+\hline 
+options.channel = -1
+
+pspm\_write\_channel('some\_file', {[}{]}, 'add', options) {[}negative
+channel{]} & ID:invalid\_input\tabularnewline
+\hline 
+options.channel = 0
+
+pspm\_write\_channel('some\_file', {[}{]}, 'delete', options) {[}no
+channel and no data given{]} & ID:invalid\_input\tabularnewline
+\hline 
+options.channel = 0
+
+pspm\_write\_channel('some\_file', {[}{]}, 'add', options) {[}empty
+newdata{]} & ID:invalid\_input\tabularnewline
+\hline 
+options.channel = 0
+
+pspm\_write\_channel('some\_file', 1:3, 'add', options) {[}newdata
+is not cell and not struct{]} & ID:invalid\_input\tabularnewline
+\hline 
+options.channel = 1:5
+
+pspm\_write\_channel(this.testdatafile, {[}{]}, 'delete', options)
+{[}more given channels than in file exist{]} & ID:invalid\_input\tabularnewline
+\hline 
+options.channel = 'ecg'; pspm\_write\_channel(this.testdatafile, {[}{]},
+'delete', options) & ID:no\_matching\_channels\tabularnewline
+\hline 
+pspm\_write\_channel(this.testdatafile, gen\_data.data\{1\}, 'add')
+{[}generated data has the wrong format (two rows in one channel){]} & ID:invalid\_data\_structure\tabularnewline
+\hline 
+\end{tabular}
+
+\subsubsection*{Action 'add'}
+
+Function name: test\_add(this) \\
+Description: Checks if action 'add' behaves as expected. A new channel
+with chantype = 'hb', sr = 200 and duration = 500 is generated.\\
+\\
+Tests: 
+\begin{enumerate}
+\item Load condition before and after and pass it to 'Verify write'
+\end{enumerate}
+
+\subsubsection*{Action 'add transposed'}
+
+Function name: test\_add\_transposed(this) \\
+Description: Checks if action 'add' behaves as expected, when data
+has the wrong dimensions. A new channel with chantype = 'rs', sr =
+200 and duration = 500 is generated.\\
+\\
+Tests: 
+\begin{enumerate}
+\item Transpose generated data
+\item Load condition before and after and pass it to 'Verify write'
+\end{enumerate}
+
+\subsubsection*{Action 'replace'/'add'}
+
+Function name: test\_replace\_add(this) \\
+Description: Checks if action 'replace' behaves as expected. A new
+channel with chantype = 'hr', sr = 10 and duration = 500 is generated.\\
+\\
+Tests: 
+\begin{enumerate}
+\item Running pspm\_write\_channel with action = 'replace' should issue
+'ID:no\_matching\_channels' (channeltype should not exist before)
+and then instead add the channel
+\item Load condition before and after and pass it to 'Verify write'
+\end{enumerate}
+
+\subsubsection*{Action 'replace'}
+
+Function name: test\_replace(this) \\
+Description: Checks if action 'replace' behaves as expected. A new
+channel with chantype = 'hr', sr = 20 and duration = 500 is generated.\\
+\\
+Tests: 
+\begin{enumerate}
+\item Load condition before and after and pass it to 'Verify write'
+\item Test if 'hr' channel has sample rate 20
+\end{enumerate}
+
+\subsubsection*{Action 'delete' (one channel)}
+
+Function name: test\_delete\_single(this) \\
+Description: Checks if action 'delete' behaves as expected. In this
+test only one channel will be deleted. To test the delete algorithm
+there will be 7 channels added which are then also used for test\_delete\_multi(this).
+The particular channels are then identified by the sample rate which
+corresponds to the channel id {*} 10.\\
+\\
+Tests:
+\begin{enumerate}
+\item Delete channel with chantype = 'hr' in newdata.header.chantype
+
+\begin{enumerate}
+\item Verify write
+\item Ensure only one channel has been deleted
+\item Test if there is no more channel with chantype = 'hr'
+\end{enumerate}
+\item Delete channel with channel number in options.channel
+
+\begin{enumerate}
+\item Verify Write
+\item Ensure only one channel has been deleted
+\end{enumerate}
+\item Test the delete algorithm
+
+\begin{enumerate}
+\item Remove 'resp' channel with options.delete = 'last'
+
+\begin{enumerate}
+\item Verify write
+\item Ensure only one channel has been deleted
+\item Test if last channel was deleted 
+\end{enumerate}
+\item Remove 'resp' channel with options.delete = 'first'
+
+\begin{enumerate}
+\item Verify write
+\item Ensure only one channel has been deleted
+\item Test if last entry was not deleted
+\end{enumerate}
+\end{enumerate}
+\end{enumerate}
+
+\subsubsection*{Action 'delete' (multiple channels)}
+
+Function name: test\_delete\_multi(this) \\
+Description: Checks if action 'delete' behaves as expected. In this
+test only multiple channels will be deleted. This test relys on the
+changes made to the testdatafile by other test functions in this class.
+\\
+\\
+Tests:
+\begin{enumerate}
+\item Delete channel 1 and 2 from testdatafile
+
+\begin{enumerate}
+\item Verify write
+\item Ensure two channels have been deleted
+\end{enumerate}
+\item Delete all 'resp' channels from testdatafile
+
+\begin{enumerate}
+\item Verify write
+\item Test if datafile contains no more 'resp' channels
+\end{enumerate}
+\end{enumerate}
+
+\subsubsection{Other methods}
+
+\subsubsection*{Verify write}
+
+Is called after pspm\_write\_channel has been called (action = 'add'
+or action = 'replace') and tests if data was written and a new history
+entry was made. \\
+Tests: 
+\begin{enumerate}
+\item if action = 'add', test if there is a new channel
+\item if action = 'replace', test if there is still the same amount of channels
+\item if action = 'delete', test if there have been as many channels deleted
+as given in outinfos.channel
+\item test if history has a new entry
+\item search for channels with same chantype as added channel (should be
+only one channel)
+\item test if number of data elements in new channel and added channel is
+equal
+\item test if new channel and added channel have same 'sr'
+\end{enumerate}
+
+\section{External functions and tools}
+
+\subsection{VB (Variational Bayes) inversion algorithm by Jean Daunizeau}
+
+Updated October 2014
+
+Changes made for use in PsPM: 
+\begin{itemize}
+\item \emph{VBA\_ReDisplay.m}, fixed try-catch syntax in various places
+by adding a comma after ``try'' to avoid warning in matlab > 2007
+\item \textit{VBA\_inv.m}, line 42: added warning off/on to suppress the
+warning ``Matrix is singular, close to singular or badly scaled.
+Results may be inaccurate. RCOND = NaN.''
+\end{itemize}
+Updated October 2016
+
+Changes made for use in PsPM: 
+\begin{itemize}
+\item \emph{VBA\_ReDisplay.m}, fixed try-catch syntax in various places
+by adding a comma after ``try'' to avoid warning in matlab > 2007
+\item \textit{VBA\_inv.m}, line 48: added warning off/on to suppress the
+warning ``Matrix is singular, close to singular or badly scaled.
+Results may be inaccurate. RCOND = NaN.''
+\item \textit{VBA\_NLStateSpaceModel.m}: added resetting warning to preceeding
+state.
+\end{itemize}
+
+\section{List of functions}
+
+\begin{longtable}[c]{|c|>{\centering}p{4cm}|c|c|}
+\hline 
+Name & Main author & Test exists & Test Doc\tabularnewline
+\hline 
+\hline 
+f\_SCR & Dominik Bach \& Jean Daunizeau & - & -\tabularnewline
+\hline 
+f\_SF & Dominik Bach & - & -\tabularnewline
+\hline 
+g\_SCR & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm & Dominik Bach & x & x\tabularnewline
+\hline 
+scr & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_align\_channels & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_axpos & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_bf\_brf & Saurabh Khemka \& Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_bf\_FIR & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_bf\_Fourier & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_bf\_hprf & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_bf\_hprf\_e & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_bf\_hprf\_fc & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_bf\_hprf\_fc\_f & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_bf\_lcrf\_gm & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_bf\_ldrf\_gm & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_bf\_ldrf\_gu & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_bf\_psrf\_fc & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_rarf\_e & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_rarf\_fc & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_rfrrf\_e & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_rprf\_e & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_bf\_scrf\_f & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_bf\_scrf & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_bf\_spsrf\_box & Laure Ciernik & - & -\tabularnewline
+\hline 
+pspm\_bf\_spsrf\_gamma & Laure Ciernik & - & -\tabularnewline
+\hline 
+pspm\_butter & Dominik Bach & X & X\tabularnewline
+\hline 
+pspm\_compute\_visual\_angle & Laure Ciernik & - & -\tabularnewline
+\hline 
+pspm\_con1 & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_con2 & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_contrast & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_convert\_area2diameter & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_convert\_au2mm & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_convert\_illum2lum & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_convert\_lux2cdm2 & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_convert\_mm2visdeg & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_convert\_pixel2unit & Laure Ciernik & - & -\tabularnewline
+\hline 
+pspm\_convert\_unit & Tobias Moser & x & x\tabularnewline
+\hline 
+pspm\_convert\_visangle2sps & Laure Ciernik & - & -\tabularnewline
+\hline 
+pspm\_data\_editor & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_dcm\_inv & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_dcm & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_denoise\_spike & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_display & Philipp C Paulus & - & -\tabularnewline
+\hline 
+pspm\_down & Dominik Bach & x & -\tabularnewline
+\hline 
+pspm\_downsample & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_ecg2hb & Philipp C Paulus & x & x\tabularnewline
+\hline 
+pspm\_ecg2hb\_amri & Eshref Yozdemir & x & -\tabularnewline
+\hline 
+pspm\_ecg\_editor & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_exp & Dominik Bach & x & -\tabularnewline
+\hline 
+pspm\_extract\_segments & Tobias Moser & x & x\tabularnewline
+\hline 
+pspm\_filtfilt & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_find\_channel & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_find\_data\_epochs & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_find\_sounds & Samuel Gerster & x & x\tabularnewline
+\hline 
+pspm\_find\_valid\_fixations & Tobias Moser & x & x\tabularnewline
+\hline 
+pspm\_get\_acq\_bioread & Tobias Moser & x & x\tabularnewline
+\hline 
+pspm\_get\_acq & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_get\_acqmat & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_get\_biograph & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_get\_biosemi & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_get\_biotrace & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_get\_blink\_l & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_get\_blink\_r & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_get\_brainvis & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_get\_cell & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_get\_cnt & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_get\_custom & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_get\_ecg & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_get\_edf & Tobias Moser & x & x\tabularnewline
+\hline 
+pspm\_get\_events & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_get\_eyelink & Christoph Korn, Tobias Moser & x & x\tabularnewline
+\hline 
+pspm\_get\_gaze\_x\_l & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_get\_gaze\_y\_l & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_get\_gaze\_x\_r & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_get\_gaze\_y\_r & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_get\_hb & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_get\_hp & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_get\_hr & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_get\_labchartmat\_ext & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_get\_labchartmat\_in & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_get\_marker & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_get\_markerinfo & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_get\_mat & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_get\_obs & Linus Rüttimann & x & x\tabularnewline
+\hline 
+pspm\_get\_physlog & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_get\_pupil & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_get\_pupil\_l & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_get\_pupil\_r & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_get\_resp & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_get\_rf & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_get\_saccade\_l & Laure Ciernik & - & -\tabularnewline
+\hline 
+pspm\_get\_saccade\_r & Laure Ciernik & - & -\tabularnewline
+\hline 
+pspm\_get\_scr & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_get\_smi & Eshref Yozdemir & - & -\tabularnewline
+\hline 
+pspm\_get\_sps & Laure Ciernik & - & -\tabularnewline
+\hline 
+pspm\_get\_spike & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_get\_sound & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_get\_timing & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_get\_txt & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_get\_vario & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_get\_viewpoint & Eshref Yozdemir & - & -\tabularnewline
+\hline 
+pspm\_get\_wdq & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_get\_wdq\_n & Tobias Moser & x & x\tabularnewline
+\hline 
+pspm\_glm\_recon & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_glm & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_hb2hp & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_hb2hr & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_import & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_init & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_interpolate & Tobias Moser & x & x\tabularnewline
+\hline 
+pspm\_jobman & Gabriel Gräni & - & -\tabularnewline
+\hline 
+pspm\_job\_create & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_load\_data & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_load1 & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_load\_single\_chan & Eshref Yozdemir & - & -\tabularnewline
+\hline 
+pspm\_merge & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_path & Eshref Yozdemir & x & -\tabularnewline
+\hline 
+pspm\_peakscore & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_pp & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_ppu2hb & Samuel Gerster & - & -\tabularnewline
+\hline 
+pspm\_predval & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_prepdata & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_process\_illuminance & Tobias Moser & x & -\tabularnewline
+\hline 
+pspm\_pulse\_convert & Dominik Bach & x & -\tabularnewline
+\hline 
+pspm\_pupil\_correct\_eyelink & Eshref Yozdemir & x & -\tabularnewline
+\hline 
+pspm\_pupil\_correct & Eshref Yozdemir & x & -\tabularnewline
+\hline 
+pspm\_pupil\_pp & Eshref Yozdemir & x & -\tabularnewline
+\hline 
+pspm\_pupil\_pp\_options & Eshref Yozdemir & - & -\tabularnewline
+\hline 
+pspm\_quit & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_ren & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_resp\_pp & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_rev\_con & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_rev\_dcm & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_rev\_glm & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_rev2 & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_review & Gabriel Graeni & - & -\tabularnewline
+\hline 
+pspm\_segment\_mean & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_scr\_pp & Dadi Zhao & x & x\tabularnewline
+\hline 
+pspm\_sf\_auc & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_sf\_dcm & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_sf\_mp & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_sf\_scl & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_sf\_theta & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_sf & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_sf\_get\_theta & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_show\_arms & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_spike\_convert & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_split\_sessions & Linus Rüttimann & x & x\tabularnewline
+\hline 
+pspm\_transfer\_function & Dominik Bach & - & -\tabularnewline
+\hline 
+pspm\_trim & Dominik Bach & x & x\tabularnewline
+\hline 
+pspm\_version & Tobias Moser & - & -\tabularnewline
+\hline 
+pspm\_write\_channel & Tobias Moser & x & x\tabularnewline
+\hline 
+set\_blinks\_saccades\_to\_nan & Eshref Yozdemir & x & -\tabularnewline
+\hline 
+\end{longtable}
+\end{document}
