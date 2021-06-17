@@ -3,7 +3,7 @@
 \usepackage[latin9]{inputenc}
 \pagestyle{headings}
 \usepackage{color}
-\usepackage{babel}
+\usepackage[british,UKenglish]{babel}
 \usepackage{float}
 \usepackage{calc}
 \usepackage{textcomp}
@@ -15,6 +15,10 @@
 \usepackage{esint}
 \usepackage[unicode=true]
  {hyperref}
+ 
+ \usepackage[cmintegrals,cmbraces]{newtxmath}
+\usepackage{ebgaramond-maths}
+\usepackage[T1]{fontenc}
 
 \makeatletter
 
@@ -65,11 +69,15 @@ backgroundcolor={\color{white}},
 framexleftmargin=1pt,
 frame=l}
 \renewcommand{\lstlistingname}{Listing}
-\title{PsPM 5.0.0 Release notes}
+\title{PsPM 5.1.0 Release notes}
 
 \begin{document}
 \maketitle
 \date
+\pagebreak
+
+
+\tableofcontents{}
 \pagebreak
 
 \section{PsPM Version 3.0}
@@ -657,8 +665,76 @@ for a better backward compatibility.
 trimming point index.
 \end{itemize}
 
+\section{PsPM Version 5.1.0}
 
-\section{References}
+\subsection*{New Features}
+\begin{itemize}
+\item PsPM now has an improved GUI with a more eye-friendly colour and typeface.
+\item PsPM now has an alternative GUI built by using .mlapp, which shows
+consistent a more modern appearance across different platforms.
+\end{itemize}
+
+\subsection*{New Functions}
+\begin{itemize}
+\item pspm\_scr\_pp
+\begin{itemize}
+\item \texttt{pspm\_scr\_pp} replaces the classic \texttt{pspm\_simple\_qa}.
+\item \texttt{pspm\_scr\_pp} now allows users to detect clipping, where
+the results can be exported together with the original outcome.
+\item \texttt{pspm\_scr\_pp} now allows users to just write artefact epochs
+and leave data unchanged.
+\end{itemize}
+\end{itemize}
+
+\subsection*{Changes}
+\begin{itemize}
+\item General
+\begin{itemize}
+\item Dialogs have been rewritten for avoiding endless loops.
+\item \textit{Pre-processing} menu has been reconstructed, where \textit{pupil
+size convert} and \textit{gaze convert} are now under \textit{pupil
+and eye tracking}.
+\item PsPM now always generates test data inside the PsPM folder.
+\end{itemize}
+\item pspm\_interpolate
+\begin{itemize}
+\item \texttt{pspm\_interpolate} now process data ending with \texttt{NaN}
+well without throwing warnings.
+\end{itemize}
+\item pspm\_find\_sounds
+\begin{itemize}
+\item \texttt{pspm\_find\_sounds} now throws warning when some data was
+excluded due to the strict parameter setting.
+\end{itemize}
+\item pspm\_split\_sessions
+\begin{itemize}
+\item \texttt{pspm\_split\_sessions} is now using \texttt{pspm\_trim} for
+processing data.
+\end{itemize}
+\end{itemize}
+
+\subsection*{Bugfixes}
+\begin{itemize}
+\item pspm\_glm
+\begin{itemize}
+\item A bug that leads to the failure of selecting left/right eye has been
+fixed.
+\end{itemize}
+\item pspm\_load1 and pspm\_dcm
+\begin{itemize}
+\item A bug that leads to the failure of exporting statistics has been fixed.
+\end{itemize}
+\item pspm\_resp\_pp
+\begin{itemize}
+\item A bug that leads to the failure of opening batch for respiration data
+processing has been fixed.
+\end{itemize}
+\item pspm\_scr\_pp
+\begin{itemize}
+\item A bug that leads to incorrect matrix construction has been fixed.
+\end{itemize}
+\end{itemize}
+
 
 \bibliographystyle{pnas2009}
 \bibliography{PsPM}
