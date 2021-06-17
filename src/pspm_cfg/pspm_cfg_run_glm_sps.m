@@ -1,13 +1,17 @@
 function out = pspm_cfg_run_glm_sps(job)
-% Executes pspm_glm
+% This function executes pspm_glm for the modality ScanPath Speed (sps) only
 
 % $Id: pspm_cfg_run_glm_hp_fc.m 386 2016-11-29 10:30:55Z tmoser $
 % $Rev: 386 $
 
-global settings
-if isempty(settings), pspm_init; end;
+% Updated 16-06-21 Teddy (WCHN)
 
-% set modality
+global settings
+if isempty(settings)
+	pspm_init;
+end
+
+% set for only the modality sps
 modality = 'sps';
 modelspec = 'sps';
 
@@ -38,11 +42,11 @@ model.modality = modality;
 model.modelspec = modelspec;
 
 if isfield(job.chan.chan_def, 'chan_def_left')
-    model.channel = 'pupil_l';
+    model.channel = 'sps_l';
 elseif isfield(job.chan.chan_def, 'chan_def_right')
-    model.channel = 'pupil_r';
+    model.channel = 'sps_r';
 else
-    model.channel = 'pupil';
+    model.channel = 'sps';
 end
 
 out = pspm_glm(model, options);
@@ -55,4 +59,3 @@ else
 end;
 
 end
-
