@@ -8,7 +8,7 @@ permalink: /news/
 
 ### 18.06.2021
 
-PsPM 5.1.0 released -- including a new function for skin conductance response processing and quality assessment, the improved scanpath speed model, the new GUI designed with .mlapp. Changes to functions for better throwing warnings and bugfixes are also included in this release. Thanks to everybody involved!
+PsPM 5.1.0 released -- including a new function for skin conductance response processing and quality assessment, the improved scanpath speed model, the new GUI designed with .mlapp. Changes to functions for better warning management and consistent data processing, together with bugfixes, are also included in this release. Thanks to everybody involved!
 
 ---
 
