@@ -22,7 +22,7 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 %                           in terms of markers (vector of integer)
 % options.prefix            In seconds, how long data before start trim point
 %                           should also be included. First marker will be
-%                           at t = -options.prefix
+%                           at t = options.prefix
 %                           Default = 0
 % options.suffix            In seconds, how long data after the end trim
 %                           point should be included. Last marker will be
@@ -40,7 +40,7 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 %           The prefix and  suffix intervals will only be applied to data -
 %           channels. Markers in those intervals are ignored.Only markers
 %           within the splitpoints will be considered for each session to
-%           avoid dupplication of markers.
+%           avoid duplication of markers.
 %
 %
 % OUTPUT:
@@ -179,7 +179,7 @@ for d = 1:numel(D)
             end
             srscr = datascr{1}.header.sr;
             if any(missing > ininfos.duration) % convert epochs in sec to datapoints
-                warning('ID:invalid_input', 'Epochs provided are in datapoints not in seconds');
+                warning('ID:invalid_input', 'Some missing epochs are outside data file.');
             else
                 missing = round(missing*srscr);
             end
@@ -272,84 +272,12 @@ for d = 1:numel(D)
                 [p_epochs, f_epochs, ex_epochs] = fileparts(options.missing);
                 newepochfile{d}{sn} = fullfile(p_epochs, sprintf('%s_sn%02.0f%s', f_epochs, sn, ex_epochs));
             end
+            
+            trimoptions = struct('overwrite', options.overwrite, 'drop_offset_markers', 1);
+            newfn = pspm_trim(datafile, options.prefix, options.suffix, splitpoint(sn, 1:2), trimoptions);
+            pspm_rename(newfn, newdatafile{d}{sn});
 
-            % 2.4.2 Adjust split points according to prefix and suffix
-            if (splitpoint(sn,1) + options.prefix) < 0
-                sta_p = 0;
-                sta_prefix = sta_p - splitpoint(sn,1);
-            else
-                sta_p = splitpoint(sn,1) + options.prefix;
-                sta_prefix = options.prefix;
-            end
-
-            if (splitpoint(sn,2) + suffix(sn)) > ininfos.duration
-                sto_p = ininfos.duration;
-                suffix(sn) = ininfos.duration - splitpoint(sn,2);
-            else
-                sto_p = splitpoint(sn,2) + suffix(sn);
-            end
-            
-            % 2.4.3 Update infos
-            infos = ininfos;
-            infos.duration = sto_p - sta_p;
-            infos.splitdate = date;
-            infos.splitsn = sprintf('Session %02.0f', sn);
-            infos.splitfile = newdatafile{d}{sn};
-            
-            % 2.4.4 Split data
-            data = cell(numel(indata),1);
-            for k = 1:numel(indata)
-                % assign header
-                data{k}.header = indata{k}.header;
-                % assign data
-                if strcmp(data{k}.header.units, 'events')
-                    if k == markerchannel
-                        startpoint = sta_p - sta_prefix;
-                        stoppoint = sto_p - suffix(sn);
-                        foo = indata{k}.data;
-                        foo_idx = find(foo<=stoppoint & foo>=startpoint);
-                        foo(foo > stoppoint) = [];
-                        foo = foo - startpoint;
-                        foo(foo < 0) = [];
-                        foo = foo - sta_prefix;
-                        data{k}.data = foo;
-                        if isfield(indata{k},'makerinfo')
-                            if isfield(indata{k}.makerinfo, 'value')
-                                foo_markervalues = indata{k}.makerinfo.value;
-                                foo_markervalues = foo_markervalues(foo_idx);
-                                data{k}.markerinfo.value = foo_markervalues;
-                            end
-                            if isfield(indata{k}.makerinfo, 'name')
-                                foo_markernames = indata{k}.makerinfo.name;
-                                foo_markernames = foo_markernames(foo_idx);
-                                data{k}.markerinfo.name = foo_markernames;
-                            end
-                        end
-                        clear foo;
-                    else
-                        startpoint = sta_p;
-                        stoppoint  = sto_p;
-                        foo = indata{k}.data;
-                        foo(foo > stoppoint) = [];
-                        foo = foo - startpoint;
-                        foo(foo < 0) = [];
-                        data{k}.data = foo;
-                        clear foo;
-                    end
-                else
-                    % convert from s into datapoints
-                    %startpoint = max(1, ceil(sta_p * data{k}.header.sr));
-                    %stoppoint  = min(floor(sto_p * data{k}.header.sr), numel(indata{k}.data));
-                    %data{k}.data = indata{k}.data(startpoint:stoppoint);
-                    
-                    temp1 = struct;
-                    temp1.data = indata(k);
-                    temp1.infos = ininfos;
-                    trimmed_struct = pspm_trim(temp1, sta_p, sto_p, 'file');
-                    data{k}.data = trimmed_struct.data{1,1}.data;
-                end
-            end
-            
+           
             % 2.4.5 Split Epochs
             if options.missing && ~isempty(missing)
                 startpoint = max(1, ceil(sta_p * srscr)); % convert from seconds into datapoints
@@ -364,23 +292,6 @@ for d = 1:numel(D)
                 end
                 epochs = [epoch_on.', epoch_off.']/srscr; % convert back to seconds
                 save(newepochfile{d}{sn}, 'epochs');
-            end
-            % save data ---
-            if exist(newdatafile{d}{sn}, 'file') && ~options.overwrite
-                if feature('ShowFigureWindows')
-                    msg = ['Split file already exists. Overwrite?', newline, 'Existing file: ',newdatafile{d}{sn}];
-                    overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default to overwrite
-                else
-                    overwrite = 'Yes'; % default to overwrite on Jenkins
-                end
-                %close gcf;
-                if strcmp(overwrite, 'No')
-                    continue;
-                else
-                    save(newdatafile{d}{sn}, 'infos', 'data');
-                end
-            else
-                save(newdatafile{d}{sn}, 'infos', 'data');
             end
             
         end
