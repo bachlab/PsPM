@@ -228,18 +228,7 @@ for d = 1:numel(D)
             else
                 sto = max(1,splitpoint(s) - 1);
             end
-            % include last space (estimated by mean space)
-            % do not cut immedeately after stop because there might be some
-            % relevant data within the mean space.
-            % Add global mean space
-            %if sta == sto || options.randomITI
-            %   mean_space = mean(diff(mrk));
-            %else
-            %   mean_space = mean(diff(mrk(sta:sto)));
-            %end
-            start_time = mrk(sta);
-            %stop_time = mrk(sto)+mean_space;
-            stop_time = mrk(sto);
+           
             if options.suffix == 0
                 if sta == sto || options.randomITI
                     suffix(s) = mean(diff(mrk));
@@ -249,15 +238,7 @@ for d = 1:numel(D)
             else
                 suffix(s) = options.suffix;
             end
-            % correct starttime (we cannot go into -) ---
-            if start_time <= 0
-                start_time = 0;
-            end
-            % correct stop_time if it exceeds duration of file
-            if stop_time > ininfos.duration
-                stop_time = ininfos.duration;
-            end
-            spp(s,:) = [start_time, stop_time];
+            spp(s,:) = [sta, sto];
         end
         splitpoint = spp;
         
@@ -275,13 +256,13 @@ for d = 1:numel(D)
             
             trimoptions = struct('overwrite', options.overwrite, 'drop_offset_markers', 1);
             newfn = pspm_trim(datafile, options.prefix, options.suffix, splitpoint(sn, 1:2), trimoptions);
-            pspm_rename(newfn, newdatafile{d}{sn});
+            pspm_ren(newfn, newdatafile{d}{sn});
 
            
-            % 2.4.5 Split Epochs
+            % 2.4.5 Split Epochs - to be updated
             if options.missing && ~isempty(missing)
-                startpoint = max(1, ceil(sta_p * srscr)); % convert from seconds into datapoints
-                stoppoint  = min(floor(sto_p * srscr), numel(datascr{1}.data));
+                startpoint = max(1, ceil((mrk(splitploint(:, 1)) - options.prefix) * srscr)); % convert from seconds into datapoints
+                stoppoint  = min(floor((mrk(splitploint(:, 2)) + options.suffix) * srscr), numel(datascr{1}.data));
                 epochs = dp_epochs(startpoint:stoppoint);
                 epoch_on = strfind(epochs.', [0 1]); % Return the start points of the excluded interval
                 epoch_off = strfind(epochs.', [1 0]); % Return the end points of the excluded interval
