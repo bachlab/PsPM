@@ -8,19 +8,19 @@ permalink: /news/
 
 ### 18.06.2021
 
-PsPM 5.1.0 released -- including a new function for skin conductance response processing and quality assessment, the improved scanpath speed model, the new GUI designed with .mlapp. Changes to functions for better warning management and consistent data processing, together with bugfixes, are also included in this release. Thanks to everybody involved!
+PsPM 5.1.0 released -- including a new function for skin conductance response processing and quality assessment, the improved scanpath speed model, and the new GUI designed with .mlapp. Changes to functions for better warning management and consistent data processing, together with bugfixes, are also included in this release. Thanks to everybody involved!
 
 ---
 
 ### 09.09.2020
 
-PsPM 5.0.0 released - including several new features such as new options in SCR quality correction, the possibility to convert gaze distances to scanpath speed or the possibility to import data from DSV (delimiter separated values) file format. This release also includes several changes (e.g. deprecate edge filtering functionality) as well as some bugfixes. Thanks to everybody involved!
+PsPM 5.0.0 released -- including several new features such as new options in SCR quality correction, the possibility to convert gaze distances to scanpath speed or the possibility to import data from DSV (delimiter separated values) file format. This release also includes several changes (e.g. deprecate edge filtering functionality) as well as some bugfixes. Thanks to everybody involved!
 
 ---
 
 ### 01.04.2020
 
-PsPM 4.3.0 released - including few new features and changes (in particular in the way PsPM imports markers from Eyelink files) as well as bugfixes correcting the 4.2.1 release. Thanks to everybody involved!
+PsPM 4.3.0 released -- including few new features and changes (in particular in the way PsPM imports markers from Eyelink files) as well as bugfixes correcting the 4.2.1 release. Thanks to everybody involved!
 
 ---
 
@@ -39,13 +39,13 @@ We are running the next full PsPM workshop on 30.6.-01.07.2020 at [ESCAN 2020](h
 
 ### 04.11.2019
 
-PsPM 4.2.1 released - including new tests and changes in PsPM functions as well as multiple bugfixes correcting 4.2.0 release. Thanks to everybody involved!
+PsPM 4.2.1 released -- including new tests and changes in PsPM functions as well as multiple bugfixes correcting 4.2.0 release. Thanks to everybody involved!
 
 ---
 
 ### 16.09.2019
 
-PsPM 4.2.0 released - including new pupil preprocessing, pupil foreshortening error correction and QRS detection algorithms; performance optimizations to pupil data import functions; new tests, bugfixes and changes to the behaviour of some functions to make PsPM more uniform and easier to use. Thanks to everybody involved!
+PsPM 4.2.0 released -- including new pupil preprocessing, pupil foreshortening error correction and QRS detection algorithms; performance optimizations to pupil data import functions; new tests, bugfixes and changes to the behaviour of some functions to make PsPM more uniform and easier to use. Thanks to everybody involved!
 
 ---
 
@@ -57,7 +57,7 @@ We are running a PsPM course on 13.11.2019 at Universität Göttingen within the
 
 ### 17.06.2019
 
-PsPM 4.1.1 released – including new models and data processing methods, support for two new eye tracker formats, various improvements and bugfixes. Thanks to everybody involved!
+PsPM 4.1.1 released -- including new models and data processing methods, support for two new eye tracker formats, various improvements and bugfixes. Thanks to everybody involved!
 
 ---
 
@@ -75,7 +75,7 @@ PsPM 4.0.1 contains minor bug fixes.
 
 ### 26.11.2017
 
-PsPM 4.0 released - including startle eye blink EMG modelling and pre-processing, and many improvements for data import and pre-processing. Thanks to everybody involved, and in particular Tobias Moser!
+PsPM 4.0 released -- including startle eye blink EMG modelling and pre-processing, and many improvements for data import and pre-processing. Thanks to everybody involved, and in particular Tobias Moser!
 
 ---
 
