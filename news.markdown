@@ -10,6 +10,8 @@ permalink: /news/
 
 PsPM 5.1.0 released -- including a new function for skin conductance response processing and quality assessment, the improved scanpath speed model, the new GUI designed with .mlapp. Changes to functions for better throwing warnings and bugfixes are also included in this release. Thanks to everybody involved!
 
+---
+
 ### 09.09.2020
 
 PsPM 5.0.0 released - including several new features such as new options in SCR quality correction, the possibility to convert gaze distances to scanpath speed or the possibility to import data from DSV (delimiter separated values) file format. This release also includes several changes (e.g. deprecate edge filtering functionality) as well as some bugfixes. Thanks to everybody involved!
