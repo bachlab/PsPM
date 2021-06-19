@@ -44,9 +44,6 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
                 [sts, infos, data] = pspm_load_data(newdatafile{k});
                 this.verifyTrue(sts == 1, sprintf('couldn''t load file %s with pspm_load_data', newdatafile{k}));
                 this.verifyTrue(numel(data) == numel(channels), sprintf('number of channels doesn''t match in file %s', newdatafile{k}));
-                this.verifyTrue(isfield(infos, 'splitdate'), sprintf('there is no field infos.splitdate in file %s', newdatafile{k}));
-                this.verifyTrue(isfield(infos, 'splitsn'), sprintf('there is no field infos.splitsn in file %s', newdatafile{k}));
-                this.verifyTrue(isfield(infos, 'splitfile'), sprintf('there is no field infos.splitfile in file %s', newdatafile{k}));
                 
                 delete(newdatafile{k});
             end
@@ -78,10 +75,7 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
                     [sts, infos, data] = pspm_load_data(newdatafile{m}{k});
                     this.verifyTrue(sts == 1, sprintf('couldn''t load file %s with pspm_load_data', newdatafile{m}{k}));
                     this.verifyTrue(numel(data) == numel(channels), sprintf('number of channels doesn''t match in file %s', newdatafile{m}{k}));
-                    this.verifyTrue(isfield(infos, 'splitdate'), sprintf('there is no field infos.splitdate in file %s', newdatafile{m}{k}));
-                    this.verifyTrue(isfield(infos, 'splitsn'), sprintf('there is no field infos.splitsn in file %s', newdatafile{m}{k}));
-                    this.verifyTrue(isfield(infos, 'splitfile'), sprintf('there is no field infos.splitfile in file %s', newdatafile{m}{k}));
-
+                   
                     delete(newdatafile{m}{k});
                 end
             
