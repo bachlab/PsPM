@@ -146,7 +146,7 @@ for d = 1:numel(D)
     % 2.1 Obtain data
     datafile = D{d};
     if options.verbose
-        fprintf('Splitting %s ... ', datafile);
+        fprintf('Splitting %s ... \n', datafile);
     end
     [sts, ininfos, indata, filestruct] = pspm_load_data(datafile); % check and get datafile ---
     if sts == -1
@@ -198,36 +198,38 @@ for d = 1:numel(D)
 
      % 2.3.3 Define trim points and adjust suffix
     if isempty(splitpoint)
-       trimpoint = [1, numel(mrk)];
+       return;
     else
         % initialise
         suffix = zeros(1,(numel(splitpoint)+1));
-        for s = 1:(numel(splitpoint)+1)
-            if s == 1
-                trimpoint(1, 1) = 1;
+        for sn = 1:(numel(splitpoint)+1)
+            if sn == 1
+                trimpoint(sn, :) = [1, max(splitpoint(sn) - 1, 1)];
+            elseif sn > numel(splitpoint)
+                trimpoint(sn, :) = [max(splitpoint(sn - 1), 1), numel(mrk)];
             else
-                trimpoint(s, 1) = splitpoint(s-1);
+                trimpoint(sn, :) = [splitpoint(sn - 1), max(splitpoint(sn) - 1, 1)];
             end
 
-            if s > numel(splitpoint)
-                trimpoint(1, 2) = numel(mrk);
+            if sn > numel(splitpoint)
+                trimpoint(sn, 2) = numel(mrk);
             else
-                trimpoint(s, 2) = max(1, splitpoint(s) - 1);
+                trimpoint(sn, 2) = max(1, splitpoint(sn) - 1);
             end
            
             if options.suffix == 0
-                if trimpoint(s, 1) == trimpoint(s, 2) || options.randomITI
-                    suffix(s) = mean(diff(mrk));
+                if trimpoint(sn, 1) == trimpoint(sn, 2) || options.randomITI
+                    suffix(sn) = mean(diff(mrk));
                 else
-                    suffix(s) = mean(diff(mrk(trimpoint(s, 1):trimpoint(s, 2))));
+                    suffix(sn) = mean(diff(mrk(trimpoint(sn, 1):trimpoint(sn, 2))));
                 end
             else
-                suffix(s) = options.suffix;
+                suffix(sn) = options.suffix;
             end
         end
         
         % 2.4 Split files
-        for sn = 1:size(splitpoint,1)
+        for sn = 1:size(trimpoint,1)
             
             % 2.4.1 Determine filename
             [p, f, ex] = fileparts(datafile);
@@ -239,7 +241,7 @@ for d = 1:numel(D)
             end
             
             trimoptions = struct('overwrite', options.overwrite, 'drop_offset_markers', 1);
-            newfn = pspm_trim(datafile, options.prefix, suffix(sn), splitpoint(sn, 1:2), trimoptions);
+            newfn = pspm_trim(datafile, options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions);
             pspm_ren(newfn, newdatafile{d}{sn});
 
            
@@ -250,7 +252,7 @@ for d = 1:numel(D)
                 dummdata{2}         = indata{markerchannel};
                 dummyinfos          = ininfos;
                 
-                newmissing = pspm_trim(struct('data', dummydata, 'infos', dummyinfos), options.prefix, suffix(sn), splitpoint(sn, 1:2));
+                newmissing = pspm_trim(struct('data', dummydata, 'infos', dummyinfos), options.prefix, suffix(sn), trimpoint(sn, 1:2));
                 
                 epochs = newmissing.data{1}.data;
                 
