@@ -1,44 +1,23 @@
 function newdatafile = pspm_pp(varargin)
 % pspm_pp contains various preprocessing utilities for reducing noise in the
-% data. 
+% data.
 %
 % INPUT:
 %   pspm_pp('median', datafile, n, channelnumber, options)
 %   pspm_pp('butter', datafile, freq, channelnumber, options)
-%   pspm_pp('simple_qa', datafile, qa, channelnumber, options)
 %
-% Currently implemented: 
+% Currently implemented:
 %   'median':                           medianfilter for SCR
 %       n:                              number of timepoints for median filter
 %   'butter':                           1st order butterworth low pass filter for SCR
 %       freq:                           cut off frequency (min 20 Hz)
-%   'simple_qa':                        Simple quality assessment for SCR
-%       qa:                             A struct with quality assessment settings
-%           min:                        Minimum value in microsiemens
-%           max:                        Maximum value in microsiemens
-%           slope:                      Maximum slope in microsiemens per second
-%           missing_epochs_filename:    If provided will create a .mat file with the missing epochs,
-%                                       e.g. abc will create abc.mat
-%           deflection_threshold:       Define an threshold in original data units for a slope to pass to be considerd in the filter.
-%                                       This is useful, for example, with oscillatory wave data
-%                                       The slope may be steep due to a jump between voltages but we
-%                                       likely do not want to consider this to be filtered.
-%                                       A value of 0.1 would filter oscillatory behaviour with threshold less than 0.1v but not greater
-%                                       Default: 0 - ie will take no effect on filter
-%           data_island_threshold:      A float in seconds to determine the maximum length of unfiltered data between epochs
 %__________________________________________________________________________
 %
-% References: For 'simple_qa' method, refer to:
-%
-% I. R. Kleckner et al., "Simple, Transparent, and Flexible Automated Quality
-% Assessment Procedures for Ambulatory Electrodermal Activity Data," in IEEE
-% Transactions on Biomedical Engineering, vol. 65, no. 7, pp. 1460-1467,
-% July 2018.
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2009-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$   
+% $Id$
 % $Rev$
 
 % initialise
@@ -129,21 +108,6 @@ switch method
             end
         end
         infos.pp = sprintf('butterworth 1st order low pass filter at cutoff frequency %2.2f Hz', freq);
-    case 'simple_qa'
-        if nargin < 3
-            qa = struct();
-        else
-            qa = varargin{3};
-        end
-        for k = 1:numel(channum)
-            curr_chan = channum(k);
-            [sts, data{curr_chan}.data] = pspm_simple_qa(data{curr_chan}.data, data{curr_chan}.header.sr, qa);
-            if sts == -1
-                warning('ID:invalid_input', 'call of pspm_simple_qa failed in round %s',k);
-                return;
-            end
-        end
-        infos.pp = sprintf('simple scr quality assessment');
     otherwise
         warning('ID:invalid_input', 'Unknown filter option ...');
         return;
@@ -154,10 +118,9 @@ newdatafile = fullfile(pth, ['m', fn, ext]);
 infos.ppdate = date;
 infos.ppfile = newdatafile;
 clear savedata
-savedata.data = data; savedata.infos = infos; 
+savedata.data = data; savedata.infos = infos;
 savedata.options = options;
 sts = pspm_load_data(newdatafile, savedata);
 fprintf(' done\n');
 
-return;
-
+return

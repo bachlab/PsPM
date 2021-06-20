@@ -84,7 +84,7 @@ end;
 % construct elements of ledalab file
 %--------------------------------------------------------------------------
 clear data
-data.conductance = (scr.data(:))';
+data.conductance = transpose(scr.data(:));
 data.time        = (1/scr.header.sr):(1/scr.header.sr):(numel(scr.data)/scr.header.sr);
 data.timeoff     = 0;
 for k = 1:numel(events.data)
@@ -102,12 +102,17 @@ fileinfo.log     = {'Created by SCRalyze for use with Ledalab 3.44.'};
 % check output file & save data
 %--------------------------------------------------------------------------
 if exist(outfile, 'file') == 2 && options.overwrite ~= 1
-    overwrite=menu(sprintf('Importfile (%s) already exists. Overwrite?', outfile), 'yes', 'no');                
+    if feature('ShowFigureWindows')
+        msg = ['Imported file already exists. Overwrite?', newline, 'Existing file: ',outfile];
+        overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'No'); % default not to overwrite by users 
+    else
+        overwrite = 'No'; % default not to overwrite on Jenkins
+    end             
     close gcf;
 else
-    overwrite = 1;
+    overwrite = 'Yes';
 end;
-if overwrite == 2
+if strcmp(overwrite, 'No')
     warning('Data discarded ...');
     return;
 else

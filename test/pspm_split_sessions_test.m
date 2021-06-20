@@ -105,9 +105,9 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
             this.verifyEqual(numel(newdatafile), nsessions);
             
             for i = 1:numel(newdatafile)
-                [~, ~, d] = pspm_load_data(newdatafile{i});
-                this.verifyEqual(d{3}.data(1), 0);
                 if exist(newdatafile{i}, 'file')
+                [~, ~, d] = pspm_load_data(newdatafile{i});
+                    this.verifyEqual(d{3}.data(1), 0);
                     delete(newdatafile{i});
                 end
             end
@@ -142,7 +142,7 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
                     end
                     
                     if i ~= numel(newdatafile)
-                        this.verifyEqual(d{3}.data(end), info.duration - (suffix + mean(diff(d{3}.data))), 'RelTol', 10^-2);
+                        this.verifyEqual(d{3}.data(end), info.duration - (suffix + mean(diff(d{3}.data))), 'RelTol', 5*10^-2);
                     end
                     % remove file
                     delete(newdatafile{i});
@@ -211,4 +211,3 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
     end
     
 end
-

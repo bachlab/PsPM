@@ -25,9 +25,12 @@ function glm = pspm_glm(model, options)
 %                   otherwise.
 %
 % optional fields
-% model.modelspec:  'scr' (default); specify the model to be used. See
-%                   pspm_init, defaults.glm() which modelspecs are possible
+% model.modelspec:  'scr' (default); specify the model to be used. 
+%                   See pspm_init, defaults.glm() which modelspecs are possible
 %                   with glm.
+% model.modality:   specify the modality to be processed.
+%                   When model.modality is set to be sps, the model.channel
+%                   should be set among sps_l, sps_r, or defaultly sps.
 % model.bf:         basis function/basis set; modality specific default
 %                   with subfields .fhandle (function handle or string) and
 %                   .args (arguments, first argument sampling interval will
@@ -46,6 +49,8 @@ function glm = pspm_glm(model, options)
 %                   precedence order described in its documentation. In a nutshell,
 %                   it prefers preprocessed channels and channels from the best eye
 %                   to other pupil channels.
+%                   SPECIAL: for the modality "sps", the model.channel
+%                   accepts only "sps_l", "sps_r", or "sps".
 %                   DEFAULT: last channel of the specified modality
 %                            (for PSR this is 'pupil')
 % model.norm:       normalise data; default 0
@@ -74,7 +79,7 @@ function glm = pspm_glm(model, options)
 %                   Default: 1
 %
 % OPTIONS (optional argument)
-% options.overwrite: overwrite existing model output; default 0
+% options.overwrite:       overwrite existing model output; default 0
 % options.marker_chan_num: marker channel number; default last marker
 %                          channel
 % options.exclude_missing: marks trials during which NaN percentage exceeds
@@ -82,8 +87,7 @@ function glm = pspm_glm(model, options)
 %                          'segment_length' (in s after onset) and 'cutoff'
 %                          (in % NaN per segment). Results are written into
 %                          model structure as fields .stats_missing and 
-%                           .stats_exclude but not used further.
-%                           
+%                           .stats_exclude but not used further.                           
 %
 % TIMING - multiple condition file(s) or struct variable(s):
 % The structure is equivalent to SPM2/5/8/12 (www.fil.ion.ucl.ac.uk/spm),
@@ -224,7 +228,11 @@ model.modality = settings.glm(modno).modality;
 
 % check data channel --
 if ~isfield(model, 'channel')
-    model.channel = model.modality;
+    if strcmp(model.modality, 'psr')
+        model.channel = "pupil";
+    else
+        model.channel = model.modality;
+    end
 elseif ~isnumeric(model.channel) && ~ismember(model.channel, {settings.chantypes.type})
     warning('ID:invalid_input', 'Channel number must be numeric.'); return;
 end
@@ -234,6 +242,13 @@ if ~isfield(model, 'norm')
     model.norm = 0;
 elseif ~ismember(model.norm, [0, 1])
     warning('ID:invalid_input', 'Normalisation must be specified as 0 or 1.'); return;
+end
+
+% check mean centering --
+if ~isfield(model,'centering')
+    model.centering = 1;
+elseif ~ismember(model.centering, [0, 1])
+    model.centering = 1;
 end
 
 % check options --
@@ -259,8 +274,15 @@ end
 
 % check files --
 if exist(model.modelfile, 'file') && ~(isfield(options, 'overwrite') && options.overwrite == 1)
-    overwrite=menu(sprintf('Model file (%s) already exists. Overwrite?', model.modelfile), 'yes', 'no');
-    if overwrite == 2, return, end
+	if feature('ShowFigureWindows')
+		msg = ['Model file already exists. Overwrite?', newline, 'Existing file: ',model.modelfile];
+    	overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default to overwrite by users 
+    else
+    	overwrite = 'Yes'; % default to overwrite on Jenkins
+    end
+    if strcmp(overwrite, 'No')
+    	return;
+    end
     options.overwrite = 1;
 end
 
@@ -731,11 +753,13 @@ for iCond = 1:numel(names)
         end
     end
     
-    % mean center
-    for iXCol=1:size(tmp.XC{iCond},2)
-        tmp.XC{iCond}(:,iXCol) = tmp.XC{iCond}(:,iXCol) - mean(tmp.XC{iCond}(:,iXCol));
+    % mean centering
+    if model.centering
+        for iXCol=1:size(tmp.XC{iCond},2)
+            tmp.XC{iCond}(:,iXCol) = tmp.XC{iCond}(:,iXCol) - mean(tmp.XC{iCond}(:,iXCol));
+        end
     end
-    
+
     % orthogonalize after convolution if there is more than one column per
     % condition
     if size(tmp.XC{iCond}, 2) > 1

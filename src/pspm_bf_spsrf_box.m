@@ -35,8 +35,8 @@ end;
 
 % create border of interval
 stop = soa;
-start = soa-2;
-start_idx = floor(start/td);
+start = soa - 2;
+start_idx = floor(start/td)+1;
 if start_idx ==0
     start_idx = start_idx+1;
 end 

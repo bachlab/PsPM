@@ -20,51 +20,22 @@ switch filtertype
     case 'butter'
         freq = job.filtertype.(filtertype).freq;
         out = pspm_pp(filtertype, datafile, freq, channelnumber, options);
-    case 'simple_qa'
-        qa_job = job.filtertype.(filtertype);
-        
+    case 'scr_pp'
+        scr_job = job.filtertype.(filtertype);
         % Option structure sent to pspm_simple_qa
-        qa = struct();
-        
-        % Check if min is defined
-        if isfield(qa_job, 'min'), qa.min = qa_job.min; end
-        
-        % Check if max is defined
-        if isfield(qa_job, 'max'), qa.max = qa_job.max; end
-        
-        % Check if slope is defined
-        if isfield(qa_job, 'slope'), qa.slope = qa_job.slope; end
-        
-        % Check if missing_epochs is defined
-        if isfield(qa_job.missing_epochs, 'write_to_file')
-            if isfield(qa_job.missing_epochs.write_to_file,'filename') && ...
-                isfield(qa_job.missing_epochs.write_to_file,'outdir')
-                
-                qa.missing_epochs_filename = fullfile( ...
-                            qa_job.missing_epochs.write_to_file.outdir{1}, ...
-                            qa_job.missing_epochs.write_to_file.filename);                
-
+        scr = struct();
+        if isfield(scr_job, 'min'), scr.min = scr_job.min; end % Check if min is defined
+        if isfield(scr_job, 'max'), scr.max = scr_job.max; end % Check if max is defined
+        if isfield(scr_job, 'slope'), scr.slope = scr_job.slope; end % Check if slope is defined
+        if isfield(scr_job.missing_epochs, 'write_to_file') % Check if missing_epochs is defined
+            if isfield(scr_job.missing_epochs.write_to_file,'filename') && isfield(scr_job.missing_epochs.write_to_file,'outdir')
+                scr.missing_epochs_filename = fullfile(scr_job.missing_epochs.write_to_file.outdir{1}, scr_job.missing_epochs.write_to_file.filename);
             end
         end
-        
-        % Check if deflection_threshold is defined
-        if isfield(qa_job, 'deflection_threshold')
-            qa.deflection_threshold = qa_job.deflection_threshold;
-        end
-        
-        % Check if data_island_threshold is defined
-        if isfield(qa_job, 'data_island_threshold')
-            qa.data_island_threshold = qa_job.data_island_threshold;
-        end
-        
-        % Check if expand_epochs is defined
-        if isfield(qa_job, 'expand_epochs')
-            qa.expand_epochs = qa_job.expand_epochs;
-        end
-        
-        out = pspm_pp(filtertype, datafile, qa, channelnumber, options);
-end
+        if isfield(scr_job, 'deflection_threshold'), scr.deflection_threshold = scr_job.deflection_threshold; end % Check if deflection_threshold is defined
+        if isfield(scr_job, 'data_island_threshold'), scr.data_island_threshold = scr_job.data_island_threshold; end % Check if data_island_threshold is defined
+        if isfield(scr_job, 'expand_epochs'), scr.expand_epochs = scr_job.expand_epochs; end % Check if expand_epochs is defined
+        if isfield(scr_job, 'change_data'), scr_job.change_data = scr_job.change_data; else, scr_job.change_data = "replace"; end % Check if data will be changed
 
-if ~iscell(out)
-    out = {out};
+        [~, out] = pspm_scr_pp(datafile, scr);
 end

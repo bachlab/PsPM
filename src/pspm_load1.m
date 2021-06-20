@@ -98,8 +98,13 @@ if exist(fn, 'file')
     if strcmpi(action, 'save')
         if ~options.overwrite
             if ~options.dont_ask_overwrite
-                overwrite = menu(sprintf('File (%s) already exists. Overwrite?', fn), 'yes', 'no');
-                if overwrite ~=2
+                if feature('ShowFigureWindows')
+                    msg = ['File already exists. Overwrite?', newline, 'Existing file: ',fn];
+                    overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default to overwrite by users 
+                else
+                    overwrite = 'Yes'; % default to overwrite on Jenkins
+                end
+                if strcmp(overwrite, 'No')
                     warning('ID:not_saving_data', 'Data not saved.\n'); return;
                 end;
             else
@@ -159,20 +164,24 @@ elseif ~isfield(indata.(mdltype), 'modality')
     % --------------------------------------------
     % return
     indata.(mdltype).modality = settings.modalities.(mdltype);
+elseif strcmpi(mdltype, 'pfm')
+    % nothing to do
 elseif ~isfield(indata.(mdltype), 'stats')
     warning('ID:invalid_data_structure', '%sNo stats contained in file.', errmsg); return;
 elseif ~isfield(indata.(mdltype), 'names')
     warning('ID:invalid_data_structure', '%sNo names contained in file.', errmsg); return;
-elseif ~strcmpi(mdltype, 'glm') && ~isfield(indata.(mdltype), 'trlnames')
-        warning('ID:invalid_data_structure', '%sNo trial names contained in file.', errmsg); return;
-elseif strcmpi(mdltype, 'glm') && size(indata.(mdltype).stats, 1) ~= numel(indata.(mdltype).stats)
+elseif strcmpi(mdltype, 'glm') 
+    if size(indata.(mdltype).stats, 1) ~= numel(indata.(mdltype).stats)
         warning('ID:invalid_data_structure', '%sGLM stats should be a n x 1 vector.', errmsg); return;
-elseif strcmpi(mdltype, 'glm') && numel(indata.(mdltype).names) ~= numel(indata.(mdltype).stats)
+    elseif strcmpi(mdltype, 'glm') && numel(indata.(mdltype).names) ~= numel(indata.(mdltype).stats)
         warning('ID:invalid_data_structure', '%sNumbers of names and parameters do not match.', errmsg); return;
-elseif ~strcmpi(mdltype, 'glm') && numel(indata.(mdltype).names) ~= size(indata.(mdltype).stats, 2)
-        warning('ID:invalid_data_strucutre', '%sNumbers of names and parameters do not match.', errmsg); return;
-elseif ~strcmpi(mdltype, 'glm') && numel(indata.(mdltype).trlnames) ~= size(indata.(mdltype).stats,1)
-        warning('ID:invalid_data_structure', '%sNumbers of trial names and parameters do not match.', errmsg); return;
+    end
+elseif ~isfield(indata.(mdltype), 'trlnames')
+    warning('ID:invalid_data_structure', '%sNo trial names contained in file.', errmsg); return;
+elseif numel(indata.(mdltype).names) ~= size(indata.(mdltype).stats, 2)
+    warning('ID:invalid_data_strucutre', '%sNumbers of names and parameters do not match.', errmsg); return;
+elseif numel(indata.(mdltype).trlnames) ~= size(indata.(mdltype).stats,1)
+    warning('ID:invalid_data_structure', '%sNumbers of trial names and parameters do not match.', errmsg); return;
 end;
 
 % Backwards compatibility for SF-Models
@@ -212,10 +221,11 @@ else
     reconflag = 1;
 end;
 
-% if not glm
+% if not glm, nor pfm
 % create condition names --
-if ~strcmpi(mdltype, 'glm')
-    indata.(mdltype).condnames = unique(indata.(mdltype).trlnames);
+if ~strcmpi(mdltype, 'glm') && ~strcmpi(mdltype, 'pfm')
+    indata.(mdltype).condnames = ...
+        unique(indata.(mdltype).trlnames(cellfun(@ischar,indata.(mdltype).trlnames)));
 end;
 
 % retrieve file contents

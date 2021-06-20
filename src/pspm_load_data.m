@@ -44,7 +44,7 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
     %                          marker channel exists)
     %__________________________________________________________________________
     % PsPM 3.0
-    % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+    % (C) 2008-2015 Dominik R Bach (Wellcome Centre for Human Neuroimaging)
 
     % $Id: pspm_load_data.m 781 2019-07-06 15:46:18Z dominik_bach $
     % $Rev: 781 $
@@ -116,7 +116,7 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
             chan.options.dont_ask_overwrite = (chan.options.dont_ask_overwrite == 1);
         catch
             chan.options.dont_ask_overwrite = 0;
-        end;
+        end
     else
         warning('ID:invalid_input', 'Unknown channel option.'); 
     end
@@ -126,10 +126,16 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
     elseif ~isstruct(chan) && ~exist(fn, 'file')
         warning('ID:nonexistent_file', 'Data file (%s) doesn''t exist', fn); return;
     elseif exist(fn, 'file') && isstruct(chan) && ~chan.options.overwrite && ~chan.options.dont_ask_overwrite
-        overwrite = menu(sprintf('File (%s) already exists. Overwrite?', fn), 'yes', 'no');
-        if overwrite == 1
+        if feature('ShowFigureWindows')
+            msg = ['File already exists. Overwrite?', newline, 'Existing file: ',fn];
+            overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default as Yes
+        else
+            overwrite = 'Yes';
+        end
+        if strcmp(overwrite, 'Yes')
             chan.options.overwrite = 1;
         else
+            chan.options.overwrite = 0;
             warning('Data not saved.\n');
         end
     end
@@ -230,6 +236,8 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
     if ischar(chan) && ~strcmp(chan, 'none')
         if strcmpi(chan, 'pupil') && isfield(infos.source, 'best_eye')
             flag = get_chans_to_load_for_pupil(data, flag, infos.source.best_eye);
+        elseif strcmpi(chan, 'sps') && isfield(infos.source, 'best_eye')
+            flag = get_chans_to_load_for_sps(data, flag, infos.source.best_eye);
         else
             for k = 1:numel(data)
                 if (any(strcmpi(chan, {'event', 'events'})) && strcmpi(data{k}.header.units, 'events')) || ...
@@ -297,6 +305,61 @@ function flag = get_chans_to_load_for_pupil(data, flag, best_eye)
     preprocessed_channels = preprocessed_channels & pupil_channels;
     combined_channels = combined_channels & pupil_channels;
     besteye_channels = besteye_channels & pupil_channels;
+
+    if any(combined_channels)
+        flag = combined_channels;
+    elseif any(preprocessed_channels)
+        flag = preprocessed_channels & besteye_channels;
+        if ~any(flag)
+            flag = preprocessed_channels;
+        end
+    else
+        flag = besteye_channels;
+    end
+end
+
+
+function flag = get_chans_to_load_for_sps(data, flag, best_eye)
+    % 16-06-21 This is a tempory patch for loading sps data, copied from
+    % pupil data
+    % It needs to be updated for testing the compatibility with sps
+    % Set flag variable according to the precedence order:
+    %
+    %   1. Combined channels (by definition also preprocessed)
+    %   2. Preprocessed channels corresponding to best eye
+    %   3. Preprocessed channels
+    %   4. Best eye pupil channels
+    %
+    % The earliest possible option is taken and then the function returns.
+    best_eye = lower(best_eye);
+    chantype_list = cellfun(@(x) x.header.chantype, data, 'uni', false);
+    sps_channels = cell2mat(cellfun(...
+        @(chantype) strncmp(chantype, 'sps',numel('sps')),...
+        chantype_list,...
+        'uni',...
+        false...
+    ));
+    preprocessed_channels = cell2mat(cellfun(...
+        @(chantype) strcmp(chantype(end-2:end), '_pp'),...
+        chantype_list,...
+        'uni',...
+        false...
+    ));
+    combined_channels = cell2mat(cellfun(...
+        @(chantype) contains(chantype, '_lr_') && strcmp(chantype(end-2:end), '_pp'),...
+        chantype_list,...
+        'uni',...
+        false...
+    ));
+    besteye_channels = cell2mat(cellfun(...
+        @(chantype) strcmp(chantype(end-1:end), ['_' best_eye]) || contains(chantype, ['_' best_eye '_']),...
+        chantype_list,...
+        'uni',...
+        false...
+    ));
+    preprocessed_channels = preprocessed_channels & sps_channels;
+    combined_channels = combined_channels & sps_channels;
+    besteye_channels = besteye_channels & sps_channels;
 
     if any(combined_channels)
         flag = combined_channels;
