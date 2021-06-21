@@ -228,6 +228,13 @@ function [pp_scr] = pspm_cfg_pp_scr
         if isfield(job.missing_epochs, 'write_to_file')
             scr_pp_options.missing_epochs_filename = [job.missing_epochs.write_to_file.outdir{1},...
                 '/', job.missing_epochs.write_to_file.filename, '.mat'];
+            length_temp = length(scr_pp_options.missing_epochs_filename);
+            if length_temp > 7
+                if strcmp((scr_pp_options.missing_epochs_filename(length_temp-7: length_temp)),'.mat.mat')
+                    scr_pp_options.missing_epochs_filename(length_temp-3:length_temp) = [];
+                end
+            end
+                
         end
         scr_pp_options.channel_action = job.chan_action;
         [sts, output] = pspm_scr_pp(scr_pp_datafile, scr_pp_options);
