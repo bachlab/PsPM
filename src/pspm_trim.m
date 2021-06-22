@@ -145,7 +145,12 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
         return;
     end
     % 1.6 Set options
-    if ~exist('options.overwrite','var')
+    if ~exist('options','var') || isempty(options) || ~isstruct(options)
+        options = struct();
+    end
+    if ~isfield(options, 'overwrite')
+        options.overwrite = 0;
+    elseif options.overwrite ~= 1
         options.overwrite = 0;
     end
     if ~isfield(options,'marker_chan_num') || ...
