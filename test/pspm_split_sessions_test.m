@@ -32,11 +32,12 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
             channels{3}.chantype = 'marker';
             datastruct = pspm_testdata_gen(channels, 100);
             datastruct.data{3}.data = [1 4 9 12 30 31 34 41 43 59 65 72 74 80 89 96]'; %with default values MAXSN=10 & BRK2NORM=3 the datafile should be split into 3 files
+            datastruct.options = struct('overwrite', 1);
             pspm_load_data(fn, datastruct); %save datafile
             %datafile.data{3}.data = [0 1]';
             %save(fn, '-struct', 'datafile');
-            
-            newdatafile = pspm_split_sessions(fn);
+            options = struct('overwrite', 1);
+            newdatafile = pspm_split_sessions(fn, 0, options);
             
             this.verifyTrue(numel(newdatafile) == this.expected_number_of_files, sprintf('the testdatafile %s has been split into %i files and not like expected into %i files', fn, numel(newdatafile), this.expected_number_of_files));
             
@@ -60,12 +61,14 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
             channels{3}.chantype = 'marker';
             datastruct = pspm_testdata_gen(channels, 100);
             datastruct.data{3}.data = [1 4 9 12 30 31 34 41 43 59 65 72 74 80 89 96]'; %with default values MAXSN=10 & BRK2NORM=3 the datafile should be split into 3 files
-            
+            datastruct.options = struct('overwrite', 1);
+
             for m=1:numel(fn)
                 pspm_load_data(fn{m}, datastruct); %save datafile
             end
             
-            newdatafile = pspm_split_sessions(fn, 3);
+            options = struct('overwrite', 1);
+            newdatafile = pspm_split_sessions(fn, 3, options);
             
             this.verifyTrue(numel(fn) == numel(newdatafile));
             
@@ -93,8 +96,11 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
             channels{3}.variance = 0.05;
 
             % 6 minutes data
-            pspm_testdata_gen(channels, 60*6, fn);            
-            newdatafile = pspm_split_sessions(fn, 3);
+            pspm_testdata_gen(channels, 60*6, fn); 
+                       
+            options = struct('overwrite', 1);
+
+            newdatafile = pspm_split_sessions(fn, 3, options);
             
             this.verifyEqual(numel(newdatafile), nsessions);
             
@@ -122,7 +128,7 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
             
             % 6 minutes data
             data = pspm_testdata_gen(channels, 60*6, fn);
-            options = struct('prefix', prefix, 'suffix', suffix);
+            options = struct('prefix', prefix, 'suffix', suffix, 'overwrite', 1);
             newdatafile = pspm_split_sessions(fn, 3, options);
             
             this.verifyEqual(numel(newdatafile),10);
@@ -177,6 +183,7 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
             end
             
             options.splitpoints = splitpoints;
+            options.overwrite = 1;
             newdatafile = pspm_split_sessions(fn, 3, options);
             if ~isempty(splitpoints)
                 n_sess_exp = numel(splitpoints)+1;
