@@ -17,7 +17,7 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 % options.overwrite:        overwrite existing files by default
 % options.max_sn:           Define the maximum of sessions to look for.
 %                           Default is 10 (defined by
-%                           settings.split.max_sn)                         
+%                           settings.split.max_sn)
 % options.min_break_ratio:  Minimum for ratio
 %                           [(session distance)/(maximum marker distance)]
 %                           Default is 3 (defined by
@@ -37,7 +37,7 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 %                           Usefull for random ITI since it reduces the
 %                           variance. Default = 0
 % options.missing           Optional name of an epoch file, e.g. containing
-%                           a missing epochs definition in s. This is then split accordingly. 
+%                           a missing epochs definition in s. This is then split accordingly.
 %
 %       REMARK for suffix and prefix:
 %           Markers in the prefix and suffix intervals are ignored. Only markers
@@ -159,14 +159,14 @@ for d = 1:numel(D)
     if options.missing
         % makes sure the epochs are in seconds and not empty
         [~, missing] = pspm_get_timing('epochs', options.missing, 'seconds');
-        missingsr = 10000; % dummy sample rate
+        missingsr = indata{1,1}.header.sr; % dummy sample rate, should be consistent with files
         if any(missing > ininfos.duration)
             warning('ID:invalid_input', 'Some missing epochs are outside data file.');
             return
         else
             missing = round(missing*missingsr); % convert epochs in sec to datapoints
         end
-        indx = zeros(round(missingsr * ininfos.duration));
+        indx = zeros(1,round(missingsr * ininfos.duration)); % indx should be a one-dimensional array?
         indx(missing(:, 1)+1) = 1;
         indx(missing(:, 2)) = -1;
         dp_epochs = (cumsum(indx(:)) == 1);
@@ -196,10 +196,10 @@ for d = 1:numel(D)
     else
         splitpoint = options.splitpoints;
     end
-
-     % 2.3.3 Define trim points and adjust suffix
+    
+    % 2.3.3 Define trim points and adjust suffix
     if isempty(splitpoint)
-       return;
+        return;
     else
         % initialise
         suffix = zeros(1,(numel(splitpoint)+1));
@@ -211,13 +211,13 @@ for d = 1:numel(D)
             else
                 trimpoint(sn, :) = [splitpoint(sn - 1), max(splitpoint(sn) - 1, 1)];
             end
-
+            
             if sn > numel(splitpoint)
                 trimpoint(sn, 2) = numel(mrk);
             else
                 trimpoint(sn, 2) = max(1, splitpoint(sn) - 1);
             end
-           
+            
             if options.suffix == 0
                 if trimpoint(sn, 1) == trimpoint(sn, 2) || options.randomITI
                     suffix(sn) = mean(diff(mrk));
@@ -235,26 +235,34 @@ for d = 1:numel(D)
             % 2.4.1 Determine filename
             [p, f, ex] = fileparts(datafile);
             newdatafile{d}{sn} = fullfile(p, sprintf('%s_sn%02.0f%s', f, sn, ex));
-
-            if options.missing && ~isempty(missing)
+            
+            if ~isempty(options.missing) && ~isempty(missing)
                 [p_epochs, f_epochs, ex_epochs] = fileparts(options.missing);
                 newepochfile{d}{sn} = fullfile(p_epochs, sprintf('%s_sn%02.0f%s', f_epochs, sn, ex_epochs));
             end
             trimoptions = struct('drop_offset_markers', 1);
             newdata = pspm_trim(struct('data', {indata}, 'infos', ininfos), ...
-                 options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions);
+                options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions);
             newdata.options = struct('overwrite', options.overwrite);
             pspm_load_data(newdatafile{d}{sn}, newdata);
-
-           
+            
+            
             % 2.4.5 Split Epochs - to be updated
-            if options.missing && ~isempty(missing)
-                dummydata{1}.data   = dp_epochs;
-                dummydata{1}.header = struct('sr', missingsr, 'chantype', 'custom', 'units', 'unknown');
-                dummdata{2}         = indata{markerchannel};
-                dummyinfos          = ininfos;
+            if ~isempty(options.missing) && ~isempty(missing)
+                dummydata{1,1}.header = struct('chantype', 'marker', ...
+                                                'sr', missingsr, ...
+                                                'units', 'unknown');
+                dummydata{1,1}.data   = dp_epochs;
                 
-                newmissing = pspm_trim(struct('data', dummydata, 'infos', dummyinfos), options.prefix, suffix(sn), trimpoint(sn, 1:2));
+                % Not sure what does this line mean
+                % I think this piece of code is dealing with epochs
+                % Why is it recommended to add annother channel for
+                % markerchennel?
+                % dummydata{1,1}.markerinfo = indata{markerchannel};
+                % dummyinfos          = ininfos;
+                
+                newmissing = pspm_trim(struct('data', {dummydata}, 'infos', ininfos), ...
+                    options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions);
                 
                 epochs = newmissing.data{1}.data;
                 
@@ -280,5 +288,5 @@ if d == 1
         newepochfile = newepochfile{1};
     end
 end
-return
+
 end
