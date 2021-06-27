@@ -160,11 +160,11 @@ for d = 1:numel(D)
         % makes sure the epochs are in seconds and not empty
         [~, missing] = pspm_get_timing('epochs', options.missing, 'seconds');
         missingsr = 10000; % dummy sample rate
-        if any(missing > ininfos.duration) % convert epochs in sec to datapoints
+        if any(missing > ininfos.duration)
             warning('ID:invalid_input', 'Some missing epochs are outside data file.');
             return
         else
-            missing = round(missing*srscr);
+            missing = round(missing*missingsr); % convert epochs in sec to datapoints
         end
         indx = zeros(round(missingsr * ininfos.duration));
         indx(missing(:, 1)+1) = 1;
