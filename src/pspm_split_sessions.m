@@ -162,7 +162,7 @@ for d = 1:numel(D)
         if sts < 0
             warning('ID:invalid_input', 'Missing epochs file not correctly specified.');
         end
-        missingsr = indata{1,1}.header.sr; % dummy sample rate, should be consistent with files
+        missingsr = 10000; % dummy sample rate, should be higher than data sampling rates (but no need to make it dynamic)
         if any(missing > ininfos.duration)
             warning('ID:invalid_input', 'Some missing epochs are outside data file.');
             return
