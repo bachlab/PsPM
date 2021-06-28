@@ -240,11 +240,13 @@ for d = 1:numel(D)
             [p, f, ex] = fileparts(datafile);
             newdatafile{d}{sn} = fullfile(p, sprintf('%s_sn%02.0f%s', f, sn, ex));
             
-            if ~isempty(options.missing) 
+            if ischar(options.missing) 
                 if ~isempty(missing)
                 [p_epochs, f_epochs, ex_epochs] = fileparts(options.missing);
                 newepochfile{d}{sn} = fullfile(p_epochs, sprintf('%s_sn%02.0f%s', f_epochs, sn, ex_epochs));
                 end
+            else
+                warning('ID:invalid_input', 'Missing epoch files are not correctly defined.');
             end
             trimoptions = struct('drop_offset_markers', 1);
             newdata = pspm_trim(struct('data', {indata}, 'infos', ininfos), ...
@@ -254,7 +256,8 @@ for d = 1:numel(D)
             
             
             % 2.4.5 Split Epochs 
-            if ~isempty(options.missing) && ~isempty(missing)
+            if ischar(options.missing)
+                if ~isempty(missing)
                 dummydata{1,1}.header = struct('chantype', 'custom', ...
                                                 'sr', missingsr, ...
                                                 'units', 'unknown');
@@ -278,6 +281,11 @@ for d = 1:numel(D)
                 end
                 epochs = [epoch_on.', epoch_off.']/missingsr; % convert back to seconds
                 save(newepochfile{d}{sn}, 'epochs');
+                else
+                    warning('ID:invalid_input', 'Missing epochs file not correctly specified.');
+                end
+            else
+                warning('ID:invalid_input', 'Missing epoch files are not correctly defined.');
             end
             
         end
