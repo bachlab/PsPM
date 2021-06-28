@@ -38,6 +38,7 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 %                           variance. Default = 0
 % options.missing           Optional name of an epoch file, e.g. containing
 %                           a missing epochs definition in s. This is then split accordingly.
+%                           epochs have a fixed sampling rate of 10000
 %
 %       REMARK for suffix and prefix:
 %           Markers in the prefix and suffix intervals are ignored. Only markers
