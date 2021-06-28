@@ -254,14 +254,14 @@ for d = 1:numel(D)
             
             % 2.4.5 Split Epochs 
             if ~isempty(options.missing) && ~isempty(missing)
-                dummydata{1,1}.header = struct('chantype', 'marker', ...
+                dummydata{1,1}.header = struct('chantype', 'custom', ...
                                                 'sr', missingsr, ...
                                                 'units', 'unknown');
                 dummydata{1,1}.data   = dp_epochs;
                
                 % add marker channel to that pspm_trim has a reference
                 dummydata{2}          = indata{markerchannel};
-                dummyinfos          = ininfos;
+                dummyinfos            = ininfos;
                 
                 newmissing = pspm_trim(struct('data', {dummydata}, 'infos', ininfos), ...
                     options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions);
