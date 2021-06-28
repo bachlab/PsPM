@@ -591,11 +591,13 @@ if isempty(sbs_trlstart)
 end
 
 % Find the index of only valid sessions
-flag_valid = ~cellfun(@isempty, sbs_trlstart);
+% flag_valid = ~cellfun(@isempty, sbs_trlstart);
+% In line 436, the invalid subsessions have been removed,
+% thus there is no need to apply the flags again
 % Initialise the record of filtered trials
 error_log = zeros(size(sbs_iti));
 % Do processing in the index of valid sessions
-idx_session = nonzeros((1:size(sbs_data,1)).*flag_valid);
+idx_session = nonzeros((1:size(sbs_data,1)));
 index_last_trial = zeros(length(idx_session'),numel(sbs_data{1,1}));
 for i_session = idx_session'
     % Check the interval since the start of the last trial

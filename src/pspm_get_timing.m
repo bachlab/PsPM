@@ -398,13 +398,17 @@ switch model
         end
         
         % check epoch information --
-        if isnumeric(outtiming) && ismatrix(outtiming)
-            if size(outtiming, 2) ~= 2
-                warning(['Epochs must be specified by a e x 2 vector', ...
-                    'of onset/offsets.']);  return;
+        if ~isempty(outtiming)
+            if isnumeric(outtiming) && ismatrix(outtiming)
+                if size(outtiming, 2) ~= 2
+                    warning(['Epochs must be specified by a e x 2 vector', ...
+                        'of onset/offsets.']);  return;
+                end
+            else
+                warning('Unknown epoch definition format.');  return;
             end
         else
-            warning('Unknown epoch definition format.');  return;
+            warning('Defined epoch is empty.'); return;
         end
         
         % check time units --

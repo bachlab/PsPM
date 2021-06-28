@@ -261,10 +261,10 @@ for d = 1:numel(D)
                 dummydata{1,1}.data   = dp_epochs;
                
                 % add marker channel to that pspm_trim has a reference
-                dummydata{2}          = indata{markerchannel};
-                dummyinfos            = ininfos;
+                dummydata{2,1}          = indata{markerchannel};
+                dummyinfos          = ininfos;
                 
-                newmissing = pspm_trim(struct('data', {dummydata}, 'infos', ininfos), ...
+                newmissing = pspm_trim(struct('data', {dummydata}, 'infos', dummyinfos), ...
                     options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions);
                 
                 epochs = newmissing.data{1}.data;
