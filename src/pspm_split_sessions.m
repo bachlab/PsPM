@@ -88,7 +88,7 @@ try options.splitpoints; catch
     options.splitpoints = [];
 end
 try options.missing; catch
-    options.missing = [];
+    options.missing = 0;
 end
 try options.randomITI; catch
     options.randomITI = 0;
@@ -158,7 +158,10 @@ for d = 1:numel(D)
     % 2.2 Handle missing epochs
     if options.missing
         % makes sure the epochs are in seconds and not empty
-        [~, missing] = pspm_get_timing('epochs', options.missing, 'seconds');
+        [sts, missing] = pspm_get_timing('epochs', options.missing, 'seconds');
+        if sts < 0
+            warning('ID:invalid_input', 'Missing epochs file not correctly specified.');
+        end
         missingsr = indata{1,1}.header.sr; % dummy sample rate, should be consistent with files
         if any(missing > ininfos.duration)
             warning('ID:invalid_input', 'Some missing epochs are outside data file.');
@@ -249,19 +252,16 @@ for d = 1:numel(D)
             pspm_load_data(newdatafile{d}{sn}, newdata);
             
             
-            % 2.4.5 Split Epochs - to be updated
+            % 2.4.5 Split Epochs 
             if ~isempty(options.missing) && ~isempty(missing)
                 dummydata{1,1}.header = struct('chantype', 'marker', ...
                                                 'sr', missingsr, ...
                                                 'units', 'unknown');
                 dummydata{1,1}.data   = dp_epochs;
-                
-                % Not sure what does this line mean
-                % I think this piece of code is dealing with epochs
-                % Why is it recommended to add annother channel for
-                % markerchennel?
-                % dummydata{1,1}.markerinfo = indata{markerchannel};
-                % dummyinfos          = ininfos;
+               
+                % add marker channel to that pspm_trim has a reference
+                dummydata{2}          = indata{markerchannel};
+                dummyinfos          = ininfos;
                 
                 newmissing = pspm_trim(struct('data', {dummydata}, 'infos', ininfos), ...
                     options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions);
