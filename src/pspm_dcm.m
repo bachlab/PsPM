@@ -591,17 +591,23 @@ if isempty(sbs_trlstart)
 end
 
 % Find the index of only valid sessions
-% flag_valid = ~cellfun(@isempty, sbs_trlstart);
+flag_valid = ~cellfun(@isempty, sbs_trlstart);
 % In line 436, the invalid subsessions have been removed,
 % thus there is no need to apply the flags again
 % Initialise the record of filtered trials
-error_log = zeros(size(sbs_iti));
+sbs_iti_size = cell2mat(cellfun(@size, sbs_iti, 'UniformOutput', false)');
+error_log = sbs_iti_size(:,1)'.*flag_valid;
 % Do processing in the index of valid sessions
 idx_session = nonzeros((1:size(sbs_data,1)));
-index_last_trial = zeros(length(idx_session'),numel(sbs_data{1,1}));
+%index_last_trial = zeros(length(idx_session'),numel(sbs_data{1,1}));
+index_last_trial = cellfun(@(x) x*0,sbs_data,'un',0);
 for i_session = idx_session'
     % Check the interval since the start of the last trial
+    if ~isempty(sbs_iti{i_session})
     error_log(i_session)=sbs_iti{i_session}(end)<model.lasttrialcutoff;
+    else
+        error_log(i_session)=0;
+    end
     % Remove the last trial if the interval since the start of the last
     % trial is less than options.trialfilter
     if error_log(i_session) > 0
@@ -612,7 +618,7 @@ for i_session = idx_session'
         last_trl_start = ceil(last_trl_start(i_trial)*model.sr);
         % Get the end of the data in this sesstion
         last_trl_stop = numel(sbs_data{i_session,1});
-		index_last_trial(i_session,:) = [zeros(1,(last_trl_start-1)), ones(1,(last_trl_stop-last_trl_start+1))];
+		index_last_trial{i_session,:} = [zeros(1,(last_trl_start-1)), ones(1,(last_trl_stop-last_trl_start+1))]';
     end
 end
 
