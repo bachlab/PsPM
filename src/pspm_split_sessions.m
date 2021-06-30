@@ -111,6 +111,7 @@ elseif iscell(datafile)
     l_datafile = length(datafile);
 else
     warning('ID:invalid_input', 'Data file must be a char or an array.');
+    return
 end
 
 % 1.3.2 check options for missing epochs
