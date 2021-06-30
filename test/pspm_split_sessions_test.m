@@ -70,8 +70,8 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
             options = struct('overwrite', 1);
             olddatafile = {fn1,fn2};
             newdatafile = pspm_split_sessions(olddatafile, 0, options);
-            fn1_new = newdatafile(1,:);
-            fn2_new = newdatafile(2,:);
+            fn1_new = newdatafile{1};
+            fn2_new = newdatafile{2};
             
             this.verifyTrue(numel(fn1_new) == this.expected_number_of_files, ...
                 sprintf('the testdatafile %s has been split into %i files and not like expected into %i files',...
