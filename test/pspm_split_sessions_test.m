@@ -53,6 +53,45 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
         end
         
         
+        function multiple_datafile(this)
+            fn1 = 'testdatafile1.mat';
+            fn2 = 'testdatafile2.mat';
+            
+            channels{1}.chantype = 'scr';
+            channels{2}.chantype = 'hb';
+            channels{3}.chantype = 'marker';
+            datastruct = pspm_testdata_gen(channels, 100);
+            datastruct.data{3}.data = [1 4 9 12 30 31 34 41 43 59 65 72 74 80 89 96]'; %with default values MAXSN=10 & BRK2NORM=3 the datafile should be split into 3 files
+            datastruct.options = struct('overwrite', 1);
+            pspm_load_data(fn1, datastruct); %save datafile
+            pspm_load_data(fn2, datastruct); %save datafile
+            %datafile.data{3}.data = [0 1]';
+            %save(fn, '-struct', 'datafile');
+            options = struct('overwrite', 1);
+            olddatafile = {fn1,fn2};
+            newdatafile = pspm_split_sessions(olddatafile, 0, options);
+            fn1_new = newdatafile{1};
+            fn2_new = newdatafile{2};
+            
+            this.verifyTrue(numel(fn1_new) == this.expected_number_of_files, ...
+                sprintf('the testdatafile %s has been split into %i files and not like expected into %i files',...
+                fn1, numel(fn1_new), this.expected_number_of_files));
+            this.verifyTrue(numel(fn2_new) == this.expected_number_of_files, ...
+                sprintf('the testdatafile %s has been split into %i files and not like expected into %i files',...
+                fn2, numel(fn2_new), this.expected_number_of_files));
+            
+            for k=1:numel(newdatafile)
+                [sts, ~, data] = pspm_load_data(newdatafile{k});
+                this.verifyTrue(sts == 1, sprintf('couldn''t load file %s with pspm_load_data', newdatafile{k}));
+                this.verifyTrue(numel(data) == numel(channels), sprintf('number of channels doesn''t match in file %s', newdatafile{k}));
+                delete(newdatafile{k});
+            end
+            
+            delete(fn1);
+            delete(fn2);
+        end
+        
+        
         
         function test_dynamic_sessions(this, nsessions)
             fn = pspm_find_free_fn(this.data_fn, '.mat');
