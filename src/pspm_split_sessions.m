@@ -103,17 +103,11 @@ end
 
 % 1.3 Handle data files
 % 1.3.1 check data file argument
-if ischar(datafile)
-    array_datafile = {datafile};
-    l_datafile = 1;
-elseif iscell(datafile)
-    array_datafile = datafile;
-    l_datafile = length(datafile);
-else
-    warning('ID:invalid_input', 'Data file must be a char or an array.');
+if ~ischar(datafile)
+    warning('ID:invalid_input', 'Data file must be a char.');
+    return;
 end
-
-% 1.3.2 check options for missing epochs
+% 1.3.2 clear datafile
 if options.missing
     if ~ischar(options.missing)
         warning('ID:invalid_input', 'Missing epochs file needs to be a char.\n');
@@ -205,8 +199,6 @@ else
 end
 
 % 2.3.3 Define trim points and adjust suffix
-for i_datafile = 1:l_datafile
-    datafile = array_datafile{i_datafile};
 if isempty(splitpoint)
     return;
 else
@@ -285,5 +277,4 @@ else
         end
         
     end
-end
 end
