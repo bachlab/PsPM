@@ -469,6 +469,7 @@ sbs_trlstart = cell(1,n_sbs);
 sbs_trlstop = cell(1,n_sbs);
 sbs_iti= cell(1,n_sbs);
 sbs_miniti = zeros(1,n_sbs);
+lasttrial_log = zeros(1, n_sbs);
 for iSn = 1:numel(model.timing)
     % initialise and get timing information -- 
     sn_newevents{1}{iSn} = []; sn_newevents{2}{iSn} = [];
@@ -552,7 +553,7 @@ for iSn = 1:numel(model.timing)
             sbs_id = sn_sbs(isn_sbs);
             % trials which are enabled and have the 'current' subsession id
             sbs_trls = trials{iSn}(:, 1) == 1 & trials{iSn}(:,2) == sbs_id;
-            if sum(sbs_trls)>1
+            if sum(sbs_trls)>0 % if any trials exist
                 sbs_trlstart{sbs_id} = sn_trlstart{iSn}(sbs_trls) - ...
                     subsessions(sbs_id,2);
                 sbs_trlstop{sbs_id} = sn_trlstop{iSn}(sbs_trls) - ...
@@ -575,6 +576,14 @@ for iSn = 1:numel(model.timing)
                     warning(['Error in event definition. Either events are ', ...
                         'outside the file, or trials overlap.']); return;
                 end
+                
+                % invalidate last trial if interval to end of session is
+                % shorter than minimum value
+                if sbs_iti{sbs_id}(end) < model.lasttrialcutoff
+                    trlindx = find(sbs_trls);         % find last trial of this subsession
+                    trials{iSn}(trlindx(end), 1) = 0; % set index - will be applied after estimation
+                    lasttrial_log(sbs_id) = 1;
+                end
             end
         end
     else
@@ -591,36 +600,36 @@ if isempty(sbs_trlstart)
 end
 
 % Find the index of only valid sessions
-flag_valid = ~cellfun(@isempty, sbs_trlstart);
+%flag_valid = ~cellfun(@isempty, sbs_trlstart);
 % In line 436, the invalid subsessions have been removed,
 % thus there is no need to apply the flags again
 % Initialise the record of filtered trials
-sbs_iti_size = cell2mat(cellfun(@size, sbs_iti, 'UniformOutput', false)');
-error_log = sbs_iti_size(:,1)'.*flag_valid;
+%sbs_iti_size = cell2mat(cellfun(@size, sbs_iti, 'UniformOutput', false)');
+%error_log = sbs_iti_size(:,1)'.*flag_valid;
 % Do processing in the index of valid sessions
-idx_session = nonzeros((1:size(sbs_data,1)));
+%idx_session = nonzeros((1:size(sbs_data,1)));
 %index_last_trial = zeros(length(idx_session'),numel(sbs_data{1,1}));
-index_last_trial = cellfun(@(x) x*0,sbs_data,'un',0);
-for i_session = idx_session'
-    % Check the interval since the start of the last trial
-    if ~isempty(sbs_iti{i_session})
-    error_log(i_session)=sbs_iti{i_session}(end)<model.lasttrialcutoff;
-    else
-        error_log(i_session)=0;
-    end
-    % Remove the last trial if the interval since the start of the last
-    % trial is less than options.trialfilter
-    if error_log(i_session) > 0
-        i_trial = length(sbs_iti{i_session});
-        % Find the position of the target trial in proc_subsessions
-        last_trl_start = sbs_trlstart{i_session};
-        % Convert from time (s) to data points
-        last_trl_start = ceil(last_trl_start(i_trial)*model.sr);
-        % Get the end of the data in this sesstion
-        last_trl_stop = numel(sbs_data{i_session,1});
-		index_last_trial{i_session,:} = [zeros(1,(last_trl_start-1)), ones(1,(last_trl_stop-last_trl_start+1))]';
-    end
-end
+%index_last_trial = cellfun(@(x) x*0,sbs_data,'un',0);
+% for i_session = idx_session'
+%     % Check the interval since the start of the last trial
+%     if ~isempty(sbs_iti{i_session})
+%     error_log(i_session)=sbs_iti{i_session}(end)<model.lasttrialcutoff;
+%     else
+%         error_log(i_session)=0;
+%     end
+%     % Remove the last trial if the interval since the start of the last
+%     % trial is less than options.trialfilter
+%     if error_log(i_session) > 0
+%         i_trial = length(sbs_iti{i_session});
+%         % Find the position of the target trial in proc_subsessions
+%         last_trl_start = sbs_trlstart{i_session};
+%         % Convert from time (s) to data points
+%         last_trl_start = ceil(last_trl_start(i_trial)*model.sr);
+%         % Get the end of the data in this sesstion
+%         last_trl_stop = numel(sbs_data{i_session,1});
+% 		index_last_trial{i_session,:} = [zeros(1,(last_trl_start-1)), ones(1,(last_trl_stop-last_trl_start+1))]';
+%     end
+% end
 
 
 % find subsessions with events and define them to be processed
@@ -631,7 +640,7 @@ model.trlstop  =  sbs_trlstop(proc_subsessions);
 model.iti      =  sbs_iti(proc_subsessions);
 model.events   =  {sbs_newevents{1}(proc_subsessions), ...
     sbs_newevents{2}(proc_subsessions)};
-model.lasttrlfiltered = error_log; % recorded the sessions that have last trial filtered
+model.lasttrlfiltered = lasttrial_log; % recorded the sessions that have last trial filtered
 model.scr      =  sbs_data(proc_subsessions);
 options.missing  =  sbs_missing(proc_subsessions);
 
@@ -818,13 +827,13 @@ for iSn = 1:numel(model.datafile)
     % set last trial that does not contain sufficient information to NaN
     %iti_mat = cell2mat(model.iti);
     % Manually convert to matrix as there could be multiple subsessions
-    iti_mat = [];
-     for i_model_iti = 1:length(model.iti)
-         iti_mat = [iti_mat; model.iti{i_model_iti}];
-     end
-    if sum(iti_mat(end)<model.lasttrialcutoff)>0
-        dcm.stats(end, :) = NaN;
-    end
+%     iti_mat = [];
+%      for i_model_iti = 1:length(model.iti)
+%          iti_mat = [iti_mat; model.iti{i_model_iti}];
+%      end
+%     if sum(iti_mat(end)<model.lasttrialcutoff)>0
+%         dcm.stats(end, :) = NaN;
+%     end
     cTrl = cTrl + size(trls, 1);
 end;
 dcm.names = {};
@@ -873,7 +882,7 @@ function [datacol, warnings] = get_data_after_trial_filling_with_nans_when_neces
     if num_indices_outside_scr > 0
         warning('ID:too_short_ITI',...
             sprintf(...
-                ['Trial %d in session %d has ITI %f; but we use %f seconds',...
+                ['Trial %d in session %d has ITI %f; but for mean response we use %f seconds',...
                 ' after each trial. Filling the rest with NaNs'],...
                 n, isbSn, sbs_iti{isbSn}(n), proc_miniti(isbSn)...
         ));
