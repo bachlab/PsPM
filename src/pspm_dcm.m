@@ -804,7 +804,6 @@ dcm.options = options;
 dcm.warnings = warnings;
 dcm.modeltype = 'dcm';
 dcm.modality = settings.modalities.dcm;
-dcm.revision = rev;
 
 if ~options.nosave
     save(model.modelfile, 'dcm');
