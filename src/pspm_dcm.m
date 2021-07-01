@@ -358,7 +358,7 @@ for iSn = 1:numel(model.datafile)
         end
          
         % put missing epochs together
-        miss_epochs = [nan_ep_start', nan_ep_stop'];
+        miss_epochs = [nan_ep_start(:), nan_ep_stop(:)];
 
         % classify if epoch should be considered
         % true for duration > substhresh and for missing epochs
@@ -366,7 +366,13 @@ for iSn = 1:numel(model.datafile)
             model.substhresh;
 
         % use offset for detected subsessions
-        session_offset = model.substhresh;
+        % session_offset = model.substhresh;
+        % I don't know why this was added - the value of model.substhresh
+        % is not used to define start and stop of the missing epochs, and
+        % so the situation is the same as for file-specified missing
+        % epochs. session_offset is later used when grouping events into
+        % subsessions.
+        session_offset = 0;
     else
         % use missing epochs as specified by file
         miss_epochs = missing{iSn}*data{iSn}{1}.header.sr;
@@ -599,39 +605,6 @@ if isempty(sbs_trlstart)
     return;
 end
 
-% Find the index of only valid sessions
-%flag_valid = ~cellfun(@isempty, sbs_trlstart);
-% In line 436, the invalid subsessions have been removed,
-% thus there is no need to apply the flags again
-% Initialise the record of filtered trials
-%sbs_iti_size = cell2mat(cellfun(@size, sbs_iti, 'UniformOutput', false)');
-%error_log = sbs_iti_size(:,1)'.*flag_valid;
-% Do processing in the index of valid sessions
-%idx_session = nonzeros((1:size(sbs_data,1)));
-%index_last_trial = zeros(length(idx_session'),numel(sbs_data{1,1}));
-%index_last_trial = cellfun(@(x) x*0,sbs_data,'un',0);
-% for i_session = idx_session'
-%     % Check the interval since the start of the last trial
-%     if ~isempty(sbs_iti{i_session})
-%     error_log(i_session)=sbs_iti{i_session}(end)<model.lasttrialcutoff;
-%     else
-%         error_log(i_session)=0;
-%     end
-%     % Remove the last trial if the interval since the start of the last
-%     % trial is less than options.trialfilter
-%     if error_log(i_session) > 0
-%         i_trial = length(sbs_iti{i_session});
-%         % Find the position of the target trial in proc_subsessions
-%         last_trl_start = sbs_trlstart{i_session};
-%         % Convert from time (s) to data points
-%         last_trl_start = ceil(last_trl_start(i_trial)*model.sr);
-%         % Get the end of the data in this sesstion
-%         last_trl_stop = numel(sbs_data{i_session,1});
-% 		index_last_trial{i_session,:} = [zeros(1,(last_trl_start-1)), ones(1,(last_trl_stop-last_trl_start+1))]';
-%     end
-% end
-
-
 % find subsessions with events and define them to be processed
 proc_subsessions = ~cellfun(@isempty, sbs_trlstart);
 proc_miniti     =  sbs_miniti(proc_subsessions);
@@ -822,18 +795,9 @@ for iSn = 1:numel(model.datafile)
         end;
         
     end;
-    % set disabled trials to NaN
+    % set disabled trials to NaN (trials during missing data stretches or
+    % that are too close to session end)
     dcm.stats(cTrl + find(trls(:, 1) == 0), :) = NaN;
-    % set last trial that does not contain sufficient information to NaN
-    %iti_mat = cell2mat(model.iti);
-    % Manually convert to matrix as there could be multiple subsessions
-%     iti_mat = [];
-%      for i_model_iti = 1:length(model.iti)
-%          iti_mat = [iti_mat; model.iti{i_model_iti}];
-%      end
-%     if sum(iti_mat(end)<model.lasttrialcutoff)>0
-%         dcm.stats(end, :) = NaN;
-%     end
     cTrl = cTrl + size(trls, 1);
 end;
 dcm.names = {};
