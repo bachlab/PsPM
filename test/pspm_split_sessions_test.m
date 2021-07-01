@@ -52,39 +52,7 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
             delete(fn);
         end
         
-        function multiple_datafiles(this)
-            fn{1} = 'testdatafile1.mat';
-            fn{2} = 'testdatafile2.mat';
-            
-            channels{1}.chantype = 'scr';
-            channels{2}.chantype = 'hb';
-            channels{3}.chantype = 'marker';
-            datastruct = pspm_testdata_gen(channels, 100);
-            datastruct.data{3}.data = [1 4 9 12 30 31 34 41 43 59 65 72 74 80 89 96]'; %with default values MAXSN=10 & BRK2NORM=3 the datafile should be split into 3 files
-            datastruct.options = struct('overwrite', 1);
-
-            for m=1:numel(fn)
-                pspm_load_data(fn{m}, datastruct); %save datafile
-            end
-            
-            options = struct('overwrite', 1);
-            newdatafile = pspm_split_sessions(fn, 3, options);
-            
-            this.verifyTrue(numel(fn) == numel(newdatafile));
-            
-            for m=1:numel(fn)
-                this.verifyTrue(numel(newdatafile{m}) == this.expected_number_of_files, sprintf('the testdatafile %s has been split into %i files and not like expected into %i files', fn{m}, numel(newdatafile{m}), this.expected_number_of_files));
-                for k=1:numel(newdatafile{m})
-                    [sts, infos, data] = pspm_load_data(newdatafile{m}{k});
-                    this.verifyTrue(sts == 1, sprintf('couldn''t load file %s with pspm_load_data', newdatafile{m}{k}));
-                    this.verifyTrue(numel(data) == numel(channels), sprintf('number of channels doesn''t match in file %s', newdatafile{m}{k}));
-                   
-                    delete(newdatafile{m}{k});
-                end
-            
-                delete(fn{m});
-            end
-        end
+        
         
         function test_dynamic_sessions(this, nsessions)
             fn = pspm_find_free_fn(this.data_fn, '.mat');

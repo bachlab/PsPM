@@ -43,9 +43,6 @@ function [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (WTCN, UZH)
 
-% $Id$
-% $Rev$
-
 % -------------------------------------------------------------------------
 % DEVELOPERS NOTES: General structure of PsPM 1st level model files
 % 
