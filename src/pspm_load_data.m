@@ -42,12 +42,12 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
     %                       .numofeventchan
     %                       .posofmarker' (first marker channel, or 0 if no 
     %                          marker channel exists)
+    %                       .posofchannels (number of the channels that
+    %                       were returned)
     %__________________________________________________________________________
-    % PsPM 3.0
-    % (C) 2008-2015 Dominik R Bach (Wellcome Centre for Human Neuroimaging)
+    % PsPM 5.1.1
+    % (C) 2008-2021 PsPM Team
 
-    % $Id: pspm_load_data.m 781 2019-07-06 15:46:18Z dominik_bach $
-    % $Rev: 781 $
 
     % -------------------------------------------------------------------------
     % DEVELOPERS NOTES: General structure of PsPM data files
@@ -253,15 +253,20 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
             warning('ID:non_existing_channeltype', 'There are no channels of type ''%s'' in the datafile', chan); return;
         end
 
-        data = data(flag == 1);    
+        data = data(flag == 1); 
+        filestruct.posofchannels = find(flag == 1);
     elseif isnumeric(chan)
         if chan == 0, chan = 1:numel(data); end
         if any(chan > numel(data))
             warning('ID:invalid_input', 'Input channel number(s) are greater than the number of channels in the data'); return;
         end
         data = data(chan);
+        filestruct.posofchannels = chan;
     elseif isstruct(chan) && ~isempty(fn) && (~exist(fn, 'file') || chan.options.overwrite == 1)
         save(fn, 'infos', 'data');
+        filestruct.posofchannels = 1:numel(data);
+    else
+        filestruct.posofchannels = [];
     end
 
     sts = 1;
