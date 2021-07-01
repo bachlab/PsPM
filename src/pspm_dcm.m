@@ -90,13 +90,12 @@ function dcm = pspm_dcm(model, options)
 % with 1 mcS amplitude
 %
 % pspm_dcm can handle NaN values in data channels. Either by specifying 
-% missing epochs manually using model.missing or by detecting missing epochs
-% automatically using the field model.substhresh: According to model.missing
-% or model.substhresh data around detected or predefined NaN periods are split
-% into subsessions which then get evaluated independently. There is no change
-% to the structure of the result. NaN periods smaller than model.substhresh 
-% or not defined in model.missing are interpolated for averages and 
-% principal response components.
+% missing epochs manually using model.missing, or by detecting NaN epochs
+% in the data. Missing epochs shorter than model.substhresh will be ignored 
+% in the inversion; otherwise the data will be split into subsessions that
+% are inverted independently. The results will be unchanged, and events
+% within missing epochs will simply be set to NaN.  NaN periods shorter than 
+% model.substhresh are interpolated for averages and principal response components.
 %
 % pspm_dcm calculates the inter-trial intervals as the duration between the end of a trial and the start of the next one. 
 % ITI value for the last trial in a session is calculated as the duration between the end of the last trial and the end of the whole session. 
@@ -130,14 +129,8 @@ function dcm = pspm_dcm(model, options)
 %            Neuroscience Methods, 255, 131-138.
 %
 %__________________________________________________________________________
-% PsPM 3.0
-% (c) 2010-2015 Dominik R Bach (WTCN, UZH)
-
-% $Id: pspm_dcm.m 792 2019-07-09 11:48:39Z esrefo $  
-% $Rev: 792 $
-
-% function revision
-rev = '$Rev: 792 $';
+% PsPM 5.1.0
+% (c) 2010-2021 PsPM Team
 
 %% Initialise & set output
 % ------------------------------------------------------------------------
@@ -365,21 +358,10 @@ for iSn = 1:numel(model.datafile)
         ignore_epochs = diff(miss_epochs, 1, 2)/data{iSn}{1}.header.sr > ...
             model.substhresh;
 
-        % use offset for detected subsessions
-        % session_offset = model.substhresh;
-        % I don't know why this was added - the value of model.substhresh
-        % is not used to define start and stop of the missing epochs, and
-        % so the situation is the same as for file-specified missing
-        % epochs. session_offset is later used when grouping events into
-        % subsessions.
-        session_offset = 0;
     else
         % use missing epochs as specified by file
         miss_epochs = missing{iSn}*data{iSn}{1}.header.sr;
         ignore_epochs = diff(miss_epochs, 1, 2) / data{iSn}{1}.header.sr > model.substhresh;
-
-        % disable offset for predefined missing epochs
-        session_offset = 0;
     end
     
     if any(ignore_epochs)
@@ -409,31 +391,24 @@ for iSn = 1:numel(model.datafile)
         % 1 session_id 
         % 2 start_time (s)
         % 3 stop_time (s)
-        % 4 missing 
-        % 5 session_offset
+        % 4 missing (1) or data segment (0)
 
         n_sbs = numel(se_start);
         % enabled subsessions
-        subsessions(end+(1:n_sbs), 1:5) = [ones(n_sbs,1)*iSn, ...
+        subsessions(end+(1:n_sbs), 1:4) = [ones(n_sbs,1)*iSn, ...
             [se_start, se_stop]/data{iSn}{1}.header.sr, ...
-            zeros(n_sbs,1), ...
-            ones(n_sbs,1)*session_offset];
+            zeros(n_sbs,1)];
         
         % missing epochs
         n_miss = sum(ignore_epochs);
-        subsessions(end+(1:n_miss), 1:5) = [ones(n_miss,1)*iSn, ...
+        subsessions(end+(1:n_miss), 1:4) = [ones(n_miss,1)*iSn, ...
             miss_epochs(i_e,:)/data{iSn}{1}.header.sr, ...
-            ones(n_miss,1), ...
-            ones(n_miss,1)*session_offset];
+            ones(n_miss,1)];
     else
-        subsessions(end+1,1:5) = [iSn, ...
-            [1, numel(data{iSn}{1}.data)]/data{iSn}{1}.header.sr, 0, ...
-            session_offset];
+        subsessions(end+1,1:4) = [iSn, ...
+            [1, numel(data{iSn}{1}.data)]/data{iSn}{1}.header.sr, 0];
     end
 end
-
-% subsessions - columns:
-% iSn, start, stop, missing
 
 % sort subsessions by start
 subsessions = sortrows(subsessions);
@@ -539,7 +514,7 @@ for iSn = 1:numel(model.timing)
     % assign trials to subsessions
     trls = num2cell([sn_trlstart{iSn}, sn_trlstop{iSn}],2);
     subs = cellfun(@(x) find(x(1) > subsessions(:,2) & ...
-        x(2) < (subsessions(:,3)-subsessions(:,5)) ... 
+        x(2) < (subsessions(:,3)) ... 
         & subsessions(:, 1) == iSn), trls, 'UniformOutput', 0);
 
     emp_subs = cellfun(@isempty, subs);
