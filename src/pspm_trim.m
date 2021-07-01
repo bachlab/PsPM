@@ -190,8 +190,13 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
             else
                 [nsts, ~, ndata] = pspm_load_data(datafile, 'marker');
             end
-            sts = [sts; nsts];
-            events = ndata{1}.data;
+            
+            if nsts > 0
+                events = ndata{1}.data;
+            else
+                return;
+            end
+            
             if isempty(events)
                 warning('ID:marker_out_of_range', 'Marker channel (%i) is empty. Cannot use as a reference.', options.marker_chan_num);
                 return;
@@ -376,5 +381,4 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
         clear newdatafile
         newdatafile = Dout;
     end
-    return
 end

@@ -90,13 +90,12 @@ function dcm = pspm_dcm(model, options)
 % with 1 mcS amplitude
 %
 % pspm_dcm can handle NaN values in data channels. Either by specifying 
-% missing epochs manually using model.missing or by detecting missing epochs
-% automatically using the field model.substhresh: According to model.missing
-% or model.substhresh data around detected or predefined NaN periods are split
-% into subsessions which then get evaluated independently. There is no change
-% to the structure of the result. NaN periods smaller than model.substhresh 
-% or not defined in model.missing are interpolated for averages and 
-% principal response components.
+% missing epochs manually using model.missing, or by detecting NaN epochs
+% in the data. Missing epochs shorter than model.substhresh will be ignored 
+% in the inversion; otherwise the data will be split into subsessions that
+% are inverted independently. The results will be unchanged, and events
+% within missing epochs will simply be set to NaN.  NaN periods shorter than 
+% model.substhresh are interpolated for averages and principal response components.
 %
 % pspm_dcm calculates the inter-trial intervals as the duration between the end of a trial and the start of the next one. 
 % ITI value for the last trial in a session is calculated as the duration between the end of the last trial and the end of the whole session. 
@@ -130,14 +129,8 @@ function dcm = pspm_dcm(model, options)
 %            Neuroscience Methods, 255, 131-138.
 %
 %__________________________________________________________________________
-% PsPM 3.0
-% (c) 2010-2015 Dominik R Bach (WTCN, UZH)
-
-% $Id: pspm_dcm.m 792 2019-07-09 11:48:39Z esrefo $  
-% $Rev: 792 $
-
-% function revision
-rev = '$Rev: 792 $';
+% PsPM 5.1.0
+% (c) 2010-2021 PsPM Team
 
 %% Initialise & set output
 % ------------------------------------------------------------------------
@@ -358,22 +351,17 @@ for iSn = 1:numel(model.datafile)
         end
          
         % put missing epochs together
-        miss_epochs = [nan_ep_start', nan_ep_stop'];
+        miss_epochs = [nan_ep_start(:), nan_ep_stop(:)];
 
         % classify if epoch should be considered
         % true for duration > substhresh and for missing epochs
         ignore_epochs = diff(miss_epochs, 1, 2)/data{iSn}{1}.header.sr > ...
             model.substhresh;
 
-        % use offset for detected subsessions
-        session_offset = model.substhresh;
     else
         % use missing epochs as specified by file
         miss_epochs = missing{iSn}*data{iSn}{1}.header.sr;
         ignore_epochs = diff(miss_epochs, 1, 2) / data{iSn}{1}.header.sr > model.substhresh;
-
-        % disable offset for predefined missing epochs
-        session_offset = 0;
     end
     
     if any(ignore_epochs)
@@ -403,31 +391,24 @@ for iSn = 1:numel(model.datafile)
         % 1 session_id 
         % 2 start_time (s)
         % 3 stop_time (s)
-        % 4 missing 
-        % 5 session_offset
+        % 4 missing (1) or data segment (0)
 
         n_sbs = numel(se_start);
         % enabled subsessions
-        subsessions(end+(1:n_sbs), 1:5) = [ones(n_sbs,1)*iSn, ...
+        subsessions(end+(1:n_sbs), 1:4) = [ones(n_sbs,1)*iSn, ...
             [se_start, se_stop]/data{iSn}{1}.header.sr, ...
-            zeros(n_sbs,1), ...
-            ones(n_sbs,1)*session_offset];
+            zeros(n_sbs,1)];
         
         % missing epochs
         n_miss = sum(ignore_epochs);
-        subsessions(end+(1:n_miss), 1:5) = [ones(n_miss,1)*iSn, ...
+        subsessions(end+(1:n_miss), 1:4) = [ones(n_miss,1)*iSn, ...
             miss_epochs(i_e,:)/data{iSn}{1}.header.sr, ...
-            ones(n_miss,1), ...
-            ones(n_miss,1)*session_offset];
+            ones(n_miss,1)];
     else
-        subsessions(end+1,1:5) = [iSn, ...
-            [1, numel(data{iSn}{1}.data)]/data{iSn}{1}.header.sr, 0, ...
-            session_offset];
+        subsessions(end+1,1:4) = [iSn, ...
+            [1, numel(data{iSn}{1}.data)]/data{iSn}{1}.header.sr, 0];
     end
 end
-
-% subsessions - columns:
-% iSn, start, stop, missing
 
 % sort subsessions by start
 subsessions = sortrows(subsessions);
@@ -469,6 +450,7 @@ sbs_trlstart = cell(1,n_sbs);
 sbs_trlstop = cell(1,n_sbs);
 sbs_iti= cell(1,n_sbs);
 sbs_miniti = zeros(1,n_sbs);
+lasttrial_log = zeros(1, n_sbs);
 for iSn = 1:numel(model.timing)
     % initialise and get timing information -- 
     sn_newevents{1}{iSn} = []; sn_newevents{2}{iSn} = [];
@@ -532,7 +514,7 @@ for iSn = 1:numel(model.timing)
     % assign trials to subsessions
     trls = num2cell([sn_trlstart{iSn}, sn_trlstop{iSn}],2);
     subs = cellfun(@(x) find(x(1) > subsessions(:,2) & ...
-        x(2) < (subsessions(:,3)-subsessions(:,5)) ... 
+        x(2) < (subsessions(:,3)) ... 
         & subsessions(:, 1) == iSn), trls, 'UniformOutput', 0);
 
     emp_subs = cellfun(@isempty, subs);
@@ -552,7 +534,7 @@ for iSn = 1:numel(model.timing)
             sbs_id = sn_sbs(isn_sbs);
             % trials which are enabled and have the 'current' subsession id
             sbs_trls = trials{iSn}(:, 1) == 1 & trials{iSn}(:,2) == sbs_id;
-            if sum(sbs_trls)>1
+            if sum(sbs_trls)>0 % if any trials exist
                 sbs_trlstart{sbs_id} = sn_trlstart{iSn}(sbs_trls) - ...
                     subsessions(sbs_id,2);
                 sbs_trlstop{sbs_id} = sn_trlstop{iSn}(sbs_trls) - ...
@@ -575,6 +557,14 @@ for iSn = 1:numel(model.timing)
                     warning(['Error in event definition. Either events are ', ...
                         'outside the file, or trials overlap.']); return;
                 end
+                
+                % invalidate last trial if interval to end of session is
+                % shorter than minimum value
+                if sbs_iti{sbs_id}(end) < model.lasttrialcutoff
+                    trlindx = find(sbs_trls);         % find last trial of this subsession
+                    trials{iSn}(trlindx(end), 1) = 0; % set index - will be applied after estimation
+                    lasttrial_log(sbs_id) = 1;
+                end
             end
         end
     else
@@ -590,31 +580,6 @@ if isempty(sbs_trlstart)
     return;
 end
 
-% Find the index of only valid sessions
-flag_valid = ~cellfun(@isempty, sbs_trlstart);
-% Initialise the record of filtered trials
-error_log = zeros(size(sbs_iti));
-% Do processing in the index of valid sessions
-idx_session = nonzeros((1:size(sbs_data,1)).*flag_valid);
-index_last_trial = zeros(length(idx_session'),numel(sbs_data{1,1}));
-for i_session = idx_session'
-    % Check the interval since the start of the last trial
-    error_log(i_session)=sbs_iti{i_session}(end)<model.lasttrialcutoff;
-    % Remove the last trial if the interval since the start of the last
-    % trial is less than options.trialfilter
-    if error_log(i_session) > 0
-        i_trial = length(sbs_iti{i_session});
-        % Find the position of the target trial in proc_subsessions
-        last_trl_start = sbs_trlstart{i_session};
-        % Convert from time (s) to data points
-        last_trl_start = ceil(last_trl_start(i_trial)*model.sr);
-        % Get the end of the data in this sesstion
-        last_trl_stop = numel(sbs_data{i_session,1});
-		index_last_trial(i_session,:) = [zeros(1,(last_trl_start-1)), ones(1,(last_trl_stop-last_trl_start+1))];
-    end
-end
-
-
 % find subsessions with events and define them to be processed
 proc_subsessions = ~cellfun(@isempty, sbs_trlstart);
 proc_miniti     =  sbs_miniti(proc_subsessions);
@@ -623,7 +588,7 @@ model.trlstop  =  sbs_trlstop(proc_subsessions);
 model.iti      =  sbs_iti(proc_subsessions);
 model.events   =  {sbs_newevents{1}(proc_subsessions), ...
     sbs_newevents{2}(proc_subsessions)};
-model.lasttrlfiltered = error_log; % recorded the sessions that have last trial filtered
+model.lasttrlfiltered = lasttrial_log; % recorded the sessions that have last trial filtered
 model.scr      =  sbs_data(proc_subsessions);
 options.missing  =  sbs_missing(proc_subsessions);
 
@@ -805,18 +770,9 @@ for iSn = 1:numel(model.datafile)
         end;
         
     end;
-    % set disabled trials to NaN
+    % set disabled trials to NaN (trials during missing data stretches or
+    % that are too close to session end)
     dcm.stats(cTrl + find(trls(:, 1) == 0), :) = NaN;
-    % set last trial that does not contain sufficient information to NaN
-    %iti_mat = cell2mat(model.iti);
-    % Manually convert to matrix as there could be multiple subsessions
-    iti_mat = [];
-     for i_model_iti = 1:length(model.iti)
-         iti_mat = [iti_mat; model.iti{i_model_iti}];
-     end
-    if sum(iti_mat(end)<model.lasttrialcutoff)>0
-        dcm.stats(end, :) = NaN;
-    end
     cTrl = cTrl + size(trls, 1);
 end;
 dcm.names = {};
@@ -848,7 +804,6 @@ dcm.options = options;
 dcm.warnings = warnings;
 dcm.modeltype = 'dcm';
 dcm.modality = settings.modalities.dcm;
-dcm.revision = rev;
 
 if ~options.nosave
     save(model.modelfile, 'dcm');
@@ -865,7 +820,7 @@ function [datacol, warnings] = get_data_after_trial_filling_with_nans_when_neces
     if num_indices_outside_scr > 0
         warning('ID:too_short_ITI',...
             sprintf(...
-                ['Trial %d in session %d has ITI %f; but we use %f seconds',...
+                ['Trial %d in session %d has ITI %f; but for mean response we use %f seconds',...
                 ' after each trial. Filling the rest with NaNs'],...
                 n, isbSn, sbs_iti{isbSn}(n), proc_miniti(isbSn)...
         ));
