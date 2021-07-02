@@ -120,7 +120,7 @@ function split_sessions = pspm_cfg_split_sessions
     end
 
     function out = pspm_cfg_run_split_sessions(job)
-        datafile = job.datafile;
+        datafile = job.datafile{1,1};
         if isfield(job.mrk_chan,'chan_nr')
             markerchannel = job.mrk_chan.chan_nr;
         else
