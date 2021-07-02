@@ -166,8 +166,11 @@ if options.missing
         missing = round(missing*missingsr); % convert epochs in sec to datapoints
     end
     indx = zeros(1,round(missingsr * ininfos.duration)); % indx should be a one-dimensional array?
-    indx(missing(:, 1)) = 1;
-    indx(missing(:, 2)+1) = -1;
+    % allow splitting empty missing epochs
+    if ~isempty(missing)
+        indx(missing(:, 1)) = 1;
+        indx(missing(:, 2)+1) = -1;
+    end
     dp_epochs = (cumsum(indx(:)) == 1);
     % extract fileparts for later
     [p_epochs, f_epochs, ex_epochs] = fileparts(options.missing);
