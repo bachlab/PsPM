@@ -128,8 +128,8 @@ function split_sessions = pspm_cfg_split_sessions
         end
         options = struct;
         options.overwrite = job.overwrite;
-        if isfield(job.missing_epochs_file,'path')
-            options.missing = job.missing_epoch.path{1,1};
+        if isfield(job.missing_epochs_file,'name')
+            options.missing = job.missing_epochs_file.name{1,1};
         else
             options.missing = 0;
         end
