@@ -1,5 +1,5 @@
 function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
-    % pspm_load_data checks and returns the structure of PsPM 3-4.x and 
+    % pspm_load_data checks and returns the structure of PsPM 3-5.x and 
     % SCRalyze 2.x data files - SCRalyze 1.x is not supported
     %
     % FORMAT: [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
