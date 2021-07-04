@@ -13,7 +13,7 @@ function split_sessions = pspm_cfg_split_sessions
     datafile         = cfg_files;
     datafile.name    = 'Data File';
     datafile.tag     = 'datafile';
-    datafile.num     = [1 Inf];
+    datafile.num     = [1 1];
     %datafile.filter  = '\.(mat|MAT)$';
     datafile.help    = {settings.datafilehelp};
 
