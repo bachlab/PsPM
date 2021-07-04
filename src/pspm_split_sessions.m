@@ -1,8 +1,7 @@
 function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchannel, options)
 % pspm_split_sessions splits experimental sessions/blocks, based on
 % regularly incoming markers, for example volume or slice markers from an
-% MRI scanner (equivalent to the 'scanner' option during import in previous
-% versions of PsPM and SCRalyze), or based on a vector of split points in
+% MRI scanner, or based on a vector of split points that is defined in
 % terms of markers. The first and the last marker will define the start of
 % the first session and the end of the last session.
 %
@@ -42,7 +41,7 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 %
 %       REMARK for suffix and prefix:
 %           Markers in the prefix and suffix intervals are ignored. Only markers
-%           between the splitpoints are considered for each session to
+%           between the splitpoints are considered for each session, to
 %           avoid duplication of markers.
 %
 %
@@ -52,6 +51,7 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 % sessions (empty if no options.missing not specified)
 %__________________________________________________________________________
 % PsPM 5.1.1
+% 2021 PsPM Team
 
 
 %% 1 Initialise
@@ -166,8 +166,11 @@ if options.missing
         missing = round(missing*missingsr); % convert epochs in sec to datapoints
     end
     indx = zeros(1,round(missingsr * ininfos.duration)); % indx should be a one-dimensional array?
-    indx(missing(:, 1)) = 1;
-    indx(missing(:, 2)+1) = -1;
+    % allow splitting empty missing epochs
+    if ~isempty(missing)
+        indx(missing(:, 1)) = 1;
+        indx(missing(:, 2)+1) = -1;
+    end
     dp_epochs = (cumsum(indx(:)) == 1);
     % extract fileparts for later
     [p_epochs, f_epochs, ex_epochs] = fileparts(options.missing);
