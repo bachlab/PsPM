@@ -17,8 +17,7 @@ function varargout = pspm_display(varargin)
 % v0.3 - Jun-2014: shortcuts added, small bugfixes
 % Last Modified by GUIDE v2.5 31-Oct-2016 16:36:19
 
-% $Id$
-% $Rev$
+% Updated 5 July 2021 by Teddy
 
 % initialise
 % -------------------------------------------------------------------------
@@ -88,9 +87,17 @@ if(numel(varargin)) == 1
     else
         filename=varargin{1,1};
     end
-    [foo, foo, handles.data, foo]=pspm_load_data(filename,0);
+    [~, info, handles.data, filestruct]=pspm_load_data(filename,0);
     
     handles.name=filename;
+    
+    % handles.text_file_summary = filename;
+    text_file_summary = ['Data source: ', filename, newline, newline, ...
+        'Duration: ', num2str(info.duration), newline,...
+        'Import date: ', info.importdate, newline, ...
+        'Position of marker: ', num2str(filestruct.posofmarker)];
+    set(handles.text_file_summary, 'String', text_file_summary);
+    
     guidata(hObject, handles);
     
     % ---add text to wave listbox--------------------------------------
