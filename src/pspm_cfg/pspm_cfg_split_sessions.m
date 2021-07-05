@@ -15,7 +15,8 @@ function split_sessions = pspm_cfg_split_sessions
     datafile.tag     = 'datafile';
     datafile.num     = [1 1];
     %datafile.filter  = '\.(mat|MAT)$';
-    datafile.help    = {settings.datafilehelp};
+    datafile.help    = {[settings.datafilehelp,...
+        ' Split sessions can handle only one data file.']};
 
     %% Marker channel
     chan_def         = cfg_const;
@@ -74,7 +75,7 @@ function split_sessions = pspm_cfg_split_sessions
     miss_epoch_true          = cfg_files;
     miss_epoch_true.name     = 'Add missing epochs file';
     miss_epoch_true.tag      = 'name';
-    miss_epoch_true.num      = [1 Inf];
+    miss_epoch_true.num      = [1 1];
     miss_epoch_true.help     = {['The selected missing epochs file will be ',...
     'split as well.'], ['The input must be the name of a file containing missing ',...
     'epochs in seconds.']};
@@ -85,7 +86,8 @@ function split_sessions = pspm_cfg_split_sessions
     missing_epoch.values  = {miss_epoch_false, miss_epoch_true};
     missing_epoch.val     = {miss_epoch_false};
     missing_epoch.help = {['A missing epochs file can be added here '...
-    'and will be split in the same way as the PsPM data file.']};
+    'and will be split in the same way as the PsPM data file. '...
+    'Split sessions can handle up to one missing epoch file.']};
 
     %% Overwrite file
     overwrite         = cfg_menu;

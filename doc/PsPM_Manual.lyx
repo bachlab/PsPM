@@ -12995,6 +12995,7 @@ Data File
 
 \begin_layout Standard
 Choose the data file, in which you want to split sessions.
+ The data file should be a single file, and a cell array is not allowed.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -13029,6 +13030,16 @@ Automatic: Detect sessions according to longest distances between markers.
 
 \begin_layout Itemize
 Marker: Split sessions according to given marker id's.
+\end_layout
+
+\begin_layout Subsubsection*
+Missing epoch file
+\end_layout
+
+\begin_layout Standard
+Split sessions can split the corresponding missing epoch file of the data
+ file if defined.
+ Up to one missing epoch file can be added.
 \end_layout
 
 \begin_layout Subsubsection*
