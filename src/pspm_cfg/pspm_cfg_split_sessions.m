@@ -13,9 +13,10 @@ function split_sessions = pspm_cfg_split_sessions
     datafile         = cfg_files;
     datafile.name    = 'Data File';
     datafile.tag     = 'datafile';
-    datafile.num     = [1 Inf];
+    datafile.num     = [1 1];
     %datafile.filter  = '\.(mat|MAT)$';
-    datafile.help    = {settings.datafilehelp};
+    datafile.help    = {[settings.datafilehelp,...
+        ' Split sessions can handle only one data file.']};
 
     %% Marker channel
     chan_def         = cfg_const;
@@ -74,7 +75,7 @@ function split_sessions = pspm_cfg_split_sessions
     miss_epoch_true          = cfg_files;
     miss_epoch_true.name     = 'Add missing epochs file';
     miss_epoch_true.tag      = 'name';
-    miss_epoch_true.num      = [1 Inf];
+    miss_epoch_true.num      = [1 1];
     miss_epoch_true.help     = {['The selected missing epochs file will be ',...
     'split as well.'], ['The input must be the name of a file containing missing ',...
     'epochs in seconds.']};
@@ -85,7 +86,8 @@ function split_sessions = pspm_cfg_split_sessions
     missing_epoch.values  = {miss_epoch_false, miss_epoch_true};
     missing_epoch.val     = {miss_epoch_false};
     missing_epoch.help = {['A missing epochs file can be added here '...
-    'and will be split in the same way as the PsPM data file.']};
+    'and will be split in the same way as the PsPM data file. '...
+    'Split sessions can handle up to one missing epoch file.']};
 
     %% Overwrite file
     overwrite         = cfg_menu;
@@ -106,9 +108,12 @@ function split_sessions = pspm_cfg_split_sessions
     split_sessions.vout = @pspm_cfg_vout_split_sessions;
     split_sessions.help = {['Split sessions, defined by trains of of markers. This function ' ...
     'is most commonly used to split fMRI sessions when a (slice or volume) pulse from the ' ...
-    'MRI scanner has been recorded. The function will identify trains of markers and detect ' ...
-    'breaks in these marker sequences. The individual sessions will be written to new files ' ...
-    'with a suffix ''_sn'', and the session number. You can choose a marker channel if several were recorded.']};
+    'MRI scanner has been recorded. In automatic mode, the function will identify trains of markers and detect ' ...
+    'breaks in these marker sequences. In manual model, you can provide a vector of markers that are used ', ...
+    'to split the file. The individual sessions will be written to new files ' ...
+    'with a suffix ''_sn'', and the session number. You can choose one datafile and, optionally, ' ...
+    'one missing epochs file, which will be split at the same points. By default, the function will use ', ...
+    'the first marker channel. Alternatively, you can choose a marker channel number.']};
 
     function vout = pspm_cfg_vout_split_sessions(job)
         vout = cfg_dep;
@@ -119,7 +124,7 @@ function split_sessions = pspm_cfg_split_sessions
     end
 
     function out = pspm_cfg_run_split_sessions(job)
-        datafile = job.datafile;
+        datafile = job.datafile{1,1};
         if isfield(job.mrk_chan,'chan_nr')
             markerchannel = job.mrk_chan.chan_nr;
         else
@@ -127,8 +132,8 @@ function split_sessions = pspm_cfg_split_sessions
         end
         options = struct;
         options.overwrite = job.overwrite;
-        if isfield(job.missing_epochs_file,'path')
-            options.missing = job.missing_epoch.path{1,1};
+        if isfield(job.missing_epochs_file,'name')
+            options.missing = job.missing_epochs_file.name{1,1};
         else
             options.missing = 0;
         end
