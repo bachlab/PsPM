@@ -74,7 +74,7 @@ handles.output = hObject;
 % Optimise Windows UI display
 if ispc
     hObject.Resize = 'off';
-    hObject.Position(3) = hObject.Position(3)*1.3; % adjust width
+    hObject.Position(3) = hObject.Position(3)*2; % adjust width
     hObject.Position(4) = hObject.Position(4)*1.15; % adjust height
     handles.tag_data_preparation_title.FontSize = 9;
     handles.tag_data_preparation_list.FontSize = 9;
@@ -98,6 +98,12 @@ if ispc
     handles.tag_feedback.FontSize = 10;
     handles.tag_quit.FontSize = 10;
     handles.tag_attribution.FontSize = 8;
+end
+
+if ismac
+    hObject.Resize = 'off';
+    hObject.Position(3) = hObject.Position(3)*0.7; % adjust width
+    hObject.Position(4) = hObject.Position(4)*0.9; % adjust height
 end
 
 % Update handles structure
