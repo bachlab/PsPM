@@ -1,24 +1,24 @@
 function varargout = pspm(varargin)
-% PsPM is the main GUI for PsPM
+% tag_PsPM is the main GUI for tag_PsPM
 %__________________________________________________________________________
-% PsPM 5.1
+% tag_PsPM 5.1
 % (C) 2008-2021 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm.m 636 2019-03-15 07:56:42Z lciernik $
+% $Id: tag_pspm.m 636 2019-03-15 07:56:42Z lciernik $
 % $Rev: 636 $
 
 % this code was mainly produced by GUIDE
 % PsPM_GUI M-file for PsPM_GUI.fig
-%      PsPM_GUI, by itself, creates a new PsPM or raises the existing
+%      PsPM_GUI, by itself, creates a new tag_PsPM or raises the existing
 %      singleton*.
 %
-%      H = pspm returns the handle to a new PsPM or the handle to
+%      H = tag_pspm returns the handle to a new tag_PsPM or the handle to
 %      the existing singleton*.
 %
-%      PsPM('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in PsPM.M with the given input arguments.
+%      tag_PsPM('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in tag_PsPM.M with the given input arguments.
 %
-%      PsPM('Property','Value',...) creates a new PsPM or raises the
+%      tag_PsPM('Property','Value',...) creates a new tag_PsPM or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
 %      applied to the GUI before PsPM_OpeningFunction gets called.  An
 %      unrecognized property name or invalid value makes property application
@@ -29,9 +29,9 @@ function varargout = pspm(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help PsPM
+% Edit the above text to modify the response to help tag_PsPM
 
-% Last Modified by GUIDE v2.5 24-May-2021 18:29:41
+% Last Modified by GUIDE v2.5 07-Jul-2021 16:18:18
 % initialise
 % -------------------------------------------------------------------------
 global settings;
@@ -40,12 +40,12 @@ if isempty(settings), pspm_init; end
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
-                   'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @PsPM_OpeningFcn, ...
-                   'gui_OutputFcn',  @PsPM_OutputFcn, ...
-                   'gui_LayoutFcn',  [] , ...
-                   'gui_Callback',   []);
-               
+    'gui_Singleton',  gui_Singleton, ...
+    'gui_OpeningFcn', @PsPM_OpeningFcn, ...
+    'gui_OutputFcn',  @PsPM_OutputFcn, ...
+    'gui_LayoutFcn',  [] , ...
+    'gui_Callback',   []);
+
 if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
@@ -57,24 +57,53 @@ else
 end
 % End initialization code - DO NOT EDIT
 
-% --- Executes just before PsPM is made visible.
+% --- Executes just before tag_PsPM is made visible.
 function PsPM_OpeningFcn(hObject, ~, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to PsPM (see VARARGIN)
+% varargin   command line arguments to tag_PsPM (see VARARGIN)
 pspm_init;
 cfg_util('initcfg'); % This must be the first call to cfg_util
 %cfg_ui('Visible','off'); % Create invisible batch ui
 
-% Choose default command line output for PsPM
+% Choose default command line output for tag_PsPM
 handles.output = hObject;
+
+% Optimise Windows UI display
+if ispc
+    hObject.Resize = 'off';
+    hObject.Position(3) = hObject.Position(3)*1.3; % adjust width
+    hObject.Position(4) = hObject.Position(4)*1.15; % adjust height
+    handles.tag_data_preparation_title.FontSize = 9;
+    handles.tag_data_preparation_list.FontSize = 9;
+    handles.tag_data_preprocessing_title.FontSize = 9;
+    handles.tag_data_preprocessing_list.FontSize = 9;
+    handles.tag_tools_title.FontSize = 9;
+    handles.tag_tools_list.FontSize = 9;
+    handles.tag_first_level_models_title.FontSize = 9;
+    handles.tag_first_level_models_list.FontSize = 9;
+    handles.tag_non_linear_scr_model.FontSize = 10;
+    handles.tag_models_for_sf.FontSize = 10;
+    handles.tag_review_model.FontSize = 10;
+    handles.tag_contrast_manager.FontSize = 10;
+    handles.tag_export_statistics.FontSize = 10;
+    handles.tag_second_level_model_title.FontSize = 10;
+    handles.tag_second_level_model.FontSize = 10;
+    handles.tag_report_second_level.FontSize = 10;
+    handles.tag_more_title.FontSize = 10;
+    handles.tag_batch.FontSize = 10;
+    handles.tag_help.FontSize = 10;
+    handles.tag_feedback.FontSize = 10;
+    handles.tag_quit.FontSize = 10;
+    handles.tag_attribution.FontSize = 8;
+end
 
 % Update handles structure
 guidata(hObject, handles);
 
-% UIWAIT makes PsPM wait for user response (see UIRESUME)
+% UIWAIT makes tag_PsPM wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
 
@@ -89,9 +118,9 @@ function varargout = PsPM_OutputFcn(~, ~, handles)
 varargout{1} = handles.output;
 
 % --- If Enable == 'on', executes on mouse press in 5 pixel border.
-% --- Otherwise, executes on mouse press in 5 pixel border or over PsPM.
-function PsPM_ButtonDownFcn(~, ~, ~)
-% hObject    handle to PsPM (see GCBO)
+% --- Otherwise, executes on mouse press in 5 pixel border or over tag_PsPM.
+function tag_PsPM_ButtonDownFcn(~, ~, ~)
+% hObject    handle to tag_PsPM (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 pspm_show_arms;
@@ -121,85 +150,85 @@ function dispdata_Callback(~, ~, ~)
 % pspm_disp;
 cfg_add_module('pspm.tools.disp');
 
-% --- Executes on button press in Export_data.
-function Export_data_Callback(~, ~, ~)
-% hObject    handle to Export_data (see GCBO)
+% --- Executes on button press in tag_export_statistics.
+function tag_export_statistics_Callback(~, ~, ~)
+% hObject    handle to tag_export_statistics (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % pspm_exp_UI;
 cfg_add_module('pspm.first_level.export');
 
-% --- Executes on button press in rev1.
-function rev1_Callback(~, ~, ~)
-% hObject    handle to rev1 (see GCBO)
+% --- Executes on button press in tag_review_model.
+function tag_review_model_Callback(~, ~, ~)
+% hObject    handle to tag_review_model (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 %pspm_rev1_UI;
 pspm_review;
-% cfg_add_module('pspm.first_level.review');
+% cfg_add_module('tag_pspm.first_level.review');
 
-% --- Executes on button press in con1.
-function con1_Callback(~, ~, ~)
-% hObject    handle to con1 (see GCBO)
+% --- Executes on button press in tag_contrast_manager.
+function tag_contrast_manager_Callback(~, ~, ~)
+% hObject    handle to tag_contrast_manager (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % pspm_con1_UI;
 pspm_contrast;
-%cfg_add_module('pspm.first_level.contrast');
+%cfg_add_module('tag_pspm.first_level.contrast');
 
-% --- Executes on button press in DCM.
-function DCM_Callback(~, ~, ~)
-% hObject    handle to DCM (see GCBO)
+% --- Executes on button press in tag_non_linear_scr_model.
+function tag_non_linear_scr_model_Callback(~, ~, ~)
+% hObject    handle to tag_non_linear_scr_model (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % pspm_dcm_UI;
 cfg_add_module('pspm.first_level.scr.dcm');
 
-% --- Executes on button press in SF.
-function SF_Callback(~, ~, ~)
-% hObject    handle to SF (see GCBO)
+% --- Executes on button press in tag_models_for_sf.
+function tag_models_for_sf_Callback(~, ~, ~)
+% hObject    handle to tag_models_for_sf (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % pspm_sf_UI;
 cfg_add_module('pspm.first_level.scr.sf');
 
-% --- Executes on button press in rev2.
-function rev2_Callback(~, ~, ~)
-% hObject    handle to rev2 (see GCBO)
+% --- Executes on button press in tag_report_second_level.
+function tag_report_second_level_Callback(~, ~, ~)
+% hObject    handle to tag_report_second_level (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 cfg_add_module('pspm.second_level.report');
 
-% --- Executes on button press in con2.
-function con2_Callback(~, ~, ~)
-% hObject    handle to con2 (see GCBO)
+% --- Executes on button press in tag_second_level_model.
+function tag_second_level_model_Callback(~, ~, ~)
+% hObject    handle to tag_second_level_model (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % pspm_con2_UI;
 cfg_add_module('pspm.second_level.contrast');
 
-% --- Executes on button press in batch_pushbutton.
-function batch_pushbutton_Callback(~, ~, ~)
-% hObject    handle to batch_pushbutton (see GCBO)
+% --- Executes on button press in tag_batch.
+function tag_batch_Callback(~, ~, ~)
+% hObject    handle to tag_batch (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 cfg_ui;
 
-% --- Executes on button press in QuitGUI.
-function QuitGUI_Callback(~, ~, ~)
-% hObject    handle to QuitGUI (see GCBO)
+% --- Executes on button press in tag_quit.
+function tag_quit_Callback(~, ~, ~)
+% hObject    handle to tag_quit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 pspm_quit; return;
 
 
-% --- Executes on selection change in Other_utils.
-function Other_utils_Callback(hObject, ~, ~)
-% hObject    handle to Other_utils (see GCBO)
+% --- Executes on selection change in tag_tools_list.
+function tag_tools_list_Callback(hObject, ~, ~)
+% hObject    handle to tag_tools_list (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% Hints: contents = get(hObject,'String') returns Other_utils contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from Other_utils
+% Hints: contents = get(hObject,'String') returns tag_tools_list contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from tag_tools_list
 val = get(hObject,'Value');
 switch val
     case 1
@@ -229,8 +258,8 @@ switch val
 end
 
 % --- Executes during object creation, after setting all properties.
-function Other_utils_CreateFcn(hObject, ~, ~)
-% hObject    handle to Other_utils (see GCBO)
+function tag_tools_list_CreateFcn(hObject, ~, ~)
+% hObject    handle to tag_tools_list (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -242,8 +271,8 @@ end
 
 
 % --- Executes during object creation, after setting all properties.
-function GLM_CreateFcn(hObject, ~, ~)
-% hObject    handle to GLM (see GCBO)
+function tag_first_level_models_list_CreateFcn(hObject, ~, ~)
+% hObject    handle to tag_first_level_models_list (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -254,14 +283,14 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in GLM.
-function GLM_Callback(hObject, ~, ~)
-% hObject    handle to GLM (see GCBO)
+% --- Executes on selection change in tag_first_level_models_list.
+function tag_first_level_models_list_Callback(hObject, ~, ~)
+% hObject    handle to tag_first_level_models_list (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns GLM contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from GLM
+% Hints: contents = cellstr(get(hObject,'String')) returns tag_first_level_models_list contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from tag_first_level_models_list
 
 selected = get(hObject,'Value');
 
@@ -289,21 +318,21 @@ switch selected
 end
 
 
-% --- Executes on selection change in ppDataPreprocessing.
-function ppDataPreprocessing_Callback(hObject, ~, ~)
-% hObject    handle to ppDataPreprocessing (see GCBO)
+% --- Executes on selection change in tag_data_preprocessing_list.
+function tag_data_preprocessing_list_Callback(hObject, ~, ~)
+% hObject    handle to tag_data_preprocessing_list (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns ppDataPreprocessing contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from ppDataPreprocessing
+% Hints: contents = cellstr(get(hObject,'String')) returns tag_data_preprocessing_list contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from tag_data_preprocessing_list
 
 selected = get(hObject,'Value');
 switch selected
     case 1
         cfg_add_module('pspm.data_preprocessing.pp_heart_period.pp_heart_data');
     case 2
-        %cfg_add_module('pspm.data_preprocessing.pp_heart_period.ecg_editor');
+        %cfg_add_module('tag_pspm.data_preprocessing.pp_heart_period.ecg_editor');
         pspm_ecg_editor();
     case 3
         cfg_add_module('pspm.data_preprocessing.resp_pp');
@@ -330,8 +359,8 @@ end
 
 
 % --- Executes during object creation, after setting all properties.
-function ppDataPreprocessing_CreateFcn(hObject, ~, ~)
-% hObject    handle to ppDataPreprocessing (see GCBO)
+function tag_data_preprocessing_list_CreateFcn(hObject, ~, ~)
+% hObject    handle to tag_data_preprocessing_list (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -342,14 +371,14 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in ppDataPreparation.
-function ppDataPreparation_Callback(hObject, ~, ~)
-% hObject    handle to ppDataPreparation (see GCBO)
+% --- Executes on selection change in tag_data_preparation_list.
+function tag_data_preparation_list_Callback(hObject, ~, ~)
+% hObject    handle to tag_data_preparation_list (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns ppDataPreparation contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from ppDataPreparation
+% Hints: contents = cellstr(get(hObject,'String')) returns tag_data_preparation_list contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from tag_data_preparation_list
 
 selected = get(hObject,'Value');
 
@@ -362,8 +391,8 @@ end
 
 
 % --- Executes during object creation, after setting all properties.
-function ppDataPreparation_CreateFcn(hObject, ~, ~)
-% hObject    handle to ppDataPreparation (see GCBO)
+function tag_data_preparation_list_CreateFcn(hObject, ~, ~)
+% hObject    handle to tag_data_preparation_list (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -374,17 +403,17 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in pushbutton24.
-function pushbutton24_Callback(~, ~, ~)
-% hObject    handle to pushbutton24 (see GCBO)
+% --- Executes on button press in tag_help.
+function tag_help_Callback(~, ~, ~)
+% hObject    handle to tag_help (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 pspm_show_help_doc();
 
 
-% --- Executes on button press in pushbutton25.
-function pushbutton25_Callback(~, ~, ~)
-% hObject    handle to pushbutton25 (see GCBO)
+% --- Executes on button press in tag_feedback.
+function tag_feedback_Callback(~, ~, ~)
+% hObject    handle to tag_feedback (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 pspm_show_forum();
