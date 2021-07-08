@@ -15,7 +15,7 @@ function varargout = pspm_display(varargin)
 % v0.1 - Jan-2014
 % v0.2 - Apr-2014
 % v0.3 - Jun-2014: shortcuts added, small bugfixes
-% Last Modified by GUIDE v2.5 31-Oct-2016 16:36:19
+% Last Modified by GUIDE v2.5 08-Jul-2021 03:27:10
 
 % Updated 5 July 2021 by Teddy
 
@@ -81,6 +81,61 @@ handles.name=[];
 set(hObject,'Resize','on');
 % -------------------------------------------------------------------------
 
+% UI adjustment for Windows
+if ispc
+    FontSizeTitle = 11;
+    FontSizeText = 10;
+    FontSizeCaption = 9;
+    FontNameSystem = "Segoe UI";
+    hObject.Position(3)=hObject.Position(3)*1.6;
+elseif ismac
+    FontSizeTitle = 16;
+    FontSizeText = 14;
+    FontSizeCaption = 12;
+    FontNameSystem = "Gill Sans";
+else
+    FontSizeTitle = 10;
+    FontNameSystem = "Verdana";
+end
+handles.button_all.FontName = FontNameSystem;
+handles.button_all.FontSize = FontSizeTitle;
+handles.button_autoscale.FontName = FontNameSystem;
+handles.button_autoscale.FontSize = FontSizeTitle;
+handles.button_plot.FontName = FontNameSystem;
+handles.button_plot.FontName = FontNameSystem;
+handles.button_plot.FontSize = FontSizeTitle;
+handles.button_plot.FontSize = FontSizeTitle;
+handles.display_plot.FontName = FontNameSystem;
+handles.display_plot.FontSize = FontSizeCaption;
+handles.list_event_channel.FontName = FontNameSystem;
+handles.list_event_channel.FontSize = FontSizeText;
+handles.list_wave_channel.FontName = FontNameSystem;
+handles.list_wave_channel.FontSize = FontSizeText;
+handles.module_display_options.FontName = FontNameSystem;
+handles.module_display_options.FontSize = FontSizeTitle;
+handles.module_event_channels.FontName = FontNameSystem;
+handles.module_event_channels.FontSize = FontSizeTitle;
+handles.module_event_options.FontName = FontNameSystem;
+handles.module_event_options.FontSize = FontSizeTitle;
+handles.module_summary.FontName = FontNameSystem;
+handles.module_summary.FontSize = FontSizeTitle;
+handles.module_wave_channels.FontName = FontNameSystem;
+handles.module_wave_channels.FontSize = FontSizeTitle;
+handles.option_extra.FontName = FontNameSystem;
+handles.option_extra.FontSize = FontSizeText;
+handles.option_integrated.FontName = FontNameSystem;
+handles.option_integrated.FontSize = FontSizeText;
+handles.text_file_summary.FontName = FontNameSystem;
+handles.text_file_summary.FontSize = FontSizeTitle;
+handles.text_starting_point.FontName = FontNameSystem;
+handles.text_starting_point.FontSize = FontSizeText;
+handles.text_time_window.FontName = FontNameSystem;
+handles.text_time_window.FontSize = FontSizeText;
+handles.text_y_max.FontName = FontNameSystem;
+handles.text_y_max.FontSize = FontSizeText;
+handles.text_y_min.FontName = FontNameSystem;
+handles.text_y_min.FontSize = FontSizeText;
+
 if(numel(varargin)) == 1
     if iscell(varargin{1,1})
         filename=varargin{1,1}{1};
@@ -113,7 +168,7 @@ if(numel(varargin)) == 1
         end
     end
     
-    set(handles.wave_listbox,'String',listitems);
+    set(handles.list_wave_channel,'String',listitems);
     clear listitems
     
     % ---add text to event listbox & activate additional options-------
@@ -125,14 +180,14 @@ if(numel(varargin)) == 1
             listitems{j,1}=handles.data{k,1}.header.chantype;
             handles.prop.eventchans(j)=k;
             j=j+1;
-            set(handles.radio_int,'Enable','on');
-            set(handles.radio_extra,'Enable','on');
+            set(handles.option_integrated,'Enable','on');
+            set(handles.option_extra,'Enable','on');
         end
     end
     
-    set(handles.event_listbox,'String',listitems);
-    set(handles.push_auto,'Value',0);
-    set(handles.push_all,'Value',1);
+    set(handles.list_event_channel,'String',listitems);
+    set(handles.button_autoscale,'Value',0);
+    set(handles.button_all,'Value',1);
     
 elseif numel(varargin)>1 ; warning('too many input arguments. Inputs 2:end ignored. ') ;
 end
@@ -167,7 +222,7 @@ function push_next_Callback(hObject, eventdata, handles)
 x1=str2num(get(handles.ed_start_x,'String'));
 x2=str2num(get(handles.ed_winsize_x,'String'));
 
-y=get(handles.axes_1,'YLim');
+y=get(handles.display_plot,'YLim');
 
 x1=x1+x2; x2=x1+x2;
 
@@ -177,7 +232,7 @@ set(handles.ed_start_x,'String',num2str(x1));
 set(handles.ed_y_min,'String',num2str(y(1)));
 set(handles.ed_y_max,'String',num2str(y(2)));
 
-set(handles.push_all,'Value',0);
+set(handles.button_all,'Value',0);
 
 
 % --- Executes on button press in push_back.
@@ -194,7 +249,7 @@ x1=x1-x2; x2=x1+x2;
 
 set(handles.ed_start_x,'String',num2str(x1));
 
-y=get(handles.axes_1,'YLim');
+y=get(handles.display_plot,'YLim');
 
 axis([x1 x2 y(1) y(2)])
 
@@ -202,20 +257,20 @@ set(handles.ed_start_x,'String',num2str(x1));
 set(handles.ed_y_min,'String',num2str(y(1)));
 set(handles.ed_y_max,'String',num2str(y(2)));
 
-set(handles.push_all,'Value',0);
+set(handles.button_all,'Value',0);
 
-% --- Executes on button press in radio_extra.
-function radio_extra_Callback(hObject, eventdata, handles)
-% hObject    handle to radio_extra (see GCBO)
+% --- Executes on button press in option_extra.
+function option_extra_Callback(hObject, eventdata, handles)
+% hObject    handle to option_extra (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of radio_extra
-status=get(handles.radio_extra,'Value');
+% Hint: get(hObject,'Value') returns toggle state of option_extra
+status=get(handles.option_extra,'Value');
 if status==1
-    set(handles.radio_int,'Value',0)
+    set(handles.option_integrated,'Value',0)
 elseif status==0
-    set(handles.radio_int,'Value',1)
+    set(handles.option_integrated,'Value',1)
 end
 
 % -------------------------------------------------------------------------
@@ -262,8 +317,8 @@ else
     axis([x1 x2 y1 y2])
 end
 
-set(handles.push_auto,'Value',0);
-set(handles.push_all,'Value',0);
+set(handles.button_autoscale,'Value',0);
+set(handles.button_all,'Value',0);
 
 % --- Executes during object creation, after setting all properties.
 function ed_winsize_x_CreateFcn(hObject, eventdata, handles)
@@ -298,8 +353,8 @@ else
     axis([x1 x2 y1 y2])
 end
 
-set(handles.push_auto,'Value',0);
-set(handles.push_all,'Value',0);
+set(handles.button_autoscale,'Value',0);
+set(handles.button_all,'Value',0);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -334,8 +389,8 @@ if y1 >= y2
 else
     axis([x1 x2 y1 y2])
 end
-set(handles.push_auto,'Value',0);
-set(handles.push_all,'Value',0);
+set(handles.button_autoscale,'Value',0);
+set(handles.button_all,'Value',0);
 
 % --- Executes during object creation, after setting all properties.
 function ed_start_x_CreateFcn(hObject, eventdata, handles)
@@ -350,15 +405,15 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in push_auto.
-function push_auto_Callback(hObject, eventdata, handles)
-% hObject    handle to push_auto (see GCBO)
+% --- Executes on button press in button_autoscale.
+function button_autoscale_Callback(hObject, eventdata, handles)
+% hObject    handle to button_autoscale (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
 axis('auto')
-y=get(handles.axes_1,'ylim');
+y=get(handles.display_plot,'ylim');
 x=str2num(get(handles.ed_start_x,'String'));
 
 x(2)=x(1)+15;
@@ -370,25 +425,25 @@ set(handles.ed_start_x,'String',num2str(x(1)));
 set(handles.ed_winsize_x,'String',num2str(x(2)-x(1)));
 set(handles.ed_y_min,'String',num2str(y(1)));
 set(handles.ed_y_max,'String',num2str(y(2)));
-set(handles.push_all,'Value',0);
+set(handles.button_all,'Value',0);
 
 
 
-% --- Executes on button press in push_all.
-function push_all_Callback(hObject, eventdata, handles)
-% hObject    handle to push_all (see GCBO)
+% --- Executes on button press in button_all.
+function button_all_Callback(hObject, eventdata, handles)
+% hObject    handle to button_all (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 axis('auto');
 
-y=get(handles.axes_1,'ylim');
-x=get(handles.axes_1,'xlim');
+y=get(handles.display_plot,'ylim');
+x=get(handles.display_plot,'xlim');
 
 set(handles.ed_start_x,'String',num2str(x(1)));
 set(handles.ed_winsize_x,'String',num2str(x(2)-x(1)));
 set(handles.ed_y_min,'String',num2str(y(1)));
 set(handles.ed_y_max,'String',num2str(y(2)));
-set(handles.push_auto,'Value',0);
+set(handles.button_autoscale,'Value',0);
 
 % --------------------------------------------------------------------
 function file_Callback(hObject, eventdata, handles)
@@ -420,10 +475,10 @@ if not(sts==0)
     
     % ---set wave and event channel value to none ---------------------
     handles.prop.wave='none';
-    set(handles.wave_listbox,'Value',1)
+    set(handles.list_wave_channel,'Value',1)
     
     handles.prop.event='none';
-    set(handles.event_listbox,'Value',1)
+    set(handles.list_event_channel,'Value',1)
     
     % ---add text to wave listbox--------------------------------------
     
@@ -438,7 +493,7 @@ if not(sts==0)
         end
     end
     
-    set(handles.wave_listbox,'String',listitems);
+    set(handles.list_wave_channel,'String',listitems);
     clear listitems
     
     % ---add text to event listbox & activate additional options-------
@@ -450,14 +505,14 @@ if not(sts==0)
             listitems{j,1}=handles.data{k,1}.header.chantype;
             handles.prop.eventchans(j)=k;
             j=j+1;
-            set(handles.radio_int,'Enable','on');
-            set(handles.radio_extra,'Enable','on');
+            set(handles.option_integrated,'Enable','on');
+            set(handles.option_extra,'Enable','on');
         end
     end
     
-    set(handles.event_listbox,'String',listitems);
-    set(handles.push_auto,'Value',0);
-    set(handles.push_all,'Value',1);
+    set(handles.list_event_channel,'String',listitems);
+    set(handles.button_autoscale,'Value',0);
+    set(handles.button_all,'Value',1);
     
 elseif numel(varargin)>1 ; warning('too many input arguments. Inputs 2:end ignored. ') ;
 end
@@ -471,8 +526,8 @@ function saveas_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-y=get(handles.axes_1,'ylim');
-x=get(handles.axes_1,'xlim');
+y=get(handles.display_plot,'ylim');
+x=get(handles.display_plot,'xlim');
 
 [filename,pathname]=uiputfile({'*.jpg';'*.tif';'*.png';'*.gif';'*.bmp'},'Save Image');
 
@@ -496,12 +551,12 @@ close(gcbf);
 
 
 % --- Executes during object creation, after setting all properties.
-function axes_1_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to axes_1 (see GCBO)
+function display_plot_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to display_plot (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
-% Hint: place code in OpeningFcn to populate axes_1
+% Hint: place code in OpeningFcn to populate display_plot
 
 
 % --- Executes during object creation, after setting all properties.
@@ -531,14 +586,14 @@ status5=get(handles.radio_pupil,'Value');
 status6=get(handles.radio_emg,'Value');
 status7=get(handles.radio_resp,'Value');
 
-set(handles.push_auto,'Enable','on');
-set(handles.push_all,'Enable','on');
+set(handles.button_autoscale,'Enable','on');
+set(handles.button_all,'Enable','on');
 
 if status0== 1
     handles.prop.wave='none';
     set(handles.radio_hb,'Enable','on');
-    set(handles.push_auto,'Enable','off');
-    set(handles.push_all,'Enable','off')
+    set(handles.button_autoscale,'Enable','off');
+    set(handles.button_all,'Enable','off')
     set(handles.radio_integrated,'Enable','off')
 elseif status1 == 1
     handles.prop.wave='scr';
@@ -558,7 +613,7 @@ end
 
 if ~(strcmp(handles.prop.wave,'ecg')) && strcmp(handles.prop.event,'hb')
     handles.prop.event='extra';
-    set(handles.radio_extra,'Value',1)
+    set(handles.option_extra,'Value',1)
 end
 
 if status0==0 ; set(handles.radio_integrated,'Enable','on') ; end
@@ -566,8 +621,8 @@ if status0==0 ; set(handles.radio_integrated,'Enable','on') ; end
 guidata(hObject, handles);
 pp_plot(handles);
 
-set(handles.push_auto,'Value',0);
-set(handles.push_all,'Value',1);
+set(handles.button_autoscale,'Value',0);
+set(handles.button_all,'Value',1);
 
 
 
@@ -581,7 +636,7 @@ function panel_event_SelectionChangeFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 status0=get(handles.radio_enone,'Value');
-status1=get(handles.radio_extra,'Value');
+status1=get(handles.option_extra,'Value');
 status2=get(handles.radio_integrated,'Value');
 status3=get(handles.radio_hb,'Value');
 
@@ -601,8 +656,8 @@ end
 guidata(hObject, handles);
 pp_plot(handles);
 
-set(handles.push_auto,'Value',0);
-set(handles.push_all,'Value',1);
+set(handles.button_autoscale,'Value',0);
+set(handles.button_all,'Value',1);
 
 
 
@@ -636,8 +691,8 @@ else
     axis([x1 x2 y1 y2])
 end
 
-set(handles.push_auto,'Value',0);
-set(handles.push_all,'Value',0);
+set(handles.button_autoscale,'Value',0);
+set(handles.button_all,'Value',0);
 
 % --- Executes during object creation, after setting all properties.
 function ed_y_max_CreateFcn(hObject, eventdata, handles)
@@ -671,21 +726,21 @@ wave=[];
 % get eventchan info
 if not(isempty(handles.prop.eventchans)) && not(handles.prop.eventchans(handles.prop.idevent)==0) &&  strcmp(handles.data{handles.prop.eventchans(handles.prop.idevent),1}.header.chantype,'marker')
     marker=handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
-    if get(handles.radio_extra,'Value')==1
+    if get(handles.option_extra,'Value')==1
         handles.prop.event='extra';
     else
         handles.prop.event='integrated';
     end
 elseif not(isempty(handles.prop.eventchans)) && not(handles.prop.eventchans(handles.prop.idevent)==0) && strcmp(handles.data{handles.prop.eventchans(handles.prop.idevent),1}.header.chantype,'hb')
     hbeat=handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
-    if get(handles.radio_extra,'Value')==1
+    if get(handles.option_extra,'Value')==1
         handles.prop.event='extra';
     else
         handles.prop.event='integrated';
     end
 elseif not(isempty(handles.prop.eventchans)) && not(handles.prop.eventchans(handles.prop.idevent)==0)
     events=handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
-    if get(handles.radio_extra,'Value')==1
+    if get(handles.option_extra,'Value')==1
         handles.prop.event='extra';
     else
         handles.prop.event='integrated';
@@ -849,7 +904,7 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(
         elseif not(isempty(hbeat))
             legend(handles.prop.wave,'heartbeats')
         elseif not(isempty(events))
-            legend(handles.prop.wave,[handles.event_listbox.String{handles.prop.idevent},' events'])
+            legend(handles.prop.wave,[handles.list_event_channel.String{handles.prop.idevent},' events'])
         elseif not(strcmp(handles.prop.event,'none'))
             legend(handles.prop.wave,'unknown events')
         else 
@@ -882,7 +937,7 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(
         elseif not(isempty(hbeat))
             legend('heartbeats')
         elseif not(isempty(events))
-            legend([handles.event_listbox.String{handles.prop.idevent},' events'])
+            legend([handles.list_event_channel.String{handles.prop.idevent},' events'])
         else
             legend('unknown events')
         end
@@ -890,12 +945,12 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(
 end
 % -------------------------------------------------------------------------
 title(sprintf(' %s ',regexprep(handles.name, '([\\_])' ,'\\$1')),'Fontsize',18);
-set(handles.axes_1,'XGrid','on')
+set(handles.display_plot,'XGrid','on')
 hold off
 % -------------------------------------------------------------------------
 
-x=get(handles.axes_1,'xlim');
-y=get(handles.axes_1,'ylim');
+x=get(handles.display_plot,'xlim');
+y=get(handles.display_plot,'ylim');
 x(2)=x(2)-x(1);
 set(handles.ed_y_min,'String',num2str(y(1)))
 set(handles.ed_y_max,'String',num2str(y(2)))
@@ -913,8 +968,8 @@ function pspm_display_ResizeFcn(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
-function panel_options_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to panel_options (see GCBO)
+function module_display_options_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to module_display_options (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -949,19 +1004,19 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in wave_listbox.
-function wave_listbox_Callback(hObject, eventdata, handles)
-% hObject    handle to wave_listbox (see GCBO)
+% --- Executes on selection change in list_wave_channel.
+function list_wave_channel_Callback(hObject, eventdata, handles)
+% hObject    handle to list_wave_channel (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns wave_listbox contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from wave_listbox
+% Hints: contents = cellstr(get(hObject,'String')) returns list_wave_channel contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from list_wave_channel
 
 
 % --- Executes during object creation, after setting all properties.
-function wave_listbox_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to wave_listbox (see GCBO)
+function list_wave_channel_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to list_wave_channel (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -972,19 +1027,19 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in event_listbox.
-function event_listbox_Callback(hObject, eventdata, handles)
-% hObject    handle to event_listbox (see GCBO)
+% --- Executes on selection change in list_event_channel.
+function list_event_channel_Callback(hObject, eventdata, handles)
+% hObject    handle to list_event_channel (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns event_listbox contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from event_listbox
+% Hints: contents = cellstr(get(hObject,'String')) returns list_event_channel contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from list_event_channel
 
 
 % --- Executes during object creation, after setting all properties.
-function event_listbox_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to event_listbox (see GCBO)
+function list_event_channel_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to list_event_channel (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -995,28 +1050,28 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in push_plot.
-function push_plot_Callback(hObject, eventdata, handles)
-% hObject    handle to push_plot (see GCBO)
+% --- Executes on button press in button_plot.
+function button_plot_Callback(hObject, eventdata, handles)
+% hObject    handle to button_plot (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % ---get selected wave channel---------------------------------------------
-handles.prop.idwave=get(handles.wave_listbox,'Value');
-handles.prop.wave=get(handles.wave_listbox,'String');
+handles.prop.idwave=get(handles.list_wave_channel,'Value');
+handles.prop.wave=get(handles.list_wave_channel,'String');
 handles.prop.wave=handles.prop.wave{handles.prop.idwave,1};
 
 % ---get selected event channel--------------------------------------------
-handles.prop.idevent=get(handles.event_listbox,'Value');
-handles.prop.event=get(handles.event_listbox,'String');
+handles.prop.idevent=get(handles.list_event_channel,'Value');
+handles.prop.event=get(handles.list_event_channel,'String');
 handles.prop.event=handles.prop.event{handles.prop.idevent,1};
 % ---deactivate marker buttons if necessary--------------------------------
 
 if handles.prop.idevent==1 || handles.prop.idwave==1
-    set(handles.radio_int,'Enable','Off');
-    set(handles.radio_extra,'Enable','Off');
+    set(handles.option_integrated,'Enable','Off');
+    set(handles.option_extra,'Enable','Off');
 else
-    set(handles.radio_int,'Enable','On');
-    set(handles.radio_extra,'Enable','On');
+    set(handles.option_integrated,'Enable','On');
+    set(handles.option_extra,'Enable','On');
 end
 
 
@@ -1027,19 +1082,19 @@ guidata(hObject, handles);
 pp_plot(handles);
 
 
-% --- Executes on button press in radio_int.
-function radio_int_Callback(hObject, eventdata, handles)
-% hObject    handle to radio_int (see GCBO)
+% --- Executes on button press in option_integrated.
+function option_integrated_Callback(hObject, eventdata, handles)
+% hObject    handle to option_integrated (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of radio_int
+% Hint: get(hObject,'Value') returns toggle state of option_integrated
 
-status=get(handles.radio_int,'Value');
+status=get(handles.option_integrated,'Value');
 if status==1
-    set(handles.radio_extra,'Value',0)
+    set(handles.option_extra,'Value',0)
 elseif status==0
-    set(handles.radio_int,'Value',1);
+    set(handles.option_integrated,'Value',1);
 end
 % -------------------------------------------------------------------------
 % Update handles structure
