@@ -22,7 +22,9 @@ function varargout = pspm_display(varargin)
 % initialise
 % -------------------------------------------------------------------------
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings)
+    pspm_init; 
+end
 % -------------------------------------------------------------------------
 
 % Begin initialization code - DO NOT EDIT
@@ -86,55 +88,64 @@ if ispc
     FontSizeTitle = 11;
     FontSizeText = 10;
     FontSizeCaption = 9;
-    FontNameSystem = "Segoe UI";
+    font_display = "Segoe UI";
     hObject.Position(3)=hObject.Position(3)*1.6;
 elseif ismac
     FontSizeTitle = 16;
     FontSizeText = 14;
     FontSizeCaption = 12;
-    FontNameSystem = "Gill Sans";
+    font_display = "Helvetica Neue";
+    font_emph = "Helvetica-Light";
 else
     FontSizeTitle = 10;
-    FontNameSystem = "Verdana";
+    font_display = "Verdana";
 end
-handles.button_all.FontName = FontNameSystem;
+handles.button_all.FontName = font_display;
 handles.button_all.FontSize = FontSizeTitle;
-handles.button_autoscale.FontName = FontNameSystem;
+handles.button_autoscale.FontName = font_display;
 handles.button_autoscale.FontSize = FontSizeTitle;
-handles.button_plot.FontName = FontNameSystem;
-handles.button_plot.FontName = FontNameSystem;
+handles.button_plot.FontName = font_display;
+handles.button_plot.FontName = font_display;
 handles.button_plot.FontSize = FontSizeTitle;
 handles.button_plot.FontSize = FontSizeTitle;
-handles.display_plot.FontName = FontNameSystem;
+handles.display_plot.FontName = font_display;
 handles.display_plot.FontSize = FontSizeCaption;
-handles.list_event_channel.FontName = FontNameSystem;
+handles.list_event_channel.FontName = font_display;
 handles.list_event_channel.FontSize = FontSizeText;
-handles.list_wave_channel.FontName = FontNameSystem;
+handles.list_wave_channel.FontName = font_display;
 handles.list_wave_channel.FontSize = FontSizeText;
-handles.module_display_options.FontName = FontNameSystem;
+handles.module_display_options.FontName = font_display;
 handles.module_display_options.FontSize = FontSizeTitle;
-handles.module_event_channels.FontName = FontNameSystem;
+handles.module_event_channels.FontName = font_display;
 handles.module_event_channels.FontSize = FontSizeTitle;
-handles.module_event_options.FontName = FontNameSystem;
+handles.module_event_options.FontName = font_display;
 handles.module_event_options.FontSize = FontSizeTitle;
-handles.module_summary.FontName = FontNameSystem;
+handles.module_summary.FontName = font_display;
 handles.module_summary.FontSize = FontSizeTitle;
-handles.module_wave_channels.FontName = FontNameSystem;
+handles.module_wave_channels.FontName = font_display;
 handles.module_wave_channels.FontSize = FontSizeTitle;
-handles.option_extra.FontName = FontNameSystem;
+handles.option_extra.FontName = font_display;
 handles.option_extra.FontSize = FontSizeText;
-handles.option_integrated.FontName = FontNameSystem;
+handles.option_integrated.FontName = font_display;
 handles.option_integrated.FontSize = FontSizeText;
-handles.text_file_summary.FontName = FontNameSystem;
+handles.text_file_summary.FontName = font_display;
 handles.text_file_summary.FontSize = FontSizeTitle;
-handles.text_starting_point.FontName = FontNameSystem;
+handles.text_starting_point.FontName = font_display;
 handles.text_starting_point.FontSize = FontSizeText;
-handles.text_time_window.FontName = FontNameSystem;
+handles.text_time_window.FontName = font_display;
 handles.text_time_window.FontSize = FontSizeText;
-handles.text_y_max.FontName = FontNameSystem;
+handles.text_y_max.FontName = font_display;
 handles.text_y_max.FontSize = FontSizeText;
-handles.text_y_min.FontName = FontNameSystem;
+handles.text_y_min.FontName = font_display;
 handles.text_y_min.FontSize = FontSizeText;
+handles.tag_summary_source_file_title.FontName = font_emph;
+handles.tag_summary_source_file_title.FontSize = FontSizeText;
+handles.tag_summary_source_file_content.FontName = font_display;
+handles.tag_summary_source_file_content.FontSize = FontSizeText;
+handles.tag_summary_recording_duration_title.FontName = font_emph;
+handles.tag_summary_recording_duration_title.FontSize = FontSizeText;
+handles.tag_summary_recording_duration_content.FontName = font_display;
+handles.tag_summary_recording_duration_content.FontSize = FontSizeText;
 
 if(numel(varargin)) == 1
     if iscell(varargin{1,1})
@@ -143,15 +154,16 @@ if(numel(varargin)) == 1
         filename=varargin{1,1};
     end
     [~, info, handles.data, filestruct]=pspm_load_data(filename,0);
+     handles.tag_summary_recording_duration_content.String = num2str(info.duration);
+     [~,filename_display,~] = fileparts(filename);
+    handles.tag_summary_source_file_content.String=filename_display;
     
-    handles.name=filename;
-    
-    % handles.text_file_summary = filename;
-    text_file_summary = ['Data source: ', filename, newline, newline, ...
-        'Duration: ', num2str(info.duration), newline,...
-        'Import date: ', info.importdate, newline, ...
-        'Position of marker: ', num2str(filestruct.posofmarker)];
-    set(handles.text_file_summary, 'String', text_file_summary);
+%     % handles.text_file_summary = filename;
+%     text_file_summary = ['Data source: ', filename, newline, newline, ...
+%         'Duration: ', num2str(info.duration), newline,...
+%         'Import date: ', info.importdate, newline, ...
+%         'Position of marker: ', num2str(filestruct.posofmarker)];
+%     set(handles.text_file_summary, 'String', text_file_summary);
     
     guidata(hObject, handles);
     
