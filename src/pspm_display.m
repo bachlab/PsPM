@@ -45,6 +45,7 @@ else
     gui_mainfcn(gui_State, varargin{:});
 end
 % End initialization code - DO NOT EDIT
+end
 
 
 % --- Executes just before pspm_display is made visible.
@@ -59,7 +60,9 @@ function pspm_display_OpeningFcn(hObject, eventdata, handles, varargin)
 % ---initialise------------------------------------------------------------
 
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings)
+    pspm_init;
+end
 
 % load chantypes from settings variable
 
@@ -86,7 +89,7 @@ if(numel(varargin)) == 1
     else
         filename=varargin{1,1};
     end
-    [~, info, handles.data, filestruct]=pspm_load_data(filename,0);
+    [~, info, handles.data, ~]=pspm_load_data(filename,0);
     handles.tag_summary_recording_duration_content.String = num2str(info.duration);
     [~,filename_display,~] = fileparts(filename);
     handles.tag_summary_source_file_content.String=filename_display;
@@ -95,10 +98,10 @@ if(numel(varargin)) == 1
     string_channel_list = [];
     for i_r_channel=1:r_channels
         for i_c_channels=1:c_channels
-        % array_channel_type(r_channels,c_channels) = handles.data{i_r_channel,i_c_channels}.header.chantype;
-        string_channel_list = [string_channel_list, ...
-            num2str(i_r_channel), ',', num2str(i_c_channels), ' ', ...
-            handles.data{i_r_channel,i_c_channels}.header.chantype, newline];
+            % array_channel_type(r_channels,c_channels) = handles.data{i_r_channel,i_c_channels}.header.chantype;
+            string_channel_list = [string_channel_list, ...
+                num2str(i_r_channel), ',', num2str(i_c_channels), ' ', ...
+                handles.data{i_r_channel,i_c_channels}.header.chantype, newline];
         end
     end
     handles.tag_summary_channel_list_content.String=string_channel_list;
@@ -157,6 +160,7 @@ guidata(hObject, handles);
 
 % UIWAIT makes pspm_display wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
+end
 
 
 % --- Outputs from this function are returned to the command line.
@@ -168,6 +172,7 @@ function varargout = pspm_display_OutputFcn(hObject, eventdata, handles)
 
 % Get default command line output from handles structure
 varargout{1} = handles.output;
+end
 
 
 % --- Executes on button press in push_next.
@@ -190,6 +195,7 @@ set(handles.ed_y_min,'String',num2str(y(1)));
 set(handles.ed_y_max,'String',num2str(y(2)));
 
 set(handles.button_all,'Value',0);
+end
 
 
 % --- Executes on button press in push_back.
@@ -215,6 +221,7 @@ set(handles.ed_y_min,'String',num2str(y(1)));
 set(handles.ed_y_max,'String',num2str(y(2)));
 
 set(handles.button_all,'Value',0);
+end
 
 % --- Executes on button press in option_extra.
 function option_extra_Callback(hObject, eventdata, handles)
@@ -234,6 +241,7 @@ end
 % Update handles structure
 guidata(hObject, handles);
 % -------------------------------------------------------------------------
+end
 
 % --- Executes on button press in radio_hb.
 function radio_hb_Callback(hObject, eventdata, handles)
@@ -242,6 +250,7 @@ function radio_hb_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of radio_hb
+end
 
 
 % --- Executes on button press in radio_integrated.
@@ -251,7 +260,7 @@ function radio_integrated_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of radio_integrated
-
+end
 
 
 function ed_winsize_x_Callback(hObject, eventdata, handles)
@@ -276,6 +285,7 @@ end
 
 set(handles.button_autoscale,'Value',0);
 set(handles.button_all,'Value',0);
+end
 
 % --- Executes during object creation, after setting all properties.
 function ed_winsize_x_CreateFcn(hObject, eventdata, handles)
@@ -288,7 +298,7 @@ function ed_winsize_x_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
+end
 
 
 function ed_y_min_Callback(hObject, eventdata, handles)
@@ -312,7 +322,7 @@ end
 
 set(handles.button_autoscale,'Value',0);
 set(handles.button_all,'Value',0);
-
+end
 
 % --- Executes during object creation, after setting all properties.
 function ed_y_min_CreateFcn(hObject, eventdata, handles)
@@ -325,7 +335,7 @@ function ed_y_min_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
+end
 
 
 function ed_start_x_Callback(hObject, eventdata, handles)
@@ -348,6 +358,7 @@ else
 end
 set(handles.button_autoscale,'Value',0);
 set(handles.button_all,'Value',0);
+end
 
 % --- Executes during object creation, after setting all properties.
 function ed_start_x_CreateFcn(hObject, eventdata, handles)
@@ -360,7 +371,7 @@ function ed_start_x_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
+end
 
 % --- Executes on button press in button_autoscale.
 function button_autoscale_Callback(hObject, eventdata, handles)
@@ -383,7 +394,7 @@ set(handles.ed_winsize_x,'String',num2str(x(2)-x(1)));
 set(handles.ed_y_min,'String',num2str(y(1)));
 set(handles.ed_y_max,'String',num2str(y(2)));
 set(handles.button_all,'Value',0);
-
+end
 
 
 % --- Executes on button press in button_all.
@@ -401,13 +412,14 @@ set(handles.ed_winsize_x,'String',num2str(x(2)-x(1)));
 set(handles.ed_y_min,'String',num2str(y(1)));
 set(handles.ed_y_max,'String',num2str(y(2)));
 set(handles.button_autoscale,'Value',0);
+end
 
 % --------------------------------------------------------------------
 function file_Callback(hObject, eventdata, handles)
 % hObject    handle to file (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+end
 
 % --------------------------------------------------------------------
 function load_Callback(hObject, eventdata, handles)
@@ -425,7 +437,23 @@ mesg='select pspm_datafiles to display';
 
 if not(sts==0)
     
-    [foo, foo, handles.data, foo]=pspm_load_data(filename,0);
+    [~, info, handles.data, ~]=pspm_load_data(filename,0);
+    
+    handles.tag_summary_recording_duration_content.String = num2str(info.duration);
+    [~,filename_display,~] = fileparts(filename);
+    handles.tag_summary_source_file_content.String=filename_display;
+    [r_channels,c_channels]=size(handles.data);
+    array_channel_type = cell(r_channels,c_channels);
+    string_channel_list = [];
+    for i_r_channel=1:r_channels
+        for i_c_channels=1:c_channels
+            % array_channel_type(r_channels,c_channels) = handles.data{i_r_channel,i_c_channels}.header.chantype;
+            string_channel_list = [string_channel_list, ...
+                num2str(i_r_channel), ',', num2str(i_c_channels), ' ', ...
+                handles.data{i_r_channel,i_c_channels}.header.chantype, newline];
+        end
+    end
+    handles.tag_summary_channel_list_content.String=string_channel_list;
     
     handles.name=filename;
     guidata(hObject, handles);
@@ -476,7 +504,7 @@ end
 
 % Update handles structure
 guidata(hObject, handles);
-
+end
 % --------------------------------------------------------------------
 function saveas_Callback(hObject, eventdata, handles)
 % hObject    handle to saveas (see GCBO)
@@ -499,13 +527,14 @@ axis([x(1) x(2) y(1) y(2)]);
 saveas(q,savename);
 %imwrite(q,savename);
 close(q)
+end
 % --------------------------------------------------------------------
 function exit_Callback(hObject, eventdata, handles)
 % hObject    handle to exit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 close(gcbf);
-
+end
 
 % --- Executes during object creation, after setting all properties.
 function display_plot_CreateFcn(hObject, eventdata, handles)
@@ -514,14 +543,14 @@ function display_plot_CreateFcn(hObject, eventdata, handles)
 % handles    empty - handles not created until after all CreateFcns called
 
 % Hint: place code in OpeningFcn to populate display_plot
-
+end
 
 % --- Executes during object creation, after setting all properties.
 function panel_wave_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to panel_wave (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-
+end
 
 % --- Executes when selected object is changed in panel_wave.
 function panel_wave_SelectionChangeFcn(hObject, eventdata, handles)
@@ -580,8 +609,7 @@ pp_plot(handles);
 
 set(handles.button_autoscale,'Value',0);
 set(handles.button_all,'Value',1);
-
-
+end
 
 % --- Executes when selected object is changed in panel_event.
 function panel_event_SelectionChangeFcn(hObject, eventdata, handles)
@@ -615,7 +643,7 @@ pp_plot(handles);
 
 set(handles.button_autoscale,'Value',0);
 set(handles.button_all,'Value',1);
-
+end
 
 
 % --- Executes on button press in radio_wnone.
@@ -625,7 +653,7 @@ function radio_wnone_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of radio_wnone
-
+end
 
 
 function ed_y_max_Callback(hObject, eventdata, handles)
@@ -650,6 +678,7 @@ end
 
 set(handles.button_autoscale,'Value',0);
 set(handles.button_all,'Value',0);
+end
 
 % --- Executes during object creation, after setting all properties.
 function ed_y_max_CreateFcn(hObject, eventdata, handles)
@@ -662,7 +691,7 @@ function ed_y_max_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
+end
 
 %% pp_plot
 
@@ -915,28 +944,28 @@ set(handles.ed_start_x,'String',num2str(x(1)))
 set(handles.ed_winsize_x,'String',num2str(x(2)))
 
 % -------------------------------------------------------------------------
-
+end
 
 % --- Executes when pspm_display is resized.
 function pspm_display_ResizeFcn(hObject, eventdata, handles)
 % hObject    handle to pspm_display (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+end
 
 % --- Executes during object creation, after setting all properties.
 function module_display_options_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to module_display_options (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-
+end
 
 % --- Executes during object creation, after setting all properties.
 function panel_event_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to panel_event (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-
+end
 
 % --- Executes on selection change in list_wave.
 function list_wave_Callback(hObject, eventdata, handles)
@@ -946,7 +975,7 @@ function list_wave_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns list_wave contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from list_wave
-
+end
 
 % --- Executes during object creation, after setting all properties.
 function list_wave_CreateFcn(hObject, eventdata, handles)
@@ -959,7 +988,7 @@ function list_wave_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
+end
 
 % --- Executes on selection change in list_wave_channel.
 function list_wave_channel_Callback(hObject, eventdata, handles)
@@ -969,7 +998,7 @@ function list_wave_channel_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns list_wave_channel contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from list_wave_channel
-
+end
 
 % --- Executes during object creation, after setting all properties.
 function list_wave_channel_CreateFcn(hObject, eventdata, handles)
@@ -982,6 +1011,7 @@ function list_wave_channel_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+end
 
 
 % --- Executes on selection change in list_event_channel.
@@ -992,7 +1022,7 @@ function list_event_channel_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns list_event_channel contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from list_event_channel
-
+end
 
 % --- Executes during object creation, after setting all properties.
 function list_event_channel_CreateFcn(hObject, eventdata, handles)
@@ -1005,7 +1035,7 @@ function list_event_channel_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
+end
 
 % --- Executes on button press in button_plot.
 function button_plot_Callback(hObject, eventdata, handles)
@@ -1037,7 +1067,7 @@ end
 guidata(hObject, handles);
 % -------------------------------------------------------------------------
 pp_plot(handles);
-
+end
 
 % --- Executes on button press in option_integrated.
 function option_integrated_Callback(hObject, eventdata, handles)
@@ -1057,10 +1087,11 @@ end
 % Update handles structure
 guidata(hObject, handles);
 % -------------------------------------------------------------------------
-
+end
 
 % --- Executes when pspm_display is resized.
 function pspm_display_SizeChangedFcn(hObject, eventdata, handles)
 % hObject    handle to pspm_display (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+end
