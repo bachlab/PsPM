@@ -71,74 +71,9 @@ function PsPM_OpeningFcn(hObject, ~, handles, varargin)
     cfg_util('initcfg'); % This must be the first call to cfg_util
     %cfg_ui('Visible','off'); % Create invisible batch ui
 
-    % Choose default command line output for tag_PsPM
     handles.output = hObject;
-
-
-    font_win = "Segoe UI";
-    font_mac = "Helvetica Neue";
-    font_linux = "Verdana";
-    if ispc
-        font_display = font_win;
-        hObject.Position(3) = hObject.Position(3)*2; % adjust width
-        hObject.Position(4) = hObject.Position(4)*1.15; % adjust height
-        font_title_size = 9;
-    elseif ismac
-        hObject.Position(3) = 0.2819; % adjust width
-        hObject.Position(4) = 0.4425; % adjust height
-        font_display = font_mac;
-        font_title_size = 12;
-        font_content_size = 15;
-        font_attribution_size = 11;
-    else
-        font_display = font_linux;
-    end
-    handles.tag_PsPM.FontName = font_display;
-    handles.tag_attribution.FontName = font_display;
-    handles.tag_attribution.FontSize = font_attribution_size;
-    handles.tag_batch.FontName = font_display;
-    handles.tag_batch.FontSize = font_content_size;
-    handles.tag_contrast_manager.FontName = font_display;
-    handles.tag_contrast_manager.FontSize = font_content_size;
-    handles.tag_data_preparation_list.FontName = font_display;
-    handles.tag_data_preparation_list.FontSize = font_title_size;
-    handles.tag_data_preparation_title.FontName = font_display;
-    handles.tag_data_preparation_title.FontSize = font_title_size;
-    handles.tag_data_preprocessing_list.FontName = font_display;
-    handles.tag_data_preprocessing_list.FontSize = font_title_size;
-    handles.tag_data_preprocessing_title.FontName = font_display;
-    handles.tag_data_preprocessing_title.FontSize = font_title_size;
-    handles.tag_export_statistics.FontName = font_display;
-    handles.tag_export_statistics.FontSize = font_content_size;
-    handles.tag_feedback.FontName = font_display;
-    handles.tag_feedback.FontSize = font_content_size;
-    handles.tag_first_level_models_list.FontName = font_display;
-    handles.tag_first_level_models_list.FontSize = font_title_size;
-    handles.tag_first_level_models_title.FontName = font_display;
-    handles.tag_first_level_models_title.FontSize = font_title_size;
-    handles.tag_help.FontName = font_display;
-    handles.tag_help.FontSize = font_content_size;
-    handles.tag_models_for_sf.FontName = font_display;
-    handles.tag_models_for_sf.FontSize = font_content_size;
-    handles.tag_more_title.FontName = font_display;
-    handles.tag_more_title.FontSize = font_title_size;
-    handles.tag_non_linear_scr_model.FontName = font_display;
-    handles.tag_non_linear_scr_model.FontSize = font_content_size;
-    handles.tag_quit.FontName = font_display;
-    handles.tag_quit.FontSize = font_content_size;
-    handles.tag_report_second_level.FontName = font_display;
-    handles.tag_report_second_level.FontSize = font_content_size;
-    handles.tag_review_model.FontName = font_display;
-    handles.tag_review_model.FontSize = font_content_size;
-    handles.tag_second_level_model_title.FontName = font_display;
-    handles.tag_second_level_model_title.FontSize = font_title_size;
-    handles.tag_second_level_model.FontName = font_display;
-    handles.tag_second_level_model.FontSize = font_content_size;
-    handles.tag_tools_list.FontName = font_display;
-    handles.tag_tools_list.FontSize = font_title_size;
-    handles.tag_tools_title.FontName = font_display;
-    handles.tag_tools_title.FontSize = font_title_size;
-    hObject.Resize = 'off';
+    % Choose default command line output for tag_PsPM
+    pspm_ui(hObject, handles, 'main');
 
     % Update handles structure
     guidata(hObject, handles);

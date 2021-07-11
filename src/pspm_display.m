@@ -74,78 +74,11 @@ for k=1:length(settings.chantypes)
     end
 end
 
-handles.prop.wave=[];
-handles.prop.event=[];
-handles.prop.wavechans=[];
-handles.prop.eventchans=[];
-handles.prop.axis=[];
-handles.name=[];
-set(hObject,'Resize','on');
+
 % -------------------------------------------------------------------------
 
-% UI adjustment for Windows
-if ispc
-    FontSizeTitle = 11;
-    FontSizeText = 10;
-    FontSizeCaption = 9;
-    font_display = "Segoe UI";
-    hObject.Position(3)=hObject.Position(3)*1.6;
-elseif ismac
-    FontSizeTitle = 16;
-    FontSizeText = 14;
-    FontSizeCaption = 12;
-    font_display = "Helvetica Neue";
-    font_emph = "Helvetica-Light";
-else
-    FontSizeTitle = 10;
-    font_display = "Verdana";
-end
-handles.button_all.FontName = font_display;
-handles.button_all.FontSize = FontSizeTitle;
-handles.button_autoscale.FontName = font_display;
-handles.button_autoscale.FontSize = FontSizeTitle;
-handles.button_plot.FontName = font_display;
-handles.button_plot.FontName = font_display;
-handles.button_plot.FontSize = FontSizeTitle;
-handles.button_plot.FontSize = FontSizeTitle;
-handles.display_plot.FontName = font_display;
-handles.display_plot.FontSize = FontSizeCaption;
-handles.list_event_channel.FontName = font_display;
-handles.list_event_channel.FontSize = FontSizeText;
-handles.list_wave_channel.FontName = font_display;
-handles.list_wave_channel.FontSize = FontSizeText;
-handles.module_display_options.FontName = font_display;
-handles.module_display_options.FontSize = FontSizeTitle;
-handles.module_event_channels.FontName = font_display;
-handles.module_event_channels.FontSize = FontSizeTitle;
-handles.module_event_options.FontName = font_display;
-handles.module_event_options.FontSize = FontSizeTitle;
-handles.module_summary.FontName = font_display;
-handles.module_summary.FontSize = FontSizeTitle;
-handles.module_wave_channels.FontName = font_display;
-handles.module_wave_channels.FontSize = FontSizeTitle;
-handles.option_extra.FontName = font_display;
-handles.option_extra.FontSize = FontSizeText;
-handles.option_integrated.FontName = font_display;
-handles.option_integrated.FontSize = FontSizeText;
-handles.text_file_summary.FontName = font_display;
-handles.text_file_summary.FontSize = FontSizeTitle;
-handles.text_starting_point.FontName = font_display;
-handles.text_starting_point.FontSize = FontSizeText;
-handles.text_time_window.FontName = font_display;
-handles.text_time_window.FontSize = FontSizeText;
-handles.text_y_max.FontName = font_display;
-handles.text_y_max.FontSize = FontSizeText;
-handles.text_y_min.FontName = font_display;
-handles.text_y_min.FontSize = FontSizeText;
-handles.tag_summary_source_file_title.FontName = font_emph;
-handles.tag_summary_source_file_title.FontSize = FontSizeText;
-handles.tag_summary_source_file_content.FontName = font_display;
-handles.tag_summary_source_file_content.FontSize = FontSizeText;
-handles.tag_summary_recording_duration_title.FontName = font_emph;
-handles.tag_summary_recording_duration_title.FontSize = FontSizeText;
-handles.tag_summary_recording_duration_content.FontName = font_display;
-handles.tag_summary_recording_duration_content.FontSize = FontSizeText;
+
+pspm_ui(hObject, handles, 'display');
 
 if(numel(varargin)) == 1
     if iscell(varargin{1,1})
@@ -956,7 +889,7 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(
     end
 end
 % -------------------------------------------------------------------------
-title(sprintf(' %s ',regexprep(handles.name, '([\\_])' ,'\\$1')),'Fontsize',18);
+% title(sprintf(' %s ',regexprep(handles.name, '([\\_])' ,'\\$1')),'Fontsize',18);
 set(handles.display_plot,'XGrid','on')
 hold off
 % -------------------------------------------------------------------------
