@@ -23,7 +23,7 @@ function varargout = pspm_display(varargin)
 % -------------------------------------------------------------------------
 global settings;
 if isempty(settings)
-    pspm_init; 
+    pspm_init;
 end
 % -------------------------------------------------------------------------
 
@@ -87,16 +87,28 @@ if(numel(varargin)) == 1
         filename=varargin{1,1};
     end
     [~, info, handles.data, filestruct]=pspm_load_data(filename,0);
-     handles.tag_summary_recording_duration_content.String = num2str(info.duration);
-     [~,filename_display,~] = fileparts(filename);
+    handles.tag_summary_recording_duration_content.String = num2str(info.duration);
+    [~,filename_display,~] = fileparts(filename);
     handles.tag_summary_source_file_content.String=filename_display;
+    [r_channels,c_channels]=size(handles.data);
+    array_channel_type = cell(r_channels,c_channels);
+    string_channel_list = [];
+    for i_r_channel=1:r_channels
+        for i_c_channels=1:c_channels
+        % array_channel_type(r_channels,c_channels) = handles.data{i_r_channel,i_c_channels}.header.chantype;
+        string_channel_list = [string_channel_list, ...
+            num2str(i_r_channel), ',', num2str(i_c_channels), ' ', ...
+            handles.data{i_r_channel,i_c_channels}.header.chantype, newline];
+        end
+    end
+    handles.tag_summary_channel_list_content.String=string_channel_list;
     
-%     % handles.text_file_summary = filename;
-%     text_file_summary = ['Data source: ', filename, newline, newline, ...
-%         'Duration: ', num2str(info.duration), newline,...
-%         'Import date: ', info.importdate, newline, ...
-%         'Position of marker: ', num2str(filestruct.posofmarker)];
-%     set(handles.text_file_summary, 'String', text_file_summary);
+    %     % handles.text_file_summary = filename;
+    %     text_file_summary = ['Data source: ', filename, newline, newline, ...
+    %         'Duration: ', num2str(info.duration), newline,...
+    %         'Import date: ', info.importdate, newline, ...
+    %         'Position of marker: ', num2str(filestruct.posofmarker)];
+    %     set(handles.text_file_summary, 'String', text_file_summary);
     
     guidata(hObject, handles);
     
@@ -428,7 +440,7 @@ if not(sts==0)
     % ---add text to wave listbox--------------------------------------
     
     listitems{1,1}='none';
-    handles.prop.wavechans(1)=0;   
+    handles.prop.wavechans(1)=0;
     j=2;
     for k=1:length(handles.data)
         if any(strcmp(handles.data{k,1}.header.chantype,handles.prop.setwave))
@@ -748,7 +760,7 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(
         base(2)=min(wave)-(max(wave)-min(wave));
         
         if not(isempty(hbeat))
-
+            
             hbeat=round(hbeat*sr.wave);
             
             HBEAT = nan(size(wave));
@@ -760,10 +772,10 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(
                 temp(isnan(temp)) = median(temp,'omitnan');
                 HBEAT(hbeat,1)=temp;
             end
-
+            
             hold on ; h=stem(y,HBEAT,'ro');
             hbase=get(h,'Baseline');
-
+            
             if strcmp(handles.prop.event,'extra')
                 set(hbase,'BaseValue',base(2),'Visible','off');
             elseif strcmp(handles.prop.event,'integrated')
@@ -799,9 +811,9 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(
         elseif not(isempty(events))
             
             events=round(events*sr.wave);
-
+            
             EVENTS = nan(size(wave));
-
+            
             if strcmp(handles.prop.event,'extra')
                 EVENTS(events,1)=min(wave)-.5;
             elseif strcmp(handles.prop.event,'integrated')
@@ -843,7 +855,7 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(
         end
         
         xlabel(' Time in seconds [s] ','Fontsize',16);
-
+        
         if not(isempty(marker))
             legend(handles.prop.wave,'marker')
         elseif not(isempty(hbeat))
@@ -852,7 +864,7 @@ elseif not(isempty(marker)) || not(isempty(wave)) || not(isempty(hbeat)) || not(
             legend(handles.prop.wave,[handles.list_event_channel.String{handles.prop.idevent},' events'])
         elseif not(strcmp(handles.prop.event,'none'))
             legend(handles.prop.wave,'unknown events')
-        else 
+        else
             legend(handles.prop.wave)
         end
         
