@@ -7,28 +7,38 @@ if ispc
     FontSizeTitle = 11;
     FontSizeText = 10;
     FontSizeCaption = 9;
-    FontNameText = "Segoe UI";
-    FontNameEmph = "Segoe UI";
-    MainWeight = 0.5;
-    MainHeight = 0.5;
+    FontSizeAttr = 7.5;
+    FontNameText = 'Segoe UI';
+    FontNameEmph = 'Segoe UI';
+    MainWeight = 0.65;
+    MainHeight = 0.65;
 elseif ismac
     FontSizeTitle = 16;
     FontSizeText = 14;
     FontSizeCaption = 12;
     FontSizeAttr = 10;
-    FontNameText = "Helvetica Neue";
-    FontNameEmph = "Helvetica-Light";
+    FontNameText = 'Helvetica Neue';
+    FontNameEmph = 'Helvetica-Light';
     MainWeight = 0.2819; % adjust width
     MainHeight = 0.4425; % adjust height
 else
-    FontSizeTitle = 10;
-    FontNameText = "DejaVu Sans";
+    FontSizeTitle = 11;
+    FontSizeText = 10;
+    FontSizeCaption = 9;
+    FontSizeAttr = 8;
+    FontNameText = 'DejaVu Sans';
+    FontNameEmph = 'DejaVu Sans';
+    MainWeight = 0.5;
+    MainHeight = 0.5;
 end
 
 switch window
     case 'main'
         handles.tag_attribution.FontName = FontNameText;
         handles.tag_attribution.FontSize = FontSizeAttr;
+        handles.tag_attribution.String = ['Version 5.1.1',newline,...
+        'Build ',datestr(now,'ddmmyyyy'),' with MATLAB 2021a',newline,...
+        'The PsPM Team, University College London'];
         handles.tag_batch.FontName = FontNameText;
         handles.tag_batch.FontSize = FontSizeTitle;
         handles.tag_contrast_manager.FontName = FontNameText;
