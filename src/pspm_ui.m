@@ -1,6 +1,7 @@
 function pspm_ui(hObject,handles,window)
 
 % pspm_ui controls the UI of the referred handle
+% The PsPM Team, UCL
 
 %% Parameters for UI optimisation
 if ispc
@@ -21,6 +22,8 @@ elseif ismac
     FontNameEmph = 'Helvetica-Light';
     MainWeight = 0.2819; % adjust width
     MainHeight = 0.4425; % adjust height
+    DisplayWeight = 190;
+    DisplayHeight = 60;
 else
     FontSizeTitle = 11;
     FontSizeText = 10;
@@ -142,6 +145,8 @@ switch window
         handles.text_y_max.FontSize = FontSizeText;
         handles.text_y_min.FontName = FontNameText;
         handles.text_y_min.FontSize = FontSizeText;
+        hObject.Position(3) = DisplayWeight;
+        hObject.Position(4) = DisplayHeight;
         set(hObject,'Resize','on');
 end
 
