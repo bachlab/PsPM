@@ -22,3 +22,9 @@ display.tag  = 'display';
 display.val  = {datafile};
 display.prog = @pspm_cfg_run_display;
 display.help = {'Display PsPM data file in a new figure.'};
+
+
+    function pspm_cfg_run_display(job)
+        pspm_display(job.datafile);
+    end
+end

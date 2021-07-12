@@ -2,9 +2,7 @@
 % pspm_App is currently a beta version
 %__________________________________________________________________________
 % PsPM 5.1
-% (C) 2008-2021 Dominik R Bach (Wellcome Centre for Human Neuroimaging)
-
-% Updated by Teddy Chao (Wellcome Centre for Human Neuroimaging)
+% (C) The PsPM Team, UCL
 
 global settings
 if isempty(settings)
