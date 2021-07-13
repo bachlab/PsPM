@@ -13,6 +13,8 @@ if ispc
     FontNameEmph = 'Segoe UI';
     MainWeight = 0.65;
     MainHeight = 0.65;
+    DisplayWeight = 250;
+    DisplayHeight = 50;
 elseif ismac
     FontSizeTitle = 16;
     FontSizeText = 14;
@@ -135,6 +137,14 @@ switch window
         handles.tag_summary_channel_list_title.FontSize = FontSizeText;
         handles.tag_summary_channel_list_content.FontName = FontNameText;
         handles.tag_summary_channel_list_content.FontSize = FontSizeText;
+        handles.edit_start_x.FontName = FontNameText;
+        handles.edit_start_x.FontSize = FontSizeText;
+        handles.edit_winsize_x.FontName = FontNameText;
+        handles.edit_winsize_x.FontSize = FontSizeText;
+        handles.edit_y_max.FontName = FontNameText;
+        handles.edit_y_max.FontSize = FontSizeText;
+        handles.edit_y_min.FontName = FontNameText;
+        handles.edit_y_min.FontSize = FontSizeText;
         handles.text_file_summary.FontName = FontNameText;
         handles.text_file_summary.FontSize = FontSizeTitle;
         handles.text_starting_point.FontName = FontNameText;
