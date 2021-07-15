@@ -321,13 +321,15 @@ for iSn = 1:numel(model.datafile)
         [~, missing{iSn}] = pspm_get_timing('epochs', ...
             model.missing{iSn}, 'seconds');
         % sort missing epochs
-        [~, sortindx] = sort(missing{iSn}(:, 1));
-        missing{iSn} = missing{iSn}(sortindx,:);
-        % check for overlap and merge
-        for k = 2:size(missing{iSn}, 1)
-            if missing{iSn}(k, 1) <= missing{iSn}(k - 1, 2)
-               missing{iSn}(k, 1) =  missing{iSn}(k - 1, 1);
-               missing{iSn}(k - 1, :) = [];
+        if size(missing{iSn}, 1) > 0
+            [~, sortindx] = sort(missing{iSn}(:, 1));
+            missing{iSn} = missing{iSn}(sortindx,:);
+            % check for overlap and merge
+            for k = 2:size(missing{iSn}, 1)
+                if missing{iSn}(k, 1) <= missing{iSn}(k - 1, 2)
+                   missing{iSn}(k, 1) =  missing{iSn}(k - 1, 1);
+                   missing{iSn}(k - 1, :) = [];
+                end
             end
         end
     else
