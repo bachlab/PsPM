@@ -8,20 +8,22 @@ if ispc
     FontSizeTitle = 11;
     FontSizeText = 10;
     FontSizeCaption = 9;
-    FontSizeAttr = 7.5;
+    FontSizeAttr = 9;
+    DisplayUnit = 'points';
     FontNameText = 'Segoe UI';
     FontNameEmph = 'Segoe UI';
-    MainWeight = 0.65;
-    MainHeight = 0.65;
+    MainWeight = 500;
+    MainHeight = 500*0.8;
     DisplayWeight = 250;
-    DisplayHeight = 50;
+    DisplayHeight = 250/5;
 elseif ismac
     FontSizeTitle = 16;
     FontSizeText = 14;
     FontSizeCaption = 12;
-    FontSizeAttr = 10;
+    FontSizeAttr = 13;
     FontNameText = 'Helvetica Neue';
     FontNameEmph = 'Helvetica-Light';
+    DisplayUnit = 'normalized';
     MainWeight = 0.2819; % adjust width
     MainHeight = 0.4425; % adjust height
     DisplayWeight = 190;
@@ -35,15 +37,20 @@ else
     FontNameEmph = 'DejaVu Sans';
     MainWeight = 0.5;
     MainHeight = 0.5;
+    DisplayWeight = 1.2;
+    DisplayHeight = 1;
 end
 
 switch window
     case 'main'
+        handles.figure1.Units = DisplayUnit;
         handles.tag_attribution.FontName = FontNameText;
         handles.tag_attribution.FontSize = FontSizeAttr;
-        handles.tag_attribution.String = ['Version 5.1.1',newline,...
-        'Build ',datestr(now,'ddmmyyyy'),' with MATLAB 2021a',newline,...
-        'The PsPM Team, University College London'];
+        %handles.tag_attribution.Visible = 'off';
+        handles.tag_attribution.HorizontalAlignment = 'center';
+        attribution_disp_text = sprintf(['Version 5.1.1, Build ',datestr(now,'ddmmyyyy'),' with MATLAB 2021a, ',...
+        'The PsPM Team, University College London']);
+        handles.tag_attribution.String = attribution_disp_text;
         handles.tag_batch.FontName = FontNameText;
         handles.tag_batch.FontSize = FontSizeTitle;
         handles.tag_contrast_manager.FontName = FontNameText;
@@ -137,14 +144,6 @@ switch window
         handles.tag_summary_channel_list_title.FontSize = FontSizeText;
         handles.tag_summary_channel_list_content.FontName = FontNameText;
         handles.tag_summary_channel_list_content.FontSize = FontSizeText;
-        handles.edit_start_x.FontName = FontNameText;
-        handles.edit_start_x.FontSize = FontSizeText;
-        handles.edit_winsize_x.FontName = FontNameText;
-        handles.edit_winsize_x.FontSize = FontSizeText;
-        handles.edit_y_max.FontName = FontNameText;
-        handles.edit_y_max.FontSize = FontSizeText;
-        handles.edit_y_min.FontName = FontNameText;
-        handles.edit_y_min.FontSize = FontSizeText;
         handles.text_file_summary.FontName = FontNameText;
         handles.text_file_summary.FontSize = FontSizeTitle;
         handles.text_starting_point.FontName = FontNameText;
