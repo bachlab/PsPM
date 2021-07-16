@@ -743,7 +743,7 @@ if ~options.getrf
             
             % handle missing values
             invopt.isYout = ymissing(:)';
-            
+
             % -- invert model
             [post, out]= VBA_NLStateSpaceModel(y(:)',u,f_fname,g_fname,dim,invopt);
             
