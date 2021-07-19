@@ -7,7 +7,8 @@ classdef pspm_trim_test < matlab.unittest.TestCase
 
 
     properties(Constant)
-        fn = 'testdatafile79887.mat';
+        fn1 = 'testdatafile79887.mat';
+        fn2 = 'testdatafile79887(copy).mat';
     end
 
     properties
@@ -33,59 +34,59 @@ classdef pspm_trim_test < matlab.unittest.TestCase
             testCase.cont_channels = [1 3 6 7];
             testCase.sr = 100;
             
-            if exist(testCase.fn, 'file')
-                delete(testCase.fn);
+            if exist(testCase.fn1, 'file')
+                delete(testCase.fn1);
             end
             
-            pspm_testdata_gen(channels,10,pspm_load_data_test.fn);
-            if ~exist(testCase.fn, 'file'), warning('the testdata could not be generated'); end;
+            pspm_testdata_gen(channels,10,pspm_load_data_test.fn1);
+            if ~exist(testCase.fn1, 'file'), warning('the testdata could not be generated'); end;
         end
     end
     
     methods (TestClassTeardown)
         function del_testdata_file(testCase)
-            if exist(testCase.fn, 'file')
-                delete(testCase.fn);
+            if exist(testCase.fn1, 'file')
+                delete(testCase.fn1);
             end
         end
     end
     
     methods (Test)
         function invalid_inputargs(testCase)
-            testCase.verifyWarning(@()pspm_trim(testCase.fn, [1 2], 5, 'marker'), 'ID:invalid_input', 'invalid_inputargs test 1');
-            testCase.verifyWarning(@()pspm_trim(testCase.fn, 0, 'bla', 'marker'), 'ID:invalid_input', 'invalid_inputargs test 2');
-            testCase.verifyWarning(@()pspm_trim(testCase.fn, 0, [], 'marker'), 'ID:invalid_input', 'invalid_inputargs test 3');
-            testCase.verifyWarning(@()pspm_trim(testCase.fn, 0, 5), 'ID:invalid_input', 'invalid_inputargs test 4');
-            testCase.verifyWarning(@()pspm_trim(testCase.fn, 0, 5, 6), 'ID:invalid_input', 'invalid_inputargs test 5');
-            testCase.verifyWarning(@()pspm_trim(testCase.fn, 0, 5, 'bla'), 'ID:invalid_input', 'invalid_inputargs test 6');
-            testCase.verifyWarning(@()pspm_trim(testCase.fn, 0, 5, [-1 5]), 'ID:invalid_input', 'invalid_inputargs test 7');
-            testCase.verifyWarning(@()pspm_trim(testCase.fn, 0, 5, [5 4]), 'ID:invalid_input', 'invalid_inputargs test 8');
+            testCase.verifyWarning(@()pspm_trim(testCase.fn1, [1 2], 5, 'marker'), 'ID:invalid_input', 'invalid_inputargs test 1');
+            testCase.verifyWarning(@()pspm_trim(testCase.fn1, 0, 'bla', 'marker'), 'ID:invalid_input', 'invalid_inputargs test 2');
+            testCase.verifyWarning(@()pspm_trim(testCase.fn1, 0, [], 'marker'), 'ID:invalid_input', 'invalid_inputargs test 3');
+            testCase.verifyWarning(@()pspm_trim(testCase.fn1, 0, 5), 'ID:invalid_input', 'invalid_inputargs test 4');
+            testCase.verifyWarning(@()pspm_trim(testCase.fn1, 0, 5, 6), 'ID:invalid_input', 'invalid_inputargs test 5');
+            testCase.verifyWarning(@()pspm_trim(testCase.fn1, 0, 5, 'bla'), 'ID:invalid_input', 'invalid_inputargs test 6');
+            testCase.verifyWarning(@()pspm_trim(testCase.fn1, 0, 5, [-1 5]), 'ID:invalid_input', 'invalid_inputargs test 7');
+            testCase.verifyWarning(@()pspm_trim(testCase.fn1, 0, 5, [5 4]), 'ID:invalid_input', 'invalid_inputargs test 8');
        end       
         
         function marker_tests(testCase)
             for k=1:testCase.numof_markertests
-                trimtest(testCase, testCase.fn, 'marker', k, 2);
+                trimtest(testCase, testCase.fn1, 'marker', k, 2);
             end
         end
         
         function file_tests(testCase)
             for k=1:testCase.numof_filetests
-                trimtest(testCase, testCase.fn, 'file', k, 2);
+                trimtest(testCase, testCase.fn1, 'file', k, 2);
             end
         end
         
         function num_tests(testCase)
             for k=1:testCase.numof_numtests
-                trimtest(testCase, testCase.fn, 'num', k, 2);
+                trimtest(testCase, testCase.fn1, 'num', k, 2);
             end
         end
         
         function multiple_files(testCase)
             %with datafile input
-            fn2 = 'testdatafile79887(copy).mat';
-            copyfile(testCase.fn,fn2);
-            fncell{1} = testCase.fn;
-            fncell{2} = fn2;
+            % fn2 = 'testdatafile79887(copy).mat';
+            copyfile(testCase.fn1,testCase.fn2);
+            fncell{1} = testCase.fn1;
+            fncell{2} = testCase.fn2;
             
             [from, to, exp_val{1}, warningID, testmsg] = filetest_3(testCase);
             
@@ -108,11 +109,11 @@ classdef pspm_trim_test < matlab.unittest.TestCase
             
             delete(newdatafile{1});
             delete(newdatafile{2});
-            delete(fn2);
+            delete(testCase.fn2);
             
             
             %with struct input
-            [sts, datafile{1}.infos, datafile{1}.data] = pspm_load_data(testCase.fn);
+            [sts, datafile{1}.infos, datafile{1}.data] = pspm_load_data(testCase.fn1);
             datafile{2} = datafile{1};
             
             [from, to, exp_val{1}, warningID, testmsg] = filetest_3(testCase);
@@ -136,19 +137,19 @@ classdef pspm_trim_test < matlab.unittest.TestCase
         %option tests
         function marker_chan_num_option_test(testCase)
             options.marker_chan_num = 3;
-            newdatafile = testCase.verifyWarning(@() pspm_trim(testCase.fn,'none','none','marker', options), 'ID:invalid_option', 'marker_chan_num_option_test test 1');
+            newdatafile = testCase.verifyWarning(@() pspm_trim(testCase.fn1,'none','none','marker', options), 'ID:invalid_option', 'marker_chan_num_option_test test 1');
             delete(newdatafile);
             
-            struct = load(testCase.fn);
+            struct = load(testCase.fn1);
             struct.data{5}.data = struct.data{5}.data(2:end);
-            save(testCase.fn,'-struct', 'struct');
+            save(testCase.fn1,'-struct', 'struct');
             options.marker_chan_num = 5;
             
-            newdatafile = pspm_trim(testCase.fn,'none','none',[2,length(struct.data{2}.data)]);
+            newdatafile = pspm_trim(testCase.fn1,'none','none',[2,length(struct.data{2}.data)]);
             [sts, exp_val.infos, exp_val.data] = pspm_load_data(newdatafile, 0);
             delete(newdatafile);
             
-            newdatafile = pspm_trim(testCase.fn,'none','none', 'marker', options);
+            newdatafile = pspm_trim(testCase.fn1,'none','none', 'marker', options);
             [sts, act_val.infos, act_val.data] = pspm_load_data(newdatafile, 0);
             delete(newdatafile);
             
@@ -205,7 +206,7 @@ classdef pspm_trim_test < matlab.unittest.TestCase
             testmsg = 'markertest 1';
             warningID = 'ID:marker_out_of_range';
             
-            [sts, exp_val.infos, exp_val.data] = pspm_load_data(testCase.fn,0);
+            [sts, exp_val.infos, exp_val.data] = pspm_load_data(testCase.fn1,0);
             
             from = -20;
             to = 20;
@@ -217,7 +218,7 @@ classdef pspm_trim_test < matlab.unittest.TestCase
             testmsg = 'markertest 2';
             warningID = 'none';
             
-            [sts, exp_val.infos, exp_val.data, filestruct] = pspm_load_data(testCase.fn,0);
+            [sts, exp_val.infos, exp_val.data, filestruct] = pspm_load_data(testCase.fn1,0);
             
             from = -1 * exp_val.data{filestruct.posofmarker}.data(1);
             to = exp_val.infos.duration - exp_val.data{filestruct.posofmarker}.data(end);
@@ -229,7 +230,7 @@ classdef pspm_trim_test < matlab.unittest.TestCase
             testmsg = 'markertest 3';
             warningID = 'none';
             
-            [sts, exp_val.infos, exp_val.data, filestruct] = pspm_load_data(testCase.fn,0);
+            [sts, exp_val.infos, exp_val.data, filestruct] = pspm_load_data(testCase.fn1,0);
             
             from = 1;
             to = -2;
@@ -259,7 +260,7 @@ classdef pspm_trim_test < matlab.unittest.TestCase
             testmsg = 'filetest 1';
             warningID = 'ID:marker_out_of_range';
             
-            [sts, exp_val.infos, exp_val.data] = pspm_load_data(testCase.fn,0);
+            [sts, exp_val.infos, exp_val.data] = pspm_load_data(testCase.fn1,0);
             
             from = -12.5;
             to = 50;
@@ -271,7 +272,7 @@ classdef pspm_trim_test < matlab.unittest.TestCase
             testmsg = 'filetest 2';
             warningID = 'none';
             
-            [sts, exp_val.infos, exp_val.data] = pspm_load_data(testCase.fn,0);
+            [sts, exp_val.infos, exp_val.data] = pspm_load_data(testCase.fn1,0);
             
             from = 0;
             to = exp_val.infos.duration;
@@ -283,7 +284,7 @@ classdef pspm_trim_test < matlab.unittest.TestCase
             testmsg = 'filetest 3';
             warningID = 'none';
             
-            [sts, exp_val.infos, exp_val.data] = pspm_load_data(testCase.fn,0);
+            [sts, exp_val.infos, exp_val.data] = pspm_load_data(testCase.fn1,0);
             
             from = 2.1;
             to = exp_val.infos.duration - 2.5;
@@ -310,7 +311,7 @@ classdef pspm_trim_test < matlab.unittest.TestCase
             testmsg = 'numtest 1';
             warningID = 'ID:marker_out_of_range';
             
-            [sts, exp_val.infos, exp_val.data] = pspm_load_data(testCase.fn,0);  
+            [sts, exp_val.infos, exp_val.data] = pspm_load_data(testCase.fn1,0);  
             
             from = -20;
             to = 20;
@@ -323,7 +324,7 @@ classdef pspm_trim_test < matlab.unittest.TestCase
             testmsg = 'numtest 2';
             warningID = 'none';
             
-            [sts, exp_val.infos, exp_val.data, filestruct] = pspm_load_data(testCase.fn,0);
+            [sts, exp_val.infos, exp_val.data, filestruct] = pspm_load_data(testCase.fn1,0);
 
             num = [3 8];
             from = -1 * exp_val.data{filestruct.posofmarker}.data(num(1));
@@ -336,7 +337,7 @@ classdef pspm_trim_test < matlab.unittest.TestCase
             testmsg = 'numtest 3';
             warningID = 'none';
             
-            [sts, exp_val.infos, exp_val.data, filestruct] = pspm_load_data(testCase.fn,0);
+            [sts, exp_val.infos, exp_val.data, filestruct] = pspm_load_data(testCase.fn1,0);
 
             num = [2 7];
             from = -1.5;
@@ -366,13 +367,22 @@ classdef pspm_trim_test < matlab.unittest.TestCase
             testmsg = 'numtest 4';
             warningID = 'ID:marker_out_of_range';
             
-            [sts, exp_val.infos, exp_val.data, filestruct] = pspm_load_data(testCase.fn,0);
+            [sts, exp_val.infos, exp_val.data, filestruct] = pspm_load_data(testCase.fn1,0);
           
             from = 'none';
             to = 0;
             exp_val.infos.trimpoints = [0 exp_val.infos.duration];
             num = [1 (numel(exp_val.data{filestruct.posofmarker}.data) + 1)];
-        end;
+        end
+        
+        function clear_test_file(testCase)
+            if exist(testCase.fn1, 'file')
+                delete(testCase.fn1);
+            end
+            if exist(testCase.fn2, 'file')
+                delete(testCase.fn2);
+            end
+        end
   
     end
     
