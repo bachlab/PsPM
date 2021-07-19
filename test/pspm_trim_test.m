@@ -16,9 +16,9 @@ classdef pspm_trim_test < matlab.unittest.TestCase
         numof_markertests = 3;
         numof_filetests = 3;
         numof_numtests = 4;
-        event_channels = [2 4 5];
-        cont_channels = [1 3 6 7];
-        sr = 100;
+        event_channels;
+        cont_channels;
+        sr;
     end
     
     methods (TestClassSetup)
@@ -31,9 +31,9 @@ classdef pspm_trim_test < matlab.unittest.TestCase
             channels{6}.chantype = 'resp';
             channels{7}.chantype = 'scr';
             
-            %testCase.event_channels;
-            %testCase.cont_channels;
-            %testCase.sr;
+            testCase.event_channels = [2 4 5];
+            testCase.cont_channels = [1 3 6 7];
+            testCase.sr = 100;
             
             if exist(testCase.fn1, 'file')
                 delete(testCase.fn1);
