@@ -9,6 +9,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
     
     properties(Constant)
         fn = 'testdatafile79887.mat';
+        fn2 = 'testdatafile898465.mat';
     end
     
     properties
@@ -66,60 +67,59 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
         end
         
         function invalid_datafile(testCase)
-            fn2 = 'testdatafile898465.mat';
-            if exist(fn2, 'file'), delete(fn2); end;
-            testCase.verifyWarning(@()pspm_load_data(fn2), 'ID:nonexistent_file', 'invalid_datafile test 1');
+            if exist(pspm_load_data_test.fn2, 'file'), delete(pspm_load_data_test.fn2); end;
+            testCase.verifyWarning(@()pspm_load_data(pspm_load_data_test.fn2), 'ID:nonexistent_file', 'invalid_datafile test 1');
 
             load(pspm_load_data_test.fn);
             
-            save(fn2, 'data');
-            testCase.verifyWarning(@()pspm_load_data(fn2), 'ID:invalid_data_structure', 'invalid_datafile test 2');
+            save(pspm_load_data_test.fn2, 'data');
+            testCase.verifyWarning(@()pspm_load_data(pspm_load_data_test.fn2), 'ID:invalid_data_structure', 'invalid_datafile test 2');
             
-            save(fn2, 'infos');
-            testCase.verifyWarning(@()pspm_load_data(fn2), 'ID:invalid_data_structure', 'invalid_datafile test 3');
+            save(pspm_load_data_test.fn2, 'infos');
+            testCase.verifyWarning(@()pspm_load_data(pspm_load_data_test.fn2), 'ID:invalid_data_structure', 'invalid_datafile test 3');
             
             fulldata = data;
             data{2} = rmfield(fulldata{2}, 'data');
-            save(fn2, 'infos', 'data');
-            testCase.verifyWarning(@()pspm_load_data(fn2), 'ID:invalid_data_structure', 'invalid_datafile test 4');
+            save(pspm_load_data_test.fn2, 'infos', 'data');
+            testCase.verifyWarning(@()pspm_load_data(pspm_load_data_test.fn2), 'ID:invalid_data_structure', 'invalid_datafile test 4');
             
             data = fulldata;
             data{3} = rmfield(fulldata{3}, 'header');
-            save(fn2, 'infos', 'data');
-            testCase.verifyWarning(@()pspm_load_data(fn2), 'ID:invalid_data_structure', 'invalid_datafile test 5');
+            save(pspm_load_data_test.fn2, 'infos', 'data');
+            testCase.verifyWarning(@()pspm_load_data(pspm_load_data_test.fn2), 'ID:invalid_data_structure', 'invalid_datafile test 5');
             
             data = fulldata;
             data{7}.header = rmfield(fulldata{7}.header, 'sr');
-            save(fn2, 'infos', 'data');
-            testCase.verifyWarning(@()pspm_load_data(fn2), 'ID:invalid_data_structure', 'invalid_datafile test 6');
+            save(pspm_load_data_test.fn2, 'infos', 'data');
+            testCase.verifyWarning(@()pspm_load_data(pspm_load_data_test.fn2), 'ID:invalid_data_structure', 'invalid_datafile test 6');
             
             data = fulldata;
             data{4}.data = [data{4}.data data{4}.data];
-            save(fn2, 'infos', 'data');
-            testCase.verifyWarning(@()pspm_load_data(fn2), 'ID:invalid_data_structure', 'invalid_datafile test 7');
+            save(pspm_load_data_test.fn2, 'infos', 'data');
+            testCase.verifyWarning(@()pspm_load_data(pspm_load_data_test.fn2), 'ID:invalid_data_structure', 'invalid_datafile test 7');
             
             data = fulldata;
             data{1}.data = [data{1}.data; 1;1;1;1];
-            save(fn2, 'infos', 'data');
-            testCase.verifyWarning(@()pspm_load_data(fn2), 'ID:invalid_data_structure', 'invalid_datafile test 8');
+            save(pspm_load_data_test.fn2, 'infos', 'data');
+            testCase.verifyWarning(@()pspm_load_data(pspm_load_data_test.fn2), 'ID:invalid_data_structure', 'invalid_datafile test 8');
             
             data = fulldata;
             data{2}.data = [data{2}.data; infos.duration+0.1];
-            save(fn2, 'infos', 'data');
-            testCase.verifyWarning(@()pspm_load_data(fn2), 'ID:invalid_data_structure', 'invalid_datafile test 9');
+            save(pspm_load_data_test.fn2, 'infos', 'data');
+            testCase.verifyWarning(@()pspm_load_data(pspm_load_data_test.fn2), 'ID:invalid_data_structure', 'invalid_datafile test 9');
             
             data = fulldata;
             data{5}.header.chantype = 'scanner';
-            save(fn2, 'infos', 'data');
-            testCase.verifyWarning(@()pspm_load_data(fn2), 'ID:invalid_data_structure', 'invalid_datafile test 10');
+            save(pspm_load_data_test.fn2, 'infos', 'data');
+            testCase.verifyWarning(@()pspm_load_data(pspm_load_data_test.fn2), 'ID:invalid_data_structure', 'invalid_datafile test 10');
             
             data = fulldata;
             data{2}.data = [data{2}.data; infos.duration+0.1];
             chan.infos = infos; chan.data = data; chan.options.overwrite = 1;
-            testCase.verifyWarning(@()pspm_load_data(fn2, chan), 'ID:invalid_data_structure', 'invalid_datafile test 11');
+            testCase.verifyWarning(@()pspm_load_data(pspm_load_data_test.fn2, chan), 'ID:invalid_data_structure', 'invalid_datafile test 11');
             
             clear infos data chan
-            delete(fn2);
+            delete(pspm_load_data_test.fn2);
         end
         
         %return all channels
@@ -211,21 +211,31 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
         function valid_datafile_6(testCase)
             chan = 0;
             [sts, infos, data] = pspm_load_data(pspm_load_data_test.fn, chan); % load
-            fn2 = 'testdatafile898465.mat';
             save.data = data;
             save.infos = infos;
             save.options.overwrite = 1;
-            sts = pspm_load_data(fn2, save);                                 % save in different file
+            sts = pspm_load_data(pspm_load_data_test.fn2, save);                                 % save in different file
             
-            [sts, infos, data] = pspm_load_data(fn2, chan);% load again
+            [sts, infos, data] = pspm_load_data(pspm_load_data_test.fn2, chan);% load again
             act_val.infos = infos;
             act_val.data = data;
             exp_val = load(pspm_load_data_test.fn);
             
             import matlab.unittest.constraints.IsEqualTo;
             testCase.verifyThat(act_val, IsEqualTo(exp_val), 'valid_datafile_5 test 1');
-            delete(fn2);
+            delete(pspm_load_data_test.fn1);
+            delete(pspm_load_data_test.fn2);
             clear save
+        end
+        
+        % clear data
+        function clear_test_file()
+            if exist(pspm_load_data_test.fn, 'file')
+                delete(pspm_load_data_test.fn);
+            end
+            if exist(pspm_load_data_test.fn2, 'file')
+                delete(pspm_load_data_test.fn2);
+            end
         end
         
         

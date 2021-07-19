@@ -10,7 +10,7 @@ function pspm_test(varargin)
     %__________________________________________________________________________
     % PsPM TestEnvironment
     % (C) 2013 Dominik Bach & Linus Ruettimann (University of Zurich)
-    % Updated Teddy Chao (WCHN, UCL)
+    % Updated 2021 Teddy (WCHN)
 
     % imports
     % -------------------------------------------------------------------------
