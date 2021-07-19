@@ -8,7 +8,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
 % $Id: pspm_load_data_test.m 646 2019-04-25 11:48:57Z esrefo $
     
     properties(Constant)
-        fn = 'testdatafile79887.mat';
+        fn1 = 'testdatafile79887.mat';
         fn2 = 'testdatafile898465.mat';
     end
     
@@ -30,12 +30,12 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
             testCase.event_channels = [2 4 5];
             testCase.pspm_channels = [1 7];
             
-            if exist(pspm_load_data_test.fn, 'file')
-                delete(pspm_load_data_test.fn);
+            if exist(pspm_load_data_test.fn1, 'file')
+                delete(pspm_load_data_test.fn1);
             end
             
-            pspm_testdata_gen(channels,10,pspm_load_data_test.fn);
-            if ~exist(pspm_load_data_test.fn, 'file')
+            pspm_testdata_gen(channels,10,pspm_load_data_test.fn1);
+            if ~exist(pspm_load_data_test.fn1, 'file')
                 warning('the testdata could not be generated');
             end
         end
@@ -43,8 +43,8 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
     
     methods (TestClassTeardown)
         function del_testdata_file(testCase)
-            if exist(pspm_load_data_test.fn, 'file')
-                delete(pspm_load_data_test.fn);
+            if exist(pspm_load_data_test.fn1, 'file')
+                delete(pspm_load_data_test.fn1);
             end
         end
     end
@@ -55,22 +55,24 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
         function invalid_inputargs(testCase)
             testCase.verifyWarning(@()pspm_load_data, 'ID:invalid_input', 'invalid_inputargs test 1');
             testCase.verifyWarning(@()pspm_load_data(1), 'ID:invalid_input', 'invalid_inputargs test 2');
-            testCase.verifyWarning(@()pspm_load_data('fn', -1), 'ID:invalid_input', 'invalid_inputargs test 3');
-            testCase.verifyWarning(@()pspm_load_data('fn', 'foobar'), 'ID:invalid_channeltype', 'invalid_inputargs test 4');
+            testCase.verifyWarning(@()pspm_load_data('fn1', -1), 'ID:invalid_input', 'invalid_inputargs test 3');
+            testCase.verifyWarning(@()pspm_load_data('fn1', 'foobar'), 'ID:invalid_channeltype', 'invalid_inputargs test 4');
             foobar.data = 1; 
-            testCase.verifyWarning(@()pspm_load_data('fn', foobar), 'ID:invalid_input', 'invalid_inputargs test 5');
+            testCase.verifyWarning(@()pspm_load_data('fn1', foobar), 'ID:invalid_input', 'invalid_inputargs test 5');
             clear foobar
-            testCase.verifyWarning(@()pspm_load_data('fn', {1}), 'ID:invalid_input', 'invalid_inputargs test 6');
+            testCase.verifyWarning(@()pspm_load_data('fn1', {1}), 'ID:invalid_input', 'invalid_inputargs test 6');
             struct.data = cell(3,1);
             testCase.verifyWarning(@()pspm_load_data(struct), 'ID:invalid_input', 'invalid_inputargs test 7');
-            testCase.verifyWarning(@()pspm_load_data(pspm_load_data_test.fn, 250), 'ID:invalid_input', 'invalid_inputargs test 8');
+            testCase.verifyWarning(@()pspm_load_data(pspm_load_data_test.fn1, 250), 'ID:invalid_input', 'invalid_inputargs test 8');
         end
         
         function invalid_datafile(testCase)
-            if exist(pspm_load_data_test.fn2, 'file'), delete(pspm_load_data_test.fn2); end;
+            if exist(pspm_load_data_test.fn2, 'file')
+                delete(pspm_load_data_test.fn2);
+            end
             testCase.verifyWarning(@()pspm_load_data(pspm_load_data_test.fn2), 'ID:nonexistent_file', 'invalid_datafile test 1');
 
-            load(pspm_load_data_test.fn);
+            load(pspm_load_data_test.fn1);
             
             save(pspm_load_data_test.fn2, 'data');
             testCase.verifyWarning(@()pspm_load_data(pspm_load_data_test.fn2), 'ID:invalid_data_structure', 'invalid_datafile test 2');
@@ -124,11 +126,11 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
         
         %return all channels
         function valid_datafile_0(testCase)
-            [sts, infos, data] = pspm_load_data(pspm_load_data_test.fn);
+            [sts, infos, data] = pspm_load_data(pspm_load_data_test.fn1);
             act_val.infos = infos;
             act_val.data = data;
             
-            exp_val = load(pspm_load_data_test.fn);
+            exp_val = load(pspm_load_data_test.fn1);
             
             import matlab.unittest.constraints.IsEqualTo;
             testCase.verifyThat(act_val, IsEqualTo(exp_val), 'valid_datafile_0 test 1');
@@ -136,12 +138,12 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
         
         %return all channels when input is a struct
         function valid_datafile_1(testCase)
-            struct = load(pspm_load_data_test.fn);
+            struct = load(pspm_load_data_test.fn1);
             [sts, infos, data] = pspm_load_data(struct);
             act_val.infos = infos;
             act_val.data = data;
             
-            exp_val = load(pspm_load_data_test.fn);
+            exp_val = load(pspm_load_data_test.fn1);
             
             import matlab.unittest.constraints.IsEqualTo;
             testCase.verifyThat(act_val, IsEqualTo(exp_val), 'valid_datafile_0 test 1');
@@ -151,11 +153,11 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
         function valid_datafile_2(testCase)
             chan = 2;
             
-            [sts, infos, data] = pspm_load_data(pspm_load_data_test.fn, chan);
+            [sts, infos, data] = pspm_load_data(pspm_load_data_test.fn1, chan);
             act_val.infos = infos;
             act_val.data = data;
             
-            exp_val = load(pspm_load_data_test.fn);
+            exp_val = load(pspm_load_data_test.fn1);
             exp_val.data = exp_val.data(chan);
             
             import matlab.unittest.constraints.IsEqualTo;
@@ -166,11 +168,11 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
         function valid_datafile_3(testCase)
             chan = [3 5];
             
-            [sts, infos, data] = pspm_load_data(pspm_load_data_test.fn, chan);
+            [sts, infos, data] = pspm_load_data(pspm_load_data_test.fn1, chan);
             act_val.infos = infos;
             act_val.data = data;
             
-            exp_val = load(pspm_load_data_test.fn);
+            exp_val = load(pspm_load_data_test.fn1);
             exp_val.data = exp_val.data(chan);
             
             import matlab.unittest.constraints.IsEqualTo;
@@ -181,11 +183,11 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
         function valid_datafile_4(testCase)
             chan = 'scr';
             
-            [sts, infos, data] = pspm_load_data(pspm_load_data_test.fn, chan);
+            [sts, infos, data] = pspm_load_data(pspm_load_data_test.fn1, chan);
             act_val.infos = infos;
             act_val.data = data;
             
-            exp_val = load(pspm_load_data_test.fn);
+            exp_val = load(pspm_load_data_test.fn1);
             exp_val.data = exp_val.data(testCase.pspm_channels);
             
             import matlab.unittest.constraints.IsEqualTo;
@@ -196,11 +198,11 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
         function valid_datafile_5(testCase)
             chan = 'events';
             
-            [sts, infos, data] = pspm_load_data(pspm_load_data_test.fn, chan);
+            [sts, infos, data] = pspm_load_data(pspm_load_data_test.fn1, chan);
             act_val.infos = infos;
             act_val.data = data;
             
-            exp_val = load(pspm_load_data_test.fn);
+            exp_val = load(pspm_load_data_test.fn1);
             exp_val.data = exp_val.data(testCase.event_channels);
             
             import matlab.unittest.constraints.IsEqualTo;
@@ -210,7 +212,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
         % save data
         function valid_datafile_6(testCase)
             chan = 0;
-            [sts, infos, data] = pspm_load_data(pspm_load_data_test.fn, chan); % load
+            [sts, infos, data] = pspm_load_data(pspm_load_data_test.fn1, chan); % load
             save.data = data;
             save.infos = infos;
             save.options.overwrite = 1;
@@ -219,19 +221,17 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
             [sts, infos, data] = pspm_load_data(pspm_load_data_test.fn2, chan);% load again
             act_val.infos = infos;
             act_val.data = data;
-            exp_val = load(pspm_load_data_test.fn);
+            exp_val = load(pspm_load_data_test.fn1);
             
             import matlab.unittest.constraints.IsEqualTo;
             testCase.verifyThat(act_val, IsEqualTo(exp_val), 'valid_datafile_5 test 1');
-            delete(pspm_load_data_test.fn1);
-            delete(pspm_load_data_test.fn2);
             clear save
         end
         
         % clear data
-        function clear_test_file()
-            if exist(pspm_load_data_test.fn, 'file')
-                delete(pspm_load_data_test.fn);
+        function clear_test_file(testCase)
+            if exist(pspm_load_data_test.fn1, 'file')
+                delete(pspm_load_data_test.fn1);
             end
             if exist(pspm_load_data_test.fn2, 'file')
                 delete(pspm_load_data_test.fn2);
