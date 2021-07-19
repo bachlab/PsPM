@@ -7,7 +7,8 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
 
     properties
         expected_number_of_files = 3;
-        data_fn = 'datafile';
+        fn1 = 'datafile';
+        fn2 = 'testdatafile0.mat';
     end
     
     properties (TestParameter)
@@ -25,37 +26,38 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
         end
         
         function one_datafile(this)
-            fn = 'testdatafile0.mat';
+            % fn = 'testdatafile0.mat';
             
             channels{1}.chantype = 'scr';
             channels{2}.chantype = 'hb';
             channels{3}.chantype = 'marker';
             datastruct = pspm_testdata_gen(channels, 100);
-            datastruct.data{3}.data = [1 4 9 12 30 31 34 41 43 59 65 72 74 80 89 96]'; %with default values MAXSN=10 & BRK2NORM=3 the datafile should be split into 3 files
+            datastruct.data{3}.data = [1 4 9 12 30 31 34 41 43 59 65 72 74 80 89 96]'; % with default values MAXSN=10 & BRK2NORM=3 the datafile should be split into 3 files
             datastruct.options = struct('overwrite', 1);
-            pspm_load_data(fn, datastruct); %save datafile
+            pspm_load_data(this.fn2, datastruct); %save datafile
             %datafile.data{3}.data = [0 1]';
             %save(fn, '-struct', 'datafile');
             options = struct('overwrite', 1);
-            newdatafile = pspm_split_sessions(fn, 0, options);
+            newdatafile = pspm_split_sessions(this.fn2, 0, options);
             
-            this.verifyTrue(numel(newdatafile) == this.expected_number_of_files, sprintf('the testdatafile %s has been split into %i files and not like expected into %i files', fn, numel(newdatafile), this.expected_number_of_files));
+            this.verifyTrue(numel(newdatafile) == this.expected_number_of_files,...
+                sprintf('the testdatafile %s has been split into %i files and not like expected into %i files', this.fn2, numel(newdatafile), this.expected_number_of_files));
             
             for k=1:numel(newdatafile)
-                [sts, infos, data] = pspm_load_data(newdatafile{k});
+                [sts, ~, data] = pspm_load_data(newdatafile{k});
                 this.verifyTrue(sts == 1, sprintf('couldn''t load file %s with pspm_load_data', newdatafile{k}));
                 this.verifyTrue(numel(data) == numel(channels), sprintf('number of channels doesn''t match in file %s', newdatafile{k}));
                 
                 delete(newdatafile{k});
             end
             
-            delete(fn);
+            delete(this.fn2);
         end
         
         
         
         function test_dynamic_sessions(this, nsessions)
-            fn = pspm_find_free_fn(this.data_fn, '.mat');
+            fn_dynamic_sessions = pspm_find_free_fn(this.fn1, '.mat');
             channels{1}.chantype = 'scr';
             channels{2}.chantype = 'hb';
             channels{3}.chantype = 'marker';
@@ -64,11 +66,11 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
             channels{3}.variance = 0.05;
 
             % 6 minutes data
-            pspm_testdata_gen(channels, 60*6, fn); 
+            pspm_testdata_gen(channels, 60*6, fn_dynamic_sessions); 
                        
             options = struct('overwrite', 1);
 
-            newdatafile = pspm_split_sessions(fn, 3, options);
+            newdatafile = pspm_split_sessions(fn_dynamic_sessions, 3, options);
             
             this.verifyEqual(numel(newdatafile), nsessions);
             
@@ -80,13 +82,13 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
                 end
             end
             
-            if exist(fn, 'file')
-                delete(fn);
+            if exist(fn_dynamic_sessions, 'file')
+                delete(fn_dynamic_sessions);
             end
         end
     
         function test_appendices(this, prefix, suffix)
-            fn = pspm_find_free_fn(this.data_fn, '.mat');
+            fn_appendices = pspm_find_free_fn(this.fn1, '.mat');
             channels{1}.chantype = 'scr';
             channels{2}.chantype = 'hb';
             channels{3}.chantype = 'marker';
@@ -95,9 +97,9 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
             channels{3}.variance = 0.05;
             
             % 6 minutes data
-            data = pspm_testdata_gen(channels, 60*6, fn);
+            data = pspm_testdata_gen(channels, 60*6, fn_appendices);
             options = struct('prefix', prefix, 'suffix', suffix, 'overwrite', 1);
-            newdatafile = pspm_split_sessions(fn, 3, options);
+            newdatafile = pspm_split_sessions(fn_appendices, 3, options);
             
             this.verifyEqual(numel(newdatafile),10);
             
@@ -117,8 +119,8 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
                 end
             end
             
-            if exist(fn, 'file')
-                delete(fn);
+            if exist(fn_appendices, 'file')
+                delete(fn_appendices);
             end
         end
         
@@ -127,7 +129,7 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
             n_sess = 10;
             sess_dist = 10;
             
-            fn = pspm_find_free_fn(this.data_fn, '.mat');
+            fn = pspm_find_free_fn(this.fn1, '.mat');
             channels{1}.chantype = 'scr';
             channels{2}.chantype = 'hb';
             channels{3}.chantype = 'marker';

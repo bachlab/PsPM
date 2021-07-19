@@ -10,8 +10,8 @@ function [fn] = pspm_find_free_fn(fname, ext)
 % $Rev: 377 $
 
 i = 1;
-fn = [fname,  num2str(i), ext];
+fn = [fname, '_', num2str(i), ext];
 while exist(fn, 'file')
     i = i+1;
-    fn = [fname,  num2str(i), ext];
+    fn = [fname, '_', num2str(i), ext];
 end;
