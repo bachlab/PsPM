@@ -34,12 +34,12 @@ else
     FontSizeTitle = 11;
     FontSizeText = 10;
     FontSizeCaption = 9;
-    FontSizeAttr = 8;
+    FontSizeAttr = 10;
     FontNameText = 'DejaVu Sans';
     FontNameEmph = 'DejaVu Sans';
     DisplayUnit = 'points';
-    MainWeight = 750;
-    MainHeight = 750*0.8;
+    MainWeight = 650;
+    MainHeight = 650*0.8;
     DisplayWeight = 190;
     DisplayHeight = 60;
     SwitchResize = 'on';
