@@ -1,37 +1,10 @@
 function varargout = pspm(varargin)
-    % tag_PsPM is the main GUI for tag_PsPM
-    %__________________________________________________________________________
-    % tag_PsPM 5.1
-    % (C) 2008-2021 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-    % $Id: tag_pspm.m 636 2019-03-15 07:56:42Z lciernik $
-    % $Rev: 636 $
-
-    % this code was mainly produced by GUIDE
-    % PsPM_GUI M-file for PsPM_GUI.fig
-    %      PsPM_GUI, by itself, creates a new tag_PsPM or raises the existing
-    %      singleton*.
-    %
-    %      H = tag_pspm returns the handle to a new tag_PsPM or the handle to
-    %      the existing singleton*.
-    %
-    %      tag_PsPM('CALLBACK',hObject,eventData,handles,...) calls the local
-    %      function named CALLBACK in tag_PsPM.M with the given input arguments.
-    %
-    %      tag_PsPM('Property','Value',...) creates a new tag_PsPM or raises the
-    %      existing singleton*.  Starting from the left, property value pairs are
-    %      applied to the GUI before PsPM_OpeningFunction gets called.  An
-    %      unrecognized property name or invalid value makes property application
-    %      stop.  All inputs are passed to PsPM_OpeningFcn via varargin.
-    %
-    %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
-    %      instance to run (singleton)".
-    %
-    % See also: GUIDE, GUIDATA, GUIHANDLES
-
-    % Edit the above text to modify the response to help tag_PsPM
-
-    % Last Modified by GUIDE v2.5 07-Jul-2021 16:18:18
+    % PsPM is the main GUI for PsPM
+    % PsPM 5.1.1
+    % (C) 2008-2021 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)    
+    % Last Updated by Teddy (WCHN, UCL) 21-07-2021
+    
     % initialise
     % -------------------------------------------------------------------------
     global settings;
