@@ -16,18 +16,20 @@ if ispc
     MainHeight = 500*0.8;
     DisplayWeight = 250;
     DisplayHeight = 250/5;
+    SwitchResize = 'off';
 elseif ismac
     FontSizeTitle = 16;
     FontSizeText = 14;
     FontSizeCaption = 12;
     FontSizeAttr = 13;
     FontNameText = 'Helvetica Neue';
-    FontNameEmph = 'Helvetica-Light';
+    FontNameEmph = 'Helvetica-Neue-Light';
     DisplayUnit = 'points';
     MainWeight = 750;
     MainHeight = 750*0.8;
     DisplayWeight = 190;
     DisplayHeight = 60;
+    SwitchResize = 'off';
 else
     FontSizeTitle = 11;
     FontSizeText = 10;
@@ -35,10 +37,12 @@ else
     FontSizeAttr = 8;
     FontNameText = 'DejaVu Sans';
     FontNameEmph = 'DejaVu Sans';
-    MainWeight = 0.5;
-    MainHeight = 0.5;
-    DisplayWeight = 1.2;
-    DisplayHeight = 1;
+    DisplayUnit = 'points';
+    MainWeight = 750;
+    MainHeight = 750*0.8;
+    DisplayWeight = 190;
+    DisplayHeight = 60;
+    SwitchResize = 'on';
 end
 
 switch window
@@ -96,7 +100,7 @@ switch window
         handles.tag_tools_title.FontSize = FontSizeCaption;
         hObject.Position(3) = MainWeight;
         hObject.Position(4) = MainHeight;
-        hObject.Resize = 'off';
+        hObject.Resize = SwitchResize;
     case 'display'
         handles.button_all.FontName = FontNameText;
         handles.button_all.FontSize = FontSizeTitle;
@@ -156,7 +160,7 @@ switch window
         handles.text_y_min.FontSize = FontSizeText;
         hObject.Position(3) = DisplayWeight;
         hObject.Position(4) = DisplayHeight;
-        set(hObject,'Resize','on');
+        hObject.Resize = 'on';
 end
 
 end
