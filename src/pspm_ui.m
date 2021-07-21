@@ -23,9 +23,9 @@ elseif ismac
     FontSizeAttr = 13;
     FontNameText = 'Helvetica Neue';
     FontNameEmph = 'Helvetica-Light';
-    DisplayUnit = 'normalized';
-    MainWeight = 0.2819; % adjust width
-    MainHeight = 0.4425; % adjust height
+    DisplayUnit = 'points';
+    MainWeight = 750;
+    MainHeight = 750*0.8;
     DisplayWeight = 190;
     DisplayHeight = 60;
 else
