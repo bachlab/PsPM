@@ -11,7 +11,7 @@ function [pp_gaze_convert] = pspm_cfg_gaze_convert
 
 % Initialise
 global settings
-if isempty(settings), pspm_init; end
+%if isempty(settings), pspm_init; end
 
 %% Datafile
 datafile         = cfg_files;
@@ -131,7 +131,7 @@ chan_action.tag     = 'channel_action';
 chan_action.val     = {'add'};
 chan_action.values  = {'replace', 'add'};
 chan_action.labels  = {'Replace channel', 'Add channel'};
-chan_action.help    = {['Choose whether to ''replace'' the given channel ', ... 
+chan_action.help    = {['Choose whether to ''replace'' the given channel ', ...
     'or ''add'' the converted data as a new channel.']};
 
 %% Executable branch
