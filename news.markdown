@@ -6,6 +6,10 @@ permalink: /news/
 
 # News
 
+### 26.07.2021
+
+PsPM 5.1.1 released -- including bugfixes for non-linear model, splitting sessions, and skin conductance response processing, the improved user interface for windows, macOS and Linux, and a new basis function template for data vector. Thanks to everybody involved!
+
 ### 18.06.2021
 
 PsPM 5.1.0 released -- including a new function for skin conductance response processing and quality assessment, the improved scanpath speed model, and the new GUI designed with .mlapp. Changes to functions for better warning management and consistent data processing, together with bugfixes, are also included in this release. Thanks to everybody involved!
