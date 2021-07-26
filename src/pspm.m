@@ -298,30 +298,30 @@ function tag_data_preprocessing_list_Callback(hObject, ~, ~)
     selected = get(hObject,'Value');
     switch selected
     case 1
-        cfg_add_module('pspm.data_preprocessing.pp_heart_period.pp_heart_data');
+        cfg_add_module('pspm.data_preprocessing.pp_scr');%pp_scr
     case 2
+        cfg_add_module('pspm.data_preprocessing.pp_heart_period.pp_heart_data');
+    case 3
         %cfg_add_module('tag_pspm.data_preprocessing.pp_heart_period.ecg_editor');
         pspm_ecg_editor();
-    case 3
-        cfg_add_module('pspm.data_preprocessing.resp_pp');
     case 4
-        cfg_add_module('pspm.data_preprocessing.pp_pupil.process_illuminance');
+        cfg_add_module('pspm.data_preprocessing.resp_pp');
     case 5
-        cfg_add_module('pspm.data_preprocessing.pp_pupil.find_valid_fixations');
+        cfg_add_module('pspm.data_preprocessing.pp_pupil.process_illuminance');
     case 6
-        cfg_add_module('pspm.data_preprocessing.pp_pupil.pupil_correct');
+        cfg_add_module('pspm.data_preprocessing.pp_pupil.find_valid_fixations');
     case 7
-        cfg_add_module('pspm.data_preprocessing.pp_pupil.pupil_preprocess');
+        cfg_add_module('pspm.data_preprocessing.pp_pupil.pupil_correct');
     case 8
-        cfg_add_module('pspm.data_preprocessing.pupil_size_convert');
+        cfg_add_module('pspm.data_preprocessing.pp_pupil.pupil_preprocess');
     case 9
-        cfg_add_module('pspm.data_preprocessing.gaze_convert');
+        cfg_add_module('pspm.data_preprocessing.pupil_size_convert');
     case 10
-        cfg_add_module('pspm.data_preprocessing.pp_emg.find_sounds');
+        cfg_add_module('pspm.data_preprocessing.gaze_convert');
     case 11
-        cfg_add_module('pspm.data_preprocessing.pp_emg.pp_emg_data');
+        cfg_add_module('pspm.data_preprocessing.pp_emg.find_sounds');
     case 12
-        cfg_add_module('pspm.data_preprocessing.pp_scr');%pp_scr
+        cfg_add_module('pspm.data_preprocessing.pp_emg.pp_emg_data');
     end
 end
 
