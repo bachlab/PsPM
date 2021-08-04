@@ -27,7 +27,7 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %                               visual angles.
 %           distance:           distance between eye and screen in length units.
 %           unit:               unit in which distance is given.
-%           
+%
 %           options:            Optional values
 %               fixation_point:     A nx2 vector containing x and y of the
 %                                   fixation point (with resepect to the
@@ -78,8 +78,9 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %                                   during invalid fixations.
 %                                   Default is 'pupil'. A char or numeric
 %                                   value or a cell array of char or
-%                                   numerics is expected. Channel names
-%                                   pupil, gaze_x, gaze_y,
+%                                   numerics is expected. 
+%                                   Allowed channel names include gaze_x, 
+%                                   gaze_y, pupil, pupil_l, pupil_r,
 %                                   pupil_missing will be automatically
 %                                   expanded to the corresponding eye. E.g.
 %                                   pupil becomes pupil_l or pupil_r
@@ -90,9 +91,9 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %__________________________________________________________________________
 % PsPM 4.0
 % (C) 2016 Tobias Moser (University of Zurich)
+% PsPM 5.2
+% 2021 Teddy Chao (WCHN, UCL)
 
-% $Id$
-% $Rev$
 
 % initialise
 % -------------------------------------------------------------------------
@@ -108,7 +109,7 @@ if numel(varargin) < 1
         ' to compute the valid fixations']); return;
 end
 
-%get imput arguments and check if correct values
+% get imput arguments and check if correct values
 if numel(varargin{1}) > 1
     mode = 'bitmap';
     bitmap = varargin{1};
@@ -148,7 +149,7 @@ else
     elseif ~isstruct(options)
         warning('ID:invalid_input', 'Options must be a struct.');
         return;
-    end 
+    end
 end
 
 % fn
@@ -203,8 +204,9 @@ elseif ~iscell(options.channels) && ~ischar(options.channels) && ...
         'numeric or a cell of char or numeric.']);
     return;
 elseif iscell(options.channels) && ...
-        any(~cellfun(@(x) isnumeric(x) ||any(strcmpi(x, {'gaze_x', 'gaze_y', ...
-        'pupil', 'pupil_missing'})), options.channels))
+        any(~cellfun(@(x) isnumeric(x) || ...
+        any(strcmpi(x, {'gaze_x', 'gaze_y', 'pupil', 'pupil_l', ...
+            'pupil_r', 'pupil_missing'})), options.channels))
     warning('ID:invalid_input', 'Option.channels contains invalid values.');
     return;
 elseif strcmpi(mode,'fixation')&& isfield(options, 'fixation_point') && ...
@@ -275,14 +277,18 @@ end
 if ~isfield(options, 'channel_action')
     options.channel_action = 'add';
 elseif sum(strcmpi(options.channel_action, {'add','replace'})) == 0
-    warning('ID:invalid_input', 'Options.channel_action must be either ''add'' or ''replace''.'); return;
+    warning('ID:invalid_input', ...
+        'Options.channel_action must be either ''add'' or ''replace''.');
+    return;
 end
 
 % overwrite
 if ~isfield(options, 'overwrite')
     options.overwrite = 0;
 elseif ~isnumeric(options.overwrite) && ~islogical(options.overwrite)
-    warning('ID:invalid_input', 'Options.overwrite must be either numeric or logical.'); return;
+    warning('ID:invalid_input', ...
+        'Options.overwrite must be either numeric or logical.');
+    return;
 end
 
 % dont_ask_overwrite
@@ -309,7 +315,7 @@ n_eyes = numel(infos.source.eyesObserved);
 new_pu = cell(n_eyes, 1);
 new_excl = cell(n_eyes, 1);
 
-for i=1:n_eyes
+for i = 1:n_eyes
     eye = lower(infos.source.eyesObserved(i));
     if strcmpi(options.eyes, 'all') || strcmpi(options.eyes(1), eye)
         gaze_x = ['gaze_x_', eye];
@@ -322,7 +328,7 @@ for i=1:n_eyes
             '(pupil|gaze_x|gaze_y|pupil_missing)', ['$0_' eye]);
         % replace strings with numbers
         str_chan_num = channels(str_chans);
-        for j=1:numel(str_chan_num)
+        for j = 1:numel(str_chan_num)
             str_chan_num(j) = {find(cellfun(@(y) strcmpi(str_chan_num(j),...
                 y.header.chantype), data),1)};
         end
@@ -377,7 +383,7 @@ for i=1:n_eyes
                         % matrix has the same (0,0) as the gaze channels
                         % nr of data points
                         N = numel(x_data);
-
+                        
                         % change bitmap to logical
                         bitmap = logical(bitmap);
                         
@@ -417,9 +423,9 @@ for i=1:n_eyes
                             set(ax, 'Parent', handle(fg));
                             
                             % plot gaze coordinates
-%                             mi=min(min(x_data),min(y_data));
-%                             ma=max(max(x_data),max(y_data));
-%                             axis([mi ma mi ma]);
+                            %                             mi=min(min(x_data),min(y_data));
+                            %                             ma=max(max(x_data),max(y_data));
+                            %                             axis([mi ma mi ma]);
                             imshow(bitmap);
                             hold on;
                             scatter( x_data, y_data);
@@ -438,7 +444,7 @@ for i=1:n_eyes
                         
                         % calculate the middlepoint of the display
                         middlepoint= [x_range(1)+ diff(x_range)/2, ...
-                                      y_range(1)+ diff(y_range)/2];
+                            y_range(1)+ diff(y_range)/2];
                         
                         % caluculate the visual angle of the fixation points
                         % according to the right range
@@ -484,7 +490,7 @@ for i=1:n_eyes
                             plot(x_unit, y_unit);
                         end
                 end
-               
+                
                 
                 % set excluded periods in pupil data to NaN
                 new_pu{i} = {data{work_chans}};
@@ -506,10 +512,10 @@ for i=1:n_eyes
                     'unit values. Maybe you need to convert them with ', ...
                     'pspm_convert_pixel2unit()']);
             end
-        else 
+        else
             warning('ID:invalid_input', ['Unable to perform gaze ', ...
-                    'validation. There must be a pupil channel. Eventually ', ...
-                    'only gaze channels have been imported.']);
+                'validation. There must be a pupil channel. Eventually ', ...
+                'only gaze channels have been imported.']);
         end
     end
 end

@@ -15,7 +15,9 @@ if isfield(job.val_method,'bitmap_file')
     end;
     
     if ~isfield(indata,'bitmap')
-       warning('ID:invalid_input', 'Indicated file ''%s'' does not contain a matrix called ''bitmap.''',job.val_method.bitmap_file{1}); 
+       warning('ID:invalid_input', ...
+           'Indicated file ''%s'' does not contain a matrix called ''bitmap.''',...
+           job.val_method.bitmap_file{1}); 
        return;
     end
     bitmap = indata.bitmap;
