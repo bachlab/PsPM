@@ -18,7 +18,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     resolution = {[1 1], [1280 1024], [1920 1080]};
     
     % eyes
-    eyes = {'l', 'r', 'b'};
+    eyes = {'l', 'r'};
     
     % others
     channel_action = {'add', 'replace'};
@@ -155,7 +155,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       options.fixation_point = [1280/4 1024*3/4];
       options.dont_ask_overwrite = 1;
       options.overwrite = 1;
-      options.channels = work_chans;
+      options.channels = 'lr';
       options.channel_action = 'add';
       
       [~,~, o_data] = pspm_load_data(fn);
