@@ -1,17 +1,17 @@
 function varargout = pspm(varargin)
 
     % pspm.m handles the main GUI for PsPM
-    % PsPM Version 5.1.1
+    % PsPM Version 5.2
     % (C) 2008-2021 Dominik R Bach (Wellcome Centre for Human Neuroimaging)    
-    % Updated 22-07-2021 Teddy (WCHN, UCL)
+    % Updated 09-08-2021 Teddy (WCHN, UCL)
     
     % initialise
-    % -------------------------------------------------------------------------
+    % ---------------------------------------------------------------------
     global settings;
     if isempty(settings)
         pspm_init;
     end
-    % -------------------------------------------------------------------------
+    % ---------------------------------------------------------------------
     % Begin initialization code - DO NOT EDIT
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -191,8 +191,9 @@ function tag_tools_list_Callback(hObject, ~, ~)
     % hObject    handle to tag_tools_list (see GCBO)
     % eventdata  reserved - to be defined in a future version of MATLAB
     % handles    structure with handles and user data (see GUIDATA)
-    % Hints: contents = get(hObject,'String') returns tag_tools_list contents as cell array
-    %        contents{get(hObject,'Value')} returns selected item from tag_tools_list
+    % Hints: contents = get(hObject,'String') returns tag_tools_list 
+    %        contents as cell array, contents{get(hObject,'Value')} 
+    %        returns selected item from tag_tools_list
     val = get(hObject,'Value');
     switch val
     case 1
@@ -230,7 +231,8 @@ function tag_tools_list_CreateFcn(hObject, ~, ~)
 
     % Hint: popupmenu controls usually have a white background on Windows.
     %       See ISPC and COMPUTER.
-    if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    if ispc && isequal(get(hObject,'BackgroundColor'),...
+            get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
 end
@@ -244,7 +246,8 @@ function tag_first_level_models_list_CreateFcn(hObject, ~, ~)
 
     % Hint: popupmenu controls usually have a white background on Windows.
     %       See ISPC and COMPUTER.
-    if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    if ispc && isequal(get(hObject,'BackgroundColor'), ...
+            get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
 end
@@ -256,8 +259,10 @@ function tag_first_level_models_list_Callback(hObject, ~, ~)
     % eventdata  reserved - to be defined in a future version of MATLAB
     % handles    structure with handles and user data (see GUIDATA)
 
-    % Hints: contents = cellstr(get(hObject,'String')) returns tag_first_level_models_list contents as cell array
-    %        contents{get(hObject,'Value')} returns selected item from tag_first_level_models_list
+    % Hints: contents = cellstr(get(hObject,'String')) returns 
+    %        tag_first_level_models_list contents as cell array
+    %        contents{get(hObject,'Value')} returns selected item 
+    %        from tag_first_level_models_list
 
     selected = get(hObject,'Value');
 
@@ -292,8 +297,10 @@ function tag_data_preprocessing_list_Callback(hObject, ~, ~)
     % eventdata  reserved - to be defined in a future version of MATLAB
     % handles    structure with handles and user data (see GUIDATA)
 
-    % Hints: contents = cellstr(get(hObject,'String')) returns tag_data_preprocessing_list contents as cell array
-    %        contents{get(hObject,'Value')} returns selected item from tag_data_preprocessing_list
+    % Hints: contents = cellstr(get(hObject,'String')) returns 
+    %        tag_data_preprocessing_list contents as cell array, 
+    %        contents{get(hObject,'Value')} returns selected item 
+    %        from tag_data_preprocessing_list
 
     selected = get(hObject,'Value');
     switch selected
@@ -302,8 +309,8 @@ function tag_data_preprocessing_list_Callback(hObject, ~, ~)
     case 2
         cfg_add_module('pspm.data_preprocessing.pp_heart_period.pp_heart_data');
     case 3
-        %cfg_add_module('tag_pspm.data_preprocessing.pp_heart_period.ecg_editor');
-        pspm_ecg_editor();
+        cfg_add_module('pspm.data_preprocessing.pp_heart_period.ecg_editor');
+        %pspm_ecg_editor();
     case 4
         cfg_add_module('pspm.data_preprocessing.resp_pp');
     case 5
@@ -335,7 +342,8 @@ function tag_data_preprocessing_list_CreateFcn(hObject, ~, ~)
 
     % Hint: popupmenu controls usually have a white background on Windows.
     %       See ISPC and COMPUTER.
-    if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    if ispc && isequal(get(hObject,'BackgroundColor'),...
+            get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
 end
@@ -347,8 +355,10 @@ function tag_data_preparation_list_Callback(hObject, ~, ~)
     % eventdata  reserved - to be defined in a future version of MATLAB
     % handles    structure with handles and user data (see GUIDATA)
 
-    % Hints: contents = cellstr(get(hObject,'String')) returns tag_data_preparation_list contents as cell array
-    %        contents{get(hObject,'Value')} returns selected item from tag_data_preparation_list
+    % Hints: contents = cellstr(get(hObject,'String')) returns 
+    %        tag_data_preparation_list contents as cell array,
+    %        contents{get(hObject,'Value')} returns selected item 
+    %        from tag_data_preparation_list
 
     selected = get(hObject,'Value');
 
@@ -369,7 +379,8 @@ function tag_data_preparation_list_CreateFcn(hObject, ~, ~)
 
     % Hint: popupmenu controls usually have a white background on Windows.
     %       See ISPC and COMPUTER.
-    if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    if ispc && isequal(get(hObject,'BackgroundColor'),...
+            get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
 end
