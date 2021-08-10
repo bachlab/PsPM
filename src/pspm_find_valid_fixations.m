@@ -71,19 +71,17 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %                                   Default is disabled (=0)
 %               eyes:               Define on which eye the operations
 %                                   should be performed. Possible values
-%                                   are: 'left', 'right', 'all'.
-%                                   Default is 'all'.
+%                                   are: 'left', 'right', 'all'. Default is
+%                                   'all'.
 %               channels:           Choose channels in which the data
 %                                   should be set to NaN
 %                                   during invalid fixations.
 %                                   Default is 'pupil'. A char or numeric
 %                                   value or a cell array of char or
-%                                   numerics is expected.
-%                                   Allowed channel names include gaze_x,
-%                                   gaze_y, pupil, pupil_missing will be 
-%                                   automatically expanded to the 
-%                                   corresponding eye.
-%                                   E.g.
+%                                   numerics is expected. Channel names
+%                                   pupil, gaze_x, gaze_y,
+%                                   pupil_missing will be automatically
+%                                   expanded to the corresponding eye. E.g.
 %                                   pupil becomes pupil_l or pupil_r
 %                                   according to the eye which is
 %                                   being processed.
@@ -92,9 +90,9 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %__________________________________________________________________________
 % PsPM 4.0
 % (C) 2016 Tobias Moser (University of Zurich)
-% PsPM 5.2
-% 2021 Teddy Chao (WCHN, UCL)
 
+% $Id$
+% $Rev$
 
 % initialise
 % -------------------------------------------------------------------------
@@ -110,7 +108,7 @@ if numel(varargin) < 1
     ' to compute the valid fixations']); return;
 end
 
-% get imput arguments and check if correct values
+%get imput arguments and check if correct values
 if numel(varargin{1}) > 1
   mode = 'bitmap';
   bitmap = varargin{1};
@@ -205,9 +203,8 @@ elseif ~iscell(options.channels) && ~ischar(options.channels) && ...
     'numeric or a cell of char or numeric.']);
   return;
 elseif iscell(options.channels) && ...
-    any(~cellfun(@(x) isnumeric(x) || ...
-    any(strcmpi(x, {'gaze_x', 'gaze_y', 'pupil', 'pupil_missing'})),...
-    options.channels))
+    any(~cellfun(@(x) isnumeric(x) ||any(strcmpi(x, {'gaze_x', 'gaze_y', ...
+    'pupil', 'pupil_missing'})), options.channels))
   warning('ID:invalid_input', 'Option.channels contains invalid values.');
   return;
 elseif strcmpi(mode,'fixation')&& isfield(options, 'fixation_point') && ...
@@ -256,8 +253,7 @@ if strcmpi(mode,'fixation')
     fix_point(:,1) = zeros(numel(data{wv(1)}.data), 1);
     fix_point(:,2) = zeros(numel(data{wv(1)}.data), 1);
     
-    if isfield(options, 'fixation_point') && ...
-        size(options.fixation_point,1) == 1
+    if isfield(options, 'fixation_point') && size(options.fixation_point,1) == 1
       % normalize values according to resolution
       fix_point = options.fixation_point ./ options.resolution;
     else
@@ -279,27 +275,21 @@ end
 if ~isfield(options, 'channel_action')
   options.channel_action = 'add';
 elseif sum(strcmpi(options.channel_action, {'add','replace'})) == 0
-  warning('ID:invalid_input', ...
-    'Options.channel_action must be either ''add'' or ''replace''.');
-  return;
+  warning('ID:invalid_input', 'Options.channel_action must be either ''add'' or ''replace''.'); return;
 end
 
 % overwrite
 if ~isfield(options, 'overwrite')
   options.overwrite = 0;
 elseif ~isnumeric(options.overwrite) && ~islogical(options.overwrite)
-  warning('ID:invalid_input', ...
-    'Options.overwrite must be either numeric or logical.');
-  return;
+  warning('ID:invalid_input', 'Options.overwrite must be either numeric or logical.'); return;
 end
 
 % dont_ask_overwrite
 if ~isfield(options, 'dont_ask_overwrite')
   options.dont_ask_overwrite = 0;
-elseif ~isnumeric(options.dont_ask_overwrite) && ...
-    ~islogical(options.dont_ask_overwrite)
-  warning('ID:invalid_input', ...
-    'Options.dont_ask_overwrite has to be numeric or logical.');
+elseif ~isnumeric(options.dont_ask_overwrite) && ~islogical(options.dont_ask_overwrite)
+  warning('ID:invalid_input', 'Options.dont_ask_overwrite has to be numeric or logical.');
 end
 
 % newfile
@@ -319,6 +309,7 @@ n_eyes = numel(infos.source.eyesObserved);
 new_pu = cell(n_eyes, 1);
 new_excl = cell(n_eyes, 1);
 
+
 for i = 1:n_eyes
   eye = lower(infos.source.eyesObserved(i));
   if strcmpi(options.eyes, 'all') || strcmpi(options.eyes(1), eye)
@@ -329,7 +320,7 @@ for i = 1:n_eyes
     str_chans = cellfun(@ischar, options.channels);
     channels = options.channels;
     channels(str_chans) = regexprep(channels(str_chans), ...
-      '(pupil|gaze_x|gaze_y|pupil_missing)', ['$0_' eye]);
+      '(pupil|pupil_pp|pupil_missing|gaze_x|gaze_y|gaze_x_pp|gaze_y_pp)', ['$0_' eye]);
     % replace strings with numbers
     str_chan_num = channels(str_chans);
     for j = 1:numel(str_chan_num)
@@ -398,21 +389,21 @@ for i = 1:n_eyes
             x_data = (x_data - x_range(1))/diff(x_range);
             y_data = (y_data - y_range(1))/diff(y_range);
             
-            % adapt to bitmap range
+            %adapt to bitmap range
             x_data = map_x_range(1)+ x_data * diff(map_x_range);
             y_data = map_y_range(1)+ y_data * diff(map_y_range);
             
-            % round gaze data such that we can use them as
-            % indexed
+            %round gaze data such that we can use them as
+            %indexed
             x_data = round(x_data);
             y_data = round(y_data);
             
-            % set all gaze values which are out of the display
+            %set all gaze values which are out of the display
             %window range to NaN
             x_data(x_data > map_x_range(2) | x_data < map_x_range(1)) = NaN;
             y_data(y_data > map_y_range(2) | y_data < map_y_range(1)) = NaN;
             
-            % only take gaze coordinates which both aren't NaNs
+            %only take gaze coordinates which both aren't NaNs
             valid_gaze_idx = find(~isnan(x_data) & ~isnan(y_data));
             valid_gaze = [x_data(valid_gaze_idx),y_data(valid_gaze_idx)];
             
@@ -557,8 +548,7 @@ if numel(new_chans) >= 1
       chan_idx(i) = numel(new_data);
     else
       % look for same chan_type
-      chans = cellfun(@(x) strcmpi(new_chans{i}.header.chantype,...
-        x.header.chantype), new_data);
+      chans = cellfun(@(x) strcmpi(new_chans{i}.header.chantype, x.header.chantype), new_data);
       if any(chans)
         % replace the first found channel
         idx = find(chans, 1, 'first');
@@ -584,8 +574,7 @@ if numel(new_chans) >= 1
   for i = 1:numel(infos.source.eyesObserved)
     e = lower(infos.source.eyesObserved(i));
     e_stat = {infos.source.chan_stats{...
-      cellfun(@(x) ~isempty(regexpi(x.header.chantype, ['_' e], 'once')),...
-      new_data)}};
+      cellfun(@(x) ~isempty(regexpi(x.header.chantype, ['_' e], 'once')), new_data)}};
     eye_stat(i) = max(cellfun(@(x) x.nan_ratio, e_stat));
   end
   

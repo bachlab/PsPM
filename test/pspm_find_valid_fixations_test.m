@@ -144,7 +144,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     function test_work_chans(this, work_chans)
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
-      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lra');
+      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lrb');
       
       options = struct();
       d = vertcat(degs{:});
@@ -155,7 +155,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       options.fixation_point = [1280/4 1024*3/4];
       options.dont_ask_overwrite = 1;
       options.overwrite = 1;
-      options.channels = 'lr';
+      options.channels = 'lr'; %{'pupil_l', 'gaze_l', 'pupil_missing'};
       options.channel_action = 'add';
       
       [~,~, o_data] = pspm_load_data(fn);

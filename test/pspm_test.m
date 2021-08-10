@@ -1,20 +1,19 @@
 function pspm_test(varargin)
-    %% pspm_test is a wrapper script for testing all testable functions in 
-    % one script, which can be used for any release.
+    %% pspm_test is a wrapper script for testing all testable functions in one
+    % - to be used before any release.
     %
     % quit_after_tests : [bool]
-    %                    Define whether the script should quit MATLAB with
-    %                    a success/fail flag
+    %                    Define whether the script should quit MATLAB with a success/fail flag
     %                    after the tests are run.
     %                    (Default: false)
 
-    %______________________________________________________________________
+    %__________________________________________________________________________
     % PsPM TestEnvironment
     % (C) 2013 Dominik Bach & Linus Ruettimann (University of Zurich)
-    % Updated PsPM 5.2 2021 Teddy Chao (WCHN, UCL)
+    % Updated Teddy Chao (WCHN, UCL)
 
     % imports
-    % ---------------------------------------------------------------------
+    % -------------------------------------------------------------------------
     import matlab.unittest.TestSuite;
 
     quit_after_tests = false;
@@ -24,7 +23,7 @@ function pspm_test(varargin)
     end
 
     % build suits
-    % ---------------------------------------------------------------------
+    % -------------------------------------------------------------------------
     suite = [...
         TestSuite.fromClass(?pspm_load_data_test), ...
         TestSuite.fromClass(?pspm_write_channel_test), ...
@@ -102,7 +101,8 @@ function pspm_test(varargin)
     full_suite = [suite, import_suite, chantype_suite];
 
     % run tests
-    % ---------------------------------------------------------------------
+    % -------------------------------------------------------------------------
+    % [pth, fn, ext] = fileparts(which('pspm_test.m'));
     [pth, ~, ~] = fileparts(which('pspm_test.m'));
     addpath(pth);
     pspm_init;
@@ -117,7 +117,7 @@ function pspm_test(varargin)
     end
 
     disp('===TEST_STATISTICS_BEGIN===');
-    display(format_test_results(stats));
+    display(format_test_results(stats)); % seems not able to be replaced with fprintf
     disp('===TEST_STATISTICS_END===');
     if quit_after_tests
         exit_code = 1 - success;
