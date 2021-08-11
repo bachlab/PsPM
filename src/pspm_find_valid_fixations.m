@@ -193,7 +193,7 @@ elseif ~islogical(options.missing) && ~isnumeric(options.missing)
   warning('ID:invalid_input', ['Options.missing is neither logical ', ...
     'nor numeric.']);
   return;
-elseif ~any(strcmpi(options.eyes, {'all', 'left', 'right'}))
+elseif ~any(strcmpi(options.eyes, settings.lateral.full))
   warning('ID:invalid_input', ['Options.eyes must be either ''all'', ', ...
     '''left'' or ''right''.']);
   return;
@@ -202,9 +202,8 @@ elseif ~iscell(options.channels) && ~ischar(options.channels) && ...
   warning('ID:invalid_input', ['Options.channels should be a char, ', ...
     'numeric or a cell of char or numeric.']);
   return;
-elseif iscell(options.channels) && ...
-    any(~cellfun(@(x) isnumeric(x) ||any(strcmpi(x, {'gaze_x', 'gaze_y', ...
-    'pupil', 'pupil_missing'})), options.channels))
+elseif iscell(options.channels) && any(~cellfun(@(x) isnumeric(x) || ...
+    any(strcmpi(x, settings.findvalidfixations.chantypes)), options.channels))
   warning('ID:invalid_input', 'Option.channels contains invalid values.');
   return;
 elseif strcmpi(mode,'fixation')&& isfield(options, 'fixation_point') && ...
@@ -319,8 +318,15 @@ for i = 1:n_eyes
     % find chars to replace
     str_chans = cellfun(@ischar, options.channels);
     channels = options.channels;
-    channels(str_chans) = regexprep(channels(str_chans), ...
-      '(pupil|pupil_pp|pupil_missing|gaze_x|gaze_y|gaze_x_pp|gaze_y_pp)', ['$0_' eye]);
+    
+    str_chantypes = ['(', settings.findvalidfixations.chantypes{1}];
+    for i_chantypes = 2:length(settings.findvalidfixations.chantypes)
+      str_chantypes = [str_chantypes, '|', ...
+        settings.findvalidfixations.chantypes{i_chantypes}];
+    end
+    str_chantypes = [str_chantypes, ')'];
+    
+    channels(str_chans) = regexprep(channels(str_chans), str_chantypes, ['$0_' eye]);
     % replace strings with numbers
     str_chan_num = channels(str_chans);
     for j = 1:numel(str_chan_num)
