@@ -51,7 +51,7 @@ classdef pspm_pupil_pp_test < pspm_testcase
             [sts, out_channel] = pspm_pupil_pp(this.pspm_input_filename, opt);
             load(this.pspm_input_filename);
 
-            this.verifyEqual(data{out_channel}.header.chantype, 'pupil_r_pp');
+            this.verifyEqual(data{out_channel}.header.chantype, 'pupil_pp_r');
         end
 
         function check_upsampling_rate(this)
@@ -76,7 +76,7 @@ classdef pspm_pupil_pp_test < pspm_testcase
             [sts, out_channel] = pspm_pupil_pp(this.pspm_input_filename, opt);
             load(this.pspm_input_filename);
 
-            this.verifyEqual(data{out_channel}.header.chantype, 'pupil_lr_pp');
+            this.verifyEqual(data{out_channel}.header.chantype, 'pupil_pp_b');
         end
 
         function check_segments(this)

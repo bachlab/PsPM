@@ -144,7 +144,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     function test_work_chans(this, work_chans)
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
-      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lrb');
+      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lr');
 
       options = struct();
       d = vertcat(degs{:});
