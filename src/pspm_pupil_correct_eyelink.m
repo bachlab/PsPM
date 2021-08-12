@@ -117,7 +117,7 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
     global settings;
     if isempty(settings), pspm_init; end
     sts = -1;
-
+    
     % default values
     % -------------------------------------------------------------------------
     all_fieldnames = {'C_x', 'C_y', 'C_z', 'S_x', 'S_y', 'S_z'};
@@ -125,9 +125,15 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
     default_params(495) = [103, -215, 495, -142, 206, 736];
     default_params(525) = [165, -239, 525, -87, 140, 851];
     default_params(625) = [183, -230, 625, -76, 156, 937];
+    
+    
 
     % input checks
     % -------------------------------------------------------------------------
+    if ~ischar(fn)
+      warning('ID:invalid_input', 'Data file must be a char.');
+      return;
+    end
     if ~isfield(options, 'mode')
         warning('ID:invalid_input', 'options struct must contain ''mode''');
         return;
@@ -183,6 +189,8 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 
     % load data
     % -------------------------------------------------------------------------
+
+    
 
     [lsts, infos, pupil_data] = pspm_load_data(fn, options.channel);
     if lsts ~= 1; return; end;
