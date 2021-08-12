@@ -912,6 +912,10 @@ function [info]=pp_plot(handles)
     % -------------------------------------------------------------------------
 
     x=get(handles.display_plot,'xlim');
+    if handles.tag_summary_recording_duration_content.Value>0
+    set(handles.display_plot,'xlim',...
+      [0,handles.tag_summary_recording_duration_content.Value]);
+    end
     y=get(handles.display_plot,'ylim');
     x(2)=x(2)-x(1);
     set(handles.edit_y_min,'String',num2str(y(1)))
@@ -1078,6 +1082,7 @@ function update_summary_list (handles, filename)
     handles.name=filename;
     [~, info, handles.data, ~]=pspm_load_data(filename,0);
     handles.tag_summary_recording_duration_content.String = [num2str(info.duration), ' s'];
+    handles.tag_summary_recording_duration_content.Value = info.duration;
     [~,filename_display,~] = fileparts(filename);
     handles.tag_summary_source_file_content.String=filename_display;
     [r_channels,c_channels]=size(handles.data);
