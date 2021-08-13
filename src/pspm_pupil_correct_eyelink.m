@@ -111,6 +111,7 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
     %     Research Methods 48.2 (2016): 510-527.
     %__________________________________________________________________________
     % (C) 2019 Eshref Yozdemir (University of Zurich)
+    % Updated 2021 Teddy Chao (WCHN, UCL)
 
     % initialise
     % -------------------------------------------------------------------------
@@ -272,8 +273,13 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
     % save data
     % -------------------------------------------------------------------------
     pupil_data{1}.data = pupil_corrected;
-    if ~strcmp(old_chantype(end-2:end), '_pp')
+    old_chantype_parts = split(old_chantype,'_');
+    if ~any(strcmp(old_chantype_parts,'pp'))
+      if ~any(strcmp({'l','r','b'},old_chantype_parts{end}))
         pupil_data{1}.header.chantype = [old_chantype '_pp'];
+      else
+        pupil_data{1}.header.chantype = [old_chantype(1:end-2), '_pp', '_', old_chantype_parts{end}];
+      end
     end
     channel_str = num2str(options.channel);
     o.msg.prefix = sprintf(...
