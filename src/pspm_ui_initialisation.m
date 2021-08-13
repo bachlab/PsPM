@@ -1,7 +1,10 @@
 function pspm_ui_initialisation(hObject,handles,window)
 
-% pspm_ui controls the UI of the referred handle
-% The PsPM Team, UCL
+% pspm_ui_initialisation adjusts the required UI parameters for window
+% initialisation
+%
+% PsPM 5.1.2
+% 2021 Teddy Chao (WCHN, UCL)
 
 global settings;
 if isempty(settings)
@@ -13,7 +16,6 @@ switch window
     handles.figure1.Units = settings.ui.DisplayUnit;
     handles.tag_attribution.FontName = settings.ui.FontNameText;
     handles.tag_attribution.FontSize = settings.ui.FontSizeAttr;
-    %handles.tag_attribution.Visible = 'off';
     handles.tag_attribution.HorizontalAlignment = 'center';
     attribution_disp_text = sprintf(['Version 5.1.1, Build ',...
       datestr(now,'ddmmyyyy'),' with MATLAB 2021a, ',...

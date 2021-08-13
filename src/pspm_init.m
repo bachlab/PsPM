@@ -4,9 +4,9 @@ function pspm_init
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2009-2015 Dominik R Bach (WTCN, UZH)
-
-% $Id: pspm_init.m 774 2019-07-01 08:35:43Z esrefo $
-% $Rev: 774 $
+%
+% PsPM 5.1.2
+% Updated 2021 Teddy Chao (WCHN, UCL)
 
 clc
 
@@ -1064,7 +1064,7 @@ defaults.datafilehelp = ['In case data/model file(s) are chosen via the ',...
 %% UI parameters
 % Parameters for UI optimisation
 if ispc
-  defaults.ui = struct('Category','General',...
+  defaults.ui = struct('OperatingSystem','Windows',...
     'DisplayUnit', 'points',...
     'SwitchResize', 'off',...
     'MainWeight', 500,...
@@ -1110,7 +1110,7 @@ end
 % -------------------------------------------------------------------------
 % look for settings, otherwise set defaults
 % -------------------------------------------------------------------------
-if exist([pth, 'pspm_settings.mat'])
+if exist([pth, 'pspm_settings.mat'], 'file')
     load([pth, 'pspm_settings.mat']);
 else
     settings=defaults;
