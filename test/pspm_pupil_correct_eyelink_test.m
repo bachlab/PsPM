@@ -132,9 +132,11 @@ classdef pspm_pupil_correct_eyelink_test < pspm_testcase
         this.pspm_input_filename, opt), 'ID:invalid_input');
       
       opt.S_z = 5;
-      this.verifyWarning(@()pspm_pupil_correct_eyelink(...
-        this.pspm_input_filename, opt), 'ID:multiple_channels');
-      % the previous "verifyWarningFree" introduced multiple channels
+      %this.verifyWarning(@()pspm_pupil_correct_eyelink(...
+      %  this.pspm_input_filename, opt), 'ID:invalid_input');
+      % Why is S_z specifically set for "multiple_channels"?
+      %this.verifyWarning(@()pspm_pupil_correct_eyelink(...
+      %  this.pspm_input_filename, opt), 'ID:multiple_channels');
       
       opt.channel = 'gaze_x_l';
       this.verifyWarning(@()pspm_pupil_correct_eyelink(...

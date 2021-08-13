@@ -285,15 +285,7 @@ if sts ~= 1; return; end
 
 %% save data
 pupil_data{1}.data = pupil_corrected;
-old_chantype_parts = split(old_chantype,'_');
-if ~any(strcmp(old_chantype_parts,'pp'))
-  if ~any(strcmp({'l','r','b'},old_chantype_parts{end}))
-    pupil_data{1}.header.chantype = [old_chantype '_pp'];
-  else
-    pupil_data{1}.header.chantype = [old_chantype(1:end-2),...
-      '_pp', '_', old_chantype_parts{end}];
-  end
-end
+pupil_data{1}.header.chantype = convert_pp(old_chantype);
 channel_str = num2str(options.channel);
 o.msg.prefix = sprintf(...
   'PFE correction :: Input channel: %s -- Input chantype: %s -- Output chantype: %s --', ...
@@ -314,3 +306,36 @@ else
   [~, gaze_mm] = pspm_convert_unit(gaze_data, units, 'mm');
 end
 end
+
+function chantype_pp = convert_pp(chantype)
+% analyse channel type and convert it as preprocessed (pp) channel type
+chantype_array = split(chantype,'_');
+% find if there is pp
+is_pp = any(strcmp(chantype_array,'pp'));
+% find if it is bilateral (b), left (l) or right (r)
+is_b = any(strcmp(chantype_array,'b'));
+is_l = any(strcmp(chantype_array,'l'));
+is_r = any(strcmp(chantype_array,'r'));
+if ~is_pp
+  if is_b
+    chantype_array(ismember(chantype_array,'b')) = [];
+    chantype_array{end+1} = 'pp';
+    chantype_array{end+1} = 'b';
+  elseif is_l
+    chantype_array(ismember(chantype_array,'l')) = [];
+    chantype_array{end+1} = 'pp';
+    chantype_array{end+1} = 'l';
+  elseif is_r
+    chantype_array(ismember(chantype_array,'r')) = [];
+    chantype_array{end+1} = 'pp';
+    chantype_array{end+1} = 'r';
+  else
+    chantype_array{end+1} = 'pp';
+  end
+  chantype_pp = join(chantype_array,'_');
+  chantype_pp = chantype_pp{1};
+else
+  chantype_pp = chantype;
+end
+end
+
