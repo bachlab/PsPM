@@ -478,7 +478,7 @@ if not(sts==0)
   set(handles.button_autoscale,'Value',0);
   set(handles.button_all,'Value',1);
   
-elseif numel(varargin)>1 
+elseif numel(varargin)>1
   warning('Too many input arguments. Inputs 2:end ignored. ');
 end
 
@@ -538,7 +538,7 @@ function panel_wave_SelectionChangeFcn(hObject, ~, handles)
 % hObject    handle to the selected object in panel_wave
 % eventdata  structure with the following fields (see UIBUTTONGROUP)
 %	EventName: string 'SelectionChanged' (read only)
-%	OldValue: handle of the previously selected object or empty if none was 
+%	OldValue: handle of the previously selected object or empty if none was
 %           selected
 %	NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
@@ -600,7 +600,7 @@ function panel_event_SelectionChangeFcn(hObject, ~, handles)
 % hObject    handle to the selected object in panel_event
 % eventdata  structure with the following fields (see UIBUTTONGROUP)
 %	EventName: string 'SelectionChanged' (read only)
-%	OldValue: handle of the previously selected object or empty if none was 
+%	OldValue: handle of the previously selected object or empty if none was
 %           selected
 %	NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
@@ -680,6 +680,12 @@ end
 %% pp_plot
 
 function pp_plot(handles)
+
+global settings;
+if isempty(settings)
+  pspm_init;
+end
+
 % ---header----------------------------------------------------------------
 
 %       handles.name ... filename
@@ -859,23 +865,23 @@ elseif not(isempty(marker)) || not(isempty(wave)) ||...
     wv_chanid = handles.prop.wavechans(handles.prop.idwave);
     unit = deblank(handles.data{wv_chanid}.header.units);
     if strcmp(handles.prop.wave,'ecg')
-      ylabel([' Amplitude [',unit,'] '],'Fontsize',14);
+      ylabel([' Amplitude [',unit,'] '],'Fontsize',settings.ui.FontSizeText);
     elseif strcmp(handles.prop.wave,'scr')
-      ylabel([' Amplitude [',unit,'] '],'Fontsize',14)
+      ylabel([' Amplitude [',unit,'] '],'Fontsize',settings.ui.FontSizeText)
     elseif strcmp(handles.prop.wave,'emg')
-      ylabel([' Amplitude [',unit,'] '],'Fontsize',14)
+      ylabel([' Amplitude [',unit,'] '],'Fontsize',settings.ui.FontSizeText)
     elseif strcmp(handles.prop.wave,'hp')
-      ylabel(' Interpolated IBI [ms] ','Fontsize',14)
+      ylabel(' Interpolated IBI [ms] ','Fontsize',settings.ui.FontSizeText)
     elseif strcmp(handles.prop.wave,'pupil')
-      ylabel(' size in arbitrary units ','Fontsize',14)
+      ylabel(' size in arbitrary units ','Fontsize',settings.ui.FontSizeText)
     elseif contains(handles.prop.wave,'pupil')
-      ylabel([' Pupil size [',unit,'] '],'Fontsize',14)
+      ylabel([' Pupil size [',unit,'] '],'Fontsize',settings.ui.FontSizeText)
     elseif contains(handles.prop.wave,'gaze') && contains(handles.prop.wave,'x')
-      ylabel([' Gaze x coordinate [',unit,'] '],'Fontsize',14)
+      ylabel([' Gaze x coordinate [',unit,'] '],'Fontsize',settings.ui.FontSizeText)
     elseif contains(handles.prop.wave,'gaze') && contains(handles.prop.wave,'y')
-      ylabel([' Gaze y coordinate [',unit,'] '],'Fontsize',14)
+      ylabel([' Gaze y coordinate [',unit,'] '],'Fontsize',settings.ui.FontSizeText)
     else
-      ylabel([' unknown unit [',unit,'] '],'Fontsize',14)
+      ylabel([' unknown unit [',unit,'] '],'Fontsize',settings.ui.FontSizeText)
     end
     
     xlabel(' Time [s] ','Fontsize',16);
@@ -897,33 +903,34 @@ elseif not(isempty(marker)) || not(isempty(wave)) ||...
     %   plotting if only event channel is selected
     % ---------------------------------------------------------------------
     
-  elseif isempty(wave) && (not(isempty(hbeat)) || ... 
+  elseif isempty(wave) && (not(isempty(hbeat)) || ...
       not(isempty(marker)) || not(isempty(events)))
     if not(isempty(hbeat))
       MARKER=diff(hbeat);
       plot(MARKER,'ro')
-      ylabel('duration of ibi [s]','Fontsize',14)
+      ylabel('Duration of ibi [s]','Fontsize',settings.ui.FontSizeText)
     elseif not(isempty(marker))
       MARKER=diff(marker);
       stem(MARKER,'r')
-      ylabel('inter-marker duration [s]','Fontsize',14)
+      ylabel('Inter-marker duration [s]','Fontsize',settings.ui.FontSizeText)
     elseif not(isempty(events))
       MARKER=diff(events);
       plot(MARKER,'ro')
-      ylabel('inter-event duration [s]','Fontsize',14)
+      ylabel('Inter-event duration [s]','Fontsize',settings.ui.FontSizeText)
     else
       % MARKER=[];
     end
     
-    xlabel('Time in seconds [s] ','Fontsize',16);
+    xlabel('Time [s] ','Fontsize',settings.ui.FontSizeText);
     if not(isempty(marker))
-      legend('marker')
+      legend('marker','Fontsize',settings.ui.FontSizeText)
     elseif not(isempty(hbeat))
-      legend('heartbeats')
+      legend('heartbeats','Fontsize',settings.ui.FontSizeText)
     elseif not(isempty(events))
-      legend([handles.list_event_channel.String{handles.prop.idevent},' events'])
+      legend([handles.list_event_channel.String{handles.prop.idevent},' events'],...
+        'Fontsize',settings.ui.FontSizeText)
     else
-      legend('unknown events')
+      legend('unknown events','Fontsize',settings.ui.FontSizeText)
     end
   end
 end
@@ -1000,9 +1007,9 @@ function list_wave_channel_Callback(~, ~, ~)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns 
+% Hints: contents = cellstr(get(hObject,'String')) returns
 %         list_wave_channel contents as cell array
-%         contents{get(hObject,'Value')} returns selected item from 
+%         contents{get(hObject,'Value')} returns selected item from
 %         list_wave_channel
 end
 
@@ -1027,9 +1034,9 @@ function list_event_channel_Callback(~, ~, ~)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns 
+% Hints: contents = cellstr(get(hObject,'String')) returns
 %        list_event_channel contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from 
+%        contents{get(hObject,'Value')} returns selected item from
 %        list_event_channel
 end
 
@@ -1120,7 +1127,7 @@ string_channel_list = [];
 if r_channels > 1 && c_channels > 1
   for i_r_channel=1:r_channels
     for i_c_channels=1:c_channels
-      % array_channel_type(r_channels,c_channels) = ... 
+      % array_channel_type(r_channels,c_channels) = ...
       %   handles.data{i_r_channel,i_c_channels}.header.chantype;
       targeted_channel_reference = ...
         handles.data{i_r_channel,i_c_channels}.header.chantype;
