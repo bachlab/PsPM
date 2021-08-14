@@ -4,6 +4,7 @@ classdef pspm_pupil_pp_test < pspm_testcase
   %__________________________________________________________________________
   % PsPM TestEnvironment
   % (C) 2019 Eshref Yozdemir (University of Zurich)
+  % Update 2021 Teddy Chao (WCHN, UCL)
   
   properties
     raw_input_filename = fullfile('ImportTestData', 'eyelink', 'S114_s2.asc');
