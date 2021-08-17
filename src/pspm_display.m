@@ -63,14 +63,14 @@ end
 
 % load chantypes from settings variable
 
-j=1 ; l=1;
-for k=1:length(settings.chantypes)
+j = 1 ; l = 1;
+for k = 1:length(settings.chantypes)
   if strcmp(settings.chantypes(k).data,'wave')
-    handles.prop.setwave{j}=settings.chantypes(k).type;
-    j=j+1;
+    handles.prop.setwave{j} = settings.chantypes(k).type;
+    j = j+1;
   elseif strcmp(settings.chantypes(k).data,'events')
-    handles.prop.setevent{l}=settings.chantypes(k).type;
-    l=l+1;
+    handles.prop.setevent{l} = settings.chantypes(k).type;
+    l = l+1;
   end
 end
 
@@ -82,14 +82,14 @@ pspm_ui(hObject, handles, 'display');
 
 if(numel(varargin)) == 1
   if iscell(varargin{1,1})
-    filename=varargin{1,1}{1};
+    filename = varargin{1,1}{1};
   else
-    filename=varargin{1,1};
+    filename = varargin{1,1};
   end
-  [~, handles.info, handles.data, ~]=pspm_load_data(filename,0);
-  handles.name=filename;
+  [~, handles.info, handles.data, ~] = pspm_load_data(filename,0);
+  handles.name = filename;
   [~,filename_display,~] = fileparts(filename);
-  handles.tag_summary_source_file_content.String=filename_display;
+  handles.tag_summary_source_file_content.String = filename_display;
   update_summary_list(handles);
   
   % handles.text_file_summary = filename;
@@ -103,14 +103,14 @@ if(numel(varargin)) == 1
   
   % ---add text to wave listbox--------------------------------------
   
-  listitems{1,1}='none';
-  handles.prop.wavechans(1)=0;
-  j=2;
-  for k=1:length(handles.data)
+  listitems{1,1} = 'none';
+  handles.prop.wavechans(1) = 0;
+  j = 2;
+  for k = 1:length(handles.data)
     if any(strcmp(handles.data{k,1}.header.chantype,handles.prop.setwave))
-      listitems{j,1}=handles.data{k,1}.header.chantype;
-      handles.prop.wavechans(j)=k;
-      j=j+1;
+      listitems{j,1} = handles.data{k,1}.header.chantype;
+      handles.prop.wavechans(j) = k;
+      j = j+1;
     end
   end
   
@@ -118,14 +118,14 @@ if(numel(varargin)) == 1
   clear listitems
   
   % ---add text to event listbox & activate additional options-------
-  listitems{1,1}='none';
-  handles.prop.eventchans(1)=0;
-  j=2;
-  for k=1:length(handles.data)
+  listitems{1,1} = 'none';
+  handles.prop.eventchans(1) = 0;
+  j = 2;
+  for k = 1:length(handles.data)
     if any(strcmp(handles.data{k,1}.header.chantype,handles.prop.setevent))
-      listitems{j,1}=handles.data{k,1}.header.chantype;
-      handles.prop.eventchans(j)=k;
-      j=j+1;
+      listitems{j,1} = handles.data{k,1}.header.chantype;
+      handles.prop.eventchans(j) = k;
+      j = j+1;
       set(handles.option_integrated,'Enable','on');
       set(handles.option_extra,'Enable','on');
     end
@@ -171,9 +171,9 @@ function push_next_Callback(~, ~, handles)
 x1 = str2double(get(handles.edit_start_x,'String'));
 x2 = str2double(get(handles.edit_winsize_x,'String'));
 
-y=get(handles.display_plot,'YLim');
+y = get(handles.display_plot,'YLim');
 
-x1=x1+x2; x2=x1+x2;
+x1 = x1+x2; x2 = x1+x2;
 
 axis([x1 x2 y(1) y(2)])
 
@@ -195,11 +195,12 @@ function push_back_Callback(~, ~, handles)
 x1 = str2double(get(handles.edit_start_x,'String'));
 x2 = str2double(get(handles.edit_winsize_x,'String'));
 
-x1=x1-x2; x2=x1+x2;
+x1 = x1-x2;
+x2 = x1+x2;
 
 set(handles.edit_start_x,'String',num2str(x1));
 
-y=get(handles.display_plot,'YLim');
+y = get(handles.display_plot,'YLim');
 
 axis([x1 x2 y(1) y(2)])
 
@@ -217,10 +218,10 @@ function option_extra_Callback(hObject, ~, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of option_extra
-status=get(handles.option_extra,'Value');
-if status==1
+status = get(handles.option_extra,'Value');
+if status == 1
   set(handles.option_integrated,'Value',0)
-elseif status==0
+elseif status == 0
   set(handles.option_integrated,'Value',1)
 end
 
@@ -397,8 +398,8 @@ function button_all_Callback(~, ~, handles)
 % handles    structure with handles and user data (see GUIDATA)
 axis('auto');
 
-y=get(handles.display_plot,'ylim');
-x=get(handles.display_plot,'xlim');
+y = get(handles.display_plot,'ylim');
+x = get(handles.display_plot,'xlim');
 
 set(handles.edit_start_x,'String',num2str(x(1)));
 set(handles.edit_winsize_x,'String',num2str(x(2)-x(1)));
@@ -422,38 +423,41 @@ function load_Callback(hObject, ~, handles)
 
 % -------------------------------------------------------------------------
 
-wd=cd;
-typ='mat';
-sel=[];
-mesg='select pspm_datafiles to display';
+wd = cd;
+typ = 'mat';
+sel = [];
+mesg = 'select pspm_datafiles to display';
 
-[filename,sts]=spm_select(1,typ,mesg,sel,wd);
+[filename,sts] = spm_select(1,typ,mesg,sel,wd);
 
-if not(sts==0)
+if not(sts == 0)
   
   handles.name = filename;
-  [~, handles.info, handles.data, ~]=pspm_load_data(filename,0);
+  [~, handles.info, handles.data, ~] = pspm_load_data(filename,0);
+  handles.name = filename;
+  [~,filename_display,~] = fileparts(filename);
+  handles.tag_summary_source_file_content.String = filename_display;
   update_summary_list(handles);
   
   guidata(hObject, handles);
   
   % ---set wave and event channel value to none ---------------------
-  handles.prop.wave='none';
+  handles.prop.wave = 'none';
   set(handles.list_wave_channel,'Value',1)
   
-  handles.prop.event='none';
+  handles.prop.event = 'none';
   set(handles.list_event_channel,'Value',1)
   
   % ---add text to wave listbox--------------------------------------
   
-  listitems{1,1}='none';
-  handles.prop.wavechans(1)=0;
-  j=2;
-  for k=1:length(handles.data)
+  listitems{1,1} = 'none';
+  handles.prop.wavechans(1) = 0;
+  j = 2;
+  for k = 1:length(handles.data)
     if any(strcmp(handles.data{k,1}.header.chantype,handles.prop.setwave))
-      listitems{j,1}=handles.data{k,1}.header.chantype;
-      handles.prop.wavechans(j)=k;
-      j=j+1;
+      listitems{j,1} = handles.data{k,1}.header.chantype;
+      handles.prop.wavechans(j) = k;
+      j = j+1;
     end
   end
   
@@ -461,14 +465,14 @@ if not(sts==0)
   clear listitems
   
   % ---add text to event listbox & activate additional options-------
-  listitems{1,1} = 'none';
-  handles.prop.eventchans(1) = 0;
+  listitems{1,1}  =  'none';
+  handles.prop.eventchans(1)  =  0;
   j = 2;
-  for k=1:length(handles.data)
+  for k = 1:length(handles.data)
     if any(strcmp(handles.data{k,1}.header.chantype,handles.prop.setevent))
       listitems{j,1} = handles.data{k,1}.header.chantype;
       handles.prop.eventchans(j) = k;
-      j=j+1;
+      j = j+1;
       set(handles.option_integrated,'Enable','on');
       set(handles.option_extra,'Enable','on');
     end
@@ -491,15 +495,15 @@ function saveas_Callback(~, ~, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-y=get(handles.display_plot,'ylim');
-x=get(handles.display_plot,'xlim');
+y = get(handles.display_plot,'ylim');
+x = get(handles.display_plot,'xlim');
 
 [filename,pathname] = uiputfile(...
   {'*.jpg';'*.tif';'*.png';'*.gif';'*.bmp'},'Save Image');
 
 screen_size = get(0, 'ScreenSize');
-savename=sprintf('%s%s',pathname,filename);
-q=figure('Visible','Off');
+savename = sprintf('%s%s',pathname,filename);
+q = figure('Visible','Off');
 set(q, 'Position', [0 0 screen_size(3) screen_size(4) ] );
 pp_plot(handles);
 axis([x(1) x(2) y(1) y(2)]);
@@ -545,20 +549,20 @@ function panel_wave_SelectionChangeFcn(hObject, ~, handles)
 
 
 
-status0=get(handles.radio_wnone,'Value');
-status1=get(handles.radio_scr,'Value');
-status2=get(handles.radio_ecg,'Value');
-status3=get(handles.radio_hr,'Value');
-status4=get(handles.radio_hp,'Value');
-status5=get(handles.radio_pupil,'Value');
-status6=get(handles.radio_emg,'Value');
-status7=get(handles.radio_resp,'Value');
+status0 = get(handles.radio_wnone,'Value');
+status1 = get(handles.radio_scr,'Value');
+status2 = get(handles.radio_ecg,'Value');
+status3 = get(handles.radio_hr,'Value');
+status4 = get(handles.radio_hp,'Value');
+status5 = get(handles.radio_pupil,'Value');
+status6 = get(handles.radio_emg,'Value');
+status7 = get(handles.radio_resp,'Value');
 
 set(handles.button_autoscale,'Enable','on');
 set(handles.button_all,'Enable','on');
 
-if status0== 1
-  handles.prop.wave='none';
+if status0 == 1
+  handles.prop.wave = 'none';
   set(handles.radio_hb,'Enable','on');
   set(handles.button_autoscale,'Enable','off');
   set(handles.button_all,'Enable','off')
@@ -569,13 +573,13 @@ elseif status2 == 1
   handles.prop.wave='ecg';
 elseif status3 == 1
   handles.prop.wave='hr';
-elseif status4==1
+elseif status4 == 1
   handles.prop.wave='hp';
-elseif status5==1
+elseif status5 == 1
   handles.prop.wave='pupil';
-elseif status6==1
+elseif status6 == 1
   handles.prop.wave='emg';
-elseif status7==1
+elseif status7 == 1
   handles.prop.resp='resp';
 end
 
@@ -584,7 +588,7 @@ if ~(strcmp(handles.prop.wave,'ecg')) && strcmp(handles.prop.event,'hb')
   set(handles.option_extra,'Value',1)
 end
 
-if status0==0
+if status0 == 0
   set(handles.radio_integrated,'Enable','on') ;
 end
 
@@ -605,10 +609,10 @@ function panel_event_SelectionChangeFcn(hObject, ~, handles)
 %	NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
 
-status0=get(handles.radio_enone,'Value');
-status1=get(handles.option_extra,'Value');
-status2=get(handles.radio_integrated,'Value');
-status3=get(handles.radio_hb,'Value');
+status0 = get(handles.radio_enone,'Value');
+status1 = get(handles.option_extra,'Value');
+status2 = get(handles.radio_integrated,'Value');
+status3 = get(handles.radio_hb,'Value');
 
 
 if status0 == 1
@@ -693,266 +697,203 @@ end
 %               .wave (channel number)
 %               .event(channel number)
 %
-% ---Initialise------------------------------------------------------------
-marker=[];
-hbeat=[];
-events=[]; % any other marker channels
-wave=[];
 
-% get eventchan info
+% Initialise
+marker = [];
+hbeat = [];
+events = []; % any other marker channels
+wave = [];
+
+% Obtain data
+
+% Get eventchan info
 if not(isempty(handles.prop.eventchans)) && ...
     not(handles.prop.eventchans(handles.prop.idevent)==0) && ...
     strcmp(handles.data{...
     handles.prop.eventchans(handles.prop.idevent),1}.header.chantype,...
     'marker')
-  marker=handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
-  if get(handles.option_extra,'Value')==1
-    handles.prop.event='extra';
+  marker = handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
+  if get(handles.option_extra,'Value') == 1
+    handles.prop.event = 'extra';
   else
-    handles.prop.event='integrated';
+    handles.prop.event = 'integrated';
   end
 elseif not(isempty(handles.prop.eventchans)) && ...
     not(handles.prop.eventchans(handles.prop.idevent)==0) && ...
     strcmp(...
     handles.data{...
     handles.prop.eventchans(handles.prop.idevent),1}.header.chantype,'hb')
-  hbeat=handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
-  if get(handles.option_extra,'Value')==1
-    handles.prop.event='extra';
+  hbeat = handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
+  if get(handles.option_extra,'Value') == 1
+    handles.prop.event = 'extra';
   else
-    handles.prop.event='integrated';
+    handles.prop.event = 'integrated';
   end
 elseif not(isempty(handles.prop.eventchans)) && ...
     not(handles.prop.eventchans(handles.prop.idevent)==0)
-  events=handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
+  events = handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
   if get(handles.option_extra,'Value')==1
-    handles.prop.event='extra';
+    handles.prop.event = 'extra';
   else
-    handles.prop.event='integrated';
+    handles.prop.event = 'integrated';
   end
 end
 
-% get wave chan info
-if not(handles.prop.wavechans(handles.prop.idwave) == 0)
+% Get wave chan info
+if handles.prop.wavechans(handles.prop.idwave) ~= 0
   wave = handles.data{handles.prop.wavechans(handles.prop.idwave),1}.data;
-  sr.wave = ...
-    handles.data{handles.prop.wavechans(handles.prop.idwave),1}.header.sr;
+  sr.wave = handles.data{handles.prop.wavechans(handles.prop.idwave),1}.header.sr;
 end
 
-%   plotting if no channel is selected
-% -------------------------------------------------------------------------
-if isempty(marker) && isempty(wave) && isempty(hbeat) && isempty(events)
-  hold off
-  x=1;
-  y=1;
-  plot(x);
-  text(x,y,'   nothing to display - please select channel   ',...
-    'FontSize',20,'BackgroundColor','k',...
-    'Color','w','HorizontalAlignment','Center','VerticalAlignment',...
-    'Middle')
-elseif not(isempty(marker)) || not(isempty(wave)) ||...
-    not(isempty(hbeat)) || not(isempty(events))
-  
-  % ---prepare ecg-----------------------------------------------------------
-  if not(isempty(handles.prop.wave))  % only if there is wave info
-    
-    switch handles.prop.wave
-      case 'ecg'
-      case 'hr'
-      case 'hp'
-      case 'scr'
-      case 'pupil'
-      case 'emg'
-      case 'resp'
-    end
-    
-  end
-  
-  % Plotting if both event and wave channel are selected
-  % -----------------------------------------------------------------------
-  % plotting data against sr corrected time
-  if not(isempty(wave)) % && (not(isempty(marker)) || not(isempty(hbeat)))
-    
-    % y = zeros(size(wave));
-    y = (0:1/sr.wave:(length(wave)/sr.wave));
-    y = y';
-    y = y(1:size(wave,1),1:size(wave,2));
-    y = y(1:size(wave,1),1);
-    % ---plot wave channel---------------------------------------------
-    
-    plot(y, wave, 'Color', 'k');
-    
-    % ---plot eventmarker--------------------------------------------
-    
-    % set basline value for the event chanel
-    base(1)=min(wave)-.1*min(wave);
-    base(2)=min(wave)-(max(wave)-min(wave));
-    
-    if not(isempty(hbeat))
-      
-      hbeat=round(hbeat*sr.wave);
-      
-      HBEAT = nan(size(wave));
-      
-      if strcmp(handles.prop.event,'extra')
-        HBEAT(hbeat,1)=min(wave)-.5;
-      elseif strcmp(handles.prop.event,'integrated')
-        temp=wave(hbeat,1);
-        temp(isnan(temp)) = median(temp,'omitnan');
-        HBEAT(hbeat,1)=temp;
-      end
-      
-      hold on ; h=stem(y,HBEAT,'ro');
-      hbase=get(h,'Baseline');
-      
-      if strcmp(handles.prop.event,'extra')
-        set(hbase,'BaseValue',base(2),'Visible','off');
-      elseif strcmp(handles.prop.event,'integrated')
-        set(hbase,'BaseValue',base(1),'Visible','off');
-      end
-      
-    elseif not(isempty(marker))
-      
-      marker=round(marker*sr.wave);
-      if marker(1,1)==0
-        marker(1,1)=1;
-      end
-      marker=marker(marker~=0);
-      MARKER=nan(size(wave));
-      
-      
-      if strcmp(handles.prop.event,'extra')
-        MARKER(marker,1)=min(wave)-.5;
-      elseif strcmp(handles.prop.event,'integrated')
-        temp=wave(marker,1);
-        temp(isnan(temp)) = median(temp,'omitnan');
-        MARKER(marker,1)=temp;
-      end
-      
-      hold on ; h=stem(y,MARKER,'ro');
-      hbase=get(h,'Baseline');
-      
-      if strcmp(handles.prop.event,'extra')
-        set(hbase,'BaseValue',base(2),'Visible','off');
-      elseif strcmp(handles.prop.event,'integrated')
-        set(hbase,'BaseValue',base(1),'Visible','off');
-      end
-    elseif not(isempty(events))
-      
-      events=round(events*sr.wave);
-      
-      EVENTS = nan(size(wave));
-      
-      if strcmp(handles.prop.event,'extra')
-        EVENTS(events,1)=min(wave)-.5;
-      elseif strcmp(handles.prop.event,'integrated')
-        temp=wave(events,1);
-        temp(isnan(temp)) = median(temp,'omitnan');
-        EVENTS(events,1)=temp;
-      end
-      
-      hold on ; h=stem(y,EVENTS,'r');
-      hbase=get(h,'Baseline');
-      
-      if strcmp(handles.prop.event,'extra')
-        set(hbase,'BaseValue',base(2),'Visible','off');
-      elseif strcmp(handles.prop.event,'integrated')
-        set(hbase,'BaseValue',base(1),'Visible','off');
-      end
-    end
-    
-    
-    wv_chanid = handles.prop.wavechans(handles.prop.idwave);
-    unit = deblank(handles.data{wv_chanid}.header.units);
-    if strcmp(handles.prop.wave,'ecg')
-      ylabel([' Amplitude [',unit,'] '],'Fontsize',settings.ui.FontSizeText);
-    elseif strcmp(handles.prop.wave,'scr')
-      ylabel([' Amplitude [',unit,'] '],'Fontsize',settings.ui.FontSizeText)
-    elseif strcmp(handles.prop.wave,'emg')
-      ylabel([' Amplitude [',unit,'] '],'Fontsize',settings.ui.FontSizeText)
-    elseif strcmp(handles.prop.wave,'hp')
-      ylabel(' Interpolated IBI [ms] ','Fontsize',settings.ui.FontSizeText)
-    elseif strcmp(handles.prop.wave,'pupil')
-      ylabel(' size in arbitrary units ','Fontsize',settings.ui.FontSizeText)
-    elseif contains(handles.prop.wave,'pupil')
-      ylabel([' Pupil size [',unit,'] '],'Fontsize',settings.ui.FontSizeText)
-    elseif contains(handles.prop.wave,'gaze') && contains(handles.prop.wave,'x')
-      ylabel([' Gaze x coordinate [',unit,'] '],'Fontsize',settings.ui.FontSizeText)
-    elseif contains(handles.prop.wave,'gaze') && contains(handles.prop.wave,'y')
-      ylabel([' Gaze y coordinate [',unit,'] '],'Fontsize',settings.ui.FontSizeText)
-    else
-      ylabel([' unknown unit [',unit,'] '],'Fontsize',settings.ui.FontSizeText)
-    end
-    
-    xlabel(' Time [s] ','Fontsize',16);
-    
-    if not(isempty(marker))
-      legend(handles.prop.wave,'marker')
-    elseif not(isempty(hbeat))
-      legend(handles.prop.wave,'heartbeats')
-    elseif not(isempty(events))
-      legend(handles.prop.wave,...
-        [handles.list_event_channel.String{handles.prop.idevent},...
-        ' events'])
-    elseif not(strcmp(handles.prop.event,'none'))
-      legend(handles.prop.wave,'unknown events')
-    else
-      legend(handles.prop.wave)
-    end
-    
-    %   plotting if only event channel is selected
-    % ---------------------------------------------------------------------
-    
-  elseif isempty(wave) && (not(isempty(hbeat)) || ...
-      not(isempty(marker)) || not(isempty(events)))
-    if not(isempty(hbeat))
-      MARKER=diff(hbeat);
-      plot(MARKER,'ro')
-      ylabel('Duration of ibi [s]','Fontsize',settings.ui.FontSizeText)
-    elseif not(isempty(marker))
-      MARKER=diff(marker);
-      stem(MARKER,'r')
-      ylabel('Inter-marker duration [s]','Fontsize',settings.ui.FontSizeText)
-    elseif not(isempty(events))
-      MARKER=diff(events);
-      plot(MARKER,'ro')
-      ylabel('Inter-event duration [s]','Fontsize',settings.ui.FontSizeText)
-    else
-      % MARKER=[];
-    end
-    
+time_length = handles.tag_summary_recording_duration_content.Value;
+
+
+% Do not plot if no wave channel is selected
+if isempty(wave)
+  if not(isempty(hbeat))
+    x_axis = 0:time_length/(length(hbeat)-2):time_length;
+    plot(x_axis,diff(hbeat),'ro');
     xlabel('Time [s] ','Fontsize',settings.ui.FontSizeText);
-    if not(isempty(marker))
-      legend('marker','Fontsize',settings.ui.FontSizeText)
-    elseif not(isempty(hbeat))
-      legend('heartbeats','Fontsize',settings.ui.FontSizeText)
-    elseif not(isempty(events))
-      legend([handles.list_event_channel.String{handles.prop.idevent},' events'],...
-        'Fontsize',settings.ui.FontSizeText)
-    else
-      legend('unknown events','Fontsize',settings.ui.FontSizeText)
-    end
+    ylabel('Duration of ibi [s]','Fontsize',settings.ui.FontSizeText);
+    legend('heartbeats','Fontsize',settings.ui.FontSizeText);
+  elseif not(isempty(marker))
+    x_axis = 0:time_length/(length(marker)-2):time_length;
+    stem(x_axis,diff(marker),'r');
+    legend('marker','Fontsize',settings.ui.FontSizeText);
+    xlabel('Time [s] ','Fontsize',settings.ui.FontSizeText);
+    ylabel('Inter-marker duration [s]','Fontsize',settings.ui.FontSizeText)
+  elseif not(isempty(events))
+    x_axis = 0:time_length/(length(events)-2):time_length;
+    plot(x_axis,diff(events),'ro')
+    xlabel('Time [s] ','Fontsize',settings.ui.FontSizeText);
+    ylabel('Inter-event duration [s]','Fontsize',settings.ui.FontSizeText)
+    legend([handles.list_event_channel.String{handles.prop.idevent},' events'],...
+      'Fontsize',settings.ui.FontSizeText)
+  else
+    f = msgbox(['Nothing to display. ',...
+    'Please select at least one channel.'], 'Error');
   end
+else
+  y = (0:1/sr.wave:(length(wave)/sr.wave));
+  y = y';
+  y = y(1:size(wave,1),1:size(wave,2));
+  y = y(1:size(wave,1),1);
+  plot(y, wave, 'Color', 'k'); % plot wave channel
+  legend(handles.prop.wave);
+  % set basline value for the event chanel
+  base(1) = min(wave)-.1*min(wave); 
+  base(2) = min(wave)-(max(wave)-min(wave));
+  % Plot heart beats
+  if ~isempty(hbeat)
+    hbeat = round(hbeat*sr.wave);
+    HBEAT = nan(size(wave));
+    if strcmp(handles.prop.event,'extra')
+      HBEAT(hbeat,1) = min(wave)-.5;
+    elseif strcmp(handles.prop.event,'integrated')
+      temp = wave(hbeat,1);
+      temp(isnan(temp))  =  median(temp,'omitnan');
+      HBEAT(hbeat,1) = temp;
+    end
+    hold on
+    h = stem(y,HBEAT,'ro');
+    legend(handles.prop.wave,'heartbeats');
+    hbase = get(h,'Baseline');
+    if strcmp(handles.prop.event,'extra')
+      set(hbase,'BaseValue',base(2),'Visible','off');
+    elseif strcmp(handles.prop.event,'integrated')
+      set(hbase,'BaseValue',base(1),'Visible','off');
+    end
+    hold off
+  end
+  % Plot marker
+  if ~isempty(marker)
+    marker = round(marker*sr.wave);
+    if marker(1,1)==0
+      marker(1,1) = 1;
+    end
+    marker = marker(marker~=0);
+    MARKER = nan(size(wave));
+    if strcmp(handles.prop.event,'extra')
+      MARKER(marker,1) = min(wave)-.5;
+    elseif strcmp(handles.prop.event,'integrated')
+      temp = wave(marker,1);
+      temp(isnan(temp)) = median(temp,'omitnan');
+      MARKER(marker,1) = temp;
+    end
+    hold on
+    h = stem(y,MARKER,'ro');
+    legend(handles.prop.wave,'marker');
+    hbase = get(h,'Baseline');
+    if strcmp(handles.prop.event,'extra')
+      set(hbase,'BaseValue',base(2),'Visible','off');
+    elseif strcmp(handles.prop.event,'integrated')
+      set(hbase,'BaseValue',base(1),'Visible','off');
+    end
+    hold off
+  end
+  % Plot events
+  if ~isempty(events)
+    events = round(events*sr.wave);
+    EVENTS = nan(size(wave));
+    if strcmp(handles.prop.event,'extra')
+      EVENTS(events,1) = min(wave)-.5;
+    elseif strcmp(handles.prop.event,'integrated')
+      temp = wave(events,1);
+      temp(isnan(temp)) = median(temp,'omitnan');
+      EVENTS(events,1) = temp;
+    end
+    hold on ; h = stem(y,EVENTS,'r');
+    hbase = get(h,'Baseline');
+    legend(handles.prop.wave,...
+    [handles.list_event_channel.String{handles.prop.idevent},...
+    ' events'])
+    if strcmp(handles.prop.event,'extra')
+      set(hbase,'BaseValue',base(2),'Visible','off');
+    elseif strcmp(handles.prop.event,'integrated')
+      set(hbase,'BaseValue',base(1),'Visible','off');
+    end
+    hold off
+  end
+  % Add labels
+  xlabel('Time [s]','Fontsize',settings.ui.FontSizeText);
+  wv_chanid = handles.prop.wavechans(handles.prop.idwave);
+  unit = deblank(handles.data{wv_chanid}.header.units);
+  Ylab = ['Unknown unit [',unit,']']; % default value
+  switch handles.prop.wave
+    case 'ecg'
+      Ylab = ['Amplitude [',unit,']'];
+    case 'scr'
+      Ylab = ['Amplitude [',unit,']'];
+    case 'emg'
+      Ylab = ['Amplitude [',unit,']'];
+    case 'hp'
+      Ylab = 'Interpolated IBI [ms]';
+    case {'pupil','pupil_l','pupil_r',...
+        'pupil_pp','pupil_pp_l','pupil_pp_r'}
+      Ylab = ['Pupil size [',unit,']'];
+    case {'gaze_x','gaze_x_l','gaze_x_r',...
+        'gaze_x_pp','gaze_x_pp_l','gaze_x_pp_r'}
+      Ylab = ['Gaze x coordinate [',unit,']'];
+    case {'gaze_y','gaze_y_l','gaze_y_r',...
+        'gaze_y_pp','gaze_y_pp_l','gaze_y_pp_r'}
+      Ylab = ['Gaze y coordinate [',unit,']'];
+  end
+  ylabel(Ylab,'Fontsize',settings.ui.FontSizeText);
 end
-% -------------------------------------------------------------------------
-% title(sprintf(' %s ',regexprep(handles.name, '([\\_])' ,'\\$1')),'Fontsize',18);
+hold on
 set(handles.display_plot,'XGrid','on')
 hold off
-% -------------------------------------------------------------------------
-
-x=get(handles.display_plot,'xlim');
+x = get(handles.display_plot,'xlim');
 if handles.tag_summary_recording_duration_content.Value>0
   set(handles.display_plot,'xlim',...
     [0,handles.tag_summary_recording_duration_content.Value]);
 end
-y=get(handles.display_plot,'ylim');
-x(2)=x(2)-x(1);
+y = get(handles.display_plot,'ylim');
+x(2) = x(2)-x(1);
 set(handles.edit_y_min,'String',num2str(y(1)))
 set(handles.edit_y_max,'String',num2str(y(2)))
 set(handles.edit_start_x,'String',num2str(x(1)))
 set(handles.edit_winsize_x,'String',num2str(x(2)))
-
-% -------------------------------------------------------------------------
 end
 
 % --- Executes when pspm_display is resized.
@@ -1059,31 +1000,28 @@ function button_plot_Callback(hObject, ~, handles)
 % hObject    handle to button_plot (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% ---get selected wave channel---------------------------------------------
-handles.prop.idwave=get(handles.list_wave_channel,'Value');
-handles.prop.wave=get(handles.list_wave_channel,'String');
-handles.prop.wave=handles.prop.wave{handles.prop.idwave,1};
-
-% ---get selected event channel--------------------------------------------
-handles.prop.idevent=get(handles.list_event_channel,'Value');
-handles.prop.event=get(handles.list_event_channel,'String');
-handles.prop.event=handles.prop.event{handles.prop.idevent,1};
-% ---deactivate marker buttons if necessary--------------------------------
-
-if handles.prop.idevent==1 || handles.prop.idwave==1
-  set(handles.option_integrated,'Enable','Off');
-  set(handles.option_extra,'Enable','Off');
+% Get selected wave channel
+if ~isfield(handles,'info')
+  f = errordlg('Please load a file first.', 'Error');
 else
-  set(handles.option_integrated,'Enable','On');
-  set(handles.option_extra,'Enable','On');
+  handles.prop.idwave = get(handles.list_wave_channel,'Value');
+  handles.prop.wave = get(handles.list_wave_channel,'String');
+  handles.prop.wave = handles.prop.wave{handles.prop.idwave,1};
+  % Get selected event channel
+  handles.prop.idevent = get(handles.list_event_channel,'Value');
+  handles.prop.event = get(handles.list_event_channel,'String');
+  handles.prop.event = handles.prop.event{handles.prop.idevent,1};
+  % Deactivate marker buttons if necessary
+  if handles.prop.idevent==1 || handles.prop.idwave==1
+    set(handles.option_integrated,'Enable','Off');
+    set(handles.option_extra,'Enable','Off');
+  else
+    set(handles.option_integrated,'Enable','On');
+    set(handles.option_extra,'Enable','On');
+  end
+  guidata(hObject, handles);
+  pp_plot(handles);
 end
-
-
-% -------------------------------------------------------------------------
-% Update handles structure
-guidata(hObject, handles);
-% -------------------------------------------------------------------------
-pp_plot(handles);
 end
 
 % --- Executes on button press in option_integrated.
@@ -1094,7 +1032,7 @@ function option_integrated_Callback(hObject, ~, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of option_integrated
 
-status=get(handles.option_integrated,'Value');
+status = get(handles.option_integrated,'Value');
 if status==1
   set(handles.option_extra,'Value',0)
 elseif status==0
@@ -1121,12 +1059,12 @@ handles.tag_summary_recording_duration_content.String = ...
   [num2str(handles.info.duration), ' s'];
 handles.tag_summary_recording_duration_content.Value = ...
   handles.info.duration;
-[r_channels,c_channels]=size(handles.data);
+[r_channels,c_channels] = size(handles.data);
 % array_channel_type = cell(r_channels,c_channels);
 string_channel_list = [];
 if r_channels > 1 && c_channels > 1
-  for i_r_channel=1:r_channels
-    for i_c_channels=1:c_channels
+  for i_r_channel = 1:r_channels
+    for i_c_channels = 1:c_channels
       % array_channel_type(r_channels,c_channels) = ...
       %   handles.data{i_r_channel,i_c_channels}.header.chantype;
       targeted_channel_reference = ...
@@ -1162,5 +1100,5 @@ else
       targeted_channel_display, newline];
   end
 end
-handles.tag_summary_channel_list_content.String=string_channel_list;
+handles.tag_summary_channel_list_content.String = string_channel_list;
 end
