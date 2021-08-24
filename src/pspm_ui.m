@@ -8,40 +8,53 @@ if ispc
     FontSizeTitle = 11;
     FontSizeText = 10;
     FontSizeCaption = 9;
-    FontSizeAttr = 7.5;
+    FontSizeAttr = 9;
+    DisplayUnit = 'points';
     FontNameText = 'Segoe UI';
     FontNameEmph = 'Segoe UI';
-    MainWeight = 0.65;
-    MainHeight = 0.65;
+    MainWeight = 500;
+    MainHeight = 500*0.8;
+    DisplayWeight = 250;
+    DisplayHeight = 250/5;
+    SwitchResize = 'off';
 elseif ismac
     FontSizeTitle = 16;
     FontSizeText = 14;
     FontSizeCaption = 12;
-    FontSizeAttr = 10;
+    FontSizeAttr = 13;
     FontNameText = 'Helvetica Neue';
-    FontNameEmph = 'Helvetica-Light';
-    MainWeight = 0.2819; % adjust width
-    MainHeight = 0.4425; % adjust height
+    FontNameEmph = 'Helvetica-Neue-Light';
+    DisplayUnit = 'points';
+    MainWeight = 750;
+    MainHeight = 750*0.8;
     DisplayWeight = 190;
     DisplayHeight = 60;
+    SwitchResize = 'off';
 else
     FontSizeTitle = 11;
     FontSizeText = 10;
     FontSizeCaption = 9;
-    FontSizeAttr = 8;
+    FontSizeAttr = 10;
     FontNameText = 'DejaVu Sans';
     FontNameEmph = 'DejaVu Sans';
-    MainWeight = 0.5;
-    MainHeight = 0.5;
+    DisplayUnit = 'points';
+    MainWeight = 650;
+    MainHeight = 650*0.8;
+    DisplayWeight = 190;
+    DisplayHeight = 60;
+    SwitchResize = 'on';
 end
 
 switch window
     case 'main'
+        handles.figure1.Units = DisplayUnit;
         handles.tag_attribution.FontName = FontNameText;
         handles.tag_attribution.FontSize = FontSizeAttr;
-        handles.tag_attribution.String = ['Version 5.1.1',newline,...
-        'Build ',datestr(now,'ddmmyyyy'),' with MATLAB 2021a',newline,...
-        'The PsPM Team, University College London'];
+        %handles.tag_attribution.Visible = 'off';
+        handles.tag_attribution.HorizontalAlignment = 'center';
+        attribution_disp_text = sprintf(['Version 5.1.1, Build ',datestr(now,'ddmmyyyy'),' with MATLAB 2021a, ',...
+        'The PsPM Team, University College London']);
+        handles.tag_attribution.String = attribution_disp_text;
         handles.tag_batch.FontName = FontNameText;
         handles.tag_batch.FontSize = FontSizeTitle;
         handles.tag_contrast_manager.FontName = FontNameText;
@@ -87,7 +100,7 @@ switch window
         handles.tag_tools_title.FontSize = FontSizeCaption;
         hObject.Position(3) = MainWeight;
         hObject.Position(4) = MainHeight;
-        hObject.Resize = 'off';
+        hObject.Resize = SwitchResize;
     case 'display'
         handles.button_all.FontName = FontNameText;
         handles.button_all.FontSize = FontSizeTitle;
@@ -147,7 +160,7 @@ switch window
         handles.text_y_min.FontSize = FontSizeText;
         hObject.Position(3) = DisplayWeight;
         hObject.Position(4) = DisplayHeight;
-        set(hObject,'Resize','on');
+        hObject.Resize = 'on';
 end
 
 end

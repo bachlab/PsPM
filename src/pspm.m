@@ -1,37 +1,10 @@
 function varargout = pspm(varargin)
-    % tag_PsPM is the main GUI for tag_PsPM
-    %__________________________________________________________________________
-    % tag_PsPM 5.1
-    % (C) 2008-2021 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-    % $Id: tag_pspm.m 636 2019-03-15 07:56:42Z lciernik $
-    % $Rev: 636 $
-
-    % this code was mainly produced by GUIDE
-    % PsPM_GUI M-file for PsPM_GUI.fig
-    %      PsPM_GUI, by itself, creates a new tag_PsPM or raises the existing
-    %      singleton*.
-    %
-    %      H = tag_pspm returns the handle to a new tag_PsPM or the handle to
-    %      the existing singleton*.
-    %
-    %      tag_PsPM('CALLBACK',hObject,eventData,handles,...) calls the local
-    %      function named CALLBACK in tag_PsPM.M with the given input arguments.
-    %
-    %      tag_PsPM('Property','Value',...) creates a new tag_PsPM or raises the
-    %      existing singleton*.  Starting from the left, property value pairs are
-    %      applied to the GUI before PsPM_OpeningFunction gets called.  An
-    %      unrecognized property name or invalid value makes property application
-    %      stop.  All inputs are passed to PsPM_OpeningFcn via varargin.
-    %
-    %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
-    %      instance to run (singleton)".
-    %
-    % See also: GUIDE, GUIDATA, GUIHANDLES
-
-    % Edit the above text to modify the response to help tag_PsPM
-
-    % Last Modified by GUIDE v2.5 07-Jul-2021 16:18:18
+    % pspm.m handles the main GUI for PsPM
+    % PsPM Version 5.1.1
+    % (C) 2008-2021 Dominik R Bach (Wellcome Centre for Human Neuroimaging)    
+    % Updated 22-07-2021 Teddy (WCHN, UCL)
+    
     % initialise
     % -------------------------------------------------------------------------
     global settings;
@@ -289,22 +262,22 @@ function tag_first_level_models_list_Callback(hObject, ~, ~)
     selected = get(hObject,'Value');
 
     switch selected
-    case 1
+    case 1 % SCR
         cfg_add_module('pspm.first_level.scr.glm_scr');
     case 2
         cfg_add_module('pspm.first_level.hp.glm_hp_e');
     case 3
         cfg_add_module('pspm.first_level.hp.glm_hp_fc');
     case 4
-        cfg_add_module('pspm.first_level.ps.glm_ps_fc');
-    case 5
         cfg_add_module('pspm.first_level.resp.glm_ra_e');
-    case 6
+    case 5
         cfg_add_module('pspm.first_level.resp.glm_ra_fc');
+    case 6
+        cfg_add_module('pspm.first_level.resp.glm_rfr_e');
     case 7
         cfg_add_module('pspm.first_level.resp.glm_rp_e');
     case 8
-        cfg_add_module('pspm.first_level.resp.glm_rfr_e');
+        cfg_add_module('pspm.first_level.ps.glm_ps_fc');
     case 9
         cfg_add_module('pspm.first_level.sebr.glm_sebr');
     case 10
@@ -325,30 +298,30 @@ function tag_data_preprocessing_list_Callback(hObject, ~, ~)
     selected = get(hObject,'Value');
     switch selected
     case 1
-        cfg_add_module('pspm.data_preprocessing.pp_heart_period.pp_heart_data');
+        cfg_add_module('pspm.data_preprocessing.pp_scr');%pp_scr
     case 2
+        cfg_add_module('pspm.data_preprocessing.pp_heart_period.pp_heart_data');
+    case 3
         %cfg_add_module('tag_pspm.data_preprocessing.pp_heart_period.ecg_editor');
         pspm_ecg_editor();
-    case 3
-        cfg_add_module('pspm.data_preprocessing.resp_pp');
     case 4
-        cfg_add_module('pspm.data_preprocessing.pp_pupil.process_illuminance');
+        cfg_add_module('pspm.data_preprocessing.resp_pp');
     case 5
-        cfg_add_module('pspm.data_preprocessing.pp_pupil.find_valid_fixations');
+        cfg_add_module('pspm.data_preprocessing.pp_pupil.process_illuminance');
     case 6
-        cfg_add_module('pspm.data_preprocessing.pp_pupil.pupil_correct');
+        cfg_add_module('pspm.data_preprocessing.pp_pupil.find_valid_fixations');
     case 7
-        cfg_add_module('pspm.data_preprocessing.pp_pupil.pupil_preprocess');
+        cfg_add_module('pspm.data_preprocessing.pp_pupil.pupil_correct');
     case 8
-        cfg_add_module('pspm.data_preprocessing.pupil_size_convert');
+        cfg_add_module('pspm.data_preprocessing.pp_pupil.pupil_preprocess');
     case 9
-        cfg_add_module('pspm.data_preprocessing.gaze_convert');
+        cfg_add_module('pspm.data_preprocessing.pupil_size_convert');
     case 10
-        cfg_add_module('pspm.data_preprocessing.pp_emg.find_sounds');
+        cfg_add_module('pspm.data_preprocessing.gaze_convert');
     case 11
-        cfg_add_module('pspm.data_preprocessing.pp_emg.pp_emg_data');
+        cfg_add_module('pspm.data_preprocessing.pp_emg.find_sounds');
     case 12
-        cfg_add_module('pspm.data_preprocessing.pp_scr');%pp_scr
+        cfg_add_module('pspm.data_preprocessing.pp_emg.pp_emg_data');
     end
 end
 

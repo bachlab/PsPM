@@ -77,7 +77,7 @@ frame=l}
 \title{PsPM: Psychophysiological Modelling}
 \maketitle
 \begin{center}
-Version 5.1.0
+Version 5.1.1
 \par\end{center}
 
 \medskip{}
@@ -5037,7 +5037,7 @@ were recorded.
 
 \subsubsection*{Data File}
 
-Choose the data file, in which you want to split sessions.
+Choose one data file, in which you want to split sessions, and only one data file is accepted.
 
 \subsubsection*{Marker Channel}
 
@@ -5057,6 +5057,15 @@ should be split according to given marker id's.
 markers.
 \item Marker: Split sessions according to given marker id's.
 \end{itemize}
+
+\subsubsection*{Missing epoch}
+Choose whether you would like to add a missing epochs file, where you would like to split sessions.
+\begin{itemize}
+\item No missing epochs file
+\item Add missing epochs file. \\
+In this option, you can choose one missing epochs file, in which you want to split sessions, and only one missing epochs file is accepted.
+\end{itemize}
+
 
 \subsubsection*{Overwrite Existing File}
 
@@ -7164,6 +7173,39 @@ processing has been fixed.
 \item pspm\_scr\_pp
 \begin{itemize}
 \item A bug that leads to incorrect matrix construction has been fixed.
+\end{itemize}
+\end{itemize}
+
+\subsection*{PsPM Version 5.1.1}
+\subsubsection*{New Functions}
+\begin{itemize}
+\item \texttt{pspm\_bf\_data}
+\begin{itemize}
+\item New function template to allow users creating their own basis functions (bf) from a data vector.
+\end{itemize}
+\end{itemize}
+\subsubsection*{UI Improvements}
+\begin{itemize}
+\item PsPM now has an improved GUI for the main screen and \texttt{pspm\_display}.
+\item PsPM now uses system specific design for Windows, macOS and Linux.
+\item A bug that affects GUI display has been fixed.
+\end{itemize}
+\subsubsection*{Bugfixes}
+\begin{itemize}
+\item \texttt{pspm\_dcm}
+\begin{itemize}
+\item A bug of channel and data referring that leads to incorrect missing epoch processing has been fixed.
+\item \texttt{pspm\_dcm} now handles empty epochs correctly.
+\end{itemize}
+\item \texttt{pspm\_scr\_pp}
+\begin{itemize}
+\item A bug that throws warning when using GUI has been fixed.
+\end{itemize}
+\item \texttt{pspm\_split\_sessions}
+\begin{itemize}
+\item A bug which leads to GUI crash has been fixed.
+\item \texttt{pspm\_split\_sessions} now accepts correct number of data files and missing epoch files in the GUI.
+\item \texttt{pspm\_split\_sessions} now processes missing epochs correctly.
 \end{itemize}
 \end{itemize}
 

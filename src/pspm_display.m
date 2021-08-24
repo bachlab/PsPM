@@ -15,7 +15,7 @@ function varargout = pspm_display(varargin)
     % v0.1 - Jan-2014
     % v0.2 - Apr-2014
     % v0.3 - Jun-2014: shortcuts added, small bugfixes
-    % Last Modified by GUIDE v2.5 08-Jul-2021 03:27:10
+    % Last Modified by GUIDE v2.5 13-Jul-2021 12:06:46
 
     % Updated 5 July 2021 by Teddy
 
@@ -170,8 +170,8 @@ function push_next_Callback(hObject, eventdata, handles)
     % eventdata  reserved - to be defined in a future version of MATLAB
     % handles    structure with handles and user data (see GUIDATA)
 
-    x1=str2num(get(handles.ed_start_x,'String'));
-    x2=str2num(get(handles.ed_winsize_x,'String'));
+    x1=str2num(get(handles.edit_start_x,'String'));
+    x2=str2num(get(handles.edit_winsize_x,'String'));
 
     y=get(handles.display_plot,'YLim');
 
@@ -179,9 +179,9 @@ function push_next_Callback(hObject, eventdata, handles)
 
     axis([x1 x2 y(1) y(2)])
 
-    set(handles.ed_start_x,'String',num2str(x1));
-    set(handles.ed_y_min,'String',num2str(y(1)));
-    set(handles.ed_y_max,'String',num2str(y(2)));
+    set(handles.edit_start_x,'String',num2str(x1));
+    set(handles.edit_y_min,'String',num2str(y(1)));
+    set(handles.edit_y_max,'String',num2str(y(2)));
 
     set(handles.button_all,'Value',0);
 end
@@ -194,20 +194,20 @@ function push_back_Callback(hObject, eventdata, handles)
     % handles    structure with handles and user data (see GUIDATA)
 
 
-    x1=str2num(get(handles.ed_start_x,'String'));
-    x2=str2num(get(handles.ed_winsize_x,'String'));
+    x1=str2num(get(handles.edit_start_x,'String'));
+    x2=str2num(get(handles.edit_winsize_x,'String'));
 
     x1=x1-x2; x2=x1+x2;
 
-    set(handles.ed_start_x,'String',num2str(x1));
+    set(handles.edit_start_x,'String',num2str(x1));
 
     y=get(handles.display_plot,'YLim');
 
     axis([x1 x2 y(1) y(2)])
 
-    set(handles.ed_start_x,'String',num2str(x1));
-    set(handles.ed_y_min,'String',num2str(y(1)));
-    set(handles.ed_y_max,'String',num2str(y(2)));
+    set(handles.edit_start_x,'String',num2str(x1));
+    set(handles.edit_y_min,'String',num2str(y(1)));
+    set(handles.edit_y_max,'String',num2str(y(2)));
 
     set(handles.button_all,'Value',0);
 end
@@ -252,19 +252,19 @@ function radio_integrated_Callback(hObject, eventdata, handles)
 end
 
 
-function ed_winsize_x_Callback(hObject, eventdata, handles)
-    % hObject    handle to ed_winsize_x (see GCBO)
+function edit_winsize_x_Callback(hObject, eventdata, handles)
+    % hObject    handle to edit_winsize_x (see GCBO)
     % eventdata  reserved - to be defined in a future version of MATLAB
     % handles    structure with handles and user data (see GUIDATA)
 
-    % Hints: get(hObject,'String') returns contents of ed_winsize_x as text
-    %        str2double(get(hObject,'String')) returns contents of ed_winsize_x as a double
-    x1=str2num(get(handles.ed_start_x,'String'));
+    % Hints: get(hObject,'String') returns contents of edit_winsize_x as text
+    %        str2double(get(hObject,'String')) returns contents of edit_winsize_x as a double
+    x1=str2num(get(handles.edit_start_x,'String'));
 
-    x2=str2num(get(handles.ed_winsize_x,'String'))+x1;
+    x2=str2num(get(handles.edit_winsize_x,'String'))+x1;
 
-    y1=str2num(get(handles.ed_y_min,'String'));
-    y2=str2num(get(handles.ed_y_max,'String'));
+    y1=str2num(get(handles.edit_y_min,'String'));
+    y2=str2num(get(handles.edit_y_max,'String'));
 
     if y1 >= y2
         warning(sprintf(' Ymin ( current input: %d ) must be smaller than Ymax ( current input: %d ) ! ',y1,y2));
@@ -277,8 +277,8 @@ function ed_winsize_x_Callback(hObject, eventdata, handles)
 end
 
 % --- Executes during object creation, after setting all properties.
-function ed_winsize_x_CreateFcn(hObject, eventdata, handles)
-    % hObject    handle to ed_winsize_x (see GCBO)
+function edit_winsize_x_CreateFcn(hObject, eventdata, handles)
+    % hObject    handle to edit_winsize_x (see GCBO)
     % eventdata  reserved - to be defined in a future version of MATLAB
     % handles    empty - handles not created until after all CreateFcns called
 
@@ -290,18 +290,18 @@ function ed_winsize_x_CreateFcn(hObject, eventdata, handles)
 end
 
 
-function ed_y_min_Callback(hObject, eventdata, handles)
-    % hObject    handle to ed_y_min (see GCBO)
+function edit_y_min_Callback(hObject, eventdata, handles)
+    % hObject    handle to edit_y_min (see GCBO)
     % eventdata  reserved - to be defined in a future version of MATLAB
     % handles    structure with handles and user data (see GUIDATA)
 
-    % Hints: get(hObject,'String') returns contents of ed_y_min as text
-    %        str2double(get(hObject,'String')) returns contents of ed_y_min as a double
-    x1=str2num(get(handles.ed_start_x,'String'));
-    x2=str2num(get(handles.ed_winsize_x,'String'))+x1;
+    % Hints: get(hObject,'String') returns contents of edit_y_min as text
+    %        str2double(get(hObject,'String')) returns contents of edit_y_min as a double
+    x1=str2num(get(handles.edit_start_x,'String'));
+    x2=str2num(get(handles.edit_winsize_x,'String'))+x1;
 
-    y1=str2num(get(handles.ed_y_min,'String'));
-    y2=str2num(get(handles.ed_y_max,'String'));
+    y1=str2num(get(handles.edit_y_min,'String'));
+    y2=str2num(get(handles.edit_y_max,'String'));
 
     if y1 >= y2
         warning(sprintf(' Ymin ( current input: %d ) must be smaller than Ymax ( current input: %d ) ! ',y1,y2));
@@ -314,8 +314,8 @@ function ed_y_min_Callback(hObject, eventdata, handles)
 end
 
 % --- Executes during object creation, after setting all properties.
-function ed_y_min_CreateFcn(hObject, eventdata, handles)
-    % hObject    handle to ed_y_min (see GCBO)
+function edit_y_min_CreateFcn(hObject, eventdata, handles)
+    % hObject    handle to edit_y_min (see GCBO)
     % eventdata  reserved - to be defined in a future version of MATLAB
     % handles    empty - handles not created until after all CreateFcns called
 
@@ -327,18 +327,18 @@ function ed_y_min_CreateFcn(hObject, eventdata, handles)
 end
 
 
-function ed_start_x_Callback(hObject, eventdata, handles)
-    % hObject    handle to ed_start_x (see GCBO)
+function edit_start_x_Callback(hObject, eventdata, handles)
+    % hObject    handle to edit_start_x (see GCBO)
     % eventdata  reserved - to be defined in a future version of MATLAB
     % handles    structure with handles and user data (see GUIDATA)
 
-    % Hints: get(hObject,'String') returns contents of ed_start_x as text
-    %        str2double(get(hObject,'String')) returns contents of ed_start_x as a double
-    x1=str2num(get(handles.ed_start_x,'String'));
-    x2=str2num(get(handles.ed_winsize_x,'String'))+x1;
+    % Hints: get(hObject,'String') returns contents of edit_start_x as text
+    %        str2double(get(hObject,'String')) returns contents of edit_start_x as a double
+    x1=str2num(get(handles.edit_start_x,'String'));
+    x2=str2num(get(handles.edit_winsize_x,'String'))+x1;
 
-    y1=str2num(get(handles.ed_y_min,'String'));
-    y2=str2num(get(handles.ed_y_max,'String'));
+    y1=str2num(get(handles.edit_y_min,'String'));
+    y2=str2num(get(handles.edit_y_max,'String'));
 
     if y1 >= y2
         warning(sprintf(' Ymin ( current input: %d ) must be smaller than Ymax ( current input: %d ) ! ',y1,y2));
@@ -350,8 +350,8 @@ function ed_start_x_Callback(hObject, eventdata, handles)
 end
 
 % --- Executes during object creation, after setting all properties.
-function ed_start_x_CreateFcn(hObject, eventdata, handles)
-    % hObject    handle to ed_start_x (see GCBO)
+function edit_start_x_CreateFcn(hObject, eventdata, handles)
+    % hObject    handle to edit_start_x (see GCBO)
     % eventdata  reserved - to be defined in a future version of MATLAB
     % handles    empty - handles not created until after all CreateFcns called
 
@@ -371,17 +371,17 @@ function button_autoscale_Callback(hObject, eventdata, handles)
 
     axis('auto')
     y=get(handles.display_plot,'ylim');
-    x=str2num(get(handles.ed_start_x,'String'));
+    x=str2num(get(handles.edit_start_x,'String'));
 
     x(2)=x(1)+15;
 
 
     axis([x(1) x(2) y(1) y(2)])
 
-    set(handles.ed_start_x,'String',num2str(x(1)));
-    set(handles.ed_winsize_x,'String',num2str(x(2)-x(1)));
-    set(handles.ed_y_min,'String',num2str(y(1)));
-    set(handles.ed_y_max,'String',num2str(y(2)));
+    set(handles.edit_start_x,'String',num2str(x(1)));
+    set(handles.edit_winsize_x,'String',num2str(x(2)-x(1)));
+    set(handles.edit_y_min,'String',num2str(y(1)));
+    set(handles.edit_y_max,'String',num2str(y(2)));
     set(handles.button_all,'Value',0);
 end
 
@@ -396,10 +396,10 @@ function button_all_Callback(hObject, eventdata, handles)
     y=get(handles.display_plot,'ylim');
     x=get(handles.display_plot,'xlim');
 
-    set(handles.ed_start_x,'String',num2str(x(1)));
-    set(handles.ed_winsize_x,'String',num2str(x(2)-x(1)));
-    set(handles.ed_y_min,'String',num2str(y(1)));
-    set(handles.ed_y_max,'String',num2str(y(2)));
+    set(handles.edit_start_x,'String',num2str(x(1)));
+    set(handles.edit_winsize_x,'String',num2str(x(2)-x(1)));
+    set(handles.edit_y_min,'String',num2str(y(1)));
+    set(handles.edit_y_max,'String',num2str(y(2)));
     set(handles.button_autoscale,'Value',0);
 end
 
@@ -632,19 +632,19 @@ function radio_wnone_Callback(hObject, eventdata, handles)
 end
 
 
-function ed_y_max_Callback(hObject, eventdata, handles)
-    % hObject    handle to ed_y_max (see GCBO)
+function edit_y_max_Callback(hObject, eventdata, handles)
+    % hObject    handle to edit_y_max (see GCBO)
     % eventdata  reserved - to be defined in a future version of MATLAB
     % handles    structure with handles and user data (see GUIDATA)
 
-    % Hints: get(hObject,'String') returns contents of ed_y_max as text
-    %        str2double(get(hObject,'String')) returns contents of ed_y_max as a double
+    % Hints: get(hObject,'String') returns contents of edit_y_max as text
+    %        str2double(get(hObject,'String')) returns contents of edit_y_max as a double
 
-    x1=str2num(get(handles.ed_start_x,'String'));
-    x2=str2num(get(handles.ed_winsize_x,'String'))+x1;
+    x1=str2num(get(handles.edit_start_x,'String'));
+    x2=str2num(get(handles.edit_winsize_x,'String'))+x1;
 
-    y1=str2num(get(handles.ed_y_min,'String'));
-    y2=str2num(get(handles.ed_y_max,'String'));
+    y1=str2num(get(handles.edit_y_min,'String'));
+    y2=str2num(get(handles.edit_y_max,'String'));
 
     if y1 >= y2
         warning(sprintf(' Ymin ( current input: %d ) must be smaller than Ymax ( current input: %d ) ! ',y1,y2));
@@ -657,8 +657,8 @@ function ed_y_max_Callback(hObject, eventdata, handles)
 end
 
 % --- Executes during object creation, after setting all properties.
-function ed_y_max_CreateFcn(hObject, eventdata, handles)
-    % hObject    handle to ed_y_max (see GCBO)
+function edit_y_max_CreateFcn(hObject, eventdata, handles)
+    % hObject    handle to edit_y_max (see GCBO)
     % eventdata  reserved - to be defined in a future version of MATLAB
     % handles    empty - handles not created until after all CreateFcns called
 
@@ -914,10 +914,10 @@ function [info]=pp_plot(handles)
     x=get(handles.display_plot,'xlim');
     y=get(handles.display_plot,'ylim');
     x(2)=x(2)-x(1);
-    set(handles.ed_y_min,'String',num2str(y(1)))
-    set(handles.ed_y_max,'String',num2str(y(2)))
-    set(handles.ed_start_x,'String',num2str(x(1)))
-    set(handles.ed_winsize_x,'String',num2str(x(2)))
+    set(handles.edit_y_min,'String',num2str(y(1)))
+    set(handles.edit_y_max,'String',num2str(y(2)))
+    set(handles.edit_start_x,'String',num2str(x(1)))
+    set(handles.edit_winsize_x,'String',num2str(x(2)))
 
     % -------------------------------------------------------------------------
 end
