@@ -33,28 +33,32 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2017 Tobias Moser (University of Zurich)
-  % Updated 2021 Teddy Chao (WCHN, UCL)
 
-  
+% $Id: pspm_get_eyelink.m 803 2019-08-26 08:00:45Z esrefo $
+% $Rev: 803 $
 
-%% Initialise
+% initialise
+% -------------------------------------------------------------------------
 global settings;
 if isempty(settings), pspm_init; end
 sourceinfo = []; sts = -1;
 % add specific import path for specific import function
 addpath(pspm_path('Import','eyelink'));
 
-%% transfer options
+% transfer options
+% -------------------------------------------------------------------------
 reference_distance = 700;
 reference_unit = 'mm';
 diameter_multiplicator = 0.00087743;
 area_multiplicator = 0.119;
 
-%% load data with specific function
+% load data with specific function
+% -------------------------------------------------------------------------
 data = import_eyelink(datafile);
 
-%% expand blink/saccade channels with offset
+% expand blink/saccade channels with offset
 % set data channels with blinks/saccades to NaN
+% -------------------------------------------------------------------------
 addpath(pspm_path('backroom'));
 for i = 1:numel(data)-1
   if strcmpi(data{i}.eyesObserved, 'l')
@@ -78,8 +82,9 @@ rmpath(pspm_path('backroom'));
 % iterate through data and fill up channel list as long as there is no
 % marker channel. if there is any marker channel, the settings accordingly
 % markerinfos, markers and marker type.
+% -------------------------------------------------------------------------
 
-%% ensure sessions have the same samplerate
+% ensure sessions have the same samplerate
 %separate marker_data from real data
 all_markers = data{numel(data)};
 data = data(1:numel(data)-1);
@@ -346,7 +351,7 @@ right_occurance = any(...
   cell2mat(cellfun(@(x) ~isempty(regexpi(x.type, '_r', 'once')),...
   import,'UniformOutput',0)));
 if left_occurance && right_occurance
-  sourceinfo.eyesObserved = 'b';
+  sourceinfo.eyesObserved = 'lr';
 elseif left_occurance && ~right_occurance
   sourceinfo.eyesObserved = 'l';
 else
