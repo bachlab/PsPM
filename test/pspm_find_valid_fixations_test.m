@@ -4,7 +4,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
   %__________________________________________________________________________
   % PsPM TestEnvironment
   % (C) 2016 Tobias Moser (University of Zurich)
-
+	% Updated 2021 Teddy Chao (WCHN, UCL)
 
   properties
     datafiles = {};
@@ -89,7 +89,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
 
       n_chans = 3; % will create 3 channels
       data = cell(n_chans*length(eyes), 1);
-      for i=1:length(eyes)
+      for i = 1:length(eyes)
         e = lower(eyes(i));
 
         % generate gaze data
@@ -144,6 +144,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     function test_work_chans(this, work_chans)
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
+			% generate bilateral data
       [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lr');
 
       options = struct();
@@ -174,9 +175,9 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       for i=1:numel(work_chans)
         chan = work_chans{i};
         if ischar(chan)
-          w_eyes = 'lr';
+          w_eyes = {'l','r'};
           for j=1:numel(w_eyes)
-            e = w_eyes(j);
+            e = w_eyes{j};
             search_chan = [chan '_' e];
             this.verifyTrue(any(strcmp(search_chan, chantypes)));
           end
@@ -190,6 +191,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     function test_work_eye(this, work_eye)
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
+			% generate bilateral data
       [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lr');
 
       options = struct();
@@ -402,12 +404,18 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
         for j=1:length(eyes)
           e = lower(eyes(j));
 
-          missing_chan = find(cellfun(@(x) strcmpi(x.header.chantype, ['pupil_missing_', e]), data), 1, 'last');
-          pupil_chan = find(cellfun(@(x) strcmpi(x.header.chantype, ['pupil_', e]), data), 1, 'last');
+          missing_chan = find(...
+          	cellfun(@(x) strcmpi(x.header.chantype, ['pupil_missing_', e]), data),...
+          	1, 'last');
+          pupil_chan = find(...
+          	cellfun(@(x) strcmpi(x.header.chantype, ['pupil_', e]), data),...
+          	1, 'last');
           this.verifyTrue(all(isnan(data{pupil_chan}.data(data{missing_chan}.data == 1))));
 
           if d.expect ~= -1
-            exp_missing = max(numel(data{pupil_chan}.data)*d.expect, sum(isnan(data{pupil_chan}.data)));
+            exp_missing = ...
+							max(numel(data{pupil_chan}.data)*d.expect,...
+							sum(isnan(data{pupil_chan}.data)));
             this.verifyTrue(sum(data{missing_chan}.data) == exp_missing);
           end
         end
@@ -449,8 +457,10 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
         for j=1:length(eyes)
           e = lower(eyes(j));
 
-          missing_chan = find(cellfun(@(x) strcmpi(x.header.chantype, ['pupil_missing_', e]), data), 1, 'last');
-          pupil_chan = find(cellfun(@(x) strcmpi(x.header.chantype, ['pupil_', e]), data), 1, 'last');
+          missing_chan = find(cellfun(@(x) strcmpi(x.header.chantype,...
+          	['pupil_missing_', e]), data), 1, 'last');
+          pupil_chan = find(cellfun(@(x) strcmpi(x.header.chantype,...
+          	['pupil_', e]), data), 1, 'last');
           this.verifyTrue(all(isnan(data{pupil_chan}.data(data{missing_chan}.data == 1))));
 
           if d.expect ~= -1
