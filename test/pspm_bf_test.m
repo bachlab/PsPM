@@ -24,7 +24,8 @@ properties(MethodSetupParameter)
     % Parameters for TestMethodSetup
     basis_function = {'FIR', 'hprf', 'hprf_e', ... 
         'hprf_fc', 'lcrf_gm', 'ldrf_gm', 'ldrf_gu', 'scrf', 'rarf_fc', ...
-        'psrf_fc', 'rarf_e', 'rarf_fc', 'rfrrf_e', 'rprf_e', 'sebrf'};
+        'psrf_fc', 'rarf_e', 'rarf_fc', 'rfrrf_e', 'rprf_e', 'sebrf',...
+        'spsrf_box'};
 end
 
 properties(TestParameter)
