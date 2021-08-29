@@ -12,7 +12,7 @@ function [bs, x] = pspm_bf_spsrf_box(varargin)
 % REFERENCE
 % (1) Xia Y, Melinscak F, Bach DR (2020) 
 % Saccadic Scanpath Length: An Index for Human Threat Conditioning
-% Behavioral Research Methods (submitted)
+% Behavioral Research Methods 53, pages 1426–1439 (2021)
 %________________________________________________________________________
 % PsPM 4.0
 
