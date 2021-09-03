@@ -476,8 +476,7 @@ defaults.chantypes(end+1) = ...
   'import', @pspm_get_custom, ...
   'data', 'wave');
 
-defaults.lateral.simplified = {'l', 'r', 'lr'};
-defaults.lateral.full = {'left', 'right', 'all'};
+
 
 defaults.findvalidfixations.chantypes = {...
   'gaze_pp_x', ...
@@ -974,6 +973,13 @@ defaults.import.mat.sr_threshold = 1; %maximum value of the field '.sr' to which
 defaults.split.max_sn = 10; % split sessions: assume maximum 10 sessions
 defaults.split.min_break_ratio = 3; % split sessions: assume inter marker intervals 3 times longer for breaks
 
+% Lateral setting
+defaults.lateral.b = 'lr';
+defaults.lateral.b.full = 'all';
+defaults.lateral.l = 'l';
+defaults.lateral.l.full = 'left';
+defaults.lateral.r = 'r';
+defaults.lateral.r.full = 'right';
 
 % other settings
 % -------------------------------------------------------------------------
