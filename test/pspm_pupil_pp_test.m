@@ -83,7 +83,7 @@ classdef pspm_pupil_pp_test < pspm_testcase
       opt.channel_combine = 'pupil_l';
       [~, out_channel] = pspm_pupil_pp(this.pspm_input_filename, opt);
       testdata = load(this.pspm_input_filename);
-      this.verifyEqual(testdata.data{out_channel}.header.chantype, 'pupil_pp_b');
+      this.verifyEqual(testdata.data{out_channel}.header.chantype, 'pupil_pp_lr');
     end
     
     function check_segments(this)
