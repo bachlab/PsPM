@@ -82,8 +82,11 @@ end;
 
 %set more defaults
 if ~isfield(options, 'eyes')
-    options.eyes = 'lr';
-elseif ~any(strcmpi(options.eyes, {'l', 'r', 'rl', 'lr'}))
+    options.eyes = settings.lateral.char.b;
+elseif ~any(strcmpi(options.eyes, {settings.lateral.char.l,...
+																	settings.lateral.char.r,...
+																	settings.lateral.char.b, ...
+																	'rl'}))
     warning('ID:invalid_input', ['''options.eyes'' must be ', ...
                                  'equal to ''l'', ''r'', ''rl'' or ''lr''.']); 
     return;

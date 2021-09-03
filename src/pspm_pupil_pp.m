@@ -266,13 +266,14 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
 		function [sts, smooth_signal] = preprocess(...
 			data, data_combine, segments, custom_settings, plot_data)
 			% load parameters
+      global settings
 			if isempty(settings)
 				pspm_init;
 			end
 			sts = 0;
 			% definitions
 			combining = ~isempty(data_combine{1}.data);
-			data_is_left = strcmpi(get_eye(data{1}.header.chantype), settings.lateral.l);
+			data_is_left = strcmpi(get_eye(data{1}.header.chantype), settings.lateral.char.l);
 			n_samples = numel(data{1}.data);
 			sr = data{1}.header.sr;
 			diameter.t_ms = linspace(0, 1000 * (n_samples-1) / sr, n_samples)';
@@ -311,11 +312,11 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
 			smooth_signal.header.chantype = convert_pp(data{1}.header.chantype);
 			if combining
 				chantype_array = split(smooth_signal.header.chantype,'_');
-				if ~isempty(chantype_array(ismember(chantype_array,settings.lateral.l)))
-					chantype_array(ismember(chantype_array,settings.lateral.l)) = {settings.lateral.b};
+				if ~isempty(chantype_array(ismember(chantype_array,settings.lateral.char.l)))
+					chantype_array(ismember(chantype_array,settings.lateral.char.l)) = {settings.lateral.char.b};
 				end
-				if ~isempty(chantype_array(ismember(chantype_array,settings.lateral.r)))
-					chantype_array(ismember(chantype_array,settings.lateral.r)) = {settings.lateral.b};
+				if ~isempty(chantype_array(ismember(chantype_array,settings.lateral.char.r)))
+					chantype_array(ismember(chantype_array,settings.lateral.char.r)) = {settings.lateral.char.b};
 				end
 				chantype_array = join(chantype_array, '_');
 				smooth_signal.header.chantype = chantype_array{1};
@@ -369,14 +370,13 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
 					seg_results = model.analyzeSegments();
 					seg_results = seg_results{1};
 					if combining
-						seg_eyes = {settings.lateral.l, settings.lateral.r, 'mean'};
+						seg_eyes = {settings.lateral.full.l, settings.lateral.full.r, 'mean'};
 					elseif data_is_left
-						seg_eyes = {settings.lateral.l};
+						seg_eyes = {settings.lateral.full.l};
 					else
-						seg_eyes = {settings.lateral.r};
+						seg_eyes = {settings.lateral.full.r};
 					end
-					smooth_signal.header.segments = store_segment_stats(...
-					smooth_signal.header.segments, seg_results, seg_eyes);
+					smooth_signal.header.segments = store_segment_stats(smooth_signal.header.segments, seg_results, seg_eyes);
 				end
   
 				if plot_data
@@ -456,6 +456,7 @@ function out_struct = assign_fields_recursively(out_struct, in_struct)
 end
 
 function chantype_pp = convert_pp(chantype)
+  global settings
 	if isempty(settings)
 		pspm_init;
 	end
@@ -464,22 +465,22 @@ function chantype_pp = convert_pp(chantype)
 	% find if there is pp
 	is_pp = any(strcmp(chantype_array,'pp'));
 	% find if it is bilateral (lr), left (l) or right (r)
-	is_b = any(strcmp(chantype_array,settings.lateral.b));
-	is_l = any(strcmp(chantype_array,settings.lateral.l));
-	is_r = any(strcmp(chantype_array,settings.lateral.r));
+	is_b = any(strcmp(chantype_array,settings.lateral.char.b));
+	is_l = any(strcmp(chantype_array,settings.lateral.char.l));
+	is_r = any(strcmp(chantype_array,settings.lateral.char.r));
 	if ~is_pp
 		if is_b
-			chantype_array(ismember(chantype_array,settings.lateral.b)) = [];
+			chantype_array(ismember(chantype_array,settings.lateral.char.b)) = [];
 			chantype_array{end+1} = 'pp';
-			chantype_array{end+1} = settings.lateral.b;
+			chantype_array{end+1} = settings.lateral.char.b;
 		elseif is_l
-			chantype_array(ismember(chantype_array,settings.lateral.l)) = [];
+			chantype_array(ismember(chantype_array,settings.lateral.char.l)) = [];
 			chantype_array{end+1} = 'pp';
-			chantype_array{end+1} = settings.lateral.l;
+			chantype_array{end+1} = settings.lateral.char.l;
 		elseif is_r
-			chantype_array(ismember(chantype_array,settings.lateral.r)) = [];
+			chantype_array(ismember(chantype_array,settings.lateral.char.r)) = [];
 			chantype_array{end+1} = 'pp';
-			chantype_array{end+1} = settings.lateral.r;
+			chantype_array{end+1} = settings.lateral.char.r;
 		else
 			chantype_array{end+1} = 'pp';
 		end
