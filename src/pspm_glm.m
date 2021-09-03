@@ -824,11 +824,11 @@ glm.regscale((end+1):(end+iSn)) = 1;
 
 % delete missing epochs and prepare output
 glm.YM = glm.Y;
-glm.YM(glm.M==1) = [];
-glm.Y(glm.M==1) = NaN;
+glm.YM(glm.M(1:length(glm.YM))==1) = [];
+glm.Y(glm.M(1:length(glm.Y))==1) = NaN;
 glm.XM = glm.X;
-glm.XM(glm.M==1, :) = [];
-glm.X(glm.M==1, :) = NaN;
+glm.XM(glm.M(1:length(glm.XM))==1, :) = [];
+glm.X(glm.M(1:length(glm.X))==1, :) = NaN;
 glm.Yhat    = NaN(size(Y));
 
 % clear local variables
