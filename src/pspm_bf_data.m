@@ -22,7 +22,10 @@ if nargin==0
 end
 
 % load data
-indata = load(datafile);
+if isempty(datafile)
+  return
+end
+indata = pspm_load_data(datafile);
 data = indata.data(:);
 
 % determine original sampling points
