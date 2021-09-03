@@ -193,7 +193,8 @@ elseif ~islogical(options.missing) && ~isnumeric(options.missing)
   warning('ID:invalid_input', ['Options.missing is neither logical ', ...
     'nor numeric.']);
   return;
-elseif ~any(strcmpi(options.eyes, settings.lateral.full))
+elseif ~any(strcmpi(options.eyes, {settings.lateral.full.b, ...
+    settings.lateral.full.l, settings.lateral.full.r}))
   warning('ID:invalid_input', ['Options.eyes must be either ''all'', ', ...
     '''left'' or ''right''.']);
   return;
