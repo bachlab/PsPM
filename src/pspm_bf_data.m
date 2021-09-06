@@ -11,6 +11,7 @@ function [bf, x] = pspm_bf_data(td)
 %_________________________________________________________________________
 % PsPM 5.1.1,
 % 2021 Dominik R Bach (University College London)
+% Updated 2021 Teddy Chao (WCHN, UCL)
 
 %% Constants 
 % CHANGE THIS TO CREATE YOUR FUNCTION
