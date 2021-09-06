@@ -8,9 +8,7 @@ classdef pspm_bf_test < matlab.unittest.TestCase
 %__________________________________________________________________________
 % PsPM TestEnvironment
 % (C) 2015 Tobias Moser (University of Zurich)
-
-% $Id: pspm_bf_test.m 467 2017-08-11 08:34:52Z tmoser $
-% $Rev: 467 $
+% Updated 2021 Teddy Chao (WCHN, UCL)
 
 properties(Constant)
     basis_function_prefix = 'pspm_bf_';
@@ -22,7 +20,7 @@ end
 
 properties(MethodSetupParameter)
     % Parameters for TestMethodSetup
-    basis_function = {'data', 'FIR', 'hprf', 'hprf_e', ... 
+    basis_function = {'FIR', 'hprf', 'hprf_e', ... 
         'hprf_fc', 'lcrf_gm', 'ldrf_gm', 'ldrf_gu', 'scrf', 'rarf_fc', ...
         'psrf_fc', 'rarf_e', 'rarf_fc', 'rfrrf_e', 'rprf_e', 'sebrf'};
 end
