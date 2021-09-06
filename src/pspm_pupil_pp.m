@@ -266,7 +266,7 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
 		function [sts, smooth_signal] = preprocess(...
 			data, data_combine, segments, custom_settings, plot_data)
 			% load parameters
-      global settings
+			global settings
 			if isempty(settings)
 				pspm_init;
 			end
@@ -456,7 +456,7 @@ function out_struct = assign_fields_recursively(out_struct, in_struct)
 end
 
 function chantype_pp = convert_pp(chantype)
-  global settings
+	global settings
 	if isempty(settings)
 		pspm_init;
 	end
@@ -464,7 +464,7 @@ function chantype_pp = convert_pp(chantype)
 	chantype_array = split(chantype,'_');
 	% find if there is pp
 	is_pp = any(strcmp(chantype_array,'pp'));
-	% find if it is bilateral (lr), left (l) or right (r)
+	% find if it is combined (lr), left (l) or right (r)
 	is_b = any(strcmp(chantype_array,settings.lateral.char.b));
 	is_l = any(strcmp(chantype_array,settings.lateral.char.l));
 	is_r = any(strcmp(chantype_array,settings.lateral.char.r));

@@ -26,8 +26,8 @@ function [pupil_pp] = pspm_cfg_pupil_preprocess(job)
     chan_def = cfg_menu;
     chan_def.name = 'Channel definition';
     chan_def.tag = 'chan_def';
-    chan_def.values = {'pupil', 'pupil_l', 'pupil_r', 'pupil_l_pp', 'pupil_r_pp'};
-    chan_def.labels = {'Best pupil', 'Left pupil', 'Right pupil', 'Left preprocessed pupil', 'Right preprocessed pupil'};
+    chan_def.values = {'pupil', 'pupil_l', 'pupil_r', 'pupil_lr', 'pupil_l_pp', 'pupil_r_pp', 'pupil_lr_pp'};
+    chan_def.labels = {'Best pupil', 'Left pupil', 'Right pupil', 'Combined left and right pupil', 'Left preprocessed pupil', 'Right preprocessed pupil', 'Combined left and right preprocessed pupil'};
     chan_def.val = {'pupil'};
     chan_def.help = {['Choose the channel definition. Only the last channel in the file corresponding to the selection ',...
         'will be corrected.']};

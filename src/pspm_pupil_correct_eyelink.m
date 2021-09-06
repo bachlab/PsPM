@@ -312,7 +312,7 @@ function chantype_pp = convert_pp(chantype)
 chantype_array = split(chantype,'_');
 % find if there is pp
 is_pp = any(strcmp(chantype_array,'pp'));
-% find if it is bilateral (b), left (l) or right (r)
+% find if it is combined (b), left (l) or right (r)
 is_b = any(strcmp(chantype_array,'b'));
 is_l = any(strcmp(chantype_array,'l'));
 is_r = any(strcmp(chantype_array,'r'));
