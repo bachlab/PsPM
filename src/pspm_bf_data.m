@@ -12,10 +12,10 @@ function [bf, x] = pspm_bf_data(td)
 	% 2021 Dominik R Bach (University College London)
 	% Updated 2021 Teddy Chao (WCHN, UCL)
 
-	%% Constants 
+	%% Constants
 	% CHANGE THIS TO CREATE YOUR FUNCTION
-	datafile = 'pspm_bf_data_sample.mat'; 
-	% this should be a *.mat file that contains a variable named 'data' with 
+	datafile = 'pspm_bf_data_sample.mat';
+	% this should be a *.mat file that contains a variable named 'data' with
 	% the data vector
 	sr = 10;
 	% this should be the sampling rate of your data vector, default to be 10
