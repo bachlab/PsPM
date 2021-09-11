@@ -11,9 +11,9 @@ jobs:
         # with: MATLAB R2020a
         # MATLAB release to set up (R2020a or later)
         # release: # optional, default is latest
-			- name: Run script
-				uses: matlab-actions/run-command@v1
-				command: test/pspm_test
+      - name: Run script
+        uses: matlab-actions/run-command@v1
+          command: test/pspm_test
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
