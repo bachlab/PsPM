@@ -113,12 +113,13 @@ function pspm_test(varargin)
 		disp('pspm_test: Some tests have failed!');
 	end
 
-	disp('===TEST_STATISTICS_BEGIN===');
-	display(format_test_results(stats)); % seems not able to be replaced with fprintf
-	disp('===TEST_STATISTICS_END===');
-	if quit_after_tests
-		exit_code = 1 - success;
-		quit(exit_code);
-	end
+
+  disp('===TEST_STATISTICS_BEGIN===');
+  display(format_test_results(stats));
+  disp('===TEST_STATISTICS_END===');
+  if quit_after_tests
+    exit_code = 1 - success;
+    quit(exit_code);
+  end
 
 end

@@ -1,15 +1,16 @@
 classdef pspm_bf_test < matlab.unittest.TestCase
-  % -------------------------------------------------------------------------
-  % Testfunction to test the generic settings of a basis function.
-  % The generic settings are:
-  %
-  % [y,x] = pspm_bf_<name>(td,<more args>)
-  % [y,x] = pspm_bf_<name>([td,<more args>])
-  %__________________________________________________________________________
-  % PsPM TestEnvironment
-  % (C) 2015 Tobias Moser (University of Zurich)
-  % Update 2021 Teddy Chao (WCHN, UCL)
-  
+
+% -------------------------------------------------------------------------
+% Testfunction to test the generic settings of a basis function.
+% The generic settings are:
+%
+% [y,x] = pspm_bf_<name>(td,<more args>)
+% [y,x] = pspm_bf_<name>([td,<more args>])
+%__________________________________________________________________________
+% PsPM TestEnvironment
+% (C) 2015 Tobias Moser (University of Zurich)
+% Updated 2021 Teddy Chao (WCHN, UCL)
+
   properties(Constant)
     basis_function_prefix = 'pspm_bf_';
   end
