@@ -118,7 +118,7 @@ function pspm_test(varargin)
     end
 
     disp('===TEST_STATISTICS_BEGIN===');
-    display(format_test_results(stats)); % seems not able to be replaced with fprintf
+    display(format_test_results(stats));
     disp('===TEST_STATISTICS_END===');
     if quit_after_tests
         exit_code = 1 - success;
