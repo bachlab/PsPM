@@ -15,4 +15,4 @@ jobs:
       - name: Run script
         uses: matlab-actions/run-command@v1
         with:
-          command: addpath('test'), addpath('src'), pspm_test_github_actions
+          command: addpath('test'), addpath('src'), pspm_test
