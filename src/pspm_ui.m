@@ -11,7 +11,7 @@ if ispc
     FontSizeAttr = 9;
     DisplayUnit = 'points';
     FontNameText = 'Segoe UI';
-    FontNameEmph = 'Segoe UI';
+    FontNameEmph = 'Segoe UI Bold';
     MainWeight = 500;
     MainHeight = 500*0.8;
     DisplayWeight = 250;
@@ -23,7 +23,7 @@ elseif ismac
     FontSizeCaption = 12;
     FontSizeAttr = 13;
     FontNameText = 'Helvetica Neue';
-    FontNameEmph = 'Helvetica-Neue-Light';
+    FontNameEmph = 'Gill Sans';
     DisplayUnit = 'points';
     MainWeight = 750;
     MainHeight = 750*0.8;
