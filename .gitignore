@@ -20,3 +20,6 @@ vendor/
 *.mat
 *.html
 !pspm_App.mat
+
+# For test folder, force to upload
+!/ImportTestData/*   
