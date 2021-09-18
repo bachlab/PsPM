@@ -1,4 +1,5 @@
 # Ignore different folders
+ImportTestData
 .bundle/
 .jekyll-cache/
 Gemfile
@@ -21,4 +22,4 @@ vendor/
 !pspm_App.mat
 
 # For test folder, force to upload
-!/ImportTestData/*   
+# !/ImportTestData/*   
