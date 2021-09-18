@@ -1,0 +1,31 @@
+[iView]
+Converted from:	"AAAAAAAAAAAA"
+Date:	00.00.0000 00:00:00
+Version:	IDF Event Detector 0.0.00
+Sample Rate:	500
+Subject:	abc                                                                                                                                                                                                                                                             
+Description:	abcdef                                                                                                                                                                                                                                                          
+
+Table Header for Fixations:
+Event Type	Trial	Number	Start	End	Duration	Location X	Location Y	Dispersion X	Dispersion Y	Plane	Avg. Pupil Size X	Avg Pupil Size Y
+
+Table Header for Saccades:
+Event Type	Trial	Number	Start	End	Duration	Start Loc.X	Start Loc.Y	End Loc.X	End Loc.Y	Amplitude	Peak Speed	Peak Speed At	Average Speed	Peak Accel.	Peak Decel.	Average Accel.
+
+Table Header for Blinks:
+Event Type	Trial	Number	Start	End	Duration
+
+Table Header for User Events:
+Event Type	Trial	Number	Start	Description
+
+Table Header for Trigger Line Events:
+Event Type	Trial	Number	Start	Duration	Port Status
+
+UserEvent	1	1	4000	# Message: CS
+TriggerLine	1	1	4000	8000	4000
+Fixation L	1	1	4000	8000	4000	1112.73	682.75	69	101	-1	10.15	10.15
+Saccade L	1	1	4000	6000	2000	1135.69	692.54	1157.16	602.74	3.55	212.44	0.22	98.17	6901.11	-5714.48	3480.57
+Blink L	1	1	6000	8000	2000
+Saccade R	1	1	12000	16000	4000	1440.62	840.76	1448.96	886.40	1.03	71.00	0.50	42.98	1641.58	-1227.01	910.78
+Fixation R	1	1	4000	8000	4000	892.66	649.22	44	53	-1	9.24	9.24
+Blink R	1	1	14000	22000	8000
