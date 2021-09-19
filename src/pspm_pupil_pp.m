@@ -148,14 +148,16 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
 	% (C) 2019 Eshref Yozdemir (University of Zurich)
 	% Updated 2021 Teddy Chao (WCHN, UCL)
 
-	%% Initialise
+
+	%% 1 Initialise
 	global settings;
 	if isempty(settings)
 		pspm_init;
 	end
 	sts = -1;
 
-	%% Create default arguments
+
+	%% 2 Create default arguments
 	if nargin == 1
 		options = struct();
 	end
@@ -184,309 +186,239 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
 		options.segments = {};
 	end
 
-	%% Input checks
+	%% 3 Input checks
 	if ~ismember(options.channel_action, {'add', 'replace'})
-		warning('ID:invalid_input', ...
-		'Option channel_action must be either ''add'' or ''replace''');
-		return;
+		warning('ID:invalid_input', 'Option channel_action must be either ''add'' or ''replace''');
+		return
 	end
 	for seg = options.segments
-		if ~isfield(seg{1}, 'start') ||...
-			~isfield(seg{1}, 'end') ||...
-			~isfield(seg{1}, 'name')
-			warning('ID:invalid_input', ...
-			'Each segment structure must have .start, .end and .name fields');
-			return;
+		if ~isfield(seg{1}, 'start') || ~isfield(seg{1}, 'end') || ~isfield(seg{1}, 'name')
+			warning('ID:invalid_input', 'Each segment structure must have .start, .end and .name fields');
+			return
 		end
 	end
 
-	%% Load
+	%% 4 Load
 	is_combined = ~strcmp(options.channel_combine, 'none');
-
 	addpath(pspm_path('backroom'));
 	[lsts, data] = pspm_load_single_chan(fn, options.channel, 'last', 'pupil');
 	if lsts ~= 1
-		return; 
+		return
 	end
 	if is_combined
-		[lsts, data_combine] = pspm_load_single_chan(...
-		fn, options.channel_combine, 'last', 'pupil');
-		if lsts ~= 1; return; end
-			if strcmp(get_eye(data{1}.header.chantype), ...
-				get_eye(data_combine{1}.header.chantype))
-				warning('ID:invalid_input', ...
-				'options.channel and options.channel_combine must specify different eyes');
-				return;
-			end
-			if data{1}.header.sr ~= data_combine{1}.header.sr
-				warning('ID:invalid_input', ...
-				'options.channel and options.channel_combine data have different sampling rate');
-				return;
-			end
-			if ~strcmp(data{1}.header.units, data_combine{1}.header.units)
-				warning('ID:invalid_input', ...
-				'options.channel and options.channel_combine data have different units');
-				return;
-			end
-			if numel(data{1}.data) ~= numel(data_combine{1}.data)
-				warning('ID:invalid_input', ...
-				'options.channel and options.channel_combine data have different lengths');
-				return;
-			end
-			old_chantype = sprintf('%s and %s', ...
-			data{1}.header.chantype, data_combine{1}.header.chantype);
-		else
-			data_combine{1}.data = [];
-			old_chantype = data{1}.header.chantype;
-		end
-		rmpath(pspm_path('backroom'));
-
-		%% preprocess
-		[lsts, smooth_signal] = preprocess(data, data_combine, ...
-		options.segments, options.custom_settings, options.plot_data);
+		[lsts, data_combine] = pspm_load_single_chan(fn, options.channel_combine, 'last', 'pupil');
 		if lsts ~= 1
-			return; 
+			return
 		end
-
-		%% save
-		channel_str = num2str(options.channel);
-		o.msg.prefix = sprintf(...
-		['Pupil preprocessing :: Input channel: %s ',...
-		'-- Input chantype: %s -- Output chantype: %s --'], ...
-		channel_str, ...
-		old_chantype, ...
-		smooth_signal.header.chantype);
-		[lsts, out_id] = pspm_write_channel(fn, smooth_signal, options.channel_action, o);
-		if lsts ~= 1; return; end
-
-			out_channel = out_id.channel;
-			sts = 1;
+		if strcmp(get_eye(data{1}.header.chantype), get_eye(data_combine{1}.header.chantype))
+			warning('ID:invalid_input', 'options.channel and options.channel_combine must specify different eyes');
+			return;
 		end
-
-		function [sts, smooth_signal] = preprocess(...
-			data, data_combine, segments, custom_settings, plot_data)
-			% load parameters
-			global settings
-			if isempty(settings)
-				pspm_init;
-			end
-			sts = 0;
-			% definitions
-			combining = ~isempty(data_combine{1}.data);
-			data_is_left = strcmpi(get_eye(data{1}.header.chantype), settings.lateral.char.l);
-			n_samples = numel(data{1}.data);
-			sr = data{1}.header.sr;
-			diameter.t_ms = linspace(0, 1000 * (n_samples-1) / sr, n_samples)';
-
-			if data_is_left
-				diameter.L = data{1}.data;
-				diameter.R = data_combine{1}.data;
-			else
-				diameter.L = data_combine{1}.data;
-				diameter.R = data{1}.data;
-			end
-			if size(diameter.L, 1) == 1
-				diameter.L = diameter.L';
-			end
-			if size(diameter.R, 1) == 1
-				diameter.R = diameter.R';
-			end
-			segmentStart = cell2mat(cellfun(@(x) x.start, segments, 'uni', false))';
-			segmentEnd = cell2mat(cellfun(@(x) x.end, segments, 'uni', false))';
-			segmentName = cellfun(@(x) x.name, segments, 'uni', false)';
-			segmentTable = table(segmentStart, segmentEnd, segmentName);
-			new_sr = custom_settings.valid.interp_upsamplingFreq;
-			upsampling_factor = new_sr / sr;
-			desired_output_samples = round(upsampling_factor * numel(data{1}.data));
-
-			%% load lib
-			libbase_path = pspm_path('ext','pupil-size', 'code');
-			libpath = {fullfile(libbase_path, 'dataModels'), ...
-			fullfile(libbase_path, 'helperFunctions')};
-			addpath(libpath{:});
-
-			%% filtering
-			model = PupilDataModel(...
-			data{1}.header.units, diameter, segmentTable, 0, custom_settings);
-			model.filterRawData();
-			smooth_signal.header.chantype = convert_pp(data{1}.header.chantype);
-			if combining
-				chantype_array = split(smooth_signal.header.chantype,'_');
-				if ~isempty(chantype_array(ismember(chantype_array,settings.lateral.char.l)))
-					chantype_array(ismember(chantype_array,settings.lateral.char.l)) = {settings.lateral.char.b};
-				end
-				if ~isempty(chantype_array(ismember(chantype_array,settings.lateral.char.r)))
-					chantype_array(ismember(chantype_array,settings.lateral.char.r)) = {settings.lateral.char.b};
-				end
-				chantype_array = join(chantype_array, '_');
-				smooth_signal.header.chantype = chantype_array{1};
-			end
-			smooth_signal.header.units = data{1}.header.units;
-			smooth_signal.header.sr = new_sr;
-			smooth_signal.header.segments = segments;
-
-			try
-				% store signal and valid samples
-				model.processValidSamples();
-				if combining
-					validsamples_obj = model.meanPupil_ValidSamples;
-    
-					smooth_signal.header.valid_samples.data_l = ...
-					model.leftPupil_ValidSamples.samples.pupilDiameter;
-					smooth_signal.header.valid_samples.sample_indices_l = ...
-					model.leftPupil_RawData.isValid;
-					smooth_signal.header.valid_samples.valid_percentage_l = ...
-					model.leftPupil_ValidSamples.validFraction;
-					smooth_signal.header.valid_samples.data_r = ...
-					model.rightPupil_ValidSamples.samples.pupilDiameter;
-					smooth_signal.header.valid_samples.sample_indices_r = ...
-					model.rightPupil_RawData.isValid;
-					smooth_signal.header.valid_samples.valid_percentage_r = ...
-					model.rightPupil_ValidSamples.validFraction;
-				else
-					if data_is_left
-						validsamples_obj = model.leftPupil_ValidSamples;
-						rawdata_obj = model.leftPupil_RawData;
-					else
-						validsamples_obj = model.rightPupil_ValidSamples;
-						rawdata_obj = model.rightPupil_RawData;
-					end
-    
-					smooth_signal.header.valid_samples.data = ...
-					validsamples_obj.samples.pupilDiameter;
-					smooth_signal.header.valid_samples.sample_indices = ...
-					find(rawdata_obj.isValid);
-					smooth_signal.header.valid_samples.valid_percentage = ...
-					validsamples_obj.validFraction;
-				end
-  
-				smooth_signal.data = validsamples_obj.signal.pupilDiameter;
-				smooth_signal.data = complete_with_nans(smooth_signal.data, ...
-				validsamples_obj.signal.t(1), ...
-				new_sr, desired_output_samples);
-  
-				% store segment information
-				if ~isempty(segments)
-					seg_results = model.analyzeSegments();
-					seg_results = seg_results{1};
-					if combining
-						seg_eyes = {settings.lateral.full.l, settings.lateral.full.r, 'mean'};
-					elseif data_is_left
-						seg_eyes = {settings.lateral.full.l};
-					else
-						seg_eyes = {settings.lateral.full.r};
-					end
-					smooth_signal.header.segments = store_segment_stats(smooth_signal.header.segments, seg_results, seg_eyes);
-				end
-  
-				if plot_data
-					model.plotData();
-				end
-			catch err
-				% https://www.mathworks.com/matlabcentral/answers/225796-rethrow-a-whole-error-as-warning
-				warning('ID:invalid_data_structure', ...
-				getReport(err, 'extended', 'hyperlinks', 'on'));
-				smooth_signal.data = NaN(desired_output_samples, 1);
-				sts = -1;
-			end
-
-			rmpath(libpath{:});
-			if sts == 0
-				sts = 1;
-			end
+		if data{1}.header.sr ~= data_combine{1}.header.sr
+			warning('ID:invalid_input', 'options.channel and options.channel_combine data have different sampling rate');
+			return;
 		end
-
-		function eyestr = get_eye(pupil_chantype)
-			indices = strfind(pupil_chantype, '_');
-			if numel(indices) == 1
-				begidx = indices(1) + 1;
-			endidx = numel(pupil_chantype);
-		else
-			begidx = indices(1) + 1;
-		endidx = indices(2) - 1;
+		if ~strcmp(data{1}.header.units, data_combine{1}.header.units)
+			warning('ID:invalid_input', 'options.channel and options.channel_combine data have different units');
+			return;
+		end
+		if numel(data{1}.data) ~= numel(data_combine{1}.data)
+			warning('ID:invalid_input', 'options.channel and options.channel_combine data have different lengths');
+			return;
+		end
+		old_chantype = sprintf('%s and %s', data{1}.header.chantype, data_combine{1}.header.chantype);
+	else
+		data_combine{1}.data = [];
+		old_chantype = data{1}.header.chantype;
 	end
-	eyestr = pupil_chantype(begidx : endidx);
+	rmpath(pspm_path('backroom'));
+
+	%% 5 preprocess
+	[lsts, smooth_signal] = preprocess(data, data_combine, options.segments, options.custom_settings, options.plot_data);
+	if lsts ~= 1
+		return
+	end
+
+	%% 6 save
+	channel_str = num2str(options.channel);
+	o.msg.prefix = sprintf(...
+	'Pupil preprocessing :: Input channel: %s -- Input chantype: %s -- Output chantype: %s --', ...
+	channel_str, ...
+	old_chantype, ...
+	smooth_signal.header.chantype);
+	[lsts, out_id] = pspm_write_channel(fn, smooth_signal, options.channel_action, o);
+	if lsts ~= 1
+		return
+	end
+	out_channel = out_id.channel;
+	sts = 1;
+end
+
+
+
+function [sts, smooth_signal] = preprocess(data, data_combine, segments, custom_settings, plot_data)
+	sts = 0;
+
+	% 1 definitions
+	combining = ~isempty(data_combine{1}.data);
+	data_is_left = strcmpi(get_eye(data{1}.header.chantype), 'l');
+	n_samples = numel(data{1}.data);
+	sr = data{1}.header.sr;
+	diameter.t_ms = linspace(0, 1000 * (n_samples-1) / sr, n_samples)';
+
+	if data_is_left
+		diameter.L = data{1}.data;
+		diameter.R = data_combine{1}.data;
+	else
+		diameter.L = data_combine{1}.data;
+		diameter.R = data{1}.data;
+	end
+	if size(diameter.L, 1) == 1
+		diameter.L = diameter.L';
+	end
+	if size(diameter.R, 1) == 1
+		diameter.R = diameter.R';
+	end
+	segmentStart = cell2mat(cellfun(@(x) x.start, segments, 'uni', false))';
+	segmentEnd = cell2mat(cellfun(@(x) x.end, segments, 'uni', false))';
+	segmentName = cellfun(@(x) x.name, segments, 'uni', false)';
+	segmentTable = table(segmentStart, segmentEnd, segmentName);
+	new_sr = custom_settings.valid.interp_upsamplingFreq;
+	upsampling_factor = new_sr / sr;
+	desired_output_samples = round(upsampling_factor * numel(data{1}.data));
+
+	% 2 load lib
+	libbase_path = pspm_path('ext','pupil-size', 'code');
+	libpath = {fullfile(libbase_path, 'dataModels'), fullfile(libbase_path, 'helperFunctions')};
+	addpath(libpath{:});
+
+	% 3 filtering
+	model = PupilDataModel(data{1}.header.units, diameter, segmentTable, 0, custom_settings);
+	model.filterRawData();
+	if combining
+		smooth_signal.header.chantype = 'pupil_lr_pp';
+	elseif strcmp(data{1}.header.chantype(end-2:end), '_pp')
+		smooth_signal.header.chantype = data{1}.header.chantype;
+	else
+		smooth_signal.header.chantype = [data{1}.header.chantype '_pp'];
+	end
+	smooth_signal.header.units = data{1}.header.units;
+	smooth_signal.header.sr = new_sr;
+	smooth_signal.header.segments = segments;
+
+	% 4 store signal and valid samples
+	try
+		model.processValidSamples();
+		if combining
+			validsamples_obj = model.meanPupil_ValidSamples;
+
+			smooth_signal.header.valid_samples.data_l = model.leftPupil_ValidSamples.samples.pupilDiameter;
+			smooth_signal.header.valid_samples.sample_indices_l = model.leftPupil_RawData.isValid;
+			smooth_signal.header.valid_samples.valid_percentage_l = model.leftPupil_ValidSamples.validFraction;
+			smooth_signal.header.valid_samples.data_r = model.rightPupil_ValidSamples.samples.pupilDiameter;
+			smooth_signal.header.valid_samples.sample_indices_r = model.rightPupil_RawData.isValid;
+			smooth_signal.header.valid_samples.valid_percentage_r = model.rightPupil_ValidSamples.validFraction;
+		else
+			if data_is_left
+				validsamples_obj = model.leftPupil_ValidSamples;
+				rawdata_obj = model.leftPupil_RawData;
+			else
+				validsamples_obj = model.rightPupil_ValidSamples;
+				rawdata_obj = model.rightPupil_RawData;
+			end
+			smooth_signal.header.valid_samples.data = validsamples_obj.samples.pupilDiameter;
+			smooth_signal.header.valid_samples.sample_indices = find(rawdata_obj.isValid);
+			smooth_signal.header.valid_samples.valid_percentage = validsamples_obj.validFraction;
+		end
+
+		smooth_signal.data = validsamples_obj.signal.pupilDiameter;
+		smooth_signal.data = complete_with_nans(smooth_signal.data, validsamples_obj.signal.t(1), ...
+		new_sr, desired_output_samples);
+
+		% 5 store segment information
+		if ~isempty(segments)
+			seg_results = model.analyzeSegments();
+			seg_results = seg_results{1};
+			if combining
+				seg_eyes = {'left', 'right', 'mean'};
+			elseif data_is_left
+				seg_eyes = {'left'};
+			else
+				seg_eyes = {'right'};
+			end
+			smooth_signal.header.segments = store_segment_stats(smooth_signal.header.segments, seg_results, seg_eyes);
+		end
+
+		if plot_data
+			model.plotData();
+		end
+	catch err
+		% https://www.mathworks.com/matlabcentral/answers/225796-rethrow-a-whole-error-as-warning
+		warning('ID:invalid_data_structure', getReport(err, 'extended', 'hyperlinks', 'on'));
+		smooth_signal.data = NaN(desired_output_samples, 1);
+		sts = -1;
+	end
+	rmpath(libpath{:});
+	if sts == 0
+		sts = 1;
+	end
+end
+
+function eyestr = get_eye(pupil_chantype)
+indices = strfind(pupil_chantype, '_');
+if numel(indices) == 1
+	begidx = indices(1) + 1;
+	endidx = numel(pupil_chantype);
+else
+	begidx = indices(1) + 1;
+	endidx = indices(2) - 1;
+end
+eyestr = pupil_chantype(begidx : endidx);
 end
 
 function segments = store_segment_stats(segments, seg_results, seg_eyes)
-	stat_columns = {...
-	'Pupil_SmoothSig_meanDiam', ...
-	'Pupil_SmoothSig_minDiam', ...
-	'Pupil_SmoothSig_maxDiam', ...
-	'Pupil_SmoothSig_missingDataPercent', ...
-	'Pupil_SmoothSig_sampleCount', ...
-	'Pupil_ValidSamples_meanDiam', ...
-	'Pupil_ValidSamples_minDiam', ...
-	'Pupil_ValidSamples_maxDiam', ...
-	'Pupil_ValidSamples_validPercent', ...
-	'Pupil_ValidSamples_sampleCount', ...
-	};
-	for eyestr = seg_eyes
-		for colstr = stat_columns
-			eyecolstr = [eyestr{1} colstr{1}];
-			col = seg_results.(eyecolstr);
-			for i = 1:numel(segments)
-				segments{i}.(eyecolstr) = col(i);
-			end
-		end
+stat_columns = {...
+'Pupil_SmoothSig_meanDiam', ...
+'Pupil_SmoothSig_minDiam', ...
+'Pupil_SmoothSig_maxDiam', ...
+'Pupil_SmoothSig_missingDataPercent', ...
+'Pupil_SmoothSig_sampleCount', ...
+'Pupil_ValidSamples_meanDiam', ...
+'Pupil_ValidSamples_minDiam', ...
+'Pupil_ValidSamples_maxDiam', ...
+'Pupil_ValidSamples_validPercent', ...
+'Pupil_ValidSamples_sampleCount', ...
+};
+for eyestr = seg_eyes
+for colstr = stat_columns
+	eyecolstr = [eyestr{1} colstr{1}];
+	col = seg_results.(eyecolstr);
+	for i = 1:numel(segments)
+		segments{i}.(eyecolstr) = col(i);
 	end
+end
+end
 end
 
 function data = complete_with_nans(data, t_beg, sr, output_samples)
-	% Complete the given data that possibly has missing samples at the
-	% beginning and at the end. The amount of missing samples is determined
-	% by sampling rate and the data beginning second t_beg.
-	sec_between_upsampled_samples = 1 / sr;
-	n_missing_at_the_beg = round(t_beg / sec_between_upsampled_samples);
-	n_missing_at_the_end = output_samples - numel(data) - n_missing_at_the_beg;
-	data = [NaN(n_missing_at_the_beg, 1) ; data ; NaN(n_missing_at_the_end, 1)];
+% Complete the given data that possibly has missing samples at the
+% beginning and at the end. The amount of missing samples is determined
+% by sampling rate and the data beginning second t_beg.
+sec_between_upsampled_samples = 1 / sr;
+n_missing_at_the_beg = round(t_beg / sec_between_upsampled_samples);
+n_missing_at_the_end = output_samples - numel(data) - n_missing_at_the_beg;
+data = [NaN(n_missing_at_the_beg, 1) ; data ; NaN(n_missing_at_the_end, 1)];
 end
 
 function out_struct = assign_fields_recursively(out_struct, in_struct)
-	% Assign all fields of in_struct to out_struct recursively, overwriting when necessary.
-	fnames = fieldnames(in_struct);
-	for i = 1:numel(fnames)
-		name = fnames{i};
-		if isstruct(in_struct.(name)) && isfield(out_struct, name)
-			out_struct.(name) = assign_fields_recursively(out_struct.(name), in_struct.(name));
-		else
-			out_struct.(name) = in_struct.(name);
-		end
-	end
+% Assign all fields of in_struct to out_struct recursively, overwriting when necessary.
+fnames = fieldnames(in_struct);
+for i = 1:numel(fnames)
+name = fnames{i};
+if isstruct(in_struct.(name)) && isfield(out_struct, name)
+	out_struct.(name) = assign_fields_recursively(out_struct.(name), in_struct.(name));
+else
+	out_struct.(name) = in_struct.(name);
 end
-
-function chantype_pp = convert_pp(chantype)
-	global settings
-	if isempty(settings)
-		pspm_init;
-	end
-	% analyse channel type and convert it as preprocessed (pp) channel type
-	chantype_array = split(chantype,'_');
-	% find if there is pp
-	is_pp = any(strcmp(chantype_array,'pp'));
-	% find if it is combined (lr), left (l) or right (r)
-	is_b = any(strcmp(chantype_array,settings.lateral.char.b));
-	is_l = any(strcmp(chantype_array,settings.lateral.char.l));
-	is_r = any(strcmp(chantype_array,settings.lateral.char.r));
-	if ~is_pp
-		if is_b
-			chantype_array(ismember(chantype_array,settings.lateral.char.b)) = [];
-			chantype_array{end+1} = 'pp';
-			chantype_array{end+1} = settings.lateral.char.b;
-		elseif is_l
-			chantype_array(ismember(chantype_array,settings.lateral.char.l)) = [];
-			chantype_array{end+1} = 'pp';
-			chantype_array{end+1} = settings.lateral.char.l;
-		elseif is_r
-			chantype_array(ismember(chantype_array,settings.lateral.char.r)) = [];
-			chantype_array{end+1} = 'pp';
-			chantype_array{end+1} = settings.lateral.char.r;
-		else
-			chantype_array{end+1} = 'pp';
-		end
-		chantype_pp = join(chantype_array,'_');
-		chantype_pp = chantype_pp{1};
-	else
-		chantype_pp = chantype;
-	end
+end
 end
