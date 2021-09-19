@@ -8,9 +8,7 @@ classdef pspm_bf_test < matlab.unittest.TestCase
 %__________________________________________________________________________
 % PsPM TestEnvironment
 % (C) 2015 Tobias Moser (University of Zurich)
-
-% $Id: pspm_bf_test.m 467 2017-08-11 08:34:52Z tmoser $
-% $Rev: 467 $
+% Updated 2021 Teddy Chao (WCHN, UCL)
 
 properties(Constant)
     basis_function_prefix = 'pspm_bf_';
