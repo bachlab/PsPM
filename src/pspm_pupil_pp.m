@@ -296,11 +296,16 @@ function [sts, smooth_signal] = preprocess(data, data_combine, segments, custom_
 	model = PupilDataModel(data{1}.header.units, diameter, segmentTable, 0, custom_settings);
 	model.filterRawData();
 	if combining
-		smooth_signal.header.chantype = 'pupil_lr_pp';
-	elseif strcmp(data{1}.header.chantype(end-2:end), '_pp')
+		smooth_signal.header.chantype = 'pupil_pp_c';
+	elseif contains(data{1}.header.chantype, '_pp')
 		smooth_signal.header.chantype = data{1}.header.chantype;
-	else
-		smooth_signal.header.chantype = [data{1}.header.chantype '_pp'];
+  else
+    marker = strfind(data{1}.header.chantype, '_');
+    marker = marker(1);
+		smooth_signal.header.chantype = ...
+      [data{1}.header.chantype(1:marker-1),...
+      '_pp_',...
+      data{1}.header.chantype(marker+1:end)];
 	end
 	smooth_signal.header.units = data{1}.header.units;
 	smooth_signal.header.sr = new_sr;
