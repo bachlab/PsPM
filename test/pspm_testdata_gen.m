@@ -51,7 +51,7 @@ function outfile = pspm_testdata_gen(channels, duration, filename)
 %                               channels or '.freq' and  for continuous channels
 %__________________________________________________________________________
 % PsPM
-% (C) 2013 Linus Ruettimann & Dominik R Bach (University of Zurich)
+% (C) 2013 Linus Rüettimann & Dominik R Bach (University of Zurich)
 
 % $Id: pspm_testdata_gen.m 458 2017-08-09 09:32:12Z tmoser $
 % $Rev: 458 $
