@@ -100,7 +100,7 @@ classdef import_smi_test < matlab.unittest.TestCase
 
     methods (Test)
         function test_import_smi(this)
-            this.test_import_smi_on_file({this.sample_file});
+            % this.test_import_smi_on_file({this.sample_file});
             this.test_import_smi_on_file({this.sample_file, this.event_file});
         end
     end
