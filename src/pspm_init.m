@@ -1088,7 +1088,7 @@ defaults.glm(9) = ... % GLM for SEBR (fear-conditioning)
 defaults.glm(10) = ... % GLM for Scanpath-speed
     struct('modality', 'sps', ...                               % modality name
     'modelspec', 'sps', ...                                  % modality name
-    'cbf', struct('fhandle', @pspm_bf_spsrf_box, 'args', 1), ...  % default basis function/set
+    'cbf', struct('fhandle', @pspm_bf_spsrf_box, 'args', 3.5), ...  % default basis function/set
     'filter', struct('lpfreq', NaN, 'lporder', NaN,  ...        % default filter settings
     'hpfreq', NaN, 'hporder', NaN, 'down', 1000, ...
     'direction', 'uni'), ...
