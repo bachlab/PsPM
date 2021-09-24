@@ -11,7 +11,7 @@ function [pp_gaze_convert] = pspm_cfg_gaze_convert
 
 % Initialise
 global settings
-%if isempty(settings), pspm_init; end
+if isempty(settings), pspm_init; end
 
 %% Datafile
 datafile         = cfg_files;
@@ -77,7 +77,7 @@ eyes.name           = 'Eyes';
 eyes.tag            = 'eyes';
 eyes.val            = {'all'};
 eyes.labels         = {'All eyes', 'Left eye', 'Right eye'};
-eyes.values         = {'lr', 'l', 'r'};
+eyes.values         = {defaults.lateral.char.b, defaults.lateral.char.l, defaults.lateral.char.r};
 eyes.help           = {['Choose eyes which should be processed. If ''All', ...
     'eyes'' is selected, all eyes which are present in the data will ', ...
     'be processed. Otherwise only the chosen eye will be processed.']};

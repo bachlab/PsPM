@@ -42,6 +42,10 @@ function [data] = import_smi(varargin)
     %__________________________________________________________________________
     %
     % (C) 2019 Laure Ciernik
+    
+    global settings;
+    if isempty(settings), pspm_init; end
+    
     if isempty(varargin)
         error('ID:invalid_input', 'import_SMI.m needs at least one input sample_file.');
     end
@@ -90,7 +94,7 @@ function [data] = import_smi(varargin)
         line_ctr = line_ctr + 1;
         curr_line = all_text(line_begs(line_ctr) : line_begs(line_ctr + 1) - back_off);
     end
-    header_sample = header_sample';
+    header_sample = transpose(header_sample);
     line_begs = line_begs(line_ctr + 1 : end);
     all_text = all_text(line_begs(1) : end);
     line_begs = line_begs - line_begs(1) + 1;
@@ -111,7 +115,7 @@ function [data] = import_smi(varargin)
     % gaze information
     % calibration area
     cal_a_pos = strncmpi(header_sample, '## Calibration Area',19);
-    if~isempty(cal_a_pos)
+    if ~isempty(cal_a_pos)
         cal_field = regexp(header_sample{cal_a_pos}, '\s+', 'split');
         xmax = str2double(cal_field{4});
         ymax = str2double(cal_field{5});
@@ -121,7 +125,7 @@ function [data] = import_smi(varargin)
     end
     % calibration points
     cal_p_pos = strncmpi(header_sample, '## Calibration Point',20);
-    if~isempty(cal_p_pos)
+    if ~isempty(cal_p_pos)
         CP = header_sample(cal_p_pos);
         CP_open = cell2mat(cellfun(@(x)regexpi(x,'('),CP,'uniformoutput',0));
         CP_close = cell2mat(cellfun(@(x)regexpi(x,')'),CP,'uniformoutput',0));
@@ -130,7 +134,7 @@ function [data] = import_smi(varargin)
         end
         CP_inf = cellfun(@(x) strsplit(x,';'),CP_inf,'uniformoutput',0);
         CP_inf = cellfun(@(x) cellfun(@(y) str2double(y),x,'uniformoutput',0),CP_inf,'uniformoutput',0);
-        CP_inf = cellfun(@(x) x',CP_inf,'uniformoutput',0);
+        CP_inf = cellfun(@(x) x', CP_inf, 'uniformoutput',0);
         calibration_points = cell2mat([CP_inf{:}]');
     else
         calibration_points=[];
@@ -145,11 +149,11 @@ function [data] = import_smi(varargin)
     l_eye = any(cell2mat(cellfun(@(x)strcmpi(x,'LEFT'),format_fields,'UniformOutput',0)));
     r_eye = any(cell2mat(cellfun(@(x)strcmpi(x,'RIGHT'),format_fields,'UniformOutput',0)));
     if l_eye && r_eye
-        eyesObserved = 'LR';
+        eyesObserved = settings.lateral.cap.b;
     elseif l_eye
-        eyesObserved = 'L';
+        eyesObserved = settings.lateral.cap.l;
     else
-        eyesObserved = 'R';
+        eyesObserved = settings.lateral.cap.r;
     end
     % Stimulus dimension
     sd_pos = strncmpi(header_sample, '## Stimulus Dimension',21);
@@ -232,7 +236,7 @@ function [data] = import_smi(varargin)
     if isempty(trial_changepoints)
         sess_beg_end = [0 numel(datanum(:, 1))];
     else
-        sess_beg_end = [0 trial_changepoints' numel(datanum(:, 1))];
+        sess_beg_end = [0 transpose(trial_changepoints) numel(datanum(:, 1))];
     end
     data = cell(n_sessions, 1);
     %% convert data, compute blink, saccade and messages
@@ -274,7 +278,7 @@ function [data] = import_smi(varargin)
             ignore_str_pos{1}=cell(4,1);
             ignore_str_pos{2}=cell(4,1);
 
-            if strcmpi(eyesObserved,'LR')
+            if strcmpi(eyesObserved,settings.lateral.cap.b)
                 % alwas add the time of the beginning of the current trial
                 % since the measured start and end times are relative to the
                 % time of the beginning ot the current trial
@@ -297,7 +301,7 @@ function [data] = import_smi(varargin)
 
 
             elseif strcmpi(eyesObserved, 'L')
-                start_blink = eventsRaw.blink_l.start(blink_l_trial_sess);%+time;
+                start_blink = eventsRaw.blink_l.start(blink_l_trial_sess); %+time;
                 end_blink = eventsRaw.blink_l.end(blink_l_trial_sess)+time;
                 start_saccade = eventsRaw.sacc_l.start(sacc_l_trial_sess);%+time;
                 end_saccade = eventsRaw.sacc_l.end(sacc_l_trial_sess);%+time;
@@ -366,7 +370,7 @@ function [data] = import_smi(varargin)
         raw_columns = columns;
         data{sn}.raw_columns = raw_columns;
 
-        if strcmpi(data{sn}.eyesObserved, 'LR')
+        if strcmpi(data{sn}.eyesObserved, settings.lateral.cap.b)
             % pupilL, pupilR, xL, yL, xR, yR, blinkL, blinkR, saccadeL,
             % saccadeR
             % get idx of different channel

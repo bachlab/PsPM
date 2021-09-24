@@ -43,7 +43,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       duration = 5*60; % 5 minutes
       
       % create time series
-      t = (0:sr^-1:duration-sr^-1)';
+      t = transpose(0:sr^-1:duration-sr^-1);
       
       % screen settings in cm
       screen_width = 50;
@@ -79,10 +79,10 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       
       degrees = {struct('deg', all_deg, 'expect', 0, 'name', 'all'), ...
         struct('deg', none_deg, 'expect', 1, 'name', 'none'), ...
-        struct('deg', some_deg, 'expect', -1, 'name', 'some')};
+        struct('deg', some_deg, 'expect', -1, 'name', 'some') };
       bitmaps = {struct('deg', all_bit, 'expect', 0, 'name', 'all'), ...
         struct('deg', none_bit, 'expect', 1, 'name', 'none'), ...
-        struct('deg', some_bit, 'expect', -1, 'name', 'some')};
+        struct('deg', some_bit, 'expect', -1, 'name', 'some') };
       
       
       infos.duration = duration;
@@ -145,7 +145,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     function test_work_chans(this, work_chans)
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
-      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lr');
+      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'c');
       
       options = struct();
       d = vertcat(degs{:});
@@ -172,10 +172,10 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
         n_data((n_old_chans+1):n_new_chans), 'UniformOutput', 0);
       
       % test for chans
-      for i=1:numel(work_chans)
+      for i = 1:numel(work_chans)
         chan = work_chans{i};
         if ischar(chan)
-          w_eyes = 'lr';
+          w_eyes = 'c';
           for j=1:numel(w_eyes)
             e = w_eyes(j);
             search_chan = [chan '_' e];
@@ -191,7 +191,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     function test_work_eye(this, work_eye)
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
-      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lr');
+      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, settings.lateral.char.b);
       
       options = struct();
       d = vertcat(degs{:});
@@ -235,7 +235,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     function test_missing(this, missing)
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
-      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lr');
+      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'c');
       
       options = struct();
       d = vertcat(degs{:});
@@ -270,7 +270,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     function test_overwrite(this, overwrite)
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
-      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lr');
+      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'c');
       
       options = struct();
       d = vertcat(degs{:});
@@ -301,7 +301,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     function test_channel_action(this, channel_action)
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
-      [degs,~] = this.generate_fixation_data(fn, this.distance{1},  'lr');
+      [degs,~] = this.generate_fixation_data(fn, this.distance{1},  'c');
       
       options = struct();
       d = vertcat(degs{:});
@@ -334,7 +334,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     function test_newfile(this, newfile)
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
-      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lr');
+      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'c');
       
       options = struct();
       d = vertcat(degs{:});
@@ -473,7 +473,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
-      this.generate_fixation_data(fn, 500, 'lr');
+      this.generate_fixation_data(fn, 500, 'c');
       
       options.dont_ask_overwrite = 1;
       box_degree = 'a';

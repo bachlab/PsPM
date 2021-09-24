@@ -362,7 +362,7 @@ function [import_cell, chan_id] = import_data_chan(import_cell, data_concat, eye
     n_data = size(data_concat, 1);
     chan_id_in_concat = find(strcmpi(chan_struct, import_cell.type), 1, 'first');
 
-    chantype_has_L_or_R = ~isempty(regexpi(import_cell.type, '_[lr]', 'once'));
+    chantype_has_L_or_R = ~isempty(regexpi(import_cell.type, ['_[',settings.lateral.char.b,']'], 'once'));
     chantype_hasnt_eyes_obs = isempty(regexpi(import_cell.type, ['_([' eyes_observed '])'], 'once'));
     if (chantype_has_L_or_R && chantype_hasnt_eyes_obs) || isempty(chan_id_in_concat)
         chan_id = NaN;

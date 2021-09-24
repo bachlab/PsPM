@@ -211,7 +211,7 @@ if ~contains(old_chantype, 'pupil')
 end
 
 is_left = contains(old_chantype, '_l');
-is_both = contains(old_chantype, '_b');
+is_both = contains(old_chantype, '_c');
 if is_both
   warning('ID:invalid_input',...
     'pspm_pupil_correct_eyelink cannot work with combined pupil channels');
@@ -308,27 +308,29 @@ end
 end
 
 function chantype_pp = convert_pp(chantype)
+global settings;
+if isempty(settings), pspm_init; end
 % analyse channel type and convert it as preprocessed (pp) channel type
 chantype_array = split(chantype,'_');
 % find if there is pp
 is_pp = any(strcmp(chantype_array,'pp'));
-% find if it is combined (b), left (l) or right (r)
-is_b = any(strcmp(chantype_array,'b'));
-is_l = any(strcmp(chantype_array,'l'));
-is_r = any(strcmp(chantype_array,'r'));
+% find if it is combined (c), left (l) or right (r)
+is_b = any(strcmp(chantype_array, settings.lateral.char.b));
+is_l = any(strcmp(chantype_array, settings.lateral.char.l));
+is_r = any(strcmp(chantype_array, settings.lateral.char.r));
 if ~is_pp
   if is_b
-    chantype_array(ismember(chantype_array,'b')) = [];
+    chantype_array(ismember(chantype_array,settings.lateral.char.b)) = [];
     chantype_array{end+1} = 'pp';
-    chantype_array{end+1} = 'b';
+    chantype_array{end+1} = settings.lateral.char.b;
   elseif is_l
-    chantype_array(ismember(chantype_array,'l')) = [];
+    chantype_array(ismember(chantype_array,settings.lateral.char.l)) = [];
     chantype_array{end+1} = 'pp';
-    chantype_array{end+1} = 'l';
+    chantype_array{end+1} = settings.lateral.char.l;
   elseif is_r
-    chantype_array(ismember(chantype_array,'r')) = [];
+    chantype_array(ismember(chantype_array,settings.lateral.char.r)) = [];
     chantype_array{end+1} = 'pp';
-    chantype_array{end+1} = 'r';
+    chantype_array{end+1} = settings.lateral.char.r;
   else
     chantype_array{end+1} = 'pp';
   end

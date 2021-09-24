@@ -978,7 +978,7 @@ defaults.lateral.char.b = 'c';
 defaults.lateral.char.l = 'l';
 defaults.lateral.char.r = 'r';
 
-defaults.lateral.cap.b = 'LR';
+defaults.lateral.cap.b = 'C';
 defaults.lateral.cap.l = 'L';
 defaults.lateral.cap.r = 'R';
 

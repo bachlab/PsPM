@@ -19,8 +19,8 @@ function [ sts, out ] = pspm_convert_visangle2sps(fn, options)
 %                                   found gaze data channels with type 'degree'
 %                  eyes:            Define on which eye the operations
 %                                   should be performed. Possible values
-%                                   are: 'l', 'r', 'lr', 'rl'. 
-%                                   Default: 'lr'
+%                                   are: 'l', 'r', 'c'. 
+%                                   Default: 'c'
 %                  .channel_action:  ['add'/'replace'] Defines whether the new channels
 %                                   should be added or the previous outputs of this function
 %                                   should be replaced.
@@ -56,11 +56,10 @@ end
 if ~isfield(options, 'eyes')
     options.eyes = settings.lateral.char.b;
 elseif ~any(strcmpi(options.eyes, {settings.lateral.char.l,...
-																	settings.lateral.char.r,...
-																	settings.lateral.char.b, ...
-																	'rl'}))
+    settings.lateral.char.r,...
+    settings.lateral.char.b}))
     warning('ID:invalid_input', ['''options.eyes'' must be either ''l'', ', ...
-                                 '''r'', ''rl'' or ''lr''.']);
+                                 '''r'', ''c''.']);
     return;
 end;
 % option.channel_action

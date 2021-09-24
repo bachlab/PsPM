@@ -225,7 +225,7 @@ for k = 1:numel(import)
   else
     % determine chan id from chantype - eyelink specific
     % thats why channel ids will be ignored!
-    if strcmpi(data{1}.eyesObserved, 'LR')
+    if strcmpi(data{1}.eyesObserved, settings.lateral.cap.b) || strcmpi(data{1}.eyesObserved, 'lr')
       chan_struct = {'pupil_l', 'pupil_r', 'gaze_x_l', 'gaze_y_l', ...
         'gaze_x_r', 'gaze_y_r','blink_l','blink_r','saccade_l','saccade_r'};
     else
@@ -316,9 +316,9 @@ for k = 1:numel(import)
     end
     
     % create statistics for eye specific channels
-    if ~isempty(regexpi(import{k}.type, '_[lr]', 'once'))
+    if ~isempty(regexpi(import{k}.type, ['_[', settings.lateral.char.b, ']'], 'once'))
       if size(n_blink, 2) > 1
-        eye_t = regexp(import{k}.type, '.*_([lr])', 'tokens');
+        eye_t = regexp(import{k}.type, ['.*_([', settings.lateral.char.b, '])'], 'tokens');
         n_eye_blink = n_blink(strcmpi(eye_t{1}, {'l','r'}));
       else
         n_eye_blink = n_blink;
@@ -326,7 +326,7 @@ for k = 1:numel(import)
       sourceinfo.chan_stats{k}.blink_ratio = n_eye_blink / n_data;
       
       if size(n_saccade, 2) > 1
-        eye_t = regexp(import{k}.type, '.*_([lr])', 'tokens');
+        eye_t = regexp(import{k}.type, ['.*_([',settings.lateral.char.b,'])'], 'tokens');
         n_eye_saccade = n_saccade(strcmpi(eye_t{1}, {'l','r'}));
       else
         n_eye_saccade = n_saccade;
@@ -347,7 +347,7 @@ sourceinfo.elcl_proc = data{1}.elcl_proc;
 left_occurance = any(cell2mat(cellfun(@(x) ~isempty(regexpi(x.type, '_l', 'once')), import,'UniformOutput',0)));
 right_occurance = any(cell2mat(cellfun(@(x) ~isempty(regexpi(x.type, '_r', 'once')), import,'UniformOutput',0)));
 if left_occurance && right_occurance
-  sourceinfo.eyesObserved = 'lr';
+  sourceinfo.eyesObserved = settings.lateral.char.b;
 elseif left_occurance && ~right_occurance
   sourceinfo.eyesObserved = 'l';
 else
