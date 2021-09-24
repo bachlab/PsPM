@@ -48,7 +48,7 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 %           screen_size_mm:  Screen size (width x height). This field is required only if the
 %                     gaze data in the given PsPM file is in pixels.
 %                     (Unit: mm)
-%                     See <a href="matlab:help pspm_convert_unit">pspm_convert_unit</a> 
+%                     See <a href="matlab:help pspm_convert_unit">pspm_convert_unit</a>
 %                     if you need inch to mm conversion.
 %
 %           C_x:      See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
@@ -112,13 +112,14 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 %     Research Methods 48.2 (2016): 510-527.
 %__________________________________________________________________________
 % (C) 2019 Eshref Yozdemir (University of Zurich)
+% PsPM 5.1.2
 % Updated 2021 Teddy Chao (WCHN, UCL)
 
 %% Initialise
 
 global settings;
 if isempty(settings)
-  pspm_init; 
+  pspm_init;
 end
 sts = -1;
 
@@ -242,6 +243,7 @@ if numel(gaze_y_data) > 1
 end
 
 %% conditionally mandatory input checks
+
 if strcmp(gaze_x_data{1}.header.units, 'pixel') || strcmp(gaze_y_data{1}.header.units, 'pixel')
   if ~isfield(options, 'screen_size_px')
     warning('ID:invalid_input', 'options struct must contain ''screen_size_px''');
@@ -271,6 +273,7 @@ else
 end
 
 %% gaze conversion
+
 gaze_x_mm = get_gaze_in_mm(gaze_x_data{1}.data,...
   gaze_x_data{1}.header.units, options.screen_size_mm(1),...
   options.screen_size_px(1));
@@ -340,4 +343,3 @@ else
   chantype_pp = chantype;
 end
 end
-

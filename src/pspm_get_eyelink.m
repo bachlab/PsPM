@@ -1,4 +1,5 @@
 function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
+
 % pspm_get_eyelink is the main function for import of SR Research Eyelink 1000
 % files.
 %
@@ -33,27 +34,24 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2017 Tobias Moser (University of Zurich)
+% PsPM 5.1.2
+% 2021 Teddy Chao (WCHN, UCL)
 
-% $Id: pspm_get_eyelink.m 803 2019-08-26 08:00:45Z esrefo $
-% $Rev: 803 $
 
-% initialise
-% -------------------------------------------------------------------------
+%% initialise
 global settings;
 if isempty(settings), pspm_init; end
 sourceinfo = []; sts = -1;
 % add specific import path for specific import function
 addpath(pspm_path('Import','eyelink'));
 
-% transfer options
-% -------------------------------------------------------------------------
+%% transfer options
 reference_distance = 700;
 reference_unit = 'mm';
 diameter_multiplicator = 0.00087743;
 area_multiplicator = 0.119;
 
-% load data with specific function
-% -------------------------------------------------------------------------
+%% load data with specific function
 data = import_eyelink(datafile);
 
 % expand blink/saccade channels with offset
@@ -355,18 +353,25 @@ else
 end
 
 % determine best eye
-eye_stat = Inf(1,numel(sourceinfo.eyesObserved));
-for i = 1:numel(sourceinfo.eyesObserved)
-  e = lower(sourceinfo.eyesObserved(i));
-  e_stat = vertcat(sourceinfo.chan_stats{...
-    cellfun(@(x) ~isempty(regexpi(x.type, ['_' e], 'once')), import)});
-  if ~isempty(e_stat)
-    eye_stat(i) = max([e_stat.nan_ratio]);
-  end
+switch sourceinfo.eyesObserved
+  case 'l'
+    sourceinfo.best_eye = sourceinfo.eyesObserved;
+  case 'r'
+    sourceinfo.best_eye = sourceinfo.eyesObserved;
+  case 'c'
+    eye_stat = Inf(1,2);
+    eye_choice = 'lr';
+    for i = 1:2
+      e = lower(eye_choice(i));
+      e_stat = vertcat(sourceinfo.chan_stats{...
+        cellfun(@(x) ~isempty(regexpi(x.type, ['_' e], 'once')), import)});
+      if ~isempty(e_stat)
+        eye_stat(i) = max([e_stat.nan_ratio]);
+      end
+    end
+    [~, min_idx] = min(eye_stat);
+    sourceinfo.best_eye = lower(eye_choice(min_idx));
 end
-
-[~, min_idx] = min(eye_stat);
-sourceinfo.best_eye = lower(sourceinfo.eyesObserved(min_idx));
 
 % remove specific import path
 rmpath(pspm_path('Import','eyelink'));
