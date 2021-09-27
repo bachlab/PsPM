@@ -27,7 +27,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     missing = {0, 1};
 
     % eyes
-    work_eye = {'all', 'left', 'right'};
+    work_eye = {'combined', 'left', 'right'};
 
     % channels
     work_chans = {{'pupil', 'gaze_x', 'gaze_y'}, {'pupil', 2}};
@@ -221,7 +221,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
         n_data((n_old_chans+1):n_new_chans), 'UniformOutput', 0);
 
       switch work_eye
-        case 'all'
+        case 'combined'
           this.verifyTrue(any(strcmpi(chantypes, 'pupil_l')) && ...
             any(strcmpi(chantypes, 'pupil_r')));
         case 'left'
@@ -482,7 +482,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
 
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
-      this.generate_fixation_data(fn, 500, 'lr');
+      this.generate_fixation_data(fn, 500, 'c');
 
       options.dont_ask_overwrite = 1;
       box_degree = 'a';
@@ -544,7 +544,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       this.verifyWarning(@() pspm_find_valid_fixations(fn, box_degree, ...
         dist, dist_unit, options), 'ID:invalid_input');
 
-      options.eyes = 'all';
+      options.eyes = 'combined';
       options.channels = 'abc';
       this.verifyWarning(@() pspm_find_valid_fixations(fn, box_degree, ...
         dist, dist_unit, options), 'ID:invalid_input');

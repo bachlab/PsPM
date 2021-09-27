@@ -71,8 +71,8 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %                                   Default is disabled (=0)
 %               eyes:               Define on which eye the operations
 %                                   should be performed. Possible values
-%                                   are: 'left', 'right', 'all'. Default is
-%                                   'all'.
+%                                   are: 'left', 'right', 'combined'. Default is
+%                                   'combined'.
 %               channels:           Choose channels in which the data
 %                                   should be set to NaN
 %                                   during invalid fixations.
@@ -90,9 +90,7 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %__________________________________________________________________________
 % PsPM 4.0
 % (C) 2016 Tobias Moser (University of Zurich)
-
-% $Id$
-% $Rev$
+% Updated 2021 Teddy Chao (WCHN, UCL)
 
 % initialise
 % -------------------------------------------------------------------------
@@ -137,7 +135,7 @@ else
     options = varargin{4};
   end
   if ~isnumeric(circle_degree)
-    warning('ID:invalid_input', ['Circle_degree is not numeric.']);
+    warning('ID:invalid_input', 'Circle_degree is not numeric.');
     return;
   elseif ~isnumeric(distance)
     warning('ID:invalid_input', 'Distance is not set or not numeric.');
@@ -178,7 +176,7 @@ if ~isfield(options, 'channels')
 end
 
 if ~isfield(options, 'eyes')
-  options.eyes = 'all';
+  options.eyes = 'combined';
 end
 
 if ~isfield(options, 'plot_gaze_coords')
@@ -195,7 +193,7 @@ elseif ~islogical(options.missing) && ~isnumeric(options.missing)
   return;
 elseif ~any(strcmpi(options.eyes, {settings.lateral.full.b, ...
     settings.lateral.full.l, settings.lateral.full.r}))
-  warning('ID:invalid_input', ['Options.eyes must be either ''all'', ', ...
+  warning('ID:invalid_input', ['Options.eyes must be either ''combined'', ', ...
     '''left'' or ''right''.']);
   return;
 elseif ~iscell(options.channels) && ~ischar(options.channels) && ...
@@ -312,7 +310,7 @@ new_excl = cell(n_eyes, 1);
 
 for i = 1:n_eyes
   eye = lower(infos.source.eyesObserved(i));
-  if strcmpi(options.eyes, 'all') || strcmpi(options.eyes(1), eye)
+  if strcmpi(options.eyes, 'combined') || strcmpi(options.eyes(1), eye)
     gaze_x = ['gaze_x_', eye];
     gaze_y = ['gaze_y_', eye];
     
