@@ -42,7 +42,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       duration = 5*60; % 5 minutes
 
       % create time series
-      t = (0:sr^-1:duration-sr^-1)';
+      t = transpose(0:sr^-1:duration-sr^-1);
 
       % screen settings in cm
       screen_width = 50;
@@ -172,7 +172,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
         n_data((n_old_chans+1):n_new_chans), 'UniformOutput', 0);
 
       % test for chans
-      for i=1:numel(work_chans)
+      for i = 1:numel(work_chans)
         chan = work_chans{i};
         if ischar(chan)
           w_eyes = {'l','r'};
@@ -373,7 +373,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
       [degs,~] = this.generate_fixation_data(fn, distance, eyes);
 
-      for i=1:numel(degs)
+      for i = 1:numel(degs)
         d = degs{i};
         box_degree = d.deg;
         dist = distance;

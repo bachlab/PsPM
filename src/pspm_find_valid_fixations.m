@@ -15,76 +15,75 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %                                               unit, options)
 %
 % ARGUMENTS:
-%           fn:                 The actual data file containing the eyelink
-%                               recording with gaze data converted to cm.
-%           bitmap:             A nxm matrix representing the display
-%                               window and holding for each poisition a
-%                               one, where a gaze value is taken into
-%                               account. If there exists gaze data at a
-%                               point with a zero value in the bitmap
-%                               the corresponding data is set to NaN.
-%           circle_degree:      size of boundary circle given in degree
-%                               visual angles.
-%           distance:           distance between eye and screen in length units.
-%           unit:               unit in which distance is given.
+%   fn:                 The actual data file containing the eyelink
+%                       recording with gaze data converted to cm.
+%   bitmap:             A nxm matrix representing the display window and
+%                       holding for each poisition a one, where a gaze
+%                       value is taken into account.
+%                       If there exists gaze data at a point with a zero
+%                       value in the bitmap the corresponding data is set
+%                       to NaN.
+%   circle_degree:      size of boundary circle given in degree
+%                       visual angles.
+%   distance:           distance between eye and screen in length units.
+%   unit:               unit in which distance is given.
 %
-%           options:            Optional values
-%               fixation_point:     A nx2 vector containing x and y of the
-%                                   fixation point (with resepect to the
-%                                   given resolution). n should be
-%                                   either 1 or should have the length of
-%                                   the actual data. Default is the middle
-%                                   of the screen. If resolution is not defined
-%                                   the values are given in percent. Therefore
-%                                   [0.5 0.5] would correspond to the middle of
-%                                   the screen. Default is [0.5 0.5]. Only
-%                                   taken into account if there is no
-%                                   bitmap.
-%               resolution:         Resolution with which the fixation point
-%                                   is defined (Maximum value of the x and y
-%                                   coordinates). This can be the resolution
-%                                   set in cogent (e.g. [1280 1024]) or the
-%                                   width and height of the screen in cm
-%                                   (e.g. [50 30]). Default is [1 1]. Only
-%                                   taken into account if there is no
-%                                   bitmap.
-%               plot_gaze_coords:   Define whether to plot the gaze
-%                                   coordinates for visual inspection of
-%                                   the validation process. Default is
-%                                   false.
-%               channel_action:     Define whether to add or replace the
-%                                   data. Default is 'add'. Possible values
-%                                   are 'add' or 'replace'
-%               newfile:            Define new filename to store data to
-%                                   it. Default is '' which means that the
-%                                   file under fn will be 'replaced'
-%               overwrite:          Define whether existing files should be
-%                                   overwritten or not. Default is 0.
-%               missing:            If missing is enabled (=1), an extra
-%                                   channel will be written containing
-%                                   information about the validated data.
-%                                   Data points equal to 1 describe epochs
-%                                   which have been discriminated as
-%                                   invalid during validation. Data points
-%                                   equal to 0 describe epochs of valid
-%                                   data (= no blink & valid fixation).
-%                                   Default is disabled (=0)
-%               eyes:               Define on which eye the operations
-%                                   should be performed. Possible values
-%                                   are: 'left', 'right', 'combined'. Default is
-%                                   'combined'.
-%               channels:           Choose channels in which the data
-%                                   should be set to NaN
-%                                   during invalid fixations.
-%                                   Default is 'pupil'. A char or numeric
-%                                   value or a cell array of char or
-%                                   numerics is expected. Channel names
-%                                   pupil, gaze_x, gaze_y,
-%                                   pupil_missing will be automatically
-%                                   expanded to the corresponding eye. E.g.
-%                                   pupil becomes pupil_l or pupil_r
-%                                   according to the eye which is
-%                                   being processed.
+%   options:            Optional values
+%     fixation_point:   A nx2 vector containing x and y of the fixation
+%                       point (with resepect to the given resolution).
+%                       n should be either 1 or should have the length of
+%                       the actual data. Default is the middle of the
+%                       screen. If resolution is not defined the values are
+%                       given in percent. Therefore, [0.5 0.5] would
+%                       correspond to the middle of the screen.
+%                       Default is [0.5 0.5]. Only
+%                       taken into account if there is no
+%                       bitmap.
+%     resolution:       Resolution with which the fixation point
+%                       is defined (Maximum value of the x and y
+%                       coordinates). This can be the resolution
+%                       set in cogent (e.g. [1280 1024]) or the
+%                       width and height of the screen in cm
+%                       (e.g. [50 30]). Default is [1 1]. Only
+%                       taken into account if there is no
+%                       bitmap.
+%     plot_gaze_coords:	Define whether to plot the gaze
+%                       coordinates for visual inspection of
+%                       the validation process. Default is
+%                       false.
+%     channel_action:   Define whether to add or replace the
+%                       data. Default is 'add'. Possible values
+%                       are 'add' or 'replace'
+%     newfile:          Define new filename to store data to
+%                       it. Default is '' which means that the
+%                       file under fn will be 'replaced'
+%     overwrite:        Define whether existing files should be
+%                       overwritten or not. Default is 0.
+%     missing:          If missing is enabled (=1), an extra
+%                       channel will be written containing
+%                       information about the validated data.
+%                       Data points equal to 1 describe epochs
+%                       which have been discriminated as
+%                       invalid during validation. Data points
+%                       equal to 0 describe epochs of valid
+%                       data (= no blink & valid fixation).
+%                       Default is disabled (=0)
+%     eyes:             Define on which eye the operations
+%                       should be performed. Possible values are: 'left',
+%                       'right', 'combined'.
+%                       Default is 'combined'.
+%     channels:         Choose channels in which the data should be set
+%                       to NaN during invalid fixations.
+%                       Default is 'pupil'.
+%                       A char or numeric value or a cell array of char
+%                       or numerics is expected.
+%                       Channel names pupil, gaze_x, gaze_y, pupil_missing
+%                       will be automatically expanded to the corresponding
+%                       eye. E.g. pupil becomes pupil_l or pupil_r
+%                       according to the eye which is being processed.
+%                       Preprocessed channels will be automatically
+%                       expanded as pupil_pp_l or pupil_pp_r if pupil_pp
+%                       is used.
 %
 %
 %__________________________________________________________________________
@@ -106,7 +105,7 @@ if numel(varargin) < 1
     ' to compute the valid fixations']); return;
 end
 
-%get imput arguments and check if correct values
+% get imput arguments and check if correct values
 if numel(varargin{1}) > 1
   mode = 'bitmap';
   bitmap = varargin{1};
@@ -224,7 +223,7 @@ elseif strcmpi(mode,'fixation')&& isfield(options, 'fixation_point') &&  ...
   return;
 end
 
-%change distance to 'mm'
+% change distance to 'mm'
 if strcmpi(mode,'fixation')
   if ~strcmpi(unit,'mm')
     [nsts,distance] = pspm_convert_unit(distance,unit ,'mm');
@@ -359,7 +358,7 @@ for i = 1:n_eyes
         
         if ~strcmpi(x_unit,'mm')&& strcmpi(mode,'fixation')
           [nsts,x_data] = pspm_convert_unit(data{gx}.data, x_unit, 'mm');
-          [msts,x_range] = pspm_convert_unit(data{gx}.header.range', x_unit, 'mm');
+          [msts,x_range] = pspm_convert_unit(transpose(data{gx}.header.range), x_unit, 'mm');
           if nsts~=1 || msts~=1
             warning('ID:invalid_input', 'Failed to convert data.');
           end
@@ -369,7 +368,7 @@ for i = 1:n_eyes
         end
         if ~strcmpi(y_unit,'mm')&& strcmpi(mode,'fixation')
           [nsts,y_data] = pspm_convert_unit(data{gy}.data, y_unit, 'mm');
-          [msts,y_range] = pspm_convert_unit(data{gy}.header.range', y_unit, 'mm');
+          [msts,y_range] = pspm_convert_unit(transpose(data{gy}.header.range), y_unit, 'mm');
           if nsts~=1 || msts~=1
             warning('ID:invalid_input', 'Failed to convert data.');
           end
@@ -459,7 +458,7 @@ for i = 1:n_eyes
             % find for each fixation point the right radius
             tot_angle = angle_of_fix + circle_degree;
             tot_angle = deg2rad(tot_angle);
-            radius = 2*distance * tan(tot_angle/2);
+            radius = 2 * distance * tan(tot_angle/2);
             radius = radius - dist;
             
             % calculate for ech point distance to fixationpoint
@@ -493,11 +492,10 @@ for i = 1:n_eyes
             end
         end
         
-        
         % set excluded periods in pupil data to NaN
         new_pu{i} = {data{work_chans}};
         new_excl{i} = cell(1,numel(new_pu{i}));
-        for j=1:numel(new_pu{i})
+        for j = 1:numel(new_pu{i})
           new_pu{i}{j}.data(excl == 1) = NaN;
           if all(isnan(new_pu{i}{j}.data))
             warning('ID:invalid_input', ['All values of channel ''%s'' ', ...
@@ -531,7 +529,8 @@ if ~isempty(options.newfile)
   if exist(pathstr, 'dir') || isempty(pathstr)
     out_file = options.newfile;
   else
-    warning('ID:invalid_input', 'Path to options.newfile (%s) does not exist.', options.newfile);
+    warning('ID:invalid_input', ...
+      'Path to options.newfile (%s) does not exist.', options.newfile);
   end
 else
   out_file = fn;
