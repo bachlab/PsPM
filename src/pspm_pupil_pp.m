@@ -59,7 +59,7 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
 %                 Preprocessing previously processed data:
 %                 Pupil channels created from other preprocessing steps
 %                 can be further processed by this function. To enable
-%                 this, pass one of 'pupil_l_pp' or 'pupil_r_pp'.
+%                 this, pass one of 'pupil_pp_l' or 'pupil_pp_r'.
 %                 There is no best eye selection in this mode.
 %                 Hence, the type of the channel must be given exactly.
 %
