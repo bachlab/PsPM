@@ -8,6 +8,13 @@ function [sts, import, sourceinfo] = pspm_get_obs(datafile, import)
 % PsPM 3.0
 % (C) 2013-2015 Linus Rüttimann (University of Zurich)
 
+% $Id$
+% $Rev$
+
+% v003 drb 06.08.2013 changed for 3.0 architecture
+% v002 lr 20.06.2013 added comments
+% v001 lr 06.06.2013
+
 % initialise
 % -------------------------------------------------------------------------
 global settings;
