@@ -22,4 +22,4 @@ vendor/
 !pspm_App.mat
 
 # Ignore temp test file
-pspm_test_temp.m
+test/pspm_test_temp.m
