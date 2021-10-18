@@ -101,7 +101,7 @@ classdef pspm_get_txt_test < pspm_get_superclass
     
     methods (Test)
         function invalid_datafile(this)
-            fn = 'testdatafile_get_txt_invalid.txt';
+            fn = 'testdatafile_get_txt_1.txt';
             
             % Test wrong delimiter
             import{1} = struct('type', 'scr' , 'channel', 1, 'delimiter', 24);
