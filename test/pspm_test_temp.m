@@ -1,4 +1,5 @@
 function pspm_test_temp(varargin)
+
 	%% pspm_test_temp is a wrapper script for testing selected testable functions in one
 	% - to be used before any release.
 	%
@@ -124,6 +125,6 @@ function pspm_test_temp(varargin)
 	if quit_after_tests
 		exit_code = 1 - success;
 		quit(exit_code);
-	end
+  end
 
 end
