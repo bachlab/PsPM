@@ -3,7 +3,7 @@ classdef pspm_get_txt_test < pspm_get_superclass
   % unittest class for the pspm_get_txt function
   %__________________________________________________________________________
   % SCRalyze TestEnvironment
-  % (C) 2013 Linus R�ttimann (University of Zurich)
+  % (C) 2013 Linus Rüttimann (University of Zurich)
   % Updated 2021 Teddy Chao (WCHN, UCL)
 
   properties
