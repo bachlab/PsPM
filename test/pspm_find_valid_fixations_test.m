@@ -429,7 +429,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
       [~,bitmaps] = this.generate_fixation_data(fn, distance, eyes);
 
-      for i=1:numel(bitmaps)
+      for i = 1:numel(bitmaps)
         d = bitmaps{i};
         bitmap = d.deg;
         options.resolution = resolution;

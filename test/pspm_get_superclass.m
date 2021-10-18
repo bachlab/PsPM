@@ -3,35 +3,35 @@ classdef (Abstract) pspm_get_superclass < pspm_testcase
   %   Abstract superclass for the pspm_get_<datatype>_test classes. All the testclasses
   %   for the file import functions (pspm_get_<datatype>_test) must inherit this
   %   class and implement its abstract methods and properties.
-  
+
   properties (Abstract)
     testcases;
     fhandle;
   end
-  
+
   methods (Abstract)
     define_testcases(this)
   end
-  
+
   methods (Static)
     function import = assign_chantype_number(import)
       global settings;
       if isempty(settings), pspm_init; end
-      
+
       for m = 1:numel(import)
         import{m}.typeno = ...
           find(strcmpi(import{m}.type, {settings.chantypes.type}));
       end
     end
   end
-  
+
   methods (TestClassSetup)
     function init(this)
       define_testcases(this);
-      
+
       global settings;
       if isempty(settings), pspm_init; end
-      
+
       % assign channel type number
       for k = 1:numel(this.testcases)
         for m = 1:numel(this.testcases{k}.import)
@@ -41,18 +41,18 @@ classdef (Abstract) pspm_get_superclass < pspm_testcase
       end
     end
   end
-  
+
   methods (Test)
     function valid_datafile(this)
       global settings;
       if isempty(settings), pspm_init; end
       fprintf('\n');
-      
+
       for k = 1:numel(this.testcases)
         [sts, import, sourceinfo] = this.fhandle(this.testcases{k}.pth, this.testcases{k}.import);
-        
+
         this.verifyEqual(sts, 1, sprintf('Status is negativ in testcase %i', k));
-        
+
         if isprop(this, 'blocks') && this.blocks
           blkno = numel(sourceinfo);
           this.verifyEqual(blkno, this.testcases{k}.numofblocks, sprintf('Wrong number of blocks in testcase %i', k));
@@ -65,15 +65,15 @@ classdef (Abstract) pspm_get_superclass < pspm_testcase
           import = {import};
           sourceinfo = {sourceinfo};
         end
-        
+
         for blk = 1:blkno
           if blkno > 1, fprintf('\n\tProcess block %i. ', blk); end
-          
+
           this.verifyNumElements(import{blk}, numel(this.testcases{k}.import), ...
             sprintf('The number of elements of ''import'' does not match in testcase %i', k));
-          
+
           for m = 1:numel(this.testcases{k}.import)
-            
+
             % test if data exists and has correct datatype
             this.verifyTrue(isfield(import{blk}{m}, 'data'), ...
               sprintf('There is no field ''data'' in importjob %i in testcase %i', m, k));
@@ -84,7 +84,7 @@ classdef (Abstract) pspm_get_superclass < pspm_testcase
               isvector(import{blk}{m}.data), ...
               sprintf('The field ''data'' in importjob %i in testcase %i is not a vector', m, k)...
               );
-            
+
             % check if sr exists and has a correct datatype
             this.verifyTrue(isfield(import{blk}{m}, 'sr'), ...
               sprintf('There is no field ''sr'' in importjob %i in testcase %i', m, k));
@@ -92,18 +92,18 @@ classdef (Abstract) pspm_get_superclass < pspm_testcase
               sprintf('The field ''sr'' in importjob %i in testcase %i is not numeric', m, k));
             this.verifyTrue(numel(import{blk}{m}.sr) == 1, ...
               sprintf('The field ''sr'' in importjob %i in testcase %i is not a number', m, k));
-            
+
             % check if there is a field type
             this.verifyTrue(isfield(import{blk}{m}, 'type'), ...
               sprintf('There is no field ''type'' in importjob %i in testcase %i', m, k));
-            
+
             % if data is of kind event check if there is field
             % marker present
             if strcmpi(settings.chantypes(this.testcases{k}.import{m}.typeno).data, 'events')
               this.verifyTrue(isfield(import{blk}{m}, 'marker'), ...
                 sprintf('There is no field ''marker'' in event importjob %i in testcase %i', m, k));
             end
-            
+
             % check if sr is within a possible range
             if strcmpi(settings.chantypes(this.testcases{k}.import{m}.typeno).data, 'wave') || ...
                 strcmpi(import{blk}{m}.marker, 'continuous')
@@ -124,21 +124,21 @@ classdef (Abstract) pspm_get_superclass < pspm_testcase
             else
               warning('Invalid channel type! (settings.chantypes.data{%i} is neither ''wave'' nor ''events'')', chantype);
             end
-            
+
             if strcmpi(settings.chantypes(this.testcases{k}.import{m}.typeno).data, 'events') && ...
                 (strcmpi(import{blk}{m}.marker, 'timestamps') || strcmpi(import{blk}{m}.marker, 'timestamp'))
               duration = import{blk}{m}.data(end);
             else
               duration = numel(import{blk}{m}.data) / import{blk}{m}.sr;
             end
-            
+
             % issue warning if duration is less than 10 seconds
             if duration < 1
               warning('The amount of data in channel %g corresponds to less than 1 seconds.', m);
             end
-            
+
           end
-          
+
           if strcmpi(settings.chantypes(this.testcases{k}.import{1}.typeno).data, 'events') && ...
               (strcmpi(import{blk}{1}.marker, 'timestamps') || ...
               strcmpi(import{blk}{1}.marker, 'timestamp'))
@@ -146,14 +146,13 @@ classdef (Abstract) pspm_get_superclass < pspm_testcase
           else
             duration = numel(import{blk}{1}.data) / import{blk}{1}.sr;
           end
-          
+
           fprintf('The samplerate of importjob 1 is %g and the duration is %gs.', import{blk}{1}.sr, duration);
         end
         fprintf('\n');
       end
-      
+
     end
   end
-  
-end
 
+end
