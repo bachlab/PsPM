@@ -44,9 +44,6 @@ function [data] = import_smi(varargin)
     % (C) 2019 Laure Ciernik
     % Updated 2021 Teddy Chao
     
-    global settings;
-		if isempty(settings), pspm_init; end
-    
     if isempty(varargin)
         error('ID:invalid_input', 'import_SMI.m needs at least one input sample_file.');
     end
@@ -150,11 +147,11 @@ function [data] = import_smi(varargin)
     l_eye = any(cell2mat(cellfun(@(x)strcmpi(x,'LEFT'),format_fields,'UniformOutput',0)));
     r_eye = any(cell2mat(cellfun(@(x)strcmpi(x,'RIGHT'),format_fields,'UniformOutput',0)));
     if l_eye && r_eye
-        eyesObserved = settings.lateral.cap.b;
+        eyesObserved = 'LR';
     elseif l_eye
-        eyesObserved = settings.lateral.cap.l;
+        eyesObserved = 'L';
     else
-        eyesObserved = settings.lateral.cap.r;
+        eyesObserved = 'R';
     end
     % Stimulus dimension
     sd_pos = strncmpi(header_sample, '## Stimulus Dimension',21);
@@ -377,7 +374,7 @@ function [data] = import_smi(varargin)
         raw_columns = columns;
         data{sn}.raw_columns = raw_columns;
 
-        if strcmpi(data{sn}.eyesObserved, settings.lateral.cap.b)
+        if strcmpi(data{sn}.eyesObserved, 'LR')
             % pupilL, pupilR, xL, yL, xR, yR, blinkL, blinkR, saccadeL,
             % saccadeR
             % get idx of different channel

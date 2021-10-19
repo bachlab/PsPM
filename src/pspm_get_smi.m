@@ -162,11 +162,7 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
         import{k}.sr = sampling_rate;
         chantype = lower(import{k}.type);
         chantype_has_L_or_R = ~isempty(regexpi(chantype, '_[lr]', 'once'));
-        eyes_observed_indexing = eyes_observed;
-        if eyes_observed == 'c'
-          eyes_observed_indexing = 'lr';
-        end
-        chantype_hasnt_eyes_obs = isempty(regexpi(chantype, ['_([' eyes_observed_indexing '])'], 'once'));
+        chantype_hasnt_eyes_obs = isempty(regexpi(chantype, ['_([' eyes_observed '])'], 'once'));
         if chantype_has_L_or_R && chantype_hasnt_eyes_obs
             % no import
         elseif strcmpi(chantype, 'marker')
@@ -536,7 +532,7 @@ function [data_concat, markers, mi_values, mi_names] = concat_sessions(data)
 end
 
 function best_eye = eye_with_smaller_nan_ratio(import, eyes_observed)
-    if eyes_observed ~= 'c'
+    if numel(eyes_observed) == 1
         best_eye = lower(eyes_observed);
     else
         eye_L_max_nan_ratio = 0;
