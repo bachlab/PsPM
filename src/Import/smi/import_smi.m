@@ -276,7 +276,7 @@ function [data] = import_smi(varargin)
             ignore_str_pos{1}=cell(4,1);
             ignore_str_pos{2}=cell(4,1);
 
-            if strcmpi(eyesObserved,settings.lateral.cap.b)
+            if strcmpi(eyesObserved,'LR')
                 % alwas add the time of the beginning of the current trial
                 % since the measured start and end times are relative to the
                 % time of the beginning ot the current trial
