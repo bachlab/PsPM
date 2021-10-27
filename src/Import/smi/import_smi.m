@@ -317,9 +317,6 @@ function [data] = import_smi(varargin)
             % add blinks and saccades to datanum
             ignore_names = {'Blink', 'Saccade'};
             for j = 1:numel(ignore_str_pos)
-            		if data{sn}.eyesObserved == 'C'
-        						data{sn}.eyesObserved = 'LR';
-      					end
                 for i=1:numel(data{sn}.eyesObserved)
                     if strcmpi(data{sn}.eyesObserved(i), 'L')
                         ep_start = 1;
@@ -336,9 +333,6 @@ function [data] = import_smi(varargin)
                     end
                     columns{idx} = [upper(data{sn}.eyesObserved(i)), ' ', ignore_names{j}];
                 end
-                if strcmp(data{sn}.eyesObserved, 'LR')
-        						data{sn}.eyesObserved = 'C';
-      					end
             end
         end
 
