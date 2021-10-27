@@ -196,8 +196,6 @@ function [file_info, line_ctr] = parse_metadata(str, line_ctr, linefeeds, has_ba
 end
 
 function chan_info = pspm_chans_in_file(chan_info)
-    global settings
-    if isempty(settings), pspm_init; end;
     for i = 1:numel(chan_info)
         pupil_mode = chan_info{i}.diam_vals;
         eyesObserved = chan_info{i}.eyesObserved;
@@ -211,7 +209,7 @@ function chan_info = pspm_chans_in_file(chan_info)
             chan_info{i}.channels_header = {'pupil_r', 'gaze_x_r', 'gaze_y_r'};
             chan_info{i}.channels_units = {pupil_unit, 'pixel', 'pixel'};
             chan_info{i}.col_idx = [4, 2, 3];
-        elseif strcmpi(eyesObserved, settings.lateral.char.b) || strcmpi(eyesObserved, 'LR')
+        elseif strcmpi(eyesObserved, 'lr') || strcmpi(eyesObserved, 'rl')
             chan_info{i}.channels_header = {'pupil_l', 'pupil_r', 'gaze_x_l', 'gaze_y_l', 'gaze_x_r', 'gaze_y_r'};
             chan_info{i}.channels_units = {pupil_unit, pupil_unit, 'pixel', 'pixel', 'pixel', 'pixel'};
             chan_info{i}.col_idx = [4, 7, 2, 3, 5, 6];
