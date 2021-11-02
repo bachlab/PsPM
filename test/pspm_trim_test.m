@@ -1,7 +1,7 @@
 classdef pspm_trim_test < matlab.unittest.TestCase
 %__________________________________________________________________________
 % SCRalyze TestEnvironment
-% (C) 2013 Linus R�ttimann (University of Zurich)
+% (C) 2013 Linus Rüttimann (University of Zurich)
 
 % $Id: pspm_trim_test.m 377 2016-10-31 15:57:10Z tmoser $
 
