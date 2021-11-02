@@ -17,8 +17,8 @@ jobs:
       - name: Add Test data
         uses: actions/checkout@v2
         with:
-          repository: bachlab/PsPM
-          path: develop
+          repository: bachlab/PsPM-beta
+          path: main
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
