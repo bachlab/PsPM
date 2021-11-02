@@ -18,7 +18,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: teddychao/PsPM_data
-          token: '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'
+          token: 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
+          path: main
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
