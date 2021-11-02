@@ -1,3 +1,10 @@
+name: Checkout tools repo
+uses: actions/checkout@v2
+  with:
+    repository: teddychao/PsPM_data
+    token: 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
+    path: ImportTestData
+
 name: GitHub Actions Demo
 on: [push]
 jobs:
