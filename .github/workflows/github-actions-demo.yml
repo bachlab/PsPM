@@ -1,16 +1,14 @@
-name: Checkout tools repo
-uses: actions/checkout@v2
-  with:
-    repository: teddychao/PsPM_data
-    token: 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
-    path: ImportTestData
-
 name: GitHub Actions Demo
 on: [push]
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: teddychao/PsPM_data
+          token: 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
+          path: ImportTestData 
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
