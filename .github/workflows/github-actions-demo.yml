@@ -4,13 +4,12 @@ jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
       - name: Check out repository code
         uses: actions/checkout@v2
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - run: echo "The ${{ github.repository }} repository has been cloned to the runner."
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
@@ -19,8 +18,11 @@ jobs:
         with:
           repository: teddychao/PsPM-data
           path: ImportTestData
-          token: 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
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+      - name: Run script
+        uses: matlab-actions/run-command@v1
+        with:
+          command: addpath('test'), addpath('src'), pspm_test_github_actions
+      - run: echo "This job's status is ${{ job.status }}."
