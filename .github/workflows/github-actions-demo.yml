@@ -19,6 +19,7 @@ jobs:
         with:
           repository: teddychao/PsPM-data
           path: ImportTestData
+          token: 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
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
