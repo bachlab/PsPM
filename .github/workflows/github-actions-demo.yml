@@ -18,6 +18,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: teddychao/PsPM-data
+          path: ImportTestData
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
