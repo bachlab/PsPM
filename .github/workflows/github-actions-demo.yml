@@ -17,8 +17,7 @@ jobs:
       - name: Add Test data
         uses: actions/checkout@v2
         with:
-          repository: teddychao/PsPM_data
-          token: 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
+          repository: teddychao/PsPM-data
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
