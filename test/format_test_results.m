@@ -8,7 +8,7 @@ function str = format_test_results(stats)
 
     total_test_time = sum(durations);
 
-    str = sprintf('### Jenkins Build Statistics\n');
+    str = sprintf('### Build Statistics\n');
     str = [str sprintf('* Total testing time: %.2f sec\n', total_test_time)];
     str = [str sprintf('* Number of passed checks: %d\n', sum(success_mask))];
     str = [str sprintf('* Number of failed checks: %d\n', sum(fail_mask))];

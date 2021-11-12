@@ -32,6 +32,16 @@ jobs:
         with:
           files: "success.txt"
           
+      - uses: pCYSl5EDgo/cat@master
+        id: result_list
+        with:
+          path: "success.txt"
+
+      - name: Return running results
+        run: echo $TEXT
+        env:
+          TEXT: ${{ steps.result_list.outputs.text }}
+          
       - name: Return running success
         if: steps.check_status.outputs.files_exists == 'true'
         run: exit 0
