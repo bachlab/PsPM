@@ -95,7 +95,6 @@ chantype_suite = [...
   TestSuite.fromClass(?pspm_get_scr_test), ...
   ];
 
-
 full_suite = [suite, import_suite, chantype_suite];
 
 %% Run tests

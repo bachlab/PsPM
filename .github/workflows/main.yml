@@ -4,9 +4,6 @@ jobs:
   PsPM-test:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
       
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -32,22 +29,12 @@ jobs:
         with:
           files: "success.txt"
           
-      - uses: pCYSl5EDgo/cat@master
-        id: result_list
-        with:
-          path: "success.txt"
-
-      - name: Return running results
-        run: echo $TEXT
-        env:
-          TEXT: ${{ steps.result_list.outputs.text }}
-          
       - name: Return running success
-        if: steps.check_status.outputs.files_exists == 'true'
+        if: ${{ steps.check_status.outputs.files_exists == 'true' }}
         run: exit 0
       
       - name: Return running failure
-        if: steps.check_status.outputs.files_exists != 'true'
+        if: ${{ steps.check_status.outputs.files_exists != 'true' }}
         run: exit 1
           
       # Optional commands
@@ -60,6 +47,10 @@ jobs:
       # - name: Display structure of downloaded files
       #   run: ls -R
       
+      # - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
+      # - run: echo "This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      # - run: echo "The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      
       # Show a value
       # - run: echo "This running status is ${{ steps.check_status.outputs.files_exists }}."
       
@@ -67,3 +58,13 @@ jobs:
       # - name: Set running status variable
       #   id: status_var
       #   run: echo ::set-output name=status_output::"success"
+      
+      # - uses: pCYSl5EDgo/cat@master
+      #   id: result_list
+      #   with:
+      #     path: "success.txt"
+
+      # - name: Return running results
+      #   run: echo $TEXT
+      #   env:
+      #     TEXT: ${{ steps.result_list.outputs.text }}
