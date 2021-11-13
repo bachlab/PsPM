@@ -8,7 +8,8 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
       
-      - name: Add Test data
+
+      - name: Add test data
         uses: actions/checkout@v2
         with:
           repository: teddychao/PsPM-data

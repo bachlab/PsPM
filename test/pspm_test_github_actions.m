@@ -98,7 +98,7 @@ chantype_suite = [...
 full_suite = [suite, import_suite, chantype_suite];
 
 %% Run tests
-[pth, ~, ~] = fileparts(which('pspm_test.m'));
+[pth, ~, ~] = fileparts(which('pspm_test_github_actions.m'));
 addpath(pth);
 pspm_init;
 stats = run(full_suite);
