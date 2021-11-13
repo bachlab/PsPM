@@ -84,7 +84,11 @@ classdef import_viewpoint_test < matlab.unittest.TestCase
             msg_counter = 1;
             for line = datalines
                 parts = strsplit(line{1},'\t');
-                msg = parts{marker_index};
+                if marker_index <= length(parts)
+                  msg = parts{marker_index};
+                else
+                  msg = [];
+                end
                 if ~isempty(msg)
                     tbeg = to_num(parts{2});
                     this.verifyEqual(tbeg, data{1}.marker.times(msg_counter));

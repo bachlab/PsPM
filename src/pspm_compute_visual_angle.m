@@ -26,8 +26,8 @@ function [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,u
 %                           Default: 'add'
 %         .eyes:            Define on which eye the operations
 %                           should be performed. Possible values
-%                           are: 'l', 'r', 'lr', 'rl'. 
-%                           Default: 'lr'
+%                           are: 'l', 'r', 'c'. 
+%                           Default: 'c'
 %                                  
 % RETURN VALUES sts
 %               sts:            Status determining whether the execution was
@@ -82,10 +82,12 @@ end;
 
 %set more defaults
 if ~isfield(options, 'eyes')
-    options.eyes = 'lr';
-elseif ~any(strcmpi(options.eyes, {'l', 'r', 'rl', 'lr'}))
+    options.eyes = settings.lateral.char.b;
+elseif ~any(strcmpi(options.eyes, {settings.lateral.char.l,...
+    settings.lateral.char.r,...
+    settings.lateral.char.b}))
     warning('ID:invalid_input', ['''options.eyes'' must be ', ...
-                                 'equal to ''l'', ''r'', ''rl'' or ''lr''.']); 
+                                 'equal to ''l'', ''r'', ''c''.']); 
     return;
 end
 
