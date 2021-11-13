@@ -1,0 +1,70 @@
+name: GitHub Actions for PsPM
+on: [push]
+jobs:
+  PsPM-test:
+    runs-on: ubuntu-latest
+    steps:
+      
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      
+      - name: Add test data
+        uses: actions/checkout@v2
+        with:
+          repository: teddychao/PsPM-data
+          path: ImportTestData
+      
+      - name: Setup MATLAB
+        uses: matlab-actions/setup-matlab@v1.0.1
+      
+      - name: Run script
+        id: pspm_test_main
+        uses: matlab-actions/run-command@v1
+        with:
+          command: addpath('test'), addpath('src'), pspm_test_github_actions
+            
+      - name: Check status
+        id: check_status
+        uses: andstor/file-existence-action@v1
+        with:
+          files: "success.txt"
+          
+      - name: Return running success
+        if: ${{ steps.check_status.outputs.files_exists == 'true' }}
+        run: exit 0
+      
+      - name: Return running failure
+        if: ${{ steps.check_status.outputs.files_exists != 'true' }}
+        run: exit 1
+          
+      # Optional commands
+      
+      # - run: echo "This job's status is ${{ job.status }}."
+      
+      # - name: List files in the repository
+      #   run: ls ${{ github.workspace }}
+      
+      # - name: Display structure of downloaded files
+      #   run: ls -R
+      
+      # - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
+      # - run: echo "This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      # - run: echo "The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      
+      # Show a value
+      # - run: echo "This running status is ${{ steps.check_status.outputs.files_exists }}."
+      
+      # Set a variable
+      # - name: Set running status variable
+      #   id: status_var
+      #   run: echo ::set-output name=status_output::"success"
+      
+      # - uses: pCYSl5EDgo/cat@master
+      #   id: result_list
+      #   with:
+      #     path: "success.txt"
+
+      # - name: Return running results
+      #   run: echo $TEXT
+      #   env:
+      #     TEXT: ${{ steps.result_list.outputs.text }}
