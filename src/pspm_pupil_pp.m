@@ -146,6 +146,7 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
 	% [2] https://github.com/ElioS-S/pupil-size
 	%__________________________________________________________________________
 	% (C) 2019 Eshref Yozdemir (University of Zurich)
+	% Updated 2021 Teddy Chao (WCHN, UCL)
 
 	%% 1 Initialise
 	global settings;
@@ -195,13 +196,13 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
 	end
 
 	%% 4 Load
-	is_combined = ~strcmp(options.channel_combine, 'none');
+	action_combine = ~strcmp(options.channel_combine, 'none');
 	addpath(pspm_path('backroom'));
 	[lsts, data] = pspm_load_single_chan(fn, options.channel, 'last', 'pupil');
 	if lsts ~= 1
 		return
 	end
-	if is_combined
+	if action_combine
 		[lsts, data_combine] = pspm_load_single_chan(fn, options.channel_combine, 'last', 'pupil');
 		if lsts ~= 1
 			return
@@ -260,7 +261,7 @@ function [sts, smooth_signal] = preprocess(data, data_combine, segments, custom_
 	data_is_left = strcmpi(get_eye(data{1}.header.chantype), 'l');
 	n_samples = numel(data{1}.data);
 	sr = data{1}.header.sr;
-	diameter.t_ms = linspace(0, 1000 * (n_samples-1) / sr, n_samples)';
+	diameter.t_ms = transpose(linspace(0, 1000 * (n_samples-1) / sr, n_samples));
 
 	if data_is_left
 		diameter.L = data{1}.data;
@@ -270,14 +271,14 @@ function [sts, smooth_signal] = preprocess(data, data_combine, segments, custom_
 		diameter.R = data{1}.data;
 	end
 	if size(diameter.L, 1) == 1
-		diameter.L = diameter.L';
+		diameter.L = transpose(diameter.L);
 	end
 	if size(diameter.R, 1) == 1
-		diameter.R = diameter.R';
+		diameter.R = transpose(diameter.R);
 	end
-	segmentStart = cell2mat(cellfun(@(x) x.start, segments, 'uni', false))';
-	segmentEnd = cell2mat(cellfun(@(x) x.end, segments, 'uni', false))';
-	segmentName = cellfun(@(x) x.name, segments, 'uni', false)';
+	segmentStart = transpose(cell2mat(cellfun(@(x) x.start, segments, 'uni', false)));
+	segmentEnd = transpose(cell2mat(cellfun(@(x) x.end, segments, 'uni', false)));
+	segmentName = transpose(cellfun(@(x) x.name, segments, 'uni', false));
 	segmentTable = table(segmentStart, segmentEnd, segmentName);
 	new_sr = custom_settings.valid.interp_upsamplingFreq;
 	upsampling_factor = new_sr / sr;
@@ -292,11 +293,16 @@ function [sts, smooth_signal] = preprocess(data, data_combine, segments, custom_
 	model = PupilDataModel(data{1}.header.units, diameter, segmentTable, 0, custom_settings);
 	model.filterRawData();
 	if combining
-		smooth_signal.header.chantype = 'pupil_lr_pp';
-	elseif strcmp(data{1}.header.chantype(end-2:end), '_pp')
+		smooth_signal.header.chantype = 'pupil_pp_c';
+	elseif contains(data{1}.header.chantype, '_pp')
 		smooth_signal.header.chantype = data{1}.header.chantype;
 	else
-		smooth_signal.header.chantype = [data{1}.header.chantype '_pp'];
+		marker = strfind(data{1}.header.chantype, '_');
+        marker = marker(1);
+        smooth_signal.header.chantype = ...
+        [data{1}.header.chantype(1:marker-1),...
+        '_pp_',...
+        data{1}.header.chantype(marker+1:end)];
 	end
 	smooth_signal.header.units = data{1}.header.units;
 	smooth_signal.header.sr = new_sr;

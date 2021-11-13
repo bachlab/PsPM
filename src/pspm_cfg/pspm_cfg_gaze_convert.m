@@ -5,13 +5,12 @@ function [pp_gaze_convert] = pspm_cfg_gaze_convert
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
-
-% $Id: pspm_cfg_gaze_convert.m 635 2019-03-14 10:14:50Z lciernik $
-% $Rev: 635 $
+% PsPM 5.1.2
+% Updated 2021 Teddy Chao (WCHN, UCL)
 
 % Initialise
 global settings
-%if isempty(settings), pspm_init; end
+if isempty(settings), pspm_init; end
 
 %% Datafile
 datafile         = cfg_files;
@@ -77,7 +76,7 @@ eyes.name           = 'Eyes';
 eyes.tag            = 'eyes';
 eyes.val            = {'all'};
 eyes.labels         = {'All eyes', 'Left eye', 'Right eye'};
-eyes.values         = {'lr', 'l', 'r'};
+eyes.values         = {'c', 'l', 'r'};
 eyes.help           = {['Choose eyes which should be processed. If ''All', ...
     'eyes'' is selected, all eyes which are present in the data will ', ...
     'be processed. Otherwise only the chosen eye will be processed.']};
