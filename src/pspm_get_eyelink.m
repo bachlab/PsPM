@@ -1,38 +1,44 @@
 function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
+
 % pspm_get_eyelink is the main function for import of SR Research Eyelink 1000
 % files.
 %
 % FORMAT: [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import);
-%	import: import job structure with
-%		- mandatory fields:
-%			.sr
-%			.data
-%				except for custom channels, the field .channel will
-%				be ignored. The id will be determined according to
-%				the channel type.
+%          import: import job structure with
+%                   - mandatory fields:
+%                       .sr
 %
-%		- optional fields:
-%			.eyelink_trackdist:
-%				A numeric value representing the distance between
-%				camera and recorded eye. Disabled if 0 or negative.
-%				If it is a positive numeric value, causes the
-%				conversion from arbitrary units to distance unit
-%				according to the set distance.
+%                       .data
+%                       except for custom channels, the field .channel will
+%                       be ignored. The id will be determined according to
+%                       the channel type.
 %
-%			.distance_unit:
-%				the unit to which the data should be converted and
-%				in which eyelink_trackdist is given
+%                   - optional fields:
+%                       .eyelink_trackdist:
+%                           A numeric value representing the distance between
+%                           camera and recorded eye. Disabled if 0 or negative.
+%                           If it is a positive numeric value, causes the
+%                           conversion from arbitrary units to distance unit
+%                           according to the set distance.
+%
+%                       .distance_unit:
+%                           the unit to which the data should be converted and
+%                           in which eyelink_trackdist is given
+%
+%
 %
 % In this function, channels related to eyes will not produce an error, if
 % they do not exist. Instead they will produce an empty channel (a channel
 % with NaN values only).
 %
-
+%__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2017 Tobias Moser (University of Zurich)
-% Updated 2021 Teddy Chao (WCHN, UCL)
+% PsPM 5.1.2
+% 2021 Teddy Chao (WCHN, UCL)
 
-%% Initialise
+
+%% initialise
 global settings;
 if isempty(settings), pspm_init; end
 sourceinfo = []; sts = -1;
@@ -48,8 +54,9 @@ area_multiplicator = 0.119;
 %% load data with specific function
 data = import_eyelink(datafile);
 
-%% expand blink/saccade channels with offset
+% expand blink/saccade channels with offset
 % set data channels with blinks/saccades to NaN
+% -------------------------------------------------------------------------
 addpath(pspm_path('backroom'));
 for i = 1:numel(data)-1
   if strcmpi(data{i}.eyesObserved, 'l')
@@ -73,15 +80,16 @@ rmpath(pspm_path('backroom'));
 % iterate through data and fill up channel list as long as there is no
 % marker channel. if there is any marker channel, the settings accordingly
 % markerinfos, markers and marker type.
+% -------------------------------------------------------------------------
 
-%% ensure sessions have the same samplerate
+% ensure sessions have the same samplerate
 %separate marker_data from real data
 all_markers = data{numel(data)};
 data = data(1:numel(data)-1);
 sr = cell2mat(cellfun(@(d) d.sampleRate, data, 'UniformOutput', false));
 eyesObs = cellfun(@(d) d.eyesObserved, data, 'UniformOutput', false);
 if numel(data) > 1 && (any(diff(sr)) || any(~strcmp(eyesObs,eyesObs{1})))
-  warning('ID:invalid_data_structure',...
+  warning('ID:invalid_data_structure', ...
     ['Cannot concatenate multiple sessions with different ', ...
     'sample rate or different eye observation.']);
   % channels
@@ -215,7 +223,7 @@ for k = 1:numel(import)
   else
     % determine chan id from chantype - eyelink specific
     % thats why channel ids will be ignored!
-    if strcmpi(data{1}.eyesObserved, 'LR')
+    if strcmpi(data{1}.eyesObserved, settings.lateral.cap.b) || strcmpi(data{1}.eyesObserved, 'lr')
       chan_struct = {'pupil_l', 'pupil_r', 'gaze_x_l', 'gaze_y_l', ...
         'gaze_x_r', 'gaze_y_r','blink_l','blink_r','saccade_l','saccade_r'};
     else
@@ -262,7 +270,7 @@ for k = 1:numel(import)
     sourceinfo.chan_stats{k}.nan_ratio = n_inv/n_data;
     
     % check for transfer if import type is a pupil
-    if ~isempty(regexpi(import{k}.type, 'pupil'))
+    if ~isempty(regexpi(import{k}.type, 'pupil', 'once'))
       if isfield(import{k}, 'eyelink_trackdist') && ...
           isnumeric(import{k}.eyelink_trackdist) && ...
           import{k}.eyelink_trackdist > 0 && ...
@@ -285,7 +293,7 @@ for k = 1:numel(import)
             reference_distance, ...
             reference_unit);
         else
-          warning('ID:invalid_data_structure',...
+          warning('ID:invalid_data_structure', ...
             'Calculated record method must be ''area'' or ''diameter''');
           return;
         end
@@ -297,18 +305,18 @@ for k = 1:numel(import)
           ' in arbitrary units is converted to milimeters or ''distance_unit''']);
       end
       % store data range in header for gaze channels
-    elseif ~isempty(regexpi(import{k}.type, 'gaze_x_'))
+    elseif ~isempty(regexpi(import{k}.type, 'gaze_x_', 'once'))
       import{k}.range = [data{1}.gaze_coords.xmin ...
         data{1}.gaze_coords.xmax];
-    elseif ~isempty(regexpi(import{k}.type, 'gaze_y_'))
+    elseif ~isempty(regexpi(import{k}.type, 'gaze_y_', 'once'))
       import{k}.range = [data{1}.gaze_coords.ymin ...
         data{1}.gaze_coords.ymax];
     end
     
     % create statistics for eye specific channels
-    if ~isempty(regexpi(import{k}.type, '_[lr]', 'once'))
+    if ~isempty(regexpi(import{k}.type, ['_[', settings.lateral.char.b, ']'], 'once'))
       if size(n_blink, 2) > 1
-        eye_t = regexp(import{k}.type, '.*_([lr])', 'tokens');
+        eye_t = regexp(import{k}.type, ['.*_([', settings.lateral.char.b, '])'], 'tokens');
         n_eye_blink = n_blink(strcmpi(eye_t{1}, {'l','r'}));
       else
         n_eye_blink = n_blink;
@@ -316,7 +324,7 @@ for k = 1:numel(import)
       sourceinfo.chan_stats{k}.blink_ratio = n_eye_blink / n_data;
       
       if size(n_saccade, 2) > 1
-        eye_t = regexp(import{k}.type, '.*_([lr])', 'tokens');
+        eye_t = regexp(import{k}.type, ['.*_([',settings.lateral.char.b,'])'], 'tokens');
         n_eye_saccade = n_saccade(strcmpi(eye_t{1}, {'l','r'}));
       else
         n_eye_saccade = n_saccade;
@@ -334,12 +342,10 @@ sourceinfo.gaze_coords = data{1}.gaze_coords;
 sourceinfo.elcl_proc = data{1}.elcl_proc;
 
 % only imported eyes should be stated in eyesObserved
-left_occurance = any(cell2mat(cellfun(@(x) ~isempty(regexpi(x.type, '_l', 'once')),...
-  import,'UniformOutput',0)));
-right_occurance = any(cell2mat(cellfun(@(x) ~isempty(regexpi(x.type, '_r', 'once')),...
-  import,'UniformOutput',0)));
+left_occurance = any(cell2mat(cellfun(@(x) ~isempty(regexpi(x.type, '_l', 'once')), import,'UniformOutput',0)));
+right_occurance = any(cell2mat(cellfun(@(x) ~isempty(regexpi(x.type, '_r', 'once')), import,'UniformOutput',0)));
 if left_occurance && right_occurance
-  sourceinfo.eyesObserved = 'lr';
+  sourceinfo.eyesObserved = settings.lateral.char.b;
 elseif left_occurance && ~right_occurance
   sourceinfo.eyesObserved = 'l';
 else
@@ -347,18 +353,25 @@ else
 end
 
 % determine best eye
-eye_stat = Inf(1,numel(sourceinfo.eyesObserved));
-for i = 1:numel(sourceinfo.eyesObserved)
-  e = lower(sourceinfo.eyesObserved(i));
-  e_stat = vertcat(sourceinfo.chan_stats{...
-    cellfun(@(x) ~isempty(regexpi(x.type, ['_' e], 'once')), import)});
-  if ~isempty(e_stat)
-    eye_stat(i) = max([e_stat.nan_ratio]);
-  end
+switch sourceinfo.eyesObserved
+  case 'l'
+    sourceinfo.best_eye = sourceinfo.eyesObserved;
+  case 'r'
+    sourceinfo.best_eye = sourceinfo.eyesObserved;
+  case 'c'
+    eye_stat = Inf(1,2);
+    eye_choice = 'lr';
+    for i = 1:2
+      e = lower(eye_choice(i));
+      e_stat = vertcat(sourceinfo.chan_stats{...
+        cellfun(@(x) ~isempty(regexpi(x.type, ['_' e], 'once')), import)});
+      if ~isempty(e_stat)
+        eye_stat(i) = max([e_stat.nan_ratio]);
+      end
+    end
+    [~, min_idx] = min(eye_stat);
+    sourceinfo.best_eye = lower(eye_choice(min_idx));
 end
-
-[~, min_idx] = min(eye_stat);
-sourceinfo.best_eye = lower(sourceinfo.eyesObserved(min_idx));
 
 % remove specific import path
 rmpath(pspm_path('Import','eyelink'));
