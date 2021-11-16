@@ -3,7 +3,7 @@ classdef pspm_get_acq_test < pspm_get_superclass
 % unittest class for the pspm_get_mat function
 %__________________________________________________________________________
 % SCRalyze TestEnvironment
-% (C) 2013 Linus Rüttimann (University of Zurich)
+% (C) 2013 Linus RÃ¼ttimann (University of Zurich)
        
     properties
         testcases;
