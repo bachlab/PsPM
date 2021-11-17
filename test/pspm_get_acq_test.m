@@ -53,7 +53,7 @@ classdef pspm_get_acq_test < pspm_get_superclass
             
             %testcase 6
             %--------------------------------------------------------------
-            this.testcases{6}.pth = 'ImportTestData/acq/Tuyen_Breath_Hold.acq';
+            this.testcases{6}.pth = 'ImportTestData/acq/Acq_real_Breath_Hold.acq';
             
             this.testcases{6}.import{1} = struct('type', 'scr'   , 'channel', 3);
             this.testcases{6}.import{2} = struct('type', 'resp'  , 'channel', 4);
