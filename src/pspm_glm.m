@@ -531,11 +531,12 @@ for iSn = 1:nFile
     % process missing values
     newmissing = zeros(size(newy(:)));
     if ~isempty(missing{iSn})
-        missingtimes = missing{iSn} * newsr;
+        time_conversion_options.sr = newsr;
+        time_conversion_options.method = 'time2dp';
+        time_conversion_options.data_length = length(newmissing);
+        missingtimes = pspm_time_conversion(missing{iSn},time_conversion_options);
         for iMs = 1:size(missingtimes, 1)
-          if round(missingtimes(iMs, 1):missingtimes(iMs, 2)) <= length(newmissing)
-            newmissing(round(missingtimes(iMs, 1):missingtimes(iMs, 2))) = 1;
-          end
+            newmissing(missingtimes(iMs, 1):missingtimes(iMs, 2)) = 1;
         end
     end
     % copy NaN in y data should be missing

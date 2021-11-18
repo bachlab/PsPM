@@ -30,15 +30,16 @@ end
 
 %% Conversion
 switch options.method
-  case time2dp
+  case 'time2dp'
     output = round(input * options.sr);
     if output == 0
       output = 1;
     end
-    if output > options.data_length && options.data_length ~= 0
-      output = options.data_length;
+    flag = output > ones(size(output))*options.data_length;
+    if sum(sum(flag))>0 && options.data_length ~= 0
+      output(flag==1) = options.data_length;
     end
-  case dp2time
+  case 'dp2time'
     output = input / options.sr;
 end
 
