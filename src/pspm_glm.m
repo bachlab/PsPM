@@ -531,10 +531,7 @@ for iSn = 1:nFile
     % process missing values
     newmissing = zeros(size(newy(:)));
     if ~isempty(missing{iSn})
-        time_conversion_options.sr = newsr;
-        time_conversion_options.method = 'time2dp';
-        time_conversion_options.data_length = length(newmissing);
-        missingtimes = pspm_time_conversion(missing{iSn},time_conversion_options);
+        missingtimes = pspm_time2index(missing{iSn},newsr,length(newmissing));
         for iMs = 1:size(missingtimes, 1)
             newmissing(missingtimes(iMs, 1):missingtimes(iMs, 2)) = 1;
         end
