@@ -247,7 +247,6 @@ for d=1:numel(D)
                     %return;
 					warning('ID:option_disabled', ['Extrapolating was forced because interpolate without extrapolating cannot be done']);
 					vq = interp1(x, v, xq, options.method, 'extrap');
-					return;
 					
                 elseif s_overlap && strcmpi(options.method, 'previous')
                     warning('ID:out_of_range', ['Cannot extrapolate with ', ...
