@@ -73,12 +73,11 @@ function [sts, out] = pspm_extract_segments(varargin)
     %                           (on MATLAB command window) or written to a created file.
     %                           The field can be set to 'screen', 'File Output'or
     %                           'none'. 'none' is the default value.
+    %           norm:           If 1, z-scores the entire data time series
+    %                           (default: 0).
     %__________________________________________________________________________
     % PsPM 4.3
     % (C) 2008-2018 Tobias Moser (University of Zurich)
-    
-    % $Id: pspm_extract_segments.m 733 2019-06-20 12:47:45Z esrefo $
-    % $Rev: 733 $
     
     % -------------------------------------------------------------------------
     % DEVELOPERS NOTES: 
@@ -229,6 +228,11 @@ function [sts, out] = pspm_extract_segments(varargin)
     else
         options.timeunit = lower(options.timeunit);
     end;
+    
+    % set default normalisation
+    if ~isfield(options, 'norm')
+        options.norm = 0;
+    end
     
     % set default marker_chan, if it is a glm struct (only for non-raw data)
     if manual_chosen == 1 || (manual_chosen == 0 && strcmpi(model_strc.modeltype,'glm'))
@@ -389,8 +393,15 @@ function [sts, out] = pspm_extract_segments(varargin)
             sampling_rates = repmat(sampling_rates, n_sessions, 1);
         end
     end;
-    
-    
+    %% Normalise data
+    if options.norm
+       newmat = cell2mat(input_data(:));
+       zfactor = std(newmat(:));
+       offset  = mean(newmat(:));
+       for iSn = 1:n_sessions
+          input_data{iSn} = (input_data{iSn} - offset) / zfactor;
+       end
+    end
     %% not all sessions have the same number of conditions
     % create a new multi structure which contains all conditions and their
     % timings. There are multiple cases: sessions with missing conditions and
