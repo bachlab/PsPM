@@ -1,6 +1,6 @@
 function [sts, out_channel] = pspm_pupil_pp(fn, options)
 
-% DESCRIPTION
+% DEFINITION
 % pspm_pupil_pp preprocesses pupil diameter signals given in any unit of measurement. It performs
 % the steps described in [1]. This function uses a modified version of [2]. The modified version
 % with a list of changes from the original is shipped with PsPM under pupil-size directory.
@@ -101,16 +101,16 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
 %% 1 Initialise
 global settings;
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 
 %% 2 Create default arguments
 if nargin == 1
-	options = struct();
+  options = struct();
 end
 if ~isfield(options, 'channel')
-	options.channel = 'pupil';
+  options.channel = 'pupil';
 end
 if ~isfield(options, 'channel_action')
 	options.channel_action = 'add';
