@@ -43,7 +43,7 @@ end
 		return
 	end
 	if isfield(options, 'custom_settings')
-		default_settings = assign_fields_recursively(default_settings, options.custom_settings);
+		default_settings = pspm_assign_fields_recursively(default_settings, options.custom_settings);
 	end
 	options.custom_settings = default_settings;
 	if ~isfield(options, 'segments')
@@ -76,7 +76,7 @@ end
 		if lsts ~= 1
 			return
 		end
-		if strcmp(get_eye(data{1}.header.chantype), get_eye(data_combine{1}.header.chantype))
+		if strcmp(pspm_get_eye(data{1}.header.chantype), pspm_get_eye(data_combine{1}.header.chantype))
 			warning('ID:invalid_input', 'options.channel and options.channel_combine must specify different eyes');
 			return;
 		end
@@ -100,8 +100,8 @@ end
 	rmpath(pspm_path('backroom'));
 
 	%% 5 preprocess
-	[lsts, smooth_signal_x] = preprocess(data_x, data_combine_x, options.segments, options.custom_settings, options.plot_data);
-	[lsts, smooth_signal_y] = preprocess(data_y, data_combine_y, options.segments, options.custom_settings, options.plot_data);
+	[lsts, smooth_signal_x] = pspm_preprocess(data_x, data_combine_x, options.segments, options.custom_settings, options.plot_data, 'gaze_x');
+	[lsts, smooth_signal_y] = pspm_preprocess(data_y, data_combine_y, options.segments, options.custom_settings, options.plot_data, 'gaze_y');
 	if lsts ~= 1
 		return
 	end
