@@ -78,7 +78,7 @@ try
 	end
 
 	smooth_signal.data = validsamples_obj.signal.pupilDiameter;
-	smooth_signal.data = complete_with_nans(smooth_signal.data, validsamples_obj.signal.t(1), ...
+	smooth_signal.data = pspm_complete_with_nans(smooth_signal.data, validsamples_obj.signal.t(1), ...
 		new_sr, desired_output_samples);
 
 	% 5 store segment information
