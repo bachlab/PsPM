@@ -65,12 +65,12 @@ end
 %% 4 Load
 action_combine = ~strcmp(options.channel_combine, 'none');
 addpath(pspm_path('backroom'));
-[lsts, gaze_original] = pspm_load_single_chan(fn, options.channel, 'last', options.channel);
+[lsts, gaze_original] = pspm_load_single_chan(fn, options.channel, 'last', 'gaze_x');
 if lsts ~= 1
   return
 end
 if action_combine
-  [lsts, gaze_combine] = pspm_load_single_chan(fn, options.channel_combine, 'last', options.channel);
+  [lsts, gaze_combine] = pspm_load_single_chan(fn, options.channel_combine, 'last', 'gaze_x');
   if lsts ~= 1
     return
   end

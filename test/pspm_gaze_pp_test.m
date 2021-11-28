@@ -37,8 +37,8 @@ classdef pspm_gaze_pp_test < pspm_testcase
       this.verifyWarning(@()pspm_gaze_pp(52), 'ID:invalid_input');
       this.verifyWarning(@()pspm_gaze_pp('abc'), 'ID:nonexistent_file');
 
-      opt.channel = 'gaze_x_l';
-      this.verifyWarning(@()pspm_gaze_pp(this.pspm_input_filename, opt), 'ID:invalid_input');
+      opt.channel = 'gaze';
+      this.verifyWarning(@()pspm_gaze_pp(this.pspm_input_filename, opt), 'ID:invalid_channeltype');
 
       opt.channel = 'gaze_x_l';
       opt.channel_combine = 'pupil_l';
@@ -53,17 +53,17 @@ classdef pspm_gaze_pp_test < pspm_testcase
       [~, out_channel] = pspm_gaze_pp(this.pspm_input_filename, opt);
       testdata = load(this.pspm_input_filename);
       this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_x_r');
-      opt.channel = 'gaze_y_r';
-      [~, out_channel] = pspm_gaze_pp(this.pspm_input_filename, opt);
-      testdata = load(this.pspm_input_filename);
-      this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_y_r');
+%       opt.channel = 'gaze_y_r';
+%       [~, out_channel] = pspm_gaze_pp(this.pspm_input_filename, opt);
+%       testdata = load(this.pspm_input_filename);
+%       this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_y_r');
     end
 
     function check_upsampling_rate(this)
       for freq = [500 1000 1500]
         opt.custom_settings.valid.interp_upsamplingFreq = freq;
         opt.channel = 'gaze_x_r';
-        [~, out_channel] = pspm_pupil_pp(this.pspm_input_filename, opt);
+        [~, out_channel] = pspm_gaze_pp(this.pspm_input_filename, opt);
         testdata = load(this.pspm_input_filename);
         pupil_chan_indices = find(...
           cell2mat(cellfun(@(x) strcmp(x.header.chantype, 'gaze_x_r'),...
