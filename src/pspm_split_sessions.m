@@ -159,8 +159,10 @@ if options.missing
         warning('ID:invalid_input', 'Could not load missing epochs.');
     end
     missingsr = 10000; % dummy sample rate, should be higher than data sampling rates (but no need to make it dynamic)
-    missing = pspm_time2index(missing_time, missingsr, ininfos.duration); % convert epochs in sec to datapoints
-    indx = zeros(1,round(missingsr * ininfos.duration)); % indx should be a one-dimensional array?
+    duration_index = round(missingsr * ininfos.duration);
+    indx = zeros(1,duration_index); % indx should be a one-dimensional array?
+    missing = pspm_time2index(missing_time, missingsr, duration_index); % convert epochs in sec to datapoints
+
     % allow splitting empty missing epochs
     if ~isempty(missing)
         indx(missing(:, 1)) = 1;
