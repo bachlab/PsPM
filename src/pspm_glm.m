@@ -18,14 +18,14 @@ function glm = pspm_glm(model, options)
 %                   'names' OR
 %                   a cell array of struct
 % model.timeunits:  one of 'seconds', 'samples', 'markers', 'markervalues'
-% model.window:     a scalar in seconds that specifies over which time 
+% model.window:     a scalar in seconds that specifies over which time
 %                   window (starting with the events specified in
 %                   model.timing) the model should be evaluated. Is only
 %                   required if model.latency equals 'free'. Is ignored
 %                   otherwise.
 %
 % optional fields
-% model.modelspec:  'scr' (default); specify the model to be used. 
+% model.modelspec:  'scr' (default); specify the model to be used.
 %                   See pspm_init, defaults.glm() which modelspecs are possible
 %                   with glm.
 % model.modality:   specify the modality to be processed.
@@ -38,7 +38,7 @@ function glm = pspm_glm(model, options)
 %                   indicates that the onset of the basis function precedes
 %                   event onsets by n seconds (default: 0: used for
 %                   interpolated data channels)
-% model.channel:    channel number or channel type. if a channel type is 
+% model.channel:    channel number or channel type. if a channel type is
 %                   specified the LAST channel matching the given type will
 %                   be used. The rationale for this is that, in general channels
 %                   later in the channel list are preprocessed/filtered versions
@@ -71,9 +71,9 @@ function glm = pspm_glm(model, options)
 %                   additional dictionary matching algorithm will try to
 %                   estimate the best latency. Latencies will then be added
 %                   at the end of the output. In 'free' models the field
-%                   model.window is MANDATORY and single basis functions 
+%                   model.window is MANDATORY and single basis functions
 %                   are allowed only.
-% model.centering:  if set to 0 the function would not perform the 
+% model.centering:  if set to 0 the function would not perform the
 %                   mean centering of the convolved X data. For example, to
 %                   invert SPS model, set centering to 0.
 %                   Default: 1
@@ -83,11 +83,11 @@ function glm = pspm_glm(model, options)
 % options.marker_chan_num: marker channel number; default last marker
 %                          channel
 % options.exclude_missing: marks trials during which NaN percentage exceeds
-%                          a cutoff value. Requires two subfields: 
+%                          a cutoff value. Requires two subfields:
 %                          'segment_length' (in s after onset) and 'cutoff'
 %                          (in % NaN per segment). Results are written into
-%                          model structure as fields .stats_missing and 
-%                           .stats_exclude but not used further.                           
+%                          model structure as fields .stats_missing and
+%                           .stats_exclude but not used further.
 %
 % TIMING - multiple condition file(s) or struct variable(s):
 % The structure is equivalent to SPM2/5/8/12 (www.fil.ion.ucl.ac.uk/spm),
@@ -143,8 +143,8 @@ function glm = pspm_glm(model, options)
 % model-based methods for skin conductance analysis. Biological Psychology,
 % 103, 63-88.
 %
-% (5) SEBR GLM: Khemka S, Tzovara A, Gerster S, Quednow B and Bach DR (2017) 
-% Modeling Startle Eyeblink Electromyogram to Assess 
+% (5) SEBR GLM: Khemka S, Tzovara A, Gerster S, Quednow B and Bach DR (2017)
+% Modeling Startle Eyeblink Electromyogram to Assess
 % Fear Learning. Psychophysiology
 %__________________________________________________________________________
 % PsPM 3.1
@@ -269,14 +269,14 @@ if isfield(options,'exclude_missing')
         warning('ID:invalid_input', 'To extract the NaN-values segment-length and cutoff must be set'); return;
     elseif ~(isnumeric(options.exclude_missing.segment_length) && isnumeric(options.exclude_missing.cutoff))
         warning('ID:invalid_input', 'To extract the NaN-values segment-length and cutoff must be numeric values.'); return;
-    end 
+    end
 end
 
 % check files --
 if exist(model.modelfile, 'file') && ~(isfield(options, 'overwrite') && options.overwrite == 1)
 	if feature('ShowFigureWindows')
 		msg = ['Model file already exists. Overwrite?', newline, 'Existing file: ',model.modelfile];
-    	overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default to overwrite by users 
+    	overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default to overwrite by users
     else
     	overwrite = 'Yes'; % default to overwrite on Jenkins
     end
@@ -309,13 +309,13 @@ for iFile = 1:nFile
     if any(strcmp(model.timeunits, {'marker', 'markers','markervalues'}))
         [sts, ~, data] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
         if sts < 1
-            warning('ID:invalid_input', ['Could not load the specified markerchannel']); 
+            warning('ID:invalid_input', ['Could not load the specified markerchannel']);
             return;
         end
         events{iFile} = data{end}.data * data{end}.header.sr;
         if strcmp(model.timeunits,'markervalues')
             model.timing{iFile}.markerinfo = data{end}.markerinfo;
-        end 
+        end
     end
 end
 if nFile > 1 && any(diff(sr) > 0)
@@ -336,7 +336,7 @@ if strcmpi(model.filter.down, 'none') || ...
 else
     % check value of model.filter.down --
     if ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
-        % tested because the field is used before the call of 
+        % tested because the field is used before the call of
         % pspm_prepdata (everything else is tested there)
         warning('ID:invalid_input', ['Filter struct needs field ', ...
             '''down'' to be numeric or ''none''.']); return;
@@ -367,7 +367,7 @@ end
 if ~isempty(basepath), addpath(basepath); end
 try
     td = 1/model.filter.down;
-    
+
     % model.bf.X contains the function values
     % bf_x contains the timestamps
     [model.bf.X, bf_x] = feval(model.bf.fhandle, [td; model.bf.args(:)]);
@@ -391,7 +391,7 @@ end
 % remove path & clear local variables --
 if ~isempty(basepath), rmpath(basepath); end
 clear basepath basefn baseext
- 
+
 
 % check regressor files --
 [sts, multi] = pspm_get_timing('onsets', model.timing, model.timeunits);
@@ -401,9 +401,9 @@ elseif strcmpi(model.timeunits,'markervalues')
     nr_multi = numel(multi);
     for n_m = 1:nr_multi
      model.timing{n_m} = multi(n_m);
-    end 
+    end
     model.timeunits = 'markers';
-end 
+end
 
 % check & get missing values --
 if ~isfield(model, 'missing')
@@ -443,7 +443,7 @@ else
     if numel(model.nuisance) ~= nFile
         warning('ID:number_of_elements_dont_match', 'Same number of data files and nuisance regressor files is needed.'); return;
     end
-    
+
     for iSn = 1:nFile
         if isempty(model.nuisance{iSn})
             R{iSn} = [];
@@ -496,7 +496,7 @@ clear sts iFile modno
 
 Y=[]; M=[]; tmp=struct([]);
 for iSn = 1:nFile
-    
+
     % prepare (filter & downsample) data
     model.filter.sr = sr(iSn);
     % find NaN values
@@ -509,11 +509,11 @@ for iSn = 1:nFile
     % filter data
     [sts, newy, newsr] = pspm_prepdata(oldy, model.filter);
     if sts ~= 1, warning('ID:invalid_input', 'Failed to filter data'); return; end
-    
+
     % if has been downsampled adjust nan_idx
     if numel(oldy) ~= numel(newy)
         nan_idx = round(nan_idx*(model.filter.down/model.filter.sr));
-        % sanitize ends 
+        % sanitize ends
         nan_idx(nan_idx < 1) = 1;
         nan_idx(nan_idx > numel(newy)) = numel(newy);
         % find duplicates
@@ -521,26 +521,26 @@ for iSn = 1:nFile
         % remove duplicates
         nan_idx(dupli) = [];
     end
-    
+
     % concatenate data
     Y=[Y; NaN(newsr * model.bf.shiftbf, 1); newy(:)];
-    
+
     % get duration of single sessions
     tmp(1).snduration(iSn) = numel(newy) + newsr * model.bf.shiftbf;
-    
+
     % process missing values
     newmissing = zeros(size(newy(:)));
     if ~isempty(missing{iSn})
-        missingtimes = pspm_time2index(missing{iSn},newsr,length(newmissing));
+        missingtimes = pspm_time2index(missing{iSn},newsr,length(newmissing),'i');
         for iMs = 1:size(missingtimes, 1)
             newmissing(missingtimes(iMs, 1):missingtimes(iMs, 2)) = 1;
         end
     end
     % copy NaN in y data should be missing
     newmissing(nan_idx) = 1;
-    
+
     M = [M; ones(newsr * model.bf.shiftbf, 1); newmissing];
-    
+
     % convert regressor information to samples
     if ~isempty(multi)
 
@@ -548,7 +548,7 @@ for iSn = 1:nFile
 
             % look for index
             name_idx = find(strcmpi(names, multi(iSn).names(n)));
-            if numel(name_idx) > 1 
+            if numel(name_idx) > 1
                 warning(['Name was found multiple times, ', ...
                     'will take first occurence.']);
                 name_idx = name_idx(1);
@@ -570,7 +570,7 @@ for iSn = 1:nFile
                         % markers are timestamps in seconds
                         newonsets = round(events{iSn}(multi(iSn).onsets{n}) ...
                             * newsr);
-                        
+
                     catch
                         warning(['\nSome events in condition %01.0f were ', ...
                             'not found in the data file %s'], n, ...
@@ -611,7 +611,7 @@ for iSn = 1:nFile
         onsets = {};
         durations = {};
     end
-    
+
 end
 
 % normalise if desired --
@@ -752,7 +752,7 @@ for iCond = 1:numel(names)
             tmp.col = {};
         end
     end
-    
+
     % mean centering
     if model.centering
         for iXCol=1:size(tmp.XC{iCond},2)
@@ -842,7 +842,7 @@ if strcmpi(model.latency, 'free')
     % prepare dictionary onsets and new design matrix
     D_on = eye(ceil(model.window*glm.infos.sr));
     XMnew = NaN(size(glm.XM));
-    
+
     % go through columns
     ncol = size(glm.XM, 2) - nR - glm.interceptno;
     glm.names(2 * ncol + (1:glm.interceptno)) = glm.names(ncol + (1:glm.interceptno));
@@ -860,10 +860,10 @@ if strcmpi(model.latency, 'free')
         % create names
         glm.names{iCol + ncol} = [glm.names{iCol}, ' Latency'];
     end
-    
+
     % add nuisance regressors (if any) and session intercepts
     XMnew(:, (iCol + 1):end) = glm.XM(:, (iCol + 1):end);
-    
+
     % replace design matrix
     glm.XMold = glm.XM;
     glm.XM = XMnew;
@@ -888,14 +888,14 @@ end
 
 % call pspm_extract_segments if options.exclude_misssing is set
 % verify that both fields are set
-% when pspm_extract_segments returns set fields in glm 
-% glm.stats_missing holds the percentage of NaNs per condition 
+% when pspm_extract_segments returns set fields in glm
+% glm.stats_missing holds the percentage of NaNs per condition
 % glm.stats_exclude holds boolean for each condition to indicate if the
 % cutoff holds
 % glm.stats_exclude_names holds the names of the conditions to be excluded
 
 if isfield(options,'exclude_missing')
-    
+
     [sts,segments] = pspm_extract_segments('auto', glm, ...
         struct('length', options.exclude_missing.segment_length));
     if sts == -1

@@ -6,13 +6,17 @@ function index = pspm_time2index(time, sr, varargin)
 %   index = pspm_time_conversion(time, sr, varargin)
 % ARGUMENTS
 %   Input
-%     time            a decimal
+%     time            a numerical value
 %                     meaning: time; unit: second
 %     sr              a numerical value
 %                     meaning: sampling rate / frequency
 %     varargin
-%       data_length   an integer
-%                     meaning: the length of data, by which data points should not exceed
+%       duration      a numerical value
+%                     meaning: the duration of the interval, default as time
+%       indicator     a character, either 't' or 'i'
+%                     meaning: indicating the type of duration
+%                     if 't', the duration is given as time, which can be a decimal
+%                     if 'i', the duration is given as index, which must be an integer
 %   Output
 %     index           an integer
 %                     meaning: index / data point
@@ -21,7 +25,17 @@ function index = pspm_time2index(time, sr, varargin)
 % Supervised by Professor Dominik Bach (WCHN, UCL)
 
 if ~isempty(varargin)
-  data_length = varargin{1};
+  switch length(varargin)
+  case 1
+  data_length = round(varargin{1} * sr);
+  case 2
+    switch varargin{2}
+    case 't'
+      data_length = round(varargin{1} * sr);
+    case 'i'
+      data_length = varargin{1};
+    end
+  end
 end
 index = round(time * sr);
 if index == 0
@@ -33,5 +47,4 @@ if exist('data_length', 'var')
     index(flag==1) = data_length;
   end
 end
-
 end
