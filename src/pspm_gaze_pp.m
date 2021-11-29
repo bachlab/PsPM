@@ -98,7 +98,7 @@ end
 rmpath(pspm_path('backroom'));
 
 %% 5 preprocess
-[lsts, smooth_signal] = pspm_preprocess(gaze_original, gaze_combine, options.segments, options.custom_settings, options.plot_data, options.channel);
+[lsts, smooth_signal] = pspm_preprocess(gaze_original, gaze_combine, options.segments, options.custom_settings, options.plot_data, 'gaze_x');
 if lsts ~= 1
   return
 end
