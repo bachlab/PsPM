@@ -154,17 +154,12 @@ end
 % 2.2 Handle missing epochs
 if options.missing
     % makes sure the epochs are in seconds and not empty
-    [sts, missing] = pspm_get_timing('epochs', options.missing, 'seconds');
+    [sts, missing_time] = pspm_get_timing('epochs', options.missing, 'seconds');
     if sts < 0
         warning('ID:invalid_input', 'Could not load missing epochs.');
     end
     missingsr = 10000; % dummy sample rate, should be higher than data sampling rates (but no need to make it dynamic)
-    if any(missing > ininfos.duration)
-        warning('ID:invalid_input', 'Some missing epochs are outside data file.');
-        return
-    else
-        missing = round(missing*missingsr); % convert epochs in sec to datapoints
-    end
+    missing = pspm_time2index(missing_time, missingsr, ininfos.duration*missingsr); % convert epochs in sec to datapoints
     indx = zeros(1,round(missingsr * ininfos.duration)); % indx should be a one-dimensional array?
     % allow splitting empty missing epochs
     if ~isempty(missing)
