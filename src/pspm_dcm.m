@@ -132,6 +132,7 @@ function dcm = pspm_dcm(model, options)
 % PsPM 5.1.0
 % (c) 2010-2021 PsPM Team
 
+
 %% Initialise & set output
 % ------------------------------------------------------------------------
 global settings;
