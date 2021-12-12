@@ -568,8 +568,12 @@ for iSn = 1:numel(model.timing)
                     subsessions(sbs_id,2);
                 sbs_iti{sbs_id} = [sbs_trlstart{sbs_id}(2:end); ...
                     numel(sbs_data{sbs_id, 1})/model.sr] - sbs_trlstop{sbs_id};
-                sbs_miniti(sbs_id) = min(sbs_iti{sbs_id}(1 : end - 1));
-                
+                 if sum(sbs_trls)>1 % if more than one trial exists
+                    sbs_miniti(sbs_id) = min(sbs_iti{sbs_id}(1 : end - 1));
+                else
+                    sbs_miniti(sbs_id) = NaN;
+                end
+
                 for ievType = 1:numel(sbs_newevents)
                     if ~isempty(sn_newevents{ievType}{iSn})
                         sbs_newevents{ievType}{sbs_id} = ...
@@ -601,7 +605,7 @@ for iSn = 1:numel(model.timing)
     end
 end
 
-if isempty(sbs_trlstart) 
+if all(cellfun(@isempty, sbs_trlstart))
     warning('ID:invalid_input', ['In all files there is not a ', ...
         'single subsession to be processed.']);
     return;
@@ -610,6 +614,7 @@ end
 % find subsessions with events and define them to be processed
 proc_subsessions = ~cellfun(@isempty, sbs_trlstart);
 proc_miniti     =  sbs_miniti(proc_subsessions);
+proc_miniti(isnan(proc_miniti)) = [];
 model.trlstart =  sbs_trlstart(proc_subsessions);
 model.trlstop  =  sbs_trlstop(proc_subsessions);
 model.iti      =  sbs_iti(proc_subsessions);
