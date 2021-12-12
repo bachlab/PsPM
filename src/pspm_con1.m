@@ -29,8 +29,6 @@ function pspm_con1(modelfile, connames, convec, datatype, deletecon, options)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
 
 % initialise 
 % ------------------------------------------------------------------------

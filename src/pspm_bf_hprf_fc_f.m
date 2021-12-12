@@ -15,8 +15,6 @@ function [fx, x, p] = pspm_bf_hprf_fc_f(td, soa, p)
 % PsPM 3.0
 % (C) 2015 Tobias Moser (University of Zurich)
 
-% $Id$   
-% $Rev$
 
 % initialise
 % -------------------------------------------------------------------------

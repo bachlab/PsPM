@@ -13,8 +13,6 @@ function [sts] = pspm_check_options(type, check_opt, fields)
 % PsPM 3.1
 % (C) 2009-2016 Tobias Moser (University of Zurich)
 
-% $Id$   
-% $Rev$
 
 % initialise
 % -------------------------------------------------------------------------

@@ -16,8 +16,6 @@ function [sts, converted] = pspm_convert_unit(data, from, to)
 % PsPM 4.0
 % (C) 2018 Tobias Moser (University of Zurich)
 
-% $Id: pspm_convert_au2mm.m 501 2017-11-24 08:36:53Z tmoser $
-% $Rev: 501 $
 
 % initialise
 % -----------------------------------------------------------------------------

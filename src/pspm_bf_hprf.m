@@ -10,9 +10,6 @@ function [bf, x ,p] = pspm_bf_hprf(td,p)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
-
 % initialise
 % -------------------------------------------------------------------------
 global settings;

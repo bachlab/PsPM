@@ -26,8 +26,6 @@ function [varargout] = pspm_convert_area2diameter(varargin)
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
 
-% $Id: pspm_convert_area2diameter.m 592 2018-09-14 09:01:41Z lciernik $
-% $Rev: 592 $
 
 % initialise
 % -------------------------------------------------------------------------

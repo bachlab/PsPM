@@ -35,11 +35,6 @@ function varargout = pspm_data_editor(varargin)
     % PsPM 5.1
     % Updated 2021 Teddy Chao (WCHN)
 
-    % $Id$
-    % $Rev$
-
-    % Last Modified by GUIDE v2.5 23-Jun-2020 14:11:46
-
     % Begin initialization code - DO NOT EDIT
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...

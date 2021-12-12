@@ -19,8 +19,6 @@ function [bs, x] = pspm_bf_rarf_fc(varargin)
 % PsPM 3.1
 % (C) 2016 G Castegnetti, Tobias Moser (University of Zurich)
 
-% $Id$
-% $Rev$
 
 % initialise
 global settings

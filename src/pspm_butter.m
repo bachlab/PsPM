@@ -9,8 +9,6 @@ function [sts, b, a] = pspm_butter(order, freqratio, pass)
     % PsPM 3.0
     % (c) 2009-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
     
-    % $Id$ 
-    % $Rev$
     
     % initialise
     % ------------------------------------------------------------------------

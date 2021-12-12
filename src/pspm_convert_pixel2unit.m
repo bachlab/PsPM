@@ -48,8 +48,7 @@ function [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, ...
 % PsPM 4.0
 % (C) 2016 Tobias Moser (University of Zurich)
 
-% $Id: pspm_find_valid_fixations.m 512 2017-12-15 13:13:08Z tmoser $
-% $Rev: 512 $
+
 global settings;
 if isempty(settings), pspm_init; end
 sts = -1;

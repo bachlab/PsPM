@@ -28,8 +28,6 @@ function [bf, x, b] = pspm_bf_hprf_e(varargin)
 % (C) 2015 Philipp C Paulus & Dominik R Bach
 % (Technische Universitaet Dresden, University of Zurich)
 
-% $Id$
-% $Rev$
 
 % input checks 
 % -------------------------------------------------------------------------

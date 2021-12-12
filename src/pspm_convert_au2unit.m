@@ -56,8 +56,6 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
 
-% $Id: pspm_convert_au2unit.m 707 2019-06-14 07:23:41Z esrefo $
-% $Rev: 707 $
 
 % initialise
 % -------------------------------------------------------------------------

@@ -29,8 +29,6 @@ function varargout = pspm_contrast(varargin)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
 
 % initialise
 % -------------------------------------------------------------------------

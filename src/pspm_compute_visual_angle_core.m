@@ -23,6 +23,7 @@ function [lat, lon, lat_range, lon_range] = pspm_compute_visual_angle_core(x_dat
 %               lon_range:      the longitude range
 %__________________________________________________________________________
 % PsPM 4.0
+
 global settings;
 if isempty(settings), pspm_init; end;
 

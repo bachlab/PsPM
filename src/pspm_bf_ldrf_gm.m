@@ -27,9 +27,6 @@ function [bs, x] = pspm_bf_ldrf_gm(varargin)
 % PsPM 3.1
 % (C) 2015 Tobias Moser (University of Zurich)
 
-% $Id$   
-% $Rev$
-
 % initialise
 % -------------------------------------------------------------------------
 global settings

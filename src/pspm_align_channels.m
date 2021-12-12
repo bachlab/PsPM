@@ -12,9 +12,6 @@ function [sts, data, duration]=pspm_align_channels(data, induration)
 % PsPM 3.1
 % (C) 2008-2016 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $ Id: $
-% $ Rev $
-
 
 % initialise status
 % -------------------------------------------------------------------------

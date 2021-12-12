@@ -14,8 +14,6 @@ function [bs, x] = pspm_bf_psrf_fc(varargin)
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
 
-% $Id$   
-% $Rev$
 
 
 % initialise

@@ -19,8 +19,6 @@ function [bs, x] = pspm_bf_psrf_erl(varargin)
 % PsPM 3.1
 % (C) 2018 Tobias Moser (University of Zurich)
 
-% $Id: pspm_bf_psrf_fc.m 403 2017-01-06 09:33:44Z tmoser $   
-% $Rev: 403 $
 
 
 % initialise

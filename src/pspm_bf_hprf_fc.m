@@ -12,9 +12,6 @@ function [bs, x] = pspm_bf_hprf_fc(varargin)
 % PsPM 3.0
 % (C) 2015 Tobias Moser (University of Zurich)
 
-% $Id$   
-% $Rev$
-
 % initialise
 global settings
 if isempty(settings), pspm_init; end;

@@ -21,8 +21,6 @@ function pspm_con2(modelfile, outfile, con, connames, options)
 % PsPM 3.0
 % (c) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$ 
 
 global settings
 if isempty(settings), pspm_init; end;
