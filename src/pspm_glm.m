@@ -829,6 +829,12 @@ glm.interceptno = iSn;
 glm.regscale((end+1):(end+iSn)) = 1;
 
 % delete missing epochs and prepare output
+perc_missing = 1 - sum(glm.M)/length(glm.M);
+if perc_missing >= 0.1
+  warning('ID:invalid_input', ...
+    ['More than 10% of input data was filtered out due to missing epochs, ',...
+    'results may be inaccurate']);
+end
 glm.YM = glm.Y;
 glm.YM(glm.M(1:length(glm.YM))==1) = [];
 glm.Y(glm.M(1:length(glm.Y))==1) = NaN;
