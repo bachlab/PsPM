@@ -56,9 +56,10 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %               A numerical value to choose whether to change the data or not
 %								Default: 1 (true)
 %       channel_action
-%               Accepted values: 'add'/'replace'
-%               Defines whether the new channel should be added or the previous outputs
-%               of this function should be replaced.
+%               Accepted values: 'add'/'replace'/'withdraw'
+%               Defines whether the new channel should be added, the previous outputs
+%               of this function should be replaced, or new data should be
+%               withdrawn.
 %								Default: 'add'
 % FUNCTIONS
 %	  filter_to_epochs
@@ -250,9 +251,10 @@ for d = 1:numel(data_source)
   if isfield(options, 'missing_epochs_filename')
     save(options.missing_epochs_filename, 'epochs');
     % Write epochs to mat if missing_epochs_filename option is present
-  else
-    % If not save epochs, save the changed data to the original data as
-    % a new channel or replace the old data
+  end
+  % If not save epochs, save the changed data to the original data as
+  % a new channel or replace the old data
+  if ~strcmp(options.channel_action, 'withdraw')
     data_to_write = indatas{1,1};
     data_to_write.data = data_changed;
     [sts_write, ~] = pspm_write_channel(out{d}, data_to_write, options.channel_action);
