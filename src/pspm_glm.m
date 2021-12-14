@@ -665,7 +665,6 @@ glm.timing.pmod       = pmod;
 glm.modality          = model.modality;
 glm.modelspec         = model.modelspec;
 glm.modeltype         = 'glm';
-glm.revision          = rev;
 
 % clear local variables --
 clear iSn iMs ynew newonsets newdurations newmissing missingtimes
