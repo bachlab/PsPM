@@ -11,7 +11,7 @@ jobs:
       - name: Add test data
         uses: actions/checkout@v2
         with:
-          repository: teddychao/PsPM-data
+          repository: bachlab/PsPM-data
           path: ImportTestData
       
       - name: Setup MATLAB
