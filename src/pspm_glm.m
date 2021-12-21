@@ -832,7 +832,7 @@ if perc_missing >= 0.1
   else
     warning('ID:invalid_input', ...
     ['More than 10% of input data was filtered out due to missing epochs, ',...
-    'which is highly likely caused by downsampling. Results may be inaccurate.']);
+    'which is possibly caused by downsampling. Results may be inaccurate.']);
   end
 end
 glm.YM = glm.Y;
