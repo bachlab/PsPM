@@ -154,18 +154,15 @@ end
 % 2.2 Handle missing epochs
 if options.missing
     % makes sure the epochs are in seconds and not empty
-    [sts, missing] = pspm_get_timing('epochs', options.missing, 'seconds');
+    [sts, missing_time] = pspm_get_timing('epochs', options.missing, 'seconds');
     if sts < 0
         warning('ID:invalid_input', 'Could not load missing epochs.');
     end
     missingsr = 10000; % dummy sample rate, should be higher than data sampling rates (but no need to make it dynamic)
-    if any(missing > ininfos.duration)
-        warning('ID:invalid_input', 'Some missing epochs are outside data file.');
-        return
-    else
-        missing = round(missing*missingsr); % convert epochs in sec to datapoints
-    end
-    indx = zeros(1,round(missingsr * ininfos.duration)); % indx should be a one-dimensional array?
+    duration_index = round(missingsr * ininfos.duration);
+    indx = zeros(1,duration_index); % indx should be a one-dimensional array?
+    missing = pspm_time2index(missing_time, missingsr, duration_index); % convert epochs in sec to datapoints
+
     % allow splitting empty missing epochs
     if ~isempty(missing)
         indx(missing(:, 1)) = 1;
@@ -215,13 +212,13 @@ else
         else
             trimpoint(sn, :) = [splitpoint(sn - 1), max(splitpoint(sn) - 1, 1)];
         end
-        
+
         if sn > numel(splitpoint)
             trimpoint(sn, 2) = numel(mrk);
         else
             trimpoint(sn, 2) = max(1, splitpoint(sn) - 1);
         end
-        
+
         if options.suffix == 0
             if trimpoint(sn, 1) == trimpoint(sn, 2) || options.randomITI
                 suffix(sn) = mean(diff(mrk));
@@ -232,26 +229,26 @@ else
             suffix(sn) = options.suffix;
         end
     end
-    
+
     % 2.4 Split files
     for sn = 1:size(trimpoint,1)
-        
+
         % 2.4.1 Determine filenames
         [p, f, ex] = fileparts(datafile);
         newdatafile{sn} = fullfile(p, sprintf('%s_sn%02.0f%s', f, sn, ex));
-        
+
         if ischar(options.missing)
             newepochfile{sn} = fullfile(p_epochs, sprintf('%s_sn%02.0f%s', f_epochs, sn, ex_epochs));
         end
-        
+
         % 2.4.2 Split data
         trimoptions = struct('drop_offset_markers', 1);
         newdata = pspm_trim(struct('data', {indata}, 'infos', ininfos), ...
             options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions);
         newdata.options = struct('overwrite', options.overwrite);
         pspm_load_data(newdatafile{sn}, newdata);
-        
-        
+
+
         % 2.4.5 Split Epochs
         if options.missing
                 dummydata{1,1}.header = struct('chantype', 'custom', ...
@@ -267,7 +264,7 @@ else
                 options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions);
 
             epochs = newmissing.data{1}.data;
-            
+
             epoch_on = 1 + strfind(epochs.', [0 1]); % Return the start points of the excluded interval
             epoch_off = strfind(epochs.', [1 0]); % Return the end points of the excluded interval
             if numel(epoch_off) < numel(epoch_on) % if the epochs is in the middle of 2 blocks
@@ -278,6 +275,6 @@ else
             epochs = [epoch_on.', epoch_off.']/missingsr; % convert back to seconds
             save(newepochfile{sn}, 'epochs');
         end
-        
+
     end
 end
