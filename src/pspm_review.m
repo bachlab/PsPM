@@ -64,6 +64,8 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 
+pspm_ui(hObject, handles, 'review');
+
 % UIWAIT makes pspm_review wait for user response (see UIRESUME)
 % uiwait(handles.pspm_review);
 
