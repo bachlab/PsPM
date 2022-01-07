@@ -23,5 +23,5 @@ assignees: ''
 ### (Optional) Screenshots if Graphical User Interface is Used
 
 ### Technical Info
-* PsPM revision ID:
+* PsPM version:
 * MATLAB version:

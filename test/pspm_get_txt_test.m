@@ -14,7 +14,7 @@ classdef pspm_get_txt_test < pspm_get_superclass
         function define_testcases(this)
             %testcase 1
             %--------------------------------------------------------------
-            this.testcases{1}.pth = 'testdatafile79887.txt';
+            this.testcases{1}.pth = 'testdatafile_get_txt_1.txt';
             
             this.testcases{1}.import{1} = struct('type', 'scr'   , 'channel', 1, 'sr', 100, 'header_lines', 0);
             this.testcases{1}.import{2} = struct('type', 'scr'   , 'channel', 2, 'sr', 100, 'header_lines', 0);
@@ -28,7 +28,7 @@ classdef pspm_get_txt_test < pspm_get_superclass
             
             %testcase 2 (with header)
             %--------------------------------------------------------------
-            this.testcases{2}.pth = 'testdatafile49821.txt';
+            this.testcases{2}.pth = 'testdatafile_get_txt_2.txt';
             
             this.testcases{2}.import{1} = struct('type', 'scr'   , 'channel', 0, 'sr', 100);
             this.testcases{2}.import{2} = struct('type', 'ecg'   , 'channel', 0, 'sr', 100);
@@ -48,7 +48,7 @@ classdef pspm_get_txt_test < pspm_get_superclass
 
             %testcase 3 (csv with header)
             %--------------------------------------------------------------
-            this.testcases{3}.pth = 'testdatafile132435.csv';
+            this.testcases{3}.pth = 'testdatafile_get_txt_3.csv';
             
             this.testcases{3}.import{1} = struct('type', 'scr'   , 'channel', 0, 'sr', 100, 'delimiter', ',');
             this.testcases{3}.import{2} = struct('type', 'ecg'   , 'channel', 0, 'sr', 100, 'delimiter', ',');
@@ -68,7 +68,7 @@ classdef pspm_get_txt_test < pspm_get_superclass
 
             %testcase 4 (delimiter separated value with custom delimiter (|))
             %--------------------------------------------------------------
-            this.testcases{4}.pth = 'testdatafile132435.psv';
+            this.testcases{4}.pth = 'testdatafile_get_txt_4.psv';
             
             this.testcases{4}.import{1} = struct('type', 'scr'   , 'channel', 0, 'sr', 100, 'delimiter', '|');
             this.testcases{4}.import{2} = struct('type', 'ecg'   , 'channel', 0, 'sr', 100, 'delimiter', '|');
@@ -93,14 +93,15 @@ classdef pspm_get_txt_test < pspm_get_superclass
         function del_testdata_files(this)
             delete(this.testcases{1}.pth);
             delete(this.testcases{2}.pth);
-            
+            delete(this.testcases{3}.pth);
+            delete(this.testcases{4}.pth);
             this.testcases = [];
         end
     end
     
     methods (Test)
         function invalid_datafile(this)
-            fn = 'testdatafile79887.txt';
+            fn = 'testdatafile_get_txt_1.txt';
             
             % Test wrong delimiter
             import{1} = struct('type', 'scr' , 'channel', 1, 'delimiter', 24);

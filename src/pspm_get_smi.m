@@ -546,10 +546,10 @@ function best_eye = eye_with_smaller_nan_ratio(import, eyes_observed)
                 eye_R_max_nan_ratio = max(eye_R_max_nan_ratio, sum(isnan(import{i}.data)));
             end
         end
-        if eye_L_max_nan_ratio < eye_R_max_nan_ratio
-            best_eye = 'l';
-        else
+        if eye_L_max_nan_ratio > eye_R_max_nan_ratio
             best_eye = 'r';
+        else
+            best_eye = 'l'; % if equal, set left
         end
     end
 end
