@@ -20,3 +20,7 @@ vendor/
 *.mat
 *.html
 !pspm_App.mat
+
+# Ignore temp test file
+test/pspm_test_temp.m
+success.txt

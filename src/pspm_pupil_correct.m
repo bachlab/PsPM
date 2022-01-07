@@ -105,9 +105,9 @@ function [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm
     % -------------------------------------------------------------------------
     is_rowvec = size(pupil, 1) == 1;
     if is_rowvec
-        pupil = pupil';
-        gaze_x_mm = gaze_x_mm';
-        gaze_y_mm = gaze_y_mm';
+        pupil = transpose(pupil);
+        gaze_x_mm = transpose(gaze_x_mm);
+        gaze_y_mm = transpose(gaze_y_mm);
     end
 
     T = [geometry_setup.S_x + gaze_x_mm, ...
@@ -122,7 +122,7 @@ function [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm
     pupil_corrected = pupil ./ sqrt(cosine);
 
     if is_rowvec
-        pupil_corrected = pupil_corrected';
+        pupil_corrected = transpose(pupil_corrected);
     end
 
     sts = 1;

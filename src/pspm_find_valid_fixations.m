@@ -90,9 +90,8 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %__________________________________________________________________________
 % PsPM 4.0
 % (C) 2016 Tobias Moser (University of Zurich)
+% Update 2021 Teddy Chao (UCL)
 
-% $Id$
-% $Rev$
 
 % initialise
 % -------------------------------------------------------------------------
@@ -137,7 +136,7 @@ else
         options = varargin{4};
     end
     if ~isnumeric(circle_degree)
-        warning('ID:invalid_input', ['Circle_degree is not numeric.']);
+        warning('ID:invalid_input', 'Circle_degree is not numeric.');
         return;
     elseif ~isnumeric(distance)
         warning('ID:invalid_input', 'Distance is not set or not numeric.');
@@ -148,7 +147,7 @@ else
     elseif ~isstruct(options)
         warning('ID:invalid_input', 'Options must be a struct.');
         return;
-    end 
+    end
 end
 
 % fn
@@ -178,7 +177,7 @@ if ~isfield(options, 'channels')
 end
 
 if ~isfield(options, 'eyes')
-    options.eyes = 'all';
+    options.eyes = 'combined';
 end
 
 if ~isfield(options, 'plot_gaze_coords')
@@ -193,18 +192,18 @@ elseif ~islogical(options.missing) && ~isnumeric(options.missing)
     warning('ID:invalid_input', ['Options.missing is neither logical ', ...
         'nor numeric.']);
     return;
-elseif ~any(strcmpi(options.eyes, {'all', 'left', 'right'}))
-    warning('ID:invalid_input', ['Options.eyes must be either ''all'', ', ...
-        '''left'' or ''right''.']);
+elseif ~any(strcmpi(options.eyes, {settings.lateral.full.b, ...
+    settings.lateral.full.l, settings.lateral.full.r}))
+    warning('ID:invalid_input', ['Options.eyes must be either ''combined'', ', ...
+    '''left'' or ''right''.']);
     return;
 elseif ~iscell(options.channels) && ~ischar(options.channels) && ...
-        ~isnumeric(options.channels)
+    ~isnumeric(options.channels)
     warning('ID:invalid_input', ['Options.channels should be a char, ', ...
         'numeric or a cell of char or numeric.']);
     return;
-elseif iscell(options.channels) && ...
-        any(~cellfun(@(x) isnumeric(x) ||any(strcmpi(x, {'gaze_x', 'gaze_y', ...
-        'pupil', 'pupil_missing'})), options.channels))
+elseif iscell(options.channels) && any(~cellfun(@(x) isnumeric(x) || ...
+    any(strcmpi(x, settings.findvalidfixations.chantypes)), options.channels))
     warning('ID:invalid_input', 'Option.channels contains invalid values.');
     return;
 elseif strcmpi(mode,'fixation')&& isfield(options, 'fixation_point') && ...
@@ -311,15 +310,20 @@ new_excl = cell(n_eyes, 1);
 
 for i=1:n_eyes
     eye = lower(infos.source.eyesObserved(i));
-    if strcmpi(options.eyes, 'all') || strcmpi(options.eyes(1), eye)
+    if strcmpi(options.eyes, 'combined') || strcmpi(options.eyes(1), eye)
         gaze_x = ['gaze_x_', eye];
         gaze_y = ['gaze_y_', eye];
         
         % find chars to replace
         str_chans = cellfun(@ischar, options.channels);
         channels = options.channels;
-        channels(str_chans) = regexprep(channels(str_chans), ...
-            '(pupil|gaze_x|gaze_y|pupil_missing)', ['$0_' eye]);
+        str_chantypes = ['(', settings.findvalidfixations.chantypes{1}];
+        for i_chantypes = 2:length(settings.findvalidfixations.chantypes)
+					str_chantypes = [str_chantypes, '|', ...
+					settings.findvalidfixations.chantypes{i_chantypes}];
+				end
+				str_chantypes = [str_chantypes, ')'];
+				channels(str_chans) = regexprep(channels(str_chans), str_chantypes, ['$0_' eye]);
         % replace strings with numbers
         str_chan_num = channels(str_chans);
         for j=1:numel(str_chan_num)
@@ -351,7 +355,7 @@ for i=1:n_eyes
                 
                 if ~strcmpi(x_unit,'mm')&& strcmpi(mode,'fixation')
                     [nsts,x_data] = pspm_convert_unit(data{gx}.data, x_unit, 'mm');
-                    [msts,x_range] = pspm_convert_unit(data{gx}.header.range', x_unit, 'mm');
+                    [msts,x_range] = pspm_convert_unit(transpose(data{gx}.header.range), x_unit, 'mm');
                     if nsts~=1 || msts~=1
                         warning('ID:invalid_input', 'Failed to convert data.');
                     end
@@ -361,7 +365,7 @@ for i=1:n_eyes
                 end
                 if ~strcmpi(y_unit,'mm')&& strcmpi(mode,'fixation')
                     [nsts,y_data] = pspm_convert_unit(data{gy}.data, y_unit, 'mm');
-                    [msts,y_range] = pspm_convert_unit(data{gy}.header.range', y_unit, 'mm');
+                    [msts,y_range] = pspm_convert_unit(transpose(data{gy}.header.range), y_unit, 'mm');
                     if nsts~=1 || msts~=1
                         warning('ID:invalid_input', 'Failed to convert data.');
                     end
