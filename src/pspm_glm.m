@@ -149,12 +149,7 @@ function glm = pspm_glm(model, options)
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2008-2016 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-
-% $Id: pspm_glm.m 627 2019-02-21 16:51:46Z lciernik $
-% $Rev: 627 $
-
-% function revision
-rev = '$Rev: 627 $';
+% Updated  2021 Teddy Chao
 
 % initialise & user output
 % -------------------------------------------------------------------------
@@ -670,7 +665,6 @@ glm.timing.pmod       = pmod;
 glm.modality          = model.modality;
 glm.modelspec         = model.modelspec;
 glm.modeltype         = 'glm';
-glm.revision          = rev;
 
 % clear local variables --
 clear iSn iMs ynew newonsets newdurations newmissing missingtimes
@@ -829,6 +823,18 @@ glm.interceptno = iSn;
 glm.regscale((end+1):(end+iSn)) = 1;
 
 % delete missing epochs and prepare output
+perc_missing = 1 - sum(glm.M)/length(glm.M);
+if perc_missing >= 0.1
+  if sr == Xfilter.sr
+  warning('ID:invalid_input', ...
+    ['More than 10% of input data was filtered out due to missing epochs. ',...
+    'Results may be inaccurate.']);
+  else
+    warning('ID:invalid_input', ...
+    ['More than 10% of input data was filtered out due to missing epochs, ',...
+    'which is possibly caused by downsampling. Results may be inaccurate.']);
+  end
+end
 glm.YM = glm.Y;
 glm.YM(glm.M(1:length(glm.YM))==1) = [];
 glm.Y(glm.M(1:length(glm.Y))==1) = NaN;
