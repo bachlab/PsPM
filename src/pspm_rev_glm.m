@@ -42,6 +42,16 @@ tmp.X = NaN(size(glm.X));
 for c=1:size(glm.X,2)
   tmp.X(glm.M==0,c)=glm.XM(:,c)/std(glm.XM(:));
 end
+
+% validate the display in case there are dominating outliers.
+tmpX = tmp.X;
+tmpX(isnan(tmpX)) = 0;
+mtmpX = mean(tmpX, 1);
+isoutlier(mtmpX)
+if sum(abs(mtmpX)>mean(abs(mtmpX))*2)>0
+  warning('ID:invalid_input', 'Results may be domainated by some outliers.');
+end
+
 [~, filename, ~]=fileparts(modelfile);
 filename=[filename, '.mat'];
 XTick=1:1:size(glm.X,2);
