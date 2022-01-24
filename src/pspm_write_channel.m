@@ -95,6 +95,9 @@ if ~strcmpi(channel_action, 'delete')
         if isfield(newdata{i}, 'data') && isfield(newdata{i}, 'header')
             d = newdata{i}.data;
             [h,w] = size(d);
+            if h==0 && w==0
+              newdata{i}.marker = 'empty';
+            end
             if w ~= 1
                 if h == 1
                     warning('ID:invalid_data_structure', ['Passed struct (%i) seems to have the wrong ', ...
