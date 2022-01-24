@@ -14,6 +14,8 @@ function outfile=pspm_import(datafile, datatype, import, options)
 %           - .type: not all data types support all channel types
 %           mandatory fields for some data types and each channel:
 %           - .sr: sampling rate for waveform, or timeunit in s for event channels
+%           - .flank ('ascending', 'descending', 'both': an optional field for
+%              continuous channels; default: both)
 %           - .channel: channel or column number in the original file
 %           optional fields for some data types and channel types:
 %           - .transfer: name of a .mat file containing values for
@@ -170,6 +172,15 @@ for k = 1:numel(import)
     if strcmpi(import{k}.type, 'marker') && settings.import.datatypes(datatype).automarker
         import{k}.channel = 1;
     end;
+    % channel
+    if ~isfield(import{k}, 'flank')
+      import{k}.flank = 'both'; % set both at the default flank
+    else
+      if ~strcmp(import{k}.flank, 'ascending') && ~strcmp(import{k}.flank, 'descending') && ~strcmp(import{k}.flank, 'both')
+        warning('ID:ivalid_import_struct', 'The option flank can only be ascending, descending or both.'); 
+        return;
+      end
+    end
     % channel number given? If not, set to zero, or assign automatically and display.
     if ~isfield(import{k}, 'channel')
         if settings.import.datatypes(datatype).searchoption
