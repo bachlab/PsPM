@@ -110,9 +110,9 @@ for iFile = 1:size(modelfileArray, 1)
       return;
     end
   end
-  
+
   handles.modelCnt = handles.modelCnt+1;
-  
+
   handles.modelData{handles.modelCnt}.modeltype = modeltype;
   handles.modelData{handles.modelCnt}.model = model;
   handles.modelData{handles.modelCnt}.modelfile = modelfile;
@@ -128,9 +128,9 @@ for iFile = 1:size(modelfileArray, 1)
   set(handles.listModel, 'Value', handles.modelCnt);
   handles.currentModel = handles.modelCnt;
   handles.modelData{handles.modelCnt}.fig = setFigureHandle(handles);
-  
+
   showModel(handles);
-  
+
 end
 setButtonEnable(handles)
 
@@ -195,13 +195,13 @@ switch handles.modelData{handles.currentModel}.modeltype
     handles.modelData{handles.currentModel}.fig = ...
       pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, ...
       handles.modelData{handles.currentModel}.model, 1);
-    
+
   case 'dcm'
     sessionNr = checkSessionNr(handles);
     if sessionNr
       pspm_rev_dcm(handles.modelData{handles.currentModel}.model, 'sum', sessionNr, [])
     end
-    
+
   case 'sf'
     epochNr = str2double(get(handles.editEpochNr,'String'));
     if isempty(epochNr) || epochNr > handles.modelData{handles.currentModel}.maxEpochNr || epochNr < 1
@@ -229,7 +229,7 @@ switch handles.modelData{handles.currentModel}.modeltype
     handles.modelData{handles.currentModel}.fig = ...
       pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, ...
       handles.modelData{handles.currentModel}.model, 2);
-    
+
   case 'dcm'
     sessionNr = checkSessionNr(handles);
     if sessionNr
@@ -241,7 +241,7 @@ switch handles.modelData{handles.currentModel}.modeltype
         pspm_rev_dcm(handles.modelData{handles.currentModel}.model, 'inv', sessionNr, trialNr);
       end
     end
-    
+
 end
 set(handles.textStatus,'String',tmpStatusString);
 guidata(hObject, handles);
@@ -258,13 +258,13 @@ switch handles.modelData{handles.currentModel}.modeltype
     handles.modelData{handles.currentModel}.fig = ...
       pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, ...
       handles.modelData{handles.currentModel}.model, 3);
-    
+
   case 'dcm'
     sessionNr = checkSessionNr(handles);
     if sessionNr
       pspm_rev_dcm(handles.modelData{handles.currentModel}.model, 'scrf', sessionNr, []);
     end
-    
+
 end
 set(handles.textStatus,'String',tmpStatusString);
 guidata(hObject, handles);
@@ -302,7 +302,7 @@ switch handles.modelData{handles.currentModel}.modeltype
   case 'dcm'
     handles.modelData{handles.currentModel}.fig = ...
       pspm_rev_con(handles.modelData{handles.currentModel}.model);
-    
+
 end
 set(handles.textStatus,'String',tmpStatusString);
 guidata(hObject, handles);
@@ -317,7 +317,7 @@ set(handles.textStatus,'String','Plotting is in progress. Please wait...');
 switch handles.modelData{handles.currentModel}.modeltype
   case 'glm'
     handles.modelData{handles.currentModel}.fig = pspm_rev_con(handles.modelData{handles.currentModel}.model);
-    
+
 end
 set(handles.textStatus,'String',tmpStatusString);
 guidata(hObject, handles);
@@ -482,7 +482,7 @@ switch handles.modelData{handles.currentModel}.modeltype
     setTextPlotString(handles, textPlotString);
     set(handles.textStatus,'String','Detected modeltype: GLM');
     drawnow
-    
+
   case 'dcm'
     buttonPlotString = {'Display', ...
       'Display', ...
@@ -504,7 +504,7 @@ switch handles.modelData{handles.currentModel}.modeltype
     setTrial(handles);
     set(handles.textStatus,'String','Detected modeltype: DCM')
     drawnow
-    
+
   case 'sf'
     buttonPlotString = {'Display'};
     textPlotString = {'Diagnostics for epoch nr.'};
@@ -540,7 +540,6 @@ function editEpochNr_Callback(~, ~, ~)
 % Hints: get(hObject,'String') returns contents of editEpochNr as text
 %        str2double(get(hObject,'String')) returns contents of editEpochNr as a double
 
-
 % --- Executes on button press in pushbutton_quit.
 function pushbutton_quit_Callback(~, ~, handles)
 % hObject    handle to pushbutton_quit (see GCBO)
@@ -548,45 +547,3 @@ function pushbutton_quit_Callback(~, ~, handles)
 % handles    structure with handles and user data (see GUIDATA)
 closeFigures(handles);
 delete(gcbf)
-
-
-% --- Executes on button press in buttonPlot1.
-function pushbutton29_Callback(hObject, eventdata, handles)
-% hObject    handle to buttonPlot1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in buttonPlot3.
-function pushbutton31_Callback(hObject, eventdata, handles)
-% hObject    handle to buttonPlot3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in buttonPlot4.
-function pushbutton32_Callback(hObject, eventdata, handles)
-% hObject    handle to buttonPlot4 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in buttonPlot5.
-function pushbutton33_Callback(hObject, eventdata, handles)
-% hObject    handle to buttonPlot5 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in buttonPlot6.
-function pushbutton34_Callback(hObject, eventdata, handles)
-% hObject    handle to buttonPlot6 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in buttonPlot2.
-function pushbutton35_Callback(hObject, eventdata, handles)
-% hObject    handle to buttonPlot2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
