@@ -548,3 +548,45 @@ function pushbutton_quit_Callback(~, ~, handles)
 % handles    structure with handles and user data (see GUIDATA)
 closeFigures(handles);
 delete(gcbf)
+
+
+% --- Executes on button press in buttonPlot1.
+function pushbutton29_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonPlot1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in buttonPlot3.
+function pushbutton31_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonPlot3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in buttonPlot4.
+function pushbutton32_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonPlot4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in buttonPlot5.
+function pushbutton33_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonPlot5 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in buttonPlot6.
+function pushbutton34_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonPlot6 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in buttonPlot2.
+function pushbutton35_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonPlot2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
