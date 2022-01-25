@@ -539,3 +539,12 @@ function editEpochNr_Callback(~, ~, ~)
 
 % Hints: get(hObject,'String') returns contents of editEpochNr as text
 %        str2double(get(hObject,'String')) returns contents of editEpochNr as a double
+
+
+% --- Executes on button press in pushbutton_quit.
+function pushbutton_quit_Callback(~, ~, handles)
+% hObject    handle to pushbutton_quit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+closeFigures(handles);
+delete(gcbf)

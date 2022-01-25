@@ -209,6 +209,8 @@ switch window
     handles.editSessionNr.FontSize = FSText;
     handles.textSessionRange.FontName = FNRoman;
     handles.textSessionRange.FontSize = FSText;
+    handles.pushbutton_quit.FontName = FNRoman;
+    handles.pushbutton_quit.FontSize = FSText;
 end
 
 end
