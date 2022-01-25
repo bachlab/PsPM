@@ -82,9 +82,9 @@ varargout{1} = handles.output;
 
 
 
-% --- Executes on button press in buttonAddModel.
+% --- Executes on button press in buttonAddModel_old.
 function buttonAddModel_Callback(hObject, ~, handles)
-% hObject    handle to buttonAddModel (see GCBO)
+% hObject    handle to buttonAddModel_old (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 filt='.*\.mat$';
@@ -135,13 +135,13 @@ end
 setButtonEnable(handles)
 
 if handles.modelCnt > 1
-  set(handles.buttonRemoveModel, 'Enable', 'on');
+  set(handles.buttonRemoveModel2, 'Enable', 'on');
 end
 guidata(hObject, handles);
 
-% --- Executes on button press in buttonRemoveModel.
+% --- Executes on button press in buttonRemoveModel2.
 function buttonRemoveModel_Callback(hObject, ~, handles)
-% hObject    handle to buttonRemoveModel (see GCBO)
+% hObject    handle to buttonRemoveModel2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 handles.modelData{handles.currentModel} = [];
@@ -155,7 +155,7 @@ if handles.currentModel > handles.modelCnt
 end
 set(handles.listModel, 'Value', handles.currentModel);
 if handles.modelCnt < 2
-  set(handles.buttonRemoveModel, 'Enable', 'off');
+  set(handles.buttonRemoveModel2, 'Enable', 'off');
 end
 showModel(handles);
 
