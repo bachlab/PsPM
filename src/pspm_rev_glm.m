@@ -75,6 +75,7 @@ for i=1:length(plotNr)
           'Name', 'Design Matrix');%,'NumberTitle','off');
         colormap('gray');
         fig(1).ax(1).h=axes('Position', [0.1 0.05 0.85 0.9]);
+        tmp.X(isnan(tmp.X))=0;
         fig(1).p(1)=imagesc(tmp.X);
         set(fig(1).ax(1).h, ...
           'XTick', XTick, 'TickDir', 'out', 'YTick',YTick, 'YTickLabel', YTickLabel, 'FontWeight', 'Bold', 'FontSize', 10,  'TickLength', [0.005 0.025]);
