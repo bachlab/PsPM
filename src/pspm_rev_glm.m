@@ -43,15 +43,6 @@ for c=1:size(glm.X,2)
   tmp.X(glm.M==0,c)=glm.XM(:,c)/std(glm.XM(:));
 end
 
-% validate the display in case there are dominating outliers.
-tmpX = tmp.X;
-tmpX(isnan(tmpX)) = 0;
-mtmpX = mean(tmpX, 1);
-isoutlier(mtmpX)
-if sum(abs(mtmpX)>mean(abs(mtmpX))*2)>0
-  warning('ID:invalid_input', 'Results may be domainated by some outliers.');
-end
-
 [~, filename, ~]=fileparts(modelfile);
 filename=[filename, '.mat'];
 XTick=1:1:size(glm.X,2);
@@ -75,15 +66,18 @@ for i=1:length(plotNr)
           'Name', 'Design Matrix');%,'NumberTitle','off');
         colormap('gray');
         fig(1).ax(1).h=axes('Position', [0.1 0.05 0.85 0.9]);
-        tmp.X(isnan(tmp.X))=0;
-        fig(1).p(1)=imagesc(tmp.X);
+        tmp.Xdisplay = tmp.X;
+        tmp.Xdisplay(isnan(tmp.Xdisplay))=0;
+        tmp.Xdisplay=tmp.Xdisplay-repmat(min(tmp.Xdisplay),size(tmp.Xdisplay,1),1);
+        tmp.Xdisplay=tmp.Xdisplay./max(tmp.Xdisplay);
+        fig(1).p(1)=imagesc(tmp.Xdisplay);
         set(fig(1).ax(1).h, ...
           'XTick', XTick, 'TickDir', 'out', 'YTick',YTick, 'YTickLabel', YTickLabel, 'FontWeight', 'Bold', 'FontSize', 10,  'TickLength', [0.005 0.025]);
         fig(1).ylabel=get(fig(1).ax(1).h, 'YLabel');
         fig(1).title=get(fig(1).ax(1).h, 'Title');
         set(fig(1).ylabel, 'String', 'Time (s)', 'FontWeight', 'Bold', 'FontSize', 14);
         set(fig(1).title, 'String', sprintf('Design Matrix: %s', filename), 'FontWeight', 'Bold', 'FontSize', 14, 'Interpreter', 'none');
-        
+
       case 2
         % --- plot orthogonality in SPM style
         pos = [0.21*pos0(3),0.1*pos0(4),0.5*pos0(3),0.7*pos0(4)];
@@ -99,7 +93,7 @@ for i=1:length(plotNr)
         set(fig(2).ax(1).h, 'XTick', XTick, 'TickDir', 'out', 'YTick',XTick, 'FontWeight', 'Bold', 'FontSize', 10,  'TickLength', [0.005 0.025]);
         fig(2).title=get(fig(2).ax(1).h, 'Title');
         set(fig(2).title, 'String', sprintf('Design Orthogonality: %s', filename), 'FontWeight', 'Bold', 'FontSize', 14, 'Interpreter', 'none');
-        
+
         % display regressornames
         % calculate width of a square
         ns = size(cormat,1);
@@ -109,12 +103,12 @@ for i=1:length(plotNr)
         nr_const = numel(idx_const);
         legend_names = glm.names(1:ns-nr_const);
         legend_names(end+1:end+nr_const) = glm.names(end-(nr_const-1):end);
-        
+
         YLim = get(fig(2).ax(1).h, 'YLim');
         sy = diff(YLim) / ns;
         XLim = get(fig(2).ax(1).h, 'XLim');
         sx = diff(XLim) / ns;
-        
+
         % iterate through regressors and colors
         corder = get(fig(2).h, 'defaultAxesColorOrder');
         cl = length(corder);
@@ -125,20 +119,20 @@ for i=1:length(plotNr)
           else
             color = corder(j,:);
           end
-          
+
           % draw lines
           space = -0.7;
           x = [space, sx*j];
           x = XLim(1) + x;
           y = [(j)*sy, (j)*sy];
           y = YLim(1) + y;
-          
+
           fig(2).ax(1).p(j+1) = patch(x,y, color);
           set(fig(2).ax(1).p(j+1), 'EdgeColor', color, ...
             'FaceColor', 'none', ...
             'Clipping', 'off', ...
             'LineWidth', 1.5);
-          
+
           % draw text
           fig(2).ax(1).t(j) = text(0.2, j*sy+0.4, legend_names(j));
           set(fig(2).ax(1).t(j), ...
@@ -146,8 +140,8 @@ for i=1:length(plotNr)
             'FontSize', 7.5, ...
             'Clipping', 'off');
         end
-        
-        
+
+
       case 3
         % --- plot predicted & observed
         pos = [0.2*pos0(3),0.1*pos0(4),0.7*pos0(3),0.7*pos0(4)];
@@ -208,14 +202,14 @@ for i=1:length(plotNr)
         nr_const = numel(idx_const);
         legend_names = glm.names(1:ns-nr_const);
         legend_names(end+1:end+nr_const) = glm.names(end-(nr_const-1):end);
-        
+
         fprintf('Regressors for %s:\n---------------------------------------\n', glm.glmfile);
         for n=1:numel(legend_names)
           fprintf('Regressor %d: %s\n',n,legend_names{n});
         end
         fprintf('---------------------------------------\n');
         fig(4).h = [];
-        
+
       case 5
         % --- do plot of reconstructed responses
         pos = [0.21*pos0(3),0.1*pos0(4),0.5*pos0(3),0.7*pos0(4)];
@@ -231,7 +225,7 @@ for i=1:length(plotNr)
         XLim = cellfun(@(x){num2str(x)}, XLim);
         set(fig(5).ax(1).h, 'XTickLabel',XLim);
         set(fig(5).title, 'String', sprintf('Estimated responses per condition: %s', filename), 'FontWeight', 'Bold', 'FontSize', 14, 'Interpreter', 'none');
-        
+
     end
   end
 end
