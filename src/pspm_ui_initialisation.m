@@ -1,7 +1,6 @@
 function pspm_ui_initialisation(hObject,handles,window)
 
-% pspm_ui_initialisation adjusts the required UI parameters for window
-% initialisation
+% pspm_ui_initialisation adjusts the required UI parameters for window initialisation
 %
 % PsPM 5.1.2
 % 2021 Teddy Chao (WCHN, UCL)
@@ -127,6 +126,9 @@ switch window
     hObject.Position(3) = settings.ui.DisplayWeight;
     hObject.Position(4) = settings.ui.DisplayHeight;
     hObject.Resize = 'on';
+  case 'review'
+  	handles.button_all.FontName = settings.ui.FontNameText;
+  	hObject.Resize = 'on';
 end
 
 end
