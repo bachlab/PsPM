@@ -97,18 +97,19 @@ if ~strcmpi(channel_action, 'delete')
             [h,w] = size(d);
             if h==0 && w==0
               newdata{i}.marker = 'empty';
-            end
-            if w ~= 1
+            else
+              if w ~= 1
                 if h == 1
-                    warning('ID:invalid_data_structure', ['Passed struct (%i) seems to have the wrong ', ...
-                        'orientation. Trying to transpose...'], i);
-                    d = d';
-                    newdata{i}.data = d;
+                  warning('ID:invalid_data_structure', ['Passed struct (%i) seems to have the wrong ', ...
+                    'orientation. Trying to transpose...'], i);
+                  d = d';
+                  newdata{i}.data = d;
                 else
-                    warning('ID:invalid_data_structure', ...
-                        'Passed struct (%i) seems to have the wrong format.', i);
-                    return;
+                  warning('ID:invalid_data_structure', ...
+                    'Passed struct (%i) seems to have the wrong format.', i);
+                  return;
                 end
+              end
             end
         else
             warning('ID:invalid_data_strucutre', ...
