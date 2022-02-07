@@ -14,8 +14,6 @@ function outfile=pspm_import(datafile, datatype, import, options)
 %           - .type: not all data types support all channel types
 %           mandatory fields for some data types and each channel:
 %           - .sr: sampling rate for waveform, or timeunit in s for event channels
-%           - .flank ('ascending', 'descending', 'both': an optional field for
-%              continuous channels; default: both)
 %           - .channel: channel or column number in the original file
 %           optional fields for some data types and channel types:
 %           - .transfer: name of a .mat file containing values for
@@ -25,18 +23,18 @@ function outfile=pspm_import(datafile, datatype, import, options)
 %              more information)
 %           - .eyelink_trackdist: distance between eyetracker and
 %              the participants' eyes. If is a numeric value the data in a pupil
-%              channel obtained with an eyelink eyetracking system are 
+%              channel obtained with an eyelink eyetracking system are
 %              converted from arbitrary units to distance unit. If value is 'none'
 %              the conversion is disabled. (only for Eyelink imports)
 %           - .distance_unit: unit in which the eyelink_trackdist is
 %              measured. If  eyelink_trackdist contains a numeric value, the
-%              default value is 'mm' otherwise the distance unit is ''. 
+%              default value is 'mm' otherwise the distance unit is ''.
 %              Can be one of the following units:'mm', 'cm', 'm','inches'.
-%           - .denoise: for marker channels in CED spike format (recorded 
-%              as 'level'), filters out markers duration longer than the 
+%           - .denoise: for marker channels in CED spike format (recorded
+%              as 'level'), filters out markers duration longer than the
 %              value given here (in ms)
 %           - .delimiter: for delimiter separated values, value used as delimiter for file read
-% 
+%
 % options:  options.overwrite - overwrite existing files by default
 %
 % RETURNS
@@ -172,15 +170,6 @@ for k = 1:numel(import)
     if strcmpi(import{k}.type, 'marker') && settings.import.datatypes(datatype).automarker
         import{k}.channel = 1;
     end;
-    % channel
-    if ~isfield(import{k}, 'flank')
-      import{k}.flank = 'both'; % set both at the default flank
-    else
-      if ~strcmp(import{k}.flank, 'ascending') && ~strcmp(import{k}.flank, 'descending') && ~strcmp(import{k}.flank, 'both')
-        warning('ID:ivalid_import_struct', 'The option flank can only be ascending, descending or both.'); 
-        return;
-      end
-    end
     % channel number given? If not, set to zero, or assign automatically and display.
     if ~isfield(import{k}, 'channel')
         if settings.import.datatypes(datatype).searchoption
@@ -214,7 +203,7 @@ for d = 1:numel(D)
         sts = -1; warning('ID:nonexistent_file', '\nDatafile (%s) doesn''t exist', filename_in_msg);
     end
     if sts == -1, fprintf('\nImport unsuccesful for file %s.\n', filename_in_msg); break; end;
-    
+
     % split blocks if necessary ---
     if iscell(sourceinfo)
         blkno = numel(sourceinfo);
@@ -223,7 +212,7 @@ for d = 1:numel(D)
         import = {import};
         sourceinfo = {sourceinfo};
     end;
-    
+
     for blk = 1:blkno
         % convert data into desired channel type format ---
         data = cell(numel(import{blk}), 1);
@@ -233,10 +222,10 @@ for d = 1:numel(D)
             [sts(k), data{k}] = feval(settings.chantypes(chantype).import, import{blk}{k});
             if isfield(import{blk}{k}, 'minfreq'), data{k}.header.minfreq = import{blk}{k}.minfreq; end;
         end;
-        
+
         if any(sts == -1), fprintf('\nData conversion unsuccesful for job %02.0f file %s.\n', ...
                 find(sts == -1), filename_in_msg); break; end;
-        
+
         % collect infos and save ---
         [pth, fn, ext]     = fileparts(filename_in_msg);
         infos.source = sourceinfo{blk};
@@ -262,7 +251,7 @@ for d = 1:numel(D)
         savedata.data = data; savedata.infos = infos; savedata.options = options;
         sts = pspm_load_data(outfile{d, blk}, savedata);
         if sts ~= 1
-            warning('Import unsuccessful for file %s.\n', D{d}); 
+            warning('Import unsuccessful for file %s.\n', D{d});
             outfile{d, blk} = [];
         end;
     end;

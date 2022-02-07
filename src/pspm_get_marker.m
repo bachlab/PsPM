@@ -1,7 +1,7 @@
 function [sts, data] = pspm_get_marker(import)
 % pspm_get_marker gets the marker channel for different data types
 % FORMAT: [sts, data] = pspm_get_marker(import)
-%               import: import job structure with mandatory fields 
+%               import: import job structure with mandatory fields
 %                  .data
 %                  .marker ('timestamps', 'continuous')
 %                  .sr (timestamps: timeunits in seconds, continuous: sample rate in 1/seconds)
@@ -13,17 +13,17 @@ function [sts, data] = pspm_get_marker(import)
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%     2022 Teddy Chao
 
 % $Id$
 % $Rev$
 
 
 global settings;
-if isempty(settings), pspm_init; end
+if isempty(settings), pspm_init; end;
 sts =-1;
 
 % get data
+% -------------------------------------------------------------------------
 [bsts, import] = pspm_get_events(import);
 if bsts~=1
     warning('ID:invalid_input','Call of pspm_get_events failed');
@@ -31,14 +31,11 @@ if bsts~=1
 end
 data.data = import.data;
 
-% add flank info
-if isfield(import, 'flank')
-    data.flank = import.flank;
-end
-
+% add marker info
+% -------------------------------------------------------------------------
 if isfield(import, 'markerinfo')
     data.markerinfo = import.markerinfo;
-end
+end;
 
 % add header
 % -------------------------------------------------------------------------

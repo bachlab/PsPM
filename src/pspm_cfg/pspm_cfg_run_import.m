@@ -2,6 +2,8 @@ function [out,datafiles, datatype, import, options] = pspm_cfg_run_import(job)
 % Arranges the users inputs to the 4 input arguments for the function
 % pspm_import and executes it
 
+% $Id$
+% $Rev$
 
 datatype = fieldnames(job.datatype);
 datatype = datatype{1};
@@ -24,7 +26,7 @@ for i=1:n
     % Importtype
     type = fieldnames(job.datatype.(datatype).importtype{i});
     import{i}.type = type{1};
-    
+
     % Channel nr.
     channel = job.datatype.(datatype).importtype{i}.(type{1}).chan_nr;
     if isfield(channel, 'chan_search')
@@ -34,18 +36,20 @@ for i=1:n
     else
         import{i}.channel = channel.chan_nr_spec;
     end
-    
+
     % Check if sample rate is available
     if isfield(job.datatype.(datatype).importtype{i}.(type{1}), 'sample_rate')
         import{i}.sr = job.datatype.(datatype).importtype{i}.(type{1}).sample_rate;
     end
-    
+
     % Check if flank option is available
     if isfield(job.datatype.(datatype).importtype{i}.(type{1}), 'flank_option') && ...
        ~strcmp(job.datatype.(datatype).importtype{i}.(type{1}).flank_option, 'default')
+
         import{i}.flank = job.datatype.(datatype).importtype{i}.(type{1}).flank_option;
+
     end
-    
+
     % Check if transfer function available
     if isfield(job.datatype.(datatype).importtype{i}.(type{1}), 'scr_transfer')
         transfer = fieldnames(job.datatype.(datatype).importtype{i}.(type{1}).scr_transfer);
@@ -92,21 +96,21 @@ for i=1:n
         if isfield(job.datatype.(datatype), 'delimiter')
             import{i}.delimiter = job.datatype.(datatype).delimiter;
         end
-        
+
         if isfield(job.datatype.(datatype), 'header_lines')
             import{i}.header_lines = job.datatype.(datatype).header_lines;
         end
-        
+
         if isfield(job.datatype.(datatype), 'channel_names_line')
             import{i}.channel_names_line = job.datatype.(datatype).channel_names_line;
         end
-        
+
         if isfield(job.datatype.(datatype), 'exclude_columns')
             import{i}.exclude_columns = job.datatype.(datatype).exclude_columns;
         end
-        
+
     end
-    
+
 end
 
 options.overwrite = job.overwrite;
