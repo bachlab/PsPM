@@ -2,8 +2,6 @@ function [out,datafiles, datatype, import, options] = pspm_cfg_run_import(job)
 % Arranges the users inputs to the 4 input arguments for the function
 % pspm_import and executes it
 
-% $Id$
-% $Rev$
 
 datatype = fieldnames(job.datatype);
 datatype = datatype{1};
@@ -45,9 +43,7 @@ for i=1:n
     % Check if flank option is available
     if isfield(job.datatype.(datatype).importtype{i}.(type{1}), 'flank_option') && ...
        ~strcmp(job.datatype.(datatype).importtype{i}.(type{1}).flank_option, 'default')
-   
         import{i}.flank = job.datatype.(datatype).importtype{i}.(type{1}).flank_option;
-   
     end
     
     % Check if transfer function available

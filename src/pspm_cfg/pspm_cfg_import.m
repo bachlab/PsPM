@@ -1,9 +1,6 @@
 function import_data = pspm_cfg_import
 
-% $Id: pspm_cfg_import.m 803 2019-08-26 08:00:45Z esrefo $
-% $Rev: 803 $
-
-% Initialise
+%% Initialise
 global settings
 if isempty(settings), pspm_init; end
 
