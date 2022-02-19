@@ -45,22 +45,16 @@ function [sts, infos] = pspm_write_channel(fn, newdata, channel_action, options)
 % PsPM 3.0
 % (C) 2015 Dominik Bach, Samuel Gerster, Tobias Moser (UZH)
 
-% $Id: pspm_write_channel.m 793 2019-07-09 13:34:30Z esrefo $
-% $Rev: 793 $
-
 %% Initialise & user output
-% -------------------------------------------------------------------------
 sts = -1;
 global settings;
 if isempty(settings), pspm_init; end
 outinfos = struct();
 
 %% load options.channel
-% -------------------------------------------------------------------------
 try options.channel; catch, options.channel = 0; end
 
 %% Check arguments
-% -------------------------------------------------------------------------
 if nargin < 1
     warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
 elseif ~ischar(fn)
@@ -84,12 +78,12 @@ elseif ~isempty(newdata) && ~isstruct(newdata) && ~iscell(newdata)
 end
 
 %% Determine whether the data has the correct 'orientation' and try to fix it
-% -------------------------------------------------------------------------
 
 if isstruct(newdata)
     newdata = {newdata};
 end
 
+<<<<<<< Updated upstream
 if ~strcmpi(channel_action, 'delete')    
     for i=1:numel(newdata)
         if isfield(newdata{i}, 'data') && isfield(newdata{i}, 'header')
@@ -114,24 +108,47 @@ if ~strcmpi(channel_action, 'delete')
         else
             warning('ID:invalid_data_strucutre', ...
                 'Passed struct (%i) contains no ''.data'' or no ''.header'' field.', i);
+=======
+if ~strcmpi(channel_action, 'delete')
+  for i=1:numel(newdata)
+    if isfield(newdata{i}, 'data') && isfield(newdata{i}, 'header')
+      d = newdata{i}.data;
+      [h,w] = size(d);
+      if h==0 || w==0
+        newdata{i}.marker = 'empty';
+      else
+        if w ~= 1
+          if h == 1
+            warning('ID:invalid_data_structure', ['Passed struct (%i) seems to have the wrong ', ...
+              'orientation. Trying to transpose...'], i);
+            d = d';
+            newdata{i}.data = d;
+          else
+            warning('ID:invalid_data_structure', ...
+              'Passed struct (%i) seems to have the wrong format.', i);
+>>>>>>> Stashed changes
             return;
+          end
         end
+      end
+    else
+      warning('ID:invalid_data_strucutre', ...
+        'Passed struct (%i) contains no ''.data'' or no ''.header'' field.', i);
+      return;
     end
+  end
 end
 
 %% Process other options
-% -------------------------------------------------------------------------
 try options.msg; catch, options.msg = ''; end
 try options.delete; catch, options.delete = 'last'; end
 
 %% Get data
-% -------------------------------------------------------------------------
 [nsts, infos, data] = pspm_load_data(fn);
 if nsts == -1, return; end
 importdata = data;
 
 %% Find channel according to action
-% -------------------------------------------------------------------------
 % channels in file
 fchannels = [];
 if ~strcmpi(channel_action, 'add')
@@ -176,7 +193,6 @@ if strcmpi(channel_action, 'add')
 end
 
 %% Manage message
-% -------------------------------------------------------------------------
 if ischar(options.msg) && ~isempty(options.msg)
     msg = options.msg;
 else
@@ -218,11 +234,9 @@ end
 infos.history{nhist + 1} = msg;
 
 %% add infos to outinfo struct
-% -------------------------------------------------------------------------
 outinfos.channel = channeli;
 
 %% save data
-% -------------------------------------------------------------------------
 outdata.infos = infos;
 outdata.data  = data;
 outdata.options.overwrite = 1;
