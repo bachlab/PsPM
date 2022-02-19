@@ -98,7 +98,7 @@ Developer's Guide
 
 \begin_layout Standard
 \align center
-Version 6.0.0
+Version 5.1.0
 \end_layout
 
 \begin_layout Standard
@@ -195,16 +195,8 @@ data
 \end_layout
 
 \begin_layout Standard
-The cells contain a struct with channel specific 
-\family typewriter
-infos
-\family default
- and 
-\family typewriter
-data
-\family default
-.
- The structs have the following mandatory fields: 
+The cells contain a struct with channel specific infos and data.
+ The structs have the mandatory fields: 
 \end_layout
 
 \begin_layout Itemize
@@ -318,15 +310,19 @@ How to add a new import data type
 Add function
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Standard
 \paragraph_spacing single
 \noindent
+\align block
+
+\series bold
 Function name
 \end_layout
 
 \begin_layout Standard
 \paragraph_spacing single
 \noindent
+\align block
 
 \family typewriter
 pspm_get_xxx
@@ -336,11 +332,10 @@ pspm_get_xxx
 xxx
 \family default
  is the data type name).
-\end_layout
+ 
+\begin_inset Newline newline
+\end_inset
 
-\begin_layout Subsubsection*
-\paragraph_spacing single
-\noindent
 
 \series bold
 Format
@@ -361,9 +356,10 @@ Format
 The function needs to take an import job and add, for each job.
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Standard
 \paragraph_spacing single
 \noindent
+\align block
 
 \series bold
 Fields
@@ -397,11 +393,7 @@ Mandatory
 \family typewriter
 .autosr
 \family default
- enabled in 
-\family typewriter
-pspm_init
-\family default
-) 
+ enabled in pspm_init) 
 \end_layout
 
 \begin_layout Standard
@@ -417,19 +409,7 @@ Optional
 \family typewriter
 .marker
 \family default
- For marker channels (
-\family typewriter
-timestamps
-\family default
- or 
-\family typewriter
-continuous
-\family default
-, see 
-\family typewriter
-pspm_get_marker
-\family default
-) 
+ for marker channels (timestamps or continuous, see pspm_get_marker) 
 \end_layout
 
 \begin_layout Itemize
@@ -439,9 +419,7 @@ pspm_get_marker
 \family typewriter
 .markerinfo
 \family default
- See 
-\family typewriter
-pspm_get_marker
+ optional, see pspm_get_marker 
 \end_layout
 
 \begin_layout Itemize
@@ -451,7 +429,7 @@ pspm_get_marker
 \family typewriter
 .minfreq
 \family default
- Minimum frequency for pulse channels 
+ minimum frequency for pulse channels 
 \end_layout
 
 \begin_layout Itemize
@@ -471,7 +449,7 @@ pspm_get_marker
 \family typewriter
 sts
 \family default
- Set as -1 if import is unsuccessful 
+ -1 if import is unsuccessful 
 \end_layout
 
 \begin_layout Itemize
@@ -503,7 +481,7 @@ sourceinfo
 \end_layout
 
 \end_deeper
-\begin_layout Subsubsection*
+\begin_layout Standard
 
 \series bold
 Notes for multiple blocks
@@ -511,19 +489,8 @@ Notes for multiple blocks
 
 \begin_layout Standard
 File formats that support multiple block storage within one file can return
- cell arrays 
-\family typewriter
-import{1:blkno}
-\family default
- and 
-\family typewriter
-sourceinfo{1:blkno}
-\family default
-; PsPM will save individual files for each block, with a filename 
-\family typewriter
-pspm_fn_blk0x.mat
-\family default
-.
+ cell arrays import{1:blkno} and sourceinfo{1:blkno}; PsPM will save individual
+ files for each block, with a filename 'pspm_fn_blk0x.mat'.
 \end_layout
 
 \begin_layout Subsubsection
@@ -539,7 +506,7 @@ The file pspm_init contains a block that defines possible import data types.
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Standard
 \noindent
 
 \family typewriter
@@ -629,37 +596,38 @@ struct('short', 'xxx', ...
 \end_inset
 
 
-\family default
-\series bold
-Good to know
+\end_layout
+
+\begin_layout Standard
+Good to know: 
 \end_layout
 
 \begin_layout Itemize
-the “long” definition is used in the GUI – make sure it’s readable.
+the “long” definition is used in the GUI – make sure it’s readable 
 \end_layout
 
 \begin_layout Itemize
-if no event channels can be imported, change .chantypes .
+if no event channels can be imported, change .chantypes 
 \end_layout
 
 \begin_layout Itemize
 if channels have searchable names in the import file, set .searchoption =
- 1.
+ 1
 \end_layout
 
 \begin_layout Itemize
 if no channel number needs to be assigned for the marker channel, set .automarker
- = 1.
+ = 1
 \end_layout
 
 \begin_layout Itemize
 if sample rate is contained in import file and determined during import,
- set .autosr = 1.
+ set .autosr = 1
 \end_layout
 
 \begin_layout Itemize
 if you need external functions – put them into a folder in the ‘import’
- subdirectory and add/remove this path within the pspm_get_xxx function.
+ subdirectory and add/remove this path within the pspm_get_xxx function
 \end_layout
 
 \begin_layout Subsection
@@ -690,14 +658,16 @@ Format
 
 \family typewriter
 [sts, data] = pspm_get_channeltype(import)
+\begin_inset Newline newline
+\end_inset
+
+
+\family default
+output
 \end_layout
 
 \begin_layout Standard
-
-\family typewriter
-data
-\family default
- Data cell of structure readable by pspm_load_data 
+data: data cell of structure readable by pspm_load_data 
 \begin_inset Newline newline
 \end_inset
 
@@ -812,28 +782,16 @@ Add default basis function
 \end_layout
 
 \begin_layout Standard
-
-\series bold
-Function name
-\end_layout
-
-\begin_layout Standard
-
-\family typewriter
-pspm_bf_xxx
-\family default
-
+Function name: pspm_bf_xxx 
 \begin_inset Newline newline
 \end_inset
 
 
-\series bold
-Function arguments
-\end_layout
+\begin_inset Newline newline
+\end_inset
 
-\begin_layout Standard
-vector of arguments, first element is time resolution, further arguments
- as defined in defaults.glm(n).cbf.args 
+Function arguments: vector of arguments, first element is time resolution,
+ further arguments as defined in defaults.glm(n).cbf.args 
 \end_layout
 
 \begin_layout Subsection
