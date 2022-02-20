@@ -24,7 +24,7 @@
 \maintain_unincluded_children false
 \language english
 \language_package default
-\inputencoding auto
+\inputencoding utf8
 \fontencoding global
 \font_roman "default" "default"
 \font_sans "default" "default"
@@ -254,7 +254,7 @@ data{n}.header.sr
 \family typewriter
 data{n}.header.units
 \family default
- (data units, or ‘events’) 
+ (data units, or ‘events') 
 \end_layout
 
 \begin_layout Description
@@ -554,61 +554,61 @@ defaults.import.datatypes(1) = ...
 
 \begin_layout Plain Layout
 
-struct('short', 'xxx', ...
+struct(`short', `xxx', ...
  % short name for internal purposes 
 \end_layout
 
 \begin_layout Plain Layout
 
-'long', 'Datatype description', ...
+`long', `Datatype description', ...
  % long name for GUI 
 \end_layout
 
 \begin_layout Plain Layout
 
-'ext', '*', ...
+`ext', `*', ...
  % data file extension 
 \end_layout
 
 \begin_layout Plain Layout
 
-'funct', @pspm_get_xxx, ...
+`funct', @pspm_get_xxx, ...
  % import function 
 \end_layout
 
 \begin_layout Plain Layout
 
-'chantypes', {{defaults.chantypes.type}}, ...
+`chantypes', {{defaults.chantypes.type}}, ...
  % allowed channel types 
 \end_layout
 
 \begin_layout Plain Layout
 
-'chandescription', 'channel', ...
+`chandescription', `channel', ...
  % description of channels for GUI 
 \end_layout
 
 \begin_layout Plain Layout
 
-'multioption', 1, ...
+`multioption', 1, ...
  % import of multiple channels for GUI 
 \end_layout
 
 \begin_layout Plain Layout
 
-'searchoption', 1, ...
+`searchoption', 1, ...
  % allow channel name search for GUI 
 \end_layout
 
 \begin_layout Plain Layout
 
-'automarker', 0, ...
+`automarker', 0, ...
  % marker not stored in separate channel 
 \end_layout
 
 \begin_layout Plain Layout
 
-'autosr', 1); % sample rate automatically assigned
+`autosr', 1); % sample rate automatically assigned
 \end_layout
 
 \end_inset
@@ -623,7 +623,7 @@ Good to know
 \end_layout
 
 \begin_layout Itemize
-The “long” definition is used in the GUI – make sure it’s readable.
+The ``long'' definition is used in the GUI – make sure it's readable.
 \end_layout
 
 \begin_layout Itemize
@@ -660,7 +660,7 @@ If sample rate is contained in import file and determined during import,
 \end_layout
 
 \begin_layout Itemize
-If you need external functions – put them into a folder in the ‘import’
+If you need external functions – put them into a folder in the `import'
  subdirectory and add/remove this path within the 
 \family typewriter
 pspm_get_xxx
@@ -706,7 +706,7 @@ Format
 [sts, data] = pspm_get_channeltype(import)
 \end_layout
 
-\begin_layout Standard
+\begin_layout Description
 
 \family typewriter
 data
@@ -757,7 +757,7 @@ status open
 
 \begin_layout Plain Layout
 
-defaults.chantypes(k).type = 'xxx';% channel type name 
+defaults.chantypes(k).type = `xxx';% channel type name 
 \end_layout
 
 \begin_layout Plain Layout
@@ -767,7 +767,7 @@ defaults.chantypes(k).import = @pspm_get_xxx; % conversion function
 
 \begin_layout Plain Layout
 
-defaults.chantypes(k).data = 'xxx'; % ’wave’ or ’events’ 
+defaults.chantypes(k).data = `xxx'; % `wave' or `events' 
 \end_layout
 
 \end_inset
@@ -798,13 +798,13 @@ defaults.glm(1) = ...
 
 \begin_layout Plain Layout
 
-struct('modality', 'scr', ...
+struct(`modality', `scr', ...
  % modality name 
 \end_layout
 
 \begin_layout Plain Layout
 
-'cbf', struct('fhandle', @pspm_bf_scrf, 'args', 1), ...
+`cbf', struct(`fhandle', @pspm_bf_scrf, `args', 1), ...
  
 \end_layout
 
@@ -815,13 +815,13 @@ struct('modality', 'scr', ...
 
 \begin_layout Plain Layout
 
-'filter', struct('lpfreq', 5, 'lporder', 1, ...
+`filter', struct(`lpfreq', 5, `lporder', 1, ...
  
 \end_layout
 
 \begin_layout Plain Layout
 
-'hpfreq', 0.05, 'hporder', 1, 'down', 10, 'direction', 'uni')); 
+`hpfreq', 0.05, `hporder', 1, `down', 10, `direction', `uni')); 
 \end_layout
 
 \begin_layout Plain Layout
@@ -858,7 +858,11 @@ Function arguments
 
 \begin_layout Standard
 vector of arguments, first element is time resolution, further arguments
- as defined in defaults.glm(n).cbf.args 
+ as defined in 
+\family typewriter
+defaults.glm(n).cbf.args
+\family default
+.
 \end_layout
 
 \begin_layout Subsection
@@ -1383,7 +1387,7 @@ CED Spike
 \begin_inset Text
 
 \begin_layout Plain Layout
-Matlab
+MATLAB
 \end_layout
 
 \end_inset
@@ -3898,6 +3902,8 @@ spike
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 .smr
 \end_layout
 
@@ -3954,7 +3960,7 @@ CED
 \begin_inset Text
 
 \begin_layout Plain Layout
-Matlab
+MATLAB
 \end_layout
 
 \end_inset
@@ -3972,6 +3978,8 @@ mat
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 .mat
 \end_layout
 
@@ -4046,6 +4054,8 @@ txt
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 .txt
 \end_layout
 
@@ -4124,6 +4134,8 @@ acq
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 .acq
 \end_layout
 
@@ -4198,6 +4210,8 @@ acqmat
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 .mat
 \end_layout
 
@@ -4272,6 +4286,8 @@ labchart
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 .adicht
 \end_layout
 
@@ -4354,6 +4370,8 @@ labchartmat_ext
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 .mat
 \end_layout
 
@@ -4436,6 +4454,8 @@ labchartmat_in
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 .mat
 \end_layout
 
@@ -4510,6 +4530,8 @@ vario
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 .vpd
 \end_layout
 
@@ -4584,6 +4606,8 @@ biograph
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 .txt
 \end_layout
 
@@ -4658,6 +4682,8 @@ biotrace
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 .txt
 \end_layout
 
@@ -4732,6 +4758,8 @@ brainvision
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 .eeg
 \end_layout
 
@@ -4806,6 +4834,8 @@ windaq
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 .wdq
 \end_layout
 
@@ -4880,6 +4910,8 @@ observer
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 .any
 \end_layout
 
@@ -4954,6 +4986,8 @@ cnt
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 .cnt
 \end_layout
 
@@ -5028,6 +5062,8 @@ biosemi
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 .bdf
 \end_layout
 
@@ -5102,6 +5138,8 @@ txt
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 .asc
 \end_layout
 
@@ -5176,6 +5214,8 @@ edf
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 .edf
 \end_layout
 
@@ -5250,6 +5290,8 @@ txt
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 .log
 \end_layout
 
@@ -5324,6 +5366,8 @@ txt
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 .txt
 \end_layout
 
@@ -5398,6 +5442,8 @@ txt
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 .txt
 \end_layout
 
@@ -5468,42 +5514,57 @@ GUI
 \begin_layout Standard
 
 \shape italic
-Contributed by Gabriel Gräni.
+Contributed by Gabriel Gräni and Dadi Zhao.
 \end_layout
 
 \begin_layout Subsection
-Matlabbatch: Getting started
+MATLABbatch: Getting started
 \end_layout
 
 \begin_layout Enumerate
-Add the trunk folder to the matlab path
+Add the trunk folder to the MATLAB path
 \end_layout
 
 \begin_layout Enumerate
-Type pspm_init into the command window (after the execution of the command
- the folders 
+Type 
+\family typewriter
+pspm_init
+\family default
+ into the command window (after the execution of the command the folders
+ 
 \family typewriter
 pspm_cfg
 \family default
- and matlabbatch should be added to the matlab path)
+ and MATLABbatch should be added to the MATLAB path)
 \end_layout
 
 \begin_layout Enumerate
-Start matlabbatch by the typing cfg_ui into the command window
+Start MATLABbatch by the typing 
+\family typewriter
+cfg_ui
+\family default
+ into the command window
 \end_layout
 
 \begin_layout Enumerate
-If the item PsPM exists in the menu bar of matlabbatch you can skip steps
+If the item PsPM exists in the menu bar of MATLABbatch you can skip steps
  5 to 7 and continue at step 8
 \end_layout
 
 \begin_layout Enumerate
-Select –> File –> Add Application
+Select → File → Add Application
 \end_layout
 
 \begin_layout Enumerate
-Navigate to the folder pspm_cfg on the left hand side of the window and
- select the file pspm_cfg.m on the right hand side –> Press the button Done
+Navigate to the folder 
+\family typewriter
+pspm_cfg
+\family default
+ on the left hand side of the window and select the file 
+\family typewriter
+pspm_cfg.m
+\family default
+ on the right hand side → Press the button Done
 \end_layout
 
 \begin_layout Enumerate
@@ -5512,7 +5573,7 @@ A new item, called PsPM, will appear in the upper menu bar.
 
 \begin_layout Enumerate
 By selecting PsPM the desired action can be selected (at the moment, there
- is only Data Preparation –> {Import, Trim} available) 
+ is only Data Preparation → {Import, Trim} available) 
 \end_layout
 
 \begin_layout Subsubsection
@@ -5520,8 +5581,8 @@ Example Function: Trim
 \end_layout
 
 \begin_layout Standard
-This example demonstrates how matlabbatch can be used to execute a function.
- For all other functions matlabbatch behaves in the same manner.
+This example demonstrates how MATLABbatch can be used to execute a function.
+ For all other functions MATLABbatch behaves in the same manner.
 \end_layout
 
 \begin_layout Itemize
@@ -5547,7 +5608,7 @@ By pressing on the green arrow the selected file will be trimmed according
 \end_layout
 
 \begin_layout Subsection
-Matlabbatch: How to
+MATLABbatch: How to
 \end_layout
 
 \begin_layout Subsubsection
@@ -5555,7 +5616,7 @@ Preliminaries
 \end_layout
 
 \begin_layout Itemize
-Add folder of matlabbatch to the matlab path
+Add folder of MATLABbatch to the MATLAB path
 \end_layout
 
 \begin_layout Itemize
@@ -5611,12 +5672,12 @@ item1= cfg_item; % Defines generic configuration item
 
 \begin_layout Plain Layout
 
-item1.name= 'Def 1'; % The display name 
+item1.name= `Def 1'; % The display name 
 \end_layout
 
 \begin_layout Plain Layout
 
-item1.tag = 'def1'; % The name appearing in the harvested job 
+item1.tag = `def1'; % The name appearing in the harvested job 
 \end_layout
 
 \begin_layout Plain Layout
@@ -5642,7 +5703,7 @@ item1.val = {true}; % Value of item (optional)
 
 \begin_layout Plain Layout
 
-item1.help = {'Help...'}; % Help text 
+item1.help = {`Help...'}; % Help text 
 \end_layout
 
 \end_inset
@@ -5673,17 +5734,17 @@ entry1 = cfg_entry; % Defines entry configuration item
 
 \begin_layout Plain Layout
 
-entry1.name = 'Input'; 
+entry1.name = `Input'; 
 \end_layout
 
 \begin_layout Plain Layout
 
-entry1.tag = 'input'; 
+entry1.tag = `input'; 
 \end_layout
 
 \begin_layout Plain Layout
 
-entry1.strtye = 'r'; % Type of values which can be entered 
+entry1.strtye = `r'; % Type of values which can be entered 
 \end_layout
 
 \begin_layout Plain Layout
@@ -5693,7 +5754,7 @@ entry1.num = [1 1]; % Expected dimension of the input
 
 \begin_layout Plain Layout
 
-entry1.help = {'Help...'}; 
+entry1.help = {`Help...'}; 
 \end_layout
 
 \end_inset
@@ -5724,12 +5785,12 @@ choice = cfg_item; % Defines choice configuration item
 
 \begin_layout Plain Layout
 
-choice.name = 'Choice';
+choice.name = `Choice';
 \end_layout
 
 \begin_layout Plain Layout
 
-choice.tag = 'choice';
+choice.tag = `choice';
 \end_layout
 
 \begin_layout Plain Layout
@@ -5745,7 +5806,7 @@ choice.values = {item1, entry1}; % Defines which items will be
 
 \begin_layout Plain Layout
 
-choice.help = {'Help...'}; 
+choice.help = {`Help...'}; 
 \end_layout
 
 \end_inset
@@ -5776,12 +5837,12 @@ fct = cfg_exbranch; % Defines the branch that has information
 
 \begin_layout Plain Layout
 
-% about how to run this module fct.name = 'Trim'; 
+% about how to run this module fct.name = `Trim'; 
 \end_layout
 
 \begin_layout Plain Layout
 
-fct.tag = 'trim'; 
+fct.tag = `trim'; 
 \end_layout
 
 \begin_layout Plain Layout
@@ -5894,7 +5955,7 @@ cfg_repeat
 \begin_inset Newline newline
 \end_inset
 
-For more information call the help function in matlab (e.g.
+For more information call the help function in MATLAB (e.g.
  
 \family typewriter
 help cfg_item
@@ -5909,9 +5970,9 @@ Note
 
 \begin_layout Standard
 The inputs to each module have to be described in a tree-like structure.
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Standard
 During data entry, there is no way to change the tree structure based on
  input data.
  Add application to the configuration tree by default
@@ -5923,21 +5984,25 @@ Add application to the configuration tree by default
 
 \begin_layout Standard
 In the following it is shown how an application can be added to the menu
- bar of matlabbatch by default (without adding it every time matlabbatch
+ bar of MATLABbatch by default (without adding it every time MATLABbatch
  is started)
 \end_layout
 
 \begin_layout Itemize
-Start matlabbatch and add the appliaction 
+Start MATLABbatch and add the appliaction 
 \family typewriter
 cfg_confgui
 \family default
- in the folder matlabbatch/cfg_confgui 
+ in the folder 
+\family typewriter
+MATLABbatch/cfg_confgui
+\family default
+ .
 \end_layout
 
 \begin_layout Itemize
-Put Generate code into the Module list by selecting ConfGUI –> Generate
- code in the menu bar
+Put Generate code into the Module list by selecting ConfGUI → Generate code
+ in the menu bar
 \end_layout
 
 \begin_layout Itemize
@@ -5956,7 +6021,7 @@ Output filename: This file will contain the whole menu structure, validity
 
 \begin_layout Itemize
 Output directory: All files which are created by the ConfGUI will be stored
- into this directory (chose a directory which is added to the matlab path)
+ into this directory (chose a directory which is added to the MATLAB path)
 \end_layout
 
 \begin_layout Itemize
@@ -5974,15 +6039,27 @@ Options:
 
 \begin_deeper
 \begin_layout Enumerate
-Create Defaults File: Yes
+Create Defaults File: 
+\family typewriter
+Yes
 \end_layout
 
 \begin_layout Enumerate
-Create mlbatch_appcfg File: Yes
+Create 
+\family typewriter
+mlbatch_appcfg
+\family default
+ File: 
+\family typewriter
+Yes
 \end_layout
 
 \begin_layout Enumerate
-Create Code for addpath(): No 
+Create Code for 
+\family typewriter
+addpath(): No
+\family default
+ 
 \end_layout
 
 \end_deeper
@@ -5992,13 +6069,30 @@ Finally press the green arrow on the upper left side of the batch editor
 \end_layout
 
 \begin_layout Itemize
-As no error occurred 3 new files ({Output filename}.m, {Output filename}_def.m,
- cfg_mlbatch_appcfg.m) should be created and added into the folder {Output
- directory}.
+As no error occurred 3 new files (
+\family typewriter
+{Output filename}.m
+\family default
+, 
+\family typewriter
+{Output filename}_def.m
+\family default
+, 
+\family typewriter
+cfg_mlbatch_appcfg.m
+\family default
+) should be created and added into the folder {
+\family typewriter
+Output directory
+\family default
+}.
 \end_layout
 
 \begin_layout Itemize
-Each time matlabbatch is started, it will search for any cfg_mlbatch_appcfg.m
+Each time MATLABbatch is started, it will search for any 
+\family typewriter
+cfg_mlbatch_appcfg.m
+\family default
  file (this file contains the names of the configuration files) and will
  add the corresponding application to the batch editor.
  
@@ -6026,52 +6120,52 @@ status open
 
 \begin_layout Plain Layout
 
-arg1 = 'scr.prep.import_data'; 
+arg1 = `scr.prep.import_data'; 
 \end_layout
 
 \begin_layout Plain Layout
 
-arg2 = 'scr.prep.trim'; 
+arg2 = `scr.prep.trim'; 
 \end_layout
 
 \begin_layout Plain Layout
 
-mod_cfg_id1 = cfg_util('tag2mod_cfg_id',arg1); 
+mod_cfg_id1 = cfg_util(`tag2mod_cfg_id',arg1); 
 \end_layout
 
 \begin_layout Plain Layout
 
-mod_cfg_id2 = cfg_util('tag2mod_cfg_id',arg2); 
+mod_cfg_id2 = cfg_util(`tag2mod_cfg_id',arg2); 
 \end_layout
 
 \begin_layout Plain Layout
 
-cjob = cfg_util('initjob'); 
+cjob = cfg_util(`initjob'); 
 \end_layout
 
 \begin_layout Plain Layout
 
-mod_job_id1 = cfg_util('addtojob', cjob, mod_cfg_id1); 
+mod_job_id1 = cfg_util(`addtojob', cjob, mod_cfg_id1); 
 \end_layout
 
 \begin_layout Plain Layout
 
-mod_job_id2 = cfg_util('addtojob', cjob, mod_cfg_id2); 
+mod_job_id2 = cfg_util(`addtojob', cjob, mod_cfg_id2); 
 \end_layout
 
 \begin_layout Plain Layout
 
-cfg_util('harvest', cjob, mod_job_id1); 
+cfg_util(`harvest', cjob, mod_job_id1); 
 \end_layout
 
 \begin_layout Plain Layout
 
-cfg_util('harvest', cjob, mod_job_id2); 
+cfg_util(`harvest', cjob, mod_job_id2); 
 \end_layout
 
 \begin_layout Plain Layout
 
-cfg_ui('local_showjob', cfg_ui, cjob); 
+cfg_ui(`local_showjob', cfg_ui, cjob); 
 \end_layout
 
 \end_inset
@@ -6084,30 +6178,60 @@ Changes
 \end_layout
 
 \begin_layout Itemize
-In the function private/cfg_onscreen at line 36 figure(fg); is commented
- out in order to prevent the appearance of the GUI for a short time if the
- function cfg_ui('Visible', 'off') is called.
+In the function 
+\family typewriter
+private/cfg_onscreen
+\family default
+ at line 36 figure(fg); is commented out in order to prevent the appearance
+ of the GUI for a short time if the function 
+\family typewriter
+cfg_ui(`Visible', `off')
+\family default
+ is called.
 \end_layout
 
 \begin_layout Subsection
-Matlabbatch: changing help texts and fieldnames 
+MATLABbatch: changing help texts and fieldnames 
 \end_layout
 
 \begin_layout Subsubsection
-File structure of matlabbatch GUI
+File structure of MATLABbatch GUI
 \end_layout
 
 \begin_layout Standard
 There exist two files per function: 1 configuration file and 1 run file.
  The configuration file defines the structure of the corresponding function
- in the matlabbatch GUI whereas the run file firstly gathers all entered
+ in the MATLABbatch GUI whereas the run file firstly gathers all entered
  values and secondly calls the corresponding SCR function.
- Both types of files are located in the subfolder pspm_cfg.
+ Both types of files are located in the subfolder 
+\family typewriter
+pspm_cfg
+\family default
+.
  The name of a configuration or a run file consists of two parts.
- The prefix of a configuration filename is called pspm_cfg_ whereas the
- filename of a run file begins with pspm_cfg_run.
+ The prefix of a configuration filename is called 
+\family typewriter
+pspm_cfg_
+\family default
+ whereas the filename of a run file begins with 
+\family typewriter
+pspm_cfg_run
+\family default
+.
  The second part of the filename is named after the function name (eg.
- for the function pspm_import.m -> pspm_cfg_import.m, pspm_cfg_run_import.m).
+ for the function 
+\family typewriter
+pspm_import.m
+\family default
+ → 
+\family typewriter
+pspm_cfg_import.m
+\family default
+, 
+\family typewriter
+pspm_cfg_run_import.m
+\family default
+).
 \end_layout
 
 \begin_layout Subsubsection
@@ -6115,9 +6239,9 @@ Edit help texts and fieldname
 \end_layout
 
 \begin_layout Standard
-In order to change any help text or fieldname in a matlabbatch GUI function
+In order to change any help text or fieldname in a MATLABbatch GUI function
  the corresponding configuration file has to be opened.
- For each item in a matlabbatch GUI function a struct variable which contains
+ For each item in a MATLABbatch GUI function a struct variable which contains
  several struct fields is defined in the configuration file.
  
 \end_layout
@@ -6125,19 +6249,26 @@ In order to change any help text or fieldname in a matlabbatch GUI function
 \begin_layout Itemize
 Help text The field .help defines the help text of the item which can be
  edited in order to change the help text.
- As soon as matlabbatch has been closed and opened again, the changes in
- the help text will be visible in matlabbatch GUI.
+ As soon as MATLABbatch has been closed and opened again, the changes in
+ the help text will be visible in MATLABbatch GUI.
 \end_layout
 
 \begin_layout Itemize
-Fieldname The fieldname of an matlabbatch GUI item is defined by the struct
- field .tag .
+Fieldname The fieldname of an MATLABbatch GUI item is defined by the struct
+ field 
+\family typewriter
+.tag
+\family default
+.
  In case a fieldname of an item should be changed be careful to verify if
  no other item, which has the same root node, hold the same fieldname.
- Otherwise matlabbatch will not work properly.
- After the fieldname of an item has been changed the run file (pspm_cfg_run_func
-tionname.m) of the corresponding function has to be adapted as well in order
- to ensure that the function call in the run file is done properly.
+ Otherwise MATLABbatch will not work properly.
+ After the fieldname of an item has been changed the run file (
+\family typewriter
+pspm_cfg_run_functionname.m
+\family default
+) of the corresponding function has to be adapted as well in order to ensure
+ that the function call in the run file is done properly.
 \end_layout
 
 \begin_layout Subsection
@@ -6149,13 +6280,21 @@ Mlapp
 \end_layout
 
 \begin_layout Standard
-Mlapp is the new format for developing GUI in Matlab.
+
+\family typewriter
+Mlapp
+\family default
+ is the new format for developing GUI in MATLAB.
  The old GUIDE based GUI will lose support from Mathworks in a future release.
  Therefore, it is recommended to move from the old GUIDE to the new Mlapp.
 \end_layout
 
 \begin_layout Standard
-The .mlapp file can be created natively through the new Matlab GUI guide.
+The 
+\family typewriter
+.mlapp
+\family default
+ file can be created natively through the new MATLAB GUI guide.
  Alternatively, it can be generated by converting the classic GUIDE based
  .fig file through the feature 
 \shape italic
@@ -6169,9 +6308,13 @@ Style
 \end_layout
 
 \begin_layout Standard
-The new GUI is currently using the colour #7f2534 for stylishing.
- The main typeface for UI design is Verdana, which is supported in Windows,
- macOS and Linux.
+The new GUI is currently using the colour 
+\family typewriter
+#7f2534
+\family default
+ for stylishing.
+ The main typeface for UI design is Segoe UI, Helvetica Neue and DejaVu
+ Sans for Windows, macOS and Linux, respectively.
 \end_layout
 
 \begin_layout Section
@@ -6189,30 +6332,31 @@ Unittest: General implementation
 \end_layout
 
 \begin_layout Standard
-In PsPM the Matlab Unit Testing Framework is used for testing of functions.
- For each tested function there is a Matlab class with the name ‘functionname_te
-st’, which contains the unittests for that specific function.
+In PsPM the MATLAB Unit Testing Framework is used for testing of functions.
+ For each tested function there is a MATLAB class with the name 
+\family typewriter
+functionname_test
+\family default
+, which contains the unittests for that specific function.
  Additionally there is a documentation page for each of the test classes,
  where information about the unittests can be found.
 \begin_inset Newline newline
 \end_inset
 
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Standard
 To run the unittests of a test class, an object of the class has to be created:
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Standard
 
 \family typewriter
 testCase = functionname_test
-\family default
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
-
+\begin_layout Standard
 where 
 \family typewriter
 testCase
@@ -6223,42 +6367,37 @@ funtionname_test
 \family default
  is the name of a test class.
  Then all the unittest that are contained in the test class can be run with:
- 
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Standard
 
 \family typewriter
 testCase.run
-\family default
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
-
+\begin_layout Standard
 A specific unittest can be run with:
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Standard
 
 \family typewriter
-testCase.run(‘unittest_name’)
-\family default
+testCase.run(‘unittest_name')
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
-
+\begin_layout Standard
 Remember that a new test class object must be generated each time the test
  class has been changed.
 \end_layout
 
 \begin_layout Subsection
-Parameterized test classes
+parameterised test classes
 \end_layout
 
 \begin_layout Standard
-Parmeterized test classes is a feature provided by the Matlab test case
+Parmeterized test classes is a feature provided by the MATLAB test case
  class.
- A test class is parameterized when it has 
+ A test class is parameterised when it has 
 \end_layout
 
 \begin_layout Itemize
@@ -6271,10 +6410,10 @@ Test methods implementing the defined test parameters
 
 \begin_layout Standard
 Each function implementing test parameters will be called multiple times
- with each possible parameter combination (which is determined by Matlab).
- Thus parameterized classes allow to write single tests for different parameter
+ with each possible parameter combination (which is determined by MATLAB).
+ Thus parameterised classes allow to write single tests for different parameter
  combinations.
- If one of the following test cases is a parameterized test class, it will
+ If one of the following test cases is a parameterised test class, it will
  be mentioned accordingly.
 \end_layout
 
@@ -6385,9 +6524,7 @@ Check if all of the returned channels have the same duration.
 Same optional duration
 \end_layout
 
-\begin_layout Standard
-
-\bar under
+\begin_layout Subparagraph
 Function name
 \end_layout
 
@@ -6395,20 +6532,19 @@ Function name
 
 \family typewriter
 same_optional_duration(this)
-\family default
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
-
-
-\bar under
+\begin_layout Subparagraph
 Description
 \end_layout
 
 \begin_layout Standard
 Passes an optional duration that is equal to the maximum duration of all
- channels in the input to pspm_align_channels and does the exact same checks
- as in lower duration case.
+ channels in the input to 
+\family typewriter
+pspm_align_channels
+\family default
+ and does the exact same checks as in lower duration case.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -6486,19 +6622,27 @@ Various case checks
 Function names
 \end_layout
 
-\begin_layout Enumerate
+\begin_layout Description
+
+\family typewriter
 only_one_channel_longer_others_same(this)
 \end_layout
 
-\begin_layout Enumerate
+\begin_layout Description
+
+\family typewriter
 only_one_channel_shorter_others_same(this)
 \end_layout
 
-\begin_layout Enumerate
+\begin_layout Description
+
+\family typewriter
 increasing_channel_lengths(this)
 \end_layout
 
-\begin_layout Enumerate
+\begin_layout Description
+
+\family typewriter
 two_same_others_shorter(this)
 \end_layout
 
@@ -6551,22 +6695,31 @@ Testcases
 Invalid input
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: invalid_input(this) 
-\begin_inset Newline newline
+
+\family typewriter
+invalid_input(this)
+\end_layout
+
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+Checks for warnings, if the input arguments are invalid and if the Signal
+ processing toolbox is installed.
+\end_layout
+
+\begin_layout Subparagraph
+Tests
+\begin_inset Newline linebreak
 \end_inset
 
-Description: Checks for warnings, if the input arguments are invalid and
- if the Signal processing toolbox is installed.
- 
-\begin_inset Newline newline
-\end_inset
 
-
-\begin_inset Newline newline
-\end_inset
-
-Tests: 
 \end_layout
 
 \begin_layout Standard
@@ -6600,6 +6753,8 @@ Expected warning
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_butter() [no input]
 \end_layout
 
@@ -6609,6 +6764,8 @@ pspm_butter() [no input]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -6620,7 +6777,9 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_butter(1,1,'abc') [pass not equal to 'high' or 'low']
+
+\family typewriter
+pspm_butter(1,1,`abc') [pass not equal to `high' or `low']
 \end_layout
 
 \end_inset
@@ -6629,6 +6788,8 @@ pspm_butter(1,1,'abc') [pass not equal to 'high' or 'low']
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -6640,7 +6801,9 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_butter(2,1) ['Signal processing toolbox is missing' #1]
+
+\family typewriter
+pspm_butter(2,1) [`Signal processing toolbox is missing' #1]
 \end_layout
 
 \end_inset
@@ -6649,6 +6812,8 @@ pspm_butter(2,1) ['Signal processing toolbox is missing' #1]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:toolbox_missing
 \end_layout
 
@@ -6660,7 +6825,9 @@ ID:toolbox_missing
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_butter(1,1) ['Signal processing toolbox is missing' #2]
+
+\family typewriter
+pspm_butter(1,1) [`Signal processing toolbox is missing' #2]
 \end_layout
 
 \end_inset
@@ -6669,6 +6836,8 @@ pspm_butter(1,1) ['Signal processing toolbox is missing' #2]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:toolbox_missing
 \end_layout
 
@@ -6690,12 +6859,24 @@ Testcases: pspm_bf_test
 Information
 \end_layout
 
-\begin_layout Standard
-Testclass: pspm_bf_test
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Testclass
+\end_layout
 
-Function: [bs, x] = pspm_bf_<specific function name>
+\begin_layout Standard
+
+\family typewriter
+pspm_bf_test
+\end_layout
+
+\begin_layout Subparagraph
+Function
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+[bs, x] = pspm_bf_<specific function name>
 \end_layout
 
 \begin_layout Subsubsection
@@ -6703,7 +6884,7 @@ Setup
 \end_layout
 
 \begin_layout Standard
-This test class is parameterized.
+This test class is parameterised.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -6716,12 +6897,9 @@ Method setup parameters
 These parameters define which function should be tested
 \series bold
 .
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
-
-\series default
-
+\begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="1" columns="2">
 <features tabularvalignment="middle">
@@ -6743,8 +6921,16 @@ Basis function
 \begin_inset Text
 
 \begin_layout Plain Layout
-Specifies the basis functions to test (without the 'pspm_bf_' prefix).
- The current basis function to test is then called via this.bf();
+Specifies the basis functions to test (without the 
+\family typewriter
+pspm_bf_ prefix
+\family default
+).
+ The current basis function to test is then called via 
+\family typewriter
+this.bf()
+\family default
+;
 \end_layout
 
 \end_inset
@@ -6764,10 +6950,9 @@ Test parameters
 \begin_layout Standard
 These are parameters which define what kind of data or option should be
  passed to each basis function.
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
-
+\begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="1" columns="2">
 <features tabularvalignment="middle">
@@ -6789,8 +6974,15 @@ Time res log
 \begin_inset Text
 
 \begin_layout Plain Layout
-Specifies for the basic test different time resolutions (argument 'td')
- which a basis function should be able to handle (as long as td <= duration).
+Specifies for the basic test different time resolutions (argument 
+\family typewriter
+`td'
+\family default
+) which a basis function should be able to handle (as long as 
+\family typewriter
+td <= duration
+\family default
+).
  The values are logarithmic and have to be translated before passed to the
  basis function.
 \end_layout
@@ -6867,6 +7059,8 @@ Expected warning
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 this.bf() [no parameters]
 \end_layout
 
@@ -6876,6 +7070,8 @@ this.bf() [no parameters]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -6887,7 +7083,9 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-this.bf(dur+1) [pass 'td' > duration of function]
+
+\family typewriter
+this.bf(dur+1) [pass `td' > duration of function]
 \end_layout
 
 \end_inset
@@ -6896,6 +7094,8 @@ this.bf(dur+1) [pass 'td' > duration of function]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -6907,6 +7107,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 this.bf(0) [invalid time resolution]
 \end_layout
 
@@ -6916,6 +7118,8 @@ this.bf(0) [invalid time resolution]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -6957,22 +7161,40 @@ Tests
 \end_layout
 
 \begin_layout Enumerate
-Test with td = 0.1, verify that no warning is issued and determine the duration
+Test with 
+\family typewriter
+td = 0.1
+\family default
+, verify that no warning is issued and determine the duration
 \end_layout
 
 \begin_layout Enumerate
-Test with td = 0.01 and check if the new duration is equal to the duration
- calculated before.
+Test with 
+\family typewriter
+td = 0.01
+\family default
+ and check if the new duration is equal to the duration calculated before.
 \end_layout
 
 \begin_layout Enumerate
 Test if function runs through without warning and that the time vector begins
- at <= 0.
+ at 
+\family typewriter
+<= 0
+\family default
+.
 \end_layout
 
 \begin_layout Enumerate
-Test if the function runs through without warning with td = 10^time_res_log
- (as long as td < duration)
+Test if the function runs through without warning with 
+\family typewriter
+td = 10^time_res_log
+\family default
+ (as long as 
+\family typewriter
+td < duration
+\family default
+)
 \end_layout
 
 \begin_layout Subsection
@@ -7025,33 +7247,48 @@ Testcases
 Invalid input
 \end_layout
 
-\begin_layout Standard
-Function name: invalid_input(testCase)
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Function name
+\end_layout
 
-Description: Pass invalid from or to metrics and check if warnings are issued.
+\begin_layout Standard
+
+\family typewriter
+invalid_input(testCase)
+\end_layout
+
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+Pass invalid from or to metrics and check if warnings are issued.
 \end_layout
 
 \begin_layout Subsubsection*
 Valid input
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: valid_input(this)
-\begin_inset Newline newline
-\end_inset
 
-Description: Pass various valid inputs and compare results to manually calculate
-d ones.
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+valid_input(this)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Pass various valid inputs and compare results to manually calculated ones.
+\end_layout
 
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
@@ -7068,15 +7305,47 @@ Various unit conversion checks:
 
 \begin_deeper
 \begin_layout Enumerate
-Conversion between same units (cm to cm)
+Conversion between same units (
+\family typewriter
+cm
+\family default
+ to 
+\family typewriter
+cm
+\family default
+)
 \end_layout
 
 \begin_layout Enumerate
-mm to km and km to mm conversions
+
+\family typewriter
+mm
+\family default
+ to 
+\family typewriter
+km
+\family default
+ and 
+\family typewriter
+km
+\family default
+ to 
+\family typewriter
+mm
+\family default
+ conversions
 \end_layout
 
 \begin_layout Enumerate
-inch to cm conversions
+
+\family typewriter
+inch
+\family default
+ to 
+\family typewriter
+cm
+\family default
+ conversions
 \end_layout
 
 \end_deeper
@@ -7131,13 +7400,13 @@ Constants
 \begin_layout Itemize
 
 \family typewriter
-testdata{0}.chan_struct = struct('nr', 1, 'name', 'ecg');
+testdata{0}.chan_struct = struct(`nr', 1, `name', `ecg');
 \end_layout
 
 \begin_layout Itemize
 
 \family typewriter
-testdata{0}.filename = 'ImportTestData
+testdata{0}.filename = `ImportTestData
 \backslash
 ecg2hb
 \backslash
@@ -7153,13 +7422,13 @@ testdata{0}.num_channels = 1
 \begin_layout Itemize
 
 \family typewriter
-testdata{1}.chan_struct = struct('nr', 3, 'name', 'ecg');
+testdata{1}.chan_struct = struct(`nr', 3, `name', `ecg');
 \end_layout
 
 \begin_layout Itemize
 
 \family typewriter
-testdata{1}.filename = 'ImportTestData
+testdata{1}.filename = `ImportTestData
 \backslash
 ecg2hb
 \backslash
@@ -7175,13 +7444,13 @@ testdata{1}.num_channels = 5
 \begin_layout Itemize
 
 \family typewriter
-backup_suffix = '_backup';
+backup_suffix = `_backup';
 \end_layout
 
 \begin_layout Itemize
 
 \family typewriter
-options = struct('semi', 0);
+options = struct(`semi', 0);
 \end_layout
 
 \begin_layout Subsubsection
@@ -7245,6 +7514,8 @@ Expected warning
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_ecg2hb() [no arguments]
 \end_layout
 
@@ -7254,6 +7525,8 @@ pspm_ecg2hb() [no arguments]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input 
 \end_layout
 
@@ -7265,6 +7538,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_ecg2hb(1) [invalid file name]
 \end_layout
 
@@ -7274,6 +7549,8 @@ pspm_ecg2hb(1) [invalid file name]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -7285,7 +7562,9 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_ecg2hb(this.fn, 'bla') [invalid channel (text)]
+
+\family typewriter
+pspm_ecg2hb(this.fn, `bla') [invalid channel (text)]
 \end_layout
 
 \end_inset
@@ -7294,6 +7573,8 @@ pspm_ecg2hb(this.fn, 'bla') [invalid channel (text)]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input 
 \end_layout
 
@@ -7305,6 +7586,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_ecg2hb(this.fn, 1) [invalid channel type]
 \end_layout
 
@@ -7314,6 +7597,8 @@ pspm_ecg2hb(this.fn, 1) [invalid channel type]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:not_allowed_channeltype
 \end_layout
 
@@ -7325,7 +7610,9 @@ ID:not_allowed_channeltype
 \begin_inset Text
 
 \begin_layout Plain Layout
-o.twthresh = 'bla'; pspm_ecg2hb(this.fn, this.chan.nr, o) [invalid twthresh
+
+\family typewriter
+o.twthresh = `bla'; pspm_ecg2hb(this.fn, this.chan.nr, o) [invalid twthresh
  (text)]
 \end_layout
 
@@ -7335,6 +7622,8 @@ o.twthresh = 'bla'; pspm_ecg2hb(this.fn, this.chan.nr, o) [invalid twthresh
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input 
 \end_layout
 
@@ -7346,6 +7635,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 o.minHR = 202; pspm_ecg2hb(this.fn, this.chan.nr, o) [invalid minHR (> default_maxHR
 )]
 \end_layout
@@ -7356,6 +7647,8 @@ o.minHR = 202; pspm_ecg2hb(this.fn, this.chan.nr, o) [invalid minHR (> default_m
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input 
 \end_layout
 
@@ -7367,6 +7660,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 o.minHR = 202; o.maxHR = 19; pspm_ecg2hb(this.fn, this.chan.nr, o) [invalid minHR
  > maxHR]
 \end_layout
@@ -7377,6 +7672,8 @@ o.minHR = 202; o.maxHR = 19; pspm_ecg2hb(this.fn, this.chan.nr, o) [invalid minH
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input 
 \end_layout
 
@@ -7388,6 +7685,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 o.maxHR = 19; pspm_ecg2hb(this.fn, this.chan.nr, o) [invalid maxHR (< default_minHR)
 ]
 \end_layout
@@ -7398,6 +7697,8 @@ o.maxHR = 19; pspm_ecg2hb(this.fn, this.chan.nr, o) [invalid maxHR (< default_mi
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input 
 \end_layout
 
@@ -7409,6 +7710,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 o.debugmode = 5; pspm_ecg2hb(this.fn, this.chan.nr, o) [invalid debugmode (not
  in [0,1])]
 \end_layout
@@ -7419,6 +7722,8 @@ o.debugmode = 5; pspm_ecg2hb(this.fn, this.chan.nr, o) [invalid debugmode (not
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input 
 \end_layout
 
@@ -7430,6 +7735,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 o.semi = 5; pspm_ecg2hb(this.fn, this.chan.nr, o) [invalid semi (not in [0,1])]
 \end_layout
 
@@ -7439,6 +7746,8 @@ o.semi = 5; pspm_ecg2hb(this.fn, this.chan.nr, o) [invalid semi (not in [0,1])]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input 
 \end_layout
 
@@ -7585,32 +7894,33 @@ Other Methods
 Test for added data
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: test_added_data()
-\begin_inset Newline newline
+
+\family typewriter
+test_added_data()
+\end_layout
+
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+Check if added hb channels show an expected behaviour.
+\end_layout
+
+\begin_layout Subparagraph
+Tests (for each channel)
+\begin_inset Newline linebreak
 \end_inset
 
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
-Description: Check if added hb channels show an expected behaviour.
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-Tests (for each channel):
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
+\begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="9" columns="2">
 <features tabularvalignment="middle">
@@ -7650,6 +7960,8 @@ Sampling rate
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 1
 \end_layout
 
@@ -7670,6 +7982,8 @@ Unit
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 'events'
 \end_layout
 
@@ -7690,6 +8004,8 @@ Channel type
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 'hb'
 \end_layout
 
@@ -7710,6 +8026,8 @@ Amount of data points in data
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 > 1
 \end_layout
 
@@ -7730,6 +8048,8 @@ Heartbeat indices are monotonically increasing
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 True
 \end_layout
 
@@ -7750,6 +8070,8 @@ Maximum number of heartbeats per second
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 < 5
 \end_layout
 
@@ -7770,6 +8092,8 @@ Data is distributed equally (standard deviation)
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 < 2s
 \end_layout
 
@@ -7790,6 +8114,8 @@ Time between end of recording and last data point
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 < 60s
 \end_layout
 
@@ -7811,12 +8137,24 @@ Testcases: pspm_filtfilt
 Information
 \end_layout
 
-\begin_layout Standard
-Testclass: pspm_filtfilt_test 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Testclass
+\end_layout
 
-Function: y = pspm_filtfilt(b,a,x)
+\begin_layout Standard
+
+\family typewriter
+pspm_filtfilt_test
+\end_layout
+
+\begin_layout Subparagraph
+Function
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+y = pspm_filtfilt(b,a,x)
 \end_layout
 
 \begin_layout Subsubsection
@@ -7827,21 +8165,30 @@ Testcases
 Invalid input
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: invalid_input(this) 
-\begin_inset Newline newline
+
+\family typewriter
+invalid_input(this)
+\end_layout
+
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+Checks for warnings, if the input arguments are invalid.
+\end_layout
+
+\begin_layout Subparagraph
+Tests
+\begin_inset Newline linebreak
 \end_inset
 
-Description: Checks for warnings, if the input arguments are invalid.
- 
-\begin_inset Newline newline
-\end_inset
 
-
-\begin_inset Newline newline
-\end_inset
-
-Tests: 
 \end_layout
 
 \begin_layout Standard
@@ -7875,6 +8222,8 @@ Expected warning
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_filtfilt() [no input]
 \end_layout
 
@@ -7884,6 +8233,8 @@ pspm_filtfilt() [no input]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -7895,6 +8246,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_filtfilt([1:10],[1:20],[1:10]) [data length less than 3 times filter
  order]
 \end_layout
@@ -7905,6 +8258,8 @@ pspm_filtfilt([1:10],[1:20],[1:10]) [data length less than 3 times filter
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -7926,16 +8281,24 @@ Testcases: pspm_find_channel
 Information
 \end_layout
 
+\begin_layout Subparagraph
+Testclass
+\end_layout
+
 \begin_layout Standard
-Testclass: pspm_find_channel_test 
-\begin_inset Newline newline
-\end_inset
 
+\family typewriter
+pspm_find_channel_test
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Function
+\end_layout
 
-Function: chan = pspm_find_channel(headercell, chantype) 
+\begin_layout Standard
+
+\family typewriter
+chan = pspm_find_channel(headercell, chantype) 
 \end_layout
 
 \begin_layout Subsubsection
@@ -7971,7 +8334,7 @@ Setup
 \begin_layout Standard
 
 \family typewriter
-headercell = {'heart', 'scr', 'pupil'};
+headercell = {`heart', `scr', `pupil'};
 \end_layout
 
 \begin_layout Subparagraph
@@ -8015,7 +8378,7 @@ Expected warning
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_find_channel('str','scr') [no headercell]
+pspm_find_channel(`str',`scr') [no headercell]
 \end_layout
 
 \end_inset
@@ -8039,7 +8402,7 @@ ID:invalid_input
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_find_channel(headercell, 'str')
+pspm_find_channel(headercell, `str')
 \end_layout
 
 \end_inset
@@ -8096,6 +8459,8 @@ Function name
 \end_layout
 
 \begin_layout Standard
+
+\family typewriter
 valid_inputargs(this)
 \end_layout
 
@@ -8114,7 +8479,7 @@ Setup
 \begin_layout Standard
 
 \family typewriter
-headercell = {'heart', 'scr', 'pupil', 'mark', 'gsr', 'eda'};
+headercell = {`heart', `scr', `pupil', `mark', `gsr', `eda'};
 \end_layout
 
 \begin_layout Subparagraph
@@ -8169,7 +8534,7 @@ Expected warning
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_find_channel(headercell, 'pupil')
+pspm_find_channel(headercell, `pupil')
 \end_layout
 
 \end_inset
@@ -8202,7 +8567,7 @@ pspm_find_channel(headercell, 'pupil')
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_find_channel(headercell, 'resp')
+pspm_find_channel(headercell, `resp')
 \end_layout
 
 \end_inset
@@ -8237,7 +8602,7 @@ ID:no_matching_channels
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_find_channel(headercell, 'scr')
+pspm_find_channel(headercell, `scr')
 \end_layout
 
 \end_inset
@@ -8272,7 +8637,7 @@ ID:multiple_matching_channels
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_find_channel(headercell, {'mark', 'str', 'bla'})
+pspm_find_channel(headercell, {`mark', `str', `bla'})
 \end_layout
 
 \end_inset
@@ -8305,7 +8670,7 @@ pspm_find_channel(headercell, {'mark', 'str', 'bla'})
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_find_channel(headercell, {'call', 'str', 'me'})
+pspm_find_channel(headercell, {`call', `str', `me'})
 \end_layout
 
 \end_inset
@@ -8340,7 +8705,7 @@ no matching channel, but no warning
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_find_channel(headercell, {'scr', 'gsr', 'eda'})
+pspm_find_channel(headercell, {`scr', `gsr', `eda'})
 \end_layout
 
 \end_inset
@@ -8408,9 +8773,13 @@ Setup
 \end_layout
 
 \begin_layout Standard
-This test class is parameterized.
+This test class is parameterised.
  For manual mode tests, the test data is generated by the function itself
- and when needed, files will be written to testdatafile<variable_nr>.mat.
+ and when needed, files will be written to 
+\family typewriter
+testdatafile<variable_nr>.mat
+\family default
+.
  For auto mode tests, the test data must be in 
 \family typewriter
 ImportTestData/fitted_models
@@ -8491,8 +8860,8 @@ Description
 Checks for warnings, if the input arguments are invalid.
 \end_layout
 
-\begin_layout Standard
-Tests:
+\begin_layout Subparagraph
+Tests
 \begin_inset Newline linebreak
 \end_inset
 
@@ -8556,7 +8925,7 @@ ID:invalid_input
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_extract_segments('a','b')
+pspm_extract_segments(`a',`b')
 \end_layout
 
 \end_inset
@@ -8580,7 +8949,7 @@ ID:invalid_input
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_extract_segments('manual',fn,0)
+pspm_extract_segments(`manual',fn,0)
 \end_layout
 
 \end_inset
@@ -8604,7 +8973,7 @@ ID:invalid_input
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_extract_segments('manual',struct('a',10),0,timing)
+pspm_extract_segments(`manual',struct(`a',10),0,timing)
 \end_layout
 
 \end_inset
@@ -8628,7 +8997,7 @@ ID:invalid_input
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_extract_segments('manual',[1,3],logical(32),timing)
+pspm_extract_segments(`manual',[1,3],logical(32),timing)
 \end_layout
 
 \end_inset
@@ -8652,7 +9021,7 @@ ID:invalid_input
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_extract_segments('manual',fn,'a',timing)
+pspm_extract_segments(`manual',fn,`a',timing)
 \end_layout
 
 \end_inset
@@ -8676,7 +9045,7 @@ ID:invalid_input
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_extract_segments('manual',fn,{'a'},timing)
+pspm_extract_segments(`manual',fn,{`a'},timing)
 \end_layout
 
 \end_inset
@@ -8700,7 +9069,7 @@ ID:invalid_input
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_extract_segments('auto',{1})
+pspm_extract_segments(`auto',{1})
 \end_layout
 
 \end_inset
@@ -8724,7 +9093,7 @@ ID:invalid_input
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_extract_segments('auto','some')
+pspm_extract_segments(`auto',`some')
 \end_layout
 
 \end_inset
@@ -8830,6 +9199,10 @@ pspm_extract_segments
 
 \begin_layout Subparagraph
 Tests
+\begin_inset Newline linebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Enumerate
@@ -8841,7 +9214,7 @@ Test if function call wirked WarningFree
 \end_layout
 
 \begin_layout Enumerate
-Test if variable 'segments' existis in output
+Test if variable `segments' existis in output
 \end_layout
 
 \begin_layout Enumerate
@@ -8946,16 +9319,22 @@ segments
 Test auto mode with GLM using second onsets
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: 
+
 \family typewriter
 test_auto_mode_glm_with_seconds(this)
-\family default
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Description
+\end_layout
 
-Description: Do the exact same tests as in 
+\begin_layout Standard
+Do the exact same tests as in 
 \family typewriter
 test_auto_mode_glm_with_markers
 \family default
@@ -8966,21 +9345,22 @@ test_auto_mode_glm_with_markers
 Test auto mode with DCM
 \end_layout
 
-\begin_layout Standard
-Note: Since in DCM case onsets are calculated using trial start and end
- seconds of DCM trials, there is no second/marker distinction in DCM test.
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Function name
+\end_layout
 
-Function name: 
+\begin_layout Standard
+
 \family typewriter
 test_auto_mode_dcm(this)
-\family default
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Description
+\end_layout
 
-Description: Runs 
+\begin_layout Standard
+Runs 
 \family typewriter
 pspm_extract_segments
 \family default
@@ -8991,14 +9371,23 @@ ImportTestData/fitted_models
  and compares the results to manually calculated results.
  In order to get meaningful condition statistic information this test function
  assigns the same trial name to certain groups of trials.
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Subparagraph
+Note
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Since in DCM case onsets are calculated using trial start and end seconds
+ of DCM trials, there is no second/marker distinction in DCM test.
+\end_layout
 
-Tests: Do the exact same tests as in 
+\begin_layout Subparagraph
+Tests
+\end_layout
+
+\begin_layout Standard
+Do the exact same tests as in 
 \family typewriter
 test_auto_mode_glm_with_markers
 \family default
@@ -9013,12 +9402,24 @@ Testcases: pspm_find_sounds
 Information
 \end_layout
 
-\begin_layout Standard
-Testclass: pspm_find_sounds_test
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Testclass
+\end_layout
 
-Function: [sts, infos] = pspm_find_sounds(file, options)
+\begin_layout Standard
+
+\family typewriter
+pspm_find_sounds_test
+\end_layout
+
+\begin_layout Subparagraph
+Function
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+[sts, infos] = pspm_find_sounds(file, options)
 \end_layout
 
 \begin_layout Subsubsection
@@ -9026,9 +9427,13 @@ Setup
 \end_layout
 
 \begin_layout Standard
-This test class is parameterized.
+This test class is parameterised.
  The test data is generated by the function itself and when needed, files
- will be written to testdatafile<variable_nr>.mat.
+ will be written to 
+\family typewriter
+testdatafile<variable_nr>.mat
+\family default
+.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -9063,7 +9468,7 @@ Channel output
 \begin_inset Text
 
 \begin_layout Plain Layout
-Specifies whether 'all' found markers or only 'corrected' markers should
+Specifies whether `all' found markers or only `corrected' markers should
  be returned.
 \end_layout
 
@@ -9200,25 +9605,33 @@ Testcases
 Invalid input
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: invalid_input(this) 
-\begin_inset Newline newline
+
+\family typewriter
+invalid_input(this)
+\end_layout
+
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+Checks for warnings, if the input arguments are invalid.
+\end_layout
+
+\begin_layout Subparagraph
+Tests
+\begin_inset Newline linebreak
 \end_inset
 
-Description: Checks for warnings, if the input arguments are invalid.
- 
-\begin_inset Newline newline
-\end_inset
 
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
-
-Tests: 
-\begin_inset Newline newline
-\end_inset
-
-
+\begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="12" columns="2">
 <features tabularvalignment="middle">
@@ -9249,7 +9662,9 @@ Expected warning
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_find_sounds('')
+
+\family typewriter
+pspm_find_sounds(`')
 \end_layout
 
 \end_inset
@@ -9258,6 +9673,8 @@ pspm_find_sounds('')
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:file_not_found
 \end_layout
 
@@ -9269,6 +9686,8 @@ ID:file_not_found
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_sounds(fn) [invalid pspm file]
 \end_layout
 
@@ -9278,6 +9697,8 @@ pspm_find_sounds(fn) [invalid pspm file]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -9289,7 +9710,9 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_find_sounds(fn) [pspm file without a 'snd' channel]
+
+\family typewriter
+pspm_find_sounds(fn) [pspm file without a `snd' channel]
 \end_layout
 
 \end_inset
@@ -9298,6 +9721,8 @@ pspm_find_sounds(fn) [pspm file without a 'snd' channel]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:no_sound_chan
 \end_layout
 
@@ -9309,6 +9734,8 @@ ID:no_sound_chan
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_sounds(fn, o) [invalid values for positive integer fields]
 \end_layout
 
@@ -9318,6 +9745,8 @@ pspm_find_sounds(fn, o) [invalid values for positive integer fields]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -9329,6 +9758,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_sounds(fn, o) [invalid values for positive numeric fields]
 \end_layout
 
@@ -9338,6 +9769,8 @@ pspm_find_sounds(fn, o) [invalid values for positive numeric fields]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -9349,6 +9782,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_sounds(fn, o) [invalid values for logic fields]
 \end_layout
 
@@ -9358,6 +9793,8 @@ pspm_find_sounds(fn, o) [invalid values for logic fields]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -9369,6 +9806,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_sounds(fn, o) [invalid channel ids for channel fields]
 \end_layout
 
@@ -9378,6 +9817,8 @@ pspm_find_sounds(fn, o) [invalid channel ids for channel fields]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:out_of_range
 \end_layout
 
@@ -9389,6 +9830,8 @@ ID:out_of_range
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_sounds(fn, o) [enabled diagnostics without a marker channel]
 \end_layout
 
@@ -9398,6 +9841,8 @@ pspm_find_sounds(fn, o) [enabled diagnostics without a marker channel]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:no_marker_chan
 \end_layout
 
@@ -9409,6 +9854,8 @@ ID:no_marker_chan
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_sounds(fn, o) [invalid values for channelaction]
 \end_layout
 
@@ -9418,6 +9865,8 @@ pspm_find_sounds(fn, o) [invalid values for channelaction]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -9429,6 +9878,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_sounds(fn, o) [invalid values for roi]
 \end_layout
 
@@ -9438,6 +9889,8 @@ pspm_find_sounds(fn, o) [invalid values for roi]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -9449,6 +9902,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_sounds(fn, o) [maxdelay < mindelay]
 \end_layout
 
@@ -9458,6 +9913,8 @@ pspm_find_sounds(fn, o) [maxdelay < mindelay]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -9475,30 +9932,45 @@ ID:invalid_input
 Test add channel
 \end_layout
 
-\begin_layout Standard
-Function name: test_add_channel(this, channeloutput, max_delay, resample,
- channelaction)
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Function name
+\end_layout
 
-Description: Test add channel with different options.
+\begin_layout Standard
+
+\family typewriter
+test_add_channel(this, channeloutput, max_delay, resample, channelaction)
+\end_layout
+
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+Test add channel with different options.
  Diagnostics is always enabled, Channel output, Max delay, Resample and
  Channel action are varied.
- Once pspm_find_sounds is complete, the function tests if the returned data
- has the expected format.
-\begin_inset Newline newline
-\end_inset
+ Once 
+\family typewriter
+pspm_find_sounds
+\family default
+ is complete, the function tests if the returned data has the expected format.
+\end_layout
 
-
-\begin_inset Newline newline
-\end_inset
-
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
-Generate data with channel 'snd' and 'marker'; and count amount of reference
- markers
+Generate data with channel 
+\family typewriter
+snd
+\family default
+ and 
+\family typewriter
+marker
+\family default
+; and count amount of reference markers
 \end_layout
 
 \begin_layout Enumerate
@@ -9511,11 +9983,21 @@ Set
 
 \begin_deeper
 \begin_layout Enumerate
-options according to test parameters
+
+\family typewriter
+options
+\family default
+ according to test parameters
 \end_layout
 
 \begin_layout Enumerate
-diagnostics to 1
+
+\family typewriter
+diagnostics
+\family default
+ to 
+\family typewriter
+1
 \end_layout
 
 \end_deeper
@@ -9539,25 +10021,34 @@ Test if added channel has correct amount of data
 Test region count
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: test_region_count(this)
-\begin_inset Newline newline
+
+\family typewriter
+test_region_count(this)
+\end_layout
+
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+Test region of interest in combination with expected sound count.
+\end_layout
+
+\begin_layout Subparagraph
+Tests
+\begin_inset Newline linebreak
 \end_inset
 
-Description: Test region of interest in combination with expected sound
- count.
-\begin_inset Newline newline
-\end_inset
 
-
-\begin_inset Newline newline
-\end_inset
-
-Tests:
 \end_layout
 
 \begin_layout Enumerate
-Generate data with channel 'snd' and 'marker'
+Generate data with channel `snd' and `marker'
 \end_layout
 
 \begin_layout Enumerate
@@ -9577,25 +10068,37 @@ Test if function finds half of the markers in half of the file
 Test threshold
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: test_threshold(this, threshold)
-\begin_inset Newline newline
-\end_inset
 
-Description: Vary the threshold option and test whether the functions returnes
- the expected data.
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+test_threshold(this, threshold)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Vary the threshold option and test whether the functions returnes the expected
+ data.
+\end_layout
 
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
-Generate data with channel 'snd' and 'marker'
+Generate data with channel 
+\family typewriter
+`snd'
+\family default
+ and 
+\family typewriter
+`marker'
 \end_layout
 
 \begin_layout Enumerate
@@ -9608,11 +10111,21 @@ Set
 
 \begin_deeper
 \begin_layout Enumerate
-threshold according to test parameter
+
+\family typewriter
+threshold
+\family default
+ according to test parameter
 \end_layout
 
 \begin_layout Enumerate
-diagnostics to 1
+
+\family typewriter
+diagnostics
+\family default
+ to 
+\family typewriter
+1
 \end_layout
 
 \end_deeper
@@ -9628,25 +10141,37 @@ Test if returned data has the correct format
 Test plot
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: test_plot(this, threshold)
-\begin_inset Newline newline
-\end_inset
 
-Description: Test if the plot functions returne the expected data and runs
- through without warning.
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+test_plot(this, threshold)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Test if the plot functions returne the expected data and runs through without
+ warning.
+\end_layout
 
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
-Generate data with channel 'snd' and 'marker'
+Generate data with channel 
+\family typewriter
+snd
+\family default
+ and 
+\family typewriter
+marker
 \end_layout
 
 \begin_layout Enumerate
@@ -9659,11 +10184,23 @@ Set
 
 \begin_deeper
 \begin_layout Enumerate
-plot to 1
+
+\family typewriter
+plot
+\family default
+ to 
+\family typewriter
+1
 \end_layout
 
 \begin_layout Enumerate
-diagnostics to 1
+
+\family typewriter
+diagnostics
+\family default
+ to 
+\family typewriter
+1
 \end_layout
 
 \end_deeper
@@ -9683,12 +10220,24 @@ Testcases: pspm_find_valid_fixations
 Information
 \end_layout
 
-\begin_layout Standard
-Testclass: pspm_find_valid_fixations_test
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Testclass
+\end_layout
 
-Function: [sts, out_file] = pspm_find_valid_fixations(fn, options)
+\begin_layout Standard
+
+\family typewriter
+pspm_find_valid_fixations_test
+\end_layout
+
+\begin_layout Subparagraph
+Function
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+[sts, out_file] = pspm_find_valid_fixations(fn, options)
 \end_layout
 
 \begin_layout Subsubsection
@@ -9696,9 +10245,13 @@ Setup
 \end_layout
 
 \begin_layout Standard
-This test class is parameterized.
+This test class is parameterised.
  The test data is generated by the function itself and when needed, files
- will be written to testdatafile<variable_nr>.mat.
+ will be written to 
+\family typewriter
+testdatafile<variable_nr>.mat
+\family default
+.
 \end_layout
 
 \begin_layout Paragraph*
@@ -9707,11 +10260,14 @@ Test parameters
 
 \begin_layout Standard
 These are parameters which define what kind of data should be passed to
- pspm_find_valid_fixations and which options should be set.
-\begin_inset Newline newline
-\end_inset
+ 
+\family typewriter
+pspm_find_valid_fixations
+\family default
+ and which options should be set.
+\end_layout
 
-
+\begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="12" columns="2">
 <features tabularvalignment="middle">
@@ -9844,7 +10400,15 @@ Channel action
 \begin_inset Text
 
 \begin_layout Plain Layout
-Defines whether to 'add' or 'replace' existing channels.
+Defines whether to 
+\family typewriter
+`add'
+\family default
+ or 
+\family typewriter
+`replace'
+\family default
+ existing channels.
 \end_layout
 
 \end_inset
@@ -9910,7 +10474,11 @@ Interpolate
 \begin_inset Text
 
 \begin_layout Plain Layout
-Defines whether to interpolate NaN values in validated channels or not.
+Defines whether to interpolate 
+\family typewriter
+NaN
+\family default
+ values in validated channels or not.
 \end_layout
 
 \end_inset
@@ -9933,7 +10501,11 @@ Missing
 
 \begin_layout Plain Layout
 Defines whether to create a channel which holds information about which
- positions have been set to NaN (and may have been interpolated afterwards).
+ positions have been set to 
+\family typewriter
+NaN
+\family default
+ (and may have been interpolated afterwards).
 \end_layout
 
 \end_inset
@@ -9998,25 +10570,33 @@ Testcases
 Invalid input
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: invalid_input(this) 
-\begin_inset Newline newline
+
+\family typewriter
+invalid_input(this)
+\end_layout
+
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+Checks for warnings, if the input arguments are invalid.
+\end_layout
+
+\begin_layout Subparagraph
+Tests
+\begin_inset Newline linebreak
 \end_inset
 
-Description: Checks for warnings, if the input arguments are invalid.
- 
-\begin_inset Newline newline
-\end_inset
 
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
-
-Tests: 
-\begin_inset Newline newline
-\end_inset
-
-
+\begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="20" columns="2">
 <features tabularvalignment="middle">
@@ -10047,6 +10627,8 @@ Expected warning
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_valid_fixations()
 \end_layout
 
@@ -10056,6 +10638,8 @@ pspm_find_valid_fixations()
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -10067,7 +10651,9 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_find_valid_fixations('a')
+
+\family typewriter
+pspm_find_valid_fixations(`a')
 \end_layout
 
 \end_inset
@@ -10076,6 +10662,8 @@ pspm_find_valid_fixations('a')
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -10087,6 +10675,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_valid_fixations(fn, options) [invalid options.validate_fixations]
 \end_layout
 
@@ -10096,6 +10686,8 @@ pspm_find_valid_fixations(fn, options) [invalid options.validate_fixations]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -10107,6 +10699,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_valid_fixations(fn, options) [invalid options.box_degree]
 \end_layout
 
@@ -10116,6 +10710,8 @@ pspm_find_valid_fixations(fn, options) [invalid options.box_degree]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -10127,6 +10723,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_valid_fixations(fn, options) [invalid options.screen_settings]
 \end_layout
 
@@ -10136,6 +10734,8 @@ pspm_find_valid_fixations(fn, options) [invalid options.screen_settings]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -10147,6 +10747,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_valid_fixations(fn, options) [missing fields for options.screen_setting
 s]
 \end_layout
@@ -10157,6 +10759,8 @@ s]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -10168,6 +10772,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_valid_fixations(fn, options) [invalid options.aspect_actual]
 \end_layout
 
@@ -10177,6 +10783,8 @@ pspm_find_valid_fixations(fn, options) [invalid options.aspect_actual]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -10188,6 +10796,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_valid_fixations(fn, options) [invalid options.aspect_used]
 \end_layout
 
@@ -10197,6 +10807,8 @@ pspm_find_valid_fixations(fn, options) [invalid options.aspect_used]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -10208,6 +10820,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_valid_fixations(fn, options) [invalid options.bitmap]
 \end_layout
 
@@ -10217,6 +10831,8 @@ pspm_find_valid_fixations(fn, options) [invalid options.bitmap]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -10228,6 +10844,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_valid_fixations(fn, options) [invalid options.display_size]
 \end_layout
 
@@ -10237,6 +10855,8 @@ pspm_find_valid_fixations(fn, options) [invalid options.display_size]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -10248,6 +10868,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_valid_fixations(fn, options) [invalid options.display_size]
 \end_layout
 
@@ -10257,6 +10879,8 @@ pspm_find_valid_fixations(fn, options) [invalid options.display_size]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -10268,6 +10892,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_valid_fixations(fn, options) [invalid options.fixation_point]
 \end_layout
 
@@ -10277,6 +10903,8 @@ pspm_find_valid_fixations(fn, options) [invalid options.fixation_point]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -10288,6 +10916,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_valid_fixations(fn, options) [invalid options.channel_action]
 \end_layout
 
@@ -10297,6 +10927,8 @@ pspm_find_valid_fixations(fn, options) [invalid options.channel_action]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -10308,6 +10940,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_valid_fixations(fn, options) [invalid options.newfile]
 \end_layout
 
@@ -10317,6 +10951,8 @@ pspm_find_valid_fixations(fn, options) [invalid options.newfile]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -10328,6 +10964,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_valid_fixations(fn, options) [invalid options.overwrite]
 \end_layout
 
@@ -10337,6 +10975,8 @@ pspm_find_valid_fixations(fn, options) [invalid options.overwrite]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -10348,6 +10988,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_valid_fixations(fn, options) [invalid options.interpolate]
 \end_layout
 
@@ -10357,6 +10999,8 @@ pspm_find_valid_fixations(fn, options) [invalid options.interpolate]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -10368,6 +11012,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_valid_fixations(fn, options) [invalid options.missing]
 \end_layout
 
@@ -10377,6 +11023,8 @@ pspm_find_valid_fixations(fn, options) [invalid options.missing]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -10388,6 +11036,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_valid_fixations(fn, options) [invalid eyes]
 \end_layout
 
@@ -10397,6 +11047,8 @@ pspm_find_valid_fixations(fn, options) [invalid eyes]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -10408,6 +11060,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_valid_fixations(fn, options) [invalid options.channels]
 \end_layout
 
@@ -10417,6 +11071,8 @@ pspm_find_valid_fixations(fn, options) [invalid options.channels]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -10434,47 +11090,89 @@ ID:invalid_input
 Test work chans
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: test_work_chans(this, work_chans)
-\begin_inset Newline newline
-\end_inset
 
-Description: Tests whether the option 'channels' actually works on the specified
- channels or not.
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+test_work_chans(this, work_chans)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Tests whether the option 
+\family typewriter
+`channels'
+\family default
+ actually works on the specified channels or not.
+\end_layout
 
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
-Generate data with distance 500, aspect_used 16:9, aspect_actual 4:3, screen_siz
-e 20 and eyes 'lr'
-\end_layout
-
-\begin_layout Enumerate
-Set options with
-\begin_inset Separator latexpar
-\end_inset
-
-
+Generate data with
 \end_layout
 
 \begin_deeper
-\begin_layout Enumerate
-overwrite = 1
+\begin_layout Description
+
+\family typewriter
+distance 500
 \end_layout
 
-\begin_layout Enumerate
-channels = work_chans
+\begin_layout Description
+
+\family typewriter
+aspect_used 16:9
 \end_layout
 
+\begin_layout Description
+
+\family typewriter
+aspect_actual 4:3
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+screen_size 20
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+eyes `lr'
+\end_layout
+
+\end_deeper
 \begin_layout Enumerate
-channel_action = 'add'
+Set options with
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+
+\family typewriter
+overwrite 1
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+channels work_chans
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+channel_action `add'
 \end_layout
 
 \end_deeper
@@ -10483,39 +11181,85 @@ Test if function runs through without warning
 \end_layout
 
 \begin_layout Enumerate
-Test if sts equals 1
+Test if 
+\family typewriter
+sts==1
 \end_layout
 
 \begin_layout Enumerate
-Test if specified work_chans are added as new processed channels
+Test if specified 
+\family typewriter
+work_chans
+\family default
+ are added as new processed channels
 \end_layout
 
 \begin_layout Subsubsection*
 Test work eye
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: test_work_eye(this, work_eye)
-\begin_inset Newline newline
-\end_inset
 
-Description: Test whether the option 'eyes' actually works on the specified
- eyes or not.
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+test_work_eye(this, work_eye)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Test whether the option 
+\family typewriter
+`eyes'
+\family default
+ actually works on the specified eyes or not.
+\end_layout
 
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
-Generate data with distance 500, aspect_used 16:9, aspect_actual 4:3, screen_siz
-e 20 and eyes 'lr'
+Generate data with
 \end_layout
 
+\begin_deeper
+\begin_layout Description
+
+\family typewriter
+distance 500
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+aspect_used 16:9
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+aspect_actual 4:3
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+screen_size 20
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+eyes `lr'
+\end_layout
+
+\end_deeper
 \begin_layout Enumerate
 Set options with
 \begin_inset Separator latexpar
@@ -10534,7 +11278,7 @@ eyes = work_eye
 \end_layout
 
 \begin_layout Enumerate
-channel_action = 'add'
+channel_action = `add'
 \end_layout
 
 \end_deeper
@@ -10555,28 +11299,65 @@ Test if specified eyes have been processed accordingly and test if not specified
 Test missing
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: test_missing(this, missing)
-\begin_inset Newline newline
-\end_inset
 
-Description: Test whether for each a a new missing channel is created if
- missing is specified as true.
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+test_missing(this, missing)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Test whether for each a a new missing channel is created if missing is specified
+ as true.
+\end_layout
 
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
-Generate data with distance 500, aspect_used 16:9, aspect_actual 4:3, screen_siz
-e 20 and eyes 'lr'
+Generate data with
 \end_layout
 
+\begin_deeper
+\begin_layout Description
+
+\family typewriter
+distance 500
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+aspect_used 16:9
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+aspect_actual 4:3
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+screen_size 20
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+eyes `lr'
+\end_layout
+
+\end_deeper
 \begin_layout Enumerate
 Set options with
 \begin_inset Separator latexpar
@@ -10586,16 +11367,22 @@ Set options with
 \end_layout
 
 \begin_deeper
-\begin_layout Enumerate
-overwrite = 1
+\begin_layout Description
+
+\family typewriter
+overwrite 1
 \end_layout
 
-\begin_layout Enumerate
-missing = missing
+\begin_layout Description
+
+\family typewriter
+missing missing
 \end_layout
 
-\begin_layout Enumerate
-channel_action = 'add'
+\begin_layout Description
+
+\family typewriter
+channel_action `add'
 \end_layout
 
 \end_deeper
@@ -10604,40 +11391,85 @@ Test if function runs through without warning
 \end_layout
 
 \begin_layout Enumerate
-Test if sts equals 1
+Test if 
+\family typewriter
+sts==1
 \end_layout
 
 \begin_layout Enumerate
-Depending on the status of 'missing' test if there are any missing channels
- or if there is no missing channel
+Depending on the status of 
+\family typewriter
+`missing'
+\family default
+, test if there are any missing channels or if there is no missing channel
 \end_layout
 
 \begin_layout Subsubsection*
 Test interpolate
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: test_interpolate(this, interpolate)
-\begin_inset Newline newline
-\end_inset
 
-Description: Test whether data is interpolated during periods which are
- set to NaN by the function.
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+test_interpolate(this, interpolate)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Test whether data is interpolated during periods which are set to 
+\family typewriter
+NaN
+\family default
+ by the function.
+\end_layout
 
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
-Generate data with distance 500, aspect_used 16:9, aspect_actual 4:3, screen_siz
-e 20 and eyes 'lr'
+Generate data with
 \end_layout
 
+\begin_deeper
+\begin_layout Description
+
+\family typewriter
+distance 500
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+aspect_used 16:9
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+aspect_actual 4:3
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+screen_size 20
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+eyes `lr'
+\end_layout
+
+\end_deeper
 \begin_layout Enumerate
 Set options with
 \begin_inset Separator latexpar
@@ -10656,7 +11488,7 @@ interpolate = interpolate
 \end_layout
 
 \begin_layout Enumerate
-channel_action = 'add'
+channel_action = `add'
 \end_layout
 
 \end_deeper
@@ -10665,11 +11497,13 @@ Test if function runs through without warning
 \end_layout
 
 \begin_layout Enumerate
-Test if sts equals 1
+Test if 
+\family typewriter
+sts==1
 \end_layout
 
 \begin_layout Enumerate
-Depending on the status of 'interpolate' test whether there are some NaN
+Depending on the status of `interpolate' test whether there are some NaN
  values or if NaN periods have been interpolated accordingly.
 \end_layout
 
@@ -10682,7 +11516,7 @@ Function name: test_overwrite(this, overwrite)
 \begin_inset Newline newline
 \end_inset
 
-Description: Test if files are overwritten, if specified with 'overwrite'
+Description: Test if files are overwritten, if specified with `overwrite'
  option.
 \begin_inset Newline newline
 \end_inset
@@ -10696,7 +11530,7 @@ Tests:
 
 \begin_layout Enumerate
 Generate data with distance 500, aspect_used 16:9, aspect_actual 4:3, screen_siz
-e 20 and eyes 'lr'
+e 20 and eyes `lr'
 \end_layout
 
 \begin_layout Enumerate
@@ -10717,7 +11551,7 @@ interpolate = interpolate
 \end_layout
 
 \begin_layout Enumerate
-channel_action = 'add'
+channel_action = `add'
 \end_layout
 
 \end_deeper
@@ -10737,26 +11571,33 @@ Test if file has been overwritten or not (tests, if there are any new channels).
 Test channel action
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: test_channel_action(this, channel_action)
-\begin_inset Newline newline
-\end_inset
 
-Description: Test if channels are added or replaced (according to channel_action
-).
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+test_channel_action(this, channel_action)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Test if channels are added or replaced (according to channel_action).
+\end_layout
 
+\begin_layout Standard
 Tests:
 \end_layout
 
 \begin_layout Enumerate
 Generate data with distance 500, aspect_used 16:9, aspect_actual 4:3, screen_siz
-e 20 and eyes 'lr'
+e 20 and eyes 
+\family typewriter
+`lr'.
 \end_layout
 
 \begin_layout Enumerate
@@ -10794,26 +11635,33 @@ Test if channels have been added or replaced (tests, if there are any new
 Test newfile
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: test_newfile(this, newfile)
-\begin_inset Newline newline
-\end_inset
 
-Description: Test whether the output is written to a newfile or to the input
- file.
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+test_newfile(this, newfile)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Test whether the output is written to a newfile or to the input file.
+\end_layout
 
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
 Generate data with distance 500, aspect_used 16:9, aspect_actual 4:3, screen_siz
-e 20 and eyes 'lr'
+e 20 and eyes 
+\family typewriter
+`lr'
 \end_layout
 
 \begin_layout Enumerate
@@ -10844,7 +11692,7 @@ set options.newfile to new file name
 
 \end_deeper
 \begin_layout Enumerate
-if newfile is disabled, set options.newfile to ''
+if newfile is disabled, set options.newfile to `'
 \end_layout
 
 \end_deeper
@@ -10858,7 +11706,7 @@ Test if sts equals 1
 
 \begin_layout Enumerate
 Test if returned outputfile equals the specified newfile or not (depending
- on the value of 'newfile')
+ on the value of `newfile')
 \end_layout
 
 \begin_layout Subsubsection*
@@ -11023,7 +11871,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Test if ‘sts’ is equal 1.
+Test if ‘sts' is equal 1.
 \end_layout
 
 \begin_layout Enumerate
@@ -11031,7 +11879,7 @@ Test if data.data is equal import.data
 \end_layout
 
 \begin_layout Enumerate
-Test if data.header.chantype is ‘ecg’
+Test if data.header.chantype is ‘ecg'
 \end_layout
 
 \begin_layout Enumerate
@@ -11071,7 +11919,7 @@ Function name: check_warnings(this)
 \begin_inset Newline newline
 \end_inset
 
-Description: Checks for warnings, if the field ‘.markers’ is missing or contains
+Description: Checks for warnings, if the field ‘.markers' is missing or contains
  invalid content.
  
 \begin_inset Newline newline
@@ -11135,7 +11983,7 @@ ID:nonexistent_field
 \begin_inset Text
 
 \begin_layout Plain Layout
-import.marker = ‘foo’
+import.marker = ‘foo'
 \end_layout
 
 \end_inset
@@ -11178,7 +12026,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Test if ‘sts’ is equal 1.
+Test if ‘sts' is equal 1.
 \end_layout
 
 \begin_layout Enumerate
@@ -11220,11 +12068,11 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Test if ‘sts’ is equal 1.
+Test if ‘sts' is equal 1.
 \end_layout
 
 \begin_layout Enumerate
-Test if the length of the field 'markerinfo' is equal to the length of the
+Test if the length of the field `markerinfo' is equal to the length of the
  output data.
 \end_layout
 
@@ -11238,19 +12086,19 @@ Settings:
 \end_layout
 
 \begin_layout Enumerate
-flank = ‘both’ (default)
+flank = ‘both' (default)
 \end_layout
 
 \begin_layout Enumerate
-flank = 'both' & data offset 50
+flank = `both' & data offset 50
 \end_layout
 
 \begin_layout Enumerate
-flank = ‘ascending’
+flank = ‘ascending'
 \end_layout
 
 \begin_layout Enumerate
-flank = ‘descending’
+flank = ‘descending'
 \end_layout
 
 \begin_layout Enumerate
@@ -11348,15 +12196,15 @@ Test if blink channels have correct unit
 \end_layout
 
 \begin_layout Enumerate
-Test if pupil channels have either 'diameter' or 'area' as unit
+Test if pupil channels have either `diameter' or `area' as unit
 \end_layout
 
 \begin_layout Enumerate
-Test if channels labeled with 'position' have unit 'pixel'
+Test if channels labeled with `position' have unit `pixel'
 \end_layout
 
 \begin_layout Enumerate
-Test if channels labeled with 'blink' have unit 'blink'
+Test if channels labeled with `blink' have unit `blink'
 \end_layout
 
 \begin_layout Subsubsection
@@ -11385,12 +12233,12 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Calls 'set_import_values(this)' to get import data set and expected channel
+Calls `set_import_values(this)' to get import data set and expected channel
  data set 
 \end_layout
 
 \begin_layout Enumerate
-passses returned sets to 'verify_basic_data_structure()'
+passses returned sets to `verify_basic_data_structure()'
 \end_layout
 
 \begin_layout Subsubsection*
@@ -11415,12 +12263,12 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Calls 'set_import_values(this)' to get import data set and expected channel
+Calls `set_import_values(this)' to get import data set and expected channel
  data set 
 \end_layout
 
 \begin_layout Enumerate
-passes returned sets to 'verify_basic_data_structure()'
+passes returned sets to `verify_basic_data_structure()'
 \end_layout
 
 \begin_layout Subsubsection*
@@ -11446,7 +12294,7 @@ Tests:
 
 \begin_layout Enumerate
 Creates an import data set and the expected channel data set an pass it
- to 'verify_basic_data_structure()'
+ to `verify_basic_data_structure()'
 \end_layout
 
 \begin_layout Subsubsection*
@@ -11471,7 +12319,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Calls 'set_import_values(this)' to get import data set and expected channel
+Calls `set_import_values(this)' to get import data set and expected channel
  data set 
 \end_layout
 
@@ -11480,7 +12328,7 @@ owerwrites some import data and channel data
 \end_layout
 
 \begin_layout Enumerate
-pass returned sets to 'verify_basic_data_structure()'
+pass returned sets to `verify_basic_data_structure()'
 \end_layout
 
 \begin_layout Subsection
@@ -11524,7 +12372,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Test if ‘sts’ is equal 1.
+Test if ‘sts' is equal 1.
 \end_layout
 
 \begin_layout Enumerate
@@ -11532,11 +12380,11 @@ Test if data.data is equal import.data
 \end_layout
 
 \begin_layout Enumerate
-Test if data.header.chantype is ‘hb’
+Test if data.header.chantype is ‘hb'
 \end_layout
 
 \begin_layout Enumerate
-Test if data.header.units is ‘events’
+Test if data.header.units is ‘events'
 \end_layout
 
 \begin_layout Enumerate
@@ -11584,7 +12432,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Test if ‘sts’ is equal 1.
+Test if ‘sts' is equal 1.
 \end_layout
 
 \begin_layout Enumerate
@@ -11592,7 +12440,7 @@ Test if data.data is equal import.data
 \end_layout
 
 \begin_layout Enumerate
-Test if data.header.chantype is ‘hr’
+Test if data.header.chantype is ‘hr'
 \end_layout
 
 \begin_layout Enumerate
@@ -11644,7 +12492,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Test if ‘sts’ is equal 1.
+Test if ‘sts' is equal 1.
 \end_layout
 
 \begin_layout Enumerate
@@ -11652,11 +12500,11 @@ Test if data.data is equal import.data
 \end_layout
 
 \begin_layout Enumerate
-Test if data.header.chantype is ‘marker’
+Test if data.header.chantype is ‘marker'
 \end_layout
 
 \begin_layout Enumerate
-Test if data.header.units is ‘events’
+Test if data.header.units is ‘events'
 \end_layout
 
 \begin_layout Enumerate
@@ -11704,7 +12552,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Test if ‘sts’ is equal 1.
+Test if ‘sts' is equal 1.
 \end_layout
 
 \begin_layout Enumerate
@@ -11712,7 +12560,7 @@ Test if data.data is equal import.data
 \end_layout
 
 \begin_layout Enumerate
-Test if data.header.chantype is ‘pupil’
+Test if data.header.chantype is ‘pupil'
 \end_layout
 
 \begin_layout Enumerate
@@ -11764,7 +12612,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Test if ‘sts’ is equal 1.
+Test if ‘sts' is equal 1.
 \end_layout
 
 \begin_layout Enumerate
@@ -11772,7 +12620,7 @@ Test if data.data is equal import.data
 \end_layout
 
 \begin_layout Enumerate
-Test if data.header.chantype is ‘resp’
+Test if data.header.chantype is ‘resp'
 \end_layout
 
 \begin_layout Enumerate
@@ -11821,7 +12669,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Test if ‘sts’ is equal 1.
+Test if ‘sts' is equal 1.
 \end_layout
 
 \begin_layout Enumerate
@@ -11849,7 +12697,7 @@ Test if data.header.sr is equal import.sr
 \end_layout
 
 \begin_layout Enumerate
-Test if data.header.chantype is ‘scr’ 
+Test if data.header.chantype is ‘scr' 
 \end_layout
 
 \begin_layout Subsubsection*
@@ -11937,7 +12785,7 @@ Additional Tests:
 \end_layout
 
 \begin_layout Enumerate
-Check for warning if the transfer parameter file doesn’t exist.
+Check for warning if the transfer parameter file doesn't exist.
  
 \end_layout
 
@@ -11958,19 +12806,19 @@ Function:
 \begin_inset Newline newline
 \end_inset
 
-[sts, multi] = pspm_get_timing('onsets', intiming, timeunits) 
+[sts, multi] = pspm_get_timing(`onsets', intiming, timeunits) 
 \begin_inset Newline newline
 \end_inset
 
-[sts, events] = pspm_get_timing('markervalues', markerinfo, names)
+[sts, events] = pspm_get_timing(`markervalues', markerinfo, names)
 \begin_inset Newline newline
 \end_inset
 
-[sts, epochs] = pspm_get_timing('epochs', epochs) 
+[sts, epochs] = pspm_get_timing(`epochs', epochs) 
 \begin_inset Newline newline
 \end_inset
 
-[sts, events] = pspm_get_timing('events', events)
+[sts, events] = pspm_get_timing(`events', events)
 \begin_inset Newline newline
 \end_inset
 
@@ -12033,7 +12881,7 @@ Expected warning
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_get_timing('epochs') [missing input var]
+pspm_get_timing(`epochs') [missing input var]
 \end_layout
 
 \end_inset
@@ -12053,7 +12901,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_get_timing('onsets', 'str') [no timeunits var]
+pspm_get_timing(`onsets', `str') [no timeunits var]
 \end_layout
 
 \end_inset
@@ -12073,7 +12921,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_get_timing('foo') [unknown format]
+pspm_get_timing(`foo') [unknown format]
 \end_layout
 
 \end_inset
@@ -12093,7 +12941,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_get_timing('onsets', intiming, 'samples') [two sessions with nonmatching
+pspm_get_timing(`onsets', intiming, `samples') [two sessions with nonmatching
  number of conditions]
 \end_layout
 
@@ -12114,7 +12962,7 @@ ID:number_of_elements_dont_match
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_get_timing('onsets', intiming, 'samples') [two sessions with nonmatching
+pspm_get_timing(`onsets', intiming, `samples') [two sessions with nonmatching
  condition names]
 \end_layout
 
@@ -12135,7 +12983,7 @@ ID:event_names_dont_match
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_get_timing('onsets', intiming, 'samples') [intiming.onsets{1} is no
+pspm_get_timing(`onsets', intiming, `samples') [intiming.onsets{1} is no
  numeric vector]
 \end_layout
 
@@ -12156,7 +13004,7 @@ ID:no_numeric_vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_get_timing('epochs', fn_mat, 'samples') [epochs is not an integer array]
+pspm_get_timing(`epochs', fn_mat, `samples') [epochs is not an integer array]
 \end_layout
 
 \end_inset
@@ -12176,7 +13024,7 @@ ID:no_integers
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_get_timing('markervalues', markerinfo) [no markervalue and no name
+pspm_get_timing(`markervalues', markerinfo) [no markervalue and no name
  ]
 \end_layout
 
@@ -12197,7 +13045,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_get_timing('markervalues', markerinfo, markervalue, names) [markervalue
+pspm_get_timing(`markervalues', markerinfo, markervalue, names) [markervalue
  is not of numeric type nor a cell array] 
 \end_layout
 
@@ -12218,7 +13066,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_get_timing('markervalues', markerinfo, markervalue, names) [markervalue
+pspm_get_timing(`markervalues', markerinfo, markervalue, names) [markervalue
  and names are not of the same length]
 \end_layout
 
@@ -12250,12 +13098,12 @@ Function name: case_epochs(this)
 \begin_inset Newline newline
 \end_inset
 
-Description: Checks the function in ‘epochs’ mode.
+Description: Checks the function in ‘epochs' mode.
  
 \begin_inset Newline newline
 \end_inset
 
-Function: [sts, epochs] = pspm_get_timing('epochs', epochs) 
+Function: [sts, epochs] = pspm_get_timing(`epochs', epochs) 
 \end_layout
 
 \begin_layout Subsubsection*
@@ -12336,12 +13184,12 @@ Function name: case_onsets(this)
 \begin_inset Newline newline
 \end_inset
 
-Description: Checks the function in ‘onsets’ mode.
+Description: Checks the function in ‘onsets' mode.
  
 \begin_inset Newline newline
 \end_inset
 
-Function: [sts, multi] = pspm_get_timing('onsets', intiming, timeunits)
+Function: [sts, multi] = pspm_get_timing(`onsets', intiming, timeunits)
  
 \end_layout
 
@@ -12354,7 +13202,7 @@ Input: mat file with the variables:
 \begin_inset Newline newline
 \end_inset
 
-names = {'name1', 'name2'}; 
+names = {`name1', `name2'}; 
 \begin_inset Newline newline
 \end_inset
 
@@ -12362,7 +13210,7 @@ onsets = {[1 2], [3 4]};
 \begin_inset Newline newline
 \end_inset
 
-pmod.name = {'name3', 'name4'}; 
+pmod.name = {`name3', `name4'}; 
 \begin_inset Newline newline
 \end_inset
 
@@ -12374,7 +13222,7 @@ pmod.poly = {2, 2};
 \begin_inset Newline newline
 \end_inset
 
-save(fn_mat, 'names', 'onsets', 'pmod'); 
+save(fn_mat, `names', `onsets', `pmod'); 
 \begin_inset Newline newline
 \end_inset
 
@@ -12386,7 +13234,7 @@ Function call:
 \begin_inset Newline newline
 \end_inset
 
-[sts, outtiming] = pspm_get_timing('onsets', fn_mat, 'samples');
+[sts, outtiming] = pspm_get_timing(`onsets', fn_mat, `samples');
 \begin_inset Newline newline
 \end_inset
 
@@ -12414,7 +13262,7 @@ Input:
 \begin_inset Newline newline
 \end_inset
 
-mat file with the variables: names = {'name1', 'name2'}; 
+mat file with the variables: names = {`name1', `name2'}; 
 \begin_inset Newline newline
 \end_inset
 
@@ -12422,7 +13270,7 @@ onsets = {[1 2 3], [3 4 5]}; durations = {[3 4 5]', [5 6 7]'};
 \begin_inset Newline newline
 \end_inset
 
-pmod.name = {'name3', 'name4'}; 
+pmod.name = {`name3', `name4'}; 
 \begin_inset Newline newline
 \end_inset
 
@@ -12442,7 +13290,7 @@ Function call:
 \begin_inset Newline newline
 \end_inset
 
-[sts, outtiming] = pspm_get_timing('onsets', fn_mat, 'samples');
+[sts, outtiming] = pspm_get_timing(`onsets', fn_mat, `samples');
 \begin_inset Newline newline
 \end_inset
 
@@ -12470,12 +13318,12 @@ Function name: case_events(this)
 \begin_inset Newline newline
 \end_inset
 
-Description: Checks the function in ‘events’ mode.
+Description: Checks the function in ‘events' mode.
  
 \begin_inset Newline newline
 \end_inset
 
-Function: [sts, epochs] = pspm_get_timing('events', events) 
+Function: [sts, epochs] = pspm_get_timing(`events', events) 
 \begin_inset Newline newline
 \end_inset
 
@@ -12499,9 +13347,9 @@ Information
 
 \begin_layout Standard
 The datatype import functions are all tested in a similar way.
- The individual testclasses must inherit the class ‘pspm_get_superclass’,
- from which they inherit the main test function ‘valid_datafile’.
- They also have to implement the property ‘fhandle’, which is a function
+ The individual testclasses must inherit the class ‘pspm_get_superclass',
+ from which they inherit the main test function ‘valid_datafile'.
+ They also have to implement the property ‘fhandle', which is a function
  handle to the specific import function.
  
 \begin_inset Newline newline
@@ -12616,7 +13464,7 @@ define testcases
 \begin_layout Standard
 In this method the testcases are defined and the testdata is generated (if
  needed).
- Each testcase is a cell in the cellarray ‘testcases’.
+ Each testcase is a cell in the cellarray ‘testcases'.
  Each testcase has the following fields:
 \end_layout
 
@@ -12667,7 +13515,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Test if ‘sts’ is equal 1.
+Test if ‘sts' is equal 1.
 \end_layout
 
 \begin_layout Enumerate
@@ -12675,23 +13523,23 @@ If the datatype supports blocks, test if the number of blocks is correct.
 \end_layout
 
 \begin_layout Enumerate
-Test if number of elements of the returned ‘import’ variable is correct.
+Test if number of elements of the returned ‘import' variable is correct.
 \end_layout
 
 \begin_layout Enumerate
-Test if each importjob has a field ‘data’, that is a numeric vector.
+Test if each importjob has a field ‘data', that is a numeric vector.
 \end_layout
 
 \begin_layout Enumerate
-Test if each importjob has a field ‘sr’, that is a number.
+Test if each importjob has a field ‘sr', that is a number.
 \end_layout
 
 \begin_layout Enumerate
-Test if each importjob has a field ‘type’.
+Test if each importjob has a field ‘type'.
 \end_layout
 
 \begin_layout Enumerate
-Test if all event importjobs have a field ‘marker’.
+Test if all event importjobs have a field ‘marker'.
 \end_layout
 
 \begin_layout Enumerate
@@ -12731,7 +13579,7 @@ Tests:
 \end_inset
 
 If the datatype supports multiple channels: Check for warning when trying
- to import a channel, that is not contained in the file ('ID:channel_not_contain
+ to import a channel, that is not contained in the file (`ID:channel_not_contain
 ed_in_file').
  
 \end_layout
@@ -12838,7 +13686,7 @@ There are seven testcase functions.
  furthermore all conditions, pmods and nuisance regressors are pairwise
  orthogonal.
  The data is also not down sampled and not filtered.
- With these limitations it’s easy to calculate the data vectors and the
+ With these limitations it's easy to calculate the data vectors and the
  expected stats.
  For each testcase it is then tested:
 \end_layout
@@ -12861,8 +13709,8 @@ In test 6 the default basis functions are used, and not all conditions and
  The data is down sampled and low and high pass filtered.
  In exchange the stats are not tested for correct values, just for the correct
  number of elements.
- The properties 'shiftbf' and 'norm' are TestParameters, which means that
- this testclass is parameterized.
+ The properties `shiftbf' and `norm' are TestParameters, which means that
+ this testclass is parameterised.
  All functions implmementing these parameters (Test 1 to Test 5) are called
  several times with all the different values and combinations of the mentioned
  parameters.
@@ -12969,7 +13817,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_glm(model) with model.timeunits = ‘foo’ [no valid timeunits field]
+pspm_glm(model) with model.timeunits = ‘foo' [no valid timeunits field]
 \end_layout
 
 \end_inset
@@ -13009,7 +13857,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_glm(model) with model.modality = 'foo' [no valid modality field]
+pspm_glm(model) with model.modality = `foo' [no valid modality field]
 \end_layout
 
 \end_inset
@@ -13029,7 +13877,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_glm(model) with model.channel = 'scr' [no valid channel field]
+pspm_glm(model) with model.channel = `scr' [no valid channel field]
 \end_layout
 
 \end_inset
@@ -13049,7 +13897,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_glm(model) with model.norm = 'no' [no valid norm field]
+pspm_glm(model) with model.norm = `no' [no valid norm field]
 \end_layout
 
 \end_inset
@@ -13069,7 +13917,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_glm(model) with model.filt.down = 'none' [filt.down is not numeric]
+pspm_glm(model) with model.filt.down = `none' [filt.down is not numeric]
 \end_layout
 
 \end_inset
@@ -13089,7 +13937,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_glm(model) with model.bf.fhandle = 'foohandle' [non existing bf]
+pspm_glm(model) with model.bf.fhandle = `foohandle' [non existing bf]
 \end_layout
 
 \end_inset
@@ -13613,7 +14461,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_hb2hp('abc') [no sample rate]
+pspm_hb2hp(`abc') [no sample rate]
 \end_layout
 
 \end_inset
@@ -13633,7 +14481,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_hb2hp('abc','abc') [not a string sample rate]
+pspm_hb2hp(`abc',`abc') [not a string sample rate]
 \end_layout
 
 \end_inset
@@ -13653,7 +14501,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_hb2hp('abc',2,'abc') [not a numeric chanel]
+pspm_hb2hp(`abc',2,`abc') [not a numeric chanel]
 \end_layout
 
 \end_inset
@@ -13860,7 +14708,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_import(datafile, datatype, ‘foo’) [no cell/struct import var.]
+pspm_import(datafile, datatype, ‘foo') [no cell/struct import var.]
 \end_layout
 
 \end_inset
@@ -13889,7 +14737,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_import(datafile, ‘foo’, import) [invalid channeltype]
+pspm_import(datafile, ‘foo', import) [invalid channeltype]
 \end_layout
 
 \end_inset
@@ -14179,7 +15027,7 @@ Setup
 \end_layout
 
 \begin_layout Standard
-This test class is parameterized.
+This test class is parameterised.
  The test data is generated by the function itself and when needed, files
  will be written to datafile<variable_nr>.mat.
 \end_layout
@@ -14318,7 +15166,7 @@ end - range is <random number after the center>:end-offset
 \end_layout
 
 \begin_layout Plain Layout
-The offset is 1 if 'extrap' is not defined.
+The offset is 1 if `extrap' is not defined.
  This is needed because if there is no data at the end or beginning of the
  data, the function is unable to interpolate (unless extrapolation is activated).
 \end_layout
@@ -15068,7 +15916,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Generate data with datatype, amount, 'center', chans, false
+Generate data with datatype, amount, `center', chans, false
 \end_layout
 
 \begin_layout Enumerate
@@ -15114,7 +15962,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Generate data with 'inline', 1, nan_method, {{'scr'}, []}, extrap
+Generate data with `inline', 1, nan_method, {{`scr'}, []}, extrap
 \end_layout
 
 \begin_layout Enumerate
@@ -15140,8 +15988,8 @@ Test if data has no more NaNs
 Special case:
 \series default
 \shape default
- When extrapolation is on and nan_method is 'start' and interp_method is
- 'previous' or nan_method is 'end' and interp_method is 'next'.
+ When extrapolation is on and nan_method is `start' and interp_method is
+ `previous' or nan_method is `end' and interp_method is `next'.
  This should issue a warning because this is not possible (e.g.
  interpolate with previous value when first NaN value is at the beginning
  of the data set).
@@ -15221,7 +16069,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Generate data with 'file', 2, 'center', {{'scr', 'scr', 'scr'}, [1,3]} ,
+Generate data with `file', 2, `center', {{`scr', `scr', `scr'}, [1,3]} ,
  false
 \end_layout
 
@@ -15294,7 +16142,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Generate data with 'file', 2, 'center', {{'scr', 'scr', 'scr'}, [1,2,3]},
+Generate data with `file', 2, `center', {{`scr', `scr', `scr'}, [1,2,3]},
  false
 \end_layout
 
@@ -15336,7 +16184,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Generate data with 'file', 2, 'center', {{'scr', 'scr', 'scr'}, [1,2,3]}
+Generate data with `file', 2, `center', {{`scr', `scr', `scr'}, [1,2,3]}
  , false
 \end_layout
 
@@ -15385,7 +16233,7 @@ Cleanup data
 \begin_layout Standard
 Sits in MethodTeardown and is called once the test class has finished all
  tests.
- It then removes all the datafiles which can be found in the property 'testdata'.
+ It then removes all the datafiles which can be found in the property `testdata'.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -15440,11 +16288,11 @@ Generated aquisition data (pspm_testdata_gen)
 \begin_layout Standard
 
 \family typewriter
-data{1}.chantype = 'scr'; 
+data{1}.chantype = `scr'; 
 \begin_inset Newline newline
 \end_inset
 
-data{2}.chantype = 'hb';
+data{2}.chantype = `hb';
 \begin_inset Newline newline
 \end_inset
 
@@ -15464,7 +16312,7 @@ Generated GLM model
 \begin_layout Standard
 
 \family typewriter
-model.timing{1}.names = {'a';'b';'c'}; 
+model.timing{1}.names = {`a';'b';'c'}; 
 \begin_inset Newline newline
 \end_inset
 
@@ -15482,7 +16330,7 @@ model.timing{1} = [10,20; 23,38; 40,70;];
 \begin_inset Newline newline
 \end_inset
 
-model.condition{1}.name = {'a';'b'}; 
+model.condition{1}.name = {`a';'b'}; 
 \begin_inset Newline newline
 \end_inset
 
@@ -15571,7 +16419,7 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-missing field 'modelfile'
+missing field `modelfile'
 \end_layout
 
 \end_inset
@@ -15591,7 +16439,7 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-missing field 'modeltype'
+missing field `modeltype'
 \end_layout
 
 \end_inset
@@ -15611,7 +16459,7 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-missing field 'modality'
+missing field `modality'
 \end_layout
 
 \end_inset
@@ -15631,7 +16479,7 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-missing field 'stats'
+missing field `stats'
 \end_layout
 
 \end_inset
@@ -15651,7 +16499,7 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-missing field 'names'
+missing field `names'
 \end_layout
 
 \end_inset
@@ -15731,7 +16579,7 @@ Expected warning
 \begin_inset Text
 
 \begin_layout Plain Layout
-field 'stats' is not an n x 1 vector
+field `stats' is not an n x 1 vector
 \end_layout
 
 \end_inset
@@ -15751,7 +16599,7 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-unequal amount of numbers and parameters in field 'stats'
+unequal amount of numbers and parameters in field `stats'
 \end_layout
 
 \end_inset
@@ -15771,7 +16619,7 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-options.zscored = 1 & action = 'cond'
+options.zscored = 1 & action = `cond'
 \end_layout
 
 \end_inset
@@ -15837,7 +16685,7 @@ Expected warning
 \begin_inset Text
 
 \begin_layout Plain Layout
-unequal size for fields in 'trlnames' and rows in 'stats'
+unequal size for fields in `trlnames' and rows in `stats'
 \end_layout
 
 \end_inset
@@ -15857,7 +16705,7 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-missing field 'trlnames'
+missing field `trlnames'
 \end_layout
 
 \end_inset
@@ -15877,7 +16725,7 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-unequal size for fields in 'names' and columns in 'stats'
+unequal size for fields in `names' and columns in `stats'
 \end_layout
 
 \end_inset
@@ -15897,7 +16745,7 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-action = 'recon'
+action = `recon'
 \end_layout
 
 \end_inset
@@ -15963,7 +16811,7 @@ Expected warning
 \begin_inset Text
 
 \begin_layout Plain Layout
-options.zscored = 1 & pspm_load1(dfn, 'none', {}, options)
+options.zscored = 1 & pspm_load1(dfn, `none', {}, options)
 \end_layout
 
 \end_inset
@@ -15983,7 +16831,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-options.zscored = 1 & pspm_load1(dfn, 'cond', {}, options)
+options.zscored = 1 & pspm_load1(dfn, `cond', {}, options)
 \end_layout
 
 \end_inset
@@ -16003,7 +16851,7 @@ options.zscored = 1 & pspm_load1(dfn, 'cond', {}, options)
 \begin_inset Text
 
 \begin_layout Plain Layout
-options.zscored = 1 & pspm_load1(dfn, 'stats', {}, options)
+options.zscored = 1 & pspm_load1(dfn, `stats', {}, options)
 \end_layout
 
 \end_inset
@@ -16069,7 +16917,7 @@ Expected warning
 \begin_inset Text
 
 \begin_layout Plain Layout
-options.zscored = 1 & pspm_load1(dfn, 'cond', {}, options)
+options.zscored = 1 & pspm_load1(dfn, `cond', {}, options)
 \end_layout
 
 \end_inset
@@ -16092,7 +16940,7 @@ ID:invalid_input
 \end_layout
 
 \begin_layout Subsubsection*
-Action 'none'
+Action `none'
 \end_layout
 
 \begin_layout Standard
@@ -16100,7 +16948,7 @@ Function: test_action_none(this)
 \begin_inset Newline newline
 \end_inset
 
-Description: Test for all modeltypes if action 'none' matches the expected
+Description: Test for all modeltypes if action `none' matches the expected
  behaviour.
 \begin_inset Newline newline
 \end_inset
@@ -16121,7 +16969,7 @@ Test if returned data is empty.
 \end_layout
 
 \begin_layout Subsubsection*
-Action 'stats'
+Action `stats'
 \end_layout
 
 \begin_layout Standard
@@ -16129,7 +16977,7 @@ Function: test_action_stats(this)
 \begin_inset Newline newline
 \end_inset
 
-Description: Test for all modeltypes if action 'stats' matches the expected
+Description: Test for all modeltypes if action `stats' matches the expected
  behaviour.
 \begin_inset Newline newline
 \end_inset
@@ -16146,11 +16994,11 @@ Basic function test
 \end_layout
 
 \begin_layout Enumerate
-Returned data contains field 'stats'
+Returned data contains field `stats'
 \end_layout
 
 \begin_layout Enumerate
-Returned data contains field 'names'
+Returned data contains field `names'
 \end_layout
 
 \begin_layout Standard
@@ -16158,15 +17006,15 @@ Tests for DCM & SF:
 \end_layout
 
 \begin_layout Enumerate
-Returned data contains field 'trlnames'
+Returned data contains field `trlnames'
 \end_layout
 
 \begin_layout Enumerate
-Returned data contains field 'condnames'
+Returned data contains field `condnames'
 \end_layout
 
 \begin_layout Subsubsection*
-Action 'cond'
+Action `cond'
 \end_layout
 
 \begin_layout Standard
@@ -16174,7 +17022,7 @@ Function: test_action_cond(this)
 \begin_inset Newline newline
 \end_inset
 
-Description: Test for all modeltypes if action 'cond' matches the expected
+Description: Test for all modeltypes if action `cond' matches the expected
  behaviour.
 \begin_inset Newline newline
 \end_inset
@@ -16191,11 +17039,11 @@ Basic function test
 \end_layout
 
 \begin_layout Enumerate
-Returned data contains field 'stats'
+Returned data contains field `stats'
 \end_layout
 
 \begin_layout Enumerate
-Returned data contains field 'names'
+Returned data contains field `names'
 \end_layout
 
 \begin_layout Standard
@@ -16203,15 +17051,15 @@ Tests for DCM & SF:
 \end_layout
 
 \begin_layout Enumerate
-Returned data contains field 'trlnames'
+Returned data contains field `trlnames'
 \end_layout
 
 \begin_layout Enumerate
-Returned data contains field 'condnames'
+Returned data contains field `condnames'
 \end_layout
 
 \begin_layout Subsubsection*
-Action 'recon'
+Action `recon'
 \end_layout
 
 \begin_layout Standard
@@ -16219,7 +17067,7 @@ Function: test_action_recon(this)
 \begin_inset Newline newline
 \end_inset
 
-Description: Test for all modeltypes if action 'recon' matches the expected
+Description: Test for all modeltypes if action `recon' matches the expected
  behaviour.
 \begin_inset Newline newline
 \end_inset
@@ -16236,11 +17084,11 @@ Basic function test
 \end_layout
 
 \begin_layout Enumerate
-Returned data contains field 'stats'
+Returned data contains field `stats'
 \end_layout
 
 \begin_layout Enumerate
-Returned data contains field 'names'
+Returned data contains field `names'
 \end_layout
 
 \begin_layout Standard
@@ -16248,7 +17096,7 @@ Tests for DCM & SF already done in specific structure test.
 \end_layout
 
 \begin_layout Subsubsection*
-Action 'savecon'
+Action `savecon'
 \end_layout
 
 \begin_layout Standard
@@ -16256,9 +17104,9 @@ Function: test_action_savecon(this)
 \begin_inset Newline newline
 \end_inset
 
-Description: Test for all modeltypes if action 'savecon' matches the expected
+Description: Test for all modeltypes if action `savecon' matches the expected
  behaviour.
- Generates a number, passes it within the 'savecon' struct and tests if
+ Generates a number, passes it within the `savecon' struct and tests if
  the number is returned correctly.
 \begin_inset Newline newline
 \end_inset
@@ -16275,19 +17123,19 @@ Basic function test
 \end_layout
 
 \begin_layout Enumerate
-Returned data contains field 'con'
+Returned data contains field `con'
 \end_layout
 
 \begin_layout Enumerate
-Field 'con' contains field 'test'
+Field `con' contains field `test'
 \end_layout
 
 \begin_layout Enumerate
-Field 'con.test' is equal to the randomly generated number
+Field `con.test' is equal to the randomly generated number
 \end_layout
 
 \begin_layout Subsubsection*
-Action 'con'
+Action `con'
 \end_layout
 
 \begin_layout Standard
@@ -16295,9 +17143,9 @@ Function: test_action_con(this)
 \begin_inset Newline newline
 \end_inset
 
-Description: Test for all modeltypes if action 'con' matches the expected
+Description: Test for all modeltypes if action `con' matches the expected
  behaviour.
- Tests if the in 'savecon' generated field test is still returned.
+ Tests if the in `savecon' generated field test is still returned.
 \begin_inset Newline newline
 \end_inset
 
@@ -16313,15 +17161,15 @@ Basic function test
 \end_layout
 
 \begin_layout Enumerate
-Returned data contains field 'con'
+Returned data contains field `con'
 \end_layout
 
 \begin_layout Enumerate
-Field 'con' contains field 'test'.
+Field `con' contains field `test'.
 \end_layout
 
 \begin_layout Subsubsection*
-Action 'all'
+Action `all'
 \end_layout
 
 \begin_layout Standard
@@ -16329,7 +17177,7 @@ Function: test_action_all(this)
 \begin_inset Newline newline
 \end_inset
 
-Description: Test for all modeltypes if action 'all' matches the expected
+Description: Test for all modeltypes if action `all' matches the expected
  behaviour.
 \begin_inset Newline newline
 \end_inset
@@ -16350,7 +17198,7 @@ Returned data is not empty.
 \end_layout
 
 \begin_layout Subsubsection*
-Action 'save'
+Action `save'
 \end_layout
 
 \begin_layout Standard
@@ -16358,10 +17206,10 @@ Function: test_action_save(this)
 \begin_inset Newline newline
 \end_inset
 
-Description: Test for all modeltypes if action 'save' matches the expected
+Description: Test for all modeltypes if action `save' matches the expected
  behaviour.
  Test with options.overwrite = 1.
- Generates random number and writes it into field 'test' in model structure.
+ Generates random number and writes it into field `test' in model structure.
  
 \begin_inset Newline newline
 \end_inset
@@ -16378,11 +17226,11 @@ Basic function test
 \end_layout
 
 \begin_layout Enumerate
-Model structure contains field 'test'
+Model structure contains field `test'
 \end_layout
 
 \begin_layout Enumerate
-Field 'test' in model structure equals to the randomly generated number.
+Field `test' in model structure equals to the randomly generated number.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -16411,11 +17259,11 @@ Tests for all:
 
 \begin_layout Enumerate
 dont_ask_overwrite = 1 & overwrite = 0 returns warning ID:not_saving_data
- and field 'test' in model struct does not match generated number
+ and field `test' in model struct does not match generated number
 \end_layout
 
 \begin_layout Enumerate
-dont_ask_overwrite = 1 & overwrite = 1 field 'test' in returned model struct
+dont_ask_overwrite = 1 & overwrite = 1 field `test' in returned model struct
  does match generated number
 \end_layout
 
@@ -16424,7 +17272,7 @@ Tests for DCM (with dont_ask_overwrite = 1 & overwrite = 1):
 \end_layout
 
 \begin_layout Enumerate
-zscored = 0 & action = 'stats'
+zscored = 0 & action = `stats'
 \begin_inset Separator latexpar
 \end_inset
 
@@ -16442,7 +17290,7 @@ Returned data.stats is not zscored
 
 \end_deeper
 \begin_layout Enumerate
-zscored = 1 & action = 'stats'
+zscored = 1 & action = `stats'
 \begin_inset Separator latexpar
 \end_inset
 
@@ -16460,7 +17308,7 @@ Returned data.stats is zscored
 
 \end_deeper
 \begin_layout Enumerate
-zscored = 0 & action = 'cond'
+zscored = 0 & action = `cond'
 \begin_inset Separator latexpar
 \end_inset
 
@@ -16473,7 +17321,7 @@ Basic function test
 \end_layout
 
 \begin_layout Enumerate
-Returned data is different when callng with zscroed = 1 & action = 'cond'
+Returned data is different when callng with zscroed = 1 & action = `cond'
  (should not zscore, when not specified)
 \end_layout
 
@@ -16542,31 +17390,31 @@ If not otherwise declared, the input variable fn is referring to a datafile
 
 
 \family typewriter
-data{1}.chantype = 'scr'; 
+data{1}.chantype = `scr'; 
 \begin_inset Newline newline
 \end_inset
 
-data{2}.chantype = 'marker'; 
+data{2}.chantype = `marker'; 
 \begin_inset Newline newline
 \end_inset
 
-data{3}.chantype = 'hr'; 
+data{3}.chantype = `hr'; 
 \begin_inset Newline newline
 \end_inset
 
-data{4}.chantype = 'hb'; 
+data{4}.chantype = `hb'; 
 \begin_inset Newline newline
 \end_inset
 
-data{5}.chantype = 'marker'; 
+data{5}.chantype = `marker'; 
 \begin_inset Newline newline
 \end_inset
 
-data{6}.chantype = 'resp'; 
+data{6}.chantype = `resp'; 
 \begin_inset Newline newline
 \end_inset
 
-data{7}.chantype = 'scr';
+data{7}.chantype = `scr';
 \family default
 
 \begin_inset Newline newline
@@ -16702,7 +17550,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_load_data(fn, ‘foobar’) [no allowed ch type]
+pspm_load_data(fn, ‘foobar') [no allowed ch type]
 \end_layout
 
 \end_inset
@@ -16909,7 +17757,7 @@ ID:nonexistent_file
 \begin_inset Text
 
 \begin_layout Plain Layout
-missing ‘infos’ variable
+missing ‘infos' variable
 \end_layout
 
 \end_inset
@@ -16938,7 +17786,7 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-missing ‘data’ variable
+missing ‘data' variable
 \end_layout
 
 \end_inset
@@ -16967,7 +17815,7 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-missing ‘data’ field in ‘data{2}’
+missing ‘data' field in ‘data{2}'
 \end_layout
 
 \end_inset
@@ -16996,7 +17844,7 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-missing ‘header’ field ‘data{3}’
+missing ‘header' field ‘data{3}'
 \end_layout
 
 \end_inset
@@ -17025,7 +17873,7 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-missing ‘sr’ field in ‘data{7}.header’
+missing ‘sr' field in ‘data{7}.header'
 \end_layout
 
 \end_inset
@@ -17112,7 +17960,7 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-An entry of data{2}.data is larger than ‘duration’
+An entry of data{2}.data is larger than ‘duration'
 \end_layout
 
 \end_inset
@@ -17141,7 +17989,7 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-data{5} has an non-existent chantype (‘scanner’)
+data{5} has an non-existent chantype (‘scanner')
 \end_layout
 
 \end_inset
@@ -17300,8 +18148,8 @@ Testclass: pspm_pp_test
 \begin_inset Newline newline
 \end_inset
 
-Function: newfile = pspm_pp('median', datafile, n, channelnumber) or newfile
- = pspm_pp('butter', datafile, freq, channelnumber) 
+Function: newfile = pspm_pp(`median', datafile, n, channelnumber) or newfile
+ = pspm_pp(`butter', datafile, freq, channelnumber) 
 \end_layout
 
 \begin_layout Subsubsection
@@ -17360,7 +18208,7 @@ Expected warning
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_pp('butter', 'file') [no freq]
+pspm_pp(`butter', `file') [no freq]
 \end_layout
 
 \end_inset
@@ -17380,7 +18228,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_pp('foo', 'file', 100) [no valid first argument]
+pspm_pp(`foo', `file', 100) [no valid first argument]
 \end_layout
 
 \end_inset
@@ -17400,7 +18248,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_pp('butter', 'file', 19) [freq below 20]
+pspm_pp(`butter', `file', 19) [freq below 20]
 \end_layout
 
 \end_inset
@@ -17459,7 +18307,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Filter one channel [Input: newfile = pspm_pp('median', testfile, 50, 3)]
+Filter one channel [Input: newfile = pspm_pp(`median', testfile, 50, 3)]
  
 \begin_inset Separator latexpar
 \end_inset
@@ -17481,7 +18329,7 @@ ii.
 
 \end_deeper
 \begin_layout Enumerate
-Filter multiple channel [Input: newfile = pspm_pp('median', testfile, 50)]
+Filter multiple channel [Input: newfile = pspm_pp(`median', testfile, 50)]
  
 \begin_inset Separator latexpar
 \end_inset
@@ -17540,7 +18388,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Filter one channel [Input: newfile = pspm_pp('butter', testfile, 40, 3)]
+Filter one channel [Input: newfile = pspm_pp(`butter', testfile, 40, 3)]
  
 \begin_inset Separator latexpar
 \end_inset
@@ -17562,7 +18410,7 @@ ii.
 
 \end_deeper
 \begin_layout Enumerate
-Filter multiple channel [Input: newfile = pspm_pp('butter', testfile, 40)]
+Filter multiple channel [Input: newfile = pspm_pp(`butter', testfile, 40)]
  
 \begin_inset Separator latexpar
 \end_inset
@@ -17715,7 +18563,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_prepdata('foo', filt) [no numeric data]
+pspm_prepdata(`foo', filt) [no numeric data]
 \end_layout
 
 \end_inset
@@ -17735,7 +18583,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_prepdata(data, filt) [with lpfreq = 'foo' (not valid)]
+pspm_prepdata(data, filt) [with lpfreq = `foo' (not valid)]
 \end_layout
 
 \end_inset
@@ -17790,7 +18638,7 @@ filt.sr = 100;
 \begin_inset Newline newline
 \end_inset
 
-filt.lpfreq = 'none'; 
+filt.lpfreq = `none'; 
 \begin_inset Newline newline
 \end_inset
 
@@ -17806,7 +18654,7 @@ filt.hporder = 1;
 \begin_inset Newline newline
 \end_inset
 
-filt.down = 'none';
+filt.down = `none';
 \begin_inset Newline newline
 \end_inset
 
@@ -17818,7 +18666,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Unidirectional tests [filt.direction = ‘uni’] 
+Unidirectional tests [filt.direction = ‘uni'] 
 \begin_inset Separator latexpar
 \end_inset
 
@@ -17848,7 +18696,7 @@ iv.
 
 \end_deeper
 \begin_layout Enumerate
-Unidirectional tests [filt.direction = ‘bi’] 
+Unidirectional tests [filt.direction = ‘bi'] 
 \begin_inset Separator latexpar
 \end_inset
 
@@ -17914,7 +18762,7 @@ filt.lporder = 1;
 \begin_inset Newline newline
 \end_inset
 
-filt.hpfreq = 'none'; 
+filt.hpfreq = `none'; 
 \begin_inset Newline newline
 \end_inset
 
@@ -17922,7 +18770,7 @@ filt.hporder = 1;
 \begin_inset Newline newline
 \end_inset
 
-filt.down = 'none';
+filt.down = `none';
 \begin_inset Newline newline
 \end_inset
 
@@ -18042,7 +18890,7 @@ filt.hporder = 1;
 \begin_inset Newline newline
 \end_inset
 
-filt.down = 'none';
+filt.down = `none';
 \begin_inset Newline newline
 \end_inset
 
@@ -18105,7 +18953,7 @@ filt.lporder = 1;
 \begin_inset Newline newline
 \end_inset
 
-filt.hpfreq = 'none'; 
+filt.hpfreq = `none'; 
 \begin_inset Newline newline
 \end_inset
 
@@ -18113,7 +18961,7 @@ filt.hporder = 1;
 \begin_inset Newline newline
 \end_inset
 
-filt.direction = 'uni';
+filt.direction = `uni';
 \begin_inset Newline newline
 \end_inset
 
@@ -18169,7 +19017,7 @@ Setup
 \end_layout
 
 \begin_layout Standard
-This test class is parameterized.
+This test class is parameterised.
  The test data is generated by the function itself and when needed, files
  will be written to datafile<variable_nr>.mat.
 \end_layout
@@ -18318,7 +19166,7 @@ mode
 \begin_layout Plain Layout
 Defines the whether the dataset should be written to a file, kept as inline
  variable or should be a mix of both.
- Can be either 'file', 'inline' or 'mixed'
+ Can be either `file', `inline' or `mixed'
 \end_layout
 
 \end_inset
@@ -18520,7 +19368,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_process_illuminance(1:10, 'a') [invalid ssamplerate]
+pspm_process_illuminance(1:10, `a') [invalid ssamplerate]
 \end_layout
 
 \end_inset
@@ -18636,7 +19484,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_process_illuminance({1:10, 'a'},{1,2}) [invalid file]
+pspm_process_illuminance({1:10, `a'},{1,2}) [invalid file]
 \end_layout
 
 \end_inset
@@ -18665,7 +19513,7 @@ ID:non_existent_file
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_process_illuminance({1:10, 1:10}, {1, 'a'}) [invalid samplerate]
+pspm_process_illuminance({1:10, 1:10}, {1, `a'}) [invalid samplerate]
 \end_layout
 
 \end_inset
@@ -18694,7 +19542,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_process_illuminance({1:10}, {1}, 'o') [wrong options]
+pspm_process_illuminance({1:10}, {1}, `o') [wrong options]
 \end_layout
 
 \end_inset
@@ -19015,7 +19863,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Generate data with 10 (sr), 100 (dur), 1 (amount), 'file'
+Generate data with 10 (sr), 100 (dur), 1 (amount), `file'
 \end_layout
 
 \begin_layout Enumerate
@@ -19043,7 +19891,7 @@ Has some of the Test parameters as parameter implemented and accordingly
  generates the lx data.
  According to the calling arguments the output is a cell of files and data
  vectors.
- All generated files will be stored in the property 'datafiles'.
+ All generated files will be stored in the property `datafiles'.
  They will be removed once all tests have finished.
 \end_layout
 
@@ -19054,7 +19902,7 @@ Cleanup
 \begin_layout Standard
 Located in MethodTeardown and is called once the test class has finished
  all tests.
- It then removes all the datafiles which can be found in the property 'datafiles
+ It then removes all the datafiles which can be found in the property `datafiles
 '.
 \end_layout
 
@@ -19291,7 +20139,7 @@ Expected warning
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_ren('fn') [no newfilename]
+pspm_ren(`fn') [no newfilename]
 \end_layout
 
 \end_inset
@@ -19311,7 +20159,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_ren({'fn1', 'fn2'}, {'rfn1', 'rfn2', 'rfn3'}) [non same size cell arrays]
+pspm_ren({`fn1', `fn2'}, {`rfn1', `rfn2', `rfn3'}) [non same size cell arrays]
 \end_layout
 
 \end_inset
@@ -19364,11 +20212,11 @@ Check if sts==1 (of pspm_load_data output)
 \end_layout
 
 \begin_layout Enumerate
-Check if the field ‘infos.rendata’ exists
+Check if the field ‘infos.rendata' exists
 \end_layout
 
 \begin_layout Enumerate
-Check if the field ‘infos.newname’ exists
+Check if the field ‘infos.newname' exists
 \end_layout
 
 \begin_layout Enumerate
@@ -19508,7 +20356,7 @@ data = [1 4 9 12 30 31 34 41 43 59 65 72 74 80 89 96]'
 Hence if MAXSN=10 & BRK2NORM=3 (default values) the datafiles should be
  split into 3 files.
  If different values are being used, update the property ‘expected_number_of_fil
-es’ of the testclass object accordingly.
+es' of the testclass object accordingly.
  
 \end_layout
 
@@ -19607,7 +20455,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_split_sessions (‘fn’, ‘foo’) [no numeric marker channel no.]
+pspm_split_sessions (‘fn', ‘foo') [no numeric marker channel no.]
 \end_layout
 
 \end_inset
@@ -19638,7 +20486,7 @@ Function name: one_datafile(this)
 \begin_inset Newline newline
 \end_inset
 
-Description: Checks the function if the variable ‘datafile’ is of type char
+Description: Checks the function if the variable ‘datafile' is of type char
  (one datafile).
  The markerchannel number is not assigned explicitly.
 \begin_inset Newline newline
@@ -19652,7 +20500,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Check if the file has been split into ‘expected_number_of_files’ files For
+Check if the file has been split into ‘expected_number_of_files' files For
  each output file the following tests are performed:
 \end_layout
 
@@ -19686,7 +20534,7 @@ Function name: multiple_datafiles(this)
 \begin_inset Newline newline
 \end_inset
 
-Description: Checks the function if the variable ‘datafile’ is of type cell
+Description: Checks the function if the variable ‘datafile' is of type cell
  (two datafiles).
  The markerchannel number is assigned explicitly.
 \begin_inset Newline newline
@@ -19743,31 +20591,31 @@ If not otherwise declared, the input variable fn is referring to a datafile
 \begin_inset Newline newline
 \end_inset
 
-data{1}.chantype = 'scr'; 
+data{1}.chantype = `scr'; 
 \begin_inset Newline newline
 \end_inset
 
-data{2}.chantype = 'marker'; 
+data{2}.chantype = `marker'; 
 \begin_inset Newline newline
 \end_inset
 
-data{3}.chantype = 'hr'; 
+data{3}.chantype = `hr'; 
 \begin_inset Newline newline
 \end_inset
 
-data{4}.chantype = 'hb'; 
+data{4}.chantype = `hb'; 
 \begin_inset Newline newline
 \end_inset
 
-data{5}.chantype = 'marker'; 
+data{5}.chantype = `marker'; 
 \begin_inset Newline newline
 \end_inset
 
-data{6}.chantype = 'resp'; 
+data{6}.chantype = `resp'; 
 \begin_inset Newline newline
 \end_inset
 
-data{7}.chantype = 'scr';
+data{7}.chantype = `scr';
 \begin_inset Newline newline
 \end_inset
 
@@ -19836,7 +20684,7 @@ Expected warning
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_trim(testCase.fn, [1 2], 5, 'marker') [invalid from parameter]
+pspm_trim(testCase.fn, [1 2], 5, `marker') [invalid from parameter]
 \end_layout
 
 \end_inset
@@ -19856,7 +20704,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_trim(testCase.fn, 0, 'bla', 'marker') [invalid to parameter]
+pspm_trim(testCase.fn, 0, `bla', `marker') [invalid to parameter]
 \end_layout
 
 \end_inset
@@ -19876,7 +20724,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_trim(testCase.fn, 0, '[]', 'marker') [invalid to parameter]
+pspm_trim(testCase.fn, 0, `[]', `marker') [invalid to parameter]
 \end_layout
 
 \end_inset
@@ -19936,7 +20784,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_trim(fn, 0, 5, ‘bla’) [invalid char reference]
+pspm_trim(fn, 0, 5, ‘bla') [invalid char reference]
 \end_layout
 
 \end_inset
@@ -19999,7 +20847,7 @@ ID:invalid_input
 \end_layout
 
 \begin_layout Subsubsection
-Reference = ‘marker’ tests
+Reference = ‘marker' tests
 \end_layout
 
 \begin_layout Standard
@@ -20007,7 +20855,7 @@ Function name: marker_tests(testCase)
 \begin_inset Newline newline
 \end_inset
 
-Description: A wrapper function for tests with reference = ‘marker’.
+Description: A wrapper function for tests with reference = ‘marker'.
  It executes the methods markertest_k, where the testcases are defined.
  
 \end_layout
@@ -20036,7 +20884,7 @@ Expected warning: ID: marker_out_of_range
 \begin_inset Newline newline
 \end_inset
 
-Input: pspm_trim(fn, -20, 20, ’marker’) 
+Input: pspm_trim(fn, -20, 20, `marker') 
 \end_layout
 
 \begin_layout Subsubsection*
@@ -20056,7 +20904,7 @@ Description: from and to are set so that the trimming points are exactly
 \end_inset
 
 Input: from = -1 * marker(1) to = duration - marker(end) pspm_trim(fn, from,
- to, ’marker’) 
+ to, `marker') 
 \end_layout
 
 \begin_layout Subsubsection*
@@ -20074,11 +20922,11 @@ Description: from and to are set so that the trimming points in the range
 \begin_inset Newline newline
 \end_inset
 
-Input: pspm_trim(fn, 1, -2, ’marker’) 
+Input: pspm_trim(fn, 1, -2, `marker') 
 \end_layout
 
 \begin_layout Subsubsection
-Reference = ‘file’ tests
+Reference = ‘file' tests
 \end_layout
 
 \begin_layout Standard
@@ -20090,7 +20938,7 @@ Function name: file_tests(testCase)
 \begin_inset Newline newline
 \end_inset
 
-Description: A wrapper function for tests with reference = ‘file’.
+Description: A wrapper function for tests with reference = ‘file'.
  It executes the methods filetest_k, where the testcases are defined.
  
 \end_layout
@@ -20119,7 +20967,7 @@ Expected warning: ID: marker_out_of_range
 \begin_inset Newline newline
 \end_inset
 
-Input: pspm_trim(fn, -12.5, 50, ’marker’) 
+Input: pspm_trim(fn, -12.5, 50, `marker') 
 \end_layout
 
 \begin_layout Subsubsection*
@@ -20138,7 +20986,7 @@ Description: from and to are set so that the trimming points are exactly
 \begin_inset Newline newline
 \end_inset
 
-Input: pspm_trim(fn, 0 , duration, ’marker’) 
+Input: pspm_trim(fn, 0 , duration, `marker') 
 \end_layout
 
 \begin_layout Subsubsection*
@@ -20156,7 +21004,7 @@ Description: from and to are set so that the trimming points in the range
 \begin_inset Newline newline
 \end_inset
 
-Input: pspm_trim(fn,2.1, duration – 2.5, ’marker’) 
+Input: pspm_trim(fn,2.1, duration – 2.5, `marker') 
 \end_layout
 
 \begin_layout Subsubsection*
@@ -20245,7 +21093,7 @@ numtest_4
 
 \begin_layout Standard
 Description: Second reference point is out of the marker range; from is
- set to ‘none’.
+ set to ‘none'.
  Hence the data should not be trimmed.
  
 \begin_inset Newline newline
@@ -20263,7 +21111,7 @@ Expected warning: ID: marker_out_of_range
 \begin_inset Newline newline
 \end_inset
 
-Input: pspm_trim(fn, ‘none’, 0, [1 (numel(marker) + 1)]) 
+Input: pspm_trim(fn, ‘none', 0, [1 (numel(marker) + 1)]) 
 \end_layout
 
 \begin_layout Subsubsection*
@@ -20350,15 +21198,15 @@ Structure (created with generate_testdatafile())
 \begin_layout Standard
 
 \family typewriter
-data{1}.chantype = 'scr'; 
+data{1}.chantype = `scr'; 
 \begin_inset Newline newline
 \end_inset
 
-data{2}.chantype = 'marker';
+data{2}.chantype = `marker';
 \begin_inset Newline newline
 \end_inset
 
-data{3}.chantype = 'scr'; 
+data{3}.chantype = `scr'; 
 \begin_inset Newline newline
 \end_inset
 
@@ -20468,7 +21316,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_write_channel('some_file', []) [no action passed]
+pspm_write_channel(`some_file', []) [no action passed]
 \end_layout
 
 \end_inset
@@ -20488,7 +21336,7 @@ ID:unknown_action
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_write_channel('some_file', [], '') [empty action passed]
+pspm_write_channel(`some_file', [], `') [empty action passed]
 \end_layout
 
 \end_inset
@@ -20508,11 +21356,11 @@ ID:unknown_action
 \begin_inset Text
 
 \begin_layout Plain Layout
-options.channel = 'some invalid channel'
+options.channel = `some invalid channel'
 \end_layout
 
 \begin_layout Plain Layout
-pspm_write_channel('some_file', [], 'add', options) [invalid channel]
+pspm_write_channel(`some_file', [], `add', options) [invalid channel]
 \end_layout
 
 \end_inset
@@ -20536,7 +21384,7 @@ options.channel = -1
 \end_layout
 
 \begin_layout Plain Layout
-pspm_write_channel('some_file', [], 'add', options) [negative channel]
+pspm_write_channel(`some_file', [], `add', options) [negative channel]
 \end_layout
 
 \end_inset
@@ -20560,7 +21408,7 @@ options.channel = 0
 \end_layout
 
 \begin_layout Plain Layout
-pspm_write_channel('some_file', [], 'delete', options) [no channel and no
+pspm_write_channel(`some_file', [], `delete', options) [no channel and no
  data given]
 \end_layout
 
@@ -20585,7 +21433,7 @@ options.channel = 0
 \end_layout
 
 \begin_layout Plain Layout
-pspm_write_channel('some_file', [], 'add', options) [empty newdata]
+pspm_write_channel(`some_file', [], `add', options) [empty newdata]
 \end_layout
 
 \end_inset
@@ -20609,7 +21457,7 @@ options.channel = 0
 \end_layout
 
 \begin_layout Plain Layout
-pspm_write_channel('some_file', 1:3, 'add', options) [newdata is not cell
+pspm_write_channel(`some_file', 1:3, `add', options) [newdata is not cell
  and not struct]
 \end_layout
 
@@ -20634,7 +21482,7 @@ options.channel = 1:5
 \end_layout
 
 \begin_layout Plain Layout
-pspm_write_channel(this.testdatafile, [], 'delete', options) [more given
+pspm_write_channel(this.testdatafile, [], `delete', options) [more given
  channels than in file exist]
 \end_layout
 
@@ -20655,7 +21503,7 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
-options.channel = 'ecg'; pspm_write_channel(this.testdatafile, [], 'delete',
+options.channel = `ecg'; pspm_write_channel(this.testdatafile, [], `delete',
  options)
 \end_layout
 
@@ -20676,7 +21524,7 @@ ID:no_matching_channels
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_write_channel(this.testdatafile, gen_data.data{1}, 'add') [generated
+pspm_write_channel(this.testdatafile, gen_data.data{1}, `add') [generated
  data has the wrong format (two rows in one channel)]
 \end_layout
 
@@ -20700,7 +21548,7 @@ ID:invalid_data_structure
 \end_layout
 
 \begin_layout Subsubsection*
-Action 'add'
+Action `add'
 \end_layout
 
 \begin_layout Standard
@@ -20708,8 +21556,8 @@ Function name: test_add(this)
 \begin_inset Newline newline
 \end_inset
 
-Description: Checks if action 'add' behaves as expected.
- A new channel with chantype = 'hb', sr = 200 and duration = 500 is generated.
+Description: Checks if action `add' behaves as expected.
+ A new channel with chantype = `hb', sr = 200 and duration = 500 is generated.
 \begin_inset Newline newline
 \end_inset
 
@@ -20721,11 +21569,11 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Load condition before and after and pass it to 'Verify write'
+Load condition before and after and pass it to `Verify write'
 \end_layout
 
 \begin_layout Subsubsection*
-Action 'add transposed'
+Action `add transposed'
 \end_layout
 
 \begin_layout Standard
@@ -20733,9 +21581,9 @@ Function name: test_add_transposed(this)
 \begin_inset Newline newline
 \end_inset
 
-Description: Checks if action 'add' behaves as expected, when data has the
+Description: Checks if action `add' behaves as expected, when data has the
  wrong dimensions.
- A new channel with chantype = 'rs', sr = 200 and duration = 500 is generated.
+ A new channel with chantype = `rs', sr = 200 and duration = 500 is generated.
 \begin_inset Newline newline
 \end_inset
 
@@ -20751,11 +21599,11 @@ Transpose generated data
 \end_layout
 
 \begin_layout Enumerate
-Load condition before and after and pass it to 'Verify write'
+Load condition before and after and pass it to `Verify write'
 \end_layout
 
 \begin_layout Subsubsection*
-Action 'replace'/'add'
+Action `replace'/'add'
 \end_layout
 
 \begin_layout Standard
@@ -20763,8 +21611,8 @@ Function name: test_replace_add(this)
 \begin_inset Newline newline
 \end_inset
 
-Description: Checks if action 'replace' behaves as expected.
- A new channel with chantype = 'hr', sr = 10 and duration = 500 is generated.
+Description: Checks if action `replace' behaves as expected.
+ A new channel with chantype = `hr', sr = 10 and duration = 500 is generated.
 \begin_inset Newline newline
 \end_inset
 
@@ -20776,17 +21624,17 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Running pspm_write_channel with action = 'replace' should issue 'ID:no_matching_
+Running pspm_write_channel with action = `replace' should issue `ID:no_matching_
 channels' (channeltype should not exist before) and then instead add the
  channel
 \end_layout
 
 \begin_layout Enumerate
-Load condition before and after and pass it to 'Verify write'
+Load condition before and after and pass it to `Verify write'
 \end_layout
 
 \begin_layout Subsubsection*
-Action 'replace'
+Action `replace'
 \end_layout
 
 \begin_layout Standard
@@ -20794,8 +21642,8 @@ Function name: test_replace(this)
 \begin_inset Newline newline
 \end_inset
 
-Description: Checks if action 'replace' behaves as expected.
- A new channel with chantype = 'hr', sr = 20 and duration = 500 is generated.
+Description: Checks if action `replace' behaves as expected.
+ A new channel with chantype = `hr', sr = 20 and duration = 500 is generated.
 \begin_inset Newline newline
 \end_inset
 
@@ -20807,15 +21655,15 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Load condition before and after and pass it to 'Verify write'
+Load condition before and after and pass it to `Verify write'
 \end_layout
 
 \begin_layout Enumerate
-Test if 'hr' channel has sample rate 20
+Test if `hr' channel has sample rate 20
 \end_layout
 
 \begin_layout Subsubsection*
-Action 'delete' (one channel)
+Action `delete' (one channel)
 \end_layout
 
 \begin_layout Standard
@@ -20823,7 +21671,7 @@ Function name: test_delete_single(this)
 \begin_inset Newline newline
 \end_inset
 
-Description: Checks if action 'delete' behaves as expected.
+Description: Checks if action `delete' behaves as expected.
  In this test only one channel will be deleted.
  To test the delete algorithm there will be 7 channels added which are then
  also used for test_delete_multi(this).
@@ -20840,7 +21688,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Delete channel with chantype = 'hr' in newdata.header.chantype
+Delete channel with chantype = `hr' in newdata.header.chantype
 \begin_inset Separator latexpar
 \end_inset
 
@@ -20857,7 +21705,7 @@ Ensure only one channel has been deleted
 \end_layout
 
 \begin_layout Enumerate
-Test if there is no more channel with chantype = 'hr'
+Test if there is no more channel with chantype = `hr'
 \end_layout
 
 \end_deeper
@@ -20889,7 +21737,7 @@ Test the delete algorithm
 
 \begin_deeper
 \begin_layout Enumerate
-Remove 'resp' channel with options.delete = 'last'
+Remove `resp' channel with options.delete = `last'
 \begin_inset Separator latexpar
 \end_inset
 
@@ -20911,7 +21759,7 @@ Test if last channel was deleted
 
 \end_deeper
 \begin_layout Enumerate
-Remove 'resp' channel with options.delete = 'first'
+Remove `resp' channel with options.delete = `first'
 \begin_inset Separator latexpar
 \end_inset
 
@@ -20934,7 +21782,7 @@ Test if last entry was not deleted
 \end_deeper
 \end_deeper
 \begin_layout Subsubsection*
-Action 'delete' (multiple channels)
+Action `delete' (multiple channels)
 \end_layout
 
 \begin_layout Standard
@@ -20942,7 +21790,7 @@ Function name: test_delete_multi(this)
 \begin_inset Newline newline
 \end_inset
 
-Description: Checks if action 'delete' behaves as expected.
+Description: Checks if action `delete' behaves as expected.
  In this test only multiple channels will be deleted.
  This test relys on the changes made to the testdatafile by other test functions
  in this class.
@@ -20976,7 +21824,7 @@ Ensure two channels have been deleted
 
 \end_deeper
 \begin_layout Enumerate
-Delete all 'resp' channels from testdatafile
+Delete all `resp' channels from testdatafile
 \begin_inset Separator latexpar
 \end_inset
 
@@ -20989,7 +21837,7 @@ Verify write
 \end_layout
 
 \begin_layout Enumerate
-Test if datafile contains no more 'resp' channels
+Test if datafile contains no more `resp' channels
 \end_layout
 
 \end_deeper
@@ -21002,8 +21850,8 @@ Verify write
 \end_layout
 
 \begin_layout Standard
-Is called after pspm_write_channel has been called (action = 'add' or action
- = 'replace') and tests if data was written and a new history entry was
+Is called after pspm_write_channel has been called (action = `add' or action
+ = `replace') and tests if data was written and a new history entry was
  made.
  
 \begin_inset Newline newline
@@ -21013,15 +21861,15 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-if action = 'add', test if there is a new channel
+if action = `add', test if there is a new channel
 \end_layout
 
 \begin_layout Enumerate
-if action = 'replace', test if there is still the same amount of channels
+if action = `replace', test if there is still the same amount of channels
 \end_layout
 
 \begin_layout Enumerate
-if action = 'delete', test if there have been as many channels deleted as
+if action = `delete', test if there have been as many channels deleted as
  given in outinfos.channel
 \end_layout
 
@@ -21039,7 +21887,7 @@ test if number of data elements in new channel and added channel is equal
 \end_layout
 
 \begin_layout Enumerate
-test if new channel and added channel have same 'sr'
+test if new channel and added channel have same `sr'
 \end_layout
 
 \begin_layout Section
@@ -21071,7 +21919,7 @@ try
 \begin_inset Quotes erd
 \end_inset
 
- to avoid warning in matlab > 2007
+ to avoid warning in MATLAB > 2007
 \end_layout
 
 \begin_layout Itemize
@@ -21113,7 +21961,7 @@ try
 \begin_inset Quotes erd
 \end_inset
 
- to avoid warning in matlab > 2007
+ to avoid warning in MATLAB > 2007
 \end_layout
 
 \begin_layout Itemize
