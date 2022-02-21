@@ -173,6 +173,14 @@ LatexCommand tableofcontents
 General
 \end_layout
 
+\begin_layout Quote
+Contributed by Dominik R Bach
+\end_layout
+
+\begin_layout Quote
+Updated by Dadi Zhao in Feburary 2022
+\end_layout
+
 \begin_layout Subsection
 Data files: General structure 
 \end_layout
@@ -1119,6 +1127,13 @@ rate_below_minimum
 \end_layout
 
 \end_deeper
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 List of data formats
 \end_layout
@@ -5507,14 +5522,23 @@ Note: Automarkers means no channel number has to be specified because markers
  are always at the same place.
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 GUI
 \end_layout
 
-\begin_layout Standard
-
-\shape italic
+\begin_layout Quote
 Contributed by Gabriel Gräni and Dadi Zhao.
+\end_layout
+
+\begin_layout Quote
+Revised by Dadi Zhao in Feburary 2022.
 \end_layout
 
 \begin_layout Subsection
@@ -5522,7 +5546,7 @@ MATLABbatch: Getting started
 \end_layout
 
 \begin_layout Enumerate
-Add the trunk folder to the MATLAB path
+Add the trunk folder to the MATLAB path.
 \end_layout
 
 \begin_layout Enumerate
@@ -6317,14 +6341,23 @@ The new GUI is currently using the colour
  Sans for Windows, macOS and Linux, respectively.
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Test Environment
 \end_layout
 
-\begin_layout Standard
+\begin_layout Quote
+Contributed by Linus Rüttimann, Tobias Moser and Dadi Zhao.
+\end_layout
 
-\shape italic
-Contributed by Linus Rüttimann & Tobias Moser.
+\begin_layout Quote
+Revised and updated by Dadi Zhao in Feburary 2022.
 \end_layout
 
 \begin_layout Subsection
@@ -6340,23 +6373,21 @@ functionname_test
 , which contains the unittests for that specific function.
  Additionally there is a documentation page for each of the test classes,
  where information about the unittests can be found.
-\begin_inset Newline newline
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
 To run the unittests of a test class, an object of the class has to be created:
-\end_layout
+\begin_inset Newline newline
+\end_inset
 
-\begin_layout Standard
 
 \family typewriter
 testCase = functionname_test
-\end_layout
+\begin_inset Newline newline
+\end_inset
 
-\begin_layout Standard
+
+\family default
 where 
 \family typewriter
 testCase
@@ -6367,25 +6398,29 @@ funtionname_test
 \family default
  is the name of a test class.
  Then all the unittest that are contained in the test class can be run with:
-\end_layout
-
-\begin_layout Standard
-
 \family typewriter
+
+\begin_inset Newline newline
+\end_inset
+
 testCase.run
-\end_layout
+\family default
+.
+\begin_inset Newline newline
+\end_inset
 
-\begin_layout Standard
 A specific unittest can be run with:
-\end_layout
-
-\begin_layout Standard
-
 \family typewriter
-testCase.run(‘unittest_name')
-\end_layout
 
-\begin_layout Standard
+\begin_inset Newline newline
+\end_inset
+
+testCase.run(‘unittest_name')
+\family default
+.
+\begin_inset Newline newline
+\end_inset
+
 Remember that a new test class object must be generated each time the test
  class has been changed.
 \end_layout
@@ -6725,9 +6760,9 @@ Tests
 \begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="5" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
+<features tabularvalignment="middle" tabularwidth="100text%">
+<column alignment="center" valignment="top" width="60text%">
+<column alignment="center" valignment="top" width="30text%">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -11269,16 +11304,16 @@ Set options with
 \end_layout
 
 \begin_deeper
-\begin_layout Enumerate
-overwrite = 1
+\begin_layout Description
+overwrite 1
 \end_layout
 
-\begin_layout Enumerate
-eyes = work_eye
+\begin_layout Description
+eyes work_eye
 \end_layout
 
-\begin_layout Enumerate
-channel_action = `add'
+\begin_layout Description
+channel_action `add'
 \end_layout
 
 \end_deeper
@@ -11287,7 +11322,9 @@ Test if function runs through without warning
 \end_layout
 
 \begin_layout Enumerate
-Test if sts equals 1
+Test if 
+\family typewriter
+sts==1
 \end_layout
 
 \begin_layout Enumerate
@@ -11479,16 +11516,16 @@ Set options with
 \end_layout
 
 \begin_deeper
-\begin_layout Enumerate
-overwrite = 1
+\begin_layout Description
+overwrite 1
 \end_layout
 
-\begin_layout Enumerate
-interpolate = interpolate
+\begin_layout Description
+interpolate interpolate
 \end_layout
 
-\begin_layout Enumerate
-channel_action = `add'
+\begin_layout Description
+channel_action `add'
 \end_layout
 
 \end_deeper
@@ -11503,36 +11540,87 @@ sts==1
 \end_layout
 
 \begin_layout Enumerate
-Depending on the status of `interpolate' test whether there are some NaN
- values or if NaN periods have been interpolated accordingly.
+Depending on the status of 
+\family typewriter
+`interpolate'
+\family default
+ test whether there are some 
+\family typewriter
+NaN
+\family default
+ values or if 
+\family typewriter
+NaN
+\family default
+ periods have been interpolated accordingly.
 \end_layout
 
 \begin_layout Subsubsection*
 Test overwrite
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: test_overwrite(this, overwrite)
-\begin_inset Newline newline
-\end_inset
 
-Description: Test if files are overwritten, if specified with `overwrite'
+\family typewriter
+test_overwrite(this, overwrite)
+\end_layout
+
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+Test if files are overwritten, if specified with 
+\family typewriter
+`overwrite'
+\family default
  option.
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
-
-\begin_inset Newline newline
-\end_inset
-
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
-Generate data with distance 500, aspect_used 16:9, aspect_actual 4:3, screen_siz
-e 20 and eyes `lr'
+Generate data with
 \end_layout
 
+\begin_deeper
+\begin_layout Description
+
+\family typewriter
+distance 500
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+aspect_used 16:9
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+aspect_actual 4:3
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+screen_size 20
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+eyes `lr'
+\end_layout
+
+\end_deeper
 \begin_layout Enumerate
 Set options with
 \begin_inset Separator latexpar
@@ -11542,16 +11630,22 @@ Set options with
 \end_layout
 
 \begin_deeper
-\begin_layout Enumerate
-overwrite = 1
+\begin_layout Description
+
+\family typewriter
+overwrite 1
 \end_layout
 
-\begin_layout Enumerate
-interpolate = interpolate
+\begin_layout Description
+
+\family typewriter
+interpolate interpolate
 \end_layout
 
-\begin_layout Enumerate
-channel_action = `add'
+\begin_layout Description
+
+\family typewriter
+channel_action `add'
 \end_layout
 
 \end_deeper
@@ -11560,7 +11654,9 @@ Test if function runs through without warning
 \end_layout
 
 \begin_layout Enumerate
-Test if sts equals 1
+Test if 
+\family typewriter
+sts==1
 \end_layout
 
 \begin_layout Enumerate
@@ -11586,20 +11682,53 @@ Description
 \end_layout
 
 \begin_layout Standard
-Test if channels are added or replaced (according to channel_action).
+Test if channels are added or replaced (according to 
+\family typewriter
+channel_action
+\family default
+).
 \end_layout
 
-\begin_layout Standard
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
-Generate data with distance 500, aspect_used 16:9, aspect_actual 4:3, screen_siz
-e 20 and eyes 
-\family typewriter
-`lr'.
+Generate data with
 \end_layout
 
+\begin_deeper
+\begin_layout Description
+
+\family typewriter
+distance 500
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+aspect_used 16:9
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+aspect_actual 4:3
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+screen_size 20
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+eyes `lr'
+\end_layout
+
+\end_deeper
 \begin_layout Enumerate
 Set options with
 \begin_inset Separator latexpar
@@ -11609,12 +11738,16 @@ Set options with
 \end_layout
 
 \begin_deeper
-\begin_layout Enumerate
-overwrite = 1
+\begin_layout Description
+
+\family typewriter
+overwrite 1
 \end_layout
 
-\begin_layout Enumerate
-channel_action = channel_action
+\begin_layout Description
+
+\family typewriter
+channel_action channel_action
 \end_layout
 
 \end_deeper
@@ -11623,7 +11756,9 @@ Test if function runs through without warning
 \end_layout
 
 \begin_layout Enumerate
-Test if sts equals 1
+Test if 
+\family typewriter
+sts==1
 \end_layout
 
 \begin_layout Enumerate
@@ -11658,12 +11793,41 @@ Tests
 \end_layout
 
 \begin_layout Enumerate
-Generate data with distance 500, aspect_used 16:9, aspect_actual 4:3, screen_siz
-e 20 and eyes 
-\family typewriter
-`lr'
+Generate data with
 \end_layout
 
+\begin_deeper
+\begin_layout Description
+
+\family typewriter
+distance 500
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+aspect_used 16:9
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+aspect_actual 4:3
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+screen_size 20
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+eyes `lr'
+\end_layout
+
+\end_deeper
 \begin_layout Enumerate
 Set options with
 \begin_inset Separator latexpar
@@ -11674,11 +11838,17 @@ Set options with
 
 \begin_deeper
 \begin_layout Enumerate
+
+\family typewriter
 overwrite = 1
 \end_layout
 
 \begin_layout Enumerate
-if newfile enabled
+if 
+\family typewriter
+newfile
+\family default
+ enabled
 \end_layout
 
 \begin_deeper
@@ -11692,7 +11862,17 @@ set options.newfile to new file name
 
 \end_deeper
 \begin_layout Enumerate
-if newfile is disabled, set options.newfile to `'
+if 
+\family typewriter
+newfile
+\family default
+ is disabled, set 
+\family typewriter
+options.newfile
+\family default
+ to 
+\family typewriter
+`'
 \end_layout
 
 \end_deeper
@@ -11701,33 +11881,45 @@ Test if function runs through without warning
 \end_layout
 
 \begin_layout Enumerate
-Test if sts equals 1
+Test if 
+\family typewriter
+sts==1
 \end_layout
 
 \begin_layout Enumerate
 Test if returned outputfile equals the specified newfile or not (depending
- on the value of `newfile')
+ on the value of 
+\family typewriter
+`newfile'
+\family default
+)
 \end_layout
 
 \begin_layout Subsubsection*
 Test gaze validation
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: test_gaze_validation(this, distance, screen_size, aspect_actual,
- aspect_used, eyes)
-\begin_inset Newline newline
-\end_inset
 
-Description: Test whether gaze validation is done correctly.
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+test_gaze_validation(this, distance, screen_size, aspect_actual, aspect_used,
+ eyes)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Test whether gaze validation is done correctly.
+\end_layout
 
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
@@ -11780,20 +11972,26 @@ load outputfile and test if (according to degree expectation) gaze validation
 Test bitmap validtion
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: test_bitmap_validation(this, distance, resolution, eyes)
-\begin_inset Newline newline
-\end_inset
 
-Description: Test whether bitmap validation is done correctly.
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+test_bitmap_validation(this, distance, resolution, eyes)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Test whether bitmap validation is done correctly.
+\end_layout
 
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
@@ -11802,31 +12000,29 @@ Generate data with the according function parameters
 
 \begin_layout Enumerate
 Iterate to returned bitmaps generated by the generation function
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_deeper
 \begin_layout Enumerate
-set function options
+Set function options
 \end_layout
 
 \begin_deeper
-\begin_layout Enumerate
-missing = 1
+\begin_layout Description
+
+\family typewriter
+missing 1
 \end_layout
 
 \end_deeper
 \begin_layout Enumerate
-ddepending on the specified number of valid fixations in the bitmap, test
- whether function runs through without warnings or not
+Depending on the specified number of valid fixations in the bitmap, test
+ whether function runs through without warnings or not.
 \end_layout
 
 \begin_layout Enumerate
-load outputfile and test if (according to bitmap expectation) bitmap validation
- has been done or not
+Load outputfile and test if (according to bitmap expectation) bitmap validation
+ has been done or not.
 \end_layout
 
 \end_deeper
@@ -11838,12 +12034,24 @@ Testcases: pspm_get_ecg
 Information
 \end_layout
 
-\begin_layout Standard
-Testclass: pspm_get_ecg_test 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Testclass
+\end_layout
 
-Function: [sts, data] = pspm_get_ecg(import) 
+\begin_layout Standard
+
+\family typewriter
+pspm_get_ecg_test
+\end_layout
+
+\begin_layout Subparagraph
+Function
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+[sts, data] = pspm_get_ecg(import) 
 \end_layout
 
 \begin_layout Subsubsection
@@ -11854,40 +12062,84 @@ Testcases
 Test
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: test(this) 
-\begin_inset Newline newline
-\end_inset
 
-Description: Test if all fields are returned correctly 
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+test(this)
+\family default
+.
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Test if all fields are returned correctly.
+\end_layout
 
-Tests: 
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
-Test if ‘sts' is equal 1.
+Test if 
+\family typewriter
+sts==1
+\family default
+.
 \end_layout
 
 \begin_layout Enumerate
-Test if data.data is equal import.data
+Test if 
+\family typewriter
+data.data
+\family default
+ is equal to 
+\family typewriter
+import.data
+\family default
+.
 \end_layout
 
 \begin_layout Enumerate
-Test if data.header.chantype is ‘ecg'
+Test if 
+\family typewriter
+data.header.chantype
+\family default
+ is 
+\family typewriter
+‘ecg'
+\family default
+.
 \end_layout
 
 \begin_layout Enumerate
-Test if data.header.units is equal import.units
+Test if 
+\family typewriter
+data.header.units
+\family default
+ is equal to 
+\family typewriter
+import.units
+\family default
+.
 \end_layout
 
 \begin_layout Enumerate
-Test if data.header.sr is equal import.sr 
+Test if 
+\family typewriter
+data.header.sr
+\family default
+ is equal to 
+\family typewriter
+import.sr
+\family default
+.
 \end_layout
 
 \begin_layout Subsection
@@ -11898,12 +12150,24 @@ Testcases: pspm_get_events
 Information
 \end_layout
 
-\begin_layout Standard
-Testclass: pspm_get_events_test 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Testclass
+\end_layout
 
-Function: [sts, import] = pspm_get_events(import) 
+\begin_layout Standard
+
+\family typewriter
+pspm_get_events_test
+\end_layout
+
+\begin_layout Subparagraph
+Function
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+[sts, import] = pspm_get_events(import)
 \end_layout
 
 \begin_layout Subsubsection
@@ -11914,22 +12178,30 @@ Testcases
 Check warnings
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: check_warnings(this) 
-\begin_inset Newline newline
-\end_inset
 
-Description: Checks for warnings, if the field ‘.markers' is missing or contains
- invalid content.
- 
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+check_warnings(this)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Checks for warnings, if the field 
+\family typewriter
+‘.markers'
+\family default
+ is missing or contains invalid content.
+\end_layout
 
-Tests: 
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Standard
@@ -11963,6 +12235,8 @@ Expected warning
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 Missing marker field
 \end_layout
 
@@ -11972,6 +12246,8 @@ Missing marker field
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:nonexistent_field
 \end_layout
 
@@ -11983,6 +12259,8 @@ ID:nonexistent_field
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 import.marker = ‘foo'
 \end_layout
 
@@ -11992,6 +12270,8 @@ import.marker = ‘foo'
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_field_content
 \end_layout
 
@@ -12009,49 +12289,65 @@ ID:invalid_field_content
 Timestamps
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: timestamps(this) 
-\begin_inset Newline newline
-\end_inset
 
-Description: Checks for correct output if the input is timestamp data 
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+timestamps(this)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Checks for correct output if the input is timestamp data.
+\end_layout
 
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
-Test if ‘sts' is equal 1.
+Test if 
+\family typewriter
+sts==1
+\family default
+.
 \end_layout
 
 \begin_layout Enumerate
 Test if the length of the output data is equal to the length of the input
- data 
+ data.
 \end_layout
 
 \begin_layout Subsubsection*
 Continuous
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: continuous(this) 
-\begin_inset Newline newline
-\end_inset
 
-Description: Checks for correct output if the input is continuous data 
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+continuous(this)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Checks for correct output if the input is continuous data.
+\end_layout
 
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
@@ -12068,12 +12364,19 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Test if ‘sts' is equal 1.
+Test if 
+\family typewriter
+sts==1
+\family default
+.
 \end_layout
 
 \begin_layout Enumerate
-Test if the length of the field `markerinfo' is equal to the length of the
- output data.
+Test if the length of the field 
+\family typewriter
+`markerinfo'
+\family default
+ is equal to the length of the output data.
 \end_layout
 
 \begin_layout Enumerate
@@ -12082,23 +12385,37 @@ Test if the length of the output data is equal to the expected number of
 \end_layout
 
 \begin_layout Standard
-Settings:
+Settings
 \end_layout
 
 \begin_layout Enumerate
-flank = ‘both' (default)
+
+\family typewriter
+flank=`both'
+\family default
+ (default)
 \end_layout
 
 \begin_layout Enumerate
-flank = `both' & data offset 50
+
+\family typewriter
+flank=`both'
+\family default
+ & 
+\family typewriter
+data offset=50
 \end_layout
 
 \begin_layout Enumerate
-flank = ‘ascending'
+
+\family typewriter
+flank=`ascending'
 \end_layout
 
 \begin_layout Enumerate
-flank = ‘descending'
+
+\family typewriter
+flank=`descending'
 \end_layout
 
 \begin_layout Enumerate
@@ -12115,8 +12432,11 @@ check with
 
 \end_deeper
 \begin_layout Enumerate
-Additional test for setting (b): Test if data offset has been removed in
- the output data.
+Additional test for setting (b): Test if 
+\family typewriter
+data offset
+\family default
+ has been removed in the output data.
 \end_layout
 
 \begin_layout Enumerate
@@ -12136,12 +12456,24 @@ Testcases: pspm_get_eyelink
 Information
 \end_layout
 
-\begin_layout Standard
-Testclass: pspm_get_eyelink_test 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Testclass
+\end_layout
 
-Function: [sts, data] = pspm_get_eyelink(import) 
+\begin_layout Standard
+
+\family typewriter
+pspm_get_eyelink_test
+\end_layout
+
+\begin_layout Subparagraph
+Function
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+[sts, data] = pspm_get_eyelink(import) 
 \end_layout
 
 \begin_layout Subsubsection
@@ -12152,35 +12484,50 @@ Methods
 set_import_values
 \end_layout
 
-\begin_layout Standard
-Function : [import_struct, channel typles] = set_import_values(this)
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Function
+\end_layout
 
-Description: Helperfunction, which creates an import data set and the expected
- channel data set 
+\begin_layout Standard
+
+\family typewriter
+[import_struct, channel typles] = set_import_values(this)
+\end_layout
+
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+Helperfunction, which creates an import data set and the expected channel
+ data set 
 \end_layout
 
 \begin_layout Subsubsection*
 verify_basic_data_structure
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: verify_basic_data_structure(this, data, sourceinfo, channel_types
-)
-\begin_inset Newline newline
-\end_inset
 
-Description: Tests if the returned data structure is valid and match a given
- expected pattern.
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+verify_basic_data_structure(this, data, sourceinfo, channel_types)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Tests if the returned data structure is valid and match a given expected
+ pattern.
+\end_layout
 
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
@@ -12192,19 +12539,47 @@ Test if recorded time and date have a valid format
 \end_layout
 
 \begin_layout Enumerate
-Test if blink channels have correct unit
+Test if 
+\family typewriter
+blink channels
+\family default
+ have correct unit
 \end_layout
 
 \begin_layout Enumerate
-Test if pupil channels have either `diameter' or `area' as unit
+Test if 
+\family typewriter
+pupil channels
+\family default
+ have either 
+\family typewriter
+`diameter'
+\family default
+ or 
+\family typewriter
+`area'
+\family default
+ as unit
 \end_layout
 
 \begin_layout Enumerate
-Test if channels labeled with `position' have unit `pixel'
+Test if channels labeled with 
+\family typewriter
+`position'
+\family default
+ have unit 
+\family typewriter
+`pixel'
 \end_layout
 
 \begin_layout Enumerate
-Test if channels labeled with `blink' have unit `blink'
+Test if channels labeled with 
+\family typewriter
+`blink'
+\family default
+ have unit 
+\family typewriter
+`blink'
 \end_layout
 
 \begin_layout Subsubsection
@@ -12215,120 +12590,171 @@ Testcases
 test_multi_session
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: test_multi_session(this)
-\begin_inset Newline newline
-\end_inset
 
-Description: Test if the returned data structure fits into the pattern of
- a multi session data set.
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+test_multi_session(this)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Test if the returned data structure fits into the pattern of a multi session
+ data set.
+\end_layout
 
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
-Calls `set_import_values(this)' to get import data set and expected channel
- data set 
+Calls 
+\family typewriter
+`set_import_values(this)'
+\family default
+ to get import data set and expected channel data set.
 \end_layout
 
 \begin_layout Enumerate
-passses returned sets to `verify_basic_data_structure()'
+passses returned sets to 
+\family typewriter
+`verify_basic_data_structure()'
+\family default
+.
 \end_layout
 
 \begin_layout Subsubsection*
 test_two_eyes
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: test_two_eyes(this)
-\begin_inset Newline newline
-\end_inset
 
-Description: Test if the returned data structure fits into the pattern of
- a two eyes data set.
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+test_two_eyes(this)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Test if the returned data structure fits into the pattern of a two eyes
+ data set.
+\end_layout
 
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
-Calls `set_import_values(this)' to get import data set and expected channel
- data set 
+Calls 
+\family typewriter
+`set_import_values(this)'
+\family default
+ to get import data set and expected channel data set.
 \end_layout
 
 \begin_layout Enumerate
-passes returned sets to `verify_basic_data_structure()'
+Passes returned sets to 
+\family typewriter
+`verify_basic_data_structure()'
+\family default
+.
 \end_layout
 
 \begin_layout Subsubsection*
 test_one_eye
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: test_one_eye(this)
-\begin_inset Newline newline
-\end_inset
 
-Description: Test if the returned data structure fits into the pattern of
- a one eye data set.
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+test_one_eye(this)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Test if the returned data structure fits into the pattern of a one eye data
+ set.
+\end_layout
 
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
-Creates an import data set and the expected channel data set an pass it
- to `verify_basic_data_structure()'
+Create an import data set and the expected channel data set an pass it to
+ 
+\family typewriter
+`verify_basic_data_structure()'
+\family default
+.
 \end_layout
 
 \begin_layout Subsubsection*
 test_track_dist
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: test_track_dist(this)
-\begin_inset Newline newline
-\end_inset
+test_track_dist(this)
+\end_layout
 
-Description: Test if the returned data structure fits into the pattern of
- a two eyes data with eyelink_trackdist set.
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Description
+\end_layout
 
+\begin_layout Standard
+Test if the returned data structure fits into the pattern of a two eyes
+ data with 
+\family typewriter
+eyelink_trackdist
+\family default
+ set.
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
-
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
-Calls `set_import_values(this)' to get import data set and expected channel
- data set 
+Call 
+\family typewriter
+`set_import_values(this)'
+\family default
+ to get import data set and expected channel data set.
 \end_layout
 
 \begin_layout Enumerate
-owerwrites some import data and channel data
+Overwrite some import data and channel data.
 \end_layout
 
 \begin_layout Enumerate
-pass returned sets to `verify_basic_data_structure()'
+Pass returned sets to 
+\family typewriter
+`verify_basic_data_structure()'
+\family default
+.
 \end_layout
 
 \begin_layout Subsection
@@ -12339,12 +12765,24 @@ Testcases: pspm_get_hb
 Information
 \end_layout
 
-\begin_layout Standard
-Testclass: pspm_get_hb_test 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Testclass
+\end_layout
 
-Function: [sts, data] = pspm_get_hb(import) 
+\begin_layout Standard
+
+\family typewriter
+pspm_get_hb_test
+\end_layout
+
+\begin_layout Subparagraph
+Function
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+[sts, data] = pspm_get_hb(import)
 \end_layout
 
 \begin_layout Subsubsection
@@ -12355,40 +12793,72 @@ Testcases
 Test
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: test(this) 
-\begin_inset Newline newline
-\end_inset
 
-Description: Test if all fields are returned correctly 
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+test(this)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Test if all fields are returned correctly.
+\end_layout
 
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
-Test if ‘sts' is equal 1.
+Test if 
+\family typewriter
+sts==1
+\family default
+.
 \end_layout
 
 \begin_layout Enumerate
-Test if data.data is equal import.data
+Test if 
+\family typewriter
+data.data
+\family default
+ is equal 
+\family typewriter
+import.data
 \end_layout
 
 \begin_layout Enumerate
-Test if data.header.chantype is ‘hb'
+Test if 
+\family typewriter
+data.header.chantype
+\family default
+ is 
+\family typewriter
+‘hb'
 \end_layout
 
 \begin_layout Enumerate
-Test if data.header.units is ‘events'
+Test if 
+\family typewriter
+data.header.units
+\family default
+ is 
+\family typewriter
+‘events'
 \end_layout
 
 \begin_layout Enumerate
-Test if data.header.sr is 1 
+Test if 
+\family typewriter
+data.header.sr==1
+\family default
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -12399,12 +12869,24 @@ Testcases: pspm_get_hr
 Information
 \end_layout
 
-\begin_layout Standard
-Testclass: pspm_get_hr_test 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Testclass
+\end_layout
 
-Function: [sts, data] = pspm_get_hr(import) 
+\begin_layout Standard
+
+\family typewriter
+pspm_get_hr_test
+\end_layout
+
+\begin_layout Subparagraph
+Function
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+[sts, data] = pspm_get_hr(import)
 \end_layout
 
 \begin_layout Subsubsection
@@ -12415,40 +12897,74 @@ Testcases
 Test
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: test(this) 
-\begin_inset Newline newline
-\end_inset
 
-Description: Test if all fields are returned correctly 
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+test(this)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Test if all fields are returned correctly.
+\end_layout
 
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
-Test if ‘sts' is equal 1.
+Test if 
+\family typewriter
+sts==1
+\family default
+.
 \end_layout
 
 \begin_layout Enumerate
-Test if data.data is equal import.data
+Test if 
+\family typewriter
+data.data
+\family default
+ is equal 
+\family typewriter
+import.data
 \end_layout
 
 \begin_layout Enumerate
-Test if data.header.chantype is ‘hr'
+Test if 
+\family typewriter
+data.header.chantype
+\family default
+ is 
+\family typewriter
+‘hr'
 \end_layout
 
 \begin_layout Enumerate
-Test if data.header.units is equal import.units
+Test if 
+\family typewriter
+data.header.units
+\family default
+ is equal 
+\family typewriter
+import.units
 \end_layout
 
 \begin_layout Enumerate
-Test if data.header.sr is equal import.sr 
+Test if 
+\family typewriter
+data.header.sr
+\family default
+ is equal 
+\family typewriter
+import.sr
 \end_layout
 
 \begin_layout Subsection
@@ -12459,12 +12975,24 @@ Testcases: pspm_get_marker
 Information
 \end_layout
 
-\begin_layout Standard
-Testclass: pspm_get_marker_test 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Testclass
+\end_layout
 
-Function: [sts, data] = pspm_get_marker(import) 
+\begin_layout Standard
+
+\family typewriter
+pspm_get_marker_test
+\end_layout
+
+\begin_layout Subparagraph
+Function
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+[sts, data] = pspm_get_marker(import)
 \end_layout
 
 \begin_layout Subsubsection
@@ -12475,40 +13003,78 @@ Testcases
 Test
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: test(this) 
-\begin_inset Newline newline
-\end_inset
 
-Description: Test if all fields are returned correctly 
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+test(this)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Test if all fields are returned correctly.
+\end_layout
 
-Tests:
+\begin_layout Subparagraph
+Tests
 \end_layout
 
 \begin_layout Enumerate
-Test if ‘sts' is equal 1.
+Test if 
+\family typewriter
+sts==1
+\family default
+.
 \end_layout
 
 \begin_layout Enumerate
-Test if data.data is equal import.data
+Test if 
+\family typewriter
+data.data
+\family default
+ is equal to 
+\family typewriter
+import.data
+\family default
+.
 \end_layout
 
 \begin_layout Enumerate
-Test if data.header.chantype is ‘marker'
+Test if 
+\family typewriter
+data.header.chantype
+\family default
+ is 
+\family typewriter
+‘marker'
+\family default
+.
 \end_layout
 
 \begin_layout Enumerate
-Test if data.header.units is ‘events'
+Test if 
+\family typewriter
+data.header.units
+\family default
+ is 
+\family typewriter
+‘events'
+\family default
+.
 \end_layout
 
 \begin_layout Enumerate
-Test if data.header.sr is 1 
+Test if 
+\family typewriter
+data.header.sr==1
+\family default
+.
 \end_layout
 
 \begin_layout Subsection
@@ -12520,11 +13086,19 @@ Information
 \end_layout
 
 \begin_layout Standard
-Testclass: pspm_get_pupil_test 
-\begin_inset Newline newline
-\end_inset
+Testclass
+\end_layout
 
-Function: [sts, data] = pspm_get_pupil(import) 
+\begin_layout Standard
+pspm_get_pupil_test
+\end_layout
+
+\begin_layout Standard
+Function
+\end_layout
+
+\begin_layout Standard
+[sts, data] = pspm_get_pupil(import)
 \end_layout
 
 \begin_layout Subsubsection
@@ -12552,7 +13126,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Test if ‘sts' is equal 1.
+Test if sts==1.
 \end_layout
 
 \begin_layout Enumerate
@@ -12612,7 +13186,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Test if ‘sts' is equal 1.
+Test if sts==1.
 \end_layout
 
 \begin_layout Enumerate
@@ -12669,7 +13243,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Test if ‘sts' is equal 1.
+Test if sts==1.
 \end_layout
 
 \begin_layout Enumerate
@@ -13515,7 +14089,7 @@ Tests:
 \end_layout
 
 \begin_layout Enumerate
-Test if ‘sts' is equal 1.
+Test if sts==1.
 \end_layout
 
 \begin_layout Enumerate
@@ -13724,34 +14298,38 @@ Testcases
 Invalid input arguments
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: invalid_input (this) 
-\begin_inset Newline newline
-\end_inset
 
-Description: Checks for warnings, if the input arguments are invalid.
- 
-\begin_inset Newline newline
-\end_inset
+\family typewriter
+invalid_input (this)
+\end_layout
 
+\begin_layout Subparagraph
+Description
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Standard
+Checks for warnings, if the input arguments are invalid.
+\end_layout
 
-Tests:
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset Newline newline
+\begin_layout Subparagraph
+Tests
+\begin_inset Newline linebreak
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="17" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="6cm">
-<column alignment="center" valignment="top">
+<features tabularvalignment="middle" tabularwidth="100text%">
+<column alignment="center" valignment="top" width="60text%">
+<column alignment="center" valignment="top" width="30text%">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -13777,6 +14355,8 @@ Expected warning
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_glm(model) [no timeunits field]
 \end_layout
 
@@ -13786,6 +14366,8 @@ pspm_glm(model) [no timeunits field]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -13797,6 +14379,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_glm(model) [no timeunits var]
 \end_layout
 
@@ -13806,6 +14390,8 @@ pspm_glm(model) [no timeunits var]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -13817,6 +14403,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_glm(model) with model.timeunits = ‘foo' [no valid timeunits field]
 \end_layout
 
@@ -13826,6 +14414,8 @@ pspm_glm(model) with model.timeunits = ‘foo' [no valid timeunits field]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -13837,6 +14427,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_glm(model) with model.timing = zeros(10,2) [no valid timing field]
 \end_layout
 
@@ -13846,6 +14438,8 @@ pspm_glm(model) with model.timing = zeros(10,2) [no valid timing field]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -13857,6 +14451,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_glm(model) with model.modality = `foo' [no valid modality field]
 \end_layout
 
@@ -13866,6 +14462,8 @@ pspm_glm(model) with model.modality = `foo' [no valid modality field]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -13877,6 +14475,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_glm(model) with model.channel = `scr' [no valid channel field]
 \end_layout
 
@@ -13886,6 +14486,8 @@ pspm_glm(model) with model.channel = `scr' [no valid channel field]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -13897,6 +14499,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_glm(model) with model.norm = `no' [no valid norm field]
 \end_layout
 
@@ -13906,6 +14510,8 @@ pspm_glm(model) with model.norm = `no' [no valid norm field]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -13917,6 +14523,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_glm(model) with model.filt.down = `none' [filt.down is not numeric]
 \end_layout
 
@@ -13926,6 +14534,8 @@ pspm_glm(model) with model.filt.down = `none' [filt.down is not numeric]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -13937,6 +14547,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_glm(model) with model.bf.fhandle = `foohandle' [non existing bf]
 \end_layout
 
@@ -13946,6 +14558,8 @@ pspm_glm(model) with model.bf.fhandle = `foohandle' [non existing bf]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_fhandle
 \end_layout
 
@@ -13957,6 +14571,8 @@ ID:invalid_fhandle
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_glm(model) with numel(model.datafile) != numel(model.timing)
 \end_layout
 
@@ -13966,6 +14582,8 @@ pspm_glm(model) with numel(model.datafile) != numel(model.timing)
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:number_of_elements_dont_match
 \end_layout
 
@@ -13977,6 +14595,8 @@ ID:number_of_elements_dont_match
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_glm(model) with model.missing is struct [non valid missing field]
 \end_layout
 
@@ -13986,6 +14606,8 @@ pspm_glm(model) with model.missing is struct [non valid missing field]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -13997,6 +14619,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_glm(model) with numel(model.datafile) != numel(model.missing)
 \end_layout
 
@@ -14006,6 +14630,8 @@ pspm_glm(model) with numel(model.datafile) != numel(model.missing)
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:number_of_elements_dont_match
 \end_layout
 
@@ -14017,6 +14643,8 @@ ID:number_of_elements_dont_match
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_glm(model) with model.nuisance is struct [non valid nuisance field]
 \end_layout
 
@@ -14026,6 +14654,8 @@ pspm_glm(model) with model.nuisance is struct [non valid nuisance field]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -14037,6 +14667,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_glm(model) with numel(model.datafile) != numel(model.nuisance)
 \end_layout
 
@@ -14046,7 +14678,33 @@ pspm_glm(model) with numel(model.datafile) != numel(model.nuisance)
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:number_of_elements_dont_match
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_glm(model) with no R variable in the nuisance file
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+ID:invalid_input
 \end_layout
 
 \end_inset
@@ -14057,26 +14715,8 @@ ID:number_of_elements_dont_match
 \begin_inset Text
 
 \begin_layout Plain Layout
-pspm_glm(model) with no R variable in the nuisance file
-\end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-ID:invalid_input
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell multicolumn="1" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none" width="4cm">
-\begin_inset Text
-
-\begin_layout Plain Layout
+\family typewriter
 pspm_glm(model) with R variable in the nuisance file that has not the same
  length as the datafile
 \end_layout
@@ -14087,6 +14727,8 @@ pspm_glm(model) with R variable in the nuisance file that has not the same
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:number_of_elements_dont_match
 \end_layout
 
@@ -14104,23 +14746,28 @@ ID:number_of_elements_dont_match
 Test 1
 \end_layout
 
+\begin_layout Subparagraph
+Format
+\end_layout
+
 \begin_layout Standard
-Function name: test1(this, shiftbf) 
-\begin_inset Newline newline
-\end_inset
 
-Description: Basic test with one basis function, one session, no nuisance
- regressors, no missings and one condition.
+\family typewriter
+test1(this, shiftbf)
+\end_layout
+
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+Basic test with one basis function, one session, no nuisance regressors,
+ no missings and one condition.
  Timeunits are seconds.
- 
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
-
-\begin_inset Newline newline
-\end_inset
-
-Testcases:
+\begin_layout Subparagraph
+Testcases
 \end_layout
 
 \begin_layout Enumerate
@@ -14139,23 +14786,28 @@ two pmods
 Test 2
 \end_layout
 
+\begin_layout Subparagraph
+Format
+\end_layout
+
 \begin_layout Standard
-Function name: test2(this, shiftbf) 
-\begin_inset Newline newline
-\end_inset
 
-Description: Test with one basis function, one session, no nuisance regressors,
- no missings and two conditions.
+\family typewriter
+test2(this, shiftbf)
+\end_layout
+
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+Test with one basis function, one session, no nuisance regressors, no missings
+ and two conditions.
  Timeunits are seconds.
- 
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
-
-\begin_inset Newline newline
-\end_inset
-
-Testcases:
+\begin_layout Subparagraph
+Testcases
 \end_layout
 
 \begin_layout Enumerate
@@ -14357,12 +15009,24 @@ Testcases: pspm_hb2hp
 Information
 \end_layout
 
-\begin_layout Standard
-Testclass: pspm_hb2hp_test 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Testclass
+\end_layout
 
-Function: [sts, infos] = pspm_hb2hp(fn, sr, chan, options)
+\begin_layout Standard
+
+\family typewriter
+pspm_hb2hp_test
+\end_layout
+
+\begin_layout Subparagraph
+Function
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+[sts, infos] = pspm_hb2hp(fn, sr, chan, options)
 \end_layout
 
 \begin_layout Subsubsection
@@ -14373,29 +15037,38 @@ Testcases
 Invalid input
 \end_layout
 
+\begin_layout Subparagraph
+Function name
+\end_layout
+
 \begin_layout Standard
-Function name: invalid_input(this) 
-\begin_inset Newline newline
+
+\family typewriter
+invalid_input(this)
+\end_layout
+
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+Checks for warnings, if the input arguments are invalid.
+\end_layout
+
+\begin_layout Subparagraph
+Tests
+\begin_inset Newline linebreak
 \end_inset
 
-Description: Checks for warnings, if the input arguments are invalid.
- 
-\begin_inset Newline newline
-\end_inset
 
-
-\begin_inset Newline newline
-\end_inset
-
-Tests: 
 \end_layout
 
 \begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="9" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
+<features tabularvalignment="middle" tabularwidth="90text%">
+<column alignment="center" valignment="top" width="50text%">
+<column alignment="center" valignment="top" width="30text%">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -14421,6 +15094,8 @@ Expected warning
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_hb2hp() [no input]
 \end_layout
 
@@ -14430,6 +15105,8 @@ pspm_hb2hp() [no input]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -14441,6 +15118,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_hb2hp(2) [not a string filename]
 \end_layout
 
@@ -14450,6 +15129,8 @@ pspm_hb2hp(2) [not a string filename]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -14461,6 +15142,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_hb2hp(`abc') [no sample rate]
 \end_layout
 
@@ -14470,6 +15153,8 @@ pspm_hb2hp(`abc') [no sample rate]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -14481,6 +15166,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_hb2hp(`abc',`abc') [not a string sample rate]
 \end_layout
 
@@ -14490,6 +15177,8 @@ pspm_hb2hp(`abc',`abc') [not a string sample rate]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -14501,6 +15190,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_hb2hp(`abc',2,`abc') [not a numeric chanel]
 \end_layout
 
@@ -14510,6 +15201,8 @@ pspm_hb2hp(`abc',2,`abc') [not a numeric chanel]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -14521,6 +15214,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_hb2hp(files{1},100) [call of pspm_load_data fails]
 \end_layout
 
@@ -14530,6 +15225,8 @@ pspm_hb2hp(files{1},100) [call of pspm_load_data fails]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -14541,6 +15238,8 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_hb2hp(files{2}, 100) [not enough points for interp1]
 \end_layout
 
@@ -14550,6 +15249,8 @@ pspm_hb2hp(files{2}, 100) [not enough points for interp1]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:too_strict_limits
 \end_layout
 
@@ -14561,6 +15262,8 @@ ID:too_strict_limits
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_hb2hp(files{3},100,[],options) [pspm_write_channel fails]
 \end_layout
 
@@ -14570,6 +15273,8 @@ pspm_hb2hp(files{3},100,[],options) [pspm_write_channel fails]
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ID:invalid_input
 \end_layout
 
@@ -21990,6 +22695,36 @@ VBA_NLStateSpaceModel.m
 : added resetting warning to preceeding state.
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+GitHub Actions
+\end_layout
+
+\begin_layout Quote
+Contributed by Dadi Zhao
+\end_layout
+
+\begin_layout Quote
+Updated in Feburary 2022
+\end_layout
+
+\begin_layout Standard
+GitHub Actions is a CI environment for testing PsPM.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 List of functions
 \end_layout
@@ -21998,10 +22733,10 @@ List of functions
 \begin_inset Tabular
 <lyxtabular version="3" rows="156" columns="4">
 <features islongtable="true" longtabularalignment="center">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top" width="4cm">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="50text%">
+<column alignment="center" valignment="top" width="15text%">
+<column alignment="center" valignment="top" width="10text%">
+<column alignment="center" valignment="top" width="10text%">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -22016,7 +22751,7 @@ Name
 \begin_inset Text
 
 \begin_layout Plain Layout
-Main author
+Main Author(s)
 \end_layout
 
 \end_inset
@@ -22045,6 +22780,8 @@ Test Doc
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 f_SCR
 \end_layout
 
@@ -22054,7 +22791,7 @@ f_SCR
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach & Jean Daunizeau
+DB & JD
 \end_layout
 
 \end_inset
@@ -22083,6 +22820,8 @@ Dominik Bach & Jean Daunizeau
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 f_SF
 \end_layout
 
@@ -22092,7 +22831,7 @@ f_SF
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -22121,6 +22860,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 g_SCR
 \end_layout
 
@@ -22130,7 +22871,7 @@ g_SCR
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -22159,6 +22900,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm
 \end_layout
 
@@ -22168,7 +22911,7 @@ pspm
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -22197,6 +22940,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 scr
 \end_layout
 
@@ -22206,7 +22951,7 @@ scr
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -22235,6 +22980,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_align_channels
 \end_layout
 
@@ -22244,7 +22991,7 @@ pspm_align_channels
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -22273,6 +23020,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_axpos
 \end_layout
 
@@ -22282,7 +23031,7 @@ pspm_axpos
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -22311,6 +23060,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_bf_brf
 \end_layout
 
@@ -22320,7 +23071,7 @@ pspm_bf_brf
 \begin_inset Text
 
 \begin_layout Plain Layout
-Saurabh Khemka & Dominik Bach
+SK & DB
 \end_layout
 
 \end_inset
@@ -22349,6 +23100,8 @@ Saurabh Khemka & Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_bf_FIR
 \end_layout
 
@@ -22358,7 +23111,7 @@ pspm_bf_FIR
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -22387,6 +23140,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_bf_Fourier
 \end_layout
 
@@ -22396,7 +23151,7 @@ pspm_bf_Fourier
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -22425,6 +23180,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_bf_hprf
 \end_layout
 
@@ -22434,7 +23191,7 @@ pspm_bf_hprf
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -22463,6 +23220,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_bf_hprf_e
 \end_layout
 
@@ -22472,7 +23231,7 @@ pspm_bf_hprf_e
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -22501,6 +23260,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_bf_hprf_fc
 \end_layout
 
@@ -22510,7 +23271,7 @@ pspm_bf_hprf_fc
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -22539,6 +23300,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_bf_hprf_fc_f
 \end_layout
 
@@ -22548,7 +23311,7 @@ pspm_bf_hprf_fc_f
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -22577,6 +23340,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_bf_lcrf_gm
 \end_layout
 
@@ -22586,7 +23351,7 @@ pspm_bf_lcrf_gm
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -22615,6 +23380,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_bf_ldrf_gm
 \end_layout
 
@@ -22624,7 +23391,7 @@ pspm_bf_ldrf_gm
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -22653,6 +23420,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_bf_ldrf_gu
 \end_layout
 
@@ -22662,7 +23431,7 @@ pspm_bf_ldrf_gu
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -22691,6 +23460,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_bf_psrf_fc
 \end_layout
 
@@ -22700,7 +23471,7 @@ pspm_bf_psrf_fc
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -22729,6 +23500,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_rarf_e
 \end_layout
 
@@ -22738,7 +23511,7 @@ pspm_rarf_e
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -22767,6 +23540,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_rarf_fc
 \end_layout
 
@@ -22776,7 +23551,7 @@ pspm_rarf_fc
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -22805,6 +23580,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_rfrrf_e
 \end_layout
 
@@ -22814,7 +23591,7 @@ pspm_rfrrf_e
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -22843,6 +23620,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_rprf_e
 \end_layout
 
@@ -22852,7 +23631,7 @@ pspm_rprf_e
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -22881,6 +23660,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_bf_scrf_f
 \end_layout
 
@@ -22890,7 +23671,7 @@ pspm_bf_scrf_f
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -22919,6 +23700,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_bf_scrf
 \end_layout
 
@@ -22928,7 +23711,7 @@ pspm_bf_scrf
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -22957,6 +23740,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_bf_spsrf_box
 \end_layout
 
@@ -22966,7 +23751,7 @@ pspm_bf_spsrf_box
 \begin_inset Text
 
 \begin_layout Plain Layout
-Laure Ciernik
+LC
 \end_layout
 
 \end_inset
@@ -22995,6 +23780,8 @@ Laure Ciernik
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_bf_spsrf_gamma
 \end_layout
 
@@ -23004,7 +23791,7 @@ pspm_bf_spsrf_gamma
 \begin_inset Text
 
 \begin_layout Plain Layout
-Laure Ciernik
+LC
 \end_layout
 
 \end_inset
@@ -23033,6 +23820,8 @@ Laure Ciernik
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_butter
 \end_layout
 
@@ -23042,7 +23831,7 @@ pspm_butter
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -23071,6 +23860,8 @@ X
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_compute_visual_angle
 \end_layout
 
@@ -23080,7 +23871,7 @@ pspm_compute_visual_angle
 \begin_inset Text
 
 \begin_layout Plain Layout
-Laure Ciernik
+LC
 \end_layout
 
 \end_inset
@@ -23109,6 +23900,8 @@ Laure Ciernik
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_con1
 \end_layout
 
@@ -23118,7 +23911,7 @@ pspm_con1
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -23147,6 +23940,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_con2
 \end_layout
 
@@ -23156,7 +23951,7 @@ pspm_con2
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -23185,6 +23980,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_contrast
 \end_layout
 
@@ -23194,7 +23991,7 @@ pspm_contrast
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -23223,6 +24020,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_convert_area2diameter
 \end_layout
 
@@ -23232,7 +24031,7 @@ pspm_convert_area2diameter
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -23261,6 +24060,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_convert_au2mm
 \end_layout
 
@@ -23270,7 +24071,7 @@ pspm_convert_au2mm
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -23299,6 +24100,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_convert_illum2lum
 \end_layout
 
@@ -23308,7 +24111,7 @@ pspm_convert_illum2lum
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -23337,6 +24140,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_convert_lux2cdm2
 \end_layout
 
@@ -23346,7 +24151,7 @@ pspm_convert_lux2cdm2
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -23375,6 +24180,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_convert_mm2visdeg
 \end_layout
 
@@ -23384,7 +24191,7 @@ pspm_convert_mm2visdeg
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -23413,6 +24220,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_convert_pixel2unit
 \end_layout
 
@@ -23422,7 +24231,7 @@ pspm_convert_pixel2unit
 \begin_inset Text
 
 \begin_layout Plain Layout
-Laure Ciernik
+LC
 \end_layout
 
 \end_inset
@@ -23451,6 +24260,8 @@ Laure Ciernik
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_convert_unit
 \end_layout
 
@@ -23460,7 +24271,7 @@ pspm_convert_unit
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -23489,6 +24300,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_convert_visangle2sps
 \end_layout
 
@@ -23498,7 +24311,7 @@ pspm_convert_visangle2sps
 \begin_inset Text
 
 \begin_layout Plain Layout
-Laure Ciernik
+LC
 \end_layout
 
 \end_inset
@@ -23527,6 +24340,8 @@ Laure Ciernik
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_data_editor
 \end_layout
 
@@ -23536,7 +24351,7 @@ pspm_data_editor
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -23565,6 +24380,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_dcm_inv
 \end_layout
 
@@ -23574,7 +24391,7 @@ pspm_dcm_inv
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -23603,6 +24420,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_dcm
 \end_layout
 
@@ -23612,7 +24431,7 @@ pspm_dcm
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -23641,6 +24460,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_denoise_spike
 \end_layout
 
@@ -23650,7 +24471,7 @@ pspm_denoise_spike
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -23679,6 +24500,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_display
 \end_layout
 
@@ -23688,7 +24511,7 @@ pspm_display
 \begin_inset Text
 
 \begin_layout Plain Layout
-Philipp C Paulus
+PCP
 \end_layout
 
 \end_inset
@@ -23717,6 +24540,8 @@ Philipp C Paulus
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_down
 \end_layout
 
@@ -23726,7 +24551,7 @@ pspm_down
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -23755,6 +24580,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_downsample
 \end_layout
 
@@ -23764,7 +24591,7 @@ pspm_downsample
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -23793,6 +24620,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_ecg2hb
 \end_layout
 
@@ -23802,7 +24631,7 @@ pspm_ecg2hb
 \begin_inset Text
 
 \begin_layout Plain Layout
-Philipp C Paulus
+PCP
 \end_layout
 
 \end_inset
@@ -23831,6 +24660,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_ecg2hb_amri
 \end_layout
 
@@ -23840,7 +24671,7 @@ pspm_ecg2hb_amri
 \begin_inset Text
 
 \begin_layout Plain Layout
-Eshref Yozdemir
+EY
 \end_layout
 
 \end_inset
@@ -23869,6 +24700,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_ecg_editor
 \end_layout
 
@@ -23878,7 +24711,7 @@ pspm_ecg_editor
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -23907,6 +24740,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_exp
 \end_layout
 
@@ -23916,7 +24751,7 @@ pspm_exp
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -23945,6 +24780,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_extract_segments
 \end_layout
 
@@ -23954,7 +24791,7 @@ pspm_extract_segments
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -23983,6 +24820,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_filtfilt
 \end_layout
 
@@ -23992,7 +24831,7 @@ pspm_filtfilt
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -24021,6 +24860,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_channel
 \end_layout
 
@@ -24030,7 +24871,7 @@ pspm_find_channel
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -24059,6 +24900,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_data_epochs
 \end_layout
 
@@ -24068,7 +24911,7 @@ pspm_find_data_epochs
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -24097,6 +24940,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_sounds
 \end_layout
 
@@ -24106,7 +24951,7 @@ pspm_find_sounds
 \begin_inset Text
 
 \begin_layout Plain Layout
-Samuel Gerster
+SG
 \end_layout
 
 \end_inset
@@ -24135,6 +24980,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_find_valid_fixations
 \end_layout
 
@@ -24144,7 +24991,7 @@ pspm_find_valid_fixations
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -24173,6 +25020,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_acq_bioread
 \end_layout
 
@@ -24182,7 +25031,7 @@ pspm_get_acq_bioread
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -24211,6 +25060,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_acq
 \end_layout
 
@@ -24220,7 +25071,7 @@ pspm_get_acq
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -24249,6 +25100,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_acqmat
 \end_layout
 
@@ -24258,7 +25111,7 @@ pspm_get_acqmat
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -24287,6 +25140,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_biograph
 \end_layout
 
@@ -24296,7 +25151,7 @@ pspm_get_biograph
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -24325,6 +25180,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_biosemi
 \end_layout
 
@@ -24334,7 +25191,7 @@ pspm_get_biosemi
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -24363,6 +25220,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_biotrace
 \end_layout
 
@@ -24372,7 +25231,7 @@ pspm_get_biotrace
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -24401,6 +25260,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_blink_l
 \end_layout
 
@@ -24410,7 +25271,7 @@ pspm_get_blink_l
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -24439,6 +25300,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_blink_r
 \end_layout
 
@@ -24448,7 +25311,7 @@ pspm_get_blink_r
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -24477,6 +25340,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_brainvis
 \end_layout
 
@@ -24486,7 +25351,7 @@ pspm_get_brainvis
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -24515,6 +25380,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_cell
 \end_layout
 
@@ -24524,7 +25391,7 @@ pspm_get_cell
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -24553,6 +25420,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_cnt
 \end_layout
 
@@ -24562,7 +25431,7 @@ pspm_get_cnt
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -24591,6 +25460,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_custom
 \end_layout
 
@@ -24600,7 +25471,7 @@ pspm_get_custom
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -24629,6 +25500,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_ecg
 \end_layout
 
@@ -24638,7 +25511,7 @@ pspm_get_ecg
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -24667,6 +25540,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_edf
 \end_layout
 
@@ -24676,7 +25551,7 @@ pspm_get_edf
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -24705,6 +25580,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_events
 \end_layout
 
@@ -24714,7 +25591,7 @@ pspm_get_events
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -24743,6 +25620,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_eyelink
 \end_layout
 
@@ -24752,7 +25631,7 @@ pspm_get_eyelink
 \begin_inset Text
 
 \begin_layout Plain Layout
-Christoph Korn, Tobias Moser
+CK & TM
 \end_layout
 
 \end_inset
@@ -24781,6 +25660,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_gaze_x_l
 \end_layout
 
@@ -24790,7 +25671,7 @@ pspm_get_gaze_x_l
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -24819,6 +25700,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_gaze_y_l
 \end_layout
 
@@ -24828,7 +25711,7 @@ pspm_get_gaze_y_l
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -24857,6 +25740,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_gaze_x_r
 \end_layout
 
@@ -24866,7 +25751,7 @@ pspm_get_gaze_x_r
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -24895,6 +25780,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_gaze_y_r
 \end_layout
 
@@ -24904,7 +25791,7 @@ pspm_get_gaze_y_r
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -24933,6 +25820,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_hb
 \end_layout
 
@@ -24942,7 +25831,7 @@ pspm_get_hb
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -24971,6 +25860,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_hp
 \end_layout
 
@@ -24980,7 +25871,7 @@ pspm_get_hp
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -25009,6 +25900,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_hr
 \end_layout
 
@@ -25018,7 +25911,7 @@ pspm_get_hr
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -25047,6 +25940,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_labchartmat_ext
 \end_layout
 
@@ -25056,7 +25951,7 @@ pspm_get_labchartmat_ext
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -25085,6 +25980,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_labchartmat_in
 \end_layout
 
@@ -25094,7 +25991,7 @@ pspm_get_labchartmat_in
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -25123,6 +26020,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_marker
 \end_layout
 
@@ -25132,7 +26031,7 @@ pspm_get_marker
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -25161,6 +26060,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_markerinfo
 \end_layout
 
@@ -25170,7 +26071,7 @@ pspm_get_markerinfo
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -25199,6 +26100,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_mat
 \end_layout
 
@@ -25208,7 +26111,7 @@ pspm_get_mat
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -25237,6 +26140,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_obs
 \end_layout
 
@@ -25246,7 +26151,7 @@ pspm_get_obs
 \begin_inset Text
 
 \begin_layout Plain Layout
-Linus Rüttimann
+LR
 \end_layout
 
 \end_inset
@@ -25275,6 +26180,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_physlog
 \end_layout
 
@@ -25284,7 +26191,7 @@ pspm_get_physlog
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -25313,6 +26220,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_pupil
 \end_layout
 
@@ -25322,7 +26231,7 @@ pspm_get_pupil
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -25351,6 +26260,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_pupil_l
 \end_layout
 
@@ -25360,7 +26271,7 @@ pspm_get_pupil_l
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -25389,6 +26300,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_pupil_r
 \end_layout
 
@@ -25398,7 +26311,7 @@ pspm_get_pupil_r
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -25427,6 +26340,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_resp
 \end_layout
 
@@ -25436,7 +26351,7 @@ pspm_get_resp
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -25465,6 +26380,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_rf
 \end_layout
 
@@ -25474,7 +26391,7 @@ pspm_get_rf
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -25503,6 +26420,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_saccade_l
 \end_layout
 
@@ -25512,7 +26431,7 @@ pspm_get_saccade_l
 \begin_inset Text
 
 \begin_layout Plain Layout
-Laure Ciernik
+LC
 \end_layout
 
 \end_inset
@@ -25541,6 +26460,8 @@ Laure Ciernik
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_saccade_r
 \end_layout
 
@@ -25550,7 +26471,7 @@ pspm_get_saccade_r
 \begin_inset Text
 
 \begin_layout Plain Layout
-Laure Ciernik
+LC
 \end_layout
 
 \end_inset
@@ -25579,6 +26500,8 @@ Laure Ciernik
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_scr
 \end_layout
 
@@ -25588,7 +26511,7 @@ pspm_get_scr
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -25617,6 +26540,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_smi
 \end_layout
 
@@ -25626,7 +26551,7 @@ pspm_get_smi
 \begin_inset Text
 
 \begin_layout Plain Layout
-Eshref Yozdemir
+EY
 \end_layout
 
 \end_inset
@@ -25655,6 +26580,8 @@ Eshref Yozdemir
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_sps
 \end_layout
 
@@ -25664,7 +26591,7 @@ pspm_get_sps
 \begin_inset Text
 
 \begin_layout Plain Layout
-Laure Ciernik
+LC
 \end_layout
 
 \end_inset
@@ -25693,6 +26620,8 @@ Laure Ciernik
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_spike
 \end_layout
 
@@ -25702,7 +26631,7 @@ pspm_get_spike
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -25731,6 +26660,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_sound
 \end_layout
 
@@ -25740,7 +26671,7 @@ pspm_get_sound
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -25769,6 +26700,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_timing
 \end_layout
 
@@ -25778,7 +26711,7 @@ pspm_get_timing
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -25807,6 +26740,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_txt
 \end_layout
 
@@ -25816,7 +26751,7 @@ pspm_get_txt
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -25845,6 +26780,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_vario
 \end_layout
 
@@ -25854,7 +26791,7 @@ pspm_get_vario
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -25883,6 +26820,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_viewpoint
 \end_layout
 
@@ -25892,7 +26831,7 @@ pspm_get_viewpoint
 \begin_inset Text
 
 \begin_layout Plain Layout
-Eshref Yozdemir
+EY
 \end_layout
 
 \end_inset
@@ -25921,6 +26860,8 @@ Eshref Yozdemir
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_wdq
 \end_layout
 
@@ -25930,7 +26871,7 @@ pspm_get_wdq
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -25959,6 +26900,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_get_wdq_n
 \end_layout
 
@@ -25968,7 +26911,7 @@ pspm_get_wdq_n
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -25997,6 +26940,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_glm_recon
 \end_layout
 
@@ -26006,7 +26951,7 @@ pspm_glm_recon
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -26035,6 +26980,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_glm
 \end_layout
 
@@ -26044,7 +26991,7 @@ pspm_glm
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -26073,6 +27020,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_hb2hp
 \end_layout
 
@@ -26082,7 +27031,7 @@ pspm_hb2hp
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -26111,6 +27060,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_hb2hr
 \end_layout
 
@@ -26120,7 +27071,7 @@ pspm_hb2hr
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -26149,6 +27100,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_import
 \end_layout
 
@@ -26158,7 +27111,7 @@ pspm_import
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -26187,6 +27140,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_init
 \end_layout
 
@@ -26196,7 +27151,7 @@ pspm_init
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -26225,6 +27180,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_interpolate
 \end_layout
 
@@ -26234,7 +27191,7 @@ pspm_interpolate
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -26263,6 +27220,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_jobman
 \end_layout
 
@@ -26272,7 +27231,7 @@ pspm_jobman
 \begin_inset Text
 
 \begin_layout Plain Layout
-Gabriel Gräni
+GG
 \end_layout
 
 \end_inset
@@ -26301,6 +27260,8 @@ Gabriel Gräni
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_job_create
 \end_layout
 
@@ -26310,7 +27271,7 @@ pspm_job_create
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -26339,6 +27300,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_load_data
 \end_layout
 
@@ -26348,7 +27311,7 @@ pspm_load_data
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -26377,6 +27340,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_load1
 \end_layout
 
@@ -26386,7 +27351,7 @@ pspm_load1
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -26415,6 +27380,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_load_single_chan
 \end_layout
 
@@ -26424,7 +27391,7 @@ pspm_load_single_chan
 \begin_inset Text
 
 \begin_layout Plain Layout
-Eshref Yozdemir
+EY
 \end_layout
 
 \end_inset
@@ -26453,6 +27420,8 @@ Eshref Yozdemir
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_merge
 \end_layout
 
@@ -26462,7 +27431,7 @@ pspm_merge
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -26491,6 +27460,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_path
 \end_layout
 
@@ -26500,7 +27471,7 @@ pspm_path
 \begin_inset Text
 
 \begin_layout Plain Layout
-Eshref Yozdemir
+EY
 \end_layout
 
 \end_inset
@@ -26529,6 +27500,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_peakscore
 \end_layout
 
@@ -26538,7 +27511,7 @@ pspm_peakscore
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -26567,6 +27540,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_pp
 \end_layout
 
@@ -26576,7 +27551,7 @@ pspm_pp
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -26605,6 +27580,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_ppu2hb
 \end_layout
 
@@ -26614,7 +27591,7 @@ pspm_ppu2hb
 \begin_inset Text
 
 \begin_layout Plain Layout
-Samuel Gerster
+SG
 \end_layout
 
 \end_inset
@@ -26643,6 +27620,8 @@ Samuel Gerster
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_predval
 \end_layout
 
@@ -26652,7 +27631,7 @@ pspm_predval
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -26681,6 +27660,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_prepdata
 \end_layout
 
@@ -26690,7 +27671,7 @@ pspm_prepdata
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -26719,6 +27700,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_process_illuminance
 \end_layout
 
@@ -26728,7 +27711,7 @@ pspm_process_illuminance
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -26757,6 +27740,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_pulse_convert
 \end_layout
 
@@ -26766,7 +27751,7 @@ pspm_pulse_convert
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -26795,6 +27780,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_pupil_correct_eyelink
 \end_layout
 
@@ -26804,7 +27791,7 @@ pspm_pupil_correct_eyelink
 \begin_inset Text
 
 \begin_layout Plain Layout
-Eshref Yozdemir
+EY
 \end_layout
 
 \end_inset
@@ -26833,6 +27820,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_pupil_correct
 \end_layout
 
@@ -26842,7 +27831,7 @@ pspm_pupil_correct
 \begin_inset Text
 
 \begin_layout Plain Layout
-Eshref Yozdemir
+EY
 \end_layout
 
 \end_inset
@@ -26871,6 +27860,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_pupil_pp
 \end_layout
 
@@ -26880,7 +27871,7 @@ pspm_pupil_pp
 \begin_inset Text
 
 \begin_layout Plain Layout
-Eshref Yozdemir
+EY
 \end_layout
 
 \end_inset
@@ -26909,6 +27900,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_pupil_pp_options
 \end_layout
 
@@ -26918,7 +27911,7 @@ pspm_pupil_pp_options
 \begin_inset Text
 
 \begin_layout Plain Layout
-Eshref Yozdemir
+EY
 \end_layout
 
 \end_inset
@@ -26947,6 +27940,8 @@ Eshref Yozdemir
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_quit
 \end_layout
 
@@ -26956,7 +27951,7 @@ pspm_quit
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -26985,6 +27980,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_ren
 \end_layout
 
@@ -26994,7 +27991,7 @@ pspm_ren
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -27023,6 +28020,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_resp_pp
 \end_layout
 
@@ -27032,7 +28031,7 @@ pspm_resp_pp
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -27061,6 +28060,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_rev_con
 \end_layout
 
@@ -27070,7 +28071,7 @@ pspm_rev_con
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -27099,6 +28100,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_rev_dcm
 \end_layout
 
@@ -27108,7 +28111,7 @@ pspm_rev_dcm
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -27137,6 +28140,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_rev_glm
 \end_layout
 
@@ -27146,7 +28151,7 @@ pspm_rev_glm
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -27175,6 +28180,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_rev2
 \end_layout
 
@@ -27184,7 +28191,7 @@ pspm_rev2
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -27213,6 +28220,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_review
 \end_layout
 
@@ -27222,7 +28231,7 @@ pspm_review
 \begin_inset Text
 
 \begin_layout Plain Layout
-Gabriel Graeni
+GG
 \end_layout
 
 \end_inset
@@ -27251,6 +28260,8 @@ Gabriel Graeni
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_segment_mean
 \end_layout
 
@@ -27260,7 +28271,7 @@ pspm_segment_mean
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -27289,6 +28300,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_scr_pp
 \end_layout
 
@@ -27298,7 +28311,7 @@ pspm_scr_pp
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dadi Zhao
+DZ
 \end_layout
 
 \end_inset
@@ -27327,6 +28340,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_sf_auc
 \end_layout
 
@@ -27336,7 +28351,7 @@ pspm_sf_auc
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -27365,6 +28380,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_sf_dcm
 \end_layout
 
@@ -27374,7 +28391,7 @@ pspm_sf_dcm
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -27403,6 +28420,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_sf_mp
 \end_layout
 
@@ -27412,7 +28431,7 @@ pspm_sf_mp
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -27441,6 +28460,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_sf_scl
 \end_layout
 
@@ -27450,7 +28471,7 @@ pspm_sf_scl
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -27479,6 +28500,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_sf_theta
 \end_layout
 
@@ -27488,7 +28511,7 @@ pspm_sf_theta
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -27517,6 +28540,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_sf
 \end_layout
 
@@ -27526,7 +28551,7 @@ pspm_sf
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -27555,6 +28580,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_sf_get_theta
 \end_layout
 
@@ -27564,7 +28591,7 @@ pspm_sf_get_theta
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -27593,6 +28620,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_show_arms
 \end_layout
 
@@ -27602,7 +28631,7 @@ pspm_show_arms
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -27631,6 +28660,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_spike_convert
 \end_layout
 
@@ -27640,7 +28671,7 @@ pspm_spike_convert
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -27669,6 +28700,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_split_sessions
 \end_layout
 
@@ -27678,7 +28711,7 @@ pspm_split_sessions
 \begin_inset Text
 
 \begin_layout Plain Layout
-Linus Rüttimann
+LR
 \end_layout
 
 \end_inset
@@ -27707,6 +28740,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_transfer_function
 \end_layout
 
@@ -27716,7 +28751,7 @@ pspm_transfer_function
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -27745,6 +28780,8 @@ Dominik Bach
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_time2index
 \end_layout
 
@@ -27754,7 +28791,7 @@ pspm_time2index
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dadi Zhao
+DZ
 \end_layout
 
 \end_inset
@@ -27783,6 +28820,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_trim
 \end_layout
 
@@ -27792,7 +28831,7 @@ pspm_trim
 \begin_inset Text
 
 \begin_layout Plain Layout
-Dominik Bach
+DB
 \end_layout
 
 \end_inset
@@ -27821,6 +28860,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_version
 \end_layout
 
@@ -27830,7 +28871,7 @@ pspm_version
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -27859,6 +28900,8 @@ Tobias Moser
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 pspm_write_channel
 \end_layout
 
@@ -27868,7 +28911,7 @@ pspm_write_channel
 \begin_inset Text
 
 \begin_layout Plain Layout
-Tobias Moser
+TM
 \end_layout
 
 \end_inset
@@ -27897,6 +28940,8 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 set_blinks_saccades_to_nan
 \end_layout
 
@@ -27906,7 +28951,7 @@ set_blinks_saccades_to_nan
 \begin_inset Text
 
 \begin_layout Plain Layout
-Eshref Yozdemir
+EY
 \end_layout
 
 \end_inset
@@ -27935,6 +28980,58 @@ x
 \end_inset
 
 
+\end_layout
+
+\begin_layout Paragraph
+Contributors
+\end_layout
+
+\begin_layout Description
+DB Dominik Bach
+\end_layout
+
+\begin_layout Description
+LC Laure Ciernik
+\end_layout
+
+\begin_layout Description
+JD Jean Daunizeau
+\end_layout
+
+\begin_layout Description
+SG Samuel Gerster
+\end_layout
+
+\begin_layout Description
+GG Gabriel Graeni
+\end_layout
+
+\begin_layout Description
+SK Saurabh Khemka
+\end_layout
+
+\begin_layout Description
+CK Christoph Korn
+\end_layout
+
+\begin_layout Description
+TM Tobias Moser
+\end_layout
+
+\begin_layout Description
+PCP Philipp C Paulus
+\end_layout
+
+\begin_layout Description
+LR Linus Rüttimann
+\end_layout
+
+\begin_layout Description
+EY Eshref Yozdemir
+\end_layout
+
+\begin_layout Description
+DZ Dadi Zhao
 \end_layout
 
 \end_body
