@@ -3,8 +3,16 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
   % DEFINITION
   %   pspm_scr_pp_test validate the behaviour of pspm_scr_pp
   %
+  % VALIDATION
+  % ├─ chantype
+  % │   ├─ scr
+  % │   └─ hb, scr
+  % └─ channel_action
+  %     ├─ add
+  %     ├─ replace
+  %     └─ withdraw
   % (C) 2013 Linus Rittimann (University of Zurich)
-  % 2021 Teddy Chao (WCHN. UCL)
+  % 2021 Teddy Chao (WCHN UCL)
 
   properties(Constant)
     fn = 'scr_pp_test.mat';
@@ -26,27 +34,36 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
     end
 
     function scr_pp_test(this)
-      channels{1}.chantype = 'scr';
+      scr_pp_test_single_channel(this);
+      scr_pp_test_multiple_channels(this);
+    end
 
-      % filter one channel
+    function scr_pp_test_single_channel(this)
+      channels{1}.chantype = 'scr';
+      scr_pp_test_template(this, channels)
+    end
+
+    function scr_pp_test_multiple_channel(this)
+      channels{1}.chantype = 'hb';
+      channels{2}.chantype = 'scr';
+      scr_pp_test_template(this, channels)
+    end
+
+    function scr_pp_test_template(this, channels)
       options1 = struct('deflection_threshold', 0, ...
         'expand_epochs', 0, ...
         'channel_action', 'add');
-
       options2 = struct('deflection_threshold', 0, ...
         'channel', 'scr', ...
         'expand_epochs', 0, ...
         'channel_action', 'replace');
-
       options3 = struct('deflection_threshold', 0, ...
         'channel', 'scr', ...
         'expand_epochs', 0, ...
         'channel_action', 'withdraw');
-
       options4 = struct('missing_epochs_filename', 'test_missing.mat', ...
         'deflection_threshold', 0, ...
         'expand_epochs', 0);
-
       options5 = struct('missing_epochs_filename', 'test_missing.mat', ...
         'deflection_threshold', 0, ...
         'expand_epochs', 0, ...
@@ -58,7 +75,7 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
       this.verifyTrue(filestruct.numofchan == numel(channels), ...
       'the returned file contains not as many channels as the inputfile');
 
-      % Verifying the situation without no missing epochs filename option 
+      % Verifying the situation without no missing epochs filename option
       % and add the epochs to the file
       pspm_testdata_gen(channels, this.duration, this.fn);
       [~, out] = pspm_scr_pp(this.fn, options1);
@@ -66,7 +83,7 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
       this.verifyTrue(sts_out == 1, 'the returned file couldn''t be loaded');
       this.verifyTrue(fstruct_out.numofchan == numel(channels)+1, 'the output has the same size');
 
-      % Verifying the situation without no missing epochs filename option 
+      % Verifying the situation without no missing epochs filename option
       % and replace the data in the file
       pspm_testdata_gen(channels, this.duration, this.fn);
       [~, out] = pspm_scr_pp(this.fn, options2);
@@ -74,7 +91,7 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
       this.verifyTrue(sts_out == 1, 'the returned file couldn''t be loaded');
       this.verifyTrue(fstruct_out.numofchan == numel(channels), 'the output has a different size');
 
-      % Verifying the situation without no missing epochs filename option 
+      % Verifying the situation without no missing epochs filename option
       % and withdraw the data in the file
       pspm_testdata_gen(channels, this.duration, this.fn);
       [~, out] = pspm_scr_pp(this.fn, options3);
@@ -111,5 +128,6 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
       delete(this.fn);
       delete('test_missing.mat');
     end
+
   end
 end
