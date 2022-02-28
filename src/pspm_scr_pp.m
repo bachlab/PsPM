@@ -165,8 +165,8 @@ end
 if options.change_data == 0 && ~isfield(options, 'missing_epochs_filename')
   warning('This procedure leads to no output, according to the selected options.');
 end
-if ~ismember(options.channel_action, {'add', 'replace'})
-  warning('ID:invalid_input', 'Option channel_action must be either ''add'' or ''repalce''');
+if ~ismember(options.channel_action, {'add', 'replace', 'withdraw'})
+  warning('ID:invalid_input', 'Option channel_action must be either ''add'', ''repalce'' or ''withdraw''');
   return;
 end
 
