@@ -14826,30 +14826,29 @@ first condition: one pmod; second condition: two pmods
 Test 3
 \end_layout
 
+\begin_layout Subparagraph
+Format
+\end_layout
+
 \begin_layout Standard
-Function name: test3(this, shiftbf) 
-\begin_inset Newline newline
-\end_inset
+test3(this, shiftbf)
+\end_layout
 
-Description: Test with one basis function, one session, two nuisance regressors
- (1Hz cosinus, 1Hz sinus), no missings, one condition and no pmods.
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+Test with one basis function, one session, two nuisance regressors (1Hz
+ cosinus, 1Hz sinus), no missings, one condition and no pmods.
  Timeunits are seconds.
- 
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Subparagraph
+Testcases
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
-
-Testcases: 
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
+\begin_layout Standard
 Only one testcase.
  
 \end_layout
@@ -14858,22 +14857,25 @@ Only one testcase.
 Test 4
 \end_layout
 
+\begin_layout Subparagraph
+Format
+\end_layout
+
 \begin_layout Standard
-Function name: test4(this, shiftbf) 
-\begin_inset Newline newline
-\end_inset
+test4(this, shiftbf)
+\end_layout
 
-Description: Test with one basis function, two sessions, no nuisance regressors,
- no missings and one condition.
- 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Description
+\end_layout
 
+\begin_layout Standard
+Test with one basis function, two sessions, no nuisance regressors, no missings
+ and one condition.
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
-
-Testcases:
+\begin_layout Subparagraph
+Testcases
 \end_layout
 
 \begin_layout Enumerate
@@ -14892,23 +14894,26 @@ timeunits are markers
 Test 5
 \end_layout
 
+\begin_layout Subparagraph
+Format
+\end_layout
+
 \begin_layout Standard
-Function name: test5(this, shiftbf) 
-\begin_inset Newline newline
-\end_inset
+test5(this, shiftbf)
+\end_layout
 
-Description: Test with two basis functions, one session, no nuisance regressors
- and one condition.
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+Test with two basis functions, one session, no nuisance regressors and one
+ condition.
  Timeunits are seconds.
- 
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
-
-\begin_inset Newline newline
-\end_inset
-
-Testcases:
+\begin_layout Subparagraph
+Testcases
 \end_layout
 
 \begin_layout Enumerate
@@ -14923,28 +14928,27 @@ with missings
 Test 6
 \end_layout
 
+\begin_layout Subparagraph
+Format
+\end_layout
+
 \begin_layout Standard
-Function name: test6(this) 
-\begin_inset Newline newline
-\end_inset
+test6(this)
+\end_layout
 
-Description: Test with default basis function and non-orthogonal conditions
- and pmods 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Description
+\end_layout
 
+\begin_layout Standard
+Test with default basis function and non-orthogonal conditions and pmods.
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Subparagraph
+Testcase
+\end_layout
 
-Testcase: 
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
+\begin_layout Standard
 Default basis functions, no nuisance regressors, no missings, two sessions
  and two conditions.
  Timeunits are seconds.
@@ -14963,42 +14967,86 @@ second condition: no pmods
 Test7:
 \end_layout
 
+\begin_layout Subparagraph
+Format
+\end_layout
+
 \begin_layout Standard
-Function name: test_extract_missing(this, cutoff, nan_percent)
-\begin_inset Newline newline
-\end_inset
+test_extract_missing(this, cutoff, nan_percent)
+\end_layout
 
-Description: Test with one basis function, one session, no nuisance regressors,
- no missings and three conditions.
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+Test with one basis function, one session, no nuisance regressors, no missings
+ and three conditions.
  Timeunits are seconds.
- 
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Subparagraph
+Testcases
+\end_layout
 
-\begin_inset Newline newline
-\end_inset
-
-Testcases: for all combinations of the test parameters cutoff and nan_percent
+\begin_layout Standard
+for all combinations of the test parameters 
+\family typewriter
+cutoff
+\family default
+ and 
+\family typewriter
+nan_percent
+\family default
+.
 \end_layout
 
 \begin_layout Itemize
-glm vector stats_missing has the appropriate length according to the number
- of conditions
+
+\family typewriter
+glm
+\family default
+ vector 
+\family typewriter
+stats_missing
+\family default
+ has the appropriate length according to the number of conditions.
 \end_layout
 
 \begin_layout Itemize
-percentages in glm vector stats_missing contains the expected value
+percentages in 
+\family typewriter
+glm
+\family default
+ vector 
+\family typewriter
+stats_missing
+\family default
+ contains the expected value.
 \end_layout
 
 \begin_layout Itemize
-glm vector stats_exclude has the appropriate length according to the number
- of conditions
+
+\family typewriter
+glm
+\family default
+ vector 
+\family typewriter
+stats_exclude
+\family default
+ has the appropriate length according to the number of conditions.
 \end_layout
 
 \begin_layout Itemize
-glm vector stats_exclude contains the expected condistion which should be
- excluded 
+
+\family typewriter
+glm
+\family default
+ vector 
+\family typewriter
+stats_exclude
+\family default
+ contains the expected condistion which should be excluded.
 \end_layout
 
 \begin_layout Subsection
