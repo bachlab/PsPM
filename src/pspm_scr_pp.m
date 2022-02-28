@@ -256,6 +256,7 @@ for d = 1:numel(data_source)
   % a new channel or replace the old data
   if ~strcmp(options.channel_action, 'withdraw')
     data_to_write = indatas{1,1};
+    data_to_write.header.chantype = 'scr';
     data_to_write.data = data_changed;
     [sts_write, ~] = pspm_write_channel(out{d}, data_to_write, options.channel_action);
     if sts_write == -1
