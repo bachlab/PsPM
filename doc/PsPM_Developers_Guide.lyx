@@ -25291,11 +25291,108 @@ Contributed by Dadi Zhao
 \end_layout
 
 \begin_layout Quote
-Updated in Feburary 2022
+Updated in March 2022
 \end_layout
 
 \begin_layout Standard
-GitHub Actions is a CI environment for testing PsPM.
+GitHub Actions is a Continuous Integration (CI) environment for testing
+ GitHub repository, which is now used for testing and maintaining PsPM.
+ GitHub Actions is deeply implemented in GitHub, thus there is no further
+ website or facility needed for running GitHub Actions for PsPM.
+\end_layout
+
+\begin_layout Section*
+6.1 Repositories
+\end_layout
+
+\begin_layout Standard
+Until March 2022, code and test data are seperately stored in GitHub, in
+ 
+\emph on
+
+\begin_inset CommandInset href
+LatexCommand href
+name "PsPM"
+target "https://github.com/bachlab/PsPM"
+literal "false"
+
+\end_inset
+
+ 
+\emph default
+and 
+\emph on
+
+\begin_inset CommandInset href
+LatexCommand href
+name "PsPM-data"
+target "https://github.com/bachlab/PsPM-data"
+literal "false"
+
+\end_inset
+
+
+\emph default
+, respectively.
+ Both of 
+\emph on
+PsPM
+\emph default
+ and 
+\emph on
+PsPM-data
+\emph default
+ are under the 
+\emph on
+
+\begin_inset CommandInset href
+LatexCommand href
+name "bachlab"
+target "https://github.com/bachlab"
+literal "false"
+
+\end_inset
+
+
+\emph default
+ account.
+ 
+\emph on
+PsPM
+\emph default
+ is a public repository allowing group members and public visitors to check
+ the code and propose issues.
+ 
+\emph on
+PsPM-data
+\emph default
+ is a private repository allowing only group members to check the data and
+ propose issues.
+ This is because 
+\emph on
+PsPM-data
+\emph default
+ has some research data that may not be appropriate for public vistors.
+ It could be a good idea to find another storage with University's approval
+ to store research data.
+
+\emph on
+ PsPM-data
+\emph default
+ has all the required test data for running testsuit of 
+\emph on
+PsPM
+\emph default
+.
+ To run testsuit of 
+\emph on
+PsPM
+\emph default
+, it must be gauranteed that 
+\emph on
+PsPM-data
+\emph default
+ is accessible.
 \end_layout
 
 \begin_layout Standard
