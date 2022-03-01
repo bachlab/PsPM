@@ -25295,14 +25295,22 @@ Updated in March 2022
 \end_layout
 
 \begin_layout Standard
-GitHub Actions is a Continuous Integration (CI) environment for testing
- GitHub repository, which is now used for testing and maintaining PsPM.
+\begin_inset CommandInset href
+LatexCommand href
+name "GitHub Actions"
+target "https://docs.github.com/en/actions"
+literal "false"
+
+\end_inset
+
+ is a Continuous Integration (CI) environment for testing GitHub repository,
+ which is now used for testing and maintaining PsPM.
  GitHub Actions is deeply implemented in GitHub, thus there is no further
  website or facility needed for running GitHub Actions for PsPM.
 \end_layout
 
-\begin_layout Section*
-6.1 Repositories
+\begin_layout Subsection
+Repositories
 \end_layout
 
 \begin_layout Standard
@@ -25373,8 +25381,8 @@ PsPM-data
 PsPM-data
 \emph default
  has some research data that may not be appropriate for public vistors.
- It could be a good idea to find another storage with University's approval
- to store research data.
+ It could be a good idea to find another cloud storage service with University's
+ approval to store research data.
 
 \emph on
  PsPM-data
@@ -25393,6 +25401,336 @@ PsPM
 PsPM-data
 \emph default
  is accessible.
+\end_layout
+
+\begin_layout Subsection
+Workflow
+\end_layout
+
+\begin_layout Standard
+To guide the actions of GitHub Actions, a workflow script as a 
+\family typewriter
+.yaml
+\family default
+ file is required, which should be storaged at 
+\family typewriter
+~/bachlab/PsPM/.github/workflow
+\family default
+.
+ The workflow has been prepared and tested to be running well for maintaining
+ 
+\emph on
+PsPM
+\emph default
+.
+ The explainations of key scripts are show below.
+\end_layout
+
+\begin_layout Subparagraph
+Step 1
+\end_layout
+
+\begin_layout Standard
+Import 
+\family typewriter
+PsPM
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+- name: Check out repository code
+\end_layout
+
+\begin_layout Plain Layout
+
+  uses: actions/checkout@v2
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This step imports the source code of 
+\emph on
+PsPM
+\emph default
+ to the server, in our case, a Ubuntu server.
+\end_layout
+
+\begin_layout Subparagraph
+Step 2
+\end_layout
+
+\begin_layout Standard
+Import 
+\family typewriter
+PsPM-data
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+- name: Add test data
+\end_layout
+
+\begin_layout Plain Layout
+
+  uses: actions/checkout@v2
+\end_layout
+
+\begin_layout Plain Layout
+
+  with:
+\end_layout
+
+\begin_layout Plain Layout
+
+    repository: bachlab/PsPM-data
+\end_layout
+
+\begin_layout Plain Layout
+
+    token: ${{ secrets.PSPM_PAT }}
+\end_layout
+
+\begin_layout Plain Layout
+
+    path: ImportTestData
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This step imports the test data in 
+\emph on
+PsPM-data
+\emph default
+ to the server.
+ The details of the token is introduced in the next section.
+\end_layout
+
+\begin_layout Subparagraph
+Step 3
+\end_layout
+
+\begin_layout Standard
+Setup MATLAB
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+- name: Setup MATLAB
+\end_layout
+
+\begin_layout Plain Layout
+
+  uses: matlab-actions/setup-matlab@v1.0.1
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subparagraph
+Step 4
+\end_layout
+
+\begin_layout Standard
+Setup testing script
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+- name: Run script
+\end_layout
+
+\begin_layout Plain Layout
+
+  id: pspm_test_main
+\end_layout
+
+\begin_layout Plain Layout
+
+  uses: matlab-actions/run-command@v1
+\end_layout
+
+\begin_layout Plain Layout
+
+  with:
+\end_layout
+
+\begin_layout Plain Layout
+
+    command: addpath(`test'), addpath(`src'), pspm_test_github_actions
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The script of testing 
+\emph on
+PsPM
+\emph default
+ has been optimised for GitHub Actions, which is saved as 
+\family typewriter
+pspm_test_github_actions
+\family default
+.
+ Further modifications should be done here.
+\end_layout
+
+\begin_layout Subparagraph
+Step 5
+\end_layout
+
+\begin_layout Standard
+Save records
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+- name: Check status
+\end_layout
+
+\begin_layout Plain Layout
+
+  id: check_status
+\end_layout
+
+\begin_layout Plain Layout
+
+  uses: andstor/file-existence-action@v1
+\end_layout
+
+\begin_layout Plain Layout
+
+  with:
+\end_layout
+
+\begin_layout Plain Layout
+
+    files: "success.txt"
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This step return a document 
+\family typewriter
+success.txt
+\family default
+ if the script does not return any error, indicating the code has passed
+ the test suit.
+\end_layout
+
+\begin_layout Subparagraph
+Step 6
+\end_layout
+
+\begin_layout Standard
+Reture success
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+- name: Return running success
+\end_layout
+
+\begin_layout Plain Layout
+
+  if: ${{ steps.check_status.outputs.files_exists == `true' }}
+\end_layout
+
+\begin_layout Plain Layout
+
+  run: exit 0
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subparagraph
+Step 7
+\end_layout
+
+\begin_layout Standard
+Return failure
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+- name: Return running failure
+\end_layout
+
+\begin_layout Plain Layout
+
+  if: ${{ steps.check_status.outputs.files_exists != `true' }}
+\end_layout
+
+\begin_layout Plain Layout
+
+  run: exit 1
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Token
+\end_layout
+
+\begin_layout Standard
+To 
 \end_layout
 
 \begin_layout Standard
