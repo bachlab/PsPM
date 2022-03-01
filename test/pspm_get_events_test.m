@@ -2,8 +2,8 @@ classdef pspm_get_events_test < matlab.unittest.TestCase
 % PSPM_GET_EVENTS_TEST 
 % unittest class for the pspm_get_events function
 %__________________________________________________________________________
-% SCRalyze TestEnvironment
-% (C) 2013 Linus R�ttimann (University of Zurich)
+% PsPM TestEnvironment
+% (C) 2013 Linus Rüttimann (University of Zurich)
   
     methods
         function check = checkFlankChange(this, positions, data)
