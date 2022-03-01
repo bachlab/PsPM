@@ -133,7 +133,7 @@ classdef pspm_get_events_test < matlab.unittest.TestCase
             this.verifyTrue(length(rimport.data) == length(rimport.markerinfo.value));
             this.verifyTrue(length(rimport.data) == length(d));
             rounded_rimport_data = round(rimport.data*100)/100;
-            this.verifyTrue(all(rounded_rimport_data == rounded_d'));
+            this.verifyTrue(all(rounded_rimport_data == transpose(rounded_d)));
             this.verifyTrue(all(ismember(rimport.markerinfo.value,[1,2])) & ...
                 all(ismember([1,2],rimport.markerinfo.value)));
 
