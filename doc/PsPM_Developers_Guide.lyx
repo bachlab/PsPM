@@ -6453,7 +6453,7 @@ Each function implementing test parameters will be called multiple times
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_align_channels_test
+pspm_align_channels_test
 \end_layout
 
 \begin_layout Subsubsection
@@ -6693,7 +6693,7 @@ In each of these cases check if the returned channels have the same duration
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_butter
+pspm_butter
 \end_layout
 
 \begin_layout Subsubsection
@@ -6887,11 +6887,11 @@ ID:toolbox_missing
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_bf_test
+pspm_bf_test
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -7233,11 +7233,11 @@ td < duration
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_convert_unit
+pspm_convert_unit
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -7397,11 +7397,11 @@ Convert each element in 3D array.
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_ecg2hb
+pspm_ecg2hb
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -7415,7 +7415,7 @@ pspm_ecg2hb_test
 \end_layout
 
 \begin_layout Subparagraph
-Function
+Format
 \end_layout
 
 \begin_layout Standard
@@ -8165,7 +8165,7 @@ Time between end of recording and last data point
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_filtfilt
+pspm_filtfilt
 \end_layout
 
 \begin_layout Subsubsection
@@ -8183,7 +8183,7 @@ pspm_filtfilt_test
 \end_layout
 
 \begin_layout Subparagraph
-Function
+Format
 \end_layout
 
 \begin_layout Standard
@@ -8309,7 +8309,7 @@ ID:invalid_input
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_find_channel
+pspm_find_channel
 \end_layout
 
 \begin_layout Subsubsection
@@ -8327,7 +8327,7 @@ pspm_find_channel_test
 \end_layout
 
 \begin_layout Subparagraph
-Function
+Format
 \end_layout
 
 \begin_layout Standard
@@ -8776,11 +8776,11 @@ multiple matching channels, but no warning
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_extract_segments
+pspm_extract_segments
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -8794,7 +8794,7 @@ pspm_extract_segments_test
 \end_layout
 
 \begin_layout Subparagraph
-Function
+Format
 \end_layout
 
 \begin_layout Standard
@@ -8878,7 +8878,7 @@ Invalid input
 \end_layout
 
 \begin_layout Subparagraph
-Function name
+Format
 \end_layout
 
 \begin_layout Standard
@@ -9430,11 +9430,11 @@ test_auto_mode_glm_with_markers
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_find_sounds
+pspm_find_sounds
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -9448,7 +9448,7 @@ pspm_find_sounds_test
 \end_layout
 
 \begin_layout Subparagraph
-Function
+Format
 \end_layout
 
 \begin_layout Standard
@@ -10010,10 +10010,6 @@ marker
 
 \begin_layout Enumerate
 Set
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_deeper
@@ -10248,7 +10244,7 @@ Test if returned data has the correct format
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_find_valid_fixations
+pspm_find_valid_fixations
 \end_layout
 
 \begin_layout Subsubsection
@@ -11297,10 +11293,6 @@ eyes `lr'
 \end_deeper
 \begin_layout Enumerate
 Set options with
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_deeper
@@ -11509,10 +11501,6 @@ eyes `lr'
 \end_deeper
 \begin_layout Enumerate
 Set options with
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_deeper
@@ -11731,10 +11719,6 @@ eyes `lr'
 \end_deeper
 \begin_layout Enumerate
 Set options with
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_deeper
@@ -12027,7 +12011,7 @@ Load outputfile and test if (according to bitmap expectation) bitmap validation
 
 \end_deeper
 \begin_layout Subsection
-Testcases: pspm_get_ecg
+pspm_get_ecg
 \end_layout
 
 \begin_layout Subsubsection
@@ -12143,7 +12127,7 @@ import.sr
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_get_events
+pspm_get_events
 \end_layout
 
 \begin_layout Subsubsection
@@ -12449,7 +12433,7 @@ Test if markerinfo is not set if it has been set before.
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_get_eyelink
+pspm_get_eyelink
 \end_layout
 
 \begin_layout Subsubsection
@@ -12758,7 +12742,7 @@ Pass returned sets to
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_get_hb
+pspm_get_hb
 \end_layout
 
 \begin_layout Subsubsection
@@ -12862,7 +12846,7 @@ data.header.sr==1
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_get_hr
+pspm_get_hr
 \end_layout
 
 \begin_layout Subsubsection
@@ -12968,7 +12952,7 @@ import.sr
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_get_marker
+pspm_get_marker
 \end_layout
 
 \begin_layout Subsubsection
@@ -13078,7 +13062,7 @@ data.header.sr==1
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_get_pupil
+pspm_get_pupil
 \end_layout
 
 \begin_layout Subsubsection
@@ -13184,7 +13168,7 @@ import.sr
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_get_resp
+pspm_get_resp
 \end_layout
 
 \begin_layout Subsubsection
@@ -13290,7 +13274,7 @@ import.sr
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_get_scr
+pspm_get_scr
 \end_layout
 
 \begin_layout Subsubsection
@@ -13516,11 +13500,11 @@ Check for warning if the transfer parameter file doesn't exist.
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_get_timing
+pspm_get_timing
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -14255,7 +14239,7 @@ ID:invalid_vector_size
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_get_<datatype>
+pspm_get_<datatype>
 \end_layout
 
 \begin_layout Subsubsection
@@ -14603,7 +14587,7 @@ If the datatype supports multiple channels: Check for warning when trying
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_get_acq
+pspm_get_acq
 \end_layout
 
 \begin_layout Standard
@@ -14709,7 +14693,7 @@ impedance_acq
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_glm
+pspm_glm
 \end_layout
 
 \begin_layout Subsubsection
@@ -15371,6 +15355,8 @@ Format
 \end_layout
 
 \begin_layout Standard
+
+\family typewriter
 test4(this, shiftbf)
 \end_layout
 
@@ -15408,6 +15394,8 @@ Format
 \end_layout
 
 \begin_layout Standard
+
+\family typewriter
 test5(this, shiftbf)
 \end_layout
 
@@ -15442,6 +15430,8 @@ Format
 \end_layout
 
 \begin_layout Standard
+
+\family typewriter
 test6(this)
 \end_layout
 
@@ -15559,7 +15549,7 @@ stats_exclude
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_hb2hp
+pspm_hb2hp
 \end_layout
 
 \begin_layout Subsubsection
@@ -15846,7 +15836,7 @@ ID:invalid_input
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_import
+pspm_import
 \end_layout
 
 \begin_layout Subsubsection
@@ -16332,7 +16322,7 @@ pspm_load_data
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_interpolate
+pspm_interpolate
 \end_layout
 
 \begin_layout Subsubsection
@@ -17915,7 +17905,7 @@ Helper function to verify whether the data is NaN free or not.
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_load1
+pspm_load1
 \end_layout
 
 \begin_layout Subsubsection
@@ -19316,7 +19306,7 @@ sts==1
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_load_data
+pspm_load_data
 \end_layout
 
 \begin_layout Subsubsection
@@ -20260,7 +20250,7 @@ chan struct
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_pp
+pspm_pp
 \end_layout
 
 \begin_layout Subsubsection
@@ -20635,7 +20625,7 @@ ii.
 
 \end_deeper
 \begin_layout Subsection
-Testcases: pspm_prepdata
+pspm_prepdata
 \end_layout
 
 \begin_layout Subsubsection
@@ -21327,7 +21317,7 @@ ratio*length(outdata) == length(data)
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_process_illuminance
+pspm_process_illuminance
 \end_layout
 
 \begin_layout Subsubsection
@@ -22463,7 +22453,7 @@ Located in MethodTeardown and is called once the test class has finished
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_pulse_convert
+pspm_pulse_convert
 \end_layout
 
 \begin_layout Subsubsection
@@ -22664,7 +22654,7 @@ Test function with downsampling the data
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_ren
+pspm_ren
 \end_layout
 
 \begin_layout Subsubsection
@@ -22916,7 +22906,7 @@ char_valid_input
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_resp_pp
+pspm_resp_pp
 \end_layout
 
 \begin_layout Subsubsection
@@ -22989,11 +22979,45 @@ Check if the returned data is the same
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_split_sessions
+pspm_scr_pp
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
+\end_layout
+
+\begin_layout Subparagraph
+Testclass
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+pspm_scr_pp_test
+\end_layout
+
+\begin_layout Subparagraph
+Properties
+\end_layout
+
+\begin_layout Standard
+...
+\end_layout
+
+\begin_layout Subparagraph
+Format
+\end_layout
+
+\begin_layout Standard
+...
+\end_layout
+
+\begin_layout Subsection
+pspm_split_sessions
+\end_layout
+
+\begin_layout Subsubsection
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -23017,7 +23041,7 @@ expected_number_of_files = 3
 \end_layout
 
 \begin_layout Subparagraph
-Function
+Format
 \end_layout
 
 \begin_layout Standard
@@ -23323,7 +23347,7 @@ one_datafile
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_trim
+pspm_trim
 \end_layout
 
 \begin_layout Subsubsection
@@ -24218,11 +24242,11 @@ Checks if the selected channel is actually used.
 \end_layout
 
 \begin_layout Subsection
-Testcases: pspm_write_channel
+pspm_write_channel
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -24236,7 +24260,7 @@ pspm_write_channel_test
 \end_layout
 
 \begin_layout Subparagraph
-Function
+Format
 \end_layout
 
 \begin_layout Standard
@@ -24249,21 +24273,32 @@ Function
 Setup
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Subparagraph
 Testdatafile
 \end_layout
 
 \begin_layout Standard
 The testdatafile is a class property.
- It is generated by the function generate_testdatafile() once the test class
- is setup.
+ It is generated by the function 
+\family typewriter
+generate_testdatafile()
+\family default
+ once the test class is setup.
  Changes made by a test to the testdatafile won't be reverted.
  Thus some test functions rely on the changes made by another test function.
  Therefore the functions may not work properly if called individually.
 \end_layout
 
-\begin_layout Paragraph*
-Structure (created with generate_testdatafile())
+\begin_layout Subparagraph
+Structure
+\end_layout
+
+\begin_layout Standard
+Created with 
+\family typewriter
+generate_testdatafile()
+\family default
+.
 \end_layout
 
 \begin_layout Description
@@ -24300,7 +24335,7 @@ The sampling rate is
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid input
 \end_layout
 
@@ -24326,7 +24361,7 @@ Checks for warnings, if the input arguments are invalid.
 Tests
 \end_layout
 
-\begin_layout Subparagraph
+\begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="13" columns="2">
 <features tabularvalignment="middle" tabularwidth="100text%">
@@ -24655,7 +24690,7 @@ ID:invalid_data_structure
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Action `add'
 \end_layout
 
@@ -24704,7 +24739,7 @@ Load condition before and after and pass it to
 `Verify write'
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Action `add transposed'
 \end_layout
 
@@ -24757,7 +24792,7 @@ Load condition before and after and pass it to
 `Verify write'
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Action `replace'/'add'
 \end_layout
 
@@ -24822,7 +24857,7 @@ Load condition before and after and pass it to
 `Verify write'
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Action `replace'
 \end_layout
 
@@ -24881,7 +24916,7 @@ Test if
 20
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Action `delete' (one channel)
 \end_layout
 
@@ -25021,7 +25056,7 @@ Test if last entry was not deleted
 
 \end_deeper
 \end_deeper
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Action `delete' (multiple channels)
 \end_layout
 
@@ -25099,7 +25134,7 @@ Test if datafile contains no more
 Other methods
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Verify write
 \end_layout
 
@@ -25183,20 +25218,13 @@ External functions and tools
 VB (Variational Bayes) inversion algorithm by Jean Daunizeau
 \end_layout
 
-\begin_layout Quote
+\begin_layout Paragraph
 Updated October 2014
 \end_layout
 
-\begin_layout Standard
-Changes made for use in PsPM: 
-\end_layout
-
-\begin_layout Itemize
-
-\emph on
-VBA_ReDisplay.m
-\emph default
-, fixed try-catch syntax in various places by adding a comma after 
+\begin_layout Description
+VBA_ReDisplay.m Fixed try-catch syntax in various places by adding a comma
+ after 
 \begin_inset Quotes eld
 \end_inset
 
@@ -25207,38 +25235,23 @@ try
  to avoid warning in MATLAB > 2007
 \end_layout
 
-\begin_layout Itemize
-
-\shape italic
-VBA_inv.m
-\shape default
-, line 42: added warning off/on to suppress the warning 
-\begin_inset Quotes eld
-\end_inset
-
+\begin_layout Description
+VBA_inv.m In line 42, added warning off/on to suppress the warning 
+\family typewriter
 Matrix is singular, close to singular or badly scaled.
  Results may be inaccurate.
- RCOND = NaN.
-\begin_inset Quotes erd
-\end_inset
-
-
+ RCOND = NaN
+\family default
+.
 \end_layout
 
-\begin_layout Quote
+\begin_layout Paragraph
 Updated October 2016
 \end_layout
 
-\begin_layout Standard
-Changes made for use in PsPM: 
-\end_layout
-
-\begin_layout Itemize
-
-\emph on
-VBA_ReDisplay.m
-\emph default
-, fixed try-catch syntax in various places by adding a comma after 
+\begin_layout Description
+VBA_ReDisplay.m Fixed try-catch syntax in various places by adding a comma
+ after 
 \begin_inset Quotes eld
 \end_inset
 
@@ -25249,30 +25262,26 @@ try
  to avoid warning in MATLAB > 2007
 \end_layout
 
-\begin_layout Itemize
-
-\shape italic
-VBA_inv.m
-\shape default
-, line 48: added warning off/on to suppress the warning 
+\begin_layout Description
+VBA_inv.m In line 48: added warning off/on to suppress the warning 
 \begin_inset Quotes eld
 \end_inset
 
+
+\family typewriter
 Matrix is singular, close to singular or badly scaled.
  Results may be inaccurate.
- RCOND = NaN.
+ RCOND = NaN
+\family default
+.
 \begin_inset Quotes erd
 \end_inset
 
 
 \end_layout
 
-\begin_layout Itemize
-
-\shape italic
-VBA_NLStateSpaceModel.m
-\shape default
-: added resetting warning to preceeding state.
+\begin_layout Description
+VBA_NLStateSpaceModel.m Added resetting warning to preceeding state.
 \end_layout
 
 \begin_layout Standard
@@ -25730,7 +25739,108 @@ Token
 \end_layout
 
 \begin_layout Standard
-To 
+Tokens are required to perform GitHub Actions for 
+\emph on
+PsPM
+\emph default
+ as the data repository is stored as private.
+ The steps for generating and implementing tokens are described as below.
+\end_layout
+
+\begin_layout Subparagraph
+Step 1
+\end_layout
+
+\begin_layout Standard
+Generate a Personal Access Token (PAT) at https://github.com/settings/tokens,
+ name it as 
+\family typewriter
+PSPM_PAT
+\family default
+ with required priviliges.
+\end_layout
+
+\begin_layout Subparagraph
+Step 2
+\end_layout
+
+\begin_layout Standard
+In the YAML file, the script for running GitHub Actions, make sure the PAT
+ file has been mentioned appropriately, like
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+token: ${{ secrets.PSPM_PAT }}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subparagraph
+Step 3
+\end_layout
+
+\begin_layout Standard
+In the settings of 
+\emph on
+PsPM
+\emph default
+ repository, which can be found at https://github.com/bachlab/PsPM/settings/secre
+ts/actions, make sure 
+\emph on
+Repository Secrets
+\emph default
+, which is under 
+\emph on
+Actions Secrets
+\emph default
+, has contained 
+\family typewriter
+PSPM_PAT
+\family default
+.
+ This operation requires your privilige to access the setting profiles of
+ the correspoding repository.
+\end_layout
+
+\begin_layout Subparagraph
+Step 4
+\end_layout
+
+\begin_layout Standard
+Similar to Step 3, in the settings of 
+\emph on
+PsPM-data
+\emph default
+ repository, which can be found at https://github.com/bachlab/PsPM-data/settings/
+secrets/actions, make sure 
+\emph on
+Repository Secrets
+\emph default
+, which is under 
+\emph on
+Actions Secrets
+\emph default
+, has contained 
+\family typewriter
+PSPM_PAT
+\family default
+.
+ This operation requires your privilige to access the setting profiles of
+ the correspoding repository.
+\end_layout
+
+\begin_layout Standard
+Now the script should be running ok.
+ Please note the PAT must be updated regularly due to security concerns.
 \end_layout
 
 \begin_layout Standard
@@ -25757,7 +25867,7 @@ List of functions
 \begin_inset Text
 
 \begin_layout Plain Layout
-Name
+Function Name
 \end_layout
 
 \end_inset
@@ -25775,7 +25885,7 @@ Main Author(s)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Test exists
+Test Function
 \end_layout
 
 \end_inset
@@ -25784,7 +25894,7 @@ Test exists
 \begin_inset Text
 
 \begin_layout Plain Layout
-Test Doc
+Test Document
 \end_layout
 
 \end_inset
@@ -31335,7 +31445,7 @@ DZ
 \begin_inset Text
 
 \begin_layout Plain Layout
-x
+Yes
 \end_layout
 
 \end_inset
@@ -31344,7 +31454,7 @@ x
 \begin_inset Text
 
 \begin_layout Plain Layout
-x
+Yes
 \end_layout
 
 \end_inset
