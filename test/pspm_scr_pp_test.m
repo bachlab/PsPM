@@ -28,25 +28,32 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
     function scr_pp_test(this)
       channels{1}.chantype = 'scr';
 
-      % filter one channel
+      scr_pp_test_template(this, channels)
+
+      % Delete testdata
+      if exist(this.fn)
+        delete(this.fn);
+      end
+      if exist('test_missing.mat')
+        delete('test_missing.mat');
+      end
+    end
+
+    function scr_pp_test_template(this, channels)
       options1 = struct('deflection_threshold', 0, ...
         'expand_epochs', 0, ...
         'channel_action', 'add');
-
       options2 = struct('deflection_threshold', 0, ...
         'channel', 'scr', ...
         'expand_epochs', 0, ...
         'channel_action', 'replace');
-
       options3 = struct('deflection_threshold', 0, ...
         'channel', 'scr', ...
         'expand_epochs', 0, ...
         'channel_action', 'withdraw');
-
       options4 = struct('missing_epochs_filename', 'test_missing.mat', ...
         'deflection_threshold', 0, ...
         'expand_epochs', 0);
-
       options5 = struct('missing_epochs_filename', 'test_missing.mat', ...
         'deflection_threshold', 0, ...
         'expand_epochs', 0, ...
@@ -106,10 +113,6 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
 
       % test no file exists when not provided
       % this.verifyError(@()load('missing_epochs_test_out'), 'MATLAB:load:couldNotReadFile');
-
-      % Delete testdata
-      delete(this.fn);
-      delete('test_missing.mat');
     end
   end
 end
