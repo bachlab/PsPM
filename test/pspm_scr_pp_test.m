@@ -38,7 +38,9 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
         delete('test_missing.mat');
       end
     end
+  end
 
+  methods
     function scr_pp_test_template(this, channels)
       options1 = struct('deflection_threshold', 0, ...
         'expand_epochs', 0, ...
@@ -63,7 +65,7 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
       [sts, ~, ~, filestruct] = pspm_load_data(this.fn, 'none');
       this.verifyTrue(sts == 1, 'the returned file couldn''t be loaded');
       this.verifyTrue(filestruct.numofchan == numel(channels), ...
-      'the returned file contains not as many channels as the inputfile');
+        'the returned file contains not as many channels as the inputfile');
 
       % Verifying the situation without no missing epochs filename option
       % and add the epochs to the file
