@@ -278,37 +278,37 @@ data{n}.data
 Additionally, a typical file contains the optional infos: 
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
-infos.sourcefile 
+infos.sourcefile
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 infos.importfile 
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 infos.importdate 
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 infos.sourcetype 
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 infos.recdate 
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 infos.rectime 
@@ -687,7 +687,7 @@ Add function
 \begin_layout Subparagraph
 
 \series bold
-Function name
+Function
 \end_layout
 
 \begin_layout Standard
@@ -712,6 +712,12 @@ Format
 
 \family typewriter
 [sts, data] = pspm_get_channeltype(import)
+\end_layout
+
+\begin_layout Subparagraph
+
+\series bold
+Arguments
 \end_layout
 
 \begin_layout Description
@@ -849,7 +855,7 @@ Add default basis function
 \begin_layout Subparagraph
 
 \series bold
-Function name
+Function
 \end_layout
 
 \begin_layout Standard
@@ -861,7 +867,7 @@ pspm_bf_xxx
 \begin_layout Subparagraph
 
 \series bold
-Function arguments
+Arguments
 \end_layout
 
 \begin_layout Standard
@@ -881,67 +887,67 @@ Warning IDs in PsPM
 General
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 invalid_input
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 invalid_channeltype
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 nonexistent_file
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 channel_not_contained_in_file
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 obsolete_function
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 not_allowed_channeltype
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 invalid_data_structure
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 no_matching_channels
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 unknown_action
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 missing_data
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 out_of_range
@@ -951,176 +957,176 @@ out_of_range
 Function specific
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 pspm_load1
 \end_layout
 
 \begin_deeper
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 not_saving_data
 \end_layout
 
 \end_deeper
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 pspm_interpolate
 \end_layout
 
 \begin_deeper
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 option_disabled
 \end_layout
 
 \end_deeper
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 pspm_trim
 \end_layout
 
 \begin_deeper
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 marker_out_of_range
 \end_layout
 
 \end_deeper
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 pspm_find_channel
 \end_layout
 
 \begin_deeper
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 multiple_matching_channels
 \end_layout
 
 \end_deeper
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 pspm_find_sounds
 \end_layout
 
 \begin_deeper
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 no_marker_chan
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 no_sound_chan
 \end_layout
 
 \end_deeper
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 pspm_get_scr
 \end_layout
 
 \begin_deeper
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 no_conversion_constant
 \end_layout
 
 \end_deeper
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 pspm_pp
 \end_layout
 
 \begin_deeper
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 invalid_freq
 \end_layout
 
 \end_deeper
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 pspm_prepdata
 \end_layout
 
 \begin_deeper
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 no_low_pass_filtering
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 downsampling_failed
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 nonint_sr 
 \end_layout
 
 \end_deeper
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 pspm_get_timing
 \end_layout
 
 \begin_deeper
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 invalid_vector_size
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 event_names_dont_match
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 no_numeric_vector
 \end_layout
 
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 no_integers 
 \end_layout
 
 \end_deeper
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 pspm_down
 \end_layout
 
 \begin_deeper
-\begin_layout Description
+\begin_layout Itemize
 
 \family typewriter
 rate_below_minimum
@@ -5657,7 +5663,15 @@ Leafs (items) are specified first
 \end_layout
 
 \begin_layout Itemize
-Assigning child items to .val or .values fields of their parent items
+Assigning child items to 
+\family typewriter
+.val
+\family default
+ or 
+\family typewriter
+.values
+\family default
+ fields of their parent items
 \end_layout
 
 \begin_layout Itemize
@@ -5975,7 +5989,7 @@ cfg_branch
 \family typewriter
 cfg_repeat
 \family default
-
+.
 \begin_inset Newline newline
 \end_inset
 
@@ -6126,18 +6140,21 @@ cfg_mlbatch_appcfg.m
 Add modules to module list
 \end_layout
 
+\begin_layout Subparagraph
+Example
+\end_layout
+
 \begin_layout Standard
-Example: Module Import and Trim will be added to the module list
+Module Import and Trim will be added to the module list
+\begin_inset Newline linebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
 \family typewriter
-
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
 \begin_inset listings
 inline false
 status open
@@ -6271,8 +6288,12 @@ In order to change any help text or fieldname in a MATLABbatch GUI function
 \end_layout
 
 \begin_layout Itemize
-Help text The field .help defines the help text of the item which can be
- edited in order to change the help text.
+Help text The field 
+\family typewriter
+.help
+\family default
+ defines the help text of the item which can be edited in order to change
+ the help text.
  As soon as MATLABbatch has been closed and opened again, the changes in
  the help text will be visible in MATLABbatch GUI.
 \end_layout
@@ -6360,7 +6381,7 @@ Contributed by Linus Rüttimann, Tobias Moser and Dadi Zhao.
 Revised and updated by Dadi Zhao in Feburary 2022.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Unittest: General implementation
 \end_layout
 
@@ -6376,18 +6397,25 @@ functionname_test
 \end_layout
 
 \begin_layout Standard
-To run the unittests of a test class, an object of the class has to be created:
-\begin_inset Newline newline
+To run the unittests of a test class, an object of the class has to be created
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+testCase = functionname_test.
+\end_layout
+
 \end_inset
 
 
-\family typewriter
-testCase = functionname_test
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
-
-\family default
+\begin_layout Standard
 where 
 \family typewriter
 testCase
@@ -6397,40 +6425,56 @@ testCase
 funtionname_test
 \family default
  is the name of a test class.
- Then all the unittest that are contained in the test class can be run with:
+ Then all the unittest that are contained in the test class can be run with
+\end_layout
+
+\begin_layout Standard
+
 \family typewriter
+\begin_inset listings
+inline false
+status open
 
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+testCase.run.
+\end_layout
+
 \end_inset
 
-testCase.run
+
 \family default
-.
-\begin_inset Newline newline
-\end_inset
+A specific unittest can be run with
+\end_layout
 
-A specific unittest can be run with:
+\begin_layout Standard
+
 \family typewriter
+\begin_inset listings
+inline false
+status open
 
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+testCase.run(unittest_name').
+\end_layout
+
 \end_inset
 
-testCase.run(‘unittest_name')
-\family default
-.
-\begin_inset Newline newline
-\end_inset
 
+\end_layout
+
+\begin_layout Standard
 Remember that a new test class object must be generated each time the test
  class has been changed.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 parameterised test classes
 \end_layout
 
 \begin_layout Standard
-Parmeterized test classes is a feature provided by the MATLAB test case
+Parmeterised test classes is a feature provided by the MATLAB test case
  class.
  A test class is parameterised when it has 
 \end_layout
@@ -6453,11 +6497,11 @@ Each function implementing test parameters will be called multiple times
 \end_layout
 
 \begin_layout Subsection
-pspm_align_channels_test
+Align Channels
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -6471,7 +6515,7 @@ pspm_align_channels_test
 \end_layout
 
 \begin_layout Subparagraph
-Function
+Format
 \end_layout
 
 \begin_layout Standard
@@ -6494,7 +6538,7 @@ ImportTestData/ecg2hb/tpspm_s102_s1.mat
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid input
 \end_layout
 
@@ -6516,7 +6560,7 @@ Description
 Checks for warnings given invalid inputs.
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Lower optional duration
 \end_layout
 
@@ -6555,7 +6599,7 @@ Assert that lower optional duration has no effect on the output.
 Check if all of the returned channels have the same duration.
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Same optional duration
 \end_layout
 
@@ -6582,7 +6626,7 @@ pspm_align_channels
  and does the exact same checks as in lower duration case.
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Higher optional duration
 \end_layout
 
@@ -6614,7 +6658,7 @@ Assert that durations of all returned channels is the same as the passed
  optional duration.
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Max duration is passed in marker channel
 \end_layout
 
@@ -6649,7 +6693,7 @@ Assert that all returned channels are aligned to the maximum duration passed
  in marker channel.
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Various case checks
 \end_layout
 
@@ -6693,11 +6737,11 @@ In each of these cases check if the returned channels have the same duration
 \end_layout
 
 \begin_layout Subsection
-pspm_butter
+Butter
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -6726,7 +6770,7 @@ Function
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid input
 \end_layout
 
@@ -6745,7 +6789,7 @@ Description
 \end_layout
 
 \begin_layout Standard
-Checks for warnings, if the input arguments are invalid and if the Signal
+Checks for warnings, if the input arguments are invalid and if the signal
  processing toolbox is installed.
 \end_layout
 
@@ -6905,7 +6949,7 @@ pspm_bf_test
 \end_layout
 
 \begin_layout Subparagraph
-Function
+Format
 \end_layout
 
 \begin_layout Standard
@@ -6922,7 +6966,7 @@ Setup
 This test class is parameterised.
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 
 \series bold
 Method setup parameters
@@ -6934,28 +6978,15 @@ These parameters define which function should be tested
 .
 \end_layout
 
-\begin_layout Standard
-\begin_inset Tabular
-<lyxtabular version="3" rows="1" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="left" valignment="top" width="10cm">
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
+\begin_layout Description
 
 \series bold
-Basis function
-\end_layout
-
+Basis
+\begin_inset space \space{}
 \end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
 
-\begin_layout Plain Layout
+function 
+\series default
 Specifies the basis functions to test (without the 
 \family typewriter
 pspm_bf_ prefix
@@ -6968,17 +6999,7 @@ this.bf()
 ;
 \end_layout
 
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test parameters
 \end_layout
 
@@ -7059,11 +7080,12 @@ Checks for warnings, if the input arguments are invalid.
  
 \end_layout
 
-\begin_layout Subparagraph
+\begin_layout Standard
 Tests
-\end_layout
+\begin_inset Newline linebreak
+\end_inset
 
-\begin_layout Subparagraph
+
 \begin_inset Tabular
 <lyxtabular version="3" rows="4" columns="2">
 <features tabularvalignment="middle">
@@ -7278,7 +7300,7 @@ inch_to_cm = 2.54
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid input
 \end_layout
 
@@ -7300,7 +7322,7 @@ Description
 Pass invalid from or to metrics and check if warnings are issued.
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Valid input
 \end_layout
 
@@ -7925,7 +7947,7 @@ this.test_added_data()
 Other Methods
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test for added data
 \end_layout
 
@@ -8196,7 +8218,7 @@ y = pspm_filtfilt(b,a,x)
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid input
 \end_layout
 
@@ -8340,7 +8362,7 @@ chan = pspm_find_channel(headercell, chantype)
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid input arguments
 \end_layout
 
@@ -8485,7 +8507,7 @@ ID:invalid_input
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Valid Input Arguments
 \end_layout
 
@@ -8873,7 +8895,7 @@ nr_trail
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid input
 \end_layout
 
@@ -9152,7 +9174,7 @@ ID:invalid_input
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test manual mode with indicated length
 \end_layout
 
@@ -9206,7 +9228,7 @@ Test if correct number of segments were produced
 Test each segment holds correct data 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test manual mode with durations
 \end_layout
 
@@ -9234,10 +9256,6 @@ pspm_extract_segments
 
 \begin_layout Subparagraph
 Tests
-\begin_inset Newline linebreak
-\end_inset
-
-
 \end_layout
 
 \begin_layout Enumerate
@@ -9260,7 +9278,7 @@ Test if correct number of segments were produced
 Test each segment holds correct data
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test auto mode with GLM using marker onsets
 \end_layout
 
@@ -9292,10 +9310,6 @@ ImportTestData/fitted_models
 
 \begin_layout Subparagraph
 Tests
-\begin_inset Newline linebreak
-\end_inset
-
-
 \end_layout
 
 \begin_layout Enumerate
@@ -9350,7 +9364,7 @@ segments
 .
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test auto mode with GLM using second onsets
 \end_layout
 
@@ -9376,7 +9390,7 @@ test_auto_mode_glm_with_markers
  but this time using seconds to specify onsets.
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test auto mode with DCM
 \end_layout
 
@@ -9471,7 +9485,7 @@ testdatafile<variable_nr>.mat
 .
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Subparagraph
 Test parameters
 \end_layout
 
@@ -9503,8 +9517,15 @@ Channel output
 \begin_inset Text
 
 \begin_layout Plain Layout
-Specifies whether `all' found markers or only `corrected' markers should
- be returned.
+Specifies whether 
+\family typewriter
+`all'
+\family default
+ found markers or only 
+\family typewriter
+`corrected'
+\family default
+ markers should be returned.
 \end_layout
 
 \end_inset
@@ -9636,7 +9657,7 @@ Defines whether a newly created marker channel should replace the existing
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid input
 \end_layout
 
@@ -9963,7 +9984,7 @@ ID:invalid_input
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test add channel
 \end_layout
 
@@ -10048,7 +10069,7 @@ Test if channels has been added or replaced
 Test if added channel has correct amount of data
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test region count
 \end_layout
 
@@ -10095,7 +10116,7 @@ Test if function finds all the markers in the whole file with initial threshold
 Test if function finds half of the markers in half of the file
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test threshold
 \end_layout
 
@@ -10134,10 +10155,6 @@ Generate data with channel
 
 \begin_layout Enumerate
 Set
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_deeper
@@ -10168,7 +10185,7 @@ Test if function runs through without warning
 Test if returned data has the correct format
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test plot
 \end_layout
 
@@ -10207,10 +10224,6 @@ marker
 
 \begin_layout Enumerate
 Set
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_deeper
@@ -10248,7 +10261,7 @@ pspm_find_valid_fixations
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -10262,7 +10275,7 @@ pspm_find_valid_fixations_test
 \end_layout
 
 \begin_layout Subparagraph
-Function
+Format
 \end_layout
 
 \begin_layout Standard
@@ -10285,7 +10298,7 @@ testdatafile<variable_nr>.mat
 .
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Paragraph
 Test parameters
 \end_layout
 
@@ -10597,7 +10610,7 @@ Defines which channels should be set to NaN during invalid fixations.
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid input
 \end_layout
 
@@ -11117,7 +11130,7 @@ ID:invalid_input
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test work chans
 \end_layout
 
@@ -11225,7 +11238,7 @@ work_chans
  are added as new processed channels
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test work eye
 \end_layout
 
@@ -11324,7 +11337,7 @@ Test if specified eyes have been processed accordingly and test if not specified
  eyes have ignored.
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test missing
 \end_layout
 
@@ -11433,7 +11446,7 @@ Depending on the status of
 , test if there are any missing channels or if there is no missing channel
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test interpolate
 \end_layout
 
@@ -11543,7 +11556,7 @@ NaN
  periods have been interpolated accordingly.
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test overwrite
 \end_layout
 
@@ -11651,7 +11664,7 @@ sts==1
 Test if file has been overwritten or not (tests, if there are any new channels).
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test channel action
 \end_layout
 
@@ -11750,7 +11763,7 @@ Test if channels have been added or replaced (tests, if there are any new
  channels).
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test newfile
 \end_layout
 
@@ -11814,10 +11827,6 @@ eyes `lr'
 \end_deeper
 \begin_layout Enumerate
 Set options with
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_deeper
@@ -11879,7 +11888,7 @@ Test if returned outputfile equals the specified newfile or not (depending
 )
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test gaze validation
 \end_layout
 
@@ -11952,7 +11961,7 @@ load outputfile and test if (according to degree expectation) gaze validation
 \end_layout
 
 \end_deeper
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test bitmap validtion
 \end_layout
 
@@ -12015,7 +12024,7 @@ pspm_get_ecg
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -12042,7 +12051,7 @@ Function
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test
 \end_layout
 
@@ -12131,7 +12140,7 @@ pspm_get_events
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -12158,7 +12167,7 @@ Function
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Check warnings
 \end_layout
 
@@ -12269,7 +12278,7 @@ ID:invalid_field_content
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Timestamps
 \end_layout
 
@@ -12308,7 +12317,7 @@ Test if the length of the output data is equal to the length of the input
  data.
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Continuous
 \end_layout
 
@@ -12464,8 +12473,8 @@ Function
 Methods
 \end_layout
 
-\begin_layout Subsubsection*
-set_import_values
+\begin_layout Paragraph
+Set import values
 \end_layout
 
 \begin_layout Subparagraph
@@ -12487,8 +12496,8 @@ Helperfunction, which creates an import data set and the expected channel
  data set 
 \end_layout
 
-\begin_layout Subsubsection*
-verify_basic_data_structure
+\begin_layout Paragraph
+Verify basic data structure
 \end_layout
 
 \begin_layout Subparagraph
@@ -12570,7 +12579,7 @@ Test if channels labeled with
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 test_multi_session
 \end_layout
 
@@ -12613,7 +12622,7 @@ passses returned sets to
 .
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 test_two_eyes
 \end_layout
 
@@ -12656,7 +12665,7 @@ Passes returned sets to
 .
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 test_one_eye
 \end_layout
 
@@ -12692,7 +12701,7 @@ Create an import data set and the expected channel data set an pass it to
 .
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 test_track_dist
 \end_layout
 
@@ -12746,7 +12755,7 @@ pspm_get_hb
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -12760,7 +12769,7 @@ pspm_get_hb_test
 \end_layout
 
 \begin_layout Subparagraph
-Function
+Format
 \end_layout
 
 \begin_layout Standard
@@ -12773,7 +12782,7 @@ Function
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test
 \end_layout
 
@@ -12877,7 +12886,7 @@ Function
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test
 \end_layout
 
@@ -12983,7 +12992,7 @@ Function
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test
 \end_layout
 
@@ -13093,7 +13102,7 @@ Function
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test
 \end_layout
 
@@ -13199,7 +13208,7 @@ Function
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test
 \end_layout
 
@@ -13384,7 +13393,7 @@ data.header.chantype
 ‘scr'
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 No transfer parameters
 \end_layout
 
@@ -13415,7 +13424,7 @@ Additional Tests
 No additional tests 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Struct transfer parameters
 \end_layout
 
@@ -13463,7 +13472,7 @@ import.transfer.offset
  
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 File transfer parameters
 \end_layout
 
@@ -13549,7 +13558,7 @@ Functions
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid input arguments
 \end_layout
 
@@ -13858,7 +13867,7 @@ ID:invalid_input
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Case Epochs
 \end_layout
 
@@ -13894,7 +13903,7 @@ Function
 [sts, epochs] = pspm_get_timing(`epochs', epochs) 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test 1 (matfile input)
 \end_layout
 
@@ -14000,7 +14009,7 @@ sts==1
  
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Case onsets
 \end_layout
 
@@ -14036,7 +14045,7 @@ Function
 [sts, multi] = pspm_get_timing(`onsets', intiming, timeunits) 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test 1
 \end_layout
 
@@ -14116,7 +14125,7 @@ sts==1
 outtiming.pmod.param == {[2 3], [4 9], [4 5], [16 25]} 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test 2
 \end_layout
 
@@ -14188,7 +14197,7 @@ outtiming.pmod.param == {[2 3 4], [4 9 16], [4 5 6]}
 .
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Case events
 \end_layout
 
@@ -14397,8 +14406,8 @@ Notes
 Setup
 \end_layout
 
-\begin_layout Subsubsection*
-define testcases
+\begin_layout Paragraph
+Define testcases
 \end_layout
 
 \begin_layout Standard
@@ -14442,7 +14451,7 @@ For datatypes which support blocks there has to be an additional field:
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Valid datafile
 \end_layout
 
@@ -14550,8 +14559,8 @@ Test if all importjobs have a samplerate between
  
 \end_layout
 
-\begin_layout Subsubsection*
-invalid datafile
+\begin_layout Paragraph
+Invalid datafile
 \end_layout
 
 \begin_layout Subparagraph
@@ -14630,7 +14639,7 @@ Function
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 get_acq should return the exact same data as Acqknowledge exported mat file
 \end_layout
 
@@ -14661,7 +14670,7 @@ pspm_get_acq
 \end_layout
 
 \begin_layout Subparagraph
-Tests
+Steps
 \end_layout
 
 \begin_layout Enumerate
@@ -15235,7 +15244,7 @@ ID:number_of_elements_dont_match
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test 1
 \end_layout
 
@@ -15275,7 +15284,7 @@ one pmod
 two pmods 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test 2
 \end_layout
 
@@ -15315,7 +15324,7 @@ first condition: no pmods; second condition: one pmod
 first condition: one pmod; second condition: two pmods 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test 3
 \end_layout
 
@@ -15346,7 +15355,7 @@ Only one testcase.
  
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test 4
 \end_layout
 
@@ -15385,7 +15394,7 @@ timeunits are samples
 timeunits are markers 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test 5
 \end_layout
 
@@ -15421,7 +15430,7 @@ no missings
 with missings 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test 6
 \end_layout
 
@@ -15462,8 +15471,8 @@ first condition: two pmods (with pmod(1).poly{1} = 2 and pmod(1).poly{2} =
 second condition: no pmods 
 \end_layout
 
-\begin_layout Subsubsection*
-Test7:
+\begin_layout Paragraph
+Test 7
 \end_layout
 
 \begin_layout Subparagraph
@@ -15580,7 +15589,7 @@ Function
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid input
 \end_layout
 
@@ -15867,7 +15876,7 @@ outfile = pspm_import(datafile, datatype, import, options)
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid input arguments
 \end_layout
 
@@ -16072,7 +16081,7 @@ ID:invalid_input
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid import variable structure
 \end_layout
 
@@ -16261,7 +16270,7 @@ ID:nonexistent_file
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 One datafile
 \end_layout
 
@@ -16292,7 +16301,7 @@ pspm_load_data
  
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Multiple datafiles
 \end_layout
 
@@ -16363,7 +16372,7 @@ datafile<variable_nr>.mat
 .
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test parameters
 \end_layout
 
@@ -16685,7 +16694,7 @@ True or false and tells the function to either replace the given channels
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid input
 \end_layout
 
@@ -17357,7 +17366,7 @@ ID:out_of_range
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test datatypes
 \end_layout
 
@@ -17380,7 +17389,7 @@ Tries to interpolate with different datatypes, amount of data, channels.
 \end_layout
 
 \begin_layout Subparagraph
-Tests
+Steps
 \end_layout
 
 \begin_layout Enumerate
@@ -17417,7 +17426,7 @@ NaN
 s
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test interpolation variations
 \end_layout
 
@@ -17533,7 +17542,7 @@ Generate data as above
 Test if function issues a warning.
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test no nan
 \end_layout
 
@@ -17591,7 +17600,7 @@ NaN
 s
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test write
 \end_layout
 
@@ -17710,7 +17719,7 @@ NaN
 Test if added channels match the size of the original data channels
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test overwrite
 \end_layout
 
@@ -17776,7 +17785,7 @@ sts==1
 According to overwrite test if file has been overwritten or not
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test replace channel
 \end_layout
 
@@ -17971,7 +17980,7 @@ dummy_<modeltype><variable_nr>.mat (dfn)
 e the test data.
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Generated aquisition data (pspm_testdata_gen)
 \end_layout
 
@@ -17995,7 +18004,7 @@ The duration of the channels is
 .
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Generated GLM model
 \end_layout
 
@@ -18011,7 +18020,7 @@ model.timing{1}.names = {`a';'b';'c'};
 model.timing{1}.onsets = {[10, 20, 30], [15, 25, 35], [18, 28, 38]}; 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Generated DCM & SF model
 \end_layout
 
@@ -18037,7 +18046,7 @@ model.condition{1}.index = [1;2];
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid model structure (general)
 \end_layout
 
@@ -18245,7 +18254,7 @@ ID:invalid_data_structure
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid model structure (specific)
 \end_layout
 
@@ -18718,7 +18727,7 @@ ID:invalid_input
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Action `none'
 \end_layout
 
@@ -18756,7 +18765,7 @@ Basic function test
 Test if returned data is empty.
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Action `stats'
 \end_layout
 
@@ -18818,7 +18827,7 @@ Returned data contains field
 `condnames'
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Action `cond'
 \end_layout
 
@@ -18880,7 +18889,7 @@ Returned data contains field
 `condnames'
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Action `recon'
 \end_layout
 
@@ -18934,7 +18943,7 @@ DCM & SF
  already done in specific structure test.
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Action `savecon'
 \end_layout
 
@@ -18997,7 +19006,7 @@ Field
  is equal to the randomly generated number
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Action `con'
 \end_layout
 
@@ -19046,7 +19055,7 @@ Field
 .
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Action `all'
 \end_layout
 
@@ -19084,7 +19093,7 @@ Basic function test
 Returned data is not empty.
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Action `save'
 \end_layout
 
@@ -19142,7 +19151,7 @@ Field
  in model structure equals to the randomly generated number.
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Options
 \end_layout
 
@@ -19276,7 +19285,7 @@ zscroed = 1 & action = `cond'
 Other methods
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Remove testdata
 \end_layout
 
@@ -19286,7 +19295,7 @@ Removes all the test data generated by the test class.
  
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Basic function test
 \end_layout
 
@@ -19398,7 +19407,7 @@ The duration of the channels is
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid input arguments
 \end_layout
 
@@ -19654,7 +19663,7 @@ ID:invalid_input
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid datafile
 \end_layout
 
@@ -20068,8 +20077,8 @@ ID:invalid_data_structure
 
 \end_layout
 
-\begin_layout Subsubsection*
-Return all channels 
+\begin_layout Paragraph
+Return all channels
 \end_layout
 
 \begin_layout Subparagraph
@@ -20095,7 +20104,7 @@ chan = 0
  
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Return all channels (struct input) 
 \end_layout
 
@@ -20122,7 +20131,7 @@ chan = 0
  
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Return one channel
 \end_layout
 
@@ -20149,7 +20158,7 @@ chan = 2
  
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Return one channel
 \end_layout
 
@@ -20176,7 +20185,7 @@ chan = [3 5]
  
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Return scr channels
 \end_layout
 
@@ -20199,7 +20208,7 @@ Checks the function, if only the scr channels shall be returned.
  
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Return event channels
 \end_layout
 
@@ -20222,7 +20231,7 @@ Checks the function, if only the event channels shall be returned.
  
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Save data 
 \end_layout
 
@@ -20268,7 +20277,7 @@ pspm_pp_test
 \end_layout
 
 \begin_layout Subparagraph
-Function
+Format
 \end_layout
 
 \begin_layout Standard
@@ -20285,7 +20294,7 @@ newfile = pspm_pp(`butter', datafile, freq, channelnumber)
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid input
 \end_layout
 
@@ -20420,7 +20429,7 @@ ID:invalid_input
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Median test
 \end_layout
 
@@ -20524,7 +20533,7 @@ ii.
 \end_layout
 
 \end_deeper
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Butterworth filter test
 \end_layout
 
@@ -20658,7 +20667,7 @@ Function
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid input
 \end_layout
 
@@ -20838,7 +20847,7 @@ ID:invalid_input
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Hipassfilter test
 \end_layout
 
@@ -20986,7 +20995,7 @@ length(outdata) == length(data)
 \end_layout
 
 \end_deeper
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Lowpassfilter test
 \end_layout
 
@@ -21128,7 +21137,7 @@ ID:no_low_pass_filtering
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Bandpassfilter test
 \end_layout
 
@@ -21205,7 +21214,7 @@ Same tests as in hipassfilter_test.
  
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Integer samplerate ratio downsampling test
 \end_layout
 
@@ -21358,7 +21367,7 @@ datafile<variable_nr>.mat
 .
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test parameters
 \end_layout
 
@@ -21369,185 +21378,236 @@ These are parameters which define what kind of data should be passed to
 pspm_process_illuminance
 \family default
  and which options should be set.
-\begin_inset Newline linebreak
-\end_inset
-
-
 \end_layout
 
-\begin_layout Standard
-\begin_inset Tabular
-<lyxtabular version="3" rows="7" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="left" valignment="top" width="10cm">
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
+\begin_layout Description
 
 \family typewriter
-\series bold
+\series medium
 bf_dur
+\family roman
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ Defines the duration of the basis function.
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Defines the duration of the basis function.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
+\begin_layout Description
 
 \family typewriter
-\series bold
+\series medium
+
 bf_offset
+\family roman
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ Defines the offset of the basis function.
+
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Defines the offset of the basis function.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
+\begin_layout Description
 
 \family typewriter
-\series bold
+\series medium
 dur
+\family roman
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ Defines the duration of the generated dataset.
+
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Defines the duration of the generated dataset.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
+\begin_layout Description
 
 \family typewriter
-\series bold
+\series medium
 sr
+\family roman
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ Defines the samplerate of the generated dataset.
+
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Defines the samplerate of the generated dataset.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
+\begin_layout Description
 
 \family typewriter
-\series bold
+\series medium
 n_times
+\family roman
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ Defines how many datasets should be generated.
+
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Defines how many datasets should be generated.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
+\begin_layout Description
 
 \family typewriter
-\series bold
+\series medium
 mode
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Defines the whether the dataset should be written to a file, kept as inline
+\family roman
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ Defines the whether the dataset should be written to a file, kept as inline
  variable or should be a mix of both.
- Can be either `file', `inline' or `mixed'
+ Can be either 
+\family typewriter
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+`file'
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+, 
+\family typewriter
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+`inline'
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ or 
+\family typewriter
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+`mixed'
+\family default
+.
 \end_layout
 
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
+\begin_layout Description
 
-\begin_layout Plain Layout
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
 
 \family typewriter
-\series bold
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
 overwrite
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Defines whether existing files should be overwritten or not.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
+\family roman
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ Defines whether existing files should be overwritten or not.
 
 \end_layout
 
@@ -21555,7 +21615,7 @@ Defines whether existing files should be overwritten or not.
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid input
 \end_layout
 
@@ -22156,7 +22216,7 @@ ID:invalid_input
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test options
 \end_layout
 
@@ -22247,7 +22307,7 @@ sts
 Test if amount of data elements of input and output data is equal
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test multi
 \end_layout
 
@@ -22273,8 +22333,8 @@ pspm_process_illuminance
 .
 \end_layout
 
-\begin_layout Standard
-Tests
+\begin_layout Subparagraph
+Steps
 \end_layout
 
 \begin_layout Enumerate
@@ -22339,7 +22399,7 @@ n_times
 , test if output has same size as input
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Test overwrite
 \end_layout
 
@@ -22417,7 +22477,7 @@ Test if existing file was overwriten or not
 Other methods
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Generate lx
 \end_layout
 
@@ -22438,7 +22498,7 @@ lx
  They will be removed once all tests have finished.
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Cleanup
 \end_layout
 
@@ -22484,7 +22544,7 @@ wavedata = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid input
 \end_layout
 
@@ -22619,7 +22679,7 @@ ID:invalid_input
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Valid input
 \end_layout
 
@@ -22641,8 +22701,8 @@ Description
 Pass generated, valid data and test if function issues no warning.
 \end_layout
 
-\begin_layout Standard
-Tests:
+\begin_layout Subparagraph
+Steps
 \end_layout
 
 \begin_layout Enumerate
@@ -22685,7 +22745,7 @@ out_newfilename = pspm_ren(filename, newfilename)
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid input
 \end_layout
 
@@ -22796,7 +22856,7 @@ ID:invalid_input
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Char Valid Input
 \end_layout
 
@@ -22824,7 +22884,7 @@ pspm_load_data
 \end_layout
 
 \begin_layout Subparagraph
-Tests
+Steps
 \end_layout
 
 \begin_layout Enumerate
@@ -22865,7 +22925,7 @@ Check if the field
 Check if the original file has been deleted 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Cell Valid Input
 \end_layout
 
@@ -22937,7 +22997,7 @@ sts = pspm_resp_pp(fn, sr, chan, options)
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Regression Test against Revision r660
 \end_layout
 
@@ -23093,7 +23153,7 @@ BRK2NORM==3
 Testcases
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Invalid input
 \end_layout
 
@@ -23224,7 +23284,7 @@ ID:invalid_input
 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 One datafile
 \end_layout
 
@@ -23252,7 +23312,7 @@ Checks the function if the variable
 \end_layout
 
 \begin_layout Subparagraph
-Tests
+Steps
 \end_layout
 
 \begin_layout Enumerate
@@ -23304,7 +23364,7 @@ infos.splitfile
  
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 Multiple datafiles
 \end_layout
 
@@ -23729,7 +23789,7 @@ markertest_k
  
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 markertest_1
 \end_layout
 
@@ -23766,7 +23826,7 @@ Input
 pspm_trim(fn, -20, 20, `marker')
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 markertest_2 
 \end_layout
 
@@ -23805,8 +23865,8 @@ then
 pspm_trim(fn, from, to, `marker') 
 \end_layout
 
-\begin_layout Subsubsection*
-markertest_3 
+\begin_layout Paragraph
+markertest_3
 \end_layout
 
 \begin_layout Subparagraph
@@ -23859,7 +23919,7 @@ filetest_k
  
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 filetest_1
 \end_layout
 
@@ -23904,7 +23964,7 @@ Input
 pspm_trim(fn, -12.5, 50, `marker') 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 filetest_2
 \end_layout
 
@@ -23939,7 +23999,7 @@ Input
 pspm_trim(fn, 0 , duration, `marker') 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 filetest_3
 \end_layout
 
@@ -23973,7 +24033,7 @@ Input
 pspm_trim(fn,2.1, duration – 2.5, `marker') 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Subsubsection
 Numeric reference tests
 \end_layout
 
@@ -24013,7 +24073,7 @@ markertest_k
  
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 numtest_1
 \end_layout
 
@@ -24058,7 +24118,7 @@ Input
 pspm_trim(fn, -20, 20, [2 14]) 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 numtest_2
 \end_layout
 
@@ -24105,7 +24165,7 @@ then
 pspm_trim(fn, from, to, [3 8]) 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 numtest_3
 \end_layout
 
@@ -24139,7 +24199,7 @@ Input
 pspm_trim(fn, -1.5, 2, [2 7]) 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Paragraph
 numtest_4
 \end_layout
 
@@ -24176,7 +24236,7 @@ Input
 pspm_trim(fn, ‘none', 0, [1 (numel(marker) + 1)]) 
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Subsubsection
 Multiple file reference tests
 \end_layout
 
@@ -24209,7 +24269,7 @@ datafile
 Options tests
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Subsubsection
 Marker channel number option
 \end_layout
 
