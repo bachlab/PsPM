@@ -5,9 +5,7 @@ function pspm_test_github_actions(varargin)
 %   exit_code: indicating the result of testing, 0 if succeed, -1 if fail
 
 % PsPM TestEnvironment for GitHub Actions
-% (C) 2021 Dominik Bach (WCHN, UCL)
-%          Linus Ruettimann (UZH)
-%          Teddy Chao (WCHN, UCL)
+% (C) 2021 Teddy Chao (WCHN, UCL)
 
 %$ imports
 import matlab.unittest.TestSuite;
