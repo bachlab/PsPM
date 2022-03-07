@@ -95,9 +95,11 @@ if ~strcmpi(channel_action, 'delete')
     if isfield(newdata{i}, 'data') && isfield(newdata{i}, 'header')
       d = newdata{i}.data;
       if isempty(d) % size of d could be 0-by-1, 0-by-0, 1-by-0
-        warning('ID:invalid_data_structure', ...
-        'Passed struct (%i) contains an empty ''.data'' field.', i);
-        return
+        d = zeros(1,0); % generalise it as 1-by-0
+        newdata{i}.data = d;
+        % warning('ID:invalid_data_structure', ...
+        % 'Passed struct (%i) contains an empty ''.data'' field.', i);
+        % return
       else
         [h, w] = size(d); % d is not empty, h and w should be non-zero
         if w ~= 1 && h~= 1
