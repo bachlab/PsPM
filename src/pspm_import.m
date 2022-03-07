@@ -14,8 +14,6 @@ function outfile=pspm_import(datafile, datatype, import, options)
 %           - .type: not all data types support all channel types
 %           mandatory fields for some data types and each channel:
 %           - .sr: sampling rate for waveform, or timeunit in s for event channels
-%           - .flank ('ascending', 'descending', 'both': an optional field for
-%              continuous channels; default: both)
 %           - .channel: channel or column number in the original file
 %           optional fields for some data types and channel types:
 %           - .transfer: name of a .mat file containing values for

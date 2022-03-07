@@ -1,8 +1,5 @@
 function cfg = pspm_cfg
 
-% $Id$
-% $Rev$
-
 
 %% SCR
 cfg        = cfg_repeat;

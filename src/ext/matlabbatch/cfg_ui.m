@@ -378,7 +378,7 @@ else
     ciid = {udmodlist.cjob udmodlist.id{cmod} udmodule.id{citem}};
 end;
 contents = cellfun(@(c)subsref(c, substruct('{}',{citem})), udmodule.contents, 'UniformOutput', false);
-sout = cat(2, udmodlist.sout{1:cmod-1});
+sout = cat(2, udmodlist.sout(1:cmod-1));
 cfg_ui_util('showvaledit', fig, ciid, contents, sout, dflag, [], @()local_valedit_update(obj));
 drawnow;
 
