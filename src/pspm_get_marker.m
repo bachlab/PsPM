@@ -1,7 +1,7 @@
 function [sts, data] = pspm_get_marker(import)
 % pspm_get_marker gets the marker channel for different data types
 % FORMAT: [sts, data] = pspm_get_marker(import)
-%               import: import job structure with mandatory fields 
+%               import: import job structure with mandatory fields
 %                  .data
 %                  .marker ('timestamps', 'continuous')
 %                  .sr (timestamps: timeunits in seconds, continuous: sample rate in 1/seconds)
