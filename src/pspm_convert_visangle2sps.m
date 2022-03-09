@@ -14,12 +14,12 @@ function [ sts, out ] = pspm_convert_visangle2sps(fn, options)
   % ┣━ fn             The actual data file containing the eyelink recording with
   % ┃                 gaze data
   % ┗━ options
-  %     ┣━ chans      On which subset of the channels the visual angles between
+  %     ┣━ .chans     On which subset of the channels the visual angles between
   %     ┃             the data point should be computed.
   %     ┃             If no channels are given then the function
   %     ┃             computes the scanpath speed of the first
   %     ┃             found gaze data channels with type 'degree'
-  %     ┣━ eyes       Define on which eye the operations should be performed.
+  %     ┣━ .eyes      Define on which eye the operations should be performed.
   %     ┃   ┃         Possible values
   %     ┃   ┣━ 'c'    [default] combined left and right side
   %     ┃   ┣━ 'l'    left side

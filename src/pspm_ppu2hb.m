@@ -1,11 +1,11 @@
-function [ sts, outinfo ] = pspm_ppu2hb( fn,chan,options )
-%pspm_ppu2hb Converts a pulse oxymeter channel to heartbeats and adds it as
+function [ sts, outinfo ] = pspm_convert_ppu2hb( fn,chan,options )
+%pspm_convert_ppu2hb Converts a pulse oxymeter channel to heartbeats and adds it as
 %a new channel
 %   First a template is generated from non ambiguous heartbeats. The ppu
 %   signal is then cross correlated with the template and maximas are
 %   identified as heartbeat maximas and a heartbeat channel is then
 %   generated from these.
-%   Format: [ sts, outinfo ] = pspm_ppu2hb( fn,chan,options )
+%   Format: [ sts, outinfo ] = pspm_convert_ppu2hb( fn,chan,options )
 %   Inputs :
 %       fn : file name with path
 %       chan : ppu channel number
@@ -19,13 +19,13 @@ function [ sts, outinfo ] = pspm_ppu2hb( fn,chan,options )
 %                          (Default: 'replace')
 %           lsm         : [integer] large spikes mode compensates for
 %                         large spikes while generating template by
-%                         removing the [integer] largest percentile of 
+%                         removing the [integer] largest percentile of
 %                         spikes from consideration
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2016 Samuel Gerster (University of Zurich), Tobias Moser (University of Zurich)
 
-% $Id: pspm_ppu2hb.m 596 2018-09-19 12:26:52Z lciernik $
+% $Id: pspm_convert_ppu2hb.m 596 2018-09-19 12:26:52Z lciernik $
 % $Rev: 596 $
 
 
@@ -71,7 +71,7 @@ if numel(data) > 1
     fprintf('There is more than one PPU channel in the data file. Only the first of these will be analysed.');
     data = data(1);
 end
-% Check that channel is ppu 
+% Check that channel is ppu
 if ~strcmp(data{1,1}.header.chantype,'ppu')
     warning('ID:not_allowed_channeltype', 'Specified channel is not a PPU channel. Don''t know what to do!')
     return;
@@ -99,7 +99,7 @@ if options.lsm
     % template
     lsi = pis(lsi);
     fprintf('   done.\n');
-else 
+else
     minProm = range(ppu)/3;
 end
 
@@ -112,7 +112,7 @@ fprintf('Creating template. This might take some time.');
                     'MinPeakProminence',minProm);
 
 if options.lsm
-    % Remove large spikes from  
+    % Remove large spikes from
     [~,lsi_in_pis,~] = intersect(pis,lsi);
     pis(lsi_in_pis) = [];
 end
@@ -120,7 +120,7 @@ end
 % handle possible errors
 if isempty(pis),warning('ID:NoPulse', 'No pulse found, nothing done.');return;end
 
-% get pulse period lower limit (assumed onset) as 30% of smalest period 
+% get pulse period lower limit (assumed onset) as 30% of smalest period
 % before detected peaks
 min_pulse_period = min(diff(pis));
 period_index_lower_bound = floor(pis(2:end-1)-.3*min_pulse_period);
@@ -185,7 +185,7 @@ write_options = struct();
 write_options.msg = msg;
 
 % Replace last existing channel or save as new channel
-[nsts, nout] = pspm_write_channel(fn, newdata, options.channel_action, write_options);    
+[nsts, nout] = pspm_write_channel(fn, newdata, options.channel_action, write_options);
 
 % user output
 fprintf('  done.\n');
