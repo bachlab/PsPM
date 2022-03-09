@@ -212,8 +212,8 @@ if ~contains(old_chantype, 'pupil')
 end
 
 is_left = contains(old_chantype, '_l');
-is_both = contains(old_chantype, '_c');
-if is_both
+is_coth = contains(old_chantype, '_c');
+if is_coth
   warning('ID:invalid_input',...
     'pspm_pupil_correct_eyelink cannot work with combined pupil channels');
   return;
@@ -318,11 +318,11 @@ chantype_array = split(chantype,'_');
 % find if there is pp
 is_pp = any(strcmp(chantype_array,'pp'));
 % find if it is combined (c), left (l) or right (r)
-is_b = any(strcmp(chantype_array, settings.lateral.char.b));
+is_c = any(strcmp(chantype_array, settings.lateral.char.c));
 is_l = any(strcmp(chantype_array, settings.lateral.char.l));
 is_r = any(strcmp(chantype_array, settings.lateral.char.r));
 if ~is_pp
-  if is_b
+  if is_c
     chantype_array(ismember(chantype_array,settings.lateral.char.b)) = [];
     chantype_array{end+1} = 'pp';
     chantype_array{end+1} = settings.lateral.char.b;

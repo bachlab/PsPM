@@ -374,7 +374,7 @@ global settings;
 if isempty(settings), pspm_init; end
 % n_data = size(data_concat, 1); % this line is not used in this function
 chan_id_in_concat = find(strcmpi(chan_struct, import_cell.type), 1, 'first');
-chantype_has_L_or_R = ~isempty(regexpi(import_cell.type, ['_[',settings.lateral.char.b,']'], 'once'));
+chantype_has_L_or_R = ~isempty(regexpi(import_cell.type, ['_[',settings.lateral.char.c,']'], 'once'));
 chantype_hasnt_eyes_obs = isempty(regexpi(import_cell.type, ['_([' eyes_observed '])'], 'once'));
 if (chantype_has_L_or_R && chantype_hasnt_eyes_obs) || isempty(chan_id_in_concat)
   chan_id = NaN;

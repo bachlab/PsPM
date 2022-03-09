@@ -980,15 +980,15 @@ defaults.split.max_sn = 10; % split sessions: assume maximum 10 sessions
 defaults.split.min_break_ratio = 3; % split sessions: assume inter marker intervals 3 times longer for breaks
 
 % Lateral setting
-defaults.lateral.char.b = 'c';
+defaults.lateral.char.c = 'c';
 defaults.lateral.char.l = 'l';
 defaults.lateral.char.r = 'r';
 
-defaults.lateral.cap.b = 'C';
+defaults.lateral.cap.c = 'C';
 defaults.lateral.cap.l = 'L';
 defaults.lateral.cap.r = 'R';
 
-defaults.lateral.full.b = 'combined';
+defaults.lateral.full.c = 'combined';
 defaults.lateral.full.l = 'left';
 defaults.lateral.full.r = 'right';
 

@@ -17,13 +17,13 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 %    2. x <-- A*(Dconv/Dref)*x
 %    3. Convert x from ref_unit to unit.
 %
-% FORMAT: 
+% FORMAT:
 %   [sts, out] = pspm_convert_au2unit(fn, chan, unit, distance, multiplicator,
 %                                     reference_distance, reference_unit, options)
 %   [sts, out] = pspm_convert_au2unit(data, unit, distance, record_method,
 %                                     multiplicator, reference_distance, reference_unit, options)
 %
-% ARGUMENTS: 
+% ARGUMENTS:
 %           fn:                 filename which contains the channels to be
 %                               converted
 %           data:               a one-dimensional vector which contains the
@@ -42,22 +42,19 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 %                               was obtained, as specified in the parameter unit.
 %                               The values will be proportionally translated to
 %                               this distance before applying the conversion function.
-%           reference_unit:     reference unit with which the multiplicator 
+%           reference_unit:     reference unit with which the multiplicator
 %                               and reference_distance values were obtained.
 %                               Possible values are mm, cm, dm, m, in, inches
-%           
+%
 %           options:            a struct of optional settings
 %               channel_action:  ['add'/'replace'] Defines whether the new channel
 %                                should be added or the previous outputs of this
 %                                function should be replaced.
 %                                (Default: 'add')
-%               
+%
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
-
-% $Id: pspm_convert_au2unit.m 707 2019-06-14 07:23:41Z esrefo $
-% $Rev: 707 $
 
 % initialise
 % -------------------------------------------------------------------------
@@ -67,7 +64,7 @@ sts = -1;
 out = struct();
 
 %% load alternating inputs
-if nargin < 1 
+if nargin < 1
     warning('ID:invalid_input', 'No arguments given. Don''t know what to do.');
     return;
 else
@@ -137,11 +134,11 @@ else
             opt_idx = 9;
         end
     end
-    
+
     if nargin >= opt_idx
         options = varargin{opt_idx};
     end
-    
+
 end
 
 %% set default values
@@ -176,30 +173,30 @@ if strcmpi(mode, 'data') && strcmpi(record_method, '') && ...
         (~isstruct(options) || ~isfield(options, 'multiplicator'))
     warning('ID:invalid_input', ['If only a numeric data vector ', ...
         'is provided, either ''record_method'' or ', ...
-        'options.multiplicator have to be specified.']); 
+        'options.multiplicator have to be specified.']);
     return;
 end
 
 if ~isfield(options, 'channel_action')
     options.channel_action = 'add';
 end
-    
+
 %% check values
 if ~ischar(fn)
-    warning('ID:invalid_input', 'fn is not a char.'); 
+    warning('ID:invalid_input', 'fn is not a char.');
     return;
 elseif ~isnumeric(data)
-    warning('ID:invalid_input', 'data is not numeric.'); 
+    warning('ID:invalid_input', 'data is not numeric.');
     return;
 elseif ~isnumeric(distance)
-    warning('ID:invalid_input', 'distance is not numeric.'); 
+    warning('ID:invalid_input', 'distance is not numeric.');
     return;
 elseif ~isnumeric(chan) && ~ischar(chan)
-    warning('ID:invalid_input', 'chan must be numeric or a string.'); 
+    warning('ID:invalid_input', 'chan must be numeric or a string.');
     return;
 elseif ~any(strcmpi(options.channel_action, {'add', 'replace'}))
     warning('ID:invalid_input', ['options.channel_action must be either ', ...
-        '''add'' or ''replace''.']); 
+        '''add'' or ''replace''.']);
     return;
 end
 

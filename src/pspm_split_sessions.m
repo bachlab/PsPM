@@ -161,7 +161,7 @@ if options.missing
     missingsr = 10000; % dummy sample rate, should be higher than data sampling rates (but no need to make it dynamic)
     duration_index = round(missingsr * ininfos.duration);
     indx = zeros(1,duration_index); % indx should be a one-dimensional array?
-    missing = pspm_time2index(missing_time, missingsr, duration_index); % convert epochs in sec to datapoints
+    missing = pspm_convert_time2index(missing_time, missingsr, duration_index); % convert epochs in sec to datapoints
 
     % allow splitting empty missing epochs
     if ~isempty(missing)

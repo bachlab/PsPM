@@ -9,18 +9,18 @@ function [sts, out] = pspm_convert_gaze_distance(fn, target, from, width, height
 %
 % ARGUMENTS:
 %     fn:                 The actual data file gaze data
-% 
+%
 %     target:             target unit of conversion. degree | sps
 %
 %     from:               Distance unit to convert from.
 %                         pixel, mm, cm, m, inches
-% 
+%
 %     width:              Width of the screen in the units chosen in the 'from' parameter
 %
 %     height:             Height of the screen in the units chosen in the 'from' parameter
 %
 %     distance:           Subject distance from the screen in the units chosen in the 'from' parameter
-% 
+%
 %     options:
 %       channel_action:   Channel action for sps data, add / replace existing sps data
 %
@@ -141,13 +141,13 @@ for gaze_eye = fieldnames(eyes)'
 
     [sts, out] = pspm_write_channel(fn, { lat_chan, lon_chan }, options.channel_action);
   elseif strcmp(target, 'sps')
-      
+
     arclen = pspm_convert_visangle2sps_core(lat, lon);
     dist_channel.data = rad2deg(arclen) .* sr;
     dist_channel.header.chantype = strcat('sps_', gaze_eye{1});
     dist_channel.header.sr = sr;
     dist_channel.header.units = 'degree';
-    
+
     [sts, out] = pspm_write_channel(fn, dist_channel, options.channel_action);
   end
 

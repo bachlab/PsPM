@@ -532,7 +532,7 @@ for iSn = 1:nFile
   % process missing values
   newmissing = zeros(size(newy(:)));
   if ~isempty(missing{iSn})
-    missingtimes = pspm_time2index(missing{iSn},newsr,length(newmissing));
+    missingtimes = pspm_convert_time2index(missing{iSn},newsr,length(newmissing));
     for iMs = 1:size(missingtimes, 1)
       newmissing(missingtimes(iMs, 1):missingtimes(iMs, 2)) = 1;
     end
