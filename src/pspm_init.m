@@ -18,7 +18,7 @@ function pspm_init
   % 3 channel type (chantype) definitions
   %   3.1 SCR
   %
-  % MAPPING
+  % STRUCTURE
   % defaults
   %   ┣ chantypes
   %   ┣ import
@@ -802,7 +802,7 @@ function pspm_init
   %
 
   % DCM for SCR filter settings
-  defaults.dcm{1} = struct('filter', struct('lpfreq', 5,  'lporder',  1,  'hpfreq', 0.0159, 'hporder',  1,  'down', 10, 'direction', 'bi', 'sigma_offset', 0.3));
+  defaults.dcm{1} = struct('filter', struct('lpfreq', 5,  'lporder',  1,  'hpfreq', 0.0159, 'hporder',  1,  'down', 10, 'direction', 'bi'), 'sigma_offset', 0.3);
   % DCM for SF filter settings
   defaults.dcm{2} = struct('filter', struct('lpfreq', 5,  'lporder',  1,  'hpfreq', 0.0159, 'hporder',  1,  'down', 10, 'direction', 'uni'));
 
