@@ -1,4 +1,4 @@
-function [sts,infos] = pspm_ecg2hb(fn, chan, options)
+function [sts,infos] = pspm_convert_ecg2hb(fn, chan, options)
 % pspm_ecg2hb identifies the position of QRS complexes in ECG data and
 % writes them as heart beat channel into the datafile. This function
 % implements the algorithm by Pan & Tompkins (1985) with some adjustments.
@@ -142,22 +142,22 @@ pt_debug=[];
 % input checks
 % -------------------------------------------------------------------------
 if nargin > 2 && exist('options', 'var')
-    
+
     if isstruct(options)
         if isfield(options, 'channel_action')
             if ~any(strcmpi(options.channel_action, {'add', 'replace'}))
                 warning('ID:invalid_input', '''options.channel_action'' must be either ''add'' or ''replace''.'); return;
-            end;             
+            end;
         end
-        
-        if isfield(options, 'semi') 
+
+        if isfield(options, 'semi')
             if any(options.semi == 0:1)
                 pt.settings.semi = options.semi;
             else
                 warning('ID:invalid_input', '''options.semi'' must be either 0 or 1.'); return;
             end;
         end;
-              
+
         if isfield(options, 'debugmode')
             if any(options.debugmode == 0:1)
                 pt.settings.debugmode = options.debugmode;
@@ -165,7 +165,7 @@ if nargin > 2 && exist('options', 'var')
                 warning('ID:invalid_input', '''options.debugmode'' must be either 0 or 1.'); return;
             end;
         end;
-        
+
         if isfield(options, 'minHR') && isfield(options, 'maxHR')
             if isnumeric(options.minHR) && isnumeric(options.maxHR) ...
                     && options.minHR < options.maxHR
@@ -191,12 +191,12 @@ if nargin > 2 && exist('options', 'var')
                     [pt.settings.minHR]); return;
             end
         end
-        
+
         if isfield(options, 'twthresh')
             if isnumeric(options.twthresh)
                 pt.settings.twthresh = options.twthresh;
             else
-                warning('ID:invalid_input', '''options.twthresh'' must be numeric.'); return;  
+                warning('ID:invalid_input', '''options.twthresh'' must be numeric.'); return;
             end
         end
     else
@@ -317,9 +317,9 @@ end
 
 % ---Manual check for outliers---------------------------------------------
 if pt.settings.semi==1
-    if any(diff(pt.set.R)<mean(diff(pt.set.R))-pt.settings.outfact*std(diff(pt.set.R))) || ... 
+    if any(diff(pt.set.R)<mean(diff(pt.set.R))-pt.settings.outfact*std(diff(pt.set.R))) || ...
             any(diff(pt.set.R)>mean(diff(pt.set.R))+pt.settings.outfact*std(diff(pt.set.R)))
-        
+
         noise=find(diff(pt.set.R)<mean(diff(pt.set.R))-pt.settings.outfact*std(diff(pt.set.R)));
         miss=find(diff(pt.set.R)>mean(diff(pt.set.R))+pt.settings.outfact*std(diff(pt.set.R)));
         pt.faulty=sort([noise miss]);
@@ -421,7 +421,7 @@ while pt.set.tstart+pt.set.tmax <= pt.settings.n
                     [pt]=tmax(pt);
                 end
                 % ---------------------------------------------------------
-                
+
                 break
                 % ----------------------------------------------------------
                 % noise peak at this point
@@ -435,7 +435,7 @@ while pt.set.tstart+pt.set.tmax <= pt.settings.n
                 error;
             end
         end
-        
+
         % ---if neither with thr 1 nor with thr 2 an r spike could be identified---
     elseif cse==3
         % divide invl into 3 smaller intervals
@@ -451,7 +451,7 @@ while pt.set.tstart+pt.set.tmax <= pt.settings.n
                 [pt.set]=update_set(PEAKI,pt.set,CSE(1,:));
                 [PEAKF,posPEAKF]=max(pt.data.pt_peaks(minvl,1));
                 [pt.set]=update_set(PEAKF,pt.set,CSE(2,:));
-                
+
                 pt.set.tstart=posPEAKF+pt.set.tstart;
                 pt.data.r(pt.set.tstart,1)=1;
                 pt.set.R(end+1)=pt.set.tstart;
@@ -459,14 +459,14 @@ while pt.set.tstart+pt.set.tmax <= pt.settings.n
                 pt.set.tstart=pt.set.tstart+pt.settings.tmin;
                 break
             end
-            
+
             if k==3
                 if numel(pt.set.R) < 2 || pt.set.R(end)-pt.set.R(end-1)>0
                     [PEAKI,posPEAKI]=max(pt.data.pt_peaks(invl,2));
                     [pt.set]=update_set(PEAKI,pt.set,CSE(1,:));
                     [PEAKF,posPEAKF]=max(pt.data.pt_peaks(invl,1));
                     [pt.set]=update_set(PEAKF,pt.set,CSE(2,:));
-                    
+
                     pt.set.tstart=posPEAKF+pt.set.tstart;
                     pt.data.r(pt.set.tstart,1)=1;
                     pt.set.R(end+1)=pt.set.tstart;
@@ -480,7 +480,7 @@ while pt.set.tstart+pt.set.tmax <= pt.settings.n
         if length(pt.set.R)>= 9
             [pt]=tmax(pt);
         end
-        % ----------------------------------------------------------------- 
+        % -----------------------------------------------------------------
     end
 end
 
@@ -542,7 +542,7 @@ end
 Rcur=diff(pt.set.R);
 
 for j=1:length(Rcur)
-    
+
     if  Rcur(j) < 0.92 * av2 || Rcur(j) > 1.16 * av2
         Rcur(j)=0;
     end

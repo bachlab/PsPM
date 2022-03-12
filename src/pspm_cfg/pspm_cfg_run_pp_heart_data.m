@@ -55,7 +55,7 @@ for i=1:numel(job.pp_type)
                 opt.channel_action = channel_action;
                 opt.channel = chan;
                 winfo = struct();
-                [sts, winfo.channel] = pspm_ecg2hb_amri(fn, opt);
+                [sts, winfo.channel] = pspm_convert_ecg2hb_amri(fn, opt);
             case 'hb2hp'
                 sr = job.pp_type{i}.hb2hp.sr;
                 opt = struct();

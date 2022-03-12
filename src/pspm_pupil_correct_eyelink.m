@@ -212,8 +212,8 @@ if ~contains(old_chantype, 'pupil')
 end
 
 is_left = contains(old_chantype, '_l');
-is_coth = contains(old_chantype, '_c');
-if is_coth
+is_both = contains(old_chantype, '_c');
+if is_both
   warning('ID:invalid_input',...
     'pspm_pupil_correct_eyelink cannot work with combined pupil channels');
   return;

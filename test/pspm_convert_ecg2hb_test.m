@@ -1,6 +1,6 @@
-classdef pspm_ecg2hb_test < pspm_testcase
+classdef pspm_convert_ecg2hb_test < pspm_testcase
 % SCR_ECG2HB_TEST
-% unittest class for the pspm_ecg2hb function
+% unittest class for the pspm_convert_ecg2hb function
 %__________________________________________________________________________
 % PsPM TestEnvironment
 % (C) 2015 Tobias Moser (University of Zurich)
@@ -66,7 +66,7 @@ classdef pspm_ecg2hb_test < pspm_testcase
                 if nsts == -1
                     warning('unable to load the test data file');
                     return;
-                end;
+                end
                 
                 if numel(data) > original_num_channels
                     for i=original_num_channels+1:numel(data)
@@ -129,40 +129,40 @@ classdef pspm_ecg2hb_test < pspm_testcase
 
         function invalid_input(this, filename, chan_struct)
             % no arguments
-            this.verifyWarning(@()pspm_ecg2hb(), 'ID:invalid_input');
+            this.verifyWarning(@()pspm_convert_ecg2hb(), 'ID:invalid_input');
             % invalid file
-            this.verifyWarning(@()pspm_ecg2hb(1), 'ID:invalid_input');
+            this.verifyWarning(@()pspm_convert_ecg2hb(1), 'ID:invalid_input');
             % invalid channel (text)
-            this.verifyWarning(@()pspm_ecg2hb(filename, 'bla'), 'ID:invalid_input');
+            this.verifyWarning(@()pspm_convert_ecg2hb(filename, 'bla'), 'ID:invalid_input');
             if chan_struct.nr ~= 1
                 % invalid channel 
-                this.verifyWarning(@()pspm_ecg2hb(filename, 1), 'ID:not_allowed_channeltype');
+                this.verifyWarning(@()pspm_convert_ecg2hb(filename, 1), 'ID:not_allowed_channeltype');
             end
             % invalid twthresh (text)
             o.twthresh = 'bla';
-            this.verifyWarning(@()pspm_ecg2hb(filename, chan_struct, o), 'ID:invalid_input');
+            this.verifyWarning(@()pspm_convert_ecg2hb(filename, chan_struct, o), 'ID:invalid_input');
             % invalid minHR (> default_maxHR)
             o.minHR = 202;
-            this.verifyWarning(@()pspm_ecg2hb(filename, chan_struct, o), 'ID:invalid_input');
+            this.verifyWarning(@()pspm_convert_ecg2hb(filename, chan_struct, o), 'ID:invalid_input');
             % invalid minHR and maxHR (> given maxHR)
             o.maxHR = 19;
-            this.verifyWarning(@()pspm_ecg2hb(filename, chan_struct, o), 'ID:invalid_input');
+            this.verifyWarning(@()pspm_convert_ecg2hb(filename, chan_struct, o), 'ID:invalid_input');
             % invalid maxHR (< default_minHR)
             o = rmfield(o, 'minHR');
-            this.verifyWarning(@()pspm_ecg2hb(filename, chan_struct, o), 'ID:invalid_input');
+            this.verifyWarning(@()pspm_convert_ecg2hb(filename, chan_struct, o), 'ID:invalid_input');
             % invalid debugmode (not in [0,1])
             o.debugmode = 5;
-            this.verifyWarning(@()pspm_ecg2hb(filename, chan_struct, o), 'ID:invalid_input');
+            this.verifyWarning(@()pspm_convert_ecg2hb(filename, chan_struct, o), 'ID:invalid_input');
             % invalid semi (not in [0,1])
             o.semi = 5;
-            this.verifyWarning(@()pspm_ecg2hb(filename, chan_struct, o), 'ID:invalid_input');
+            this.verifyWarning(@()pspm_convert_ecg2hb(filename, chan_struct, o), 'ID:invalid_input');
             
         end
         
         function valid_input(this, filename, chan_struct, num_channels)
             % call function and vary arguments
-            this.verifyWarningFree(@()pspm_ecg2hb(filename, chan_struct.nr, this.options));
-            this.verifyWarningFree(@()pspm_ecg2hb(filename, chan_struct.name, this.options));
+            this.verifyWarningFree(@()pspm_convert_ecg2hb(filename, chan_struct.nr, this.options));
+            this.verifyWarningFree(@()pspm_convert_ecg2hb(filename, chan_struct.name, this.options));
             % test added data
             this.verifyWarningFree(@()this.test_added_data(filename, num_channels));
         end
