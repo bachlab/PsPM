@@ -1,10 +1,10 @@
-function index = pspm_convert_time2index(time, sr, varargin)
+function index = pspm_time2index(time, sr, varargin)
 
   % DEFINITION
-  % pspm_convert_time2index converts time to index.
+  % pspm_time2index converts time to index.
   %
   % FORMAT
-  % index = pspm_convert_time2index(time, sr, varargin)
+  % index = pspm_time2index(time, sr, varargin)
   %
   % ARGUMENTS
   % Input

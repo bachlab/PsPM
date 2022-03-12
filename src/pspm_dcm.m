@@ -372,7 +372,7 @@ for iSn = 1:numel(model.datafile)
 
   else
     % use missing epochs as specified by file
-    miss_epochs = pspm_convert_time2index(missing{iSn},data{iSn}{1}.header.sr);
+    miss_epochs = pspm_time2index(missing{iSn},data{iSn}{1}.header.sr);
     ignore_epochs = diff(missing{iSn}, 1, 2) > model.substhresh;
 
     % and set data to NaN to enable later detection of "short" missing
@@ -440,7 +440,7 @@ foo = {};
 for vs = 1:numel(valid_subsessions)
   isbSn = valid_subsessions(vs);
   sbSn = subsessions(isbSn, :);
-  flanks = pspm_convert_time2index(sbSn(2:3), data{sbSn(1)}{1}.header.sr);
+  flanks = pspm_time2index(sbSn(2:3), data{sbSn(1)}{1}.header.sr);
   sbSn_data = data{sbSn(1)}{1}.data(flanks(1):flanks(2));
   sbs_miss = isnan(sbSn_data);
 
@@ -455,7 +455,7 @@ for vs = 1:numel(valid_subsessions)
 
   % define missing epochs for inversion in final sampling rate
   sbs_missing{isbSn, 1} = zeros(size(sbs_data{isbSn, 1}));
-  sbs_missing_indx = pspm_convert_time2index(find(sbs_miss)/data{sbSn(1)}{1}.header.sr, model.sr)
+  sbs_missing_indx = pspm_time2index(find(sbs_miss)/data{sbSn(1)}{1}.header.sr, model.sr)
   sbs_missing{isbSn, 1}(sbs_missing_indx) = 1;
 end
 
@@ -753,7 +753,7 @@ if (options.indrf || options.getrf) && ~isempty(options.flexevents)
     comp = u .* repmat(s',n,1);
     aSCR = comp(:, 1);
     aSCR = aSCR - aSCR(1);
-    foo = min([numel(aSCR), (pspm_convert_time2index(meansoa, model.sr) + 50)]);
+    foo = min([numel(aSCR), (pspm_time2index(meansoa, model.sr) + 50)]);
     [mx ind] = max(abs(aSCR(1:foo)));
     if aSCR(ind) < 0, aSCR = -aSCR; end;
     aSCR = (aSCR - min(aSCR))/(max(aSCR) - min(aSCR));
