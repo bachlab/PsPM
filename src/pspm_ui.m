@@ -1,51 +1,50 @@
 function pspm_ui(hObject,handles,window)
 
-% pspm_ui controls the UI of the referred handle
-% The PsPM Team, UCL
+  % pspm_ui controls the UI of the referred handle
+  % The PsPM Team, UCL
 
-%% Parameters for UI optimisation
-if ispc
-  FSTitle = 11;
-  FSText = 10;
-  FSCaption = 9;
-  FSAttr = 9;
-  DisplayUnit = 'points';
-  FNRoman = 'Segoe UI';
-  FNEmph = 'Segoe UI Bold';
-  MainWeight = 500;
-  MainHeight = 500*0.8;
-  DisplayWeight = 250;
-  DisplayHeight = 250/5;
-  SwitchResize = 'off';
-elseif ismac
-  FSTitle = 16;
-  FSText = 14;
-  FSCaption = 12;
-  FSAttr = 13;
-  FNRoman = 'Helvetica Neue';
-  FNEmph = 'Gill Sans';
-  DisplayUnit = 'points';
-  MainWeight = 750;
-  MainHeight = 750*0.8;
-  DisplayWeight = 190;
-  DisplayHeight = 60;
-  SwitchResize = 'off';
-else
-  FSTitle = 11;
-  FSText = 10;
-  FSCaption = 9;
-  FSAttr = 10;
-  FNRoman = 'DejaVu Sans';
-  FNEmph = 'DejaVu Sans';
-  DisplayUnit = 'points';
-  MainWeight = 650;
-  MainHeight = 650*0.8;
-  DisplayWeight = 190;
-  DisplayHeight = 60;
-  SwitchResize = 'on';
-end
-
-switch window
+  %% Parameters for UI optimisation
+  if ispc
+    FSTitle = 11;
+    FSText = 10;
+    FSCaption = 9;
+    FSAttr = 9;
+    DisplayUnit = 'points';
+    FNRoman = 'Segoe UI';
+    FNEmph = 'Segoe UI Bold';
+    MainWeight = 500;
+    MainHeight = 500*0.8;
+    DisplayWeight = 250;
+    DisplayHeight = 250/5;
+    SwitchResize = 'off';
+  elseif ismac
+    FSTitle = 16;
+    FSText = 14;
+    FSCaption = 12;
+    FSAttr = 13;
+    FNRoman = 'Helvetica Neue';
+    FNEmph = 'Gill Sans';
+    DisplayUnit = 'points';
+    MainWeight = 750;
+    MainHeight = 750*0.8;
+    DisplayWeight = 190;
+    DisplayHeight = 60;
+    SwitchResize = 'off';
+  else
+    FSTitle = 11;
+    FSText = 10;
+    FSCaption = 9;
+    FSAttr = 10;
+    FNRoman = 'DejaVu Sans';
+    FNEmph = 'DejaVu Sans';
+    DisplayUnit = 'points';
+    MainWeight = 650;
+    MainHeight = 650*0.8;
+    DisplayWeight = 190;
+    DisplayHeight = 60;
+    SwitchResize = 'on';
+  end
+  switch window
   case 'main'
     handles.figure1.Units = DisplayUnit;
     handles.tag_attribution.FontName = FNRoman;
@@ -53,7 +52,7 @@ switch window
     %handles.tag_attribution.Visible = 'off';
     handles.tag_attribution.HorizontalAlignment = 'center';
     attribution_disp_text = sprintf(['Version 5.1.1, Build ',datestr(now,'ddmmyyyy'),' with MATLAB 2021a, ',...
-      'The PsPM Team, University College London']);
+    'The PsPM Team, University College London']);
     handles.tag_attribution.String = attribution_disp_text;
     handles.tag_batch.FontName = FNRoman;
     handles.tag_batch.FontSize = FSTitle;
@@ -163,54 +162,66 @@ switch window
     hObject.Resize = 'on';
   case 'review'
     hObject.Resize = 'on';
-    handles.panelStatus.FontName = FNRoman;
-    handles.panelStatus.FontSize = FSTitle;
-    handles.textStatus.FontName = FNRoman;
-    handles.textStatus.FontSize = FSText;
-    handles.buttonAddModel.FontName = FNRoman;
-    handles.buttonAddModel.FontSize = FSText;
-    handles.buttonRemoveModel.FontName = FNRoman;
-    handles.buttonRemoveModel.FontSize = FSText;
-    handles.panelModel.FontName = FNRoman;
-    handles.panelModel.FontSize = FSTitle;
-    handles.listModel.FontName = FNRoman;
-    handles.listModel.FontSize = FSText;
-    handles.panelPlot.FontName = FNRoman;
-    handles.panelPlot.FontSize = FSTitle;
-    handles.textPlot1.FontName = FNRoman;
-    handles.textPlot1.FontSize = FSText;
-    handles.buttonPlot1.FontName = FNRoman;
-    handles.buttonPlot1.FontSize = FSText;
-    handles.editEpochNr.FontName = FNRoman;
-    handles.editEpochNr.FontSize = FSText;
-    handles.textPlot2.FontName = FNRoman;
-    handles.textPlot2.FontSize = FSText;
-    handles.buttonPlot2.FontName = FNRoman;
-    handles.buttonPlot2.FontSize = FSText;
-    handles.editEpochNr.FontName = FNRoman;
-    handles.editEpochNr.FontSize = FSText;
-    handles.textPlot3.FontName = FNRoman;
-    handles.textPlot3.FontSize = FSText;
-    handles.buttonPlot3.FontName = FNRoman;
-    handles.buttonPlot3.FontSize = FSText;
-    handles.textPlot4.FontName = FNRoman;
-    handles.textPlot4.FontSize = FSText;
-    handles.buttonPlot4.FontName = FNRoman;
-    handles.buttonPlot4.FontSize = FSText;
-    handles.textPlot5.FontName = FNRoman;
-    handles.textPlot5.FontSize = FSText;
-    handles.buttonPlot5.FontName = FNRoman;
-    handles.buttonPlot5.FontSize = FSText;
-    handles.buttonPlotClose.FontName = FNRoman;
-    handles.buttonPlotClose.FontSize = FSText;
-    handles.textSessionNr.FontName = FNRoman;
-    handles.textSessionNr.FontSize = FSText;
-    handles.editSessionNr.FontName = FNRoman;
-    handles.editSessionNr.FontSize = FSText;
-    handles.textSessionRange.FontName = FNRoman;
-    handles.textSessionRange.FontSize = FSText;
-    handles.pushbutton_quit.FontName = FNRoman;
-    handles.pushbutton_quit.FontSize = FSText;
+    Title_components = {'panelStatus',...
+    'panelModel',...
+    'panelPlot'};
+    Text_components = {'textStatus',...
+    'buttonAddModel',...
+    'buttonRemoveModel',...
+    'listModel',...
+    'textPlot1',...
+    'buttonPlot1',...
+    'editEpochNr',...
+    'textPlot2',...
+    'buttonPlot2',...
+    'editEpochNr',...
+    'textPlot3',...
+    'buttonPlot3',...
+    'textPlot4',...
+    'buttonPlot4',...
+    'textPlot5',...
+    'buttonPlot5',...
+    'buttonPlotClose',...
+    'textSessionNr',...
+    'editSessionNr',...
+    'textSessionRange',...
+    'pushbutton_quit'};
+  case 'data_editor'
+    hObject.Resize = 'on';
+    Title_components = {'pnlSettings'};
+    Text_components = {'bgOutputFormat',...
+    'rbEpochs',...
+    'rbInterpolate',...
+    'cbInterpolate',...
+    'lbChannel',...
+    'edOpenFilePath',...
+    'pbOpenInputFile',...
+    'pnlEpoch',...
+    'pnlInput',...
+    'edOpenMissingEpochFilePath',...
+    'pbOpenMissingEpochFile',...
+    'edOutputFile',...
+    'pbOpenOutputFile',...
+    'pbSaveOutput',...
+    'axData',...
+    'lbEpochs',...
+    'pbCancel',...
+    'pbApply'};
+  end
+  if exist('Title_components', 'var')
+    ApplyStyle(handles, Title_components, FNRoman, FSTitle);
+  end
+  if exist('Text_components', 'var')
+    ApplyStyle(handles, Text_components, FNRoman, FSText);
+  end
 end
 
+function ApplyStyle(handles, widgt, FN, FS)
+  [r,c] = size(widgt);
+  for i_r = 1:r
+    for i_c = 1:c
+      handles = setfield(handles, widgt{i_r,i_c}, 'FontName', FN);
+      handles = setfield(handles, widgt{i_r,i_c}, 'FontSize', FS);
+    end
+  end
 end

@@ -56,6 +56,7 @@ else
 end
 % End initialization code - DO NOT EDIT
 
+
 function pspm_data_editor_OpeningFcn(hObject, ~, handles, varargin)
 % Feature
 %   Executes just before pspm_data_editor is made visible.
@@ -70,6 +71,7 @@ global settings; % initialise
 if isempty(settings)
   pspm_init;
 end
+pspm_ui(hObject, handles, 'data_editor');
 if get(handles.rbInterpolate, 'Value')
   set(handles.cbInterpolate, 'Enable', 'on');
   handles.output_type = 'interpolate';
@@ -1187,11 +1189,3 @@ for ep = epochs % for each ep add an area as if drawn by the user and add to epo
   SelectedArea(hObject, 'add');
   UpdateEpochList(hObject);
 end
-
-
-% --- If Enable == 'on', executes on mouse press in 5 pixel border.
-% --- Otherwise, executes on mouse press in 5 pixel border or over pbOpenInputFile.
-function pbOpenInputFile_ButtonDownFcn(hObject, eventdata, handles)
-% hObject    handle to pbOpenInputFile (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
