@@ -23,7 +23,7 @@ function pspm_ui(hObject,handles,window)
     FSCaption = 12;
     FSAttr = 13;
     FNRoman = 'Helvetica Neue';
-    FNEmph = 'Gill Sans';
+    FNEmph = 'Futura';
     DisplayUnit = 'points';
     MainWeight = 750;
     MainHeight = 750*0.8;
@@ -36,7 +36,7 @@ function pspm_ui(hObject,handles,window)
     FSCaption = 9;
     FSAttr = 10;
     FNRoman = 'DejaVu Sans';
-    FNEmph = 'DejaVu Sans';
+    FNEmph = 'DejaVu Sans Bold';
     DisplayUnit = 'points';
     MainWeight = 650;
     MainHeight = 650*0.8;
@@ -46,6 +46,30 @@ function pspm_ui(hObject,handles,window)
   end
   switch window
   case 'main'
+    % TitleCase
+    TitleComponents = {'tag_batch',...
+    'tag_contrast_manager',...
+    'tag_export_statistics',...
+    'tag_feedback',...
+    'tag_help',...
+    'tag_models_for_sf',...
+    'tag_non_linear_scr_model',...
+    'tag_quit',...
+    'tag_report_second_level',...
+    'tag_review_model',...
+    'tag_second_level_model'};
+    % CaptionCase
+    CaptionComponents = {'tag_data_preparation_list',...
+    'tag_data_preparation_title',...
+    'tag_data_preprocessing_list',...
+    'tag_data_preprocessing_title',...
+    'tag_first_level_models_list',...
+    'tag_first_level_models_title',...
+    'tag_more_title',...
+    'tag_second_level_model_title',...
+    'tag_tools_list',...
+    'tag_tools_title'};
+    % Others
     handles.figure1.Units = DisplayUnit;
     handles.tag_attribution.FontName = FNRoman;
     handles.tag_attribution.FontSize = FSAttr;
@@ -54,118 +78,55 @@ function pspm_ui(hObject,handles,window)
     attribution_disp_text = sprintf(['Version 5.1.1, Build ',datestr(now,'ddmmyyyy'),' with MATLAB 2021a, ',...
     'The PsPM Team, University College London']);
     handles.tag_attribution.String = attribution_disp_text;
-    handles.tag_batch.FontName = FNRoman;
-    handles.tag_batch.FontSize = FSTitle;
-    handles.tag_contrast_manager.FontName = FNRoman;
-    handles.tag_contrast_manager.FontSize = FSTitle;
-    handles.tag_data_preparation_list.FontName = FNRoman;
-    handles.tag_data_preparation_list.FontSize = FSCaption;
-    handles.tag_data_preparation_title.FontName = FNRoman;
-    handles.tag_data_preparation_title.FontSize = FSCaption;
-    handles.tag_data_preprocessing_list.FontName = FNRoman;
-    handles.tag_data_preprocessing_list.FontSize = FSCaption;
-    handles.tag_data_preprocessing_title.FontName = FNRoman;
-    handles.tag_data_preprocessing_title.FontSize = FSCaption;
-    handles.tag_export_statistics.FontName = FNRoman;
-    handles.tag_export_statistics.FontSize = FSTitle;
-    handles.tag_feedback.FontName = FNRoman;
-    handles.tag_feedback.FontSize = FSTitle;
-    handles.tag_first_level_models_list.FontName = FNRoman;
-    handles.tag_first_level_models_list.FontSize = FSCaption;
-    handles.tag_first_level_models_title.FontName = FNRoman;
-    handles.tag_first_level_models_title.FontSize = FSCaption;
-    handles.tag_help.FontName = FNRoman;
-    handles.tag_help.FontSize = FSTitle;
-    handles.tag_models_for_sf.FontName = FNRoman;
-    handles.tag_models_for_sf.FontSize = FSTitle;
-    handles.tag_more_title.FontName = FNRoman;
-    handles.tag_more_title.FontSize = FSCaption;
-    handles.tag_non_linear_scr_model.FontName = FNRoman;
-    handles.tag_non_linear_scr_model.FontSize = FSTitle;
     handles.tag_PsPM.FontName = FNRoman;
-    handles.tag_quit.FontName = FNRoman;
-    handles.tag_quit.FontSize = FSTitle;
-    handles.tag_report_second_level.FontName = FNRoman;
-    handles.tag_report_second_level.FontSize = FSTitle;
-    handles.tag_review_model.FontName = FNRoman;
-    handles.tag_review_model.FontSize = FSTitle;
-    handles.tag_second_level_model_title.FontName = FNRoman;
-    handles.tag_second_level_model_title.FontSize = FSCaption;
-    handles.tag_second_level_model.FontName = FNRoman;
-    handles.tag_second_level_model.FontSize = FSTitle;
-    handles.tag_tools_list.FontName = FNRoman;
-    handles.tag_tools_list.FontSize = FSCaption;
-    handles.tag_tools_title.FontName = FNRoman;
-    handles.tag_tools_title.FontSize = FSCaption;
     hObject.Position(3) = MainWeight;
     hObject.Position(4) = MainHeight;
     hObject.Resize = SwitchResize;
   case 'display'
-    handles.button_all.FontName = FNRoman;
-    handles.button_all.FontSize = FSTitle;
-    handles.button_autoscale.FontName = FNRoman;
-    handles.button_autoscale.FontSize = FSTitle;
-    handles.button_plot.FontName = FNRoman;
-    handles.button_plot.FontName = FNRoman;
-    handles.button_plot.FontSize = FSTitle;
-    handles.button_plot.FontSize = FSTitle;
-    handles.display_plot.FontName = FNRoman;
-    handles.display_plot.FontSize = FSCaption;
-    handles.list_event_channel.FontName = FNRoman;
-    handles.list_event_channel.FontSize = FSText;
-    handles.list_wave_channel.FontName = FNRoman;
-    handles.list_wave_channel.FontSize = FSText;
-    handles.module_display_options.FontName = FNRoman;
-    handles.module_display_options.FontSize = FSTitle;
-    handles.module_event_channels.FontName = FNRoman;
-    handles.module_event_channels.FontSize = FSTitle;
-    handles.module_event_options.FontName = FNRoman;
-    handles.module_event_options.FontSize = FSTitle;
-    handles.module_summary.FontName = FNRoman;
-    handles.module_summary.FontSize = FSTitle;
-    handles.module_wave_channels.FontName = FNRoman;
-    handles.module_wave_channels.FontSize = FSTitle;
+    % TitleCase
+    TitleComponents = {'button_all',...
+    'button_autoscale',...
+    'button_plot',...
+    'module_display_options',...
+    'module_event_channels',...
+    'module_event_options',...
+    'module_summary',...
+    'module_wave_channels',...
+    'text_file_summary'};
+    % CaptionCase
+    CaptionComponents = {'display_plot'};
+    % TextCase
+    TextComponents = {'list_event_channel',...
+    'list_wave_channel',...
+    'option_extra',...
+    'option_integrated',...
+    'tag_summary_recording_duration_content',...
+    'tag_summary_channel_list_content',...
+    'text_starting_point',...
+    'text_time_window',...
+    'text_y_max',...
+    'text_y_min',...
+    'tag_summary_source_file_content'};
+    % EmphCase
+    EmphComponents = {'tag_summary_recording_duration_title',...
+    'tag_summary_source_file_title',...
+    'tag_summary_channel_list_title'};
+    % Others
+    hObject.Position(3) = DisplayWeight;
+    hObject.Position(4) = DisplayHeight;
+    hObject.Resize = 'on';
     handles.name=[];
-    handles.option_extra.FontName = FNRoman;
-    handles.option_extra.FontSize = FSText;
-    handles.option_integrated.FontName = FNRoman;
-    handles.option_integrated.FontSize = FSText;
     handles.prop.axis=[];
     handles.prop.event=[];
     handles.prop.eventchans=[];
     handles.prop.wave=[];
     handles.prop.wavechans=[];
-    handles.tag_summary_recording_duration_content.FontName = FNRoman;
-    handles.tag_summary_recording_duration_content.FontSize = FSText;
-    handles.tag_summary_recording_duration_title.FontName = FNEmph;
-    handles.tag_summary_recording_duration_title.FontSize = FSText;
-    handles.tag_summary_source_file_content.FontName = FNRoman;
-    handles.tag_summary_source_file_content.FontSize = FSText;
-    handles.tag_summary_source_file_title.FontName = FNEmph;
-    handles.tag_summary_source_file_title.FontSize = FSText;
-    handles.tag_summary_channel_list_title.FontName = FNEmph;
-    handles.tag_summary_channel_list_title.FontSize = FSText;
-    handles.tag_summary_channel_list_content.FontName = FNRoman;
-    handles.tag_summary_channel_list_content.FontSize = FSText;
-    handles.text_file_summary.FontName = FNRoman;
-    handles.text_file_summary.FontSize = FSTitle;
-    handles.text_starting_point.FontName = FNRoman;
-    handles.text_starting_point.FontSize = FSText;
-    handles.text_time_window.FontName = FNRoman;
-    handles.text_time_window.FontSize = FSText;
-    handles.text_y_max.FontName = FNRoman;
-    handles.text_y_max.FontSize = FSText;
-    handles.text_y_min.FontName = FNRoman;
-    handles.text_y_min.FontSize = FSText;
-    hObject.Position(3) = DisplayWeight;
-    hObject.Position(4) = DisplayHeight;
-    hObject.Resize = 'on';
   case 'review'
     hObject.Resize = 'on';
-    Title_components = {'panelStatus',...
+    TitleComponents = {'panelStatus',...
     'panelModel',...
     'panelPlot'};
-    Text_components = {'textStatus',...
+    TextComponents = {'textStatus',...
     'buttonAddModel',...
     'buttonRemoveModel',...
     'listModel',...
@@ -188,8 +149,8 @@ function pspm_ui(hObject,handles,window)
     'pushbutton_quit'};
   case 'data_editor'
     hObject.Resize = 'on';
-    Title_components = {'pnlSettings'};
-    Text_components = {'bgOutputFormat',...
+    TitleComponents = {'pnlSettings'};
+    TextComponents = {'bgOutputFormat',...
     'rbEpochs',...
     'rbInterpolate',...
     'cbInterpolate',...
@@ -209,11 +170,17 @@ function pspm_ui(hObject,handles,window)
     'pbCancel',...
     'pbApply'};
   end
-  if exist('Title_components', 'var')
-    ApplyStyle(handles, Title_components, FNRoman, FSTitle);
+  if exist('TitleComponents', 'var')
+    ApplyStyle(handles, TitleComponents, FNRoman, FSTitle);
   end
-  if exist('Text_components', 'var')
-    ApplyStyle(handles, Text_components, FNRoman, FSText);
+  if exist('TextComponents', 'var')
+    ApplyStyle(handles, TextComponents, FNRoman, FSText);
+  end
+  if exist('CaptionComponents', 'var')
+    ApplyStyle(handles, CaptionComponents, FNRoman, FSCaption);
+  end
+  if exist('EmphComponents', 'var')
+    ApplyStyle(handles, EmphComponents, FNEmph, FSText);
   end
 end
 
