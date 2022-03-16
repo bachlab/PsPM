@@ -314,6 +314,7 @@ else
   ydata = handles.data;
   sr = 1;
 end
+handles.axData = gca;
 p = plot(xdata,ydata, 'Color', color);
 set(handles.axData, 'NextPlot', 'add');
 NaN_data = NaN(numel(xdata),1);
