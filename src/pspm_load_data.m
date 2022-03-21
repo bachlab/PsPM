@@ -200,6 +200,7 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
                     elseif ~ismember(lower(data{k}.header.chantype), {settings.chantypes.type})
                         nflag(k) = 1;
                     elseif isempty(data{k}.data)
+                        data{k}.data = zeros(1,0); % convert empty data to a generalised 1-by-0 matrix
                         warning('ID:missing_data', 'Channel %01.0f is empty.', k);
                     end
                 end
