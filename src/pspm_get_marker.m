@@ -14,7 +14,6 @@ function [sts, data] = pspm_get_marker(import)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-
 global settings;
 if isempty(settings), pspm_init; end;
 sts =-1;
@@ -40,5 +39,5 @@ end;
 data.header.chantype = 'marker';
 data.header.units = 'events';
 data.header.sr = 1;
-sts =1;
+sts = 1;
 return;
