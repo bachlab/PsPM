@@ -2,52 +2,51 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 % pspm_load_data checks and returns the structure of PsPM 3-5.x and
 % SCRalyze 2.x data files - SCRalyze 1.x is not supported
 %
-% FORMAT: [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
-%           fn: filename, or struct with fields .infos, .data
-%           chan: One of the below options:
+% FORMAT
+% [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 %
-%               0 or empty - returns all channels
+% INPUT
+% fn						filename, or struct with fields
+% ┣ .infos
+% ┗ .data
+% chan					one of the below options:
+% 	0 or empty	returns all channels
+% 	vector of channelnumbers
+%								returns only these channels
+% 	'wave'			returns all waveform channels
+% 	'events'		returns all event channels
+%   'pupil'			goes through the below precedence order and loads all channels corresponding to the first existing option:
+%								1. Combined pupil channels (by definition also preprocessed)
+%								2. Preprocessed pupil channels corresponding to best eye
+%								3. Preprocessed pupil channels
+%								4. Best eye pupil channels
+%								please note that if there is only one eye in the datafile, that eye is defined as the best eye.
+% 	'channel type'
+%								returns the respective channels
+%								(see settings for channel types)
+% 	'none'			just checks the file
+%               a struct with fields .infos, .data, .options - checks
+%               and saves file
 %
-%               vector of channelnumbers - returns only these channels
+% OUTPUT
+% sts						0 as default
+%								-1 if check is unsuccessful
+% infos					variable from data file
+% data					cell array of channels as specified
+% filestruct		a struct with the fields
+% ┣ .numofchan	number of channels
+% ┣ .numofwavechan
+% ┃							number of wave channels
+% ┣ .numofeventchan
+% ┃							number of event channels
+% ┣ .posofmarker
+% ┃							position of the first marker channel
+% ┃							0 if no marker channel exists
+% ┗ .posofchannels
+%								number of the channels that were returned
 %
-%               'wave' - returns all waveform channels
-%
-%               'events' - returns all event channels
-%
-%               'pupil' - goes through the below precedence order and
-%                         loads all channels corresponding to the first
-%                         existing option:
-%
-%                         1. Combined pupil channels (by definition also preprocessed)
-%                         2. Preprocessed pupil channels corresponding to best eye
-%                         3. Preprocessed pupil channels
-%                         4. Best eye pupil channels
-%
-%                         Note that if there is only one eye in the datafile,
-%                         that eye is defined as the best eye.
-%
-%               'channel type' - returns the respective channels
-%                       (see settings for channel types)
-%
-%               'none' - just checks the file
-%                   a struct with fields .infos, .data, .options - checks
-%                      and saves file
-%
-%           sts: -1 if check is unsuccessful
-%           infos: variable from data file
-%           data: cell array of channels as specified
-%           filestruct: A struct with the fields
-%                       .numofchan
-%                       .numofwavechan
-%                       .numofeventchan
-%                       .posofmarker' (first marker channel, or 0 if no
-%                          marker channel exists)
-%                       .posofchannels (number of the channels that
-%                       were returned)
-%__________________________________________________________________________
 % PsPM 5.1.2
-% (C) 2008-2021 Dominik R. Bach (Wellcome Centre for Human Neuroimaging,
-% UCL)
+% (C) 2008-2021 Dominik R. Bach (Wellcome Centre for Human Neuroimaging, UCL)
 
 
 % -------------------------------------------------------------------------
@@ -85,20 +84,72 @@ global settings;
 if isempty(settings)
   pspm_init;
 end
-
 % initialise output
-sts = -1; infos = []; data = []; filestruct=[]; gerrmsg = '';
+sts = -1;
+infos = [];
+data = [];
+filestruct=[];
+gerrmsg = '';
 
-%% 2 Input check
-if nargin < 1
-  warning('ID:invalid_input', 'No datafile specified');
+%% 2 check the number of inputs
+switch nargin
+case 0
+  warning('ID:invalid_input', 'No datafile specified.');
   return
-elseif ~(ischar(fn) || isstruct(fn))
-  warning('ID:invalid_input', 'Need string or struct input for datafile.');
+case 1
+	chan = 0;
+case 2
+	% accept
+otherwise
+  warning('ID:invalid_input', 'Too many inputs specified.');
   return
-elseif nargin < 2
-  chan = 0;
-elseif isnumeric(chan)
+end
+
+%% 3 check fn
+% fn has to be a file or a struct
+if ~exist(fn, 'file') && ~isstruct(fn)
+  warning('ID:invalid_input', 'fn needs to be a file or a struct.');
+  return
+end
+
+%% 4 check chan
+switch class(chan)
+case double
+	% in this case chan is specified as a number or a vector, as double
+	% the number or the vector can only be a 0 or (a) positive number(s)
+  if any(chan < 0)
+    warning('ID:invalid_input', 'Negative channel numbers not allowed.');
+    return
+  end
+case char
+	% in this case chan is specified as a char
+  if any(~ismember(chan, [{settings.chantypes.type}, 'none', 'wave', 'events']))
+    warning('ID:invalid_channeltype', 'Unknown channel type.');
+    return
+  end
+end
+% if fn exists but it's not clear whether to overwrite it
+if exist(fn, 'file')
+	if isstruct(chan) && ~chan.options.overwrite && ~chan.options.dont_ask_overwrite
+	  if feature('ShowFigureWindows')
+	    msg = ['File already exists. Overwrite?', newline, 'Existing file: ',fn];
+	    overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default as Yes
+	  else
+	    overwrite = 'Yes';
+	  end
+	  if strcmp(overwrite, 'Yes')
+	    chan.options.overwrite = 1;
+	  else
+	    chan.options.overwrite = 0;
+	    warning('Data not saved.\n');
+	  end
+	end
+end
+
+
+
+% 4 check channels
+if isnumeric(chan)
   if any(chan < 0)
     warning('ID:invalid_input', 'Negative channel numbers not allowed.');
     return
@@ -127,26 +178,7 @@ else
   warning('ID:invalid_input', 'Unknown channel option.');
 end
 
-%% 2.1 check whether file exists
-if isstruct(fn)
-elseif ~isstruct(chan) && ~exist(fn, 'file')
-  warning('ID:nonexistent_file', 'Data file (%s) doesn''t exist', fn); return;
-elseif exist(fn, 'file') && isstruct(chan) && ~chan.options.overwrite && ~chan.options.dont_ask_overwrite
-  if feature('ShowFigureWindows')
-    msg = ['File already exists. Overwrite?', newline, 'Existing file: ',fn];
-    overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default as Yes
-  else
-    overwrite = 'Yes';
-  end
-  if strcmp(overwrite, 'Yes')
-    chan.options.overwrite = 1;
-  else
-    chan.options.overwrite = 0;
-    warning('Data not saved.\n');
-  end
-end
-
-%% 2.2 check file structure
+%% 4.2 check whether file structure is valid
 if isstruct(chan)
   try
     data = chan.data; infos = chan.infos;
@@ -179,14 +211,13 @@ else
   end
 end
 
-%% 2.3 check variables
+%% 5 check variables
 vflag = 0;
 if ~exist('infos', 'var')
   vflag = 1;
 elseif ~isstruct(infos)
   vflag = 1;
 end
-
 if isempty(data) || ~iscell(data)
   vflag = 1;
 end
@@ -208,10 +239,13 @@ for k = 1:numel(data)
     vflag(k) = 1;
   elseif ~isfield(data{k}.header, 'chantype') || ~isfield(data{k}.header, 'sr') || ~isfield(data{k}.header, 'units')
     vflag(k) = 1;
-  elseif strcmpi(data{k}.header.units, 'events') && any(data{k}.data > infos.duration)
-    wflag(k) = 1;
-  elseif strcmpi(data{k}.header.units, 'events') && any(data{k}.data < 0)
-    wflag(k) = 1;
+  elseif strcmpi(data{k}.header.units, 'events')
+    if any(data{k}.data > infos.duration) || any(data{k}.data < 0)
+      wflag(k) = 1;
+    end
+    if ~isfield(data{k}.header, 'flank')
+      data{k}.header.flank = 'both';
+    end
   elseif ~strcmpi(data{k}.header.units, 'events') && ...
       (length(data{k}.data) < infos.duration * data{k}.header.sr - 3 ||...
       length(data{k}.data) > infos.duration * data{k}.header.sr + 3)
@@ -230,7 +264,7 @@ if any(vflag)
   return
 end
 if any(wflag)
-  errmsg = [gerrmsg, sprintf('The data in channel %01.0f is out of the range [0, infos.duration]', find(wflag,1))]; 
+  errmsg = [gerrmsg, sprintf('The data in channel %01.0f is out of the range [0, infos.duration]', find(wflag,1))];
   warning('ID:invalid_data_structure', '%s', errmsg);
   return
 end
@@ -262,7 +296,7 @@ elseif numel(filestruct.posofmarker) > 1
 end
 
 
-%% 3 Return channels, or save file
+%% 5 Return channels, or save file
 flag = zeros(numel(data), 1);
 if ischar(chan) && ~strcmp(chan, 'none')
   if strcmpi(chan, 'pupil') && isfield(infos.source, 'best_eye')
@@ -285,7 +319,6 @@ if ischar(chan) && ~strcmp(chan, 'none')
       'There are no channels of type ''%s'' in the datafile', chan);
     return
   end
-
   data = data(flag == 1);
   filestruct.posofchannels = find(flag == 1);
 elseif isnumeric(chan)
