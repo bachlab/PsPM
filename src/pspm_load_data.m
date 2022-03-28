@@ -101,7 +101,7 @@ gerrmsg = '';
 switch nargin
   case 0
     warning('ID:invalid_input', 'No datafile specified.');
-    return
+    return;
   case 1
     chan = 0;
   case 2
@@ -134,12 +134,14 @@ switch class(fn)
       return
     end
     % fn is an existing .mat file but may not have required fields
-    loaded_infos = load(fn, 'infos');
-    loaded_data = load(fn, 'data');
-    if ~isempty(fieldnames(load(fn, 'scr'))) % check for SCRalyze 1.x files
+    fields = matfile(fn);
+    if isfield(fields, 'scr')
       warning('ID:SCRalyze_1_file', 'SCRalyze 1.x compatibility is discontinued');
       return
     end
+    loaded_infos = load(fn, 'infos');
+    loaded_data = load(fn, 'data');
+    
     if isempty(fieldnames(loaded_infos)) || ~isstruct(loaded_infos) || isempty(fieldnames(loaded_data)) || ~isstruct(loaded_data)
       errmsg = [gerrmsg, 'Some variables are either missing or invalid in this file.'];
       warning('ID:invalid_data_structure', '%s', errmsg);
@@ -199,7 +201,11 @@ switch class(chan)
 end
 
 %% 5 Check infos
-loaded_infos = load(fn, 'infos');
+if isstruct(fn)
+  loaded_infos.infos = fn.infos;
+else
+  loaded_infos = load(fn, 'infos');
+end
 flag_infos = 0;
 if isempty(fieldnames(loaded_infos))
   flag_infos = 1;
@@ -212,9 +218,14 @@ if flag_infos
   warning('ID:invalid_data_structure', 'Input data does not have sufficient infos');
   return
 end
+infos = loaded_infos.infos;
 
 %% 6 Check data
-loaded_data = load(fn, 'data');
+if isstruct(fn)
+  loaded_data.data = fn.data;
+else
+  loaded_data = load(fn, 'data');
+end
 data = loaded_data.data;
 % initialise error flags
 vflag = zeros(numel(data), 1); % records data structure, valid if 0
