@@ -7,12 +7,14 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 %
 % INPUT
 % fn						filename, or struct with fields
-% ┣ .infos
-% ┗ .data
-% chan					one of the below options:
+% ┣━ .infos
+% ┗━ .data
+% chan					can be a numeric vector, a string or a struct
+%		[vector]
 % 	0 or empty	returns all channels
-% 	vector of channelnumbers
+% 	number of channels
 %								returns only these channels
+%		[string]
 % 	'wave'			returns all waveform channels
 % 	'events'		returns all event channels
 %   'pupil'			goes through the below precedence order and loads all
@@ -27,8 +29,9 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 %								returns the respective channels
 %								(see settings for channel types)
 % 	'none'			just checks the file
-%               a struct with fields .infos, .data, .options - checks
-%               and saves file
+%		[struct]
+%               must have fields .infos, .data, .options
+%								will check and save file
 %
 % OUTPUT
 % sts						0 as default
@@ -36,15 +39,15 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 % infos					variable from data file
 % data					cell array of channels as specified
 % filestruct		a struct with the fields
-% ┣ .numofchan	number of channels
-% ┣ .numofwavechan
+% ┣━ .numofchan	number of channels
+% ┣━ .numofwavechan
 % ┃							number of wave channels
-% ┣ .numofeventchan
+% ┣━ .numofeventchan
 % ┃							number of event channels
-% ┣ .posofmarker
+% ┣━ .posofmarker
 % ┃							position of the first marker channel
 % ┃							0 if no marker channel exists
-% ┗ .posofchannels
+% ┗━ .posofchannels
 %								number of the channels that were returned
 %
 % COMPATIBILITY
@@ -317,7 +320,7 @@ end
 
 
 %% 9 Return channels, or save file
-if isfield(chan, 'data')
+if isstruct(chan)
   data = chan.data;
 end
 flag = zeros(numel(data), 1);

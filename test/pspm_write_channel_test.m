@@ -139,6 +139,7 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       gen_data.data{1}.data = [];
       gen_data_test_empty = gen_data.data{1};
       pspm_write_channel(this.testdatafile, gen_data_test_empty, 'add');
+      this.verifyWarning(@()pspm_load_data(this.testdatafile), 'ID:missing_data');
       [~,~,data1,~]=pspm_load_data(this.testdatafile);
       this.verifyEqual(size(data1{numel(data1),1}.data), [1 0]);
       pspm_write_channel(this.testdatafile, gen_data_test_empty, 'delete');
