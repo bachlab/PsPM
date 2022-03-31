@@ -289,9 +289,9 @@ end
 
 
 %% 7 Autofill information in header
-if ~isfield(data{k}.header, 'flank')
-  data{k}.header.flank = 'both';
-end
+% if ~isfield(data{k}.header, 'flank')
+%   data{k}.header.flank = 'both';
+% end
 % some other optional fields which can be autofilled with default values should be added here.
 
 %% 8 Analyse file structure
@@ -317,6 +317,9 @@ end
 
 
 %% 9 Return channels, or save file
+if isfield(chan, 'data')
+  data = chan.data;
+end
 flag = zeros(numel(data), 1);
 if ischar(chan) && ~strcmp(chan, 'none')
   if strcmpi(chan, 'pupil') && isfield(infos.source, 'best_eye')

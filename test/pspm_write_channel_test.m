@@ -7,7 +7,7 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
   % 2022 Teddy Chao
 
   properties
-    testdatafile = '';
+    testdatafile = 'write_channel_test.mat';
   end
 
   methods(TestClassSetup)
