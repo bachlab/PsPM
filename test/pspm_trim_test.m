@@ -7,7 +7,7 @@ classdef pspm_trim_test < matlab.unittest.TestCase
 
 
     properties(Constant)
-        fn = 'testdatafile79887.mat';
+        fn = 'trim_test.mat';
     end
 
     properties
@@ -37,8 +37,10 @@ classdef pspm_trim_test < matlab.unittest.TestCase
                 delete(testCase.fn);
             end
             
-            pspm_testdata_gen(channels,10,pspm_load_data_test.fn);
-            if ~exist(testCase.fn, 'file'), warning('the testdata could not be generated'); end;
+            pspm_testdata_gen(channels,10,testCase.fn);
+            if ~exist(testCase.fn, 'file')
+              warning('the testdata could not be generated');
+            end
         end
     end
     

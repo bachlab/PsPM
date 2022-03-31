@@ -321,6 +321,7 @@ end
 
 %% 9 Return channels, or save file
 if isstruct(chan)
+  infos = chan.infos;
   data = chan.data;
 end
 flag = zeros(numel(data), 1);
