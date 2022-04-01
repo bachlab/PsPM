@@ -315,8 +315,9 @@ if any(nflag)
 end
 if any(zflag)
   data{find(zflag,1)}.data = zeros(1,0); % convert empty data to a generalised 1-by-0 matrix
-  warning('ID:missing_data', 'Channel %01.0f is empty.', find(zflag,1));
-  return
+  warning('ID:missing_data', 'Some channels are empty.');
+  %warning('ID:missing_data', 'Channel %01.0f is empty.', find(zflag,1));
+  % if there is empty data, give a warning but do not suspend
 end
 
 
