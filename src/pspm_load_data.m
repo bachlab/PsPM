@@ -139,7 +139,13 @@ switch class(fn)
         return
       end
       % fn is an existing .mat file but may not have required fields
-      fields = matfile(fn);
+      try
+        fields = matfile(fn);
+      catch
+        errmsg = [gerrmsg, 'Not a matlab data file.'];
+        warning('ID:invalid_file_type', '%s', errmsg);
+        return
+      end
       if isfield(fields, 'scr')
         warning('ID:SCRalyze_1_file', 'SCRalyze 1.x compatibility is discontinued');
         return
@@ -176,9 +182,14 @@ switch class(chan)
     end
   case 'struct'
     if ~isfield(chan, 'data') || ~isfield(chan, 'infos')
+      % data and infos are mandatory fields and must be provided
       % gerrmsg = sprintf('\nData structure is invalid:');
       warning('ID:invalid_input', 'Input struct is not a valid PsPM struct');
       return
+    end
+    if ~isfield(chan, 'options')
+      % options is an optional field
+      chan.options = [];
     end
     % add default values
     if ~isfield(chan.options, 'overwrite')
@@ -247,6 +258,7 @@ end
 vflag = zeros(numel(data), 1); % records data structure, valid if 0
 wflag = zeros(numel(data), 1); % records whether data is out of range, valid if 0
 nflag = zeros(numel(data), 1);
+zflag = zeros(numel(data), 1);
 % loop through channels
 for k = 1:numel(data)
   % check header
@@ -270,8 +282,7 @@ for k = 1:numel(data)
         vflag(k) = 1;
       else
         if isempty(data{k}.data)
-          data{k}.data = zeros(1,0); % convert empty data to a generalised 1-by-0 matrix
-          warning('ID:missing_data', 'Channel %01.0f is empty.', k);
+          zflag(k) = 1;
         end
         if strcmpi(data{k}.header.units, 'events')
           if (any(data{k}.data > infos.duration) || any(data{k}.data < 0))
@@ -300,6 +311,11 @@ end
 if any(nflag)
   errmsg = [gerrmsg, sprintf('Unknown channel type in channel %01.0f', find(nflag,1))];
   warning('ID:invalid_data_structure', '%s', errmsg);
+  return
+end
+if any(zflag)
+  data{find(zflag,1)}.data = zeros(1,0); % convert empty data to a generalised 1-by-0 matrix
+  warning('ID:missing_data', 'Channel %01.0f is empty.', find(zflag,1));
   return
 end
 

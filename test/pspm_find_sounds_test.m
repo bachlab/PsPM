@@ -29,7 +29,7 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
                         
             % create empty file
             fn = pspm_find_free_fn(this.testdata_fn, '.mat'); 
-            fclose(fopen(fn, 'w'));
+            % fclose(fopen(fn, 'w'));
             % test with invalid pspm file
             this.verifyWarning(@() pspm_find_sounds(fn), 'ID:invalid_input');
                 
