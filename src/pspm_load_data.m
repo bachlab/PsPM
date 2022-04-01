@@ -326,9 +326,9 @@ end
 
 
 %% 7 Autofill information in header
-% if ~isfield(data{k}.header, 'flank')
-%   data{k}.header.flank = 'both';
-% end
+if ~isfield(data{k}.header, 'flank')
+  data{k}.header.flank = 'both';
+end
 % some other optional fields which can be autofilled with default values should be added here.
 
 %% 8 Analyse file structure
