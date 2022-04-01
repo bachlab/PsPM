@@ -131,32 +131,36 @@ switch class(fn)
         return
       end
     else
-      % fn exists but may not be a .mat file
-      [~, ~, fExt] = fileparts(fn);
-      if ~strcmpi(fExt,'.mat')
-        errmsg = [gerrmsg, 'Not a matlab data file or .mat extraname is missing.'];
-        warning('ID:invalid_file_type', '%s', errmsg);
-        return
-      end
-      % fn is an existing .mat file but may not have required fields
-      try
-        fields = matfile(fn);
-      catch
-        errmsg = [gerrmsg, 'Not a matlab data file.'];
-        warning('ID:invalid_file_type', '%s', errmsg);
-        return
-      end
-      if isfield(fields, 'scr')
-        warning('ID:SCRalyze_1_file', 'SCRalyze 1.x compatibility is discontinued');
-        return
-      end
-      if isempty(fieldnames(load(fn, 'infos'))) || ...
-          ~isstruct(load(fn, 'infos')) || ...
-          isempty(fieldnames(load(fn, 'data'))) || ...
-          ~isstruct(load(fn, 'data'))
-        errmsg = [gerrmsg, 'Some variables are either missing or invalid in this file.'];
-        warning('ID:invalid_data_structure', '%s', errmsg);
-        return
+      if ~isstruct(chan)
+        % check fn as a mat file only if chan is not a struct
+        % because if chan is a struct fn will be overwritten
+        % fn exists but may not be a .mat file
+        [~, ~, fExt] = fileparts(fn);
+        if ~strcmpi(fExt,'.mat')
+          errmsg = [gerrmsg, 'Not a matlab data file or .mat extraname is missing.'];
+          warning('ID:invalid_file_type', '%s', errmsg);
+          return
+        end
+        % fn is an existing .mat file but may not have required fields
+        try
+          fields = matfile(fn);
+        catch
+          errmsg = [gerrmsg, 'Not a matlab data file.'];
+          warning('ID:invalid_file_type', '%s', errmsg);
+          return
+        end
+        if isfield(fields, 'scr')
+          warning('ID:SCRalyze_1_file', 'SCRalyze 1.x compatibility is discontinued');
+          return
+        end
+        if isempty(fieldnames(load(fn, 'infos'))) || ...
+            ~isstruct(load(fn, 'infos')) || ...
+            isempty(fieldnames(load(fn, 'data'))) || ...
+            ~isstruct(load(fn, 'data'))
+          errmsg = [gerrmsg, 'Some variables are either missing or invalid in this file.'];
+          warning('ID:invalid_data_structure', '%s', errmsg);
+          return
+        end
       end
     end
   otherwise
