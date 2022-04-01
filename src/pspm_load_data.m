@@ -218,16 +218,18 @@ switch class(chan)
 end
 
 %% 5 Check infos
-if isstruct(fn)
-  infos = fn.infos;
-elseif exist(fn, "file")
-  loaded_infos = load(fn, 'infos');
-  if isfield(loaded_infos, "infos") && numel(fieldnames(loaded_infos))==1
-    infos = loaded_infos.infos;
-  end
-  clear loaded_infos
-else
+if isstruct(chan)
   infos = chan.infos;
+else
+  if isstruct(fn) % data is from a struct fn
+    infos = fn.infos;
+  elseif exist(fn, "file") % data is from a file fn
+    loaded_infos = load(fn, 'infos');
+    if isfield(loaded_infos, "infos") && numel(fieldnames(loaded_infos))==1
+      infos = loaded_infos.infos;
+    end
+    clear loaded_infos
+  end
 end
 flag_infos = 0;
 if isempty(fieldnames(infos))
@@ -243,16 +245,18 @@ if flag_infos
 end
 
 %% 6 Check data
-if isstruct(fn)
-  data = fn.data; % data is from a struct fn
-elseif exist(fn, "file")
-  loaded_data = load(fn, 'data'); % data is from a file fn
-  if isfield(loaded_data, "data") && numel(fieldnames(loaded_data))==1
-    data = loaded_data.data;
-  end
-  clear loaded_data
+if isstruct(chan)
+  data = chan.data;
 else
-  data = chan.data; % data is from a struct chan
+  if isstruct(fn) % data is from a struct fn
+    data = fn.data;
+  elseif exist(fn, "file") % data is from a file fn
+    loaded_data = load(fn, 'data');
+    if isfield(loaded_data, "data") && numel(fieldnames(loaded_data))==1
+      data = loaded_data.data;
+    end
+    clear loaded_data
+  end
 end
 % initialise error flags
 vflag = zeros(numel(data), 1); % records data structure, valid if 0
