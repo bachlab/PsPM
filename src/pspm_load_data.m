@@ -126,29 +126,32 @@ switch class(fn)
   case {'string', 'char'}
     % specify if fn is a filename
     if ~exist(fn, 'file')
-      warning('ID:nonexistent_file', 'The file fn does not exist.');
-      return
-    end
-    % fn exists but may not be a .mat file
-    [~, ~, fExt] = fileparts(fn);
-    if ~strcmpi(fExt,'.mat')
-      errmsg = [gerrmsg, 'Not a matlab data file or .mat extraname is missing.'];
-      warning('ID:invalid_file_type', '%s', errmsg);
-      return
-    end
-    % fn is an existing .mat file but may not have required fields
-    fields = matfile(fn);
-    if isfield(fields, 'scr')
-      warning('ID:SCRalyze_1_file', 'SCRalyze 1.x compatibility is discontinued');
-      return
-    end
-    loaded_infos = load(fn, 'infos');
-    loaded_data = load(fn, 'data');
-    
-    if isempty(fieldnames(loaded_infos)) || ~isstruct(loaded_infos) || isempty(fieldnames(loaded_data)) || ~isstruct(loaded_data)
-      errmsg = [gerrmsg, 'Some variables are either missing or invalid in this file.'];
-      warning('ID:invalid_data_structure', '%s', errmsg);
-      return
+      if ~isstruct(chan) % if chan is not a struct, fn must exist
+        warning('ID:nonexistent_file', 'The file fn does not exist.');
+        return
+      end
+    else
+      % fn exists but may not be a .mat file
+      [~, ~, fExt] = fileparts(fn);
+      if ~strcmpi(fExt,'.mat')
+        errmsg = [gerrmsg, 'Not a matlab data file or .mat extraname is missing.'];
+        warning('ID:invalid_file_type', '%s', errmsg);
+        return
+      end
+      % fn is an existing .mat file but may not have required fields
+      fields = matfile(fn);
+      if isfield(fields, 'scr')
+        warning('ID:SCRalyze_1_file', 'SCRalyze 1.x compatibility is discontinued');
+        return
+      end
+      if isempty(fieldnames(load(fn, 'infos'))) || ...
+          ~isstruct(load(fn, 'infos')) || ...
+          isempty(fieldnames(load(fn, 'data'))) || ...
+          ~isstruct(load(fn, 'data'))
+        errmsg = [gerrmsg, 'Some variables are either missing or invalid in this file.'];
+        warning('ID:invalid_data_structure', '%s', errmsg);
+        return
+      end
     end
   otherwise
     % fn is neither a file nor a struct
@@ -205,15 +208,21 @@ end
 
 %% 5 Check infos
 if isstruct(fn)
-  loaded_infos.infos = fn.infos;
-else
+  infos = fn.infos;
+elseif exist(fn, "file")
   loaded_infos = load(fn, 'infos');
+  if isfield(loaded_infos, "infos") && numel(fieldnames(loaded_infos))==1
+    infos = loaded_infos.infos;
+  end
+  clear loaded_infos
+else
+  infos = chan.infos;
 end
 flag_infos = 0;
-if isempty(fieldnames(loaded_infos))
+if isempty(fieldnames(infos))
   flag_infos = 1;
 else
-  if ~isfield(loaded_infos.infos, 'duration')
+  if ~isfield(infos, 'duration')
     flag_infos = 1;
   end
 end
@@ -221,15 +230,19 @@ if flag_infos
   warning('ID:invalid_data_structure', 'Input data does not have sufficient infos');
   return
 end
-infos = loaded_infos.infos;
 
 %% 6 Check data
 if isstruct(fn)
-  loaded_data.data = fn.data;
+  data = fn.data; % data is from a struct fn
+elseif exist(fn, "file")
+  loaded_data = load(fn, 'data'); % data is from a file fn
+  if isfield(loaded_data, "data") && numel(fieldnames(loaded_data))==1
+    data = loaded_data.data;
+  end
+  clear loaded_data
 else
-  loaded_data = load(fn, 'data');
+  data = chan.data; % data is from a struct chan
 end
-data = loaded_data.data;
 % initialise error flags
 vflag = zeros(numel(data), 1); % records data structure, valid if 0
 wflag = zeros(numel(data), 1); % records whether data is out of range, valid if 0
@@ -261,12 +274,12 @@ for k = 1:numel(data)
           warning('ID:missing_data', 'Channel %01.0f is empty.', k);
         end
         if strcmpi(data{k}.header.units, 'events')
-          if (any(data{k}.data > loaded_infos.infos.duration) || any(data{k}.data < 0))
+          if (any(data{k}.data > infos.duration) || any(data{k}.data < 0))
             wflag(k) = 1;
           end
         else
-          if (length(data{k}.data) < loaded_infos.infos.duration * data{k}.header.sr - 3 ||...
-              length(data{k}.data) > loaded_infos.infos.duration * data{k}.header.sr + 3)
+          if (length(data{k}.data) < infos.duration * data{k}.header.sr - 3 ||...
+              length(data{k}.data) > infos.duration * data{k}.header.sr + 3)
             wflag(k) = 1;
           end
         end
