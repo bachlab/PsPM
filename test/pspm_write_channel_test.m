@@ -1,17 +1,16 @@
 classdef pspm_write_channel_test < matlab.unittest.TestCase
-  % pspm_write_channel_test
-  % unittest class for the pspm_write_channel function
-  %__________________________________________________________________________
+  
+  % Unittest class for the pspm_write_channel function
   % PsPM TestEnvironment
   % (C) 2015 Tobias Moser (University of Zurich)
-  % 2022 Teddy Chao
+  %     2022 Teddy Chao
 
   properties
     testdatafile = 'write_channel_test.mat';
   end
 
   methods(TestClassSetup)
-    %% Generate Testdatafile
+    % Generate Testdatafile
     function generate_testdatafile(this)
 
       % initialise data settings
@@ -38,7 +37,7 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
   end
 
   methods(TestClassTeardown)
-    %% Cleanup function
+    % Cleanup function
     % responsible to clean up the dirt that has been made
     function cleanup(this)
       if ~isempty(this.testdatafile)
@@ -126,7 +125,8 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       gen_data = pspm_testdata_gen(c, 500);
       d = gen_data.data{1}.data;
       gen_data.data{1}.data = [d,d];
-      this.verifyWarning(@()pspm_write_channel(this.testdatafile, gen_data.data{1}, 'add'), 'ID:invalid_data_structure');
+      this.verifyWarning(@()...
+        pspm_write_channel(this.testdatafile, gen_data.data{1}, 'add'), 'ID:invalid_data_structure');
     end
 
     function test_empty(this)
@@ -179,7 +179,8 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       gen_data.data{1}.data = gen_data.data{1}.data';
 
       % add channel
-      [~, outinfos] = this.verifyWarning(@()pspm_write_channel(this.testdatafile, gen_data.data{1}, 'add'), 'ID:invalid_data_structure');
+      [~, outinfos] = this.verifyWarning(@()...
+        pspm_write_channel(this.testdatafile, gen_data.data{1}, 'add'), 'ID:invalid_data_structure');
 
       % load changed data
       [~, new.infos, new.data] = pspm_load_data(this.testdatafile);
@@ -197,7 +198,8 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       [~, old.infos, old.data] = pspm_load_data(this.testdatafile);
 
       % channel should not exist -> should fall into 'add' action
-      [~, outinfos] = this.verifyWarningFree(@() pspm_write_channel(this.testdatafile, gen_data.data{1}, 'replace'));
+      [~, outinfos] = this.verifyWarningFree(@()...
+        pspm_write_channel(this.testdatafile, gen_data.data{1}, 'replace'));
 
       % load changed data
       [~, new.infos, new.data] = pspm_load_data(this.testdatafile);
@@ -215,7 +217,8 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       [~, old.infos, old.data] = pspm_load_data(this.testdatafile);
 
       % channel should exist -> should actually replace
-      [~, outinfos] = this.verifyWarningFree(@() pspm_write_channel(this.testdatafile, gen_data.data{1}, 'replace'));
+      [~, outinfos] = this.verifyWarningFree(@()...
+        pspm_write_channel(this.testdatafile, gen_data.data{1}, 'replace'));
 
       % load changed data
       [~, new.infos, new.data] = pspm_load_data(this.testdatafile);
@@ -235,7 +238,8 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       [~, old.infos, old.data] = pspm_load_data(this.testdatafile);
 
       % channel should exist -> should actually replace
-      [~, outinfos] = this.verifyWarningFree(@() pspm_write_channel(this.testdatafile, gen_data.data{1}, 'replace'));
+      [~, outinfos] = this.verifyWarningFree(@()...
+        pspm_write_channel(this.testdatafile, gen_data.data{1}, 'replace'));
 
       % load changed data
       [~, new.infos, new.data] = pspm_load_data(this.testdatafile);
@@ -245,22 +249,23 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
 
       % change units
       gen_data.data{1}.header.units = 'degree';
-      [~, outinfos] = this.verifyWarningFree(@() pspm_write_channel(this.testdatafile, gen_data.data{1}, 'replace'));
+      [~, ~] = this.verifyWarningFree(@() pspm_write_channel(this.testdatafile, gen_data.data{1}, 'replace'));
       [~, post_unit_change.infos, post_unit_change.data] = pspm_load_data(this.testdatafile);
 
       % should be one more channel as degrees did not exist
       this.verifyEqual(length(post_unit_change.data), length(new.data) + 1);
 
       % assert one mm gaze channel and one degree gaze channel
-      this.verifyEqual(length(find(cellfun(@(c) strcmp(c.header.units, 'mm') && strcmp(c.header.chantype, 'gaze_x_l'), post_unit_change.data))), 1);
-      this.verifyEqual(length(find(cellfun(@(c) strcmp(c.header.units, 'degree') && strcmp(c.header.chantype, 'gaze_x_l'), post_unit_change.data))), 1);
+      this.verifyEqual(length(find(cellfun(@(c) strcmp(c.header.units, 'mm') && ...
+        strcmp(c.header.chantype, 'gaze_x_l'), post_unit_change.data))), 1);
+      this.verifyEqual(length(find(cellfun(@(c) strcmp(c.header.units, 'degree') && ...
+        strcmp(c.header.chantype, 'gaze_x_l'), post_unit_change.data))), 1);
 
     end
 
     function test_delete_single(this)
 
-      %% Delete with chantype
-      % -------------------------------------------------------------
+      % 1 Delete with chantype
       % prepare
       data.header.chantype = 'hr';
 
@@ -281,8 +286,7 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       chan = cellfun(@(f) strcmpi(f.header.chantype, 'hr'), new.data);
       this.verifyTrue(~any(chan));
 
-      %% Delete with channr
-      % -------------------------------------------------------------
+      % 2 Delete with channr
       options.channel = numel(new.data);
       % new is now old
       old = new;
@@ -296,9 +300,8 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       this.verify_write(new, old, [], 'delete', outinfos);
       this.verifyEqual(numel(outinfos.channel), 1);
 
-      %% Test delete algorithm
+      % 3 Test delete algorithm
       % will then also be needed for test_delete_multi
-      % -------------------------------------------------------------
       % prepare (add some resp channels)
       c = cell(1,7);
       for i=1:7
@@ -352,8 +355,7 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
     function test_delete_multi(this)
       % work with file earlier filled with resp channels
 
-      %% remove first two channels
-      % -------------------------------------------------------------
+      % 1 remove first two channels
       % load file before
       [~, old.infos, old.data] = pspm_load_data(this.testdatafile);
 
@@ -370,8 +372,7 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       this.verify_write(new, old, [], 'delete', outinfos);
       this.verifyEqual(numel(outinfos.channel), 2);
 
-      %% remove remaining 'resp' channels
-      % -------------------------------------------------------------
+      % 2 remove remaining 'resp' channels
       old = new;
 
       chan = cellfun(@(f) strcmpi(f.header.chantype, 'resp'), new.data);

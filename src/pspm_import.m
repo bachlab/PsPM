@@ -87,7 +87,7 @@ function outfile=pspm_import(datafile, datatype, import, options)
 % initialise
 % -------------------------------------------------------------------------
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 outfile = [];
 
 % input argument check & transform
@@ -114,7 +114,7 @@ end
 
 % check options ---
 try
-  if options.overwrite ~= 1, options.overwrite = 0; end;
+  if options.overwrite ~= 1, options.overwrite = 0; end
 catch
   options.overwrite = 0;
 end
@@ -184,11 +184,11 @@ for k = 1:numel(import)
     else
       import{k}.channel = k;
       fprintf('Assigned channel/column %1.0f to import job %1.0f of type %s.\n', k, k, import{k}.type);
-    end;
-  end;
+    end
+  end
   % assign channel type number
   import{k}.typeno = find(strcmpi(import{k}.type, {settings.chantypes.type}));
-end;
+end
 
 % loop through data files
 % -------------------------------------------------------------------------
@@ -209,7 +209,7 @@ for d = 1:numel(D)
   else
     sts = -1; warning('ID:nonexistent_file', '\nDatafile (%s) doesn''t exist', filename_in_msg);
   end
-  if sts == -1, fprintf('\nImport unsuccesful for file %s.\n', filename_in_msg); break; end;
+  if sts == -1, fprintf('\nImport unsuccesful for file %s.\n', filename_in_msg); break; end
 
   % split blocks if necessary ---
   if iscell(sourceinfo)
@@ -218,20 +218,20 @@ for d = 1:numel(D)
     blkno = 1;
     import = {import};
     sourceinfo = {sourceinfo};
-  end;
+  end
 
   for blk = 1:blkno
     % convert data into desired channel type format ---
     data = cell(numel(import{blk}), 1);
     for k = 1:numel(import{blk})
-      if ~isfield(import{blk}{k}, 'units'), import{blk}{k}.units = 'unknown'; end;
+      if ~isfield(import{blk}{k}, 'units'), import{blk}{k}.units = 'unknown'; end
       chantype = find(strcmpi(import{blk}{k}.type, {settings.chantypes.type}));
       [sts(k), data{k}] = feval(settings.chantypes(chantype).import, import{blk}{k});
-      if isfield(import{blk}{k}, 'minfreq'), data{k}.header.minfreq = import{blk}{k}.minfreq; end;
+      if isfield(import{blk}{k}, 'minfreq'), data{k}.header.minfreq = import{blk}{k}.minfreq; end
     end
 
     if any(sts == -1), fprintf('\nData conversion unsuccesful for job %02.0f file %s.\n', ...
-        find(sts == -1), filename_in_msg); break; end;
+        find(sts == -1), filename_in_msg); break; end
 
     % collect infos and save ---
     [pth, fn, ext]     = fileparts(filename_in_msg);
@@ -242,7 +242,7 @@ for d = 1:numel(D)
 
     % align data length ---
     [sts, data, duration] = pspm_align_channels(data);
-    if sts == -1, fprintf('\nData alignment unsuccesful for file %s.\n', D{d}); break; end;
+    if sts == -1, fprintf('\nData alignment unsuccesful for file %s.\n', D{d}); break; end
     infos.duration   = duration;
     infos.durationinfo = 'Recording duration in seconds';
     data = data(:);
@@ -252,7 +252,7 @@ for d = 1:numel(D)
       outfile{d, blk}=fullfile(pth, [settings.import.fileprefix, fn, '.mat']);
     else
       outfile{d, blk}=fullfile(pth, sprintf('%s%s_blk%02.0f.mat', settings.import.fileprefix, fn, blk));
-    end;
+    end
     infos.importfile = outfile{d};
     clear savedata
     savedata.data = data; savedata.infos = infos; savedata.options = options;

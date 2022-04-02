@@ -54,8 +54,9 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 % SCRalyze 2.x data files - SCRalyze 1.x is not supported
 %
 % VERSION
-% PsPM 5.1.2
+% PsPM 6.0.0
 % (C) 2008-2021 Dominik R. Bach (Wellcome Centre for Human Neuroimaging, UCL)
+%     2022 Teddy Chao
 
 
 % -------------------------------------------------------------------------

@@ -30,6 +30,7 @@ data.data = import.data;
 if isfield(import, 'flank')
     data.flank = import.flank;
 end
+% add marker info
 if isfield(import, 'markerinfo')
     data.markerinfo = import.markerinfo;
 end;
