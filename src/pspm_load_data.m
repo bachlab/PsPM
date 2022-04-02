@@ -91,7 +91,7 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 
 
 %% 1 Initialise
-global settings
+global settings;
 if isempty(settings)
   pspm_init;
 end
