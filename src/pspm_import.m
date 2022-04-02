@@ -1,52 +1,55 @@
-function outfile=pspm_import(datafile, datatype, import, options)
-
+function outfile = pspm_import(datafile, datatype, import, options)
+% ● DESCRIPTION
 % pspm_import imports scr data from different formats and writes them to a
-%       file to the same path
-%
-% FORMAT:
-% OUTFILE = pspm_import(datafile, datatype, import, options)
-%
-% datafile: file containing the scr data, or cell array of files
-% datatype: supported datatypes are defined in pspm_init (see manual)
-%
-% import:   a cell array of struct with one job (imported channel) per cell
-%           mandatory fields for all data types and each job:
-%           - .type: not all data types support all channel types
-%           mandatory fields for some data types and each channel:
-%           - .sr: sampling rate for waveform, or timeunit in s for event channels
-%           - .channel: channel or column number in the original file
-%           optional fields for some data types and channel types:
-%           - .transfer: name of a .mat file containing values for
-%              the transfer function, OR a struct array containing the values
-%              OR 'none', when no conversion is required
-%              (c and optional Rs and offset, see pspm_transfer_function for
-%              more information)
-%           - .eyelink_trackdist: distance between eyetracker and
-%              the participants' eyes. If is a numeric value the data in a pupil
-%              channel obtained with an eyelink eyetracking system are
-%              converted from arbitrary units to distance unit. If value is 'none'
-%              the conversion is disabled. (only for Eyelink imports)
-%           - .distance_unit: unit in which the eyelink_trackdist is
-%              measured. If  eyelink_trackdist contains a numeric value, the
-%              default value is 'mm' otherwise the distance unit is ''.
-%              Can be one of the following units:'mm', 'cm', 'm','inches'.
-%           - .denoise: for marker channels in CED spike format (recorded
-%              as 'level'), filters out markers duration longer than the
-%              value given here (in ms)
-%           - .delimiter: for delimiter separated values, value used as delimiter for file read
-%
-% options:  options.overwrite - overwrite existing files by default
-%
-% RETURNS
-% a .mat file (or cell array of files) on the input file path containing scr
-% and event info
-%__________________________________________________________________________
+% file to the same path
+% ● FORMAT
+% outfile = pspm_import(datafile, datatype, import, options)
+% ● INPUT
+% datafile      file containing the scr data, or cell array of files
+% datatype      supported datatypes are defined in pspm_init (see manual)
+% import        a cell array of struct with one job (imported channel) 
+% ┃             per cell
+% ┃             ● mandatory fields for all data types and each job
+% ┣━.type       not all data types support all channel types
+% ┃             ● mandatory fields for some data types and each channel
+% ┣━.sr         sampling rate for waveform, or timeunit in s for event 
+% ┃             channels
+% ┣━.channel    channel or column number in the original file
+% ┃             ● optional fields for some data types and channel types
+% ┣━.transfer:  name of a .mat file containing values for
+% ┃             the transfer function, OR a struct array containing the 
+% ┃             values OR 'none', when no conversion is required
+% ┃             (c and optional Rs and offset, see pspm_transfer_function 
+% ┃             for more information)
+% ┣━.eyelink_trackdist
+% ┃             distance between eyetracker and
+% ┃             the participants' eyes. If is a numeric value the data in 
+% ┃             a pupil channel obtained with an eyelink eyetracking system
+% ┃             are converted from arbitrary units to distance unit. If
+% ┃             value is 'none' the conversion is disabled.
+% ┃             (only for Eyelink imports)
+% ┣━.distance_unit
+% ┃             unit in which the eyelink_trackdist is measured.
+% ┃             If eyelink_trackdist contains a numeric value, the default 
+% ┃             value is 'mm' otherwise the distance unit is ''. Can be 
+% ┃             one of the following units:'mm', 'cm', 'm', 'inches'.
+% ┣━.denoise    for marker channels in CED spike format (recorded
+% ┃             as 'level'), filters out markers duration longer than the
+% ┃             value given here (in ms)
+% ┗━.delimiter  for delimiter separated values, value used as delimiter 
+%               for file read
+% options       a struct
+% ┗━.overwrite  overwrite existing files by default
+% ● OUTPUT
+% outfile       a .mat file (or cell array of files) on the input file path
+%               containing scr and event info
+% ● VERSION
 % PsPM 3.0
+% ● AUTHORSHIP
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 
-% -------------------------------------------------------------------------
-% DEVELOPERS NOTES: Structure of PsPM import
+%% DEVELOPERS NOTES: Structure of PsPM import
 %
 % pspm_import is a general function for handling of import jobs. It checks
 % the import job, calls a datatype-specific function to extract data from
@@ -82,16 +85,13 @@ function outfile=pspm_import(datafile, datatype, import, options)
 % file formats that support multiple block storage within one file can
 % return cell arrays import{1:blkno} and sourceinfo{1:blkno}; SCRalyze will
 % save individual files for each block, with a filename 'pspm_fn_blk0x.mat'
-% -------------------------------------------------------------------------
 
-% initialise
-% -------------------------------------------------------------------------
+%% initialise
 global settings;
 if isempty(settings), pspm_init; end
 outfile = [];
 
-% input argument check & transform
-% -------------------------------------------------------------------------
+%% input argument check & transform
 if nargin<1
   warning('ID:invalid_input', 'No input file'); return;
 elseif ~iscell(datafile) && ~ischar(datafile)
@@ -128,8 +128,7 @@ end
 clear datafile
 
 
-% import job check
-% -------------------------------------------------------------------------
+%% import job check
 
 % determine datatype ---
 datatype = find(strcmpi(datatype, {settings.import.datatypes.short}));
@@ -190,8 +189,7 @@ for k = 1:numel(import)
   import{k}.typeno = find(strcmpi(import{k}.type, {settings.chantypes.type}));
 end
 
-% loop through data files
-% -------------------------------------------------------------------------
+%% loop through data files
 for d = 1:numel(D)
   % pass over to import function if datafile exists, otherwise next file
   file_exists = true;

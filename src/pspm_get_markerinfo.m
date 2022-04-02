@@ -1,28 +1,35 @@
 function [sts, markerinfo] = pspm_get_markerinfo(fn, options)
-% OVERVIEW 
-% pspm_get_markerinfo extracts markerinfo from PsPm files that contain
-% such information (typically after import of EEG-style data files, e. g.
+% ● DESCRIPTION 
+% pspm_get_markerinfo extracts markerinfo from PsPM files that contain
+% such information (typically after import of EEG-style data files, e.g.
 % BrainVision or NeuroScan)
-%
-% FORMAT
+% ● FORMAT
 % [sts, markerinfo] = pspm_get_markerinfo(filename, options)
-%
-%          filename:                [char] name of PsPM file, if empty,
-%                                   you will prompted for one
-%
-%          options.markerchan:      [numeric] channel id of the marker
-%                                   channel; Default is -1 which means the
-%                                   first found marker channel will be used
-%
-%          options.filename:        [char] name of a file to write
-%                                   the markerinfo to; Default is empty (no
-%                                   file will be written)
-%
-%          options.overwrite:       [logical] define whether to
-%                                   overwrite existing output files or not
-%__________________________________________________________________________
-% PsPM 3.0
+% ● INPUT
+% filename        [char] 
+%                 name of PsPM file
+%                 if empty, you will be prompted for one
+% options
+% ┣━.markerchan   [double] 
+% ┃               channel id of the marker channel;
+% ┃               default value: -1, meaning to use the first found marker channel
+% ┣━.filename     [char] 
+% ┃               name of a file to write the markerinfo to;
+% ┃               default value: empty, meaning no file will be written
+% ┗━.overwrite    [logical] (0 or 1) 
+%                 define whether to overwrite existing output files or not
+% ● OUTPUT
+% sts             [double] 
+%                 default value: -1 if unsuccessful
+% markerinfo      [struct] 
+% ┣━.name         [char] 
+% ┣━.value        
+% ┗━.element      
+% ● VERSION
+% PsPM 6.0
+% ● AUTHORSHIP
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%     2022      Teddy Chao (UCL)
 
 global settings;
 if isempty(settings), pspm_init; end
@@ -67,7 +74,7 @@ if options.markerchan == -1
 end
 
 % get file
-[bsts, infos, data] = pspm_load_data(fn, options.markerchan);
+[bsts, ~, data] = pspm_load_data(fn, options.markerchan);
 if bsts == -1, return, end
 
 % check markers
@@ -77,8 +84,7 @@ if isempty(data{1}.data)
   return;
 end
 
-% -------------------------------------------------------------------------
-% extract markers: find unique type/value combinations ...
+%% extract markers: find unique type/value combinations ...
 markertype = data{1}.markerinfo.name;
 markervalue = data{1}.markerinfo.value;
 markerall = strcat(markertype', regexp(num2str(markervalue'), '\s+', 'split'));
@@ -100,7 +106,8 @@ if ~isempty(outfn)
   if exist(outfn, 'file')
     if options.overwrite
       write_ok = true;
-    elseif strcmpi('Yes', questdlg(sprintf('File (%s) already exists. Overwrite?', outfn)))
+    elseif strcmpi('Yes', ...
+        questdlg(sprintf('File (%s) already exists. Overwrite?', outfn)))
       write_ok = true;
     else
       write_ok = false;
@@ -108,8 +115,6 @@ if ~isempty(outfn)
   else
     write_ok = true;
   end
-
-
   if write_ok
     save(outfn, 'markerinfo');
   end

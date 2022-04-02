@@ -1,66 +1,68 @@
 function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
-% DESCRIPTION
+% ● DESCRIPTION
 % pspm_load_data checks and returns the structure of PsPM 3-5.x and
-%
-% FORMAT
+% ● FORMAT
 % [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
-%
-% INPUT
-% fn						filename, or struct with fields
-% ┣━ .infos
-% ┗━ .data
-% chan					can be a numeric vector, a string or a struct
-%		[vector]
-% 	0 or empty	returns all channels
-% 	number of channels
-%								returns only these channels
-%		[string]
-% 	'wave'			returns all waveform channels
-% 	'events'		returns all event channels
-%   'pupil'			goes through the below precedence order and loads all
-%               channels corresponding to the first existing option:
-%								1. Combined pupil channels (by definition also preprocessed)
-%								2. Preprocessed pupil channels corresponding to best eye
-%								3. Preprocessed pupil channels
-%								4. Best eye pupil channels
-%								please note that if there is only one eye in the datafile,
-%               that eye is defined as the best eye.
-% 	'channel type'
-%								returns the respective channels
-%								(see settings for channel types)
-% 	'none'			just checks the file
-%		[struct]
-%               must have fields .infos, .data, .options
-%								will check and save file
-%
-% OUTPUT
-% sts						0 as default
-%								-1 if check is unsuccessful
-% infos					variable from data file
-% data					cell array of channels as specified
-% filestruct		a struct with the fields
-% ┣━ .numofchan	number of channels
-% ┣━ .numofwavechan
-% ┃							number of wave channels
-% ┣━ .numofeventchan
-% ┃							number of event channels
-% ┣━ .posofmarker
-% ┃							position of the first marker channel
-% ┃							0 if no marker channel exists
-% ┗━ .posofchannels
-%								number of the channels that were returned
-%
-% COMPATIBILITY
+% ● INPUT
+% fn					[char] filename / [struct] with fields
+% ┣━.infos
+% ┗━.data
+% chan				[numeric vector] / [char] / [struct]
+%		          [vector]
+% 	            0 or empty	returns all channels
+% 	            number of channels
+%								            returns only these channels
+%		          [char]
+% 	            'wave'      returns all waveform channels
+% 	            'events'		returns all event channels
+%               'pupil'			goes through the below precedence order and 
+%                           loads all channels corresponding to the first 
+%                           existing option:
+%								            1. Combined pupil channels 
+%                              (by definition also preprocessed)
+%								            2. Preprocessed pupil channels 
+%                              corresponding to best eye
+%							              3. Preprocessed pupil channels
+%							              4. Best eye pupil channels
+%							              please note that if there is only one eye in 
+%                           the datafile, that eye is defined as the best eye.
+% 	             'channel type'
+%                           returns the respective channels
+%								            (see settings for channel types)
+% 	             'none'			just checks the file
+%		          [struct] check and save file
+%             	┣━.infos (mandatory)
+%               ┣━.data (mandatory)
+%               ┗━.options (mandatory)
+% ● OUTPUT
+% sts					[logical]
+%             0 as default
+%							-1 if check is unsuccessful
+% infos				[struct]
+%             variable from data file
+% data				cell array of channels as specified
+% filestruct	[struct]
+% ┣━.numofchan
+% ┃						number of channels
+% ┣━.numofwavechan
+% ┃						number of wave channels
+% ┣━.numofeventchan
+% ┃						number of event channels
+% ┣━.posofmarker
+% ┃						position of the first marker channel
+% ┃						0 if no marker channel exists
+% ┗━.posofchannels
+%							number of the channels that were returned
+% ● COMPATIBILITY
 % SCRalyze 2.x data files - SCRalyze 1.x is not supported
-%
-% VERSION
-% PsPM 6.0.0
+% ● VERSION
+% PsPM 6.0
+% ● AUTHOSHIP
 % (C) 2008-2021 Dominik R. Bach (Wellcome Centre for Human Neuroimaging, UCL)
-%     2022 Teddy Chao
+%     2022 Teddy Chao (UCL)
 
 
-% -------------------------------------------------------------------------
-% DEVELOPERS NOTES: General structure of PsPM data files
+%% DEVELOPERS NOTES: General structure of PsPM data files
 %
 % each file contains two variables:
 % infos - struct variable with general infos
@@ -86,11 +88,9 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 % this feature will be removed in the future
 %
 % compatibility with SCRalyze 1.x files was removed after version b2.1.8
-% -------------------------------------------------------------------------
 
 
 %% 1 Initialise
-global settings;
 if isempty(settings)
   pspm_init;
 end
@@ -274,7 +274,9 @@ for k = 1:numel(data)
   if ~isfield(data{k}, 'header')
     vflag(k) = 1;
   else
-    if ~isfield(data{k}.header, 'chantype') || ~isfield(data{k}.header, 'sr') || ~isfield(data{k}.header, 'units')
+    if ~isfield(data{k}.header, 'chantype') || ...
+        ~isfield(data{k}.header, 'sr') || ...
+        ~isfield(data{k}.header, 'units')
       vflag(k) = 1;
     else
       if ~ismember(lower(data{k}.header.chantype), {settings.chantypes.type})
@@ -283,7 +285,8 @@ for k = 1:numel(data)
     end
   end
   % check data
-  if vflag(k)==0 && nflag(k)==0 && flag_infos==0 % required information is available and valid in header and infos
+  if vflag(k)==0 && nflag(k)==0 && flag_infos==0
+    % required information is available and valid in header and infos
     if ~isfield(data{k}, 'data')
       vflag(k) = 1;
     else
@@ -313,7 +316,8 @@ if any(vflag)
   return
 end
 if any(wflag)
-  errmsg = [gerrmsg, sprintf('The data in channel %01.0f is out of the range [0, infos.duration]', find(wflag,1))];
+  errmsg = [gerrmsg, sprintf(['The data in channel %01.0f is out of ',...
+    'the range [0, infos.duration]'], find(wflag,1))];
   warning('ID:invalid_data_structure', '%s', errmsg);
   return
 end
@@ -323,16 +327,20 @@ if any(nflag)
   return
 end
 if any(zflag)
-  data{find(zflag,1)}.data = zeros(1,0); % convert empty data to a generalised 1-by-0 matrix
-  warning('ID:missing_data', 'Some channels are empty.');
-  %warning('ID:missing_data', 'Channel %01.0f is empty.', find(zflag,1));
+  % convert empty data to a generalised 1-by-0 matrix
+  data{find(zflag,1)}.data = zeros(1,0); 
+  warning('ID:missing_data', 'Channel %01.0f is empty.', find(zflag,1));
   % if there is empty data, give a warning but do not suspend
 end
 
 
 %% 7 Autofill information in header
-if ~isfield(data{k}.header, 'flank')
-  data{k}.header.flank = 'both';
+% add flank for only continuous data (wave)
+l_type = {settings.chantypes.data};
+if strcmp(l_type{strcmp({settings.chantypes.type},{data{k}.header.chantype})},'wave')
+  if ~isfield(data{k}.header, 'flank')
+    data{k}.header.flank = 'both';
+  end
 end
 % some other optional fields which can be autofilled with default values should be added here.
 
@@ -357,7 +365,6 @@ elseif numel(filestruct.posofmarker) > 1
   filestruct.posofmarker = filestruct.posofmarker(1); % first marker channel
 end
 
-
 %% 9 Return channels, or save file
 if isstruct(chan)
   infos = chan.infos;
@@ -366,14 +373,16 @@ end
 flag = zeros(numel(data), 1);
 if ischar(chan) && ~strcmp(chan, 'none')
   if strcmpi(chan, 'pupil') && isfield(infos.source, 'best_eye')
-    flag = get_chans_to_load_for_pupil(data, flag, infos.source.best_eye);
+    flag = get_chans_to_load_for_pupil(data, infos.source.best_eye);
   elseif strcmpi(chan, 'sps') && isfield(infos.source, 'best_eye')
-    flag = get_chans_to_load_for_sps(data, flag, infos.source.best_eye);
+    flag = get_chans_to_load_for_sps(data, infos.source.best_eye);
   else
     for k = 1:numel(data)
-      if (any(strcmpi(chan, {'event', 'events'})) && strcmpi(data{k}.header.units, 'events')) || ...
+      if (any(strcmpi(chan, {'event', 'events'})) && ...
+          strcmpi(data{k}.header.units, 'events')) || ...
           (strcmpi(chan, 'wave') && ~strcmpi(data{k}.header.units, 'events')) || ...
-          (any(strcmpi(chan, {'trigger', 'marker'})) && any(strcmpi(data{k}.header.chantype, {'trigger', 'marker'})))
+          (any(strcmpi(chan, {'trigger', 'marker'})) && ...
+          any(strcmpi(data{k}.header.chantype, {'trigger', 'marker'})))
         flag(k) = 1;
       elseif strcmp(data{k}.header.chantype, chan)
         flag(k) = 1;
@@ -396,7 +405,8 @@ elseif isnumeric(chan)
   end
   data = data(chan);
   filestruct.posofchannels = chan;
-elseif isstruct(chan) && ~isempty(fn) && (~exist(fn, 'file') || chan.options.overwrite == 1)
+elseif isstruct(chan) && ~isempty(fn) && (~exist(fn, 'file') || ...
+    chan.options.overwrite == 1)
   save(fn, 'infos', 'data');
   filestruct.posofchannels = 1:numel(data);
 else
@@ -406,7 +416,7 @@ end
 sts = 1;
 end
 
-function flag = get_chans_to_load_for_pupil(data, flag, best_eye)
+function flag = get_chans_to_load_for_pupil(data, best_eye)
 % Set flag variable according to the precedence order:
 %
 %   1. Combined channels (by definition also preprocessed)
@@ -415,11 +425,11 @@ function flag = get_chans_to_load_for_pupil(data, flag, best_eye)
 %   4. Best eye pupil channels
 %
 % The earliest possible option is taken and then the function returns.
-global settings;
+% global settings; 
+% This is an inner function which should not need global variable
 if isempty(settings)
   pspm_init;
 end
-best_eye = lower(best_eye);
 chantype_list = cellfun(@(x) x.header.chantype, data, 'uni', false);
 pupil_channels = cell2mat(cellfun(...
   @(chantype) strncmp(chantype, 'pupil',numel('pupil')),...
@@ -434,7 +444,8 @@ preprocessed_channels = cell2mat(cellfun(...
   false...
   ));
 combined_channels = cell2mat(cellfun(...
-  @(chantype) any(strcmp(split(chantype,'_'),settings.lateral.char.b)) && any(strcmp(split(chantype,'_'),'pp')),...
+  @(chantype) any(strcmp(split(chantype,'_'),settings.lateral.char.b)) && ...
+    any(strcmp(split(chantype,'_'),'pp')),...
   chantype_list,...
   'uni',...
   false...
@@ -462,7 +473,7 @@ end
 end
 
 
-function flag = get_chans_to_load_for_sps(data, flag, best_eye)
+function flag = get_chans_to_load_for_sps(data, best_eye)
 % 16-06-21 This is a tempory patch for loading sps data, copied from
 % pupil data
 % It needs to be updated for testing the compatibility with sps
@@ -489,13 +500,15 @@ preprocessed_channels = cell2mat(cellfun(...
   false...
   ));
 combined_channels = cell2mat(cellfun(...
-  @(chantype) contains(chantype, ['_',settings.lateral.char.b,'_']) && strcmp(chantype(end-2:end), '_pp'),...
+  @(chantype) contains(chantype, ['_',settings.lateral.char.b,'_']) && ...
+    strcmp(chantype(end-2:end), '_pp'),...
   chantype_list,...
   'uni',...
   false...
   ));
 besteye_channels = cell2mat(cellfun(...
-  @(chantype) strcmp(chantype(end-1:end), ['_' best_eye]) || contains(chantype, ['_' best_eye '_']),...
+  @(chantype) strcmp(chantype(end-1:end), ['_' best_eye]) || ...
+    contains(chantype, ['_' best_eye '_']),...
   chantype_list,...
   'uni',...
   false...

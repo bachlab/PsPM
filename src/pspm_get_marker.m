@@ -1,11 +1,9 @@
 function [sts, data] = pspm_get_marker(import)
-% OVERVIEW
+% ● DESCRIPTION
 % pspm_get_marker gets the marker channel for different data types
-%
-% FORMAT
+% ● FORMAT
 % [sts, data] = pspm_get_marker(import)
-%
-% INPUT
+% ● INPUT
 %	import				import job structure
 % ┣━.data				mandatory
 % ┣━.marker 		mandatory, string
@@ -17,13 +15,11 @@ function [sts, data] = pspm_get_marker(import)
 %	┃							accepted values: 'ascending', 'descending', 'both'
 % ┃             default: 'both'
 % ┗━.markerinfo	optional, struct, returns marker timestamps in seconds
-% 		┣━.name
-% 		┗━.value
-%
-% VERSION
+% 	  ┣━.name
+%     ┗━.value
+% ● VERSION
 % PsPM 6.0
-%
-% AUTHORSHIP
+% ● AUTHORSHIP
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %			2022			Teddy Chao (UCL)
 
@@ -35,7 +31,7 @@ sts = -1;
 
 %% get data
 [bsts, import] = pspm_get_events(import);
-if bsts~=1
+if bsts ~= 1
   warning('ID:invalid_input', 'Call of pspm_get_events failed');
   return
 end
