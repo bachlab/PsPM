@@ -33,27 +33,21 @@ function [sts, markerinfo] = pspm_get_markerinfo(fn, options)
 
 global settings;
 if isempty(settings), pspm_init; end
-
 % set output values
-sts = -1; markerinfo = [];
-
-
+sts = -1;
+markerinfo = [];
 if nargin <= 1
   options = struct();
 end
-
 if ~isfield(options, 'markerchan')
   options.markerchan = -1;
 end
-
 if ~isfield(options, 'filename')
   options.filename = '';
 end
-
 if ~isfield(options, 'overwrite')
   options.overwrite = false;
 end
-
 if ~isstruct(options)
   warning('ID:invalid_input', 'Options has to be a struct.'); return;
 elseif isfield(options, 'filename') && ~ischar(options.filename)
@@ -63,33 +57,27 @@ elseif isfield(options, 'markerchan') && ~isnumeric(options.markerchan)
 elseif isfield(options, 'overwrite') && ~islogical(options.overwrite)
   warning('ID:invalid_input', 'Options.overwrite must be logical.'); return;
 end
-
 % check input arguments
 if nargin < 1 || isempty(fn)
   fn = spm_select(1, 'mat', 'Extract markers from which file?');
 end
-
 if options.markerchan == -1
   options.markerchan = 'events';
 end
-
 % get file
 [bsts, ~, data] = pspm_load_data(fn, options.markerchan);
 if bsts == -1, return, end
-
 % check markers
 if isempty(data{1}.data)
   sts = -1;
   warning('File (%s) contains no event markers', fn);
   return;
 end
-
 %% extract markers: find unique type/value combinations ...
 markertype = data{1}.markerinfo.name;
 markervalue = data{1}.markerinfo.value;
 markerall = strcat(markertype', regexp(num2str(markervalue'), '\s+', 'split'));
 markerunique = unique(markerall);
-
 % ... and write them into a struct
 for k = 1:numel(markerunique)
   % find all elements
@@ -99,7 +87,6 @@ for k = 1:numel(markerunique)
   markerinfo(k).value = markervalue(indx(1));
   markerinfo(k).elements = indx';
 end
-
 % if necessary, write into a file
 outfn = options.filename;
 if ~isempty(outfn)

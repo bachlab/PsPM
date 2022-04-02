@@ -427,8 +427,7 @@ function flag = get_chans_to_load_for_pupil(data, best_eye)
 %   4. Best eye pupil channels
 %
 % The earliest possible option is taken and then the function returns.
-% global settings; 
-% This is an inner function which should not need global variable
+global settings;
 if isempty(settings)
   pspm_init;
 end
