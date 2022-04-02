@@ -1,9 +1,10 @@
 function [sts, markerinfo] = pspm_get_markerinfo(fn, options)
+% OVERVIEW 
 % pspm_get_markerinfo extracts markerinfo from PsPm files that contain
 % such information (typically after import of EEG-style data files, e. g.
 % BrainVision or NeuroScan)
 %
-% FORMAT:
+% FORMAT
 % [sts, markerinfo] = pspm_get_markerinfo(filename, options)
 %
 %          filename:                [char] name of PsPM file, if empty,

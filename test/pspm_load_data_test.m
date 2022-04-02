@@ -1,8 +1,8 @@
 classdef pspm_load_data_test < matlab.unittest.TestCase
-  % pspm_load_data_test
+  
+	% pspm_load_data_test
   % unittest class for the pspm_load_data function
-  %__________________________________________________________________________
-  % PsPM TestEnvironment
+  % testEnvironment for PsPM version 6.0
   % (C) 2013 Linus Rüttimann (University of Zurich)
   %     2022 Teddy Chao (UCL)
 
@@ -17,34 +17,38 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
   end
 
   properties(TestParameter)
-
   end
 
   methods
-    %function compare_data(ActualData, ExpectData)
     function compare_data(this, act_val, exp_val)
+			% this method is recommened for comparing structs (Infos, data, header)
+			% because load_data will autofill some fields which should be allowed as different
       import matlab.unittest.constraints.IsEqualTo;
       % Verify Infos
       ExpStructInfos = exp_val.infos;
       ActStructInfos = act_val.infos;
-      this.verifyThat(ExpStructInfos, IsEqualTo(ActStructInfos), 'valid_datafile_0 test 1');
-      % Verify Data
+      this.verifyThat(ExpStructInfos, ...
+      								IsEqualTo(ActStructInfos), ...
+      								'valid_datafile_0 test 1');
       ExpStruct = exp_val.data;
       ActStruct = act_val.data;
-      % disp(arg1);
       for i_struct = 1:length(ExpStruct)
         ExpHeader = ExpStruct{i_struct,1}.header;
         ActHeader = ActStruct{i_struct,1}.header;
         ExpData = ExpStruct{i_struct,1}.data;
         ActData = ActStruct{i_struct,1}.data;
         % Verify data
-        this.verifyThat(ExpData, IsEqualTo(ActData), 'valid_datafile_0 test 1');
+        this.verifyThat(ExpData, ...
+        								IsEqualTo(ActData), ...
+        								'valid_datafile_0 test 1');
         % Verify header
         l_fieldnames = fieldnames(ExpHeader);
         for i_field = 1:numel(l_fieldnames)
           ExpHeaderVal = ExpHeader.(l_fieldnames{i_field});
           ActHeaderVal = ActHeader.(l_fieldnames{i_field});
-          this.verifyThat(ExpHeaderVal, IsEqualTo(ActHeaderVal), 'valid_datafile_0 test 1');
+          this.verifyThat(ExpHeaderVal, ...
+          								IsEqualTo(ActHeaderVal), ...
+          								'valid_datafile_0 test 1');
         end
       end
     end
@@ -59,16 +63,12 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       channels{5}.chantype = 'marker';
       channels{6}.chantype = 'resp';
       channels{7}.chantype = 'scr';
-
       this.event_channels = [2 4 5];
       this.pspm_channels = [1 7];
-
       if exist(this.fn, 'file')
         delete(this.fn);
       end
-
       pspm_testdata_gen(channels, 10, this.fn);
-
       if ~exist(this.fn, 'file')
         warning('the testdata could not be generated');
       end
@@ -85,8 +85,8 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
 
   methods (Test)
 
-    % Test group 1: check warnings
     function invalid_inputargs(this)
+		% Test group 1: check warnings
       % test 1
       this.verifyWarning(@()pspm_load_data(), ...
         'ID:invalid_input', ...
@@ -233,9 +233,8 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       clear infos data chan
       delete(this.fn2);
     end
-
-    %return all channels
-    function valid_datafile_0(this)
+    
+    function valid_datafile_0(this) % return all channels
       [~, infos, data] = pspm_load_data(this.fn);
       act_val.infos = infos;
       act_val.data = data;
@@ -243,8 +242,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       this.compare_data(act_val, exp_val);
     end
 
-    % return all channels when input is a struct
-    function valid_datafile_1(this)
+    function valid_datafile_1(this) % return all channels when input is a struct
       struct = load(this.fn);
       [~, infos, data] = pspm_load_data(struct);
       act_val.infos = infos;
@@ -252,9 +250,8 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       exp_val = load(this.fn);
       this.compare_data(act_val, exp_val);
     end
-
-    %return one channel
-    function valid_datafile_2(this)
+    
+    function valid_datafile_2(this) % return one channel
       chan = 2;
       [~, infos, data] = pspm_load_data(this.fn, chan);
       act_val.infos = infos;
@@ -263,9 +260,8 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       exp_val.data = exp_val.data(chan);
       this.compare_data(act_val, exp_val);
     end
-
-    %return multiple channels
-    function valid_datafile_3(this)
+    
+    function valid_datafile_3(this) % return multiple channels
       chan = [3 5];
       [~, infos, data] = pspm_load_data(this.fn, chan);
       act_val.infos = infos;
@@ -275,8 +271,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       this.compare_data(act_val, exp_val);
     end
 
-    %return scr channels
-    function valid_datafile_4(this)
+    function valid_datafile_4(this) % return scr channels
       chan = 'scr';
       [~, infos, data] = pspm_load_data(this.fn, chan);
       act_val.infos = infos;
@@ -286,8 +281,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       this.compare_data(act_val, exp_val);
     end
 
-    %return event channels
-    function valid_datafile_5(this)
+    function valid_datafile_5(this) % return event channels
       chan = 'events';
       [~, infos, data] = pspm_load_data(this.fn, chan);
       act_val.infos = infos;
@@ -297,14 +291,13 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       this.compare_data(act_val, exp_val);
     end
 
-    % save data
-    function valid_datafile_6(this)
+    function valid_datafile_6(this) % save data
       chan = 0;
       [~, infos, data] = pspm_load_data(this.fn, chan); % load
       save.data = data;
       save.infos = infos;
       save.options.overwrite = 1;
-      pspm_load_data(this.fn, save);                                 % save in different file
+      pspm_load_data(this.fn, save); % save in different file
       [~, infos, data] = pspm_load_data(this.fn, chan);% load again
       act_val.infos = infos;
       act_val.data = data;
@@ -313,5 +306,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       delete(this.fn);
       clear save
     end
+		
   end
+	
 end
