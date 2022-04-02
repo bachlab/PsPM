@@ -7,36 +7,36 @@ function outfile = pspm_import(datafile, datatype, import, options)
 % ● INPUT
 % datafile      file containing the scr data, or cell array of files
 % datatype      supported datatypes are defined in pspm_init (see manual)
-% import        a cell array of struct with one job (imported channel) 
+% import        a cell array of struct with one job (imported channel)
 % ┃             per cell
 % ┃             ● mandatory fields for all data types and each job
 % ┣━.type       not all data types support all channel types
 % ┃             ● mandatory fields for some data types and each channel
-% ┣━.sr         sampling rate for waveform, or timeunit in s for event 
+% ┣━.sr         sampling rate for waveform, or timeunit in s for event
 % ┃             channels
 % ┣━.channel    channel or column number in the original file
 % ┃             ● optional fields for some data types and channel types
 % ┣━.transfer:  name of a .mat file containing values for
-% ┃             the transfer function, OR a struct array containing the 
+% ┃             the transfer function, OR a struct array containing the
 % ┃             values OR 'none', when no conversion is required
-% ┃             (c and optional Rs and offset, see pspm_transfer_function 
+% ┃             (c and optional Rs and offset, see pspm_transfer_function
 % ┃             for more information)
 % ┣━.eyelink_trackdist
 % ┃             distance between eyetracker and
-% ┃             the participants' eyes. If is a numeric value the data in 
+% ┃             the participants' eyes. If is a numeric value the data in
 % ┃             a pupil channel obtained with an eyelink eyetracking system
 % ┃             are converted from arbitrary units to distance unit. If
 % ┃             value is 'none' the conversion is disabled.
 % ┃             (only for Eyelink imports)
 % ┣━.distance_unit
 % ┃             unit in which the eyelink_trackdist is measured.
-% ┃             If eyelink_trackdist contains a numeric value, the default 
-% ┃             value is 'mm' otherwise the distance unit is ''. Can be 
+% ┃             If eyelink_trackdist contains a numeric value, the default
+% ┃             value is 'mm' otherwise the distance unit is ''. Can be
 % ┃             one of the following units:'mm', 'cm', 'm', 'inches'.
 % ┣━.denoise    for marker channels in CED spike format (recorded
 % ┃             as 'level'), filters out markers duration longer than the
 % ┃             value given here (in ms)
-% ┗━.delimiter  for delimiter separated values, value used as delimiter 
+% ┗━.delimiter  for delimiter separated values, value used as delimiter
 %               for file read
 % options       a struct
 % ┗━.overwrite  overwrite existing files by default
@@ -47,6 +47,7 @@ function outfile = pspm_import(datafile, datatype, import, options)
 % PsPM 3.0
 % ● AUTHORSHIP
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%     2022      Teddy Chao
 
 
 %% DEVELOPERS NOTES: Structure of PsPM import
@@ -247,9 +248,11 @@ for d = 1:numel(D)
 
     % save file ---
     if blkno == 1
-      outfile{d, blk}=fullfile(pth, [settings.import.fileprefix, fn, '.mat']);
+      outfile{d, blk}=fullfile(pth, ...
+        [settings.import.fileprefix, fn, '.mat']);
     else
-      outfile{d, blk}=fullfile(pth, sprintf('%s%s_blk%02.0f.mat', settings.import.fileprefix, fn, blk));
+      outfile{d, blk}=fullfile(pth, ...
+        sprintf('%s%s_blk%02.0f.mat', settings.import.fileprefix, fn, blk));
     end
     infos.importfile = outfile{d};
     clear savedata

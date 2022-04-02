@@ -1,30 +1,30 @@
 function [sts, markerinfo] = pspm_get_markerinfo(fn, options)
-% ● DESCRIPTION 
+% ● DESCRIPTION
 % pspm_get_markerinfo extracts markerinfo from PsPM files that contain
 % such information (typically after import of EEG-style data files, e.g.
 % BrainVision or NeuroScan)
 % ● FORMAT
 % [sts, markerinfo] = pspm_get_markerinfo(filename, options)
 % ● INPUT
-% filename        [char] 
+% filename        [char]
 %                 name of PsPM file
 %                 if empty, you will be prompted for one
 % options
-% ┣━.markerchan   [double] 
+% ┣━.markerchan   [double]
 % ┃               channel id of the marker channel;
 % ┃               default value: -1, meaning to use the first found marker channel
-% ┣━.filename     [char] 
+% ┣━.filename     [char]
 % ┃               name of a file to write the markerinfo to;
 % ┃               default value: empty, meaning no file will be written
-% ┗━.overwrite    [logical] (0 or 1) 
+% ┗━.overwrite    [logical] (0 or 1)
 %                 define whether to overwrite existing output files or not
 % ● OUTPUT
-% sts             [double] 
+% sts             [double]
 %                 default value: -1 if unsuccessful
-% markerinfo      [struct] 
-% ┣━.name         [char] 
-% ┣━.value        
-% ┗━.element      
+% markerinfo      [struct]
+% ┣━.name         [char]
+% ┣━.value
+% ┗━.element
 % ● VERSION
 % PsPM 6.0
 % ● AUTHORSHIP

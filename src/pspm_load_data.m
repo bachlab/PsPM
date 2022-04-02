@@ -91,6 +91,7 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 
 
 %% 1 Initialise
+global settings
 if isempty(settings)
   pspm_init;
 end
@@ -267,7 +268,7 @@ end
 vflag = zeros(numel(data), 1); % records data structure, valid if 0
 wflag = zeros(numel(data), 1); % records whether data is out of range, valid if 0
 nflag = zeros(numel(data), 1);
-zflag = zeros(numel(data), 1);
+zflag = zeros(numel(data), 1); % records whether data is empty
 % loop through channels
 for k = 1:numel(data)
   % check header
@@ -336,13 +337,14 @@ end
 
 %% 7 Autofill information in header
 % add flank for only continuous data (wave)
-l_type = {settings.chantypes.data};
-if strcmp(l_type{strcmp({settings.chantypes.type},{data{k}.header.chantype})},'wave')
-  if ~isfield(data{k}.header, 'flank')
-    data{k}.header.flank = 'both';
-  end
-end
-% some other optional fields which can be autofilled with default values should be added here.
+% l_type = {settings.chantypes.data};
+% if strcmp(l_type{strcmp({settings.chantypes.type},{data{k}.header.chantype})},'wave')
+%   if ~isfield(data{k}.header, 'flank')
+%     data{k}.header.flank = 'both';
+%   end
+% end
+% some other optional fields which can be autofilled with default values 
+% should be added here.
 
 %% 8 Analyse file structure
 filestruct.numofwavechan = 0;
