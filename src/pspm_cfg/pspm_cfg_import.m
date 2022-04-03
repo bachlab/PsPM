@@ -16,8 +16,8 @@ chan_search      = cfg_const;
 chan_search.name = 'Search';
 chan_search.tag  = 'chan_search';
 chan_search.val  = {true};
-chan_search.help = {['Search for channel by its name - this only works if the ', ...
-  'channel names are unambiguous.']};
+chan_search.help = {['Search for channel by its name - this only works ', ...
+  'if the channel names are unambiguous.']};
 
 % Sample Rate
 sample_rate         = cfg_entry;
@@ -149,7 +149,8 @@ delimiter           = cfg_entry;
 delimiter.name      = 'Delimiter';
 delimiter.tag       = 'delimiter';
 delimiter.strtype   = 's';
-delimiter.help      = {'The delimiter to be used for file reading, leave blank to use any whitespace character.'};
+delimiter.help      = {['The delimiter to be used for file reading, ',...
+  'leave blank to use any whitespace character.']};
 
 header_lines           = cfg_entry;
 header_lines.name      = 'Header lines';
@@ -211,7 +212,8 @@ for datatype_i=1:length(fileoptions)
   chan_nr_spec.tag     = 'chan_nr_spec';
   chan_nr_spec.strtype = 'i';
   chan_nr_spec.num     = [1 1];
-  chan_nr_spec.help    = {'Specify the n-th channel. This counts the number of channels actually recorded.'};
+  chan_nr_spec.help    = {['Specify the n-th channel. ',...
+    'This counts the number of channels actually recorded.']};
 
   % Channel/Column Nr. (variable choice options)
   chan_nr        = cfg_choice;
@@ -366,23 +368,28 @@ for datatype_i=1:length(fileoptions)
   end
 
   if any(strcmpi(settings.import.datatypes(datatype_i).short, 'viewpoint'))
-    datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {viewpoint_target_unit}];
+    datatype_item{datatype_i}.val = ...
+      [datatype_item{datatype_i}.val, {viewpoint_target_unit}];
   end
 
   if any(strcmpi(settings.import.datatypes(datatype_i).short, 'smi'))
-    datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {smi_target_unit, smi_stimulus_resolution}];
+    datatype_item{datatype_i}.val = ...
+      [datatype_item{datatype_i}.val, {smi_target_unit, smi_stimulus_resolution}];
   end
 
   if any(strcmpi(settings.import.datatypes(datatype_i).short, 'txt'))
-    datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {header_lines,channel_names_line,exclude_columns}];
+    datatype_item{datatype_i}.val = ...
+      [datatype_item{datatype_i}.val, {header_lines,channel_names_line,exclude_columns}];
   end
 
   if any(strcmpi(settings.import.datatypes(datatype_i).short, 'csv'))
-    datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {header_lines,channel_names_line,exclude_columns}];
+    datatype_item{datatype_i}.val = ...
+      [datatype_item{datatype_i}.val, {header_lines,channel_names_line,exclude_columns}];
   end
 
   if any(strcmpi(settings.import.datatypes(datatype_i).short, 'dsv'))
-    datatype_item{datatype_i}.val = [datatype_item{datatype_i}.val, {delimiter,header_lines,channel_names_line,exclude_columns}];
+    datatype_item{datatype_i}.val = ...
+      [datatype_item{datatype_i}.val, {delimiter,header_lines,channel_names_line,exclude_columns}];
   end
 end
 

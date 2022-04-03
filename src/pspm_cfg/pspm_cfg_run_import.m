@@ -55,10 +55,14 @@ for i=1:n
         file = file{1};
         import{i}.transfer = file;
       case 'input'
-        import{i}.transfer.c = job.datatype.(datatype).importtype{i}.(type{1}).scr_transfer.input.transfer_const;
-        import{i}.transfer.offset = job.datatype.(datatype).importtype{i}.(type{1}).scr_transfer.input.offset;
-        import{i}.transfer.Rs = job.datatype.(datatype).importtype{i}.(type{1}).scr_transfer.input.resistor;
-        import{i}.transfer.recsys = job.datatype.(datatype).importtype{i}.(type{1}).scr_transfer.input.recsys;
+        import{i}.transfer.c = ...
+          job.datatype.(datatype).importtype{i}.(type{1}).scr_transfer.input.transfer_const;
+        import{i}.transfer.offset = ...
+          job.datatype.(datatype).importtype{i}.(type{1}).scr_transfer.input.offset;
+        import{i}.transfer.Rs = ...
+          job.datatype.(datatype).importtype{i}.(type{1}).scr_transfer.input.resistor;
+        import{i}.transfer.recsys = ...
+          job.datatype.(datatype).importtype{i}.(type{1}).scr_transfer.input.recsys;
       case 'none'
         import{i}.transfer = 'none';
     end

@@ -23,6 +23,7 @@ function [sts, data] = pspm_get_marker(import)
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %			2022			Teddy Chao (UCL)
 
+%% initialise
 global settings;
 if isempty(settings)
   pspm_init;
