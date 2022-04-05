@@ -87,40 +87,55 @@ function outfile = pspm_import(datafile, datatype, import, options)
 % return cell arrays import{1:blkno} and sourceinfo{1:blkno}; SCRalyze will
 % save individual files for each block, with a filename 'pspm_fn_blk0x.mat'
 
-%% initialise
+%% 1 Initialise
 global settings;
 if isempty(settings), pspm_init; end
 outfile = [];
 
-%% input argument check & transform
-if nargin<1
-  warning('ID:invalid_input', 'No input file'); return;
+%% 2 Input argument check & transform
+if nargin < 1
+  warning('ID:invalid_input', ...
+    'No input file');
+  return
 elseif ~iscell(datafile) && ~ischar(datafile)
-  warning('ID:invalid_input', 'Input file needs to be a string or cell array'); return;
-elseif nargin<2
-  warning('ID:invalid_input', 'No data type'); return;
+  warning('ID:invalid_input', ...
+    'Input file needs to be a string or cell array');
+  return
+elseif nargin < 2
+  warning('ID:invalid_input', ...
+    'No data type'); return
 elseif ~ischar(datatype)
-  warning('ID:invalid_input', 'Data type needs to be a string'); return;
+  warning('ID:invalid_input', ...
+    'Data type needs to be a string');
+  return
 elseif sum(strcmpi(datatype, {settings.import.datatypes.short})) == 0
-  warning('ID:invalid_channeltype', 'Data type (%s) not recognised', datatype); return;
-elseif nargin<3
-  warning('ID:invalid_input', 'No import job'); return;
+  warning('ID:invalid_channeltype', ...
+    'Data type (%s) not recognised', datatype);
+  return
+elseif nargin < 3
+  warning('ID:invalid_input', ...
+    'No import job');
+  return
 elseif ~iscell(import)
   if isstruct(import) && numel(import) == 1
     import = {import};
   else
-    warning('ID:invalid_input', 'Import needs to be a cell array of struct, or a single struct'); return;
+    warning('ID:invalid_input', ...
+      'Import needs to be a cell array of struct, or a single struct');
+    return
   end
 end
 
-% check options ---
+% 2.1 check options
 try
-  if options.overwrite ~= 1, options.overwrite = 0; end
+  if options.overwrite ~= 1
+    options.overwrite = 0;
+  end
 catch
   options.overwrite = 0;
 end
 
-% convert data files ---
+% 2.2 convert data files
 if iscell(datafile)
   D=datafile;
 else
@@ -129,9 +144,9 @@ end
 clear datafile
 
 
-%% import job check
+%% 3 Check import jobs
 
-% determine datatype ---
+% 3.1 determine datatype
 datatype = find(strcmpi(datatype, {settings.import.datatypes.short}));
 
 % check number of jobs ---
@@ -140,8 +155,9 @@ if (~settings.import.datatypes(datatype).multioption) && (numel(import) > 1)
   % two jobs when one is an automatically assigned marker channel?
   if ~(settings.import.datatypes(datatype).automarker && numel(import) == 2 && ...
       any(strcmpi({import{1}.type, import{2}.type}, 'marker')))
-    warning('ID:ivalid_import_struct', 'Only one data channel can be imported at a time for data type ''%s''.\n', ...
-      settings.import.datatypes(datatype).long); return;
+    warning('ID:ivalid_import_struct', ...
+      'Only one data channel can be imported at a time for data type ''%s''.\n', ...
+      settings.import.datatypes(datatype).long); return
   end
 end
 
@@ -149,15 +165,21 @@ end
 for k = 1:numel(import)
   % channel type specified?
   if ~isfield(import{k}, 'type')
-    warning('ID:ivalid_import_struct', 'No type given for import job %2.0f.\n', k); return;
+    warning('ID:ivalid_import_struct', ...
+      'No type given for import job %2.0f.\n', k);
+    return
     % channel type allowed for this datatype?
   elseif sum(strcmpi(import{k}.type, settings.import.datatypes(datatype).chantypes)) == 0
-    warning('ID:ivalid_import_struct', 'Channel type ''%s'' in import job %2.0f is not supported for data type %s.\n', ...
-      import{k}.type, k, settings.import.datatypes(datatype).long); return;
+    warning('ID:ivalid_import_struct', ...
+      'Channel type ''%s'' in import job %2.0f is not supported for data type %s.\n', ...
+      import{k}.type, k, settings.import.datatypes(datatype).long);
+    return
     % sample rate given or automatically assigned?
   elseif ~isfield(import{k}, 'sr') && ~settings.import.datatypes(datatype).autosr
-    warning('ID:ivalid_import_struct', 'Sample rate needed for import job %02.0f of type %s.\n', ...
-      k, import{k}.type); return;
+    warning('ID:ivalid_import_struct', ...
+      'Sample rate needed for import job %02.0f of type %s.\n', ...
+      k, import{k}.type);
+    return
     % sample rate given AND automatically assigned? If yes, remove and say so.
   elseif isfield(import{k}, 'sr') && settings.import.datatypes(datatype).autosr
     import{k} = rmfield(import{k}, 'sr');
@@ -168,13 +190,19 @@ for k = 1:numel(import)
   if strcmpi(import{k}.type, 'marker') && settings.import.datatypes(datatype).automarker
     import{k}.channel = 1;
   end
-  % flank
+  % flank loading
   if ~isfield(import{k}, 'flank')
-    import{k}.flank = 'both'; % set both at the default flank
+    l_type = {settings.chantypes.data};
+    if strcmp(l_type{strcmp({settings.chantypes.type},{import{k}.type})},'wave')
+      import{k}.flank = 'both'; % set both at the default flank
+    end
   else
-    if ~strcmp(import{k}.flank, 'ascending') && ~strcmp(import{k}.flank, 'descending') && ~strcmp(import{k}.flank, 'both')
-      warning('ID:invalid_import_struct', 'The option flank can only be ascending, descending or both.');
-      return;
+    if ~strcmp(import{k}.flank, 'ascending') && ...
+        ~strcmp(import{k}.flank, 'descending') && ...
+        ~strcmp(import{k}.flank, 'both')
+      warning('ID:invalid_import_struct', ...
+        'The option flank can only be ascending, descending or both.');
+      return
     end
   end
   % channel number given? If not, set to zero, or assign automatically and display.
@@ -206,9 +234,14 @@ for d = 1:numel(D)
   if file_exists
     [sts, import, sourceinfo] = feval(settings.import.datatypes(datatype).funct, D{d}, import);
   else
-    sts = -1; warning('ID:nonexistent_file', '\nDatafile (%s) doesn''t exist', filename_in_msg);
+    sts = -1;
+    warning('ID:nonexistent_file', ...
+  		'\nDatafile (%s) doesn''t exist', filename_in_msg);
   end
-  if sts == -1, fprintf('\nImport unsuccesful for file %s.\n', filename_in_msg); break; end
+  if sts == -1
+    fprintf('\nImport unsuccesful for file %s.\n', filename_in_msg);
+    break;
+  end
 
   % split blocks if necessary ---
   if iscell(sourceinfo)
@@ -233,7 +266,7 @@ for d = 1:numel(D)
         find(sts == -1), filename_in_msg); break; end
 
     % collect infos and save ---
-    [pth, fn, ext]     = fileparts(filename_in_msg);
+    [pth, fn, ~] = fileparts(filename_in_msg);
     infos.source = sourceinfo{blk};
     infos.source.type = settings.import.datatypes(datatype).long;
     infos.source.file = D{d};
