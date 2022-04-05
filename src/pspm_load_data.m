@@ -337,12 +337,12 @@ end
 
 %% 7 Autofill information in header
 % add flank for only continuous data (wave)
-% l_type = {settings.chantypes.data};
-% if strcmp(l_type{strcmp({settings.chantypes.type},{data{k}.header.chantype})},'wave')
-%   if ~isfield(data{k}.header, 'flank')
-%     data{k}.header.flank = 'both';
-%   end
-% end
+l_type = {settings.chantypes.data};
+if strcmp(l_type{strcmp({settings.chantypes.type},{data{k}.header.chantype})},'wave')
+  if ~isfield(data{k}.header, 'flank')
+    data{k}.header.flank = 'both';
+  end
+end
 % some other optional fields which can be autofilled with default values 
 % should be added here.
 
