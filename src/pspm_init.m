@@ -1211,7 +1211,7 @@ else
 end
 
 
-
+settings.developmode=0;
 settings.path=pth;
 settings.scrpath=scrpath;
 settings.spmpath=spmpath;

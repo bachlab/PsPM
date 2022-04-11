@@ -107,6 +107,7 @@ function pspm_test(varargin)
     [pth, ~, ~] = fileparts(which('pspm_test.m'));
     addpath(pth);
     pspm_init;
+		settings.developmode=1;
     stats = run(full_suite);
     n_failed = sum([stats.Failed]);
     success = n_failed == 0;
