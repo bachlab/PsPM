@@ -165,13 +165,13 @@ dcm = [];
 warnings = {};
 
 %% 2 Check input arguments & set defaults
+% 2.1
 if nargin < 1
   warning('ID:invalid_input', 'No data to work on.');
   return
 elseif nargin < 2
   options = struct([]);
 end
-
 if ~isfield(model, 'datafile')
   warning('ID:invalid_input', 'No input data file specified.'); return;
 elseif ~isfield(model, 'modelfile')
@@ -180,7 +180,7 @@ elseif ~isfield(model, 'timing')
   warning('ID:invalid_input', 'No event onsets specified.'); return;
 end
 
-% check faulty input --
+% 2.2 check faulty input
 if ~iscell(model.datafile) && ~ischar(model.datafile)
   warning('ID:invalid_input', 'Input data must be a cell or string.'); return;
 elseif ~ischar(model.modelfile)
@@ -189,7 +189,7 @@ elseif ~ischar(model.timing) && ~iscell(model.timing)
   warning('ID:invalid_input', 'Event definition must be a string or cell array.'); return;
 end
 
-% get further input or set defaults --
+% 2.3 get further input or set defaults --
 % check data channel --
 if ~isfield(model, 'channel')
   model.channel = 'scr'; % this returns the first SCR channel
@@ -232,25 +232,25 @@ if ~isstruct(options)
 end
 
 % set and check options ---
-try options.indrf;              catch, options(1).indrf = 0;    end
-try options.getrf;              catch, options.getrf = 0;    end
-try options.rf;                 catch, options.rf = 0;       end
-try options.nosave;             catch, options.nosave = 0;   end
-try options.overwrite;          catch, options.overwrite = 0; end
-try options.depth;              catch, options.depth = 2; end
-try options.sfpost;             catch, options.sfpost = 5; end
+try options.indrf;              catch, options(1).indrf = 0;            end
+try options.getrf;              catch, options.getrf = 0;               end
+try options.rf;                 catch, options.rf = 0;                  end
+try options.nosave;             catch, options.nosave = 0;              end
+try options.overwrite;          catch, options.overwrite = 0;           end
+try options.depth;              catch, options.depth = 2;               end
+try options.sfpost;             catch, options.sfpost = 5;              end
 try options.aSCR_sigma_offset;  catch, options.aSCR_sigma_offset = 0.1; end
-try options.sclpost;            catch, options.sclpost = 5; end
-try options.sclpre;             catch, options.sclpre = 2; end
-try options.sfpre;              catch, options.sfpre = 2; end
-try options.sffreq;             catch, options.sffreq = 0.5; end
-try options.method;             catch, options.method = 'dcm'; end
-try options.dispwin;            catch, options.dispwin = 1;       end
-try options.dispsmallwin;       catch, options.dispsmallwin = 0;  end
-try options.crfupdate;          catch, options.crfupdate = 0;     end
-try options.eventnames;         catch, options.eventnames = {};   end
-try options.trlnames;           catch, options.trlnames = {};     end
-try model.lasttrialcutoff;      catch, model.lasttrialcutoff = 7; end
+try options.sclpost;            catch, options.sclpost = 5;             end
+try options.sclpre;             catch, options.sclpre = 2;              end
+try options.sfpre;              catch, options.sfpre = 2;               end
+try options.sffreq;             catch, options.sffreq = 0.5;            end
+try options.method;             catch, options.method = 'dcm';          end
+try options.dispwin;            catch, options.dispwin = 1;             end
+try options.dispsmallwin;       catch, options.dispsmallwin = 0;        end
+try options.crfupdate;          catch, options.crfupdate = 0;           end
+try options.eventnames;         catch, options.eventnames = {};         end
+try options.trlnames;           catch, options.trlnames = {};           end
+try model.lasttrialcutoff;      catch, model.lasttrialcutoff = 7;       end
 
 % check option fields --
 % numeric fields
@@ -321,7 +321,6 @@ if numel(model.missing) ~= nFile
 end
 
 %% Check, get and prepare data
-% ------------------------------------------------------------------------
 
 % split into subsessions
 % colnames: iSn start stop enabled (if contains events)
@@ -646,7 +645,8 @@ options.missing  =  sbs_missing(proc_subsessions);
 %% Prepare data for CRF estimation and for amplitude priors
 % get average event sequence per trial --
 if nEvnt(1) > 0
-  flexseq = cell2mat(model.events{1}') - repmat(cell2mat(model.trlstart'), [1, size(model.events{1}{1}, 2), 2]);
+  flexseq = cell2mat(model.events{1}') - repmat(cell2mat(model.trlstart'), ...
+    [1, size(model.events{1}{1}, 2), 2]);
   flexseq(flexseq < 0) = NaN;
   flexevents = [];
   % this loop serves to avoid the function nanmean which is part of the
@@ -661,7 +661,8 @@ else
   flexevents = [];
 end
 if nEvnt(2) > 0
-  fixseq  = cell2mat(model.events{2}') - repmat(cell2mat(model.trlstart'), 1, size(model.events{2}{1}, 2));
+  fixseq  = cell2mat(model.events{2}') - repmat(cell2mat(model.trlstart'),...
+    1, size(model.events{2}{1}, 2));
   fixseq(fixseq < 0) = NaN;
   fixevents = [];
   for k = 1:size(fixseq, 2)
@@ -732,14 +733,17 @@ if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
     der = der(ceil(3 * model.sr):end);
     if all(der > 0) || all(der < 0)
       warning('ID:PCA_eSCR',...
-        'No peak detected in response to outcomes. Cannot individually adjust CRF. Standard CRF will be used instead.');
+        ['No peak detected in response to outcomes. ',...
+        'Cannot individually adjust CRF. ',...
+        'Standard CRF will be used instead.']);
       [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
       options.indrf = 0;
     else
       options.eSCR = eSCR;
     end
   else
-    warning('ID:invalid_input', 'Due to NaNs after some trial endings, PCA could not be computed');
+    warning('ID:invalid_input',...
+      'Due to NaNs after some trial endings, PCA could not be computed');
     [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
   end
 end
@@ -770,20 +774,21 @@ if (options.indrf || options.getrf) && ~isempty(options.flexevents)
     % mean centre
     mD = D - repmat(mean(D, 2), 1, size(D, 2));
     % PCA
-    [u s c]=svd(mD', 0);
-    [p,n] = size(mD);
+    [u, s, c]=svd(mD', 0);
+    [p, n] = size(mD);
     s = diag(s);
     comp = u .* repmat(s',n,1);
     aSCR = comp(:, 1);
     aSCR = aSCR - aSCR(1);
     foo = min([numel(aSCR), (pspm_time2index(meansoa, model.sr) + 50)]);
-    [mx ind] = max(abs(aSCR(1:foo)));
+    [mx, ind] = max(abs(aSCR(1:foo)));
     if aSCR(ind) < 0, aSCR = -aSCR; end
     aSCR = (aSCR - min(aSCR))/(max(aSCR) - min(aSCR));
     clear u s c p n s comp mx ind mD
     options.aSCR = aSCR;
   else
-    warning('ID:invalid_input', 'Due to NaNs after some trial endings, PCA could not be computed');
+    warning('ID:invalid_input', ...
+      'Due to NaNs after some trial endings, PCA could not be computed');
     [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
   end
 end
@@ -865,8 +870,9 @@ end
 function [datacol, warnings] = ...
   get_data_after_trial_filling_with_nans_when_necessary(...
   scr_sess, win, n, isbSn, sbs_iti, proc_miniti, warnings)
-% Try to get all the data elements after the end of the trial n in session isbSn. Indices of the elements
-% to return are stored in win. In case these indices are larger than size of scr_sess{isbSn}, then fill the
+% Try to get all the data elements after the end of the trial n in session 
+% isbSn. Indices of the elements to return are stored in win. In case these 
+% indices are larger than size of scr_sess{isbSn}, then fill the
 % rest of the data with NaN values.
 datacol = NaN(1, numel(win));
 num_indices_outside_scr = win(end) - numel(scr_sess);
