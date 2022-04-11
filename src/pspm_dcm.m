@@ -130,12 +130,11 @@ function dcm = pspm_dcm(model, options)
 %
 %__________________________________________________________________________
 % PsPM 5.1.0
-% (c) 2010-2021 PsPM Team
+% (c) 2010-2021 Dominik Bach (Wellcome Centre for Human Neuroimaging, UCL)
 
 %% Initialise & set output
-% ------------------------------------------------------------------------
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 
 dcm = [];
 
@@ -144,12 +143,11 @@ dcm = [];
 warnings = {};
 
 %% Check input arguments & set defaults
-% -------------------------------------------------------------------------
 if nargin < 1
   warning('ID:invalid_input', 'No data to work on.'); fn = []; return;
 elseif nargin < 2
   options = struct([]);
-end;
+end
 
 if ~isfield(model, 'datafile')
   warning('ID:invalid_input', 'No input data file specified.'); return;
@@ -157,7 +155,7 @@ elseif ~isfield(model, 'modelfile')
   warning('ID:invalid_input', 'No output model file specified.'); return;
 elseif ~isfield(model, 'timing')
   warning('ID:invalid_input', 'No event onsets specified.'); return;
-end;
+end
 
 % check faulty input --
 if ~iscell(model.datafile) && ~ischar(model.datafile)
@@ -166,7 +164,7 @@ elseif ~ischar(model.modelfile)
   warning('ID:invalid_input', 'Output model must be a string.'); return;
 elseif ~ischar(model.timing) && ~iscell(model.timing)
   warning('ID:invalid_input', 'Event definition must be a string or cell array.'); return;
-end;
+end
 
 % get further input or set defaults --
 % check data channel --
@@ -174,7 +172,7 @@ if ~isfield(model, 'channel')
   model.channel = 'scr'; % this returns the first SCR channel
 elseif ~isnumeric(model.channel) && ~strcmp(model.channel,'scr')
   warning('ID:invalid_input', 'Channel number must be numeric.'); return;
-end;
+end
 
 % check normalisation --
 if ~isfield(model, 'norm')
@@ -203,12 +201,12 @@ if ~isfield(model, 'filter')
   model.filter = settings.dcm{1}.filter;
 elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
   warning('ID:invalid_input', 'Filter structure needs a numeric ''down'' field.'); return;
-end;
+end
 
 if ~isstruct(options)
   warning('ID:invalid_input', '''options'' must be a struct.');
   return;
-end;
+end
 
 % set and check options ---
 try options.indrf;   catch, options(1).indrf = 0;    end
@@ -455,7 +453,7 @@ for vs = 1:numel(valid_subsessions)
 
   % define missing epochs for inversion in final sampling rate
   sbs_missing{isbSn, 1} = zeros(size(sbs_data{isbSn, 1}));
-  sbs_missing_indx = pspm_time2index(find(sbs_miss)/data{sbSn(1)}{1}.header.sr, model.sr)
+  sbs_missing_indx = pspm_time2index(find(sbs_miss)/data{sbSn(1)}{1}.header.sr, model.sr);
   sbs_missing{isbSn, 1}(sbs_missing_indx) = 1;
 end
 
@@ -468,7 +466,6 @@ end
 clear foo
 
 %% Check & get events and group into flexible and fixed responses
-% ------------------------------------------------------------------------
 trials = {};
 n_sbs = size(subsessions, 1);
 sbs_newevents = cell(2,1);
@@ -624,7 +621,6 @@ model.scr      =  sbs_data(proc_subsessions);
 options.missing  =  sbs_missing(proc_subsessions);
 
 %% Prepare data for CRF estimation and for amplitude priors
-% ------------------------------------------------------------------------
 % get average event sequence per trial --
 if nEvnt(1) > 0
   flexseq = cell2mat(model.events{1}') - repmat(cell2mat(model.trlstart'), [1, size(model.events{1}{1}, 2), 2]);
@@ -636,11 +632,11 @@ if nEvnt(1) > 0
     for m = 1:2
       foo = flexseq(:, k, m);
       flexevents(k, m) = mean(foo(~isnan(foo)));
-    end;
-  end;
+    end
+  end
 else
   flexevents = [];
-end;
+end
 if nEvnt(2) > 0
   fixseq  = cell2mat(model.events{2}') - repmat(cell2mat(model.trlstart'), 1, size(model.events{2}{1}, 2));
   fixseq(fixseq < 0) = NaN;
@@ -648,10 +644,10 @@ if nEvnt(2) > 0
   for k = 1:size(fixseq, 2)
     foo = fixseq(:, k);
     fixevents(k) = mean(foo(~isnan(foo)));
-  end;
+  end
 else
   fixevents = [];
-end;
+end
 startevent = min([flexevents(:); fixevents(:)]);
 flexevents = flexevents - startevent;
 fixevents  = fixevents  - startevent;
@@ -666,7 +662,7 @@ if (options.indrf || options.getrf) && min(proc_miniti) < 5
   warning('Inter trial interval is too short to estimate individual CRF - at least 5 s needed. Standard CRF will be used instead.');
   [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
   options.indrf = 0;
-end;
+end
 
 % extract PCA of last fixed response (eSCR) if last event is fixed --
 if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
@@ -685,8 +681,8 @@ if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
       [row,warnings] = get_data_after_trial_filling_with_nans_when_necessary(scr_sess, win, n, isbSn, model.iti, proc_miniti, warnings);
       D(c, 1:numel(row)) = row;
       c = c + 1;
-    end;
-  end;
+    end
+  end
   clear c k n
   if isempty(find(isnan(D(:))))
     % mean centre
@@ -701,7 +697,7 @@ if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
     eSCR = eSCR - eSCR(1);
     foo = min([numel(eSCR), 50]);
     [mx ind] = max(abs(eSCR(1:foo)));
-    if eSCR(ind) < 0, eSCR = -eSCR; end;
+    if eSCR(ind) < 0, eSCR = -eSCR; end
     eSCR = (eSCR - min(eSCR))/(max(eSCR) - min(eSCR));
 
     % check for peak (zero-crossing of the smoothed derivative) after more
@@ -715,12 +711,12 @@ if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
       options.indrf = 0;
     else
       options.eSCR = eSCR;
-    end;
+    end
   else
     warning('ID:invalid_input', 'Due to NaNs after some trial endings, PCA could not be computed');
     [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
   end
-end;
+end
 
 % extract data from all trials
 winsize = floor(model.sr * min([proc_miniti 10]));
@@ -734,8 +730,8 @@ for isbSn = 1:numel(model.scr)
     [row,warnings] = get_data_after_trial_filling_with_nans_when_necessary(scr_sess, win, n, isbSn, model.iti, proc_miniti, warnings);
     D(c, 1:numel(row)) = row;
     c = c + 1;
-  end;
-end;
+  end
+end
 clear c n
 
 
@@ -755,7 +751,7 @@ if (options.indrf || options.getrf) && ~isempty(options.flexevents)
     aSCR = aSCR - aSCR(1);
     foo = min([numel(aSCR), (pspm_time2index(meansoa, model.sr) + 50)]);
     [mx ind] = max(abs(aSCR(1:foo)));
-    if aSCR(ind) < 0, aSCR = -aSCR; end;
+    if aSCR(ind) < 0, aSCR = -aSCR; end
     aSCR = (aSCR - min(aSCR))/(max(aSCR) - min(aSCR));
     clear u s c p n s comp mx ind mD
     options.aSCR = aSCR;
@@ -763,17 +759,15 @@ if (options.indrf || options.getrf) && ~isempty(options.flexevents)
     warning('ID:invalid_input', 'Due to NaNs after some trial endings, PCA could not be computed');
     [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
   end
-end;
+end
 
 % get mean response
 options.meanSCR = transpose(nanmean(D));
 
 %% Invert DCM
-% ------------------------------------------------------------------------
 dcm = pspm_dcm_inv(model, options);
 
 %% Assemble stats & names
-% ------------------------------------------------------------------------
 dcm.stats = [];
 cTrl = 0;
 proc_subs_ids = find(proc_subsessions);
@@ -798,36 +792,35 @@ for iSn = 1:numel(model.datafile)
       dcm.stats(sbs_trl + cTrl, :) = fix_stats;
     elseif ~isempty(flex_stats)
       dcm.stats(sbs_trl + cTrl, :) = flex_stats;
-    end;
+    end
 
-  end;
+  end
   % set disabled trials to NaN (trials during missing data stretches or
   % that are too close to session end)
   dcm.stats(cTrl + find(trls(:, 1) == 0), :) = NaN;
   cTrl = cTrl + size(trls, 1);
-end;
+end
 dcm.names = {};
 for iEvnt = 1:numel(dcm.sn{1}.a(1).a)
   dcm.names{iEvnt, 1} = sprintf('%s: amplitude', flexevntnames{iEvnt});
   dcm.names{iEvnt + numel(dcm.sn{1}.a(1).a), 1} = sprintf('%s: peak latency', flexevntnames{iEvnt});
   dcm.names{iEvnt + 2*numel(dcm.sn{1}.a(1).a), 1} = sprintf('%s: dispersion', flexevntnames{iEvnt});
-end;
+end
 cMsr = 3 * iEvnt;
-if isempty(cMsr), cMsr = 0; end;
+if isempty(cMsr), cMsr = 0; end
 for iEvnt = 1:numel(dcm.sn{1}.e(1).a)
   dcm.names{iEvnt + cMsr, 1} = sprintf('%s: response amplitude', fixevntnames{iEvnt});
-end;
+end
 
 if isfield(options, 'trlnames') && numel(options.trlnames) == size(dcm.stats, 1)
   dcm.trlnames = options.trlnames;
 else
   for iTrl = 1:size(dcm.stats, 1)
     dcm.trlnames{iTrl} = sprintf('Trial #%d', iTrl);
-  end;
-end;
+  end
+end
 
 %% Assemble input and save
-% ------------------------------------------------------------------------
 dcm.dcmname = model.modelfile; % this field will be removed in the future
 dcm.modelfile = model.modelfile;
 dcm.input = model;
@@ -838,7 +831,7 @@ dcm.modality = settings.modalities.dcm;
 
 if ~options.nosave
   save(model.modelfile, 'dcm');
-end;
+end
 
 end
 
