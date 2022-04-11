@@ -264,7 +264,7 @@ if options.indrf && options.rf
 end
 
 % stop the script if files are not allowed to overwrite
-if ~pspm_overwrite(model.modelfile, options.overwrite); return; end
+if ~pspm_overwrite(model.modelfile, options); return; end
 
 if ischar(model.datafile)
   model.datafile = {model.datafile};

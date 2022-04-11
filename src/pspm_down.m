@@ -107,18 +107,7 @@ for d=1:numel(D)
     [p f ex]=fileparts(datafile);
     newfile=fullfile(p, ['d', f, ex]);
     
-    if exist(newfile, 'file')==2 && ~options.overwrite
-        if feature('ShowFigureWindows')
-            msg = ['New file already exists. Overwrite?', newline, 'Existing file: ',options.output_file];
-            overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default to overwrite by users
-        else
-            overwrite = 'Yes'; % default to overwrite on Jenkins
-        end
-        %close gcf;
-        if strcmp(overwrite,'No') 
-            return; 
-        end
-    end
+		if ~pspm_overwrite(newfile, options); return; end
     
     % user output
     fprintf('Downsampling %s ... ', datafile);

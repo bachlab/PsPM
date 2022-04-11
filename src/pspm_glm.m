@@ -267,19 +267,8 @@ if isfield(options,'exclude_missing')
   end
 end
 
-% check files --
-if exist(model.modelfile, 'file') && ~(isfield(options, 'overwrite') && options.overwrite == 1)
-  if feature('ShowFigureWindows')
-    msg = ['Model file already exists. Overwrite?', newline, 'Existing file: ',model.modelfile];
-    overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default to overwrite by users
-  else
-    overwrite = 'Yes'; % default to overwrite on Jenkins
-  end
-  if strcmp(overwrite, 'No')
-    return;
-  end
-  options.overwrite = 1;
-end
+if ~pspm_overwrite(model.modelfile, options); return; end
+	
 
 if ischar(model.datafile)
   model.datafile={model.datafile};

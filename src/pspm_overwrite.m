@@ -1,4 +1,4 @@
-function ow_final = pspm_overwrite(fn, ow)
+function ow_final = pspm_overwrite(varargin)
 
 % DESCRIPTION
 % pspm_overwrite generalises the overwriting operation
@@ -22,12 +22,16 @@ function ow_final = pspm_overwrite(fn, ow)
 % OUTPUTS
 % ow_final  option of overwriting determined by pspm_overwrite
 
-settings = [];
-pspm_init;
+pth = fileparts(which('pspm'));
+settings_struct = load([pth, '/pspm_settings.mat'], "settings");
+settings = settings_struct.settings;
+
+
 
 %% start to define ow
-switch length(nargin)
+switch numel(varargin)
   case 1 % ow is not defined
+    fn = varargin{1};
     switch settings.developmode
       case 1
         ow_final = 1; % In develop mode, always overwrite
@@ -49,10 +53,11 @@ switch length(nargin)
         end
     end
   case 2
+    ow = varargin{2};
     switch class(ow)
-      case double
+      case 'double'
         ow_final = ow;
-      case struct
+      case 'struct'
         ow_struct = ow;
         if isfield(ow_struct, "overwrite")
           ow_final = ow_struct.overwrite;

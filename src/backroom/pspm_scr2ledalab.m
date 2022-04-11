@@ -101,23 +101,15 @@ fileinfo.log     = {'Created by SCRalyze for use with Ledalab 3.44.'};
 
 % check output file & save data
 %--------------------------------------------------------------------------
-if exist(outfile, 'file') == 2 && options.overwrite ~= 1
-    if feature('ShowFigureWindows')
-        msg = ['Imported file already exists. Overwrite?', newline, 'Existing file: ',outfile];
-        overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'No'); % default not to overwrite by users 
-    else
-        overwrite = 'No'; % default not to overwrite on Jenkins
-    end             
-    close gcf;
+
+if pspm_overwrite(outfile, options)
+	save(outfile, 'data', 'fileinfo');
 else
-    overwrite = 'Yes';
-end;
-if strcmp(overwrite, 'No')
-    warning('Data discarded ...');
-    return;
-else
-    save(outfile, 'data', 'fileinfo');
-end;
+	warning('Data discarded ...');
+	return
+end
+
+
 sts = 1;
 return;
 
