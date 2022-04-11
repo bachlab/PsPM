@@ -1,4 +1,5 @@
 function dcm = pspm_dcm(model, options)
+% ● DESCRIPTION
 % pspm_dcm sets up a DCM for skin conductance, prepares and normalises the
 % data, passes it over to the model inversion routine, and saves both the
 % forward model and its inversion.
@@ -11,10 +12,10 @@ function dcm = pspm_dcm(model, options)
 % Flexible responses can for example be anticipatory, decision-related,
 % or evoked with unknown onset.
 %
-% FORMAT
+% ● FORMAT
 %	dcm = pspm_dcm(model, options)
 %
-% ARGUMENTS
+% ● ARGUMENTS
 %	model
 %	┃ Required fields
 % ┣━.modelfile  A file name for the model output.
@@ -74,7 +75,7 @@ function dcm = pspm_dcm(model, options)
 %	┃             Default: 2.
 % ┣━.sfpre      sf-free window before first event.
 %	┃             Default: 2s.
-% ┣━.sfpost:		sf-free window after last event.
+% ┣━.sfpost     sf-free window after last event.
 %	┃             Default: 5s.
 % ┣━.sffreq:		maximum frequency of SF in ITIs.
 %	┃             Default: 0.5/s.
@@ -94,21 +95,19 @@ function dcm = pspm_dcm(model, options)
 %	┃ Output options
 % ┣━.nosave:		Don't save dcm structure (e.g. used by pspm_get_rf)
 %	┃ Naming options
-% ┣━.trlnames:	Cell array of names for individual trials,
+% ┣━.trlnames   Cell array of names for individual trials,
 %	┃             is used for contrast manager only (e.g. condition descriptions)
 % ┗━.eventnames
 %               Cell array of names for individual events,
 %               in the order they are specified in the model.timing array - 
 %               to be used for display and export only
-
-%
-% OUTPUT
+% ● OUTPUT
 %	fn            Name of the model file.
 %	dcm           Model struct.
 %
 % Output units: all timeunits are in seconds; eSCR and aSCR amplitude are
-% in SN units such that an eSCR SN pulse with 1 unit amplitude causes an eSCR
-% with 1 mcS amplitude
+% in SN units such that an eSCR SN pulse with 1 unit amplitude causes an 
+% eSCR with 1 mcS amplitude
 %
 % pspm_dcm can handle NaN values in data channels. Either by specifying
 % missing epochs manually using model.missing, or by detecting NaN epochs
@@ -116,7 +115,8 @@ function dcm = pspm_dcm(model, options)
 % in the inversion; otherwise the data will be split into subsessions that
 % are inverted independently. The results will be unchanged, and events
 % within missing epochs will simply be set to NaN.  NaN periods shorter than
-% model.substhresh are interpolated for averages and principal response components.
+% model.substhresh are interpolated for averages and principal response 
+% components.
 %
 % pspm_dcm calculates the inter-trial intervals as the duration between the
 % end of a trial and the start of the next one.
@@ -130,27 +130,29 @@ function dcm = pspm_dcm(model, options)
 %   2. when computing the PCA from all the trials in all the sessions.
 %
 % In case of case (2), after each trial, all the samples in
-% the period with duration equal to the just mentioned overall min ITI value is
-% used as a row of the input matrix. Since this minimum does not use the
-% min ITI value of the last trial in each session, the sample period may be longer
-% than the ITI value of the last trial. In such a case, pspm_dcm
-% is not able to compute the PCA and emits a warning.
+% the period with duration equal to the just mentioned overall min ITI 
+% value is used as a row of the input matrix. Since this minimum does not 
+% use the min ITI value of the last trial in each session, the sample 
+% period may be longer than the ITI value of the last trial. In such a case, 
+% pspm_dcm is not able to compute the PCA and emits a warning.
 %
 % The rationale behind this behaviour is that we observed that ITI value of
-% the last trial in a session might be much smaller than the usual ITI values. For
-% example, this can happen when a long missing data section starts very soon after
-% the beginning of a trial. If this very small ITI value is used to define the
-% sample periods after each trial, nearly all the trials use much less than
-% available amount of samples in both case (1) and (2). Instead, we aim to use as
-% much data as possible in (1), and perform (2) only if this edge case is not present.
+% the last trial in a session might be much smaller than the usual ITI 
+% values. For example, this can happen when a long missing data section 
+% starts very soon after the beginning of a trial. If this very small ITI 
+% value is used to define the sample periods after each trial, nearly all 
+% the trials use much less than available amount of samples in both case 
+% (1) and (2). Instead, we aim to use as much data as possible in (1), and 
+% perform (2) only if this edge case is not present.
 %
-% REFERENCE: (1) Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010).
-%            Dynamic causal modelling of anticipatory skin conductance
-%            changes. Biological Psychology, 85(1), 163-70
-%            (2) Staib, M., Castegnetti, G., & Bach, D. R. (2015).
-%            Optimising a model-based approach to inferring fear
-%            learning from skin conductance responses. Journal of
-%            Neuroscience Methods, 255, 131-138.
+% REFERENCES
+% (1) Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010).
+%     Dynamic causal modelling of anticipatory skin conductance changes. 
+%     Biological Psychology, 85(1), 163-70
+% (2) Staib, M., Castegnetti, G., & Bach, D. R. (2015).
+%     Optimising a model-based approach to inferring fear learning from 
+%     skin conductance responses.
+%     Journal of Neuroscience Methods, 255, 131-138.
 %
 %__________________________________________________________________________
 % PsPM 5.1.0
@@ -165,7 +167,7 @@ dcm = [];
 warnings = {};
 
 %% 2 Check input arguments & set defaults
-% 2.1
+% 2.1 check input
 if nargin < 1
   warning('ID:invalid_input', 'No data to work on.');
   return
@@ -197,21 +199,21 @@ elseif ~isnumeric(model.channel) && ~strcmp(model.channel,'scr')
   warning('ID:invalid_input', 'Channel number must be numeric.'); return;
 end
 
-% check normalisation --
+% 2.4 check normalisation --
 if ~isfield(model, 'norm')
   model.norm = 0;
 elseif ~any(ismember(model.norm, [0, 1]))
   warning('ID:invalid_input', 'Normalisation must be specified as 0 or 1.'); return;
 end
 
-% check constrained model --
+% 2.5 check constrained model --
 if ~isfield(model, 'constrained')
   model.constrained = 0;
 elseif ~any(ismember(model.constrained, [0, 1]))
   warning('ID:invalid_input', 'Constrained model must be specified as 0 or 1.'); return;
 end
 
-% check substhresh --
+% 2.6 check substhresh --
 if ~isfield(model, 'substhresh')
   model.substhresh = 2;
 elseif ~isnumeric(model.substhresh)
@@ -219,7 +221,7 @@ elseif ~isnumeric(model.substhresh)
   return;
 end
 
-% check filter --
+% 2.7 check filter --
 if ~isfield(model, 'filter')
   model.filter = settings.dcm{1}.filter;
 elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
@@ -231,7 +233,7 @@ if ~isstruct(options)
   return;
 end
 
-% set and check options ---
+% 2.8 set and check options ---
 try options.indrf;              catch, options(1).indrf = 0;            end
 try options.getrf;              catch, options.getrf = 0;               end
 try options.rf;                 catch, options.rf = 0;                  end
@@ -252,7 +254,7 @@ try options.eventnames;         catch, options.eventnames = {};         end
 try options.trlnames;           catch, options.trlnames = {};           end
 try model.lasttrialcutoff;      catch, model.lasttrialcutoff = 7;       end
 
-% check option fields --
+% 2.9 check option fields --
 % numeric fields
 num_fields = {'depth', 'sfpre', 'sfpost', 'sffreq', 'sclpre', ...
   'sclpost', 'aSCR_sigma_offset'};
@@ -264,31 +266,30 @@ cell_fields = {'trlnames', 'eventnames'};
 check_sts = sum([pspm_check_options('numeric', options, num_fields), ...
   pspm_check_options('logical', options, bool_fields), ...
   pspm_check_options('cell', options, cell_fields)]);
-
 %
 if check_sts < 3
   warning('ID:invalid_input', ['An error occurred while validating the ', ...
     'input options. See earlier warnings for more information.']);
   return;
 end
-
 % check input of special rf field
 if isempty(options.rf) || ...
     ((isnumeric(options.rf) && options.rf ~= 0) && (~ischar(options.rf)))
   warning('ID:invalid_input', 'Field ''rf'' is neither a string nor 0.');
   return;
 end
-
 % check mutual exclusivity
 if options.indrf && options.rf
   warning('RF can be provided or estimated, not both.'); return;
 end
 
-% check files --
+% 2.10 check files
 if exist(model.modelfile, 'file') && options.overwrite == 0
-  msg = ['Model file already exists. Overwrite?', newline, 'Existing file: ',model.modelfile];
+  msg = ['Model file already exists. Overwrite?', ...
+    newline, 'Existing file: ',model.modelfile];
   if feature('ShowFigureWindows')
-    overwrite=questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default as Yes (to overwrite)
+    overwrite=questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes');
+    % default as Yes (to overwrite)
   else
     overwrite = 'Yes'; % default as Yes (to overwrite)
   end
@@ -306,21 +307,22 @@ if ~isfield(model, 'missing')
 elseif ischar(model.missing) || isnumeric(model.missing)
   model.missing = {model.missing};
 elseif ~iscell(model.missing)
-  warning('ID:invalid_input', ['Missing values must be a filename, ', ...
-    'matrix, or cell array of these.']); return;
+  warning('ID:invalid_input',...
+    'Missing values must be a filename, matrix, or cell array of these.');
+  return
 end
-
 if nFile ~= numel(model.timing)
-  warning('ID:number_of_elements_dont_match', ['Session numbers of data ', ...
-    'files and event definitions do not match.']); return;
+  warning('ID:number_of_elements_dont_match',...
+    'Session numbers of data files and event definitions do not match.');
+  return
+end
+if nFile ~= numel(model.missing)
+  warning('ID:number_of_elements_dont_match',...
+    'Same number of data files and missing value definitions is needed.');
+  return
 end
 
-if numel(model.missing) ~= nFile
-  warning('ID:number_of_elements_dont_match', ['Same number of data ', ...
-    'files and missing value definitions is needed.']); return;
-end
-
-%% Check, get and prepare data
+%% 3 Check, get and prepare data
 
 % split into subsessions
 % colnames: iSn start stop enabled (if contains events)
@@ -487,7 +489,7 @@ for vs = 1:numel(valid_subsessions)
 end
 clear foo
 
-%% Check & get events and group into flexible and fixed responses
+%% 4 Check & get events and group into flexible and fixed responses
 trials = {};
 n_sbs = size(subsessions, 1);
 sbs_newevents = cell(2,1);
@@ -496,8 +498,9 @@ sbs_trlstop = cell(1,n_sbs);
 sbs_iti= cell(1,n_sbs);
 sbs_miniti = zeros(1,n_sbs);
 lasttrial_log = zeros(1, n_sbs);
+% 4.1 processing in each element
 for iSn = 1:numel(model.timing)
-  % initialise and get timing information --
+  % 4.1.1 initialise and get timing information --
   sn_newevents{1}{iSn} = []; sn_newevents{2}{iSn} = [];
   [sts, events] = pspm_get_timing('events', model.timing{iSn});
   if sts ~=1, return; end
@@ -631,19 +634,20 @@ end
 
 % find subsessions with events and define them to be processed
 proc_subsessions = ~cellfun(@isempty, sbs_trlstart);
-proc_miniti     =  sbs_miniti(proc_subsessions);
-% proc_miniti(isnan(proc_miniti)) = [];
-model.trlstart =  sbs_trlstart(proc_subsessions);
-model.trlstop  =  sbs_trlstop(proc_subsessions);
-model.iti      =  sbs_iti(proc_subsessions);
-model.events   =  {sbs_newevents{1}(proc_subsessions), ...
-  sbs_newevents{2}(proc_subsessions)};
+proc_miniti = sbs_miniti(proc_subsessions);
+% proc_miniti may contains NaN, but it is not recommended to remove these
+% NaN now, because its length will be inconsistant with other variables in
+% the following processing. NaNs are accepted by .* operations in MATLAB.
+model.trlstart = sbs_trlstart(proc_subsessions);
+model.trlstop = sbs_trlstop(proc_subsessions);
+model.iti = sbs_iti(proc_subsessions);
+model.events = {sbs_newevents{1}(proc_subsessions), sbs_newevents{2}(proc_subsessions)};
 model.lasttrlfiltered = lasttrial_log; % recorded the sessions that have last trial filtered
-model.scr      =  sbs_data(proc_subsessions);
-options.missing  =  sbs_missing(proc_subsessions);
+model.scr = sbs_data(proc_subsessions);
+options.missing = sbs_missing(proc_subsessions);
 
-%% Prepare data for CRF estimation and for amplitude priors
-% get average event sequence per trial --
+%% 5 Prepare data for CRF estimation and for amplitude priors
+% 5.1 get average event sequence per trial
 if nEvnt(1) > 0
   flexseq = cell2mat(model.events{1}') - repmat(cell2mat(model.trlstart'), ...
     [1, size(model.events{1}{1}, 2), 2]);
@@ -675,13 +679,11 @@ end
 startevent = min([flexevents(:); fixevents(:)]);
 flexevents = flexevents - startevent;
 fixevents  = fixevents  - startevent;
-
 options.flexevents = flexevents;
 options.fixevents  = fixevents;
-
 clear flexseq fixseq flexevents fixevents startevent
 
-% check ITI --
+% 5.2 check ITI
 if (options.indrf || options.getrf) && min(proc_miniti) < 5
   warning(['Inter trial interval is too short to estimate individual CRF - ',...
     'at least 5 s needed. Standard CRF will be used instead.']);
@@ -689,13 +691,14 @@ if (options.indrf || options.getrf) && min(proc_miniti) < 5
   options.indrf = 0;
 end
 
-% extract PCA of last fixed response (eSCR) if last event is fixed --
+% 5.3 extract PCA of last fixed response (eSCR) if last event is fixed --
 if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
     || (max(options.fixevents > max(options.flexevents(:, 2), [], 2))))
-  [ ~ , lastfix] = max(options.fixevents);
+  [~, lastfix] = max(options.fixevents);
   % extract data
   winsize = floor(model.sr * min([proc_miniti 10]));
-  D = []; c = 1;
+  D = [];
+	c = 1;
   valid_newevents = sbs_newevents{2}(proc_subsessions);
   for isbSn = 1:numel(model.scr)
     scr_sess = model.scr{isbSn};
@@ -703,7 +706,7 @@ if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
     foo(foo < 0) = [];
     for n = 1:size(foo, 1)
       win = ceil(model.sr * foo(n) + (1:winsize));
-      [row,warnings] = get_data_after_trial_filling_with_nans_when_necessary(...
+      [row, warnings] = get_data_after_trial_filling_with_nans_when_necessary(...
         scr_sess, win, n, isbSn, model.iti, proc_miniti, warnings);
       D(c, 1:numel(row)) = row;
       c = c + 1;
@@ -711,21 +714,18 @@ if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
   end
   clear c k n
   if isempty(find(isnan(D(:))))
-    % mean centre
-    mD = D - repmat(mean(D, 2), 1, size(D, 2));
-
+    mD = D - repmat(mean(D, 2), 1, size(D, 2)); % mean centre
     % PCA
-    [u s]=svd(mD', 0);
-    [p,n] = size(mD);
+    [u, s]=svd(mD', 0);
+    [~, n] = size(mD);
     s = diag(s);
     comp = u .* repmat(s',n,1);
     eSCR = comp(:, 1);
     eSCR = eSCR - eSCR(1);
     foo = min([numel(eSCR), 50]);
-    [mx ind] = max(abs(eSCR(1:foo)));
+    [~, ind] = max(abs(eSCR(1:foo)));
     if eSCR(ind) < 0, eSCR = -eSCR; end
     eSCR = (eSCR - min(eSCR))/(max(eSCR) - min(eSCR));
-
     % check for peak (zero-crossing of the smoothed derivative) after more
     % than 3 seconds (use CRF if there is none)
     der = diff(eSCR);
@@ -748,13 +748,14 @@ if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
   end
 end
 
-% extract data from all trials
+% 5.4 extract data from all trials
 winsize = floor(model.sr * min([proc_miniti 10]));
 D = []; c = 1;
 for isbSn = 1:numel(model.scr)
   scr_sess = model.scr{isbSn};
   for n = 1:numel(model.trlstart{isbSn})
-    win = ceil(((model.sr * model.trlstart{isbSn}(n)):(model.sr * model.trlstop{isbSn}(n) + winsize)));
+    win = ceil(((model.sr * model.trlstart{isbSn}(n)):...
+      (model.sr * model.trlstop{isbSn}(n) + winsize)));
     % correct rounding errors
     win(win == 0) = [];
     [row,warnings] = get_data_after_trial_filling_with_nans_when_necessary(...
@@ -765,8 +766,7 @@ for isbSn = 1:numel(model.scr)
 end
 clear c n
 
-
-% do PCA if required
+% 5.5 do PCA if required
 if (options.indrf || options.getrf) && ~isempty(options.flexevents)
   if isempty(find(isnan(D(:))))
     % mean SOA
@@ -774,14 +774,14 @@ if (options.indrf || options.getrf) && ~isempty(options.flexevents)
     % mean centre
     mD = D - repmat(mean(D, 2), 1, size(D, 2));
     % PCA
-    [u, s, c]=svd(mD', 0);
-    [p, n] = size(mD);
+    [u, s, ~] = svd(mD', 0);
+    [~, n] = size(mD);
     s = diag(s);
     comp = u .* repmat(s',n,1);
     aSCR = comp(:, 1);
     aSCR = aSCR - aSCR(1);
     foo = min([numel(aSCR), (pspm_time2index(meansoa, model.sr) + 50)]);
-    [mx, ind] = max(abs(aSCR(1:foo)));
+    [~, ind] = max(abs(aSCR(1:foo)));
     if aSCR(ind) < 0, aSCR = -aSCR; end
     aSCR = (aSCR - min(aSCR))/(max(aSCR) - min(aSCR));
     clear u s c p n s comp mx ind mD
@@ -793,13 +793,13 @@ if (options.indrf || options.getrf) && ~isempty(options.flexevents)
   end
 end
 
-% get mean response
+% 5.6 get mean response
 options.meanSCR = transpose(nanmean(D));
 
-%% Invert DCM
+%% 6 Invert DCM
 dcm = pspm_dcm_inv(model, options);
 
-%% Assemble stats & names
+%% 7 Assemble stats & names
 dcm.stats = [];
 cTrl = 0;
 proc_subs_ids = find(proc_subsessions);
@@ -835,8 +835,10 @@ end
 dcm.names = {};
 for iEvnt = 1:numel(dcm.sn{1}.a(1).a)
   dcm.names{iEvnt, 1} = sprintf('%s: amplitude', flexevntnames{iEvnt});
-  dcm.names{iEvnt + numel(dcm.sn{1}.a(1).a), 1} = sprintf('%s: peak latency', flexevntnames{iEvnt});
-  dcm.names{iEvnt + 2*numel(dcm.sn{1}.a(1).a), 1} = sprintf('%s: dispersion', flexevntnames{iEvnt});
+  dcm.names{iEvnt + numel(dcm.sn{1}.a(1).a), 1} = ...
+    sprintf('%s: peak latency', flexevntnames{iEvnt});
+  dcm.names{iEvnt + 2*numel(dcm.sn{1}.a(1).a), 1} = ...
+    sprintf('%s: dispersion', flexevntnames{iEvnt});
 end
 cMsr = 3 * iEvnt;
 if isempty(cMsr), cMsr = 0; end
@@ -852,7 +854,7 @@ else
   end
 end
 
-%% Assemble input and save
+%% 8 Assemble input and save
 dcm.dcmname = model.modelfile; % this field will be removed in the future
 dcm.modelfile = model.modelfile;
 dcm.input = model;
@@ -860,7 +862,6 @@ dcm.options = options;
 dcm.warnings = warnings;
 dcm.modeltype = 'dcm';
 dcm.modality = settings.modalities.dcm;
-
 if ~options.nosave
   save(model.modelfile, 'dcm');
 end
@@ -878,11 +879,10 @@ datacol = NaN(1, numel(win));
 num_indices_outside_scr = win(end) - numel(scr_sess);
 if num_indices_outside_scr > 0
   warning('ID:too_short_ITI',...
-    sprintf(...
     ['Trial %d in session %d has ITI %f; but for mean response we use %f seconds',...
     ' after each trial. Filling the rest with NaNs'],...
     n, isbSn, sbs_iti{isbSn}(n), proc_miniti(isbSn)...
-    ));
+    );
   [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
   win(end - num_indices_outside_scr + 1 : end) = [];
   datacol(1:numel(win)) = scr_sess(win);
