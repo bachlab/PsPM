@@ -263,16 +263,8 @@ if options.indrf && options.rf
   warning('RF can be provided or estimated, not both.'); return;
 end
 
-% check files --
-if exist(model.modelfile, 'file') && options.overwrite == 0
-  msg = ['Model file already exists. Overwrite?', newline, 'Existing file: ',model.modelfile];
-  if feature('ShowFigureWindows')
-    overwrite=questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default as Yes (to overwrite)
-  else
-    overwrite = 'Yes'; % default as Yes (to overwrite)
-  end
-  if strcmp(overwrite, 'No'), return; end
-end
+% stop the script if files are not allowed to overwrite
+if ~pspm_overwrite(model.modelfile, options.overwrite); return; end
 
 if ischar(model.datafile)
   model.datafile = {model.datafile};
