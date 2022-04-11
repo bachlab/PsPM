@@ -3,87 +3,108 @@ function dcm = pspm_dcm(model, options)
 % data, passes it over to the model inversion routine, and saves both the
 % forward model and its inversion.
 %
-% Both flexible-latency (within a response window) and fixed-latency (evoked after a specified event) responses can be modelled.
-% For fixed responses, delay and dispersion are assumed to be constant (either pre-determined or estimated from the data),
-%  while for flexible responses, both are estimated for each individual trial.
-% Flexible responses can for example be anticipatory, decision-related, or evoked with unknown onset.
+% Both flexible-latency (within a response window) and fixed-latency
+% (evoked after a specified event) responses can be modelled.
+% For fixed responses, delay and dispersion are assumed to be constant
+% (either pre-determined or estimated from the data), while for flexible 
+% responses, both are estimated for each individual trial.
+% Flexible responses can for example be anticipatory, decision-related,
+% or evoked with unknown onset.
 %
 % FORMAT
 %	dcm = pspm_dcm(model, options)
 %
 % ARGUMENTS
-%	MODEL
-%		Required fields
-%			model.modelfile:	A file name for the model output.
-%			model.datafile:		A file name (single session) OR a cell array of file names.
-%			model.timing:		A file name/cell array of events (single session) OR a cell array of file names/cell arrays.
-%								When specifying file names, each file must be a *.mat file that contain a cell variable called 'events'.
-%								Each cell should contain either one column (fixed response) or two columns (flexible response).
-%								All matrices in the array need to have the same number of rows,
-%									i.e. the event structure must be the same for every trial.
-%								If this is not the case, include "dummy" events with negative onsets.
-%		Optional fields
-%			model.missing:		Allows to specify missing (e. g. artefact) epochs in the data file.
-%								See pspm_get_timing for epoch definition; specify a cell array for multiple input files.
-%								This must always be specified in SECONDS.
-%								Default: no missing values
-%			model.lasttrialcutoff:  If there fewer data after the end of then last trial in a session than this cutoff value (in s), then estimated
-%                               parameters from this trial will be assumed inestimable and set to NaN after the
-%                               inversion. This value can be set as inf to always retain
-%                               parameters from the last trial.
-%                               Default: 7 s
-%			model.substhresh:	Minimum duration (in seconds) of NaN periods to cause splitting up into subsessions which get
-%									evaluated independently (excluding NaN values).
-%								Default: 2.
-%			model.filter:		Filter settings.
-%								Modality specific default.
-%			model.channel:		Channel number.
-%								Default: first SCR channel
-%			model.norm:			Normalise data.
-%								i.e. Data are normalised during inversion but results transformed back into raw data units.
-%								Default: 0.
-% 			model.constrained:	Constrained model for flexible responses which have fixed dispersion (0.3 s SD) but flexible latency.
-
-%
-%	OPTIONS (all optional fields)
-% 		Response function options
-%			options.crfupdate:	Update CRF priors to observed SCRF, or use pre-estimated priors (default)
-%			options.indrf:		Estimate the response function from the data.
-%								Default: 0.
-%			options.getrf:		Only estimate RF, do not do trial-wise DCM
-%			options.rf:			Call an external file to provide response function (for use when this is previously estimated by pspm_get_rf)
-%		Inversion options
-%			options.depth:		No of trials to invert at the same time.
-%								Default: 2.
-%			options.sfpre:		sf-free window before first event.
-%								Default: 2s.
-%			options.sfpost:		sf-free window after last event.
-%								Default: 5s.
-%			options.sffreq:		maximum frequency of SF in ITIs.
-%								Default: 0.5/s.
-%			options.sclpre:		scl-change-free window before first event.
-%								Default: 2s.
-%			options.sclpost:	scl-change-free window after last event.
-%								Default: 5s.
-%			options.aSCR_sigma_offset: Minimum dispersion (standard deviation) for flexible responses.
-%								Default: 0.1s.
-%		Display options
-%			options.dispwin:	Display progress window.
-%								Default: 1.
-%			options.dispsmallwin: display intermediate windows.
-%								Default: 0.
-%		Output options
-%			options.nosave:		Don't save dcm structure (e.g. used by pspm_get_rf)
-%		Naming options
-%			options.trlnames:	Cell array of names for individual trials,
-%									is used for contrast manager only (e.g. condition descriptions)
-%			options.eventnames: Cell array of names for individual events,
-%									in the order they are specified in the model.timing array - to be used for display and export only
+%	model
+%	┃ Required fields
+% ┣━.modelfile  A file name for the model output.
+%	┣━.datafile   A file name (single session) OR a cell array of file names.
+%	┣━.timing     A file name/cell array of events (single session) OR a cell
+%	┃             array of file names/cell arrays.
+%	┃             When specifying file names, each file must be a *.mat file
+%	┃             that contain a cell variable called 'events'.
+%	┃             Each cell should contain either one column (fixed response)
+%	┃             or two columns (flexible response).
+%	┃             All matrices in the array need to have the same number of rows,
+%	┃             i.e. the event structure must be the same for every trial.
+%	┃             If this is not the case, include "dummy" events with 
+%	┃             negative onsets.
+%	┃ Optional fields
+% ┣━.missing    Allows to specify missing (e. g. artefact) epochs in the 
+%	┃             data file.
+%	┃             See pspm_get_timing for epoch definition; specify a cell 
+%	┃             array for multiple input files.
+%	┃             This must always be specified in SECONDS.
+%	┃             Default: no missing values
+% ┣━.lasttrialcutoff
+%	┃             If there fewer data after the end of then last trial in a
+%	┃             session than this cutoff value (in s), then estimated
+%	┃             parameters from this trial will be assumed inestimable
+%	┃             and set to NaN after the
+%	┃             inversion. This value can be set as inf to always retain
+%	┃             parameters from the last trial.
+%	┃             Default: 7 s
+% ┣━.substhresh
+%	┃             Minimum duration (in seconds) of NaN periods to cause
+%	┃             splitting up into subsessions which get evaluated
+%	┃             independently (excluding NaN values).
+%	┃             Default: 2.
+% ┣━.filter			Filter settings.
+%	┃             Modality specific default.
+% ┣━.channel:		Channel number.
+%	┃             Default: first SCR channel
+% ┣━.norm:			Normalise data.
+%	┃             i.e. Data are normalised during inversion but results
+%	┃             transformed back into raw data units.
+%	┃             Default: 0.
+% ┗━.constrained
+%	              Constrained model for flexible responses which have fixed
+%               dispersion (0.3 s SD) but flexible latency.
+% options
+%	┃ Response function options
+% ┣━.crfupdate  Update CRF priors to observed SCRF, or use pre-estimated 
+%	┃             priors (default)
+% ┣━.indrf      Estimate the response function from the data.
+%	┃             Default: 0.
+% ┣━.getrf      Only estimate RF, do not do trial-wise DCM
+% ┣━.rf         Call an external file to provide response function
+%	┃             (for use when this is previously estimated by pspm_get_rf)
+%	┃ Inversion options
+% ┣━.depth      No of trials to invert at the same time.
+%	┃             Default: 2.
+% ┣━.sfpre      sf-free window before first event.
+%	┃             Default: 2s.
+% ┣━.sfpost:		sf-free window after last event.
+%	┃             Default: 5s.
+% ┣━.sffreq:		maximum frequency of SF in ITIs.
+%	┃             Default: 0.5/s.
+% ┣━.sclpre     scl-change-free window before first event.
+%	┃             Default: 2s.
+% ┣━.sclpost    scl-change-free window after last event.
+%	┃             Default: 5s.
+% ┣━.aSCR_sigma_offset
+%	┃             Minimum dispersion (standard deviation) for flexible responses.
+%	┃             Default: 0.1s.
+%	┃ Display options
+% ┣━.dispwin    Display progress window.
+%	┃             Default: 1.
+% ┣━.dispsmallwin
+%	┃             display intermediate windows.
+%	┃             Default: 0.
+%	┃ Output options
+% ┣━.nosave:		Don't save dcm structure (e.g. used by pspm_get_rf)
+%	┃ Naming options
+% ┣━.trlnames:	Cell array of names for individual trials,
+%	┃             is used for contrast manager only (e.g. condition descriptions)
+% ┗━.eventnames
+%               Cell array of names for individual events,
+%               in the order they are specified in the model.timing array - 
+%               to be used for display and export only
 
 %
 % OUTPUT
-%	fn:		Name of the model file.
-%	dcm:	Model struct.
+%	fn            Name of the model file.
+%	dcm           Model struct.
 %
 % Output units: all timeunits are in seconds; eSCR and aSCR amplitude are
 % in SN units such that an eSCR SN pulse with 1 unit amplitude causes an eSCR
@@ -97,9 +118,12 @@ function dcm = pspm_dcm(model, options)
 % within missing epochs will simply be set to NaN.  NaN periods shorter than
 % model.substhresh are interpolated for averages and principal response components.
 %
-% pspm_dcm calculates the inter-trial intervals as the duration between the end of a trial and the start of the next one.
-% ITI value for the last trial in a session is calculated as the duration between the end of the last trial and the end of the whole session.
-% Since this value may differ significantly from the regular ITI duration values, it is not used when computing the minimum ITI duration of a session.
+% pspm_dcm calculates the inter-trial intervals as the duration between the
+% end of a trial and the start of the next one.
+% ITI value for the last trial in a session is calculated as the duration
+% between the end of the last trial and the end of the whole session.
+% Since this value may differ significantly from the regular ITI duration
+% values, it is not used when computing the minimum ITI duration of a session.
 %
 % Minimum of session specific min ITI values is used
 %   1. when computing mean SCR signal
@@ -112,8 +136,8 @@ function dcm = pspm_dcm(model, options)
 % than the ITI value of the last trial. In such a case, pspm_dcm
 % is not able to compute the PCA and emits a warning.
 %
-% The rationale behind this behaviour is that we observed that ITI value of the
-% last trial in a session might be much smaller than the usual ITI values. For
+% The rationale behind this behaviour is that we observed that ITI value of
+% the last trial in a session might be much smaller than the usual ITI values. For
 % example, this can happen when a long missing data section starts very soon after
 % the beginning of a trial. If this very small ITI value is used to define the
 % sample periods after each trial, nearly all the trials use much less than
@@ -132,19 +156,18 @@ function dcm = pspm_dcm(model, options)
 % PsPM 5.1.0
 % (c) 2010-2021 Dominik Bach (Wellcome Centre for Human Neuroimaging, UCL)
 
-%% Initialise & set output
+%% 1 Initialise & set output
 global settings;
 if isempty(settings), pspm_init; end
-
 dcm = [];
-
 % cell array which saves all the warnings which are not followed
 % by a `return` function
 warnings = {};
 
-%% Check input arguments & set defaults
+%% 2 Check input arguments & set defaults
 if nargin < 1
-  warning('ID:invalid_input', 'No data to work on.'); fn = []; return;
+  warning('ID:invalid_input', 'No data to work on.');
+  return
 elseif nargin < 2
   options = struct([]);
 end
@@ -209,25 +232,25 @@ if ~isstruct(options)
 end
 
 % set and check options ---
-try options.indrf;   catch, options(1).indrf = 0;    end
-try options.getrf;   catch, options.getrf = 0;    end
-try options.rf;      catch, options.rf = 0;       end
-try options.nosave;  catch, options.nosave = 0;   end
-try options.overwrite; catch, options.overwrite = 0; end
-try options.depth; catch, options.depth = 2; end
-try options.sfpost; catch, options.sfpost = 5; end
-try options.aSCR_sigma_offset; catch, options.aSCR_sigma_offset = 0.1; end
-try options.sclpost; catch, options.sclpost = 5; end
-try options.sclpre; catch, options.sclpre = 2; end
-try options.sfpre; catch, options.sfpre = 2; end
-try options.sffreq; catch, options.sffreq = 0.5; end
-try options.method; catch, options.method = 'dcm'; end
-try options.dispwin; catch, options.dispwin = 1; end
-try options.dispsmallwin; catch, options.dispsmallwin = 0; end
-try options.crfupdate; catch, options.crfupdate = 0; end
-try options.eventnames; catch, options.eventnames = {}; end
-try options.trlnames; catch, options.trlnames = {}; end
-try model.lasttrialcutoff; catch, model.lasttrialcutoff = 7; end
+try options.indrf;              catch, options(1).indrf = 0;    end
+try options.getrf;              catch, options.getrf = 0;    end
+try options.rf;                 catch, options.rf = 0;       end
+try options.nosave;             catch, options.nosave = 0;   end
+try options.overwrite;          catch, options.overwrite = 0; end
+try options.depth;              catch, options.depth = 2; end
+try options.sfpost;             catch, options.sfpost = 5; end
+try options.aSCR_sigma_offset;  catch, options.aSCR_sigma_offset = 0.1; end
+try options.sclpost;            catch, options.sclpost = 5; end
+try options.sclpre;             catch, options.sclpre = 2; end
+try options.sfpre;              catch, options.sfpre = 2; end
+try options.sffreq;             catch, options.sffreq = 0.5; end
+try options.method;             catch, options.method = 'dcm'; end
+try options.dispwin;            catch, options.dispwin = 1;       end
+try options.dispsmallwin;       catch, options.dispsmallwin = 0;  end
+try options.crfupdate;          catch, options.crfupdate = 0;     end
+try options.eventnames;         catch, options.eventnames = {};   end
+try options.trlnames;           catch, options.trlnames = {};     end
+try model.lasttrialcutoff;      catch, model.lasttrialcutoff = 7; end
 
 % check option fields --
 % numeric fields
@@ -610,7 +633,7 @@ end
 % find subsessions with events and define them to be processed
 proc_subsessions = ~cellfun(@isempty, sbs_trlstart);
 proc_miniti     =  sbs_miniti(proc_subsessions);
-proc_miniti(isnan(proc_miniti)) = [];
+% proc_miniti(isnan(proc_miniti)) = [];
 model.trlstart =  sbs_trlstart(proc_subsessions);
 model.trlstop  =  sbs_trlstop(proc_subsessions);
 model.iti      =  sbs_iti(proc_subsessions);
@@ -659,7 +682,8 @@ clear flexseq fixseq flexevents fixevents startevent
 
 % check ITI --
 if (options.indrf || options.getrf) && min(proc_miniti) < 5
-  warning('Inter trial interval is too short to estimate individual CRF - at least 5 s needed. Standard CRF will be used instead.');
+  warning(['Inter trial interval is too short to estimate individual CRF - ',...
+    'at least 5 s needed. Standard CRF will be used instead.']);
   [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
   options.indrf = 0;
 end
@@ -678,7 +702,8 @@ if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
     foo(foo < 0) = [];
     for n = 1:size(foo, 1)
       win = ceil(model.sr * foo(n) + (1:winsize));
-      [row,warnings] = get_data_after_trial_filling_with_nans_when_necessary(scr_sess, win, n, isbSn, model.iti, proc_miniti, warnings);
+      [row,warnings] = get_data_after_trial_filling_with_nans_when_necessary(...
+        scr_sess, win, n, isbSn, model.iti, proc_miniti, warnings);
       D(c, 1:numel(row)) = row;
       c = c + 1;
     end
@@ -706,7 +731,8 @@ if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
     der = conv(der, ones(10, 1));
     der = der(ceil(3 * model.sr):end);
     if all(der > 0) || all(der < 0)
-      warning('ID:PCA_eSCR','No peak detected in response to outcomes. Cannot individually adjust CRF. Standard CRF will be used instead.');
+      warning('ID:PCA_eSCR',...
+        'No peak detected in response to outcomes. Cannot individually adjust CRF. Standard CRF will be used instead.');
       [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
       options.indrf = 0;
     else
@@ -727,7 +753,8 @@ for isbSn = 1:numel(model.scr)
     win = ceil(((model.sr * model.trlstart{isbSn}(n)):(model.sr * model.trlstop{isbSn}(n) + winsize)));
     % correct rounding errors
     win(win == 0) = [];
-    [row,warnings] = get_data_after_trial_filling_with_nans_when_necessary(scr_sess, win, n, isbSn, model.iti, proc_miniti, warnings);
+    [row,warnings] = get_data_after_trial_filling_with_nans_when_necessary(...
+      scr_sess, win, n, isbSn, model.iti, proc_miniti, warnings);
     D(c, 1:numel(row)) = row;
     c = c + 1;
   end
@@ -835,7 +862,9 @@ end
 
 end
 
-function [datacol, warnings] = get_data_after_trial_filling_with_nans_when_necessary(scr_sess, win, n, isbSn, sbs_iti, proc_miniti, warnings)
+function [datacol, warnings] = ...
+  get_data_after_trial_filling_with_nans_when_necessary(...
+  scr_sess, win, n, isbSn, sbs_iti, proc_miniti, warnings)
 % Try to get all the data elements after the end of the trial n in session isbSn. Indices of the elements
 % to return are stored in win. In case these indices are larger than size of scr_sess{isbSn}, then fill the
 % rest of the data with NaN values.
