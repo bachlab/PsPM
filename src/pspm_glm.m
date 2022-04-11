@@ -267,7 +267,7 @@ if isfield(options,'exclude_missing')
   end
 end
 
-if ~pspm_overwrite(model.modelfile, options); return; end
+options.overwrite = ~pspm_overwrite(model.modelfile, options);
 	
 
 if ischar(model.datafile)

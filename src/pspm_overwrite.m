@@ -30,8 +30,14 @@ settings = settings_struct.settings;
 
 %% start to define ow
 switch numel(varargin)
+  case 0
+    warning('ID:invalid_input', 'at least one argument is required');
+    return;
   case 1 % ow is not defined
     fn = varargin{1};
+    if iscell(fn)
+      fn = fn{1};
+    end
     switch settings.developmode
       case 1
         ow_final = 1; % In develop mode, always overwrite
@@ -53,7 +59,16 @@ switch numel(varargin)
         end
     end
   case 2
+    fn = varargin{1};
+    if iscell(fn)
+      fn = fn{1};
+    end
     ow = varargin{2};
+    if ~exist(fn, 'file')
+      % if file does not exist, always "overwrite"
+      ow_final = 1;
+      return
+    end
     switch class(ow)
       case 'double'
         ow_final = ow;
