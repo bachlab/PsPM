@@ -22,11 +22,7 @@ function ow_final = pspm_overwrite(varargin)
 % OUTPUTS
 % ow_final  option of overwriting determined by pspm_overwrite
 
-pth = fileparts(which('pspm'));
-settings_struct = load([pth, '/pspm_settings.mat'], "settings");
-settings = settings_struct.settings;
-
-
+global settings;
 
 %% start to define ow
 switch numel(varargin)
@@ -52,7 +48,7 @@ switch numel(varargin)
             overwrite = questdlg(msg, ...
               'File already exists', 'Yes', 'No', 'Yes');
             % default as Yes (to overwrite)
-            ow_final = strcmp(overwrite, "Yes");
+            ow_final = strcmp(overwrite, 'Yes');
           else
             ow_final = 1; % if GUI is not available, always overwrite
           end
@@ -74,7 +70,7 @@ switch numel(varargin)
         ow_final = ow;
       case 'struct'
         ow_struct = ow;
-        if isfield(ow_struct, "overwrite")
+        if isfield(ow_struct, 'overwrite')
           ow_final = ow_struct.overwrite;
         else
           ow_final = 0;
