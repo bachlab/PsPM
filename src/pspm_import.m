@@ -9,13 +9,16 @@ function outfile = pspm_import(datafile, datatype, import, options)
 % datatype      supported datatypes are defined in pspm_init (see manual)
 % import        a cell array of struct with one job (imported channel)
 % ┃             per cell
-% ┃             ● mandatory fields for all data types and each job
+% ┃             ▶︎ mandatory fields for all data types and each job
 % ┣━.type       not all data types support all channel types
-% ┃             ● mandatory fields for some data types and each channel
+% ┃             ▶︎ mandatory fields for some data types and each channel
 % ┣━.sr         sampling rate for waveform, or timeunit in s for event
 % ┃             channels
 % ┣━.channel    channel or column number in the original file
-% ┃             ● optional fields for some data types and channel types
+% ┃             ▶︎ optional fields for some data types and channel types
+% ┣━.flank      optional, string, applicable for continuous channels only
+%	┃							accepted values: 'ascending', 'descending', 'both'
+% ┃             default: 'both'
 % ┣━.transfer:  name of a .mat file containing values for
 % ┃             the transfer function, OR a struct array containing the
 % ┃             values OR 'none', when no conversion is required
@@ -41,7 +44,7 @@ function outfile = pspm_import(datafile, datatype, import, options)
 % options       a struct
 % ┗━.overwrite  overwrite existing files by default
 % ● OUTPUT
-% outfile       a .mat file (or cell array of files) on the input file path
+% outfile        a .mat file (or cell array of files) on the input file path
 %               containing scr and event info
 % ● VERSION
 % PsPM 3.0

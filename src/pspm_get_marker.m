@@ -11,14 +11,14 @@ function [sts, data] = pspm_get_marker(import)
 % ┣━.sr 				mandatory, double
 %	┃							timestamps: timeunits in seconds
 %	┃							continuous: sample rate in 1/seconds)
-% ┣━.flank			optional, string, applicable for continuous channels only
+% ┣━.flank      optional, string, applicable for continuous channels only
 %	┃							accepted values: 'ascending', 'descending', 'both'
 % ┃             default: 'both'
 % ┗━.markerinfo	optional, struct, returns marker timestamps in seconds
 % 	  ┣━.name
 %     ┗━.value
 % ● VERSION
-% PsPM 6.0
+% Optimised for PsPM 6.0
 % ● AUTHORSHIP
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %			2022			Teddy Chao (UCL)
@@ -37,10 +37,7 @@ if bsts ~= 1
   return
 end
 data.data = import.data;
-% add flank info
-if isfield(import, 'flank')
-  data.flank = import.flank;
-end
+
 % add marker info
 if isfield(import, 'markerinfo')
   data.markerinfo = import.markerinfo;
