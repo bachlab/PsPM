@@ -34,25 +34,24 @@ switch numel(varargin)
     if iscell(fn)
       fn = fn{1};
     end
-    switch settings.developmode
-      case 1
-        ow_final = 1; % In develop mode, always overwrite
-      otherwise
-        if ~exist(fn, 'file')
-          % if file does not exist, always "overwrite"
-          ow_final = 1;
+    if settings.developmode
+      ow_final = 1; % In develop mode, always overwrite
+    else
+      if ~exist(fn, 'file')
+        % if file does not exist, always "overwrite"
+        ow_final = 1;
+      else
+        if feature('ShowFigureWindows') % if in gui
+          msg = ['Model file already exists. Overwrite?', ...
+            newline, 'Existing file: ', fn];
+          overwrite = questdlg(msg, ...
+            'File already exists', 'Yes', 'No', 'Yes');
+          % default as Yes (to overwrite)
+          ow_final = strcmp(overwrite, 'Yes');
         else
-          if feature('ShowFigureWindows') % if in gui
-            msg = ['Model file already exists. Overwrite?', ...
-              newline, 'Existing file: ', fn];
-            overwrite = questdlg(msg, ...
-              'File already exists', 'Yes', 'No', 'Yes');
-            % default as Yes (to overwrite)
-            ow_final = strcmp(overwrite, 'Yes');
-          else
-            ow_final = 1; % if GUI is not available, always overwrite
-          end
+          ow_final = 1; % if GUI is not available, always overwrite
         end
+      end
     end
   case 2
     fn = varargin{1};

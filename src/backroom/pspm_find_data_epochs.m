@@ -100,8 +100,7 @@ end;
 epochs = ([start, stop]).*data{chan_id}.header.sr^-1;
 
 
-write_ok = pspm_overwrite(options.output_file, options);
-if write_ok
+if pspm_overwrite(options.output_file, options)
     save(options.output_file, 'epochs');
 end;
 
