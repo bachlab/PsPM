@@ -99,12 +99,28 @@ end;
 % create epochs and divide by samplerate
 epochs = ([start, stop]).*data{chan_id}.header.sr^-1;
 
+file_exist = exist(options.output_file, 'file');
+write_ok = false;
+if file_exist
+    if options.overwrite 
+        write_ok = true;
+    elseif ~options.dont_ask_overwrite
+        if feature('ShowFigureWindows')
+            msg = ['File already exists. Overwrite?', newline, 'Existing file: ',options.output_file];
+    	    ov = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default to overwrite by users
+        else
+            ov = 'Yes'; % default to overwrite on Jenkins
+        end
+        write_ok = strcmp(ov,'Yes');
+    end;
+else
+    write_ok = true;
+end;
 
-if pspm_overwrite(options.output_file, options)
+if write_ok
     save(options.output_file, 'epochs');
 end;
 
 epochfile = options.output_file;
 
 sts = 1;
-
