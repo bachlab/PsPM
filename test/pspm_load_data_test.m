@@ -233,7 +233,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       clear infos data chan
       delete(this.fn2);
     end
-    
+
     function valid_datafile_0(this) % return all channels
       [~, infos, data] = pspm_load_data(this.fn);
       act_val.infos = infos;

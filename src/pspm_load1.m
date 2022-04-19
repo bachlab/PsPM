@@ -92,26 +92,15 @@ try options.dont_ask_overwrite = (options.dont_ask_overwrite == 1); catch, optio
 
 % check whether file exists --
 if exist(fn, 'file')
-    if strcmpi(action, 'save')
-        if ~options.overwrite
-            if ~options.dont_ask_overwrite
-                if feature('ShowFigureWindows')
-                    msg = ['File already exists. Overwrite?', newline, 'Existing file: ',fn];
-                    overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default to overwrite by users 
-                else
-                    overwrite = 'Yes'; % default to overwrite on Jenkins
-                end
-                if strcmp(overwrite, 'No')
-                    warning('ID:not_saving_data', 'Data not saved.\n'); return;
-                end;
-            else
-                warning('ID:not_saving_data', 'Not saving data.\n'); return;
-            end;
-        end;
-    end;
+  if strcmpi(action, 'save')
+    if ~pspm_overwrite(fn, options)
+      warning('ID:not_saving_data', 'Not saving data.\n');
+      return
+    end
+  end
 elseif ~strcmpi(action, 'save')
-    warning('ID:invalid_input', '1st level file (%s) doesn''t exist', fn); return;
-end;
+  warning('ID:invalid_input', '1st level file (%s) doesn''t exist', fn); return;
+end
 
 %  set default zscored
 if nargin <= 3 || ~isfield(options, 'zscored')
