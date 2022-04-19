@@ -258,25 +258,7 @@ for i = 1:w
         % care about correct output
         if ~isempty(options.fn) && ischar(options.fn{i,j})
             fn = options.fn{i,j};
-            f_exist = exist(fn, 'file');
-            if f_exist
-                if options.overwrite
-                    save_file = 1;
-                elseif ~options.dont_ask_overwrite
-                    if feature('ShowFigureWindows')
-                        msg = ['File already exists. Overwrite?', newline, 'Existing file: ', fn];
-                        overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'No'); % default not to overwrite by users 
-                        save_file = strcmp(overwrite, 'Yes');
-                    else
-                        overwrite = 'No'; % default not to overwrite on Jenkins
-                        save_file = 0;
-                    end
-                else
-                    save_file = 0;
-                end
-            else
-                save_file = 1;
-            end
+            save_file = pspm_overwrite(fn, options);
             
             if save_file
                 R = regd;

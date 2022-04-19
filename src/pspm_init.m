@@ -1201,24 +1201,25 @@ else
     'FontNameEmph', 'Verdana Bold');
 end
 
+defaults.developmode=1;
+defaults.path=pth;
+defaults.scrpath=scrpath;
+defaults.spmpath=spmpath;
+defaults.matlabbatchpath=matlabbatchpath;
+defaults.scrcfgpath=scrcfgpath;
+defaults.signal = signal;
+defaults.pspm_version = pspm_vers;
+
 % -------------------------------------------------------------------------
 % look for settings, otherwise set defaults
 % -------------------------------------------------------------------------
-if exist([pth, 'pspm_settings.mat'], 'file')
-    load([pth, 'pspm_settings.mat']);
+if exist([pth, 'pspm_settings_custom.mat'], 'file')
+    load([pth, 'pspm_settings_custom.mat']);
 else
-    settings=defaults;
+    settings = defaults;
 end
 
-
-
-settings.path=pth;
-settings.scrpath=scrpath;
-settings.spmpath=spmpath;
-settings.matlabbatchpath=matlabbatchpath;
-settings.scrcfgpath=scrcfgpath;
-settings.signal = signal;
-settings.pspm_version = pspm_vers;
+save([pth, 'pspm_settings.mat'], "settings", '-mat');
 
 
 return;
