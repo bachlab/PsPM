@@ -26033,7 +26033,7 @@ List of functions
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="156" columns="4">
+<lyxtabular version="3" rows="157" columns="4">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="50text%">
 <column alignment="center" valignment="top" width="15text%">
@@ -30764,6 +30764,46 @@ DB
 \begin_layout Plain Layout
 
 \family typewriter
+pspm_overwrite
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DZ
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
 pspm_path
 \end_layout
 
@@ -31622,7 +31662,7 @@ DZ
 \begin_inset Text
 
 \begin_layout Plain Layout
-Yes
+x
 \end_layout
 
 \end_inset
@@ -31631,7 +31671,7 @@ Yes
 \begin_inset Text
 
 \begin_layout Plain Layout
-Yes
+x
 \end_layout
 
 \end_inset
