@@ -23740,31 +23740,24 @@ ID:invalid_input
 Testing 'marker' as reference
 \end_layout
 
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Function name
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 marker_tests(testCase)
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Description
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 A wrapper function for tests with 
 \family typewriter
-reference = `marker'
+reference = 'marker'
 \family default
 .
  It executes the methods 
@@ -23775,19 +23768,15 @@ markertest_k
  
 \end_layout
 
-\end_deeper
-\begin_layout Subparagraph
+\begin_layout Verse
 markertest_1
 \end_layout
 
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Description
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 from and to are set so that the trimming points are out of the range 
 \family typewriter
 [0,duration]
@@ -23796,47 +23785,35 @@ from and to are set so that the trimming points are out of the range
  Hence the data should not be trimmed.
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Expected warning
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 ID: marker_out_of_range
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Input
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 pspm_trim(fn, -20, 20, `marker')
 \end_layout
 
-\end_deeper
-\begin_layout Subparagraph
+\begin_layout Verse
 markertest_2 
 \end_layout
 
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Description
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 from and to are set so that the trimming points are exactly 
 \family typewriter
 (0, duration)
@@ -23845,89 +23822,69 @@ from and to are set so that the trimming points are exactly
  Hence the data should not be trimmed.
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Input
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Description
 
 \family typewriter
 from -1 * marker(1)
 \end_layout
 
-\begin_layout Itemize
+\begin_layout Description
 
 \family typewriter
 to duration - marker(end)
 \end_layout
 
-\begin_layout Itemize
+\begin_layout Standard
 then 
 \family typewriter
 pspm_trim(fn, from, to, `marker') 
 \end_layout
 
-\end_deeper
-\begin_layout Subparagraph
+\begin_layout Verse
 markertest_3
 \end_layout
 
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Description
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 from and to are set so that the trimming points in the range [0,duration].
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Input
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 pspm_trim(fn, 1, -2, `marker')
 \end_layout
 
-\end_deeper
 \begin_layout Paragraph
 Testing 'file' as reference
 \end_layout
 
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Function name
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 file_tests(testCase)
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Description
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 A wrapper function for tests with 
 \family typewriter
 reference = ‘file'
@@ -23941,22 +23898,14 @@ filetest_k
  
 \end_layout
 
-\end_deeper
 \begin_layout Subparagraph
 filetest_1
 \end_layout
 
-\begin_layout Itemize
-
-\series bold
+\begin_layout Enumerate
 Description
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-
 \family typewriter
-from
+ from
 \family default
  and 
 \family typewriter
@@ -23970,47 +23919,35 @@ to
  Hence the data should not be trimmed.
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\series bold
+\begin_layout Enumerate
 Expected warning
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Enumerate
 
 \family typewriter
 ID: marker_out_of_range
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\series bold
+\begin_layout Enumerate
 Input
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Enumerate
 
 \family typewriter
 pspm_trim(fn, -12.5, 50, `marker') 
 \end_layout
 
-\end_deeper
-\begin_layout Subparagraph
+\begin_layout Verse
 filetest_2
 \end_layout
 
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Description
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 from
@@ -24027,33 +23964,25 @@ to
  Hence the data should not be trimmed.
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Input
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 pspm_trim(fn, 0 , duration, `marker') 
 \end_layout
 
-\end_deeper
-\begin_layout Subparagraph
+\begin_layout Verse
 filetest_3
 \end_layout
 
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Description
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 from
@@ -24069,47 +23998,35 @@ to
 .
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Input
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 pspm_trim(fn,2.1, duration – 2.5, `marker') 
 \end_layout
 
-\end_deeper
 \begin_layout Paragraph
 Numeric reference tests
 \end_layout
 
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Function name
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 num_tests(testCase)
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Description
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 A wrapper function for tests with 
 \family typewriter
 reference = [a b]
@@ -24131,19 +24048,15 @@ markertest_k
  
 \end_layout
 
-\end_deeper
-\begin_layout Subparagraph
+\begin_layout Verse
 numtest_1
 \end_layout
 
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Description
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 from
@@ -24160,47 +24073,35 @@ to
  Hence the data should not be trimmed.
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Expected warning
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 ID: marker_out_of_range
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Input
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 pspm_trim(fn, -20, 20, [2 14]) 
 \end_layout
 
-\end_deeper
-\begin_layout Subparagraph
+\begin_layout Verse
 numtest_2
 \end_layout
 
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Description
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 from
@@ -24217,45 +24118,37 @@ to
  Hence the data should not be trimmed.
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Input
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 from = -1 * marker(3)
 \end_layout
 
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 to = duration - marker(8)
 \end_layout
 
-\begin_layout Itemize
+\begin_layout Standard
 then 
 \family typewriter
 pspm_trim(fn, from, to, [3 8]) 
 \end_layout
 
-\end_deeper
-\begin_layout Subparagraph
+\begin_layout Verse
 numtest_3
 \end_layout
 
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Description
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 from
@@ -24271,96 +24164,72 @@ to
 .
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Input
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 pspm_trim(fn, -1.5, 2, [2 7]) 
 \end_layout
 
-\end_deeper
-\begin_layout Subparagraph
+\begin_layout Verse
 numtest_4
 \end_layout
 
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Description
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 Second reference point is out of the marker range; from is set to 
 \family typewriter
-`none'
+‘none'
 \family default
 .
  Hence the data should not be trimmed.
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Expected warning
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 ID: marker_out_of_range 
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Input
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 pspm_trim(fn, ‘none', 0, [1 (numel(marker) + 1)]) 
 \end_layout
 
-\end_deeper
 \begin_layout Paragraph
 Multiple file reference tests
 \end_layout
 
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Function name
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 multiple_files(testCase)
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Description
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 The input variable 
 \family typewriter
 datafile
@@ -24371,42 +24240,29 @@ datafile
  
 \end_layout
 
-\end_deeper
-\begin_layout Paragraph
+\begin_layout Subsubsection*
 Option tests (marker channel number option)
 \end_layout
 
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Function name
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \family typewriter
 marker_chan_num_option_test(testCase)
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-
-\series bold
+\begin_layout Subparagraph
 Description
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
-Tests if the option 
-\family typewriter
-marker_chan_num
-\family default
- is working correctly.
+\begin_layout Standard
+Tests if the option marker_chan_num is working correctly.
  There are two tests:
 \end_layout
 
-\begin_deeper
 \begin_layout Enumerate
 Checks for a warning if the selected channel is no marker channel.
 \end_layout
@@ -24416,8 +24272,6 @@ Checks if the selected channel is actually used.
  
 \end_layout
 
-\end_deeper
-\end_deeper
 \begin_layout Subsection
 pspm_write_channel
 \end_layout
