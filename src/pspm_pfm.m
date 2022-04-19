@@ -344,25 +344,7 @@ elseif ~ismember(model.norm, [0, 1])
     warning('ID:invalid_input', '''model.zscore'' has to be 0 or 1.'); return;
 end
 
-%%% Checking options %%%
-if ~isfield(options, 'overwrite')
-    options.overwrite = 0;
-elseif ~ismember(options.overwrite, [0, 1])
-    options.overwrite = 0;
-end
-
-if exist(model.modelfile, 'file') && ~(isfield(options, 'overwrite') && options.overwrite == 1)
-	if feature('ShowFigureWindows')
-		msg = ['Model file already exists. Overwrite?', newline, 'Existing file: ',model.modelfile];
-    	overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default to overwrite by users 
-    else 
-    	overwrite = 'Yes'; % default to overwrite on Jenkins
-    end
-    if strcmp(overwrite, 'No')
-    	return;
-    end
-    options.overwrite = 1;
-end
+if ~pspm_overwrite(model.modelfile, options); return; end
 
 %%
 %%%%%%%% Loading files %%%%%%%%
