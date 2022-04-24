@@ -8191,7 +8191,7 @@ pspm_filtfilt
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -8335,7 +8335,7 @@ pspm_find_channel
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -12446,7 +12446,7 @@ pspm_get_eyelink
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -12859,7 +12859,7 @@ pspm_get_hr
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -12965,7 +12965,7 @@ pspm_get_marker
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -13075,7 +13075,7 @@ pspm_get_pupil
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -13181,7 +13181,7 @@ pspm_get_resp
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -13287,7 +13287,7 @@ pspm_get_scr
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -14252,7 +14252,7 @@ pspm_get_<datatype>
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Standard
@@ -14612,7 +14612,7 @@ pspm_get
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -14706,7 +14706,7 @@ pspm_glm
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -15562,7 +15562,7 @@ pspm_hb2hp
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -15849,7 +15849,7 @@ pspm_import
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -16335,7 +16335,7 @@ pspm_interpolate
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -17918,7 +17918,7 @@ pspm_load1
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -18108,8 +18108,6 @@ Expected warning
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\family typewriter
 empty model file
 \end_layout
 
@@ -18132,9 +18130,9 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+missing field 
 \family typewriter
-missing field `modelfile'
+`modelfile'
 \end_layout
 
 \end_inset
@@ -18156,9 +18154,9 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+missing field 
 \family typewriter
-missing field `modeltype'
+`modeltype'
 \end_layout
 
 \end_inset
@@ -18180,9 +18178,9 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+missing field 
 \family typewriter
-missing field `modality'
+`modality'
 \end_layout
 
 \end_inset
@@ -18204,9 +18202,9 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+missing field 
 \family typewriter
-missing field `stats'
+`stats'
 \end_layout
 
 \end_inset
@@ -18228,9 +18226,9 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+missing field 
 \family typewriter
-missing field `names'
+`names'
 \end_layout
 
 \end_inset
@@ -18491,7 +18489,11 @@ ID:invalid_data_structure
 \begin_inset Text
 
 \begin_layout Plain Layout
-unequal size for fields in `names' and columns in 
+unequal size for fields in 
+\family typewriter
+`names'
+\family default
+ and columns in 
 \family typewriter
 `stats'
 \end_layout
@@ -19323,7 +19325,7 @@ Reviewed and updated by Teddy on 19 April 2022
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -19352,8 +19354,11 @@ Setup
 
 \begin_layout Standard
 If not otherwise declared, the input variable fn is referring to a datafile
- which was generated with pspm_testdata_gen and consists out of the following
- channels:
+ which was generated with 
+\family typewriter
+pspm_testdata_gen
+\family default
+ and consists out of the following channels:
 \end_layout
 
 \begin_layout Description
@@ -19443,11 +19448,31 @@ Tests
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="9" columns="2">
+<lyxtabular version="3" rows="9" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+#
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Issue
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -19472,9 +19497,25 @@ Expected warning
 \begin_inset Text
 
 \begin_layout Plain Layout
+1
+\end_layout
 
-\family typewriter
-pspm_load_data [no filename]
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+No filename
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+/
 \end_layout
 
 \end_inset
@@ -19496,9 +19537,27 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+No char filename
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \family typewriter
-pspm_load_data(1) [no char filename]
+1
 \end_layout
 
 \end_inset
@@ -19520,10 +19579,27 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Negative channel number
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \family typewriter
-pspm_load_data(fn, -1) [neg.
- channel no]
+fn, -1
 \end_layout
 
 \end_inset
@@ -19545,9 +19621,27 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+No allowed ch type
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \family typewriter
-pspm_load_data(fn, ‘foobar') [no allowed ch type]
+fn, `foobar'
 \end_layout
 
 \end_inset
@@ -19569,9 +19663,27 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Missing field in foo struct
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \family typewriter
-pspm_load_data(fn, foo) [missing field in foo struct]
+fn, foo
 \end_layout
 
 \end_inset
@@ -19593,9 +19705,27 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Invalid channel option
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \family typewriter
-pspm_load_data(fn, {1}) [invalid channel option]
+fn, {1}
 \end_layout
 
 \end_inset
@@ -19617,9 +19747,27 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Struct has no infos field
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \family typewriter
-pspm_load_data(struct) [struct has no infos field]
+struct
 \end_layout
 
 \end_inset
@@ -19641,9 +19789,27 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Nonexisting channel
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \family typewriter
-pspm_load_data(fn, 250) [nonexisting channel]
+fn, 250
 \end_layout
 
 \end_inset
@@ -19699,9 +19865,10 @@ Tests
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="12" columns="3">
+<lyxtabular version="3" rows="12" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="6cm">
 <column alignment="center" valignment="top" width="6cm">
 <column alignment="center" valignment="top">
 <row>
@@ -19709,7 +19876,16 @@ Tests
 \begin_inset Text
 
 \begin_layout Plain Layout
-Test No.
+#
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Issue
 \end_layout
 
 \end_inset
@@ -19752,6 +19928,15 @@ non-existent datafile
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
@@ -19779,6 +19964,15 @@ ID:nonexistent_file
 
 \begin_layout Plain Layout
 missing ‘infos' variable
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset
@@ -19814,6 +20008,15 @@ missing ‘data' variable
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
@@ -19841,6 +20044,15 @@ ID:invalid_data_structure
 
 \begin_layout Plain Layout
 missing ‘data' field in ‘data{2}'
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset
@@ -19876,6 +20088,15 @@ missing ‘header' field ‘data{3}'
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
@@ -19903,6 +20124,15 @@ ID:invalid_data_structure
 
 \begin_layout Plain Layout
 missing ‘sr' field in ‘data{7}.header'
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset
@@ -19938,6 +20168,15 @@ data{4} is a nx2 vector (instead of a nx1 vector)
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
@@ -19965,6 +20204,15 @@ ID:invalid_data_structure
 
 \begin_layout Plain Layout
 the length of data{1}.data is incompatible with the duration
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset
@@ -20000,6 +20248,15 @@ An entry of data{2}.data is larger than ‘duration'
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
@@ -20031,6 +20288,15 @@ data{5} has an non-existent chantype (‘scanner')
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
@@ -20058,6 +20324,15 @@ ID:invalid_data_structure
 
 \begin_layout Plain Layout
 duplicates (9) with struct chan input
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset
@@ -20330,8 +20605,10 @@ Tests
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="2">
+<lyxtabular version="3" rows="4" columns="4">
 <features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -20339,7 +20616,25 @@ Tests
 \begin_inset Text
 
 \begin_layout Plain Layout
-Input
+#
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Issue
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Parameters of the function
 \end_layout
 
 \end_inset
@@ -20359,9 +20654,27 @@ Expected warning
 \begin_inset Text
 
 \begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+No frequency
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \family typewriter
-pspm_pp(`butter', `file') [no freq]
+`butter', `file'
 \end_layout
 
 \end_inset
@@ -20383,9 +20696,27 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+No valid first argument
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \family typewriter
-pspm_pp(`foo', `file', 100) [no valid first argument]
+`foo', `file', 100
 \end_layout
 
 \end_inset
@@ -20407,9 +20738,29 @@ ID:invalid_input
 \begin_inset Text
 
 \begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Freq below 
+\family typewriter
+20
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \family typewriter
-pspm_pp(`butter', `file', 19) [freq below 20]
+`butter', `file', 19
 \end_layout
 
 \end_inset
@@ -20642,7 +20993,7 @@ pspm_prepdata
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -21334,7 +21685,7 @@ pspm_process_illuminance
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -22492,7 +22843,7 @@ pspm_pulse_convert
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -22693,7 +23044,7 @@ pspm_ren
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -22945,7 +23296,7 @@ pspm_resp_pp
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
@@ -23390,7 +23741,7 @@ Reviewed and updated by Teddy on 19 April 2022
 \end_layout
 
 \begin_layout Subsubsection
-Information
+Overview
 \end_layout
 
 \begin_layout Subparagraph
