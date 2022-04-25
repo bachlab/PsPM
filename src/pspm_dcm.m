@@ -629,7 +629,7 @@ end
 % find subsessions with events and define them to be processed
 proc_subsessions = ~cellfun(@isempty, sbs_trlstart);
 proc_miniti = sbs_miniti(proc_subsessions);
-proc_miniti(isnan(proc_miniti)) = [];
+% proc_miniti(isnan(proc_miniti)) = [];
 % proc_miniti may contains NaN, but it is not recommended to remove these
 % NaN now, because its length will be inconsistant with other variables in
 % the following processing. NaNs are accepted by .* operations in MATLAB.
