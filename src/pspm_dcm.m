@@ -465,16 +465,14 @@ for vs = 1:numel(valid_subsessions)
   if any(sbs_miss)
     interpolateoptions = struct('extrapolate', 1);
     [~, sbSn_data] = pspm_interpolate(sbSn_data, interpolateoptions);
+    
     clear interpolateoptions
   end
   [sts, sbs_data{isbSn, 1}, model.sr] = pspm_prepdata(sbSn_data, model.filter);
+  % define missing epochs for inversion in final sampling rate
+  sbs_missing{isbSn, 1} = downsample(sbs_miss, model.filter.sr/model.sr);
   if sts == -1, return; end
   foo{vs, 1} = (sbs_data{isbSn}(:) - mean(sbs_data{isbSn}));
-
-  % define missing epochs for inversion in final sampling rate
-  sbs_missing{isbSn, 1} = zeros(size(sbs_data{isbSn, 1}));
-  sbs_missing_indx = pspm_time2index(find(sbs_miss)/data{sbSn(1)}{1}.header.sr, model.sr);
-  sbs_missing{isbSn, 1}(sbs_missing_indx) = 1;
 end
 
 foo = cell2mat(foo);
