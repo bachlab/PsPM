@@ -93,7 +93,9 @@ function dcm = pspm_dcm(model, options)
 %	┃             display intermediate windows.
 %	┃             Default: 0.
 %	┃ Output options
-% ┣━.nosave:		Don't save dcm structure (e.g. used by pspm_get_rf)
+% ┣━.nosave		  Don't save dcm structure (e.g. used by pspm_get_rf)
+% ┣━.overwrite	whether to overwrite
+%	┃             Default: determined by pspm_overwrite.
 %	┃ Naming options
 % ┣━.trlnames   Cell array of names for individual trials,
 %	┃             is used for contrast manager only (e.g. condition descriptions)
@@ -242,7 +244,6 @@ try options.indrf;              catch, options(1).indrf = 0;            end
 try options.getrf;              catch, options.getrf = 0;               end
 try options.rf;                 catch, options.rf = 0;                  end
 try options.nosave;             catch, options.nosave = 0;              end
-try options.overwrite;          catch, options.overwrite = 0;           end
 try options.depth;              catch, options.depth = 2;               end
 try options.sfpost;             catch, options.sfpost = 5;              end
 try options.aSCR_sigma_offset;  catch, options.aSCR_sigma_offset = 0.1; end
@@ -284,13 +285,15 @@ if isempty(options.rf) || ...
 end
 % check mutual exclusivity
 if options.indrf && options.rf
-  warning('RF can be provided or estimated, not both.'); return;
+  warning('ID:invalid_input', 'RF can be provided or estimated, not both.');
+  return
 end
 
 % 2.10 check files
 % stop the script if files are not allowed to overwrite
 if ~pspm_overwrite(model.modelfile, options)
-  return;
+  warning('ID:invalid_input', 'Results are not allowed to overwrite.');
+  return
 end
 
 if ischar(model.datafile)
@@ -466,16 +469,14 @@ for vs = 1:numel(valid_subsessions)
   if any(sbs_miss)
     interpolateoptions = struct('extrapolate', 1);
     [~, sbSn_data] = pspm_interpolate(sbSn_data, interpolateoptions);
+    
     clear interpolateoptions
   end
   [sts, sbs_data{isbSn, 1}, model.sr] = pspm_prepdata(sbSn_data, model.filter);
+  % define missing epochs for inversion in final sampling rate
+  sbs_missing{isbSn, 1} = downsample(sbs_miss, model.filter.sr/model.sr);
   if sts == -1, return; end
   foo{vs, 1} = (sbs_data{isbSn}(:) - mean(sbs_data{isbSn}));
-
-  % define missing epochs for inversion in final sampling rate
-  sbs_missing{isbSn, 1} = zeros(size(sbs_data{isbSn, 1}));
-  sbs_missing_indx = pspm_time2index(find(sbs_miss)/data{sbSn(1)}{1}.header.sr, model.sr);
-  sbs_missing{isbSn, 1}(sbs_missing_indx) = 1;
 end
 
 foo = cell2mat(foo);
@@ -632,6 +633,7 @@ end
 % find subsessions with events and define them to be processed
 proc_subsessions = ~cellfun(@isempty, sbs_trlstart);
 proc_miniti = sbs_miniti(proc_subsessions);
+% proc_miniti(isnan(proc_miniti)) = [];
 % proc_miniti may contains NaN, but it is not recommended to remove these
 % NaN now, because its length will be inconsistant with other variables in
 % the following processing. NaNs are accepted by .* operations in MATLAB.
@@ -868,9 +870,9 @@ end
 function [datacol, warnings] = ...
   get_data_after_trial_filling_with_nans_when_necessary(...
   scr_sess, win, n, isbSn, sbs_iti, proc_miniti, warnings)
-% Try to get all the data elements after the end of the trial n in session
-% isbSn. Indices of the elements to return are stored in win. In case these
-% indices are larger than size of scr_sess{isbSn}, then fill the
+% Try to get all the data elements after the end of the trial n in session 
+% isbSn. Indices of the elements to return are sto
+% red in win. In case these indices are larger than size of scr_sess{isbSn}, then fill the
 % rest of the data with NaN values.
 datacol = NaN(1, numel(win));
 num_indices_outside_scr = win(end) - numel(scr_sess);
