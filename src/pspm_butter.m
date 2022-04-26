@@ -8,17 +8,19 @@ function [sts, b, a] = pspm_butter(order, freqratio, pass)
     %__________________________________________________________________________
     % PsPM 3.0
     % (c) 2009-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-    
-    % $Id$ 
+
+    % $Id$
     % $Rev$
-    
-    % initialise
-    % ------------------------------------------------------------------------
-    global settings;
-    if isempty(settings), pspm_init; end;
-    sts = -1; a = []; b = [];
+
+		%% Initialise
+		global settings
+		if isempty(settings)
+			pspm_init;
+		end
+		sts = -1;
+		a = []; b = [];
     errmsg = ' - please install the signal processing toolbox if you need other filters.';
-    
+
     % check input arguments
     % ------------------------------------------------------------------------
     if nargin < 2
@@ -28,11 +30,11 @@ function [sts, b, a] = pspm_butter(order, freqratio, pass)
     elseif ~(any(strcmpi(pass, {'high', 'low'})))
         warning('ID:invalid_input','%s is not a valid argument.', pass); return;
     end;
-        
+
     if ~settings.signal && order ~= 1
-        warning('ID:toolbox_missing','This function can only create 1st order filters - %s', errmsg); return; 
+        warning('ID:toolbox_missing','This function can only create 1st order filters - %s', errmsg); return;
     end;
-    
+
     % filters
     % ------------------------------------------------------------------------
     if settings.signal
@@ -57,10 +59,10 @@ function [sts, b, a] = pspm_butter(order, freqratio, pass)
             b = f(n).b;
         end;
     end;
-    
+
     sts = 1;
     return;
-        
+
     % create filters (last used on 29.09.2013)
     % ------------------------------------------------------------------------
     % % lowpass
@@ -76,5 +78,3 @@ function [sts, b, a] = pspm_butter(order, freqratio, pass)
     %     filt{2}(n).freqratio = freqratio(n);
     % end;
     % save([settings.path, 'pspm_butter.mat'], 'filt');
-    
-    

@@ -31,10 +31,11 @@ function [sts, markerinfo] = pspm_get_markerinfo(fn, options)
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %     2022      Teddy Chao (UCL)
 
-%% initialise
-global settings;
-if isempty(settings), pspm_init; end
-% set output values
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
 sts = -1;
 markerinfo = [];
 %% get info

@@ -91,8 +91,11 @@ function outfile = pspm_import(datafile, datatype, import, options)
 % save individual files for each block, with a filename 'pspm_fn_blk0x.mat'
 
 %% 1 Initialise
-global settings;
-if isempty(settings), pspm_init; end
+global settings
+if isempty(settings)
+  pspm_init;
+end
+sts = -1;
 outfile = [];
 
 %% 2 Input argument check & transform
@@ -239,7 +242,7 @@ for d = 1:numel(D)
   else
     sts = -1;
     warning('ID:nonexistent_file', ...
-  		'\nDatafile (%s) doesn''t exist', filename_in_msg);
+      '\nDatafile (%s) doesn''t exist', filename_in_msg);
   end
   if sts == -1
     fprintf('\nImport unsuccesful for file %s.\n', filename_in_msg);

@@ -1,23 +1,21 @@
 function pspm_test_github_actions(varargin)
-
+% ● Description
 % pspm_test_github_actions is a test suite for PsPM with GitHub Actions
-% Variable
-%   exit_code: indicating the result of testing, 0 if succeed, -1 if fail
-
-% PsPM TestEnvironment for GitHub Actions
+% ● Authorship
 % (C) 2021 Dominik Bach (WCHN, UCL)
 %          Linus Ruettimann (UZH)
 %          Teddy Chao (WCHN, UCL)
+% ● Developer's notes
+% exit_code: indicating the result of testing, 0 if succeed, -1 if fail
+% PsPM TestEnvironment for GitHub Actions
 
-%$ imports
+%% imports
 import matlab.unittest.TestSuite;
-
 quit_after_tests = false;
 if nargin > 0
   quit_after_tests = varargin{1};
   assert(islogical(quit_after_tests));
 end
-
 %% Build suites
 suite = [...
   TestSuite.fromClass(?pspm_align_channels_test), ...
@@ -55,7 +53,6 @@ suite = [...
   TestSuite.fromClass(?pspm_write_channel_test), ...
   TestSuite.fromClass(?set_blinks_saccades_to_nan_test), ...
   ];
-
 %% Import suites
 import_suite = [...
   TestSuite.fromClass(?import_eyelink_test), ...
@@ -82,7 +79,6 @@ import_suite = [...
   TestSuite.fromClass(?pspm_get_viewpoint_test), ...
   TestSuite.fromClass(?pspm_get_wdq_n_test), ...
   ];
-
 %% Channel type suites
 chantype_suite = [...
   TestSuite.fromClass(?pspm_get_ecg_test), ...
@@ -95,9 +91,7 @@ chantype_suite = [...
   TestSuite.fromClass(?pspm_get_resp_test), ...
   TestSuite.fromClass(?pspm_get_scr_test), ...
   ];
-
 full_suite = [suite, import_suite, chantype_suite];
-
 %% Run tests
 [pth, ~, ~] = fileparts(which('pspm_test_github_actions.m'));
 addpath(pth);
@@ -107,7 +101,6 @@ settings.developmode = 1; % set to develop mode
 stats = run(full_suite);
 n_failed = sum([stats.Failed]);
 success = n_failed == 0;
-
 if success
   disp('pspm_test: All tests have passed!');
   fid = fopen('success.txt', 'wt');
@@ -119,10 +112,8 @@ else
   fprintf(fid, format_test_results(stats));
   fclose(fid);
 end
-
 if quit_after_tests
   exit_code = 1 - success;
   quit(exit_code);
 end
-
 end
