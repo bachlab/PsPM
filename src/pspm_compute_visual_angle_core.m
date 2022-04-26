@@ -3,7 +3,7 @@ function [lat, lon, lat_range, lon_range] = pspm_compute_visual_angle_core(x_dat
 % visual angle (for each data point). The convention used here is that the
 % origin of coordinate system for gaze data is at the bottom left corner of
 % the screen.
-% 
+%
 % FORMAT:
 %       [lat, lon, lat_range, lon_range ] = pspm_compute_visual_angle_core(x_data, y_data, options)
 %
@@ -13,9 +13,9 @@ function [lat, lon, lat_range, lon_range] = pspm_compute_visual_angle_core(x_dat
 %       width:            screen width in same units as data
 %       height:           screen height in same units as data
 %       distance:         screen distance in same units as data
-%       options:            
-%         .interpolate:   Boolean - Interpolate values 
-%                                  
+%       options:
+%         .interpolate:   Boolean - Interpolate values
+%
 % RETURN VALUES
 %               lat:            the latitude in degrees
 %               lon:            the longitude in degrees
@@ -26,29 +26,29 @@ function [lat, lon, lat_range, lon_range] = pspm_compute_visual_angle_core(x_dat
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 
 % interpolate channel specific data if required
 if (isfield(options, 'interpolate') && options.interpolate)
-    interpolate_options = struct('extrapolate', 1);
-    [ sts_x, gx_d ] = pspm_interpolate(x_data, interpolate_options);
-    [ sts_x, gy_d ] = pspm_interpolate(y_data, interpolate_options);
+  interpolate_options = struct('extrapolate', 1);
+  [ sts_x, gx_d ] = pspm_interpolate(x_data, interpolate_options);
+  [ sts_x, gy_d ] = pspm_interpolate(y_data, interpolate_options);
 else
-    gx_d = x_data;
-    gy_d = x_data;
+  gx_d = x_data;
+  gy_d = x_data;
 end
 
-% The convention is that the origin of the screen is in the bottom 
-% left corner, so the following line is not needed a priori, but I 
+% The convention is that the origin of the screen is in the bottom
+% left corner, so the following line is not needed a priori, but I
 % leave it anyway just in case :
-% gy_d = data{gy}.header.range(2)-gy_d; 
+% gy_d = data{gy}.header.range(2)-gy_d;
 
 N = numel(gx_d);
 if N~=numel(gy_d)
-    warning('ID:invalid_input', 'length of data in gaze_x and gaze_y is not the same');
-    return;
+  warning('ID:invalid_input', 'length of data in gaze_x and gaze_y is not the same');
+  return;
 end;
 
 % move (0,0) into center of the screen
@@ -57,17 +57,17 @@ gy_d = gy_d - height/2;
 
 % compute visual angle for gaze_x and gaze_y data:
 % 1) x axis in cartesian coordinates
-s_x = gx_d;                                     
+s_x = gx_d;
 % 2) y axis in cartesian coordinates, actually the distance from participant to the screen
-s_y = distance * ones(numel(gx_d),1);           
+s_y = distance * ones(numel(gx_d),1);
 % 3) z axis in spherical coordinates, actually the y axis of the screen
-s_z = gy_d;                                     
-% 4) convert cartesian to spherical coordinates in radians, 
+s_z = gy_d;
+% 4) convert cartesian to spherical coordinates in radians,
 %    where azimuth = longitude, elevation = latitude
 %    the center of spherical coordinates are the eyes of the subject
-[azimuth, elevation, ~]= cart2sph(s_x,s_y,s_z); 
+[azimuth, elevation, ~]= cart2sph(s_x,s_y,s_z);
 % 5) convert radians into degrees
-lat = rad2deg(elevation);   
+lat = rad2deg(elevation);
 lon = rad2deg(azimuth);
 
 % compute visual angle for the range (same procedure)

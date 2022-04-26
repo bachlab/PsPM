@@ -118,7 +118,7 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 

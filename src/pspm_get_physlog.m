@@ -3,8 +3,8 @@ function [sts, import, sourceinfo] = pspm_get_physlog(datafile, import)
 %   pspm_get_physlog loads data from physlog files using the
 %   import_physlog() function. It maps the output of the called function
 %   according to the settings passed in the 'import' parameter.
-%   
-%   Special about this function is that channel numbers for event/marker 
+%
+%   Special about this function is that channel numbers for event/marker
 %   channels correspond to the different event types scanphyslog files.
 %   Possible event types are:
 %
@@ -20,7 +20,7 @@ function [sts, import, sourceinfo] = pspm_get_physlog(datafile, import)
 %                 8    Calibration
 %                 9    Manual start
 %                 10   Reference ECG Trigger
-%    
+%
 %   Channel types are:
 %           Chan-Nr:   Type:
 %           --------   -----
@@ -36,7 +36,7 @@ function [sts, import, sourceinfo] = pspm_get_physlog(datafile, import)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 sourceinfo = [];
@@ -47,27 +47,27 @@ addpath(pspm_path('Import','physlog'));
 % -------------------------------------------------------------------------
 [bsts, out] = import_physlog(datafile);
 if bsts ~= 1
-    warning('ID:invalid_input', 'Physlog import was not successfull');
-    return;
+  warning('ID:invalid_input', 'Physlog import was not successfull');
+  return;
 end;
 
 % iterate through data and fill up channel list as specified in import
 % -------------------------------------------------------------------------
 for k = 1:numel(import)
-    if strcmpi(import{k}.type, 'marker')        
-        chan = import{k}.channel;
-        if chan > size(out.trigger.t, 2), warning('ID:channel_not_contained_in_file', 'Column %02.0f not contained in file %s.\n', chan, datafile); return; end;
-        import{k}.marker = 'continuous';
-        import{k}.sr     = out.trigger.sr;
-        import{k}.data   = out.trigger.t{:,chan};
-    else
-        chan = import{k}.channel;
-        if chan > size(out.data, 1), warning('ID:channel_not_contained_in_file', 'Column %02.0f not contained in file %s.\n', chan, datafile); return; end;
-        import{k}.sr = out.data{chan,1}.header.sr;
-        import{k}.data = out.data{chan,1}.data;
-        import{k}.units = out.data{chan,1}.header.units;
-        sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan);
-    end;
+  if strcmpi(import{k}.type, 'marker')
+    chan = import{k}.channel;
+    if chan > size(out.trigger.t, 2), warning('ID:channel_not_contained_in_file', 'Column %02.0f not contained in file %s.\n', chan, datafile); return; end;
+    import{k}.marker = 'continuous';
+    import{k}.sr     = out.trigger.sr;
+    import{k}.data   = out.trigger.t{:,chan};
+  else
+    chan = import{k}.channel;
+    if chan > size(out.data, 1), warning('ID:channel_not_contained_in_file', 'Column %02.0f not contained in file %s.\n', chan, datafile); return; end;
+    import{k}.sr = out.data{chan,1}.header.sr;
+    import{k}.data = out.data{chan,1}.data;
+    import{k}.units = out.data{chan,1}.header.units;
+    sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan);
+  end;
 end;
 
 % extract record time and date

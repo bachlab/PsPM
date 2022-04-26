@@ -1,7 +1,7 @@
 function [bs, x] = pspm_bf_hprf_f( td, soa )
-% pspm_bf_hprf_f basis function dependent on SOA 
+% pspm_bf_hprf_f basis function dependent on SOA
 %   Detailed explanation goes here
-% Description: 
+% Description:
 %
 % FORMAT: [bf p] = pspm_bf_hprf_f(td, soa)
 % with  td = time resolution in s
@@ -20,7 +20,7 @@ if isempty(settings), pspm_init; end;
 if nargin < 1
    errmsg='No sampling interval stated'; warning('ID:invalid_input',errmsg); return;
 elseif nargin < 2
-    soa = 3.5; 
+    soa = 3.5;
 end;
 
 d = 30;
@@ -46,4 +46,3 @@ x = (start:td:stop-td)';
 bs = rectangularPulse(start, stop,x);
 
 end
-

@@ -83,7 +83,7 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 out = [];

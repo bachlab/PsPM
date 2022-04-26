@@ -7,7 +7,7 @@ function pspm_show_arms
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 pf = pspm_path('CologneCoatOfArms.jpg');
 
@@ -17,5 +17,4 @@ figure('Position', [40 40 300 400], 'MenuBar', 'none', 'Name', 'Viva Colonia', '
 image(P);
 axis image
 axis off
-return;
-
+return

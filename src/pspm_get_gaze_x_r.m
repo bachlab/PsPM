@@ -6,7 +6,7 @@ function [sts, data]=pspm_get_gaze_x_r(import)
 %   [sts, data]= pspm_get_gaze_x_r(import)
 %   with import.data: column vector of waveform data
 %        import.sr: sample rate
-%  
+%
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2015 Tobias Moser (University of Zurich)
@@ -14,7 +14,7 @@ function [sts, data]=pspm_get_gaze_x_r(import)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 

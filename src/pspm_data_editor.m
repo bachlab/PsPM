@@ -71,7 +71,7 @@ function pspm_data_editor_OpeningFcn(hObject, ~, handles, varargin)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 pspm_ui(hObject, handles, 'data_editor');

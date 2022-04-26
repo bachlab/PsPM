@@ -11,25 +11,17 @@ function [sts, data]=pspm_get_custom(import)
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2009-2014 Tobias Moser (University of Zurich)
-
 %% Initialise
 global settings
 if isempty(settings)
 	pspm_init;
 end
-sts = -1;
-
-% assign data
-% -------------------------------------------------------------------------
+%% assign data
 data.data = import.data(:);
-
-% add header
-% -------------------------------------------------------------------------
+%% add header
 data.header.chantype = 'custom';
 data.header.units = import.units;
 data.header.sr = import.sr;
-
-% check status
+%% check status
 sts = 1;
-
-return;
+return

@@ -24,6 +24,6 @@ function output = pspm_template_varargin(input, varargin)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;

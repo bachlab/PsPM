@@ -39,7 +39,7 @@ function y = pspm_filtfilt(b,a,x)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 
@@ -47,16 +47,16 @@ sts = -1;
 %--------------------------------------------------------------------------
 
 if nargin < 3
-    warning('ID:invalid_input','Not enough parameters were specified.'); return;
+  warning('ID:invalid_input','Not enough parameters were specified.'); return;
 end
 
 [m,n] = size(x);
 if n>1 && m>1
-    y = zeros(size(x));
-    for i=1:n
-        y(:,i) = pspm_filtfilt(b,a,x(:,i));
-    end
-    return
+  y = zeros(size(x));
+  for i=1:n
+    y(:,i) = pspm_filtfilt(b,a,x(:,i));
+  end
+  return
 end
 if m==1, x = x(:); end
 len = size(x,1);
@@ -71,13 +71,13 @@ if na < nfilt, a(nfilt)=0; end
 
 nfact = 3*(nfilt-1);
 if len <= nfact
-    warning('ID:invalid_input','Data must have length more than 3 times filter order.'); return;
+  warning('ID:invalid_input','Data must have length more than 3 times filter order.'); return;
 end
 if nfilt == 1
-    y=x; return
+  y=x; return
 end
 
-% Use sparse matrix to solve system of linear equations for initial 
+% Use sparse matrix to solve system of linear equations for initial
 % conditions zi are the steady-state states of the filter b(z)/a(z) in the
 % state-space implementation of the 'filter' command
 %--------------------------------------------------------------------------

@@ -1,11 +1,8 @@
 function index = pspm_time2index(time, sr, varargin)
-
 % DEFINITION
 % pspm_time2index converts time to index.
-%
 % FORMAT
 % index = pspm_time2index(time, sr, varargin)
-%
 % ARGUMENTS
 % Input
 %   time            a decimal
@@ -18,18 +15,15 @@ function index = pspm_time2index(time, sr, varargin)
 % Output
 %   index           an integer
 %                   meaning: index / data point
-%
 % PsPM 5.1.2
 % (C) 2021 Teddy Chao (WCHN, UCL)
 % Supervised by Professor Dominik Bach (WCHN, UCL)
-
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
-
 if ~isempty(varargin)
   data_length = varargin{1};
 end
@@ -43,5 +37,4 @@ if exist('data_length', 'var')
     index(flag==1) = data_length;
   end
 end
-
 end

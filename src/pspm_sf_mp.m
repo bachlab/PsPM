@@ -1,14 +1,14 @@
 function out = pspm_sf_mp(scr, sr, opt)
 % pspm_sf_mp does the inversion of a DCM for SF of the skin conductance, using a matching
 % pursuit algorithm, and f_SF for the forward model
-% 
+%
 % the input data is assumed to be in mcS, and sampling rate in Hz
-% 
+%
 % FORMAT
 % function out = pspm_sf_mp(scr, sr, opt)
-% 
+%
 %   out:        output
-%               out.n: number of responses above threshold 
+%               out.n: number of responses above threshold
 %               out.f: frequency of responses above threshold in Hz
 %               out.ma: mean amplitude of responses above threshold
 %               out.t: timing of responses
@@ -23,10 +23,10 @@ function out = pspm_sf_mp(scr, sr, opt)
 %   scr:        skin conductance epoch (maximum size depends on computing
 %               power, a sensible size is 60 s at 10 Hz)
 %   sr:         sampling rate in Hz
-%   
+%
 %   options: options structure
 %       - options.threshold: threshold for SN detection (default 0.1 mcS)
-%       - options.theta: a (1 x 5) vector of theta values for f_SF 
+%       - options.theta: a (1 x 5) vector of theta values for f_SF
 %           (default: read from pspm_sf_theta)
 %       - options.fresp: maximum frequency of modelled responses (default 0.5 Hz)
 %       - options.dispwin: display result window (default 1)
@@ -34,7 +34,7 @@ function out = pspm_sf_mp(scr, sr, opt)
 %                              disabled if set to false. If set to true
 %                              this will add a further field 'D' to the
 %                              output struct. Default is false.
-% 
+%
 %
 % REFERENCE
 %__________________________________________________________________________
@@ -45,7 +45,7 @@ function out = pspm_sf_mp(scr, sr, opt)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 tstart = tic;
@@ -53,46 +53,46 @@ tstart = tic;
 % check input arguments
 %==========================================================================
 if nargin < 2 || ~isnumeric(sr) || numel(sr) > 1
-    errmsg = sprintf('No valid sample rate given.');
+  errmsg = sprintf('No valid sample rate given.');
 elseif (sr < 1) || (sr > 1e5)
-    errmsg = sprintf('Sample rate out of range.');
+  errmsg = sprintf('Sample rate out of range.');
 elseif nargin < 1 || ~isnumeric(scr)
-    errmsg = 'No data.';
+  errmsg = 'No data.';
 elseif ~any(size(scr) == 1)
-    errmsg = 'Input SCR is not a vector';
+  errmsg = 'Input SCR is not a vector';
 else
-    scr = scr(:);
+  scr = scr(:);
 end;
 
 if exist('errmsg') == 1, warning(errmsg); out = []; return; end;
-        
+
 
 % options
 % ------------------------------------------------------------------------
 try
-    S.fresp = opt.fresp;
+  S.fresp = opt.fresp;
 catch
-    S.fresp = 0.5;
+  S.fresp = 0.5;
 end;
 try
-    S.theta = opt.theta;
+  S.theta = opt.theta;
 catch
-    [S.theta, osr] = pspm_sf_theta;
+  [S.theta, osr] = pspm_sf_theta;
 end;
 try
-    S.threshold = opt.threshold;
+  S.threshold = opt.threshold;
 catch
-    S.threshold = 0.1;
+  S.threshold = 0.1;
 end;
 try
-    opt.dispwin;
+  opt.dispwin;
 catch
-    opt.dispwin = 0;
+  opt.dispwin = 0;
 end;
 try
-    opt.diagnostics;
+  opt.diagnostics;
 catch
-    opt.diagnostics = 0;
+  opt.diagnostics = 0;
 end;
 
 
@@ -110,46 +110,46 @@ S.tonicsets = {[],[]};          % no tonic response components
 S.theta = pspm_sf_theta;         % get SF CRF
 S.maxres = 0.001 * S.n;         % residual threshold per sample
 S.options = opt;
-        
+
 % generate over-complete dictionary D.D
 % -------------------------------------------------------------------------
 
 % generate SF templates ---
 for iSet = 1:numel(S.sfsets)
-    % generate each set of predefined SF by calling ODE
-    Xt = zeros(3, 1);
-    ut = S.dt:S.dt:S.sfduration;
-    ut(2, :) = numel(S.sfsets{iSet})/2;
-    in.dt = S.dt;
-    Theta = [S.theta(1:3), S.sfsets{iSet}];
-    for k = 1:(size(ut, 2) - 1)
-        Xt(:, k + 1) = f_SF(Xt(:, k), Theta, ut(:, k), in);
-    end;
-    % extract SF amplitude and normalise to 1 unit
-    if iSet == 1
-        sfa = max(Xt(1, :));
-    end;
-    sf{iSet} = Xt(1, :)/sfa; 
+  % generate each set of predefined SF by calling ODE
+  Xt = zeros(3, 1);
+  ut = S.dt:S.dt:S.sfduration;
+  ut(2, :) = numel(S.sfsets{iSet})/2;
+  in.dt = S.dt;
+  Theta = [S.theta(1:3), S.sfsets{iSet}];
+  for k = 1:(size(ut, 2) - 1)
+    Xt(:, k + 1) = f_SF(Xt(:, k), Theta, ut(:, k), in);
+  end;
+  % extract SF amplitude and normalise to 1 unit
+  if iSet == 1
+    sfa = max(Xt(1, :));
+  end;
+  sf{iSet} = Xt(1, :)/sfa;
 end;
 
 % initialise D.D ---
-D.D = zeros(numel(S.sfsets) * S.n + S.ntail + numel(S.tonicsets{1}) * numel(S.tonicsets{2}), S.n); 
+D.D = zeros(numel(S.sfsets) * S.n + S.ntail + numel(S.tonicsets{1}) * numel(S.tonicsets{2}), S.n);
 
 % model atoms for SF tail ---
 for k = 1:S.ntail
-    D.D(k, 1:min(S.n, S.nsf - S.ntail + k - 1)) = sf{1}((S.ntail - k + 2):min(S.nsf, S.ntail - k + 1 + S.n));
-    D.tindx(k) = 1 - (S.ntail - k + 1) .* S.dt; 
+  D.D(k, 1:min(S.n, S.nsf - S.ntail + k - 1)) = sf{1}((S.ntail - k + 2):min(S.nsf, S.ntail - k + 1 + S.n));
+  D.tindx(k) = 1 - (S.ntail - k + 1) .* S.dt;
 end;
 Dindx = k;
 
 % model atoms for SF occuring in data segment --
 for iSet = 1:numel(S.sfsets)
-    maxn = S.n;
-    for k = 1:maxn
-        D.D(Dindx + k, k:min(k + S.nsf - 1, S.n)) = sf{iSet}(1:min(S.nsf, S.n - k + 1));
-        D.tindx(Dindx + k) = 1 + (k - 1) .* S.dt;
-    end;
-    Dindx = Dindx + k;
+  maxn = S.n;
+  for k = 1:maxn
+    D.D(Dindx + k, k:min(k + S.nsf - 1, S.n)) = sf{iSet}(1:min(S.nsf, S.n - k + 1));
+    D.tindx(Dindx + k) = 1 + (k - 1) .* S.dt;
+  end;
+  Dindx = Dindx + k;
 end;
 D.phasicterms = Dindx;
 
@@ -157,12 +157,12 @@ Dindx = Dindx + 1;
 
 % model tonic atoms
 for ia = 1:numel(S.tonicsets{1})
-    for ib = 1:numel(S.tonicsets{2})
-        D.D(Dindx, :) = S.tonicsets{1}(ia) + (1:S.n) * S.dt * S.tonicsets{2}(ib);
-        D.D(Dindx + 1, :) = (S.tonicsets{1}(ia) + S.n * S.dt * S.tonicsets{2}(ib)) - (1:S.n) * S.dt * S.tonicsets{2}(ib);
-        D.tindx(Dindx + (0:1)) = NaN;
-        Dindx = Dindx + 2;
-    end;
+  for ib = 1:numel(S.tonicsets{2})
+    D.D(Dindx, :) = S.tonicsets{1}(ia) + (1:S.n) * S.dt * S.tonicsets{2}(ib);
+    D.D(Dindx + 1, :) = (S.tonicsets{1}(ia) + S.n * S.dt * S.tonicsets{2}(ib)) - (1:S.n) * S.dt * S.tonicsets{2}(ib);
+    D.tindx(Dindx + (0:1)) = NaN;
+    Dindx = Dindx + 2;
+  end;
 end;
 
 % % normalise D.D and retain original amplitudes --
@@ -171,7 +171,7 @@ D.aD = sqrt(diag(D.D*D.D'));
 D.D = D.D./repmat(D.aD, 1, size(D.D, 2));
 
 % clear local variables ---
-clear Xt ut in Theta k iSet sfa maxsn D.Dindx 
+clear Xt ut in Theta k iSet sfa maxsn D.Dindx
 
 % prepare data
 % -------------------------------------------------------------------------
@@ -193,31 +193,31 @@ S.diagnostics.error = NaN; % error
 
 % run algorithm ---
 while S.cont
-    % remove used atoms from dictionary
-    S.Dind = find(~ismember(1:(size(D.D, 1)), ind));
-    S.Dtemp = D.D(S.Dind, :);
-    % compute inner product
-    anew = S.Dtemp * S.Yres;
-    % search for largest value and retain index
-    [a(k, 1), tempindx] = max(anew);
-    % translate temporary index into index for entire dictionary
-    ind(k, 1) = S.Dind(tempindx);
-    % stopping criterion: negative and zero values
-    if a(k, 1) <=0
-        a(k) = []; ind(k) = []; 
-        S.cont = 0;
-        S.diagnostics.neg = 1;
-    else
-        % compute amplitude in original values
-        asf(k, 1) = a(k)/D.aD(ind(k));
-        % compute residual
-        S.Yres = S.Yres - a(k) * D.D(ind(k), :)';  
-        % stopping criteria: smaller than threshold, maximum number of sf 
-        if sum(S.Yres.^2) < S.maxres || k >= S.maxsf
-            S.cont = 0;
-        end;
-        k = k + 1;
+  % remove used atoms from dictionary
+  S.Dind = find(~ismember(1:(size(D.D, 1)), ind));
+  S.Dtemp = D.D(S.Dind, :);
+  % compute inner product
+  anew = S.Dtemp * S.Yres;
+  % search for largest value and retain index
+  [a(k, 1), tempindx] = max(anew);
+  % translate temporary index into index for entire dictionary
+  ind(k, 1) = S.Dind(tempindx);
+  % stopping criterion: negative and zero values
+  if a(k, 1) <=0
+    a(k) = []; ind(k) = [];
+    S.cont = 0;
+    S.diagnostics.neg = 1;
+  else
+    % compute amplitude in original values
+    asf(k, 1) = a(k)/D.aD(ind(k));
+    % compute residual
+    S.Yres = S.Yres - a(k) * D.D(ind(k), :)';
+    % stopping criteria: smaller than threshold, maximum number of sf
+    if sum(S.Yres.^2) < S.maxres || k >= S.maxsf
+      S.cont = 0;
     end;
+    k = k + 1;
+  end;
 end;
 
 S.diagnostics.num = numel(a); % number of iterations
@@ -256,7 +256,7 @@ out.S = S;
 
 % only add field D if opt.diagnostics is set to true.
 if opt.diagnostics
-    out.D = D;
+  out.D = D;
 end;
 out.ind = ind;
 out.sortind = sortind;
@@ -269,12 +269,12 @@ out.time = toc(tstart);
 % diagnostic plot
 % -------------------------------------------------------------------------
 if opt.dispwin
-    figure; 
-    ind = ind(out.a > S.threshold);
-    plot(Yhatprime, 'g'); hold on
-    plot(y, 'k'); 
-    plot(D.D(ind, :)', 'b');
-    plot(Yhat, 'r');
+  figure;
+  ind = ind(out.a > S.threshold);
+  plot(Yhatprime, 'g'); hold on
+  plot(y, 'k');
+  plot(D.D(ind, :)', 'b');
+  plot(Yhat, 'r');
 end;
 
 

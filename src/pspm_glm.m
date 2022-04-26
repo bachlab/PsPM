@@ -154,7 +154,7 @@ function glm = pspm_glm(model, options)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 glm = struct([]); % output model structure
@@ -270,7 +270,7 @@ if isfield(options,'exclude_missing')
 end
 
 options.overwrite = ~pspm_overwrite(model.modelfile, options);
-	
+
 
 if ischar(model.datafile)
   model.datafile={model.datafile};
@@ -402,7 +402,7 @@ else
   end
   if numel(model.missing) ~= nFile
     warning('ID:number_of_elements_dont_match',...
-     'Same number of data files and missing value definitions is needed.'); return;
+      'Same number of data files and missing value definitions is needed.'); return;
   end
   for iSn = 1:nFile
     if isempty(model.missing{iSn})
@@ -411,7 +411,7 @@ else
       [sts, missing{iSn}] = pspm_get_timing('epochs', model.missing{iSn}, 'seconds');
     end
     if sts == -1, warning('ID:invalid_input',...
-     'Failed to call pspm_get_timing'); return; end
+        'Failed to call pspm_get_timing'); return; end
   end
 end
 
@@ -430,7 +430,7 @@ else
   end
   if numel(model.nuisance) ~= nFile
     warning('ID:number_of_elements_dont_match',...
-     'Same number of data files and nuisance regressor files is needed.'); return;
+      'Same number of data files and nuisance regressor files is needed.'); return;
   end
 
   for iSn = 1:nFile
@@ -446,18 +446,18 @@ else
         end
       catch
         warning('ID:invalid_file_type',...
-         'Unacceptable file format or non-existing file for nuisance file in session %01.0f', iSn); return;
+          'Unacceptable file format or non-existing file for nuisance file in session %01.0f', iSn); return;
       end
       if size(R{iSn}, 1) ~= numel(y{iSn})
         warning('ID:number_of_elements_dont_match',...
-         'Nuisance regressors for session %01.0f must have same number of data points as observed data.', iSn); return;
+          'Nuisance regressors for session %01.0f must have same number of data points as observed data.', iSn); return;
       end
     end
     if iSn == 1
       nR = size(R{iSn}, 2);
     elseif size(R{iSn}, 2) ~= nR
       warning('ID:number_of_elements_dont_match',...
-       'Nuisance regressors for all sessions must have the same number of columns'); return;
+        'Nuisance regressors for all sessions must have the same number of columns'); return;
     end
   end
 end
@@ -817,13 +817,13 @@ glm.regscale((end+1):(end+iSn)) = 1;
 perc_missing = 1 - sum(glm.M)/length(glm.M);
 if perc_missing >= 0.1
   if sr == Xfilter.sr
-  warning('ID:invalid_input', ...
-    ['More than 10% of input data was filtered out due to missing epochs. ',...
-    'Results may be inaccurate.']);
+    warning('ID:invalid_input', ...
+      ['More than 10% of input data was filtered out due to missing epochs. ',...
+      'Results may be inaccurate.']);
   else
     warning('ID:invalid_input', ...
-    ['More than 10% of input data was filtered out due to missing epochs, ',...
-    'which is possibly caused by downsampling. Results may be inaccurate.']);
+      ['More than 10% of input data was filtered out due to missing epochs, ',...
+      'which is possibly caused by downsampling. Results may be inaccurate.']);
   end
 end
 glm.YM = glm.Y;

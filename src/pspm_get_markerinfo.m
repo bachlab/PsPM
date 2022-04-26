@@ -34,7 +34,7 @@ function [sts, markerinfo] = pspm_get_markerinfo(fn, options)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 markerinfo = [];

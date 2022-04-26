@@ -7,15 +7,15 @@
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 fs = filesep;
 if settings.scrpath, rmpath(settings.path), end;
 
 if any(contains(path, 'VBA'))
-    rmpath(pspm_path('ext','VBA'));
-    rmpath(pspm_path('ext','VBA','subfunctions'));
-    rmpath(pspm_path('ext','VBA','stats&plots'));
+  rmpath(pspm_path('ext','VBA'));
+  rmpath(pspm_path('ext','VBA','subfunctions'));
+  rmpath(pspm_path('ext','VBA','stats&plots'));
 end
 
 clear settings

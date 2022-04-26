@@ -6,7 +6,7 @@ function [sts, data]=pspm_get_blink_l(import)
 %   [sts, data]= pspm_get_blink_l(import)
 %   with import.data: column vector of waveform data
 %        import.sr: sample rate
-%  
+%
 %__________________________________________________________________________
 % PsPM 4.0.2
 % (C) 2018 Laure Ciernik
@@ -14,7 +14,7 @@ function [sts, data]=pspm_get_blink_l(import)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 

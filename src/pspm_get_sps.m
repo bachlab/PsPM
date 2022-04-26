@@ -11,7 +11,7 @@ function [sts, data] = pspm_get_sps(import)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 

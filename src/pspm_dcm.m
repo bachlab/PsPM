@@ -7,7 +7,7 @@ function dcm = pspm_dcm(model, options)
 % Both flexible-latency (within a response window) and fixed-latency
 % (evoked after a specified event) responses can be modelled.
 % For fixed responses, delay and dispersion are assumed to be constant
-% (either pre-determined or estimated from the data), while for flexible 
+% (either pre-determined or estimated from the data), while for flexible
 % responses, both are estimated for each individual trial.
 % Flexible responses can for example be anticipatory, decision-related,
 % or evoked with unknown onset.
@@ -28,12 +28,12 @@ function dcm = pspm_dcm(model, options)
 %	┃             or two columns (flexible response).
 %	┃             All matrices in the array need to have the same number of rows,
 %	┃             i.e. the event structure must be the same for every trial.
-%	┃             If this is not the case, include "dummy" events with 
+%	┃             If this is not the case, include "dummy" events with
 %	┃             negative onsets.
 %	┃ Optional fields
-% ┣━.missing    Allows to specify missing (e. g. artefact) epochs in the 
+% ┣━.missing    Allows to specify missing (e. g. artefact) epochs in the
 %	┃             data file.
-%	┃             See pspm_get_timing for epoch definition; specify a cell 
+%	┃             See pspm_get_timing for epoch definition; specify a cell
 %	┃             array for multiple input files.
 %	┃             This must always be specified in SECONDS.
 %	┃             Default: no missing values
@@ -63,7 +63,7 @@ function dcm = pspm_dcm(model, options)
 %               dispersion (0.3 s SD) but flexible latency.
 % options
 %	┃ Response function options
-% ┣━.crfupdate  Update CRF priors to observed SCRF, or use pre-estimated 
+% ┣━.crfupdate  Update CRF priors to observed SCRF, or use pre-estimated
 %	┃             priors (default)
 % ┣━.indrf      Estimate the response function from the data.
 %	┃             Default: 0.
@@ -99,14 +99,14 @@ function dcm = pspm_dcm(model, options)
 %	┃             is used for contrast manager only (e.g. condition descriptions)
 % ┗━.eventnames
 %               Cell array of names for individual events,
-%               in the order they are specified in the model.timing array - 
+%               in the order they are specified in the model.timing array -
 %               to be used for display and export only
 % ● OUTPUT
 %	fn            Name of the model file.
 %	dcm           Model struct.
 %
 % Output units: all timeunits are in seconds; eSCR and aSCR amplitude are
-% in SN units such that an eSCR SN pulse with 1 unit amplitude causes an 
+% in SN units such that an eSCR SN pulse with 1 unit amplitude causes an
 % eSCR with 1 mcS amplitude
 %
 % pspm_dcm can handle NaN values in data channels. Either by specifying
@@ -115,7 +115,7 @@ function dcm = pspm_dcm(model, options)
 % in the inversion; otherwise the data will be split into subsessions that
 % are inverted independently. The results will be unchanged, and events
 % within missing epochs will simply be set to NaN.  NaN periods shorter than
-% model.substhresh are interpolated for averages and principal response 
+% model.substhresh are interpolated for averages and principal response
 % components.
 %
 % pspm_dcm calculates the inter-trial intervals as the duration between the
@@ -130,27 +130,27 @@ function dcm = pspm_dcm(model, options)
 %   2. when computing the PCA from all the trials in all the sessions.
 %
 % In case of case (2), after each trial, all the samples in
-% the period with duration equal to the just mentioned overall min ITI 
-% value is used as a row of the input matrix. Since this minimum does not 
-% use the min ITI value of the last trial in each session, the sample 
-% period may be longer than the ITI value of the last trial. In such a case, 
+% the period with duration equal to the just mentioned overall min ITI
+% value is used as a row of the input matrix. Since this minimum does not
+% use the min ITI value of the last trial in each session, the sample
+% period may be longer than the ITI value of the last trial. In such a case,
 % pspm_dcm is not able to compute the PCA and emits a warning.
 %
 % The rationale behind this behaviour is that we observed that ITI value of
-% the last trial in a session might be much smaller than the usual ITI 
-% values. For example, this can happen when a long missing data section 
-% starts very soon after the beginning of a trial. If this very small ITI 
-% value is used to define the sample periods after each trial, nearly all 
-% the trials use much less than available amount of samples in both case 
-% (1) and (2). Instead, we aim to use as much data as possible in (1), and 
+% the last trial in a session might be much smaller than the usual ITI
+% values. For example, this can happen when a long missing data section
+% starts very soon after the beginning of a trial. If this very small ITI
+% value is used to define the sample periods after each trial, nearly all
+% the trials use much less than available amount of samples in both case
+% (1) and (2). Instead, we aim to use as much data as possible in (1), and
 % perform (2) only if this edge case is not present.
 %
 % REFERENCES
 % (1) Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010).
-%     Dynamic causal modelling of anticipatory skin conductance changes. 
+%     Dynamic causal modelling of anticipatory skin conductance changes.
 %     Biological Psychology, 85(1), 163-70
 % (2) Staib, M., Castegnetti, G., & Bach, D. R. (2015).
-%     Optimising a model-based approach to inferring fear learning from 
+%     Optimising a model-based approach to inferring fear learning from
 %     skin conductance responses.
 %     Journal of Neuroscience Methods, 255, 131-138.
 %
@@ -161,7 +161,7 @@ function dcm = pspm_dcm(model, options)
 %% 1 Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 
@@ -695,7 +695,7 @@ if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
   % extract data
   winsize = floor(model.sr * min([proc_miniti 10]));
   D = [];
-	c = 1;
+  c = 1;
   valid_newevents = sbs_newevents{2}(proc_subsessions);
   for isbSn = 1:numel(model.scr)
     scr_sess = model.scr{isbSn};
@@ -868,8 +868,8 @@ end
 function [datacol, warnings] = ...
   get_data_after_trial_filling_with_nans_when_necessary(...
   scr_sess, win, n, isbSn, sbs_iti, proc_miniti, warnings)
-% Try to get all the data elements after the end of the trial n in session 
-% isbSn. Indices of the elements to return are stored in win. In case these 
+% Try to get all the data elements after the end of the trial n in session
+% isbSn. Indices of the elements to return are stored in win. In case these
 % indices are larger than size of scr_sess{isbSn}, then fill the
 % rest of the data with NaN values.
 datacol = NaN(1, numel(win));

@@ -17,7 +17,7 @@ function varargout = pspm_display(varargin)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 
@@ -92,18 +92,18 @@ if(numel(varargin)) == 1
   [~,filename_display,~] = fileparts(filename);
   handles.tag_summary_source_file_content.String = filename_display;
   update_summary_list(handles);
-  
+
   % handles.text_file_summary = filename;
   % text_file_summary = ['Data source: ', filename, newline, newline, ...
   %         'Duration: ', num2str(info.duration), newline,...
   %         'Import date: ', info.importdate, newline, ...
   %         'Position of marker: ', num2str(filestruct.posofmarker)];
   %     set(handles.text_file_summary, 'String', text_file_summary);
-  
+
   guidata(hObject, handles);
-  
+
   % ---add text to wave listbox--------------------------------------
-  
+
   listitems{1,1} = 'none';
   handles.prop.wavechans(1) = 0;
   j = 2;
@@ -114,10 +114,10 @@ if(numel(varargin)) == 1
       j = j+1;
     end
   end
-  
+
   set(handles.list_wave_channel,'String',listitems);
   clear listitems
-  
+
   % ---add text to event listbox & activate additional options-------
   listitems{1,1} = 'none';
   handles.prop.eventchans(1) = 0;
@@ -131,11 +131,11 @@ if(numel(varargin)) == 1
       set(handles.option_extra,'Enable','on');
     end
   end
-  
+
   set(handles.list_event_channel,'String',listitems);
   set(handles.button_autoscale,'Value',0);
   set(handles.button_all,'Value',1);
-  
+
 elseif numel(varargin)>1
   warning('Too many input arguments. Inputs 2:end ignored. ');
 end
@@ -432,25 +432,25 @@ mesg = 'select pspm_datafiles to display';
 [filename,sts] = spm_select(1,typ,mesg,sel,wd);
 
 if not(sts == 0)
-  
+
   handles.name = filename;
   [~, handles.info, handles.data, ~] = pspm_load_data(filename,0);
   handles.name = filename;
   [~,filename_display,~] = fileparts(filename);
   handles.tag_summary_source_file_content.String = filename_display;
   update_summary_list(handles);
-  
+
   guidata(hObject, handles);
-  
+
   % ---set wave and event channel value to none ---------------------
   handles.prop.wave = 'none';
   set(handles.list_wave_channel,'Value',1)
-  
+
   handles.prop.event = 'none';
   set(handles.list_event_channel,'Value',1)
-  
+
   % ---add text to wave listbox--------------------------------------
-  
+
   listitems{1,1} = 'none';
   handles.prop.wavechans(1) = 0;
   j = 2;
@@ -461,10 +461,10 @@ if not(sts == 0)
       j = j+1;
     end
   end
-  
+
   set(handles.list_wave_channel,'String',listitems);
   clear listitems
-  
+
   % ---add text to event listbox & activate additional options-------
   listitems{1,1}  =  'none';
   handles.prop.eventchans(1)  =  0;
@@ -478,11 +478,11 @@ if not(sts == 0)
       set(handles.option_extra,'Enable','on');
     end
   end
-  
+
   set(handles.list_event_channel,'String',listitems);
   set(handles.button_autoscale,'Value',0);
   set(handles.button_all,'Value',1);
-  
+
 elseif numel(varargin)>1
   warning('Too many input arguments. Inputs 2:end ignored. ');
 end
@@ -772,7 +772,7 @@ if isempty(wave)
       'Fontsize',settings.ui.FontSizeText)
   else
     f = msgbox(['Nothing to display. ',...
-    'Please select at least one channel.'], 'Error');
+      'Please select at least one channel.'], 'Error');
   end
 else
   y = (0:1/sr.wave:(length(wave)/sr.wave));
@@ -782,7 +782,7 @@ else
   plot(y, wave, 'Color', 'k'); % plot wave channel
   legend(handles.prop.wave);
   % set basline value for the event chanel
-  base(1) = min(wave)-.1*min(wave); 
+  base(1) = min(wave)-.1*min(wave);
   base(2) = min(wave)-(max(wave)-min(wave));
   % Plot heart beats
   if ~isempty(hbeat)
@@ -846,8 +846,8 @@ else
     hold on ; h = stem(y,EVENTS,'r');
     hbase = get(h,'Baseline');
     legend(handles.prop.wave,...
-    [handles.list_event_channel.String{handles.prop.idevent},...
-    ' events'])
+      [handles.list_event_channel.String{handles.prop.idevent},...
+      ' events'])
     if strcmp(handles.prop.event,'extra')
       set(hbase,'BaseValue',base(2),'Visible','off');
     elseif strcmp(handles.prop.event,'integrated')

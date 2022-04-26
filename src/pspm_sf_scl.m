@@ -4,7 +4,7 @@ function scl = pspm_sf_scl(scr, sr, options)
 % FORMAT:
 % auc = pspm_sf_scl(scr, sr)
 %
-% REFERENCE: 
+% REFERENCE:
 %
 %__________________________________________________________________________
 % PsPM 3.0
@@ -13,13 +13,13 @@ function scl = pspm_sf_scl(scr, sr, options)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 
 % check input arguments
 if nargin < 1
-    warning('No data specified'); return;
+  warning('No data specified'); return;
 end;
 
 scl = mean(scr);

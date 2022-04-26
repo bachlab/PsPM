@@ -8,7 +8,7 @@ function varargout = pspm_review(varargin)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 

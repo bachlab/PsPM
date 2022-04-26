@@ -11,7 +11,7 @@ function [sts, data] = pspm_get_sps_r(import)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 
@@ -19,7 +19,7 @@ sts = -1;
 data.data = import.data(:);
 
 % add header
-data.header.chantype = 'sps_r'
+data.header.chantype = 'sps_r';
 data.header.units = import.units;
 data.header.sr = import.sr;
 data.header.range = import.range;
@@ -28,4 +28,3 @@ data.header.range = import.range;
 sts = 1;
 
 end
-

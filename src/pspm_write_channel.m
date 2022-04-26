@@ -38,7 +38,7 @@ function [sts, infos] = pspm_write_channel(fn, newdata, channel_action, options)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 outinfos = struct();

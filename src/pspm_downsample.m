@@ -12,15 +12,15 @@ function [sts data] = pspm_downsample(data, freqratio)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 
 %% check input arguments
 if nargin < 2
-    warning('Not enough input arguments.'); return
+  warning('Not enough input arguments.'); return
 elseif floor(freqratio) ~= freqratio
-    warning('Frequency ratio must be integer.'); return
+  warning('Frequency ratio must be integer.'); return
 end;
 
 data = data(freqratio:freqratio:end);

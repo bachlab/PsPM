@@ -8,7 +8,7 @@ function pspm_ui_initialisation(hObject,handles,window)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 
@@ -129,8 +129,8 @@ switch window
     hObject.Position(4) = settings.ui.DisplayHeight;
     hObject.Resize = 'on';
   case 'review'
-  	handles.button_all.FontName = settings.ui.FontNameText;
-  	hObject.Resize = 'on';
+    handles.button_all.FontName = settings.ui.FontNameText;
+    hObject.Resize = 'on';
 end
 
 end

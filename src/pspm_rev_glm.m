@@ -23,7 +23,7 @@ function fig = pspm_rev_glm(modelfile, glm, plotNr)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 

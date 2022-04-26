@@ -15,17 +15,12 @@ global settings
 if isempty(settings)
 	pspm_init;
 end
-sts = -1;
-
-% assign respiratory data
+%% assign respiratory data
 data.data = import.data(:);
-
-% add header
+%% add header
 data.header.chantype = 'ecg';
 data.header.units = import.units;
 data.header.sr = import.sr;
-
-% check status
+%% check status
 sts = 1;
-
-return;
+return
