@@ -45,6 +45,7 @@ classdef pspm_trim_test < matlab.unittest.TestCase
     end
   end
   methods (Test)
+    %% Invalid input arguments
     function invalid_inputargs(testCase)
       testCase.verifyWarning(@()pspm_trim(testCase.fn, [1 2], 5, 'marker'),...
         'ID:invalid_input', 'invalid_inputargs test 1');
@@ -63,21 +64,25 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       testCase.verifyWarning(@()pspm_trim(testCase.fn, 0, 5, [5 4]),...
         'ID:invalid_input', 'invalid_inputargs test 8');
     end
+    %% Testing 'marker' as reference
     function marker_tests(testCase)
       for k=1:testCase.numof_markertests
         trimtest(testCase, testCase.fn, 'marker', k, 2);
       end
     end
+    %% Testing 'file' as reference
     function file_tests(testCase)
       for k=1:testCase.numof_filetests
         trimtest(testCase, testCase.fn, 'file', k, 2);
       end
     end
+    %% Numeric reference tests
     function num_tests(testCase)
       for k=1:testCase.numof_numtests
         trimtest(testCase, testCase.fn, 'num', k, 2);
       end
     end
+    %% Multiple file reference tests
     function multiple_files(testCase)
       %with datafile input
       fn2 = 'trim_test_2.mat';
@@ -114,7 +119,7 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       import matlab.unittest.constraints.IsEqualTo;
       testCase.verifyThat(act_val, IsEqualTo(exp_val), 'multiple_files test with stuct input');
     end
-    %option tests
+    %% Option tests (marker channel number option)
     function marker_chan_num_option_test(testCase)
       options.marker_chan_num = 3;
       newdatafile = testCase.verifyWarning(@() ...
@@ -206,9 +211,9 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       exp_val.infos.trimpoints = [nfrom nto];
       exp_val.infos.duration = nto - nfrom;
     end
-    
+
     function [from, to, exp_val, warningID, testmsg] = filetest_1(testCase)
-			% reference = 'file' tests
+      % reference = 'file' tests
       testmsg = 'filetest 1';
       warningID = 'ID:marker_out_of_range';
       [~, exp_val.infos, exp_val.data] = pspm_load_data(testCase.fn,0);
@@ -245,7 +250,7 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       exp_val.infos.duration = to - from;
     end
     function [from, to, exp_val, warningID, testmsg, num] = numtest_1(testCase)
-			% reference = [a b] (numeric) tests
+      % reference = [a b] (numeric) tests
       testmsg = 'numtest 1';
       warningID = 'ID:marker_out_of_range';
       [~, exp_val.infos, exp_val.data] = pspm_load_data(testCase.fn,0);

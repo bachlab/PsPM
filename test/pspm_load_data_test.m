@@ -76,6 +76,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
     end
   end
   methods (Test)
+  	%% Invalid input arguments
     function invalid_inputargs(this)
   		% Test group 1: check warnings
       % test 1
@@ -114,6 +115,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
         'ID:invalid_input', ...
         'invalid_inputargs test 8');
     end
+    %% Invalid datafile
     function invalid_datafile(this)
       if exist(this.fn2, 'file')
         delete(this.fn2);
@@ -223,14 +225,16 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       clear infos data chan
       delete(this.fn2);
     end
-    function valid_datafile_0(this) % return all channels
+    %% Return all channels
+    function valid_datafile_0(this)
       [~, infos, data] = pspm_load_data(this.fn);
       act_val.infos = infos;
       act_val.data = data;
       exp_val = load(this.fn);
       this.compare_data(act_val, exp_val);
     end
-    function valid_datafile_1(this) % return all channels when input is a struct
+    %% Return all channels (struct input) 
+    function valid_datafile_1(this)
       struct = load(this.fn);
       [~, infos, data] = pspm_load_data(struct);
       act_val.infos = infos;
@@ -238,7 +242,8 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       exp_val = load(this.fn);
       this.compare_data(act_val, exp_val);
     end
-    function valid_datafile_2(this) % return one channel
+    %% Return one channel
+    function valid_datafile_2(this)
       chan = 2;
       [~, infos, data] = pspm_load_data(this.fn, chan);
       act_val.infos = infos;
@@ -247,7 +252,8 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       exp_val.data = exp_val.data(chan);
       this.compare_data(act_val, exp_val);
     end
-    function valid_datafile_3(this) % return multiple channels
+    %% Return multiple channels
+    function valid_datafile_3(this)
       chan = [3 5];
       [~, infos, data] = pspm_load_data(this.fn, chan);
       act_val.infos = infos;
@@ -256,7 +262,8 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       exp_val.data = exp_val.data(chan);
       this.compare_data(act_val, exp_val);
     end
-    function valid_datafile_4(this) % return scr channels
+    %% Return scr channels
+    function valid_datafile_4(this)
       chan = 'scr';
       [~, infos, data] = pspm_load_data(this.fn, chan);
       act_val.infos = infos;
@@ -265,7 +272,8 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       exp_val.data = exp_val.data(this.pspm_channels);
       this.compare_data(act_val, exp_val);
     end
-    function valid_datafile_5(this) % return event channels
+    %% Return event channels
+    function valid_datafile_5(this)
       chan = 'events';
       [~, infos, data] = pspm_load_data(this.fn, chan);
       act_val.infos = infos;
@@ -274,7 +282,8 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       exp_val.data = exp_val.data(this.event_channels);
       this.compare_data(act_val, exp_val);
     end
-    function valid_datafile_6(this) % save data
+    %% Save data 
+    function valid_datafile_6(this)
       chan = 0;
       [~, infos, data] = pspm_load_data(this.fn, chan); % load
       save.data = data;
