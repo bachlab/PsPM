@@ -70,8 +70,7 @@ data = struct;
 mdltype = 'no valid model';
 mdltypes = settings.first;
 
-% check input arguments & set defaults
-% -------------------------------------------------------------------------
+%% check input arguments & set defaults
 % check missing input --
 if nargin < 1
   warning('ID:invalid_input', 'No datafile specified'); return;
@@ -79,7 +78,7 @@ elseif nargin < 2
   action = 'none';
 elseif any(strcmpi(action, {'save', 'savecon'})) && nargin < 3
   warning('ID:missing_data', 'Save failed, no data provided'); return;
-end;
+end
 
 errmsg = sprintf('Data file %s is not a valid PsPM file:\n', fn);
 
@@ -87,11 +86,11 @@ errmsg = sprintf('Data file %s is not a valid PsPM file:\n', fn);
 [pth, filename, ext] = fileparts(fn);
 if isempty(ext)
   ext = '.mat';
-end;
+end
 fn = fullfile(pth, [filename, ext]);
 
-try options.overwrite = (options.overwrite == 1); catch, options.overwrite = 0; end;
-try options.dont_ask_overwrite = (options.dont_ask_overwrite == 1); catch, options.dont_ask_overwrite = 0; end;
+try options.overwrite = (options.overwrite == 1); catch, options.overwrite = 0; end
+try options.dont_ask_overwrite = (options.dont_ask_overwrite == 1); catch, options.dont_ask_overwrite = 0; end
 
 % check whether file exists --
 if exist(fn, 'file')
@@ -116,13 +115,13 @@ if ~strcmpi(action, 'save')
     indata = load(fn);
   catch
     errmsg = [errmsg, 'Not a matlab data file.']; warning('ID:invalid_input', errmsg); return;
-  end;
+  end
 else
   indata = savedata;
-end;
+end
 
 % check for SCRalyze 1.x files --
-if isfield('indata', 'dsm'), warning('ID:SCRalyze_1_file', 'SCRalyze 1.x compatibility is discontinued'); return; end;
+if isfield('indata', 'dsm'), warning('ID:SCRalyze_1_file', 'SCRalyze 1.x compatibility is discontinued'); return; end
 
 % check file contents
 % ------------------------------------------------------------------------
@@ -134,7 +133,7 @@ elseif numel(mdltype) > 1
   warning('ID:invalid_data_structure', '%sMore than one model type in this file', errmsg); return;
 else
   mdltype = mdltypes{mdltype};
-end;
+end
 
 % check model content --
 if ~isfield(indata.(mdltype), 'modelfile')
@@ -171,7 +170,7 @@ elseif numel(indata.(mdltype).names) ~= size(indata.(mdltype).stats, 2)
   warning('ID:invalid_data_strucutre', '%sNumbers of names and parameters do not match.', errmsg); return;
 elseif numel(indata.(mdltype).trlnames) ~= size(indata.(mdltype).stats,1)
   warning('ID:invalid_data_structure', '%sNumbers of trial names and parameters do not match.', errmsg); return;
-end;
+end
 
 % Backwards compatibility for SF-Models
 % Transform old sf-structure into new structure
@@ -194,7 +193,7 @@ if strcmpi(mdltype, 'sf') && ~isfield(indata.(mdltype), 'model')
       end
       indata.sf = rmfield(indata.sf, methods{k});
       i = i + 1;
-    end;
+    end
   end
 end
 
@@ -203,22 +202,21 @@ if ~isfield(indata.(mdltype), 'con')
   conflag = 0;
 else
   conflag = 1;
-end;
+end
 if ~isfield(indata.(mdltype), 'recon')
   reconflag = 0;
 else
   reconflag = 1;
-end;
+end
 
 % if not glm, nor pfm
 % create condition names --
 if ~strcmpi(mdltype, 'glm') && ~strcmpi(mdltype, 'pfm')
   indata.(mdltype).condnames = ...
     unique(indata.(mdltype).trlnames(cellfun(@ischar,indata.(mdltype).trlnames)));
-end;
+end
 
-% retrieve file contents
-% -------------------------------------------------------------------------
+%% retrieve file contents
 
 if options.zscored
   if strcmpi(mdltype, 'dcm') && ...
@@ -233,8 +231,9 @@ if options.zscored
     data.zscored = 1;
   else
     data.zscored = 0;
-    warning('ID:invalid_input', ['Z-scoring only available for non-linear models and action ''stats'' or ''cond''. ',...
-      'Not z-scoring data!']);
+    warning('ID:invalid_input', ...
+      ['Z-scoring only available for non-linear models and action ',...
+      '''stats'' or ''cond''. Not z-scoring data!']);
   end
 end
 
@@ -252,7 +251,7 @@ switch action
     if ~strcmpi(mdltype, 'glm')
       data.trlnames = indata.(mdltype).trlnames;
       data.condnames = indata.(mdltype).condnames;
-    end;
+    end
   case 'cond'
     if strcmpi(mdltype, 'glm')
       condindx = 1:(indata.glm.bf.bfno):(numel(indata.glm.stats)-indata.glm.interceptno);
@@ -268,17 +267,17 @@ switch action
       for iCond = 1:numel(indata.(mdltype).condnames)
         condindx = strcmpi(indata.(mdltype).condnames{iCond}, indata.(mdltype).trlnames);
         data.stats(iCond, :) = nanmean(indata.(mdltype).stats(condindx, :), 1);
-      end;
+      end
       data.names = indata.(mdltype).names;
       data.trlnames = indata.(mdltype).trlnames;
       data.condnames = indata.(mdltype).condnames;
-    end;
+    end
   case 'recon'
     if strcmpi(mdltype, 'glm')
       if ~reconflag
         [sts, indata.glm] = pspm_glm_recon(fn);
-        if sts ~= 1, warning('GLM reconstruction not successful.'); return; end;
-      end;
+        if sts ~= 1, warning('GLM reconstruction not successful.'); return; end
+      end
       data.stats = indata.glm.recon;
       data.names = indata.glm.reconnames;
       if isfield(indata.glm,'stats_missing')&& isfield(indata.glm,'stats_exclude')
@@ -288,13 +287,13 @@ switch action
       end
     else
       warning('ID:invalid_input', '%s. ''recon'' option only defined for GLM files', errmsg);
-    end;
+    end
   case 'con'
     if conflag
       data = indata.(mdltype).con;
     else
       data = [];
-    end;
+    end
   case 'all'
     data = indata.(mdltype);
   case 'savecon'
@@ -304,8 +303,7 @@ switch action
     save(fn, '-struct', 'indata', mdltype);
   otherwise
     warning('ID:unknown_action', 'Unknown action. Just checking file. File is valid.'); return;
-end;
-
+end
 
 % set status and return
 sts = 1;

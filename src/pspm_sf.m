@@ -57,11 +57,13 @@ function outfile = pspm_sf(model, options)
 % the output also contains a field .time that contains the inversion time
 % in ms (for DCM and MP)
 % ------------------------------------------------------------------------
+% function revision
+rev = '$Rev$';
 
 % initialise
 % ------------------------------------------------------------------------
 global settings
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 outfile = [];
 
 % check input
@@ -71,7 +73,7 @@ if nargin<1
   errmsg=sprintf('Nothing to do.'); warning('ID:invalid_input', errmsg); return;
 elseif nargin<2
   options = struct();
-end;
+end
 
 if ~isfield(model, 'datafile')
   warning('ID:invalid_input', 'No input data file specified.'); return;
@@ -81,7 +83,7 @@ elseif ~isfield(model, 'timeunits')
   warning('ID:invalid_input', 'No timeunits specified.'); return;
 elseif ~isfield(model, 'timing') && ~strcmpi(model.timeunits, 'file')
   warning('ID:invalid_input', 'No epochs specified.'); return;
-end;
+end
 
 % check faulty input --
 if ~ischar(model.datafile) && ~iscell(model.datafile)
@@ -92,32 +94,32 @@ elseif ~ischar(model.timing) && ~iscell(model.timing) && ~isnumeric(model.timing
   warning('ID:invalid_input', 'Event onsets must be a string, cell, or struct.'); return;
 elseif ~ischar(model.timeunits) || ~ismember(model.timeunits, {'seconds', 'markers', 'samples', 'whole'})
   warning('ID:invalid_input', 'Timeunits (%s) not recognised; only ''seconds'', ''markers'', ''samples'' and ''whole'' are supported', model.timeunits); return;
-end;
+end
 
 % convert single file input to cell --
 if ischar(model.datafile)
   model.datafile={model.datafile};
-end;
+end
 if ischar(model.timing) || isnumeric(model.timing)
   model.timing = {model.timing};
-end;
+end
 if ischar(model.modelfile)
   model.modelfile = {model.modelfile};
-end;
+end
 
 % check number of files --
 if ~strcmpi(model.timeunits, 'whole') && numel(model.datafile) ~= numel(model.timing)
   warning('ID:number_of_elements_dont_match', 'Number of data files and epoch definitions does not match.'); return;
 elseif numel(model.datafile) ~= numel(model.modelfile)
   warning('ID:number_of_elements_dont_match', 'Number of data files and model files does not match.'); return;
-end;
+end
 
 % check methods --
 if ~isfield(model, 'method')
   model.method = {'dcm'};
 elseif ischar(model.method)
   model.method={model.method};
-end;
+end
 if ~iscell(model.method)
   warning('Method needs to be a char or cell array'); return;
 else
@@ -148,12 +150,12 @@ else
         datatype = [1 2 2 2];
       otherwise
         warning('Method %s not supported', model.method{k}); return;
-    end;
-  end;
-end;
+    end
+  end
+end
 
 % check timing --
-if strcmpi(model.timeunits, 'whole');
+if strcmpi(model.timeunits, 'whole')
   epochs = repmat({[1 1]}, numel(model.datafile), 1);
 else
   for iSn = 1:numel(model.datafile)
@@ -161,26 +163,25 @@ else
     if sts == -1
       warning('ID:invalid_input', 'Call of pspm_get_timing failed.');
       return;
-    end;
-  end;
-end;
+    end
+  end
+end
 
 % check filter --
 if ~isfield(model, 'filter')
   model.filter = settings.dcm{2}.filter;
 elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
   warning('ID:invalid_input', 'Filter structure needs a numeric ''down'' field.'); return;
-end;
+end
 
 % set options --
-try model.channel; catch, model.channel = 'scr'; end;
-try options.overwrite; catch, options.overwrite = 0; end;
+try model.channel; catch, model.channel = 'scr'; end
+try options.overwrite; catch, options.overwrite = 0; end
 if ~isfield(options,'marker_chan_num') || ~isnumeric(options.marker_chan_num) || numel(options.marker_chan_num) > 1
   options.marker_chan_num = 0;
-end;
+end
 
-% get data
-% ------------------------------------------------------------------------
+%% get data
 for iFile = 1:numel(model.datafile)
   % user output --
   fprintf('SF analysis: %s ...', model.datafile{iFile});
@@ -188,48 +189,48 @@ for iFile = 1:numel(model.datafile)
   if ~pspm_overwrite(model.modelfile, options); return; end
 
   % get and filter data --
-  [sts, infos, data] = pspm_load_data(model.datafile{iFile}, model.channel);
-  if sts < 0, return; end;
+  [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
+  if sts < 0, return; end
   Y{1} = data{1}.data; sr(1) = data{1}.header.sr;
   model.filter.sr = sr(1);
   [sts, Y{2}, sr(2)] = pspm_prepdata(data{1}.data, model.filter);
   if sts == -1
     warning('ID:invalid_input', 'Call of pspm_prepdata failed.');
     return;
-  end;
+  end
   % check data units --
   if ~strcmpi(data{1}.header.units, 'uS') && any(strcmpi('dcm', method))
     fprintf('\nYour data units are stored as %s, and the method will apply an amplitude threshold in uS. Please check your results.\n', ...
       data{1}.header.units);
-  end;
+  end
   % get marker data --
   if any(strcmp(model.timeunits, {'marker', 'markers'}))
     if options.marker_chan_num
-      [nsts, ninfos, ndata] = pspm_load_data(datafile, options.marker_chan_num);
+      [nsts, ~, ndata] = pspm_load_data(datafile, options.marker_chan_num);
       if nsts == -1
         warning('ID:invalid_input', 'Could not load data');
         return;
-      end;
+      end
       if ~strcmp(ndata{1}.header.chantype, 'marker')
         warning('ID:invalid_option', 'Channel %i is no marker channel. The first marker channel in the file is used instead', options.marker_chan_num);
-        [nsts, ninfos, ndata] = pspm_load_data(datafile, 'marker');
+        [nsts, ~, ~] = pspm_load_data(datafile, 'marker');
         if nsts == -1
           warning('ID:invalid_input', 'Could not load data');
           return;
-        end;
+        end
       end
     else
-      [nsts, ninfos, ndata] = pspm_load_data(datafile, 'marker');
+      [nsts, ~, ~] = pspm_load_data(datafile, 'marker');
       if nsts == -1
         warning('ID:invalid_input', 'Could not load data');
         return;
-      end;
-    end;
+      end
+    end
     events = data{1}.data;
-  end;
-  if sts < 0, return; end;
+  end
+  if sts < 0, return; end
   for iEpoch = 1:size(epochs{iFile}, 1)
-    if iEpoch > 1, fprintf('\n\t\t\t'); end;
+    if iEpoch > 1, fprintf('\n\t\t\t'); end
     fprintf('epoch %01.0f ...', iEpoch);
     for k = 1:numel(method)
       fprintf('%s ', method{k});
@@ -242,14 +243,14 @@ for iFile = 1:numel(model.datafile)
           win = round(events(epochs{1}(iEpoch, :)) * sr(datatype(k)));
         case 'whole'
           win = [1 numel(Y{datatype(k)})];
-      end;
+      end
       if any(win > numel(Y{datatype(k)}) + 1) || any(win < 0)
         warning(sprintf('\nEpoch %2.0f outside of file %s ...', iEpoch, model.modelfile{iFile}));
       else
         % correct issues with using 'round'
         win(1) = max(win(1), 1);
         win(2) = min(win(2), numel(Y{datatype(k)}));
-      end;
+      end
       % collect information --
       sf.model{k}(iEpoch).modeltype = method{k};
       sf.model{k}(iEpoch).boundaries = squeeze(epochs{iFile}(iEpoch, :));
@@ -267,16 +268,16 @@ for iFile = 1:numel(model.datafile)
       else
         sf.model{k}(iEpoch).stats   = invrs;
         sf.stats(iEpoch, k)         = invrs;
-      end;
-    end;
+      end
+    end
     sf.trlnames{iEpoch} = sprintf('Epoch #%d', iEpoch);
-  end;
+  end
   sf.names = method(:);
   sf.infos.date = date;
   sf.infos.file = model.modelfile{iFile};
   sf.modelfile = model.modelfile{iFile};
   sf.data = Y;
-  if exist('events','var'), sf.events = events; end;
+  if exist('events','var'), sf.events = events; end
   sf.input = model;
   sf.options = options;
   sf.modeltype = 'sf';
@@ -286,4 +287,4 @@ for iFile = 1:numel(model.datafile)
   save(model.modelfile{iFile}, 'sf');
   outfile = model.modelfile(iFile);
   fprintf('\n');
-end;
+end
