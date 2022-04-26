@@ -15,14 +15,13 @@ function [sts, import, sourceinfo]  = pspm_get_wdq_n(datafile, import)
 % PsPM 3.0
 % (C) 2012 - 2015 Tobias Moser (University of Zurich)
 
-% $Id$
-% $Rev$
-
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-sourceinfo = []; sts = -1;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
+sourceinfo = [];
 addpath(pspm_path('Import','nwdq')); 
 
 % get external file, using Dataq functions

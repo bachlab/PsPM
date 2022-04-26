@@ -11,10 +11,11 @@ function [sts, data]=pspm_get_saccade_r(import)
 % PsPM 4.0.2
 % (C) 2018 Laure Ciernik
 
-global settings;
-if isempty(settings), pspm_init; end
-
-% initialise status
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
 
 % assign pupil data

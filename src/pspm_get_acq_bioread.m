@@ -13,14 +13,13 @@ function [sts, import, sourceinfo] = pspm_get_acq_bioread(datafile, import)
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
 
-% $Id$
-% $Rev$
-
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-sourceinfo = []; sts = -1;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
+sourceinfo = [];
 
 % load data
 % -------------------------------------------------------------------------

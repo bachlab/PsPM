@@ -91,8 +91,11 @@ function outfile = pspm_import(datafile, datatype, import, options)
 % save individual files for each block, with a filename 'pspm_fn_blk0x.mat'
 
 %% 1 Initialise
-global settings;
-if isempty(settings), pspm_init; end
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 outfile = [];
 
 %% 2 Input argument check & transform

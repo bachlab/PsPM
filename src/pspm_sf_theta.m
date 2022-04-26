@@ -12,14 +12,12 @@ function [theta, sr] = pspm_sf_theta
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
  
-% $Id$
-% $Rev$
-
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-% -------------------------------------------------------------------------
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 
 theta = [0.923581    3.921034    2.159389    1.5339    1.6411756741];
 sr = 10;

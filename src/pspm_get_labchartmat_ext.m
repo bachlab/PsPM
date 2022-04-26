@@ -27,11 +27,13 @@ function [sts, import, sourceinfo] = pspm_get_labchartmat_ext(datafile, import)
 % John Enlow, Windows Development Manager, ADInstruments, New Zealand
 % -------------------------------------------------------------------------
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-sourceinfo = []; sts = -1;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
+sourceinfo = [];
 
 % load & check data
 % -------------------------------------------------------------------------

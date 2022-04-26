@@ -48,11 +48,13 @@ function [sts, import, sourceinfo] = pspm_get_txt(datafile, import)
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 % (c) 2020 Ivan Rojkov (UZH) - added dsv support
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-sourceinfo = []; sts = -1;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
+sourceinfo = [];
 
 % check import structure options
 % -------------------------------------------------------------------------

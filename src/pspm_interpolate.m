@@ -64,10 +64,12 @@ function [sts, outdata] = pspm_interpolate(indata, options)
 % $Id: pspm_interpolate.m 592 2018-09-14 09:01:41Z lciernik $
 % $Rev: 592 $
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 % will return a cell of the same size as the indata
 outdata = {};
 sts = -1;

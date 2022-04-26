@@ -38,11 +38,12 @@ function varargout = pspm_jobman(varargin)
 % $Id$
 % $Rev$
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-% -------------------------------------------------------------------------
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 
 persistent isInitCfg;
 if isempty(isInitCfg) &&  ~(nargin == 1 && strcmpi(varargin{1},'initcfg'))

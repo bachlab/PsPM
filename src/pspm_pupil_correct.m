@@ -67,11 +67,12 @@ function [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm
     %__________________________________________________________________________
     % (C) 2019 Eshref Yozdemir (University of Zurich)
 
-    % initialise
-    % -------------------------------------------------------------------------
-    global settings;
-    if isempty(settings), pspm_init; end
-    sts = -1;
+		%% Initialise
+		global settings
+		if isempty(settings)
+			pspm_init;
+		end
+		sts = -1;
 
     % input checks
     % -------------------------------------------------------------------------

@@ -59,10 +59,11 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 % $Id: pspm_convert_au2unit.m 707 2019-06-14 07:23:41Z esrefo $
 % $Rev: 707 $
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
 out = struct();
 

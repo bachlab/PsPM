@@ -12,11 +12,13 @@ function [sts, b, a] = pspm_butter(order, freqratio, pass)
     % $Id$ 
     % $Rev$
     
-    % initialise
-    % ------------------------------------------------------------------------
-    global settings;
-    if isempty(settings), pspm_init; end;
-    sts = -1; a = []; b = [];
+		%% Initialise
+		global settings
+		if isempty(settings)
+			pspm_init;
+		end
+		sts = -1;
+		a = []; b = [];
     errmsg = ' - please install the signal processing toolbox if you need other filters.';
     
     % check input arguments

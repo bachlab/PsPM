@@ -42,13 +42,12 @@ function out = pspm_sf_mp(scr, sr, opt)
 % (C) 2008-2015 Dominik R Bach (UZH, WTCN)
 % last edited 18.08.2014
 
-% $Id$
-% $Rev$
-
-% initialise
-% ------------------------------------------------------------------------
+%% Initialise
 global settings
-if isempty(settings), pspm_init; end;
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 tstart = tic;
 
 % check input arguments

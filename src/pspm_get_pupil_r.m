@@ -11,13 +11,11 @@ function [sts, data]=pspm_get_pupil_r(import)
 % PsPM 3.1
 % (C) 2015 Tobias Moser (University of Zurich)
 
-% $Id$
-% $Rev$
-
-global settings;
-if isempty(settings), pspm_init; end
-
-% initialise status
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
 
 % assign respiratory data

@@ -24,8 +24,12 @@ function pspm_con2(modelfile, outfile, con, connames, options)
 % $Id$
 % $Rev$ 
 
+%% Initialise
 global settings
-if isempty(settings), pspm_init; end;
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 
 % check input arguments
 if nargin<1

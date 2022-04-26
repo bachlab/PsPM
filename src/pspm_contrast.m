@@ -32,11 +32,12 @@ function varargout = pspm_contrast(varargin)
 % $Id$
 % $Rev$
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-% -------------------------------------------------------------------------
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;

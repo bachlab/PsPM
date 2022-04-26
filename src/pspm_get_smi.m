@@ -79,9 +79,13 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
     %
     % (C) 2019 Eshref Yozdemir (University of Zurich)
 
-    global settings;
-    if isempty(settings), pspm_init; end
-    sourceinfo = []; sts = -1;
+		%% Initialise
+		global settings
+		if isempty(settings)
+			pspm_init;
+		end
+		sts = -1;
+    sourceinfo = [];
     addpath(pspm_path('Import','smi'));
 
     if ~iscell(import)

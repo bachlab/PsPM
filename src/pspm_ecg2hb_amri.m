@@ -94,11 +94,12 @@ function [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
     %__________________________________________________________________________
     % (C) 2019 Eshref Yozdemir (University of Zurich)
 
-    % initialise
-    % -------------------------------------------------------------------------
-    sts = -1;
-    global settings;
-    if isempty(settings), pspm_init; end;
+		%% Initialise
+		global settings
+		if isempty(settings)
+			pspm_init;
+		end
+		sts = -1;
 
     % create default arguments
     % --------------------------------------------------------------

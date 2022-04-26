@@ -10,16 +10,11 @@ function [sts, data]=pspm_get_ecg(import)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
-
-% v002 29.07.2013 changed to 3.0 architecture
-% v001 08.05.2012 Dominik R Bach
-
-global settings;
-if isempty(settings), pspm_init; end;
-
-% initialise status
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
 
 % assign respiratory data

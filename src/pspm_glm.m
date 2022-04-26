@@ -151,10 +151,12 @@ function glm = pspm_glm(model, options)
 % (C) 2008-2016 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 % Updated  2021 Teddy Chao
 
-% initialise & user output
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 glm = struct([]); % output model structure
 tmp = struct([]); % temporary model structure
 

@@ -6,17 +6,13 @@ function [sts, import, sourceinfo] = pspm_get_biotrace(datafile, import)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
-
-% v002 drb 04.08.2013 3.0 architecture
-% v001 drb 22.02.2011
-
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-sourceinfo = []; sts = -1;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
+sourceinfo = [];
 
 % get data
 % -------------------------------------------------------------------------

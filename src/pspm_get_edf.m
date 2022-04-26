@@ -6,14 +6,13 @@ function [sts, import, sourceinfo] = pspm_get_edf(datafile, import)
 % PsPM 3.0
 % (C) 2008-2015 Tobias Moser (University of Zurich)
 
-% $Id$
-% $Rev$
-
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-sourceinfo = []; sts = -1;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
+sourceinfo = [];
 addpath(pspm_path('Import','fieldtrip','fileio')); 
 
 % get data

@@ -67,10 +67,13 @@ function pspm_data_editor_OpeningFcn(hObject, ~, handles, varargin)
 %   handles    structure with handles and user data (see GUIDATA)
 % Varargin
 %   command line arguments to pspm_data_editor (see VARARGIN)
-global settings; % initialise
+
+%% Initialise
+global settings
 if isempty(settings)
-  pspm_init;
+	pspm_init;
 end
+sts = -1;
 pspm_ui(hObject, handles, 'data_editor');
 if get(handles.rbInterpolate, 'Value')
   set(handles.cbInterpolate, 'Enable', 'on');

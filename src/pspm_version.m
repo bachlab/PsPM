@@ -18,12 +18,9 @@ function [sts, v] = pspm_version(varargin)
 % PsPM 3.1
 % (C) 2009-2016 Tobias Moser (University of Zurich)
 
-% $Id$
-% $Rev$
 
 %% start
 % do not include pspm_init, because pspm_version is called by pspm_init!!!
-% -------------------------------------------------------------------------
 sts = -1;
 
 %% load startup info file

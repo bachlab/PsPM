@@ -18,12 +18,13 @@ function [sts, import, sourceinfo] = pspm_get_mat(datafile, import)
 % v002 drb 8.1.2010 fixed a bug with error handling
 % v001 drb 16.9.2009
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-sourceinfo = []; sts = -1;
-
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
+sourceinfo = [];
 
 % load data and check contents
 % -------------------------------------------------------------------------

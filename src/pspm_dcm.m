@@ -158,9 +158,13 @@ function dcm = pspm_dcm(model, options)
 % PsPM 5.1.0
 % (c) 2010-2021 Dominik Bach (Wellcome Centre for Human Neuroimaging, UCL)
 
-%% 1 Initialise & set output
-global settings;
-if isempty(settings), pspm_init; end
+%% 1 Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
+
 dcm = [];
 % cell array which saves all the warnings which are not followed
 % by a `return` function

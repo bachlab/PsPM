@@ -32,8 +32,11 @@ function [ sts, out ] = pspm_convert_visangle2sps(fn, options)
 %       .channel                Id of the added channels.
 %_____________________________________________________________
 
-global settings;
-if isempty(settings), pspm_init; end;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
 
 % check missing input --

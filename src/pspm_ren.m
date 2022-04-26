@@ -10,17 +10,13 @@ function newfilename = pspm_ren(filename, newfilename)
 %__________________________________________________________________________
 % PsPM 3.0 
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-% $Id$
-% $Rev$
 
-% v101 drb 21.10.2009 updated for v2.x
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-% -------------------------------------------------------------------------
-% check and transform input arguments
-%-------------------------------------------------------------------------
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 
 if nargin < 2
     errmsg = sprintf('No new filename given.');

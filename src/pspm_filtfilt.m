@@ -36,14 +36,12 @@ function y = pspm_filtfilt(b,a,x)
 % L. Shure, T. Krauss, F. Gustafsson
 % Copyright 1988-2004 The MathWorks, Inc.
 
-% $Id$
-% $Rev$
-
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-% -------------------------------------------------------------------------
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 
 % Check input data
 %--------------------------------------------------------------------------

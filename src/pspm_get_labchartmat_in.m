@@ -30,11 +30,13 @@ function [sts, import, sourceinfo] = pspm_get_labchartmat_in(datafile, import)
 % time (26.06.2013)
 % -------------------------------------------------------------------------
 
-% initialise 
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-sourceinfo = []; sts = -1;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
+sourceinfo = [];
 
 % load & check data
 % -------------------------------------------------------------------------

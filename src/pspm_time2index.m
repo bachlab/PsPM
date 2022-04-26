@@ -23,6 +23,13 @@ function index = pspm_time2index(time, sr, varargin)
 % (C) 2021 Teddy Chao (WCHN, UCL)
 % Supervised by Professor Dominik Bach (WCHN, UCL)
 
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
+
 if ~isempty(varargin)
   data_length = varargin{1};
 end

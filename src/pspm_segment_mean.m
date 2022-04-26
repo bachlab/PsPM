@@ -27,13 +27,11 @@ function [sts, out] = pspm_segment_mean(segments, options)
 % PsPM 3.1
 % (C) 2008-2016 Tobias Moser (University of Zurich)
 
-% $Id$
-% $Rev$
-
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
 out = struct();
 

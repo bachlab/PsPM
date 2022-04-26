@@ -11,14 +11,13 @@ function [sts, import, sourceinfo] = pspm_get_acq(datafile, import)
 % PsPM 3.0
 % (C) 2011-2014 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
-
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-sourceinfo = []; sts = -1;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
+sourceinfo = [];
 addpath(pspm_path('Import','acq')); 
 
 

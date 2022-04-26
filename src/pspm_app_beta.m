@@ -4,9 +4,11 @@
 % PsPM 5.1
 % (C) The PsPM Team, UCL
 
+%% Initialise
 global settings
 if isempty(settings)
-    pspm_init;
+	pspm_init;
 end
+sts = -1;
 
 pspm_App;

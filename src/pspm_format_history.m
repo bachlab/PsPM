@@ -23,9 +23,12 @@ function [sts, hist_str] = pspm_format_history(history_cell_array)
     % --------------------------------------------------------------------------
     % (C) 2019 Eshref Yozdemir
 
-    sts = -1;
-    global settings;
-    if isempty(settings), pspm_init; end
+		%% Initialise
+		global settings
+		if isempty(settings)
+			pspm_init;
+		end
+		sts = -1;
 
     header_indices = cell2mat(cellfun(@(x) strfind(x, '::'), history_cell_array, 'uni', false));
     headers = {};

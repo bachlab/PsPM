@@ -16,11 +16,13 @@ function [sts, import, sourceinfo] = pspm_get_brainvis(datafile, import)
 % v002 drb 31.07.2012 fixed bug in timestamp import
 % v001 drb 23.08.2011
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-sourceinfo = []; sts = -1;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
+sourceinfo = [];
 addpath(pspm_path('Import','fieldtrip','fileio')); 
 
 % get data

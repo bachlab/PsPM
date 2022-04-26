@@ -8,11 +8,12 @@ function [data]=pspm_denoise_spike(inputdata, header, kbdata, cutoff)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
-
-global settings;
-if isempty(settings), pspm_init; end;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 
 % if both + and - getevents are recorded, filter out spikes
 % with < cutoff ms duration and take only low to high transitions

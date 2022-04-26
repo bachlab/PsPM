@@ -24,15 +24,12 @@ function sts = pspm_resp_pp(fn, sr, chan, options)
 % PsPM 3.0
 % (C) 2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_resp_pp.m 790 2019-07-09 10:24:23Z esrefo $
-% $Rev: 790 $
-
-
-% initialise & user output
-% -------------------------------------------------------------------------
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
-global settings;
-if isempty(settings), pspm_init; end
 
 % check input
 % -------------------------------------------------------------------------

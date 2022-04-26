@@ -10,15 +10,11 @@ function [sts, data]=pspm_get_emg(import)
 % PsPM 3.0
 % (C) 2009-2014 Tobias Moser (University of Zurich)
 
-% $Id$
-% $Rev$
-
-
-global settings;
-if isempty(settings), pspm_init; end;
-
-% initialise status
-% -------------------------------------------------------------------------
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
 
 % assign data

@@ -11,13 +11,11 @@ function [sts, data]=pspm_get_hp(import)
 % PsPM 3.0
 % (C) 2010-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
-
-global settings;
-if isempty(settings), pspm_init; end;
-
-% initialise status
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
 
 % assign respiratory data

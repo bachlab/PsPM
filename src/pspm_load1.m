@@ -60,11 +60,14 @@ function [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
 % -------------------------------------------------------------------------
 
 
-% initialise & user output
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-sts = -1; data = struct; mdltype = 'no valid model';
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
+data = struct;
+mdltype = 'no valid model';
 mdltypes = settings.first;
 
 % check input arguments & set defaults

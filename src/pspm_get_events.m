@@ -12,15 +12,12 @@ function [sts, import] = pspm_get_events(import)
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2013-2015 Dominik R Bach & Tobias Moser (University of Zurich)
-%
-% $Id$
-% $Rev$
 
-global settings;
-if isempty(settings), pspm_init; end;
-
-% initialise
-% -------------------------------------------------------------------------
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
 
 % get data

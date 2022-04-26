@@ -55,10 +55,11 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 
 
 %% 1 Initialise
-global settings;
+global settings
 if isempty(settings)
-    pspm_init;
+	pspm_init;
 end
+sts = -1;
 newdatafile = [];
 
 % 1.1 Check input arguments

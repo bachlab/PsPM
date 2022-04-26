@@ -12,12 +12,14 @@ function [sts, import, sourceinfo] = pspm_get_biosemi(datafile, import)
 % v004 drb 02.09.2013 new for 3.0 architecture
 
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 addpath(pspm_path('Import','fieldtrip','fileio')); 
-sourceinfo = []; sts = -1;
+sourceinfo = [];
 
 % get external file, using fieldtrip
 % -------------------------------------------------------------------------

@@ -117,12 +117,12 @@ function output = pspm_pfm(model, options)
 % PsPM 4.2
 % (C) 2020 Ivan Rojkov (University of Zurich)
 
-% $Id$   
-% $Rev$
-
-%%%%%%%% Initialise %%%%%%%%
-global settings;
-if isempty(settings), pspm_init; end
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 
 
 %%%%%%%% Checking inputs %%%%%%%%

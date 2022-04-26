@@ -18,19 +18,13 @@ function theta = pspm_get_rf(fn, events, outfile, chan, options)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %
-% $Id$
-% $Rev$
-%
-% v005 drb 25.09.2012 added options
-% v004 drb 24.09.2012 added handling of more complex designs including aSCR
-% v003 drb 04.09.2012 write theta parameters for use in DCM
-% v002 drb 15.08.2012 instead of copying code, call pspm_dcm
-% v001 drb 06.08.2012
 
-% initialise
-% ------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 
 rf = [];
 

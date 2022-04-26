@@ -25,16 +25,13 @@ function [ sts, outinfo ] = pspm_ppu2hb( fn,chan,options )
 % PsPM 3.1
 % (C) 2016 Samuel Gerster (University of Zurich), Tobias Moser (University of Zurich)
 
-% $Id: pspm_ppu2hb.m 596 2018-09-19 12:26:52Z lciernik $
-% $Rev: 596 $
-
-
-% initialise
-% -------------------------------------------------------------------------
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
 outinfo = struct();
-global settings;
-if isempty(settings), pspm_init; end
 
 %% check input
 % -------------------------------------------------------------------------

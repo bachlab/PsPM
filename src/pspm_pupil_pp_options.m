@@ -143,11 +143,12 @@ function [sts, default_settings] = pspm_pupil_pp_options()
     %__________________________________________________________________________
     % (C) 2019 Eshref Yozdemir (University of Zurich)
 
-    % initialise
-    % -------------------------------------------------------------------------
-    global settings;
-    if isempty(settings), pspm_init; end
-    sts = -1;
+		%% Initialise
+		global settings
+		if isempty(settings)
+			pspm_init;
+		end
+		sts = -1;
 
     libbase_path = pspm_path('ext','pupil-size', 'code');
     libpath = {fullfile(libbase_path, 'dataModels'), fullfile(libbase_path, 'helperFunctions')};

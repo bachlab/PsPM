@@ -16,10 +16,11 @@ function [sts] = pspm_check_options(type, check_opt, fields)
 % $Id$   
 % $Rev$
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
 
 n_errors = 0;

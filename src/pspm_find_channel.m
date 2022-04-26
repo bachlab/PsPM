@@ -16,14 +16,12 @@ function chan = pspm_find_channel(headercell, chantype)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
-
-% initialise
-% -------------------------------------------------------------------------
+%% Initialise
 global settings
-if isempty(settings), pspm_init; end;
-chan = -1;
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 
 % check input
 % -------------------------------------------------------------------------

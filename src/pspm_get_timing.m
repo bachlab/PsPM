@@ -58,9 +58,6 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2009-2015 Dominik R Bach (WTCN, UZH)
-%
-% $Id$
-% $Rev$
 
 % -------------------------------------------------------------------------
 % DEVELOPERS NOTES
@@ -73,12 +70,14 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %     for 'param'
 % -------------------------------------------------------------------------
 
-% initialise & define output
-% -------------------------------------------------------------------------
+%% Initialise
 global settings
-if isempty(settings), pspm_init; end
- outtiming = []; filewarning = 0;
- sts = -1;
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
+outtiming = [];
+filewarning = 0;
 
 
 % check input

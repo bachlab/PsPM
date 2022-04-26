@@ -38,11 +38,12 @@ function [sts, output] = pspm_emg_pp(fn, options)
 % $Id: pspm_emg_pp.m 777 2019-07-02 09:09:18Z esrefo $   
 % $Rev: 777 $
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end
-sts =-1;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 output = struct();
 
 % set default values

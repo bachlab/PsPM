@@ -2,6 +2,13 @@ function pspm_ui(hObject,handles,window)
 
   % pspm_ui controls the UI of the referred handle
   % The PsPM Team, UCL
+	
+	%% Initialise
+	global settings
+	if isempty(settings)
+		pspm_init;
+	end
+	sts = -1;
 
   %% Parameters for UI optimisation
   if ispc
@@ -75,7 +82,8 @@ function pspm_ui(hObject,handles,window)
     handles.tag_attribution.FontSize = FSAttr;
     %handles.tag_attribution.Visible = 'off';
     handles.tag_attribution.HorizontalAlignment = 'center';
-    attribution_disp_text = sprintf(['Version 5.1.1, Build ',datestr(now,'ddmmyyyy'),' with MATLAB 2021a, ',...
+    attribution_disp_text = sprintf(['Version 5.1.1, Build ',...
+    datestr(now,'ddmmyyyy'),' with MATLAB 2021a, ',...
     'The PsPM Team, University College London']);
     handles.tag_attribution.String = attribution_disp_text;
     handles.tag_PsPM.FontName = FNRoman;

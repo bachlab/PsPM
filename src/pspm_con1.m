@@ -32,10 +32,12 @@ function pspm_con1(modelfile, connames, convec, datatype, deletecon, options)
 % $Id$
 % $Rev$
 
-% initialise 
-% ------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 
 % check input arguments
 % ------------------------------------------------------------------------

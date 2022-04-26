@@ -93,10 +93,11 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 % Update 2021 Teddy Chao (UCL)
 
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
 out_file = '';
 

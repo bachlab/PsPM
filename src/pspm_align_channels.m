@@ -1,4 +1,4 @@
-function [sts, data, duration]=pspm_align_channels(data, induration)
+function [sts, data, duration] = pspm_align_channels(data, induration)
 % pspm_align_channels is an import functions that checks recording length
 % for all channels of a data file and aligns them
 % if a duration argument is stated, all channels will be aligned to this
@@ -12,15 +12,12 @@ function [sts, data, duration]=pspm_align_channels(data, induration)
 % PsPM 3.1
 % (C) 2008-2016 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $ Id: $
-% $ Rev $
-
-
-% initialise status
-% -------------------------------------------------------------------------
-sts = -1;
+%% Initialise
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 
 
 % check input arguments

@@ -9,13 +9,11 @@ function [sts, glm] = pspm_glm_recon(modelfile)
 % PsPM 3.0
 % (C) 2008-2018 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
-
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
 
 % get GLM & basis functions

@@ -92,9 +92,12 @@ function [sts, out] = pspm_extract_segments(varargin)
     %   Search FLAG to see where these flags are set.
     % -------------------------------------------------------------------------
     
-    global settings;
-    if isempty(settings), pspm_init; end;
-    sts = -1;
+		%% Initialise
+		global settings
+		if isempty(settings)
+			pspm_init;
+		end
+		sts = -1;
     
     if nargin >= 2
         switch varargin{1}

@@ -37,16 +37,14 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
     % PsPM 3.0
     % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-    % $Id$
-    % $Rev$
-
-    %% 1 Pre-settings
+		%% 1 Pre-settings
 
     % 1.1 Initialise
-    global settings;
-    if isempty(settings)
-        pspm_init;
-    end
+		global settings
+		if isempty(settings)
+			pspm_init;
+		end
+		sts = -1;
     newdatafile = [];
 
     % 1.2 Verify the number of input arguments

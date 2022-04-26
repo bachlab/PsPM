@@ -91,11 +91,10 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 
 
 %% 1 Initialise
-global settings;
+global settings
 if isempty(settings)
-  pspm_init;
+	pspm_init;
 end
-% initialise output
 sts = -1;
 infos = [];
 data = [];

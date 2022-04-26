@@ -15,11 +15,13 @@ function [sts, import, sourceinfo] = pspm_get_obs(datafile, import)
 % v002 lr 20.06.2013 added comments
 % v001 lr 06.06.2013
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-sourceinfo = []; sts = -1;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
+sourceinfo = [];
 
 % get external file
 % -------------------------------------------------------------------------

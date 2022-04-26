@@ -149,7 +149,7 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
 	% Updated 2021 Teddy Chao (WCHN, UCL)
 
 	%% 1 Initialise
-	global settings;
+	global settings
 	if isempty(settings)
 		pspm_init;
 	end

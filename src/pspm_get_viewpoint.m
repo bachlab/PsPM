@@ -69,9 +69,13 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
 % (C) 2019 Eshref Yozdemir (University of Zurich)
 % Updated 2021 Teddy Chao (WCHN, UCL)
 
-global settings;
-if isempty(settings), pspm_init; end
-sourceinfo = []; sts = -1;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
+sourceinfo = [];
 addpath(pspm_path('Import','viewpoint'));
 
 if ~iscell(import)

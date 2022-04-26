@@ -19,10 +19,11 @@ function [sts, converted] = pspm_convert_unit(data, from, to)
 % $Id: pspm_convert_au2mm.m 501 2017-11-24 08:36:53Z tmoser $
 % $Rev: 501 $
 
-% initialise
-% -----------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
 converted = [];
 

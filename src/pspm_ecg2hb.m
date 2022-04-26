@@ -101,11 +101,12 @@ function [sts,infos] = pspm_ecg2hb(fn, chan, options)
 %                 information on the position of the QRS complexes.
 % -------------------------------------------------------------------------
 
-% initialise
-% -------------------------------------------------------------------------
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
-global settings;
-if isempty(settings), pspm_init; end;
 infos = struct();
 
 

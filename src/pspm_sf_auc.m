@@ -12,17 +12,12 @@ function auc = pspm_sf_auc(scr, sr, options)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %
-% $Id$
-% $Rev$
-%
-% v02 30.7.2009 drb changed sum to mean
-% v01 17.6.2009 drb
-%
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-% -------------------------------------------------------------------------
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 
 
 % check input arguments

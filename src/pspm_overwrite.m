@@ -22,7 +22,12 @@ function ow_final = pspm_overwrite(varargin)
 % OUTPUTS
 % ow_final  option of overwriting determined by pspm_overwrite
 
-global settings;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 
 %% start to define ow
 switch numel(varargin)

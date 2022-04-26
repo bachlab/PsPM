@@ -23,8 +23,12 @@ function [lat, lon, lat_range, lon_range] = pspm_compute_visual_angle_core(x_dat
 %               lon_range:      the longitude range
 %__________________________________________________________________________
 % PsPM 4.0
-global settings;
-if isempty(settings), pspm_init; end;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 
 % interpolate channel specific data if required
 if (isfield(options, 'interpolate') && options.interpolate)

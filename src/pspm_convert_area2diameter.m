@@ -29,10 +29,11 @@ function [varargout] = pspm_convert_area2diameter(varargin)
 % $Id: pspm_convert_area2diameter.m 592 2018-09-14 09:01:41Z lciernik $
 % $Rev: 592 $
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
 
 narginchk(1, 3);

@@ -38,13 +38,11 @@ function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 % PsPM 3.1
 % (C) 2015 Tobias Moser, Christoph Korn (University of Zurich)
 
-% $Id$
-% $Rev$
-
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
 out = {};
 

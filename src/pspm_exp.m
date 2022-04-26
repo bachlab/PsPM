@@ -30,14 +30,11 @@ function sts = pspm_exp(modelfile, options)
 % PsPM 3.0
 % (C) 2009-2015 Dominik R Bach (WTCN, UZH)
 
-% $Id$
-% $Rev$
-
-
-% initialise
-% ------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
 
 % check input arguments

@@ -30,10 +30,11 @@ function [sts, outdata, newsr] = pspm_prepdata(data, filt)
 % $Rev$
 
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
 newsr = 0;
 outdata = data;

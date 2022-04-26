@@ -29,10 +29,11 @@ function [sts] = pspm_remove_epochs(datafile, channel, epochfile, options)
 % $Id: pspm_find_data_epochs.m 410 2017-01-30 11:14:06Z tmoser $
 % $Rev: 410 $
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
 
 % input checks for options only as these are not directly passed to 

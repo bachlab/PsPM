@@ -7,19 +7,13 @@ function [sts, import, sourceinfo] = pspm_get_biograph(datafile, import)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
-
-% v004 lr  16.09.2013 added marker field for event channels
-% v003 drb 04.08.2013 3.0 architecture
-% v002 drb 11.02.2011 comply with new pspm_import requirements
-% v001 drb 7.9.2010
-
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-sourceinfo = []; sts = -1;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
+sourceinfo = [];
 
 % get data
 % -------------------------------------------------------------------------

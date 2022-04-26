@@ -36,10 +36,11 @@ function [sts, out] = pspm_convert_gaze_distance(fn, target, from, width, height
 % $Id: pspm_convert_gaze_distance.m 1 2020-08-13 12:28:08Z sammaxwellxyz $
 % $Rev: 1 $
 
-% initialise
-% -----------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
 
 % Number of arguments validation

@@ -85,15 +85,13 @@ function [sts, infos] = pspm_find_sounds(file, options)
 % PsPM 3.0
 % (C) 2015 Samuel Gerster (University of Zurich)
 
-% $Id$
-% $Rev$
-
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end
-
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
+
 % Check argument
 if ~exist(file,'file')
     warning('ID:file_not_found', 'File %s was not found. Aborted.',file); return;

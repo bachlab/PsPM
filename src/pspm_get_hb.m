@@ -23,11 +23,12 @@ function [sts, data]=pspm_get_hb(import)
 % v002 6.11.2009 added correction for pulserate
 % v001 17.9.2009 Dominik R Bach
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-sts =-1;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 
 % get data
 % -------------------------------------------------------------------------

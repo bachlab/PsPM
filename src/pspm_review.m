@@ -5,10 +5,12 @@ function varargout = pspm_review(varargin)
 % (C) 2008-2015 Gabriel Graeni (University of Zurich)
 % Updated 2021 Teddy Chao (WCHN, UCL)
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 
 
 % Begin initialization code - DO NOT EDIT

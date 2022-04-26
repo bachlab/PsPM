@@ -38,10 +38,13 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 % 2021 Teddy Chao (WCHN, UCL)
 
 
-%% initialise
-global settings;
-if isempty(settings), pspm_init; end
-sourceinfo = []; sts = -1;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
+sourceinfo = [];
 % add specific import path for specific import function
 addpath(pspm_path('Import','eyelink'));
 

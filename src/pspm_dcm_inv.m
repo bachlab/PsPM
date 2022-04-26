@@ -89,10 +89,13 @@ function dcm = pspm_dcm_inv(model, options)
 % $Id$
 % $Rev$
 
-% initialise & say hello
-% ------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
+
 dcm = [];
 fprintf('Computing non-linear model: %s ...\n', model.modelfile);
 

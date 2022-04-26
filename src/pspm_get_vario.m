@@ -15,11 +15,13 @@ function [sts, import, sourceinfo] = pspm_get_vario(datafile, import)
 % v002 drb 11.02.2011 comply with new pspm_import requirements
 % v001 drb 6.9.2010
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-sourceinfo = []; sts = -1;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
+sourceinfo = [];
 addpath(pspm_path('Import','vario')); 
 
 % get data

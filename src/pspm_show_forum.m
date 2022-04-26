@@ -6,12 +6,10 @@ function pspm_show_forum
 %
 % Updated by Teddy Chao (UCL)
 
-% $Id$
-% $Rev$
-
-global settings;
+%% Initialise
+global settings
 if isempty(settings)
-    pspm_init;
+	pspm_init;
 end
 
 web('https://github.com/bachlab/PsPM/issues', '-browser')

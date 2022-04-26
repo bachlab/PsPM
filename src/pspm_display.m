@@ -14,12 +14,13 @@ function varargout = pspm_display(varargin)
 % Updated in PsPM 5.1.2
 % 2021 Teddy Chao (WCHN, UCL)
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
+%% Initialise
+global settings
 if isempty(settings)
-  pspm_init;
+	pspm_init;
 end
+sts = -1;
+
 global channel_type_reference_list;
 channel_type_reference_list = settings.chantypes;
 % -------------------------------------------------------------------------

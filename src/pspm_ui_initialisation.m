@@ -5,10 +5,12 @@ function pspm_ui_initialisation(hObject,handles,window)
 % PsPM 5.1.2
 % 2021 Teddy Chao (WCHN, UCL)
 
-global settings;
+%% Initialise
+global settings
 if isempty(settings)
-  pspm_init;
+	pspm_init;
 end
+sts = -1;
 
 switch window
   case 'main'

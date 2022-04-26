@@ -35,12 +35,12 @@ function [sts, infos] = pspm_write_channel(fn, newdata, channel_action, options)
 % PsPM 3.0
 % (C) 2015 Dominik Bach, Samuel Gerster, Tobias Moser (UZH)
 
-%% Initialise & User output
-sts = -1;
-global settings;
+%% Initialise
+global settings
 if isempty(settings)
-  pspm_init;
+	pspm_init;
 end
+sts = -1;
 outinfos = struct();
 
 % load options.channel

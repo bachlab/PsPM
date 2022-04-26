@@ -25,15 +25,12 @@ function [sts, infos] = pspm_hb2hp(fn, sr, chan, options)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id: pspm_hb2hp.m 810 2019-09-20 07:45:27Z esrefo $
-% $Rev: 810 $
-
-
-% initialise & user output
-% -------------------------------------------------------------------------
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
-global settings;
-if isempty(settings), pspm_init; end;
 
 if ~exist('options','var'), options = struct(); end;
 if ~isfield(options,'channel_action'), options.channel_action = 'replace'; end;  

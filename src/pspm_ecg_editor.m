@@ -31,8 +31,12 @@ function varargout = pspm_ecg_editor(varargin)
 % (C) 2013-2016 Philipp C Paulus, Tobias Moser
 % (Dresden University of Technology, University of Zurich)
 
-% $Id$   
-% $Rev$
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 
 % Last Modified by GUIDE v2.5 31-Oct-2016 16:40:26
 

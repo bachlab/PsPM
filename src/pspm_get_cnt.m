@@ -6,20 +6,14 @@ function [sts, import, sourceinfo] = pspm_get_cnt(datafile, import)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
-
-% v004 drb 14.08.2013 changed for 3.0 architecture
-% v003 drb 14.08.2012 added handling of 32 bit data
-% v002 drb 07.08.2012 added handling of empty event channel
-% v001 drb 31.07.2012
-
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 addpath(pspm_path('Import','fieldtrip','fileio')); 
-sourceinfo = []; sts = -1;
+sourceinfo = [];
 
 % get external file, using fieldtrip
 % -------------------------------------------------------------------------
