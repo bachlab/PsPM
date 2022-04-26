@@ -3,28 +3,23 @@ classdef pspm_process_illuminance_test < matlab.unittest.TestCase
   % unittest class for the pspm_process_illuminance function
   % ● Authorship
   % (C) 2016 Tobias Moser (University of Zurich)
-
   properties
     testfile_prefix = 'testdata_process_illuminance';
     datafiles = {};
   end;
-
   properties (TestParameter)
     % one file
     bf_dur = {0.1 10 100};
     bf_offset = {0.1 10 100};
     dur = {0.1 10 100};
     sr = {0.1 10 100};
-
     % multiple files
     n_times = {1, 8}
     mode = {'file', 'data', 'mixed'};
     overwrite = {true, false};
   end;
-
   methods(TestMethodTeardown)
     %% Cleanup function
-    % -----------------------------------------------------------------
     function cleanup(this)
       for i=1:length(this.datafiles)
         d = this.datafiles{i};
@@ -35,12 +30,9 @@ classdef pspm_process_illuminance_test < matlab.unittest.TestCase
       this.datafiles = {''};
     end;
   end;
-
   methods
     %% Generate data
-    % -----------------------------------------------------------------
     function [data_list, sr_list] = generate_lx(this, sr, dur, n_times, mode)
-
       if strcmpi(mode, 'mixed')
         data_list = repmat({'file'; 'data'}, fix(n_times/2), 1);
         if mod(n_times, 2) == 1
@@ -49,7 +41,6 @@ classdef pspm_process_illuminance_test < matlab.unittest.TestCase
       else
         data_list = repmat({mode}, n_times, 1);
       end;
-
       sr_list = cell(n_times,1);
       for i=1:n_times
         sr_list{i} = sr;
@@ -61,7 +52,6 @@ classdef pspm_process_illuminance_test < matlab.unittest.TestCase
             file_name = pspm_find_free_fn(this.testfile_prefix, '.mat');
             this.datafiles{end+1} = file_name;
             data_list{i} = file_name;
-
             save(file_name, 'Lx');
           case 'data'
             data_list{i} = Lx;
@@ -69,21 +59,15 @@ classdef pspm_process_illuminance_test < matlab.unittest.TestCase
       end;
     end;
   end;
-
-
   methods (Test)
     %% test options
-    % -----------------------------------------------------------------
     function test_options(this, sr, dur, bf_dur, bf_offset)
       [d_list, sr_list] = this.generate_lx(sr, dur, 1, 'data');
-
       d_list = d_list{1};
       sr_list = sr_list{1};
-
       o = struct();
       o.bf.duration = bf_dur;
       o.bf.offset = bf_offset;
-
       if sr*dur < 1
         expect_warning = 'ID:missing_data';
       elseif sr*bf_dur < 1
@@ -91,7 +75,6 @@ classdef pspm_process_illuminance_test < matlab.unittest.TestCase
       else
         expect_warning = '';
       end;
-
       if ~isempty(expect_warning)
         [sts, ~] = this.verifyWarning(@()pspm_process_illuminance(d_list, sr_list, o), expect_warning);
         this.verifyEqual(sts, -1);
@@ -101,9 +84,7 @@ classdef pspm_process_illuminance_test < matlab.unittest.TestCase
         this.verifyEqual(size(out,1), size(d_list,1));
       end;
     end;
-
     %% test multi
-    % -----------------------------------------------------------------
     function test_multi(this, n_times, mode)
       [data, sr_list] = this.generate_lx(10, 100, n_times, mode);
       [sts, out] = this.verifyWarningFree(@()pspm_process_illuminance(data, sr_list));
@@ -115,25 +96,18 @@ classdef pspm_process_illuminance_test < matlab.unittest.TestCase
         this.verifyEqual(size(out), size(data));
       end;
     end;
-
     %% test overwrite
-    % -----------------------------------------------------------------
     function test_overwrite(this, overwrite)
       [fn_list, sr_list] = this.generate_lx(10, 100, 1, 'file');
       fn = fn_list{1};
       sr = sr_list{1};
-
       o = struct();
       o.overwrite = overwrite;
       o.dont_ask_overwrite = true;
       o.fn = fn;
-
       [sts, out] = this.verifyWarningFree(@()pspm_process_illuminance(fn, sr, o));
       this.verifyEqual(sts, 1);
-
-
       d = load(fn);
-
       if overwrite
         this.verifyTrue(ischar(out));
         this.verifyTrue(isfield(d, 'R'));
@@ -143,13 +117,10 @@ classdef pspm_process_illuminance_test < matlab.unittest.TestCase
         this.verifyTrue(isfield(d, 'Lx'));
         this.verifyEqual(size(d.Lx, 2), 1);
       end;
-
     end;
   end;
-
   methods (Test)
     %% test for invalid input
-    % -----------------------------------------------------------------
     function invalid_input(this)
       % no input
       this.verifyWarning(@() pspm_process_illuminance(), 'ID:invalid_input');

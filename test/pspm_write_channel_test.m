@@ -5,11 +5,9 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
   % ● Authorship
   % (C) 2015 Tobias Moser (University of Zurich)
   %     2022 Teddy Chao
-
   properties
     testdatafile = 'write_channel_test.mat';
   end
-
   methods(TestClassSetup)
     % Generate Testdatafile
     function generate_testdatafile(this)
@@ -31,7 +29,6 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       this.testdatafile = fn;
     end
   end
-
   methods(TestClassTeardown)
     % Cleanup function
     % responsible to clean up the dirt that has been made
@@ -41,7 +38,6 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       end
     end
   end
-
   methods
     function verify_write(this, new, old, gen_data, action, outinfos)
       sign = 1;
@@ -83,7 +79,6 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       end
     end
   end
-
   methods(Test)
     function invalid_input(this)
       this.verifyWarning(@()pspm_write_channel(), 'ID:invalid_input');
@@ -111,7 +106,6 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       this.verifyWarning(@()...
         pspm_write_channel(this.testdatafile, gen_data.data{1}, 'add'), 'ID:invalid_data_structure');
     end
-
     function test_empty(this)
       % generate new channel
       c{1}.chantype = 'hb';
@@ -126,7 +120,6 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       this.verifyEqual(size(data1{numel(data1),1}.data), [1 0]);
       pspm_write_channel(this.testdatafile, gen_data_test_empty, 'delete');
     end
-
     function test_add(this)
       % generate new channel
       c{1}.chantype = 'hb';
@@ -140,7 +133,6 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       [~, new.infos, new.data] = pspm_load_data(this.testdatafile);
       this.verifyWarningFree(@() this.verify_write(new, old, gen_data, 'add', outinfos));
     end
-
     function test_add_transposed(this)
       % generate new channel
       c{1}.chantype = 'rs';
@@ -157,7 +149,6 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       [~, new.infos, new.data] = pspm_load_data(this.testdatafile);
       this.verifyWarningFree(@() this.verify_write(new, old, gen_data, 'add', outinfos));
     end
-
     function test_replace_add(this)
       % generate new channel
       c{1}.chantype = 'hr';
@@ -172,7 +163,6 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       [~, new.infos, new.data] = pspm_load_data(this.testdatafile);
       this.verifyWarningFree(@() this.verify_write(new, old, gen_data, 'add', outinfos));
     end
-
     function test_replace(this)
       % change channel setting and regenerate data
       c{1}.chantype = 'hr';
@@ -188,7 +178,6 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       % check if has been replaced
       this.verifyWarningFree(@() this.verify_write(new, old, gen_data, 'replace', outinfos));
     end
-
     function test_replace_units(this)
       % change channel setting and regenerate data
       c{1}.chantype = 'gaze_x_l';
@@ -215,9 +204,7 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
         strcmp(c.header.chantype, 'gaze_x_l'), post_unit_change.data))), 1);
       this.verifyEqual(length(find(cellfun(@(c) strcmp(c.header.units, 'degree') && ...
         strcmp(c.header.chantype, 'gaze_x_l'), post_unit_change.data))), 1);
-
     end
-
     function test_delete_single(this)
       % ●●● 1 Delete with chantype
       % prepare
@@ -284,7 +271,6 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       % ensure first entry was deleted
       this.verifyEqual(new.data{end}.header.sr, 60);
     end
-
     function test_delete_multi(this)
       % work with file earlier filled with resp channels
       % ●●● 1 remove first two channels
@@ -327,5 +313,4 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       this.verifyTrue(~any(chan));
     end
   end
-
 end

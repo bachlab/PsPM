@@ -9,7 +9,6 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
     nan_output_prefix = 'nan_output';
     outputfile_prefix = 'segments'
   end
-
   properties(TestParameter)
     % different NaN ratios
     nan_ratio = {0,0.25,0.50,0.75,1};
@@ -20,7 +19,6 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
     % generate outputfile
     outputfile = {0,1};
   end
-
   methods
     function [control_data,timing] = generate_segment_data_manual(this, fn,trials,nan_ratio)
       this.datafiles{end+1} = fn;
@@ -204,7 +202,6 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
         this.verifyTrue(abs(seg.total_nan_percent-control.total_nan_percent)<1e-12);
       end
     end
-
     function test_auto_mode_glm_with_markers(this)
       import matlab.unittest.constraints.IsEqualTo
       import matlab.unittest.constraints.RelativeTolerance

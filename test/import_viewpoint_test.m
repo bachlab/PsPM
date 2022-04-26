@@ -3,7 +3,6 @@ classdef import_viewpoint_test < matlab.unittest.TestCase
   % unittest class for import_viewpoint, PsPM TestEnvironment
   % ● Authorship
   % (C) 2019 Eshref Yozdemir (University of Zurich)
-
   properties (Constant)
     funcpath = pspm_path('Import', 'viewpoint');
     files = {...
@@ -11,23 +10,18 @@ classdef import_viewpoint_test < matlab.unittest.TestCase
       fullfile('ImportTestData', 'viewpoint', 'viewpoint_test_data_with_events.txt')...
       };
   end
-
   methods
     function test_import_viewpoint_on_file(this, fn)
       import matlab.unittest.constraints.IsEqualTo
       import matlab.unittest.constraints.RelativeTolerance
-
       addpath(this.funcpath);
       data = import_viewpoint(fn);
       rmpath(this.funcpath);
-
       [datalines, eventlines, header] = read_datafile(fn, 22);
       header_parts = split(header, sprintf('\t'));
       marker_index = find(strcmp(header_parts, 'MRK'));
-
       this.verifyEqual(size(data{1}.dataraw, 1), numel(datalines));
       this.verifyEqual(size(data{1}.channels, 1), numel(datalines));
-
       % check column equality manually
       % ------------------------------------------
       cols_to_check = {'ALX', 'ALY', 'APW'};
@@ -37,7 +31,6 @@ classdef import_viewpoint_test < matlab.unittest.TestCase
         import_idx = find(strcmp(data{1}.dataraw_header, col));
         this.verifyEqual(manual_mat(:, i), data{1}.dataraw(:, import_idx));
       end
-
       % find channels
       % ------------------------------------------------------------
       timecol = data{1}.dataraw(:, 1);
@@ -49,7 +42,6 @@ classdef import_viewpoint_test < matlab.unittest.TestCase
       datacols([blink_A_chan blink_B_chan sacc_A_chan sacc_B_chan]) = false;
       datacols_A = datacols & contains(data{1}.channels_header, '_A');
       datacols_B = datacols & contains(data{1}.channels_header, '_B');
-
       % go through blinks, saccades, and check if data is set to NaN
       % correctly and blink/saccade periods are 1.
       % ---------------------------------------------------------------------------
@@ -59,15 +51,12 @@ classdef import_viewpoint_test < matlab.unittest.TestCase
         if any(strncmp(parts{3}, {'A:Blink', 'A:Saccade', 'B:Blink', 'B:Saccade'},numel(parts{3})))...
             && strcmp(parts{3}(end-2:end), 'sec')
           tend = to_num(parts{2});
-
           foridx = strfind(line, 'for');
           secidx = strfind(line, 'sec');
           duration = to_num(line(foridx + numel('for') : secidx - 1));
           tbeg = round(tend - duration, 4);
-
           begidx = find(timecol == tbeg);
           endidx = find(timecol == tend);
-
           if strncmp(parts{3}, 'A:Blink', numel('A:Blink'))
             this.verifyTrue(all(data{1}.channels(begidx : endidx, blink_A_chan) == 1));
           elseif strncmp(parts{3}, 'B:Blink', numel('B:Blink'))
@@ -98,7 +87,6 @@ classdef import_viewpoint_test < matlab.unittest.TestCase
       end
     end
   end
-
   methods (Test)
     function test_import_viewpoint(this)
       for f = this.files
@@ -107,7 +95,6 @@ classdef import_viewpoint_test < matlab.unittest.TestCase
     end
   end
 end
-
 function mat = get_manual_matrix(datalines, header, cols_to_get)
 indices = [];
 header_parts = split(header, sprintf('\t'));
@@ -122,7 +109,6 @@ for i = 1:numel(datalines)
   end
 end
 end
-
 function [datalines, eventlines, header] = read_datafile(fn, n_lines_before_data)
 % Simply and manually read the datafile
 fid = fopen(fn);
@@ -146,7 +132,6 @@ while isstr(tline)
 end
 fclose(fid);
 end
-
 function a = to_num(str)
 a = str2num(str);
 if isempty(a)

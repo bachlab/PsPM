@@ -32,18 +32,14 @@ classdef (Abstract) pspm_get_superclass < pspm_testcase
       end
     end
   end
-
   methods (Test)
     function valid_datafile(this)
       global settings;
       if isempty(settings), pspm_init; end;
       fprintf('\n');
-
       for k = 1:numel(this.testcases)
         [sts, import, sourceinfo] = this.fhandle(this.testcases{k}.pth, this.testcases{k}.import);
-
         this.verifyEqual(sts, 1, sprintf('Status is negativ in testcase %i', k));
-
         if isprop(this, 'blocks') && this.blocks
           blkno = numel(sourceinfo);
           this.verifyEqual(blkno, this.testcases{k}.numofblocks, sprintf('Wrong number of blocks in testcase %i', k));
@@ -56,12 +52,10 @@ classdef (Abstract) pspm_get_superclass < pspm_testcase
           import = {import};
           sourceinfo = {sourceinfo};
         end
-
         for blk = 1:blkno
           if blkno > 1, fprintf('\n\tProcess block %i. ', blk); end;
           this.verifyNumElements(import{blk}, numel(this.testcases{k}.import), ...
           	sprintf('The number of elements of ''import'' does not match in testcase %i', k));
-
           for m = 1:numel(this.testcases{k}.import)
             % test if data exists and has correct datatype
             this.verifyTrue(isfield(import{blk}{m}, 'data'), ...

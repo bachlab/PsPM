@@ -3,30 +3,22 @@ classdef import_smi_test < matlab.unittest.TestCase
   % unittest class for import_smi, PsPM TestEnvironment
   % ● Authorship
   % (C) 2019 Eshref Yozdemir (University of Zurich)
-
   properties (Constant)
     funcpath = pspm_path('Import', 'smi');
     sample_file = fullfile('ImportTestData', 'smi', 'smi_data_2.txt');
     event_file = fullfile('ImportTestData', 'smi', 'smi_data_2_events.txt');
   end
-
   methods
-
     function test_import_smi_on_file(this, fn)
       import matlab.unittest.constraints.IsEqualTo
       import matlab.unittest.constraints.RelativeTolerance
-
       addpath(this.funcpath);
       data = import_smi(fn{:});
       rmpath(this.funcpath);
-
       n_userevent = 1;
-
       [datalines, header] = read_datafile(fn{1}, 38);
-
       this.verifyEqual(size(data{1}.raw, 1), numel(datalines));
       this.verifyEqual(size(data{1}.channels, 1), numel(datalines));
-
       % check column equality manually
       % ------------------------------------------
       cols_to_check = {'L Mapped Diameter [mm]', 'R Mapped Diameter [mm]', 'L POR X [px]', 'L POR Y [px]',...
@@ -38,11 +30,9 @@ classdef import_smi_test < matlab.unittest.TestCase
         import_idx = find(strcmp(data{1}.raw_columns, col));
         this.verifyEqual(manual_mat(:, i), data{1}.raw(:, import_idx));
       end
-
       if numel(fn) > 1
         this.verifyEqual(size(data{1}.markers, 1), n_userevent);
         eventlines = read_eventfile(fn{2}, 23);
-
         % find channels
         % ------------------------------------------------------------
         timecol = data{1}.raw(:, 1);
@@ -54,7 +44,6 @@ classdef import_smi_test < matlab.unittest.TestCase
         datacols([blink_l_chan blink_r_chan sacc_l_chan sacc_r_chan]) = false;
         datacols_l = datacols & contains(data{1}.channels_columns, 'L ');
         datacols_r = datacols & contains(data{1}.channels_columns, 'R ');
-
         % go through blinks, saccades, and check if data is set to NaN
         % correctly and blink/saccade periods are 1.
         %
@@ -97,7 +86,6 @@ classdef import_smi_test < matlab.unittest.TestCase
       end
     end
   end
-
   methods (Test)
     function test_import_smi(this)
       this.test_import_smi_on_file({this.sample_file});
@@ -105,7 +93,6 @@ classdef import_smi_test < matlab.unittest.TestCase
     end
   end
 end
-
 function mat = get_manual_matrix(datalines, header, cols_to_get)
 indices = [];
 header_parts = split(header, sprintf('\t'));
@@ -120,7 +107,6 @@ for i = 1:numel(datalines)
   end
 end
 end
-
 function [datalines, header] = read_datafile(fn, n_lines_before_data)
 % Simply and manually read the datafile
 fid = fopen(fn);
@@ -136,7 +122,6 @@ while isstr(tline)
 end
 fclose(fid);
 end
-
 function eventlines = read_eventfile(fn, n_lines_before_data)
 % Simply and manually read the eventfile
 fid = fopen(fn);
@@ -150,7 +135,6 @@ while isstr(tline)
   tline = fgetl(fid);
 end
 end
-
 function a = to_num(str)
 a = str2num(str);
 if isempty(a)

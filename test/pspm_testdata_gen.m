@@ -52,8 +52,6 @@ function outfile = pspm_testdata_gen(channels, duration, filename)
 %                               channels or '.freq' and  for continuous channels
 % ● Authorship
 % (C) 2013 Linus Rüettimann & Dominik R Bach (University of Zurich)
-
-
 % Check input
 % -------------------------------------------------------------------------
 if nargin < 1
@@ -68,26 +66,19 @@ elseif nargin < 2
   %Default value
   duration = 10;
 end
-
 % check options
 try options.noise; catch, options.noise = 0; end
-
 save_flag = 0;
 if nargin==3 && ischar(filename), save_flag=1; end
-
-
 % prepare output
 % -------------------------------------------------------------------------
-
 % Continuous Channels
 cont_channels{1} = 'scr';
 cont_channels{2} = 'hr';
 cont_channels{3} = 'resp';
 cont_channels{4} = 'snd';
-
 % regex expression for scr OR hr OR resp OR snd OR gaze with x/y and r/l
 cont_channels_regex = '^(scr|hr|resp|snd|gaze_[x|y]_[r|l])$';
-
 % Eventbased Channels
 event_channels{1} = 'hb';
 event_channels{2} = 'rs';

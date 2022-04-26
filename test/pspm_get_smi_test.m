@@ -3,14 +3,12 @@ classdef pspm_get_smi_test < pspm_get_superclass
   % unittest class for the pspm_get_smi function
   % ● Authorship
   % (C) 2019 Eshref Yozdemir (University of Zurich)
-
   properties
     fhandle = @pspm_get_smi;
     testcases;
     sample_file = fullfile('ImportTestData', 'smi', 'smi_data_1.txt');
     event_file = fullfile('ImportTestData', 'smi', 'smi_data_1_events.txt');
   end
-
   methods
     function define_testcases(this)
       % testcase 1
@@ -39,7 +37,6 @@ classdef pspm_get_smi_test < pspm_get_superclass
       this.testcases{2}.import{end + 1} = struct('type', 'marker');
     end
   end
-
   methods (Test)
     function invalid_input(this)
       import{1}.type = 'pupil_l';
@@ -65,7 +62,6 @@ classdef pspm_get_smi_test < pspm_get_superclass
       import{1}.target_unit = 'kilometers';
       this.verifyWarning(@()pspm_get_smi({'a', 'b'}, import), 'ID:invalid_input');
     end
-
     function test_milimeter_pupil(this)
       import{1}.type = 'pupil_l';
       import{2}.type = 'pupil_r';
@@ -76,7 +72,6 @@ classdef pspm_get_smi_test < pspm_get_superclass
       this.verifyEqual(data{1}.units, 'mm');
       this.verifyEqual(data{2}.units, 'mm');
     end
-
     function test_converted_pupil(this)
       import{1}.type = 'gaze_x_l';
       import{1}.stimulus_resolution = [1920 1080];
@@ -91,7 +86,6 @@ classdef pspm_get_smi_test < pspm_get_superclass
       this.verifyEqual(data{1}.units, 'inches');
       this.verifyEqual(data{2}.units, 'inches');
     end
-
     function test_stimulus_resolution_converts_gaze(this)
       import{1}.type = 'gaze_x_l';
       import{2}.type = 'gaze_x_r';
@@ -112,7 +106,6 @@ classdef pspm_get_smi_test < pspm_get_superclass
       this.verifyEqual(data{3}.units, 'mm');
       this.verifyEqual(data{4}.units, 'mm');
     end
-    
     function test_blinks_saccades_are_NaN(this)
       import{1}.type = 'gaze_x_l';
       import{2}.type = 'gaze_y_r';
