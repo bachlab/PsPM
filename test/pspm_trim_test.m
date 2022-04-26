@@ -1,15 +1,13 @@
 classdef pspm_trim_test < matlab.unittest.TestCase
-
-	% pspm_trim_test
+  % ● Description
   % unittest class for the pspm_trim_test function
   % testEnvironment for PsPM version 6.0
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
   %     2022 Teddy Chao
-
   properties(Constant)
     fn = 'trim_test.mat';
   end
-
   properties
     numof_markertests = 3;
     numof_filetests = 3;
@@ -18,7 +16,6 @@ classdef pspm_trim_test < matlab.unittest.TestCase
     cont_channels;
     sr;
   end
-
   methods (TestClassSetup)
     function gen_testdata(testCase)
       channels{1}.chantype = 'scr';
@@ -40,7 +37,6 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       end
     end
   end
-
   methods (TestClassTeardown)
     function del_testdata_file(testCase)
       if exist(testCase.fn, 'file')
@@ -48,7 +44,6 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       end
     end
   end
-
   methods (Test)
     function invalid_inputargs(testCase)
       testCase.verifyWarning(@()pspm_trim(testCase.fn, [1 2], 5, 'marker'),...
@@ -68,25 +63,21 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       testCase.verifyWarning(@()pspm_trim(testCase.fn, 0, 5, [5 4]),...
         'ID:invalid_input', 'invalid_inputargs test 8');
     end
-
     function marker_tests(testCase)
       for k=1:testCase.numof_markertests
         trimtest(testCase, testCase.fn, 'marker', k, 2);
       end
     end
-
     function file_tests(testCase)
       for k=1:testCase.numof_filetests
         trimtest(testCase, testCase.fn, 'file', k, 2);
       end
     end
-
     function num_tests(testCase)
       for k=1:testCase.numof_numtests
         trimtest(testCase, testCase.fn, 'num', k, 2);
       end
     end
-
     function multiple_files(testCase)
       %with datafile input
       fn2 = 'trim_test_2.mat';
@@ -123,7 +114,6 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       import matlab.unittest.constraints.IsEqualTo;
       testCase.verifyThat(act_val, IsEqualTo(exp_val), 'multiple_files test with stuct input');
     end
-
     %option tests
     function marker_chan_num_option_test(testCase)
       options.marker_chan_num = 3;
@@ -145,7 +135,6 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       testCase.verifyThat(act_val, IsEqualTo(exp_val), 'marker_chan_num_option_test test 2');
     end
   end
-
   methods
     function trimtest(testCase, datafile, reference, testnum, markerchan)
       switch reference
@@ -174,12 +163,10 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       testCase.verifyThat(act_val, IsEqualTo(exp_val), testmsg);
       delete(newdatafile);
     end
-
     %% marker/file/num-testcases
     % REMARK: the properties numof_markertests, numof_filetests and
     %         numof_numtests must be updated if testcases are being
     %         added.
-
     % reference = 'marker' tests
     function [from, to, exp_val, warningID, testmsg] = markertest_1(testCase, markerchan)
       testmsg = 'markertest 1';
@@ -189,7 +176,6 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       to = 20;
       exp_val.infos.trimpoints = [0 exp_val.infos.duration];
     end
-
     function [from, to, exp_val, warningID, testmsg] = markertest_2(testCase, markerchan)
       testmsg = 'markertest 2';
       warningID = 'none';
@@ -198,7 +184,6 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       to = exp_val.infos.duration - exp_val.data{filestruct.posofmarker}.data(end);
       exp_val.infos.trimpoints = [0 exp_val.infos.duration];
     end
-
     function [from, to, exp_val, warningID, testmsg] = markertest_3(testCase, markerchan)
       testmsg = 'markertest 3';
       warningID = 'none';
@@ -231,7 +216,6 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       to = 50;
       exp_val.infos.trimpoints = [0 exp_val.infos.duration];
     end
-
     function [from, to, exp_val, warningID, testmsg] = filetest_2(testCase)
       testmsg = 'filetest 2';
       warningID = 'none';
@@ -240,7 +224,6 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       to = exp_val.infos.duration;
       exp_val.infos.trimpoints = [0 exp_val.infos.duration];
     end
-
     function [from, to, exp_val, warningID, testmsg] = filetest_3(testCase)
       testmsg = 'filetest 3';
       warningID = 'none';
@@ -261,7 +244,6 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       exp_val.infos.trimpoints = [from to];
       exp_val.infos.duration = to - from;
     end
-
     function [from, to, exp_val, warningID, testmsg, num] = numtest_1(testCase)
 			% reference = [a b] (numeric) tests
       testmsg = 'numtest 1';
@@ -272,7 +254,6 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       num = [2 14];
       exp_val.infos.trimpoints = [0 exp_val.infos.duration];
     end
-
     function [from, to, exp_val, warningID, testmsg, num] = numtest_2(testCase)
       testmsg = 'numtest 2';
       warningID = 'none';
@@ -282,7 +263,6 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       to = exp_val.infos.duration - exp_val.data{filestruct.posofmarker}.data(num(2));
       exp_val.infos.trimpoints = [0 exp_val.infos.duration];
     end
-
     function [from, to, exp_val, warningID, testmsg, num] = numtest_3(testCase)
       testmsg = 'numtest 3';
       warningID = 'none';
@@ -306,7 +286,6 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       exp_val.infos.trimpoints = [nfrom nto];
       exp_val.infos.duration = nto - nfrom;
     end
-
     function [from, to, exp_val, warningID, testmsg, num] = numtest_4(testCase)
       testmsg = 'numtest 4';
       warningID = 'ID:marker_out_of_range';
@@ -316,8 +295,5 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       exp_val.infos.trimpoints = [0 exp_val.infos.duration];
       num = [1 (numel(exp_val.data{filestruct.posofmarker}.data) + 1)];
     end
-
   end
-
 end
-

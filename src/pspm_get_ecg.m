@@ -10,27 +10,17 @@ function [sts, data]=pspm_get_ecg(import)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
-
-% v002 29.07.2013 changed to 3.0 architecture
-% v001 08.05.2012 Dominik R Bach
-
-global settings;
-if isempty(settings), pspm_init; end;
-
-% initialise status
-sts = -1;
-
-% assign respiratory data
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
+%% assign respiratory data
 data.data = import.data(:);
-
-% add header
+%% add header
 data.header.chantype = 'ecg';
 data.header.units = import.units;
 data.header.sr = import.sr;
-
-% check status
+%% check status
 sts = 1;
-
-return;
+return

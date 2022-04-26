@@ -9,27 +9,26 @@ function fighandle = pspm_rev_con(model)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (UZH, WTCN)
 
-% $Id$
-% $Rev$
-
-% initialise
-% ------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
+sts = -1;
 fighandle = [];
 
 % check input
 % ------------------------------------------------------------------------
-if nargin < 1, return; 
+if nargin < 1, return;
 elseif ~isfield(model, 'con')
-    fprintf('No contrasts contained in model.\n');
-    return;
+  fprintf('No contrasts contained in model.\n');
+  return;
 end;
 
 % print contrast names to screen
 % ------------------------------------------------------------------------
 fprintf('Contrast names for %s:\n---------------------------------------\n', model.modelfile);
 for n=1:numel(model.con)
-    fprintf('Contrast %d: %s\n',n,model.con(n).name);
+  fprintf('Contrast %d: %s\n',n,model.con(n).name);
 end;
 fprintf('---------------------------------------\n');

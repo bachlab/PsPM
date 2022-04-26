@@ -4,26 +4,22 @@ function scl = pspm_sf_scl(scr, sr, options)
 % FORMAT:
 % auc = pspm_sf_scl(scr, sr)
 %
-% REFERENCE: 
+% REFERENCE:
 %
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
-
-% v01 2.10.2009 drb
-
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-% -------------------------------------------------------------------------
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
+sts = -1;
 
 % check input arguments
 if nargin < 1
-    warning('No data specified'); return;
+  warning('No data specified'); return;
 end;
 
 scl = mean(scr);

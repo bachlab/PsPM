@@ -8,12 +8,11 @@ function [sts, data] = pspm_get_sps(import)
 %        import.sr: sample rate
 %
 
-global settings;
-if isempty(settings), pspm_init; end;
-
-
-
-% initialise status
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
 sts = -1;
 
 % assign sps data
