@@ -1,20 +1,20 @@
 function [ft, p, t] = pspm_bf_scrf_f(td, p)
-% pspm_bf_scrf_f: canonical skin conductance response function 
+% pspm_bf_scrf_f: canonical skin conductance response function
 % (exponentially modified gaussian, EMG)
 % FORMAT: [bf p] = pspm_bf_scrf_f(td, p)
 %         with  td    : time resolution in s
 %               p(1)  : time to peak
 %               p(2)  : variance of rise defining gaussian
 %               p(3:4): decay constants
-% 
+%
 % REFERENCE
-% Bach DR, Flandin G, Friston KJ, Dolan RJ (2010). Modelling event-related skin 
+% Bach DR, Flandin G, Friston KJ, Dolan RJ (2010). Modelling event-related skin
 % conductance responses. International Journal of Psychophysiology, 75, 349-356.
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2009-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$   
+% $Id$
 % $Rev$
 
 % initialise
@@ -24,15 +24,15 @@ if isempty(settings), pspm_init; end;
 % -------------------------------------------------------------------------
 
 if nargin < 1
-   errmsg='No sampling interval stated'; warning('ID:invalid_input', errmsg); return;
+  errmsg='No sampling interval stated'; warning('ID:invalid_input', errmsg); return;
 elseif nargin < 2
-    p=[3.0745  0.7013 0.3176 0.0708];
+  p=[3.0745  0.7013 0.3176 0.0708];
 end;
 
 if td > 90
-    warning('ID:invalid_input', 'Time resolution is larger than duration of the function.'); return;
+  warning('ID:invalid_input', 'Time resolution is larger than duration of the function.'); return;
 elseif td == 0
-    warning('ID:invalid_input', 'Time resolution must be larger than 0.'); return;
+  warning('ID:invalid_input', 'Time resolution must be larger than 0.'); return;
 end;
 
 t0 = p(1);

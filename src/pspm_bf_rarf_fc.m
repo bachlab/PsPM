@@ -1,12 +1,12 @@
 function [bs, x] = pspm_bf_rarf_fc(varargin)
 % pspm_bf_rarf_fc
-% Description: 
+% Description:
 %
-% FORMAT: [bs, x] = pspm_bf_rarf_fc(td, bf_type) 
-%     OR: [bs, x] = pspm_bf_rarf_fc([td, bf_type]) 
+% FORMAT: [bs, x] = pspm_bf_rarf_fc(td, bf_type)
+%     OR: [bs, x] = pspm_bf_rarf_fc([td, bf_type])
 %
 % ARGUMENTS:
-%           td:         The time the response function should have.   
+%           td:         The time the response function should have.
 %           bf_type:    Which type of response function should be generated
 %                           1: first type response function is generated
 %                           (default) = gamma_early + gamma_late
@@ -14,7 +14,7 @@ function [bs, x] = pspm_bf_rarf_fc(varargin)
 %                           = gamma_early + gamma_early'
 %
 % REFERENCE
-% 
+%
 %________________________________________________________________________
 % PsPM 3.1
 % (C) 2016 G Castegnetti, Tobias Moser (University of Zurich)
@@ -28,22 +28,22 @@ if isempty(settings), pspm_init; end;
 
 % check input arguments
 if nargin==0
-    errmsg='No sampling interval stated'; warning('ID:invalid_input', errmsg); return;
+  errmsg='No sampling interval stated'; warning('ID:invalid_input', errmsg); return;
 end;
 
 td = varargin{1}(1);
 if numel(varargin{1}) == 1 && nargin == 1
-    bf_type = 1;
+  bf_type = 1;
 elseif numel(varargin{1}) == 2
-    bf_type = varargin{1}(2);
+  bf_type = varargin{1}(2);
 else
-    bf_type = varargin{2}(1);
+  bf_type = varargin{2}(1);
 end;
 
 if td > 30
-    warning('ID:invalid_input', 'Time resolution is larger than duration of the function.'); return;
+  warning('ID:invalid_input', 'Time resolution is larger than duration of the function.'); return;
 elseif td == 0
-    warning('ID:invalid_input', 'Time resolution must be larger than 0.'); return;
+  warning('ID:invalid_input', 'Time resolution must be larger than 0.'); return;
 end;
 
 % define paramters
@@ -59,7 +59,7 @@ p_late = [3.41301736200870 1.10734203371767 7.58288130400132 amp];
 % fix value of bf_type
 % -------------------------------------------------------------------------
 if (bf_type<1)||(bf_type>2)
-    bf_type = 1; 
+  bf_type = 1;
 end;
 
 x = (0:td:30-td)';
@@ -81,9 +81,9 @@ g_early = g_early/max(g_early);
 g_late = g_late/max(g_late);
 
 if bf_type == 1
-    bs = [g_early g_late];
+  bs = [g_early g_late];
 else
-    bs = [g_early(1:end-1) diff(g_early)];
+  bs = [g_early(1:end-1) diff(g_early)];
 end;
 
 % orthogonalise

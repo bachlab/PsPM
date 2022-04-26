@@ -1,24 +1,19 @@
 classdef pspm_load_data_test < matlab.unittest.TestCase
-
-  % pspm_load_data_test
+  % ● Description
   % unittest class for the pspm_load_data function
-  % testEnvironment for PsPM version 6.0
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
   %     2022 Teddy Chao (UCL)
-
   properties(Constant)
     fn = 'load_data_test.mat';
     fn2 = 'load_data_test2.mat';
   end
-
   properties
     event_channels;
     pspm_channels;
   end
-
   properties(TestParameter)
   end
-
   methods
     function compare_data(this, act_val, exp_val)
       % this method is recommened for comparing structs (Infos, data, header)
@@ -53,7 +48,6 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       end
     end
   end
-
   methods (TestClassSetup)
     function gen_testdata(this)
       channels{1}.chantype = 'scr';
@@ -74,7 +68,6 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       end
     end
   end
-
   methods (TestClassTeardown)
     function del_testdata_file(this)
       if exist(this.fn, 'file')
@@ -82,9 +75,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       end
     end
   end
-
   methods (Test)
-
   	%% Invalid input arguments
     function invalid_inputargs(this)
   		% Test group 1: check warnings
@@ -307,7 +298,5 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       delete(this.fn);
       clear save
     end
-
   end
-
 end
