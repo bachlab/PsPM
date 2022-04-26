@@ -3,11 +3,11 @@ function [sts, import, sourceinfo]  = pspm_get_wdq_n(datafile, import)
 % FORMAT: [sts, import, sourceinfo] = pspm_get_wdq_n(datafile, import);
 %
 % this function does not use the ActiveX control elements provided by
-% Dataq developers. Instead it reads the binary file according to the 
-% documentation published by dataq (http://www.dataq.com/resources/techinfo/ff.htm). 
+% Dataq developers. Instead it reads the binary file according to the
+% documentation published by dataq (http://www.dataq.com/resources/techinfo/ff.htm).
 % The current called routine nReadDataq.m may not provide as many data
 % (check the commented header of the routine nReadDataq for more
-% information) as the ActiveX control elements do, but the function is 
+% information) as the ActiveX control elements do, but the function is
 % independent of cpu architecture. Which means it does not require a 32-bit
 % Matlab-Version.
 %
@@ -15,15 +15,14 @@ function [sts, import, sourceinfo]  = pspm_get_wdq_n(datafile, import)
 % PsPM 3.0
 % (C) 2012 - 2015 Tobias Moser (University of Zurich)
 
-% $Id$
-% $Rev$
-
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-sourceinfo = []; sts = -1;
-addpath(pspm_path('Import','nwdq')); 
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
+sts = -1;
+sourceinfo = [];
+addpath(pspm_path('Import','nwdq'));
 
 % get external file, using Dataq functions
 % -------------------------------------------------------------------------
@@ -33,24 +32,21 @@ addpath(pspm_path('Import','nwdq'));
 % -------------------------------------------------------------------------
 % loop through import jobs
 for k = 1:numel(import)
-    chan = import{k}.channel;
-    if chan > size(inputdata, 2)
-        warning('ID:channel_not_contained_in_file', 'Channel %1.0f does not exist in data file', chan); return;
-    end;
-    import{k}.sr = inputinfo.sampleRatePerChannel; % sample rate per channel
-    import{k}.data = inputdata{chan};     % data per channel
-    import{k}.units = inputinfo.engineeringUnitsTag(chan, :);
-    sourceinfo.chan{k, 1} = sprintf('Channel %02.0f', chan);
-    if strcmpi(settings.chantypes(import{k}.typeno).data, 'events')
-        import{k}.marker = 'continuous';
-    end;
+  chan = import{k}.channel;
+  if chan > size(inputdata, 2)
+    warning('ID:channel_not_contained_in_file', 'Channel %1.0f does not exist in data file', chan); return;
+  end;
+  import{k}.sr = inputinfo.sampleRatePerChannel; % sample rate per channel
+  import{k}.data = inputdata{chan};     % data per channel
+  import{k}.units = inputinfo.engineeringUnitsTag(chan, :);
+  sourceinfo.chan{k, 1} = sprintf('Channel %02.0f', chan);
+  if strcmpi(settings.chantypes(import{k}.typeno).data, 'events')
+    import{k}.marker = 'continuous';
+  end;
 end;
 
 % clear path and return
 % -------------------------------------------------------------------------
-rmpath(pspm_path('Import','nwdq')); 
+rmpath(pspm_path('Import','nwdq'));
 sts = 1;
-return;
-
-
-
+return

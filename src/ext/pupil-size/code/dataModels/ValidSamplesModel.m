@@ -144,6 +144,11 @@ classdef ValidSamplesModel < handle
             valz          = [diff(valid_t_ms);NaN];
             valz(end)     = valz(end-1);
             [~,binzIndxA] = histc(t_upsampled.*1000, valid_t_ms);
+            if sum(find(binzIndxA~=0))/length(binzIndxA) < 0.9
+              % Throw a warning if too many histogram counts are 0
+              warning('ID:invalid_input', 'Too many histogram counts are 0.');
+            end
+            binzIndxA     = binzIndxA(binzIndxA~=0);
             gaps_ms       = valz(binzIndxA);
 
             % Set samples that are really close to the raw samples as

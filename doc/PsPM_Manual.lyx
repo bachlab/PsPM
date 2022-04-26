@@ -103,7 +103,7 @@ PsPM: Psychophysiological Modelling
 
 \begin_layout Standard
 \align center
-Version 5.1.0
+Version 6.0.0
 \end_layout
 
 \begin_layout Standard
@@ -147,7 +147,11 @@ Dominik R Bach, Giuseppe Castegnetti, Laure Ciernik, Samuel Gerster, Saurabh
  Khemka, Christoph Korn, Samuel Maxwell, Tobias Moser, Philipp C Paulus,
  Ivan Rojkov, Matthias Staib, Yanfang Xia, Eshref Yozdemir, Dadi Zhao and
  collaborators
-\begin_inset Newline newline
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Newpage newpage
 \end_inset
 
 
@@ -7150,7 +7154,7 @@ Preprocess heart data
 \begin_layout Standard
 
 \shape italic
-Related function:
+Related functions:
 \shape default
  
 \family typewriter

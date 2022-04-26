@@ -11,9 +11,5 @@ function [sts, import, sourceinfo] = pspm_get_csv(datafile, import)
 %__________________________________________________________________________
 % PsPM 5.0
 % (C) 2008-2020 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-
-% $Id$
-% $Rev$
-
 import = cellfun(@(c) setfield(c, 'delimiter', ','), import, 'UniformOutput', false);
 [sts, import, sourceinfo] = pspm_get_txt(datafile, import);

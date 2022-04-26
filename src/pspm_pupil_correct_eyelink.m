@@ -116,8 +116,7 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 % Updated 2021 Teddy Chao (WCHN, UCL)
 
 %% Initialise
-
-global settings;
+global settings
 if isempty(settings)
   pspm_init;
 end

@@ -36,10 +36,11 @@ function [sts, out] = pspm_convert_gaze_distance(fn, target, from, width, height
 % $Id: pspm_convert_gaze_distance.m 1 2020-08-13 12:28:08Z sammaxwellxyz $
 % $Rev: 1 $
 
-% initialise
-% -----------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
 sts = -1;
 
 % Number of arguments validation
@@ -86,9 +87,9 @@ end;
 [sts, infos, data] = pspm_load_data(fn,0);
 
 eyes.l = find(cellfun(@(c) ~isempty(regexp(c.header.chantype, 'gaze_[x|y]_l', 'once'))...
-   && strcmp(c.header.units, from), data));
+  && strcmp(c.header.units, from), data));
 eyes.r = find(cellfun(@(c) ~isempty(regexp(c.header.chantype, 'gaze_[x|y]_r', 'once'))...
-   && strcmp(c.header.units, from), data));
+  && strcmp(c.header.units, from), data));
 
 if (length(eyes.l) < 1 && length(eyes.r) < 1)
   warning('ID:invalid_input', 'no gaze data found with the units provided')
@@ -157,9 +158,9 @@ end
 
 % CODE SAME AS IN pspm_pixel2unit
 function out = pixel_conversion(data, screen_length, interest_range)
-  length_per_pixel = screen_length ./ (diff(interest_range) + 1);
-  % baseline data in pixels wrt. the range (i.e. pixels of interest)
-  pixel_index = data-interest_range(1);
-  % convert indices into coordinates in the units of interests
-  out = pixel_index * length_per_pixel;
+length_per_pixel = screen_length ./ (diff(interest_range) + 1);
+% baseline data in pixels wrt. the range (i.e. pixels of interest)
+pixel_index = data-interest_range(1);
+% convert indices into coordinates in the units of interests
+out = pixel_index * length_per_pixel;
 end

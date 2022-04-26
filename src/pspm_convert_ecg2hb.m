@@ -101,24 +101,25 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, chan, options)
 %                 information on the position of the QRS complexes.
 % -------------------------------------------------------------------------
 
-% initialise
-% -------------------------------------------------------------------------
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
 sts = -1;
-global settings;
-if isempty(settings), pspm_init; end;
 infos = struct();
 
 
 % check input
 % -------------------------------------------------------------------------
 if nargin < 1
-    warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
+  warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
 elseif ~ischar(fn)
-    warning('ID:invalid_input', 'Need file name string as first input.'); return;
+  warning('ID:invalid_input', 'Need file name string as first input.'); return;
 elseif (nargin < 2) || isempty(chan) || (isnumeric(chan) && (chan == 0))
-    chan = 'ecg';
+  chan = 'ecg';
 elseif ~isnumeric(chan) && ~strcmp(chan,'ecg')
-        warning('ID:invalid_input', 'Channel number must be numeric'); return;
+  warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end;
 
 try options.channel_action; catch, options.channel_action = 'replace'; end
@@ -143,65 +144,65 @@ pt_debug=[];
 % -------------------------------------------------------------------------
 if nargin > 2 && exist('options', 'var')
 
-    if isstruct(options)
-        if isfield(options, 'channel_action')
-            if ~any(strcmpi(options.channel_action, {'add', 'replace'}))
-                warning('ID:invalid_input', '''options.channel_action'' must be either ''add'' or ''replace''.'); return;
-            end;
-        end
-
-        if isfield(options, 'semi')
-            if any(options.semi == 0:1)
-                pt.settings.semi = options.semi;
-            else
-                warning('ID:invalid_input', '''options.semi'' must be either 0 or 1.'); return;
-            end;
-        end;
-
-        if isfield(options, 'debugmode')
-            if any(options.debugmode == 0:1)
-                pt.settings.debugmode = options.debugmode;
-            else
-                warning('ID:invalid_input', '''options.debugmode'' must be either 0 or 1.'); return;
-            end;
-        end;
-
-        if isfield(options, 'minHR') && isfield(options, 'maxHR')
-            if isnumeric(options.minHR) && isnumeric(options.maxHR) ...
-                    && options.minHR < options.maxHR
-                pt.settings.minHR = options.minHR;
-                pt.settings.maxHR = options.maxHR;
-            else
-                warning('ID:invalid_input', ['''options.minHR'' and ''options.maxHR'' ', ...
-                    'must be numeric and ''options.minHR'' must be ', ...
-                    'smaller than ''options.maxHR''']); return;
-            end
-        elseif isfield(options, 'minHR')
-            if isnumeric(options.minHR) && options.minHR < pt.settings.maxHR
-                pt.settings.minHR = options.minHR;
-            else
-                warning('ID:invalid_input', '''options.minHR'' must be numeric and smaller than %d.', ...
-                    [pt.settings.maxHR]); return;
-            end
-        elseif isfield(options, 'maxHR')
-            if isnumeric(options.maxHR) && options.maxHR > pt.settings.minHR
-                pt.settings.maxHR = options.maxHR;
-            else
-                warning('ID:invalid_input', '''options.maxHR'' must be numeric and greater than %d.', ...
-                    [pt.settings.minHR]); return;
-            end
-        end
-
-        if isfield(options, 'twthresh')
-            if isnumeric(options.twthresh)
-                pt.settings.twthresh = options.twthresh;
-            else
-                warning('ID:invalid_input', '''options.twthresh'' must be numeric.'); return;
-            end
-        end
-    else
-        warning('ID:invalid_input', '''options'' must be of type struct.'); return;
+  if isstruct(options)
+    if isfield(options, 'channel_action')
+      if ~any(strcmpi(options.channel_action, {'add', 'replace'}))
+        warning('ID:invalid_input', '''options.channel_action'' must be either ''add'' or ''replace''.'); return;
+      end;
     end
+
+    if isfield(options, 'semi')
+      if any(options.semi == 0:1)
+        pt.settings.semi = options.semi;
+      else
+        warning('ID:invalid_input', '''options.semi'' must be either 0 or 1.'); return;
+      end;
+    end;
+
+    if isfield(options, 'debugmode')
+      if any(options.debugmode == 0:1)
+        pt.settings.debugmode = options.debugmode;
+      else
+        warning('ID:invalid_input', '''options.debugmode'' must be either 0 or 1.'); return;
+      end;
+    end;
+
+    if isfield(options, 'minHR') && isfield(options, 'maxHR')
+      if isnumeric(options.minHR) && isnumeric(options.maxHR) ...
+          && options.minHR < options.maxHR
+        pt.settings.minHR = options.minHR;
+        pt.settings.maxHR = options.maxHR;
+      else
+        warning('ID:invalid_input', ['''options.minHR'' and ''options.maxHR'' ', ...
+          'must be numeric and ''options.minHR'' must be ', ...
+          'smaller than ''options.maxHR''']); return;
+      end
+    elseif isfield(options, 'minHR')
+      if isnumeric(options.minHR) && options.minHR < pt.settings.maxHR
+        pt.settings.minHR = options.minHR;
+      else
+        warning('ID:invalid_input', '''options.minHR'' must be numeric and smaller than %d.', ...
+          [pt.settings.maxHR]); return;
+      end
+    elseif isfield(options, 'maxHR')
+      if isnumeric(options.maxHR) && options.maxHR > pt.settings.minHR
+        pt.settings.maxHR = options.maxHR;
+      else
+        warning('ID:invalid_input', '''options.maxHR'' must be numeric and greater than %d.', ...
+          [pt.settings.minHR]); return;
+      end
+    end
+
+    if isfield(options, 'twthresh')
+      if isnumeric(options.twthresh)
+        pt.settings.twthresh = options.twthresh;
+      else
+        warning('ID:invalid_input', '''options.twthresh'' must be numeric.'); return;
+      end
+    end
+  else
+    warning('ID:invalid_input', '''options'' must be of type struct.'); return;
+  end
 
 end
 
@@ -210,12 +211,12 @@ end
 [nsts, dinfo, data] = pspm_load_data(fn, chan);
 if nsts == -1, return; end;
 if numel(data) > 1
-    fprintf('There is more than one ECG channel in the data file. Only the first of these will be analysed.');
-    data = data(1);
+  fprintf('There is more than one ECG channel in the data file. Only the first of these will be analysed.');
+  data = data(1);
 end;
 if not(strcmp(data{1,1}.header.chantype,'ecg'))
-    warning('ID:not_allowed_channeltype', 'Specified channel is not an ECG channel. Don''t know what to do!')
-    return;
+  warning('ID:not_allowed_channeltype', 'Specified channel is not an ECG channel. Don''t know what to do!')
+  return;
 end
 
 % =========================================================================
@@ -256,7 +257,7 @@ pt.data.x(:,2)=pt.data.x(:,2).^2;
 pt.settings.q=round(pt.settings.filt.sr/6.66667);
 pt.data.x(:,3)=pt.data.x(:,2);
 for j=(pt.settings.q+1):pt.settings.n
-    pt.data.x(j,3)=(1/pt.settings.q)*(sum(pt.data.x((j-pt.settings.q):j,2)));
+  pt.data.x(j,3)=(1/pt.settings.q)*(sum(pt.data.x((j-pt.settings.q):j,2)));
 end
 
 % --Find peaks-------------------------------------------------------------
@@ -286,17 +287,17 @@ pt.set.tstart=1;
 
 % ---Debug Mode------------------------------------------------------------
 if pt.settings.debugmode==1
-    % ----------------------------------------------------------------------
-    %    Info variable containing information on pt_debug.data
-    pt.pt_debug.info={'heartbeats','amplified signal','integrated signal',...
-        'amplified peaks','integrated peaks','amplified thresholds',...
-        'integrated thresholds'};
-    % ----------------------------------------------------------------------
-    pt.pt_debug.data=nan(length(pt.data.x),7);
-    pt.pt_debug.data(:,2)=pt.data.x(:,2);
-    pt.pt_debug.data(:,3)=pt.data.x(:,3);
-    pt.pt_debug.data(:,4)=pt.data.pt_peaks(:,1);
-    pt.pt_debug.data(:,5)=pt.data.pt_peaks(:,2);
+  % ----------------------------------------------------------------------
+  %    Info variable containing information on pt_debug.data
+  pt.pt_debug.info={'heartbeats','amplified signal','integrated signal',...
+    'amplified peaks','integrated peaks','amplified thresholds',...
+    'integrated thresholds'};
+  % ----------------------------------------------------------------------
+  pt.pt_debug.data=nan(length(pt.data.x),7);
+  pt.pt_debug.data(:,2)=pt.data.x(:,2);
+  pt.pt_debug.data(:,3)=pt.data.x(:,3);
+  pt.pt_debug.data(:,4)=pt.data.pt_peaks(:,1);
+  pt.pt_debug.data(:,5)=pt.data.pt_peaks(:,2);
 end
 % ---Start R-Spike search: setup standard values---------------------------
 pt.set.ts=round(pt.settings.filt.sr/6.25);
@@ -306,33 +307,33 @@ pt.set.ts=round(pt.settings.filt.sr/6.25);
 
 % ---Debug Mode------------------------------------------------------------
 if pt.settings.debugmode==1
-    pt.pt_debug.data(:,1)=pt.data.r;
-    pt.debug.data(pt.pt_debug.data(:,1)==1,1)=max(max(pt.pt_debug.data));
-    pt_debug=pt.pt_debug;
-    figure; hold on;
-    stem(pt_debug.data(:,1),'k');
-    plot(pt_debug.data(:,2:7));
-    legend(pt.pt_debug.info);
+  pt.pt_debug.data(:,1)=pt.data.r;
+  pt.debug.data(pt.pt_debug.data(:,1)==1,1)=max(max(pt.pt_debug.data));
+  pt_debug=pt.pt_debug;
+  figure; hold on;
+  stem(pt_debug.data(:,1),'k');
+  plot(pt_debug.data(:,2:7));
+  legend(pt.pt_debug.info);
 end
 
 % ---Manual check for outliers---------------------------------------------
 if pt.settings.semi==1
-    if any(diff(pt.set.R)<mean(diff(pt.set.R))-pt.settings.outfact*std(diff(pt.set.R))) || ...
-            any(diff(pt.set.R)>mean(diff(pt.set.R))+pt.settings.outfact*std(diff(pt.set.R)))
+  if any(diff(pt.set.R)<mean(diff(pt.set.R))-pt.settings.outfact*std(diff(pt.set.R))) || ...
+      any(diff(pt.set.R)>mean(diff(pt.set.R))+pt.settings.outfact*std(diff(pt.set.R)))
 
-        noise=find(diff(pt.set.R)<mean(diff(pt.set.R))-pt.settings.outfact*std(diff(pt.set.R)));
-        miss=find(diff(pt.set.R)>mean(diff(pt.set.R))+pt.settings.outfact*std(diff(pt.set.R)));
-        pt.faulty=sort([noise miss]);
-        % -----------------------------------------------------------------
-        [nsts,R]=pspm_ecg_editor(pt); % open gui to manually check for outliers
-        if nsts~=-1 && not(isempty(R))
-            pt.set.R=R;
-        else
-            warning('Manual correction not completed. Results will not be saved to file!')
-            sts=-1;
-            return
-        end
+    noise=find(diff(pt.set.R)<mean(diff(pt.set.R))-pt.settings.outfact*std(diff(pt.set.R)));
+    miss=find(diff(pt.set.R)>mean(diff(pt.set.R))+pt.settings.outfact*std(diff(pt.set.R)));
+    pt.faulty=sort([noise miss]);
+    % -----------------------------------------------------------------
+    [nsts,R]=pspm_ecg_editor(pt); % open gui to manually check for outliers
+    if nsts~=-1 && not(isempty(R))
+      pt.set.R=R;
+    else
+      warning('Manual correction not completed. Results will not be saved to file!')
+      sts=-1;
+      return
     end
+  end
 end
 
 % ---Prepare output and save-----------------------------------------------
@@ -374,156 +375,156 @@ CSE(1,:)='SPKI%d';
 CSE(2,:)='SPKF%d';
 % -------------------------------------------------------------------------
 while pt.set.tstart+pt.set.tmax <= pt.settings.n
-    % ---R-spike search--------------------------------------------------------
-    if cse < 3
+  % ---R-spike search--------------------------------------------------------
+  if cse < 3
+    j=pt.set.tstart;
+    while j <= pt.set.tstart + pt.set.tmax && j < pt.settings.n
+      if j+pt.set.tmax < pt.settings.n
+        invl=j:j+pt.set.tmax;
+        invl2=j:j+pt.set.ts;
+      else invl=j:pt.settings.n;
+        invl2=j:pt.settings.n;
+      end
+      % -------------------------------------------------------------
+      % no peak found in first pass, so lower threshold
+      if j==(pt.set.tstart+pt.set.tmax) && cse==1
+        cse=2;
         j=pt.set.tstart;
-        while j <= pt.set.tstart + pt.set.tmax && j < pt.settings.n
-            if j+pt.set.tmax < pt.settings.n
-                invl=j:j+pt.set.tmax;
-                invl2=j:j+pt.set.ts;
-            else invl=j:pt.settings.n;
-                invl2=j:pt.settings.n;
-            end
-            % -------------------------------------------------------------
-            % no peak found in first pass, so lower threshold
-            if j==(pt.set.tstart+pt.set.tmax) && cse==1
-                cse=2;
-                j=pt.set.tstart;
-                % ---------------------------------------------------------
-                % no peak found in second pass, so use most likely peak
-            elseif  j==(pt.set.tstart+pt.set.tmax) && cse==2
-                cse=3;
-                % ---------------------------------------------------------
-                % no peak at this point
-            elseif pt.data.pt_peaks(j,1) == 0
-                j = j + 1;
-                % ---------------------------------------------------------
-                % R peak at this point
-            elseif pt.data.pt_peaks(j,1) >= (pt.set.THRF/cse) && max(pt.data.pt_peaks(invl2,2)) >= (pt.set.THRI/cse)  ...
-                    && strcmp(twave_check(pt,j),'negative')
-                if pt.settings.debugmode==1 % save current thresholds to debug variable
-                    if j+pt.set.tmax <= pt.settings.n
-                        pt.pt_debug.data(j:j+pt.set.tmax,6)=pt.set.THRF/cse;
-                        pt.pt_debug.data(j:j+pt.set.tmax,7)=pt.set.THRI/cse;
-                    else
-                        pt.pt_debug.data(j:end,6)=pt.set.THRF/cse;
-                        pt.pt_debug.data(j:end,7)=pt.set.THRI/cse;
-                    end
-                end
-                [pt.set]=update_set(max(pt.data.pt_peaks(invl2,2)),pt.set,sprintf(CSE(1,:),cse));
-                [pt.set]=update_set(pt.data.pt_peaks(j,1),pt.set,sprintf(CSE(2,:),cse));
-                pt.data.r(j,1)=1;
-                cse=1;
-                pt.set.tstart=j+pt.settings.tmin;
-                pt.set.R(end+1)=j;
-                % ---update tmax-------------------------------------------
-                if length(pt.set.R)>= 9
-                    [pt]=tmax(pt);
-                end
-                % ---------------------------------------------------------
-
-                break
-                % ----------------------------------------------------------
-                % noise peak at this point
-            elseif  pt.data.pt_peaks(j,1) > 0 || strcmp(pt.set.twave,'positive')
-                [pt.set]=update_set(pt.data.pt_peaks(j,1),pt.set,'NPKF');
-                [pt.set]=update_set(pt.data.pt_peaks(j,2),pt.set,'NPKI');
-                j=j+1;
-                % ----------------------------------------------------------
-                % this shouldn't happen:
-            else
-                error;
-            end
+        % ---------------------------------------------------------
+        % no peak found in second pass, so use most likely peak
+      elseif  j==(pt.set.tstart+pt.set.tmax) && cse==2
+        cse=3;
+        % ---------------------------------------------------------
+        % no peak at this point
+      elseif pt.data.pt_peaks(j,1) == 0
+        j = j + 1;
+        % ---------------------------------------------------------
+        % R peak at this point
+      elseif pt.data.pt_peaks(j,1) >= (pt.set.THRF/cse) && max(pt.data.pt_peaks(invl2,2)) >= (pt.set.THRI/cse)  ...
+          && strcmp(twave_check(pt,j),'negative')
+        if pt.settings.debugmode==1 % save current thresholds to debug variable
+          if j+pt.set.tmax <= pt.settings.n
+            pt.pt_debug.data(j:j+pt.set.tmax,6)=pt.set.THRF/cse;
+            pt.pt_debug.data(j:j+pt.set.tmax,7)=pt.set.THRI/cse;
+          else
+            pt.pt_debug.data(j:end,6)=pt.set.THRF/cse;
+            pt.pt_debug.data(j:end,7)=pt.set.THRI/cse;
+          end
         end
-
-        % ---if neither with thr 1 nor with thr 2 an r spike could be identified---
-    elseif cse==3
-        % divide invl into 3 smaller intervals
-        for k=1:3
-            mindx=[];
-            mindx=(k-1)*round(length(invl)/3)+1:k*round(length(invl)/3);
-            if max(mindx)>length(invl)
-                mindx(mindx>length(invl))=[];
-            end
-            minvl=invl(1,mindx);
-            if any(pt.data.pt_peaks(minvl,1)>pt.set.THRF)
-                [PEAKI,posPEAKI]=max(pt.data.pt_peaks(minvl,2));
-                [pt.set]=update_set(PEAKI,pt.set,CSE(1,:));
-                [PEAKF,posPEAKF]=max(pt.data.pt_peaks(minvl,1));
-                [pt.set]=update_set(PEAKF,pt.set,CSE(2,:));
-
-                pt.set.tstart=posPEAKF+pt.set.tstart;
-                pt.data.r(pt.set.tstart,1)=1;
-                pt.set.R(end+1)=pt.set.tstart;
-                cse=1;
-                pt.set.tstart=pt.set.tstart+pt.settings.tmin;
-                break
-            end
-
-            if k==3
-                if numel(pt.set.R) < 2 || pt.set.R(end)-pt.set.R(end-1)>0
-                    [PEAKI,posPEAKI]=max(pt.data.pt_peaks(invl,2));
-                    [pt.set]=update_set(PEAKI,pt.set,CSE(1,:));
-                    [PEAKF,posPEAKF]=max(pt.data.pt_peaks(invl,1));
-                    [pt.set]=update_set(PEAKF,pt.set,CSE(2,:));
-
-                    pt.set.tstart=posPEAKF+pt.set.tstart;
-                    pt.data.r(pt.set.tstart,1)=1;
-                    pt.set.R(end+1)=pt.set.tstart;
-                    cse=1;
-                    pt.set.tstart=pt.set.tstart+pt.settings.tmin;
-                    break
-                end
-            end
-        end
-        % ---update tmax---------------------------------------------------
+        [pt.set]=update_set(max(pt.data.pt_peaks(invl2,2)),pt.set,sprintf(CSE(1,:),cse));
+        [pt.set]=update_set(pt.data.pt_peaks(j,1),pt.set,sprintf(CSE(2,:),cse));
+        pt.data.r(j,1)=1;
+        cse=1;
+        pt.set.tstart=j+pt.settings.tmin;
+        pt.set.R(end+1)=j;
+        % ---update tmax-------------------------------------------
         if length(pt.set.R)>= 9
-            [pt]=tmax(pt);
+          [pt]=tmax(pt);
         end
-        % -----------------------------------------------------------------
+        % ---------------------------------------------------------
+
+        break
+        % ----------------------------------------------------------
+        % noise peak at this point
+      elseif  pt.data.pt_peaks(j,1) > 0 || strcmp(pt.set.twave,'positive')
+        [pt.set]=update_set(pt.data.pt_peaks(j,1),pt.set,'NPKF');
+        [pt.set]=update_set(pt.data.pt_peaks(j,2),pt.set,'NPKI');
+        j=j+1;
+        % ----------------------------------------------------------
+        % this shouldn't happen:
+      else
+        error;
+      end
     end
+
+    % ---if neither with thr 1 nor with thr 2 an r spike could be identified---
+  elseif cse==3
+    % divide invl into 3 smaller intervals
+    for k=1:3
+      mindx=[];
+      mindx=(k-1)*round(length(invl)/3)+1:k*round(length(invl)/3);
+      if max(mindx)>length(invl)
+        mindx(mindx>length(invl))=[];
+      end
+      minvl=invl(1,mindx);
+      if any(pt.data.pt_peaks(minvl,1)>pt.set.THRF)
+        [PEAKI,posPEAKI]=max(pt.data.pt_peaks(minvl,2));
+        [pt.set]=update_set(PEAKI,pt.set,CSE(1,:));
+        [PEAKF,posPEAKF]=max(pt.data.pt_peaks(minvl,1));
+        [pt.set]=update_set(PEAKF,pt.set,CSE(2,:));
+
+        pt.set.tstart=posPEAKF+pt.set.tstart;
+        pt.data.r(pt.set.tstart,1)=1;
+        pt.set.R(end+1)=pt.set.tstart;
+        cse=1;
+        pt.set.tstart=pt.set.tstart+pt.settings.tmin;
+        break
+      end
+
+      if k==3
+        if numel(pt.set.R) < 2 || pt.set.R(end)-pt.set.R(end-1)>0
+          [PEAKI,posPEAKI]=max(pt.data.pt_peaks(invl,2));
+          [pt.set]=update_set(PEAKI,pt.set,CSE(1,:));
+          [PEAKF,posPEAKF]=max(pt.data.pt_peaks(invl,1));
+          [pt.set]=update_set(PEAKF,pt.set,CSE(2,:));
+
+          pt.set.tstart=posPEAKF+pt.set.tstart;
+          pt.data.r(pt.set.tstart,1)=1;
+          pt.set.R(end+1)=pt.set.tstart;
+          cse=1;
+          pt.set.tstart=pt.set.tstart+pt.settings.tmin;
+          break
+        end
+      end
+    end
+    % ---update tmax---------------------------------------------------
+    if length(pt.set.R)>= 9
+      [pt]=tmax(pt);
+    end
+    % -----------------------------------------------------------------
+  end
 end
 
 %% ---Update_set-----------------------------------------------------------
 function [set]=update_set(PEAK,set,CSE)
 % -------------------------------------------------------------------------
 switch CSE
-    case 'SPKI1'
-        SPKI=set.SPKI;
-        NPKI=set.NPKI;
-        SPKI=0.125*PEAK+0.875*SPKI;
-    case 'SPKI2'
-        SPKI=set.SPKI;
-        NPKI=set.NPKI;
-        SPKI=0.25*PEAK+0.75*SPKI;
-    case 'NPKI'
-        SPKI=set.SPKI;
-        NPKI=set.NPKI;
-        NPKI=0.25*PEAK+0.75*NPKI;
-    case 'SPKF1'
-        SPKF=set.SPKF;
-        NPKF=set.NPKF;
-        SPKF=0.125*PEAK+0.875*SPKF;
-    case 'SPKF2'
-        SPKF=set.SPKF;
-        NPKF=set.NPKF;
-        SPKF=0.25*PEAK+0.75*SPKF;
-    case 'NPKF'
-        SPKF=set.SPKF;
-        NPKF=set.NPKF;
-        NPKF=0.25*PEAK+0.75*NPKF;
+  case 'SPKI1'
+    SPKI=set.SPKI;
+    NPKI=set.NPKI;
+    SPKI=0.125*PEAK+0.875*SPKI;
+  case 'SPKI2'
+    SPKI=set.SPKI;
+    NPKI=set.NPKI;
+    SPKI=0.25*PEAK+0.75*SPKI;
+  case 'NPKI'
+    SPKI=set.SPKI;
+    NPKI=set.NPKI;
+    NPKI=0.25*PEAK+0.75*NPKI;
+  case 'SPKF1'
+    SPKF=set.SPKF;
+    NPKF=set.NPKF;
+    SPKF=0.125*PEAK+0.875*SPKF;
+  case 'SPKF2'
+    SPKF=set.SPKF;
+    NPKF=set.NPKF;
+    SPKF=0.25*PEAK+0.75*SPKF;
+  case 'NPKF'
+    SPKF=set.SPKF;
+    NPKF=set.NPKF;
+    NPKF=0.25*PEAK+0.75*NPKF;
 end
 
 % ---Thresholds------------------------------------------------------------
 switch CSE
-    case {'SPKI1','SPKI2','NPKI'}
-        set.SPKI=SPKI;
-        set.NPKI=NPKI;
-        set.THRI= NPKI + 0.25 * (SPKI-NPKI);
-    case {'SPKF1','SPKF2','NPKF'}
-        set.SPKF=SPKF;
-        set.NPKF=NPKF;
-        set.THRF= NPKF + 0.25 * (SPKF-NPKF);
+  case {'SPKI1','SPKI2','NPKI'}
+    set.SPKI=SPKI;
+    set.NPKI=NPKI;
+    set.THRI= NPKI + 0.25 * (SPKI-NPKI);
+  case {'SPKF1','SPKF2','NPKF'}
+    set.SPKF=SPKF;
+    set.NPKF=NPKF;
+    set.THRF= NPKF + 0.25 * (SPKF-NPKF);
 end
 
 % -------------------------------------------------------------------------
@@ -532,9 +533,9 @@ function [pt]=tmax(pt)
 % ---Setup and load--------------------------------------------------------
 
 if length(pt.set.R)==9
-    av2=mean(diff(pt.set.R));
+  av2=mean(diff(pt.set.R));
 else
-    av2=pt.set.tmax/1.66;
+  av2=pt.set.tmax/1.66;
 end
 
 % ---Get average 2---------------------------------------------------------
@@ -543,14 +544,14 @@ Rcur=diff(pt.set.R);
 
 for j=1:length(Rcur)
 
-    if  Rcur(j) < 0.92 * av2 || Rcur(j) > 1.16 * av2
-        Rcur(j)=0;
-    end
+  if  Rcur(j) < 0.92 * av2 || Rcur(j) > 1.16 * av2
+    Rcur(j)=0;
+  end
 end;
 
 if length(Rcur(Rcur~=0)) > 8
-    Rcor=Rcur(Rcur ~=0);
-    av2=mean(Rcor((length(Rcor)-7):length(Rcor)));
+  Rcor=Rcur(Rcur ~=0);
+  av2=mean(Rcor((length(Rcor)-7):length(Rcor)));
 end
 
 
@@ -559,7 +560,7 @@ end
 pt.set.tmax=round(av2*1.66);
 
 if pt.set.tmax < 2* pt.settings.tmin        % tmax must not be smaller than tmin
-    pt.set.tmax= 2 * pt.settings.tmin;      % tmax should be tmin * 2
+  pt.set.tmax= 2 * pt.settings.tmin;      % tmax should be tmin * 2
 end
 
 % -------------------------------------------------------------------------
@@ -570,11 +571,11 @@ function [twave]=twave_check(pt,j)
 q=diff(pt.set.R);
 
 if ~isempty(q) && q(end) < pt.settings.filt.sr * pt.settings.twthresh
-    if pt.set.grad(j) < 0.5 * pt.set.grad(pt.set.R(end-1));
-        twave='positive';
-    else
-        twave='negative';
-    end
+  if pt.set.grad(j) < 0.5 * pt.set.grad(pt.set.R(end-1));
+    twave='positive';
+  else
+    twave='negative';
+  end
 else twave='negative';
 end
 % -------------------------------------------------------------------------

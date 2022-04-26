@@ -43,12 +43,12 @@ function [fx, dfdx, dfdP] = f_SCR(Xt, Theta, ut, in)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach & Jean Daunizeau (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
-
-% settings
+%% Initialise settings
 global settings
-if isempty(settings), pspm_init; end;
+if isempty(settings)
+	pspm_init;
+end
+sts = -1;
 sigma = 0.3;  % std for event-related and spontaneous sudomotor input function
 sigma_SCL = 1;% std for SCL changes
 sigma_offset = settings.dcm{1}.sigma_offset; %  offset for aSCR sigma to constrain the amplitude/sd trade-off
