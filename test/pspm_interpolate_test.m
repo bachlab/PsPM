@@ -1,16 +1,14 @@
 classdef pspm_interpolate_test < matlab.unittest.TestCase
-
-  % pspm_interpolate_test
+  % ● Description
   % unittest class for the pspm_interpolate function
   % testEnvironment for PsPM version 6.0
+  % ● Authorship
   % (C) 2015 Tobias Moser (University of Zurich)
   %			2022 Teddy Chao (UCL)
-
   properties
     datafile = 'interpolate_test';
     testdata = {};
   end
-
   properties (TestParameter)
     % interpolation test
     interp_method = {'linear', 'pchip', 'nearest', 'spline', 'previous', 'next'};
@@ -30,9 +28,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
     overwrite = {true, false};
     replace_channels = {true, false};
   end
-
   methods
-
     function [data, opt_chans] = generate_data(this, datatype, amount, nan_method, chans, extrap)
       data = {};
       opt_chans = cell(1,amount);
@@ -84,7 +80,6 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       end
       this.testdata{end+1} = data;
     end
-
     function [outdata] = put_nan(this, indata, method, extrap)
       outdata = [];
       middle = floor(numel(indata)/2);
@@ -110,7 +105,6 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       outdata = indata;
       outdata(s:e) = NaN;
     end
-
     function verify_nan_free(this, data, channels)
       if isnumeric(data)
         % only one channel to interpolate
@@ -136,11 +130,8 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
         end
       end
     end
-
   end
-
   methods (TestMethodTeardown)
-
     function cleanup_data(this)
       data = this.testdata;
       % if datafield is a file, delete it
@@ -153,11 +144,8 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       end
       this.testdata = {};
     end
-
   end
-
   methods (Test)
-
     function invalid_input(this)
       c{1}.chantype = 'scr';
       valid_data = pspm_testdata_gen(c, 10);
@@ -221,7 +209,6 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       options = struct('extrapolate', true, 'method', 'next');
       this.verifyWarning(@() pspm_interpolate(invalid_data, options), 'ID:out_of_range');
     end
-
     function test_datatypes(this, datatype, amount, chans)
       % generate data
       [data, opt_chans] = generate_data(this, datatype, amount, 'center', chans, false);
@@ -265,7 +252,6 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
         this.verify_nan_free(outdata, options.channels);
       end
     end
-
     function test_interpolation_variations(this, interp_method, extrap, nan_method)
       % generate data
       [data, opt_chans] = generate_data(this, 'inline', 1, nan_method, {{'scr'}, []}, extrap);
@@ -291,7 +277,6 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
         this.verify_nan_free(outdata{1}, options.channels);
       end
     end
-
     function test_no_nan(this)
       %% try to interpolate without nans
       % generate data
@@ -310,7 +295,6 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       % test for nans
       this.verify_nan_free(outdata, {});
     end
-
     function test_write(this, newfile)
       % test whether data is added to a new channel or a new file is
       % created
@@ -360,7 +344,6 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
         end
       end
     end
-
     function test_overwrite(this, overwrite)
       % generate data
       [data, opt_chans] = generate_data(this, 'file', 2, 'center', ...
@@ -386,7 +369,6 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
         end
       end
     end
-
     function test_replace_channel(this, replace_channels)
       % generate data (this, datatype, amount, nan_method, chans, extrap)
       [data, opt_chans] = generate_data(this, 'file', 2, 'center', ...
@@ -415,5 +397,4 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       end
     end
   end
-
 end

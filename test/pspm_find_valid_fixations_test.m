@@ -1,25 +1,21 @@
 classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
-  % PSPM_FIND_VALID_FIXATIONS_TEST
+  % ● Description
   % unittest class for pspm_find_valid_fixations
-  %__________________________________________________________________________
+  % ● Authorship
   % PsPM TestEnvironment
   % (C) 2016 Tobias Moser (University of Zurich)
   % Updated 2021 Teddy Chao (WCHN, UCL)
-
   properties
     datafiles = {};
     testfile_prefix = 'datafile';
   end
-
   properties(TestParameter)
     % gaze validation settings
     distance = {75};
     unit ={'cm'};
     resolution = {[1 1], [1280 1024], [1920 1080]};
-
     % eyes
     eyes = {'l', 'r'};
-
     % others
     channel_action = {'add', 'replace'};
     newfile = {0, 1};

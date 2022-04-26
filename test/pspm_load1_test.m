@@ -1,16 +1,12 @@
 classdef pspm_load1_test < matlab.unittest.TestCase
-  % SCR_LOAD1_TEST
+  % ● Description
   % unittest class for the pspm_load1 function
-  %__________________________________________________________________________
-  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2015 Tobias Moser (University of Zurich)
-
-  % $Id: pspm_load1_test.m 491 2017-10-13 13:28:08Z tmoser $
-  % $Rev: 491 $
 
   properties (Constant)
     % define testfile name
-    fn = 'testdatafile79888.mat';
+    fn = 'testdata_load1.mat';
   end
 
   properties

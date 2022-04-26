@@ -1,7 +1,8 @@
 classdef pspm_get_hb_test < matlab.unittest.TestCase
-  % SCR_GET_HB_TEST
+  % ● Description
   % unittest class for the pspm_get_hb function
-  % SCRalyze TestEnvironment
+  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
   methods (Test)
     function test(this)

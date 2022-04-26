@@ -1,7 +1,7 @@
 classdef pspm_get_biotrace_test < pspm_get_superclass
-  % SCR_GET_BIOTRACE_TEST
+  % ● Description
   % unittest class for the pspm_get_biotrace function
-  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
   properties
     testcases;
@@ -19,4 +19,3 @@ classdef pspm_get_biotrace_test < pspm_get_superclass
     end
   end
 end
-

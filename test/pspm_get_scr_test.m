@@ -1,12 +1,8 @@
 classdef pspm_get_scr_test < matlab.unittest.TestCase
-  % SCR_GET_SCR_TEST
+  % ● Description
   % unittest class for the pspm_get_scr function
-  %__________________________________________________________________________
-  % SCRalyze TestEnvironment
-  % (C) 2013 Linus R�ttimann (University of Zurich)
-
-
-
+  % ● Authorship
+  % (C) 2013 Linus Rüttimann (University of Zurich)
   methods (Test)
 
     function no_transferparams(testCase)

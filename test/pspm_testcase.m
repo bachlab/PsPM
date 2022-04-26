@@ -1,9 +1,8 @@
 classdef pspm_testcase < matlab.unittest.TestCase
-  % PSPM_TESTCASE
+  % ● Description
   % Parent class for pspm test cases. Implements some basic functions
   % such as ensuring that the ImportTestData direcotry is available.
-  %__________________________________________________________________________
-  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2017 Tobias Moser (University of Zurich)
   % Updated 2021 Teddy Chao (WCHN, UCL)
   methods(TestClassSetup)

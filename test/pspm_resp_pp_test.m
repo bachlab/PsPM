@@ -1,7 +1,7 @@
 classdef pspm_resp_pp_test < pspm_testcase
-  % PSPM_RESP_PP_TEST
+  % ● Description
   % unittest class for the pspm_resp_pp function
-  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2019 Eshref Yozdemir (University of Zurich)
   properties(Constant)
     input_filename = ['ImportTestData' filesep 'resp' filesep 'pspm_resp_pp_input.mat'];

@@ -1,7 +1,7 @@
 classdef pspm_get_physlog_test < pspm_get_superclass
-  % SCR_GET_PHYSLOG_TEST
+  % ● Description
   % unittest class for the pspm_get_physlog function
-  % PsPM 3.1 TestEnvironment
+  % ● Authorship
   % (C) 2015 Tobias Moser (University of Zurich)
   properties
     testcases;

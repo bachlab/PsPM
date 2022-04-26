@@ -1,7 +1,7 @@
 classdef pspm_get_sps_test < matlab.unittest.TestCase
-  % SCR_GET_SPIKE_TEST
+  % ● Description
   % unittest class for the pspm_get_sps_test function
-  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
   methods (Test)
     function invalid_eye(this)

@@ -1,8 +1,8 @@
 classdef pspm_write_channel_test < matlab.unittest.TestCase
-  
-	% pspm_write_channel_test
+  % ● Description
   % unittest class for the pspm_write_channel function
   % testEnvironment for PsPM version 6.0
+  % ● Authorship
   % (C) 2015 Tobias Moser (University of Zurich)
   %     2022 Teddy Chao
 

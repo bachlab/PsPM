@@ -1,14 +1,12 @@
 classdef pspm_get_biosemi_test < pspm_get_superclass
-  % SCR_GET_BIOSEMI_TEST
+  % ● Description
   % unittest class for the pspm_get_biosemi function
-  % SCRalyze TestEnvironment
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
-
   properties
     testcases;
     fhandle = @pspm_get_biosemi;
   end
-
   methods
     function define_testcases(this)
       % testcase 1
@@ -25,7 +23,6 @@ classdef pspm_get_biosemi_test < pspm_get_superclass
       this.testcases{2}.import{4} = struct('type', 'marker', 'channel', 0);
     end
   end
-
   methods (Test)
     function invalid_datafile(this)
       fn = 'ImportTestData/biosemi/91316#00_hab.bdf';

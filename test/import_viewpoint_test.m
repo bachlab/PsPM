@@ -1,7 +1,7 @@
 classdef import_viewpoint_test < matlab.unittest.TestCase
-  % IMPORT_VIEWPOINT_TEST
-  % unittest class for the import_viewpoint function
-  %__________________________________________________________________________
+  % ● Description
+  % unittest class for import_viewpoint, PsPM TestEnvironment
+  % ● Authorship
   % (C) 2019 Eshref Yozdemir (University of Zurich)
 
   properties (Constant)

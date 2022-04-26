@@ -1,8 +1,7 @@
 classdef pspm_ren_test < matlab.unittest.TestCase
-  % SCR_REN_TEST
+  % ● Description
   % unittest class for the pspm_ren function
-  %__________________________________________________________________________
-  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
   properties
   end

@@ -1,28 +1,23 @@
 classdef pspm_blink_saccade_filt_test < pspm_get_superclass
-  % PSPM_BLINK_SACCADE_FILT_TEST
+  % ● Description
   % unittest class for the pspm_blink_saccade_filt function
-  %__________________________________________________________________________
+  % ● Authorship
   % (C) 2019 Eshref Yozdemir (University of Zurich)
-
   properties
     fn = fullfile('ImportTestData', 'eyelink', 'u_sc4b31.asc');
     testcases;
     fhandle = @pspm_blink_saccade_filt;
   end
-
   methods
     function define_testcases(this)
-
     end
   end
-
   methods (Test)
     function invalid_input(this)
       this.verifyWarning(@()pspm_blink_saccade_filt(this.fn, 'str'), 'ID:invalid_input');
       options.channel_action = 'delete';
       this.verifyWarning(@()pspm_blink_saccade_filt(this.fn, 0, options), 'ID:invalid_input');
     end
-
     function test_filtering(this)
       factor_list = [0, 0.001, 0.01, 0.1, 1];
       for discard_factor = factor_list
@@ -36,15 +31,12 @@ classdef pspm_blink_saccade_filt_test < pspm_get_superclass
         options.eyelink_trackdist = 700;
         options.distance_unit = 'mm';
         options.overwrite = true;
-
         fn_imported = pspm_import(this.fn, 'eyelink', import, options);
         fn_imported = fn_imported{1};
         [sts, ~, data_old] = pspm_load_data(fn_imported);
-
         options = struct('channel_action', 'replace');
         pspm_blink_saccade_filt(fn_imported, discard_factor, options);
         [sts, ~, data_new] = pspm_load_data(fn_imported);
-
         N = numel(data_old{1}.data);
         n_remove = round(discard_factor * data_old{1}.header.sr);
         blink_r_indices = find(data_old{4}.data);
@@ -57,7 +49,6 @@ classdef pspm_blink_saccade_filt_test < pspm_get_superclass
     end
   end
 end
-
 function out = assert_nan(data, indices, N, n_remove)
 for idx = indices
   lo = max(1, idx - n_remove);

@@ -1,7 +1,8 @@
 classdef pspm_get_obs_test < pspm_get_superclass
-  % SCR_GET_OBS_TEST
+  % ● Description
   % unittest class for the pspm_get_obs function
   % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
   properties
     testcases;

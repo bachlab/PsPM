@@ -1,5 +1,6 @@
 function outfile = pspm_testdata_gen(channels, duration, filename)
-%SCR_TESTDATA_GEN generates simple testdata
+  % ● Description
+% SCR_TESTDATA_GEN generates simple testdata
 %
 % The function generates testdata for multiple channels. For continuous
 % channels it generates a simple sine waveform with amplitude 1 and
@@ -49,15 +50,8 @@ function outfile = pspm_testdata_gen(channels, duration, filename)
 %                    - .header: a struct with the fields '.chantype',
 %                               '.units', '.sr' and '.eventrt' for eventbased
 %                               channels or '.freq' and  for continuous channels
-%__________________________________________________________________________
-% PsPM
+% ● Authorship
 % (C) 2013 Linus Rüettimann & Dominik R Bach (University of Zurich)
-
-% $Id: pspm_testdata_gen.m 458 2017-08-09 09:32:12Z tmoser $
-% $Rev: 458 $
-
-% v002 lr  22.04.2013
-% v001 drb 15.03.2013
 
 
 % Check input

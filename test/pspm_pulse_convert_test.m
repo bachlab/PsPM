@@ -1,8 +1,8 @@
 classdef pspm_pulse_convert_test < matlab.unittest.TestCase
-  % SCR_PULSE_CONVERT_TEST
+  % ● Description
   % unittest class for the pspm_pulse_convert function
-  % PsPM TestEnvironment
-  % (C) 2013 Linus R�ttimann (University of Zurich)
+  % ● Authorship
+  % (C) 2013 Linus Rüttimann (University of Zurich)
   methods (Test)
     function invalid_input(testCase)
       testCase.verifyWarning(@()pspm_pulse_convert, 'ID:invalid_input', 'invalid_inputargs test 1');

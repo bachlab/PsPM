@@ -1,15 +1,14 @@
 classdef pspm_get_mat_test < pspm_get_superclass
-  % SCR_GET_MAT_TEST
+  % ● Description
   % unittest class for the pspm_get_mat function
   % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
-
   properties
     testcases;
     fhandle = @pspm_get_mat;
     datatype = 'mat';
   end
-
   methods
     function define_testcases(this)
       % testcase 1 (cell structure)
@@ -55,7 +54,6 @@ classdef pspm_get_mat_test < pspm_get_superclass
       save(this.testcases{2}.pth, 'data');
     end
   end
-
   methods (TestClassTeardown)
     function del_testdata_files(this)
       delete(this.testcases{1}.pth);
@@ -63,7 +61,6 @@ classdef pspm_get_mat_test < pspm_get_superclass
       this.testcases = [];
     end
   end
-
   methods (Test)
     function invalid_datafile(this)
       fn = 'testfile_get_mat_test_3.mat';

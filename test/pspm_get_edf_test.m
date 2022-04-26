@@ -1,14 +1,13 @@
 classdef pspm_get_edf_test < pspm_get_superclass
-  % SCR_GET_EDF_TEST
+  % ● Description
   % unittest class for the pspm_get_edf function
   % PsPM 3.0 TestEnvironment
+  % ● Authorship
   % (C) 2014 Tobias Moser (University of Zurich)
-
   properties
     testcases;
     fhandle = @pspm_get_edf
   end
-
   methods
     function define_testcases(this)
       % only testcase at the moment since this is the only kind of
@@ -30,7 +29,6 @@ classdef pspm_get_edf_test < pspm_get_superclass
       this.testcases{1}.import{7} = struct('type', 'scr', 'channel', 12);
     end
   end
-
   methods (Test)
     function invalid_input(this)
       fn = 'ImportTestData/edf/TM012face.EDF';

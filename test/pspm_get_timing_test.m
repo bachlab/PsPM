@@ -1,8 +1,7 @@
 classdef pspm_get_timing_test < matlab.unittest.TestCase
-  % SCR_GET_TIMING_TEST
+  % ● Description
   % unittest class for the pspm_get_timing function
-  %__________________________________________________________________________
-  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
 
 

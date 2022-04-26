@@ -1,15 +1,12 @@
 classdef pspm_find_sounds_test < matlab.unittest.TestCase
-
-  % pspm_find_sounds_test
+  % ● Description
   % unittest class for the pspm_find_sounds function
-  % testEnvironment for PsPM version 6.0
+  % ● Authorship
   % (C) 2015 Tobias Moser (University of Zurich)
   %     2022 Teddy Chao (UCL)
-
   properties
     testdata_fn = 'find_sounds_test';
   end
-
   properties (TestParameter)
     channel_output = {'all', 'corrected'};
     max_delay = {0.01, 3, 100};
@@ -18,7 +15,6 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
     resample = {1, 50, 1000};
     channel_action = {'none', 'add', 'replace'};
   end
-
   methods(Test)
     function invalid_input(this)
       % file does not exist
@@ -88,7 +84,6 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
       delete(fn)
     end
   end
-
   methods (Test)
     function test_add_channel(this, channel_output, max_delay, min_delay, resample, channel_action)
       dur = 10;
@@ -149,7 +144,6 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
       end
       delete(fn);
     end
-
     function test_region_count(this)
       % this test only works because generated data is 'symmetric'
       % and events occur always with same distance
@@ -172,7 +166,6 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
       this.verifyWarningFree(@() pspm_find_sounds(fn, o));
       delete(fn);
     end
-
     function test_threshold(this, threshold)
       dur = 10;
       % sound channel
@@ -197,7 +190,6 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
       end
       delete(fn);
     end
-
     function test_plot(this)
       dur = 10;
       % sound channel
@@ -217,7 +209,5 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
       this.verifyEqual(numel(out_infos.delays), numel(out_infos.snd_markers));
       delete(fn);
     end
-
   end
-
 end

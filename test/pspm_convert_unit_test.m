@@ -1,12 +1,11 @@
 classdef pspm_convert_unit_test < matlab.unittest.TestCase
-  % PSPM_CONVERT_UNIT_TEST
+  % ● Description
   % unittest class for the pspm_convert_unit function
-  %__________________________________________________________________________
+  % ● Authorship
   % (C) 2019 Eshref Yozdemir (University of Zurich)
   properties(Constant)
     inch_to_cm = 2.54;
   end
-
   methods
     function test_success(this, input_arr, expected_arr, from, to)
       import matlab.unittest.constraints.IsEqualTo
@@ -16,7 +15,6 @@ classdef pspm_convert_unit_test < matlab.unittest.TestCase
       this.verifyThat(actual_arr, IsEqualTo(expected_arr, 'Within', RelativeTolerance(1e-10)));
     end
   end
-
   methods(Test)
     function invalid_input(testCase)
       % Nonnumeric input
@@ -27,7 +25,6 @@ classdef pspm_convert_unit_test < matlab.unittest.TestCase
       testCase.verifyWarning(@()pspm_convert_unit(1:10, 5, 6), 'ID:invalid_input', 'invalid_inputargs test 5');
       testCase.verifyWarning(@()pspm_convert_unit(1:10, [5, 6], 'km'), 'ID:invalid_input', 'invalid_inputargs test 6');
     end
-
     function valid_input(this)
       % Empty input
       [sts, converted] = pspm_convert_unit([], 'cm', 'km');

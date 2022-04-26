@@ -1,25 +1,22 @@
 classdef import_eyelink_test < matlab.unittest.TestCase
-  % IMPORT_EYELINK_TEST
-  % unittest class for the import_eyelink function
+  % ● Description
+  % unittest class for import_eyelink, PsPM TestEnvironment
+  % ● Authorship
   % (C) 2019 Eshref Yozdemir (University of Zurich)
-
   properties
     funcpath = pspm_path('Import', 'eyelink');
     files = {['ImportTestData' filesep 'eyelink' filesep 'S114_s2_short.asc'],...
       ['ImportTestData' filesep 'eyelink' filesep 'example_data.asc'],...
       ['ImportTestData' filesep 'eyelink' filesep 'u_sc4b31_short.asc']};
   end
-
   methods
     function test_import_eyelink_on_file(this, filepath)
       import matlab.unittest.constraints.IsEqualTo
       import matlab.unittest.constraints.RelativeTolerance
-
       % read eyelink file using import eyelink
       addpath(this.funcpath);
       data = import_eyelink(filepath);
       rmpath(this.funcpath);
-
       % manually read the file and compare the results
       fid = fopen(filepath);
       sn = 0;
@@ -41,10 +38,9 @@ classdef import_eyelink_test < matlab.unittest.TestCase
       sacc_r = false;
       while ischar(tline)
         parts = split(tline);
-
         is_dataline = ~isempty(str2num(parts{1}));
-        is_msgline = strcmp(parts{1}, 'MSG') && (contains(tline, 'CS') || contains(tline, 'US') || contains(tline, 'TS'));
-
+        is_msgline = strcmp(parts{1}, 'MSG') && (contains(tline, 'CS') ...
+        || contains(tline, 'US') || contains(tline, 'TS'));
         if strncmp(tline, 'SBLINK L', numel('SBLINK L'))
           blink_l = true;
         elseif strncmp(tline, 'SBLINK R', numel('SBLINK R'))
@@ -62,7 +58,6 @@ classdef import_eyelink_test < matlab.unittest.TestCase
         elseif strncmp(tline, 'ESACC R', numel('ESACC R'))
           sacc_r = false;
         end
-
         if contains(tline, 'RECCFG')
           sn = sn + 1;
           sample_idx = 1;
@@ -155,13 +150,11 @@ classdef import_eyelink_test < matlab.unittest.TestCase
           this.verifyEqual(to_num(parts{2}), msgtimes(msg_idx));
           msg_idx = msg_idx + 1;
         end
-
         tline = fgetl(fid);
       end
       fclose(fid);
     end
   end
-
   methods (Test)
     function test_import_eyelink(this)
       for i = 1:numel(this.files)
@@ -170,7 +163,6 @@ classdef import_eyelink_test < matlab.unittest.TestCase
     end
   end
 end
-
 function a = to_num(str)
 a = str2num(str);
 if isempty(a)

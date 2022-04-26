@@ -1,7 +1,8 @@
 classdef pspm_get_eyelink_test < pspm_get_superclass
-  % SCR_GET_EYELINK_TEST
+  % ● Description
   % unittest class for the pspm_get_eyelink function
   % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2014 Tobias Moser (University of Zurich)
   properties
     fhandle = @pspm_get_eyelink

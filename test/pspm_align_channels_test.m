@@ -1,8 +1,7 @@
 classdef pspm_align_channels_test < pspm_testcase
-  % PSPM_ALIGN_CHANNELS_TEST
-  % unittest class for the pspm_align_channels function
-  %__________________________________________________________________________
-  % PsPM TestEnvironment
+  % ● Description
+  % unittest class for pspm_align_channels, PsPM TestEnvironment
+  % ● Authorship
   % (C) 2019 Eshref Yozdemir (University of Zurich)
 
   properties(Constant)

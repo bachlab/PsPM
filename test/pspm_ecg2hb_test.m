@@ -1,8 +1,7 @@
 classdef pspm_ecg2hb_test < pspm_testcase
-  % SCR_ECG2HB_TEST
+  % ● Description
   % unittest class for the pspm_ecg2hb function
-  %__________________________________________________________________________
-  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2015 Tobias Moser (University of Zurich)
 
   properties

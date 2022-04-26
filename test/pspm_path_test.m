@@ -1,7 +1,7 @@
 classdef pspm_path_test < pspm_testcase
-  % PSPM_PATH_TEST
+  % ● Description
   % unittest class for the pspm_path function
-  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2019 Eshref Yozdemir (University of Zurich)
   %     2022 Teddy Chao (UCL)
   properties(Constant)

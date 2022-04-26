@@ -1,7 +1,7 @@
 classdef pspm_prepdata_test < matlab.unittest.TestCase
-  % SCR_PREPDATA_TEST
+  % ● Description
   % unittest class for the pspm_prepdata function
-  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
 
   properties

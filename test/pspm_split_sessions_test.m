@@ -1,7 +1,7 @@
 classdef pspm_split_sessions_test < matlab.unittest.TestCase
-  % SCR_SPLIT_SESSIONS_TEST
+  % ● Description
   % unittest class for the pspm_split_sessions function
-  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
   properties
     expected_number_of_files = 3;

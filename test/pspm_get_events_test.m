@@ -1,9 +1,9 @@
 classdef pspm_get_events_test < matlab.unittest.TestCase
-  % PSPM_GET_EVENTS_TEST
+  % ● Description
   % unittest class for the pspm_get_events function
   % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
-
   methods
     function check = checkFlankChange(this, positions, data)
       positions(:,2) = positions(:,1) - 1;
@@ -12,7 +12,6 @@ classdef pspm_get_events_test < matlab.unittest.TestCase
       check = (sum(abs(sign(diff(data(positions),1,2)))) == length(positions));
     end
   end
-
   methods (Test)
     function check_warnings(this)
       import.sr = 1;
@@ -21,7 +20,6 @@ classdef pspm_get_events_test < matlab.unittest.TestCase
       import.marker = 'foo';
       this.verifyWarning(@()pspm_get_events(import), 'ID:invalid_field_content');
     end
-
     function timestamps(this)
       import.marker = 'timestamps';
       import.sr = 10^-3;
@@ -30,7 +28,6 @@ classdef pspm_get_events_test < matlab.unittest.TestCase
       this.verifyEqual(sts, 1);
       this.verifyTrue(length(rimport.data) == length(import.data));
     end
-
     function continuous(this)
       import.marker = 'continuous';
       import.sr = 10^3;

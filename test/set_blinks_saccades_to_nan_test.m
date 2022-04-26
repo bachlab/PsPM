@@ -1,8 +1,7 @@
 classdef set_blinks_saccades_to_nan_test < matlab.unittest.TestCase
-  % SET_BLINKS_SACCADES_TO_NAN_TEST
+  % ● Description
   % unittest class for the set_blinks_saccades_to_nan function
-  %__________________________________________________________________________
-  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2019 Eshref Yozdemir (University of Zurich)
 
   properties(Constant)

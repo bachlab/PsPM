@@ -1,7 +1,8 @@
 classdef pspm_get_hr_test < matlab.unittest.TestCase
-  % SCR_GET_HR_TEST
+  % ● Description
   % unittest class for the pspm_get_hr function
   % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
   methods (Test)
     function test(this)

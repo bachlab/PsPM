@@ -1,8 +1,7 @@
 classdef pspm_down_test < matlab.unittest.TestCase
-  % SCR_DOWN_TEST
+  % ● Description
   % unittest class for the pspm_down function
-  %__________________________________________________________________________
-  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2015 Tobias Moser (University of Zurich)
 
   properties(Constant)

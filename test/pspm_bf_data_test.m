@@ -1,11 +1,10 @@
 classdef pspm_bf_data_test < matlab.unittest.TestCase
-
-  % Testfunction to test the generic settings of a basis function.
-  % The generic settings are:
-  % [bf,x] = pspm_bf_data(td)
-
-  % PsPM TestEnvironment
+  % ● Description
+	% unittest class for pspm_bf_data, PsPM TestEnvironment
+  % ● Authorship
   % (C) 2021 Teddy Chao (WCHN, UCL)
+  % ● Developer's notes
+  % Generic settings: [bf,x] = pspm_bf_data(td)
 
   properties(Constant)
     fn = 'pspm_bf_data_sample.mat';

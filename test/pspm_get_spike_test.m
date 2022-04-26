@@ -1,7 +1,7 @@
 classdef pspm_get_spike_test < pspm_get_superclass
-  % SCR_GET_SPIKE_TEST
+  % ● Description
   % unittest class for the pspm_get_spike function
-  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
   properties
     testcases;

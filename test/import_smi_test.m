@@ -1,7 +1,7 @@
 classdef import_smi_test < matlab.unittest.TestCase
-  % IMPORT_SMI_TEST
-  % unittest class for the import_smi function
-  %__________________________________________________________________________
+  % ● Description
+  % unittest class for import_smi, PsPM TestEnvironment
+  % ● Authorship
   % (C) 2019 Eshref Yozdemir (University of Zurich)
 
   properties (Constant)

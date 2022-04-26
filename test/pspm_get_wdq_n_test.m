@@ -1,8 +1,8 @@
 classdef pspm_get_wdq_n_test < pspm_get_superclass
-  % SCR_GET_WDQ_N_TEST
+  % ● Description
   % unittest class for the pspm_get_wdq_n function
-  %__________________________________________________________________________
   % PsPM 3.0 TestEnvironment
+  % ● Authorship
   % (C) 2014 Tobias Moser (University of Zurich)
   properties
     testcases;

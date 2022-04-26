@@ -1,5 +1,5 @@
 classdef (Abstract) pspm_get_superclass < pspm_testcase
-  %SCR_GET_SUPERCLASS
+  % ● Description
   %   Abstract superclass for the pspm_get_<datatype>_test classes. All the testclasses
   %   for the file import functions (pspm_get_<datatype>_test) must inherit this
   %   class and implement its abstract methods and properties.

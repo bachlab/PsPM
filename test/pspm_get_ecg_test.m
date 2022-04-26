@@ -1,7 +1,7 @@
 classdef pspm_get_ecg_test < matlab.unittest.TestCase
-  % SCR_GET_ECG_TEST
+  % ● Description
   % unittest class for the pspm_get_ecg function
-  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
   methods (Test)
     function test(this)

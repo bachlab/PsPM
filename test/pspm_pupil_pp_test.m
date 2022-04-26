@@ -1,8 +1,7 @@
 classdef pspm_pupil_pp_test < pspm_testcase
-  % PSPM_PUPIL_PP_TEST
+  % ● Description
   % unittest class for the pspm_pupil_pp function
-  %__________________________________________________________________________
-  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2019 Eshref Yozdemir (University of Zurich)
   % Update 2021 Teddy Chao (WCHN, UCL)
   properties

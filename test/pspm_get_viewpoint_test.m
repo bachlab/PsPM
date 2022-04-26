@@ -1,6 +1,7 @@
 classdef pspm_get_viewpoint_test < pspm_get_superclass
-  % PSPM_GET_VIEWPOINT_TEST
+  % ● Description
   % unittest class for the pspm_get_viewpoint function
+  % ● Authorship
   % (C) 2019 Eshref Yozdemir (University of Zurich)
   properties
     fhandle = @pspm_get_viewpoint;

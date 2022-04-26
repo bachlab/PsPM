@@ -1,11 +1,10 @@
 classdef pspm_find_channel_test < matlab.unittest.TestCase
-  % SCR_FIND_CHANNEL_TEST
+  % ● Description
   % unittest class for the pspm_find_channel function
-  % SCRalyze TestEnvironment
-  % (C) 2013 Linus R¸ttimann (University of Zurich)
+  % ● Authorship
+  % (C) 2013 Linus Rüttimann (University of Zurich)
   properties
   end
-
   methods (Test)
     function invalid_inputargs(this)
       this.verifyWarning(@()pspm_find_channel('str','scr'), 'ID:invalid_input', 'invalid_inputargs test 1');
@@ -13,7 +12,6 @@ classdef pspm_find_channel_test < matlab.unittest.TestCase
       this.verifyWarning(@()pspm_find_channel(headercell, 'str'), 'ID:not_allowed_channeltype', 'invalid_inputargs test 2');
       this.verifyWarning(@()pspm_find_channel(headercell, 4), 'ID:invalid_input', 'invalid_inputargs test 3');
     end
-
     function valid_inputargs(this)
       headercell = {'heart', 'scr', 'pupil', 'mark', 'gsr', 'eda'};
       this.verifyEqual(pspm_find_channel(headercell, 'pupil'), 3);

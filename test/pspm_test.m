@@ -1,12 +1,12 @@
 function pspm_test(varargin)
-% DESCRIPTION
+  % ● Description
 % pspm_test is a wrapper script for testing all testable functions in one
 % - to be used before any release.
 % quit_after_tests : [bool]
 %                    Define whether the script should quit MATLAB with a success/fail flag
 %                    after the tests are run.
 %                    (Default: false)
-% PsPM TestEnvironment
+% ● Authorship
 % (C) 2013 Dominik Bach & Linus Ruettimann (University of Zurich)
 % Updated Teddy Chao (WCHN, UCL)
 

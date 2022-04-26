@@ -1,14 +1,13 @@
 classdef pspm_get_labchartmat_ext_test < pspm_get_superclass
-  % SCR_GET_LABCHARTMAT_EXT_TEST
+  % ● Description
   % unittest class for the pspm_get_labchartmat_ext function
   % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
-
   properties
     testcases;
     fhandle = @pspm_get_labchartmat_ext;
   end
-
   methods
     function define_testcases(this)
       % testcase 1
@@ -19,7 +18,6 @@ classdef pspm_get_labchartmat_ext_test < pspm_get_superclass
       this.testcases{1}.import{4} = struct('type', 'marker', 'channel', 0);
     end
   end
-
   methods (Test)
     function invalid_datafile(this)
       fn = 'ImportTestData/labchart/LabChartMat_ext_SCR_ECG_HR.mat';

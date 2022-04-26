@@ -1,8 +1,8 @@
 classdef pspm_trim_test < matlab.unittest.TestCase
-
-	% pspm_trim_test
+  % ● Description
   % unittest class for the pspm_trim_test function
   % testEnvironment for PsPM version 6.0
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
   %     2022 Teddy Chao
 

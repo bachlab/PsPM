@@ -1,14 +1,13 @@
 classdef pspm_get_marker_test < matlab.unittest.TestCase
-  % SCR_GET_MARKER_TEST
+  % ● Description
   % unittest class for the pspm_get_marker function
   % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
-
   properties (TestParameter)
     flank = { 'descending', 'ascending' };
     sr = { 1, 2 };
   end
-
   methods (Test)
     function timestamps(this)
       import.sr = 1;
@@ -21,7 +20,6 @@ classdef pspm_get_marker_test < matlab.unittest.TestCase
       this.verifyTrue(strcmpi(data.header.units, 'events'));
       this.verifyEqual(data.header.sr, 1);
     end
-
     function continuous(this, flank, sr)
       import.sr = sr;
       import.data = [ 42, 42, 84, 84, 84, 42, 42, 42, 84, 42 ];

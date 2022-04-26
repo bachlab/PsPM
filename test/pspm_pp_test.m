@@ -1,8 +1,7 @@
 classdef pspm_pp_test < matlab.unittest.TestCase
-  % SCR_PP_TEST
+  % ● Description
   % unittest class for the pspm_pp function
-  %__________________________________________________________________________
-  % SCRalyze TestEnvironment
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
 
   properties

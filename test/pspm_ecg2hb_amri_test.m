@@ -1,8 +1,7 @@
 classdef pspm_ecg2hb_amri_test < pspm_testcase
-  % PSPM_ECG2HB_AMRI_TEST
+  % ● Description
   % unittest class for the pspm_ecg2hb_amri function
-  %__________________________________________________________________________
-  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2019 Eshref Yozdemir (University of Zurich)
 
   properties(Constant)

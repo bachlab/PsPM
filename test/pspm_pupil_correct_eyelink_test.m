@@ -1,7 +1,7 @@
 classdef pspm_pupil_correct_eyelink_test < pspm_testcase
-  % PSPM_PUPIL_CORRECT_EYELINK_TEST
+  % ● Description
   % unittest class for the pspm_pupil_correct_eyelink function
-  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2019 Eshref Yozdemir (University of Zurich)
   properties
     raw_input_filename = fullfile('ImportTestData', 'eyelink', 'S114_s2.asc');

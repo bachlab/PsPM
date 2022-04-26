@@ -1,6 +1,7 @@
 classdef pspm_scr_pp_test < matlab.unittest.TestCase
-  % DEFINITION
-  %   pspm_scr_pp_test validate the behaviour of pspm_scr_pp
+  % ● Description
+  % unittest class for pspm_scr_pp
+  % ● Authorship
   % 2021 Teddy Chao (WCHN UCL)
   properties(Constant)
     fn = 'scr_pp_test.mat';

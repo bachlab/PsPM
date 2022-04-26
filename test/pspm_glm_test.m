@@ -1,9 +1,9 @@
 classdef pspm_glm_test < matlab.unittest.TestCase
-  % PSPM_GLM_TEST
+  % ● Description
   % unittest class for the pspm_glm function
-  %__________________________________________________________________________
-  % SCRalyze TestEnvironment
-  % (C) 2014 Linus R�ttimann (University of Zurich)
+  % PsPM TestEnvironment
+  % ● Authorship
+  % (C) 2014 Linus Rüttimann (University of Zurich)
 
   properties (TestParameter)
     shiftbf = {0, 5};

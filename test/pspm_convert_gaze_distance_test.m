@@ -1,7 +1,6 @@
 classdef pspm_convert_gaze_distance_test < matlab.unittest.TestCase
-  % pspm_convert_gaze_distance_test
+  % ● Description
   % unittest class for the pspm_convert_gaze_distance_test function
-
 
   properties
     raw_input_filename = fullfile('ImportTestData', 'eyelink', 'S114_s2.asc');

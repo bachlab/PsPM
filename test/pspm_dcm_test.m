@@ -1,8 +1,7 @@
 classdef pspm_dcm_test < pspm_testcase
-  % PSPM_DCM_TEST
+  % ● Description
   % unittest class for the pspm_dcm function
-  %__________________________________________________________________________
-  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2017 Tobias Moser (University of Zurich)
 
   properties

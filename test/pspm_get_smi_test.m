@@ -1,6 +1,7 @@
 classdef pspm_get_smi_test < pspm_get_superclass
-  % PSPM_GET_SMI_TEST
+  % ● Description
   % unittest class for the pspm_get_smi function
+  % ● Authorship
   % (C) 2019 Eshref Yozdemir (University of Zurich)
 
   properties

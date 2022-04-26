@@ -1,7 +1,8 @@
 classdef pspm_get_pupil_test < matlab.unittest.TestCase
-  % SCR_GET_PUPIL_TEST
+  % ● Description
   % unittest class for the pspm_get_pupil function
   % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
   methods (Test)
     function test(this)

@@ -1,7 +1,7 @@
 classdef pspm_pupil_correct_test < pspm_testcase
-  % PSPM_PUPIL_CORRECT_TEST
+  % ● Description
   % unittest class for the pspm_pupil_correct function
-  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2019 Eshref Yozdemir (University of Zurich)
   methods(Test)
     function invalid_input(this)

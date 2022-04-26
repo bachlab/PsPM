@@ -1,15 +1,11 @@
 classdef pspm_process_illuminance_test < matlab.unittest.TestCase
-  % SCR_PROCESS_ILLUMINANCE test function
+  % ● Description
   % unittest class for the pspm_process_illuminance function
-  %__________________________________________________________________________
-  % PsPM TestEnvironment
+  % ● Authorship
   % (C) 2016 Tobias Moser (University of Zurich)
-  %
-  % $Id: pspm_process_illuminance_test.m 377 2016-10-31 15:57:10Z tmoser $
-  % $Rev: 377 $
 
   properties
-    testfile_prefix = 'testdatafile';
+    testfile_prefix = 'testdata_process_illuminance';
     datafiles = {};
   end;
 

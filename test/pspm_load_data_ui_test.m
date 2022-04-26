@@ -1,8 +1,7 @@
 classdef pspm_load_data_ui_test < matlab.unittest.TestCase
-  % SCR_LOAD_DATA_UI_TEST
+  % ● Description
   % unittest class for userinteraction parts for the pspm_load_data function
-  %__________________________________________________________________________
-  % SCRalyze TestEnvironment
+  % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
   properties(Constant)
     fn = 'testfile_load_data_ui.mat';
