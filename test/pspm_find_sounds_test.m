@@ -1,6 +1,6 @@
 classdef pspm_find_sounds_test < matlab.unittest.TestCase
-	
-	% pspm_find_sounds_test
+
+  % pspm_find_sounds_test
   % unittest class for the pspm_find_sounds function
   % testEnvironment for PsPM version 6.0
   % (C) 2015 Tobias Moser (University of Zurich)
@@ -18,7 +18,7 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
     resample = {1, 50, 1000};
     channel_action = {'none', 'add', 'replace'};
   end
-	
+
   methods(Test)
     function invalid_input(this)
       % file does not exist
@@ -217,7 +217,7 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
       this.verifyEqual(numel(out_infos.delays), numel(out_infos.snd_markers));
       delete(fn);
     end
-		
+
   end
-	
+
 end

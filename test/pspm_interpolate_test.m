@@ -1,6 +1,6 @@
 classdef pspm_interpolate_test < matlab.unittest.TestCase
-  
-	% pspm_interpolate_test
+
+  % pspm_interpolate_test
   % unittest class for the pspm_interpolate function
   % testEnvironment for PsPM version 6.0
   % (C) 2015 Tobias Moser (University of Zurich)
@@ -32,7 +32,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
   end
 
   methods
-	
+
     function [data, opt_chans] = generate_data(this, datatype, amount, nan_method, chans, extrap)
       data = {};
       opt_chans = cell(1,amount);
@@ -136,11 +136,11 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
         end
       end
     end
-		
+
   end
 
   methods (TestMethodTeardown)
-	
+
     function cleanup_data(this)
       data = this.testdata;
       % if datafield is a file, delete it
@@ -153,11 +153,11 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       end
       this.testdata = {};
     end
-		
+
   end
 
   methods (Test)
-	
+
     function invalid_input(this)
       c{1}.chantype = 'scr';
       valid_data = pspm_testdata_gen(c, 10);
@@ -214,7 +214,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       this.verifyWarning(@() pspm_interpolate(invalid_data), 'ID:option_disabled');
       options = struct('extrapolate', true, 'method', 'previous');
       this.verifyWarning(@() pspm_interpolate(invalid_data, options), 'ID:out_of_range');
-			% finalise
+      % finalise
       invalid_data.data{1}.data(1) = backup;
       invalid_data.data{1}.data(end) = NaN;
       this.verifyWarning(@() pspm_interpolate(invalid_data), 'ID:option_disabled');

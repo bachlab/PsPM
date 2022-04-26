@@ -1,6 +1,6 @@
 classdef pspm_load_data_test < matlab.unittest.TestCase
-  
-	% pspm_load_data_test
+
+  % pspm_load_data_test
   % unittest class for the pspm_load_data function
   % testEnvironment for PsPM version 6.0
   % (C) 2013 Linus Rüttimann (University of Zurich)
@@ -21,15 +21,15 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
 
   methods
     function compare_data(this, act_val, exp_val)
-			% this method is recommened for comparing structs (Infos, data, header)
-			% because load_data will autofill some fields which should be allowed as different
+      % this method is recommened for comparing structs (Infos, data, header)
+      % because load_data will autofill some fields which should be allowed as different
       import matlab.unittest.constraints.IsEqualTo;
       % Verify Infos
       ExpStructInfos = exp_val.infos;
       ActStructInfos = act_val.infos;
       this.verifyThat(ExpStructInfos, ...
-      								IsEqualTo(ActStructInfos), ...
-      								'valid_datafile_0 test 1');
+        IsEqualTo(ActStructInfos), ...
+        'valid_datafile_0 test 1');
       ExpStruct = exp_val.data;
       ActStruct = act_val.data;
       for i_struct = 1:length(ExpStruct)
@@ -39,16 +39,16 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
         ActData = ActStruct{i_struct,1}.data;
         % Verify data
         this.verifyThat(ExpData, ...
-        								IsEqualTo(ActData), ...
-        								'valid_datafile_0 test 1');
+          IsEqualTo(ActData), ...
+          'valid_datafile_0 test 1');
         % Verify header
         l_fieldnames = fieldnames(ExpHeader);
         for i_field = 1:numel(l_fieldnames)
           ExpHeaderVal = ExpHeader.(l_fieldnames{i_field});
           ActHeaderVal = ActHeader.(l_fieldnames{i_field});
           this.verifyThat(ExpHeaderVal, ...
-          								IsEqualTo(ActHeaderVal), ...
-          								'valid_datafile_0 test 1');
+            IsEqualTo(ActHeaderVal), ...
+            'valid_datafile_0 test 1');
         end
       end
     end
@@ -86,7 +86,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
   methods (Test)
 
     function invalid_inputargs(this)
-		% Test group 1: check warnings
+  		% Test group 1: check warnings
       % test 1
       this.verifyWarning(@()pspm_load_data(), ...
         'ID:invalid_input', ...
@@ -250,7 +250,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       exp_val = load(this.fn);
       this.compare_data(act_val, exp_val);
     end
-    
+
     function valid_datafile_2(this) % return one channel
       chan = 2;
       [~, infos, data] = pspm_load_data(this.fn, chan);
@@ -260,7 +260,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       exp_val.data = exp_val.data(chan);
       this.compare_data(act_val, exp_val);
     end
-    
+
     function valid_datafile_3(this) % return multiple channels
       chan = [3 5];
       [~, infos, data] = pspm_load_data(this.fn, chan);
@@ -306,7 +306,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       delete(this.fn);
       clear save
     end
-		
+
   end
-	
+
 end

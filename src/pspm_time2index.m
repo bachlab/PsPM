@@ -33,7 +33,7 @@ if index == 0
 end
 if exist('data_length', 'var')
   flag = index > ones(size(index)) * data_length;
-  if sum(sum(flag))>0
+  if sum(sum(flag)) > 0
     index(flag==1) = data_length;
   end
 end
