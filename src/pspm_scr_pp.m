@@ -83,12 +83,12 @@ function [sts, out] = pspm_scr_pp(datafile, options, chan)
 
 
 %% Initialise
-global settings;
+global settings
 if isempty(settings)
   pspm_init;
 end
+sts = -1;
 out = [];
-sts = 1;
 
 %% Set default values
 if ~exist('options', 'var')

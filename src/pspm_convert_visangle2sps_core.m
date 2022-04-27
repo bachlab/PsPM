@@ -1,14 +1,14 @@
 function arclen = pspm_convert_visangle2sps_core(lat, lon)
 
 if sum(isnan(lon)) > 0 || sum(isnan(lat)) > 0
-    warning('ID:invalid_input', 'cannot calculate sps from data with NaN values, check gaze degree data for NaNs');
-    return;
+  warning('ID:invalid_input', 'cannot calculate sps from data with NaN values, check gaze degree data for NaNs');
+  return;
 end
 
 %compare if length are the same
 if numel(lon) ~=numel(lat)
-    warning('ID:invalid_input', 'length of data in gaze_x and gaze_y is not the same');
-    return;
+  warning('ID:invalid_input', 'length of data in gaze_x and gaze_y is not the same');
+  return;
 end;
 
 
