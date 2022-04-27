@@ -7,10 +7,12 @@ function varargout = pspm(varargin)
     
     % initialise
     % -------------------------------------------------------------------------
-    global settings;
-    if isempty(settings)
-        pspm_init;
-    end
+		%% Initialise
+		global settings
+		if isempty(settings)
+			pspm_init;
+		end
+		sts = -1;
     % -------------------------------------------------------------------------
     % Begin initialization code - DO NOT EDIT
     gui_Singleton = 1;
@@ -375,13 +377,7 @@ function tag_data_preparation_list_CreateFcn(hObject, ~, ~)
 end
 
 
-% --- Executes on button press in tag_help.
-function tag_help_Callback(~, ~, ~)
-    % hObject    handle to tag_help (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
-    pspm_show_help_doc();
-end
+
 
 
 % --- Executes on button press in tag_feedback.
@@ -390,4 +386,13 @@ function tag_feedback_Callback(~, ~, ~)
     % eventdata  reserved - to be defined in a future version of MATLAB
     % handles    structure with handles and user data (see GUIDATA)
     pspm_show_forum();
+end
+
+
+% --- Executes on button press in tag_help.
+function tag_help_Callback(~, ~, ~)
+% hObject    handle to tag_help (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+    pspm_show_help_doc();
 end

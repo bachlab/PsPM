@@ -7,7 +7,7 @@ function [fx, dfdx, dfdP] = f_SF(Xt, Theta, ut, in)
 %
 % event input: gaussian bumps with 0.3 s variance, emulating sudomotor
 % firing
-% 
+%
 % NOTE different from f_SCR, the delay in neural conductance is not
 % explicitly modelled here but substracted afterwards
 %
@@ -58,14 +58,14 @@ if ut(2) > 0
 else
     sfTheta = [];
 end;
-    
-    
+
+
 % ODE 3rd order + gaussian
 xdot = [Xt(2)
         Xt(3)
         - Theta(1:3) * Xt(1:3) + gu(ut(1), sfTheta, 1)];
 
-    
+
 fx = Xt + dt .* xdot;
 
 J = [0 1 0
@@ -93,5 +93,3 @@ else
     gu = 0;
 end;
 return;
-
-       
