@@ -1,4 +1,4 @@
-function [sts,infos] = pspm_ecg2hb(fn, chan, options)
+function [sts,infos] = pspm_convert_ecg2hb(fn, chan, options)
 % pspm_ecg2hb identifies the position of QRS complexes in ECG data and
 % writes them as heart beat channel into the datafile. This function
 % implements the algorithm by Pan & Tompkins (1985) with some adjustments.
