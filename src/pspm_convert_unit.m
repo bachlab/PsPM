@@ -1,7 +1,6 @@
 function [sts, converted] = pspm_convert_unit(data, from, to)
 % pspm_convert_unit is a function to convert between different units
 % currently only length units are possible.
-%
 % FORMAT:
 %   [sts, converted] = pspm_convert_unit(data, from, to)
 %
@@ -12,7 +11,6 @@ function [sts, converted] = pspm_convert_unit(data, from, to)
 %   to:                 Unit of the output vector.
 %
 % Valid units are currently mm, cm, dm, m, km, in, inches
-%______________________________________________________________________________
 % PsPM 4.0
 % (C) 2018 Tobias Moser (University of Zurich)
 

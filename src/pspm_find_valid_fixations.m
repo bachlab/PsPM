@@ -93,11 +93,10 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 % Update 2021 Teddy Chao (UCL)
 
 
-%% Initialise
-global settings
-if isempty(settings)
-  pspm_init;
-end
+% initialise
+% -------------------------------------------------------------------------
+global settings;
+if isempty(settings), pspm_init; end
 sts = -1;
 out_file = '';
 
@@ -193,7 +192,7 @@ elseif ~islogical(options.missing) && ~isnumeric(options.missing)
   warning('ID:invalid_input', ['Options.missing is neither logical ', ...
     'nor numeric.']);
   return;
-elseif ~any(strcmpi(options.eyes, {settings.lateral.full.b, ...
+elseif ~any(strcmpi(options.eyes, {settings.lateral.full.c, ...
     settings.lateral.full.l, settings.lateral.full.r}))
   warning('ID:invalid_input', ['Options.eyes must be either ''combined'', ', ...
     '''left'' or ''right''.']);

@@ -47,28 +47,22 @@ function [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, ...
 %__________________________________________________________________________
 % PsPM 4.0
 % (C) 2016 Tobias Moser (University of Zurich)
-
 %% Initialise
 global settings
 if isempty(settings)
   pspm_init;
 end
 sts = -1;
-
-
 if nargin < 6
   warning('ID:invalid_input', 'Not enough arguments.');
   return;
 end
-
 % try to set default values
 %if no options are set
 if ~exist('options','var')
   options = struct();
   options.channel_action = 'add';
 end
-
-
 % do value checks
 if ~isstruct(options)
   warning('ID:invalid_input', 'Options must be a struct.');
@@ -89,7 +83,6 @@ elseif ~isnumeric(chan)
   warning('ID:invalid_input', 'Channels must be indicated by their ID nummber.');
   return;
 end
-
 % number of channels given must be even or 0 if unit 'degree' is given
 if strcmpi(unit,'degree')
   if mod(numel(chan),2)~=0 && chan~=0
@@ -107,67 +100,55 @@ if lsts ~= 1
   warning('ID:invalid_input', 'Could not load input data correctly.');
   return;
 end
-
 % find gaze channels
 gaze_idx = cellfun(@(x) ~isempty(...
   regexp(x.header.chantype, 'gaze_[x|y]_[r|l]', 'once')), data);
-
 gaze_chans = data(gaze_idx);
 n_chans = numel(gaze_chans);
 if n_chans == 0
   warning('ID:invalid_input','No gaze channels found, nothing to do.')
-  return;
+  return
 end
-
-%diffenrentiate which units to which unit to convert
+% diffenrentiate which units to which unit to convert
 if strcmpi(unit,'degree')
   %unit_out = unit;
   unit_h_w_d = 'mm';
 else
   %unit_out = unit;
   unit_h_w_d = unit;
-end;
-
+end
 % do conversion for normal length units and for degree unit
 for c = 1:n_chans
   chan = gaze_chans{c};
   if strcmpi(chan.header.units, 'pixel')
-
     % pick conversion factor according to channel type x / y coord
     if ~isempty(regexp(chan.header.chantype, 'gaze_x_', 'once'))
       screen_length = width;
     else
       screen_length = height;
-    end;
-
+    end
     % length per pixel along width or height
     lenght_per_pixel = screen_length ./ (diff(chan.header.range) + 1);
-
     % baseline data in pixels wrt. the range (i.e. pixels of interest)
     pixel_index = chan.data-chan.header.range(1);
     % convert indices into coordinates in the units of interests
     chan.data = pixel_index * lenght_per_pixel ;
-
     % same procedure for the range (baseline + conversion)
     chan.header.range = (chan.header.range-chan.header.range(1)) * lenght_per_pixel ;
-
     % writting the new units into the structure
     chan.header.units = unit_h_w_d;
   else
     warning('ID:invalid_input', ['Not converting (%s) because ', ...
       'input data is not in pixel.'], chan.header.chantype);
-  end;
+  end
   % replace data
   gaze_chans{c} = chan;
-
-end;
-
+end
 [lsts, outinfo] = pspm_write_channel(fn, gaze_chans, options.channel_action);
 if lsts ~= 1
   warning('ID:invalid_input', 'Could not write converted data.');
   return;
 end
-
 if strcmpi(unit,'degree')
   options.channel_action = 'replace';
   [lsts, outinfo] = pspm_compute_visual_angle(fn,outinfo.channel, ...
@@ -176,11 +157,8 @@ if strcmpi(unit,'degree')
     warning('ID:compute_visual_angle_err',...
       'An error occured during the computation of the visual angle.');
     return;
-  end;
-end;
-
-
+  end
+end
 sts = 1;
 out = outinfo;
-
 end
