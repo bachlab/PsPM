@@ -26,7 +26,7 @@ classdef pspm_load1_test < matlab.unittest.TestCase
       % generate model data
       model.datafile = this.fn;
       model.timeunits = 'seconds';
-      for i=1:length(settings.first)
+      for i = 1:length(settings.first)
         if ~strcmpi(settings.first{i},'pfm')
           mbn = ['model_', settings.first{i}];
           fn_ok = false;

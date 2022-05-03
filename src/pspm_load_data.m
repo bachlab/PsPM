@@ -4,55 +4,55 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 % ● FORMAT
 % [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 % ● INPUT
-% fn					[char] filename / [struct] with fields
+% fn          [char] filename / [struct] with fields
 % ┣━.infos
 % ┗━.data
-% chan				[numeric vector] / [char] / [struct]
-%		          [vector]
-% 	            0 or empty	returns all channels
-% 	            number of channels
-%								            returns only these channels
-%		          [char]
-% 	            'wave'      returns all waveform channels
-% 	            'events'		returns all event channels
-%               'pupil'			goes through the below precedence order and
+% chan        [numeric vector] / [char] / [struct]
+%             [vector]
+%               0 or empty  returns all channels
+%               number of channels
+%                            returns only these channels
+%             [char]
+%               'wave'      returns all waveform channels
+%               'events'    returns all event channels
+%               'pupil'     goes through the below precedence order and
 %                           loads all channels corresponding to the first
 %                           existing option:
-%								            1. Combined pupil channels
+%                            1. Combined pupil channels
 %                              (by definition also preprocessed)
-%								            2. Preprocessed pupil channels
+%                            2. Preprocessed pupil channels
 %                              corresponding to best eye
-%							              3. Preprocessed pupil channels
-%							              4. Best eye pupil channels
-%							              please note that if there is only one eye in
+%                            3. Preprocessed pupil channels
+%                            4. Best eye pupil channels
+%                            please note that if there is only one eye in
 %                           the datafile, that eye is defined as the best eye.
-% 	             'channel type'
+%                'channel type'
 %                           returns the respective channels
-%								            (see settings for channel types)
-% 	             'none'			just checks the file
-%		          [struct] check and save file
-%             	┣━.infos (mandatory)
+%                            (see settings for channel types)
+%                'none'      just checks the file
+%             [struct] check and save file
+%               ┣━.infos (mandatory)
 %               ┣━.data (mandatory)
 %               ┗━.options (mandatory)
 % ● OUTPUT
-% sts					[logical]
+% sts         [logical]
 %             0 as default
-%							-1 if check is unsuccessful
-% infos				[struct]
+%             -1 if check is unsuccessful
+% infos       [struct]
 %             variable from data file
-% data				cell array of channels as specified
-% filestruct	[struct]
+% data        cell array of channels as specified
+% filestruct  [struct]
 % ┣━.numofchan
-% ┃						number of channels
+% ┃           number of channels
 % ┣━.numofwavechan
-% ┃						number of wave channels
+% ┃           number of wave channels
 % ┣━.numofeventchan
-% ┃						number of event channels
+% ┃           number of event channels
 % ┣━.posofmarker
-% ┃						position of the first marker channel
-% ┃						0 if no marker channel exists
+% ┃           position of the first marker channel
+% ┃           0 if no marker channel exists
 % ┗━.posofchannels
-%							number of the channels that were returned
+%             number of the channels that were returned
 % ● COMPATIBILITY
 % SCRalyze 2.x data files - SCRalyze 1.x is not supported
 % ● VERSION
@@ -60,9 +60,8 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 % ● AUTHOSHIP
 % (C) 2008-2021 Dominik R. Bach (Wellcome Centre for Human Neuroimaging, UCL)
 %     2022 Teddy Chao (UCL)
-
-
-%% DEVELOPERS NOTES: General structure of PsPM data files
+% ● DEVELOPERS NOTES
+% General structure of PsPM data files
 %
 % each file contains two variables:
 % infos - struct variable with general infos
@@ -86,9 +85,6 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 %
 % data.header.chantype = 'trigger' is allowed for backward compatibility;
 % this feature will be removed in the future
-%
-% compatibility with SCRalyze 1.x files was removed after version b2.1.8
-
 
 %% 1 Initialise
 global settings
@@ -100,7 +96,6 @@ infos = [];
 data = [];
 filestruct = [];
 gerrmsg = '';
-
 %% 2 Check the number of inputs
 switch nargin
   case 0
