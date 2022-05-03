@@ -206,14 +206,14 @@ for iFile = 1:numel(model.datafile)
   % get marker data --
   if any(strcmp(model.timeunits, {'marker', 'markers'}))
     if options.marker_chan_num
-      [nsts, ~, ndata] = pspm_load_data(datafile, options.marker_chan_num);
+      [nsts, ~, ndata] = pspm_load_data(model.datafile, options.marker_chan_num);
       if nsts == -1
         warning('ID:invalid_input', 'Could not load data');
         return;
       end
       if ~strcmp(ndata{1}.header.chantype, 'marker')
         warning('ID:invalid_option', 'Channel %i is no marker channel. The first marker channel in the file is used instead', options.marker_chan_num);
-        [nsts, ~, ~] = pspm_load_data(datafile, 'marker');
+        [nsts, ~, ~] = pspm_load_data(model.datafile, 'marker');
         if nsts == -1
           warning('ID:invalid_input', 'Could not load data');
           return;
