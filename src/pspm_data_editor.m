@@ -9,7 +9,6 @@ function varargout = pspm_data_editor(varargin)
 %                     pspm_data_editor() to edit acquisition data, the actual
 %                     data vector has to be passed via the varargin
 %                     argmument. The data should be 1xn or nx1 double vector.
-%
 %   options           [struct]
 %   ┣━.output_file    Use output_file to specify a file the changed data
 %   ┃                 is saved to when clicking 'save' or 'apply'. Only
@@ -106,31 +105,32 @@ if numel(varargin) > 1 && isstruct(varargin{2}) % load options
 end
 guidata(hObject, handles); % Update handles structure
 if numel(varargin) > 0
-  if ischar(varargin{1})
-    if exist(varargin{1}, 'file')
-      set(handles.pnlInput, 'Visible', 'on');
-      set(handles.pnlOutput, 'Visible', 'on');
-      loadFromFile(hObject, varargin{1});
-    else
-      warning('File ''%s'' does not exist.', varargin{1});
-    end
-  elseif isnumeric(varargin{1})
-    set(handles.pnlInput, 'Visible', 'off');
-    handles.data = varargin{1};
-    handles.input_mode = 'raw';
-    guidata(hObject, handles);
-    PlotData(hObject);
-    if isfield(handles, 'options') && isfield(handles.options, 'output_file')
-      set(handles.pnlOutput, 'Visible', 'off');
-    end
-    if isfield(handles, 'options') && isfield(handles.options, 'epoch_file')
-      set(handles.pnlEpoch, 'Visible', 'off');
-    end
-    if isfield(handles, 'options') && isfield(handles.options, 'epoch_file')
-      handles = guidata(hObject);
-      Add_Epochs(hObject, handles)
-    end
+  switch class(varargin{1})
+    case 'char'
+      if exist(varargin{1}, 'file')
+        set(handles.pnlInput, 'Visible', 'on');
+        set(handles.pnlOutput, 'Visible', 'on');
+        loadFromFile(hObject, varargin{1});
+      else
+        warning('File ''%s'' does not exist.', varargin{1});
+      end
+    case 'double'
+      set(handles.pnlInput, 'Visible', 'off');
+      handles.data = varargin{1};
+      handles.input_mode = 'raw';
   end
+  if isfield(handles, 'options') && isfield(handles.options, 'output_file')
+    set(handles.pnlOutput, 'Visible', 'off');
+  end
+  if isfield(handles, 'options') && isfield(handles.options, 'epoch_file')
+    set(handles.pnlEpoch, 'Visible', 'off');
+  end
+  if isfield(handles, 'options') && isfield(handles.options, 'epoch_file')
+    handles = guidata(hObject);
+    Add_Epochs(hObject, handles)
+  end
+  guidata(hObject, handles);
+  PlotData(hObject);
 end
 uiwait(handles.fgDataEditor);
 
