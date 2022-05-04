@@ -1,39 +1,33 @@
 function varargout = pspm_data_editor(varargin)
+% ● Description
 % pspm_data_editor MATLAB code for pspm_data_editor.fig
-%
-% FORMAT:
+% ● Format
 %   [varargout] = pspm_data_editor(varargin)
 %   [sts, out]  = pspm_data_editor(indata, options)
+% ● Arguments
+%   indata            Can be multiple kinds of data types. In order to use
+%                     pspm_data_editor() to edit acquisition data, the actual
+%                     data vector has to be passed via the varargin
+%                     argmument. The data should be 1xn or nx1 double vector.
 %
-% DESCRIPTION:
-%
-%
-% INPUT:
-%   indata:             Can be multiple kinds of data types. In order to use
-%                       pspm_data_editor() to edit acquisition data, the actual
-%                       data vector has to be passed via the varargin
-%                       argmument. The data should be 1xn or nx1 double vector.
-%
-%   options:
-%       .output_file:   Use output_file to specify a file the changed data
-%                       is saved to when clicking 'save' or 'apply'. Only
-%                       works in 'file' mode.
-%       .epoch_file:    Use epoch_file to specify a .mat file to import epoch data
-%                       .mat file must be a struct with an 'epoch' field
-%                       and a e x 2 matrix of epoch on- and offsets
-%                       (n: number of epochs)
-%
-% OUTPUT:
-%   out:                The output depends on the actual output type chosen in
-%                       the graphical interface. At the moment either the
-%                       interpolated data or epochs only can be chosen as
-%                       output of the function.
+%   options           [struct]
+%   ┣━.output_file    Use output_file to specify a file the changed data
+%   ┃                 is saved to when clicking 'save' or 'apply'. Only
+%   ┃                 works in 'file' mode.
+%   ┣━.epoch_file     Use epoch_file to specify a .mat file to import epoch data
+%   ┃                 .mat file must be a struct with an 'epoch' field
+%   ┃                 and a e x 2 matrix of epoch on- and offsets
+%   ┃                 (n: number of epochs)
+%   ┗━.overwrite      defines whether to overwrite the file
+% ● Outputs
+%   out:              The output depends on the actual output type chosen in
+%                     the graphical interface. At the moment either the
+%                     interpolated data or epochs only can be chosen as
+%                     output of the function.
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2015 Tobias Moser (University of Zurich)
-%
-% PsPM 5.1
-% Updated 2021 Teddy Chao (WCHN)
+%     2021 Teddy Chao (UCL)
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -178,7 +172,11 @@ else
           end
         end
         if write_file
-          newd.options.overwrite = 1;
+          if isfield(options, 'overwrite')
+            newd.options.overwrite = options.overwrite;
+          else
+            newd.options.overwrite = pspm_overwrite(out_file);
+          end
           [write_success, ~, ~] = pspm_load_data(out_file, newd);
           if disp_success
             if write_success
@@ -198,15 +196,7 @@ else
       ep = cellfun(@(x) x.range', handles.epochs, 'UniformOutput', 0);
       epochs = cell2mat(ep)';
       if strcmpi(handles.input_mode, 'file')
-        if exist(out_file, 'file')
-          button = questdlg(sprintf(...
-            'File (%s) already exists. Overwrite?', out_file), ...
-            'Add channels?', 'Yes', 'No', 'No');
-          write_ok = strcmpi(button, 'Yes');
-        else
-          write_ok = true;
-        end
-        if write_ok
+        if pspm_overwrite(out_file)
           save(out_file, 'epochs');
         end
       else
