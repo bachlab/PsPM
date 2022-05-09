@@ -123,7 +123,6 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       dist_unit = this.unit{1};
       options.resolution = [1280 1024];
       options.fixation_point = [1280/4 1024*3/4];
-      options.dont_ask_overwrite = 1;
       options.overwrite = 1;
       options.channels = work_chans;
       options.channel_action = 'add';
@@ -164,7 +163,6 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       dist_unit = this.unit{1};
       options.resolution = [1280 1024];
       options.fixation_point = [1280/4 1024*3/4];
-      options.dont_ask_overwrite = 1;
       options.overwrite = 1;
       options.eyes = work_eye;
       options.channel_action = 'add';
@@ -201,7 +199,6 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       dist_unit = this.unit{1};
       options.resolution = [1280 1024];
       options.fixation_point = [1280/4 1024*3/4];
-      options.dont_ask_overwrite = 1;
       options.overwrite = 1;
       options.missing = missing;
       options.channel_action = 'add';
@@ -231,7 +228,6 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       dist_unit = this.unit{1};
       options.resolution = [1280 1024];
       options.fixation_point = [1280/4 1024*3/4];
-      options.dont_ask_overwrite= 1;
       options.overwrite = overwrite;
       options.channel_action = 'add';
       [~, ~, o_data] = pspm_load_data(fn);
@@ -257,7 +253,6 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       options.resolution = [1280 1024];
       options.screen_settings.display_size = 20;
       options.fixation_point = [1280/4 1024*3/4];
-      options.dont_ask_overwrite= 1;
       options.overwrite = 1;
       options.channel_action = channel_action;
       [~, ~, o_data] = pspm_load_data(fn);
@@ -283,7 +278,6 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       dist_unit = this.unit{1};
       options.resolution = [1280 1024];
       options.fixation_point = [1280/4 1024*3/4];
-      options.dont_ask_overwrite = 1;
       options.overwrite = 1;
       if newfile
         options.newfile = pspm_find_free_fn(this.testfile_prefix, '.mat');
@@ -363,8 +357,9 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
             pspm_find_valid_fixations(fn,bitmap, options), ...
             'ID:invalid_input');
         else
-          [sts, outfile] = this.verifyWarningFree(@() ...
-            pspm_find_valid_fixations(fn, bitmap, options));
+          [sts, outfile] = this.verifyWarning(@() ...
+            pspm_find_valid_fixations(fn,bitmap, options), ...
+            'ID:invalid_input');
           this.verifyEqual(sts, 1);
         end
         [~, ~, data] = pspm_load_data(outfile);
@@ -393,7 +388,6 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
       this.generate_fixation_data(fn, 500, 'c');
-      options.dont_ask_overwrite = 1;
       box_degree = 'a';
       dist = '1';
       this.verifyWarning(@() pspm_find_valid_fixations(fn, box_degree, ...
