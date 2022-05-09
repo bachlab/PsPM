@@ -29,31 +29,29 @@ function varargout = pspm_contrast(varargin)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
-
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-% -------------------------------------------------------------------------
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
+sts = -1;
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
-    'gui_Singleton',  gui_Singleton, ...
-    'gui_OpeningFcn', @pspm_contrast_OpeningFcn, ...
-    'gui_OutputFcn',  @pspm_contrast_OutputFcn, ...
-    'gui_LayoutFcn',  [] , ...
-    'gui_Callback',   []);
+  'gui_Singleton',  gui_Singleton, ...
+  'gui_OpeningFcn', @pspm_contrast_OpeningFcn, ...
+  'gui_OutputFcn',  @pspm_contrast_OutputFcn, ...
+  'gui_LayoutFcn',  [] , ...
+  'gui_Callback',   []);
 if nargin && ischar(varargin{1})
-    gui_State.gui_Callback = str2func(varargin{1});
+  gui_State.gui_Callback = str2func(varargin{1});
 end
 
 if nargout
-    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+  [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
 else
-    gui_mainfcn(gui_State, varargin{:});
+  gui_mainfcn(gui_State, varargin{:});
 end
 % End initialization code - DO NOT EDIT
 
@@ -117,21 +115,21 @@ lbTop = get(handles.listNames, 'ListboxTop');
 radioGroupValue = getGroupValue(handles);
 contrastVal = find(handles.conArray{handles.currentContrast}.contrasts(:,listValue));
 if isempty(contrastVal)
-    handles.conArray{handles.currentContrast}.contrasts(radioGroupValue,listValue) = 1;
+  handles.conArray{handles.currentContrast}.contrasts(radioGroupValue,listValue) = 1;
 elseif contrastVal == radioGroupValue
-    handles.conArray{handles.currentContrast}.contrasts(radioGroupValue,listValue) = ~handles.conArray{handles.currentContrast}.contrasts(radioGroupValue,listValue);
+  handles.conArray{handles.currentContrast}.contrasts(radioGroupValue,listValue) = ~handles.conArray{handles.currentContrast}.contrasts(radioGroupValue,listValue);
 end
 
 contrastVal = find(handles.conArray{handles.currentContrast}.contrasts(:,listValue));
 if isempty(contrastVal)
-    handles.conArray{handles.currentContrast}.namesString{listValue} = handles.names{listValue};
+  handles.conArray{handles.currentContrast}.namesString{listValue} = handles.names{listValue};
 else
-    handles.conArray{handles.currentContrast}.namesString{listValue} = sprintf('<HTML><FONT bgcolor="%s">%s</Font></html>',handles.colorString{contrastVal},handles.names{listValue});
+  handles.conArray{handles.currentContrast}.namesString{listValue} = sprintf('<HTML><FONT bgcolor="%s">%s</Font></html>',handles.colorString{contrastVal},handles.names{listValue});
 end
 
 set(handles.listNames,'String',handles.conArray{handles.currentContrast}.namesString);
 if numel(handles.conArray{handles.currentContrast}.namesString) >= lbTop
-    set(handles.listNames, 'ListboxTop', lbTop);
+  set(handles.listNames, 'ListboxTop', lbTop);
 end;
 guidata(hObject, handles);
 
@@ -146,7 +144,7 @@ function listNames_CreateFcn(hObject, eventdata, handles)
 % Hint: listbox controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
+  set(hObject,'BackgroundColor','white');
 end
 
 
@@ -188,45 +186,45 @@ set(handles.textStatus,'String','Loading model. Please wait...');
 drawnow
 [sts, model, modeltype] = pspm_load1(modelfile, 'all', 'any');
 if sts == -1 || ~any(strcmp(modeltype,{'glm','dcm','sf'}))
-    set(handles.textStatus,'String','No modeltype detected');
+  set(handles.textStatus,'String','No modeltype detected');
+  drawnow
+  return;
+elseif strcmp(modeltype,'sf')
+  dcm = cellfun(@(field) strcmpi(field(1).modeltype, 'dcm'), model.model);
+  if numel(dcm) < 1
+    set(handles.textStatus,'String','No supported modeltype detected');
     drawnow
     return;
-elseif strcmp(modeltype,'sf')
-    dcm = cellfun(@(field) strcmpi(field(1).modeltype, 'dcm'), model.model);
-    if numel(dcm) < 1
-        set(handles.textStatus,'String','No supported modeltype detected');
-        drawnow
-        return;
-    end
+  end
 end
 set(handles.buttonNewContrast,'Enable','on');
 set(handles.checkboxDeleteCon,'Enable','on');
 set(handles.checkboxDeleteCon,'Value',0);
 % detect model
 switch modeltype
-    case 'glm'
-        set(handles.textStatus,'String','Detected modeltype: GLM');
-        drawnow
-        handles.paramnames = model.names;
-        handles.condnames = {};
-        % get condition names, code borrowed from pspm_glm_recon
-        regno = (numel(model.names) - model.interceptno)/model.bf.bfno;
-        for k = 1:regno
-            foobar = model.names{((k - 1) * model.bf.bfno + 1)};
-            foo = strfind(foobar, ', bf');
-            handles.condnames{k} = foobar(1:(foo-1));
-            clear foo foobar
-        end;
+  case 'glm'
+    set(handles.textStatus,'String','Detected modeltype: GLM');
+    drawnow
+    handles.paramnames = model.names;
+    handles.condnames = {};
+    % get condition names, code borrowed from pspm_glm_recon
+    regno = (numel(model.names) - model.interceptno)/model.bf.bfno;
+    for k = 1:regno
+      foobar = model.names{((k - 1) * model.bf.bfno + 1)};
+      foo = strfind(foobar, ', bf');
+      handles.condnames{k} = foobar(1:(foo-1));
+      clear foo foobar
+    end;
 
-    case 'dcm'
-        set(handles.textStatus,'String','Detected modeltype: DCM')
-        drawnow
-        handles.paramnames = model.trlnames;
-        handles.condnames = model.condnames;
-    case 'sf'
-        set(handles.textStatus,'String','Detected modeltype: SF')
-        drawnow
-        handles.paramnames = model.trlnames;
+  case 'dcm'
+    set(handles.textStatus,'String','Detected modeltype: DCM')
+    drawnow
+    handles.paramnames = model.trlnames;
+    handles.condnames = model.condnames;
+  case 'sf'
+    set(handles.textStatus,'String','Detected modeltype: SF')
+    drawnow
+    handles.paramnames = model.trlnames;
 end
 handles.names = handles.paramnames;
 handles.modeltype = modeltype;
@@ -265,7 +263,7 @@ function panelTestDef_SelectionChangeFcn(hObject, eventdata, handles)
 testGroupVal = getTestGroupValue(handles);
 setContrastGroup(handles, testGroupVal);
 if testGroupVal ~= handles.conArray{handles.currentContrast}.testGroupVal
-    handles = clearNamesColor(handles);
+  handles = clearNamesColor(handles);
 end
 handles.conArray{handles.currentContrast}.testGroupVal = testGroupVal;
 
@@ -283,24 +281,24 @@ function panelStatstype_SelectionChangeFcn(hObject, eventdata, handles)
 % get current stats type and assign names --
 testStatstype = getStatsTypeValue(handles);
 if testStatstype == 1
-    handles.names = handles.paramnames;
+  handles.names = handles.paramnames;
 else
-    handles.names = handles.condnames;
+  handles.names = handles.condnames;
 end
 
 if strcmpi(handles.modeltype, 'dcm') && testStatstype ~= 3
-    set(handles.checkboxZscored, 'Enable', 'on');
+  set(handles.checkboxZscored, 'Enable', 'on');
 else
-    set(handles.checkboxZscored, 'Enable', 'off');
-    set(handles.checkboxZscored, 'Value', 0);
+  set(handles.checkboxZscored, 'Enable', 'off');
+  set(handles.checkboxZscored, 'Value', 0);
 end
 lbTop = get(handles.listNames, 'ListboxTop');
 if lbTop > numel(handles.names)
-    set(handles.listNames, 'ListboxTop', 1);
+  set(handles.listNames, 'ListboxTop', 1);
 end
 lbValue = get(handles.listNames, 'Value');
 if lbValue > numel(handles.names)
-    set(handles.listNames, 'Value', 1);
+  set(handles.listNames, 'Value', 1);
 end
 set(handles.listNames, 'String', handles.names);
 
@@ -339,7 +337,7 @@ function listContrastNames_CreateFcn(hObject, eventdata, handles)
 % Hint: listbox controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
+  set(hObject,'BackgroundColor','white');
 end
 
 
@@ -359,25 +357,25 @@ handles.conArray{handles.contrastCnt}.statstype = getStatsTypeValue(handles);
 
 contrastName = get(handles.editContrastName,'String');
 if isempty(contrastName)
-    handles.contrastNamesString{handles.currentContrast} = ' ';
+  handles.contrastNamesString{handles.currentContrast} = ' ';
 else
-    handles.contrastNamesString{handles.currentContrast} = contrastName;
+  handles.contrastNamesString{handles.currentContrast} = contrastName;
 end
 set(handles.listContrastNames,'String',handles.contrastNamesString);
 set(handles.listContrastNames,'Value',handles.currentContrast);
 set(handles.listNames,'String',handles.conArray{handles.currentContrast}.namesString);
 
 if handles.enableGroupButtons == false
-    set(handles.listNames,'Enable','on');
-    enableButtonGroups(handles)
-    set(handles.buttonRun,'Enable','on');
-    set(handles.buttonClearCon,'Enable','on');
-    set(handles.listContrastNames,'Enable','on');
-    handles.enableGroupButtons = true;
+  set(handles.listNames,'Enable','on');
+  enableButtonGroups(handles)
+  set(handles.buttonRun,'Enable','on');
+  set(handles.buttonClearCon,'Enable','on');
+  set(handles.listContrastNames,'Enable','on');
+  handles.enableGroupButtons = true;
 end
 
 if handles.contrastCnt > 1
-    set(handles.buttonDeleteContrast, 'Enable', 'on');
+  set(handles.buttonDeleteContrast, 'Enable', 'on');
 end
 
 guidata(hObject, handles);
@@ -402,7 +400,7 @@ function editContrastName_CreateFcn(hObject, eventdata, handles)
 % Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
+  set(hObject,'BackgroundColor','white');
 end
 
 % --- Executes on button press in buttonDeleteContrast.
@@ -416,7 +414,7 @@ handles.contrastNamesString{handles.currentContrast} = [];
 handles.contrastNamesString(cellfun('isempty',handles.contrastNamesString)) = [];
 handles.contrastCnt = handles.contrastCnt - 1;
 if handles.currentContrast > handles.contrastCnt
-    handles.currentContrast = handles.contrastCnt;
+  handles.currentContrast = handles.contrastCnt;
 end
 set(handles.listContrastNames, 'Value', handles.currentContrast);
 set(handles.listContrastNames, 'String', handles.contrastNamesString);
@@ -425,7 +423,7 @@ setTestGroupValue(handles, handles.conArray{handles.currentContrast}.testGroupVa
 setContrastGroup(handles, handles.conArray{handles.currentContrast}.testGroupVal)
 
 if handles.contrastCnt < 2
-    set(handles.buttonDeleteContrast, 'Enable', 'off');
+  set(handles.buttonDeleteContrast, 'Enable', 'off');
 end
 
 guidata(hObject, handles);
@@ -449,7 +447,7 @@ function popupDatatype_CreateFcn(hObject, eventdata, handles)
 % Hint: popupmenu controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
+  set(hObject,'BackgroundColor','white');
 end
 
 % --- Executes on button press in checkboxDeleteCon.
@@ -466,29 +464,29 @@ function buttonRun_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 for i=1:numel(handles.conArray)
-    norm1 = sum(handles.conArray{i}.contrasts(1,:));
-    if norm1 == 0
-        norm1 = 1;
-    end
-    norm2 = sum(handles.conArray{i}.contrasts(2,:));
-    if norm2 == 0
-        norm2 = 1;
-    end
-    norm3 = sum(handles.conArray{i}.contrasts(3,:));
-    if norm3 == 0
-        norm3 = 1;
-    end
-    
-    switch handles.conArray{i}.testGroupVal
-        case 1
-            conVec{i} = handles.conArray{i}.contrasts(1,:)/norm1;
-            
-        case 2
-            conVec{i} = handles.conArray{i}.contrasts(1,:)/norm1 - handles.conArray{i}.contrasts(2,:)/norm2;
-            
-        case 3
-            conVec{i} = handles.conArray{i}.contrasts(1,:)/norm1 - 2*handles.conArray{i}.contrasts(2,:)/norm2 + handles.conArray{i}.contrasts(3,:)/norm3;
-    end
+  norm1 = sum(handles.conArray{i}.contrasts(1,:));
+  if norm1 == 0
+    norm1 = 1;
+  end
+  norm2 = sum(handles.conArray{i}.contrasts(2,:));
+  if norm2 == 0
+    norm2 = 1;
+  end
+  norm3 = sum(handles.conArray{i}.contrasts(3,:));
+  if norm3 == 0
+    norm3 = 1;
+  end
+
+  switch handles.conArray{i}.testGroupVal
+    case 1
+      conVec{i} = handles.conArray{i}.contrasts(1,:)/norm1;
+
+    case 2
+      conVec{i} = handles.conArray{i}.contrasts(1,:)/norm1 - handles.conArray{i}.contrasts(2,:)/norm2;
+
+    case 3
+      conVec{i} = handles.conArray{i}.contrasts(1,:)/norm1 - 2*handles.conArray{i}.contrasts(2,:)/norm2 + handles.conArray{i}.contrasts(3,:)/norm3;
+  end
 end
 
 deletecon = get(handles.checkboxDeleteCon,'Value');
@@ -521,12 +519,12 @@ val = find(val);
 
 function setTestGroupValue(handles, val)
 switch val
-    case 1
-        set(handles.radioIntercept,'Value',1);
-    case 2
-        set(handles.radioCondDiff,'Value',1);
-    case 3
-        set(handles.radioQuadEffects,'Value',1);
+  case 1
+    set(handles.radioIntercept,'Value',1);
+  case 2
+    set(handles.radioCondDiff,'Value',1);
+  case 3
+    set(handles.radioQuadEffects,'Value',1);
 end
 
 
@@ -539,18 +537,18 @@ function setContrastGroup(handles, nr)
 set(handles.radioGroup1,'Enable','on');
 set(handles.radioGroup1,'Value',1);
 if nr > 1
-    set(handles.radioGroup2,'Enable','on');
-    set(handles.radioGroup2,'String',sprintf('<HTML><FONT bgcolor="%s">%s</Font></html>',handles.colorString{2},'Group 2'));
+  set(handles.radioGroup2,'Enable','on');
+  set(handles.radioGroup2,'String',sprintf('<HTML><FONT bgcolor="%s">%s</Font></html>',handles.colorString{2},'Group 2'));
 else
-    set(handles.radioGroup2,'Enable','off');
-    set(handles.radioGroup2,'String','Group 2');
+  set(handles.radioGroup2,'Enable','off');
+  set(handles.radioGroup2,'String','Group 2');
 end
 if nr > 2
-    set(handles.radioGroup3,'Enable','on');
-    set(handles.radioGroup3,'String',sprintf('<HTML><FONT bgcolor="%s">%s</Font></html>',handles.colorString{3},'Group 3'));
+  set(handles.radioGroup3,'Enable','on');
+  set(handles.radioGroup3,'String',sprintf('<HTML><FONT bgcolor="%s">%s</Font></html>',handles.colorString{3},'Group 3'));
 else
-    set(handles.radioGroup3,'Enable','off');
-    set(handles.radioGroup3,'String','Group 3');
+  set(handles.radioGroup3,'Enable','off');
+  set(handles.radioGroup3,'String','Group 3');
 end
 
 
@@ -574,15 +572,15 @@ set(handles.checkboxZscored, 'Enable', 'off');
 function adjustStatsTypeDisplay(handles)
 
 switch handles.modeltype
-    case {'sf','dcm'}
-        set(handles.radioParam, 'String', 'show all trials');      
-        set(handles.radioCond, 'String', 'show conditions');
-        set(handles.radioRecon, 'Visible', 'off');
-    case 'glm'
-        set(handles.radioRecon, 'Visible', 'on');
-        set(handles.radioParam, 'String', 'show all basis functions');
-        set(handles.radioCond, 'String', 'show only first basis function');
-        set(handles.radioRecon, 'String', 'show combined basis function');
+  case {'sf','dcm'}
+    set(handles.radioParam, 'String', 'show all trials');
+    set(handles.radioCond, 'String', 'show conditions');
+    set(handles.radioRecon, 'Visible', 'off');
+  case 'glm'
+    set(handles.radioRecon, 'Visible', 'on');
+    set(handles.radioParam, 'String', 'show all basis functions');
+    set(handles.radioCond, 'String', 'show only first basis function');
+    set(handles.radioRecon, 'String', 'show combined basis function');
 end;
 
 function enableButtonGroups(handles)
@@ -596,19 +594,19 @@ set(handles.radioCondDiff,'Enable','on');
 set(handles.radioQuadEffects,'Enable','on');
 
 switch handles.modeltype
-    case {'sf','dcm'}
-        set(handles.radioParam, 'Enable', 'on'); 
-        set(handles.radioCond, 'Enable', 'on');
-        set(handles.checkboxZscored, 'Enable', 'on');
-        if ~strcmpi(handles.modeltype, 'sf')
-            set(handles.radioCond, 'Enable', 'on');
-        end
-    case {'glm'}
-        set(handles.radioParam, 'Enable', 'on');
-        set(handles.radioRecon, 'Enable', 'on');
-        set(handles.radioCond, 'Enable', 'on');
+  case {'sf','dcm'}
+    set(handles.radioParam, 'Enable', 'on');
+    set(handles.radioCond, 'Enable', 'on');
+    set(handles.checkboxZscored, 'Enable', 'on');
+    if ~strcmpi(handles.modeltype, 'sf')
+      set(handles.radioCond, 'Enable', 'on');
+    end
+  case {'glm'}
+    set(handles.radioParam, 'Enable', 'on');
+    set(handles.radioRecon, 'Enable', 'on');
+    set(handles.radioCond, 'Enable', 'on');
 end
-        
+
 
 
 % --- Executes on button press in checkboxZscored.

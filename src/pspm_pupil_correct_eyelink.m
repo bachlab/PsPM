@@ -116,8 +116,7 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 % Updated 2021 Teddy Chao (WCHN, UCL)
 
 %% Initialise
-
-global settings;
+global settings
 if isempty(settings)
   pspm_init;
 end
@@ -318,11 +317,11 @@ chantype_array = split(chantype,'_');
 % find if there is pp
 is_pp = any(strcmp(chantype_array,'pp'));
 % find if it is combined (c), left (l) or right (r)
-is_b = any(strcmp(chantype_array, settings.lateral.char.b));
+is_c = any(strcmp(chantype_array, settings.lateral.char.c));
 is_l = any(strcmp(chantype_array, settings.lateral.char.l));
 is_r = any(strcmp(chantype_array, settings.lateral.char.r));
 if ~is_pp
-  if is_b
+  if is_c
     chantype_array(ismember(chantype_array,settings.lateral.char.b)) = [];
     chantype_array{end+1} = 'pp';
     chantype_array{end+1} = settings.lateral.char.b;

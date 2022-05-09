@@ -1,34 +1,37 @@
 function varargout = pspm(varargin)
+    % pspm.m handles the main GUI for PsPM
+    % PsPM Version 5.1.1
+    % (C) 2008-2021 Dominik R Bach (Wellcome Centre for Human Neuroimaging)    
+    % Updated 22-07-2021 Teddy (WCHN, UCL)
+    
+    % initialise
+    % -------------------------------------------------------------------------
+		%% Initialise
+		global settings
+		if isempty(settings)
+			pspm_init;
+		end
+		sts = -1;
+    % -------------------------------------------------------------------------
+    % Begin initialization code - DO NOT EDIT
+    gui_Singleton = 1;
+    gui_State = struct('gui_Name',       mfilename, ...
+    'gui_Singleton',  gui_Singleton, ...
+    'gui_OpeningFcn', @PsPM_OpeningFcn, ...
+    'gui_OutputFcn',  @PsPM_OutputFcn, ...
+    'gui_LayoutFcn',  [] , ...
+    'gui_Callback',   []);
 
-% pspm.m handles the main GUI for PsPM
-% PsPM Version 5.2
-% (C) 2008-2021 Dominik R Bach (Wellcome Centre for Human Neuroimaging)
-% Updated 09-08-2021 Teddy (WCHN, UCL)
+    if nargin && ischar(varargin{1})
+        gui_State.gui_Callback = str2func(varargin{1});
+    end
 
-%% Initialise
-global settings;
-if isempty(settings)
-  pspm_init;
-end
-% Begin initialization code - DO NOT EDIT
-gui_Singleton = 1;
-gui_State = struct('gui_Name',       mfilename, ...
-  'gui_Singleton',  gui_Singleton, ...
-  'gui_OpeningFcn', @PsPM_OpeningFcn, ...
-  'gui_OutputFcn',  @PsPM_OutputFcn, ...
-  'gui_LayoutFcn',  [] , ...
-  'gui_Callback',   []);
-
-if nargin && ischar(varargin{1})
-  gui_State.gui_Callback = str2func(varargin{1});
-end
-
-if nargout
-  [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
-else
-  gui_mainfcn(gui_State, varargin{:});
-end
-% End initialization code - DO NOT EDIT
+    if nargout
+        [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+    else
+        gui_mainfcn(gui_State, varargin{:});
+    end
+    % End initialization code - DO NOT EDIT
 end
 
 % --- Executes just before tag_PsPM is made visible.
@@ -383,20 +386,18 @@ if ispc && isequal(get(hObject,'BackgroundColor'),...
 end
 end
 
-
-% --- Executes on button press in tag_help.
-function tag_help_Callback(~, ~, ~)
-% hObject    handle to tag_help (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-pspm_show_help_doc();
-end
-
-
 % --- Executes on button press in tag_feedback.
 function tag_feedback_Callback(~, ~, ~)
 % hObject    handle to tag_feedback (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 pspm_show_forum();
+end
+
+% --- Executes on button press in tag_help.
+function tag_help_Callback(~, ~, ~)
+% hObject    handle to tag_help (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+    pspm_show_help_doc();
 end

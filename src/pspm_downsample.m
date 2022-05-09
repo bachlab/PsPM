@@ -9,24 +9,18 @@ function [sts data] = pspm_downsample(data, freqratio)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
-
-% v001 drb 9.12.2009
-
-% initialise
-% ------------------------------------------------------------------------
-
-global settings;
-if isempty(settings), pspm_init; end;
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
 sts = -1;
 
-% check input arguments
-% ------------------------------------------------------------------------
+%% check input arguments
 if nargin < 2
-    warning('Not enough input arguments.'); return
+  warning('Not enough input arguments.'); return
 elseif floor(freqratio) ~= freqratio
-    warning('Frequency ratio must be integer.'); return
+  warning('Frequency ratio must be integer.'); return
 end;
 
 data = data(freqratio:freqratio:end);
