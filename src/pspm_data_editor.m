@@ -119,18 +119,19 @@ if numel(varargin) > 0
       handles.data = varargin{1};
       handles.input_mode = 'raw';
   end
+  handles = guidata(hObject);
+  guidata(hObject, handles);
+  PlotData(hObject);
   if isfield(handles, 'options') && isfield(handles.options, 'output_file')
     set(handles.pnlOutput, 'Visible', 'off');
   end
-  if isfield(handles, 'options') && isfield(handles.options, 'epoch_file')
+  if isfield(handles, 'options') && ~isfield(handles.options, 'epoch_file')
     set(handles.pnlEpoch, 'Visible', 'off');
   end
   if isfield(handles, 'options') && isfield(handles.options, 'epoch_file')
-    handles = guidata(hObject);
+    handles.epoch_file = handles.options.epoch_file;
     Add_Epochs(hObject, handles)
   end
-  guidata(hObject, handles);
-  PlotData(hObject);
 end
 uiwait(handles.fgDataEditor);
 
