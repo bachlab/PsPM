@@ -143,9 +143,9 @@ end
 
 % 2.2 convert data files
 if iscell(datafile)
-  D=datafile;
+  D = datafile;
 else
-  D={datafile};
+  D = {datafile};
 end
 clear datafile
 
@@ -155,7 +155,7 @@ clear datafile
 % 3.1 determine datatype
 datatype = find(strcmpi(datatype, {settings.import.datatypes.short}));
 
-% check number of jobs ---
+% 3.2 check number of jobs
 % more than one job when only one is allowed?
 if (~settings.import.datatypes(datatype).multioption) && (numel(import) > 1)
   % two jobs when one is an automatically assigned marker channel?
@@ -167,7 +167,7 @@ if (~settings.import.datatypes(datatype).multioption) && (numel(import) > 1)
   end
 end
 
-% check each job ---
+% 3.3 check each job
 for k = 1:numel(import)
   % channel type specified?
   if ~isfield(import{k}, 'type')
@@ -224,8 +224,13 @@ for k = 1:numel(import)
   import{k}.typeno = find(strcmpi(import{k}.type, {settings.chantypes.type}));
 end
 
-%% loop through data files
+%% 4 loop through data files
+% Previous checks have been passed.
+
 for d = 1:numel(D)
+  if ~settings.developmode
+    fprintf(['\n▶︎ Importing ', D{d}, ': ']);
+  end
   % pass over to import function if datafile exists, otherwise next file
   file_exists = true;
   filename_in_msg = D{d};
@@ -302,7 +307,9 @@ for d = 1:numel(D)
       outfile{d, blk} = [];
     end
   end
-  fprintf(' done.\n');
+  if ~settings.developmode
+    fprintf('Done.');
+  end
   % convert import cell back and remove data ---
   import = import{1};
   for k = 1:numel(import)
