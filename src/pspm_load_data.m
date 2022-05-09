@@ -198,25 +198,10 @@ switch class(chan)
     end
     % add default values
     if ~isfield(chan.options, 'overwrite')
-      chan.options.overwrite = 0; % do not overwrite as default
+      chan.options.overwrite = pspm_overwrite(fn);
     end
-    if ~isfield(chan.options, 'dont_ask_overwrite')
-      chan.options.dont_ask_overwrite = 0; % do not overwrite as default
-    end
-    % if fn exists but it's not clear whether to overwrite it
-    if ~chan.options.overwrite && ~chan.options.dont_ask_overwrite
-      if feature('ShowFigureWindows')
-        msg = ['File already exists. Overwrite?', newline, 'Existing file: ',fn];
-        overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'Yes'); % default as Yes
-      else
-        overwrite = 'Yes';
-      end
-      if strcmp(overwrite, 'Yes')
-        chan.options.overwrite = 1;
-      else
-        chan.options.overwrite = 0;
-        warning('Data not saved.\n');
-      end
+    if ~chan.options.overwrite
+      warning('Data not saved.\n');
     end
   otherwise
     warning('ID:invalid_input', 'Unknown channel option.');

@@ -51,8 +51,6 @@ function outfile = pspm_import(datafile, datatype, import, options)
 % ● AUTHORSHIP
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %     2022      Teddy Chao
-
-
 %% DEVELOPERS NOTES: Structure of PsPM import
 %
 % pspm_import is a general function for handling of import jobs. It checks
@@ -89,7 +87,6 @@ function outfile = pspm_import(datafile, datatype, import, options)
 % file formats that support multiple block storage within one file can
 % return cell arrays import{1:blkno} and sourceinfo{1:blkno}; SCRalyze will
 % save individual files for each block, with a filename 'pspm_fn_blk0x.mat'
-
 %% 1 Initialise
 global settings
 if isempty(settings)
@@ -97,7 +94,6 @@ if isempty(settings)
 end
 sts = -1;
 outfile = [];
-
 %% 2 Input argument check & transform
 if nargin < 1
   warning('ID:invalid_input', ...
@@ -131,7 +127,6 @@ elseif ~iscell(import)
     return
   end
 end
-
 % 2.1 check options
 try
   if options.overwrite ~= 1
@@ -140,7 +135,6 @@ try
 catch
   options.overwrite = 0;
 end
-
 % 2.2 convert data files
 if iscell(datafile)
   D = datafile;
@@ -148,13 +142,9 @@ else
   D = {datafile};
 end
 clear datafile
-
-
 %% 3 Check import jobs
-
 % 3.1 determine datatype
 datatype = find(strcmpi(datatype, {settings.import.datatypes.short}));
-
 % 3.2 check number of jobs
 % more than one job when only one is allowed?
 if (~settings.import.datatypes(datatype).multioption) && (numel(import) > 1)
@@ -166,7 +156,6 @@ if (~settings.import.datatypes(datatype).multioption) && (numel(import) > 1)
       settings.import.datatypes(datatype).long); return
   end
 end
-
 % 3.3 check each job
 for k = 1:numel(import)
   % channel type specified?
@@ -223,10 +212,8 @@ for k = 1:numel(import)
   % assign channel type number
   import{k}.typeno = find(strcmpi(import{k}.type, {settings.chantypes.type}));
 end
-
 %% 4 loop through data files
 % Previous checks have been passed.
-
 for d = 1:numel(D)
   if ~settings.developmode
     fprintf(['\n▶︎ Importing ', D{d}, ': ']);
@@ -253,7 +240,6 @@ for d = 1:numel(D)
     fprintf('\nImport unsuccesful for file %s.\n', filename_in_msg);
     break;
   end
-
   % split blocks if necessary ---
   if iscell(sourceinfo)
     blkno = numel(sourceinfo);
@@ -262,7 +248,6 @@ for d = 1:numel(D)
     import = {import};
     sourceinfo = {sourceinfo};
   end
-
   for blk = 1:blkno
     % convert data into desired channel type format ---
     data = cell(numel(import{blk}), 1);
@@ -272,24 +257,23 @@ for d = 1:numel(D)
       [sts(k), data{k}] = feval(settings.chantypes(chantype).import, import{blk}{k});
       if isfield(import{blk}{k}, 'minfreq'), data{k}.header.minfreq = import{blk}{k}.minfreq; end
     end
-
     if any(sts == -1), fprintf('\nData conversion unsuccesful for job %02.0f file %s.\n', ...
         find(sts == -1), filename_in_msg); break; end
-
     % collect infos and save ---
     [pth, fn, ~] = fileparts(filename_in_msg);
     infos.source = sourceinfo{blk};
     infos.source.type = settings.import.datatypes(datatype).long;
     infos.source.file = D{d};
     infos.importdate = date;
-
     % align data length ---
     [sts, data, duration] = pspm_align_channels(data);
-    if sts == -1, fprintf('\nData alignment unsuccesful for file %s.\n', D{d}); break; end
+    if sts == -1
+      fprintf('\nData alignment unsuccesful for file %s.\n', D{d});
+      break
+    end
     infos.duration   = duration;
     infos.durationinfo = 'Recording duration in seconds';
     data = data(:);
-
     % save file ---
     if blkno == 1
       outfile{d, blk}=fullfile(pth, ...
