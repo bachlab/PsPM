@@ -197,7 +197,7 @@ for k = 1:numel(import)
       import{k}.channel = 0;
     else
       import{k}.channel = k;
-      fprintf('Assigned channel/column %1.0f to import job %1.0f of type %s.\n', k, k, import{k}.type);
+      fprintf('\nAssigned channel/column %1.0f to import job %1.0f of type %s.', k, k, import{k}.type);
     end
   end
   % assign channel type number

@@ -354,7 +354,11 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       end
       options = struct('overwrite', overwrite, 'dont_ask_overwrite', 1, 'newfile', true);
       % call function
-      [sts, outdata] = this.verifyWarningFree(@() pspm_interpolate(data, options));
+      if overwrite
+        [sts, ~] = this.verifyWarningFree(@() pspm_interpolate(data, options));
+      else
+        [sts, ~] = this.verifyWarning(@() pspm_interpolate(data, options), 'ID:data_loss');
+      end
       % sts should be 1
       this.verifyEqual(sts, 1);
       % test if cannot btw. can be loaded

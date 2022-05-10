@@ -902,7 +902,7 @@ function pspm_init
   settings.scrcfgpath = scrcfgpath;
   settings.signal = signal;
   settings.pspm_version = pspm_vers;
-  settings.developmode = 1;
+  settings.developmode = 0;
 
   return
 end
