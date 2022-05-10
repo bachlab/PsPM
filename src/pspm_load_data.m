@@ -201,7 +201,7 @@ switch class(chan)
       chan.options.overwrite = pspm_overwrite(fn);
     end
     if ~chan.options.overwrite
-      warning('Data not saved.\n');
+      warning('ID:data_loss', 'Data not saved.\n');
     end
   otherwise
     warning('ID:invalid_input', 'Unknown channel option.');

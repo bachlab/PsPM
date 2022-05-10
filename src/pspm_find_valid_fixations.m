@@ -485,8 +485,6 @@ for i=1:n_eyes
               plot(x_unit, y_unit);
             end
         end
-
-
         % set excluded periods in pupil data to NaN
         new_pu{i} = {data{work_chans}};
         new_excl{i} = cell(1,numel(new_pu{i}));
@@ -516,7 +514,6 @@ for i=1:n_eyes
 end
 
 op = struct();
-op.dont_ask_overwrite = options.dont_ask_overwrite;
 op.overwrite = options.overwrite;
 
 if ~isempty(options.newfile)

@@ -267,7 +267,7 @@ for d = 1:numel(D)
     infos.durationinfo = 'Recording duration in seconds';
     data = data(:);
     % 4.3.4 save file
-    if ~exist(outfile, 'var') % initialise
+    if ~exist('outfile', 'var') % initialise
       outfile = cell(numel(D), blkno);
     end
     if blkno == 1
@@ -279,7 +279,11 @@ for d = 1:numel(D)
     end
     infos.importfile = outfile{d};
     clear savedata
-    savedata.data = data; savedata.infos = infos; savedata.options = options;
+    savedata.data = data;
+    savedata.infos = infos;
+    if exist('options','var')
+      savedata.options = options;
+    end
     sts = pspm_load_data(outfile{d, blk}, savedata);
     if sts ~= 1
       warning('Import unsuccessful for file %s.\n', D{d});
