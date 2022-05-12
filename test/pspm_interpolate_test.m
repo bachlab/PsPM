@@ -18,11 +18,9 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
     amount = {1, 6};
     datatype = {'struct', 'inline', 'file', 'all'};
     chans = { ...
-      {{'scr'}, []}
-      % hb channels shouldn't be interpolated (events)
-      {{'scr', 'hb', 'scr'},[]}, ...
-      % all channels except first should be interpolated
-      {{'scr', 'scr', 'scr'}, [1,3]} ...
+      {{'scr'}, []}, ...
+      {{'scr', 'hb', 'scr'},[]}, ... % hb channels shouldn't be interpolated (events)
+      {{'scr', 'scr', 'scr'}, [1,3]} ... % all channels except first should be interpolated
       };
     newfile = {true, false};
     overwrite = {true, false};
@@ -30,11 +28,10 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
   end
   methods
     function [data, opt_chans] = generate_data(this, datatype, amount, nan_method, chans, extrap)
-      data = {};
       opt_chans = cell(1,amount);
       if strcmpi(datatype, 'all')
         expand = {1, 2, 3};
-        if amount < numel(expand);
+        if amount < numel(expand)
           expand = {1:amount};
         end
       else
@@ -80,8 +77,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       end
       this.testdata{end+1} = data;
     end
-    function [outdata] = put_nan(this, indata, method, extrap)
-      outdata = [];
+    function outdata = put_nan(~, indata, method, extrap)
       middle = floor(numel(indata)/2);
       % if extrapolation is given we can delete to the end and
       % beginning of the file; otherwise not
@@ -110,8 +106,8 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
         % only one channel to interpolate
         this.verifyTrue(~any(isnan(data)));
       else
-        [sts, infos, d] = pspm_load_data(data, 0);
-        for i=1:numel(d)
+        [~, ~, d] = pspm_load_data(data, 0);
+        for i = 1:numel(d)
           % only test non-event channels
           if ~strcmpi(d{i}.header.units, 'events')
             if (isempty(channels) || ismember(i, channels))
@@ -135,8 +131,8 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
     function cleanup_data(this)
       data = this.testdata;
       % if datafield is a file, delete it
-      for i=1:numel(data)
-        for j=1:numel(data{i})
+      for i = 1:numel(data)
+        for j = 1:numel(data{i})
           if ischar(data{i}{j}) && exist(data{i}{j}, 'file')
             delete(data{i}{j});
           end
@@ -182,16 +178,13 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       % invalid overwrite
       options = struct('overwrite', 'bla');
       this.verifyWarning(@() pspm_interpolate(valid_data, options), 'ID:invalid_input');
-      % invalid dont_ask_overwrite
-      options = struct('dont_ask_overwrite', 'bla');
-      this.verifyWarning(@() pspm_interpolate(valid_data, options), 'ID:invalid_input');
       % invalid channel_action
       options = struct('channel_action', 'bla');
       this.verifyWarning(@() pspm_interpolate(valid_data, options), 'ID:invalid_input');
       % try to interpolate an events channel
       c{1}.chantype = 'hb';
       invalid_data = pspm_testdata_gen(c, 10);
-      options = struct('channels', [1]);
+      options = struct('channels', 1);
       this.verifyWarning(@() pspm_interpolate(invalid_data, options), 'ID:invalid_channeltype');
       % try to interpolate with nan from beginning; without
       % extrapolation
@@ -263,7 +256,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
           (strcmpi(nan_method, 'start') && strcmpi(interp_method, 'previous')) || ...
           (strcmpi(nan_method, 'end') && strcmpi(interp_method, 'next')))
         % this makes no sense -> should give warning
-        [sts, outdata] = this.verifyWarning(@() pspm_interpolate(data, options), 'ID:out_of_range');
+        [~, ~] = this.verifyWarning(@() pspm_interpolate(data, options), 'ID:out_of_range');
       else
         % call function
         [sts, outdata] = this.verifyWarningFree(@() pspm_interpolate(data, options));
@@ -306,7 +299,6 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       options.channels = opt_chans;
       options.extrapolate = false;
       % don't care about that right now
-      options.dont_ask_overwrite = 1;
       options.overwrite = 1;
       options.newfile = newfile;
       % call function
@@ -322,8 +314,8 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
         for i=1:numel(outdata)
           file_exist = exist(outdata{i}, 'file');
           this.verifyTrue(file_exist > 0);
-          [sts, oldinfo, olddata] = pspm_load_data(data{i});
-          [sts, newinfo, newdata] = pspm_load_data(outdata{i});
+          [~, ~, olddata] = pspm_load_data(data{i});
+          [~, ~, newdata] = pspm_load_data(outdata{i});
           this.verifyEqual(size(olddata), size(newdata));
           this.verify_nan_free(outdata{i}, options.channels{i});
           if file_exist
@@ -336,7 +328,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
         % verify nan is already done by datatype
         for i = 1:numel(outdata)
           this.verify_nan_free(data{i}, outdata{i});
-          [sts, newinfo, d] = pspm_load_data(data{i});
+          [~, ~, d] = pspm_load_data(data{i});
           c = options.channels{i};
           for j=1:numel(c)
             this.verifyEqual(size(d{c(j)}), size(d{outdata{i}(j)}));
@@ -346,13 +338,13 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
     end
     function test_overwrite(this, overwrite)
       % generate data
-      [data, opt_chans] = generate_data(this, 'file', 2, 'center', ...
+      [data, ~] = generate_data(this, 'file', 2, 'center', ...
         {{'scr', 'scr', 'scr'}, [1,2,3]} , false);
       % create files beforehand
       for i = 1:numel(data)
         fclose(fopen(['i', data{i}], 'w'));
       end
-      options = struct('overwrite', overwrite, 'dont_ask_overwrite', 1, 'newfile', true);
+      options = struct('overwrite', overwrite, 'newfile', true);
       % call function
       if overwrite
         [sts, ~] = this.verifyWarningFree(@() pspm_interpolate(data, options));

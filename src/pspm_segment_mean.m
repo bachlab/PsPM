@@ -51,10 +51,6 @@ if ~isfield(options, 'overwrite')
   options.overwrite = 0;
 end
 
-if ~isfield(options, 'dont_ask_overwrite')
-  options.dont_ask_overwrite = 0;
-end
-
 if ~isfield(options, 'adjust_method')
   options.adjust_method = 'none';
 end
@@ -73,8 +69,6 @@ elseif ~isempty(options.newfile) && ~ischar(options.newfile)
   warning('ID:invalid_input', 'options.newfile is not a string.'); return;
 elseif ~isnumeric(options.overwrite) && ~islogical(options.overwrite)
   warning('ID:invalid_input', 'options.overwrite has to be either numeric or logical.'); return;
-elseif ~isnumeric(options.dont_ask_overwrite) && ~islogical(options.dont_ask_overwrite)
-  warning('ID:invalid_input', 'options.dont_ask_overwrite has to be either numeric or logical'); return;
 end
 
 % if files specified load them
@@ -182,16 +176,10 @@ out.conditions = conditions;
 if ~isempty(options.newfile)
   [pathstr, ~, ~] = fileparts(options.newfile);
   if exist(pathstr, 'dir')
-    f_ex = exist(options.newfile, 'file') ~= 0;
-    write_ok = ~f_ex || options.overwrite;
-    if f_ex && ~options.overwrite && ~options.dont_ask_overwrite
-      button = questdlg(sprintf('File (%s) already exists. Replace file?', ...
-        options.newfile), 'Replace file?', 'Yes', 'No', 'No');
-
-      write_ok = strcmpi(button, 'Yes');
+  	if ~options.overwrite
+    	options.overwrite = pspm_overwrite(options.newfile);
     end
-
-    if write_ok
+    if options.overwrite
       segment_mean = conditions;
       save(options.newfile, 'segment_mean');
     end

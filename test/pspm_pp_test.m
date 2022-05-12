@@ -118,7 +118,6 @@ classdef pspm_pp_test < matlab.unittest.TestCase
       channels{3}.chantype = 'scr';
       pspm_testdata_gen(channels, 10, fn);
       options.overwrite = 0;
-      options.dont_ask_overwrite = 1;
       newfile = pspm_pp('butter', fn, 40, [1,3], options);
       % compare the files and ensure there was no overwrite
       [sts, infos, data, filestruct] = pspm_load_data(newfile, 'none');
