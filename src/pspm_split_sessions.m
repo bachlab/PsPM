@@ -22,7 +22,8 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 %                           Default is 3 (defined by
 %                           settings.split.min_break_ratio)
 % options.splitpoints       Alternatively, directly specify session start
-%                           in terms of markers (vector of integer)
+%                           (excluding the first session starting at the
+%                           first marker) in terms of markers (vector of integer)
 % options.prefix            In seconds, how long data before start trim point
 %                           should also be included. First marker will be
 %                           at t = options.prefix
@@ -197,6 +198,10 @@ if isempty(options.splitpoints)
   splitpoint = find(diff(mrk) > cutoff)+1;
 else
   splitpoint = options.splitpoints;
+  if numel(mrk) < max(splitpoint)
+      warning('ID:invalid_input', 'Splitpoint definition assumes more markers than there are in the file.');
+      return
+  end
 end
 
 % 2.3.3 Define trim points and adjust suffix
@@ -257,7 +262,7 @@ else
         'units', 'unknown');
       dummydata{1,1}.data   = dp_epochs;
 
-      % add marker channel to that pspm_trim has a reference
+      % add marker channel so that pspm_trim has a reference
       dummydata{2,1}      = indata{markerchannel};
       dummyinfos          = ininfos;
 
