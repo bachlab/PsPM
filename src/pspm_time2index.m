@@ -16,26 +16,17 @@ function index = pspm_time2index(time, sr, varargin)
 %   index           an integer
 %                   meaning: index / data point
 % PsPM 5.1.2
-% ● Authorship
-% (C) 2021 Teddy Chao (WCHN, UCL)
-% Supervised by Professor Dominik Bach (WCHN, UCL)
-%% Initialise
-global settings
-if isempty(settings)
-  pspm_init;
-end
-sts = -1;
+% contributed by: 
+% 2021 Teddy Chao (WCHN, UCL)
+
 if ~isempty(varargin)
   data_length = varargin{1};
 end
 index = round(time * sr);
-if index == 0
-  index = 1;
-end
+index(index == 0) = 1;
 if exist('data_length', 'var')
   flag = index > ones(size(index)) * data_length;
   if sum(sum(flag)) > 0
     index(flag==1) = data_length;
   end
-end
 end
