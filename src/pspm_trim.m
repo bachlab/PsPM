@@ -264,7 +264,7 @@ for i_D = 1:numel(D)
       if l_endmarker > numel(events)
         warning('ID:marker_out_of_range', ...
           ['\nEnd marker (%03.0f) out of file - no ', ...
-          'trimming end end.\n'], g_endmarker);
+          'trimming at end.\n'], g_endmarker);
         sto_p = infos.duration;
         sto_offset = 0;
       else
