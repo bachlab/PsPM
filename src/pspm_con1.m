@@ -1,53 +1,44 @@
 function pspm_con1(modelfile, connames, convec, datatype, deletecon, options)
-% pspm_con1 creates contrasts on the first level (i.e. within one dataset)
-% and saves them to the modelfile to be accessed later
-%
-% FORMAT:
-% pspm_con1 (modelfile, connames, convec, [datatype, deletecon, options])
-%
-% modelfile: a filename, or cell array of filenames
-% connames: a cell array of names for the desired contrasts
-% convec: a cell array of contrasts
-%
-% optional arguments
-% datatype: 'param': use all parameter estimates
-%           'cond': GLM - contrasts formulated in terms of conditions,
-%                   automatically detects number of basis functions and
-%                   uses only the first one (i.e. without derivatives)
-%                   other models - contrasts based on unique trial names
-%           'recon': contrasts formulated in terms of conditions in a GLM,
-%                   reconstructs estimated response from all basis functions
-%                   and uses the peak of the estimated response
-%           deletecon: should existing contrasts be deleted (1) or
-%                   appended (0)?
-%                   default = 0;
-% options: options.zscored: 1 - zscore data
-%                               Restriction: only for non-linear models
-%                               and not when datatype == 'recon'
-%                           0 - do not zscore data
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-
-% $Id$
-% $Rev$
+% ● Description
+%   pspm_con1 creates contrasts on the first level (i.e. within one dataset)
+%   and saves them to the modelfile to be accessed later.
+% ● Format
+%   pspm_con1 (modelfile, connames, convec, [datatype, deletecon, options])
+% ● Arguments
+%    modelfile: a filename, or cell array of filenames
+%     connames: a cell array of names for the desired contrasts
+%       convec: a cell array of contrasts
+%     datatype: 'param':  use all parameter estimates
+%                'cond':  GLM - contrasts formulated in terms of conditions,
+%                         automatically detects number of basis functions and
+%                         uses only the first one (i.e. without derivatives)
+%                         other models - contrasts based on unique trial names
+%               'recon':  contrasts formulated in terms of conditions in a GLM,
+%                         reconstructs estimated response from all basis functions
+%                         and uses the peak of the estimated response
+%    deletecon: define existing contrasts to be deleted (1) or appended (0, default).
+%      options: [struct]
+%               .zscored: 1 - zscore data
+%                             Restriction: only for non-linear models
+%                             and not when datatype == 'recon'
+%                         0 - do not zscore data
+% ● Version
+%   PsPM 3.0
+%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings
 if isempty(settings)
   pspm_init;
 end
-sts = -1;
-
-% check input arguments
-% ------------------------------------------------------------------------
-if nargin<1
-  errmsg=sprintf('No modelfile specified'); warning(errmsg); return;
-elseif nargin<2
-  errmsg=sprintf('No contrast names specified'); warning(errmsg); return;
-elseif nargin<3
-  errmsg=sprintf('No contrasts specified'); warning(errmsg); return;
-elseif nargin<4
+%% check input arguments
+if nargin < 1
+  errmsg = sprintf('No modelfile specified'); warning(errmsg); return;
+elseif nargin < 2
+  errmsg = sprintf('No contrast names specified'); warning(errmsg); return;
+elseif nargin < 3
+  errmsg = sprintf('No contrasts specified'); warning(errmsg); return;
+elseif nargin < 4
   datatype = 'param';
 end;
 if nargin < 5
@@ -98,8 +89,7 @@ if isfield(options, 'zscored') && options.zscored
   load1_options.zscored = 1;
 end;
 
-% work on contrasts
-% ------------------------------------------------------------------------
+%% work on contrasts
 for iFn =1:numel(modelfile)
   % user output --
   fprintf('Loading data ... ');

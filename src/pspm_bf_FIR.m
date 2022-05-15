@@ -1,11 +1,11 @@
 function [FIR, x] = pspm_bf_FIR(varargin)
 % ● Description
 %   pspm_bf_FIR provides a pre-defined finite impulse response (FIR) model for
-%   skin conductance responses with n (default 30) post-stimulus timebins of 1 second
-%   each.
+%   skin conductance responses with n (default 30) post-stimulus timebins of 1
+%   second each.
 % ● Format
-%   [FIR, x]=pspm_bf_FIR(TD, N, D) or
-%   [FIR, x]=pspm_bf_FIR([TD, N, D])
+%   [FIR, x] = pspm_bf_FIR(TD, N, D) or
+%   [FIR, x] = pspm_bf_FIR([TD, N, D])
 % ● Arguments
 %   TD: sampling interval in seconds
 %    N: number of timepoints (default: 30)
