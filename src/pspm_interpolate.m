@@ -135,7 +135,7 @@ for d = 1:numel(D)
   fn = D{d}; % determine file names
   inline_flag = 0; % flag to decide what kind of data should be handled
   if ischar(fn)
-    fprintf('Interpolating %s ... \n', fn); % user output
+    fprintf('\nInterpolating %s, ', fn); % user output
   elseif isnumeric(fn)
     inline_flag = 1;
   end
@@ -290,6 +290,9 @@ for d = 1:numel(D)
     end
   else
     outdata{d} = chans{1};
+  end
+  if ischar(fn)
+    fprintf('done.')
   end
 end
 % format output same as input

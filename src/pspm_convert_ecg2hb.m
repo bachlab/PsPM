@@ -31,9 +31,7 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, chan, options)
 % PsPM 3.0
 % (C) 2013-2015 Philipp C Paulus & Dominik R Bach
 % (Technische Universitaet Dresden, University of Zurich)
-
-% $Id: pspm_ecg2hb.m 644 2019-04-25 11:35:02Z esrefo $
-% $Rev: 644 $
+%     2022      Teddy Chao
 
 % -------------------------------------------------------------------------
 % DEVELOPERS NOTES: Changes from the original Pan & Tompkins algorithm
@@ -120,13 +118,13 @@ elseif (nargin < 2) || isempty(chan) || (isnumeric(chan) && (chan == 0))
   chan = 'ecg';
 elseif ~isnumeric(chan) && ~strcmp(chan,'ecg')
   warning('ID:invalid_input', 'Channel number must be numeric'); return;
-end;
+end
 
 try options.channel_action; catch, options.channel_action = 'replace'; end
 
 % user output
 % -------------------------------------------------------------------------
-fprintf('QRS detection for %s ... ', fn);
+fprintf('\n\xBB QRS detection for %s,', fn);
 
 % additional options
 % -------------------------------------------------------------------------
@@ -148,7 +146,7 @@ if nargin > 2 && exist('options', 'var')
     if isfield(options, 'channel_action')
       if ~any(strcmpi(options.channel_action, {'add', 'replace'}))
         warning('ID:invalid_input', '''options.channel_action'' must be either ''add'' or ''replace''.'); return;
-      end;
+      end
     end
 
     if isfield(options, 'semi')
@@ -156,16 +154,16 @@ if nargin > 2 && exist('options', 'var')
         pt.settings.semi = options.semi;
       else
         warning('ID:invalid_input', '''options.semi'' must be either 0 or 1.'); return;
-      end;
-    end;
+      end
+    end
 
     if isfield(options, 'debugmode')
       if any(options.debugmode == 0:1)
         pt.settings.debugmode = options.debugmode;
       else
         warning('ID:invalid_input', '''options.debugmode'' must be either 0 or 1.'); return;
-      end;
-    end;
+      end
+    end
 
     if isfield(options, 'minHR') && isfield(options, 'maxHR')
       if isnumeric(options.minHR) && isnumeric(options.maxHR) ...
@@ -208,12 +206,12 @@ end
 
 % get data
 % -------------------------------------------------------------------------
-[nsts, dinfo, data] = pspm_load_data(fn, chan);
-if nsts == -1, return; end;
+[nsts, ~, data] = pspm_load_data(fn, chan);
+if nsts == -1, return; end
 if numel(data) > 1
   fprintf('There is more than one ECG channel in the data file. Only the first of these will be analysed.');
   data = data(1);
-end;
+end
 if not(strcmp(data{1,1}.header.chantype,'ecg'))
   warning('ID:not_allowed_channeltype', 'Specified channel is not an ECG channel. Don''t know what to do!')
   return;
@@ -239,7 +237,7 @@ pt.set.tmax=round(60/pt.settings.minHR*pt.settings.filt.down);
 
 % ---Filter Rawdata--------------------------------------------------------
 [nsts,pt.data.x,pt.settings.filt.sr]=pspm_prepdata(data{1}.data,pt.settings.filt);
-if nsts == -1, return; end;
+if nsts == -1, return; end
 pt.settings.n=length(pt.data.x);
 
 % ---setup threshold variables and R variable------------------------------
@@ -346,13 +344,13 @@ newdata.header.units = 'events';
 newdata.header.chantype = 'hb';
 
 % user output
-fprintf('  done.\n');
+fprintf(' done.');
 
 action = options.channel_action;
 
 o.msg.prefix = 'QRS detection with Pan & Tompkins algorithm and HB-timeseries';
 [nsts, write_info] = pspm_write_channel(fn, newdata, action, o);
-if nsts == -1, return; end;
+if nsts == -1, return; end
 infos.channel = write_info.channel;
 infos.pt_debug = pt_debug;
 sts = 1;
@@ -382,7 +380,8 @@ while pt.set.tstart+pt.set.tmax <= pt.settings.n
       if j+pt.set.tmax < pt.settings.n
         invl=j:j+pt.set.tmax;
         invl2=j:j+pt.set.ts;
-      else invl=j:pt.settings.n;
+      else
+        invl=j:pt.settings.n;
         invl2=j:pt.settings.n;
       end
       % -------------------------------------------------------------
@@ -438,17 +437,16 @@ while pt.set.tstart+pt.set.tmax <= pt.settings.n
     end
 
     % ---if neither with thr 1 nor with thr 2 an r spike could be identified---
-  elseif cse==3
+  elseif cse == 3
     % divide invl into 3 smaller intervals
-    for k=1:3
-      mindx=[];
+    for k = 1:3
       mindx=(k-1)*round(length(invl)/3)+1:k*round(length(invl)/3);
       if max(mindx)>length(invl)
         mindx(mindx>length(invl))=[];
       end
       minvl=invl(1,mindx);
       if any(pt.data.pt_peaks(minvl,1)>pt.set.THRF)
-        [PEAKI,posPEAKI]=max(pt.data.pt_peaks(minvl,2));
+        [PEAKI,~]=max(pt.data.pt_peaks(minvl,2));
         [pt.set]=update_set(PEAKI,pt.set,CSE(1,:));
         [PEAKF,posPEAKF]=max(pt.data.pt_peaks(minvl,1));
         [pt.set]=update_set(PEAKF,pt.set,CSE(2,:));
@@ -463,7 +461,7 @@ while pt.set.tstart+pt.set.tmax <= pt.settings.n
 
       if k==3
         if numel(pt.set.R) < 2 || pt.set.R(end)-pt.set.R(end-1)>0
-          [PEAKI,posPEAKI]=max(pt.data.pt_peaks(invl,2));
+          [PEAKI,~]=max(pt.data.pt_peaks(invl,2));
           [pt.set]=update_set(PEAKI,pt.set,CSE(1,:));
           [PEAKF,posPEAKF]=max(pt.data.pt_peaks(invl,1));
           [pt.set]=update_set(PEAKF,pt.set,CSE(2,:));
@@ -547,7 +545,7 @@ for j=1:length(Rcur)
   if  Rcur(j) < 0.92 * av2 || Rcur(j) > 1.16 * av2
     Rcur(j)=0;
   end
-end;
+end
 
 if length(Rcur(Rcur~=0)) > 8
   Rcor=Rcur(Rcur ~=0);
@@ -571,11 +569,12 @@ function [twave]=twave_check(pt,j)
 q=diff(pt.set.R);
 
 if ~isempty(q) && q(end) < pt.settings.filt.sr * pt.settings.twthresh
-  if pt.set.grad(j) < 0.5 * pt.set.grad(pt.set.R(end-1));
+  if pt.set.grad(j) < 0.5 * pt.set.grad(pt.set.R(end-1))
     twave='positive';
   else
     twave='negative';
   end
-else twave='negative';
+else
+  twave='negative';
 end
 % -------------------------------------------------------------------------
