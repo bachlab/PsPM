@@ -1,18 +1,16 @@
 function [bs, x] = pspm_bf_hprf_f( td, soa )
-% pspm_bf_hprf_f basis function dependent on SOA
-%   Detailed explanation goes here
-% Description:
-%
-% FORMAT: [bf p] = pspm_bf_hprf_f(td, soa)
-% with  td = time resolution in s
+% ● Description
+%   pspm_bf_hprf_f basis function dependent on SOA
+% ● Format
+%   [bf p] = pspm_bf_hprf_f(td, soa)
+% ● Arguments
+%    td: time resolution in s
+%   soa:  
+% ● References
+% ● Version
+%   PsPM 4.0
 
-%
-% REFERENCE
-%
-%________________________________________________________________________
-% PsPM 4.0
-
-% initialise
+%% initialise
 global settings
 if isempty(settings), pspm_init; end;
 

@@ -1,17 +1,15 @@
 function [bf, x] = pspm_bf_data(td)
-% Description
-% pspm_bf_data provides a generic interface for creating a user-defined
-% response function from a data vector saved in a *.mat file. To use this
-% function, the variables 'datafile' and 'sr' need to be hard-coded. GLM
-% can then be called with the optional argument model.bf = 'pspm_bf_data'.
-%
-% Format
-% [bf, x]=pspm_bf_data(td)
-%
-% Version
-% PsPM 5.1.1,
-% 2021 Dominik R Bach (University College London)
-% 2021 Teddy Chao (UCL)
+% ● Description
+%   pspm_bf_data provides a generic interface for creating a user-defined
+%   response function from a data vector saved in a *.mat file. To use this
+%   function, the variables 'datafile' and 'sr' need to be hard-coded. GLM
+%   can then be called with the optional argument model.bf = 'pspm_bf_data'.
+% ● Format
+%   [bf, x] = pspm_bf_data(td)
+% ● Version
+%   PsPM 5.1.1
+%   2021 Dominik R Bach (University College London)
+%        Teddy Chao (UCL)
 
 %% Constants
 % CHANGE THIS TO CREATE YOUR FUNCTION
