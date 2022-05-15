@@ -207,7 +207,7 @@ end
 % Previous checks have been passed.
 for d = 1:numel(D)
   if ~settings.developmode
-    fprintf(['\n▶︎ Importing ', D{d}, ': ']);
+    fprintf(['\nImporting ', D{d}, ': ']);
   end
   % 4.1 pass over to import function if datafile exists, otherwise next file
   file_exists = true;

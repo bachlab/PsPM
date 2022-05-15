@@ -1,5 +1,5 @@
 function pspm_test(varargin)
-  % ● Description
+% ● Description
 % pspm_test is a wrapper script for testing all testable functions in one
 % - to be used before any release.
 % quit_after_tests : [bool]
