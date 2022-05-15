@@ -16726,7 +16726,7 @@ Tests
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="19" columns="3">
+<lyxtabular version="3" rows="18" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="6cm">
@@ -17140,7 +17140,7 @@ ID:invalid_input
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_interpolate(valid_data, options) [options.dont_ask_overwrite is invalid]
+pspm_interpolate(valid_data, options) [options.replace_channels is invalid]
 \end_layout
 
 \end_inset
@@ -17173,39 +17173,6 @@ ID:invalid_input
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_interpolate(valid_data, options) [options.replace_channels is invalid]
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-ID:invalid_input
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-14
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
 pspm_interpolate(invalid_data, options) [try to interpolate an events channel]
 \end_layout
 
@@ -17228,7 +17195,7 @@ ID:invalid_channeltype
 \begin_inset Text
 
 \begin_layout Plain Layout
-15
+14
 \end_layout
 
 \end_inset
@@ -17262,7 +17229,7 @@ ID:option_disabled
 \begin_inset Text
 
 \begin_layout Plain Layout
-16
+15
 \end_layout
 
 \end_inset
@@ -17296,7 +17263,7 @@ ID:out_of_range
 \begin_inset Text
 
 \begin_layout Plain Layout
-17
+16
 \end_layout
 
 \end_inset
@@ -17330,7 +17297,7 @@ ID:option_disabled
 \begin_inset Text
 
 \begin_layout Plain Layout
-18
+17
 \end_layout
 
 \end_inset
@@ -19188,7 +19155,7 @@ Tests for all
 \begin_layout Enumerate
 
 \family typewriter
-dont_ask_overwrite = 1 & overwrite = 0
+overwrite = 0
 \family default
  returns warning 
 \family typewriter
@@ -19204,7 +19171,7 @@ ID:not_saving_data
 \begin_layout Enumerate
 
 \family typewriter
-dont_ask_overwrite = 1 & overwrite = 1
+overwrite = 1
 \family default
  field 
 \family typewriter
@@ -19220,7 +19187,7 @@ Tests for DCM
 \begin_layout Standard
 with 
 \family typewriter
-dont_ask_overwrite = 1 & overwrite = 1
+overwrite = 1
 \end_layout
 
 \begin_layout Enumerate

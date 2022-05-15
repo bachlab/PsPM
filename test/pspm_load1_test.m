@@ -305,11 +305,8 @@ classdef pspm_load1_test < matlab.unittest.TestCase
         mdltype = mdltypes{mdltype};
         mdl.(mdltype).test = x;
         % test overwrite
-        options.dont_ask_overwrite = 1;
-        % do not overwrite
-        %options.overwrite = 0;
-        %[sts, data, mdt] = this.verifyWarning(@()pspm_load1(f, 'save', mdl, options), 'ID:not_saving_data');
-        % dont_ask_overwrite is no longer used as pspm_overwrite
+        options.overwrite = 0;
+        [sts, data, mdt] = this.verifyWarning(@()pspm_load1(f, 'save', mdl, options), 'ID:not_saving_data');
         % determins these parameters
         mdl = load(f);
         this.verifyNotEqual(mdl.(mdltype).test, x);

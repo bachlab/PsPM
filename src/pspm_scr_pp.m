@@ -1,4 +1,4 @@
-function [sts, out] = pspm_scr_pp(datafile, options)
+function [sts, out] = pspm_scr_pp(datafile, options, chan)
 
 % DEFINITION
 %   pspm_scr_pp applies simple skin conductance response (SCR) quality assessment rulesets
@@ -61,6 +61,8 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %               of this function should be replaced, or new data should be
 %               withdrawn.
 %								Default: 'add'
+%     chan: number of SCR channel 
+%               Default: first SCR channel
 % FUNCTIONS
 %	  filter_to_epochs
 %               Return the start and end points of epoches (2D array) by the given
@@ -91,6 +93,11 @@ out = [];
 %% Set default values
 if ~exist('options', 'var')
   options = struct();
+end
+if nargin < 3 || isempty(chan) || (chan == 0)
+    chan = 'scr';
+elseif ~isnumeric(chan)
+    warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end
 if ~isfield(options, 'min')
   options.min = 0.05;
@@ -158,14 +165,15 @@ end
 if options.change_data == 0 && ~isfield(options, 'missing_epochs_filename')
   warning('This procedure leads to no output, according to the selected options.');
 end
-if ~ismember(options.channel_action, {'add', 'replace'})
-  warning('ID:invalid_input', 'Option channel_action must be either ''add'' or ''repalce''');
+if ~ismember(options.channel_action, {'add', 'replace', 'withdraw'})
+  warning('ID:invalid_input', 'Option channel_action must be either ''add'', ''replace'' or ''withdraw''');
   return;
 end
 
 for d = 1:numel(data_source)
   % out{d} = [];
-  [sts_loading, ~, indatas, ~] = pspm_load_data(data_source{d}); % check and get datafile ---
+  [sts_loading, ~, indatas, ~] = pspm_load_data(data_source{d}, chan); % check and get datafile ---
+  
   sts = sts_loading * sts;
   if sts_loading == -1
     warning('ID:invalid_input', 'Could not load data');
