@@ -22,7 +22,6 @@ global settings
 if isempty(settings)
   pspm_init;
 end
-sts = -1;
 newdatafile = [];
 
 % check input arguments
@@ -55,7 +54,7 @@ end
 % load data
 % -------------------------------------------------------------------------
 [sts, infos, data] = pspm_load_data(fn, 0);
-if sts ~= 1,
+if sts ~= 1
   warning('ID:invalid_input', 'call of pspm_load_data failed');
   return;
 end
@@ -80,7 +79,7 @@ switch method
   case 'median'
     n = varargin{3};
     % user output
-    fprintf('Preprocess: median filtering datafile %s ...', fn);
+    fprintf('\n\xBB Preprocess: median filtering datafile %s, ', fn);
     for k = 1:numel(channum)
       curr_chan = channum(k);
       data{curr_chan}.data = medfilt1(data{curr_chan}.data, n);
@@ -88,9 +87,9 @@ switch method
     infos.pp = sprintf('median filter over %1.0f timepoints', n);
   case 'butter'
     freq = varargin{3};
-    if freq < 20, warning('ID:invalid_freq', 'Cut off frequency must be at least 20 Hz'); return; end;
+    if freq < 20, warning('ID:invalid_freq', 'Cut off frequency must be at least 20 Hz'); return; end
     % user output
-    fprintf('Preprocess: butterworth filtering datafile %s ...', fn);
+    fprintf('\n\xBB Preprocess: butterworth filtering datafile %s, ', fn);
     for k = 1:numel(channum)
       curr_chan = channum(k);
       filt.sr = data{curr_chan}.header.sr;
@@ -119,7 +118,7 @@ infos.ppfile = newdatafile;
 clear savedata
 savedata.data = data; savedata.infos = infos;
 savedata.options = options;
-sts = pspm_load_data(newdatafile, savedata);
-fprintf(' done\n');
+pspm_load_data(newdatafile, savedata);
+fprintf('done.');
 
 return
