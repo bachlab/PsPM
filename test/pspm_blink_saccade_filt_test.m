@@ -26,17 +26,17 @@ classdef pspm_blink_saccade_filt_test < pspm_get_superclass
         import{1}.distance_unit = 'mm';
         import{2}.type = 'gaze_x_r';
         import{3}.type = 'gaze_y_r';
-        import{4}.type = 'blink_r'
+        import{4}.type = 'blink_r';
         import{5}.type = 'saccade_r';
         options.eyelink_trackdist = 700;
         options.distance_unit = 'mm';
         options.overwrite = true;
         fn_imported = pspm_import(this.fn, 'eyelink', import, options);
         fn_imported = fn_imported{1};
-        [sts, ~, data_old] = pspm_load_data(fn_imported);
+        [~, ~, data_old] = pspm_load_data(fn_imported);
         options = struct('channel_action', 'replace');
         pspm_blink_saccade_filt(fn_imported, discard_factor, options);
-        [sts, ~, data_new] = pspm_load_data(fn_imported);
+        [~, ~, data_new] = pspm_load_data(fn_imported);
         N = numel(data_old{1}.data);
         n_remove = round(discard_factor * data_old{1}.header.sr);
         blink_r_indices = find(data_old{4}.data);

@@ -1,5 +1,5 @@
 function pspm_test(varargin)
-  % ● Description
+% ● Description
 % pspm_test is a wrapper script for testing all testable functions in one
 % - to be used before any release.
 % quit_after_tests : [bool]
@@ -95,9 +95,7 @@ full_suite = [suite, import_suite, chantype_suite];
 % [pth, fn, ext] = fileparts(which('pspm_test.m'));
 [pth, ~, ~] = fileparts(which('pspm_test.m'));
 addpath(pth);
-settings=[];
 pspm_init;
-settings.developmode=1;
 stats = run(full_suite);
 n_failed = sum([stats.Failed]);
 success = n_failed == 0;
