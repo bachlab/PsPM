@@ -1,5 +1,6 @@
 function [varargout] = pspm_convert_area2diameter(varargin)
-% pspm_convert_area2diameter converts area values into diameter values
+% ● Description
+%   pspm_convert_area2diameter converts area values into diameter values
 %
 % It can work on PsPM files or on numeric vectors.
 %
