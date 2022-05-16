@@ -1,7 +1,13 @@
 function arclen = pspm_convert_visangle2sps_core(lat, lon)
+% ● Description
+% ● Format
+%   arclen = pspm_convert_visangle2sps_core(lat, lon)
+% ● Arguments
+% ● Version
 
 if sum(isnan(lon)) > 0 || sum(isnan(lat)) > 0
-  warning('ID:invalid_input', 'cannot calculate sps from data with NaN values, check gaze degree data for NaNs');
+  warning('ID:invalid_input', ...
+    'cannot calculate sps from data with NaN values, check gaze degree data for NaNs');
   return;
 end
 

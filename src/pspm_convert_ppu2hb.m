@@ -1,31 +1,34 @@
 function [ sts, outinfo ] = pspm_convert_ppu2hb( fn,chan,options )
-% pspm_convert_ppu2hb Converts a pulse oxymeter channel to heartbeats and adds it as
-% a new channel
+% ● Description
+%   pspm_convert_ppu2hb Converts a pulse oxymeter channel to heartbeats and adds it as
+%   a new channel
 %   First a template is generated from non ambiguous heartbeats. The ppu
 %   signal is then cross correlated with the template and maximas are
 %   identified as heartbeat maximas and a heartbeat channel is then
 %   generated from these.
-%   Format: [ sts, outinfo ] = pspm_convert_ppu2hb( fn,chan,options )
-%   Inputs :
-%       fn : file name with path
-%       chan : ppu channel number
-%       options : struct with following possible fields
-%           diagnostics : [true/FALSE] displays some debugging information
-%           replace     : [true/FALSE] replace existing heartbeat channel.
-%                         If multiple channels are present, replaces last.
-%           channel_action ['add'/'replace'] Defines whether the interpolated
-%                          data should be added or the corresponding channel
-%                          should be replaced.
-%                          (Default: 'replace')
-%           lsm         : [integer] large spikes mode compensates for
-%                         large spikes while generating template by
-%                         removing the [integer] largest percentile of
-%                         spikes from consideration
-%__________________________________________________________________________
-% PsPM 3.1
-% (C) 2016  Samuel Gerster (University of Zurich)
-%           Tobias Moser (University of Zurich)
-%     2022  Teddy Chao (UCL)
+% ● Format
+%   [ sts, outinfo ] = pspm_convert_ppu2hb( fn,chan,options )
+% ● Arguments
+%                 fn: file name with path
+%               chan: ppu channel number
+%   ┌────────options: struct with following possible fields
+%   ├───.diagnostics: [true/FALSE]
+%   │                 displays some debugging information
+%   ├───────.replace: [true/FALSE] replace existing heartbeat channel.
+%   │                 If multiple channels are present, replaces last.
+%   ├.channel_action: ['add'/'replace', 'replace']
+%   │                 Defines whether the interpolated
+%   │                 data should be added or the corresponding channel
+%   │                 should be replaced.
+%   └───────────.lsm: [integer]
+%                     large spikes mode compensates for large spikes 
+%                     while generating template by removing the [integer] 
+%                     largest percentile of spikes from consideration.
+% ● Version
+%   PsPM 3.1
+%   (C) 2016  Samuel Gerster (University of Zurich)
+%             Tobias Moser (University of Zurich)
+%       2022  Teddy Chao (UCL)
 
 %% Initialise
 global settings

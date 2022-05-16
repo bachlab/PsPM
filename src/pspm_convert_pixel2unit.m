@@ -1,52 +1,48 @@
 function [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, ...
   height, distance, options)
-% pspm_convert_pixel2unit allows to transfer gaze data from pixel to units.
-% This facilitates the use of pspm_find_valid_fixations() which needs data
-% in unit values. The convention used here is that the center of coordinate in
-% the desired units would be set to at the center of the [0,0] pixel which is
-% in the bottom left corner of the screen.
-%
-% Usage:
+% ● Description
+%   pspm_convert_pixel2unit allows to transfer gaze data from pixel to units.
+%   This facilitates the use of pspm_find_valid_fixations() which needs data
+%   in unit values. The convention used here is that the center of coordinate in
+%   the desired units would be set to at the center of the [0,0] pixel which is
+%   in the bottom left corner of the screen.
+% ● Format
 %   [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, height, options)
-%
-% Arguments:
-%
-%   fn:                         File to convert.
-%   chan:                       On which subset of channels should the conversion
-%                               be done. Supports all values which can be passed
-%                               to pspm_load_data(). This will only work on
-%                               gaze-channels. Other channels specified will be
-%                               ignored.(For conversion into 'degree' there must be
-%                               the same amount of gane_x as gaze_y channels)
-%   unit:                       unit  to which the measurements should be
-%                               converted.
-%                               The value can contain any length unit or
-%                               'degree'. In this case the corresponding data
-%                               is firstly converted into 'mm' and
-%                               afterwards the visual angles are computed.
-%   width:                      Width of the display window. Unit is 'mm'
-%                               if 'degree' is chosen, otherwise 'unit'.
-%   height:                     Height of the display window. Unit is 'mm'
-%                               if 'degree' is chosen, otherwise 'unit'.
-%   distance:                   distance between eye and screen in length units.
-%                               Unit is 'mm' if 'degree' is chosen. For
-%                               other conversions this field is ignored,
-%                               i.e default value '-1'
-%   options:                    Options struct
-%       .channel_action:        ['add'/'replace'] Defines whether the new channel
-%                               should be added or the previous outputs of this
-%                               function should be replaced.
-%                               (Default: 'add')
-%
-% Return values:
-%
-%   sts:                        Status determining whether the execution was
-%                               successfull (sts == 1) or not (sts == -1)
-%   out:                        Output struct
-%       .channel                Id of the added channels.
-%__________________________________________________________________________
-% PsPM 4.0
-% (C) 2016 Tobias Moser (University of Zurich)
+% ● Arguments
+%                 fn: File to convert.
+%               chan: On which subset of channels should the conversion
+%                     be done. Supports all values which can be passed
+%                     to pspm_load_data(). This will only work on
+%                     gaze-channels. Other channels specified will be
+%                     ignored.(For conversion into 'degree' there must be
+%                     the same amount of gane_x as gaze_y channels)
+%               unit: unit  to which the measurements should be converted.
+%                     The value can contain any length unit or
+%                     'degree'. In this case the corresponding data
+%                     is firstly converted into 'mm' and
+%                     afterwards the visual angles are computed.
+%              width: Width of the display window. Unit is 'mm'
+%                     if 'degree' is chosen, otherwise 'unit'.
+%             height: Height of the display window. Unit is 'mm'
+%                     if 'degree' is chosen, otherwise 'unit'.
+%           distance: distance between eye and screen in length units.
+%                     Unit is 'mm' if 'degree' is chosen. For
+%                     other conversions this field is ignored,
+%                     i.e default value '-1'
+%   ┌────────options: Options struct
+%   └.channel_action: ['add'/'replace', default as 'add']
+%                     Defines whether the new channel
+%                     should be added or the previous outputs of this
+%                     function should be replaced.
+% ● Output
+%               sts:  Status determining whether the execution was 
+%                     successfull (sts == 1) or not (sts == -1)
+%   ┌───────────out:  Output struct
+%   └───────.channel  Id of the added channels.
+% ● Version
+%   PsPM 4.0
+%   (C) 2016 Tobias Moser (University of Zurich)
+
 %% Initialise
 global settings
 if isempty(settings)
