@@ -235,7 +235,7 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       % will then also be needed for test_delete_multi
       % prepare (add some resp channels)
       c = cell(1,7);
-      for i=1:7
+      for i = 1:7
         % all resp channels
         c{i}.chantype = 'resp';
         % allows to identify the channel again easily
@@ -292,7 +292,7 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       if find(chan) <= 1
         % add some more 'resp' channels
         c = cell(1,7);
-        for i=1:7
+        for i = 1:7
           % all resp channels
           c{i}.chantype = 'resp';
           % allows to identify the channel again easily

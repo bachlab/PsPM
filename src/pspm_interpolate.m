@@ -114,6 +114,7 @@ elseif ~islogical(options.overwrite) && ~isnumeric(options.overwrite)
   return;
 end
 % 1.3 check data file argument
+% 1.3.1 define D
 if ischar(indata) || isstruct(indata) || isnumeric(indata)
   D = {indata};
 elseif iscell(indata) ...
@@ -126,8 +127,11 @@ else
     'Data must be either char, numeric, struct or cell array of char, numeric or struct.');
   return;
 end
+% 1.3.2 define outdata
 if iscell(indata)
   outdata = cell(size(D));
+else
+  outdata = {}; % initialise
 end
 %% 2 work on all data files
 for d = 1:numel(D)
@@ -135,7 +139,7 @@ for d = 1:numel(D)
   fn = D{d}; % determine file names
   inline_flag = 0; % flag to decide what kind of data should be handled
   if ischar(fn)
-    fprintf('Interpolating %s ... \n', fn); % user output
+    fprintf('\nInterpolating %s, ', fn); % user output
   elseif isnumeric(fn)
     inline_flag = 1;
   end
@@ -174,7 +178,6 @@ for d = 1:numel(D)
   else
     chans = {fn};
   end
-
   interp_frac = ones(numel(chans), 1);
   for k = 1:numel(chans)
     if inline_flag
@@ -182,26 +185,21 @@ for d = 1:numel(D)
     else
       dat = chans{k}.data;
     end
-
     if numel(find(~isnan(dat))) < 2
       warning('ID:invalid_input',...
         'Need at least two sample points to run interpolation (Channel %i). Skipping.', k);
     else
       x = 1:length(dat);
       v = dat;
-
       % add some other checks here if you want to filter out other data
       % features (e. g. out-of-range values)
       filt = isnan(v);
       xq = find(filt);
-
       % remember how many data is being interpolated
       interp_frac(k) = numel(xq)/numel(v);
-
       % throw away data matching 'filt'
       x(xq) = [];
       v(xq) = [];
-
       % check for overlaps
       if numel(xq) < 1
         e_overlap = 0;
@@ -210,18 +208,11 @@ for d = 1:numel(D)
         e_overlap = max(xq) > max(x);
         s_overlap = min(xq) < min(x);
       end
-
       if s_overlap || e_overlap
         if ~options.extrapolate
-          %warning('ID:option_disabled', ['Cannot interpolate without extrapolating,', ...
-          %    ' because out-of-range data overlaps at the beginning or at the end.', ...
-          %    ' Either turn on extrapolation or use pspm_trim to cut away ', ...
-          %    'out-of-range values at the beginning or end of the data.']);
-          %return;
           warning('ID:option_disabled', ...
             'Extrapolating was forced because interpolate without extrapolating cannot be done');
           vq = interp1(x, v, xq, options.method, 'extrap');
-
         elseif s_overlap && strcmpi(options.method, 'previous')
           warning('ID:out_of_range', ['Cannot extrapolate with ', ...
             'method ''previous'' and overlap at the beginning.']);
@@ -290,6 +281,9 @@ for d = 1:numel(D)
     end
   else
     outdata{d} = chans{1};
+  end
+  if ischar(fn)
+    fprintf('done.')
   end
 end
 % format output same as input
