@@ -4,12 +4,12 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 %   works on a PsPM file and is able to replace a channel or add the data as
 %   a new channel.
 % ● Features
-%   Given arbitrary unit values are converted using a recording distance D given in
-%   'unit', a reference distance Dref given in 'reference_unit', a multiplicator A given
-%   in 'reference_unit'.
-%   Before applying the conversion, the function takes the square root of the input
-%   data if the recording method is area. This is performed to always return linear
-%   units.
+%   Given arbitrary unit values are converted using a recording distance D 
+%   given in 'unit', a reference distance Dref given in 'reference_unit', a 
+%   multiplicator A given in 'reference_unit'.
+%   Before applying the conversion, the function takes the square root of the 
+%   input data if the recording method is area. This is performed to always 
+%   return linear units.
 %   Using the given variables, the following calculations are performed:
 %   0. Take square root of data if recording is 'area'.
 %   1. Let from unit to reference_unit converted recording distance be Dconv.

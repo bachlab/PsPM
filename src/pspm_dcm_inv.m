@@ -1,93 +1,100 @@
 function dcm = pspm_dcm_inv(model, options)
-% pspm_dcm_inv does trial-by-trial inversion of a DCM for skin conductance
-% created by pspm_dcm. This includes estimating trial by trial estimates of
-% sympathetic arousal as well as estimation of the impulse response
-% function, if required.
-%
-% Whether the IR is estimated from the data or not is determined by
-% pspm_dcm
-% and passed to the inversion routine in the options.
-%
-% FORMAT:       dcm = pspm_dcm_inv(model, options)
-%
-% MODEL with required fields:
-% model.scr:        cell array of normalised and min-adjusted time series
-% model.zfactor:    normalisation denominator from pspm_dcm
-% model.sr:         sample rate (must be the same across sessions)
-% model.events:     a cell of cell array of flexible and fixed events:
-%                   model.events{1}{sn} - flexible, model.events{2}{sn} -
-%                   fixed
-% model.trlstart:   a cell of trialstart for each trial (created in pspm_dcm)
-% model.trlstop:    a cell of trial end for each trial (created in pspm_dcm)
-% model.iti:        a cell of ITI for each trial (created in pspm_dcm)
-%
-% and optional fields
-% model.norm:       normalise data; default 0 (i. e. data are normalised
-%                   during inversion but results transformed back into raw
-%                   data units)
-% model.constrained: constrained model for flexible responses which have
-%                   have fixed dispersion (0.3 s SD) but flexible latency
-%
-% OPTIONS with optional fields:
-%
-% response function options
-% - options.eSCR: contains the data to estimate RF from
-% - options.aSCR: contains the data to adjust the RF to
-% - options.meanSCR: data to adjust the response amplitude priors to
-% - options.flexevents: flexible events to adjust amplitude priors
-% - options.fixevents: fixed events to adjust amplitude priors
-% - options.crfupdate: update CRF priors to observed SCRF, or use
-%                      pre-estimated priors (default)
-% - options.getrf: only estimate RF, do not do trial-wise DCM
-% - options.rf: use pre-specified RF, provided in file, or as 4-element
-%               vector in log parameter space
-%
-% inversion options
-% - options.depth: no of trials to invert at the same time (default: 2)
-% - options.sfpre: sf-free window before first event (default 2 s)
-% - options.sfpost: sf-free window after last event (default 5 s)
-% - options.sffreq: maximum frequency of SF in ITIs (default 0.5/s)
-% - options.sclpre: scl-change-free window before first event (default 2 s)
-% - options.sclpost: scl-change-free window after last event (default 5 s)
-% - options.aSCR_sigma_offset: minimum dispersion (standard deviation) for
-%   flexible responses (default 0.1 s)
-% - options.missing: data points to be disregarded by inversion
-%
-% display options
-% - options.dispwin: display progress window (default 1)
-% - options.dispsmallwin: display intermediate windows (default 0);
-%
-% Output units: all timeunits are in seconds; eSCR and aSCR amplitude are
-% in SN units such that an eSCR SN pulse with 1 unit amplitude causes an eSCR
-% with 1 mcS amplitude (unless model.norm = 1)
-%
-% REFERENCE: (1) Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010).
-%            Dynamic causal modelling of anticipatory skin conductance
-%            changes. Biological Psychology, 85(1), 163-70
-%            (2) Staib, M., Castegnetti, G., & Bach, D. R. (2015).
-%            Optimising a model-based approach to inferring fear
-%            learning from skin conductance responses. Journal of
-%            neuroscience methods, 255, 131-138.
-%
-% for terminology and data transformations see developer notes
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2011-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-
-% DEVELOPER NOTES
-% ------------------------------------------------------------------------
-% There are two event types: flexible and fixed. The terminology is to call
-% flexible responses aSCR (anticipatory) and fixed responses eSCR (evoked SCR).
-%
-% All parameters are extracted as parameter values and are transformed
-% back to meaningful values at the end (to avoid transformation at each
-% step), apart from SF timing
-%
-% The SCR timeseries is z-transformed in pspm_dcm, and amplitude parameter
-% estimates transformed back at the end (to standardise priors and precisions)
-
-% $Id$
-% $Rev$
+% ● Description
+%   pspm_dcm_inv does trial-by-trial inversion of a DCM for skin conductance
+%   created by pspm_dcm. This includes estimating trial by trial estimates of
+%   sympathetic arousal as well as estimation of the impulse response
+%   function, if required.
+%   Whether the IR is estimated from the data or not is determined by pspm_dcm
+%   and passed to the inversion routine in the options.
+% ● Format
+%   dcm = pspm_dcm_inv(model, options)
+% ● Arguments
+%   ┌─────────model
+%   │ ▶︎ Mandatory 
+%   ├──────────.scr:  [mandatory, cell_array]
+%   │                 normalised and min-adjusted time series
+%   ├──────.zfactor:  [mandatory]
+%   │                 normalisation denominator from pspm_dcm
+%   ├───────────.sr:  [mandatory, numeric]
+%   │                 sample rate (must be the same across sessions)
+%   ├───────.events:  [mandatory, a cell of cell array]
+%   │                 flexible and fixed events:
+%   │                 model.events{1}{sn} - flexible
+%   │                 model.events{2}{sn} - fixed
+%   ├─────.trlstart:  [mandatory, cell]
+%   │                 trial start for each trial (created in pspm_dcm)
+%   ├──────.trlstop:  [mandatory, cell]
+%   │                 trial end for each trial (created in pspm_dcm)
+%   ├──────────.iti:  [mandatory, cell]
+%   │                 ITI for each trial (created in pspm_dcm).
+%   │ ▶︎ Optional                
+%   ├─────────.norm:  [optional, default as 0]
+%   │                 whether to normalise data.
+%   │                 i. e. data are normalised during inversion but results
+%   │                 transformed back into raw data units.
+%   └──.constrained:  [optional]
+%                     constrained model for flexible responses which have
+%                     have fixed dispersion (0.3 s SD) but flexible latency
+%   ┌─────────options (all optional)
+%   │ ▶︎ response function
+%   ├─────────.eSCR:  contains the data to estimate RF from
+%   ├─────────.aSCR:  contains the data to adjust the RF to
+%   ├──────.meanSCR:  data to adjust the response amplitude priors to
+%   ├───.flexevents:  flexible events to adjust amplitude priors
+%   ├────.fixevents:  fixed events to adjust amplitude priors
+%   ├────.crfupdate:  update CRF priors to observed SCRF, or use
+%   │                 pre-estimated priors (default)
+%   ├────────.getrf:  only estimate RF, do not do trial-wise DCM
+%   ├───────────.rf:  use pre-specified RF, provided in file, or as 4-element
+%   │                 vector in log parameter space
+%   │ ▶︎ inversion
+%   ├────────.depth:  [numeric, default as 2]
+%   │                 no of trials to invert at the same time.
+%   ├────────.sfpre:  [numeric, default as 2, unit: second]
+%   │                 sf-free window before first event.
+%   ├───────.sfpost:  [numeric, default: 5, unit: second]
+%   │                 sf-free window after last event.
+%   ├───────.sffreq:  [numeric, default: 0.5, unit: /second or Hz]
+%   │                 maximum frequency of SF in ITIs.
+%   ├───────.sclpre:  [numeric, default: 2, unit: second]
+%   │                 scl-change-free window before first event.
+%   ├──────.sclpost:  [numeric, default: 5, unit: second]
+%   │                 scl-change-free window after last event.
+%   ├─.aSCR_sigma_offset:
+%   │                 [numeric, default: 0.1, unit: second]
+%   │                 minimum dispersion (standard deviation) for flexible
+%   │                 responses.
+%   ├──────.missing:  data points to be disregarded by inversion.
+%   │ ▶︎ display
+%   ├──────.dispwin:  [bool, default as 1]
+%   │                 display progress window.
+%   └─.dispsmallwin:  [bool, default as 0]
+%                     display intermediate windows
+% ● Outputs
+%   Output units: all timeunits are in seconds; eSCR and aSCR amplitude are
+%   in SN units such that an eSCR SN pulse with 1 unit amplitude causes an eSCR
+%   with 1 mcS amplitude (unless model.norm = 1)
+% ● Developer Notes
+%   There are two event types: flexible and fixed. The terminology is to call
+%   flexible responses aSCR (anticipatory) and fixed responses eSCR (evoked
+%   SCR).
+%   All parameters are extracted as parameter values and are transformed
+%   back to meaningful values at the end (to avoid transformation at each
+%   step), apart from SF timing.
+%   The SCR timeseries is z-transformed in pspm_dcm, and amplitude parameter
+%   estimates transformed back at the end (to standardise priors and
+%   precisions).
+% ● References
+%   (1) Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010).
+%       Dynamic causal modelling of anticipatory skin conductance changes.
+%       Biological Psychology, 85(1), 163-70
+%   (2) Staib, M., Castegnetti, G., & Bach, D. R. (2015).
+%       Optimising a model-based approach to inferring fear learning from skin
+%       conductance responses.
+%       Journal of Neuroscience Methods, 255, 131-138.
+% ● Version
+%   PsPM 3.0
+%   (C) 2011-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

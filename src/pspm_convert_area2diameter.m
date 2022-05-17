@@ -1,33 +1,26 @@
 function [varargout] = pspm_convert_area2diameter(varargin)
 % ● Description
 %   pspm_convert_area2diameter converts area values into diameter values
-%
-% It can work on PsPM files or on numeric vectors.
-%
-% FORMAT:
+%   It can work on PsPM files or on numeric vectors.
+% ● Format
 %   [sts, d]    = pspm_convert_area2diameter(area)
 %   [sts, chan] = pspm_convert_area2diameter(fn, chan, options)
-%
-% ARGUMENTS:
-%           fn:                 a numeric vector of milimeter values
-%           chan:               Channels which should be converted from
-%                               area to diameter. Should be either a string
-%                               representing the channels chantype or a
-%                               numeric value representing the channels id.
-%                               Multiple channels are allowed and should be
-%                               provided as cell.
-%           area:               a numeric vector of area values (the unit
-%                               is not important)
-%           options:
-%               channel_action:  ['add'/'replace'] Defines whether the new channel
-%                                should be added or the previous outputs of this
-%                                function should be replaced.
-%                                (Default: 'add')
-%__________________________________________________________________________
-% PsPM 3.1
-% (C) 2016 Tobias Moser (University of Zurich)
-
-
+% ● Arguments
+%                 fn: a numeric vector of milimeter values
+%               chan: Channels which should be converted from area to diameter. 
+%                     Should be either a string representing the channels  
+%                     chantype or a numeric value representing the channels id. 
+%                     Multiple channels are allowed and should be provided as 
+%                     cell.
+%               area: a numeric vector of area values (the unit is not 
+%                     important)
+%   ┌────────options:
+%   └.channel_action: ['add'/'replace', default as 'add']
+%                     Defines whether the new channel should be added or the 
+%                     previous outputs of this function should be replaced.
+% ● Version
+%   PsPM 3.1
+%   (C) 2016 Tobias Moser (University of Zurich)
 
 %% Initialise
 global settings
