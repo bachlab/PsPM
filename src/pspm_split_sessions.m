@@ -1,59 +1,55 @@
 function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchannel, options)
-% pspm_split_sessions splits experimental sessions/blocks, based on
-% regularly incoming markers, for example volume or slice markers from an
-% MRI scanner, or based on a vector of split points that is defined in
-% terms of markers. The first and the last marker will define the start of
-% the first session and the end of the last session.
-%
-% FORMAT:
-% newdatafile = pspm_split_sessions(datafile, markerchannel, options)
-%
-% INPUT:
-% datafile:                 a file name
-% markerchannel (optional): number of the channel that contains the
-%                           relevant markers
-% options
-% options.overwrite:        overwrite existing files by default
-% options.max_sn:           Define the maximum of sessions to look for.
-%                           Default is 10 (defined by
-%                           settings.split.max_sn)
-% options.min_break_ratio:  Minimum for ratio
-%                           [(session distance)/(maximum marker distance)]
-%                           Default is 3 (defined by
-%                           settings.split.min_break_ratio)
-% options.splitpoints       Alternatively, directly specify session start
-%                           (excluding the first session starting at the
-%                           first marker) in terms of markers (vector of integer)
-% options.prefix            In seconds, how long data before start trim point
-%                           should also be included. First marker will be
-%                           at t = options.prefix
-%                           Default = 0
-% options.suffix            In seconds, how long data after the end trim
-%                           point should be included. Last marker will be
-%                           at t = duration (of session) - options.suffix
-%                           Default = 0
-% options.randomITI         Tell the function to use all the markers to
-%                           evaluate the mean distance between them.
-%                           Usefull for random ITI since it reduces the
-%                           variance. Default = 0
-% options.missing           Optional name of an epoch file, e.g. containing
-%                           a missing epochs definition in s. This is then split accordingly.
-%                           epochs have a fixed sampling rate of 10000
-%
-%       REMARK for suffix and prefix:
-%           Markers in the prefix and suffix intervals are ignored. Only markers
-%           between the splitpoints are considered for each session, to
-%           avoid duplication of markers.
-%
-%
-% OUTPUT:
-% newdatafile: cell array of filenames for the individual sessions
-% newepochfile: cell array of missing epoch filenames for the individual
-% sessions (empty if no options.missing not specified)
-%__________________________________________________________________________
-% PsPM 5.1.1
-% 2021 PsPM Team
-
+% ● Descrition
+%   pspm_split_sessions splits experimental sessions/blocks, based on
+%   regularly incoming markers, for example volume or slice markers from an
+%   MRI scanner, or based on a vector of split points that is defined in
+%   terms of markers. The first and the last marker will define the start of
+%   the first session and the end of the last session.
+% ● Format
+%   newdatafile = pspm_split_sessions(datafile, markerchannel, options)
+% ● Arguments
+%            datafile:  a file name
+%       markerchannel:  (optional)
+%                       number of the channel containing the relevant markers.
+%   ┌─────────options:
+%   ├──────.overwrite:  overwrite existing files by default
+%   ├─────────.max_sn:  Define the maximum of sessions to look for.
+%   │                   Default is 10 (defined by settings.split.max_sn)
+%   ├.min_break_ratio:  Minimum for ratio
+%   │                   [(session distance)/(maximum marker distance)]
+%   │                   Default is 3 (defined by settings.split.min_break_ratio)
+%   ├────.splitpoints:  Alternatively, directly specify session start
+%   │                   (excluding the first session starting at the
+%   │                   first marker) in terms of markers (vector of integer)
+%   ├─────────.prefix:  [numeric, unit:second, default:0]
+%   │                   Defines how long data before start trim point should
+%   │                   also be included. First marker will be at 
+%   │                   t = options.prefix.
+%   ├─────────.suffix:  [numeric, unit:second, default:0]
+%   │                   Defines how long data after the end trim point should be
+%   │                   included. Last marker will be at t = duration (of
+%   │                   session) - options.suffix.
+%   ├───────.randomITI: [default:0]
+%   │                   Tell the function to use all the markers to evaluate
+%   │                   the mean distance between them.
+%   │                   Usefull for random ITI since it reduces the variance.
+%   └─────────.missing: Optional name of an epoch file, e.g. containing a
+%                       missing epochs definition in s. This is then split
+%                       accordingly.
+% ● Developer's notes
+%   epochs have a fixed sampling rate of 10000
+%   REMARK for suffix and prefix:
+%   Markers in the prefix and suffix intervals are ignored. Only markers
+%   between the splitpoints are considered for each session, to avoid
+%   duplication of markers.
+% ● Outputs
+%          newdatafile: cell array of filenames for the individual sessions
+%         newepochfile: cell array of missing epoch filenames for the individual
+%                       sessions (empty if no options.missing not specified)
+% ● Version
+%   PsPM 5.1.1
+%   (C) 2021 Dominik Bach (UCL)
+%       2022 Teddy Chao (UCL)
 
 %% 1 Initialise
 global settings

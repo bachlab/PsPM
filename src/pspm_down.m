@@ -1,26 +1,22 @@
-function [sts, newfile]=pspm_down(datafile, newsr, chan, options)
-%
-% pspm_down downsamples a PsPm dataset to the desired new sample rate
-% this function applies anti-aliasing filtering at 1/2 of the new sample
-% rate. The data will be written to a new file, the original name will be
-% prepended with 'd'
-%
-% FORMAT:
-% [STS, NEWFILE] = pspm_down(datafile, newsr, chan, options)
-%
-% INPUT:
-%   datafile:   can be a name, or for convenience, a cell array of filenames
-%   newfreq:    new frequency (must be >= 10 Hz)
-%   chan:       channels to downsample (default: all channels)
-%   options:    options.overwrite - overwrite existing files by default
-%
-% OUTPUT:
-%   sts:        1 if the
-%   newfile:    a filename for the updated file, or cell array of filenames
-%
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2010-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+function [sts, newfile] = pspm_down(datafile, newsr, chan, options)
+% ● Description
+% 	pspm_down downsamples a PsPm dataset to the desired new sample rate
+% 	this function applies anti-aliasing filtering at 1/2 of the new sample
+% 	rate. The data will be written to a new file, the original name will be
+% 	prepended with 'd'.
+% ● Format
+% 	[sts, newfile] = pspm_down(datafile, newsr, chan, options)
+% ● Input
+%   datafile:	can be a name, or for convenience, a cell array of filenames
+%    newfreq:	new frequency (must be >= 10 Hz)
+%   		chan:	channels to downsample (default: all channels)
+%    options:	options.overwrite - overwrite existing files by default
+% ● Output
+%   		 sts:	1 if the function runs successfully
+%    newfile:	the filename for the updated file, or cell array of filenames
+% ● Version
+% 	PsPM 3.0
+% 	(C) 2010-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

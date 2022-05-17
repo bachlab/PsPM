@@ -1,44 +1,50 @@
 function newdatafile = pspm_trim(datafile, from, to, reference, options)
-% pspm_trim cuts an PsPM dataset to the limits set with the parameters 'from'
-% and 'to' and writes it to a file with a prepended 't'
-%
-% FORMAT:
-% NEWDATAFILE = pspm_trim (datafile, from, to, reference, options)
-%
-% datafile:     a file name, a cell array of filenames, a struct with
-%               fields .data and .infos or a cell array of structs
-% from and to:  either numbers, or 'none'
-% reference:    'marker': from and to are set in seconds with
-%                         respect to the first and last scanner/marker pulse
-%               'file':   from and to are set in seconds with respect to start
-%                         of datafile
-%               a 2-element vector: from and to are set in seconds with
-%                         respect to the two markers defined here
-%               a 2-elemtn cell-array: from and to are set in seconds with
-%                         respect to the first two markers having the value
-%                         held in the cell array
-%
-% options:  options.overwrite:       overwrite existing files by default
-%           options.marker_chan_num: marker channel number - if undefined
-%                                     or 0, first marker channel is used
-%           options.drop_offset_markers:
-%                                    if offsets are set in the reference, you
-%                                    might be interested in only the data, but
-%                                    not in the additional markers which are
-%                                    within the offset. therefore set this
-%                                    option to 1 to drop markers which lie in
-%                                    the offset. this is for event channels
-%                                    only. default is 0.
-%
-% RETURNS a filename for the updated file, a cell array of filenames, a
-% struct with fields .data and .infos or a cell array of structs
-%
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Descrition
+%   pspm_trim cuts an PsPM dataset to the limits set with the parameters 'from'
+%   and 'to' and writes it to a file with a prepended 't'
+% ● Format
+%   newdatafile = pspm_trim (datafile, from, to, reference, options)
+% ● Arguments
+%            datafile:  string/struct/cell_array
+%                       [string] the name of the file to be trimmed.
+%                       [struct] fields .data and .infos
+%                       [cell_array] a cell array of filenames or structs
+%                from:  either numbers, or 'none'
+%                       the start of trimming period
+%                  to:  a numeric value or 'none'
+%                       the end of trimming period
+%           reference:  string/vector/cell_array
+%                       [string]
+%                       'marker' from and to are set in seconds with respect
+%                                to the first and last scanner/marker
+%                                pulse
+%                       'file'   from and to are set in seconds with respect 
+%                                to start of datafile
+%                       [vector] a 2-element vector:
+%                       from and to are set in seconds with respect to the two 
+%                       markers defined here
+%                       [cell_array] a 2-element cell-array
+%                       from and to are set in seconds with respect to the first
+%                       two markers having the value held in the cell array
+%   ┌─────────options:
+%   ├──────.overwrite:  overwrite existing files by default
+%   ├.marker_chan_num:  marker channel number.
+%   │                   if undefined or 0, first marker channel is used.
+%   └.drop_offset_markers:
+%                       if offsets are set in the reference, you might be
+%                       interested in only the data, but not in the additional 
+%                       markers which are within the offset. therefore set this
+%                       option to 1 to drop markers which lie in the offset.
+%                       this is for event channels only. default is 0.
+% ● Outputs
+%         newdatafile:  a filename for the updated file, a cell array of
+%                       filenames, a struct with fields .data and .infos or a
+%                       cell array of structs
+% ● Version
+%   PsPM 3.0
+%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% 1 Pre-settings
-
 % 1.1 Initialise
 global settings
 if isempty(settings)
@@ -46,23 +52,21 @@ if isempty(settings)
 end
 sts = -1;
 newdatafile = [];
-
 % 1.2 Verify the number of input arguments
 switch nargin
   case 0
     warning('ID:invalid_input', 'No data.\n');
-    return;
+    return
   case 1
     warning('ID:invalid_input', 'No start or end point given.\n');
-    return;
+    return
   case 2
     warning('ID:invalid_input', 'No end point given.\n');
-    return;
+    return
   case 3
     warning('ID:invalid_input', 'No reference given.\n');
-    return;
+    return
 end
-
 % 1.3 Verify the data file
 if ischar(datafile) || isstruct(datafile)
   D = {datafile};
@@ -74,7 +78,6 @@ else
   warning('Data file must be a char, cell, or struct.');
 end
 clear datafile
-
 % 1.4 Verify the start and end points
 if ~( ...
     (ischar(from) && strcmpi(from, 'none')) || ...
@@ -82,7 +85,7 @@ if ~( ...
     (isnumeric(from) && numel(from) == numel(D)) ...
     )
   warning('ID:invalid_input', 'No valid start point given.\n');
-  return;
+  return
 end
 if ~( ...
     (ischar(to) && strcmpi(to, 'none')) || ...
@@ -90,7 +93,7 @@ if ~( ...
     (isnumeric(to) && numel(to) == numel(D)) ...
     )
   warning('ID:invalid_input', 'No end point given');
-  return;
+  return
 end
 if numel(from) == 1
   from = ones(1,numel(D)) * from;
@@ -98,7 +101,6 @@ end
 if numel(to) == 1
   to = ones(1,numel(D)) * to;
 end
-
 % 1.5 Verify reference
 calculate_idx = false;
 switch(class(reference))
@@ -112,7 +114,7 @@ switch(class(reference))
         getmarker = 0;
       otherwise
         warning('ID:invalid_input', 'Invalid reference option ''%s'', should be marker or file.', reference);
-        return;
+        return
     end
   case 'double'
     if numel(reference) == 2
@@ -122,11 +124,11 @@ switch(class(reference))
       % check if reference markers are valid ---
       if startmarker < 1 || g_endmarker < startmarker
         warning('ID:invalid_input', 'No valid reference markers.\n');
-        return;
+        return
       end
     else
       warning('ID:invalid_input', 'Invalid reference option ''%s'', should contain only two elements', reference);
-      return;
+      return
     end
   case 'cell'
     if numel(reference) == 2
@@ -136,11 +138,11 @@ switch(class(reference))
       calculate_idx = true;
     else
       warning('ID:invalid_input', 'Invalid reference option ''%s'', should contain only two elements', reference);
-      return;
+      return
     end
   otherwise
     warning('ID:invalid_input', 'Invalid reference option ''%s'', should be a character, a number, or a cell', reference);
-    return;
+    return
 end
 % 1.6 Set options
 if ~exist('options','var') || isempty(options) || ~isstruct(options)
@@ -160,10 +162,8 @@ if ~isfield(options, 'drop_offset_markers') || ...
     ~isnumeric(options.drop_offset_markers)
   options.drop_offset_markers = 0;
 end
-
 %% 2 Work on all data
 for i_D = 1:numel(D)
-
   % 2.1 Obtain essential file info
   datafile = D{i_D}; % Obtain file name
   if isstruct(datafile)
@@ -172,10 +172,8 @@ for i_D = 1:numel(D)
     fprintf('Trimming %s ... ', datafile);
   end
   [sts, infos, data] = pspm_load_data(datafile, 0);
-
   % 2.2 Calculate markers if needed
   if getmarker == 1
-
     % 2.2.1 Verify the markers
     if options.marker_chan_num
       [nsts, ~, ndata] = pspm_load_data(datafile, options.marker_chan_num);
@@ -188,18 +186,15 @@ for i_D = 1:numel(D)
     else
       [nsts, ~, ndata] = pspm_load_data(datafile, 'marker');
     end
-
     if nsts > 0
       events = ndata{1}.data;
     else
-      return;
+      return
     end
-
     if isempty(events)
       warning('ID:marker_out_of_range', 'Marker channel (%i) is empty. Cannot use as a reference.', options.marker_chan_num);
-      return;
+      return
     end
-
     % 2.2.2 Caluculate marker idx if specified by marker values or markernames
     if calculate_idx
       % get idx of starting marker
@@ -210,7 +205,7 @@ for i_D = 1:numel(D)
         startmarker = find(strcmpi(ndata{1}.markerinfo.name,marker_sta_vals),1);
       else
         warning('ID:invalid_input', 'The value or name of the starting marker must be numeric or a string');
-        return;
+        return
       end
       % get idx of ending marker
       try_num_end = str2double(marker_end_vals);
@@ -220,14 +215,13 @@ for i_D = 1:numel(D)
         g_endmarker = find(strcmpi(ndata{1}.markerinfo.name,marker_end_vals),1);
       else
         warning('ID:invalid_input', 'The value or name of the ending marker must be numeric or a string');
-        return;
+        return
       end
       % check if the markers are valid
       if startmarker < 1 || g_endmarker < startmarker
-        warning('ID:invalid_input', 'No valid reference markers.\n'); return;
+        warning('ID:invalid_input', 'No valid reference markers.\n'); return
       end
     end
-
     % 2.2.3 set local endmarker depending on global endmarker
     if isempty(g_endmarker)
       l_endmarker = numel(events);
@@ -236,13 +230,11 @@ for i_D = 1:numel(D)
     end
     clear nsts ninfos ndata
   end
-
   % 2.2.4 Break program if data was not loaded successfully
   if any(sts == -1)
     newdatafile = [];
     break;
   end
-
   % 2.3 Convert from and to from time points into seconds
   if ischar(from) % 'none'
     sta_p = 0;
@@ -276,7 +268,6 @@ for i_D = 1:numel(D)
       sto_offset = 0;
     end
   end
-
   % 2.4 Check start and end points
   if ((sta_p + sta_offset) < 0)
     warning('ID:marker_out_of_range', ['\nStart point (%.2f s) outside', ...
@@ -298,7 +289,6 @@ for i_D = 1:numel(D)
       sto_offset = infos.duration - sto_p;
     end
   end
-
   % 2.5 Trim file
   for k = 1:numel(data)
     if ~strcmpi(data{k}.header.units, 'events') % waveform channels
@@ -348,7 +338,6 @@ for i_D = 1:numel(D)
     infos.trimpoints = [(sta_p + sta_offset) (sto_p + sto_offset)];
   end
   clear savedata
-
   % 2.6 Save data
   savedata.data = data;
   savedata.infos = infos;
@@ -371,12 +360,10 @@ for i_D = 1:numel(D)
     fprintf('  done.\n');
   end
 end
-
 % 3 Return value
 % if cell array of datafiles is being processed,
 % return cell array of filenames
 if i_D > 1
   clear newdatafile
   newdatafile = Dout;
-end
 end

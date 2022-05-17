@@ -1,25 +1,22 @@
 function output = pspm_template_varargin(input, varargin)
-
-% DEFINITION
+% ● Descrition
 %   pspm_template_varargin ...
-% FORMAT
+% ● Format
 %   output = pspm_template(input, varargin)
-% ARGUMENTS
+% ● Arguments
 %   Input
-%     input     variable type
-%               meaning: ...
-%               unit: (if applicable)
-%   Output
-%     output    variable type
-%               meaning: ...
-%               unit: (if applicable)
+%      input: [variable type, unit: (if applicable)]
+%             meaning: ...
 %   Optional
-%     option    variable type
-%               meaning: ...
-%               unit: (if applicable)
-% PsPM (version)
-% (C) 2021 developer (unit, university)
-% Supervised by Professor Dominik Bach (WCHN, UCL)
+%     option: [variable type, unit: (if applicable)]
+%             meaning: ...
+% ● Outputs
+%     output: [variable type, unit: (if applicable)]
+%             meaning: ...
+% ● Version
+%   PsPM (version)
+%   (C) 2021 developer (unit, university)
+%   Supervised by Professor Dominik Bach (WCHN, UCL)
 
 %% Initialise
 global settings

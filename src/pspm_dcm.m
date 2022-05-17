@@ -1,164 +1,159 @@
 function dcm = pspm_dcm(model, options)
-% ● DESCRIPTION
-% pspm_dcm sets up a DCM for skin conductance, prepares and normalises the
-% data, passes it over to the model inversion routine, and saves both the
-% forward model and its inversion.
+% ● Description
+% 	pspm_dcm sets up a DCM for skin conductance, prepares and normalises the
+% 	data, passes it over to the model inversion routine, and saves both the
+% 	forward model and its inversion.
+% 	Both flexible-latency (within a response window) and fixed-latency
+% 	(evoked after a specified event) responses can be modelled.
+% 	For fixed responses, delay and dispersion are assumed to be constant
+% 	(either pre-determined or estimated from the data), while for flexible
+% 	responses, both are estimated for each individual trial.
+% 	Flexible responses can for example be anticipatory, decision-related,
+% 	or evoked with unknown onset.
+% ● Format
+%		dcm = pspm_dcm(model, options)
+% ● Arguments
+%		┌──────model:
+%		│ ▶︎ Mandatory
+% 	├─.modelfile:	[string/cell array]
+%		│             The name of the model output file.
+%		├──.datafile:	[string/cell array]
+%		│             A file name (single session) OR a cell array of file names.
+%		├────.timing:	A file name/cell array of events (single session) OR a cell
+%		│             array of file names/cell arrays.
+%		│             When specifying file names, each file must be a *.mat file
+%		│             that contain a cell variable called 'events'.
+%		│             Each cell should contain either one column (fixed response)
+%		│             or two columns (flexible response).
+%		│             All matrices in the array need to have the same number of 
+%		│             rows, i.e. the event structure must be the same for every 
+%		│             trial. If this is not the case, include "dummy" events with
+%		│             negative onsets.
+%		│ ▶︎ Optional
+% 	├───.missing:	Allows to specify missing (e. g. artefact) epochs in the
+%		│             data file. See pspm_get_timing for epoch definition; specify
+%		│             a cell array for multiple input files. This must always be 
+%		│            	specified in SECONDS.
+%		│             Default: no missing values
+% 	├─.lasttrialcutoff
+%		│             If there fewer data after the end of then last trial in a
+%		│             session than this cutoff value (in s), then estimated
+%		│             parameters from this trial will be assumed inestimable
+%		│             and set to NaN after the
+%		│             inversion. This value can be set as inf to always retain
+%		│             parameters from the last trial.
+%		│             Default: 7 s
+% 	├─.substhresh:Minimum duration (in seconds) of NaN periods to cause
+%		│             splitting up into subsessions which get evaluated
+%		│             independently (excluding NaN values).
+%		│             Default: 2.
+% 	├────.filter:	Filter settings.
+%		│             Modality specific default.
+% 	├───.channel:	Channel number.
+%		│             Default: first SCR channel
+% 	├──────.norm:	Normalise data.
+%		│             i.e. Data are normalised during inversion but results
+%		│             transformed back into raw data units.
+%		│             Default: 0.
+% 	└─.constrained:
+%	              	Constrained model for flexible responses which have fixed
+%               	dispersion (0.3 s SD) but flexible latency.
+%		┌────options:
+%		│ ▶︎ Response function
+% 	├─.crfupdate: Update CRF priors to observed SCRF, or use pre-estimated
+%		│             priors (default)
+% 	├─────.indrf:	Estimate the response function from the data.
+%		│             Default: 0.
+% 	├─────.getrf:	Only estimate RF, do not do trial-wise DCM
+% 	├────────.rf:	Call an external file to provide response function
+%		│             (for use when this is previously estimated by pspm_get_rf)
+%		│ ▶︎ Inversion
+% 	├─────.depth:	No of trials to invert at the same time.
+%		│             Default: 2.
+% 	├─────.sfpre:	sf-free window before first event.
+%		│             Default: 2s.
+% 	├────.sfpost:	sf-free window after last event.
+%		│             Default: 5s.
+% 	├────.sffreq:	maximum frequency of SF in ITIs.
+%		│             Default: 0.5/s.
+% 	├────.sclpre:	scl-change-free window before first event.
+%		│             Default: 2s.
+% 	├───.sclpost: scl-change-free window after last event.
+%		│             Default: 5s.
+% 	├.aSCR_sigma_offset:
+%		│             Minimum dispersion (standard deviation) for flexible 
+%		│             responses.
+%		│             Default: 0.1s.
+%		│ Display
+% 	├─.dispwin    Display progress window.
+%		│             Default: 1.
+% 	├─.dispsmallwin
+%		│             display intermediate windows.
+%		│             Default: 0.
+%		│ ▶︎ Output
+% 	├────.nosave: Don't save dcm structure (e.g. used by pspm_get_rf)
+% 	├─.overwrite: whether to overwrite
+%		│             Default: determined by pspm_overwrite.
+%		│ ▶︎ Naming
+% 	├──.trlnames: Cell array of names for individual trials,
+%		│             is used for contrast manager only (e.g. condition 
+%		│             descriptions)
+% 	└─.eventnames:Cell array of names for individual events,
+%               	in the order they are specified in the model.timing array -
+%               	to be used for display and export only
+% ● Output
+%							fn:	Name of the model file.
+%					 	 dcm:	Model struct.
 %
-% Both flexible-latency (within a response window) and fixed-latency
-% (evoked after a specified event) responses can be modelled.
-% For fixed responses, delay and dispersion are assumed to be constant
-% (either pre-determined or estimated from the data), while for flexible
-% responses, both are estimated for each individual trial.
-% Flexible responses can for example be anticipatory, decision-related,
-% or evoked with unknown onset.
+% 	Output units: all timeunits are in seconds; eSCR and aSCR amplitude are
+% 	in SN units such that an eSCR SN pulse with 1 unit amplitude causes an
+% 	eSCR with 1 mcS amplitude
+% ● Developer's Notes
+% 	pspm_dcm can handle NaN values in data channels. Either by specifying
+% 	missing epochs manually using model.missing, or by detecting NaN epochs
+% 	in the data. Missing epochs shorter than model.substhresh will be ignored
+% 	in the inversion; otherwise the data will be split into subsessions that
+% 	are inverted independently. The results will be unchanged, and events
+% 	within missing epochs will simply be set to NaN.  NaN periods shorter than
+% 	model.substhresh are interpolated for averages and principal response
+% 	components.
+% 	pspm_dcm calculates the inter-trial intervals as the duration between the
+% 	end of a trial and the start of the next one.
+% 	ITI value for the last trial in a session is calculated as the duration
+% 	between the end of the last trial and the end of the whole session.
+% 	Since this value may differ significantly from the regular ITI duration
+% 	values, it is not used when computing the minimum ITI duration of a session.
 %
-% ● FORMAT
-%	dcm = pspm_dcm(model, options)
-%
-% ● ARGUMENTS
-%	model
-%	┃ Required fields
-% ┣━.modelfile  A file name for the model output.
-%	┣━.datafile   A file name (single session) OR a cell array of file names.
-%	┣━.timing     A file name/cell array of events (single session) OR a cell
-%	┃             array of file names/cell arrays.
-%	┃             When specifying file names, each file must be a *.mat file
-%	┃             that contain a cell variable called 'events'.
-%	┃             Each cell should contain either one column (fixed response)
-%	┃             or two columns (flexible response).
-%	┃             All matrices in the array need to have the same number of rows,
-%	┃             i.e. the event structure must be the same for every trial.
-%	┃             If this is not the case, include "dummy" events with
-%	┃             negative onsets.
-%	┃ Optional fields
-% ┣━.missing    Allows to specify missing (e. g. artefact) epochs in the
-%	┃             data file.
-%	┃             See pspm_get_timing for epoch definition; specify a cell
-%	┃             array for multiple input files.
-%	┃             This must always be specified in SECONDS.
-%	┃             Default: no missing values
-% ┣━.lasttrialcutoff
-%	┃             If there fewer data after the end of then last trial in a
-%	┃             session than this cutoff value (in s), then estimated
-%	┃             parameters from this trial will be assumed inestimable
-%	┃             and set to NaN after the
-%	┃             inversion. This value can be set as inf to always retain
-%	┃             parameters from the last trial.
-%	┃             Default: 7 s
-% ┣━.substhresh
-%	┃             Minimum duration (in seconds) of NaN periods to cause
-%	┃             splitting up into subsessions which get evaluated
-%	┃             independently (excluding NaN values).
-%	┃             Default: 2.
-% ┣━.filter			Filter settings.
-%	┃             Modality specific default.
-% ┣━.channel:		Channel number.
-%	┃             Default: first SCR channel
-% ┣━.norm:			Normalise data.
-%	┃             i.e. Data are normalised during inversion but results
-%	┃             transformed back into raw data units.
-%	┃             Default: 0.
-% ┗━.constrained
-%	              Constrained model for flexible responses which have fixed
-%               dispersion (0.3 s SD) but flexible latency.
-% options
-%	┃ Response function options
-% ┣━.crfupdate  Update CRF priors to observed SCRF, or use pre-estimated
-%	┃             priors (default)
-% ┣━.indrf      Estimate the response function from the data.
-%	┃             Default: 0.
-% ┣━.getrf      Only estimate RF, do not do trial-wise DCM
-% ┣━.rf         Call an external file to provide response function
-%	┃             (for use when this is previously estimated by pspm_get_rf)
-%	┃ Inversion options
-% ┣━.depth      No of trials to invert at the same time.
-%	┃             Default: 2.
-% ┣━.sfpre      sf-free window before first event.
-%	┃             Default: 2s.
-% ┣━.sfpost     sf-free window after last event.
-%	┃             Default: 5s.
-% ┣━.sffreq:		maximum frequency of SF in ITIs.
-%	┃             Default: 0.5/s.
-% ┣━.sclpre     scl-change-free window before first event.
-%	┃             Default: 2s.
-% ┣━.sclpost    scl-change-free window after last event.
-%	┃             Default: 5s.
-% ┣━.aSCR_sigma_offset
-%	┃             Minimum dispersion (standard deviation) for flexible responses.
-%	┃             Default: 0.1s.
-%	┃ Display options
-% ┣━.dispwin    Display progress window.
-%	┃             Default: 1.
-% ┣━.dispsmallwin
-%	┃             display intermediate windows.
-%	┃             Default: 0.
-%	┃ Output options
-% ┣━.nosave		  Don't save dcm structure (e.g. used by pspm_get_rf)
-% ┣━.overwrite	whether to overwrite
-%	┃             Default: determined by pspm_overwrite.
-%	┃ Naming options
-% ┣━.trlnames   Cell array of names for individual trials,
-%	┃             is used for contrast manager only (e.g. condition descriptions)
-% ┗━.eventnames
-%               Cell array of names for individual events,
-%               in the order they are specified in the model.timing array -
-%               to be used for display and export only
-% ● OUTPUT
-%	fn            Name of the model file.
-%	dcm           Model struct.
-%
-% Output units: all timeunits are in seconds; eSCR and aSCR amplitude are
-% in SN units such that an eSCR SN pulse with 1 unit amplitude causes an
-% eSCR with 1 mcS amplitude
-%
-% pspm_dcm can handle NaN values in data channels. Either by specifying
-% missing epochs manually using model.missing, or by detecting NaN epochs
-% in the data. Missing epochs shorter than model.substhresh will be ignored
-% in the inversion; otherwise the data will be split into subsessions that
-% are inverted independently. The results will be unchanged, and events
-% within missing epochs will simply be set to NaN.  NaN periods shorter than
-% model.substhresh are interpolated for averages and principal response
-% components.
-%
-% pspm_dcm calculates the inter-trial intervals as the duration between the
-% end of a trial and the start of the next one.
-% ITI value for the last trial in a session is calculated as the duration
-% between the end of the last trial and the end of the whole session.
-% Since this value may differ significantly from the regular ITI duration
-% values, it is not used when computing the minimum ITI duration of a session.
-%
-% Minimum of session specific min ITI values is used
+% 	Minimum of session specific min ITI values is used
 %   1. when computing mean SCR signal
 %   2. when computing the PCA from all the trials in all the sessions.
 %
-% In case of case (2), after each trial, all the samples in
-% the period with duration equal to the just mentioned overall min ITI
-% value is used as a row of the input matrix. Since this minimum does not
-% use the min ITI value of the last trial in each session, the sample
-% period may be longer than the ITI value of the last trial. In such a case,
-% pspm_dcm is not able to compute the PCA and emits a warning.
+% 	In case of case (2), after each trial, all the samples in
+% 	the period with duration equal to the just mentioned overall min ITI
+% 	value is used as a row of the input matrix. Since this minimum does not
+% 	use the min ITI value of the last trial in each session, the sample
+% 	period may be longer than the ITI value of the last trial. In such a case,
+% 	pspm_dcm is not able to compute the PCA and emits a warning.
 %
-% The rationale behind this behaviour is that we observed that ITI value of
-% the last trial in a session might be much smaller than the usual ITI
-% values. For example, this can happen when a long missing data section
-% starts very soon after the beginning of a trial. If this very small ITI
-% value is used to define the sample periods after each trial, nearly all
-% the trials use much less than available amount of samples in both case
-% (1) and (2). Instead, we aim to use as much data as possible in (1), and
-% perform (2) only if this edge case is not present.
-%
-% REFERENCES
-% (1) Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010).
+% 	The rationale behind this behaviour is that we observed that ITI value of
+% 	the last trial in a session might be much smaller than the usual ITI
+% 	values. For example, this can happen when a long missing data section
+% 	starts very soon after the beginning of a trial. If this very small ITI
+% 	value is used to define the sample periods after each trial, nearly all
+% 	the trials use much less than available amount of samples in both case
+% 	(1) and (2). Instead, we aim to use as much data as possible in (1), and
+% 	perform (2) only if this edge case is not present.
+% ● References
+% 	1.Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010).
 %     Dynamic causal modelling of anticipatory skin conductance changes.
 %     Biological Psychology, 85(1), 163-70
-% (2) Staib, M., Castegnetti, G., & Bach, D. R. (2015).
+% 	2.Staib, M., Castegnetti, G., & Bach, D. R. (2015).
 %     Optimising a model-based approach to inferring fear learning from
 %     skin conductance responses.
 %     Journal of Neuroscience Methods, 255, 131-138.
-%
-%__________________________________________________________________________
-% PsPM 5.1.0
-% (c) 2010-2021 Dominik Bach (Wellcome Centre for Human Neuroimaging, UCL)
+% ● Version
+% 	PsPM 5.1.0
+% 	(c) 2010-2021 Dominik Bach (Wellcome Centre for Human Neuroimaging, UCL)
 
 %% 1 Initialise
 global settings
