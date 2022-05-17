@@ -45,12 +45,14 @@ end
 % loop through channels
 % -------------------------------------------------------------------------
 chanflag = zeros(1,numel(headercell));
-for chan=1:numel(headercell)
-  for name=1:numel(namestrings)
+for chan = 1:numel(headercell)
+  for name = 1:numel(namestrings)
     if strcmp(namestrings{name}, 'ppg')
       chanflag(chan) = sum(strcmp(split(lower(headercell{chan}),','), 'ppg'))>0;
     else
-      chanflag(chan) = ~isempty(strfind(lower(headercell{chan}), namestrings{name}));
+      if ~isempty(strfind(lower(headercell{chan}), namestrings{name}))
+       chanflag(chan) = 1;
+     end
     end
   end
 end
