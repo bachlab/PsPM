@@ -672,7 +672,7 @@ function pspm_init
   defaults.import.channames.hp        = {'hp'};
   defaults.import.channames.resp      = {'resp', 'breath'};
   defaults.import.channames.pupil     = {'pupil', 'eye', 'track'};
-  defaults.import.channames.ppu       = {'ppu'};
+  defaults.import.channames.ppu       = {'ppg'};
   defaults.import.channames.marker    = {'trig', 'mark', 'event', 'scanner'};
   defaults.import.channames.sound     = {'sound'};
   defaults.import.channames.custom    = {'custom'};

@@ -21,7 +21,6 @@ global settings
 if isempty(settings)
   pspm_init;
 end
-sts = -1;
 
 % check input
 % -------------------------------------------------------------------------
@@ -29,31 +28,32 @@ if nargin < 2
   warning('ID:invalid_input', '\Not enough input arguments.\n');
 elseif ~iscell(headercell)
   warning('ID:invalid_input', '\nHeader input must be a cell array of char.\n'); return;
-end;
-
+end
 if ischar(chantype)
   if ~ismember(chantype, {settings.chantypes.type})
     warning('ID:not_allowed_channeltype', '\nChannel type %s not allowed.\n', chantype); return;
   else
     namestrings = settings.import.channames.(chantype);
-  end;
+  end
 elseif iscell(chantype)
   namestrings = chantype;
   chantype = 'special';
 else
   warning('ID:invalid_input', '\nChannel type must be a string.\n'); return;
-end;
+end
 
 % loop through channels
 % -------------------------------------------------------------------------
-chanflag=0;
+chanflag = zeros(1,numel(headercell));
 for chan=1:numel(headercell)
   for name=1:numel(namestrings)
-    if ~isempty(strfind(lower(headercell{chan}), namestrings{name}))
-      chanflag(chan)=1;
-    end;
-  end;
-end;
+    if strcmp(namestrings{name}, 'ppg')
+      chanflag(chan) = sum(strcmp(split(lower(headercell{chan}),','), 'ppg'))>0;
+    else
+      chanflag(chan) = ~isempty(strfind(lower(headercell{chan}), namestrings{name}));
+    end
+  end
+end
 
 % define output and give warnings
 % -------------------------------------------------------------------------
@@ -62,13 +62,13 @@ if sum(chanflag) > 1
   if ~strcmpi(chantype, 'special')
     warning('ID:multiple_matching_channels', '\nChannel of type ''%s'' could not be identified from its name - there are two possible channels.\n', ...
       chantype);
-  end;
+  end
 elseif sum(chanflag) == 0
   chan = 0;
   if ~strcmpi(chantype, 'special')
     warning('ID:no_matching_channels', '\nChannel of type ''%s'' could not be identified from its name - no matching channel was found.\n', ...
       chantype);
-  end;
+  end
 else
   chan=find(chanflag==1);
-end;
+end
