@@ -15,7 +15,7 @@ end
 if numel(lon) ~=numel(lat)
   warning('ID:invalid_input', 'length of data in gaze_x and gaze_y is not the same');
   return;
-end;
+end
 
 
 %convert lon and lat into radians
