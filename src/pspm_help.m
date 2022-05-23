@@ -1,5 +1,13 @@
 function [information, arguments] = pspm_help(func_name)
-fid = fopen([func_name,'.m'],'r');
+% ● Description
+% ● Arguments
+% ● Authers
+%   (C) 2022 Teddy Chao (UCL)
+global settings
+if isempty(settings)
+  pspm_init;
+end
+fid = fopen([settings.path,func_name,'.m'],'r');
 % read the file into a cell array, one cell per line
 i = 1;
 tline = fgetl(fid);
@@ -55,7 +63,7 @@ for i_var = 1:length(idx_var)
       % A.(var_name) = var_disc;
     otherwise
       A{i_var,1} = D((idx_fst(i_var-1)+2):(idx_var(i_var)-1));
-      A{i_var,2} = D((idx_var(i_var)+2):end);
+      A{i_var,2} = D((idx_var(i_var)+2):idx_fst(i_var));
   end
 end
 

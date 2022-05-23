@@ -13,8 +13,8 @@ function outfile = pspm_import(datafile, datatype, import, options)
 %       import.type:  (mandatory for all data types and each job) 
 %                     not all data types support all channel types.
 %         import.sr:  (mandatory for some data types and each 
-%                     channel) sampling rate for waveform, or timeunit in 
-%                     second for event channels.
+%                     channel) sampling rate for waveforms or time units in 
+%                     second for event channels, in Hz.
 %    import.channel:  (mandatory for some data types and each channel) 
 %                     channel or column number in the original file.
 %      import.flank:  [optional, string] Applicable for continuous channels 

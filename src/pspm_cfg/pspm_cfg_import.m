@@ -8,7 +8,9 @@ if isempty(settings), pspm_init; end
 fileoptions={settings.import.datatypes.long};
 chantypesDescription = {settings.chantypes.description};
 chantypesData = {settings.chantypes.data};
-
+cd(settings.path)
+[information, arguments] = pspm_help('pspm_import');
+cd([settings.path,'pspm_cfg/'])
 
 %% Predefined struct
 % Channel/Column Search
@@ -25,7 +27,8 @@ sample_rate.name    = 'Sample Rate';
 sample_rate.tag     = 'sample_rate';
 sample_rate.strtype = 'r';
 sample_rate.num     = [1 1];
-sample_rate.help    = {'Sample rate in Hz (i. e. samples per second).'};
+sample_rate.help    = arguments(contains(arguments(:,1),'import.sr'),2);
+% 'Sample rate in Hz (i. e. samples per second).'
 
 % Transfer function
 scr_file         = cfg_files;
