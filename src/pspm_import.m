@@ -17,10 +17,23 @@ function outfile = pspm_import(datafile, datatype, import, options)
 %                     second for event channels, in Hz.
 %    import.channel:  (mandatory for some data types and each channel) 
 %                     channel or column number in the original file.
-%      import.flank:  [optional, string] Applicable for continuous channels 
-%                     only; Accepted values include 'ascending',
-%                     'descending', and 'both', and the default value is
-%                     'both'.
+%      import.flank:  [optional, string]
+%                     The flank option specifies which 
+%                     of the rising edge (ascending), falling edge 
+%                     (descending), both edges or their mean (middle) of a 
+%                     marker impulse should be imported into the marker 
+%                     channel;
+%                     The flank option is applicable for 
+%                     continuous channels only and accepts 
+%                     'ascending', 'descending', or 'both';
+%                     The default value is 'both' that means to select the 
+%                     middle of the impulse;
+%                     Some exceptions are Eyelink, ViewPoint and
+%                     SensoMotoric Instruments data, for which the default
+%                     are respectively ''both'', ''ascending'', 
+%                     ''ascending''; 
+%                     If the numbers of rising and falling edges differ, 
+%                     PsPM will throw an error.
 %   import.transfer:  [optional, string] name of a .mat file containing 
 %                     values for the transfer function, OR a struct array  
 %                     containing the values OR 'none', when no conversion 
