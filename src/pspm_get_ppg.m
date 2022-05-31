@@ -1,8 +1,8 @@
-function [sts, data]=pspm_get_ppu(import)
-% pspm_get_ppu is a common function for importing PPU data
+function [sts, data]=pspm_get_ppg(import)
+% pspm_get_ppg is a common function for importing PPU data
 %
 % FORMAT:
-%   [sts, data]= pspm_get_ppu(import)
+%   [sts, data]= pspm_get_ppg(import)
 %   with import.data: column vector of waveform data
 %        import.sr: sample rate
 %
@@ -21,7 +21,7 @@ sts = -1;
 data.data = import.data(:);
 
 % add header
-data.header.chantype = 'ppu';
+data.header.chantype = 'ppg';
 data.header.units = import.units;
 data.header.sr = import.sr;
 
