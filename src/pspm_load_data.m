@@ -46,9 +46,8 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 % ● AUTHOSHIP
 % (C) 2008-2021 Dominik R. Bach (Wellcome Centre for Human Neuroimaging, UCL)
 %     2022 Teddy Chao (UCL)
-
-
-%% DEVELOPERS NOTES: General structure of PsPM data files
+% ● DEVELOPERS NOTES
+% General structure of PsPM data files
 %
 % each file contains two variables:
 % infos - struct variable with general infos
@@ -72,9 +71,6 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 %
 % data.header.chantype = 'trigger' is allowed for backward compatibility;
 % this feature will be removed in the future
-%
-% compatibility with SCRalyze 1.x files was removed after version b2.1.8
-
 
 %% 1 Initialise
 global settings
@@ -86,7 +82,6 @@ infos = [];
 data = [];
 filestruct = [];
 gerrmsg = '';
-
 %% 2 Check the number of inputs
 switch nargin
   case 0
