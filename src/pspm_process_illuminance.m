@@ -72,7 +72,6 @@ try options.bf.dilation.fhandle; catch; options.bf.dilation.fhandle = @pspm_bf_l
 try options.bf.constriction.fhandle; catch; options.bf.constriction.fhandle = @pspm_bf_lcrf_gm; end
 try options.fn; catch; options.fn = ''; end
 try options.overwrite; catch; options.overwrite = false; end
-try options.dont_ask_overwrite; catch; options.dont_ask_overwrite = false; end
 
 % ensure parameters are correct
 % -------------------------------------------------------------------------
@@ -99,8 +98,6 @@ elseif ~isnumeric(options.bf.duration)
 elseif ~isnumeric(options.bf.offset)
   warning('ID:invalid_input', 'options.bf.offset must be numeric.');
   return;
-elseif ~islogical(options.dont_ask_overwrite) && ~isnumeric(options.dont_ask_overwrite)
-  warning('ID:invalid_input', 'options.dont_ask_overwrite must be numeric or logical.');
 elseif ~isa(options.bf.constriction.fhandle, 'function_handle')
   warning('ID:invalid_input', ['options.bf.constriction.fhandle has', ...
     ' to be a valid function handle.']); return;
@@ -248,16 +245,12 @@ for i = 1:w
     % -----------------------------------------------------------------
     tmp_reg1 = conv(transd, bf1d);
     tmp_reg2 = conv(eventd, bf2d);
-
     regd(:, 1) = tmp_reg1((n_bf+1):(dur*lsr+n_bf))*(-1);
     regd(:, 2) = tmp_reg2((n_bf+1):(dur*lsr+n_bf))*(-1);
-
-
     % care about correct output
     if ~isempty(options.fn) && ischar(options.fn{i,j})
       fn = options.fn{i,j};
       save_file = pspm_overwrite(fn, options);
-
       if save_file
         R = regd;
         save(fn, 'R');

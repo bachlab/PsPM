@@ -44,7 +44,7 @@ sts = -1;
 outinfos = struct();
 
 % load options.channel
-try options.channel
+try options.channel;
 catch, options.channel = 0;
 end
 

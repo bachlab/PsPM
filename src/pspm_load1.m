@@ -29,8 +29,7 @@ function [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
 %                               zscore data - substract the mean and divide
 %                               by the standard deviation.
 %
-%                           for 'save' - options.overwrite and
-%                           options.dont_ask_overwrite
+%                           for 'save' - options.overwrite
 %                           (default: user dialogue)
 %
 %           output
@@ -90,7 +89,6 @@ end
 fn = fullfile(pth, [filename, ext]);
 
 try options.overwrite = (options.overwrite == 1); catch, options.overwrite = 0; end
-try options.dont_ask_overwrite = (options.dont_ask_overwrite == 1); catch, options.dont_ask_overwrite = 0; end
 
 % check whether file exists --
 if exist(fn, 'file')

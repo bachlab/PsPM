@@ -1,11 +1,11 @@
-function [ sts, outinfo ] = pspm_ppu2hb( fn,chan,options )
-%pspm_ppu2hb Converts a pulse oxymeter channel to heartbeats and adds it as
-%a new channel
+function [ sts, outinfo ] = pspm_convert_ppu2hb( fn,chan,options )
+% pspm_convert_ppu2hb Converts a pulse oxymeter channel to heartbeats and adds it as
+% a new channel
 %   First a template is generated from non ambiguous heartbeats. The ppu
 %   signal is then cross correlated with the template and maximas are
 %   identified as heartbeat maximas and a heartbeat channel is then
 %   generated from these.
-%   Format: [ sts, outinfo ] = pspm_ppu2hb( fn,chan,options )
+%   Format: [ sts, outinfo ] = pspm_convert_ppu2hb( fn,chan,options )
 %   Inputs :
 %       fn : file name with path
 %       chan : ppu channel number
@@ -23,7 +23,9 @@ function [ sts, outinfo ] = pspm_ppu2hb( fn,chan,options )
 %                         spikes from consideration
 %__________________________________________________________________________
 % PsPM 3.1
-% (C) 2016 Samuel Gerster (University of Zurich), Tobias Moser (University of Zurich)
+% (C) 2016  Samuel Gerster (University of Zurich)
+%           Tobias Moser (University of Zurich)
+%     2022  Teddy Chao (UCL)
 
 %% Initialise
 global settings
@@ -116,6 +118,7 @@ end
 
 % handle possible errors
 if isempty(pis),warning('ID:NoPulse', 'No pulse found, nothing done.');return;end
+if length(pis)==1,warning('ID:OnePulse', 'Only one pulse found, unable to calculate min_pulse_period.');return;end
 
 % get pulse period lower limit (assumed onset) as 30% of smalest period
 % before detected peaks

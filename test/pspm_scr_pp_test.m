@@ -22,7 +22,23 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
     end
     function scr_pp_test(this)
       channels{1}.chantype = 'scr';
-      % filter one channel
+      scr_pp_test_template(this, channels)
+      % channels{1}.chantype = 'hb';
+      % channels{2}.chantype = 'scr';
+      % scr_pp_test_template(this, channels)
+
+      % Delete testdata
+      if exist(this.fn, 'file')
+        delete(this.fn);
+      end
+      if exist('test_missing.mat', 'file')
+        delete('test_missing.mat');
+      end
+    end
+  end
+
+  methods
+    function scr_pp_test_template(this, channels)
       options1 = struct('deflection_threshold', 0, ...
         'expand_epochs', 0, ...
         'channel_action', 'add');

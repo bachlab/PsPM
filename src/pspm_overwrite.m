@@ -24,7 +24,6 @@ global settings
 if isempty(settings)
   pspm_init;
 end
-sts = -1;
 %% Define ow
 switch numel(varargin)
   case 0
