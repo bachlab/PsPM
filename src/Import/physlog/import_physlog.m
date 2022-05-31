@@ -38,7 +38,7 @@ function [sts, out] = import_physlog(fn)
 %                       (according to philips event settings)
 %
 %                           .t{:,1} = Trigger ECG
-%                           .t{:,2} = Trigger PPU
+%                           .t{:,2} = Trigger PPG
 %                           .t{:,3} = Trigger Respiration
 %                           .t{:,4} = Measurement ('slice onset')
 %                           .t{:,5} = start of scan sequence (decimal 16)
@@ -120,7 +120,7 @@ fclose('all');
 
 % handle triggers
 % 0x0001 = 0000.0000.0000.0001 = Trigger ECG
-% 0x0002 = 0000.0000.0000.0010 = Trigger PPU
+% 0x0002 = 0000.0000.0000.0010 = Trigger PPG
 % 0x0004 = 0000.0000.0000.0100 = Trigger Respiration
 % 0x0008 = 0000.0000.0000.1000 = Measurement ('slice onset')
 % 0x0010 = 0000.0000.0001.0000 = start of scan sequence (decimal 16)
@@ -133,7 +133,7 @@ fclose('all');
 trig = struct();
 trig.val = int16(hex2dec(dataArray{:,10}));
 trig.t{:,1} = double(bitand(trig.val, 1) ~= 0); % ECG
-trig.t{:,2} = double(bitand(trig.val, 2) ~= 0); % PPU
+trig.t{:,2} = double(bitand(trig.val, 2) ~= 0); % PPG
 trig.t{:,3} = double(bitand(trig.val, 4) ~= 0); % Respiration
 trig.t{:,4} = double(bitand(trig.val, 8) ~= 0); % Measurement
 trig.t{:,5} = double(bitand(trig.val, 16) ~= 0); % start of scan sequence
@@ -162,7 +162,7 @@ for j = 1:4
     out.data{j,1}.header.chantype = 'ecg';
     out.data{j,1}.header.units    = 'volt';
 end
-out.data{5,1}.header.chantype = 'ppu';
+out.data{5,1}.header.chantype = 'ppg';
 out.data{5,1}.header.units    = 'volt';
 out.data{6,1}.header.chantype = 'resp';
 out.data{6,1}.header.units    = 'PSI';

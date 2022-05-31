@@ -1,14 +1,14 @@
-function [ sts, outinfo ] = pspm_convert_ppu2hb( fn,chan,options )
-% pspm_convert_ppu2hb Converts a pulse oxymeter channel to heartbeats and adds it as
+function [ sts, outinfo ] = pspm_convert_ppg2hb( fn,chan,options )
+% pspm_convert_ppg2hb Converts a pulse oxymeter channel to heartbeats and adds it as
 % a new channel
-%   First a template is generated from non ambiguous heartbeats. The ppu
+%   First a template is generated from non ambiguous heartbeats. The ppg
 %   signal is then cross correlated with the template and maximas are
 %   identified as heartbeat maximas and a heartbeat channel is then
 %   generated from these.
-%   Format: [ sts, outinfo ] = pspm_convert_ppu2hb( fn,chan,options )
+%   Format: [ sts, outinfo ] = pspm_convert_ppg2hb( fn,chan,options )
 %   Inputs :
 %       fn : file name with path
-%       chan : ppu channel number
+%       chan : ppg channel number
 %       options : struct with following possible fields
 %           diagnostics : [true/FALSE] displays some debugging information
 %           replace     : [true/FALSE] replace existing heartbeat channel.
@@ -42,8 +42,8 @@ if nargin < 1
 elseif ~ischar(fn)
   warning('ID:invalid_input', 'Need file name string as first input.'); return;
 elseif nargin < 2 || isempty(chan)
-  chan = 'ppu';
-elseif ~isnumeric(chan) && ~strcmp(chan,'ppu')
+  chan = 'ppg';
+elseif ~isnumeric(chan) && ~strcmp(chan,'ppg')
   warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end
 
@@ -67,24 +67,24 @@ if nsts == -1
   return;
 end
 if numel(data) > 1
-  fprintf('There is more than one PPU channel in the data file. Only the first of these will be analysed.');
+  fprintf('There is more than one PPG channel in the data file. Only the first of these will be analysed.');
   data = data(1);
 end
-% Check that channel is ppu
-if ~strcmp(data{1,1}.header.chantype,'ppu')
-  warning('ID:not_allowed_channeltype', 'Specified channel is not a PPU channel. Don''t know what to do!')
+% Check that channel is ppg
+if ~strcmp(data{1,1}.header.chantype,'ppg')
+  warning('ID:not_allowed_channeltype', 'Specified channel is not a PPG channel. Don''t know what to do!')
   return;
 end
 
 %% Large spikes mode
 %--------------------------------------------------------------------------
-ppu = data{1}.data;
+ppg = data{1}.data;
 % large spike mode
 if options.lsm
   fprintf('Entering large spikes mode. This might take some time.');
   % Look for all peaks lower than 200 bpm (multiple of two in heart rate
   %  to compensate for absolute value and therefore twice as mani maxima)
-  [pks,pis] = findpeaks(abs(ppu),...
+  [pks,pis] = findpeaks(abs(ppg),...
     'MinPeakDistance',30/200*data{1}.header.sr);
   % Ensure at least one spike is removed by adapting quantil to realistic
   % values, given number of detected spikes
@@ -99,7 +99,7 @@ if options.lsm
   lsi = pis(lsi);
   fprintf('   done.\n');
 else
-  minProm = range(ppu)/3;
+  minProm = range(ppg)/3;
 end
 
 %% Create template
@@ -126,7 +126,7 @@ min_pulse_period = min(diff(pis));
 period_index_lower_bound = floor(pis(2:end-1)-.3*min_pulse_period);
 fprintf('...');
 
-% Create template from mean of peak time-locked ppu pulse periods
+% Create template from mean of peak time-locked ppg pulse periods
 pulses = cell2mat(arrayfun(@(x) data{1}.data(x:x+min_pulse_period),period_index_lower_bound','un',0));
 template = mean(pulses,2);
 fprintf('done.\n');
@@ -141,31 +141,31 @@ if options.diagnostics
   plot(t_template,template,'k','lineWidth',3)
   xlabel('time [s]')
   ylabel('Amplitude')
-  title('Generated ppu template (bk) and pulses used (colored)')
+  title('Generated ppg template (bk) and pulses used (colored)')
 end
 
 %% Cross correlate the signal with the template and find peaks
 %--------------------------------------------------------------------------
 fprintf('Applying template.');
-ppu_corr = xcorr(data{1}.data,template)/sum(template);
-% Truncate ppu_xcorr and realigne it so the max correlation corresponds to
+ppg_corr = xcorr(data{1}.data,template)/sum(template);
+% Truncate ppg_xcorr and realigne it so the max correlation corresponds to
 % templates peak and not beginning of template.
-ppu_corr = ppu_corr(length(data{1}.data)-floor(.3*min_pulse_period):end-floor(.3*min_pulse_period));
+ppg_corr = ppg_corr(length(data{1}.data)-floor(.3*min_pulse_period):end-floor(.3*min_pulse_period));
 if options.diagnostics
-  t_ppu = (0:length(data{1}.data)-1)'/data{1}.header.sr;
+  t_ppg = (0:length(data{1}.data)-1)'/data{1}.header.sr;
   figure
-  if length(t_ppu) ~= length(ppu_corr)
-    length(t_ppu)
+  if length(t_ppg) ~= length(ppg_corr)
+    length(t_ppg)
   end
-  plot(t_ppu,ppu_corr,t_ppu,data{1}.data)
+  plot(t_ppg,ppg_corr,t_ppg,data{1}.data)
   xlabel('time [s]')
   ylabel('Amplitude')
-  title('ppu cross-corelated with template and ppu')
-  legend('ppu (X) template','ppu')
+  title('ppg cross-corelated with template and ppg')
+  legend('ppg (X) template','ppg')
 end
 % Get peaks that are at least one template width appart. These are the best
 % correlation points.
-[~,hb] = findpeaks(ppu_corr/max(ppu_corr),...
+[~,hb] = findpeaks(ppg_corr/max(ppg_corr),...
   data{1}.header.sr,...
   'MinPeakdistance',min_pulse_period/data{1}.header.sr);
 fprintf('   done.\n');
@@ -174,7 +174,7 @@ fprintf('   done.\n');
 %--------------------------------------------------------------------------
 % save data
 fprintf('Saving data.');
-msg = sprintf('Heart beat detection from ppu with cross correlation HB-timeseries added to data on %s', date);
+msg = sprintf('Heart beat detection from ppg with cross correlation HB-timeseries added to data on %s', date);
 
 newdata.data = hb(:);
 newdata.header.sr = 1;
