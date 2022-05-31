@@ -279,16 +279,13 @@ end
 
 % overwrite
 if ~isfield(options, 'overwrite')
-  options.overwrite = 0;
-elseif ~isnumeric(options.overwrite) && ~islogical(options.overwrite)
-  warning('ID:invalid_input', 'Options.overwrite must be either numeric or logical.'); return;
-end
-
-% dont_ask_overwrite
-if ~isfield(options, 'dont_ask_overwrite')
-  options.dont_ask_overwrite = 0;
-elseif ~isnumeric(options.dont_ask_overwrite) && ~islogical(options.dont_ask_overwrite)
-  warning('ID:invalid_input', 'Options.dont_ask_overwrite has to be numeric or logical.');
+  options.overwrite = pspm_overwrite(fn);
+else
+  if ~isnumeric(options.overwrite) && ~islogical(options.overwrite)
+    warning('ID:invalid_input', ...
+      'Options.overwrite must be either numeric or logical.');
+    return
+  end
 end
 
 % newfile
@@ -488,8 +485,6 @@ for i=1:n_eyes
               plot(x_unit, y_unit);
             end
         end
-
-
         % set excluded periods in pupil data to NaN
         new_pu{i} = {data{work_chans}};
         new_excl{i} = cell(1,numel(new_pu{i}));
@@ -519,7 +514,6 @@ for i=1:n_eyes
 end
 
 op = struct();
-op.dont_ask_overwrite = options.dont_ask_overwrite;
 op.overwrite = options.overwrite;
 
 if ~isempty(options.newfile)
