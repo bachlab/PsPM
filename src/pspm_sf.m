@@ -55,7 +55,7 @@ function outfile = pspm_sf(model, options)
 % in ms (for DCM and MP)
 % ● Version
 % PsPM 3.0
-% ● Authorship
+% ● Authors
 % (C) 2008-2015 Dominik R Bach (WTCN, UZH)
 
 %% 1 Initialise
