@@ -6502,7 +6502,7 @@ Trigger ECG
 \begin_inset Text
 
 \begin_layout Plain Layout
-Trigger PPU
+Trigger PPG
 \end_layout
 
 \end_inset
@@ -7158,7 +7158,7 @@ Related functions:
 \shape default
  
 \family typewriter
-pspm_ecg2hb, pspm_ecg2hb_amri, pspm_hb2hp, pspm_ppu2hb
+pspm_ecg2hb, pspm_ecg2hb_amri, pspm_hb2hp, pspm_ppg2hb
 \end_layout
 
 \begin_layout Standard

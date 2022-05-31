@@ -11,7 +11,7 @@ function [sts, import, sourceinfo] = pspm_get_physlog(datafile, import)
 %           Chan-Nr:   Type:
 %           --------   -----
 %                 1    Trigger ECG
-%                 2    Trigger PPU
+%                 2    Trigger PPG
 %                 3    Trigger Respiration
 %                 4    Measurement ('slice onset')
 %                 5    start of scan sequence
@@ -25,7 +25,7 @@ function [sts, import, sourceinfo] = pspm_get_physlog(datafile, import)
 %           Chan-Nr:   Type:
 %           --------   -----
 %                1-4   ECG channel
-%                  5   PPU channel
+%                  5   PPG channel
 %                  6   Resp channel
 %
 % FORMAT: [sts, import, sourceinfo] = pspm_get_physlog(datafile, import);

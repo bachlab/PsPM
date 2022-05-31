@@ -255,32 +255,32 @@ hb2hp.help          = {['Convert heart beat time stamps into interpolated ', ...
     'Heart beat conversion, or directly work on heart beat time stamps, ', ...
     'for example obtained by a pulse oxymeter.']};
 
-ppu2hb_chan_def     = cfg_const;
-ppu2hb_chan_def.name = 'Default';
-ppu2hb_chan_def.tag = 'chan_def';
-ppu2hb_chan_def.val = {0};
-ppu2hb_chan_def.help = {['First Peripheral pulse oximetry channel.']};
+ppg2hb_chan_def     = cfg_const;
+ppg2hb_chan_def.name = 'Default';
+ppg2hb_chan_def.tag = 'chan_def';
+ppg2hb_chan_def.val = {0};
+ppg2hb_chan_def.help = {['First Peripheral pulse oximetry channel.']};
 
-ppu2hb_chan_nr      = cfg_entry;
-ppu2hb_chan_nr.name = 'Number';
-ppu2hb_chan_nr.tag  = 'chan_nr';
-ppu2hb_chan_nr.strtype = 'i';
-ppu2hb_chan_nr.num  = [1 1];
-ppu2hb_chan_nr.help = {''};
+ppg2hb_chan_nr      = cfg_entry;
+ppg2hb_chan_nr.name = 'Number';
+ppg2hb_chan_nr.tag  = 'chan_nr';
+ppg2hb_chan_nr.strtype = 'i';
+ppg2hb_chan_nr.num  = [1 1];
+ppg2hb_chan_nr.help = {''};
 
-ppu2hb_chan         = cfg_choice;
-ppu2hb_chan.name    = 'Channel';
-ppu2hb_chan.tag     = 'chan';
-ppu2hb_chan.val     = {ppu2hb_chan_def};
-ppu2hb_chan.values  = {ppu2hb_chan_def, ppu2hb_chan_nr};
-ppu2hb_chan.help    = {['Number of Peripheral pulse oximetry channel ', ...
+ppg2hb_chan         = cfg_choice;
+ppg2hb_chan.name    = 'Channel';
+ppg2hb_chan.tag     = 'chan';
+ppg2hb_chan.val     = {ppg2hb_chan_def};
+ppg2hb_chan.values  = {ppg2hb_chan_def, ppg2hb_chan_nr};
+ppg2hb_chan.help    = {['Number of Peripheral pulse oximetry channel ', ...
     '(default: first Peripheral puls oximetry channel)']};
 
-ppu2hb              = cfg_exbranch;
-ppu2hb.name         = 'Convert Peripheral pulse oximetry to Heart Beat';
-ppu2hb.tag          = 'ppu2hb';
-ppu2hb.val          = {ppu2hb_chan};
-ppu2hb.help          = {['Convert Peripheral pulse oximetry to ', ...
+ppg2hb              = cfg_exbranch;
+ppg2hb.name         = 'Convert Peripheral pulse oximetry to Heart Beat';
+ppg2hb.tag          = 'ppg2hb';
+ppg2hb.val          = {ppg2hb_chan};
+ppg2hb.help          = {['Convert Peripheral pulse oximetry to ', ...
     'Heart Beat events.']};
 
 ecg2hp              = cfg_exbranch;
@@ -293,7 +293,7 @@ ecg2hp.help         = {['Convert ECG data into Heart period time series.']};
 pp_type             = cfg_choice;
 pp_type.name        = 'Type of preprocessing';
 pp_type.tag         = 'pp_type';
-pp_type.values      = {ecg2hb, ecg2hb_amri, hb2hp, ppu2hb, ecg2hp};
+pp_type.values      = {ecg2hb, ecg2hb_amri, hb2hp, ppg2hb, ecg2hp};
 pp_type.help        = {'Specify the type of preprocessing.'};
 
 pp                  = cfg_repeat;
