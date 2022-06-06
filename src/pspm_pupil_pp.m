@@ -94,12 +94,11 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
 % [1]	Kret, Mariska E., and Elio E. Sjak-Shie. "Preprocessing pupil size data:
 %		Guidelines and code." Behavior research methods (2018): 1-7.
 % [2]	https://github.com/ElioS-S/pupil-size
-%
 % (C) 2019 Eshref Yozdemir (University of Zurich)
 % Updated 2021 Teddy Chao (WCHN, UCL)
 
 %% 1 Initialise
-global settings;
+global settings
 if isempty(settings)
   pspm_init;
 end

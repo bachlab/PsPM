@@ -3,164 +3,201 @@ function pspm_ui(hObject,handles,window)
 % pspm_ui controls the UI of the referred handle
 % The PsPM Team, UCL
 
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
+sts = -1;
+
 %% Parameters for UI optimisation
 if ispc
-    FontSizeTitle = 11;
-    FontSizeText = 10;
-    FontSizeCaption = 9;
-    FontSizeAttr = 9;
-    DisplayUnit = 'points';
-    FontNameText = 'Segoe UI';
-    FontNameEmph = 'Segoe UI Bold';
-    MainWeight = 500;
-    MainHeight = 500*0.8;
-    DisplayWeight = 250;
-    DisplayHeight = 250/5;
-    SwitchResize = 'off';
+  FSTitle = 11;
+  FSText = 10;
+  FSCaption = 9;
+  FSAttr = 9;
+  DisplayUnit = 'points';
+  FNRoman = 'Segoe UI';
+  FNEmph = 'Segoe UI Bold';
+  MainWeight = 500;
+  MainHeight = 500*0.8;
+  DisplayWeight = 250;
+  DisplayHeight = 250/5;
+  SwitchResize = 'off';
 elseif ismac
-    FontSizeTitle = 16;
-    FontSizeText = 14;
-    FontSizeCaption = 12;
-    FontSizeAttr = 13;
-    FontNameText = 'Helvetica Neue';
-    FontNameEmph = 'Gill Sans';
-    DisplayUnit = 'points';
-    MainWeight = 750;
-    MainHeight = 750*0.8;
-    DisplayWeight = 190;
-    DisplayHeight = 60;
-    SwitchResize = 'off';
+  FSTitle = 16;
+  FSText = 14;
+  FSCaption = 12;
+  FSAttr = 13;
+  FNRoman = 'Helvetica Neue';
+  FNEmph = 'Futura';
+  DisplayUnit = 'points';
+  MainWeight = 750;
+  MainHeight = 750*0.8;
+  DisplayWeight = 190;
+  DisplayHeight = 60;
+  SwitchResize = 'off';
 else
-    FontSizeTitle = 11;
-    FontSizeText = 10;
-    FontSizeCaption = 9;
-    FontSizeAttr = 10;
-    FontNameText = 'DejaVu Sans';
-    FontNameEmph = 'DejaVu Sans';
-    DisplayUnit = 'points';
-    MainWeight = 650;
-    MainHeight = 650*0.8;
-    DisplayWeight = 190;
-    DisplayHeight = 60;
-    SwitchResize = 'on';
+  FSTitle = 11;
+  FSText = 10;
+  FSCaption = 9;
+  FSAttr = 10;
+  FNRoman = 'DejaVu Sans';
+  FNEmph = 'DejaVu Sans Bold';
+  DisplayUnit = 'points';
+  MainWeight = 650;
+  MainHeight = 650*0.8;
+  DisplayWeight = 190;
+  DisplayHeight = 60;
+  SwitchResize = 'on';
 end
-
 switch window
-    case 'main'
-        handles.figure1.Units = DisplayUnit;
-        handles.tag_attribution.FontName = FontNameText;
-        handles.tag_attribution.FontSize = FontSizeAttr;
-        %handles.tag_attribution.Visible = 'off';
-        handles.tag_attribution.HorizontalAlignment = 'center';
-        attribution_disp_text = sprintf(['Version 5.1.1, Build ',datestr(now,'ddmmyyyy'),' with MATLAB 2021a, ',...
-        'The PsPM Team, University College London']);
-        handles.tag_attribution.String = attribution_disp_text;
-        handles.tag_batch.FontName = FontNameText;
-        handles.tag_batch.FontSize = FontSizeTitle;
-        handles.tag_contrast_manager.FontName = FontNameText;
-        handles.tag_contrast_manager.FontSize = FontSizeTitle;
-        handles.tag_data_preparation_list.FontName = FontNameText;
-        handles.tag_data_preparation_list.FontSize = FontSizeCaption;
-        handles.tag_data_preparation_title.FontName = FontNameText;
-        handles.tag_data_preparation_title.FontSize = FontSizeCaption;
-        handles.tag_data_preprocessing_list.FontName = FontNameText;
-        handles.tag_data_preprocessing_list.FontSize = FontSizeCaption;
-        handles.tag_data_preprocessing_title.FontName = FontNameText;
-        handles.tag_data_preprocessing_title.FontSize = FontSizeCaption;
-        handles.tag_export_statistics.FontName = FontNameText;
-        handles.tag_export_statistics.FontSize = FontSizeTitle;
-        handles.tag_feedback.FontName = FontNameText;
-        handles.tag_feedback.FontSize = FontSizeTitle;
-        handles.tag_first_level_models_list.FontName = FontNameText;
-        handles.tag_first_level_models_list.FontSize = FontSizeCaption;
-        handles.tag_first_level_models_title.FontName = FontNameText;
-        handles.tag_first_level_models_title.FontSize = FontSizeCaption;
-        handles.tag_help.FontName = FontNameText;
-        handles.tag_help.FontSize = FontSizeTitle;
-        handles.tag_models_for_sf.FontName = FontNameText;
-        handles.tag_models_for_sf.FontSize = FontSizeTitle;
-        handles.tag_more_title.FontName = FontNameText;
-        handles.tag_more_title.FontSize = FontSizeCaption;
-        handles.tag_non_linear_scr_model.FontName = FontNameText;
-        handles.tag_non_linear_scr_model.FontSize = FontSizeTitle;
-        handles.tag_PsPM.FontName = FontNameText;
-        handles.tag_quit.FontName = FontNameText;
-        handles.tag_quit.FontSize = FontSizeTitle;
-        handles.tag_report_second_level.FontName = FontNameText;
-        handles.tag_report_second_level.FontSize = FontSizeTitle;
-        handles.tag_review_model.FontName = FontNameText;
-        handles.tag_review_model.FontSize = FontSizeTitle;
-        handles.tag_second_level_model_title.FontName = FontNameText;
-        handles.tag_second_level_model_title.FontSize = FontSizeCaption;
-        handles.tag_second_level_model.FontName = FontNameText;
-        handles.tag_second_level_model.FontSize = FontSizeTitle;
-        handles.tag_tools_list.FontName = FontNameText;
-        handles.tag_tools_list.FontSize = FontSizeCaption;
-        handles.tag_tools_title.FontName = FontNameText;
-        handles.tag_tools_title.FontSize = FontSizeCaption;
-        hObject.Position(3) = MainWeight;
-        hObject.Position(4) = MainHeight;
-        hObject.Resize = SwitchResize;
-    case 'display'
-        handles.button_all.FontName = FontNameText;
-        handles.button_all.FontSize = FontSizeTitle;
-        handles.button_autoscale.FontName = FontNameText;
-        handles.button_autoscale.FontSize = FontSizeTitle;
-        handles.button_plot.FontName = FontNameText;
-        handles.button_plot.FontName = FontNameText;
-        handles.button_plot.FontSize = FontSizeTitle;
-        handles.button_plot.FontSize = FontSizeTitle;
-        handles.display_plot.FontName = FontNameText;
-        handles.display_plot.FontSize = FontSizeCaption;
-        handles.list_event_channel.FontName = FontNameText;
-        handles.list_event_channel.FontSize = FontSizeText;
-        handles.list_wave_channel.FontName = FontNameText;
-        handles.list_wave_channel.FontSize = FontSizeText;
-        handles.module_display_options.FontName = FontNameText;
-        handles.module_display_options.FontSize = FontSizeTitle;
-        handles.module_event_channels.FontName = FontNameText;
-        handles.module_event_channels.FontSize = FontSizeTitle;
-        handles.module_event_options.FontName = FontNameText;
-        handles.module_event_options.FontSize = FontSizeTitle;
-        handles.module_summary.FontName = FontNameText;
-        handles.module_summary.FontSize = FontSizeTitle;
-        handles.module_wave_channels.FontName = FontNameText;
-        handles.module_wave_channels.FontSize = FontSizeTitle;
-        handles.name=[];
-        handles.option_extra.FontName = FontNameText;
-        handles.option_extra.FontSize = FontSizeText;
-        handles.option_integrated.FontName = FontNameText;
-        handles.option_integrated.FontSize = FontSizeText;
-        handles.prop.axis=[];
-        handles.prop.event=[];
-        handles.prop.eventchans=[];
-        handles.prop.wave=[];
-        handles.prop.wavechans=[];
-        handles.tag_summary_recording_duration_content.FontName = FontNameText;
-        handles.tag_summary_recording_duration_content.FontSize = FontSizeText;
-        handles.tag_summary_recording_duration_title.FontName = FontNameEmph;
-        handles.tag_summary_recording_duration_title.FontSize = FontSizeText;
-        handles.tag_summary_source_file_content.FontName = FontNameText;
-        handles.tag_summary_source_file_content.FontSize = FontSizeText;
-        handles.tag_summary_source_file_title.FontName = FontNameEmph;
-        handles.tag_summary_source_file_title.FontSize = FontSizeText;
-        handles.tag_summary_channel_list_title.FontName = FontNameEmph;
-        handles.tag_summary_channel_list_title.FontSize = FontSizeText;
-        handles.tag_summary_channel_list_content.FontName = FontNameText;
-        handles.tag_summary_channel_list_content.FontSize = FontSizeText;
-        handles.text_file_summary.FontName = FontNameText;
-        handles.text_file_summary.FontSize = FontSizeTitle;
-        handles.text_starting_point.FontName = FontNameText;
-        handles.text_starting_point.FontSize = FontSizeText;
-        handles.text_time_window.FontName = FontNameText;
-        handles.text_time_window.FontSize = FontSizeText;
-        handles.text_y_max.FontName = FontNameText;
-        handles.text_y_max.FontSize = FontSizeText;
-        handles.text_y_min.FontName = FontNameText;
-        handles.text_y_min.FontSize = FontSizeText;
-        hObject.Position(3) = DisplayWeight;
-        hObject.Position(4) = DisplayHeight;
-        hObject.Resize = 'on';
+  case 'main'
+    % TitleCase
+    TitleComponents = {'tag_batch',...
+      'tag_contrast_manager',...
+      'tag_export_statistics',...
+      'tag_feedback',...
+      'tag_help',...
+      'tag_models_for_sf',...
+      'tag_non_linear_scr_model',...
+      'tag_quit',...
+      'tag_report_second_level',...
+      'tag_review_model',...
+      'tag_second_level_model'};
+    % CaptionCase
+    CaptionComponents = {'tag_data_preparation_list',...
+      'tag_data_preparation_title',...
+      'tag_data_preprocessing_list',...
+      'tag_data_preprocessing_title',...
+      'tag_first_level_models_list',...
+      'tag_first_level_models_title',...
+      'tag_more_title',...
+      'tag_second_level_model_title',...
+      'tag_tools_list',...
+      'tag_tools_title'};
+    % Others
+    handles.figure1.Units = DisplayUnit;
+    handles.tag_attribution.FontName = FNRoman;
+    handles.tag_attribution.FontSize = FSAttr;
+    %handles.tag_attribution.Visible = 'off';
+    handles.tag_attribution.HorizontalAlignment = 'center';
+    attribution_disp_text = sprintf(['Version 5.1.1, Build ',...
+      datestr(now,'ddmmyyyy'),' with MATLAB 2021a, ',...
+      'The PsPM Team, University College London']);
+    handles.tag_attribution.String = attribution_disp_text;
+    handles.tag_PsPM.FontName = FNRoman;
+    hObject.Position(3) = MainWeight;
+    hObject.Position(4) = MainHeight;
+    hObject.Resize = SwitchResize;
+  case 'display'
+    % TitleCase
+    TitleComponents = {'button_all',...
+      'button_autoscale',...
+      'button_plot',...
+      'module_display_options',...
+      'module_event_channels',...
+      'module_event_options',...
+      'module_summary',...
+      'module_wave_channels',...
+      'text_file_summary'};
+    % CaptionCase
+    CaptionComponents = {'display_plot'};
+    % TextCase
+    TextComponents = {'list_event_channel',...
+      'list_wave_channel',...
+      'option_extra',...
+      'option_integrated',...
+      'tag_summary_recording_duration_content',...
+      'tag_summary_channel_list_content',...
+      'text_starting_point',...
+      'text_time_window',...
+      'text_y_max',...
+      'text_y_min',...
+      'tag_summary_source_file_content'};
+    % EmphCase
+    EmphComponents = {'tag_summary_recording_duration_title',...
+      'tag_summary_source_file_title',...
+      'tag_summary_channel_list_title'};
+    % Others
+    hObject.Position(3) = DisplayWeight;
+    hObject.Position(4) = DisplayHeight;
+    hObject.Resize = 'on';
+    handles.name=[];
+    handles.prop.axis=[];
+    handles.prop.event=[];
+    handles.prop.eventchans=[];
+    handles.prop.wave=[];
+    handles.prop.wavechans=[];
+  case 'review'
+    hObject.Resize = 'on';
+    TitleComponents = {'panelStatus',...
+      'panelModel',...
+      'panelPlot'};
+    TextComponents = {'textStatus',...
+      'buttonAddModel',...
+      'buttonRemoveModel',...
+      'listModel',...
+      'textPlot1',...
+      'buttonPlot1',...
+      'editEpochNr',...
+      'textPlot2',...
+      'buttonPlot2',...
+      'editEpochNr',...
+      'textPlot3',...
+      'buttonPlot3',...
+      'textPlot4',...
+      'buttonPlot4',...
+      'textPlot5',...
+      'buttonPlot5',...
+      'buttonPlotClose',...
+      'textSessionNr',...
+      'editSessionNr',...
+      'textSessionRange',...
+      'pushbutton_quit'};
+  case 'data_editor'
+    hObject.Resize = 'on';
+    TitleComponents = {'pnlSettings'};
+    TextComponents = {'bgOutputFormat',...
+      'rbEpochs',...
+      'rbInterpolate',...
+      'cbInterpolate',...
+      'lbChannel',...
+      'edOpenFilePath',...
+      'pbOpenInputFile',...
+      'pnlEpoch',...
+      'pnlInput',...
+      'edOpenMissingEpochFilePath',...
+      'pbOpenMissingEpochFile',...
+      'edOutputFile',...
+      'pbOpenOutputFile',...
+      'pbSaveOutput',...
+      'axData',...
+      'pnlOutput',...
+      'lbEpochs',...
+      'pbCancel',...
+      'pbApply'};
+end
+if exist('TitleComponents', 'var')
+  ApplyStyle(handles, TitleComponents, FNRoman, FSTitle);
+end
+if exist('TextComponents', 'var')
+  ApplyStyle(handles, TextComponents, FNRoman, FSText);
+end
+if exist('CaptionComponents', 'var')
+  ApplyStyle(handles, CaptionComponents, FNRoman, FSCaption);
+end
+if exist('EmphComponents', 'var')
+  ApplyStyle(handles, EmphComponents, FNEmph, FSText);
+end
 end
 
+function ApplyStyle(handles, widgt, FN, FS)
+[r,c] = size(widgt);
+for i_r = 1:r
+  for i_c = 1:c
+    handles = setfield(handles, widgt{i_r,i_c}, 'FontName', FN);
+    handles = setfield(handles, widgt{i_r,i_c}, 'FontSize', FS);
+  end
+end
 end

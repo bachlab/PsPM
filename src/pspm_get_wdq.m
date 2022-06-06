@@ -9,15 +9,14 @@ function [sts, import, sourceinfo]  = pspm_get_wdq(datafile, import)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
-
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-sourceinfo = []; sts = -1;
-addpath(pspm_path('Import','wdq')); 
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
+sts = -1;
+sourceinfo = [];
+addpath(pspm_path('Import','wdq'));
 
 % get external file, using Dataq functions
 % -------------------------------------------------------------------------
@@ -27,24 +26,21 @@ inputdata = ReadDataq(datafile);
 % -------------------------------------------------------------------------
 % loop through import jobs
 for k = 1:numel(import)
-    chan = import{k}.channel;
-    if chan > size(inputdata.Data, 2)
-        warning('Channel %1.0f does not exist in data file', chan); return;
-    end;
-    import{k}.sr = inputdata.SR;            % sample rate per channel
-    import{k}.data = inputdata.Data(:, chan);     % data per channel
-    import{k}.units = inputdata.Units{chan};
-    sourceinfo.chan{k, 1} = sprintf('Channel %02.0f', chan);
-    if strcmpi(settings.chantypes(import{k}.typeno).data, 'events')
-        import{k}.marker = 'continuous';
-    end;
+  chan = import{k}.channel;
+  if chan > size(inputdata.Data, 2)
+    warning('Channel %1.0f does not exist in data file', chan); return;
+  end;
+  import{k}.sr = inputdata.SR;            % sample rate per channel
+  import{k}.data = inputdata.Data(:, chan);     % data per channel
+  import{k}.units = inputdata.Units{chan};
+  sourceinfo.chan{k, 1} = sprintf('Channel %02.0f', chan);
+  if strcmpi(settings.chantypes(import{k}.typeno).data, 'events')
+    import{k}.marker = 'continuous';
+  end;
 end;
 
 % clear path and return
 % -------------------------------------------------------------------------
-rmpath(pspm_path('Import','wdq')); 
+rmpath(pspm_path('Import','wdq'));
 sts = 1;
-return;
-
-
-
+return

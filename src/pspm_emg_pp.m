@@ -1,27 +1,27 @@
 function [sts, output] = pspm_emg_pp(fn, options)
 % pspm_emg_pp reduces noise in emg data in 3 steps. Following
 % from the literature[1] it does the following steps:
-%   - Initial filtering:        4th order Butterworth with 50 Hz and 470 Hz 
+%   - Initial filtering:        4th order Butterworth with 50 Hz and 470 Hz
 %                               cutoff frequencies
 %   - Remove mains noise:       50 Hz (variable) notch filter
-%   - Smoothing and rectifying: 4th order Butterworth low-pass filter with 
+%   - Smoothing and rectifying: 4th order Butterworth low-pass filter with
 %                               a time constant of 3 ms (=> cutoff of 53.05
 %                               Hz)
-%  
+%
 % Once the data is preprocessed, according to the option 'channel_action',
 % it will either replace the existing channel or add it as new channel to
 % the provided file.
 %
 %   FORMAT:  [sts, output] = pspm_emg_pp(fn, options)
-%       fn:                 [string] Path to the PsPM file which contains 
+%       fn:                 [string] Path to the PsPM file which contains
 %                           the EMG data
 %       options.
-%           mains_freq:     [integer] Frequency of mains noise to remove 
+%           mains_freq:     [integer] Frequency of mains noise to remove
 %                           with notch filter (default: 50Hz).
 %
 %           channel:        [numeric/string] Channel to be preprocessed.
 %                           Can be a channel ID or a channel name.
-%                           Default is 'emg'.
+%                           Default is 'emg' (i.e. first EMG channel)
 %
 %           channel_action:  ['add'/'replace'] Defines whether the new channel
 %                            should be added or the previous outputs of this
@@ -29,50 +29,51 @@ function [sts, output] = pspm_emg_pp(fn, options)
 %                            (Default: 'rplace')
 %
 % [1] Khemka S, Tzovara A, Gerster S, Quednow BB, Bach DR (2016).
-%     Modeling Startle Eyeblink Electromyogram to Assess Fear Learning. 
+%     Modeling Startle Eyeblink Electromyogram to Assess Fear Learning.
 %     Psychophysiology
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2009-2016 Tobias Moser (University of Zurich)
 
-% $Id: pspm_emg_pp.m 777 2019-07-02 09:09:18Z esrefo $   
+% $Id: pspm_emg_pp.m 777 2019-07-02 09:09:18Z esrefo $
 % $Rev: 777 $
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end
-sts =-1;
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
+sts = -1;
 output = struct();
 
 % set default values
 % -------------------------------------------------------------------------
 if nargin < 2
-    options = struct();
+  options = struct();
 end
 
 if ~isfield(options, 'mains_freq')
-    options.mains_freq = 50;
+  options.mains_freq = 50;
 end
 
-if ~isfield(options, 'channel') 
-    options.channel = 'emg';
+if ~isfield(options, 'channel')
+  options.channel = 'emg';
 end
 
 if ~isfield(options, 'channel_action')
-    options.channel_action = 'replace';
+  options.channel_action = 'replace';
 end
 
 % check values
 % -------------------------------------------------------------------------
 if ~isnumeric(options.mains_freq)
-    warning('ID:invalid_input', 'Option mains_freq must be numeric.');
-    return;
+  warning('ID:invalid_input', 'Option mains_freq must be numeric.');
+  return;
 elseif ~ismember(options.channel_action, {'add', 'replace'})
-    warning('ID:invalid_input', 'Option channel_action must be either ''add'' or ''repalce''');
-    return;
+  warning('ID:invalid_input', 'Option channel_action must be either ''add'' or ''repalce''');
+  return;
 elseif ~isnumeric(options.channel) && ~ischar(options.channel)
-    warning('ID:invalid_input', 'Option channel must be a string or numeric');
+  warning('ID:invalid_input', 'Option channel must be a string or numeric');
 end
 
 % load data
@@ -136,10 +137,10 @@ data{1}.header.chantype = 'emg_pp';
 % -------------------------------------------------------------------------
 channel_str = num2str(options.channel);
 o.msg.prefix = sprintf(...
-    'EMG preprocessing :: Input channel: %s -- Input chantype: %s -- Output chantype: %s --', ...
-    channel_str, ...
-    old_chantype, ...
-    data{1}.header.chantype);
+  'EMG preprocessing :: Input channel: %s -- Input chantype: %s -- Output chantype: %s --', ...
+  channel_str, ...
+  old_chantype, ...
+  data{1}.header.chantype);
 [lsts, outinfos] = pspm_write_channel(fn, data{1}, options.channel_action, o);
 if lsts ~= 1, return; end
 

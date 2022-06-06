@@ -25,3 +25,10 @@ function output = pspm_template_options(input, options)
 % PsPM (version)
 % (C) 2021 developer (unit, university)
 % Supervised by Professor Dominik Bach (WCHN, UCL)
+
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
+sts = -1;

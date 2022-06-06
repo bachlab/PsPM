@@ -69,9 +69,13 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
 % (C) 2019 Eshref Yozdemir (University of Zurich)
 % Updated 2021 Teddy Chao (WCHN, UCL)
 
-global settings;
-if isempty(settings), pspm_init; end
-sourceinfo = []; sts = -1;
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
+sts = -1;
+sourceinfo = [];
 addpath(pspm_path('Import','viewpoint'));
 
 if ~iscell(import)
@@ -274,7 +278,7 @@ for i = 1:numel(data)
     end
     data{i}.channels_header{k} = header;
   end
-  
+
   if strcmpi(data{i}.eyesObserved, 'a')
     data{i}.eyesObserved = 'R';
   elseif strcmpi(data{i}.eyesObserved, 'b')
@@ -374,7 +378,7 @@ global settings;
 if isempty(settings), pspm_init; end
 % n_data = size(data_concat, 1); % this line is not used in this function
 chan_id_in_concat = find(strcmpi(chan_struct, import_cell.type), 1, 'first');
-chantype_has_L_or_R = ~isempty(regexpi(import_cell.type, ['_[',settings.lateral.char.b,']'], 'once'));
+chantype_has_L_or_R = ~isempty(regexpi(import_cell.type, ['_[',settings.lateral.char.c,']'], 'once'));
 chantype_hasnt_eyes_obs = isempty(regexpi(import_cell.type, ['_([' eyes_observed '])'], 'once'));
 if (chantype_has_L_or_R && chantype_hasnt_eyes_obs) || isempty(chan_id_in_concat)
   chan_id = NaN;
@@ -422,22 +426,22 @@ last_time = data{1}.channels(1, second_col_idx);
 for c = 1:numel(data)
   start_time = data{c}.channels(1, second_col_idx);
   end_time = data{c}.channels(end, second_col_idx);
-  
+
   time_diff = start_time - last_time;
   if time_diff > 1.5 * (1 / sr)
     n_missing = round(time_diff * sr);
     % curr_len = size(data_concat, 1); % not used in this function
     data_concat(end + 1:(end + n_missing), 1:n_cols) = NaN(n_missing, n_cols);
   end
-  
+
   n_data_in_session = size(data{c}.channels, 1);
   n_markers_in_session = size(data{c}.marker.times, 1);
-  
+
   data_concat(end + 1:(end + n_data_in_session), 1:n_cols) = data{c}.channels;
   markers(end + 1:(end + n_markers_in_session), 1) = data{c}.marker.times;
   mi_values(end + 1:(end + n_markers_in_session),1) = data{c}.marker.value;
   mi_names(end + 1:(end + n_markers_in_session),1) = data{c}.marker.name;
-  
+
   last_time = end_time;
 end
 end
