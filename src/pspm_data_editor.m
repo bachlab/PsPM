@@ -768,7 +768,6 @@ end
 
 function UpdateEpochList(hObject)
 handles = guidata(hObject);
-epochs = struct.empty(6,0);
 if numel(handles.plots) > 0
   ep = findSelectedEpochs(hObject);
   epochs = handles.epochs;
@@ -1178,14 +1177,6 @@ function Add_Epochs(hObject, handles)
 %   handles seems to be modified in Add_Epochs
 %   I changed it into a void function
 E = load(handles.epoch_file, 'epochs');
-
-% update to sort epochs according to the time series order
-  %   epochs_list = 1:length(epochs);
-  %   for i_epochs_list = 1:length(epochs) % obtain data
-  %     epochs_list(i_epochs_list) = epochs{1,i_epochs_list}.range(1);
-  %   end
-  %   [~,idx]=sort(epochs_list);
-  %   handles.epochs = epochs{1,idx};
 epochs = transpose(sort(E.epochs));
 for ep = epochs % for each ep add an area as if drawn by the user and add to epoch list
   handles = guidata(hObject);
