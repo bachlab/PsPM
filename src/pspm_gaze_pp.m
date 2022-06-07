@@ -10,6 +10,7 @@ function [sts, out_channel] = pspm_gaze_pp(fn, options)
 % 	fn				[string] Path to the PsPM file which contains the gaze data.
 % 	options
 %   .channel  [numeric/string, optional] Channel ID to be preprocessed.
+%   .channel_combine  [numeric/string, optional] Channel ID to be combined.
 % ●	Authors
 % 	(C) 2021 Teddy Chao
 
