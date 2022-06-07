@@ -40,16 +40,16 @@ classdef pspm_gaze_pp_test < pspm_testcase
       opt.channel = 'gaze';
       this.verifyWarning(@()pspm_gaze_pp(this.pspm_input_filename, opt), 'ID:invalid_channeltype');
 
-      opt.channel = 'gaze_x_l';
+      opt.channel = 'gaze_l';
       opt.channel_combine = 'pupil_l';
       this.verifyWarning(@()pspm_gaze_pp(this.pspm_input_filename, opt), 'ID:invalid_input');
 
-      opt.channel_combine = 'gaze_y_l';
+      opt.channel_combine = 'gaze_l';
       this.verifyWarning(@()pspm_gaze_pp(this.pspm_input_filename, opt), 'ID:invalid_input');
     end
 
     function check_if_preprocessed_channel_is_saved(this)
-      opt.channel = 'gaze_x_r';
+      opt.channel = 'gaze_r';
       [~, out_channel] = pspm_gaze_pp(this.pspm_input_filename, opt);
       testdata = load(this.pspm_input_filename);
       this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_x_r');
