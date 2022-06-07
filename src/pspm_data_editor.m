@@ -310,9 +310,6 @@ else
 end
 handles.axData = gca;
 p = plot(xdata,ydata, 'Color', color);
-xlabel('time -- second');
-ylabel([handles.data{1,1}.header.chantype, ' -- ', handles.data{1,1}.header.units]);
-handles.axData.FontSize = 14;
 set(handles.axData, 'NextPlot', 'add');
 NaN_data = NaN(numel(xdata),1);
 handles.plots{chan_id}.sr = sr;
@@ -841,13 +838,7 @@ if numel(handles.plots) > 0
     set(handles.lbEpochs, 'Value', sel_ep);
   end
   set(handles.lbEpochs, 'String', names);
-  % update to sort epochs according to the time series order
-  epochs_list = 1:length(epochs);
-  for i_epochs_list = 1:length(epochs) % obtain data
-    epochs_list(i_epochs_list) = epochs{1,i_epochs_list}.range(1);
-  end
-  [~,idx]=sort(epochs_list);
-  handles.epochs = epochs{1,idx};
+  handles.epochs = epochs;
   guidata(hObject, handles);
   InterpolateData(hObject);
 end
