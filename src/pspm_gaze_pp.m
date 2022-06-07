@@ -21,11 +21,12 @@ end
 sts = -1;
 
 %% 2 Create default arguments
+list_channels = {'gaze_x_l', 'gaze_x_r', 'gaze_y_l', 'gaze_y_r'};
 if nargin == 1
   options = struct();
 end
 if ~isfield(options, 'channel')
-  options.channel = 'gaze_l';
+  options.channel = 'gaze_x_l';
 end
 if ~isfield(options, 'channel_action')
   options.channel_action = 'add';
@@ -33,6 +34,7 @@ end
 if ~isfield(options, 'channel_combine')
   options.channel_combine = 'none';
 end
+action_combine = ~strcmp(options.channel_combine, 'none');
 if ~isfield(options, 'plot_data')
   options.plot_data = false;
 end
@@ -49,10 +51,39 @@ if ~isfield(options, 'segments')
 end
 
 %% 3 Input checks
+% 3.1 check the file exist
+[sts, ~, ~, ~] = pspm_load_data(fn);
+if sts ~= 1
+  warning('ID:invalid_input', 'cannot load data from the file');
+  return
+end
+% 3.2 check the channel can be loaded
+[sts, ~, ~, ~] = pspm_load_data(fn, options.channel);
+if sts ~= 1
+  warning('ID:invalid_channeltype', 'cannot load the specified channel from the file');
+  return
+end
 if ~ismember(options.channel_action, {'add', 'replace'})
   warning('ID:invalid_input', ...
-    'Option channel_action must be either ''add'' or ''replace''');
+    'Option channel_action must be either ''add'' or ''replace''.');
   return
+end
+if ~ismember(options.channel, list_channels)
+  warning('ID:invalid_input', ...
+    'Option channel must be either ''gaze_x_l'', ''gaze_x_r'', ''gaze_y_l'' or ''gaze_y_r''.');
+  return
+end
+if action_combine
+  if ~ismember(options.channel_combine, list_channels)
+    warning('ID:invalid_input', ...
+      'Option channel_combine must be either ''gaze_x_l'', ''gaze_x_r'', ''gaze_y_l'' or ''gaze_y_r''.');
+    return
+  else
+    if strcmp(options.channel(end),options.channel_combine(end)) || ~strcmp(options.channel(6),options.channel_combine(6))
+      warning('ID:invalid_input', 'Option channel_combine must match channel.');
+      return
+    end
+  end
 end
 for seg = options.segments
   if ~isfield(seg{1}, 'start') || ~isfield(seg{1}, 'end') || ~isfield(seg{1}, 'name')
@@ -63,42 +94,31 @@ for seg = options.segments
 end
 
 %% 4 Load
-action_combine = ~strcmp(options.channel_combine, 'none');
 addpath(pspm_path('backroom'));
-[lsts, gaze_original] = pspm_load_single_chan(fn, options.channel, 'last', 'gaze_x');
-if lsts ~= 1
-  return
-end
+[~, gaze_og] = pspm_load_single_chan(fn, options.channel, 'last', options.channel);
 if action_combine
-  [lsts, gaze_combine] = pspm_load_single_chan(fn, options.channel_combine, 'last', 'gaze_x');
-  if lsts ~= 1
-    return
-  end
-  if strcmp(pspm_get_eye(gaze_original{1}.header.chantype), pspm_get_eye(gaze_combine{1}.header.chantype))
-    warning('ID:invalid_input', 'options.channel and options.channel_combine must specify different eyes');
-    return;
-  end
-  if gaze_original{1}.header.sr ~= gaze_combine{1}.header.sr
+  [~, gaze_combine] = pspm_load_single_chan(fn, options.channel_combine, 'last', options.channel_combine);
+  if gaze_og{1}.header.sr ~= gaze_combine{1}.header.sr
     warning('ID:invalid_input', 'options.channel and options.channel_combine data have different sampling rate');
     return;
   end
-  if ~strcmp(gaze_original{1}.header.units, gaze_combine{1}.header.units)
+  if ~strcmp(gaze_og{1}.header.units, gaze_combine{1}.header.units)
     warning('ID:invalid_input', 'options.channel and options.channel_combine data have different units');
     return;
   end
-  if numel(gaze_original{1}.data) ~= numel(gaze_combine{1}.data)
+  if numel(gaze_og{1}.data) ~= numel(gaze_combine{1}.data)
     warning('ID:invalid_input', 'options.channel and options.channel_combine data have different lengths');
     return;
   end
-  old_chantype = sprintf('%s and %s', gaze_original{1}.header.chantype, gaze_combine{1}.header.chantype);
+  old_chantype = sprintf('%s and %s', gaze_og{1}.header.chantype, gaze_combine{1}.header.chantype);
 else
   gaze_combine{1}.data = [];
-  old_chantype = gaze_original{1}.header.chantype;
+  old_chantype = gaze_og{1}.header.chantype;
 end
 rmpath(pspm_path('backroom'));
 
 %% 5 preprocess
-[lsts, smooth_signal] = pspm_preprocess(gaze_original, gaze_combine, options.segments, options.custom_settings, options.plot_data, 'gaze_x');
+[lsts, smooth_signal] = pspm_preprocess(gaze_og, gaze_combine, options.segments, options.custom_settings, options.plot_data, 'gaze_x');
 if lsts ~= 1
   return
 end
