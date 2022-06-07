@@ -58,10 +58,10 @@ classdef pspm_gaze_pp_test < pspm_testcase
       [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
       testdata = load(this.pspm_input_fn);
       this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_x_r');
-      opt.channel = 'gaze_y_r';
-      [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
-      testdata = load(this.pspm_input_fn);
-      this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_y_r');
+      % opt.channel = 'gaze_y_r';
+      % [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
+      % testdata = load(this.pspm_input_fn);
+      % this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_y_r');
     end
 
     function check_upsampling_rate(this)
