@@ -1,19 +1,17 @@
 function [sts, out_channel] = pspm_gaze_pp(fn, options)
 
-% DESCRIPTION
-% pspm_gaze_pp preprocesses gaze signals
-%
-% FORMAT
-% [sts, out_channel] = pspm_gaze_pp(fn)
-% [sts, out_channel] = pspm_gaze_pp(fn, options)
-%
-% VARIABLES
-% fn		[string] Path to the PsPM file which contains the gaze data.
-% options
-% 	channel	[numeric/string, optional] Channel ID to be preprocessed, default: 'gaze_x'.
-%
-% (C) 2021 Teddy Chao (WCHN, UCL)
-% Supervised by Professor Dominik Bach (WCHN, UCL)
+% ●	Description
+% 	pspm_gaze_pp preprocesses gaze signals, gaze x and gaze y channels at
+% 	the same time.
+% ●	Format
+% 	[sts, out_channel] = pspm_gaze_pp(fn) or
+% 	[sts, out_channel] = pspm_gaze_pp(fn, options)
+% ●	Arguments
+% 	fn				[string] Path to the PsPM file which contains the gaze data.
+% 	options
+% 		channel	[numeric/string, optional] Channel ID to be preprocessed.
+% ●	Authors
+% 	(C) 2021 Teddy Chao
 
 %% 1 Initialise
 global settings;
@@ -27,7 +25,7 @@ if nargin == 1
   options = struct();
 end
 if ~isfield(options, 'channel')
-  options.channel = 'gaze_x';
+  options.channel = 'gaze_l';
 end
 if ~isfield(options, 'channel_action')
   options.channel_action = 'add';
@@ -52,12 +50,14 @@ end
 
 %% 3 Input checks
 if ~ismember(options.channel_action, {'add', 'replace'})
-  warning('ID:invalid_input', 'Option channel_action must be either ''add'' or ''replace''');
+  warning('ID:invalid_input', ...
+    'Option channel_action must be either ''add'' or ''replace''');
   return
 end
 for seg = options.segments
   if ~isfield(seg{1}, 'start') || ~isfield(seg{1}, 'end') || ~isfield(seg{1}, 'name')
-    warning('ID:invalid_input', 'Each segment structure must have .start, .end and .name fields');
+    warning('ID:invalid_input', ...
+      'Each segment structure must have .start, .end and .name fields');
     return
   end
 end
