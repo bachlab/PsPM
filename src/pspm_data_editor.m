@@ -310,6 +310,9 @@ else
 end
 handles.axData = gca;
 p = plot(xdata,ydata, 'Color', color);
+xlabel('time -- second');
+ylabel([handles.data{1,1}.header.chantype, ' -- ', handles.data{1,1}.header.units]);
+handles.axData.FontSize = 14;
 set(handles.axData, 'NextPlot', 'add');
 NaN_data = NaN(numel(xdata),1);
 handles.plots{chan_id}.sr = sr;
@@ -1174,7 +1177,7 @@ function Add_Epochs(hObject, handles)
 %   handles seems to be modified in Add_Epochs
 %   I changed it into a void function
 E = load(handles.epoch_file, 'epochs');
-epochs = E.epochs';
+epochs = transpose(sort(E.epochs));
 for ep = epochs % for each ep add an area as if drawn by the user and add to epoch list
   handles = guidata(hObject);
   handles.select.start = [ ep(1), 0.5 ];
