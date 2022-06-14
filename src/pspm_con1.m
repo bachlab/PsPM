@@ -134,9 +134,7 @@ for iFn =1:numel(modelfile)
   % calculate contrasts --
   % this automatically replicates contrasts across multiple measures if
   % data.stats has more than one column
-  data_stats_converted = data.stats;
-  data_stats_converted(isnan(data.stats)) = 0;
-  conval = conmat * data_stats_converted;
+  conval = conmat(logical(mean(~isnan(data.stats),2))) * data.stats(logical(mean(~isnan(data.stats),2)),:);
 
   % zscored text-output for connames
   if isfield(data, 'zscored') && data.zscored
