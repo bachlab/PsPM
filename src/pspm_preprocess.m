@@ -1,4 +1,4 @@
-function [sts, smooth_signal] = pspm_preprocess(data, data_combine, segments, custom_settings, plot_data, channel_type)
+function varargout  = pspm_preprocess(data, data_combine, segments, custom_settings, plot_data, channel_type)
 sts = 0;
 
 % 1 definitions
@@ -108,4 +108,11 @@ rmpath(libpath{:});
 if sts == 0
   sts = 1;
 end
+varargout{1} = sts;
+switch nargout
+  case 2
+    varargout{2} = smooth_signal;
+  case 3
+    varargout{2} = smooth_signal;
+    varargout{3} = model;
 end

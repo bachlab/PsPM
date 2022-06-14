@@ -97,6 +97,9 @@ end
 %% 4 Load
 addpath(pspm_path('backroom'));
 [~, gaze_og] = pspm_load_single_chan(fn, options.channel, 'last', options.channel);
+% load pupil
+[~, pupil_l] = pspm_load_single_chan(fn, 'pupil_l', 'last', 'pupil_l');
+[~, pupil_r] = pspm_load_single_chan(fn, 'pupil_r', 'last', 'pupil_r');
 if action_combine
   [~, gaze_combine] = pspm_load_single_chan(fn, options.channel_combine, 'last', options.channel_combine);
   if gaze_og{1}.header.sr ~= gaze_combine{1}.header.sr
@@ -118,21 +121,35 @@ else
 end
 rmpath(pspm_path('backroom'));
 
-%% 5 preprocess
-[lsts, smooth_signal] = pspm_preprocess(gaze_og, gaze_combine, ...
+%% 5 Set up smooth signal gaze
+% obtain valid samples from pupil
+[~, ~, model] = pspm_preprocess(pupil_l, pupil_r, ...
   options.segments, options.custom_settings, options.plot_data, options.channel(1:end-2));
-if lsts ~= 1
-  return
-end
+% set up structure for smooth signal gaze
+upsampling_factor = options.custom_settings.valid.interp_upsamplingFreq / gaze_og{1}.header.sr;
+desired_output_samples_gaze = round(upsampling_factor * numel(gaze_og{1}.data));
+smooth_signal_gaze.header.chantype = pspm_update_chantype(gaze_og{1}.header.chantype,'pp');
+smooth_signal_gaze.header.units = gaze_og{1}.header.units;
+smooth_signal_gaze.header.sr = options.custom_settings.valid.interp_upsamplingFreq;
+smooth_signal_gaze.header.segments = options.segments;
+smooth_signal_gaze.header.valid_samples.data = model.leftPupil_ValidSamples.samples.pupilDiameter;
+smooth_signal_gaze.header.valid_samples.sample_indices = find(model.leftPupil_RawData.isValid);
+smooth_signal_gaze.header.valid_samples.valid_percentage = model.leftPupil_ValidSamples.validFraction;
 
-%% 6 save
+%% 6 preprocess
+% gaze_pp obtains the valid sample information from pupil_pp and then use
+% it to process gaze signals
+smooth_signal_gaze.data = pspm_complete_with_nans(gaze_og{1}.data, model.leftPupil_ValidSamples.signal.t(1), ...
+    options.custom_settings.valid.interp_upsamplingFreq, desired_output_samples_gaze);
+
+%% 7 save
 channel_str = num2str(options.channel);
 o.msg.prefix = sprintf(...
   'Gaze preprocessing :: Input channel: %s -- Input chantype: %s -- Output chantype: %s --', ...
   channel_str, ...
   old_chantype, ...
-  smooth_signal.header.chantype);
-[lsts, out_id] = pspm_write_channel(fn, smooth_signal, options.channel_action, o);
+  smooth_signal_gaze.header.chantype);
+[lsts, out_id] = pspm_write_channel(fn, smooth_signal_gaze, options.channel_action, o);
 if lsts ~= 1
   return
 end

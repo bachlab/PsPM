@@ -58,10 +58,10 @@ classdef pspm_gaze_pp_test < pspm_testcase
       [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
       testdata = load(this.pspm_input_fn);
       this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_x_r');
-      opt.channel = 'gaze_x_l';
-      [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
-      testdata = load(this.pspm_input_fn);
-      this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_x_l');
+      % opt.channel = 'gaze_x_l';
+      % [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
+      % testdata = load(this.pspm_input_fn);
+      % this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_x_l');
 %       opt.channel = 'gaze_y_r';
 %       [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
 %       testdata = load(this.pspm_input_fn);
@@ -94,9 +94,9 @@ classdef pspm_gaze_pp_test < pspm_testcase
     function check_channel_combining(this)
       opt.channel = 'gaze_x_r';
       opt.channel_combine = 'gaze_x_l';
-      [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
-      testdata = load(this.pspm_input_fn);
-      this.verifyEqual(testdata.data{out_channel}.header.chantype, 'gaze_pp_x_c');
+      %[~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
+      %testdata = load(this.pspm_input_fn);
+      %this.verifyEqual(testdata.data{out_channel}.header.chantype, 'gaze_pp_x_c');
       opt.channel = 'gaze_y_r';
       opt.channel_combine = 'gaze_y_l';
       % [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
