@@ -1,73 +1,60 @@
 function [sts, out] = pspm_scr_pp(datafile, options, chan)
 
-% DEFINITION
+%	●	Definition
 %   pspm_scr_pp applies simple skin conductance response (SCR) quality assessment rulesets
 %   Rule 1: Microsiemens values must be within range (0.05 to 60)
 %   Rule 2: Absolute slope of value change must be less than 10 microsiemens per second
-% FORMAT
+%	●	Format
 %   [sts, out] = pspm_scr_pp(data, options)
-% ARGUMENTS
-%   Input
-%     datafile  a file name, or cell array of file names
-%   Output
-%	    sts       Status indicating whether the program is running as expected.
-%	    out				The path to the  output of the final processed data.
-%								Can be the changed to the data with epochs removed if options.change_data
-%               is set to be positive.
-%   Optional
-%	    options   A struct with algorithm specific settings.
-%		    min     Minimum value in microsiemens (default: 0.05).
-%		    max     Maximum value in microsiemens (default: 60).
-%		    slope   Maximum slope in microsiemens per sec (default: 10).
-%		    missing_epochs_filename
-%               If provided will create a .mat file saving the epochs.
-%								The path can be specified, but if not the file will be saved in the
-%               current folder.
-%               If saving to the missing epochs file, no data in the original datafile
-%               will be changed. For instance, abc will create abc.mat
-%		    deflection_threshold
-%               Define an threshold in original data units for a slope to pass to be
-%               considered in the filter.
-%								This is useful, for example, with oscillatory wave data due to limited
-%               A/D bandwidth.
-%								The slope may be steep due to a jump between voltages but we likely do not
-%               want to consider this to be filtered.
-%								A value of 0.1 would filter oscillatory behaviour with threshold less than
-%               0.1v but not greater
-%								Default: 0.1
-%		    data_island_threshold
-%               A float in seconds to determine the maximum length of data between NaN
-%               epochs.
-%								Islands of data shorter than this threshold will be removed.
-%								Default: 0 s - no effect on filter
-%		    expand_epochs
-%               A float in seconds to determine by how much data on the flanks of artefact
-%               epochs will be removed.
-%								Default: 0.5 s
-%		    clipping_step_size
-%               A numerical value specifying the step size in moving average algorithm
-%               for detecting clipping
-%								Default: 2
-%		    clipping_threshold
-%               A float between 0 and 1 specifying the proportion of local maximum in a
-%               step.
-%								Default: 0.1
-%		    change_data
-%               A numerical value to choose whether to change the data or not
-%								Default: 1 (true)
-%       channel_action
-%               Accepted values: 'add'/'replace'/'withdraw'
-%               Defines whether the new channel should be added, the previous outputs
-%               of this function should be replaced, or new data should be
-%               withdrawn.
-%								Default: 'add'
-%     chan: number of SCR channel 
-%               Default: first SCR channel
-% FUNCTIONS
-%	  filter_to_epochs
-%               Return the start and end points of epoches (2D array) by the given
+%	●	Arguments
+%   datafile:	a file name, or cell array of file names
+%    options:	(optional) A struct with algorithm specific settings.
+%		    .min:	Minimum value in microsiemens (default: 0.05).
+%		    .max:	Maximum value in microsiemens (default: 60).
+%		  .slope:	Maximum slope in microsiemens per sec (default: 10).
+%		.missing_epochs_filename:
+%							If provided will create a .mat file saving the epochs. The path can be 
+%							specified, but if not the file will be saved in the current folder.
+%             If saving to the missing epochs file, no data in the original datafile
+%             will be changed. For instance, abc will create abc.mat.
+%		.deflection_threshold:
+%							Define an threshold in original data units for a slope to pass to be
+%							considered in the filter. This is useful, for example, with oscillatory wave 
+%							data due to limited A/D bandwidth. The slope may be steep due to a jump 
+%							between voltages but we likely do not want to consider this to be filtered.
+%							A value of 0.1 would filter oscillatory behaviour with threshold less than
+%							0.1v but not greater. Default as 0.1
+%		.data_island_threshold:
+%							A float in seconds to determine the maximum length of data between NaN 
+%							epochs. Islands of data shorter than this threshold will be removed.
+%							Default: 0 s - no effect on filter
+%		.expand_epochs:
+%             A float in seconds to determine by how much data on the flanks of artefact
+%             epochs will be removed. Default: 0.5 s
+%		.clipping_step_size:
+%             A numerical value specifying the step size in moving average algorithm
+%             for detecting clipping. Default as 2.
+%		.clipping_threshold:
+%             A float between 0 and 1 specifying the proportion of local maximum in a
+%             step. Default as 0.1
+%		.change_data:
+%             A numerical value to choose whether to change the data or not.
+%							Default: 1 (true)
+%		.chan_action:
+%            	Accepted values: 'add'/'replace'/'withdraw'
+%             Defines whether the new channel should be added, the previous outputs
+%             of this function should be replaced, or new data should be
+%             withdrawn. Default: 'add'
+%				chan: number of SCR channel. Default as first SCR channel.
+%	●	Output
+%	    	 sts:	Status indicating whether the program is running as expected.
+%	    	 out:	The path to the  output of the final processed data.
+%							Can be the changed to the data with epochs removed if options.change_data
+%             is set to be positive.
+%	●	Functions
+%	  filter_to_epochs: Return the start and end points of epoches (2D array) by the given
 %               filter (1D array).
-% KEY VARIABLES
+%	●	Key variables
 %	  filt 					A filtering array consisting of 0 and 1 for selecting data whose y and
 %                 slope are both within the range of interest.
 %	  filt_epochs		A filtering array consisting of 0 and 1 for selecting epochs.
@@ -75,11 +62,9 @@ function [sts, out] = pspm_scr_pp(datafile, options, chan)
 %                 range of interest.
 %	  filt_slope 		A filtering array consisting of 0 and 1 for selecting data whose slope
 %                 is within the range of interest.
-%
-% PsPM (5.1)
-% 2009-2017 Tobias Moser (University of Zurich)
-% 2020 Samuel Maxwell & Dominik Bach (UCL)
-% 2021 Teddy Chao (WCHN, UCL)
+%	●	Version
+% 	PsPM (5.1)
+% 	2021 Teddy Chao (UCL)
 
 
 %% Initialise
@@ -129,8 +114,8 @@ end
 if ~isfield(options, 'clipping_threshold')
   options.clipping_threshold = 0.1;
 end
-if ~isfield(options, 'channel_action')
-  options.channel_action = 'add';
+if ~isfield(options, 'chan_action')
+  options.chan_action = 'add';
 end
 
 %% Sanity checks
@@ -165,8 +150,8 @@ end
 if options.change_data == 0 && ~isfield(options, 'missing_epochs_filename')
   warning('This procedure leads to no output, according to the selected options.');
 end
-if ~ismember(options.channel_action, {'add', 'replace', 'withdraw'})
-  warning('ID:invalid_input', 'Option channel_action must be either ''add'', ''replace'' or ''withdraw''');
+if ~ismember(options.chan_action, {'add', 'replace', 'withdraw'})
+  warning('ID:invalid_input', 'Option chan_action must be either ''add'', ''replace'' or ''withdraw''');
   return;
 end
 
@@ -262,10 +247,10 @@ for d = 1:numel(data_source)
   end
   % If not save epochs, save the changed data to the original data as
   % a new channel or replace the old data
-  if ~strcmp(options.channel_action, 'withdraw')
+  if ~strcmp(options.chan_action, 'withdraw')
     data_to_write = indatas{1,1};
     data_to_write.data = data_changed;
-    [sts_write, ~] = pspm_write_channel(out{d}, data_to_write, options.channel_action);
+    [sts_write, ~] = pspm_write_channel(out{d}, data_to_write, options.chan_action);
     if sts_write == -1
       sts = -1;
       warning('Epochs were not written to the original file successfully.');

@@ -1,4 +1,4 @@
-function [sts, out_channel] = pspm_pupil_pp(fn, options)
+function [sts, out_chan] = pspm_pupil_pp(fn, options)
 % pspm_pupil_pp preprocesses pupil diameter signals given in any unit of
 % measurement. It performs the steps described in [1]. This function
 % uses a modified version of [2]. The modified version with a list of
@@ -37,76 +37,76 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
 %    and interpolation. The parameters of the filtering and upsampling are
 %    configurable.
 %
-% Once the pupil data is preprocessed, according to the option 'channel_action',
-% it will either replace an existing preprocessed pupil channel or add it as new
-% channel to the provided file.
+% Once the pupil data is preprocessed, according to the option 'chan_action',
+% it will either replace an existing preprocessed pupil chan or add it as new
+% chan to the provided file.
 %
-%   FORMAT:  [sts, out_channel] = pspm_pupil_pp(fn)
-%            [sts, out_channel] = pspm_pupil_pp(fn, options)
+%   FORMAT:  [sts, out_chan] = pspm_pupil_pp(fn)
+%            [sts, out_chan] = pspm_pupil_pp(fn, options)
 %
 %       fn:                      [string] Path to the PsPM file which contains
 %                                the pupil data.
 %       options:
 %           Optional:
-%               channel:         [numeric/string] Channel ID to be preprocessed.
+%               chan:         [numeric/string] Channel ID to be preprocessed.
 %                                (Default: 'pupil')
 %
 %                                Preprocessing raw eye data:
-%                                The best eye is processed when channel is 'pupil'.
+%                                The best eye is processed when chan is 'pupil'.
 %                                In order to process a specific eye, use 'pupil_l' or
 %                                'pupil_r'. In order to process the combined left and
 %																 right eye, use 'pupil_lr'.
 %
 %                                Preprocessing previously processed data:
-%                                Pupil channels created from other preprocessing steps
+%                                Pupil chans created from other preprocessing steps
 %                                can be further processed by this function. To enable
 %                                this, pass one of 'pupil_l_pp' or 'pupil_r_pp'.
 %                                There is no best eye selection in this mode.
-%                                Hence, the type of the channel must be given exactly.
+%                                Hence, the type of the chan must be given exactly.
 %
-%                                Finally, a channel can be specified by its
+%                                Finally, a chan can be specified by its
 %                                index in the given PsPM data structure. It will be
-%                                preprocessed as long as it is a valid pupil channel.
+%                                preprocessed as long as it is a valid pupil chan.
 %
-%                                If channel is specified as a string and there are
-%                                multiple channels with the exact same type, only the
+%                                If chan is specified as a string and there are
+%                                multiple chans with the exact same type, only the
 %                                last one will be processed. This is normally not the
-%                                case with raw data channels; however, there may be
-%                                multiple preprocessed channels with same type if 'add'
-%                                channel_action was previously used. This feature can
-%                                be combined with 'add' channel_action to create
+%                                case with raw data chans; however, there may be
+%                                multiple preprocessed chans with same type if 'add'
+%                                chan_action was previously used. This feature can
+%                                be combined with 'add' chan_action to create
 %                                preprocessing histories where the result of each step
-%                                is stored as a separate channel.
+%                                is stored as a separate chan.
 %
-%                                .data field of the preprocessed channel contains
+%                                .data field of the preprocessed chan contains
 %                                the smoothed, upsampled signal that is the result
 %                                of step 3 in [1].
 %
-%                                .header field of the preprocessed channel contains
+%                                .header field of the preprocessed chan contains
 %                                information regarding which samples in the input
 %                                signal were considered valid in addition to the
-%                                usual information of PsPM channels. This valid sample
+%                                usual information of PsPM chans. This valid sample
 %                                info is stored in .header.valid_samples field.
 %
-%               channel_combine: [numeric/string] Channel ID to be used for computing
+%               chan_combine: [numeric/string] Channel ID to be used for computing
 %                                the mean pupil signal.
 %                                (Default: 'none')
 %
-%                                The input format is exactly the same as the .channel
-%                                field. However, the eye specified in this channel
-%                                must be different than the one specified in .channel
+%                                The input format is exactly the same as the .chan
+%                                field. However, the eye specified in this chan
+%                                must be different than the one specified in .chan
 %                                field.
 %
-%                                By default, this channel is not used. Only specify
+%                                By default, this chan is not used. Only specify
 %                                it if you want to combine left and right pupil eye
-%                                signals. When specified, the type of the output channel
+%                                signals. When specified, the type of the output chan
 %                                is 'pupil_lr_pp'.
 %
-%               channel_action:  ['add'/'replace'] Defines whether corrected data
+%               chan_action:  ['add'/'replace'] Defines whether corrected data
 %                                should be added or the corresponding preprocessed
-%                                channel should be replaced. Note that 'replace' mode
-%                                does not replace the raw data channel, but a previously
-%                                stored preprocessed channel with a '_pp' suffix at the
+%                                chan should be replaced. Note that 'replace' mode
+%                                does not replace the raw data chan, but a previously
+%                                stored preprocessed chan with a '_pp' suffix at the
 %                                end of its type.
 %                                (Default: 'add')
 %
@@ -139,7 +139,7 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
 %               plot_data:       Plot the preprocessing steps if true.
 %                                (Default: false)
 %
-%       out_channel:             Channel ID of the preprocessed output.
+%       out_chan:             Channel ID of the preprocessed output.
 %
 % [1] Kret, Mariska E., and Elio E. Sjak-Shie. "Preprocessing pupil size data:
 %     Guidelines and code." Behavior research methods (2018): 1-7.
@@ -159,14 +159,14 @@ sts = -1;
 if nargin == 1
   options = struct();
 end
-if ~isfield(options, 'channel')
-  options.channel = 'pupil';
+if ~isfield(options, 'chan')
+  options.chan = 'pupil';
 end
-if ~isfield(options, 'channel_action')
-  options.channel_action = 'add';
+if ~isfield(options, 'chan_action')
+  options.chan_action = 'add';
 end
-if ~isfield(options, 'channel_combine')
-  options.channel_combine = 'none';
+if ~isfield(options, 'chan_combine')
+  options.chan_combine = 'none';
 end
 if ~isfield(options, 'plot_data')
   options.plot_data = false;
@@ -184,8 +184,8 @@ if ~isfield(options, 'segments')
 end
 
 %% 3 Input checks
-if ~ismember(options.channel_action, {'add', 'replace'})
-  warning('ID:invalid_input', 'Option channel_action must be either ''add'' or ''replace''');
+if ~ismember(options.chan_action, {'add', 'replace'})
+  warning('ID:invalid_input', 'Option chan_action must be either ''add'' or ''replace''');
   return
 end
 for seg = options.segments
@@ -196,31 +196,31 @@ for seg = options.segments
 end
 
 %% 4 Load
-action_combine = ~strcmp(options.channel_combine, 'none');
+action_combine = ~strcmp(options.chan_combine, 'none');
 addpath(pspm_path('backroom'));
-[lsts, data] = pspm_load_single_chan(fn, options.channel, 'last', 'pupil');
+[lsts, data] = pspm_load_single_chan(fn, options.chan, 'last', 'pupil');
 if lsts ~= 1
   return
 end
 if action_combine
-  [lsts, data_combine] = pspm_load_single_chan(fn, options.channel_combine, 'last', 'pupil');
+  [lsts, data_combine] = pspm_load_single_chan(fn, options.chan_combine, 'last', 'pupil');
   if lsts ~= 1
     return
   end
   if strcmp(get_eye(data{1}.header.chantype), get_eye(data_combine{1}.header.chantype))
-    warning('ID:invalid_input', 'options.channel and options.channel_combine must specify different eyes');
+    warning('ID:invalid_input', 'options.chan and options.chan_combine must specify different eyes');
     return;
   end
   if data{1}.header.sr ~= data_combine{1}.header.sr
-    warning('ID:invalid_input', 'options.channel and options.channel_combine data have different sampling rate');
+    warning('ID:invalid_input', 'options.chan and options.chan_combine data have different sampling rate');
     return;
   end
   if ~strcmp(data{1}.header.units, data_combine{1}.header.units)
-    warning('ID:invalid_input', 'options.channel and options.channel_combine data have different units');
+    warning('ID:invalid_input', 'options.chan and options.chan_combine data have different units');
     return;
   end
   if numel(data{1}.data) ~= numel(data_combine{1}.data)
-    warning('ID:invalid_input', 'options.channel and options.channel_combine data have different lengths');
+    warning('ID:invalid_input', 'options.chan and options.chan_combine data have different lengths');
     return;
   end
   old_chantype = sprintf('%s and %s', data{1}.header.chantype, data_combine{1}.header.chantype);
@@ -237,17 +237,17 @@ if lsts ~= 1
 end
 
 %% 6 save
-channel_str = num2str(options.channel);
+chan_str = num2str(options.chan);
 o.msg.prefix = sprintf(...
-  'Pupil preprocessing :: Input channel: %s -- Input chantype: %s -- Output chantype: %s --', ...
-  channel_str, ...
+  'Pupil preprocessing :: Input chan: %s -- Input chantype: %s -- Output chantype: %s --', ...
+  chan_str, ...
   old_chantype, ...
   smooth_signal.header.chantype);
-[lsts, out_id] = pspm_write_channel(fn, smooth_signal, options.channel_action, o);
+[lsts, out_id] = pspm_write_chan(fn, smooth_signal, options.chan_action, o);
 if lsts ~= 1
   return
 end
-out_channel = out_id.channel;
+out_chan = out_id.chan;
 sts = 1;
 end
 
