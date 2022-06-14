@@ -77,7 +77,7 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
 %             than the one specified in .channel field. By default, this 
 %             channel is not used. Only specify it if you want to combine 
 %             left and right pupil eye signals, and in this situation, 
-%             the type of the output channel becomes 'pupil_lr_pp'.
+%             the type of the output channel becomes 'pupil_pp_c'.
 % 	.channel_action
 %             [optional][string][Accepts: 'add'/'replace'][Default: 'add']
 % 			      Defines whether corrected data should be added or the 

@@ -139,8 +139,17 @@ smooth_signal_gaze.header.valid_samples.valid_percentage = model.leftPupil_Valid
 %% 6 preprocess
 % gaze_pp obtains the valid sample information from pupil_pp and then use
 % it to process gaze signals
-smooth_signal_gaze.data = pspm_complete_with_nans(gaze_og{1}.data, model.leftPupil_ValidSamples.signal.t(1), ...
-    options.custom_settings.valid.interp_upsamplingFreq, desired_output_samples_gaze);
+if ~action_combine
+    smooth_signal_gaze.data = pspm_complete_with_nans(gaze_og{1}.data, model.leftPupil_ValidSamples.signal.t(1), ...
+      options.custom_settings.valid.interp_upsamplingFreq, desired_output_samples_gaze);
+else
+    smooth_signal_gaze.data = pspm_complete_with_nans(gaze_og{1}.data, model.leftPupil_ValidSamples.signal.t(1), ...
+      options.custom_settings.valid.interp_upsamplingFreq, desired_output_samples_gaze);
+    smooth_signal_gaze_combine.data = pspm_complete_with_nans(gaze_combine{1}.data, model.leftPupil_ValidSamples.signal.t(1), ...
+      options.custom_settings.valid.interp_upsamplingFreq, desired_output_samples_gaze);
+    smooth_signal_gaze.data = transpose(mean(transpose([smooth_signal_gaze.data, smooth_signal_gaze_combine.data]),'omitnan'));
+    smooth_signal_gaze.header.chantype = pspm_update_chantype(gaze_og{1}.header.chantype,{'pp','c'});
+end
 
 %% 7 save
 channel_str = num2str(options.channel);
