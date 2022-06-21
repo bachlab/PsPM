@@ -336,13 +336,11 @@ if isstruct(chan)
 end
 flag = zeros(numel(data), 1);
 if ischar(chan) && ~strcmp(chan, 'none')
-  if length(chan) > 4
-    if strcmpi(chan(1:5), 'pupil')
-      if strcmpi(chan, 'pupil') && isfield(infos.source, 'best_eye')
-        flag = get_chans_to_load_for_pupil(data, infos.source.best_eye, 0);
-      elseif strcmpi(chan(7), 'l') || strcmpi(chan(7), 'r')
-        flag = get_chans_to_load_for_pupil(data, chan(7), 1);
-      end
+  if contains(chan,'pupil')
+    if strcmpi(chan, 'pupil') && isfield(infos.source, 'best_eye')
+      flag = get_chans_to_load_for_pupil(data, infos.source.best_eye, 0);
+    elseif strcmpi(chan(7), 'l') || strcmpi(chan(7), 'r')
+      flag = get_chans_to_load_for_pupil(data, chan(7), 1);
     end
   elseif strcmpi(chan, 'sps') && isfield(infos.source, 'best_eye')
     flag = get_chans_to_load_for_sps(data, infos.source.best_eye);
