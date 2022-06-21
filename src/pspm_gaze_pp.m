@@ -186,3 +186,17 @@ n_missing_at_the_beg = round(t_beg / sec_between_upsampled_samples);
 n_missing_at_the_end = output_samples - numel(data) - n_missing_at_the_beg;
 data = [NaN(n_missing_at_the_beg, 1) ; data ; NaN(n_missing_at_the_end, 1)];
 end
+function out_struct = pspm_assign_fields_recursively(out_struct, in_struct)
+% Definition
+% pspm_assign_fields_recursively assign all fields of in_struct to 
+% out_struct recursively, overwriting when necessary.
+fnames = fieldnames(in_struct);
+for i = 1:numel(fnames)
+	name = fnames{i};
+	if isstruct(in_struct.(name)) && isfield(out_struct, name)
+		out_struct.(name) = pspm_assign_fields_recursively(out_struct.(name), in_struct.(name));
+	else
+		out_struct.(name) = in_struct.(name);
+	end
+end
+end
