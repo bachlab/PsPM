@@ -135,7 +135,7 @@ for iFn = 1:numel(modelfile)
   if sum(idx_issue) > 0
     if sum(idx_valid_issue) > 0 && sum(idx_invalid_issue) == 0
       warning(['Calculated data.stats contain NaN caused by 0 in conmat, '...
-        'which are ignored.']);
+        'which are ignored when calculating conval.']);
       data_stats_converted = data.stats;
       data_stats_converted(isnan(data_stats_converted)) = 0;
       conval = conmat * data_stats_converted;
