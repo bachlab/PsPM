@@ -200,7 +200,7 @@ else
 end
 %% 5 preprocess
 [lsts, smooth_signal, model] = pspm_preprocess(data, data_combine, ...
-  options.segments, options.custom_settings, options.plot_data, 'pupil');
+  options.segments, options.custom_settings, options.plot_data);
 if lsts ~= 1
   return
 end
@@ -226,7 +226,7 @@ switch nargout
     varargout{3} = model;
 end
 end
-function varargout  = pspm_preprocess(data, data_combine, segments, custom_settings, plot_data, channel_type)
+function varargout  = pspm_preprocess(data, data_combine, segments, custom_settings, plot_data)
 sts = 0;
 % 1 definitions
 combining = ~isempty(data_combine{1}.data);
@@ -262,7 +262,7 @@ addpath(libpath{:});
 model = PupilDataModel(data{1}.header.units, diameter, segmentTable, 0, custom_settings);
 model.filterRawData();
 if combining
-  smooth_signal.header.chantype = [channel_type, '_pp_c'];
+  smooth_signal.header.chantype = pspm_update_chantype(data{1}.header.chantype, {'pp', 'c'});
 elseif contains(data{1}.header.chantype, '_pp')
   smooth_signal.header.chantype = data{1}.header.chantype;
 else
@@ -313,7 +313,7 @@ try
     else
       seg_eyes = {'right'};
     end
-    smooth_signal.header.segments = pspm_store_segment_stats(smooth_signal.header.segments, seg_results, seg_eyes, channel_type);
+    smooth_signal.header.segments = pspm_store_segment_stats(smooth_signal.header.segments, seg_results, seg_eyes);
   end
   if plot_data
     model.plotData();
@@ -345,4 +345,27 @@ sec_between_upsampled_samples = 1 / sr;
 n_missing_at_the_beg = round(t_beg / sec_between_upsampled_samples);
 n_missing_at_the_end = output_samples - numel(data) - n_missing_at_the_beg;
 data = [NaN(n_missing_at_the_beg, 1) ; data ; NaN(n_missing_at_the_end, 1)];
+end
+function segments = pspm_store_segment_stats(segments, seg_results, seg_eyes)
+stat_columns = {...
+  'Pupil_SmoothSig_meanDiam', ...
+  'Pupil_SmoothSig_minDiam', ...
+  'Pupil_SmoothSig_maxDiam', ...
+  'Pupil_SmoothSig_missingDataPercent', ...
+  'Pupil_SmoothSig_sampleCount', ...
+  'Pupil_ValidSamples_meanDiam', ...
+  'Pupil_ValidSamples_minDiam', ...
+  'Pupil_ValidSamples_maxDiam', ...
+  'Pupil_ValidSamples_validPercent', ...
+  'Pupil_ValidSamples_sampleCount', ...
+  };
+for eyestr = seg_eyes
+  for colstr = stat_columns
+    eyecolstr = [eyestr{1} colstr{1}];
+    col = seg_results.(eyecolstr);
+    for i = 1:numel(segments)
+      segments{i}.(eyecolstr) = col(i);
+    end
+  end
+end
 end

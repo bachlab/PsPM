@@ -338,9 +338,9 @@ flag = zeros(numel(data), 1);
 if ischar(chan) && ~strcmp(chan, 'none')
   if strcmpi(chan(1:5), 'pupil') 
     if strcmpi(chan, 'pupil') && isfield(infos.source, 'best_eye')
-      flag = get_chans_to_load_for_pupil(data, infos.source.best_eye);
+      flag = get_chans_to_load_for_pupil(data, infos.source.best_eye, 0);
     elseif strcmpi(chan(7), 'l') || strcmpi(chan(7), 'r')
-      flag = get_chans_to_load_for_pupil(data, chan(7));
+      flag = get_chans_to_load_for_pupil(data, chan(7), 1);
     end
   %elseif strcmpi(chan(1:4), 'gaze')
   %  flag = get_chans_to_load_for_pupil(data, chan);
@@ -386,7 +386,7 @@ end
 sts = 1;
 end
 
-function flag = get_chans_to_load_for_pupil(data, best_eye)
+function flag = get_chans_to_load_for_pupil(data, best_eye, prefer_unprocessed)
 % Set flag variable according to the precedence order:
 %
 %   1. Combined channels (by definition also preprocessed)
@@ -427,11 +427,12 @@ besteye_channels = cell2mat(cellfun(...
   ));
 preprocessed_channels = preprocessed_channels & pupil_channels;
 combined_channels = combined_channels & pupil_channels;
-besteye_channels = besteye_channels & pupil_channels;
+besteye_channels = besteye_channels & pupil_channels & ~preprocessed_channels;
+% best eye will not select preprocessed eyes
 
 if any(combined_channels)
   flag = combined_channels;
-elseif any(preprocessed_channels)
+elseif any(preprocessed_channels) && ~prefer_unprocessed
   flag = preprocessed_channels & besteye_channels;
   if ~any(flag)
     flag = preprocessed_channels;
