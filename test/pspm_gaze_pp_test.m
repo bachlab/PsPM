@@ -76,6 +76,7 @@ classdef pspm_gaze_pp_test < pspm_testcase
       for freq = [500 1000 1500]
         opt.custom_settings.valid.interp_upsamplingFreq = freq;
         opt.channel = 'gaze_x_r';
+        opt.valid_sample = 1;
         [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
         testdata = load(this.pspm_input_fn);
         pupil_chan_indices = find(...
@@ -84,7 +85,6 @@ classdef pspm_gaze_pp_test < pspm_testcase
         pupil_chan = pupil_chan_indices(end);
         sr = testdata.data{pupil_chan}.header.sr;
         upsampling_factor = freq / sr;
-
         this.verifyEqual(...
           numel(testdata.data{pupil_chan}.data) * upsampling_factor,...
           numel(testdata.data{out_channel}.data));

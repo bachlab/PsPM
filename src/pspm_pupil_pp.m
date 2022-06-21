@@ -124,7 +124,6 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-
 %% 2 Create default arguments
 if nargin == 1
   options = struct();
@@ -153,7 +152,6 @@ options.custom_settings = default_settings;
 if ~isfield(options, 'segments')
   options.segments = {};
 end
-
 %% 3 Input checks
 if ~ismember(options.channel_action, {'add', 'replace'})
   warning('ID:invalid_input', ...
@@ -167,20 +165,13 @@ for seg = options.segments
     return
   end
 end
-
 %% 4 Load
 action_combine = ~strcmp(options.channel_combine, 'none');
-
-addpath(pspm_path('backroom'));
-[lsts, data] = pspm_load_single_chan(fn, options.channel, 'last', 'pupil');
-if lsts ~= 1
-  return
-end
+[lsts, ~, data, ~] = pspm_load_data(fn, options.channel);
+if lsts ~= 1; return; end
 if action_combine
-  [lsts, data_combine] = pspm_load_single_chan(fn, options.channel_combine, 'last', 'pupil');
-  if lsts ~= 1
-    return
-  end
+  [lsts, ~, data_combine, ~] = pspm_load_data(fn, options.channel_combine);
+  if lsts ~= 1; return; end
   if strcmp(pspm_get_eye(data{1}.header.chantype), pspm_get_eye(data_combine{1}.header.chantype))
     warning('ID:invalid_input', ...
       'options.channel and options.channel_combine must specify different eyes');
@@ -207,15 +198,12 @@ else
   data_combine{1}.data = [];
   old_chantype = data{1}.header.chantype;
 end
-rmpath(pspm_path('backroom'));
-
 %% 5 preprocess
 [lsts, smooth_signal, model] = pspm_preprocess(data, data_combine, ...
   options.segments, options.custom_settings, options.plot_data, 'pupil');
 if lsts ~= 1
   return
 end
-
 %% 6 save
 channel_str = num2str(options.channel);
 o.msg.prefix = sprintf(...
@@ -238,17 +226,14 @@ switch nargout
     varargout{3} = model;
 end
 end
-
 function varargout  = pspm_preprocess(data, data_combine, segments, custom_settings, plot_data, channel_type)
 sts = 0;
-
 % 1 definitions
 combining = ~isempty(data_combine{1}.data);
 data_is_left = strcmpi(pspm_get_eye(data{1}.header.chantype), 'l');
 n_samples = numel(data{1}.data);
 sr = data{1}.header.sr;
 diameter.t_ms = transpose(linspace(0, 1000 * (n_samples-1) / sr, n_samples));
-
 if data_is_left
   diameter.L = data{1}.data;
   diameter.R = data_combine{1}.data;
@@ -269,12 +254,10 @@ segmentTable = table(segmentStart, segmentEnd, segmentName);
 new_sr = custom_settings.valid.interp_upsamplingFreq;
 upsampling_factor = new_sr / sr;
 desired_output_samples = round(upsampling_factor * numel(data{1}.data));
-
 % 2 load lib
 libbase_path = pspm_path('ext',['pupil', '-size'], 'code');
 libpath = {fullfile(libbase_path, 'dataModels'), fullfile(libbase_path, 'helperFunctions')};
 addpath(libpath{:});
-
 % 3 filtering
 model = PupilDataModel(data{1}.header.units, diameter, segmentTable, 0, custom_settings);
 model.filterRawData();
@@ -293,7 +276,6 @@ end
 smooth_signal.header.units = data{1}.header.units;
 smooth_signal.header.sr = new_sr;
 smooth_signal.header.segments = segments;
-
 % 4 store signal and valid samples
 try
   model.processValidSamples();
@@ -317,11 +299,9 @@ try
     smooth_signal.header.valid_samples.sample_indices = find(rawdata_obj.isValid);
     smooth_signal.header.valid_samples.valid_percentage = validsamples_obj.validFraction;
   end
-
   smooth_signal.data = validsamples_obj.signal.pupilDiameter;
   smooth_signal.data = pspm_complete_with_nans(smooth_signal.data, validsamples_obj.signal.t(1), ...
     new_sr, desired_output_samples);
-
   % 5 store segment information
   if ~isempty(segments)
     seg_results = model.analyzeSegments();
@@ -335,7 +315,6 @@ try
     end
     smooth_signal.header.segments = pspm_store_segment_stats(smooth_signal.header.segments, seg_results, seg_eyes, channel_type);
   end
-
   if plot_data
     model.plotData();
   end
@@ -358,7 +337,6 @@ switch nargout
     varargout{3} = model;
 end
 end
-
 function data = pspm_complete_with_nans(data, t_beg, sr, output_samples)
 % Complete the given data that possibly has missing samples at the
 % beginning and at the end. The amount of missing samples is determined

@@ -1,7 +1,8 @@
 function out_struct = pspm_assign_fields_recursively(out_struct, in_struct)
 
 % DEFINITION
-% pspm_assign_fields_recursively assign all fields of in_struct to out_struct recursively, overwriting when necessary.
+% pspm_assign_fields_recursively assign all fields of in_struct to 
+% out_struct recursively, overwriting when necessary.
 fnames = fieldnames(in_struct);
 for i = 1:numel(fnames)
 	name = fnames{i};
