@@ -57,8 +57,8 @@ warning on;
 % loop through import jobs
 for k = 1:numel(import)
   % define channel number ---
-  if import{k}.channel > 0
-    chan = import{k}.channel;
+  if import{k}.chan > 0
+    chan = import{k}.chan;
   else
     chan = pspm_find_channel(arrayfun(@(i) chanhead{i}.title, 1:numel(chanhead), 'UniformOutput', 0), ...
       import{k}.type); % bring channel names into a cell array

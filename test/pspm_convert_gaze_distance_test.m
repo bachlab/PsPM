@@ -6,7 +6,7 @@ classdef pspm_convert_gaze_distance_test < matlab.unittest.TestCase
     fn = '';
   end
   properties (TestParameter)
-    channel_action = { 'add', 'replace' };
+    chan_action = { 'add', 'replace' };
     from = { 'pixel', 'mm', 'inches' };
     target = { 'degree', 'sps' };
   end
@@ -44,7 +44,7 @@ classdef pspm_convert_gaze_distance_test < matlab.unittest.TestCase
       this.verifyWarning(@() pspm_convert_gaze_distance(this.fn, target, "pixel", 111, 222, 'not_a_number'),  'ID:invalid_input:distance');
       this.verifyWarning(@() pspm_convert_gaze_distance(this.fn, 'invalid_conversion', 'pixel', 111, 222, 333), 'ID:invalid_input:target');
     end
-    function conversion(this, target, from, channel_action)
+    function conversion(this, target, from, chan_action)
       load(this.fn);
       width = 323;
       height = 232;
@@ -62,9 +62,9 @@ classdef pspm_convert_gaze_distance_test < matlab.unittest.TestCase
         this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_r'), data)), 0);
       end
       [sts, out_channel] = this.verifyWarningFree(@() pspm_convert_gaze_distance(...
-        this.fn, target, from, width, height, distance, struct('channel_action', channel_action)));
+        this.fn, target, from, width, height, distance, struct('chan_action', chan_action)));
       load(this.fn);
-      this.verifyTrue(length(out_channel.channel) > 0);
+      this.verifyTrue(length(out_channel.chan) > 0);
       extra = 2;
       if strcmp(target, 'degree')
         extra = 4;
@@ -78,10 +78,10 @@ classdef pspm_convert_gaze_distance_test < matlab.unittest.TestCase
         this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_r'), data)), 1);
       end
       [sts, out_channel] = this.verifyWarningFree(@() pspm_convert_gaze_distance(...
-        this.fn, target, from, width, height, distance, struct('channel_action', channel_action)));
+        this.fn, target, from, width, height, distance, struct('chan_action', chan_action)));
       load(this.fn);
       extra = 0;
-      if (strcmp(channel_action, 'add'));
+      if (strcmp(chan_action, 'add'));
         if strcmp(target, 'degree')
           extra = extra + 4;
         else

@@ -14,7 +14,7 @@ function outfile = pspm_import(datafile, datatype, import, options)
 % ┃             ▶︎ mandatory fields for some data types and each channel
 % ┣━.sr         sampling rate for waveform, or timeunit in s for event
 % ┃             channels
-% ┣━.channel    channel or column number in the original file
+% ┣━.chan    channel or column number in the original file
 % ┃             ▶︎ optional fields for some data types and channel types
 % ┣━.flank      optional, string, applicable for continuous channels only
 %	┃							accepted values: 'ascending', 'descending', 'both'
@@ -174,7 +174,7 @@ for k = 1:numel(import)
   end
   % marker channel in data format where no channel name is needed?
   if strcmpi(import{k}.type, 'marker') && settings.import.datatypes(datatype).automarker
-    import{k}.channel = 1;
+    import{k}.chan = 1;
   end
   % flank loading
   if ~isfield(import{k}, 'flank')
@@ -194,9 +194,9 @@ for k = 1:numel(import)
   % channel number given? If not, set to zero, or assign automatically and display.
   if ~isfield(import{k}, 'channel')
     if settings.import.datatypes(datatype).searchoption
-      import{k}.channel = 0;
+      import{k}.chan = 0;
     else
-      import{k}.channel = k;
+      import{k}.chan = k;
       fprintf('\nAssigned channel/column %1.0f to import job %1.0f of type %s.', k, k, import{k}.type);
     end
   end

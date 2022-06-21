@@ -342,7 +342,7 @@ if strcmpi(handles.gui_mode, 'file') && numel(handles.R) > 0
   [nsts, infos] = pspm_write_channel(handles.fn, out_d, w_action, op);
 
   if nsts ~= -1
-    handles.write_chan = infos.channel;
+    handles.write_chan = infos.chan;
   else
     warning('ID:invalid_input', 'Could not write channel.');
     handles.sts = nsts;

@@ -18,7 +18,7 @@ classdef import_smi_test < matlab.unittest.TestCase
       n_userevent = 1;
       [datalines, header] = read_datafile(fn{1}, 38);
       this.verifyEqual(size(data{1}.raw, 1), numel(datalines));
-      this.verifyEqual(size(data{1}.channels, 1), numel(datalines));
+      this.verifyEqual(size(data{1}.chans, 1), numel(datalines));
       % check column equality manually
       % ------------------------------------------
       cols_to_check = {'L Mapped Diameter [mm]', 'R Mapped Diameter [mm]', 'L POR X [px]', 'L POR Y [px]',...
@@ -36,14 +36,14 @@ classdef import_smi_test < matlab.unittest.TestCase
         % find channels
         % ------------------------------------------------------------
         timecol = data{1}.raw(:, 1);
-        blink_l_chan = find(strcmp(data{1}.channels_columns, 'L Blink'));
-        blink_r_chan = find(strcmp(data{1}.channels_columns, 'R Blink'));
-        sacc_l_chan = find(strcmp(data{1}.channels_columns, 'L Saccade'));
-        sacc_r_chan = find(strcmp(data{1}.channels_columns, 'R Saccade'));
-        datacols = true(size(data{1}.channels_columns));
+        blink_l_chan = find(strcmp(data{1}.chans_columns, 'L Blink'));
+        blink_r_chan = find(strcmp(data{1}.chans_columns, 'R Blink'));
+        sacc_l_chan = find(strcmp(data{1}.chans_columns, 'L Saccade'));
+        sacc_r_chan = find(strcmp(data{1}.chans_columns, 'R Saccade'));
+        datacols = true(size(data{1}.chans_columns));
         datacols([blink_l_chan blink_r_chan sacc_l_chan sacc_r_chan]) = false;
-        datacols_l = datacols & contains(data{1}.channels_columns, 'L ');
-        datacols_r = datacols & contains(data{1}.channels_columns, 'R ');
+        datacols_l = datacols & contains(data{1}.chans_columns, 'L ');
+        datacols_r = datacols & contains(data{1}.chans_columns, 'R ');
         % go through blinks, saccades, and check if data is set to NaN
         % correctly and blink/saccade periods are 1.
         %
@@ -58,13 +58,13 @@ classdef import_smi_test < matlab.unittest.TestCase
             begidx = find(timecol == tbeg);
             endidx = find(timecol == tend);
             if strcmp(parts{1}, 'Blink L')
-              this.verifyTrue(all(data{1}.channels(begidx : endidx, blink_l_chan) == 1));
+              this.verifyTrue(all(data{1}.chans(begidx : endidx, blink_l_chan) == 1));
             elseif strcmp(parts{1}, 'Blink R')
-              this.verifyTrue(all(data{1}.channels(begidx : endidx, blink_r_chan) == 1));
+              this.verifyTrue(all(data{1}.chans(begidx : endidx, blink_r_chan) == 1));
             elseif strcmp(parts{1}, 'Saccade L')
-              this.verifyTrue(all(data{1}.channels(begidx : endidx, sacc_l_chan) == 1));
+              this.verifyTrue(all(data{1}.chans(begidx : endidx, sacc_l_chan) == 1));
             elseif strcmp(parts{1}, 'Saccade R')
-              this.verifyTrue(all(data{1}.channels(begidx : endidx, sacc_r_chan) == 1));
+              this.verifyTrue(all(data{1}.chans(begidx : endidx, sacc_r_chan) == 1));
             end
           elseif strcmp(parts{1}, 'UserEvent')
             tbeg = int64(to_num(parts{4}));
@@ -79,9 +79,9 @@ classdef import_smi_test < matlab.unittest.TestCase
         % check raw data is same as channels
         % ------------------------------------------
         for col = cols_to_check
-          channels_idx = find(strcmp(data{1}.channels_columns, col{1}));
+          channels_idx = find(strcmp(data{1}.chans_columns, col{1}));
           dataraw_idx = find(strcmp(data{1}.raw_columns, col{1}));
-          this.verifyEqual(data{1}.raw(:, dataraw_idx), data{1}.channels(:, channels_idx));
+          this.verifyEqual(data{1}.raw(:, dataraw_idx), data{1}.chans(:, channels_idx));
         end
       end
     end

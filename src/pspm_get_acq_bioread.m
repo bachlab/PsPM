@@ -29,10 +29,10 @@ inputdata = load(datafile);
 % extract individual channels
 % -------------------------------------------------------------------------
 for k = 1:numel(import)
-  channel_labels = cellfun(@(x) x.name, inputdata.channels, 'UniformOutput', 0)';
+  channel_labels = cellfun(@(x) x.name, inputdata.chans, 'UniformOutput', 0)';
   % define channel number ---
-  if import{k}.channel > 0
-    chan = import{k}.channel;
+  if import{k}.chan > 0
+    chan = import{k}.chan;
   else
     chan = pspm_find_channel(channel_labels, import{k}.type);
     if chan < 1, return; end;
@@ -43,11 +43,11 @@ for k = 1:numel(import)
   sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', chan, channel_labels{chan});
 
   % define sample rate ---
-  import{k}.sr = inputdata.channels{chan}.samples_per_second;
+  import{k}.sr = inputdata.chans{chan}.samples_per_second;
 
   % get data & data units
-  import{k}.data = double(inputdata.channels{chan}.data);
-  import{k}.units = inputdata.channels{chan}.units;
+  import{k}.data = double(inputdata.chans{chan}.data);
+  import{k}.units = inputdata.chans{chan}.units;
 
   if strcmpi(settings.chantypes(import{k}.typeno).data, 'events')
     import{k}.marker = 'continuous';

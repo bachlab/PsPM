@@ -47,9 +47,9 @@ classdef pspm_get_smi_test < pspm_get_superclass
       this.verifyWarning(@()pspm_get_smi({'a', 'b'}, import), 'ID:channel_not_contained_in_file');
       import{1}.type = 'custom';
       this.verifyWarning(@()pspm_get_smi({'a', 'b'}, import), 'ID:invalid_input');
-      import{1}.channel = -1;
+      import{1}.chan = -1;
       this.verifyWarning(@()pspm_get_smi({'a', 'b'}, import), 'ID:invalid_input');
-      import{1}.channel = 1;
+      import{1}.chan = 1;
       import{1}.stimulus_resolution = [];
       this.verifyWarning(@()pspm_get_smi({'a', 'b'}, import), 'ID:invalid_input');
       import{1}.stimulus_resolution = [5];

@@ -10,7 +10,7 @@ function [sts, import, sourceinfo] = pspm_get_txt(datafile, import)
 %                       .type:
 %                           A char array corresponding to a valid PsPM data
 %                           type, see `pspm_init.m` for more details.
-%                       .channel:
+%                       .chan:
 %                           A numeric value representing the column number
 %                           of the corresponding numerical data.   
 %                   - optional fields:
@@ -29,12 +29,12 @@ function [sts, import, sourceinfo] = pspm_get_txt(datafile, import)
 %                           import cell, e.g.: 
 %                               import{1}.header_lines == 3
 %                           Default: 1.
-%                       .channel_names_line:
+%                       .chan_names_line:
 %                           A numeric value corresponding to the line
 %                           number where the channel names are specified.
 %                           To be used it should be specified on the first 
 %                           import cell, e.g.: 
-%                               import{1}.channel_names_line == 2
+%                               import{1}.chan_names_line == 2
 %                           Default: 1. 
 %                       .exclude_columns:
 %                           A numeric value corresponding to the number of
@@ -79,11 +79,11 @@ end
 if ~isfield(import{1}, 'channel_names_line')
    channel_names_line = 1;
    if header_lines < channel_names_line, channel_names_line=0; end
-elseif ~isnumeric(import{1}.channel_names_line)
+elseif ~isnumeric(import{1}.chan_names_line)
    warning('ID:invalid_input','The ''channel_names_line'' option should be a numeric value.')
    return;
 else
-   channel_names_line = import{1}.channel_names_line;
+   channel_names_line = import{1}.chan_names_line;
 end
 
 if ~isfield(import{1}, 'exclude_columns')
@@ -147,8 +147,8 @@ end
 % -------------------------------------------------------------------------
 for k = 1:numel(import)
     % define channel number
-    if import{k}.channel > 0
-        chan = import{k}.channel;
+    if import{k}.chan > 0
+        chan = import{k}.chan;
     elseif channel_names_line ~= 0
         chan = pspm_find_channel(channel_names, import{k}.type);
         if chan < 1, return; end;

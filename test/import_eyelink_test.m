@@ -100,46 +100,46 @@ classdef import_eyelink_test < matlab.unittest.TestCase
         elseif is_dataline
           % check if the values in the current line are in the expected locations
           if pupil_l_idx ~= -1
-            this.verifyEqual(to_num(parts{4}), data{sn}.channels(sample_idx, pupil_l_idx));
+            this.verifyEqual(to_num(parts{4}), data{sn}.chans(sample_idx, pupil_l_idx));
           end
           if gaze_x_l_idx ~= -1
-            this.verifyEqual(to_num(parts{2}), data{sn}.channels(sample_idx, gaze_x_l_idx));
+            this.verifyEqual(to_num(parts{2}), data{sn}.chans(sample_idx, gaze_x_l_idx));
           end
           if gaze_y_l_idx ~= -1
-            this.verifyEqual(to_num(parts{3}), data{sn}.channels(sample_idx, gaze_y_l_idx));
+            this.verifyEqual(to_num(parts{3}), data{sn}.chans(sample_idx, gaze_y_l_idx));
           end
           if pupil_r_idx ~= -1
             if pupil_l_idx ~= -1
-              this.verifyEqual(to_num(parts{7}), data{sn}.channels(sample_idx, pupil_r_idx));
+              this.verifyEqual(to_num(parts{7}), data{sn}.chans(sample_idx, pupil_r_idx));
             else
-              this.verifyEqual(to_num(parts{4}), data{sn}.channels(sample_idx, pupil_r_idx));
+              this.verifyEqual(to_num(parts{4}), data{sn}.chans(sample_idx, pupil_r_idx));
             end
           end
           if gaze_x_r_idx ~= -1
             if gaze_x_l_idx ~= -1
-              this.verifyEqual(to_num(parts{5}), data{sn}.channels(sample_idx, gaze_x_r_idx));
+              this.verifyEqual(to_num(parts{5}), data{sn}.chans(sample_idx, gaze_x_r_idx));
             else
-              this.verifyEqual(to_num(parts{2}), data{sn}.channels(sample_idx, gaze_x_r_idx));
+              this.verifyEqual(to_num(parts{2}), data{sn}.chans(sample_idx, gaze_x_r_idx));
             end
           end
           if gaze_y_r_idx ~= -1
             if gaze_y_l_idx ~= -1
-              this.verifyEqual(to_num(parts{6}), data{sn}.channels(sample_idx, gaze_y_r_idx));
+              this.verifyEqual(to_num(parts{6}), data{sn}.chans(sample_idx, gaze_y_r_idx));
             else
-              this.verifyEqual(to_num(parts{3}), data{sn}.channels(sample_idx, gaze_y_r_idx));
+              this.verifyEqual(to_num(parts{3}), data{sn}.chans(sample_idx, gaze_y_r_idx));
             end
           end
           if blink_l_idx ~= -1
-            this.verifyEqual(data{sn}.channels(sample_idx, blink_l_idx), double(blink_l));
+            this.verifyEqual(data{sn}.chans(sample_idx, blink_l_idx), double(blink_l));
           end
           if blink_r_idx ~= -1
-            this.verifyEqual(data{sn}.channels(sample_idx, blink_r_idx), double(blink_r));
+            this.verifyEqual(data{sn}.chans(sample_idx, blink_r_idx), double(blink_r));
           end
           if sacc_l_idx ~= -1
-            this.verifyEqual(data{sn}.channels(sample_idx, sacc_l_idx), double(sacc_l));
+            this.verifyEqual(data{sn}.chans(sample_idx, sacc_l_idx), double(sacc_l));
           end
           if sacc_r_idx ~= -1
-            this.verifyEqual(data{sn}.channels(sample_idx, sacc_r_idx), double(sacc_r));
+            this.verifyEqual(data{sn}.chans(sample_idx, sacc_r_idx), double(sacc_r));
           end
           sample_idx = sample_idx + 1;
         elseif is_msgline

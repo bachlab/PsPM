@@ -20,7 +20,7 @@ function [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,u
 %       distance:           distance between eye and screen in length units.
 %       unit:               unit in which width, height and distance are given.
 %       options:
-%         .channel_action:  ['add'/'replace'] Defines whether the new channels
+%         .chan_action:  ['add'/'replace'] Defines whether the new channels
 %                           should be added or the previous outputs of this function
 %                           should be replaced.
 %                           Default: 'add'
@@ -48,7 +48,7 @@ if nargin < 6
   return;
 elseif ~exist('options','var')
   options = struct();
-  options.channel_action = 'add';
+  options.chan_action = 'add';
 end;
 
 % check types of arguments
@@ -153,7 +153,7 @@ if p==1
   return;
 end;
 
-[lsts, outinfo] = pspm_write_channel(fn, visual_angl_chans, options.channel_action);
+[lsts, outinfo] = pspm_write_channel(fn, visual_angl_chans, options.chan_action);
 if lsts ~= 1
   warning('ID:invalid_input', 'Could not write converted data.');
   return;

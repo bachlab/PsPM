@@ -17,7 +17,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     % eyes
     eyes = {'l', 'r'};
     % others
-    channel_action = {'add', 'replace'};
+    chan_action = {'add', 'replace'};
     newfile = {0, 1};
     overwrite = {0, 1};
     missing = {0, 1};
@@ -124,8 +124,8 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       options.resolution = [1280 1024];
       options.fixation_point = [1280/4 1024*3/4];
       options.overwrite = 1;
-      options.channels = work_chans;
-      options.channel_action = 'add';
+      options.chans = work_chans;
+      options.chan_action = 'add';
       [~,~, o_data] = pspm_load_data(fn);
       [sts, outfile] = this.verifyWarningFree(@() ...
         pspm_find_valid_fixations(fn, box_degree, dist,dist_unit,options));
@@ -165,7 +165,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       options.fixation_point = [1280/4 1024*3/4];
       options.overwrite = 1;
       options.eyes = work_eye;
-      options.channel_action = 'add';
+      options.chan_action = 'add';
       [~,~, o_data] = pspm_load_data(fn);
       [sts, outfile] = this.verifyWarningFree(@() ...
         pspm_find_valid_fixations(fn, box_degree, dist, dist_unit,options));
@@ -201,7 +201,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       options.fixation_point = [1280/4 1024*3/4];
       options.overwrite = 1;
       options.missing = missing;
-      options.channel_action = 'add';
+      options.chan_action = 'add';
       [sts, outfile] = this.verifyWarningFree(@() ...
         pspm_find_valid_fixations(fn, box_degree, dist,dist_unit,options));
       this.verifyEqual(sts, 1);
@@ -228,7 +228,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       dist_unit = this.unit{1};
       options.resolution = [1280 1024];
       options.fixation_point = [1280/4 1024*3/4];
-      options.channel_action = 'add';
+      options.chan_action = 'add';
       [~, ~, o_data] = pspm_load_data(fn);
       % Test no overwrite
       options.overwrite = 0;
@@ -246,7 +246,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       [~, ~, n_data] = pspm_load_data(outfile);
       this.verifyNotEqual(numel(n_data), numel(o_data));
     end
-    function test_channel_action(this, channel_action)
+    function test_chan_action(this, chan_action)
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
       [degs,~] = this.generate_fixation_data(fn, this.distance{1},  'lr');
@@ -259,13 +259,13 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       options.screen_settings.display_size = 20;
       options.fixation_point = [1280/4 1024*3/4];
       options.overwrite = 1;
-      options.channel_action = channel_action;
+      options.chan_action = chan_action;
       [~, ~, o_data] = pspm_load_data(fn);
       [sts, outfile] = this.verifyWarningFree(@() ...
         pspm_find_valid_fixations(fn, box_degree, dist, dist_unit,options));
       this.verifyEqual(sts, 1);
       [~, ~, n_data] = pspm_load_data(outfile);
-      switch channel_action
+      switch chan_action
         case 'add'
           this.verifyNotEqual(numel(n_data), numel(o_data));
         case 'replace'
@@ -421,10 +421,10 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       this.verifyWarning(@() pspm_find_valid_fixations(fn, box_degree, ...
         dist, dist_unit, options), 'ID:invalid_input');
       options.fixation_point = [100 500];
-      options.channel_action = 'bla';
+      options.chan_action = 'bla';
       this.verifyWarning(@() pspm_find_valid_fixations(fn, box_degree, ...
         dist, dist_unit, options), 'ID:invalid_input');
-      options.channel_action = 'add';
+      options.chan_action = 'add';
       options.newfile = 0;
       this.verifyWarning(@() pspm_find_valid_fixations(fn, box_degree, ...
         dist, dist_unit, options), 'ID:invalid_input');
@@ -441,7 +441,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       this.verifyWarning(@() pspm_find_valid_fixations(fn, box_degree, ...
         dist, dist_unit, options), 'ID:invalid_input');
       options.eyes = 'combined';
-      options.channels = 'abc';
+      options.chans = 'abc';
       this.verifyWarning(@() pspm_find_valid_fixations(fn, box_degree, ...
         dist, dist_unit, options), 'ID:invalid_input');
     end

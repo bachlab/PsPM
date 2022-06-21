@@ -53,10 +53,10 @@ function output = pspm_pfm(model, options)
 %                        value as .arg. For unbounded parameters set -Inf
 %                        or/and Inf respectively.
 %                        DEFAULT: specified by the modality
-%    model.channel:      allows to specify channel number or channel type.
+%    model.chan:      allows to specify channel number or channel type.
 %                        If there is only one element specified, this element
 %                        will be applied to each datafile.
-%                        model.channel can also be a cell array of the size of
+%                        model.chan can also be a cell array of the size of
 %                        model.datafile in which case each element of the array
 %                        correspond to the channel to use for each data file.
 %                        DEFAULT: last channel of 'pupil' data type
@@ -247,20 +247,20 @@ chan_war_msg = ['Channel number must be a unique number,', ...
   'a cell array of unique number', ...
   'or correspond to a valid channel type.'];
 if ~isfield(model, 'channel')
-  model.channel = 'pupil';
-elseif ~iscell(model.channel) && ~isnumeric(model.channel) && ...
-    ~ismember(model.channel, {settings.chantypes.type})
+  model.chan = 'pupil';
+elseif ~iscell(model.chan) && ~isnumeric(model.chan) && ...
+    ~ismember(model.chan, {settings.chantypes.type})
   warning('ID:invalid_input', chan_war_msg); return;
-elseif ~iscell(model.channel) && numel(model.channel) > 1
+elseif ~iscell(model.chan) && numel(model.chan) > 1
   warning('ID:invalid_input', chan_war_msg); return;
-elseif iscell(model.channel) && numel(model.channel)~=numel(model.datafile)
+elseif iscell(model.chan) && numel(model.chan)~=numel(model.datafile)
   warning('ID:invalid_input', ...
     'Channel array must be of the same size as datafile array.'); return;
-elseif iscell(model.channel)
-  model.channel = model.channel(:);
+elseif iscell(model.chan)
+  model.chan = model.chan(:);
   tmp_fun = @(x) ~isnumeric(x) && numel(x)~=1 ...
     && ~ismember(x, {settings.chantypes.type});
-  tmp = cellfun(tmp_fun,model.channel);
+  tmp = cellfun(tmp_fun,model.chan);
   if any(tmp)
     warning('ID:invalid_input', chan_war_msg); return;
   end
@@ -357,10 +357,10 @@ n_file = numel(model.datafile);                 % number of files
 % Loading data and sr
 fprintf('Getting data .');
 for iFile = 1:n_file
-  if iscell(model.channel)
-    [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel{iFile});
+  if iscell(model.chan)
+    [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.chan{iFile});
   else
-    [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
+    [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.chan);
   end
   if sts < 1, warning('ID:load_data_fail', 'Problem encountered while loading data.'); return; end
 

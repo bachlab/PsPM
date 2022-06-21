@@ -32,7 +32,7 @@ addpath(pspm_path('Import','nwdq'));
 % -------------------------------------------------------------------------
 % loop through import jobs
 for k = 1:numel(import)
-  chan = import{k}.channel;
+  chan = import{k}.chan;
   if chan > size(inputdata, 2)
     warning('ID:channel_not_contained_in_file', 'Channel %1.0f does not exist in data file', chan); return;
   end;

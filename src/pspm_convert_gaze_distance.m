@@ -28,7 +28,7 @@ function [sts, out] = pspm_convert_gaze_distance(fn, target, from, width, height
 %   sts:               Status determining whether the execution was
 %                      successfull (sts == 1) or not (sts == -1)
 %   out:               Output struct
-%     .channel           Id of the added channels.
+%     .chan           Id of the added channels.
 %__________________________________________________________________________
 % PsPM 4.3.1
 % (C) 2020 Sam Maxwell (University College London)
@@ -52,7 +52,7 @@ end
 
 % Options defaults
 if ~isfield(options, 'channel_action');
-  options.channel_action = 'add';
+  options.chan_action = 'add';
 end
 
 
@@ -140,7 +140,7 @@ for gaze_eye = fieldnames(eyes)'
     lon_chan.header.units = 'degree';
     lon_chan.header.range = lon_chan;
 
-    [sts, out] = pspm_write_channel(fn, { lat_chan, lon_chan }, options.channel_action);
+    [sts, out] = pspm_write_channel(fn, { lat_chan, lon_chan }, options.chan_action);
   elseif strcmp(target, 'sps')
 
     arclen = pspm_convert_visangle2sps_core(lat, lon);
@@ -149,7 +149,7 @@ for gaze_eye = fieldnames(eyes)'
     dist_channel.header.sr = sr;
     dist_channel.header.units = 'degree';
 
-    [sts, out] = pspm_write_channel(fn, dist_channel, options.channel_action);
+    [sts, out] = pspm_write_channel(fn, dist_channel, options.chan_action);
   end
 
 end

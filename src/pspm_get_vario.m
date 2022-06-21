@@ -34,25 +34,25 @@ addpath(pspm_path('Import','vario'));
 for k = 1:numel(import)
   if ~strcmpi(import{k}.type, 'marker')
     % define channel number ---
-    if import{k}.channel > 0
-      chan = import{k}.channel;
+    if import{k}.chan > 0
+      chan = import{k}.chan;
     else
-      chan = pspm_find_channel({vario.channel.name}, import{k}.type);
+      chan = pspm_find_channel({vario.chan.name}, import{k}.type);
       if chan < 1, return; end;
     end;
 
-    if chan > size({vario.channel.name}, 2), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', chan, datafile); return; end;
+    if chan > size({vario.chan.name}, 2), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', chan, datafile); return; end;
 
-    sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', chan, vario.channel(chan).name);
+    sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', chan, vario.chan(chan).name);
 
     % sample rate
-    import{k}.sr = vario.channel(chan).scaled_scan_fac;
+    import{k}.sr = vario.chan(chan).scaled_scan_fac;
 
     % units
-    import{k}.units = vario.channel(chan).unit;
+    import{k}.units = vario.chan(chan).unit;
 
     % get data
-    import{k}.data =  vario.channel(chan).data(:);
+    import{k}.data =  vario.chan(chan).data(:);
 
   else
     import{k}.sr = 1; % converted to seconds in getVarioport_allChannels.m

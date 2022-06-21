@@ -57,11 +57,11 @@ if ~isfield(options, 'mains_freq')
 end
 
 if ~isfield(options, 'channel')
-  options.channel = 'emg';
+  options.chan = 'emg';
 end
 
 if ~isfield(options, 'channel_action')
-  options.channel_action = 'replace';
+  options.chan_action = 'replace';
 end
 
 % check values
@@ -69,16 +69,16 @@ end
 if ~isnumeric(options.mains_freq)
   warning('ID:invalid_input', 'Option mains_freq must be numeric.');
   return;
-elseif ~ismember(options.channel_action, {'add', 'replace'})
+elseif ~ismember(options.chan_action, {'add', 'replace'})
   warning('ID:invalid_input', 'Option channel_action must be either ''add'' or ''repalce''');
   return;
-elseif ~isnumeric(options.channel) && ~ischar(options.channel)
+elseif ~isnumeric(options.chan) && ~ischar(options.chan)
   warning('ID:invalid_input', 'Option channel must be a string or numeric');
 end
 
 % load data
 % -------------------------------------------------------------------------
-[lsts, infos, data] = pspm_load_data(fn, options.channel);
+[lsts, infos, data] = pspm_load_data(fn, options.chan);
 if lsts ~= 1, return, end
 
 % do the job
@@ -135,16 +135,16 @@ data{1}.header.chantype = 'emg_pp';
 
 % save data
 % -------------------------------------------------------------------------
-channel_str = num2str(options.channel);
+channel_str = num2str(options.chan);
 o.msg.prefix = sprintf(...
   'EMG preprocessing :: Input channel: %s -- Input chantype: %s -- Output chantype: %s --', ...
   channel_str, ...
   old_chantype, ...
   data{1}.header.chantype);
-[lsts, outinfos] = pspm_write_channel(fn, data{1}, options.channel_action, o);
+[lsts, outinfos] = pspm_write_channel(fn, data{1}, options.chan_action, o);
 if lsts ~= 1, return; end
 
-output.channel = outinfos.channel;
+output.chan = outinfos.chan;
 sts = 1;
 
 end

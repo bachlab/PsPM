@@ -51,7 +51,7 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
 %                          calculated as 2*sqrt(a/pi).
 %
 %                  - optional fields:
-%                      .channel:
+%                      .chan:
 %                          If .type is custom, the index of the channel to import
 %                          must be specified using this option.
 %                      .stimulus_resolution:
@@ -136,7 +136,7 @@ end
 [data_concat, markers, mi_values, mi_names] = concat_sessions(data);
 
 addpath(pspm_path('backroom'));
-chan_struct = data{1}.channels_columns;
+chan_struct = data{1}.chans_columns;
 eyes_observed = lower(data{1}.eyesObserved);
 if strcmpi(eyes_observed, 'l')
   mask_chans = {'L Blink', 'L Saccade'};
@@ -266,7 +266,7 @@ proper = true;
 eyes_observed = cellfun(@(x) x.eyesObserved, data, 'UniformOutput', false);
 same_eyes = all_strs_in_cell_array_are_equal(eyes_observed);
 
-channel_headers = cellfun(@(x) x.channels_columns, data, 'UniformOutput', false);
+channel_headers = cellfun(@(x) x.chans_columns, data, 'UniformOutput', false);
 same_headers = all_strs_in_cell_array_are_equal(channel_headers);
 
 if ~(same_eyes && same_headers)
@@ -468,7 +468,7 @@ end
 
 function [import_cell, chan_id] = import_custom_chan(import_cell, data_concat, raw_columns, chan_struct, units, sampling_rate)
 n_cols = size(raw_columns, 2);
-chan_id = import_cell.channel;
+chan_id = import_cell.chan;
 if chan_id < 1
   warning('ID:invalid_input', sprintf('Custom channel id %d is less than 1', chan_id));
   return
@@ -495,7 +495,7 @@ function [data_concat, markers, mi_values, mi_names] = concat_sessions(data)
 %
 % data: Cell array containing data for multiple sessions.
 %
-% data_concat : Matrix formed by concatenating data{i}.channels arrays according to
+% data_concat : Matrix formed by concatenating data{i}.chans arrays according to
 %               timesteps. If end and begin of consecutive channels are far apart,
 %               NaNs are inserted.
 % markers     : Array of marker seconds, formed by simply concatening data{i}.marker.times.
@@ -508,7 +508,7 @@ mi_values = [];
 mi_names = {};
 
 microsecond_col_idx = 1;
-n_cols = size(data{1}.channels, 2);
+n_cols = size(data{1}.chans, 2);
 sr = data{1}.sampleRate;
 last_time = data{1}.raw(1, microsecond_col_idx);
 microsec_to_sec = 1e-6;
@@ -523,10 +523,10 @@ for c = 1:numel(data)
     data_concat(end + 1:(end + n_missing), 1:n_cols) = NaN(n_missing, n_cols);
   end
 
-  n_data_in_session = size(data{c}.channels, 1);
+  n_data_in_session = size(data{c}.chans, 1);
   n_markers_in_session = numel(data{c}.markerinfos.name);
 
-  data_concat(end + 1:(end + n_data_in_session), 1:n_cols) = data{c}.channels;
+  data_concat(end + 1:(end + n_data_in_session), 1:n_cols) = data{c}.chans;
   markers(end + 1:(end + n_markers_in_session), 1) = data{c}.markers' * microsec_to_sec;
   mi_values(end + 1:(end + n_markers_in_session),1) = data{c}.markerinfos.value';
   mi_names(end + 1:(end + n_markers_in_session),1) = data{c}.markerinfos.name';

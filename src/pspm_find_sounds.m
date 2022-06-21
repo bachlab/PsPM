@@ -80,7 +80,7 @@ function [sts, infos] = pspm_find_sounds(file, options)
 %           .snd_markers : vector of begining of sound sound events
 %           .delays : vector of delays between markers and detected sounds.
 %                Only available with option 'diagnostics' turned on.
-%           .channel: number of added chan, when options.channel_action ~= 'none'
+%           .chan: number of added chan, when options.chan_action ~= 'none'
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2015 Samuel Gerster (University of Zurich)
@@ -100,8 +100,8 @@ end
 fprintf('Processing sound in file %s\n',file);
 
 % Process options
-try options.channel_action; catch, options.channel_action = 'none'; end
-try options.channel_output; catch; options.channel_output = 'all'; end
+try options.chan_action; catch, options.chan_action = 'none'; end
+try options.chan_output; catch; options.chan_output = 'all'; end
 try options.diagnostics; catch, options.diagnostics = true; end
 try options.maxdelay; catch, options.maxdelay = 3; end
 try options.mindelay; catch, options.mindelay = 0; end
@@ -136,14 +136,14 @@ elseif ~islogical(options.diagnostics) && ~isnumeric(options.diagnostics)
   warning('ID:invalid_input', 'Option diagnostics is not numeric or logical');  return;
 elseif ~islogical(options.plot) && ~isnumeric(options.plot)
   warning('ID:invalid_input', 'Option plot is not numeric or logical');  return;
-elseif ~strcmpi(options.channel_output, 'all') && ~strcmpi(options.channel_output, 'corrected')
+elseif ~strcmpi(options.chan_output, 'all') && ~strcmpi(options.chan_output, 'corrected')
   warning('ID:invalid_input', 'Option channel_output must be either ''all'' or ''corrected''.');  return;
 elseif ~isnumeric(options.expectedSoundCount) || mod(options.expectedSoundCount,1) ...
     || options.expectedSoundCount < 0
   warning('ID:invalid_input', 'Option expectedSoundCount is not an integer.');  return;
 elseif ~isempty(options.roi) && (length(options.roi) ~= 2 || ~all(isnumeric(options.roi) & options.roi >= 0))
   warning('ID:invalid_input', 'Option roi must be a float vector of length 2 or 0');  return;
-elseif ~ischar(options.channel_action) || ~ismember(options.channel_action, {'none', 'add', 'replace'})
+elseif ~ischar(options.chan_action) || ~ismember(options.chan_action, {'none', 'add', 'replace'})
   warning('ID:invalid_input', 'Option channel_action must be either ''none'', ''add'' or ''replace'''); return;
 end
 
@@ -362,9 +362,9 @@ while searchForMoreSounds == true
 end
 
 %% Save as new channel
-if ~strcmpi(options.channel_action, 'none')
+if ~strcmpi(options.chan_action, 'none')
   % Save the new channel
-  if strcmpi(options.channel_output, 'all')
+  if strcmpi(options.chan_output, 'all')
     snd_events.data = snd_re_all;
     vals = snd_fe_all-snd_re_all;
     snd_events.markerinfo.value = vals;
@@ -383,8 +383,8 @@ if ~strcmpi(options.channel_action, 'none')
   snd_events.header.sr = 1;
   snd_events.header.chantype = 'marker';
   snd_events.header.units ='events';
-  [~, ininfos] = pspm_write_channel(file, snd_events, options.channel_action);
-  outinfos.channel = ininfos.channel;
+  [~, ininfos] = pspm_write_channel(file, snd_events, options.chan_action);
+  outinfos.chan = ininfos.chan;
 end
 
 %% Plot Option

@@ -197,7 +197,7 @@ function pspm_init
   %
   % DEVELOPERS NOTES
   % in order to implement new channel types
-  % to defaults.import.channeltypes. If direct import is allowed, create the
+  % to defaults.import.chantypes. If direct import is allowed, create the
   % associated pspm_get_xxx import function. See first channel type (SCR) for
   % explanations.
   % These are the allowed chantypes in a data file (checked by pspm_load_data)

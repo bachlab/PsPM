@@ -38,11 +38,11 @@ if numel(channel_names{1}) == 0 || strcmp(channel_names{1}{1}, 'Time (s)') == 0
 elseif numel(channel_names{1}) == 1
   warning('No channels were found in the datafile.'); return
 end
-obs.channel_names = channel_names{1};
+obs.chan_names = channel_names{1};
 
 % read data ---
 formatSpec = '';
-for i=1:numel(obs.channel_names)
+for i=1:numel(obs.chan_names)
   formatSpec = [formatSpec '%f'];
 end
 fid = fopen(datafile);
@@ -73,19 +73,19 @@ end
 % extract individual jobs
 % -------------------------------------------------------------------------
 for k = 1:numel(import)
-  if import{k}.channel > 0
-    chan = import{k}.channel;
+  if import{k}.chan > 0
+    chan = import{k}.chan;
   elseif strcmpi(import{k}.type, 'marker')
-    chan = pspm_find_channel(obs.channel_names, {'sync'});
-    if chan < 1, warning('Marker channel for import job %02.0f could not be identified (it''s name needs to be SYNC). Please specify as field .channel', k);  return; end;
+    chan = pspm_find_channel(obs.chan_names, {'sync'});
+    if chan < 1, warning('Marker channel for import job %02.0f could not be identified (it''s name needs to be SYNC). Please specify as field .chan', k);  return; end;
   else
-    chan = pspm_find_channel(obs.channel_names, import{k}.type);
+    chan = pspm_find_channel(obs.chan_names, import{k}.type);
     if chan < 1, return; end;
   end;
 
   if chan > numel(obs.data), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', chan, datafile); return; end;
 
-  sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', chan, obs.channel_names{chan});
+  sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', chan, obs.chan_names{chan});
 
   import{k}.sr = obs.sr;
   if strcmpi(import{k}.type, 'marker')

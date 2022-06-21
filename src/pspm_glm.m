@@ -29,7 +29,7 @@ function glm = pspm_glm(model, options)
 %                   See pspm_init, defaults.glm() which modelspecs are possible
 %                   with glm.
 % model.modality:   specify the modality to be processed.
-%                   When model.modality is set to be sps, the model.channel
+%                   When model.modality is set to be sps, the model.chan
 %                   should be set among sps_l, sps_r, or defaultly sps.
 % model.bf:         basis function/basis set; modality specific default
 %                   with subfields .fhandle (function handle or string) and
@@ -38,7 +38,7 @@ function glm = pspm_glm(model, options)
 %                   indicates that the onset of the basis function precedes
 %                   event onsets by n seconds (default: 0: used for
 %                   interpolated data channels)
-% model.channel:    channel number or channel type. if a channel type is
+% model.chan:    channel number or channel type. if a channel type is
 %                   specified the LAST channel matching the given type will
 %                   be used. The rationale for this is that, in general channels
 %                   later in the channel list are preprocessed/filtered versions
@@ -49,7 +49,7 @@ function glm = pspm_glm(model, options)
 %                   precedence order described in its documentation. In a nutshell,
 %                   it prefers preprocessed channels and channels from the best eye
 %                   to other pupil channels.
-%                   SPECIAL: for the modality "sps", the model.channel
+%                   SPECIAL: for the modality "sps", the model.chan
 %                   accepts only "sps_l", "sps_r", or "sps".
 %                   DEFAULT: last channel of the specified modality
 %                            (for PSR this is 'pupil')
@@ -226,11 +226,11 @@ model.modality = settings.glm(modno).modality;
 % check data channel --
 if ~isfield(model, 'channel')
   if strcmp(model.modality, 'psr')
-    model.channel = "pupil";
+    model.chan = "pupil";
   else
-    model.channel = model.modality;
+    model.chan = model.modality;
   end
-elseif ~isnumeric(model.channel) && ~ismember(model.channel, {settings.chantypes.type})
+elseif ~isnumeric(model.chan) && ~ismember(model.chan, {settings.chantypes.type})
   warning('ID:invalid_input', 'Channel number must be numeric.'); return;
 end
 
@@ -287,7 +287,7 @@ end
 fprintf('Getting data ...');
 nFile = numel(model.datafile);
 for iFile = 1:nFile
-  [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
+  [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.chan);
   if sts < 1, return; end
   y{iFile} = data{end}.data(:);
   sr(iFile) = data{end}.header.sr;

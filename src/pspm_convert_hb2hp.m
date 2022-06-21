@@ -37,7 +37,7 @@ function [sts, infos] = pspm_convert_hb2hp(fn, sr, chan, options)
 
   if ~exist('options','var'), options = struct();
   end;
-  if ~isfield(options,'channel_action'), options.channel_action = 'replace';
+  if ~isfield(options,'channel_action'), options.chan_action = 'replace';
   end;
   if ~isfield(options,'limit'), options.limit = struct();
   end;
@@ -99,14 +99,14 @@ function [sts, infos] = pspm_convert_hb2hp(fn, sr, chan, options)
 
   o.msg.prefix = 'Heart beat converted to heart period and';
   try
-    [nsts,winfos] = pspm_write_channel(fn, newdata, options.channel_action, o);
+    [nsts,winfos] = pspm_write_channel(fn, newdata, options.chan_action, o);
     if nsts == -1, return;
     end
   catch
     warning('ID:invalid_input', 'call of pspm_write_channel failed');
     return;
   end;
-  infos.channel = winfos.channel;
+  infos.chan = winfos.chan;
 
   sts = 1;
 end

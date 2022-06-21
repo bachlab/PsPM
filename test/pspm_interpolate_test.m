@@ -161,10 +161,10 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       invalid_data = {'file_does_not_exist'};
       this.verifyWarning(@() pspm_interpolate(invalid_data), 'ID:nonexistent_file');
       % invalid amount of channels
-      options.channels = cell(size(valid_data)+1);
+      options.chans = cell(size(valid_data)+1);
       this.verifyWarning(@() pspm_interpolate(valid_data, options), 'ID:invalid_size');
       % invalid data in channels
-      options.channels = 'ab';
+      options.chans = 'ab';
       this.verifyWarning(@() pspm_interpolate(valid_data, options), 'ID:invalid_input');
       % invalid interpolation method
       options = struct('method', 'invalid_method');
@@ -178,8 +178,8 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       % invalid overwrite
       options = struct('overwrite', 'bla');
       this.verifyWarning(@() pspm_interpolate(valid_data, options), 'ID:invalid_input');
-      % invalid channel_action
-      options = struct('channel_action', 'bla');
+      % invalid chan_action
+      options = struct('chan_action', 'bla');
       this.verifyWarning(@() pspm_interpolate(valid_data, options), 'ID:invalid_input');
       % try to interpolate an events channel
       c{1}.chantype = 'hb';
@@ -207,7 +207,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       [data, opt_chans] = generate_data(this, datatype, amount, 'center', chans, false);
       % define options
       options.method = 'linear';
-      options.channels = opt_chans;
+      options.chans = opt_chans;
       options.extrapolate = false;
       % call function
       [sts, outdata] = this.verifyWarningFree(@() pspm_interpolate(data, options));
@@ -220,7 +220,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       this.verifyNotEqual(data, outdata);
       % test for nans:
       % * interpolated channels should contain no more nans
-      % * not interpolated channels (specified by options.channels)
+      % * not interpolated channels (specified by options.chans)
       %   should still contain nans
       if iscell(outdata)
         for i = 1:numel(outdata)
@@ -232,8 +232,8 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
             check_chans = outdata{i};
           else
             check_data = outdata{i};
-            if iscell(options.channels) && numel(options.channels) > 0
-              check_chans = options.channels{i};
+            if iscell(options.chans) && numel(options.chans) > 0
+              check_chans = options.chans{i};
             else
               check_chans = {};
             end
@@ -242,7 +242,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
           this.verify_nan_free(check_data, check_chans);
         end
       else
-        this.verify_nan_free(outdata, options.channels);
+        this.verify_nan_free(outdata, options.chans);
       end
     end
     function test_interpolation_variations(this, interp_method, extrap, nan_method)
@@ -250,7 +250,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       [data, opt_chans] = generate_data(this, 'inline', 1, nan_method, {{'scr'}, []}, extrap);
       % define options
       options.method = interp_method;
-      options.channels = opt_chans;
+      options.chans = opt_chans;
       options.extrapolate = extrap;
       if extrap && (...
           (strcmpi(nan_method, 'start') && strcmpi(interp_method, 'previous')) || ...
@@ -267,7 +267,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
         % but data shouldn't be the same
         this.verifyNotEqual(data, outdata);
         % test for nans:
-        this.verify_nan_free(outdata{1}, options.channels);
+        this.verify_nan_free(outdata{1}, options.chans);
       end
     end
     function test_no_nan(this)
@@ -296,7 +296,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       [data, opt_chans] = generate_data(this, 'file', 2, 'center', c_info, false);
       % define options
       options.method = 'linear';
-      options.channels = opt_chans;
+      options.chans = opt_chans;
       options.extrapolate = false;
       % don't care about that right now
       options.overwrite = 1;
@@ -317,7 +317,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
           [~, ~, olddata] = pspm_load_data(data{i});
           [~, ~, newdata] = pspm_load_data(outdata{i});
           this.verifyEqual(size(olddata), size(newdata));
-          this.verify_nan_free(outdata{i}, options.channels{i});
+          this.verify_nan_free(outdata{i}, options.chans{i});
           if file_exist
             delete(outdata{i});
           end
@@ -329,7 +329,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
         for i = 1:numel(outdata)
           this.verify_nan_free(data{i}, outdata{i});
           [~, ~, d] = pspm_load_data(data{i});
-          c = options.channels{i};
+          c = options.chans{i};
           for j=1:numel(c)
             this.verifyEqual(size(d{c(j)}), size(d{outdata{i}(j)}));
           end
@@ -370,9 +370,9 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       [data, opt_chans] = generate_data(this, 'file', 2, 'center', ...
         {{'scr', 'scr', 'scr'}, [1,2,3]} , false);
       if replace_channels
-        options = struct('channel_action', 'replace');
+        options = struct('chan_action', 'replace');
       else
-        options = struct('channel_action', 'add');
+        options = struct('chan_action', 'add');
       end
       % call function
       [sts, outdata] = this.verifyWarningFree(@() pspm_interpolate(data, options));

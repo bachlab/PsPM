@@ -35,8 +35,8 @@ for k = 1:numel(import)
 
   if strcmpi(settings.chantypes(import{k}.typeno).data, 'wave')
     % define channel number ---
-    if import{k}.channel > 0
-      chan = import{k}.channel;
+    if import{k}.chan > 0
+      chan = import{k}.chan;
     else
       chan = pspm_find_channel(hdr.label, import{k}.type);
       if chan < 1, return; end;

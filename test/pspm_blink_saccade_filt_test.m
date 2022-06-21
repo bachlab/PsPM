@@ -15,7 +15,7 @@ classdef pspm_blink_saccade_filt_test < pspm_get_superclass
   methods (Test)
     function invalid_input(this)
       this.verifyWarning(@()pspm_blink_saccade_filt(this.fn, 'str'), 'ID:invalid_input');
-      options.channel_action = 'delete';
+      options.chan_action = 'delete';
       this.verifyWarning(@()pspm_blink_saccade_filt(this.fn, 0, options), 'ID:invalid_input');
     end
     function test_filtering(this)
@@ -34,7 +34,7 @@ classdef pspm_blink_saccade_filt_test < pspm_get_superclass
         fn_imported = pspm_import(this.fn, 'eyelink', import, options);
         fn_imported = fn_imported{1};
         [~, ~, data_old] = pspm_load_data(fn_imported);
-        options = struct('channel_action', 'replace');
+        options = struct('chan_action', 'replace');
         pspm_blink_saccade_filt(fn_imported, discard_factor, options);
         [~, ~, data_new] = pspm_load_data(fn_imported);
         N = numel(data_old{1}.data);

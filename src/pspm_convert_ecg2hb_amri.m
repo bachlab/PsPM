@@ -107,10 +107,10 @@ if nargin < 2
   options = struct();
 end
 if ~isfield(options, 'channel')
-  options.channel = 'ecg';
+  options.chan = 'ecg';
 end
 if ~isfield(options, 'channel_action')
-  options.channel_action = 'replace';
+  options.chan_action = 'replace';
 end
 if ~isfield(options, 'signal_to_use')
   options.signal_to_use = 'auto';
@@ -136,7 +136,7 @@ end
 
 % input checks
 % -------------------------------------------------------------------------
-if ~ismember(options.channel_action, {'add', 'replace'})
+if ~ismember(options.chan_action, {'add', 'replace'})
   warning('ID:invalid_input', 'Option channel_action must be either ''add'' or ''replace''');
   return;
 end
@@ -172,7 +172,7 @@ end
 % load
 % -------------------------------------------------------------------------
 addpath(pspm_path('backroom'));
-[lsts, data] = pspm_load_single_chan(fn, options.channel, 'last', 'ecg');
+[lsts, data] = pspm_load_single_chan(fn, options.chan, 'last', 'ecg');
 if lsts ~= 1; return; end;
 rmpath(pspm_path('backroom'));
 
@@ -198,9 +198,9 @@ heartbeats{1}.header.sr = 1;
 heartbeats{1}.header.chantype = 'hb';
 heartbeats{1}.header.units = 'events';
 o.msg.prefix = 'QRS detection using AMRI algorithm';
-[lsts, infos] = pspm_write_channel(fn, heartbeats, options.channel_action);
+[lsts, infos] = pspm_write_channel(fn, heartbeats, options.chan_action);
 if lsts ~= 1; return; end;
 
-out_channel = infos.channel;
+out_channel = infos.chan;
 sts = 1;
 end

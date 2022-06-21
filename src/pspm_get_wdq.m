@@ -26,7 +26,7 @@ inputdata = ReadDataq(datafile);
 % -------------------------------------------------------------------------
 % loop through import jobs
 for k = 1:numel(import)
-  chan = import{k}.channel;
+  chan = import{k}.chan;
   if chan > size(inputdata.Data, 2)
     warning('Channel %1.0f does not exist in data file', chan); return;
   end;

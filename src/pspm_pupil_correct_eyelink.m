@@ -10,7 +10,7 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 % size related information. If the gaze data is in pixels and screen information is
 % not given, the function emits a warning and exits early.
 %
-% Once the pupil data is preprocessed, according to the option 'channel_action',
+% Once the pupil data is preprocessed, according to the option 'chan_action',
 % it will either replace an existing preprocessed pupil channel or add it as new
 % channel to the provided file.
 %
@@ -85,8 +85,8 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 %                     last one will be processed. This is normally not the
 %                     case with raw data channels; however, there may be
 %                     multiple preprocessed channels with same type if 'add'
-%                     channel_action was previously used. This feature can
-%                     be combined with 'add' channel_action to create
+%                     chan_action was previously used. This feature can
+%                     be combined with 'add' chan_action to create
 %                     preprocessing histories where the result of each step
 %                     is stored as a separate channel.
 %
@@ -96,7 +96,7 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 %                     Therefore, this function should not overwrite a raw data
 %                     channel.
 %
-%           channel_action:  ['add'/'replace'] Defines whether output data should
+%           chan_action:  ['add'/'replace'] Defines whether output data should
 %                     be added or the corresponding preprocessed channel
 %                     should be replaced. Note that 'replace' mode does not
 %                     replace raw data channels. It replaces a previously
@@ -164,18 +164,18 @@ end
 
 %% create default arguments
 
-if isfield(options, 'channel_action')
-  if ~any(strcmpi(options.channel_action, {'add', 'replace'}))
+if isfield(options, 'chan_action')
+  if ~any(strcmpi(options.chan_action, {'add', 'replace'}))
     warning('ID:invalid_input',...
-      'options.channel_action must be ''add'' or ''replace''');
+      'options.chan_action must be ''add'' or ''replace''');
     return;
   end
 else
-  options.channel_action = 'add';
+  options.chan_action = 'add';
 end
 
 if ~isfield(options, 'channel')
-  options.channel = 'pupil';
+  options.chan = 'pupil';
 end
 
 if strcmpi(options.mode, 'auto')
@@ -194,14 +194,14 @@ end
 
 %% load data
 
-[lsts, ~, pupil_data] = pspm_load_data(fn, options.channel);
+[lsts, ~, pupil_data] = pspm_load_data(fn, options.chan);
 if lsts ~= 1
   return
 end
 if numel(pupil_data) > 1
   warning('ID:multiple_channels', ['There is more than one channel'...
     ' with type %s in the data file.\n'...
-    ' We will process only the last one.\n'], options.channel);
+    ' We will process only the last one.\n'], options.chan);
   pupil_data = pupil_data(end);
 end
 old_chantype = pupil_data{1}.header.chantype;
@@ -288,16 +288,16 @@ if sts ~= 1; return; end
 %% save data
 pupil_data{1}.data = pupil_corrected;
 pupil_data{1}.header.chantype = convert_pp(old_chantype);
-channel_str = num2str(options.channel);
+channel_str = num2str(options.chan);
 o.msg.prefix = sprintf(...
   'PFE correction :: Input channel: %s -- Input chantype: %s -- Output chantype: %s --', ...
   channel_str, ...
   old_chantype, ...
   pupil_data{1}.header.chantype);
-[lsts, out_id] = pspm_write_channel(fn, pupil_data, options.channel_action, o);
+[lsts, out_id] = pspm_write_channel(fn, pupil_data, options.chan_action, o);
 if lsts ~= 1; return; end
 
-out_channel = out_id.channel;
+out_channel = out_id.chan;
 sts = 1;
 end
 

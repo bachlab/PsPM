@@ -51,7 +51,7 @@ end
 % Display diagnostic plots? default is "false"
 try if ~islogical(options.diagnostics),options.diagnostics = false;end
 catch, options.diagnostics = false; end
-try options.channel_action; catch, options.channel_action = 'replace'; end;
+try options.chan_action; catch, options.chan_action = 'replace'; end;
 try if ~isnumeric(options.lsm),options.lsm = 0;end
 catch, options.lsm = 0; end
 
@@ -185,13 +185,13 @@ write_options = struct();
 write_options.msg = msg;
 
 % Replace last existing channel or save as new channel
-[nsts, nout] = pspm_write_channel(fn, newdata, options.channel_action, write_options);
+[nsts, nout] = pspm_write_channel(fn, newdata, options.chan_action, write_options);
 
 % user output
 fprintf('  done.\n');
 if nsts ~= -1,
   sts = 1;
-  outinfo.channel = nout.channel;
+  outinfo.chan = nout.chan;
 end;
 
 return;

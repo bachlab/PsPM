@@ -193,7 +193,7 @@ if nargin >= 2
       data_fn = model_strc.input.datafile;
       n_file = numel(data_fn);
       timing = model_strc.input.timing;
-      chan = repmat({model_strc.input.channel}, size(data_fn));
+      chan = repmat({model_strc.input.chan}, size(data_fn));
 
       if strcmpi(model_strc.modeltype,'glm')
         options.timeunit = model_strc.input.timeunits;

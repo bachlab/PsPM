@@ -52,7 +52,7 @@ function dcm = pspm_dcm(model, options)
 %	┃             Default: 2.
 % ┣━.filter			Filter settings.
 %	┃             Modality specific default.
-% ┣━.channel:		Channel number.
+% ┣━.chan:		  Channel number.
 %	┃             Default: first SCR channel
 % ┣━.norm:			Normalise data.
 %	┃             i.e. Data are normalised during inversion but results
@@ -200,8 +200,8 @@ end
 % 2.3 get further input or set defaults --
 % check data channel --
 if ~isfield(model, 'channel')
-  model.channel = 'scr'; % this returns the first SCR channel
-elseif ~isnumeric(model.channel) && ~strcmp(model.channel,'scr')
+  model.chan = 'scr'; % this returns the first SCR channel
+elseif ~isnumeric(model.chan) && ~strcmp(model.chan,'scr')
   warning('ID:invalid_input', 'Channel number must be numeric.'); return;
 end
 
@@ -331,7 +331,7 @@ data = cell(numel(model.datafile), 1);
 missing = cell(nFile, 1);
 for iSn = 1:numel(model.datafile)
   % check & load data
-  [sts, ~, data{iSn}] = pspm_load_data(model.datafile{iSn}, model.channel);
+  [sts, ~, data{iSn}] = pspm_load_data(model.datafile{iSn}, model.chan);
   if sts == -1 || isempty(data{iSn})
     warning('ID:invalid_input', 'No SCR data contained in file %s', ...
       model.datafile{iSn});

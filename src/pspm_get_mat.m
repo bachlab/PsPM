@@ -52,7 +52,7 @@ end;
 % select desired channels
 % -------------------------------------------------------------------------
 for k = 1:numel(import)
-  chan = import{k}.channel;
+  chan = import{k}.chan;
 
   if chan > numel(data), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', chan, datafile); return; end;
 

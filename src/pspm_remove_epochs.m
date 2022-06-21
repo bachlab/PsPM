@@ -16,7 +16,7 @@ function [sts] = pspm_remove_epochs(datafile, channel, epochfile, options)
 %                               this parameter is passed to pspm_get_timing().
 %   timeunits:                  timeunit of the epochfile.
 %   options:
-%       .channel_action ['add'/'replace'] Defines whether the new channels
+%       .chan_action ['add'/'replace'] Defines whether the new channels
 %                       should be added or the corresponding channel
 %                       should be replaced.
 %                       (Default: 'add')
@@ -49,7 +49,7 @@ if ~exist('options', 'var')
 end
 
 if ~isfield(options, 'channel_action')
-  options.channel_action = 'add';
+  options.chan_action = 'add';
 end
 
 [lsts, ~, data] = pspm_load_data(datafile, channel);
@@ -98,7 +98,7 @@ for i_data = 1:n_data
 end
 
 % save data to file
-[lsts] = pspm_write_channel(datafile, data, options.channel_action);
+[lsts] = pspm_write_channel(datafile, data, options.chan_action);
 
 if lsts == -1
   warning('ID:invalid_input', 'Could not write channel to file.');

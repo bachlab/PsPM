@@ -55,13 +55,13 @@ end;
 % -------------------------------------------------------------------------
 for k = 1:numel(import)
   if strcmpi(import{k}.type, 'marker')
-    chan = import{k}.channel;
+    chan = import{k}.chan;
     if chan > size(out.trigger.t, 2), warning('ID:channel_not_contained_in_file', 'Column %02.0f not contained in file %s.\n', chan, datafile); return; end;
     import{k}.marker = 'continuous';
     import{k}.sr     = out.trigger.sr;
     import{k}.data   = out.trigger.t{:,chan};
   else
-    chan = import{k}.channel;
+    chan = import{k}.chan;
     if chan > size(out.data, 1), warning('ID:channel_not_contained_in_file', 'Column %02.0f not contained in file %s.\n', chan, datafile); return; end;
     import{k}.sr = out.data{chan,1}.header.sr;
     import{k}.data = out.data{chan,1}.data;

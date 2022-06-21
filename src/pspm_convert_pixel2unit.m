@@ -33,7 +33,7 @@ function [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, ...
 %                               other conversions this field is ignored,
 %                               i.e default value '-1'
 %   options:                    Options struct
-%       .channel_action:        ['add'/'replace'] Defines whether the new channel
+%       .chan_action:        ['add'/'replace'] Defines whether the new channel
 %                               should be added or the previous outputs of this
 %                               function should be replaced.
 %                               (Default: 'add')
@@ -43,7 +43,7 @@ function [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, ...
 %   sts:                        Status determining whether the execution was
 %                               successfull (sts == 1) or not (sts == -1)
 %   out:                        Output struct
-%       .channel                Id of the added channels.
+%       .chan                Id of the added channels.
 %__________________________________________________________________________
 % PsPM 4.0
 % (C) 2016 Tobias Moser (University of Zurich)
@@ -61,7 +61,7 @@ end
 %if no options are set
 if ~exist('options','var')
   options = struct();
-  options.channel_action = 'add';
+  options.chan_action = 'add';
 end
 % do value checks
 if ~isstruct(options)
@@ -144,14 +144,14 @@ for c = 1:n_chans
   % replace data
   gaze_chans{c} = chan;
 end
-[lsts, outinfo] = pspm_write_channel(fn, gaze_chans, options.channel_action);
+[lsts, outinfo] = pspm_write_channel(fn, gaze_chans, options.chan_action);
 if lsts ~= 1
   warning('ID:invalid_input', 'Could not write converted data.');
   return;
 end
 if strcmpi(unit,'degree')
-  options.channel_action = 'replace';
-  [lsts, outinfo] = pspm_compute_visual_angle(fn,outinfo.channel, ...
+  options.chan_action = 'replace';
+  [lsts, outinfo] = pspm_compute_visual_angle(fn,outinfo.chan, ...
     width, height, distance,unit_h_w_d,options);
   if lsts < 1
     warning('ID:compute_visual_angle_err',...

@@ -120,7 +120,7 @@ elseif ~isnumeric(chan) && ~strcmp(chan,'ecg')
   warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end
 
-try options.channel_action; catch, options.channel_action = 'replace'; end
+try options.chan_action; catch, options.chan_action = 'replace'; end
 
 % user output
 % -------------------------------------------------------------------------
@@ -144,8 +144,8 @@ if nargin > 2 && exist('options', 'var')
 
   if isstruct(options)
     if isfield(options, 'channel_action')
-      if ~any(strcmpi(options.channel_action, {'add', 'replace'}))
-        warning('ID:invalid_input', '''options.channel_action'' must be either ''add'' or ''replace''.'); return;
+      if ~any(strcmpi(options.chan_action, {'add', 'replace'}))
+        warning('ID:invalid_input', '''options.chan_action'' must be either ''add'' or ''replace''.'); return;
       end
     end
 
@@ -346,12 +346,12 @@ newdata.header.chantype = 'hb';
 % user output
 fprintf(' done.');
 
-action = options.channel_action;
+action = options.chan_action;
 
 o.msg.prefix = 'QRS detection with Pan & Tompkins algorithm and HB-timeseries';
 [nsts, write_info] = pspm_write_channel(fn, newdata, action, o);
 if nsts == -1, return; end
-infos.channel = write_info.channel;
+infos.chan = write_info.chan;
 infos.pt_debug = pt_debug;
 sts = 1;
 

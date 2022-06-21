@@ -21,7 +21,7 @@ classdef import_viewpoint_test < matlab.unittest.TestCase
       header_parts = split(header, sprintf('\t'));
       marker_index = find(strcmp(header_parts, 'MRK'));
       this.verifyEqual(size(data{1}.dataraw, 1), numel(datalines));
-      this.verifyEqual(size(data{1}.channels, 1), numel(datalines));
+      this.verifyEqual(size(data{1}.chans, 1), numel(datalines));
       % check column equality manually
       % ------------------------------------------
       cols_to_check = {'ALX', 'ALY', 'APW'};
@@ -34,14 +34,14 @@ classdef import_viewpoint_test < matlab.unittest.TestCase
       % find channels
       % ------------------------------------------------------------
       timecol = data{1}.dataraw(:, 1);
-      blink_A_chan = find(strcmp(data{1}.channels_header, 'blink_A'));
-      blink_B_chan = find(strcmp(data{1}.channels_header, 'blink_B'));
-      sacc_A_chan = find(strcmp(data{1}.channels_header, 'saccade_A'));
-      sacc_B_chan = find(strcmp(data{1}.channels_header, 'saccade_B'));
-      datacols = true(size(data{1}.channels_header));
+      blink_A_chan = find(strcmp(data{1}.chans_header, 'blink_A'));
+      blink_B_chan = find(strcmp(data{1}.chans_header, 'blink_B'));
+      sacc_A_chan = find(strcmp(data{1}.chans_header, 'saccade_A'));
+      sacc_B_chan = find(strcmp(data{1}.chans_header, 'saccade_B'));
+      datacols = true(size(data{1}.chans_header));
       datacols([blink_A_chan blink_B_chan sacc_A_chan sacc_B_chan]) = false;
-      datacols_A = datacols & contains(data{1}.channels_header, '_A');
-      datacols_B = datacols & contains(data{1}.channels_header, '_B');
+      datacols_A = datacols & contains(data{1}.chans_header, '_A');
+      datacols_B = datacols & contains(data{1}.chans_header, '_B');
       % go through blinks, saccades, and check if data is set to NaN
       % correctly and blink/saccade periods are 1.
       % ---------------------------------------------------------------------------
@@ -58,13 +58,13 @@ classdef import_viewpoint_test < matlab.unittest.TestCase
           begidx = find(timecol == tbeg);
           endidx = find(timecol == tend);
           if strncmp(parts{3}, 'A:Blink', numel('A:Blink'))
-            this.verifyTrue(all(data{1}.channels(begidx : endidx, blink_A_chan) == 1));
+            this.verifyTrue(all(data{1}.chans(begidx : endidx, blink_A_chan) == 1));
           elseif strncmp(parts{3}, 'B:Blink', numel('B:Blink'))
-            this.verifyTrue(all(data{1}.channels(begidx : endidx, blink_B_chan) == 1));
+            this.verifyTrue(all(data{1}.chans(begidx : endidx, blink_B_chan) == 1));
           elseif strncmp(parts{3}, 'A:Saccade', numel('A:Saccade'))
-            this.verifyTrue(all(data{1}.channels(begidx : endidx, sacc_A_chan) == 1));
+            this.verifyTrue(all(data{1}.chans(begidx : endidx, sacc_A_chan) == 1));
           elseif strncmp(parts{3}, 'B:Saccade', numel('B:Saccade'))
-            this.verifyTrue(all(data{1}.channels(begidx : endidx, sacc_B_chan) == 1));
+            this.verifyTrue(all(data{1}.chans(begidx : endidx, sacc_B_chan) == 1));
           end
         end
       end

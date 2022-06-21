@@ -37,7 +37,7 @@ end
 % verify if all channels are constant in unit and sampling rate
 chans_constant = 1;
 for i_chan = 1:labchart.n_channels
-  chan_spec = labchart.channel_specs(i_chan);
+  chan_spec = labchart.chan_specs(i_chan);
   chans_constant = chans_constant && (all(strcmpi(chan_spec.units{1}, chan_spec.units)) ...
     && all(chan_spec.fs(1) == chan_spec.fs));
 end
@@ -63,10 +63,10 @@ for k = 1:numel(import)
 
   % find channel number if not marker channel
   if ~strcmpi(import{k}.type, 'marker')
-    if import{k}.channel > 0
-      chan = import{k}.channel;
+    if import{k}.chan > 0
+      chan = import{k}.chan;
     else
-      chan = pspm_find_channel(cellstr(labchart.channel_names(:)), import{k}.type);
+      chan = pspm_find_channel(cellstr(labchart.chan_names(:)), import{k}.type);
       if chan < 1, return; end
     end
     if chan > labchart.n_channels
@@ -74,7 +74,7 @@ for k = 1:numel(import)
         'Channel %02.0f not contained in file %s.\n', chan, datafile);
       return;
     end
-    lab_chan = labchart.channel_specs(chan);
+    lab_chan = labchart.chan_specs(chan);
   end
 
   % loop through records
@@ -112,7 +112,7 @@ for k = 1:numel(import)
     % get sr ---
     import{k}.sr = lab_chan.fs(1);
     sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', chan, ...
-      labchart.channel_names{chan});
+      labchart.chan_names{chan});
   end
 end
 

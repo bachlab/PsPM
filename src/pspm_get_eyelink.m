@@ -9,7 +9,7 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 %                       .sr
 %
 %                       .data
-%                       except for custom channels, the field .channel will
+%                       except for custom channels, the field .chan will
 %                       be ignored. The id will be determined according to
 %                       the channel type.
 %
@@ -35,7 +35,7 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 % PsPM 3.0
 % (C) 2008-2017 Tobias Moser (University of Zurich)
 % PsPM 5.1.2
-% 2021 Teddy Chao (WCHN, UCL)
+% 2021 Teddy Chao (UCL)
 
 
 %% Initialise
@@ -71,9 +71,9 @@ for i = 1:numel(data)-1
   end
   expand_factor = 0;
 
-  data{i}.channels = blink_saccade_filtering(...
-    data{i}.channels, ...
-    data{i}.channels_header, ...
+  data{i}.chans = blink_saccade_filtering(...
+    data{i}.chans, ...
+    data{i}.chans_header, ...
     mask_chans, ...
     expand_factor * data{i}.sampleRate ...
     );
@@ -96,7 +96,7 @@ if numel(data) > 1 && (any(diff(sr)) || any(~strcmp(eyesObs,eyesObs{1})))
     ['Cannot concatenate multiple sessions with different ', ...
     'sample rate or different eye observation.']);
   % channels
-  channels = data{1}.channels;
+  chans = data{1}.chans;
   % samplerate
   sampleRate = data{1}.sampleRate;
   % markers
@@ -110,13 +110,13 @@ else
   sr = data{1}.sampleRate;
   last_time = data{1}.raw(1,1);
 
-  channels = [];
+  chans = [];
   markers = [];
 
   mi_value = [];
   mi_name = {};
 
-  n_cols = size(data{1}.channels, 2);
+  n_cols = size(data{1}.chans, 2);
   counter = 1;
 
   for c = 1:numel(data)
@@ -135,7 +135,7 @@ else
     if n_diff > 0
 
       % channels and markers
-      channels(counter:(counter+n_diff-1),1:n_cols) = NaN(n_diff, n_cols);
+      chans(counter:(counter+n_diff-1),1:n_cols) = NaN(n_diff, n_cols);
       markers(counter:(counter+n_diff-1), 1) = zeros(n_diff,1);
 
       % markerinfos
@@ -156,10 +156,10 @@ else
       counter = counter + n_diff;
     end
 
-    n_data = size(data{c}.channels, 1);
+    n_data = size(data{c}.chans, 1);
 
     % channels and markers
-    channels(counter:(counter+n_data-1),1:n_cols) = data{c}.channels;
+    chans(counter:(counter+n_data-1),1:n_cols) = data{c}.chans;
     markers(counter:(counter+n_data-1),1) = data{c}.markers;
 
     % markerinfos
@@ -183,7 +183,7 @@ end
 
 
 % create invalid data stats
-n_data = size(channels,1);
+n_data = size(chans,1);
 
 % count blink and saccades (combined in blink channel at the moment)
 blink_idx = find(strcmpi(units, 'blink'));
@@ -194,11 +194,11 @@ saccade_idx = find(strcmpi(units, 'saccade'));
 
 bns_chans = [blink_idx saccade_idx];
 for i_bns = 1:numel(bns_chans)
-  channels(isnan(channels(:, bns_chans(i_bns))), bns_chans(i_bns)) = 0;
+  chans(isnan(chans(:, bns_chans(i_bns))), bns_chans(i_bns)) = 0;
 end
 
-n_blink = sum (channels(:,blink_idx));
-n_saccade= sum (channels(:,saccade_idx));
+n_blink = sum (chans(:,blink_idx));
+n_saccade= sum (chans(:,saccade_idx));
 
 for k = 1:numel(import)
 
@@ -236,7 +236,7 @@ for k = 1:numel(import)
     end
 
     if strcmpi(import{k}.type, 'custom')
-      chan = import{k}.channel;
+      chan = import{k}.chan;
     else
       chan = find(strcmpi(chan_struct, import{k}.type), 1, 'first');
     end
@@ -249,17 +249,17 @@ for k = 1:numel(import)
         'Will create artificial channel with NaN values.'], import{k}.type);
 
       % create NaN values for this channel
-      import{k}.data = NaN(size(channels, 1),1);
+      import{k}.data = NaN(size(chans, 1),1);
       chan = -1;
       import{k}.units = '';
     else
-      if chan > size(channels, 2)
+      if chan > size(chans, 2)
         warning('ID:channel_not_contained_in_file', ...
           'Column %02.0f (%s) not contained in file %s.\n', ...
           chan, import{k}.type, datafile);
         return;
       end
-      import{k}.data = channels(:, chan);
+      import{k}.data = chans(:, chan);
       import{k}.units = units{chan};
     end
 

@@ -21,7 +21,7 @@ function [ sts, out ] = pspm_convert_visangle2sps(fn, options)
 %                                   should be performed. Possible values
 %                                   are: 'l', 'r', 'c'.
 %                                   Default: 'c'
-%                  .channel_action:  ['add'/'replace'] Defines whether the new channels
+%                  .chan_action:  ['add'/'replace'] Defines whether the new channels
 %                                   should be added or the previous outputs of this function
 %                                   should be replaced.
 %                                   Default: 'add'
@@ -29,7 +29,7 @@ function [ sts, out ] = pspm_convert_visangle2sps(fn, options)
 %   sts:                        Status determining whether the execution was
 %                               successfull (sts == 1) or not (sts == -1)
 %   out:                        Output struct
-%       .channel                Id of the added channels.
+%       .chan                Id of the added channels.
 %_____________________________________________________________
 
 %% Initialise
@@ -65,11 +65,11 @@ elseif ~any(strcmpi(options.eyes, {settings.lateral.char.l,...
     '''r'', ''c''.']);
   return;
 end;
-% option.channel_action
+% option.chan_action
 if ~isfield(options, 'channel_action')
-  options.channel_action = 'add';
-elseif ~any(strcmpi(options.channel_action, {'add', 'replace'}))
-  warning('ID:invalid_input', ['''options.channel_action'' must be either ''add'' or ''replace''.']);
+  options.chan_action = 'add';
+elseif ~any(strcmpi(options.chan_action, {'add', 'replace'}))
+  warning('ID:invalid_input', ['''options.chan_action'' must be either ''add'' or ''replace''.']);
   return;
 end;
 
@@ -121,7 +121,7 @@ for i=1:n_eyes
       dist_channel.header.units = 'degree';
 
 
-      [lsts, outinfo] = pspm_write_channel(fn, dist_channel, options.channel_action);
+      [lsts, outinfo] = pspm_write_channel(fn, dist_channel, options.chan_action);
 
       if lsts ~= 1
         warning('ID:invalid_input', '~Distance channel could not be written');

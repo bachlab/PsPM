@@ -15,7 +15,7 @@ function [sts, infos] = pspm_write_channel(fn, newdata, chan_action, options)
 % ┣━ channel_action
 % ┃  ┣━ 'add'       add newdata as a new channel
 % ┃  ┣━ 'replace'   replace channel with given newdata
-% ┃  ┗━ 'delete'    remove channel given with options.channel
+% ┃  ┗━ 'delete'    remove channel given with options.chan
 % ┗━ options
 %    ┣━ .msg        custom history message [char/struct()]
 %    ┣━ .prefix     custom history message prefix text, but automatically added
@@ -23,13 +23,13 @@ function [sts, infos] = pspm_write_channel(fn, newdata, chan_action, options)
 %    ┃              <prefix> <action>ed on <date>
 %    ┣━ .chan       specifiy which channel should be 'edited'
 %    ┃              default value is 0
-%    ┣━ .delete     method to look for a channel when options.channel is not an integer
+%    ┣━ .delete     method to look for a channel when options.chan is not an integer
 %    ┃    ┣━ 'last'  (default) deletes last occurence of the given chantype
 %    ┃    ┣━ 'first' deletes the first occurence
 %    ┃    ┗━ 'all'   removes all occurences
 %    ┃  Outputs will be written into the info struct. The structure depends on
 %    ┃  the passed action and options.
-%    ┗━ .channel     contains channel id of added / replaced / deleted
+%    ┗━ .chan     contains channel id of added / replaced / deleted
 %                    channels.
 %
 % PsPM 3.0
@@ -43,7 +43,7 @@ end
 sts = -1;
 outinfos = struct();
 
-% load options.channel
+% load options.chan
 try options.chan;
 catch, options.chan = 0;
 end

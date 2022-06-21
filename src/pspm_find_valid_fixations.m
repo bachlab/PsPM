@@ -173,7 +173,7 @@ if strcmpi(mode,'fixation')&& ~isfield(options, 'resolution')
 end
 
 if ~isfield(options, 'channels')
-  options.channels = 'pupil';
+  options.chans = 'pupil';
 end
 
 if ~isfield(options, 'eyes')
@@ -197,14 +197,14 @@ elseif ~any(strcmpi(options.eyes, {settings.lateral.full.c, ...
   warning('ID:invalid_input', ['Options.eyes must be either ''combined'', ', ...
     '''left'' or ''right''.']);
   return;
-elseif ~iscell(options.channels) && ~ischar(options.channels) && ...
-    ~isnumeric(options.channels)
-  warning('ID:invalid_input', ['Options.channels should be a char, ', ...
+elseif ~iscell(options.chans) && ~ischar(options.chans) && ...
+    ~isnumeric(options.chans)
+  warning('ID:invalid_input', ['Options.chans should be a char, ', ...
     'numeric or a cell of char or numeric.']);
   return;
-elseif iscell(options.channels) && any(~cellfun(@(x) isnumeric(x) || ...
-    any(strcmpi(x, settings.findvalidfixations.chantypes)), options.channels))
-  warning('ID:invalid_input', 'Option.channels contains invalid values.');
+elseif iscell(options.chans) && any(~cellfun(@(x) isnumeric(x) || ...
+    any(strcmpi(x, settings.findvalidfixations.chantypes)), options.chans))
+  warning('ID:invalid_input', 'Option.chans contains invalid values.');
   return;
 elseif strcmpi(mode,'fixation')&& isfield(options, 'fixation_point') && ...
     (~isnumeric(options.fixation_point) || ...
@@ -272,9 +272,9 @@ end
 %-----------------------------------------------------
 
 if ~isfield(options, 'channel_action')
-  options.channel_action = 'add';
-elseif sum(strcmpi(options.channel_action, {'add','replace'})) == 0
-  warning('ID:invalid_input', 'Options.channel_action must be either ''add'' or ''replace''.'); return;
+  options.chan_action = 'add';
+elseif sum(strcmpi(options.chan_action, {'add','replace'})) == 0
+  warning('ID:invalid_input', 'Options.chan_action must be either ''add'' or ''replace''.'); return;
 end
 
 % overwrite
@@ -295,8 +295,8 @@ elseif ~ischar(options.newfile)
   warning('ID:invalid_input', 'Options.newfile is not char.'); return;
 end
 
-if ~iscell(options.channels)
-  options.channels = {options.channels};
+if ~iscell(options.chans)
+  options.chans = {options.chans};
 end
 
 
@@ -312,8 +312,8 @@ for i=1:n_eyes
     gaze_y = ['gaze_y_', eye];
 
     % find chars to replace
-    str_chans = cellfun(@ischar, options.channels);
-    channels = options.channels;
+    str_chans = cellfun(@ischar, options.chans);
+    channels = options.chans;
     str_chantypes = ['(', settings.findvalidfixations.chantypes{1}];
     for i_chantypes = 2:length(settings.findvalidfixations.chantypes)
       str_chantypes = [str_chantypes, '|', ...
@@ -538,7 +538,7 @@ if numel(new_chans) >= 1
   new_data = data;
   chan_idx = NaN(1,numel(new_chans));
   for i = 1:numel(new_chans)
-    if strcmpi(options.channel_action, 'add')
+    if strcmpi(options.chan_action, 'add')
       new_data{end+1} = new_chans{i};
       chan_idx(i) = numel(new_data);
     else

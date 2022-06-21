@@ -63,8 +63,8 @@ for blk = 1:blkno
       sourceinfo{blk}.chan{k, 1} = sprintf('Channel %02.0f: %s', k, 'Events');
     else
       % define channel number ---
-      if import{blk}{k}.channel > 0
-        chan = import{blk}{k}.channel;
+      if import{blk}{k}.chan > 0
+        chan = import{blk}{k}.chan;
       else
         chan = pspm_find_channel(cellstr(labchart.titles), import{blk}{k}.type);
         if chan < 1, return; end;

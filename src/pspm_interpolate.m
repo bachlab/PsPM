@@ -31,14 +31,14 @@ function [sts, outdata] = pspm_interpolate(indata, options)
 %   ┣━.extrapolate    Determine should extrapolate for data out of the data
 %   ┃                 range.
 %   ┃                 [optional; not recommended; accept: 1, 0; default: 0]
-%   ┣━.channels       If passed, should have the same size as indata and
+%   ┣━.chans       If passed, should have the same size as indata and
 %   ┃                 contains for each entry in indata the channel(s) to
-%   ┃                 be interpolated. If options.channels is empty or a
+%   ┃                 be interpolated. If options.chans is empty or a
 %   ┃                 certain cell is empty the function then tries to
 %   ┃                 interpolate all continuous data channels. This
 %   ┃                 works only on files or structs.
 %   ┃                 [optional; default: empty]
-%   ┣━.channel_action Defines whether the interpolated data should be added
+%   ┣━.chan_action Defines whether the interpolated data should be added
 %   ┃                 or the corresponding channel should be replaced.
 %   ┃                 [optional; accept: 'add', 'replace'; default: 'add']
 %   ┗━.newfile:       This is only possible if data is loaded from a file.
@@ -78,27 +78,27 @@ end
 % 1.2 initialise options
 try options.overwrite; catch, options.overwrite = 0; end
 try options.method; catch, options.method = 'linear'; end
-try options.channels; catch, options.channels = []; end
+try options.chans; catch, options.chans = []; end
 try options.newfile; catch, options.newfile = 0; end
-try options.channel_action; catch, options.channel_action = 'add'; end
+try options.chan_action; catch, options.chan_action = 'add'; end
 try options.extrapolate; catch, options.extrapolate = 0; end
 % 1.3 check channel size
-if numel(options.channels) > 0
-  if numel(options.channels) ~= numel(indata)
-    warning('ID:invalid_size', 'options.channels must have same size as indata');
+if numel(options.chans) > 0
+  if numel(options.chans) ~= numel(indata)
+    warning('ID:invalid_size', 'options.chans must have same size as indata');
     return;
-  elseif (numel(options.channels) == 1) && ~iscell(options.channels)
-    options.channels = {options.channels};
+  elseif (numel(options.chans) == 1) && ~iscell(options.chans)
+    options.chans = {options.chans};
   end
 end
 % 1.4 check if valid data in options
 if ~ismember(options.method, {'linear', 'nearest', 'next', 'previous', 'spline', 'pchip', 'cubic'})
   warning('ID:invalid_input', 'Invalid interpolation method.');
   return;
-elseif ~(isnumeric(options.channels) || isempty(options.channels) || ...
-    (iscell(options.channels) && sum(cellfun(@(f) (isnumeric(f) || ...
-    isempty(f)), options.channels)) == numel(options.channels)))
-  warning('ID:invalid_input', 'options.channels must be numeric or a cell of numerics');
+elseif ~(isnumeric(options.chans) || isempty(options.chans) || ...
+    (iscell(options.chans) && sum(cellfun(@(f) (isnumeric(f) || ...
+    isempty(f)), options.chans)) == numel(options.chans)))
+  warning('ID:invalid_input', 'options.chans must be numeric or a cell of numerics');
   return;
 elseif ~islogical(options.newfile) && ~isnumeric(options.newfile)
   warning('ID:invalid_input', 'options.newfile must be numeric or logical');
@@ -106,8 +106,8 @@ elseif ~islogical(options.newfile) && ~isnumeric(options.newfile)
 elseif ~islogical(options.extrapolate) && ~isnumeric(options.extrapolate)
   warning('ID:invalid_input', 'options.extrapolate must be numeric or logical');
   return;
-elseif ~any(strcmpi(options.channel_action, {'add', 'replace'}))
-  warning('ID:invalid_input', 'options.channel_action can only be ''add'' or ''replace''');
+elseif ~any(strcmpi(options.chan_action, {'add', 'replace'}))
+  warning('ID:invalid_input', 'options.chan_action can only be ''add'' or ''replace''');
   return;
 elseif ~islogical(options.overwrite) && ~isnumeric(options.overwrite)
   warning('ID:invalid_input', 'options.overwrite must be numeric (0 or 1) or logical');
@@ -156,9 +156,9 @@ for d = 1:numel(D)
       outdata = {};
       break;
     end
-    if numel(options.channels) > 0 && numel(options.channels{d}) > 0
+    if numel(options.chans) > 0 && numel(options.chans{d}) > 0
       % channels passed; try to get appropriate channels
-      work_chans = options.channels{d};
+      work_chans = options.chans{d};
       chans = data(work_chans);
     else
       % no channels passed; try to search appropriate channels
@@ -270,13 +270,13 @@ for d = 1:numel(D)
       else
         o = struct();
         % add to existing file
-        if strcmp(options.channel_action, 'replace')
-          o.channel = work_chans;
+        if strcmp(options.chan_action, 'replace')
+          o.chan = work_chans;
         end
         o.msg.prefix = 'Interpolated channel';
-        [sts, infos] = pspm_write_channel(fn, savedata.data(work_chans), options.channel_action, o);
-        % added channel ids are in infos.channel
-        outdata{d} = infos.channel;
+        [sts, infos] = pspm_write_channel(fn, savedata.data(work_chans), options.chan_action, o);
+        % added channel ids are in infos.chan
+        outdata{d} = infos.chan;
       end
     end
   else

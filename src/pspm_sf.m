@@ -23,7 +23,7 @@ function outfile = pspm_sf(model, options)
 % ┃             accepted values: 'auc', 'scl', 'dcm', 'mp'
 % ┃             default: 'dcm'
 % ┣━.filter     filter settings; modality specific default
-% ┗━.channel    channel number; default: first SCR channel
+% ┗━.chan    channel number; default: first SCR channel
 % options	[struct]
 % ┣━.overwrite  overwrite existing files
 % ┣━.marker_chan_num
@@ -167,7 +167,7 @@ elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
   warning('ID:invalid_input', 'Filter structure needs a numeric ''down'' field.'); return;
 end
 % 2.8 Set options
-try model.channel; catch, model.channel = 'scr'; end
+try model.chan; catch, model.chan = 'scr'; end
 try options.overwrite; catch, options.overwrite = 0; end
 if ~isfield(options,'marker_chan_num') ||...
     ~isnumeric(options.marker_chan_num) ||...
@@ -181,7 +181,7 @@ for iFile = 1:numel(model.datafile)
   % 3.2 Check whether model file exists
   if ~pspm_overwrite(model.modelfile, options); return; end
   % 3.3 get and filter data
-  [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
+  [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.chan);
   if sts < 0, return; end
   Y{1} = data{1}.data; sr(1) = data{1}.header.sr;
   model.filter.sr = sr(1);

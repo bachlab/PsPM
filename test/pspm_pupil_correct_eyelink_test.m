@@ -75,9 +75,9 @@ classdef pspm_pupil_correct_eyelink_test < pspm_testcase
       this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
       opt.S_z = 5;
       this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:multiple_channels');
-      opt.channel = 'gaze_x_l';
+      opt.chan = 'gaze_x_l';
       this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
-      opt.channel = 5;
+      opt.chan = 5;
       this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
     end
     function check_if_corrected_channel_is_saved(this)
@@ -85,7 +85,7 @@ classdef pspm_pupil_correct_eyelink_test < pspm_testcase
       options.screen_size_mm = [43 25];
       options.mode = 'auto';
       options.C_z = 495;
-      options.channel = 'pupil_l';
+      options.chan = 'pupil_l';
       [sts, out_channel] = pspm_pupil_correct_eyelink(this.pspm_input_filename, options);
       load(this.pspm_input_filename);
       this.verifyEqual(data{out_channel}.header.chantype, 'pupil_pp_l');

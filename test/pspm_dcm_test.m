@@ -63,7 +63,7 @@ classdef pspm_dcm_test < pspm_testcase
       this.verifyWarning(@() pspm_dcm(wrong_model), 'ID:invalid_input');
       % invalid channel
       wrong_model = correct_model;
-      wrong_model.channel = '';
+      wrong_model.chan = '';
       this.verifyWarning(@() pspm_dcm(wrong_model), 'ID:invalid_input');
       % invalid norm
       wrong_model = correct_model;
