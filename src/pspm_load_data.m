@@ -23,6 +23,10 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 %                  4. Best eye pupil channels
 %                     please note that if there is only one eye in
 %                     the datafile, that eye is defined as the best eye.
+%        'pupil_l' returns the left pupil channel
+%        'pupil_r' returns the right pupil channel
+%        'gaze_x_l' returns the left gaze x channel
+%        'gaze_x_r' returns the right gaze x channel
 %        'channel type'
 %                 returns the respective channels (see settings for channel types)
 %        'none'		just checks the file
@@ -332,8 +336,14 @@ if isstruct(chan)
 end
 flag = zeros(numel(data), 1);
 if ischar(chan) && ~strcmp(chan, 'none')
-  if strcmpi(chan, 'pupil') && isfield(infos.source, 'best_eye')
-    flag = get_chans_to_load_for_pupil(data, infos.source.best_eye);
+  if strcmpi(chan(1:5), 'pupil') 
+    if strcmpi(chan, 'pupil') && isfield(infos.source, 'best_eye')
+      flag = get_chans_to_load_for_pupil(data, infos.source.best_eye);
+    elseif strcmpi(chan(7), 'l') || strcmpi(chan(7), 'r')
+      flag = get_chans_to_load_for_pupil(data, chan(7));
+    end
+  %elseif strcmpi(chan(1:4), 'gaze')
+  %  flag = get_chans_to_load_for_pupil(data, chan);
   elseif strcmpi(chan, 'sps') && isfield(infos.source, 'best_eye')
     flag = get_chans_to_load_for_sps(data, infos.source.best_eye);
   else

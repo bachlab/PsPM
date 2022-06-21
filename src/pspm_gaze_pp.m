@@ -7,12 +7,14 @@ function [sts, out_channel] = pspm_gaze_pp(fn, options)
 % 	[sts, out_channel] = pspm_gaze_pp(fn) or
 % 	[sts, out_channel] = pspm_gaze_pp(fn, options)
 % ●	Arguments
-% 	fn				[string] Path to the PsPM file which contains the gaze data.
-% 	options
-%   .channel  [numeric/string, optional] Channel ID to be preprocessed.
-%   .channel_combine  [numeric/string, optional] Channel ID to be combined.
+% 	              fn: [string] Path to the PsPM file which contains the gaze data.
+% 	         options: [struct]
+%           .channel: [numeric/string, optional] Channel ID to be preprocessed.
+%   .channel_combine: [numeric/string, optional] Channel ID to be combined.
+%      .valid_sample: [bool] 1 or 0. 1 if use valid samples produced by
+%                     pspm_pupil_pp, 0 if not to use. default as 0.
 % ●	Authors
-% 	(C) 2021 Teddy Chao
+% 	(C) 2021 Teddy Chao (UCL)
 
 %% 1 Initialise
 global settings;
@@ -34,6 +36,9 @@ if ~isfield(options, 'channel_action')
 end
 if ~isfield(options, 'channel_combine')
   options.channel_combine = 'none';
+end
+if ~isfield(options, 'valid_sample')
+  options.valid_sample = 0;
 end
 action_combine = ~strcmp(options.channel_combine, 'none');
 if ~isfield(options, 'plot_data')
@@ -95,13 +100,9 @@ for seg = options.segments
 end
 
 %% 4 Load
-addpath(pspm_path('backroom'));
-[~, gaze_og] = pspm_load_single_chan(fn, options.channel, 'last', options.channel);
-% load pupil
-[~, pupil_l] = pspm_load_single_chan(fn, 'pupil_l', 'last', 'pupil_l');
-[~, pupil_r] = pspm_load_single_chan(fn, 'pupil_r', 'last', 'pupil_r');
+[~, ~, gaze_og, ~] = pspm_load_data(fn, options.channel);
 if action_combine
-  [~, gaze_combine] = pspm_load_single_chan(fn, options.channel_combine, 'last', options.channel_combine);
+  [~, ~, gaze_combine, ~] = pspm_load_data(fn, options.channel_combine);
   if gaze_og{1}.header.sr ~= gaze_combine{1}.header.sr
     warning('ID:invalid_input', 'options.channel and options.channel_combine data have different sampling rate');
     return;
@@ -119,36 +120,55 @@ else
   gaze_combine{1}.data = [];
   old_chantype = gaze_og{1}.header.chantype;
 end
-rmpath(pspm_path('backroom'));
 
 %% 5 Set up smooth signal gaze
 % obtain valid samples from pupil
-[~, ~, model] = pspm_preprocess(pupil_l, pupil_r, ...
-  options.segments, options.custom_settings, options.plot_data, options.channel(1:end-2));
+if options.valid_sample
+  options_pp = options;
+  options_pp.channel = 'pupil_l';
+  [~, ~, model] = pspm_pupil_pp(fn, options_pp);
+  upsampling_factor = options.custom_settings.valid.interp_upsamplingFreq / gaze_og{1}.header.sr;
+  desired_output_samples_gaze = round(upsampling_factor * numel(gaze_og{1}.data));
+  smooth_signal_gaze.header.chantype = pspm_update_chantype(gaze_og{1}.header.chantype,'pp');
+  smooth_signal_gaze.header.units = gaze_og{1}.header.units;
+  smooth_signal_gaze.header.sr = options.custom_settings.valid.interp_upsamplingFreq;
+  smooth_signal_gaze.header.segments = options.segments;
+  smooth_signal_gaze.header.valid_samples.data = model.leftPupil_ValidSamples.samples.pupilDiameter;
+  smooth_signal_gaze.header.valid_samples.sample_indices = find(model.leftPupil_RawData.isValid);
+  smooth_signal_gaze.header.valid_samples.valid_percentage = model.leftPupil_ValidSamples.validFraction;
+end
+% pspm_preprocess(pupil_l, pupil_r, ...
+%   options.segments, options.custom_settings, options.plot_data, options.channel(1:end-2));
 % set up structure for smooth signal gaze
-upsampling_factor = options.custom_settings.valid.interp_upsamplingFreq / gaze_og{1}.header.sr;
-desired_output_samples_gaze = round(upsampling_factor * numel(gaze_og{1}.data));
-smooth_signal_gaze.header.chantype = pspm_update_chantype(gaze_og{1}.header.chantype,'pp');
-smooth_signal_gaze.header.units = gaze_og{1}.header.units;
-smooth_signal_gaze.header.sr = options.custom_settings.valid.interp_upsamplingFreq;
-smooth_signal_gaze.header.segments = options.segments;
-smooth_signal_gaze.header.valid_samples.data = model.leftPupil_ValidSamples.samples.pupilDiameter;
-smooth_signal_gaze.header.valid_samples.sample_indices = find(model.leftPupil_RawData.isValid);
-smooth_signal_gaze.header.valid_samples.valid_percentage = model.leftPupil_ValidSamples.validFraction;
+
 
 %% 6 preprocess
 % gaze_pp obtains the valid sample information from pupil_pp and then use
 % it to process gaze signals
 if ~action_combine
+  if options.valid_sample
     smooth_signal_gaze.data = pspm_complete_with_nans(gaze_og{1}.data, model.leftPupil_ValidSamples.signal.t(1), ...
       options.custom_settings.valid.interp_upsamplingFreq, desired_output_samples_gaze);
+  else
+    smooth_signal_gaze.data = gaze_og{1}.data;
+  end
+  smooth_signal_gaze.header.chantype = pspm_update_chantype(gaze_og{1}.header.chantype,'pp');
+  smooth_signal_gaze.header.sr = gaze_og{1}.header.sr;
+  smooth_signal_gaze.header.units = gaze_og{1}.header.units;
 else
+  if options.valid_sample
     smooth_signal_gaze.data = pspm_complete_with_nans(gaze_og{1}.data, model.leftPupil_ValidSamples.signal.t(1), ...
       options.custom_settings.valid.interp_upsamplingFreq, desired_output_samples_gaze);
     smooth_signal_gaze_combine.data = pspm_complete_with_nans(gaze_combine{1}.data, model.leftPupil_ValidSamples.signal.t(1), ...
       options.custom_settings.valid.interp_upsamplingFreq, desired_output_samples_gaze);
-    smooth_signal_gaze.data = transpose(mean(transpose([smooth_signal_gaze.data, smooth_signal_gaze_combine.data]),'omitnan'));
-    smooth_signal_gaze.header.chantype = pspm_update_chantype(gaze_og{1}.header.chantype,{'pp','c'});
+  else
+    smooth_signal_gaze.data = gaze_og{1}.data;
+    smooth_signal_gaze_combine.data = gaze_combine{1}.data;
+  end
+  smooth_signal_gaze.data = transpose(mean(transpose([smooth_signal_gaze.data, smooth_signal_gaze_combine.data]),'omitnan'));
+  smooth_signal_gaze.header.chantype = pspm_update_chantype(gaze_og{1}.header.chantype,{'pp','c'});
+  smooth_signal_gaze.header.sr = gaze_og{1}.header.sr;
+  smooth_signal_gaze.header.units = gaze_og{1}.header.units;
 end
 
 %% 7 save
@@ -164,4 +184,14 @@ if lsts ~= 1
 end
 out_channel = out_id.channel;
 sts = 1;
+end
+
+function data = pspm_complete_with_nans(data, t_beg, sr, output_samples)
+% Complete the given data that possibly has missing samples at the
+% beginning and at the end. The amount of missing samples is determined
+% by sampling rate and the data beginning second t_beg.
+sec_between_upsampled_samples = 1 / sr;
+n_missing_at_the_beg = round(t_beg / sec_between_upsampled_samples);
+n_missing_at_the_end = output_samples - numel(data) - n_missing_at_the_beg;
+data = [NaN(n_missing_at_the_beg, 1) ; data ; NaN(n_missing_at_the_end, 1)];
 end
