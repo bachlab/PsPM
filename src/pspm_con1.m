@@ -112,7 +112,7 @@ for iFn = 1:numel(modelfile)
   fprintf('\nWriting contrasts to %s\n', modelfile{iFn});
   % 3.5 check number of contrast weights --
   paramno = size(data.stats, 1);
-  for c=1:numel(convec)
+  for c = 1:numel(convec)
     if numel(convec{c}) > paramno
       warning('Contrast (%d) has more weights than statistics (%d) in modelfile %s', ...
         numel(convec{c}), paramno, modelfile{iFn});
@@ -120,20 +120,32 @@ for iFn = 1:numel(modelfile)
     end
   end
   % 3.6 transform into row vector and right pad with zeros --
-  conmat=zeros(numel(connames), paramno);
-  for c=1:numel(convec)
-    conmat(c,1:numel(convec{c}))=convec{c};
+  conmat = zeros(numel(connames), paramno);
+  for c = 1:numel(convec)
+    conmat(c,1:numel(convec{c})) = convec{c};
   end
   % 3.7 calculate contrasts
   % this automatically replicates contrasts across multiple measures if
   % data.stats has more than one column
-  if sum(isnan(data.stats)) > 0
-    warning('Calculated statistics contain NaN, save the results?');
-    [~,~,~] = uiputfile('results.mat');
-    return
-  else
-    conval = conmat * data.stats;
+  % there are issues if data.stats has NaN and the corresponding conmat
+  % also contains 0
+  idx_issue = isnan(prod(data.stats,2));
+  idx_valid_issue = transpose(conmat==0) .* idx_issue;
+  idx_invalid_issue = transpose(conmat~=0) .* idx_issue;
+  if sum(idx_issue) > 0
+    if sum(idx_valid_issue) > 0 && sum(idx_invalid_issue) == 0
+      warning(['Calculated data.stats contain NaN caused by 0 in conmat, '...
+        'which are ignored.']);
+      data_stats_converted = data.stats;
+      data_stats_converted(isnan(data_stats_converted)) = 0;
+      conval = conmat * data_stats_converted;
+    else
+      warning(['Calculated data.stats contain NaNs, caused by unknown reason, '...
+        'which is invalid.']);
+      conval = conmat * data.stats;
+    end
   end
+    
   % zscored text-output for connames
   if isfield(data, 'zscored') && data.zscored
     out_zscored = ' (z-scored)';
@@ -152,7 +164,7 @@ for iFn = 1:numel(modelfile)
     newconnames = connames;
   end
   % 3.9 save contrasts
-  for iCon=1:numel(conval)
+  for iCon = 1:numel(conval)
     con(conno+iCon).type   = out_datatype;
     con(conno+iCon).name   = newconnames{iCon};
     con(conno+iCon).con    = conval(iCon);
