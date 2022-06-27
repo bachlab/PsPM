@@ -117,7 +117,7 @@ classdef pspm_convert_ecg2hb_test < pspm_testcase
       this.verifyWarning(@()pspm_convert_ecg2hb(filename, 'bla'), 'ID:invalid_input');
       if chan_struct.nr ~= 1
         % invalid channel
-        this.verifyWarning(@()pspm_convert_ecg2hb(filename, 1), 'ID:not_allowed_channeltype');
+        this.verifyWarning(@()pspm_convert_ecg2hb(filename, 1), 'ID:not_allowed_chantype');
       end
       % invalid twthresh (text)
       o.twthresh = 'bla';

@@ -199,7 +199,7 @@ if lsts ~= 1
   return
 end
 if numel(pupil_data) > 1
-  warning('ID:multiple_channels', ['There is more than one channel'...
+  warning('ID:multiple_chans', ['There is more than one channel'...
     ' with type %s in the data file.\n'...
     ' We will process only the last one.\n'], options.chan);
   pupil_data = pupil_data(end);
@@ -231,12 +231,12 @@ if lsts ~= 1; return; end
 if lsts ~= 1; return; end
 
 if numel(gaze_x_data) > 1
-  warning('ID:multiple_channels',...
+  warning('ID:multiple_chans',...
     'There are more than one gaze x channel. We will use the last one');
   gaze_x_data = gaze_x_data(end:end);
 end
 if numel(gaze_y_data) > 1
-  warning('ID:multiple_channels',...
+  warning('ID:multiple_chans',...
     'There are more than one gaze y channel. We will use the last one');
   gaze_y_data = gaze_y_data(end:end);
 end

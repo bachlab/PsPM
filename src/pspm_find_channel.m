@@ -33,7 +33,7 @@ end;
 
 if ischar(chantype)
   if ~ismember(chantype, {settings.chantypes.type})
-    warning('ID:not_allowed_channeltype', '\nChannel type %s not allowed.\n', chantype); return;
+    warning('ID:not_allowed_chantype', '\nChannel type %s not allowed.\n', chantype); return;
   else
     namestrings = settings.import.channames.(chantype);
   end;

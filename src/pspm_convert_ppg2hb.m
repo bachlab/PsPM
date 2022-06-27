@@ -72,7 +72,7 @@ if numel(data) > 1
 end
 % Check that channel is ppg
 if ~strcmp(data{1,1}.header.chantype,'ppg')
-  warning('ID:not_allowed_channeltype', 'Specified channel is not a PPG channel. Don''t know what to do!')
+  warning('ID:not_allowed_chantype', 'Specified channel is not a PPG channel. Don''t know what to do!')
   return;
 end
 

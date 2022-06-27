@@ -172,7 +172,7 @@ for d = 1:numel(D)
     % look for event channels
     ev = cellfun(@(f) strcmpi(f.header.units, 'events'), chans);
     if any(ev)
-      warning('ID:invalid_channeltype', 'Cannot interpolate event channels.');
+      warning('ID:invalid_chantype', 'Cannot interpolate event channels.');
       return;
     end
   else

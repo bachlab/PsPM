@@ -206,7 +206,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
         pspm_find_valid_fixations(fn, box_degree, dist,dist_unit,options));
       this.verifyEqual(sts, 1);
       [~, ~, n_data] = pspm_load_data(outfile);
-      % look for channels with 'missing' in channeltype
+      % look for channels with 'missing' in chantype
       missing_chans = cellfun(@(x) ...
         numel(regexp(x.header.chantype, 'missing')) > 0, n_data);
       if missing

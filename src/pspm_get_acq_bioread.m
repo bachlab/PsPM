@@ -24,7 +24,10 @@ sourceinfo = [];
 % load data
 % -------------------------------------------------------------------------
 inputdata = load(datafile);
-
+if isfield(inputdata, 'channels') && ~isfield(inputdata, 'chans')
+  inputdata.chans = inputdata.channels;
+  inputdata = rmfield(inputdata, 'channels');
+end
 
 % extract individual channels
 % -------------------------------------------------------------------------

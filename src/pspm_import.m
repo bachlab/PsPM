@@ -79,8 +79,8 @@ function outfile = pspm_import(datafile, datatype, import, options)
 %           recording date & time, and others)
 %
 % Guideline for new channel functions:
-% - functions are named as 'pspm_get_channeltype' and called
-%      [sts, data] = pspm_get_channeltype(import)
+% - functions are named as 'pspm_get_chantype' and called
+%      [sts, data] = pspm_get_chantype(import)
 % - see pspm_load_data for the required structure of 'data'
 %
 % Notes for multiple blocks:
@@ -110,7 +110,7 @@ elseif ~ischar(datatype)
     'Data type needs to be a string');
   return
 elseif sum(strcmpi(datatype, {settings.import.datatypes.short})) == 0
-  warning('ID:invalid_channeltype', ...
+  warning('ID:invalid_chantype', ...
     'Data type (%s) not recognised', datatype);
   return
 elseif nargin < 3
