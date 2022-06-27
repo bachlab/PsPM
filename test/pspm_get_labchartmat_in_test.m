@@ -18,18 +18,18 @@ classdef pspm_get_labchartmat_in_test < pspm_get_superclass
       % The channels are technically emg channels. Since there are no other
       % sample files available at the moment, they are treated as scr
       % channels here
-      this.testcases{1}.import{1} = struct('type', 'scr'   , 'channel', 1);
-      this.testcases{1}.import{2} = struct('type', 'scr'   , 'channel', 2);
-      this.testcases{1}.import{3} = struct('type', 'scr'   , 'channel', 3);
-      this.testcases{1}.import{4} = struct('type', 'scr'   , 'channel', 4);
+      this.testcases{1}.import{1} = struct('type', 'scr'   , 'chan', 1);
+      this.testcases{1}.import{2} = struct('type', 'scr'   , 'chan', 2);
+      this.testcases{1}.import{3} = struct('type', 'scr'   , 'chan', 3);
+      this.testcases{1}.import{4} = struct('type', 'scr'   , 'chan', 4);
     end
   end
   methods (Test)
     function invalid_datafile(this)
       fn = 'ImportTestData/labchart/LabChartMat_in_allchannels.mat';
-      import{1} = struct('type', 'scr'   , 'channel', 1);
-      import{2} = struct('type', 'scr'   , 'channel', 2);
-      import{3} = struct('type', 'scr'   , 'channel',15);
+      import{1} = struct('type', 'scr'   , 'chan', 1);
+      import{2} = struct('type', 'scr'   , 'chan', 2);
+      import{3} = struct('type', 'scr'   , 'chan',15);
       import = this.assign_chantype_number(import);
       this.verifyWarning(@()pspm_get_labchartmat_in(fn, import), 'ID:channel_not_contained_in_file');
     end

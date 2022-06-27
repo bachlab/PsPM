@@ -21,7 +21,7 @@ fid = fopen(filename,'r','b'); %big-endian byte ordering
 
 %channel count
 fseek(fid, 7, 'bof');
-vario.head.channel_count = fread(fid, 1);
+vario.head.chan_count = fread(fid, 1);
 
 %scanrate in Hertz
 fseek(fid, 20, 'bof');
@@ -40,19 +40,19 @@ vario.head.measure_time = fread(fid, 3);
 fseek(fid, 2, 'bof');
 vario.head.length = fread(fid, 1, 'uint16');
 % get channel info
-for i=1:vario.head.channel_count
-    vario.channel(i) = vario_channel_read(i,fid,vario.head.Scaled_Scan_Rate,vario.head.channel_count);
+for i=1:vario.head.chan_count
+    vario.chan(i) = vario_channel_read(i,fid,vario.head.Scaled_Scan_Rate,vario.head.chan_count);
     %write correct channel data
-    vario.channel(i).data = (vario.channel(i).data - vario.channel(i).offset) .* (vario.channel(i).mul / vario.channel(i).div);
+    vario.chan(i).data = (vario.chan(i).data - vario.chan(i).offset) .* (vario.chan(i).mul / vario.chan(i).div);
 end;
 fclose(fid);
 
 if nargout==2
-    markIX = find(strcmpi({vario.channel.name},'marker'));
-    vario.channel(markIX).time = (1:length(vario.channel(markIX).data)) / vario.channel(markIX).scaled_scan_fac;
+    markIX = find(strcmpi({vario.chan.name},'marker'));
+    vario.chan(markIX).time = (1:length(vario.chan(markIX).data)) / vario.chan(markIX).scaled_scan_fac;
     %marker value > 0, marker channel shows difference, new marker value is
     %kept in next sample
-    eventIdx = find(vario.channel(markIX).data > 0 & diff([0;vario.channel(markIX).data]) & diff([vario.channel(markIX).data;0]) == 0);
+    eventIdx = find(vario.chan(markIX).data > 0 & diff([0;vario.chan(markIX).data]) & diff([vario.chan(markIX).data;0]) == 0);
     %allocating
     event= struct('time', {}, 'nid', {},'name', {});
     if ~isempty(eventIdx)
@@ -60,9 +60,9 @@ if nargout==2
         %events
         for iEvent = 1:length(eventIdx)
             iEventIdx = eventIdx(iEvent);
-            event(iEvent).time = vario.channel(markIX).time(iEventIdx);
-            event(iEvent).nid = vario.channel(markIX).data(iEventIdx);
-            event(iEvent).name = num2str(vario.channel(markIX).data(iEventIdx));
+            event(iEvent).time = vario.chan(markIX).time(iEventIdx);
+            event(iEvent).nid = vario.chan(markIX).data(iEventIdx);
+            event(iEvent).name = num2str(vario.chan(markIX).data(iEventIdx));
         end
     end    
 end;

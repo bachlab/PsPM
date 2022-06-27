@@ -76,11 +76,11 @@ else
    header_lines = import{1}.header_lines;
 end
 
-if ~isfield(import{1}, 'channel_names_line')
+if ~isfield(import{1}, 'chan_names_line')
    channel_names_line = 1;
    if header_lines < channel_names_line, channel_names_line=0; end
 elseif ~isnumeric(import{1}.chan_names_line)
-   warning('ID:invalid_input','The ''channel_names_line'' option should be a numeric value.')
+   warning('ID:invalid_input','The ''chan_names_line'' option should be a numeric value.')
    return;
 else
    channel_names_line = import{1}.chan_names_line;
@@ -154,7 +154,7 @@ for k = 1:numel(import)
         if chan < 1, return; end;
     else
         warning('ID:invalid_input', ...
-                ['Neiter ''channel'' nor ''channel_names_line'' options were specified.', ...
+                ['Neiter ''channel'' nor ''chan_names_line'' options were specified.', ...
                  ' Not able to import the data.'])
         return;
     end

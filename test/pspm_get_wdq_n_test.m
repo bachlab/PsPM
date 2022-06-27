@@ -14,18 +14,18 @@ classdef pspm_get_wdq_n_test < pspm_get_superclass
       % data we are able to produce
       % testcase 1
       this.testcases{1}.pth = 'ImportTestData/nwdq/sc4b26.WDQ';
-      this.testcases{1}.import{1} = struct('type', 'scr', 'channel', 1);
-      this.testcases{1}.import{2} = struct('type', 'ecg', 'channel', 2);
-      this.testcases{1}.import{3} = struct('type', 'ecg', 'channel', 3);
-      this.testcases{1}.import{4} = struct('type', 'resp', 'channel', 4);
-      this.testcases{1}.import{5} = struct('type', 'marker', 'channel', 5);
+      this.testcases{1}.import{1} = struct('type', 'scr', 'chan', 1);
+      this.testcases{1}.import{2} = struct('type', 'ecg', 'chan', 2);
+      this.testcases{1}.import{3} = struct('type', 'ecg', 'chan', 3);
+      this.testcases{1}.import{4} = struct('type', 'resp', 'chan', 4);
+      this.testcases{1}.import{5} = struct('type', 'marker', 'chan', 5);
     end
   end
   methods (Test)
     function invalid_input(this)
       fn = 'ImportTestData/nwdq/sc4b26.WDQ';
-      import{1} = struct('type', 'scr'   , 'channel', 1);
-      import{2} = struct('type', 'marker', 'channel', 7);
+      import{1} = struct('type', 'scr'   , 'chan', 1);
+      import{2} = struct('type', 'marker', 'chan', 7);
       import = this.assign_chantype_number(import);
       this.verifyWarning(@()pspm_get_wdq_n(fn, import), 'ID:channel_not_contained_in_file');
     end

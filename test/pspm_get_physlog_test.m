@@ -13,22 +13,22 @@ classdef pspm_get_physlog_test < pspm_get_superclass
       % data we are able to produce
       % testcase 1
       this.testcases{1}.pth = 'ImportTestData/physlog/SCANPHYSLOG20150821194530.log';
-      this.testcases{1}.import{1} = struct('type', 'ecg', 'channel', 1);
-      this.testcases{1}.import{2} = struct('type', 'ecg', 'channel', 2);
-      this.testcases{1}.import{3} = struct('type', 'ecg', 'channel', 3);
-      this.testcases{1}.import{4} = struct('type', 'ecg', 'channel', 4);
-      this.testcases{1}.import{5} = struct('type', 'ppg', 'channel', 5);
-      this.testcases{1}.import{6} = struct('type', 'resp', 'channel', 6);
-      this.testcases{1}.import{7} = struct('type', 'marker', 'channel', 1);
-      this.testcases{1}.import{8} = struct('type', 'marker', 'channel', 2);
-      this.testcases{1}.import{9} = struct('type', 'marker', 'channel', 3);
-      this.testcases{1}.import{10} = struct('type', 'marker', 'channel', 4);
-      this.testcases{1}.import{11} = struct('type', 'marker', 'channel', 5);
-      this.testcases{1}.import{12} = struct('type', 'marker', 'channel', 6);
-      this.testcases{1}.import{13} = struct('type', 'marker', 'channel', 7);
-      this.testcases{1}.import{14} = struct('type', 'marker', 'channel', 8);
-      this.testcases{1}.import{15} = struct('type', 'marker', 'channel', 9);
-      this.testcases{1}.import{16} = struct('type', 'marker', 'channel', 10);
+      this.testcases{1}.import{1} = struct('type', 'ecg', 'chan', 1);
+      this.testcases{1}.import{2} = struct('type', 'ecg', 'chan', 2);
+      this.testcases{1}.import{3} = struct('type', 'ecg', 'chan', 3);
+      this.testcases{1}.import{4} = struct('type', 'ecg', 'chan', 4);
+      this.testcases{1}.import{5} = struct('type', 'ppg', 'chan', 5);
+      this.testcases{1}.import{6} = struct('type', 'resp', 'chan', 6);
+      this.testcases{1}.import{7} = struct('type', 'marker', 'chan', 1);
+      this.testcases{1}.import{8} = struct('type', 'marker', 'chan', 2);
+      this.testcases{1}.import{9} = struct('type', 'marker', 'chan', 3);
+      this.testcases{1}.import{10} = struct('type', 'marker', 'chan', 4);
+      this.testcases{1}.import{11} = struct('type', 'marker', 'chan', 5);
+      this.testcases{1}.import{12} = struct('type', 'marker', 'chan', 6);
+      this.testcases{1}.import{13} = struct('type', 'marker', 'chan', 7);
+      this.testcases{1}.import{14} = struct('type', 'marker', 'chan', 8);
+      this.testcases{1}.import{15} = struct('type', 'marker', 'chan', 9);
+      this.testcases{1}.import{16} = struct('type', 'marker', 'chan', 10);
     end
   end
   methods (Test)
@@ -40,11 +40,11 @@ classdef pspm_get_physlog_test < pspm_get_superclass
       this.verifyWarning(@() this.fhandle(fn, {}), 'ID:invalid_input');
       fn = 'ImportTestData/physlog/SCANPHYSLOG20150821194530.log';
       % data chan does not exist
-      import{1} = struct('type', 'ecg', 'channel', 8);
+      import{1} = struct('type', 'ecg', 'chan', 8);
       import = this.assign_chantype_number(import);
       this.verifyWarning(@() this.fhandle(fn, import), 'ID:channel_not_contained_in_file');
       % trigger chan does not exist
-      import{1} = struct('type', 'marker', 'channel', 11);
+      import{1} = struct('type', 'marker', 'chan', 11);
       import = this.assign_chantype_number(import);
       this.verifyWarning(@() this.fhandle(fn, import), 'ID:channel_not_contained_in_file');
     end

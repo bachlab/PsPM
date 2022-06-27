@@ -12,20 +12,20 @@ classdef pspm_get_obs_test < pspm_get_superclass
     function define_testcases(this)
       % testcase 1
       this.testcases{1}.pth = 'ImportTestData/obs/ID0043-Laurens-BV_COND.obs';
-      this.testcases{1}.import{1} = struct('type', 'scr'   , 'channel', 2);
-      this.testcases{1}.import{2} = struct('type', 'marker', 'channel', 1);
+      this.testcases{1}.import{1} = struct('type', 'scr'   , 'chan', 2);
+      this.testcases{1}.import{2} = struct('type', 'marker', 'chan', 1);
       % testcase 2
       this.testcases{2}.pth = 'ImportTestData/obs/ID0043-Laurens-BV_COND.obs';
-      this.testcases{2}.import{1} = struct('type', 'scr'   , 'channel', 0);
-      this.testcases{2}.import{2} = struct('type', 'marker', 'channel', 0);
+      this.testcases{2}.import{1} = struct('type', 'scr'   , 'chan', 0);
+      this.testcases{2}.import{2} = struct('type', 'marker', 'chan', 0);
     end
   end
   methods (Test)
     function invalid_datafile(this)
       fn = 'ImportTestData/obs/ID0043-Laurens-BV_COND.obs';
-      import{1} = struct('type', 'scr'   , 'channel', 2);
-      import{2} = struct('type', 'marker', 'channel', 1);
-      import{3} = struct('type', 'scr'   , 'channel', 4);
+      import{1} = struct('type', 'scr'   , 'chan', 2);
+      import{2} = struct('type', 'marker', 'chan', 1);
+      import{3} = struct('type', 'scr'   , 'chan', 4);
       import = this.assign_chantype_number(import);
       this.verifyWarning(@()pspm_get_obs(fn, import), 'ID:channel_not_contained_in_file');
     end

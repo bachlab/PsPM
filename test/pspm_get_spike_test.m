@@ -12,27 +12,27 @@ classdef pspm_get_spike_test < pspm_get_superclass
     function define_testcases(this)
       % testcase 1
       this.testcases{1}.pth = 'ImportTestData/spike/AEC_11.smr';
-      this.testcases{1}.import{1} = struct('type', 'scr'   , 'channel', 1);
-      this.testcases{1}.import{2} = struct('type', 'marker', 'channel', 2);
-      this.testcases{1}.import{3} = struct('type', 'marker', 'channel', 3);
-      this.testcases{1}.import{4} = struct('type', 'marker', 'channel', 4);
-      this.testcases{1}.import{5} = struct('type', 'marker', 'channel', 5);
-      this.testcases{1}.import{6} = struct('type', 'marker', 'channel', 6);
-      this.testcases{1}.import{7} = struct('type', 'marker', 'channel', 7);
-      % this.testcases{1}.import{8} = struct('type', 'marker', 'channel', 8);
-      % this.testcases{1}.import{9} = struct('type', 'marker', 'channel', 9);
+      this.testcases{1}.import{1} = struct('type', 'scr'   , 'chan', 1);
+      this.testcases{1}.import{2} = struct('type', 'marker', 'chan', 2);
+      this.testcases{1}.import{3} = struct('type', 'marker', 'chan', 3);
+      this.testcases{1}.import{4} = struct('type', 'marker', 'chan', 4);
+      this.testcases{1}.import{5} = struct('type', 'marker', 'chan', 5);
+      this.testcases{1}.import{6} = struct('type', 'marker', 'chan', 6);
+      this.testcases{1}.import{7} = struct('type', 'marker', 'chan', 7);
+      % this.testcases{1}.import{8} = struct('type', 'marker', 'chan', 8);
+      % this.testcases{1}.import{9} = struct('type', 'marker', 'chan', 9);
       % testcase 2
       this.testcases{2}.pth = 'ImportTestData/spike/Spike_SCR_Marker.smr';
-      this.testcases{2}.import{1} = struct('type', 'scr'   , 'channel', 1);
-      this.testcases{2}.import{2} = struct('type', 'marker', 'channel', 2);
+      this.testcases{2}.import{1} = struct('type', 'scr'   , 'chan', 1);
+      this.testcases{2}.import{2} = struct('type', 'marker', 'chan', 2);
     end
   end
   methods (Test)
     function invalid_datafile(this)
       fn = 'ImportTestData/spike/Spike_SCR_Marker.smr';
-      import{1} = struct('type', 'scr'   , 'channel', 1);
-      import{2} = struct('type', 'marker', 'channel', 2);
-      import{3} = struct('type', 'marker', 'channel', 4);
+      import{1} = struct('type', 'scr'   , 'chan', 1);
+      import{2} = struct('type', 'marker', 'chan', 2);
+      import{3} = struct('type', 'marker', 'chan', 4);
       import = this.assign_chantype_number(import);
       this.verifyWarning(@()pspm_get_spike(fn, import), 'ID:channel_not_contained_in_file');
     end

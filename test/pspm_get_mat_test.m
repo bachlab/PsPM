@@ -14,22 +14,22 @@ classdef pspm_get_mat_test < pspm_get_superclass
       % testcase 1 (cell structure)
       this.testcases{1}.pth = 'testfile_get_mat_test_1.mat';
       this.testcases{1}.datasubtype = 1; % cell structure
-      this.testcases{1}.import{1} = struct('type', 'scr'   , 'channel', 1, 'sr', 100);
-      this.testcases{1}.import{2} = struct('type', 'marker', 'channel', 2, 'sr',   1);
-      this.testcases{1}.import{3} = struct('type', 'hr'    , 'channel', 5, 'sr', 100);
-      this.testcases{1}.import{4} = struct('type', 'hb'    , 'channel', 4, 'sr',   1);
-      this.testcases{1}.import{5} = struct('type', 'marker', 'channel', 3, 'sr',   1);
-      this.testcases{1}.import{6} = struct('type', 'resp'  , 'channel', 6, 'sr', 100);
-      this.testcases{1}.import{7} = struct('type', 'scr'   , 'channel', 7, 'sr', 100);
+      this.testcases{1}.import{1} = struct('type', 'scr'   , 'chan', 1, 'sr', 100);
+      this.testcases{1}.import{2} = struct('type', 'marker', 'chan', 2, 'sr',   1);
+      this.testcases{1}.import{3} = struct('type', 'hr'    , 'chan', 5, 'sr', 100);
+      this.testcases{1}.import{4} = struct('type', 'hb'    , 'chan', 4, 'sr',   1);
+      this.testcases{1}.import{5} = struct('type', 'marker', 'chan', 3, 'sr',   1);
+      this.testcases{1}.import{6} = struct('type', 'resp'  , 'chan', 6, 'sr', 100);
+      this.testcases{1}.import{7} = struct('type', 'scr'   , 'chan', 7, 'sr', 100);
       % generate testdata
-      channels1{1}.chantype = 'scr';
-      channels1{2}.chantype = 'marker';
-      channels1{3}.chantype = 'marker';
-      channels1{4}.chantype = 'hb';
-      channels1{5}.chantype = 'hr';
-      channels1{6}.chantype = 'resp';
-      channels1{7}.chantype = 'scr';
-      gendata = pspm_testdata_gen(channels1);
+      chans1{1}.chantype = 'scr';
+      chans1{2}.chantype = 'marker';
+      chans1{3}.chantype = 'marker';
+      chans1{4}.chantype = 'hb';
+      chans1{5}.chantype = 'hr';
+      chans1{6}.chantype = 'resp';
+      chans1{7}.chantype = 'scr';
+      gendata = pspm_testdata_gen(chans1);
       for k = 1:numel(this.testcases{1}.import)
         data{k} = gendata.data{k}.data;
       end
@@ -37,16 +37,16 @@ classdef pspm_get_mat_test < pspm_get_superclass
       % testcase 2 (matrix structure)
       this.testcases{2}.pth = 'testfile_get_mat_test_2.mat';
       this.testcases{2}.datasubtype = 2; % matrix structure
-      this.testcases{2}.import{1} = struct('type', 'scr'   , 'channel', 1, 'sr', 100);
-      this.testcases{2}.import{2} = struct('type', 'scr'   , 'channel', 4, 'sr', 200);
-      this.testcases{2}.import{3} = struct('type', 'hr'    , 'channel', 3, 'sr', 100);
-      this.testcases{2}.import{4} = struct('type', 'scr'   , 'channel', 2, 'sr', 100);
+      this.testcases{2}.import{1} = struct('type', 'scr'   , 'chan', 1, 'sr', 100);
+      this.testcases{2}.import{2} = struct('type', 'scr'   , 'chan', 4, 'sr', 200);
+      this.testcases{2}.import{3} = struct('type', 'hr'    , 'chan', 3, 'sr', 100);
+      this.testcases{2}.import{4} = struct('type', 'scr'   , 'chan', 2, 'sr', 100);
       % generate testdata
-      channels2{1}.chantype = 'scr';
-      channels2{2}.chantype = 'scr';
-      channels2{3}.chantype = 'hr';
-      channels2{4}.chantype = 'scr';
-      gendata = pspm_testdata_gen(channels2);
+      chans2{1}.chantype = 'scr';
+      chans2{2}.chantype = 'scr';
+      chans2{3}.chantype = 'hr';
+      chans2{4}.chantype = 'scr';
+      gendata = pspm_testdata_gen(chans2);
       data = [];
       for k = 1:numel(this.testcases{2}.import)
         data = [data, gendata.data{k}.data];
@@ -80,8 +80,8 @@ classdef pspm_get_mat_test < pspm_get_superclass
       'ID:invalid_data_structure', 'invalid_datafile test 3');
       delete(fn);
       fn = this.testcases{2}.pth;
-      import{1} = struct('type', 'scr'   , 'channel', 1);
-      import{2} = struct('type', 'marker', 'channel', 6);
+      import{1} = struct('type', 'scr'   , 'chan', 1);
+      import{2} = struct('type', 'marker', 'chan', 6);
       import = this.assign_chantype_number(import);
       this.verifyWarning(@()pspm_get_mat(fn, import), 'ID:channel_not_contained_in_file');
     end
