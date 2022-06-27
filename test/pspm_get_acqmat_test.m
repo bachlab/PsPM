@@ -11,20 +11,20 @@ classdef pspm_get_acqmat_test < pspm_get_superclass
     function define_testcases(this)
       % testcase 1
       this.testcases{1}.pth = 'ImportTestData/acq/Acq_exported_SCR_Marker.mat';
-      this.testcases{1}.import{1} = struct('type', 'scr'   , 'channel', 1);
-      this.testcases{1}.import{2} = struct('type', 'marker', 'channel', 2);
+      this.testcases{1}.import{1} = struct('type', 'scr'   , 'chan', 1);
+      this.testcases{1}.import{2} = struct('type', 'marker', 'chan', 2);
       % testcase 2
       this.testcases{2}.pth = 'ImportTestData/acq/subject1_SCR_to_10_painful_shocks.mat';
-      this.testcases{2}.import{1} = struct('type', 'scr'   , 'channel', 1);
-      this.testcases{2}.import{2} = struct('type', 'marker', 'channel', 2);
+      this.testcases{2}.import{1} = struct('type', 'scr'   , 'chan', 1);
+      this.testcases{2}.import{2} = struct('type', 'marker', 'chan', 2);
     end
   end
   methods (Test)
     function invalid_datafile(this)
       fn = 'ImportTestData/acq/Acq_exported_SCR_Marker.mat';
-      import{1} = struct('type', 'scr'   , 'channel', 1);
-      import{2} = struct('type', 'marker', 'channel', 2);
-      import{3} = struct('type', 'marker', 'channel', 4);
+      import{1} = struct('type', 'scr'   , 'chan', 1);
+      import{2} = struct('type', 'marker', 'chan', 2);
+      import{3} = struct('type', 'marker', 'chan', 4);
       import = this.assign_chantype_number(import);
       this.verifyWarning(@()pspm_get_acqmat(fn, import), 'ID:channel_not_contained_in_file');
     end

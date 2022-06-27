@@ -18,7 +18,7 @@ function [varargout] = pspm_convert_area2diameter(varargin)
 %           area:               a numeric vector of area values (the unit
 %                               is not important)
 %           options:
-%               channel_action:  ['add'/'replace'] Defines whether the new channel
+%               chan_action:  ['add'/'replace'] Defines whether the new channel
 %                                should be added or the previous outputs of this
 %                                function should be replaced.
 %                                (Default: 'add')
@@ -58,7 +58,7 @@ else
     options = struct();
   end
 
-  if ~isfield(options, 'channel_action')
+  if ~isfield(options, 'chan_action')
     options.chan_action = 'add';
   end
 

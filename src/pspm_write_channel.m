@@ -6,13 +6,13 @@ function [sts, infos] = pspm_write_channel(fn, newdata, chan_action, options)
 % and pspm_rewrite_channel.
 %
 % FORMAT
-% [sts, infos] = pspm_write_channel(fn, newdata, channel_action, options)
+% [sts, infos] = pspm_write_channel(fn, newdata, chan_action, options)
 %
 % PARAMETERS
 % ┣━ fn             data file name
 % ┣━ newdata        [struct()/empty] is either a new data struct or a cell array of
 % ┃                 new data structs.
-% ┣━ channel_action
+% ┣━ chan_action
 % ┃  ┣━ 'add'       add newdata as a new channel
 % ┃  ┣━ 'replace'   replace channel with given newdata
 % ┃  ┗━ 'delete'    remove channel given with options.chan

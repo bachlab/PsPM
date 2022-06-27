@@ -22,7 +22,7 @@ function [sts, out] = pspm_convert_gaze_distance(fn, target, from, width, height
 %     distance:           Subject distance from the screen in the units chosen in the 'from' parameter
 %
 %     options:
-%       channel_action:   Channel action for sps data, add / replace existing sps data
+%       chan_action:   Channel action for sps data, add / replace existing sps data
 %
 % OUTPUT:
 %   sts:               Status determining whether the execution was
@@ -51,7 +51,7 @@ elseif nargin < 7;
 end
 
 % Options defaults
-if ~isfield(options, 'channel_action');
+if ~isfield(options, 'chan_action');
   options.chan_action = 'add';
 end
 

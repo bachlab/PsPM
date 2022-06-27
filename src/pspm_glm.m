@@ -224,7 +224,7 @@ modno = find(strcmpi(model.modelspec, {settings.glm.modelspec}));
 model.modality = settings.glm(modno).modality;
 
 % check data channel --
-if ~isfield(model, 'channel')
+if ~isfield(model, 'chan')
   if strcmp(model.modality, 'psr')
     model.chan = "pupil";
   else

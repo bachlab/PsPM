@@ -10,7 +10,7 @@ function [sts, infos] = pspm_convert_hb2hp(fn, sr, chan, options)
   %             beat channel); if empty (= 0 / []) will be set to default
   %             value
   %       options: optional arguments [struct]
-  %           channel_action: ['add'/'replace'] Defines whether heart rate signal
+  %           chan_action: ['add'/'replace'] Defines whether heart rate signal
   %                           should be added or the corresponding preprocessed
   %                           channel should be replaced.
   %                           (Default: 'replace')
@@ -37,7 +37,7 @@ function [sts, infos] = pspm_convert_hb2hp(fn, sr, chan, options)
 
   if ~exist('options','var'), options = struct();
   end;
-  if ~isfield(options,'channel_action'), options.chan_action = 'replace';
+  if ~isfield(options,'chan_action'), options.chan_action = 'replace';
   end;
   if ~isfield(options,'limit'), options.limit = struct();
   end;

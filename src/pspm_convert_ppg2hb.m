@@ -13,7 +13,7 @@ function [ sts, outinfo ] = pspm_convert_ppg2hb( fn,chan,options )
 %           diagnostics : [true/FALSE] displays some debugging information
 %           replace     : [true/FALSE] replace existing heartbeat channel.
 %                         If multiple channels are present, replaces last.
-%           channel_action ['add'/'replace'] Defines whether the interpolated
+%           chan_action ['add'/'replace'] Defines whether the interpolated
 %                          data should be added or the corresponding channel
 %                          should be replaced.
 %                          (Default: 'replace')

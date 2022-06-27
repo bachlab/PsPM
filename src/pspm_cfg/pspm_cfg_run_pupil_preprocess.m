@@ -6,13 +6,13 @@ function [out] = pspm_cfg_run_pupil_preprocess(job)
     fn = job.datafile{1};
     options = struct();
 
-    chankey = fieldnames(job.channel);
+    chankey = fieldnames(job.chan);
     chankey = chankey{1};
-    options.channel = job.channel.(chankey);
+    options.chan = job.chan.(chankey);
 
-    chankey = fieldnames(job.channel_combine);
+    chankey = fieldnames(job.chan_combine);
     chankey = chankey{1};
-    options.channel_combine = job.channel_combine.(chankey);
+    options.chan_combine = job.chan_combine.(chankey);
 
     settkey = fieldnames(job.settings);
     settkey = settkey{1};
@@ -25,7 +25,7 @@ function [out] = pspm_cfg_run_pupil_preprocess(job)
         options.segments{end + 1} = job.segments(i);
     end
 
-    options.channel_action = job.channel_action;
+    options.chan_action = job.chan_action;
     options.plot_data = job.plot_data;
 
     [sts, out{1}] = pspm_pupil_pp(fn, options);

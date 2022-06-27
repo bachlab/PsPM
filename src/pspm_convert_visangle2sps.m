@@ -66,7 +66,7 @@ elseif ~any(strcmpi(options.eyes, {settings.lateral.char.l,...
   return;
 end;
 % option.chan_action
-if ~isfield(options, 'channel_action')
+if ~isfield(options, 'chan_action')
   options.chan_action = 'add';
 elseif ~any(strcmpi(options.chan_action, {'add', 'replace'}))
   warning('ID:invalid_input', ['''options.chan_action'' must be either ''add'' or ''replace''.']);

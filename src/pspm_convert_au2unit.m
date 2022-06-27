@@ -47,7 +47,7 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 %                               Possible values are mm, cm, dm, m, in, inches
 %
 %           options:            a struct of optional settings
-%               channel_action:  ['add'/'replace'] Defines whether the new channel
+%               chan_action:  ['add'/'replace'] Defines whether the new channel
 %                                should be added or the previous outputs of this
 %                                function should be replaced.
 %                                (Default: 'add')
@@ -181,7 +181,7 @@ if strcmpi(mode, 'data') && strcmpi(record_method, '') && ...
   return;
 end
 
-if ~isfield(options, 'channel_action')
+if ~isfield(options, 'chan_action')
   options.chan_action = 'add';
 end
 

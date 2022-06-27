@@ -1,9 +1,9 @@
-function [sts, out_channel] = pspm_blink_saccade_filt(fn, discard_factor, options)
+function [sts, out_chan] = pspm_blink_saccade_filt(fn, discard_factor, options)
 % Perform blink-saccade filtering on a given file containing pupil data. This
 % function extends each blink and/or saccade period towards the beginning and the
 % end of the signal by an amount specified by the user.
 %
-% FORMAT: [sts, out_channel] = pspm_blink_saccade_filt(fn, discard_factor, options)
+% FORMAT: [sts, out_chan] = pspm_blink_saccade_filt(fn, discard_factor, options)
 %
 %       fn:                 [string] Path to the PsPM file which contains
 %                           the pupil data.
@@ -23,12 +23,12 @@ function [sts, out_channel] = pspm_blink_saccade_filt(fn, discard_factor, option
 %                           each end of every blink/saccade period.
 %       options:
 %           Optional:
-%               channel:         [numeric/string] Channel ID to be preprocessed.
+%               chan:         [numeric/string] Channel ID to be preprocessed.
 %                                By default preprocesses all the pupil and gaze
 %                                channels.
 %                                (Default: 0)
 %
-%               channel_action:  ['add'/'replace'] Defines whether corrected data
+%               chan_action:  ['add'/'replace'] Defines whether corrected data
 %                                should be added or the corresponding preprocessed
 %                                channel should be replaced.
 %                                (Default: 'add')
@@ -44,19 +44,19 @@ sts = -1;
 if nargin == 2
   options = struct();
 end
-if ~isfield(options, 'channel')
-  options.channel = 0;
+if ~isfield(options, 'chan')
+  options.chan = 0;
 end
-if ~isfield(options, 'channel_action')
-  options.channel_action = 'add';
+if ~isfield(options, 'chan_action')
+  options.chan_action = 'add';
 end
 
 if ~isnumeric(discard_factor)
   warning('ID:invalid_input', 'discard_factor must be numeric');
   return;
 end
-if ~ismember(options.channel_action, {'add', 'replace'})
-  warning('ID:invalid_input', 'Option channel_action must be either ''add'' or ''replace''');
+if ~ismember(options.chan_action, {'add', 'replace'})
+  warning('ID:invalid_input', 'Option chan_action must be either ''add'' or ''replace''');
   return;
 end
 
@@ -64,7 +64,7 @@ end
 % ---------
 [lsts, ~, data] = pspm_load_data(fn);
 if lsts ~= 1; return; end;
-[lsts, ~, data_user] = pspm_load_data(fn, options.channel);
+[lsts, ~, data_user] = pspm_load_data(fn, options.chan);
 if lsts ~= 1; return; end;
 data_user = keep_pupil_gaze_chans(data_user);
 
@@ -85,7 +85,7 @@ end
 n_mask_chans = numel(data_mat);
 for i = 1:numel(data_user)
   chantype = data_user{i}.header.chantype;
-  should_add = options.channel ~= 0 || ...
+  should_add = options.chan ~= 0 || ...
     strncmp(chantype, 'pupil', numel('pupil')) || ...
     strncmp(chantype, 'gaze', numel('gaze'));
   if should_add
@@ -108,23 +108,23 @@ rmpath(pspm_path('backroom'));
 for i = 1:numel(data_user)
   data_user{i}.data = out_mat(:, n_mask_chans + i);
 end
-channel_str = options.channel;
-if isnumeric(channel_str)
-  channel_str = num2str(channel_str);
+chan_str = options.chan;
+if isnumeric(chan_str)
+  chan_str = num2str(chan_str);
 end
-o.msg.prefix = sprintf('Blink saccade filtering :: Input channel: %s', channel_str);
-[lsts, out_id] = pspm_write_channel(fn, data_user, options.channel_action, o);
+o.msg.prefix = sprintf('Blink saccade filtering :: Input channel: %s', chan_str);
+[lsts, out_id] = pspm_write_channel(fn, data_user, options.chan_action, o);
 if lsts ~= 1; return; end;
 
-out_channel = out_id.channel;
+out_chan = out_id.chan;
 sts = 1;
 end
 
 function [out_cell] = keep_pupil_gaze_chans(in_cell)
 out_cell = {};
 for i = 1:numel(in_cell)
-  channel = lower(in_cell{i}.header.chantype);
-  if contains(channel, 'pupil') || contains(channel, 'gaze')
+  chan = lower(in_cell{i}.header.chantype);
+  if contains(chan, 'pupil') || contains(chan, 'gaze')
     out_cell{end + 1} = in_cell{i};
   end
 end

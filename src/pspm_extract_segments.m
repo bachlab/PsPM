@@ -184,6 +184,11 @@ if nargin >= 2
         model_strc = struct_file;
       end
 
+      if isfield(model_strc.input, 'channel') && ~isfield(model_strc.input, 'chan')
+          model_strc.input.chan = model_strc.input.channel;
+          model_strc.input = rmfield(model_strc.input,'channel'); % rename the field channel to chan
+        end
+
       if nargin == 3
         options = varargin{3};
       else

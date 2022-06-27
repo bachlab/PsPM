@@ -6,7 +6,7 @@ function [sts, infos] = pspm_find_sounds(file, options)
 % ARGUMENTS:
 %       file : path and filename of the pspm file holding the sound
 %       options : struct with following possible values
-%           channel_action : ['none'/'add'/'replace'] if not set to 'none'
+%           chan_action : ['none'/'add'/'replace'] if not set to 'none'
 %               sound events are written as marker channel to the
 %               specified pspm file. Onset times then correspond to marker
 %               events and duration is written to markerinfo. The
@@ -144,7 +144,7 @@ elseif ~isnumeric(options.expectedSoundCount) || mod(options.expectedSoundCount,
 elseif ~isempty(options.roi) && (length(options.roi) ~= 2 || ~all(isnumeric(options.roi) & options.roi >= 0))
   warning('ID:invalid_input', 'Option roi must be a float vector of length 2 or 0');  return;
 elseif ~ischar(options.chan_action) || ~ismember(options.chan_action, {'none', 'add', 'replace'})
-  warning('ID:invalid_input', 'Option channel_action must be either ''none'', ''add'' or ''replace'''); return;
+  warning('ID:invalid_input', 'Option chan_action must be either ''none'', ''add'' or ''replace'''); return;
 end
 
 % call it outinfos not to get confused

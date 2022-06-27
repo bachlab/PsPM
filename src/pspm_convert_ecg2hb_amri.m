@@ -5,7 +5,7 @@ function [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
 % version with a list of changes made is shipped with PsPM under amri_eegfmri
 % directory.
 %
-% Once the R-peaks are computed, according to the option 'channel_action',
+% Once the R-peaks are computed, according to the option 'chan_action',
 % it will either replace an existing heartbeat channel or add it as a new
 % channel to the provided file.
 %
@@ -75,7 +75,7 @@ function [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
 %                                R-peak such that it is classified as an R-peak.
 %                                (Default: 0.4)
 %
-%               channel_action:  ['add'/'replace'] Defines whether corrected data
+%               chan_action:  ['add'/'replace'] Defines whether corrected data
 %                                should be added or the corresponding preprocessed
 %                                channel should be replaced. Note that 'replace' mode
 %                                does not replace the raw data channel, but a previously
@@ -109,7 +109,7 @@ end
 if ~isfield(options, 'channel')
   options.chan = 'ecg';
 end
-if ~isfield(options, 'channel_action')
+if ~isfield(options, 'chan_action')
   options.chan_action = 'replace';
 end
 if ~isfield(options, 'signal_to_use')
@@ -137,7 +137,7 @@ end
 % input checks
 % -------------------------------------------------------------------------
 if ~ismember(options.chan_action, {'add', 'replace'})
-  warning('ID:invalid_input', 'Option channel_action must be either ''add'' or ''replace''');
+  warning('ID:invalid_input', 'Option chan_action must be either ''add'' or ''replace''');
   return;
 end
 if ~ismember(options.signal_to_use, {'ecg', 'teo', 'auto'})

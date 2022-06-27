@@ -52,7 +52,7 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %                                   coordinates for visual inspection of
 %                                   the validation process. Default is
 %                                   false.
-%               channel_action:     Define whether to add or replace the
+%               chan_action:     Define whether to add or replace the
 %                                   data. Default is 'add'. Possible values
 %                                   are 'add' or 'replace'
 %               newfile:            Define new filename to store data to
@@ -73,7 +73,7 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %                                   should be performed. Possible values
 %                                   are: 'left', 'right', 'all'. Default is
 %                                   'all'.
-%               channels:           Choose channels in which the data
+%               chans:           Choose channels in which the data
 %                                   should be set to NaN
 %                                   during invalid fixations.
 %                                   Default is 'pupil'. A char or numeric
@@ -172,7 +172,7 @@ if strcmpi(mode,'fixation')&& ~isfield(options, 'resolution')
   options.resolution = [1 1];
 end
 
-if ~isfield(options, 'channels')
+if ~isfield(options, 'chans')
   options.chans = 'pupil';
 end
 
@@ -271,7 +271,7 @@ end
 % calculate radius araund de fixation points
 %-----------------------------------------------------
 
-if ~isfield(options, 'channel_action')
+if ~isfield(options, 'chan_action')
   options.chan_action = 'add';
 elseif sum(strcmpi(options.chan_action, {'add','replace'})) == 0
   warning('ID:invalid_input', 'Options.chan_action must be either ''add'' or ''replace''.'); return;
@@ -313,22 +313,22 @@ for i=1:n_eyes
 
     % find chars to replace
     str_chans = cellfun(@ischar, options.chans);
-    channels = options.chans;
+    chans = options.chans;
     str_chantypes = ['(', settings.findvalidfixations.chantypes{1}];
     for i_chantypes = 2:length(settings.findvalidfixations.chantypes)
       str_chantypes = [str_chantypes, '|', ...
         settings.findvalidfixations.chantypes{i_chantypes}];
     end
     str_chantypes = [str_chantypes, ')'];
-    channels(str_chans) = regexprep(channels(str_chans), str_chantypes, ['$0_' eye]);
+    chans(str_chans) = regexprep(chans(str_chans), str_chantypes, ['$0_' eye]);
     % replace strings with numbers
-    str_chan_num = channels(str_chans);
+    str_chan_num = chans(str_chans);
     for j=1:numel(str_chan_num)
       str_chan_num(j) = {find(cellfun(@(y) strcmpi(str_chan_num(j),...
         y.header.chantype), data),1)};
     end
-    channels(str_chans) = str_chan_num;
-    work_chans = cell2mat(channels);
+    chans(str_chans) = str_chan_num;
+    work_chans = cell2mat(chans);
 
     if numel(work_chans) >= 1
       % always use first found channel

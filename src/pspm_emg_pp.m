@@ -8,7 +8,7 @@ function [sts, output] = pspm_emg_pp(fn, options)
 %                               a time constant of 3 ms (=> cutoff of 53.05
 %                               Hz)
 %
-% Once the data is preprocessed, according to the option 'channel_action',
+% Once the data is preprocessed, according to the option 'chan_action',
 % it will either replace the existing channel or add it as new channel to
 % the provided file.
 %
@@ -23,7 +23,7 @@ function [sts, output] = pspm_emg_pp(fn, options)
 %                           Can be a channel ID or a channel name.
 %                           Default is 'emg' (i.e. first EMG channel)
 %
-%           channel_action:  ['add'/'replace'] Defines whether the new channel
+%           chan_action:  ['add'/'replace'] Defines whether the new channel
 %                            should be added or the previous outputs of this
 %                            function should be replaced.
 %                            (Default: 'rplace')
@@ -60,7 +60,7 @@ if ~isfield(options, 'channel')
   options.chan = 'emg';
 end
 
-if ~isfield(options, 'channel_action')
+if ~isfield(options, 'chan_action')
   options.chan_action = 'replace';
 end
 
@@ -70,7 +70,7 @@ if ~isnumeric(options.mains_freq)
   warning('ID:invalid_input', 'Option mains_freq must be numeric.');
   return;
 elseif ~ismember(options.chan_action, {'add', 'replace'})
-  warning('ID:invalid_input', 'Option channel_action must be either ''add'' or ''repalce''');
+  warning('ID:invalid_input', 'Option chan_action must be either ''add'' or ''repalce''');
   return;
 elseif ~isnumeric(options.chan) && ~ischar(options.chan)
   warning('ID:invalid_input', 'Option channel must be a string or numeric');

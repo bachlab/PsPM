@@ -48,7 +48,7 @@ if ~exist('options', 'var')
   options = struct();
 end
 
-if ~isfield(options, 'channel_action')
+if ~isfield(options, 'chan_action')
   options.chan_action = 'add';
 end
 

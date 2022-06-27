@@ -19,7 +19,7 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, chan, options)
 %                        [def. 0].
 %                    ... twthresh - sets the threshold to perform the twave
 %                        check. [def. 0.36s].
-%                    ... channel_action - ['add'/'replace'] Defines whether
+%                    ... chan_action - ['add'/'replace'] Defines whether
 %                        the new channel should be added or the previous
 %                        outputs of this function should be replaced.
 %                        (Default: 'replace')
@@ -143,7 +143,7 @@ pt_debug=[];
 if nargin > 2 && exist('options', 'var')
 
   if isstruct(options)
-    if isfield(options, 'channel_action')
+    if isfield(options, 'chan_action')
       if ~any(strcmpi(options.chan_action, {'add', 'replace'}))
         warning('ID:invalid_input', '''options.chan_action'' must be either ''add'' or ''replace''.'); return;
       end

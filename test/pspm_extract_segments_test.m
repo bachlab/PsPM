@@ -207,6 +207,10 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       import matlab.unittest.constraints.RelativeTolerance
       load(['ImportTestData' filesep 'fitted_models' filesep 'glm_scr_cond_marker.mat'], 'glm');
       load(['ImportTestData' filesep 'fitted_models' filesep 'glm_orig_data.mat'], 'data');
+      if isfield(glm.input, 'channel') && ~isfield(glm.input, 'chan')
+        glm.input.chan = glm.input.channel;
+        glm.input = rmfield(glm.input,'channel'); % rename the field channel to chan
+      end
       marker = data{5}.data;
       assert(numel(glm.input.timing) == 1);
       input_data = glm.input.data{1};

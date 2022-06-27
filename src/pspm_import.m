@@ -192,12 +192,14 @@ for k = 1:numel(import)
     end
   end
   % channel number given? If not, set to zero, or assign automatically and display.
-  if ~isfield(import{k}, 'channel')
+  if ~isfield(import{k}, 'chan')
+    if ~isfield(import{k}, 'channel')
     if settings.import.datatypes(datatype).searchoption
       import{k}.chan = 0;
     else
       import{k}.chan = k;
       fprintf('\nAssigned channel/column %1.0f to import job %1.0f of type %s.', k, k, import{k}.type);
+    end
     end
   end
   % assign channel type number
