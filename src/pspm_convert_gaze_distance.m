@@ -44,16 +44,14 @@ end
 sts = -1;
 
 % Number of arguments validation
-if nargin < 6;
+if nargin < 6
   warning('ID:invalid_input','Not enough input arguments.'); return;
-elseif nargin < 7;
+elseif nargin < 7
   options = struct();
 end
 
-% Options defaults
-if ~isfield(options, 'chan_action');
-  options.chan_action = 'add';
-end
+options = pspm_option_checker(options, 'convert_gaze_distance');
+
 
 
 % Input argument validation
@@ -84,7 +82,7 @@ end;
 
 
 % distance to sps conversion
-[sts, infos, data] = pspm_load_data(fn,0);
+[sts, ~, data] = pspm_load_data(fn,0);
 
 eyes.l = find(cellfun(@(c) ~isempty(regexp(c.header.chantype, 'gaze_[x|y]_l', 'once'))...
   && strcmp(c.header.units, from), data));

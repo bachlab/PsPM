@@ -199,7 +199,7 @@ end
 
 % 2.3 get further input or set defaults --
 % check data channel --
-if ~isfield(model, 'channel')
+if ~isfield(model, 'chan')
   model.chan = 'scr'; % this returns the first SCR channel
 elseif ~isnumeric(model.chan) && ~strcmp(model.chan,'scr')
   warning('ID:invalid_input', 'Channel number must be numeric.'); return;

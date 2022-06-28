@@ -1,4 +1,4 @@
-function [sts, outdata] = pspm_interpolate(indata, options)
+function [sts, outdata] = pspm_interpolate(varargin)
 % ● Description
 % This function interpolates NaN values passed with the indata parameter.
 % The behaviour of the function can furthermore be adjusted with the
@@ -66,6 +66,17 @@ if isempty(settings)
 end
 outdata = {}; % will return a cell of the same size as the indata
 sts = -1;
+switch length(varargin)
+  case 1
+    indata = varargin{1};
+    options = struct;
+  case 2
+    indata = varargin{1};
+    options = varargin{2};
+  case 3
+    warning('Up to two variables are accepted by pspm_interpolate.');
+    return
+end
 % 1.1 check input arguments
 if nargin<1
   warning('ID:missing_data', 'No data.\n');
@@ -76,11 +87,11 @@ if isempty(indata)
   return;
 end
 % 1.2 initialise options
+options = pspm_option_checker(options, 'interpolate');
 try options.overwrite; catch, options.overwrite = 0; end
 try options.method; catch, options.method = 'linear'; end
 try options.chans; catch, options.chans = []; end
 try options.newfile; catch, options.newfile = 0; end
-try options.chan_action; catch, options.chan_action = 'add'; end
 try options.extrapolate; catch, options.extrapolate = 0; end
 % 1.3 check channel size
 if numel(options.chans) > 0
@@ -105,9 +116,6 @@ elseif ~islogical(options.newfile) && ~isnumeric(options.newfile)
   return;
 elseif ~islogical(options.extrapolate) && ~isnumeric(options.extrapolate)
   warning('ID:invalid_input', 'options.extrapolate must be numeric or logical');
-  return;
-elseif ~any(strcmpi(options.chan_action, {'add', 'replace'}))
-  warning('ID:invalid_input', 'options.chan_action can only be ''add'' or ''replace''');
   return;
 elseif ~islogical(options.overwrite) && ~isnumeric(options.overwrite)
   warning('ID:invalid_input', 'options.overwrite must be numeric (0 or 1) or logical');

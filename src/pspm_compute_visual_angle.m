@@ -48,8 +48,8 @@ if nargin < 6
   return;
 elseif ~exist('options','var')
   options = struct();
-  options.chan_action = 'add';
 end;
+options = pspm_option_checker(options, 'compute_visual_angle')
 
 % check types of arguments
 if ~ischar(fn) || ~exist(fn, 'file')

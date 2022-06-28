@@ -75,20 +75,20 @@ end
 % convert datafile to cell for convenience
 % -------------------------------------------------------------------------
 if iscell(datafile)
-  D=datafile;
+  D = datafile;
 else
-  D={datafile};
+  D = {datafile};
 end
 clear datafile
 
 % work on all data files
 % -------------------------------------------------------------------------
-for d=1:numel(D)
+for d = 1:numel(D)
   % determine file names
-  datafile=D{d};
+  datafile = D{d};
 
   % check and get datafile
-  [lsts infos data] = pspm_load_data(datafile, 0);
+  [lsts, ~, ~] = pspm_load_data(datafile, 0);
   if lsts == -1, continue; end
 
   if any(chan > numel(data))

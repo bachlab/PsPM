@@ -51,7 +51,7 @@ end
 % Display diagnostic plots? default is "false"
 try if ~islogical(options.diagnostics),options.diagnostics = false;end
 catch, options.diagnostics = false; end
-try options.chan_action; catch, options.chan_action = 'replace'; end;
+options = pspm_option_checker(options, 'convert_ppg2hb');
 try if ~isnumeric(options.lsm),options.lsm = 0;end
 catch, options.lsm = 0; end
 

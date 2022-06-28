@@ -44,19 +44,10 @@ sts = -1;
 if nargin == 2
   options = struct();
 end
-if ~isfield(options, 'chan')
-  options.chan = 0;
-end
-if ~isfield(options, 'chan_action')
-  options.chan_action = 'add';
-end
+options = pspm_option_checker(options, 'blink_saccade_filt');
 
 if ~isnumeric(discard_factor)
   warning('ID:invalid_input', 'discard_factor must be numeric');
-  return;
-end
-if ~ismember(options.chan_action, {'add', 'replace'})
-  warning('ID:invalid_input', 'Option chan_action must be either ''add'' or ''replace''');
   return;
 end
 

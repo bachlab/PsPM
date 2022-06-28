@@ -270,12 +270,7 @@ end
 
 % calculate radius araund de fixation points
 %-----------------------------------------------------
-
-if ~isfield(options, 'chan_action')
-  options.chan_action = 'add';
-elseif sum(strcmpi(options.chan_action, {'add','replace'})) == 0
-  warning('ID:invalid_input', 'Options.chan_action must be either ''add'' or ''replace''.'); return;
-end
+options = pspm_option_checker(options, 'find_valid_fixations');
 
 % overwrite
 if ~isfield(options, 'overwrite')

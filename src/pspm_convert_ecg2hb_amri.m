@@ -106,12 +106,7 @@ sts = -1;
 if nargin < 2
   options = struct();
 end
-if ~isfield(options, 'channel')
-  options.chan = 'ecg';
-end
-if ~isfield(options, 'chan_action')
-  options.chan_action = 'replace';
-end
+options = pspm_option_checker(options, 'convert_ecg2hb_amri');
 if ~isfield(options, 'signal_to_use')
   options.signal_to_use = 'auto';
 end

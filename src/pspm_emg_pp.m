@@ -56,24 +56,13 @@ if ~isfield(options, 'mains_freq')
   options.mains_freq = 50;
 end
 
-if ~isfield(options, 'channel')
-  options.chan = 'emg';
-end
-
-if ~isfield(options, 'chan_action')
-  options.chan_action = 'replace';
-end
+options = pspm_option_checker(options, 'emg_pp');
 
 % check values
 % -------------------------------------------------------------------------
 if ~isnumeric(options.mains_freq)
   warning('ID:invalid_input', 'Option mains_freq must be numeric.');
   return;
-elseif ~ismember(options.chan_action, {'add', 'replace'})
-  warning('ID:invalid_input', 'Option chan_action must be either ''add'' or ''repalce''');
-  return;
-elseif ~isnumeric(options.chan) && ~ischar(options.chan)
-  warning('ID:invalid_input', 'Option channel must be a string or numeric');
 end
 
 % load data

@@ -37,8 +37,7 @@ function [sts, infos] = pspm_convert_hb2hp(fn, sr, chan, options)
 
   if ~exist('options','var'), options = struct();
   end;
-  if ~isfield(options,'chan_action'), options.chan_action = 'replace';
-  end;
+  options = pspm_option_checker(options, 'convert_hb2hp');
   if ~isfield(options,'limit'), options.limit = struct();
   end;
   if ~isfield(options.limit,'upper'), options.limit.upper = 2;

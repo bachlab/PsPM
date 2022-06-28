@@ -1,4 +1,4 @@
-function [sts, infos] = pspm_find_sounds(file, options)
+function [sts, infos] = pspm_find_sounds(varargin)
 %pspm_find_sounds finds and if required analyzes sound events in a pspm file.
 % A sound is accepted as event if it is longer than 10 ms and events are
 % recognized as different if they are at least 50 ms appart.
@@ -92,15 +92,27 @@ if isempty(settings)
 end
 sts = -1;
 
+switch length(varargin)
+  case 1
+    file = varargin{1};
+    options = struct;
+  case 2
+    file = varargin{1};
+    options = varargin{2};
+  case 3
+    warning('Up to two variables are accepted by pspm_find_sounds.');
+    return
+end
+
 % Check argument
-if ~exist(file,'file')
+if ~exist(file, 'file')
   warning('ID:file_not_found', 'File %s was not found. Aborted.',file); return;
 end
 
 fprintf('Processing sound in file %s\n',file);
+options = pspm_option_checker(options, 'find_sound');
 
 % Process options
-try options.chan_action; catch, options.chan_action = 'none'; end
 try options.chan_output; catch; options.chan_output = 'all'; end
 try options.diagnostics; catch, options.diagnostics = true; end
 try options.maxdelay; catch, options.maxdelay = 3; end
@@ -143,8 +155,6 @@ elseif ~isnumeric(options.expectedSoundCount) || mod(options.expectedSoundCount,
   warning('ID:invalid_input', 'Option expectedSoundCount is not an integer.');  return;
 elseif ~isempty(options.roi) && (length(options.roi) ~= 2 || ~all(isnumeric(options.roi) & options.roi >= 0))
   warning('ID:invalid_input', 'Option roi must be a float vector of length 2 or 0');  return;
-elseif ~ischar(options.chan_action) || ~ismember(options.chan_action, {'none', 'add', 'replace'})
-  warning('ID:invalid_input', 'Option chan_action must be either ''none'', ''add'' or ''replace'''); return;
 end
 
 % call it outinfos not to get confused
