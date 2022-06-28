@@ -1,16 +1,13 @@
 classdef pspm_gaze_pp_test < pspm_testcase
-
   % DEFINITION
   % pspm_gaze_pp_test unittest classes for the pspm_gaze_pp function
   % PsPM TestEnvironment
-  % (C) 2021 Teddy Chao (WCHN, UCL)
+  % (C) 2021 Teddy Chao (UCL)
   % Supervised by Professor Dominik Bach (WCHN, UCL)
-
   properties
     raw_input_fn = fullfile('ImportTestData', 'eyelink', 'S114_s2.asc');
     pspm_input_fn = '';
   end
-
   methods(TestClassSetup)
     function backup(this)
       import = {};
@@ -39,7 +36,6 @@ classdef pspm_gaze_pp_test < pspm_testcase
       this.pspm_input_fn = this.pspm_input_fn{1};
     end
   end
-
   methods(Test)
     function invalid_input(this)
       this.verifyWarning(@()pspm_gaze_pp(52), 'ID:invalid_input');
@@ -52,26 +48,24 @@ classdef pspm_gaze_pp_test < pspm_testcase
       opt.channel_combine = 'gaze_l';
       this.verifyWarning(@()pspm_gaze_pp(this.pspm_input_fn, opt), 'ID:invalid_input');
     end
-
     function check_if_preprocessed_channel_is_saved(this)
       opt.channel = 'gaze_x_r';
       [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
       testdata = load(this.pspm_input_fn);
       this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_x_r');
-      % opt.channel = 'gaze_x_l';
-      % [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
-      % testdata = load(this.pspm_input_fn);
-      % this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_x_l');
-%       opt.channel = 'gaze_y_r';
-%       [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
-%       testdata = load(this.pspm_input_fn);
-%       this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_y_r');
-%       opt.channel = 'gaze_y_l';
-%       [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
-%       testdata = load(this.pspm_input_fn);
-%       this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_y_l');
+      opt.channel = 'gaze_x_l';
+      [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
+      testdata = load(this.pspm_input_fn);
+      this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_x_l');
+      opt.channel = 'gaze_y_r';
+      [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
+      testdata = load(this.pspm_input_fn);
+      this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_y_r');
+      opt.channel = 'gaze_y_l';
+      [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
+      testdata = load(this.pspm_input_fn);
+      this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_y_l');
     end
-
     function check_upsampling_rate(this)
       for freq = [500 1000 1500]
         opt.custom_settings.valid.interp_upsamplingFreq = freq;
@@ -90,7 +84,6 @@ classdef pspm_gaze_pp_test < pspm_testcase
           numel(testdata.data{out_channel}.data));
       end
     end
-
     function check_channel_combining(this)
       opt.channel = 'gaze_x_r';
       opt.channel_combine = 'gaze_x_l';
@@ -99,27 +92,11 @@ classdef pspm_gaze_pp_test < pspm_testcase
       this.verifyEqual(testdata.data{out_channel}.header.chantype, 'gaze_pp_x_c');
       opt.channel = 'gaze_y_r';
       opt.channel_combine = 'gaze_y_l';
-      % [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
-      % testdata = load(this.pspm_input_fn);
-      % this.verifyEqual(testdata.data{out_channel}.header.chantype, 'gaze_pp_y_c');
-    end
-
-    function check_segments(this)
-      opt.channel = 'gaze_r';
-      opt.segments{1}.start = 5;
-      opt.segments{1}.end = 10;
-      opt.segments{1}.name = 'seg1';
-      opt.segments{2}.start = 25;
-      opt.segments{2}.end = 27;
-      opt.segments{2}.name = 'seg2';
-      % [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
-      % testdata = load(this.pspm_input_fn);
-      % this.verifyTrue(isfield(testdata.data{out_channel}.header, 'segments'));
-      % this.verifyEqual(testdata.data{out_channel}.header.segments{1}.name, 'seg1');
-      % this.verifyEqual(testdata.data{out_channel}.header.segments{2}.name, 'seg2');
+      [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
+      testdata = load(this.pspm_input_fn);
+      this.verifyEqual(testdata.data{out_channel}.header.chantype, 'gaze_pp_y_c');
     end
   end
-
   methods(TestClassTeardown)
     function restore(this)
       delete(this.pspm_input_fn);

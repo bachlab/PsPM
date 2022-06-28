@@ -84,7 +84,6 @@ for seg = options.segments
     return
   end
 end
-
 %% 4 Load
 [~, ~, gaze_og, ~] = pspm_load_data(fn, options.channel);
 if action_combine
@@ -170,7 +169,7 @@ o.msg.prefix = sprintf(...
   old_chantype, ...
   preprocessed_gaze.header.chantype);
 [lsts, out_id] = pspm_write_channel(fn, preprocessed_gaze, options.channel_action, o);
-if lsts ~= 1
+if lsts ~= 1 % if writting channel is unsuccessful
   return
 end
 out_channel = out_id.channel;
