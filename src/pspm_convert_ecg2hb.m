@@ -143,7 +143,7 @@ pt_debug=[];
 if nargin > 2 && exist('options', 'var')
 
   if isstruct(options)
-    options = pspm_option_checker(options, 'convert_ecg2hb');
+    options = pspm_options(options, 'convert_ecg2hb');
 
     if isfield(options, 'semi')
       if any(options.semi == 0:1)

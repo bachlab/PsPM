@@ -1,6 +1,6 @@
-function option_out = pspm_option_checker(option_in, funcname)
+function option_out = pspm_options(option_in, funcname)
 % Definition
-% pspm_option_checker automatically determine the fields of options for the
+% pspm_options automatically determine the fields of options for the
 % corresponding function
 % option_in needs to be a struct
 % Written by

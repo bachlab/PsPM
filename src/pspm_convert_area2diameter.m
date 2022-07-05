@@ -58,7 +58,7 @@ else
     options = struct();
   end
   
-  options = pspm_option_checker(options, 'convert_area2diameter')
+  options = pspm_options(options, 'convert_area2diameter')
 
   if ~any(strcmpi(options.chan_action, {'replace', 'add'}))
     warning('ID:invalid_input', ['options.chan_action should ', ...

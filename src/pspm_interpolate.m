@@ -87,7 +87,7 @@ if isempty(indata)
   return;
 end
 % 1.2 initialise options
-options = pspm_option_checker(options, 'interpolate');
+options = pspm_options(options, 'interpolate');
 try options.overwrite; catch, options.overwrite = 0; end
 try options.method; catch, options.method = 'linear'; end
 try options.chans; catch, options.chans = []; end

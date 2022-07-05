@@ -50,7 +50,7 @@ elseif nargin < 7
   options = struct();
 end
 
-options = pspm_option_checker(options, 'convert_gaze_distance');
+options = pspm_options(options, 'convert_gaze_distance');
 
 
 

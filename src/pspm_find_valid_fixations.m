@@ -270,7 +270,7 @@ end
 
 % calculate radius araund de fixation points
 %-----------------------------------------------------
-options = pspm_option_checker(options, 'find_valid_fixations');
+options = pspm_options(options, 'find_valid_fixations');
 
 % overwrite
 if ~isfield(options, 'overwrite')

@@ -66,7 +66,7 @@ elseif ~any(strcmpi(options.eyes, {settings.lateral.char.l,...
   return;
 end;
 % option.chan_action
-options = pspm_option_checker(options, 'convert_visangle2sps');
+options = pspm_options(options, 'convert_visangle2sps');
 
 % fn
 if ~ischar(fn) || ~exist(fn, 'file')

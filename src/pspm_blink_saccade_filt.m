@@ -44,7 +44,7 @@ sts = -1;
 if nargin == 2
   options = struct();
 end
-options = pspm_option_checker(options, 'blink_saccade_filt');
+options = pspm_options(options, 'blink_saccade_filt');
 
 if ~isnumeric(discard_factor)
   warning('ID:invalid_input', 'discard_factor must be numeric');

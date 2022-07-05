@@ -106,7 +106,7 @@ sts = -1;
 if nargin < 2
   options = struct();
 end
-options = pspm_option_checker(options, 'convert_ecg2hb_amri');
+options = pspm_options(options, 'convert_ecg2hb_amri');
 if ~isfield(options, 'signal_to_use')
   options.signal_to_use = 'auto';
 end

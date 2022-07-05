@@ -49,7 +49,7 @@ if nargin < 6
 elseif ~exist('options','var')
   options = struct();
 end;
-options = pspm_option_checker(options, 'compute_visual_angle')
+options = pspm_options(options, 'compute_visual_angle')
 
 % check types of arguments
 if ~ischar(fn) || ~exist(fn, 'file')

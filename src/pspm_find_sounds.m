@@ -110,7 +110,7 @@ if ~exist(file, 'file')
 end
 
 fprintf('Processing sound in file %s\n',file);
-options = pspm_option_checker(options, 'find_sound');
+options = pspm_options(options, 'find_sound');
 
 % Process options
 try options.chan_output; catch; options.chan_output = 'all'; end

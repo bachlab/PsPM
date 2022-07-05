@@ -56,7 +56,7 @@ if ~isfield(options, 'mains_freq')
   options.mains_freq = 50;
 end
 
-options = pspm_option_checker(options, 'emg_pp');
+options = pspm_options(options, 'emg_pp');
 
 % check values
 % -------------------------------------------------------------------------

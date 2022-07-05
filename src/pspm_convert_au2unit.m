@@ -181,7 +181,7 @@ if strcmpi(mode, 'data') && strcmpi(record_method, '') && ...
   return;
 end
 
-options = pspm_option_checker(options, 'convert_au2unit');
+options = pspm_options(options, 'convert_au2unit');
 
 %% check values
 if ~ischar(fn)
