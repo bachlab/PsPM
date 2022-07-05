@@ -1,102 +1,115 @@
-function options_out = pspm_options(options_in, funcname)
+function OptOut = pspm_options(OptIn, FuncName)
 % Definition
 % pspm_options automatically determine the fields of options for the
 % corresponding function
-% options_in needs to be a struct
+% OptIn needs to be a struct
 % Written by
 % 2022 Teddy Chao (UCL)
 
 
 %% 0 warning messages
-str_options_chan_invalid = 'options.chan must contain valid channel types or positive integers.';
-str_options_chan_invalid_char = 'options.chan is not a valid channel type.';
+StrOptChanInvalid = 'options.chan must contain valid channel types or positive integers.';
+StrOptChanInvalid_char = 'options.chan is not a valid channel type.';
 
 
-options_out = [];
+OptOut = [];
 
-switch funcname
+switch FuncName
   case 'convert_au2unit'
-    options_out = autofill_chan_action(options_in,  'add', {'add', 'replace'});
+    OptOut = autofill_chan_action(OptIn);
   case 'convert_area2diameter'
-    options_out = autofill_chan_action(options_in,  'add', {'add', 'replace'});
+    OptOut = autofill_chan_action(OptIn);
   case 'convert_pixel2unit'
-    options_out = autofill_chan_action(options_in,  'add', {'add', 'replace'});
+    OptOut = autofill_chan_action(OptIn);
   case 'convert_visangle2sps'
-    options_out = autofill_chan_action(options_in,  'add', {'add', 'replace'});
+    OptOut = autofill_chan_action(OptIn);
   case 'convert_hb2hp'
-    options_out = autofill_chan_action(options_in,  'replace', {'add', 'replace'});
+    OptOut = autofill_chan_action(OptIn, 'replace');
   case 'blink_saccade_filt'
-    options_temp = autofill(options_in, 'chan', 0);
-    options_out = autofill_chan_action(options_temp,  'add', {'add', 'replace'});
+    OptTemp = autofill(OptIn, 'chan', 0);
+    OptOut = autofill_chan_action(OptTemp);
   case 'convert_gaze_distance'
-    options_out = autofill_chan_action(options_in,  'add', {'add', 'replace'});
+    OptOut = autofill_chan_action(OptIn);
   case 'compute_visual_angle'
-    options_out = autofill_chan_action(options_in,  'add', {'add', 'replace'});
-  % case 'convert_ecg2hb_amri'
-  %  options_temp = autofill(options_in, 'chan', 'ecg');
-  %  options_out = autofill_chan_action(options_temp,  'replace', {'add', 'replace'});
+    OptOut = autofill_chan_action(OptIn);
+  case 'convert_ecg2hb_amri'
+   OptTemp = autofill(OptIn, 'chan', 'ecg');
+   OptOut = autofill_chan_action(OptTemp, 'replace');
   case 'convert_ppg2hb'
-    options_temp = autofill(options_in, 'chan', 'ppg2hb');
-    options_out = autofill_chan_action(options_temp,  'replace', {'add', 'replace'});
+    OptTemp = autofill(OptIn, 'chan', 'ppg2hb');
+    OptOut = autofill_chan_action(OptTemp,  'replace');
   case 'emg_pp'
-    options_temp = autofill(options_in, 'chan', 'emg');
-   options_out = autofill_chan_action(options_temp, 'replace', {'add', 'replace'});
+    OptTemp = autofill(OptIn, 'chan', 'emg');
+   OptOut = autofill_chan_action(OptTemp, 'replace');
   case 'exp'
-    options_temp = autofill(options_in, 'target', 'screen');
-    options_temp = autofill(options_temp, 'statstype', 'param');
-    options_temp = autofill(options_temp, 'delim', '\t');
-    options_out = autofill(options_temp, 'exclude_missing', 0);
+    OptTemp = autofill(OptIn, 'target', 'screen');
+    OptTemp = autofill(OptTemp, 'statstype', 'param');
+    OptTemp = autofill(OptTemp, 'delim', '\t');
+    OptOut = autofill(OptTemp, 'exclude_missing', 0);
   case 'find_sound'
-    options_out = autofill_chan_action(options_in,  'none', {'add', 'replace', 'none'});
+    OptOut = autofill_chan_action(OptIn, 'none', {'add','replace','none'});
   case 'find_valid_fixations'
-    options_out = autofill_chan_action(options_in,  'add', {'add', 'replace'});
+    OptOut = autofill_chan_action(OptIn);
   case 'interpolate'
-    options_out = autofill_chan_action(options_in,  'add', {'add', 'replace'});
+    OptOut = autofill_chan_action(OptIn);
   case 'write_channel'
-    if ~isfield(options_in, 'chan')
-      warning('ID:invalid_input', str_options_chan_invalid);
+    if ~isfield(OptIn, 'chan')
+      warning('ID:invalid_input', StrOptChanInvalid);
       return
     else
-      switch class(options_in.chan)
+      switch class(OptIn.chan)
         case 'char'
-          if ~any(strcmpi(options_in.chan,{'add','replace','none'}))
-            warning('ID:invalid_input', str_options_chan_invalid_char);
+          if ~any(strcmpi(OptIn.chan,{'add','replace','none'}))
+            warning('ID:invalid_input', StrOptChanInvalid_char);
             return
           else
-            options_out.chan = options_in.chan;
+            OptOut.chan = OptIn.chan;
           end
         case 'double'
-          if (any(mod(options_in.chan,1)) || any(options_in.chan<0))
-            warning('ID:invalid_input', str_options_chan_invalid);
+          if (any(mod(OptIn.chan,1)) || any(OptIn.chan<0))
+            warning('ID:invalid_input', StrOptChanInvalid);
             return;
           else
-            options_out.chan = options_in.chan;
+            OptOut.chan = OptIn.chan;
           end
         otherwise
-          warning('ID:invalid_input', str_options_chan_invalid);
+          warning('ID:invalid_input', StrOptChanInvalid);
           return
       end
     end
 end
 
-function options_out = autofill(options_in, fieldname, defaultvalue)
-options_out = options_in;
-if ~isfield(options_in, fieldname)
-  options_out.(fieldname) = defaultvalue;
+function OptOut = autofill(OptIn, FieldName, DefaultValue)
+OptOut = OptIn;
+if ~isfield(OptIn, FieldName)
+  OptOut.(FieldName) = DefaultValue;
 else
-  options_out.(fieldname) = options_in.(filedname);
+  OptOut.(FieldName) = OptIn.(FieldName);
 end
 
-function options_out = autofill_chan_action(options_in, defaultvalue, optionvalue)
-options_out = options_in;
-if ~isfield(options_in, 'chan_action')
-  options_out.chan_action = defaultvalue;
+function OptOut = autofill_chan_action(varargin)
+switch nargin
+  case 1
+    OptIn = varargin{1};
+    DefaultValue = 'add';
+    OptValue = {'add', 'replace'};
+  case 2
+    OptIn = varargin{1};
+    DefaultValue = varargin{2};
+    OptValue = {'add', 'replace'};
+  case 3
+    OptIn = varargin{1};
+    DefaultValue = varargin{2};
+    OptValue = varargin{3};
+end
+OptOut = OptIn;
+if ~isfield(OptIn, 'chan_action')
+  OptOut.chan_action = DefaultValue;
 else
-  if ~any(strcmpi(options_in.chan_action, ...
-      optionvalue))
+  if ~any(strcmpi(OptIn.chan_action, OptValue))
     warning('ID:invalid_input', ...
       '''options.chan_action'' must be among accepted values.');
     return
   end
-  options_out.chan_action = options_in.chan_action;
+  OptOut.chan_action = OptIn.chan_action;
 end
