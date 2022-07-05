@@ -18,6 +18,10 @@ if ~isfield(option_in, 'chan')
       option_out.chan = 'ppg2hb';
     case 'emg_pp'
       option_out.chan = 'emg';
+    case 'write_channel'
+      if ischar(options.chan) && ~any(strcmpi(options.chan,{settings.chantypes.type}))
+        warning('ID:invalid_input', 'options.chan is not a valid channel type.'); return;
+      end
   end
 elseif ~isnumeric(options.chan) && ~ischar(options.chan)
   warning('ID:invalid_input', 'Option channel must be a string or numeric');
