@@ -129,14 +129,14 @@ for iFn = 1:numel(modelfile)
   % data.stats has more than one column
   % there are issues if data.stats has NaN and the corresponding conmat
   % also contains 0
-  idx_issue = isnan(prod(data.stats,2));
+  idx_issue = any(isnan(data.stats),2);
   l_conmat_r = length(conmat(:,1)); 
-  if sum(idx_issue) > 0
+  if any(idx_issue(:))
     for i_conmat_r = 1:l_conmat_r % if conmat is a 2D matrix, repeat for each row
       conmat_array = conmat(i_conmat_r,:);
       idx_valid_issue = transpose(conmat_array==0) .* idx_issue;
       idx_invalid_issue = transpose(conmat_array~=0) .* idx_issue;
-      if sum(idx_valid_issue) > 0 && sum(idx_invalid_issue) == 0
+      if any(idx_valid_issue) && ~any(idx_invalid_issue)
         warning(['Calculated data.stats contain NaNs that are caused by unknown reasons. '...
           'data.stats are then used in a contrasts, producing an invalid results (NaN).']);
         data_stats_converted = data.stats;
