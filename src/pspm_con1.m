@@ -134,14 +134,14 @@ for iFn = 1:numel(modelfile)
   idx_invalid_issue = transpose(conmat~=0) .* idx_issue;
   if sum(idx_issue) > 0
     if sum(idx_valid_issue) > 0 && sum(idx_invalid_issue) == 0
-      warning(['Calculated data.stats contain NaN caused by 0 in conmat, '...
-        'which are ignored when calculating conval.']);
+      warning(['Calculated data.stats contain NaNs that are caused by unknown reasons. '...
+        'data.stats are then used in a contrasts, producing an invalid results (NaN).']);
       data_stats_converted = data.stats;
       data_stats_converted(isnan(data_stats_converted)) = 0;
       conval = conmat * data_stats_converted;
     else
-      warning(['Calculated data.stats contain NaNs, caused by unknown reason, '...
-        'which is invalid.']);
+      warning(['Calculated data.stats contain NaNs that are caused by unknown reasons. '...
+        'However they were not used in the computation of the contrasts.']);
       conval = conmat * data.stats;
     end
   end
