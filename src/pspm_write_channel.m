@@ -48,12 +48,14 @@ try options.chan;
 catch, options.chan = 0;
 end
 
+if nargin < 1
+  warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
+  end
+  
 options = pspm_options(options, 'write_channel');
 
 %% Check arguments
-if nargin < 1
-  warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
-elseif ~ischar(fn)
+if ~ischar(fn)
   warning('ID:invalid_input', 'Need file name string as first input.'); return;
 elseif nargin < 3 || all(~strcmpi({'add', 'replace', 'delete'}, chan_action))
   warning('ID:unknown_action', 'Action must be defined and ''add'', ''replace'' or ''delete'''); return;
