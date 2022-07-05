@@ -48,6 +48,8 @@ try options.chan;
 catch, options.chan = 0;
 end
 
+options = pspm_options(options, 'write_channel');
+
 %% Check arguments
 if nargin < 1
   warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
