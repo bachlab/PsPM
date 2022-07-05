@@ -60,8 +60,7 @@ end
 % try to set default values
 %if no options are set
 if ~exist('options','var')
-  options = struct();
-  options = pspm_options(options, 'convert_pixel2unit');
+  options = pspm_options(struct(), 'convert_pixel2unit');
 end
 % do value checks
 if ~isstruct(options)

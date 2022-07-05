@@ -63,13 +63,6 @@ if nargin == 4 && ~isstruct(options)
 end
 
 
-% set options
-% -------------------------------------------------------------------------
-try
-  if options.overwrite ~= 1, options.overwrite = 0; end
-catch
-  options.overwrite = 0;
-end
 
 
 % convert datafile to cell for convenience
