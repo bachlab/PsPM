@@ -5,7 +5,7 @@ function [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
 % version with a list of changes made is shipped with PsPM under amri_eegfmri
 % directory.
 %
-% Once the R-peaks are computed, according to the option 'chan_action',
+% Once the R-peaks are computed, according to the option 'channel_action',
 % it will either replace an existing heartbeat channel or add it as a new
 % channel to the provided file.
 %
@@ -75,7 +75,7 @@ function [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
 %                                R-peak such that it is classified as an R-peak.
 %                                (Default: 0.4)
 %
-%               chan_action:  ['add'/'replace'] Defines whether corrected data
+%               channel_action:  ['add'/'replace'] Defines whether corrected data
 %                                should be added or the corresponding preprocessed
 %                                channel should be replaced. Note that 'replace' mode
 %                                does not replace the raw data channel, but a previously
@@ -106,7 +106,12 @@ sts = -1;
 if nargin < 2
   options = struct();
 end
-options = pspm_options(options, 'convert_ecg2hb_amri');
+if ~isfield(options, 'channel')
+  options.channel = 'ecg';
+end
+if ~isfield(options, 'channel_action')
+  options.channel_action = 'replace';
+end
 if ~isfield(options, 'signal_to_use')
   options.signal_to_use = 'auto';
 end
@@ -131,8 +136,8 @@ end
 
 % input checks
 % -------------------------------------------------------------------------
-if ~ismember(options.chan_action, {'add', 'replace'})
-  warning('ID:invalid_input', 'Option chan_action must be either ''add'' or ''replace''');
+if ~ismember(options.channel_action, {'add', 'replace'})
+  warning('ID:invalid_input', 'Option channel_action must be either ''add'' or ''replace''');
   return;
 end
 if ~ismember(options.signal_to_use, {'ecg', 'teo', 'auto'})
@@ -167,7 +172,7 @@ end
 % load
 % -------------------------------------------------------------------------
 addpath(pspm_path('backroom'));
-[lsts, data] = pspm_load_single_chan(fn, options.chan, 'last', 'ecg');
+[lsts, data] = pspm_load_single_chan(fn, options.channel, 'last', 'ecg');
 if lsts ~= 1; return; end;
 rmpath(pspm_path('backroom'));
 
@@ -193,7 +198,7 @@ heartbeats{1}.header.sr = 1;
 heartbeats{1}.header.chantype = 'hb';
 heartbeats{1}.header.units = 'events';
 o.msg.prefix = 'QRS detection using AMRI algorithm';
-[lsts, infos] = pspm_write_channel(fn, heartbeats, options.chan_action);
+[lsts, infos] = pspm_write_channel(fn, heartbeats, options.channel_action);
 if lsts ~= 1; return; end;
 
 out_channel = infos.chan;

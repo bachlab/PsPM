@@ -143,7 +143,11 @@ pt_debug=[];
 if nargin > 2 && exist('options', 'var')
 
   if isstruct(options)
-    options = pspm_options(options, 'convert_ecg2hb');
+    if isfield(options, 'chan_action')
+      if ~any(strcmpi(options.chan_action, {'add', 'replace'}))
+        warning('ID:invalid_input', '''options.chan_action'' must be either ''add'' or ''replace''.'); return;
+      end
+    end
 
     if isfield(options, 'semi')
       if any(options.semi == 0:1)

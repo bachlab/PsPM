@@ -97,7 +97,7 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       options.chan = 1:5;
       this.verifyWarning(@()pspm_write_channel(this.testdatafile, [], 'delete', options), 'ID:invalid_input');
       options.chan = 'ecg';
-      this.verifyWarning(@()pspm_write_channel(this.testdatafile, [], 'delete', options), 'ID:no_matching_channels');
+      this.verifyWarning(@()pspm_write_channel(this.testdatafile, [], 'delete', options), 'ID:no_matching_chans');
       c{1}.chantype = 'hb';
       c{1}.sr = 200;
       gen_data = pspm_testdata_gen(c, 500);

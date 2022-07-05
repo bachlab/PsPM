@@ -6,7 +6,7 @@ function [sts, infos] = pspm_write_channel(fn, newdata, chan_action, options)
 % and pspm_rewrite_channel.
 %
 % FORMAT
-% [sts, infos] = pspm_write_channel(fn, newdata, chan_action, options)
+% [sts, infos] = pspm_write_channel(fn, newdata, channel_action, options)
 %
 % PARAMETERS
 % ┣━ fn             data file name
@@ -21,9 +21,9 @@ function [sts, infos] = pspm_write_channel(fn, newdata, chan_action, options)
 %    ┣━ .prefix     custom history message prefix text, but automatically added
 %    ┃              action verb (only prefix defined). The text will be
 %    ┃              <prefix> <action>ed on <date>
-%    ┣━ .chan       specifiy which channel should be 'edited'
+%    ┣━ .chan    specifiy which channel should be 'edited'
 %    ┃              default value is 0
-%    ┣━ .delete     method to look for a channel when options.chan is not an integer
+%    ┣━ .delete     method to look for a channel when options.channel is not an integer
 %    ┃    ┣━ 'last'  (default) deletes last occurence of the given chantype
 %    ┃    ┣━ 'first' deletes the first occurence
 %    ┃    ┗━ 'all'   removes all occurences
@@ -48,14 +48,10 @@ try options.chan;
 catch, options.chan = 0;
 end
 
+%% Check arguments
 if nargin < 1
   warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
-  end
-  
-options = pspm_options(options, 'write_channel');
-
-%% Check arguments
-if ~ischar(fn)
+elseif ~ischar(fn)
   warning('ID:invalid_input', 'Need file name string as first input.'); return;
 elseif nargin < 3 || all(~strcmpi({'add', 'replace', 'delete'}, chan_action))
   warning('ID:unknown_action', 'Action must be defined and ''add'', ''replace'' or ''delete'''); return;
@@ -127,37 +123,37 @@ end
 
 %% Find channel according to action
 % channels in file
-fchannels = [];
+fchans = [];
 if ~strcmpi(chan_action, 'add')
-  % Search for channel(s)
-  fchannels = cellfun(@(x) x.header.chantype,data,'un',0);
+  % Search for chan(s)
+  fchans = cellfun(@(x) x.header.chantype,data,'un',0);
   if ischar(options.chan)
     if strcmpi(options.delete,'all')
-      channeli = find(strcmpi(options.chan,fchannels));
+      chani = find(strcmpi(options.chan,fchans));
     else
-      channeli = find(strcmpi(options.chan,fchannels),1,options.delete);
+      chani = find(strcmpi(options.chan,fchans),1,options.delete);
     end
   elseif options.chan == 0
     funits = cellfun(@(x) x.header.units, data,'UniformOutput',0);
     % if the chantype matches, and unit matches if one is provided
-    channeli = cellfun(@(n) match_channel(fchannels, funits, n), newdata, 'UniformOutput', 0);
-    channeli = cell2mat(channeli);
+    chani = cellfun(@(n) match_chan(fchans, funits, n), newdata, 'UniformOutput', 0);
+    chani = cell2mat(chani);
   else
     chan = options.chan;
-    if any(chan > numel(fchannels))
+    if any(chan > numel(fchans))
       warning('ID:invalid_input', 'channel is larger than channel count in file'); return;
     else
-      channeli = chan;
+      chani = chan;
     end
   end
 
-  if isempty(channeli)
+  if isempty(chani)
     if strcmpi(chan_action, 'replace')
       % chan_action replace: no multi channel option possible
       % no channel found to replace
       chan_action = 'add';
     else
-      warning('ID:no_matching_channels',...
+      warning('ID:no_matching_chans',...
         'no channel of type ''%s'' found in the file',options.chan);
       return;
     end
@@ -165,10 +161,10 @@ if ~strcmpi(chan_action, 'add')
 end
 
 if strcmpi(chan_action, 'add')
-  channeli = numel(data) + (1:numel(newdata));
+  chani = numel(data) + (1:numel(newdata));
   chantypes = cellfun(@(f) f.header.chantype, newdata, 'un', 0);
-  fchannels = cell(numel(data) + numel(newdata),1);
-  fchannels(channeli,1) = chantypes;
+  fchans = cell(numel(data) + numel(newdata),1);
+  fchans(chani,1) = chantypes;
 end
 
 %% Manage message
@@ -189,7 +185,7 @@ else
   prefix = [prefix ' Output channel ID: #%02d --'];
 
   msg = '';
-  for i = channeli'
+  for i = chani'
     % translate prefix
     p = sprintf(prefix, i);
     msg = [msg, p, sprintf(' %s on %s', v, date)];
@@ -199,9 +195,9 @@ end
 
 %% Modify data according to action
 if strcmpi(chan_action, 'delete')
-  data(channeli) = [];
+  data(chani) = [];
 else
-  data(channeli,1) = newdata;
+  data(chani,1) = newdata;
 end
 
 if isfield(infos, 'history')
@@ -212,7 +208,7 @@ end
 infos.history{nhist + 1} = msg;
 
 % add infos to outinfo struct
-outinfos.chan = channeli;
+outinfos.chan = chani;
 
 %% Save data
 outdata.infos = infos;
@@ -228,7 +224,7 @@ infos = outinfos;
 
 sts = 1;
 
-function matches = match_channel(existing_chans, exisiting_units, chan)
+function matches = match_chan(existing_chans, exisiting_units, chan)
 if isfield(chan.header, 'units')
   matches = find(...
     strcmpi(chan.header.chantype, existing_chans)...
