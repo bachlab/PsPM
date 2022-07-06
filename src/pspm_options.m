@@ -12,8 +12,12 @@ switch FuncName
   case 'blink_saccade_filt'
     Opt = Autofill(Opt,'chan', 0);
     Opt = AutofillChanAction(Opt);
+  case 'compute_visual_angle_core'
+    Opt = Autofill(Opt,'interpolate',0);
   case 'compute_visual_angle'
     Opt = AutofillChanAction(Opt);
+  case 'con1'
+    Opt = AutofillChanAction(Opt,'zscored',0);
   case 'convert_area2diameter'
     Opt = AutofillChanAction(Opt);
   case 'convert_au2unit'

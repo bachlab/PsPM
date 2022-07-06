@@ -94,7 +94,8 @@ end;
 
 % set load1_options
 load1_options = struct('zscored',0);
-if isfield(options, 'zscored') && options.zscored
+options = pspm_options(options, 'con1');
+if options.zscored
   load1_options.zscored = 1;
 end;
 
