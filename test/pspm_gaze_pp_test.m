@@ -1,9 +1,8 @@
 classdef pspm_gaze_pp_test < pspm_testcase
-  % DEFINITION
+  % Definition
   % pspm_gaze_pp_test unittest classes for the pspm_gaze_pp function
   % PsPM TestEnvironment
   % (C) 2021 Teddy Chao (UCL)
-  % Supervised by Professor Dominik Bach (WCHN, UCL)
   properties
     raw_input_fn = fullfile('ImportTestData', 'eyelink', 'S114_s2.asc');
     pspm_input_fn = '';
@@ -38,17 +37,24 @@ classdef pspm_gaze_pp_test < pspm_testcase
   end
   methods(Test)
     function invalid_input(this)
+      % the function checks if the input filename and options are valid
+      % the input filename is only a number
       this.verifyWarning(@()pspm_gaze_pp(52), 'ID:invalid_input');
+      % the input filename refers to a non-existing file
       this.verifyWarning(@()pspm_gaze_pp('abc'), 'ID:nonexistent_file');
+      % the input filename is valid, but the channel referred through options is not existing
       opt.channel = 'gaze';
       this.verifyWarning(@()pspm_gaze_pp(this.pspm_input_fn, opt), 'ID:invalid_channeltype');
+      % the input filename is valid, but the two channels to combine are identical
       opt.channel = 'gaze_x_l';
       opt.channel_combine = 'pupil_x_l';
       this.verifyWarning(@()pspm_gaze_pp(this.pspm_input_fn, opt), 'ID:invalid_input');
-      opt.channel_combine = 'gaze_l';
+      % the input filename is valid, but the two channels to combine are not both x or both y
+      opt.channel_combine = 'gaze_y_l';
       this.verifyWarning(@()pspm_gaze_pp(this.pspm_input_fn, opt), 'ID:invalid_input');
     end
-    function check_if_preprocessed_channel_is_saved(this)
+    function preprocessed_channel(this)
+      % check if the channel name of the preprocessed file is correct
       opt.channel = 'gaze_x_r';
       [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
       testdata = load(this.pspm_input_fn);
@@ -66,7 +72,8 @@ classdef pspm_gaze_pp_test < pspm_testcase
       testdata = load(this.pspm_input_fn);
       this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_y_l');
     end
-    function check_upsampling_rate(this)
+    function upsampling_rate(this)
+      % check if the upsampling rate is correct
       for freq = [500 1000 1500]
         opt.custom_settings.valid.interp_upsamplingFreq = freq;
         opt.channel = 'gaze_x_r';
@@ -84,7 +91,8 @@ classdef pspm_gaze_pp_test < pspm_testcase
           numel(testdata.data{out_channel}.data));
       end
     end
-    function check_channel_combining(this)
+    function channel_combining(this)
+      % check if the combined channel has the correct channel type name
       opt.channel = 'gaze_x_r';
       opt.channel_combine = 'gaze_x_l';
       [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
