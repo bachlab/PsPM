@@ -142,12 +142,12 @@ for gaze_eye = fieldnames(eyes)'
   elseif strcmp(target, 'sps')
 
     arclen = pspm_convert_visangle2sps_core(lat, lon);
-    dist_channel.data = rad2deg(arclen) .* sr;
-    dist_channel.header.chantype = strcat('sps_', gaze_eye{1});
-    dist_channel.header.sr = sr;
-    dist_channel.header.units = 'degree';
+    dist_chan.data = rad2deg(arclen) .* sr;
+    dist_chan.header.chantype = strcat('sps_', gaze_eye{1});
+    dist_chan.header.sr = sr;
+    dist_chan.header.units = 'degree';
 
-    [sts, out] = pspm_write_channel(fn, dist_channel, options.chan_action);
+    [sts, out] = pspm_write_channel(fn, dist_chan, options.chan_action);
   end
 
 end

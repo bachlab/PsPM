@@ -29,7 +29,7 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-options = pspm_options(options);
+options = pspm_options(options, 'compute_visual_angle_core');
 % interpolate channel specific data if required
 if options.interpolate
   interpolate_options = struct('extrapolate', 1);
