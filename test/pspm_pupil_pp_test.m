@@ -32,9 +32,9 @@ classdef pspm_pupil_pp_test < pspm_testcase
     function invalid_input(this)
       this.verifyWarning(@()pspm_pupil_pp(52), 'ID:invalid_input');
       this.verifyWarning(@()pspm_pupil_pp('abc'), 'ID:nonexistent_file');
-      opt.channel = 'gaze_x_l';
+      opt.channel = 'pupil_x_l';
       this.verifyWarning(@()pspm_pupil_pp(...
-        this.pspm_input_filename, opt), 'ID:invalid_input');
+        this.pspm_input_filename, opt), 'ID:invalid_channeltype');
       opt.channel = 'pupil_l';
       opt.channel_combine = 'gaze_y_l';
       this.verifyWarning(@()pspm_pupil_pp(...

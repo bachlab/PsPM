@@ -12020,6 +12020,220 @@ Load outputfile and test if (according to bitmap expectation) bitmap validation
 
 \end_deeper
 \begin_layout Subsection
+pspm_gaze_pp
+\end_layout
+
+\begin_layout Subsubsection
+Overview
+\end_layout
+
+\begin_layout Subparagraph
+Testclass
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+pspm_gaze_pp_test
+\end_layout
+
+\begin_layout Subparagraph
+Function
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+pspm_gaze_pp
+\family default
+ preprocesses gaze signals, gaze 
+\family typewriter
+x
+\family default
+ and gaze y channels at % the same time.
+\end_layout
+
+\begin_layout Subsubsection
+Testcases
+\end_layout
+
+\begin_layout Paragraph*
+Invalid input
+\end_layout
+
+\begin_layout Subparagraph
+Function name
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+invalid_input(this).
+\end_layout
+
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+Check if the input is valid.
+\end_layout
+
+\begin_layout Subparagraph
+Tests
+\end_layout
+
+\begin_layout Enumerate
+Test if input as a number is invalid.
+\end_layout
+
+\begin_layout Enumerate
+Test if input as a string is invalid.
+\end_layout
+
+\begin_layout Enumerate
+Test if combining two identical channels is invalid.
+\end_layout
+
+\begin_layout Enumerate
+Test if combining an invalid channel is invalid.
+\end_layout
+
+\begin_layout Paragraph*
+Preprocessed channel
+\end_layout
+
+\begin_layout Subparagraph
+Function name
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+preprocessed_channel(this).
+\end_layout
+
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+Check if preprocessing a single channel is successful.
+\end_layout
+
+\begin_layout Subparagraph
+Tests
+\end_layout
+
+\begin_layout Enumerate
+Test if 
+\family typewriter
+gaze_x_r
+\family default
+ can be pre-processed successfully.
+\end_layout
+
+\begin_layout Enumerate
+Test if 
+\family typewriter
+gaze_x_l
+\family default
+ can be pre-processed successfully.
+\end_layout
+
+\begin_layout Enumerate
+Test if 
+\family typewriter
+gaze_y_r
+\family default
+ can be pre-processed successfully.
+\end_layout
+
+\begin_layout Enumerate
+Test if 
+\family typewriter
+gaze_y_l
+\family default
+ can be pre-processed successfully.
+\end_layout
+
+\begin_layout Paragraph*
+Check upsampling rate
+\end_layout
+
+\begin_layout Subparagraph
+Function name
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+upsampling_rate(this)
+\end_layout
+
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+Check the upsampling rate after 
+\family typewriter
+gaze_pp
+\family default
+.
+\end_layout
+
+\begin_layout Paragraph*
+Check channel combining
+\end_layout
+
+\begin_layout Subparagraph
+Function name
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+channel_combining(this).
+\end_layout
+
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+Test if combing two appropriate channels is successful.
+\end_layout
+
+\begin_layout Subparagraph
+Tests
+\end_layout
+
+\begin_layout Enumerate
+Test if combing 
+\family typewriter
+gaze_x_r
+\family default
+ and 
+\family typewriter
+gaze_x_l
+\family default
+ is successful.
+\end_layout
+
+\begin_layout Enumerate
+Test if combing 
+\family typewriter
+gaze_y_r
+\family default
+ and 
+\family typewriter
+gaze_y_l
+\family default
+ is successful.
+\end_layout
+
+\begin_layout Subsection
 pspm_get_ecg
 \end_layout
 

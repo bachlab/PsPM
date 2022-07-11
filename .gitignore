@@ -23,4 +23,5 @@ vendor/
 
 # Ignore temp test file
 test/pspm_test_temp.m
+test/pspm_test_dynamic.m
 success.txt
