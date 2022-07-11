@@ -12100,7 +12100,7 @@ Test if combining an invalid channel is invalid.
 \end_layout
 
 \begin_layout Paragraph*
-Check if preprocessed channel is saved
+Preprocessed channel
 \end_layout
 
 \begin_layout Subparagraph
@@ -12110,7 +12110,7 @@ Function name
 \begin_layout Standard
 
 \family typewriter
-check_if_preprocessed_channel_is_saved(this).
+preprocessed_channel(this).
 \end_layout
 
 \begin_layout Subparagraph
@@ -12168,7 +12168,7 @@ Function name
 \begin_layout Standard
 
 \family typewriter
-check_upsampling_rate(this)
+upsampling_rate(this)
 \end_layout
 
 \begin_layout Subparagraph
@@ -12194,7 +12194,7 @@ Function name
 \begin_layout Standard
 
 \family typewriter
-check_channel_combining(this).
+channel_combining(this).
 \end_layout
 
 \begin_layout Subparagraph
