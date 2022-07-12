@@ -140,16 +140,15 @@ for iFn = 1:numel(modelfile)
       idx_invalid_issue = transpose(conmat_array~=0) .* idx_issue;
       if any(idx_valid_issue)
         warning(['Calculated data.stats contain NaNs that are caused by unknown reasons. '...
-          'data.stats are then used in a contrasts, producing an invalid results (NaN).']);
-          data_stats_converted(idx_valid_issue==1,:) = 0;
+          'However they were not used in the computation of the contrasts.']);
+        data_stats_converted(idx_valid_issue==1,:) = 0;
       elseif any(idx_invalid_issue)
         warning(['Calculated data.stats contain NaNs that are caused by unknown reasons. '...
-          'However they were not used in the computation of the contrasts.']);
+          'data.stats are then used in a contrasts, producing an invalid result (NaN).']);
       end
     end
   end
   conval = conmat_converted * data_stats_converted;
-
   % zscored text-output for connames
   if isfield(data, 'zscored') && data.zscored
     out_zscored = ' (z-scored)';
