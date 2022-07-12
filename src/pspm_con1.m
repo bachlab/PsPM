@@ -141,7 +141,9 @@ for iFn = 1:numel(modelfile)
       if any(idx_valid_issue)
         warning(['Calculated data.stats contain NaNs that are caused by unknown reasons. '...
           'However they were not used in the computation of the contrasts.']);
-        data_stats_converted(idx_valid_issue==1,:) = 0;
+        data_stats_converted_array = data_stats_converted(idx_valid_issue==1,:);
+        data_stats_converted_array(isnan(data_stats_converted_array)) = 0;
+        data_stats_converted(idx_valid_issue==1,:) = data_stats_converted_array;
       elseif any(idx_invalid_issue)
         warning(['Calculated data.stats contain NaNs that are caused by unknown reasons. '...
           'data.stats are then used in a contrasts, producing an invalid result (NaN).']);
