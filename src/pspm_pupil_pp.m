@@ -32,7 +32,7 @@ function varargout = pspm_pupil_pp (fn, options)
 %       valid samples found in the previous step. This is done by
 %       performing filtering, upsampling and interpolation. The parameters
 %       of the filtering and upsampling are configurable. Once the pupil
-%       data is preprocessed, according to the option 'channel_action',
+%       data is preprocessed, according to the option 'chan_action',
 %       it will either replace an existing preprocessed pupil channel or
 %       add it as new channel to the provided file.
 % ● Format
@@ -60,8 +60,8 @@ function varargout = pspm_pupil_pp (fn, options)
 %               channels with the exact same type, only last one will be
 %			          processed. This is normally not the case with raw data
 %               channels; however, there may be multiple channels with same
-%               type if 'add' channel_action was previously used. This
-%			          feature can be combined with 'add' channel_action to create
+%               type if 'add' chan_action was previously used. This
+%			          feature can be combined with 'add' chan_action to create
 %               preprocessing histories where the result of each step is
 %               stored as a separate channel.
 %       .data:  field of the preprocessed channel contains the smoothed,
@@ -74,9 +74,9 @@ function varargout = pspm_pupil_pp (fn, options)
 %   .chan_combine:
 %               [optional][numeric/string][Default: 'none']
 %			          Channel ID to be used for computing the mean pupil signal.
-%               The input format is exactly the same as the .channel field.
+%               The input format is exactly the same as the .chan field.
 %               However, the eye specified in this channel must be different
-%               than the one specified in .channel field. By default, this
+%               than the one specified in .chan field. By default, this
 %               channel is not used. Only specify it if you want to combine
 %               left and right pupil eye signals, and in this situation,
 %               the type of the output channel becomes 'pupil_pp_c'.
@@ -152,9 +152,9 @@ if ~isfield(options, 'segments')
   options.segments = {};
 end
 %% 3 Input checks
-if ~ismember(options.channel_action, {'add', 'replace'})
+if ~ismember(options.chan_action, {'add', 'replace'})
   warning('ID:invalid_input', ...
-    'Option channel_action must be either ''add'' or ''replace''');
+    'Option chan_action must be either ''add'' or ''replace''');
   return
 end
 for seg = options.segments
@@ -176,7 +176,7 @@ if action_combine
   if lsts ~= 1
     return
   end
-  if strcmp(get_eye(data{1}.header.chantype), get_eye(data_combine{1}.header.chantype))
+  if strcmp(pspm_get_eye(data{1}.header.chantype), pspm_get_eye(data_combine{1}.header.chantype))
     warning('ID:invalid_input', 'options.chan and options.chan_combine must specify different eyes');
     return;
   end
