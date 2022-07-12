@@ -767,6 +767,166 @@ processing has been fixed.
 \end{itemize}
 \end{itemize}
 
+\section{PsPM Version 6.0.0}
+\subsection*{New features}
+\begin{itemize}
+\item PsPM now support a develop mode, which allows
+  \begin{itemize}
+  \item Minimised terminal output
+  \item Automagical parameter selection for testing
+  \item Always overwrite files (issue: \#302, solution: \#364).
+  \end{itemize}
+\item \texttt{pspm\_extract\_segments}
+  \begin{itemize}
+  \item now allows an option z-score for normalisation (solution: \#332).
+  \end{itemize}
+\item \texttt{pspm\_find\_valid\_fixations}
+  \begin{itemize}
+  \item now allows processing preprocessed left/right/combined pupil data (issue: \#275, solution: \#290).
+  \end{itemize}
+\item \texttt{pspm\_gaze\_pp}
+  \begin{itemize}
+  \item now allows preprocessing gaze signals (issue: \#310, solution: \#311).
+  \end{itemize}
+\item \texttt{pspm\_overwrite}
+  \begin{itemize}
+  \item now handles the behaviour of overwrite if not defined by the user, and is used where applicable (issues: \#374, \#375, solution: \#376).
+  \end{itemize}
+\item \texttt{pspm\_time2index}
+  \begin{itemize}
+  \item now processes adjustable conversion from time to index globally (issue: \#326, solution: \#327, \#388).
+  \end{itemize}
+\item \texttt{pspm\_update\_chantype}
+  \begin{itemize}
+  \item now allows generalised behaviour of updating channel types (issue: \#310, solution: \#311).
+  \end{itemize}
+\end{itemize}
+
+\subsection*{Bug Fixes}
+\begin{itemize}
+\item General
+  \begin{itemize}
+  \item A bug which may lead to failure of pspm path searching has been fixed (issue: \#353, solution: \#354).
+  \item A bug which may display figures in the GUI has been fixed (issue: \#248, solution: \#345).
+  \end{itemize}
+\item \texttt{pspm\_bf\_spsrf\_box}
+  \begin{itemize}
+  \item now uses correct parameter settings (issue: \#298, solution: \#299).
+  \end{itemize}
+\item \texttt{pspm\_convert\_ppu2hb}
+  \begin{itemize}
+  \item terminates if only one pulse is detected (issue: \#381, solution: \#382).
+  \end{itemize}
+\item \texttt{pspm\_data\_editor}
+  \begin{itemize}
+  \item now able to show figures when import a datafile correctly (issue: \#358, solution: \#359).
+  \end{itemize}
+\item \texttt{pspm\_dcm}
+  \begin{itemize}
+  \item now handles missing epochs that start at 0 correctly (issue: \#324, solution: \#334).
+  \item now processes variables properly to make length consistent (issue: \#361, solution: \#363).
+  \end{itemize}
+\item \texttt{pspm\_display}
+  \begin{itemize}
+  \item now display plots with correct x-axis ranges (issue: \#291, solution: \#292).
+  \end{itemize}
+\item \texttt{pspm\_glm}
+  \begin{itemize}
+  \item now applies correct variable settings (issue: \#314, solution: \#315).
+  \item now produces results correctly when facing many short missing epochs (issue: \#338, solution: \#339).
+  \end{itemize}
+\item \texttt{pspm\_interpolate}
+  \begin{itemize}
+  \item now returns results correctly when applying forced extrapolation (issue: \#317, solution: \#337).
+  \end{itemize}
+\item \texttt{pspm\_resp\_pp}
+  \begin{itemize}
+  \item now allows replace as the channel action properly (issue: \#380, solution: \#383).
+  \end{itemize}
+\item \texttt{pspm\_scr\_pp}
+  \begin{itemize}
+  \item now uses inconsistent variables when delivering missing epochs (issue: \#300, solution: \#301).
+  \item now writes data out properly when epochs are removed (issue: \#335, solution: \#336).
+  \item now properly handles data if the first channel is not \texttt{scr} (issue: \#351, solution: \#352).
+  \end{itemize}
+\item \texttt{pspm\_sf}
+  \begin{itemize}
+  \item now refer to model file correctly (issue: \#370, solution: \#371).
+  \end{itemize}
+\item \texttt{pspm\_split\_sessions}
+  \begin{itemize}
+  \item now processes missing files with an epoch starting at 0~s properly (issue: \#323, solution: \#333).
+  \item now properly catches edge cases (solutions: \#386, \#389).
+  \end{itemize}
+\item \texttt{ValidSamplesModel}
+  \begin{itemize}
+  \item now properly throw warnings if histogram counts are zeros (issue: \#355, solution: \#365).
+  \end{itemize}
+\end{itemize}
+
+\subsection*{Improvements}
+\begin{itemize}
+\item General
+  \begin{itemize}
+  \item now supports loading \texttt{ppg} data (issue: \#391, solution: \#392).
+  \item now displays improved terminal output text (issue: \#387, solution: \#390).
+  \end{itemize}
+\item \texttt{pspm\_con1}
+  \begin{itemize}
+  \item now assesses the statistics in the arguments for throwing warnings when detecting invalid values (issue: \#395, solution: \#398).
+  \end{itemize}
+\item \texttt{pspm\_data\_editor}
+  \begin{itemize}
+  \item now displays the x and y axis label and text according to the input data (issue: \#224, solution: \#394).
+  \item now sorts the epoch list according to the start data point.
+  \end{itemize}
+\item \texttt{pspm\_get\_marker}
+  \begin{itemize}
+  \item now detect and update the field \texttt{flank} when applicable (issue: \#308, solution: \#343).
+  \end{itemize}
+\item \texttt{pspm\_import}
+  \begin{itemize}
+  \item now detect and update the field \texttt{flank} when applicable (issue: \#308, solution: \#343).
+  \end{itemize}
+\item \texttt{pspm\_load\_data}
+  \begin{itemize}
+  \item now checks whether the input has an empty channel (issue: \#212, solution: \#344).
+  \item now autofills some variables (issue: \#308, solution: \#343).
+  \end{itemize}
+\item \texttt{pspm\_pupil\_pp}
+  \begin{itemize}
+  \item now calls \texttt{pspm\_load\_data} to load single channels (issue: \#308, solution: \#343).
+  \end{itemize}
+\item \texttt{pspm\_rev\_glm}
+  \begin{itemize}
+  \item now display normalised data for visualisation purpose only (issue: \#213, solution: \#342, \#347).
+  \end{itemize}
+\item \texttt{pspm\_write\_channel}
+  \begin{itemize}
+  \item now checks whether the input has an empty channel (issue: \#212, solution: \#344).
+  \end{itemize}
+\end{itemize}
+
+\subsection*{GUI}
+\begin{itemize}
+\item "Edit defaults" in the GUI is now working properly (issue: \#289, solution: \#348).
+\item GUI typeface is now generalised across the software (issue: \#293, solution: \#294).
+\end{itemize}
+
+\subsection*{For Developers}
+\begin{itemize}
+\item General
+  \begin{itemize}
+  \item now uses \texttt{.editorconfig} to control the indent (solution: \#328).
+  \item now uses UTF-8, LF, and MATLAB's soft tab indent as the standard code formatting style (issue: \#130, solution: \#296, \#369).
+  \item now uses test data from the repository PsPM-data (issue: \#340, solution: \#341).
+  \end{itemize}
+\item \texttt{pspm\_get\_text\_test}
+  \begin{itemize}
+  \item A bug, which leaves residual test files after code testing, has been fixed (issue: \#312, solution: \#313).
+  \end{itemize}
+\end{itemize}
+
 \bibliographystyle{pnas2009}
 \bibliography{PsPM}
 
