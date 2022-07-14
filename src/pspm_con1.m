@@ -134,11 +134,13 @@ for iFn = 1:numel(modelfile)
   [Rconval, ~] = size(conval);
   if any(IdxIssueRow(:))
     for rconval = 1:Rconval
-      if any(conmat(rconval,IdxIssueRow) == 0)
+      if all(conmat(rconval,IdxIssueRow) == 0)
+        % all the issues refer to 0 in conmat
         conval(rconval,:) = conmat(rconval,~IdxIssueRow) * data.stats(~IdxIssueRow,:);
         warning(['Calculated data.stats contain NaNs that are caused by unknown reasons. '...
           'However they were not used in the computation of the contrasts.']);
       else
+        % the issues refer to non-0 or 0 in conmat
         conval(rconval,:) = conmat(rconval,:) * data.stats;
         warning(['Calculated data.stats contain NaNs that are caused by unknown reasons. '...
             'data.stats are then used in a contrasts, producing an invalid result (NaN).']);
