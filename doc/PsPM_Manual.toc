@@ -1,0 +1,179 @@
+\babel@toc {UKenglish}{}\relax 
+\contentsline {part}{I\hspace {1em}Background}{7}{part.1}%
+\contentsline {section}{\numberline {1}What is psychophysiological modelling?}{7}{section.1}%
+\contentsline {subsection}{\numberline {1.1}The psychophysiological inverse problem}{7}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Operational analysis}{7}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Model-based analysis }{7}{subsection.1.3}%
+\contentsline {section}{\numberline {2}Method comparison}{8}{section.2}%
+\contentsline {section}{\numberline {3}General model structure}{9}{section.3}%
+\contentsline {subsection}{\numberline {3.1}General}{9}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Peripheral models}{10}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Neural models}{11}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Model inversion}{11}{subsection.3.4}%
+\contentsline {subsubsection}{\numberline {3.4.1}Hierarchical summary statistic approach}{11}{subsubsection.3.4.1}%
+\contentsline {subsubsection}{\numberline {3.4.2}Multi-level modelling}{11}{subsubsection.3.4.2}%
+\contentsline {subsubsection}{\numberline {3.4.3}Probabilistic model inversion}{12}{subsubsection.3.4.3}%
+\contentsline {subsubsection}{\numberline {3.4.4}General linear convolution model (GLM)}{12}{subsubsection.3.4.4}%
+\contentsline {subsubsection}{\numberline {3.4.5}Non-linear model inversion}{13}{subsubsection.3.4.5}%
+\contentsline {section}{\numberline {4}Skin conductance (SCR) models}{13}{section.4}%
+\contentsline {subsection}{\numberline {4.1}General}{13}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Peripheral LTI model}{13}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}Model evaluation}{13}{subsubsection.4.2.1}%
+\contentsline {paragraph}{Linearity: the system's response does not depend on previous inputs. }{14}{section*.4}%
+\contentsline {paragraph}{Model limits}{15}{section*.5}%
+\contentsline {subsubsection}{\numberline {4.2.2}Skin Conductance Response Function (SCRF)}{15}{subsubsection.4.2.2}%
+\contentsline {paragraph}{Canonical Skin Conductance Response Function}{16}{section*.6}%
+\contentsline {subsection}{\numberline {4.3}Neural model and model inversion}{17}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {4.3.1}Physiological evidence}{17}{subsubsection.4.3.1}%
+\contentsline {subsubsection}{\numberline {4.3.2}General Linear Model (GLM) for evoked SA}{17}{subsubsection.4.3.2}%
+\contentsline {subsubsection}{\numberline {4.3.3}Non-linear model (DCM) for event-related SA}{17}{subsubsection.4.3.3}%
+\contentsline {subsubsection}{\numberline {4.3.4}Non-linear model for tonic SA (spontaneous fluctuations, SF)}{18}{subsubsection.4.3.4}%
+\contentsline {subsection}{\numberline {4.4}Data conditioning}{19}{subsection.4.4}%
+\contentsline {subsubsection}{\numberline {4.4.1}Filtering}{19}{subsubsection.4.4.1}%
+\contentsline {subsubsection}{\numberline {4.4.2}Normalisation}{19}{subsubsection.4.4.2}%
+\contentsline {subsection}{\numberline {4.5}Implicit estimates of tonic sympathetic arousal}{20}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Comparison with other model-based methods for SCR}{20}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Recommendations}{20}{subsection.4.7}%
+\contentsline {section}{\numberline {5}Heart Period (HP) Models}{21}{section.5}%
+\contentsline {subsection}{\numberline {5.1}General}{21}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Peripheral and neural model}{22}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Model for event-related HPR}{22}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Model for fear-conditioned HPR}{23}{subsection.5.4}%
+\contentsline {subsubsection}{\numberline {5.4.1}Adaptation to different SOAs}{24}{subsubsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.5}Data Conditioning}{24}{subsection.5.5}%
+\contentsline {subsubsection}{\numberline {5.5.1}QRS detection}{24}{subsubsection.5.5.1}%
+\contentsline {paragraph}{\textmd {PsPM also offers a QRS detection algorithm for ECG data acquired in MRI environments. The algorithm is described in \cite {liu2012statistical}. The implementation is obtained from the software link given in the paper.}}{24}{section*.10}%
+\contentsline {subsubsection}{\numberline {5.5.2}Interpolation and Filtering }{24}{subsubsection.5.5.2}%
+\contentsline {subsection}{\numberline {5.6}Recommendations}{25}{subsection.5.6}%
+\contentsline {section}{\numberline {6}Pupil size response (PSR) models}{25}{section.6}%
+\contentsline {subsection}{\numberline {6.1}General}{25}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Model for pupil size changes elicited by (il)luminance changes}{26}{subsection.6.2}%
+\contentsline {subsubsection}{\numberline {6.2.1}Model for steady-state pupil size}{26}{subsubsection.6.2.1}%
+\contentsline {subsubsection}{\numberline {6.2.2}Model for pupil dilation/constriction}{26}{subsubsection.6.2.2}%
+\contentsline {subsection}{\numberline {6.3}Model for pupil size changes elicited by fear conditioning}{27}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Data preconditioning}{27}{subsection.6.4}%
+\contentsline {section}{\numberline {7}Respiratory response models}{28}{section.7}%
+\contentsline {subsection}{\numberline {7.1}General}{28}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Peripheral and neural model}{29}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Models for evoked respiratory responses}{29}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Model for fear-conditioned RAR}{29}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}Data Conditioning}{30}{subsection.7.5}%
+\contentsline {subsubsection}{\numberline {7.5.1}Breathing cycle detection }{30}{subsubsection.7.5.1}%
+\contentsline {paragraph}{Cushion system}{30}{section*.12}%
+\contentsline {subsubsection}{\numberline {7.5.2}Interpolation and Filtering }{31}{subsubsection.7.5.2}%
+\contentsline {subsection}{\numberline {7.6}Recommendations}{31}{subsection.7.6}%
+\contentsline {section}{\numberline {8}Startle eye blink response models}{31}{section.8}%
+\contentsline {subsection}{\numberline {8.1}General}{31}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Peripheral and neural model}{31}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Data preconditioning}{32}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Recommendations}{32}{subsection.8.4}%
+\contentsline {section}{\numberline {9}Scanpath speed (SPS) model}{32}{section.9}%
+\contentsline {subsection}{\numberline {9.1}General }{32}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Model for fear-conditioned SPS }{33}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Data preconditioning }{33}{subsection.9.3}%
+\contentsline {subsection}{\numberline {9.4}Recommendations}{33}{subsection.9.4}%
+\contentsline {part}{II\hspace {1em}User Guide}{34}{part.2}%
+\contentsline {section}{\numberline {10}Installation}{34}{section.10}%
+\contentsline {section}{\numberline {11}Start the package}{34}{section.11}%
+\contentsline {section}{\numberline {12}General points}{34}{section.12}%
+\contentsline {subsection}{\numberline {12.1}File types}{34}{subsection.12.1}%
+\contentsline {subsection}{\numberline {12.2}Functions that create new data files}{34}{subsection.12.2}%
+\contentsline {subsection}{\numberline {12.3}Functions that create or modify data channels in an existing file}{35}{subsection.12.3}%
+\contentsline {section}{\numberline {13}Data preparation}{35}{section.13}%
+\contentsline {subsection}{\numberline {13.1}Import}{35}{subsection.13.1}%
+\contentsline {paragraph}{CED Spike}{36}{section*.14}%
+\contentsline {paragraph}{Text}{36}{section*.15}%
+\contentsline {paragraph}{Matlab}{36}{section*.16}%
+\contentsline {paragraph}{Biopac AcqKnowledge (up to v. 3.9)}{36}{section*.17}%
+\contentsline {paragraph}{exported Biopac AcqKnowledge}{36}{section*.18}%
+\contentsline {paragraph}{bioread-converted Biopac AcqKnowledge (any version)}{36}{section*.19}%
+\contentsline {paragraph}{Labchart exported (up to v. 7.1)}{36}{section*.21}%
+\contentsline {paragraph}{Labchart exported (v. 7.2 and higher)}{36}{section*.22}%
+\contentsline {paragraph}{VarioPort}{36}{section*.23}%
+\contentsline {paragraph}{Biograph Infiniti exported}{36}{section*.24}%
+\contentsline {paragraph}{Windaq (PsPM Version)}{37}{section*.28}%
+\contentsline {paragraph}{European Data Format (EDF)}{40}{section*.39}%
+\contentsline {paragraph}{Philips Scanphyslog}{40}{section*.40}%
+\contentsline {subsection}{\numberline {13.2}Trim}{42}{subsection.13.2}%
+\contentsline {section}{\numberline {14}Data preprocessing}{44}{section.14}%
+\contentsline {subsection}{\numberline {14.1}Preprocess heart data}{44}{subsection.14.1}%
+\contentsline {subsection}{\numberline {14.2}ECG editor }{47}{subsection.14.2}%
+\contentsline {subsection}{\numberline {14.3}Preprocess respiration data}{51}{subsection.14.3}%
+\contentsline {subsection}{\numberline {14.4}Prepare illuminance GLM}{52}{subsection.14.4}%
+\contentsline {subsection}{\numberline {14.5}Find valid fixations}{53}{subsection.14.5}%
+\contentsline {subsection}{\numberline {14.6}Pupil Foreshortening Error Correction }{54}{subsection.14.6}%
+\contentsline {subsection}{\numberline {14.7}Pupil Size Preprocessing }{56}{subsection.14.7}%
+\contentsline {subsection}{\numberline {14.8}Convert data}{60}{subsection.14.8}%
+\contentsline {subsection}{\numberline {14.9}Find startle sound onsets}{61}{subsection.14.9}%
+\contentsline {subsection}{\numberline {14.10}Preprocess startle eyeblink EMG}{62}{subsection.14.10}%
+\contentsline {subsection}{\numberline {14.11}Gaze Preprocessing }{63}{subsection.14.11}%
+\contentsline {subsection}{\numberline {14.12}Preprocessing SCR }{64}{subsection.14.12}%
+\contentsline {paragraph}{Channel action}{65}{section*.163}%
+\contentsline {section}{\numberline {15}First level}{65}{section.15}%
+\contentsline {subsection}{\numberline {15.1}GLM (modality-independent options)}{65}{subsection.15.1}%
+\contentsline {subsection}{\numberline {15.2}GLM for SCR}{69}{subsection.15.2}%
+\contentsline {subsection}{\numberline {15.3}GLM for evoked HPR}{70}{subsection.15.3}%
+\contentsline {subsection}{\numberline {15.4}GLM for fear-conditioned HPR}{70}{subsection.15.4}%
+\contentsline {subsection}{\numberline {15.5}GLM for fear-conditioned PSR}{71}{subsection.15.5}%
+\contentsline {subsection}{\numberline {15.6}GLM for evoked RAR}{71}{subsection.15.6}%
+\contentsline {subsection}{\numberline {15.7}GLM for fear-conditioned RAR}{72}{subsection.15.7}%
+\contentsline {subsection}{\numberline {15.8}GLM for evoked RPR}{72}{subsection.15.8}%
+\contentsline {subsection}{\numberline {15.9}GLM for evoked RFRR}{72}{subsection.15.9}%
+\contentsline {subsection}{\numberline {15.10}GLM for SEBR}{73}{subsection.15.10}%
+\contentsline {subsection}{\numberline {15.11}GLM for SPS}{73}{subsection.15.11}%
+\contentsline {subsection}{\numberline {15.12}Non-Linear Model for SCR}{74}{subsection.15.12}%
+\contentsline {paragraph}{Display Progress Window}{78}{section*.249}%
+\contentsline {subsection}{\numberline {15.13}SF models}{78}{subsection.15.13}%
+\contentsline {subsection}{\numberline {15.14}Review First-Level Model (via Batch editor)}{81}{subsection.15.14}%
+\contentsline {subsection}{\numberline {15.15}First-Level Model Review Manager (via GUI)}{82}{subsection.15.15}%
+\contentsline {subsection}{\numberline {15.16}First-Level Contrasts (via Batch editor)}{82}{subsection.15.16}%
+\contentsline {subsection}{\numberline {15.17}First level contrast manager (via GUI)}{83}{subsection.15.17}%
+\contentsline {subsection}{\numberline {15.18}Export Statistics }{84}{subsection.15.18}%
+\contentsline {section}{\numberline {16}Second level}{85}{section.16}%
+\contentsline {subsection}{\numberline {16.1}Define Second-Level Model}{85}{subsection.16.1}%
+\contentsline {subsection}{\numberline {16.2}Report Second-Level Results }{86}{subsection.16.2}%
+\contentsline {section}{\numberline {17}Tools}{86}{section.17}%
+\contentsline {subsection}{\numberline {17.1}Display Data}{86}{subsection.17.1}%
+\contentsline {subsection}{\numberline {17.2}Data editor}{86}{subsection.17.2}%
+\contentsline {paragraph}{Inline mode}{87}{section*.303}%
+\contentsline {subsection}{\numberline {17.3}Rename File}{88}{subsection.17.3}%
+\contentsline {subsection}{\numberline {17.4}Split Sessions}{89}{subsection.17.4}%
+\contentsline {subsection}{\numberline {17.5}Merge files}{90}{subsection.17.5}%
+\contentsline {subsection}{\numberline {17.6}Artefact Removal}{90}{subsection.17.6}%
+\contentsline {subsection}{\numberline {17.7}Downsample Data }{91}{subsection.17.7}%
+\contentsline {subsection}{\numberline {17.8}Interpolate missing data}{92}{subsection.17.8}%
+\contentsline {subsection}{\numberline {17.9}Extract segments}{92}{subsection.17.9}%
+\contentsline {subsection}{\numberline {17.10}Segment mean}{95}{subsection.17.10}%
+\contentsline {subsection}{\numberline {17.11}Extract event marker info}{95}{subsection.17.11}%
+\contentsline {section}{\numberline {18}Convenience functions}{96}{section.18}%
+\contentsline {section}{\numberline {19}Troubleshooting and known problems}{96}{section.19}%
+\contentsline {subsection}{\numberline {19.1}Path}{96}{subsection.19.1}%
+\contentsline {subsection}{\numberline {19.2}Diagnostic graphics for non-linear model inversion}{96}{subsection.19.2}%
+\contentsline {subsection}{\numberline {19.3}Export statistics into text format with tab delimiter}{97}{subsection.19.3}%
+\contentsline {part}{III\hspace {1em}Tutorial}{98}{part.3}%
+\contentsline {section}{\numberline {20}GLM for SCR tutorial: Appraisal data }{98}{section.20}%
+\contentsline {subsection}{\numberline {20.1}Import}{98}{subsection.20.1}%
+\contentsline {subsection}{\numberline {20.2}Trim}{99}{subsection.20.2}%
+\contentsline {subsection}{\numberline {20.3}First-Level}{101}{subsection.20.3}%
+\contentsline {subsection}{\numberline {20.4}Review First-Level Model}{103}{subsection.20.4}%
+\contentsline {subsection}{\numberline {20.5}First-Level Contrast Manager}{107}{subsection.20.5}%
+\contentsline {subsection}{\numberline {20.6}Export Statistics}{107}{subsection.20.6}%
+\contentsline {subsection}{\numberline {20.7}Adapting scripts for multiple participants and second-level analyses }{107}{subsection.20.7}%
+\contentsline {section}{\numberline {21}Non-linear SCR tutorial: Delay fear conditioning data}{107}{section.21}%
+\contentsline {subsection}{\numberline {21.1}Setup the Non-Linear Model}{108}{subsection.21.1}%
+\contentsline {subsection}{\numberline {21.2}First-level Contrasts}{111}{subsection.21.2}%
+\contentsline {subsection}{\numberline {21.3}Exporting statistics}{112}{subsection.21.3}%
+\contentsline {section}{\numberline {22}Adapting scripts for multiple participants}{112}{section.22}%
+\contentsline {subsection}{\numberline {22.1}Importing and trimming data}{112}{subsection.22.1}%
+\contentsline {subsection}{\numberline {22.2}Inverting non-linear models}{113}{subsection.22.2}%
+\contentsline {section}{\numberline {23}Second-level Contrast Manager}{115}{section.23}%
+\contentsline {subsection}{\numberline {23.1}GLM}{115}{subsection.23.1}%
+\contentsline {subsubsection}{\numberline {23.1.1}Define Second-Level Model}{115}{subsubsection.23.1.1}%
+\contentsline {subsubsection}{\numberline {23.1.2}Report Second-Level Results}{116}{subsubsection.23.1.2}%
+\contentsline {subsection}{\numberline {23.2}Non-linear models}{116}{subsection.23.2}%
+\contentsline {section}{\numberline {24}Calling PsPM functions directly from the Matlab command line}{118}{section.24}%
+\contentsline {part}{IV\hspace {1em}How to Reference PsPM}{121}{part.4}%
+\contentsline {part}{V\hspace {1em}Release notes}{123}{part.5}%
+\contentsline {paragraph}{Parametric modulators}{123}{section*.370}%
+\contentsline {part}{VI\hspace {1em}Acknowledgements}{138}{part.6}%
+\contentsline {part}{VII\hspace {1em}References}{140}{part.7}%

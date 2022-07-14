@@ -1,0 +1,346 @@
+\begin{thebibliography}{10}
+
+\bibitem{Bach:2013ab}
+Bach, D.~R \& Friston, K.~J.
+\newblock (2013) Model-based analysis of skin conductance responses: {Towards}
+  causal models in psychophysiology.
+\newblock {\em Psychophysiology} {\bf 50}, 15--22.
+
+\bibitem{Bach2018:aa}
+Bach, D.~R, Castegnetti, G, Korn, C.~W, Gerster, S, Melinscak, F,  \& Moser, T.
+\newblock (2018) Psychophysiological modeling: {Current} state and future
+  directions.
+\newblock {\em Psychophysiology} {\bf 55}, e13214.
+
+\bibitem{Burnham:2004}
+Burnham, K.~P \& Anderson, D.~R.
+\newblock (2004) Multimodel inference understanding {AIC} and {BIC} in model
+  selection.
+\newblock {\em Sociol. Methods Res.} {\bf 33}, 261--304.
+
+\bibitem{Penny:2004aa}
+Penny, W.~D, Stephan, K.~E, Mechelli, A,  \& Friston, K.~J.
+\newblock (2004) Comparing dynamic causal models.
+\newblock {\em Neuroimage} {\bf 22}, 1157--1172.
+
+\bibitem{Alexander:2005aa}
+Alexander, D.~M, Trengove, C, Johnston, P, Cooper, T, August, J.~P,  \& Gordon,
+  E.
+\newblock (2005) Separating individual skin conductance responses in a short
+  interstimulus-interval paradigm.
+\newblock {\em J. Neurosci. Methods} {\bf 146}, 116--123.
+
+\bibitem{Bach:2009aa}
+Bach, D.~R, Flandin, G, Friston, K.~J,  \& Dolan, R.~J.
+\newblock (2009) Time-series analysis for rapid event-related skin conductance
+  responses.
+\newblock {\em J. Neurosci. Methods} {\bf 184}, 224--234.
+
+\bibitem{Benedek:2010ab}
+Benedek, M \& Kaernbach, C.
+\newblock (2010) Decomposition of skin conductance data by means of nonnegative
+  deconvolution.
+\newblock {\em Psychophysiology} {\bf 47}, 647--658.
+
+\bibitem{Benedek:2010aa}
+Benedek, M \& Kaernbach, C.
+\newblock (2010) A continuous measure of phasic electrodermal activity.
+\newblock {\em J. Neurosci. Methods} {\bf 190}, 80--91.
+
+\bibitem{Bach:2013aa}
+Bach, D.~R, Friston, K.~J,  \& Dolan, R.~J.
+\newblock (2013) An improved algorithm for model-based analysis of evoked skin
+  conductance responses.
+\newblock {\em Biol. Psychol.} {\bf 94}, 490--497.
+
+\bibitem{Bach:2014aa}
+Bach, D.~R.
+\newblock (2014) A head-to-head comparison of {SCRalyze} and {Ledalab}, two
+  model-based methods for skin conductance analysis.
+\newblock {\em Biol. Psychol.} {\bf 103}, 63--68.
+
+\bibitem{Staib:2015aa}
+Staib, M, Castegnetti, G,  \& Bach, D.~R.
+\newblock (2015) Optimising a model-based approach to inferring fear learning
+  from skin conductance responses.
+\newblock {\em J. Neurosci. Methods} {\bf 255}, 131--138.
+
+\bibitem{Pinheiro:2000aa}
+Pinheiro, J.~C \& Bates, D.~M.
+\newblock (2000) {\em Mixed-{Effects} {Models} in {S} and {S}-{PLUS}},
+  Statistics and {Computing}.
+\newblock (Springer-Verlag, New York).
+\newblock DOI: 10.1007/b98882.
+
+\bibitem{Bach:2017aa}
+Bach, D.~R, Tzovara, A,  \& Vunder, J.
+\newblock (2017) Blocking human fear memory with the matrix metalloproteinase
+  inhibitor doxycycline.
+\newblock {\em Mol. Psychiatry} {\bf 23}, 1584--1589.
+
+\bibitem{Homan:2017aa}
+Homan, P, Lin, Q, Murrough, J.~W, Soleimani, L, Bach, D.~R, Clem, R.~L,  \&
+  Schiller, D.
+\newblock (2017) Prazosin during threat discrimination boosts memory of the
+  safe stimulus.
+\newblock {\em Learn. Mem.} {\bf 24}, 597--601.
+
+\bibitem{Tzovara:2018aa}
+Tzovara, A, Korn, C.~W,  \& Bach, D.~R.
+\newblock (2018) Human {Pavlovian} fear conditioning conforms to probabilistic
+  learning.
+\newblock {\em PLoS Comput. Biol.} {\bf 14}, e1006243.
+
+\bibitem{Daunizeau:2009aa}
+Daunizeau, J, Friston, K.~J,  \& Kiebel, S.~J.
+\newblock (2009) Variational {Bayesian} identification and prediction of
+  stochastic nonlinear dynamic causal models.
+\newblock {\em Physica D} {\bf 238}, 2089--2118.
+
+\bibitem{boucsein:2012}
+Boucsein, W.
+\newblock (2012) {\em Electrodermal activity}.
+\newblock (Springer Science \& Business Media).
+
+\bibitem{Bini:1980aa}
+Bini, G, Hagbarth, K.~E, Hynninen, P,  \& Wallin, B.~G.
+\newblock (1980) Thermoregulatory and rhythm-generating mechanisms governing
+  the sudomotor and vasoconstrictor outflow in human cutaneous nerves.
+\newblock {\em J. Physiol.} {\bf 306}, 537--552.
+
+\bibitem{Sugenoya:1990aa}
+Sugenoya, J, Iwase, S, Mano, T,  \& Ogawa, T.
+\newblock (1990) Identification of sudomotor activity in cutaneous sympathetic
+  nerves using sweat expulsion as the effector response.
+\newblock {\em Eur. J. Appl. Physiol. Occup. Physiol.} {\bf 61}, 302--308.
+
+\bibitem{Kunimoto:1991aa}
+Kunimoto, M, Kirn{\"o}, K, Elam, M,  \& Wallin, B.~G.
+\newblock (1991) Neuroeffector characteristics of sweat glands in the human
+  hand activated by regular neural stimuli.
+\newblock {\em J. Physiol.} {\bf 442}, 391--411.
+
+\bibitem{Kunimoto:1992aa}
+Kunimoto, M, Kirn{\"o}, K, Elam, M, Karlsson, T,  \& Wallin, B.~G.
+\newblock (1992) Neuro-effector characteristics of sweat glands in the human
+  hand activated by irregular stimuli.
+\newblock {\em Acta Physiol. Scand.} {\bf 146}, 261--269.
+
+\bibitem{Gerster:2017aa}
+Gerster, S, Namer, B, Elam, M,  \& Bach, D.~R.
+\newblock (2017) Testing a linear time invariant model for skin conductance
+  responses by intraneural recording and stimulation.
+\newblock {\em Psychophysiology} {\bf 55}, e12986.
+
+\bibitem{Kirno:1991aa}
+Kirn{\"o}, K, Kunimoto, M, Lundin, S, Elam, M,  \& Wallin, B.~G.
+\newblock (1991) Can galvanic skin response be used as a quantitative estimate
+  of sympathetic nerve activity in regional anesthesia?
+\newblock {\em Anesth. Analg.} {\bf 73}, 138--142.
+
+\bibitem{Bach:2010ad}
+Bach, D.~R, Flandin, G, Friston, K.~J,  \& Dolan, R.~J.
+\newblock (2010) Modelling event-related skin conductance responses.
+\newblock {\em Int. J. Psychophysiol.} {\bf 75}, 349--356.
+
+\bibitem{Kunimoto:1992ab}
+Kunimoto, M, Kirn{\"o}, K, Elam, M, Karlsson, T,  \& Wallin, B.~G.
+\newblock (1992) Non-linearity of skin resistance response to intraneural
+  electrical stimulation of sudomotor nerves.
+\newblock {\em Acta Physiol. Scand.} {\bf 146}, 385--392.
+
+\bibitem{Friston:1998aa}
+Friston, K.~J, Josephs, O, Rees, G,  \& Turner, R.
+\newblock (1998) Nonlinear event-related responses in {fMRI}.
+\newblock {\em Magn. Reson. Med.} {\bf 39}, 41--52.
+
+\bibitem{Friston:2000aa}
+Friston, K.~J, Mechelli, A, Turner, R,  \& Price, C.~J.
+\newblock (2000) Nonlinear responses in {fMRI}: the {Balloon} model, {Volterra}
+  kernels, and other hemodynamics.
+\newblock {\em Neuroimage} {\bf 12}, 466--477.
+
+\bibitem{Bach:2010ac}
+Bach, D.~R, Friston, K.~J,  \& Dolan, R.~J.
+\newblock (2010) Analytic measures for quantification of arousal from
+  spontaneous skin conductance fluctuations.
+\newblock {\em Int. J. Psychophysiol.} {\bf 76}, 52--55.
+
+\bibitem{Bach:2010aa}
+Bach, D.~R, Daunizeau, J, Friston, K.~J,  \& Dolan, R.~J.
+\newblock (2010) Dynamic causal modelling of anticipatory skin conductance
+  responses.
+\newblock {\em Biol. Psychol.} {\bf 85}, 163--170.
+
+\bibitem{Daunizeau:2014aa}
+Daunizeau, J, Adam, V,  \& Rigoux, L.
+\newblock (2014) {VBA}: a probabilistic treatment of nonlinear models for
+  neurobiological and behavioural data.
+\newblock {\em PLoS Comput. Biol.} {\bf 10}, e1003441.
+
+\bibitem{Bach:2011a}
+Bach, D.~R, Daunizeau, J, Kuelzow, N, Friston, K.~J,  \& Dolan, R.~J.
+\newblock (2011) Dynamic causal modeling of spontaneous fluctuations in skin
+  conductance.
+\newblock {\em Psychophysiology} {\bf 48}, 252--257.
+
+\bibitem{Bach:2015aa}
+Bach, D.~R \& Staib, M.
+\newblock (2015) A matching pursuit algorithm for inferring tonic sympathetic
+  arousal from spontaneous skin conductance fluctuations.
+\newblock {\em Psychophysiology} {\bf 52}, 1106--1112.
+
+\bibitem{Lim:1997aa}
+Lim, C.~L, Rennie, C, Barry, R.~J, Bahramali, H, Lazzaro, I, Manor, B,  \&
+  Gordon, E.
+\newblock (1997) Decomposing skin conductance into tonic and phasic components.
+\newblock {\em Int. J. Psychophysiol.} {\bf 25}, 97--109.
+
+\bibitem{Greco:2014aa}
+Greco, A, Lanata, A, Valenza, G, Scilingo, E.~P,  \& Citi, L.
+\newblock (2014) {\em Electrodermal activity processing: {A} convex
+  optimization approach}.
+\newblock (IEEE), pp. 2290--2293.
+
+\bibitem{Berntson:1995}
+Berntson, G.~G, Cacioppo, J.~T,  \& Quigley, K.~S.
+\newblock (1995) The metrics of cardiac chronotropism: {Biometric}
+  perspectives.
+\newblock {\em Psychophysiology} {\bf 32}, 162--171.
+
+\bibitem{Paulus:2016aa}
+Paulus, P.~C, Castegnetti, G,  \& Bach, D.~R.
+\newblock (2016) Modeling event-related heart period responses.
+\newblock {\em Psychophysiology} {\bf 53}, 837--846.
+
+\bibitem{Castegnetti:2016aa}
+Castegnetti, G, Tzovara, A, Staib, M, Paulus, P.~C, Hofer, N,  \& Bach, D.~R.
+\newblock (2016) Modeling fear-conditioned bradycardia in humans.
+\newblock {\em Psychophysiology} {\bf 53}, 930--939.
+
+\bibitem{Bradley:2001}
+Bradley, M.~M, Codispoti, M, Cuthbert, B.~N,  \& Lang, P.~J.
+\newblock (2001) Emotion and motivation {I}: {Defensive} and appetitive
+  reactions in picture processing.
+\newblock {\em Emotion} {\bf 1}, 276--298.
+
+\bibitem{Castegnetti:2016ab}
+Castegnetti, G, Tzovara, A, Staib, M, Gerster, S,  \& Bach, D.
+\newblock (2017) Assessing fear learning via conditioned respiratory amplitude
+  responses.
+\newblock {\em Psychophysiology} {\bf 54}, 215--223.
+
+\bibitem{Pan:1985aa}
+Pan, J \& Tompkins, W.~J.
+\newblock (1985) A real-time {QRS} detection algorithm.
+\newblock {\em IEEE. Trans. Biomed. Eng.} {\bf 32}, 230--236.
+
+\bibitem{liu2012statistical}
+Liu, Z, de~Zwart, J.~A, van Gelderen, P, Kuo, L.-W,  \& Duyn, J.~H.
+\newblock (2012) Statistical feature extraction for artifact removal from
+  concurrent {fMRI-EEG} recordings.
+\newblock {\em Neuroimage} {\bf 59}, 2073--2087.
+
+\bibitem{McDougal:2008aa}
+McDougal, D \& Gamlin, P.
+\newblock (2008) Pupillary control pathways.
+\newblock {\em The Senses: A Comprehensive Reference} {\bf 1}, 521--536.
+
+\bibitem{Korn:2016a}
+Korn, C.~W \& Bach, D.~R.
+\newblock (2016) A solid frame for the window on cognition: {Modeling}
+  event-related pupil responses.
+\newblock {\em J. Vis.} {\bf 16}, 28.
+
+\bibitem{Korn:2017a}
+Korn, C.~W, Staib, M, Tzovara, A, Castegnetti, G,  \& Bach, D.~R.
+\newblock (2017) A pupil size response model to assess fear learning.
+\newblock {\em Psychophysiology} {\bf 54}, 330--343.
+
+\bibitem{Watson:2012aa}
+Watson, A.~B \& Yellott, J.~I.
+\newblock (2012) A unified formula for light-adapted pupil size.
+\newblock {\em J. Vis.} {\bf 12}, 12--12.
+
+\bibitem{Hayes:2015a}
+Hayes, T.~R \& Petrov, A.~A.
+\newblock (2015) Mapping and correcting the influence of gaze position on pupil
+  size measurements.
+\newblock {\em Behav. Res. Methods} {\bf 48}, 510--527.
+
+\bibitem{kret2018preprocessing}
+Kret, M.~E \& Sjak-Shie, E.~E.
+\newblock (2018) Preprocessing pupil size data: Guidelines and code.
+\newblock {\em Behav. Res. Methods} {\bf 51}, 1336--1342.
+
+\bibitem{Cacioppo:2007aa}
+Cacioppo, J.~T, Tassinary, L.~G,  \& Berntson, G.
+\newblock (2007) {\em Handbook of psychophysiology}.
+\newblock (Cambridge University Press).
+
+\bibitem{Wientjes:1998aa}
+Wientjes, C.~J \& Grossman, P.
+\newblock (1998) Respiratory psychophysiology as a discipline: introduction to
+  the special issue.
+\newblock {\em Biol. Psychol.} {\bf 49}, 1--8.
+
+\bibitem{Binks:2006aa}
+Binks, A.~P, Banzett, R.~B,  \& Duvivier, C.
+\newblock (2006) An inexpensive, {MRI} compatible device to measure tidal
+  volume from chest-wall circumference.
+\newblock {\em Physiol. Meas.} {\bf 28}, 149.
+
+\bibitem{Bach:2016aa}
+Bach, D.~R, Gerster, S, Tzovara, A,  \& Castegnetti, G.
+\newblock (2016) A linear model for event-related respiration responses.
+\newblock {\em J. Neurosci. Methods} {\bf 270}, 147--155.
+
+\bibitem{Yeomans:2002aa}
+Yeomans, J.~S, Li, L, Scott, B.~W,  \& Frankland, P.~W.
+\newblock (2002) Tactile, acoustic and vestibular systems sum to elicit the
+  startle reflex.
+\newblock {\em Neurosci. Biobehav. Rev.} {\bf 26}, 1--11.
+
+\bibitem{Lang:1997aa}
+Lang, P.~J, Bradley, M.~M,  \& Cuthbert, B.~N.
+\newblock (1997) {\em Attention and orienting: {Sensory} and motivational
+  processes}, eds.{} Lang, P.~J, Simons, R.~F,  \& Balaban, M.~T.
+\newblock (Lawrence Erlbaum, Mahwah, NJ), pp. 97--135.
+
+\bibitem{Bach:2015ac}
+Bach, D.~R.
+\newblock (2015) A cost minimisation and {Bayesian} inference model predicts
+  startle reflex modulation across species.
+\newblock {\em J. Theor. Biol.} {\bf 370}, 53--60.
+
+\bibitem{Brown:1951aa}
+Brown, J.~S, Kalish, H.~I,  \& Farber, I.~E.
+\newblock (1951) Conditioned fear as revealed by magnitude of startle response
+  to an auditory stimulus.
+\newblock {\em J. Exp. Psychol.} {\bf 41}, 317--328.
+
+\bibitem{Khemka:2016a}
+Khemka, S, Tzovara, A, Gerster, S, Quednow, B.~B,  \& Bach, D.~R.
+\newblock (2017) Modeling startle eyeblink electromyogram to assess fear
+  learning.
+\newblock {\em Psychophysiology} {\bf 54}, 204--214.
+
+\bibitem{schutz:2011}
+Schutz, A.~C, Braun, D.~I,  \& Gegenfurtner, K.~R.
+\newblock (2011) Eye movements and perception: {A} selective review.
+\newblock {\em J. Vis.} {\bf 11}, 1--30.
+
+\bibitem{xia:2020}
+Xia, Y, Melinscak, F,  \& Bach, D.
+\newblock (2020) Saccadic scanpath length: an index for human threat
+  conditioning.
+\newblock {\em Behav. Res. Methods} {\bf 53}, 1426--1439.
+
+\bibitem{Kleckner:2017a}
+{Kleckner}, I.~R, {Jones}, R.~M, {Wilder-Smith}, O, {Wormwood}, J.~B,
+  {Akcakaya}, M, {Quigley}, K.~S, {Lord}, C,  \& {Goodwin}, M.~S.
+\newblock (2018) Simple, transparent, and flexible automated quality assessment
+  procedures for ambulatory electrodermal activity data.
+\newblock {\em IEEE. Trans. Biomed. Eng.} {\bf 65}, 1460--1467.
+
+\end{thebibliography}

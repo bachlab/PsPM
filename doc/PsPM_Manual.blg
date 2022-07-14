@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99d (TeX Live 2022)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: PsPM_Manual.aux
+The style file: pnas2009.bst
+Database file #1: PsPM.bib
+You've used 59 entries,
+            1761 wiz_defined-function locations,
+            878 strings with 14593 characters,
+and the built_in function-call counts, 15085 in all, are:
+= -- 1389
+> -- 759
+< -- 2
++ -- 273
+- -- 214
+* -- 1371
+:= -- 2452
+add.period$ -- 178
+call.type$ -- 59
+change.case$ -- 54
+chr.to.int$ -- 0
+cite$ -- 59
+duplicate$ -- 615
+empty$ -- 1257
+format.name$ -- 214
+if$ -- 3120
+int.to.chr$ -- 0
+int.to.str$ -- 59
+missing$ -- 62
+newline$ -- 299
+num.names$ -- 61
+pop$ -- 79
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 97
+stack$ -- 0
+substring$ -- 1335
+swap$ -- 195
+text.length$ -- 2
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 167
+width$ -- 61
+write$ -- 651
