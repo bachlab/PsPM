@@ -82,8 +82,7 @@ switch window
     handles.tag_attribution.FontSize = FSAttr;
     %handles.tag_attribution.Visible = 'off';
     handles.tag_attribution.HorizontalAlignment = 'center';
-    attribution_disp_text = sprintf(['Version 5.1.1, Build ',...
-      datestr(now,'ddmmyyyy'),' with MATLAB 2021a, ',...
+    attribution_disp_text = sprintf(['Version 6.0.0, Build 14-07-2022 with MATLAB 2022a, ',...
       'The PsPM Team, University College London']);
     handles.tag_attribution.String = attribution_disp_text;
     handles.tag_PsPM.FontName = FNRoman;

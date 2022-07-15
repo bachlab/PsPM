@@ -8,9 +8,9 @@ function [bf, x] = pspm_bf_data(td)
 % FORMAT:
 % 	[bf, x]=pspm_bf_data(td)
 %
-% PsPM 5.1.1,
-% 2021 Dominik R Bach (University College London)
-% Updated 2021 Teddy Chao (WCHN, UCL)
+% PsPM 6.0.0
+% 2022 Dominik R Bach (University College London)
+% Updated 2022 Teddy Chao (WCHN, UCL)
 
 %% Constants
 % CHANGE THIS TO CREATE YOUR FUNCTION
