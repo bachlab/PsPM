@@ -16,8 +16,9 @@ function pspm_con2(modelfile, outfile, con, connames, options)
 %               option 'file' to be read from first model file. contrasts
 %               will be numbered by default if this argument is missing or has
 %               value 'number'
-%     options:  .overwrite: defines whether to overwrite existing files.
-%                           (default = 0).
+%     options:  
+%  .overwrite:  defines whether to overwrite existing files.
+%               (default = 0).
 % ● Version
 %   PsPM 3.0
 %   (c) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

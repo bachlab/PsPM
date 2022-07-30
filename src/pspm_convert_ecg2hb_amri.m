@@ -12,12 +12,15 @@ function [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
 %   [sts, out_channel] = pspm_ecg2hb_amri(fn)
 %   [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
 % ● Arguments
-%                 fn: [string] Path to the PsPM file which contains the pupil data.
-%   options
-%   ├─────── channel: [optional, numeric/string, default as 'ecg']
+%                 fn: [string] Path to the PsPM file which contains the pupil
+%                     data.
+%   ┌─────── options
+%   ├───────.channel: [optional, numeric/string, default as 'ecg']
 %   │                 Channel ID to be preprocessed.
-%   │                 Channel can be specified by its index in the given PsPM data structure. 
-%   │                 It will be preprocessed as long as it is a valid ECG channel.
+%   │                 Channel can be specified by its index in the given PsPM
+%   │                 data structure. 
+%   │                 It will be preprocessed as long as it is a valid ECG
+%   │                 channel.
 %   │                 If there are multiple channels with 'ecg' type, only
 %   │                 the last one will be processed. If you want to detect
 %   │                 r-peaks for all ECG channels in a PsPM file separately,
@@ -25,12 +28,15 @@ function [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
 %   │                 each channel.  Further, use 'add' mode to store each
 %   │                 resulting 'heartbeat' channel separately.
 %   ├─ signal_to_use: ['ecg'/'teo'/'auto', default as 'auto'] 
-%   │                 Choose which signal will be used as the input to the core R-peak 
-%   │                 detection steps. When 'ecg', filtered ECG signal will be used. When 'teo',
+%   │                 Choose which signal will be used as the input to the core
+%   │                 R-peak detection steps. When 'ecg', filtered ECG signal
+%   │                 will be used. 
+%   │                 When 'teo',
 %   │                 Teager Enery Operator will be applied to the filtered
 %   │                 ECG signal before feeding it to R-peak finding part.
-%   │                 When 'auto', the option that results in the higher
-%   │                 maximal autocorrelation will be used.
+%   │                 When 'auto'
+%   │                 the option that results in the higher maximal 
+%   │                 autocorrelation will be used.
 %   ├─────── hrrange: [numeric] Minimum and maximum heartbeat rates (BPM)
 %   │                 to use in the algorithm. Must be a numeric array of
 %   │                 length 2, i.e. [min_bpm max_bpm].

@@ -1,35 +1,31 @@
 function varargout = pspm_ecg_editor(varargin)
-%
-% pspm_ecg_edtior allows manual correction of ecg data and creates a hb output.
-% Function can be called seperately.
-%
-%   INPUT:
-%       [sts, R] = pspm_ecg_editor(pt)
-%       [sts, R] = pspm_ecg_editor(fn, chan, options)
-%
-%       pt:         A struct() from pspm_ecg2hb detection.
-%       fn:         A file to  data file containing the ecg channel to be
-%                   edited
-%       chan:       Channel id of ecg channel in the data file
-%       options:    A struct() of options
-%           hb:         Channel id of the existing hb channel
-%           semi:       Defines whether to navigate between potentially
-%                       wrong hb events only (semi = 1), or between all
-%                       hb events (semi = 0 => manual mode)
-%           artefact:   Epoch file with epochs of artefacts (to be ignored)
-%           factor:     To what factor should potentially wrong hb events
-%                       deviate from the standard deviation. (Default: 1)
-%
-%
+% ● Description
+%   pspm_ecg_edtior allows manual correction of ecg data and creates a hb
+%   output. Function can be called seperately.
+% ● Format
+%   [sts, R] = pspm_ecg_editor(pt)
+%   [sts, R] = pspm_ecg_editor(fn, chan, options)
+% ● Arguments
+%        pt:  A struct() from pspm_ecg2hb detection.
+%        fn:  A file to  data file containing the ecg channel to be edited
+%      chan:  Channel id of ecg channel in the data file
+%   options:  A struct() of options
+%       .hb:  Channel id of the existing hb channel
+%     .semi:  Defines whether to navigate between potentially wrong hb events
+%             only (semi = 1), or between all hb events (semi = 0 => manual
+%             mode)
+% .artefact:  Epoch file with epochs of artefacts (to be ignored)
+%   .factor:  To what factor should potentially wrong hb events
+%             deviate from the standard deviation. (Default: 1)
 %   variable r
 %       r(1,:) ... original r vector
 %       r(2,:) ... r vector containing potential faulty labeled qrs compl.
 %       r(3,:) ... removed
 %       r(4,:) ... added
-%__________________________________________________________________________
-% PsPM 3.1
-% (C) 2013-2016 Philipp C Paulus, Tobias Moser
-% (Dresden University of Technology, University of Zurich)
+% ● Written by
+%   PsPM 3.1
+%   (C) 2013-2016 Philipp C Paulus, Tobias Moser
+%   (Dresden University of Technology, University of Zurich)
 
 %% Initialise
 global settings

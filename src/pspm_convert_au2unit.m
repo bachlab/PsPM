@@ -22,19 +22,29 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 %                                     multiplicator, reference_distance, reference_unit, options)
 % ● Arguments
 %                 fn: filename which contains the channels to be converted
-%               data: a one-dimensional vector which contains the data to be converted
+%               data: a one-dimensional vector which contains the data to be
+%                     converted
 %               chan: channel id of the channel to be coverted.
-%                     Expected to be numeric. The channel should contain area or diameter unit values.
-%               unit: To which unit the data should be converted. possible values are mm, cm, dm, m, in, inches.
-%           distance: distance between camera and eyes in units as specified in the parameter unit
-%      record_method: either 'area' or 'diameter', tells the function what the format of the recorded data is
+%                     Expected to be numeric. The channel should contain area
+%                     or diameter unit values.
+%               unit: To which unit the data should be converted. possible
+%                     values are mm, cm, dm, m, in, inches.
+%           distance: distance between camera and eyes in units as specified in
+%                     the parameter unit
+%      record_method: either 'area' or 'diameter', tells the function what the
+%                     format of the recorded data is
 %      multiplicator: the multiplicator in the linear conversion.
-% reference_distance: distance at which the multiplicator value was obtained, as specified in the parameter unit.
-%                     The values will be proportionally translated to this distance before applying the conversion function.
-%     reference_unit: reference unit with which the multiplicator and reference_distance values were obtained.
+% reference_distance: distance at which the multiplicator value was obtained,
+%                     as specified in the parameter unit.
+%                     The values will be proportionally translated to this
+%                     distance before applying the conversion function.
+%     reference_unit: reference unit with which the multiplicator and
+%                     reference_distance values were obtained.
 %                     Possible values are mm, cm, dm, m, in, inches
 %           options:  a struct of optional settings
-%   .channel_action:  ['add'/'replace'] Defines whether the new channel should be added or the previous outputs of this function should be replaced. (Default: 'add')
+%   .channel_action:  ['add'/'replace'] Defines whether the new channel should
+%                     be added or the previous outputs of this function should
+%                     be replaced. (Default: 'add')
 % ● Version
 %   PsPM 3.1
 %   (C) 2016 Tobias Moser (University of Zurich)
