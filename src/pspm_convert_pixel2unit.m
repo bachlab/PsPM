@@ -41,6 +41,7 @@ function [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, ...
 %   └───────.channel  Id of the added channels.
 % ● Version
 %   PsPM 4.0
+% ● Written By
 %   (C) 2016 Tobias Moser (University of Zurich)
 
 %% Initialise

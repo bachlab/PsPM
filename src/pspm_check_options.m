@@ -11,6 +11,7 @@ function sts = pspm_check_options(type, check_opt, fields)
 %      fields:  [cell of strings] fields which should be checked
 % ● Version
 %   PsPM 3.1
+% ● Written By
 %   (C) 2009-2016 Tobias Moser (University of Zurich)
 
 %% Initialise

@@ -7,8 +7,10 @@ function [sts, data, duration] = pspm_align_channels(data, induration)
 % ● Format
 %   [sts, data, duration] = pspm_align_channels(inputdata, induration)
 % ● Arguments
+%   TBA.
 % ● Version
 %   PsPM 3.1
+% ● Written By
 %   (C) 2008-2016 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
@@ -18,7 +20,7 @@ if isempty(settings)
 end
 sts = -1;
 %% Check input arguments
-if nargin == 2
+if nargin == 2;
   if ~(isnumeric(induration) && numel(induration) == 1)
     warning('ID:invalid_input', 'induration must be a numeric scalar'); return;
   end

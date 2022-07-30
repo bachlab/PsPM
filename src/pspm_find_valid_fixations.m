@@ -87,10 +87,12 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %                                   being processed.
 %
 %
-%__________________________________________________________________________
-% PsPM 4.0
-% (C) 2016 Tobias Moser (University of Zurich)
-% Update 2021 Teddy Chao (UCL)
+% ● Version
+%   PsPM 4.0
+% ● Written By
+%   (C) 2016 Tobias Moser (University of Zurich)
+% ● Maintained By
+%   2021 Teddy Chao (UCL)
 
 
 % initialise

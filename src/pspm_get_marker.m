@@ -18,10 +18,11 @@ function [sts, data] = pspm_get_marker(import)
 % 	  ┣━.name
 %     ┗━.value
 % ● VERSION
-% Optimised for PsPM 6.0
-% ● AUTHORSHIP
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%			2022			Teddy Chao (UCL)
+%   Updated with PsPM 6.0
+% ● Written By
+%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Maintained by
+%		2022 Teddy Chao (UCL)
 
 %% initialise
 global settings;

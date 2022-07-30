@@ -9,10 +9,11 @@ function [sts data] = pspm_downsample(data, freqratio)
 %   freqratio: the frequency ratio of downsampling operation.
 % ● Output
 %         sts: -1 if the frequency ratio is not an integer
-% ● Written by
+% ● Version
 %   PsPM 3.0
+% ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-% ● Updated by
+% ● Maintained by
 %   2022 Teddy Chao
 
 %% 1 Initialise

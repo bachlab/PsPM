@@ -16,8 +16,8 @@ function theta = pspm_get_rf(fn, events, outfile, chan, options)
 %         options: to be passed on to pspm_dcm
 %__________________________________________________________________________
 % PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%
+% ● Written By
+%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

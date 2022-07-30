@@ -12,16 +12,15 @@ function [FIR, x] = pspm_bf_FIR(varargin)
 %    D: duration of bin in seconds (default: 1 s)
 % ● Version
 %   PsPM 3.0
+% ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Check input arguments
 if nargin==0
   errmsg='No sampling interval stated'; warning('ID:invalid_input', errmsg); return;
 end;
-
 n = 30;
 d = 1;
-
 td = varargin{1}(1);
 if nargin == 1 && numel(varargin{1}) > 1
   n = varargin{1}(2);
@@ -37,20 +36,15 @@ elseif nargin > 1
     d = varargin{3}(1);
   end;
 end;
-
 if td > d
   warning('ID:invalid_input', 'Time resolution is larger than duration of the function.'); return;
 elseif td == 0
   warning('ID:invalid_input', 'Time resolution must be larger than 0.'); return;
 end;
-
-
 % initialise FIR
-FIR=[zeros(1, n); zeros(round((d*n/td)), n);];
-
+FIR = [zeros(1, n); zeros(round((d*n/td)), n);];
 % generate timestamps
 x = (0:td:d-td)';
-
 %% set FIR columns
 starts=1;
 for reg=1:n
@@ -58,5 +52,4 @@ for reg=1:n
   FIR(starts:stops, reg)=1;
   starts=stops+1;
 end;
-
 return;

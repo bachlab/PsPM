@@ -6,29 +6,30 @@ function [sts, out_channel] = pspm_blink_saccade_filt(fn, discard_factor, option
 % ● Format
 %   [sts, out_channel] = pspm_blink_saccade_filt(fn, discard_factor, options)
 % ● Arguments
-%                 fn: [string] Path to the PsPM file which contains
-%                     the pupil data.
-%     discard_factor: [numeric] Factor used to determine the number of
-%                     samples right before and right after a blink/saccade
-%                     period to discard. This value is multiplied by the
-%                     sampling rate of the recording to determine the
-%                     number of samples to discard from one end. Therefore,
-%                     for each blink/saccade period, 2*this_value*SR many
-%                     samples are discarded in total, and effectively
-%                     blink/saccade period is extended.
-%                     This value also corresponds to the duration of
-%                     samples to discard on one end in seconds. For example,
-%                     when it is 0.01, we discard 10 ms worth of data on
-%                     each end of every blink/saccade period.
-%   options
-%   ┣━━━━━━━ channel: [numeric/string, optional, default:0]
-%   ┃                 Channel ID to be preprocessed.
-%   ┃                 By default preprocesses all the pupil and gaze channels.
-%   ┗ channel_action: [string, optional, accept:'add'/'replace', default:'add']
-%                     Defines whether corrected data should be added or the
-%                     corresponding preprocessed channel should be replaced.
-% ● Contributed by
+%              fn: [string] Path to the PsPM file which contains
+%                  the pupil data.
+%  discard_factor: [numeric] Factor used to determine the number of
+%                  samples right before and right after a blink/saccade
+%                  period to discard. This value is multiplied by the
+%                  sampling rate of the recording to determine the
+%                  number of samples to discard from one end. Therefore,
+%                  for each blink/saccade period, 2*this_value*SR many
+%                  samples are discarded in total, and effectively
+%                  blink/saccade period is extended.
+%                  This value also corresponds to the duration of
+%                  samples to discard on one end in seconds. For example,
+%                  when it is 0.01, we discard 10 ms worth of data on
+%                  each end of every blink/saccade period.
+%         options:
+%        .channel: [numeric/string, optional, default:0]
+%                  Channel ID to be preprocessed.
+%                  By default preprocesses all the pupil and gaze channels.
+% .channel_action: [string, optional, accept:'add'/'replace', default:'add']
+%                  Defines whether corrected data should be added or the
+%                  corresponding preprocessed channel should be replaced.
+% ● Written By
 %   (C) 2020 Eshref Yozdemir (University of Zurich)
+
 
 global settings;
 if isempty(settings), pspm_init; end

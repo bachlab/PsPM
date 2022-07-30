@@ -5,10 +5,10 @@ function [sts, data]=pspm_get_emg(import)
 %   [sts, data]= pspm_get_emg(import)
 %   with import.data: column vector of waveform data
 %        import.sr: sample rate
-%
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2009-2014 Tobias Moser (University of Zurich)
+% ● Version
+%   PsPM 3.0
+% ● Written By
+%   (C) 2009-2014 Tobias Moser (University of Zurich)
 
 %% Initialise
 global settings

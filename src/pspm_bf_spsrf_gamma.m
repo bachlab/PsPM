@@ -19,6 +19,8 @@ function [bs, t] = pspm_bf_spsrf_gamma(varargin)
 %   doi: 10.3758/s13428-020-01490-5
 % ● Version
 %   PsPM 4.0
+% ● Written By
+%   TBA
 
 %% initialize
 global settings

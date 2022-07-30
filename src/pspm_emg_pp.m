@@ -30,8 +30,9 @@ function [sts, output] = pspm_emg_pp(fn, options)
 %   [1] Khemka S, Tzovara A, Gerster S, Quednow BB, Bach DR (2016).
 %       Modeling Startle Eyeblink Electromyogram to Assess Fear Learning.
 %       Psychophysiology
-% ● Written By
+% ● Version
 %   PsPM 3.1
+% ● Written By
 %   (C) 2009-2016 Tobias Moser (University of Zurich)
 
 %% Initialise

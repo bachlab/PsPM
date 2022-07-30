@@ -3,10 +3,10 @@ function [sts, import, sourceinfo] = pspm_get_labchartmat_in(datafile, import)
 % (ADInstruments) files, exported into matlab using built-in export feature.
 % For the online LabChart see pspm_labchartmat_ext
 % FORMAT: [sts, import, sourceinfo] = pspm_get_labchartmat_in(datafile, import);
-%
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Version
+%   PsPM 3.0
+% ● Written By
+%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 % ------------------------------------------------------------------------
 % NOTE this info is inherited from the old labchart export code but I

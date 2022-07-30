@@ -10,9 +10,10 @@ function [sts, data]=pspm_get_hb(import)
 %                  and optional fields
 %                  .flank ('ascending', 'descending', 'both': optional field for
 %                   continuous channels; default: both)
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Version
+%   PsPM 3.0
+% ● Written By
+%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

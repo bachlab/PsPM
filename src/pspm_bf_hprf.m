@@ -10,6 +10,7 @@ function [bf, x ,p] = pspm_bf_hprf(td,p)
 % ● References
 % ● Version
 %   PsPM 3.0
+% ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %				2022			Teddy Chao (UCL)
 

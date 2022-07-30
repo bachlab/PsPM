@@ -81,9 +81,10 @@ function [sts, infos] = pspm_find_sounds(file, options)
 %           .delays : vector of delays between markers and detected sounds.
 %                Only available with option 'diagnostics' turned on.
 %           .channel: number of added chan, when options.channel_action ~= 'none'
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2015 Samuel Gerster (University of Zurich)
+% ● Version
+%   PsPM 3.0
+% ● Written By
+%   (C) 2015 Samuel Gerster (University of Zurich)
 
 %% Initialise
 global settings

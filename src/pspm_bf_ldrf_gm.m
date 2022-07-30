@@ -22,6 +22,7 @@ function [bs, x] = pspm_bf_ldrf_gm(varargin)
 %   Korn CW, Bach DR.
 % ● Version
 %   PsPM 3.1
+% ● Written By
 %   (C) 2015 Tobias Moser (University of Zurich)
 %				2022 Teddy Chao (UCL)
 

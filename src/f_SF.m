@@ -1,27 +1,27 @@
 function [fx, dfdx, dfdP] = f_SF(Xt, Theta, ut, in)
-% f_SF implements a biophysically informed, phenomenological forward model
-% for spontaneous fluctuations of the skin conductance
-%
-% output function: third order differential equation the parameters of
-% which are estimated across trials
-%
-% event input: gaussian bumps with 0.3 s variance, emulating sudomotor
-% firing
-%
-% NOTE different from f_SCR, the delay in neural conductance is not
-% explicitly modelled here but substracted afterwards
-%
-% FORMAT [fx dfdx] = f_SF(Xt,Theta,ut,in)
-%               Theta:  3 general constants
-%                       2 value  per SF(time, log(amplitude))
-%               ut: row 1 - time (after cue onset)
-%                   row 2 - number of SF
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Description
+%   f_SF implements a biophysically informed, phenomenological forward model
+%   for spontaneous fluctuations of the skin conductance.
+%   output function: 
+%   third order differential equation the parameters of which are estimated 
+%   across trials
+%   event input: 
+%   gaussian bumps with 0.3 s variance, emulating sudomotor firing.
+%   Note:
+%   different from f_SCR, the delay in neural conductance is not explicitly 
+%   modelled here but substracted afterwards
+% ● Format
+%   [fx dfdx] = f_SF(Xt,Theta,ut,in)
+% ● Arguments
+%   Theta:  3 general constants
+%           2 value  per SF (time, log(amplitude))
+%      ut:  row 1 - time (after cue onset)
+%           row 2 - number of SF
+% ● Version
+%   PsPM 3.0
+% ● Written By
+%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
 
 % initialise
 % -------------------------------------------------------------------------

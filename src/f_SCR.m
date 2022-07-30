@@ -1,47 +1,47 @@
 function [fx, dfdx, dfdP] = f_SCR(Xt, Theta, ut, in)
-% f_SCR implements a phenomenological forward model for anticipatory and 
-% event-related skin conductance responses, taking into account spontaneous
-% fluctuations [SF] in the absence of experimental input, and slow baseline
-% [SCL] changes between experimental inputs that might not be completely
-% removed by filtering
-%
-% output function: third order differential equation the parameters of
-% which are estimated across trials, plus derivatives wrt time and
-% parameters
-%
-% event input: gaussian bumps with 0.3 s variance, emulating sudomotor
-% firing
-% 
-% sustained input: modeled by gaussian bumps with variable variance
-% 
-% spontaneous input: in inter-trial intervals > 7 s, SF are assumed with a
-% frequency of 0.5 Hz and a function analogous to f_SF
-%
-% FORMAT [fx, dfdx, dfdP] = f_aSCR(Xt,Theta,ut,in)
-%               Theta:  4 ER constants (3 ODE params + time)
-%                       3 SF constants (3 ODE params)
-%                       3 values per aSCR (invsigma(peaktime), invsigma(std),
-%                       log(amplitude))
-%                       1 value  per eSCR (log(amplitude))
-%                       2 values per SF (invsigma(peaktime), log(amplitude))
-%                       2 values per SCL change (invsigma(time), amplitude)
-%               ut: row 1 - time (after cue onset)
-%                   row 2 - number of aSCR
-%                   row 3 - number of eSCR
-%                   row 4 - number of SF
-%                   row 5 - number of SCL changes
-%                   row 6 - ...: event onsets for aSCR
-%                   row ... - ...: upper bounds for each aSCR.m
-%                   row ... - ...: upper bounds for each aSCR.s
-%                   row ... - ...: event onsets for eSCR
-%                   row ... - ...: lower bound for SF
-%                   row ... - ...: upper bound for SF
-%                   row ... - ...: lower bound for SCL
-%                   row ... - ...: upper bound for SCL
-%
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach & Jean Daunizeau (Wellcome Trust Centre for Neuroimaging)
+% ● Description
+%   f_SCR implements a phenomenological forward model for anticipatory and 
+%   event-related skin conductance responses, taking into account spontaneous
+%   fluctuations [SF] in the absence of experimental input, and slow baseline
+%   [SCL] changes between experimental inputs that might not be completely
+%   removed by filtering.
+%   output function: 
+%   third order differential equation the parameters of which are estimated
+%   across trials, plus derivatives wrt time and parameters.
+%   event input: 
+%   gaussian bumps with 0.3 s variance, emulating sudomotor firing
+%   sustained input: 
+%   modeled by gaussian bumps with variable variance
+%   spontaneous input: 
+%   in inter-trial intervals > 7 s, SF are assumed with a
+%   frequency of 0.5 Hz and a function analogous to f_SF
+% ● Format
+%   [fx, dfdx, dfdP] = f_aSCR(Xt,Theta,ut,in)
+% ● Arguments
+%   Theta:  4 ER constants (3 ODE params + time)
+%           3 SF constants (3 ODE params)
+%           3 values per aSCR (invsigma(peaktime), invsigma(std),
+%           log(amplitude))
+%           1 value  per eSCR (log(amplitude))
+%           2 values per SF (invsigma(peaktime), log(amplitude))
+%           2 values per SCL change (invsigma(time), amplitude)
+%      ut:  row 1 - time (after cue onset)
+%           row 2 - number of aSCR
+%           row 3 - number of eSCR
+%           row 4 - number of SF
+%           row 5 - number of SCL changes
+%           row 6 - ...: event onsets for aSCR
+%           row ... - ...: upper bounds for each aSCR.m
+%           row ... - ...: upper bounds for each aSCR.s
+%           row ... - ...: event onsets for eSCR
+%           row ... - ...: lower bound for SF
+%           row ... - ...: upper bound for SF
+%           row ... - ...: lower bound for SCL
+%           row ... - ...: upper bound for SCL
+% ● Version
+%   PsPM 3.0
+% ● Written By
+%   (C) 2008-2015 Dominik R Bach & Jean Daunizeau (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise settings
 global settings

@@ -9,9 +9,10 @@ function [sts, import] = pspm_get_events(import)
 %                  .flank ('ascending', 'descending', 'both', 'all': optional field for
 %                   continuous channels; default: both)
 %           returns event timestamps in seconds in import.data
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2013-2015 Dominik R Bach & Tobias Moser (University of Zurich)
+% ● Version
+%   PsPM 3.0
+% ● Written By
+%   (C) 2013-2015 Dominik R Bach & Tobias Moser (University of Zurich)
 
 %% Initialise
 global settings

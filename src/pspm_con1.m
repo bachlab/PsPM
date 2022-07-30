@@ -24,6 +24,7 @@ function pspm_con1(modelfile, connames, convec, datatype, deletecon, options)
 %                         0 - do not zscore data
 % ● Version
 %   PsPM 3.0
+% ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise

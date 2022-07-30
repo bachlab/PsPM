@@ -3,7 +3,7 @@ function [fx, x, p] = pspm_bf_hprf_fc_f(td, soa, p)
 % ● Format
 %   [bf p] = pspm_bf_hprf_fc_f(td, soa, p)
 % ● Arguments
-%     td: time resolution in s
+%     td: time resolution in second
 %   p(1): a
 %   p(2): b
 %   p(3): x0
@@ -13,13 +13,11 @@ function [fx, x, p] = pspm_bf_hprf_fc_f(td, soa, p)
 %   PsPM 3.0
 %   (C) 2015 Tobias Moser (University of Zurich)
 
-% initialise
-% -------------------------------------------------------------------------
+%% initialise
 global settings;
 if isempty(settings), pspm_init; end;
-% -------------------------------------------------------------------------
 if nargin < 1
-  errmsg='No sampling interval stated'; warning('ID:invalid_input',errmsg); return;
+  errmsg = 'No sampling interval stated'; warning('ID:invalid_input',errmsg); return;
 end;
 if nargin < 2
   soa = 3.5;

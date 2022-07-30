@@ -28,6 +28,8 @@ function [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,u
 %               out:  Id of the added channels.
 % ● Version
 %   PsPM 4.0
+% ● Written By
+%   TBA.
 
 %% Initialise
 global settings

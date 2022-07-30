@@ -31,7 +31,8 @@ function [sts, import, sourceinfo] = pspm_get_physlog(datafile, import)
 % FORMAT: [sts, import, sourceinfo] = pspm_get_physlog(datafile, import);
 %__________________________________________________________________________
 % PsPM 3.1
-% (C) 2008-2015 Tobias Moser (University of Zurich)
+% ● Written By
+%   (C) 2008-2015 Tobias Moser (University of Zurich)
 
 %% Initialise
 global settings

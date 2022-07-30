@@ -19,6 +19,7 @@ function [bf, x] = pspm_bf_sebrf(varargin)
 %   doi: 10.1111/psyp.12775
 % ● Version
 %   PsPM 3.1
+% ● Written By
 %   (C) 2015 Tobias Moser (University of Zurich)
 
 %% input checks

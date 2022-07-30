@@ -12,8 +12,8 @@ function [sts, hist_str] = pspm_format_history_from_file(fn)
 % OUTPUT:
 %     hist_str: Formatted table string
 %
-% --------------------------------------------------------------------------
-% (C) 2019 Eshref Yozdemir
+% ● Written By
+%   (C) 2019 Eshref Yozdemir
 
 [sts, infos, ~, ~] = pspm_load_data(fn);
 if sts ~= 1; return; end

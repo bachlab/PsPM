@@ -26,6 +26,7 @@ function [ sts, outinfo ] = pspm_convert_ppu2hb( fn,chan,options )
 %                     largest percentile of spikes from consideration.
 % ● Version
 %   PsPM 3.1
+% ● Written By
 %   (C) 2016  Samuel Gerster (University of Zurich)
 %             Tobias Moser (University of Zurich)
 %       2022  Teddy Chao (UCL)

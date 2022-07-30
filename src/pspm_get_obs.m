@@ -6,7 +6,8 @@ function [sts, import, sourceinfo] = pspm_get_obs(datafile, import)
 % FORMAT: [sts, import, sourceinfo] = pspm_get_obs(datafile, import);
 %__________________________________________________________________________
 % PsPM 3.0
-% (C) 2013-2015 Linus R¸ttimann (University of Zurich)
+% ● Written By
+%   (C) 2013-2015 Linus R¸ttimann (University of Zurich)
 
 %% Initialise
 global settings

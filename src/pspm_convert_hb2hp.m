@@ -26,6 +26,7 @@ function [sts, infos] = pspm_convert_hb2hp(fn, sr, chan, options)
 %                     heart periods in seconds. Default is 0.2.
 % ● Version
 %   PsPM 3.0
+% ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% initialise & user output

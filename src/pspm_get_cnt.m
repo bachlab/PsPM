@@ -2,9 +2,10 @@ function [sts, import, sourceinfo] = pspm_get_cnt(datafile, import)
 % pspm_get_cnt is the main function for import of NeuroScan cnt files
 % FORMAT: [sts, import, sourceinfo] = pspm_get_cnt(datafile, import);
 % this function uses fieldtrip fileio functions
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Version
+%   PsPM 3.0
+% ● Written By
+%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

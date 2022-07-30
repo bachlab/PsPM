@@ -1,11 +1,10 @@
 function [gx,dgdx,dgdPhi] = g_aSCR(Xt,Phi,ut,inG)
-% Description
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-
-% $Id$
-% $Rev$
+% ● Description
+%   TBA.
+% ● Version
+%   PsPM 3.0
+% ● Written By
+%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 % initialise
 % -------------------------------------------------------------------------

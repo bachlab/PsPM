@@ -29,6 +29,8 @@ function [ sts, out ] = pspm_convert_visangle2sps(fn, options)
 %                     successfull (sts == 1) or not (sts == -1)
 %   ┌────────────out: Output struct
 %   └───────.channel: Id of the added channels.
+% ● Version
+% ● Written By
 
 %% Initialise
 global settings

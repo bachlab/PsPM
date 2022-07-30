@@ -20,6 +20,7 @@ function [varargout] = pspm_convert_area2diameter(varargin)
 %                     previous outputs of this function should be replaced.
 % ● Version
 %   PsPM 3.1
+% ● Written By
 %   (C) 2016 Tobias Moser (University of Zurich)
 
 %% Initialise

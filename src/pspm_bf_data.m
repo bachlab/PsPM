@@ -8,8 +8,10 @@ function [bf, x] = pspm_bf_data(td)
 %   [bf, x] = pspm_bf_data(td)
 % ● Version
 %   PsPM 5.1.1
+% ● Written By
 %   2021 Dominik R Bach (University College London)
-%        Teddy Chao (UCL)
+% ● Maintained By
+%   2022 Teddy Chao (UCL)
 
 %% Constants
 % CHANGE THIS TO CREATE YOUR FUNCTION

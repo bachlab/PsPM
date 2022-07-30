@@ -5,7 +5,8 @@ function [sts, import, sourceinfo] = pspm_get_biograph(datafile, import)
 %
 %__________________________________________________________________________
 % PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Written By
+%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

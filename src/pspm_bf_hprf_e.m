@@ -1,25 +1,26 @@
 function [bf, x, b] = pspm_bf_hprf_e(varargin)
 % ● Description
-% pspm_bf_hprf_e constructs the heart period response function consisting of
-% modified Gaussian functions
+%   pspm_bf_hprf_e constructs the heart period response function consisting of
+%   modified Gaussian functions
 % ● Format
-% [bf, x, b] = pspm_bf_hprf_e(td, b) or pspm_bf_hprf_e([td, b])
+%   [bf, x, b] = pspm_bf_hprf_e(td, b) or pspm_bf_hprf_e([td, b])
 % ● Arguments
-% td   time resolution in s
-% b    number of basis functions (default 1:6)
+%   td: time resolution in s
+%    b: number of basis functions (default 1:6)
 % ● Developer's notes
-% Basis functions will be orthogonalized using spm_orth by default. Onsets
-% pspm_glm must be shifted by 5 s to account for the pre-event epoch.
-% Put in values 1:6 for b in order to get following basis functions:
-% 1:    BF 1    -   mu 1 s, sigma 1.9 s (contains pre event epoch of -5s)
-% 2:    BF 2    -   mu 5.2 s, sigma 1.9 s
-% 3:    BF 3    -   mu 7.2 s, sigma 1.5 s
-% 4:    BF 4    -   mu 7.2 s, sigma 4 s
-% 5:    BF 5    -   mu 12.6 s, sigma 2 s
-% 6:    BF 6    -   mu 18.85 s, sigma 1.8 s
+%   Basis functions will be orthogonalized using spm_orth by default. Onsets
+%   pspm_glm must be shifted by 5 s to account for the pre-event epoch.
+%   Put in values 1:6 for b in order to get following basis functions:
+%   1:  BF 1  - mu 1 s, sigma 1.9 s (contains pre event epoch of -5s)
+%   2:  BF 2  - mu 5.2 s, sigma 1.9 s
+%   3:  BF 3  - mu 7.2 s, sigma 1.5 s
+%   4:  BF 4  - mu 7.2 s, sigma 4 s
+%   5:  BF 5  - mu 12.6 s, sigma 2 s
+%   6:  BF 6  - mu 18.85 s, sigma 1.8 s
 % ● References
 % ● Version
-% PsPM 3.0
+%   PsPM 3.0
+% ● Written By
 % (C) 2015 Philipp C Paulus & Dominik R Bach
 % (Technische Universitaet Dresden, University of Zurich)
 

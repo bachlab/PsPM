@@ -4,12 +4,8 @@ function [sts, import, sourceinfo] = pspm_get_biosemi(datafile, import)
 % this function uses fieldtrip fileio functions
 %__________________________________________________________________________
 % PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-
-% $Id$
-% $Rev$
-
-% v004 drb 02.09.2013 new for 3.0 architecture
+% ● Written By
+%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 
 %% Initialise

@@ -8,7 +8,8 @@ function [sts, import, sourceinfo] = pspm_get_acqmat(datafile, import)
 % file format. Always check your imported data before using it.
 %__________________________________________________________________________
 % PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Written By
+%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

@@ -5,12 +5,14 @@ function [bs, x] = pspm_bf_hprf_fc(varargin)
 %   [bs, x] = pspm_bf_hprf_fc([TD, D, soa])
 % ● Arguments
 %   td: time resolution in second
-%    d: number of derivatives (default 0)
+%    d: number of derivatives (default value 0)
 % ● References
 % ● Version
 %   PsPM 3.0
+% ● Written By
 %   (C) 2015 Tobias Moser (University of Zurich)
-%				2022 Teddy Chao (UCL)
+% ● Maintained By
+%		2022 Teddy Chao (UCL)
 
 % initialise
 global settings

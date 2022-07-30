@@ -12,8 +12,8 @@ function [lat, lon, lat_range, lon_range] = pspm_compute_visual_angle_core(x_dat
 %            width: screen width in same units as data
 %           height: screen height in same units as data
 %         distance: screen distance in same units as data
-%   options
-%   ┗━.interpolate: Boolean - Interpolate values
+%          options:
+%     .interpolate: Boolean - Interpolate values
 % ● Output
 %              lat: the latitude in degrees
 %              lon: the longitude in degrees
@@ -21,6 +21,8 @@ function [lat, lon, lat_range, lon_range] = pspm_compute_visual_angle_core(x_dat
 %        lon_range: the longitude range
 % ● Version
 %   PsPM 4.0
+% ● Written By
+%   TBA.
 
 %% Initialise
 global settings

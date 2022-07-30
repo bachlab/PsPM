@@ -9,7 +9,8 @@ function [sts, data]=pspm_get_pupil_r(import)
 %
 %__________________________________________________________________________
 % PsPM 3.1
-% (C) 2015 Tobias Moser (University of Zurich)
+% ● Written By
+%   (C) 2015 Tobias Moser (University of Zurich)
 
 %% Initialise
 global settings
