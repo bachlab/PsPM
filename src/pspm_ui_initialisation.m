@@ -1,9 +1,11 @@
 function pspm_ui_initialisation(hObject,handles,window)
-
-% pspm_ui_initialisation adjusts the required UI parameters for window initialisation
-%
-% PsPM 5.1.2
-% 2021 Teddy Chao (WCHN, UCL)
+% ● Description
+%   pspm_ui_initialisation adjusts the required UI parameters for window
+%   initialisation.
+% ● Introduced in
+%   PsPM 5.1.2
+% ● Written By
+%   2021 Teddy Chao (WCHN, UCL)
 
 %% Initialise
 global settings
@@ -11,7 +13,6 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-
 switch window
   case 'main'
     handles.figure1.Units = settings.ui.DisplayUnit;
@@ -132,5 +133,4 @@ switch window
     handles.button_all.FontName = settings.ui.FontNameText;
     hObject.Resize = 'on';
 end
-
 end

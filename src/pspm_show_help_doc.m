@@ -1,6 +1,9 @@
 function pspm_show_help_doc
-% PsPM 5.1
-% 2021 Teddy Chao
+% ● Introduced In
+%   PsPM 5.1
+% ● Written By
+%   2021 Teddy Chao
+
 %% Initialise
 global settings
 if isempty(settings)

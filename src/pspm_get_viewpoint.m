@@ -64,9 +64,9 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
 %                          Sampling rate.
 %                      .chan_id:
 %                          Channel index of the imported channel in the raw data columns.
-%__________________________________________________________________________
 %
-% (C) 2019 Eshref Yozdemir (University of Zurich)
+% ● Written By
+%   (C) 2019 Eshref Yozdemir (University of Zurich)
 % Updated 2021 Teddy Chao (WCHN, UCL)
 
 %% Initialise

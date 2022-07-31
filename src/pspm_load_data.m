@@ -41,10 +41,10 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 % ┣━.posofmarker      position of the first marker channel
 % ┃                   0 if no marker channel exists
 % ┗━.posofchannels    number of the channels that were returned
-% ● VERSION
-% PsPM 6.0
-% ● AUTHOSHIP
-% (C) 2008-2021 Dominik R. Bach (Wellcome Centre for Human Neuroimaging, UCL)
+% ● Introduced In
+%   PsPM 6.0
+% ● Written By
+%   (C) 2008-2021 Dominik R. Bach (Wellcome Centre for Human Neuroimaging, UCL)
 %     2022 Teddy Chao (UCL)
 
 

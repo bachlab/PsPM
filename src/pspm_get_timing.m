@@ -55,9 +55,10 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %                   rows
 %
 %
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2009-2015 Dominik R Bach (WTCN, UZH)
+% ● Introduced In
+%   PsPM 3.0
+% ● Written By
+%   (C) 2009-2015 Dominik R Bach (WTCN, UZH)
 
 % -------------------------------------------------------------------------
 % DEVELOPERS NOTES

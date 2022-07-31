@@ -1,6 +1,6 @@
 function varargout = pspm_data_editor(varargin)
 % ● Description
-% pspm_data_editor MATLAB code for pspm_data_editor.fig
+%   pspm_data_editor MATLAB code for pspm_data_editor.fig
 % ● Format
 %   [varargout] = pspm_data_editor(varargin)
 %   [sts, out]  = pspm_data_editor(indata, options)
@@ -23,7 +23,7 @@ function varargout = pspm_data_editor(varargin)
 %                     the graphical interface. At the moment either the
 %                     interpolated data or epochs only can be chosen as
 %                     output of the function.
-% ● Version
+% ● Introduced In
 %   PsPM 3.1
 % ● Written By
 %   (C) 2015 Tobias Moser (University of Zurich)

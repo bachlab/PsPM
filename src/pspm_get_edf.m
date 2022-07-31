@@ -2,7 +2,7 @@ function [sts, import, sourceinfo] = pspm_get_edf(datafile, import)
 % pspm_get_edf is the main function for import of EDF files
 % FORMAT: [sts, import, sourceinfo] = pspm_get_edf(datafile, import);
 % this function uses fieldtrip fileio functions
-% ● Version
+% ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Tobias Moser (University of Zurich)

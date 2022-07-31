@@ -7,8 +7,9 @@ function [sts, infos] = pspm_convert_hb2hp(fn, sr, chan, options)
 % ● Arguments
 %                 fn: data file name
 %                 sr: new sample rate for heart period channel
-%               chan: number of heart beat channel (optional, default: first heart
-%                     beat channel); if empty (= 0 / []) will be set to default value
+%               chan: number of heart beat channel (optional, default: 
+%                     first heart beat channel); if empty (= 0 / []) 
+%                     will be set to default value
 %   ┌────────options: optional arguments [struct]
 %   ├.channel_action: ['add'/'replace', default as 'replace']
 %   │                 Defines whether heart rate signal
@@ -24,7 +25,7 @@ function [sts, infos] = pspm_convert_hb2hp(fn, sr, chan, options)
 %   └─────────.lower: [numeric]
 %                     Specifies the lower limit of the
 %                     heart periods in seconds. Default is 0.2.
-% ● Version
+% ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

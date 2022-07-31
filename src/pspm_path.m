@@ -16,7 +16,10 @@ function path_to_folder = pspm_path(varargin)
 %
 % OUTPUT:
 %     path_to_folder: Constructed absolute path
-% (C) 2019 Eshref Yozdemir (University of Zurich)
+% ● Introduced In
+%   TBA.
+% ● Written By
+%   (C) 2019 Eshref Yozdemir (University of Zurich)
 if ~all(cellfun(@(x) isstr(x), varargin))
   error('ID:invalid_input', 'All inputs to pspm_path must be string');
 end

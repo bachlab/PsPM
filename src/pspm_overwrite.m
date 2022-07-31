@@ -17,8 +17,9 @@ function ow_final = pspm_overwrite(varargin)
 %           if a value, can be 0 (not to overwrite) or 1 (to overwrite)
 %           if a struct, check if the field "overwrite" exist
 % ● Outputs
-% ow_final  option of overwriting determined by pspm_overwrite
-% (C) 2022 Teddy Chao (University College London)
+%   ow_final  option of overwriting determined by pspm_overwrite
+% ● Written By
+%   (C) 2022 Teddy Chao (UCL)
 %% Initialise
 global settings
 if isempty(settings)

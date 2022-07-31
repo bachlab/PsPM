@@ -6,7 +6,7 @@ function [bf, x] = pspm_bf_data(td)
 %   can then be called with the optional argument model.bf = 'pspm_bf_data'.
 % ● Format
 %   [bf, x] = pspm_bf_data(td)
-% ● Version
+% ● Introduced In
 %   PsPM 5.1.1
 % ● Written By
 %   2021 Dominik R Bach (University College London)

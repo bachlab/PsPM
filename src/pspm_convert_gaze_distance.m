@@ -10,17 +10,21 @@ function [sts, out] = pspm_convert_gaze_distance(fn, target, from, width, height
 %                 fn: The actual data file gaze data
 %             target: target unit of conversion. degree | sps
 %               from: Distance unit to convert from: pixel, mm, cm, m, inches
-%              width: Width of the screen in the units chosen in the 'from' parameter
-%             height: Height of the screen in the units chosen in the 'from' parameter
-%           distance: Subject distance from the screen in the units chosen in the 'from' parameter
-%   ┌────────options
-%   └.channel_action: Channel action for sps data, add / replace existing sps data
+%              width: Width of the screen in the units chosen in the 'from'
+%                     parameter
+%             height: Height of the screen in the units chosen in the 'from'
+%                     parameter
+%           distance: Subject distance from the screen in the units chosen in
+%                     the 'from' parameter
+%   ┌────────options:
+%   └.channel_action: Channel action for sps data, add / replace existing sps
+%                     data
 % ● Output
 %                sts: Status determining whether the execution was
 %                     successfull (sts == 1) or not (sts == -1)
 %          ┌─────out  [struct] Output
 %          └.channel: Id of the added channels.
-% ● Version
+% ● Introduced In
 %   PsPM 4.3.1
 % ● Written By
 %   (C) 2020 Sam Maxwell (University College London)

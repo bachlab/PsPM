@@ -5,10 +5,10 @@ function [sts, data]=pspm_get_sound(import)
 %   [sts, data]=pspm_get_sound(import)
 %   with import.data: column vector of waveform data
 %        import.sr: sample rate
-%
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2015 Tobias Moser (University of Zurich)
+% ● Introduced In
+%   PsPM 3.0
+% ● Written By
+%   (C) 2015 Tobias Moser (University of Zurich)
 
 %% Initialise
 global settings

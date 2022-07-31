@@ -46,8 +46,9 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 %          newdatafile: cell array of filenames for the individual sessions
 %         newepochfile: cell array of missing epoch filenames for the individual
 %                       sessions (empty if no options.missing not specified)
-% ● Version
+% ● Introduced In
 %   PsPM 5.1.1
+% ● Written By
 %   (C) 2021 Dominik Bach (UCL)
 %       2022 Teddy Chao (UCL)
 

@@ -110,10 +110,12 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 % [1] Hayes, Taylor R., and Alexander A. Petrov. "Mapping and correcting the
 %     influence of gaze position on pupil size measurements." Behavior
 %     Research Methods 48.2 (2016): 510-527.
-%__________________________________________________________________________
-% (C) 2019 Eshref Yozdemir (University of Zurich)
-% PsPM 5.1.2
-% Updated 2021 Teddy Chao (WCHN, UCL)
+% ● Written By
+%   (C) 2019 Eshref Yozdemir (University of Zurich)
+% ● Introduced In
+%   PsPM 5.1.2
+% ● Maintained By
+%   2021 Teddy Chao (WCHN, UCL)
 
 %% Initialise
 global settings

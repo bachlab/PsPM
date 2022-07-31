@@ -3,7 +3,7 @@ function arclen = pspm_convert_visangle2sps_core(lat, lon)
 % ● Format
 %   arclen = pspm_convert_visangle2sps_core(lat, lon)
 % ● Arguments
-% ● Version
+% ● Introduced In
 % ● Written By
 
 if sum(isnan(lon)) > 0 || sum(isnan(lat)) > 0

@@ -13,8 +13,9 @@ function output = pspm_template_varargin(input, varargin)
 % ● Outputs
 %     output: [variable type, unit: (if applicable)]
 %             meaning: ...
-% ● Version
+% ● Introduced In
 %   PsPM (version)
+% ● Written By
 %   (C) 2021 developer (unit, university)
 %   Supervised by Professor Dominik Bach (WCHN, UCL)
 

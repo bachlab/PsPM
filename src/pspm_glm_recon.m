@@ -4,10 +4,10 @@ function [sts, glm] = pspm_glm_recon(modelfile)
 % reconstructed response peaks into the field glm.recon in original GLM file
 %
 % FORMAT: [sts, glm] = pspm_glm_recon(glmfile)
-%
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2018 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Introduced In
+%   PsPM 3.0
+% ● Written By
+%   (C) 2008-2018 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

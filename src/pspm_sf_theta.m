@@ -8,9 +8,10 @@ function [theta, sr] = pspm_sf_theta
 % theta 5: scaling parameter in log space, was slightly adapted on
 % 12.05.2014 such that an input with unit amplitude elicits a response with
 % exactly unit amplitude, see pspm_f_amplitude_check.m
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Introduced In
+%   PsPM 3.0
+% ● Written By
+%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

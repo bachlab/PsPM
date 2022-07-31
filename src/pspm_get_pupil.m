@@ -5,9 +5,8 @@ function [sts, data]=pspm_get_pupil(import)
 %   [sts, data]= pspm_get_pupil(import)
 %   with import.data: column vector of waveform data
 %        import.sr: sample rate
-%
-%__________________________________________________________________________
-% PsPM 3.0
+% ● Introduced In
+%   PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 

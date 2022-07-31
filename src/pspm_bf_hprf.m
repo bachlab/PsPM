@@ -8,11 +8,12 @@ function [bf, x ,p] = pspm_bf_hprf(td,p)
 %   td: time resolution in s
 %    p: '3' vs '4' basis function solution
 % ● References
-% ● Version
+% ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%				2022			Teddy Chao (UCL)
+% ● Maintained By
+%   2022  Teddy Chao (UCL)
 
 %% initialise
 global settings;
@@ -34,9 +35,9 @@ else
 		idx = [1 3:4];
 end
 x = (0:td:29-td);
-s(1,:)=[3.1 13.4 6 5.8];
-s(2,:)=[.27 .73 .96 3.8];
-s(3,:)=[.0075 -2.4 8.7 4.9];
+s(1,:) = [3.1 13.4 6 5.8];
+s(2,:) = [.27 .73 .96 3.8];
+s(3,:) = [.0075 -2.4 8.7 4.9];
 s = s(:,idx);
 for k = 1:length(idx)
   bf(:,k) = gampdf(x - s(3,k), s(1,k), s(2,k));

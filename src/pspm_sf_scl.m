@@ -5,10 +5,10 @@ function scl = pspm_sf_scl(scr, sr, options)
 % auc = pspm_sf_scl(scr, sr)
 %
 % REFERENCE:
-%
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Introduced In
+%   PsPM 3.0
+% ● Written By
+%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

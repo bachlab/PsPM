@@ -24,12 +24,12 @@ function y = pspm_filtfilt(b,a,x)
 % The length of the input x must be more than three times
 % the filter order, defined as max(length(b)-1,length(a)-1).
 %
-% References:
-% [1] Sanjit K. Mitra, Digital Signal Processing, 2nd ed, McGraw-Hill, 2001
-% [2] Fredrik Gustafsson, Determining the initial states in forward-backward
-%     filtering, IEEE Transactions on Signal Processing, pp. 988--992,
-%     April 1996, Volume 44, Issue 4
-% ● Version
+% ● References:
+%   [1] Sanjit K. Mitra, Digital Signal Processing, 2nd ed, McGraw-Hill, 2001
+%   [2] Fredrik Gustafsson, Determining the initial states in forward-backward
+%       filtering, IEEE Transactions on Signal Processing, pp. 988--992,
+%       April 1996, Volume 44, Issue 4
+% ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

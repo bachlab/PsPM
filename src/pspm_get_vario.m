@@ -4,16 +4,10 @@ function [sts, import, sourceinfo] = pspm_get_vario(datafile, import)
 %
 % this function uses the conversion routine getVarioPort.m
 % written and maintained by Christoph Berger at the University of Rostock
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-
-% $Id$
-% $Rev$
-
-% v003 drb 04.08.2013 3.0 architecture
-% v002 drb 11.02.2011 comply with new pspm_import requirements
-% v001 drb 6.9.2010
+% ● Introduced In
+%   PsPM 3.0
+% ● Written By
+%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

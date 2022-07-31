@@ -29,8 +29,8 @@ function [sts, import, sourceinfo] = pspm_get_physlog(datafile, import)
 %                  6   Resp channel
 %
 % FORMAT: [sts, import, sourceinfo] = pspm_get_physlog(datafile, import);
-%__________________________________________________________________________
-% PsPM 3.1
+% ● Introduced In
+%   PsPM 3.1
 % ● Written By
 %   (C) 2008-2015 Tobias Moser (University of Zurich)
 

@@ -2,11 +2,12 @@ function [sts, data] = pspm_get_sps_l(import)
 % pspm_get_sps_l is a comon function for importing left eye eyelink data (distances
 % between following data points)
 %
-% FORMAT:
+% ● Format
 %   [sts, data]=pspm_get_sps_l(import)
 %   with import.data: column vector of waveform data
 %        import.sr: sample rate
-%
+% ● Written By
+%   TBA.
 
 %% Initialise
 global settings

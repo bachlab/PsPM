@@ -7,7 +7,7 @@ function [sts, data]=pspm_get_custom(import)
 %   [sts, data]= pspm_get_custom(import)
 %   with import.data: column vector of waveform data
 %        import.sr: sample rate
-% ● Version
+% ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2009-2014 Tobias Moser (University of Zurich)

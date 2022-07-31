@@ -18,11 +18,11 @@ function [bf, x, b] = pspm_bf_hprf_e(varargin)
 %   5:  BF 5  - mu 12.6 s, sigma 2 s
 %   6:  BF 6  - mu 18.85 s, sigma 1.8 s
 % ● References
-% ● Version
+% ● Introduced In
 %   PsPM 3.0
 % ● Written By
-% (C) 2015 Philipp C Paulus & Dominik R Bach
-% (Technische Universitaet Dresden, University of Zurich)
+%   (C) 2015 Philipp C Paulus & Dominik R Bach
+%   (Technische Universitaet Dresden, University of Zurich)
 
 %% input checks
 global settings;

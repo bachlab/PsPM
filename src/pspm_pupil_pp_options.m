@@ -140,8 +140,8 @@ function [sts, default_settings] = pspm_pupil_pp_options()
 %                                        value will be set to NaN.
 %                                        (Default: 250 ms)
 %
-%__________________________________________________________________________
-% (C) 2019 Eshref Yozdemir (University of Zurich)
+% ● Written By
+%   (C) 2019 Eshref Yozdemir (University of Zurich)
 
 %% Initialise
 global settings

@@ -20,7 +20,7 @@ function [bs, x] = pspm_bf_ldrf_gm(varargin)
 %   J Vis. 2016;16(3):28. doi: 10.1167/16.3.28.
 %   A solid frame for the window on cognition: Modeling event-related pupil responses.
 %   Korn CW, Bach DR.
-% ● Version
+% ● Introduced In
 %   PsPM 3.1
 % ● Written By
 %   (C) 2015 Tobias Moser (University of Zurich)

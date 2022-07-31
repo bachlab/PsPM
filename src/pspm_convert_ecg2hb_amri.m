@@ -27,7 +27,7 @@ function [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
 %   │                 call this function multiple times with the index of
 %   │                 each channel.  Further, use 'add' mode to store each
 %   │                 resulting 'heartbeat' channel separately.
-%   ├─ signal_to_use: ['ecg'/'teo'/'auto', default as 'auto'] 
+%   ├─.signal_to_use: ['ecg'/'teo'/'auto', default as 'auto'] 
 %   │                 Choose which signal will be used as the input to the core
 %   │                 R-peak detection steps. When 'ecg', filtered ECG signal
 %   │                 will be used. 
@@ -37,40 +37,40 @@ function [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
 %   │                 When 'auto'
 %   │                 the option that results in the higher maximal 
 %   │                 autocorrelation will be used.
-%   ├─────── hrrange: [numeric] Minimum and maximum heartbeat rates (BPM)
+%   ├───────.hrrange: [numeric] Minimum and maximum heartbeat rates (BPM)
 %   │                 to use in the algorithm. Must be a numeric array of
 %   │                 length 2, i.e. [min_bpm max_bpm].
 %   │                 (Default: [20 200])
 %   │                 (Unit: beats per minute)
-%   ├── ecg_bandpass: [numeric] Minimum and maximum frequencies to use
+%   ├──.ecg_bandpass: [numeric] Minimum and maximum frequencies to use
 %   │                 during bandpass filter of the raw ECG signal to
 %   │                 construct filtered ECG signal.
 %   │                 (Default: [0.5 40])
 %   │                 (Unit: Hz)
-%   ├── teo_bandpass: [numeric, unit: Hz, default as [8 40]]
+%   ├──.teo_bandpass: [numeric, unit: Hz, default as [8 40]]
 %   │                 Minimum and maximum frequencies to use
 %   │                 during bandpass filter of filtered ECG signal to
 %   │                 construct TEO input signal.
-%   ├──── teo_order:  [numeric, default as 1]
+%   ├────.teo_order:  [numeric, default as 1]
 %   │                 Order of the TEO operator. Must be integer.
 %   │                 For a discrete time signal x(t) and order k,
 %   │                 TEO[x(t); k] is defined as
 %   │                 TEO[x(t); k] = x(t)x(t) - x(t-k)x(t+k).
-%   ├ min_cross_corr: [numeric, default as 0.5]
+%   ├.min_cross_corr: [numeric, default as 0.5]
 %   │                 Minimum cross correlation between a candidate
 %   │                 R-peak and the found template such that the candidate is
 %   │                 classified as an R-peak.
-%   ├ min_relative_amplitude:
+%   ├.min_relative_amplitude:
 %   │                 [numeric, default as 0.4]
 %   │                 Minimum relative peak amplitude of a candidate
 %   │                 R-peak such that it is classified as an R-peak.
-%   ├ channel_action: ['add'/'replace'] Defines whether corrected data
+%   ├.channel_action: ['add'/'replace'] Defines whether corrected data
 %   │                 should be added or the corresponding preprocessed
 %   │                 channel should be replaced. Note that 'replace' mode
 %   │                 does not replace the raw data channel, but a previously
 %   │                 stored heartbeat channel.
 %   │                 (Default: 'replace')
-%   └─── out_channel: Channel ID of the preprocessed output. Output will
+%   └───.out_channel: Channel ID of the preprocessed output. Output will
 %                     be written to a 'heartbeat' channel to the given PsPM
 %                     file. .data field contains the timestamps of heartbeats
 %                     in seconds.

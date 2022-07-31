@@ -32,7 +32,7 @@ function sts = pspm_exp(modelfile, options)
 %                       This option can only be used for GLM files when
 %                       exclude_missing was set during model setup.
 %                       Otherwise this argument is ignored.
-% ● Version
+% ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2009-2015 Dominik R Bach (WTCN, UZH)

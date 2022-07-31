@@ -16,8 +16,7 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
 %           reference:  string/vector/cell_array
 %                       [string]
 %                       'marker' from and to are set in seconds with respect
-%                                to the first and last scanner/marker
-%                                pulse
+%                                to the first and last scanner/marker pulse
 %                       'file'   from and to are set in seconds with respect 
 %                                to start of datafile
 %                       [vector] a 2-element vector:
@@ -37,11 +36,12 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
 %                       option to 1 to drop markers which lie in the offset.
 %                       this is for event channels only. default is 0.
 % ● Outputs
-%         newdatafile:  a filename for the updated file, a cell array of
+%          newdatafile:  a filename for the updated file, a cell array of
 %                       filenames, a struct with fields .data and .infos or a
 %                       cell array of structs
-% ● Version
+% ● Introduced In
 %   PsPM 3.0
+% ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% 1 Pre-settings
@@ -113,7 +113,9 @@ switch(class(reference))
       case 'file'
         getmarker = 0;
       otherwise
-        warning('ID:invalid_input', 'Invalid reference option ''%s'', should be marker or file.', reference);
+        warning('ID:invalid_input', ...
+        ['Invalid reference option ''%s'', ',...
+        'should be marker or file.'], reference);
         return
     end
   case 'double'
@@ -137,11 +139,14 @@ switch(class(reference))
       marker_end_vals = reference{2};
       calculate_idx = true;
     else
-      warning('ID:invalid_input', 'Invalid reference option ''%s'', should contain only two elements', reference);
+      warning('ID:invalid_input', ...
+      'Invalid reference option ''%s'', should contain only two elements',...
+      reference);
       return
     end
   otherwise
-    warning('ID:invalid_input', 'Invalid reference option ''%s'', should be a character, a number, or a cell', reference);
+    warning('ID:invalid_input', ...
+    'Invalid reference option ''%s'', should be a character, a number, or a cell', reference);
     return
 end
 % 1.6 Set options

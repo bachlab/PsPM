@@ -9,8 +9,9 @@ function [fx, x, p] = pspm_bf_hprf_fc_f(td, soa, p)
 %   p(3): x0
 %   p(4): A
 % ● References
-% ● Version
+% ● Introduced In
 %   PsPM 3.0
+% ● Written By
 %   (C) 2015 Tobias Moser (University of Zurich)
 
 %% initialise

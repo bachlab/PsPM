@@ -5,7 +5,7 @@ function outfile = pspm_import(datafile, datatype, import, options)
 % ● Format
 %   outfile = pspm_import(datafile, datatype, import, options)
 % ● Arguments
-%          datafile:  file containing the scr data, or cell array of files.
+%           datafile:  file containing the scr data, or cell array of files.
 %          datatype:  supported datatypes are defined in pspm_init (see 
 %                     manual).
 %            import:  a cell array of struct with one job (imported 
@@ -62,9 +62,9 @@ function outfile = pspm_import(datafile, datatype, import, options)
 % ● Output
 %           outfile:  a .mat file (or cell array of files) on the input 
 %                     file path containing scr and event info.
-% ● Version
+% ● Introduced In
 %   PsPM 3.0
-% ● Authors
+% ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %       2022      Teddy Chao (UCL)
 % ● Developer notes

@@ -8,7 +8,7 @@ function [sts, data, duration] = pspm_align_channels(data, induration)
 %   [sts, data, duration] = pspm_align_channels(inputdata, induration)
 % ● Arguments
 %   TBA.
-% ● Version
+% ● Introduced In
 %   PsPM 3.1
 % ● Written By
 %   (C) 2008-2016 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

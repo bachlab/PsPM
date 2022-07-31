@@ -27,8 +27,9 @@ function scr = pspm_transfer_function(data, c, Rs, offset, recsys)
 %           (given in voltage) has been generated. Either the system is a 
 %           'conductance' based system (which is the default) or it is a
 %           'resistance' based system.
-% ● Version
+% ● Introduced In
 %   PsPM 3.0
+% ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise

@@ -8,9 +8,9 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, chan, options)
 % ● Arguments
 %                 fn: data file name
 %               chan: number of ECG channel (optional, default: first ECG
-%                     channel) if is empty (= 0 / []) then default channel will be
-%                     used.
-%   ┌────────options
+%                     channel) if is empty (= 0 / []) then default channel will
+%                     be used.
+%   ┌────────options:
 %   ├──────────.semi: activates the semi automatic mode, allowing the
 %   │                 handcorrection of all IBIs that fulfill:
 %   │                 >/< mean(ibi) +/- 3 * std(ibi) [def. 1].
@@ -20,7 +20,8 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, chan, options)
 %   │                 runs the algorithm in debugmode (additional results 
 %   │                 in debug variable 'infos.pt_debug') and plots a graph 
 %   │                 that allows quality checks.
-%   ├──────.twthresh: sets the threshold to perform the twave check. [def. 0.36s].
+%   ├──────.twthresh: sets the threshold to perform the twave check.
+%   │                 [def. 0.36s].
 %   └.channel_action: ['add'/'replace', default as 'replace']
 %                     Defines whether the new channel should be added or 
 %                     the previous outputs of this function should be replaced.
@@ -87,7 +88,7 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, chan, options)
 %
 %   R:            Vector of the same length as the raw data, containing
 %                 information on the position of the QRS complexes.
-% ● Version
+% ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2013-2015 Philipp C Paulus & Dominik R Bach

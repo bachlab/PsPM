@@ -5,9 +5,10 @@ function [sts, import, sourceinfo]  = pspm_get_wdq(datafile, import)
 % this function uses the conversion routine ReadDataq.m provided by Dataq
 % developers. ActiveX control elements provided in the file activex.exe
 % provided by Dataq must be installed, too.
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Introduced In
+%   PsPM 3.0
+% ● Written By
+%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

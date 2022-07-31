@@ -6,7 +6,7 @@ function [sts, data]=pspm_get_gaze_y_r(import)
 %   [sts, data]= pspm_get_gaze_y_r(import)
 %   with import.data: column vector of waveform data
 %        import.sr: sample rate
-% ● Version
+% ● Introduced In
 %   PsPM 3.1
 % ● Written By
 %   (C) 2015 Tobias Moser (University of Zurich)

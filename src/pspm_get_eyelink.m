@@ -31,8 +31,8 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 % they do not exist. Instead they will produce an empty channel (a channel
 % with NaN values only).
 %
-% ● Version
-%   Introduced with PsPM 3.0
+% ● Introduced In
+%   PsPM 3.0
 %   Updated with PsPM 5.1.2
 % ● Written By
 %   (C) 2008-2017 Tobias Moser (University of Zurich)

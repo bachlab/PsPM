@@ -1,7 +1,8 @@
 % pspm_quit clears settings, removes paths & closes figures
-%__________________________________________________________________________
-% PsPM 5.0.0
-% (C) 2008-2020 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Introduced In
+%   PsPM 5.0
+% ● Written By
+%   (C) 2008-2020 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 
 %% Initialise

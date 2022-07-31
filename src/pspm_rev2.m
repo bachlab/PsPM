@@ -6,10 +6,10 @@ function pspm_rev2(modelfile, con)
 %
 % optional argument: con indicates the contrasts that you wish to be
 % reported
-%
-% __________________________________________________________________________
-% PsPM 3.0
-% (c) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Introduced In
+%   PsPM 3.0
+% ● Written By
+%   (c) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

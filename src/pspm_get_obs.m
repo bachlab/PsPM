@@ -1,13 +1,14 @@
 function [sts, import, sourceinfo] = pspm_get_obs(datafile, import)
-% pspm_get_obs is the main function for import of text-exported Noldus
-% Observer XT compatible files. At the current state the function is only
-% assured to work with the output files of Vsrrp98.
-%
-% FORMAT: [sts, import, sourceinfo] = pspm_get_obs(datafile, import);
-%__________________________________________________________________________
-% PsPM 3.0
+% ● Description
+%   pspm_get_obs is the main function for import of text-exported Noldus
+%   Observer XT compatible files. At the current state the function is only
+%   assured to work with the output files of Vsrrp98.
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_obs(datafile, import);
+% ● Introduced In
+%   PsPM 3.0
 % ● Written By
-%   (C) 2013-2015 Linus R¸ttimann (University of Zurich)
+%   (C) 2013-2015 Linus Rüttimann (University of Zurich)
 
 %% Initialise
 global settings

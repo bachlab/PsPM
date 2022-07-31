@@ -7,26 +7,28 @@ function [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,u
 % ● Format
 %   [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,unit,options)
 % ● Arguments
-%                fn:  The actual data file containing the eyelink recording with gaze data
+%                fn:  The actual data file containing the eyelink recording
+%                     with gaze data
 %              chan:  On which subset of channels should the conversion be done.
-%                     Supports all values which can be passed to pspm_load_data().
+%                     Supports all values which can be passed to
+%                     pspm_load_data().
 %                     The will only work on gaze-channels.
 %                     Other channels specified will be ignored.
 %             width:  Width of the display window. Unit is 'unit'.
 %            height:  Height of the display window. Unit is 'unit'.
 %          distance:  distance between eye and screen in length units.
 %              unit:  unit in which width, height and distance are given.
-% options
-% ┣━.channel_action:  [accept: 'add'/'replace', default: 'add']
-% ┃                   Defines whether the new channels should be added or the
-% ┃                   previous outputs of this function should be replaced.
-% ┗━━━━━━━━━━━.eyes:  [accept: 'l'/'r'/'c', default: 'c'] 
+% ┌──────── options:
+% ├─.channel_action:  [accept: 'add'/'replace', default: 'add']
+% │                   Defines whether the new channels should be added or the
+% │                   previous outputs of this function should be replaced.
+% └───────────.eyes:  [accept: 'l'/'r'/'c', default: 'c'] 
 %                     Define on which eye the operations should be performed.
 % ● Output
 %               sts:  Status determining whether the execution was
 %                     successfull (sts == 1) or not (sts == -1)
 %               out:  Id of the added channels.
-% ● Version
+% ● Introduced In
 %   PsPM 4.0
 % ● Written By
 %   TBA.

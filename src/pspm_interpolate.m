@@ -54,9 +54,10 @@ function [sts, outdata] = pspm_interpolate(indata, options)
 %              data (or the filename(s) where the interpolated data can be 
 %              found).
 %
-% ● Version
-% PsPM 3.0
-% (C) 2015 Tobias Moser (University of Zurich)
+% ● Introduced In
+%   PsPM 3.0
+% ● Written By
+%   (C) 2015 Tobias Moser (University of Zurich)
 %     2022 Teddy Chao (UCL)
 
 %% Initialise

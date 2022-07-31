@@ -1,27 +1,29 @@
 function sts = pspm_resp_pp(fn, sr, chan, options)
 % ● Description
-% pspm_resp_pp preprocesses raw respiration traces. The function detects
-% respiration cycles for bellows and cushion systems, computes respiration
-% period, amplitude and RFR, assigns these measures to the start of each
-% cycle and linearly interpolates these (expect rs = respiration time
-% stamps). Results are written to new channels in the same file
+%   pspm_resp_pp preprocesses raw respiration traces. The function detects
+%   respiration cycles for bellows and cushion systems, computes respiration
+%   period, amplitude and RFR, assigns these measures to the start of each
+%   cycle and linearly interpolates these (expect rs = respiration time
+%   stamps). Results are written to new channels in the same file
 % ● Format
-% sts = pspm_resp_pp(fn, sr, chan, options)
+%   sts = pspm_resp_pp(fn, sr, chan, options)
 % ● Arguments
-% fn                  data file name
-% sr                  sample rate for new interpolated channel
-% chan                number of respiration channel (optional, default: first
+%                fn:  data file name
+%                sr:  sample rate for new interpolated channel
+%              chan:  number of respiration channel (optional, default: first
 %                     respiration channel)
-% options
-% ┣━.systemtype       ['bellows'(default) /'cushion']
-% ┣━.datatype         a cell array with any of 'rp', 'ra', 'rfr',
-% ┃                   'rs', 'all' (default)
-% ┣━.plot             1 creates a respiratory cycle detection plot
-% ┗━.channel_action   ['add'(default) /'replace']
-%                     Defines whether the new channels should be added or 
-%                     the corresponding channel should be replaced.
-% PsPM 3.0
-% (C) 2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ┌─────────options:
+% ├─────.systemtype:  ['bellows'(default) /'cushion']
+% ├───────.datatype:  a cell array with any of 'rp', 'ra', 'rfr',
+% │                   'rs', 'all' (default)
+% ├───────────.plot:  1 creates a respiratory cycle detection plot
+% └─.channel_action:  ['add'(default) /'replace']
+%                     Defines whether the new channels should be added or the
+%                     corresponding channel should be replaced.
+% ● Introduced In
+%   PsPM 3.0
+% ● Written By
+%   (C) 2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

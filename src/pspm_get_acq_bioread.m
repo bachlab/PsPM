@@ -1,16 +1,16 @@
 function [sts, import, sourceinfo] = pspm_get_acq_bioread(datafile, import)
-% pspm_get_acq_bioread is the main function for import of converted
-% biopac/acknowledge files (any version). It requires the files to be
-% converted to .mat files using the bioread[1] tool acq2mat.exe.
-%
-% FORMAT: [sts, import, sourceinfo] = pspm_get_acq_bioread(datafile, import);
-%
-% This function is based on sample files, not on proper documentation of the
-% file format. Always check your imported data before using it.
-%
-% [1] https://github.com/njvack/bioread
-%__________________________________________________________________________
-% PsPM 3.1
+% ● Description
+%   pspm_get_acq_bioread is the main function for import of converted
+%   biopac/acknowledge files (any version). It requires the files to be
+%   converted to .mat files using the bioread[1] tool acq2mat.exe.
+%   This function is based on sample files, not on proper documentation of the
+%   file format. Always check your imported data before using it.
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_acq_bioread(datafile, import);
+% ● Reference
+%   [1] https://github.com/njvack/bioread
+% ● Introduced in
+%   PsPM 3.1
 % ● Written By
 %   (C) 2016 Tobias Moser (University of Zurich)
 

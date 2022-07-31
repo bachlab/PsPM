@@ -1,24 +1,24 @@
 function [sts, data] = pspm_get_marker(import)
-% ● DESCRIPTION
-% pspm_get_marker gets the marker channel for different data types
-% ● FORMAT
-% [sts, data] = pspm_get_marker(import)
+% ● Description
+%   pspm_get_marker gets the marker channel for different data types
+% ● Format
+%   [sts, data] = pspm_get_marker(import)
 % ● INPUT
-%	import				import job structure
-% ┣━.data				mandatory
-% ┣━.marker 		mandatory, string
-%	┃							accepted values: 'timestamps' or 'continuous'
-% ┣━.sr 				mandatory, double
-%	┃							timestamps: timeunits in seconds
-%	┃							continuous: sample rate in 1/seconds)
-% ┣━.flank      optional, string, applicable for continuous channels only
-%	┃							accepted values: 'ascending', 'descending', 'both'
-% ┃             default: 'both'
-% ┗━.markerinfo	optional, struct, returns marker timestamps in seconds
-% 	  ┣━.name
-%     ┗━.value
-% ● VERSION
-%   Updated with PsPM 6.0
+%	  ┌───import: import job structure
+%   ├────.data: mandatory
+%   ├──.marker: mandatory, string
+%   │						accepted values: 'timestamps' or 'continuous'
+%   ├────────.sr: mandatory, double
+%   │						  timestamps: timeunits in seconds
+%   │						  continuous: sample rate in 1/seconds)
+%   ├─────.flank: optional, string, applicable for continuous channels only
+%   │						  accepted values: 'ascending', 'descending', 'both'
+%   │						  default: 'both'
+%   └.markerinfo: optional, struct, returns marker timestamps in seconds
+% 	  ├────.name:
+%     └───.value:
+% ● Last Updated In
+%   PsPM 6.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 % ● Maintained by

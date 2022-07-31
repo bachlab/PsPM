@@ -1,31 +1,24 @@
 % create appropriate contrasts for DCM cond option
 
 function varargout = pspm_contrast(varargin)
-% PSPM_CONTRAST MATLAB code for pspm_contrast.fig
-%      PSPM_CONTRAST, by itself, creates a new PSPM_CONTRAST or raises the existing
-%      singleton*.
-%
-%      H = PSPM_CONTRAST returns the handle to a new PSPM_CONTRAST or the handle to
-%      the existing singleton*.
-%
-%      PSPM_CONTRAST('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in PSPM_CONTRAST.M with the given input arguments.
-%
-%      PSPM_CONTRAST('Property','Value',...) creates a new PSPM_CONTRAST or raises the
-%      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before pspm_contrast_OpeningFcn gets called.  An
-%      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to pspm_contrast_OpeningFcn via varargin.
-%
-%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
-%      instance to run (singleton)".
-%
-% See also: GUIDE, GUIDATA, GUIHANDLES
-
-% Edit the above text to modify the response to help pspm_contrast
-
-% Last Modified by GUIDE v2.5 03-Jul-2017 13:59:10
-% ● Version
+% ● Description
+%   PSPM_CONTRAST MATLAB code for pspm_contrast.fig
+%   PSPM_CONTRAST, by itself, creates a new PSPM_CONTRAST or raises the existing
+%   singleton*.
+%   H = PSPM_CONTRAST returns the handle to a new PSPM_CONTRAST or the handle to
+%   the existing singleton*.
+%   PSPM_CONTRAST('CALLBACK',hObject,eventData,handles,...) calls the local
+%   function named CALLBACK in PSPM_CONTRAST.M with the given input arguments.
+%   PSPM_CONTRAST('Property','Value',...) creates a new PSPM_CONTRAST or raises
+%   the existing singleton*.  Starting from the left, property value pairs are
+%   applied to the GUI before pspm_contrast_OpeningFcn gets called.  An
+%   unrecognized property name or invalid value makes property application
+%   stop.  All inputs are passed to pspm_contrast_OpeningFcn via varargin.
+%   *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
+%   instance to run (singleton)".
+%   See also: GUIDE, GUIDATA, GUIHANDLES
+%   Edit the above text to modify the response to help pspm_contrast
+% ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

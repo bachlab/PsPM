@@ -18,7 +18,7 @@ function [varargout] = pspm_convert_area2diameter(varargin)
 %   └.channel_action: ['add'/'replace', default as 'add']
 %                     Defines whether the new channel should be added or the 
 %                     previous outputs of this function should be replaced.
-% ● Version
+% ● Introduced In
 %   PsPM 3.1
 % ● Written By
 %   (C) 2016 Tobias Moser (University of Zurich)

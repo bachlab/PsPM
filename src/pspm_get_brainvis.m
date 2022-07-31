@@ -1,15 +1,16 @@
 function [sts, import, sourceinfo] = pspm_get_brainvis(datafile, import)
-% pspm_get_brainvis is the main function for import of BrainVision files
-% FORMAT: [sts, import, sourceinfo] = pspm_get_brainvis(datafile, import);
-% this function uses fieldtrip fileio functions
+% ● Description
+%   pspm_get_brainvis is the main function for import of BrainVision files
+%   this function uses fieldtrip fileio functions
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_brainvis(datafile, import);
 % ● Version
 %   PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-
-% NOTE I did not have sample files, simply assumed that hdr.labels would be
-% a cell array - might have to be changed in lines 38 and 41
-
+% ● Note
+%   I did not have sample files, simply assumed that hdr.labels would be
+%   a cell array - might have to be changed in lines 38 and 41
 
 %% Initialise
 global settings

@@ -6,7 +6,8 @@ function [sts, data] = pspm_get_sps_r(import)
 %   [sts, data]=pspm_get_sps_r(import)
 %   with import.data: column vector of waveform data
 %        import.sr: sample rate
-%
+% ● Written By
+%   TBA.
 
 %% Initialise
 global settings

@@ -19,8 +19,10 @@ function output = pspm_template_options(input, options)
 %       field   variable type
 %               meaning: ...
 %               unit: (if applicable)
-% PsPM (version)
-% (C) 2021 developer (unit, university)
+% ● Introduced In
+%   PsPM Version
+% ● Written By
+%   (C) 2021 developer (unit, university)
 % Supervised by Professor Dominik Bach (WCHN, UCL)
 
 %% Initialise

@@ -60,12 +60,14 @@ function [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm
 %   OUTPUT:
 %       pupil_corrected: PFE corrected pupil data.
 %                        (Unit: unit of the input pupil data)
-%
-% [1] Hayes, Taylor R., and Alexander A. Petrov. "Mapping and correcting the
-%     influence of gaze position on pupil size measurements." Behavior
-%     Research Methods 48.2 (2016): 510-527.
-%__________________________________________________________________________
-% (C) 2019 Eshref Yozdemir (University of Zurich)
+% ● References
+%   [1] Hayes, Taylor R., and Alexander A. Petrov. "Mapping and correcting the
+%       influence of gaze position on pupil size measurements." Behavior
+%       Research Methods 48.2 (2016): 510-527.
+% ● Introduced In
+%   TBA.
+% ● Written By
+%   (C) 2019 Eshref Yozdemir (University of Zurich)
 
 %% Initialise
 global settings

@@ -7,8 +7,8 @@ function [sts, data]=pspm_get_pupil_l(import)
 %   with import.data: column vector of waveform data
 %        import.sr: sample rate
 %
-%__________________________________________________________________________
-% PsPM 3.1
+% ● Introduced In
+%   PsPM 3.1
 % ● Written By
 %   (C) 2015 Tobias Moser (University of Zurich)
 

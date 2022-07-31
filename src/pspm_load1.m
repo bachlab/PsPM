@@ -38,9 +38,10 @@ function [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
 %           'stats', 'recon', 'cond': data.stats, data.names, (and data.trlnames if existing)
 %           'con':   con structure
 %           'all':   full first level structure
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (WTCN, UZH)
+% ● Introduced In
+%   PsPM 3.0
+% ● Written By
+%   (C) 2008-2015 Dominik R Bach (WTCN, UZH)
 
 % -------------------------------------------------------------------------
 % DEVELOPERS NOTES: General structure of PsPM 1st level model files

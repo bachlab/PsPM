@@ -10,8 +10,8 @@ function pspm_con2(modelfile, outfile, con, connames, options)
 %               note: all modelfiles need to have the same contrasts (it's best
 %               to compute these with pspm_con1 in one call)
 %     outfile:  a file the model is being saved to
-%         con:  optional argument containing a vector with the contrasts for which
-%               the second level should be set up (default: all), or 'all'
+%         con:  optional argument containing a vector with the contrasts for 
+%               which the second level should be set up (default: all), or 'all'
 %     conname:  optional argument containing names for the contrasts or the
 %               option 'file' to be read from first model file. contrasts
 %               will be numbered by default if this argument is missing or has
@@ -19,7 +19,7 @@ function pspm_con2(modelfile, outfile, con, connames, options)
 %     options:  
 %  .overwrite:  defines whether to overwrite existing files.
 %               (default = 0).
-% ● Version
+% ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (c) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

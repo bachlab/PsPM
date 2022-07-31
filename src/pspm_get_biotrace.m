@@ -2,8 +2,8 @@ function [sts, import, sourceinfo] = pspm_get_biotrace(datafile, import)
 % pspm_get_biotrace is the main function for import of text-exported
 % Mindemedia BioTrace files
 % FORMAT: [sts, import, sourceinfo] = pspm_get_biotrace(datafile, import);
-%__________________________________________________________________________
-% PsPM 3.0
+% ● Introduced In
+%   PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 

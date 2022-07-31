@@ -37,9 +37,10 @@ function out = pspm_sf_mp(scr, sr, opt)
 %
 %
 % REFERENCE
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (UZH, WTCN)
+% ● Introduced In
+%   PsPM 3.0
+% ● Written By
+%   (C) 2008-2015 Dominik R Bach (UZH, WTCN)
 % last edited 18.08.2014
 
 %% Initialise

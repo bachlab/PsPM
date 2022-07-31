@@ -12,7 +12,7 @@ function [ft, p, t] = pspm_bf_scrf_f(td, p)
 % ● Reference
 %   Bach DR, Flandin G, Friston KJ, Dolan RJ (2010). Modelling event-related skin
 %   conductance responses. International Journal of Psychophysiology, 75, 349-356.
-% ● Version
+% ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2009-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

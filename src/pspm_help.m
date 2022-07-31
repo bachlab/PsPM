@@ -1,7 +1,7 @@
 function [information, arguments] = pspm_help(func_name)
 % ● Description
 % ● Arguments
-% ● Authers
+% ● Written By
 %   (C) 2022 Teddy Chao (UCL)
 global settings
 if isempty(settings)

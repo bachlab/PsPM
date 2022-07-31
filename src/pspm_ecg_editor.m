@@ -22,7 +22,7 @@ function varargout = pspm_ecg_editor(varargin)
 %       r(2,:) ... r vector containing potential faulty labeled qrs compl.
 %       r(3,:) ... removed
 %       r(4,:) ... added
-% ● Version
+% ● Introduced In
 %   PsPM 3.1
 % ● Written By
 %   (C) 2013-2016 Philipp C Paulus, Tobias Moser

@@ -7,7 +7,7 @@ function [sts, import, sourceinfo] = pspm_get_labchart(datafile, import)
 %   online conversion tool.
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_labchart(datafile, import);
-% ● Version
+% ● Introduced In
 %   PsPM 3.1
 % ● Written By
 %   (C) 2016 Tobias Moser (University of Zurich)

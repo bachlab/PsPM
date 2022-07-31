@@ -22,12 +22,10 @@ function [sts] = pspm_remove_epochs(datafile, channel, epochfile, options)
 %                       (Default: 'add')
 %
 % OUTPUT:
-%__________________________________________________________________________
-% PsPM 4.0
-% (C) 2016 Tobias Moser (University of Zurich)
-
-% $Id: pspm_find_data_epochs.m 410 2017-01-30 11:14:06Z tmoser $
-% $Rev: 410 $
+% ● Introduced In
+%   PsPM 4.0
+% ● Written By
+%   (C) 2016 Tobias Moser (University of Zurich)
 
 %% Initialise
 global settings
