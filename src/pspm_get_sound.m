@@ -1,6 +1,6 @@
-function [sts, data]=pspm_get_sound(import)
-% pspm_get_sound is a common function for importing sound data
-%
+function [sts, data] = pspm_get_sound(import)
+% ● Description
+%   pspm_get_sound is a common function for importing sound data.
 % ● Format
 %   [sts, data]=pspm_get_sound(import)
 % ● Arguments
@@ -17,14 +17,11 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-
 % assign respiratory data
 data.data = import.data(:);
-
 % add header
 data.header.chantype = 'snd';
 data.header.units = import.units;
 data.header.sr = import.sr;
-
 % check status
 sts = 1;

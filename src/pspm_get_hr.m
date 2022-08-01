@@ -1,10 +1,11 @@
 function [sts, data]=pspm_get_hr(import)
-% pspm_get_hr is a common function for importing heart rate data
-%
+% ● Description
+%   pspm_get_hr is a common function for importing heart rate data
 % ● Format
 %   [sts, data]= pspm_get_hr(import)
-%   with data: column vector of waveform data
-%        import: import job structure with mandatory fields .data and .sr
+% ● Arguments
+%     data: column vector of waveform data
+%   import: import job structure with mandatory fields .data and .sr
 % ● Introduced In
 %   PsPM 3.0
 % ● Written By

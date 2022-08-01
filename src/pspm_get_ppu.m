@@ -3,8 +3,9 @@ function [sts, data]=pspm_get_ppu(import)
 %   pspm_get_ppu is a common function for importing PPU data
 % ● Format
 %   [sts, data]= pspm_get_ppu(import)
-%   with import.data: column vector of waveform data
-%        import.sr: sample rate
+% ● Arguments
+%   import.data: column vector of waveform data
+%     import.sr: sample rate
 % ● Introduced In
 %   PsPM 3.0
 % ● Written By

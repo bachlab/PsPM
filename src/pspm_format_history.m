@@ -10,8 +10,7 @@ function [sts, hist_str] = pspm_format_history(history_cell_array)
 %   functions starting in version 4.2.0. For earlier versions, this function
 %   may not produce decent looking tables.
 % ● Format
-%     [sts, hist_str] = pspm_format_history(history_cell_array)
-%
+%   [sts, hist_str] = pspm_format_history(history_cell_array)
 % ● Arguments
 %   history_cell_array: [cell array of strings] infos.history field in a PsPM 
 %                       file

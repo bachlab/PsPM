@@ -1,10 +1,11 @@
 function [sts, data]=pspm_get_ecg(import)
-% pspm_get_ecg is a common function for importing continuous ECG data
-%
-% FORMAT:
+% ● Description
+%   pspm_get_ecg is a common function for importing continuous ECG data.
+% ● Format
 %   [sts, data]= pspm_get_ecg(data, import)
-%   with data: column vector of waveform data
-%        import: import job structure with mandatory fields .data and .sr
+% ● Arguments
+%     data: column vector of waveform data
+%   import: import job structure with mandatory fields .data and .sr
 % ● Introduced In
 %   PsPM 3.0
 % ● Written By

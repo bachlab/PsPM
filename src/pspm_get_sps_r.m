@@ -1,7 +1,7 @@
 function [sts, data] = pspm_get_sps_r(import)
-% pspm_get_sps_r is a comon function for importing right eye eyelink data (distances
-% between following data points)
-%
+% ● Description
+%   pspm_get_sps_r is a comon function for importing right eye eyelink data
+%   (distances between following data points)
 % ● Format
 %   [sts, data]=pspm_get_sps_r(import)
 %   with import.data: column vector of waveform data

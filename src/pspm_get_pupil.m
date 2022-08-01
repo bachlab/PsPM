@@ -1,5 +1,6 @@
 function [sts, data]=pspm_get_pupil(import)
-% pspm_get_pupil is a common function for importing pupil data
+% ● Description
+%   pspm_get_pupil is a common function for importing pupil data
 %
 % ● Format
 %   [sts, data]= pspm_get_pupil(import)

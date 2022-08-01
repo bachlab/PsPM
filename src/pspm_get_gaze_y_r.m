@@ -1,10 +1,12 @@
 function [sts, data]=pspm_get_gaze_y_r(import)
-% pspm_get_gaze_y_r is a common function for importing eyelink data
-% (gaze_y_r data)
+% ● Description
+%   pspm_get_gaze_y_r is a common function for importing eyelink data
+%   (gaze_y_r data)
 % ● Format
 %   [sts, data]= pspm_get_gaze_y_r(import)
-%   with import.data: column vector of waveform data
-%        import.sr: sample rate
+% ● Arguments
+%   import.data: column vector of waveform data
+%     import.sr: sample rate
 % ● Introduced In
 %   PsPM 3.1
 % ● Written By

@@ -1,5 +1,6 @@
 function [sts, data]=pspm_get_scr(import)
-% pspm_get_scr is a common function for importing scr data
+% ● Description
+%   pspm_get_scr is a common function for importing scr data
 %
 % ● Format
 %   [sts, data]=pspm_get_scr(import)

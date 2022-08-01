@@ -1,8 +1,8 @@
 function [sts, outtiming] = pspm_get_timing(varargin)
-% pspm_get_timing is a shared function to read timing information from
-% different formats and align with a number of files. Time units (seconds,
-% samples, markers) are not changed.
-%
+% ● Description
+%   pspm_get_timing is a shared function to read timing information from
+%   different formats and align with a number of files. Time units (seconds,
+%   samples, markers) are not changed.
 % ● Format
 %   [sts, multi]  = pspm_get_timing('onsets', intiming, timeunits)
 %   [sts, epochs] = pspm_get_timing('epochs', epochs, timeunits)

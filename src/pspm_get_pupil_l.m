@@ -1,12 +1,12 @@
 function [sts, data]=pspm_get_pupil_l(import)
 % ● Description
-% pspm_get_pupil_l is a common function for importing eyelink data
-% (pupil_l data)
+%   pspm_get_pupil_l is a common function for importing eyelink data
+%   (pupil_l data)
 % ● Format
 %   [sts, data]= pspm_get_pupil_l(import)
 % ● Arguments
-%   with import.data: column vector of waveform data
-%        import.sr: sample rate
+%   import.data: column vector of waveform data
+%     import.sr: sample rate
 % ● Introduced In
 %   PsPM 3.1
 % ● Written By

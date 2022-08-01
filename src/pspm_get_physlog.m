@@ -1,13 +1,11 @@
 function [sts, import, sourceinfo] = pspm_get_physlog(datafile, import)
-% DESCRIPTION:
+% ● Description
 %   pspm_get_physlog loads data from physlog files using the
 %   import_physlog() function. It maps the output of the called function
 %   according to the settings passed in the 'import' parameter.
-%
 %   Special about this function is that channel numbers for event/marker
 %   channels correspond to the different event types scanphyslog files.
-%   Possible event types are:
-%
+%   * Possible event types are:
 %           Chan-Nr:   Type:
 %           --------   -----
 %                 1    Trigger ECG
@@ -20,14 +18,12 @@ function [sts, import, sourceinfo] = pspm_get_physlog(datafile, import)
 %                 8    Calibration
 %                 9    Manual start
 %                 10   Reference ECG Trigger
-%
-%   Channel types are:
+%   * Channel types are:
 %           Chan-Nr:   Type:
 %           --------   -----
 %                1-4   ECG channel
 %                  5   PPU channel
 %                  6   Resp channel
-%
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_physlog(datafile, import);
 % ● Introduced In

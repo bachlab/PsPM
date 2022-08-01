@@ -3,29 +3,23 @@ function y = pspm_filtfilt(b,a,x)
 %   pspm_filtfilt. Zero-phase forward and reverse digital filtering
 % ● Format
 %   y = pspm_filtfilt(b,a,x)
-%
-% b        - filter parameters (numerator)
-% a        - filter parameters (denominator)
-% x        - input data vector (if matrix, filter over columns)
-%
-% y        - filtered data
-%__________________________________________________________________________
-%
-% The filter is described by the difference equation:
-%
+% ● Arguments
+%   b:  filter parameters (numerator)
+%   a:  filter parameters (denominator)
+%   x:  input data vector (if matrix, filter over columns)
+%   y:  filtered data
+% ● Developer's Notes
+%   The filter is described by the difference equation:
 %     y(n) = b(1)*x(n) + b(2)*x(n-1) + ... + b(nb+1)*x(n-nb)
 %                      - a(2)*y(n-1) - ... - a(na+1)*y(n-na)
-%
-% After filtering in the forward direction, the filtered sequence is then
-% reversed and run back through the filter; Y is the time reverse of the
-% output of the second filtering operation. The result has precisely zero
-% phase distortion and magnitude modified by the square of the filter's
-% magnitude response.  Care is taken to minimize startup and ending
-% transients by matching initial conditions.
-%
-% The length of the input x must be more than three times
-% the filter order, defined as max(length(b)-1,length(a)-1).
-%
+%   After filtering in the forward direction, the filtered sequence is then
+%   reversed and run back through the filter; Y is the time reverse of the
+%   output of the second filtering operation. The result has precisely zero
+%   phase distortion and magnitude modified by the square of the filter's
+%   magnitude response.  Care is taken to minimize startup and ending
+%   transients by matching initial conditions.
+%   The length of the input x must be more than three times
+%   the filter order, defined as max(length(b)-1,length(a)-1).
 % ● References:
 %   [1] Sanjit K. Mitra, Digital Signal Processing, 2nd ed, McGraw-Hill, 2001
 %   [2] Fredrik Gustafsson, Determining the initial states in forward-backward
@@ -35,9 +29,9 @@ function y = pspm_filtfilt(b,a,x)
 %   PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-
-% L. Shure, T. Krauss, F. Gustafsson
-% Copyright 1988-2004 The MathWorks, Inc.
+% ● References
+%   L. Shure, T. Krauss, F. Gustafsson
+%   Copyright 1988-2004 The MathWorks, Inc.
 
 %% Initialise
 global settings
