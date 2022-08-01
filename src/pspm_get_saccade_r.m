@@ -2,7 +2,7 @@ function [sts, data]=pspm_get_saccade_r(import)
 % pspm_get_saccade_r is a common function for importing eyelink data
 % (saccade_r data)
 %
-% FORMAT:
+% ● Format
 %   [sts, data]=pspm_get_saccade_r(import)
 %   with import.data: column vector of waveform data
 %        import.sr: sample rate

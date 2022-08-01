@@ -1,7 +1,7 @@
 function [bs, x] = pspm_bf_psrf_erl(varargin)
 % ● Description
 %   Erlang response function to pupil size changes
-% ● FORMAT
+% ● Format
 %   [bs, x] = pspm_bf_psrf_erl(TD, n, tmax)
 %   [bs, x] = pspm_bf_psrf_erl([TD, n, tmax])
 % ● Arguments
@@ -16,7 +16,8 @@ function [bs, x] = pspm_bf_psrf_erl(varargin)
 %   PsPM 3.1
 % ● Written By
 %   (C) 2018 Tobias Moser (University of Zurich)
-%				2022 Teddy Chao (UCL)
+% ● Maintained By
+%		2022 Teddy Chao (UCL)
 
 %% initialise
 global settings

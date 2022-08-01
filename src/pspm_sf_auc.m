@@ -1,8 +1,7 @@
 function auc = pspm_sf_auc(scr, sr, options)
 % pspm_sf_auc returns the integral/area under the curve of an SCR time series
-
-% FORMAT:
-% auc = pspm_sf_auc(scr)
+% ● Format
+%   auc = pspm_sf_auc(scr)
 %
 % REFERENCE:
 % Bach DR, Friston KJ, Dolan RJ (2010). Analytic measures for the

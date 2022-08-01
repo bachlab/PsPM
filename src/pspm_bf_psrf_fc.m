@@ -7,14 +7,15 @@ function [bs, x] = pspm_bf_psrf_fc(varargin)
 %   td:	time resolution in second
 %    d:	number of derivatives (default 0)
 % ● Reference
-%   Christoph W. Korn, Matthias Staib, Athina Tzovara, Giuseppe Castegnetti1,
+%   Christoph W. Korn, Matthias Staib, Athina Tzovara, Giuseppe Castegnetti,
 %   and Dominik R. Bach (2016) A pupil size response model to assess
 %   fear learning
 % ● Introduced In
 %   PsPM 3.1
 % ● Written By
 %   (C) 2016 Tobias Moser (University of Zurich)
-%				2022 Teddy Chao (UCL)
+% ● Maintained By
+%		2022 Teddy Chao (UCL)
 
 %% initialise
 global settings

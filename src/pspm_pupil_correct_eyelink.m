@@ -14,7 +14,7 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 % it will either replace an existing preprocessed pupil channel or add it as new
 % channel to the provided file.
 %
-%	FORMAT:
+% ● Format
 %   [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 %
 %	INPUT:

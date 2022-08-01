@@ -1,7 +1,7 @@
 function [sts, data]=pspm_get_resp(import)
 % pspm_get_resp is a common function for importing respiration data
 %
-% FORMAT:
+% ● Format
 %   [sts, data]=pspm_get_resp(import)
 %   with import.data: column vector of waveform data
 %        import.sr: sample rate

@@ -4,8 +4,8 @@ function theta = pspm_get_rf(fn, events, outfile, chan, options)
 % third-order ODE and DCM machinery
 % the function returns an m-function for the RF, and the parameters of that
 % function
-%
-% FORMAT theta = pspm_get_rf(datafile, events, outfile, chan, options)
+% ● Format
+%   theta = pspm_get_rf(datafile, events, outfile, chan, options)
 %   with datafile: SCRalyze data file
 %        events: specified in seconds as
 %            a vector of onsets

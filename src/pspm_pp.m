@@ -1,8 +1,7 @@
 function newdatafile = pspm_pp(varargin)
 % pspm_pp contains various preprocessing utilities for reducing noise in the
 % data.
-%
-% INPUT:
+% ● Format
 %   pspm_pp('median', datafile, n, channelnumber, options)
 %   pspm_pp('butter', datafile, freq, channelnumber, options)
 %

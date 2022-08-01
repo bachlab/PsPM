@@ -9,8 +9,8 @@ function [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm
 % 3. Diameter values are scaled using 1/sqrt(cos). Hence, the corrected pupil values
 % are at least as big as the input pupil values.
 %
-%   FORMAT:
-%       [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm, geometry_setup)
+% ● Format
+%   [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm, geometry_setup)
 %
 %   INPUT:
 %       pupil:           Numeric array containing pupil diameter.

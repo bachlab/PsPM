@@ -1,8 +1,8 @@
 function scl = pspm_sf_scl(scr, sr, options)
 % pspm_sf_scl returns the mean skin conductance level for an epoch
 
-% FORMAT:
-% auc = pspm_sf_scl(scr, sr)
+% ● Format
+%   auc = pspm_sf_scl(scr, sr)
 %
 % REFERENCE:
 % ● Introduced In

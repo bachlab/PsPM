@@ -23,6 +23,7 @@ function [bs, x] = pspm_bf_lcrf_gm(varargin)
 %   PsPM 3.1
 % ● Written By
 %   (C) 2015 Tobias Moser (University of Zurich)
+% ● Maintained By
 %       2022 Teddy Chao (UCL)
 
 %% initialise

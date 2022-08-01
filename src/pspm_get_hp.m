@@ -1,7 +1,7 @@
 function [sts, data]=pspm_get_hp(import)
 % pspm_get_hp is a common function for importing heart period data
 %
-% FORMAT:
+% ● Format
 %   [sts, data]= pspm_get_hp(import)
 %   with data: column vector of waveform data with interpolated heart
 %               period data in ms

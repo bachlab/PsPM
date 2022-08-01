@@ -17,9 +17,9 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 %   3. Convert x from ref_unit to unit.
 % ● Format
 %   [sts, out] = pspm_convert_au2unit(fn, chan, unit, distance, multiplicator,
-%                                     reference_distance, reference_unit, options)
+%                reference_distance, reference_unit, options)
 %   [sts, out] = pspm_convert_au2unit(data, unit, distance, record_method,
-%                                     multiplicator, reference_distance, reference_unit, options)
+%                multiplicator, reference_distance, reference_unit, options)
 % ● Arguments
 %                 fn: filename which contains the channels to be converted
 %               data: a one-dimensional vector which contains the data to be

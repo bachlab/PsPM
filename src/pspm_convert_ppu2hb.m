@@ -29,7 +29,8 @@ function [ sts, outinfo ] = pspm_convert_ppu2hb( fn,chan,options )
 % ● Written By
 %   (C) 2016  Samuel Gerster (University of Zurich)
 %             Tobias Moser (University of Zurich)
-%       2022  Teddy Chao (UCL)
+% ● Maintained By
+%		2022  Teddy Chao (UCL)
 
 %% Initialise
 global settings

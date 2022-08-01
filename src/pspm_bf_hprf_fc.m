@@ -6,7 +6,6 @@ function [bs, x] = pspm_bf_hprf_fc(varargin)
 % ● Arguments
 %   td: time resolution in second
 %    d: number of derivatives (default value 0)
-% ● References
 % ● Version
 %   PsPM 3.0
 % ● Written By

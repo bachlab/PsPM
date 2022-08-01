@@ -1,7 +1,7 @@
 function [sts, import, sourceinfo] = pspm_get_txt(datafile, import)
 % pspm_get_txt is the main function for import of text files
-%
-% FORMAT: [sts, import, sourceinfo] = pspm_get_txt(datafile, import);
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_txt(datafile, import);
 %       datafile:   a .txt-file containing numerical data (with any
 %                   delimiter) and optionally the channel names in the first
 %                   line.

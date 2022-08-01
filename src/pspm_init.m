@@ -1,8 +1,8 @@
 function pspm_init
 
-  % DESCRIPTION
-  % pspm_init initializes PsPM by determining the path and loading settings
-  % into the main workspace
+  % ● Description
+  %   pspm_init initializes PsPM by determining the path and loading settings
+  %   into the main workspace
   %
   % INDEX
   % 1 license & user output

@@ -1,7 +1,9 @@
 function varargout = pspm_jobman(varargin)
-% Main interface for PsPM Batch System
+% ● Description
+%   Main interface for PsPM Batch System
 %
-% FORMAT pspm_jobman('initcfg')
+% ● Format
+%   pspm_jobman('initcfg')
 % Initialise jobs configuration and set MATLAB path accordingly.
 %
 % FORMAT pspm_jobman('run',job)

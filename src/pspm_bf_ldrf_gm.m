@@ -1,10 +1,10 @@
 function [bs, x] = pspm_bf_ldrf_gm(varargin)
-% ● Description:
+% ● Description
 %   Gamma response function for pupil dilation.
 %   Pupil size models were developed with pupil size data recorded in
 %   diameter values. Therefore pupil size data analyzed using these models
 %   should also be in diameter.
-% ● FORMAT
+% ● Format
 %   [bs, x] = pspm_bf_ldrf_gm(td, n, offset, a, b, A)
 %   [bs, x] = pspm_bf_ldrf_gm([td, n, offset, a, b, A])
 % ● Arguments
@@ -15,16 +15,17 @@ function [bs, x] = pspm_bf_ldrf_gm(varargin)
 %        a: shape of the function
 %        b: scale of the function
 %        A: quantifier or amplitude of the function
-%
-% ● Reference
-%   J Vis. 2016;16(3):28. doi: 10.1167/16.3.28.
-%   A solid frame for the window on cognition: Modeling event-related pupil responses.
-%   Korn CW, Bach DR.
+
 % ● Introduced In
 %   PsPM 3.1
 % ● Written By
 %   (C) 2015 Tobias Moser (University of Zurich)
-%				2022 Teddy Chao (UCL)
+% ● Maintained By
+%		2022 Teddy Chao (UCL)
+% ● Reference
+%   Korn, C. W., & Bach, D. R. (2016). A solid frame for the window on
+%   cognition: Modeling event-related pupil responses. Journal of Vision,
+%   16(3), 28. https://doi.org/10.1167/16.3.28
 
 %% initialise
 global settings

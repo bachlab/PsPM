@@ -1,8 +1,7 @@
 function output = pspm_template_options(input, options)
-
-% DEFINITION
+% ● Description
 %   pspm_template_options ...
-% FORMAT
+% ● Format
 %   output = pspm_template_options(input, options)
 % ARGUMENTS
 %   Input

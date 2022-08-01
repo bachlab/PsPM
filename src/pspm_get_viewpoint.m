@@ -2,7 +2,8 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
 % pspm_get_viewpoint is the main function for import of Arrington Research
 % ViewPoint EyeTracker files.
 %
-% FORMAT: [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import);
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import);
 %          datafile: Path to a ViewPoint EyeTracker data stored in ASCII format.
 %          import: import job structure with
 %                  - mandatory fields:

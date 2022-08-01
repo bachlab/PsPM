@@ -1,6 +1,7 @@
 function [sts, import, sourceinfo] = pspm_get_spike(datafile, import)
 % pspm_get_spike is the main function for import of spike files
-% FORMAT: [sts, import, sourceinfo] = pspm_get_spike(datafile, import);
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_spike(datafile, import);
 %
 %            - .denoise: for marker channels in CED spike format (recorded
 %              as 'level'), filters out markers duration longer than the

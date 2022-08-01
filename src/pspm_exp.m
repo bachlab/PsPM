@@ -28,8 +28,7 @@ function sts = pspm_exp(modelfile, options)
 %   │                   delimiter for output file.
 %   └.exclude_missing:  [optional, default as 0]
 %                       exclude parameters from conditions with too many NaN
-%                       values.
-%                       This option can only be used for GLM files when
+%                       values. This option can only be used for GLM files when
 %                       exclude_missing was set during model setup.
 %                       Otherwise this argument is ignored.
 % ● Introduced In

@@ -1,8 +1,8 @@
 function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
 % pspm_get_smi is the main function for import of SensoMotoric Instruments
 % iView X EyeTracker files.
-%
-% FORMAT: [sts, import, sourceinfo] = pspm_get_smi(datafile, import);
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_smi(datafile, import);
 %          datafile: String or cell array of strings. The size of the cell array can be 1 or 2.
 %
 %                    If datafile is string, it must be the path to the sample file containing

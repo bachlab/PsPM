@@ -4,8 +4,8 @@ function out = pspm_sf_mp(scr, sr, opt)
 %
 % the input data is assumed to be in mcS, and sampling rate in Hz
 %
-% FORMAT
-% function out = pspm_sf_mp(scr, sr, opt)
+% ● Format
+%   function out = pspm_sf_mp(scr, sr, opt)
 %
 %   out:        output
 %               out.n: number of responses above threshold

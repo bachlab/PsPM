@@ -1,7 +1,7 @@
 function [sts, data]=pspm_get_hb(import)
 % pspm_get_hb is a common function for importing heart beat data
 %
-% FORMAT:
+% ● Format
 % function [sts, data]= pspm_get_hb(import)
 %               import: import job structure with mandatory fields
 %                  .data

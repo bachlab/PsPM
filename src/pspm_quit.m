@@ -4,7 +4,6 @@
 % ● Written By
 %   (C) 2008-2020 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-
 %% Initialise
 global settings
 if isempty(settings)
@@ -12,16 +11,13 @@ if isempty(settings)
 end
 fs = filesep;
 if settings.scrpath, rmpath(settings.path), end;
-
 if any(contains(path, 'VBA'))
   rmpath(pspm_path('ext','VBA'));
   rmpath(pspm_path('ext','VBA','subfunctions'));
   rmpath(pspm_path('ext','VBA','stats&plots'));
 end
-
 clear settings
 close all
-
 disp(' ');
 disp('Thanks for using PsPM.');
 disp('_____________________________________________________________________________________________');

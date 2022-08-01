@@ -4,10 +4,10 @@ function [sts, data] = pspm_get_marker(import)
 % ● Format
 %   [sts, data] = pspm_get_marker(import)
 % ● INPUT
-%	  ┌───import: import job structure
-%   ├────.data: mandatory
-%   ├──.marker: mandatory, string
-%   │						accepted values: 'timestamps' or 'continuous'
+%	  ┌─────import: import job structure
+%   ├──────.data: mandatory
+%   ├────.marker: mandatory, string
+%   │						  accepted values: 'timestamps' or 'continuous'
 %   ├────────.sr: mandatory, double
 %   │						  timestamps: timeunits in seconds
 %   │						  continuous: sample rate in 1/seconds)

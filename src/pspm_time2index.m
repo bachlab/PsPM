@@ -1,8 +1,8 @@
 function index = pspm_time2index(time, sr, varargin)
-  % ● Description
-% pspm_time2index converts time stamps in seconds to a data index.
-% FORMAT
-% index = pspm_time2index(time, sr, varargin)
+% ● Description
+%   pspm_time2index converts time stamps in seconds to a data index.
+% ● Format
+%   index = pspm_time2index(time, sr, varargin)
 % ARGUMENTS
 % Input
 %   time            a vector or matrix 

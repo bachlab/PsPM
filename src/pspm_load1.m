@@ -1,5 +1,6 @@
 function [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
-% FORMAT: [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
+% ● Format
+%   [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
 %           datafile: filename
 %           action (default 'none'):
 %                   'none':  check whether file is valid at all

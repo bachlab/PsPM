@@ -7,7 +7,8 @@ function [sts, import, sourceinfo] = pspm_get_labchartmat_ext(datafile, import)
 %
 % this function only supports data files containing one data block
 %
-% FORMAT: [data sourceinfo sts] = pspm_get_labchartmat_ext(datafile, import);
+% ● Format
+%   [data sourceinfo sts] = pspm_get_labchartmat_ext(datafile, import);
 % ● Introduced In
 %   PsPM 3.0
 % ● Written By

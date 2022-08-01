@@ -5,8 +5,8 @@ function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 % Pupil size models were developed with pupil size data recorded in
 % diameter values. Therefore pupil size data analyzed using these models
 % should also be in diameter.
-%
-% [sts, out] = pspm_process_illuminance(ldata, sr, options)
+% ● Format
+%   [sts, out] = pspm_process_illuminance(ldata, sr, options)
 %   Inputs:
 %       ldata:      illuminance data as (cell of) 1x1 double or filename
 %       sr:         sample rate in Hz of the input data

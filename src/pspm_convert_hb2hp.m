@@ -1,7 +1,7 @@
 function [sts, infos] = pspm_convert_hb2hp(fn, sr, chan, options)
 % ● Description
-%   pspm_convert_hb2hp transforms heart beat data into an interpolated heart rate
-%   signal and adds this as an additional channel to the data file
+%   pspm_convert_hb2hp transforms heart beat data into an interpolated heart 
+%   rate signal and adds this as an additional channel to the data file
 % ● Format
 %   sts = pspm_convert_hb2hp(fn, sr, chan, options)
 % ● Arguments

@@ -1,5 +1,3 @@
-% create appropriate contrasts for DCM cond option
-
 function varargout = pspm_contrast(varargin)
 % ● Description
 %   PSPM_CONTRAST MATLAB code for pspm_contrast.fig

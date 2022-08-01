@@ -4,8 +4,8 @@ function outfile = pspm_merge(infile1, infile2, reference, options)
 % The data is aligned to file start or first marker. Data after the reference
 % are extended to the duration of the longer data file
 %
-% FORMAT:
-% outfile = pspm_merge(infile1, infile2, reference, options)
+% ● Format
+%   outfile = pspm_merge(infile1, infile2, reference, options)
 %
 % infile1, infile2: data file name(s) (char, or cell array for multiple
 %                   files)

@@ -1,5 +1,5 @@
 function [bs, x] = pspm_bf_rarf_fc(varargin)
-% ● Description:
+% ● Description
 % ● Format
 %   [bs, x] = pspm_bf_rarf_fc(td, bf_type)
 %   [bs, x] = pspm_bf_rarf_fc([td, bf_type])
@@ -15,7 +15,8 @@ function [bs, x] = pspm_bf_rarf_fc(varargin)
 %   PsPM 3.1
 % ● Written By
 %   (C) 2016 G Castegnetti, Tobias Moser (University of Zurich)
-%       2022 Teddy Chao
+% ● Maintained By
+%		2022 Teddy Chao
 
 %% initialise
 global settings

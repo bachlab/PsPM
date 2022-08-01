@@ -1,6 +1,8 @@
 function y = pspm_filtfilt(b,a,x)
-% pspm_filtfilt. Zero-phase forward and reverse digital filtering
-% FORMAT y = pspm_filtfilt(b,a,x)
+% ● Description
+%   pspm_filtfilt. Zero-phase forward and reverse digital filtering
+% ● Format
+%   y = pspm_filtfilt(b,a,x)
 %
 % b        - filter parameters (numerator)
 % a        - filter parameters (denominator)

@@ -1,11 +1,9 @@
 function [sts] = pspm_remove_epochs(datafile, channel, epochfile, options)
 % pspm_remove_epochs sets epochs of data to NaN
-%
-%
-% FORMAT:
+% ● Format
 %   [sts] = pspm_remove_epochs(datafile, channel, epochfile, options)
 %
-% ARGUMENTS:
+% ● Arguments
 %   datafile:                   a filename or a cell of filenames
 %   channel:                    defines which channels should be affected by
 %                               epoch removal. this argument is passed to

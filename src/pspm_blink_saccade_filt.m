@@ -1,8 +1,8 @@
 function [sts, out_channel] = pspm_blink_saccade_filt(fn, discard_factor, options)
 % ● Description
 %   Perform blink-saccade filtering on a given file containing pupil data. This
-%   function extends each blink and/or saccade period towards the beginning and the
-%   end of the signal by an amount specified by the user.
+%   function extends each blink and/or saccade period towards the beginning and 
+%   the end of the signal by an amount specified by the user.
 % ● Format
 %   [sts, out_channel] = pspm_blink_saccade_filt(fn, discard_factor, options)
 % ● Arguments

@@ -41,8 +41,9 @@ function [sts, out_channel] = pspm_pupil_pp(fn, options)
 % it will either replace an existing preprocessed pupil channel or add it as new
 % channel to the provided file.
 %
-%   FORMAT:  [sts, out_channel] = pspm_pupil_pp(fn)
-%            [sts, out_channel] = pspm_pupil_pp(fn, options)
+% ● Format
+%   [sts, out_channel] = pspm_pupil_pp(fn)
+%   [sts, out_channel] = pspm_pupil_pp(fn, options)
 %
 %       fn:                      [string] Path to the PsPM file which contains
 %                                the pupil data.

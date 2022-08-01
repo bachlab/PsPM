@@ -8,8 +8,8 @@ function wavedata=pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
 % values. This is unlikely to reflect a pulse frequency above the sampling
 % resolution of the 1401 and more likely to be a technical glitch. These
 % time stamps are filtered out before re-sampling.
-% FORMAT:
-% wavedata = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
+% ● Format
+%   wavedata = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
 %           with pulsedata: timestamps in ms
 %                resamplingrate: for interpolation
 %                samplingrate: to be downsampled to

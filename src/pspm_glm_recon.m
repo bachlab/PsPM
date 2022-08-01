@@ -3,7 +3,8 @@ function [sts, glm] = pspm_glm_recon(modelfile)
 % Reconstructed responses are written into the field glm.resp, and
 % reconstructed response peaks into the field glm.recon in original GLM file
 %
-% FORMAT: [sts, glm] = pspm_glm_recon(glmfile)
+% ● Format
+%   [sts, glm] = pspm_glm_recon(glmfile)
 % ● Introduced In
 %   PsPM 3.0
 % ● Written By

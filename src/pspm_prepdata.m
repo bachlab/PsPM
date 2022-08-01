@@ -3,7 +3,8 @@ function [sts, outdata, newsr] = pspm_prepdata(data, filt)
 % downsampling raw data "on the fly". This data is usually stored in
 % results files rather than data files.
 %
-% FORMAT [sts, data, newsr] = pspm_prepdata(data, filt)
+% ● Format
+%   [sts, data, newsr] = pspm_prepdata(data, filt)
 %
 % data is a column vector of data
 % filt is a struct with fields:

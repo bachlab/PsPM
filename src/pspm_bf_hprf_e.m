@@ -27,13 +27,10 @@ function [bf, x, b] = pspm_bf_hprf_e(varargin)
 %% input checks
 global settings;
 if isempty(settings), pspm_init; end;
-
 if nargin < 1
-  errmsg='No sampling interval stated'; warning('ID:invalid_input', errmsg); return;
+  errmsg = 'No sampling interval stated'; warning('ID:invalid_input', errmsg); return;
 end;
-
-varargin=cell2mat(varargin);
-
+varargin = cell2mat(varargin);
 if length(varargin)==1
   b=1:6;
 elseif varargin(end)<=6 && varargin(end)~=0

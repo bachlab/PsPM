@@ -8,8 +8,8 @@ function [sts, default_settings] = pspm_pupil_pp_options()
 %   - pspm/pupil-size/code/helperFunctions/rawDataFilter.m lines 63 to 149,
 %   - pspm/pupil-size/code/dataModels/ValidSamplesModel.m lines 357 to 373.
 %
-% FORMAT:
-%     [sts, default_settings] = pspm_pupil_pp_options()
+% ● Format
+%   [sts, default_settings] = pspm_pupil_pp_options()
 %
 % OUTPUT:
 %     default_settings: Structure with the fields below.

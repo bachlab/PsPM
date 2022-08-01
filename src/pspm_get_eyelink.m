@@ -1,44 +1,35 @@
 function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
-
-% pspm_get_eyelink is the main function for import of SR Research Eyelink 1000
-% files.
-%
-% FORMAT: [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import);
-%          import: import job structure with
-%                   - mandatory fields:
-%                       .sr
-%
-%                       .data
-%                       except for custom channels, the field .channel will
-%                       be ignored. The id will be determined according to
-%                       the channel type.
-%
-%                   - optional fields:
-%                       .eyelink_trackdist:
-%                           A numeric value representing the distance between
-%                           camera and recorded eye. Disabled if 0 or negative.
-%                           If it is a positive numeric value, causes the
-%                           conversion from arbitrary units to distance unit
-%                           according to the set distance.
-%
-%                       .distance_unit:
-%                           the unit to which the data should be converted and
-%                           in which eyelink_trackdist is given
-%
-%
-%
-% In this function, channels related to eyes will not produce an error, if
-% they do not exist. Instead they will produce an empty channel (a channel
-% with NaN values only).
-%
+% ● Description
+%   pspm_get_eyelink is the main function for import of SR Research Eyelink 1000
+%   files.
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import);
+% ● Arguments
+%   ┌────────────import:  import job structure with
+%   │ [mandatory fields]
+%   ├───────────────.sr:
+%   ├─────────────.data:  except for custom channels, the field .channel will
+%   │                     be ignored. The id will be determined according to
+%   │                     the channel type.
+%   │ [optional fields]
+%   ├.eyelink_trackdist:  A numeric value representing the distance between
+%   │                     camera and recorded eye. Disabled if 0 or negative.
+%   │                     If it is a positive numeric value, causes the
+%   │                     conversion from arbitrary units to distance unit
+%   │                     according to the set distance.
+%   └────.distance_unit:  The unit to which the data should be converted and
+%                         in which eyelink_trackdist is given.
+% ● Developer's Notes
+%   In this function, channels related to eyes will not produce an error, if
+%   they do not exist. Instead they will produce an empty channel (a channel
+%   with NaN values only).
 % ● Introduced In
 %   PsPM 3.0
 %   Updated with PsPM 5.1.2
 % ● Written By
 %   (C) 2008-2017 Tobias Moser (University of Zurich)
 % ● Maintained by
-%   2021 Teddy Chao (WCHN, UCL)
-
+%   2022 Teddy Chao (UCL)
 
 %% Initialise
 global settings

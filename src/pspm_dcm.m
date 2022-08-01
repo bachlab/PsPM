@@ -98,7 +98,7 @@ function dcm = pspm_dcm(model, options)
 % 	├──.trlnames: Cell array of names for individual trials,
 %		│             is used for contrast manager only (e.g. condition 
 %		│             descriptions)
-% 	└─.eventnames:Cell array of names for individual events,
+% 	└.eventnames: Cell array of names for individual events,
 %               	in the order they are specified in the model.timing array -
 %               	to be used for display and export only
 % ● Output

@@ -2,8 +2,8 @@ function newfilename = pspm_ren(filename, newfilename)
 
 % pspm_ren renames an SCR datafile and updates the infos field
 %
-% FORMAT:
-% NEWFILENAME = pspm_ren(FILENAME, NEWFILENAME)
+% ● Format
+%   NEWFILENAME = pspm_ren(FILENAME, NEWFILENAME)
 %
 % FILENAME can be a name, or for convenience, a cell array of filenames
 % ● Introduced In

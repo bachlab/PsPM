@@ -2,7 +2,7 @@ function [sts, out] = pspm_segment_mean(segments, options)
 % pspm_segment_mean is a function which takes segments created by
 % pspm_extract_segments and creates means among sessions.
 %
-% FORMAT:
+% ● Format
 %   [sts, out] = pspm_segment_mean(segments, options)
 %
 % INPUT:

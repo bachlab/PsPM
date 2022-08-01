@@ -16,7 +16,8 @@ function [bs, x] = pspm_bf_scrf(varargin)
 %   PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%            2022 Teddy Chao (UCL)
+% ● Maintained By
+%		2022 Teddy Chao (UCL)
 
 %% initialise
 global settings

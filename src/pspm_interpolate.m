@@ -1,23 +1,21 @@
 function [sts, outdata] = pspm_interpolate(indata, options)
 % ● Description
-% This function interpolates NaN values passed with the indata parameter.
-% The behaviour of the function can furthermore be adjusted with the
-% combination of different options.
-% The function works either on single data sets such as a filename, a
-% numeric array or a pspm data struct. Alternatively it is possible to pass
-% a cell containing all these possible datatypes. The function then 
-% iterates through the whole data set and replaces the passed data with the 
-% interpolated data. For filenames the interpolated data will, depending on 
-% option.newfile, be written to the existing file or can also be added to a 
-% new file with filename 'i'+<old filename>. The corresponding cell 
-% (in outdata) will then contain the filename of the new file 
-% (if newfile = 1) or will contain the channel id where the interpolated 
-% data can be found in the existing file (because it has been added or 
-% replaced). The edited data set will then be returned as parameter outdata.
-%
+%   This function interpolates NaN values passed with the indata parameter.
+%   The behaviour of the function can furthermore be adjusted with the
+%   combination of different options.
+%   The function works either on single data sets such as a filename, a
+%   numeric array or a pspm data struct. Alternatively it is possible to pass
+%   a cell containing all these possible datatypes. The function then 
+%   iterates through the whole data set and replaces the passed data with the 
+%   interpolated data. For filenames the interpolated data will, depending on 
+%   option.newfile, be written to the existing file or can also be added to a 
+%   new file with filename 'i'+<old filename>. The corresponding cell 
+%   (in outdata) will then contain the filename of the new file 
+%   (if newfile = 1) or will contain the channel id where the interpolated 
+%   data can be found in the existing file (because it has been added or 
+%   replaced). The edited data set will then be returned as parameter outdata.
 % ● Format
-% [sts, outdata] = pspm_interpolate(indata, options)
-%
+%   [sts, outdata] = pspm_interpolate(indata, options)
 % ● Arguments
 %   indata        [struct/char/numeric] or [cell array of struct/char/numeric]
 %                 contains the data to be interpolated

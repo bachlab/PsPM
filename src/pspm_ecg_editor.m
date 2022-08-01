@@ -6,17 +6,17 @@ function varargout = pspm_ecg_editor(varargin)
 %   [sts, R] = pspm_ecg_editor(pt)
 %   [sts, R] = pspm_ecg_editor(fn, chan, options)
 % ● Arguments
-%        pt:  A struct() from pspm_ecg2hb detection.
-%        fn:  A file to  data file containing the ecg channel to be edited
-%      chan:  Channel id of ecg channel in the data file
-%   options:  A struct() of options
-%       .hb:  Channel id of the existing hb channel
-%     .semi:  Defines whether to navigate between potentially wrong hb events
-%             only (semi = 1), or between all hb events (semi = 0 => manual
-%             mode)
-% .artefact:  Epoch file with epochs of artefacts (to be ignored)
-%   .factor:  To what factor should potentially wrong hb events
-%             deviate from the standard deviation. (Default: 1)
+%         pt:  A struct() from pspm_ecg2hb detection.
+%         fn:  A file to  data file containing the ecg channel to be edited
+%       chan:  Channel id of ecg channel in the data file
+% ┌──options:  A struct() of options
+% ├──────.hb:  Channel id of the existing hb channel
+% ├────.semi:  Defines whether to navigate between potentially wrong hb events
+% │            only (semi = 1), or between all hb events (semi = 0 => manual
+% │            mode)
+% ├.artefact:  Epoch file with epochs of artefacts (to be ignored)
+% └──.factor:  To what factor should potentially wrong hb events
+%              deviate from the standard deviation. (Default: 1)
 %   variable r
 %       r(1,:) ... original r vector
 %       r(2,:) ... r vector containing potential faulty labeled qrs compl.
