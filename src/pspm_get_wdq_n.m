@@ -1,5 +1,6 @@
 function [sts, import, sourceinfo]  = pspm_get_wdq_n(datafile, import)
-% pspm_get_wdq_n is a function to import of Dataq/Windaq files
+% ● Description
+%   pspm_get_wdq_n is a function to import of Dataq/Windaq files
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_wdq_n(datafile, import);
 %
