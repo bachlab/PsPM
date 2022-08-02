@@ -36,7 +36,7 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
 %                       option to 1 to drop markers which lie in the offset.
 %                       this is for event channels only. default is 0.
 % ● Outputs
-%          newdatafile:  a filename for the updated file, a cell array of
+%          newdatafile: a filename for the updated file, a cell array of
 %                       filenames, a struct with fields .data and .infos or a
 %                       cell array of structs
 % ● Introduced In

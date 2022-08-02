@@ -47,10 +47,10 @@ function outfile = pspm_sf(model, options)
 %     Bach DR, Friston KJ, Dolan RJ (2010). Analytic measures for the
 %     quantification of arousal from spontanaeous skin conductance
 %     fluctuations. International Journal of Psychophysiology, 76, 52-55.
-% ● Developer's note
+% ● Developer's Note
 %   the output also contains a field .time that contains the inversion time
 %   in ms (for DCM and MP)
-% ● Version
+% ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (WCHN,UCL and UZH)

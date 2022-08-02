@@ -36,16 +36,16 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 %   └─────────.missing: Optional name of an epoch file, e.g. containing a
 %                       missing epochs definition in s. This is then split
 %                       accordingly.
+% ● Outputs
+%          newdatafile: cell array of filenames for the individual sessions
+%         newepochfile: cell array of missing epoch filenames for the individual
+%                       sessions (empty if no options.missing not specified)
 % ● Developer's notes
 %   epochs have a fixed sampling rate of 10000
 %   REMARK for suffix and prefix:
 %   Markers in the prefix and suffix intervals are ignored. Only markers
 %   between the splitpoints are considered for each session, to avoid
 %   duplication of markers.
-% ● Outputs
-%          newdatafile: cell array of filenames for the individual sessions
-%         newepochfile: cell array of missing epoch filenames for the individual
-%                       sessions (empty if no options.missing not specified)
 % ● Introduced In
 %   PsPM 5.1.1
 % ● Written By

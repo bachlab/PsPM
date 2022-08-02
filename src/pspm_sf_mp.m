@@ -1,47 +1,46 @@
 function out = pspm_sf_mp(scr, sr, opt)
-% pspm_sf_mp does the inversion of a DCM for SF of the skin conductance, using a matching
-% pursuit algorithm, and f_SF for the forward model
-%
-% the input data is assumed to be in mcS, and sampling rate in Hz
-%
+% ● Description
+%   pspm_sf_mp does the inversion of a DCM for SF of the skin conductance, using 
+%   a matching pursuit algorithm, and f_SF for the forward model
+%   the input data is assumed to be in mcS, and sampling rate in Hz
 % ● Format
 %   function out = pspm_sf_mp(scr, sr, opt)
-%
-%   out:        output
-%               out.n: number of responses above threshold
-%               out.f: frequency of responses above threshold in Hz
-%               out.ma: mean amplitude of responses above threshold
-%               out.t: timing of responses
-%               out.a: amplitude of responses (re-estimated)
-%               out.rawa: amplitude of responses (initial estimate)
-%               out.theta: parameters used for f_SF
-%               out.threshold: threshold
-%               out.yhat: fitted time series (reestimated amplitudes)
-%               out.yhatraw: fitted time series (original amplitudes)
-%               out.S: inversion settings
-%               out.D: inversion dictionary
-%   scr:        skin conductance epoch (maximum size depends on computing
-%               power, a sensible size is 60 s at 10 Hz)
-%   sr:         sampling rate in Hz
-%
-%   options: options structure
-%       - options.threshold: threshold for SN detection (default 0.1 mcS)
-%       - options.theta: a (1 x 5) vector of theta values for f_SF
-%           (default: read from pspm_sf_theta)
-%       - options.fresp: maximum frequency of modelled responses (default 0.5 Hz)
-%       - options.dispwin: display result window (default 1)
-%       - options.diagnostics: add further diagnostics to the output. Is
-%                              disabled if set to false. If set to true
-%                              this will add a further field 'D' to the
-%                              output struct. Default is false.
-%
-%
-% REFERENCE
+% ● Output
+%        out: output
+%         .n: number of responses above threshold
+%         .f: frequency of responses above threshold in Hz
+%        .ma: mean amplitude of responses above threshold
+%         .t: timing of responses
+%         .a: amplitude of responses (re-estimated)
+%      .rawa: amplitude of responses (initial estimate)
+%     .theta: parameters used for f_SF
+% .threshold: threshold
+%      .yhat: fitted time series (reestimated amplitudes)
+%   .yhatraw: fitted time series (original amplitudes)
+%         .S: inversion settings
+%         .D: inversion dictionary
+% ● Arguments
+%        scr: skin conductance epoch (maximum size depends on computing
+%             power, a sensible size is 60 s at 10 Hz)
+%         sr: sampling rate in Hz
+%    options: options structure
+% .threshold: threshold for SN detection (default 0.1 mcS)
+%     .theta: a (1 x 5) vector of theta values for f_SF
+%             (default: read from pspm_sf_theta)
+%     .fresp: maximum frequency of modelled responses (default 0.5 Hz)
+%   .dispwin: display result window (default 1)
+%   .diagnostics:
+%             add further diagnostics to the output. Is disabled if set to 
+%             false. If set to true this will add a further field 'D' to the
+%             output struct. Default is false.
+% ● References
 % ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (UZH, WTCN)
-% last edited 18.08.2014
+%   last edited 18.08.2014
+% ● Maintained By
+%   2022 Teddy Chao
 
 %% Initialise
 global settings
