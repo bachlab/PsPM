@@ -4,11 +4,11 @@ function [sts, import, sourceinfo] = pspm_get_brainvis(datafile, import)
 %   this function uses fieldtrip fileio functions
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_brainvis(datafile, import);
-% ● Version
+% ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-% ● Note
+% ● Developer's Note
 %   I did not have sample files, simply assumed that hdr.labels would be
 %   a cell array - might have to be changed in lines 38 and 41
 

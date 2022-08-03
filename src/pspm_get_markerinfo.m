@@ -5,7 +5,7 @@ function [sts, markerinfo] = pspm_get_markerinfo(fn, options)
 %   BrainVision or NeuroScan)
 % ● Format
 %   [sts, markerinfo] = pspm_get_markerinfo(filename, options)
-% ● INPUT
+% ● Arguments
 %       filename: [char]
 %                 name of PsPM file
 %                 if empty, you will be prompted for one

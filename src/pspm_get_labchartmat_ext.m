@@ -12,7 +12,7 @@ function [sts, import, sourceinfo] = pspm_get_labchartmat_ext(datafile, import)
 %   PsPM 3.0
 % ● Written By
 %   (C) 2011-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-
+% ● Developer's Notes
 % ------------------------------------------------------------------------
 % Tue Jun 08, 2010 12:25 am from
 % http://www.adinstruments.com/forum/viewtopic.php?f=7&t=35&p=79#p79

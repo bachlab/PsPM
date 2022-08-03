@@ -4,7 +4,7 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 %   SCRalyze 2.x data files - SCRalyze 1.x is not supported
 % ● Format
 %   [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
-% ● INPUT
+% ● Arguments
 % fn     [char] filename / [struct] with fields
 % ┣━.infos
 % ┗━.data
@@ -30,7 +30,7 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 %           ┣━.infos (mandatory)
 %           ┣━.data (mandatory)
 %           ┗━.options (mandatory)
-% ● OUTPUT
+% ● Outputs
 % sts      [logical] 0 as default, -1 if check is unsuccessful
 % infos    [struct] variable from data file
 % data     cell array of channels as specified

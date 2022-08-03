@@ -24,7 +24,7 @@ function [bs, x] = pspm_bf_lcrf_gm(varargin)
 % ● Written By
 %   (C) 2015 Tobias Moser (University of Zurich)
 % ● Maintained By
-%       2022 Teddy Chao (UCL)
+%   2022 Teddy Chao (UCL)
 
 %% initialise
 global settings

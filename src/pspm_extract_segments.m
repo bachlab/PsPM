@@ -77,7 +77,7 @@ function [sts, out] = pspm_extract_segments(varargin)
 %   (C) 2008-2018 Tobias Moser (University of Zurich)
 
 % -------------------------------------------------------------------------
-% DEVELOPERS NOTES:
+% ● Developer's Notes
 %   This function uses three different flags encoded in the variable
 %   "manual_chosen", it can take the following values:
 %       - manual_chosen = 0  ---> it means the function runs in auto mode

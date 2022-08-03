@@ -1,12 +1,11 @@
 function [sts, out] = pspm_scr_pp(datafile, options, chan)
-
-% DEFINITION
+% ● Description
 %   pspm_scr_pp applies simple skin conductance response (SCR) quality assessment rulesets
 %   Rule 1: Microsiemens values must be within range (0.05 to 60)
 %   Rule 2: Absolute slope of value change must be less than 10 microsiemens per second
 % ● Format
 %   [sts, out] = pspm_scr_pp(data, options)
-% ARGUMENTS
+% ● Arguments
 %   Input
 %     datafile  a file name, or cell array of file names
 %   Output

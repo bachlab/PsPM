@@ -3,7 +3,7 @@ function [sts, data] = pspm_get_marker(import)
 %   pspm_get_marker gets the marker channel for different data types
 % ● Format
 %   [sts, data] = pspm_get_marker(import)
-% ● INPUT
+% ● Arguments
 %	  ┌─────import: import job structure
 %   ├──────.data: mandatory
 %   ├────.marker: mandatory, string
@@ -17,8 +17,7 @@ function [sts, data] = pspm_get_marker(import)
 %   └.markerinfo: optional, struct, returns marker timestamps in seconds
 % 	  ├────.name:
 %     └───.value:
-% ● Last Updated In
-%   PsPM 6.0
+% ● Introduced In
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 % ● Maintained by

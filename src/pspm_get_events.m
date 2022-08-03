@@ -1,5 +1,6 @@
 function [sts, import] = pspm_get_events(import)
-% pspm_get_events processes events for different event channel types
+% ● Description
+%   pspm_get_events processes events for different event channel types
 % ● Format
 %   [sts, data] = pspm_get_events(import)
 % ● Arguments

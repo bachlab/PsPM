@@ -1,7 +1,6 @@
 function [sts, data]=pspm_get_scr(import)
 % ● Description
 %   pspm_get_scr is a common function for importing scr data
-%
 % ● Format
 %   [sts, data]=pspm_get_scr(import)
 %          import: import job structure with mandatory fields

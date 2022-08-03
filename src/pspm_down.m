@@ -6,7 +6,7 @@ function [sts, newfile] = pspm_down(datafile, newsr, chan, options)
 % 	prepended with 'd'.
 % ● Format
 % 	[sts, newfile] = pspm_down(datafile, newsr, chan, options)
-% ● Input
+% ● Arguments
 %   datafile:	can be a name, or for convenience, a cell array of filenames
 %    newfreq:	new frequency (must be >= 10 Hz)
 %   		chan:	channels to downsample (default: all channels)
