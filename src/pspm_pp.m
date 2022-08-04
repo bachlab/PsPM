@@ -1,21 +1,22 @@
 function newdatafile = pspm_pp(varargin)
-% pspm_pp contains various preprocessing utilities for reducing noise in the
-% data.
+% ● Description
+%   pspm_pp contains various preprocessing utilities for reducing noise in the
+%   data.
 % ● Format
 %   pspm_pp('median', datafile, n, channelnumber, options)
 %   pspm_pp('butter', datafile, freq, channelnumber, options)
-%
-% Currently implemented:
-%   'median':                           medianfilter for SCR
-%       n:                              number of timepoints for median filter
-%   'butter':                           1st order butterworth low pass filter for SCR
-%       freq:                           cut off frequency (min 20 Hz)
-%__________________________________________________________________________
-%
+% ● Arguments
+%   [Currently implemented]
+%   'median': medianfilter for SCR
+%          n: number of timepoints for median filter
+%   'butter': 1st order butterworth low pass filter for SCR
+%       freq: cut off frequency (min 20 Hz)
 % ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2009-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Maintained By
+%   2022 Teddy Chao (UCL)
 
 %% Initialise
 global settings

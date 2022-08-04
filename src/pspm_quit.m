@@ -1,8 +1,13 @@
-% pspm_quit clears settings, removes paths & closes figures
-% PsPM 6.0.0
-% (C) 2008-2022 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+function pspm_quit
+% ● Description
+%   pspm_quit clears settings, removes paths & closes figures
+% ● Introduced In
+%   TBA
+% ● Written By
+%   (C) 2008-2022 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Maintained By
+%   2022 Teddy Chao
 
-%% Initialise
 global settings
 if isempty(settings)
   pspm_init;
@@ -18,6 +23,6 @@ clear settings
 close all
 disp(' ');
 disp('Thanks for using PsPM.');
-disp('_____________________________________________________________________________________________');
+disp(repelem('-',20));
 disp('PsPM 6.0.0 (c) 2008-2022 Dominik R. Bach');
 disp('Uni Bonn, DE | UCL, UK | UZH, CH');
