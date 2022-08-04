@@ -16,10 +16,15 @@ function varargout = pspm_contrast(varargin)
 %   instance to run (singleton)".
 %   See also: GUIDE, GUIDATA, GUIHANDLES
 %   Edit the above text to modify the response to help pspm_contrast
+% ● Format
+%   pspm_contrast('CALLBACK',hObject,eventData,handles,...)
+%   pspm_contrast('Property','Value',...)
 % ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Maintained By
+%   2022 Teddy Chao
 
 %% Initialise
 global settings

@@ -6,6 +6,13 @@ function [sts, import, sourceinfo] = pspm_get_acqmat(datafile, import)
 %   file format. Always check your imported data before using it.
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_acqmat(datafile, import);
+% ● Arguments
+%   datafile:
+%     import:
+%   .channel:
+%      .type:
+%      .data:
+%     .units:
 % ● Introduced In
 %   PsPM 3.0
 % ● Written By

@@ -1,10 +1,17 @@
-function pspm_ui_initialisation(hObject,handles,window)
+function pspm_ui_initialisation(hObject, handles, window)
 % ● Description
 %   pspm_ui_initialisation adjusts the required UI parameters for window
 %   initialisation.
+% ● Format
+%   pspm_ui_initialisation(hObject, handles, window)
+% ● Arguments
+%   hObject: MATLAB UI controllor
+%   handles: MATLAB UI controllor
+%    window: the name of the GUI window.
+%            accepts: 'main', 'display', and 'review'
 % ● Introduced in
 %   PsPM 5.1.2
-% ● Written By
+% ● Written and Maintained By
 %   2021 Teddy Chao (WCHN, UCL)
 
 %% Initialise

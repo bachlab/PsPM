@@ -8,10 +8,20 @@ function [sts, import, sourceinfo] = pspm_get_acq(datafile, import)
 %   which supports all files created with Windows/PC versions of
 %   AcqKnowledge (3.9.0 or below), BSL (3.7.0 or below), and BSL PRO
 %   (3.7.0 or below).
+% ● Arguments
+%   datafile:
+%     import:
+%   .channel:
+%      .type:
+%        .sr:
+%      .data:
+%    .marker:
 % ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2011-2014 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Maintained By
+%   2022 Teddy Chao (UCL)
 
 %% Initialise
 global settings

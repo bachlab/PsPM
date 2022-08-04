@@ -28,5 +28,4 @@ function output = pspm_template_options(input, options)
 global settings
 if isempty(settings)
   pspm_init;
-end
-sts = -1;
+end. sts = -1;
