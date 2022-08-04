@@ -78,47 +78,46 @@ function glm = pspm_glm(model, options)
 %                 invert SPS model, set centering to 0. Default: 1
 %		┌───options:
 %		│ ▶︎ optional
-% options.overwrite:       overwrite existing model output; default 0
-% options.marker_chan_num: marker channel number; default last marker
-%                          channel
-% options.exclude_missing: marks trials during which NaN percentage exceeds
-%                          a cutoff value. Requires two subfields:
-%                          'segment_length' (in s after onset) and 'cutoff'
-%                          (in % NaN per segment). Results are written into
-%                          model structure as fields .stats_missing and
-%                           .stats_exclude but not used further.
-%
-% TIMING - multiple condition file(s) or struct variable(s):
-% The structure is equivalent to SPM2/5/8/12 (www.fil.ion.ucl.ac.uk/spm),
-% such that SPM files can be used.
-% The file contains the following variables:
-% - names: a cell array of string for the names of the experimental
-%   conditions
-% - onsets: a cell array of number vectors for the onsets of events for
-%   each experimental condition, expressed in seconds, marker numbers, or
-%   samples, as specified in timeunits
-% - durations (optional, default 0): a cell array of vectors for the
-%   duration of each event. You need to use 'seconds' or 'samples' as time
-%   units
-% - pmod: this is used to specify regressors that specify how responses in
-%   an experimental condition depend on a parameter to model the effect
-%   e.g. of habituation, reaction times, or stimulus ratings.
-%   pmod is a struct array corresponding to names and onsets and containing
-%   the fields
+% 	├──.overwrite:  overwrite existing model output; default 0
+% 	├──.marker_chan_num:
+%		│             marker channel number; default last marker channel.
+% 	└──.exclude_missing:
+%                 marks trials during which NaN percentage exceeds
+%                 a cutoff value. Requires two subfields:
+%                 'segment_length' (in s after onset) and 'cutoff'
+%                 (in % NaN per segment). Results are written into
+%                 model structure as fields .stats_missing and
+%                 .stats_exclude but not used further.
+% ● Outputs
+%           glm:  a structure 'glm' which is also written to file
+% ● Developer's Notes
+%   TIMING - multiple condition file(s) or struct variable(s):
+%   The structure is equivalent to SPM2/5/8/12 (www.fil.ion.ucl.ac.uk/spm),
+%   such that SPM files can be used.
+%   The file contains the following variables:
+%   - names: a cell array of string for the names of the experimental
+%     conditions
+%   - onsets: a cell array of number vectors for the onsets of events for
+%     each experimental condition, expressed in seconds, marker numbers, or
+%     samples, as specified in timeunits
+%   - durations (optional, default 0): a cell array of vectors for the
+%     duration of each event. You need to use 'seconds' or 'samples' as time
+%     units
+%   - pmod: this is used to specify regressors that specify how responses in
+%     an experimental condition depend on a parameter to model the effect
+%     e.g. of habituation, reaction times, or stimulus ratings.
+%     pmod is a struct array corresponding to names and onsets and containing
+%     the fields
 %   - name: cell array of names for each parametric modulator for this
 %       condition
 %   - param: cell array of vectors for each parameter for this condition,
 %       containing as many numbers as there are onsets
 %   - poly (optional, default 1): specifies the polynomial degree
 %
-% e.g. produce a simple multiple condition file by typing
-%  names = {'condition a', 'condition b'};
-%  onsets = {[1 2 3], [4 5 6]};
-%  save('testfile', 'names', 'onsets');
-%
-%
-% RETURNS a structure 'glm' which is also written to file
-%
+%   e.g. produce a simple multiple condition file by typing
+%   names = {'condition a', 'condition b'};
+%   onsets = {[1 2 3], [4 5 6]};
+%   save('testfile', 'names', 'onsets');
 % ● References
 %   [1] GLM for SCR:
 %       Bach DR, Flandin G, Friston KJ, Dolan RJ (2009). Time-series analysis for
@@ -144,7 +143,7 @@ function glm = pspm_glm(model, options)
 % ● Written By
 %   (C) 2008-2016 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 % ● Maintained By
-%   2022 Teddy Chao
+%   2022 Teddy Chao (UCL)
 
 %% Initialise
 global settings

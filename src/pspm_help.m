@@ -1,7 +1,17 @@
 function [information, arguments] = pspm_help(func_name)
 % ● Description
+%   pspm_help returns the description and arguments of 
+%   a specified function
+% ● Format
+%   [information, arguments] = pspm_help(func_name)
 % ● Arguments
-% ● Written By
+%     func_name:  the name of the function for help information
+% ● Outputs
+%   information:  the description of the specific function
+%     arguments:  the arguments of the specific function
+% ● Introduced In
+%   PsPM 6.0
+% ● Written and Maintained By
 %   (C) 2022 Teddy Chao (UCL)
 global settings
 if isempty(settings)

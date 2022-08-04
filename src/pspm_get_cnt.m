@@ -4,10 +4,23 @@ function [sts, import, sourceinfo] = pspm_get_cnt(datafile, import)
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_cnt(datafile, import);
 %   This function uses fieldtrip fileio functions
+% ● Arguments
+%       datafile:
+%   ┌─────import:
+%   ├────.typeno:
+%   ├───.channel:
+%   ├────────.sr:
+%   ├──────.data:
+%   ├────.marker:
+%   └.markerinfo:
+%     ├───.value:
+%     └────.name:
 % ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Maintained By
+%   2022 Teddy Chao (UCL)
 
 %% Initialise
 global settings
