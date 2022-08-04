@@ -15,7 +15,7 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 %        ▶ char
 %        'wave'    returns all waveform channels
 %        'events'  returns all event channels
-%        'pupil'   goes through the below precedence order and loads all 
+%        'pupil'   goes through the below precedence order and loads all
 %                  channels corresponding to the first existing option:
 %                  1. Combined pupil channels (by definition also preprocessed)
 %                  2. Preprocessed pupil channels corresponding to best eye
@@ -23,6 +23,10 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 %                  4. Best eye pupil channels
 %                     please note that if there is only one eye in
 %                     the datafile, that eye is defined as the best eye.
+%        'pupil_l' returns the left pupil channel
+%        'pupil_r' returns the right pupil channel
+%        'gaze_x_l' returns the left gaze x channel
+%        'gaze_x_r' returns the right gaze x channel
 %        'channel type'
 %                 returns the respective channels (see settings for channel types)
 %        'none'		just checks the file
@@ -46,9 +50,8 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 % ● Written By
 %   (C) 2008-2021 Dominik R. Bach (Wellcome Centre for Human Neuroimaging, UCL)
 %     2022 Teddy Chao (UCL)
-
-
-%% DEVELOPERS NOTES: General structure of PsPM data files
+% ● DEVELOPERS NOTES
+% General structure of PsPM data files
 %
 % each file contains two variables:
 % infos - struct variable with general infos
@@ -72,9 +75,6 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 %
 % data.header.chantype = 'trigger' is allowed for backward compatibility;
 % this feature will be removed in the future
-%
-% compatibility with SCRalyze 1.x files was removed after version b2.1.8
-
 
 %% 1 Initialise
 global settings
@@ -86,7 +86,6 @@ infos = [];
 data = [];
 filestruct = [];
 gerrmsg = '';
-
 %% 2 Check the number of inputs
 switch nargin
   case 0
@@ -337,8 +336,12 @@ if isstruct(chan)
 end
 flag = zeros(numel(data), 1);
 if ischar(chan) && ~strcmp(chan, 'none')
-  if strcmpi(chan, 'pupil') && isfield(infos.source, 'best_eye')
-    flag = get_chans_to_load_for_pupil(data, infos.source.best_eye);
+  if contains(chan,'pupil')
+    if strcmpi(chan, 'pupil') && isfield(infos.source, 'best_eye')
+      flag = get_chans_to_load_for_pupil(data, infos.source.best_eye, 0);
+    elseif strcmpi(chan(7), 'l') || strcmpi(chan(7), 'r')
+      flag = get_chans_to_load_for_pupil(data, chan(7), 1);
+    end
   elseif strcmpi(chan, 'sps') && isfield(infos.source, 'best_eye')
     flag = get_chans_to_load_for_sps(data, infos.source.best_eye);
   else
@@ -381,7 +384,7 @@ end
 sts = 1;
 end
 
-function flag = get_chans_to_load_for_pupil(data, best_eye)
+function flag = get_chans_to_load_for_pupil(data, best_eye, prefer_unprocessed)
 % Set flag variable according to the precedence order:
 %
 %   1. Combined channels (by definition also preprocessed)
@@ -422,11 +425,12 @@ besteye_channels = cell2mat(cellfun(...
   ));
 preprocessed_channels = preprocessed_channels & pupil_channels;
 combined_channels = combined_channels & pupil_channels;
-besteye_channels = besteye_channels & pupil_channels;
+besteye_channels = besteye_channels & pupil_channels & ~preprocessed_channels;
+% best eye will not select preprocessed eyes
 
 if any(combined_channels)
   flag = combined_channels;
-elseif any(preprocessed_channels)
+elseif any(preprocessed_channels) && ~prefer_unprocessed
   flag = preprocessed_channels & besteye_channels;
   if ~any(flag)
     flag = preprocessed_channels;

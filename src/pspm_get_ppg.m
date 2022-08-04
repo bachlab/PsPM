@@ -20,7 +20,7 @@ sts = -1;
 % assign respiratory data
 data.data = import.data(:);
 % add header
-data.header.chantype = 'ppu';
+data.header.chantype = 'ppg';
 data.header.units = import.units;
 data.header.sr = import.sr;
 % check status

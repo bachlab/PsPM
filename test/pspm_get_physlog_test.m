@@ -1,7 +1,7 @@
 classdef pspm_get_physlog_test < pspm_get_superclass
   % ● Description
   % unittest class for the pspm_get_physlog function
-  % ● Authorship
+  % ● Authors
   % (C) 2015 Tobias Moser (University of Zurich)
   properties
     testcases;
@@ -17,7 +17,7 @@ classdef pspm_get_physlog_test < pspm_get_superclass
       this.testcases{1}.import{2} = struct('type', 'ecg', 'channel', 2);
       this.testcases{1}.import{3} = struct('type', 'ecg', 'channel', 3);
       this.testcases{1}.import{4} = struct('type', 'ecg', 'channel', 4);
-      this.testcases{1}.import{5} = struct('type', 'ppu', 'channel', 5);
+      this.testcases{1}.import{5} = struct('type', 'ppg', 'channel', 5);
       this.testcases{1}.import{6} = struct('type', 'resp', 'channel', 6);
       this.testcases{1}.import{7} = struct('type', 'marker', 'channel', 1);
       this.testcases{1}.import{8} = struct('type', 'marker', 'channel', 2);

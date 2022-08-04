@@ -22,7 +22,7 @@ for i=1:numel(job.pp_type)
             chan = pp_field.chan.chan_nr;
         elseif isfield(pp_field.chan, 'chan_def')
             % only works as long as pp has format of something2somethingelse
-            % e.g. ppu2hb
+            % e.g. ppg2hb
             chan = regexprep(pp, '(\w*)2(\w*)', '$1');
         elseif isfield(pp_field.chan, 'proc_chan')
             pchan = pp_field.chan.proc_chan;
@@ -87,10 +87,10 @@ for i=1:numel(job.pp_type)
                     % call ecg2hp
                     [sts, winfo] = pspm_convert_hb2hp(fn, sr, winfo.channel, opt);
                 end;
-            case 'ppu2hb'
+            case 'ppg2hb'
                 opt = struct();
                 opt.channel_action = channel_action;
-                [sts, winfo] = pspm_convert_ppu2hb(fn, chan, opt);
+                [sts, winfo] = pspm_convert_ppg2hb(fn, chan, opt);
         end;
 
         if sts ~= -1
