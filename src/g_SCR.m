@@ -11,7 +11,6 @@ function [gx,dgdx,dgdPhi] = g_aSCR(Xt,Phi,ut,inG)
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-%% initialise
 global settings;
 if isempty(settings), pspm_init; end;
 gx = Xt(1) + Xt(4) + Xt(7);
