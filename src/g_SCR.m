@@ -4,8 +4,6 @@ function [gx,dgdx,dgdPhi] = g_aSCR(Xt,Phi,ut,inG)
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
 
 % initialise
 % -------------------------------------------------------------------------
