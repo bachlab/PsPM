@@ -1,6 +1,11 @@
 function [gx,dgdx,dgdPhi] = g_aSCR(Xt,Phi,ut,inG)
 % ● Description
 %   TBA.
+% ● Arguments
+%     Xt:
+%    Phi:
+%     ut:
+%    inG:
 % ● Introduced In
 %   PsPM 3.0
 % ● Written By
