@@ -4,10 +4,19 @@ function [sts, import, sourceinfo] = pspm_get_biograph(datafile, import)
 %   BioGraph Infiniti files
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_biograph(datafile, import);
+% ● Arguments
+%   datafile:
+%     import:
+%      .type:
+%    .marker:
+%        .sr:
+%      .data:
 % ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Maintained By
+%   2022 Teddy Chao (UCL)
 
 %% Initialise
 global settings
@@ -16,18 +25,14 @@ if isempty(settings)
 end
 sts = -1;
 sourceinfo = [];
-
-% get data
-% -------------------------------------------------------------------------
+%% Get data
 fid = fopen(datafile);
 bio.header = textscan(fid, '%s', 'Delimiter', '|');
 fclose(fid);
 fid = fopen(datafile);
 bio.data = textscan(fid, '%n%n', 'Delimiter', ',', 'HeaderLines', 9);
 fclose(fid);
-
-% extract individual channel
-% -------------------------------------------------------------------------
+%% extract individual channel
 if strcmpi(settings.chantypes(import{1}.typeno).data, 'events')
   if isempty(strfind(bio.header{1}{1}, 'Interval Data Export'))
     fprintf('\n');
@@ -51,7 +56,6 @@ else
   fclose(fid);
   str = str{1}{1};
   pos = strfind(str, '.'); % position of the the decimal point
-
   if isempty(pos)
     threshold = import{1}.sr;
   elseif numel(pos) > 1
@@ -59,14 +63,11 @@ else
   else
     threshold = import{1}.sr * 10^-(length(str) - pos); %length(str) - pos = no. of decimal places
   end
-
   % diff(timestamps) < sr^-1 + abs(error)
   % --> abs(1-diff(timestamps)) < threshold, with threshold = sr * abs(error)
   if any(abs(1-import{1}.sr*diff(bio.data{1})) > threshold)
     warning('Sample rate in header line and timestamps in first column do not match.'); return;
   end;
-
 end;
-
 sts = 1;
 return
