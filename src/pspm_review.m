@@ -14,8 +14,6 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-
-
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...

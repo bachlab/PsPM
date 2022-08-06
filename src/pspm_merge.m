@@ -1,24 +1,26 @@
 function outfile = pspm_merge(infile1, infile2, reference, options)
-% pspm_merge merges two PsPM datafiles with different channels and
-% writes it to a file with the same name as the first file, prepended 'm'.
-% The data is aligned to file start or first marker. Data after the reference
-% are extended to the duration of the longer data file
-%
+% ● Description
+%   pspm_merge merges two PsPM datafiles with different channels and writes
+%   it to a file with the same name as the first file, prepended 'm'.
+%   The data is aligned to file start or first marker. Data after the reference
+%   are extended to the duration of the longer data file
 % ● Format
 %   outfile = pspm_merge(infile1, infile2, reference, options)
-%
-% infile1, infile2: data file name(s) (char, or cell array for multiple
-%                   files)
-% reference:        'marker' aligns with respect to first marker
-%                   'file'   aligns with respect to file start
-% options:
-% options.overwrite: overwrite existing files by default
-% options.marker_chan_num: 2 marker channel numbers - if undefined
-%                          or 0, first marker channel is used
+% ● Arguments
+%    infile1, infile2:  data file name(s) (char, or cell array for multiple
+%                       files)
+%           reference: 'marker' aligns with respect to first marker
+%                      'file'   aligns with respect to file start
+%   ┌─────────options:
+%   ├──────.overwrite: overwrite existing files by default
+%   └.marker_chan_num: 2 marker channel numbers - if undefined
+%                      or 0, first marker channel is used
 % ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (UZH, WTCN)
+% ● Maintained By
+%   2022 Teddy Chao (UCL)
 
 %% Initialise
 global settings
