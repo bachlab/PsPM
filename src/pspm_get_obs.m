@@ -5,10 +5,19 @@ function [sts, import, sourceinfo] = pspm_get_obs(datafile, import)
 %   assured to work with the output files of Vsrrp98.
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_obs(datafile, import);
+% ● Arguments
+%     datafile:
+%       import:
+% ● Outputs
+%          sts:
+%       import:
+%   sourceinfo:
 % ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2013-2015 Linus Rüttimann (University of Zurich)
+% ● Maintained By
+%   2022 Teddy Chao (UCL)
 
 %% Initialise
 global settings

@@ -1,52 +1,52 @@
 function output = pspm_pfm(model, options)
-% PFM stands for Pupil Fitting Model and allows to fit models to the puipil
-% data. The function starts by extracting and averaging signal segments of
-% length `model.window` from each data file individually, then averages
-% these mean segments and finally fits an LTI model.
-% The fitting process is a residual least square minimisation where the
-% predicted value is calculated as following:
-%          Y_predicted = input_function (*) basis_function
-% with (*) represents a convolution. Only parameters of the input
-% function are optimised.
-%
-% MODEL is made of:
-% - REQUIRED FIELDS:
-%    model.modelfile:    a file name for the model output
-%    model.datafile:     a file name (single session) OR
-%                        a cell array of file names
-%    model.timing:       a multiple condition file name (single session) OR
-%                        a cell array of multiple condition file names OR
-%                        a struct (single session) with fields .names, .onsets,
-%                             and (optional) .durations OR
-%                        a cell array of struct OR
-%                        a struct with fields 'markerinfos', 'markervalues',
-%                            'names' OR
-%                        a cell array of struct
-%    model.timeunits:    a char array equal to 'seconds', 'samples' or 'markers'
-%    model.window:       a scalar in model.timeunits as unit that specifies
-%                        over which time window (starting with the events
-%                        specified in model.timing) the model should
-%                        be evaluated.
-%                        For model.timeunits == 'markers', the unit of the
-%                        window should be specified in 'seconds'.
-%
-% - OPTIONAL FIELDS:
-%    model.modality:     a char array equal to 'constriction' or 'dilation'
-%                        corresponding to the fitted model.
-%                        DEFAULT: 'dilation'
-%    model.bf:           basis function/basis set with required subfields:
-%                           .fhandle : function handle or string
-%                           .args    : arguments; the first two arguments
-%                                      (time resolution and duration)
-%                                      will be added by pspm_pupil_model.
-%                        DEFAULT: specified by the modality
-%    model.if:           input function (function which will be fitted)
-%                        with required subfields:
-%                           .fhandle : function handle or string
-%                           .arg     : initial arguments, numeric array
-%                           .lb      : lower bounds, numeric array of the
+% ● Description
+%   PFM stands for Pupil Fitting Model and allows to fit models to the puipil
+%   data. The function starts by extracting and averaging signal segments of
+%   length `model.window` from each data file individually, then averages
+%   these mean segments and finally fits an LTI model.
+% ● Developer's Notes
+%   The fitting process is a residual least square minimisation where the
+%   predicted value is calculated as following:
+%     Y_predicted = input_function (*) basis_function
+%   with (*) represents a convolution. Only parameters of the input
+%   function are optimised.
+% ● Arguments
+%           model:  [struct]
+%     ▶︎ mandantory
+%      .modelfile:  a file name for the model output
+%       .datafile:  a file name (single session) OR
+%                   a cell array of file names
+%         .timing:  a multiple condition file name (single session) OR
+%                   a cell array of multiple condition file names OR
+%                   a struct (single session) with fields .names, .onsets,
+%                   and (optional) .durations OR
+%                   a cell array of struct OR
+%                   a struct with fields 'markerinfos', 'markervalues',
+%                   'names' OR
+%                   a cell array of struct
+%      .timeunits:  a char array equal to 'seconds', 'samples' or 'markers'
+%         .window:  a scalar in model.timeunits as unit that specifies
+%                   over which time window (starting with the events
+%                   specified in model.timing) the model should be evaluated.
+%                   For model.timeunits == 'markers', the unit of the window
+%                   should be specified in 'seconds'.
+%     ▶︎ optional
+%       .modality:  a char array equal to 'constriction' or 'dilation'
+%                   corresponding to the fitted model.
+%                   DEFAULT: 'dilation'
+%             .bf:  basis function/basis set with required subfields:
+%                   .fhandle : function handle or string
+%                   .args    : arguments; the first two arguments
+%                              (time resolution and duration)
+%                              will be added by pspm_pupil_model.
+%                   DEFAULT: specified by the modality
+%             .if:  input function (function which will be fitted)
+%                   with required subfields:
+%                   .fhandle : function handle or string
+%                   .arg     : initial arguments, numeric array
+%                   .lb      : lower bounds, numeric array of the
 %                                      same size as .arg
-%                           .ub      : upper bounds, numeric array of the
+%                   .ub      : upper bounds, numeric array of the
 %                                      same size as .arg
 %                        If an argument should not be fitted, set the
 %                        corresponding value of .lb and .ub to the same
@@ -110,9 +110,9 @@ function output = pspm_pfm(model, options)
 % RETURNS a structure 'pfm' which is also written to file
 %
 % ● Reference
-%   J Vis. 2016;16(3):28. doi: 10.1167/16.3.28.
-% A solid frame for the window on cognition: Modeling event-related pupil responses.
-% Korn CW, Bach DR.
+%   Korn, C. W., & Bach, D. R. (2016). A solid frame for the window on 
+%   cognition: Modeling event-related pupil responses. Journal of Vision, 
+%   16(3), 28. https://doi.org/10.1167/16.3.28
 % ● Introduced In
 %   PsPM 4.2
 % ● Written By
