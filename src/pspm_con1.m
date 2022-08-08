@@ -130,27 +130,24 @@ for iFn = 1:numel(modelfile)
   % data.stats has more than one column
   % there are issues if data.stats has NaN and the corresponding conmat
   % also contains 0
-  idx_issue = any(isnan(data.stats),2);
-  l_conmat_r = length(conmat(:,1)); 
-  if any(idx_issue(:))
-    for i_conmat_r = 1:l_conmat_r % if conmat is a 2D matrix, repeat for each row
-      conmat_array = conmat(i_conmat_r,:);
-      idx_valid_issue = transpose(conmat_array==0) .* idx_issue;
-      idx_invalid_issue = transpose(conmat_array~=0) .* idx_issue;
-      if any(idx_valid_issue) && ~any(idx_invalid_issue)
-        warning(['Calculated data.stats contain NaNs that are caused by unknown reasons. '...
-          'data.stats are then used in a contrasts, producing an invalid results (NaN).']);
-        data_stats_converted = data.stats;
-        data_stats_converted(isnan(data_stats_converted)) = 0;
-        conval = conmat * data_stats_converted;
-      else
+  IdxIssueRow = any(isnan(data.stats),2);
+  conval = conmat * data.stats; % initialise conval
+  [Rconval, ~] = size(conval);
+  if any(IdxIssueRow(:))
+    for rconval = 1:Rconval
+      if all(conmat(rconval,IdxIssueRow) == 0)
+        % all the issues refer to 0 in conmat
+        conval(rconval,:) = conmat(rconval,~IdxIssueRow) * data.stats(~IdxIssueRow,:);
         warning(['Calculated data.stats contain NaNs that are caused by unknown reasons. '...
           'However they were not used in the computation of the contrasts.']);
-        conval = conmat * data.stats;
+      else
+        % the issues refer to non-0 or 0 in conmat
+        conval(rconval,:) = conmat(rconval,:) * data.stats;
+        warning(['Calculated data.stats contain NaNs that are caused by unknown reasons. '...
+            'data.stats are then used in a contrasts, producing an invalid result (NaN).']);
       end
     end
   end
-
   % zscored text-output for connames
   if isfield(data, 'zscored') && data.zscored
     out_zscored = ' (z-scored)';

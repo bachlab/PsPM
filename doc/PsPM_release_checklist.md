@@ -4,6 +4,7 @@ This file contains the steps required for finalising a PsPM release. Many items 
 - [ ] Update version number & date in
 	 - [ ] `pspm_msg`
 	 - [ ] `pspm_quit`
+     - [ ] `pspm_ui`
 	 - [ ] `pspm.fig`: Load `pspm.fig` into MATLAB using `openfig`, update `fig.Children(9).String` and save back to `pspm.fig`
 - [ ] Manual and Developers Guide: front pages
 - [ ] Make sure both manuals are updated

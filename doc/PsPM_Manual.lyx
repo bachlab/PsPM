@@ -19877,6 +19877,445 @@ A bug that leads to incorrect matrix construction has been fixed.
 \end_layout
 
 \end_deeper
+\begin_layout Subsection*
+Version 6.0.0
+\end_layout
+
+\begin_layout Standard
+This is a major release and may have incompatibility with previous versions.
+\end_layout
+
+\begin_layout Subsubsection*
+New features
+\end_layout
+
+\begin_layout Itemize
+PsPM now support a develop mode, which allows
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Minimised terminal output.
+\end_layout
+
+\begin_layout Itemize
+Automagical parameter selection for testing.
+\end_layout
+
+\begin_layout Itemize
+Always to overwrite files.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_extract_segments
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now allows an optional 
+\shape italic
+z
+\shape default
+ - score for normalisation.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_find_valid_fixations
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now allows processing preprocessed left/right/combined pupil data.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_gaze_pp
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now allows preprocessing gaze signals.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_overwrite
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now handles the behaviour of overwrite if not defined by the user, and is
+ used where applicable.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_time2index
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now processes adjustable conversion from time to index globally.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_update_chantype
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now allows generalised behaviour of updating channel types.
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection*
+Bug Fixes
+\end_layout
+
+\begin_layout Itemize
+General
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A bug which may lead to failure of pspm path searching has been fixed.
+\end_layout
+
+\begin_layout Itemize
+A bug which may display figures in the GUI has been fixed.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_bf_spsrf_box
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now uses correct parameter settings.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_convert_ppu2hb
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now terminates if only one pulse is detected.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_data_editor
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now able to show figures when import a datafile correctly.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_dcm
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now handles missing epochs that start at 0 correctly.
+\end_layout
+
+\begin_layout Itemize
+now processes variables properly to make length consistent.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_display
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now displays plots with correct x-axis ranges.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_glm
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now applies correct variable settings.
+\end_layout
+
+\begin_layout Itemize
+now produces results correctly when facing many short missing epochs.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_interpolate
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now returns results correctly when applying forced extrapolation.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_resp_pp
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now allows replace as the channel action properly.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_scr_pp
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now uses inconsistent variables when delivering missing epochs.
+\end_layout
+
+\begin_layout Itemize
+now writes data out properly when epochs are removed.
+\end_layout
+
+\begin_layout Itemize
+now properly handles data if the first channel is not 
+\family typewriter
+scr
+\family default
+.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_sf
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now refer to model file correctly.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_split_sessions
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now processes missing files with an epoch starting at 0 s properly.
+ 
+\end_layout
+
+\begin_layout Itemize
+now properly catches edge cases.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+ValidSamplesModel
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now properly throws warnings if histogram counts are zeros.
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection*
+Improvements
+\end_layout
+
+\begin_layout Itemize
+General
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now supports loading 
+\family typewriter
+ppg
+\family default
+ data.
+\end_layout
+
+\begin_layout Itemize
+now displays improved terminal output text.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_con1
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now assesses the statistics in the arguments for throwing warnings when
+ detecting invalid values.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_data_editor
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now displays the 
+\shape italic
+x
+\shape default
+ and 
+\shape italic
+y
+\shape default
+ axis label and text according to the input data.
+\end_layout
+
+\begin_layout Itemize
+now sorts the epoch list according to the start data point.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_get_marker
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now detects and update the field 
+\family typewriter
+flank
+\family default
+ when applicable.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_import
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now detects and update the field 
+\family typewriter
+flank
+\family default
+ when applicable.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_load_data
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now checks whether the input has an empty channel.
+\end_layout
+
+\begin_layout Itemize
+now autofills some variables.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_pupil_pp
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now calls 
+\family typewriter
+pspm_load_data
+\family default
+ to load single channels.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_rev_glm
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now displays normalised data for visualisation purpose only.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_write_channel
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now checks whether the input has an empty channel.
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection*
+GUI
+\end_layout
+
+\begin_layout Itemize
+"Edit defaults" in the GUI is now working properly.
+\end_layout
+
+\begin_layout Itemize
+GUI typeface is now generalised across the software.
+\end_layout
+
+\begin_layout Subsubsection*
+For Developers
+\end_layout
+
+\begin_layout Itemize
+General
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+PsPM now uses 
+\family typewriter
+.editorconfig
+\family default
+ to control the indent.
+\end_layout
+
+\begin_layout Itemize
+PsPM now uses UTF-8, LF, and MATLAB's soft tab indent as the standard code
+ formatting style.
+\end_layout
+
+\begin_layout Itemize
+PsPM now uses test data from the repository PsPM-data.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_get_text_test
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A bug, which leaves residual test files after code testing, has been fixed.
+\end_layout
+
+\end_deeper
 \begin_layout Part
 Acknowledgements
 \end_layout
