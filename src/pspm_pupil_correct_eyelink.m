@@ -1,121 +1,100 @@
 function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
-% pspm_pupil_correct_eyelink performs pupil foreshortening error (PFE) correction specifically
-% for Eyelink recorded and imported data following the steps described in [1]. For
-% details of the exact scaling, see <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>.
-%
-% In order to perform PFE, we need both pupil and gaze data. If the gaze data
-% in the given file is in pixels, we need information about the screen dimensions
-% and resolution to calculate the pixel to milimeter ratio. On the other hand, if
-% the gaze data is in mm, cm, inches, etc., there is no need to enter any screen
-% size related information. If the gaze data is in pixels and screen information is
-% not given, the function emits a warning and exits early.
-%
-% Once the pupil data is preprocessed, according to the option 'channel_action',
-% it will either replace an existing preprocessed pupil channel or add it as new
-% channel to the provided file.
-%
+% ● Description
+%   pspm_pupil_correct_eyelink performs pupil foreshortening error (PFE) 
+%   correction specifically for Eyelink recorded and imported data following
+%   the steps described in [1]. For details of the exact scaling, see 
+%   <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>.
+% ● Developer's Notes
+%   In order to perform PFE, we need both pupil and gaze data. If the gaze data
+%   in the given file is in pixels, we need information about the screen 
+%   dimensions and resolution to calculate the pixel to milimeter ratio. On the
+%   other hand, if the gaze data is in mm, cm, inches, etc., there is no need
+%   to enter any screen size related information. If the gaze data is in pixels
+%   and screen information is not given, the function emits a warning and exits
+%   early. Once the pupil data is preprocessed, according to the option
+%   'channel_action', it will either replace an existing preprocessed pupil
+%   channel or add it as new channel to the provided file.
 % ● Format
 %   [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
-%
-%	INPUT:
-%   fn:                Path to a PsPM imported Eyelink data.
-%
-%   options:
-%       Mandatory:
-%           mode:     Conversion mode. Must be one of 'auto' or 'manual'.
-%                     If 'auto', then optimized conversion parameters
-%                     in Table 3 of [1] will be used. In 'auto' mode,
-%                     options struct must contain C_z parameter described
-%                     below. Further, C_z must be one of 495, 525 or 625.
-%                     The other parameters will be set according to which
-%                     of these three C_z is equal to.
-%
-%                     If 'manual', then all of C_x, C_y, C_z, S_x, S_y, S_z
-%                     fields must be provided according to your recording
-%                     setup.
-%
-%                     Note that in order to use 'auto' mode, your camera-screen-eye
-%                     setup must match exactly one of the three sample setups given
-%                     in [1].
-%
-%           C_z:      See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
-%
-%       Optional:
-%           screen_size_px:  Screen size (width x height). This field is required only
-%                     if the gaze data in the given PsPM file is in pixels.
-%                     (Unit: pixel)
-%
-%           screen_size_mm:  Screen size (width x height). This field is required only if the
-%                     gaze data in the given PsPM file is in pixels.
-%                     (Unit: mm)
-%                     See <a href="matlab:help pspm_convert_unit">pspm_convert_unit</a>
-%                     if you need inch to mm conversion.
-%
-%           C_x:      See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
-%
-%           C_y:      See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
-%
-%           S_x:      See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
-%
-%           S_y:      See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
-%
-%           S_z:      See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
-%
-%           channel:	[numeric/string] Channel ID to be preprocessed.
-%                     (Default: 'pupil')
-%
-%                     Preprocessing raw eye data:
-%                     The best eye is processed when channel is 'pupil'.
-%                     In order to process a specific eye, use 'pupil_l' or
-%                     'pupil_r'.
-%
-%                     Preprocessing previously processed data:
-%                     Pupil channels created from other preprocessing steps
-%                     can be further processed by this function. To enable
-%                     this, pass one of 'pupil_pp_l' or 'pupil_pp_r'. There
-%                     is no best eye selection in this mode. Hence, the
-%                     type of the channel must be given exactly.
-%
-%                     Finally, a channel can be specified by its
-%                     index in the given PsPM data structure. It will be
-%                     preprocessed as long as it is a valid pupil channel.
-%
-%                     If channel is specified as a string and there are
-%                     multiple channels with the exact same type, only the
-%                     last one will be processed. This is normally not the
-%                     case with raw data channels; however, there may be
-%                     multiple preprocessed channels with same type if 'add'
-%                     channel_action was previously used. This feature can
-%                     be combined with 'add' channel_action to create
-%                     preprocessing histories where the result of each step
-%                     is stored as a separate channel.
-%
-%                     In all of the above cases, if the type of the input
-%                     channel does not contain a '_pp' suffix, then a '_pp'
-%                     suffix will be appended to the type of the output channel.
-%                     Therefore, this function should not overwrite a raw data
-%                     channel.
-%
-%           channel_action:  ['add'/'replace'] Defines whether output data should
+% ● Arguments
+%              fn:  Path to a PsPM imported Eyelink data.
+%   ┌─────options:
+%   │ ▶︎ mandatory
+%   ├────────mode:  Conversion mode. Must be one of 'auto' or 'manual'.
+%   │               If 'auto', then optimized conversion parameters in
+%   │               Table 3 of [1] will be used. In 'auto' mode,
+%   │               options struct must contain C_z parameter described
+%   │               below. Further, C_z must be one of 495, 525 or 625.
+%   │               The other parameters will be set according to which
+%   │               of these three C_z is equal to.
+%   │               If 'manual', then all of C_x, C_y, C_z, S_x, S_y, S_z
+%   │               fields must be provided according to your recording
+%   │               setup. Note that in order to use 'auto' mode, your
+%   │               camera-screen-eye setup must match exactly one of the three
+%   │               sample setups given in [1].
+%   ├─────────C_z:  See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
+%   │ ▶︎ optional
+%   ├screen_size_px:Screen size (width x height). This field is required only
+%   │               if the gaze data in the given PsPM file is in pixels.
+%   │               (Unit: pixel)
+%   ├screen_size_mm:Screen size (width x height). This field is required only
+%   │               if the gaze data in the given PsPM file is in pixels.
+%   │               (Unit: mm)
+%   │               See <a href="matlab:help pspm_convert_unit">pspm_convert_unit</a>
+%   │               if you need inch to mm conversion.
+%   ├─────────C_x:  See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
+%   ├─────────C_y:  See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
+%   ├─────────S_x:  See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
+%   ├─────────S_y:  See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
+%   ├─────────S_z:  See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
+%   ├─────channel:  [numeric/string] Channel ID to be preprocessed.
+%   │               (Default: 'pupil')
+%   │               * Preprocessing raw eye data:
+%   │                 The best eye is processed when channel is 'pupil'.
+%   │                 In order to process a specific eye, use 'pupil_l' or
+%   │                 'pupil_r'.
+%   │               * Preprocessing previously processed data:
+%   │                 Pupil channels created from other preprocessing steps
+%   │                 can be further processed by this function. To enable
+%   │                 this, pass one of 'pupil_pp_l' or 'pupil_pp_r'. There
+%   │                 is no best eye selection in this mode. Hence, the
+%   │                 type of the channel must be given exactly.
+%   │               * Finally, a channel can be specified by its
+%   │                 index in the given PsPM data structure. It will be
+%   │                 preprocessed as long as it is a valid pupil channel.
+%   │               * If channel is specified as a string and there are
+%   │                 multiple channels with the exact same type, only the
+%   │                 last one will be processed. This is normally not the
+%   │                 case with raw data channels; however, there may be
+%   │                 multiple preprocessed channels with same type if 'add'
+%   │                 channel_action was previously used. This feature can
+%   │                 be combined with 'add' channel_action to create
+%   │                 preprocessing histories where the result of each step
+%   │                 is stored as a separate channel.
+%   │               * In all of the above cases, if the type of the input
+%   │                 channel does not contain a '_pp' suffix, then a '_pp'
+%   │                 suffix will be appended to the type of the output channel.
+%   │                 Therefore, this function should not overwrite a raw data
+%   │                 channel.
+%   └channel_action:  ['add'/'replace'] Defines whether output data should
 %                     be added or the corresponding preprocessed channel
 %                     should be replaced. Note that 'replace' mode does not
 %                     replace raw data channels. It replaces a previously
 %                     stored preprocessed channel with a '_pp' suffix at the
 %                     end of its type.
 %                     (Default: 'add')
-%
-%   OUTPUT:
-%       out_channel:             Channel index of the stored output channel.
-%
-% [1] Hayes, Taylor R., and Alexander A. Petrov. "Mapping and correcting the
-%     influence of gaze position on pupil size measurements." Behavior
-%     Research Methods 48.2 (2016): 510-527.
-% ● Written By
-%   (C) 2019 Eshref Yozdemir (University of Zurich)
+% ● Outputs
+%       out_channel:  Channel index of the stored output channel.
+% ● Reference
+%   [1] Hayes, Taylor R., and Alexander A. Petrov. "Mapping and correcting the
+%       influence of gaze position on pupil size measurements." Behavior
+%       Research Methods 48.2 (2016): 510-527.
 % ● Introduced In
 %   PsPM 5.1.2
+% ● Written By
+%   (C) 2019 Eshref Yozdemir (University of Zurich)
 % ● Maintained By
-%   2021 Teddy Chao (WCHN, UCL)
+%   2021, 2022 Teddy Chao (UCL)
 
 %% Initialise
 global settings

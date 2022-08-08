@@ -1,34 +1,34 @@
 function [sts, out] = pspm_segment_mean(segments, options)
-% pspm_segment_mean is a function which takes segments created by
-% pspm_extract_segments and creates means among sessions.
-%
+% ● Description
+%   pspm_segment_mean is a function which takes segments created by
+%   pspm_extract_segments and creates means among sessions.
 % ● Format
 %   [sts, out] = pspm_segment_mean(segments, options)
-%
-% INPUT:
-%   segments:           Cell of multiple segments, each obtained with
-%                       pspm_extract_segments()
-%   options:
-%       plot:           Display plot of the mean of each condition over
-%                       multiple subjects
-%       adjust_method:  How to deal with different sampling rates. Options
-%                       are 'none' (Default; will fail if sampling rates
-%                       are different), 'downsample' (will sample down to
-%                       minimum sample rate), 'interpolate' (will
-%                       interpolate to maximum sample rate)
-%       newfile:        If specified, the segment data will be written into
-%                       file specified. If is equal to '' (empty) then data
-%                       will not be returned. If written to file. The file
-%                       is also speciefied in the out struct. Default is
-%                       ''.
-%       overwrite:      If specified, file specified in options.newfile,
-%                       will be overwritten, if it already exists.
+% ● Arguments
+%         segments: Cell of multiple segments, each obtained with 
+%                   pspm_extract_segments()
+%   ┌──────options:
+%   ├─────────plot: Display plot of the mean of each condition over multiple 
+%   │               subjects
+%   ├adjust_method: How to deal with different sampling rates. Accepted values 
+%   │               are 'none' (Default; will fail if sampling rates are
+%   │               different), 'downsample' (will sample down to minimum
+%   │               sample rate), 'interpolate' (will interpolate to maximum
+%   │               sample rate).
+%   ├──────newfile: If specified, the segment data will be written into file
+%   │               specified. If is equal to '' (empty) then data will not be
+%   │               returned. If written to file. The file is also speciefied
+%   │               in the out struct. Default is ''.
+%   └────overwrite: If specified, file specified in options.newfile, will be 
+%                   overwritten, if it already exists.
 % ● Introduced In
 %   PsPM 3.1
 % ● Written By
 %   (C) 2008-2016 Tobias Moser (University of Zurich)
+% ● Maintained By
+%   2022 Teddy Chao (UCL)
 
-%% Initialise
+%% initialise
 global settings
 if isempty(settings)
   pspm_init;
@@ -190,4 +190,3 @@ if ~isempty(options.newfile)
   out.file = options.newfile;
 end
 sts = 1;
-

@@ -1,26 +1,29 @@
 function fig = pspm_rev_glm(modelfile, glm, plotNr)
-% pspm_rev_glm is a tool for reviewing a first level GLM designs. It is
-% meant to be called by pspm_review only
-%
+% ● Description
+%   pspm_rev_glm is a tool for reviewing a first level GLM designs. It is
+%   meant to be called by pspm_review only.
 % ● Format
 %   fig = pspm_rev_glm(modelfile, glm, plotNr, fig)
-%
-% modelfile: filename and path of modelfile
-% glm:       loaded model
-% plotNr:    defines which figure shall be plotted
-%            (several plots can be defined by a vector)
-%            1 - design matrix, SPM style
-%            2 - design orthogonality, SPM style
-%            3 - predicted & observed
-%            4 - print regressor names
-%            5 - reconstructed responses
-% fig:       returns the figure handles
+% ● Arguments
+%   modelfile:  filename and path of modelfile
+%         glm:  loaded model
+%      plotNr:  defines which figure shall be plotted
+%               (several plots can be defined by a vector)
+%               1 - design matrix, SPM style
+%               2 - design orthogonality, SPM style
+%               3 - predicted & observed
+%               4 - print regressor names
+%               5 - reconstructed responses
+% ● Outputs
+%         fig:  returns the figure handles
 % ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Maintained By
+%   2022 Teddy Chao (UCL)
 
-%% Initialise
+% initialise
 global settings
 if isempty(settings)
   pspm_init;

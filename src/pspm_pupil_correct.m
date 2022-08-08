@@ -1,65 +1,47 @@
 function [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm, geometry_setup)
-% pspm_pupil_correct performs pupil foreshortening error (PFE) correction for
-% arbitrary eye tracker measurements according to equations (3) and (4) in [1].
-% In particular,
-%
-% 1. Target points (T_x, T_y, T_z) are calculated using gaze x and y positions at each timestep
-% 2. Cosine of the oblique angle is computed using the dot products of unitary vectors
-% corresponding to camera C and target T.
-% 3. Diameter values are scaled using 1/sqrt(cos). Hence, the corrected pupil values
-% are at least as big as the input pupil values.
-%
+% ● Description
+%   pspm_pupil_correct performs pupil foreshortening error (PFE) correction for
+%   arbitrary eye tracker measurements according to equations (3) and (4) in
+%   [1].
+% ● Developer's Notes
+%   In particular,
+%   1. Target points (T_x, T_y, T_z) are calculated using gaze x and y 
+%      positions at each timestep
+%   2. Cosine of the oblique angle is computed using the dot products of
+%      unitary vectors corresponding to camera C and target T.
+%   3. Diameter values are scaled using 1/sqrt(cos). Hence, the corrected pupil
+%      values are at least as big as the input pupil values.
 % ● Format
 %   [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm, geometry_setup)
-%
-%   INPUT:
-%       pupil:           Numeric array containing pupil diameter.
-%                        (Unit: any unit)
-%
-%       gaze_x_mm:       Numeric array containing gaze x positions.
-%                        (Unit: mm)
-%
-%       gaze_y_mm:       Numeric array containing gaze y positions.
-%                        (Unit: mm)
-%
-%       geometry_setup:  Struct with the following geometry setup fields.
-%                        When defining these coordinate system parameters, we
-%                        assume that the origin O of the 3D coordinate system
-%                        is the center of the pupil.
-%
-%           C_x:         Horizontal displacement of the center of camera lens,
-%                        i.e. how much to the left or to the right the camera
-%                        looks for a sitting person whose pupil is at O.
-%                        (Unit: mm)
-%
-%           C_y:         Vertical displacement of the center of camera lens,
-%                        i.e. how much to the top or to the bottom the camera
-%                        looks for a sitting person whose pupil is at O.
-%                        (Unit: mm)
-%
-%           C_z:         The distance between pupil center and camera center if
-%                        they have same x and y coordinates.
-%                        (Unit: mm)
-%
-%           S_x:         Horizontal displacement of the top left corner of screen
-%                        i.e. how much to the left or to the right the top left
-%                        corner of screen looks for a sitting person whose
-%                        pupil is at O.
-%                        (Unit: mm)
-%
-%           S_y:         Vertical displacement of the top left corner of screen
-%                        i.e. how much to the top or to the bottom the top left
-%                        corner of screen looks for a sitting person whose pupil
-%                        is at O.
-%                        (Unit: mm)
-%
-%           S_z:         The distance between pupil center and top left corner of
-%                        screen if they have same x and y coordinates.
-%                        (Unit: mm)
-%
-%   OUTPUT:
-%       pupil_corrected: PFE corrected pupil data.
-%                        (Unit: unit of the input pupil data)
+% ● Arguments
+%            pupil: Numeric array containing pupil diameter. (Unit: any unit)
+%        gaze_x_mm: Numeric array containing gaze x positions. (Unit: mm)
+%        gaze_y_mm: Numeric array containing gaze y positions. (Unit: mm)
+%   geometry_setup: Struct with the following geometry setup fields.
+%   │               When defining these coordinate system parameters, we
+%   │               assume that the origin O of the 3D coordinate system
+%   │               is the center of the pupil.
+%   ├─────────.C_x: Horizontal displacement of the center of camera lens,
+%   │               i.e. how much to the left or to the right the camera
+%   │               looks for a sitting person whose pupil is at O. (Unit: mm)
+%   ├─────────.C_y: Vertical displacement of the center of camera lens,
+%   │               i.e. how much to the top or to the bottom the camera
+%   │               looks for a sitting person whose pupil is at O. (Unit: mm)
+%   ├─────────.C_z: The distance between pupil center and camera center if
+%   │               they have same x and y coordinates. (Unit: mm)
+%   ├─────────.S_x: Horizontal displacement of the top left corner of screen
+%   │               i.e. how much to the left or to the right the top left
+%   │               corner of screen looks for a sitting person whose
+%   │               pupil is at O. (Unit: mm)
+%   ├─────────.S_y: Vertical displacement of the top left corner of screen
+%   │               i.e. how much to the top or to the bottom the top left
+%   │               corner of screen looks for a sitting person whose pupil
+%   │               is at O. (Unit: mm)
+%   └─────────.S_z: The distance between pupil center and top left corner of
+%                   screen if they have same x and y coordinates. (Unit: mm)
+% ● Outputs
+%  pupil_corrected: PFE corrected pupil data. 
+%                   (Unit: unit of the input pupil data)
 % ● References
 %   [1] Hayes, Taylor R., and Alexander A. Petrov. "Mapping and correcting the
 %       influence of gaze position on pupil size measurements." Behavior
@@ -68,8 +50,10 @@ function [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm
 %   TBA.
 % ● Written By
 %   (C) 2019 Eshref Yozdemir (University of Zurich)
+% ● Maintained By
+%   2022 Teddy Chao (UCL)
 
-%% Initialise
+% initialise
 global settings
 if isempty(settings)
   pspm_init;

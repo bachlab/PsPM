@@ -2,9 +2,8 @@ function pspm_show_help_doc
 % ● Introduced In
 %   PsPM 5.1
 % ● Written By
-%   2021 Teddy Chao
+%   2021 Teddy Chao (UCL)
 
-%% Initialise
 global settings
 if isempty(settings)
   pspm_init;

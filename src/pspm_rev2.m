@@ -1,17 +1,19 @@
 function pspm_rev2(modelfile, con)
-% pspm_rev2 is a tool for reviewing & reporting a second level design
-%
+% ● Description
+%   pspm_rev2 is a tool for reviewing & reporting a second level design.
 % ● Format
 %   pspm_rev2(MODELFILE, {CON})
-%
-% optional argument: con indicates the contrasts that you wish to be
-% reported
+% ● Arguments
+%   optional argument: con indicates the contrasts that you wish to be
+%   reported
 % ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (c) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Maintained By
+%   2022 Teddy Chao (UCL)
 
-%% Initialise
+% initialise
 global settings
 if isempty(settings)
   pspm_init;
