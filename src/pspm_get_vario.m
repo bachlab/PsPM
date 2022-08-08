@@ -5,12 +5,21 @@ function [sts, import, sourceinfo] = pspm_get_vario(datafile, import)
 %   written and maintained by Christoph Berger at the University of Rostock
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_acq(datafile, import);
+% ● Arguments
+%     datafile:
+%       import:
+% ● Outputs
+%          sts:
+%       import:
+%   sourceinfo:
 % ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Maintained By
+%   2022 Teddy Chao (UCL)
 
-%% Initialise
+% initialise
 global settings
 if isempty(settings)
   pspm_init;

@@ -9,8 +9,8 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %   [sts, events] = pspm_get_timing('events', events)
 %   for recursive calls also:
 %   [sts, epochs] = pspm_get_timing('file', filename)
-%
-% onsets and timeunits are 'seconds', 'samples' or 'markers':
+% ● Arguments
+%   onsets and timeunits are 'seconds', 'samples' or 'markers':
 %      for defining event onsets for multiple conditions (e. g. GLM)
 %      intiming is - a multiple condition file name (single session) OR
 %                  - a cell array of multiple condition file names OR
@@ -23,7 +23,7 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %
 %      if timeunits are 'samples' or 'markers', all onsets must be integer
 %
-% % onsets and timeunits are 'markervalues':
+%   onsets and timeunits are 'markervalues':
 %      for defining onsets for multiple conditions (e.g. GLM) from
 %      entries in markerinfos:
 %      intiming:  - a struct with fields 'markerinfos', 'markervalues,
@@ -36,39 +36,32 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %                      conditions from the entries in markerinfos.name
 %                    - names: cell array of condition names
 %
-% epochs: for defining data epochs (e. g. analysis of SF, missing epochs in GLM)
-%         epochs can be one of the following
-%               - an SPM style onset file with two event types: onset &
-%                    offset (names are ignored)
-%               - a two-column text file with on/offsets
-%               - a .mat file with a variable 'epochs' (see below)
-%               - e x 2 matrix of epoch on- and offsets (e: number of
-%                   epochs)
-%
-% events: for defining events and event windows (e. g. in DCM), events can
-%         be either a variable that is, or a file name that contains a variable
-%         'events' that is
-%               - a .mat file with a variable 'events' (see below)
-%               - a cell array with multiple one and two column vectors for
-%                   fully flexible DCMs that must all have the same number of
-%                   rows
-%
-%
+%     epochs: for defining data epochs (e. g. analysis of SF, missing epochs in
+%             GLM). epochs can be one of the following
+%             - an SPM style onset file with two event types: onset & offset 
+%               (names are ignored)
+%             - a two-column text file with on/offsets
+%             - a .mat file with a variable 'epochs' (see below)
+%             - e x 2 matrix of epoch on- and offsets (e: number of epochs)
+%     events: for defining events and event windows (e. g. in DCM), events can
+%             be either a variable that is, or a file name that contains a 
+%             variable. 'events' that is
+%             - a .mat file with a variable 'events' (see below)
+%             - a cell array with multiple one and two column vectors for fully
+%               flexible DCMs that must all have the same number of rows.
+% ● Developer's Notes
+%   Differences in GLM multiple condition definitions between SPM and PsPM
+%   (1) 'durations' is optional - default is 0
+%   (2) 'durations' must be 0 if onsets are specified by markers
+%   (3) 'poly' is an optional field in pmods - default is 1. Polynomial
+%       values larger than 1 are expanded here and returned as additional cells
+%       for 'param'
 % ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2009-2015 Dominik R Bach (WTCN, UZH)
-
-% -------------------------------------------------------------------------
-% DEVELOPERS NOTES
-% Differences in GLM multiple condition definitions between SPM and
-% PsPM
-% (1) 'durations' is optional - default is 0
-% (2) 'durations' must be 0 if onsets are specified by markers
-% (3) 'poly' is an optional field in pmods - default is 1. Polynomial
-%     values larger than 1 are expanded here and returned as additional cells
-%     for 'param'
-% -------------------------------------------------------------------------
+% ● Maintained By
+%   2022 Teddy Chao (UCL)
 
 %% Initialise
 global settings

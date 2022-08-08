@@ -1,36 +1,34 @@
 function [sts, outdata, newsr] = pspm_prepdata(data, filt)
-% pspm_prepdata is a shared PsPM function for twofold butterworth filting and
-% downsampling raw data "on the fly". This data is usually stored in
-% results files rather than data files.
-%
+% ● Description
+%   pspm_prepdata is a shared PsPM function for twofold butterworth filting and
+%   downsampling raw data "on the fly". This data is usually stored in results
+%   files rather than data files.
 % ● Format
 %   [sts, data, newsr] = pspm_prepdata(data, filt)
-%
-% data is a column vector of data
-% filt is a struct with fields:
-%       .sr        - current sample rate in Hz
-%       .lpfreq    - low pass filt frequency or 'none'
-%       .lporder   - low pass filt order
-%       .hporder   - high pass filt order
-%       .hpfreq    - high pass filt frequency or 'none'
-%       .direction - filt direction
-%       .down      - sample rate in Hz after downsampling or 'none'
-%
-% Note that the order for bandpass and bandstop filters is equal to
-% order = lporder + hporder
-%
-% the new sample rate is returned as newsr because downsampling might
-% fail for some required sampling rates; a fallback is used then
-%
-% used by pspm_glm, pspm_sf, pspm_pulse_convert, pspm_dcm, pspm_pp
-%
+% ● Arguments
+%          data:  a column vector of data
+%   ┌──────filt:  a struct with fields:
+%   ├───────.sr:  current sample rate in Hz
+%   ├───.lpfreq:  low pass filt frequency or 'none'
+%   ├──.lporder:  low pass filt order
+%   ├──.hporder:  high pass filt order
+%   ├───.hpfreq:  high pass filt frequency or 'none'
+%   ├.direction:  filt direction
+%   └─────.down:  sample rate in Hz after downsampling or 'none'
+% ● Developer's Notes
+%   Note that the order for bandpass and bandstop filters is equal to
+%   order = lporder + hporder
+%   the new sample rate is returned as newsr because downsampling might fail
+%   for some required sampling rates; a fallback is used then used by pspm_glm,
+%   pspm_sf, pspm_pulse_convert, pspm_dcm, pspm_pp.
 % ● Introduced In
 %   PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Maintained By
+%   2022 Teddy Chao (UCL)
 
-
-%% Initialise
+%% initialise
 global settings
 if isempty(settings)
   pspm_init;
@@ -172,9 +170,6 @@ if ~ischar(filt.down) && filt.sr > filt.down
 else
   newsr = filt.sr;
 end
-
 outdata = data;
 sts = 1;
 return;
-
-
