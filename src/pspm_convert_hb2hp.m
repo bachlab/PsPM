@@ -25,8 +25,8 @@ function [sts, infos] = pspm_convert_hb2hp(fn, sr, chan, options)
 %   └─────────.lower: [numeric]
 %                     Specifies the lower limit of the
 %                     heart periods in seconds. Default is 0.2.
-% ● Introduced In
-%   PsPM 3.0
+% ● Version History
+%   Introduced in PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 

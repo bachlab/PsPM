@@ -7,8 +7,8 @@ function [sts, import, sourceinfo] = pspm_get_mat(datafile, import)
 %   datafile: a .mat file that contains a variable 'data' that is either
 %             [1] a cell array of channel data vectors
 %             [2] a datapoints x channel matrix
-% ● Introduced In
-%   PsPM 3.0
+% ● Version History
+%   Introduced in PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 

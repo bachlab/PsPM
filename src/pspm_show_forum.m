@@ -1,8 +1,7 @@
 function pspm_show_forum
-% ● Introduced In
-%   PsPM 5.1
-% ● Written By
-%   (C) 2020 Teddy Chao (UCL)
+% ● Version History
+%   Introduced In PsPM 5.1
+%   Written By (C) 2020 Teddy Chao (UCL)
 
 global settings
 if isempty(settings)

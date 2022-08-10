@@ -8,8 +8,8 @@ function [bf, x] = pspm_bf_data(td)
 %   [bf, x] = pspm_bf_data(td)
 % ● Arguments
 %   td: the time interval in points for sampling
-% ● Introduced In
-%   PsPM 5.1.1
+% ● Version History
+%   Introduced in PsPM 5.1.1
 % ● Written By
 %   2021 Dominik R Bach (University College London)
 % ● Maintained By

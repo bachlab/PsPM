@@ -71,8 +71,8 @@ function [sts, out] = pspm_extract_segments(varargin)
 %   │                     'none'. 'none' is the default value.
 %   └──────────────.norm: If 1, z-scores the entire data time series
 %                         (default: 0).
-% ● Introduced In
-%   PsPM 4.3
+% ● Version History
+%   Introduced in PsPM 4.3
 % ● Written By
 %   (C) 2008-2018 Tobias Moser (University of Zurich)
 

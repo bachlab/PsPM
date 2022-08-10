@@ -17,8 +17,8 @@ function [bs, t] = pspm_bf_spsrf_gamma(varargin)
 %   Saccadic Scanpath Length: An Index for Human Threat Conditioning
 %   Behavioral Research Methods 53, pages 1426–1439 (2021)
 %   doi: 10.3758/s13428-020-01490-5
-% ● Introduced In
-%   PsPM 4.0
+% ● Version History
+%   Introduced in PsPM 4.0
 % ● Written By
 %   TBA
 

@@ -1,18 +1,19 @@
 function [chantype_new] = pspm_update_chantype (chantype_og,keyword)
 % ● Description
-% pspm_update_chantype update the keywords of channel type
+%   pspm_update_chantype update the keywords of channel type
 % ● Arguments
-% chantype_og: [string] the name of the original channel type
-% keyword: the keyword to update to
-%           accepted values, 'c', 'pp', or {'c','pp'}
-%           'c': update the lateral keyword 'l' or 'r' to 'c'
-%           'pp': update the channel type to be preprocessed
-%           {'c','pp'}: update the channel type to be both bilateral
-%           and preprocessed.
+%   chantype_og:  [string] the name of the original channel type
+%       keyword:  the keyword to update to
+%                 accepted values, 'c', 'pp', or {'c','pp'}
+%                 'c': update the lateral keyword 'l' or 'r' to 'c'
+%                 'pp': update the channel type to be preprocessed
+%                 {'c','pp'}: update the channel type to be both bilateral
+%                 and preprocessed.
 % ● Output
-% chantype_new: the new channel type with the updated keyword
-% ● Written by
-% 2022 Teddy Chao (UCL)
+%   chantype_new: the new channel type with the updated keyword
+% ● Version History
+%   Introduced in PsPM 6.0.
+%   Written by Teddy Chao (UCL) in 2022
 
 chantype_new = chantype_og;
 chantype_og_struct = split(chantype_og, '_');

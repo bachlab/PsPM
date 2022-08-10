@@ -31,8 +31,8 @@ function varargout = pspm_jobman(varargin)
 % ● Developer's Notes
 %   This code is based on SPM8 and earlier versions by John Ashburner, 
 %   Philippe Ciuciu and Guillaume Flandin.
-% ● Introduced In
-%   PsPM 3.0
+% ● Version History
+%   Introduced in PsPM 3.0
 % ● Written By
 %   Copyright (C) 2008 Wellcome Trust Centre for Neuroimaging
 %   Copyright (C) 2008 Freiburg Brain Imaging

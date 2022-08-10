@@ -10,8 +10,8 @@ function [FIR, x] = pspm_bf_FIR(varargin)
 %   TD: sampling interval in seconds
 %    N: number of timepoints (default: 30)
 %    D: duration of bin in seconds (default: 1 s)
-% ● Introduced In
-%   PsPM 3.0
+% ● Version History
+%   Introduced in PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 

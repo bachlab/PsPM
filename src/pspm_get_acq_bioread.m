@@ -16,8 +16,8 @@ function [sts, import, sourceinfo] = pspm_get_acq_bioread(datafile, import)
 %    .marker:
 % ● Reference
 %   [1] https://github.com/njvack/bioread
-% ● Introduced in
-%   PsPM 3.1
+% ● Version History
+%   Introduced in PsPM 3.1
 % ● Written By
 %   (C) 2016 Tobias Moser (University of Zurich)
 % ● Maintained By

@@ -16,8 +16,8 @@ function theta = pspm_get_rf(fn, events, outfile, chan, options)
 %    outfile: (optional) a file to write the response function to
 %       chan: (optional) data channel (default: look for first SCR channel)
 %    options: [struct] to be passed on to pspm_dcm
-% ● Introduced In
-%   PsPM 3.0
+% ● Version History
+%   Introduced in PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 

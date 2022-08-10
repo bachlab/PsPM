@@ -6,8 +6,8 @@ function [sts, data]=pspm_get_hr(import)
 % ● Arguments
 %     data: column vector of waveform data
 %   import: import job structure with mandatory fields .data and .sr
-% ● Introduced In
-%   PsPM 3.0
+% ● Version History
+%   Introduced in PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 

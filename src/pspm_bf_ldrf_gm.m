@@ -15,9 +15,8 @@ function [bs, x] = pspm_bf_ldrf_gm(varargin)
 %        a: shape of the function
 %        b: scale of the function
 %        A: quantifier or amplitude of the function
-
-% ● Introduced In
-%   PsPM 3.1
+% ● Version History
+%   Introduced in PsPM 3.1
 % ● Written By
 %   (C) 2015 Tobias Moser (University of Zurich)
 % ● Maintained By

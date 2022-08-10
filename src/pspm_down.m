@@ -14,8 +14,8 @@ function [sts, newfile] = pspm_down(datafile, newsr, chan, options)
 % ● Output
 %   		 sts:	1 if the function runs successfully
 %    newfile:	the filename for the updated file, or cell array of filenames
-% ● Introduced In
-% 	PsPM 3.0
+% ● Version History
+%   Introduced in PsPM 3.0
 % ● Written By
 % 	(C) 2010-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 

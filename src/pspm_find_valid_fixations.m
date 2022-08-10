@@ -62,8 +62,8 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %                     pupil_missing will be automatically expanded to the
 %                     corresponding eye. E.g. pupil becomes pupil_l or pupil_r
 %                     according to the eye which is being processed.
-% ● Introduced In
-%   PsPM 4.0
+% ● Version History
+%   Introduced in PsPM 4.0
 % ● Written By
 %   (C) 2016 Tobias Moser (University of Zurich)
 % ● Maintained By

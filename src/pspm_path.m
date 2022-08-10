@@ -14,8 +14,8 @@ function path_to_folder = pspm_path(varargin)
 %
 % ● Outputs
 %   path_to_folder: Constructed absolute path
-% ● Introduced In
-%   TBA.
+% ● Version History
+%   Introduced In TBA.
 % ● Written By
 %   (C) 2019 Eshref Yozdemir (University of Zurich)
 % ● Maintained By

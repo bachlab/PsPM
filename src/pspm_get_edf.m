@@ -7,8 +7,8 @@ function [sts, import, sourceinfo] = pspm_get_edf(datafile, import)
 % ● Arguments
 %   datafile:
 %     import:  
-% ● Introduced In
-%   PsPM 3.0
+% ● Version History
+%   Introduced in PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Tobias Moser (University of Zurich)
 % ● Maintained By

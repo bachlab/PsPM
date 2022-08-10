@@ -15,8 +15,8 @@ function outfile = pspm_merge(infile1, infile2, reference, options)
 %   ├──────.overwrite: overwrite existing files by default
 %   └.marker_chan_num: 2 marker channel numbers - if undefined
 %                      or 0, first marker channel is used
-% ● Introduced In
-%   PsPM 3.0
+% ● Version History
+%   Introduced In PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (UZH, WTCN)
 % ● Maintained By

@@ -23,9 +23,9 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 %   In this function, channels related to eyes will not produce an error, if
 %   they do not exist. Instead they will produce an empty channel (a channel
 %   with NaN values only).
-% ● Introduced In
-%   PsPM 3.0
-%   Updated with PsPM 5.1.2
+% ● Version History
+%   Introduced in PsPM 3.0
+%   Updated in PsPM 5.1.2
 % ● Written By
 %   (C) 2008-2017 Tobias Moser (University of Zurich)
 % ● Maintained by

@@ -39,8 +39,8 @@ function [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, ...
 %                     successfull (sts == 1) or not (sts == -1)
 %   ┌───────────out:  Output struct
 %   └───────.channel  Id of the added channels.
-% ● Introduced In
-%   PsPM 4.0
+% ● Version History
+%   Introduced in PsPM 4.0
 % ● Written By
 %   (C) 2016 Tobias Moser (University of Zurich)
 

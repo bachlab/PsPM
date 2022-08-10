@@ -28,8 +28,8 @@ function [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,u
 %               sts:  Status determining whether the execution was
 %                     successfull (sts == 1) or not (sts == -1)
 %               out:  Id of the added channels.
-% ● Introduced In
-%   PsPM 4.0
+% ● Version History
+%   Introduced in PsPM 4.0
 % ● Written By
 %   TBA.
 

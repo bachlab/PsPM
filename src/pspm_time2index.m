@@ -14,10 +14,9 @@ function index = pspm_time2index(time, sr, varargin)
 % ● Output
 %           index:  an integer
 %                   meaning: index / data point
-% ● Introduced In
-%   PsPM 5.1.2
-% ● Written By
-%   2021 Teddy Chao (WCHN, UCL)
+% ● Version History
+%   Introduced in PsPM 5.1.2
+%   Written by 2021 Teddy Chao (WCHN, UCL)
 
 if ~isempty(varargin)
   data_length = varargin{1};

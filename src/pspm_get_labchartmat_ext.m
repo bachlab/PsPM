@@ -15,8 +15,8 @@ function [sts, import, sourceinfo] = pspm_get_labchartmat_ext(datafile, import)
 %          sts:
 %       import:
 %   sourceinfo:
-% ● Introduced In
-%   PsPM 3.0
+% ● Version History
+%   Introduced in PsPM 3.0
 % ● Developer's Notes
 %   Tue Jun 08, 2010 12:25 am from
 %   http://www.adinstruments.com/forum/viewtopic.php?f=7&t=35&p=79#p79

@@ -10,8 +10,8 @@ function [sts, b, a] = pspm_butter(order, freqratio, pass)
 %   freqratio: the cut-off frequency of the Butterworth filter to be designed
 % ● Output
 %         sts: = -1 if non-standard filters are requested
-% ● Introduced In
-%   PsPM 3.0
+% ● Version History
+%   Introduced in PsPM 3.0
 % ● Written By
 %   (C) 2009-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 % ● Maintained By

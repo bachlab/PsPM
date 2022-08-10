@@ -11,8 +11,8 @@ function [bs, x] = pspm_bf_rarf_fc(varargin)
 %             2: second type response function is generated
 %                = gamma_early + gamma_early'
 % ● Reference
-% ● Introduced In
-%   PsPM 3.1
+% ● Version History
+%   Introduced in PsPM 3.1
 % ● Written By
 %   (C) 2016 G Castegnetti, Tobias Moser (University of Zurich)
 % ● Maintained By

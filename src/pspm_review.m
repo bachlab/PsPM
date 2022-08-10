@@ -1,8 +1,8 @@
 function varargout = pspm_review(varargin)
 % ● Description
 %   pspm_review MATLAB code for pspm_review.fig
-% ● Introduced In
-%   PsPM 3.0
+% ● Version History
+%   Introduced In PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Gabriel Graeni (University of Zurich)
 % ● Maintained By

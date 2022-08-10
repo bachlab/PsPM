@@ -38,8 +38,8 @@ function [fx, dfdx, dfdP] = f_SCR(Xt, Theta, ut, in)
 %           row ... - ...: upper bound for SF
 %           row ... - ...: lower bound for SCL
 %           row ... - ...: upper bound for SCL
-% ● Introduced in
-%   PsPM 3.0
+% ● Version History
+%   Introduced in PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach & Jean Daunizeau (Wellcome Trust Centre for Neuroimaging)
 

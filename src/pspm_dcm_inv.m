@@ -92,8 +92,8 @@ function dcm = pspm_dcm_inv(model, options)
 %       Optimising a model-based approach to inferring fear learning from skin
 %       conductance responses.
 %       Journal of Neuroscience Methods, 255, 131-138.
-% ● Introduced In
-%   PsPM 3.0
+% ● Version History
+%   Introduced in PsPM 3.0
 % ● Written By
 %   (C) 2011-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 

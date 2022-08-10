@@ -1,12 +1,10 @@
 function varargout = pspm(varargin)
 % ● Description
 %   pspm.m handles the main GUI for PsPM
-% ● Last Updated in
-%   PsPM 5.1.1
-% ● Written By
-%   (C) 2008-2021 Dominik R Bach (Wellcome Centre for Human Neuroimaging)
-% ● Maintained By
-%   22-07-2021 Teddy Chao (UCL)
+% ● Version History
+%   Introduced in PsPM 1.0.
+%   Written by Dominik R Bach (Wellcome Centre for Human Neuroimaging) in 2008-2021
+%   Lastly updated in PsPM 5.1.1 by Teddy Chao (UCL) in 2021
 
 %% Initialise
 global settings

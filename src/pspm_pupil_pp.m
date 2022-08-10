@@ -114,6 +114,8 @@ function varargout = pspm_pupil_pp (fn, options)
 %   [1] Kret, Mariska E., and Elio E. Sjak-Shie. "Preprocessing pupil size
 %       data: Guidelines and code." Behavior research methods (2018): 1-7.
 %   [2]	https://github.com/ElioS-S/pupil-size
+% ● Version History
+%   Introduced In TBA
 % ● Written By
 %   (C) 2019 Eshref Yozdemir (University of Zurich)
 %       2021 Teddy Chao (UCL)

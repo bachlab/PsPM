@@ -16,8 +16,8 @@ function wavedata = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
 %        pulsedata: timestamps in ms
 %   resamplingrate: for interpolation
 %     samplingrate: to be downsampled to
-% ● Introduced In
-%   PsPM 3.0
+% ● Version History
+%   Introduced In PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 % ● Maintained By
