@@ -62,7 +62,7 @@ function outfile = pspm_import(datafile, datatype, import, options)
 % ● Output
 %           outfile:  a .mat file (or cell array of files) on the input 
 %                     file path containing scr and event info.
-% ● Version History
+% ● Copyright
 %   Introduced in PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

@@ -1,29 +1,24 @@
 function [sts] = pspm_remove_epochs(datafile, channel, epochfile, options)
-% pspm_remove_epochs sets epochs of data to NaN
+% ● Description
+%   pspm_remove_epochs sets epochs of data to NaN
 % ● Format
 %   [sts] = pspm_remove_epochs(datafile, channel, epochfile, options)
-%
 % ● Arguments
-%   datafile:                   a filename or a cell of filenames
-%   channel:                    defines which channels should be affected by
-%                               epoch removal. this argument is passed to
-%                               pspm_load_data(). therefore valid values are
-%                               defined therein.
-%   epochfile:                  a filename which defines the epoch to be set to
-%                               NaN. The epochs must be in seconds.
-%                               this parameter is passed to pspm_get_timing().
-%   timeunits:                  timeunit of the epochfile.
-%   options:
-%       .channel_action ['add'/'replace'] Defines whether the new channels
-%                       should be added or the corresponding channel
-%                       should be replaced.
-%                       (Default: 'add')
-%
-% OUTPUT:
-% ● Introduced In
-%   PsPM 4.0
-% ● Written By
-%   (C) 2016 Tobias Moser (University of Zurich)
+%    datafile:  a filename or a cell of filenames
+%     channel:  defines which channels should be affected by epoch removal. This 
+%               argument is passed to pspm_load_data(). Therefore, valid values 
+%               are defined therein.
+%   epochfile:  a filename which defines the epoch to be set to NaN. The epochs 
+%               must be in seconds. This parameter is passed to pspm_get_timing().
+%   timeunits:  timeunit of the epochfile.
+%   ┌─options:  [struct]
+%   └.channel_action:
+%               ['add'/'replace'] Defines whether the new channels should be 
+%               added or the corresponding channel should be replaced.
+%               (Default: 'add')
+% ● Copyright
+%   Introduced in PsPM 4.0
+%   Written by 2016 Tobias Moser (University of Zurich)
 
 %% Initialise
 global settings

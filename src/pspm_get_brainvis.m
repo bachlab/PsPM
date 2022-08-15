@@ -7,15 +7,13 @@ function [sts, import, sourceinfo] = pspm_get_brainvis(datafile, import)
 % ● Arguments
 %       datafile:
 %         import:
-% ● Version History
-%   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 % ● Developer's Note
 %   I did not have sample files, simply assumed that hdr.labels would be
 %   a cell array - might have to be changed in lines 38 and 41
-% ● Maintained By
-%   2022 Teddy Chao (UCL)
+% ● Copyright
+%   Introduced in PsPM 3.0
+%   Written by 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained by 2022 Teddy Chao (UCL)
 
 %% Initialise
 global settings

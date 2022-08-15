@@ -5,10 +5,9 @@ function fighandle = pspm_rev_con(model)
 %   fighandle = pspm_rev_con(modelfile)
 % ● Arguments
 %   modelfile: filename and path of modelfile
-% ● Version History
+% ● Copyright
 %   Introduced In PsPM 3.0
-% ● Written By
-%   (C) 2008-2015 Dominik R Bach (UZH, WTCN)
+%   Written by 2008-2015 Dominik R Bach (UZH, WTCN)
 
 %% Initialise
 global settings

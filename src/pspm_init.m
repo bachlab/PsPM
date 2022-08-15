@@ -20,7 +20,7 @@ function pspm_init
 %   ├─import
 %   │   └─chantypes
 %   └─lateral
-% ● Version History
+% ● Copyright
 %   Introduced in PsPM 3.1
 % ● Written By
 %   (C) 2009-2015 Dominik R Bach (WTCN, UZH)

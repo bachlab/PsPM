@@ -107,7 +107,7 @@ function output = pspm_pfm(model, options)
 %   Korn, C. W., & Bach, D. R. (2016). A solid frame for the window on 
 %   cognition: Modeling event-related pupil responses. Journal of Vision, 
 %   16(3), 28. https://doi.org/10.1167/16.3.28
-% ● Version History
+% ● Copyright
 %   Introduced In PsPM 4.2
 % ● Written By
 %   (C) 2020 Ivan Rojkov (University of Zurich)

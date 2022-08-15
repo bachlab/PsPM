@@ -12,8 +12,6 @@ function [sts, import, sourceinfo] = pspm_get_labchartmat_in(datafile, import)
 %          sts:
 %       import:
 %   sourceinfo:
-% ● Version History
-%   Introduced in PsPM 3.0
 % ● Developer's Notes
 %   * NOTE
 %     This info is inherited from the old labchart export code but I
@@ -30,6 +28,8 @@ function [sts, import, sourceinfo] = pspm_get_labchartmat_in(datafile, import)
 %     apparently (according to sample files provided by Jessica Golle, U Bern,
 %     when multiple blocks are recorded, markers are counted wrt intra-block
 %     time (26.06.2013)
+% ● Copyright
+%   Introduced in PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 % ● Maintained By

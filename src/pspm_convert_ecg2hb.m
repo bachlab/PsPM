@@ -88,7 +88,7 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, chan, options)
 %
 %   R:            Vector of the same length as the raw data, containing
 %                 information on the position of the QRS complexes.
-% ● Version History
+% ● Copyright
 %   Introduced in PsPM 3.0
 % ● Written By
 %   (C) 2013-2015 Philipp C Paulus & Dominik R Bach

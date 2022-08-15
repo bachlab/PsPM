@@ -33,7 +33,7 @@ function out = pspm_sf_dcm(scr, sr, opt)
 %   Bach DR, Daunizeau J, Kuelzow N, Friston KJ, & Dolan RJ (2011). Dynamic
 %   causal modelling of spontaneous fluctuations in skin conductance.
 %   Psychophysiology, 48, 252-57.
-% ● Version History
+% ● Copyright
 %   Introduced In PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

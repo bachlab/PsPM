@@ -11,7 +11,7 @@ function newdatafile = pspm_pp(varargin)
 %          n: number of timepoints for median filter
 %   'butter': 1st order butterworth low pass filter for SCR
 %       freq: cut off frequency (min 20 Hz)
-% ● Version History
+% ● Copyright
 %   Introduced In PsPM 3.0
 % ● Written By
 %   (C) 2009-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

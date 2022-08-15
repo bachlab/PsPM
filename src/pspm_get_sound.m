@@ -6,7 +6,7 @@ function [sts, data] = pspm_get_sound(import)
 % ● Arguments
 %   import.data: column vector of waveform data
 %     import.sr: sample rate
-% ● Version History
+% ● Copyright
 %   Introduced in PsPM 3.0
 % ● Written By
 %   (C) 2015 Tobias Moser (University of Zurich)

@@ -15,8 +15,6 @@ function [sts, import, sourceinfo] = pspm_get_labchartmat_ext(datafile, import)
 %          sts:
 %       import:
 %   sourceinfo:
-% ● Version History
-%   Introduced in PsPM 3.0
 % ● Developer's Notes
 %   Tue Jun 08, 2010 12:25 am from
 %   http://www.adinstruments.com/forum/viewtopic.php?f=7&t=35&p=79#p79
@@ -26,6 +24,8 @@ function [sts, import, sourceinfo] = pspm_get_labchartmat_ext(datafile, import)
 %   three channels recorded at 1kHz, 2kHz and 500Hz, then the tick rate would
 %   be 2kHz and the comment positions would be at 2kHz ticks.
 %   John Enlow, Windows Development Manager, ADInstruments, New Zealand
+% ● Copyright
+%   Introduced in PsPM 3.0
 % ● Written By
 %   (C) 2011-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 % ● Maintained By

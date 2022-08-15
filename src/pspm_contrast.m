@@ -19,7 +19,7 @@ function varargout = pspm_contrast(varargin)
 % ● Format
 %   pspm_contrast('CALLBACK',hObject,eventData,handles,...)
 %   pspm_contrast('Property','Value',...)
-% ● Version History
+% ● Copyright
 %   Introduced in PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

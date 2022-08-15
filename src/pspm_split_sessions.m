@@ -46,10 +46,10 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 %   Markers in the prefix and suffix intervals are ignored. Only markers
 %   between the splitpoints are considered for each session, to avoid
 %   duplication of markers.
-% ● Version History
+% ● Copyright
 %   Introduced In PsPM 5.1.1
-%   Written By (C) 2021 Dominik Bach (UCL)
-%   Updated By 2022 Teddy Chao (UCL)
+%   Written by 2021 Dominik Bach (UCL)
+%   Updated and maintained by 2022 Teddy Chao (UCL)
 
 %% 1 Initialise
 global settings

@@ -5,7 +5,7 @@ function arclen = pspm_convert_visangle2sps_core(lat, lon)
 % ● Arguments
 %   lat:
 %   lon:
-% ● Version History
+% ● Copyright
 %   Introduced in TBA.
 % ● Written By
 %   TBA.

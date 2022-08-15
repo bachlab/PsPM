@@ -45,7 +45,7 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 %   .channel_action:  ['add'/'replace'] Defines whether the new channel should
 %                     be added or the previous outputs of this function should
 %                     be replaced. (Default: 'add')
-% ● Version History
+% ● Copyright
 %   Introduced in PsPM 3.1
 % ● Written By
 %   (C) 2016 Tobias Moser (University of Zurich)

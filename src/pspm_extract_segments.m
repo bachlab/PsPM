@@ -71,12 +71,6 @@ function [sts, out] = pspm_extract_segments(varargin)
 %   │                     'none'. 'none' is the default value.
 %   └──────────────.norm: If 1, z-scores the entire data time series
 %                         (default: 0).
-% ● Version History
-%   Introduced in PsPM 4.3
-% ● Written By
-%   (C) 2008-2018 Tobias Moser (University of Zurich)
-
-% -------------------------------------------------------------------------
 % ● Developer's Notes
 %   This function uses three different flags encoded in the variable
 %   "manual_chosen", it can take the following values:
@@ -87,7 +81,9 @@ function [sts, out] = pspm_extract_segments(varargin)
 %       - manual_chosen = 2  ---> it means the function runs in manual mode
 %                                 and with raw data.
 %   Search FLAG to see where these flags are set.
-% -------------------------------------------------------------------------
+% ● Copyright
+%   Introduced in PsPM 4.3
+%   Written by 2008-2018 Tobias Moser (University of Zurich)
 
 %% Initialise
 global settings

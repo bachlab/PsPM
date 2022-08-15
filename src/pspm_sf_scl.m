@@ -10,12 +10,11 @@ function scl = pspm_sf_scl(scr, sr, options)
 % ● Outputs
 %       scl:
 % ● References
-% ● Version History
+% ● Copyright
 %   Introduced In PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-% ● Written By
-%   2022 Teddy Chao (UCL)
+%   Maintained by 2022 Teddy Chao (UCL)
 
 % initialise
 global settings

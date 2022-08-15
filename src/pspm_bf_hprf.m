@@ -8,12 +8,10 @@ function [bf, x ,p] = pspm_bf_hprf(td,p)
 %   td: time resolution in s
 %    p: '3' vs '4' basis function solution
 % ● References
-% ● Version History
+% ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-% ● Maintained By
-%   2022  Teddy Chao (UCL)
+%   Written by 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained by 2022 Teddy Chao (UCL)
 
 %% initialise
 global settings;

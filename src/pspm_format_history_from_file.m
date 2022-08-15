@@ -9,10 +9,8 @@ function [sts, hist_str] = pspm_format_history_from_file(fn)
 %   fn: [string] Path to a PsPM file
 % ● Output
 %   hist_str: Formatted table string
-% ● Version History
-%   TBA.
-% ● Written By
-%   (C) 2019 Eshref Yozdemir
+% ● Copyright
+%   Written by (C) 2019 Eshref Yozdemir
 
 [sts, infos, ~, ~] = pspm_load_data(fn);
 if sts ~= 1; return; end

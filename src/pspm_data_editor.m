@@ -23,10 +23,9 @@ function varargout = pspm_data_editor(varargin)
 %                   the graphical interface. At the moment either the
 %                   interpolated data or epochs only can be chosen as
 %                   output of the function.
-% ● Version History
+% ● Copyright
 %   Introduced in PsPM 3.1
-% ● Written By
-%   (C) 2015 Tobias Moser (University of Zurich)
+%   Written by 2015 Tobias Moser (University of Zurich)
 % ● Maintained By
 %		2021 Teddy Chao (UCL)
 

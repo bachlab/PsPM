@@ -79,10 +79,8 @@ function [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
 %       removal from concurrent fMRI-EEG recordings." Neuroimage 59.3 (2012):
 %       2073-2087.
 %   [2] http://www.amri.ninds.nih.gov/software.html
-% ● Version History
-%   Introduced in TBA.
-% ● Written By
-%   (C) 2019 Eshref Yozdemir (University of Zurich)
+% ● Copyright
+%   Written by (C) 2019 Eshref Yozdemir (University of Zurich)
 
 %% Initialise
 global settings

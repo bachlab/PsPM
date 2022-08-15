@@ -10,7 +10,7 @@ function [sts, glm] = pspm_glm_recon(modelfile)
 % ● Outputs
 %   sts: 
 %   glm:
-% ● Version History
+% ● Copyright
 %   Introduced in PsPM 3.0
 % ● Written By
 %   (C) 2008-2018 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

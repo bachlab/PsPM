@@ -14,12 +14,10 @@ function [sts, hist_str] = pspm_format_history(history_cell_array)
 % ● Arguments
 %   history_cell_array: [cell array of strings] infos.history field in a PsPM 
 %                       file
-% ● Version History
-%   TBA.
 % ● Output
 %   hist_str: Formatted table string
-% ● Written By
-%   (C) 2019 Eshref Yozdemir
+% ● Copyright
+%   Written by 2019 Eshref Yozdemir
 
 %% initialise
 global settings

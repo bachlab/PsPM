@@ -1,12 +1,9 @@
 function pspm_quit
 % ● Description
 %   pspm_quit clears settings, removes paths & closes figures
-% ● Version History
-%   Introduced In TBA.
-% ● Written By
-%   (C) 2008-2022 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-% ● Maintained By
-%   2022 Teddy Chao
+% ● Copyright
+%   Written by 2008-2022 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained by 2022 Teddy Chao (UCL)
 
 global settings
 if isempty(settings)

@@ -34,13 +34,12 @@ function out = pspm_sf_mp(scr, sr, opt)
 %             false. If set to true this will add a further field 'D' to the
 %             output struct. Default is false.
 % ● References
-% ● Version History
+% ● Copyright
 %   Introduced In PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (UZH, WTCN)
 %   last edited 18.08.2014
-% ● Maintained By
-%   2022 Teddy Chao
+%   Maintained by 2022 Teddy Chao
 
 %% Initialise
 global settings

@@ -12,7 +12,7 @@ function [sts, import, sourceinfo] = pspm_get_vario(datafile, import)
 %          sts:
 %       import:
 %   sourceinfo:
-% ● Version History
+% ● Copyright
 %   Introduced in PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

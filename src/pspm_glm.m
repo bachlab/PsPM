@@ -5,83 +5,84 @@ function glm = pspm_glm(model, options)
 % ● Format
 %   glm = pspm_glm(model, options)
 % ● Arguments
-%	┌─────model:  [struct]
-%	│ ▶︎ mandatory
-% 	├.modelfile:  a file name for the model output
-% 	├─.datafile:  a file name (single session) OR
-%	│             a cell array of file names
-% 	├───.timing:  a multiple condition file name (single session) OR
-%	│             a cell array of multiple condition file names OR
-%	│             a struct (single session) with fields .names, .onsets,
-%	│             and (optional) .durations and .pmod  OR
-%	│             a cell array of struct OR
-%	│             a struct with fields 'markerinfos', 'markervalues,
-%	│             'names' OR a cell array of struct
-% 	├.timeunits:  one of 'seconds', 'samples', 'markers', 'markervalues'
-% 	├───.window:  a scalar in seconds that specifies over which time
-%	│             window (starting with the events specified in
-%	│             model.timing) the model should be evaluated. Is only
-%	│             required if model.latency equals 'free'. Is ignored
-%	│             otherwise.
-%	│ ▶︎ optional
-% 	├.modelspec:  'scr' (default); specify the model to be used.
-%	│             See pspm_init, defaults.glm() which modelspecs are possible
-%	│             with glm.
-% 	├─.modality:  specify the modality to be processed.
-%	│             When model.modality is set to be sps, the model.channel
-%	│             should be set among sps_l, sps_r, or defaultly sps.
-% 	├───────.bf:  basis function/basis set; modality specific default
-%	│             with subfields .fhandle (function handle or string) and
-%	│             .args (arguments, first argument sampling interval will
-%	│             be added by pspm_glm). The optional subfield .shiftbf = n
-%	│             indicates that the onset of the basis function precedes
-%	│             event onsets by n seconds (default: 0: used for
-%	│             interpolated data channels)
-% 	├──.channel:  channel number or channel type. if a channel type is
-%	│             specified the LAST channel matching the given type will
-%	│             be used. The rationale for this is that, in general channels
-%	│             later in the channel list are preprocessed/filtered versions
-%	│             of raw channels.
-%	│             SPECIAL: if 'pupil' is specified the function uses the
-%	│             last pupil channel returned by 
-%	│             <a href="matlab:help pspm_load_data">pspm_load_data</a>.
-%	│             pspm_load_data loads 'pupil' channels according to a specific
-%	│             precedence order described in its documentation. In a nutshell,
-%	│             it prefers preprocessed channels and channels from the best eye
-%	│             to other pupil channels.
-%	│             SPECIAL: for the modality "sps", the model.channel
-%	│             accepts only "sps_l", "sps_r", or "sps".
-%	│             DEFAULT: last channel of the specified modality
-%	│             (for PSR this is 'pupil')
-% 	├─────.norm:  normalise data; default 0
-% 	├───.filter:  filter settings; modality specific default
-% 	├──.missing:  allows to specify missing (e. g. artefact) epochs in the
-%	│             data file. See pspm_get_timing for epoch definition;
-%	│             specify a cell array for multiple input files. This
-%	│             must always be specified in SECONDS.
-%	│             Default: no missing values
-% 	├─.nuisance:  allows to specify nuisance regressors. Must be a file
-%	│             name; the file is either a .txt file containing the
-%	│             regressors in columns, or a .mat file containing the
-%	│             regressors in a matrix variable called R. There must be
-%	│             as many values for each column of R as there are data
-%	│             values. SCRalyze will call these regressors R1, R2, ...
-% 	├──.latency:  allows to specify whether latency should be 'fixed'
-%	│             (default) or should be 'free'. In 'free' models an
-%	│             additional dictionary matching algorithm will try to
-%	│             estimate the best latency. Latencies will then be added
-%	│             at the end of the output. In 'free' models the fiel
-%	│             model.window is MANDATORY and single basis functions
-%	│             are allowed only.
-% 	└.centering:  if set to 0 the function would not perform the
+%   ┌─────model:  [struct]
+%   │ ▶︎ mandatory
+%   ├.modelfile:  a file name for the model output
+%   ├─.datafile:  a file name (single session) OR
+%   │             a cell array of file names
+%   ├───.timing:  a multiple condition file name (single session) OR
+%   │             a cell array of multiple condition file names OR
+%   │             a struct (single session) with fields .names, .onsets,
+%   │             and (optional) .durations and .pmod  OR
+%   │             a cell array of struct OR
+%   │             a struct with fields 'markerinfos', 'markervalues,
+%   │             'names' OR a cell array of struct
+%   ├.timeunits:  one of 'seconds', 'samples', 'markers', 'markervalues'
+%   ├───.window:  a scalar in seconds that specifies over which time
+%   │             window (starting with the events specified in
+%   │             model.timing) the model should be evaluated. Is only
+%   │             required if model.latency equals 'free'. Is ignored
+%   │             otherwise.
+%   │ ▶︎ optional
+%   ├.modelspec:  'scr' (default); specify the model to be used.
+%   │             See pspm_init, defaults.glm() which modelspecs are possible
+%   │             with glm.
+%   ├─.modality:  specify the modality to be processed.
+%   │             When model.modality is set to be sps, the model.channel
+%   │             should be set among sps_l, sps_r, or defaultly sps.
+%   ├───────.bf:  basis function/basis set; modality specific default
+%   │             with subfields .fhandle (function handle or string) and
+%   │             .args (arguments, first argument sampling interval will
+%   │             be added by pspm_glm). The optional subfield .shiftbf = n
+%   │             indicates that the onset of the basis function precedes
+%   │             event onsets by n seconds (default: 0: used for
+%   │             interpolated data channels)
+%   ├──.channel:  channel number or channel type. if a channel type is
+%   │             specified the LAST channel matching the given type will
+%   │             be used. The rationale for this is that, in general channels
+%   │             later in the channel list are preprocessed/filtered versions
+%   │             of raw channels.
+%   │             SPECIAL: if 'pupil' is specified the function uses the
+%   │             last pupil channel returned by 
+%   │             <a href="matlab:help pspm_load_data">pspm_load_data</a>.
+%   │             pspm_load_data loads 'pupil' channels according to a specific
+%   │             precedence order described in its documentation. In a nutshell,
+%   │             it prefers preprocessed channels and channels from the best eye
+%   │             to other pupil channels.
+%   │             SPECIAL: for the modality "sps", the model.channel
+%   │             accepts only "sps_l", "sps_r", or "sps".
+%   │             DEFAULT: last channel of the specified modality
+%   │             (for PSR this is 'pupil')
+%   ├─────.norm:  normalise data; default 0
+%   ├───.filter:  filter settings; modality specific default
+%   ├──.missing:  allows to specify missing (e. g. artefact) epochs in the
+%   │             data file. See pspm_get_timing for epoch definition;
+%   │             specify a cell array for multiple input files. This
+%   │             must always be specified in SECONDS.
+%   │             Default: no missing values
+%   ├─.nuisance:  allows to specify nuisance regressors. Must be a file
+%   │             name; the file is either a .txt file containing the
+%   │             regressors in columns, or a .mat file containing the
+%   │             regressors in a matrix variable called R. There must be
+%   │             as many values for each column of R as there are data
+%   │             values. SCRalyze will call these regressors R1, R2, ...
+%   ├──.latency:  allows to specify whether latency should be 'fixed'
+%   │             (default) or should be 'free'. In 'free' models an
+%   │             additional dictionary matching algorithm will try to
+%   │             estimate the best latency. Latencies will then be added
+%   │             at the end of the output. In 'free' models the fiel
+%   │             model.window is MANDATORY and single basis functions
+%   │             are allowed only.
+%   └.centering:  if set to 0 the function would not perform the
 %                 mean centering of the convolved X data. For example, to
 %                 invert SPS model, set centering to 0. Default: 1
-%	┌───options:
-%	│ ▶︎ optional
-% 	├──.overwrite:  overwrite existing model output; default 0
-% 	├──.marker_chan_num:
-%	│             marker channel number; default last marker channel.
-% 	└──.exclude_missing:
+%   ┌───options:
+%   │ ▶︎ optional
+%   ├──.overwrite:
+%   │             overwrite existing model output; default 0
+%   ├──.marker_chan_num:
+%   │             marker channel number; default last marker channel.
+%   └──.exclude_missing:
 %                 marks trials during which NaN percentage exceeds
 %                 a cutoff value. Requires two subfields:
 %                 'segment_length' (in s after onset) and 'cutoff'
@@ -137,7 +138,7 @@ function glm = pspm_glm(model, options)
 %   [5] SEBR GLM: Khemka S, Tzovara A, Gerster S, Quednow B and Bach DR (2017)
 %       Modeling Startle Eyeblink Electromyogram to Assess
 %       Fear Learning. Psychophysiology
-% ● Version History
+% ● Copyright
 %   Introduced in PsPM 3.1
 % ● Written By
 %   (C) 2008-2016 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

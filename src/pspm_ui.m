@@ -5,10 +5,9 @@ function pspm_ui(hObject,handles,window)
 %   hObject: UI controllor of the specific GUI window.
 %   handles: UI controllor of the specific GUI window.
 %    window: the name of the specific GUI window.
-% ● Version History
+% ● Copyright
 %   Introduced in PsPM 5.1
-%   Written by Teddy Chao (UCL) in 2021
-%   Lastly updated by Teddy Chao (UCL) in 2022
+%   Written and maintained by 2021-2022 Teddy Chao (UCL)
 
 %% Initialise
 global settings

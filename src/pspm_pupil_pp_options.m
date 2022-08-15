@@ -100,7 +100,7 @@ function [sts, default_settings] = pspm_pupil_pp_options()
 %                             interpolate over. Sections that were interpolated
 %                             over distances larger than this value will be
 %                             set to NaN. (Default: 250 ms)
-% ● Version History
+% ● Copyright
 %   Introduced In TBA.
 % ● Written By
 %   (C) 2019 Eshref Yozdemir (University of Zurich)

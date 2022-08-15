@@ -20,7 +20,7 @@ function [sts, import, sourceinfo]  = pspm_get_wdq_n(datafile, import)
 %   information) as the ActiveX control elements do, but the function is
 %   independent of cpu architecture. Which means it does not require a 32-bit
 %   Matlab-Version.
-% ● Version History
+% ● Copyright
 %   Introduced in PsPM 3.0
 % ● Written By
 %   (C) 2012 - 2015 Tobias Moser (University of Zurich)

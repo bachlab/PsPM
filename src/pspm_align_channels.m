@@ -9,12 +9,10 @@ function [sts, data, duration] = pspm_align_channels(data, induration)
 % ● Arguments
 %         data: [struct] the input data to be processed, in PsPM data format
 %   induration: [double] the duration of the input data
-% ● Version History
+% ● Copyright
 %   Introduced in PsPM 3.1
-% ● Written By
-%   (C) 2008-2016 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-% ● Maintained By
-%   2022 Teddy Chao (UCL)
+%   Written by 2008-2016 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained by 2022 Teddy Chao (UCL)
 
 %% Initialise
 global settings;

@@ -39,9 +39,9 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
 %          newdatafile: a filename for the updated file, a cell array of
 %                       filenames, a struct with fields .data and .infos or a
 %                       cell array of structs
-% ● Version History
+% ● Copyright
 %   Introduced In PsPM 3.0
-%   Written By (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Written by 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% 1 Pre-settings
 % 1.1 Initialise

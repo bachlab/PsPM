@@ -10,7 +10,7 @@ function [sts, data] = pspm_get_scr(import)
 %   .transfer:  transfer parameters, either a struct with fields .Rs, .c, 
 %               .offset, .recsys, or a file containing variables 'Rs' 'c', 
 %               'offset', 'recsys'.
-% ● Version History
+% ● Copyright
 %   Introduced in PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

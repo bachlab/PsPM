@@ -24,7 +24,7 @@ function [sts, out] = pspm_convert_gaze_distance(fn, target, from, width, height
 %                     successfull (sts == 1) or not (sts == -1)
 %          ┌─────out  [struct] Output
 %          └.channel: Id of the added channels.
-% ● Version History
+% ● Copyright
 %   Introduced in PsPM 4.3.1
 % ● Written By
 %   (C) 2020 Sam Maxwell (University College London)

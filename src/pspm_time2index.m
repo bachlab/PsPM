@@ -4,19 +4,16 @@ function index = pspm_time2index(time, sr, varargin)
 % ● Format
 %   index = pspm_time2index(time, sr, varargin)
 % ● Arguments
-%            time:  a vector or matrix 
-%                   meaning: time stamps; unit: second
-%              sr:  a numerical value
-%                   meaning: sampling rate / frequency
-%   varargin
-%     data_length:  an integer
-%                   meaning: the length of data, by which data points should not exceed
+%           time: [vector or matrix] time stamps in second.
+%             sr: [numeric] sampling rate or frequency
+%   ┌───varargin: optional variables
+%   └data_length: [interger] the length of data, by which the length of data 
+%                 points should not exceed
 % ● Output
-%           index:  an integer
-%                   meaning: index / data point
-% ● Version History
+%          index: [integer] index or data point
+% ● Copyright
 %   Introduced in PsPM 5.1.2
-%   Written by 2021 Teddy Chao (WCHN, UCL)
+%   Written by 2021 Teddy Chao (UCL)
 
 if ~isempty(varargin)
   data_length = varargin{1};

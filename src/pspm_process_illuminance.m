@@ -29,7 +29,7 @@ function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 %             out:  has same size as ldata and contains either the
 %                   processed data or contains the path to the .mat file
 %                   where the data has been stored to
-% ● Version History
+% ● Copyright
 %   Introduced In PsPM 3.1
 % ● Written By
 %   (C) 2015 Tobias Moser, Christoph Korn (University of Zurich)

@@ -17,7 +17,7 @@ function [sts, data] = pspm_get_marker(import)
 %   └.markerinfo: optional, struct, returns marker timestamps in seconds
 % 	  ├────.name:
 %     └───.value:
-% ● Version History
+% ● Copyright
 %   Introduced in TBA.
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

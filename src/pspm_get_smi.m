@@ -63,10 +63,8 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
 %  ├──────.units: Units of the channel.
 %  ├─────────.sr: Sampling rate.
 %  └────.chan_id: Channel index of the imported channel in the raw data columns.
-% ● Version History
-%   Introduced in TBA.
-% ● Written By
-%   (C) 2019 Eshref Yozdemir (University of Zurich)
+% ● Copyright
+%   Written by 2019 Eshref Yozdemir (University of Zurich)
 % ● Maintained By
 %   2022 Teddy Chao (UCL)
 

@@ -52,7 +52,7 @@ function [sts, outdata] = pspm_interpolate(indata, options)
 %         outdata:  Has the same format as indata but contains the interpolated 
 %                   data (or the filename(s) where the interpolated data can be 
 %                   found).
-% ● Version History
+% ● Copyright
 %   Introduced in PsPM 3.0
 % ● Written By
 %   (C) 2015 Tobias Moser (University of Zurich)

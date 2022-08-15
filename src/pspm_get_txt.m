@@ -33,7 +33,7 @@ function [sts, import, sourceinfo] = pspm_get_txt(datafile, import)
 %               exclude starting from the left. To be used it should be 
 %               specified on the first import cell, e.g. 
 %               import{1}.exclude_columns == 2. Default: 0.
-% ● Version History
+% ● Copyright
 %   Introduced in PsPM 3.0
 % ● Written By
 %   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

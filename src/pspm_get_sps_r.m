@@ -10,10 +10,9 @@ function [sts, data] = pspm_get_sps_r(import)
 %       .sr: sample rate
 %    .units:
 %    .range:
-% ● Written By
+% ● Copyright
 %   TBA.
-% ● Maintained By
-%   2022 Teddy Chao (UCL)
+%   Maintained by 2022 Teddy Chao (UCL)
 
 % initialise
 global settings
