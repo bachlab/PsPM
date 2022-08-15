@@ -10,68 +10,69 @@ function [sts, out] = pspm_scr_pp(datafile, options, chan)
 % ● Arguments
 %      datafile:  a file name, or cell array of file names
 %   [Optional]
-%	  ┌───options:  A struct with algorithm specific settings.
-%		├──────.min:  Minimum value in microsiemens (default: 0.05).
-%		├──────.max:  Maximum value in microsiemens (default: 60).
-%		├────.slope:  Maximum slope in microsiemens per sec (default: 10).
-%		├.missing_epochs_filename:
+%   ┌───options:  A struct with algorithm specific settings.
+%   ├──────.min:  Minimum value in microsiemens (default: 0.05).
+%   ├──────.max:  Maximum value in microsiemens (default: 60).
+%   ├────.slope:  Maximum slope in microsiemens per sec (default: 10).
+%   ├.missing_epochs_filename:
 %   │             If provided will create a .mat file saving the epochs.
-%		│					    The path can be specified, but if not the file will be saved
+%   │             The path can be specified, but if not the file will be saved
 %   │             in the current folder. If saving to the missing epochs file,
 %   │             no data in the original datafile will be changed. For 
 %   │             instance, abc will create abc.mat
-%		├.deflection_threshold:
+%   ├.deflection_threshold:
 %   │             Define an threshold in original data units for a slope to pass
 %   │             to be considered in the filter. This is useful, for example,
 %   │             with oscillatory wave data due to limited A/D bandwidth.
-%		│					    The slope may be steep due to a jump between voltages but we 
+%   │             The slope may be steep due to a jump between voltages but we 
 %   │             likely do not want to consider this to be filtered.
-%		│					    A value of 0.1 would filter oscillatory behaviour with 
+%   │             A value of 0.1 would filter oscillatory behaviour with 
 %   │             threshold less than 0.1v but not greater. Default: 0.1
-%		├.data_island_threshold:
+%   ├.data_island_threshold:
 %   │             A float in seconds to determine the maximum length of data 
 %   │             between NaN epochs.
-%		│					    Islands of data shorter than this threshold will be removed.
-%		│					    Default: 0 s - no effect on filter
-%		├.expand_epochs:
+%   │             Islands of data shorter than this threshold will be removed.
+%   │             Default: 0 s - no effect on filter
+%   ├.expand_epochs:
 %   │             A float in seconds to determine by how much data on the flanks
 %   │             of artefact epochs will be removed. Default: 0.5 s
-%		├.clipping_step_size:
+%   ├.clipping_step_size:
 %   │             A numerical value specifying the step size in moving average
 %   │             algorithm for detecting clipping. Default: 2
-%		├.clipping_threshold:
+%   ├.clipping_threshold:
 %   │             A float between 0 and 1 specifying the proportion of local
 %   │             maximum in a step. Default: 0.1
-%		├.change_data:
+%   ├.change_data:
 %   │             A numerical value to choose whether to change the data or not
-%		│					    Default: 1 (true)
-%		├.channel_action:
+%   │             Default: 1 (true)
+%   ├.channel_action:
 %   │             Accepted values: 'add'/'replace'/'withdraw'
 %   │             Defines whether the new channel should be added, the previous
 %   │             outputs of this function should be replaced, or new data 
 %   │             should be withdrawn. Default: 'add'.
 %   └─────.chan:  Number of SCR channel. Default: first SCR channel
 % ● Outputs
-%	          sts:  Status indicating whether the program is running as expected.
-%	          out:  The path to the  output of the final processed data.
-%						      Can be the changed to the data with epochs removed if
+%           sts:  Status indicating whether the program is running as expected.
+%           out:  The path to the  output of the final processed data.
+%                 Can be the changed to the data with epochs removed if
 %                 options.change_data is set to be positive.
 % ● Internal Functions
-%	  filter_to_epochs
+%   filter_to_epochs
 %                 Return the start and end points of epoches (2D array) by the 
 %                 given filter (1D array).
 % ● Key Variables of Internal Functions
-%	  filt 					A filtering array consisting of 0 and 1 for selecting data 
+%   filt          A filtering array consisting of 0 and 1 for selecting data 
 %                 whose y and slope are both within the range of interest.
-%	  filt_epochs		A filtering array consisting of 0 and 1 for selecting epochs.
-%	  filt_range 		A filtering array consisting of 0 and 1 for selecting data 
+%   filt_epochs   A filtering array consisting of 0 and 1 for selecting epochs.
+%   filt_range    A filtering array consisting of 0 and 1 for selecting data 
 %                 within the range of interest.
-%	  filt_slope 		A filtering array consisting of 0 and 1 for selecting data 
+%   filt_slope    A filtering array consisting of 0 and 1 for selecting data 
 %                 whose slope is within the range of interest.
 % ● Copyright
 %   Introduced In PsPM 5.1
 %   Written in 2009-2017 by Tobias Moser (University of Zurich)
-%              2020 by Samuel Maxwell & Dominik Bach (UCL)
+%   Updated in 2020 by Samuel Maxwell (UCL)
+%                      Dominik R Bach (UCL)
 %              2021 by Teddy Chao (UCL)
 %   Maintained in 2022 by Teddy Chao (UCL)
 

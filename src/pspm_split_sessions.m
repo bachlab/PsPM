@@ -48,7 +48,7 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 %   duplication of markers.
 % ● Copyright
 %   Introduced in PsPM 5.1.1
-%   Written in 2021 by Dominik Bach (UCL)
+%   Written in 2021 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Updated and maintained in 2022 by Teddy Chao (UCL)
 
 %% 1 Initialise

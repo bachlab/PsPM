@@ -15,10 +15,10 @@ function [sts, data] = pspm_get_marker(import)
 %   │						  accepted values: 'ascending', 'descending', 'both'
 %   │						  default: 'both'
 %   └.markerinfo: optional, struct, returns marker timestamps in seconds
-% 	  ├────.name:
+%     ├────.name:
 %     └───.value:
 % ● Copyright
-%   Introduced in TBA.
+%   Introduced in PsPM version?.
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy Chao (UCL)
 
