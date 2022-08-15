@@ -19,8 +19,7 @@ function [sts, data] = pspm_get_marker(import)
 %     └───.value:
 % ● Copyright
 %   Introduced in TBA.
-% ● Written By
-%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 % ● Maintained by
 %		2022 Teddy Chao (UCL)
 

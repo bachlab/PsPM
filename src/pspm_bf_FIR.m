@@ -12,8 +12,7 @@ function [FIR, x] = pspm_bf_FIR(varargin)
 %    D: duration of bin in seconds (default: 1 s)
 % ● Copyright
 %   Introduced in PsPM 3.0
-%   Written by 2008-2015 Dominik R Bach 
-%   (Wellcome Trust Centre for Neuroimaging)
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Check input arguments
 if nargin==0

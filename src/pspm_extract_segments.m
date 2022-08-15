@@ -83,7 +83,7 @@ function [sts, out] = pspm_extract_segments(varargin)
 %   Search FLAG to see where these flags are set.
 % ● Copyright
 %   Introduced in PsPM 4.3
-%   Written by 2008-2018 Tobias Moser (University of Zurich)
+%   Written in 2008-2018 by Tobias Moser (University of Zurich)
 
 %% Initialise
 global settings

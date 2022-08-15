@@ -22,10 +22,8 @@ function pspm_init
 %   └─lateral
 % ● Copyright
 %   Introduced in PsPM 3.1
-% ● Written By
-%   (C) 2009-2015 Dominik R Bach (WTCN, UZH)
-% ● Maintained By
-%   Updated 2022 Teddy Chao (UCL)
+%   Written in 2009-2015 by Dominik R Bach (WTCN, UZH)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 clc
 

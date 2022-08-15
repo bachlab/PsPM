@@ -90,8 +90,7 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, chan, options)
 %                 information on the position of the QRS complexes.
 % ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2013-2015 Philipp C Paulus & Dominik R Bach
+%   Written in 2013-2015 Philipp C Paulus & Dominik R Bach
 %   (Technische Universitaet Dresden, University of Zurich)
 
 %% Initialise

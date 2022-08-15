@@ -47,8 +47,7 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 %                     be replaced. (Default: 'add')
 % ● Copyright
 %   Introduced in PsPM 3.1
-% ● Written By
-%   (C) 2016 Tobias Moser (University of Zurich)
+%   Written in 2016 by Tobias Moser (University of Zurich)
 
 %% initialise
 global settings

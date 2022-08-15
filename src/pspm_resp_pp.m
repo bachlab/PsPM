@@ -21,8 +21,8 @@ function sts = pspm_resp_pp(fn, sr, chan, options)
 %                     Defines whether the new channels should be added or the
 %                     corresponding channel should be replaced.
 % ● Version History
-%   Introduced In PsPM 3.0
-%   Written by 2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Introduced in PsPM 3.0
+%   Written in 2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

@@ -30,8 +30,7 @@ function [sts, import, sourceinfo] = pspm_get_labchartmat_in(datafile, import)
 %     time (26.06.2013)
 % ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 % ● Maintained By
 %   2022 Teddy Chao (UCL)
 

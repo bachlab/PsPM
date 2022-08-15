@@ -14,8 +14,8 @@ function [bs, x] = pspm_bf_psrf_erl(varargin)
 %   Behavior Research Methods Instruments & Computers, 25, 16-26.
 % ● Copyright
 %   Introduced in PsPM 3.1
-%   Written by 2018 Tobias Moser (University of Zurich)
-%   Maintained by 2022 Teddy Chao (UCL)
+%   Written in 2018 by Tobias Moser (University of Zurich)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% initialise
 global settings

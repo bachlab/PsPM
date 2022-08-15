@@ -19,8 +19,8 @@ function ow_final = pspm_overwrite(varargin)
 % ● Outputs
 %   ow_final  option of overwriting determined by pspm_overwrite
 % ● Copyright
-%   Introduced In PsPM 6.0
-%   Written by 2022 Teddy Chao (UCL)
+%   Introduced in PsPM 6.0
+%   Written in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

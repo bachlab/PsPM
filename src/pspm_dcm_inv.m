@@ -94,8 +94,7 @@ function dcm = pspm_dcm_inv(model, options)
 %       Journal of Neuroscience Methods, 255, 131-138.
 % ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2011-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Written in 2011-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

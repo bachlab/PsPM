@@ -10,8 +10,7 @@ function [sts, data]=pspm_get_blink_r(import)
 %   └─────.sr:  sample rate
 % ● Copyright
 %   Introduced in PsPM 4.0.2
-% ● Written By
-%   (C) 2018 Laure Ciernik
+%   Written in 2018 by Laure Ciernik
 
 %% Initialise
 global settings

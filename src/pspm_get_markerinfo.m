@@ -28,8 +28,7 @@ function [sts, markerinfo] = pspm_get_markerinfo(fn, options)
 %     └─.element:
 % ● Copyright
 %   Introduced in PsPM 6.0
-% ● Written By
-%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 % ● Maintained By
 %   2022  Teddy Chao (UCL)
 

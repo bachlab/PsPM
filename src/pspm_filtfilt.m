@@ -25,13 +25,12 @@ function y = pspm_filtfilt(b,a,x)
 %   [2] Fredrik Gustafsson, Determining the initial states in forward-backward
 %       filtering, IEEE Transactions on Signal Processing, pp. 988--992,
 %       April 1996, Volume 44, Issue 4
-% ● Copyright
-%   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 % ● References
 %   L. Shure, T. Krauss, F. Gustafsson
 %   Copyright 1988-2004 The MathWorks, Inc.
+% ● Copyright
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

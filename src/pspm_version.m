@@ -13,7 +13,7 @@ function [sts, v] = pspm_version(varargin)
 %           checks if there is a new pspm version available.
 % ● Copyright
 %   Introduced in PsPM 3.1
-%   Written by (C) 2009-2016 Tobias Moser (University of Zurich)
+%   Written in 2009-2016 by Tobias Moser (University of Zurich)
 
 %% start
 % do not include pspm_init, because pspm_version is called by pspm_init!!!

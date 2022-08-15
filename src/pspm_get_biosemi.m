@@ -17,10 +17,8 @@ function [sts, import, sourceinfo] = pspm_get_biosemi(datafile, import)
 %     └────.name:
 % ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-% ● Maintained By
-%   2022 Teddy Chao
+%   Written in 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

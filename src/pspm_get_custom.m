@@ -1,4 +1,4 @@
-function [sts, data]=pspm_get_custom(import)
+function [sts, data] = pspm_get_custom(import)
 % ● Description
 %   pspm_get_custom is a common function for importing custom data in this case
 %   the function was made for the blink-data in the pspm_get_eyelink function
@@ -9,8 +9,7 @@ function [sts, data]=pspm_get_custom(import)
 %     import.sr: sample rate
 % ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2009-2014 Tobias Moser (University of Zurich)
+%   Written in 2009-2014 by Tobias Moser (University of Zurich)
 
 %% Initialise
 global settings

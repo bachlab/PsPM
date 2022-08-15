@@ -47,11 +47,9 @@ function [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm
 %       influence of gaze position on pupil size measurements." Behavior
 %       Research Methods 48.2 (2016): 510-527.
 % ● Copyright
-%   Introduced In TBA.
-% ● Written By
-%   (C) 2019 Eshref Yozdemir (University of Zurich)
-% ● Maintained By
-%   2022 Teddy Chao (UCL)
+%   Introduced in PsPM version?.
+%   Written in 2019 by Eshref Yozdemir (University of Zurich)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 % initialise
 global settings

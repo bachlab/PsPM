@@ -35,11 +35,9 @@ function [sts, import, sourceinfo] = pspm_get_txt(datafile, import)
 %               import{1}.exclude_columns == 2. Default: 0.
 % ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   (c) 2020 Ivan Rojkov (UZH) - added dsv support
-% ● Maintained By
-%   2022 Teddy Chao (UCL)
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%              2020 Ivan Rojkov (UZH) - added dsv support
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

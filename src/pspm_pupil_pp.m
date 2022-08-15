@@ -115,12 +115,10 @@ function varargout = pspm_pupil_pp (fn, options)
 %       data: Guidelines and code." Behavior research methods (2018): 1-7.
 %   [2]	https://github.com/ElioS-S/pupil-size
 % ● Copyright
-%   Introduced In TBA
-% ● Written By
-%   (C) 2019 Eshref Yozdemir (University of Zurich)
-%       2021 Teddy Chao (UCL)
-% ● Maintained By
-%       2022 Teddy Chao (UCL)
+%   Introduced in PsPM version ?
+%   Written in 2019 by Eshref Yozdemir (University of Zurich)
+%              2021 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% 1 Initialise
 global settings

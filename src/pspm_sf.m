@@ -51,9 +51,9 @@ function outfile = pspm_sf(model, options)
 %   the output also contains a field .time that contains the inversion time
 %   in ms (for DCM and MP)
 % ● Copyright
-%   Introduced In PsPM 3.0
-%   Written by 2008-2015 Dominik R Bach (WCHN, UCL and UZH)
-%   Maintained by 2022 Teddy Chao (UCL)
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (WCHN, UCL and UZH)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% 1 Initialise
 global settings

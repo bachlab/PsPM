@@ -2,11 +2,9 @@ function varargout = pspm_review(varargin)
 % ● Description
 %   pspm_review MATLAB code for pspm_review.fig
 % ● Copyright
-%   Introduced In PsPM 3.0
-% ● Written By
-%   (C) 2008-2015 Gabriel Graeni (University of Zurich)
-% ● Maintained By
-%   2022 Teddy Chao (UCL)
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Gabriel Graeni (University of Zurich)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

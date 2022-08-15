@@ -10,10 +10,8 @@ function [sts, data]=pspm_get_emg(import)
 %      .sr: sample rate
 % ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2009-2014 Tobias Moser (University of Zurich)
-% ● Maintained By
-%   2022 Teddy Chao (UCL)
+%   Written in 2009-2014 by Tobias Moser (University of Zurich)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

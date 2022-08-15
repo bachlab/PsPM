@@ -11,10 +11,8 @@ function [sts, data] = pspm_get_saccade_l(import)
 %    .units:
 % ● Copyright
 %   Introduced in PsPM 4.0.2
-% ● Written By
-%   (C) 2018 Laure Ciernik
-% ● Maintained By
-%   2022 Teddy Chao (UCL)
+%   Written in 2018 by Laure Ciernik
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 % initialise
 global settings

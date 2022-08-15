@@ -1,7 +1,7 @@
 function pspm_show_forum
 % ● Copyright
 %   Introduced In PsPM 5.1
-%   Written By (C) 2020 Teddy Chao (UCL)
+%   Written in 2020 by Teddy Chao (UCL)
 
 global settings
 if isempty(settings)

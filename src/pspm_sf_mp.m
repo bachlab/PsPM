@@ -35,11 +35,9 @@ function out = pspm_sf_mp(scr, sr, opt)
 %             output struct. Default is false.
 % ● References
 % ● Copyright
-%   Introduced In PsPM 3.0
-% ● Written By
-%   (C) 2008-2015 Dominik R Bach (UZH, WTCN)
-%   last edited 18.08.2014
-%   Maintained by 2022 Teddy Chao
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (UZH, WTCN) last edited 18.08.2014
+%   Maintained in 2022 by Teddy Chao
 
 %% Initialise
 global settings

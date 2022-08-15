@@ -12,8 +12,7 @@ function [sts, b, a] = pspm_butter(order, freqratio, pass)
 %         sts: = -1 if non-standard filters are requested
 % ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2009-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Written in 2009-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 % ● Maintained By
 %   2022 Teddy Chao (UCL)
 

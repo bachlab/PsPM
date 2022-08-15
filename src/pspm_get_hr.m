@@ -1,4 +1,4 @@
-function [sts, data]=pspm_get_hr(import)
+function [sts, data] = pspm_get_hr(import)
 % ● Description
 %   pspm_get_hr is a common function for importing heart rate data
 % ● Format
@@ -8,8 +8,8 @@ function [sts, data]=pspm_get_hr(import)
 %   import: import job structure with mandatory fields .data and .sr
 % ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

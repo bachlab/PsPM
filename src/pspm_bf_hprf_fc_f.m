@@ -10,7 +10,7 @@ function [fx, x, p] = pspm_bf_hprf_fc_f(td, soa, p)
 %   p(4): A
 % ● Copyright
 %   Introduced in PsPM 3.0
-%   Written by 2015 Tobias Moser (University of Zurich)
+%   Written in 2015 by Tobias Moser (University of Zurich)
 
 %% initialise
 global settings;

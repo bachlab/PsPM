@@ -11,8 +11,8 @@ function [information, arguments] = pspm_help(func_name)
 %     arguments:  the arguments of the specific function
 % ● Copyright
 %   Introduced in PsPM 6.0
-% ● Written and Maintained By
-%   (C) 2022 Teddy Chao (UCL)
+%   Written and maintained in 2022 by Teddy Chao (UCL)
+
 global settings
 if isempty(settings)
   pspm_init;

@@ -54,8 +54,7 @@ function [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
 %     .con for contrasts
 % ● Copyright
 %   Introduced In PsPM 3.0
-% ● Written By
-%   (C) 2008-2015 Dominik R Bach (WTCN, UZH)
+%   Written in 2008-2015 by Dominik R Bach (WTCN, UZH)
 % ● Maintained By
 %   2022 Teddy Chao (UCL)
 

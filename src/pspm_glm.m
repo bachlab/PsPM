@@ -140,10 +140,8 @@ function glm = pspm_glm(model, options)
 %       Fear Learning. Psychophysiology
 % ● Copyright
 %   Introduced in PsPM 3.1
-% ● Written By
-%   (C) 2008-2016 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-% ● Maintained By
-%   2022 Teddy Chao (UCL)
+%   Written in 2008-2016 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

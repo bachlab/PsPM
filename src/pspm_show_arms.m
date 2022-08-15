@@ -2,9 +2,9 @@ function pspm_show_arms
 % ● Developer's Notes
 %   Happy Easter!
 % ● Copyright
-%   Introduced In PsPM 3.0
-%   Written By (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained By 2022 Teddy Chao (UCL)
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 global settings
 if isempty(settings)

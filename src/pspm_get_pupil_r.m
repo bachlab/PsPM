@@ -11,10 +11,8 @@ function [sts, data]=pspm_get_pupil_r(import)
 %    .units:
 % ● Copyright
 %   Introduced in PsPM 3.1
-% ● Written By
-%   (C) 2015 Tobias Moser (University of Zurich)
-% ● Maintained By
-%   2022 Teddy Chao (UCL)
+%   Written in 2015 by Tobias Moser (University of Zurich)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 % initialise
 global settings

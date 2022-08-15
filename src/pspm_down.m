@@ -16,8 +16,7 @@ function [sts, newfile] = pspm_down(datafile, newsr, chan, options)
 %    newfile:	the filename for the updated file, or cell array of filenames
 % ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-% 	(C) 2010-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Written in 2010-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

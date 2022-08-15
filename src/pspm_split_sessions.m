@@ -47,9 +47,9 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 %   between the splitpoints are considered for each session, to avoid
 %   duplication of markers.
 % ● Copyright
-%   Introduced In PsPM 5.1.1
-%   Written by 2021 Dominik Bach (UCL)
-%   Updated and maintained by 2022 Teddy Chao (UCL)
+%   Introduced in PsPM 5.1.1
+%   Written in 2021 by Dominik Bach (UCL)
+%   Updated and maintained in 2022 by Teddy Chao (UCL)
 
 %% 1 Initialise
 global settings

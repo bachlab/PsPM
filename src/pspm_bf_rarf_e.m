@@ -15,7 +15,7 @@ function [bs, x] = pspm_bf_rarf_e(varargin)
 %   ISSN 0165-0270, http://dx.doi.org/10.1016/j.jneumeth.2016.06.001.
 % ● Copyright
 %   Introduced in PsPM 3.1
-%   Written by 2016 Tobias Moser (University of Zurich)
+%   Written in 2016 by Tobias Moser (University of Zurich)
 
 %% initialise
 global settings

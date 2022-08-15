@@ -80,7 +80,7 @@ function [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
 %       2073-2087.
 %   [2] http://www.amri.ninds.nih.gov/software.html
 % ● Copyright
-%   Written by (C) 2019 Eshref Yozdemir (University of Zurich)
+%   Written in 2019 by Eshref Yozdemir (University of Zurich)
 
 %% Initialise
 global settings

@@ -14,8 +14,7 @@ function [ft, p, t] = pspm_bf_scrf_f(td, p)
 %   conductance responses. International Journal of Psychophysiology, 75, 349-356.
 % ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2009-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Written in 2009-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% initialise
 global settings;

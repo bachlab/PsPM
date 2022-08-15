@@ -23,8 +23,8 @@ function pspm_rev_dcm(dcm, job, sn, trl)
 %   trl:
 % ● Copyright
 %   Introduced In PsPM 3.0
-%   Written by 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained by 2022 Teddy Chao (UCL)
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

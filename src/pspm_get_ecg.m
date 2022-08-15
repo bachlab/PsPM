@@ -8,8 +8,7 @@ function [sts, data]=pspm_get_ecg(import)
 %   import: import job structure with mandatory fields .data and .sr
 % ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

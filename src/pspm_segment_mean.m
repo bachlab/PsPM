@@ -22,9 +22,8 @@ function [sts, out] = pspm_segment_mean(segments, options)
 %   └────overwrite: If specified, file specified in options.newfile, will be 
 %                   overwritten, if it already exists.
 % ● Copyright
-%   Introduced In PsPM 3.1
-% ● Written By
-%   (C) 2008-2016 Tobias Moser (University of Zurich)
+%   Introduced in PsPM 3.1
+%   Written in 2008-2016 by Tobias Moser (University of Zurich)
 % ● Maintained By
 %   2022 Teddy Chao (UCL)
 

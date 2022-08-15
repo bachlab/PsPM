@@ -12,8 +12,8 @@ function [bs, x] = pspm_bf_psrf_fc(varargin)
 %   fear learning
 % ● Copyright
 %   Introduced in PsPM 3.1
-%   Written by 2016 Tobias Moser (University of Zurich)
-%   Maintained by 2022 Teddy Chao (UCL)
+%   Written in 2016 by Tobias Moser (University of Zurich)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% initialise
 global settings

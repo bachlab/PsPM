@@ -72,8 +72,7 @@ function [sts, infos] = pspm_find_sounds(file, options)
 % └──────.channel: number of added chan, when options.channel_action ~= 'none'
 % ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2015 Samuel Gerster (University of Zurich)
+%   Written in 2015 by Samuel Gerster (University of Zurich)
 
 %% Initialise
 global settings

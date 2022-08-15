@@ -11,7 +11,8 @@ function [sts, data] = pspm_get_sps_l(import)
 %    .units:
 %    .range:
 % ● Copyright
-%   Maintained by 2022 Teddy Chao (UCL)
+%   Introduced in PsPM version?
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 % initialise
 global settings

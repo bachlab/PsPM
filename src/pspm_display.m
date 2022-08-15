@@ -5,10 +5,8 @@ function varargout = pspm_display(varargin)
 %   Accepts input: 'filepath/filename'
 % ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2013 Philipp C Paulus (Technische Universitaet Dresden)
-% ● Maintained By
-%   2021 Teddy Chao (WCHN, UCL)
+%   Written in 2013 Philipp C Paulus (Technische Universitaet Dresden)
+%   Maintained in 2021 by Teddy Chao (WCHN, UCL)
 
 %% Initialise
 global settings

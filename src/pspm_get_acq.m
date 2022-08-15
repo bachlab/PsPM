@@ -18,10 +18,8 @@ function [sts, import, sourceinfo] = pspm_get_acq(datafile, import)
 %    .marker:
 % ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2011-2014 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-% ● Maintained By
-%   2022 Teddy Chao (UCL)
+%   Written in 2011-2014 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

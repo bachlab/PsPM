@@ -23,8 +23,7 @@ function [sts, outdata, newsr] = pspm_prepdata(data, filt)
 %   pspm_sf, pspm_pulse_convert, pspm_dcm, pspm_pp.
 % ● Copyright
 %   Introduced In PsPM 3.0
-% ● Written By
-%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 % ● Maintained By
 %   2022 Teddy Chao (UCL)
 

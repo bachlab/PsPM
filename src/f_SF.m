@@ -19,7 +19,7 @@ function [fx, dfdx, dfdP] = f_SF(Xt, Theta, ut, in)
 %           row 2 - number of SF
 % ● Copyright
 %   Introduced in PsPM 3.0
-%   Written by 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% initialise
 global settings;

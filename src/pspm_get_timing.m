@@ -58,10 +58,8 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %       for 'param'
 % ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2009-2015 Dominik R Bach (WTCN, UZH)
-% ● Maintained By
-%   2022 Teddy Chao (UCL)
+%   Written in 2009-2015 by Dominik R Bach (WTCN, UZH)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

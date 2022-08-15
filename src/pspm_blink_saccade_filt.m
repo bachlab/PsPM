@@ -28,7 +28,7 @@ function [sts, out_channel] = pspm_blink_saccade_filt(fn, discard_factor, option
 %                  Defines whether corrected data should be added or the
 %                  corresponding preprocessed channel should be replaced.
 % ● Copyright
-%   Written by 2020 Eshref Yozdemir (University of Zurich)
+%   Written in 2020 by Eshref Yozdemir (University of Zurich)
 
 
 global settings;

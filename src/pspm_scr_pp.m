@@ -70,12 +70,10 @@ function [sts, out] = pspm_scr_pp(datafile, options, chan)
 %                 whose slope is within the range of interest.
 % ● Copyright
 %   Introduced In PsPM 5.1
-% ● Written By
-%   2009-2017 Tobias Moser (University of Zurich)
-%   2020 Samuel Maxwell & Dominik Bach (UCL)
-%   2021 Teddy Chao (UCL)
-% ● Maintained By
-%   2022 Teddy Chao (UCL)
+%   Written in 2009-2017 by Tobias Moser (University of Zurich)
+%              2020 by Samuel Maxwell & Dominik Bach (UCL)
+%              2021 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

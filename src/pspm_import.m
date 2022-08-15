@@ -5,101 +5,97 @@ function outfile = pspm_import(datafile, datatype, import, options)
 % ● Format
 %   outfile = pspm_import(datafile, datatype, import, options)
 % ● Arguments
-%           datafile:  file containing the scr data, or cell array of files.
-%          datatype:  supported datatypes are defined in pspm_init (see 
-%                     manual).
-%            import:  a cell array of struct with one job (imported 
-%                     channel) per cell.
-%       import.type:  (mandatory for all data types and each job) 
-%                     not all data types support all channel types.
-%         import.sr:  (mandatory for some data types and each 
-%                     channel) sampling rate for waveforms or time units in 
-%                     second for event channels, in Hz.
-%    import.channel:  (mandatory for some data types and each channel) 
-%                     channel or column number in the original file.
-%      import.flank:  [optional, string]
-%                     The flank option specifies which 
-%                     of the rising edge (ascending), falling edge 
-%                     (descending), both edges or their mean (middle) of a 
-%                     marker impulse should be imported into the marker 
-%                     channel;
-%                     The flank option is applicable for 
-%                     continuous channels only and accepts 
-%                     'ascending', 'descending', or 'both';
-%                     The default value is 'both' that means to select the 
-%                     middle of the impulse;
-%                     Some exceptions are Eyelink, ViewPoint and
-%                     SensoMotoric Instruments data, for which the default
-%                     are respectively ''both'', ''ascending'', 
-%                     ''ascending''; 
-%                     If the numbers of rising and falling edges differ, 
-%                     PsPM will throw an error.
-%   import.transfer:  [optional, string] name of a .mat file containing 
-%                     values for the transfer function, OR a struct array  
-%                     containing the values OR 'none', when no conversion 
-%                     is required (c and optional Rs and offset; See 
-%                     pspm_transfer_function for more information).
-%  import.eyelink_trackdist: 
-%                     The distance between eyetracker and the participants'
-%                     eyes; If is a numeric value the data in
-%                     a pupil channel obtained with an eyelink eyetracking 
-%                     system are converted from arbitrary units to distance 
-%                     unit; If value is 'none' the conversion is disabled;
-%                     (only for Eyelink imports).
-%  import.distance_unit:
-%                     Unit in which the eyelink_trackdist is measured;
-%                     If eyelink_trackdist contains a numeric value, the 
-%                     default value is 'mm' otherwise the distance unit is 
-%                     ''; Accepted values include 'mm', 'cm', 
-%                     'm', and 'inches'.
-%    import.denoise:  for marker channels in CED spike format (recorded
-%                     as 'level'), filters out markers duration longer than 
-%                     the value given here (in ms).
-%  import.delimiter:  for delimiter separated values, value used as 
-%                     delimiter for file read.
-%           options:  a struct.
-% options.overwrite:  overwrite existing files by default.
+%              datafile:  file containing the scr data, or cell array of files.
+%              datatype:  supported datatypes are defined in pspm_init (see 
+%                         manual).
+%   ┌────────────import:  a cell array of struct with one job (imported channel)
+%   │                     per cell.
+%   ├─────────────.type:  (mandatory for all data types and each job) not all 
+%   │                     data types support all channel types.
+%   ├───────────────.sr:  (mandatory for some data types and each channel) 
+%   │                     sampling rate for waveforms or time units in second
+%   │                     for event channels, in Hz.
+%   ├──────────.channel:  (mandatory for some data types and each channel) 
+%   │                     channel or column number in the original file.
+%   ├────────────.flank:  [optional, string]
+%   │                     The flank option specifies which 
+%   │                     of the rising edge (ascending), falling edge 
+%   │                     (descending), both edges or their mean (middle) of a 
+%   │                     marker impulse should be imported into the marker 
+%   │                     channel;
+%   │                     The flank option is applicable for 
+%   │                     continuous channels only and accepts 
+%   │                     'ascending', 'descending', or 'both';
+%   │                     The default value is 'both' that means to select the 
+%   │                     middle of the impulse;
+%   │                     Some exceptions are Eyelink, ViewPoint and
+%   │                     SensoMotoric Instruments data, for which the default
+%   │                     are respectively ''both'', ''ascending'', 
+%   │                     ''ascending''; 
+%   │                     If the numbers of rising and falling edges differ, 
+%   │                     PsPM will throw an error.
+%   ├─────────.transfer:  [optional, string] name of a .mat file containing 
+%   │                     values for the transfer function, OR a struct array  
+%   │                     containing the values OR 'none', when no conversion 
+%   │                     is required (c and optional Rs and offset; See 
+%   │                     pspm_transfer_function for more information).
+%   ├.eyelink_trackdist:  The distance between eyetracker and the participants'
+%   │                     eyes; If is a numeric value the data in
+%   │                     a pupil channel obtained with an eyelink eyetracking 
+%   │                     system are converted from arbitrary units to distance 
+%   │                     unit; If value is 'none' the conversion is disabled;
+%   │                     (only for Eyelink imports).
+%   ├────.distance_unit:  Unit in which the eyelink_trackdist is measured;
+%   │                     If eyelink_trackdist contains a numeric value, the 
+%   │                     default value is 'mm' otherwise the distance unit is 
+%   │                     ''; Accepted values include 'mm', 'cm', 
+%   │                     'm', and 'inches'.
+%   ├──────────.denoise:  for marker channels in CED spike format (recorded
+%   │                     as 'level'), filters out markers duration longer than 
+%   │                     the value given here (in ms).
+%   └────────.delimiter:  for delimiter separated values, value used as 
+%                         delimiter for file read.
+%   ┌───────────options:  a struct.
+%   └────────.overwrite:  overwrite existing files by default.
 % ● Output
-%           outfile:  a .mat file (or cell array of files) on the input 
-%                     file path containing scr and event info.
-% ● Copyright
-%   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-% ● Maintained By
-%       2022      Teddy Chao (UCL)
+%               outfile:  a .mat file (or cell array of files) on the input 
+%                         file path containing scr and event info.
 % ● Developer notes
 %   Structure of PsPM import
-%   pspm_import is a general function for handling of import jobs. It checks
-%   the import job, calls a datatype-specific function to extract data from
-%   the file, then calls channel-specific functions to convert the data,
-%   writes them to file, and checks the consistency of the output file using
-%   pspm_load_data.
+%     pspm_import is a general function for handling of import jobs. It checks
+%     the import job, calls a datatype-specific function to extract data from
+%     the file, then calls channel-specific functions to convert the data,
+%     writes them to file, and checks the consistency of the output file using
+%     pspm_load_data.
 %   Guideline for new data type functions:
-% - functions are named as 'pspm_get_datatype' and called
+%   - functions are named as 'pspm_get_datatype' and called
 %     [sts, import, sourceinfo] = pspm_get_datatype(filename, import)
-% - data type must be described in pspm_init - see there for details
-% - the function needs to take an import job and add, or each job, fields
-% -- .data - the actual data
-% -- .sr   - the sample rate for this channel (only if enabled in pspm_init)
-% - optional fields
-% -- .marker - for marker channels (see pspm_get_marker)
-% -- .markerinfo - same
-% -- .minfreq - minimum frequency for pulse channels
-% -- .units - if data units are defined by the recording software
-% - sourceinfo contains information on the source file, with field
+%   - data type must be described in pspm_init - see there for details
+%   - the function needs to take an import job and add, or each job, fields
+%   -- .data - the actual data
+%   -- .sr   - the sample rate for this channel (only if enabled in pspm_init)
+%   - optional fields
+%   -- .marker - for marker channels (see pspm_get_marker)
+%   -- .markerinfo - same
+%   -- .minfreq - minimum frequency for pulse channels
+%   -- .units - if data units are defined by the recording software
+%   - sourceinfo contains information on the source file, with field
 %        -- .chan - a cell of string descriptions of the imported source
 %                    channels, e. g. names, or numbers
 %       and any optional fields that will be added to infos.source (e. g.
 %           recording date & time, and others)
 %   Guideline for new channel functions:
-% - functions are named as 'pspm_get_channeltype' and called
+%   - functions are named as 'pspm_get_channeltype' and called
 %      [sts, data] = pspm_get_channeltype(import)
-% - see pspm_load_data for the required structure of 'data'
+%   - see pspm_load_data for the required structure of 'data'
 %   Notes for multiple blocks:
-% file formats that support multiple block storage within one file can
-% return cell arrays import{1:blkno} and sourceinfo{1:blkno}; SCRalyze will
-% save individual files for each block, with a filename 'pspm_fn_blk0x.mat'
+%   file formats that support multiple block storage within one file can
+%   return cell arrays import{1:blkno} and sourceinfo{1:blkno}; SCRalyze will
+%   save individual files for each block, with a filename 'pspm_fn_blk0x.mat'
+% ● Copyright
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% 1 Initialise
 global settings

@@ -7,7 +7,7 @@ function pspm_ui(hObject,handles,window)
 %    window: the name of the specific GUI window.
 % ● Copyright
 %   Introduced in PsPM 5.1
-%   Written and maintained by 2021-2022 Teddy Chao (UCL)
+%   Written and maintained in 2021-2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

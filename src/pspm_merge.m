@@ -17,8 +17,7 @@ function outfile = pspm_merge(infile1, infile2, reference, options)
 %                      or 0, first marker channel is used
 % ● Copyright
 %   Introduced In PsPM 3.0
-% ● Written By
-%   (C) 2008-2015 Dominik R Bach (UZH, WTCN)
+%   Written in 2008-2015 by Dominik R Bach (UZH, WTCN)
 % ● Maintained By
 %   2022 Teddy Chao (UCL)
 

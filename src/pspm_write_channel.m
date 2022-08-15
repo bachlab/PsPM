@@ -32,7 +32,10 @@ function [sts, infos] = pspm_write_channel(fn, newdata, channel_action, options)
 %                   channels.
 % ● Copyright
 %   Introduced in PsPM 3.0
-%   Written by (C) 2015 Dominik Bach, Samuel Gerster, Tobias Moser (UZH)
+%   Written in 2015 by Dominik R Bach (University of Zurich)
+%                      Samuel Gerster (University of Zurich)
+%                      Tobias Moser (University of Zurich)
+%   Updated in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

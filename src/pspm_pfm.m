@@ -109,8 +109,7 @@ function output = pspm_pfm(model, options)
 %   16(3), 28. https://doi.org/10.1167/16.3.28
 % ● Copyright
 %   Introduced In PsPM 4.2
-% ● Written By
-%   (C) 2020 Ivan Rojkov (University of Zurich)
+%   Written in 2020 Ivan Rojkov (University of Zurich)
 % ● Maintained By
 %   2022 Teddy Chao (UCL)
 

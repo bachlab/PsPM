@@ -11,7 +11,7 @@ function pspm_ui_initialisation(hObject, handles, window)
 %            accepts: 'main', 'display', and 'review'
 % ● Copyright
 %   Introduced in PsPM 5.1.2
-%   Written and maintained by 2021 Teddy Chao (UCL)
+%   Written and maintained in 2021 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

@@ -8,8 +8,7 @@ function [sts, data] = pspm_get_sound(import)
 %     import.sr: sample rate
 % ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2015 Tobias Moser (University of Zurich)
+%   Written in 2015 by Tobias Moser (University of Zurich)
 
 %% initialise
 global settings

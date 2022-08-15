@@ -101,11 +101,9 @@ function [sts, default_settings] = pspm_pupil_pp_options()
 %                             over distances larger than this value will be
 %                             set to NaN. (Default: 250 ms)
 % ● Copyright
-%   Introduced In TBA.
-% ● Written By
-%   (C) 2019 Eshref Yozdemir (University of Zurich)
-% ● Maintained By
-%   2022 Teddy Chao (UCL)
+%   Introduced In PsPM version?.
+%   Written in 2019 by Eshref Yozdemir (University of Zurich)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 global settings
 if isempty(settings)

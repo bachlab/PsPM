@@ -33,8 +33,7 @@ function sts = pspm_exp(modelfile, options)
 %                       Otherwise this argument is ignored.
 % ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2009-2015 Dominik R Bach (WTCN, UZH)
+%   Written in 2009-2015 by Dominik R Bach (WTCN, UZH)
 
 %% Initialise
 global settings

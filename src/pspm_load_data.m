@@ -71,9 +71,8 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 %   data.header.chantype = 'trigger' is allowed for backward compatibility;
 %       this feature will be removed in the future
 % ● Copyright
-%   Introduced In PsPM 6.0
-% ● Written By
-%   (C) 2008-2021 Dominik R. Bach (Wellcome Centre for Human Neuroimaging, UCL)
+%   Introduced in PsPM 6.0
+%   Written in 2008-2021 by Dominik R. Bach (Wellcome Centre for Human Neuroimaging, UCL)
 %     2022 Teddy Chao (UCL)
 
 %% 1 Initialise

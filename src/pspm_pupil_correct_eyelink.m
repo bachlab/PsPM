@@ -90,11 +90,9 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 %       influence of gaze position on pupil size measurements." Behavior
 %       Research Methods 48.2 (2016): 510-527.
 % ● Copyright
-%   Introduced In PsPM 5.1.2
-% ● Written By
-%   (C) 2019 Eshref Yozdemir (University of Zurich)
-% ● Maintained By
-%   2021, 2022 Teddy Chao (UCL)
+%   Introduced in PsPM 5.1.2
+%   Written in 2019 by Eshref Yozdemir (University of Zurich)
+%   Maintained in 2021-2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

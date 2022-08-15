@@ -11,10 +11,8 @@ function [sts data] = pspm_downsample(data, freqratio)
 %         sts: -1 if the frequency ratio is not an integer
 % ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-% ● Maintained by
-%   2022 Teddy Chao
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao
 
 %% 1 Initialise
 global settings

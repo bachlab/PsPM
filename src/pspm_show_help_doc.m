@@ -1,7 +1,7 @@
 function pspm_show_help_doc
 % ● Copyright
 %   Introduced In PsPM 5.1
-%   Written By 2021 Teddy Chao (UCL)
+%   Written in 2021 by Teddy Chao (UCL)
 
 global settings
 if isempty(settings)

@@ -11,7 +11,7 @@ function [sts, import, sourceinfo] = pspm_get_csv(datafile, import)
 %             A delimiter of ',' is applied to all import channels
 % ● Copyright
 %   Introduced in PsPM 5.0
-%   Written by 2008-2020 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Written in 2008-2020 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 import = cellfun(@(c) setfield(c, 'delimiter', ','), import, 'UniformOutput', false);
 [sts, import, sourceinfo] = pspm_get_txt(datafile, import);

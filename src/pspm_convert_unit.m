@@ -13,8 +13,7 @@ function [sts, converted] = pspm_convert_unit(data, from, to)
 %         Valid units are currently mm, cm, dm, m, km, in, inches
 % ● Copyright
 %   Introduced in PsPM 4.0
-% ● Written By
-%   (C) 2018 Tobias Moser (University of Zurich)
+%   Written in 2018 by Tobias Moser (University of Zurich)
 
 %% Initialise
 global settings

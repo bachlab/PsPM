@@ -18,7 +18,7 @@ function [sts] = pspm_remove_epochs(datafile, channel, epochfile, options)
 %               (Default: 'add')
 % ● Copyright
 %   Introduced in PsPM 4.0
-%   Written by 2016 Tobias Moser (University of Zurich)
+%   Written in 2016 by Tobias Moser (University of Zurich)
 
 %% Initialise
 global settings

@@ -9,8 +9,7 @@ function [sts, import, sourceinfo] = pspm_get_mat(datafile, import)
 %             [2] a datapoints x channel matrix
 % ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

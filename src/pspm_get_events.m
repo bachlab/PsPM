@@ -15,8 +15,7 @@ function [sts, import] = pspm_get_events(import)
 %       import: returns event timestamps in seconds in import.data
 % ● Copyright
 %   Introduced in PsPM 3.0
-% ● Written By
-%   (C) 2013-2015 Dominik R Bach & Tobias Moser (University of Zurich)
+%   Written in 2013-2015 by Dominik R Bach & Tobias Moser (University of Zurich)
 
 %% Initialise
 global settings

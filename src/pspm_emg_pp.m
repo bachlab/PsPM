@@ -32,7 +32,7 @@ function [sts, output] = pspm_emg_pp(fn, options)
 %       Psychophysiology
 % ● Copyright
 %   Introduced in PsPM 3.1
-%   Written by (C) 2009-2016 Tobias Moser (University of Zurich)
+%   Written in 2009-2016 by Tobias Moser (University of Zurich)
 
 %% Initialise
 global settings

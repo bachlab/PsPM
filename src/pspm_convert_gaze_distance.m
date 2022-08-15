@@ -26,8 +26,7 @@ function [sts, out] = pspm_convert_gaze_distance(fn, target, from, width, height
 %          └.channel: Id of the added channels.
 % ● Copyright
 %   Introduced in PsPM 4.3.1
-% ● Written By
-%   (C) 2020 Sam Maxwell (University College London)
+%   Written in 2020 by Sam Maxwell (University College London)
 
 %% Initialise
 global settings

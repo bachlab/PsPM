@@ -25,9 +25,8 @@ function varargout = pspm_data_editor(varargin)
 %                   output of the function.
 % ● Copyright
 %   Introduced in PsPM 3.1
-%   Written by 2015 Tobias Moser (University of Zurich)
-% ● Maintained By
-%		2021 Teddy Chao (UCL)
+%   Written in 2015 by Tobias Moser (University of Zurich)
+%   Maintained in 2021 by Teddy Chao (UCL)
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;

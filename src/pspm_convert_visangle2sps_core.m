@@ -6,11 +6,7 @@ function arclen = pspm_convert_visangle2sps_core(lat, lon)
 %   lat:
 %   lon:
 % ● Copyright
-%   Introduced in TBA.
-% ● Written By
-%   TBA.
-% ● Maintained By
-%   2022 Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 if sum(isnan(lon)) > 0 || sum(isnan(lat)) > 0
   warning('ID:invalid_input', ...

@@ -12,8 +12,8 @@ function [sts, import, sourceinfo] = pspm_get_brainvis(datafile, import)
 %   a cell array - might have to be changed in lines 38 and 41
 % ● Copyright
 %   Introduced in PsPM 3.0
-%   Written by 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained by 2022 Teddy Chao (UCL)
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings
