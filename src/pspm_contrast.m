@@ -22,8 +22,7 @@ function varargout = pspm_contrast(varargin)
 % ● Copyright
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-% ● Maintained By
-%   2022 Teddy Chao
+%   Maintained in 2022 by Teddy Chao
 
 %% Initialise
 global settings

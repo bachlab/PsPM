@@ -18,8 +18,7 @@ function outfile = pspm_merge(infile1, infile2, reference, options)
 % ● Copyright
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (UZH, WTCN)
-% ● Maintained By
-%   2022 Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

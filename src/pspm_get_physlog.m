@@ -37,8 +37,7 @@ function [sts, import, sourceinfo] = pspm_get_physlog(datafile, import)
 % ● Copyright
 %   Introduced in PsPM 3.1
 %   Written in 2008-2015 by Tobias Moser (University of Zurich)
-% ● Maintained By
-%   2022 Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

@@ -32,8 +32,7 @@ function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 % ● Copyright
 %   Introduced In PsPM 3.1
 %   Written in 2015 by Tobias Moser, Christoph Korn (University of Zurich)
-% ● Maintained By
-%   2022 Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 % initialise
 global settings

@@ -27,8 +27,7 @@ function [ sts, outinfo ] = pspm_convert_ppu2hb( fn,chan,options )
 % ● Copyright
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Samuel Gerster and Tobias Moser (University of Zurich)
-% ● Maintained By
-%		2022  Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings
