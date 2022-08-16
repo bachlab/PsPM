@@ -6,6 +6,12 @@ permalink: /news/
 
 # News
 
+### 16.07.2022
+
+PsPM 6.0.0 released -- including developer mode, gaze signal post processing, specific lateral or combined pupil data processing, improved file overwriting behaviour, supporting PPG data loading, various bug fixes and improvements for functions, and more. Thanks to everybody involved!
+
+---
+
 ### 26.07.2021
 
 PsPM 5.1.1 released -- including bugfixes for non-linear model, splitting sessions, and skin conductance response processing, the improved user interface for windows, macOS and Linux, and a new basis function template for data vector. Thanks to everybody involved!

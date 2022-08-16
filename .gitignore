@@ -10,3 +10,4 @@ LICENSE.txt
 README.md
 .jekyll-cache/
 _site/
+.DS_Store
