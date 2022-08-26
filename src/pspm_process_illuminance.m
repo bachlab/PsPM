@@ -1,44 +1,40 @@
 function [sts, out] = pspm_process_illuminance(ldata, sr, options)
-% pspm_process_illuminance is used to process raw lux data and transfer
-% it into two nuisance regressors (dilation and constriction) for glm
-%
-% Pupil size models were developed with pupil size data recorded in
-% diameter values. Therefore pupil size data analyzed using these models
-% should also be in diameter.
-%
-% [sts, out] = pspm_process_illuminance(ldata, sr, options)
-%   Inputs:
-%       ldata:      illuminance data as (cell of) 1x1 double or filename
-%       sr:         sample rate in Hz of the input data
-%       options:    struct with optional settings
-%           .transfer   params for the transfer function
-%
-%           .bf         settings for the basis functions
-%               .duration       duration of the basis functions in s
-%               .offset         offset in s
-%               .dilation       options for the dilation basis function
-%                   .fhandle        function handle to the dilation
-%                                   response function
-%               .constriction
-%                   .fhandle        function handle to the constriction
-%                                   response function
-%           .fn         [filename] if specified ldata{i,j} will be saved to
-%                       a file with filename options.fn{i,j} into the
-%                       variable 'R'
-%
-%           .overwrite  [true/FALSE] specifies if file specified with
-%                       options.fn should be overwritten or not.
-%
-%   Outputs:
-%           sts:    status
-%           out:    has same size as ldata and contains either the
+% ● Description
+%   pspm_process_illuminance is used to process raw lux data and transfer
+%   it into two nuisance regressors (dilation and constriction) for glm
+% ● Developer's Notes
+%   Pupil size models were developed with pupil size data recorded in
+%   diameter values. Therefore pupil size data analyzed using these models
+%   should also be in diameter.
+% ● Format
+%   [sts, out] = pspm_process_illuminance(ldata, sr, options)
+% ● Arguments
+%           ldata:  illuminance data as (cell of) 1x1 double or filename
+%              sr:  sample rate in Hz of the input data
+%   ┌─────options:  struct with optional settings
+%   ├───.transfer:  params for the transfer function
+%   ├─────────.bf:  settings for the basis functions
+%   ├───.duration:  duration of the basis functions in s
+%   ├─────.offset:  offset in s
+%   ├───.dilation:  options for the dilation basis function
+%   ├────.fhandle:  function handle to the dilation response function.
+%   ├.constriction:
+%   ├────.fhandle:  function handle to the constriction response function.
+%   │         .fn:  [filename] if specified ldata{i,j} will be saved to a file
+%   │               with filename options.fn{i,j} into the variable 'R'.
+%   └──.overwrite:  [true/FALSE] specifies if file specified with options.fn
+%                   should be overwritten or not.
+% ● Outputs
+%             sts:  status
+%             out:  has same size as ldata and contains either the
 %                   processed data or contains the path to the .mat file
 %                   where the data has been stored to
-%__________________________________________________________________________
-% PsPM 3.1
-% (C) 2015 Tobias Moser, Christoph Korn (University of Zurich)
+% ● Copyright
+%   Introduced In PsPM 3.1
+%   Written in 2015 by Tobias Moser, Christoph Korn (University of Zurich)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
-%% Initialise
+% initialise
 global settings
 if isempty(settings)
   pspm_init;

@@ -1,33 +1,24 @@
 function [sts] = pspm_remove_epochs(datafile, channel, epochfile, options)
-% pspm_remove_epochs sets epochs of data to NaN
-%
-%
-% FORMAT:
+% ● Description
+%   pspm_remove_epochs sets epochs of data to NaN
+% ● Format
 %   [sts] = pspm_remove_epochs(datafile, channel, epochfile, options)
-%
-% ARGUMENTS:
-%   datafile:                   a filename or a cell of filenames
-%   channel:                    defines which channels should be affected by
-%                               epoch removal. this argument is passed to
-%                               pspm_load_data(). therefore valid values are
-%                               defined therein.
-%   epochfile:                  a filename which defines the epoch to be set to
-%                               NaN. The epochs must be in seconds.
-%                               this parameter is passed to pspm_get_timing().
-%   timeunits:                  timeunit of the epochfile.
-%   options:
-%       .channel_action ['add'/'replace'] Defines whether the new channels
-%                       should be added or the corresponding channel
-%                       should be replaced.
-%                       (Default: 'add')
-%
-% OUTPUT:
-%__________________________________________________________________________
-% PsPM 4.0
-% (C) 2016 Tobias Moser (University of Zurich)
-
-% $Id: pspm_find_data_epochs.m 410 2017-01-30 11:14:06Z tmoser $
-% $Rev: 410 $
+% ● Arguments
+%    datafile:  a filename or a cell of filenames
+%     channel:  defines which channels should be affected by epoch removal. This 
+%               argument is passed to pspm_load_data(). Therefore, valid values 
+%               are defined therein.
+%   epochfile:  a filename which defines the epoch to be set to NaN. The epochs 
+%               must be in seconds. This parameter is passed to pspm_get_timing().
+%   timeunits:  timeunit of the epochfile.
+%   ┌─options:  [struct]
+%   └.channel_action:
+%               ['add'/'replace'] Defines whether the new channels should be 
+%               added or the corresponding channel should be replaced.
+%               (Default: 'add')
+% ● Copyright
+%   Introduced in PsPM 4.0
+%   Written in 2016 by Tobias Moser (University of Zurich)
 
 %% Initialise
 global settings

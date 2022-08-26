@@ -1,15 +1,25 @@
 function [sts, import, sourceinfo] = pspm_get_acq(datafile, import)
-% pspm_get_acq is the main function for import of biopac/acknowledge files
-% FORMAT: [sts, import, sourceinfo] = pspm_get_acq(datafile, import);
-%
-% this function uses the conversion routine acqread.m version 2.0 (2007-08-21)
-% by Sebastien Authier and Vincent Finnerty at the University of Montreal
-% which supports all files created with Windows/PC versions of
-% AcqKnowledge (3.9.0 or below), BSL (3.7.0 or below), and BSL PRO
-% (3.7.0 or below).
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2011-2014 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Description
+%   pspm_get_acq is the main function for import of biopac/acknowledge files
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_acq(datafile, import);
+%   this function uses the conversion routine acqread.m version 2.0 (2007-08-21)
+%   by Sebastien Authier and Vincent Finnerty at the University of Montreal
+%   which supports all files created with Windows/PC versions of
+%   AcqKnowledge (3.9.0 or below), BSL (3.7.0 or below), and BSL PRO
+%   (3.7.0 or below).
+% ● Arguments
+%   datafile:
+%     import:
+%   .channel:
+%      .type:
+%        .sr:
+%      .data:
+%    .marker:
+% ● Copyright
+%   Introduced in PsPM 3.0
+%   Written in 2011-2014 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

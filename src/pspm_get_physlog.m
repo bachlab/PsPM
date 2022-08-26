@@ -1,37 +1,43 @@
 function [sts, import, sourceinfo] = pspm_get_physlog(datafile, import)
-% DESCRIPTION:
+% ● Description
 %   pspm_get_physlog loads data from physlog files using the
 %   import_physlog() function. It maps the output of the called function
 %   according to the settings passed in the 'import' parameter.
-%
+% ● Developer's Notes
 %   Special about this function is that channel numbers for event/marker
 %   channels correspond to the different event types scanphyslog files.
-%   Possible event types are:
-%
-%           Chan-Nr:   Type:
-%           --------   -----
-%                 1    Trigger ECG
-%                 2    Trigger PPG
-%                 3    Trigger Respiration
-%                 4    Measurement ('slice onset')
-%                 5    start of scan sequence
-%                 6    end of scan sequence
-%                 7    Trigger external
-%                 8    Calibration
-%                 9    Manual start
-%                 10   Reference ECG Trigger
-%
-%   Channel types are:
-%           Chan-Nr:   Type:
-%           --------   -----
-%                1-4   ECG channel
-%                  5   PPG channel
-%                  6   Resp channel
-%
-% FORMAT: [sts, import, sourceinfo] = pspm_get_physlog(datafile, import);
-%__________________________________________________________________________
-% PsPM 3.1
-% (C) 2008-2015 Tobias Moser (University of Zurich)
+%   * Possible event types are:
+%     Chan-Nr:   Type:
+%     --------   -----
+%           1    Trigger ECG
+%           2    Trigger PPG
+%           3    Trigger Respiration
+%           4    Measurement ('slice onset')
+%           5    start of scan sequence
+%           6    end of scan sequence
+%           7    Trigger external
+%           8    Calibration
+%           9    Manual start
+%          10    Reference ECG Trigger
+%   * Channel types are:
+%     Chan-Nr:   Type:
+%     --------   -----
+%         1-4   ECG channel
+%           5   PPG channel
+%           6   Resp channel
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_physlog(datafile, import);
+% ● Arguments
+%     datafile:
+%       import:
+% ● Outputs
+%          sts:
+%       import:
+%   sourceinfo:
+% ● Copyright
+%   Introduced in PsPM 3.1
+%   Written in 2008-2015 by Tobias Moser (University of Zurich)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

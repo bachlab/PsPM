@@ -1,17 +1,21 @@
 function [sts, import] = pspm_get_events(import)
-% pspm_get_events processes events for different event channel types
-% FORMAT: [sts, data] = pspm_get_events(import)
-%               import: import job structure with mandatory fields
-%                  .data
-%                  .marker ('timestamps', 'continuous')
-%                  .sr (timestamps: timeunits in seconds, continuous: sample rate in 1/seconds)
-%                  and optional field
-%                  .flank ('ascending', 'descending', 'both', 'all': optional field for
-%                   continuous channels; default: both)
-%           returns event timestamps in seconds in import.data
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2013-2015 Dominik R Bach & Tobias Moser (University of Zurich)
+% ● Description
+%   pspm_get_events processes events for different event channel types
+% ● Format
+%   [sts, data] = pspm_get_events(import)
+% ● Arguments
+%      import:  import job structure with mandatory fields
+%       .data:  mandatory
+%     .marker:  mandatory, accepts 'timestamps' and 'continuous'.
+%         .sr:  timestamps: timeunits in seconds, continuous: sample rate in
+%               1/seconds)
+%      .flank:  optional for continuous channels; default: both; accepts
+%               'ascending', 'descending', 'both', 'all'.
+% ● Output
+%       import: returns event timestamps in seconds in import.data
+% ● Copyright
+%   Introduced in PsPM 3.0
+%   Written in 2013-2015 by Dominik R Bach & Tobias Moser (University of Zurich)
 
 %% Initialise
 global settings

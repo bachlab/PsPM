@@ -1,42 +1,38 @@
 function [sts, output] = pspm_emg_pp(fn, options)
-% pspm_emg_pp reduces noise in emg data in 3 steps. Following
-% from the literature[1] it does the following steps:
-%   - Initial filtering:        4th order Butterworth with 50 Hz and 470 Hz
-%                               cutoff frequencies
-%   - Remove mains noise:       50 Hz (variable) notch filter
-%   - Smoothing and rectifying: 4th order Butterworth low-pass filter with
-%                               a time constant of 3 ms (=> cutoff of 53.05
-%                               Hz)
-%
-% Once the data is preprocessed, according to the option 'channel_action',
-% it will either replace the existing channel or add it as new channel to
-% the provided file.
-%
-%   FORMAT:  [sts, output] = pspm_emg_pp(fn, options)
-%       fn:                 [string] Path to the PsPM file which contains
-%                           the EMG data
-%       options.
-%           mains_freq:     [integer] Frequency of mains noise to remove
-%                           with notch filter (default: 50Hz).
-%
-%           channel:        [numeric/string] Channel to be preprocessed.
-%                           Can be a channel ID or a channel name.
-%                           Default is 'emg' (i.e. first EMG channel)
-%
-%           channel_action:  ['add'/'replace'] Defines whether the new channel
-%                            should be added or the previous outputs of this
-%                            function should be replaced.
-%                            (Default: 'rplace')
-%
-% [1] Khemka S, Tzovara A, Gerster S, Quednow BB, Bach DR (2016).
-%     Modeling Startle Eyeblink Electromyogram to Assess Fear Learning.
-%     Psychophysiology
-%__________________________________________________________________________
-% PsPM 3.1
-% (C) 2009-2016 Tobias Moser (University of Zurich)
-
-% $Id: pspm_emg_pp.m 777 2019-07-02 09:09:18Z esrefo $
-% $Rev: 777 $
+% ● Description
+%   pspm_emg_pp reduces noise in emg data in 3 steps. Following from the
+%   literature[1] it does the following steps:
+%   1)  Initial filtering:
+%       4th order Butterworth with 50 Hz and 470 Hz cutoff frequencies
+%   2)  Remove mains noise:
+%       50 Hz (variable) notch filter
+%   3)  Smoothing and rectifying:
+%       4th order Butterworth low-pass filter with a time constant of 3 ms 
+%       (=> cutoff of 53.05Hz)
+%   Once the data is preprocessed, according to the option 'channel_action',
+%   it will either replace the existing channel or add it as new channel to
+%   the provided file.
+% ● Format
+%   [sts, output] = pspm_emg_pp(fn, options)
+% ● Arguments
+%                fn:  [string]
+%                     Path to the PsPM file which contains the EMG data.
+%           options:
+%       .mains_freq:  [integer] Frequency of mains noise to remove
+%                     with notch filter (default: 50Hz).
+%          .channel:  [numeric/string] Channel to be preprocessed.
+%                     Can be a channel ID or a channel name.
+%                     Default is 'emg' (i.e. first EMG channel)
+%   .channel_action:  ['add'/'replace'] Defines whether the new channel should 
+%                     be added or the previous outputs of this function should 
+%                     be replaced. (Default: 'replace')
+% ● References
+%   [1] Khemka S, Tzovara A, Gerster S, Quednow BB, Bach DR (2016).
+%       Modeling Startle Eyeblink Electromyogram to Assess Fear Learning.
+%       Psychophysiology
+% ● Copyright
+%   Introduced in PsPM 3.1
+%   Written in 2009-2016 by Tobias Moser (University of Zurich)
 
 %% Initialise
 global settings

@@ -1,65 +1,63 @@
 function [sts, outdata] = pspm_interpolate(indata, options)
 % ● Description
-% This function interpolates NaN values passed with the indata parameter.
-% The behaviour of the function can furthermore be adjusted with the
-% combination of different options.
-% The function works either on single data sets such as a filename, a
-% numeric array or a pspm data struct. Alternatively it is possible to pass
-% a cell containing all these possible datatypes. The function then 
-% iterates through the whole data set and replaces the passed data with the 
-% interpolated data. For filenames the interpolated data will, depending on 
-% option.newfile, be written to the existing file or can also be added to a 
-% new file with filename 'i'+<old filename>. The corresponding cell 
-% (in outdata) will then contain the filename of the new file 
-% (if newfile = 1) or will contain the channel id where the interpolated 
-% data can be found in the existing file (because it has been added or 
-% replaced). The edited data set will then be returned as parameter outdata.
-%
+%   This function interpolates NaN values passed with the indata parameter.
+%   The behaviour of the function can furthermore be adjusted with the
+%   combination of different options.
+%   The function works either on single data sets such as a filename, a
+%   numeric array or a pspm data struct. Alternatively it is possible to pass
+%   a cell containing all these possible datatypes. The function then 
+%   iterates through the whole data set and replaces the passed data with the 
+%   interpolated data. For filenames the interpolated data will, depending on 
+%   option.newfile, be written to the existing file or can also be added to a 
+%   new file with filename 'i'+<old filename>. The corresponding cell 
+%   (in outdata) will then contain the filename of the new file 
+%   (if newfile = 1) or will contain the channel id where the interpolated 
+%   data can be found in the existing file (because it has been added or 
+%   replaced). The edited data set will then be returned as parameter outdata.
 % ● Format
-% [sts, outdata] = pspm_interpolate(indata, options)
-%
+%   [sts, outdata] = pspm_interpolate(indata, options)
 % ● Arguments
-%   indata        [struct/char/numeric] or [cell array of struct/char/numeric]
-%                 contains the data to be interpolated
+%          indata:  [struct/char/numeric] or [cell array of struct/char/numeric]
+%                   contains the data to be interpolated
 %
-%   options
-%   ┣━.overwrite      Defines if existing datafiles should be overwritten.
-%   ┃                 [optional; accept: 1, 0; default: 0]
-%   ┣━.method         Defines the interpolation method, see interp1() for
-%   ┃                 possible interpolation methods.
-%   ┃                 [optional; default: linear]
-%   ┣━.extrapolate    Determine should extrapolate for data out of the data
-%   ┃                 range.
-%   ┃                 [optional; not recommended; accept: 1, 0; default: 0]
-%   ┣━.channels       If passed, should have the same size as indata and
-%   ┃                 contains for each entry in indata the channel(s) to
-%   ┃                 be interpolated. If options.channels is empty or a
-%   ┃                 certain cell is empty the function then tries to
-%   ┃                 interpolate all continuous data channels. This
-%   ┃                 works only on files or structs.
-%   ┃                 [optional; default: empty]
-%   ┣━.channel_action Defines whether the interpolated data should be added
-%   ┃                 or the corresponding channel should be replaced.
-%   ┃                 [optional; accept: 'add', 'replace'; default: 'add']
-%   ┗━.newfile:       This is only possible if data is loaded from a file.
-%                     If 0 the data will be added to the file where
-%                     the data was loaded from. If 1 the data will be
-%                     written to a new file called 'i'+<old filename>.
-%                     [optional; default: 0]
+%   ┌─────options:
+%   ├──.overwrite:  Defines if existing datafiles should be overwritten.
+%   │               [optional; accept: 1, 0; default: 0]
+%   ├─────.method:  Defines the interpolation method, see interp1() for
+%   │               possible interpolation methods.
+%   │               [optional; default: linear]
+%   ├─.extrapolate: Determine should extrapolate for data out of the data
+%   │               range.
+%   │               [optional; not recommended; accept: 1, 0; default: 0]
+%   ├────.channels: If passed, should have the same size as indata and
+%   │               contains for each entry in indata the channel(s) to
+%   │               be interpolated. If options.channels is empty or a
+%   │               certain cell is empty the function then tries to
+%   │               interpolate all continuous data channels. This
+%   │               works only on files or structs.
+%   │               [optional; default: empty]
+%   ├.channel_action:
+%   │               Defines whether the interpolated data should be added
+%   │               or the corresponding channel should be replaced.
+%   │               [optional; accept: 'add', 'replace'; default: 'add']
+%   └────.newfile:  This is only possible if data is loaded from a file.
+%                   If 0 the data will be added to the file where
+%                   the data was loaded from. If 1 the data will be
+%                   written to a new file called 'i'+<old filename>.
+%                   [optional; default: 0]
 % ● Output
-%   sts        Returns the status of the function
-%              -1: function did not work properly
-%              1:  the function went through properly
-%   outdata    Has the same format as indata but contains the interpolated 
-%              data (or the filename(s) where the interpolated data can be 
-%              found).
-%
-% ● Version
-% PsPM 3.0
-% (C) 2015 Tobias Moser (University of Zurich)
-%     2022 Teddy Chao (UCL)
+%             sts:  Returns the status of the function
+%                   -1: function did not work properly
+%                    1: the function went through properly
+%         outdata:  Has the same format as indata but contains the interpolated 
+%                   data (or the filename(s) where the interpolated data can be 
+%                   found).
+% ● Copyright
+%   Introduced in PsPM 3.0
+%   Written in 2015 by Tobias Moser (University of Zurich)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
-%% Initialise
+%% initialise
 global settings
 if isempty(settings)
   pspm_init;

@@ -1,23 +1,27 @@
-function wavedata=pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
-% pspm_pulse_convert converts pulsed data into a data waveform, assuming
-% milliseconds as time unit and a resamplingrate in Hz given as input argument
-% This function is designed for data from CED spike, recorded by CED Micro
-% 1401. These data should not normally exceed pulse frequencies of 10 kHz,
-% corresponding to a pulse time stamp difference of 0.1 ms. Smaller values
-% are frequently observed, in time series with otherwise much higher
-% values. This is unlikely to reflect a pulse frequency above the sampling
-% resolution of the 1401 and more likely to be a technical glitch. These
-% time stamps are filtered out before re-sampling.
-% FORMAT:
-% wavedata = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
-%           with pulsedata: timestamps in ms
-%                resamplingrate: for interpolation
-%                samplingrate: to be downsampled to
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+function wavedata = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
+% ● Description
+%   pspm_pulse_convert converts pulsed data into a data waveform, assuming
+%   milliseconds as time unit and a resamplingrate in Hz given as input argument
+% ● Developer's Notes
+%   This function is designed for data from CED spike, recorded by CED Micro
+%   1401. These data should not normally exceed pulse frequencies of 10 kHz,
+%   corresponding to a pulse time stamp difference of 0.1 ms. Smaller values
+%   are frequently observed, in time series with otherwise much higher
+%   values. This is unlikely to reflect a pulse frequency above the sampling
+%   resolution of the 1401 and more likely to be a technical glitch. These
+%   time stamps are filtered out before re-sampling.
+% ● Format
+%   wavedata = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
+% ● Arguments
+%        pulsedata: timestamps in ms
+%   resamplingrate: for interpolation
+%     samplingrate: to be downsampled to
+% ● Copyright
+%   Introduced In PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao
 
-%% Initialise
+% initialise
 global settings
 if isempty(settings)
   pspm_init;

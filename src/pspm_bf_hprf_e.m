@@ -1,47 +1,34 @@
 function [bf, x, b] = pspm_bf_hprf_e(varargin)
-% pspm_bf_hprf_e constructs the heart period response function consisting of
-% modified Gaussian functions
-%
-% FORMAT: [bf, x, b] = pspm_bf_hprf_e(td, b) or pspm_bf_hprf_e([td, b])
-%
-% with  td = time resolution in s and
-%       b  = number of basis functions (default 1:6)
-%
-% basis functions will be orthogonalized using spm_orth by default. Onsets
-% pspm_glm must be shifted by 5 s to account for the pre-event epoch.
-%
-% put in values 1:6 for b in order to get following basis functions:
-%
-% 1:    BF 1    -   mu 1 s, sigma 1.9 s (contains pre event epoch of -5s)
-% 2:    BF 2    -   mu 5.2 s, sigma 1.9 s
-% 3:    BF 3    -   mu 7.2 s, sigma 1.5 s
-% 4:    BF 4    -   mu 7.2 s, sigma 4 s
-% 5:    BF 5    -   mu 12.6 s, sigma 2 s
-% 6:    BF 6    -   mu 18.85 s, sigma 1.8 s
-%
-% -------------------------------------------------------------------------
-%
-% REFERENCE
-%
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2015 Philipp C Paulus & Dominik R Bach
-% (Technische Universitaet Dresden, University of Zurich)
+% ● Description
+%   pspm_bf_hprf_e constructs the heart period response function consisting of
+%   modified Gaussian functions
+% ● Format
+%   [bf, x, b] = pspm_bf_hprf_e(td, b) or pspm_bf_hprf_e([td, b])
+% ● Arguments
+%   td: time resolution in s
+%    b: number of basis functions (default 1:6)
+% ● Developer's notes
+%   Basis functions will be orthogonalized using spm_orth by default. Onsets
+%   pspm_glm must be shifted by 5 s to account for the pre-event epoch.
+%   Put in values 1:6 for b in order to get following basis functions:
+%   1:  BF 1  - mu 1 s, sigma 1.9 s (contains pre event epoch of -5s)
+%   2:  BF 2  - mu 5.2 s, sigma 1.9 s
+%   3:  BF 3  - mu 7.2 s, sigma 1.5 s
+%   4:  BF 4  - mu 7.2 s, sigma 4 s
+%   5:  BF 5  - mu 12.6 s, sigma 2 s
+%   6:  BF 6  - mu 18.85 s, sigma 1.8 s
+% ● Copyright
+%   Introduced in PsPM 3.0
+%   Written in 2015 by Philipp C Paulus (Technische Universitaet Dresden)
+%                      Dominik R Bach (University of Zurich)
 
-% $Id$
-% $Rev$
-
-% input checks
-% -------------------------------------------------------------------------
+%% input checks
 global settings;
 if isempty(settings), pspm_init; end;
-
 if nargin < 1
-  errmsg='No sampling interval stated'; warning('ID:invalid_input', errmsg); return;
+  errmsg = 'No sampling interval stated'; warning('ID:invalid_input', errmsg); return;
 end;
-
-varargin=cell2mat(varargin);
-
+varargin = cell2mat(varargin);
 if length(varargin)==1
   b=1:6;
 elseif varargin(end)<=6 && varargin(end)~=0

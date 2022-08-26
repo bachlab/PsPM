@@ -1,18 +1,19 @@
 function [sts, data]=pspm_get_hb(import)
-% pspm_get_hb is a common function for importing heart beat data
-%
-% FORMAT:
-% function [sts, data]= pspm_get_hb(import)
-%               import: import job structure with mandatory fields
-%                  .data
-%                  .marker ('timestamps', 'continuous')
-%                  .sr (timestamps: timeunits in seconds, continuous: sample rate in 1/seconds)
+% ● Description
+%   pspm_get_hb is a common function for importing heart beat data
+% ● Format
+%   [sts, data]= pspm_get_hb(import)
+% ● Arguments
+%   import: import job structure with mandatory fields
+%     .data
+%   .marker ('timestamps', 'continuous')
+%       .sr (timestamps: timeunits in seconds, continuous: sample rate in 1/seconds)
 %                  and optional fields
 %                  .flank ('ascending', 'descending', 'both': optional field for
 %                   continuous channels; default: both)
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Copyright
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

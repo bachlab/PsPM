@@ -1,35 +1,35 @@
 function [sts, markerinfo] = pspm_get_markerinfo(fn, options)
-% ● DESCRIPTION
-% pspm_get_markerinfo extracts markerinfo from PsPM files that contain
-% such information (typically after import of EEG-style data files, e.g.
-% BrainVision or NeuroScan)
-% ● FORMAT
-% [sts, markerinfo] = pspm_get_markerinfo(filename, options)
-% ● INPUT
-% filename        [char]
+% ● Description
+%   pspm_get_markerinfo extracts markerinfo from PsPM files that contain
+%   such information (typically after import of EEG-style data files, e.g.
+%   BrainVision or NeuroScan)
+% ● Format
+%   [sts, markerinfo] = pspm_get_markerinfo(filename, options)
+% ● Arguments
+%       filename: [char]
 %                 name of PsPM file
 %                 if empty, you will be prompted for one
-% options
-% ┣━.markerchan   [double]
-% ┃               channel id of the marker channel;
-% ┃               default value: -1, meaning to use the first found marker channel
-% ┣━.filename     [char]
-% ┃               name of a file to write the markerinfo to;
-% ┃               default value: empty, meaning no file will be written
-% ┗━.overwrite    [logical] (0 or 1)
+%   ┌────options:
+%   ├.markerchan: [double]
+%   │             channel id of the marker channel;
+%   │             default value: -1, meaning to use the first found marker 
+%   │             channel
+%   ├──.filename: [char]
+%   │             name of a file to write the markerinfo to;
+%   │             default value: empty, meaning no file will be written
+%   └──overwrite: [logical] (0 or 1)
 %                 define whether to overwrite existing output files or not
-% ● OUTPUT
-% sts             [double]
+% ● Output
+%            sts: [double]
 %                 default value: -1 if unsuccessful
-% markerinfo      [struct]
-% ┣━.name         [char]
-% ┣━.value
-% ┗━.element
-% ● VERSION
-% PsPM 6.0
-% ● AUTHORSHIP
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%     2022      Teddy Chao (UCL)
+%     markerinfo: [struct]
+%     ├────.name: [char]
+%     ├───.value:
+%     └─.element:
+% ● Copyright
+%   Introduced in PsPM 6.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

@@ -1,6 +1,5 @@
 function varargout = pspm_pupil_pp (fn, options)
-%function [sts, out_channel] = pspm_pupil_pp(fn, options)
-% ● Definition
+% ● Description
 %   pspm_pupil_pp preprocesses pupil diameter signals given in any unit of
 %   measurement. It performs the steps described in [1]. This function uses
 %   a modified version of [2]. The modified version with a list of changes
@@ -39,7 +38,7 @@ function varargout = pspm_pupil_pp (fn, options)
 % ● Format
 %   [sts, out_channel] = pspm_pupil_pp(fn)
 %   [sts, out_channel] = pspm_pupil_pp(fn, options)
-% ● Variables
+% ● Arguments
 %          fn:  [string]
 %               Path to the PsPM file which contains the pupil data.
 %     options:  [struct]
@@ -115,9 +114,11 @@ function varargout = pspm_pupil_pp (fn, options)
 %   [1] Kret, Mariska E., and Elio E. Sjak-Shie. "Preprocessing pupil size
 %       data: Guidelines and code." Behavior research methods (2018): 1-7.
 %   [2]	https://github.com/ElioS-S/pupil-size
-% ● Authors
-%   (C) 2019 Eshref Yozdemir (University of Zurich)
-%       2021 Teddy Chao (UCL)
+% ● Copyright
+%   Introduced in PsPM version ?
+%   Written in 2019 by Eshref Yozdemir (University of Zurich)
+%              2021 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% 1 Initialise
 global settings

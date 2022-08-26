@@ -1,13 +1,13 @@
 function fighandle = pspm_rev_con(model)
-% pspm_rev_con is a tool for reviewing contrasts of first level models
-%
-% FORMAT:
-% pspm_rev_con(modelfile)
-%
-% modelfile: filename and path of modelfile
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (UZH, WTCN)
+% ● Description
+%   pspm_rev_con is a tool for reviewing contrasts of first level models
+% ● Format
+%   fighandle = pspm_rev_con(modelfile)
+% ● Arguments
+%   modelfile: filename and path of modelfile
+% ● Copyright
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (UZH, WTCN)
 
 %% Initialise
 global settings

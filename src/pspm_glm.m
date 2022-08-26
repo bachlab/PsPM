@@ -1,155 +1,147 @@
 function glm = pspm_glm(model, options)
-% pspm_glm specifies a within subject general linear convolution model of
-% predicted signals and calculates amplitude estimates for these responses
-%
-% FORMAT:
-% glm = pspm_glm(model, options)
-%
-% MODEL with required fields
-% model.modelfile:  a file name for the model output
-% model.datafile:   a file name (single session) OR
-%                   a cell array of file names
-% model.timing:     a multiple condition file name (single session) OR
-%                   a cell array of multiple condition file names OR
-%                   a struct (single session) with fields .names, .onsets,
-%                       and (optional) .durations and .pmod  OR
-%                   a cell array of struct OR
-%                   a struct with fields 'markerinfos', 'markervalues,
-%                   'names' OR
-%                   a cell array of struct
-% model.timeunits:  one of 'seconds', 'samples', 'markers', 'markervalues'
-% model.window:     a scalar in seconds that specifies over which time
-%                   window (starting with the events specified in
-%                   model.timing) the model should be evaluated. Is only
-%                   required if model.latency equals 'free'. Is ignored
-%                   otherwise.
-%
-% optional fields
-% model.modelspec:  'scr' (default); specify the model to be used.
-%                   See pspm_init, defaults.glm() which modelspecs are possible
-%                   with glm.
-% model.modality:   specify the modality to be processed.
-%                   When model.modality is set to be sps, the model.channel
-%                   should be set among sps_l, sps_r, or defaultly sps.
-% model.bf:         basis function/basis set; modality specific default
-%                   with subfields .fhandle (function handle or string) and
-%                   .args (arguments, first argument sampling interval will
-%                   be added by pspm_glm). The optional subfield .shiftbf = n
-%                   indicates that the onset of the basis function precedes
-%                   event onsets by n seconds (default: 0: used for
-%                   interpolated data channels)
-% model.channel:    channel number or channel type. if a channel type is
-%                   specified the LAST channel matching the given type will
-%                   be used. The rationale for this is that, in general channels
-%                   later in the channel list are preprocessed/filtered versions
-%                   of raw channels.
-%                   SPECIAL: if 'pupil' is specified the function uses the
-%                   last pupil channel returned by <a href="matlab:help pspm_load_data">pspm_load_data</a>.
-%                   pspm_load_data loads 'pupil' channels according to a specific
-%                   precedence order described in its documentation. In a nutshell,
-%                   it prefers preprocessed channels and channels from the best eye
-%                   to other pupil channels.
-%                   SPECIAL: for the modality "sps", the model.channel
-%                   accepts only "sps_l", "sps_r", or "sps".
-%                   DEFAULT: last channel of the specified modality
-%                            (for PSR this is 'pupil')
-% model.norm:       normalise data; default 0
-% model.filter:     filter settings; modality specific default
-% model.missing:    allows to specify missing (e. g. artefact) epochs in
-%                   the data file. See pspm_get_timing for epoch definition;
-%                   specify a cell array for multiple input files. This
-%                   must always be specified in SECONDS.
-%                   Default: no missing values
-% model.nuisance:   allows to specify nuisance regressors. Must be a file
-%                   name; the file is either a .txt file containing the
-%                   regressors in columns, or a .mat file containing the
-%                   regressors in a matrix variable called R. There must be
-%                   as many values for each column of R as there are data
-%                   values. SCRalyze will call these regressors R1, R2, ...
-% model.latency:    allows to specify whether latency should be 'fixed'
-%                   (default) or should be 'free'. In 'free' models an
-%                   additional dictionary matching algorithm will try to
-%                   estimate the best latency. Latencies will then be added
-%                   at the end of the output. In 'free' models the field
-%                   model.window is MANDATORY and single basis functions
-%                   are allowed only.
-% model.centering:  if set to 0 the function would not perform the
-%                   mean centering of the convolved X data. For example, to
-%                   invert SPS model, set centering to 0.
-%                   Default: 1
-%
-% OPTIONS (optional argument)
-% options.overwrite:       overwrite existing model output; default 0
-% options.marker_chan_num: marker channel number; default last marker
-%                          channel
-% options.exclude_missing: marks trials during which NaN percentage exceeds
-%                          a cutoff value. Requires two subfields:
-%                          'segment_length' (in s after onset) and 'cutoff'
-%                          (in % NaN per segment). Results are written into
-%                          model structure as fields .stats_missing and
-%                           .stats_exclude but not used further.
-%
-% TIMING - multiple condition file(s) or struct variable(s):
-% The structure is equivalent to SPM2/5/8/12 (www.fil.ion.ucl.ac.uk/spm),
-% such that SPM files can be used.
-% The file contains the following variables:
-% - names: a cell array of string for the names of the experimental
-%   conditions
-% - onsets: a cell array of number vectors for the onsets of events for
-%   each experimental condition, expressed in seconds, marker numbers, or
-%   samples, as specified in timeunits
-% - durations (optional, default 0): a cell array of vectors for the
-%   duration of each event. You need to use 'seconds' or 'samples' as time
-%   units
-% - pmod: this is used to specify regressors that specify how responses in
-%   an experimental condition depend on a parameter to model the effect
-%   e.g. of habituation, reaction times, or stimulus ratings.
-%   pmod is a struct array corresponding to names and onsets and containing
-%   the fields
+% ● Description
+%   pspm_glm specifies a within subject general linear convolution model of
+%   predicted signals and calculates amplitude estimates for these responses.
+% ● Format
+%   glm = pspm_glm(model, options)
+% ● Arguments
+%   ┌─────model:  [struct]
+%   │ ▶︎ mandatory
+%   ├.modelfile:  a file name for the model output
+%   ├─.datafile:  a file name (single session) OR
+%   │             a cell array of file names
+%   ├───.timing:  a multiple condition file name (single session) OR
+%   │             a cell array of multiple condition file names OR
+%   │             a struct (single session) with fields .names, .onsets,
+%   │             and (optional) .durations and .pmod  OR
+%   │             a cell array of struct OR
+%   │             a struct with fields 'markerinfos', 'markervalues,
+%   │             'names' OR a cell array of struct
+%   ├.timeunits:  one of 'seconds', 'samples', 'markers', 'markervalues'
+%   ├───.window:  a scalar in seconds that specifies over which time
+%   │             window (starting with the events specified in
+%   │             model.timing) the model should be evaluated. Is only
+%   │             required if model.latency equals 'free'. Is ignored
+%   │             otherwise.
+%   │ ▶︎ optional
+%   ├.modelspec:  'scr' (default); specify the model to be used.
+%   │             See pspm_init, defaults.glm() which modelspecs are possible
+%   │             with glm.
+%   ├─.modality:  specify the modality to be processed.
+%   │             When model.modality is set to be sps, the model.channel
+%   │             should be set among sps_l, sps_r, or defaultly sps.
+%   ├───────.bf:  basis function/basis set; modality specific default
+%   │             with subfields .fhandle (function handle or string) and
+%   │             .args (arguments, first argument sampling interval will
+%   │             be added by pspm_glm). The optional subfield .shiftbf = n
+%   │             indicates that the onset of the basis function precedes
+%   │             event onsets by n seconds (default: 0: used for
+%   │             interpolated data channels)
+%   ├──.channel:  channel number or channel type. if a channel type is
+%   │             specified the LAST channel matching the given type will
+%   │             be used. The rationale for this is that, in general channels
+%   │             later in the channel list are preprocessed/filtered versions
+%   │             of raw channels.
+%   │             SPECIAL: if 'pupil' is specified the function uses the
+%   │             last pupil channel returned by 
+%   │             <a href="matlab:help pspm_load_data">pspm_load_data</a>.
+%   │             pspm_load_data loads 'pupil' channels according to a specific
+%   │             precedence order described in its documentation. In a nutshell,
+%   │             it prefers preprocessed channels and channels from the best eye
+%   │             to other pupil channels.
+%   │             SPECIAL: for the modality "sps", the model.channel
+%   │             accepts only "sps_l", "sps_r", or "sps".
+%   │             DEFAULT: last channel of the specified modality
+%   │             (for PSR this is 'pupil')
+%   ├─────.norm:  normalise data; default 0
+%   ├───.filter:  filter settings; modality specific default
+%   ├──.missing:  allows to specify missing (e. g. artefact) epochs in the
+%   │             data file. See pspm_get_timing for epoch definition;
+%   │             specify a cell array for multiple input files. This
+%   │             must always be specified in SECONDS.
+%   │             Default: no missing values
+%   ├─.nuisance:  allows to specify nuisance regressors. Must be a file
+%   │             name; the file is either a .txt file containing the
+%   │             regressors in columns, or a .mat file containing the
+%   │             regressors in a matrix variable called R. There must be
+%   │             as many values for each column of R as there are data
+%   │             values. SCRalyze will call these regressors R1, R2, ...
+%   ├──.latency:  allows to specify whether latency should be 'fixed'
+%   │             (default) or should be 'free'. In 'free' models an
+%   │             additional dictionary matching algorithm will try to
+%   │             estimate the best latency. Latencies will then be added
+%   │             at the end of the output. In 'free' models the fiel
+%   │             model.window is MANDATORY and single basis functions
+%   │             are allowed only.
+%   └.centering:  if set to 0 the function would not perform the
+%                 mean centering of the convolved X data. For example, to
+%                 invert SPS model, set centering to 0. Default: 1
+%   ┌───options:
+%   │ ▶︎ optional
+%   ├──.overwrite:
+%   │             overwrite existing model output; default 0
+%   ├──.marker_chan_num:
+%   │             marker channel number; default last marker channel.
+%   └──.exclude_missing:
+%                 marks trials during which NaN percentage exceeds
+%                 a cutoff value. Requires two subfields:
+%                 'segment_length' (in s after onset) and 'cutoff'
+%                 (in % NaN per segment). Results are written into
+%                 model structure as fields .stats_missing and
+%                 .stats_exclude but not used further.
+% ● Outputs
+%           glm:  a structure 'glm' which is also written to file
+% ● Developer's Notes
+%   TIMING - multiple condition file(s) or struct variable(s):
+%   The structure is equivalent to SPM2/5/8/12 (www.fil.ion.ucl.ac.uk/spm),
+%   such that SPM files can be used.
+%   The file contains the following variables:
+%   - names: a cell array of string for the names of the experimental
+%     conditions
+%   - onsets: a cell array of number vectors for the onsets of events for
+%     each experimental condition, expressed in seconds, marker numbers, or
+%     samples, as specified in timeunits
+%   - durations (optional, default 0): a cell array of vectors for the
+%     duration of each event. You need to use 'seconds' or 'samples' as time
+%     units
+%   - pmod: this is used to specify regressors that specify how responses in
+%     an experimental condition depend on a parameter to model the effect
+%     e.g. of habituation, reaction times, or stimulus ratings.
+%     pmod is a struct array corresponding to names and onsets and containing
+%     the fields
 %   - name: cell array of names for each parametric modulator for this
 %       condition
 %   - param: cell array of vectors for each parameter for this condition,
 %       containing as many numbers as there are onsets
 %   - poly (optional, default 1): specifies the polynomial degree
-%
-% e.g. produce a simple multiple condition file by typing
-%  names = {'condition a', 'condition b'};
-%  onsets = {[1 2 3], [4 5 6]};
-%  save('testfile', 'names', 'onsets');
-%
-%
-% RETURNS a structure 'glm' which is also written to file
-%
-% -------------------------------------------------------------------------
-% REFERENCES:
-%
-% (1) GLM for SCR:
-% Bach DR, Flandin G, Friston KJ, Dolan RJ (2009). Time-series analysis for
-% rapid event-related skin conductance responses. Journal of Neuroscience
-% Methods, 184, 224-234.
-%
-% (2) SCR: Canonical response function, and GLM assumptions:
-% Bach DR, Flandin G, Friston KJ, Dolan RJ (2010). Modelling event-related
-% skin conductance responses. International Journal of Psychophysiology,
-% 75, 349-356.
-%
-% (3) Fine-tuning of SCR CLM:
-% Bach DR, Friston KJ, Dolan RJ (2013). An improved algorithm for
-% model-based analysis of evoked skin conductance responses. Biological
-% Psychology, 94, 490-497.
-%
-% (4) SCR GLM validation and comparison with Ledalab:
-% Bach DR (2014).  A head-to-head comparison of SCRalyze and Ledalab, two
-% model-based methods for skin conductance analysis. Biological Psychology,
-% 103, 63-88.
-%
-% (5) SEBR GLM: Khemka S, Tzovara A, Gerster S, Quednow B and Bach DR (2017)
-% Modeling Startle Eyeblink Electromyogram to Assess
-% Fear Learning. Psychophysiology
-%__________________________________________________________________________
-% PsPM 3.1
-% (C) 2008-2016 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-% Updated  2021 Teddy Chao
+%     e.g. produce a simple multiple condition file by typing
+%     names = {'condition a', 'condition b'};
+%     onsets = {[1 2 3], [4 5 6]};
+%     save('testfile', 'names', 'onsets');
+% ● References
+%   [1] GLM for SCR:
+%       Bach DR, Flandin G, Friston KJ, Dolan RJ (2009). Time-series analysis for
+%       rapid event-related skin conductance responses. Journal of Neuroscience
+%       Methods, 184, 224-234.
+%   [2] SCR: Canonical response function, and GLM assumptions:
+%       Bach DR, Flandin G, Friston KJ, Dolan RJ (2010). Modelling event-related
+%       skin conductance responses. International Journal of Psychophysiology,
+%       75, 349-356.
+%   [3] Fine-tuning of SCR CLM:
+%       Bach DR, Friston KJ, Dolan RJ (2013). An improved algorithm for
+%       model-based analysis of evoked skin conductance responses. Biological
+%       Psychology, 94, 490-497.
+%   [4] SCR GLM validation and comparison with Ledalab:
+%       Bach DR (2014).  A head-to-head comparison of SCRalyze and Ledalab, two
+%       model-based methods for skin conductance analysis. Biological Psychology,
+%       103, 63-88.
+%   [5] SEBR GLM: Khemka S, Tzovara A, Gerster S, Quednow B and Bach DR (2017)
+%       Modeling Startle Eyeblink Electromyogram to Assess
+%       Fear Learning. Psychophysiology
+% ● Copyright
+%   Introduced in PsPM 3.1
+%   Written in 2008-2016 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

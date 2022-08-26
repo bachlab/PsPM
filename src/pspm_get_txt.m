@@ -1,52 +1,43 @@
 function [sts, import, sourceinfo] = pspm_get_txt(datafile, import)
-% pspm_get_txt is the main function for import of text files
-%
-% FORMAT: [sts, import, sourceinfo] = pspm_get_txt(datafile, import);
-%       datafile:   a .txt-file containing numerical data (with any
-%                   delimiter) and optionally the channel names in the first
-%                   line.
-%       import:     import job structure
-%                   - required fields:
-%                       .type:
-%                           A char array corresponding to a valid PsPM data
-%                           type, see `pspm_init.m` for more details.
-%                       .channel:
-%                           A numeric value representing the column number
-%                           of the corresponding numerical data.   
-%                   - optional fields:
-%                       .delimiter: 
-%                           A char array corresponding to the delimiter
-%                           used in the datafile to delimit data columns.
-%                           To be used it should be specified on the first 
-%                           import cell, e.g.: 
-%                               import{1}.delimiter == ','
-%                           Default: white-space (see textscan function)
-%                       .header_lines:
-%                           A numeric value corresponding to the number of 
-%                           header lines. Which means the data start on
-%                           line number: "header_lines + 1".
-%                           To be used it should be specified on the first 
-%                           import cell, e.g.: 
-%                               import{1}.header_lines == 3
-%                           Default: 1.
-%                       .channel_names_line:
-%                           A numeric value corresponding to the line
-%                           number where the channel names are specified.
-%                           To be used it should be specified on the first 
-%                           import cell, e.g.: 
-%                               import{1}.channel_names_line == 2
-%                           Default: 1. 
-%                       .exclude_columns:
-%                           A numeric value corresponding to the number of
-%                           columns to exclude starting from the left.
-%                           To be used it should be specified on the first 
-%                           import cell, e.g.: 
-%                               import{1}.exclude_columns == 2
-%                           Default: 0.
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-% (c) 2020 Ivan Rojkov (UZH) - added dsv support
+% ● Description
+%   pspm_get_txt is the main function for import of text files
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_txt(datafile, import);
+% ● Arguments
+%   ┌─datafile: a .txt-file containing numerical data (with any delimiter) and
+%   │           optionally the channel names in the first line.
+%   ├───import: import job structure
+%   │               - required fields:
+%   ├────.type: A char array corresponding to a valid PsPM data type, see 
+%   │           `pspm_init.m` for more details.
+%   ├─.channel: A numeric value representing the column number of the
+%   │           corresponding numerical data.   
+%   │- optional fields:
+%   ├─.delimiter: 
+%   │           A char array corresponding to the delimiter used in the datafile
+%   │           to delimit data columns. To be used it should be specified on 
+%   │           the first import cell, e.g.: import{1}.delimiter == ','
+%   │           Default: white-space (see textscan function)
+%   ├─.header_lines:
+%   │           A numeric value corresponding to the number of header lines. 
+%   │           Which means the data start on line number: "header_lines + 1".
+%   │           To be used it should be specified on the first import cell,  
+%   │           e.g.: import{1}.header_lines == 3. Default: 1.
+%   ├─.channel_names_line:
+%   │           A numeric value corresponding to the line number where the
+%   │           channel names are specified. To be used it should be specified 
+%   │           on the first import cell, e.g. import{1}.channel_names_line == 2
+%   │           Default: 1. 
+%   └─.exclude_columns:
+%               A numeric value corresponding to the number of columns to 
+%               exclude starting from the left. To be used it should be 
+%               specified on the first import cell, e.g. 
+%               import{1}.exclude_columns == 2. Default: 0.
+% ● Copyright
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%              2020 Ivan Rojkov (UZH) - added dsv support
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings
