@@ -1,15 +1,16 @@
 function [sts, data]=pspm_get_hp(import)
-% pspm_get_hp is a common function for importing heart period data
-%
-% FORMAT:
+% ● Description
+%   pspm_get_hp is a common function for importing heart period data
+% ● Format
 %   [sts, data]= pspm_get_hp(import)
-%   with data: column vector of waveform data with interpolated heart
-%               period data in ms
-%        import: import job structure with mandatory fields .data and .sr
-%
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2010-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Arguments
+%     data: column vector of waveform data with interpolated heart period data
+%           in ms
+%   import: import job structure with mandatory fields .data and .sr
+% ● Copyright
+%   Introduced in PsPM 3.0
+% ● Written By
+%   (C) 2010-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

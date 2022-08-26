@@ -1,21 +1,23 @@
 function [sts, import, sourceinfo] = pspm_get_vario(datafile, import)
-% pspm_get_vario is the main function for import of VarioPort files
-% FORMAT: [sts, import, sourceinfo] = pspm_get_acq(datafile, import);
-%
-% this function uses the conversion routine getVarioPort.m
-% written and maintained by Christoph Berger at the University of Rostock
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Description
+%   pspm_get_vario is the main function for import of VarioPort files
+%   this function uses the conversion routine getVarioPort.m
+%   written and maintained by Christoph Berger at the University of Rostock
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_acq(datafile, import);
+% ● Arguments
+%     datafile:
+%       import:
+% ● Outputs
+%          sts:
+%       import:
+%   sourceinfo:
+% ● Copyright
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
-% $Id$
-% $Rev$
-
-% v003 drb 04.08.2013 3.0 architecture
-% v002 drb 11.02.2011 comply with new pspm_import requirements
-% v001 drb 6.9.2010
-
-%% Initialise
+% initialise
 global settings
 if isempty(settings)
   pspm_init;

@@ -1,5 +1,4 @@
-function [sts, out_chan] = pspm_gaze_pp(fn, options)
-
+function [sts, out_channel] = pspm_gaze_pp(fn, options)
 % ●	Description
 % 	pspm_gaze_pp preprocesses gaze signals, gaze x and gaze y channels at
 % 	the same time.
@@ -13,8 +12,8 @@ function [sts, out_chan] = pspm_gaze_pp(fn, options)
 %   .chan_combine: [numeric/string, optional] Channel ID to be combined.
 %      .valid_sample: [bool] 1 or 0. 1 if use valid samples produced by
 %                     pspm_pupil_pp, 0 if not to use. default as 0.
-% ●	Authors
-% 	(C) 2021 Teddy Chao (UCL)
+% ●	Copyright
+% 	Written in 2021 by Teddy Chao (UCL)
 
 %% 1 Initialise
 global settings;
@@ -187,7 +186,7 @@ data = [NaN(n_missing_at_the_beg, 1) ; data ; NaN(n_missing_at_the_end, 1)];
 end
 function out_struct = pspm_assign_fields_recursively(out_struct, in_struct)
 % Definition
-% pspm_assign_fields_recursively assign all fields of in_struct to 
+% pspm_assign_fields_recursively assign all fields of in_struct to
 % out_struct recursively, overwriting when necessary.
 fnames = fieldnames(in_struct);
 for i = 1:numel(fnames)

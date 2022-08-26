@@ -8,7 +8,9 @@ if isempty(settings), pspm_init; end
 fileoptions={settings.import.datatypes.long};
 chantypesDescription = {settings.chantypes.description};
 chantypesData = {settings.chantypes.data};
-
+cd(settings.path)
+[information, arguments] = pspm_help('pspm_import');
+cd([settings.path,'pspm_cfg/'])
 
 %% Predefined struct
 % Channel/Column Search
@@ -25,7 +27,8 @@ sample_rate.name    = 'Sample Rate';
 sample_rate.tag     = 'sample_rate';
 sample_rate.strtype = 'r';
 sample_rate.num     = [1 1];
-sample_rate.help    = {'Sample rate in Hz (i. e. samples per second).'};
+sample_rate.help    = arguments(contains(arguments(:,1),'import.sr'),2);
+% 'Sample rate in Hz (i. e. samples per second).'
 
 % Transfer function
 scr_file         = cfg_files;
@@ -232,12 +235,7 @@ for datatype_i=1:length(fileoptions)
   flank_option.values = {'ascending', 'descending', 'all', 'both', 'default'};
   flank_option.labels = {'ascending', 'descending', 'both', 'middle', 'default'};
   flank_option.val    = {'default'};
-  flank_option.help   = {['The flank option specifies which of the rising edge(ascending), ', ...
-    'falling edge(descending), both edges or their mean(middle) of a marker impulse should ', ...
-    'be imported into the marker channel. The default option is to select the middle of ', ...
-    'the impulse, some exceptions are Eyelink, ViewPoint and SensoMotoric Instruments data ', ...
-    'for which the default are respectively ''both'', ''ascending'', ''ascending''. ',...
-    'If the numbers of rising and falling edges differ, PsPM will throw an error. ']};
+  flank_option.help   = arguments(contains(arguments(:,1),'import.flank'),2);
 
   %% Channel/Column Type Items
   importtype_item = cell(1,length(chantypes));

@@ -1,86 +1,77 @@
 function [sts, out] = pspm_extract_segments(varargin)
-% pspm_extract_segments. Function in order to extract segments of a certain
-% length after defined onsets and create summary statistics
-% (mean, SD, SEM, % NaN) over these segments
-%
-% The function supports either manual setting of data files, channels,
-% timing and timeunits or automatic extraction from a glm model file.
-%
-% The segments variable returned will be a cx1 cell where c corresponds to
-% the number of conditions. Each element contains a struct with
-% fields data, mean, std and sem (std of the mean).
-% The field data is a nxo*s vector where n is number of data points and o*s
-% corresponds to the onsets multiplied by the sessions.
-%
-%   FORMAT:
-%       [sts, segments] = pspm_extract_segments('manual', data_fn, chan, timing, options)
-%       [sts, segments] = pspm_extract_segments('manual', data_raw, sr, timing, options)
-%       [sts, segments] = pspm_extract_segments('auto', glm, options)
-%       [sts, segments] = pspm_extract_segments('auto', dcm, options)
-%
-%   ARGUMENTS:
-%       mode:               Tells the function in which mode get the
-%                           settings from. Either 'manual' or 'auto'.
-%       glm:                Path to the glm file or a glm structure.
-%       dcm:                Path to the dcm file or a dcm structure.
-%       data_fn:            Path or cell of paths to data files from which
-%                           the segments should be extracted. Each file
-%                           will be treated as session. Onset values are
-%                           averaged through conditions and sessions.
-%       data_raw:           Numeric raw data or a cell array of numeric raw data.
-%       chan:               Channel number or cell of channel numbers which
-%                           defines which channel should be taken to
-%                           extract the segments. Chan should correspond to
-%                           data_fn and should have the same length. If
-%                           data_fn is a cell and chan is a single number,
-%                           the number will be taken for all files.
-%       sr:                 Array of sampling rates of same dimension as
-%                           the cell array data_raw or one sample rate
-%                           if all the data have the same one.
-%       timing:             Either a cell containing the timing settings or
-%                           a string pointing to the timing file.
-%       options:
-%           timeunit:       'seconds' (default), 'samples' or 'markers'. In 'auto'
-%                           mode the value will be ignored and taken from
-%                           the glm model file or the dcm model file.
-%                           In the case of raw data the timeunit should
-%                           be seconds.
-%           length:         Length of the segments in the 'timeunits'.
-%                           If given the same length is taken for
-%                           segments for glm structure. If not given lengths
-%                           are take from the timing data. This argument is optional. If
-%                           'timeunit' equals 'markers' then 'length' is
-%                           expected to be in seconds.
-%                           For dcm structures the option length will be
-%                           ignored and length will be set from timing
-%                           data.
-%           plot:           If 1 mean values (solid) and standard error of
-%                           the mean (dashed) will be ploted. Default is 0.
-%           outputfile:     Define filename to store segments. If is equal
-%                           to '', no file will be written. Default is 0.
-%           overwrite:      Define if already existing files should be
-%                           overwritten. Default ist 0.
-%           marker_chan:    Mandatory if timeunit is 'markers'. For the
-%                           function to find the appropriate timing of the
-%                           specified marker ids. Must have the same format
-%                           as data_fn.
-%                           If timeunit is 'markers' and raw data are
-%                           given then this parameter should be an
-%                           cell array of numeric array of marker data.
-%           nan_output:     This option defines whether the user wants to
-%                           output the NaN ratios of the trials for each condition.
-%                           If so,  we values can be printed on the screen
-%                           (on MATLAB command window) or written to a created file.
-%                           The field can be set to 'screen', 'File Output'or
-%                           'none'. 'none' is the default value.
-%           norm:           If 1, z-scores the entire data time series
-%                           (default: 0).
-%__________________________________________________________________________
-% PsPM 4.3
-% (C) 2008-2018 Tobias Moser (University of Zurich)
-
-% -------------------------------------------------------------------------
-% DEVELOPERS NOTES:
+% ● Description
+%   pspm_extract_segments. Function in order to extract segments of a certain
+%   length after defined onsets and create summary statistics
+%   (mean, SD, SEM, % NaN) over these segments
+%   The function supports either manual setting of data files, channels,
+%   timing and timeunits or automatic extraction from a glm model file.
+%   The segments variable returned will be a cx1 cell where c corresponds to
+%   the number of conditions. Each element contains a struct with
+%   fields data, mean, std and sem (std of the mean).
+%   The field data is a nxo*s vector where n is number of data points and o*s
+%   corresponds to the onsets multiplied by the sessions.
+% ● Format
+%   [sts, segments] = pspm_extract_segments('manual', data_fn, chan, timing, options)
+%   [sts, segments] = pspm_extract_segments('manual', data_raw, sr, timing, options)
+%   [sts, segments] = pspm_extract_segments('auto', glm, options)
+%   [sts, segments] = pspm_extract_segments('auto', dcm, options)
+% ● Arguments
+%                   mode:  Tells the function in which mode get the
+%                          settings from. Either 'manual' or 'auto'.
+%                    glm:  Path to the glm file or a glm structure.
+%                    dcm:  Path to the dcm file or a dcm structure.
+%                data_fn:  Path or cell of paths to data files from which
+%                          the segments should be extracted. Each file
+%                          will be treated as session. Onset values are
+%                          averaged through conditions and sessions.
+%               data_raw:  Numeric raw data or a cell array of numeric raw data.
+%                   chan:  Channel number or cell of channel numbers which
+%                          defines which channel should be taken to
+%                          extract the segments. Chan should correspond to
+%                          data_fn and should have the same length. If
+%                          data_fn is a cell and chan is a single number,
+%                          the number will be taken for all files.
+%                     sr:  Array of sampling rates of same dimension as
+%                          the cell array data_raw or one sample rate
+%                          if all the data have the same one.
+%                 timing:  Either a cell containing the timing settings or
+%                          a string pointing to the timing file.
+%   ┌────────────options:
+%   ├──────────.timeunit: 'seconds' (default), 'samples' or 'markers'. In 'auto'
+%   │                     mode the value will be ignored and taken from
+%   │                     the glm model file or the dcm model file. In the case
+%   │                     of raw data the timeunit should be seconds.
+%   ├────────────.length: Length of the segments in the 'timeunits'.
+%   │                     If given the same length is taken for segments for 
+%   │                     glm structure. If not given lengths are take from
+%   │                     the timing data. This argument is optional. If
+%   │                     'timeunit' equals 'markers' then 'length' is
+%   │                     expected to be in seconds.
+%   │                     For dcm structures the option length will be
+%   │                     ignored and length will be set from timing
+%   │                     data.
+%   ├──────────────.plot: If 1 mean values (solid) and standard error of
+%   │                     the mean (dashed) will be ploted. Default is 0.
+%   ├────────.outputfile: Define filename to store segments. If is equal
+%   │                     to '', no file will be written. Default is 0.
+%   ├─────────.overwrite: Define if already existing files should be
+%   │                     overwritten. Default ist 0.
+%   ├───────.marker_chan: Mandatory if timeunit is 'markers'. For the
+%   │                     function to find the appropriate timing of the
+%   │                     specified marker ids. Must have the same format
+%   │                     as data_fn.
+%   │                     If timeunit is 'markers' and raw data are
+%   │                     given then this parameter should be an
+%   │                     cell array of numeric array of marker data.
+%   ├────────.nan_output: This option defines whether the user wants to output
+%   │                     the NaN ratios of the trials for each condition.
+%   │                     If so,  we values can be printed on the screen (on 
+%   │                     MATLAB command window) or written to a created file.
+%   │                     The field can be set to 'screen', 'File Output'or
+%   │                     'none'. 'none' is the default value.
+%   └──────────────.norm: If 1, z-scores the entire data time series
+%                         (default: 0).
+% ● Developer's Notes
 %   This function uses three different flags encoded in the variable
 %   "manual_chosen", it can take the following values:
 %       - manual_chosen = 0  ---> it means the function runs in auto mode
@@ -90,7 +81,9 @@ function [sts, out] = pspm_extract_segments(varargin)
 %       - manual_chosen = 2  ---> it means the function runs in manual mode
 %                                 and with raw data.
 %   Search FLAG to see where these flags are set.
-% -------------------------------------------------------------------------
+% ● Copyright
+%   Introduced in PsPM 4.3
+%   Written in 2008-2018 by Tobias Moser (University of Zurich)
 
 %% Initialise
 global settings

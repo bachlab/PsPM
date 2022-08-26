@@ -1,14 +1,21 @@
 function [sts, import, sourceinfo] = pspm_get_acqmat(datafile, import)
-% pspm_get_acqmat is the main function for import of exported
-% biopac/acknowledge files, version 4.0 or higher (tested on 4.2.0)
-%
-% FORMAT: [sts, import, sourceinfo] = pspm_get_acqmat(datafile, import);
-%
-% This function is based on sample files, not on proper documentation of the
-% file format. Always check your imported data before using it.
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Description
+%   pspm_get_acqmat is the main function for import of exported
+%   biopac/acknowledge files, version 4.0 or higher (tested on 4.2.0)
+%   This function is based on sample files, not on proper documentation of the
+%   file format. Always check your imported data before using it.
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_acqmat(datafile, import);
+% ● Arguments
+%   datafile:
+%     import:
+%   .channel:
+%      .type:
+%      .data:
+%     .units:
+% ● Copyright
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

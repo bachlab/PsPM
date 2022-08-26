@@ -1,21 +1,31 @@
 function [sts, import, sourceinfo]  = pspm_get_wdq_n(datafile, import)
-% pspm_get_wdq_n is a function to import of Dataq/Windaq files
-% FORMAT: [sts, import, sourceinfo] = pspm_get_wdq_n(datafile, import);
-%
-% this function does not use the ActiveX control elements provided by
-% Dataq developers. Instead it reads the binary file according to the
-% documentation published by dataq (http://www.dataq.com/resources/techinfo/ff.htm).
-% The current called routine nReadDataq.m may not provide as many data
-% (check the commented header of the routine nReadDataq for more
-% information) as the ActiveX control elements do, but the function is
-% independent of cpu architecture. Which means it does not require a 32-bit
-% Matlab-Version.
-%
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2012 - 2015 Tobias Moser (University of Zurich)
+% ● Description
+%   pspm_get_wdq_n is a function to import of Dataq/Windaq files
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_wdq_n(datafile, import);
+% ● Arguments
+%     datafile:
+%       import:
+% ● Outputs
+%          sts:
+%       import:
+%   sourceinfo:
+% ● Developer's Notes
+%   This function does not use the ActiveX control elements provided by
+%   Dataq developers. Instead it reads the binary file according to the
+%   documentation published by dataq 
+%   (http://www.dataq.com/resources/techinfo/ff.htm).
+%   The current called routine nReadDataq.m may not provide as many data
+%   (check the commented header of the routine nReadDataq for more
+%   information) as the ActiveX control elements do, but the function is
+%   independent of cpu architecture. Which means it does not require a 32-bit
+%   Matlab-Version.
+% ● Copyright
+%   Introduced in PsPM 3.0
+%   Written in 2012-2015 by Tobias Moser (University of Zurich)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
-%% Initialise
+%% initialise
 global settings
 if isempty(settings)
   pspm_init;

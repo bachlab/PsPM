@@ -1,22 +1,15 @@
 function [sts, import, sourceinfo] = pspm_get_mat(datafile, import)
-% pspm_get_mat is the main function for import of matlab files
-% FORMAT: [sts, import, sourceinfo] = pspm_get_mat(datafile, import);
-%      datafile: a .mat file that contains a variable 'data' that is either
-%                  - a cell array of channel data vectors
-%                  - a datapoints x channel matrix
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-
-% $Id$
-% $Rev$
-
-% v006 lr  09.09.2013 added .marker field for event channels
-% v005 lr  05.09.2013 added warning IDs and additional warnings
-% v004 drb 31.07.2013 changed for 3.0 architecture
-% v003 drb 11.02.2011 comply with new pspm_import requirements
-% v002 drb 8.1.2010 fixed a bug with error handling
-% v001 drb 16.9.2009
+% ● Description
+%   pspm_get_mat is the main function for import of matlab files
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_mat(datafile, import);
+% ● Arguments
+%   datafile: a .mat file that contains a variable 'data' that is either
+%             [1] a cell array of channel data vectors
+%             [2] a datapoints x channel matrix
+% ● Copyright
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

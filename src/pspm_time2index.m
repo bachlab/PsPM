@@ -1,23 +1,19 @@
 function index = pspm_time2index(time, sr, varargin)
-  % ● Description
-% pspm_time2index converts time stamps in seconds to a data index.
-% FORMAT
-% index = pspm_time2index(time, sr, varargin)
-% ARGUMENTS
-% Input
-%   time            a vector or matrix 
-%                   meaning: time stamps; unit: second
-%   sr              a numerical value
-%                   meaning: sampling rate / frequency
-%   varargin
-%     data_length   an integer
-%                   meaning: the length of data, by which data points should not exceed
-% Output
-%   index           an integer
-%                   meaning: index / data point
-% PsPM 5.1.2
-% contributed by: 
-% 2021 Teddy Chao (WCHN, UCL)
+% ● Description
+%   pspm_time2index converts time stamps in seconds to a data index.
+% ● Format
+%   index = pspm_time2index(time, sr, varargin)
+% ● Arguments
+%           time: [vector or matrix] time stamps in second.
+%             sr: [numeric] sampling rate or frequency
+%   ┌───varargin: optional variables
+%   └data_length: [interger] the length of data, by which the length of data 
+%                 points should not exceed
+% ● Output
+%          index: [integer] index or data point
+% ● Copyright
+%   Introduced in PsPM 5.1.2
+%   Written in 2021 by Teddy Chao (UCL)
 
 if ~isempty(varargin)
   data_length = varargin{1};

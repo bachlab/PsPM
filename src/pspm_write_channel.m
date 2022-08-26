@@ -1,39 +1,41 @@
-function [sts, infos] = pspm_write_channel(fn, newdata, chan_action, options)
-% pspm_write_channel adds, replaces and deletes channels in an existing
-% data file.
-%
-% This function is an integration of the former functions pspm_add_channel
-% and pspm_rewrite_channel.
-%
-% FORMAT
-% [sts, infos] = pspm_write_channel(fn, newdata, channel_action, options)
-%
-% PARAMETERS
-% ┣━ fn             data file name
-% ┣━ newdata        [struct()/empty] is either a new data struct or a cell array of
-% ┃                 new data structs.
-% ┣━ chan_action
-% ┃  ┣━ 'add'       add newdata as a new channel
-% ┃  ┣━ 'replace'   replace channel with given newdata
-% ┃  ┗━ 'delete'    remove channel given with options.chan
-% ┗━ options
-%    ┣━ .msg        custom history message [char/struct()]
-%    ┣━ .prefix     custom history message prefix text, but automatically added
-%    ┃              action verb (only prefix defined). The text will be
-%    ┃              <prefix> <action>ed on <date>
-%    ┣━ .chan    specifiy which channel should be 'edited'
-%    ┃              default value is 0
-%    ┣━ .delete     method to look for a channel when options.channel is not an integer
-%    ┃    ┣━ 'last'  (default) deletes last occurence of the given chantype
-%    ┃    ┣━ 'first' deletes the first occurence
-%    ┃    ┗━ 'all'   removes all occurences
-%    ┃  Outputs will be written into the info struct. The structure depends on
-%    ┃  the passed action and options.
-%    ┗━ .chan     contains channel id of added / replaced / deleted
-%                    channels.
-%
-% PsPM 3.0
-% (C) 2015 Dominik Bach, Samuel Gerster, Tobias Moser (UZH)
+function [sts, infos] = pspm_write_channel(fn, newdata, channel_action, options)
+% ● Description
+%   pspm_write_channel adds, replaces and deletes channels in an existing
+%   data file. This function is an integration of the former functions
+%   pspm_add_channel and pspm_rewrite_channel.
+% ● Format
+%   [sts, infos] = pspm_write_channel(fn, newdata, channel_action, options)
+% ● Arguments
+%               fn: data file name
+%          newdata: [struct()/empty] is either a new data struct or a cell
+%                   array of new data structs.
+%   channel_action: accepts 'add'/'replace'/'delete'
+%                   'add':  add newdata as a new channel
+%                   'replace':  replace channel with given newdata
+%                   'delete': remove channel given with options.channel
+%    ┌─────options:
+%    ├────────.msg: custom history message [char/struct()]
+%    ├─────.prefix: custom history message prefix text, but automatically added
+%    │              action verb (only prefix defined). The text will be
+%    │              <prefix> <action>ed on <date>
+%    ├────.channel: specifiy which channel should be 'edited'
+%    │              default value is 0
+%    ├─────.delete: method to look for a channel when options.channel is not an
+%    │              integer, accepts 'last'/'first'/'all'.
+%    │              'last':   (default) deletes last occurence of the given
+%    │                        chantype
+%    │              'first':  deletes the first occurence
+%    │              'all':    removes all occurences
+%    │              Outputs will be written into the info struct. The structure
+%    │              depends on the passed action and options.
+%    └────.channel: contains channel id of added / replaced / deleted
+%                   channels.
+% ● Copyright
+%   Introduced in PsPM 3.0
+%   Written in 2015 by Dominik R Bach (University of Zurich)
+%                      Samuel Gerster (University of Zurich)
+%                      Tobias Moser (University of Zurich)
+%   Updated in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings
