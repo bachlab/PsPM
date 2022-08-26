@@ -1,32 +1,32 @@
 function varargout = pspm_data_editor(varargin)
 % ● Description
-% pspm_data_editor MATLAB code for pspm_data_editor.fig
+%   pspm_data_editor MATLAB code for pspm_data_editor.fig
 % ● Format
 %   [varargout] = pspm_data_editor(varargin)
 %   [sts, out]  = pspm_data_editor(indata, options)
 % ● Arguments
-%   indata            Can be multiple kinds of data types. In order to use
-%                     pspm_data_editor() to edit acquisition data, the actual
-%                     data vector has to be passed via the varargin
-%                     argmument. The data should be 1xn or nx1 double vector.
-%   options           [struct]
-%   ┣━.output_file    Use output_file to specify a file the changed data
-%   ┃                 is saved to when clicking 'save' or 'apply'. Only
-%   ┃                 works in 'file' mode.
-%   ┣━.epoch_file     Use epoch_file to specify a .mat file to import epoch data
-%   ┃                 .mat file must be a struct with an 'epoch' field
-%   ┃                 and a e x 2 matrix of epoch on- and offsets
-%   ┃                 (n: number of epochs)
-%   ┗━.overwrite      defines whether to overwrite the file
+%          indata:  Can be multiple kinds of data types. In order to use
+%                   pspm_data_editor() to edit acquisition data, the actual
+%                   data vector has to be passed via the varargin
+%                   argmument. The data should be 1xn or nx1 double vector.
+%   ┌─────options:  [struct]
+%   ├.output_file:  Use output_file to specify a file the changed data
+%   │               is saved to when clicking 'save' or 'apply'. Only
+%   │               works in 'file' mode.
+%   ├─.epoch_file:  Use epoch_file to specify a .mat file to import epoch data
+%   │               .mat file must be a struct with an 'epoch' field
+%   │               and a e x 2 matrix of epoch on- and offsets
+%   │               (n: number of epochs)
+%   └──.overwrite:  defines whether to overwrite the file
 % ● Outputs
-%   out:              The output depends on the actual output type chosen in
-%                     the graphical interface. At the moment either the
-%                     interpolated data or epochs only can be chosen as
-%                     output of the function.
-%__________________________________________________________________________
-% PsPM 3.1
-% (C) 2015 Tobias Moser (University of Zurich)
-%     2021 Teddy Chao (UCL)
+%             out:  The output depends on the actual output type chosen in
+%                   the graphical interface. At the moment either the
+%                   interpolated data or epochs only can be chosen as
+%                   output of the function.
+% ● Copyright
+%   Introduced in PsPM 3.1
+%   Written in 2015 by Tobias Moser (University of Zurich)
+%   Maintained in 2021 by Teddy Chao (UCL)
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;

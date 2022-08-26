@@ -1,16 +1,24 @@
 function [sts, import, sourceinfo] = pspm_get_biosemi(datafile, import)
-% pspm_get_biosemi is the main function for import of BioSemi bdf files
-% FORMAT: [sts, import, sourceinfo] = pspm_get_biosemi(datafile, import);
-% this function uses fieldtrip fileio functions
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-
-% $Id$
-% $Rev$
-
-% v004 drb 02.09.2013 new for 3.0 architecture
-
+% ● Description
+%   pspm_get_biosemi is the main function for import of BioSemi bdf files
+%   this function uses fieldtrip fileio functions
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_biosemi(datafile, import);
+% ● Arguments
+%       datafile:
+%   ┌─────import:
+%   ├────.typeno:
+%   ├───.channel:
+%   ├────────.sr:
+%   ├──────.data:
+%   ├────.marker:
+%   └.markerinfo:
+%     ├───.value:
+%     └────.name:
+% ● Copyright
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

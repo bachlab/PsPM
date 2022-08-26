@@ -1,20 +1,21 @@
-function [sts, data]=pspm_get_scr(import)
-% pspm_get_scr is a common function for importing scr data
-%
-% FORMAT:
-%       [sts, data]=pspm_get_scr(import)
-%          import: import job structure with mandatory fields
-%                   .sr
-%                   .data
-%                   .transfer - transfer parameters, either a struct with
-%                   fields .Rs, .c, .offset, .recsys, or a file containing
-%                   variables 'Rs' 'c', 'offset', 'recsys'
-%
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+function [sts, data] = pspm_get_scr(import)
+% ● Description
+%   pspm_get_scr is a common function for importing scr data
+% ● Format
+%   [sts, data] = pspm_get_scr(import)
+% ● Arguments
+%     import:  import job structure with mandatory fields
+%         .sr:
+%       .data:
+%   .transfer:  transfer parameters, either a struct with fields .Rs, .c, 
+%               .offset, .recsys, or a file containing variables 'Rs' 'c', 
+%               'offset', 'recsys'.
+% ● Copyright
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
-%% Initialise
+% initialise
 global settings
 if isempty(settings)
   pspm_init;
@@ -27,15 +28,12 @@ if isfield(import, 'transfer')
 else
   transferparams = 'none';
 end;
-
 clear c Rs offset recsys
-
 if isfield(import, 'units')
   dataunits = import.units;
 else
   dataunits='unknown';
 end
-
 if isstruct(transferparams)
   try
     c=transferparams.c;
@@ -87,5 +85,4 @@ data.header.transfer = struct('Rs', Rs, 'offset', offset, 'c', c, 'recsys', recs
 
 % check status
 sts = 1;
-
 return

@@ -1,41 +1,35 @@
 function [sts,infos] = pspm_convert_ecg2hb(fn, chan, options)
-% pspm_ecg2hb identifies the position of QRS complexes in ECG data and
-% writes them as heart beat channel into the datafile. This function
-% implements the algorithm by Pan & Tompkins (1985) with some adjustments.
-%
-% Format:   sts = pspm_ecg2hb(fn, chan,options)
+% ● Description
+%   pspm_ecg2hb identifies the position of QRS complexes in ECG data and
+%   writes them as heart beat channel into the datafile. This function
+%   implements the algorithm by Pan & Tompkins (1985) with some adjustments.
+% ● Format
+%   sts = pspm_ecg2hb(fn, chan,options)
+% ● Arguments
 %                 fn: data file name
-%                 chan: number of ECG channel (optional, default: first ECG
-%                 channel) if is empty (= 0 / []) then default channel will be
-%                 used
-%           options: ... semi - activates the semi automatic mode, allowing the
-%                           handcorrection of all IBIs that fulfill:
-%                           >/< mean(ibi) +/- 3 * std(ibi) [def. 1].
-%                    ... minHR - sets minimal HR [def. 20bpm].
-%                    ... maxHR - sets maximal HR [def. 200bpm].
-%                    ... debugmode - runs the algorithm in debugmode
-%                        (additional results in debug variable 'infos.pt_debug')
-%                        and plots a graph that allows quality checks
-%                        [def. 0].
-%                    ... twthresh - sets the threshold to perform the twave
-%                        check. [def. 0.36s].
-%                    ... channel_action - ['add'/'replace'] Defines whether
-%                        the new channel should be added or the previous
-%                        outputs of this function should be replaced.
-%                        (Default: 'replace')
-%
-% Reference:
-% Pan J & Tomkins WJ (1985). A Real-Time QRS Detection Algorithm. IEEE
-% Transactions on Biomedical Engineering, 32, 230-236.
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2013-2015 Philipp C Paulus & Dominik R Bach
-% (Technische Universitaet Dresden, University of Zurich)
-%     2022      Teddy Chao
-
-% -------------------------------------------------------------------------
-% DEVELOPERS NOTES: Changes from the original Pan & Tompkins algorithm
-%
+%               chan: number of ECG channel (optional, default: first ECG
+%                     channel) if is empty (= 0 / []) then default channel will
+%                     be used.
+%   ┌────────options:
+%   ├──────────.semi: activates the semi automatic mode, allowing the
+%   │                 handcorrection of all IBIs that fulfill:
+%   │                 >/< mean(ibi) +/- 3 * std(ibi) [def. 1].
+%   ├─────────.minHR: sets minimal HR [def. 20bpm].
+%   ├─────────.maxHR: sets maximal HR [def. 200bpm].
+%   ├─────.debugmode: [numeric, default as 0]
+%   │                 runs the algorithm in debugmode (additional results 
+%   │                 in debug variable 'infos.pt_debug') and plots a graph 
+%   │                 that allows quality checks.
+%   ├──────.twthresh: sets the threshold to perform the twave check.
+%   │                 [def. 0.36s].
+%   └.channel_action: ['add'/'replace', default as 'replace']
+%                     Defines whether the new channel should be added or 
+%                     the previous outputs of this function should be replaced.
+% ● Reference
+%   Pan J & Tomkins WJ (1985). A Real-Time QRS Detection Algorithm. IEEE
+%   Transactions on Biomedical Engineering, 32, 230-236.
+% ● Developer's notes
+%   ▶︎ Changes from the original Pan & Tompkins algorithm
 %   filter:       P. & T. intend to achieve a pass band from 5-15 Hz with a
 %                 real-time filter. This function uses an offline second
 %                 order Butterworth filter with a pass band of 5-15 Hz.
@@ -62,10 +56,7 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, chan, options)
 %                 most psychophysiological studies HR > 200 bpm are very
 %                 unlikely to occur HRmax was set to be 200 bpm
 %                 (options.HRmax).
-%
-% -------------------------------------------------------------------------
-%   Important variables of the algorithm
-% -------------------------------------------------------------------------
+%   ▶︎ Important variables of the algorithm
 %   PEAKF/PEAKI:  Are the current peaks in the amplified (F) and integrated
 %                 (I) signal. These peaks are compared with the threshold
 %                 set.
@@ -97,7 +88,10 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, chan, options)
 %
 %   R:            Vector of the same length as the raw data, containing
 %                 information on the position of the QRS complexes.
-% -------------------------------------------------------------------------
+% ● Copyright
+%   Introduced in PsPM 3.0
+%   Written in 2013-2015 Philipp C Paulus & Dominik R Bach
+%   (Technische Universitaet Dresden, University of Zurich)
 
 %% Initialise
 global settings

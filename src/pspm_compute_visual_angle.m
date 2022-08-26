@@ -1,40 +1,36 @@
 function [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,unit,options)
-% pspm_compute_visual_angle computes from gaze data the corresponding
-% visual angle (for each data point). The convention used here is that the
-% origin of coordinate system for gaze data is at the bottom left corner of
-% the screen.
-%
-% FORMAT:
-%        [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,unit,options)
-%
-% ARGUMENTS:
-%       fn:                 The actual data file containing the eyelink
-%                           recording with gaze data
-%       chan:               On which subset of channels should the conversion
-%                           be done. Supports all values which can be passed
-%                           to pspm_load_data(). The will only work on
-%                           gaze-channels. Other channels specified will be
-%                           ignored.
-%       width:              Width of the display window. Unit is 'unit'.
-%       height:             Height of the display window. Unit is 'unit'.
-%       distance:           distance between eye and screen in length units.
-%       unit:               unit in which width, height and distance are given.
-%       options:
-%         .channel_action:  ['add'/'replace'] Defines whether the new channels
-%                           should be added or the previous outputs of this function
-%                           should be replaced.
-%                           Default: 'add'
-%         .eyes:            Define on which eye the operations
-%                           should be performed. Possible values
-%                           are: 'l', 'r', 'c'.
-%                           Default: 'c'
-%
-% RETURN VALUES sts
-%               sts:            Status determining whether the execution was
-%                               successfull (sts == 1) or not (sts == -1)
-%               out:            Id of the added channels.
-%__________________________________________________________________________
-% PsPM 4.0
+% ● Description
+%   pspm_compute_visual_angle computes from gaze data the corresponding
+%   visual angle (for each data point). The convention used here is that the
+%   origin of coordinate system for gaze data is at the bottom left corner of
+%   the screen.
+% ● Format
+%   [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,unit,options)
+% ● Arguments
+%                fn:  The actual data file containing the eyelink recording
+%                     with gaze data
+%              chan:  On which subset of channels should the conversion be done.
+%                     Supports all values which can be passed to
+%                     pspm_load_data().
+%                     The will only work on gaze-channels.
+%                     Other channels specified will be ignored.
+%             width:  Width of the display window. Unit is 'unit'.
+%            height:  Height of the display window. Unit is 'unit'.
+%          distance:  distance between eye and screen in length units.
+%              unit:  unit in which width, height and distance are given.
+% ┌──────── options:
+% ├─.channel_action:  [accept: 'add'/'replace', default: 'add']
+% │                   Defines whether the new channels should be added or the
+% │                   previous outputs of this function should be replaced.
+% └───────────.eyes:  [accept: 'l'/'r'/'c', default: 'c'] 
+%                     Define on which eye the operations should be performed.
+% ● Output
+%               sts:  Status determining whether the execution was
+%                     successfull (sts == 1) or not (sts == -1)
+%               out:  Id of the added channels.
+% ● Copyright
+%   Introduced in PsPM 4.0
+
 %% Initialise
 global settings
 if isempty(settings)

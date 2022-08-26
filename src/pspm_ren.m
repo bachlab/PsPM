@@ -1,15 +1,15 @@
 function newfilename = pspm_ren(filename, newfilename)
-
-% pspm_ren renames an SCR datafile and updates the infos field
-%
-% FORMAT:
-% NEWFILENAME = pspm_ren(FILENAME, NEWFILENAME)
-%
-% FILENAME can be a name, or for convenience, a cell array of filenames
-%
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Description
+%   pspm_ren renames an SCR datafile and updates the infos field
+% ● Format
+%   newfilename = pspm_ren(filename, newfilename)
+% ● Arguments
+%      filename: can be a name, or for convenience, a cell array of filenames
+%   newfilename: TBA.
+% ● Copyright
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings

@@ -1,96 +1,71 @@
 function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
-% pspm_find_valid_fixaitons takes a file with data from eyelink recordings
-% which has been converted to length units and filters out invalid fixations.
-% Gaze values outside of a defined range are set to NaN, which can later
-% be interpolated using pspm_interpolate. The function will create a timeseries
-% with NaN values during invalid fixations (as defined by the parameters).
-%
-% With two options it is possible to tell the function whether to add or
-% replace the channels and to tell whether the function should create a new
-% file or overwrite the file given in fn.
-%
-% FORMAT:
+% ● Description
+%   pspm_find_valid_fixaitons takes a file with data from eyelink recordings
+%   which has been converted to length units and filters out invalid fixations.
+%   Gaze values outside of a defined range are set to NaN, which can later
+%   be interpolated using pspm_interpolate. The function will create a
+%   timeseries with NaN values during invalid fixations (as defined by the
+%   parameters).
+%   With two options it is possible to tell the function whether to add or
+%   replace the channels and to tell whether the function should create a new
+%   file or overwrite the file given in fn.
+% ● Format
 %   [sts, out_file] = pspm_find_valid_fixations(fn, bitmap, options)
 %   [sts, out_file] = pspm_find_valid_fixations(fn, circle_degree, distance,
 %                                               unit, options)
-%
-% ARGUMENTS:
-%           fn:                 The actual data file containing the eyelink
-%                               recording with gaze data converted to cm.
-%           bitmap:             A nxm matrix representing the display
-%                               window and holding for each poisition a
-%                               one, where a gaze value is taken into
-%                               account. If there exists gaze data at a
-%                               point with a zero value in the bitmap
-%                               the corresponding data is set to NaN.
-%           circle_degree:      size of boundary circle given in degree
-%                               visual angles.
-%           distance:           distance between eye and screen in length units.
-%           unit:               unit in which distance is given.
-%
-%           options:            Optional values
-%               fixation_point:     A nx2 vector containing x and y of the
-%                                   fixation point (with resepect to the
-%                                   given resolution). n should be
-%                                   either 1 or should have the length of
-%                                   the actual data. Default is the middle
-%                                   of the screen. If resolution is not defined
-%                                   the values are given in percent. Therefore
-%                                   [0.5 0.5] would correspond to the middle of
-%                                   the screen. Default is [0.5 0.5]. Only
-%                                   taken into account if there is no
-%                                   bitmap.
-%               resolution:         Resolution with which the fixation point
-%                                   is defined (Maximum value of the x and y
-%                                   coordinates). This can be the resolution
-%                                   set in cogent (e.g. [1280 1024]) or the
-%                                   width and height of the screen in cm
-%                                   (e.g. [50 30]). Default is [1 1]. Only
-%                                   taken into account if there is no
-%                                   bitmap.
-%               plot_gaze_coords:   Define whether to plot the gaze
-%                                   coordinates for visual inspection of
-%                                   the validation process. Default is
-%                                   false.
-%               channel_action:     Define whether to add or replace the
-%                                   data. Default is 'add'. Possible values
-%                                   are 'add' or 'replace'
-%               newfile:            Define new filename to store data to
-%                                   it. Default is '' which means that the
-%                                   file under fn will be 'replaced'
-%               overwrite:          Define whether existing files should be
-%                                   overwritten or not. Default is 0.
-%               missing:            If missing is enabled (=1), an extra
-%                                   channel will be written containing
-%                                   information about the validated data.
-%                                   Data points equal to 1 describe epochs
-%                                   which have been discriminated as
-%                                   invalid during validation. Data points
-%                                   equal to 0 describe epochs of valid
-%                                   data (= no blink & valid fixation).
-%                                   Default is disabled (=0)
-%               eyes:               Define on which eye the operations
-%                                   should be performed. Possible values
-%                                   are: 'left', 'right', 'all'. Default is
-%                                   'all'.
-%               channels:           Choose channels in which the data
-%                                   should be set to NaN
-%                                   during invalid fixations.
-%                                   Default is 'pupil'. A char or numeric
-%                                   value or a cell array of char or
-%                                   numerics is expected. Channel names
-%                                   pupil, gaze_x, gaze_y,
-%                                   pupil_missing will be automatically
-%                                   expanded to the corresponding eye. E.g.
-%                                   pupil becomes pupil_l or pupil_r
-%                                   according to the eye which is
-%                                   being processed.
-%
-%
-%__________________________________________________________________________
-% PsPM 4.0
-% (C) 2016 Tobias Moser (University of Zurich)
-% Update 2021 Teddy Chao (UCL)
+% ● Arguments
+%                 fn: The actual data file containing the eyelink recording
+%                     with gaze data converted to cm.
+%             bitmap: A nxm matrix representing the display window and holding
+%                     for each poisition a one, where a gaze value is taken into
+%                     account. If there exists gaze data at a point with a zero
+%                     value in the bitmap the corresponding data is set to NaN.
+%      circle_degree: size of boundary circle given in degree visual angles.
+%           distance: distance between eye and screen in length units.
+%               unit: unit in which distance is given.
+%   ┌────────options: Optional values
+%   ├.fixation_point: A nx2 vector containing x and y of the fixation point
+%   │                 (with resepect to the given resolution). n should be
+%   │                 either 1 or should have the length of the actual data. 
+%   │                 Default is the middle of the screen. 
+%   │                 If resolution is not defined the values are given in 
+%   │                 percent. Therefore [0.5 0.5] would correspond to the
+%   │                 middle of the screen. Default is [0.5 0.5]. Only taken
+%   │                 into account if there is no bitmap.
+%   ├────.resolution: Resolution with which the fixation point is defined
+%   │                 (Maximum value of the x and y coordinates). This can be
+%   │                 the resolution set in cogent (e.g. [1280 1024]) or the
+%   │                 width and height of the screen in cm (e.g. [50 30]).
+%   │                 Default is [1 1]. Only taken into account if there is no
+%   │                 bitmap.
+%   ├.plot_gaze_coords: Define whether to plot the gaze coordinates for visual
+%   │                 inspection of the validation process. Default is false.
+%   ├.channel_action: Define whether to add or replace the data. Default is
+%   │                 'add'. Possible values are 'add' or 'replace'
+%   ├───────.newfile: Define new filename to store data to it. Default is ''
+%   │                 which means that the file under fn will be 'replaced'.
+%   ├─────.overwrite: Define whether existing files should be overwritten or
+%   │                 not. Default is 0.
+%   ├───────.missing: If missing is enabled (=1), an extra channel will be
+%   │                 written containing information about the validated data.
+%   │                 Data points equal to 1 describe epochs which have been 
+%   │                 discriminated as invalid during validation. Data points
+%   │                 equal to 0 describe epochs of valid data (= no blink &
+%   │                 valid fixation). Default is disabled (=0)
+%   ├──────────.eyes: Define on which eye the operations should be performed.
+%   │                 Possible values are: 'left', 'right', 'all'. Default is
+%   │                 'all'.
+%   └──────.channels: Choose channels in which the data should be set to NaN
+%                     during invalid fixations. Default is 'pupil'. A char or 
+%                     numeric value or a cell array of char or numerics is
+%                     expected. Channel names pupil, gaze_x, gaze_y,
+%                     pupil_missing will be automatically expanded to the
+%                     corresponding eye. E.g. pupil becomes pupil_l or pupil_r
+%                     according to the eye which is being processed.
+% ● Copyright
+%   Introduced in PsPM 4.0
+%   Written in 2016 Tobias Moser (University of Zurich)
+%   Maintained in 2021 by Teddy Chao (UCL)
 
 
 % initialise

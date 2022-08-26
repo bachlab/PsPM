@@ -1,43 +1,41 @@
 function out = pspm_sf_dcm(scr, sr, opt)
-% pspm_sf_dcm does dynamic causal modelling for SF of the skin conductance
-% uses f_SF and g_Id
-%
-% the input data is assumed to be in mcS, and sampling rate in Hz
-%
-% FORMAT
-% function out = pspm_sf_dcm(scr, sr, opt)
-%
-%   out:        output
-%               out.n: number of responses above threshold
-%               out.f: frequency of responses above threshold in Hz
-%               out.ma: mean amplitude of responses above threshold
-%               out.t: timing of (all) responses
-%               out.a: amplitude of (all) responses
-%               out.theta: parameters used for f_SF
-%               out.threshold: threshold
-%               out.if: initial frequency for f_SF
-%               out.yhat: fitted time series
-%               out.model: information about the DCM inversion
-%   scr:        skin conductance epoch (maximum size depends on computing
+% ● Description
+%   pspm_sf_dcm does dynamic causal modelling for SF of the skin conductance
+%   uses f_SF and g_Id
+%   the input data is assumed to be in mcS, and sampling rate in Hz
+% ● Format
+%   function out = pspm_sf_dcm(scr, sr, opt)
+% ● Output
+%         out:  output
+%          .n:  number of responses above threshold
+%          .f:  frequency of responses above threshold in Hz
+%         .ma:  mean amplitude of responses above threshold
+%          .t:  timing of (all) responses
+%          .a:  amplitude of (all) responses
+%      .theta:  parameters used for f_SF
+%  .threshold:  threshold
+%         .if:  initial frequency for f_SF
+%       .yhat:  fitted time series
+%      .model:  information about the DCM inversion
+% ● Arguments
+%         scr:  skin conductance epoch (maximum size depends on computing
 %               power, a sensible size is 60 s at 10 Hz)
-%   sr:         sampling rate in Hz
-%
-%   options: options structure
-%       - options.threshold: threshold for SN detection (default 0.1 mcS)
-%       - options.theta: a (1 x 5) vector of theta values for f_SF
-%           (default: read from pspm_sf_theta)
-%       - options.fresp: frequency of responses to model (default 0.5 Hz)
-%       - options.dispwin: display progress window (default 1)
-%       - options.dispsmallwin: display intermediate windows (default 0);
-%
-%
-% REFERENCE
-% Bach DR, Daunizeau J, Kuelzow N, Friston KJ, & Dolan RJ (2011). Dynamic
-% causal modelling of spontaneous fluctuations in skin conductance.
-% Psychophysiology, 48, 252-57.
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%          sr:  sampling rate in Hz
+%     options:  options structure
+%  .threshold:  threshold for SN detection (default 0.1 mcS)
+%      .theta:  a (1 x 5) vector of theta values for f_SF
+%               (default: read from pspm_sf_theta)
+%      .fresp:  frequency of responses to model (default 0.5 Hz)
+%    .dispwin:  display progress window (default 1)
+%  .dispsmallwin:
+%               display intermediate windows (default 0);
+% ● References
+%   Bach DR, Daunizeau J, Kuelzow N, Friston KJ, & Dolan RJ (2011). Dynamic
+%   causal modelling of spontaneous fluctuations in skin conductance.
+%   Psychophysiology, 48, 252-57.
+% ● Copyright
+%   Introduced In PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

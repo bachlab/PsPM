@@ -1,35 +1,34 @@
 function theta = pspm_get_rf(fn, events, outfile, chan, options)
-% pspm_get_rf estimates a response function from an event-related design
-% (e.g. for further use in a GLM analysis), using a regularisation as
-% third-order ODE and DCM machinery
-% the function returns an m-function for the RF, and the parameters of that
-% function
-%
-% FORMAT theta = pspm_get_rf(datafile, events, outfile, chan, options)
-%   with datafile: SCRalyze data file
-%        events: specified in seconds as
-%            a vector of onsets
-%            an SPM style onsets file with one event type
-%            an epochs file (see pspm_dcm or pspm_get_epochs)
-%         outfile (optional): a file to write the response function to
-%         chan (optional): data channel (default: look for first SCR channel)
-%         options: to be passed on to pspm_dcm
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%
+% ● Description
+%   pspm_get_rf estimates a response function from an event-related design
+%   (e.g. for further use in a GLM analysis), using a regularisation as
+%   third-order ODE and DCM machinery.
+% ● Developer's Notes
+%   the function returns an m-function for the RF, and the parameters of that
+%   function
+% ● Format
+%   theta = pspm_get_rf(fn, events, outfile, chan, options)
+% ● Arguments
+%         fn: the file name of a PsPM data file
+%     events: specified in seconds as either (1) a vector of onsets, or (2) an 
+%             SPM style onsets file with one event type, or (3) an epochs file
+%             (see pspm_dcm or pspm_get_epochs).
+%    outfile: (optional) a file to write the response function to
+%       chan: (optional) data channel (default: look for first SCR channel)
+%    options: [struct] to be passed on to pspm_dcm
+% ● Copyright
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-%% Initialise
+%% initialise
 global settings
 if isempty(settings)
   pspm_init;
 end
 sts = -1;
-
 rf = [];
 
-% check input
-% ------------------------------------------------------------------------
+%% check input
 if nargin < 1
   warning('No data to work on.'); return;
 elseif nargin < 2
@@ -45,15 +44,11 @@ if nargin < 4
   chan = 'scr';
 end;
 
-
-% call DCM
-% -------------------------------------------------------------------------
-
+%% call DCM
 options.getrf = 1;
 try options.nosave, catch, options.nosave = 1; end;
 options.chan = chan;
 [foo dcm] = pspm_dcm(fn, '', events, options);
-
 if numel(dcm{1}.prior.posterior) == 2
   % based on eSCR
   theta = dcm{1}.prior.posterior(2).muTheta(1:7)';
@@ -62,16 +57,15 @@ else
   theta = dcm{1}.prior.posterior(3).muTheta(1:7)';
 end;
 
-% write response function to file
-% ------------------------------------------------------------------------
+%% write response function to file
 if ~isempty(outfile)
   [pth fn ext] = fileparts(outfile);
   c = clock;
-  job{1}  = sprintf('function [rf, theta] = %s(td)', fn);
-  job{2}='%-----------------------------------------------------------------------';
-  job{3}=['% Response function created by pspm_get_rf, ', date, sprintf('  %02.0f:%02.0f', c(4:5))];
-  job{4}='%-----------------------------------------------------------------------';
-  job{5} = sprintf('theta = [%f %f %f %f %f %f %f];', theta);
+  job{1}  = sprintf('function [rf, theta] = %s(td)', fn); 
+  job{2}  = '%-----------------------------------------------------------------------';
+  job{3}  = ['% Response function created by pspm_get_rf, ', date, sprintf('  %02.0f:%02.0f', c(4:5))];
+  job{4}  = '%-----------------------------------------------------------------------';
+  job{5}  = sprintf('theta = [%f %f %f %f %f %f %f];', theta);
   job{6}  = sprintf('ut(1, :) = td:td:90;');
   job{7}  = sprintf('ut(2, :) = 0;');
   job{8}  = sprintf('ut(3, :) = 1;');
@@ -87,8 +81,8 @@ if ~isempty(outfile)
   job{18} = sprintf('rf = Xt(1, :);');
   job{19} = sprintf('rf = rf/max(rf);');
   job{20} = sprintf('rf = rf(:);');
-  job=strvcat(job');
-  outfile=fullfile(pth, [fn, '.m']);
+  job = strvcat(job');
+  outfile = fullfile(pth, [fn, '.m']);
   dlmwrite(outfile, job, 'delimiter', '');
 end;
 return

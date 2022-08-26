@@ -1,7 +1,13 @@
 function pspm_ui(hObject,handles,window)
-
-% pspm_ui controls the UI of the referred handle
-% The PsPM Team, UCL
+% ● Description
+%   pspm_ui controls the UI of the referred handle.
+% ● Arguments
+%   hObject: UI controllor of the specific GUI window.
+%   handles: UI controllor of the specific GUI window.
+%    window: the name of the specific GUI window.
+% ● Copyright
+%   Introduced in PsPM 5.1
+%   Written and maintained in 2021-2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings
@@ -9,7 +15,6 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-
 %% Parameters for UI optimisation
 if ispc
   FSTitle = 11;
@@ -190,7 +195,6 @@ if exist('EmphComponents', 'var')
   ApplyStyle(handles, EmphComponents, FNEmph, FSText);
 end
 end
-
 function ApplyStyle(handles, widgt, FN, FS)
 [r,c] = size(widgt);
 for i_r = 1:r

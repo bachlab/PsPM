@@ -1,32 +1,31 @@
 function pspm_con1(modelfile, connames, convec, datatype, deletecon, options)
 % ● Description
-%   pspm_con1 creates contrasts on the first level (i.e. within one
-%   dataset) and saves them to the modelfile to be accessed later.
+%   pspm_con1 creates contrasts on the first level (i.e. within one dataset)
+%   and saves them to the modelfile to be accessed later.
 % ● Format
 %   pspm_con1 (modelfile, connames, convec, [datatype, deletecon, options])
 % ● Arguments
-%   modelfile:  a filename, or cell array of filenames.
-%    connames:  a cell array of names for the desired contrasts.
-%      convec:  a cell array of contrasts.
-%    datatype:  an optional structure
-%      .param:  use all parameter estimates
-%       .cond:  GLM - contrasts formulated in terms of conditions,
-%               automatically detects number of basis functions and uses
-%               only the first one (i.e. without derivatives) other models
-%               - contrasts based on unique trial names.
-%      .recon:  contrasts formulated in terms of conditions in a GLM,
-%               reconstructs estimated response from all basis functions
-%               and uses the peak of the estimated response
-%  .deletecon:  should existing contrasts be deleted (1) or appended (0)?
-%               default as 0;
-%     options:
-%    .zscored: 1 - zscore data
-%                  Restriction: only for non-linear models
-%                  and not when datatype == 'recon'
-%              0 - do not zscore data
-% ● Version
-%   PsPM 3.0
-%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%    modelfile: a filename, or cell array of filenames
+%     connames: a cell array of names for the desired contrasts
+%       convec: a cell array of contrasts
+%     datatype: 'param':  use all parameter estimates
+%                'cond':  GLM - contrasts formulated in terms of conditions,
+%                         automatically detects number of basis functions and
+%                         uses only the first one (i.e. without derivatives)
+%                         other models - contrasts based on unique trial names
+%               'recon':  contrasts formulated in terms of conditions in a GLM,
+%                         reconstructs estimated response from all basis 
+%                         functions and uses the peak of the estimated response
+%    deletecon: define existing contrasts to be deleted (1) or appended (0, 
+%               default).
+%      options: [struct]
+%               .zscored: 1 - zscore data
+%                             Restriction: only for non-linear models
+%                             and not when datatype == 'recon'
+%                         0 - do not zscore data
+% ● Copyright
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings

@@ -1,7 +1,8 @@
 function pspm_show_help_doc
-% PsPM 5.1
-% 2021 Teddy Chao
-%% Initialise
+% ● Copyright
+%   Introduced In PsPM 5.1
+%   Written in 2021 by Teddy Chao (UCL)
+
 global settings
 if isempty(settings)
   pspm_init;

@@ -1,25 +1,26 @@
 function [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
-% FORMAT: [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
-%           datafile: filename
-%           action (default 'none'):
-%                   'none':  check whether file is valid at all
-%                   'stats': retrieve stats struct with fields .stats
-%                            and .names
-%                   'cond':  for GLM - retrieve stats struct using only
-%                            first regressor/basis function for each condition
-%                            for models with 2D stats structure - retrieve
-%                            mean parameter values per condition, based on
-%                            unique trial names
-%                   'recon': (for GLM) retrieve stats struct using
-%                            reconstructed responses (which are at the same
-%                            time written into the glm struct as glm.recon)
-%                   'con':   retrieve full con structure
-%                   'all':   retrieve the full first level structure
-%                   'savecon': add contrasts to file, use an additional
-%                            input argument data that contains the contrasts
-%                   'save':  check and save first levle model, use an additional
-%                            input argument data that contains the model
-%                            struct
+% ● Format
+%   [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
+% ● Arguments
+%   datafile: filename
+%     action: (default 'none'):
+%             'none':   check whether file is valid at all
+%             'stats':  retrieve stats struct with fields .stats
+%                       and .names
+%             'cond':   for GLM - retrieve stats struct using only
+%                       first regressor/basis function for each condition
+%                       for models with 2D stats structure - retrieve
+%                       mean parameter values per condition, based on
+%                       unique trial names
+%             'recon':  (for GLM) retrieve stats struct using
+%                       reconstructed responses (which are at the same
+%                       time written into the glm struct as glm.recon)
+%               'con':  retrieve full con structure
+%               'all':  retrieve the full first level structure
+%           'savecon':  add contrasts to file, use an additional
+%                       input argument data that contains the contrasts
+%              'save':  check and save first levle model, use an additional
+%                       input argument data that contains the model struct
 %
 %           savedata:       for 'save' option - a struct containing the
 %                           model as only field
@@ -38,26 +39,23 @@ function [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
 %           'stats', 'recon', 'cond': data.stats, data.names, (and data.trlnames if existing)
 %           'con':   con structure
 %           'all':   full first level structure
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (WTCN, UZH)
-
-% -------------------------------------------------------------------------
-% DEVELOPERS NOTES: General structure of PsPM 1st level model files
-%
-% each file contains one struct variable with the model
-% allowed model names are specified in pspm_init
-% each model must contain the following fields:
-%   .stats: a n x 1 vector (glm, for n regressors) or n x k matrix (dcm,
+% ● Developer's Notes
+%   General structure of PsPM 1st level model files
+%   Each file contains one struct variable with the model
+%   allowed model names are specified in pspm_init
+%   each model must contain the following fields:
+%     .stats: a n x 1 vector (glm, for n regressors) or n x k matrix (dcm,
 %           sf; for k measures, n trials/epochs)
-%   .names: a cell array corresponding to regressor names (glm) or measure
+%     .names: a cell array corresponding to regressor names (glm) or measure
 %           names across trials/epochs (sf, dcm)
-%   .trlnames for models with 2D stats structure (dcm, sf)
-% optional fields:
-%   .recon for reconstructed glm responses
-%   .con for contrasts
-% -------------------------------------------------------------------------
-
+%     .trlnames for models with 2D stats structure (dcm, sf)
+%   optional fields:
+%     .recon for reconstructed glm responses
+%     .con for contrasts
+% ● Copyright
+%   Introduced In PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (WTCN, UZH)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings
