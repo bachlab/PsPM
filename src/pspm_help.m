@@ -81,12 +81,15 @@ function A = sort_info (B)
 % remove '% '
 for i_line = 1:length(B)
   C = B{i_line, 1};
+  if C(1) == ' '
+      break
+  end
   if contains(C,'% ')
     C(strfind(C,'% '):(strfind(C,'% ')+1))=[];
   end
   B{i_line, 1} = C;
 end
-D = {'Description', 'Format', 'Version', 'Authors'};
+D = {'Description', 'Format'};
 % sort
 A = struct();
 for i_D = 1:length(D)
@@ -95,8 +98,8 @@ for i_D = 1:length(D)
   while ( ~strcmp(B{N_target+1,1}(1),'●') )
     str = [str, B{N_target+1, 1}];
     N_target = N_target + 1;
-    if strcmp(B{N_target+1,1}(1),'●')
-      break
+    if strcmp(B{N_target,1}(1),'●') || strcmp(B{N_target,1}(1),' ')
+        break
     end
   end
   A.(D{i_D}) = remove_multiple_space(str);

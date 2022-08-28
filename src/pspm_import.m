@@ -97,7 +97,6 @@ function outfile = pspm_import(datafile, datatype, import, options)
 %   Written in 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy Chao (UCL)
 
-
 %% 1 Initialise
 global settings
 if isempty(settings)

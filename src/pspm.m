@@ -1,38 +1,41 @@
 function varargout = pspm(varargin)
 % ● Description
-%   pspm handles the main GUI for PsPM
-% ● Copyright
-%   Introduced in PsPM 1.0.
-%   Written by Dominik R Bach (Wellcome Centre for Human Neuroimaging) in 2008-2021
-%   Lastly updated in PsPM 5.1.1 by Teddy Chao (UCL) in 2021
+%   pspm.m handles the main GUI for PsPM
+% ● Last Updated in
+%   PsPM 5.1.1
+% ● Written By
+%   (C) 2008-2021 Dominik R Bach (Wellcome Centre for Human Neuroimaging)
+% ● Maintained By
+%   22-07-2021 Teddy Chao (UCL)
 
 %% Initialise
 global settings
 if isempty(settings)
-  pspm_init;
+    pspm_init;
 end
 sts = -1;
 % -------------------------------------------------------------------------
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
-  'gui_Singleton',  gui_Singleton, ...
-  'gui_OpeningFcn', @PsPM_OpeningFcn, ...
-  'gui_OutputFcn',  @PsPM_OutputFcn, ...
-  'gui_LayoutFcn',  [] , ...
-  'gui_Callback',   []);
+    'gui_Singleton',  gui_Singleton, ...
+    'gui_OpeningFcn', @PsPM_OpeningFcn, ...
+    'gui_OutputFcn',  @PsPM_OutputFcn, ...
+    'gui_LayoutFcn',  [] , ...
+    'gui_Callback',   []);
 
 if nargin && ischar(varargin{1})
-  gui_State.gui_Callback = str2func(varargin{1});
+    gui_State.gui_Callback = str2func(varargin{1});
 end
 
 
 if nargout
-  [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
 else
-  gui_mainfcn(gui_State, varargin{:});
+    gui_mainfcn(gui_State, varargin{:});
 end
 % End initialization code - DO NOT EDIT
+end
 
 % --- Executes just before tag_PsPM is made visible.
 function PsPM_OpeningFcn(hObject, ~, handles, varargin)
@@ -196,30 +199,30 @@ function tag_tools_list_Callback(hObject, ~, ~)
 %        contents{get(hObject,'Value')} returns selected item from tag_tools_list
 val = get(hObject,'Value');
 switch val
-  case 1
-    pspm_display;
-  case 2
-    cfg_add_module('pspm.tools.rename');
-  case 3
-    cfg_add_module('pspm.tools.split_sessions');
-  case 4
-    cfg_add_module('pspm.tools.merge');
-  case 5
-    cfg_add_module('pspm.tools.artefact_rm');
-  case 6
-    cfg_add_module('pspm.tools.downsample');
-  case 7
-    cfg_add_module('pspm.tools.interpolate');
-  case 8
-    cfg_add_module('pspm.tools.extract_segments');
-  case 9
-    cfg_add_module('pspm.tools.segment_mean');
-  case 10
-    cfg_add_module('pspm.tools.extract_markerinfo');
-  case 11
-    pspm_data_editor();
-  case 12
-    cfg_add_module('pspm.tools.convert_data');
+    case 1
+        pspm_display;
+    case 2
+        cfg_add_module('pspm.tools.rename');
+    case 3
+        cfg_add_module('pspm.tools.split_sessions');
+    case 4
+        cfg_add_module('pspm.tools.merge');
+    case 5
+        cfg_add_module('pspm.tools.artefact_rm');
+    case 6
+        cfg_add_module('pspm.tools.downsample');
+    case 7
+        cfg_add_module('pspm.tools.interpolate');
+    case 8
+        cfg_add_module('pspm.tools.extract_segments');
+    case 9
+        cfg_add_module('pspm.tools.segment_mean');
+    case 10
+        cfg_add_module('pspm.tools.extract_markerinfo');
+    case 11
+        pspm_data_editor();
+    case 12
+        cfg_add_module('pspm.tools.convert_data');
 end
 end
 
@@ -232,7 +235,7 @@ function tag_tools_list_CreateFcn(hObject, ~, ~)
 % Hint: popupmenu controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-  set(hObject,'BackgroundColor','white');
+    set(hObject,'BackgroundColor','white');
 end
 end
 
@@ -246,7 +249,7 @@ function tag_first_level_models_list_CreateFcn(hObject, ~, ~)
 % Hint: popupmenu controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-  set(hObject,'BackgroundColor','white');
+    set(hObject,'BackgroundColor','white');
 end
 end
 
@@ -263,26 +266,26 @@ function tag_first_level_models_list_Callback(hObject, ~, ~)
 selected = get(hObject,'Value');
 
 switch selected
-  case 1 % SCR
-    cfg_add_module('pspm.first_level.scr.glm_scr');
-  case 2
-    cfg_add_module('pspm.first_level.hp.glm_hp_e');
-  case 3
-    cfg_add_module('pspm.first_level.hp.glm_hp_fc');
-  case 4
-    cfg_add_module('pspm.first_level.resp.glm_ra_e');
-  case 5
-    cfg_add_module('pspm.first_level.resp.glm_ra_fc');
-  case 6
-    cfg_add_module('pspm.first_level.resp.glm_rfr_e');
-  case 7
-    cfg_add_module('pspm.first_level.resp.glm_rp_e');
-  case 8
-    cfg_add_module('pspm.first_level.ps.glm_ps_fc');
-  case 9
-    cfg_add_module('pspm.first_level.sebr.glm_sebr');
-  case 10
-    cfg_add_module('pspm.first_level.sps.glm_sps');
+    case 1 % SCR
+        cfg_add_module('pspm.first_level.scr.glm_scr');
+    case 2
+        cfg_add_module('pspm.first_level.hp.glm_hp_e');
+    case 3
+        cfg_add_module('pspm.first_level.hp.glm_hp_fc');
+    case 4
+        cfg_add_module('pspm.first_level.resp.glm_ra_e');
+    case 5
+        cfg_add_module('pspm.first_level.resp.glm_ra_fc');
+    case 6
+        cfg_add_module('pspm.first_level.resp.glm_rfr_e');
+    case 7
+        cfg_add_module('pspm.first_level.resp.glm_rp_e');
+    case 8
+        cfg_add_module('pspm.first_level.ps.glm_ps_fc');
+    case 9
+        cfg_add_module('pspm.first_level.sebr.glm_sebr');
+    case 10
+        cfg_add_module('pspm.first_level.sps.glm_sps');
 end
 end
 
@@ -298,31 +301,31 @@ function tag_data_preprocessing_list_Callback(hObject, ~, ~)
 
 selected = get(hObject,'Value');
 switch selected
-  case 1
-    cfg_add_module('pspm.data_preprocessing.pp_scr');%pp_scr
-  case 2
-    cfg_add_module('pspm.data_preprocessing.pp_heart_period.pp_heart_data');
-  case 3
-    %cfg_add_module('tag_pspm.data_preprocessing.pp_heart_period.ecg_editor');
-    pspm_ecg_editor();
-  case 4
-    cfg_add_module('pspm.data_preprocessing.resp_pp');
-  case 5
-    cfg_add_module('pspm.data_preprocessing.pp_pupil.process_illuminance');
-  case 6
-    cfg_add_module('pspm.data_preprocessing.pp_pupil.find_valid_fixations');
-  case 7
-    cfg_add_module('pspm.data_preprocessing.pp_pupil.pupil_correct');
-  case 8
-    cfg_add_module('pspm.data_preprocessing.pp_pupil.pupil_preprocess');
-  case 9
-    cfg_add_module('pspm.data_preprocessing.pupil_size_convert');
-  case 10
-    cfg_add_module('pspm.data_preprocessing.gaze_convert');
-  case 11
-    cfg_add_module('pspm.data_preprocessing.pp_emg.find_sounds');
-  case 12
-    cfg_add_module('pspm.data_preprocessing.pp_emg.pp_emg_data');
+    case 1
+        cfg_add_module('pspm.data_preprocessing.pp_scr');%pp_scr
+    case 2
+        cfg_add_module('pspm.data_preprocessing.pp_heart_period.pp_heart_data');
+    case 3
+        %cfg_add_module('tag_pspm.data_preprocessing.pp_heart_period.ecg_editor');
+        pspm_ecg_editor();
+    case 4
+        cfg_add_module('pspm.data_preprocessing.resp_pp');
+    case 5
+        cfg_add_module('pspm.data_preprocessing.pp_pupil.process_illuminance');
+    case 6
+        cfg_add_module('pspm.data_preprocessing.pp_pupil.find_valid_fixations');
+    case 7
+        cfg_add_module('pspm.data_preprocessing.pp_pupil.pupil_correct');
+    case 8
+        cfg_add_module('pspm.data_preprocessing.pp_pupil.pupil_preprocess');
+    case 9
+        cfg_add_module('pspm.data_preprocessing.pupil_size_convert');
+    case 10
+        cfg_add_module('pspm.data_preprocessing.gaze_convert');
+    case 11
+        cfg_add_module('pspm.data_preprocessing.pp_emg.find_sounds');
+    case 12
+        cfg_add_module('pspm.data_preprocessing.pp_emg.pp_emg_data');
 end
 end
 
@@ -337,7 +340,7 @@ function tag_data_preprocessing_list_CreateFcn(hObject, ~, ~)
 % Hint: popupmenu controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-  set(hObject,'BackgroundColor','white');
+    set(hObject,'BackgroundColor','white');
 end
 end
 
@@ -354,10 +357,10 @@ function tag_data_preparation_list_Callback(hObject, ~, ~)
 selected = get(hObject,'Value');
 
 switch selected
-  case 1
-    cfg_add_module('pspm.prep.import');
-  case 2
-    cfg_add_module('pspm.prep.trim');
+    case 1
+        cfg_add_module('pspm.prep.import');
+    case 2
+        cfg_add_module('pspm.prep.trim');
 end
 end
 
@@ -371,7 +374,7 @@ function tag_data_preparation_list_CreateFcn(hObject, ~, ~)
 % Hint: popupmenu controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-  set(hObject,'BackgroundColor','white');
+    set(hObject,'BackgroundColor','white');
 end
 end
 
