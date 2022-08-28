@@ -65,10 +65,10 @@ function [data] = import_viewpoint(filepath)
         endidx = sess_beg_indices(sn + 1) - 1;
         data{sn}.dataraw = dataraw(begidx : endidx, :);
         data{sn}.dataraw_header = chan_info.read_numeric_columns';
-        data{sn}.chans = chans(begidx : endidx, :);
-        data{sn}.chans_header = chan_info.chans_header;
-        data{sn}.chans_units = chan_info.chans_units;
-        data{sn}.chan_indices = chan_info.col_idx;
+        data{sn}.channels = chans(begidx : endidx, :);
+        data{sn}.channels_header = chan_info.channels_header;
+        data{sn}.channels_units = chan_info.channels_units;
+        data{sn}.channel_indices = chan_info.col_idx;
         data{sn}.eyesObserved = file_info.eyesObserved;
         data{sn}.viewingDistance = file_info.viewingDistance;
         data{sn}.screenSize = file_info.screenSize;
@@ -80,7 +80,7 @@ function [data] = import_viewpoint(filepath)
         data{sn}.marker.name = markers_in_sess(nonempty_indices);
         data{sn}.marker.value = (-1) * ones('like', nonempty_indices);
         data{sn}.marker.pos = nonempty_indices;
-        data{sn}.marker.times = data{sn}.chans(nonempty_indices, 1);
+        data{sn}.marker.times = data{sn}.channels(nonempty_indices, 1);
     end
     rmpath(bsearch_path);
 end
@@ -123,8 +123,8 @@ function [dataraw, marker, messages, chan_info, file_info] = parse_viewpoint_fil
     file_info.eyesObserved = eyesObserved;
     chan_info.read_numeric_columns = read_numeric_columns;
     chan_info.col_idx = col_idx;
-    chan_info.chans_header = chans_header;
-    chan_info.chans_units = chans_units;
+    chan_info.channels_header = chans_header;
+    chan_info.channels_units = chans_units;
 end
 
 function [file_info, line_ctr] = parse_metadata(str, line_ctr, linefeeds, has_backr)
@@ -303,14 +303,14 @@ function [chans, marker, chan_info] = parse_messages(messages, chans, marker, ch
         curr_n_cols = size(chans, 2);
         chans(:, curr_n_cols + 1) = blinks_A;
         chans(:, curr_n_cols + 2) = saccades_A;
-        chan_info.chans_header = [chan_info.chans_header; 'blink_A'; 'saccade_A'];
-        chan_info.chans_units = [chan_info.chans_units; 'blink'; 'saccade'];
+        chan_info.channels_header = [chan_info.channels_header; 'blink_A'; 'saccade_A'];
+        chan_info.channels_units = [chan_info.channels_units; 'blink'; 'saccade'];
         chan_info.col_idx = [chan_info.col_idx; -1; -1];
         if strcmp(eyesObserved, 'AB')
             chans(:, curr_n_cols + 3) = blinks_B;
             chans(:, curr_n_cols + 4) = saccades_B;
-            chan_info.chans_header = [chan_info.chans_header; 'blink_B'; 'saccade_B'];
-            chan_info.chans_units = [chan_info.chans_units; 'blink'; 'saccade'];
+            chan_info.channels_header = [chan_info.channels_header; 'blink_B'; 'saccade_B'];
+            chan_info.channels_units = [chan_info.channels_units; 'blink'; 'saccade'];
             chan_info.col_idx = [chan_info.col_idx; -1; -1];
         end
     end

@@ -6,11 +6,11 @@ function Opt = pspm_options(Opt, FuncName)
 % Written by
 % 2022 Teddy Chao (UCL)
 
-StrOptChanInvalid = 'options.chan must contain valid channel types or positive integers.';
-StrOptChanInvalid_char = 'options.chan is not a valid channel type.';
+StrOptChanInvalid = 'options.channel must contain valid channel types or positive integers.';
+StrOptChanInvalid_char = 'options.channel is not a valid channel type.';
 switch FuncName
   case 'blink_saccade_filt'
-    Opt = Autofill(Opt,'chan', 0);
+    Opt = Autofill(Opt,'channel', 0);
     Opt = AutofillChanAction(Opt);
   case 'compute_visual_angle_core'
     Opt = Autofill(Opt,'interpolate',0);
@@ -23,7 +23,7 @@ switch FuncName
   case 'convert_au2unit'
     Opt = AutofillChanAction(Opt);
   case 'convert_ecg2hb_amri'
-    Opt = Autofill(Opt, 'chan', 'ecg');
+    Opt = Autofill(Opt, 'channel', 'ecg');
     Opt = AutofillChanAction(Opt, 'replace');
   case 'convert_gaze_distance'
     Opt = AutofillChanAction(Opt);
@@ -32,12 +32,12 @@ switch FuncName
   case 'convert_pixel2unit'
     Opt = AutofillChanAction(Opt);
   case 'convert_ppg2hb'
-    Opt = Autofill(Opt,'chan', 'ppg2hb');
+    Opt = Autofill(Opt,'channel', 'ppg2hb');
     Opt = AutofillChanAction(Opt, 'replace');
   case 'convert_visangle2sps'
     Opt = AutofillChanAction(Opt);
   case 'emg_pp'
-    Opt = Autofill(Opt,'chan', 'emg');
+    Opt = Autofill(Opt,'channel', 'emg');
     Opt = AutofillChanAction(Opt, 'replace');
   case 'exp'
     Opt = Autofill(Opt,'target', 'screen');
@@ -58,7 +58,7 @@ switch FuncName
       Opt.marker_chan_num = 0;
     end
   case 'write_channel'
-    if ~isfield(Opt, 'chan')
+    if ~isfield(Opt, 'channel')
       warning('ID:invalid_input', StrOptChanInvalid);
       return
     else
@@ -97,12 +97,12 @@ switch nargin
     DefaultValue = varargin{1};
     OptValue = varargin{2};    
 end
-if ~isfield(Opt, 'chan_action')
-  Opt.chan_action = DefaultValue;
+if ~isfield(Opt, 'channel_action')
+  Opt.channel_action = DefaultValue;
 else
-  if ~any(strcmpi(Opt.chan_action, OptValue))
+  if ~any(strcmpi(Opt.channel_action, OptValue))
     warning('ID:invalid_input', ...
-      '''options.chan_action'' must be among accepted values.');
+      '''options.channel_action'' must be among accepted values.');
     return
   end
 end

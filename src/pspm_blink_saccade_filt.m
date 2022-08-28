@@ -43,26 +43,26 @@ if ~isnumeric(discard_factor)
 end
 [lsts, ~, data] = pspm_load_data(fn);
 if lsts ~= 1; return; end;
-[lsts, ~, data_user] = pspm_load_data(fn, options.chan);
+[lsts, ~, data_user] = pspm_load_data(fn, options.channel);
 if lsts ~= 1; return; end;
-data_user = keep_pupil_gaze_chans(data_user);
+data_user = keep_pupil_gaze_channels(data_user);
 %% build matrixes and lists
 data_mat = {};
 column_names = {};
-mask_chans = {};
+mask_channels = {};
 for i = 1:numel(data)
   chantype = data{i}.header.chantype;
   if strncmp(chantype, 'blink', numel('blink')) || ...
       strncmp(chantype, 'saccade', numel('saccade'))
-    mask_chans{end + 1} = chantype;
+    mask_channels{end + 1} = chantype;
     data_mat{end + 1} = data{i}.data;
     column_names{end + 1} = chantype;
   end
 end
-n_mask_chans = numel(data_mat);
+n_mask_channels = numel(data_mat);
 for i = 1:numel(data_user)
   chantype = data_user{i}.header.chantype;
-  should_add = options.chan ~= 0 || ...
+  should_add = options.channel ~= 0 || ...
     strncmp(chantype, 'pupil', numel('pupil')) || ...
     strncmp(chantype, 'gaze', numel('gaze'));
   if should_add
@@ -75,27 +75,27 @@ data_mat = cell2mat(data_mat);
 addpath(pspm_path('backroom'));
 sr = data{1}.header.sr;
 samples_to_discard = round(sr * discard_factor);
-out_mat = blink_saccade_filtering(data_mat, column_names, mask_chans, samples_to_discard);
+out_mat = blink_saccade_filtering(data_mat, column_names, mask_channels, samples_to_discard);
 rmpath(pspm_path('backroom'));
 %% write back
 for i = 1:numel(data_user)
-  data_user{i}.data = out_mat(:, n_mask_chans + i);
+  data_user{i}.data = out_mat(:, n_mask_channels + i);
 end
-chan_str = options.chan;
-if isnumeric(chan_str)
-  chan_str = num2str(chan_str);
+channel_str = options.channel;
+if isnumeric(channel_str)
+  channel_str = num2str(channel_str);
 end
-o.msg.prefix = sprintf('Blink saccade filtering :: Input channel: %s', chan_str);
-[lsts, out_id] = pspm_write_channel(fn, data_user, options.chan_action, o);
+o.msg.prefix = sprintf('Blink saccade filtering :: Input channel: %s', channel_str);
+[lsts, out_id] = pspm_write_channel(fn, data_user, options.channel_action, o);
 if lsts ~= 1; return; end;
-out_chan = out_id.chan;
+out_channel = out_id.channel;
 sts = 1;
-%% keep_pupil_gaze_chans
-function [out_cell] = keep_pupil_gaze_chans(in_cell)
+%% keep_pupil_gaze_channels
+function [out_cell] = keep_pupil_gaze_channels(in_cell)
 out_cell = {};
 for i = 1:numel(in_cell)
-  chan = lower(in_cell{i}.header.chantype);
-  if contains(chan, 'pupil') || contains(chan, 'gaze')
+  channel = lower(in_cell{i}.header.chantype);
+  if contains(channel, 'pupil') || contains(channel, 'gaze')
     out_cell{end + 1} = in_cell{i};
   end
 end

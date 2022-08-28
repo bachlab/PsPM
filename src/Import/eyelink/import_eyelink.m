@@ -55,9 +55,9 @@ rmpath(bsearch_path);
 markers_sess = create_marker_val_fields(markers_sess);
 for sn = 1:numel(dataraw)
   data{sn}.raw = dataraw{sn};
-  data{sn}.chans = data{sn}.raw(:, chan_info{sn}.col_idx);
-  data{sn}.chans_header = chan_info{sn}.chans_header;
-  data{sn}.units = chan_info{sn}.chans_units;
+  data{sn}.channels = data{sn}.raw(:, chan_info{sn}.col_idx);
+  data{sn}.channels_header = chan_info{sn}.channels_header;
+  data{sn}.units = chan_info{sn}.channels_units;
 
   data{sn}.sampleRate = chan_info{sn}.sr;
   data{sn}.eyesObserved = chan_info{sn}.eyesObserved;
@@ -202,16 +202,16 @@ for i = 1:numel(chan_info)
 
   pupil_unit = ['arbitrary ' lower(pupil_mode) ' units'];
   if strcmpi(eyesObserved, 'l')
-    chan_info{i}.chans_header = {'pupil_l', 'gaze_x_l', 'gaze_y_l'};
-    chan_info{i}.chans_units = {pupil_unit, 'pixel', 'pixel'};
+    chan_info{i}.channels_header = {'pupil_l', 'gaze_x_l', 'gaze_y_l'};
+    chan_info{i}.channels_units = {pupil_unit, 'pixel', 'pixel'};
     chan_info{i}.col_idx = [4, 2, 3];
   elseif strcmpi(eyesObserved, 'r')
-    chan_info{i}.chans_header = {'pupil_r', 'gaze_x_r', 'gaze_y_r'};
-    chan_info{i}.chans_units = {pupil_unit, 'pixel', 'pixel'};
+    chan_info{i}.channels_header = {'pupil_r', 'gaze_x_r', 'gaze_y_r'};
+    chan_info{i}.channels_units = {pupil_unit, 'pixel', 'pixel'};
     chan_info{i}.col_idx = [4, 2, 3];
   elseif strcmpi(eyesObserved, 'lr') || strcmpi(eyesObserved, 'rl')
-    chan_info{i}.chans_header = {'pupil_l', 'pupil_r', 'gaze_x_l', 'gaze_y_l', 'gaze_x_r', 'gaze_y_r'};
-    chan_info{i}.chans_units = {pupil_unit, pupil_unit, 'pixel', 'pixel', 'pixel', 'pixel'};
+    chan_info{i}.channels_header = {'pupil_l', 'pupil_r', 'gaze_x_l', 'gaze_y_l', 'gaze_x_r', 'gaze_y_r'};
+    chan_info{i}.channels_units = {pupil_unit, pupil_unit, 'pixel', 'pixel', 'pixel', 'pixel'};
     chan_info{i}.col_idx = [4, 7, 2, 3, 5, 6];
   else
     error('ID:pspm_error', 'This branch should not have been taken. Please contact PsPM dev team');
@@ -312,26 +312,26 @@ end
 % set data columns
 if contains(eyes, 'l')
   chan_info.col_idx(end + 1) = size(dataraw, 2) + 1;
-  chan_info.chans_header{end + 1} = 'blink_l';
-  chan_info.chans_units{end + 1} = 'blink';
+  chan_info.channels_header{end + 1} = 'blink_l';
+  chan_info.channels_units{end + 1} = 'blink';
   dataraw(:, end + 1) = blinks_L;
 end
 if contains(eyes, 'r')
   chan_info.col_idx(end + 1) = size(dataraw, 2) + 1;
-  chan_info.chans_header{end + 1} = 'blink_r';
-  chan_info.chans_units{end + 1} = 'blink';
+  chan_info.channels_header{end + 1} = 'blink_r';
+  chan_info.channels_units{end + 1} = 'blink';
   dataraw(:, end + 1) = blinks_R;
 end
 if contains(eyes, 'l')
   chan_info.col_idx(end + 1) = size(dataraw, 2) + 1;
-  chan_info.chans_header{end + 1} = 'saccade_l';
-  chan_info.chans_units{end + 1} = 'saccade';
+  chan_info.channels_header{end + 1} = 'saccade_l';
+  chan_info.channels_units{end + 1} = 'saccade';
   dataraw(:, end + 1) = saccades_L;
 end
 if contains(eyes, 'r')
   chan_info.col_idx(end + 1) = size(dataraw, 2) + 1;
-  chan_info.chans_header{end + 1} = 'saccade_r';
-  chan_info.chans_units{end + 1} = 'saccade';
+  chan_info.channels_header{end + 1} = 'saccade_r';
+  chan_info.channels_units{end + 1} = 'saccade';
   dataraw(:, end + 1) = saccades_R;
 end
 end
