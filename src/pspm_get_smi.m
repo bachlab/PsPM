@@ -124,7 +124,7 @@ end
 [data_concat, markers, mi_values, mi_names] = concat_sessions(data);
 
 addpath(pspm_path('backroom'));
-chan_struct = data{1}.chans_columns;
+chan_struct = data{1}.channel_columns;
 eyes_observed = lower(data{1}.eyesObserved);
 if strcmpi(eyes_observed, 'l')
   mask_chans = {'L Blink', 'L Saccade'};
@@ -254,7 +254,7 @@ proper = true;
 eyes_observed = cellfun(@(x) x.eyesObserved, data, 'UniformOutput', false);
 same_eyes = all_strs_in_cell_array_are_equal(eyes_observed);
 
-channel_headers = cellfun(@(x) x.chans_columns, data, 'UniformOutput', false);
+channel_headers = cellfun(@(x) x.channel_columns, data, 'UniformOutput', false);
 same_headers = all_strs_in_cell_array_are_equal(channel_headers);
 
 if ~(same_eyes && same_headers)
@@ -483,7 +483,7 @@ function [data_concat, markers, mi_values, mi_names] = concat_sessions(data)
 %
 % data: Cell array containing data for multiple sessions.
 %
-% data_concat : Matrix formed by concatenating data{i}.chans arrays according to
+% data_concat : Matrix formed by concatenating data{i}.channels arrays according to
 %               timesteps. If end and begin of consecutive channels are far apart,
 %               NaNs are inserted.
 % markers     : Array of marker seconds, formed by simply concatening data{i}.marker.times.

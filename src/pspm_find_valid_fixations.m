@@ -148,7 +148,7 @@ if strcmpi(mode,'fixation')&& ~isfield(options, 'resolution')
 end
 
 if ~isfield(options, 'chans')
-  options.chans = 'pupil';
+  options.channels = 'pupil';
 end
 
 if ~isfield(options, 'eyes')
@@ -172,14 +172,14 @@ elseif ~any(strcmpi(options.eyes, {settings.lateral.full.c, ...
   warning('ID:invalid_input', ['Options.eyes must be either ''combined'', ', ...
     '''left'' or ''right''.']);
   return;
-elseif ~iscell(options.chans) && ~ischar(options.chans) && ...
-    ~isnumeric(options.chans)
-  warning('ID:invalid_input', ['Options.chans should be a char, ', ...
+elseif ~iscell(options.channels) && ~ischar(options.channels) && ...
+    ~isnumeric(options.channels)
+  warning('ID:invalid_input', ['Options.channels should be a char, ', ...
     'numeric or a cell of char or numeric.']);
   return;
-elseif iscell(options.chans) && any(~cellfun(@(x) isnumeric(x) || ...
-    any(strcmpi(x, settings.findvalidfixations.chantypes)), options.chans))
-  warning('ID:invalid_input', 'Option.chans contains invalid values.');
+elseif iscell(options.channels) && any(~cellfun(@(x) isnumeric(x) || ...
+    any(strcmpi(x, settings.findvalidfixations.chantypes)), options.channels))
+  warning('ID:invalid_input', 'Option.channels contains invalid values.');
   return;
 elseif strcmpi(mode,'fixation')&& isfield(options, 'fixation_point') && ...
     (~isnumeric(options.fixation_point) || ...
@@ -265,8 +265,8 @@ elseif ~ischar(options.newfile)
   warning('ID:invalid_input', 'Options.newfile is not char.'); return;
 end
 
-if ~iscell(options.chans)
-  options.chans = {options.chans};
+if ~iscell(options.channels)
+  options.channels = {options.channels};
 end
 
 
@@ -282,8 +282,8 @@ for i=1:n_eyes
     gaze_y = ['gaze_y_', eye];
 
     % find chars to replace
-    str_chans = cellfun(@ischar, options.chans);
-    chans = options.chans;
+    str_chans = cellfun(@ischar, options.channels);
+    chans = options.channels;
     str_chantypes = ['(', settings.findvalidfixations.chantypes{1}];
     for i_chantypes = 2:length(settings.findvalidfixations.chantypes)
       str_chantypes = [str_chantypes, '|', ...

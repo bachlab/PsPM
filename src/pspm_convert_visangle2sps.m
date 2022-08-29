@@ -11,7 +11,7 @@ function [ sts, out ] = pspm_convert_visangle2sps(fn, options)
 %                 fn: The actual data file containing the eyelink
 %                     recording with gaze data
 %   ┌────────options: struct with following fields
-%   ├─────────.chans: On which subset of the channels the visual
+%   ├──────.channels: On which subset of the channels the visual
 %   │                 angles between the data point should be
 %   │                 computed             .
 %   │                 If no channels are given then the function
@@ -45,7 +45,7 @@ elseif nargin<2
   channels = 0;
 end
 if isfield(options, 'chans')
-  channels = options.chans;
+  channels = options.channels;
   if ~isnumeric(channels)
     warning('ID:invalid_input', 'Channels must be defined by their id.');
     return

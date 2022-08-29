@@ -276,7 +276,7 @@ o.msg.prefix = sprintf(...
 [lsts, out_id] = pspm_write_channel(fn, pupil_data, options.channel_action, o);
 if lsts ~= 1; return; end
 
-out_channel = out_id.chan;
+out_channel = out_id.channel;
 sts = 1;
 end
 

@@ -10,9 +10,9 @@ function [out] = pspm_cfg_run_pupil_preprocess(job)
     chankey = chankey{1};
     options.chan = job.chan.(chankey);
 
-    chankey = fieldnames(job.chan_combine);
+    chankey = fieldnames(job.channel_combine);
     chankey = chankey{1};
-    options.chan_combine = job.chan_combine.(chankey);
+    options.channel_combine = job.channel_combine.(chankey);
 
     settkey = fieldnames(job.settings);
     settkey = settkey{1};

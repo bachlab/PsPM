@@ -71,7 +71,7 @@ function varargout = pspm_pupil_pp (fn, options)
 %   │           valid in addition to the usual information of PsPM channels.
 %   │           This valid sample info is stored in .header.valid_samples
 %   │           field.
-%   ├─.chan_combine:
+%   ├─.channel_combine:
 %   │           [optional][numeric/string][Default: 'none']
 %   │           Channel ID to be used for computing the mean pupil signal.
 %   │           The input format is exactly the same as the .chan field.
@@ -129,13 +129,13 @@ end
 if nargin == 1
   options = struct();
 end
-if ~isfield(options, 'chan')
+if ~isfield(options, 'channel')
   options.channel = 'pupil';
 end
 if ~isfield(options, 'channel_action')
   options.channel_action = 'add';
 end
-if ~isfield(options, 'chan_combine')
+if ~isfield(options, 'channel_combine')
   options.channel_combine = 'none';
 end
 if ~isfield(options, 'plot_data')
