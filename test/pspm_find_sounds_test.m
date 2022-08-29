@@ -114,7 +114,7 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
       this.verifyTrue(isfield(out_infos, 'delays'));
       this.verifyTrue(isfield(out_infos, 'snd_markers'));
       if ~strcmpi(channel_action, 'none')
-        this.verifyTrue(isfield(out_infos, 'chan'));
+        this.verifyTrue(isfield(out_infos, 'channel'));
         % are there 3 channels
         if strcmpi(channel_action, 'replace')
           this.verifyEqual(out_infos.channel, 2);

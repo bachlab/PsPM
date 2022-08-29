@@ -184,7 +184,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       % try to interpolate an events channel
       c{1}.chantype = 'hb';
       invalid_data = pspm_testdata_gen(c, 10);
-      options = struct('chans', 1);
+      options = struct('channels', 1);
       this.verifyWarning(@() pspm_interpolate(invalid_data, options), 'ID:invalid_chantype');
       % try to interpolate with nan from beginning; without
       % extrapolation
