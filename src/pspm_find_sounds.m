@@ -1,4 +1,4 @@
-function [sts, infos] = pspm_find_sounds(file, options)
+function [sts, infos] = pspm_find_sounds(varargin)
 % ● Description
 %   pspm_find_sounds finds and if required analyzes sound events in a pspm file.
 %   A sound is accepted as event if it is longer than 10 ms and events are

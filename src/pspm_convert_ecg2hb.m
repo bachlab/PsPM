@@ -1,13 +1,13 @@
-function [sts,infos] = pspm_convert_ecg2hb(fn, chan, options)
+function [sts,infos] = pspm_convert_ecg2hb(fn, channel, options)
 % ● Description
 %   pspm_ecg2hb identifies the position of QRS complexes in ECG data and
 %   writes them as heart beat channel into the datafile. This function
 %   implements the algorithm by Pan & Tompkins (1985) with some adjustments.
 % ● Format
-%   sts = pspm_ecg2hb(fn, chan,options)
+%   sts = pspm_ecg2hb(fn, channel, options)
 % ● Arguments
 %                 fn: data file name
-%               chan: number of ECG channel (optional, default: first ECG
+%            channel: number of ECG channel (optional, default: first ECG
 %                     channel) if is empty (= 0 / []) then default channel will
 %                     be used.
 %   ┌────────options:
@@ -108,9 +108,9 @@ if nargin < 1
   warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
 elseif ~ischar(fn)
   warning('ID:invalid_input', 'Need file name string as first input.'); return;
-elseif (nargin < 2) || isempty(chan) || (isnumeric(chan) && (chan == 0))
-  chan = 'ecg';
-elseif ~isnumeric(chan) && ~strcmp(chan,'ecg')
+elseif (nargin < 2) || isempty(channel) || (isnumeric(channel) && (channel == 0))
+  channel = 'ecg';
+elseif ~isnumeric(channel) && ~strcmp(channel,'ecg')
   warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end
 
@@ -200,7 +200,7 @@ end
 
 % get data
 % -------------------------------------------------------------------------
-[nsts, ~, data] = pspm_load_data(fn, chan);
+[nsts, ~, data] = pspm_load_data(fn, channel);
 if nsts == -1, return; end
 if numel(data) > 1
   fprintf('There is more than one ECG channel in the data file. Only the first of these will be analysed.');
@@ -345,7 +345,7 @@ action = options.channel_action;
 o.msg.prefix = 'QRS detection with Pan & Tompkins algorithm and HB-timeseries';
 [nsts, write_info] = pspm_write_channel(fn, newdata, action, o);
 if nsts == -1, return; end
-infos.chan = write_info.chan;
+infos.channel = write_info.channel;
 infos.pt_debug = pt_debug;
 sts = 1;
 

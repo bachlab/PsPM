@@ -147,7 +147,7 @@ if strcmpi(mode,'fixation')&& ~isfield(options, 'resolution')
   options.resolution = [1 1];
 end
 
-if ~isfield(options, 'chans')
+if ~isfield(options, 'channels')
   options.channels = 'pupil';
 end
 
@@ -283,22 +283,22 @@ for i=1:n_eyes
 
     % find chars to replace
     str_chans = cellfun(@ischar, options.channels);
-    chans = options.channels;
+    channels = options.channels;
     str_chantypes = ['(', settings.findvalidfixations.chantypes{1}];
     for i_chantypes = 2:length(settings.findvalidfixations.chantypes)
       str_chantypes = [str_chantypes, '|', ...
         settings.findvalidfixations.chantypes{i_chantypes}];
     end
     str_chantypes = [str_chantypes, ')'];
-    chans(str_chans) = regexprep(chans(str_chans), str_chantypes, ['$0_' eye]);
+    channels(str_chans) = regexprep(channels(str_chans), str_chantypes, ['$0_' eye]);
     % replace strings with numbers
-    str_chan_num = chans(str_chans);
+    str_chan_num = channels(str_chans);
     for j=1:numel(str_chan_num)
       str_chan_num(j) = {find(cellfun(@(y) strcmpi(str_chan_num(j),...
         y.header.chantype), data),1)};
     end
-    chans(str_chans) = str_chan_num;
-    work_chans = cell2mat(chans);
+    channels(str_chans) = str_chan_num;
+    work_chans = cell2mat(channels);
 
     if numel(work_chans) >= 1
       % always use first found channel
@@ -513,10 +513,10 @@ if numel(new_chans) >= 1
       chan_idx(i) = numel(new_data);
     else
       % look for same chan_type
-      chans = cellfun(@(x) strcmpi(new_chans{i}.header.chantype, x.header.chantype), new_data);
-      if any(chans)
+      channels = cellfun(@(x) strcmpi(new_chans{i}.header.chantype, x.header.chantype), new_data);
+      if any(channels)
         % replace the first found channel
-        idx = find(chans, 1, 'first');
+        idx = find(channels, 1, 'first');
         new_data{idx}.data = new_chans{i}.data;
         chan_idx(i) = idx;
       else

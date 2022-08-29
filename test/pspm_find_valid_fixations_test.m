@@ -17,7 +17,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     % eyes
     eyes = {'l', 'r'};
     % others
-    chan_action = {'add', 'replace'};
+    channel_action = {'add', 'replace'};
     newfile = {0, 1};
     overwrite = {0, 1};
     missing = {0, 1};
@@ -124,8 +124,8 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       options.resolution = [1280 1024];
       options.fixation_point = [1280/4 1024*3/4];
       options.overwrite = 1;
-      options.chans = work_chans;
-      options.chan_action = 'add';
+      options.channels = work_chans;
+      options.channel_action = 'add';
       [~,~, o_data] = pspm_load_data(fn);
       [sts, outfile] = this.verifyWarningFree(@() ...
         pspm_find_valid_fixations(fn, box_degree, dist,dist_unit,options));
@@ -135,18 +135,18 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       n_old_chans = numel(o_data);
       chantypes = cellfun(@(x) x.header.chantype, ...
         n_data((n_old_chans+1):n_new_chans), 'UniformOutput', 0);
-      % test for chans
+      % test for channels
       for i = 1:numel(work_chans)
-        chan = work_chans{i};
-        if ischar(chan)
+        channel = work_chans{i};
+        if ischar(channel)
           w_eyes = {'l','r'};
           for j=1:numel(w_eyes)
             e = w_eyes{j};
-            search_chan = [chan '_' e];
+            search_chan = [channel '_' e];
             this.verifyTrue(any(strcmp(search_chan, chantypes)));
           end
-        elseif isnumeric(chan)
-          search_chan = o_data{chan}.header.chantype;
+        elseif isnumeric(channel)
+          search_chan = o_data{channel}.header.chantype;
           this.verifyTrue(any(strcmp(search_chan, chantypes)));
         end
       end
@@ -165,7 +165,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       options.fixation_point = [1280/4 1024*3/4];
       options.overwrite = 1;
       options.eyes = work_eye;
-      options.chan_action = 'add';
+      options.channel_action = 'add';
       [~,~, o_data] = pspm_load_data(fn);
       [sts, outfile] = this.verifyWarningFree(@() ...
         pspm_find_valid_fixations(fn, box_degree, dist, dist_unit,options));
@@ -201,7 +201,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       options.fixation_point = [1280/4 1024*3/4];
       options.overwrite = 1;
       options.missing = missing;
-      options.chan_action = 'add';
+      options.channel_action = 'add';
       [sts, outfile] = this.verifyWarningFree(@() ...
         pspm_find_valid_fixations(fn, box_degree, dist,dist_unit,options));
       this.verifyEqual(sts, 1);
@@ -210,10 +210,10 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       missing_chans = cellfun(@(x) ...
         numel(regexp(x.header.chantype, 'missing')) > 0, n_data);
       if missing
-        % expect missing chans
+        % expect missing channels
         this.verifyTrue(any(missing_chans));
       else
-        % expect no missing chans
+        % expect no missing channels
         this.verifyTrue(all(~missing_chans));
       end
     end
@@ -228,7 +228,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       dist_unit = this.unit{1};
       options.resolution = [1280 1024];
       options.fixation_point = [1280/4 1024*3/4];
-      options.chan_action = 'add';
+      options.channel_action = 'add';
       [~, ~, o_data] = pspm_load_data(fn);
       % Test no overwrite
       options.overwrite = 0;
@@ -246,7 +246,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       [~, ~, n_data] = pspm_load_data(outfile);
       this.verifyNotEqual(numel(n_data), numel(o_data));
     end
-    function test_chan_action(this, chan_action)
+    function test_chan_action(this, channel_action)
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
       [degs,~] = this.generate_fixation_data(fn, this.distance{1},  'lr');
@@ -259,13 +259,13 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       options.screen_settings.display_size = 20;
       options.fixation_point = [1280/4 1024*3/4];
       options.overwrite = 1;
-      options.chan_action = chan_action;
+      options.channel_action = channel_action;
       [~, ~, o_data] = pspm_load_data(fn);
       [sts, outfile] = this.verifyWarningFree(@() ...
         pspm_find_valid_fixations(fn, box_degree, dist, dist_unit,options));
       this.verifyEqual(sts, 1);
       [~, ~, n_data] = pspm_load_data(outfile);
-      switch chan_action
+      switch channel_action
         case 'add'
           this.verifyNotEqual(numel(n_data), numel(o_data));
         case 'replace'
@@ -421,10 +421,10 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       this.verifyWarning(@() pspm_find_valid_fixations(fn, box_degree, ...
         dist, dist_unit, options), 'ID:invalid_input');
       options.fixation_point = [100 500];
-      options.chan_action = 'bla';
+      options.channel_action = 'bla';
       this.verifyWarning(@() pspm_find_valid_fixations(fn, box_degree, ...
         dist, dist_unit, options), 'ID:invalid_input');
-      options.chan_action = 'add';
+      options.channel_action = 'add';
       options.newfile = 0;
       this.verifyWarning(@() pspm_find_valid_fixations(fn, box_degree, ...
         dist, dist_unit, options), 'ID:invalid_input');
@@ -441,7 +441,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       this.verifyWarning(@() pspm_find_valid_fixations(fn, box_degree, ...
         dist, dist_unit, options), 'ID:invalid_input');
       options.eyes = 'combined';
-      options.chans = 'abc';
+      options.channels = 'abc';
       this.verifyWarning(@() pspm_find_valid_fixations(fn, box_degree, ...
         dist, dist_unit, options), 'ID:invalid_input');
     end
