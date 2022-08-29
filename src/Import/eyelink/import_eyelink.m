@@ -11,7 +11,7 @@ function [data] = import_eyelink(filepath)
 %                   Each of these structures have the following entries:
 %
 %                       raw: Matrix containing raw data columns.
-%                       chans: Matrix (timestep x n_cols) of relevant PsPM columns.
+%                       channels: Matrix (timestep x n_cols) of relevant PsPM columns.
 %                                 Currently, time, pupil, gaze, blink and saccade channels
 %                                 are imported.
 %                       channel_header: Column headers of each channels column.
