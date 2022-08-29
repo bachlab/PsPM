@@ -149,7 +149,7 @@ if p==1
   return;
 end;
 
-[lsts, outinfo] = pspm_write_channel(fn, visual_angl_chans, options.chan_action);
+[lsts, outinfo] = pspm_write_channel(fn, visual_angl_chans, options.channel_action);
 if lsts ~= 1
   warning('ID:invalid_input', 'Could not write converted data.');
   return;

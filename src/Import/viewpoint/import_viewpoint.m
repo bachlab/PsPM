@@ -15,8 +15,8 @@ function [data] = import_viewpoint(filepath)
     %                       chans: Matrix (timestep x n_cols) of relevant PsPM columns.
     %                                 Currently, time, pupil, gaze, blink and saccade channels
     %                                 are imported.
-    %                       chans_header: Column headers of each channels column.
-    %                       chans_units: Units of each channels column.
+    %                       channel_header: Column headers of each channels column.
+    %                       channel_units: Units of each channels column.
     %                       eyesObserved: Either A or AB, denoting observed eyes in datafile.
     %                       viewingDistance: Viewing distance in milimeters.
     %                       screenSize: Structure with fields
@@ -66,8 +66,8 @@ function [data] = import_viewpoint(filepath)
         data{sn}.dataraw = dataraw(begidx : endidx, :);
         data{sn}.dataraw_header = chan_info.read_numeric_columns';
         data{sn}.channels = chans(begidx : endidx, :);
-        data{sn}.channels_header = chan_info.channels_header;
-        data{sn}.channels_units = chan_info.channels_units;
+        data{sn}.channel_header = chan_info.channel_header;
+        data{sn}.channel_units = chan_info.channel_units;
         data{sn}.channel_indices = chan_info.col_idx;
         data{sn}.eyesObserved = file_info.eyesObserved;
         data{sn}.viewingDistance = file_info.viewingDistance;
@@ -100,7 +100,7 @@ function [dataraw, marker, messages, chan_info, file_info] = parse_viewpoint_fil
         eyesObserved = 'AB';
     end
 
-    [col_idx, chans_header, chans_units] = pspm_chans_in_file(column_ids, eyesObserved);
+    [col_idx, channel_header, channel_units] = pspm_chans_in_file(column_ids, eyesObserved);
     [msg_linenums, messages] = get_msg_lines(str, linefeeds, has_backr);
 
     linefeeds = linefeeds(line_ctr : end);
@@ -123,8 +123,8 @@ function [dataraw, marker, messages, chan_info, file_info] = parse_viewpoint_fil
     file_info.eyesObserved = eyesObserved;
     chan_info.read_numeric_columns = read_numeric_columns;
     chan_info.col_idx = col_idx;
-    chan_info.channels_header = chans_header;
-    chan_info.channels_units = chans_units;
+    chan_info.channel_header = channel_header;
+    chan_info.channel_units = channel_units;
 end
 
 function [file_info, line_ctr] = parse_metadata(str, line_ctr, linefeeds, has_backr)
@@ -180,11 +180,11 @@ function [columns, column_ids, line_ctr] = parse_header(str, line_ctr, linefeeds
     end
 end
 
-function [col_idx, chans_header, chans_units] = pspm_chans_in_file(column_ids, eyesObserved)
+function [col_idx, channel_header, channel_units] = pspm_chans_in_file(column_ids, eyesObserved)
     total_time_index = find(strcmp(column_ids, 'ATT'));
     col_idx = [total_time_index];
-    chans_header = {'Time'};
-    chans_units = {'seconds'};
+    channel_header = {'Time'};
+    channel_units = {'seconds'};
     for which_eye = eyesObserved
         pupil_width_index = find(strcmp(column_ids, [which_eye 'PW']));
         gaze_col_indices = find(strcmp(column_ids, [which_eye 'LX']) | strcmp(column_ids, [which_eye 'LY']));
@@ -193,12 +193,12 @@ function [col_idx, chans_header, chans_units] = pspm_chans_in_file(column_ids, e
 
         n_prev_cols = numel(col_idx);
         col_idx = [col_idx; pupil_width_index; gaze_col_indices];
-        chans_header = [chans_header; ['pupil_' which_eye]; ['gaze_x_' which_eye]; ['gaze_y_' which_eye]];
-        chans_units = [chans_units; 'ratio'; 'ratio'; 'ratio'];
+        channel_header = [channel_header; ['pupil_' which_eye]; ['gaze_x_' which_eye]; ['gaze_y_' which_eye]];
+        channel_units = [channel_units; 'ratio'; 'ratio'; 'ratio'];
 
         if ~isempty(pupil_dia_index)
             col_idx(n_prev_cols + 1) = pupil_dia_index;
-            chans_units{n_prev_cols + 1} = 'mm';
+            channel_units{n_prev_cols + 1} = 'mm';
         end
 
         if ~isempty(corrected_gaze_col_indices)
@@ -303,14 +303,14 @@ function [chans, marker, chan_info] = parse_messages(messages, chans, marker, ch
         curr_n_cols = size(chans, 2);
         chans(:, curr_n_cols + 1) = blinks_A;
         chans(:, curr_n_cols + 2) = saccades_A;
-        chan_info.channels_header = [chan_info.channels_header; 'blink_A'; 'saccade_A'];
-        chan_info.channels_units = [chan_info.channels_units; 'blink'; 'saccade'];
+        chan_info.channel_header = [chan_info.channel_header; 'blink_A'; 'saccade_A'];
+        chan_info.channel_units = [chan_info.channel_units; 'blink'; 'saccade'];
         chan_info.col_idx = [chan_info.col_idx; -1; -1];
         if strcmp(eyesObserved, 'AB')
             chans(:, curr_n_cols + 3) = blinks_B;
             chans(:, curr_n_cols + 4) = saccades_B;
-            chan_info.channels_header = [chan_info.channels_header; 'blink_B'; 'saccade_B'];
-            chan_info.channels_units = [chan_info.channels_units; 'blink'; 'saccade'];
+            chan_info.channel_header = [chan_info.channel_header; 'blink_B'; 'saccade_B'];
+            chan_info.channel_units = [chan_info.channel_units; 'blink'; 'saccade'];
             chan_info.col_idx = [chan_info.col_idx; -1; -1];
         end
     end

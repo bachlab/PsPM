@@ -25,7 +25,7 @@ function [out] = pspm_cfg_run_pupil_preprocess(job)
         options.segments{end + 1} = job.segments(i);
     end
 
-    options.chan_action = job.chan_action;
+    options.channel_action = job.channel_action;
     options.plot_data = job.plot_data;
 
     [sts, out{1}] = pspm_pupil_pp(fn, options);

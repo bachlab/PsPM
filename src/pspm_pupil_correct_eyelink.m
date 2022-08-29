@@ -143,14 +143,14 @@ end
 
 %% create default arguments
 
-if isfield(options, 'chan_action')
-  if ~any(strcmpi(options.chan_action, {'add', 'replace'}))
+if isfield(options, 'channel_action')
+  if ~any(strcmpi(options.channel_action, {'add', 'replace'}))
     warning('ID:invalid_input',...
-      'options.chan_action must be ''add'' or ''replace''');
+      'options.channel_action must be ''add'' or ''replace''');
     return;
   end
 else
-  options.chan_action = 'add';
+  options.channel_action = 'add';
 end
 
 if ~isfield(options, 'channel')
@@ -273,7 +273,7 @@ o.msg.prefix = sprintf(...
   channel_str, ...
   old_chantype, ...
   pupil_data{1}.header.chantype);
-[lsts, out_id] = pspm_write_channel(fn, pupil_data, options.chan_action, o);
+[lsts, out_id] = pspm_write_channel(fn, pupil_data, options.channel_action, o);
 if lsts ~= 1; return; end
 
 out_channel = out_id.chan;

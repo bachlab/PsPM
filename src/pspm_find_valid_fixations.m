@@ -508,7 +508,7 @@ if numel(new_chans) >= 1
   new_data = data;
   chan_idx = NaN(1,numel(new_chans));
   for i = 1:numel(new_chans)
-    if strcmpi(options.chan_action, 'add')
+    if strcmpi(options.channel_action, 'add')
       new_data{end+1} = new_chans{i};
       chan_idx(i) = numel(new_data);
     else

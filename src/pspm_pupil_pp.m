@@ -32,7 +32,7 @@ function varargout = pspm_pupil_pp (fn, options)
 %       valid samples found in the previous step. This is done by
 %       performing filtering, upsampling and interpolation. The parameters
 %       of the filtering and upsampling are configurable. Once the pupil
-%       data is preprocessed, according to the option 'chan_action',
+%       data is preprocessed, according to the option 'channel_action',
 %       it will either replace an existing preprocessed pupil channel or
 %       add it as new channel to the provided file.
 % ● Format
@@ -60,8 +60,8 @@ function varargout = pspm_pupil_pp (fn, options)
 %   │           channels with the exact same type, only last one will be
 %   │           processed. This is normally not the case with raw data
 %   │           channels; however, there may be multiple channels with same
-%   │           type if 'add' chan_action was previously used. This
-%   │           feature can be combined with 'add' chan_action to create
+%   │           type if 'add' channel_action was previously used. This
+%   │           feature can be combined with 'add' channel_action to create
 %   │           preprocessing histories where the result of each step is
 %   │           stored as a separate channel.
 %   ├────.data: field of the preprocessed channel contains the smoothed,
@@ -80,7 +80,7 @@ function varargout = pspm_pupil_pp (fn, options)
 %   │           channel is not used. Only specify it if you want to combine
 %   │           left and right pupil eye signals, and in this situation,
 %   │           the type of the output channel becomes 'pupil_pp_c'.
-%   ├─.chan_action:
+%   ├─.channel_action:
 %   │           [optional][string][Accepts: 'add'/'replace'][Default: 'add']
 %   │           Defines whether corrected data should be added or the
 %   │           corresponding preprocessed channel should be replaced. Note
@@ -130,13 +130,13 @@ if nargin == 1
   options = struct();
 end
 if ~isfield(options, 'chan')
-  options.chan = 'pupil';
+  options.channel = 'pupil';
 end
-if ~isfield(options, 'chan_action')
-  options.chan_action = 'add';
+if ~isfield(options, 'channel_action')
+  options.channel_action = 'add';
 end
 if ~isfield(options, 'chan_combine')
-  options.chan_combine = 'none';
+  options.channel_combine = 'none';
 end
 if ~isfield(options, 'plot_data')
   options.plot_data = false;
@@ -154,9 +154,9 @@ if ~isfield(options, 'segments')
   options.segments = {};
 end
 %% 3 Input checks
-if ~ismember(options.chan_action, {'add', 'replace'})
+if ~ismember(options.channel_action, {'add', 'replace'})
   warning('ID:invalid_input', ...
-    'Option chan_action must be either ''add'' or ''replace''');
+    'Option channel_action must be either ''add'' or ''replace''');
   return
 end
 for seg = options.segments
@@ -167,31 +167,31 @@ for seg = options.segments
   end
 end
 %% 4 Load
-action_combine = ~strcmp(options.chan_combine, 'none');
+action_combine = ~strcmp(options.channel_combine, 'none');
 addpath(pspm_path('backroom'));
-[lsts, data] = pspm_load_single_chan(fn, options.chan, 'last', 'pupil');
+[lsts, data] = pspm_load_single_chan(fn, options.channel, 'last', 'pupil');
 if lsts ~= 1
   return
 end
 if action_combine
-  [lsts, data_combine] = pspm_load_single_chan(fn, options.chan_combine, 'last', 'pupil');
+  [lsts, data_combine] = pspm_load_single_chan(fn, options.channel_combine, 'last', 'pupil');
   if lsts ~= 1
     return
   end
   if strcmp(pspm_get_eye(data{1}.header.chantype), pspm_get_eye(data_combine{1}.header.chantype))
-    warning('ID:invalid_input', 'options.chan and options.chan_combine must specify different eyes');
+    warning('ID:invalid_input', 'options.channel and options.channel_combine must specify different eyes');
     return;
   end
   if data{1}.header.sr ~= data_combine{1}.header.sr
-    warning('ID:invalid_input', 'options.chan and options.chan_combine data have different sampling rate');
+    warning('ID:invalid_input', 'options.channel and options.channel_combine data have different sampling rate');
     return;
   end
   if ~strcmp(data{1}.header.units, data_combine{1}.header.units)
-    warning('ID:invalid_input', 'options.chan and options.chan_combine data have different units');
+    warning('ID:invalid_input', 'options.channel and options.channel_combine data have different units');
     return;
   end
   if numel(data{1}.data) ~= numel(data_combine{1}.data)
-    warning('ID:invalid_input', 'options.chan and options.chan_combine data have different lengths');
+    warning('ID:invalid_input', 'options.channel and options.channel_combine data have different lengths');
     return;
   end
   old_chantype = sprintf('%s and %s', ...
@@ -207,17 +207,17 @@ if lsts ~= 1
   return
 end
 %% 6 save
-chan_str = num2str(options.chan);
+chan_str = num2str(options.channel);
 o.msg.prefix = sprintf(...
   'Pupil preprocessing :: Input chan: %s -- Input chantype: %s -- Output chantype: %s --', ...
   chan_str, ...
   old_chantype, ...
   smooth_signal.header.chantype);
-[lsts, out_id] = pspm_write_channel(fn, smooth_signal, options.chan_action, o);
+[lsts, out_id] = pspm_write_channel(fn, smooth_signal, options.channel_action, o);
 if lsts ~= 1
   return
 end
-out_chan = out_id.chan;
+out_chan = out_id.channel;
 sts = 1;
 varargout{1} = sts;
 switch nargout

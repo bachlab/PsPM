@@ -45,9 +45,9 @@ end
 sts = -1;
 outinfos = struct();
 
-% load options.chan
-try options.chan;
-catch, options.chan = 0;
+% load options.channel
+try options.channel;
+catch, options.channel = 0;
 end
 
 %% Check arguments
@@ -55,19 +55,19 @@ if nargin < 1
   warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
 elseif ~ischar(fn)
   warning('ID:invalid_input', 'Need file name string as first input.'); return;
-elseif nargin < 3 || all(~strcmpi({'add', 'replace', 'delete'}, chan_action))
+elseif nargin < 3 || all(~strcmpi({'add', 'replace', 'delete'}, channel_action))
   warning('ID:unknown_action', 'Action must be defined and ''add'', ''replace'' or ''delete'''); return;
-elseif ischar(options.chan) && ~any(strcmpi(options.chan,{settings.chantypes.type}))
-  warning('ID:invalid_input', 'options.chan is not a valid channel type.'); return;
-elseif isnumeric(options.chan) && (any(mod(options.chan,1)) || any(options.chan<0))
-  warning('ID:invalid_input', 'options.chan must be a positive integer or a channel type.'); return;
-elseif ~isnumeric(options.chan) && ~ischar(options.chan)
-  warning('ID:invalid_input', 'options.chan must contain valid channel types or positive integers.'); return;
+elseif ischar(options.channel) && ~any(strcmpi(options.channel,{settings.chantypes.type}))
+  warning('ID:invalid_input', 'options.channel is not a valid channel type.'); return;
+elseif isnumeric(options.channel) && (any(mod(options.channel,1)) || any(options.channel<0))
+  warning('ID:invalid_input', 'options.channel must be a positive integer or a channel type.'); return;
+elseif ~isnumeric(options.channel) && ~ischar(options.channel)
+  warning('ID:invalid_input', 'options.channel must contain valid channel types or positive integers.'); return;
 elseif isempty(newdata)
-  if ~strcmpi(chan_action, 'delete')
-    warning('ID:invalid_input', 'newdata is empty. Got nothing to %s.', chan_action); return;
-  elseif options.chan == 0
-    warning('ID:invalid_input', 'If options.chan is 0, a newdata structure must be provided'); return;
+  if ~strcmpi(channel_action, 'delete')
+    warning('ID:invalid_input', 'newdata is empty. Got nothing to %s.', channel_action); return;
+  elseif options.channel == 0
+    warning('ID:invalid_input', 'If options.channel is 0, a newdata structure must be provided'); return;
   end
 elseif ~isempty(newdata) && ~isstruct(newdata) && ~iscell(newdata)
   warning('ID:invalid_input', 'newdata must either be a newdata structure or empty'); return;
@@ -79,7 +79,7 @@ if isstruct(newdata)
   newdata = {newdata};
 end
 
-if ~strcmpi(chan_action, 'delete')
+if ~strcmpi(channel_action, 'delete')
   for i=1:numel(newdata)
     if isfield(newdata{i}, 'data') && isfield(newdata{i}, 'header')
       d = newdata{i}.data;
@@ -126,43 +126,43 @@ end
 %% Find channel according to action
 % channels in file
 fchans = [];
-if ~strcmpi(chan_action, 'add')
-  % Search for chan(s)
+if ~strcmpi(channel_action, 'add')
+  % Search for channel(s)
   fchans = cellfun(@(x) x.header.chantype,data,'un',0);
-  if ischar(options.chan)
+  if ischar(options.channel)
     if strcmpi(options.delete,'all')
-      chani = find(strcmpi(options.chan,fchans));
+      chani = find(strcmpi(options.channel,fchans));
     else
-      chani = find(strcmpi(options.chan,fchans),1,options.delete);
+      chani = find(strcmpi(options.channel,fchans),1,options.delete);
     end
-  elseif options.chan == 0
+  elseif options.channel == 0
     funits = cellfun(@(x) x.header.units, data,'UniformOutput',0);
     % if the chantype matches, and unit matches if one is provided
     chani = cellfun(@(n) match_chan(fchans, funits, n), newdata, 'UniformOutput', 0);
     chani = cell2mat(chani);
   else
-    chan = options.chan;
-    if any(chan > numel(fchans))
+    channel = options.channel;
+    if any(channel > numel(fchans))
       warning('ID:invalid_input', 'channel is larger than channel count in file'); return;
     else
-      chani = chan;
+      chani = channel;
     end
   end
 
   if isempty(chani)
-    if strcmpi(chan_action, 'replace')
-      % chan_action replace: no multi channel option possible
+    if strcmpi(channel_action, 'replace')
+      % channel_action replace: no multi channel option possible
       % no channel found to replace
-      chan_action = 'add';
+      channel_action = 'add';
     else
       warning('ID:no_matching_chans',...
-        'no channel of type ''%s'' found in the file',options.chan);
+        'no channel of type ''%s'' found in the file',options.channel);
       return;
     end
   end
 end
 
-if strcmpi(chan_action, 'add')
+if strcmpi(channel_action, 'add')
   chani = numel(data) + (1:numel(newdata));
   chantypes = cellfun(@(f) f.header.chantype, newdata, 'un', 0);
   fchans = cell(numel(data) + numel(newdata),1);
@@ -173,7 +173,7 @@ end
 if ischar(options.msg) && ~isempty(options.msg)
   msg = options.msg;
 else
-  switch chan_action
+  switch channel_action
     case 'add', v = 'added';
     case 'replace', v = 'replaced';
     case 'delete', v = 'deleted';
@@ -196,7 +196,7 @@ else
 end
 
 %% Modify data according to action
-if strcmpi(chan_action, 'delete')
+if strcmpi(channel_action, 'delete')
   data(chani) = [];
 else
   data(chani,1) = newdata;
@@ -210,7 +210,7 @@ end
 infos.history{nhist + 1} = msg;
 
 % add infos to outinfo struct
-outinfos.chan = chani;
+outinfos.channel = chani;
 
 %% Save data
 outdata.infos = infos;
@@ -226,11 +226,11 @@ infos = outinfos;
 
 sts = 1;
 
-function matches = match_chan(existing_chans, exisiting_units, chan)
-if isfield(chan.header, 'units')
+function matches = match_chan(existing_chans, exisiting_units, channel)
+if isfield(channel.header, 'units')
   matches = find(...
-    strcmpi(chan.header.chantype, existing_chans)...
-    & strcmpi(chan.header.units, exisiting_units),1,'last');
+    strcmpi(channel.header.chantype, existing_chans)...
+    & strcmpi(channel.header.units, exisiting_units),1,'last');
 else
-  matches = find(strcmpi(chan.header.chantype, existing_chans) ,1,'last');
+  matches = find(strcmpi(channel.header.chantype, existing_chans) ,1,'last');
 end

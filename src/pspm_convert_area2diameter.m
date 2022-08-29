@@ -54,8 +54,8 @@ else
 
   options = pspm_options(options, 'convert_area2diameter')
 
-  if ~any(strcmpi(options.chan_action, {'replace', 'add'}))
-    warning('ID:invalid_input', ['options.chan_action should ', ...
+  if ~any(strcmpi(options.channel_action, {'replace', 'add'}))
+    warning('ID:invalid_input', ['options.channel_action should ', ...
       'be either ''add'' or ''replace''.']); return;
   end
 
@@ -83,7 +83,7 @@ elseif strcmpi(mode, 'file')
       diam{1}.header.units = 'diameter units';
     end
   end
-  [~, infos] = pspm_write_channel(fn, diam, options.chan_action);
+  [~, infos] = pspm_write_channel(fn, diam, options.channel_action);
   varargout{2} = infos.chan;
   sts = 1;
 end

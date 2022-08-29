@@ -34,8 +34,8 @@ end
 if ~exist('options', 'var')
   options = struct();
 end
-if ~isfield(options, 'chan_action')
-  options.chan_action = 'add';
+if ~isfield(options, 'channel_action')
+  options.channel_action = 'add';
 end
 [lsts, ~, data] = pspm_load_data(datafile, channel);
 if lsts == -1
@@ -72,7 +72,7 @@ for i_data = 1:n_data
   end
 end
 % save data to file
-[lsts] = pspm_write_channel(datafile, data, options.chan_action);
+[lsts] = pspm_write_channel(datafile, data, options.channel_action);
 if lsts == -1
   warning('ID:invalid_input', 'Could not write channel to file.');
   return;

@@ -63,7 +63,7 @@ elseif ~any(strcmpi(options.eyes, {settings.lateral.char.l,...
     '''r'', ''c''.']);
   return;
 end;
-% option.chan_action
+% option.channel_action
 options = pspm_options(options, 'convert_visangle2sps');
 % fn
 if ~ischar(fn) || ~exist(fn, 'file')

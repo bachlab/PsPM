@@ -361,7 +361,7 @@ while searchForMoreSounds == true
 end
 
 %% Save as new channel
-if ~strcmpi(options.chan_action, 'none')
+if ~strcmpi(options.channel_action, 'none')
   % Save the new channel
   if strcmpi(options.chan_output, 'all')
     snd_events.data = snd_re_all;
@@ -382,7 +382,7 @@ if ~strcmpi(options.chan_action, 'none')
   snd_events.header.sr = 1;
   snd_events.header.chantype = 'marker';
   snd_events.header.units ='events';
-  [~, ininfos] = pspm_write_channel(file, snd_events, options.chan_action);
+  [~, ininfos] = pspm_write_channel(file, snd_events, options.channel_action);
   outinfos.chan = ininfos.chan;
 end
 

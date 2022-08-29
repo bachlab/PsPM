@@ -27,7 +27,7 @@ list_chans = {'gaze_x_l', 'gaze_x_r', 'gaze_y_l', 'gaze_y_r'};
 % 2.2 set default values
 if nargin == 1;                        options = struct();              end
 if ~isfield(options,'chan');        options.chan = 'gaze_x_l';    end
-if ~isfield(options,'chan_action');    options.chan_action = 'add';  end
+if ~isfield(options,'channel_action');    options.channel_action = 'add';  end
 if ~isfield(options,'chan_combine');   options.chan_combine = 'none';end
 if ~isfield(options,'valid_sample');   options.valid_sample = 0;        end
 if ~isfield(options, 'plot_data');     options.plot_data = false;       end
@@ -53,9 +53,9 @@ if sts ~= 1
   warning('ID:invalid_chantype', 'cannot load the specified channel from the file');
   return
 end
-if ~ismember(options.chan_action, {'add', 'replace'})
+if ~ismember(options.channel_action, {'add', 'replace'})
   warning('ID:invalid_input', ...
-    'Option chan_action must be either ''add'' or ''replace''.');
+    'Option channel_action must be either ''add'' or ''replace''.');
   return
 end
 if ~ismember(options.chan, list_chans)
@@ -167,7 +167,7 @@ o.msg.prefix = sprintf(...
   chan_str, ...
   old_chantype, ...
   preprocessed_gaze.header.chantype);
-[lsts, out_id] = pspm_write_channel(fn, preprocessed_gaze, options.chan_action, o);
+[lsts, out_id] = pspm_write_channel(fn, preprocessed_gaze, options.channel_action, o);
 if lsts ~= 1 % if writting channel is unsuccessful
   return
 end

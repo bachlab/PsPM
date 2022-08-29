@@ -94,12 +94,12 @@ end
 data = map_viewpoint_eyes_to_left_right(data, import);
 [data_concat, markers, mi_names, mi_values] = concat_sessions(data);
 
-sampling_rate = compute_sampling_rate(data{1}.chans(:, 1));
+sampling_rate = compute_sampling_rate(data{1}.channels(:, 1));
 eyes_observed = lower(data{1}.eyesObserved);
-chan_struct = data{1}.chans_header;
+chan_struct = data{1}.channel_header;
 raw_columns = data{1}.dataraw_header;
-channel_indices = data{1}.chan_indices;
-units = data{1}.chans_units;
+channel_indices = data{1}.channel_indices;
+units = data{1}.channel_units;
 screen_size = data{1}.screenSize;
 viewing_dist = data{1}.viewingDistance;
 
@@ -144,7 +144,7 @@ for k = 1:num_import_cells
         'Will create artificial channel with NaN values.'], ...
         import{k}.type);
     end
-    sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan_id);
+    sourceinfo.channel{k, 1} = sprintf('Column %02.0f', chan_id);
     sourceinfo.chan_stats{k,1} = struct();
     n_nan = sum(isnan(import{k}.data));
     n_data = numel(import{k}.data);
@@ -171,7 +171,7 @@ function proper = assert_same_sample_rate(data)
 proper = true;
 sample_rates = zeros(1,numel(data));
 for i = 1:numel(data)
-  sample_rates(i) = compute_sampling_rate(data{i}.chans(:, 1));
+  sample_rates(i) = compute_sampling_rate(data{i}.channels(:, 1));
 end
 if any(diff(sample_rates))
   sample_rates_str = sprintf('%d ', sample_rates);
@@ -189,7 +189,7 @@ proper = true;
 eyes_observed = cellfun(@(x) x.eyesObserved, data, 'UniformOutput', false);
 eyes_observed = cell2mat(eyes_observed);
 
-chan_headers = cellfun(@(x) x.chans_header, data, 'UniformOutput', false);
+chan_headers = cellfun(@(x) x.channel_header, data, 'UniformOutput', false);
 same_headers = true;
 for i = 1:(numel(chan_headers) - 1)
   if ~all(strcmpi(chan_headers{i}, chan_headers{i+1}))
@@ -208,7 +208,7 @@ end
 
 function proper = assert_sessions_are_one_after_another(data)
 proper = true;
-cell_of_second_arrays = cellfun(@(x) x.chans(:, 1), data, 'UniformOutput', false);
+cell_of_second_arrays = cellfun(@(x) x.channels(:, 1), data, 'UniformOutput', false);
 cell_of_second_arrays = cell_of_second_arrays';
 seconds_concat = cell2mat(cell_of_second_arrays);
 neg_diff_indices = find(diff(seconds_concat) < 0);
@@ -252,15 +252,15 @@ end
 function data = map_viewpoint_eyes_to_left_right(data, import)
 % Map eye A to right eye, eye B to left eye.
 for i = 1:numel(data)
-  % channels = data{i}.chans_header; % seems not used
-  for k = 1:numel(data{i}.chans_header)
-    header = data{i}.chans_header{k};
+  % channels = data{i}.channel_header; % seems not used
+  for k = 1:numel(data{i}.channel_header)
+    header = data{i}.channel_header{k};
     if strcmpi(header(end - 1:end), '_A')
       header(end - 1:end) = '_R';
     elseif strcmpi(header(end - 1:end), '_B')
       header(end - 1:end) = '_L';
     end
-    data{i}.chans_header{k} = header;
+    data{i}.channel_header{k} = header;
   end
 
   if strcmpi(data{i}.eyesObserved, 'a')
@@ -291,11 +291,11 @@ for i = 1:numel(import)
 end
 if data_has_only_right_eye && import_has_only_left_eye
   for i = 1:numel(data)
-    for k = 1:numel(data{i}.chans_header)
-      header = data{i}.chans_header{k};
+    for k = 1:numel(data{i}.channel_header)
+      header = data{i}.channel_header{k};
       if strcmpi(header(end - 1:end), '_R')
         header(end - 1:end) = '_L';
-        data{i}.chans_header{k} = header;
+        data{i}.channel_header{k} = header;
       end
     end
     data{i}.eyesObserved = 'L';
@@ -334,7 +334,7 @@ function [import_cell, chan_id] = import_custom_chan(...
   import_cell, data_concat, channel_indices, raw_columns, chan_struct, units, sampling_rate)
 n_raw_cols = size(raw_columns, 2);
 % n_concat_rows = size(data_concat, 1); % not used
-chan_id = import_cell.chan;
+chan_id = import_cell.channel;
 if chan_id < 1
   warning('ID:invalid_input', ...
     'Custom channel id %d is less than 1',...
@@ -390,7 +390,7 @@ function [data_concat, markers, mi_names, mi_values] = concat_sessions(data)
 %
 % data: Cell array containing data for multiple sessions.
 %
-% data_concat : Matrix formed by concatenating data{i}.chans arrays according to
+% data_concat : Matrix formed by concatenating data{i}.channels arrays according to
 %               timesteps. If end and begin of consecutive channels are far apart,
 %               NaNs are inserted.
 % markers     : Array of marker seconds, formed by simply concatening data{i}.marker.times.
@@ -403,13 +403,13 @@ mi_names = {};
 mi_values = [];
 
 second_col_idx = 1;
-n_cols = size(data{1}.chans, 2);
-sr = compute_sampling_rate(data{1}.chans(:, second_col_idx));
-last_time = data{1}.chans(1, second_col_idx);
+n_cols = size(data{1}.channels, 2);
+sr = compute_sampling_rate(data{1}.channels(:, second_col_idx));
+last_time = data{1}.channels(1, second_col_idx);
 
 for c = 1:numel(data)
-  start_time = data{c}.chans(1, second_col_idx);
-  end_time = data{c}.chans(end, second_col_idx);
+  start_time = data{c}.channels(1, second_col_idx);
+  end_time = data{c}.channels(end, second_col_idx);
 
   time_diff = start_time - last_time;
   if time_diff > 1.5 * (1 / sr)
@@ -418,10 +418,10 @@ for c = 1:numel(data)
     data_concat(end + 1:(end + n_missing), 1:n_cols) = NaN(n_missing, n_cols);
   end
 
-  n_data_in_session = size(data{c}.chans, 1);
+  n_data_in_session = size(data{c}.channels, 1);
   n_markers_in_session = size(data{c}.marker.times, 1);
 
-  data_concat(end + 1:(end + n_data_in_session), 1:n_cols) = data{c}.chans;
+  data_concat(end + 1:(end + n_data_in_session), 1:n_cols) = data{c}.channels;
   markers(end + 1:(end + n_markers_in_session), 1) = data{c}.marker.times;
   mi_values(end + 1:(end + n_markers_in_session),1) = data{c}.marker.value;
   mi_names(end + 1:(end + n_markers_in_session),1) = data{c}.marker.name;

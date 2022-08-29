@@ -13,7 +13,7 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
     min_delay = {0.001, .01};
     threshold = {0,0.1,0.5,1};
     resample = {1, 50, 1000};
-    chan_action = {'none', 'add', 'replace'};
+    channel_action = {'none', 'add', 'replace'};
   end
   methods(Test)
     function invalid_input(this)
@@ -66,10 +66,10 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
       % test with diagnostics and no marker channel in data
       o = struct('diagnostics', 1);
       this.verifyWarning(@() pspm_find_sounds(fn, o), 'ID:no_marker_chan');
-      % test with invalid chan_action
+      % test with invalid channel_action
       inv_val = {'a', 1};
       for i=1:length(inv_val)
-        o = struct('chan_action',inv_val{i});
+        o = struct('channel_action',inv_val{i});
         this.verifyWarning(@() pspm_find_sounds(fn, o), 'ID:invalid_input');
       end
       % test with invalid roi
@@ -85,7 +85,7 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
     end
   end
   methods (Test)
-    function test_add_channel(this, chan_output, max_delay, min_delay, resample, chan_action)
+    function test_add_channel(this, chan_output, max_delay, min_delay, resample, channel_action)
       dur = 10;
       % sound channel
       c{1}.chantype = 'snd';
@@ -100,9 +100,9 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
       % define options
       o = struct('diagnostics', 1, ...
         'chan_output', chan_output, 'maxdelay', max_delay, ...
-        'mindelay', min_delay, 'resample', resample, 'chan_action', chan_action);
+        'mindelay', min_delay, 'resample', resample, 'channel_action', channel_action);
       if max_delay == this.max_delay{1} && strcmpi(chan_output, 'corrected') ...
-          && ~strcmpi(chan_action, 'none')
+          && ~strcmpi(channel_action, 'none')
         % warning by pspm_load_data because channel will be empty
         [~, out_infos] = this.verifyWarning(@() pspm_find_sounds(fn, o), 'ID:missing_data');
         [sts, ~, d_data] = this.verifyWarning(@() pspm_load_data(fn), 'ID:missing_data');
@@ -113,32 +113,32 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
       this.verifyEqual(sts, 1);
       this.verifyTrue(isfield(out_infos, 'delays'));
       this.verifyTrue(isfield(out_infos, 'snd_markers'));
-      if ~strcmpi(chan_action, 'none')
+      if ~strcmpi(channel_action, 'none')
         this.verifyTrue(isfield(out_infos, 'chan'));
         % are there 3 channels
-        if strcmpi(chan_action, 'replace')
-          this.verifyEqual(out_infos.chan, 2);
+        if strcmpi(channel_action, 'replace')
+          this.verifyEqual(out_infos.channel, 2);
         else
-          this.verifyEqual(out_infos.chan, 3);
+          this.verifyEqual(out_infos.channel, 3);
         end
         this.verifyEqual(numel(out_infos.delays), numel(out_infos.snd_markers));
         if (max_delay == this.max_delay{1}) && strcmpi(chan_output, 'corrected')
           % no markers should be detected
-          this.verifyEqual(numel(d_data{out_infos.chan}.data),0);
+          this.verifyEqual(numel(d_data{out_infos.channel}.data),0);
         else
           if strcmpi(chan_output, 'all')
             % #3 should contain any data and should contain more
             % than #2
-            this.verifyTrue(numel(d_data{out_infos.chan}.data)>=1 ...
-              && numel(d_data{out_infos.chan}.data) > n_ref_marker);
+            this.verifyTrue(numel(d_data{out_infos.channel}.data)>=1 ...
+              && numel(d_data{out_infos.channel}.data) > n_ref_marker);
           elseif strcmpi(chan_output, 'corrected')
             % #3 should contain any data and should contain the same
             % amount of markers as #2
-            this.verifyTrue(numel(d_data{out_infos.chan}.data)>=1);
+            this.verifyTrue(numel(d_data{out_infos.channel}.data)>=1);
             % allow relative tolerance of +/- 1 data point
-            this.verifyEqual(numel(d_data{out_infos.chan}.data), n_ref_marker, ...
+            this.verifyEqual(numel(d_data{out_infos.channel}.data), n_ref_marker, ...
               'RelTol', 1/n_ref_marker);
-            this.verifyEqual(numel(d_data{out_infos.chan}.data), numel(out_infos.snd_markers));
+            this.verifyEqual(numel(d_data{out_infos.channel}.data), numel(out_infos.snd_markers));
           end
         end
       end

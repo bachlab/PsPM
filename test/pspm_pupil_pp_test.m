@@ -32,10 +32,10 @@ classdef pspm_pupil_pp_test < pspm_testcase
     function invalid_input(this)
       this.verifyWarning(@()pspm_pupil_pp(52), 'ID:invalid_input');
       this.verifyWarning(@()pspm_pupil_pp('abc'), 'ID:nonexistent_file');
-      opt.chan = 'pupil_x_l';
+      opt.channel = 'pupil_x_l';
       this.verifyWarning(@()pspm_pupil_pp(...
         this.pspm_input_filename, opt), 'ID:invalid_chantype');
-      opt.chan = 'pupil_l';
+      opt.channel = 'pupil_l';
       opt.chan_combine = 'gaze_y_l';
       this.verifyWarning(@()pspm_pupil_pp(...
         this.pspm_input_filename, opt), 'ID:invalid_input');
@@ -44,7 +44,7 @@ classdef pspm_pupil_pp_test < pspm_testcase
         this.pspm_input_filename, opt), 'ID:invalid_input');
     end
     function check_if_preprocessed_channel_is_saved(this)
-      opt.chan = 'pupil_r';
+      opt.channel = 'pupil_r';
       [~, out_chan] = pspm_pupil_pp(this.pspm_input_filename, opt);
       testdata = load(this.pspm_input_filename);
       this.verifyEqual(testdata.data{out_chan}.header.chantype,...
@@ -53,7 +53,7 @@ classdef pspm_pupil_pp_test < pspm_testcase
     function check_upsampling_rate(this)
       for freq = [500 1000 1500]
         opt.custom_settings.valid.interp_upsamplingFreq = freq;
-        opt.chan = 'pupil_r';
+        opt.channel = 'pupil_r';
         [~, out_chan] = pspm_pupil_pp(this.pspm_input_filename, opt);
         testdata = load(this.pspm_input_filename);
         pupil_chan_indices = find(...
@@ -68,14 +68,14 @@ classdef pspm_pupil_pp_test < pspm_testcase
       end
     end
     function check_channel_combining(this)
-      opt.chan = 'pupil_r';
+      opt.channel = 'pupil_r';
       opt.chan_combine = 'pupil_l';
       [~, out_chan] = pspm_pupil_pp(this.pspm_input_filename, opt);
       testdata = load(this.pspm_input_filename);
       this.verifyEqual(testdata.data{out_chan}.header.chantype, 'pupil_pp_c');
     end
     function check_segments(this)
-      opt.chan = 'pupil_r';
+      opt.channel = 'pupil_r';
       opt.segments{1}.start = 5;
       opt.segments{1}.end = 10;
       opt.segments{1}.name = 'seg1';

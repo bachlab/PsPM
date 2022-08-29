@@ -139,13 +139,13 @@ for c = 1:n_chans
   % replace data
   gaze_chans{c} = chan;
 end
-[lsts, outinfo] = pspm_write_channel(fn, gaze_chans, options.chan_action);
+[lsts, outinfo] = pspm_write_channel(fn, gaze_chans, options.channel_action);
 if lsts ~= 1
   warning('ID:invalid_input', 'Could not write converted data.');
   return;
 end
 if strcmpi(unit,'degree')
-  options.chan_action = 'replace';
+  options.channel_action = 'replace';
   [lsts, outinfo] = pspm_compute_visual_angle(fn,outinfo.chan, ...
     width, height, distance,unit_h_w_d,options);
   if lsts < 1

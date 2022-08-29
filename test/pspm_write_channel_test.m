@@ -45,7 +45,7 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
         if strcmp(action, 'delete')
           sign = -1;
         end
-        this.verifyTrue((numel(new.data) - numel(old.data)) == sign*numel(outinfos.chan));
+        this.verifyTrue((numel(new.data) - numel(old.data)) == sign*numel(outinfos.channel));
       else
         this.verifyEqual(numel(new.data), numel(old.data));
       end
@@ -71,7 +71,7 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
           warning('No channel found with chantype %s.', added_chan.header.chantype);
         end
         % ensure returned channel id is equal to the channel looked for
-        this.verifyEqual(find(chan), outinfos.chan);
+        this.verifyEqual(find(chan), outinfos.channel);
         % same amount of data
         this.verifyEqual(numel(new_chan.data), numel(added_chan.data));
         % same sr
@@ -86,17 +86,17 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       this.verifyWarning(@()pspm_write_channel('some_file', []), 'ID:unknown_action');
       this.verifyWarning(@()pspm_write_channel('some_file', [], ''), 'ID:unknown_action');
       options = struct();
-      options.chan = 'some invalid channel';
+      options.channel = 'some invalid channel';
       this.verifyWarning(@()pspm_write_channel('some_file', [], 'add', options), 'ID:invalid_input');
-      options.chan = -1;
+      options.channel = -1;
       this.verifyWarning(@()pspm_write_channel('some_file', [], 'add', options), 'ID:invalid_input');
-      options.chan = 0;
+      options.channel = 0;
       this.verifyWarning(@()pspm_write_channel('some_file', [], 'delete', options), 'ID:invalid_input');
       this.verifyWarning(@()pspm_write_channel('some_file', [], 'add', options), 'ID:invalid_input');
       this.verifyWarning(@()pspm_write_channel('some_file', 1:3, 'add', options), 'ID:invalid_input');
-      options.chan = 1:5;
+      options.channel = 1:5;
       this.verifyWarning(@()pspm_write_channel(this.testdatafile, [], 'delete', options), 'ID:invalid_input');
-      options.chan = 'ecg';
+      options.channel = 'ecg';
       this.verifyWarning(@()pspm_write_channel(this.testdatafile, [], 'delete', options), 'ID:no_matching_chans');
       c{1}.chantype = 'hb';
       c{1}.sr = 200;
@@ -217,12 +217,12 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       [~, new.infos, new.data] = pspm_load_data(this.testdatafile);
       % do basic checks
       this.verify_write(new, old, [], 'delete', outinfos);
-      this.verifyEqual(numel(outinfos.chan), 1);
+      this.verifyEqual(numel(outinfos.channel), 1);
       % search channel hr (should be deleted)
       chan = cellfun(@(f) strcmpi(f.header.chantype, 'hr'), new.data);
       this.verifyTrue(~any(chan));
       % ●●● 2 Delete with channr
-      options.chan = numel(new.data);
+      options.channel = numel(new.data);
       % new is now old
       old = new;
       [~, outinfos] = this.verifyWarningFree(@() pspm_write_channel(this.testdatafile, [], 'delete', options));
@@ -230,7 +230,7 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       [~, new.infos, new.data] = pspm_load_data(this.testdatafile);
       % do basic checks
       this.verify_write(new, old, [], 'delete', outinfos);
-      this.verifyEqual(numel(outinfos.chan), 1);
+      this.verifyEqual(numel(outinfos.channel), 1);
       % ●●● 3 Test delete algorithm
       % will then also be needed for test_delete_multi
       % prepare (add some resp channels)
@@ -249,25 +249,25 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       % delete last occurence
       options = struct();
       options.delete = 'last';
-      options.chan = 'resp';
+      options.channel = 'resp';
       [~, outinfos] = this.verifyWarningFree(@() pspm_write_channel(this.testdatafile, [], 'delete', options));
       % load changed data
       [~, new.infos, new.data] = pspm_load_data(this.testdatafile);
       % do basic checks
       this.verify_write(new, old, [], 'delete', outinfos);
-      this.verifyEqual(numel(outinfos.chan), 1);
+      this.verifyEqual(numel(outinfos.channel), 1);
       % ensure last entry was deleted
       this.verifyEqual(new.data{end}.header.sr, 60);
       % new becomes old
       old = new;
       options.delete = 'first';
-      options.chan = 'resp';
+      options.channel = 'resp';
       [~, outinfos] = this.verifyWarningFree(@() pspm_write_channel(this.testdatafile, [], 'delete', options));
       % load changed data
       [~, new.infos, new.data] = pspm_load_data(this.testdatafile);
       % do basic checks
       this.verify_write(new, old, [], 'delete', outinfos);
-      this.verifyEqual(numel(outinfos.chan), 1);
+      this.verifyEqual(numel(outinfos.channel), 1);
       % ensure first entry was deleted
       this.verifyEqual(new.data{end}.header.sr, 60);
     end
@@ -278,14 +278,14 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       [~, old.infos, old.data] = pspm_load_data(this.testdatafile);
       % delete last occurence
       options = struct();
-      options.chan = 1:2;
+      options.channel = 1:2;
       [~, outinfos] = this.verifyWarningFree(@() pspm_write_channel(this.testdatafile, [], 'delete', options));
       % load changed data
       [~, new.infos, new.data] = pspm_load_data(this.testdatafile);
       % verify
       % do basic checks
       this.verify_write(new, old, [], 'delete', outinfos);
-      this.verifyEqual(numel(outinfos.chan), 2);
+      this.verifyEqual(numel(outinfos.channel), 2);
       % ●●● 2 remove remaining 'resp' channels
       old = new;
       chan = cellfun(@(f) strcmpi(f.header.chantype, 'resp'), new.data);
@@ -301,7 +301,7 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
         gen_data = pspm_testdata_gen(c, 500);
         this.verifyWarningFree(@() pspm_write_channel(this.testdatafile, gen_data.data, 'add'));
       end
-      options.chan = 'resp';
+      options.channel = 'resp';
       options.delete = 'all';
       [~, outinfos] = this.verifyWarningFree(@() pspm_write_channel(this.testdatafile, [], 'delete', options));
       % load changed data

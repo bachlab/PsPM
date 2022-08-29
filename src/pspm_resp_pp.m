@@ -48,7 +48,7 @@ try options.systemtype; catch, options.systemtype = 'bellows'; end
 try options.datatype; catch, options.datatype = {'rp', 'ra', 'rfr', 'rs'}; end
 try options.plot; catch, options.plot = 0; end
 try options.diagnostics; catch, options.diagnostics = 0; end
-try options.chan_action; catch, options.chan_action = 'add'; end
+try options.channel_action; catch, options.channel_action = 'add'; end
 if ~ischar(options.systemtype) || sum(strcmpi(options.systemtype, {'bellows', 'cushion'})) == 0
   warning('ID:invalid_input', 'Unknown system type.'); return;
 elseif ~iscell(options.datatype)
@@ -108,12 +108,12 @@ end
 ibi = diff(respstamp);
 indx = find(ibi < 1);
 respstamp(indx + 1) = [];
-if strcmp(options.chan_action, 'replace') && numel(find(datatype == 1)) > 1
+if strcmp(options.channel_action, 'replace') && numel(find(datatype == 1)) > 1
   % replace makes no sense
   warning('ID:invalid_input', ...
     ['More than one datatype defined. Replacing data makes no sense. '...
-    'Resetting ''options.chan_action'' to ''add''.']);
-  options.chan_action = 'add';
+    'Resetting ''options.channel_action'' to ''add''.']);
+  options.channel_action = 'add';
 end
 %% compute data values, interpolate and write
 for iType = 1:(numel(datatypes) - 1)
@@ -179,7 +179,7 @@ for iType = 1:(numel(datatypes) - 1)
     end
     % write
     newdata.data = writedata(:);
-    nsts = pspm_write_channel(fn, newdata, options.chan_action, o);
+    nsts = pspm_write_channel(fn, newdata, options.channel_action, o);
     if nsts == -1, return; end
   end
 end

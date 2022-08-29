@@ -150,7 +150,7 @@ if ~isnumeric(options.min_relative_amplitude)
 end
 %% load
 addpath(pspm_path('backroom'));
-[lsts, data] = pspm_load_single_chan(fn, options.chan, 'last', 'ecg');
+[lsts, data] = pspm_load_single_chan(fn, options.channel, 'last', 'ecg');
 if lsts ~= 1; return; end;
 rmpath(pspm_path('backroom'));
 %% process
@@ -172,7 +172,7 @@ heartbeats{1}.header.sr = 1;
 heartbeats{1}.header.chantype = 'hb';
 heartbeats{1}.header.units = 'events';
 o.msg.prefix = 'QRS detection using AMRI algorithm';
-[lsts, infos] = pspm_write_channel(fn, heartbeats, options.chan_action);
+[lsts, infos] = pspm_write_channel(fn, heartbeats, options.channel_action);
 if lsts ~= 1; return; end;
 out_channel = infos.channel;
 sts = 1;

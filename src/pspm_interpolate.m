@@ -276,11 +276,11 @@ for d = 1:numel(D)
       else
         o = struct();
         % add to existing file
-        if strcmp(options.chan_action, 'replace')
+        if strcmp(options.channel_action, 'replace')
           o.chan = work_chans;
         end
         o.msg.prefix = 'Interpolated channel';
-        [sts, infos] = pspm_write_channel(fn, savedata.data(work_chans), options.chan_action, o);
+        [sts, infos] = pspm_write_channel(fn, savedata.data(work_chans), options.channel_action, o);
         % added channel ids are in infos.chan
         outdata{d} = infos.chan;
       end

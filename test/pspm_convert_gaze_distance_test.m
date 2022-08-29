@@ -6,7 +6,7 @@ classdef pspm_convert_gaze_distance_test < matlab.unittest.TestCase
     fn = '';
   end
   properties (TestParameter)
-    chan_action = { 'add', 'replace' };
+    channel_action = { 'add', 'replace' };
     from = { 'pixel', 'mm', 'inches' };
     target = { 'degree', 'sps' };
   end
@@ -14,7 +14,7 @@ classdef pspm_convert_gaze_distance_test < matlab.unittest.TestCase
     % get the gaze data channels for a specific unit
     function len = get_gaze_and_unit(this, data, unit)
       len = find(cellfun(@(c) strcmp(c.header.units, unit) && ~isempty(regexp(c.header.chantype, 'gaze_[x|y]_[r|l]')), data));
-    end;
+    end
   end
   methods(TestMethodSetup)
     function backup(this)
@@ -44,16 +44,16 @@ classdef pspm_convert_gaze_distance_test < matlab.unittest.TestCase
       this.verifyWarning(@() pspm_convert_gaze_distance(this.fn, target, "pixel", 111, 222, 'not_a_number'),  'ID:invalid_input:distance');
       this.verifyWarning(@() pspm_convert_gaze_distance(this.fn, 'invalid_conversion', 'pixel', 111, 222, 333), 'ID:invalid_input:target');
     end
-    function conversion(this, target, from, chan_action)
+    function conversion(this, target, from, channel_action)
       load(this.fn);
       width = 323;
       height = 232;
       distance = 600;
-      if (~strcmp(from, 'pixel'));
+      if (~strcmp(from, 'pixel'))
         pspm_convert_pixel2unit(this.fn, 0, from, width, height, distance);
         load(this.fn);
         this.verifyLength(this.get_gaze_and_unit(data, from), 4);
-      end;
+      end
       data_length = length(data);
       if strcmp(target, 'degree')
         this.verifyLength(this.get_gaze_and_unit(data, 'degree'), 0);
@@ -62,9 +62,9 @@ classdef pspm_convert_gaze_distance_test < matlab.unittest.TestCase
         this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_r'), data)), 0);
       end
       [sts, out_channel] = this.verifyWarningFree(@() pspm_convert_gaze_distance(...
-        this.fn, target, from, width, height, distance, struct('chan_action', chan_action)));
+        this.fn, target, from, width, height, distance, struct('channel_action', channel_action)));
       load(this.fn);
-      this.verifyTrue(length(out_channel.chan) > 0);
+      this.verifyTrue(~isempty(out_channel.channel));
       extra = 2;
       if strcmp(target, 'degree')
         extra = 4;
@@ -78,16 +78,16 @@ classdef pspm_convert_gaze_distance_test < matlab.unittest.TestCase
         this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_r'), data)), 1);
       end
       [sts, out_channel] = this.verifyWarningFree(@() pspm_convert_gaze_distance(...
-        this.fn, target, from, width, height, distance, struct('chan_action', chan_action)));
+        this.fn, target, from, width, height, distance, struct('channel_action', channel_action)));
       load(this.fn);
       extra = 0;
-      if (strcmp(chan_action, 'add'));
+      if (strcmp(channel_action, 'add'))
         if strcmp(target, 'degree')
           extra = extra + 4;
         else
           extra = extra + 2;
         end
-      end;
+      end
       this.verifyLength(data, data_length + extra);
       this.verifyEqual(sts, 1);
     end

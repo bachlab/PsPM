@@ -175,8 +175,8 @@ elseif ~isnumeric(distance)
 elseif ~isnumeric(chan) && ~ischar(chan)
   warning('ID:invalid_input', 'chan must be numeric or a string.');
   return;
-elseif ~any(strcmpi(options.chan_action, {'add', 'replace'}))
-  warning('ID:invalid_input', ['options.chan_action must be either ', ...
+elseif ~any(strcmpi(options.channel_action, {'add', 'replace'}))
+  warning('ID:invalid_input', ['options.channel_action must be either ', ...
     '''add'' or ''replace''.']);
   return;
 end
@@ -205,7 +205,7 @@ switch mode
     data{1}.data = convert_data;
     data{1}.header.units = unit;
     [f_sts, f_info] = pspm_write_channel(fn, data{1},...
-      options.chan_action);
+      options.channel_action);
     sts = f_sts;
     out.chan = f_info.chan;
     out.fn = fn;

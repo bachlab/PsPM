@@ -77,19 +77,19 @@ for gaze_eye = fieldnames(eyes)'
     sr =  data{d}.header.sr;
     if ~isempty(regexp(data{d}.header.chantype, 'gaze_x_', 'once'))
       lon_chan = data{d};
-      if (strcmp(from, 'pixel'));
+      if (strcmp(from, 'pixel'))
         data_x = pixel_conversion(data{d}.data, width, data{d}.header.range);
       else;
         [ sts, data_x ] = pspm_convert_unit(data{d}.data, from, 'mm');
-      end;
+      end
     else
       lat_chan = data{d};
-      if (strcmp(from, 'pixel'));
+      if (strcmp(from, 'pixel'))
         data_y = pixel_conversion(data{d}.data, height, data{d}.header.range);
-      else;
+      else
         [ sts, data_y ] = pspm_convert_unit(data{d}.data, from, 'mm');
-      end;
-    end;
+      end
+    end
   end
   if strcmp(target, 'sps')
     options.interpolate = 1;

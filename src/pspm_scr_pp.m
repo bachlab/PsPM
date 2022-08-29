@@ -123,8 +123,8 @@ end
 if ~isfield(options, 'clipping_threshold')
   options.clipping_threshold = 0.1;
 end
-if ~isfield(options, 'chan_action')
-  options.chan_action = 'add';
+if ~isfield(options, 'channel_action')
+  options.channel_action = 'add';
 end
 
 %% Sanity checks
@@ -159,8 +159,8 @@ end
 if options.change_data == 0 && ~isfield(options, 'missing_epochs_filename')
   warning('This procedure leads to no output, according to the selected options.');
 end
-if ~ismember(options.chan_action, {'add', 'replace', 'withdraw'})
-  warning('ID:invalid_input', 'Option chan_action must be either ''add'', ''replace'' or ''withdraw''');
+if ~ismember(options.channel_action, {'add', 'replace', 'withdraw'})
+  warning('ID:invalid_input', 'Option channel_action must be either ''add'', ''replace'' or ''withdraw''');
   return;
 end
 
@@ -256,10 +256,10 @@ for d = 1:numel(data_source)
   end
   % If not save epochs, save the changed data to the original data as
   % a new channel or replace the old data
-  if ~strcmp(options.chan_action, 'withdraw')
+  if ~strcmp(options.channel_action, 'withdraw')
     data_to_write = indatas{1,1};
     data_to_write.data = data_changed;
-    [sts_write, ~] = pspm_write_channel(out{d}, data_to_write, options.chan_action);
+    [sts_write, ~] = pspm_write_channel(out{d}, data_to_write, options.channel_action);
     if sts_write == -1
       sts = -1;
       warning('Epochs were not written to the original file successfully.');

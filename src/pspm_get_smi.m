@@ -94,9 +94,9 @@ end
 if isstr(datafile)
   datafile = {datafile};
 end
-if ~assert_proper_datafile_format(datafile); return; end;
-if ~assert_custom_import_channels_has_channel_field(import); return; end;
-if ~assert_all_chantypes_are_supported(settings, import); return; end;
+if ~assert_proper_datafile_format(datafile); return; end
+if ~assert_custom_import_channels_has_channel_field(import); return; end
+if ~assert_all_chantypes_are_supported(settings, import); return; end
 try
   if numel(datafile) == 2
     data = import_smi(datafile{1}, datafile{2});
@@ -177,7 +177,7 @@ for k = 1:num_import_cells
       ' does not seem to be present in the datafile. ', ...
       'Will create artificial channel with NaN values.'], import{k}.type));
   end
-  sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan_id);
+  sourceinfo.channel{k, 1} = sprintf('Column %02.0f', chan_id);
   sourceinfo.chan_stats{k,1} = struct();
   n_nan = sum(isnan(import{k}.data));
   n_data = numel(import{k}.data);
@@ -456,7 +456,7 @@ end
 
 function [import_cell, chan_id] = import_custom_chan(import_cell, data_concat, raw_columns, chan_struct, units, sampling_rate)
 n_cols = size(raw_columns, 2);
-chan_id = import_cell.chan;
+chan_id = import_cell.channel;
 if chan_id < 1
   warning('ID:invalid_input', sprintf('Custom channel id %d is less than 1', chan_id));
   return
@@ -496,7 +496,7 @@ mi_values = [];
 mi_names = {};
 
 microsecond_col_idx = 1;
-n_cols = size(data{1}.chans, 2);
+n_cols = size(data{1}.channels, 2);
 sr = data{1}.sampleRate;
 last_time = data{1}.raw(1, microsecond_col_idx);
 microsec_to_sec = 1e-6;
@@ -511,10 +511,10 @@ for c = 1:numel(data)
     data_concat(end + 1:(end + n_missing), 1:n_cols) = NaN(n_missing, n_cols);
   end
 
-  n_data_in_session = size(data{c}.chans, 1);
+  n_data_in_session = size(data{c}.channels, 1);
   n_markers_in_session = numel(data{c}.markerinfos.name);
 
-  data_concat(end + 1:(end + n_data_in_session), 1:n_cols) = data{c}.chans;
+  data_concat(end + 1:(end + n_data_in_session), 1:n_cols) = data{c}.channels;
   markers(end + 1:(end + n_markers_in_session), 1) = data{c}.markers' * microsec_to_sec;
   mi_values(end + 1:(end + n_markers_in_session),1) = data{c}.markerinfos.value';
   mi_names(end + 1:(end + n_markers_in_session),1) = data{c}.markerinfos.name';
