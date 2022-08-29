@@ -69,7 +69,7 @@ function [sts, infos] = pspm_find_sounds(varargin)
 % ├──.snd_markers: vector of begining of sound sound events
 % ├───────.delays: vector of delays between markers and detected sounds.
 % │                Only available with option 'diagnostics' turned on.
-% └──────.channel: number of added chan, when options.channel_action ~= 'none'
+% └──────.channel: number of added channel, when options.channel_action ~= 'none'
 % ● Copyright
 %   Introduced in PsPM 3.0
 %   Written in 2015 by Samuel Gerster (University of Zurich)
@@ -383,7 +383,7 @@ if ~strcmpi(options.channel_action, 'none')
   snd_events.header.chantype = 'marker';
   snd_events.header.units ='events';
   [~, ininfos] = pspm_write_channel(file, snd_events, options.channel_action);
-  outinfos.chan = ininfos.chan;
+  outinfos.channel = ininfos.channel;
 end
 
 %% Plot Option

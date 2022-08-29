@@ -36,10 +36,10 @@ classdef pspm_pupil_pp_test < pspm_testcase
       this.verifyWarning(@()pspm_pupil_pp(...
         this.pspm_input_filename, opt), 'ID:invalid_chantype');
       opt.channel = 'pupil_l';
-      opt.chan_combine = 'gaze_y_l';
+      opt.channel_combine = 'gaze_y_l';
       this.verifyWarning(@()pspm_pupil_pp(...
         this.pspm_input_filename, opt), 'ID:invalid_input');
-      opt.chan_combine = 'pupil_l';
+      opt.channel_combine = 'pupil_l';
       this.verifyWarning(@()pspm_pupil_pp(...
         this.pspm_input_filename, opt), 'ID:invalid_input');
     end
@@ -69,7 +69,7 @@ classdef pspm_pupil_pp_test < pspm_testcase
     end
     function check_channel_combining(this)
       opt.channel = 'pupil_r';
-      opt.chan_combine = 'pupil_l';
+      opt.channel_combine = 'pupil_l';
       [~, out_chan] = pspm_pupil_pp(this.pspm_input_filename, opt);
       testdata = load(this.pspm_input_filename);
       this.verifyEqual(testdata.data{out_chan}.header.chantype, 'pupil_pp_c');

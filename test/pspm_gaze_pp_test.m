@@ -47,10 +47,10 @@ classdef pspm_gaze_pp_test < pspm_testcase
       this.verifyWarning(@()pspm_gaze_pp(this.pspm_input_fn, opt), 'ID:invalid_chantype');
       % the input filename is valid, but the two channels to combine are identical
       opt.chan = 'gaze_x_l';
-      opt.chan_combine = 'pupil_x_l';
+      opt.channel_combine = 'pupil_x_l';
       this.verifyWarning(@()pspm_gaze_pp(this.pspm_input_fn, opt), 'ID:invalid_input');
       % the input filename is valid, but the two channels to combine are not both x or both y
-      opt.chan_combine = 'gaze_y_l';
+      opt.channel_combine = 'gaze_y_l';
       this.verifyWarning(@()pspm_gaze_pp(this.pspm_input_fn, opt), 'ID:invalid_input');
     end
     function preprocessed_channel(this)
@@ -94,12 +94,12 @@ classdef pspm_gaze_pp_test < pspm_testcase
     function channel_combining(this)
       % check if the combined channel has the correct channel type name
       opt.chan = 'gaze_x_r';
-      opt.chan_combine = 'gaze_x_l';
+      opt.channel_combine = 'gaze_x_l';
       [~, out_chan] = pspm_gaze_pp(this.pspm_input_fn, opt);
       testdata = load(this.pspm_input_fn);
       this.verifyEqual(testdata.data{out_chan}.header.chantype, 'gaze_pp_x_c');
       opt.chan = 'gaze_y_r';
-      opt.chan_combine = 'gaze_y_l';
+      opt.channel_combine = 'gaze_y_l';
       [~, out_chan] = pspm_gaze_pp(this.pspm_input_fn, opt);
       testdata = load(this.pspm_input_fn);
       this.verifyEqual(testdata.data{out_chan}.header.chantype, 'gaze_pp_y_c');

@@ -35,7 +35,7 @@ classdef (Abstract) pspm_get_superclass < pspm_testcase
   methods (Test)
     function valid_datafile(this)
       global settings;
-      if isempty(settings), pspm_init; end;
+      if isempty(settings), pspm_init; end
       fprintf('\n');
       for k = 1:numel(this.testcases)
         [sts, import, sourceinfo] = this.fhandle(this.testcases{k}.pth, this.testcases{k}.import);

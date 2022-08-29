@@ -116,9 +116,9 @@ catch err
   return;
 end
 if numel(data) > 1
-  if ~assert_same_sample_rate(data); return; end;
-  if ~assert_same_eyes_observed(data); return; end;
-  if ~assert_sessions_are_one_after_another(data); return; end;
+  if ~assert_same_sample_rate(data); return; end
+  if ~assert_same_eyes_observed(data); return; end
+  if ~assert_sessions_are_one_after_another(data); return; end
 end
 
 [data_concat, markers, mi_values, mi_names] = concat_sessions(data);
