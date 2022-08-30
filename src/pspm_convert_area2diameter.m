@@ -4,10 +4,10 @@ function [varargout] = pspm_convert_area2diameter(varargin)
 %   It can work on PsPM files or on numeric vectors.
 % ● Format
 %   [sts, d]    = pspm_convert_area2diameter(area)
-%   [sts, chan] = pspm_convert_area2diameter(fn, chan, options)
+%   [sts, channel] = pspm_convert_area2diameter(fn, channel, options)
 % ● Arguments
 %                 fn: a numeric vector of milimeter values
-%               chan: Channels which should be converted from area to diameter.
+%               channel: Channels which should be converted from area to diameter.
 %                     Should be either a string representing the channels
 %                     chantype or a numeric value representing the channels id.
 %                     Multiple channels are allowed and should be provided as
@@ -40,10 +40,10 @@ if numel(varargin) == 1
   mode = 'vector';
 else
   fn = varargin{1};
-  chan = varargin{2};
+  channel = varargin{2};
 
-  if ~iscell(chan)
-    chan = num2cell(chan);
+  if ~iscell(channel)
+    channel = num2cell(channel);
   end
 
   if numel(varargin) == 3
@@ -67,9 +67,9 @@ if strcmpi(mode, 'vector')
   varargout{2} = 2.*sqrt(area./pi);
   sts = 1;
 elseif strcmpi(mode, 'file')
-  diam = cell(numel(chan), 1);
-  for i = 1:numel(chan)
-    [~, ~, data] = pspm_load_data(fn, chan{i});
+  diam = cell(numel(channel), 1);
+  for i = 1:numel(channel)
+    [~, ~, data] = pspm_load_data(fn, channel{i});
     diam{i} = data{1};
     diam{i}.data = 2.*sqrt(diam{i}.data./pi);
 
@@ -84,7 +84,7 @@ elseif strcmpi(mode, 'file')
     end
   end
   [~, infos] = pspm_write_channel(fn, diam, options.channel_action);
-  varargout{2} = infos.chan;
+  varargout{2} = infos.channel;
   sts = 1;
 end
 varargout{1} = sts;

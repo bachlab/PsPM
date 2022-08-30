@@ -16,7 +16,7 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 %   2. x <-- A*(Dconv/Dref)*x
 %   3. Convert x from ref_unit to unit.
 % ● Format
-%   [sts, out] = pspm_convert_au2unit(fn, chan, unit, distance, multiplicator,
+%   [sts, out] = pspm_convert_au2unit(fn, channel, unit, distance, multiplicator,
 %                reference_distance, reference_unit, options)
 %   [sts, out] = pspm_convert_au2unit(data, unit, distance, record_method,
 %                multiplicator, reference_distance, reference_unit, options)
@@ -24,7 +24,7 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 %                 fn: filename which contains the channels to be converted
 %               data: a one-dimensional vector which contains the data to be
 %                     converted
-%               chan: channel id of the channel to be coverted.
+%               channel: channel id of the channel to be coverted.
 %                     Expected to be numeric. The channel should contain area
 %                     or diameter unit values.
 %               unit: To which unit the data should be converted. possible
@@ -87,7 +87,7 @@ else
     else
       unit = varargin{3};
       distance = varargin{4};
-      chan = varargin{2};
+      channel = varargin{2};
       multiplicator = varargin{5};
       reference_distance = varargin{6};
       reference_unit = varargin{7};
@@ -119,7 +119,7 @@ else
       unit = varargin{2};
       distance = varargin{3};
       fn = '';
-      chan = -1;
+      channel = -1;
       record_method = varargin{4};
       multiplicator = varargin{5};
       reference_distance = varargin{6};
@@ -172,8 +172,8 @@ elseif ~isnumeric(data)
 elseif ~isnumeric(distance)
   warning('ID:invalid_input', 'distance is not numeric.');
   return;
-elseif ~isnumeric(chan) && ~ischar(chan)
-  warning('ID:invalid_input', 'chan must be numeric or a string.');
+elseif ~isnumeric(channel) && ~ischar(channel)
+  warning('ID:invalid_input', 'channel must be numeric or a string.');
   return;
 elseif ~any(strcmpi(options.channel_action, {'add', 'replace'}))
   warning('ID:invalid_input', ['options.channel_action must be either ', ...
@@ -183,7 +183,7 @@ end
 %% try to load data
 switch mode
   case 'file'
-    [f_sts, infos, data] = pspm_load_data(fn, chan);
+    [f_sts, infos, data] = pspm_load_data(fn, channel);
     if f_sts ~= 1
       warning('ID:invalid_input', 'Error while load data.');
       return;
@@ -207,7 +207,7 @@ switch mode
     [f_sts, f_info] = pspm_write_channel(fn, data{1},...
       options.channel_action);
     sts = f_sts;
-    out.chan = f_info.chan;
+    out.channel = f_info.channel;
     out.fn = fn;
   case 'data'
     out = convert_data;

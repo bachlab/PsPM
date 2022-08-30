@@ -6,9 +6,9 @@ function [out] = pspm_cfg_run_pupil_preprocess(job)
     fn = job.datafile{1};
     options = struct();
 
-    chankey = fieldnames(job.chan);
+    chankey = fieldnames(job.channel);
     chankey = chankey{1};
-    options.chan = job.chan.(chankey);
+    options.channel = job.channel.(chankey);
 
     chankey = fieldnames(job.channel_combine);
     chankey = chankey{1};
