@@ -56,21 +56,21 @@ classdef pspm_gaze_pp_test < pspm_testcase
     function preprocessed_channel(this)
       % check if the channel name of the preprocessed file is correct
       opt.channel = 'gaze_x_r';
-      [~, out_chan] = pspm_gaze_pp(this.pspm_input_fn, opt);
+      [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
       testdata = load(this.pspm_input_fn);
-      this.verifyEqual(testdata.data{out_chan}.header.chantype,'gaze_pp_x_r');
+      this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_x_r');
       opt.channel = 'gaze_x_l';
-      [~, out_chan] = pspm_gaze_pp(this.pspm_input_fn, opt);
+      [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
       testdata = load(this.pspm_input_fn);
-      this.verifyEqual(testdata.data{out_chan}.header.chantype,'gaze_pp_x_l');
+      this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_x_l');
       opt.channel = 'gaze_y_r';
-      [~, out_chan] = pspm_gaze_pp(this.pspm_input_fn, opt);
+      [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
       testdata = load(this.pspm_input_fn);
-      this.verifyEqual(testdata.data{out_chan}.header.chantype,'gaze_pp_y_r');
+      this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_y_r');
       opt.channel = 'gaze_y_l';
-      [~, out_chan] = pspm_gaze_pp(this.pspm_input_fn, opt);
+      [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
       testdata = load(this.pspm_input_fn);
-      this.verifyEqual(testdata.data{out_chan}.header.chantype,'gaze_pp_y_l');
+      this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_y_l');
     end
     function upsampling_rate(this)
       % check if the upsampling rate is correct
@@ -78,7 +78,7 @@ classdef pspm_gaze_pp_test < pspm_testcase
         opt.custom_settings.valid.interp_upsamplingFreq = freq;
         opt.channel = 'gaze_x_r';
         opt.valid_sample = 1;
-        [~, out_chan] = pspm_gaze_pp(this.pspm_input_fn, opt);
+        [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
         testdata = load(this.pspm_input_fn);
         pupil_chan_indices = find(...
           cell2mat(cellfun(@(x) strcmp(x.header.chantype, 'gaze_x_r'),...
@@ -88,21 +88,21 @@ classdef pspm_gaze_pp_test < pspm_testcase
         upsampling_factor = freq / sr;
         this.verifyEqual(...
           numel(testdata.data{pupil_chan}.data) * upsampling_factor,...
-          numel(testdata.data{out_chan}.data));
+          numel(testdata.data{out_channel}.data));
       end
     end
     function channel_combining(this)
       % check if the combined channel has the correct channel type name
       opt.channel = 'gaze_x_r';
       opt.channel_combine = 'gaze_x_l';
-      [~, out_chan] = pspm_gaze_pp(this.pspm_input_fn, opt);
+      [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
       testdata = load(this.pspm_input_fn);
-      this.verifyEqual(testdata.data{out_chan}.header.chantype, 'gaze_pp_x_c');
+      this.verifyEqual(testdata.data{out_channel}.header.chantype, 'gaze_pp_x_c');
       opt.channel = 'gaze_y_r';
       opt.channel_combine = 'gaze_y_l';
-      [~, out_chan] = pspm_gaze_pp(this.pspm_input_fn, opt);
+      [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
       testdata = load(this.pspm_input_fn);
-      this.verifyEqual(testdata.data{out_chan}.header.chantype, 'gaze_pp_y_c');
+      this.verifyEqual(testdata.data{out_channel}.header.chantype, 'gaze_pp_y_c');
     end
   end
   methods(TestClassTeardown)

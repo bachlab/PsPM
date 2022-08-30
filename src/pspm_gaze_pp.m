@@ -3,12 +3,12 @@ function [sts, out_channel] = pspm_gaze_pp(fn, options)
 % 	pspm_gaze_pp preprocesses gaze signals, gaze x and gaze y channels at
 % 	the same time.
 % ●	Format
-% 	[sts, out_chan] = pspm_gaze_pp(fn) or
-% 	[sts, out_chan] = pspm_gaze_pp(fn, options)
+% 	[sts, out_channel] = pspm_gaze_pp(fn) or
+% 	[sts, out_channel] = pspm_gaze_pp(fn, options)
 % ●	Arguments
 % 	              fn: [string] Path to the PsPM file which contains the gaze data.
 % 	         options: [struct]
-%           .chan: [numeric/string, optional] Channel ID to be preprocessed.
+%           .channel: [numeric/string, optional] Channel ID to be preprocessed.
 %   .channel_combine: [numeric/string, optional] Channel ID to be combined.
 %      .valid_sample: [bool] 1 or 0. 1 if use valid samples produced by
 %                     pspm_pupil_pp, 0 if not to use. default as 0.
@@ -26,7 +26,7 @@ sts = -1;
 list_chans = {'gaze_x_l', 'gaze_x_r', 'gaze_y_l', 'gaze_y_r'};
 % 2.2 set default values
 if nargin == 1;                        options = struct();              end
-if ~isfield(options,'chan');        options.chan = 'gaze_x_l';    end
+if ~isfield(options,'channel');        options.channel = 'gaze_x_l';    end
 if ~isfield(options,'channel_action');    options.channel_action = 'add';  end
 if ~isfield(options,'channel_combine');   options.channel_combine = 'none';end
 if ~isfield(options,'valid_sample');   options.valid_sample = 0;        end
@@ -48,7 +48,7 @@ options.custom_settings = default_settings;
 [sts, ~, ~, ~] = pspm_load_data(fn);
 if sts ~= 1; warning('ID:invalid_input', 'cannot load data from the file'); return; end
 % 3.2 check the channel can be loaded
-[sts, ~, ~, ~] = pspm_load_data(fn, options.chan);
+[sts, ~, ~, ~] = pspm_load_data(fn, options.channel);
 if sts ~= 1
   warning('ID:invalid_chantype', 'cannot load the specified channel from the file');
   return
@@ -58,7 +58,7 @@ if ~ismember(options.channel_action, {'add', 'replace'})
     'Option channel_action must be either ''add'' or ''replace''.');
   return
 end
-if ~ismember(options.chan, list_chans)
+if ~ismember(options.channel, list_chans)
   warning('ID:invalid_input', ...
     'Option channel must be either ''gaze_x_l'', ''gaze_x_r'', ''gaze_y_l'' or ''gaze_y_r''.');
   return
@@ -69,8 +69,8 @@ if action_combine
       'Option channel_combine must be either ''gaze_x_l'', ''gaze_x_r'', ''gaze_y_l'' or ''gaze_y_r''.');
     return
   else
-    if strcmp(options.chan(end),options.channel_combine(end)) || ...
-        ~strcmp(options.chan(6),options.channel_combine(6))
+    if strcmp(options.channel(end),options.channel_combine(end)) || ...
+        ~strcmp(options.channel(6),options.channel_combine(6))
       warning('ID:invalid_input', 'Option channel_combine must match channel.');
       return
     end
@@ -84,22 +84,22 @@ for seg = options.segments
   end
 end
 %% 4 Load
-[~, ~, gaze_og, ~] = pspm_load_data(fn, options.chan);
+[~, ~, gaze_og, ~] = pspm_load_data(fn, options.channel);
 if action_combine
   [~, ~, gaze_combine, ~] = pspm_load_data(fn, options.channel_combine);
   if gaze_og{1}.header.sr ~= gaze_combine{1}.header.sr
     warning('ID:invalid_input', ...
-      'options.chan and options.channel_combine data have different sampling rate');
+      'options.channel and options.channel_combine data have different sampling rate');
     return;
   end
   if ~strcmp(gaze_og{1}.header.units, gaze_combine{1}.header.units)
     warning('ID:invalid_input', ...
-      'options.chan and options.channel_combine data have different units');
+      'options.channel and options.channel_combine data have different units');
     return;
   end
   if numel(gaze_og{1}.data) ~= numel(gaze_combine{1}.data)
     warning('ID:invalid_input', ...
-      'options.chan and options.channel_combine data have different lengths');
+      'options.channel and options.channel_combine data have different lengths');
     return;
   end
   old_chantype = sprintf('%s and %s', ...
@@ -112,7 +112,7 @@ end
 % obtain valid samples from pupil
 if options.valid_sample
   options_pp = options;
-  options_pp.chan = 'pupil_l';
+  options_pp.channel = 'pupil_l';
   [~, ~, model] = pspm_pupil_pp(fn, options_pp);
   upsampling_factor = options.custom_settings.valid.interp_upsamplingFreq / gaze_og{1}.header.sr;
   desired_output_samples_gaze = round(upsampling_factor * numel(gaze_og{1}.data));
@@ -161,7 +161,7 @@ else
   preprocessed_gaze.header.units = gaze_og{1}.header.units;
 end
 %% 7 save
-chan_str = num2str(options.chan);
+chan_str = num2str(options.channel);
 o.msg.prefix = sprintf(...
   'Gaze preprocessing :: Input channel: %s -- Input chantype: %s -- Output chantype: %s --', ...
   chan_str, ...
@@ -171,7 +171,7 @@ o.msg.prefix = sprintf(...
 if lsts ~= 1 % if writting channel is unsuccessful
   return
 end
-out_chan = out_id.channel;
+out_channel = out_id.channel;
 sts = 1;
 end
 function data = pspm_cmpnans(data, t_beg, sr, output_samples)
