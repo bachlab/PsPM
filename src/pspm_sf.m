@@ -164,7 +164,7 @@ elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
   warning('ID:invalid_input', 'Filter structure needs a numeric ''down'' field.'); return;
 end
 % 2.8 Set options
-try model.chan; catch, model.chan = 'scr'; end
+try model.channel; catch, model.channel = 'scr'; end
 options = pspm_options(options, 'sf');
 %% 3 Get data
 for iFile = 1:numel(model.datafile)
@@ -173,7 +173,7 @@ for iFile = 1:numel(model.datafile)
   % 3.2 Check whether model file exists
   if ~pspm_overwrite(model.modelfile, options); return; end
   % 3.3 get and filter data
-  [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.chan);
+  [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
   if sts < 0, return; end
   Y{1} = data{1}.data; sr(1) = data{1}.header.sr;
   model.filter.sr = sr(1);

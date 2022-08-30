@@ -36,14 +36,14 @@ inputdata = ReadDataq(datafile);
 % -------------------------------------------------------------------------
 % loop through import jobs
 for k = 1:numel(import)
-  chan = import{k}.chan;
-  if chan > size(inputdata.Data, 2)
-    warning('Channel %1.0f does not exist in data file', chan); return;
+  channel = import{k}.channel;
+  if channel > size(inputdata.Data, 2)
+    warning('Channel %1.0f does not exist in data file', channel); return;
   end;
   import{k}.sr = inputdata.SR;            % sample rate per channel
-  import{k}.data = inputdata.Data(:, chan);     % data per channel
-  import{k}.units = inputdata.Units{chan};
-  sourceinfo.chan{k, 1} = sprintf('Channel %02.0f', chan);
+  import{k}.data = inputdata.Data(:, channel);     % data per channel
+  import{k}.units = inputdata.Units{channel};
+  sourceinfo.channel{k, 1} = sprintf('Channel %02.0f', channel);
   if strcmpi(settings.chantypes(import{k}.typeno).data, 'events')
     import{k}.marker = 'continuous';
   end;

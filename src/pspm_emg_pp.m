@@ -63,7 +63,7 @@ end
 
 % load data
 % -------------------------------------------------------------------------
-[lsts, infos, data] = pspm_load_data(fn, options.chan);
+[lsts, infos, data] = pspm_load_data(fn, options.channel);
 if lsts ~= 1, return, end
 
 % do the job
@@ -120,7 +120,7 @@ data{1}.header.chantype = 'emg_pp';
 
 % save data
 % -------------------------------------------------------------------------
-channel_str = num2str(options.chan);
+channel_str = num2str(options.channel);
 o.msg.prefix = sprintf(...
   'EMG preprocessing :: Input channel: %s -- Input chantype: %s -- Output chantype: %s --', ...
   channel_str, ...
@@ -129,7 +129,7 @@ o.msg.prefix = sprintf(...
 [lsts, outinfos] = pspm_write_channel(fn, data{1}, options.channel_action, o);
 if lsts ~= 1, return; end
 
-output.chan = outinfos.chan;
+output.channel = outinfos.channel;
 sts = 1;
 
 end

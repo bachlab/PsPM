@@ -58,13 +58,13 @@ classdef import_viewpoint_test < matlab.unittest.TestCase
           begidx = find(timecol == tbeg);
           endidx = find(timecol == tend);
           if strncmp(parts{3}, 'A:Blink', numel('A:Blink'))
-            this.verifyTrue(all(data{1}.chans(begidx : endidx, blink_A_chan) == 1));
+            this.verifyTrue(all(data{1}.channels(begidx : endidx, blink_A_chan) == 1));
           elseif strncmp(parts{3}, 'B:Blink', numel('B:Blink'))
-            this.verifyTrue(all(data{1}.chans(begidx : endidx, blink_B_chan) == 1));
+            this.verifyTrue(all(data{1}.channels(begidx : endidx, blink_B_chan) == 1));
           elseif strncmp(parts{3}, 'A:Saccade', numel('A:Saccade'))
-            this.verifyTrue(all(data{1}.chans(begidx : endidx, sacc_A_chan) == 1));
+            this.verifyTrue(all(data{1}.channels(begidx : endidx, sacc_A_chan) == 1));
           elseif strncmp(parts{3}, 'B:Saccade', numel('B:Saccade'))
-            this.verifyTrue(all(data{1}.chans(begidx : endidx, sacc_B_chan) == 1));
+            this.verifyTrue(all(data{1}.channels(begidx : endidx, sacc_B_chan) == 1));
           end
         end
       end

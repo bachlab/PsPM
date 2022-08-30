@@ -11,7 +11,7 @@ function [sts, out] = pspm_extract_segments(varargin)
 %   The field data is a nxo*s vector where n is number of data points and o*s
 %   corresponds to the onsets multiplied by the sessions.
 % ● Format
-%   [sts, segments] = pspm_extract_segments('manual', data_fn, chan, timing, options)
+%   [sts, segments] = pspm_extract_segments('manual', data_fn, channel, timing, options)
 %   [sts, segments] = pspm_extract_segments('manual', data_raw, sr, timing, options)
 %   [sts, segments] = pspm_extract_segments('auto', glm, options)
 %   [sts, segments] = pspm_extract_segments('auto', dcm, options)
@@ -25,11 +25,11 @@ function [sts, out] = pspm_extract_segments(varargin)
 %                          will be treated as session. Onset values are
 %                          averaged through conditions and sessions.
 %               data_raw:  Numeric raw data or a cell array of numeric raw data.
-%                   chan:  Channel number or cell of channel numbers which
+%                channel:  Channel number or cell of channel numbers which
 %                          defines which channel should be taken to
 %                          extract the segments. Chan should correspond to
 %                          data_fn and should have the same length. If
-%                          data_fn is a cell and chan is a single number,
+%                          data_fn is a cell and channel is a single number,
 %                          the number will be taken for all files.
 %                     sr:  Array of sampling rates of same dimension as
 %                          the cell array data_raw or one sample rate
@@ -100,7 +100,7 @@ if nargin >= 2
       end
 
       data_fn = varargin{2};
-      chan = varargin{3};
+      channel = varargin{3};
       timing = varargin{4};
 
       if nargin == 5
@@ -130,33 +130,33 @@ if nargin >= 2
         clear data_fn
       end
 
-      % check chan variable (and creation of sr if needed)
-      if isnumeric(chan) && numel(chan) == 1
+      % check channel variable (and creation of sr if needed)
+      if isnumeric(channel) && numel(channel) == 1
         if manual_chosen == 1
-          chan = repmat({chan}, size(data_fn));
+          channel = repmat({channel}, size(data_fn));
         else
-          sr = repmat({chan}, size(data_raw));
-          clear chan
+          sr = repmat({channel}, size(data_raw));
+          clear channel
         end
       else
-        if ~iscell(chan) || (any(~cellfun(@isnumeric, chan)) &&  manual_chosen == 1)
-          warning('ID:invalid_input', 'chan has to be numeric or a cell array of numerics.'); return;
-        elseif ~iscell(chan) || (any(~cellfun(@isnumeric, chan)) &&  manual_chosen == 2)
+        if ~iscell(channel) || (any(~cellfun(@isnumeric, channel)) &&  manual_chosen == 1)
+          warning('ID:invalid_input', 'channel has to be numeric or a cell array of numerics.'); return;
+        elseif ~iscell(channel) || (any(~cellfun(@isnumeric, channel)) &&  manual_chosen == 2)
           warning('ID:invalid_input', 'sr has to be numeric or a cell array of numerics.'); return;
         elseif manual_chosen == 2
-          sr = chan;
+          sr = channel;
         end
       end
 
       if manual_chosen == 1
-        if strcmpi(class(data_fn), class(chan)) && (numel(chan) ~= numel(data_fn))
-          warning('ID:invalid_input', 'data_fn and chan must correspond in number of elements.'); return;
+        if strcmpi(class(data_fn), class(channel)) && (numel(channel) ~= numel(data_fn))
+          warning('ID:invalid_input', 'data_fn and channel must correspond in number of elements.'); return;
         elseif strcmpi(class(data_fn), class(timing)) && (iscell(timing) && (numel(timing) ~= numel(data_fn)))
           warning('ID:invalid_input', 'data_fn and timing must correspond in number of elements.'); return;
         end
       else
         if strcmpi(class(data_raw), class(sr)) && (numel(sr) ~= numel(data_raw))
-          warning('ID:invalid_input', 'data_fn and chan must correspond in number of elements.'); return;
+          warning('ID:invalid_input', 'data_fn and channel must correspond in number of elements.'); return;
         elseif strcmpi(class(data_raw), class(timing)) && (numel(timing) ~= numel(data_raw))
           warning('ID:invalid_input', 'data_fn and timing must correspond in number of elements.'); return;
         end
@@ -177,11 +177,6 @@ if nargin >= 2
         model_strc = struct_file;
       end
 
-      if isfield(model_strc.input, 'channel') && ~isfield(model_strc.input, 'chan')
-          model_strc.input.chan = model_strc.input.channel;
-          model_strc.input = rmfield(model_strc.input,'channel'); % rename the field channel to chan
-        end
-
       if nargin == 3
         options = varargin{3};
       else
@@ -191,7 +186,7 @@ if nargin >= 2
       data_fn = model_strc.input.datafile;
       n_file = numel(data_fn);
       timing = model_strc.input.timing;
-      chan = repmat({model_strc.input.chan}, size(data_fn));
+      channel = repmat({model_strc.input.channel}, size(data_fn));
 
       if strcmpi(model_strc.modeltype,'glm')
         options.timeunit = model_strc.input.timeunits;
@@ -326,7 +321,7 @@ if manual_chosen ~= 0
   marker_data = {};
   if manual_chosen == 1
     for i=1:numel(data_fn)
-      [sts, ~, data] = pspm_load_data(data_fn{i}, chan{i});
+      [sts, ~, data] = pspm_load_data(data_fn{i}, channel{i});
       assert(sts == 1);
       input_data{end + 1} = data{1}.data;
       sampling_rates(end + 1) = data{1}.header.sr;

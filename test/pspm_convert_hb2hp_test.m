@@ -20,7 +20,7 @@ function invalid_input(this)
   fullfile('ImportTestData', 'ecg2hb', 'test_hb2hp_data2.mat')...
   };
 
-  options.chan_action = 'abc';
+  options.channel_action = 'abc';
 
   % Verify no input
   this.verifyWarning(@() pspm_convert_hb2hp(), 'ID:invalid_input');

@@ -189,10 +189,10 @@ proper = true;
 eyes_observed = cellfun(@(x) x.eyesObserved, data, 'UniformOutput', false);
 eyes_observed = cell2mat(eyes_observed);
 
-chan_headers = cellfun(@(x) x.channel_header, data, 'UniformOutput', false);
+channel_headers = cellfun(@(x) x.channel_header, data, 'UniformOutput', false);
 same_headers = true;
-for i = 1:(numel(chan_headers) - 1)
-  if ~all(strcmpi(chan_headers{i}, chan_headers{i+1}))
+for i = 1:(numel(channel_headers) - 1)
+  if ~all(strcmpi(channel_headers{i}, channel_headers{i+1}))
     same_headers = false;
     break
   end

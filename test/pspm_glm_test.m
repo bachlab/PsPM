@@ -30,9 +30,9 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       this.verifyWarning(@()pspm_glm(model), 'ID:invalid_input');
       model.modelspec = 'scr';
       %channel
-      model.chan = 'foo';
+      model.channel = 'foo';
       this.verifyWarning(@()pspm_glm(model), 'ID:invalid_input');
-      model.chan = 1;
+      model.channel = 1;
       %normalisation
       model.norm = 'no';
       this.verifyWarning(@()pspm_glm(model), 'ID:invalid_input');

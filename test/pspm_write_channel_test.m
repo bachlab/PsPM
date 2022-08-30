@@ -21,11 +21,11 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       c{3}.chantype = 'scr';
       c{4}.chantype = 'gaze_x_l';
       c{4}.units = 'mm';
-      data_settings.chans = c;
+      data_settings.channels = c;
       data_settings.sr = 100;
       data_settings.duration = 500;
       % generate aquisition data
-      pspm_testdata_gen(data_settings.chans, data_settings.duration, fn);
+      pspm_testdata_gen(data_settings.channels, data_settings.duration, fn);
       this.testdatafile = fn;
     end
   end
@@ -97,7 +97,7 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       options.channel = 1:5;
       this.verifyWarning(@()pspm_write_channel(this.testdatafile, [], 'delete', options), 'ID:invalid_input');
       options.channel = 'ecg';
-      this.verifyWarning(@()pspm_write_channel(this.testdatafile, [], 'delete', options), 'ID:no_matching_chans');
+      this.verifyWarning(@()pspm_write_channel(this.testdatafile, [], 'delete', options), 'ID:no_matching_channels');
       c{1}.chantype = 'hb';
       c{1}.sr = 200;
       gen_data = pspm_testdata_gen(c, 500);

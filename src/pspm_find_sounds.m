@@ -102,7 +102,7 @@ fprintf('Processing sound in file %s\n',file);
 options = pspm_options(options, 'find_sound');
 
 % Process options
-try options.chan_output; catch; options.chan_output = 'all'; end
+try options.channel_output; catch; options.channel_output = 'all'; end
 try options.diagnostics; catch, options.diagnostics = true; end
 try options.maxdelay; catch, options.maxdelay = 3; end
 try options.mindelay; catch, options.mindelay = 0; end
@@ -137,7 +137,7 @@ elseif ~islogical(options.diagnostics) && ~isnumeric(options.diagnostics)
   warning('ID:invalid_input', 'Option diagnostics is not numeric or logical');  return;
 elseif ~islogical(options.plot) && ~isnumeric(options.plot)
   warning('ID:invalid_input', 'Option plot is not numeric or logical');  return;
-elseif ~strcmpi(options.chan_output, 'all') && ~strcmpi(options.chan_output, 'corrected')
+elseif ~strcmpi(options.channel_output, 'all') && ~strcmpi(options.channel_output, 'corrected')
   warning('ID:invalid_input', 'Option channel_output must be either ''all'' or ''corrected''.');  return;
 elseif ~isnumeric(options.expectedSoundCount) || mod(options.expectedSoundCount,1) ...
     || options.expectedSoundCount < 0
@@ -363,7 +363,7 @@ end
 %% Save as new channel
 if ~strcmpi(options.channel_action, 'none')
   % Save the new channel
-  if strcmpi(options.chan_output, 'all')
+  if strcmpi(options.channel_output, 'all')
     snd_events.data = snd_re_all;
     vals = snd_fe_all-snd_re_all;
     snd_events.markerinfo.value = vals;

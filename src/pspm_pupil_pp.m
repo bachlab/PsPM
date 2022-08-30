@@ -42,7 +42,7 @@ function varargout = pspm_pupil_pp (fn, options)
 %          fn:  [string]
 %               Path to the PsPM file which contains the pupil data.
 %   ┌──options: [struct]
-%   ├────.chan: [optional][numeric/string][Default: 'pupil']
+%   ├────.channel: [optional][numeric/string][Default: 'pupil']
 %   │           Channel ID to be preprocessed.
 %   │           ▶ ︎Preprocessing raw eye data:
 %   │           The best eye is processed when channel is 'pupil'. To
@@ -74,9 +74,9 @@ function varargout = pspm_pupil_pp (fn, options)
 %   ├─.channel_combine:
 %   │           [optional][numeric/string][Default: 'none']
 %   │           Channel ID to be used for computing the mean pupil signal.
-%   │           The input format is exactly the same as the .chan field.
+%   │           The input format is exactly the same as the .channel field.
 %   │           However, the eye specified in this channel must be different
-%   │           than the one specified in .chan field. By default, this
+%   │           than the one specified in .channel field. By default, this
 %   │           channel is not used. Only specify it if you want to combine
 %   │           left and right pupil eye signals, and in this situation,
 %   │           the type of the output channel becomes 'pupil_pp_c'.
@@ -207,10 +207,10 @@ if lsts ~= 1
   return
 end
 %% 6 save
-chan_str = num2str(options.channel);
+channel_str = num2str(options.channel);
 o.msg.prefix = sprintf(...
-  'Pupil preprocessing :: Input chan: %s -- Input chantype: %s -- Output chantype: %s --', ...
-  chan_str, ...
+  'Pupil preprocessing :: Input channel: %s -- Input chantype: %s -- Output chantype: %s --', ...
+  channel_str, ...
   old_chantype, ...
   smooth_signal.header.chantype);
 [lsts, out_id] = pspm_write_channel(fn, smooth_signal, options.channel_action, o);

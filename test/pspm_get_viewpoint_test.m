@@ -40,9 +40,9 @@ classdef pspm_get_viewpoint_test < pspm_get_superclass
       this.verifyWarning(@()pspm_get_viewpoint('a', import), 'ID:channel_not_contained_in_file');
       import{1}.type = 'custom';
       this.verifyWarning(@()pspm_get_viewpoint('a', import), 'ID:invalid_input');
-      import{1}.chan = -1;
+      import{1}.channel = -1;
       this.verifyWarning(@()pspm_get_viewpoint('a', import), 'ID:invalid_input');
-      import{1}.chan = 1;
+      import{1}.channel = 1;
       import{1}.target_unit = 'kilometers';
       this.verifyWarning(@()pspm_get_viewpoint('a', import), 'ID:invalid_input');
     end

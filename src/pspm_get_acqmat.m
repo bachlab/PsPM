@@ -34,16 +34,16 @@ inputdata = load(datafile);
 % -------------------------------------------------------------------------
 for k = 1:numel(import)
   % define channel number ---
-  if import{k}.chan > 0
-    chan = import{k}.chan;
+  if import{k}.channel > 0
+    channel = import{k}.channel;
   else
-    chan = pspm_find_channel(cellstr(inputdata.labels), import{k}.type);
-    if chan < 1, return; end
+    channel = pspm_find_channel(cellstr(inputdata.labels), import{k}.type);
+    if channel < 1, return; end
   end
 
-  if chan > size(inputdata.labels, 1), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', chan, datafile); return; end;
+  if channel > size(inputdata.labels, 1), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', channel, datafile); return; end;
 
-  sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', chan, inputdata.labels(chan, :));
+  sourceinfo.channel{k, 1} = sprintf('Channel %02.0f: %s', channel, inputdata.labels(channel, :));
 
   % define sample rate ---
   % catch cases that are not documented and on which we have no example
@@ -59,8 +59,8 @@ for k = 1:numel(import)
   end
 
   % get data & data units
-  import{k}.data = double(inputdata.data(:, chan));
-  import{k}.units = inputdata.units(chan,:);
+  import{k}.data = double(inputdata.data(:, channel));
+  import{k}.units = inputdata.units(channel,:);
 
   if strcmpi(settings.chantypes(import{k}.typeno).data, 'events')
     import{k}.marker = 'continuous';

@@ -1,4 +1,4 @@
-function [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, ...
+function [sts, out] = pspm_convert_pixel2unit(fn, channel, unit, width, ...
   height, distance, options)
 % ● Description
 %   pspm_convert_pixel2unit allows to transfer gaze data from pixel to units.
@@ -7,10 +7,10 @@ function [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, ...
 %   the desired units would be set to at the center of the [0,0] pixel which is
 %   in the bottom left corner of the screen.
 % ● Format
-%   [sts, out] = pspm_convert_pixel2unit(fn, chan, unit, width, height, options)
+%   [sts, out] = pspm_convert_pixel2unit(fn, channel, unit, width, height, options)
 % ● Arguments
 %                 fn: File to convert.
-%               chan: On which subset of channels should the conversion
+%            channel: On which subset of channels should the conversion
 %                     be done. Supports all values which can be passed
 %                     to pspm_load_data(). This will only work on
 %                     gaze-channels. Other channels specified will be
@@ -74,13 +74,13 @@ elseif ~isnumeric(distance)
 elseif ~ischar(unit)
   warning('ID:invalid_input', 'Unit must be a char.');
   return;
-elseif ~isnumeric(chan)
+elseif ~isnumeric(channel)
   warning('ID:invalid_input', 'Channels must be indicated by their ID nummber.');
   return;
 end
 % number of channels given must be even or 0 if unit 'degree' is given
 if strcmpi(unit,'degree')
-  if mod(numel(chan),2)~=0 && chan~=0
+  if mod(numel(channel),2)~=0 && channel~=0
     warning('ID:invalid_input', 'Need an even number of channels or the value 0 to convert to degrees');
     return;
   end
@@ -90,7 +90,7 @@ if strcmpi(unit,'degree')
   end
 end
 % load data to convert
-[lsts, ~, data] = pspm_load_data(fn, chan);
+[lsts, ~, data] = pspm_load_data(fn, channel);
 if lsts ~= 1
   warning('ID:invalid_input', 'Could not load input data correctly.');
   return;
@@ -114,30 +114,30 @@ else
 end
 % do conversion for normal length units and for degree unit
 for c = 1:n_chans
-  chan = gaze_chans{c};
-  if strcmpi(chan.header.units, 'pixel')
+  channel = gaze_chans{c};
+  if strcmpi(channel.header.units, 'pixel')
     % pick conversion factor according to channel type x / y coord
-    if ~isempty(regexp(chan.header.chantype, 'gaze_x_', 'once'))
+    if ~isempty(regexp(channel.header.chantype, 'gaze_x_', 'once'))
       screen_length = width;
     else
       screen_length = height;
     end
     % length per pixel along width or height
-    lenght_per_pixel = screen_length ./ (diff(chan.header.range) + 1);
+    lenght_per_pixel = screen_length ./ (diff(channel.header.range) + 1);
     % baseline data in pixels wrt. the range (i.e. pixels of interest)
-    pixel_index = chan.data-chan.header.range(1);
+    pixel_index = channel.data-channel.header.range(1);
     % convert indices into coordinates in the units of interests
-    chan.data = pixel_index * lenght_per_pixel ;
+    channel.data = pixel_index * lenght_per_pixel ;
     % same procedure for the range (baseline + conversion)
-    chan.header.range = (chan.header.range-chan.header.range(1)) * lenght_per_pixel ;
+    channel.header.range = (channel.header.range-channel.header.range(1)) * lenght_per_pixel ;
     % writting the new units into the structure
-    chan.header.units = unit_h_w_d;
+    channel.header.units = unit_h_w_d;
   else
     warning('ID:invalid_input', ['Not converting (%s) because ', ...
-      'input data is not in pixel.'], chan.header.chantype);
+      'input data is not in pixel.'], channel.header.chantype);
   end
   % replace data
-  gaze_chans{c} = chan;
+  gaze_chans{c} = channel;
 end
 [lsts, outinfo] = pspm_write_channel(fn, gaze_chans, options.channel_action);
 if lsts ~= 1
@@ -146,7 +146,7 @@ if lsts ~= 1
 end
 if strcmpi(unit,'degree')
   options.channel_action = 'replace';
-  [lsts, outinfo] = pspm_compute_visual_angle(fn,outinfo.chan, ...
+  [lsts, outinfo] = pspm_compute_visual_angle(fn,outinfo.channel, ...
     width, height, distance,unit_h_w_d,options);
   if lsts < 1
     warning('ID:compute_visual_angle_err',...

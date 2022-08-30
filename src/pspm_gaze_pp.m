@@ -23,7 +23,7 @@ end
 sts = -1;
 %% 2 Create default arguments
 % 2.1 static variables
-list_chans = {'gaze_x_l', 'gaze_x_r', 'gaze_y_l', 'gaze_y_r'};
+list_channels = {'gaze_x_l', 'gaze_x_r', 'gaze_y_l', 'gaze_y_r'};
 % 2.2 set default values
 if nargin == 1;                        options = struct();              end
 if ~isfield(options,'channel');        options.channel = 'gaze_x_l';    end
@@ -58,13 +58,13 @@ if ~ismember(options.channel_action, {'add', 'replace'})
     'Option channel_action must be either ''add'' or ''replace''.');
   return
 end
-if ~ismember(options.channel, list_chans)
+if ~ismember(options.channel, list_channels)
   warning('ID:invalid_input', ...
     'Option channel must be either ''gaze_x_l'', ''gaze_x_r'', ''gaze_y_l'' or ''gaze_y_r''.');
   return
 end
 if action_combine
-  if ~ismember(options.channel_combine, list_chans)
+  if ~ismember(options.channel_combine, list_channels)
     warning('ID:invalid_input', ...
       'Option channel_combine must be either ''gaze_x_l'', ''gaze_x_r'', ''gaze_y_l'' or ''gaze_y_r''.');
     return
@@ -161,10 +161,10 @@ else
   preprocessed_gaze.header.units = gaze_og{1}.header.units;
 end
 %% 7 save
-chan_str = num2str(options.channel);
+channel_str = num2str(options.channel);
 o.msg.prefix = sprintf(...
   'Gaze preprocessing :: Input channel: %s -- Input chantype: %s -- Output chantype: %s --', ...
-  chan_str, ...
+  channel_str, ...
   old_chantype, ...
   preprocessed_gaze.header.chantype);
 [lsts, out_id] = pspm_write_channel(fn, preprocessed_gaze, options.channel_action, o);

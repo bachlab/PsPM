@@ -242,20 +242,20 @@ chan_war_msg = ['Channel number must be a unique number,', ...
   'a cell array of unique number', ...
   'or correspond to a valid channel type.'];
 if ~isfield(model, 'channel')
-  model.chan = 'pupil';
-elseif ~iscell(model.chan) && ~isnumeric(model.chan) && ...
-    ~ismember(model.chan, {settings.chantypes.type})
+  model.channel = 'pupil';
+elseif ~iscell(model.channel) && ~isnumeric(model.channel) && ...
+    ~ismember(model.channel, {settings.chantypes.type})
   warning('ID:invalid_input', chan_war_msg); return;
-elseif ~iscell(model.chan) && numel(model.chan) > 1
+elseif ~iscell(model.channel) && numel(model.channel) > 1
   warning('ID:invalid_input', chan_war_msg); return;
-elseif iscell(model.chan) && numel(model.chan)~=numel(model.datafile)
+elseif iscell(model.channel) && numel(model.channel)~=numel(model.datafile)
   warning('ID:invalid_input', ...
     'Channel array must be of the same size as datafile array.'); return;
-elseif iscell(model.chan)
-  model.chan = model.chan(:);
+elseif iscell(model.channel)
+  model.channel = model.channel(:);
   tmp_fun = @(x) ~isnumeric(x) && numel(x)~=1 ...
     && ~ismember(x, {settings.chantypes.type});
-  tmp = cellfun(tmp_fun,model.chan);
+  tmp = cellfun(tmp_fun,model.channel);
   if any(tmp)
     warning('ID:invalid_input', chan_war_msg); return;
   end
@@ -352,10 +352,10 @@ n_file = numel(model.datafile);                 % number of files
 % Loading data and sr
 fprintf('Getting data .');
 for iFile = 1:n_file
-  if iscell(model.chan)
-    [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.chan{iFile});
+  if iscell(model.channel)
+    [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel{iFile});
   else
-    [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.chan);
+    [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
   end
   if sts < 1, warning('ID:load_data_fail', 'Problem encountered while loading data.'); return; end
 

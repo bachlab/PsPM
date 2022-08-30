@@ -45,11 +45,11 @@ end;
 % select desired channels
 % -------------------------------------------------------------------------
 for k = 1:numel(import)
-  chan = import{k}.chan;
+  channel = import{k}.channel;
 
-  if chan > numel(data), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', chan, datafile); return; end;
+  if channel > numel(data), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', channel, datafile); return; end;
 
-  import{k}.data = data{chan};
+  import{k}.data = data{channel};
   if strcmpi(settings.chantypes(import{k}.typeno).data, 'events') && ~isfield(import{k}, 'marker')
     if strcmpi(chantype, 'cell') && import{k}.sr <= settings.import.mat.sr_threshold
       import{k}.marker = 'timestamps';
@@ -57,7 +57,7 @@ for k = 1:numel(import)
       import{k}.marker = 'continuous';
     end
   end
-  sourceinfo.chan{k} = sprintf('Data %s %02.0', chantype, chan);
+  sourceinfo.channel{k} = sprintf('Data %s %02.0', chantype, channel);
 end;
 
 sts = 1;

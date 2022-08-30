@@ -67,14 +67,14 @@ else
    header_lines = import{1}.header_lines;
 end
 
-if ~isfield(import{1}, 'chan_names_line')
+if ~isfield(import{1}, 'channel_names_line')
    channel_names_line = 1;
    if header_lines < channel_names_line, channel_names_line=0; end
-elseif ~isnumeric(import{1}.chan_names_line)
-   warning('ID:invalid_input','The ''chan_names_line'' option should be a numeric value.')
+elseif ~isnumeric(import{1}.channel_names_line)
+   warning('ID:invalid_input','The ''channel_names_line'' option should be a numeric value.')
    return;
 else
-   channel_names_line = import{1}.chan_names_line;
+   channel_names_line = import{1}.channel_names_line;
 end
 
 if ~isfield(import{1}, 'exclude_columns')
@@ -138,28 +138,28 @@ end
 % -------------------------------------------------------------------------
 for k = 1:numel(import)
     % define channel number
-    if import{k}.chan > 0
-        chan = import{k}.chan;
+    if import{k}.channel > 0
+        channel = import{k}.channel;
     elseif channel_names_line ~= 0
-        chan = pspm_find_channel(channel_names, import{k}.type);
-        if chan < 1, return; end;
+        channel = pspm_find_channel(channel_names, import{k}.type);
+        if channel < 1, return; end;
     else
         warning('ID:invalid_input', ...
-                ['Neiter ''channel'' nor ''chan_names_line'' options were specified.', ...
+                ['Neiter ''channel'' nor ''channel_names_line'' options were specified.', ...
                  ' Not able to import the data.'])
         return;
     end
 
-    if chan > size(data, 2), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', chan, datafile); return; end;
+    if channel > size(data, 2), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', channel, datafile); return; end;
 
-    import{k}.data = data(:, chan);
+    import{k}.data = data(:, channel);
 
     if isfield(import{k},'typeno') && strcmpi(settings.chantypes(import{k}.typeno).data, 'events')
         import{k}.marker = 'continuous';
     end;
 
-    sourceinfo.chan{k} = sprintf('Data column %02.0', chan);
+    sourceinfo.channel{k} = sprintf('Data column %02.0', channel);
 end;
 
 sts = 1;
-return;
+return

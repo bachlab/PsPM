@@ -40,7 +40,7 @@ end
 % verify if all channels are constant in unit and sampling rate
 chans_constant = 1;
 for i_chan = 1:labchart.n_channels
-  chan_spec = labchart.chan_specs(i_chan);
+  chan_spec = labchart.channel_specs(i_chan);
   chans_constant = chans_constant && (all(strcmpi(chan_spec.units{1}, chan_spec.units)) ...
     && all(chan_spec.fs(1) == chan_spec.fs));
 end
@@ -66,18 +66,18 @@ for k = 1:numel(import)
 
   % find channel number if not marker channel
   if ~strcmpi(import{k}.type, 'marker')
-    if import{k}.chan > 0
-      chan = import{k}.chan;
+    if import{k}.channel > 0
+      channel = import{k}.channel;
     else
-      chan = pspm_find_channel(cellstr(labchart.chan_names(:)), import{k}.type);
-      if chan < 1, return; end
+      channel = pspm_find_channel(cellstr(labchart.chan_names(:)), import{k}.type);
+      if channel < 1, return; end
     end
-    if chan > labchart.n_channels
+    if channel > labchart.n_channels
       warning('ID:channel_not_contained_in_file', ...
-        'Channel %02.0f not contained in file %s.\n', chan, datafile);
+        'Channel %02.0f not contained in file %s.\n', channel, datafile);
       return;
     end
-    lab_chan = labchart.chan_specs(chan);
+    lab_chan = labchart.channel_specs(channel);
   end
 
   % loop through records
@@ -108,14 +108,14 @@ for k = 1:numel(import)
     import{k}.marker = 'timestamps';
     import{k}.markerinfo = struct('name', {vertcat(marker_name{:})}, ...
       'value', {cell2mat(vertcat(marker_value{:}))});
-    sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', k, 'Events');
+    sourceinfo.channel{k, 1} = sprintf('Channel %02.0f: %s', k, 'Events');
   else
     % get units ---
     import{k}.units = lab_chan.units{1};
     % get sr ---
     import{k}.sr = lab_chan.fs(1);
-    sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', chan, ...
-      labchart.chan_names{chan});
+    sourceinfo.channel{k, 1} = sprintf('Channel %02.0f: %s', channel, ...
+      labchart.chan_names{channel});
   end
 end
 

@@ -61,18 +61,18 @@ end;
 % -------------------------------------------------------------------------
 for k = 1:numel(import)
   if strcmpi(import{k}.type, 'marker')
-    chan = import{k}.chan;
-    if chan > size(out.trigger.t, 2), warning('ID:channel_not_contained_in_file', 'Column %02.0f not contained in file %s.\n', chan, datafile); return; end;
+    channel = import{k}.channel;
+    if channel > size(out.trigger.t, 2), warning('ID:channel_not_contained_in_file', 'Column %02.0f not contained in file %s.\n', channel, datafile); return; end;
     import{k}.marker = 'continuous';
     import{k}.sr     = out.trigger.sr;
-    import{k}.data   = out.trigger.t{:,chan};
+    import{k}.data   = out.trigger.t{:,channel};
   else
-    chan = import{k}.chan;
-    if chan > size(out.data, 1), warning('ID:channel_not_contained_in_file', 'Column %02.0f not contained in file %s.\n', chan, datafile); return; end;
-    import{k}.sr = out.data{chan,1}.header.sr;
-    import{k}.data = out.data{chan,1}.data;
-    import{k}.units = out.data{chan,1}.header.units;
-    sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan);
+    channel = import{k}.channel;
+    if channel > size(out.data, 1), warning('ID:channel_not_contained_in_file', 'Column %02.0f not contained in file %s.\n', channel, datafile); return; end;
+    import{k}.sr = out.data{channel,1}.header.sr;
+    import{k}.data = out.data{channel,1}.data;
+    import{k}.units = out.data{channel,1}.header.units;
+    sourceinfo.channel{k, 1} = sprintf('Column %02.0f', channel);
   end;
 end;
 

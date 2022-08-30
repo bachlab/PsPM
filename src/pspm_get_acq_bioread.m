@@ -34,24 +34,24 @@ inputdata = load(datafile);
 for k = 1:numel(import)
   channel_labels = transpose(cellfun(@(x) x.name, inputdata.channels, 'UniformOutput', 0));
   % define channel number ---
-  if import{k}.chan > 0
-    chan = import{k}.chan;
+  if import{k}.channel > 0
+    channel = import{k}.channel;
   else
-    chan = pspm_find_channel(channel_labels, import{k}.type);
-    if chan < 1, return; end;
+    channel = pspm_find_channel(channel_labels, import{k}.type);
+    if channel < 1, return; end;
   end;
-  if chan > size(channel_labels, 1)
+  if channel > size(channel_labels, 1)
     warning('ID:channel_not_contained_in_file', ...
-    'Channel %02.0f not contained in file %s.\n', chan, datafile);
+    'Channel %02.0f not contained in file %s.\n', channel, datafile);
     return
   end
-  sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', chan, channel_labels{chan});
+  sourceinfo.channel{k, 1} = sprintf('Channel %02.0f: %s', channel, channel_labels{channel});
   % define sample rate ---
 
-  import{k}.sr = inputdata.channels{chan}.samples_per_second;
+  import{k}.sr = inputdata.channels{channel}.samples_per_second;
   % get data & data units
-  import{k}.data = double(inputdata.channels{chan}.data);
-  import{k}.units = inputdata.channels{chan}.units;
+  import{k}.data = double(inputdata.channels{channel}.data);
+  import{k}.units = inputdata.channels{channel}.units;
   if strcmpi(settings.chantypes(import{k}.typeno).data, 'events')
     import{k}.marker = 'continuous';
   end;

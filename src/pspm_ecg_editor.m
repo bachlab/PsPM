@@ -4,11 +4,11 @@ function varargout = pspm_ecg_editor(varargin)
 %   output. Function can be called seperately.
 % ● Format
 %   [sts, R] = pspm_ecg_editor(pt)
-%   [sts, R] = pspm_ecg_editor(fn, chan, options)
+%   [sts, R] = pspm_ecg_editor(fn, channel, options)
 % ● Arguments
 %         pt:  A struct() from pspm_ecg2hb detection.
 %         fn:  A file to  data file containing the ecg channel to be edited
-%       chan:  Channel id of ecg channel in the data file
+%       channel:  Channel id of ecg channel in the data file
 % ┌──options:  A struct() of options
 % ├──────.hb:  Channel id of the existing hb channel
 % ├────.semi:  Defines whether to navigate between potentially wrong hb events
@@ -323,7 +323,7 @@ if strcmpi(handles.gui_mode, 'file') && numel(handles.R) > 0
 
   % transpose if necessary
   if max(size(out_d.data,1)) ~= length(out_d.data)
-    out_d.data = out_d.data';
+    out_d.data = transpose(out_d.data);
   end;
 
   switch output_settings
@@ -338,7 +338,7 @@ if strcmpi(handles.gui_mode, 'file') && numel(handles.R) > 0
   [nsts, infos] = pspm_write_channel(handles.fn, out_d, w_action, op);
 
   if nsts ~= -1
-    handles.write_chan = infos.chan;
+    handles.write_chan = infos.channel;
   else
     warning('ID:invalid_input', 'Could not write channel.');
     handles.sts = nsts;
@@ -405,7 +405,7 @@ else
   sr=handles.data.settings.filt.sr;
   % -------------------------------------------------------------------------
   % QRS complexes
-  ecg=handles.data.data.x(:,1)';
+  ecg = transpose(handles.data.data.x(:,1));
 
   handles.plot.sr = sr;
   handles.plot.ecg = ecg;
@@ -419,15 +419,15 @@ set(handles.cbManualMode, 'Value', handles.manualmode);
 % Update handles structure
 guidata(hObject,handles);
 
-% --- update hb chan
+% --- update hb channel
 function reload_hb_chan(hObject, handles)
 
 ecg = handles.plot.ecg;
 sr = handles.plot.sr;
 
 if isstruct(handles.data)
-  R=handles.data.set.R;
-  r=handles.data.data.r';
+  R = handles.data.set.R;
+  r = transpose(handles.data.data.r);
   % set modification rows
   r(3:4, :) = NaN;
   handles.manualmode = 1 && get(handles.cbManualMode, 'Value');
@@ -450,7 +450,7 @@ else
   end;
   r = zeros(4,numel(ecg));
   if numel(hb) >= 1
-    R = round(hb*sr)';
+    R = transpose(round(hb*sr));
     r(1,R) = 1;
     handles.manualmode = get(handles.cbManualMode, 'Value');
   else
@@ -1549,14 +1549,14 @@ for k=1:n_col*2
   if any(layer)
     if numel(stem_handles) < k || stem_handles(k) == -1
       % plot stems
-      stem_handles(k)=stem(handles.plot.y(layer),...
+      stem_handles(k) = stem(handles.plot.y(layer),...
         handles.plot.r(ev_idx,layer)*stem_size,'color',b_cl);
       % set stem layout
       set(stem_handles(k),'Linewidth',2,...
         'MarkerFaceColor',cl, 'MarkerEdgeColor', cl);
 
       % set baseline
-      sbase=get(stem_handles(k),'baseline');
+      sbase = get(stem_handles(k),'baseline');
       set(sbase,'BaseValue',baseline,'Visible','off');
     else
       % update stemdata

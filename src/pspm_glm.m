@@ -216,13 +216,13 @@ modno = find(strcmpi(model.modelspec, {settings.glm.modelspec}));
 model.modality = settings.glm(modno).modality;
 
 % check data channel --
-if ~isfield(model, 'chan')
+if ~isfield(model, 'channel')
   if strcmp(model.modality, 'psr')
-    model.chan = "pupil";
+    model.channel = "pupil";
   else
-    model.chan = model.modality;
+    model.channel = model.modality;
   end
-elseif ~isnumeric(model.chan) && ~ismember(model.chan, {settings.chantypes.type})
+elseif ~isnumeric(model.channel) && ~ismember(model.channel, {settings.chantypes.type})
   warning('ID:invalid_input', 'Channel number must be numeric.'); return;
 end
 
@@ -279,7 +279,7 @@ end
 fprintf('Getting data ...');
 nFile = numel(model.datafile);
 for iFile = 1:nFile
-  [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.chan);
+  [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
   if sts < 1, return; end
   y{iFile} = data{end}.data(:);
   sr(iFile) = data{end}.header.sr;

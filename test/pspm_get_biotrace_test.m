@@ -11,11 +11,11 @@ classdef pspm_get_biotrace_test < pspm_get_superclass
     function define_testcases(this)
       % testcase 1
       this.testcases{1}.pth = 'ImportTestData/biotrace/Biotrace_SCR.txt';
-      this.testcases{1}.import{1} = struct('type', 'scr'   , 'chan', 1);
+      this.testcases{1}.import{1} = struct('type', 'scr'   , 'channel', 1);
       % testcase 2
       this.testcases{2}.pth = 'ImportTestData/biotrace/Biotrace_SCR_Marker.txt';
-      this.testcases{2}.import{1} = struct('type', 'scr'   , 'chan', 1);
-      this.testcases{2}.import{1} = struct('type', 'marker', 'chan', 0);
+      this.testcases{2}.import{1} = struct('type', 'scr'   , 'channel', 1);
+      this.testcases{2}.import{1} = struct('type', 'marker', 'channel', 0);
     end
   end
 end

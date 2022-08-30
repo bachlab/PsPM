@@ -1,4 +1,4 @@
-function [ sts, outinfo ] = pspm_convert_ppu2hb( fn,chan,options )
+function [ sts, outinfo ] = pspm_convert_ppu2hb( fn,channel,options )
 % ● Description
 %   pspm_convert_ppu2hb Converts a pulse oxymeter channel to heartbeats and
 %   adds it as a new channel.
@@ -7,10 +7,10 @@ function [ sts, outinfo ] = pspm_convert_ppu2hb( fn,chan,options )
 %   identified as heartbeat maximas and a heartbeat channel is then
 %   generated from these.
 % ● Format
-%   [ sts, outinfo ] = pspm_convert_ppu2hb( fn,chan,options )
+%   [ sts, outinfo ] = pspm_convert_ppu2hb( fn,channel,options )
 % ● Arguments
 %                 fn: file name with path
-%               chan: ppu channel number
+%            channel: ppu channel number
 %   ┌────────options: struct with following possible fields
 %   ├───.diagnostics: [true/FALSE]
 %   │                 displays some debugging information
@@ -44,9 +44,9 @@ if nargin < 1
   warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
 elseif ~ischar(fn)
   warning('ID:invalid_input', 'Need file name string as first input.'); return;
-elseif nargin < 2 || isempty(chan)
-  chan = 'ppg';
-elseif ~isnumeric(chan) && ~strcmp(chan,'ppg')
+elseif nargin < 2 || isempty(channel)
+  channel = 'ppg';
+elseif ~isnumeric(channel) && ~strcmp(channel,'ppg')
   warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end
 
@@ -64,7 +64,7 @@ fprintf('Heartbeat detection for %s ... \n', fn);
 
 % get data
 % -------------------------------------------------------------------------
-[nsts, ~, data] = pspm_load_data(fn, chan);
+[nsts, ~, data] = pspm_load_data(fn, channel);
 if nsts == -1
   warning('ID:invalid_input', 'call of pspm_load_data failed');
   return;
@@ -194,9 +194,7 @@ write_options.msg = msg;
 fprintf('  done.\n');
 if nsts ~= -1,
   sts = 1;
-  outinfo.chan = nout.chan;
+  outinfo.channel = nout.channel;
 end;
-
 return;
-
 end

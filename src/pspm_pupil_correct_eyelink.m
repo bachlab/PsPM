@@ -154,7 +154,7 @@ else
 end
 
 if ~isfield(options, 'channel')
-  options.chan = 'pupil';
+  options.channel = 'pupil';
 end
 
 if strcmpi(options.mode, 'auto')
@@ -173,14 +173,14 @@ end
 
 %% load data
 
-[lsts, ~, pupil_data] = pspm_load_data(fn, options.chan);
+[lsts, ~, pupil_data] = pspm_load_data(fn, options.channel);
 if lsts ~= 1
   return
 end
 if numel(pupil_data) > 1
-  warning('ID:multiple_chans', ['There is more than one channel'...
+  warning('ID:multiple_channels', ['There is more than one channel'...
     ' with type %s in the data file.\n'...
-    ' We will process only the last one.\n'], options.chan);
+    ' We will process only the last one.\n'], options.channel);
   pupil_data = pupil_data(end);
 end
 old_chantype = pupil_data{1}.header.chantype;
@@ -210,12 +210,12 @@ if lsts ~= 1; return; end
 if lsts ~= 1; return; end
 
 if numel(gaze_x_data) > 1
-  warning('ID:multiple_chans',...
+  warning('ID:multiple_channels',...
     'There are more than one gaze x channel. We will use the last one');
   gaze_x_data = gaze_x_data(end:end);
 end
 if numel(gaze_y_data) > 1
-  warning('ID:multiple_chans',...
+  warning('ID:multiple_channels',...
     'There are more than one gaze y channel. We will use the last one');
   gaze_y_data = gaze_y_data(end:end);
 end
@@ -267,7 +267,7 @@ if sts ~= 1; return; end
 %% save data
 pupil_data{1}.data = pupil_corrected;
 pupil_data{1}.header.chantype = convert_pp(old_chantype);
-channel_str = num2str(options.chan);
+channel_str = num2str(options.channel);
 o.msg.prefix = sprintf(...
   'PFE correction :: Input channel: %s -- Input chantype: %s -- Output chantype: %s --', ...
   channel_str, ...

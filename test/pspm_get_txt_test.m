@@ -11,20 +11,20 @@ classdef pspm_get_txt_test < pspm_get_superclass
     function define_testcases(this)
       % testcase 1
       this.testcases{1}.pth = 'testdatafile_get_txt_1.txt';
-      this.testcases{1}.import{1} = struct('type', 'scr'   , 'chan', 1, 'sr', 100, 'header_lines', 0);
-      this.testcases{1}.import{2} = struct('type', 'scr'   , 'chan', 2, 'sr', 100, 'header_lines', 0);
-      this.testcases{1}.import{3} = struct('type', 'hr'    , 'chan', 5, 'sr', 100, 'header_lines', 0);
-      this.testcases{1}.import{4} = struct('type', 'resp'  , 'chan', 6, 'sr', 100, 'header_lines', 0);
-      this.testcases{1}.import{5} = struct('type', 'scr'   , 'chan', 7, 'sr', 100, 'header_lines', 0);
+      this.testcases{1}.import{1} = struct('type', 'scr'   , 'channel', 1, 'sr', 100, 'header_lines', 0);
+      this.testcases{1}.import{2} = struct('type', 'scr'   , 'channel', 2, 'sr', 100, 'header_lines', 0);
+      this.testcases{1}.import{3} = struct('type', 'hr'    , 'channel', 5, 'sr', 100, 'header_lines', 0);
+      this.testcases{1}.import{4} = struct('type', 'resp'  , 'channel', 6, 'sr', 100, 'header_lines', 0);
+      this.testcases{1}.import{5} = struct('type', 'scr'   , 'channel', 7, 'sr', 100, 'header_lines', 0);
       % generate testdata
       data = rand(900, 8);
       save(this.testcases{1}.pth, 'data', '-ascii');
       % testcase 2 (with header)
       this.testcases{2}.pth = 'testdatafile_get_txt_2.txt';
-      this.testcases{2}.import{1} = struct('type', 'scr'   , 'chan', 0, 'sr', 100);
-      this.testcases{2}.import{2} = struct('type', 'ecg'   , 'chan', 0, 'sr', 100);
-      this.testcases{2}.import{3} = struct('type', 'hr'    , 'chan', 0, 'sr', 100);
-      this.testcases{2}.import{4} = struct('type', 'resp'  , 'chan', 0, 'sr', 100);
+      this.testcases{2}.import{1} = struct('type', 'scr'   , 'channel', 0, 'sr', 100);
+      this.testcases{2}.import{2} = struct('type', 'ecg'   , 'channel', 0, 'sr', 100);
+      this.testcases{2}.import{3} = struct('type', 'hr'    , 'channel', 0, 'sr', 100);
+      this.testcases{2}.import{4} = struct('type', 'resp'  , 'channel', 0, 'sr', 100);
       % generate testdata
       header = {'scr' 'ecg' 'heart' 'resp'};
       data = rand(900, 4);
@@ -36,10 +36,10 @@ classdef pspm_get_txt_test < pspm_get_superclass
       fclose(fid);
       % testcase 3 (csv with header)
       this.testcases{3}.pth = 'testdatafile_get_txt_3.csv';
-      this.testcases{3}.import{1} = struct('type', 'scr'   , 'chan', 0, 'sr', 100, 'delimiter', ',');
-      this.testcases{3}.import{2} = struct('type', 'ecg'   , 'chan', 0, 'sr', 100, 'delimiter', ',');
-      this.testcases{3}.import{3} = struct('type', 'hr'    , 'chan', 0, 'sr', 100, 'delimiter', ',');
-      this.testcases{3}.import{4} = struct('type', 'resp'  , 'chan', 0, 'sr', 100, 'delimiter', ',');
+      this.testcases{3}.import{1} = struct('type', 'scr'   , 'channel', 0, 'sr', 100, 'delimiter', ',');
+      this.testcases{3}.import{2} = struct('type', 'ecg'   , 'channel', 0, 'sr', 100, 'delimiter', ',');
+      this.testcases{3}.import{3} = struct('type', 'hr'    , 'channel', 0, 'sr', 100, 'delimiter', ',');
+      this.testcases{3}.import{4} = struct('type', 'resp'  , 'channel', 0, 'sr', 100, 'delimiter', ',');
       %generate testdata
       header = {'scr' 'ecg' 'heart' 'resp'};
       data = rand(900, 4);
@@ -51,10 +51,10 @@ classdef pspm_get_txt_test < pspm_get_superclass
       fclose(fid);
       % testcase 4 (delimiter separated value with custom delimiter (|))
       this.testcases{4}.pth = 'testdatafile_get_txt_4.psv';
-      this.testcases{4}.import{1} = struct('type', 'scr'   , 'chan', 0, 'sr', 100, 'delimiter', '|');
-      this.testcases{4}.import{2} = struct('type', 'ecg'   , 'chan', 0, 'sr', 100, 'delimiter', '|');
-      this.testcases{4}.import{3} = struct('type', 'hr'    , 'chan', 0, 'sr', 100, 'delimiter', '|');
-      this.testcases{4}.import{4} = struct('type', 'resp'  , 'chan', 0, 'sr', 100, 'delimiter', '|');
+      this.testcases{4}.import{1} = struct('type', 'scr'   , 'channel', 0, 'sr', 100, 'delimiter', '|');
+      this.testcases{4}.import{2} = struct('type', 'ecg'   , 'channel', 0, 'sr', 100, 'delimiter', '|');
+      this.testcases{4}.import{3} = struct('type', 'hr'    , 'channel', 0, 'sr', 100, 'delimiter', '|');
+      this.testcases{4}.import{4} = struct('type', 'resp'  , 'channel', 0, 'sr', 100, 'delimiter', '|');
       % generate testdata
       header = {'scr' 'ecg' 'heart' 'resp'};
       data = rand(900, 4);
@@ -79,31 +79,31 @@ classdef pspm_get_txt_test < pspm_get_superclass
     function invalid_datafile(this)
       fn = 'testdatafile_get_txt_1.txt';
       % Test wrong delimiter
-      import{1} = struct('type', 'scr' , 'chan', 1, 'delimiter', 24);
+      import{1} = struct('type', 'scr' , 'channel', 1, 'delimiter', 24);
       import = this.assign_chantype_number(import);
       this.verifyWarning(@()pspm_get_txt(fn, import), 'ID:invalid_input');
       % Test wrong header_lines
-      import{1} = struct('type', 'scr' , 'chan', 1, 'header_lines', 'A');
+      import{1} = struct('type', 'scr' , 'channel', 1, 'header_lines', 'A');
       import = this.assign_chantype_number(import);
       this.verifyWarning(@()pspm_get_txt(fn, import), 'ID:invalid_input');
       % Test wrong channel_names_line
-      import{1} = struct('type', 'scr' , 'chan', 1, 'chan_names_line', 'A');
+      import{1} = struct('type', 'scr' , 'channel', 1, 'chan_names_line', 'A');
       import = this.assign_chantype_number(import);
       this.verifyWarning(@()pspm_get_txt(fn, import), 'ID:invalid_input');
       % Test wrong exclude_columns
-      import{1} = struct('type', 'scr' , 'chan', 1, 'exclude_columns', 'A');
+      import{1} = struct('type', 'scr' , 'channel', 1, 'exclude_columns', 'A');
       import = this.assign_chantype_number(import);
       this.verifyWarning(@()pspm_get_txt(fn, import), 'ID:invalid_input');
       % Test channel number larger than number of columns
-      import{1} = struct('type', 'scr'   , 'chan', 1);
-      import{2} = struct('type', 'scr'   , 'chan', 2);
-      import{3} = struct('type', 'scr'   , 'chan',35);
+      import{1} = struct('type', 'scr'   , 'channel', 1);
+      import{2} = struct('type', 'scr'   , 'channel', 2);
+      import{3} = struct('type', 'scr'   , 'channel',35);
       import = this.assign_chantype_number(import);
       this.verifyWarning(@()pspm_get_txt(fn, import), 'ID:channel_not_contained_in_file');
       % Test "no indication what to select"
-      import{1} = struct('type', 'scr' , 'chan', 0, 'chan_names_line', 0);
-      import{2} = struct('type', 'scr' , 'chan', 0, 'chan_names_line', 0);
-      import{3} = struct('type', 'scr' , 'chan', 0, 'chan_names_line', 0);
+      import{1} = struct('type', 'scr' , 'channel', 0, 'chan_names_line', 0);
+      import{2} = struct('type', 'scr' , 'channel', 0, 'chan_names_line', 0);
+      import{3} = struct('type', 'scr' , 'channel', 0, 'chan_names_line', 0);
       import = this.assign_chantype_number(import);
       this.verifyWarning(@()pspm_get_txt(fn, import), 'ID:invalid_input');
     end

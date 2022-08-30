@@ -8,7 +8,7 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
     testdata_fn = 'find_sounds_test';
   end
   properties (TestParameter)
-    chan_output = {'all', 'corrected'};
+    channel_output = {'all', 'corrected'};
     max_delay = {0.01, 3, 100};
     min_delay = {0.001, .01};
     threshold = {0,0.1,0.5,1};
@@ -55,12 +55,12 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
         o = struct(log_fields{j}, 'a');
         this.verifyWarning(@() pspm_find_sounds(fn, o), 'ID:invalid_input');
       end
-      o = struct('chan_output', 'a');
+      o = struct('channel_output', 'a');
       this.verifyWarning(@() pspm_find_sounds(fn, o), 'ID:invalid_input');
       % invalid channel ids out of range
-      chan_fields = {'sndchannel', 'trigchannel'};
-      for i=1:numel(chan_fields)
-        o = struct(chan_fields{i}, 5);
+      channel_fields = {'sndchannel', 'trigchannel'};
+      for i=1:numel(channel_fields)
+        o = struct(channel_fields{i}, 5);
         this.verifyWarning(@() pspm_find_sounds(fn, o), 'ID:out_of_range');
       end
       % test with diagnostics and no marker channel in data
@@ -85,7 +85,7 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
     end
   end
   methods (Test)
-    function test_add_channel(this, chan_output, max_delay, min_delay, resample, channel_action)
+    function test_add_channel(this, channel_output, max_delay, min_delay, resample, channel_action)
       dur = 10;
       % sound channel
       c{1}.chantype = 'snd';
@@ -99,9 +99,9 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
       n_ref_marker = numel(ref_data{2}.data);
       % define options
       o = struct('diagnostics', 1, ...
-        'chan_output', chan_output, 'maxdelay', max_delay, ...
+        'channel_output', channel_output, 'maxdelay', max_delay, ...
         'mindelay', min_delay, 'resample', resample, 'channel_action', channel_action);
-      if max_delay == this.max_delay{1} && strcmpi(chan_output, 'corrected') ...
+      if max_delay == this.max_delay{1} && strcmpi(channel_output, 'corrected') ...
           && ~strcmpi(channel_action, 'none')
         % warning by pspm_load_data because channel will be empty
         [~, out_infos] = this.verifyWarning(@() pspm_find_sounds(fn, o), 'ID:missing_data');
@@ -122,16 +122,16 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
           this.verifyEqual(out_infos.channel, 3);
         end
         this.verifyEqual(numel(out_infos.delays), numel(out_infos.snd_markers));
-        if (max_delay == this.max_delay{1}) && strcmpi(chan_output, 'corrected')
+        if (max_delay == this.max_delay{1}) && strcmpi(channel_output, 'corrected')
           % no markers should be detected
           this.verifyEqual(numel(d_data{out_infos.channel}.data),0);
         else
-          if strcmpi(chan_output, 'all')
+          if strcmpi(channel_output, 'all')
             % #3 should contain any data and should contain more
             % than #2
             this.verifyTrue(numel(d_data{out_infos.channel}.data)>=1 ...
               && numel(d_data{out_infos.channel}.data) > n_ref_marker);
-          elseif strcmpi(chan_output, 'corrected')
+          elseif strcmpi(channel_output, 'corrected')
             % #3 should contain any data and should contain the same
             % amount of markers as #2
             this.verifyTrue(numel(d_data{out_infos.channel}.data)>=1);

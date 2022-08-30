@@ -20,19 +20,19 @@ classdef pspm_get_edf_test < pspm_get_superclass
       % 10 ecg
       % 9, 13 events (done with automarker setting)
       % 12 scr
-      this.testcases{1}.import{1} = struct('type', 'emg', 'chan', 1);
-      this.testcases{1}.import{2} = struct('type', 'emg', 'chan', 2);
-      this.testcases{1}.import{3} = struct('type', 'emg', 'chan', 3);
-      this.testcases{1}.import{4} = struct('type', 'emg', 'chan', 4);
-      this.testcases{1}.import{5} = struct('type', 'emg', 'chan', 5);
-      this.testcases{1}.import{6} = struct('type', 'ecg', 'chan', 10);
-      this.testcases{1}.import{7} = struct('type', 'scr', 'chan', 12);
+      this.testcases{1}.import{1} = struct('type', 'emg', 'channel', 1);
+      this.testcases{1}.import{2} = struct('type', 'emg', 'channel', 2);
+      this.testcases{1}.import{3} = struct('type', 'emg', 'channel', 3);
+      this.testcases{1}.import{4} = struct('type', 'emg', 'channel', 4);
+      this.testcases{1}.import{5} = struct('type', 'emg', 'channel', 5);
+      this.testcases{1}.import{6} = struct('type', 'ecg', 'channel', 10);
+      this.testcases{1}.import{7} = struct('type', 'scr', 'channel', 12);
     end
   end
   methods (Test)
     function invalid_input(this)
       fn = 'ImportTestData/edf/TM012face.EDF';
-      import{1} = struct('type', 'scr', 'chan', 100);
+      import{1} = struct('type', 'scr', 'channel', 100);
       import = this.assign_chantype_number(import);
       this.verifyWarning(@()pspm_get_edf(fn, import), 'ID:channel_not_contained_in_file');
     end

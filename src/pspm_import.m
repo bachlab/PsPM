@@ -80,7 +80,7 @@ function outfile = pspm_import(datafile, datatype, import, options)
 %   -- .minfreq - minimum frequency for pulse channels
 %   -- .units - if data units are defined by the recording software
 %   - sourceinfo contains information on the source file, with field
-%        -- .chan - a cell of string descriptions of the imported source
+%        -- .channel - a cell of string descriptions of the imported source
 %                    channels, e. g. names, or numbers
 %       and any optional fields that will be added to infos.source (e. g.
 %           recording date & time, and others)
@@ -184,7 +184,7 @@ for k = 1:numel(import)
   end
   % marker channel in data format where no channel name is needed?
   if strcmpi(import{k}.type, 'marker') && settings.import.datatypes(datatype).automarker
-    import{k}.chan = 1;
+    import{k}.channel = 1;
   end
   % flank loading
   if ~isfield(import{k}, 'flank')
@@ -202,12 +202,12 @@ for k = 1:numel(import)
     end
   end
   % channel number given? If not, set to zero, or assign automatically and display.
-  if ~isfield(import{k}, 'chan')
+  if ~isfield(import{k}, 'channel')
     if ~isfield(import{k}, 'channel')
     if settings.import.datatypes(datatype).searchoption
-      import{k}.chan = 0;
+      import{k}.channel = 0;
     else
-      import{k}.chan = k;
+      import{k}.channel = k;
       fprintf('\nAssigned channel/column %1.0f to import job %1.0f of type %s.', k, k, import{k}.type);
     end
     end

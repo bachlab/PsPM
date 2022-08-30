@@ -11,51 +11,51 @@ classdef pspm_get_acq_test < pspm_get_superclass
     function define_testcases(this)
       % testcase 1
       this.testcases{1}.pth = 'ImportTestData/acq/Acq_SCR.acq';
-      this.testcases{1}.import{1} = struct('type', 'scr'   , 'chan', 1);
+      this.testcases{1}.import{1} = struct('type', 'scr'   , 'channel', 1);
       % testcase 2
       this.testcases{2}.pth = 'ImportTestData/acq/Acq_SCR_Marker.acq';
-      this.testcases{2}.import{1} = struct('type', 'scr'   , 'chan', 1);
-      this.testcases{2}.import{2} = struct('type', 'marker', 'chan', 2);
+      this.testcases{2}.import{1} = struct('type', 'scr'   , 'channel', 1);
+      this.testcases{2}.import{2} = struct('type', 'marker', 'channel', 2);
       % testcase 3
       this.testcases{3}.pth = 'ImportTestData/acq/Acq_ECG_SCR_Marker.acq';
-      this.testcases{3}.import{1} = struct('type', 'ecg'   , 'chan', 1);
-      this.testcases{3}.import{2} = struct('type', 'scr'   , 'chan', 2);
-      this.testcases{3}.import{3} = struct('type', 'marker', 'chan', 3);
+      this.testcases{3}.import{1} = struct('type', 'ecg'   , 'channel', 1);
+      this.testcases{3}.import{2} = struct('type', 'scr'   , 'channel', 2);
+      this.testcases{3}.import{3} = struct('type', 'marker', 'channel', 3);
       % testcase 4 (with channel name search)
       this.testcases{4}.pth = 'ImportTestData/acq/Acq_ECG_SCR_Marker.acq';
-      this.testcases{4}.import{1} = struct('type', 'ecg'   , 'chan', 0);
-      this.testcases{4}.import{2} = struct('type', 'scr'   , 'chan', 0);
-      this.testcases{4}.import{3} = struct('type', 'marker', 'chan', 0);
+      this.testcases{4}.import{1} = struct('type', 'ecg'   , 'channel', 0);
+      this.testcases{4}.import{2} = struct('type', 'scr'   , 'channel', 0);
+      this.testcases{4}.import{3} = struct('type', 'marker', 'channel', 0);
       % testcase 5
       this.testcases{5}.pth = 'ImportTestData/acq/Acq_various_channels.acq';
-      this.testcases{5}.import{1} = struct('type', 'ecg'   , 'chan', 1);
-      this.testcases{5}.import{2} = struct('type', 'scr'   , 'chan', 2);
-      this.testcases{5}.import{3} = struct('type', 'marker', 'chan', 3);
-      this.testcases{5}.import{4} = struct('type', 'hr'    , 'chan', 8);
-      this.testcases{5}.import{5} = struct('type', 'scr'   , 'chan', 9);
+      this.testcases{5}.import{1} = struct('type', 'ecg'   , 'channel', 1);
+      this.testcases{5}.import{2} = struct('type', 'scr'   , 'channel', 2);
+      this.testcases{5}.import{3} = struct('type', 'marker', 'channel', 3);
+      this.testcases{5}.import{4} = struct('type', 'hr'    , 'channel', 8);
+      this.testcases{5}.import{5} = struct('type', 'scr'   , 'channel', 9);
       % testcase 6
       this.testcases{6}.pth = 'ImportTestData/acq/Acq_real_Breath_Hold.acq';
-      this.testcases{6}.import{1} = struct('type', 'scr'   , 'chan', 3);
-      this.testcases{6}.import{2} = struct('type', 'resp'  , 'chan', 4);
-      this.testcases{6}.import{3} = struct('type', 'marker', 'chan', 5);
-      this.testcases{6}.import{4} = struct('type', 'marker', 'chan', 6);
-      this.testcases{6}.import{5} = struct('type', 'marker', 'chan', 7);
-      this.testcases{6}.import{6} = struct('type', 'marker', 'chan', 8);
+      this.testcases{6}.import{1} = struct('type', 'scr'   , 'channel', 3);
+      this.testcases{6}.import{2} = struct('type', 'resp'  , 'channel', 4);
+      this.testcases{6}.import{3} = struct('type', 'marker', 'channel', 5);
+      this.testcases{6}.import{4} = struct('type', 'marker', 'channel', 6);
+      this.testcases{6}.import{5} = struct('type', 'marker', 'channel', 7);
+      this.testcases{6}.import{6} = struct('type', 'marker', 'channel', 8);
       % testcase 7 - channels with different sample rate
       this.testcases{7}.pth = 'ImportTestData/acq/PassiveAvoidance01019.acq';
-      this.testcases{7}.import{1} = struct('type', 'scr', 'chan', 1);
-      this.testcases{7}.import{2} = struct('type', 'hr', 'chan', 2);
-      this.testcases{7}.import{3} = struct('type', 'marker', 'chan', 3);
-      this.testcases{7}.import{4} = struct('type', 'marker', 'chan', 4);
-      this.testcases{7}.import{5} = struct('type', 'marker', 'chan', 5);
-      this.testcases{7}.import{6} = struct('type', 'marker', 'chan', 6);
+      this.testcases{7}.import{1} = struct('type', 'scr', 'channel', 1);
+      this.testcases{7}.import{2} = struct('type', 'hr', 'channel', 2);
+      this.testcases{7}.import{3} = struct('type', 'marker', 'channel', 3);
+      this.testcases{7}.import{4} = struct('type', 'marker', 'channel', 4);
+      this.testcases{7}.import{5} = struct('type', 'marker', 'channel', 5);
+      this.testcases{7}.import{6} = struct('type', 'marker', 'channel', 6);
     end
   end
   methods (Test)
     function invalid_datafile(this)
       fn = 'ImportTestData/acq/Acq_SCR.acq';
-      import{1} = struct('type', 'scr'   , 'chan', 1);
-      import{2} = struct('type', 'marker', 'chan', 2);
+      import{1} = struct('type', 'scr'   , 'channel', 1);
+      import{2} = struct('type', 'marker', 'channel', 2);
       import = this.assign_chantype_number(import);
       this.verifyWarning(@()pspm_get_acq(fn, import), 'ID:channel_not_contained_in_file');
     end
@@ -63,7 +63,7 @@ classdef pspm_get_acq_test < pspm_get_superclass
       fpath_acq = 'ImportTestData/acq/impedance_acq.acq';
       import = {struct( ...
         'type', 'scr', ...
-        'chan', 1, ...
+        'channel', 1, ...
         'transfer', 'none', ...
         'typeno', 1 ...
         )};
