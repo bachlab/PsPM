@@ -155,7 +155,7 @@ if ~strcmpi(channel_action, 'add')
       % no channel found to replace
       channel_action = 'add';
     else
-      warning('ID:no_matching_chans',...
+      warning('ID:no_matching_channels',...
         'no channel of type ''%s'' found in the file',options.channel);
       return;
     end

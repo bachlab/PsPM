@@ -87,7 +87,7 @@ classdef pspm_get_txt_test < pspm_get_superclass
       import = this.assign_chantype_number(import);
       this.verifyWarning(@()pspm_get_txt(fn, import), 'ID:invalid_input');
       % Test wrong channel_names_line
-      import{1} = struct('type', 'scr' , 'channel', 1, 'chan_names_line', 'A');
+      import{1} = struct('type', 'scr' , 'channel', 1, 'channel_names_line', 'A');
       import = this.assign_chantype_number(import);
       this.verifyWarning(@()pspm_get_txt(fn, import), 'ID:invalid_input');
       % Test wrong exclude_columns
