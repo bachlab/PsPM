@@ -86,7 +86,11 @@ if isempty(ext)
 end
 fn = fullfile(pth, [filename, ext]);
 
-try options.overwrite = (options.overwrite == 1); catch, options.overwrite = 0; end
+%  set default zscored
+if nargin <= 3
+  options = struct();
+end
+options = pspm_options(options, 'load1');
 
 % check whether file exists --
 if exist(fn, 'file')
@@ -100,10 +104,7 @@ elseif ~strcmpi(action, 'save')
   warning('ID:invalid_input', '1st level file (%s) doesn''t exist', fn); return;
 end
 
-%  set default zscored
-if nargin <= 3 || ~isfield(options, 'zscored')
-  options.zscored = 0;
-end
+
 
 % check whether file is a matlab file --
 if ~strcmpi(action, 'save')
