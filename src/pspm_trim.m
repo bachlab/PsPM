@@ -42,6 +42,7 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
 % ● Copyright
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% 1 Pre-settings
 % 1.1 Initialise
@@ -152,20 +153,7 @@ end
 if ~exist('options','var') || isempty(options) || ~isstruct(options)
   options = struct();
 end
-if ~isfield(options, 'overwrite')
-  options.overwrite = 0;
-elseif options.overwrite ~= 1
-  options.overwrite = 0;
-end
-if ~isfield(options,'marker_chan_num') || ...
-    ~isnumeric(options.marker_chan_num) || ...
-    numel(options.marker_chan_num) > 1
-  options.marker_chan_num = 0;
-end
-if ~isfield(options, 'drop_offset_markers') || ...
-    ~isnumeric(options.drop_offset_markers)
-  options.drop_offset_markers = 0;
-end
+options = pspm_options(options, 'trim');
 %% 2 Work on all data
 for i_D = 1:numel(D)
   % 2.1 Obtain essential file info

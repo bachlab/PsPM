@@ -1,75 +1,101 @@
-function Opt = pspm_options(Opt, FuncName)
-% Definition
-% pspm_options automatically determine the fields of options for the
-% corresponding function
-% Opt needs to be a struct
-% Written by
-% 2022 Teddy Chao (UCL)
+function options = pspm_options(options, FunName)
+% ● Definition
+%   pspm_options automatically determine the fields of options for the
+%   corresponding function.
+% ● Arguments
+%   options:  a struct to be filled by the function
+%   FunName:  a string, the name of the function where option is used
+% ● Copyright
+%   Introduced in PsPM 6.1
+%   Written in 2022 by Teddy Chao (UCL)
 
 StrOptChanInvalid = 'options.channel must contain valid channel types or positive integers.';
-StrOptChanInvalid_char = 'options.channel is not a valid channel type.';
-switch FuncName
+StrOptChanInvalidChar = 'options.channel is not a valid channel type.';
+switch FunName
   case 'blink_saccade_filt'
-    Opt = Autofill(Opt,'channel', 0);
-    Opt = AutofillChanAction(Opt);
+    options = Autofill(options,'channel', 0);
+    options = AutofillChanAction(options);
   case 'compute_visual_angle_core'
-    Opt = Autofill(Opt,'interpolate',0);
+    options = Autofill(options,'interpolate',0);
   case 'compute_visual_angle'
-    Opt = AutofillChanAction(Opt);
+    options = AutofillChanAction(options);
   case 'con1'
-    Opt = AutofillChanAction(Opt,'zscored',0);
+    options = AutofillChanAction(options,'zscored',0);
   case 'convert_area2diameter'
-    Opt = AutofillChanAction(Opt);
+    options = AutofillChanAction(options);
   case 'convert_au2unit'
-    Opt = AutofillChanAction(Opt);
+    options = AutofillChanAction(options);
   case 'convert_ecg2hb_amri'
-    Opt = Autofill(Opt, 'channel', 'ecg');
-    Opt = AutofillChanAction(Opt, 'replace');
+    options = Autofill(options, 'channel', 'ecg');
+    options = AutofillChanAction(options, 'replace');
   case 'convert_gaze_distance'
-    Opt = AutofillChanAction(Opt);
+    options = AutofillChanAction(options);
   case 'convert_hb2hp'
-    Opt = AutofillChanAction(Opt, 'replace');
+    options = AutofillChanAction(options, 'replace');
   case 'convert_pixel2unit'
-    Opt = AutofillChanAction(Opt);
+    options = AutofillChanAction(options);
   case 'convert_ppg2hb'
-    Opt = Autofill(Opt,'channel', 'ppg2hb');
-    Opt = AutofillChanAction(Opt, 'replace');
+    options = Autofill(options,'channel', 'ppg2hb');
+    options = AutofillChanAction(options, 'replace');
   case 'convert_visangle2sps'
-    Opt = AutofillChanAction(Opt);
+    options = AutofillChanAction(options);
   case 'emg_pp'
-    Opt = Autofill(Opt,'channel', 'emg');
-    Opt = AutofillChanAction(Opt, 'replace');
+    options = Autofill(options,'channel', 'emg');
+    options = AutofillChanAction(options, 'replace');
   case 'exp'
-    Opt = Autofill(Opt,'target', 'screen');
-    Opt = Autofill(Opt, 'statstype', 'param');
-    Opt = Autofill(Opt, 'delim', '\t');
-    Opt = Autofill(Opt, 'exclude_missing', 0);
+    options = Autofill(options,'target', 'screen');
+    options = Autofill(options, 'statstype', 'param');
+    options = Autofill(options, 'delim', '\t');
+    options = Autofill(options, 'exclude_missing', 0);
   case 'find_sound'
-    Opt = AutofillChanAction(Opt, 'none', {'add','replace','none'});
+    options = AutofillChanAction(options, 'none', {'add','replace','none'});
   case 'find_valid_fixations'
-    Opt = AutofillChanAction(Opt);
+    options = AutofillChanAction(options);
   case 'interpolate'
-    Opt = AutofillChanAction(Opt);
+    options = AutofillChanAction(options);
   case 'sf'
-    Opt = Autofill(Opt,'overwrite', 0);
-    if ~isfield(Opt,'marker_chan_num') ||...
-        ~isnumeric(Opt.marker_chan_num) ||...
-        numel(Opt.marker_chan_num) > 1
-      Opt.marker_chan_num = 0;
+    options = Autofill(options,'overwrite', 0);
+    if ~isfield(options,'marker_chan_num') ||...
+        ~isnumeric(options.marker_chan_num) ||...
+        numel(options.marker_chan_num) > 1
+      options.marker_chan_num = 0;
+    end
+  case 'split_sessions'
+    options = Autofill(options, 'overwrite', 0, 1);
+    options = Autofill(options, 'prefix', 0);
+    options = Autofill(options, 'suffix', 0);
+    options = Autofill(options, 'verbose', 0);
+    options = Autofill(options, 'splitpoints', []);
+    options = Autofill(options, 'missing', 0);
+    options = Autofill(options, 'randomITI', 0);
+    options = Autofill(options, 'max_sn', settings.split.max_sn);
+    % maximum number of sessions (default 10)
+    options = Autofill(options, 'max_sn', settings.split.min_break_ratio);
+    % minimum ratio of session break to normal inter marker interval (default 3)
+  case 'trim'
+    options = Autofill(options, 'overwrite', 0, 1);
+    if ~isfield(options,'marker_chan_num') || ...
+      ~isnumeric(options.marker_chan_num) || ...
+      numel(options.marker_chan_num) > 1
+      options.marker_chan_num = 0;
+    end
+    if ~isfield(options, 'drop_offset_markers') || ...
+      ~isnumeric(options.drop_offset_markers)
+      options.drop_offset_markers = 0;
     end
   case 'write_channel'
-    if ~isfield(Opt, 'channel')
+    if ~isfield(options, 'channel')
       warning('ID:invalid_input', StrOptChanInvalid);
       return
     else
-      switch class(Opt.chan)
+      switch class(options.channel)
         case 'char'
-          if ~any(strcmpi(Opt.chan,{'add','replace','none'}))
-            warning('ID:invalid_input', StrOptChanInvalid_char);
+          if ~any(strcmpi(options.channel,{'add','replace','none'}))
+            warning('ID:invalid_input', StrOptChanInvalidChar);
             return
           end
         case 'double'
-          if (any(mod(Opt.chan,1)) || any(Opt.chan<0))
+          if (any(mod(options.channel, 1)) || any(options.channel<0))
             warning('ID:invalid_input', StrOptChanInvalid);
             return
           end
@@ -79,13 +105,34 @@ switch FuncName
       end
     end
 end
-function Opt = Autofill(Opt, FieldName, DefaultValue)
-if ~isfield(Opt, FieldName)
-  Opt.(FieldName) = DefaultValue;
-else
-  Opt.(FieldName) = Opt.(FieldName);
+
+function options = Autofill(varagin)
+switch nargin
+  case 3
+    options = varagin{1};
+    FieldName = varagin{2};
+    DefaultValue = varagin{3};
+    if ~isfield(options, FieldName)
+      options.(FieldName) = DefaultValue;
+    end
+  case 4
+    options = varagin{1};
+    FieldName = varagin{2};
+    DefaultValue = varagin{3};
+    AcceptableValue = varagin{4};
+    if ~isfield(options, FieldName)
+      options.(FieldName) = DefaultValue;
+    else
+      if options.(FieldName) ~= AcceptableValue
+        options.(FieldName) = DefaultValue;
+      end
+    end
+  else
+    warning('ID:invalid_input', 'Autofill needs at least 3 arguments');
 end
-function Opt = AutofillChanAction(Opt, varargin)
+
+
+function options = AutofillChanAction(options, varargin)
 switch nargin
   case 1
     DefaultValue = 'add';
@@ -97,10 +144,10 @@ switch nargin
     DefaultValue = varargin{1};
     OptValue = varargin{2};    
 end
-if ~isfield(Opt, 'channel_action')
-  Opt.channel_action = DefaultValue;
+if ~isfield(options, 'channel_action')
+  options.channel_action = DefaultValue;
 else
-  if ~any(strcmpi(Opt.channel_action, OptValue))
+  if ~any(strcmpi(options.channel_action, OptValue))
     warning('ID:invalid_input', ...
       '''options.channel_action'' must be among accepted values.');
     return

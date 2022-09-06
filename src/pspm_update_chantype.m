@@ -1,4 +1,4 @@
-function [chantype_new] = pspm_update_chantype (chantype_og,keyword)
+function [chantype_new] = pspm_update_chantype (chantype_og, keyword)
 % ● Description
 %   pspm_update_chantype update the keywords of channel type
 % ● Arguments

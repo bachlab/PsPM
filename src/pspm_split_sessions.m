@@ -69,35 +69,7 @@ end
 if ~exist('options','var') || isempty(options) || ~isstruct(options)
   options = struct();
 end
-if ~isfield(options, 'overwrite')
-  options.overwrite = 0;
-elseif options.overwrite ~= 1
-  options.overwrite = 0;
-end
-try options.prefix; catch
-  options.prefix = 0;
-end
-try options.suffix; catch
-  options.suffix = 0;
-end
-try options.verbose; catch
-  options.verbose = 0;
-end
-try options.splitpoints; catch
-  options.splitpoints = [];
-end
-try options.missing; catch
-  options.missing = 0;
-end
-try options.randomITI; catch
-  options.randomITI = 0;
-end
-try options.max_sn; catch
-  options.max_sn = settings.split.max_sn; % maximum number of sessions (default 10)
-end
-try options.min_break_ratio; catch
-  options.min_break_ratio = settings.split.min_break_ratio; % minimum ratio of session break to normal inter marker interval (default 3)
-end
+options = pspm_options(options, 'split_sessions');
 
 % 1.3 Handle data files
 % 1.3.1 check data file argument
