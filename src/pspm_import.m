@@ -136,6 +136,7 @@ elseif ~iscell(import)
     return
   end
 end
+options = pspm_options(options, 'import');
 % 2.1 convert data files
 if iscell(datafile)
   D = datafile;

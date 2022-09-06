@@ -25,13 +25,9 @@ sts = -1;
 % 2.1 static variables
 list_channels = {'gaze_x_l', 'gaze_x_r', 'gaze_y_l', 'gaze_y_r'};
 % 2.2 set default values
-if nargin == 1;                        options = struct();              end
-if ~isfield(options,'channel');        options.channel = 'gaze_x_l';    end
-if ~isfield(options,'channel_action');    options.channel_action = 'add';  end
-if ~isfield(options,'channel_combine');   options.channel_combine = 'none';end
-if ~isfield(options,'valid_sample');   options.valid_sample = 0;        end
-if ~isfield(options, 'plot_data');     options.plot_data = false;       end
-if ~isfield(options, 'segments');      options.segments = {};           end
+if nargin == 1
+  options = struct();
+end
 action_combine = ~strcmp(options.channel_combine, 'none');
 % 2.3 set default options from pupil_pp
 [lsts, default_settings] = pspm_pupil_pp_options();

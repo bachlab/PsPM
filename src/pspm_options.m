@@ -51,12 +51,19 @@ switch FunName
     options = AutofillChanAction(options, 'none', {'add','replace','none'});
   case 'find_valid_fixations'
     options = AutofillChanAction(options);
+  case 'gaze_pp'
+    options = Autofill(options, 'channel', 'gaze_x_l');
+    options = AutofillChanAction(options, 'add', {'add','replace','none'});
+    options = Autofill(options, 'channel_combine', 'none');
+    options = Autofill(options, 'segments', {});
+    options = Autofill(options, 'valid_sample', 0);
+    options = Autofill(options, 'plot_data', false);
   case 'glm'
-    options = AutofillChanAction(options, 'modelspec', 'scr');
-    options = AutofillChanAction(options, 'bf', 0);
-    options = AutofillChanAction(options, 'overwrite', 0, 1);
-    options = AutofillChanAction(options, 'norm', 0);
-    options = AutofillChanAction(options, 'centering', 1);
+    options = Autofill(options, 'modelspec', 'scr');
+    options = Autofill(options, 'bf', 0);
+    options = Autofill(options, 'overwrite', 0, 1);
+    options = Autofill(options, 'norm', 0);
+    options = Autofill(options, 'centering', 1);
     if ~isfield(options, 'marker_chan_num')
       options.marker_chan_num = 'marker';
     elseif ~(isnumeric(options.marker_chan_num) && numel(options.marker_chan_num)==1)
@@ -72,6 +79,8 @@ switch FunName
         return
       end
     end
+  case 'import'
+    options = Autofill(options, 'overwrite', 0, 1);
   case 'interpolate'
     options = AutofillChanAction(options);
   case 'sf'
@@ -148,11 +157,11 @@ switch nargin
         options.(FieldName) = DefaultValue;
       end
     end
-  else
+  otherwise
     warning('ID:invalid_input', 'Autofill needs at least 3 arguments');
+    return
   end
 end
-
 
 function options = AutofillChanAction(options, varargin)
 switch nargin
