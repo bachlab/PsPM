@@ -35,15 +35,15 @@ switch FunName
   case 'convert_pixel2unit'
     options = AutofillChanAction(options);
   case 'convert_ppg2hb'
-    options = Autofill(options,'channel', 'ppg2hb');
+    options = Autofill(options, 'channel', 'ppg2hb');
     options = AutofillChanAction(options, 'replace');
   case 'convert_visangle2sps'
     options = AutofillChanAction(options);
   case 'emg_pp'
-    options = Autofill(options,'channel', 'emg');
+    options = Autofill(options, 'channel', 'emg');
     options = AutofillChanAction(options, 'replace');
   case 'exp'
-    options = Autofill(options,'target', 'screen');
+    options = Autofill(options, 'target', 'screen');
     options = Autofill(options, 'statstype', 'param');
     options = Autofill(options, 'delim', '\t');
     options = Autofill(options, 'exclude_missing', 0);
@@ -51,6 +51,27 @@ switch FunName
     options = AutofillChanAction(options, 'none', {'add','replace','none'});
   case 'find_valid_fixations'
     options = AutofillChanAction(options);
+  case 'glm'
+    options = AutofillChanAction(options, 'modelspec', 'scr');
+    options = AutofillChanAction(options, 'bf', 0);
+    options = AutofillChanAction(options, 'overwrite', 0, 1);
+    options = AutofillChanAction(options, 'norm', 0);
+    options = AutofillChanAction(options, 'centering', 1);
+    if ~isfield(options, 'marker_chan_num')
+      options.marker_chan_num = 'marker';
+    elseif ~(isnumeric(options.marker_chan_num) && numel(options.marker_chan_num)==1)
+      options.marker_chan_num = 'marker';
+    end
+    if isfield(options,'exclude_missing')
+      if ~(isfield(options.exclude_missing, 'segment_length') && ...
+        isfield(options.exclude_missing,'cutoff'))
+        warning('ID:invalid_input', 'To extract the NaN-values segment-length and cutoff must be set');
+        return
+      elseif ~(isnumeric(options.exclude_missing.segment_length) && isnumeric(options.exclude_missing.cutoff))
+        warning('ID:invalid_input', 'To extract the NaN-values segment-length and cutoff must be numeric values.');
+        return
+      end
+    end
   case 'interpolate'
     options = AutofillChanAction(options);
   case 'sf'
@@ -129,6 +150,7 @@ switch nargin
     end
   else
     warning('ID:invalid_input', 'Autofill needs at least 3 arguments');
+  end
 end
 
 

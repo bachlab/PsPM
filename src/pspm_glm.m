@@ -241,27 +241,9 @@ elseif ~ismember(model.centering, [0, 1])
 end
 
 % check options --
-if ~isfield(options, 'overwrite')
-  options.overwrite = 0;
-elseif ~ismember(options.overwrite, [0, 1])
-  options.overwrite = 0;
-end
-if ~isfield(options, 'marker_chan_num')
-  options.marker_chan_num = 'marker';
-elseif ~(isnumeric(options.marker_chan_num) && numel(options.marker_chan_num)==1)
-  options.marker_chan_num = 'marker';
-end
+options = pspm_options(options, 'glm');
 
-if isfield(options,'exclude_missing')
-  if ~(isfield(options.exclude_missing, 'segment_length') && ...
-      isfield(options.exclude_missing,'cutoff'))
-    warning('ID:invalid_input', 'To extract the NaN-values segment-length and cutoff must be set'); return;
-  elseif ~(isnumeric(options.exclude_missing.segment_length) && isnumeric(options.exclude_missing.cutoff))
-    warning('ID:invalid_input', 'To extract the NaN-values segment-length and cutoff must be numeric values.'); return;
-  end
-end
 
-options.overwrite = ~pspm_overwrite(model.modelfile, options);
 
 
 if ischar(model.datafile)
@@ -424,7 +406,6 @@ else
     warning('ID:number_of_elements_dont_match',...
       'Same number of data files and nuisance regressor files is needed.'); return;
   end
-
   for iSn = 1:nFile
     if isempty(model.nuisance{iSn})
       R{iSn} = [];
