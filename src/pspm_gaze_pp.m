@@ -28,6 +28,7 @@ list_channels = {'gaze_x_l', 'gaze_x_r', 'gaze_y_l', 'gaze_y_r'};
 if nargin == 1
   options = struct();
 end
+options = pspm_options(options, 'gaze_pp');
 action_combine = ~strcmp(options.channel_combine, 'none');
 % 2.3 set default options from pupil_pp
 [lsts, default_settings] = pspm_pupil_pp_options();

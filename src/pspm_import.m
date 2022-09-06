@@ -136,6 +136,9 @@ elseif ~iscell(import)
     return
   end
 end
+if ~exist('options', 'var')
+  options = struct();
+end
 options = pspm_options(options, 'import');
 % 2.1 convert data files
 if iscell(datafile)
