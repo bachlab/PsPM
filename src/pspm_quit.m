@@ -10,7 +10,7 @@ if isempty(settings)
   pspm_init;
 end
 fs = filesep;
-if settings.scrpath, rmpath(settings.path), end;
+if settings.scrpath, rmpath(settings.path), end
 if any(contains(path, 'VBA'))
   rmpath(pspm_path('ext','VBA'));
   rmpath(pspm_path('ext','VBA','subfunctions'));

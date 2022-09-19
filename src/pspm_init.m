@@ -69,7 +69,7 @@ if numel(subfolders(mem)) == 0
 end
 
 % check whether scralyze is on the path
-pth = fileparts(which('pspm'));
+pth = fileparts(which('pspm_guide'));
 if ~contains(p, pth)
   scrpath=1;
   addpath(pth);
