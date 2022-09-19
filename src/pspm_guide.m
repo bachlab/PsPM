@@ -11,7 +11,7 @@ global settings
 if isempty(settings)
     pspm_init;
 end
-sts = -1;
+% sts = -1;
 % -------------------------------------------------------------------------
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -21,20 +21,16 @@ gui_State = struct('gui_Name',       mfilename, ...
     'gui_OutputFcn',  @PsPM_OutputFcn, ...
     'gui_LayoutFcn',  [] , ...
     'gui_Callback',   []);
-
 if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
-
-
 if nargout
     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
 else
     gui_mainfcn(gui_State, varargin{:});
 end
-% End initialization code - DO NOT EDIT
 end
-
+% End initialization code - DO NOT EDIT
 % --- Executes just before tag_PsPM is made visible.
 function PsPM_OpeningFcn(hObject, ~, handles, varargin)
 % This function has no output args, see OutputFcn.
@@ -45,30 +41,24 @@ function PsPM_OpeningFcn(hObject, ~, handles, varargin)
 pspm_init;
 cfg_util('initcfg'); % This must be the first call to cfg_util
 %cfg_ui('Visible','off'); % Create invisible batch ui
-
 handles.output = hObject;
 % Choose default command line output for tag_PsPM
 pspm_ui(hObject, handles, 'main');
-
 % Update handles structure
 guidata(hObject, handles);
-
 % UIWAIT makes tag_PsPM wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 end
-
-
 % --- Outputs from this function are returned to the command line.
 function varargout = PsPM_OutputFcn(~, ~, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
 % Get default command line output from handles structure
 varargout{1} = handles.output;
 end
-
+%% Button: PsPM
 % --- If Enable == 'on', executes on mouse press in 5 pixel border.
 % --- Otherwise, executes on mouse press in 5 pixel border or over tag_PsPM.
 function tag_PsPM_ButtonDownFcn(~, ~, ~)
@@ -77,7 +67,7 @@ function tag_PsPM_ButtonDownFcn(~, ~, ~)
 % handles    structure with handles and user data (see GUIDATA)
 pspm_show_arms;
 end
-
+%% Data preparation - import
 % --- Executes on button press in Import_data.
 function Import_data_Callback(~, ~, ~)
 % hObject    handle to Import_data (see GCBO)
@@ -86,9 +76,7 @@ function Import_data_Callback(~, ~, ~)
 % pspm_import_UI;
 cfg_add_module('pspm.prep.import');
 end
-
-
-% --- Executes on button press in Trim_data.
+%% Data preparation - trim
 function Trim_data_Callback(~, ~, ~)
 % hObject    handle to Trim_data (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -96,8 +84,7 @@ function Trim_data_Callback(~, ~, ~)
 % pspm_trim_UI;
 cfg_add_module('pspm.prep.trim');
 end
-
-% --- Executes on button press in dispdata.
+%% Tools - display data
 function dispdata_Callback(~, ~, ~)
 % hObject    handle to dispdata (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -105,8 +92,7 @@ function dispdata_Callback(~, ~, ~)
 % pspm_disp;
 cfg_add_module('pspm.tools.disp');
 end
-
-% --- Executes on button press in tag_export_statistics.
+%% Export statistics
 function tag_export_statistics_Callback(~, ~, ~)
 % hObject    handle to tag_export_statistics (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -114,7 +100,7 @@ function tag_export_statistics_Callback(~, ~, ~)
 % pspm_exp_UI;
 cfg_add_module('pspm.first_level.export');
 end
-
+%% Review model
 % --- Executes on button press in tag_review_model.
 function tag_review_model_Callback(~, ~, ~)
 % hObject    handle to tag_review_model (see GCBO)
@@ -223,22 +209,16 @@ switch val
         cfg_add_module('pspm.tools.convert_data');
 end
 end
-
-% --- Executes during object creation, after setting all properties.
 function tag_tools_list_CreateFcn(hObject, ~, ~)
 % hObject    handle to tag_tools_list (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-
 % Hint: popupmenu controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
 end
-
-
-% --- Executes during object creation, after setting all properties.
 function tag_first_level_models_list_CreateFcn(hObject, ~, ~)
 % hObject    handle to tag_first_level_models_list (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -251,16 +231,13 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 end
 
-
 % --- Executes on selection change in tag_first_level_models_list.
 function tag_first_level_models_list_Callback(hObject, ~, ~)
 % hObject    handle to tag_first_level_models_list (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
 % Hints: contents = cellstr(get(hObject,'String')) returns tag_first_level_models_list contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from tag_first_level_models_list
-
 selected = get(hObject,'Value');
 
 switch selected
@@ -287,16 +264,13 @@ switch selected
 end
 end
 
-
 % --- Executes on selection change in tag_data_preprocessing_list.
 function tag_data_preprocessing_list_Callback(hObject, ~, ~)
 % hObject    handle to tag_data_preprocessing_list (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
 % Hints: contents = cellstr(get(hObject,'String')) returns tag_data_preprocessing_list contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from tag_data_preprocessing_list
-
 selected = get(hObject,'Value');
 switch selected
     case 1
@@ -327,14 +301,11 @@ switch selected
 end
 end
 
-
-
 % --- Executes during object creation, after setting all properties.
 function tag_data_preprocessing_list_CreateFcn(hObject, ~, ~)
 % hObject    handle to tag_data_preprocessing_list (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-
 % Hint: popupmenu controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -348,12 +319,9 @@ function tag_data_preparation_list_Callback(hObject, ~, ~)
 % hObject    handle to tag_data_preparation_list (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
 % Hints: contents = cellstr(get(hObject,'String')) returns tag_data_preparation_list contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from tag_data_preparation_list
-
 selected = get(hObject,'Value');
-
 switch selected
     case 1
         cfg_add_module('pspm.prep.import');
@@ -361,7 +329,6 @@ switch selected
         cfg_add_module('pspm.prep.trim');
 end
 end
-
 
 % --- Executes during object creation, after setting all properties.
 function tag_data_preparation_list_CreateFcn(hObject, ~, ~)
@@ -375,10 +342,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 end
-
-
-
-
 
 % --- Executes on button press in tag_feedback.
 function tag_feedback_Callback(~, ~, ~)
