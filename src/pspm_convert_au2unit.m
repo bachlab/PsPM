@@ -13,7 +13,7 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 %   Using the given variables, the following calculations are performed:
 %   0. Take square root of data if recording is 'area'.
 %   1. Let from unit to reference_unit converted recording distance be Dconv.
-%   2. x <-- A*(Dconv/Dref)*x
+%   2. x ← A*(Dconv/Dref)*x
 %   3. Convert x from ref_unit to unit.
 % ● Format
 %   [sts, out] = pspm_convert_au2unit(fn, chan, unit, distance, multiplicator,
