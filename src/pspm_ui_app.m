@@ -1,6 +1,6 @@
 function app = pspm_ui_app (app)
 OS = ispc*1 + ismac*2 + (isunix-ismac)*3;
-pspm_font_list = {'Segoe UI', 'Helvetica', 'DejaVu Sans'};
+pspm_font_list = {'Segoe UI', '.AppleSystemUIFont', 'DejaVu Sans'};
 pspm_font_size_list = {14, 14, 14};
 pspm_font = pspm_font_list{OS};
 pspm_font_size = pspm_font_size_list{OS};
