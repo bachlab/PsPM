@@ -241,10 +241,14 @@ else
 
       epoch_on = 1 + strfind(epochs.', [0 1]); % Return the start points of the excluded interval
       epoch_off = strfind(epochs.', [1 0]); % Return the end points of the excluded interval
+
       if numel(epoch_off) < numel(epoch_on) % if the epochs is in the middle of 2 blocks
         epoch_off(end+1) = numel(epochs);
       elseif numel(epoch_on) < numel(epoch_off)
         epoch_on = [0, epoch_on];
+      elseif (numel(epoch_on) > 0 && numel(epoch_off > 0) && epoch_off(1) < epoch_on(1))
+        epoch_on = [0, epoch_on];
+        epoch_off(end+1) = numel(epochs);
       end
       epochs = [epoch_on.', epoch_off.']/missingsr; % convert back to seconds
       save(newepochfile{sn}, 'epochs');
