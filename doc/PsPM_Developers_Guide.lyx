@@ -6317,25 +6317,32 @@ pspm_cfg_run_functionname.m
 \end_layout
 
 \begin_layout Subsection
-Recommendations for GUI development
-\end_layout
-
-\begin_layout Subsubsection
-Mlapp
+GUI Development Progress
 \end_layout
 
 \begin_layout Standard
+MATLAB GUIDE 
+\begin_inset Flex URL
+status open
 
-\family typewriter
-Mlapp
-\family default
- is the new format for developing GUI in MATLAB.
- The old GUIDE based GUI will lose support from Mathworks in a future release.
- Therefore, it is recommended to move from the old GUIDE to the new Mlapp.
+\begin_layout Plain Layout
+
+https://uk.mathworks.com/help/matlab/migrate-guide-apps.html
 \end_layout
 
-\begin_layout Standard
-The 
+\end_inset
+
+ was originally used as the framework for designing the GUI of PsPM.
+ However, the framework suffers from the risk that plots may be unexpectedly
+ displayed on such figures since they need to be called by users' command
+ lines.
+ At the same time, GUIDE based GUI will lose support from Mathworks in a
+ future release of MATLAB.
+ Consequently, PsPM is currently slowly being migrated to the new UI designing
+ framework, MATLAB AppDesigner.
+ Instead of creating .fig files, the new AppDesigner frameworks will create
+ .mlapp files.
+ The 
 \family typewriter
 .mlapp
 \family default
@@ -6348,8 +6355,60 @@ migration
 .
 \end_layout
 
-\begin_layout Subsubsection
-Style
+\begin_layout Standard
+The main GUI has been recreated by using AppDesigner in PsPM version 6.1,
+ where the function lists inherted from the legacy of GUIDE-based GUI.
+ The code has been re-sorted out in MATLAB by following the coding style
+ of AppDesigner.
+ A typical button corresponds to the function shown below
+\begin_inset Newline linebreak
+\end_inset
+
+
+\family typewriter
+
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+function 
+\end_layout
+
+\begin_layout Plain Layout
+
+button_Callback(app, event) 
+\end_layout
+
+\begin_layout Plain Layout
+
+switch event.Value 
+\end_layout
+
+\begin_layout Plain Layout
+
+case 'A'  
+\end_layout
+
+\begin_layout Plain Layout
+
+action; 
+\end_layout
+
+\begin_layout Plain Layout
+
+end 
+\end_layout
+
+\begin_layout Plain Layout
+
+end
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -6358,8 +6417,9 @@ The new GUI is currently using the colour
 #7f2534
 \family default
  for stylishing.
- The main typeface for UI design is Segoe UI, Helvetica Neue and DejaVu
- Sans for Windows, macOS and Linux, respectively.
+ The main typeface for UI design is Segoe UI, San Francisco (or Helvetica
+ Neue for pre-macOS Yosemite) and DejaVu Sans for Windows, macOS and Linux,
+ respectively.
 \end_layout
 
 \begin_layout Standard
