@@ -1,4 +1,10 @@
 function app = pspm_ui_app (app)
+% ● Descrition
+%		pspm_ui_app handles the ui controlling elements for app designer based
+%		GUI files. Details of font styles can be found in the developer's
+%		guide.
+%	●	History
+%		Written in 2022 by Teddy Chao
 OS = ispc*1 + ismac*2 + (isunix-ismac)*3;
 pspm_font_list = {'Segoe UI', '.AppleSystemUIFont', 'DejaVu Sans'};
 pspm_font_size_list = {14, 14, 14};
