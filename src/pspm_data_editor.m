@@ -173,11 +173,7 @@ else
           end
         end
         if write_file
-          if isfield(options, 'overwrite')
-            newd.options.overwrite = options.overwrite;
-          else
-            newd.options.overwrite = pspm_overwrite(out_file);
-          end
+          newd.options.overwrite = pspm_overwrite(out_file, options);
           [write_success, ~, ~] = pspm_load_data(out_file, newd);
           if disp_success
             if write_success
