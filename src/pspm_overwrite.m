@@ -67,11 +67,6 @@ switch numel(varargin)
       fn = fn{1};
     end
     overwrite = varargin{2};
-    if ~exist(fn, 'file')
-      % if file does not exist, always "overwrite"
-      overwrite_final = 1;
-      return
-    end
     switch class(overwrite)
       case 'double'
         overwrite_final = overwrite;

@@ -310,6 +310,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
         dist = distance;
         dist_unit = this.unit{1};
         options.resolution = resolution;
+        options.overwrite = 1;
         options.missing = 1;
         options.fixation_point = [resolution(1)/4 resolution(2)*3/4];
         options.newfile = pspm_find_free_fn(this.testfile_prefix, '.mat');
@@ -354,6 +355,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
         d = bitmaps{i};
         bitmap = d.deg;
         options.resolution = resolution;
+        options.overwrite = 1;
         options.missing = 1;
         options.newfile = pspm_find_free_fn(this.testfile_prefix, '.mat');
         this.datafiles{end+1} = options.newfile;
