@@ -1,4 +1,4 @@
-function pspm(varargin)
+function pspm_beta(varargin)
 % ● Description
 %   pspm.m handles the main GUI for PsPM
 % ● Last Updated in

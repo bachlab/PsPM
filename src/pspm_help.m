@@ -86,7 +86,7 @@ for i_line = 1:length(B)
   end
   B{i_line, 1} = C;
 end
-D = {'Description', 'Format', 'Version', 'Authors'};
+D = {'Description', 'Format', 'Copyright'};
 % sort
 A = struct();
 for i_D = 1:length(D)
@@ -95,7 +95,9 @@ for i_D = 1:length(D)
   while ( ~strcmp(B{N_target+1,1}(1),'●') )
     str = [str, B{N_target+1, 1}];
     N_target = N_target + 1;
-    if strcmp(B{N_target+1,1}(1),'●')
+    if N_target == length(B)
+        break
+    elseif strcmp(B{N_target+1,1}(1),'●')
       break
     end
   end

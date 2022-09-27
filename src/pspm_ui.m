@@ -34,8 +34,8 @@ elseif ismac
   FSText = 14;
   FSCaption = 12;
   FSAttr = 13;
-  FNRoman = 'Helvetica Neue';
-  FNEmph = 'Futura';
+  FNRoman = 'Helvetica';
+  FNEmph = 'Helvetica-Bold';
   DisplayUnit = 'points';
   MainWeight = 750;
   MainHeight = 750*0.8;
