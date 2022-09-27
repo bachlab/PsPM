@@ -10,7 +10,7 @@ function [bs, x] = pspm_bf_psrf_fc(varargin)
 %   Christoph W. Korn, Matthias Staib, Athina Tzovara, Giuseppe Castegnetti,
 %   and Dominik R. Bach (2016) A pupil size response model to assess
 %   fear learning
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Tobias Moser (University of Zurich)
 %   Maintained in 2022 by Teddy Chao (UCL)

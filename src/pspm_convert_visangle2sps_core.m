@@ -5,7 +5,7 @@ function arclen = pspm_convert_visangle2sps_core(lat, lon)
 % ● Arguments
 %   lat:
 %   lon:
-% ● Copyright
+% ● History
 %   Maintained in 2022 by Teddy Chao (UCL)
 
 if sum(isnan(lon)) > 0 || sum(isnan(lat)) > 0

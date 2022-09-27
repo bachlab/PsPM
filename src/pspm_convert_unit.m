@@ -11,7 +11,7 @@ function [sts, converted] = pspm_convert_unit(data, from, to)
 %         Valid units are currently mm, cm, dm, m, km, in, inches
 %     to: Unit of the output vector.
 %         Valid units are currently mm, cm, dm, m, km, in, inches
-% ● Copyright
+% ● History
 %   Introduced in PsPM 4.0
 %   Written in 2018 by Tobias Moser (University of Zurich)
 

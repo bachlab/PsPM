@@ -19,7 +19,7 @@ function [lat, lon, lat_range, lon_range] = pspm_compute_visual_angle_core(x_dat
 %              lon: the longitude in degrees
 %        lat_range: the latitude range
 %        lon_range: the longitude range
-% ● Copyright
+% ● History
 %   Introduced in PsPM 4.0
 
 %% Initialise

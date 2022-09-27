@@ -28,7 +28,7 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, chan, options)
 % ● Reference
 %   Pan J & Tomkins WJ (1985). A Real-Time QRS Detection Algorithm. IEEE
 %   Transactions on Biomedical Engineering, 32, 230-236.
-% ● Developer's notes
+% ● Developer's Notes
 %   ▶︎ Changes from the original Pan & Tompkins algorithm
 %   filter:       P. & T. intend to achieve a pass band from 5-15 Hz with a
 %                 real-time filter. This function uses an offline second
@@ -88,7 +88,7 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, chan, options)
 %
 %   R:            Vector of the same length as the raw data, containing
 %                 information on the position of the QRS complexes.
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2013-2015 Philipp C Paulus & Dominik R Bach
 %   (Technische Universitaet Dresden, University of Zurich)

@@ -12,7 +12,7 @@ function [bs, x] = pspm_bf_rprf_e(varargin)
 %   A linear model for event-related respiration responses,
 %   Journal of Neuroscience Methods, Volume 270, 1 September 2016, Pages 147-155,
 %   ISSN 0165-0270, doi:10.1016/j.jneumeth.2016.06.001.
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Tobias Moser (University of Zurich)
 %   Maintained in 2022 by Teddy Chao (UCL)

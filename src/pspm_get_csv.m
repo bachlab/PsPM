@@ -9,7 +9,7 @@ function [sts, import, sourceinfo] = pspm_get_csv(datafile, import)
 %             and optionally the channel names in the first line.
 %     import: import job structure
 %             A delimiter of ',' is applied to all import channels
-% ● Copyright
+% ● History
 %   Introduced in PsPM 5.0
 %   Written in 2008-2020 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 

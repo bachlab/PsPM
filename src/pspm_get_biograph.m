@@ -11,7 +11,7 @@ function [sts, import, sourceinfo] = pspm_get_biograph(datafile, import)
 %    .marker:
 %        .sr:
 %      .data:
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy Chao (UCL)

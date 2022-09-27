@@ -7,7 +7,7 @@ function [bf, x, b] = pspm_bf_hprf_e(varargin)
 % ● Arguments
 %   td: time resolution in s
 %    b: number of basis functions (default 1:6)
-% ● Developer's notes
+% ● Developer's Notes
 %   Basis functions will be orthogonalized using spm_orth by default. Onsets
 %   pspm_glm must be shifted by 5 s to account for the pre-event epoch.
 %   Put in values 1:6 for b in order to get following basis functions:
@@ -17,7 +17,7 @@ function [bf, x, b] = pspm_bf_hprf_e(varargin)
 %   4:  BF 4  - mu 7.2 s, sigma 4 s
 %   5:  BF 5  - mu 12.6 s, sigma 2 s
 %   6:  BF 6  - mu 18.85 s, sigma 1.8 s
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2015 by Philipp C Paulus (Technische Universitaet Dresden)
 %                      Dominik R Bach (University of Zurich)

@@ -9,7 +9,7 @@ function [information, arguments] = pspm_help(func_name)
 % ● Outputs
 %   information:  the description of the specific function
 %     arguments:  the arguments of the specific function
-% ● Copyright
+% ● History
 %   Introduced in PsPM 6.0
 %   Written and maintained in 2022 by Teddy Chao (UCL)
 

@@ -21,7 +21,7 @@ function [sts, outdata, newsr] = pspm_prepdata(data, filt)
 %   the new sample rate is returned as newsr because downsampling might fail
 %   for some required sampling rates; a fallback is used then used by pspm_glm,
 %   pspm_sf, pspm_pulse_convert, pspm_dcm, pspm_pp.
-% ● Copyright
+% ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy Chao (UCL)
