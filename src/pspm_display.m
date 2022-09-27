@@ -3,7 +3,7 @@ function varargout = pspm_display(varargin)
 %   Code for the GUI that is used to display different data from scr
 %   datafiles.
 %   Accepts input: 'filepath/filename'
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2013 Philipp C Paulus (Technische Universitaet Dresden)
 %   Maintained in 2021 by Teddy Chao (WCHN, UCL)

@@ -13,7 +13,7 @@ function [sts, import] = pspm_get_events(import)
 %               'ascending', 'descending', 'both', 'all'.
 % ● Output
 %       import: returns event timestamps in seconds in import.data
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2013-2015 by Dominik R Bach & Tobias Moser (University of Zurich)
 

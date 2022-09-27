@@ -9,7 +9,7 @@ function [sts, data] = pspm_get_saccade_l(import)
 %     .data: column vector of waveform data
 %       .sr: sample rate
 %    .units:
-% ● Copyright
+% ● History
 %   Introduced in PsPM 4.0.2
 %   Written in 2018 by Laure Ciernik
 %   Maintained in 2022 by Teddy Chao (UCL)

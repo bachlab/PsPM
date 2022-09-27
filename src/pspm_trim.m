@@ -1,5 +1,5 @@
 function newdatafile = pspm_trim(datafile, from, to, reference, options)
-% ● Descrition
+% ● Description
 %   pspm_trim cuts an PsPM dataset to the limits set with the parameters 'from'
 %   and 'to' and writes it to a file with a prepended 't'
 % ● Format
@@ -39,7 +39,7 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
 %          newdatafile: a filename for the updated file, a cell array of
 %                       filenames, a struct with fields .data and .infos or a
 %                       cell array of structs
-% ● Copyright
+% ● Version
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 

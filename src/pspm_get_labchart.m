@@ -10,7 +10,7 @@ function [sts, import, sourceinfo] = pspm_get_labchart(datafile, import)
 % ● Arguments
 %   datafile:
 %     import:
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Tobias Moser (University of Zurich)
 %   Maintained in 2022 by Teddy Chao (UCL)

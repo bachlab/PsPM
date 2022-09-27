@@ -30,7 +30,7 @@ function [sts, infos] = pspm_write_channel(fn, newdata, channel_action, options)
 %    │              depends on the passed action and options.
 %    └────.channel: contains channel id of added / replaced / deleted
 %                   channels.
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2015 by Dominik R Bach (University of Zurich)
 %                      Samuel Gerster (University of Zurich)

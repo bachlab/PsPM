@@ -8,7 +8,7 @@ function [sts, data]=pspm_get_emg(import)
 %   .units: 
 %    .data: column vector of waveform data
 %      .sr: sample rate
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2009-2014 by Tobias Moser (University of Zurich)
 %   Maintained in 2022 by Teddy Chao (UCL)

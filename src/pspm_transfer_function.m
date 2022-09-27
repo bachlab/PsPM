@@ -1,5 +1,5 @@
 function scr = pspm_transfer_function(data, c, Rs, offset, recsys)
-% ● Descrition
+% ● Description
 %   pspm_transfer_function converts input data into SCR in microsiemens
 %   assuming a linear transfer from total conductance to measured data
 % ● Format

@@ -9,7 +9,7 @@ function [sts, hist_str] = pspm_format_history_from_file(fn)
 %   fn: [string] Path to a PsPM file
 % ● Output
 %   hist_str: Formatted table string
-% ● Copyright
+% ● History
 %   Written in 2019 by Eshref Yozdemir (UZH)
 
 [sts, infos, ~, ~] = pspm_load_data(fn);
