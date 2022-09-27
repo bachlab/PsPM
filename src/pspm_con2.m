@@ -17,11 +17,13 @@ function pspm_con2(modelfile, outfile, con, connames, options)
 %               will be numbered by default if this argument is missing or has
 %               value 'number'
 %     options:  
-%  .overwrite:  defines whether to overwrite existing files.
-%               (default = 0).
+%  .overwrite:  [logical] (0 or 1)
+%               Define whether to overwrite existing output files or not.
+%               Default value: determined by pspm_overwrite.
 % ● Copyright
 %   Introduced in PsPM 3.0
-%   Written in 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao
 
 %% Initialise
 global settings

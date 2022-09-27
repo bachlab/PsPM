@@ -17,7 +17,9 @@ function varargout = pspm_data_editor(varargin)
 %   │               .mat file must be a struct with an 'epoch' field
 %   │               and a e x 2 matrix of epoch on- and offsets
 %   │               (n: number of epochs)
-%   └──.overwrite:  defines whether to overwrite the file
+%   └──.overwrite:  [logical] (0 or 1)
+%                   Define whether to overwrite existing output files or not.
+%                   Default value: determined by pspm_overwrite.
 % ● Outputs
 %             out:  The output depends on the actual output type chosen in
 %                   the graphical interface. At the moment either the

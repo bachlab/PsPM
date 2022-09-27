@@ -78,8 +78,9 @@ function glm = pspm_glm(model, options)
 %                 invert SPS model, set centering to 0. Default: 1
 %   ┌───options:
 %   │ ▶︎ optional
-%   ├──.overwrite:
-%   │             overwrite existing model output; default 0
+%   ├──.overwrite:  [logical] (0 or 1)
+%   │             Define whether to overwrite existing output files or not.
+%   │             Default value: determined by pspm_overwrite.
 %   ├──.marker_chan_num:
 %   │             marker channel number; default last marker channel.
 %   └──.exclude_missing:
@@ -871,7 +872,6 @@ end
 % glm.stats_exclude_names holds the names of the conditions to be excluded
 
 if isfield(options,'exclude_missing')
-
   [sts,segments] = pspm_extract_segments('auto', glm, ...
     struct('length', options.exclude_missing.segment_length));
   if sts == -1
@@ -887,21 +887,14 @@ if isfield(options,'exclude_missing')
     'un',0);
   glm.stats_exclude_names = glm.stats_exclude_names(glm.stats_exclude);
 end
-
-
-
-% save data
+%% save data
+% overwrite is determined in load1
 savedata = struct('glm', glm);
 [sts, data, mdltype] = pspm_load1(model.modelfile, 'save', savedata, options);
 if sts == -1
   warning('ID:invalid_input', 'call of pspm_load1 failed');
   return;
 end
-
-
-% user output
-%-------------------------------------------------------------------------
-
+%% user output
 fprintf(' done. \n');
-
 return

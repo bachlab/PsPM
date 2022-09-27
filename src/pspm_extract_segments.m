@@ -54,8 +54,9 @@ function [sts, out] = pspm_extract_segments(varargin)
 %   │                     the mean (dashed) will be ploted. Default is 0.
 %   ├────────.outputfile: Define filename to store segments. If is equal
 %   │                     to '', no file will be written. Default is 0.
-%   ├─────────.overwrite: Define if already existing files should be
-%   │                     overwritten. Default ist 0.
+%   ├─────────.overwrite: [logical] (0 or 1)
+%   │                     Define whether to overwrite existing output files or not.
+%   │                     Default value: determined by pspm_overwrite.
 %   ├───────.marker_chan: Mandatory if timeunit is 'markers'. For the
 %   │                     function to find the appropriate timing of the
 %   │                     specified marker ids. Must have the same format
@@ -171,7 +172,7 @@ if nargin >= 2
       if ~isstruct(struct_file)
         if ~ischar(struct_file) || ~exist(struct_file, 'file')
           warning('ID:invalid_input', 'GLM file is not a string or does not exist.'); return;
-        end;
+        end
         [~, model_strc, ~] = pspm_load1(struct_file, 'all');
       else
         model_strc = struct_file;
@@ -181,7 +182,7 @@ if nargin >= 2
         options = varargin{3};
       else
         options = struct();
-      end;
+      end
 
       data_fn = model_strc.input.datafile;
       n_file = numel(data_fn);
@@ -197,33 +198,33 @@ if nargin >= 2
             warning('ID:invalid_input', ['''markers'' defined as ', ...
               'timeunit, but cannot load the corresponding ', ...
               'marker channel information from the GLM input.']);
-          end;
-        end;
-      end;
+          end
+        end
+      end
 
       manual_chosen = 0;      % set FLAG to indicate 'not manual', i.e. 'auto'
 
     otherwise
       warning('ID:invalid_input', 'Unknown mode specified.'); return;
-  end;
+  end
 else
   warning('ID:invalid_input', 'The function expects at least 2 parameters.'); return;
-end;
+end
 
 if (manual_chosen == 0) && ~iscell(data_fn)
   data_fn = {data_fn};
-end;
+end
 
 if ~isstruct(options)
   warning('ID:invalid_input', 'Options must be a struct.'); return;
-end;
+end
 
 % set default timeunit
 if ~isfield(options, 'timeunit')
   options.timeunit = 'seconds';
 else
   options.timeunit = lower(options.timeunit);
-end;
+end
 
 % set default normalisation
 if ~isfield(options, 'norm')
@@ -236,28 +237,25 @@ if manual_chosen == 1 || (manual_chosen == 0 && strcmpi(model_strc.modeltype,'gl
     options.marker_chan = repmat({-1}, numel(data_fn),1);
   elseif ~iscell(options.marker_chan)
     options.marker_chan = repmat({options.marker_chan}, size(data_fn));
-  end;
-end;
+  end
+end
 
 % set default length
 if ~isfield(options, 'length')
   options.length = -1;
-end;
+end
 
 % default plot
 if ~isfield(options, 'plot')
   options.plot = 0;
-end;
+end
 
 % outputfile
 if ~isfield(options, 'outputfile')
   options.outputfile = '';
-end;
+end
 
-% overwrite
-if ~isfield(options, 'overwrite')
-  options.overwrite = 0;
-end;
+
 
 %set default ouput_nan
 if ~isfield(options, 'nan_output')|| strcmpi(options.nan_output, 'none')
@@ -278,8 +276,6 @@ elseif ~isnumeric(options.plot) && ~islogical(options.plot)
   warning('ID:invalid_input', 'options.plot is not numeric.'); return;
 elseif ~isempty(options.outputfile) && ~ischar(options.outputfile)
   warning('ID:invalid_input', 'options.outputfile has to be a string.'); return;
-elseif ~isnumeric(options.overwrite) && ~islogical(options.overwrite)
-  warning('ID:invalid_input', 'Options.overwrite has to be numeric or logical.'); return;
 elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 2 && ~isfield(options,'marker_chan')
   warning('ID:invalid_input','''markers'' specified as a timeunit but nothing was specified in ''options.marker_chan''')
 elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 2 && ~all(size(data_raw) == size(options.marker_chan))
@@ -293,8 +289,8 @@ elseif manual_chosen == 1 || (manual_chosen == 0 && strcmpi(model_strc.modeltype
       && any(cellfun(@(x) isnumeric(x) && x <= 0, options.marker_chan))
     warning('ID:invalid_input', ['''markers'' specified as a timeunit but ', ...
       'no valid marker channel is defined.']); return;
-  end;
-end;
+  end
+end
 
 if manual_chosen == 2
   n_sessions = numel(data_raw);
@@ -302,7 +298,7 @@ elseif manual_chosen == 1 || strcmpi(model_strc.modeltype, 'glm')
   n_sessions = numel(data_fn);
 else
   n_sessions = numel(model_strc.input.scr);
-end;
+end
 
 % load timing
 if manual_chosen ~= 0
@@ -334,7 +330,7 @@ if manual_chosen ~= 0
   elseif manual_chosen == 2
     input_data = data_raw;
     sampling_rates = [sr{:}];
-    if strcmpi(options.timeunit, 'markers'), marker_data = options.marker_chan; end;
+    if strcmpi(options.timeunit, 'markers'), marker_data = options.marker_chan; end
   end
 elseif strcmpi(model_strc.modeltype, 'glm')
   multi = model_strc.timing.multi;
@@ -382,13 +378,13 @@ else
       multi(1).durations{1} = durations;
     end
     point= point+nr_trials_in_sess;
-  end;
+  end
   input_data = model_strc.input.scr;
   sampling_rates = model_strc.input.sr;
   if numel(sampling_rates) == 1
     sampling_rates = repmat(sampling_rates, n_sessions, 1);
   end
-end;
+end
 %% Normalise data
 if options.norm
   newmat = cell2mat(input_data(:));
@@ -479,7 +475,7 @@ if options.plot
 
   % legend labels
   legend_lb = cell(n_cond*3,1);
-end;
+end
 
 %% This section gives each trial over all session a uniquie identifier.
 all_sessions = cell2mat(cellfun(@(x)reshape(x, [min(size(x)), max(size(x))]),comb_sessions,'un', 0));
@@ -559,10 +555,10 @@ for session_idx = 1:n_sessions
           end
         catch
           warning('ID:invalid_input', 'Cannot determine onset duration.'); return;
-        end;
+        end
       else
         segment_length = options.length;
-      end;
+      end
 
       % ensure start and segment_length have the 'sample' format to
       % access on data
@@ -584,8 +580,8 @@ for session_idx = 1:n_sessions
             start = start;
           else
             start = start * sr / filtered_sr;
-          end;
-      end;
+          end
+      end
 
       start = max(1, round(start));
       stop = min(numel(session_data) + 1, start + round(segment_length));
@@ -598,7 +594,7 @@ for session_idx = 1:n_sessions
 
       if ~isfield(segments{cond_idx}, 'data')
         segments{cond_idx}.data = NaN((stop-start), n_onsets_in_cond{cond_idx});
-      end;
+      end
       if (stop - start) > size(segments{cond_idx}.data, 1)
         last_row = size(segments{cond_idx}.data, 1);
         segments{cond_idx}.data(last_row + 1 : (stop - start), :) = NaN;
@@ -606,10 +602,10 @@ for session_idx = 1:n_sessions
 
       onset_write_idx = onset_write_indices_in_cond_and_session(onset_idx);
       segments{cond_idx}.data(1:(stop-start), onset_write_idx) = session_data(start:(stop-1));
-    end;
-  end;
+    end
+  end
   num_prev_conds = num_prev_conds + num_conds_in_session;
-end;
+end
 
 %% create statistics for each condition
 for c=1:n_cond
@@ -641,8 +637,8 @@ for c=1:n_cond
     legend_lb{(c-1)*3 + 1} = [comb_names{c} ' AVG'];
     legend_lb{(c-1)*3 + 2} = [comb_names{c} ' SEM+'];
     legend_lb{(c-1)*3 + 3} = [comb_names{c} ' SEM-'];
-  end;
-end;
+  end
+end
 
 %% nan_output
 if ~strcmpi(options.nan_output,'none')
@@ -709,31 +705,16 @@ if ~isempty(options.outputfile)
   % ensure correct file suffix
   [pt, fn, ~] = fileparts(options.outputfile);
   outfile = [pt filesep fn '.mat'];
-  write_ok = 0;
-  if exist(outfile, 'file')
-    if options.overwrite
-      write_ok = 1;
-    else
-      button = questdlg(sprintf('File (%s) already exists. Replace file?', ...
-        outfile), 'Replace file?', 'Yes', 'No', 'No');
-
-      write_ok = strcmpi(button, 'Yes');
-    end;
-  else
-    write_ok = 1;
-  end;
-
-  if write_ok
+  % overwrite
+  overwrite = pspm_overwrite(outfile, options);
+  if overwrite
     save(outfile, 'segments');
     out.outputfile = outfile;
-  end;
-end;
-
+  end
+end
 if options.plot
   % show plot
   set(fg, 'Visible', 'on');
   legend(legend_lb);
-end;
-
+end
 sts = 1;
-

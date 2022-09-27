@@ -44,8 +44,9 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %   │                 'add'. Possible values are 'add' or 'replace'
 %   ├───────.newfile: Define new filename to store data to it. Default is ''
 %   │                 which means that the file under fn will be 'replaced'.
-%   ├─────.overwrite: Define whether existing files should be overwritten or
-%   │                 not. Default is 0.
+%   ├─────.overwrite: [logical] (0 or 1)
+%   │                 Define whether to overwrite existing output files or not.
+%   │                 Default value: determined by pspm_overwrite.
 %   ├───────.missing: If missing is enabled (=1), an extra channel will be
 %   │                 written containing information about the validated data.
 %   │                 Data points equal to 1 describe epochs which have been
@@ -248,15 +249,7 @@ end
 options = pspm_options(options, 'find_valid_fixations');
 
 % overwrite
-if ~isfield(options, 'overwrite')
-  options.overwrite = pspm_overwrite(fn);
-else
-  if ~isnumeric(options.overwrite) && ~islogical(options.overwrite)
-    warning('ID:invalid_input', ...
-      'Options.overwrite must be either numeric or logical.');
-    return
-  end
-end
+options.overwrite = pspm_overwrite(fn, options);
 
 % newfile
 if ~isfield(options, 'newfile')

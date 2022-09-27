@@ -27,7 +27,9 @@ function outfile = pspm_sf(model, options)
 %   ├─────────.filter:  filter settings; modality specific default
 %   └────────.channel:  channel number; default: first SCR channel
 %   ┌─────────options
-%   ├──────.overwrite:  overwrite existing files
+%   ├──────.overwrite:  [logical] (0 or 1)
+%   │                   Define whether to overwrite existing output files or not.
+%   │                   Default value: determined by pspm_overwrite.
 %   ├.marker_chan_num:  marker channel number
 %   │                   if undefined or 0, first marker channel is used.
 %   │ additional options for individual methods:
@@ -171,7 +173,9 @@ for iFile = 1:numel(model.datafile)
   % 3.1 User output
   fprintf('SF analysis: %s ...', model.datafile{iFile});
   % 3.2 Check whether model file exists
-  if ~pspm_overwrite(model.modelfile, options); return; end
+  if ~pspm_overwrite(model.modelfile, options)
+		return
+	end
   % 3.3 get and filter data
   [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
   if sts < 0, return; end

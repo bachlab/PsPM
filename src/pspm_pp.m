@@ -11,6 +11,11 @@ function newdatafile = pspm_pp(varargin)
 %          n: number of timepoints for median filter
 %   'butter': 1st order butterworth low pass filter for SCR
 %       freq: cut off frequency (min 20 Hz)
+%	channelnumber:
+%	┌──options:	[struct] optional
+% └.overwrite:[logical] (0 or 1)
+%             Define whether to overwrite existing output files or not.
+%             Default value: determined by pspm_overwrite.
 % ● Copyright
 %   Introduced In PsPM 3.0
 %   Written in 2009-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -23,8 +28,7 @@ if isempty(settings)
 end
 newdatafile = [];
 
-% check input arguments
-% -------------------------------------------------------------------------
+%% Check input arguments
 if nargin < 1
   warning('ID:invalid_input', 'No input arguments. Don''t know what to do.');
 elseif nargin < 2
@@ -47,19 +51,17 @@ fn = varargin{2};
 if nargin >=5 && isstruct(varargin{5}) && isfield(varargin{5}, 'overwrite')
   options = varargin{5};
 else
-  options.overwrite = 0;
+  options = struct(); % build an empty struct if nothing is available
 end
 
-% load data
-% -------------------------------------------------------------------------
+%% Load data
 [sts, infos, data] = pspm_load_data(fn, 0);
 if sts ~= 1
   warning('ID:invalid_input', 'call of pspm_load_data failed');
   return;
 end
 
-% determine channel number
-% -------------------------------------------------------------------------
+%% Determine channel number
 if nargin >= 4 && ~isempty(varargin{4}) && ...
     (~isequal(size(varargin{4}), [1,1]) || varargin{4} ~= 0)
   channum = varargin{4};
@@ -72,8 +74,7 @@ else
   channum = find(channum == 1);
 end
 
-% do the job
-% -------------------------------------------------------------------------
+%% Do the job
 switch method
   case 'median'
     n = varargin{3};
@@ -115,7 +116,9 @@ newdatafile = fullfile(pth, ['m', fn, ext]);
 infos.ppdate = date;
 infos.ppfile = newdatafile;
 clear savedata
-savedata.data = data; savedata.infos = infos;
+savedata.data = data;
+savedata.infos = infos;
+options.overwrite = pspm_overwrite(newdatafile, options);
 savedata.options = options;
 pspm_load_data(newdatafile, savedata);
 fprintf('done.');

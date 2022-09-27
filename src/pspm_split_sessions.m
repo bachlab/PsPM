@@ -12,7 +12,9 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 %       markerchannel:  (optional)
 %                       number of the channel containing the relevant markers.
 %   ┌─────────options:
-%   ├──────.overwrite:  overwrite existing files by default
+%   ├──────.overwrite:  [logical] (0 or 1)
+%   │                   Define whether to overwrite existing output files or not.
+%   │                   Default value: determined by pspm_overwrite.
 %   ├─────────.max_sn:  Define the maximum of sessions to look for.
 %   │                   Default is 10 (defined by settings.split.max_sn)
 %   ├.min_break_ratio:  Minimum for ratio
@@ -219,7 +221,8 @@ else
     trimoptions = struct('drop_offset_markers', 1);
     newdata = pspm_trim(struct('data', {indata}, 'infos', ininfos), ...
       options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions);
-    newdata.options = struct('overwrite', options.overwrite);
+		options.overwrite = pspm_overwrite(newdatafile{sn}, options);
+    newdata.options = options;
     pspm_load_data(newdatafile{sn}, newdata);
 
 

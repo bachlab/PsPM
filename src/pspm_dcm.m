@@ -92,8 +92,9 @@ function dcm = pspm_dcm(model, options)
 %		│             Default: 0.
 %		│ ▶︎ Output
 % 	├────.nosave: Don't save dcm structure (e.g. used by pspm_get_rf)
-% 	├─.overwrite: whether to overwrite
-%		│             Default: determined by pspm_overwrite.
+% 	├─.overwrite: [logical] (0 or 1)
+%   │             Define whether to overwrite existing output files or not.
+%   │             Default value: determined by pspm_overwrite.
 %		│ ▶︎ Naming
 % 	├──.trlnames: Cell array of names for individual trials,
 %		│             is used for contrast manager only (e.g. condition

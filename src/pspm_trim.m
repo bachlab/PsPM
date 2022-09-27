@@ -26,7 +26,9 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
 %                       from and to are set in seconds with respect to the first
 %                       two markers having the value held in the cell array
 %   ┌─────────options:
-%   ├──────.overwrite:  overwrite existing files by default
+%   ├──────.overwrite:  [logical] (0 or 1)
+%   │                   Define whether to overwrite existing output files or not.
+%   │                   Default value: determined by pspm_overwrite.
 %   ├.marker_chan_num:  marker channel number.
 %   │                   if undefined or 0, first marker channel is used.
 %   └.drop_offset_markers:
@@ -340,6 +342,7 @@ for i_D = 1:numel(D)
     [pth, fn, ext] = fileparts(datafile);
     newdatafile    = fullfile(pth, ['t', fn, ext]);
     savedata.infos.trimfile = newdatafile;
+		options.overwrite = pspm_overwrite(newdatafile, options);
     savedata.options = options;
     sts = pspm_load_data(newdatafile, savedata);
   end

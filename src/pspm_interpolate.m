@@ -22,7 +22,9 @@ function [sts, outdata] = pspm_interpolate(varargin)
 %
 %   ┌─────options:
 %   ├──.overwrite:  Defines if existing datafiles should be overwritten.
-%   │               [optional; accept: 1, 0; default: 0]
+%		│								[logical] (0 or 1)
+%		│								Define whether to overwrite existing output files or not.
+%		│								Default value: determined by pspm_overwrite.
 %   ├─────.method:  Defines the interpolation method, see interp1() for
 %   │               possible interpolation methods.
 %   │               [optional; default: linear]
@@ -86,7 +88,6 @@ if isempty(indata)
 end
 % 1.2 initialise options
 options = pspm_options(options, 'interpolate');
-try options.overwrite; catch, options.overwrite = 0; end
 try options.method; catch, options.method = 'linear'; end
 try options.channels; catch, options.channels = []; end
 try options.newfile; catch, options.newfile = 0; end
@@ -114,9 +115,6 @@ elseif ~islogical(options.newfile) && ~isnumeric(options.newfile)
   return;
 elseif ~islogical(options.extrapolate) && ~isnumeric(options.extrapolate)
   warning('ID:invalid_input', 'options.extrapolate must be numeric or logical');
-  return;
-elseif ~islogical(options.overwrite) && ~isnumeric(options.overwrite)
-  warning('ID:invalid_input', 'options.overwrite must be numeric (0 or 1) or logical');
   return;
 end
 % 1.3 check data file argument
@@ -267,7 +265,7 @@ for d = 1:numel(D)
         newdatafile    = fullfile(pth, ['i', fn, ext]);
         savedata.infos.interpolatefile = newdatafile;
         % pass options
-        o.overwrite = options.overwrite;
+        o.overwrite = pspm_overwrite(newdatafile, options);
         savedata.options = o;
         sts = pspm_load_data(newdatafile, savedata);
         if sts == 1

@@ -18,7 +18,8 @@ function [sts, markerinfo] = pspm_get_markerinfo(fn, options)
 %   │             name of a file to write the markerinfo to;
 %   │             default value: empty, meaning no file will be written
 %   └──overwrite: [logical] (0 or 1)
-%                 define whether to overwrite existing output files or not
+%                 Define whether to overwrite existing output files or not.
+%                 Default value: determined by pspm_overwrite.
 % ● Output
 %            sts: [double]
 %                 default value: -1 if unsuccessful
@@ -48,17 +49,12 @@ end
 if ~isfield(options, 'filename')
   options.filename = '';
 end
-if ~isfield(options, 'overwrite')
-  options.overwrite = false;
-end
 if ~isstruct(options)
   warning('ID:invalid_input', 'Options has to be a struct.'); return;
 elseif isfield(options, 'filename') && ~ischar(options.filename)
   warning('ID:invalid_input', 'Options.filename has to be char.'); return;
 elseif isfield(options, 'markerchan') && ~isnumeric(options.markerchan)
   warning('ID:invalid_input', 'Options.markerchan has to be numeric.'); return;
-elseif isfield(options, 'overwrite') && ~islogical(options.overwrite)
-  warning('ID:invalid_input', 'Options.overwrite must be logical.'); return;
 end
 % check input arguments
 if nargin < 1 || isempty(fn)
@@ -93,19 +89,7 @@ end
 % if necessary, write into a file
 outfn = options.filename;
 if ~isempty(outfn)
-  if exist(outfn, 'file')
-    if options.overwrite
-      write_ok = true;
-    elseif strcmpi('Yes', ...
-        questdlg(sprintf('File (%s) already exists. Overwrite?', outfn)))
-      write_ok = true;
-    else
-      write_ok = false;
-    end
-  else
-    write_ok = true;
-  end
-  if write_ok
+  if pspm_overwrite(outfn, options)
     save(outfn, 'markerinfo');
   end
 end

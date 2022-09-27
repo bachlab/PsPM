@@ -10,7 +10,8 @@ function [sts, newfile] = pspm_down(datafile, newsr, chan, options)
 %   datafile:	can be a name, or for convenience, a cell array of filenames
 %    newfreq:	new frequency (must be >= 10 Hz)
 %   		chan:	channels to downsample (default: all channels)
-%    options:	options.overwrite - overwrite existing files by default
+%    options:	defines whether to overwrite the file.
+%		│         Default value: determined by pspm_overwrite.
 % ● Output
 %   		 sts:	1 if the function runs successfully
 %    newfile:	the filename for the updated file, or cell array of filenames
@@ -25,8 +26,7 @@ if isempty(settings)
 end
 sts = -1;
 
-% check input arguments
-% -------------------------------------------------------------------------
+%% check input arguments
 if nargin<1
   errmsg='No data file'; warning('ID:invalid_input', errmsg); return;
 elseif nargin<2
@@ -58,11 +58,7 @@ if nargin == 4 && ~isstruct(options)
   return;
 end
 
-
-
-
-% convert datafile to cell for convenience
-% -------------------------------------------------------------------------
+%% convert datafile to cell for convenience
 if iscell(datafile)
   D = datafile;
 else
@@ -70,8 +66,7 @@ else
 end
 clear datafile
 
-% work on all data files
-% -------------------------------------------------------------------------
+%% work on all data files
 for d = 1:numel(D)
   % determine file names
   datafile = D{d};
@@ -93,9 +88,10 @@ for d = 1:numel(D)
   end
 
   % make outputfile
-  [p f ex]=fileparts(datafile);
+  [p, f, ex]=fileparts(datafile);
   newfile=fullfile(p, ['d', f, ex]);
 
+  % if not to overwrite files, end the function
   if ~pspm_overwrite(newfile, options); return; end
 
   % user output
@@ -121,7 +117,7 @@ for d = 1:numel(D)
     end
   end
 
-  [pth nfn ext] = fileparts(newfile);
+  [pth, nfn, ext] = fileparts(newfile);
   infos.downsampledfile = [nfn ext];
   save(newfile, 'infos', 'data');
   Dout{d}=newfile;
@@ -140,4 +136,4 @@ end
 
 sts = 1;
 
-return;
+return

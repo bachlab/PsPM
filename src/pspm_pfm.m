@@ -100,7 +100,9 @@ function output = pspm_pfm(model, options)
 %                   DEFAULT: 0 (not normalize)
 %   ┌─────options:  [struct]
 %   └──.overwrite:  (optional) overwrite existing model output;
-%                   DEFAULT: 0
+%                   [logical] (0 or 1)
+%                   Define whether to overwrite existing output files or not.
+%                   Default value: determined by pspm_overwrite.
 % ● Outputs
 %   pfm: a structure 'pfm' which is also written to file
 % ● Reference
@@ -120,7 +122,7 @@ end
 sts = -1;
 
 
-%%%%%%%% Checking inputs %%%%%%%%
+%%  Checking inputs 
 
 if nargin<1
   errmsg='Nothing to do.'; warning('ID:invalid_input', errmsg); return;
@@ -128,7 +130,7 @@ elseif nargin<2
   options = struct();
 end
 
-%%% Checking required fields %%%
+%%  Checking required fields 
 if ~isfield(model, 'datafile')
   warning('ID:invalid_input', 'No input data file specified.'); return;
 elseif ~ischar(model.datafile) && ~iscell(model.datafile)
@@ -168,7 +170,7 @@ if ~isempty(model.timing) && (numel(model.datafile) ~= numel(model.timing))
     'Session numbers of data files and event definitions do not match.'); return;
 end
 
-%%% Checking optionnal fields %%%
+%%  Checking optionnal fields
 
 % Checking model specs
 if ~isfield(model, 'modality')
@@ -339,10 +341,11 @@ elseif ~ismember(model.norm, [0, 1])
   warning('ID:invalid_input', '''model.zscore'' has to be 0 or 1.'); return;
 end
 
-if ~pspm_overwrite(model.modelfile, options); return; end
+if ~pspm_overwrite(model.modelfile, options)
+	return;
+end
 
-%%
-%%%%%%%% Loading files %%%%%%%%
+%% Loading files 
 
 fprintf('Computing Pupil Model: %s \n', model.modelfile);
 
@@ -398,7 +401,7 @@ else
   fprintf('\n');
 end
 
-%%%%%%%% Zscoring the data %%%%%%%%
+%%  Zscoring the data 
 if model.zscore
   fprintf('Zscoring ...\n')
   n_file = numel(model.datafile);
@@ -408,7 +411,7 @@ if model.zscore
   end
 end
 
-%%%%%%%% Extracting segments %%%%%%%%
+%%  Extracting segments
 fprintf('Extracting segments ...\n')
 
 % temporary structure which is deleted after extracting segments
@@ -439,7 +442,7 @@ for k=1:n_file
 end
 clear extrsg tmp_data s lsts
 
-%%%%%%%% Downsample the data %%%%%%%%
+%% Downsample the data
 % if a filter was specified or if the data differ in sr
 if model.filter.applied_filt
   fprintf('Filtering ...\n')
@@ -469,7 +472,7 @@ else
   filtered = 0;
 end
 
-%%%%%%%% Determining mean values %%%%%%%%
+%% Determining mean values
 fprintf('Preparing for fitting ...\n')
 
 baseline_index = floor(sr(1)*model.baseline)+1;
@@ -514,7 +517,7 @@ for i=1:n_exp_cond
   clear tmp_data tmp_data_new tmp_max tmp_max_ind
 end
 
-%%%%%%%% Fitting the model %%%%%%%%
+%% Fitting the model
 fprintf('Fitting ...\n')
 
 for i=1:n_exp_cond
@@ -563,7 +566,7 @@ for i=1:n_exp_cond
 
 end
 
-%%%%%%%% Saving model %%%%%%%%
+%% Saving model
 fprintf('Saving model ...\n');
 
 % Collecting input model information
@@ -617,10 +620,7 @@ if sts == -1
   warning('ID:invalid_input', 'call of pspm_load1 failed');
   return;
 end
-
-%%%%%%%% User output %%%%%%%%
+%% User output
 output = pfm;
-
 fprintf('done. \n');
-
 end
