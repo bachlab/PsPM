@@ -16,7 +16,7 @@ function [sts] = pspm_remove_epochs(datafile, channel, epochfile, options)
 %               ['add'/'replace'] Defines whether the new channels should be 
 %               added or the corresponding channel should be replaced.
 %               (Default: 'add')
-% ● Copyright
+% ● History
 %   Introduced in PsPM 4.0
 %   Written in 2016 by Tobias Moser (University of Zurich)
 

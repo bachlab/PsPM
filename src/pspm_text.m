@@ -1,7 +1,7 @@
 function pspm_text
 % ● Description
 %   pspm_text handles the text for GUI display.
-% ● Copyright
+% ● History
 %   Introduced in PsPM 6.0
 %   Written and maintained in 2022 by Teddy Chao (UCL)
   helptext_import_acq = '';

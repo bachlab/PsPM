@@ -12,7 +12,7 @@ function [bs, x] = pspm_bf_scrf(varargin)
 %   Bach DR, Flandin G, Friston KJ, Dolan RJ (2010). Modelling event-related
 %   skin conductance responses. International Journal of Psychophysiology,
 %   75, 349-356.
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy Chao (UCL)

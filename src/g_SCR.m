@@ -6,7 +6,7 @@ function [gx,dgdx,dgdPhi] = g_aSCR(Xt,Phi,ut,inG)
 %    Phi:
 %     ut:
 %    inG:
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 

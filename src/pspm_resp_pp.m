@@ -20,7 +20,7 @@ function sts = pspm_resp_pp(fn, sr, chan, options)
 %   └.channel_action: ['add'(default) /'replace']
 %                     Defines whether the new channels should be added or the
 %                     corresponding channel should be replaced.
-% ● Version History
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 

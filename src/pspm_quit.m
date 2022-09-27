@@ -1,7 +1,7 @@
 function pspm_quit
 % ● Description
 %   pspm_quit clears settings, removes paths & closes figures
-% ● Copyright
+% ● History
 %   Written in 2008-2022 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy Chao (UCL)
 
@@ -10,7 +10,7 @@ if isempty(settings)
   pspm_init;
 end
 fs = filesep;
-if settings.scrpath, rmpath(settings.path), end
+if settings.scrpath, rmpath(settings.path), end;
 if any(contains(path, 'VBA'))
   rmpath(pspm_path('ext','VBA'));
   rmpath(pspm_path('ext','VBA','subfunctions'));

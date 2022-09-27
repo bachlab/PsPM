@@ -28,7 +28,7 @@ function y = pspm_filtfilt(b,a,x)
 % ● References
 %   L. Shure, T. Krauss, F. Gustafsson
 %   Copyright 1988-2004 The MathWorks, Inc.
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 

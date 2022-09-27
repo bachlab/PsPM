@@ -8,7 +8,7 @@ function [sts, import, sourceinfo] = pspm_get_spike(datafile, import)
 %   .denoise: for marker channels in CED spike format (recorded as 'level'), 
 %             filters out markers duration longer than the value given here (in
 %             ms).
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 

@@ -1,5 +1,5 @@
 function pspm_show_forum
-% ● Copyright
+% ● History
 %   Introduced In PsPM 5.1
 %   Written in 2020 by Teddy Chao (UCL)
 
