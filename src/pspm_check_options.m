@@ -9,7 +9,7 @@ function sts = pspm_check_options(type, check_opt, fields)
 %               like 'string', 'numeric', 'cell', 'logical'
 %   check_opt:  [struct] options which should be checked
 %      fields:  [cell of strings] fields which should be checked
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.1
 %   Written in 2009-2016 by Tobias Moser (University of Zurich)
 

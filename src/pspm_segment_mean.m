@@ -21,7 +21,7 @@ function [sts, out] = pspm_segment_mean(segments, options)
 %   │               in the out struct. Default is ''.
 %   └────overwrite: If specified, file specified in options.newfile, will be 
 %                   overwritten, if it already exists.
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.1
 %   Written in 2008-2016 by Tobias Moser (University of Zurich)
 %   Maintained in 2022 by Teddy Chao (UCL)

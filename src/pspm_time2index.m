@@ -11,7 +11,7 @@ function index = pspm_time2index(time, sr, varargin)
 %                 points should not exceed
 % ● Output
 %          index: [integer] index or data point
-% ● Copyright
+% ● History
 %   Introduced in PsPM 5.1.2
 %   Written in 2021 by Teddy Chao (UCL)
 

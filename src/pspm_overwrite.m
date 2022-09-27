@@ -18,7 +18,7 @@ function ow_final = pspm_overwrite(varargin)
 %       if a struct, check if the field "overwrite" exist
 % ● Outputs
 %   ow_final  option of overwriting determined by pspm_overwrite
-% ● Copyright
+% ● History
 %   Introduced in PsPM 6.0
 %   Written in 2022 by Teddy Chao (UCL)
 

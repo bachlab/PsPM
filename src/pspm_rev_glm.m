@@ -16,7 +16,7 @@ function fig = pspm_rev_glm(modelfile, glm, plotNr)
 %               5 - reconstructed responses
 % ● Outputs
 %         fig:  returns the figure handles
-% ● Copyright
+% ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy Chao (UCL)

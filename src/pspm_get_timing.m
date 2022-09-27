@@ -56,7 +56,7 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %   (3) 'poly' is an optional field in pmods - default is 1. Polynomial
 %       values larger than 1 are expanded here and returned as additional cells
 %       for 'param'
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2009-2015 by Dominik R Bach (WTCN, UZH)
 %   Maintained in 2022 by Teddy Chao (UCL)

@@ -17,7 +17,7 @@ function [bf, x] = pspm_bf_sebrf(varargin)
 %   Modeling Startle Eyeblink Electromyogram to Assess Fear Learning.
 %   Psychophysiology. 2017 Feb; 54(2): 204–214.
 %   doi: 10.1111/psyp.12775
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.1
 %   Written in 2015 by Tobias Moser (University of Zurich)
 

@@ -13,7 +13,7 @@ function [sts, import, sourceinfo] = pspm_get_acqmat(datafile, import)
 %      .type:
 %      .data:
 %     .units:
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 

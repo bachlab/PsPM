@@ -11,7 +11,7 @@ function [chantype_new] = pspm_update_chantype (chantype_og,keyword)
 %                 and preprocessed.
 % ● Output
 %   chantype_new: the new channel type with the updated keyword
-% ● Copyright
+% ● History
 %   Introduced in PsPM 6.0.
 %   Written in 2022 by Teddy Chao (UCL)
 

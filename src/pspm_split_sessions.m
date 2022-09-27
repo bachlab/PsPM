@@ -1,5 +1,5 @@
 function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchannel, options)
-% ● Descrition
+% ● Description
 %   pspm_split_sessions splits experimental sessions/blocks, based on
 %   regularly incoming markers, for example volume or slice markers from an
 %   MRI scanner, or based on a vector of split points that is defined in
@@ -46,7 +46,7 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 %   Markers in the prefix and suffix intervals are ignored. Only markers
 %   between the splitpoints are considered for each session, to avoid
 %   duplication of markers.
-% ● Copyright
+% ● History
 %   Introduced in PsPM 5.1.1
 %   Written in 2021 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Updated and maintained in 2022 by Teddy Chao (UCL)

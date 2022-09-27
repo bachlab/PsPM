@@ -12,7 +12,7 @@ function [sts, import, sourceinfo] = pspm_get_obs(datafile, import)
 %          sts:
 %       import:
 %   sourceinfo:
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2013-2015 by Linus Rüttimann (University of Zurich)
 %   Maintained in 2022 by Teddy Chao (UCL)

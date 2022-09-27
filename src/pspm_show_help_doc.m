@@ -1,5 +1,5 @@
 function pspm_show_help_doc
-% ● Copyright
+% ● History
 %   Introduced In PsPM 5.1
 %   Written in 2021 by Teddy Chao (UCL)
 
