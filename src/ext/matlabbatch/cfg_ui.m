@@ -299,7 +299,7 @@ else
     set(findobj(handles.cfg_ui,'-regexp', 'Tag','.*(Del)|(Repl)Mod$'),'Enable','on');
     mrk = cell(size(sts));
     [mrk{dep}] = deal('DEP');
-    [mrk{~sts}] = deal('<-X');
+    [mrk{~sts}] = deal('←X');
     [mrk{~dep & sts}] = deal('');
     str = cfg_textfill(handles.modlist, str, mrk, false);
 end;

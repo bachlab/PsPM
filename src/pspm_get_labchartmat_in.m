@@ -28,7 +28,7 @@ function [sts, import, sourceinfo] = pspm_get_labchartmat_in(datafile, import)
 %     apparently (according to sample files provided by Jessica Golle, U Bern,
 %     when multiple blocks are recorded, markers are counted wrt intra-block
 %     time (26.06.2013)
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy Chao (UCL)

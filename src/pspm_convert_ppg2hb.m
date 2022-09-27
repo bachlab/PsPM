@@ -24,7 +24,7 @@ function [ sts, outinfo ] = pspm_convert_ppu2hb( fn,channel,options )
 %                     large spikes mode compensates for large spikes
 %                     while generating template by removing the [integer]
 %                     largest percentile of spikes from consideration.
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Samuel Gerster (University of Zurich)
 %                      Tobias Moser (University of Zurich)

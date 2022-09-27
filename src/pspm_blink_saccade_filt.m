@@ -27,7 +27,7 @@ function [sts, out_channel] = pspm_blink_saccade_filt(fn, discard_factor, option
 % .channel_action: [string, optional, accept:'add'/'replace', default:'add']
 %                  Defines whether corrected data should be added or the
 %                  corresponding preprocessed channel should be replaced.
-% ● Copyright
+% ● History
 %   Written in 2020 by Eshref Yozdemir (University of Zurich)
 
 global settings;

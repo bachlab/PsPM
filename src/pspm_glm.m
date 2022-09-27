@@ -139,7 +139,7 @@ function glm = pspm_glm(model, options)
 %   [5] SEBR GLM: Khemka S, Tzovara A, Gerster S, Quednow B and Bach DR (2017)
 %       Modeling Startle Eyeblink Electromyogram to Assess
 %       Fear Learning. Psychophysiology
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.1
 %   Written in 2008-2016 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy Chao (UCL)

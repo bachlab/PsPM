@@ -17,7 +17,7 @@ function [fx, dfdx, dfdP] = f_SF(Xt, Theta, ut, in)
 %           2 value  per SF (time, log(amplitude))
 %      ut:  row 1 - time (after cue onset)
 %           row 2 - number of SF
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 

@@ -9,7 +9,7 @@ function [information, arguments] = pspm_help(func_name)
 % ● Outputs
 %   information:  the description of the specific function
 %     arguments:  the arguments of the specific function
-% ● Copyright
+% ● History
 %   Introduced in PsPM 6.0
 %   Written and maintained in 2022 by Teddy Chao (UCL)
 
@@ -98,8 +98,10 @@ for i_D = 1:length(D)
   while ( ~strcmp(B{N_target+1,1}(1),'●') )
     str = [str, B{N_target+1, 1}];
     N_target = N_target + 1;
-    if strcmp(B{N_target,1}(1),'●') || strcmp(B{N_target,1}(1),' ')
+    if N_target == length(B)
         break
+    elseif strcmp(B{N_target+1,1}(1),'●')
+      break
     end
   end
   A.(D{i_D}) = remove_multiple_space(str);

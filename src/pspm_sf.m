@@ -1,5 +1,5 @@
 function outfile = pspm_sf(model, options)
-% ● Descrition
+% ● Description
 %   pspm_sf is a wrapper function for analysis of tonic SC measures.
 % ● Format
 %   outfile = pspm_sf(model, options)

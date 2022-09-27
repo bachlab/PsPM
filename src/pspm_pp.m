@@ -16,7 +16,7 @@ function newdatafile = pspm_pp(varargin)
 % └.overwrite:[logical] (0 or 1)
 %             Define whether to overwrite existing output files or not.
 %             Default value: determined by pspm_overwrite.
-% ● Copyright
+% ● History
 %   Introduced In PsPM 3.0
 %   Written in 2009-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy Chao (UCL)
@@ -27,7 +27,6 @@ if isempty(settings)
   pspm_init;
 end
 newdatafile = [];
-
 %% Check input arguments
 if nargin < 1
   warning('ID:invalid_input', 'No input arguments. Don''t know what to do.');
@@ -60,7 +59,6 @@ if sts ~= 1
   warning('ID:invalid_input', 'call of pspm_load_data failed');
   return;
 end
-
 %% Determine channel number
 if nargin >= 4 && ~isempty(varargin{4}) && ...
     (~isequal(size(varargin{4}), [1,1]) || varargin{4} ~= 0)
@@ -73,7 +71,6 @@ else
   end
   channum = find(channum == 1);
 end
-
 %% Do the job
 switch method
   case 'median'
@@ -110,7 +107,6 @@ switch method
     warning('ID:invalid_input', 'Unknown filter option ...');
     return;
 end
-
 [pth, fn, ext] = fileparts(fn);
 newdatafile = fullfile(pth, ['m', fn, ext]);
 infos.ppdate = date;
@@ -122,5 +118,4 @@ options.overwrite = pspm_overwrite(newdatafile, options);
 savedata.options = options;
 pspm_load_data(newdatafile, savedata);
 fprintf('done.');
-
 return

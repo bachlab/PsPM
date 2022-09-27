@@ -82,7 +82,7 @@ function [sts, out] = pspm_extract_segments(varargin)
 %       - manual_chosen = 2  ---> it means the function runs in manual mode
 %                                 and with raw data.
 %   Search FLAG to see where these flags are set.
-% ● Copyright
+% ● History
 %   Introduced in PsPM 4.3
 %   Written in 2008-2018 by Tobias Moser (University of Zurich)
 

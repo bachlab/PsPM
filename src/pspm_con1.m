@@ -23,7 +23,7 @@ function pspm_con1(modelfile, connames, convec, datatype, deletecon, options)
 %                             Restriction: only for non-linear models
 %                             and not when datatype == 'recon'
 %                         0 - do not zscore data
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 

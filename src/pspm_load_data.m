@@ -70,7 +70,7 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 %       to record some file history.
 %   data.header.chantype = 'trigger' is allowed for backward compatibility;
 %       this feature will be removed in the future
-% ● Copyright
+% ● History
 %   Introduced in PsPM 6.0
 %   Written in 2008-2021 by Dominik R. Bach (Wellcome Centre for Human Neuroimaging, UCL)
 %     2022 Teddy Chao (UCL)

@@ -49,7 +49,7 @@ function [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
 %   optional fields:
 %     .recon for reconstructed glm responses
 %     .con for contrasts
-% ● Copyright
+% ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (WTCN, UZH)
 %   Maintained in 2022 by Teddy Chao (UCL)

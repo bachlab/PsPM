@@ -20,7 +20,7 @@ function pspm_con2(modelfile, outfile, con, connames, options)
 %  .overwrite:  [logical] (0 or 1)
 %               Define whether to overwrite existing output files or not.
 %               Default value: determined by pspm_overwrite.
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy Chao

@@ -95,7 +95,7 @@ function outfile = pspm_import(datafile, datatype, import, options)
 %   file formats that support multiple block storage within one file can
 %   return cell arrays import{1:blkno} and sourceinfo{1:blkno}; SCRalyze will
 %   save individual files for each block, with a filename 'pspm_fn_blk0x.mat'
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy Chao (UCL)

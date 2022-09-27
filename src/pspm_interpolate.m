@@ -54,7 +54,7 @@ function [sts, outdata] = pspm_interpolate(varargin)
 %         outdata:  Has the same format as indata but contains the interpolated
 %                   data (or the filename(s) where the interpolated data can be
 %                   found).
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2015 by Tobias Moser (University of Zurich)
 %   Maintained in 2022 by Teddy Chao (UCL)

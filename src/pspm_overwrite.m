@@ -23,7 +23,7 @@ function overwrite_final = pspm_overwrite(varargin)
 %   overwrite_final  option of overwriting determined by pspm_overwrite
 %                     0: not to overwrite
 %                     1: to overwrite
-% ● Copyright
+% ● History
 %   Introduced in PsPM 6.0
 %   Written in 2022 by Teddy Chao (UCL)
 

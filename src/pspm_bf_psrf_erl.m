@@ -12,7 +12,7 @@ function [bs, x] = pspm_bf_psrf_erl(varargin)
 %   Hoeks, B., & Levelt, W.J.M. (1993).
 %   Pupillary Dilation as a Measure of Attention - a Quantitative System-Analysis.
 %   Behavior Research Methods Instruments & Computers, 25, 16-26.
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.1
 %   Written in 2018 by Tobias Moser (University of Zurich)
 %   Maintained in 2022 by Teddy Chao (UCL)

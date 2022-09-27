@@ -13,7 +13,7 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 %   Using the given variables, the following calculations are performed:
 %   0. Take square root of data if recording is 'area'.
 %   1. Let from unit to reference_unit converted recording distance be Dconv.
-%   2. x <-- A*(Dconv/Dref)*x
+%   2. x ← A*(Dconv/Dref)*x
 %   3. Convert x from ref_unit to unit.
 % ● Format
 %   [sts, out] = pspm_convert_au2unit(fn, channel, unit, distance, multiplicator,
@@ -45,7 +45,7 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 %   .channel_action:  ['add'/'replace'] Defines whether the new channel should
 %                     be added or the previous outputs of this function should
 %                     be replaced. (Default: 'add')
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Tobias Moser (University of Zurich)
 

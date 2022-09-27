@@ -12,7 +12,7 @@ function chan = pspm_find_channel(headercell, chantype)
 %   the channel number (not physical channel number) that matches namestrings
 %   0 if no channel matches namestrings
 %   -1 if more than one channel matches namestrings
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 

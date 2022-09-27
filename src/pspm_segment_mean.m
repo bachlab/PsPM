@@ -22,7 +22,7 @@ function [sts, out] = pspm_segment_mean(segments, options)
 %   └────overwrite: [logical] (0 or 1)
 %										Define whether to overwrite existing output files or not.
 %										Default value: determined by pspm_overwrite.
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.1
 %   Written in 2008-2016 by Tobias Moser (University of Zurich)
 %   Maintained in 2022 by Teddy Chao (UCL)

@@ -24,7 +24,7 @@ function [sts, import, sourceinfo] = pspm_get_labchartmat_ext(datafile, import)
 %   three channels recorded at 1kHz, 2kHz and 500Hz, then the tick rate would
 %   be 2kHz and the comment positions would be at 2kHz ticks.
 %   John Enlow, Windows Development Manager, ADInstruments, New Zealand
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2011-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy Chao (UCL)
