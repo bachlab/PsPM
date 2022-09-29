@@ -90,6 +90,7 @@ switch FunName
     options = Autofill(options, 'overwrite', 0, 1);
   case 'interpolate'
     options = AutofillChanAction(options);
+    try options.overwrite; catch, options.overwrite = 0; end
   case 'sf'
     options = Autofill(options,'overwrite', 0);
     if ~isfield(options,'marker_chan_num') ||...
@@ -161,7 +162,7 @@ switch nargin
     if ~isfield(options, FieldName)
       options.(FieldName) = DefaultValue;
     else
-      if options.(FieldName) ~= AcceptableValue
+      if options.(FieldName) ~= AcceptableValue && options.(FieldName) ~= DefaultValue
         options.(FieldName) = DefaultValue;
       end
     end

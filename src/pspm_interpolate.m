@@ -113,6 +113,8 @@ elseif ~(isnumeric(options.channels) || isempty(options.channels) || ...
 elseif ~islogical(options.newfile) && ~isnumeric(options.newfile)
   warning('ID:invalid_input', 'options.newfile must be numeric or logical');
   return;
+elseif ~islogical(options.overwrite) && ~isnumeric(options.overwrite)
+   warning('ID:invalid_input', 'options.overwrite must be numeric (0 or 1) or logical');
 elseif ~islogical(options.extrapolate) && ~isnumeric(options.extrapolate)
   warning('ID:invalid_input', 'options.extrapolate must be numeric or logical');
   return;

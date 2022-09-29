@@ -57,9 +57,9 @@ function outfile = pspm_import(datafile, datatype, import, options)
 %                         delimiter for file read.
 %   ┌───────────options:  a struct.
 %   └────────.overwrite:  overwrite existing files by default.
-%													[logical] (0 or 1)
-%													Define whether to overwrite existing output files or not.
-%													Default value: determined by pspm_overwrite.
+%                         [logical] (0 or 1)
+%                         Define whether to overwrite existing output files or not.
+%                         Default value: determined by pspm_overwrite.
 % ● Output
 %               outfile:  a .mat file (or cell array of files) on the input
 %                         file path containing scr and event info.

@@ -167,15 +167,21 @@ elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
 end
 % 2.8 Set options
 try model.channel; catch, model.channel = 'scr'; end
-options = pspm_options(options, 'sf');
+% try options.overwrite; catch, options.overwrite = 0; end
+if ~isfield(options,'marker_chan_num') ||...
+    ~isnumeric(options.marker_chan_num) ||...
+    numel(options.marker_chan_num) > 1
+  options.marker_chan_num = 0;
+end
+% options = pspm_options(options, 'sf');
 %% 3 Get data
 for iFile = 1:numel(model.datafile)
   % 3.1 User output
   fprintf('SF analysis: %s ...', model.datafile{iFile});
   % 3.2 Check whether model file exists
   if ~pspm_overwrite(model.modelfile, options)
-		return
-	end
+    return
+  end
   % 3.3 get and filter data
   [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
   if sts < 0, return; end
