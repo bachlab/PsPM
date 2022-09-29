@@ -87,7 +87,7 @@ switch FunName
     options = Autofill(options, 'overwrite', 0, 1);
     options = Autofill(options, 'zscored', 0);
   case 'import'
-    options = Autofill(options, 'overwrite', 0, 1);
+    % options = Autofill(options, 'overwrite', 0, 1);
   case 'interpolate'
     options = AutofillChanAction(options);
     try options.overwrite; catch, options.overwrite = 0; end
