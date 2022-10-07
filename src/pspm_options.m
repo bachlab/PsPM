@@ -19,7 +19,7 @@ end
 text_optional_channel_invalid = 'options.channel must contain valid channel types or positive integers.';
 text_optional_channel_invalid_char = 'options.channel is not a valid channel type.';
 
-%% 
+%% 2 Main Processing
 switch FunName
   case 'blink_saccade_filt'
     options = autofill(options, 'channel', 0);
@@ -90,7 +90,7 @@ switch FunName
     end
     if isfield(options,'exclude_missing')
       if ~(isfield(options.exclude_missing, 'segment_length') && ...
-  				isfield(options.exclude_missing,'cutoff'))
+          isfield(options.exclude_missing,'cutoff'))
         warning('ID:invalid_input', 'To extract the NaN-values segment-length and cutoff must be set');
         return
       elseif ~(isnumeric(options.exclude_missing.segment_length) && isnumeric(options.exclude_missing.cutoff))
@@ -109,8 +109,8 @@ switch FunName
   case 'sf'
     options = autofill(options,'overwrite', 0);
     if ~isfield(options,'marker_chan_num') ||...
-  			~isnumeric(options.marker_chan_num) ||...
-  			numel(options.marker_chan_num) > 1
+        ~isnumeric(options.marker_chan_num) ||...
+        numel(options.marker_chan_num) > 1
       options.marker_chan_num = 0;
     end
   case 'split_sessions'
@@ -128,12 +128,12 @@ switch FunName
   case 'trim'
     options = autofill(options, 'overwrite', 0, 1);
     if ~isfield(options,'marker_chan_num') || ...
-  			~isnumeric(options.marker_chan_num) || ...
-  			numel(options.marker_chan_num) > 1
+        ~isnumeric(options.marker_chan_num) || ...
+        numel(options.marker_chan_num) > 1
       options.marker_chan_num = 0;
     end
     if ~isfield(options, 'drop_offset_markers') || ...
-  			~isnumeric(options.drop_offset_markers)
+        ~isnumeric(options.drop_offset_markers)
       options.drop_offset_markers = 0;
     end
   case 'write_channel'
@@ -142,19 +142,19 @@ switch FunName
       return
     else
       switch class(options.channel)
-  			case 'char'
-  				if ~any(strcmpi(options.channel,{'add','replace','none'}))
-  					warning('ID:invalid_input', text_optional_channel_invalid_char);
-  					return
-  				end
-  			case 'double'
-  				if (any(mod(options.channel, 1)) || any(options.channel<0))
-  					warning('ID:invalid_input', text_optional_channel_invalid);
-  					return
-  				end
-  			otherwise
-  				warning('ID:invalid_input', text_optional_channel_invalid);
-  				return
+        case 'char'
+          if ~any(strcmpi(options.channel,{'add','replace','none'}))
+            warning('ID:invalid_input', text_optional_channel_invalid_char);
+            return
+          end
+        case 'double'
+          if (any(mod(options.channel, 1)) || any(options.channel<0))
+            warning('ID:invalid_input', text_optional_channel_invalid);
+            return
+          end
+        otherwise
+          warning('ID:invalid_input', text_optional_channel_invalid);
+          return
       end
     end
 end
@@ -174,13 +174,12 @@ switch nargin
           flag_is_allowed_value = any(options.(field_name) == default_value);
         case 'char'
           flag_is_allowed_value = strcmp(options.(field_name), default_value);
-        end
       end
-      if ~flag_is_allowed_value
+    end
+    if ~flag_is_allowed_value
       allowed_values_message = generate_allowed_values_message(default_value);
       warning('ID:invalid_input', ['''options.''', field_name, ' is invalid. ',...
-        generate_allowed_values_message);
-      end
+        allowed_values_message]);
     end
   case 4
     options = varargin{1};
@@ -201,7 +200,7 @@ switch nargin
       if ~flag_is_allowed_value
         allowed_values_message = generate_allowed_values_message(default_value, optional_value);
         warning('ID:invalid_input', ['''options.''', field_name, ' is invalid. ',...
-        generate_allowed_values_message);
+          allowed_values_message]);
         return
       end
     end
@@ -239,44 +238,46 @@ switch nargin
   case 1
     default_value = varargin{1};
     if isnumeric(default_value)
-      default_value = num2str(default_value)
+      default_value_message = num2str(default_value);
     end
-    default_value = ('"',default_value,'"');
-    warning_message = ['The only allowed value is ', default_value, '.'];
+    allowed_values_message = ['The only allowed value is "', default_value_message, '".'];
   case 2
     default_value = varargin{1};
     optional_value = varargin{2};
     if isnumeric(default_value)
       default_value_message = num2str(default_value);
     end
-    default_value_message = ('"',default_value_message,'", ');
+    default_value_message = ['"', default_value_message,'", '];
     switch class(optional_value)
       case 'double'
         switch length(optional_value)
           case 1
-            optional_value_message = (' and "', num2str(optional_value), '"');
+            optional_value_message = [' and "', num2str(optional_value), '"'];
           case 2
-            optional_value_message = (', "', num2str(optional_value[1]), '"', ...
-                                      ', and "', num2str(optional_value[2]), '"');
+            optional_value_message = [', "', num2str(optional_value(1)), '"', ...
+              ', and "', num2str(optional_value(2)), '"'];
           case 3
-            optional_value_message = (', "', num2str(optional_value[1]), '"', ...
-                                      ', "', num2str(optional_value[2]), '"', ...
-                                      ', and "', num2str(optional_value[3]), '"');
+            optional_value_message = [', "', num2str(optional_value(1)), '"', ...
+              ', "', num2str(optional_value(2)), '"', ...
+              ', and "', num2str(optional_value(3)), '"'];
         end
       case 'char'
-        optional_value_message = (' and "', optional_value, '"');
+        optional_value_message = [' and "', optional_value, '"'];
       case 'struct'
         switch length(optional_value)
           case 1
-            optional_value_message = (' and "', optional_value{1}, '"');
+            optional_value_message = [' and "', optional_value{1}, '"'];
           case 2
-            optional_value_message = (', "', optional_value{1}, '"', ...
-                                      ', and "', optional_value{2}, '"');
+            optional_value_message = [', "', optional_value{1}, '"', ...
+              ', and "', optional_value{2}, '"'];
           case 3
-            optional_value_message = (', "', optional_value{1}, '"', ...
-                                      ', "', optional_value{2}, '"', ...
-                                      ', and "', optional_value{3}, '"');
+            optional_value_message = [', "', optional_value{1}, '"', ...
+              ', "', optional_value{2}, '"', ...
+              ', and "', optional_value{3}, '"'];
+        end
     end
-    allowed_values_message = ['The allowed values are ', default_value, optional_value_message, '.'];
-  end
+    allowed_values_message = ['The allowed values are ', ...
+                              default_value_message, ...
+                              optional_value_message, '.'];
+end
 end
