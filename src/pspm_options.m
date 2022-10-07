@@ -25,7 +25,7 @@ switch FunName
     options = autofill(options, 'channel', 0);
     options = autofill_channel_action(options);
   case 'compute_visual_angle_core'
-    options = autofill(options,'interpolate',0);
+    options = autofill(options,'interpolate',0,1);
   case 'compute_visual_angle'
     %if ~isfield(options, 'eyes')
     %  options.eyes = settings.lateral.char.b;
@@ -36,7 +36,7 @@ switch FunName
     %  'equal to ''l'', ''r'', ''c''.']);
     %  return
     %end
-    options = autofill_channel_action(options,'eyes',settings.lateral.char.b,{settings.lateral.char.l,settings.lateral.char.r});
+    options = autofill(options,'eyes',settings.lateral.char.b,{settings.lateral.char.l,settings.lateral.char.r});
     options = autofill_channel_action(options);
   case 'con1'
     options = autofill_channel_action(options,'zscored',0,1);
@@ -103,7 +103,7 @@ switch FunName
     end
   case 'load1'
     options = autofill(options, 'overwrite', 0, 1);
-    options = autofill(options, 'zscored', 0);
+    options = autofill(options, 'zscored', 0, 1);
   case 'import'
     % options = autofill(options, 'overwrite', 0, 1);
   case 'interpolate'
@@ -183,7 +183,7 @@ switch nargin
       end
       if ~flag_is_allowed_value
         allowed_values_message = generate_allowed_values_message(default_value);
-        warning('ID:invalid_input', ['''options.''', field_name, ' is invalid. ',...
+        warning('ID:invalid_input', ['options.', field_name, ' is invalid. ',...
           allowed_values_message]);
       end
     end
@@ -205,7 +205,7 @@ switch nargin
       end
       if ~flag_is_allowed_value
         allowed_values_message = generate_allowed_values_message(default_value, optional_value);
-        warning('ID:invalid_input', ['''options.''', field_name, ' is invalid. ',...
+        warning('ID:invalid_input', ['options.', field_name, ' is invalid. ',...
           allowed_values_message]);
         return
       end
