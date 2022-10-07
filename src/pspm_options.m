@@ -75,6 +75,9 @@ switch FunName
     options = autofill_channel_action(options, 'add', {'add','replace','none'});
     options = autofill(options, 'channel_combine', 'none');
     % options = autofill(options, 'segments', {}); % need revision
+    if ~isfield(options, 'segments')
+      options.segments = {};
+    end
     options = autofill(options, 'valid_sample', 0);
     options = autofill(options, 'plot_data', false);
   case 'glm'
@@ -119,6 +122,9 @@ switch FunName
     options = autofill(options, 'suffix', 0);
     options = autofill(options, 'verbose', 0);
     % options = autofill(options, 'splitpoints', []); % need revision
+    if ~isfield(options, 'splitpoints')
+      options.splitpoints = [];
+    end
     options = autofill(options, 'missing', 0);
     options = autofill(options, 'randomITI', 0);
     options = autofill(options, 'max_sn', settings.split.max_sn);
@@ -239,6 +245,8 @@ switch nargin
     default_value = varargin{1};
     if isnumeric(default_value)
       default_value_message = num2str(default_value);
+    else
+      default_value_message = default_value;
     end
     allowed_values_message = ['The only allowed value is "', default_value_message, '".'];
   case 2
