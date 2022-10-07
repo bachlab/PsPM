@@ -45,7 +45,7 @@ if nargin < 6
 elseif ~exist('options','var')
   options = struct();
 end;
-options = pspm_options(options, 'compute_visual_angle')
+
 
 % check types of arguments
 if ~ischar(fn) || ~exist(fn, 'file')
@@ -80,15 +80,8 @@ if lsts ~= 1
 end;
 
 %set more defaults
-if ~isfield(options, 'eyes')
-  options.eyes = settings.lateral.char.b;
-elseif ~any(strcmpi(options.eyes, {settings.lateral.char.l,...
-    settings.lateral.char.r,...
-    settings.lateral.char.b}))
-  warning('ID:invalid_input', ['''options.eyes'' must be ', ...
-    'equal to ''l'', ''r'', ''c''.']);
-  return;
-end
+options = pspm_options(options, 'compute_visual_angle')
+
 
 %iterate through eyes
 n_eyes = numel(infos.source.eyesObserved);

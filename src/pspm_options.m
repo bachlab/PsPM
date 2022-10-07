@@ -9,12 +9,17 @@ function options = pspm_options(options, FunName)
 %   Introduced in PsPM 6.1
 %   Written in 2022 by Teddy Chao (UCL)
 
+%% 0 Initialise
 global settings
 if isempty(settings)
   pspm_init;
 end
+
+%% 1 Text
 text_optional_channel_invalid = 'options.channel must contain valid channel types or positive integers.';
 text_optional_channel_invalid_char = 'options.channel is not a valid channel type.';
+
+%% 
 switch FunName
   case 'blink_saccade_filt'
     options = autofill(options, 'channel', 0);
@@ -22,9 +27,19 @@ switch FunName
   case 'compute_visual_angle_core'
     options = autofill(options,'interpolate',0);
   case 'compute_visual_angle'
+    %if ~isfield(options, 'eyes')
+    %  options.eyes = settings.lateral.char.b;
+    %elseif ~any(strcmpi(options.eyes, {settings.lateral.char.l,...
+    %  settings.lateral.char.r,...
+    %  settings.lateral.char.b}))
+    %  warning('ID:invalid_input', ['''options.eyes'' must be ', ...
+    %  'equal to ''l'', ''r'', ''c''.']);
+    %  return
+    %end
+    options = autofill_channel_action(options,'eyes',settings.lateral.char.b,{settings.lateral.char.l,settings.lateral.char.r});
     options = autofill_channel_action(options);
   case 'con1'
-    options = autofill_channel_action(options,'zscored',0);
+    options = autofill_channel_action(options,'zscored',0,1);
   case 'convert_area2diameter'
     options = autofill_channel_action(options);
   case 'convert_au2unit'
@@ -158,12 +173,21 @@ switch nargin
     options = varargin{1};
     field_name = varargin{2};
     default_value = varargin{3};
-    acceptable_value = varargin{4};
+    optional_value = varargin{4};
     if ~isfield(options, field_name)
       options.(field_name) = default_value;
     else
-      if options.(field_name) ~= acceptable_value && options.(field_name) ~= default_value
-        options.(field_name) = default_value;
+      switch class(optional_value)
+        case 'double'
+          optional_value = [optional_value, default_value];
+          flag_is_optional_value = any(options.(field_name) == optional_value);
+        case {'char','cell'}
+          optional_value = {optional_value, default_value};
+          flag_is_optional_value = strcmp(options.(field_name), optional_value);
+      end
+      if ~flag_is_optional_value
+        warning('ID:invalid_input', ['''options.''', field_name, ' must be among accepted values.']);
+        return
       end
     end
   otherwise
