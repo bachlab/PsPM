@@ -168,6 +168,19 @@ switch nargin
     default_value = varargin{3};
     if ~isfield(options, field_name)
       options.(field_name) = default_value;
+    else
+      switch class(default_value)
+        case 'double'
+          flag_is_allowed_value = any(options.(field_name) == default_value);
+        case 'char'
+          flag_is_allowed_value = strcmp(options.(field_name), default_value);
+        end
+      end
+      if ~flag_is_allowed_value
+      allowed_values_message = generate_allowed_values_message(default_value);
+      warning('ID:invalid_input', ['''options.''', field_name, ' is invalid. ',...
+        generate_allowed_values_message);
+      end
     end
   case 4
     options = varargin{1};
@@ -179,14 +192,16 @@ switch nargin
     else
       switch class(optional_value)
         case 'double'
-          optional_value = [optional_value, default_value];
-          flag_is_optional_value = any(options.(field_name) == optional_value);
+          allowed_value = [optional_value, default_value];
+          flag_is_allowed_value = any(options.(field_name) == allowed_value);
         case {'char','cell'}
-          optional_value = {optional_value, default_value};
-          flag_is_optional_value = strcmp(options.(field_name), optional_value);
+          allowed_value = {optional_value, default_value};
+          flag_is_allowed_value = strcmp(options.(field_name), allowed_value);
       end
-      if ~flag_is_optional_value
-        warning('ID:invalid_input', ['''options.''', field_name, ' must be among accepted values.']);
+      if ~flag_is_allowed_value
+        allowed_values_message = generate_allowed_values_message(default_value, optional_value);
+        warning('ID:invalid_input', ['''options.''', field_name, ' is invalid. ',...
+        generate_allowed_values_message);
         return
       end
     end
@@ -217,4 +232,51 @@ else
     return
   end
 end
+end
+
+function allowed_values_message = generate_allowed_values_message(varargin)
+switch nargin
+  case 1
+    default_value = varargin{1};
+    if isnumeric(default_value)
+      default_value = num2str(default_value)
+    end
+    default_value = ('"',default_value,'"');
+    warning_message = ['The only allowed value is ', default_value, '.'];
+  case 2
+    default_value = varargin{1};
+    optional_value = varargin{2};
+    if isnumeric(default_value)
+      default_value_message = num2str(default_value);
+    end
+    default_value_message = ('"',default_value_message,'", ');
+    switch class(optional_value)
+      case 'double'
+        switch length(optional_value)
+          case 1
+            optional_value_message = (' and "', num2str(optional_value), '"');
+          case 2
+            optional_value_message = (', "', num2str(optional_value[1]), '"', ...
+                                      ', and "', num2str(optional_value[2]), '"');
+          case 3
+            optional_value_message = (', "', num2str(optional_value[1]), '"', ...
+                                      ', "', num2str(optional_value[2]), '"', ...
+                                      ', and "', num2str(optional_value[3]), '"');
+        end
+      case 'char'
+        optional_value_message = (' and "', optional_value, '"');
+      case 'struct'
+        switch length(optional_value)
+          case 1
+            optional_value_message = (' and "', optional_value{1}, '"');
+          case 2
+            optional_value_message = (', "', optional_value{1}, '"', ...
+                                      ', and "', optional_value{2}, '"');
+          case 3
+            optional_value_message = (', "', optional_value{1}, '"', ...
+                                      ', "', optional_value{2}, '"', ...
+                                      ', and "', optional_value{3}, '"');
+    end
+    allowed_values_message = ['The allowed values are ', default_value, optional_value_message, '.'];
+  end
 end
