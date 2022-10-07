@@ -74,7 +74,7 @@ switch FunName
     options = autofill(options, 'channel', 'gaze_x_l');
     options = autofill_channel_action(options, 'add', {'add','replace','none'});
     options = autofill(options, 'channel_combine', 'none');
-    options = autofill(options, 'segments', {});
+    % options = autofill(options, 'segments', {}); % need revision
     options = autofill(options, 'valid_sample', 0);
     options = autofill(options, 'plot_data', false);
   case 'glm'
@@ -118,7 +118,7 @@ switch FunName
     options = autofill(options, 'prefix', 0);
     options = autofill(options, 'suffix', 0);
     options = autofill(options, 'verbose', 0);
-    options = autofill(options, 'splitpoints', []);
+    % options = autofill(options, 'splitpoints', []); % need revision
     options = autofill(options, 'missing', 0);
     options = autofill(options, 'randomITI', 0);
     options = autofill(options, 'max_sn', settings.split.max_sn);
@@ -175,11 +175,11 @@ switch nargin
         case 'char'
           flag_is_allowed_value = strcmp(options.(field_name), default_value);
       end
-    end
-    if ~flag_is_allowed_value
-      allowed_values_message = generate_allowed_values_message(default_value);
-      warning('ID:invalid_input', ['''options.''', field_name, ' is invalid. ',...
-        allowed_values_message]);
+      if ~flag_is_allowed_value
+        allowed_values_message = generate_allowed_values_message(default_value);
+        warning('ID:invalid_input', ['''options.''', field_name, ' is invalid. ',...
+          allowed_values_message]);
+      end
     end
   case 4
     options = varargin{1};
@@ -277,7 +277,7 @@ switch nargin
         end
     end
     allowed_values_message = ['The allowed values are ', ...
-                              default_value_message, ...
-                              optional_value_message, '.'];
+      default_value_message, ...
+      optional_value_message, '.'];
 end
 end
