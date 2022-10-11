@@ -212,6 +212,35 @@ switch nargin
         return
       end
     end
+  case 5
+    options = varargin{1};
+    field_name = varargin{2};
+    default_value = varargin{3};
+    optional_value_boundary = varargin{4};
+    range_marker = varargin{5};
+    if ~isfield(options, field_name)
+      options.(field_name) = default_value;
+    else
+      switch class(optional_value_boundary)
+        case 'double'
+          switch range_marker
+            case '>'
+              flag_is_allowed_value = options.(field_name) > optional_value_boundary;
+            case '<'
+              flag_is_allowed_value = options.(field_name) < optional_value_boundary;
+            otherwise
+              warning('ID:invalid_input', 'range_marker must be < or >.');
+          end
+        otherwise
+          warning('ID:invalid_input', 'optional_value_boundary must be a double value for using ranges.');
+      end
+      if ~flag_is_allowed_value
+        allowed_values_message = generate_allowed_values_message(default_value, optional_value);
+        warning('ID:invalid_input', ['options.', field_name, ' is invalid. ',...
+          allowed_values_message]);
+        return
+      end
+    end
   otherwise
     warning('ID:invalid_input', 'autofill needs at least 3 arguments');
     return
