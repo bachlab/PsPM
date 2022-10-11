@@ -27,19 +27,12 @@ switch FunName
   case 'compute_visual_angle_core'
     options = autofill(options,'interpolate',0,1);
   case 'compute_visual_angle'
-    %if ~isfield(options, 'eyes')
-    %  options.eyes = settings.lateral.char.b;
-    %elseif ~any(strcmpi(options.eyes, {settings.lateral.char.l,...
-    %  settings.lateral.char.r,...
-    %  settings.lateral.char.b}))
-    %  warning('ID:invalid_input', ['''options.eyes'' must be ', ...
-    %  'equal to ''l'', ''r'', ''c''.']);
-    %  return
-    %end
     options = autofill(options,'eyes',settings.lateral.char.b,{settings.lateral.char.l,settings.lateral.char.r});
     options = autofill_channel_action(options);
   case 'con1'
-    options = autofill_channel_action(options,'zscored',0,1);
+    options = autofill(options,'zscored',0,1);
+  case 'con2'
+    options = autofill_channel_action(options);
   case 'convert_area2diameter'
     options = autofill_channel_action(options);
   case 'convert_au2unit'
@@ -74,10 +67,7 @@ switch FunName
     options = autofill(options, 'channel', 'gaze_x_l');
     options = autofill_channel_action(options, 'add', {'add','replace','none'});
     options = autofill(options, 'channel_combine', 'none');
-    % options = autofill(options, 'segments', {}); % need revision
-    if ~isfield(options, 'segments')
-      options.segments = {};
-    end
+    options = autofill(options, 'segments', {});
     options = autofill(options, 'valid_sample', 0);
     options = autofill(options, 'plot_data', false);
   case 'glm'
@@ -121,10 +111,7 @@ switch FunName
     options = autofill(options, 'prefix', 0);
     options = autofill(options, 'suffix', 0);
     options = autofill(options, 'verbose', 0);
-    % options = autofill(options, 'splitpoints', []); % need revision
-    if ~isfield(options, 'splitpoints')
-      options.splitpoints = [];
-    end
+    options = autofill(options, 'splitpoints', []);
     options = autofill(options, 'missing', 0);
     options = autofill(options, 'randomITI', 0);
     options = autofill(options, 'max_sn', settings.split.max_sn);
@@ -177,9 +164,15 @@ switch nargin
     else
       switch class(default_value)
         case 'double'
-          flag_is_allowed_value = any(options.(field_name) == default_value);
+          if isempty(default_value)
+            flag_is_allowed_value = isempty(options.(field_name));
+          else
+            flag_is_allowed_value = any(options.(field_name) == default_value);
+          end
         case 'char'
           flag_is_allowed_value = strcmp(options.(field_name), default_value);
+        case 'cell'
+          flag_is_allowed_value = isequal(options.(field_name), default_value);
       end
       if ~flag_is_allowed_value
         allowed_values_message = generate_allowed_values_message(default_value);
@@ -199,9 +192,12 @@ switch nargin
         case 'double'
           allowed_value = [optional_value, default_value];
           flag_is_allowed_value = any(options.(field_name) == allowed_value);
-        case {'char','cell'}
+        case 'char'
           allowed_value = {optional_value, default_value};
           flag_is_allowed_value = strcmp(options.(field_name), allowed_value);
+        case 'cell'
+          allowed_value = {optional_value, default_value};
+          flag_is_allowed_value = isequal(options.(field_name), allowed_value);
       end
       if ~flag_is_allowed_value
         allowed_values_message = generate_allowed_values_message(default_value, optional_value);
