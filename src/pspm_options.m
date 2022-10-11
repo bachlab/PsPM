@@ -298,9 +298,14 @@ end
 if ~isfield(options, 'channel_action')
   options.channel_action = default_value;
 else
-  if ~any(strcmpi(options.channel_action, optional_value))
+  acceptable_values = optional_value;
+  acceptable_values(2:end+1) = acceptable_values(1:end);
+  acceptable_values{1} = default_value;
+  if ~any(strcmpi(options.channel_action, acceptable_values))
+    allowed_values_message = generate_allowed_values_message(default_value, optional_value);
     warning('ID:invalid_input', ...
-      '''options.channel_action'' must be among accepted values.');
+      ['''options.channel_action'' must be among accepted values. '...
+      allowed_values_message]);
     return
   end
 end
@@ -319,10 +324,15 @@ switch nargin
   case 2
     default_value = varargin{1};
     optional_value = varargin{2};
-    if isnumeric(default_value)
-      default_value_message = num2str(default_value);
+    switch class(default_value)
+      case 'double'
+        default_value_converted = num2str(default_value);
+      case 'char'
+        default_value_converted = default_value;
+      case 'cell'
+        default_value_converted = default_value{1};
     end
-    default_value_message = ['"', default_value_message,'", '];
+    default_value_message = ['"', default_value_converted,'", '];
     switch class(optional_value)
       case 'double'
         switch length(optional_value)
@@ -338,7 +348,7 @@ switch nargin
         end
       case 'char'
         optional_value_message = [' and "', optional_value, '"'];
-      case 'struct'
+      case 'cell'
         switch length(optional_value)
           case 1
             optional_value_message = [' and "', optional_value{1}, '"'];
