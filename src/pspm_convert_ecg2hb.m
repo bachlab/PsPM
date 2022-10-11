@@ -13,7 +13,7 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, channel, options)
 %   ┌────────options:
 %   ├──────────.semi: activates the semi automatic mode, allowing the
 %   │                 handcorrection of all IBIs that fulfill:
-%   │                 >/< mean(ibi) +/- 3 * std(ibi) [def. 1].
+%   │                 >/< mean(ibi) +/- 3 * std(ibi) [def. 0].
 %   ├─────────.minHR: sets minimal HR [def. 20bpm].
 %   ├─────────.maxHR: sets maximal HR [def. 200bpm].
 %   ├─────.debugmode: [numeric, default as 0]

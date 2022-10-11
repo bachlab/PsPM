@@ -1,4 +1,4 @@
-function [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
+function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 % ● Description
 %   pspm_ecg2hb_amri performs R-peak detection from an ECG signal using the steps
 %   decribed in R-peak detection section of [1]. This function uses a modified
@@ -81,6 +81,7 @@ function [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
 %   [2] http://www.amri.ninds.nih.gov/software.html
 % ● History
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
+%   Updated in 2022 by Teddy Chao
 
 %% Initialise
 global settings
@@ -93,61 +94,6 @@ if nargin < 2
   options = struct();
 end
 options = pspm_options(options, 'convert_ecg2hb_amri');
-if ~isfield(options, 'signal_to_use')
-  options.signal_to_use = 'auto';
-end
-if ~isfield(options, 'hrrange')
-  options.hrrange = [20 200];
-end
-if ~isfield(options, 'ecg_bandpass')
-  options.ecg_bandpass = [0.5 40];
-end
-if ~isfield(options, 'teo_bandpass')
-  options.teo_bandpass = [8 40];
-end
-if ~isfield(options, 'teo_order')
-  options.teo_order = 1;
-end
-if ~isfield(options, 'min_cross_corr')
-  options.min_cross_corr = 0.5;
-end
-if ~isfield(options, 'min_relative_amplitude')
-  options.min_relative_amplitude = 0.4;
-end
-
-%% input checks
-if ~ismember(options.channel_action, {'add', 'replace'})
-  warning('ID:invalid_input', 'Option channel_action must be either ''add'' or ''replace''');
-  return;
-end
-if ~ismember(options.signal_to_use, {'ecg', 'teo', 'auto'})
-  warning('ID:invalid_input', 'Option signal_to_use must be one of ''ecg'',''teo'' or ''auto''');
-  return;
-end
-if ~isnumeric(options.hrrange) || any(options.hrrange <= 0)
-  warning('ID:invalid_input', 'Option hrrange must contain positive numbers');
-  return;
-end
-if ~isnumeric(options.ecg_bandpass) || any(options.ecg_bandpass <= 0)
-  warning('ID:invalid_input', 'Option ecg_bandpass must contain positive numbers');
-  return;
-end
-if ~isnumeric(options.teo_bandpass) || any(options.teo_bandpass <= 0)
-  warning('ID:invalid_input', 'Option teo_bandpass must contain positive numbers');
-  return;
-end
-if ~isnumeric(options.teo_order) || options.teo_order <= 0 || mod(options.teo_order, 1) ~= 0
-  warning('ID:invalid_input', 'Option teo_order must be a positive integer');
-  return;
-end
-if ~isnumeric(options.min_cross_corr)
-  warning('ID:invalid_input', 'Option min_cross_corr must be numeric');
-  return;
-end
-if ~isnumeric(options.min_relative_amplitude)
-  warning('ID:invalid_input', 'Option min_relative_amplitude must be numeric');
-  return;
-end
 %% load
 addpath(pspm_path('backroom'));
 [lsts, data] = pspm_load_single_chan(fn, options.channel, 'last', 'ecg');

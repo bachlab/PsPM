@@ -54,6 +54,13 @@ switch FunName
     end
   case 'convert_ecg2hb_amri'
     options = autofill(options, 'channel', 'ecg');
+    options = autofill(options, 'signal_to_use', 'auto', {'ecg', 'teo'});
+    options = autofill(options, 'hrrange', [20 200], '>', 0);
+    options = autofill(options, 'ecg_bandpass', [0.5 40], '>', 0);
+    options = autofill(options, 'teo_bandpass', [8 40], '>', 0);
+    options = autofill(options, 'teo_order', 1, '>', 0);
+    options = autofill(options, 'min_cross_corr', 0.5);
+    options = autofill(options, 'min_relative_amplitude', 0.4);
     options = autofill_channel_action(options);
   case 'convert_gaze_distance'
     options = autofill_channel_action(options);
@@ -80,7 +87,7 @@ switch FunName
     options = autofill_channel_action(options);
   case 'gaze_pp'
     options = autofill(options, 'channel', 'gaze_x_l');
-    options = autofill_channel_action(options, 'add', {'add','replace','none'});
+    options = autofill_channel_action(options, 'add', {'replace','none'});
     options = autofill(options, 'channel_combine', 'none');
     options = autofill(options, 'segments', {});
     options = autofill(options, 'valid_sample', 0);
@@ -205,8 +212,13 @@ switch nargin
     else
       switch class(optional_value)
         case 'double'
-          allowed_value = [optional_value, default_value];
-          flag_is_allowed_value = any(options.(field_name) == allowed_value);
+          if length(default_value) ~= length(options.(field_name))
+            flag_is_allowed_value = 0;
+          else
+            allowed_value = [optional_value; default_value];
+            truetable = options.(field_name) == allowed_value;
+            flag_is_allowed_value = any(sum(truetable,2));
+          end
         case 'char'
           allowed_value = {optional_value, default_value};
           flag_is_allowed_value = strcmp(options.(field_name), allowed_value);
@@ -232,13 +244,21 @@ switch nargin
     else
       switch class(optional_value_boundary)
         case 'double'
-          switch range_marker
-            case '>'
-              flag_is_allowed_value = options.(field_name) > optional_value_boundary;
-            case '<'
-              flag_is_allowed_value = options.(field_name) < optional_value_boundary;
-            otherwise
-              warning('ID:invalid_input', 'range_marker must be < or >.');
+          if length(default_value) ~= length(options.(field_name))
+            flag_is_allowed_value = 0;
+          else
+            switch range_marker
+              case '>'
+                flag_is_allowed_value = options.(field_name) > optional_value_boundary;
+              case '>='
+                flag_is_allowed_value = options.(field_name) >= optional_value_boundary;
+              case '<'
+                flag_is_allowed_value = options.(field_name) < optional_value_boundary;
+              case '<='
+                flag_is_allowed_value = options.(field_name) <= optional_value_boundary;
+              otherwise
+                warning('ID:invalid_input', 'range_marker must be <, >, <=, or >=.');
+            end
           end
         otherwise
           warning('ID:invalid_input', 'optional_value_boundary must be a double value for using ranges.');
