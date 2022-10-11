@@ -40,9 +40,18 @@ switch FunName
   case 'convert_ecg2hb'
     options = autofill_channel_action(options, 'replace');
     options = autofill(options, 'debugmode', 0, 1); % can be merged into development mode?
-    %options = autofill(options, 'semi', 0, 1); % semi==1 will pop a dialog
-    %options = autofill(options, 'maxHR (bpm)', 200); 
-    %options = autofill(options, 'minHR (bpm)', 20); 
+    options = autofill(options, 'semi', 0, 1); % semi==1 will pop a dialog
+    options = autofill(options, 'maxHR', 200, '>', 20); % field: maxHR (bpm)
+    options = autofill(options, 'minHR', 20, '<', 200); % field: minHR (bpm)
+    options = autofill(options, 'twthresh', 0.36);
+    options = autofill(options, 'outfact', 2);
+    if options.maxHR < options.minHR
+      warning('ID:invalid_input', ...
+        ['''options.minHR'' and ''options.maxHR'' ', ...
+        'must be numeric and ''options.minHR'' must be ', ...
+        'smaller than ''options.maxHR''']);
+      return
+    end
   case 'convert_ecg2hb_amri'
     options = autofill(options, 'channel', 'ecg');
     options = autofill_channel_action(options);
@@ -66,7 +75,7 @@ switch FunName
     options = autofill(options, 'delim', '\t');
     options = autofill(options, 'exclude_missing', 0);
   case 'find_sound'
-    options = autofill_channel_action(options, 'none', {'add','replace','none'});
+    options = autofill_channel_action(options, 'none', {'add','replace'});
   case 'find_valid_fixations'
     options = autofill_channel_action(options);
   case 'gaze_pp'
@@ -216,8 +225,8 @@ switch nargin
     options = varargin{1};
     field_name = varargin{2};
     default_value = varargin{3};
-    optional_value_boundary = varargin{4};
-    range_marker = varargin{5};
+    range_marker = varargin{4};
+    optional_value_boundary = varargin{5};
     if ~isfield(options, field_name)
       options.(field_name) = default_value;
     else
@@ -235,7 +244,7 @@ switch nargin
           warning('ID:invalid_input', 'optional_value_boundary must be a double value for using ranges.');
       end
       if ~flag_is_allowed_value
-        allowed_values_message = generate_allowed_values_message(default_value, optional_value);
+        allowed_values_message = generate_allowed_values_message(default_value, optional_value_boundary, range_marker);
         warning('ID:invalid_input', ['options.', field_name, ' is invalid. ',...
           allowed_values_message]);
         return
@@ -252,7 +261,7 @@ function options = autofill_channel_action(options, varargin)
 % Usage: (1) use only the variable options if the default channel option is
 % 'add' (2) use two variables and the latter as the default channel option
 % other than 'add' (3) use three variables where the second is the default
-% channel action and the third variable is the list of optional/acceptable 
+% channel action and the third variable is the list of optional/acceptable
 % channel actions.
 % Written by Teddy in 2022.
 switch nargin
@@ -325,5 +334,23 @@ switch nargin
     allowed_values_message = ['The allowed values are ', ...
       default_value_message, ...
       optional_value_message, '.'];
+  case 3
+    default_value = varargin{1};
+    optional_value_boundary = varargin{2};
+    range_marker = varargin{3};
+    switch range_marker
+      case '<'
+        allowed_values_message = ['The default value is ', ...
+          num2str(default_value), ...
+          ', and the allowed values must be smaller than ',...
+          num2str(optional_value_boundary), '.'];
+      case '>'
+        allowed_values_message = ['The default value is ', ...
+          num2str(default_value), ...
+          ', and the allowed values must be larger than ',...
+          num2str(optional_value_boundary), '.'];
+      otherwise
+        warning('ID:invalid_input', 'optional_value_boundary must be double');
+    end
 end
 end
