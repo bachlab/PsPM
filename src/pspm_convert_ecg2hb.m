@@ -114,7 +114,13 @@ elseif ~isnumeric(channel) && ~strcmp(channel,'ecg')
   warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end
 
-try options.channel_action; catch, options.channel_action = 'replace'; end
+if exist('options','var')
+  options = pspm_options(options, 'convert_ecg2hb');
+else
+  options = pspm_options(struct(), 'convert_ecg2hb');
+end
+
+% try options.channel_action; catch, options.channel_action = 'replace'; end
 
 % user output
 % -------------------------------------------------------------------------
@@ -148,14 +154,6 @@ if nargin > 2 && exist('options', 'var')
         pt.settings.semi = options.semi;
       else
         warning('ID:invalid_input', '''options.semi'' must be either 0 or 1.'); return;
-      end
-    end
-
-    if isfield(options, 'debugmode')
-      if any(options.debugmode == 0:1)
-        pt.settings.debugmode = options.debugmode;
-      else
-        warning('ID:invalid_input', '''options.debugmode'' must be either 0 or 1.'); return;
       end
     end
 

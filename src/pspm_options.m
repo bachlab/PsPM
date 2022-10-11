@@ -37,9 +37,15 @@ switch FunName
     options = autofill_channel_action(options);
   case 'convert_au2unit'
     options = autofill_channel_action(options);
+  case 'convert_ecg2hb'
+    options = autofill_channel_action(options, 'replace');
+    options = autofill(options, 'debugmode', 0, 1); % can be merged into development mode?
+    %options = autofill(options, 'semi', 0, 1); % semi==1 will pop a dialog
+    %options = autofill(options, 'maxHR (bpm)', 200); 
+    %options = autofill(options, 'minHR (bpm)', 20); 
   case 'convert_ecg2hb_amri'
     options = autofill(options, 'channel', 'ecg');
-    options = autofill_channel_action(options, 'replace');
+    options = autofill_channel_action(options);
   case 'convert_gaze_distance'
     options = autofill_channel_action(options);
   case 'convert_hb2hp'
@@ -213,6 +219,13 @@ end
 end
 
 function options = autofill_channel_action(options, varargin)
+% Description: subfunction of pspm_options for autofill channel actions
+% Usage: (1) use only the variable options if the default channel option is
+% 'add' (2) use two variables and the latter as the default channel option
+% other than 'add' (3) use three variables where the second is the default
+% channel action and the third variable is the list of optional/acceptable 
+% channel actions.
+% Written by Teddy in 2022.
 switch nargin
   case 1
     default_value = 'add';
