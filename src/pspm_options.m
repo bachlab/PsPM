@@ -66,6 +66,8 @@ switch FunName
     options = autofill_channel_action(options);
   case 'convert_hb2hp'
     options = autofill_channel_action(options, 'replace');
+    options = autofill(options, 'limit.lower', 0.2);
+    options = autofill(options, 'limit.upper', 2);
   case 'convert_pixel2unit'
     options = autofill_channel_action(options);
   case 'convert_ppg2hb'

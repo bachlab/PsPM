@@ -36,14 +36,15 @@ if isempty(settings), pspm_init;
 end
 if ~exist('options','var'), options = struct();
 end
-if ~isfield(options,'channel_action'), options.channel_action = 'replace';
-end
-if ~isfield(options,'limit'), options.limit = struct();
-end
-if ~isfield(options.limit,'upper'), options.limit.upper = 2;
-end
-if ~isfield(options.limit,'lower'), options.limit.lower = 0.2;
-end
+%if ~isfield(options,'channel_action'), options.channel_action = 'replace';
+%end
+%if ~isfield(options,'limit'), options.limit = struct();
+%end
+%if ~isfield(options.limit,'upper'), options.limit.upper = 2;
+%end
+%if ~isfield(options.limit,'lower'), options.limit.lower = 0.2;
+%end
+options = pspm_options(options, 'convert_hb2hp');
 
 % check input
 % -------------------------------------------------------------------------
