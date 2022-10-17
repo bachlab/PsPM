@@ -19,7 +19,7 @@ function varargout = pspm_data_editor(varargin)
 %   │               (n: number of epochs)
 %   └──.overwrite:  [logical] (0 or 1)
 %                   Define whether to overwrite existing output files or not.
-%                   Default value: determined by pspm_overwrite.
+%                   Default value: not to overwrite.
 % ● Outputs
 %             out:  The output depends on the actual output type chosen in
 %                   the graphical interface. At the moment either the
@@ -94,6 +94,7 @@ set(handles.fgDataEditor, 'WindowButtonUpFcn', @buttonUp_Callback);
 set(handles.fgDataEditor, 'WindowButtonMotionFcn', @buttonMotion_Callback);
 if numel(varargin) > 1 && isstruct(varargin{2}) % load options
   handles.options = varargin{2};
+  handles.options = pspm_options(handles.options, 'data_editor');
   if isfield(handles.options, 'output_file') && ... % check if options are valid and assign accordingly
       ischar(handles.options.output_file)
     handles.output_file = handles.options.output_file;

@@ -71,9 +71,13 @@ switch FunName
   case 'convert_pixel2unit'
     options = autofill_channel_action(options);
   case 'convert_ppg2hb'
-    options = autofill(options, 'channel', 'ppg2hb');
+    % options = autofill(options, 'channel', 'ppg2hb');
+    options = autofill(options, 'diagnostics', 0, 1);
+    options = autofill(options, 'lsm', 0);
     options = autofill_channel_action(options, 'replace');
   case 'convert_visangle2sps'
+    options = autofill(options, 'channels', 0);
+    options = autofill(options, 'eye', settings.lateral.char.b, {settings.lateral.char.r, settings.lateral.char.l});
     options = autofill_channel_action(options);
   case 'emg_pp'
     options = autofill(options, 'channel', 'emg');
@@ -83,17 +87,21 @@ switch FunName
     options = autofill(options, 'statstype', 'param');
     options = autofill(options, 'delim', '\t');
     options = autofill(options, 'exclude_missing', 0);
+  case 'data_editor'
+    % output_file does not have a default value
+    % epoch_file does not have a default value
+    options = autofill(options, 'overwrite', 0, 1);
   case 'find_sound'
     options = autofill_channel_action(options, 'none', {'add','replace'});
   case 'find_valid_fixations'
     options = autofill_channel_action(options);
   case 'gaze_pp'
     options = autofill(options, 'channel', 'gaze_x_l');
-    options = autofill_channel_action(options, 'add', {'replace','none'});
     options = autofill(options, 'channel_combine', 'none');
     options = autofill(options, 'segments', {});
     options = autofill(options, 'valid_sample', 0);
     options = autofill(options, 'plot_data', false);
+    options = autofill_channel_action(options, 'add', {'replace','none'});
   case 'glm'
     options = autofill(options, 'modelspec', 'scr');
     options = autofill(options, 'bf', 0);
