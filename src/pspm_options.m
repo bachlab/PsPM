@@ -14,6 +14,10 @@ global settings
 if isempty(settings)
   pspm_init;
 end
+if isempty(options) && ~isempty(fieldnames(options))
+  warning('ID:invalid_input', 'options has fields with unspecified values.');
+  return
+end
 
 %% 1 Text
 text_optional_channel_invalid = 'options.channel must contain valid channel types or positive integers.';
@@ -91,6 +95,24 @@ switch FunName
     % output_file does not have a default value
     % epoch_file does not have a default value
     options = autofill(options, 'overwrite', 0, 1);
+  case 'dcm'
+    options = autofill(options, 'indrf', 0); % Estimate the response function from the data
+    options = autofill(options, 'getrf', 0); % only estimate RF, do not do trial-wise DCM
+    options = autofill(options, 'rf', 0); % Call an external file to provide response function (for use when this is previously estimated by pspm_get_rf)
+    options = autofill(options, 'nosave', 0); % Don't save dcm structure (e.g. used by pspm_get_rf)
+    options = autofill(options, 'depth', 2); % no of trials to invert at the same time
+    options = autofill(options, 'aSCR_sigma_offset', 0.1); % minimum dispersion (standard deviation) for flexible responses (second)
+    options = autofill(options, 'sclpre', 2); % scl-change-free window before first event (second)
+    options = autofill(options, 'sclpost', 5); % scl-change-free window after last event (second)
+    options = autofill(options, 'sfpre', 2); % sf-free window before first event (second)
+    options = autofill(options, 'sfpost', 5); % sf-free window after last event (second)
+    options = autofill(options, 'sffreq', 0.5); % maximum frequency of SF in ITIs (Hz)
+    options = autofill(options, 'method', 'dcm');
+    options = autofill(options, 'dispwin', 1);
+    options = autofill(options, 'dispsmallwin', 0);
+    options = autofill(options, 'crfupdate', 0); % update CRF priors to observed SCRF, or use pre-estimated priors
+    options = autofill(options, 'eventnames', {}); % Cell array of names for individual events
+    options = autofill(options, 'trlnames', {}); % Cell array of names for individual trials, is used for contrast manager only (e.g. condition descriptions)
   case 'find_sound'
     options = autofill_channel_action(options, 'none', {'add','replace'});
   case 'find_valid_fixations'
@@ -194,17 +216,21 @@ switch nargin
     if ~isfield(options, field_name)
       options.(field_name) = default_value;
     else
-      switch class(default_value)
-        case 'double'
-          if isempty(default_value)
-            flag_is_allowed_value = isempty(options.(field_name));
-          else
-            flag_is_allowed_value = any(options.(field_name) == default_value);
-          end
-        case 'char'
-          flag_is_allowed_value = strcmp(options.(field_name), default_value);
-        case 'cell'
-          flag_is_allowed_value = isequal(options.(field_name), default_value);
+      if ~strcmp(class(default_value),class(options.(field_name)))
+        flag_is_allowed_value = 0;
+      else
+        switch class(default_value)
+          case 'double'
+            if isempty(default_value)
+              flag_is_allowed_value = isempty(options.(field_name));
+            else
+              flag_is_allowed_value = any(options.(field_name) == default_value);
+            end
+          case 'char'
+            flag_is_allowed_value = strcmp(options.(field_name), default_value);
+          case 'cell'
+            flag_is_allowed_value = isequal(options.(field_name), default_value);
+        end
       end
       if ~flag_is_allowed_value
         allowed_values_message = generate_allowed_values_message(default_value);
@@ -220,25 +246,29 @@ switch nargin
     if ~isfield(options, field_name)
       options.(field_name) = default_value;
     else
-      switch class(optional_value)
-        case 'double'
-          if length(default_value) ~= length(options.(field_name))
-            flag_is_allowed_value = 0;
-          else
-            allowed_value = [optional_value; default_value];
-            truetable = options.(field_name) == allowed_value;
-            flag_is_allowed_value = any(sum(truetable,2));
-          end
-        case 'char'
-          allowed_value = {optional_value, default_value};
-          flag_is_allowed_value = strcmp(options.(field_name), allowed_value);
-        case 'cell'
-          allowed_value = {optional_value, default_value};
-          flag_is_allowed_value = isequal(options.(field_name), allowed_value);
+      if ~strcmp(class(default_value),class(options.(field_name)))
+        flag_is_allowed_value = 0;
+      else
+        switch class(optional_value)
+          case 'double'
+            if length(default_value) ~= length(options.(field_name))
+              flag_is_allowed_value = 0;
+            else
+              allowed_value = [optional_value; default_value];
+              truetable = options.(field_name) == allowed_value;
+              flag_is_allowed_value = any(sum(truetable,2));
+            end
+          case 'char'
+            allowed_value = {optional_value, default_value};
+            flag_is_allowed_value = strcmp(options.(field_name), allowed_value);
+          case 'cell'
+            allowed_value = {optional_value, default_value};
+            flag_is_allowed_value = isequal(options.(field_name), allowed_value);
+        end
       end
       if ~flag_is_allowed_value
         allowed_values_message = generate_allowed_values_message(default_value, optional_value);
-        warning('ID:invalid_input', ['options.', field_name, ' is invalid. ',...
+        warning('ID:invalid_input', ['options.', field_name, ' has an invalid value. ',...
           allowed_values_message]);
         return
       end
@@ -314,7 +344,7 @@ else
   if ~any(strcmpi(options.channel_action, acceptable_values))
     allowed_values_message = generate_allowed_values_message(default_value, optional_value);
     warning('ID:invalid_input', ...
-      ['''options.channel_action'' must be among accepted values. '...
+      ['''options.channel_action'' must have an accepted value. '...
       allowed_values_message]);
     return
   end
@@ -327,6 +357,8 @@ switch nargin
     default_value = varargin{1};
     if isnumeric(default_value)
       default_value_message = num2str(default_value);
+    elseif iscell(default_value) && isempty(default_value)
+      default_value_message = '{}';
     else
       default_value_message = default_value;
     end
