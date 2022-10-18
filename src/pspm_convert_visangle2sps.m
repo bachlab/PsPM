@@ -44,25 +44,25 @@ if nargin<1
 elseif nargin<2
   channels = 0;
 end
-if isfield(options, 'chans')
-  channels = options.channels;
-  if ~isnumeric(channels)
-    warning('ID:invalid_input', 'Channels must be defined by their id.');
-    return
-  end
-else
-  channels = 0;
-end
+% if isfield(options, 'channels')
+%   channels = options.channels;
+%   if ~isnumeric(channels)
+%     warning('ID:invalid_input', 'Channels must be defined by their id.');
+%     return
+%   end
+% else
+%   channels = 0;
+% end
 % option.eyes
-if ~isfield(options, 'eyes')
-  options.eyes = settings.lateral.char.b;
-elseif ~any(strcmpi(options.eyes, {settings.lateral.char.l,...
-    settings.lateral.char.r,...
-    settings.lateral.char.b}))
-  warning('ID:invalid_input', ['''options.eyes'' must be either ''l'', ', ...
-    '''r'', ''c''.']);
-  return;
-end;
+% if ~isfield(options, 'eyes')
+%   options.eyes = settings.lateral.char.b;
+% elseif ~any(strcmpi(options.eyes, {settings.lateral.char.l,...
+%     settings.lateral.char.r,...
+%     settings.lateral.char.b}))
+%   warning('ID:invalid_input', ['''options.eyes'' must be either ''l'', ', ...
+%     '''r'', ''c''.']);
+%   return;
+% end;
 % option.channel_action
 options = pspm_options(options, 'convert_visangle2sps');
 % fn

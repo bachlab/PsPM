@@ -52,11 +52,11 @@ end
 
 %%% Process options
 % Display diagnostic plots? default is "false"
-try if ~islogical(options.diagnostics),options.diagnostics = false;end
-catch, options.diagnostics = false; end
+% try if ~islogical(options.diagnostics),options.diagnostics = false;end
+% catch, options.diagnostics = false; end
 options = pspm_options(options, 'convert_ppg2hb');
-try if ~isnumeric(options.lsm),options.lsm = 0;end
-catch, options.lsm = 0; end
+% try if ~isnumeric(options.lsm),options.lsm = 0;end
+% catch, options.lsm = 0; end
 
 %% user output
 % -------------------------------------------------------------------------
