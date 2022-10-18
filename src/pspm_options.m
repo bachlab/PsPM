@@ -113,6 +113,27 @@ switch FunName
     options = autofill(options, 'crfupdate', 0); % update CRF priors to observed SCRF, or use pre-estimated priors
     options = autofill(options, 'eventnames', {}); % Cell array of names for individual events
     options = autofill(options, 'trlnames', {}); % Cell array of names for individual trials, is used for contrast manager only (e.g. condition descriptions)
+    options = autofill(options, 'overwrite', 1, 0);
+  case 'dcm_inv'
+    options = autofill(options, 'eSCR', 0); % contains the data to estimate RF from
+    options = autofill(options, 'aSCR_sigma_offset', 0.1); % minimum dispersion (standard deviation) for flexible responses (second)
+    options = autofill(options, 'aSCR', 0); % contains the data to adjust the RF to 
+    options = autofill(options, 'meanSCR', 0); % data to adjust the response amplitude priors to
+    options = autofill(options, 'depth', 2); % no of trials to invert at the same time
+    options = autofill(options, 'dispsmallwin', 0);
+    options = autofill(options, 'dispwin', 1);
+    options = autofill(options, 'sfpre', 2); % sf-free window before first event (second)
+    options = autofill(options, 'sfpost', 5); % sf-free window after last event (second)
+    options = autofill(options, 'sffreq', 0.5); % maximum frequency of SF in ITIs (Hz)
+    options = autofill(options, 'sclpre', 2.5); % scl-change-free window before first event, avoid overlap of last SCL change with next trial (second)
+    options = autofill(options, 'sclpost', 2); % scl-change-free window after last event (second)
+    options = autofill(options, 'crfupdate', 0); % update CRF priors to observed SCRF, or use pre-estimated priors, default to use pre-estimated priors
+    options = autofill(options, 'getrf', 0); % only estimate RF, do not do trial-wise DCM
+    options = autofill(options, 'overwrite', 1, 0);
+    % options = autofill(options, 'fixevents', ?); % fixed events to adjust amplitude priors
+    % options = autofill(options, 'flexevents', ?); % flexible events to adjust amplitude priors
+    % options = autofill(options, 'missing', ?); % data points to be disregarded by inversion
+    % options = autofill(options, 'rf', ?); % use pre-specified RF, provided in file, or as 4-element vector in log parameter space
   case 'find_sound'
     options = autofill_channel_action(options, 'none', {'add','replace'});
   case 'find_valid_fixations'
