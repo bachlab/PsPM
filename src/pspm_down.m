@@ -11,7 +11,7 @@ function [sts, newfile] = pspm_down(datafile, newsr, chan, options)
 %    newfreq:	new frequency (must be >= 10 Hz)
 %   		chan:	channels to downsample (default: all channels)
 %    options:	defines whether to overwrite the file.
-%		│         Default value: determined by pspm_overwrite.
+%		          Default value: overwrite, and also determined by pspm_overwrite.
 % ● Output
 %   		 sts:	1 if the function runs successfully
 %    newfile:	the filename for the updated file, or cell array of filenames
@@ -53,9 +53,12 @@ elseif ischar(chan)
   end
 end
 
-if nargin == 4 && ~isstruct(options)
+if nargin == 4 
+if ~isstruct(options)
   warning('ID:invalid_input','options has to be a struct');
   return;
+else
+  options = pspm_options(options, 'down');
 end
 
 %% convert datafile to cell for convenience

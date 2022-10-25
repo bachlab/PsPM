@@ -14,8 +14,10 @@ global settings
 if isempty(settings)
   pspm_init;
 end
+options.invalid = 0;
 if isempty(options) && ~isempty(fieldnames(options))
   warning('ID:invalid_input', 'options has fields with unspecified values.');
+  options.invalid = 1;
   return
 end
 
@@ -54,6 +56,7 @@ switch FunName
         ['''options.minHR'' and ''options.maxHR'' ', ...
         'must be numeric and ''options.minHR'' must be ', ...
         'smaller than ''options.maxHR''']);
+      options.invalid = 1;
       return
     end
   case 'convert_ecg2hb_amri'
@@ -83,14 +86,6 @@ switch FunName
     options = autofill(options, 'channels', 0);
     options = autofill(options, 'eye', settings.lateral.char.b, {settings.lateral.char.r, settings.lateral.char.l});
     options = autofill_channel_action(options);
-  case 'emg_pp'
-    options = autofill(options, 'channel', 'emg');
-    options = autofill_channel_action(options, 'replace');
-  case 'exp'
-    options = autofill(options, 'target', 'screen');
-    options = autofill(options, 'statstype', 'param');
-    options = autofill(options, 'delim', '\t');
-    options = autofill(options, 'exclude_missing', 0);
   case 'data_editor'
     % output_file does not have a default value
     % epoch_file does not have a default value
@@ -117,7 +112,7 @@ switch FunName
   case 'dcm_inv'
     options = autofill(options, 'eSCR', 0); % contains the data to estimate RF from
     options = autofill(options, 'aSCR_sigma_offset', 0.1); % minimum dispersion (standard deviation) for flexible responses (second)
-    options = autofill(options, 'aSCR', 0); % contains the data to adjust the RF to 
+    options = autofill(options, 'aSCR', 0); % contains the data to adjust the RF to
     options = autofill(options, 'meanSCR', 0); % data to adjust the response amplitude priors to
     options = autofill(options, 'depth', 2); % no of trials to invert at the same time
     options = autofill(options, 'dispsmallwin', 0);
@@ -134,8 +129,51 @@ switch FunName
     % options = autofill(options, 'flexevents', ?); % flexible events to adjust amplitude priors
     % options = autofill(options, 'missing', ?); % data points to be disregarded by inversion
     % options = autofill(options, 'rf', ?); % use pre-specified RF, provided in file, or as 4-element vector in log parameter space
-  case 'find_sound'
+  case 'down'
+    options = autofill(options, 'overwrite', 1, 0);
+  case 'emg_pp'
+    options = autofill(options, 'channel', 'emg');
+    options = autofill_channel_action(options, 'replace', {'add'});
+    options = autofill(options, 'mains_freq', 50);
+  case 'exp'
+    options = autofill(options, 'target', 'screen');
+    options = autofill(options, 'statstype', 'param', {'cond', 'recon'});
+    options = autofill(options, 'delim', '\t');
+    options = autofill(options, 'exclude_missing', 0, 1);
+  case 'find_sounds'
     options = autofill_channel_action(options, 'none', {'add','replace'});
+    options = autofill(options, 'channel_output', 'all', 'corrected');
+    options = autofill(options, 'diagnostics', 1, 0);
+    options = autofill(options, 'maxdelay', 3, '>=', 0);
+    options = autofill(options, 'mindelay', 0, '>=', 0);
+    options = autofill(options, 'threshold', 0.1, '>=', 0);
+    options = autofill(options, 'sndchannel', 0, 'integer>=', 0);
+    options = autofill(options, 'trigchannel', 0, 'integer>=', 0);
+    % options = autofill(options, 'expectedSoundCount', 0, 'integer>=', 0);
+    options = autofill(options, 'resample', 1, 'integer>=', 1);
+    options = autofill(options, 'plot', 0, 1);
+    options = autofill(options, 'snd_in_snd', 0, 1);
+    % options = autofill(options, 'roi', []);
+    if options.maxdelay < options.mindelay
+      warning('ID:invalid_input', ...
+        ['''options.mindelay'' and ''options.maxdelay'' ', ...
+        'must be numeric and ''options.mindelay'' must be ', ...
+        'smaller than ''options.maxdelay''']);
+      options.invalid = 1;
+    end
+    if options.plot
+      options.diagnostics = true;
+    end
+    try options.roi; catch, options.roi = []; end
+    try options.expectedSoundCount; catch; options.expectedSoundCount = 0; end
+    if ~isnumeric(options.expectedSoundCount) || mod(options.expectedSoundCount,1) ...
+        || options.expectedSoundCount < 0
+      warning('ID:invalid_input', 'Option expectedSoundCount is not an integer.');
+      options.invalid = 1;
+    elseif ~isempty(options.roi) && (length(options.roi) ~= 2 || ~all(isnumeric(options.roi) & options.roi >= 0))
+      warning('ID:invalid_input', 'Option roi must be a float vector of length 2 or 0');
+      options.invalid = 1;
+    end
   case 'find_valid_fixations'
     options = autofill_channel_action(options);
   case 'gaze_pp'
@@ -160,9 +198,11 @@ switch FunName
       if ~(isfield(options.exclude_missing, 'segment_length') && ...
           isfield(options.exclude_missing,'cutoff'))
         warning('ID:invalid_input', 'To extract the NaN-values segment-length and cutoff must be set');
+        options.invalid = 1;
         return
       elseif ~(isnumeric(options.exclude_missing.segment_length) && isnumeric(options.exclude_missing.cutoff))
         warning('ID:invalid_input', 'To extract the NaN-values segment-length and cutoff must be numeric values.');
+        options.invalid = 1;
         return
       end
     end
@@ -207,21 +247,25 @@ switch FunName
   case 'write_channel'
     if ~isfield(options, 'channel')
       warning('ID:invalid_input', text_optional_channel_invalid);
+      options.invalid = 1;
       return
     else
       switch class(options.channel)
         case 'char'
           if ~any(strcmpi(options.channel,{'add','replace','none'}))
             warning('ID:invalid_input', text_optional_channel_invalid_char);
+            options.invalid = 1;
             return
           end
         case 'double'
           if (any(mod(options.channel, 1)) || any(options.channel<0))
             warning('ID:invalid_input', text_optional_channel_invalid);
+            options.invalid = 1;
             return
           end
         otherwise
           warning('ID:invalid_input', text_optional_channel_invalid);
+          options.invalid = 1;
           return
       end
     end
@@ -257,6 +301,8 @@ switch nargin
         allowed_values_message = generate_allowed_values_message(default_value);
         warning('ID:invalid_input', ['options.', field_name, ' is invalid. ',...
           allowed_values_message]);
+        options.invalid = 1;
+        return
       end
     end
   case 4
@@ -283,14 +329,16 @@ switch nargin
             allowed_value = {optional_value, default_value};
             flag_is_allowed_value = strcmp(options.(field_name), allowed_value);
           case 'cell'
-            allowed_value = {optional_value, default_value};
-            flag_is_allowed_value = isequal(options.(field_name), allowed_value);
+            allowed_value = optional_value;
+            allowed_value{end+1} = default_value;
+            flag_is_allowed_value = strcmp(options.(field_name), allowed_value);
         end
       end
       if ~flag_is_allowed_value
         allowed_values_message = generate_allowed_values_message(default_value, optional_value);
         warning('ID:invalid_input', ['options.', field_name, ' has an invalid value. ',...
           allowed_values_message]);
+        options.invalid = 1;
         return
       end
     end
@@ -303,36 +351,54 @@ switch nargin
     if ~isfield(options, field_name)
       options.(field_name) = default_value;
     else
-      switch class(optional_value_boundary)
-        case 'double'
-          if length(default_value) ~= length(options.(field_name))
-            flag_is_allowed_value = 0;
-          else
-            switch range_marker
-              case '>'
-                flag_is_allowed_value = options.(field_name) > optional_value_boundary;
-              case '>='
-                flag_is_allowed_value = options.(field_name) >= optional_value_boundary;
-              case '<'
-                flag_is_allowed_value = options.(field_name) < optional_value_boundary;
-              case '<='
-                flag_is_allowed_value = options.(field_name) <= optional_value_boundary;
-              otherwise
-                warning('ID:invalid_input', 'range_marker must be <, >, <=, or >=.');
+      if ~strcmp(class(default_value),class(options.(field_name)))
+        flag_is_allowed_value = 0;
+      else
+        switch class(optional_value_boundary)
+          case 'double'
+            if length(default_value) ~= length(options.(field_name))
+              flag_is_allowed_value = 0;
+            else
+              switch range_marker
+                case '>' % larger than some value
+                  flag_is_allowed_value = options.(field_name) > optional_value_boundary;
+                case 'integer>' % integer larger than some value
+                  flag_is_allowed_value = (options.(field_name) > optional_value_boundary) && (floor(options.(field_name))==options.(field_name));
+                case '>='
+                  flag_is_allowed_value = options.(field_name) >= optional_value_boundary;
+                case 'integer>='
+                  flag_is_allowed_value = (options.(field_name) >= optional_value_boundary) && (floor(options.(field_name))==options.(field_name));
+                case '<'
+                  flag_is_allowed_value = options.(field_name) < optional_value_boundary;
+                case 'integer<'
+                  flag_is_allowed_value = (options.(field_name) < optional_value_boundary) && (floor(options.(field_name))==options.(field_name));
+                case '<='
+                  flag_is_allowed_value = options.(field_name) <= optional_value_boundary;
+                case 'integer<='
+                  flag_is_allowed_value = (options.(field_name) <= optional_value_boundary) && (floor(options.(field_name))==options.(field_name));
+                otherwise
+                  warning('ID:invalid_input', 'range_marker must be <, >, <=, or >=.');
+                  options.invalid = 1;
+                  return
+              end
             end
-          end
-        otherwise
-          warning('ID:invalid_input', 'optional_value_boundary must be a double value for using ranges.');
+          otherwise
+            warning('ID:invalid_input', 'optional_value_boundary must be a double value for using ranges.');
+            options.invalid = 1;
+            return
+        end
       end
       if ~flag_is_allowed_value
         allowed_values_message = generate_allowed_values_message(default_value, optional_value_boundary, range_marker);
-        warning('ID:invalid_input', ['options.', field_name, ' is invalid. ',...
+        warning('ID:invalid_input', ['options.', field_name, ' has an invalid value. ',...
           allowed_values_message]);
+        options.invalid = 1;
         return
       end
     end
   otherwise
     warning('ID:invalid_input', 'autofill needs at least 3 arguments');
+    options.invalid = 1;
     return
 end
 end
@@ -367,6 +433,7 @@ else
     warning('ID:invalid_input', ...
       ['''options.channel_action'' must have an accepted value. '...
       allowed_values_message]);
+    options.invalid = 1;
     return
   end
 end
@@ -437,13 +504,44 @@ switch nargin
           num2str(default_value), ...
           ', and the allowed values must be smaller than ',...
           num2str(optional_value_boundary), '.'];
+      case '<='
+        allowed_values_message = ['The default value is ', ...
+          num2str(default_value), ...
+          ', and the allowed values must be smaller than or equal to ',...
+          num2str(optional_value_boundary), '.'];
       case '>'
         allowed_values_message = ['The default value is ', ...
           num2str(default_value), ...
           ', and the allowed values must be larger than ',...
           num2str(optional_value_boundary), '.'];
+      case '>='
+        allowed_values_message = ['The default value is ', ...
+          num2str(default_value), ...
+          ', and the allowed values must be larger than or equal to ',...
+          num2str(optional_value_boundary), '.'];
+      case 'integer<'
+        allowed_values_message = ['The default value is ', ...
+          num2str(default_value), ...
+          ', and the allowed values must be an integer, also smaller than ',...
+          num2str(optional_value_boundary), '.'];
+      case 'integer<='
+        allowed_values_message = ['The default value is ', ...
+          num2str(default_value), ...
+          ', and the allowed values must be an integer, also smaller than or equal to ',...
+          num2str(optional_value_boundary), '.'];
+      case 'integer>'
+        allowed_values_message = ['The default value is ', ...
+          num2str(default_value), ...
+          ', and the allowed values must be an integer, also larger than ',...
+          num2str(optional_value_boundary), '.'];
+      case 'integer>='
+        allowed_values_message = ['The default value is ', ...
+          num2str(default_value), ...
+          ', and the allowed values must be an integer, also larger than or equal to ',...
+          num2str(optional_value_boundary), '.'];
       otherwise
         warning('ID:invalid_input', 'optional_value_boundary must be double');
+        return
     end
 end
 end

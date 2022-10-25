@@ -99,52 +99,8 @@ if ~exist(file, 'file')
 end
 
 fprintf('Processing sound in file %s\n',file);
-options = pspm_options(options, 'find_sound');
-
-% Process options
-try options.channel_output; catch; options.channel_output = 'all'; end
-try options.diagnostics; catch, options.diagnostics = true; end
-try options.maxdelay; catch, options.maxdelay = 3; end
-try options.mindelay; catch, options.mindelay = 0; end
-try options.plot; catch, options.plot = false; end
-try options.resample; catch, options.resample = 1; end
-try options.roi; catch, options.roi = []; end
-try options.sndchannel; catch, options.sndchannel = 0; end
-try options.threshold; catch, options.threshold = 0.1; end
-try options.trigchannel; catch, options.trigchannel = 0; end
-try options.expectedSoundCount; catch; options.expectedSoundCount = 0; end
-try options.snd_in_snd; catch; options.snd_in_snd = false; end
-
-if options.plot
-  options.diagnostics = true;
-end
-
-if ~isnumeric(options.resample) || mod(options.resample,1) || options.resample<1
-  warning('ID:invalid_input', 'Option resample is not an integer or negative.'); return;
-elseif ~isnumeric(options.mindelay) || options.mindelay < 0
-  warning('ID:invalid_input', 'Option mindelay is not a number or negative.');  return;
-elseif ~isnumeric(options.maxdelay) || options.maxdelay < 0
-  warning('ID:invalid_input', 'Option maxdelay is not a number or negative.');  return;
-elseif options.maxdelay < options.mindelay
-  warning('ID:invalid_input','mindelay is larger than mindelay.');  return;
-elseif ~isnumeric(options.threshold) || options.threshold < 0
-  warning('ID:invalid_input', 'Option threshold is not a number or negative.');  return;
-elseif ~isnumeric(options.sndchannel) || mod(options.sndchannel,1) || options.sndchannel < 0
-  warning('ID:invalid_input', 'Option sndchannel is not an integer.');  return;
-elseif ~isnumeric(options.trigchannel) || mod(options.trigchannel,1) || options.trigchannel < 0
-  warning('ID:invalid_input', 'Option trichannel is not an integer.');  return;
-elseif ~islogical(options.diagnostics) && ~isnumeric(options.diagnostics)
-  warning('ID:invalid_input', 'Option diagnostics is not numeric or logical');  return;
-elseif ~islogical(options.plot) && ~isnumeric(options.plot)
-  warning('ID:invalid_input', 'Option plot is not numeric or logical');  return;
-elseif ~strcmpi(options.channel_output, 'all') && ~strcmpi(options.channel_output, 'corrected')
-  warning('ID:invalid_input', 'Option channel_output must be either ''all'' or ''corrected''.');  return;
-elseif ~isnumeric(options.expectedSoundCount) || mod(options.expectedSoundCount,1) ...
-    || options.expectedSoundCount < 0
-  warning('ID:invalid_input', 'Option expectedSoundCount is not an integer.');  return;
-elseif ~isempty(options.roi) && (length(options.roi) ~= 2 || ~all(isnumeric(options.roi) & options.roi >= 0))
-  warning('ID:invalid_input', 'Option roi must be a float vector of length 2 or 0');  return;
-end
+options = pspm_options(options, 'find_sounds');
+if options.invalid; return; end
 
 % call it outinfos not to get confused
 outinfos = struct();
