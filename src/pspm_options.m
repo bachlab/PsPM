@@ -140,7 +140,8 @@ switch FunName
     options = autofill(options, 'statstype', 'param', {'cond', 'recon'});
     options = autofill(options, 'delim', '\t');
     options = autofill(options, 'exclude_missing', 0, 1);
-  case 'find_sounds'
+  case 'find_sounds' 
+    %% find_sounds
     options = autofill_channel_action(options, 'none', {'add','replace'});
     options = autofill(options, 'channel_output', 'all', 'corrected');
     options = autofill(options, 'diagnostics', 1, 0);
@@ -175,8 +176,52 @@ switch FunName
       options.invalid = 1;
     end
   case 'find_valid_fixations'
+    %% find_valid_fixations
     options = autofill_channel_action(options);
+    options = autofill(options, 'missing', 0, 1);
+    options = autofill(options, 'plot_gaze_coords', 0, 1);
+    options = autofill(options, 'eyes', settings.lateral.full.c, ...
+      {settings.lateral.full.c, settings.lateral.full.l, settings.lateral.full.r});
+    if ~isfield(options, 'channels')
+      options.channels = 'pupil';
+    elseif ~iscell(options.channels) && ~ischar(options.channels) && ...
+        ~isnumeric(options.channels)
+      warning('ID:invalid_input', ['Options.channels should be a char, ', ...
+        'numeric or a cell of char or numeric.']);
+      options.invalid = 1;
+      return;
+    end
+    if strcmpi(options.mode,'fixation')&& ~isfield(options, 'resolution')
+      options.resolution = [1 1];
+    end
+    if iscell(options.channels) && any(~cellfun(@(x) isnumeric(x) || ...
+        any(strcmpi(x, settings.findvalidfixations.chantypes)), options.channels))
+      warning('ID:invalid_input', 'Option.channels contains invalid values.');
+      options.invalid = 1;
+      return;
+    elseif strcmpi(options.mode,'fixation')&& isfield(options, 'fixation_point') && ...
+        (~isnumeric(options.fixation_point) || ...
+        size(options.fixation_point,2) ~= 2)
+      warning('ID:invalid_input', ['Options.fixation_point is not ', ...
+        'numeric, or has the wrong size (should be nx2).']);
+      options.invalid = 1;
+      return;
+    elseif isfield(options, 'resolution') && (~isnumeric(options.resolution) || ...
+        ~all(size(options.resolution) == [1 2]))
+      warning('ID:invalid_input', ['Options.fixation_point is not ', ...
+        'numeric, or has the wrong size (should be 1x2).']);
+      options.invalid = 1;
+      return;
+    elseif strcmpi(options.mode,'fixation')&& isfield(options, 'fixation_point') &&  ...
+        ~all(options.fixation_point < options.resolution)
+      warning('ID:out_of_range', ['Some fixation points are larger than ', ...
+        'the range given. Ensure fixation points are within the given ', ...
+        'resolution.']);
+      options.invalid = 1;
+      return;
+    end
   case 'gaze_pp'
+    %% gaze_pp
     options = autofill(options, 'channel', 'gaze_x_l');
     options = autofill(options, 'channel_combine', 'none');
     options = autofill(options, 'segments', {});
@@ -184,6 +229,7 @@ switch FunName
     options = autofill(options, 'plot_data', false);
     options = autofill_channel_action(options, 'add', {'replace','none'});
   case 'glm'
+    %% glm
     options = autofill(options, 'modelspec', 'scr');
     options = autofill(options, 'bf', 0);
     options = autofill(options, 'overwrite', 0, 1);
@@ -207,6 +253,7 @@ switch FunName
       end
     end
   case 'load1'
+    %% load1
     options = autofill(options, 'overwrite', 0, 1);
     options = autofill(options, 'zscored', 0, 1);
   case 'import'
