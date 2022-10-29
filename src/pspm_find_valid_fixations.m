@@ -93,8 +93,10 @@ if numel(varargin{1}) > 1
   end
   if numel(varargin) < 2
     options = struct();
+    options.mode = 'bitmap';
   else
     options = varargin{2};
+    options.mode = 'bitmap';
   end
 else
   mode = 'fixation';
@@ -108,8 +110,15 @@ else
   unit = varargin{3};
   if numel(varargin) < 4
     options = struct();
+    options.mode = 'fixation';
   else
     options = varargin{4};
+    if ~isstruct(options)
+      warning('ID:invalid_input', 'Options must be a struct.');
+      return;
+    else
+      options.mode = 'fixation';
+    end
   end
   if ~isnumeric(circle_degree)
     warning('ID:invalid_input', 'Circle_degree is not numeric.');
@@ -119,9 +128,6 @@ else
     return;
   elseif ~ischar(unit)
     warning('ID:invalid_input', 'Unit should be a char.');
-    return;
-  elseif ~isstruct(options)
-    warning('ID:invalid_input', 'Options must be a struct.');
     return;
   end
 end
@@ -139,67 +145,12 @@ if msts ~= 1
     'opening the file %s.'],fn); return;
 end
 
-% check validate_fixations and then the depending mandatory fields
-if ~isfield(options, 'missing')
-  options.missing = false;
+options = pspm_options(options, 'find_valid_fixations');
+if options.invalid
+  warning('ID:invalid_input', 'The input options is invalid.')
+  return
 end
 
-if strcmpi(mode,'fixation')&& ~isfield(options, 'resolution')
-  options.resolution = [1 1];
-end
-
-if ~isfield(options, 'channels')
-  options.channels = 'pupil';
-end
-
-if ~isfield(options, 'eyes')
-  options.eyes = 'combined';
-end
-
-if ~isfield(options, 'plot_gaze_coords')
-  options.plot_gaze_coords = false;
-end
-
-if ~islogical(options.plot_gaze_coords) && ~isnumeric(options.plot_gaze_coords)
-  warning('ID:invalid_input', ['Options.plot_gaze_coords must ', ...
-    'be logical or numeric.']);
-  return;
-elseif ~islogical(options.missing) && ~isnumeric(options.missing)
-  warning('ID:invalid_input', ['Options.missing is neither logical ', ...
-    'nor numeric.']);
-  return;
-elseif ~any(strcmpi(options.eyes, {settings.lateral.full.c, ...
-    settings.lateral.full.l, settings.lateral.full.r}))
-  warning('ID:invalid_input', ['Options.eyes must be either ''combined'', ', ...
-    '''left'' or ''right''.']);
-  return;
-elseif ~iscell(options.channels) && ~ischar(options.channels) && ...
-    ~isnumeric(options.channels)
-  warning('ID:invalid_input', ['Options.channels should be a char, ', ...
-    'numeric or a cell of char or numeric.']);
-  return;
-elseif iscell(options.channels) && any(~cellfun(@(x) isnumeric(x) || ...
-    any(strcmpi(x, settings.findvalidfixations.chantypes)), options.channels))
-  warning('ID:invalid_input', 'Option.channels contains invalid values.');
-  return;
-elseif strcmpi(mode,'fixation')&& isfield(options, 'fixation_point') && ...
-    (~isnumeric(options.fixation_point) || ...
-    size(options.fixation_point,2) ~= 2)
-  warning('ID:invalid_input', ['Options.fixation_point is not ', ...
-    'numeric, or has the wrong size (should be nx2).']);
-  return;
-elseif isfield(options, 'resolution') && (~isnumeric(options.resolution) || ...
-    ~all(size(options.resolution) == [1 2]))
-  warning('ID:invalid_input', ['Options.fixation_point is not ', ...
-    'numeric, or has the wrong size (should be 1x2).']);
-  return;
-elseif strcmpi(mode,'fixation')&& isfield(options, 'fixation_point') &&  ...
-    ~all(options.fixation_point < options.resolution)
-  warning('ID:out_of_range', ['Some fixation points are larger than ', ...
-    'the range given. Ensure fixation points are within the given ', ...
-    'resolution.']);
-  return;
-end
 
 %change distance to 'mm'
 if strcmpi(mode,'fixation')
@@ -246,7 +197,7 @@ end
 
 % calculate radius araund de fixation points
 %-----------------------------------------------------
-options = pspm_options(options, 'find_valid_fixations');
+%options = pspm_options(options, 'find_valid_fixations');
 
 % overwrite
 options.overwrite = pspm_overwrite(fn, options);
