@@ -22,15 +22,13 @@ if isempty(settings)
 end
 sts = -1;
 %% 2 Create default arguments
-% 2.1 static variables
-list_channels = {'gaze_x_l', 'gaze_x_r', 'gaze_y_l', 'gaze_y_r'};
-% 2.2 set default values
+% 2.1 set default values
 if nargin == 1
   options = struct();
 end
 options = pspm_options(options, 'gaze_pp');
 action_combine = ~strcmp(options.channel_combine, 'none');
-% 2.3 set default options from pupil_pp
+% 2.2 set default options from pupil_pp
 [lsts, default_settings] = pspm_pupil_pp_options();
 if lsts ~= 1
   return
@@ -50,27 +48,11 @@ if sts ~= 1
   warning('ID:invalid_chantype', 'cannot load the specified channel from the file');
   return
 end
-if ~ismember(options.channel_action, {'add', 'replace'})
-  warning('ID:invalid_input', ...
-    'Option channel_action must be either ''add'' or ''replace''.');
-  return
-end
-if ~ismember(options.channel, list_channels)
-  warning('ID:invalid_input', ...
-    'Option channel must be either ''gaze_x_l'', ''gaze_x_r'', ''gaze_y_l'' or ''gaze_y_r''.');
-  return
-end
 if action_combine
-  if ~ismember(options.channel_combine, list_channels)
-    warning('ID:invalid_input', ...
-      'Option channel_combine must be either ''gaze_x_l'', ''gaze_x_r'', ''gaze_y_l'' or ''gaze_y_r''.');
+  if strcmp(options.channel(end),options.channel_combine(end)) || ...
+      ~strcmp(options.channel(6),options.channel_combine(6))
+    warning('ID:invalid_input', 'Option channel_combine must match channel.');
     return
-  else
-    if strcmp(options.channel(end),options.channel_combine(end)) || ...
-        ~strcmp(options.channel(6),options.channel_combine(6))
-      warning('ID:invalid_input', 'Option channel_combine must match channel.');
-      return
-    end
   end
 end
 for seg = options.segments
@@ -187,11 +169,11 @@ function out_struct = pspm_assign_fields_recursively(out_struct, in_struct)
 % out_struct recursively, overwriting when necessary.
 fnames = fieldnames(in_struct);
 for i = 1:numel(fnames)
-	name = fnames{i};
-	if isstruct(in_struct.(name)) && isfield(out_struct, name)
-		out_struct.(name) = pspm_assign_fields_recursively(out_struct.(name), in_struct.(name));
-	else
-		out_struct.(name) = in_struct.(name);
-	end
+  name = fnames{i};
+  if isstruct(in_struct.(name)) && isfield(out_struct, name)
+    out_struct.(name) = pspm_assign_fields_recursively(out_struct.(name), in_struct.(name));
+  else
+    out_struct.(name) = in_struct.(name);
+  end
 end
 end

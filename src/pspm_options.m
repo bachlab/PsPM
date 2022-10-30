@@ -28,22 +28,30 @@ text_optional_channel_invalid_char = 'options.channel is not a valid channel typ
 %% 2 Main Processing
 switch FunName
   case 'blink_saccade_filt'
+    %% 2.1 pspm_blink_saccade_filt
     options = autofill(options, 'channel', 0);
     options = autofill_channel_action(options);
   case 'compute_visual_angle_core'
+    %% 2.2 pspm_compute_visual_angle_core
     options = autofill(options,'interpolate',0,1);
   case 'compute_visual_angle'
+    %% 2.3 pspm_compute_visual_angle
     options = autofill(options,'eyes',settings.lateral.char.b,{settings.lateral.char.l,settings.lateral.char.r});
     options = autofill_channel_action(options);
   case 'con1'
+    %% 2.4 pspm_con1
     options = autofill(options,'zscored',0,1);
   case 'con2'
+    %% 2.5 pspm_con2
     options = autofill_channel_action(options);
   case 'convert_area2diameter'
+    %% 2.6 pspm_convert_area2diameter
     options = autofill_channel_action(options);
   case 'convert_au2unit'
+    %% 2.7 pspm_convert_au2unit
     options = autofill_channel_action(options);
   case 'convert_ecg2hb'
+    %% 2.8 pspm_convert_ecg2hb
     options = autofill_channel_action(options, 'replace');
     options = autofill(options, 'debugmode', 0, 1); % can be merged into development mode?
     options = autofill(options, 'semi', 0, 1); % semi==1 will pop a dialog
@@ -60,6 +68,7 @@ switch FunName
       return
     end
   case 'convert_ecg2hb_amri'
+    %% 2.9 pspm_convert_ecg2hb_amri
     options = autofill(options, 'channel', 'ecg');
     options = autofill(options, 'signal_to_use', 'auto', {'ecg', 'teo'});
     options = autofill(options, 'hrrange', [20 200], '>', 0);
@@ -70,27 +79,34 @@ switch FunName
     options = autofill(options, 'min_relative_amplitude', 0.4);
     options = autofill_channel_action(options);
   case 'convert_gaze_distance'
+    %% 2.10 pspm_convert_gaze_distance
     options = autofill_channel_action(options);
   case 'convert_hb2hp'
+    %% 2.11 pspm_convert_hb2hp
     options = autofill_channel_action(options, 'replace');
     options = autofill(options, 'limit.lower', 0.2);
     options = autofill(options, 'limit.upper', 2);
   case 'convert_pixel2unit'
+    %% 2.12 pspm_convert_pixel2unit
     options = autofill_channel_action(options);
   case 'convert_ppg2hb'
+    %% 2.13 pspm_convert_ppg2hb
     % options = autofill(options, 'channel', 'ppg2hb');
     options = autofill(options, 'diagnostics', 0, 1);
     options = autofill(options, 'lsm', 0);
     options = autofill_channel_action(options, 'replace');
   case 'convert_visangle2sps'
+    %% 2.14 pspm_convert_visangle2sps
     options = autofill(options, 'channels', 0);
     options = autofill(options, 'eye', settings.lateral.char.b, {settings.lateral.char.r, settings.lateral.char.l});
     options = autofill_channel_action(options);
   case 'data_editor'
+    %% 2.15 pspm_data_editor
     % output_file does not have a default value
     % epoch_file does not have a default value
     options = autofill(options, 'overwrite', 0, 1);
   case 'dcm'
+    %% 2.16 pspm_dcm
     options = autofill(options, 'indrf', 0); % Estimate the response function from the data
     options = autofill(options, 'getrf', 0); % only estimate RF, do not do trial-wise DCM
     options = autofill(options, 'rf', 0); % Call an external file to provide response function (for use when this is previously estimated by pspm_get_rf)
@@ -110,6 +126,7 @@ switch FunName
     options = autofill(options, 'trlnames', {}); % Cell array of names for individual trials, is used for contrast manager only (e.g. condition descriptions)
     options = autofill(options, 'overwrite', 1, 0);
   case 'dcm_inv'
+    %% 2.17 pspm_dcm_inv
     options = autofill(options, 'eSCR', 0); % contains the data to estimate RF from
     options = autofill(options, 'aSCR_sigma_offset', 0.1); % minimum dispersion (standard deviation) for flexible responses (second)
     options = autofill(options, 'aSCR', 0); % contains the data to adjust the RF to
@@ -130,18 +147,21 @@ switch FunName
     % options = autofill(options, 'missing', ?); % data points to be disregarded by inversion
     % options = autofill(options, 'rf', ?); % use pre-specified RF, provided in file, or as 4-element vector in log parameter space
   case 'down'
+    %% 2.18 pspm_down
     options = autofill(options, 'overwrite', 1, 0);
   case 'emg_pp'
+    %% 2.19 pspm_emg_pp
     options = autofill(options, 'channel', 'emg');
     options = autofill_channel_action(options, 'replace', {'add'});
     options = autofill(options, 'mains_freq', 50);
   case 'exp'
+    %% 2.20 pspm_exp
     options = autofill(options, 'target', 'screen');
     options = autofill(options, 'statstype', 'param', {'cond', 'recon'});
     options = autofill(options, 'delim', '\t');
     options = autofill(options, 'exclude_missing', 0, 1);
-  case 'find_sounds' 
-    %% find_sounds
+  case 'find_sounds'
+    %% pspm_find_sounds
     options = autofill_channel_action(options, 'none', {'add','replace'});
     options = autofill(options, 'channel_output', 'all', 'corrected');
     options = autofill(options, 'diagnostics', 1, 0);
@@ -176,12 +196,20 @@ switch FunName
       options.invalid = 1;
     end
   case 'find_valid_fixations'
-    %% find_valid_fixations
+    %% 2.21 pspm_find_valid_fixations
     options = autofill_channel_action(options);
     options = autofill(options, 'missing', 0, 1);
     options = autofill(options, 'plot_gaze_coords', 0, 1);
     options = autofill(options, 'eyes', settings.lateral.full.c, ...
       {settings.lateral.full.c, settings.lateral.full.l, settings.lateral.full.r});
+    % newfile
+    if ~isfield(options, 'newfile')
+      options.newfile = '';
+    elseif ~ischar(options.newfile)
+      warning('ID:invalid_input', 'Options.newfile is not char.');
+      options.invalid = 1;
+      return
+    end
     if ~isfield(options, 'channels')
       options.channels = 'pupil';
     elseif ~iscell(options.channels) && ~ischar(options.channels) && ...
@@ -191,15 +219,21 @@ switch FunName
       options.invalid = 1;
       return;
     end
-    if strcmpi(options.mode,'fixation')&& ~isfield(options, 'resolution')
+    if ~iscell(options.channels)
+      options.channels = {options.channels};
+    end
+    if strcmpi(options.mode,'fixation') && ~isfield(options, 'resolution')
       options.resolution = [1 1];
+    end
+    if strcmpi(options.mode,'fixation') && ~isfield(options, 'fixation_point')
+      options.resolution = [0.5 0.5];
     end
     if iscell(options.channels) && any(~cellfun(@(x) isnumeric(x) || ...
         any(strcmpi(x, settings.findvalidfixations.chantypes)), options.channels))
       warning('ID:invalid_input', 'Option.channels contains invalid values.');
       options.invalid = 1;
       return;
-    elseif strcmpi(options.mode,'fixation')&& isfield(options, 'fixation_point') && ...
+    elseif strcmpi(options.mode,'fixation') && isfield(options, 'fixation_point') && ...
         (~isnumeric(options.fixation_point) || ...
         size(options.fixation_point,2) ~= 2)
       warning('ID:invalid_input', ['Options.fixation_point is not ', ...
@@ -212,7 +246,7 @@ switch FunName
         'numeric, or has the wrong size (should be 1x2).']);
       options.invalid = 1;
       return;
-    elseif strcmpi(options.mode,'fixation')&& isfield(options, 'fixation_point') &&  ...
+    elseif strcmpi(options.mode,'fixation') && isfield(options, 'fixation_point') &&  ...
         ~all(options.fixation_point < options.resolution)
       warning('ID:out_of_range', ['Some fixation points are larger than ', ...
         'the range given. Ensure fixation points are within the given ', ...
@@ -221,15 +255,15 @@ switch FunName
       return;
     end
   case 'gaze_pp'
-    %% gaze_pp
-    options = autofill(options, 'channel', 'gaze_x_l');
-    options = autofill(options, 'channel_combine', 'none');
+    %% 2.22 pspm_gaze_pp
+    options = autofill(options, 'channel', 'gaze_x_l', {'gaze_x_r','gaze_y_l','gaze_y_r'});
+    options = autofill(options, 'channel_combine', 'none', {'gaze_x_l','gaze_x_r','gaze_y_l','gaze_y_r'});
     options = autofill(options, 'segments', {});
-    options = autofill(options, 'valid_sample', 0);
+    options = autofill(options, 'valid_sample', 0, 1);
     options = autofill(options, 'plot_data', false);
     options = autofill_channel_action(options, 'add', {'replace','none'});
   case 'glm'
-    %% glm
+    %% pspm_glm
     options = autofill(options, 'modelspec', 'scr');
     options = autofill(options, 'bf', 0);
     options = autofill(options, 'overwrite', 0, 1);
@@ -253,15 +287,18 @@ switch FunName
       end
     end
   case 'load1'
-    %% load1
+    %% pspm_load1
     options = autofill(options, 'overwrite', 0, 1);
     options = autofill(options, 'zscored', 0, 1);
   case 'import'
+    %% pspm_import
     % options = autofill(options, 'overwrite', 0, 1);
   case 'interpolate'
+    %% pspm_interpolate
     options = autofill_channel_action(options);
     try options.overwrite; catch, options.overwrite = 0; end
   case 'sf'
+    %% pspm_sf
     options = autofill(options,'overwrite', 0);
     if ~isfield(options,'marker_chan_num') ||...
         ~isnumeric(options.marker_chan_num) ||...
@@ -269,6 +306,7 @@ switch FunName
       options.marker_chan_num = 0;
     end
   case 'split_sessions'
+    %% pspm_split_sessions
     options = autofill(options, 'overwrite', 0, 1);
     options = autofill(options, 'prefix', 0);
     options = autofill(options, 'suffix', 0);
@@ -281,6 +319,7 @@ switch FunName
     options = autofill(options, 'min_break_ratio', settings.split.min_break_ratio);
     % minimum ratio of session break to normal inter marker interval (default 3)
   case 'trim'
+    %% pspm_trim
     options = autofill(options, 'overwrite', 0, 1);
     if ~isfield(options,'marker_chan_num') || ...
         ~isnumeric(options.marker_chan_num) || ...
@@ -292,6 +331,7 @@ switch FunName
       options.drop_offset_markers = 0;
     end
   case 'write_channel'
+    %% pspm_write_channel
     if ~isfield(options, 'channel')
       warning('ID:invalid_input', text_optional_channel_invalid);
       options.invalid = 1;
@@ -410,19 +450,29 @@ switch nargin
                 case '>' % larger than some value
                   flag_is_allowed_value = options.(field_name) > optional_value_boundary;
                 case 'integer>' % integer larger than some value
-                  flag_is_allowed_value = (options.(field_name) > optional_value_boundary) && (floor(options.(field_name))==options.(field_name));
+                  flag_is_allowed_value = ...
+                  (options.(field_name) > optional_value_boundary) &&...
+                  (floor(options.(field_name))==options.(field_name));
                 case '>='
-                  flag_is_allowed_value = options.(field_name) >= optional_value_boundary;
+                  flag_is_allowed_value = ...
+                  options.(field_name) >= optional_value_boundary;
                 case 'integer>='
-                  flag_is_allowed_value = (options.(field_name) >= optional_value_boundary) && (floor(options.(field_name))==options.(field_name));
+                  flag_is_allowed_value = ...
+                  (options.(field_name) >= optional_value_boundary) && ...
+                  (floor(options.(field_name))==options.(field_name));
                 case '<'
                   flag_is_allowed_value = options.(field_name) < optional_value_boundary;
                 case 'integer<'
-                  flag_is_allowed_value = (options.(field_name) < optional_value_boundary) && (floor(options.(field_name))==options.(field_name));
+                  flag_is_allowed_value = ...
+                  (options.(field_name) < optional_value_boundary) && ...
+                  (floor(options.(field_name))==options.(field_name));
                 case '<='
-                  flag_is_allowed_value = options.(field_name) <= optional_value_boundary;
+                  flag_is_allowed_value = ...
+                  options.(field_name) <= optional_value_boundary;
                 case 'integer<='
-                  flag_is_allowed_value = (options.(field_name) <= optional_value_boundary) && (floor(options.(field_name))==options.(field_name));
+                  flag_is_allowed_value = ...
+                  (options.(field_name) <= optional_value_boundary) && ...
+                  (floor(options.(field_name))==options.(field_name));
                 otherwise
                   warning('ID:invalid_input', 'range_marker must be <, >, <=, or >=.');
                   options.invalid = 1;
@@ -430,7 +480,8 @@ switch nargin
               end
             end
           otherwise
-            warning('ID:invalid_input', 'optional_value_boundary must be a double value for using ranges.');
+            warning('ID:invalid_input', ...
+            'optional_value_boundary must be a double value for using ranges.');
             options.invalid = 1;
             return
         end
@@ -536,6 +587,17 @@ switch nargin
             optional_value_message = [', "', optional_value{1}, '"', ...
               ', "', optional_value{2}, '"', ...
               ', and "', optional_value{3}, '"'];
+          case 4
+            optional_value_message = [', "', optional_value{1}, '"', ...
+              ', "', optional_value{2}, '"', ...
+              ', "', optional_value{3}, '"', ...
+              ', and "', optional_value{4}, '"'];
+          case 5
+            optional_value_message = [', "', optional_value{1}, '"', ...
+              ', "', optional_value{2}, '"', ...
+              ', "', optional_value{3}, '"', ...
+              ', "', optional_value{4}, '"', ...
+              ', and "', optional_value{5}, '"'];
         end
     end
     allowed_values_message = ['The allowed values are ', ...

@@ -202,16 +202,7 @@ end
 % overwrite
 options.overwrite = pspm_overwrite(fn, options);
 
-% newfile
-if ~isfield(options, 'newfile')
-  options.newfile = '';
-elseif ~ischar(options.newfile)
-  warning('ID:invalid_input', 'Options.newfile is not char.'); return;
-end
 
-if ~iscell(options.channels)
-  options.channels = {options.channels};
-end
 
 
 % iterate through eyes
