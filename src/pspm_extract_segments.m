@@ -219,17 +219,9 @@ if ~isstruct(options)
   warning('ID:invalid_input', 'Options must be a struct.'); return;
 end
 
-% set default timeunit
-if ~isfield(options, 'timeunit')
-  options.timeunit = 'seconds';
-else
-  options.timeunit = lower(options.timeunit);
-end
 
-% set default normalisation
-if ~isfield(options, 'norm')
-  options.norm = 0;
-end
+
+
 
 % set default marker_chan, if it is a glm struct (only for non-raw data)
 if manual_chosen == 1 || (manual_chosen == 0 && strcmpi(model_strc.modeltype,'glm'))
@@ -240,57 +232,8 @@ if manual_chosen == 1 || (manual_chosen == 0 && strcmpi(model_strc.modeltype,'gl
   end
 end
 
-% set default length
-if ~isfield(options, 'length')
-  options.length = -1;
-end
-
-% default plot
-if ~isfield(options, 'plot')
-  options.plot = 0;
-end
-
-% outputfile
-if ~isfield(options, 'outputfile')
-  options.outputfile = '';
-end
 
 
-
-%set default ouput_nan
-if ~isfield(options, 'nan_output')|| strcmpi(options.nan_output, 'none')
-  options.nan_output = 'none';
-elseif ~strcmpi( options.nan_output,'screen')
-  [path, name, ext ]= fileparts(options.nan_output);
-  if 7 ~= exist(path, 'dir')
-    warning('ID:invalid_input', 'Path for nan_output does not exist'); return;
-  end
-end
-
-% check mutual arguments (options)
-if ~ismember(options.timeunit, {'seconds','samples', 'markers'})
-  warning('ID:invalid_input', 'Invalid timeunit, use either ''markers'', ''seconds'' or ''samples'''); return;
-elseif ~isnumeric(options.length)
-  warning('ID:invalid_input', 'options.length is not numeric.'); return;
-elseif ~isnumeric(options.plot) && ~islogical(options.plot)
-  warning('ID:invalid_input', 'options.plot is not numeric.'); return;
-elseif ~isempty(options.outputfile) && ~ischar(options.outputfile)
-  warning('ID:invalid_input', 'options.outputfile has to be a string.'); return;
-elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 2 && ~isfield(options,'marker_chan')
-  warning('ID:invalid_input','''markers'' specified as a timeunit but nothing was specified in ''options.marker_chan''')
-elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 2 && ~all(size(data_raw) == size(options.marker_chan))
-  warning('ID:invalid_input', '''data_raw'' and ''options.marker_chan'' do not have the same size.'); return;
-elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 1 && ~all(size(data_fn) == size(options.marker_chan))
-  warning('ID:invalid_input', '''data_fn'' and ''options.marker_chan'' do not have the same size.'); return;
-elseif manual_chosen == 1 || (manual_chosen == 0 && strcmpi(model_strc.modeltype,'glm'))
-  if any(cellfun(@(x) ~strcmpi(x, 'marker') && ~isnumeric(x), options.marker_chan))
-    warning('ID:invalid_input', 'Options.marker_chan has to be numeric or ''marker''.'); return;
-  elseif strcmpi(options.timeunit, 'markers') ...
-      && any(cellfun(@(x) isnumeric(x) && x <= 0, options.marker_chan))
-    warning('ID:invalid_input', ['''markers'' specified as a timeunit but ', ...
-      'no valid marker channel is defined.']); return;
-  end
-end
 
 if manual_chosen == 2
   n_sessions = numel(data_raw);

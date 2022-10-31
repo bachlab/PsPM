@@ -160,6 +160,52 @@ switch FunName
     options = autofill(options, 'statstype', 'param', {'cond', 'recon'});
     options = autofill(options, 'delim', '\t');
     options = autofill(options, 'exclude_missing', 0, 1);
+  case 'extract_segments'
+  	options = autofill(options, 'norm', 0, 1);
+  	options = autofill(options, 'plot', 0, 1);
+  	options = autofill(options, 'timeunit', 'seconds', {'seconds', 'samples', 'markers'});
+  	% set default length
+  	% Length of the segments in the 'timeunits'. If given the same length is taken for segments for glm structure. If not given lengths are take from the timing data. This argument is optional. If 'timeunit' equals 'markers' then 'length' is expected to be in seconds. For dcm structures the option length will be ignored and length will be set from timing data.
+  	if ~isfield(options, 'length')
+  	  options.length = -1;
+  	end
+  	% outputfile
+  	if ~isfield(options, 'outputfile')
+  	  options.outputfile = '';
+  	end
+  	%set default ouput_nan
+  	if ~isfield(options, 'nan_output')|| strcmpi(options.nan_output, 'none')
+  	  options.nan_output = 'none';
+  	elseif ~strcmpi( options.nan_output,'screen')
+  	  [path, name, ext ]= fileparts(options.nan_output);
+  	  if 7 ~= exist(path, 'dir')
+  	    warning('ID:invalid_input', 'Path for nan_output does not exist'); return;
+  	  end
+  	end
+  	% check mutual arguments (options)
+  	if ~ismember(options.timeunit, {'seconds','samples', 'markers'})
+  	  warning('ID:invalid_input', 'Invalid timeunit, use either ''markers'', ''seconds'' or ''samples'''); return;
+  	elseif ~isnumeric(options.length)
+  	  warning('ID:invalid_input', 'options.length is not numeric.'); return;
+  	elseif ~isnumeric(options.plot) && ~islogical(options.plot)
+  	  warning('ID:invalid_input', 'options.plot is not numeric.'); return;
+  	elseif ~isempty(options.outputfile) && ~ischar(options.outputfile)
+  	  warning('ID:invalid_input', 'options.outputfile has to be a string.'); return;
+  	elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 2 && ~isfield(options,'marker_chan')
+  	  warning('ID:invalid_input','''markers'' specified as a timeunit but nothing was specified in ''options.marker_chan''')
+  	elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 2 && ~all(size(data_raw) == size(options.marker_chan))
+  	  warning('ID:invalid_input', '''data_raw'' and ''options.marker_chan'' do not have the same size.'); return;
+  	elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 1 && ~all(size(data_fn) == size(options.marker_chan))
+  	  warning('ID:invalid_input', '''data_fn'' and ''options.marker_chan'' do not have the same size.'); return;
+  	elseif manual_chosen == 1 || (manual_chosen == 0 && strcmpi(model_strc.modeltype,'glm'))
+  	  if any(cellfun(@(x) ~strcmpi(x, 'marker') && ~isnumeric(x), options.marker_chan))
+  	    warning('ID:invalid_input', 'Options.marker_chan has to be numeric or ''marker''.'); return;
+  	  elseif strcmpi(options.timeunit, 'markers') ...
+  	      && any(cellfun(@(x) isnumeric(x) && x <= 0, options.marker_chan))
+  	    warning('ID:invalid_input', ['''markers'' specified as a timeunit but ', ...
+  	      'no valid marker channel is defined.']); return;
+  	  end
+  	end
   case 'find_sounds'
     %% pspm_find_sounds
     options = autofill_channel_action(options, 'none', {'add','replace'});

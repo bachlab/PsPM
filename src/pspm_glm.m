@@ -244,9 +244,6 @@ end
 % check options --
 options = pspm_options(options, 'glm');
 
-
-
-
 if ischar(model.datafile)
   model.datafile={model.datafile};
 end
