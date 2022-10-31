@@ -170,20 +170,69 @@ switch FunName
     options = autofill(options, 'delim', '\t');
     options = autofill(options, 'exclude_missing', 0, 1);
   case 'extract_segments'
+    %% 2.21 pspm_extract_segments
     options = autofill(options, 'norm', 0, 1);
     options = autofill(options, 'plot', 0, 1);
     options = autofill(options, 'overwrite', 0, 1);
     options = autofill(options, 'length', -1, '@anynumeric');
     options = autofill(options, 'outputfile', '', '@anychar');
     options = autofill(options, 'timeunit', 'seconds', {'seconds', 'samples', 'markers'});
-
-    %set default ouput_nan
+    % 2.21.1 set default ouput_nan
     if ~isfield(options, 'nan_output')|| strcmpi(options.nan_output, 'none')
       options.nan_output = 'none';
     elseif ~strcmpi( options.nan_output,'screen')
-      [path, name, ext ]= fileparts(options.nan_output);
+      [path, ~, ~ ]= fileparts(options.nan_output);
       if 7 ~= exist(path, 'dir')
-        warning('ID:invalid_input', 'Path for nan_output does not exist'); return;
+        warning('ID:invalid_input', 'Path for nan_output does not exist');
+        options.invalid = 1;
+        return
+      end
+    end
+    % 2.21.2 set default marker_chan, if it is a glm struct (only for non-raw data)
+    if options.manual_chosen == 1 || ...
+        (options.manual_chosen == 0 && strcmpi(options.model_strc.modeltype,'glm'))
+      if ~isfield(options, 'marker_chan')
+        options.marker_chan = repmat({-1}, numel(options.data_fn),1);
+      elseif ~iscell(options.marker_chan)
+        options.marker_chan = repmat({options.marker_chan}, size(options.data_fn));
+      end
+    end
+    % 2.21.3 check mutual arguments (options)
+    if strcmpi(options.timeunit, 'markers') && ...
+        options.manual_chosen == 2 && ...
+        ~isfield(options,'marker_chan')
+      warning('ID:invalid_input',...
+        '''markers'' specified as a timeunit but nothing was specified in ''options.marker_chan''');
+      options.invalid = 1;
+      return
+    elseif strcmpi(options.timeunit, 'markers') && ...
+        options.manual_chosen == 2 && ...
+        ~all(size(options.data_raw) == size(options.marker_chan))
+      warning('ID:invalid_input',...
+        '''data_raw'' and ''options.marker_chan'' do not have the same size.');
+      options.invalid = 1;
+      return
+    elseif strcmpi(options.timeunit, 'markers') && ...
+        options.manual_chosen == 1 && ...
+        ~all(size(options.data_fn) == size(options.marker_chan))
+      warning('ID:invalid_input', ...
+        '''data_fn'' and ''options.marker_chan'' do not have the same size.');
+      options.invalid = 1;
+      return
+    elseif options.manual_chosen == 1 || ...
+        (options.manual_chosen == 0 && strcmpi(options.model_strc.modeltype,'glm'))
+      if any(cellfun(@(x) ~strcmpi(x, 'marker') && ~isnumeric(x), options.marker_chan))
+        warning('ID:invalid_input', ...
+          'Options.marker_chan has to be numeric or ''marker''.');
+        options.invalid = 1;
+        return
+      elseif strcmpi(options.timeunit, 'markers') ...
+          && any(cellfun(@(x) isnumeric(x) && x <= 0, options.marker_chan))
+        warning('ID:invalid_input', ...
+          ['''markers'' specified as a timeunit but ', ...
+          'no valid marker channel is defined.']);
+        options.invalid = 1;
+        return
       end
     end
   case 'find_sounds'

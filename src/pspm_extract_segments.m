@@ -214,38 +214,18 @@ if (manual_chosen == 0) && ~iscell(data_fn)
   data_fn = {data_fn};
 end
 
-
+if isstruct(options)
+  options.manual_chosen = manual_chosen;
+  if exist('model_strc', 'var')
+    options.model_strc = model_strc;
+  end
+  options.data_fn = data_fn;
+end
 options = pspm_options(options, 'extract_segments');
 if options.invalid
   return
 end
 
-
-% set default marker_chan, if it is a glm struct (only for non-raw data)
-if manual_chosen == 1 || (manual_chosen == 0 && strcmpi(model_strc.modeltype,'glm'))
-  if ~isfield(options, 'marker_chan')
-    options.marker_chan = repmat({-1}, numel(data_fn),1);
-  elseif ~iscell(options.marker_chan)
-    options.marker_chan = repmat({options.marker_chan}, size(data_fn));
-  end
-end
-
-% check mutual arguments (options)
-if strcmpi(options.timeunit, 'markers') && manual_chosen == 2 && ~isfield(options,'marker_chan')
-  warning('ID:invalid_input','''markers'' specified as a timeunit but nothing was specified in ''options.marker_chan''')
-elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 2 && ~all(size(data_raw) == size(options.marker_chan))
-  warning('ID:invalid_input', '''data_raw'' and ''options.marker_chan'' do not have the same size.'); return;
-elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 1 && ~all(size(data_fn) == size(options.marker_chan))
-  warning('ID:invalid_input', '''data_fn'' and ''options.marker_chan'' do not have the same size.'); return;
-elseif manual_chosen == 1 || (manual_chosen == 0 && strcmpi(model_strc.modeltype,'glm'))
-  if any(cellfun(@(x) ~strcmpi(x, 'marker') && ~isnumeric(x), options.marker_chan))
-    warning('ID:invalid_input', 'Options.marker_chan has to be numeric or ''marker''.'); return;
-  elseif strcmpi(options.timeunit, 'markers') ...
-      && any(cellfun(@(x) isnumeric(x) && x <= 0, options.marker_chan))
-    warning('ID:invalid_input', ['''markers'' specified as a timeunit but ', ...
-      'no valid marker channel is defined.']); return;
-  end
-end
 
 if manual_chosen == 2
   n_sessions = numel(data_raw);
