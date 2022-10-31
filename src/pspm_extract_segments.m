@@ -25,9 +25,9 @@ function [sts, out] = pspm_extract_segments(varargin)
 %                          will be treated as session. Onset values are
 %                          averaged through conditions and sessions.
 %               data_raw:  Numeric raw data or a cell array of numeric raw data.
-%                channel:  Channel number or cell of channel numbers which
+%                   channel:  Channel number or cell of channel numbers which
 %                          defines which channel should be taken to
-%                          extract the segments. Chan should correspond to
+%                          extract the segments. channel should correspond to
 %                          data_fn and should have the same length. If
 %                          data_fn is a cell and channel is a single number,
 %                          the number will be taken for all files.
@@ -54,9 +54,8 @@ function [sts, out] = pspm_extract_segments(varargin)
 %   │                     the mean (dashed) will be ploted. Default is 0.
 %   ├────────.outputfile: Define filename to store segments. If is equal
 %   │                     to '', no file will be written. Default is 0.
-%   ├─────────.overwrite: [logical] (0 or 1)
-%   │                     Define whether to overwrite existing output files or not.
-%   │                     Default value: determined by pspm_overwrite.
+%   ├─────────.overwrite: Define if already existing files should be
+%   │                     overwritten. Default ist 0.
 %   ├───────.marker_chan: Mandatory if timeunit is 'markers'. For the
 %   │                     function to find the appropriate timing of the
 %   │                     specified marker ids. Must have the same format
@@ -215,12 +214,11 @@ if (manual_chosen == 0) && ~iscell(data_fn)
   data_fn = {data_fn};
 end
 
-if ~isstruct(options)
-  warning('ID:invalid_input', 'Options must be a struct.'); return;
+
+options = pspm_options(options, 'extract_segments');
+if options.invalid
+  return
 end
-
-
-
 
 
 % set default marker_chan, if it is a glm struct (only for non-raw data)
@@ -232,8 +230,22 @@ if manual_chosen == 1 || (manual_chosen == 0 && strcmpi(model_strc.modeltype,'gl
   end
 end
 
-
-
+% check mutual arguments (options)
+if strcmpi(options.timeunit, 'markers') && manual_chosen == 2 && ~isfield(options,'marker_chan')
+  warning('ID:invalid_input','''markers'' specified as a timeunit but nothing was specified in ''options.marker_chan''')
+elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 2 && ~all(size(data_raw) == size(options.marker_chan))
+  warning('ID:invalid_input', '''data_raw'' and ''options.marker_chan'' do not have the same size.'); return;
+elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 1 && ~all(size(data_fn) == size(options.marker_chan))
+  warning('ID:invalid_input', '''data_fn'' and ''options.marker_chan'' do not have the same size.'); return;
+elseif manual_chosen == 1 || (manual_chosen == 0 && strcmpi(model_strc.modeltype,'glm'))
+  if any(cellfun(@(x) ~strcmpi(x, 'marker') && ~isnumeric(x), options.marker_chan))
+    warning('ID:invalid_input', 'Options.marker_chan has to be numeric or ''marker''.'); return;
+  elseif strcmpi(options.timeunit, 'markers') ...
+      && any(cellfun(@(x) isnumeric(x) && x <= 0, options.marker_chan))
+    warning('ID:invalid_input', ['''markers'' specified as a timeunit but ', ...
+      'no valid marker channel is defined.']); return;
+  end
+end
 
 if manual_chosen == 2
   n_sessions = numel(data_raw);
@@ -648,16 +660,30 @@ if ~isempty(options.outputfile)
   % ensure correct file suffix
   [pt, fn, ~] = fileparts(options.outputfile);
   outfile = [pt filesep fn '.mat'];
-  % overwrite
-  overwrite = pspm_overwrite(outfile, options);
-  if overwrite
+  write_ok = 0;
+  if exist(outfile, 'file')
+    if options.overwrite
+      write_ok = 1;
+    else
+      button = questdlg(sprintf('File (%s) already exists. Replace file?', ...
+        outfile), 'Replace file?', 'Yes', 'No', 'No');
+
+      write_ok = strcmpi(button, 'Yes');
+    end
+  else
+    write_ok = 1;
+  end
+
+  if write_ok
     save(outfile, 'segments');
     out.outputfile = outfile;
   end
 end
+
 if options.plot
   % show plot
   set(fg, 'Visible', 'on');
   legend(legend_lb);
 end
+
 sts = 1;
