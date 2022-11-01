@@ -1,14 +1,14 @@
 function theta = pspm_get_rf(fn, events, outfile, chan, options)
-% ‚óè Description
+% ‚ó? Description
 %   pspm_get_rf estimates a response function from an event-related design
 %   (e.g. for further use in a GLM analysis), using a regularisation as
 %   third-order ODE and DCM machinery.
-% ‚óè Developer's Notes
+% ‚ó? Developer's Notes
 %   the function returns an m-function for the RF, and the parameters of that
 %   function
-% ‚óè Format
+% ‚ó? Format
 %   theta = pspm_get_rf(fn, events, outfile, chan, options)
-% ‚óè Arguments
+% ‚ó? Arguments
 %         fn: the file name of a PsPM data file
 %     events: specified in seconds as either (1) a vector of onsets, or (2) an 
 %             SPM style onsets file with one event type, or (3) an epochs file
@@ -16,7 +16,7 @@ function theta = pspm_get_rf(fn, events, outfile, chan, options)
 %    outfile: (optional) a file to write the response function to
 %       chan: (optional) data channel (default: look for first SCR channel)
 %    options: [struct] to be passed on to pspm_dcm
-% ‚óè History
+% ‚ó? History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
@@ -45,8 +45,9 @@ if nargin < 4
 end;
 
 %% call DCM
-options.getrf = 1;
-try options.nosave, catch, options.nosave = 1; end;
+options = pspm_options(options, 'get_rf');
+% options.getrf = 1;
+%try options.nosave, catch, options.nosave = 1; end;
 options.chan = chan;
 [foo dcm] = pspm_dcm(fn, '', events, options);
 if numel(dcm{1}.prior.posterior) == 2

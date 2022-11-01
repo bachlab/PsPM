@@ -213,25 +213,28 @@ switch FunName
     options = autofill(options, 'markerchan',             -1,       '@anyinteger');
     options = autofill(options, 'filename',               '',       '@anychar');
     options = autofill(options, 'overwrite',              0,        1);
+  case 'get_rf'
+    options = autofill(options, 'getrf',                  1           );
+    options = autofill(options, 'nosave',                 1,        0 );
   case 'glm'
     %% pspm_glm
-    options = autofill(options, 'modelspec', 'scr');
-    options = autofill(options, 'bf', 0);
-    options = autofill(options, 'overwrite', 0, 1);
-    options = autofill(options, 'norm', 0);
-    options = autofill(options, 'centering', 1);
+    options = autofill(options, 'modelspec',              'scr'       );
+    options = autofill(options, 'bf',                     0,        1 );
+    options = autofill(options, 'overwrite',              0,        1 );
+    options = autofill(options, 'norm',                   0,        1 );
+    options = autofill(options, 'centering',              1,        0 );
     options = fill_glm(options);
-  case 'load1'
-    %% pspm_load1
-    options = autofill(options, 'overwrite', 0, 1);
-    options = autofill(options, 'zscored', 0, 1);
   case 'import'
     %% pspm_import
-    % options = autofill(options, 'overwrite', 0, 1);
+    options = autofill(options, 'overwrite',              0,        1 );
   case 'interpolate'
     %% pspm_interpolate
     options = autofill_channel_action(options);
-    try options.overwrite; catch, options.overwrite = 0; end
+    options = autofill(options, 'overwrite',              0,        1 );
+  case 'load1'
+    %% pspm_load1
+    options = autofill(options, 'overwrite',              0,        1 );
+    options = autofill(options, 'zscored', 0, 1);
   case 'sf'
     %% pspm_sf
     options = autofill(options,'overwrite', 0);
