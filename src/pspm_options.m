@@ -1,11 +1,11 @@
 function options = pspm_options(options, FunName)
-% ● Definition
+% ? Definition
 %   pspm_options automatically determine the fields of options for the
 %   corresponding function.
-% ● Arguments
+% ? Arguments
 %   options:  a struct to be filled by the function
 %   FunName:  a string, the name of the function where option is used
-% ● Copyright
+% ? Copyright
 %   Introduced in PsPM 6.1
 %   Written in 2022 by Teddy Chao (UCL)
 
@@ -249,6 +249,7 @@ switch FunName
     options = autofill(options, 'resample', 1, 'integer>=', 1);
     options = autofill(options, 'plot', 0, 1);
     options = autofill(options, 'snd_in_snd', 0, 1);
+    options = autofill(options, 'expectedSoundCount', 0, '@anyinteger');
     % options = autofill(options, 'roi', []);
     if options.maxdelay < options.mindelay
       warning('ID:invalid_input', ...
@@ -261,12 +262,9 @@ switch FunName
       options.diagnostics = true;
     end
     try options.roi; catch, options.roi = []; end
+    
     try options.expectedSoundCount; catch; options.expectedSoundCount = 0; end
-    if ~isnumeric(options.expectedSoundCount) || mod(options.expectedSoundCount,1) ...
-        || options.expectedSoundCount < 0
-      warning('ID:invalid_input', 'Option expectedSoundCount is not an integer.');
-      options.invalid = 1;
-    elseif ~isempty(options.roi) && (length(options.roi) ~= 2 || ~all(isnumeric(options.roi) & options.roi >= 0))
+    if ~isempty(options.roi) && (length(options.roi) ~= 2 || ~all(isnumeric(options.roi) & options.roi >= 0))
       warning('ID:invalid_input', 'Option roi must be a float vector of length 2 or 0');
       options.invalid = 1;
     end
@@ -493,6 +491,9 @@ switch nargin
               flag_is_allowed_value = ischar(options.(field_name));
             elseif strcmp(optional_value, '@anynumeric')
               flag_is_allowed_value = isnumeric(options.(field_name));
+            elseif strcmp(optional_value, '@anyinteger')
+              flag_is_allowed_value = isnumeric(options.(field_name)) && ...
+                  (options.(field_name)>0) && (mod(options.(field_name), 1)==0);
             else
               allowed_value = {optional_value, default_value};
               flag_is_allowed_value = strcmp(options.(field_name), allowed_value);
