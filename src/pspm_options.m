@@ -38,18 +38,18 @@ text_optional_channel_invalid_char = 'options.channel is not a valid channel typ
 switch FunName
   case 'blink_saccade_filt'
     %% 2.1 pspm_blink_saccade_filt
-    options = autofill(options, 'channel', 0, '@anynumeric');
+    options = autofill(options, 'channel',        0,    '@anynumeric');
     options = autofill_channel_action(options);
   case 'compute_visual_angle_core'
     %% 2.2 pspm_compute_visual_angle_core
-    options = autofill(options,'interpolate',0,1);
+    options = autofill(options, 'interpolate',    0,    1);
   case 'compute_visual_angle'
     %% 2.3 pspm_compute_visual_angle
-    options = autofill(options,'eyes',settings.lateral.char.b,{settings.lateral.char.l,settings.lateral.char.r});
+    options = autofill(options, 'eyes',           settings.lateral.char.b,{settings.lateral.char.l,settings.lateral.char.r});
     options = autofill_channel_action(options);
   case 'con1'
     %% 2.4 pspm_con1
-    options = autofill(options,'zscored',0,1);
+    options = autofill(options, 'zscored',        0,    1);
   case 'con2'
     %% 2.5 pspm_con2
     options = autofill_channel_action(options);
@@ -62,12 +62,12 @@ switch FunName
   case 'convert_ecg2hb'
     %% 2.8 pspm_convert_ecg2hb
     options = autofill_channel_action(options, 'replace');
-    options = autofill(options, 'debugmode', 0, 1); % can be merged into development mode?
-    options = autofill(options, 'semi', 0, 1); % semi==1 will pop a dialog
-    options = autofill(options, 'maxHR', 200, '>', 20); % field: maxHR (bpm)
-    options = autofill(options, 'minHR', 20, '<', 200); % field: minHR (bpm)
-    options = autofill(options, 'twthresh', 0.36, '@anynumeric');
-    options = autofill(options, 'outfact', 2, '@anynumeric');
+    options = autofill(options, 'debugmode',      0,    1); % can be merged into development mode?
+    options = autofill(options, 'semi',           0,    1); % semi==1 will pop a dialog
+    options = autofill(options, 'maxHR',          200,  '>', 20); % field: maxHR (bpm)
+    options = autofill(options, 'minHR',          20,   '<', 200); % field: minHR (bpm)
+    options = autofill(options, 'twthresh',       0.36, '@anynumeric');
+    options = autofill(options, 'outfact',        2,    '@anynumeric');
     if options.maxHR < options.minHR
       warning('ID:invalid_input', ...
         ['''options.minHR'' and ''options.maxHR'' ', ...
@@ -78,14 +78,14 @@ switch FunName
     end
   case 'convert_ecg2hb_amri'
     %% 2.9 pspm_convert_ecg2hb_amri
-    options = autofill(options, 'channel', 'ecg');
-    options = autofill(options, 'signal_to_use', 'auto', {'ecg', 'teo'});
-    options = autofill(options, 'hrrange', [20 200], '>', 0);
-    options = autofill(options, 'ecg_bandpass', [0.5 40], '>', 0);
-    options = autofill(options, 'teo_bandpass', [8 40], '>', 0);
-    options = autofill(options, 'teo_order', 1, '>', 0);
-    options = autofill(options, 'min_cross_corr', 0.5, '@anynumeric');
-    options = autofill(options, 'min_relative_amplitude', 0.4, '@anynumeric');
+    options = autofill(options, 'channel',                'ecg'                   );
+    options = autofill(options, 'signal_to_use',          'auto',   {'ecg', 'teo'});
+    options = autofill(options, 'hrrange',                [20 200], '>', 0        );
+    options = autofill(options, 'ecg_bandpass',           [0.5 40], '>', 0        );
+    options = autofill(options, 'teo_bandpass',           [8 40],   '>', 0        );
+    options = autofill(options, 'teo_order',              1,        '>', 0        );
+    options = autofill(options, 'min_cross_corr',         0.5,      '@anynumeric' );
+    options = autofill(options, 'min_relative_amplitude', 0.4,      '@anynumeric' );
     options = autofill_channel_action(options);
   case 'convert_gaze_distance'
     %% 2.10 pspm_convert_gaze_distance
@@ -93,248 +93,126 @@ switch FunName
   case 'convert_hb2hp'
     %% 2.11 pspm_convert_hb2hp
     options = autofill_channel_action(options, 'replace');
-    options = autofill(options, 'limit.lower', 0.2, '@anynumeric');
-    options = autofill(options, 'limit.upper', 2, '@anynumeric');
+    options = autofill(options, 'limit.lower',            0.2,      '@anynumeric' );
+    options = autofill(options, 'limit.upper',            2,        '@anynumeric' );
   case 'convert_pixel2unit'
     %% 2.12 pspm_convert_pixel2unit
     options = autofill_channel_action(options);
   case 'convert_ppg2hb'
     %% 2.13 pspm_convert_ppg2hb
-    options = autofill(options, 'channel', 'ppg2hb', '@anychar');
-    options = autofill(options, 'diagnostics', 0, 1);
-    options = autofill(options, 'lsm', 0);
+    options = autofill(options, 'channel',                'ppg2hb', '@anychar'    );
+    options = autofill(options, 'diagnostics',            0,        1);
+    options = autofill(options, 'lsm',                    0);
     options = autofill_channel_action(options, 'replace');
   case 'convert_visangle2sps'
     %% 2.14 pspm_convert_visangle2sps
-    options = autofill(options, 'channels', 0, '@anynumeric');
-    options = autofill(options, 'eye', settings.lateral.char.b, {settings.lateral.char.r, settings.lateral.char.l});
+    options = autofill(options, 'channels',               0,        '@anynumeric' );
+    options = autofill(options, 'eye',                    settings.lateral.char.b, {settings.lateral.char.r, settings.lateral.char.l});
     options = autofill_channel_action(options);
   case 'data_editor'
     %% 2.15 pspm_data_editor
     % output_file does not have a default value
     % epoch_file does not have a default value
-    options = autofill(options, 'overwrite', 0, 1);
+    options = autofill(options, 'overwrite',              0,        1);
   case 'dcm'
     %% 2.16 pspm_dcm
-    options = autofill(options, 'indrf', 0, '@anynumeric'); % Estimate the response function from the data
-    options = autofill(options, 'getrf', 0, '@anynumeric'); % only estimate RF, do not do trial-wise DCM
-    options = autofill(options, 'rf', 0, '@anynumeric'); % Call an external file to provide response function (for use when this is previously estimated by pspm_get_rf)
-    options = autofill(options, 'nosave', 0, '@anynumeric'); % Don't save dcm structure (e.g. used by pspm_get_rf)
-    options = autofill(options, 'depth', 2, '@anynumeric'); % no of trials to invert at the same time
-    options = autofill(options, 'aSCR_sigma_offset', 0.1, '@anynumeric'); % minimum dispersion (standard deviation) for flexible responses (second)
-    options = autofill(options, 'sclpre', 2, '@anynumeric'); % scl-change-free window before first event (second)
-    options = autofill(options, 'sclpost', 5, '@anynumeric'); % scl-change-free window after last event (second)
-    options = autofill(options, 'sfpre', 2, '@anynumeric'); % sf-free window before first event (second)
-    options = autofill(options, 'sfpost', 5, '@anynumeric'); % sf-free window after last event (second)
-    options = autofill(options, 'sffreq', 0.5, '@anynumeric'); % maximum frequency of SF in ITIs (Hz)
-    options = autofill(options, 'method', 'dcm');
-    options = autofill(options, 'dispwin', 1, '@anynumeric');
-    options = autofill(options, 'dispsmallwin', 0, '@anynumeric');
-    options = autofill(options, 'crfupdate', 0, '@anynumeric'); % update CRF priors to observed SCRF, or use pre-estimated priors
-    options = autofill(options, 'eventnames', {}); % Cell array of names for individual events
-    options = autofill(options, 'trlnames', {}); % Cell array of names for individual trials, is used for contrast manager only (e.g. condition descriptions)
-    options = autofill(options, 'overwrite', 1, 0);
+    options = autofill(options, 'indrf',                  0,        '@anynumeric'); % Estimate the response function from the data
+    options = autofill(options, 'getrf',                  0,        '@anynumeric'); % only estimate RF, do not do trial-wise DCM
+    options = autofill(options, 'rf',                     0,        '@anynumeric'); % Call an external file to provide response function (for use when this is previously estimated by pspm_get_rf)
+    options = autofill(options, 'nosave',                 0,        '@anynumeric'); % Don't save dcm structure (e.g. used by pspm_get_rf)
+    options = autofill(options, 'depth',                  2,        '@anynumeric'); % no of trials to invert at the same time
+    options = autofill(options, 'aSCR_sigma_offset',      0.1,      '@anynumeric' ); % minimum dispersion (standard deviation) for flexible responses (second)
+    options = autofill(options, 'sclpre',                 2,        '@anynumeric' ); % scl-change-free window before first event (second)
+    options = autofill(options, 'sclpost',                5,        '@anynumeric' ); % scl-change-free window after last event (second)
+    options = autofill(options, 'sfpre',                  2,        '@anynumeric' ); % sf-free window before first event (second)
+    options = autofill(options, 'sfpost',                 5,        '@anynumeric' ); % sf-free window after last event (second)
+    options = autofill(options, 'sffreq',                 0.5,      '@anynumeric' ); % maximum frequency of SF in ITIs (Hz)
+    options = autofill(options, 'method',                 'dcm'                   );
+    options = autofill(options, 'dispwin',                1,        '@anynumeric' );
+    options = autofill(options, 'dispsmallwin',           0,        '@anynumeric' );
+    options = autofill(options, 'crfupdate',              0,        '@anynumeric' ); % update CRF priors to observed SCRF, or use pre-estimated priors
+    options = autofill(options, 'eventnames',           	{}                      ); % Cell array of names for individual events
+    options = autofill(options, 'trlnames',               {}                      ); % Cell array of names for individual trials, is used for contrast manager only (e.g. condition descriptions)
+    options = autofill(options, 'overwrite',              1,        0             );
   case 'dcm_inv'
     %% 2.17 pspm_dcm_inv
-    options = autofill(options, 'eSCR', 0, '@anynumeric'); % contains the data to estimate RF from
-    options = autofill(options, 'aSCR_sigma_offset', 0.1, '@anynumeric'); % minimum dispersion (standard deviation) for flexible responses (second)
-    options = autofill(options, 'aSCR', 0, '@anynumeric'); % contains the data to adjust the RF to
-    options = autofill(options, 'meanSCR', 0, '@anynumeric'); % data to adjust the response amplitude priors to
-    options = autofill(options, 'depth', 2, '@anynumeric'); % no of trials to invert at the same time
-    options = autofill(options, 'dispsmallwin', 0, '@anynumeric');
-    options = autofill(options, 'dispwin', 1, '@anynumeric');
-    options = autofill(options, 'sfpre', 2, '@anynumeric'); % sf-free window before first event (second)
-    options = autofill(options, 'sfpost', 5, '@anynumeric'); % sf-free window after last event (second)
-    options = autofill(options, 'sffreq', 0.5, '@anynumeric'); % maximum frequency of SF in ITIs (Hz)
-    options = autofill(options, 'sclpre', 2.5, '@anynumeric'); % scl-change-free window before first event, avoid overlap of last SCL change with next trial (second)
-    options = autofill(options, 'sclpost', 2, '@anynumeric'); % scl-change-free window after last event (second)
-    options = autofill(options, 'crfupdate', 0, '@anynumeric'); % update CRF priors to observed SCRF, or use pre-estimated priors, default to use pre-estimated priors
-    options = autofill(options, 'getrf', 0, '@anynumeric'); % only estimate RF, do not do trial-wise DCM
-    options = autofill(options, 'overwrite', 1, 0);
+    options = autofill(options, 'eSCR',                   0,        '@anynumeric'); % contains the data to estimate RF from
+    options = autofill(options, 'aSCR_sigma_offset',      0.1,      '@anynumeric'); % minimum dispersion (standard deviation) for flexible responses (second)
+    options = autofill(options, 'aSCR',                   0,        '@anynumeric'); % contains the data to adjust the RF to
+    options = autofill(options, 'meanSCR',                0,        '@anynumeric'); % data to adjust the response amplitude priors to
+    options = autofill(options, 'depth',                  2,        '@anynumeric'); % no of trials to invert at the same time
+    options = autofill(options, 'dispsmallwin',           0,        '@anynumeric');
+    options = autofill(options, 'dispwin',                1,        '@anynumeric');
+    options = autofill(options, 'sfpre',                  2,        '@anynumeric'); % sf-free window before first event (second)
+    options = autofill(options, 'sfpost',                 5,        '@anynumeric'); % sf-free window after last event (second)
+    options = autofill(options, 'sffreq',                 0.5,      '@anynumeric'); % maximum frequency of SF in ITIs (Hz)
+    options = autofill(options, 'sclpre',                 2.5,      '@anynumeric'); % scl-change-free window before first event, avoid overlap of last SCL change with next trial (second)
+    options = autofill(options, 'sclpost',                2,        '@anynumeric'); % scl-change-free window after last event (second)
+    options = autofill(options, 'crfupdate',              0,        '@anynumeric'); % update CRF priors to observed SCRF, or use pre-estimated priors, default to use pre-estimated priors
+    options = autofill(options, 'getrf',                  0,        '@anynumeric'     ); % only estimate RF, do not do trial-wise DCM
+    options = autofill(options, 'overwrite',              1,        0                 );
     % options = autofill(options, 'fixevents', ?); % fixed events to adjust amplitude priors
     % options = autofill(options, 'flexevents', ?); % flexible events to adjust amplitude priors
     % options = autofill(options, 'missing', ?); % data points to be disregarded by inversion
     % options = autofill(options, 'rf', ?); % use pre-specified RF, provided in file, or as 4-element vector in log parameter space
   case 'down'
     %% 2.18 pspm_down
-    options = autofill(options, 'overwrite', 1, 0);
+    options = autofill(options, 'overwrite',              1,        0                 );
   case 'emg_pp'
     %% 2.19 pspm_emg_pp
-    options = autofill(options, 'channel', 'emg', '@anychar');
-    options = autofill_channel_action(options, 'replace', {'add'});
-    options = autofill(options, 'mains_freq', 50, '@anynumeric');
+    options = autofill(options, 'channel',                'emg',    '@anychar'        );
+    options = autofill(options, 'mains_freq',             50,       '@anynumeric'     );
+    options = autofill_channel_action(options,            'replace','add'             );
   case 'exp'
     %% 2.20 pspm_exp
-    options = autofill(options, 'target', 'screen', '@anychar');
-    options = autofill(options, 'statstype', 'param', {'cond', 'recon'});
-    options = autofill(options, 'delim', '\t');
-    options = autofill(options, 'exclude_missing', 0, 1);
+    options = autofill(options, 'target',                 'screen', '@anychar'        );
+    options = autofill(options, 'statstype',              'param',  {'cond', 'recon'} );
+    options = autofill(options, 'delim',                  '\t'                        );
+    options = autofill(options, 'exclude_missing',        0,        1                 );
   case 'extract_segments'
     %% 2.21 pspm_extract_segments
-    options = autofill(options, 'norm', 0, 1);
-    options = autofill(options, 'plot', 0, 1);
-    options = autofill(options, 'overwrite', 0, 1);
-    options = autofill(options, 'length', -1, '@anynumeric');
-    options = autofill(options, 'outputfile', '', '@anychar');
-    options = autofill(options, 'timeunit', 'seconds', {'seconds', 'samples', 'markers'});
-    % 2.21.1 set default ouput_nan
-    if ~isfield(options, 'nan_output')|| strcmpi(options.nan_output, 'none')
-      options.nan_output = 'none';
-    elseif ~strcmpi( options.nan_output,'screen')
-      [path, ~, ~ ]= fileparts(options.nan_output);
-      if 7 ~= exist(path, 'dir')
-        warning('ID:invalid_input', 'Path for nan_output does not exist');
-        options.invalid = 1;
-        return
-      end
-    end
-    % 2.21.2 set default marker_chan, if it is a glm struct (only for non-raw data)
-    if options.manual_chosen == 1 || ...
-        (options.manual_chosen == 0 && strcmpi(options.model_strc.modeltype,'glm'))
-      if ~isfield(options, 'marker_chan')
-        options.marker_chan = repmat({-1}, numel(options.data_fn),1);
-      elseif ~iscell(options.marker_chan)
-        options.marker_chan = repmat({options.marker_chan}, size(options.data_fn));
-      end
-    end
-    % 2.21.3 check mutual arguments (options)
-    if strcmpi(options.timeunit, 'markers') && ...
-        options.manual_chosen == 2 && ...
-        ~isfield(options,'marker_chan')
-      warning('ID:invalid_input',...
-        '''markers'' specified as a timeunit but nothing was specified in ''options.marker_chan''');
-      options.invalid = 1;
-      return
-    elseif strcmpi(options.timeunit, 'markers') && ...
-        options.manual_chosen == 2 && ...
-        ~all(size(options.data_raw) == size(options.marker_chan))
-      warning('ID:invalid_input',...
-        '''data_raw'' and ''options.marker_chan'' do not have the same size.');
-      options.invalid = 1;
-      return
-    elseif strcmpi(options.timeunit, 'markers') && ...
-        options.manual_chosen == 1 && ...
-        ~all(size(options.data_fn) == size(options.marker_chan))
-      warning('ID:invalid_input', ...
-        '''data_fn'' and ''options.marker_chan'' do not have the same size.');
-      options.invalid = 1;
-      return
-    elseif options.manual_chosen == 1 || ...
-        (options.manual_chosen == 0 && strcmpi(options.model_strc.modeltype,'glm'))
-      if any(cellfun(@(x) ~strcmpi(x, 'marker') && ~isnumeric(x), options.marker_chan))
-        warning('ID:invalid_input', ...
-          'Options.marker_chan has to be numeric or ''marker''.');
-        options.invalid = 1;
-        return
-      elseif strcmpi(options.timeunit, 'markers') ...
-          && any(cellfun(@(x) isnumeric(x) && x <= 0, options.marker_chan))
-        warning('ID:invalid_input', ...
-          ['''markers'' specified as a timeunit but ', ...
-          'no valid marker channel is defined.']);
-        options.invalid = 1;
-        return
-      end
-    end
+    options = autofill(options, 'norm',                   0,        1                 );
+    options = autofill(options, 'plot',                   0,        1                 );
+    options = autofill(options, 'overwrite',              0,        1                 );
+    options = autofill(options, 'length',                 -1,       '@anynumeric'     );
+    options = autofill(options, 'outputfile',             '',       '@anychar'        );
+    options = autofill(options, 'timeunit',               'seconds', {'seconds', 'samples', 'markers'});
+    options = fill_extract_segments(options);
   case 'find_sounds'
     %% pspm_find_sounds
-    options = autofill_channel_action(options, 'none', {'add','replace'});
-    options = autofill(options, 'channel_output', 'all', 'corrected');
-    options = autofill(options, 'diagnostics', 1, 0);
-    options = autofill(options, 'maxdelay', 3, '>=', 0);
-    options = autofill(options, 'mindelay', 0, '>=', 0);
-    options = autofill(options, 'threshold', 0.1, '>=', 0);
-    options = autofill(options, 'sndchannel', 0, 'integer>=', 0);
-    options = autofill(options, 'trigchannel', 0, 'integer>=', 0);
-    % options = autofill(options, 'expectedSoundCount', 0, 'integer>=', 0);
-    options = autofill(options, 'resample', 1, 'integer>=', 1);
-    options = autofill(options, 'plot', 0, 1);
-    options = autofill(options, 'snd_in_snd', 0, 1);
-    options = autofill(options, 'expectedSoundCount', 0, '@anyinteger');
-    % options = autofill(options, 'roi', []);
-    if options.maxdelay < options.mindelay
-      warning('ID:invalid_input', ...
-        ['''options.mindelay'' and ''options.maxdelay'' ', ...
-        'must be numeric and ''options.mindelay'' must be ', ...
-        'smaller than ''options.maxdelay''']);
-      options.invalid = 1;
-    end
-    if options.plot
-      options.diagnostics = true;
-    end
-    try options.roi; catch, options.roi = []; end
-    
-    try options.expectedSoundCount; catch; options.expectedSoundCount = 0; end
-    if ~isempty(options.roi) && (length(options.roi) ~= 2 || ~all(isnumeric(options.roi) & options.roi >= 0))
-      warning('ID:invalid_input', 'Option roi must be a float vector of length 2 or 0');
-      options.invalid = 1;
-    end
+    options = autofill_channel_action(options,            'none',   {'add','replace'} );
+    options = autofill(options, 'channel_output',         'all',    'corrected'       );
+    options = autofill(options, 'diagnostics',            1,        0                 );
+    options = autofill(options, 'maxdelay',               3,        '>=',  0          );
+    options = autofill(options, 'mindelay',               0,        '>=',  0          );
+    options = autofill(options, 'threshold',              0.1,      '>=',  0          );
+    options = autofill(options, 'sndchannel',             0,        '@anyinteger'     );
+    options = autofill(options, 'trigchannel',            0,        '@anyinteger'     );
+    options = autofill(options, 'resample',               1,        '@anyinteger'     );
+    options = autofill(options, 'plot',                   0,        1                 );
+    options = autofill(options, 'snd_in_snd',             0,        1                 );
+    options = autofill(options, 'expectedSoundCount',     0,        '@anyinteger'     );
+    options = fill_find_sounds(options);
   case 'find_valid_fixations'
     %% 2.21 pspm_find_valid_fixations
     options = autofill_channel_action(options);
-    options = autofill(options, 'missing', 0, 1);
-    options = autofill(options, 'plot_gaze_coords', 0, 1);
-    options = autofill(options, 'eyes', settings.lateral.full.c, ...
-      {settings.lateral.full.c, settings.lateral.full.l, settings.lateral.full.r});
-    % newfile
-    if ~isfield(options, 'newfile')
-      options.newfile = '';
-    elseif ~ischar(options.newfile)
-      warning('ID:invalid_input', 'Options.newfile is not char.');
-      options.invalid = 1;
-      return
-    end
-    if ~isfield(options, 'channels')
-      options.channels = 'pupil';
-    elseif ~iscell(options.channels) && ~ischar(options.channels) && ...
-        ~isnumeric(options.channels)
-      warning('ID:invalid_input', ['Options.channels should be a char, ', ...
-        'numeric or a cell of char or numeric.']);
-      options.invalid = 1;
-      return;
-    end
-    if ~iscell(options.channels)
-      options.channels = {options.channels};
-    end
-    if strcmpi(options.mode,'fixation') && ~isfield(options, 'resolution')
-      options.resolution = [1 1];
-    end
-    if strcmpi(options.mode,'fixation') && ~isfield(options, 'fixation_point')
-      options.resolution = [0.5 0.5];
-    end
-    if iscell(options.channels) && any(~cellfun(@(x) isnumeric(x) || ...
-        any(strcmpi(x, settings.findvalidfixations.chantypes)), options.channels))
-      warning('ID:invalid_input', 'Option.channels contains invalid values.');
-      options.invalid = 1;
-      return;
-    elseif strcmpi(options.mode,'fixation') && isfield(options, 'fixation_point') && ...
-        (~isnumeric(options.fixation_point) || ...
-        size(options.fixation_point,2) ~= 2)
-      warning('ID:invalid_input', ['Options.fixation_point is not ', ...
-        'numeric, or has the wrong size (should be nx2).']);
-      options.invalid = 1;
-      return;
-    elseif isfield(options, 'resolution') && (~isnumeric(options.resolution) || ...
-        ~all(size(options.resolution) == [1 2]))
-      warning('ID:invalid_input', ['Options.fixation_point is not ', ...
-        'numeric, or has the wrong size (should be 1x2).']);
-      options.invalid = 1;
-      return;
-    elseif strcmpi(options.mode,'fixation') && isfield(options, 'fixation_point') &&  ...
-        ~all(options.fixation_point < options.resolution)
-      warning('ID:out_of_range', ['Some fixation points are larger than ', ...
-        'the range given. Ensure fixation points are within the given ', ...
-        'resolution.']);
-      options.invalid = 1;
-      return;
-    end
+    options = autofill(options, 'missing',                0,        1                 );
+    options = autofill(options, 'newfile',                '',       '@anychar'        );
+    options = autofill(options, 'plot_gaze_coords',       0,        1                 );
+    options = autofill(options, 'eyes',                   settings.lateral.full.c, {settings.lateral.full.l, settings.lateral.full.r});
+    options = fill_find_valid_fixations(options);
   case 'gaze_pp'
     %% 2.22 pspm_gaze_pp
-    options = autofill(options, 'channel', 'gaze_x_l', {'gaze_x_r','gaze_y_l','gaze_y_r'});
-    options = autofill(options, 'channel_combine', 'none', {'gaze_x_l','gaze_x_r','gaze_y_l','gaze_y_r'});
-    options = autofill(options, 'segments', {});
-    options = autofill(options, 'valid_sample', 0, 1);
-    options = autofill(options, 'plot_data', false);
-    options = autofill_channel_action(options, 'add', {'replace','none'});
+    options = autofill(options, 'channel',                'gaze_x_l', {'gaze_x_r','gaze_y_l','gaze_y_r'});
+    options = autofill(options, 'channel_combine',        'none',   {'gaze_x_l','gaze_x_r','gaze_y_l','gaze_y_r'});
+    options = autofill(options, 'segments',               {});
+    options = autofill(options, 'valid_sample',           0,        1);
+    options = autofill(options, 'plot_data',              false);
+    options = autofill_channel_action(options,            'add',    {'replace','none'});
+  case 'get_markerinfo'
+    options = autofill(options, 'markerchan',             -1,       '@anyinteger');
+    options = autofill(options, 'filename',               '',       '@anychar');
+    options = autofill(options, 'overwrite',              0,        1);
   case 'glm'
     %% pspm_glm
     options = autofill(options, 'modelspec', 'scr');
@@ -342,23 +220,7 @@ switch FunName
     options = autofill(options, 'overwrite', 0, 1);
     options = autofill(options, 'norm', 0);
     options = autofill(options, 'centering', 1);
-    if ~isfield(options, 'marker_chan_num')
-      options.marker_chan_num = 'marker';
-    elseif ~(isnumeric(options.marker_chan_num) && numel(options.marker_chan_num)==1)
-      options.marker_chan_num = 'marker';
-    end
-    if isfield(options,'exclude_missing')
-      if ~(isfield(options.exclude_missing, 'segment_length') && ...
-          isfield(options.exclude_missing,'cutoff'))
-        warning('ID:invalid_input', 'To extract the NaN-values segment-length and cutoff must be set');
-        options.invalid = 1;
-        return
-      elseif ~(isnumeric(options.exclude_missing.segment_length) && isnumeric(options.exclude_missing.cutoff))
-        warning('ID:invalid_input', 'To extract the NaN-values segment-length and cutoff must be numeric values.');
-        options.invalid = 1;
-        return
-      end
-    end
+    options = fill_glm(options);
   case 'load1'
     %% pspm_load1
     options = autofill(options, 'overwrite', 0, 1);
@@ -481,7 +343,7 @@ switch nargin
             if length(default_value) ~= length(options.(field_name))
               flag_is_allowed_value = 0;
             else
-
+              
               allowed_value = [optional_value; default_value];
               truetable = options.(field_name) == allowed_value;
               flag_is_allowed_value = any(sum(truetable,2));
@@ -493,7 +355,7 @@ switch nargin
               flag_is_allowed_value = isnumeric(options.(field_name));
             elseif strcmp(optional_value, '@anyinteger')
               flag_is_allowed_value = isnumeric(options.(field_name)) && ...
-                  (options.(field_name)>0) && (mod(options.(field_name), 1)==0);
+                (options.(field_name)>0) && (mod(options.(field_name), 1)==0);
             else
               allowed_value = {optional_value, default_value};
               flag_is_allowed_value = strcmp(options.(field_name), allowed_value);
@@ -736,4 +598,153 @@ switch nargin
         return
     end
 end
+end
+
+function options = fill_extract_segments(options)
+% 2.21.1 set default ouput_nan
+if ~isfield(options, 'nan_output')|| strcmpi(options.nan_output, 'none')
+  options.nan_output = 'none';
+elseif ~strcmpi( options.nan_output,'screen')
+  [path, ~, ~ ]= fileparts(options.nan_output);
+  if 7 ~= exist(path, 'dir')
+    warning('ID:invalid_input', 'Path for nan_output does not exist');
+    options.invalid = 1;
+    return
+  end
+end
+% 2.21.2 set default marker_chan, if it is a glm struct (only for non-raw data)
+if options.manual_chosen == 1 || ...
+    (options.manual_chosen == 0 && strcmpi(options.model_strc.modeltype,'glm'))
+  if ~isfield(options, 'marker_chan')
+    options.marker_chan = repmat({-1}, numel(options.data_fn),1);
+  elseif ~iscell(options.marker_chan)
+    options.marker_chan = repmat({options.marker_chan}, size(options.data_fn));
+  end
+end
+% 2.21.3 check mutual arguments (options)
+if strcmpi(options.timeunit, 'markers') && ...
+    options.manual_chosen == 2 && ...
+    ~isfield(options,'marker_chan')
+  warning('ID:invalid_input',...
+    '''markers'' specified as a timeunit but nothing was specified in ''options.marker_chan''');
+  options.invalid = 1;
+  return
+elseif strcmpi(options.timeunit, 'markers') && ...
+    options.manual_chosen == 2 && ...
+    ~all(size(options.data_raw) == size(options.marker_chan))
+  warning('ID:invalid_input',...
+    '''data_raw'' and ''options.marker_chan'' do not have the same size.');
+  options.invalid = 1;
+  return
+elseif strcmpi(options.timeunit, 'markers') && ...
+    options.manual_chosen == 1 && ...
+    ~all(size(options.data_fn) == size(options.marker_chan))
+  warning('ID:invalid_input', ...
+    '''data_fn'' and ''options.marker_chan'' do not have the same size.');
+  options.invalid = 1;
+  return
+elseif options.manual_chosen == 1 || ...
+    (options.manual_chosen == 0 && strcmpi(options.model_strc.modeltype,'glm'))
+  if any(cellfun(@(x) ~strcmpi(x, 'marker') && ~isnumeric(x), options.marker_chan))
+    warning('ID:invalid_input', ...
+      'Options.marker_chan has to be numeric or ''marker''.');
+    options.invalid = 1;
+    return
+  elseif strcmpi(options.timeunit, 'markers') ...
+      && any(cellfun(@(x) isnumeric(x) && x <= 0, options.marker_chan))
+    warning('ID:invalid_input', ...
+      ['''markers'' specified as a timeunit but ', ...
+      'no valid marker channel is defined.']);
+    options.invalid = 1;
+    return
+  end
+end
+end
+
+function options = fill_find_valid_fixations(options)
+global settings
+if isempty(settings)
+  pspm_init;
+end
+if ~isfield(options, 'channels')
+  options.channels = 'pupil';
+elseif ~iscell(options.channels) && ~ischar(options.channels) && ...
+    ~isnumeric(options.channels)
+  warning('ID:invalid_input', ['Options.channels should be a char, ', ...
+    'numeric or a cell of char or numeric.']);
+  options.invalid = 1;
+  return;
+end
+if ~iscell(options.channels)
+  options.channels = {options.channels};
+end
+if strcmpi(options.mode,'fixation') && ~isfield(options, 'resolution')
+  options.resolution = [1 1];
+end
+if strcmpi(options.mode,'fixation') && ~isfield(options, 'fixation_point')
+  options.resolution = [0.5 0.5];
+end
+if iscell(options.channels) && any(~cellfun(@(x) isnumeric(x) || ...
+    any(strcmpi(x, settings.findvalidfixations.chantypes)), options.channels))
+  warning('ID:invalid_input', 'Option.channels contains invalid values.');
+  options.invalid = 1;
+  return;
+elseif strcmpi(options.mode,'fixation') && isfield(options, 'fixation_point') && ...
+    (~isnumeric(options.fixation_point) || ...
+    size(options.fixation_point,2) ~= 2)
+  warning('ID:invalid_input', ['Options.fixation_point is not ', ...
+    'numeric, or has the wrong size (should be nx2).']);
+  options.invalid = 1;
+  return;
+elseif isfield(options, 'resolution') && (~isnumeric(options.resolution) || ...
+    ~all(size(options.resolution) == [1 2]))
+  warning('ID:invalid_input', ['Options.fixation_point is not ', ...
+    'numeric, or has the wrong size (should be 1x2).']);
+  options.invalid = 1;
+  return;
+elseif strcmpi(options.mode,'fixation') && isfield(options, 'fixation_point') &&  ...
+    ~all(options.fixation_point < options.resolution)
+  warning('ID:out_of_range', ['Some fixation points are larger than ', ...
+    'the range given. Ensure fixation points are within the given ', ...
+    'resolution.']);
+  options.invalid = 1;
+  return;
+end
+end
+
+function options = fill_glm(options)
+if ~isfield(options, 'marker_chan_num')
+      options.marker_chan_num = 'marker';
+    elseif ~(isnumeric(options.marker_chan_num) && numel(options.marker_chan_num)==1)
+      options.marker_chan_num = 'marker';
+    end
+    if isfield(options,'exclude_missing')
+      if ~(isfield(options.exclude_missing, 'segment_length') && ...
+          isfield(options.exclude_missing,'cutoff'))
+        warning('ID:invalid_input', 'To extract the NaN-values segment-length and cutoff must be set');
+        options.invalid = 1;
+        return
+      elseif ~(isnumeric(options.exclude_missing.segment_length) && isnumeric(options.exclude_missing.cutoff))
+        warning('ID:invalid_input', 'To extract the NaN-values segment-length and cutoff must be numeric values.');
+        options.invalid = 1;
+        return
+      end
+    end
+end
+
+function options = fill_find_sounds(options)
+% options = autofill(options, 'roi', []);
+    if options.maxdelay < options.mindelay
+      warning('ID:invalid_input', ...
+        ['''options.mindelay'' and ''options.maxdelay'' ', ...
+        'must be numeric and ''options.mindelay'' must be ', ...
+        'smaller than ''options.maxdelay''']);
+      options.invalid = 1;
+    end
+    if options.plot; options.diagnostics = true; end
+    try options.roi; catch, options.roi = []; end
+    if ~isempty(options.roi) && (length(options.roi) ~= 2 || ~all(isnumeric(options.roi) & options.roi >= 0))
+      warning('ID:invalid_input', 'Option roi must be a float vector of length 2 or 0');
+      options.invalid = 1;
+    end
 end

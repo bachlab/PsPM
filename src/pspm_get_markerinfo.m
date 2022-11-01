@@ -1,11 +1,11 @@
 function [sts, markerinfo] = pspm_get_markerinfo(fn, options)
-% ● Description
+% �? Description
 %   pspm_get_markerinfo extracts markerinfo from PsPM files that contain
 %   such information (typically after import of EEG-style data files, e.g.
 %   BrainVision or NeuroScan)
-% ● Format
+% �? Format
 %   [sts, markerinfo] = pspm_get_markerinfo(filename, options)
-% ● Arguments
+% �? Arguments
 %       filename: [char]
 %                 name of PsPM file
 %                 if empty, you will be prompted for one
@@ -20,14 +20,14 @@ function [sts, markerinfo] = pspm_get_markerinfo(fn, options)
 %   └──overwrite: [logical] (0 or 1)
 %                 Define whether to overwrite existing output files or not.
 %                 Default value: determined by pspm_overwrite.
-% ● Output
+% �? Output
 %            sts: [double]
 %                 default value: -1 if unsuccessful
 %     markerinfo: [struct]
 %     ├────.name: [char]
 %     ├───.value:
 %     └─.element:
-% ● History
+% �? History
 %   Introduced in PsPM 6.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy Chao (UCL)
@@ -43,19 +43,7 @@ markerinfo = [];
 if nargin <= 1
   options = struct();
 end
-if ~isfield(options, 'markerchan')
-  options.markerchan = -1;
-end
-if ~isfield(options, 'filename')
-  options.filename = '';
-end
-if ~isstruct(options)
-  warning('ID:invalid_input', 'Options has to be a struct.'); return;
-elseif isfield(options, 'filename') && ~ischar(options.filename)
-  warning('ID:invalid_input', 'Options.filename has to be char.'); return;
-elseif isfield(options, 'markerchan') && ~isnumeric(options.markerchan)
-  warning('ID:invalid_input', 'Options.markerchan has to be numeric.'); return;
-end
+options = pspm_options(options, 'get_markerinfo');
 % check input arguments
 if nargin < 1 || isempty(fn)
   fn = spm_select(1, 'mat', 'Extract markers from which file?');
