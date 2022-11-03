@@ -73,7 +73,7 @@ for k = 1:numel(import)
   sourceinfo.channel{k, 1} = sprintf('Channel %02.0f: %s', channel, chanhead{channel}.title);
 
   % convert to waveform or get sample rate for wave channel types
-  if strcmpi(settings.chantypes(import{k}.typeno).data, 'wave')
+  if strcmpi(settings.channeltypes(import{k}.typeno).data, 'wave')
     if chanhead{channel}.kind == 1 % waveform
       import{k}.data = chandata{channel};
       import{k}.sr   = 1./chanhead{channel}.sampleinterval;
@@ -98,7 +98,7 @@ for k = 1:numel(import)
       warning('Unknown channel format in CED spike file for import job %02.0f', k);  return;
     end;
     % extract, and possibly denoise event channels
-  elseif strcmpi(settings.chantypes(import{k}.typeno).data, 'events')
+  elseif strcmpi(settings.channeltypes(import{k}.typeno).data, 'events')
     if chanhead{channel}.kind == 1 % waveform
       import{k}.marker = 'continuous';
       import{k}.data = chandata{channel};

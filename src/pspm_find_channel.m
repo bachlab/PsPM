@@ -1,12 +1,12 @@
-function chan = pspm_find_channel(headercell, chantype)
+function chan = pspm_find_channel(headercell, channeltype)
 % ● Description
 %   pspm_find_channel searches a cell arrays of channel headers and
 %   finds the channel that matches the desired type.
 % ● Format
-%   chan = pspm_find_channel(headercell, chantype)
+%   chan = pspm_find_channel(headercell, channeltype)
 % ● Arguments
 %   headercell: cell array of names (e.g. from acq import)
-%     chantype: an allowed channel type (char) (or a cell array of possible
+%     channeltype: an allowed channel type (char) (or a cell array of possible
 %               channel names for operations on non-allowed input channel types)
 % ● Outputs
 %   the channel number (not physical channel number) that matches namestrings
@@ -31,15 +31,15 @@ elseif ~iscell(headercell)
   warning('ID:invalid_input', '\nHeader input must be a cell array of char.\n'); return;
 end;
 
-if ischar(chantype)
-  if ~ismember(chantype, {settings.chantypes.type})
-    warning('ID:not_allowed_chantype', '\nChannel type %s not allowed.\n', chantype); return;
+if ischar(channeltype)
+  if ~ismember(channeltype, {settings.channeltypes.type})
+    warning('ID:not_allowed_channeltype', '\nChannel type %s not allowed.\n', channeltype); return;
   else
-    namestrings = settings.import.channames.(chantype);
+    namestrings = settings.import.channames.(channeltype);
   end;
-elseif iscell(chantype)
-  namestrings = chantype;
-  chantype = 'special';
+elseif iscell(channeltype)
+  namestrings = channeltype;
+  channeltype = 'special';
 else
   warning('ID:invalid_input', '\nChannel type must be a string.\n'); return;
 end;
@@ -59,15 +59,15 @@ end;
 % -------------------------------------------------------------------------
 if sum(chanflag) > 1
   chan = -1;
-  if ~strcmpi(chantype, 'special')
+  if ~strcmpi(channeltype, 'special')
     warning('ID:multiple_matching_channels', '\nChannel of type ''%s'' could not be identified from its name - there are two possible channels.\n', ...
-      chantype);
+      channeltype);
   end;
 elseif sum(chanflag) == 0
   chan = 0;
-  if ~strcmpi(chantype, 'special')
+  if ~strcmpi(channeltype, 'special')
     warning('ID:no_matching_channels', '\nChannel of type ''%s'' could not be identified from its name - no matching channel was found.\n', ...
-      chantype);
+      channeltype);
   end;
 else
   chan=find(chanflag==1);

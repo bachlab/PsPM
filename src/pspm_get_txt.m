@@ -154,7 +154,7 @@ for k = 1:numel(import)
 
     import{k}.data = data(:, channel);
 
-    if isfield(import{k},'typeno') && strcmpi(settings.chantypes(import{k}.typeno).data, 'events')
+    if isfield(import{k},'typeno') && strcmpi(settings.channeltypes(import{k}.typeno).data, 'events')
         import{k}.marker = 'continuous';
     end;
 

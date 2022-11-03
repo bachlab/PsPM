@@ -65,7 +65,7 @@ if nargin >= 4 && ~isempty(varargin{4}) && ...
   channum = varargin{4};
 else
   for k = 1:numel(data)
-    if strcmp(data{k}.header.chantype, 'scr')
+    if strcmp(data{k}.header.channeltype, 'scr')
       channum(k) = 1;
     end
   end

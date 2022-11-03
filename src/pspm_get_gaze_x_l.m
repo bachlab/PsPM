@@ -19,7 +19,7 @@ sts = -1;
 % assign respiratory data
 data.data = import.data(:);
 % add header
-data.header.chantype = 'gaze_x_l';
+data.header.channeltype = 'gaze_x_l';
 data.header.units = import.units;
 data.header.sr = import.sr;
 data.header.range = import.range;

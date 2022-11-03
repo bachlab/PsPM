@@ -169,9 +169,9 @@ if strcmpi(mode,'fixation')
 
     % set fixation point default or expand to data size
     % find first wave channel
-    ct = cellfun(@(x) x.header.chantype, data, 'UniformOutput', false);
+    ct = cellfun(@(x) x.header.channeltype, data, 'UniformOutput', false);
     chan_data = cellfun(@(x) ...
-      settings.chantypes(strcmpi({settings.chantypes.type}, x)).data, ...
+      settings.channeltypes(strcmpi({settings.channeltypes.type}, x)).data, ...
       ct, 'UniformOutput', false);
     wv = find(strcmpi(chan_data, 'wave'));
 
@@ -219,18 +219,18 @@ for i=1:n_eyes
     % find chars to replace
     str_chans = cellfun(@ischar, options.channels);
     channels = options.channels;
-    str_chantypes = ['(', settings.findvalidfixations.chantypes{1}];
-    for i_chantypes = 2:length(settings.findvalidfixations.chantypes)
-      str_chantypes = [str_chantypes, '|', ...
-        settings.findvalidfixations.chantypes{i_chantypes}];
+    str_channeltypes = ['(', settings.findvalidfixations.channeltypes{1}];
+    for i_channeltypes = 2:length(settings.findvalidfixations.channeltypes)
+      str_channeltypes = [str_channeltypes, '|', ...
+        settings.findvalidfixations.channeltypes{i_channeltypes}];
     end
-    str_chantypes = [str_chantypes, ')'];
-    channels(str_chans) = regexprep(channels(str_chans), str_chantypes, ['$0_' eye]);
+    str_channeltypes = [str_channeltypes, ')'];
+    channels(str_chans) = regexprep(channels(str_chans), str_channeltypes, ['$0_' eye]);
     % replace strings with numbers
     str_chan_num = channels(str_chans);
     for j=1:numel(str_chan_num)
       str_chan_num(j) = {find(cellfun(@(y) strcmpi(str_chan_num(j),...
-        y.header.chantype), data),1)};
+        y.header.channeltype), data),1)};
     end
     channels(str_chans) = str_chan_num;
     work_chans = cell2mat(channels);
@@ -239,14 +239,14 @@ for i=1:n_eyes
       % always use first found channel
       switch mode
         case 'bitmap'
-          gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
+          gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.channeltype) & ...
             ~strcmpi(x.header.units,'degree'), data),1);
-          gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
+          gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.channeltype) & ...
             ~strcmpi(x.header.units,'degree'), data),1);
         case 'fixation'
-          gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
+          gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.channeltype) & ...
             ~strcmpi(x.header.units,'degree') & ~strcmpi(x.header.units,'pixel'),data),1);
-          gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
+          gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.channeltype) & ...
             ~strcmpi(x.header.units,'degree')& ~strcmpi(x.header.units,'pixel'),data),1);
       end
 
@@ -398,9 +398,9 @@ for i=1:n_eyes
           if all(isnan(new_pu{i}{j}.data))
             warning('ID:invalid_input', ['All values of channel ''%s'' ', ...
               'completely set to NaN. Please reconsider your parameters.'], ...
-              new_pu{i}{j}.header.chantype);
+              new_pu{i}{j}.header.channeltype);
           end
-          excl_hdr = struct('chantype', ['pupil_missing_', eye],...
+          excl_hdr = struct('channeltype', ['pupil_missing_', eye],...
             'units', '', 'sr', new_pu{i}{j}.header.sr);
           new_excl{i}{j} = struct('data', double(excl), 'header', excl_hdr);
         end
@@ -444,7 +444,7 @@ if numel(new_chans) >= 1
       chan_idx(i) = numel(new_data);
     else
       % look for same chan_type
-      channels = cellfun(@(x) strcmpi(new_chans{i}.header.chantype, x.header.chantype), new_data);
+      channels = cellfun(@(x) strcmpi(new_chans{i}.header.channeltype, x.header.channeltype), new_data);
       if any(channels)
         % replace the first found channel
         idx = find(channels, 1, 'first');
@@ -468,7 +468,7 @@ if numel(new_chans) >= 1
   for i = 1:numel(infos.source.eyesObserved)
     e = lower(infos.source.eyesObserved(i));
     e_stat = {infos.source.chan_stats{...
-      cellfun(@(x) ~isempty(regexpi(x.header.chantype, ['_' e], 'once')), new_data)}};
+      cellfun(@(x) ~isempty(regexpi(x.header.channeltype, ['_' e], 'once')), new_data)}};
     eye_stat(i) = max(cellfun(@(x) x.nan_ratio, e_stat));
   end
   [~, min_idx] = min(eye_stat);

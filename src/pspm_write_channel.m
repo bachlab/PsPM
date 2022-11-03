@@ -23,7 +23,7 @@ function [sts, infos] = pspm_write_channel(fn, newdata, channel_action, options)
 %    ├─────.delete: method to look for a channel when options.channel is not an
 %    │              integer, accepts 'last'/'first'/'all'.
 %    │              'last':   (default) deletes last occurence of the given
-%    │                        chantype
+%    │                        channeltype
 %    │              'first':  deletes the first occurence
 %    │              'all':    removes all occurences
 %    │              Outputs will be written into the info struct. The structure
@@ -57,7 +57,7 @@ elseif ~ischar(fn)
   warning('ID:invalid_input', 'Need file name string as first input.'); return;
 elseif nargin < 3 || all(~strcmpi({'add', 'replace', 'delete'}, channel_action))
   warning('ID:unknown_action', 'Action must be defined and ''add'', ''replace'' or ''delete'''); return;
-elseif ischar(options.channel) && ~any(strcmpi(options.channel,{settings.chantypes.type}))
+elseif ischar(options.channel) && ~any(strcmpi(options.channel,{settings.channeltypes.type}))
   warning('ID:invalid_input', 'options.channel is not a valid channel type.'); return;
 elseif isnumeric(options.channel) && (any(mod(options.channel,1)) || any(options.channel<0))
   warning('ID:invalid_input', 'options.channel must be a positive integer or a channel type.'); return;
@@ -128,7 +128,7 @@ end
 fchannels = [];
 if ~strcmpi(channel_action, 'add')
   % Search for channel(s)
-  fchannels = cellfun(@(x) x.header.chantype,data,'un',0);
+  fchannels = cellfun(@(x) x.header.channeltype,data,'un',0);
   if ischar(options.channel)
     if strcmpi(options.delete,'all')
       channeli = find(strcmpi(options.channel,fchannels));
@@ -137,7 +137,7 @@ if ~strcmpi(channel_action, 'add')
     end
   elseif options.channel == 0
     funits = cellfun(@(x) x.header.units, data,'UniformOutput',0);
-    % if the chantype matches, and unit matches if one is provided
+    % if the channeltype matches, and unit matches if one is provided
     channeli = cellfun(@(n) match_chan(fchannels, funits, n), newdata, 'UniformOutput', 0);
     channeli = cell2mat(channeli);
   else
@@ -164,9 +164,9 @@ end
 
 if strcmpi(channel_action, 'add')
   channeli = numel(data) + (1:numel(newdata));
-  chantypes = cellfun(@(f) f.header.chantype, newdata, 'un', 0);
+  channeltypes = cellfun(@(f) f.header.channeltype, newdata, 'un', 0);
   fchannels = cell(numel(data) + numel(newdata),1);
-  fchannels(channeli,1) = chantypes;
+  fchannels(channeli,1) = channeltypes;
 end
 
 %% Manage message
@@ -229,8 +229,8 @@ sts = 1;
 function matches = match_chan(existing_channels, exisiting_units, channel)
 if isfield(channel.header, 'units')
   matches = find(...
-    strcmpi(channel.header.chantype, existing_channels)...
+    strcmpi(channel.header.channeltype, existing_channels)...
     & strcmpi(channel.header.units, exisiting_units),1,'last');
 else
-  matches = find(strcmpi(channel.header.chantype, existing_channels) ,1,'last');
+  matches = find(strcmpi(channel.header.channeltype, existing_channels) ,1,'last');
 end

@@ -47,7 +47,7 @@ try mrk = ft_read_event(datafile, 'headerformat', headerformat, 'dataformat', he
 % -------------------------------------------------------------------------
 for k = 1:numel(import)
         
-    if strcmpi(settings.chantypes(import{k}.typeno).data, 'wave')
+    if strcmpi(settings.channeltypes(import{k}.typeno).data, 'wave')
         % channel number --- 
         if import{k}.channel > 0
              channel = import{k}.channel;

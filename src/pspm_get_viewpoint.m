@@ -78,7 +78,7 @@ if ~ischar(datafile)
   return;
 end
 if ~assert_custom_import_channels_has_channel_field(import); return; end
-if ~assert_all_chantypes_are_supported(settings, import); return; end
+if ~assert_all_channeltypes_are_supported(settings, import); return; end
 try
   data = import_viewpoint(datafile);
 catch err
@@ -127,9 +127,9 @@ for k = 1:num_import_cells
       [import{k}, chan_id] = import_custom_chan(import{k}, data_concat, channel_indices, raw_columns, chan_struct, units, sampling_rate);
     else
       [import{k}, chan_id] = import_data_chan(import{k}, data_concat, eyes_observed, channel_indices, chan_struct, units, sampling_rate);
-      chantype = import{k}.type;
-      is_gaze_x_chan = ~isempty(regexpi(chantype, 'gaze_x_', 'once'));
-      is_gaze_y_chan = ~isempty(regexpi(chantype, 'gaze_y_', 'once'));
+      channeltype = import{k}.type;
+      is_gaze_x_chan = ~isempty(regexpi(channeltype, 'gaze_x_', 'once'));
+      is_gaze_y_chan = ~isempty(regexpi(channeltype, 'gaze_y_', 'once'));
       if is_gaze_x_chan
         import{k} = convert_gaze_chan(import{k}, screen_size.xmin, screen_size.xmax);
       elseif is_gaze_y_chan
@@ -233,10 +233,10 @@ for i = 1:numel(import)
 end
 end
 
-function proper = assert_all_chantypes_are_supported(settings, import)
+function proper = assert_all_channeltypes_are_supported(settings, import)
 proper = true;
 viewpoint_idx = find(strcmpi('viewpoint', {settings.import.datatypes.short}));
-viewpoint_types = settings.import.datatypes(viewpoint_idx).chantypes;
+viewpoint_types = settings.import.datatypes(viewpoint_idx).channeltypes;
 for k = 1:numel(import)
   input_type = import{k}.type;
   if ~any(strcmpi(input_type, viewpoint_types))
@@ -362,9 +362,9 @@ global settings;
 if isempty(settings), pspm_init; end
 % n_data = size(data_concat, 1); % this line is not used in this function
 chan_id_in_concat = find(strcmpi(chan_struct, import_cell.type), 1, 'first');
-chantype_has_L_or_R = ~isempty(regexpi(import_cell.type, ['_[',settings.lateral.char.c,']'], 'once'));
-chantype_hasnt_eyes_obs = isempty(regexpi(import_cell.type, ['_([' eyes_observed '])'], 'once'));
-if (chantype_has_L_or_R && chantype_hasnt_eyes_obs) || isempty(chan_id_in_concat)
+channeltype_has_L_or_R = ~isempty(regexpi(import_cell.type, ['_[',settings.lateral.char.c,']'], 'once'));
+channeltype_hasnt_eyes_obs = isempty(regexpi(import_cell.type, ['_([' eyes_observed '])'], 'once'));
+if (channeltype_has_L_or_R && channeltype_hasnt_eyes_obs) || isempty(chan_id_in_concat)
   chan_id = NaN;
   return;
 else

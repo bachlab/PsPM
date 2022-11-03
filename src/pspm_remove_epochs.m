@@ -52,11 +52,11 @@ n_data = numel(data);
 for i_data = 1:n_data
   chan = data{i_data};
   sr = chan.header.sr;
-  chantype = chan.header.chantype;
+  channeltype = chan.header.channeltype;
   for i_ep = 1:n_ep
     epoch = ep(i_ep, :);
-    if strcmpi(settings.chantypes(strcmpi({settings.chantypes.type}, ...
-        chantype)).data, 'events')
+    if strcmpi(settings.channeltypes(strcmpi({settings.channeltypes.type}, ...
+        channeltype)).data, 'events')
       % remove markers within the period
       chan.data(chan.data >= epoch(1) & chan.data <= epoch(2)) = [];
     else

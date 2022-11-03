@@ -223,7 +223,7 @@ if ~isfield(model, 'channel')
   else
     model.channel = model.modality;
   end
-elseif ~isnumeric(model.channel) && ~ismember(model.channel, {settings.chantypes.type})
+elseif ~isnumeric(model.channel) && ~ismember(model.channel, {settings.channeltypes.type})
   warning('ID:invalid_input', 'Channel number must be numeric.'); return;
 end
 

@@ -246,7 +246,7 @@ chan_war_msg = ['Channel number must be a unique number,', ...
 if ~isfield(model, 'channel')
   model.channel = 'pupil';
 elseif ~iscell(model.channel) && ~isnumeric(model.channel) && ...
-    ~ismember(model.channel, {settings.chantypes.type})
+    ~ismember(model.channel, {settings.channeltypes.type})
   warning('ID:invalid_input', chan_war_msg); return;
 elseif ~iscell(model.channel) && numel(model.channel) > 1
   warning('ID:invalid_input', chan_war_msg); return;
@@ -256,7 +256,7 @@ elseif iscell(model.channel) && numel(model.channel)~=numel(model.datafile)
 elseif iscell(model.channel)
   model.channel = model.channel(:);
   tmp_fun = @(x) ~isnumeric(x) && numel(x)~=1 ...
-    && ~ismember(x, {settings.chantypes.type});
+    && ~ismember(x, {settings.channeltypes.type});
   tmp = cellfun(tmp_fun,model.channel);
   if any(tmp)
     warning('ID:invalid_input', chan_war_msg); return;

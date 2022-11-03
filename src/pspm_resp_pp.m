@@ -63,7 +63,7 @@ else
 end
 %% get data
 [nsts, infos, data] = pspm_load_data(fn, chan);
-old_chantype = data{1}.header.chantype;
+old_channeltype = data{1}.header.channeltype;
 if nsts == -1
   warning('ID:invalid_input', 'Could not load data properly.');
   return;
@@ -125,7 +125,7 @@ for iType = 1:(numel(datatypes) - 1)
       case 1
         %rp
         respdata = diff(respstamp);
-        newdata.header.chantype = 'rp';
+        newdata.header.channeltype = 'rp';
         action_msg = 'Respiration converted to respiration period';
         newdata.header.units = 's';
       case 2
@@ -134,7 +134,7 @@ for iType = 1:(numel(datatypes) - 1)
           win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
           respdata(k) = range(resp(win));
         end
-        newdata.header.chantype = 'ra';
+        newdata.header.channeltype = 'ra';
         action_msg = 'Respiration converted to respiration amplitude';
         newdata.header.units = 'unknown';
       case 3
@@ -144,21 +144,21 @@ for iType = 1:(numel(datatypes) - 1)
           win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
           respdata(k) = range(resp(win))/ibi(k);
         end
-        newdata.header.chantype = 'rfr';
+        newdata.header.channeltype = 'rfr';
         action_msg = 'Respiration converted to rfr';
         newdata.header.units = 'unknown';
       case 4
         %rs
-        newdata.header.chantype = 'rs';
+        newdata.header.channeltype = 'rs';
         action_msg = 'Respiration converted to respiration time stamps';
         newdata.header.units = 'events';
     end
     channel_str = num2str(chan);
     o.msg.prefix = sprintf(...
-      'Respiration preprocessing :: Input channel: %s -- Input chantype: %s -- Output channel: %s -- Action: %s --', ...
+      'Respiration preprocessing :: Input channel: %s -- Input channeltype: %s -- Output channel: %s -- Action: %s --', ...
       channel_str, ...
-      old_chantype, ...
-      newdata.header.chantype, ...
+      old_channeltype, ...
+      newdata.header.channeltype, ...
       action_msg);
     % interpolate
     switch iType

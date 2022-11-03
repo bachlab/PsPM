@@ -96,7 +96,7 @@ if isstr(datafile)
 end
 if ~assert_proper_datafile_format(datafile); return; end
 if ~assert_custom_import_channels_has_channel_field(import); return; end
-if ~assert_all_chantypes_are_supported(settings, import); return; end
+if ~assert_all_channeltypes_are_supported(settings, import); return; end
 try
   if numel(datafile) == 2
     data = import_smi(datafile{1}, datafile{2});
@@ -152,20 +152,20 @@ for k = 1:num_import_cells
   chan_id = NaN;
   import{k}.units = 'N/A';
   import{k}.sr = sampling_rate;
-  chantype = lower(import{k}.type);
-  chantype_has_L_or_R = ~isempty(regexpi(chantype, '_[lr]', 'once'));
-  chantype_hasnt_eyes_obs = isempty(regexpi(chantype, ['_([' eyes_observed '])'], 'once'));
-  if chantype_has_L_or_R && chantype_hasnt_eyes_obs
+  channeltype = lower(import{k}.type);
+  channeltype_has_L_or_R = ~isempty(regexpi(channeltype, '_[lr]', 'once'));
+  channeltype_hasnt_eyes_obs = isempty(regexpi(channeltype, ['_([' eyes_observed '])'], 'once'));
+  if channeltype_has_L_or_R && channeltype_hasnt_eyes_obs
     % no import
-  elseif strcmpi(chantype, 'marker')
+  elseif strcmpi(channeltype, 'marker')
     [import{k}, chan_id] = import_marker_chan(import{k}, markers, mi_values, mi_names, size(data_concat, 1), sampling_rate);
-  elseif contains(chantype, 'pupil')
+  elseif contains(channeltype, 'pupil')
     [import{k}, chan_id] = import_pupil_chan(import{k}, data_concat, viewing_dist, raw_columns, chan_struct, units, sampling_rate);
-  elseif contains(chantype, 'gaze')
+  elseif contains(channeltype, 'gaze')
     [import{k}, chan_id] = import_gaze_chan(import{k}, data_concat, screen_size_mm, calib_area_px, raw_columns, chan_struct, sampling_rate);
-  elseif contains(chantype, 'blink') || contains(chantype, 'saccade')
+  elseif contains(channeltype, 'blink') || contains(channeltype, 'saccade')
     [import{k}, chan_id] = import_blink_or_saccade_chan(import{k}, data_concat, raw_columns, chan_struct, units, sampling_rate);
-  elseif strcmpi(chantype, 'custom')
+  elseif strcmpi(channeltype, 'custom')
     [import{k}, chan_id] = import_custom_chan(import{k}, data_concat, raw_columns, chan_struct, units, sampling_rate);
   else
     warning('ID:pspm_error', 'This branch should not have been taken. Please report this error to PsPM dev team'); return;
@@ -289,10 +289,10 @@ for i = 1:numel(import)
 end
 end
 
-function proper = assert_all_chantypes_are_supported(settings, import)
+function proper = assert_all_channeltypes_are_supported(settings, import)
 proper = true;
 viewpoint_idx = find(strcmpi('smi', {settings.import.datatypes.short}));
-viewpoint_types = settings.import.datatypes(viewpoint_idx).chantypes;
+viewpoint_types = settings.import.datatypes(viewpoint_idx).channeltypes;
 for k = 1:numel(import)
   input_type = import{k}.type;
   if ~any(strcmpi(input_type, viewpoint_types))
@@ -304,8 +304,8 @@ for k = 1:numel(import)
 end
 end
 
-function expect_list = map_pspm_header_to_smi_headers(pspm_chantype)
-type_parts = split(pspm_chantype, '_');
+function expect_list = map_pspm_header_to_smi_headers(pspm_channeltype)
+type_parts = split(pspm_channeltype, '_');
 if strcmpi(type_parts{1}, 'pupil')
   which_eye = upper(type_parts{2});
   expect_list = {[which_eye ' Dia'], [which_eye ' Dia X'], [which_eye ' Area'], [which_eye ' Mapped Diameter']};

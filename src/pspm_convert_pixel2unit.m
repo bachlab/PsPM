@@ -97,7 +97,7 @@ if lsts ~= 1
 end
 % find gaze channels
 gaze_idx = cellfun(@(x) ~isempty(...
-  regexp(x.header.chantype, 'gaze_[x|y]_[r|l]', 'once')), data);
+  regexp(x.header.channeltype, 'gaze_[x|y]_[r|l]', 'once')), data);
 gaze_chans = data(gaze_idx);
 n_chans = numel(gaze_chans);
 if n_chans == 0
@@ -117,7 +117,7 @@ for c = 1:n_chans
   channel = gaze_chans{c};
   if strcmpi(channel.header.units, 'pixel')
     % pick conversion factor according to channel type x / y coord
-    if ~isempty(regexp(channel.header.chantype, 'gaze_x_', 'once'))
+    if ~isempty(regexp(channel.header.channeltype, 'gaze_x_', 'once'))
       screen_length = width;
     else
       screen_length = height;
@@ -134,7 +134,7 @@ for c = 1:n_chans
     channel.header.units = unit_h_w_d;
   else
     warning('ID:invalid_input', ['Not converting (%s) because ', ...
-      'input data is not in pixel.'], channel.header.chantype);
+      'input data is not in pixel.'], channel.header.channeltype);
   end
   % replace data
   gaze_chans{c} = channel;

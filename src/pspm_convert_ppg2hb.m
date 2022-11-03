@@ -74,8 +74,8 @@ if numel(data) > 1
   data = data(1);
 end
 % Check that channel is ppg
-if ~strcmp(data{1,1}.header.chantype,'ppg')
-  warning('ID:not_allowed_chantype', 'Specified channel is not a PPG channel. Don''t know what to do!')
+if ~strcmp(data{1,1}.header.channeltype,'ppg')
+  warning('ID:not_allowed_channeltype', 'Specified channel is not a PPG channel. Don''t know what to do!')
   return;
 end
 
@@ -182,7 +182,7 @@ msg = sprintf('Heart beat detection from ppg with cross correlation HB-timeserie
 newdata.data = hb(:);
 newdata.header.sr = 1;
 newdata.header.units = 'events';
-newdata.header.chantype = 'hb';
+newdata.header.channeltype = 'hb';
 
 write_options = struct();
 write_options.msg = msg;

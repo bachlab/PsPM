@@ -45,7 +45,7 @@ if sts ~= 1; warning('ID:invalid_input', 'cannot load data from the file'); retu
 % 3.2 check the channel can be loaded
 [sts, ~, ~, ~] = pspm_load_data(fn, options.channel);
 if sts ~= 1
-  warning('ID:invalid_chantype', 'cannot load the specified channel from the file');
+  warning('ID:invalid_channeltype', 'cannot load the specified channel from the file');
   return
 end
 if action_combine
@@ -81,11 +81,11 @@ if action_combine
       'options.channel and options.channel_combine data have different lengths');
     return;
   end
-  old_chantype = sprintf('%s and %s', ...
-    gaze_og{1}.header.chantype, gaze_combine{1}.header.chantype);
+  old_channeltype = sprintf('%s and %s', ...
+    gaze_og{1}.header.channeltype, gaze_combine{1}.header.channeltype);
 else
   gaze_combine{1}.data = [];
-  old_chantype = gaze_og{1}.header.chantype;
+  old_channeltype = gaze_og{1}.header.channeltype;
 end
 %% 5 Obtain valid sample from pupil
 % obtain valid samples from pupil
@@ -95,7 +95,7 @@ if options.valid_sample
   [~, ~, model] = pspm_pupil_pp(fn, options_pp);
   upsampling_factor = options.custom_settings.valid.interp_upsamplingFreq / gaze_og{1}.header.sr;
   desired_output_samples_gaze = round(upsampling_factor * numel(gaze_og{1}.data));
-  preprocessed_gaze.header.chantype = pspm_update_chantype(gaze_og{1}.header.chantype,'pp');
+  preprocessed_gaze.header.channeltype = pspm_update_channeltype(gaze_og{1}.header.channeltype,'pp');
   preprocessed_gaze.header.units = gaze_og{1}.header.units;
   preprocessed_gaze.header.sr = options.custom_settings.valid.interp_upsamplingFreq;
   preprocessed_gaze.header.segments = options.segments;
@@ -115,7 +115,7 @@ if ~action_combine
     preprocessed_gaze.data = gaze_og{1}.data;
     preprocessed_gaze.header.sr = gaze_og{1}.header.sr;
   end
-  preprocessed_gaze.header.chantype = pspm_update_chantype(gaze_og{1}.header.chantype,'pp');
+  preprocessed_gaze.header.channeltype = pspm_update_channeltype(gaze_og{1}.header.channeltype,'pp');
   preprocessed_gaze.header.units = gaze_og{1}.header.units;
 else
   if options.valid_sample
@@ -136,16 +136,16 @@ else
     preprocessed_gaze.header.sr = gaze_og{1}.header.sr;
   end
   preprocessed_gaze.data = transpose(mean(transpose([preprocessed_gaze.data, preprocessed_gaze_combine.data]),'omitnan'));
-  preprocessed_gaze.header.chantype = pspm_update_chantype(gaze_og{1}.header.chantype,{'pp','c'});
+  preprocessed_gaze.header.channeltype = pspm_update_channeltype(gaze_og{1}.header.channeltype,{'pp','c'});
   preprocessed_gaze.header.units = gaze_og{1}.header.units;
 end
 %% 7 save
 channel_str = num2str(options.channel);
 o.msg.prefix = sprintf(...
-  'Gaze preprocessing :: Input channel: %s -- Input chantype: %s -- Output chantype: %s --', ...
+  'Gaze preprocessing :: Input channel: %s -- Input channeltype: %s -- Output channeltype: %s --', ...
   channel_str, ...
-  old_chantype, ...
-  preprocessed_gaze.header.chantype);
+  old_channeltype, ...
+  preprocessed_gaze.header.channeltype);
 [lsts, out_id] = pspm_write_channel(fn, preprocessed_gaze, options.channel_action, o);
 if lsts ~= 1 % if writting channel is unsuccessful
   return

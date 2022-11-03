@@ -35,7 +35,7 @@ try mrk = ft_read_event(datafile); catch, mrk = []; end;
 % loop through import jobs
 for k = 1:numel(import)
 
-  if strcmpi(settings.chantypes(import{k}.typeno).data, 'wave')
+  if strcmpi(settings.channeltypes(import{k}.typeno).data, 'wave')
     % define channel number ---
     if import{k}.channel > 0
       channel = import{k}.channel;

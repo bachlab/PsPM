@@ -50,7 +50,7 @@ for k = 1:numel(import)
   import{k}.data = inputdata{channel};     % data per channel
   import{k}.units = inputinfo.engineeringUnitsTag(channel, :);
   sourceinfo.channel{k, 1} = sprintf('Channel %02.0f', channel);
-  if strcmpi(settings.chantypes(import{k}.typeno).data, 'events')
+  if strcmpi(settings.channeltypes(import{k}.typeno).data, 'events')
     import{k}.marker = 'continuous';
   end;
 end;

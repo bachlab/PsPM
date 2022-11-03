@@ -68,7 +68,7 @@ for k = 1:numel(import)
   % See https://www.mathworks.com/matlabcentral/fileexchange/16023-acqread
   import{k}.data = header.dAmplScale(channel) * double(inputdata{channel}) + header.dAmplOffset(channel);
 
-  if strcmpi(settings.chantypes(import{k}.typeno).data, 'events')
+  if strcmpi(settings.channeltypes(import{k}.typeno).data, 'events')
     import{k}.marker = 'continuous';
   end;
 end;

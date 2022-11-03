@@ -194,7 +194,7 @@ for k = 1:numel(import)
 
   if ~any(strcmpi(import{k}.type, ...
       settings.import.datatypes(strcmpi('eyelink', ...
-      {settings.import.datatypes.short})).chantypes))
+      {settings.import.datatypes.short})).channeltypes))
     warning('ID:channel_not_contained_in_file', ...
       'Channel type ''%s'' is not supported.\n', ...
       import{k}.type);
@@ -214,7 +214,7 @@ for k = 1:numel(import)
       import{k}.flank = 'all';
     end
   else
-    % determine channel id from chantype - eyelink specific
+    % determine channel id from channeltype - eyelink specific
     % thats why channel ids will be ignored!
     if strcmpi(data{1}.eyesObserved, settings.lateral.cap.c) || strcmpi(data{1}.eyesObserved, 'lr')
       chan_struct = {'pupil_l', 'pupil_r', 'gaze_x_l', 'gaze_y_l', ...

@@ -18,7 +18,7 @@ end
 %% assign respiratory data
 data.data = import.data(:);
 %% add header
-data.header.chantype = 'ecg';
+data.header.channeltype = 'ecg';
 data.header.units = import.units;
 data.header.sr = import.sr;
 %% check status

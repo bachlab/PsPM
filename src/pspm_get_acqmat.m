@@ -62,7 +62,7 @@ for k = 1:numel(import)
   import{k}.data = double(inputdata.data(:, channel));
   import{k}.units = inputdata.units(channel,:);
 
-  if strcmpi(settings.chantypes(import{k}.typeno).data, 'events')
+  if strcmpi(settings.channeltypes(import{k}.typeno).data, 'events')
     import{k}.marker = 'continuous';
   end
 end

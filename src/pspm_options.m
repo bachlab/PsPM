@@ -691,7 +691,7 @@ if strcmpi(options.mode,'fixation') && ~isfield(options, 'fixation_point')
   options.resolution = [0.5 0.5];
 end
 if iscell(options.channels) && any(~cellfun(@(x) isnumeric(x) || ...
-    any(strcmpi(x, settings.findvalidfixations.chantypes)), options.channels))
+    any(strcmpi(x, settings.findvalidfixations.channeltypes)), options.channels))
   warning('ID:invalid_input', 'Option.channels contains invalid values.');
   options.invalid = 1;
   return;

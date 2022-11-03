@@ -171,7 +171,7 @@ for i_D = 1:numel(D)
     % 2.2.1 Verify the markers
     if options.marker_chan_num
       [nsts, ~, ndata] = pspm_load_data(datafile, options.marker_chan_num);
-      if ~strcmp(ndata{1}.header.chantype, 'marker')
+      if ~strcmp(ndata{1}.header.channeltype, 'marker')
         warning('ID:invalid_option', ['Channel %i is no marker ', ...
           ' channel. The first marker channel in the file is ', ...
           'used instead'], options.marker_chan_num);

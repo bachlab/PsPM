@@ -123,7 +123,7 @@ elseif ~ischar(datatype)
 		'Data type needs to be a string');
 	return
 elseif sum(strcmpi(datatype, {settings.import.datatypes.short})) == 0
-	warning('ID:invalid_chantype', ...
+	warning('ID:invalid_channeltype', ...
 		'Data type (%s) not recognised', datatype);
 	return
 elseif nargin < 3
@@ -172,7 +172,7 @@ for k = 1:numel(import)
 			'No type given for import job %2.0f.\n', k);
 		return
 		% channel type allowed for this datatype?
-	elseif sum(strcmpi(import{k}.type, settings.import.datatypes(datatype).chantypes)) == 0
+	elseif sum(strcmpi(import{k}.type, settings.import.datatypes(datatype).channeltypes)) == 0
 		warning('ID:ivalid_import_struct', ...
 			'Channel type ''%s'' in import job %2.0f is not supported for data type %s.\n', ...
 			import{k}.type, k, settings.import.datatypes(datatype).long);
@@ -195,8 +195,8 @@ for k = 1:numel(import)
 	end
 	% flank loading
 	if ~isfield(import{k}, 'flank')
-		l_type = {settings.chantypes.data};
-		if strcmp(l_type{strcmp({settings.chantypes.type},{import{k}.type})},'wave')
+		l_type = {settings.channeltypes.data};
+		if strcmp(l_type{strcmp({settings.channeltypes.type},{import{k}.type})},'wave')
 			import{k}.flank = 'both'; % set both at the default flank
 		end
 	else
@@ -220,7 +220,7 @@ for k = 1:numel(import)
 		end
 	end
 	% assign channel type number
-	import{k}.typeno = find(strcmpi(import{k}.type, {settings.chantypes.type}));
+	import{k}.typeno = find(strcmpi(import{k}.type, {settings.channeltypes.type}));
 end
 %% 4 loop through data files
 % Previous checks have been passed.
@@ -264,8 +264,8 @@ for d = 1:numel(D)
 		data = cell(numel(import{blk}), 1);
 		for k = 1:numel(import{blk})
 			if ~isfield(import{blk}{k}, 'units'), import{blk}{k}.units = 'unknown'; end
-			chantype = find(strcmpi(import{blk}{k}.type, {settings.chantypes.type}));
-			[sts(k), data{k}] = feval(settings.chantypes(chantype).import, import{blk}{k});
+			channeltype = find(strcmpi(import{blk}{k}.type, {settings.channeltypes.type}));
+			[sts(k), data{k}] = feval(settings.channeltypes(channeltype).import, import{blk}{k});
 			if isfield(import{blk}{k}, 'minfreq'), data{k}.header.minfreq = import{blk}{k}.minfreq; end
 		end
 		if any(sts == -1), fprintf('\nData conversion unsuccesful for job %02.0f file %s.\n', ...

@@ -115,7 +115,7 @@ heartbeats{1}.data = find(rpeak_logic_vec) / ecg.srate;
 rmpath(pspm_path('ext','amri_eegfmri'));
 %% save
 heartbeats{1}.header.sr = 1;
-heartbeats{1}.header.chantype = 'hb';
+heartbeats{1}.header.channeltype = 'hb';
 heartbeats{1}.header.units = 'events';
 o.msg.prefix = 'QRS detection using AMRI algorithm';
 [lsts, infos] = pspm_write_channel(fn, heartbeats, options.channel_action);

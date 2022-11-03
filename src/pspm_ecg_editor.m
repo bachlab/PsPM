@@ -317,7 +317,7 @@ if strcmpi(handles.gui_mode, 'file') && numel(handles.R) > 0
   out_d = struct();
   out_d.data = handles.R/sr;
   out_d.header = struct();
-  out_d.header.chantype = 'hb';
+  out_d.header.channeltype = 'hb';
   out_d.header.sr = 1;
   out_d.header.units = 'events';
 
@@ -852,7 +852,7 @@ end
 function load_data_file(hObject, handles, fn)
 [sts, ~, handles.data, ~] = pspm_load_data(fn);
 if sts == 1
-  ecg_chans = find(cellfun(@(x) strcmpi(x.header.chantype, 'ecg'), handles.data));
+  ecg_chans = find(cellfun(@(x) strcmpi(x.header.channeltype, 'ecg'), handles.data));
   % set possible ecg chans
   sel_ecg_chan = find(ecg_chans == handles.data_chan, 1, 'first');
   if isempty(sel_ecg_chan)
@@ -862,7 +862,7 @@ if sts == 1
   set(handles.ppEcgChan, 'String', ecg_chans);
   set(handles.ppEcgChan, 'Value', sel_ecg_chan);
 
-  hb_chans = find(cellfun(@(x) strcmpi(x.header.chantype, 'hb'), handles.data));
+  hb_chans = find(cellfun(@(x) strcmpi(x.header.channeltype, 'hb'), handles.data));
   hb_chan_list = cell(1,length(hb_chans)+1);
   hb_chan_list{1} = 'None';
   hb_chan_list(2:end) = num2cell(hb_chans);

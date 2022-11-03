@@ -178,7 +178,7 @@ if action_combine
   if lsts ~= 1
     return
   end
-  if strcmp(pspm_get_eye(data{1}.header.chantype), pspm_get_eye(data_combine{1}.header.chantype))
+  if strcmp(pspm_get_eye(data{1}.header.channeltype), pspm_get_eye(data_combine{1}.header.channeltype))
     warning('ID:invalid_input', 'options.channel and options.channel_combine must specify different eyes');
     return;
   end
@@ -194,11 +194,11 @@ if action_combine
     warning('ID:invalid_input', 'options.channel and options.channel_combine data have different lengths');
     return;
   end
-  old_chantype = sprintf('%s and %s', ...
-    data{1}.header.chantype, data_combine{1}.header.chantype);
+  old_channeltype = sprintf('%s and %s', ...
+    data{1}.header.channeltype, data_combine{1}.header.channeltype);
 else
   data_combine{1}.data = [];
-  old_chantype = data{1}.header.chantype;
+  old_channeltype = data{1}.header.channeltype;
 end
 %% 5 preprocess
 [lsts, smooth_signal, model] = pspm_preprocess(data, data_combine, ...
@@ -209,10 +209,10 @@ end
 %% 6 save
 channel_str = num2str(options.channel);
 o.msg.prefix = sprintf(...
-  'Pupil preprocessing :: Input channel: %s -- Input chantype: %s -- Output chantype: %s --', ...
+  'Pupil preprocessing :: Input channel: %s -- Input channeltype: %s -- Output channeltype: %s --', ...
   channel_str, ...
-  old_chantype, ...
-  smooth_signal.header.chantype);
+  old_channeltype, ...
+  smooth_signal.header.channeltype);
 [lsts, out_id] = pspm_write_channel(fn, smooth_signal, options.channel_action, o);
 if lsts ~= 1
   return
@@ -232,7 +232,7 @@ function varargout  = pspm_preprocess(data, data_combine, segments, custom_setti
 sts = 0;
 % 1 definitions
 combining = ~isempty(data_combine{1}.data);
-data_is_left = strcmpi(pspm_get_eye(data{1}.header.chantype), 'l');
+data_is_left = strcmpi(pspm_get_eye(data{1}.header.channeltype), 'l');
 n_samples = numel(data{1}.data);
 sr = data{1}.header.sr;
 diameter.t_ms = transpose(linspace(0, 1000 * (n_samples-1) / sr, n_samples));
@@ -264,16 +264,16 @@ addpath(libpath{:});
 model = PupilDataModel(data{1}.header.units, diameter, segmentTable, 0, custom_settings);
 model.filterRawData();
 if combining
-  smooth_signal.header.chantype = pspm_update_chantype(data{1}.header.chantype, {'pp', 'c'});
-elseif contains(data{1}.header.chantype, '_pp')
-  smooth_signal.header.chantype = data{1}.header.chantype;
+  smooth_signal.header.channeltype = pspm_update_channeltype(data{1}.header.channeltype, {'pp', 'c'});
+elseif contains(data{1}.header.channeltype, '_pp')
+  smooth_signal.header.channeltype = data{1}.header.channeltype;
 else
-  marker = strfind(data{1}.header.chantype, '_');
+  marker = strfind(data{1}.header.channeltype, '_');
   marker = marker(1);
-  smooth_signal.header.chantype = ...
-    [data{1}.header.chantype(1:marker-1),...
+  smooth_signal.header.channeltype = ...
+    [data{1}.header.channeltype(1:marker-1),...
     '_pp_',...
-    data{1}.header.chantype(marker+1:end)];
+    data{1}.header.channeltype(marker+1:end)];
 end
 smooth_signal.header.units = data{1}.header.units;
 smooth_signal.header.sr = new_sr;
@@ -385,28 +385,28 @@ for i = 1:numel(fnames)
 	end
 end
 end
-function eye = pspm_get_eye(chantype)
+function eye = pspm_get_eye(channeltype)
 % Definition
 % pspm_get_eye detect the eye location from an input channel type
 %	FORMAT
-%	eye = pspm_get_eye(chantype)
+%	eye = pspm_get_eye(channeltype)
 % ARGUMENTS
 %   Input
-%     chantype  a string that contains the eye location
+%     channeltype  a string that contains the eye location
 %   Output
 %     eye    		a character
 % PsPM (version 5.1.2)
 % (C) 2021 Teddy Chao (UCL)
 eye = 'unknown';
 for eye_attempt = ['l', 'r', 'c']
-	if contains(chantype, ['_', eye_attempt, '_'])
+	if contains(channeltype, ['_', eye_attempt, '_'])
 		eye = eye_attempt;
-	elseif chantype(length(chantype)-1:length(chantype)) == ['_', eye_attempt]
+	elseif channeltype(length(channeltype)-1:length(channeltype)) == ['_', eye_attempt]
 		eye = eye_attempt;
 	end
 end
 if strcmp(eye, 'unknown')
-	warning('ID:invalid_input', 'chantype does not contain a valid eye');
+	warning('ID:invalid_input', 'channeltype does not contain a valid eye');
 	return
 end
 end

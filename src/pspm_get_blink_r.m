@@ -23,7 +23,7 @@ sts = -1;
 data.data = import.data(:);
 
 % add header
-data.header.chantype = 'blink_r';
+data.header.channeltype = 'blink_r';
 data.header.units = import.units;
 data.header.sr = import.sr;
 

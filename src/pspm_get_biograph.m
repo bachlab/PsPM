@@ -31,7 +31,7 @@ fid = fopen(datafile);
 bio.data = textscan(fid, '%n%n', 'Delimiter', ',', 'HeaderLines', 9);
 fclose(fid);
 %% extract individual channel
-if strcmpi(settings.chantypes(import{1}.typeno).data, 'events')
+if strcmpi(settings.channeltypes(import{1}.typeno).data, 'events')
   if isempty(strfind(bio.header{1}{1}, 'Interval Data Export'))
     fprintf('\n');
     warning('Please use ''Interval Data Export'' for channels of type ''%s''', ...

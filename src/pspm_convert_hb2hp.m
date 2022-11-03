@@ -96,7 +96,7 @@ end
 newdata.data = newhp(:);
 newdata.header.sr = sr;
 newdata.header.units = 'ms';
-newdata.header.chantype = 'hp';
+newdata.header.channeltype = 'hp';
 
 
 o.msg.prefix = 'Heart beat converted to heart period and';

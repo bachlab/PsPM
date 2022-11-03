@@ -9,7 +9,7 @@ function [varargout] = pspm_convert_area2diameter(varargin)
 %                 fn: a numeric vector of milimeter values
 %               channel: Channels which should be converted from area to diameter.
 %                     Should be either a string representing the channels
-%                     chantype or a numeric value representing the channels id.
+%                     channeltype or a numeric value representing the channels id.
 %                     Multiple channels are allowed and should be provided as
 %                     cell.
 %               area: a numeric vector of area values (the unit is not

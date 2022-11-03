@@ -51,23 +51,23 @@ data_mat = {};
 column_names = {};
 mask_channels = {};
 for i = 1:numel(data)
-  chantype = data{i}.header.chantype;
-  if strncmp(chantype, 'blink', numel('blink')) || ...
-      strncmp(chantype, 'saccade', numel('saccade'))
-    mask_channels{end + 1} = chantype;
+  channeltype = data{i}.header.channeltype;
+  if strncmp(channeltype, 'blink', numel('blink')) || ...
+      strncmp(channeltype, 'saccade', numel('saccade'))
+    mask_channels{end + 1} = channeltype;
     data_mat{end + 1} = data{i}.data;
-    column_names{end + 1} = chantype;
+    column_names{end + 1} = channeltype;
   end
 end
 n_mask_channels = numel(data_mat);
 for i = 1:numel(data_user)
-  chantype = data_user{i}.header.chantype;
+  channeltype = data_user{i}.header.channeltype;
   should_add = options.channel ~= 0 || ...
-    strncmp(chantype, 'pupil', numel('pupil')) || ...
-    strncmp(chantype, 'gaze', numel('gaze'));
+    strncmp(channeltype, 'pupil', numel('pupil')) || ...
+    strncmp(channeltype, 'gaze', numel('gaze'));
   if should_add
     data_mat{end + 1} = data_user{i}.data;
-    column_names{end + 1} = data_user{i}.header.chantype;
+    column_names{end + 1} = data_user{i}.header.channeltype;
   end
 end
 data_mat = cell2mat(data_mat);
@@ -94,7 +94,7 @@ sts = 1;
 function [out_cell] = keep_pupil_gaze_channels(in_cell)
 out_cell = {};
 for i = 1:numel(in_cell)
-  channel = lower(in_cell{i}.header.chantype);
+  channel = lower(in_cell{i}.header.channeltype);
   if contains(channel, 'pupil') || contains(channel, 'gaze')
     out_cell{end + 1} = in_cell{i};
   end

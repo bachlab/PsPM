@@ -224,7 +224,7 @@ for i=1:numel(handles.plots) % remove plots
   end
 end
 [~, infos, data] = pspm_load_data(file); % load file
-channels = cellfun(@(x) {x.header.chantype,x.header.units}, data, 'UniformOutput', 0);
+channels = cellfun(@(x) {x.header.channeltype,x.header.units}, data, 'UniformOutput', 0);
 set(handles.edOpenFilePath, 'String', file);
 corder = get(handles.fgDataEditor, 'defaultAxesColorOrder'); % format channels
 cl = length(corder)-2;
@@ -310,7 +310,7 @@ end
 handles.axData = gca;
 p = plot(xdata,ydata, 'Color', color);
 xlabel('time -- second');
-ylabel([handles.data{1,1}.header.chantype, ' -- ', handles.data{1,1}.header.units]);
+ylabel([handles.data{1,1}.header.channeltype, ' -- ', handles.data{1,1}.header.units]);
 handles.axData.FontSize = 14;
 set(handles.axData, 'NextPlot', 'add');
 NaN_data = NaN(numel(xdata),1);
