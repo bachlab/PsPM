@@ -9,7 +9,7 @@ classdef pspm_find_channel_test < matlab.unittest.TestCase
     function invalid_inputargs(this)
       this.verifyWarning(@()pspm_find_channel('str','scr'), 'ID:invalid_input', 'invalid_inputargs test 1');
       headercell = {'heart', 'scr', 'pupil'};
-      this.verifyWarning(@()pspm_find_channel(headercell, 'str'), 'ID:not_allowed_chantype', 'invalid_inputargs test 2');
+      this.verifyWarning(@()pspm_find_channel(headercell, 'str'), 'ID:not_allowed_channeltype', 'invalid_inputargs test 2');
       this.verifyWarning(@()pspm_find_channel(headercell, 4), 'ID:invalid_input', 'invalid_inputargs test 3');
     end
     function valid_inputargs(this)

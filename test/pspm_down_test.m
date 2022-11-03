@@ -11,19 +11,19 @@ classdef pspm_down_test < matlab.unittest.TestCase
   end
   methods(TestClassSetup)
     function generate_test_data(this)
-      channels{1}.chantype = 'scr';
+      channels{1}.channeltype = 'scr';
       channels{1}.sr = pspm_down_test.oldsr;
-      channels{2}.chantype = 'marker';
+      channels{2}.channeltype = 'marker';
       channels{2}.sr = pspm_down_test.oldsr;
-      channels{3}.chantype = 'hr';
+      channels{3}.channeltype = 'hr';
       channels{3}.sr = pspm_down_test.oldsr;
-      channels{4}.chantype = 'hb';
+      channels{4}.channeltype = 'hb';
       channels{4}.sr = pspm_down_test.oldsr;
-      channels{5}.chantype = 'marker';
+      channels{5}.channeltype = 'marker';
       channels{5}.sr = pspm_down_test.oldsr;
-      channels{6}.chantype = 'resp';
+      channels{6}.channeltype = 'resp';
       channels{6}.sr = pspm_down_test.oldsr;
-      channels{7}.chantype = 'scr';
+      channels{7}.channeltype = 'scr';
       channels{7}.sr = pspm_down_test.oldsr;
       if exist(pspm_down_test.fn, 'file')
         delete(pspm_down_test.fn);
@@ -67,7 +67,7 @@ classdef pspm_down_test < matlab.unittest.TestCase
       this.verifyEqual(numel(old.data),numel(new.data));
       for i = 1:numel(old.data)
         % check if channel has been downsampled (if is wavechannel)
-        if ismember(old.data{i}.header.chantype, pspm_down_test.wave_channels)
+        if ismember(old.data{i}.header.channeltype, pspm_down_test.wave_channels)
           % same duration as in old channel
           dur_old = numel(old.data{i}.data) / old.data{i}.header.sr;
           dur_new = numel(new.data{i}.data) / new.data{i}.header.sr;

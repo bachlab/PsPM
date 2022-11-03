@@ -56,7 +56,7 @@ classdef pspm_get_acq_test < pspm_get_superclass
       fn = 'ImportTestData/acq/Acq_SCR.acq';
       import{1} = struct('type', 'scr'   , 'channel', 1);
       import{2} = struct('type', 'marker', 'channel', 2);
-      import = this.assign_chantype_number(import);
+      import = this.assign_channeltype_number(import);
       this.verifyWarning(@()pspm_get_acq(fn, import), 'ID:channel_not_contained_in_file');
     end
     function get_acq_returns_same_data_as_acqknowledge_exported_mat(this)

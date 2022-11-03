@@ -63,7 +63,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
         y(NaN_idx)=nan;
       end
       data{1}.data = y';
-      data{1}.header.chantype = 'scr';
+      data{1}.header.channeltype = 'scr';
       data{1}.header.units = 'unknown';
       data{1}.header.sr = sr;
       infos.duration = length_sec;

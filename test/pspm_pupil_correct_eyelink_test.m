@@ -88,8 +88,8 @@ classdef pspm_pupil_correct_eyelink_test < pspm_testcase
       options.channel = 'pupil_l';
       [sts, out_channel] = pspm_pupil_correct_eyelink(this.pspm_input_filename, options);
       load(this.pspm_input_filename);
-      this.verifyEqual(data{out_channel}.header.chantype, 'pupil_pp_l');
-      ecg_chan_indices = find(cell2mat(cellfun(@(x) strcmp(x.header.chantype, 'pupil_l'), data, 'uni', false)));
+      this.verifyEqual(data{out_channel}.header.channeltype, 'pupil_pp_l');
+      ecg_chan_indices = find(cell2mat(cellfun(@(x) strcmp(x.header.channeltype, 'pupil_l'), data, 'uni', false)));
       this.verifyEqual(numel(data{ecg_chan_indices(end)}.data), numel(data{out_channel}.data));
     end
   end

@@ -16,7 +16,7 @@ classdef pspm_import_test <  matlab.unittest.TestCase
       import{1}.type = 'scr';
       datatype = 'foo';
       this.verifyWarning(@()pspm_import(datafile, datatype, import), ...
-      'ID:invalid_chantype', 'invalid_input test 3'); %invalid chantype
+      'ID:invalid_channeltype', 'invalid_input test 3'); %invalid channeltype
       datatype = 'spike';
       datafile = 5;
       this.verifyWarning(@()pspm_import(datafile, datatype, import), ...

@@ -5,7 +5,7 @@ classdef pspm_get_scr_test < matlab.unittest.TestCase
   % (C) 2013 Linus Rüttimann (University of Zurich)
   methods (Test)
     function no_transferparams(testCase)
-      channel.chantype = 'scr';
+      channel.channeltype = 'scr';
       outfile = pspm_testdata_gen(channel, 10);
       exp_data = outfile.data{1}.data;
       import.data = exp_data;
@@ -16,12 +16,12 @@ classdef pspm_get_scr_test < matlab.unittest.TestCase
       testCase.verifyTrue(~isempty(data.data));
       testCase.verifyTrue(isfield(data.header,'units'));
       testCase.verifyTrue(isfield(data.header,'sr'));
-      testCase.verifyTrue(isfield(data.header,'chantype'));
+      testCase.verifyTrue(isfield(data.header,'channeltype'));
       testCase.verifyEqual(data.header.sr, import.sr);
-      testCase.verifyEqual(data.header.chantype, 'scr');
+      testCase.verifyEqual(data.header.channeltype, 'scr');
     end
     function struct_transferparams(testCase)
-      channel.chantype = 'scr';
+      channel.channeltype = 'scr';
       outfile = pspm_testdata_gen(channel, 10);
       exp_data = outfile.data{1}.data;
       import.data = exp_data;
@@ -36,16 +36,16 @@ classdef pspm_get_scr_test < matlab.unittest.TestCase
       testCase.verifyTrue(~isempty(data.data));
       testCase.verifyTrue(isfield(data.header,'units'));
       testCase.verifyTrue(isfield(data.header,'sr'));
-      testCase.verifyTrue(isfield(data.header,'chantype'));
+      testCase.verifyTrue(isfield(data.header,'channeltype'));
       testCase.verifyEqual(data.header.sr, import.sr);
-      testCase.verifyEqual(data.header.chantype, 'scr');
+      testCase.verifyEqual(data.header.channeltype, 'scr');
       import.transfer = rmfield(import.transfer, 'Rs');
       import.transfer = rmfield(import.transfer, 'offset');
       testCase.verifyWarningFree(@()pspm_get_scr(import));
     end
     function file_transferparams(testCase)
       filename = 'transpa7875.mat';
-      channel.chantype = 'scr';
+      channel.channeltype = 'scr';
       outfile = pspm_testdata_gen(channel, 10);
       exp_data = outfile.data{1}.data;
       import.data = exp_data;
@@ -60,9 +60,9 @@ classdef pspm_get_scr_test < matlab.unittest.TestCase
       testCase.verifyTrue(~isempty(data.data));
       testCase.verifyTrue(isfield(data.header,'units'));
       testCase.verifyTrue(isfield(data.header,'sr'));
-      testCase.verifyTrue(isfield(data.header,'chantype'));
+      testCase.verifyTrue(isfield(data.header,'channeltype'));
       testCase.verifyEqual(data.header.sr, import.sr);
-      testCase.verifyEqual(data.header.chantype, 'scr');
+      testCase.verifyEqual(data.header.channeltype, 'scr');
       delete(filename);
     end
   end

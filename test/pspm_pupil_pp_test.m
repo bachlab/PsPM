@@ -34,7 +34,7 @@ classdef pspm_pupil_pp_test < pspm_testcase
       this.verifyWarning(@()pspm_pupil_pp('abc'), 'ID:nonexistent_file');
       opt.channel = 'pupil_x_l';
       this.verifyWarning(@()pspm_pupil_pp(...
-        this.pspm_input_filename, opt), 'ID:invalid_chantype');
+        this.pspm_input_filename, opt), 'ID:invalid_channeltype');
       opt.channel = 'pupil_l';
       opt.channel_combine = 'gaze_y_l';
       this.verifyWarning(@()pspm_pupil_pp(...
@@ -47,7 +47,7 @@ classdef pspm_pupil_pp_test < pspm_testcase
       opt.channel = 'pupil_r';
       [~, out_chan] = pspm_pupil_pp(this.pspm_input_filename, opt);
       testdata = load(this.pspm_input_filename);
-      this.verifyEqual(testdata.data{out_chan}.header.chantype,...
+      this.verifyEqual(testdata.data{out_chan}.header.channeltype,...
         'pupil_pp_r');
     end
     function check_upsampling_rate(this)
@@ -57,7 +57,7 @@ classdef pspm_pupil_pp_test < pspm_testcase
         [~, out_chan] = pspm_pupil_pp(this.pspm_input_filename, opt);
         testdata = load(this.pspm_input_filename);
         pupil_chan_indices = find(...
-          cell2mat(cellfun(@(x) strcmp(x.header.chantype, 'pupil_r'),...
+          cell2mat(cellfun(@(x) strcmp(x.header.channeltype, 'pupil_r'),...
           testdata.data, 'uni', false)));
         pupil_chan = pupil_chan_indices(end);
         sr = testdata.data{pupil_chan}.header.sr;
@@ -72,7 +72,7 @@ classdef pspm_pupil_pp_test < pspm_testcase
       opt.channel_combine = 'pupil_l';
       [~, out_chan] = pspm_pupil_pp(this.pspm_input_filename, opt);
       testdata = load(this.pspm_input_filename);
-      this.verifyEqual(testdata.data{out_chan}.header.chantype, 'pupil_pp_c');
+      this.verifyEqual(testdata.data{out_chan}.header.channeltype, 'pupil_pp_c');
     end
     function check_segments(this)
       opt.channel = 'pupil_r';

@@ -30,7 +30,7 @@ classdef pspm_get_labchartmat_in_test < pspm_get_superclass
       import{1} = struct('type', 'scr', 'channel', 1);
       import{2} = struct('type', 'scr', 'channel', 2);
       import{3} = struct('type', 'scr', 'channel',15);
-      import = this.assign_chantype_number(import);
+      import = this.assign_channeltype_number(import);
       this.verifyWarning(@()pspm_get_labchartmat_in(fn, import), 'ID:channel_not_contained_in_file');
     end
   end

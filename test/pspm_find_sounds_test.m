@@ -25,10 +25,10 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
       % test with invalid pspm file
       this.verifyWarning(@() pspm_find_sounds(fn), 'ID:invalid_input');
       % test with data without a snd channel
-      c{1}.chantype = 'scr';
+      c{1}.channeltype = 'scr';
       pspm_testdata_gen(c, 10, fn);
       this.verifyWarning(@() pspm_find_sounds(fn), 'ID:no_sound_chan');
-      c{1}.chantype = 'snd';
+      c{1}.channeltype = 'snd';
       c{1}.noise = 1;
       pspm_testdata_gen(c, 10, fn);
       % invalid values for positive integer fields
@@ -88,10 +88,10 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
     function test_add_channel(this, channel_output, max_delay, min_delay, resample, channel_action)
       dur = 10;
       % sound channel
-      c{1}.chantype = 'snd';
+      c{1}.channeltype = 'snd';
       c{1}.noise = 1;
       % marker
-      c{2}.chantype = 'marker';
+      c{2}.channeltype = 'marker';
       c{2}.eventdist = 'max';
       fn = pspm_find_free_fn(this.testdata_fn, '.mat');
       pspm_testdata_gen(c, dur, fn);
@@ -149,10 +149,10 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
       % and events occur always with same distance
       dur = 10;
       % sound channel
-      c{1}.chantype = 'snd';
+      c{1}.channeltype = 'snd';
       c{1}.noise = 1;
       % marker
-      c{2}.chantype = 'marker';
+      c{2}.channeltype = 'marker';
       c{2}.eventdist = 'max';
       fn = pspm_find_free_fn(this.testdata_fn, '.mat');
       pspm_testdata_gen(c, dur, fn);
@@ -169,10 +169,10 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
     function test_threshold(this, threshold)
       dur = 10;
       % sound channel
-      c{1}.chantype = 'snd';
+      c{1}.channeltype = 'snd';
       c{1}.noise = 1;
       % marker
-      c{2}.chantype = 'marker';
+      c{2}.channeltype = 'marker';
       c{2}.eventdist = 'max';
       fn = pspm_find_free_fn(this.testdata_fn, '.mat');
       pspm_testdata_gen(c, dur, fn);
@@ -193,10 +193,10 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
     function test_plot(this)
       dur = 10;
       % sound channel
-      c{1}.chantype = 'snd';
+      c{1}.channeltype = 'snd';
       c{1}.noise = 1;
       % marker
-      c{2}.chantype = 'marker';
+      c{2}.channeltype = 'marker';
       c{2}.eventdist = 'max';
       fn = pspm_find_free_fn(this.testdata_fn, '.mat');
       pspm_testdata_gen(c, dur, fn);
