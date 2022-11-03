@@ -339,14 +339,17 @@ switch nargin
       options.(field_name) = default_value;
     else
       if ~strcmp(class(default_value),class(options.(field_name)))
-        flag_is_allowed_value = 0;
+        if (isnumeric(default_value) && islogical(options.(field_name))) || (islogical(default_value) && isnumeric(options.(field_name)))
+          flag_is_allowed_value = 1;
+        else
+          flag_is_allowed_value = 0;
+        end
       else
         switch class(optional_value)
           case 'double'
             if length(default_value) ~= length(options.(field_name))
               flag_is_allowed_value = 0;
             else
-              
               allowed_value = [optional_value; default_value];
               truetable = options.(field_name) == allowed_value;
               flag_is_allowed_value = any(sum(truetable,2));
