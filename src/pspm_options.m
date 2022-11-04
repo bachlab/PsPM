@@ -113,7 +113,7 @@ switch FunName
     %% 2.15 pspm_data_editor
     % output_file does not have a default value
     % epoch_file does not have a default value
-    options = autofill(options, 'overwrite',              0,        1);
+    options = autofill(options, 'overwrite',              0,        [1, 2]);
   case 'dcm'
     %% 2.16 pspm_dcm
     options = autofill(options, 'indrf',                  0,        '@anynumeric'); % Estimate the response function from the data
@@ -133,7 +133,7 @@ switch FunName
     options = autofill(options, 'crfupdate',              0,        '@anynumeric' ); % update CRF priors to observed SCRF, or use pre-estimated priors
     options = autofill(options, 'eventnames',           	{}                      ); % Cell array of names for individual events
     options = autofill(options, 'trlnames',               {}                      ); % Cell array of names for individual trials, is used for contrast manager only (e.g. condition descriptions)
-    options = autofill(options, 'overwrite',              1,        0             );
+    options = autofill(options, 'overwrite',              1,        [0, 2]         );
   case 'dcm_inv'
     %% 2.17 pspm_dcm_inv
     options = autofill(options, 'eSCR',                   0,        '@anynumeric'); % contains the data to estimate RF from
@@ -150,14 +150,14 @@ switch FunName
     options = autofill(options, 'sclpost',                2,        '@anynumeric'); % scl-change-free window after last event (second)
     options = autofill(options, 'crfupdate',              0,        '@anynumeric'); % update CRF priors to observed SCRF, or use pre-estimated priors, default to use pre-estimated priors
     options = autofill(options, 'getrf',                  0,        '@anynumeric'     ); % only estimate RF, do not do trial-wise DCM
-    options = autofill(options, 'overwrite',              1,        0                 );
+    options = autofill(options, 'overwrite',              1,        [0, 2]            );
     % options = autofill(options, 'fixevents', ?); % fixed events to adjust amplitude priors
     % options = autofill(options, 'flexevents', ?); % flexible events to adjust amplitude priors
     % options = autofill(options, 'missing', ?); % data points to be disregarded by inversion
     % options = autofill(options, 'rf', ?); % use pre-specified RF, provided in file, or as 4-element vector in log parameter space
   case 'down'
     %% 2.18 pspm_down
-    options = autofill(options, 'overwrite',              1,        0                 );
+    options = autofill(options, 'overwrite',              1,        [0, 2]            );
   case 'emg_pp'
     %% 2.19 pspm_emg_pp
     options = autofill(options, 'channel',                'emg',    '@anychar'        );
@@ -173,7 +173,7 @@ switch FunName
     %% 2.21 pspm_extract_segments
     options = autofill(options, 'norm',                   0,        1                 );
     options = autofill(options, 'plot',                   0,        1                 );
-    options = autofill(options, 'overwrite',              0,        1                 );
+    options = autofill(options, 'overwrite',              0,        [1, 2]            );
     options = autofill(options, 'length',                 -1,       '@anynumeric'     );
     options = autofill(options, 'outputfile',             '',       '@anychar'        );
     options = autofill(options, 'timeunit',               'seconds', {'seconds', 'samples', 'markers'});
@@ -205,39 +205,39 @@ switch FunName
     %% 2.22 pspm_gaze_pp
     options = autofill(options, 'channel',                'gaze_x_l', {'gaze_x_r','gaze_y_l','gaze_y_r'});
     options = autofill(options, 'channel_combine',        'none',   {'gaze_x_l','gaze_x_r','gaze_y_l','gaze_y_r'});
-    options = autofill(options, 'segments',               {});
-    options = autofill(options, 'valid_sample',           0,        1);
-    options = autofill(options, 'plot_data',              false);
+    options = autofill(options, 'segments',               {}                          );
+    options = autofill(options, 'valid_sample',           0,        1                 );
+    options = autofill(options, 'plot_data',              false                       );
     options = autofill_channel_action(options,            'add',    {'replace','none'});
   case 'get_markerinfo'
-    options = autofill(options, 'markerchan',             -1,       '@anyinteger');
-    options = autofill(options, 'filename',               '',       '@anychar');
-    options = autofill(options, 'overwrite',              0,        1);
+    options = autofill(options, 'markerchan',             -1,       '@anyinteger'     );
+    options = autofill(options, 'filename',               '',       '@anychar'        );
+    options = autofill(options, 'overwrite',              0,        [1, 2]            );
   case 'get_rf'
-    options = autofill(options, 'getrf',                  1           );
-    options = autofill(options, 'nosave',                 1,        0 );
+    options = autofill(options, 'getrf',                  1                           );
+    options = autofill(options, 'nosave',                 1,        0                 );
   case 'glm'
     %% pspm_glm
-    options = autofill(options, 'modelspec',              'scr'       );
-    options = autofill(options, 'bf',                     0,        1 );
-    options = autofill(options, 'overwrite',              0,        1 );
-    options = autofill(options, 'norm',                   0,        1 );
-    options = autofill(options, 'centering',              1,        0 );
+    options = autofill(options, 'modelspec',              'scr'                       );
+    options = autofill(options, 'bf',                     0,        1                 );
+    options = autofill(options, 'overwrite',              0,        [1, 2]            );
+    options = autofill(options, 'norm',                   0,        1                 );
+    options = autofill(options, 'centering',              1,        0                 );
     options = fill_glm(options);
   case 'import'
     %% pspm_import
-    options = autofill(options, 'overwrite',              0,        1 );
+    options = autofill(options, 'overwrite',              0,        [1, 2]            );
   case 'interpolate'
     %% pspm_interpolate
     options = autofill_channel_action(options);
-    options = autofill(options, 'overwrite',              0,        1 );
+    options = autofill(options, 'overwrite',              0,        [1, 2]            );
   case 'load1'
     %% pspm_load1
-    options = autofill(options, 'overwrite',              0,        1 );
-    options = autofill(options, 'zscored', 0, 1);
+    options = autofill(options, 'overwrite',              0,        [1, 2]            );
+    options = autofill(options, 'zscored',                0,        1                 );
   case 'sf'
     %% pspm_sf
-    options = autofill(options,'overwrite', 0);
+    options = autofill(options,'overwrite',               0,        [1, 2]            );
     if ~isfield(options,'marker_chan_num') ||...
         ~isnumeric(options.marker_chan_num) ||...
         numel(options.marker_chan_num) > 1
@@ -245,7 +245,7 @@ switch FunName
     end
   case 'split_sessions'
     %% pspm_split_sessions
-    options = autofill(options, 'overwrite', 0, 1);
+    options = autofill(options, 'overwrite',              0,        [1, 2]            );
     options = autofill(options, 'prefix', 0);
     options = autofill(options, 'suffix', 0);
     options = autofill(options, 'verbose', 0);
@@ -258,7 +258,7 @@ switch FunName
     % minimum ratio of session break to normal inter marker interval (default 3)
   case 'trim'
     %% pspm_trim
-    options = autofill(options, 'overwrite', 0, 1);
+    options = autofill(options, 'overwrite',              0,        [1, 2]            );
     if ~isfield(options,'marker_chan_num') || ...
         ~isnumeric(options.marker_chan_num) || ...
         numel(options.marker_chan_num) > 1
@@ -350,7 +350,7 @@ switch nargin
             if length(default_value) ~= length(options.(field_name))
               flag_is_allowed_value = 0;
             else
-              allowed_value = [optional_value; default_value];
+              allowed_value = [optional_value, default_value];
               truetable = options.(field_name) == allowed_value;
               flag_is_allowed_value = any(sum(truetable,2));
             end
