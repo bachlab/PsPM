@@ -88,10 +88,10 @@ if isempty(indata)
 end
 % 1.2 initialise options
 options = pspm_options(options, 'interpolate');
-try options.method; catch, options.method = 'linear'; end
+% try options.method; catch, options.method = 'linear'; end
 try options.channels; catch, options.channels = []; end
-try options.newfile; catch, options.newfile = 0; end
-try options.extrapolate; catch, options.extrapolate = 0; end
+% try options.newfile; catch, options.newfile = 0; end
+%try options.extrapolate; catch, options.extrapolate = 0; end
 % 1.3 check channel size
 if numel(options.channels) > 0
   if numel(options.channels) ~= numel(indata)
