@@ -243,13 +243,19 @@ for k = 1:numel(data)
   if ~isfield(data{k}, 'header')
     vflag(k) = 1;
   else
-    if ~isfield(data{k}.header, 'channeltype') || ...
+    if (~isfield(data{k}.header, 'channeltype') && ~isfield(data{k}.header, 'chantype')) || ...
         ~isfield(data{k}.header, 'sr') || ...
         ~isfield(data{k}.header, 'units')
       vflag(k) = 1;
     else
-      if ~ismember(lower(data{k}.header.channeltype), {settings.channeltypes.type})
-        nflag(k) = 1;
+      if isfield(data{k}.header, 'channeltype')
+        if ~ismember(lower(data{k}.header.channeltype), {settings.channeltypes.type})
+          nflag(k) = 1;
+        end
+      else
+        if ~ismember(lower(data{k}.header.chantype), {settings.channeltypes.type})
+          nflag(k) = 1;
+        end
       end
     end
   end
@@ -306,6 +312,12 @@ end
 %% 7 Autofill information in header
 % some other optional fields which can be autofilled with default values
 % should be added here.
+for k = 1:numel(data)
+  if isfield(data{k}.header, 'chantype')
+    data{k}.header.channeltype = data{k}.header.chantype;
+    data{k}.header = rmfield( data{k}.header , 'chantype' );
+  end
+end
 
 %% 8 Analyse file structure
 filestruct.numofwavechan = 0;
