@@ -1,11 +1,11 @@
 function options = pspm_options(options, FunName)
-% ? Definition
+% # Definition
 %   pspm_options automatically determine the fields of options for the
 %   corresponding function.
-% ? Arguments
+% # Arguments
 %   options:  a struct to be filled by the function
 %   FunName:  a string, the name of the function where option is used
-% ? Copyright
+% # Copyright
 %   Introduced in PsPM 6.1
 %   Written in 2022 by Teddy Chao (UCL)
 
@@ -210,14 +210,16 @@ switch FunName
     options = autofill(options, 'plot_data',              false                       );
     options = autofill_channel_action(options,            'add',    {'replace','none'});
   case 'get_markerinfo'
+    %% 2.23 pspm_get_markerinfo
     options = autofill(options, 'markerchan',             -1,       '@anyinteger'     );
     options = autofill(options, 'filename',               '',       '@anychar'        );
     options = autofill(options, 'overwrite',              0,        [1, 2]            );
   case 'get_rf'
+    %% 2.24 pspm_get_rf
     options = autofill(options, 'getrf',                  1                           );
     options = autofill(options, 'nosave',                 1,        0                 );
   case 'glm'
-    %% pspm_glm
+    %% 2.25 pspm_glm
     options = autofill(options, 'modelspec',              'scr'                       );
     options = autofill(options, 'bf',                     0,        1                 );
     options = autofill(options, 'overwrite',              0,        [1, 2]            );
@@ -225,12 +227,16 @@ switch FunName
     options = autofill(options, 'centering',              1,        0                 );
     options = fill_glm(options);
   case 'import'
-    %% pspm_import
+    %% 2.26 pspm_import
     options = autofill(options, 'overwrite',              0,        [1, 2]            );
   case 'interpolate'
-    %% pspm_interpolate
+    %% 2.27 pspm_interpolate
     options = autofill_channel_action(options);
     options = autofill(options, 'overwrite',              0,        [1, 2]            );
+    options = autofill(options, 'method',          'linear',        {'pchip', 'nearest', 'spline', 'previous', 'next'}         );
+    options = autofill(options, 'extrapolate',            0,        1                 );
+    options = autofill(options, 'newfile',                0,        1                 );
+    %options = autofill(options, 'channels',              []                          );    
   case 'load1'
     %% pspm_load1
     options = autofill(options, 'overwrite',              0,        [1, 2]            );
