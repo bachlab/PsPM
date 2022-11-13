@@ -1,4 +1,4 @@
-function [sts, data]=pspm_get_gaze_y_l(import)
+function [sts, data] = pspm_get_gaze_y_l(import)
 % ● Description
 %   pspm_get_gaze_y_l is a common function for importing eyelink data
 %   (gaze_y_l data)

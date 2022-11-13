@@ -1,4 +1,4 @@
-function [sts, data]=pspm_get_ppu(import)
+function [sts, data] = pspm_get_ppg(import)
 % ● Description
 %   pspm_get_ppu is a common function for importing PPU data
 % ● Format

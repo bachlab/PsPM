@@ -86,7 +86,7 @@ for i_line = 1:length(B)
   end
   B{i_line, 1} = C;
 end
-D = {'Description', 'Format', 'Copyright'};
+D = {'Description', 'Format', 'History'};
 % sort
 A = struct();
 for i_D = 1:length(D)

@@ -1,4 +1,4 @@
-function [sts data] = pspm_downsample(data, freqratio)
+function [sts, data] = pspm_downsample(data, freqratio)
 % ● Description
 %   pspm_downsample implements a simple downsample routine for users who
 %   don't have the Matlab Signal Processing Toolbox installed.

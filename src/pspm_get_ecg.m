@@ -1,4 +1,4 @@
-function [sts, data]=pspm_get_ecg(import)
+function [sts, data] = pspm_get_ecg(import)
 % ● Description
 %   pspm_get_ecg is a common function for importing continuous ECG data.
 % ● Format

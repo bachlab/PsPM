@@ -1,4 +1,4 @@
-function [ sts, outinfo ] = pspm_convert_ppu2hb( fn,chan,options )
+function [ sts, outinfo ] = pspm_convert_ppg2hb( fn,chan,options )
 % ● Description
 %   pspm_convert_ppu2hb Converts a pulse oxymeter channel to heartbeats and 
 %   adds it as a new channel.

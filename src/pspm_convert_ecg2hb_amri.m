@@ -1,4 +1,4 @@
-function [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
+function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 % ● Description
 %   pspm_ecg2hb_amri performs R-peak detection from an ECG signal using the steps
 %   decribed in R-peak detection section of [1]. This function uses a modified
