@@ -263,7 +263,7 @@ addpath(libpath{:});
 model = PupilDataModel(data{1}.header.units, diameter, segmentTable, 0, custom_settings);
 model.filterRawData();
 if combining
-  smooth_signal.header.chantype = pspm_update_chantype(data{1}.header.chantype, {'pp', 'c'});
+  smooth_signal.header.chantype = pspm_update_channel_type(data{1}.header.chantype, {'pp', 'c'});
 elseif contains(data{1}.header.chantype, '_pp')
   smooth_signal.header.chantype = data{1}.header.chantype;
 else
