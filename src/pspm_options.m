@@ -222,7 +222,7 @@ switch FunName
     options = autofill(options, 'valid_sample',           0,        1                   );
     options = autofill(options, 'plot_data',              false                         );
     options = autofill_channel_action(options,            'add',    {'replace',...
-      'none'}             );
+                                                                    'none'}             );
   case 'get_markerinfo'
     %% 2.23 pspm_get_markerinfo
     options = autofill(options, 'markerchan',             -1,       '@anyinteger'       );
@@ -283,28 +283,19 @@ switch FunName
     options.bf.constriction = autofill(options.bf.constriction, 'fhandle', @pspm_bf_lcrf_gm);
   case 'pupil_correct_eyelink'
     %% 2.33 pspm_pupil_correct_eyelink
+    options = autofill_channel_action(options);
     options = autofill(options, 'mode',                   'auto',   'manual'            );
-    if isfield(options, 'channel_action')
-      if ~any(strcmpi(options.channel_action, {'add', 'replace'}))
-        warning('ID:invalid_input',...
-          'options.channel_action must be ''add'' or ''replace''');
-        return;
-      end
-    else
-      options.channel_action = 'add';
-    end
-
-    if ~isfield(options, 'channel')
-      options.channel = 'pupil';
-    end
+    options = autofill(options, 'C_x',                    0,        '@anynumeric'       );
+    options = autofill(options, 'C_y',                    0,        '@anynumeric'       );
+    options = autofill(options, 'C_z',                    0,        '@anynumeric'       );
+    options = autofill(options, 'S_x',                    0,        '@anynumeric'       );
+    options = autofill(options, 'S_y',                    0,        '@anynumeric'       );
+    options = autofill(options, 'S_z',                    0,        '@anynumeric'       );
+    options = autofill(options, 'channel',                'pupil',  '@anychar'          );
   case 'sf'
     %% pspm_sf
     options = autofill(options,'overwrite',               0,        [1, 2]              );
-    if ~isfield(options,'marker_chan_num') ||...
-        ~isnumeric(options.marker_chan_num) ||...
-        numel(options.marker_chan_num) > 1
-      options.marker_chan_num = 0;
-    end
+    options = autofill(options,'marker_chan_num',         0,        '>=',0              );
   case 'split_sessions'
     %% pspm_split_sessions
     options = autofill(options, 'overwrite',              0,        [1, 2]              );
@@ -319,15 +310,8 @@ switch FunName
   case 'trim'
     %% pspm_trim
     options = autofill(options, 'overwrite',              0,        [1, 2]              );
-    if ~isfield(options,'marker_chan_num') || ...
-        ~isnumeric(options.marker_chan_num) || ...
-        numel(options.marker_chan_num) > 1
-      options.marker_chan_num = 0;
-    end
-    if ~isfield(options, 'drop_offset_markers') || ...
-        ~isnumeric(options.drop_offset_markers)
-      options.drop_offset_markers = 0;
-    end
+    options = autofill(options, 'marker_chan_num',        0,        '>=', 0             );
+    options = autofill(options, 'drop_offset_markers',    0,        '>=', 0             );
   case 'write_channel'
     %% pspm_write_channel
     if ~isfield(options, 'channel')

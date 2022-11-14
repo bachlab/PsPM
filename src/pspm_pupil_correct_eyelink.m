@@ -1,10 +1,10 @@
 function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
-% ● Description
+% �? Description
 %   pspm_pupil_correct_eyelink performs pupil foreshortening error (PFE)
 %   correction specifically for Eyelink recorded and imported data following
 %   the steps described in [1]. For details of the exact scaling, see
 %   <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>.
-% ● Developer's Notes
+% �? Developer's Notes
 %   In order to perform PFE, we need both pupil and gaze data. If the gaze data
 %   in the given file is in pixels, we need information about the screen
 %   dimensions and resolution to calculate the pixel to milimeter ratio. On the
@@ -14,9 +14,9 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 %   early. Once the pupil data is preprocessed, according to the option
 %   'channel_action', it will either replace an existing preprocessed pupil
 %   channel or add it as new channel to the provided file.
-% ● Format
+% �? Format
 %   [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
-% ● Arguments
+% �? Arguments
 %              fn:  Path to a PsPM imported Eyelink data.
 %   ┌─────options:
 %   │ ▶︎ mandatory
@@ -83,13 +83,13 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 %                     stored preprocessed channel with a '_pp' suffix at the
 %                     end of its type.
 %                     (Default: 'add')
-% ● Outputs
+% �? Outputs
 %       out_channel:  Channel index of the stored output channel.
-% ● Reference
+% �? Reference
 %   [1] Hayes, Taylor R., and Alexander A. Petrov. "Mapping and correcting the
 %       influence of gaze position on pupil size measurements." Behavior
 %       Research Methods 48.2 (2016): 510-527.
-% ● History
+% �? History
 %   Introduced in PsPM 5.1.2
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
 %   Maintained in 2021-2022 by Teddy Chao (UCL)
@@ -115,22 +115,9 @@ if ~ischar(fn)
   warning('ID:invalid_input', 'Data file must be a char.');
   return;
 end
-if ~isfield(options, 'mode')
-  warning('ID:invalid_input', 'options struct must contain ''mode''');
-  return;
-end
-if ~any(strcmpi(options.mode, {'auto', 'manual'}))
-  warning('ID:invalid_input', 'options.mode must be ''auto'' or ''manual''');
-  return;
-end
-if ~isfield(options, 'C_z')
-  warning('ID:invalid_input', 'options struct must contain ''C_z''');
-  return;
-end
-if ~isnumeric(options.C_z)
-  warning('ID:invalid_input', 'options.C_z must be numeric');
-  return;
-end
+
+%% create default arguments
+options = pspm_options(options, 'pupil_correct_eyelink');
 if strcmp(options.mode, 'manual')
   for field = all_fieldnames
     if ~isfield(options, field{1})
@@ -140,9 +127,6 @@ if strcmp(options.mode, 'manual')
     end
   end
 end
-
-%% create default arguments
-options = pspm_options(options, 'pupil_correct_eyelink');
 if strcmpi(options.mode, 'auto')
   if ismember(options.C_z, cell2mat(keys(default_params)))
     for i = 1:numel(all_fieldnames)
