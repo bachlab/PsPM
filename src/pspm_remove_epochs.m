@@ -34,9 +34,7 @@ end
 if ~exist('options', 'var')
   options = struct();
 end
-if ~isfield(options, 'channel_action')
-  options.channel_action = 'add';
-end
+options = pspm_options(options, 'remove_epochs');
 [lsts, ~, data] = pspm_load_data(datafile, channel);
 if lsts == -1
   warning('ID:invalid_input', 'Could not load data properly.');

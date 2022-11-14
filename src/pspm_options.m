@@ -1,11 +1,11 @@
 function options = pspm_options(options, FunName)
-% # Definition
+% ● Definition
 %   pspm_options automatically determine the fields of options for the
 %   corresponding function.
-% # Arguments
+% ● Arguments
 %   options:  a struct to be filled by the function
 %   FunName:  a string, the name of the function where option is used
-% # Copyright
+% ● Copyright
 %   Introduced in PsPM 6.1
 %   Written in 2022 by Teddy Chao (UCL)
 
@@ -222,7 +222,7 @@ switch FunName
     options = autofill(options, 'valid_sample',           0,        1                   );
     options = autofill(options, 'plot_data',              false                         );
     options = autofill_channel_action(options,            'add',    {'replace',...
-                                                                    'none'}             );
+      'none'}             );
   case 'get_markerinfo'
     %% 2.23 pspm_get_markerinfo
     options = autofill(options, 'markerchan',             -1,       '@anyinteger'       );
@@ -292,6 +292,19 @@ switch FunName
     options = autofill(options, 'S_y',                    0,        '@anynumeric'       );
     options = autofill(options, 'S_z',                    0,        '@anynumeric'       );
     options = autofill(options, 'channel',                'pupil',  '@anychar'          );
+    % screen_size_mm
+    % screen_size_px
+  case 'remove_epochs'
+    %% 2.34 pspm_remove_epochs
+    options = autofill_channel_action(options);
+  case 'resp_pp'
+    %% 2.34 pspm_resp_pp
+    options = autofill_channel_action(options);
+    options = autofill(options, 'systemtype',             'bellows','cushion'           );
+    options = autofill(options, 'plot',                   0,        1                   );
+    options = autofill(options, 'diagnostics',            0,        1                   );
+    options = autofill(options, 'datatype', {'rp', 'ra', 'rfr', 'rs', 'all'},...
+                                                                    '@anysubset'        );
   case 'sf'
     %% pspm_sf
     options = autofill(options,'overwrite',               0,        [1, 2]              );
@@ -408,6 +421,8 @@ switch nargin
                 (options.(field_name)>0) && (mod(options.(field_name), 1)==0);
             elseif strcmp(optional_value, '@anystruct')
               flag_is_allowed_value = isstruct(options.(field_name));
+            elseif strcmp(optional_value, '@anysubset')
+              flag_is_allowed_value = prod(ismember(options.datatype,default_value),'all');
             elseif strcmp(optional_value, '@any')
               flag_is_allowed_value = true;
             else

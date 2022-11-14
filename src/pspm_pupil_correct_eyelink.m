@@ -1,10 +1,10 @@
 function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
-% �? Description
+% ● Description
 %   pspm_pupil_correct_eyelink performs pupil foreshortening error (PFE)
 %   correction specifically for Eyelink recorded and imported data following
 %   the steps described in [1]. For details of the exact scaling, see
 %   <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>.
-% �? Developer's Notes
+% ● Developer's Notes
 %   In order to perform PFE, we need both pupil and gaze data. If the gaze data
 %   in the given file is in pixels, we need information about the screen
 %   dimensions and resolution to calculate the pixel to milimeter ratio. On the
@@ -14,12 +14,12 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 %   early. Once the pupil data is preprocessed, according to the option
 %   'channel_action', it will either replace an existing preprocessed pupil
 %   channel or add it as new channel to the provided file.
-% �? Format
+% ● Format
 %   [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
-% �? Arguments
+% ● Arguments
 %              fn:  Path to a PsPM imported Eyelink data.
 %   ┌─────options:
-%   │ ▶︎ mandatory
+%   │ * mandatory
 %   ├────────mode:  Conversion mode. Must be one of 'auto' or 'manual'.
 %   │               If 'auto', then optimized conversion parameters in
 %   │               Table 3 of [1] will be used. In 'auto' mode,
@@ -33,7 +33,7 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 %   │               camera-screen-eye setup must match exactly one of the three
 %   │               sample setups given in [1].
 %   ├─────────C_z:  See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
-%   │ ▶︎ optional
+%   │ * optional
 %   ├screen_size_px:Screen size (width x height). This field is required only
 %   │               if the gaze data in the given PsPM file is in pixels.
 %   │               (Unit: pixel)
@@ -83,13 +83,13 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 %                     stored preprocessed channel with a '_pp' suffix at the
 %                     end of its type.
 %                     (Default: 'add')
-% �? Outputs
+% ● Outputs
 %       out_channel:  Channel index of the stored output channel.
-% �? Reference
+% ● Reference
 %   [1] Hayes, Taylor R., and Alexander A. Petrov. "Mapping and correcting the
 %       influence of gaze position on pupil size measurements." Behavior
 %       Research Methods 48.2 (2016): 510-527.
-% �? History
+% ● History
 %   Introduced in PsPM 5.1.2
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
 %   Maintained in 2021-2022 by Teddy Chao (UCL)

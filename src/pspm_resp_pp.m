@@ -16,6 +16,7 @@ function sts = pspm_resp_pp(fn, sr, chan, options)
 %   ├────.systemtype: ['bellows'(default) /'cushion']
 %   ├──────.datatype: a cell array with any of 'rp', 'ra', 'rfr',
 %   │                   'rs', 'all' (default)
+%   ├───.diagnostics: 
 %   ├──────────.plot: 1 creates a respiratory cycle detection plot
 %   └.channel_action: ['add'(default) /'replace']
 %                     Defines whether the new channels should be added or the
@@ -44,14 +45,12 @@ elseif nargin < 3 || isempty(chan) || (chan == 0)
 elseif ~isnumeric(chan)
   warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end
-try options.systemtype; catch, options.systemtype = 'bellows'; end
+if ~exist('options', 'var')
+  options = struct();
+end
+options = pspm_options(options, 'resp_pp');
 try options.datatype; catch, options.datatype = {'rp', 'ra', 'rfr', 'rs'}; end
-try options.plot; catch, options.plot = 0; end
-try options.diagnostics; catch, options.diagnostics = 0; end
-try options.channel_action; catch, options.channel_action = 'add'; end
-if ~ischar(options.systemtype) || sum(strcmpi(options.systemtype, {'bellows', 'cushion'})) == 0
-  warning('ID:invalid_input', 'Unknown system type.'); return;
-elseif ~iscell(options.datatype)
+if ~iscell(options.datatype)
   warning('ID:invalid_input', 'Unknown data type.'); return;
 else
   datatypes = {'rp', 'ra', 'rfr', 'rs', 'all'};
