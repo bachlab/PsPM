@@ -20,7 +20,7 @@ function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 %   ├────.fhandle:  function handle to the dilation response function.
 %   ├.constriction:
 %   ├────.fhandle:  function handle to the constriction response function.
-%   │         .fn:  [filename] if specified ldata{i,j} will be saved to a file
+%   ├─────────.fn:  [filename] if specified ldata{i,j} will be saved to a file
 %   │               with filename options.fn{i,j} into the variable 'R'.
 %   └──.overwrite:  [logical] (0 or 1)
 %										Define whether to overwrite existing output files or not.
@@ -51,23 +51,7 @@ elseif ~isstruct(options)
 end
 
 % setup default values
-if ~isfield(options, 'transfer')
-  options.transfer = [49.79,-1.05,-0.50];
-end
-if ~isfield(options, 'bf') || ~isstruct(options.bf)
-  options.bf = struct();
-end
-if ~isfield(options.bf, 'duration')
-  options.bf.duration = 20;
-end
-if ~isfield(options.bf, 'offset')
-  options.bf.offset = .2;
-end
-try options.bf.dilation; catch; options.bf.dilation = struct(); end
-try options.bf.constriction; catch; options.bf.constriction = struct(); end
-try options.bf.dilation.fhandle; catch; options.bf.dilation.fhandle = @pspm_bf_ldrf_gm; end
-try options.bf.constriction.fhandle; catch; options.bf.constriction.fhandle = @pspm_bf_lcrf_gm; end
-try options.fn; catch; options.fn = ''; end
+options = pspm_options(options, 'process_illuminance');
 
 % ensure parameters are correct
 % -------------------------------------------------------------------------

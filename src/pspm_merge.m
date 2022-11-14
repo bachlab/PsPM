@@ -57,7 +57,7 @@ if ~ischar(reference) || ~ismember(reference, {'marker', 'file'})
 end
 
 % check options --
-try options.marker_chan_num, catch, options.marker_chan_num = [0 0]; end
+options = pspm_options(options, 'merge');
 
 %% loop through data files
 for iFile = 1:numel(infile{1})

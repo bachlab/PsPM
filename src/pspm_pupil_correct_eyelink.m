@@ -142,21 +142,7 @@ if strcmp(options.mode, 'manual')
 end
 
 %% create default arguments
-
-if isfield(options, 'channel_action')
-  if ~any(strcmpi(options.channel_action, {'add', 'replace'}))
-    warning('ID:invalid_input',...
-      'options.channel_action must be ''add'' or ''replace''');
-    return;
-  end
-else
-  options.channel_action = 'add';
-end
-
-if ~isfield(options, 'channel')
-  options.channel = 'pupil';
-end
-
+options = pspm_options(options, 'pupil_correct_eyelink');
 if strcmpi(options.mode, 'auto')
   if ismember(options.C_z, cell2mat(keys(default_params)))
     for i = 1:numel(all_fieldnames)
@@ -170,6 +156,7 @@ if strcmpi(options.mode, 'auto')
     return;
   end
 end
+
 
 %% load data
 

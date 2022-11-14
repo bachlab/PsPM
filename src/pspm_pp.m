@@ -44,15 +44,13 @@ if nargin < 3
     warning('ID:invalid_input', 'Missing filter specs.'); return;
   end
 end
-
 fn = varargin{2};
-
 if nargin >=5 && isstruct(varargin{5}) && isfield(varargin{5}, 'overwrite')
   options = varargin{5};
 else
   options = struct(); % build an empty struct if nothing is available
 end
-
+options = pspm_options(options, 'pp');% update options
 %% Load data
 [sts, infos, data] = pspm_load_data(fn, 0);
 if sts ~= 1

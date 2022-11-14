@@ -130,6 +130,9 @@ elseif nargin<2
   options = struct();
 end
 
+%% Update options
+options = pspm_options(options, 'pfm');
+
 %%  Checking required fields 
 if ~isfield(model, 'datafile')
   warning('ID:invalid_input', 'No input data file specified.'); return;
