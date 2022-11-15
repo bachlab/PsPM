@@ -322,13 +322,14 @@ switch FunName
     options = autofill(options, 'missing_epochs_filename','missing_epochs_filename',...
                                                                     '@anychar'          );
   case 'segment_mean'
+    % 2.35 pspm_segment_mean
     options = autofill(options, 'overwrite',              0,        [1, 2]              );
     options = autofill(options, 'newfile',               '',        '@anychar'          );
     options = autofill(options, 'plot',                   0,        1                   );
     options = autofill(options, 'adjust_method',     'none',        {'downsample', ...
                                                                     'interpolate'}      );
   case 'sf'
-    %% pspm_sf
+    %% 2.36 pspm_sf
     options = autofill(options,'overwrite',               1,        [0, 2]              );
     options = autofill(options,'marker_chan_num',         0,        '@anyinteger'       );
     options = autofill(options,'threshold',               0.1,      '>', 0              );
@@ -342,11 +343,13 @@ switch FunName
     options = autofill(options,'dispwin',                 1,        0                   );
     options = autofill(options,'dispsmallwin',            0,        1                   );
   case 'sf_dcm'
+    % 2.37 pspm_sf_dcm
     options = autofill(options,'dispwin',                 1,        0                   );
     options = autofill(options,'dispsmallwin',            0,        1                   );
     options = autofill(options,'fresp',                 0.5,        '>', 0              );
     options = autofill(options,'threshold',             0.1,        '>', 0              );
   case 'sf_mp'
+    % 2.38 pspm_sf_mp
     options = autofill(options,'diagnostics',             0,        1                   );
     options = autofill(options,'dispwin',                 0,        1                   );
     options = autofill(options,'threshold',             0.1,        '>', 0              );
@@ -358,7 +361,7 @@ switch FunName
                                                           1.6411756741, ...
                                                           ],        '@anynumeric'       );
   case 'split_sessions'
-    %% pspm_split_sessions
+    %% 2.39 pspm_split_sessions
     options = autofill(options, 'overwrite',              0,        [1, 2]              );
     options = autofill(options, 'prefix',                 0,        '>=', 0             );
     options = autofill(options, 'suffix',                 0,        '>=', 0             );
@@ -371,20 +374,22 @@ switch FunName
     options = autofill(options, 'min_break_ratio',        settings.split.min_break_ratio,...
                                                                     '>', 0              ); % minimum ratio of session break to normal inter marker interval (default 3)
   case 'trim'
-    %% pspm_trim
+    %% 2.40 pspm_trim
     options = autofill(options, 'overwrite',              0,        [1, 2]              );
     options = autofill(options, 'marker_chan_num',        0,        '@anyinteger'       );
     options = autofill(options, 'drop_offset_markers',    0,        '@anyinteger'       );
   case 'write_channel'
-    %% pspm_write_channel
+    %% 2.41 pspm_write_channel
+    options = autofill(options, 'delete',            'last',        {'first','all'}     );
+    options = autofill(options, 'msg',                   '',        '@anycharstruct'    );
+    options = autofill(options, 'prefix', 'Generic undocumented operation :: ',...
+                                                                    '@anychar'          );
     if ~isfield(options, 'channel')
-      warning('ID:invalid_input', text_optional_channel_invalid);
-      options.invalid = 1;
-      return
+      options.channel = 0;
     else
       switch class(options.channel)
         case 'char'
-          if ~any(strcmpi(options.channel,{'add','replace','none'}))
+          if ~any(strcmpi(options.channel,{settings.channeltypes.type}))
             warning('ID:invalid_input', text_optional_channel_invalid_char);
             options.invalid = 1;
             return
@@ -471,6 +476,8 @@ switch nargin
                 (options.(field_name)>0) && (mod(options.(field_name), 1)==0);
             elseif strcmp(optional_value, '@anystruct')
               flag_is_allowed_value = isstruct(options.(field_name));
+            elseif strcmp(optional_value, '@anycharstruct')
+              flag_is_allowed_value = ischar(options.(field_name)) || isstruct(options.(field_name));
             elseif strcmp(optional_value, '@anysubset')
               flag_is_allowed_value = prod(ismember(options.datatype,default_value),'all');
             elseif strcmp(optional_value, '@any')

@@ -20,14 +20,16 @@ function [sts, infos] = pspm_write_channel(fn, newdata, channel_action, options)
 %    │              <prefix> <action>ed on <date>
 %    ├────.channel: specifiy which channel should be 'edited'
 %    │              default value is 0
-%    ├─────.delete: method to look for a channel when options.channel is not an
-%    │              integer, accepts 'last'/'first'/'all'.
-%    │              'last':   (default) deletes last occurence of the given
-%    │                        channeltype
-%    │              'first':  deletes the first occurence
-%    │              'all':    removes all occurences
-%    │              Outputs will be written into the info struct. The structure
-%    │              depends on the passed action and options.
+%    └─────.delete: method to look for a channel when options.channel is not an
+%                   integer, accepts 'last'/'first'/'all'.
+%                   'last':   (default) deletes last occurence of the given
+%                             channeltype
+%                   'first':  deletes the first occurence
+%                   'all':    removes all occurences
+% ● Outputs
+%              sts:
+%    ┌──────.infos: Outputs will be written into the .info struct.
+%    │              The structure depends on the passed action and options.
 %    └────.channel: contains channel id of added / replaced / deleted
 %                   channels.
 % ● History
@@ -44,11 +46,10 @@ if isempty(settings)
 end
 sts = -1;
 outinfos = struct();
-
-% load options.channel
-try options.channel;
-catch, options.channel = 0;
+if ~exist('options','var')
+  options = struct();
 end
+options = pspm_options(options, 'write_channel');
 
 %% Check arguments
 if nargin < 1
@@ -57,12 +58,6 @@ elseif ~ischar(fn)
   warning('ID:invalid_input', 'Need file name string as first input.'); return;
 elseif nargin < 3 || all(~strcmpi({'add', 'replace', 'delete'}, channel_action))
   warning('ID:unknown_action', 'Action must be defined and ''add'', ''replace'' or ''delete'''); return;
-elseif ischar(options.channel) && ~any(strcmpi(options.channel,{settings.channeltypes.type}))
-  warning('ID:invalid_input', 'options.channel is not a valid channel type.'); return;
-elseif isnumeric(options.channel) && (any(mod(options.channel,1)) || any(options.channel<0))
-  warning('ID:invalid_input', 'options.channel must be a positive integer or a channel type.'); return;
-elseif ~isnumeric(options.channel) && ~ischar(options.channel)
-  warning('ID:invalid_input', 'options.channel must contain valid channel types or positive integers.'); return;
 elseif isempty(newdata)
   if ~strcmpi(channel_action, 'delete')
     warning('ID:invalid_input', 'newdata is empty. Got nothing to %s.', channel_action); return;
@@ -110,11 +105,6 @@ if ~strcmpi(channel_action, 'delete')
   end
 end
 
-%% Process other options
-try options.msg; catch, options.msg = '';
-end
-try options.delete; catch, options.delete = 'last';
-end
 
 %% Get data
 [nsts, infos, data] = pspm_load_data(fn);
@@ -182,7 +172,7 @@ else
   if isstruct(options.msg) && isfield(options.msg, 'prefix')
     prefix = options.msg.prefix;
   else
-    prefix = 'Generic undocumented operation :: ';
+    prefix = options.prefix;
   end
   prefix = [prefix ' Output channel ID: #%02d --'];
 
