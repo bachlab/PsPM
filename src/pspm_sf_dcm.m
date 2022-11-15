@@ -1,10 +1,10 @@
-function out = pspm_sf_dcm(scr, sr, opt)
+function out = pspm_sf_dcm(scr, sr, options)
 % ● Description
 %   pspm_sf_dcm does dynamic causal modelling for SF of the skin conductance
 %   uses f_SF and g_Id
 %   the input data is assumed to be in mcS, and sampling rate in Hz
 % ● Format
-%   function out = pspm_sf_dcm(scr, sr, opt)
+%   function out = pspm_sf_dcm(scr, sr, options)
 % ● Output
 %         out:  output
 %          .n:  number of responses above threshold
@@ -64,32 +64,19 @@ end;
 if exist('errmsg') == 1, warning(errmsg); out = []; return; end;
 
 
+
 % options
 % ------------------------------------------------------------------------
+options = pspm_options(options, 'sf_dcm');
+options.DisplayWin = options.dispwin;
+options.GnFigs = options.dispsmallwin;
+fresp = options.fresp;
+threshold = options.threshold;
+
 try
-  fresp = opt.fresp;
-catch
-  fresp = 0.5;
-end;
-try
-  theta = opt.theta;
+  theta = options.theta;
 catch
   [theta, osr] = pspm_sf_theta;
-end;
-try
-  threshold = opt.threshold;
-catch
-  threshold = 0.1;
-end;
-try
-  options.DisplayWin = opt.dispwin;
-catch
-  options.DisplayWin = 1;
-end;
-try
-  options.GnFigs = opt.dispsmallwin;
-catch
-  options.GnFigs = 0;
 end;
 
 
