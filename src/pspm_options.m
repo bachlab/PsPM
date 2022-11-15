@@ -346,17 +346,30 @@ switch FunName
     options = autofill(options,'dispsmallwin',            0,        1                   );
     options = autofill(options,'fresp',                 0.5,        '>', 0              );
     options = autofill(options,'threshold',             0.1,        '>', 0              );
+  case 'sf_mp'
+    options = autofill(options,'diagnostics',             0,        1                   );
+    options = autofill(options,'dispwin',                 0,        1                   );
+    options = autofill(options,'threshold',             0.1,        '>', 0              );
+    options = autofill(options,'fresp',                 0.5,        '>', 0              );
+    options = autofill(options,'theta',                   [0.923581, ...
+                                                          3.921034, ...
+                                                          2.159389, ...
+                                                          1.5339, ...
+                                                          1.6411756741, ...
+                                                          ],        '@anynumeric'       );
   case 'split_sessions'
     %% pspm_split_sessions
     options = autofill(options, 'overwrite',              0,        [1, 2]              );
-    options = autofill(options, 'prefix',                 0                             );
-    options = autofill(options, 'suffix',                 0                             );
-    options = autofill(options, 'verbose',                0                             );
-    options = autofill(options, 'splitpoints',            []                            );
-    options = autofill(options, 'missing',                0                             );
-    options = autofill(options, 'randomITI',              0                             );
-    options = autofill(options, 'max_sn',                 settings.split.max_sn         ); % maximum number of sessions (default 10)
-    options = autofill(options, 'min_break_ratio',        settings.split.min_break_ratio); % minimum ratio of session break to normal inter marker interval (default 3)
+    options = autofill(options, 'prefix',                 0,        '>=', 0             );
+    options = autofill(options, 'suffix',                 0,        '>=', 0             );
+    options = autofill(options, 'verbose',                1,        0                   );
+    options = autofill(options, 'splitpoints',           [],        '@anynumeric'       );
+    options = autofill(options, 'missing',                0,        '@anychar'          );
+    options = autofill(options, 'randomITI',              0,        1                   );
+    options = autofill(options, 'max_sn',                 settings.split.max_sn,...
+                                                                    '>', 0              ); % maximum number of sessions (default 10)
+    options = autofill(options, 'min_break_ratio',        settings.split.min_break_ratio,...
+                                                                    '>', 0              ); % minimum ratio of session break to normal inter marker interval (default 3)
   case 'trim'
     %% pspm_trim
     options = autofill(options, 'overwrite',              0,        [1, 2]              );

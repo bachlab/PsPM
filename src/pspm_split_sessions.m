@@ -25,7 +25,7 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 %   │                   first marker) in terms of markers (vector of integer)
 %   ├─────────.prefix:  [numeric, unit:second, default:0]
 %   │                   Defines how long data before start trim point should
-%   │                   also be included. First marker will be at 
+%   │                   also be included. First marker will be at
 %   │                   t = options.prefix.
 %   ├─────────.suffix:  [numeric, unit:second, default:0]
 %   │                   Defines how long data after the end trim point should be
@@ -35,6 +35,8 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 %   │                   Tell the function to use all the markers to evaluate
 %   │                   the mean distance between them.
 %   │                   Usefull for random ITI since it reduces the variance.
+%   ├─────────.verbose: [default:1]
+%   │                   printing processing messages
 %   └─────────.missing: Optional name of an epoch file, e.g. containing a
 %                       missing epochs definition in s. This is then split
 %                       accordingly.
@@ -79,12 +81,6 @@ if ~ischar(datafile)
   warning('ID:invalid_input', 'Data file must be a char.');
   return;
 end
-% 1.3.2 clear datafile
-if options.missing
-  if ~ischar(options.missing)
-    warning('ID:invalid_input', 'Missing epochs file needs to be a char.\n');
-  end
-end
 
 % 1.4 Check if prefix is positiv and suffix is negative
 if options.prefix > 0
@@ -100,14 +96,6 @@ elseif isempty(markerchannel)
   markerchannel = 0;
 elseif ~isnumeric(markerchannel)
   warning('ID:invalid_input', 'Marker channel needs to be a number.\n');
-  return;
-end
-if ~isnumeric(options.splitpoints)
-  warning('ID:invalid_input', 'options.splitpoints has to be numeric.');
-  return;
-end
-if ~isnumeric(options.randomITI) || ~ismember(options.randomITI, [0, 1])
-  warning('ID:invalid_input', 'options.randomITI should be 0 or 1.');
   return;
 end
 
