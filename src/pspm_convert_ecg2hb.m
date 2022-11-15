@@ -1,10 +1,10 @@
 function [sts,infos] = pspm_convert_ecg2hb(fn, chan, options)
 % ● Description
-%   pspm_ecg2hb identifies the position of QRS complexes in ECG data and
+%   pspm_convert_ecg2hb identifies the position of QRS complexes in ECG data and
 %   writes them as heart beat channel into the datafile. This function
 %   implements the algorithm by Pan & Tompkins (1985) with some adjustments.
 % ● Format
-%   sts = pspm_ecg2hb(fn, chan,options)
+%   sts = pspm_convert_ecg2hb(fn, chan,options)
 % ● Arguments
 %                 fn: data file name
 %               chan: number of ECG channel (optional, default: first ECG
@@ -17,13 +17,13 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, chan, options)
 %   ├─────────.minHR: sets minimal HR [def. 20bpm].
 %   ├─────────.maxHR: sets maximal HR [def. 200bpm].
 %   ├─────.debugmode: [numeric, default as 0]
-%   │                 runs the algorithm in debugmode (additional results 
-%   │                 in debug variable 'infos.pt_debug') and plots a graph 
+%   │                 runs the algorithm in debugmode (additional results
+%   │                 in debug variable 'infos.pt_debug') and plots a graph
 %   │                 that allows quality checks.
 %   ├──────.twthresh: sets the threshold to perform the twave check.
 %   │                 [def. 0.36s].
 %   └.channel_action: ['add'/'replace', default as 'replace']
-%                     Defines whether the new channel should be added or 
+%                     Defines whether the new channel should be added or
 %                     the previous outputs of this function should be replaced.
 % ● Reference
 %   Pan J & Tomkins WJ (1985). A Real-Time QRS Detection Algorithm. IEEE

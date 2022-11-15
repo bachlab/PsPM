@@ -1,6 +1,6 @@
 function [ft, p, t] = pspm_bf_scrf_f(td, p)
 % ● Description
-%   canonical skin conductance response function
+%   pspm_bf_scrf_f is the canonical skin conductance response function.
 %   (exponentially modified gaussian, EMG)
 % ● Format
 %   [bf p] = pspm_bf_scrf_f(td, p)

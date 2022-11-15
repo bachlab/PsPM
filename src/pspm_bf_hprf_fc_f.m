@@ -1,5 +1,6 @@
 function [fx, x, p] = pspm_bf_hprf_fc_f(td, soa, p)
 % ● Description
+%   pspm_bf_hprf_fc_f is the basis function for...
 % ● Format
 %   [bf p] = pspm_bf_hprf_fc_f(td, soa, p)
 % ● Arguments

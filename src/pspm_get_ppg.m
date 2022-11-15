@@ -1,8 +1,8 @@
 function [sts, data] = pspm_get_ppg(import)
 % ● Description
-%   pspm_get_ppu is a common function for importing PPU data
+%   pspm_get_ppg is a common function for importing PPG data
 % ● Format
-%   [sts, data]= pspm_get_ppu(import)
+%   [sts, data]= pspm_get_ppg(import)
 % ● Arguments
 %   import.data: column vector of waveform data
 %     import.sr: sample rate

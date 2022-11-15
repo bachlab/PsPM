@@ -1,6 +1,6 @@
 function [sts, b, a] = pspm_butter(order, freqratio, pass)
 % ● Description
-%   This function interfaces Matlab Signal Processing Toolbox filters and
+%   pspm_butter interfaces Matlab Signal Processing Toolbox filters and
 %   additionally implements a few standard filters for those who don''t have
 %   this toolbox
 % ● Format

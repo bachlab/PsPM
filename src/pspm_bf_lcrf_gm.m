@@ -1,6 +1,6 @@
 function [bs, x] = pspm_bf_lcrf_gm(varargin)
 % ● Description
-%   Gamma response function for pupil constriction.
+%   pspm_bf_lcrf_gm is the gamma response function for pupil constriction.
 %   Pupil size models were developed with pupil size data recorded in
 %   diameter values. Therefore pupil size data analyzed using these models
 %   should also be in diameter.
