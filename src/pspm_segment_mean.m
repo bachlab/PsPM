@@ -38,31 +38,13 @@ out = struct();
 if nargin < 2
 	options = struct();
 end
-
-if ~isfield(options, 'plot')
-	options.plot = 0;
-end
-
-if ~isfield(options, 'newfile')
-	options.newfile = '';
-end
-
-if ~isfield(options, 'adjust_method')
-	options.adjust_method = 'none';
-end
-
+options = pspm_options(options, 'segment_mean');
 if nargin > 1 && ~isstruct(options)
 	warning('ID:invalid_input', 'Options must be a struct.'); return;
-elseif ~isnumeric(options.plot) && ~islogical(options.plot)
-	warning('ID:invalid_input', 'Options.plot must be numeric or logical.'); return;
 elseif ~(iscell(segments) || ischar(segments)) || ...
 		(iscell(segments) && any(~cellfun(@(x) iscell(x) || ischar(x), segments)))
 	warning('ID:invalid_input', ['The function expects segments to be a ', ...
 		'cell of cells or a cell of strings.']); return;
-elseif ~any(ismember(options.adjust_method, {'none', 'downsample', 'interpolate'}))
-	warning('ID:invalid_input', 'options.adjust_method must be ''none'', ''downsample'' or ''interpolate'''); return;
-elseif ~isempty(options.newfile) && ~ischar(options.newfile)
-	warning('ID:invalid_input', 'options.newfile is not a string.'); return;
 end
 
 % if files specified load them

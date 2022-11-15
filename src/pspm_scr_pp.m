@@ -42,6 +42,9 @@ function [sts, out] = pspm_scr_pp(datafile, options, chan)
 %   ├.clipping_threshold:
 %   │             A float between 0 and 1 specifying the proportion of local
 %   │             maximum in a step. Default: 0.1
+%   ├.clipping_n_window:
+%   │             A numerical value specifying the number of windows in moving average
+%   │             algorithm for detecting clipping. Default: 10000
 %   ├.change_data:
 %   │             A numerical value to choose whether to change the data or not
 %   │             Default: 1 (true)

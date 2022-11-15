@@ -306,20 +306,27 @@ switch FunName
     options = autofill(options, 'datatype', {'rp', 'ra', 'rfr', 'rs', 'all'},...
                                                                     '@anysubset'        );
   case 'scr_pp'
+    %% 2.34 pspm_scr_pp
     options = autofill_channel_action(options,            'add',    {'replace', ...
                                                                     'withdraw'}         );
     options = autofill(options, 'min',                    0.05,     '@anynumeric'       );
     options = autofill(options, 'max',                    60,       '@anynumeric'       );
     options = autofill(options, 'slope',                  10,       '@anynumeric'       );
     options = autofill(options, 'deflection_threshold',   0.1,      '@anynumeric'       );
-    options = autofill(options, 'expand_epochs',          0.5,      '@anynumeric'       );
-    options = autofill(options, 'clipping_step_size',     10000,    '@anynumeric'       );
-    options = autofill(options, 'clipping_n_window',      2,        '@anynumeric'       );
+    options = autofill(options, 'expand_epochs',          0.5,      '>=', 0             );
+    options = autofill(options, 'clipping_step_size',     2,        '@anyinteger'       );
+    options = autofill(options, 'clipping_n_window',      10000,    '@anyinteger'       );
     options = autofill(options, 'clipping_threshold',     0.1,      '@anynumeric'       );
     options = autofill(options, 'change_data',            1,        0                   );
     options = autofill(options, 'data_island_threshold',  0,        '>=', 0             );
     options = autofill(options, 'missing_epochs_filename','missing_epochs_filename',...
                                                                     '@anychar'          );
+  case 'segment_mean'
+    options = autofill(options, 'overwrite',              0,        [1, 2]              );
+    options = autofill(options, 'newfile',               '',        '@anychar'          );
+    options = autofill(options, 'plot',                   0,        1                   );
+    options = autofill(options, 'adjust_method',     'none',        {'downsample', ...
+                                                                    'interpolate'}      );
   case 'sf'
     %% pspm_sf
     options = autofill(options,'overwrite',               0,        [1, 2]              );
