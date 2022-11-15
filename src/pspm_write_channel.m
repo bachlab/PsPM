@@ -160,30 +160,27 @@ if strcmpi(channel_action, 'add')
 end
 
 %% Manage message
-if ischar(options.msg) && ~isempty(options.msg)
-  msg = options.msg;
-else
-  switch channel_action
-    case 'add', v = 'added';
-    case 'replace', v = 'replaced';
-    case 'delete', v = 'deleted';
-  end
-
-  if isstruct(options.msg) && isfield(options.msg, 'prefix')
-    prefix = options.msg.prefix;
-  else
-    prefix = options.prefix;
-  end
-  prefix = [prefix ' Output channel ID: #%02d --'];
-
-  msg = '';
-  for i = channeli'
-    % translate prefix
-    p = sprintf(prefix, i);
-    msg = [msg, p, sprintf(' %s on %s', v, date)];
-  end
-  msg(end-1:end)='';
+msg = options.msg;
+switch channel_action
+  case 'add', v = 'added';
+  case 'replace', v = 'replaced';
+  case 'delete', v = 'deleted';
 end
+
+if isstruct(options.msg) && isfield(options.msg, 'prefix')
+  prefix = options.msg.prefix;
+else
+  prefix = options.prefix;
+end
+prefix = [prefix ' Output channel ID: #%02d --'];
+
+msg = '';
+for i = channeli'
+  % translate prefix
+  p = sprintf(prefix, i);
+  msg = [msg, p, sprintf(' %s on %s', v, date)];
+end
+msg(end-1:end)='';
 
 %% Modify data according to action
 if strcmpi(channel_action, 'delete')
