@@ -22,7 +22,9 @@ classdef pspm_sf_test < matlab.unittest.TestCase
       c{1}.channeltype = 'scr';
       c{2}.channeltype = 'hb';
       pspm_testdata_gen(c, 100, this.fn);
-      delete c
+      if exist('c','var')
+        delete c
+      end
       % generate model data
       model.datafile = this.fn;
       model.timeunits = 'seconds';

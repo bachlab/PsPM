@@ -330,7 +330,17 @@ switch FunName
   case 'sf'
     %% pspm_sf
     options = autofill(options,'overwrite',               0,        [1, 2]              );
-    options = autofill(options,'marker_chan_num',         0,        '>=',0              );
+    options = autofill(options,'marker_chan_num',         0,        '@anyinteger'       );
+    options = autofill(options,'threshold',               0.1,      '>', 0              );
+    options = autofill(options,'theta',                   [0.923581, ...
+                                                          3.921034, ...
+                                                          2.159389, ...
+                                                          1.5339, ...
+                                                          1.6411756741, ...
+                                                          ],        '@anynumeric'       );
+    options = autofill(options,'fresp',                   0.5,      '>=', 0             );
+    options = autofill(options,'dispwin',                 1,        0                   );
+    options = autofill(options,'dispsmallwin',            0,        1                   );
   case 'split_sessions'
     %% pspm_split_sessions
     options = autofill(options, 'overwrite',              0,        [1, 2]              );

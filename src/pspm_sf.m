@@ -167,13 +167,7 @@ elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
 end
 % 2.8 Set options
 try model.channel; catch, model.channel = 'scr'; end
-% try options.overwrite; catch, options.overwrite = 0; end
-if ~isfield(options,'marker_chan_num') ||...
-    ~isnumeric(options.marker_chan_num) ||...
-    numel(options.marker_chan_num) > 1
-  options.marker_chan_num = 0;
-end
-% options = pspm_options(options, 'sf');
+options = pspm_options(options, 'sf');
 %% 3 Get data
 for iFile = 1:numel(model.datafile)
   % 3.1 User output
