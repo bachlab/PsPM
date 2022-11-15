@@ -89,43 +89,11 @@ if ~exist('options', 'var')
   options = struct();
 end
 if nargin < 3 || isempty(chan) || (chan == 0)
-    chan = 'scr';
+  chan = 'scr';
 elseif ~isnumeric(chan)
-    warning('ID:invalid_input', 'Channel number must be numeric'); return;
+  warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end
-if ~isfield(options, 'min')
-  options.min = 0.05;
-end
-if ~isfield(options, 'max')
-  options.max = 60;
-end
-if ~isfield(options, 'slope')
-  options.slope = 10;
-end
-if ~isfield(options, 'deflection_threshold')
-  options.deflection_threshold = 0.1;
-end
-if ~isfield(options, 'data_island_threshold')
-  options.data_island_threshold = nan;
-end
-if ~isfield(options, 'expand_epochs')
-  options.expand_epochs = 0.5;
-end
-if ~isfield(options, 'change_data')
-  options.change_data = 1;
-end
-if ~isfield(options, 'clipping_step_size')
-  options.clipping_step_size = 10000;
-end
-if ~isfield(options, 'clipping_n_window')
-  options.clipping_n_window = 2;
-end
-if ~isfield(options, 'clipping_threshold')
-  options.clipping_threshold = 0.1;
-end
-if ~isfield(options, 'channel_action')
-  options.channel_action = 'add';
-end
+options = pspm_options(options, 'scr_pp');
 
 %% Sanity checks
 if ischar(datafile) || isstruct(datafile)
@@ -138,17 +106,7 @@ else
   warning('ID:invalid_input', 'Data file must be a char, cell, or struct.');
   return;
 end
-if ~isnumeric(options.min)
-  warning('ID:invalid_input', 'Argument ''options.min'' must be numeric.'); return;
-elseif ~isnumeric(options.max)
-  warning('ID:invalid_input', 'Argument ''options.max'' must be numeric.'); return;
-elseif ~isnumeric(options.slope)
-  warning('ID:invalid_input', 'Argument ''options.slope'' must be numeric.'); return;
-elseif isfield(options, 'missing_epochs_filename')
-  if ~ischar(options.missing_epochs_filename)
-    warning('ID:invalid_input', ...
-      'Argument ''options.missing_epochs_filename'' must be char array.'); return;
-  end
+if isfield(options, 'missing_epochs_filename')
   [pth, ~, ~] = fileparts(options.missing_epochs_filename);
   if ~isempty(pth) && exist(pth,'dir')~=7
     warning('ID:invalid_input',...
@@ -158,10 +116,6 @@ elseif isfield(options, 'missing_epochs_filename')
 end
 if options.change_data == 0 && ~isfield(options, 'missing_epochs_filename')
   warning('This procedure leads to no output, according to the selected options.');
-end
-if ~ismember(options.channel_action, {'add', 'replace', 'withdraw'})
-  warning('ID:invalid_input', 'Option channel_action must be either ''add'', ''replace'' or ''withdraw''');
-  return;
 end
 
 for d = 1:numel(data_source)
