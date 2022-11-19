@@ -27,7 +27,7 @@ if nargin < 3
   %p=[43.2180170215633,0.195621916215104,-6.9671,81.0383536117737];
   % table 2 row 4 in Castegnetti et al. 2016
   % col 3: -3.86 - 3.5 = -7.3600
-  p=[48.5, 0.182, -7.3600, 1];
+  p = [48.5, 0.182, -7.3600, 1];
   % col 4 is different to the published parameter because here
   % soa will be added later in the code therefore soa is subtracted
   % before

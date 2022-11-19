@@ -1,4 +1,4 @@
-function [sts, data]=pspm_get_emg(import)
+function [sts, data] = pspm_get_emg(import)
 % ● Description
 %   pspm_get_emg is a common function for importing EMG data
 % ● Format

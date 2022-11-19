@@ -16,9 +16,9 @@ function [bs, x] = pspm_bf_lcrf_gm(varargin)
 %        b: scale of the function
 %        A: quantifier or amplitude of the function
 % ● References
-%   J Vis. 2016;16(3):28. doi: 10.1167/16.3.28.
-%   A solid frame for the window on cognition: Modeling event-related pupil responses.
 %   Korn CW, Bach DR.
+%   A solid frame for the window on cognition: Modeling event-related pupil responses.
+%   J Vis. 2016;16(3):28. doi: 10.1167/16.3.28.
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2015 by Tobias Moser (University of Zurich)

@@ -1,6 +1,6 @@
 function varargout = pspm_display(varargin)
 % ● Description
-%   Code for the GUI that is used to display different data from scr
+%   pspm_display is the code for the GUI that is used to display different data from scr
 %   datafiles.
 % ● Arguments
 %   Accepts input: 'filepath/filename'

@@ -1,6 +1,6 @@
 function [sts, outdata] = pspm_interpolate(indata, options)
 % ● Description
-%   This function interpolates NaN values passed with the indata parameter.
+%   pspm_interpolate interpolates NaN values passed with the indata parameter.
 %   The behaviour of the function can furthermore be adjusted with the
 %   combination of different options.
 %   The function works either on single data sets such as a filename, a
