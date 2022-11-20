@@ -381,7 +381,15 @@ switch FunName
   case 'write_channel'
     %% 2.41 pspm_write_channel
     options = autofill(options, 'delete',            'last',        {'first','all'}     );
-    options = autofill(options, 'msg',                   '',        '@anycharstruct'    );
+    if ~isfield('options','msg')
+      options.msg = '';
+    else
+      if ~ischar(options.msg) && ~isstruct(options.msg)
+        warning('ID:invalid_input', 'options.msg must be a char or a struct.');
+        options.invalid = 1;
+        return
+      end
+    end
     options = autofill(options, 'prefix', 'Generic undocumented operation :: ',...
                                                                     '@anychar'          );
     if ~isfield(options, 'channel')
@@ -451,7 +459,8 @@ switch nargin
       options.(field_name) = default_value;
     else
       if ~strcmp(class(default_value),class(options.(field_name)))
-        if (isnumeric(default_value) && islogical(options.(field_name))) || (islogical(default_value) && isnumeric(options.(field_name)))
+        if (isnumeric(default_value) && islogical(options.(field_name))) || ...
+            (islogical(default_value) && isnumeric(options.(field_name)))
           flag_is_allowed_value = 1;
         else
           flag_is_allowed_value = 0;
@@ -476,8 +485,6 @@ switch nargin
                 (options.(field_name)>0) && (mod(options.(field_name), 1)==0);
             elseif strcmp(optional_value, '@anystruct')
               flag_is_allowed_value = isstruct(options.(field_name));
-            elseif strcmp(optional_value, '@anycharstruct')
-              flag_is_allowed_value = ischar(options.(field_name)) || isstruct(options.(field_name));
             elseif strcmp(optional_value, '@anysubset')
               flag_is_allowed_value = prod(ismember(options.datatype,default_value),'all');
             elseif strcmp(optional_value, '@any')
