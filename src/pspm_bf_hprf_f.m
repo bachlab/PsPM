@@ -1,6 +1,6 @@
 function [bs, x] = pspm_bf_hprf_f( td, soa )
 % ● Description
-%   Basis function dependent on stimuli onset asynchrony (SOA).
+%   pspm_bf_hprf_f is the basis function dependent on stimuli onset asynchrony (SOA).
 % ● Format
 %   [bf p] = pspm_bf_hprf_f(td, soa)
 % ● Arguments

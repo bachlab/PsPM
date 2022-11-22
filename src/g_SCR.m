@@ -1,4 +1,4 @@
-function [gx,dgdx,dgdPhi] = g_aSCR(Xt,Phi,ut,inG)
+function [gx,dgdx,dgdPhi] = g_SCR(Xt,Phi,ut,inG)
 % ● Description
 %   TBA.
 % ● Arguments

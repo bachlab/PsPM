@@ -1,6 +1,6 @@
 function varargout = pspm_guide(varargin)
 % ● Description
-%   pspm handles the main GUI for PsPM
+%   pspm_guide handles the main GUI for PsPM
 % ● Developer's Guide
 %   * Template
 %     function varargout = FunctionName(hObject, eventdata, handles, varargin)
@@ -46,7 +46,7 @@ end
 
 
 function PsPM_OpeningFcn(hObject, ~, handles, ~)
-  % Executes just before tag_PsPM is made visible. 
+  % Executes just before tag_PsPM is made visible.
   % This function has no output args, see OutputFcn.
   pspm_init;
   cfg_util('initcfg'); % This must be the first call to cfg_util
@@ -58,7 +58,7 @@ function PsPM_OpeningFcn(hObject, ~, handles, ~)
   guidata(hObject, handles);
   % UIWAIT makes tag_PsPM wait for user response (see UIRESUME)
   % uiwait(handles.figure1);
-  
+
 function varargout = PsPM_OutputFcn(~, ~, handles)
   % Outputs from this function are returned to the command line.
   % Get default command line output from handles structure
@@ -70,7 +70,7 @@ function pspm_logo(~, ~, ~)
   % If Enable == 'on', executes on mouse press in 5 pixel border.
   % Otherwise, executes on mouse press in 5 pixel border or over tag_PsPM.
   pspm_show_arms;
-  
+
 % 2 Data Preparation
 function data_preparation_list_callback(hObject, ~, ~)
   % Selection list: data preparation
@@ -164,11 +164,11 @@ function display_data_callback(~, ~, ~)
   % Tools - display data
   % main function: pspm_disp
   cfg_add_module('pspm.tools.disp');
-  
+
 % 5 First Level Models
 function first_level_models_list_callback(hObject, ~, ~)
   switch get(hObject,'Value')
-    case 1 
+    case 1
         cfg_add_module('pspm.first_level.scr.glm_scr');
     case 2
         cfg_add_module('pspm.first_level.hp.glm_hp_e');
@@ -193,7 +193,7 @@ function first_level_models_list_create_function(hObject, ~, ~)
   if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
   end
-  
+
 % 6 Non-linear SCR Model
 function non_linear_scr_model_callback(~, ~, ~)
   % pspm_dcm_UI;
@@ -215,7 +215,7 @@ function contrast_manager_callback(~, ~, ~)
   % pspm_con1_UI;
   pspm_contrast;
   %cfg_add_module('tag_pspm.first_level.contrast');
-  
+
 % 10 Export Statistics
 function export_statistics_callback(~, ~, ~)
   % Export statistics
@@ -230,16 +230,16 @@ function second_level_model_callback(~, ~, ~)
 % 12 Report second level
 function report_second_level_callback(~, ~, ~)
   cfg_add_module('pspm.second_level.report');
-  
+
 % 13 Batch
 function batch_callback(~, ~, ~)
   cfg_ui;
-  
+
 % 14 Help
 function help_callback(~, ~, ~)
   pspm_show_help_doc();
 
-% 15 Feedback  
+% 15 Feedback
 function feedback_callback(~, ~, ~)
   pspm_show_forum();
 

@@ -1,6 +1,6 @@
 function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 % ● Description
-%   pspm_find_valid_fixaitons takes a file with data from eyelink recordings
+%   pspm_find_valid_fixations takes a file with data from eyelink recordings
 %   which has been converted to length units and filters out invalid fixations.
 %   Gaze values outside of a defined range are set to NaN, which can later
 %   be interpolated using pspm_interpolate. The function will create a

@@ -1,6 +1,6 @@
 function [sts, outdata] = pspm_interpolate(varargin)
 % ● Description
-%   This function interpolates NaN values passed with the indata parameter.
+%   pspm_interpolate interpolates NaN values passed with the indata parameter.
 %   The behaviour of the function can furthermore be adjusted with the
 %   combination of different options.
 %   The function works either on single data sets such as a filename, a
@@ -19,7 +19,6 @@ function [sts, outdata] = pspm_interpolate(varargin)
 % ● Arguments
 %          indata:  [struct/char/numeric] or [cell array of struct/char/numeric]
 %                   contains the data to be interpolated
-%
 %   ┌─────options:
 %   ├──.overwrite:  Defines if existing datafiles should be overwritten.
 %		│								[logical] (0 or 1)

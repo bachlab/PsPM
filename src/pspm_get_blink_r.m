@@ -1,4 +1,4 @@
-function [sts, data]=pspm_get_blink_r(import)
+function [sts, data] = pspm_get_blink_r(import)
 % ● Description
 %   pspm_get_blink_r is a common function for importing eyelink data
 %   (blink_r data)

@@ -99,7 +99,7 @@ if options.valid_sample
   [~, ~, model] = pspm_pupil_pp(fn, options_pp);
   upsampling_factor = options.custom_settings.valid.interp_upsamplingFreq / gaze_og{1}.header.sr;
   desired_output_samples_gaze = round(upsampling_factor * numel(gaze_og{1}.data));
-  preprocessed_gaze.header.channeltype = pspm_update_channeltype(gaze_og{1}.header.channeltype,'pp');
+  preprocessed_gaze.header.channeltype = pspm_update_channel_type(gaze_og{1}.header.channeltype,'pp');
   preprocessed_gaze.header.units = gaze_og{1}.header.units;
   preprocessed_gaze.header.sr = options.custom_settings.valid.interp_upsamplingFreq;
   preprocessed_gaze.header.segments = options.segments;
@@ -119,7 +119,7 @@ if ~action_combine
     preprocessed_gaze.data = gaze_og{1}.data;
     preprocessed_gaze.header.sr = gaze_og{1}.header.sr;
   end
-  preprocessed_gaze.header.channeltype = pspm_update_channeltype(gaze_og{1}.header.channeltype,'pp');
+  preprocessed_gaze.header.channeltype = pspm_update_channel_type(gaze_og{1}.header.channeltype,'pp');
   preprocessed_gaze.header.units = gaze_og{1}.header.units;
 else
   if options.valid_sample

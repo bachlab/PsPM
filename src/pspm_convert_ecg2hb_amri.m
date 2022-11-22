@@ -1,6 +1,6 @@
 function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 % ● Description
-%   pspm_ecg2hb_amri performs R-peak detection from an ECG signal using the steps
+%   pspm_convert_ecg2hb_amri performs R-peak detection from an ECG signal using the steps
 %   decribed in R-peak detection section of [1]. This function uses a modified
 %   version of the amri_eeg_rpeak.m code that can be obtained from [2]. Modified
 %   version with a list of changes made is shipped with PsPM under amri_eegfmri
@@ -9,8 +9,8 @@ function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 %   it will either replace an existing heartbeat channel or add it as a new
 %   channel to the provided file.
 % ● Format
-%   [sts, out_channel] = pspm_ecg2hb_amri(fn)
-%   [sts, out_channel] = pspm_ecg2hb_amri(fn, options)
+%   [sts, out_channel] = pspm_convert_ecg2hb_amri(fn)
+%   [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 % ● Arguments
 %                 fn: [string] Path to the PsPM file which contains the pupil
 %                     data.

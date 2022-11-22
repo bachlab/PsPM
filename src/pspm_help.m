@@ -1,6 +1,6 @@
 function [information, arguments] = pspm_help(func_name)
 % ● Description
-%   pspm_help returns the description and arguments of 
+%   pspm_help returns the description and arguments of
 %   a specified function
 % ● Format
 %   [information, arguments] = pspm_help(func_name)

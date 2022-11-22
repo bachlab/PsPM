@@ -1,7 +1,7 @@
 function output = pspm_pfm(model, options)
 % ● Description
 %   PFM stands for Pupil Fitting Model and allows to fit models to the puipil
-%   data. The function starts by extracting and averaging signal segments of
+%   data. pspm_pfm starts by extracting and averaging signal segments of
 %   length `model.window` from each data file individually, then averages
 %   these mean segments and finally fits an LTI model.
 % ● Developer's Notes

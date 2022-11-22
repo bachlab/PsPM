@@ -4,7 +4,7 @@ function [sts, import, sourceinfo] = pspm_get_vario(datafile, import)
 %   this function uses the conversion routine getVarioPort.m
 %   written and maintained by Christoph Berger at the University of Rostock
 % ● Format
-%   [sts, import, sourceinfo] = pspm_get_acq(datafile, import);
+%   [sts, import, sourceinfo] = pspm_get_vario(datafile, import);
 % ● Arguments
 %     datafile:
 %       import:
