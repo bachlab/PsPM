@@ -294,11 +294,18 @@ switch FunName
     options = autofill(options, 'channel',                'pupil',  '@anychar'          );
     % screen_size_mm
     % screen_size_px
+  case 'pupil_pp'
+    %% 2.34 pspm_pupil_pp
+    options = autofill_channel_action(options);
+    options = autofill(options, 'channel',                'pupil',  '@anychar'          );
+    options = autofill(options, 'channel_combine',        'none',   '@anychar'          );
+    options = autofill(options, 'plot_data',              0,        1                   );
+    options = autofill(options, 'segments',               {},       '@anycell'          );
   case 'remove_epochs'
-    %% 2.34 pspm_remove_epochs
+    %% 2.35 pspm_remove_epochs
     options = autofill_channel_action(options);
   case 'resp_pp'
-    %% 2.34 pspm_resp_pp
+    %% 2.36 pspm_resp_pp
     options = autofill_channel_action(options);
     options = autofill(options, 'systemtype',             'bellows','cushion'           );
     options = autofill(options, 'plot',                   0,        1                   );
@@ -306,7 +313,7 @@ switch FunName
     options = autofill(options, 'datatype', {'rp', 'ra', 'rfr', 'rs', 'all'},...
                                                                     '@anysubset'        );
   case 'scr_pp'
-    %% 2.34 pspm_scr_pp
+    %% 2.37 pspm_scr_pp
     options = autofill_channel_action(options,            'add',    {'replace', ...
                                                                     'withdraw'}         );
     options = autofill(options, 'min',                    0.05,     '@anynumeric'       );
@@ -322,14 +329,14 @@ switch FunName
     options = autofill(options, 'missing_epochs_filename','missing_epochs_filename',...
                                                                     '@anychar'          );
   case 'segment_mean'
-    % 2.35 pspm_segment_mean
+    % 2.38 pspm_segment_mean
     options = autofill(options, 'overwrite',              0,        [1, 2]              );
     options = autofill(options, 'newfile',               '',        '@anychar'          );
     options = autofill(options, 'plot',                   0,        1                   );
     options = autofill(options, 'adjust_method',     'none',        {'downsample', ...
                                                                     'interpolate'}      );
   case 'sf'
-    %% 2.36 pspm_sf
+    %% 2.39 pspm_sf
     options = autofill(options,'overwrite',               1,        [0, 2]              );
     options = autofill(options,'marker_chan_num',         0,        '@anyinteger'       );
     options = autofill(options,'threshold',               0.1,      '>', 0              );
@@ -343,13 +350,13 @@ switch FunName
     options = autofill(options,'dispwin',                 1,        0                   );
     options = autofill(options,'dispsmallwin',            0,        1                   );
   case 'sf_dcm'
-    % 2.37 pspm_sf_dcm
+    % 2.40 pspm_sf_dcm
     options = autofill(options,'dispwin',                 1,        0                   );
     options = autofill(options,'dispsmallwin',            0,        1                   );
     options = autofill(options,'fresp',                 0.5,        '>', 0              );
     options = autofill(options,'threshold',             0.1,        '>', 0              );
   case 'sf_mp'
-    % 2.38 pspm_sf_mp
+    % 2.41 pspm_sf_mp
     options = autofill(options,'diagnostics',             0,        1                   );
     options = autofill(options,'dispwin',                 0,        1                   );
     options = autofill(options,'threshold',             0.1,        '>', 0              );
@@ -361,7 +368,7 @@ switch FunName
                                                           1.6411756741, ...
                                                           ],        '@anynumeric'       );
   case 'split_sessions'
-    %% 2.39 pspm_split_sessions
+    %% 2.42 pspm_split_sessions
     options = autofill(options, 'overwrite',              0,        [1, 2]              );
     options = autofill(options, 'prefix',                 0,        '>=', 0             );
     options = autofill(options, 'suffix',                 0,        '>=', 0             );
@@ -374,12 +381,12 @@ switch FunName
     options = autofill(options, 'min_break_ratio',        settings.split.min_break_ratio,...
                                                                     '>', 0              ); % minimum ratio of session break to normal inter marker interval (default 3)
   case 'trim'
-    %% 2.40 pspm_trim
+    %% 2.43 pspm_trim
     options = autofill(options, 'overwrite',              0,        [1, 2]              );
     options = autofill(options, 'marker_chan_num',        0,        '@anyinteger'       );
     options = autofill(options, 'drop_offset_markers',    0,        '@anyinteger'       );
   case 'write_channel'
-    %% 2.41 pspm_write_channel
+    %% 2.44 pspm_write_channel
     options = autofill(options, 'delete',            'last',        {'first','all'}     );
     if ~isfield('options','msg')
       options.msg = '';
@@ -480,6 +487,8 @@ switch nargin
               flag_is_allowed_value = ischar(options.(field_name));
             elseif strcmp(optional_value, '@anynumeric')
               flag_is_allowed_value = isnumeric(options.(field_name));
+            elseif strcmp(optional_value, '@anycell')
+              flag_is_allowed_value = iscell(options.(field_name));
             elseif strcmp(optional_value, '@anyinteger')
               flag_is_allowed_value = isnumeric(options.(field_name)) && ...
                 (options.(field_name)>0) && (mod(options.(field_name), 1)==0);

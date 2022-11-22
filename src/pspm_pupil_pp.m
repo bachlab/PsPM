@@ -129,30 +129,18 @@ end
 if nargin == 1
   options = struct();
 end
-if ~isfield(options, 'channel')
-  options.channel = 'pupil';
-end
-if ~isfield(options, 'channel_action')
-  options.channel_action = 'add';
-end
-if ~isfield(options, 'channel_combine')
-  options.channel_combine = 'none';
-end
-if ~isfield(options, 'plot_data')
-  options.plot_data = false;
-end
+options = pspm_options(options, 'pupil_pp');
+
 [lsts, default_settings] = pspm_pupil_pp_options();
 if lsts ~= 1
   return
 end
 if isfield(options, 'custom_settings')
-  default_settings = pspm_assign_fields_recursively(...
-    default_settings, options.custom_settings);
+ default_settings = pspm_assign_fields_recursively(...
+   default_settings, options.custom_settings);
 end
 options.custom_settings = default_settings;
-if ~isfield(options, 'segments')
-  options.segments = {};
-end
+
 %% 3 Input checks
 if ~ismember(options.channel_action, {'add', 'replace'})
   warning('ID:invalid_input', ...
