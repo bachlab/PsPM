@@ -1,22 +1,22 @@
 function [fx, dfdx, dfdP] = f_SCR(Xt, Theta, ut, in)
 % ● Description
-%   f_SCR implements a phenomenological forward model for anticipatory and 
+%   f_SCR implements a phenomenological forward model for anticipatory and
 %   event-related skin conductance responses, taking into account spontaneous
 %   fluctuations [SF] in the absence of experimental input, and slow baseline
 %   [SCL] changes between experimental inputs that might not be completely
 %   removed by filtering.
-%   output function: 
+%   output function:
 %   third order differential equation the parameters of which are estimated
 %   across trials, plus derivatives wrt time and parameters.
-%   event input: 
+%   event input:
 %   gaussian bumps with 0.3 s variance, emulating sudomotor firing
-%   sustained input: 
+%   sustained input:
 %   modeled by gaussian bumps with variable variance
-%   spontaneous input: 
+%   spontaneous input:
 %   in inter-trial intervals > 7 s, SF are assumed with a
 %   frequency of 0.5 Hz and a function analogous to f_SF
 % ● Format
-%   [fx, dfdx, dfdP] = f_aSCR(Xt,Theta,ut,in)
+%   [fx, dfdx, dfdP] = f_SCR(Xt,Theta,ut,in)
 % ● Arguments
 %   Theta:  4 ER constants (3 ODE params + time)
 %           3 SF constants (3 ODE params)
@@ -77,7 +77,7 @@ if ut(2) > 0
     % - unpack Theta
     aTheta = Theta(Theta_n + (1:(3 * ut(2))))';
     aTheta = reshape(aTheta, [3, ut(2)])';
-    % - set sigmoid function defaults 
+    % - set sigmoid function defaults
     dmdx = NaN(ut(2), 1);
     dsdx = NaN(ut(2), 1);
     sig.beta = 0.5;
@@ -126,7 +126,7 @@ if ut(4) > 0
         [t, dtdx(k)] = sigm(Theta(Theta_n + 3 * ut(2) + ut(3) + (k - 1) * 2 + 1), sig);
         sfTheta(k, 1) = ut(SF_lb(k)) + t; % lower bound plus parameter vaue
     end;
-    sfTheta(:, 2) = sigma;   
+    sfTheta(:, 2) = sigma;
     sfTheta(:, 3) = exp(Theta((Theta_n + 3 * ut(2) + ut(3)) + (2:2:(2 * ut(4)))));
 else
     sfTheta = [];
@@ -161,9 +161,9 @@ xdot = [Xt(2)
         Xt(6)
         -Theta(5:7) * Xt(4:6) + gu(ut(1), sfTheta, 1)
         gu(ut(1), SCLtheta, 1)];
-        
 
-% compute fx    
+
+% compute fx
 fx = Xt + dt .* xdot;
 
 
@@ -176,7 +176,7 @@ J = [0 1 0       0 0 0      0
      0 0 0       0 0 1      0
      0 0 0      -Theta(5:7) 0
      0 0 0       0 0 0      0];
- 
+
 dfdx = (dt .* J + eye(7))';
 
 % compute dfdP
@@ -191,7 +191,7 @@ Jp(6, 5:7) = -Xt(4:6);
      Jp(3, 7 + (2:3:(3 * ut(2))))  = gu(ut(1), aTheta, 0) .* (ut(1) - aTheta(:, 1)).^2 .* (aTheta(:, 2)).^-3 .* dsdx;
      Jp(3, 7 + (3:3:(3 * ut(2))))  = gu(ut(1), aTheta, 0);
  end;
-    
+
 if ~isempty(eTheta)
     Jp(3, (7 + 3 * ut(2)) + (1:ut(3)))  = gu(ut(1), eTheta, 0);
 end;
@@ -209,7 +209,7 @@ end;
 if ~isempty(SCLtheta)
     Jp(7, (7 + 3 * ut(2) + ut(3)) + 2 * ut(4) + (1:2:(2 * ut(5)))) = gu(ut(1), SCLtheta, 0) .* 1./(sigma_SCL.^2) .* (ut(1) - SCLtheta(:, 1)) .* dtscldx;
     SCLtheta(:, 3) = 1; % we don't take the exp(amp) here, so dSCLdamp = gu for unit amplitude
-    Jp(7, (7 + 3 * ut(2) + ut(3)) + 2 * ut(4) + (2:2:(2 * ut(5)))) = gu(ut(1), SCLtheta, 0); 
+    Jp(7, (7 + 3 * ut(2) + ut(3)) + 2 * ut(4) + (2:2:(2 * ut(5)))) = gu(ut(1), SCLtheta, 0);
 end;
 
 dfdP = dt .* Jp';
@@ -245,4 +245,3 @@ return;
 
 % =========================================================================
 
-       

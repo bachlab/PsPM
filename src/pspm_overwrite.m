@@ -1,14 +1,14 @@
 function ow_final = pspm_overwrite(varargin)
 % ● Description
-% pspm_overwrite generalises the overwriting operation
-% pspm_overwrite considers the following situations
-% - whether options.overwrite is defined
-% - whether PsPM is in develop mode
-% - whether the file exist
-% - whether GUI can be used
-% Only the following situation will stop PsPM to overwrite files
-% 1. if overwrite is defined as not to overwrite
-% 2. if overwrite is not defined, and users use the GUI to stop overwriting
+%   pspm_overwrite generalises the overwriting operation
+%   pspm_overwrite considers the following situations
+%   - whether options.overwrite is defined
+%   - whether PsPM is in develop mode
+%   - whether the file exist
+%   - whether GUI can be used
+%   Only the following situation will stop PsPM to overwrite files
+%   1. if overwrite is defined as not to overwrite
+%   2. if overwrite is not defined, and users use the GUI to stop overwriting
 % ● Arguments
 %   fn: the name of the file to possibly overwrite
 %       can be a link if necessary
@@ -17,7 +17,7 @@ function ow_final = pspm_overwrite(varargin)
 %       if a value, can be 0 (not to overwrite) or 1 (to overwrite)
 %       if a struct, check if the field "overwrite" exist
 % ● Outputs
-%   ow_final  option of overwriting determined by pspm_overwrite
+%   ow_final:  option of overwriting determined by pspm_overwrite
 % ● History
 %   Introduced in PsPM 6.0
 %   Written in 2022 by Teddy Chao (UCL)

@@ -1,4 +1,4 @@
-function [sts, data]=pspm_get_resp(import)
+function [sts, data] = pspm_get_resp(import)
 % ● Description
 %   pspm_get_resp is a common function for importing respiration data.
 % ● Format

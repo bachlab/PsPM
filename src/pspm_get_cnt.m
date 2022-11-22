@@ -18,7 +18,7 @@ function [sts, import, sourceinfo] = pspm_get_cnt(datafile, import)
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy Chao
 
 %% Initialise
 global settings
@@ -26,7 +26,7 @@ if isempty(settings)
 	pspm_init;
 end
 sts = -1;
-addpath(pspm_path('Import','fieldtrip','fileio')); 
+addpath(pspm_path('Import','fieldtrip','fileio'));
 sourceinfo = [];
 
 % get external file, using fieldtrip
@@ -46,28 +46,28 @@ try mrk = ft_read_event(datafile, 'headerformat', headerformat, 'dataformat', he
 % extract individual channels
 % -------------------------------------------------------------------------
 for k = 1:numel(import)
-        
+
     if strcmpi(settings.chantypes(import{k}.typeno).data, 'wave')
-        % channel number --- 
+        % channel number ---
         if import{k}.channel > 0
              chan = import{k}.channel;
          else
-             chan = pspm_find_channel(hdr.label, import{k}.type); 
+             chan = pspm_find_channel(hdr.label, import{k}.type);
              if chan < 1, return; end;
          end;
-    
+
              sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', chan, hdr.label{chan});
 
          % sample rate ---
         import{k}.sr = hdr.Fs;
-    
+
         % get data ---
         import{k}.data = indata(chan, :);
-    
+
     else                % event channels
         % time unit
         import{k}.sr = 1./hdr.Fs;
-        
+
         if ~isempty(mrk)
             import{k}.data = [mrk(:).sample];
             import{k}.marker = 'timestamps';
@@ -79,11 +79,11 @@ for k = 1:numel(import)
             import{k}.markerinfo.name = [];
         end;
     end;
-    
+
 end;
 
 % clear path and return
 % -------------------------------------------------------------------------
-rmpath(pspm_path('Import','fieldtrip','fileio')); 
+rmpath(pspm_path('Import','fieldtrip','fileio'));
 sts = 1;
 return

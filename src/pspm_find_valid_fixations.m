@@ -1,6 +1,6 @@
 function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 % ● Description
-%   pspm_find_valid_fixaitons takes a file with data from eyelink recordings
+%   pspm_find_valid_fixations takes a file with data from eyelink recordings
 %   which has been converted to length units and filters out invalid fixations.
 %   Gaze values outside of a defined range are set to NaN, which can later
 %   be interpolated using pspm_interpolate. The function will create a
@@ -26,9 +26,9 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %   ┌────────options: Optional values
 %   ├.fixation_point: A nx2 vector containing x and y of the fixation point
 %   │                 (with resepect to the given resolution). n should be
-%   │                 either 1 or should have the length of the actual data. 
-%   │                 Default is the middle of the screen. 
-%   │                 If resolution is not defined the values are given in 
+%   │                 either 1 or should have the length of the actual data.
+%   │                 Default is the middle of the screen.
+%   │                 If resolution is not defined the values are given in
 %   │                 percent. Therefore [0.5 0.5] would correspond to the
 %   │                 middle of the screen. Default is [0.5 0.5]. Only taken
 %   │                 into account if there is no bitmap.
@@ -48,7 +48,7 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %   │                 not. Default is 0.
 %   ├───────.missing: If missing is enabled (=1), an extra channel will be
 %   │                 written containing information about the validated data.
-%   │                 Data points equal to 1 describe epochs which have been 
+%   │                 Data points equal to 1 describe epochs which have been
 %   │                 discriminated as invalid during validation. Data points
 %   │                 equal to 0 describe epochs of valid data (= no blink &
 %   │                 valid fixation). Default is disabled (=0)
@@ -56,7 +56,7 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %   │                 Possible values are: 'left', 'right', 'all'. Default is
 %   │                 'all'.
 %   └──────.channels: Choose channels in which the data should be set to NaN
-%                     during invalid fixations. Default is 'pupil'. A char or 
+%                     during invalid fixations. Default is 'pupil'. A char or
 %                     numeric value or a cell array of char or numerics is
 %                     expected. Channel names pupil, gaze_x, gaze_y,
 %                     pupil_missing will be automatically expanded to the

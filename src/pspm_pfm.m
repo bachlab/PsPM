@@ -1,7 +1,7 @@
 function output = pspm_pfm(model, options)
 % ● Description
 %   PFM stands for Pupil Fitting Model and allows to fit models to the puipil
-%   data. The function starts by extracting and averaging signal segments of
+%   data. pspm_pfm starts by extracting and averaging signal segments of
 %   length `model.window` from each data file individually, then averages
 %   these mean segments and finally fits an LTI model.
 % ● Developer's Notes
@@ -66,7 +66,7 @@ function output = pspm_pfm(model, options)
 %   │          └─────────.ub: upper bounds, numeric array of the same size as
 %   │                         .arg
 %   │               If an argument should not be fitted, set the corresponding
-%   │               value of .lb and .ub to the same value as .arg. 
+%   │               value of .lb and .ub to the same value as .arg.
 %   │               For unbounded parameters set -Inf or/and Inf respectively.
 %   │               DEFAULT: specified by the modality
 %   ├────.channel:  allows to specify channel number or channel type.
@@ -104,8 +104,8 @@ function output = pspm_pfm(model, options)
 % ● Outputs
 %   pfm: a structure 'pfm' which is also written to file
 % ● Reference
-%   Korn, C. W., & Bach, D. R. (2016). A solid frame for the window on 
-%   cognition: Modeling event-related pupil responses. Journal of Vision, 
+%   Korn, C. W., & Bach, D. R. (2016). A solid frame for the window on
+%   cognition: Modeling event-related pupil responses. Journal of Vision,
 %   16(3), 28. https://doi.org/10.1167/16.3.28
 % ● History
 %   Introduced In PsPM 4.2

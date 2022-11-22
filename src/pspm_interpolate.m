@@ -1,25 +1,24 @@
 function [sts, outdata] = pspm_interpolate(indata, options)
 % ● Description
-%   This function interpolates NaN values passed with the indata parameter.
+%   pspm_interpolate interpolates NaN values passed with the indata parameter.
 %   The behaviour of the function can furthermore be adjusted with the
 %   combination of different options.
 %   The function works either on single data sets such as a filename, a
 %   numeric array or a pspm data struct. Alternatively it is possible to pass
-%   a cell containing all these possible datatypes. The function then 
-%   iterates through the whole data set and replaces the passed data with the 
-%   interpolated data. For filenames the interpolated data will, depending on 
-%   option.newfile, be written to the existing file or can also be added to a 
-%   new file with filename 'i'+<old filename>. The corresponding cell 
-%   (in outdata) will then contain the filename of the new file 
-%   (if newfile = 1) or will contain the channel id where the interpolated 
-%   data can be found in the existing file (because it has been added or 
+%   a cell containing all these possible datatypes. The function then
+%   iterates through the whole data set and replaces the passed data with the
+%   interpolated data. For filenames the interpolated data will, depending on
+%   option.newfile, be written to the existing file or can also be added to a
+%   new file with filename 'i'+<old filename>. The corresponding cell
+%   (in outdata) will then contain the filename of the new file
+%   (if newfile = 1) or will contain the channel id where the interpolated
+%   data can be found in the existing file (because it has been added or
 %   replaced). The edited data set will then be returned as parameter outdata.
 % ● Format
 %   [sts, outdata] = pspm_interpolate(indata, options)
 % ● Arguments
 %          indata:  [struct/char/numeric] or [cell array of struct/char/numeric]
 %                   contains the data to be interpolated
-%
 %   ┌─────options:
 %   ├──.overwrite:  Defines if existing datafiles should be overwritten.
 %   │               [optional; accept: 1, 0; default: 0]
@@ -49,8 +48,8 @@ function [sts, outdata] = pspm_interpolate(indata, options)
 %             sts:  Returns the status of the function
 %                   -1: function did not work properly
 %                    1: the function went through properly
-%         outdata:  Has the same format as indata but contains the interpolated 
-%                   data (or the filename(s) where the interpolated data can be 
+%         outdata:  Has the same format as indata but contains the interpolated
+%                   data (or the filename(s) where the interpolated data can be
 %                   found).
 % ● History
 %   Introduced in PsPM 3.0

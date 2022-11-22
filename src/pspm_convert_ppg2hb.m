@@ -1,13 +1,13 @@
-function [ sts, outinfo ] = pspm_convert_ppu2hb( fn,chan,options )
+function [ sts, outinfo ] = pspm_convert_ppg2hb( fn,chan,options )
 % ● Description
-%   pspm_convert_ppu2hb Converts a pulse oxymeter channel to heartbeats and 
+%   pspm_convert_ppg2hb Converts a pulse oxymeter channel to heartbeats and
 %   adds it as a new channel.
 %   First a template is generated from non ambiguous heartbeats. The ppu
 %   signal is then cross correlated with the template and maximas are
 %   identified as heartbeat maximas and a heartbeat channel is then
 %   generated from these.
 % ● Format
-%   [ sts, outinfo ] = pspm_convert_ppu2hb( fn,chan,options )
+%   [ sts, outinfo ] = pspm_convert_ppg2hb( fn,chan,options )
 % ● Arguments
 %                 fn: file name with path
 %               chan: ppu channel number
@@ -21,8 +21,8 @@ function [ sts, outinfo ] = pspm_convert_ppu2hb( fn,chan,options )
 %   │                 data should be added or the corresponding channel
 %   │                 should be replaced.
 %   └───────────.lsm: [integer]
-%                     large spikes mode compensates for large spikes 
-%                     while generating template by removing the [integer] 
+%                     large spikes mode compensates for large spikes
+%                     while generating template by removing the [integer]
 %                     largest percentile of spikes from consideration.
 % ● History
 %   Introduced in PsPM 3.1

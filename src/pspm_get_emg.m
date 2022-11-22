@@ -1,11 +1,11 @@
-function [sts, data]=pspm_get_emg(import)
+function [sts, data] = pspm_get_emg(import)
 % ● Description
 %   pspm_get_emg is a common function for importing EMG data
 % ● Format
-%   [sts, data]= pspm_get_emg(import)
+%   [sts, data] = pspm_get_emg(import)
 % ● Arguments
 %   import: [struct]
-%   .units: 
+%   .units:
 %    .data: column vector of waveform data
 %      .sr: sample rate
 % ● History

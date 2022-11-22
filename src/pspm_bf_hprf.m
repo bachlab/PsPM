@@ -1,7 +1,6 @@
 function [bf, x ,p] = pspm_bf_hprf(td,p)
 % ● Description
-%   heart period response function
-%   (scaled gamma functions)
+%   pspm_bf_hprf is the heart period response function (scaled gamma functions).
 % ● Format
 %   [bf, x, p] = pspm_bf_hprf(td, p)
 % ● Arguments

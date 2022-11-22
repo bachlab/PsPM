@@ -1,4 +1,4 @@
-function [sts, data]=pspm_get_pupil_r(import)
+function [sts, data] = pspm_get_pupil_r(import)
 % ● Description
 %   pspm_get_pupil_r is a common function for importing eyelink data
 %   (pupil_r data)

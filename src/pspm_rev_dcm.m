@@ -1,9 +1,9 @@
 function pspm_rev_dcm(dcm, job, sn, trl)
 % ● Description
-%   This function displays DCM results post hoc. It is meant to be called by
+%   pspm_rev_dcm displays DCM results post hoc. It is meant to be called by
 %   pspm_review only.
 % ● Developer's Notes
-%   The development of this funcrion is still in progress. 
+%   The development of this funcrion is still in progress.
 %   More jobs to be implemented.
 % ● Format
 %   pspm_rev_dcm(dcm, job, sn, trl)

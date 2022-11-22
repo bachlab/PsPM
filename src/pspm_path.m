@@ -11,7 +11,6 @@ function path_to_folder = pspm_path(varargin)
 %             is assumed to be the name of a folder. For example, if you want
 %             to get the path to <PSPM_ROOT>/a/b/c folder, call
 %             pspm_path('a', 'b', 'c').
-%
 % ● Outputs
 %   path_to_folder: Constructed absolute path
 % ● History
