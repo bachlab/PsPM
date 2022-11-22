@@ -147,7 +147,6 @@ end
 
 options = pspm_options(options, 'find_valid_fixations');
 if options.invalid
-  warning('ID:invalid_input', 'The input options is invalid.')
   return
 end
 

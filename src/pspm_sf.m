@@ -168,6 +168,9 @@ end
 % 2.8 Set options
 try model.channel; catch, model.channel = 'scr'; end
 options = pspm_options(options, 'sf');
+if options.invalid
+  return
+end
 %% 3 Get data
 for iFile = 1:numel(model.datafile)
   % 3.1 User output

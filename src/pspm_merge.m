@@ -58,6 +58,9 @@ end
 
 % check options --
 options = pspm_options(options, 'merge');
+if options.invalid
+  return
+end
 
 %% loop through data files
 for iFile = 1:numel(infile{1})

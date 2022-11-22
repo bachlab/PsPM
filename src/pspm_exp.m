@@ -54,6 +54,10 @@ elseif nargin < 2
 end;
 
 options = pspm_options(options, 'exp');
+if options.invalid
+  return
+end
+
 target = options.target;
 statstype = options.statstype;
 delim = options.delim;

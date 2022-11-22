@@ -162,6 +162,9 @@ if strcmpi(mode, 'data') && strcmpi(record_method, '') && ...
   return;
 end
 options = pspm_options(options, 'convert_au2unit');
+if options.invalid
+  return
+end
 %% check values
 if ~ischar(fn)
   warning('ID:invalid_input', 'fn is not a char.');

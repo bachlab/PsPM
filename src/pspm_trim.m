@@ -17,10 +17,10 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
 %                       [string]
 %                       'marker' from and to are set in seconds with respect
 %                                to the first and last scanner/marker pulse
-%                       'file'   from and to are set in seconds with respect 
+%                       'file'   from and to are set in seconds with respect
 %                                to start of datafile
 %                       [vector] a 2-element vector:
-%                       from and to are set in seconds with respect to the two 
+%                       from and to are set in seconds with respect to the two
 %                       markers defined here
 %                       [cell_array] a 2-element cell-array
 %                       from and to are set in seconds with respect to the first
@@ -33,7 +33,7 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
 %   │                   if undefined or 0, first marker channel is used.
 %   └.drop_offset_markers:
 %                       if offsets are set in the reference, you might be
-%                       interested in only the data, but not in the additional 
+%                       interested in only the data, but not in the additional
 %                       markers which are within the offset. therefore set this
 %                       option to 1 to drop markers which lie in the offset.
 %                       this is for event channels only. default is 0.
@@ -156,6 +156,9 @@ if ~exist('options','var') || isempty(options) || ~isstruct(options)
   options = struct();
 end
 options = pspm_options(options, 'trim');
+if options.invalid
+  return
+end
 %% 2 Work on all data
 for i_D = 1:numel(D)
   % 2.1 Obtain essential file info

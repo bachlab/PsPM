@@ -16,7 +16,7 @@ function sts = pspm_resp_pp(fn, sr, chan, options)
 %   ├────.systemtype: ['bellows'(default) /'cushion']
 %   ├──────.datatype: a cell array with any of 'rp', 'ra', 'rfr',
 %   │                   'rs', 'all' (default)
-%   ├───.diagnostics: 
+%   ├───.diagnostics:
 %   ├──────────.plot: 1 creates a respiratory cycle detection plot
 %   └.channel_action: ['add'(default) /'replace']
 %                     Defines whether the new channels should be added or the
@@ -49,6 +49,9 @@ if ~exist('options', 'var')
   options = struct();
 end
 options = pspm_options(options, 'resp_pp');
+if options.invalid
+  return
+end
 try options.datatype; catch, options.datatype = {'rp', 'ra', 'rfr', 'rs'}; end
 if ~iscell(options.datatype)
   warning('ID:invalid_input', 'Unknown data type.'); return;

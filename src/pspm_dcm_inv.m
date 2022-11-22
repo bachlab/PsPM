@@ -10,7 +10,7 @@ function dcm = pspm_dcm_inv(model, options)
 %   dcm = pspm_dcm_inv(model, options)
 % ● Arguments
 %   ┌─────────model
-%   │ ▶︎ Mandatory 
+%   │ ▶︎ Mandatory
 %   ├──────────.scr:  [mandatory, cell_array]
 %   │                 normalised and min-adjusted time series
 %   ├──────.zfactor:  [mandatory]
@@ -27,7 +27,7 @@ function dcm = pspm_dcm_inv(model, options)
 %   │                 trial end for each trial (created in pspm_dcm)
 %   ├──────────.iti:  [mandatory, cell]
 %   │                 ITI for each trial (created in pspm_dcm).
-%   │ ▶︎ Optional                
+%   │ ▶︎ Optional
 %   ├─────────.norm:  [optional, default as 0]
 %   │                 whether to normalise data.
 %   │                 i. e. data are normalised during inversion but results
@@ -122,17 +122,9 @@ try model.norm; catch, model.norm = 0; end;
 try model.constrained; catch, model.constrained = 0; end
 
 options = pspm_options(options, 'dcm_inv');
-% try options.eSCR; catch, options.eSCR = 0; end;
-% try options.aSCR; catch, options.aSCR = 0; end;
-% try options.meanSCR; catch, options.meanSCR = 0; end;
-% try options.depth;   catch, options.depth   = 2; end;
-% try options.sfpre;   catch, options.sfpre   = 2; end;
-% try options.sfpost;  catch, options.sfpost  = 5; end;
-% try options.sffreq;  catch, options.sffreq  = 0.5; end;
-% try options.sclpre;  catch, options.sclpre  = 2.5; end; % avoid overlap of last SCL change with next trial
-% try options.sclpost; catch, options.sclpost = 2; end;
-% try options.crfupdate; catch, options.crfupdate = 0; end;
-% try options.getrf; catch, options.getrf = 0; end;
+if options.invalid
+  return
+end
 try invopt.DisplayWin = options.dispwin; catch, invopt.DisplayWin = 1; end;
 try invopt.GnFigs = options.dispsmallwin; catch, invopt.GnFigs = 0; end;
 sigma_offset_temp = settings.dcm{1}.sigma_offset;

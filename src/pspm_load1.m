@@ -88,6 +88,9 @@ if nargin <= 3
   options = struct();
 end
 options = pspm_options(options, 'load1');
+if options.invalid
+  return
+end
 
 % check whether file exists --
 if exist(fn, 'file')

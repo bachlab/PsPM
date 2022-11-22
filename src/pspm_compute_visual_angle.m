@@ -44,8 +44,7 @@ if nargin < 6
   return;
 elseif ~exist('options','var')
   options = struct();
-end;
-
+end
 
 % check types of arguments
 if ~ischar(fn) || ~exist(fn, 'file')
@@ -80,8 +79,10 @@ if lsts ~= 1
 end;
 
 %set more defaults
-options = pspm_options(options, 'compute_visual_angle')
-
+options = pspm_options(options, 'compute_visual_angle');
+if options.invalid
+  return
+end
 
 %iterate through eyes
 n_eyes = numel(infos.source.eyesObserved);

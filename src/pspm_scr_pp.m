@@ -97,7 +97,9 @@ elseif ~isnumeric(chan)
   warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end
 options = pspm_options(options, 'scr_pp');
-
+if options.invalid
+  return
+end
 %% Sanity checks
 if ischar(datafile) || isstruct(datafile)
   data_source = {datafile};

@@ -238,23 +238,10 @@ end
 
 % 2.8 set and check options ---
 options = pspm_options(options, 'dcm');
-% try options.indrf;              catch, options(1).indrf = 0;            end
-% try options.getrf;              catch, options.getrf = 0;               end
-% try options.rf;                 catch, options.rf = 0;                  end
-% try options.nosave;             catch, options.nosave = 0;              end
-% try options.depth;              catch, options.depth = 2;               end
-% try options.sfpost;             catch, options.sfpost = 5;              end
-% try options.aSCR_sigma_offset;  catch, options.aSCR_sigma_offset = 0.1; end
-% try options.sclpost;            catch, options.sclpost = 5;             end
-% try options.sclpre;             catch, options.sclpre = 2;              end
-% try options.sfpre;              catch, options.sfpre = 2;               end
-% try options.sffreq;             catch, options.sffreq = 0.5;            end
-% try options.method;             catch, options.method = 'dcm';          end
-% try options.dispwin;            catch, options.dispwin = 1;             end
-% try options.dispsmallwin;       catch, options.dispsmallwin = 0;        end
-% try options.crfupdate;          catch, options.crfupdate = 0;           end
-% try options.eventnames;         catch, options.eventnames = {};         end
-% try options.trlnames;           catch, options.trlnames = {};           end
+if options.invalid
+  return
+end
+
 try model.lasttrialcutoff;      catch, model.lasttrialcutoff = 7;       end
 
 % 2.9 check option fields --

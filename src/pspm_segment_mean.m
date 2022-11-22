@@ -39,6 +39,9 @@ if nargin < 2
 	options = struct();
 end
 options = pspm_options(options, 'segment_mean');
+if options.invalid
+  return
+end
 if nargin > 1 && ~isstruct(options)
 	warning('ID:invalid_input', 'Options must be a struct.'); return;
 elseif ~(iscell(segments) || ischar(segments)) || ...

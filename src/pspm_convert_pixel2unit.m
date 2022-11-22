@@ -56,8 +56,13 @@ end
 % try to set default values
 %if no options are set
 if ~exist('options','var')
-  options = pspm_options(struct(), 'convert_pixel2unit');
+  options = struct();
 end
+options = pspm_options(options, 'convert_pixel2unit');
+if options.invalid
+  return
+end
+
 % do value checks
 if ~isstruct(options)
   warning('ID:invalid_input', 'Options must be a struct.');

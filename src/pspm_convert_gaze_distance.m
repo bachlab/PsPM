@@ -41,6 +41,9 @@ elseif nargin < 7
   options = struct();
 end
 options = pspm_options(options, 'convert_gaze_distance');
+if options.invalid
+  return
+end
 % Input argument validation
 if ~ismember(target, { 'degree', 'sps' })
   warning('ID:invalid_input:target', 'target conversion must be sps or degree');

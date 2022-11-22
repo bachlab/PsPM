@@ -51,6 +51,9 @@ else
   options = struct(); % build an empty struct if nothing is available
 end
 options = pspm_options(options, 'pp');% update options
+if options.invalid
+  return
+end
 %% Load data
 [sts, infos, data] = pspm_load_data(fn, 0);
 if sts ~= 1

@@ -143,6 +143,9 @@ if ~exist('options', 'var')
 	options = struct();
 end
 options = pspm_options(options, 'import');
+if options.invalid
+  return
+end
 % 2.1 convert data files
 if iscell(datafile)
 	D = datafile;

@@ -37,9 +37,10 @@ if nargin == 2
   options = struct();
 end
 options = pspm_options(options, 'blink_saccade_filt');
+if options.invalid; return; end
 if ~isnumeric(discard_factor)
   warning('ID:invalid_input', 'discard_factor must be numeric');
-  return;
+  return
 end
 [lsts, ~, data] = pspm_load_data(fn);
 if lsts ~= 1; return; end;

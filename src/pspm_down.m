@@ -53,12 +53,14 @@ elseif ischar(chan)
   end
 end
 
-if nargin == 4 
+if nargin == 4
 if ~isstruct(options)
   warning('ID:invalid_input','options has to be a struct');
   return;
-else
-  options = pspm_options(options, 'down');
+end
+options = pspm_options(options, 'down');
+if options.invalid
+  return
 end
 
 %% convert datafile to cell for convenience

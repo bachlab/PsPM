@@ -95,6 +95,9 @@ set(handles.fgDataEditor, 'WindowButtonMotionFcn', @buttonMotion_Callback);
 if numel(varargin) > 1 && isstruct(varargin{2}) % load options
   handles.options = varargin{2};
   handles.options = pspm_options(handles.options, 'data_editor');
+  if handles.options.invalid
+    return
+  end
   if isfield(handles.options, 'output_file') && ... % check if options are valid and assign accordingly
       ischar(handles.options.output_file)
     handles.output_file = handles.options.output_file;

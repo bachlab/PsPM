@@ -50,7 +50,9 @@ if ~exist('options','var')
   options = struct();
 end
 options = pspm_options(options, 'write_channel');
-
+if options.invalid
+  return
+end
 %% Check arguments
 if nargin < 1
   warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;

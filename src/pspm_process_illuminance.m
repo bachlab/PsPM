@@ -52,6 +52,9 @@ end
 
 % setup default values
 options = pspm_options(options, 'process_illuminance');
+if options.invalid
+  return
+end
 
 % ensure parameters are correct
 % -------------------------------------------------------------------------

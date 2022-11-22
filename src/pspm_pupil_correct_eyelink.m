@@ -118,6 +118,9 @@ end
 
 %% create default arguments
 options = pspm_options(options, 'pupil_correct_eyelink');
+if options.invalid
+  return
+end
 if strcmp(options.mode, 'manual')
   for field = all_fieldnames
     if ~isfield(options, field{1})

@@ -88,6 +88,9 @@ if isempty(indata)
 end
 % 1.2 initialise options
 options = pspm_options(options, 'interpolate');
+if options.invalid
+  return
+end
 % try options.method; catch, options.method = 'linear'; end
 try options.channels; catch, options.channels = []; end
 % try options.newfile; catch, options.newfile = 0; end

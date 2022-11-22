@@ -1,22 +1,22 @@
 function theta = pspm_get_rf(fn, events, outfile, chan, options)
-% ‚ó? Description
+% ‚óè Description
 %   pspm_get_rf estimates a response function from an event-related design
 %   (e.g. for further use in a GLM analysis), using a regularisation as
 %   third-order ODE and DCM machinery.
-% ‚ó? Developer's Notes
+% ‚óè Developer's Notes
 %   the function returns an m-function for the RF, and the parameters of that
 %   function
-% ‚ó? Format
+% ‚óè Format
 %   theta = pspm_get_rf(fn, events, outfile, chan, options)
-% ‚ó? Arguments
+% ‚óè Arguments
 %         fn: the file name of a PsPM data file
-%     events: specified in seconds as either (1) a vector of onsets, or (2) an 
+%     events: specified in seconds as either (1) a vector of onsets, or (2) an
 %             SPM style onsets file with one event type, or (3) an epochs file
 %             (see pspm_dcm or pspm_get_epochs).
 %    outfile: (optional) a file to write the response function to
 %       chan: (optional) data channel (default: look for first SCR channel)
 %    options: [struct] to be passed on to pspm_dcm
-% ‚ó? History
+% ‚óè History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
@@ -62,7 +62,7 @@ end;
 if ~isempty(outfile)
   [pth fn ext] = fileparts(outfile);
   c = clock;
-  job{1}  = sprintf('function [rf, theta] = %s(td)', fn); 
+  job{1}  = sprintf('function [rf, theta] = %s(td)', fn);
   job{2}  = '%-----------------------------------------------------------------------';
   job{3}  = ['% Response function created by pspm_get_rf, ', date, sprintf('  %02.0f:%02.0f', c(4:5))];
   job{4}  = '%-----------------------------------------------------------------------';

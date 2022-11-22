@@ -94,6 +94,9 @@ if nargin < 2
   options = struct();
 end
 options = pspm_options(options, 'convert_ecg2hb_amri');
+if options.invalid
+  return
+end
 %% load
 addpath(pspm_path('backroom'));
 [lsts, data] = pspm_load_single_chan(fn, options.channel, 'last', 'ecg');

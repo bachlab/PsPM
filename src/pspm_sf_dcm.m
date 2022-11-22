@@ -68,6 +68,9 @@ if exist('errmsg') == 1, warning(errmsg); out = []; return; end;
 % options
 % ------------------------------------------------------------------------
 options = pspm_options(options, 'sf_dcm');
+if options.invalid
+  return
+end
 options.DisplayWin = options.dispwin;
 options.GnFigs = options.dispsmallwin;
 fresp = options.fresp;

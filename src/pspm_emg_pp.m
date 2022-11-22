@@ -53,6 +53,9 @@ if ~isfield(options, 'mains_freq')
 end
 
 options = pspm_options(options, 'emg_pp');
+if options.invalid
+  return
+end
 
 % check values
 % -------------------------------------------------------------------------

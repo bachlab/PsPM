@@ -130,7 +130,9 @@ if nargin == 1
   options = struct();
 end
 options = pspm_options(options, 'pupil_pp');
-
+if options.invalid
+  return
+end
 [lsts, default_settings] = pspm_pupil_pp_options();
 if lsts ~= 1
   return

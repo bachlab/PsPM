@@ -99,8 +99,11 @@ if ~exist(file, 'file')
 end
 
 fprintf('Processing sound in file %s\n',file);
+
 options = pspm_options(options, 'find_sounds');
-if options.invalid; return; end
+if options.invalid
+  return
+end
 
 % call it outinfos not to get confused
 outinfos = struct();

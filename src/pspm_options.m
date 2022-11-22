@@ -57,7 +57,7 @@ switch FunName
     options = autofill_channel_action(options);
   case 'convert_area2diameter'
     %% 2.6 pspm_convert_area2diameter
-    options = autofill_channel_action(options);
+    options = autofill_channel_action(options,            'add',      'replace'         );
   case 'convert_au2unit'
     %% 2.7 pspm_convert_au2unit
     options = autofill_channel_action(options);
@@ -370,7 +370,7 @@ switch FunName
   case 'split_sessions'
     %% 2.42 pspm_split_sessions
     options = autofill(options, 'overwrite',              0,        [1, 2]              );
-    options = autofill(options, 'prefix',                 0,        '>=', 0             );
+    options = autofill(options, 'prefix',                 0,        '<=', 0             );
     options = autofill(options, 'suffix',                 0,        '>=', 0             );
     options = autofill(options, 'verbose',                1,        0                   );
     options = autofill(options, 'splitpoints',           [],        '@anynumeric'       );
@@ -647,7 +647,7 @@ switch nargin
       case 'cell'
         default_value_converted = default_value{1};
     end
-    default_value_message = ['"', default_value_converted,'", '];
+    default_value_message = ['"', default_value_converted,'"'];
     switch class(optional_value)
       case 'double'
         switch length(optional_value)

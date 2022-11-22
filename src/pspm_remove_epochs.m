@@ -35,6 +35,9 @@ if ~exist('options', 'var')
   options = struct();
 end
 options = pspm_options(options, 'remove_epochs');
+if options.invalid
+  return
+end
 [lsts, ~, data] = pspm_load_data(datafile, channel);
 if lsts == -1
   warning('ID:invalid_input', 'Could not load data properly.');

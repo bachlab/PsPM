@@ -122,7 +122,7 @@ end
 sts = -1;
 
 
-%%  Checking inputs 
+%%  Checking inputs
 
 if nargin<1
   errmsg='Nothing to do.'; warning('ID:invalid_input', errmsg); return;
@@ -132,8 +132,11 @@ end
 
 %% Update options
 options = pspm_options(options, 'pfm');
+if options.invalid
+  return
+end
 
-%%  Checking required fields 
+%%  Checking required fields
 if ~isfield(model, 'datafile')
   warning('ID:invalid_input', 'No input data file specified.'); return;
 elseif ~ischar(model.datafile) && ~iscell(model.datafile)
@@ -348,7 +351,7 @@ if ~pspm_overwrite(model.modelfile, options)
 	return;
 end
 
-%% Loading files 
+%% Loading files
 
 fprintf('Computing Pupil Model: %s \n', model.modelfile);
 
@@ -404,7 +407,7 @@ else
   fprintf('\n');
 end
 
-%%  Zscoring the data 
+%%  Zscoring the data
 if model.zscore
   fprintf('Zscoring ...\n')
   n_file = numel(model.datafile);

@@ -114,10 +114,12 @@ elseif ~isnumeric(channel) && ~strcmp(channel,'ecg')
   warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end
 
-if exist('options','var')
-  options = pspm_options(options, 'convert_ecg2hb');
-else
-  options = pspm_options(struct(), 'convert_ecg2hb');
+if ~exist('options','var')
+  options = struct();
+end
+options = pspm_options(options, 'convert_ecg2hb');
+if options.invalid
+  return
 end
 
 %% user output

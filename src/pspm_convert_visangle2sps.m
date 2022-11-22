@@ -65,6 +65,9 @@ end
 % end;
 % option.channel_action
 options = pspm_options(options, 'convert_visangle2sps');
+if options.invalid
+  return
+end
 % fn
 if ~ischar(fn) || ~exist(fn, 'file')
   warning('ID:invalid_input', ['File %s is not char or does not ', ...

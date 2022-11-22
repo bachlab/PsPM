@@ -74,7 +74,9 @@ if ~exist('options','var') || isempty(options) || ~isstruct(options)
   options = struct();
 end
 options = pspm_options(options, 'split_sessions');
-
+if options.invalid
+  return
+end
 % 1.3 Handle data files
 % 1.3.1 check data file argument
 if ~ischar(datafile)

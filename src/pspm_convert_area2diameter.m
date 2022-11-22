@@ -52,11 +52,9 @@ else
     options = struct();
   end
 
-  options = pspm_options(options, 'convert_area2diameter')
-
-  if ~any(strcmpi(options.channel_action, {'replace', 'add'}))
-    warning('ID:invalid_input', ['options.channel_action should ', ...
-      'be either ''add'' or ''replace''.']); return;
+  options = pspm_options(options, 'convert_area2diameter');
+  if options.invalid
+    return
   end
 
   mode = 'file';
