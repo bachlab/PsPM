@@ -56,7 +56,7 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %   ├──────────.eyes: Define on which eye the operations should be performed.
 %   │                 Possible values are: 'left', 'right', 'all'. Default is
 %   │                 'all'.
-%   └──────.channels: Choose channels in which the data should be set to NaN
+%   └───────.channel: Choose channels in which the data should be set to NaN
 %                     during invalid fixations. Default is 'pupil'. A char or
 %                     numeric value or a cell array of char or numerics is
 %                     expected. Channel names pupil, gaze_x, gaze_y,
@@ -216,23 +216,23 @@ for i=1:n_eyes
     gaze_y = ['gaze_y_', eye];
 
     % find chars to replace
-    str_chans = cellfun(@ischar, options.channels);
-    channels = options.channels;
+    str_chans = cellfun(@ischar, options.channel);
+    channel = options.channel;
     str_channeltypes = ['(', settings.findvalidfixations.channeltypes{1}];
     for i_channeltypes = 2:length(settings.findvalidfixations.channeltypes)
       str_channeltypes = [str_channeltypes, '|', ...
         settings.findvalidfixations.channeltypes{i_channeltypes}];
     end
     str_channeltypes = [str_channeltypes, ')'];
-    channels(str_chans) = regexprep(channels(str_chans), str_channeltypes, ['$0_' eye]);
+    channel(str_chans) = regexprep(channel(str_chans), str_channeltypes, ['$0_' eye]);
     % replace strings with numbers
-    str_chan_num = channels(str_chans);
+    str_chan_num = channel(str_chans);
     for j=1:numel(str_chan_num)
       str_chan_num(j) = {find(cellfun(@(y) strcmpi(str_chan_num(j),...
         y.header.channeltype), data),1)};
     end
-    channels(str_chans) = str_chan_num;
-    work_chans = cell2mat(channels);
+    channel(str_chans) = str_chan_num;
+    work_chans = cell2mat(channel);
 
     if numel(work_chans) >= 1
       % always use first found channel
@@ -443,10 +443,10 @@ if numel(new_chans) >= 1
       chan_idx(i) = numel(new_data);
     else
       % look for same chan_type
-      channels = cellfun(@(x) strcmpi(new_chans{i}.header.channeltype, x.header.channeltype), new_data);
-      if any(channels)
+      channel = cellfun(@(x) strcmpi(new_chans{i}.header.channeltype, x.header.channeltype), new_data);
+      if any(channel)
         % replace the first found channel
-        idx = find(channels, 1, 'first');
+        idx = find(channel, 1, 'first');
         new_data{idx}.data = new_chans{i}.data;
         chan_idx(i) = idx;
       else

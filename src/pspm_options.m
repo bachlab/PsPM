@@ -109,7 +109,7 @@ switch FunName
   case 'convert_visangle2sps'
     %% 2.14 pspm_convert_visangle2sps
     options = autofill_channel_action(options);
-    options = autofill(options, 'channels',               0,        '@anynumeric'       );
+    options = autofill(options, 'channel',                0,        '@anynumeric'       );
     options = autofill(options, 'eye',                    settings.lateral.char.b, ...
                                                           {settings.lateral.char.r, ...
                                                           settings.lateral.char.l}      );
@@ -254,7 +254,7 @@ switch FunName
                                                                     'next'}             );
     options = autofill(options, 'extrapolate',            0,        1                   );
     options = autofill(options, 'newfile',                0,        1                   );
-    %options = autofill(options, 'channels',              []                            );
+    %options = autofill(options, 'channel',              []                            );
   case 'load1'
     %% 2.28 pspm_load1
     options = autofill(options, 'overwrite',              0,        [1, 2]              );
@@ -808,17 +808,17 @@ global settings
 if isempty(settings)
   pspm_init;
 end
-if ~isfield(options, 'channels')
-  options.channels = 'pupil';
-elseif ~iscell(options.channels) && ~ischar(options.channels) && ...
-    ~isnumeric(options.channels)
-  warning('ID:invalid_input', ['Options.channels should be a char, ', ...
+if ~isfield(options, 'channel')
+  options.channel = 'pupil';
+elseif ~iscell(options.channel) && ~ischar(options.channel) && ...
+    ~isnumeric(options.channel)
+  warning('ID:invalid_input', ['Options.channel should be a char, ', ...
     'numeric or a cell of char or numeric.']);
   options.invalid = 1;
   return;
 end
-if ~iscell(options.channels)
-  options.channels = {options.channels};
+if ~iscell(options.channel)
+  options.channel = {options.channel};
 end
 if strcmpi(options.mode,'fixation') && ~isfield(options, 'resolution')
   options.resolution = [1 1];
@@ -826,9 +826,9 @@ end
 if strcmpi(options.mode,'fixation') && ~isfield(options, 'fixation_point')
   options.resolution = [0.5 0.5];
 end
-if iscell(options.channels) && any(~cellfun(@(x) isnumeric(x) || ...
-    any(strcmpi(x, settings.findvalidfixations.channeltypes)), options.channels))
-  warning('ID:invalid_input', 'Option.channels contains invalid values.');
+if iscell(options.channel) && any(~cellfun(@(x) isnumeric(x) || ...
+    any(strcmpi(x, settings.findvalidfixations.channeltypes)), options.channel))
+  warning('ID:invalid_input', 'Option.channel contains invalid values.');
   options.invalid = 1;
   return;
 elseif strcmpi(options.mode,'fixation') && isfield(options, 'fixation_point') && ...

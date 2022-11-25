@@ -11,7 +11,7 @@ function [ sts, out ] = pspm_convert_visangle2sps(fn, options)
 %                 fn: The actual data file containing the eyelink
 %                     recording with gaze data
 %   ┌────────options: struct with following fields
-%   ├──────.channels: On which subset of the channels the visual
+%   ├───────.channel: On which subset of the channels the visual
 %   │                 angles between the data point should be
 %   │                 computed             .
 %   │                 If no channels are given then the function
@@ -42,28 +42,8 @@ sts = -1;
 if nargin<1
   warning('ID:invalid_input', 'Nothing to do.'); return
 elseif nargin<2
-  channels = 0;
+  channel = 0;
 end
-% if isfield(options, 'channels')
-%   channels = options.channels;
-%   if ~isnumeric(channels)
-%     warning('ID:invalid_input', 'Channels must be defined by their id.');
-%     return
-%   end
-% else
-%   channels = 0;
-% end
-% option.eyes
-% if ~isfield(options, 'eyes')
-%   options.eyes = settings.lateral.char.b;
-% elseif ~any(strcmpi(options.eyes, {settings.lateral.char.l,...
-%     settings.lateral.char.r,...
-%     settings.lateral.char.b}))
-%   warning('ID:invalid_input', ['''options.eyes'' must be either ''l'', ', ...
-%     '''r'', ''c''.']);
-%   return;
-% end;
-% option.channel_action
 options = pspm_options(options, 'convert_visangle2sps');
 if options.invalid
   return
@@ -74,7 +54,7 @@ if ~ischar(fn) || ~exist(fn, 'file')
     'seem to exist.'], fn); return
 end
 %% load data to evaluate
-[lsts, infos, data] = pspm_load_data(fn, channels);
+[lsts, infos, data] = pspm_load_data(fn, channel);
 if lsts ~= 1
   warning('ID:invalid_input', 'Could not load input data correctly.');
   return

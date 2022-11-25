@@ -124,7 +124,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       options.resolution = [1280 1024];
       options.fixation_point = [1280/4 1024*3/4];
       options.overwrite = 1;
-      options.channels = work_chans;
+      options.channel = work_chans;
       options.channel_action = 'add';
       [~,~, o_data] = pspm_load_data(fn);
       [sts, outfile] = this.verifyWarningFree(@() ...
@@ -443,7 +443,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       this.verifyWarning(@() pspm_find_valid_fixations(fn, box_degree, ...
         dist, dist_unit, options), 'ID:invalid_input');
       options.eyes = 'combined';
-      options.channels = 'abc';
+      options.channel = 'abc';
       this.verifyWarning(@() pspm_find_valid_fixations(fn, box_degree, ...
         dist, dist_unit, options), 'ID:invalid_input');
     end
