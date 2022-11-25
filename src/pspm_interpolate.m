@@ -30,9 +30,9 @@ function [sts, outdata] = pspm_interpolate(varargin)
 %   ├─.extrapolate: Determine should extrapolate for data out of the data
 %   │               range.
 %   │               [optional; not recommended; accept: 1, 0; default: 0]
-%   ├────.channels: If passed, should have the same size as indata and
+%   ├─────.channel: If passed, should have the same size as indata and
 %   │               contains for each entry in indata the channel(s) to
-%   │               be interpolated. If options.channels is empty or a
+%   │               be interpolated. If options.channel is empty or a
 %   │               certain cell is empty the function then tries to
 %   │               interpolate all continuous data channels. This
 %   │               works only on files or structs.
@@ -91,26 +91,26 @@ if options.invalid
   return
 end
 % try options.method; catch, options.method = 'linear'; end
-try options.channels; catch, options.channels = []; end
+try options.channel; catch, options.channel = []; end
 % try options.newfile; catch, options.newfile = 0; end
 %try options.extrapolate; catch, options.extrapolate = 0; end
 % 1.3 check channel size
-if numel(options.channels) > 0
-  if numel(options.channels) ~= numel(indata)
-    warning('ID:invalid_size', 'options.channels must have same size as indata');
+if numel(options.channel) > 0
+  if numel(options.channel) ~= numel(indata)
+    warning('ID:invalid_size', 'options.channel must have same size as indata');
     return;
-  elseif (numel(options.channels) == 1) && ~iscell(options.channels)
-    options.channels = {options.channels};
+  elseif (numel(options.channel) == 1) && ~iscell(options.channel)
+    options.channel = {options.channel};
   end
 end
 % 1.4 check if valid data in options
 if ~ismember(options.method, {'linear', 'nearest', 'next', 'previous', 'spline', 'pchip', 'cubic'})
   warning('ID:invalid_input', 'Invalid interpolation method.');
   return;
-elseif ~(isnumeric(options.channels) || isempty(options.channels) || ...
-    (iscell(options.channels) && sum(cellfun(@(f) (isnumeric(f) || ...
-    isempty(f)), options.channels)) == numel(options.channels)))
-  warning('ID:invalid_input', 'options.channels must be numeric or a cell of numerics');
+elseif ~(isnumeric(options.channel) || isempty(options.channel) || ...
+    (iscell(options.channel) && sum(cellfun(@(f) (isnumeric(f) || ...
+    isempty(f)), options.channel)) == numel(options.channel)))
+  warning('ID:invalid_input', 'options.channel must be numeric or a cell of numerics');
   return;
 elseif ~islogical(options.newfile) && ~isnumeric(options.newfile)
   warning('ID:invalid_input', 'options.newfile must be numeric or logical');
@@ -164,34 +164,34 @@ for d = 1:numel(D)
       outdata = {};
       break;
     end
-    if numel(options.channels) > 0 && numel(options.channels{d}) > 0
-      % channels passed; try to get appropriate channels
-      work_channels = options.channels{d};
-      channels = data(work_channels);
+    if numel(options.channel) > 0 && numel(options.channel{d}) > 0
+      % channel passed; try to get appropriate channel
+      work_channels = options.channel{d};
+      channel = data(work_channels);
     else
-      % no channels passed; try to search appropriate channels
+      % no channel passed; try to search appropriate channel
       work_channels = find(cellfun(@(f) ~strcmpi(f.header.units, 'events'), data))';
-      channels = data(work_channels);
+      channel = data(work_channels);
     end
-    % sanity check channels should be a cell
-    if ~iscell(channels) && numel(channels) == 1
-      channels = {channels};
+    % sanity check channel should be a cell
+    if ~iscell(channel) && numel(channel) == 1
+      channel = {channel};
     end
-    % look for event channels
-    ev = cellfun(@(f) strcmpi(f.header.units, 'events'), channels);
+    % look for event channel
+    ev = cellfun(@(f) strcmpi(f.header.units, 'events'), channel);
     if any(ev)
-      warning('ID:invalid_channeltype', 'Cannot interpolate event channels.');
+      warning('ID:invalid_channeltype', 'Cannot interpolate event channel.');
       return;
     end
   else
-    channels = {fn};
+    channel = {fn};
   end
-  interp_frac = ones(numel(channels), 1);
-  for k = 1:numel(channels)
+  interp_frac = ones(numel(channel), 1);
+  for k = 1:numel(channel)
     if inline_flag
-      dat = channels{k};
+      dat = channel{k};
     else
-      dat = channels{k}.data;
+      dat = channel{k}.data;
     end
     if numel(find(~isnan(dat))) < 2
       warning('ID:invalid_input',...
@@ -239,16 +239,16 @@ for d = 1:numel(D)
       end
       dat(xq) = vq;
       if inline_flag
-        channels{k} = dat;
+        channel{k} = dat;
       else
-        channels{k}.data = dat;
+        channel{k}.data = dat;
       end
     end
   end
   if ~inline_flag
     clear savedata
     savedata.data = data;
-    savedata.data(work_channels) = channels(:);
+    savedata.data(work_channels) = channel(:);
     savedata.infos = infos;
     if isfield(savedata.infos, 'history')
       nhist = numel(savedata.infos.history);
@@ -288,7 +288,7 @@ for d = 1:numel(D)
       end
     end
   else
-    outdata{d} = channels{1};
+    outdata{d} = channel{1};
   end
   if ischar(fn)
     fprintf('done.')
