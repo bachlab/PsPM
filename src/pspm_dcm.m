@@ -61,7 +61,7 @@ function dcm = pspm_dcm(model, options)
 %		┌────options:
 %		│ ▶︎ Response function
 % 	├─.crfupdate: Update CRF priors to observed SCRF, or use pre-estimated
-%		│             priors (default)
+%		│             priors (default). Default as 0, optional as 1.
 % 	├─────.indrf:	Estimate the response function from the data.
 %		│             Default: 0.
 % 	├─────.getrf:	Only estimate RF, do not do trial-wise DCM

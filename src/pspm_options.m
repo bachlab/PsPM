@@ -38,17 +38,17 @@ text_optional_channel_invalid_char = 'options.channel is not a valid channel typ
 switch FunName
   case 'blink_saccade_filt'
     %% 2.1 pspm_blink_saccade_filt
-    options = autofill(options, 'channel',                0,          '@anynumeric'     );
     options = autofill_channel_action(options);
+    options = autofill(options, 'channel',                0,          '@anynumeric'     );
   case 'compute_visual_angle_core'
     %% 2.2 pspm_compute_visual_angle_core
     options = autofill(options, 'interpolate',            0,          1                 );
   case 'compute_visual_angle'
     %% 2.3 pspm_compute_visual_angle
+    options = autofill_channel_action(options);
     options = autofill(options, 'eyes',                   settings.lateral.char.b,...
                                                           {settings.lateral.char.l,...
                                                           settings.lateral.char.r}      );
-    options = autofill_channel_action(options);
   case 'con1'
     %% 2.4 pspm_con1
     options = autofill(options, 'zscored',                0,          1                 );
@@ -65,11 +65,11 @@ switch FunName
     %% 2.8 pspm_convert_ecg2hb
     options = autofill_channel_action(options, 'replace');
     options = autofill(options, 'debugmode',              0,          1                 ); % can be merged into development mode?
-    options = autofill(options, 'semi',                   0,          1                 ); % semi==1 will pop a dialog
     options = autofill(options, 'maxHR',                  200,        '>', 20           ); % field: maxHR (bpm)
     options = autofill(options, 'minHR',                  20,         '<', 200          ); % field: minHR (bpm)
-    options = autofill(options, 'twthresh',               0.36,       '@anynumeric'     );
     options = autofill(options, 'outfact',                2,          '@anynumeric'     );
+    options = autofill(options, 'semi',                   0,          1                 ); % semi==1 will pop a dialog
+    options = autofill(options, 'twthresh',               0.36,       '@anynumeric'     );
     if options.maxHR < options.minHR
       warning('ID:invalid_input', ...
         ['''options.minHR'' and ''options.maxHR'' ', ...
@@ -80,15 +80,15 @@ switch FunName
     end
   case 'convert_ecg2hb_amri'
     %% 2.9 pspm_convert_ecg2hb_amri
+    options = autofill_channel_action(options);
     options = autofill(options, 'channel',                'ecg'                         );
-    options = autofill(options, 'signal_to_use',          'auto',   {'ecg', 'teo'}      );
-    options = autofill(options, 'hrrange',                [20 200], '>', 0              );
     options = autofill(options, 'ecg_bandpass',           [0.5 40], '>', 0              );
-    options = autofill(options, 'teo_bandpass',           [8 40],   '>', 0              );
-    options = autofill(options, 'teo_order',              1,        '>', 0              );
+    options = autofill(options, 'hrrange',                [20 200], '>', 0              );
     options = autofill(options, 'min_cross_corr',         0.5,      '@anynumeric'       );
     options = autofill(options, 'min_relative_amplitude', 0.4,      '@anynumeric'       );
-    options = autofill_channel_action(options);
+    options = autofill(options, 'signal_to_use',          'auto',   {'ecg', 'teo'}      );
+    options = autofill(options, 'teo_bandpass',           [8 40],   '>', 0              );
+    options = autofill(options, 'teo_order',              1,        '>', 0              );
   case 'convert_gaze_distance'
     %% 2.10 pspm_convert_gaze_distance
     options = autofill_channel_action(options);
@@ -120,42 +120,44 @@ switch FunName
     options = autofill(options, 'overwrite',              0,        [1, 2]);
   case 'dcm'
     %% 2.16 pspm_dcm
-    options = autofill(options, 'indrf',                  0,        '@anynumeric'       ); % Estimate the response function from the data
-    options = autofill(options, 'getrf',                  0,        '@anynumeric'       ); % only estimate RF, do not do trial-wise DCM
-    options = autofill(options, 'rf',                     0,        '@anynumeric'       ); % Call an external file to provide response function (for use when this is previously estimated by pspm_get_rf)
-    options = autofill(options, 'nosave',                 0,        '@anynumeric'       ); % Don't save dcm structure (e.g. used by pspm_get_rf)
-    options = autofill(options, 'depth',                  2,        '@anynumeric'       ); % no of trials to invert at the same time
     options = autofill(options, 'aSCR_sigma_offset',      0.1,      '@anynumeric'       ); % minimum dispersion (standard deviation) for flexible responses (second)
-    options = autofill(options, 'sclpre',                 2,        '@anynumeric'       ); % scl-change-free window before first event (second)
-    options = autofill(options, 'sclpost',                5,        '@anynumeric'       ); % scl-change-free window after last event (second)
-    options = autofill(options, 'sfpre',                  2,        '@anynumeric'       ); % sf-free window before first event (second)
-    options = autofill(options, 'sfpost',                 5,        '@anynumeric'       ); % sf-free window after last event (second)
-    options = autofill(options, 'sffreq',                 0.5,      '@anynumeric'       ); % maximum frequency of SF in ITIs (Hz)
-    options = autofill(options, 'method',                 'dcm'                         );
-    options = autofill(options, 'dispwin',                1,        '@anynumeric'       );
-    options = autofill(options, 'dispsmallwin',           0,        '@anynumeric'       );
     options = autofill(options, 'crfupdate',              0,        '@anynumeric'       ); % update CRF priors to observed SCRF, or use pre-estimated priors
+    options = autofill(options, 'crfupdate',              0,        1                   );
+    options = autofill(options, 'depth',                  2,        '@anynumeric'       ); % no of trials to invert at the same time
+    options = autofill(options, 'dispsmallwin',           0,        '@anynumeric'       );
+    options = autofill(options, 'dispwin',                1,        0                   );
     options = autofill(options, 'eventnames',           	{}                            ); % Cell array of names for individual events
-    options = autofill(options, 'trlnames',               {}                            ); % Cell array of names for individual trials, is used for contrast manager only (e.g. condition descriptions)
+    options = autofill(options, 'getrf',                  0,        1                   ); % only estimate RF, do not do trial-wise DCM
+    options = autofill(options, 'indrf',                  0,        1                   ); % Estimate the response function from the data
+    options = autofill(options, 'method',                 'dcm'                         );
+    options = autofill(options, 'nosave',                 0,        '@anynumeric'       ); % Don't save dcm structure (e.g. used by pspm_get_rf)
     options = autofill(options, 'overwrite',              1,        [0, 2]              );
+    options = autofill(options, 'rf',                     0,        '@anynumeric'       ); % Call an external file to provide response function (for use when this is previously estimated by pspm_get_rf)
+    options = autofill(options, 'sclpost',                5,        '@anynumeric'       ); % scl-change-free window after last event (second)
+    options = autofill(options, 'sclpre',                 2,        '@anynumeric'       ); % scl-change-free window before first event (second)
+    options = autofill(options, 'sffreq',                 0.5,      '@anynumeric'       ); % maximum frequency of SF in ITIs (Hz)
+    options = autofill(options, 'sfpost',                 5,        '@anynumeric'       ); % sf-free window after last event (second)
+    options = autofill(options, 'sfpre',                  2,        '@anynumeric'       ); % sf-free window before first event (second)
+    options = autofill(options, 'trlnames',               {}                            ); % Cell array of names for individual trials, is used for contrast manager only (e.g. condition descriptions)
   case 'dcm_inv'
     %% 2.17 pspm_dcm_inv
-    options = autofill(options, 'eSCR',                   0,        '@anynumeric'       ); % contains the data to estimate RF from
     options = autofill(options, 'aSCR_sigma_offset',      0.1,      '@anynumeric'       ); % minimum dispersion (standard deviation) for flexible responses (second)
     options = autofill(options, 'aSCR',                   0,        '@anynumeric'       ); % contains the data to adjust the RF to
-    options = autofill(options, 'meanSCR',                0,        '@anynumeric'       ); % data to adjust the response amplitude priors to
+    options = autofill(options, 'crfupdate',              0,        '@anynumeric'       ); % update CRF priors to observed SCRF, or use pre-estimated priors, default to use pre-estimated priors
+    options = autofill(options, 'crfupdate',              0,        1                   );
     options = autofill(options, 'depth',                  2,        '@anynumeric'       ); % no of trials to invert at the same time
     options = autofill(options, 'dispsmallwin',           0,        '@anynumeric'       );
-    options = autofill(options, 'dispwin',                1,        '@anynumeric'       );
-    options = autofill(options, 'sfpre',                  2,        '@anynumeric'       ); % sf-free window before first event (second)
-    options = autofill(options, 'sfpost',                 5,        '@anynumeric'       ); % sf-free window after last event (second)
-    options = autofill(options, 'sffreq',                 0.5,      '@anynumeric'       ); % maximum frequency of SF in ITIs (Hz)
-    options = autofill(options, 'sclpre',                 2.5,      '@anynumeric'       ); % scl-change-free window before first event, avoid overlap of last SCL change with next trial (second)
-    options = autofill(options, 'sclpost',                2,        '@anynumeric'       ); % scl-change-free window after last event (second)
-    options = autofill(options, 'crfupdate',              0,        '@anynumeric'       ); % update CRF priors to observed SCRF, or use pre-estimated priors, default to use pre-estimated priors
-    options = autofill(options, 'getrf',                  0,        '@anynumeric'       ); % only estimate RF, do not do trial-wise DCM
+    options = autofill(options, 'dispwin',                1,        0                   );
+    options = autofill(options, 'eSCR',                   0,        '@anynumeric'       ); % contains the data to estimate RF from
+    options = autofill(options, 'getrf',                  0,        1                   ); % only estimate RF, do not do trial-wise DCM
+    options = autofill(options, 'meanSCR',                0,        '@anynumeric'       ); % data to adjust the response amplitude priors to
     options = autofill(options, 'overwrite',              1,        [0, 2]              );
-    % options = autofill(options, 'fixevents', ?); % fixed events to adjust amplitude priors
+    options = autofill(options, 'sclpost',                2,        '@anynumeric'       ); % scl-change-free window after last event (second)
+    options = autofill(options, 'sclpre',                 2.5,      '@anynumeric'       ); % scl-change-free window before first event, avoid overlap of last SCL change with next trial (second)
+    options = autofill(options, 'sffreq',                 0.5,      '@anynumeric'       ); % maximum frequency of SF in ITIs (Hz)
+    options = autofill(options, 'sfpost',                 5,        '@anynumeric'       ); % sf-free window after last event (second)
+    options = autofill(options, 'sfpre',                  2,        '@anynumeric'       ); % sf-free window before first event (second)
+    % options = autofill(options, 'fixevents', ?); % fixed events tßo adjust amplitude priors
     % options = autofill(options, 'flexevents', ?); % flexible events to adjust amplitude priors
     % options = autofill(options, 'missing', ?); % data points to be disregarded by inversion
     % options = autofill(options, 'rf', ?); % use pre-specified RF, provided in file, or as 4-element vector in log parameter space
@@ -164,22 +166,22 @@ switch FunName
     options = autofill(options, 'overwrite',              1,        [0, 2]              );
   case 'emg_pp'
     %% 2.19 pspm_emg_pp
+    options = autofill_channel_action(options,            'replace','add'               );
     options = autofill(options, 'channel',                'emg',    '@anychar'          );
     options = autofill(options, 'mains_freq',             50,       '@anynumeric'       );
-    options = autofill_channel_action(options,            'replace','add'               );
   case 'exp'
     %% 2.20 pspm_exp
-    options = autofill(options, 'target',                 'screen', '@anychar'          );
-    options = autofill(options, 'statstype',              'param',  {'cond', 'recon'}   );
     options = autofill(options, 'delim',                  '\t'                          );
     options = autofill(options, 'exclude_missing',        0,        1                   );
+    options = autofill(options, 'statstype',              'param',  {'cond', 'recon'}   );
+    options = autofill(options, 'target',                 'screen', '@anychar'          );
   case 'extract_segments'
     %% 2.21 pspm_extract_segments
-    options = autofill(options, 'norm',                   0,        1                   );
-    options = autofill(options, 'plot',                   0,        1                   );
-    options = autofill(options, 'overwrite',              0,        [1, 2]              );
     options = autofill(options, 'length',                 -1,       '@anynumeric'       );
+    options = autofill(options, 'norm',                   0,        1                   );
     options = autofill(options, 'outputfile',             '',       '@anychar'          );
+    options = autofill(options, 'overwrite',              0,        [1, 2]              );
+    options = autofill(options, 'plot',                   0,        1                   );
     options = autofill(options, 'timeunit',               'seconds',{'seconds', ...
                                                                     'samples',...
                                                                     'markers'}          );
@@ -189,25 +191,25 @@ switch FunName
     options = autofill_channel_action(options,            'none',   {'add','replace'}   );
     options = autofill(options, 'channel_output',         'all',    'corrected'         );
     options = autofill(options, 'diagnostics',            1,        0                   );
+    options = autofill(options, 'expectedSoundCount',     0,        '@anyinteger'       );
     options = autofill(options, 'maxdelay',               3,        '>=',  0            );
     options = autofill(options, 'mindelay',               0,        '>=',  0            );
-    options = autofill(options, 'threshold',              0.1,      '>=',  0            );
-    options = autofill(options, 'sndchannel',             0,        '@anyinteger'       );
-    options = autofill(options, 'trigchannel',            0,        '@anyinteger'       );
-    options = autofill(options, 'resample',               1,        '@anyinteger'       );
     options = autofill(options, 'plot',                   0,        1                   );
+    options = autofill(options, 'resample',               1,        '@anyinteger'       );
     options = autofill(options, 'snd_in_snd',             0,        1                   );
-    options = autofill(options, 'expectedSoundCount',     0,        '@anyinteger'       );
+    options = autofill(options, 'sndchannel',             0,        '@anyinteger'       );
+    options = autofill(options, 'threshold',              0.1,      '>=',  0            );
+    options = autofill(options, 'trigchannel',            0,        '@anyinteger'       );
     options = fill_find_sounds(options);
   case 'find_valid_fixations'
     %% 2.21 pspm_find_valid_fixations
     options = autofill_channel_action(options);
-    options = autofill(options, 'missing',                0,        1                   );
-    options = autofill(options, 'newfile',                '',       '@anychar'          );
-    options = autofill(options, 'plot_gaze_coords',       0,        1                   );
     options = autofill(options, 'eyes',                   settings.lateral.full.c, ...
                                                           {settings.lateral.full.l, ...
                                                           settings.lateral.full.r}      );
+    options = autofill(options, 'missing',                0,        1                   );
+    options = autofill(options, 'newfile',                '',       '@anychar'          );
+    options = autofill(options, 'plot_gaze_coords',       0,        1                   );
     options = fill_find_valid_fixations(options);
   case 'gaze_pp'
     %% 2.22 pspm_gaze_pp
@@ -218,27 +220,29 @@ switch FunName
                                                                     'gaze_x_r',...
                                                                     'gaze_y_l',...
                                                                     'gaze_y_r'}         );
+    options = autofill(options, 'plot_data',              false                         );
     options = autofill(options, 'segments',               {}                            );
     options = autofill(options, 'valid_sample',           0,        1                   );
-    options = autofill(options, 'plot_data',              false                         );
     options = autofill_channel_action(options,            'add',    {'replace',...
                                                                     'none'}             );
   case 'get_markerinfo'
     %% 2.23 pspm_get_markerinfo
-    options = autofill(options, 'markerchan',             -1,       '@anyinteger'       );
     options = autofill(options, 'filename',               '',       '@anychar'          );
+    options = autofill(options, 'markerchan',             -1,       '@anyinteger'       );
     options = autofill(options, 'overwrite',              0,        [1, 2]              );
   case 'get_rf'
     %% 2.24 pspm_get_rf
+    options = autofill(options, 'crfupdate',              0,        1                   );
     options = autofill(options, 'getrf',                  1                             );
     options = autofill(options, 'nosave',                 1,        0                   );
+    options = autofill(options, 'indrf',                  0,        1                   );
   case 'glm'
     %% 2.25 pspm_glm
-    options = autofill(options, 'modelspec',              'scr'                         );
     options = autofill(options, 'bf',                     0,        1                   );
-    options = autofill(options, 'overwrite',              0,        [1, 2]              );
-    options = autofill(options, 'norm',                   0,        1                   );
     options = autofill(options, 'centering',              1,        0                   );
+    options = autofill(options, 'modelspec',              'scr'                         );
+    options = autofill(options, 'norm',                   0,        1                   );
+    options = autofill(options, 'overwrite',              0,        [1, 2]              );
     options = fill_glm(options);
   case 'import'
     %% 2.26 pspm_import
@@ -246,14 +250,15 @@ switch FunName
   case 'interpolate'
     %% 2.27 pspm_interpolate
     options = autofill_channel_action(options);
-    options = autofill(options, 'overwrite',              0,        [1, 2]              );
+    options = autofill(options, 'extrapolate',            0,        1                   );
     options = autofill(options, 'method',                 'linear', {'pchip',...
                                                                     'nearest', ...
                                                                     'spline', ...
                                                                     'previous', ...
                                                                     'next'}             );
-    options = autofill(options, 'extrapolate',            0,        1                   );
+
     options = autofill(options, 'newfile',                0,        1                   );
+    options = autofill(options, 'overwrite',              0,        [1, 2]              );
     %options = autofill(options, 'channel',              []                            );
   case 'load1'
     %% 2.28 pspm_load1
@@ -271,34 +276,35 @@ switch FunName
     options = autofill(options, 'overwrite',              0,        [1, 2]              );
   case 'process_illuminance'
     %% 2.32 pspm_process_illuminance
-    options = autofill(options, 'overwrite',              0,        [1, 2]              );
-    options = autofill(options, 'transfer',[49.79,-1.05,-0.50],     '@anynumeric'       );
     options = autofill(options, 'bf',                     struct(), '@anystruct'        );
     options = autofill(options, 'fn',                     '',       '@anychar'          );
+    options = autofill(options, 'overwrite',              0,        [1, 2]              );
+    options = autofill(options, 'transfer',[49.79,-1.05,-0.50],     '@anynumeric'       );
+    options.bf = autofill(options.bf,   'constriction',   struct(), '@anystruct'        );
+    options.bf = autofill(options.bf,   'dilation',       struct(), '@anystruct'        );
     options.bf = autofill(options.bf,   'duration',       20,       '>=',  0            );
     options.bf = autofill(options.bf,   'offset',         0.2,      '>=',  0            );
-    options.bf = autofill(options.bf,   'dilation',       struct(), '@anystruct'        );
-    options.bf = autofill(options.bf,   'constriction',   struct(), '@anystruct'        );
-    options.bf.dilation     = autofill(options.bf.dilation,     'fhandle', @pspm_bf_ldrf_gm);
     options.bf.constriction = autofill(options.bf.constriction, 'fhandle', @pspm_bf_lcrf_gm);
+    options.bf.dilation     = autofill(options.bf.dilation,     'fhandle', @pspm_bf_ldrf_gm);
   case 'pupil_correct_eyelink'
     %% 2.33 pspm_pupil_correct_eyelink
     options = autofill_channel_action(options);
-    options = autofill(options, 'mode',                   'auto',   'manual'            );
     options = autofill(options, 'C_x',                    0,        '@anynumeric'       );
     options = autofill(options, 'C_y',                    0,        '@anynumeric'       );
     options = autofill(options, 'C_z',                    0,        '@anynumeric'       );
+    options = autofill(options, 'channel',                'pupil',  '@anychar'          );
+    options = autofill(options, 'mode',                   'auto',   'manual'            );
     options = autofill(options, 'S_x',                    0,        '@anynumeric'       );
     options = autofill(options, 'S_y',                    0,        '@anynumeric'       );
     options = autofill(options, 'S_z',                    0,        '@anynumeric'       );
-    options = autofill(options, 'channel',                'pupil',  '@anychar'          );
     % screen_size_mm
     % screen_size_px
   case 'pupil_pp'
     %% 2.34 pspm_pupil_pp
     options = autofill_channel_action(options);
     options = autofill(options, 'channel',                'pupil',  '@anychar'          );
-    options = autofill(options, 'channel_combine',        'none',   '@anychar'          );
+    options = autofill(options, 'channel_combine',        'none',   {'pupil_l', ...
+                                                                    'pupil_r'}          );
     options = autofill(options, 'plot_data',              0,        1                   );
     options = autofill(options, 'segments',               {},       '@anycell'          );
   case 'remove_epochs'
@@ -307,38 +313,41 @@ switch FunName
   case 'resp_pp'
     %% 2.36 pspm_resp_pp
     options = autofill_channel_action(options);
-    options = autofill(options, 'systemtype',             'bellows','cushion'           );
-    options = autofill(options, 'plot',                   0,        1                   );
-    options = autofill(options, 'diagnostics',            0,        1                   );
     options = autofill(options, 'datatype', {'rp', 'ra', 'rfr', 'rs', 'all'},...
                                                                     '@anysubset'        );
+    options = autofill(options, 'diagnostics',            0,        1                   );
+    options = autofill(options, 'plot',                   0,        1                   );
+    options = autofill(options, 'systemtype',             'bellows','cushion'           );
   case 'scr_pp'
     %% 2.37 pspm_scr_pp
     options = autofill_channel_action(options,            'add',    {'replace', ...
                                                                     'withdraw'}         );
-    options = autofill(options, 'min',                    0.05,     '@anynumeric'       );
-    options = autofill(options, 'max',                    60,       '@anynumeric'       );
-    options = autofill(options, 'slope',                  10,       '@anynumeric'       );
+    options = autofill(options, 'change_data',            1,        0                   );
+    options = autofill(options, 'clipping_n_window',      10000,    '@anyinteger'       );
+    options = autofill(options, 'clipping_step_size',     2,        '@anyinteger'       );
+    options = autofill(options, 'clipping_threshold',     0.1,      '@anynumeric'       );
+    options = autofill(options, 'data_island_threshold',  0,        '>=', 0             );
     options = autofill(options, 'deflection_threshold',   0.1,      '@anynumeric'       );
     options = autofill(options, 'expand_epochs',          0.5,      '>=', 0             );
-    options = autofill(options, 'clipping_step_size',     2,        '@anyinteger'       );
-    options = autofill(options, 'clipping_n_window',      10000,    '@anyinteger'       );
-    options = autofill(options, 'clipping_threshold',     0.1,      '@anynumeric'       );
-    options = autofill(options, 'change_data',            1,        0                   );
-    options = autofill(options, 'data_island_threshold',  0,        '>=', 0             );
+    options = autofill(options, 'max',                    60,       '@anynumeric'       );
+    options = autofill(options, 'min',                    0.05,     '@anynumeric'       );
     options = autofill(options, 'missing_epochs_filename','missing_epochs_filename',...
                                                                     '@anychar'          );
+    options = autofill(options, 'slope',                  10,       '@anynumeric'       );
   case 'segment_mean'
     % 2.38 pspm_segment_mean
+    options = autofill(options, 'adjust_method',     'none',        {'downsample', ...
+                                                                    'interpolate'}      );
     options = autofill(options, 'overwrite',              0,        [1, 2]              );
     options = autofill(options, 'newfile',               '',        '@anychar'          );
     options = autofill(options, 'plot',                   0,        1                   );
-    options = autofill(options, 'adjust_method',     'none',        {'downsample', ...
-                                                                    'interpolate'}      );
   case 'sf'
     %% 2.39 pspm_sf
-    options = autofill(options,'overwrite',               1,        [0, 2]              );
+    options = autofill(options,'dispsmallwin',            0,        1                   );
+    options = autofill(options,'dispwin',                 1,        0                   );
+    options = autofill(options,'fresp',                   0.5,      '>=', 0             );
     options = autofill(options,'marker_chan_num',         0,        '@anyinteger'       );
+    options = autofill(options,'overwrite',               1,        [0, 2]              );
     options = autofill(options,'threshold',               0.1,      '>', 0              );
     options = autofill(options,'theta',                   [0.923581, ...
                                                           3.921034, ...
@@ -346,9 +355,7 @@ switch FunName
                                                           1.5339, ...
                                                           1.6411756741, ...
                                                           ],        '@anynumeric'       );
-    options = autofill(options,'fresp',                   0.5,      '>=', 0             );
-    options = autofill(options,'dispwin',                 1,        0                   );
-    options = autofill(options,'dispsmallwin',            0,        1                   );
+
   case 'sf_dcm'
     % 2.40 pspm_sf_dcm
     options = autofill(options,'dispwin',                 1,        0                   );
@@ -369,22 +376,23 @@ switch FunName
                                                           ],        '@anynumeric'       );
   case 'split_sessions'
     %% 2.42 pspm_split_sessions
-    options = autofill(options, 'overwrite',              0,        [1, 2]              );
-    options = autofill(options, 'prefix',                 0,        '<=', 0             );
-    options = autofill(options, 'suffix',                 0,        '>=', 0             );
-    options = autofill(options, 'verbose',                1,        0                   );
-    options = autofill(options, 'splitpoints',           [],        '@anynumeric'       );
-    options = autofill(options, 'missing',                0,        '@anychar'          );
-    options = autofill(options, 'randomITI',              0,        1                   );
     options = autofill(options, 'max_sn',                 settings.split.max_sn,...
                                                                     '>', 0              ); % maximum number of sessions (default 10)
     options = autofill(options, 'min_break_ratio',        settings.split.min_break_ratio,...
                                                                     '>', 0              ); % minimum ratio of session break to normal inter marker interval (default 3)
+    options = autofill(options, 'missing',                0,        '@anychar'          );
+    options = autofill(options, 'overwrite',              0,        [1, 2]              );
+    options = autofill(options, 'prefix',                 0,        '<=', 0             );
+    options = autofill(options, 'randomITI',              0,        1                   );
+    options = autofill(options, 'splitpoints',           [],        '@anynumeric'       );
+    options = autofill(options, 'suffix',                 0,        '>=', 0             );
+    options = autofill(options, 'verbose',                1,        0                   );
+
   case 'trim'
     %% 2.43 pspm_trim
-    options = autofill(options, 'overwrite',              0,        [1, 2]              );
-    options = autofill(options, 'marker_chan_num',        0,        '@anyinteger'       );
     options = autofill(options, 'drop_offset_markers',    0,        '@anyinteger'       );
+    options = autofill(options, 'marker_chan_num',        0,        '@anyinteger'       );
+    options = autofill(options, 'overwrite',              0,        [1, 2]              );
   case 'write_channel'
     %% 2.44 pspm_write_channel
     options = autofill(options, 'delete',            'last',        {'first','all'}     );
