@@ -95,8 +95,16 @@ switch FunName
   case 'convert_hb2hp'
     %% 2.11 pspm_convert_hb2hp
     options = autofill_channel_action(options, 'replace');
-    options = autofill(options, 'limit.lower',            0.2,      '@anynumeric'       );
-    options = autofill(options, 'limit.upper',            2,        '@anynumeric'       );
+    options = autofill(options, 'limit.lower',            0.2,      '>', 0              );
+    options = autofill(options, 'limit.upper',            2,        '>', 0              );
+    if options.limit.upper < options.limit.lower
+      warning('ID:invalid_input', ...
+        ['''options.limit.lower'' and ''options.limit.upper'' ', ...
+        'must be positive numeric and ''options.limit.lower'' must be ', ...
+        'smaller than ''options.limit.upper''.']);
+      options.invalid = 1;
+      return
+    end
   case 'convert_pixel2unit'
     %% 2.12 pspm_convert_pixel2unit
     options = autofill_channel_action(options);
@@ -242,7 +250,7 @@ switch FunName
     options = autofill(options, 'centering',              1,        0                   );
     options = autofill(options, 'norm',                   0,        1                   );
     options = autofill(options, 'overwrite',              0,        [1, 2]              );
-    options = autofill(options, 'marker_chan_num',        1,        '@anynumeric'       );
+    % options = autofill(options, 'marker_chan_num',        1,        '@anynumeric'       );
     options = fill_glm(options);
   case 'import'
     %% 2.26 pspm_import
