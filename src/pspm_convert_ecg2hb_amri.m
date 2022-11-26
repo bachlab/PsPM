@@ -64,13 +64,15 @@ function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 %   │                 [numeric, default as 0.4]
 %   │                 Minimum relative peak amplitude of a candidate
 %   │                 R-peak such that it is classified as an R-peak.
-%   ├.channel_action: ['add'/'replace'] Defines whether corrected data
-%   │                 should be added or the corresponding preprocessed
-%   │                 channel should be replaced. Note that 'replace' mode
-%   │                 does not replace the raw data channel, but a previously
-%   │                 stored heartbeat channel.
-%   │                 (Default: 'replace')
-%   └───.out_channel: Channel ID of the preprocessed output. Output will
+%   └.channel_action: ['add'/'replace'] Defines whether corrected data
+%                     should be added or the corresponding preprocessed
+%                     channel should be replaced. Note that 'replace' mode
+%                     does not replace the raw data channel, but a previously
+%                     stored heartbeat channel.
+%                     (Default: 'replace')
+% ● Outputs
+%                sts: status marker showing whether the function works normally.
+%        out_channel: Channel ID of the preprocessed output. Output will
 %                     be written to a 'heartbeat' channel to the given PsPM
 %                     file. .data field contains the timestamps of heartbeats
 %                     in seconds.

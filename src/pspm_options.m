@@ -145,7 +145,7 @@ switch FunName
     options = autofill(options, 'aSCR',                   0,        '@anynumeric'       ); % contains the data to adjust the RF to
     options = autofill(options, 'crfupdate',              0,        '@anynumeric'       ); % update CRF priors to observed SCRF, or use pre-estimated priors, default to use pre-estimated priors
     options = autofill(options, 'crfupdate',              0,        1                   );
-    options = autofill(options, 'depth',                  2,        '@anynumeric'       ); % no of trials to invert at the same time
+    options = autofill(options, 'depth',                  2,        '@anyinteger'       ); % no of trials to invert at the same time
     options = autofill(options, 'dispsmallwin',           0,        '@anynumeric'       );
     options = autofill(options, 'dispwin',                1,        0                   );
     options = autofill(options, 'eSCR',                   0,        '@anynumeric'       ); % contains the data to estimate RF from
@@ -240,9 +240,9 @@ switch FunName
     %% 2.25 pspm_glm
     options = autofill(options, 'bf',                     0,        1                   );
     options = autofill(options, 'centering',              1,        0                   );
-    options = autofill(options, 'modelspec',              'scr'                         );
     options = autofill(options, 'norm',                   0,        1                   );
     options = autofill(options, 'overwrite',              0,        [1, 2]              );
+    options = autofill(options, 'marker_chan_num',        1,        '@anynumeric'       );
     options = fill_glm(options);
   case 'import'
     %% 2.26 pspm_import
