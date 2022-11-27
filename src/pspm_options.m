@@ -70,14 +70,7 @@ switch FunName
     options = autofill(options, 'outfact',                2,          '@anynumeric'     );
     options = autofill(options, 'semi',                   0,          1                 ); % semi==1 will pop a dialog
     options = autofill(options, 'twthresh',               0.36,       '@anynumeric'     );
-    if options.maxHR < options.minHR
-      warning('ID:invalid_input', ...
-        ['''options.minHR'' and ''options.maxHR'' ', ...
-        'must be numeric and ''options.minHR'' must be ', ...
-        'smaller than ''options.maxHR''']);
-      options.invalid = 1;
-      return
-    end
+    options = check_range(options, 'minHR', 'maxHR');
   case 'convert_ecg2hb_amri'
     %% 2.9 pspm_convert_ecg2hb_amri
     options = autofill_channel_action(options);
@@ -903,6 +896,17 @@ if options.plot; options.diagnostics = true; end
 try options.roi; catch, options.roi = []; end
 if ~isempty(options.roi) && (length(options.roi) ~= 2 || ~all(isnumeric(options.roi) & options.roi >= 0))
   warning('ID:invalid_input', 'Option roi must be a float vector of length 2 or 0');
+  options.invalid = 1;
+end
+end
+
+function options = check_range(options, range_start, range_end)
+if options.(range_start) > options.(range_end)
+  warning('ID:invalid_input', ...
+  ['options.', range_start, ' and options.', range_end, ...
+  ' must be positive numeric.'
+  'options.', range_start, ' must be ', ...
+  'smaller than ''options.', range_end, '.']);
   options.invalid = 1;
 end
 end
