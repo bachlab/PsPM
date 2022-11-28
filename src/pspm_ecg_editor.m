@@ -10,7 +10,7 @@ function varargout = pspm_ecg_editor(varargin)
 %         fn:  A file to  data file containing the ecg channel to be edited
 %       channel:  Channel id of ecg channel in the data file
 % ┌──options:  A struct() of options
-% ├──────.hb:  Channel id of the existing hb channel
+% ├─.channel:  Channel id of the existing hb channel
 % ├────.semi:  Defines whether to navigate between potentially wrong hb events
 % │            only (semi = 1), or between all hb events (semi = 0 => manual
 % │            mode)
@@ -366,7 +366,7 @@ if numel(varargin) == 0 || ~isstruct(varargin{1})
   handles.options = pspm_options(handles.options, 'ecg_editor');
 
   if isfield(handles.options, 'hb')
-    handles.hb_chan = handles.options.hb;
+    handles.hb_chan = handles.options.channel;
   end
   if isfield(handles.options, 'factor')
     handles.plot.factr = handles.options.factor;

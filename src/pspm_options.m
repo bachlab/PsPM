@@ -99,7 +99,7 @@ switch FunName
     options = autofill_channel_action(options, 'replace');
     options = autofill(options, 'channel',                'ppg2hb', '@anychar'          );
     options = autofill(options, 'diagnostics',            0,        1                   );
-    options = autofill(options, 'lsm',                    0                             );
+    options = autofill(options, 'lsm',                    0,        [0,100-10^-10]      );
   case 'convert_visangle2sps'
     %% 2.14 pspm_convert_visangle2sps
     options = autofill_channel_action(options);
@@ -162,21 +162,22 @@ switch FunName
     %% 2.19 pspm_down
     options = autofill(options, 'factor',                 1,        '>', 0              );
     options = autofill(options, 'semi',                   0,        1                   );
-    options = autofill(options, 'channel',                '@anychar'                    );
+    options = autofill(options, 'channel',                [],       '@anychar'          );
+    options = autofill(options, 'artefact',               [],       '@anychar'          );
   case 'emg_pp'
     %% 2.20 pspm_emg_pp
     options = autofill_channel_action(options,            'replace','add'               );
     options = autofill(options, 'channel',                'emg',    '@anychar'          );
-    options = autofill(options, 'mains_freq',             50,       '@anynumeric'       );
+    options = autofill(options, 'mains_freq',             50,       '>', 0              );
   case 'exp'
     %% 2.21 pspm_exp
-    options = autofill(options, 'delim',                  '\t'                          );
+    options = autofill(options, 'delim',                  '\t',     '@anychar'          );
     options = autofill(options, 'exclude_missing',        0,        1                   );
     options = autofill(options, 'statstype',              'param',  {'cond', 'recon'}   );
     options = autofill(options, 'target',                 'screen', '@anychar'          );
   case 'extract_segments'
     %% 2.22 pspm_extract_segments
-    options = autofill(options, 'length',                 -1,       '@anynumeric'       );
+    options = autofill(options, 'length',                 -1,       '>', 1              );
     options = autofill(options, 'norm',                   0,        1                   );
     options = autofill(options, 'outputfile',             '',       '@anychar'          );
     options = autofill(options, 'overwrite',              0,        [1, 2]              );
@@ -296,8 +297,8 @@ switch FunName
     options = autofill(options, 'S_x',                    0,        '@anynumeric'       );
     options = autofill(options, 'S_y',                    0,        '@anynumeric'       );
     options = autofill(options, 'S_z',                    0,        '@anynumeric'       );
-    % screen_size_mm
-    % screen_size_px
+    options = autofill(options, 'screen_size_mm'         10,        '>', 0              );
+    options = autofill(options, 'screen_size_px'        100,        '>', 0              );
   case 'pupil_pp'
     %% 2.37 pspm_pupil_pp
     options = autofill_channel_action(options);
@@ -354,13 +355,18 @@ switch FunName
                                                           1.5339, ...
                                                           1.6411756741, ...
                                                           ],        '@anynumeric'       );
-
   case 'sf_dcm'
     % 2.43 pspm_sf_dcm
     options = autofill(options,'dispwin',                 1,        0                   );
     options = autofill(options,'dispsmallwin',            0,        1                   );
     options = autofill(options,'fresp',                 0.5,        '>', 0              );
     options = autofill(options,'threshold',             0.1,        '>', 0              );
+    options = autofill(options,'theta',                   [0.923581, ...
+                                                          3.921034, ...
+                                                          2.159389, ...
+                                                          1.5339, ...
+                                                          1.6411756741, ...
+                                                          ],        '@anynumeric'       );
   case 'sf_mp'
     % 2.44 pspm_sf_mp
     options = autofill(options,'diagnostics',             0,        1                   );
