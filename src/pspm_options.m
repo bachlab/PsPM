@@ -132,7 +132,7 @@ switch FunName
     options = autofill(options, 'sffreq',                 0.5,      '@anynumeric'       ); % maximum frequency of SF in ITIs (Hz)
     options = autofill(options, 'sfpost',                 5,        '@anynumeric'       ); % sf-free window after last event (second)
     options = autofill(options, 'sfpre',                  2,        '@anynumeric'       ); % sf-free window before first event (second)
-    options = autofill(options, 'trlnames',               {}                            ); % Cell array of names for individual trials, is used for contrast manager only (e.g. condition descriptions)
+    options = autofill(options, 'trlnames',               {},       '@anycellchar'      ); % Cell array of names for individual trials, is used for contrast manager only (e.g. condition descriptions)
   case 'dcm_inv'
     %% 2.17 pspm_dcm_inv
     options = autofill(options, 'aSCR_sigma_offset',      0.1,      '@anynumeric'       ); % minimum dispersion (standard deviation) for flexible responses (second)
@@ -236,6 +236,8 @@ switch FunName
     options = autofill(options, 'getrf',                  1                             );
     options = autofill(options, 'nosave',                 1,        0                   );
     options = autofill(options, 'indrf',                  0,        1                   );
+    options = autofill(options, 'rf',                     0,        1                   );
+    options = autofill(options, 'trlnames',               {},       '@anycellchar'      );
   case 'glm'
     %% 2.28 pspm_glm
     options = autofill(options, 'bf',                     0,        1                   );
@@ -297,8 +299,10 @@ switch FunName
     options = autofill(options, 'S_x',                    0,        '@anynumeric'       );
     options = autofill(options, 'S_y',                    0,        '@anynumeric'       );
     options = autofill(options, 'S_z',                    0,        '@anynumeric'       );
-    options = autofill(options, 'screen_size_mm'         10,        '>', 0              );
-    options = autofill(options, 'screen_size_px'        100,        '>', 0              );
+    options = autofill(options, 'screen_size_mm',         [43.5,...
+                                                          29.9],    '@anynumeric'       );
+    options = autofill(options, 'screen_size_px',         [1920,...
+                                                          1080],    '@anynumeric'       );
   case 'pupil_pp'
     %% 2.37 pspm_pupil_pp
     options = autofill_channel_action(options);
@@ -509,6 +513,8 @@ switch nargin
               flag_is_allowed_value = isstruct(options.(field_name));
             elseif strcmp(optional_value, '@anysubset')
               flag_is_allowed_value = prod(ismember(options.datatype,default_value),'all');
+            elseif strcmp(optional_value, '@anycellchar')
+              flag_is_allowed_value = iscell(options.(field_name)) || ischar(options.(field_name));
             elseif strcmp(optional_value, '@any')
               flag_is_allowed_value = true;
             else
