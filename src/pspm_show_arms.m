@@ -4,12 +4,11 @@ function pspm_show_arms
 % PsPM 3.0
 % (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
-
-% v001 drb 3.11.2009 
-%global settings;
-%if isempty(settings), pspm_init; end;
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
 pf = pspm_path('CologneCoatOfArms.jpg');
 
 %pf = [settings.path, 'CologneCoatOfArms.jpg'];
@@ -18,5 +17,4 @@ figure('Position', [40 40 300 400], 'MenuBar', 'none', 'Name', 'Viva Colonia', '
 image(P);
 axis image
 axis off
-return;
-
+return

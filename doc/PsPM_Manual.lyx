@@ -103,7 +103,7 @@ PsPM: Psychophysiological Modelling
 
 \begin_layout Standard
 \align center
-Version 5.1.0
+Version 6.0.0
 \end_layout
 
 \begin_layout Standard
@@ -147,7 +147,11 @@ Dominik R Bach, Giuseppe Castegnetti, Laure Ciernik, Samuel Gerster, Saurabh
  Khemka, Christoph Korn, Samuel Maxwell, Tobias Moser, Philipp C Paulus,
  Ivan Rojkov, Matthias Staib, Yanfang Xia, Eshref Yozdemir, Dadi Zhao and
  collaborators
-\begin_inset Newline newline
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Newpage newpage
 \end_inset
 
 
@@ -6498,7 +6502,7 @@ Trigger ECG
 \begin_inset Text
 
 \begin_layout Plain Layout
-Trigger PPU
+Trigger PPG
 \end_layout
 
 \end_inset
@@ -7150,11 +7154,11 @@ Preprocess heart data
 \begin_layout Standard
 
 \shape italic
-Related function:
+Related functions:
 \shape default
  
 \family typewriter
-pspm_ecg2hb, pspm_ecg2hb_amri, pspm_hb2hp, pspm_ppu2hb
+pspm_ecg2hb, pspm_ecg2hb_amri, pspm_hb2hp, pspm_ppg2hb
 \end_layout
 
 \begin_layout Standard
@@ -12982,11 +12986,16 @@ pspm_split_sessions, pspm_trim
 Split sessions, defined by trains of markers.
  This function is most commonly used to split fMRI sessions when a (slice
  or volume) pulse from the MRI scanner has been recorded.
- The function will identify trains of markers and detect breaks in these
- marker sequences.
- The individual sessions will be written to new files with a suffix '_sn',
+ In automatic mode, the function will identify trains of markers and detect
+ breaks in these marker sequences.
+ In manual model, you can provide a vector of markers that are used to split
+ the file.
+ The individual sessions will be written to new files with a suffix ''_sn'',
  and the session number.
- You can choose a marker channel if several were recorded.
+ You can choose one datafile and, optionally, one missing epochs file, which
+ will be split at the same points.
+ By default, the function will use the first marker channel.
+ Alternatively, you can choose a marker channel number.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -12995,6 +13004,7 @@ Data File
 
 \begin_layout Standard
 Choose the data file, in which you want to split sessions.
+ The data file should be a single file, and a cell array is not allowed.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -13029,6 +13039,16 @@ Automatic: Detect sessions according to longest distances between markers.
 
 \begin_layout Itemize
 Marker: Split sessions according to given marker id's.
+\end_layout
+
+\begin_layout Subsubsection*
+Missing epoch file
+\end_layout
+
+\begin_layout Standard
+Split sessions can split the corresponding missing epoch file of the data
+ file if defined.
+ Up to one missing epoch file can be added.
 \end_layout
 
 \begin_layout Subsubsection*

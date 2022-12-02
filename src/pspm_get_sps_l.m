@@ -8,19 +8,18 @@ function [sts, data] = pspm_get_sps_l(import)
 %        import.sr: sample rate
 %
 
-global settings;
-if isempty(settings), pspm_init; end;
-
-
-
-% initialise status
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
 sts = -1;
 
 % assign sps data
 data.data = import.data(:);
 
 % add header
-data.header.chantype = 'sps_l'
+data.header.chantype = 'sps_l';
 data.header.units = import.units;
 data.header.sr = import.sr;
 data.header.range = import.range;

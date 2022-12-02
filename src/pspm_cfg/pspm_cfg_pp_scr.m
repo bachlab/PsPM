@@ -211,17 +211,36 @@ function [pp_scr] = pspm_cfg_pp_scr
     end
 
     function out = pspm_cfg_run_scr_pp(job)
-        options = struct();
-        options.mains_freq = job.options(1).mains_freq;
-        options.channel_action = job.options(1).chan_action;
-        if isfield(job.options(1).channel, 'cust_channel')
-            options.channel = job.options(1).channel(1).cust_channel;
-        elseif isfield(job.options(1).channel, 'first_channel')
-            options.channel = job.options(1).channel(1).first_channel;
+        scr_pp_datafile = job.datafile{1};
+        scr_pp_options = struct();
+        scr_pp_options.min = job.min;
+        scr_pp_options.max = job.max;
+        scr_pp_options.slope = job.slope;
+        scr_pp_options.deflection_threshold = job.deflection_threshold;
+        scr_pp_options.expand_epochs = job.expand_epochs;
+        if isfield(job.channel, 'cust_channel')
+            scr_pp_options.channel = job.channel.cust_channel;
+        elseif isfield(job.channel, 'first_channel')
+            scr_pp_options.channel = job.channel.first_channel;
         end
-        [sts, output] = pspm_scr_pp(job.datafile{1}, options);
+        scr_pp_options.clipping_step_size = job.clipping_detection.clipping_step_size;
+        scr_pp_options.clipping_threshold = job.clipping_detection.clipping_threshold;
+        if isfield(job.missing_epochs, 'write_to_file')
+            scr_pp_options.missing_epochs_filename = [job.missing_epochs.write_to_file.outdir{1},...
+                '/', job.missing_epochs.write_to_file.filename, '.mat'];
+            length_temp = length(scr_pp_options.missing_epochs_filename);
+            if length_temp > 7
+                if strcmp((scr_pp_options.missing_epochs_filename(length_temp-7: length_temp)),'.mat.mat')
+                    scr_pp_options.missing_epochs_filename(length_temp-3:length_temp) = [];
+                end
+            end
+                
+        end
+        scr_pp_options.channel_action = job.chan_action;
+        [sts, output] = pspm_scr_pp(scr_pp_datafile, scr_pp_options);
         if sts == 1
-            out = {output.channel};
+            % out = {output.channel};
+            out = output{1};
         else
             out = {-1};
         end

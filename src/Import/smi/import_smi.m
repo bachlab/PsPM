@@ -42,6 +42,8 @@ function [data] = import_smi(varargin)
     %__________________________________________________________________________
     %
     % (C) 2019 Laure Ciernik
+    % Updated 2021 Teddy Chao
+    
     if isempty(varargin)
         error('ID:invalid_input', 'import_SMI.m needs at least one input sample_file.');
     end
@@ -90,7 +92,7 @@ function [data] = import_smi(varargin)
         line_ctr = line_ctr + 1;
         curr_line = all_text(line_begs(line_ctr) : line_begs(line_ctr + 1) - back_off);
     end
-    header_sample = header_sample';
+    header_sample = transpose(header_sample);
     line_begs = line_begs(line_ctr + 1 : end);
     all_text = all_text(line_begs(1) : end);
     line_begs = line_begs - line_begs(1) + 1;
