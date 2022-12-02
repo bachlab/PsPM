@@ -22,7 +22,7 @@ function [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,u
 % ├─.channel_action:  [accept: 'add'/'replace', default: 'add']
 % │                   Defines whether the new channels should be added or the
 % │                   previous outputs of this function should be replaced.
-% └───────────.eyes:  [accept: 'l'/'r'/'c', default: 'c'] 
+% └───────────.eyes:  [accept: 'l'/'r'/'c', default: 'c']
 %                     Define on which eye the operations should be performed.
 % ● Output
 %               sts:  Status determining whether the execution was
@@ -44,8 +44,7 @@ if nargin < 6
   return;
 elseif ~exist('options','var')
   options = struct();
-  options.channel_action = 'add';
-end;
+end
 
 % check types of arguments
 if ~ischar(fn) || ~exist(fn, 'file')
@@ -80,14 +79,9 @@ if lsts ~= 1
 end;
 
 %set more defaults
-if ~isfield(options, 'eyes')
-  options.eyes = settings.lateral.char.b;
-elseif ~any(strcmpi(options.eyes, {settings.lateral.char.l,...
-    settings.lateral.char.r,...
-    settings.lateral.char.b}))
-  warning('ID:invalid_input', ['''options.eyes'' must be ', ...
-    'equal to ''l'', ''r'', ''c''.']);
-  return;
+options = pspm_options(options, 'compute_visual_angle');
+if options.invalid
+  return
 end
 
 %iterate through eyes
@@ -101,9 +95,9 @@ for i=1:n_eyes
 
     % always use first found channel
 
-    gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
+    gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.channeltype) & ...
       strcmpi('mm', x.header.units), data),1);
-    gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
+    gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.channeltype) & ...
       strcmpi('mm', x.header.units), data),1);
 
     if ~isempty(gx) && ~isempty(gy)

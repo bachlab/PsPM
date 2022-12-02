@@ -83,17 +83,17 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
         % unit micrometer
         pupil = sin(t/10)*3000+5000;
         data{1 + n_chans*(i-1)}.data = gaze_x;
-        data{1 + n_chans*(i-1)}.header.chantype = ['gaze_x_', e];
+        data{1 + n_chans*(i-1)}.header.channeltype = ['gaze_x_', e];
         data{1 + n_chans*(i-1)}.header.units = 'cm';
         data{1 + n_chans*(i-1)}.header.sr = sr;
         data{1 + n_chans*(i-1)}.header.range = [0 screen_width];
         data{2 + n_chans*(i-1)}.data = gaze_y;
-        data{2 + n_chans*(i-1)}.header.chantype = ['gaze_y_', e];
+        data{2 + n_chans*(i-1)}.header.channeltype = ['gaze_y_', e];
         data{2 + n_chans*(i-1)}.header.units = 'cm';
         data{2 + n_chans*(i-1)}.header.sr = sr;
         data{2 + n_chans*(i-1)}.header.range = [0 screen_height];
         data{3 + n_chans*(i-1)}.data = pupil;
-        data{3 + n_chans*(i-1)}.header.chantype = ['pupil_', e];
+        data{3 + n_chans*(i-1)}.header.channeltype = ['pupil_', e];
         data{3 + n_chans*(i-1)}.header.units = 'diameter';
         data{3 + n_chans*(i-1)}.header.sr = sr;
       end
@@ -124,7 +124,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       options.resolution = [1280 1024];
       options.fixation_point = [1280/4 1024*3/4];
       options.overwrite = 1;
-      options.channels = work_chans;
+      options.channel = work_chans;
       options.channel_action = 'add';
       [~,~, o_data] = pspm_load_data(fn);
       [sts, outfile] = this.verifyWarningFree(@() ...
@@ -133,21 +133,21 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       [~,~, n_data] = pspm_load_data(outfile);
       n_new_chans = numel(n_data);
       n_old_chans = numel(o_data);
-      chantypes = cellfun(@(x) x.header.chantype, ...
+      channeltypes = cellfun(@(x) x.header.channeltype, ...
         n_data((n_old_chans+1):n_new_chans), 'UniformOutput', 0);
-      % test for chans
+      % test for channels
       for i = 1:numel(work_chans)
-        chan = work_chans{i};
-        if ischar(chan)
+        channel = work_chans{i};
+        if ischar(channel)
           w_eyes = {'l','r'};
           for j=1:numel(w_eyes)
             e = w_eyes{j};
-            search_chan = [chan '_' e];
-            this.verifyTrue(any(strcmp(search_chan, chantypes)));
+            search_chan = [channel '_' e];
+            this.verifyTrue(any(strcmp(search_chan, channeltypes)));
           end
-        elseif isnumeric(chan)
-          search_chan = o_data{chan}.header.chantype;
-          this.verifyTrue(any(strcmp(search_chan, chantypes)));
+        elseif isnumeric(channel)
+          search_chan = o_data{channel}.header.channeltype;
+          this.verifyTrue(any(strcmp(search_chan, channeltypes)));
         end
       end
     end
@@ -173,19 +173,19 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       [~,~, n_data] = pspm_load_data(outfile);
       n_old_chans = numel(o_data);
       n_new_chans = numel(n_data);
-      % get list of new chantypes
-      chantypes = cellfun(@(x) x.header.chantype, ...
+      % get list of new channeltypes
+      channeltypes = cellfun(@(x) x.header.channeltype, ...
         n_data((n_old_chans+1):n_new_chans), 'UniformOutput', 0);
       switch work_eye
         case 'combined'
-          this.verifyTrue(any(strcmpi(chantypes, 'pupil_l')) && ...
-            any(strcmpi(chantypes, 'pupil_r')));
+          this.verifyTrue(any(strcmpi(channeltypes, 'pupil_l')) && ...
+            any(strcmpi(channeltypes, 'pupil_r')));
         case 'left'
-          this.verifyTrue(any(strcmpi(chantypes, 'pupil_l')) && ...
-            all(~strcmpi(chantypes, 'pupil_r')));
+          this.verifyTrue(any(strcmpi(channeltypes, 'pupil_l')) && ...
+            all(~strcmpi(channeltypes, 'pupil_r')));
         case 'right'
-          this.verifyTrue(any(strcmpi(chantypes, 'pupil_r')) && ...
-            all(~strcmpi(chantypes, 'pupil_l')));
+          this.verifyTrue(any(strcmpi(channeltypes, 'pupil_r')) && ...
+            all(~strcmpi(channeltypes, 'pupil_l')));
       end
     end
     function test_missing(this, missing)
@@ -208,12 +208,12 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       [~, ~, n_data] = pspm_load_data(outfile);
       % look for channels with 'missing' in channeltype
       missing_chans = cellfun(@(x) ...
-        numel(regexp(x.header.chantype, 'missing')) > 0, n_data);
+        numel(regexp(x.header.channeltype, 'missing')) > 0, n_data);
       if missing
-        % expect missing chans
+        % expect missing channels
         this.verifyTrue(any(missing_chans));
       else
-        % expect no missing chans
+        % expect no missing channels
         this.verifyTrue(all(~missing_chans));
       end
     end
@@ -246,7 +246,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       [~, ~, n_data] = pspm_load_data(outfile);
       this.verifyNotEqual(numel(n_data), numel(o_data));
     end
-    function test_channel_action(this, channel_action)
+    function test_chan_action(this, channel_action)
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
       [degs,~] = this.generate_fixation_data(fn, this.distance{1},  'lr');
@@ -310,6 +310,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
         dist = distance;
         dist_unit = this.unit{1};
         options.resolution = resolution;
+        options.overwrite = 1;
         options.missing = 1;
         options.fixation_point = [resolution(1)/4 resolution(2)*3/4];
         options.newfile = pspm_find_free_fn(this.testfile_prefix, '.mat');
@@ -330,10 +331,10 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
         for j=1:length(eyes)
           e = lower(eyes(j));
           missing_chan = find(...
-            cellfun(@(x) strcmpi(x.header.chantype, ['pupil_missing_', e]), data),...
+            cellfun(@(x) strcmpi(x.header.channeltype, ['pupil_missing_', e]), data),...
             1, 'last');
           pupil_chan = find(...
-            cellfun(@(x) strcmpi(x.header.chantype, ['pupil_', e]), data),...
+            cellfun(@(x) strcmpi(x.header.channeltype, ['pupil_', e]), data),...
             1, 'last');
           this.verifyTrue(all(isnan(data{pupil_chan}.data(data{missing_chan}.data == 1))));
           if d.expect ~= -1
@@ -354,6 +355,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
         d = bitmaps{i};
         bitmap = d.deg;
         options.resolution = resolution;
+        options.overwrite = 1;
         options.missing = 1;
         options.newfile = pspm_find_free_fn(this.testfile_prefix, '.mat');
         this.datafiles{end+1} = options.newfile;
@@ -372,9 +374,9 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
         % missing channel.
         for j = 1:length(eyes)
           e = lower(eyes(j));
-          missing_chan = find(cellfun(@(x) strcmpi(x.header.chantype,...
+          missing_chan = find(cellfun(@(x) strcmpi(x.header.channeltype,...
             ['pupil_missing_', e]), data), 1, 'last');
-          pupil_chan = find(cellfun(@(x) strcmpi(x.header.chantype,...
+          pupil_chan = find(cellfun(@(x) strcmpi(x.header.channeltype,...
             ['pupil_', e]), data), 1, 'last');
           this.verifyTrue(all(isnan(data{pupil_chan}.data(data{missing_chan}.data == 1))));
           if d.expect ~= -1
@@ -441,7 +443,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       this.verifyWarning(@() pspm_find_valid_fixations(fn, box_degree, ...
         dist, dist_unit, options), 'ID:invalid_input');
       options.eyes = 'combined';
-      options.channels = 'abc';
+      options.channel = 'abc';
       this.verifyWarning(@() pspm_find_valid_fixations(fn, box_degree, ...
         dist, dist_unit, options), 'ID:invalid_input');
     end

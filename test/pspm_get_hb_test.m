@@ -12,7 +12,7 @@ classdef pspm_get_hb_test < matlab.unittest.TestCase
       [sts, data] = pspm_get_hb(import);
       this.verifyEqual(sts, 1);
       this.verifyEqual(data.data, import.data(:));
-      this.verifyTrue(strcmpi(data.header.chantype, 'hb'));
+      this.verifyTrue(strcmpi(data.header.channeltype, 'hb'));
       this.verifyTrue(strcmpi(data.header.units, 'events'));
       this.verifyEqual(data.header.sr, 1);
     end

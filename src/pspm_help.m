@@ -1,6 +1,6 @@
 function [information, arguments] = pspm_help(func_name)
 % ● Description
-%   pspm_help returns the description and arguments of 
+%   pspm_help returns the description and arguments of
 %   a specified function
 % ● Format
 %   [information, arguments] = pspm_help(func_name)
@@ -81,12 +81,15 @@ function A = sort_info (B)
 % remove '% '
 for i_line = 1:length(B)
   C = B{i_line, 1};
+  if C(1) == ' '
+      break
+  end
   if contains(C,'% ')
     C(strfind(C,'% '):(strfind(C,'% ')+1))=[];
   end
   B{i_line, 1} = C;
 end
-D = {'Description', 'Format', 'History'};
+D = {'Description', 'Format'};
 % sort
 A = struct();
 for i_D = 1:length(D)

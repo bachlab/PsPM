@@ -22,7 +22,7 @@ classdef pspm_get_vario_test < pspm_get_superclass
       fn = 'ImportTestData/vario/Varioport_various_channels.vpd';
       import{1} = struct('type', 'scr'   , 'channel', 1);
       import{2} = struct('type', 'scr'   , 'channel', 12);
-      import = this.assign_chantype_number(import);
+      import = this.assign_channeltype_number(import);
       this.verifyWarning(@()pspm_get_vario(fn, import), 'ID:channel_not_contained_in_file');
     end
   end

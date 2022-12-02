@@ -43,7 +43,7 @@ function glm = pspm_glm(model, options)
 %   │             later in the channel list are preprocessed/filtered versions
 %   │             of raw channels.
 %   │             SPECIAL: if 'pupil' is specified the function uses the
-%   │             last pupil channel returned by 
+%   │             last pupil channel returned by
 %   │             <a href="matlab:help pspm_load_data">pspm_load_data</a>.
 %   │             pspm_load_data loads 'pupil' channels according to a specific
 %   │             precedence order described in its documentation. In a nutshell,
@@ -78,8 +78,9 @@ function glm = pspm_glm(model, options)
 %                 invert SPS model, set centering to 0. Default: 1
 %   ┌───options:
 %   │ ▶︎ optional
-%   ├──.overwrite:
-%   │             overwrite existing model output; default 0
+%   ├──.overwrite:  [logical] (0 or 1)
+%   │             Define whether to overwrite existing output files or not.
+%   │             Default value: determined by pspm_overwrite.
 %   ├──.marker_chan_num:
 %   │             marker channel number; default last marker channel.
 %   └──.exclude_missing:
@@ -222,7 +223,7 @@ if ~isfield(model, 'channel')
   else
     model.channel = model.modality;
   end
-elseif ~isnumeric(model.channel) && ~ismember(model.channel, {settings.chantypes.type})
+elseif ~isnumeric(model.channel) && ~ismember(model.channel, {settings.channeltypes.type})
   warning('ID:invalid_input', 'Channel number must be numeric.'); return;
 end
 
@@ -241,29 +242,10 @@ elseif ~ismember(model.centering, [0, 1])
 end
 
 % check options --
-if ~isfield(options, 'overwrite')
-  options.overwrite = 0;
-elseif ~ismember(options.overwrite, [0, 1])
-  options.overwrite = 0;
+options = pspm_options(options, 'glm');
+if options.invalid
+  return
 end
-if ~isfield(options, 'marker_chan_num')
-  options.marker_chan_num = 'marker';
-elseif ~(isnumeric(options.marker_chan_num) && numel(options.marker_chan_num)==1)
-  options.marker_chan_num = 'marker';
-end
-
-if isfield(options,'exclude_missing')
-  if ~(isfield(options.exclude_missing, 'segment_length') && ...
-      isfield(options.exclude_missing,'cutoff'))
-    warning('ID:invalid_input', 'To extract the NaN-values segment-length and cutoff must be set'); return;
-  elseif ~(isnumeric(options.exclude_missing.segment_length) && isnumeric(options.exclude_missing.cutoff))
-    warning('ID:invalid_input', 'To extract the NaN-values segment-length and cutoff must be numeric values.'); return;
-  end
-end
-
-options.overwrite = ~pspm_overwrite(model.modelfile, options);
-
-
 if ischar(model.datafile)
   model.datafile={model.datafile};
 end
@@ -424,7 +406,6 @@ else
     warning('ID:number_of_elements_dont_match',...
       'Same number of data files and nuisance regressor files is needed.'); return;
   end
-
   for iSn = 1:nFile
     if isempty(model.nuisance{iSn})
       R{iSn} = [];
@@ -890,7 +871,6 @@ end
 % glm.stats_exclude_names holds the names of the conditions to be excluded
 
 if isfield(options,'exclude_missing')
-
   [sts,segments] = pspm_extract_segments('auto', glm, ...
     struct('length', options.exclude_missing.segment_length));
   if sts == -1
@@ -906,21 +886,14 @@ if isfield(options,'exclude_missing')
     'un',0);
   glm.stats_exclude_names = glm.stats_exclude_names(glm.stats_exclude);
 end
-
-
-
-% save data
+%% save data
+% overwrite is determined in load1
 savedata = struct('glm', glm);
 [sts, data, mdltype] = pspm_load1(model.modelfile, 'save', savedata, options);
 if sts == -1
   warning('ID:invalid_input', 'call of pspm_load1 failed');
   return;
 end
-
-
-% user output
-%-------------------------------------------------------------------------
-
+%% user output
 fprintf(' done. \n');
-
 return

@@ -28,8 +28,12 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-%% interpolate channel specific data if required
-if (isfield(options, 'interpolate') && options.interpolate)
+options = pspm_options(options, 'compute_visual_angle_core');
+if options.invalid
+  return
+end
+% interpolate channel specific data if required
+if options.interpolate
   interpolate_options = struct('extrapolate', 1);
   [ sts_x, gx_d ] = pspm_interpolate(x_data, interpolate_options);
   [ sts_x, gy_d ] = pspm_interpolate(y_data, interpolate_options);

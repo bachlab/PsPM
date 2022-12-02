@@ -20,10 +20,11 @@ function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 %   ├────.fhandle:  function handle to the dilation response function.
 %   ├.constriction:
 %   ├────.fhandle:  function handle to the constriction response function.
-%   │         .fn:  [filename] if specified ldata{i,j} will be saved to a file
+%   ├─────────.fn:  [filename] if specified ldata{i,j} will be saved to a file
 %   │               with filename options.fn{i,j} into the variable 'R'.
-%   └──.overwrite:  [true/FALSE] specifies if file specified with options.fn
-%                   should be overwritten or not.
+%   └──.overwrite:  [logical] (0 or 1)
+%										Define whether to overwrite existing output files or not.
+%										Default value: determined by pspm_overwrite.
 % ● Outputs
 %             sts:  status
 %             out:  has same size as ldata and contains either the
@@ -50,24 +51,10 @@ elseif ~isstruct(options)
 end
 
 % setup default values
-if ~isfield(options, 'transfer')
-  options.transfer = [49.79,-1.05,-0.50];
+options = pspm_options(options, 'process_illuminance');
+if options.invalid
+  return
 end
-if ~isfield(options, 'bf') || ~isstruct(options.bf)
-  options.bf = struct();
-end
-if ~isfield(options.bf, 'duration')
-  options.bf.duration = 20;
-end
-if ~isfield(options.bf, 'offset')
-  options.bf.offset = .2;
-end
-try options.bf.dilation; catch; options.bf.dilation = struct(); end
-try options.bf.constriction; catch; options.bf.constriction = struct(); end
-try options.bf.dilation.fhandle; catch; options.bf.dilation.fhandle = @pspm_bf_ldrf_gm; end
-try options.bf.constriction.fhandle; catch; options.bf.constriction.fhandle = @pspm_bf_lcrf_gm; end
-try options.fn; catch; options.fn = ''; end
-try options.overwrite; catch; options.overwrite = false; end
 
 % ensure parameters are correct
 % -------------------------------------------------------------------------
@@ -84,9 +71,6 @@ elseif ~isnumeric(sr) && ~iscell(sr)
 elseif ~isempty(options.fn) && (iscell(ldata) && ~iscell(options.fn)) || ...
     (~iscell(ldata) && iscell(options.fn))
   warning('ID:invalid_input', 'ldata and options.fn have not the same dimension.');
-  return;
-elseif ~islogical(options.overwrite) && ~isnumeric(options.overwrite)
-  warning('ID:invalid_input', 'options.overwrite must be numeric or logical.');
   return;
 elseif ~isnumeric(options.bf.duration)
   warning('ID:invalid_input', 'options.bf.duration must be numeric.');

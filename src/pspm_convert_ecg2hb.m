@@ -1,4 +1,4 @@
-function [sts,infos] = pspm_convert_ecg2hb(fn, chan, options)
+function [sts,infos] = pspm_convert_ecg2hb(fn, channel, options)
 % ● Description
 %   pspm_convert_ecg2hb identifies the position of QRS complexes in ECG data and
 %   writes them as heart beat channel into the datafile. This function
@@ -7,13 +7,13 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, chan, options)
 %   sts = pspm_convert_ecg2hb(fn, chan,options)
 % ● Arguments
 %                 fn: data file name
-%               chan: number of ECG channel (optional, default: first ECG
+%            channel: number of ECG channel (optional, default: first ECG
 %                     channel) if is empty (= 0 / []) then default channel will
 %                     be used.
 %   ┌────────options:
 %   ├──────────.semi: activates the semi automatic mode, allowing the
 %   │                 handcorrection of all IBIs that fulfill:
-%   │                 >/< mean(ibi) +/- 3 * std(ibi) [def. 1].
+%   │                 >/< mean(ibi) +/- 3 * std(ibi) [def. 0].
 %   ├─────────.minHR: sets minimal HR [def. 20bpm].
 %   ├─────────.maxHR: sets maximal HR [def. 200bpm].
 %   ├─────.debugmode: [numeric, default as 0]
@@ -92,6 +92,7 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, chan, options)
 %   Introduced in PsPM 3.0
 %   Written in 2013-2015 Philipp C Paulus & Dominik R Bach
 %   (Technische Universitaet Dresden, University of Zurich)
+%   Updated in 2022 Teddy Chao
 
 %% Initialise
 global settings
@@ -102,111 +103,47 @@ sts = -1;
 infos = struct();
 
 
-% check input
-% -------------------------------------------------------------------------
+%% check input
 if nargin < 1
   warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
 elseif ~ischar(fn)
   warning('ID:invalid_input', 'Need file name string as first input.'); return;
-elseif (nargin < 2) || isempty(chan) || (isnumeric(chan) && (chan == 0))
-  chan = 'ecg';
-elseif ~isnumeric(chan) && ~strcmp(chan,'ecg')
+elseif (nargin < 2) || isempty(channel) || (isnumeric(channel) && (channel == 0))
+  channel = 'ecg';
+elseif ~isnumeric(channel) && ~strcmp(channel,'ecg')
   warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end
 
-try options.channel_action; catch, options.channel_action = 'replace'; end
-
-% user output
-% -------------------------------------------------------------------------
-fprintf('\n\xBB QRS detection for %s,', fn);
-
-% additional options
-% -------------------------------------------------------------------------
-% settings for semi automatic mode
-pt.settings.semi=1;         %   semiautomatic mode - [def: 0]
-pt.settings.outfact=2;      %   mark those IBIs that are >/< mean(IBI)+/- outfact * std(IBI)
-% settings for QRS detection
-pt.settings.minHR=20;       %   original: 0 ; set to 20 bpm [def](min 1)
-pt.settings.maxHR=200;      %   original: 300 bpm; adjusted to 200 bpm [def]!
-pt.settings.twthresh=0.36;  %   original: 0.36 s [def]!
-pt.settings.debugmode=0;    %   no debuggin [def]
-pt_debug=[];
-
-% input checks
-% -------------------------------------------------------------------------
-if nargin > 2 && exist('options', 'var')
-
-  if isstruct(options)
-    if isfield(options, 'channel_action')
-      if ~any(strcmpi(options.channel_action, {'add', 'replace'}))
-        warning('ID:invalid_input', '''options.channel_action'' must be either ''add'' or ''replace''.'); return;
-      end
-    end
-
-    if isfield(options, 'semi')
-      if any(options.semi == 0:1)
-        pt.settings.semi = options.semi;
-      else
-        warning('ID:invalid_input', '''options.semi'' must be either 0 or 1.'); return;
-      end
-    end
-
-    if isfield(options, 'debugmode')
-      if any(options.debugmode == 0:1)
-        pt.settings.debugmode = options.debugmode;
-      else
-        warning('ID:invalid_input', '''options.debugmode'' must be either 0 or 1.'); return;
-      end
-    end
-
-    if isfield(options, 'minHR') && isfield(options, 'maxHR')
-      if isnumeric(options.minHR) && isnumeric(options.maxHR) ...
-          && options.minHR < options.maxHR
-        pt.settings.minHR = options.minHR;
-        pt.settings.maxHR = options.maxHR;
-      else
-        warning('ID:invalid_input', ['''options.minHR'' and ''options.maxHR'' ', ...
-          'must be numeric and ''options.minHR'' must be ', ...
-          'smaller than ''options.maxHR''']); return;
-      end
-    elseif isfield(options, 'minHR')
-      if isnumeric(options.minHR) && options.minHR < pt.settings.maxHR
-        pt.settings.minHR = options.minHR;
-      else
-        warning('ID:invalid_input', '''options.minHR'' must be numeric and smaller than %d.', ...
-          [pt.settings.maxHR]); return;
-      end
-    elseif isfield(options, 'maxHR')
-      if isnumeric(options.maxHR) && options.maxHR > pt.settings.minHR
-        pt.settings.maxHR = options.maxHR;
-      else
-        warning('ID:invalid_input', '''options.maxHR'' must be numeric and greater than %d.', ...
-          [pt.settings.minHR]); return;
-      end
-    end
-
-    if isfield(options, 'twthresh')
-      if isnumeric(options.twthresh)
-        pt.settings.twthresh = options.twthresh;
-      else
-        warning('ID:invalid_input', '''options.twthresh'' must be numeric.'); return;
-      end
-    end
-  else
-    warning('ID:invalid_input', '''options'' must be of type struct.'); return;
-  end
-
+if ~exist('options','var')
+  options = struct();
+end
+options = pspm_options(options, 'convert_ecg2hb');
+if options.invalid
+  return
 end
 
-% get data
-% -------------------------------------------------------------------------
-[nsts, ~, data] = pspm_load_data(fn, chan);
+%% user output
+fprintf('\n\xBB QRS detection for %s,', fn);
+
+%% additional options
+% settings for semi automatic mode
+pt.settings.semi = options.semi;         %   semiautomatic mode - default as 0, also accepts 1
+pt.settings.outfact = options.outfact;      %   mark those IBIs that are >/< mean(IBI)+/- outfact * std(IBI)
+% settings for QRS detection
+pt.settings.minHR = options.minHR;       %   original: 0 ; set to 20 bpm [def](min 1)
+pt.settings.maxHR = options.maxHR;      %   original: 300 bpm; adjusted to 200 bpm [def]!
+pt.settings.twthresh = options.twthresh;  %   original: 0.36 s [def]!
+pt.settings.debugmode = options.debugmode;    %   no debuggin [def]
+pt_debug=[];
+
+%% get data
+[nsts, ~, data] = pspm_load_data(fn, channel);
 if nsts == -1, return; end
 if numel(data) > 1
   fprintf('There is more than one ECG channel in the data file. Only the first of these will be analysed.');
   data = data(1);
 end
-if not(strcmp(data{1,1}.header.chantype,'ecg'))
+if not(strcmp(data{1,1}.header.channeltype,'ecg'))
   warning('ID:not_allowed_channeltype', 'Specified channel is not an ECG channel. Don''t know what to do!')
   return;
 end
@@ -335,7 +272,7 @@ newhr=pt.set.R/pt.settings.filt.sr;
 newdata.data = newhr(:);
 newdata.header.sr = 1;
 newdata.header.units = 'events';
-newdata.header.chantype = 'hb';
+newdata.header.channeltype = 'hb';
 
 % user output
 fprintf(' done.');

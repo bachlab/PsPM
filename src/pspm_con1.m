@@ -14,9 +14,9 @@ function pspm_con1(modelfile, connames, convec, datatype, deletecon, options)
 %                         uses only the first one (i.e. without derivatives)
 %                         other models - contrasts based on unique trial names
 %               'recon':  contrasts formulated in terms of conditions in a GLM,
-%                         reconstructs estimated response from all basis 
+%                         reconstructs estimated response from all basis
 %                         functions and uses the peak of the estimated response
-%    deletecon: define existing contrasts to be deleted (1) or appended (0, 
+%    deletecon: define existing contrasts to be deleted (1) or appended (0,
 %               default).
 %      options: [struct]
 %               .zscored: 1 - zscore data
@@ -82,7 +82,11 @@ switch datatype
 end
 % 2.6 set load1_options
 load1_options = struct('zscored',0);
-if isfield(options, 'zscored') && options.zscored
+options = pspm_options(options, 'con1');
+if options.invalid
+  return
+end
+if options.zscored
   load1_options.zscored = 1;
 end
 %% 3 work on contrasts

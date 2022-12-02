@@ -3,7 +3,7 @@ function [sts, out] = pspm_scr_pp(datafile, options, chan)
 %   pspm_scr_pp applies simple skin conductance response (SCR) quality
 %   assessment rulesets
 %   Rule 1: Microsiemens values must be within range (0.05 to 60)
-%   Rule 2: Absolute slope of value change must be less than 10 microsiemens 
+%   Rule 2: Absolute slope of value change must be less than 10 microsiemens
 %           per second
 % ● Format
 %   [sts, out] = pspm_scr_pp(data, options)
@@ -18,18 +18,18 @@ function [sts, out] = pspm_scr_pp(datafile, options, chan)
 %   │             If provided will create a .mat file saving the epochs.
 %   │             The path can be specified, but if not the file will be saved
 %   │             in the current folder. If saving to the missing epochs file,
-%   │             no data in the original datafile will be changed. For 
+%   │             no data in the original datafile will be changed. For
 %   │             instance, abc will create abc.mat
 %   ├.deflection_threshold:
 %   │             Define an threshold in original data units for a slope to pass
 %   │             to be considered in the filter. This is useful, for example,
 %   │             with oscillatory wave data due to limited A/D bandwidth.
-%   │             The slope may be steep due to a jump between voltages but we 
+%   │             The slope may be steep due to a jump between voltages but we
 %   │             likely do not want to consider this to be filtered.
-%   │             A value of 0.1 would filter oscillatory behaviour with 
+%   │             A value of 0.1 would filter oscillatory behaviour with
 %   │             threshold less than 0.1v but not greater. Default: 0.1
 %   ├.data_island_threshold:
-%   │             A float in seconds to determine the maximum length of data 
+%   │             A float in seconds to determine the maximum length of data
 %   │             between NaN epochs.
 %   │             Islands of data shorter than this threshold will be removed.
 %   │             Default: 0 s - no effect on filter
@@ -42,13 +42,16 @@ function [sts, out] = pspm_scr_pp(datafile, options, chan)
 %   ├.clipping_threshold:
 %   │             A float between 0 and 1 specifying the proportion of local
 %   │             maximum in a step. Default: 0.1
+%   ├.clipping_n_window:
+%   │             A numerical value specifying the number of windows in moving average
+%   │             algorithm for detecting clipping. Default: 10000
 %   ├.change_data:
 %   │             A numerical value to choose whether to change the data or not
 %   │             Default: 1 (true)
 %   ├.channel_action:
 %   │             Accepted values: 'add'/'replace'/'withdraw'
 %   │             Defines whether the new channel should be added, the previous
-%   │             outputs of this function should be replaced, or new data 
+%   │             outputs of this function should be replaced, or new data
 %   │             should be withdrawn. Default: 'add'.
 %   └─────.chan:  Number of SCR channel. Default: first SCR channel
 % ● Outputs
@@ -58,15 +61,15 @@ function [sts, out] = pspm_scr_pp(datafile, options, chan)
 %                 options.change_data is set to be positive.
 % ● Internal Functions
 %   filter_to_epochs
-%                 Return the start and end points of epoches (2D array) by the 
+%                 Return the start and end points of epoches (2D array) by the
 %                 given filter (1D array).
 % ● Key Variables of Internal Functions
-%   filt          A filtering array consisting of 0 and 1 for selecting data 
+%   filt          A filtering array consisting of 0 and 1 for selecting data
 %                 whose y and slope are both within the range of interest.
 %   filt_epochs   A filtering array consisting of 0 and 1 for selecting epochs.
-%   filt_range    A filtering array consisting of 0 and 1 for selecting data 
+%   filt_range    A filtering array consisting of 0 and 1 for selecting data
 %                 within the range of interest.
-%   filt_slope    A filtering array consisting of 0 and 1 for selecting data 
+%   filt_slope    A filtering array consisting of 0 and 1 for selecting data
 %                 whose slope is within the range of interest.
 % ● History
 %   Introduced In PsPM 5.1
@@ -89,44 +92,14 @@ if ~exist('options', 'var')
   options = struct();
 end
 if nargin < 3 || isempty(chan) || (chan == 0)
-    chan = 'scr';
+  chan = 'scr';
 elseif ~isnumeric(chan)
-    warning('ID:invalid_input', 'Channel number must be numeric'); return;
+  warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end
-if ~isfield(options, 'min')
-  options.min = 0.05;
+options = pspm_options(options, 'scr_pp');
+if options.invalid
+  return
 end
-if ~isfield(options, 'max')
-  options.max = 60;
-end
-if ~isfield(options, 'slope')
-  options.slope = 10;
-end
-if ~isfield(options, 'deflection_threshold')
-  options.deflection_threshold = 0.1;
-end
-if ~isfield(options, 'data_island_threshold')
-  options.data_island_threshold = nan;
-end
-if ~isfield(options, 'expand_epochs')
-  options.expand_epochs = 0.5;
-end
-if ~isfield(options, 'change_data')
-  options.change_data = 1;
-end
-if ~isfield(options, 'clipping_step_size')
-  options.clipping_step_size = 10000;
-end
-if ~isfield(options, 'clipping_n_window')
-  options.clipping_n_window = 2;
-end
-if ~isfield(options, 'clipping_threshold')
-  options.clipping_threshold = 0.1;
-end
-if ~isfield(options, 'channel_action')
-  options.channel_action = 'add';
-end
-
 %% Sanity checks
 if ischar(datafile) || isstruct(datafile)
   data_source = {datafile};
@@ -138,17 +111,7 @@ else
   warning('ID:invalid_input', 'Data file must be a char, cell, or struct.');
   return;
 end
-if ~isnumeric(options.min)
-  warning('ID:invalid_input', 'Argument ''options.min'' must be numeric.'); return;
-elseif ~isnumeric(options.max)
-  warning('ID:invalid_input', 'Argument ''options.max'' must be numeric.'); return;
-elseif ~isnumeric(options.slope)
-  warning('ID:invalid_input', 'Argument ''options.slope'' must be numeric.'); return;
-elseif isfield(options, 'missing_epochs_filename')
-  if ~ischar(options.missing_epochs_filename)
-    warning('ID:invalid_input', ...
-      'Argument ''options.missing_epochs_filename'' must be char array.'); return;
-  end
+if isfield(options, 'missing_epochs_filename')
   [pth, ~, ~] = fileparts(options.missing_epochs_filename);
   if ~isempty(pth) && exist(pth,'dir')~=7
     warning('ID:invalid_input',...
@@ -159,15 +122,11 @@ end
 if options.change_data == 0 && ~isfield(options, 'missing_epochs_filename')
   warning('This procedure leads to no output, according to the selected options.');
 end
-if ~ismember(options.channel_action, {'add', 'replace', 'withdraw'})
-  warning('ID:invalid_input', 'Option channel_action must be either ''add'', ''replace'' or ''withdraw''');
-  return;
-end
 
 for d = 1:numel(data_source)
   % out{d} = [];
   [sts_loading, ~, indatas, ~] = pspm_load_data(data_source{d}, chan); % check and get datafile ---
-  
+
   sts = sts_loading * sts;
   if sts_loading == -1
     warning('ID:invalid_input', 'Could not load data');

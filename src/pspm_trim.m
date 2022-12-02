@@ -17,21 +17,23 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
 %                       [string]
 %                       'marker' from and to are set in seconds with respect
 %                                to the first and last scanner/marker pulse
-%                       'file'   from and to are set in seconds with respect 
+%                       'file'   from and to are set in seconds with respect
 %                                to start of datafile
 %                       [vector] a 2-element vector:
-%                       from and to are set in seconds with respect to the two 
+%                       from and to are set in seconds with respect to the two
 %                       markers defined here
 %                       [cell_array] a 2-element cell-array
 %                       from and to are set in seconds with respect to the first
 %                       two markers having the value held in the cell array
 %   ┌─────────options:
-%   ├──────.overwrite:  overwrite existing files by default
+%   ├──────.overwrite:  [logical] (0 or 1)
+%   │                   Define whether to overwrite existing output files or not.
+%   │                   Default value: determined by pspm_overwrite.
 %   ├.marker_chan_num:  marker channel number.
 %   │                   if undefined or 0, first marker channel is used.
 %   └.drop_offset_markers:
 %                       if offsets are set in the reference, you might be
-%                       interested in only the data, but not in the additional 
+%                       interested in only the data, but not in the additional
 %                       markers which are within the offset. therefore set this
 %                       option to 1 to drop markers which lie in the offset.
 %                       this is for event channels only. default is 0.
@@ -42,6 +44,7 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
 % ● Version
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% 1 Pre-settings
 % 1.1 Initialise
@@ -152,19 +155,9 @@ end
 if ~exist('options','var') || isempty(options) || ~isstruct(options)
   options = struct();
 end
-if ~isfield(options, 'overwrite')
-  options.overwrite = 0;
-elseif options.overwrite ~= 1
-  options.overwrite = 0;
-end
-if ~isfield(options,'marker_chan_num') || ...
-    ~isnumeric(options.marker_chan_num) || ...
-    numel(options.marker_chan_num) > 1
-  options.marker_chan_num = 0;
-end
-if ~isfield(options, 'drop_offset_markers') || ...
-    ~isnumeric(options.drop_offset_markers)
-  options.drop_offset_markers = 0;
+options = pspm_options(options, 'trim');
+if options.invalid
+  return
 end
 %% 2 Work on all data
 for i_D = 1:numel(D)
@@ -181,7 +174,7 @@ for i_D = 1:numel(D)
     % 2.2.1 Verify the markers
     if options.marker_chan_num
       [nsts, ~, ndata] = pspm_load_data(datafile, options.marker_chan_num);
-      if ~strcmp(ndata{1}.header.chantype, 'marker')
+      if ~strcmp(ndata{1}.header.channeltype, 'marker')
         warning('ID:invalid_option', ['Channel %i is no marker ', ...
           ' channel. The first marker channel in the file is ', ...
           'used instead'], options.marker_chan_num);
@@ -352,6 +345,7 @@ for i_D = 1:numel(D)
     [pth, fn, ext] = fileparts(datafile);
     newdatafile    = fullfile(pth, ['t', fn, ext]);
     savedata.infos.trimfile = newdatafile;
+		options.overwrite = pspm_overwrite(newdatafile, options);
     savedata.options = options;
     sts = pspm_load_data(newdatafile, savedata);
   end

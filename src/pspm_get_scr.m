@@ -78,7 +78,7 @@ data.data = pspm_transfer_function(inputdata, c, Rs, offset, recsys);
 data.data = data.data(:);
 
 % add header
-data.header.chantype = 'scr';
+data.header.channeltype = 'scr';
 data.header.units = dataunits;
 data.header.sr = import.sr;
 data.header.transfer = struct('Rs', Rs, 'offset', offset, 'c', c, 'recsys', recsys);

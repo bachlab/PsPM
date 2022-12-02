@@ -53,26 +53,15 @@ elseif nargin < 2
   options = struct();
 end;
 
-if ~isfield(options,'target')
-  target = 'screen';
-else
-  target = options.target;
+options = pspm_options(options, 'exp');
+if options.invalid
+  return
 end
-if ~isfield(options,'statstype')
-  statstype = 'param';
-else
-  statstype = options.statstype;
-end
-if ~isfield(options,'delim')
-  delim = '\t';
-else
-  delim = options.delim;
-end
-if ~isfield(options,'exclude_missing')
-  exclude_missing = 0;
-else
-  exclude_missing = options.exclude_missing;
-end
+
+target = options.target;
+statstype = options.statstype;
+delim = options.delim;
+exclude_missing = options.exclude_missing;
 
 % check model file argument (actual files are checked below) --
 if ischar(modelfile)

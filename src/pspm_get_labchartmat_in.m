@@ -66,25 +66,25 @@ for blk = 1:blkno
       import{blk}{k}.data = labchart.com(markerindex, 3);
       import{blk}{k}.markerinfo.name = markertype(labchart.com(markerindex, 5));
       import{blk}{k}.markerinfo.value = labchart.com(markerindex, 5);
-      sourceinfo{blk}.chan{k, 1} = sprintf('Channel %02.0f: %s', k, 'Events');
+      sourceinfo{blk}.channel{k, 1} = sprintf('Channel %02.0f: %s', k, 'Events');
     else
       % define channel number ---
       if import{blk}{k}.channel > 0
-        chan = import{blk}{k}.channel;
+        channel = import{blk}{k}.channel;
       else
-        chan = pspm_find_channel(cellstr(labchart.titles), import{blk}{k}.type);
-        if chan < 1, return; end;
+        channel = pspm_find_channel(cellstr(labchart.titles), import{blk}{k}.type);
+        if channel < 1, return; end;
       end;
 
-      if chan > numel(cellstr(labchart.titles)), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', chan, datafile); return; end;
+      if channel > numel(cellstr(labchart.titles)), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', channel, datafile); return; end;
 
-      sourceinfo{blk}.chan{k, 1} = sprintf('Channel %02.0f: %s', chan, labchart.titles(chan, :));
+      sourceinfo{blk}.channel{k, 1} = sprintf('Channel %02.0f: %s', channel, labchart.titles(channel, :));
 
       % get data (a simple vector)
-      import{blk}{k}.data = [zeros(1, labchart.firstsampleoffset(chan, blk)), ...
-        labchart.data(labchart.datastart(chan, blk):labchart.dataend(chan, blk))];
+      import{blk}{k}.data = [zeros(1, labchart.firstsampleoffset(channel, blk)), ...
+        labchart.data(labchart.datastart(channel, blk):labchart.dataend(channel, blk))];
       % get sample rate
-      import{blk}{k}.sr = labchart.samplerate(chan, blk);
+      import{blk}{k}.sr = labchart.samplerate(channel, blk);
     end;
   end;
 end;

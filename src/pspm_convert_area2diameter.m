@@ -4,19 +4,19 @@ function [varargout] = pspm_convert_area2diameter(varargin)
 %   It can work on PsPM files or on numeric vectors.
 % ● Format
 %   [sts, d]    = pspm_convert_area2diameter(area)
-%   [sts, chan] = pspm_convert_area2diameter(fn, chan, options)
+%   [sts, channel] = pspm_convert_area2diameter(fn, channel, options)
 % ● Arguments
 %                 fn: a numeric vector of milimeter values
-%               chan: Channels which should be converted from area to diameter. 
-%                     Should be either a string representing the channels  
-%                     chantype or a numeric value representing the channels id. 
-%                     Multiple channels are allowed and should be provided as 
+%               channel: Channels which should be converted from area to diameter.
+%                     Should be either a string representing the channels
+%                     channeltype or a numeric value representing the channels id.
+%                     Multiple channels are allowed and should be provided as
 %                     cell.
-%               area: a numeric vector of area values (the unit is not 
+%               area: a numeric vector of area values (the unit is not
 %                     important)
 %   ┌────────options:
 %   └.channel_action: ['add'/'replace', default as 'add']
-%                     Defines whether the new channel should be added or the 
+%                     Defines whether the new channel should be added or the
 %                     previous outputs of this function should be replaced.
 % ● History
 %   Introduced in PsPM 3.1
@@ -40,10 +40,10 @@ if numel(varargin) == 1
   mode = 'vector';
 else
   fn = varargin{1};
-  chan = varargin{2};
+  channel = varargin{2};
 
-  if ~iscell(chan)
-    chan = num2cell(chan);
+  if ~iscell(channel)
+    channel = num2cell(channel);
   end
 
   if numel(varargin) == 3
@@ -52,13 +52,9 @@ else
     options = struct();
   end
 
-  if ~isfield(options, 'channel_action')
-    options.channel_action = 'add';
-  end
-
-  if ~any(strcmpi(options.channel_action, {'replace', 'add'}))
-    warning('ID:invalid_input', ['options.channel_action should ', ...
-      'be either ''add'' or ''replace''.']); return;
+  options = pspm_options(options, 'convert_area2diameter');
+  if options.invalid
+    return
   end
 
   mode = 'file';
@@ -69,9 +65,9 @@ if strcmpi(mode, 'vector')
   varargout{2} = 2.*sqrt(area./pi);
   sts = 1;
 elseif strcmpi(mode, 'file')
-  diam = cell(numel(chan), 1);
-  for i = 1:numel(chan)
-    [~, ~, data] = pspm_load_data(fn, chan{i});
+  diam = cell(numel(channel), 1);
+  for i = 1:numel(channel)
+    [~, ~, data] = pspm_load_data(fn, channel{i});
     diam{i} = data{1};
     diam{i}.data = 2.*sqrt(diam{i}.data./pi);
 

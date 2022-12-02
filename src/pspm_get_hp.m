@@ -22,7 +22,7 @@ sts = -1;
 data.data = import.data(:);
 
 % add header
-data.header.chantype = 'hp';
+data.header.channeltype = 'hp';
 if strcmpi(import.units, 'unknown')
   data.header.units = 'ms';
 else

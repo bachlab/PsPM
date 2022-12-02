@@ -46,7 +46,7 @@ for k = 1:numel(data)
     if followingtime > 0
       data{k}.data = [data{k}.data; zeros(round(followingtime*data{k}.header.sr), 1)];
       if followingtime > .1
-        fprintf('\nData recordings in %s channel were non-existent %0.2f s before the last recording in one or more other channel(s).\nThis gap was padded with zeros.', data{k}.header.chantype, followingtime);
+        fprintf('\nData recordings in %s channel were non-existent %0.2f s before the last recording in one or more other channel(s).\nThis gap was padded with zeros.', data{k}.header.channeltype, followingtime);
       end
     end
   end

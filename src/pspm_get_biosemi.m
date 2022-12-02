@@ -39,24 +39,24 @@ try mrk = ft_read_event(datafile); catch, mrk = []; end;
 % -------------------------------------------------------------------------
 for k = 1:numel(import)
 
-  if strcmpi(settings.chantypes(import{k}.typeno).data, 'wave')
+  if strcmpi(settings.channeltypes(import{k}.typeno).data, 'wave')
     % channel number ---
     if import{k}.channel > 0
-      chan = import{k}.channel;
+      channel = import{k}.channel;
     else
-      chan = pspm_find_channel(hdr.label, import{k}.type);
-      if chan < 1, return; end;
+      channel = pspm_find_channel(hdr.label, import{k}.type);
+      if channel < 1, return; end;
     end;
 
-    if chan > size(indata, 1), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', chan, datafile); return; end;
+    if channel > size(indata, 1), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', channel, datafile); return; end;
 
-    sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', chan, hdr.label{chan});
+    sourceinfo.channel{k, 1} = sprintf('Channel %02.0f: %s', channel, hdr.label{channel});
 
     % sample rate ---
     import{k}.sr = hdr.Fs;
 
     % get data ---
-    import{k}.data = indata(chan, :);
+    import{k}.data = indata(channel, :);
 
   else                % event channels
     % time unit

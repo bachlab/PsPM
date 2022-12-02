@@ -20,8 +20,8 @@ classdef pspm_load1_test < matlab.unittest.TestCase
       if isempty(settings), pspm_init; end
       this.defaults = settings;
       % generate aquisition data
-      c{1}.chantype = 'scr';
-      c{2}.chantype = 'hb';
+      c{1}.channeltype = 'scr';
+      c{2}.channeltype = 'hb';
       pspm_testdata_gen(c, 100, this.fn);
       % generate model data
       model.datafile = this.fn;

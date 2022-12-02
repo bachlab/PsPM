@@ -51,13 +51,13 @@ elseif ~isfield(labchart, 'data_block1')
 end;
 
 % retrieve sampling rate(s) ---
-for chan = 1:size(labchart.ticktimes_block1, 1)
-  samples = ~isnan(labchart.ticktimes_block1(chan, :));
-  timestamps = unique(diff(labchart.ticktimes_block1(chan, samples)));
+for channel = 1:size(labchart.ticktimes_block1, 1)
+  samples = ~isnan(labchart.ticktimes_block1(channel, :));
+  timestamps = unique(diff(labchart.ticktimes_block1(channel, samples)));
   if any(timestamps > 1.05 * mean(timestamps)) || any(timestamps < 0.95 * mean(timestamps))
     warning('Recording timestamps imprecise (> 5% deviation)'); return;
   else
-    sr(chan) = mean(timestamps);
+    sr(channel) = mean(timestamps);
   end;
 end;
 
@@ -70,26 +70,26 @@ for k = 1:numel(import)
     import{k}.sr     = min(sr);
     import{k}.marker = 'timestamps';
 
-    sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', k, 'Events');
+    sourceinfo.channel{k, 1} = sprintf('Channel %02.0f: %s', k, 'Events');
   else
     % define channel number ---
     if import{k}.channel > 0
-      chan = import{k}.channel;
+      channel = import{k}.channel;
     else
-      chan = pspm_find_channel(cellstr(labchart.titles_block1), import{k}.type);
-      if chan < 1, return; end;
+      channel = pspm_find_channel(cellstr(labchart.titles_block1), import{k}.type);
+      if channel < 1, return; end;
     end;
 
-    if chan > numel(cellstr(labchart.titles_block1)), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', chan, datafile); return; end;
+    if channel > numel(cellstr(labchart.titles_block1)), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', channel, datafile); return; end;
 
-    sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', chan, labchart.titles_block1(chan, :));
+    sourceinfo.channel{k, 1} = sprintf('Channel %02.0f: %s', channel, labchart.titles_block1(channel, :));
 
     % use ticktimes from channel 1 if ticktimes contains only one row
     if size(labchart.ticktimes_block1,1) > 1
       % get time range ---
-      samples = ~isnan(labchart.ticktimes_block1(chan, :));
+      samples = ~isnan(labchart.ticktimes_block1(channel, :));
       % get sample rate ---
-      import{k}.sr = 1/sr(chan);
+      import{k}.sr = 1/sr(channel);
     else
       % get time range ---
       samples = ~isnan(labchart.ticktimes_block1(1, :));
@@ -97,9 +97,9 @@ for k = 1:numel(import)
       import{k}.sr = 1/sr;
     end;
     % get data
-    import{k}.data = labchart.data_block1(chan, samples);
+    import{k}.data = labchart.data_block1(channel, samples);
     % get units ---
-    import{k}.units = labchart.units_block1(chan, :);
+    import{k}.units = labchart.units_block1(channel, :);
   end;
 end;
 

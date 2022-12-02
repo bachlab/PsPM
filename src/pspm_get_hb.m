@@ -32,7 +32,7 @@ data.data = import.data;
 
 % add header
 % -------------------------------------------------------------------------
-data.header.chantype = 'hb';
+data.header.channeltype = 'hb';
 data.header.units = 'events';
 data.header.sr = 1;
 sts =1;

@@ -29,7 +29,7 @@ elseif isnumeric(data.data)
     foo{k} = data.data(:, k);
   end;
   data = foo;
-  chantype = 'column';
+  channeltype = 'column';
 elseif iscell(data.data)
   for k = 1:numel(data.data)
     if ~(isnumeric(data.data{k}) && isvector(data.data{k}))
@@ -37,7 +37,7 @@ elseif iscell(data.data)
     end
   end
   data = data.data;
-  chantype = 'cell';
+  channeltype = 'cell';
 else
   warning('ID:invalid_data_structure', 'Variable ''data'' in file %s must be a cell or numeric.\n', datafile); return;
 end;
@@ -45,19 +45,19 @@ end;
 % select desired channels
 % -------------------------------------------------------------------------
 for k = 1:numel(import)
-  chan = import{k}.channel;
+  channel = import{k}.channel;
 
-  if chan > numel(data), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', chan, datafile); return; end;
+  if channel > numel(data), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', channel, datafile); return; end;
 
-  import{k}.data = data{chan};
-  if strcmpi(settings.chantypes(import{k}.typeno).data, 'events') && ~isfield(import{k}, 'marker')
-    if strcmpi(chantype, 'cell') && import{k}.sr <= settings.import.mat.sr_threshold
+  import{k}.data = data{channel};
+  if strcmpi(settings.channeltypes(import{k}.typeno).data, 'events') && ~isfield(import{k}, 'marker')
+    if strcmpi(channeltype, 'cell') && import{k}.sr <= settings.import.mat.sr_threshold
       import{k}.marker = 'timestamps';
     else
       import{k}.marker = 'continuous';
     end
   end
-  sourceinfo.chan{k} = sprintf('Data %s %02.0', chantype, chan);
+  sourceinfo.channel{k} = sprintf('Data %s %02.0', channeltype, channel);
 end;
 
 sts = 1;

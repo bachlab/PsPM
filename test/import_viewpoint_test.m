@@ -34,14 +34,14 @@ classdef import_viewpoint_test < matlab.unittest.TestCase
       % find channels
       % ------------------------------------------------------------
       timecol = data{1}.dataraw(:, 1);
-      blink_A_chan = find(strcmp(data{1}.channels_header, 'blink_A'));
-      blink_B_chan = find(strcmp(data{1}.channels_header, 'blink_B'));
-      sacc_A_chan = find(strcmp(data{1}.channels_header, 'saccade_A'));
-      sacc_B_chan = find(strcmp(data{1}.channels_header, 'saccade_B'));
-      datacols = true(size(data{1}.channels_header));
+      blink_A_chan = find(strcmp(data{1}.channel_header, 'blink_A'));
+      blink_B_chan = find(strcmp(data{1}.channel_header, 'blink_B'));
+      sacc_A_chan = find(strcmp(data{1}.channel_header, 'saccade_A'));
+      sacc_B_chan = find(strcmp(data{1}.channel_header, 'saccade_B'));
+      datacols = true(size(data{1}.channel_header));
       datacols([blink_A_chan blink_B_chan sacc_A_chan sacc_B_chan]) = false;
-      datacols_A = datacols & contains(data{1}.channels_header, '_A');
-      datacols_B = datacols & contains(data{1}.channels_header, '_B');
+      datacols_A = datacols & contains(data{1}.channel_header, '_A');
+      datacols_B = datacols & contains(data{1}.channel_header, '_B');
       % go through blinks, saccades, and check if data is set to NaN
       % correctly and blink/saccade periods are 1.
       % ---------------------------------------------------------------------------

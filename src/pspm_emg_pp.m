@@ -7,7 +7,7 @@ function [sts, output] = pspm_emg_pp(fn, options)
 %   2)  Remove mains noise:
 %       50 Hz (variable) notch filter
 %   3)  Smoothing and rectifying:
-%       4th order Butterworth low-pass filter with a time constant of 3 ms 
+%       4th order Butterworth low-pass filter with a time constant of 3 ms
 %       (=> cutoff of 53.05Hz)
 %   Once the data is preprocessed, according to the option 'channel_action',
 %   it will either replace the existing channel or add it as new channel to
@@ -23,8 +23,8 @@ function [sts, output] = pspm_emg_pp(fn, options)
 %          .channel:  [numeric/string] Channel to be preprocessed.
 %                     Can be a channel ID or a channel name.
 %                     Default is 'emg' (i.e. first EMG channel)
-%   .channel_action:  ['add'/'replace'] Defines whether the new channel should 
-%                     be added or the previous outputs of this function should 
+%   .channel_action:  ['add'/'replace'] Defines whether the new channel should
+%                     be added or the previous outputs of this function should
 %                     be replaced. (Default: 'replace')
 % ● References
 %   [1] Khemka S, Tzovara A, Gerster S, Quednow BB, Bach DR (2016).
@@ -52,12 +52,9 @@ if ~isfield(options, 'mains_freq')
   options.mains_freq = 50;
 end
 
-if ~isfield(options, 'channel')
-  options.channel = 'emg';
-end
-
-if ~isfield(options, 'channel_action')
-  options.channel_action = 'replace';
+options = pspm_options(options, 'emg_pp');
+if options.invalid
+  return
 end
 
 % check values
@@ -65,11 +62,6 @@ end
 if ~isnumeric(options.mains_freq)
   warning('ID:invalid_input', 'Option mains_freq must be numeric.');
   return;
-elseif ~ismember(options.channel_action, {'add', 'replace'})
-  warning('ID:invalid_input', 'Option channel_action must be either ''add'' or ''repalce''');
-  return;
-elseif ~isnumeric(options.channel) && ~ischar(options.channel)
-  warning('ID:invalid_input', 'Option channel must be a string or numeric');
 end
 
 % load data
@@ -126,17 +118,17 @@ filt.direction = 'uni';
 if lsts == -1, return; end
 
 % change channel type to emg_pp to match sebr modality
-old_chantype = data{1}.header.chantype;
-data{1}.header.chantype = 'emg_pp';
+old_channeltype = data{1}.header.channeltype;
+data{1}.header.channeltype = 'emg_pp';
 
 % save data
 % -------------------------------------------------------------------------
 channel_str = num2str(options.channel);
 o.msg.prefix = sprintf(...
-  'EMG preprocessing :: Input channel: %s -- Input chantype: %s -- Output chantype: %s --', ...
+  'EMG preprocessing :: Input channel: %s -- Input channeltype: %s -- Output channeltype: %s --', ...
   channel_str, ...
-  old_chantype, ...
-  data{1}.header.chantype);
+  old_channeltype, ...
+  data{1}.header.channeltype);
 [lsts, outinfos] = pspm_write_channel(fn, data{1}, options.channel_action, o);
 if lsts ~= 1, return; end
 

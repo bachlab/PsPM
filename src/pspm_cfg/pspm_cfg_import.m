@@ -6,8 +6,8 @@ if isempty(settings), pspm_init; end
 
 % Get filetype
 fileoptions={settings.import.datatypes.long};
-chantypesDescription = {settings.chantypes.description};
-chantypesData = {settings.chantypes.data};
+channeltypesDescription = {settings.channeltypes.description};
+channeltypesData = {settings.channeltypes.data};
 cd(settings.path)
 [information, arguments] = pspm_help('pspm_import');
 cd([settings.path,'pspm_cfg/'])
@@ -195,7 +195,7 @@ for datatype_i=1:length(fileoptions)
   description  = regexprep(description,'(\<\w)','${upper($1)}');
   searchoption = settings.import.datatypes(datatype_i).searchoption;
   automarker   = settings.import.datatypes(datatype_i).automarker;
-  chantypes    = settings.import.datatypes(datatype_i).chantypes;
+  channeltypes    = settings.import.datatypes(datatype_i).channeltypes;
   short        = settings.import.datatypes(datatype_i).short;
   ext          = settings.import.datatypes(datatype_i).ext;
   help         = {settings.import.datatypes(datatype_i).help};
@@ -238,21 +238,21 @@ for datatype_i=1:length(fileoptions)
   flank_option.help   = arguments(contains(arguments(:,1),'import.flank'),2);
 
   %% Channel/Column Type Items
-  importtype_item = cell(1,length(chantypes));
-  for importtype_i=1:length(chantypes)
+  importtype_item = cell(1,length(channeltypes));
+  for importtype_i=1:length(channeltypes)
     importtype_item{importtype_i}       = cfg_branch;
     % Find channeltype description
-    chantypesDescIdx = find(strcmp({settings.chantypes.type},chantypes{importtype_i}));
-    if ~isempty(chantypesDescIdx)
-      importtype_item{importtype_i}.name = chantypesDescription{chantypesDescIdx};
+    channeltypesDescIdx = find(strcmp({settings.channeltypes.type},channeltypes{importtype_i}));
+    if ~isempty(channeltypesDescIdx)
+      importtype_item{importtype_i}.name = channeltypesDescription{channeltypesDescIdx};
     else
-      importtype_item{importtype_i}.name  = chantypes{importtype_i};
+      importtype_item{importtype_i}.name  = channeltypes{importtype_i};
     end
-    importtype_item{importtype_i}.tag   = chantypes{importtype_i};
+    importtype_item{importtype_i}.tag   = channeltypes{importtype_i};
     importtype_item{importtype_i}.help  = {''};
 
     % Check for different Channel/Column options
-    if strcmp(chantypes(importtype_i), 'marker') && automarker
+    if strcmp(channeltypes(importtype_i), 'marker') && automarker
       % Def->0
       chan_nr_def.val = {0};
       chan_nr.val    = {chan_nr_def};
@@ -281,7 +281,7 @@ for datatype_i=1:length(fileoptions)
       end
     end
 
-    if strcmp(chantypesData{chantypesDescIdx}, 'events')
+    if strcmp(channeltypesData{channeltypesDescIdx}, 'events')
       importtype_item{importtype_i}.val = {chan_nr,flank_option};
     else
       importtype_item{importtype_i}.val = {chan_nr};
@@ -294,7 +294,7 @@ for datatype_i=1:length(fileoptions)
     end
 
     % Check for scr transfer function
-    if strcmp(chantypes(importtype_i), 'scr')
+    if strcmp(channeltypes(importtype_i), 'scr')
       importtype_item{importtype_i}.val = [importtype_item{importtype_i}.val,{scr_transfer}];
     end
 

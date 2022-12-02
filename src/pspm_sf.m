@@ -21,13 +21,15 @@ function outfile = pspm_sf(model, options)
 %   │                   used).
 %   │ Optional
 %   ├──────────method:  [string/cell_array]
-%   │                   [string] accept 'auc', 'scl', 'dcm', or 'mp', default 
-%   │                   as 'dcm' 
+%   │                   [string] accept 'auc', 'scl', 'dcm', or 'mp', default
+%   │                   as 'dcm'
 %   │                   [cell_array] a cell array of methods mentioned above.
 %   ├─────────.filter:  filter settings; modality specific default
 %   └────────.channel:  channel number; default: first SCR channel
 %   ┌─────────options
-%   ├──────.overwrite:  overwrite existing files
+%   ├──────.overwrite:  [logical] (0 or 1)
+%   │                   Define whether to overwrite existing output files or not.
+%   │                   Default value: determined by pspm_overwrite.
 %   ├.marker_chan_num:  marker channel number
 %   │                   if undefined or 0, first marker channel is used.
 %   │ additional options for individual methods:
@@ -165,18 +167,18 @@ elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
 end
 % 2.8 Set options
 try model.channel; catch, model.channel = 'scr'; end
-try options.overwrite; catch, options.overwrite = 0; end
-if ~isfield(options,'marker_chan_num') ||...
-    ~isnumeric(options.marker_chan_num) ||...
-    numel(options.marker_chan_num) > 1
-  options.marker_chan_num = 0;
+options = pspm_options(options, 'sf');
+if options.invalid
+  return
 end
 %% 3 Get data
 for iFile = 1:numel(model.datafile)
   % 3.1 User output
   fprintf('SF analysis: %s ...', model.datafile{iFile});
   % 3.2 Check whether model file exists
-  if ~pspm_overwrite(model.modelfile, options); return; end
+  if ~pspm_overwrite(model.modelfile, options)
+    return
+  end
   % 3.3 get and filter data
   [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
   if sts < 0, return; end
@@ -202,7 +204,7 @@ for iFile = 1:numel(model.datafile)
         warning('ID:invalid_input', 'Could not load data');
         return;
       end
-      if ~strcmp(ndata{1}.header.chantype, 'marker')
+      if ~strcmp(ndata{1}.header.channeltype, 'marker')
         warning('ID:invalid_option', ...
           ['Channel %i is no marker channel. ',...
           'The first marker channel in the file is used instead'],...

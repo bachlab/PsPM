@@ -13,7 +13,7 @@ classdef pspm_ren_test < matlab.unittest.TestCase
     function char_valid_input(this)
       fn = 'testdata_ren_1.mat';
       rfn = 'rtestdata_ren_1.mat';
-      channels.chantype = 'scr';
+      channels.channeltype = 'scr';
       pspm_testdata_gen(channels, 10, fn);
       newfilename = pspm_ren(fn, rfn);
       [sts, infos, data] = pspm_load_data(newfilename);
@@ -29,7 +29,7 @@ classdef pspm_ren_test < matlab.unittest.TestCase
       fn{2} = 'rtestdata_ren_2.mat';
       rfn{1} = 'testdata_ren_3.mat';
       rfn{2} = 'rtestdata_ren_3.mat';
-      channels.chantype = 'scr';
+      channels.channeltype = 'scr';
       pspm_testdata_gen(channels, 10, fn{1});
       pspm_testdata_gen(channels, 10, fn{2});
       newfilename = pspm_ren(fn, rfn);

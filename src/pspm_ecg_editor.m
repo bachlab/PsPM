@@ -4,13 +4,13 @@ function varargout = pspm_ecg_editor(varargin)
 %   output. Function can be called seperately.
 % ● Format
 %   [sts, R] = pspm_ecg_editor(pt)
-%   [sts, R] = pspm_ecg_editor(fn, chan, options)
+%   [sts, R] = pspm_ecg_editor(fn, channel, options)
 % ● Arguments
 %         pt:  A struct() from pspm_ecg2hb detection.
 %         fn:  A file to  data file containing the ecg channel to be edited
-%       chan:  Channel id of ecg channel in the data file
+%       channel:  Channel id of ecg channel in the data file
 % ┌──options:  A struct() of options
-% ├──────.hb:  Channel id of the existing hb channel
+% ├─.channel:  Channel id of the existing hb channel
 % ├────.semi:  Defines whether to navigate between potentially wrong hb events
 % │            only (semi = 1), or between all hb events (semi = 0 => manual
 % │            mode)
@@ -147,7 +147,7 @@ if strcmpi(handles.gui_mode, 'file')
   set(handles.pnlFileIO, 'visible', 'on');
 else
   set(handles.pnlFileIO, 'visible', 'off');
-end;
+end
 % -------------------------------------------------------------------------
 % Update handles structure
 guidata(hObject, handles);
@@ -182,10 +182,10 @@ elseif not(isempty(handles.R))
     varargout{2} = handles.R;
   else
     varargout{2} = handles.write_chan;
-  end;
+  end
 else
   varargout{2} = [];
-end;
+end
 delete(hObject);
 % -------------------------------------------------------------------------
 
@@ -203,7 +203,7 @@ else
   handles.edit_mode = 'add_qrs';
   set(handles.figure1,'Pointer','crosshair');
   guidata(hObject, handles);
-end;
+end
 
 
 % --- Executes on button press in togg_remove.
@@ -221,7 +221,7 @@ else
   handles.edit_mode = 'remove_qrs';
   set(handles.figure1,'Pointer','crosshair');
   guidata(hObject, handles);
-end;
+end
 % -------------------------------------------------------------------------
 
 
@@ -301,7 +301,7 @@ r(1,r(4,:)==1)=1;   % added QRS markers
 % remove artefact markers
 if get(handles.rbExcludeArtefactQRS, 'Value') == 1 && any(handles.plot.artefact_layer)
   r(1, handles.plot.artefact_layer) = NaN;
-end;
+end
 
 handles.R=[];
 handles.R=find(r(1,:)==1);
@@ -317,14 +317,14 @@ if strcmpi(handles.gui_mode, 'file') && numel(handles.R) > 0
   out_d = struct();
   out_d.data = handles.R/sr;
   out_d.header = struct();
-  out_d.header.chantype = 'hb';
+  out_d.header.channeltype = 'hb';
   out_d.header.sr = 1;
   out_d.header.units = 'events';
 
   % transpose if necessary
   if max(size(out_d.data,1)) ~= length(out_d.data)
-    out_d.data = out_d.data';
-  end;
+    out_d.data = transpose(out_d.data);
+  end
 
   switch output_settings
     case 1
@@ -333,7 +333,7 @@ if strcmpi(handles.gui_mode, 'file') && numel(handles.R) > 0
     case 2
       w_action = 'replace';
       w_chan = handles.hb_chan;
-  end;
+  end
   op = struct('channel', w_chan);
   [nsts, infos] = pspm_write_channel(handles.fn, out_d, w_action, op);
 
@@ -342,8 +342,8 @@ if strcmpi(handles.gui_mode, 'file') && numel(handles.R) > 0
   else
     warning('ID:invalid_input', 'Could not write channel.');
     handles.sts = nsts;
-  end;
-end;
+  end
+end
 
 guidata(hObject,handles);
 uiresume
@@ -359,41 +359,45 @@ if numel(varargin) == 0 || ~isstruct(varargin{1})
 
   if numel(varargin) > 2
     handles.options = varargin{3};
-  end;
+  else
+    handles.options = struct();
+  end
+
+  handles.options = pspm_options(handles.options, 'ecg_editor');
 
   if isfield(handles.options, 'hb')
-    handles.hb_chan = handles.options.hb;
-  end;
+    handles.hb_chan = handles.options.channel;
+  end
   if isfield(handles.options, 'factor')
     handles.plot.factr = handles.options.factor;
-  end;
+  end
   if isfield(handles.options, 'semi')
     handles.manualmode = ~handles.options.semi;
-  end;
+  end
   if isfield(handles.options, 'artefact') && ~isempty(handles.options.artefact)
     load_data_artefacts(hObject, handles, handles.options.artefact);
     % update handles
     handles = guidata(hObject);
-  end;
+  end
   if isfield(handles.options, 'limits')
     if isfield(handles.options.limits, 'lower')
       handles.plot.limits.lower = handles.options.limits.lower;
-    end;
+    end
 
     if isfield(handles.options.limits, 'upper')
       handles.plot.limits.upper = handles.options.limits.upper;
-    end;
-  end;
+    end
+  end
 
   if numel(varargin) >= 2
     handles.data_chan = varargin{2};
-  end;
+  end
 
   if numel(varargin) >= 1
     load_data_file(hObject, handles, varargin{1});
     % update handles
     handles = guidata(hObject);
-  end;
+  end
 else
   handles.data = varargin{1};
   handles.gui_mode = 'inline';
@@ -405,11 +409,11 @@ else
   sr=handles.data.settings.filt.sr;
   % -------------------------------------------------------------------------
   % QRS complexes
-  ecg=handles.data.data.x(:,1)';
+  ecg = transpose(handles.data.data.x(:,1));
 
   handles.plot.sr = sr;
   handles.plot.ecg = ecg;
-end;
+end
 
 % -------------------------------------------------------------------------
 % output.
@@ -419,15 +423,15 @@ set(handles.cbManualMode, 'Value', handles.manualmode);
 % Update handles structure
 guidata(hObject,handles);
 
-% --- update hb chan
+% --- update hb channel
 function reload_hb_chan(hObject, handles)
 
 ecg = handles.plot.ecg;
 sr = handles.plot.sr;
 
 if isstruct(handles.data)
-  R=handles.data.set.R;
-  r=handles.data.data.r';
+  R = handles.data.set.R;
+  r = transpose(handles.data.data.r);
   % set modification rows
   r(3:4, :) = NaN;
   handles.manualmode = 1 && get(handles.cbManualMode, 'Value');
@@ -443,20 +447,20 @@ else
     set(handles.cbManualMode, 'Enable', 'off');
     if get(handles.rbReplaceHbChan, 'Value')
       set(handles.rbAddChan, 'Value', 1);
-    end;
+    end
     handles.manualmode = 1;
     set(handles.cbManualMode, 'Value', 1);
     hb = {};
-  end;
+  end
   r = zeros(4,numel(ecg));
   if numel(hb) >= 1
-    R = round(hb*sr)';
+    R = transpose(round(hb*sr));
     r(1,R) = 1;
     handles.manualmode = get(handles.cbManualMode, 'Value');
   else
     R = [];
-  end;
-end;
+  end
+end
 
 handles.plot.R = R;
 handles.plot.r = r;
@@ -484,7 +488,7 @@ for i=1:length(handles.artefact_epochs)
   start = max(1, round(a_coord(1)*handles.plot.sr));
   stop = min(length(a_lay), round(a_coord(2)*handles.plot.sr));
   a_lay(start:stop) = 1;
-end;
+end
 
 % reset old detections
 r(1,R) = 1;
@@ -501,7 +505,7 @@ if get(handles.rbDisableArtefactDetection, 'Value') || ...
   ibi_f = ibi(ibi_filter(1:end-1));
 else
   ibi_f = ibi;
-end;
+end
 % -------------------------------------------------------------------------
 % create vectors for potential mislabeled qrs complexes
 flag(ibi>(mean(ibi_f)+(factr*std(ibi_f))))=1;   % too short
@@ -523,17 +527,17 @@ if ~isempty(handles.artefact_epochs) && numel(R) > 0
     chans = 2;
   elseif get(handles.rbHideArtefactEvents, 'Value')
     chans = [1,2];
-  end;
+  end
 
   % update maxk if necessary
   if ~isempty(chans)
     maxk = length(find(flag==1 & ibi_filter));
-  end;
+  end
 
   if ~isempty(chans) && any(a_lay)
     r(chans, a_lay) = 0;
-  end;
-end;
+  end
+end
 
 % if detection is disabled and detected as faulty then channel 1 and
 % are empty but flag is set; in order to display the blue marker we have to
@@ -541,7 +545,7 @@ end;
 idx = r(2,R)==0 & flag==1;
 if get(handles.rbDisableArtefactDetection, 'Value') && any(idx)
   r(1,R(idx)) = 1;
-end;
+end
 
 % make zeros NaN
 r(r==0)=NaN;
@@ -552,7 +556,7 @@ handles.plot.artefact_layer = a_lay;
 
 if exist('handles.maxk', 'var') == 0 && exist('maxk', 'var')
   handles.maxk = maxk;
-end;
+end
 
 % update dynamic R / make it global because its quite an expensive
 % operation
@@ -578,8 +582,8 @@ else
     sample_id = custom_R(idx);
   else
     sample_id = 1;
-  end;
-end;
+  end
+end
 % -------------------------------------------------------------------------
 if handles.jo==0 % check only if changes were done.
   % plot ecg signal
@@ -588,39 +592,39 @@ if handles.jo==0 % check only if changes were done.
     handles.plot.p = plot(handles.plot.y,handles.plot.ecg,'color',handles.clr{1}(1,:));
     ylim([min(handles.plot.ecg)*(1-.1), max(handles.plot.ecg)*(1+.1)]);
     handles.e=1;
-  end;
+  end
   % -------------------------------------------------------------------------
   if not(isempty(handles.s))
     try
       for i = 1:length(handles.s)
         if handles.s(i) > 0
           delete(handles.s(i));
-        end;
-      end;
+        end
+      end
       handles.s = [];
     catch
       warning('Could not properly clean up stem markers.');
-    end;
-  end;
+    end
+  end
   % ---------------------------------------------------------------------
   if ~isempty(handles.selection.sh)
     try
       for i =1:length(handles.selection.sh)
         delete(handles.selection.sh);
-      end;
+      end
       handles.selection.sh = [];
     catch
-    end;
-  end;
+    end
+  end
   % ---------------------------------------------------------------------
   % plot normal stems
   handles.s = plot_stems(handles, handles.s, [1 length(handles.plot.r)], 1);
   handles.jo = 1;
-end;
+end
 % plot or update highlight stems
 if ~isempty(handles.plot.R)
   handles.selection.sh = plot_stems(handles, handles.selection.sh, [sample_id, sample_id], 2);
-end;
+end
 % -------------------------------------------------------------------------
 if ~handles.manualmode
   left_border  = count-2*handles.zoom_factor;
@@ -666,7 +670,7 @@ if handles.update_selection
     if ~isempty(custom_R)
       if lst_id > length(custom_R)
         lst_id = 1;
-      end;
+      end
       lst_count = custom_R(lst_id);
       lst_sample = lst_count;
       sel_sample = handles.count;
@@ -675,14 +679,14 @@ if handles.update_selection
         d = abs(custom_R-sel_sample*handles.plot.sr);
         idx = find(d == min(d));
         set(handles.lstEvents, 'Value', idx);
-      end;
-    end;
+      end
+    end
   else
     if lst_id ~= handles.k
       set(handles.lstEvents, 'Value', handles.k);
-    end;
-  end;
-end;
+    end
+  end
+end
 
 % --- Executes when user attempts to close figure1.
 function figure1_CloseRequestFcn(hObject, eventdata, handles)
@@ -710,7 +714,7 @@ function figure1_KeyPressFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 if strcmpi(eventdata.Key, 'escape')
   exitModus;
-end;
+end
 
 % -------------------------------------------------------------------------
 function exitModus()
@@ -730,7 +734,7 @@ if strcmpi(handles.edit_mode,'remove_qrs')
   pt = get(handles.axes, 'CurrentPoint');
   handles.selection.start = pt(1,1:2);
   guidata(hObject, handles);
-end;
+end
 
 % --- Executes on button press in zoomIn.
 function zoomIn_Callback(hObject, eventdata, handles)
@@ -785,7 +789,7 @@ if ischar(fname) && ~isempty(fname)
   reload_hb_chan(hObject, handles);
   handles = guidata(hObject);
   reload_plot(hObject, handles);
-end;
+end
 
 
 % --- Executes on selection change in ppHbChan.
@@ -804,12 +808,12 @@ if ~isempty(handles.data)
     handles.hb_chan = -1;
   else
     handles.hb_chan = str2double(new_hb_chan);
-  end;
+  end
   % reload hb channel
   reload_hb_chan(hObject, handles);
   handles = guidata(hObject);
   reload_plot(hObject, handles);
-end;
+end
 
 % --- Executes on selection change in ppEcgChan.
 function ppEcgChan_Callback(hObject, ~, handles)
@@ -832,9 +836,9 @@ if ~isempty(handles.data)
   if handles.plot.p ~= -1
     delete(handles.plot.p);
     handles.plot.p = -1;
-  end;
+  end
   reload_plot(hObject, handles);
-end;
+end
 
 % --- Executes during object creation, after setting all properties.
 function ppEcgChan_CreateFcn(hObject, eventdata, handles)
@@ -852,17 +856,17 @@ end
 function load_data_file(hObject, handles, fn)
 [sts, ~, handles.data, ~] = pspm_load_data(fn);
 if sts == 1
-  ecg_chans = find(cellfun(@(x) strcmpi(x.header.chantype, 'ecg'), handles.data));
+  ecg_chans = find(cellfun(@(x) strcmpi(x.header.channeltype, 'ecg'), handles.data));
   % set possible ecg chans
   sel_ecg_chan = find(ecg_chans == handles.data_chan, 1, 'first');
   if isempty(sel_ecg_chan)
     sel_ecg_chan = 1;
-  end;
+  end
   handles.data_chan = ecg_chans(sel_ecg_chan);
   set(handles.ppEcgChan, 'String', ecg_chans);
   set(handles.ppEcgChan, 'Value', sel_ecg_chan);
 
-  hb_chans = find(cellfun(@(x) strcmpi(x.header.chantype, 'hb'), handles.data));
+  hb_chans = find(cellfun(@(x) strcmpi(x.header.channeltype, 'hb'), handles.data));
   hb_chan_list = cell(1,length(hb_chans)+1);
   hb_chan_list{1} = 'None';
   hb_chan_list(2:end) = num2cell(hb_chans);
@@ -873,16 +877,16 @@ if sts == 1
     sel_hb_chan = find(cell2mat(hb_chan_list(2:end)) == handles.hb_chan,1) + 1;
     if isempty(sel_hb_chan)
       sel_hb_chan = -2;
-    end;
-  end;
+    end
+  end
 
   if sel_hb_chan == -2
     if length(hb_chans) == 1
       sel_hb_chan = 2;
     else
       sel_hb_chan = 1;
-    end;
-  end;
+    end
+  end
 
   set(handles.ppHbChan, 'String', hb_chan_list);
   set(handles.ppHbChan, 'Value', sel_hb_chan);
@@ -891,7 +895,7 @@ if sts == 1
   if strcmpi(handles.hb_chan, 'None')
     handles.hb_chan = -1;
     set(handles.rbReplaceHbChan, 'Enable', 'off');
-  end;
+  end
 
   handles.fn = fn;
   set(handles.edtDataFile, 'String', fn);
@@ -905,11 +909,11 @@ if sts == 1
   if handles.plot.p ~= -1
     delete(handles.plot.p);
     handles.plot.p = -1;
-  end;
+  end
   handles.plot.sr = sr;
 
   guidata(hObject, handles);
-end;
+end
 
 % --- Reload plot settings
 function reload_plot(hObject, handles)
@@ -923,10 +927,10 @@ if ~isempty(handles.data)
       count = fl(handles.k)/handles.plot.sr;
     else
       count = 1/handles.plot.sr;
-    end;
+    end
   else
     count = handles.count;
-  end;
+  end
 
   sel_sample = count*handles.plot.sr;
 
@@ -945,8 +949,8 @@ if ~isempty(handles.data)
     handles.count = R(idx)/handles.plot.sr;
     if isempty(handles.count)
       handles.count = 0;
-    end;
-  end;
+    end
+  end
 
   % update event list
   update_event_list(hObject, handles);
@@ -958,7 +962,7 @@ if ~isempty(handles.data)
 
   % check nex_prev button
   check_navigation_buttons(hObject, handles);
-end;
+end
 
 % --- Check navigation buttons
 function check_navigation_buttons(hObject, handles)
@@ -977,19 +981,19 @@ else
     maximum = length(handles.plot.r)/handles.plot.sr;
     minimum = 0;
     prev = handles.count - (handles.winsize/2)*handles.zoom_factor;
-  end;
+  end
   if  next > maximum
     set(handles.push_next,'enable','off');
   else
     set(handles.push_next, 'enable', 'on');
-  end;
+  end
 
   if prev < minimum
     set(handles.push_last, 'enable', 'off');
   else
     set(handles.push_last, 'enable', 'on');
-  end;
-end;
+  end
+end
 
 % --- Update event list
 function update_event_list(hObject, handles)
@@ -1000,13 +1004,13 @@ if handles.manualmode
 else
   new_el = handles.plot.faulties;
   sel_el = handles.k;
-end;
+end
 
 new_list = cell(length(new_el),1);
 for i=1:length(new_el)
   % find color
   new_list{i} = create_event_list_entry(hObject, handles, new_el(i));
-end;
+end
 
 set(handles.lstEvents, 'Value', 1);
 set(handles.lstEvents, 'String', new_list);
@@ -1020,13 +1024,13 @@ if nansum(el, 1) > 0
   cl = handles.clr{max(el_idx)+1}(1,:);
 else
   cl = handles.clr{2}(1,:);
-end;
+end
 
 if handles.plot.artefact_layer(sample_id)
   f_cl = '777777';
 else
   f_cl = '000000';
-end;
+end
 
 t = sample_id/handles.plot.sr;
 entry = sprintf('<html><font bgcolor="#%02s%02s%02s" color="#%06s">%0.4f</font></html>',...
@@ -1104,7 +1108,7 @@ if ischar(fname) && ~isempty(fname)
   load_data_artefacts(hObject, handles, fn);
   handles = guidata(hObject);
   refresh_faulty(hObject, handles);
-end;
+end
 
 % --- Load artefact epochs file
 function load_data_artefacts(hObject, handles, artefacts)
@@ -1145,11 +1149,11 @@ if sts ~= -1
     set(handles.edtArtefactFile, 'Visible', 'off');
     set(handles.pbArtefactFile, 'Visible', 'off');
     set(handles.pbArtefactsDisable, 'Visible', 'off');
-  end;
+  end
 else
   handles.artefact_epochs = [];
   warning('ID:invalid_input', 'Could not load artefacts.');
-end;
+end
 guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
@@ -1181,17 +1185,17 @@ if sel_id >= 0
     if sel_id > length(custom_R)
       sel_id = 1;
       set(hObject, 'Value', sel_id);
-    end;
+    end
     handles.count = custom_R(sel_id)/handles.plot.sr;
   else
     handles.k = sel_id;
-  end;
+  end
   handles.update_selection = false;
   pp_plot(hObject, handles);
   handles = guidata(hObject);
   handles.update_selection = true;
   guidata(hObject, handles);
-end;
+end
 
 
 
@@ -1219,7 +1223,7 @@ function edtUpperLimit_Callback(hObject, eventdata, handles)
 if isnan(str2double(get(hObject, 'String')))
   errordlg('Value has to be numeric.');
   set(hObject, 'String', num2str(handles.plot.limits.upper));
-end;
+end
 
 % --- Executes during object creation, after setting all properties.
 function edtUpperLimit_CreateFcn(hObject, eventdata, handles)
@@ -1245,7 +1249,7 @@ function edtLowerLimit_Callback(hObject, eventdata, handles)
 if isnan(str2double(get(hObject, 'String')))
   errordlg('Value has to be numeric.');
   set(hObject, 'String', num2str(handles.plot.limits.lower));
-end;
+end
 
 % --- Executes during object creation, after setting all properties.
 function edtLowerLimit_CreateFcn(hObject, eventdata, handles)
@@ -1296,7 +1300,7 @@ function edtFactor_Callback(hObject, eventdata, handles)
 if isnan(str2double(get(hObject, 'String')))
   errordlg('Value has to be numeric.');
   set(hObject, 'String', num2str(handles.plot.factr));
-end;
+end
 
 
 % --- Executes on button press in pbArtefactsDisable.
@@ -1379,21 +1383,21 @@ switch handles.edit_mode
       ev_pos = min(find(lst_R >= x));
       if isempty(ev_pos)
         ev_pos = length(lst_R) + 1;
-      end;
+      end
 
       new_events = cell(length(cur_events)+1, 1);
       if length(cur_events) >= 1
         new_events(1:(ev_pos-1)) = cur_events(1:(ev_pos-1));
-      end;
+      end
 
       % set entry
       new_events{ev_pos} = create_event_list_entry(hObject, handles, x);
       if length(cur_events) >= ev_pos
         new_events((ev_pos+1):end) = cur_events(ev_pos:end);
-      end;
+      end
       set(handles.lstEvents, 'String', new_events);
       set(handles.lstEvents, 'Value', ev_pos);
-    end;
+    end
 
 
   case 'remove_qrs'        % click input
@@ -1402,7 +1406,7 @@ switch handles.edit_mode
     if handles.selection.p ~= -1
       delete(handles.selection.p);
       handles.selection.p = -1;
-    end;
+    end
 
     % find start and stop positions
     if handles.selection.start(1) < pt(1)
@@ -1411,7 +1415,7 @@ switch handles.edit_mode
     else
       stop = handles.selection.start(1)*handles.plot.sr;
       start = pt(1)*handles.plot.sr;
-    end;
+    end
 
     % sanitize
     start = max(1, round(start));
@@ -1428,7 +1432,7 @@ switch handles.edit_mode
       lst_R = custom_R;
     else
       lst_R = find(handles.plot.r(2, :) == 1);
-    end;
+    end
 
     % replace selected objects
     cur_events = cellstr(get(handles.lstEvents,'String'));
@@ -1436,12 +1440,12 @@ switch handles.edit_mode
       ev_pos = find(lst_R == custom_R(idx(i)), 1);
       if ~isempty(ev_pos)
         cur_events{ev_pos} = create_event_list_entry(hObject, handles, custom_R(idx(i)));
-      end;
-    end;
+      end
+    end
     set(handles.lstEvents, 'String', cur_events);
   otherwise
     no_change = 1;
-end;
+end
 
 if ~no_change
   % update dynamic R
@@ -1457,11 +1461,11 @@ if ~no_change
     pos_R = find(handles.plot.r(2,:) == 1);
     [~, k] = min(abs(pos_R-x));
     handles.k = k;
-  end;
+  end
 
   pp_plot(hObject,handles);
 
-end;
+end
 
 
 % --- Executes on mouse motion over figure - except title and menu.
@@ -1484,7 +1488,7 @@ if handles.draw_selection
   else
     p = patch(x,y, 'white', 'FaceColor', 'none');
     handles.selection.p = p;
-  end;
+  end
 
 
   guidata(hObject, handles);
@@ -1493,7 +1497,7 @@ if handles.draw_selection
 
   handles.selection.sh = plot_stems(handles, handles.selection.sh, range, 2);
   guidata(hObject, handles);
-end;
+end
 
 % --- Plot selection highlight
 function [stem_handles] = plot_stems(handles, stem_handles, range, cl_type)
@@ -1505,7 +1509,7 @@ if range(1) > range(2)
 else
   start = range(1);
   stop = range(2);
-end;
+end
 
 start = max(1, round(start));
 stop = min(length(handles.plot.r), round(stop));
@@ -1538,37 +1542,37 @@ for k=1:n_col*2
     layer = ~handles.plot.artefact_layer;
     cl = handles.clr{ev_idx+1}(cl_type,:);
     b_cl = cl;
-  end;
+  end
 
   layer = layer & p_range;
   if p_rules(ev_idx) ~= 0
     layer = layer & p_sum == p_rules(ev_idx);
-  end;
+  end
 
 
   if any(layer)
     if numel(stem_handles) < k || stem_handles(k) == -1
       % plot stems
-      stem_handles(k)=stem(handles.plot.y(layer),...
+      stem_handles(k) = stem(handles.plot.y(layer),...
         handles.plot.r(ev_idx,layer)*stem_size,'color',b_cl);
       % set stem layout
       set(stem_handles(k),'Linewidth',2,...
         'MarkerFaceColor',cl, 'MarkerEdgeColor', cl);
 
       % set baseline
-      sbase=get(stem_handles(k),'baseline');
+      sbase = get(stem_handles(k),'baseline');
       set(sbase,'BaseValue',baseline,'Visible','off');
     else
       % update stemdata
       set(stem_handles(k), 'XData', handles.plot.y(layer), ...
         'YData', handles.plot.r(ev_idx,layer)*stem_size);
-    end;
+    end
     uistack(stem_handles(k), 'top');
   else
     if numel(stem_handles) >= k && stem_handles(k) ~= -1
       delete(stem_handles(k));
-    end;
+    end
     stem_handles(k) = -1;
-  end;
+  end
 
-end;
+end

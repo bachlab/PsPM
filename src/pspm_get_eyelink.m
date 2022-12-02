@@ -63,7 +63,7 @@ for i = 1:numel(data)-1
 
   data{i}.channels = blink_saccade_filtering(...
     data{i}.channels, ...
-    data{i}.channels_header, ...
+    data{i}.channel_header, ...
     mask_chans, ...
     expand_factor * data{i}.sampleRate ...
     );
@@ -194,7 +194,7 @@ for k = 1:numel(import)
 
   if ~any(strcmpi(import{k}.type, ...
       settings.import.datatypes(strcmpi('eyelink', ...
-      {settings.import.datatypes.short})).chantypes))
+      {settings.import.datatypes.short})).channeltypes))
     warning('ID:channel_not_contained_in_file', ...
       'Channel type ''%s'' is not supported.\n', ...
       import{k}.type);
@@ -214,7 +214,7 @@ for k = 1:numel(import)
       import{k}.flank = 'all';
     end
   else
-    % determine chan id from chantype - eyelink specific
+    % determine channel id from channeltype - eyelink specific
     % thats why channel ids will be ignored!
     if strcmpi(data{1}.eyesObserved, settings.lateral.cap.c) || strcmpi(data{1}.eyesObserved, 'lr')
       chan_struct = {'pupil_l', 'pupil_r', 'gaze_x_l', 'gaze_y_l', ...
@@ -226,9 +226,9 @@ for k = 1:numel(import)
     end
 
     if strcmpi(import{k}.type, 'custom')
-      chan = import{k}.channel;
+      channel = import{k}.channel;
     else
-      chan = find(strcmpi(chan_struct, import{k}.type), 1, 'first');
+      channel = find(strcmpi(chan_struct, import{k}.type), 1, 'first');
     end
 
     if ~isempty(regexpi(import{k}.type, '_[lr]', 'once')) && ...
@@ -240,24 +240,24 @@ for k = 1:numel(import)
 
       % create NaN values for this channel
       import{k}.data = NaN(size(channels, 1),1);
-      chan = -1;
+      channel = -1;
       import{k}.units = '';
     else
-      if chan > size(channels, 2)
+      if channel > size(channels, 2)
         warning('ID:channel_not_contained_in_file', ...
           'Column %02.0f (%s) not contained in file %s.\n', ...
-          chan, import{k}.type, datafile);
+          channel, import{k}.type, datafile);
         return;
       end
-      import{k}.data = channels(:, chan);
-      import{k}.units = units{chan};
+      import{k}.data = channels(:, channel);
+      import{k}.units = units{channel};
     end
 
 
     import{k}.sr = sampleRate;
-    sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan);
+    sourceinfo.channel{k, 1} = sprintf('Column %02.0f', channel);
 
-    % chan specific stats
+    % channel specific stats
     sourceinfo.chan_stats{k,1} = struct();
     n_inv = sum(isnan(import{k}.data));
     sourceinfo.chan_stats{k}.nan_ratio = n_inv/n_data;

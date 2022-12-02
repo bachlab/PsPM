@@ -136,12 +136,12 @@ classdef pspm_get_eyelink_test < pspm_get_superclass
       fn = 'ImportTestData/eyelink/S114_s2.asc';
       import{1} = struct('type', 'custom'   , 'channel', 21);
       import{2} = struct('type', 'marker', 'channel', 20);
-      import = this.assign_chantype_number(import);
+      import = this.assign_channeltype_number(import);
       this.verifyWarning(@()pspm_get_eyelink(fn, import),...
         'ID:channel_not_contained_in_file');
       import{1} = struct('type', 'scr'   , 'channel', 21);
       import{2} = struct('type', 'marker', 'channel', 20);
-      import = this.assign_chantype_number(import);
+      import = this.assign_channeltype_number(import);
       this.verifyWarning(@()pspm_get_eyelink(fn, import),...
         'ID:channel_not_contained_in_file');
     end
