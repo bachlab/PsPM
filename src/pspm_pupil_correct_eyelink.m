@@ -1,12 +1,12 @@
 function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 % ● Description
-%   pspm_pupil_correct_eyelink performs pupil foreshortening error (PFE) 
+%   pspm_pupil_correct_eyelink performs pupil foreshortening error (PFE)
 %   correction specifically for Eyelink recorded and imported data following
-%   the steps described in [1]. For details of the exact scaling, see 
+%   the steps described in [1]. For details of the exact scaling, see
 %   <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>.
 % ● Developer's Notes
 %   In order to perform PFE, we need both pupil and gaze data. If the gaze data
-%   in the given file is in pixels, we need information about the screen 
+%   in the given file is in pixels, we need information about the screen
 %   dimensions and resolution to calculate the pixel to milimeter ratio. On the
 %   other hand, if the gaze data is in mm, cm, inches, etc., there is no need
 %   to enter any screen size related information. If the gaze data is in pixels
@@ -19,7 +19,7 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 % ● Arguments
 %              fn:  Path to a PsPM imported Eyelink data.
 %   ┌─────options:
-%   │ ▶︎ mandatory
+%   │ * mandatory
 %   ├────────mode:  Conversion mode. Must be one of 'auto' or 'manual'.
 %   │               If 'auto', then optimized conversion parameters in
 %   │               Table 3 of [1] will be used. In 'auto' mode,
@@ -33,7 +33,7 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 %   │               camera-screen-eye setup must match exactly one of the three
 %   │               sample setups given in [1].
 %   ├─────────C_z:  See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
-%   │ ▶︎ optional
+%   │ * optional
 %   ├screen_size_px:Screen size (width x height). This field is required only
 %   │               if the gaze data in the given PsPM file is in pixels.
 %   │               (Unit: pixel)
@@ -115,21 +115,11 @@ if ~ischar(fn)
   warning('ID:invalid_input', 'Data file must be a char.');
   return;
 end
-if ~isfield(options, 'mode')
-  warning('ID:invalid_input', 'options struct must contain ''mode''');
-  return;
-end
-if ~any(strcmpi(options.mode, {'auto', 'manual'}))
-  warning('ID:invalid_input', 'options.mode must be ''auto'' or ''manual''');
-  return;
-end
-if ~isfield(options, 'C_z')
-  warning('ID:invalid_input', 'options struct must contain ''C_z''');
-  return;
-end
-if ~isnumeric(options.C_z)
-  warning('ID:invalid_input', 'options.C_z must be numeric');
-  return;
+
+%% create default arguments
+options = pspm_options(options, 'pupil_correct_eyelink');
+if options.invalid
+  return
 end
 if strcmp(options.mode, 'manual')
   for field = all_fieldnames
@@ -140,23 +130,6 @@ if strcmp(options.mode, 'manual')
     end
   end
 end
-
-%% create default arguments
-
-if isfield(options, 'channel_action')
-  if ~any(strcmpi(options.channel_action, {'add', 'replace'}))
-    warning('ID:invalid_input',...
-      'options.channel_action must be ''add'' or ''replace''');
-    return;
-  end
-else
-  options.channel_action = 'add';
-end
-
-if ~isfield(options, 'channel')
-  options.channel = 'pupil';
-end
-
 if strcmpi(options.mode, 'auto')
   if ismember(options.C_z, cell2mat(keys(default_params)))
     for i = 1:numel(all_fieldnames)
@@ -171,6 +144,7 @@ if strcmpi(options.mode, 'auto')
   end
 end
 
+
 %% load data
 
 [lsts, ~, pupil_data] = pspm_load_data(fn, options.channel);
@@ -178,19 +152,19 @@ if lsts ~= 1
   return
 end
 if numel(pupil_data) > 1
-  warning('ID:multiple_channels', ['There is more than one channel'...
+  warning('ID:invalid_input', ['There is more than one channel'...
     ' with type %s in the data file.\n'...
     ' We will process only the last one.\n'], options.channel);
   pupil_data = pupil_data(end);
 end
-old_chantype = pupil_data{1}.header.chantype;
-if ~contains(old_chantype, 'pupil')
+old_channeltype = pupil_data{1}.header.channeltype;
+if ~contains(old_channeltype, 'pupil')
   warning('ID:invalid_input', 'Specified channel is not a pupil channel');
   return;
 end
 
-is_left = contains(old_chantype, '_l');
-is_both = contains(old_chantype, '_c');
+is_left = contains(old_channeltype, '_l');
+is_both = contains(old_channeltype, '_c');
 if is_both
   warning('ID:invalid_input',...
     'pspm_pupil_correct_eyelink cannot work with combined pupil channels');
@@ -266,13 +240,13 @@ if sts ~= 1; return; end
 
 %% save data
 pupil_data{1}.data = pupil_corrected;
-pupil_data{1}.header.chantype = convert_pp(old_chantype);
+pupil_data{1}.header.channeltype = convert_pp(old_channeltype);
 channel_str = num2str(options.channel);
 o.msg.prefix = sprintf(...
-  'PFE correction :: Input channel: %s -- Input chantype: %s -- Output chantype: %s --', ...
+  'PFE correction :: Input channel: %s -- Input channeltype: %s -- Output channeltype: %s --', ...
   channel_str, ...
-  old_chantype, ...
-  pupil_data{1}.header.chantype);
+  old_channeltype, ...
+  pupil_data{1}.header.channeltype);
 [lsts, out_id] = pspm_write_channel(fn, pupil_data, options.channel_action, o);
 if lsts ~= 1; return; end
 
@@ -288,36 +262,36 @@ else
 end
 end
 
-function chantype_pp = convert_pp(chantype)
+function channeltype_pp = convert_pp(channeltype)
 global settings;
 if isempty(settings), pspm_init; end
 % analyse channel type and convert it as preprocessed (pp) channel type
-chantype_array = split(chantype,'_');
+channeltype_array = split(channeltype,'_');
 % find if there is pp
-is_pp = any(strcmp(chantype_array,'pp'));
+is_pp = any(strcmp(channeltype_array,'pp'));
 % find if it is combined (c), left (l) or right (r)
-is_c = any(strcmp(chantype_array, settings.lateral.char.c));
-is_l = any(strcmp(chantype_array, settings.lateral.char.l));
-is_r = any(strcmp(chantype_array, settings.lateral.char.r));
+is_c = any(strcmp(channeltype_array, settings.lateral.char.c));
+is_l = any(strcmp(channeltype_array, settings.lateral.char.l));
+is_r = any(strcmp(channeltype_array, settings.lateral.char.r));
 if ~is_pp
   if is_c
-    chantype_array(ismember(chantype_array,settings.lateral.char.b)) = [];
-    chantype_array{end+1} = 'pp';
-    chantype_array{end+1} = settings.lateral.char.b;
+    channeltype_array(ismember(channeltype_array,settings.lateral.char.b)) = [];
+    channeltype_array{end+1} = 'pp';
+    channeltype_array{end+1} = settings.lateral.char.b;
   elseif is_l
-    chantype_array(ismember(chantype_array,settings.lateral.char.l)) = [];
-    chantype_array{end+1} = 'pp';
-    chantype_array{end+1} = settings.lateral.char.l;
+    channeltype_array(ismember(channeltype_array,settings.lateral.char.l)) = [];
+    channeltype_array{end+1} = 'pp';
+    channeltype_array{end+1} = settings.lateral.char.l;
   elseif is_r
-    chantype_array(ismember(chantype_array,settings.lateral.char.r)) = [];
-    chantype_array{end+1} = 'pp';
-    chantype_array{end+1} = settings.lateral.char.r;
+    channeltype_array(ismember(channeltype_array,settings.lateral.char.r)) = [];
+    channeltype_array{end+1} = 'pp';
+    channeltype_array{end+1} = settings.lateral.char.r;
   else
-    chantype_array{end+1} = 'pp';
+    channeltype_array{end+1} = 'pp';
   end
-  chantype_pp = join(chantype_array,'_');
-  chantype_pp = chantype_pp{1};
+  channeltype_pp = join(channeltype_array,'_');
+  channeltype_pp = channeltype_pp{1};
 else
-  chantype_pp = chantype;
+  channeltype_pp = channeltype;
 end
 end

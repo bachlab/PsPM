@@ -17,7 +17,7 @@ end
 sts = -1;
 
 global channel_type_reference_list;
-channel_type_reference_list = settings.chantypes;
+channel_type_reference_list = settings.channeltypes;
 % -------------------------------------------------------------------------
 
 % Begin initialization code - DO NOT EDIT
@@ -57,15 +57,15 @@ if isempty(settings)
   pspm_init;
 end
 
-% load chantypes from settings variable
+% load channeltypes from settings variable
 
 j = 1 ; l = 1;
-for k = 1:length(settings.chantypes)
-  if strcmp(settings.chantypes(k).data,'wave')
-    handles.prop.setwave{j} = settings.chantypes(k).type;
+for k = 1:length(settings.channeltypes)
+  if strcmp(settings.channeltypes(k).data,'wave')
+    handles.prop.setwave{j} = settings.channeltypes(k).type;
     j = j+1;
-  elseif strcmp(settings.chantypes(k).data,'events')
-    handles.prop.setevent{l} = settings.chantypes(k).type;
+  elseif strcmp(settings.channeltypes(k).data,'events')
+    handles.prop.setevent{l} = settings.channeltypes(k).type;
     l = l+1;
   end
 end
@@ -103,8 +103,8 @@ if(numel(varargin)) == 1
   handles.prop.wavechans(1) = 0;
   j = 2;
   for k = 1:length(handles.data)
-    if any(strcmp(handles.data{k,1}.header.chantype,handles.prop.setwave))
-      listitems{j,1} = handles.data{k,1}.header.chantype;
+    if any(strcmp(handles.data{k,1}.header.channeltype,handles.prop.setwave))
+      listitems{j,1} = handles.data{k,1}.header.channeltype;
       handles.prop.wavechans(j) = k;
       j = j+1;
     end
@@ -118,8 +118,8 @@ if(numel(varargin)) == 1
   handles.prop.eventchans(1) = 0;
   j = 2;
   for k = 1:length(handles.data)
-    if any(strcmp(handles.data{k,1}.header.chantype,handles.prop.setevent))
-      listitems{j,1} = handles.data{k,1}.header.chantype;
+    if any(strcmp(handles.data{k,1}.header.channeltype,handles.prop.setevent))
+      listitems{j,1} = handles.data{k,1}.header.channeltype;
       handles.prop.eventchans(j) = k;
       j = j+1;
       set(handles.option_integrated,'Enable','on');
@@ -450,8 +450,8 @@ if not(sts == 0)
   handles.prop.wavechans(1) = 0;
   j = 2;
   for k = 1:length(handles.data)
-    if any(strcmp(handles.data{k,1}.header.chantype,handles.prop.setwave))
-      listitems{j,1} = handles.data{k,1}.header.chantype;
+    if any(strcmp(handles.data{k,1}.header.channeltype,handles.prop.setwave))
+      listitems{j,1} = handles.data{k,1}.header.channeltype;
       handles.prop.wavechans(j) = k;
       j = j+1;
     end
@@ -465,8 +465,8 @@ if not(sts == 0)
   handles.prop.eventchans(1)  =  0;
   j = 2;
   for k = 1:length(handles.data)
-    if any(strcmp(handles.data{k,1}.header.chantype,handles.prop.setevent))
-      listitems{j,1} = handles.data{k,1}.header.chantype;
+    if any(strcmp(handles.data{k,1}.header.channeltype,handles.prop.setevent))
+      listitems{j,1} = handles.data{k,1}.header.channeltype;
       handles.prop.eventchans(j) = k;
       j = j+1;
       set(handles.option_integrated,'Enable','on');
@@ -706,7 +706,7 @@ wave = [];
 if not(isempty(handles.prop.eventchans)) && ...
     not(handles.prop.eventchans(handles.prop.idevent)==0) && ...
     strcmp(handles.data{...
-    handles.prop.eventchans(handles.prop.idevent),1}.header.chantype,...
+    handles.prop.eventchans(handles.prop.idevent),1}.header.channeltype,...
     'marker')
   marker = handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
   if get(handles.option_extra,'Value') == 1
@@ -718,7 +718,7 @@ elseif not(isempty(handles.prop.eventchans)) && ...
     not(handles.prop.eventchans(handles.prop.idevent)==0) && ...
     strcmp(...
     handles.data{...
-    handles.prop.eventchans(handles.prop.idevent),1}.header.chantype,'hb')
+    handles.prop.eventchans(handles.prop.idevent),1}.header.channeltype,'hb')
   hbeat = handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
   if get(handles.option_extra,'Value') == 1
     handles.prop.event = 'extra';
@@ -1062,9 +1062,9 @@ if r_channels > 1 && c_channels > 1
   for i_r_channel = 1:r_channels
     for i_c_channels = 1:c_channels
       % array_channel_type(r_channels,c_channels) = ...
-      %   handles.data{i_r_channel,i_c_channels}.header.chantype;
+      %   handles.data{i_r_channel,i_c_channels}.header.channeltype;
       targeted_channel_reference = ...
-        handles.data{i_r_channel,i_c_channels}.header.chantype;
+        handles.data{i_r_channel,i_c_channels}.header.channeltype;
       targeted_channel_display = ...
         channel_list_full(strcmp(targeted_channel_reference, ...
         {channel_type_reference_list.type}));
@@ -1086,7 +1086,7 @@ else
       i_r_channels = i_channel;
     end
     targeted_channel_reference = ...
-      handles.data{i_r_channels,i_c_channels}.header.chantype;
+      handles.data{i_r_channels,i_c_channels}.header.channeltype;
     targeted_channel_display = ...
       channel_list_full(strcmp(targeted_channel_reference, ...
       {channel_type_reference_list.type}));

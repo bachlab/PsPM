@@ -46,7 +46,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
         % generate data
         if strcmpi(this.datatype{data{i}}, 'inline')
           % inline is always just one channel
-          c{1}.chantype = 'scr';
+          c{1}.channeltype = 'scr';
           if amount > 1
             opt_chans{i} = {};
           end
@@ -54,7 +54,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
           % not inline is with chans option
           c = cell(1,numel(chans{1}));
           for j=1:numel(chans{1})
-            c{j}.chantype = chans{1}{j};
+            c{j}.channeltype = chans{1}{j};
           end
           opt_chans{i} = chans{2};
         end
@@ -143,7 +143,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
   end
   methods (Test)
     function invalid_input(this)
-      c{1}.chantype = 'scr';
+      c{1}.channeltype = 'scr';
       valid_data = pspm_testdata_gen(c, 10);
       valid_data = {valid_data, valid_data};
       % no input
@@ -161,10 +161,10 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       invalid_data = {'file_does_not_exist'};
       this.verifyWarning(@() pspm_interpolate(invalid_data), 'ID:nonexistent_file');
       % invalid amount of channels
-      options.channels = cell(size(valid_data)+1);
+      options.channel = cell(size(valid_data)+1);
       this.verifyWarning(@() pspm_interpolate(valid_data, options), 'ID:invalid_size');
       % invalid data in channels
-      options.channels = 'ab';
+      options.channel = 'ab';
       this.verifyWarning(@() pspm_interpolate(valid_data, options), 'ID:invalid_input');
       % invalid interpolation method
       options = struct('method', 'invalid_method');
@@ -182,13 +182,13 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       options = struct('channel_action', 'bla');
       this.verifyWarning(@() pspm_interpolate(valid_data, options), 'ID:invalid_input');
       % try to interpolate an events channel
-      c{1}.chantype = 'hb';
+      c{1}.channeltype = 'hb';
       invalid_data = pspm_testdata_gen(c, 10);
-      options = struct('channels', 1);
+      options = struct('channel', 1);
       this.verifyWarning(@() pspm_interpolate(invalid_data, options), 'ID:invalid_channeltype');
       % try to interpolate with nan from beginning; without
       % extrapolation
-      c{1}.chantype = 'scr';
+      c{1}.channeltype = 'scr';
       invalid_data = pspm_testdata_gen(c, 10);
       backup = invalid_data.data{1}.data(1);
       invalid_data.data{1}.data(1) = NaN;
@@ -207,7 +207,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       [data, opt_chans] = generate_data(this, datatype, amount, 'center', chans, false);
       % define options
       options.method = 'linear';
-      options.channels = opt_chans;
+      options.channel = opt_chans;
       options.extrapolate = false;
       % call function
       [sts, outdata] = this.verifyWarningFree(@() pspm_interpolate(data, options));
@@ -220,7 +220,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       this.verifyNotEqual(data, outdata);
       % test for nans:
       % * interpolated channels should contain no more nans
-      % * not interpolated channels (specified by options.channels)
+      % * not interpolated channels (specified by options.channel)
       %   should still contain nans
       if iscell(outdata)
         for i = 1:numel(outdata)
@@ -232,8 +232,8 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
             check_chans = outdata{i};
           else
             check_data = outdata{i};
-            if iscell(options.channels) && numel(options.channels) > 0
-              check_chans = options.channels{i};
+            if iscell(options.channel) && numel(options.channel) > 0
+              check_chans = options.channel{i};
             else
               check_chans = {};
             end
@@ -242,7 +242,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
           this.verify_nan_free(check_data, check_chans);
         end
       else
-        this.verify_nan_free(outdata, options.channels);
+        this.verify_nan_free(outdata, options.channel);
       end
     end
     function test_interpolation_variations(this, interp_method, extrap, nan_method)
@@ -250,7 +250,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       [data, opt_chans] = generate_data(this, 'inline', 1, nan_method, {{'scr'}, []}, extrap);
       % define options
       options.method = interp_method;
-      options.channels = opt_chans;
+      options.channel = opt_chans;
       options.extrapolate = extrap;
       if extrap && (...
           (strcmpi(nan_method, 'start') && strcmpi(interp_method, 'previous')) || ...
@@ -267,13 +267,13 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
         % but data shouldn't be the same
         this.verifyNotEqual(data, outdata);
         % test for nans:
-        this.verify_nan_free(outdata{1}, options.channels);
+        this.verify_nan_free(outdata{1}, options.channel);
       end
     end
     function test_no_nan(this)
       %% try to interpolate without nans
       % generate data
-      c{1}.chantype = 'scr';
+      c{1}.channeltype = 'scr';
       data = pspm_testdata_gen(c, 10);
       % interpolate
       [sts, outdata] = this.verifyWarningFree(@() pspm_interpolate(data));
@@ -296,7 +296,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       [data, opt_chans] = generate_data(this, 'file', 2, 'center', c_info, false);
       % define options
       options.method = 'linear';
-      options.channels = opt_chans;
+      options.channel = opt_chans;
       options.extrapolate = false;
       % don't care about that right now
       options.overwrite = 1;
@@ -317,7 +317,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
           [~, ~, olddata] = pspm_load_data(data{i});
           [~, ~, newdata] = pspm_load_data(outdata{i});
           this.verifyEqual(size(olddata), size(newdata));
-          this.verify_nan_free(outdata{i}, options.channels{i});
+          this.verify_nan_free(outdata{i}, options.channel{i});
           if file_exist
             delete(outdata{i});
           end
@@ -329,7 +329,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
         for i = 1:numel(outdata)
           this.verify_nan_free(data{i}, outdata{i});
           [~, ~, d] = pspm_load_data(data{i});
-          c = options.channels{i};
+          c = options.channel{i};
           for j=1:numel(c)
             this.verifyEqual(size(d{c(j)}), size(d{outdata{i}(j)}));
           end

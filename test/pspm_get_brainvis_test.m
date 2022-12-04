@@ -22,7 +22,7 @@ classdef pspm_get_brainvis_test < pspm_get_superclass
     function invalid_datafile(this)
       fn = 'ImportTestData/brainvis/ECue16_SCR.eeg';
       import{1} = struct('type', 'scr'   , 'channel', 5);
-      import = this.assign_chantype_number(import);
+      import = this.assign_channeltype_number(import);
       this.verifyWarning(@()pspm_get_brainvis(fn, import), 'ID:channel_not_contained_in_file');
     end
   end

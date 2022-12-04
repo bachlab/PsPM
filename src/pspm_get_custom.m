@@ -19,7 +19,7 @@ end
 %% assign data
 data.data = import.data(:);
 %% add header
-data.header.chantype = 'custom';
+data.header.channeltype = 'custom';
 data.header.units = import.units;
 data.header.sr = import.sr;
 %% check status

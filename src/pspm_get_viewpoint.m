@@ -14,7 +14,7 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
 %   │             Right eye corresponds to eye A in ViewPoint; left eye
 %   │             corresponds to eye B. However, when there is only one
 %   │             eye in the data and in user input, they are matched. If the
-%   │             given channel type does not exist in the given datafile, 
+%   │             given channel type does not exist in the given datafile,
 %   │             it will be filled with NaNs and a warning will be emitted.
 %   │             The pupil diameter values returned by get_viewpoint are
 %   │             normalized ratio values reported by Viewpoint Eyetracker
@@ -38,10 +38,10 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
 %   │             corresponding to blinks/saccades for that eye are set to NaN.
 %   │ ▶︎ optional
 %   ├───.channel: If .type is custom, the index of the channel to import must
-%   │             be specified using this option. This value must be the 
+%   │             be specified using this option. This value must be the
 %   │             channel index of the desired channel in the raw data columns.
-%   ├.target_unit:the unit to which the gaze data should be converted. This 
-%   │             option has no effect for pupil diameter channel since that is 
+%   ├.target_unit:the unit to which the gaze data should be converted. This
+%   │             option has no effect for pupil diameter channel since that is
 %   │             always returned as ratio. (Default: mm)
 %   │ ▶︎ Each import structure will get the following output fields:
 %   ├──────.data: Data channel corresponding to the input channel type or
@@ -78,7 +78,7 @@ if ~ischar(datafile)
   return;
 end
 if ~assert_custom_import_channels_has_channel_field(import); return; end
-if ~assert_all_chantypes_are_supported(settings, import); return; end
+if ~assert_all_channeltypes_are_supported(settings, import); return; end
 try
   data = import_viewpoint(datafile);
 catch err
@@ -96,10 +96,10 @@ data = map_viewpoint_eyes_to_left_right(data, import);
 
 sampling_rate = compute_sampling_rate(data{1}.channels(:, 1));
 eyes_observed = lower(data{1}.eyesObserved);
-chan_struct = data{1}.channels_header;
+chan_struct = data{1}.channel_header;
 raw_columns = data{1}.dataraw_header;
 channel_indices = data{1}.channel_indices;
-units = data{1}.channels_units;
+units = data{1}.channel_units;
 screen_size = data{1}.screenSize;
 viewing_dist = data{1}.viewingDistance;
 
@@ -127,9 +127,9 @@ for k = 1:num_import_cells
       [import{k}, chan_id] = import_custom_chan(import{k}, data_concat, channel_indices, raw_columns, chan_struct, units, sampling_rate);
     else
       [import{k}, chan_id] = import_data_chan(import{k}, data_concat, eyes_observed, channel_indices, chan_struct, units, sampling_rate);
-      chantype = import{k}.type;
-      is_gaze_x_chan = ~isempty(regexpi(chantype, 'gaze_x_', 'once'));
-      is_gaze_y_chan = ~isempty(regexpi(chantype, 'gaze_y_', 'once'));
+      channeltype = import{k}.type;
+      is_gaze_x_chan = ~isempty(regexpi(channeltype, 'gaze_x_', 'once'));
+      is_gaze_y_chan = ~isempty(regexpi(channeltype, 'gaze_y_', 'once'));
       if is_gaze_x_chan
         import{k} = convert_gaze_chan(import{k}, screen_size.xmin, screen_size.xmax);
       elseif is_gaze_y_chan
@@ -144,7 +144,7 @@ for k = 1:num_import_cells
         'Will create artificial channel with NaN values.'], ...
         import{k}.type);
     end
-    sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan_id);
+    sourceinfo.channel{k, 1} = sprintf('Column %02.0f', chan_id);
     sourceinfo.chan_stats{k,1} = struct();
     n_nan = sum(isnan(import{k}.data));
     n_data = numel(import{k}.data);
@@ -189,7 +189,7 @@ proper = true;
 eyes_observed = cellfun(@(x) x.eyesObserved, data, 'UniformOutput', false);
 eyes_observed = cell2mat(eyes_observed);
 
-channel_headers = cellfun(@(x) x.channels_header, data, 'UniformOutput', false);
+channel_headers = cellfun(@(x) x.channel_header, data, 'UniformOutput', false);
 same_headers = true;
 for i = 1:(numel(channel_headers) - 1)
   if ~all(strcmpi(channel_headers{i}, channel_headers{i+1}))
@@ -233,10 +233,10 @@ for i = 1:numel(import)
 end
 end
 
-function proper = assert_all_chantypes_are_supported(settings, import)
+function proper = assert_all_channeltypes_are_supported(settings, import)
 proper = true;
 viewpoint_idx = find(strcmpi('viewpoint', {settings.import.datatypes.short}));
-viewpoint_types = settings.import.datatypes(viewpoint_idx).chantypes;
+viewpoint_types = settings.import.datatypes(viewpoint_idx).channeltypes;
 for k = 1:numel(import)
   input_type = import{k}.type;
   if ~any(strcmpi(input_type, viewpoint_types))
@@ -252,15 +252,15 @@ end
 function data = map_viewpoint_eyes_to_left_right(data, import)
 % Map eye A to right eye, eye B to left eye.
 for i = 1:numel(data)
-  % channels = data{i}.channels_header; % seems not used
-  for k = 1:numel(data{i}.channels_header)
-    header = data{i}.channels_header{k};
+  % channels = data{i}.channel_header; % seems not used
+  for k = 1:numel(data{i}.channel_header)
+    header = data{i}.channel_header{k};
     if strcmpi(header(end - 1:end), '_A')
       header(end - 1:end) = '_R';
     elseif strcmpi(header(end - 1:end), '_B')
       header(end - 1:end) = '_L';
     end
-    data{i}.channels_header{k} = header;
+    data{i}.channel_header{k} = header;
   end
 
   if strcmpi(data{i}.eyesObserved, 'a')
@@ -291,11 +291,11 @@ for i = 1:numel(import)
 end
 if data_has_only_right_eye && import_has_only_left_eye
   for i = 1:numel(data)
-    for k = 1:numel(data{i}.channels_header)
-      header = data{i}.channels_header{k};
+    for k = 1:numel(data{i}.channel_header)
+      header = data{i}.channel_header{k};
       if strcmpi(header(end - 1:end), '_R')
         header(end - 1:end) = '_L';
-        data{i}.channels_header{k} = header;
+        data{i}.channel_header{k} = header;
       end
     end
     data{i}.eyesObserved = 'L';
@@ -362,9 +362,9 @@ global settings;
 if isempty(settings), pspm_init; end
 % n_data = size(data_concat, 1); % this line is not used in this function
 chan_id_in_concat = find(strcmpi(chan_struct, import_cell.type), 1, 'first');
-chantype_has_L_or_R = ~isempty(regexpi(import_cell.type, ['_[',settings.lateral.char.c,']'], 'once'));
-chantype_hasnt_eyes_obs = isempty(regexpi(import_cell.type, ['_([' eyes_observed '])'], 'once'));
-if (chantype_has_L_or_R && chantype_hasnt_eyes_obs) || isempty(chan_id_in_concat)
+channeltype_has_L_or_R = ~isempty(regexpi(import_cell.type, ['_[',settings.lateral.char.c,']'], 'once'));
+channeltype_hasnt_eyes_obs = isempty(regexpi(import_cell.type, ['_([' eyes_observed '])'], 'once'));
+if (channeltype_has_L_or_R && channeltype_hasnt_eyes_obs) || isempty(chan_id_in_concat)
   chan_id = NaN;
   return;
 else

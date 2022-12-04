@@ -44,8 +44,9 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %   │                 'add'. Possible values are 'add' or 'replace'
 %   ├───────.newfile: Define new filename to store data to it. Default is ''
 %   │                 which means that the file under fn will be 'replaced'.
-%   ├─────.overwrite: Define whether existing files should be overwritten or
-%   │                 not. Default is 0.
+%   ├─────.overwrite: [logical] (0 or 1)
+%   │                 Define whether to overwrite existing output files or not.
+%   │                 Default value: determined by pspm_overwrite.
 %   ├───────.missing: If missing is enabled (=1), an extra channel will be
 %   │                 written containing information about the validated data.
 %   │                 Data points equal to 1 describe epochs which have been
@@ -55,7 +56,7 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %   ├──────────.eyes: Define on which eye the operations should be performed.
 %   │                 Possible values are: 'left', 'right', 'all'. Default is
 %   │                 'all'.
-%   └──────.channels: Choose channels in which the data should be set to NaN
+%   └───────.channel: Choose channels in which the data should be set to NaN
 %                     during invalid fixations. Default is 'pupil'. A char or
 %                     numeric value or a cell array of char or numerics is
 %                     expected. Channel names pupil, gaze_x, gaze_y,
@@ -92,8 +93,10 @@ if numel(varargin{1}) > 1
   end
   if numel(varargin) < 2
     options = struct();
+    options.mode = 'bitmap';
   else
     options = varargin{2};
+    options.mode = 'bitmap';
   end
 else
   mode = 'fixation';
@@ -107,8 +110,15 @@ else
   unit = varargin{3};
   if numel(varargin) < 4
     options = struct();
+    options.mode = 'fixation';
   else
     options = varargin{4};
+    if ~isstruct(options)
+      warning('ID:invalid_input', 'Options must be a struct.');
+      return;
+    else
+      options.mode = 'fixation';
+    end
   end
   if ~isnumeric(circle_degree)
     warning('ID:invalid_input', 'Circle_degree is not numeric.');
@@ -118,9 +128,6 @@ else
     return;
   elseif ~ischar(unit)
     warning('ID:invalid_input', 'Unit should be a char.');
-    return;
-  elseif ~isstruct(options)
-    warning('ID:invalid_input', 'Options must be a struct.');
     return;
   end
 end
@@ -138,67 +145,11 @@ if msts ~= 1
     'opening the file %s.'],fn); return;
 end
 
-% check validate_fixations and then the depending mandatory fields
-if ~isfield(options, 'missing')
-  options.missing = false;
+options = pspm_options(options, 'find_valid_fixations');
+if options.invalid
+  return
 end
 
-if strcmpi(mode,'fixation')&& ~isfield(options, 'resolution')
-  options.resolution = [1 1];
-end
-
-if ~isfield(options, 'channels')
-  options.channels = 'pupil';
-end
-
-if ~isfield(options, 'eyes')
-  options.eyes = 'combined';
-end
-
-if ~isfield(options, 'plot_gaze_coords')
-  options.plot_gaze_coords = false;
-end
-
-if ~islogical(options.plot_gaze_coords) && ~isnumeric(options.plot_gaze_coords)
-  warning('ID:invalid_input', ['Options.plot_gaze_coords must ', ...
-    'be logical or numeric.']);
-  return;
-elseif ~islogical(options.missing) && ~isnumeric(options.missing)
-  warning('ID:invalid_input', ['Options.missing is neither logical ', ...
-    'nor numeric.']);
-  return;
-elseif ~any(strcmpi(options.eyes, {settings.lateral.full.c, ...
-    settings.lateral.full.l, settings.lateral.full.r}))
-  warning('ID:invalid_input', ['Options.eyes must be either ''combined'', ', ...
-    '''left'' or ''right''.']);
-  return;
-elseif ~iscell(options.channels) && ~ischar(options.channels) && ...
-    ~isnumeric(options.channels)
-  warning('ID:invalid_input', ['Options.channels should be a char, ', ...
-    'numeric or a cell of char or numeric.']);
-  return;
-elseif iscell(options.channels) && any(~cellfun(@(x) isnumeric(x) || ...
-    any(strcmpi(x, settings.findvalidfixations.chantypes)), options.channels))
-  warning('ID:invalid_input', 'Option.channels contains invalid values.');
-  return;
-elseif strcmpi(mode,'fixation')&& isfield(options, 'fixation_point') && ...
-    (~isnumeric(options.fixation_point) || ...
-    size(options.fixation_point,2) ~= 2)
-  warning('ID:invalid_input', ['Options.fixation_point is not ', ...
-    'numeric, or has the wrong size (should be nx2).']);
-  return;
-elseif isfield(options, 'resolution') && (~isnumeric(options.resolution) || ...
-    ~all(size(options.resolution) == [1 2]))
-  warning('ID:invalid_input', ['Options.fixation_point is not ', ...
-    'numeric, or has the wrong size (should be 1x2).']);
-  return;
-elseif strcmpi(mode,'fixation')&& isfield(options, 'fixation_point') &&  ...
-    ~all(options.fixation_point < options.resolution)
-  warning('ID:out_of_range', ['Some fixation points are larger than ', ...
-    'the range given. Ensure fixation points are within the given ', ...
-    'resolution.']);
-  return;
-end
 
 %change distance to 'mm'
 if strcmpi(mode,'fixation')
@@ -217,9 +168,9 @@ if strcmpi(mode,'fixation')
 
     % set fixation point default or expand to data size
     % find first wave channel
-    ct = cellfun(@(x) x.header.chantype, data, 'UniformOutput', false);
+    ct = cellfun(@(x) x.header.channeltype, data, 'UniformOutput', false);
     chan_data = cellfun(@(x) ...
-      settings.chantypes(strcmpi({settings.chantypes.type}, x)).data, ...
+      settings.channeltypes(strcmpi({settings.channeltypes.type}, x)).data, ...
       ct, 'UniformOutput', false);
     wv = find(strcmpi(chan_data, 'wave'));
 
@@ -245,34 +196,12 @@ end
 
 % calculate radius araund de fixation points
 %-----------------------------------------------------
-
-if ~isfield(options, 'channel_action')
-  options.channel_action = 'add';
-elseif sum(strcmpi(options.channel_action, {'add','replace'})) == 0
-  warning('ID:invalid_input', 'Options.channel_action must be either ''add'' or ''replace''.'); return;
-end
+%options = pspm_options(options, 'find_valid_fixations');
 
 % overwrite
-if ~isfield(options, 'overwrite')
-  options.overwrite = pspm_overwrite(fn);
-else
-  if ~isnumeric(options.overwrite) && ~islogical(options.overwrite)
-    warning('ID:invalid_input', ...
-      'Options.overwrite must be either numeric or logical.');
-    return
-  end
-end
+options.overwrite = pspm_overwrite(fn, options);
 
-% newfile
-if ~isfield(options, 'newfile')
-  options.newfile = '';
-elseif ~ischar(options.newfile)
-  warning('ID:invalid_input', 'Options.newfile is not char.'); return;
-end
 
-if ~iscell(options.channels)
-  options.channels = {options.channels};
-end
 
 
 % iterate through eyes
@@ -287,36 +216,36 @@ for i=1:n_eyes
     gaze_y = ['gaze_y_', eye];
 
     % find chars to replace
-    str_chans = cellfun(@ischar, options.channels);
-    channels = options.channels;
-    str_chantypes = ['(', settings.findvalidfixations.chantypes{1}];
-    for i_chantypes = 2:length(settings.findvalidfixations.chantypes)
-      str_chantypes = [str_chantypes, '|', ...
-        settings.findvalidfixations.chantypes{i_chantypes}];
+    str_chans = cellfun(@ischar, options.channel);
+    channel = options.channel;
+    str_channeltypes = ['(', settings.findvalidfixations.channeltypes{1}];
+    for i_channeltypes = 2:length(settings.findvalidfixations.channeltypes)
+      str_channeltypes = [str_channeltypes, '|', ...
+        settings.findvalidfixations.channeltypes{i_channeltypes}];
     end
-    str_chantypes = [str_chantypes, ')'];
-    channels(str_chans) = regexprep(channels(str_chans), str_chantypes, ['$0_' eye]);
+    str_channeltypes = [str_channeltypes, ')'];
+    channel(str_chans) = regexprep(channel(str_chans), str_channeltypes, ['$0_' eye]);
     % replace strings with numbers
-    str_chan_num = channels(str_chans);
+    str_chan_num = channel(str_chans);
     for j=1:numel(str_chan_num)
       str_chan_num(j) = {find(cellfun(@(y) strcmpi(str_chan_num(j),...
-        y.header.chantype), data),1)};
+        y.header.channeltype), data),1)};
     end
-    channels(str_chans) = str_chan_num;
-    work_chans = cell2mat(channels);
+    channel(str_chans) = str_chan_num;
+    work_chans = cell2mat(channel);
 
     if numel(work_chans) >= 1
       % always use first found channel
       switch mode
         case 'bitmap'
-          gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
+          gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.channeltype) & ...
             ~strcmpi(x.header.units,'degree'), data),1);
-          gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
+          gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.channeltype) & ...
             ~strcmpi(x.header.units,'degree'), data),1);
         case 'fixation'
-          gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
+          gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.channeltype) & ...
             ~strcmpi(x.header.units,'degree') & ~strcmpi(x.header.units,'pixel'),data),1);
-          gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
+          gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.channeltype) & ...
             ~strcmpi(x.header.units,'degree')& ~strcmpi(x.header.units,'pixel'),data),1);
       end
 
@@ -468,9 +397,9 @@ for i=1:n_eyes
           if all(isnan(new_pu{i}{j}.data))
             warning('ID:invalid_input', ['All values of channel ''%s'' ', ...
               'completely set to NaN. Please reconsider your parameters.'], ...
-              new_pu{i}{j}.header.chantype);
+              new_pu{i}{j}.header.channeltype);
           end
-          excl_hdr = struct('chantype', ['pupil_missing_', eye],...
+          excl_hdr = struct('channeltype', ['pupil_missing_', eye],...
             'units', '', 'sr', new_pu{i}{j}.header.sr);
           new_excl{i}{j} = struct('data', double(excl), 'header', excl_hdr);
         end
@@ -487,10 +416,8 @@ for i=1:n_eyes
     end
   end
 end
-
 op = struct();
 op.overwrite = options.overwrite;
-
 if ~isempty(options.newfile)
   [pathstr, ~, ~] = fileparts(options.newfile);
   if exist(pathstr, 'dir') || isempty(pathstr)
@@ -501,14 +428,12 @@ if ~isempty(options.newfile)
 else
   out_file = fn;
 end
-
 % collect data
 if options.missing
   new_chans = [[new_excl{:}], [new_pu{:}]];
 else
   new_chans = [new_pu{:}];
 end
-
 if numel(new_chans) >= 1
   new_data = data;
   chan_idx = NaN(1,numel(new_chans));
@@ -518,10 +443,10 @@ if numel(new_chans) >= 1
       chan_idx(i) = numel(new_data);
     else
       % look for same chan_type
-      chans = cellfun(@(x) strcmpi(new_chans{i}.header.chantype, x.header.chantype), new_data);
-      if any(chans)
+      channel = cellfun(@(x) strcmpi(new_chans{i}.header.channeltype, x.header.channeltype), new_data);
+      if any(channel)
         % replace the first found channel
-        idx = find(chans, 1, 'first');
+        idx = find(channel, 1, 'first');
         new_data{idx}.data = new_chans{i}.data;
         chan_idx(i) = idx;
       else
@@ -530,7 +455,6 @@ if numel(new_chans) >= 1
       end
     end
   end
-
   % update chan stats (similar to pspm_get_eyelink)
   for i = 1:numel(new_data)
     % update nan ratio
@@ -538,23 +462,19 @@ if numel(new_chans) >= 1
     n_data = numel(new_data{i}.data);
     infos.source.chan_stats{i}.nan_ratio = n_inv/n_data;
   end
-
   % update best eye
   eye_stat = Inf(1,numel(infos.source.eyesObserved));
   for i = 1:numel(infos.source.eyesObserved)
     e = lower(infos.source.eyesObserved(i));
     e_stat = {infos.source.chan_stats{...
-      cellfun(@(x) ~isempty(regexpi(x.header.chantype, ['_' e], 'once')), new_data)}};
+      cellfun(@(x) ~isempty(regexpi(x.header.channeltype, ['_' e], 'once')), new_data)}};
     eye_stat(i) = max(cellfun(@(x) x.nan_ratio, e_stat));
   end
-
   [~, min_idx] = min(eye_stat);
   infos.source.best_eye = lower(infos.source.eyesObserved(min_idx));
-
   file_struct.infos = infos;
   file_struct.data = new_data;
   file_struct.options = op;
-
   [sts, ~, ~, ~] = pspm_load_data(out_file, file_struct);
 else
   warning('ID:invalid_input', 'Appearently no data was generated.');

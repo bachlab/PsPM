@@ -64,13 +64,15 @@ function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 %   │                 [numeric, default as 0.4]
 %   │                 Minimum relative peak amplitude of a candidate
 %   │                 R-peak such that it is classified as an R-peak.
-%   ├.channel_action: ['add'/'replace'] Defines whether corrected data
-%   │                 should be added or the corresponding preprocessed
-%   │                 channel should be replaced. Note that 'replace' mode
-%   │                 does not replace the raw data channel, but a previously
-%   │                 stored heartbeat channel.
-%   │                 (Default: 'replace')
-%   └───.out_channel: Channel ID of the preprocessed output. Output will
+%   └.channel_action: ['add'/'replace'] Defines whether corrected data
+%                     should be added or the corresponding preprocessed
+%                     channel should be replaced. Note that 'replace' mode
+%                     does not replace the raw data channel, but a previously
+%                     stored heartbeat channel.
+%                     (Default: 'replace')
+% ● Outputs
+%                sts: status marker showing whether the function works normally.
+%        out_channel: Channel ID of the preprocessed output. Output will
 %                     be written to a 'heartbeat' channel to the given PsPM
 %                     file. .data field contains the timestamps of heartbeats
 %                     in seconds.
@@ -81,6 +83,7 @@ function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 %   [2] http://www.amri.ninds.nih.gov/software.html
 % ● History
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
+%   Updated in 2022 by Teddy Chao
 
 %% Initialise
 global settings
@@ -92,65 +95,9 @@ sts = -1;
 if nargin < 2
   options = struct();
 end
-if ~isfield(options, 'channel')
-  options.channel = 'ecg';
-end
-if ~isfield(options, 'channel_action')
-  options.channel_action = 'replace';
-end
-if ~isfield(options, 'signal_to_use')
-  options.signal_to_use = 'auto';
-end
-if ~isfield(options, 'hrrange')
-  options.hrrange = [20 200];
-end
-if ~isfield(options, 'ecg_bandpass')
-  options.ecg_bandpass = [0.5 40];
-end
-if ~isfield(options, 'teo_bandpass')
-  options.teo_bandpass = [8 40];
-end
-if ~isfield(options, 'teo_order')
-  options.teo_order = 1;
-end
-if ~isfield(options, 'min_cross_corr')
-  options.min_cross_corr = 0.5;
-end
-if ~isfield(options, 'min_relative_amplitude')
-  options.min_relative_amplitude = 0.4;
-end
-%% input checks
-if ~ismember(options.channel_action, {'add', 'replace'})
-  warning('ID:invalid_input', 'Option channel_action must be either ''add'' or ''replace''');
-  return;
-end
-if ~ismember(options.signal_to_use, {'ecg', 'teo', 'auto'})
-  warning('ID:invalid_input', 'Option signal_to_use must be one of ''ecg'',''teo'' or ''auto''');
-  return;
-end
-if ~isnumeric(options.hrrange) || any(options.hrrange <= 0)
-  warning('ID:invalid_input', 'Option hrrange must contain positive numbers');
-  return;
-end
-if ~isnumeric(options.ecg_bandpass) || any(options.ecg_bandpass <= 0)
-  warning('ID:invalid_input', 'Option ecg_bandpass must contain positive numbers');
-  return;
-end
-if ~isnumeric(options.teo_bandpass) || any(options.teo_bandpass <= 0)
-  warning('ID:invalid_input', 'Option teo_bandpass must contain positive numbers');
-  return;
-end
-if ~isnumeric(options.teo_order) || options.teo_order <= 0 || mod(options.teo_order, 1) ~= 0
-  warning('ID:invalid_input', 'Option teo_order must be a positive integer');
-  return;
-end
-if ~isnumeric(options.min_cross_corr)
-  warning('ID:invalid_input', 'Option min_cross_corr must be numeric');
-  return;
-end
-if ~isnumeric(options.min_relative_amplitude)
-  warning('ID:invalid_input', 'Option min_relative_amplitude must be numeric');
-  return;
+options = pspm_options(options, 'convert_ecg2hb_amri');
+if options.invalid
+  return
 end
 %% load
 addpath(pspm_path('backroom'));
@@ -173,7 +120,7 @@ heartbeats{1}.data = find(rpeak_logic_vec) / ecg.srate;
 rmpath(pspm_path('ext','amri_eegfmri'));
 %% save
 heartbeats{1}.header.sr = 1;
-heartbeats{1}.header.chantype = 'hb';
+heartbeats{1}.header.channeltype = 'hb';
 heartbeats{1}.header.units = 'events';
 o.msg.prefix = 'QRS detection using AMRI algorithm';
 [lsts, infos] = pspm_write_channel(fn, heartbeats, options.channel_action);

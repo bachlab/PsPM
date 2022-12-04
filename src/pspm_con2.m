@@ -17,11 +17,13 @@ function pspm_con2(modelfile, outfile, con, connames, options)
 %               will be numbered by default if this argument is missing or has
 %               value 'number'
 %     options:  
-%  .overwrite:  defines whether to overwrite existing files.
-%               (default = 0).
+%  .overwrite:  [logical] (0 or 1)
+%               Define whether to overwrite existing output files or not.
+%               Default value: determined by pspm_overwrite.
 % ● History
 %   Introduced in PsPM 3.0
-%   Written in 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao
 
 %% Initialise
 global settings
@@ -39,7 +41,7 @@ elseif nargin<3
 end
 if nargin < 4
   conoption = 'number';
-elseif ~iscell(connames);
+elseif ~iscell(connames)
   if strcmpi(connames, 'number') || strcmpi(connames, 'file')
     conoption = connames;
   else
@@ -50,9 +52,6 @@ else
   conoption = 'name';
 end
 datatype = 'any';
-if nargin < 5 || ~isfield(options, 'overwrite') || ~isnumeric(options.overwrite)
-  options.overwrite = 0;
-end
 if ischar(con)
   if ~strcmpi(con, 'all')
     errmsg = sprintf('Invalid contrast option (%s)', con); warning(errmsg); return
@@ -69,11 +68,8 @@ else
   sample = 1;
 end
 %% check outfile
-if isfile(outfile)
-  overwrite = pspm_overwrite(outfile, options)
-  if overwrite == 0
-    return
-  end
+if pspm_overwrite(outfile, options) == 0
+  return
 end
 %% assemble input (for diagnostic checking)
 t.input.inputfile = modelfile;
@@ -127,7 +123,7 @@ if numel(connames)~=numel(con) && ~strcmpi(conoption, 'number')
   warning(errmsg);
   conoption = 'number';
 end
-if strcmpi(conoption, 'number');
+if strcmpi(conoption, 'number')
   for n=1:numel(con)
     t.names{n}=sprintf('Contrast %d', n);
   end

@@ -63,7 +63,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
         y(NaN_idx)=nan;
       end
       data{1}.data = y';
-      data{1}.header.chantype = 'scr';
+      data{1}.header.channeltype = 'scr';
       data{1}.header.units = 'unknown';
       data{1}.header.sr = sr;
       infos.duration = length_sec;
@@ -207,6 +207,10 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       import matlab.unittest.constraints.RelativeTolerance
       load(['ImportTestData' filesep 'fitted_models' filesep 'glm_scr_cond_marker.mat'], 'glm');
       load(['ImportTestData' filesep 'fitted_models' filesep 'glm_orig_data.mat'], 'data');
+      if ~isfield(glm.input, 'channel') && isfield(glm.input, 'chan')
+        glm.input.channel = glm.input.chan;
+        glm.input = rmfield(glm.input,'chan'); % rename the field channel to chan
+      end
       marker = data{5}.data;
       assert(numel(glm.input.timing) == 1);
       input_data = glm.input.data{1};

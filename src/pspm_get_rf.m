@@ -10,7 +10,7 @@ function theta = pspm_get_rf(fn, events, outfile, chan, options)
 %   theta = pspm_get_rf(fn, events, outfile, chan, options)
 % ● Arguments
 %         fn: the file name of a PsPM data file
-%     events: specified in seconds as either (1) a vector of onsets, or (2) an 
+%     events: specified in seconds as either (1) a vector of onsets, or (2) an
 %             SPM style onsets file with one event type, or (3) an epochs file
 %             (see pspm_dcm or pspm_get_epochs).
 %    outfile: (optional) a file to write the response function to
@@ -45,8 +45,9 @@ if nargin < 4
 end;
 
 %% call DCM
-options.getrf = 1;
-try options.nosave, catch, options.nosave = 1; end;
+options = pspm_options(options, 'get_rf');
+% options.getrf = 1;
+%try options.nosave, catch, options.nosave = 1; end;
 options.chan = chan;
 [foo dcm] = pspm_dcm(fn, '', events, options);
 if numel(dcm{1}.prior.posterior) == 2
@@ -61,7 +62,7 @@ end;
 if ~isempty(outfile)
   [pth fn ext] = fileparts(outfile);
   c = clock;
-  job{1}  = sprintf('function [rf, theta] = %s(td)', fn); 
+  job{1}  = sprintf('function [rf, theta] = %s(td)', fn);
   job{2}  = '%-----------------------------------------------------------------------';
   job{3}  = ['% Response function created by pspm_get_rf, ', date, sprintf('  %02.0f:%02.0f', c(4:5))];
   job{4}  = '%-----------------------------------------------------------------------';

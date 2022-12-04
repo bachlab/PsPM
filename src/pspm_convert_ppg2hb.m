@@ -10,7 +10,7 @@ function [ sts, outinfo ] = pspm_convert_ppg2hb( fn,chan,options )
 %   [ sts, outinfo ] = pspm_convert_ppg2hb( fn,chan,options )
 % ● Arguments
 %                 fn: file name with path
-%               chan: ppu channel number
+%            channel: ppu channel number
 %   ┌────────options: struct with following possible fields
 %   ├───.diagnostics: [true/FALSE]
 %   │                 displays some debugging information
@@ -44,19 +44,22 @@ if nargin < 1
   warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
 elseif ~ischar(fn)
   warning('ID:invalid_input', 'Need file name string as first input.'); return;
-elseif nargin < 2 || isempty(chan)
-  chan = 'ppg';
-elseif ~isnumeric(chan) && ~strcmp(chan,'ppg')
+elseif nargin < 2 || isempty(channel)
+  channel = 'ppg';
+elseif ~isnumeric(channel) && ~strcmp(channel,'ppg')
   warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end
 
 %%% Process options
 % Display diagnostic plots? default is "false"
-try if ~islogical(options.diagnostics),options.diagnostics = false;end
-catch, options.diagnostics = false; end
-try options.channel_action; catch, options.channel_action = 'replace'; end;
-try if ~isnumeric(options.lsm),options.lsm = 0;end
-catch, options.lsm = 0; end
+% try if ~islogical(options.diagnostics),options.diagnostics = false;end
+% catch, options.diagnostics = false; end
+options = pspm_options(options, 'convert_ppg2hb');
+if options.invalid
+  return
+end
+% try if ~isnumeric(options.lsm),options.lsm = 0;end
+% catch, options.lsm = 0; end
 
 %% user output
 % -------------------------------------------------------------------------
@@ -64,7 +67,7 @@ fprintf('Heartbeat detection for %s ... \n', fn);
 
 % get data
 % -------------------------------------------------------------------------
-[nsts, ~, data] = pspm_load_data(fn, chan);
+[nsts, ~, data] = pspm_load_data(fn, channel);
 if nsts == -1
   warning('ID:invalid_input', 'call of pspm_load_data failed');
   return;
@@ -74,7 +77,7 @@ if numel(data) > 1
   data = data(1);
 end
 % Check that channel is ppg
-if ~strcmp(data{1,1}.header.chantype,'ppg')
+if ~strcmp(data{1,1}.header.channeltype,'ppg')
   warning('ID:not_allowed_channeltype', 'Specified channel is not a PPG channel. Don''t know what to do!')
   return;
 end
@@ -182,7 +185,7 @@ msg = sprintf('Heart beat detection from ppg with cross correlation HB-timeserie
 newdata.data = hb(:);
 newdata.header.sr = 1;
 newdata.header.units = 'events';
-newdata.header.chantype = 'hb';
+newdata.header.channeltype = 'hb';
 
 write_options = struct();
 write_options.msg = msg;
@@ -196,7 +199,5 @@ if nsts ~= -1,
   sts = 1;
   outinfo.channel = nout.channel;
 end;
-
 return;
-
 end

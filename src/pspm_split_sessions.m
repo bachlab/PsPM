@@ -12,7 +12,9 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 %       markerchannel:  (optional)
 %                       number of the channel containing the relevant markers.
 %   ┌─────────options:
-%   ├──────.overwrite:  overwrite existing files by default
+%   ├──────.overwrite:  [logical] (0 or 1)
+%   │                   Define whether to overwrite existing output files or not.
+%   │                   Default value: determined by pspm_overwrite.
 %   ├─────────.max_sn:  Define the maximum of sessions to look for.
 %   │                   Default is 10 (defined by settings.split.max_sn)
 %   ├.min_break_ratio:  Minimum for ratio
@@ -23,7 +25,7 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 %   │                   first marker) in terms of markers (vector of integer)
 %   ├─────────.prefix:  [numeric, unit:second, default:0]
 %   │                   Defines how long data before start trim point should
-%   │                   also be included. First marker will be at 
+%   │                   also be included. First marker will be at
 %   │                   t = options.prefix.
 %   ├─────────.suffix:  [numeric, unit:second, default:0]
 %   │                   Defines how long data after the end trim point should be
@@ -33,6 +35,8 @@ function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchann
 %   │                   Tell the function to use all the markers to evaluate
 %   │                   the mean distance between them.
 %   │                   Usefull for random ITI since it reduces the variance.
+%   ├─────────.verbose: [default:1]
+%   │                   printing processing messages
 %   └─────────.missing: Optional name of an epoch file, e.g. containing a
 %                       missing epochs definition in s. This is then split
 %                       accordingly.
@@ -69,47 +73,15 @@ end
 if ~exist('options','var') || isempty(options) || ~isstruct(options)
   options = struct();
 end
-if ~isfield(options, 'overwrite')
-  options.overwrite = 0;
-elseif options.overwrite ~= 1
-  options.overwrite = 0;
+options = pspm_options(options, 'split_sessions');
+if options.invalid
+  return
 end
-try options.prefix; catch
-  options.prefix = 0;
-end
-try options.suffix; catch
-  options.suffix = 0;
-end
-try options.verbose; catch
-  options.verbose = 0;
-end
-try options.splitpoints; catch
-  options.splitpoints = [];
-end
-try options.missing; catch
-  options.missing = 0;
-end
-try options.randomITI; catch
-  options.randomITI = 0;
-end
-try options.max_sn; catch
-  options.max_sn = settings.split.max_sn; % maximum number of sessions (default 10)
-end
-try options.min_break_ratio; catch
-  options.min_break_ratio = settings.split.min_break_ratio; % minimum ratio of session break to normal inter marker interval (default 3)
-end
-
 % 1.3 Handle data files
 % 1.3.1 check data file argument
 if ~ischar(datafile)
   warning('ID:invalid_input', 'Data file must be a char.');
   return;
-end
-% 1.3.2 clear datafile
-if options.missing
-  if ~ischar(options.missing)
-    warning('ID:invalid_input', 'Missing epochs file needs to be a char.\n');
-  end
 end
 
 % 1.4 Check if prefix is positiv and suffix is negative
@@ -126,14 +98,6 @@ elseif isempty(markerchannel)
   markerchannel = 0;
 elseif ~isnumeric(markerchannel)
   warning('ID:invalid_input', 'Marker channel needs to be a number.\n');
-  return;
-end
-if ~isnumeric(options.splitpoints)
-  warning('ID:invalid_input', 'options.splitpoints has to be numeric.');
-  return;
-end
-if ~isnumeric(options.randomITI) || ~ismember(options.randomITI, [0, 1])
-  warning('ID:invalid_input', 'options.randomITI should be 0 or 1.');
   return;
 end
 
@@ -247,13 +211,14 @@ else
     trimoptions = struct('drop_offset_markers', 1);
     newdata = pspm_trim(struct('data', {indata}, 'infos', ininfos), ...
       options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions);
-    newdata.options = struct('overwrite', options.overwrite);
+		options.overwrite = pspm_overwrite(newdatafile{sn}, options);
+    newdata.options = options;
     pspm_load_data(newdatafile{sn}, newdata);
 
 
     % 2.4.5 Split Epochs
     if options.missing
-      dummydata{1,1}.header = struct('chantype', 'custom', ...
+      dummydata{1,1}.header = struct('channeltype', 'custom', ...
         'sr', missingsr, ...
         'units', 'unknown');
       dummydata{1,1}.data   = dp_epochs;

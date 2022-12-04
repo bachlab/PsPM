@@ -17,7 +17,9 @@ function varargout = pspm_data_editor(varargin)
 %   │               .mat file must be a struct with an 'epoch' field
 %   │               and a e x 2 matrix of epoch on- and offsets
 %   │               (n: number of epochs)
-%   └──.overwrite:  defines whether to overwrite the file
+%   └──.overwrite:  [logical] (0 or 1)
+%                   Define whether to overwrite existing output files or not.
+%                   Default value: not to overwrite.
 % ● Outputs
 %             out:  The output depends on the actual output type chosen in
 %                   the graphical interface. At the moment either the
@@ -92,6 +94,10 @@ set(handles.fgDataEditor, 'WindowButtonUpFcn', @buttonUp_Callback);
 set(handles.fgDataEditor, 'WindowButtonMotionFcn', @buttonMotion_Callback);
 if numel(varargin) > 1 && isstruct(varargin{2}) % load options
   handles.options = varargin{2};
+  handles.options = pspm_options(handles.options, 'data_editor');
+  if handles.options.invalid
+    return
+  end
   if isfield(handles.options, 'output_file') && ... % check if options are valid and assign accordingly
       ischar(handles.options.output_file)
     handles.output_file = handles.options.output_file;
@@ -173,11 +179,7 @@ else
           end
         end
         if write_file
-          if isfield(options, 'overwrite')
-            newd.options.overwrite = options.overwrite;
-          else
-            newd.options.overwrite = pspm_overwrite(out_file);
-          end
+          newd.options.overwrite = pspm_overwrite(out_file, options);
           [write_success, ~, ~] = pspm_load_data(out_file, newd);
           if disp_success
             if write_success
@@ -225,7 +227,7 @@ for i=1:numel(handles.plots) % remove plots
   end
 end
 [~, infos, data] = pspm_load_data(file); % load file
-channels = cellfun(@(x) {x.header.chantype,x.header.units}, data, 'UniformOutput', 0);
+channels = cellfun(@(x) {x.header.channeltype,x.header.units}, data, 'UniformOutput', 0);
 set(handles.edOpenFilePath, 'String', file);
 corder = get(handles.fgDataEditor, 'defaultAxesColorOrder'); % format channels
 cl = length(corder)-2;
@@ -311,7 +313,7 @@ end
 handles.axData = gca;
 p = plot(xdata,ydata, 'Color', color);
 xlabel('time -- second');
-ylabel([handles.data{1,1}.header.chantype, ' -- ', handles.data{1,1}.header.units]);
+ylabel([handles.data{1,1}.header.channeltype, ' -- ', handles.data{1,1}.header.units]);
 handles.axData.FontSize = 14;
 set(handles.axData, 'NextPlot', 'add');
 NaN_data = NaN(numel(xdata),1);

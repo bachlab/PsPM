@@ -16,6 +16,7 @@ function sts = pspm_resp_pp(fn, sr, chan, options)
 %   ├────.systemtype: ['bellows'(default) /'cushion']
 %   ├──────.datatype: a cell array with any of 'rp', 'ra', 'rfr',
 %   │                   'rs', 'all' (default)
+%   ├───.diagnostics:
 %   ├──────────.plot: 1 creates a respiratory cycle detection plot
 %   └.channel_action: ['add'(default) /'replace']
 %                     Defines whether the new channels should be added or the
@@ -44,14 +45,15 @@ elseif nargin < 3 || isempty(chan) || (chan == 0)
 elseif ~isnumeric(chan)
   warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end
-try options.systemtype; catch, options.systemtype = 'bellows'; end
+if ~exist('options', 'var')
+  options = struct();
+end
+options = pspm_options(options, 'resp_pp');
+if options.invalid
+  return
+end
 try options.datatype; catch, options.datatype = {'rp', 'ra', 'rfr', 'rs'}; end
-try options.plot; catch, options.plot = 0; end
-try options.diagnostics; catch, options.diagnostics = 0; end
-try options.channel_action; catch, options.channel_action = 'add'; end
-if ~ischar(options.systemtype) || sum(strcmpi(options.systemtype, {'bellows', 'cushion'})) == 0
-  warning('ID:invalid_input', 'Unknown system type.'); return;
-elseif ~iscell(options.datatype)
+if ~iscell(options.datatype)
   warning('ID:invalid_input', 'Unknown data type.'); return;
 else
   datatypes = {'rp', 'ra', 'rfr', 'rs', 'all'};
@@ -63,7 +65,7 @@ else
 end
 %% get data
 [nsts, infos, data] = pspm_load_data(fn, chan);
-old_chantype = data{1}.header.chantype;
+old_channeltype = data{1}.header.channeltype;
 if nsts == -1
   warning('ID:invalid_input', 'Could not load data properly.');
   return;
@@ -125,7 +127,7 @@ for iType = 1:(numel(datatypes) - 1)
       case 1
         %rp
         respdata = diff(respstamp);
-        newdata.header.chantype = 'rp';
+        newdata.header.channeltype = 'rp';
         action_msg = 'Respiration converted to respiration period';
         newdata.header.units = 's';
       case 2
@@ -134,7 +136,7 @@ for iType = 1:(numel(datatypes) - 1)
           win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
           respdata(k) = range(resp(win));
         end
-        newdata.header.chantype = 'ra';
+        newdata.header.channeltype = 'ra';
         action_msg = 'Respiration converted to respiration amplitude';
         newdata.header.units = 'unknown';
       case 3
@@ -144,21 +146,21 @@ for iType = 1:(numel(datatypes) - 1)
           win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
           respdata(k) = range(resp(win))/ibi(k);
         end
-        newdata.header.chantype = 'rfr';
+        newdata.header.channeltype = 'rfr';
         action_msg = 'Respiration converted to rfr';
         newdata.header.units = 'unknown';
       case 4
         %rs
-        newdata.header.chantype = 'rs';
+        newdata.header.channeltype = 'rs';
         action_msg = 'Respiration converted to respiration time stamps';
         newdata.header.units = 'events';
     end
     channel_str = num2str(chan);
     o.msg.prefix = sprintf(...
-      'Respiration preprocessing :: Input channel: %s -- Input chantype: %s -- Output channel: %s -- Action: %s --', ...
+      'Respiration preprocessing :: Input channel: %s -- Input channeltype: %s -- Output channel: %s -- Action: %s --', ...
       channel_str, ...
-      old_chantype, ...
-      newdata.header.chantype, ...
+      old_channeltype, ...
+      newdata.header.channeltype, ...
       action_msg);
     % interpolate
     switch iType
@@ -166,7 +168,7 @@ for iType = 1:(numel(datatypes) - 1)
         newt = (1/sr):(1/sr):infos.duration;
         if ~isempty(respdata)
           % assign rp/ra/RFR to following zero crossing
-          writedata = interp1(respstamp(2:end), respdata, newt, 'linear' ,'extrap'); 
+          writedata = interp1(respstamp(2:end), respdata, newt, 'linear' ,'extrap');
           % 'extrap' option may introduce falsely negative values
           writedata(writedata < 0) = 0;
         else

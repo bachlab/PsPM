@@ -42,15 +42,15 @@ addpath(pspm_path('Import','nwdq'));
 % -------------------------------------------------------------------------
 % loop through import jobs
 for k = 1:numel(import)
-  chan = import{k}.channel;
-  if chan > size(inputdata, 2)
-    warning('ID:channel_not_contained_in_file', 'Channel %1.0f does not exist in data file', chan); return;
+  channel = import{k}.channel;
+  if channel > size(inputdata, 2)
+    warning('ID:channel_not_contained_in_file', 'Channel %1.0f does not exist in data file', channel); return;
   end;
   import{k}.sr = inputinfo.sampleRatePerChannel; % sample rate per channel
-  import{k}.data = inputdata{chan};     % data per channel
-  import{k}.units = inputinfo.engineeringUnitsTag(chan, :);
-  sourceinfo.chan{k, 1} = sprintf('Channel %02.0f', chan);
-  if strcmpi(settings.chantypes(import{k}.typeno).data, 'events')
+  import{k}.data = inputdata{channel};     % data per channel
+  import{k}.units = inputinfo.engineeringUnitsTag(channel, :);
+  sourceinfo.channel{k, 1} = sprintf('Channel %02.0f', channel);
+  if strcmpi(settings.channeltypes(import{k}.typeno).data, 'events')
     import{k}.marker = 'continuous';
   end;
 end;

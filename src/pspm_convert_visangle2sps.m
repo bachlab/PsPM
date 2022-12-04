@@ -2,7 +2,7 @@ function [ sts, out ] = pspm_convert_visangle2sps(fn, options)
 % ● Description
 %   pspm_convert_visangle2sps takes a file with data from eyelink recordings
 %   and computes by seconds normalized distances bewteen visual angle data.
-%   It saves the result into a new channel with chaneltype 'sps' (Scanpath 
+%   It saves the result into a new channel with chaneltype 'sps' (Scanpath
 %   speed). It is important that pspm_convert_visangle2sps only takes channels
 %   which are in visual angle.
 % ● Format
@@ -11,7 +11,7 @@ function [ sts, out ] = pspm_convert_visangle2sps(fn, options)
 %                 fn: The actual data file containing the eyelink
 %                     recording with gaze data
 %   ┌────────options: struct with following fields
-%   ├─────────.chans: On which subset of the channels the visual
+%   ├───────.channel: On which subset of the channels the visual
 %   │                 angles between the data point should be
 %   │                 computed             .
 %   │                 If no channels are given then the function
@@ -42,32 +42,10 @@ sts = -1;
 if nargin<1
   warning('ID:invalid_input', 'Nothing to do.'); return
 elseif nargin<2
-  channels = 0;
+  channel = 0;
 end
-if isfield(options, 'chans')
-  channels = options.chans;
-  if ~isnumeric(channels)
-    warning('ID:invalid_input', 'Channels must be defined by their id.');
-    return
-  end
-else
-  channels = 0;
-end
-% option.eyes
-if ~isfield(options, 'eyes')
-  options.eyes = settings.lateral.char.b;
-elseif ~any(strcmpi(options.eyes, {settings.lateral.char.l,...
-    settings.lateral.char.r,...
-    settings.lateral.char.b}))
-  warning('ID:invalid_input', ['''options.eyes'' must be either ''l'', ', ...
-    '''r'', ''c''.']);
-  return
-end
-% option.channel_action
-if ~isfield(options, 'channel_action')
-  options.channel_action = 'add';
-elseif ~any(strcmpi(options.channel_action, {'add', 'replace'}))
-  warning('ID:invalid_input', ['''options.channel_action'' must be either ''add'' or ''replace''.']);
+options = pspm_options(options, 'convert_visangle2sps');
+if options.invalid
   return
 end
 % fn
@@ -76,21 +54,21 @@ if ~ischar(fn) || ~exist(fn, 'file')
     'seem to exist.'], fn); return
 end
 %% load data to evaluate
-[lsts, infos, data] = pspm_load_data(fn, channels);
+[lsts, infos, data] = pspm_load_data(fn, channel);
 if lsts ~= 1
   warning('ID:invalid_input', 'Could not load input data correctly.');
   return
 end
 %% iterate through eyes
 n_eyes = numel(infos.source.eyesObserved);
-for i=1:n_eyes
+for i = 1:n_eyes
   eye = lower(infos.source.eyesObserved(i));
   if contains(options.eyes, eye)
     gaze_x = ['gaze_x_', eye];
     gaze_y = ['gaze_y_', eye];
-    gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
+    gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.channeltype) & ...
       strcmpi('degree', x.header.units), data),1);
-    gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
+    gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.channeltype) & ...
       strcmpi('degree', x.header.units), data),1);
     if ~isempty(gx) && ~isempty(gy)
       % get channel specific data
@@ -104,7 +82,7 @@ for i=1:n_eyes
       end
       % create new channel with data holding distances
       dist_channel.data = rad2deg(arclen) .* data{gx}.header.sr;
-      dist_channel.header.chantype = strcat('sps_', eye);
+      dist_channel.header.channeltype = strcat('sps_', eye);
       dist_channel.header.sr = data{gx}.header.sr;
       dist_channel.header.units = 'degree';
       [lsts, outinfo] = pspm_write_channel(fn, dist_channel, options.channel_action);

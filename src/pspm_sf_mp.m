@@ -1,10 +1,10 @@
-function out = pspm_sf_mp(scr, sr, opt)
+function out = pspm_sf_mp(scr, sr, options)
 % ● Description
-%   pspm_sf_mp does the inversion of a DCM for SF of the skin conductance, using 
+%   pspm_sf_mp does the inversion of a DCM for SF of the skin conductance, using
 %   a matching pursuit algorithm, and f_SF for the forward model
 %   the input data is assumed to be in mcS, and sampling rate in Hz
 % ● Format
-%   function out = pspm_sf_mp(scr, sr, opt)
+%   function out = pspm_sf_mp(scr, sr, options)
 % ● Output
 %        out: output
 %         .n: number of responses above threshold
@@ -30,7 +30,7 @@ function out = pspm_sf_mp(scr, sr, opt)
 %     .fresp: maximum frequency of modelled responses (default 0.5 Hz)
 %   .dispwin: display result window (default 1)
 %   .diagnostics:
-%             add further diagnostics to the output. Is disabled if set to 
+%             add further diagnostics to the output. Is disabled if set to
 %             false. If set to true this will add a further field 'D' to the
 %             output struct. Default is false.
 % ● References
@@ -48,7 +48,7 @@ sts = -1;
 tstart = tic;
 
 % check input arguments
-%==========================================================================
+% ------------------------------------------------------------------------
 if nargin < 2 || ~isnumeric(sr) || numel(sr) > 1
   errmsg = sprintf('No valid sample rate given.');
 elseif (sr < 1) || (sr > 1e5)
@@ -66,32 +66,7 @@ if exist('errmsg') == 1, warning(errmsg); out = []; return; end;
 
 % options
 % ------------------------------------------------------------------------
-try
-  S.fresp = opt.fresp;
-catch
-  S.fresp = 0.5;
-end;
-try
-  S.theta = opt.theta;
-catch
-  [S.theta, osr] = pspm_sf_theta;
-end;
-try
-  S.threshold = opt.threshold;
-catch
-  S.threshold = 0.1;
-end;
-try
-  opt.dispwin;
-catch
-  opt.dispwin = 0;
-end;
-try
-  opt.diagnostics;
-catch
-  opt.diagnostics = 0;
-end;
-
+options = pspm_options(options, 'sf_mp');
 
 % inversion settings in structure S
 % ------------------------------------------------------------------------
@@ -106,7 +81,7 @@ S.sfsets = {[1, 0]};            % model single response only (latency 1, amplitu
 S.tonicsets = {[],[]};          % no tonic response components
 S.theta = pspm_sf_theta;         % get SF CRF
 S.maxres = 0.001 * S.n;         % residual threshold per sample
-S.options = opt;
+S.options = options;
 
 % generate over-complete dictionary D.D
 % -------------------------------------------------------------------------
@@ -251,8 +226,8 @@ out.ma = mean(out.a(out.a > S.threshold));
 S = rmfield(S, 'Dtemp');
 out.S = S;
 
-% only add field D if opt.diagnostics is set to true.
-if opt.diagnostics
+% only add field D if options.diagnostics is set to true.
+if options.diagnostics
   out.D = D;
 end;
 out.ind = ind;
@@ -265,7 +240,7 @@ out.time = toc(tstart);
 
 % diagnostic plot
 % -------------------------------------------------------------------------
-if opt.dispwin
+if options.dispwin
   figure;
   ind = ind(out.a > S.threshold);
   plot(Yhatprime, 'g'); hold on

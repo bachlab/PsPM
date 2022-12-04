@@ -1,14 +1,14 @@
 function [sts, infos] = pspm_convert_hb2hp(fn, sr, chan, options)
 % ● Description
-%   pspm_convert_hb2hp transforms heart beat data into an interpolated heart 
+%   pspm_convert_hb2hp transforms heart beat data into an interpolated heart
 %   rate signal and adds this as an additional channel to the data file
 % ● Format
 %   sts = pspm_convert_hb2hp(fn, sr, chan, options)
 % ● Arguments
 %                 fn: data file name
 %                 sr: new sample rate for heart period channel
-%               chan: number of heart beat channel (optional, default: 
-%                     first heart beat channel); if empty (= 0 / []) 
+%               chan: number of heart beat channel (optional, default:
+%                     first heart beat channel); if empty (= 0 / [])
 %                     will be set to default value
 %   ┌────────options: optional arguments [struct]
 %   ├.channel_action: ['add'/'replace', default as 'replace']
@@ -34,15 +34,12 @@ sts = -1;
 global settings;
 if isempty(settings), pspm_init;
 end
-if ~exist('options','var'), options = struct();
+if ~exist('options','var')
+  options = struct();
 end
-if ~isfield(options,'channel_action'), options.channel_action = 'replace';
-end
-if ~isfield(options,'limit'), options.limit = struct();
-end
-if ~isfield(options.limit,'upper'), options.limit.upper = 2;
-end
-if ~isfield(options.limit,'lower'), options.limit.lower = 0.2;
+options = pspm_options(options, 'convert_hb2hp');
+if options.invalid
+  return
 end
 
 % check input
@@ -60,6 +57,7 @@ elseif nargin < 3 || isempty(chan) || (isnumeric(chan) && (chan == 0))
 elseif ~isnumeric(chan) && ~strcmpi(chan, 'hb')
   warning('ID:invalid_input','Channel number must be numeric'); return;
 end
+
 
 % get data
 % -------------------------------------------------------------------------
@@ -94,7 +92,8 @@ end
 newdata.data = newhp(:);
 newdata.header.sr = sr;
 newdata.header.units = 'ms';
-newdata.header.chantype = 'hp';
+newdata.header.channeltype = 'hp';
+
 
 o.msg.prefix = 'Heart beat converted to heart period and';
 try
