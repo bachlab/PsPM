@@ -59,7 +59,9 @@ function outfile = pspm_sf(model, options)
 
 %% 1 Initialise
 global settings
-if isempty(settings), pspm_init; end
+if isempty(settings)
+  pspm_init;
+end
 outfile = [];
 %% 2 Check input
 % 2.1 Check missing input
