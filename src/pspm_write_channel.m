@@ -1,4 +1,4 @@
-function [sts, infos] = pspm_write_channel(fn, newdata, channel_action, options)
+function varargout = pspm_write_channel(fn, newdata, channel_action, options)
 % ● Description
 %   pspm_write_channel adds, replaces and deletes channels in an existing
 %   data file. This function is an integration of the former functions
@@ -163,21 +163,19 @@ switch channel_action
   case 'replace', v = 'replaced';
   case 'delete', v = 'deleted';
 end
-
 if isstruct(options.msg) && isfield(options.msg, 'prefix')
   prefix = options.msg.prefix;
 else
   prefix = options.prefix;
 end
 prefix = [prefix ' Output channel ID: #%02d --'];
-
 msg = '';
 for i = channeli'
   % translate prefix
   p = sprintf(prefix, i);
   msg = [msg, p, sprintf(' %s on %s', v, date)];
 end
-msg(end-1:end)='';
+msg(end-1:end) = '';
 
 %% 5 Modify data according to action
 if strcmpi(channel_action, 'delete')
@@ -185,14 +183,12 @@ if strcmpi(channel_action, 'delete')
 else
   data(channeli,1) = newdata;
 end
-
 if isfield(infos, 'history')
   nhist = numel(infos.history);
 else
   nhist = 0;
 end
 infos.history{nhist + 1} = msg;
-
 % add infos to outinfo struct
 outinfos.channel = channeli;
 
@@ -200,15 +196,21 @@ outinfos.channel = channeli;
 outdata.infos = infos;
 outdata.data  = data;
 outdata.options.overwrite = 1;
-
 nsts = pspm_load_data(fn, outdata);
 if nsts == -1
   return
 end
 
+%% 7 Sort output
 infos = outinfos;
-
 sts = 1;
+switch nargout
+  case 1
+    varargout{1} = infos;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = infos;
+end
 end
 
 function matches = match_chan(existing_channels, exisiting_units, channel)

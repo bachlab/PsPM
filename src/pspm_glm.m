@@ -1,4 +1,4 @@
-function [sts, glm] = pspm_glm(model, options)
+function varargout = pspm_glm(model, options)
 % ● Description
 %   pspm_glm specifies a within subject general linear convolution model of
 %   predicted signals and calculates amplitude estimates for these responses.
@@ -890,7 +890,7 @@ end
 %% save data
 % overwrite is determined in load1
 savedata = struct('glm', glm);
-[sts_load1, ~, ~] = pspm_load1(model.modelfile, 'save', savedata, options);
+[sts_load1, data_load1, mdltype_load1] = pspm_load1(model.modelfile, 'save', savedata, options);
 if ~sts_load1
   warning('ID:invalid_input', 'call of pspm_load1 failed');
   return;
@@ -898,4 +898,11 @@ end
 %% user output
 fprintf(' done. \n');
 sts = 1;
+switch nargout
+  case 1
+    varargout{1} = glm;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = glm;
+end
 end

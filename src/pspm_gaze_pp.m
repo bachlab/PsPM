@@ -1,4 +1,4 @@
-function [sts, out_channel] = pspm_gaze_pp(fn, options)
+function varargout = pspm_gaze_pp(fn, options)
 % ●	Description
 % 	pspm_gaze_pp preprocesses gaze signals, gaze x and gaze y channels at
 % 	the same time.
@@ -99,7 +99,7 @@ if options.valid_sample
   [~, ~, model] = pspm_pupil_pp(fn, options_pp);
   upsampling_factor = options.custom_settings.valid.interp_upsamplingFreq / gaze_og{1}.header.sr;
   desired_output_samples_gaze = round(upsampling_factor * numel(gaze_og{1}.data));
-  preprocessed_gaze.header.channeltype = pspm_update_channel_type(gaze_og{1}.header.channeltype,'pp');
+  preprocessed_gaze.header.channeltype = pspm_update_channeltype(gaze_og{1}.header.channeltype,'pp');
   preprocessed_gaze.header.units = gaze_og{1}.header.units;
   preprocessed_gaze.header.sr = options.custom_settings.valid.interp_upsamplingFreq;
   preprocessed_gaze.header.segments = options.segments;
@@ -119,7 +119,7 @@ if ~action_combine
     preprocessed_gaze.data = gaze_og{1}.data;
     preprocessed_gaze.header.sr = gaze_og{1}.header.sr;
   end
-  preprocessed_gaze.header.channeltype = pspm_update_channel_type(gaze_og{1}.header.channeltype,'pp');
+  preprocessed_gaze.header.channeltype = pspm_update_channeltype(gaze_og{1}.header.channeltype,'pp');
   preprocessed_gaze.header.units = gaze_og{1}.header.units;
 else
   if options.valid_sample
@@ -157,6 +157,13 @@ end
 %% Return values
 out_channel = out_id.channel;
 sts = 1;
+switch nargout
+  case 1
+    varargout{1} = out_channel;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = out_channel;
+end
 end
 
 function data = pspm_cmpnans(data, t_beg, sr, output_samples)

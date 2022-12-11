@@ -1,4 +1,4 @@
-function [sts, outfile] = pspm_sf(model, options)
+function varargout = pspm_sf(model, options)
 % ● Description
 %   pspm_sf is a wrapper function for analysis of tonic SC measures.
 % ● Format
@@ -282,4 +282,11 @@ for iFile = 1:numel(model.datafile)
   outfile = model.modelfile(iFile);
   fprintf('\n');
   sts = 1;
+  switch nargout
+    case 1
+      varargout{1} = outfile;
+    case 2
+      varargout{1} = sts;
+      varargout{2} = outfile;
+  end
 end

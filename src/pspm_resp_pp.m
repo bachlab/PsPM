@@ -181,7 +181,7 @@ for iType = 1:(numel(datatypes) - 1)
     end
     % write
     newdata.data = writedata(:);
-    nsts = pspm_write_channel(fn, newdata, options.channel_action, o);
+    [nsts, ~] = pspm_write_channel(fn, newdata, options.channel_action, o);
     if nsts == -1, return; end
   end
 end

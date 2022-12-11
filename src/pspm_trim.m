@@ -1,4 +1,4 @@
-function [sts, newdatafile] = pspm_trim(datafile, from, to, reference, options)
+function varargout = pspm_trim(datafile, from, to, reference, options)
 % ● Description
 %   pspm_trim cuts an PsPM dataset to the limits set with the parameters 'from'
 %   and 'to' and writes it to a file with a prepended 't'
@@ -38,6 +38,7 @@ function [sts, newdatafile] = pspm_trim(datafile, from, to, reference, options)
 %                       option to 1 to drop markers which lie in the offset.
 %                       this is for event channels only. default is 0.
 % ● Outputs
+%                  sts: status variable indicating whether function run successfully.
 %          newdatafile: a filename for the updated file, a cell array of
 %                       filenames, a struct with fields .data and .infos or a
 %                       cell array of structs
@@ -116,8 +117,8 @@ switch(class(reference))
         getmarker = 0;
       otherwise
         warning('ID:invalid_input', ...
-        ['Invalid reference option ''%s'', ',...
-        'should be marker or file.'], reference);
+          ['Invalid reference option ''%s'', ',...
+          'should be marker or file.'], reference);
         return
     end
   case 'double'
@@ -142,13 +143,13 @@ switch(class(reference))
       calculate_idx = true;
     else
       warning('ID:invalid_input', ...
-      'Invalid reference option ''%s'', should contain only two elements',...
-      reference);
+        'Invalid reference option ''%s'', should contain only two elements',...
+        reference);
       return
     end
   otherwise
     warning('ID:invalid_input', ...
-    'Invalid reference option ''%s'', should be a character, a number, or a cell', reference);
+      'Invalid reference option ''%s'', should be a character, a number, or a cell', reference);
     return
 end
 % 1.6 Set options
@@ -347,7 +348,7 @@ for i_D = 1:numel(D)
     [pth, fn, ext] = fileparts(datafile);
     newdatafile    = fullfile(pth, ['t', fn, ext]);
     savedata.infos.trimfile = newdatafile;
-		options.overwrite = pspm_overwrite(newdatafile, options);
+    options.overwrite = pspm_overwrite(newdatafile, options);
     savedata.options = options;
     sts_load_data = pspm_load_data(newdatafile, savedata);
     if ~sts_load_data
@@ -366,4 +367,11 @@ if i_D > 1
   newdatafile = Dout;
 end
 sts = 1;
+switch nargout
+  case 1
+    varargout{1} = newdatafile;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = newdatafile;
+end
 end
