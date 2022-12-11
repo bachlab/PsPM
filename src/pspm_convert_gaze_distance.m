@@ -50,7 +50,7 @@ if ~ismember(target, { 'degree', 'sps' })
   return
 end
 if ~ismember(from, { 'pixel', 'mm', 'cm', 'inches', 'm' })
-  warning('ID:invalid_input:from', 'from unit must be "pixel", "mm", "cm", "inches", "m"');
+  warning('ID:invalid_input:from', 'from unit must be `pixel`, `mm`, `cm`, `inches`, `m`');
   return
 end
 if ~isnumeric(height)

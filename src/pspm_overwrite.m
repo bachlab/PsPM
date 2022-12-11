@@ -18,7 +18,7 @@ function overwrite_final = pspm_overwrite(varargin)
 %               option of overwrite if this option is presented
 %               can be a value or a struct
 %               if a value, can be 0 (not to overwrite) or 1 (to overwrite)
-%               if a struct, check if the field "overwrite" exist
+%               if a struct, check if the field `overwrite` exist
 % ● Outputs
 %   overwrite_final  option of overwriting determined by pspm_overwrite
 %                     0: not to overwrite
@@ -46,7 +46,7 @@ switch numel(varargin)
       overwrite_final = 1; % In develop mode, always overwrite
     else
       if ~exist(fn, 'file')
-        % if file does not exist, always "overwrite"
+        % if file does not exist, always overwrite
         overwrite_final = 1;
       else
         if feature('ShoverwriteFigureWindoverwrites') % if in gui
@@ -76,7 +76,7 @@ switch numel(varargin)
           overwrite_final = overwrite_struct.overwrite;
         else
           if ~exist(fn, 'file')
-            % if file does not exist, always "overwrite"
+            % if file does not exist, always **overwrite**
             overwrite_final = 1;
           else
             overwrite_final = 0;

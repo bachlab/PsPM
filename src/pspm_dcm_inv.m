@@ -560,7 +560,7 @@ if ~options.getrf
       % -- and for each aSCR: m - s - a
 
       if aSCRno > 0
-        % get trial onsets and identify "dummy" events
+        % get trial onsets and identify `dummy` events
         aSCR_dummy = zeros(aSCRno, adepth);
         aSCR_on = events{1}{sn}(trls, :, 1)';
         aSCR_dummy(aSCR_on < 0) = 1;
@@ -602,7 +602,7 @@ if ~options.getrf
 
       % - get eSCR priors from previous estimations
       if eSCRno > 0
-        % - identify "dummy" events
+        % - identify `dummy` events
         eSCR_dummy = zeros(eSCRno, adepth);
         eSCR_on = events{2}{sn}(trls, :)';
         eSCR_dummy(eSCR_on < 0) = 1;
