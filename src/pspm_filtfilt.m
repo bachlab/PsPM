@@ -83,8 +83,8 @@ data = [1+a(2) a(3:nfilt) ones(1,nfilt-2) -ones(1,nfilt-2)];
 sp   = sparse(rows,cols,data);
 zi   = sp \ (b(2:nfilt).' - a(2:nfilt).'*b(1));
 
-% Extrapolate beginning and end of data sequence using a "reflection
-% method".  Slopes of original and extrapolated sequences match at the end
+% Extrapolate beginning and end of data sequence using a `reflection
+% method`.  Slopes of original and extrapolated sequences match at the end
 % points. This reduces end effects
 %--------------------------------------------------------------------------
 y    = [2*x(1)-x((nfact+1):-1:2);x;2*x(len)-x((len-1):-1:len-nfact)];
