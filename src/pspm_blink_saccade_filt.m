@@ -91,6 +91,7 @@ o.msg.prefix = sprintf('Blink saccade filtering :: Input channel: %s', channel_s
 if lsts ~= 1; return; end;
 out_channel = out_id.channel;
 sts = 1;
+end
 %% keep_pupil_gaze_channels
 function [out_cell] = keep_pupil_gaze_channels(in_cell)
 out_cell = {};
@@ -99,4 +100,5 @@ for i = 1:numel(in_cell)
   if contains(channel, 'pupil') || contains(channel, 'gaze')
     out_cell{end + 1} = in_cell{i};
   end
+end
 end

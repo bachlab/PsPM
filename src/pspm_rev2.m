@@ -1,4 +1,4 @@
-function pspm_rev2(modelfile, con)
+function sts = pspm_rev2(modelfile, con)
 % ● Description
 %   pspm_rev2 is a tool for reviewing & reporting a second level design.
 % ● Format
@@ -117,4 +117,5 @@ disp(' ');
 disp('__________________________________________________________________________________');
 disp('PsPM (c) Dominik R. Bach, Wellcome Trust Centre for Neuroimaging, UCL London UK');
 
-return;
+sts = 1;
+end

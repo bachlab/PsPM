@@ -202,3 +202,4 @@ if options.plot
   stem(respstamp, ones(size(respstamp)), 'Marker', 'o', 'Color', 'b');
 end
 sts = 1;
+end

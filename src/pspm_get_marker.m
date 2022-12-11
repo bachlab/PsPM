@@ -47,4 +47,4 @@ data.header.channeltype = 'marker';
 data.header.units = 'events';
 data.header.sr = 1;
 sts = 1;
-return
+end

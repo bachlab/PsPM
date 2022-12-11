@@ -13,7 +13,7 @@ function [sts, import, sourceinfo]  = pspm_get_wdq_n(datafile, import)
 % ● Developer's Notes
 %   This function does not use the ActiveX control elements provided by
 %   Dataq developers. Instead it reads the binary file according to the
-%   documentation published by dataq 
+%   documentation published by dataq
 %   (http://www.dataq.com/resources/techinfo/ff.htm).
 %   The current called routine nReadDataq.m may not provide as many data
 %   (check the commented header of the routine nReadDataq for more
@@ -59,4 +59,4 @@ end;
 % -------------------------------------------------------------------------
 rmpath(pspm_path('Import','nwdq'));
 sts = 1;
-return
+end

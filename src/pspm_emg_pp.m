@@ -134,5 +134,4 @@ if lsts ~= 1, return; end
 
 output.channel = outinfos.channel;
 sts = 1;
-
 end

@@ -140,5 +140,4 @@ if d>1
 end
 
 sts = 1;
-
-return
+end

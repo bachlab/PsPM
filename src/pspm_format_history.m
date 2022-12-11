@@ -12,7 +12,7 @@ function [sts, hist_str] = pspm_format_history(history_cell_array)
 % ● Format
 %   [sts, hist_str] = pspm_format_history(history_cell_array)
 % ● Arguments
-%   history_cell_array: [cell array of strings] infos.history field in a PsPM 
+%   history_cell_array: [cell array of strings] infos.history field in a PsPM
 %                       file
 % ● Output
 %   hist_str: Formatted table string
@@ -35,6 +35,7 @@ end
 table_mat = construct_cell_matrix_from_col_parts(headers, columns);
 table_mat = make_each_cell_in_a_column_same_length(table_mat);
 hist_str = format_as_table(table_mat, '-', '|');
+%% Return status
 sts = 1;
 end
 %% Function: construct_cell_matrix_from_col_parts

@@ -39,7 +39,7 @@ function [sts, infos] = pspm_write_channel(fn, newdata, channel_action, options)
 %                      Tobias Moser (University of Zurich)
 %   Updated in 2022 by Teddy Chao (UCL)
 
-%% Initialise
+%% 0 Initialise
 global settings
 if isempty(settings)
   pspm_init;
@@ -53,7 +53,7 @@ options = pspm_options(options, 'write_channel');
 if options.invalid
   return
 end
-%% Check arguments
+%% 1 Check arguments
 if nargin < 1
   warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
 elseif ~ischar(fn)
@@ -69,13 +69,10 @@ elseif isempty(newdata)
 elseif ~isempty(newdata) && ~isstruct(newdata) && ~iscell(newdata)
   warning('ID:invalid_input', 'newdata must either be a newdata structure or empty'); return;
 end
-
-%% Determine whether the data has the correct 'orientation' and try to fix it
-
+% Determine whether the data has the correct 'orientation' and try to fix it
 if isstruct(newdata)
   newdata = {newdata};
 end
-
 if ~strcmpi(channel_action, 'delete')
   for i=1:numel(newdata)
     if isfield(newdata{i}, 'data') && isfield(newdata{i}, 'header')
@@ -106,16 +103,14 @@ if ~strcmpi(channel_action, 'delete')
     end
   end
 end
-
-
-%% Get data
+%% 2 Get data
 [nsts, infos, data] = pspm_load_data(fn);
 if nsts == -1
   return
 end
 % importdata = data; % importdata is not used by following steps
 
-%% Find channel according to action
+%% 3 Find channel according to action
 % channels in file
 fchannels = [];
 if ~strcmpi(channel_action, 'add')
@@ -161,7 +156,7 @@ if strcmpi(channel_action, 'add')
   fchannels(channeli,1) = channeltypes;
 end
 
-%% Manage message
+%% 4 Manage message
 msg = options.msg;
 switch channel_action
   case 'add', v = 'added';
@@ -184,7 +179,7 @@ for i = channeli'
 end
 msg(end-1:end)='';
 
-%% Modify data according to action
+%% 5 Modify data according to action
 if strcmpi(channel_action, 'delete')
   data(channeli) = [];
 else
@@ -201,7 +196,7 @@ infos.history{nhist + 1} = msg;
 % add infos to outinfo struct
 outinfos.channel = channeli;
 
-%% Save data
+%% 6 Save data
 outdata.infos = infos;
 outdata.data  = data;
 outdata.options.overwrite = 1;
@@ -214,6 +209,7 @@ end
 infos = outinfos;
 
 sts = 1;
+end
 
 function matches = match_chan(existing_channels, exisiting_units, channel)
 if isfield(channel.header, 'units')
@@ -222,4 +218,5 @@ if isfield(channel.header, 'units')
     & strcmpi(channel.header.units, exisiting_units),1,'last');
 else
   matches = find(strcmpi(channel.header.channeltype, existing_channels) ,1,'last');
+end
 end

@@ -125,6 +125,7 @@ global settings
 if isempty(settings)
   pspm_init;
 end
+sts = -1;
 %% 2 Create default arguments
 if nargin == 1
   options = struct();
@@ -204,7 +205,7 @@ o.msg.prefix = sprintf(...
   old_channeltype, ...
   smooth_signal.header.channeltype);
 [lsts, out_id] = pspm_write_channel(fn, smooth_signal, options.channel_action, o);
-if lsts ~= 1
+if ~lsts
   return
 end
 out_chan = out_id.channel;
@@ -218,6 +219,7 @@ switch nargout
     varargout{3} = model;
 end
 end
+
 function varargout  = pspm_preprocess(data, data_combine, segments, custom_settings, plot_data)
 sts = 0;
 % 1 definitions

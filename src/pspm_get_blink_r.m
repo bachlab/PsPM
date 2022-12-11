@@ -27,5 +27,6 @@ data.header.channeltype = 'blink_r';
 data.header.units = import.units;
 data.header.sr = import.sr;
 
-% check status
+%% Return values
 sts = 1;
+end

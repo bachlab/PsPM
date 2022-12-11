@@ -1,4 +1,4 @@
-function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchannel, options)
+function [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchannel, options)
 % ● Description
 %   pspm_split_sessions splits experimental sessions/blocks, based on
 %   regularly incoming markers, for example volume or slice markers from an
@@ -107,8 +107,8 @@ end
 if options.verbose
   fprintf('Splitting %s ... \n', datafile);
 end
-[sts, ininfos, indata, filestruct] = pspm_load_data(datafile); % check and get datafile ---
-if sts == -1
+[sts_load_data, ininfos, indata, filestruct] = pspm_load_data(datafile); % check and get datafile ---
+if ~sts_load_data
   warning('ID:invalid_input', 'Could not load data.');
   return;
 end
@@ -116,8 +116,8 @@ end
 % 2.2 Handle missing epochs
 if options.missing
   % makes sure the epochs are in seconds and not empty
-  [sts, missing_time] = pspm_get_timing('epochs', options.missing, 'seconds');
-  if sts < 0
+  [sts_get_timing, missing_time] = pspm_get_timing('epochs', options.missing, 'seconds');
+  if ~sts_get_timing
     warning('ID:invalid_input', 'Could not load missing epochs.');
   end
   missingsr = 10000; % dummy sample rate, should be higher than data sampling rates (but no need to make it dynamic)
@@ -198,15 +198,12 @@ else
 
   % 2.4 Split files
   for sn = 1:size(trimpoint,1)
-
     % 2.4.1 Determine filenames
     [p, f, ex] = fileparts(datafile);
     newdatafile{sn} = fullfile(p, sprintf('%s_sn%02.0f%s', f, sn, ex));
-
     if ischar(options.missing)
       newepochfile{sn} = fullfile(p_epochs, sprintf('%s_sn%02.0f%s', f_epochs, sn, ex_epochs));
     end
-
     % 2.4.2 Split data
     trimoptions = struct('drop_offset_markers', 1);
     newdata = pspm_trim(struct('data', {indata}, 'infos', ininfos), ...
@@ -214,27 +211,20 @@ else
 		options.overwrite = pspm_overwrite(newdatafile{sn}, options);
     newdata.options = options;
     pspm_load_data(newdatafile{sn}, newdata);
-
-
     % 2.4.5 Split Epochs
     if options.missing
       dummydata{1,1}.header = struct('channeltype', 'custom', ...
         'sr', missingsr, ...
         'units', 'unknown');
       dummydata{1,1}.data   = dp_epochs;
-
       % add marker channel so that pspm_trim has a reference
       dummydata{2,1}      = indata{markerchannel};
       dummyinfos          = ininfos;
-
       newmissing = pspm_trim(struct('data', {dummydata}, 'infos', dummyinfos), ...
         options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions);
-
       epochs = newmissing.data{1}.data;
-
       epoch_on = 1 + strfind(epochs.', [0 1]); % Return the start points of the excluded interval
       epoch_off = strfind(epochs.', [1 0]); % Return the end points of the excluded interval
-
       if numel(epoch_off) < numel(epoch_on) % if the epochs is in the middle of 2 blocks
         epoch_off(end+1) = numel(epochs);
       elseif numel(epoch_on) < numel(epoch_off)
@@ -246,6 +236,6 @@ else
       epochs = [epoch_on.', epoch_off.']/missingsr; % convert back to seconds
       save(newepochfile{sn}, 'epochs');
     end
-
   end
+sts = 1;
 end

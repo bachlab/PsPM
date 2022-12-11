@@ -475,7 +475,9 @@ if numel(new_chans) >= 1
   file_struct.infos = infos;
   file_struct.data = new_data;
   file_struct.options = op;
-  [sts, ~, ~, ~] = pspm_load_data(out_file, file_struct);
+  [sts_load_data, ~, ~, ~] = pspm_load_data(out_file, file_struct);
 else
   warning('ID:invalid_input', 'Appearently no data was generated.');
+end
+sts = 1;
 end

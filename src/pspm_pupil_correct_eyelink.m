@@ -235,8 +235,8 @@ gaze_y_mm = get_gaze_in_mm(gaze_y_data{1}.data,...
 pupil = pupil_data{1}.data;
 
 %% correction
-[sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm, options);
-if sts ~= 1; return; end
+[sts_pupil_correct, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm, options);
+if sts_pupil_correct ~= 1; return; end
 
 %% save data
 pupil_data{1}.data = pupil_corrected;

@@ -74,8 +74,9 @@ for i_data = 1:n_data
 end
 % save data to file
 [lsts] = pspm_write_channel(datafile, data, options.channel_action);
-if lsts == -1
+if ~lsts
   warning('ID:invalid_input', 'Could not write channel to file.');
   return;
 end
 sts = 1;
+end

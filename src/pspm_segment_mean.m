@@ -165,3 +165,4 @@ if ~isempty(options.newfile)
 	out.file = options.newfile;
 end
 sts = 1;
+end

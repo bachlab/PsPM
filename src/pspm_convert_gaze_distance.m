@@ -117,10 +117,10 @@ for gaze_eye = fieldnames(eyes)'
     dist_channel.header.channeltype = strcat('sps_', gaze_eye{1});
     dist_channel.header.sr = sr;
     dist_channel.header.units = 'degree';
-    [sts, out] = pspm_write_channel(fn, dist_channel, options.channel_action);
+    [sts_write_channel, out] = pspm_write_channel(fn, dist_channel, options.channel_action);
   end
-
 end
+sts = 1;
 end
 %% CODE SAME AS IN pspm_pixel2unit
 function out = pixel_conversion(data, screen_length, interest_range)

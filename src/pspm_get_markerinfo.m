@@ -81,3 +81,5 @@ if ~isempty(outfn)
     save(outfn, 'markerinfo');
   end
 end
+sts = 1;
+end

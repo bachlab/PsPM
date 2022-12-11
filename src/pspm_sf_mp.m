@@ -1,4 +1,4 @@
-function out = pspm_sf_mp(scr, sr, options)
+function [sts, out] = pspm_sf_mp(scr, sr, options)
 % ● Description
 %   pspm_sf_mp does the inversion of a DCM for SF of the skin conductance, using
 %   a matching pursuit algorithm, and f_SF for the forward model
@@ -249,4 +249,5 @@ if options.dispwin
   plot(Yhat, 'r');
 end;
 
-
+sts = 1;
+end

@@ -9,3 +9,4 @@ if isempty(settings)
 end
 web('https://github.com/bachlab/PsPM/issues', '-browser')
 return
+end

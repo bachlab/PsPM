@@ -1,4 +1,4 @@
-function out = pspm_sf_dcm(scr, sr, options)
+function [sts, out] = pspm_sf_dcm(scr, sr, options)
 % ● Description
 %   pspm_sf_dcm does dynamic causal modelling for SF of the skin conductance
 %   uses f_SF and g_Id
@@ -166,3 +166,5 @@ out.model.y = y(:)';
 out.time = toc(tstart);
 % =======================================================================
 
+sts = 1;
+end

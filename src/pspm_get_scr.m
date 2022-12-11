@@ -7,8 +7,8 @@ function [sts, data] = pspm_get_scr(import)
 %     import:  import job structure with mandatory fields
 %         .sr:
 %       .data:
-%   .transfer:  transfer parameters, either a struct with fields .Rs, .c, 
-%               .offset, .recsys, or a file containing variables 'Rs' 'c', 
+%   .transfer:  transfer parameters, either a struct with fields .Rs, .c,
+%               .offset, .recsys, or a file containing variables 'Rs' 'c',
 %               'offset', 'recsys'.
 % ● History
 %   Introduced in PsPM 3.0
@@ -85,4 +85,4 @@ data.header.transfer = struct('Rs', Rs, 'offset', offset, 'c', c, 'recsys', recs
 
 % check status
 sts = 1;
-return
+end

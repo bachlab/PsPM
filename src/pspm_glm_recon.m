@@ -6,9 +6,9 @@ function [sts, glm] = pspm_glm_recon(modelfile)
 % ● Format
 %   [sts, glm] = pspm_glm_recon(glmfile)
 % ● Arguments
-%   glmfile: 
+%   glmfile:
 % ● Outputs
-%   sts: 
+%   sts:
 %   glm:
 % ● History
 %   Introduced in PsPM 3.0
@@ -72,5 +72,6 @@ end
 glm.recon = recon;
 glm.resp  = resp;
 glm.reconnames = condname(:);
-sts =1;
+sts = 1;
 save(modelfile, 'glm');
+end

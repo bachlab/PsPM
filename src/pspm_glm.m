@@ -1,4 +1,4 @@
-function glm = pspm_glm(model, options)
+function [sts, glm] = pspm_glm(model, options)
 % ● Description
 %   pspm_glm specifies a within subject general linear convolution model of
 %   predicted signals and calculates amplitude estimates for these responses.
@@ -278,6 +278,7 @@ for iFile = 1:nFile
     end
   end
 end
+
 if nFile > 1 && any(diff(sr) > 0)
   fprintf('\nSample rate differs between sessions.\n')
 else
@@ -889,11 +890,12 @@ end
 %% save data
 % overwrite is determined in load1
 savedata = struct('glm', glm);
-[sts, data, mdltype] = pspm_load1(model.modelfile, 'save', savedata, options);
-if sts == -1
+[sts_load1, ~, ~] = pspm_load1(model.modelfile, 'save', savedata, options);
+if ~sts_load1
   warning('ID:invalid_input', 'call of pspm_load1 failed');
   return;
 end
 %% user output
 fprintf(' done. \n');
-return
+sts = 1;
+end

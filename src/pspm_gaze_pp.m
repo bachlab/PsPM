@@ -151,12 +151,14 @@ o.msg.prefix = sprintf(...
   old_channeltype, ...
   preprocessed_gaze.header.channeltype);
 [lsts, out_id] = pspm_write_channel(fn, preprocessed_gaze, options.channel_action, o);
-if lsts ~= 1 % if writting channel is unsuccessful
+if ~lsts % if writting channel is unsuccessful
   return
 end
+%% Return values
 out_channel = out_id.channel;
 sts = 1;
 end
+
 function data = pspm_cmpnans(data, t_beg, sr, output_samples)
 % complete with NaNs
 % Complete the given data that possibly has missing samples at the

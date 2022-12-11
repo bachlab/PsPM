@@ -1,4 +1,4 @@
-function outfile = pspm_sf(model, options)
+function [sts, outfile] = pspm_sf(model, options)
 % ● Description
 %   pspm_sf is a wrapper function for analysis of tonic SC measures.
 % ● Format
@@ -61,6 +61,7 @@ function outfile = pspm_sf(model, options)
 global settings
 if isempty(settings), pspm_init; end
 outfile = [];
+sts = -1;
 %% 2 Check input
 % 2.1 Check missing input
 if nargin<1
@@ -152,8 +153,8 @@ if strcmpi(model.timeunits, 'whole')
   epochs = repmat({[1 1]}, numel(model.datafile), 1);
 else
   for iSn = 1:numel(model.datafile)
-    [sts, epochs{iSn}] = pspm_get_timing('epochs', model.timing{iSn}, model.timeunits);
-    if sts == -1
+    [sts_get_timing, epochs{iSn}] = pspm_get_timing('epochs', model.timing{iSn}, model.timeunits);
+    if sts_get_timing == -1
       warning('ID:invalid_input', 'Call of pspm_get_timing failed.');
       return;
     end
@@ -180,12 +181,12 @@ for iFile = 1:numel(model.datafile)
     return
   end
   % 3.3 get and filter data
-  [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
-  if sts < 0, return; end
+  [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
+  if sts_load_data < 0, return; end
   Y{1} = data{1}.data; sr(1) = data{1}.header.sr;
   model.filter.sr = sr(1);
-  [sts, Y{2}, sr(2)] = pspm_prepdata(data{1}.data, model.filter);
-  if sts == -1
+  [sts_prepdata, Y{2}, sr(2)] = pspm_prepdata(data{1}.data, model.filter);
+  if sts_prepdata == -1
     warning('ID:invalid_input', 'Call of pspm_prepdata failed.');
     return;
   end
@@ -224,7 +225,6 @@ for iFile = 1:numel(model.datafile)
     end
     events = data{1}.data;
   end
-  if sts < 0, return; end
   for iEpoch = 1:size(epochs{iFile}, 1)
     if iEpoch > 1, fprintf('\n\t\t\t'); end
     fprintf('epoch %01.0f ...', iEpoch);
@@ -281,4 +281,5 @@ for iFile = 1:numel(model.datafile)
   save(model.modelfile{iFile}, 'sf');
   outfile = model.modelfile(iFile);
   fprintf('\n');
+  sts = 1;
 end

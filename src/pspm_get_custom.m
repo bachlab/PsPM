@@ -16,6 +16,7 @@ global settings
 if isempty(settings)
 	pspm_init;
 end
+sts = -1;
 %% assign data
 data.data = import.data(:);
 %% add header

@@ -1,4 +1,4 @@
-function newdatafile = pspm_trim(datafile, from, to, reference, options)
+function [sts, newdatafile] = pspm_trim(datafile, from, to, reference, options)
 % ● Description
 %   pspm_trim cuts an PsPM dataset to the limits set with the parameters 'from'
 %   and 'to' and writes it to a file with a prepended 't'
@@ -168,7 +168,10 @@ for i_D = 1:numel(D)
   else
     fprintf('Trimming %s ... ', datafile);
   end
-  [sts, infos, data] = pspm_load_data(datafile, 0);
+  [sts_load_data, infos, data] = pspm_load_data(datafile, 0);
+  if ~sts_load_data
+    warning('ID:invalid_option', 'Failed to load datafile');
+  end
   % 2.2 Calculate markers if needed
   if getmarker == 1
     % 2.2.1 Verify the markers
@@ -226,11 +229,6 @@ for i_D = 1:numel(D)
       l_endmarker = g_endmarker;
     end
     clear nsts ninfos ndata
-  end
-  % 2.2.4 Break program if data was not loaded successfully
-  if any(sts == -1)
-    newdatafile = [];
-    break;
   end
   % 2.3 Convert from and to from time points into seconds
   if ischar(from) % 'none'
@@ -339,7 +337,11 @@ for i_D = 1:numel(D)
   savedata.data = data;
   savedata.infos = infos;
   if isstruct(datafile)
-    sts = pspm_load_data(savedata, 'none');
+    sts_load_data = pspm_load_data(savedata, 'none');
+    if ~sts_load_data
+      warning('ID:unable_to_save', 'Cannot save data to the expected file.')
+      return
+    end
     newdatafile = savedata;
   else
     [pth, fn, ext] = fileparts(datafile);
@@ -347,16 +349,14 @@ for i_D = 1:numel(D)
     savedata.infos.trimfile = newdatafile;
 		options.overwrite = pspm_overwrite(newdatafile, options);
     savedata.options = options;
-    sts = pspm_load_data(newdatafile, savedata);
+    sts_load_data = pspm_load_data(newdatafile, savedata);
+    if ~sts_load_data
+      warning('ID:unable_to_save', 'Cannot save data to the expected file.')
+      return
+    end
   end
-  if sts ~= 1
-    Dout{i_D} = ' ';
-    warning('Trimming unsuccessful for file %s.\n', newdatafile);
-  else
-    Dout{i_D} = newdatafile;
-    % user output
-    fprintf('  done.\n');
-  end
+  Dout{i_D} = newdatafile;
+  fprintf('  done.\n');
 end
 % 3 Return value
 % if cell array of datafiles is being processed,
@@ -364,4 +364,6 @@ end
 if i_D > 1
   clear newdatafile
   newdatafile = Dout;
+end
+sts = 1;
 end

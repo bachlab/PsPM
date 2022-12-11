@@ -1,4 +1,4 @@
-function scl = pspm_sf_scl(scr, sr, options)
+function [sts, scl] = pspm_sf_scl(scr, sr, options)
 % ● Description
 %   pspm_sf_scl returns the mean skin conductance level for an epoch
 % ● Format
@@ -26,4 +26,6 @@ if nargin < 1
   warning('No data specified'); return;
 end;
 scl = mean(scr);
-return;
+
+sts = 1;
+end

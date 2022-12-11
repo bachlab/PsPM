@@ -1,4 +1,4 @@
-function newfilename = pspm_ren(filename, newfilename)
+function [sts, newfilename] = pspm_ren(filename, newfilename)
 % ● Description
 %   pspm_ren renames an SCR datafile and updates the infos field
 % ● Format
@@ -81,3 +81,5 @@ if numel(newfilename) == 1
 elseif isempty(newfilename)
   newfilename = [];
 end;
+sts = 1;
+end

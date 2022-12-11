@@ -12,7 +12,16 @@ function [sts, hist_str] = pspm_format_history_from_file(fn)
 % ● History
 %   Written in 2019 by Eshref Yozdemir (UZH)
 
-[sts, infos, ~, ~] = pspm_load_data(fn);
-if sts ~= 1; return; end
-[sts, hist_str] = pspm_format_history(infos.history);
+%% Initialise
+sts = -1;
+[sts_load_data, infos, ~, ~] = pspm_load_data(fn);
+if ~sts_load_data
+  return
+end
+[sts_format_history, hist_str] = pspm_format_history(infos.history);
+if ~sts_format_history
+  return
+end
+%% Return status
+sts = 1;
 end

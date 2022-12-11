@@ -1,4 +1,4 @@
-function wavedata = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
+function [sts, wavedata] = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
 % ● Description
 %   pspm_pulse_convert converts pulsed data into a data waveform, assuming
 %   milliseconds as time unit and a resamplingrate in Hz given as input argument
@@ -74,14 +74,13 @@ else
     filt.direction = 'bi';
     filt.down = samplingrate;
     filt.sr = resamplingrate;
-    [sts, wavedata] = pspm_prepdata(wavedata, filt);
-    if sts ~= 1
+    [sts_prepdata, wavedata] = pspm_prepdata(wavedata, filt);
+    if sts_prepdata ~= 1
       warning('ID:invalid_input', 'call of pspm_prepdata failed');
       return;
     end;
   end;
 end;
 
-
-
-return;
+sts = 1;
+end

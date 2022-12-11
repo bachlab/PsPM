@@ -1,4 +1,4 @@
-function chan = pspm_find_channel(headercell, channeltype)
+function [sts, chan] = pspm_find_channel(headercell, channeltype)
 % ● Description
 %   pspm_find_channel searches a cell arrays of channel headers and
 %   finds the channel that matches the desired type.
@@ -15,6 +15,7 @@ function chan = pspm_find_channel(headercell, channeltype)
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Updated in 2022 by Teddy Chao
 
 %% Initialise
 global settings
@@ -72,3 +73,6 @@ elseif sum(chanflag) == 0
 else
   chan=find(chanflag==1);
 end;
+
+sts = 1;
+end
