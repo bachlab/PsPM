@@ -94,7 +94,8 @@ end
 if nargin < 3 || isempty(chan) || (chan == 0)
   chan = 'scr';
 elseif ~isnumeric(chan)
-  warning('ID:invalid_input', 'Channel number must be numeric'); return;
+  warning('ID:invalid_input', 'Channel number must be numeric');
+  return
 end
 options = pspm_options(options, 'scr_pp');
 if options.invalid
@@ -111,23 +112,9 @@ else
   warning('ID:invalid_input', 'Data file must be a char, cell, or struct.');
   return;
 end
-if isfield(options, 'missing_epochs_filename')
-  [pth, ~, ~] = fileparts(options.missing_epochs_filename);
-  if ~isempty(pth) && exist(pth,'dir')~=7
-    warning('ID:invalid_input',...
-      'Please specify a valid output directory if you want to save missing epochs.');
-    return;
-  end
-end
-if options.change_data == 0 && ~isfield(options, 'missing_epochs_filename')
-  warning('This procedure leads to no output, according to the selected options.');
-end
-
 for d = 1:numel(data_source)
   % out{d} = [];
-  [sts_loading, ~, indatas, ~] = pspm_load_data(data_source{d}, chan); % check and get datafile ---
-
-  sts = sts_loading * sts;
+  [sts_loading, ~, indatas, ~] = pspm_load_data(data_source{d}, chan); % check and get datafile
   if sts_loading == -1
     warning('ID:invalid_input', 'Could not load data');
     return;
@@ -138,9 +125,7 @@ for d = 1:numel(data_source)
     return;
   end
   sr = indatas{1,1}.header.sr; % return sampling frequency from the input data
-
   if ~any(size(indata) > 1)
-    sts = -1;
     warning('ID:invalid_input', 'Argument ''data'' should contain > 1 data points.');
     return;
   end
@@ -159,20 +144,16 @@ for d = 1:numel(data_source)
   end
   filt_clipping = detect_clipping(indata, options.clipping_step_size, ...
     options.clipping_n_window, options.clipping_threshold);
-
   % combine filters
   filt = filt_range & filt_slope;
   filt = filt & (1-filt_clipping);
-
   %% Find data islands and expand artefact islands
   if isempty(find(filt==0, 1))
     warning('Epoch was empty based on the current settings.');
   else
     if options.data_island_threshold > 0 || options.expand_epochs > 0
-
       % work out data epochs
       filt_epochs = filter_to_epochs(1-filt); % gives data (rather than artefact) epochs
-
       if options.expand_epochs > 0
         % remove data epochs too short to be shortened
         epoch_duration = diff(filt_epochs, 1, 2);
@@ -181,15 +162,12 @@ for d = 1:numel(data_source)
         filt_epochs(:, 1) = filt_epochs(:, 1) + ceil(options.expand_epochs * sr);
         filt_epochs(:, 2) = filt_epochs(:, 2) - ceil(options.expand_epochs * sr);
       end
-
       % correct possibly negative values
       filt_epochs(filt_epochs(:, 2) < 1, 2) = 1;
-
       if options.data_island_threshold > 0
         epoch_duration = diff(filt_epochs, 1, 2);
         filt_epochs(epoch_duration < options.data_island_threshold * sr, :) = [];
       end
-
       % write back into data
       index(filt_epochs(:, 1)) = 1;
       index(filt_epochs(:, 2)) = -1;
@@ -199,7 +177,6 @@ for d = 1:numel(data_source)
     end
   end
   data_changed(filt) = indata(filt);
-
   % Compute epochs
   if ~isempty(find(filt == 0, 1))
     epochs = filter_to_epochs(filt);
@@ -207,7 +184,6 @@ for d = 1:numel(data_source)
   else
     epochs = [];
   end
-
   %% Save data
   if isfield(options, 'missing_epochs_filename')
     save(options.missing_epochs_filename, 'epochs');
@@ -220,11 +196,11 @@ for d = 1:numel(data_source)
     data_to_write.data = data_changed;
     [sts_write, ~] = pspm_write_channel(out{d}, data_to_write, options.channel_action);
     if sts_write == -1
-      sts = -1;
       warning('Epochs were not written to the original file successfully.');
     end
   end
 end
+sts = 1; % sts is true if all processing above is successful
 end
 
 function epochs = filter_to_epochs(filt)	% Return the start and end points of the excluded interval
