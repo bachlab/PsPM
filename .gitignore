@@ -19,4 +19,9 @@ vendor/
 *.asv
 *.mat
 *.html
-!pspm_App.mat
+!pspm_appdesigner.mat
+
+# Ignore temp test file
+test/pspm_test_temp.m
+test/pspm_test_dynamic.m
+success.txt

@@ -1,19 +1,11 @@
 function pspm_show_forum
-% Happy Easter!
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%
-% Updated by Teddy Chao (UCL)
+% ● History
+%   Introduced In PsPM 5.1
+%   Written in 2020 by Teddy Chao (UCL)
 
-% $Id$
-% $Rev$
-
-global settings;
+global settings
 if isempty(settings)
-    pspm_init;
+  pspm_init;
 end
-
 web('https://github.com/bachlab/PsPM/issues', '-browser')
-
 return

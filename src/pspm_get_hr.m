@@ -1,36 +1,32 @@
-function [sts, data]=pspm_get_hr(import)
-% pspm_get_hr is a common function for importing heart rate data
-%
-% FORMAT:
+function [sts, data] = pspm_get_hr(import)
+% ● Description
+%   pspm_get_hr is a common function for importing heart rate data
+% ● Format
 %   [sts, data]= pspm_get_hr(import)
-%   with data: column vector of waveform data
-%        import: import job structure with mandatory fields .data and .sr
-%  
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Arguments
+%     data: column vector of waveform data
+%   import: import job structure with mandatory fields .data and .sr
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
-% $Id$
-% $Rev$
-
-% v002 29.07.2013 changed to 3.0 architecture
-% v001 31.5.2010 Dominik R Bach
-
-global settings;
-if isempty(settings), pspm_init; end;
-
-% initialise status
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
 sts = -1;
 
 % assign respiratory data
 data.data = import.data(:);
 
 % add header
-data.header.chantype = 'hr';
+data.header.channeltype = 'hr';
 if strcmpi(import.units, 'unknown')
-    data.header.units = 'bpm';
+  data.header.units = 'bpm';
 else
-    data.header.units = import.units;
+  data.header.units = import.units;
 end;
 data.header.sr = import.sr;
 

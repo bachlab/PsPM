@@ -20,7 +20,7 @@ function [data] = import_smi(varargin)
     %                       raw: Matrix containing raw data columns.
     %                       raw_columns: Column headers of each raw data column.
     %                       channels: Matrix (timestep x n_cols) of relevant PsPM columns.
-    %                       channels_columns: Column headers of each channels column.
+    %                       channel_columns: Column headers of each channels column.
     %                       units: Units of each channels column.
     %                       eyesObserved: One of L, R or LR, denoting observed eyes in datafile.
     %                       head_distance: Viewing distance.
@@ -42,6 +42,8 @@ function [data] = import_smi(varargin)
     %__________________________________________________________________________
     %
     % (C) 2019 Laure Ciernik
+    % Updated 2021 Teddy Chao
+    
     if isempty(varargin)
         error('ID:invalid_input', 'import_SMI.m needs at least one input sample_file.');
     end
@@ -90,7 +92,7 @@ function [data] = import_smi(varargin)
         line_ctr = line_ctr + 1;
         curr_line = all_text(line_begs(line_ctr) : line_begs(line_ctr + 1) - back_off);
     end
-    header_sample = header_sample';
+    header_sample = transpose(header_sample);
     line_begs = line_begs(line_ctr + 1 : end);
     all_text = all_text(line_begs(1) : end);
     line_begs = line_begs - line_begs(1) + 1;
@@ -232,7 +234,7 @@ function [data] = import_smi(varargin)
     if isempty(trial_changepoints)
         sess_beg_end = [0 numel(datanum(:, 1))];
     else
-        sess_beg_end = [0 trial_changepoints' numel(datanum(:, 1))];
+        sess_beg_end = [0 transpose(trial_changepoints) numel(datanum(:, 1))];
     end
     data = cell(n_sessions, 1);
     %% convert data, compute blink, saccade and messages
@@ -274,7 +276,7 @@ function [data] = import_smi(varargin)
             ignore_str_pos{1}=cell(4,1);
             ignore_str_pos{2}=cell(4,1);
 
-            if strcmpi(eyesObserved,'LR')
+            if strcmpi(eyesObserved, 'LR')
                 % alwas add the time of the beginning of the current trial
                 % since the measured start and end times are relative to the
                 % time of the beginning ot the current trial
@@ -345,7 +347,7 @@ function [data] = import_smi(varargin)
             data{sn}.markers = msg_times_in_sn;
 
             msg_str =  msgs(3, val_msg_idx);
-            msg_str_idx = cell2mat(cellfun(@(x) find(x==':',1,'first'),msg_str,'UniformOutput',0));
+            msg_str_idx = cell2mat(cellfun(@(x) find(x==':', 1, 'first'),msg_str,'UniformOutput',0));
             for u=1:length(msg_str_idx)
                 msg_str{u} = msg_str{u}(msg_str_idx(u)+2:end);
             end
@@ -396,19 +398,19 @@ function [data] = import_smi(varargin)
                     data{sn}.units = {pupil_units{:}, 'pixel', 'pixel', 'pixel', 'pixel', 'blink', 'blink', 'saccade', 'saccade'};
                 end
                 data{sn}.channels = data{sn}.raw(:, channel_indices);
-                data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
+                data{sn}.channel_columns = data{sn}.raw_columns(channel_indices);
 
             else
                 if POR_available
                     channel_indices = [pupil_channels,xL,yL,xR,yR,POR_xL,POR_yL,POR_xR,POR_yR];
                     data{sn}.units = {pupil_units{:}, 'pixel', 'pixel', 'pixel', 'pixel', 'pixel', 'pixel', 'pixel', 'pixel'};
                     data{sn}.channels = data{sn}.raw(:, channel_indices);
-                    data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
+                    data{sn}.channel_columns = data{sn}.raw_columns(channel_indices);
                 else
                     channel_indices = [pupil_channels,xL,yL,xR,yR];
                     data{sn}.units = {pupil_units{:}, 'pixel', 'pixel', 'pixel', 'pixel'};
                     data{sn}.channels = data{sn}.raw(:, channel_indices);
-                    data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
+                    data{sn}.channel_columns = data{sn}.raw_columns(channel_indices);
                 end
             end
         else
@@ -428,23 +430,23 @@ function [data] = import_smi(varargin)
                     channel_indices = [pupil_channels,x,y,POR_x,POR_y,blink,saccade];
                     data{sn}.units = {pupil_units{:}, 'pixel', 'pixel', 'pixel', 'pixel', 'blink', 'saccade'};
                     data{sn}.channels = data{sn}.raw(:, channel_indices);
-                    data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
+                    data{sn}.channel_columns = data{sn}.raw_columns(channel_indices);
                 else
                     channel_indices = [pupil_channels,x,y,blink,saccade];
                     data{sn}.units = {pupil_units{:}, 'pixel', 'pixel', 'blink', 'saccade'};
                     data{sn}.channels = data{sn}.raw(:, channel_indices);
-                    data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
+                    data{sn}.channel_columns = data{sn}.raw_columns(channel_indices);
                 end
             else
                 if POR_available
                     channel_indices = [pupil_channels,x,y,POR_x,POR_y];
                     data{sn}.channels = data{sn}.raw(:, channel_indices);
-                    data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
+                    data{sn}.channel_columns = data{sn}.raw_columns(channel_indices);
                     data{sn}.units = {pupil_units{:}, 'pixel', 'pixel', 'pixel', 'pixel'};
                 else
                     channel_indices = [pupil_channels,x,y];
                     data{sn}.channels = data{sn}.raw(:, channel_indices);
-                    data{sn}.channels_columns = data{sn}.raw_columns(channel_indices);
+                    data{sn}.channel_columns = data{sn}.raw_columns(channel_indices);
                     data{sn}.units = {pupil_units{:}, 'pixel', 'pixel'};
                 end
             end

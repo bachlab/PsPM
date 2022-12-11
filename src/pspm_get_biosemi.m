@@ -1,23 +1,33 @@
 function [sts, import, sourceinfo] = pspm_get_biosemi(datafile, import)
-% pspm_get_biosemi is the main function for import of BioSemi bdf files
-% FORMAT: [sts, import, sourceinfo] = pspm_get_biosemi(datafile, import);
-% this function uses fieldtrip fileio functions
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Description
+%   pspm_get_biosemi is the main function for import of BioSemi bdf files
+%   this function uses fieldtrip fileio functions
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_biosemi(datafile, import);
+% ● Arguments
+%       datafile:
+%   ┌─────import:
+%   ├────.typeno:
+%   ├───.channel:
+%   ├────────.sr:
+%   ├──────.data:
+%   ├────.marker:
+%   └.markerinfo:
+%     ├───.value:
+%     └────.name:
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
-% $Id$
-% $Rev$
-
-% v004 drb 02.09.2013 new for 3.0 architecture
-
-
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-addpath(pspm_path('Import','fieldtrip','fileio')); 
-sourceinfo = []; sts = -1;
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
+sts = -1;
+addpath(pspm_path('Import','fieldtrip','fileio'));
+sourceinfo = [];
 
 % get external file, using fieldtrip
 % -------------------------------------------------------------------------
@@ -28,50 +38,47 @@ try mrk = ft_read_event(datafile); catch, mrk = []; end;
 % extract individual channels
 % -------------------------------------------------------------------------
 for k = 1:numel(import)
-        
-    if strcmpi(settings.chantypes(import{k}.typeno).data, 'wave')
-        % channel number --- 
-        if import{k}.channel > 0
-             chan = import{k}.channel;
-        else
-             chan = pspm_find_channel(hdr.label, import{k}.type); 
-             if chan < 1, return; end;
-        end;
-        
-        if chan > size(indata, 1), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', chan, datafile); return; end;
-    
-        sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', chan, hdr.label{chan});
 
-        % sample rate ---
-        import{k}.sr = hdr.Fs;
-    
-        % get data ---
-        import{k}.data = indata(chan, :);
-    
-    else                % event channels
-        % time unit
-        import{k}.sr = 1./hdr.Fs;
-        
-        if ~isempty(mrk)
-            import{k}.data = [mrk(:).sample];
-            import{k}.marker = 'timestamps';
-            import{k}.markerinfo.value = [mrk(:).value];
-            import{k}.markerinfo.name = {mrk(:).type};
-        else
-            import{k}.data = [];
-            import{k}.marker = 'timestamps';
-            import{k}.markerinfo.value = [];
-            import{k}.markerinfo.name = [];
-        end;
+  if strcmpi(settings.channeltypes(import{k}.typeno).data, 'wave')
+    % channel number ---
+    if import{k}.channel > 0
+      channel = import{k}.channel;
+    else
+      channel = pspm_find_channel(hdr.label, import{k}.type);
+      if channel < 1, return; end;
     end;
-    
+
+    if channel > size(indata, 1), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', channel, datafile); return; end;
+
+    sourceinfo.channel{k, 1} = sprintf('Channel %02.0f: %s', channel, hdr.label{channel});
+
+    % sample rate ---
+    import{k}.sr = hdr.Fs;
+
+    % get data ---
+    import{k}.data = indata(channel, :);
+
+  else                % event channels
+    % time unit
+    import{k}.sr = 1./hdr.Fs;
+
+    if ~isempty(mrk)
+      import{k}.data = [mrk(:).sample];
+      import{k}.marker = 'timestamps';
+      import{k}.markerinfo.value = [mrk(:).value];
+      import{k}.markerinfo.name = {mrk(:).type};
+    else
+      import{k}.data = [];
+      import{k}.marker = 'timestamps';
+      import{k}.markerinfo.value = [];
+      import{k}.markerinfo.name = [];
+    end;
+  end;
+
 end;
 
 % clear path and return
 % -------------------------------------------------------------------------
-rmpath(pspm_path('Import','fieldtrip','fileio')); 
+rmpath(pspm_path('Import','fieldtrip','fileio'));
 sts = 1;
-return;
-
-
-
+return

@@ -1,64 +1,58 @@
 function y = pspm_filtfilt(b,a,x)
-% pspm_filtfilt. Zero-phase forward and reverse digital filtering
-% FORMAT y = pspm_filtfilt(b,a,x)
-%
-% b        - filter parameters (numerator)
-% a        - filter parameters (denominator)
-% x        - input data vector (if matrix, filter over columns)
-%
-% y        - filtered data
-%__________________________________________________________________________
-%
-% The filter is described by the difference equation:
-%
-%     y(n) = b(1)*x(n) + b(2)*x(n-1) + ... + b(nb+1)*x(n-nb)
-%                      - a(2)*y(n-1) - ... - a(na+1)*y(n-na)
-%
-% After filtering in the forward direction, the filtered sequence is then
-% reversed and run back through the filter; Y is the time reverse of the
-% output of the second filtering operation. The result has precisely zero
-% phase distortion and magnitude modified by the square of the filter's
-% magnitude response.  Care is taken to minimize startup and ending
-% transients by matching initial conditions.
-%
-% The length of the input x must be more than three times
-% the filter order, defined as max(length(b)-1,length(a)-1).
-%
-% References:
-% [1] Sanjit K. Mitra, Digital Signal Processing, 2nd ed, McGraw-Hill, 2001
-% [2] Fredrik Gustafsson, Determining the initial states in forward-backward
-%     filtering, IEEE Transactions on Signal Processing, pp. 988--992,
-%     April 1996, Volume 44, Issue 4
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Description
+%   pspm_filtfilt. Zero-phase forward and reverse digital filtering
+% ● Format
+%   y = pspm_filtfilt(b,a,x)
+% ● Arguments
+%   b:  filter parameters (numerator)
+%   a:  filter parameters (denominator)
+%   x:  input data vector (if matrix, filter over columns)
+%   y:  filtered data
+% ● Developer's notes
+%   The filter is described by the difference equation:
+%   y(n) = b(1)*x(n) + b(2)*x(n-1) + ... + b(nb+1)*x(n-nb)
+%          - a(2)*y(n-1) - ... - a(na+1)*y(n-na)
+%   After filtering in the forward direction, the filtered sequence is then
+%   reversed and run back through the filter; Y is the time reverse of the
+%   output of the second filtering operation. The result has precisely zero
+%   phase distortion and magnitude modified by the square of the filter's
+%   magnitude response.  Care is taken to minimize startup and ending
+%   transients by matching initial conditions.
+%   The length of the input x must be more than three times
+%   the filter order, defined as max(length(b)-1,length(a)-1).
+% ● References
+%   [1] Sanjit K. Mitra, Digital Signal Processing, 2nd ed, McGraw-Hill, 2001
+%   [2] Fredrik Gustafsson, Determining the initial states in forward-backward
+%       filtering, IEEE Transactions on Signal Processing, pp. 988--992,
+%       April 1996, Volume 44, Issue 4
+% ● References
+%   L. Shure, T. Krauss, F. Gustafsson
+%   Copyright 1988-2004 The MathWorks, Inc.
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% L. Shure, T. Krauss, F. Gustafsson
-% Copyright 1988-2004 The MathWorks, Inc.
-
-% $Id$
-% $Rev$
-
-% initialise
-% -------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
-% -------------------------------------------------------------------------
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
+sts = -1;
 
 % Check input data
 %--------------------------------------------------------------------------
 
 if nargin < 3
-    warning('ID:invalid_input','Not enough parameters were specified.'); return;
+  warning('ID:invalid_input','Not enough parameters were specified.'); return;
 end
 
 [m,n] = size(x);
 if n>1 && m>1
-    y = zeros(size(x));
-    for i=1:n
-        y(:,i) = pspm_filtfilt(b,a,x(:,i));
-    end
-    return
+  y = zeros(size(x));
+  for i=1:n
+    y(:,i) = pspm_filtfilt(b,a,x(:,i));
+  end
+  return
 end
 if m==1, x = x(:); end
 len = size(x,1);
@@ -73,13 +67,13 @@ if na < nfilt, a(nfilt)=0; end
 
 nfact = 3*(nfilt-1);
 if len <= nfact
-    warning('ID:invalid_input','Data must have length more than 3 times filter order.'); return;
+  warning('ID:invalid_input','Data must have length more than 3 times filter order.'); return;
 end
 if nfilt == 1
-    y=x; return
+  y=x; return
 end
 
-% Use sparse matrix to solve system of linear equations for initial 
+% Use sparse matrix to solve system of linear equations for initial
 % conditions zi are the steady-state states of the filter b(z)/a(z) in the
 % state-space implementation of the 'filter' command
 %--------------------------------------------------------------------------

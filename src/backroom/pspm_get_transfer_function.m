@@ -74,28 +74,30 @@ switch ext
     case {'.smr'}
         import{1}.type = 'scr';
         import{1}.channel = scrchan;
-        [data sts] = pspm_get_spike(infile, import);
-        if sts == -1, warning('Import failed'); return; end;
-        scr = data{1}.data;
-        sr = data{1}.header.sr;
+        options = struct('overwrite', 1);
+        newfn = pspm_import(infile, 'spike', import, options);
+      
     case {'.mat'}
-        [sts infos data] = pspm_load_data(infile, 'scr');
-        if sts == -1, warning('Data could not be loaded'); return; end;
-        scr = data{1}.data;
-        sr  = data{1}.header.sr;
-end;
+        newfn = infile;
+end
+
+[sts infos data] = pspm_load_data(newfn{1}, 'scr');
+if sts == -1, warning('Data could not be loaded'); return; end;
+scr = data{1}.data;
+sr  = data{1}.header.sr;
+
 
 
 % identify resistance steps
 % -------------------------------------------------------------------------
-% - initialise
-point(1)=1;
 % - create smoothed scr series
 scrs = conv(scr, ones(round(sr/5), 1)./round(sr/5));
 % - find possible offset (last value)
 offset = scrs(end-sr);
 % - set dummy (infinite) offset resistor
 Rtest(end + 1) = 1e100;
+% - initialise
+point(1)=find(scrs>1.5*offset, 1);
 % - loop over resistor values
 for step=1:(numel(Rtest) - 1)
     % look at std in second 2-4
@@ -169,12 +171,12 @@ title('Separation of resistor values', 'FontWeight', 'Bold', 'FontSize', 14);
 set(fig.ax(1).h, 'FontWeight', 'Bold', 'FontSize', 10, 'XTick', []);
 % show fit of transfer function
 fig.ax(2).h=axes('Position', pos(2,:));
-scatter(1:numel(PR), 1./Rtest((skipvalues+1):end).*1e6, 'b');
+scatter(1:numel(PR), 1e6./Rtest((skipvalues+1):end), 'b');
 hold on
-scatter(1:numel(PR), 1./(c./PR-Rs*1e-6), 'r');
+scatter(1:numel(PR), 1./(c./PR-(1e-6)*Rs), 'r');
 legend({'conductance of resistors (mcS)', 'conductance predicted from pulse rate (mcS)'});
 title( 'Predicted and true conductance values', 'FontWeight', 'Bold', 'FontSize', 14);
-me=max(1./Rtest((skipvalues+1):end).*1e6-1./(c./PR-Rs*1e-6));
+me=max(1./Rtest((skipvalues+1):end).*1e6-1./(c./PR-Rs));
 set(fig.ax(2).h, 'FontWeight', 'Bold', 'FontSize', 10, 'XTick', []);
 % give values
 if skipvalues>0
@@ -185,7 +187,7 @@ annotation('textbox', [0.1 0.09 0.8 0.04], 'String', 'Transfer function: C_B_o_d
 annotation('textbox', [0.1 0.06 0.8 0.04], 'String', ['c = ', num2str(c, '%0.2f')], 'FontWeight', 'Bold', 'FontSize', 10, 'LineStyle', 'none');
 annotation('textbox', [0.1 0.03 0.8 0.04], 'String', ['offset = ', num2str(offset, '%0.2f')], 'FontWeight', 'Bold', 'FontSize', 10, 'LineStyle', 'none');
 annotation('textbox', [0.1 0.00 0.8 0.04], 'String', ['written to ', outfile, '.mat'], 'FontWeight', 'Bold', 'FontSize', 10, 'LineStyle', 'none', 'Interpreter', 'none');
-print ('-dpsc', outfile)
+print ('-depsc', outfile)
 
 
 

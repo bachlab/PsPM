@@ -1,35 +1,34 @@
 function fighandle = pspm_rev_con(model)
-% pspm_rev_con is a tool for reviewing contrasts of first level models
-%
-% FORMAT:
-% pspm_rev_con(modelfile)
-%
-% modelfile: filename and path of modelfile
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (UZH, WTCN)
+% ● Description
+%   pspm_rev_con is a tool for reviewing contrasts of first level models
+% ● Format
+%   fighandle = pspm_rev_con(modelfile)
+% ● Arguments
+%   modelfile: filename and path of modelfile
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (UZH, WTCN)
 
-% $Id$
-% $Rev$
-
-% initialise
-% ------------------------------------------------------------------------
-global settings;
-if isempty(settings), pspm_init; end;
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
+sts = -1;
 fighandle = [];
 
 % check input
 % ------------------------------------------------------------------------
-if nargin < 1, return; 
+if nargin < 1, return;
 elseif ~isfield(model, 'con')
-    fprintf('No contrasts contained in model.\n');
-    return;
+  fprintf('No contrasts contained in model.\n');
+  return;
 end;
 
 % print contrast names to screen
 % ------------------------------------------------------------------------
 fprintf('Contrast names for %s:\n---------------------------------------\n', model.modelfile);
 for n=1:numel(model.con)
-    fprintf('Contrast %d: %s\n',n,model.con(n).name);
+  fprintf('Contrast %d: %s\n',n,model.con(n).name);
 end;
 fprintf('---------------------------------------\n');
