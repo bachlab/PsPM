@@ -9,13 +9,13 @@ function [sts, v] = pspm_version(varargin)
 %   [sts, v] = pspm_version()
 %   [sts, v] = pspm_version(action)
 % ● Arguments
-%   action: define an additional action. Possible actions are 'check' that 
+%   action: define an additional action. Possible actions are 'check' that
 %           checks if there is a new pspm version available.
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2009-2016 by Tobias Moser (University of Zurich)
 
-%% start
+%% 0 start
 % do not include pspm_init, because pspm_version is called by pspm_init!!!
 sts = -1;
 
