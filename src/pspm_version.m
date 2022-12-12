@@ -78,4 +78,4 @@ switch nargout
     varargout{1} = sts;
     varargout{2} = version_of_pspm;
 end
-end
+return

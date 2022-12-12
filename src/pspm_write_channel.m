@@ -211,7 +211,7 @@ switch nargout
     varargout{1} = sts;
     varargout{2} = infos;
 end
-end
+return
 
 function matches = match_chan(existing_channels, exisiting_units, channel)
 if isfield(channel.header, 'units')
@@ -220,5 +220,4 @@ if isfield(channel.header, 'units')
     & strcmpi(channel.header.units, exisiting_units),1,'last');
 else
   matches = find(strcmpi(channel.header.channeltype, existing_channels) ,1,'last');
-end
 end

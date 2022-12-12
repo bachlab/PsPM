@@ -318,4 +318,4 @@ switch nargout
     varargout{2} = data;
     varargout{3} = mdltype;
 end
-end
+return

@@ -87,4 +87,4 @@ if ~isempty(outfile)
   dlmwrite(outfile, job, 'delimiter', '');
 end;
 sts = 1;
-end
+return

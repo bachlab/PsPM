@@ -68,4 +68,4 @@ for k = 1:numel(import)
 end
 %% Return values
 sts = 1;
-end
+return

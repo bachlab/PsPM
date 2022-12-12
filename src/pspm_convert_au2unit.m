@@ -218,4 +218,4 @@ switch mode
     out = convert_data;
 end
 sts = 1;
-end
+return

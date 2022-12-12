@@ -24,4 +24,4 @@ if ~sts_format_history
 end
 %% Return status
 sts = 1;
-end
+return

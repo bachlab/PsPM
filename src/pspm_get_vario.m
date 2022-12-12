@@ -67,4 +67,4 @@ end
 %% clear path and return
 rmpath(pspm_path('Import','vario'));
 sts = 1;
-end
+return

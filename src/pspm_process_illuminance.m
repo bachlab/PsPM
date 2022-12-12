@@ -251,4 +251,4 @@ end
 
 out = reg;
 sts = 1;
-end
+return

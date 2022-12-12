@@ -199,4 +199,4 @@ end
 fprintf('  done.\n');
 sts = 1;
 outinfo.channel = nout.channel;
-end
+return

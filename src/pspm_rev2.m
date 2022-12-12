@@ -116,6 +116,5 @@ end;
 disp(' ');
 disp('__________________________________________________________________________________');
 disp('PsPM (c) Dominik R. Bach, Wellcome Trust Centre for Neuroimaging, UCL London UK');
-
 sts = 1;
-end
+return

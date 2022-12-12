@@ -161,7 +161,7 @@ sourceinfo.best_eye = eye_with_smaller_nan_ratio(import, eyes_observed);
 
 rmpath(pspm_path('Import','viewpoint'));
 sts = 1;
-end
+return
 
 function sr = compute_sampling_rate(seconds_channel)
 sr = round(median(1 ./ diff(seconds_channel)));

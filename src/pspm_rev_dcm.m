@@ -122,4 +122,4 @@ switch job
 end;
 
 sts = 1;
-end
+return

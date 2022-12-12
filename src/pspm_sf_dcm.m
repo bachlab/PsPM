@@ -165,7 +165,6 @@ out.model.u = u;
 out.model.y = y(:)';
 out.time = toc(tstart);
 % =======================================================================
-
 sts = 1;
 switch nargout
   case 1
@@ -174,5 +173,4 @@ switch nargout
     varargout{1} = sts;
     varargout{2} = out;
 end
-
-end
+return

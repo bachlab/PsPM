@@ -480,4 +480,4 @@ else
   warning('ID:invalid_input', 'Appearently no data was generated.');
 end
 sts = 1;
-end
+return

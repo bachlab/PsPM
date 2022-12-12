@@ -86,3 +86,4 @@ elseif strcmpi(mode, 'file')
   sts = 1;
 end
 varargout{1} = sts;
+return

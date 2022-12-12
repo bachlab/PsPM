@@ -30,6 +30,5 @@ if nargin < 1
 end;
 scr = scr - min(scr);
 auc = mean(scr);
-
 sts = 1;
 end

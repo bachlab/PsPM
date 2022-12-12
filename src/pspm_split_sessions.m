@@ -249,4 +249,4 @@ switch nargout
     varargout{2} = newdatafile;
     varargout{3} = newepochfile;
 end
-end
+return

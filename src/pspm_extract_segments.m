@@ -668,4 +668,4 @@ end
 
 %% Return values
 sts = 1;
-end
+return

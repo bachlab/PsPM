@@ -15,12 +15,12 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 %               ▶ char
 %                 'wave'    returns all waveform channels
 %                 'events'  returns all event channels
-%                 'pupil'   goes through the below precedence order and loads 
-%                           all channels corresponding to the first existing 
+%                 'pupil'   goes through the below precedence order and loads
+%                           all channels corresponding to the first existing
 %                           option:
-%                           1.  Combined pupil channels (by definition also 
+%                           1.  Combined pupil channels (by definition also
 %                               preprocessed)
-%                           2.  Preprocessed pupil channels corresponding to 
+%                           2.  Preprocessed pupil channels corresponding to
 %                               best eye
 %                           3.  Preprocessed pupil channels
 %                           4.  Best eye pupil channels
@@ -33,7 +33,7 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
 %                 'gaze_x_r'
 %                           returns the right gaze x channel
 %                 'channel type'
-%                           returns the respective channels (see settings for 
+%                           returns the respective channels (see settings for
 %                           channel types)
 %                 'none'		just checks the file
 %               ▶ struct  check and save file
@@ -393,7 +393,7 @@ else
 end
 
 sts = 1;
-end
+return
 
 function flag = get_chans_to_load_for_pupil(data, best_eye, prefer_unprocessed)
 % Set flag variable according to the precedence order:

@@ -18,15 +18,12 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-
 % assign pupil data
 data.data = import.data(:);
-
 % add header
 data.header.channeltype = 'blink_l';
 data.header.units = import.units;
 data.header.sr = import.sr;
-
 %% Return values
 sts = 1;
-end
+return

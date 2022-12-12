@@ -18,4 +18,3 @@ image(P);
 axis image
 axis off
 return
-end

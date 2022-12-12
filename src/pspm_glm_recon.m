@@ -72,6 +72,7 @@ end
 glm.recon = recon;
 glm.resp  = resp;
 glm.reconnames = condname(:);
+save(modelfile, 'glm');
 sts = 1;
 switch nargout
   case 1
@@ -80,8 +81,4 @@ switch nargout
     varargout{1} = sts;
     varargout{2} = glm;
 end
-
-save(modelfile, 'glm');
-
-
-end
+return

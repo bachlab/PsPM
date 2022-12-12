@@ -218,7 +218,7 @@ switch nargout
     varargout{2} = out_chan;
     varargout{3} = model;
 end
-end
+return
 
 function varargout  = pspm_preprocess(data, data_combine, segments, custom_settings, plot_data)
 sts = 0;

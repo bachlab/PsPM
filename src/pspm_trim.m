@@ -374,4 +374,4 @@ switch nargout
     varargout{1} = sts;
     varargout{2} = newdatafile;
 end
-end
+return

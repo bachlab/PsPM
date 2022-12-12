@@ -21,4 +21,4 @@ if ~sts_get_txt
   return
 end
 sts = 1;
-end
+return

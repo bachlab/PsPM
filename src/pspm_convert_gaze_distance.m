@@ -121,7 +121,7 @@ for gaze_eye = fieldnames(eyes)'
   end
 end
 sts = 1;
-end
+return
 %% CODE SAME AS IN pspm_pixel2unit
 function out = pixel_conversion(data, screen_length, interest_range)
 length_per_pixel = screen_length ./ (diff(interest_range) + 1);

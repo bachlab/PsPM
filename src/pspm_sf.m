@@ -281,12 +281,13 @@ for iFile = 1:numel(model.datafile)
   save(model.modelfile{iFile}, 'sf');
   outfile = model.modelfile(iFile);
   fprintf('\n');
-  sts = 1;
-  switch nargout
-    case 1
-      varargout{1} = outfile;
-    case 2
-      varargout{1} = sts;
-      varargout{2} = outfile;
-  end
 end
+sts = 1;
+switch nargout
+  case 1
+    varargout{1} = outfile;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = outfile;
+end
+return

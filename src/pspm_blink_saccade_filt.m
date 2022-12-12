@@ -101,4 +101,4 @@ for i = 1:numel(in_cell)
     out_cell{end + 1} = in_cell{i};
   end
 end
-end
+return

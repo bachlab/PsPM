@@ -59,3 +59,4 @@ x = (start:td:stop-td)';
 % approximations
 fx = A * gampdf(x - shift, a, b);
 %fx = A * exp(log(x-shift).*(a-1) - gl - (x-shift)./b - log(b)*a);
+return

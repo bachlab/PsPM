@@ -38,4 +38,4 @@ x = (start:td:stop-td)';
 % das stimmt nicht --> verstehe nicht wie ich anfang und ende des intervals
 % bekomme
 bs = rectangularPulse(start, stop,x);
-end
+return

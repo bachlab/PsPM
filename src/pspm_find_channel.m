@@ -75,4 +75,4 @@ switch nargout
     varargout{1} = sts;
     varargout{2} = channel;
 end
-end
+return

@@ -127,4 +127,4 @@ o.msg.prefix = 'QRS detection using AMRI algorithm';
 if lsts ~= 1; return; end;
 out_channel = infos.channel;
 sts = 1;
-end
+return

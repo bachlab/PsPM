@@ -85,4 +85,4 @@ data.header.transfer = struct('Rs', Rs, 'offset', offset, 'c', c, 'recsys', recs
 
 % check status
 sts = 1;
-end
+return

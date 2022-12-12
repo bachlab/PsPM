@@ -139,4 +139,4 @@ switch window
     handles.button_all.FontName = settings.ui.FontNameText;
     hObject.Resize = 'on';
 end
-end
+return

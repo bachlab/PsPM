@@ -85,4 +85,4 @@ switch nargout
     varargout{1} = sts;
     varargout{2} = newfilename;
 end
-end
+return

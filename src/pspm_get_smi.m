@@ -194,7 +194,7 @@ sourceinfo.best_eye = eye_with_smaller_nan_ratio(import, eyes_observed);
 
 rmpath(pspm_path('Import','smi'));
 sts = 1;
-end
+return
 
 function proper = assert_proper_datafile_format(datafile)
 proper = is_proper_datafile_format(datafile);

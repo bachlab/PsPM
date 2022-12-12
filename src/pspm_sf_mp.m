@@ -250,4 +250,4 @@ if options.dispwin
 end;
 
 sts = 1;
-end
+return

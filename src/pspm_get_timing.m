@@ -449,5 +449,4 @@ switch model
 end
 
 sts = 1;
-
-end
+return

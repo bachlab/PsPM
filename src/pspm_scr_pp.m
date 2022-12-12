@@ -201,7 +201,7 @@ for d = 1:numel(data_source)
   end
 end
 sts = 1; % sts is true if all processing above is successful
-end
+return
 
 function epochs = filter_to_epochs(filt)	% Return the start and end points of the excluded interval
 epoch_on = find(diff(filt) == -1) + 1;	% Return the start points of the excluded interval
@@ -219,7 +219,6 @@ elseif isempty(epoch_on) && ~isempty(epoch_off)
   epoch_on = 1;
 end
 epochs = [ epoch_on, epoch_off ];
-end
 
 function index_clipping = detect_clipping(data, step_size, n_window, threshold)
 l_data = length(data);
@@ -234,5 +233,4 @@ for window_starter = index_window_starter
     index_clip_pred = window_starter + [0,index_clip_pred(data_oi_front==data_oi_front_max)];
     index_clipping(index_clip_pred) = 1;
   end
-end
 end

@@ -194,7 +194,7 @@ end
 if exist('EmphComponents', 'var')
   ApplyStyle(handles, EmphComponents, FNEmph, FSText);
 end
-end
+return
 function ApplyStyle(handles, widgt, FN, FS)
 [r,c] = size(widgt);
 for i_r = 1:r
@@ -202,5 +202,4 @@ for i_r = 1:r
     handles = setfield(handles, widgt{i_r,i_c}, 'FontName', FN);
     handles = setfield(handles, widgt{i_r,i_c}, 'FontSize', FS);
   end
-end
 end

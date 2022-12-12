@@ -80,4 +80,4 @@ end;
 % -------------------------------------------------------------------------
 rmpath(pspm_path('Import','fieldtrip','fileio'));
 sts = 1;
-end
+return

@@ -161,4 +161,4 @@ if strcmpi(unit,'degree')
 end
 sts = 1;
 out = outinfo;
-end
+return

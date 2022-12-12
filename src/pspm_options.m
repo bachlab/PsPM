@@ -460,7 +460,7 @@ switch FunName
       end
     end
 end
-end
+return
 
 function options = autofill(varargin)
 switch nargin
@@ -632,7 +632,6 @@ switch nargin
     options.invalid = 1;
     return
 end
-end
 
 function options = autofill_channel_action(options, varargin)
 % Description: subfunction of pspm_options for autofill channel actions
@@ -667,7 +666,6 @@ else
     options.invalid = 1;
     return
   end
-end
 end
 
 function allowed_values_message = generate_allowed_values_message(varargin)
@@ -790,7 +788,6 @@ switch nargin
         return
     end
 end
-end
 
 function options = fill_extract_segments(options)
 % 2.21.1 set default ouput_nan
@@ -851,7 +848,6 @@ elseif options.manual_chosen == 1 || ...
     return
   end
 end
-end
 
 function options = fill_find_valid_fixations(options)
 global settings
@@ -902,7 +898,6 @@ elseif strcmpi(options.mode,'fixation') && isfield(options, 'fixation_point') &&
   options.invalid = 1;
   return;
 end
-end
 
 function options = fill_glm(options)
 if ~isfield(options, 'marker_chan_num')
@@ -922,7 +917,6 @@ if isfield(options,'exclude_missing')
     return
   end
 end
-end
 
 function options = fill_find_sounds(options)
 % options = autofill(options, 'roi', []);
@@ -939,7 +933,6 @@ if ~isempty(options.roi) && (length(options.roi) ~= 2 || ~all(isnumeric(options.
   warning('ID:invalid_input', 'Option roi must be a float vector of length 2 or 0');
   options.invalid = 1;
 end
-end
 
 function options = check_range(options, range_start, range_end)
 if options.(range_start) > options.(range_end)
@@ -949,5 +942,4 @@ if options.(range_start) > options.(range_end)
   'options.', range_start, ' must be ', ...
   'smaller than ''options.', range_end, '.']);
   options.invalid = 1;
-end
 end

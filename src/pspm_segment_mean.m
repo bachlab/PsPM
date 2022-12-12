@@ -151,7 +151,6 @@ if options.plot
 	legend(legend_lb);
 end
 out.conditions = conditions;
-
 if ~isempty(options.newfile)
 	[pathstr, ~, ~] = fileparts(options.newfile);
 	if exist(pathstr, 'dir')
@@ -165,4 +164,4 @@ if ~isempty(options.newfile)
 	out.file = options.newfile;
 end
 sts = 1;
-end
+return

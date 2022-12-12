@@ -154,7 +154,7 @@ o.msg.prefix = sprintf(...
 if ~lsts % if writting channel is unsuccessful
   return
 end
-%% Return values
+%% 8 Return values
 out_channel = out_id.channel;
 sts = 1;
 switch nargout
@@ -164,7 +164,7 @@ switch nargout
     varargout{1} = sts;
     varargout{2} = out_channel;
 end
-end
+return
 
 function data = pspm_cmpnans(data, t_beg, sr, output_samples)
 % complete with NaNs

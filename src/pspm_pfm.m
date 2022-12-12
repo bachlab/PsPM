@@ -1,4 +1,4 @@
-function output = pspm_pfm(model, options)
+function varargout = pspm_pfm(model, options)
 % ● Description
 %   PFM stands for Pupil Fitting Model and allows to fit models to the puipil
 %   data. pspm_pfm starts by extracting and averaging signal segments of
@@ -627,6 +627,13 @@ if sts == -1
   return;
 end
 %% User output
-output = pfm;
 fprintf('done. \n');
+sts = 1;
+switch nargout
+  case 1
+    varargout{1} = pfm;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = pfm;
 end
+return

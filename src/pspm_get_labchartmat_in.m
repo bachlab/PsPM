@@ -90,4 +90,4 @@ for blk = 1:blkno
 end;
 
 sts = 1;
-end
+return

@@ -82,6 +82,6 @@ end;
 % clear path and return
 % -------------------------------------------------------------------------
 rmpath(pspm_path('Import','fieldtrip','fileio'));
-% return values
+%% return values
 sts = 1;
 return

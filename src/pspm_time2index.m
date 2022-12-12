@@ -26,4 +26,4 @@ if exist('data_length', 'var')
     index(flag==1) = data_length;
   end
 end
-end
+return

@@ -79,3 +79,4 @@ data = double(data);
 % convert
 scr(~z) = 1./((c./(data(~z)-offset)).^power-Rs*1e-6);
 sts = 1;
+return

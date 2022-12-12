@@ -369,4 +369,4 @@ end
 % remove specific import path
 rmpath(pspm_path('Import','eyelink'));
 sts = 1;
-end
+return

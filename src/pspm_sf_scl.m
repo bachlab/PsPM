@@ -26,6 +26,5 @@ if nargin < 1
   warning('No data specified'); return;
 end;
 scl = mean(scr);
-
 sts = 1;
-end
+return

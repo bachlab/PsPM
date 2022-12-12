@@ -82,4 +82,4 @@ if ~isempty(outfn)
   end
 end
 sts = 1;
-end
+return

@@ -37,7 +37,7 @@ table_mat = make_each_cell_in_a_column_same_length(table_mat);
 hist_str = format_as_table(table_mat, '-', '|');
 %% Return status
 sts = 1;
-end
+return
 %% Function: construct_cell_matrix_from_col_parts
 function table_mat = construct_cell_matrix_from_col_parts(headers, columns)
 table_mat = {};

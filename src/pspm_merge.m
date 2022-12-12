@@ -114,4 +114,4 @@ end
 % convert to char if only one file was given
 if numel(infile{1}) == 1, outfile = outfile{1}; end
 sts = 1;
-end
+return
