@@ -125,7 +125,7 @@ switch cmd
     cfg_util('deljob', cjob);
 
   otherwise
-    error(['"' varargin{1} '" - unknown option']);
+    error([varargin{1} ': unknown option']);
 end
 
 

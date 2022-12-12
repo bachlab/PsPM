@@ -73,7 +73,7 @@ function [sts, out] = pspm_extract_segments(varargin)
 %                         (default: 0).
 % ● Developer's Notes
 %   This function uses three different flags encoded in the variable
-%   "manual_chosen", it can take the following values:
+%   `manual_chosen`, it can take the following values:
 %       - manual_chosen = 0  ---> it means the function runs in auto mode
 %       - manual_chosen = 1  ---> it means the function runs in manual mode
 %                                 but the given data are not raw but

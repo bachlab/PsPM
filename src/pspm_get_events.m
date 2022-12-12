@@ -119,7 +119,7 @@ elseif strcmpi(import.marker, 'continuous')
     v = sortrows(v, 2);
     baseline = v(end, 1);
 
-    % we are interested in the delta -> remove "baseline offset"
+    % we are interested in the delta -> remove `baseline offset`
     values = data_orig(round(mPos) - 3) - baseline;
     import.markerinfo.value = values;
 

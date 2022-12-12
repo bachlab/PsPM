@@ -197,9 +197,9 @@ if isstruct(chan)
 else
   if isstruct(fn) % data is from a struct fn
     infos = fn.infos;
-  elseif exist(fn, "file") % data is from a file fn
+  elseif exist(fn, 'file') % data is from a file fn
     loaded_infos = load(fn, 'infos');
-    if isfield(loaded_infos, "infos") && numel(fieldnames(loaded_infos))==1
+    if isfield(loaded_infos, 'infos') && numel(fieldnames(loaded_infos))==1
       infos = loaded_infos.infos;
     end
     clear loaded_infos
@@ -224,9 +224,9 @@ if isstruct(chan)
 else
   if isstruct(fn) % data is from a struct fn
     data = fn.data;
-  elseif exist(fn, "file") % data is from a file fn
+  elseif exist(fn, 'file') % data is from a file fn
     loaded_data = load(fn, 'data');
-    if isfield(loaded_data, "data") && numel(fieldnames(loaded_data))==1
+    if isfield(loaded_data, 'data') && numel(fieldnames(loaded_data))==1
       data = loaded_data.data;
     end
     clear loaded_data

@@ -1,4 +1,4 @@
-function [ sts, outinfo ] = pspm_convert_ppg2hb( fn,chan,options )
+function [ sts, outinfo ] = pspm_convert_ppg2hb( fn, channel, options )
 % ● Description
 %   pspm_convert_ppg2hb Converts a pulse oxymeter channel to heartbeats and
 %   adds it as a new channel.
@@ -7,7 +7,7 @@ function [ sts, outinfo ] = pspm_convert_ppg2hb( fn,chan,options )
 %   identified as heartbeat maximas and a heartbeat channel is then
 %   generated from these.
 % ● Format
-%   [ sts, outinfo ] = pspm_convert_ppg2hb( fn,chan,options )
+%   [ sts, outinfo ] = pspm_convert_ppg2hb( fn, channel, options )
 % ● Arguments
 %                 fn: file name with path
 %            channel: ppu channel number
@@ -51,7 +51,7 @@ elseif ~isnumeric(channel) && ~strcmp(channel,'ppg')
 end
 
 %%% Process options
-% Display diagnostic plots? default is "false"
+% Display diagnostic plots? default is false
 % try if ~islogical(options.diagnostics),options.diagnostics = false;end
 % catch, options.diagnostics = false; end
 options = pspm_options(options, 'convert_ppg2hb');

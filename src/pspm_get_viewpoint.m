@@ -33,7 +33,7 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
 %   │             it is in the given datafile.
 %   │             Blinks and saccades are read and can be imported if they are
 %   │             included in the given datafile as asynchronous messages. This
-%   │             corresponds to "Include Events in File" option in ViewPoint
+%   │             corresponds to `Include Events in File` option in ViewPoint
 %   │             EyeTracker software. For a given eye, pupil and gaze values
 %   │             corresponding to blinks/saccades for that eye are set to NaN.
 %   │ ▶︎ optional

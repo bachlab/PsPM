@@ -49,8 +49,8 @@ function varargout = pspm_glm(model, options)
 %   │             precedence order described in its documentation. In a nutshell,
 %   │             it prefers preprocessed channels and channels from the best eye
 %   │             to other pupil channels.
-%   │             SPECIAL: for the modality "sps", the model.channel
-%   │             accepts only "sps_l", "sps_r", or "sps".
+%   │             SPECIAL: for the modality 'sps', the model.channel
+%   │             accepts only 'sps_l', 'sps_r', or 'sps'.
 %   │             DEFAULT: last channel of the specified modality
 %   │             (for PSR this is 'pupil')
 %   ├─────.norm:  normalise data; default 0
@@ -219,7 +219,7 @@ model.modality = settings.glm(modno).modality;
 % check data channel --
 if ~isfield(model, 'channel')
   if strcmp(model.modality, 'psr')
-    model.channel = "pupil";
+    model.channel = 'pupil';
   else
     model.channel = model.modality;
   end

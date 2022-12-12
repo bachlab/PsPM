@@ -27,7 +27,7 @@ function dcm = pspm_dcm(model, options)
 %		│             or two columns (flexible response).
 %		│             All matrices in the array need to have the same number of
 %		│             rows, i.e. the event structure must be the same for every
-%		│             trial. If this is not the case, include "dummy" events with
+%		│             trial. If this is not the case, include `dummy` events with
 %		│             negative onsets.
 %		│ ▶︎ Optional
 % 	├───.missing:	Allows to specify missing (e. g. artefact) epochs in the
@@ -382,7 +382,7 @@ for iSn = 1:numel(model.datafile)
     miss_epochs = pspm_time2index(missing{iSn},data{iSn}{1}.header.sr);
     ignore_epochs = diff(missing{iSn}, 1, 2) > model.substhresh;
 
-    % and set data to NaN to enable later detection of "short" missing
+    % and set data to NaN to enable later detection of `short` missing
     % epochs
     for k = 1:size(miss_epochs, 1)
       flanks = round(miss_epochs(k,:));
@@ -533,11 +533,11 @@ for iSn = 1:numel(model.timing)
     [size(sn_newevents{1}{iSn}, 1), ...
     size(sn_newevents{1}{iSn}, 2) * size(sn_newevents{1}{iSn}, 3)]), ...
     sn_newevents{2}{iSn}];
-  % exclude "dummy" events with negative onsets
+  % exclude `dummy` events with negative onsets
   sn_allevents(sn_allevents < 0) = inf;
   % first event per trial
   sn_trlstart{iSn} = min(sn_allevents, [], 2);
-  % exclude "dummy" events with negative onsets
+  % exclude `dummy` events with negative onsets
   sn_allevents(isinf(sn_allevents)) = -inf;
   % last event of per trial
   sn_trlstop{iSn}  = max(sn_allevents, [], 2);
