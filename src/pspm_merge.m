@@ -1,4 +1,4 @@
-function [sts, outfile] = pspm_merge(infile1, infile2, reference, options)
+function varargout = pspm_merge(infile1, infile2, reference, options)
 % ● Description
 %   pspm_merge merges two PsPM datafiles with different channels and writes
 %   it to a file with the same name as the first file, prepended 'm'.
@@ -114,4 +114,11 @@ end
 % convert to char if only one file was given
 if numel(infile{1}) == 1, outfile = outfile{1}; end
 sts = 1;
+switch nargout
+  case 1
+    varargout{1} = outfile;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = outfile;
+end
 return

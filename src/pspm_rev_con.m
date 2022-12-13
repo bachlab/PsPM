@@ -1,4 +1,4 @@
-function [sts, fighandle] = pspm_rev_con(model)
+function varargout = pspm_rev_con(model)
 % ● Description
 %   pspm_rev_con is a tool for reviewing contrasts of first level models
 % ● Format
@@ -34,4 +34,11 @@ end;
 fprintf('---------------------------------------\n');
 
 sts = 1;
+switch nargout
+  case 1
+    varargout{1} = fighandle;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = fighandle;
+end
 return

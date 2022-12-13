@@ -1,4 +1,4 @@
-function [sts, scr] = pspm_transfer_function(data, c, Rs, offset, recsys)
+function varargout = pspm_transfer_function(data, c, Rs, offset, recsys)
 % ● Description
 %   pspm_transfer_function converts input data into SCR in microsiemens
 %   assuming a linear transfer from total conductance to measured data
@@ -79,4 +79,11 @@ data = double(data);
 % convert
 scr(~z) = 1./((c./(data(~z)-offset)).^power-Rs*1e-6);
 sts = 1;
+switch nargout
+  case 1
+    varargout{1} = scr;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = scr;
+end
 return

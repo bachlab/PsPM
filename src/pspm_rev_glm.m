@@ -1,4 +1,4 @@
-function [sts, fig] = pspm_rev_glm(modelfile, glm, plotNr)
+function varargout = pspm_rev_glm(modelfile, glm, plotNr)
 % ● Description
 %   pspm_rev_glm is a tool for reviewing a first level GLM designs. It is
 %   meant to be called by pspm_review only.
@@ -231,4 +231,11 @@ for i=1:length(plotNr)
   end
 end
 sts = 1;
+switch nargout
+  case 1
+    varargout{1} = fig;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = fig;
+end
 return
