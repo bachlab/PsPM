@@ -181,8 +181,8 @@ switch nargout
   case 1
     varargout{1} = outdata;
   case 2
-    varargout{1} = outdata;
-    varargout{2} = newsr;
+    varargout{1} = sts;
+    varargout{2} = outdata;
   case 3
     varargout{1} = sts;
     varargout{2} = outdata;
