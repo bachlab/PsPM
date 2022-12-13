@@ -1,4 +1,4 @@
-function [sts, outdata, newsr] = pspm_prepdata(data, filt)
+function varargout = pspm_prepdata(varargin)
 % ● Description
 %   pspm_prepdata is a shared PsPM function for twofold butterworth filting and
 %   downsampling raw data `on the fly`. This data is usually stored in results
@@ -26,26 +26,24 @@ function [sts, outdata, newsr] = pspm_prepdata(data, filt)
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy Chao (UCL)
 
-%% initialise
+%% Initialise
 global settings
 if isempty(settings)
   pspm_init;
 end
 sts = -1;
-newsr = 0;
-outdata = data;
-
-% check input for NaN values
-% -------------------------------------------------------------------------
-if any(isnan(data))
-  warning('ID:invalid_input', ...
-    ['Data contains NaN values which have been replaced with 0. ',...
-    'The results may be inaccurate.']);
-  data(isnan(data)) = 0; %return;
+%% Check input
+data = varargin{1};
+switch nargin
+  case 2
+    filt = varargin{2};
+    options = struct();
+  case 3
+    filt = varargin{2};
+    options = varargin{3};
 end
-
-% check input
-% -------------------------------------------------------------------------
+newsr = 0;
+options = pspm_options(options, 'prepdata');
 if nargin < 2
   warning('ID:invalid_input', 'Nothing to do.'); return;
 elseif ~isnumeric(data)
@@ -66,23 +64,29 @@ elseif ((~isnumeric(filt.lpfreq) && (~ischar(filt.lpfreq) || ~strcmpi(filt.lpfre
   return;
 end
 uni = strcmpi(filt.direction, 'uni');
-
-% prepare data
-% -------------------------------------------------------------------------
-
-% determine nyquist frequency --
+%% Preprocessing data for nan
+if any(isnan(data))
+  if options.fillnan
+    data_fillnan = pspm_fill_nan_head_tail(data);
+    data = 0.5 * (fillmissing(data_fillnan, 'previous') + fillmissing(data_fillnan, 'next'));
+  else
+    warning('ID:invalid_input', ...
+    ['Data contains NaN values but filling nan is not allowed. ',...
+    'Processing cannot be performed.']);
+    return
+  end
+end
+%% Prepare data
+% determine nyquist frequency
 nyq = filt.sr/2;
-% transform data into column --
+% transform data into column
 data = data(:);
-% if unidirectional, append data to avoid filter ringing --
+% if unidirectional, append data to avoid filter ringing
 if uni
   data = [data(1) * ones(floor(50 * filt.sr), 1); data];
 end
-
 lowpass_filt = false;
-
-% lowpass filt
-% -------------------------------------------------------------------------
+%% Lowpass filt
 if ~ischar(filt.lpfreq) && ~isnan(filt.lpfreq)
   lowpass_filt = true;
 elseif isnumeric(filt.down) && ~isnan(filt.down) && filt.down < filt.sr
@@ -92,10 +96,10 @@ elseif isnumeric(filt.down) && ~isnan(filt.down) && filt.down < filt.sr
   filt.lpfreq = filt.down/2;
   filt.lporder = 1;
 end
-
 if lowpass_filt
   if filt.lpfreq >= nyq
-    warning('ID:no_low_pass_filtering', 'The low pass filter cutoff frequency is higher (or equal) than the nyquist frequency. The data won''t be low pass filtered!');
+    warning('ID:no_low_pass_filtering', ...
+      'The low pass filter cutoff frequency is higher (or equal) than the nyquist frequency. The data won''t be low pass filtered!');
   else
     [lsts, filt.b, filt.a]=pspm_butter(filt.lporder, filt.lpfreq/nyq, 'low');
     if lsts == -1
@@ -110,9 +114,7 @@ if lowpass_filt
     end
   end
 end
-
-% highpass filt
-% -------------------------------------------------------------------------
+%% Highpass filt
 if ~ischar(filt.hpfreq) && ~isnan(filt.hpfreq)
   [lsts, filt.b, filt.a]=pspm_butter(filt.hporder, filt.hpfreq/nyq, 'high');
   if lsts == -1
@@ -126,20 +128,18 @@ if ~ischar(filt.hpfreq) && ~isnan(filt.hpfreq)
     data = pspm_filtfilt(filt.b, filt.a, data);
   end
 end
-
 % if uni, remove dummy data
 if uni
   data = data((floor(50 * filt.sr) + 1):end);
 end
-
-% downsample
-% -------------------------------------------------------------------------
+%% Downsample
 if ~ischar(filt.down) && filt.sr > filt.down
   if strcmpi(filt.lpfreq, 'none') || isnan(filt.lpfreq)
     warning('No low pass filter applied - aliasing is possible. Use a low pass filter to prevent.');
   elseif filt.down < 2 * filt.lpfreq
     filt.down = 2 * filt.lpfreq;
-    warning('ID:freq_change', 'Sampling rate was changed to %01.2f Hz to prevent aliasing', filt.down)
+    warning('ID:freq_change', ...
+      'Sampling rate was changed to %01.2f Hz to prevent aliasing', filt.down)
   end
   freqratio = filt.sr/filt.down;
   if freqratio == ceil(freqratio) % NB isinteger might not work for some values
@@ -163,14 +163,37 @@ if ~ischar(filt.down) && filt.sr > filt.down
       warning('ID:nonint_sr', 'Note that the new sampling rate is a non-integer number.');
     end
   else
-    lsts = -1; errmsg = 'because signal processing toolbox is not installed and downsampling ratio is non-integer.';
+    lsts = -1;
+    errmsg = 'because signal processing toolbox is not installed and downsampling ratio is non-integer.';
   end
-  if lsts == -1
-    warning('ID:downsampling_failed', sprintf('\nDownsampling failed %s', errmsg)); return;
+  if ~lsts
+    warning('ID:downsampling_failed', ['\nDownsampling failed %s', errmsg]);
+    return
   end
 else
   newsr = filt.sr;
 end
+%% Prepare the final data
 outdata = data;
 sts = 1;
-return;
+switch nargout
+  case 1
+    varargout{1} = outdata;
+  case 2
+    varargout{1} = outdata;
+    varargout{2} = newsr;
+  case 3
+    varargout{1} = sts;
+    varargout{2} = outdata;
+    varargout{3} = newsr;
+end
+return
+function data = pspm_fill_nan_head_tail(data)
+index_non_nan_first = find(~isnan(data), 1);
+index_non_nan_last = find(~isnan(data), 1, 'last');
+if index_non_nan_first > 1
+  data(1:(index_non_nan_first-1)) = data(index_non_nan_first);
+end
+if index_non_nan_last < length(data)
+  data((index_non_nan_last+1):length(data)) = data(index_non_nan_last);
+end
