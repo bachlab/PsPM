@@ -34,6 +34,7 @@ end
 sts = -1;
 %% Check input
 data = varargin{1};
+options = struct();
 switch nargin
   case 2
     filt = varargin{2};
