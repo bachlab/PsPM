@@ -703,7 +703,7 @@ for iCond = 1:numel(names)
         % convolve
         tmp.col{iSn, 1} = conv(tmp.X{iCond}(snonsets(iSn):snoffsets(iSn), iXcol), glm.bf.X(:,iBf));
         % filter design matrix w/o downsampling
-        [sts,  tmp.col{iSn, 1}] = pspm_prepdata(tmp.col{iSn, 1}, Xfilter);
+        [sts,  tmp.col{iSn, 1}, ~] = pspm_prepdata(tmp.col{iSn, 1}, Xfilter);
         if sts ~= 1, glm = struct([]);warning('ID:invalid_input', 'Failed to filter data');return; end
         % cut away tail
         tmp.col{iSn, 1}((tmp.snduration(iSn) + 1):end) = [];
@@ -758,7 +758,7 @@ for iSn = 1:numel(model.datafile)
   Rf{iSn} = [];
   model.filter.sr = sr(iSn);
   for iR = 1:nR
-    [sts, Rf{iSn}(:, iR)]  = pspm_prepdata(R{iSn}(:, iR), model.filter);
+    [sts, Rf{iSn}(:, iR), ~]  = pspm_prepdata(R{iSn}(:, iR), model.filter);
     if sts ~= 1,warning('ID:invalid_input', 'Failed to filter data'); return; end
   end
   if (model.bf.shiftbf ~= 0) && ~isempty(Rf{iSn})
