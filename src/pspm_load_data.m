@@ -449,7 +449,6 @@ elseif any(preprocessed_channels) && ~prefer_unprocessed
 else
   flag = besteye_channels;
 end
-end
 
 
 function flag = get_chans_to_load_for_sps(data, best_eye)
@@ -505,5 +504,4 @@ elseif any(preprocessed_channels)
   end
 else
   flag = besteye_channels;
-end
 end

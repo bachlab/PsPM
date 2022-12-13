@@ -159,8 +159,8 @@ if isempty(options.splitpoints)
 else
   splitpoint = options.splitpoints;
   if numel(mrk) < max(splitpoint)
-      warning('ID:invalid_input', 'Splitpoint definition assumes more markers than there are in the file.');
-      return
+    warning('ID:invalid_input', 'Splitpoint definition assumes more markers than there are in the file.');
+    return
   end
 end
 
@@ -208,7 +208,7 @@ else
     trimoptions = struct('drop_offset_markers', 1);
     newdata = pspm_trim(struct('data', {indata}, 'infos', ininfos), ...
       options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions);
-		options.overwrite = pspm_overwrite(newdatafile{sn}, options);
+    options.overwrite = pspm_overwrite(newdatafile{sn}, options);
     newdata.options = options;
     pspm_load_data(newdatafile{sn}, newdata);
     % 2.4.5 Split Epochs
@@ -237,6 +237,7 @@ else
       save(newepochfile{sn}, 'epochs');
     end
   end
+end
 sts = 1;
 switch nargout
   case 1

@@ -1,4 +1,4 @@
-function dcm = pspm_dcm(model, options)
+function varargout = pspm_dcm(model, options)
 % ● Description
 % 	pspm_dcm sets up a DCM for skin conductance, prepares and normalises the
 % 	data, passes it over to the model inversion routine, and saves both the
@@ -849,8 +849,15 @@ dcm.modality = settings.modalities.dcm;
 if ~options.nosave
   save(model.modelfile, 'dcm');
 end
-
+sts = 1;
+switch nargout
+  case 1
+    varargout{1} = dcm;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = dcm;
 end
+return
 
 function [datacol, warnings] = ...
   get_data_after_trial_filling_with_nans_when_necessary(...
@@ -873,7 +880,6 @@ if num_indices_outside_scr > 0
   datacol(numel(win) + 1 : end) = NaN;
 else
   datacol(1:numel(win)) = scr_sess(win);
-end
 end
 
 function [sts] = pspm_dcm_check_options(type, check_opt, fields)
@@ -914,28 +920,27 @@ for f = 1:numel(fields)
         if ~ischar(val)
           warning('ID:invalid_input', ['Field ''' fl ''' must be a string.']);
           n_errors = n_errors + 1;
-        end;
+        end
       case 'numeric'
         if ~isnumeric(val)
           warning('ID:invalid_input', ['Field ''' fl ''' must be numeric.']);
           n_errors = n_errors + 1;
-        end;
+        end
       case 'cell'
         if ~iscell(val)
           warning('ID:invalid_input', ['Field ''' fl ''' must be a cell.']);
           n_errors = n_errors + 1;
-        end;
+        end
       case 'logical'
         if ~islogical(val) && ~(isnumeric(val) && any(val == [0 1]))
           warning('ID:invalid_input', ['Field ''' fl ''' must be a logical.']);
           n_errors = n_errors + 1;
-        end;
-    end;
-  end;
-end;
+        end
+    end
+  end
+end
 
 if n_errors == 0
   sts = 1;
-end;
+end
 
-return

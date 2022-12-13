@@ -82,7 +82,7 @@ for gaze_eye = fieldnames(eyes)'
       lon_chan = data{d};
       if (strcmp(from, 'pixel'))
         data_x = pixel_conversion(data{d}.data, width, data{d}.header.range);
-      else;
+      else
         [ sts, data_x ] = pspm_convert_unit(data{d}.data, from, 'mm');
       end
     else
@@ -99,7 +99,7 @@ for gaze_eye = fieldnames(eyes)'
   end
   try
     [ lat, lon, lat_range, lon_range ] = pspm_compute_visual_angle_core(data_x, data_y, width, height, distance, options);
-  catch;
+  catch
     warning('ID:invalid_input', 'Could not convert distance data to degrees');
     return
   end
@@ -129,4 +129,3 @@ length_per_pixel = screen_length ./ (diff(interest_range) + 1);
 pixel_index = data-interest_range(1);
 % convert indices into coordinates in the units of interests
 out = pixel_index * length_per_pixel;
-end

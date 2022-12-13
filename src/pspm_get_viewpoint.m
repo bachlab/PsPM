@@ -165,7 +165,6 @@ return
 
 function sr = compute_sampling_rate(seconds_channel)
 sr = round(median(1 ./ diff(seconds_channel)));
-end
 
 function proper = assert_same_sample_rate(data)
 proper = true;
@@ -180,8 +179,7 @@ if any(diff(sample_rates))
     ' different sample rates. Found sample rates: %s'],...
     sample_rates_str);
   proper = false;
-  return;
-end
+  return
 end
 
 function proper = assert_same_eyes_observed(data)
@@ -202,8 +200,7 @@ if any(diff(eyes_observed)) || ~same_headers
   error_msg = 'Cannot concatenate multiple sessions with different eye observation or channel headers';
   warning('ID:invalid_data_structure', error_msg);
   proper = false;
-  return;
-end
+  return
 end
 
 function proper = assert_sessions_are_one_after_another(data)
@@ -220,7 +217,6 @@ if ~isempty(neg_diff_indices)
   proper = false;
   return;
 end
-end
 
 function proper = assert_custom_import_channels_has_channel_field(import)
 proper = true;
@@ -230,7 +226,6 @@ for i = 1:numel(import)
     proper = false;
     return;
   end
-end
 end
 
 function proper = assert_all_channeltypes_are_supported(settings, import)
@@ -246,7 +241,6 @@ for k = 1:numel(import)
     proper = false;
     return;
   end
-end
 end
 
 function data = map_viewpoint_eyes_to_left_right(data, import)
@@ -301,7 +295,6 @@ if data_has_only_right_eye && import_has_only_left_eye
     data{i}.eyesObserved = 'L';
   end
 end
-end
 
 function import_cell = import_marker_chan(import_cell, markers, mi_names, mi_values, n_rows, sampling_rate)
 % Put here all characters which do not belong to markers.
@@ -328,7 +321,6 @@ import_cell.units = 'unknown';
 markerinfo.name = mi_names;
 markerinfo.value = mi_values;
 import_cell.markerinfo = markerinfo;
-end
 
 function [import_cell, chan_id] = import_custom_chan(...
   import_cell, data_concat, channel_indices, raw_columns, chan_struct, units, sampling_rate)
@@ -354,7 +346,6 @@ else
   import_cell.data_header = chan_struct{chan_id_in_concat};
 end
 import_cell.sr = sampling_rate;
-end
 
 function [import_cell, chan_id] = import_data_chan(...
   import_cell, data_concat, eyes_observed, channel_indices, chan_struct, units, sampling_rate)
@@ -373,7 +364,6 @@ else
   chan_id = channel_indices(chan_id_in_concat);
 end
 import_cell.sr = sampling_rate;
-end
 
 function import_cell = convert_gaze_chan(import_cell, mincoord, maxcoord)
 import_cell.range = [mincoord maxcoord];
@@ -382,7 +372,6 @@ if ~strcmp('mm', import_cell.target_unit)
   [~, import_cell.data] = pspm_convert_unit(import_cell.data, 'mm', import_cell.target_unit);
 end
 import_cell.units = import_cell.target_unit;
-end
 
 function [data_concat, markers, mi_names, mi_values] = concat_sessions(data)
 % Concatenate multiple sessions into contiguous arrays, inserting NaN or N/A fields
@@ -428,7 +417,6 @@ for c = 1:numel(data)
 
   last_time = end_time;
 end
-end
 
 function best_eye = eye_with_smaller_nan_ratio(import, eyes_observed)
 if numel(eyes_observed) == 1
@@ -450,5 +438,4 @@ else
   else
     best_eye = 'r';
   end
-end
 end

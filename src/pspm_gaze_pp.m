@@ -175,7 +175,7 @@ sec_between_upsampled_samples = 1 / sr;
 n_missing_at_the_beg = round(t_beg / sec_between_upsampled_samples);
 n_missing_at_the_end = output_samples - numel(data) - n_missing_at_the_beg;
 data = [NaN(n_missing_at_the_beg, 1) ; data ; NaN(n_missing_at_the_end, 1)];
-end
+
 function out_struct = pspm_assign_fields_recursively(out_struct, in_struct)
 % Definition
 % pspm_assign_fields_recursively assign all fields of in_struct to
@@ -188,5 +188,4 @@ for i = 1:numel(fnames)
   else
     out_struct.(name) = in_struct.(name);
   end
-end
 end
