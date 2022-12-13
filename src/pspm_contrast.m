@@ -12,8 +12,8 @@ function varargout = pspm_contrast(varargin)
 %   applied to the GUI before pspm_contrast_OpeningFcn gets called.  An
 %   unrecognized property name or invalid value makes property application
 %   stop.  All inputs are passed to pspm_contrast_OpeningFcn via varargin.
-%   *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
-%   instance to run (singleton)".
+%   *See GUI Options on GUIDE's Tools menu.  Choose `GUI allows only one
+%   instance to run (singleton)`.
 %   See also: GUIDE, GUIDATA, GUIHANDLES
 %   Edit the above text to modify the response to help pspm_contrast
 % ● Format

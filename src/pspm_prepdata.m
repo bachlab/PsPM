@@ -1,7 +1,7 @@
 function [sts, outdata, newsr] = pspm_prepdata(data, filt)
 % ● Description
 %   pspm_prepdata is a shared PsPM function for twofold butterworth filting and
-%   downsampling raw data "on the fly". This data is usually stored in results
+%   downsampling raw data `on the fly`. This data is usually stored in results
 %   files rather than data files.
 % ● Format
 %   [sts, data, newsr] = pspm_prepdata(data, filt)

@@ -609,7 +609,7 @@ guidata(hObject, handles);
 
 function buttonDown_Callback(hObject, ~)
 % Comment
-%   Used to be "buttonDown_Callback(hObject, data)", but the variable
+%   Used to be `buttonDown_Callback(hObject, data)`, but the variable
 %   data seems to be not used.
 handles = guidata(hObject); % get current cursor position
 switch handles.mode
@@ -621,7 +621,7 @@ guidata(hObject, handles);
 
 function buttonUp_Callback(hObject, ~)
 % Comment
-%   Used to be "buttonUp_Callback(hObject, data)", but the variable
+%   Used to be `buttonUp_Callback(hObject, data)`, but the variable
 %   data seems to be not used.
 % get current cursor position
 handles = guidata(hObject);
@@ -649,7 +649,7 @@ UpdateEpochList(hObject);
 
 function buttonMotion_Callback(hObject, ~)
 % Comment
-%   Used to be "buttonMotion_Callback(hObject, data)", but the variable
+%   Used to be `buttonMotion_Callback(hObject, data)`, but the variable
 %   data seems to be not used.
 handles = guidata(hObject);
 if isfield(handles, 'mode')
