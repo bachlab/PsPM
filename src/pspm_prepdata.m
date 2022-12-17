@@ -68,6 +68,8 @@ uni = strcmpi(filt.direction, 'uni');
 %% Preprocessing data for nan
 if any(isnan(data))
   if options.fillnan
+    data_index = 1:length(data);
+    data_nan_index = data_index(isnan(data));
     data = pspm_interp1(data);
   else
     warning('ID:invalid_input', ...
@@ -133,6 +135,7 @@ if uni
   data = data((floor(50 * filt.sr) + 1):end);
 end
 %% Downsample
+data(data_nan_index) = NaN; % reverse filled values back to nan
 if ~ischar(filt.down) && filt.sr > filt.down
   if strcmpi(filt.lpfreq, 'none') || isnan(filt.lpfreq)
     warning('No low pass filter applied - aliasing is possible. Use a low pass filter to prevent.');
