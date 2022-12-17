@@ -68,8 +68,7 @@ uni = strcmpi(filt.direction, 'uni');
 %% Preprocessing data for nan
 if any(isnan(data))
   if options.fillnan
-    data_fillnan = pspm_fill_nan_head_tail(data);
-    data = 0.5 * (fillmissing(data_fillnan, 'previous') + fillmissing(data_fillnan, 'next'));
+    data = pspm_interp1(data);
   else
     warning('ID:invalid_input', ...
     ['Data contains NaN values but filling nan is not allowed. ',...
@@ -189,12 +188,63 @@ switch nargout
     varargout{3} = newsr;
 end
 return
-function data = pspm_fill_nan_head_tail(data)
-index_non_nan_first = find(~isnan(data), 1);
-index_non_nan_last = find(~isnan(data), 1, 'last');
-if index_non_nan_first > 1
-  data(1:(index_non_nan_first-1)) = data(index_non_nan_first);
+function data_interp = pspm_interp1(data)
+% find nan head and tail
+data_nan_head = 0;
+data_nan_tail = 0;
+data_nan_head_range = [];
+data_nan_tail_range = [];
+data_nan_head_interp = [];
+data_nan_tail_interp = [];
+index_non_nan_full = 1:length(data);
+index_non_nan_full = index_non_nan_full(~isnan(data));
+if index_non_nan_full(1) > 1
+  data_nan_head = 1;
+  data_nan_head_range = 1:(index_non_nan_full(1)-1);
 end
-if index_non_nan_last < length(data)
-  data((index_non_nan_last+1):length(data)) = data(index_non_nan_last);
+if index_non_nan_full(end) < length(data)
+  data_nan_tail = 1;
+  data_nan_tail_range = (index_non_nan_full(end)+1):length(data);
 end
+data_body = data(index_non_nan_full(1):index_non_nan_full(end));
+% processing body
+index = 1:length(data_body);
+index_nan = index(isnan(data_body));
+index_non_nan = index(~isnan(data_body));
+if ~isempty(index_nan)
+  data_body_interp = interp1(index_non_nan,data_body(index_non_nan),index_nan);
+else
+  data_body_interp = data_body;
+end
+% interpolate head
+if data_nan_head
+  data_nan_head_interp = interp1(...
+    (1:length(data_body_interp))+length(data_nan_head_range),...
+    data_body_interp,...
+    data_nan_head_range,'linear','extrap');
+end
+% interpolate tail
+if data_nan_tail
+  data_nan_tail_interp = interp1(...
+    (1:length(data_body_interp))+length(data_nan_head_range),...
+    data_body_interp,...
+    data_nan_tail_range,'linear','extrap');
+end
+if iscolumn(data_body_interp)
+  if ~iscolumn(data_nan_head_interp)
+    data_nan_head_interp = transpose(data_nan_head_interp);
+  end
+  if ~iscolumn(data_nan_tail_interp)
+    data_nan_tail_interp = transpose(data_nan_tail_interp);
+  end
+  data_interp = [data_nan_head_interp; data_body_interp; data_nan_tail_interp];
+else
+  if iscolumn(data_nan_head_interp)
+    data_nan_head_interp = transpose(data_nan_head_interp);
+  end
+  if iscolumn(data_nan_tail_interp)
+    data_nan_tail_interp = transpose(data_nan_tail_interp);
+  end
+  data_interp = [data_nan_head_interp, data_body_interp, data_nan_tail_interp];
+end
+return
