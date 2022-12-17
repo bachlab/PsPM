@@ -135,7 +135,9 @@ if uni
   data = data((floor(50 * filt.sr) + 1):end);
 end
 %% Downsample
-data(data_nan_index) = NaN; % reverse filled values back to nan
+if exist('data_nan_index','var')
+  data(data_nan_index) = NaN; % reverse filled values back to nan if necessary
+end
 if ~ischar(filt.down) && filt.sr > filt.down
   if strcmpi(filt.lpfreq, 'none') || isnan(filt.lpfreq)
     warning('No low pass filter applied - aliasing is possible. Use a low pass filter to prevent.');
