@@ -4,7 +4,9 @@ function varargout = pspm_prepdata(varargin)
 %   downsampling raw data `on the fly`. This data is usually stored in results
 %   files rather than data files.
 % ● Format
+%   [sts, data, newsr] = pspm_prepdata(varargin)
 %   [sts, data, newsr] = pspm_prepdata(data, filt)
+%   [sts, data, newsr] = pspm_prepdata(data, filt, options)
 % ● Arguments
 %          data:  a column vector of data
 %   ┌──────filt:  a struct with fields:
@@ -15,6 +17,8 @@ function varargout = pspm_prepdata(varargin)
 %   ├───.hpfreq:  high pass filt frequency or 'none'
 %   ├.direction:  filt direction
 %   └─────.down:  sample rate in Hz after downsampling or 'none'
+%   ┌───options:  a struct with fields
+%   └──.fillnan:  0/1 specify whether to fill nan if there is. Default: 1
 % ● Developer's Notes
 %   Note that the order for bandpass and bandstop filters is equal to
 %   order = lporder + hporder
