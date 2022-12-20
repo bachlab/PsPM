@@ -124,3 +124,4 @@ delete(labchart.file_h);
 % -------------------------------------------------------------------------
 rmpath(pspm_path('Import','labchart','adi'));
 sts = 1;
+return

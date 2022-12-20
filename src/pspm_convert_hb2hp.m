@@ -105,6 +105,5 @@ catch
   return;
 end
 infos.channel = winfos.channel;
-
 sts = 1;
-end
+return

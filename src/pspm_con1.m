@@ -33,7 +33,7 @@ if isempty(settings)
   pspm_init;
 end
 %% 2 check input arguments
-% 2.1 check nargin
+%% 2.1 check nargin
 if nargin < 1
   errmsg = 'No modelfile specified'; warning(errmsg); return;
 elseif nargin < 2
@@ -49,7 +49,7 @@ end
 if nargin < 6
   options = struct();
 end
-% 2.2 check & convert filenames
+%% 2.2 check & convert filenames
 if ischar(modelfile)
   modelfile = {modelfile};
 elseif ~iscell(modelfile)
@@ -91,15 +91,15 @@ if options.zscored
 end
 %% 3 work on contrasts
 for iFn = 1:numel(modelfile)
-  % 3.1 user output --
+  %% 3.1 user output --
   fprintf('Loading data ... ');
-  % 3.2 retrieve stats --
+  %% 3.2 retrieve stats --
   [lsts, data, ~] = pspm_load1(modelfile{iFn}, datatype, '', load1_options);
   if lsts == -1
     warning('ID:invalid_input', 'Could not retrieve stats');
     return;
   end
-  % 3.3 create con structure or retrieve existing contrasts --
+  %% 3.3 create con structure or retrieve existing contrasts --
   if deletecon == 1
     con = []; conno = 0;
   else
@@ -111,9 +111,9 @@ for iFn = 1:numel(modelfile)
       conno = numel(con);
     end
   end
-  % 3.4 user output --
+  %% 3.4 user output --
   fprintf('\nWriting contrasts to %s\n', modelfile{iFn});
-  % 3.5 check number of contrast weights --
+  %% 3.5 check number of contrast weights --
   paramno = size(data.stats, 1);
   for c = 1:numel(convec)
     if numel(convec{c}) > paramno
@@ -167,7 +167,7 @@ for iFn = 1:numel(modelfile)
   else
     newconnames = connames;
   end
-  % 3.9 save contrasts
+  %% 3.9 save contrasts
   for iCon = 1:numel(conval)
     con(conno+iCon).type   = out_datatype;
     con(conno+iCon).name   = newconnames{iCon};
@@ -178,3 +178,4 @@ for iFn = 1:numel(modelfile)
   end
   pspm_load1(modelfile{iFn}, 'savecon', con);
 end
+return

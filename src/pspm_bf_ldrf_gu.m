@@ -88,3 +88,4 @@ sg_gt = exp(-((x2).^2)./(2.*p(1).^2));
 sg_ht = exp(-x2*p(2)) + exp (-x2*p(3));
 sg_ft = conv(sg_gt, sg_ht);
 bs(round(offset/td + 1):end) = p(4) * sg_ft(1:numel(x2));
+return

@@ -192,12 +192,11 @@ write_options.msg = msg;
 
 % Replace last existing channel or save as new channel
 [nsts, nout] = pspm_write_channel(fn, newdata, options.channel_action, write_options);
-
+if ~nsts
+  return
+end
 % user output
 fprintf('  done.\n');
-if nsts ~= -1,
-  sts = 1;
-  outinfo.channel = nout.channel;
-end;
-return;
-end
+sts = 1;
+outinfo.channel = nout.channel;
+return

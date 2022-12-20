@@ -67,5 +67,6 @@ else
     warning('Sample rate in header line and timestamps in first column do not match.'); return;
   end;
 end;
+%% Return values
 sts = 1;
 return

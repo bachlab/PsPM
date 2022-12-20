@@ -1,4 +1,4 @@
-function glm = pspm_glm(model, options)
+function varargout = pspm_glm(model, options)
 % ● Description
 %   pspm_glm specifies a within subject general linear convolution model of
 %   predicted signals and calculates amplitude estimates for these responses.
@@ -252,32 +252,35 @@ end
 if ischar(model.timing) || isstruct(model.timing)
   model.timing = {model.timing};
 end
-
 if ~isempty(model.timing) && (numel(model.datafile) ~= numel(model.timing))
-  warning('ID:number_of_elements_dont_match', 'Session numbers of data files and event definitions do not match.'); return;
+	warning('ID:number_of_elements_dont_match', 'Session numbers of data files and event definitions do not match.');
+  return
 end
 
-% check & get data --
+%% check & get data --
 fprintf('Getting data ...');
 nFile = numel(model.datafile);
 for iFile = 1:nFile
   [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
-  if sts < 1, return; end
+  if sts < 1
+    return
+  end
   y{iFile} = data{end}.data(:);
   sr(iFile) = data{end}.header.sr;
   fprintf('.');
   if any(strcmp(model.timeunits, {'marker', 'markers','markervalues'}))
     [sts, ~, data] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
     if sts < 1
-      warning('ID:invalid_input', ['Could not load the specified markerchannel']);
-      return;
+      warning('ID:invalid_input', 'Could not load the specified markerchannel');
+      return
     end
-    events{iFile} = data{end}.data * data{end}.header.sr;
+    events{iFile} = data{end}.data(:) * data{end}.header.sr;
     if strcmp(model.timeunits,'markervalues')
       model.timing{iFile}.markerinfo = data{end}.markerinfo;
     end
   end
 end
+
 if nFile > 1 && any(diff(sr) > 0)
   fprintf('\nSample rate differs between sessions.\n')
 else
@@ -554,7 +557,6 @@ for iSn = 1:nFile
           end
           pmod(name_idx).name = multi(iSn).pmod(n).name;
         end
-
       end
 
       % shift conditions for sessions not being the first
@@ -855,7 +857,7 @@ glm.EV   = 1 - (var(glm.e)/var(glm.YM));   % explained variance proportion
 %-------------------------------------------------------------------------
 glm.X = glm.X .* repmat(glm.regscale, size(glm.X, 1), 1);
 glm.XM = glm.XM .* repmat(glm.regscale, size(glm.XM, 1), 1);
-glm.stats = glm.stats ./ glm.regscale';
+glm.stats = glm.stats ./ transpose(glm.regscale);
 
 if strcmpi(model.latency, 'free')
   % add latency parameters
@@ -882,18 +884,25 @@ if isfield(options,'exclude_missing')
     'un',0);
   glm.stats_missing = cell2mat(nan_percentages);
   glm.stats_exclude = glm.stats_missing > options.exclude_missing.cutoff;
-  glm.stats_exclude_names = cellfun(@(x) x.name,segments, ...
-    'un',0);
+  glm.stats_exclude_names = cellfun(@(x) x.name,segments,'un',0);
   glm.stats_exclude_names = glm.stats_exclude_names(glm.stats_exclude);
 end
 %% save data
 % overwrite is determined in load1
 savedata = struct('glm', glm);
-[sts, data, mdltype] = pspm_load1(model.modelfile, 'save', savedata, options);
-if sts == -1
+[sts_load1, data_load1, mdltype_load1] = pspm_load1(model.modelfile, 'save', savedata, options);
+if ~sts_load1
   warning('ID:invalid_input', 'call of pspm_load1 failed');
-  return;
+  return
 end
 %% user output
 fprintf(' done. \n');
+sts = 1;
+switch nargout
+  case 1
+    varargout{1} = glm;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = glm;
+end
 return

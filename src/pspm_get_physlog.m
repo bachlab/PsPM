@@ -84,4 +84,4 @@ sourceinfo.time = out.record_time;
 rmpath(pspm_path('Import','physlog'));
 
 sts = 1;
-return;
+return

@@ -1,4 +1,4 @@
-function chan = pspm_find_channel(headercell, channeltype)
+function varargout = pspm_find_channel(headercell, channeltype)
 % ● Description
 %   pspm_find_channel searches a cell arrays of channel headers and
 %   finds the channel that matches the desired type.
@@ -15,60 +15,64 @@ function chan = pspm_find_channel(headercell, channeltype)
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Updated in 2022 by Teddy Chao
 
-%% Initialise
+%% 0 Initialise
 global settings
 if isempty(settings)
   pspm_init;
 end
 sts = -1;
-
-% check input
-% -------------------------------------------------------------------------
+%% 1 check input
 if nargin < 2
   warning('ID:invalid_input', '\Not enough input arguments.\n');
 elseif ~iscell(headercell)
   warning('ID:invalid_input', '\nHeader input must be a cell array of char.\n'); return;
-end;
-
+end
 if ischar(channeltype)
   if ~ismember(channeltype, {settings.channeltypes.type})
     warning('ID:not_allowed_channeltype', '\nChannel type %s not allowed.\n', channeltype); return;
   else
     namestrings = settings.import.channames.(channeltype);
-  end;
+  end
 elseif iscell(channeltype)
   namestrings = channeltype;
   channeltype = 'special';
 else
   warning('ID:invalid_input', '\nChannel type must be a string.\n'); return;
-end;
-
-% loop through channels
-% -------------------------------------------------------------------------
-chanflag=0;
-for chan=1:numel(headercell)
-  for name=1:numel(namestrings)
-    if ~isempty(strfind(lower(headercell{chan}), namestrings{name}))
-      chanflag(chan)=1;
-    end;
-  end;
-end;
-
-% define output and give warnings
-% -------------------------------------------------------------------------
-if sum(chanflag) > 1
-  chan = -1;
+end
+%% 2 Loop through channels
+channelflag = 0;
+for channel = 1:numel(headercell)
+  for name = 1:numel(namestrings)
+    if ~isempty(strfind(lower(headercell{channel}), namestrings{name}))
+      channelflag(channel)=1;
+    end
+  end
+end
+%% 3 define output and give warnings
+if sum(channelflag) > 1
+  channel = -1;
   if ~strcmpi(channeltype, 'special')
     warning('ID:multiple_matching_channels', '\nChannel of type ''%s'' could not be identified from its name - there are two possible channels.\n', ...
       channeltype);
-  end;
-elseif sum(chanflag) == 0
-  chan = 0;
+  end
+elseif sum(channelflag) == 0
+  channel = 0;
   if ~strcmpi(channeltype, 'special')
     warning('ID:no_matching_channels', '\nChannel of type ''%s'' could not be identified from its name - no matching channel was found.\n', ...
       channeltype);
-  end;
+  end
 else
-  chan=find(chanflag==1);
-end;
+  channel = find(channelflag==1);
+end
+%% 4 Sort output
+sts = 1;
+switch nargout
+  case 1
+    varargout{1} = channel;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = channel;
+end
+return

@@ -76,3 +76,5 @@ x_range_sp = rad2deg(x_range_sp);
 y_range_sp = rad2deg(y_range_sp);
 lon_range = [x_range_sp(1),x_range_sp(2)];
 lat_range = [y_range_sp(3),y_range_sp(4)];
+sts = 1;
+return

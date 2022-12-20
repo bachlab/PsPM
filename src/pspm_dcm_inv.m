@@ -883,9 +883,8 @@ else
   dcm.prior = prior;
 end;
 
-% (7) clear up
+%% (7) clear up
 % ========================================================================
 settings.dcm{1}.sigma_offset = sigma_offset_temp;
 dcm.invmodel = model;
-
-end % function
+return

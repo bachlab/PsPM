@@ -1,4 +1,4 @@
-function y = pspm_filtfilt(b,a,x)
+function varargout = pspm_filtfilt(b,a,x)
 % ● Description
 %   pspm_filtfilt. Zero-phase forward and reverse digital filtering
 % ● Format
@@ -38,14 +38,10 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-
-% Check input data
-%--------------------------------------------------------------------------
-
+%% Check input data
 if nargin < 3
   warning('ID:invalid_input','Not enough parameters were specified.'); return;
 end
-
 [m,n] = size(x);
 if n>1 && m>1
   y = zeros(size(x));
@@ -56,15 +52,12 @@ if n>1 && m>1
 end
 if m==1, x = x(:); end
 len = size(x,1);
-
-% Check filter parameters
-%--------------------------------------------------------------------------
+%% Check filter parameters
 b  = b(:).';    a  = a(:).';
 nb = length(b); na = length(a);
 nfilt = max(nb,na);
 if nb < nfilt, b(nfilt)=0; end
 if na < nfilt, a(nfilt)=0; end
-
 nfact = 3*(nfilt-1);
 if len <= nfact
   warning('ID:invalid_input','Data must have length more than 3 times filter order.'); return;
@@ -72,31 +65,35 @@ end
 if nfilt == 1
   y=x; return
 end
-
-% Use sparse matrix to solve system of linear equations for initial
-% conditions zi are the steady-state states of the filter b(z)/a(z) in the
-% state-space implementation of the 'filter' command
-%--------------------------------------------------------------------------
+% Developer's Guide
+%   Use sparse matrix to solve system of linear equations for initial
+%   conditions zi are the steady-state states of the filter b(z)/a(z) in the
+%   state-space implementation of the 'filter' command
 rows = [1:nfilt-1  2:nfilt-1  1:nfilt-2];
 cols = [ones(1,nfilt-1) 2:nfilt-1  2:nfilt-1];
 data = [1+a(2) a(3:nfilt) ones(1,nfilt-2) -ones(1,nfilt-2)];
 sp   = sparse(rows,cols,data);
 zi   = sp \ (b(2:nfilt).' - a(2:nfilt).'*b(1));
-
-% Extrapolate beginning and end of data sequence using a `reflection
-% method`.  Slopes of original and extrapolated sequences match at the end
-% points. This reduces end effects
-%--------------------------------------------------------------------------
+% Developer's Guide
+%   Extrapolate beginning and end of data sequence using a `reflection
+%   method`.  Slopes of original and extrapolated sequences match at the end
+%   points. This reduces end effects
 y    = [2*x(1)-x((nfact+1):-1:2);x;2*x(len)-x((len-1):-1:len-nfact)];
-
-% Filter, reverse data, filter again, and reverse data again
-%--------------------------------------------------------------------------
+%% Filter, reverse data, filter again, and reverse data again
 y    = filter(b,a,y,zi*y(1));
 y    = y(end:-1:1);
 y    = filter(b,a,y,zi*y(1));
 y    = y(end:-1:1);
-
-% Reformat y
-%--------------------------------------------------------------------------
+%% Reformat y
 y([1:nfact len+nfact+(1:nfact)]) = [];
 if m == 1, y = y.'; end
+%% Sort outputs
+sts = 1;
+switch nargout
+  case 1
+    varargout{1} = y;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = y;
+end
+return

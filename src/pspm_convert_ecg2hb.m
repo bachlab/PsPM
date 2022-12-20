@@ -285,9 +285,7 @@ if nsts == -1, return; end
 infos.channel = write_info.channel;
 infos.pt_debug = pt_debug;
 sts = 1;
-
-
-return;
+return
 
 % -------------------------------------------------------------------------
 %   see below for subfunctions find_r, update_set, tmax, twave_check

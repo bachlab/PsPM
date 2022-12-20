@@ -32,10 +32,9 @@ pspm_layout_component_list_buttons = {'button_open_issue',...
 update_app_struct(app, pspm_layout_component_list_full, 'FontName', pspm_font);
 update_app_struct(app, pspm_layout_component_list_buttons, 'FontSize', pspm_font_size);
 update_app_struct(app, pspm_layout_component_list_buttons, 'FontWeight', 'normal');
-end
+return
 
 function update_app_struct(app, components, field_name, value)
 for i_comp = 1:length(components)
   app = setfield(app, components{i_comp}, field_name, value);
-end
 end

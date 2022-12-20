@@ -1,4 +1,4 @@
-function auc = pspm_sf_auc(scr, sr, options)
+function varargout = pspm_sf_auc(scr, sr, options)
 % ● Description
 %   pspm_sf_auc returns the integral/area under the curve of an SCR time series
 % ● Format
@@ -30,3 +30,12 @@ if nargin < 1
 end;
 scr = scr - min(scr);
 auc = mean(scr);
+sts = 1;
+switch nargout
+  case 1
+    varargout{1} = auc;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = auc;
+end
+end

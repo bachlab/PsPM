@@ -1,4 +1,4 @@
-function newdatafile = pspm_trim(datafile, from, to, reference, options)
+function varargout = pspm_trim(datafile, from, to, reference, options)
 % ● Description
 %   pspm_trim cuts an PsPM dataset to the limits set with the parameters 'from'
 %   and 'to' and writes it to a file with a prepended 't'
@@ -38,6 +38,7 @@ function newdatafile = pspm_trim(datafile, from, to, reference, options)
 %                       option to 1 to drop markers which lie in the offset.
 %                       this is for event channels only. default is 0.
 % ● Outputs
+%                  sts: status variable indicating whether function run successfully.
 %          newdatafile: a filename for the updated file, a cell array of
 %                       filenames, a struct with fields .data and .infos or a
 %                       cell array of structs
@@ -116,8 +117,8 @@ switch(class(reference))
         getmarker = 0;
       otherwise
         warning('ID:invalid_input', ...
-        ['Invalid reference option ''%s'', ',...
-        'should be marker or file.'], reference);
+          ['Invalid reference option ''%s'', ',...
+          'should be marker or file.'], reference);
         return
     end
   case 'double'
@@ -142,13 +143,13 @@ switch(class(reference))
       calculate_idx = true;
     else
       warning('ID:invalid_input', ...
-      'Invalid reference option ''%s'', should contain only two elements',...
-      reference);
+        'Invalid reference option ''%s'', should contain only two elements',...
+        reference);
       return
     end
   otherwise
     warning('ID:invalid_input', ...
-    'Invalid reference option ''%s'', should be a character, a number, or a cell', reference);
+      'Invalid reference option ''%s'', should be a character, a number, or a cell', reference);
     return
 end
 % 1.6 Set options
@@ -168,7 +169,10 @@ for i_D = 1:numel(D)
   else
     fprintf('Trimming %s ... ', datafile);
   end
-  [sts, infos, data] = pspm_load_data(datafile, 0);
+  [sts_load_data, infos, data] = pspm_load_data(datafile, 0);
+  if ~sts_load_data
+    warning('ID:invalid_option', 'Failed to load datafile');
+  end
   % 2.2 Calculate markers if needed
   if getmarker == 1
     % 2.2.1 Verify the markers
@@ -226,11 +230,6 @@ for i_D = 1:numel(D)
       l_endmarker = g_endmarker;
     end
     clear nsts ninfos ndata
-  end
-  % 2.2.4 Break program if data was not loaded successfully
-  if any(sts == -1)
-    newdatafile = [];
-    break;
   end
   % 2.3 Convert from and to from time points into seconds
   if ischar(from) % 'none'
@@ -339,24 +338,26 @@ for i_D = 1:numel(D)
   savedata.data = data;
   savedata.infos = infos;
   if isstruct(datafile)
-    sts = pspm_load_data(savedata, 'none');
+    sts_load_data = pspm_load_data(savedata, 'none');
+    if ~sts_load_data
+      warning('ID:unable_to_save', 'Cannot save data to the expected file.')
+      return
+    end
     newdatafile = savedata;
   else
     [pth, fn, ext] = fileparts(datafile);
     newdatafile    = fullfile(pth, ['t', fn, ext]);
     savedata.infos.trimfile = newdatafile;
-		options.overwrite = pspm_overwrite(newdatafile, options);
+    options.overwrite = pspm_overwrite(newdatafile, options);
     savedata.options = options;
-    sts = pspm_load_data(newdatafile, savedata);
+    sts_load_data = pspm_load_data(newdatafile, savedata);
+    if ~sts_load_data
+      warning('ID:unable_to_save', 'Cannot save data to the expected file.')
+      return
+    end
   end
-  if sts ~= 1
-    Dout{i_D} = ' ';
-    warning('Trimming unsuccessful for file %s.\n', newdatafile);
-  else
-    Dout{i_D} = newdatafile;
-    % user output
-    fprintf('  done.\n');
-  end
+  Dout{i_D} = newdatafile;
+  fprintf('  done.\n');
 end
 % 3 Return value
 % if cell array of datafiles is being processed,
@@ -365,3 +366,12 @@ if i_D > 1
   clear newdatafile
   newdatafile = Dout;
 end
+sts = 1;
+switch nargout
+  case 1
+    varargout{1} = newdatafile;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = newdatafile;
+end
+return

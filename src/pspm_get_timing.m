@@ -38,13 +38,13 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %
 %     epochs: for defining data epochs (e. g. analysis of SF, missing epochs in
 %             GLM). epochs can be one of the following
-%             - an SPM style onset file with two event types: onset & offset 
+%             - an SPM style onset file with two event types: onset & offset
 %               (names are ignored)
 %             - a two-column text file with on/offsets
 %             - a .mat file with a variable 'epochs' (see below)
 %             - e x 2 matrix of epoch on- and offsets (e: number of epochs)
 %     events: for defining events and event windows (e. g. in DCM), events can
-%             be either a variable that is, or a file name that contains a 
+%             be either a variable that is, or a file name that contains a
 %             variable. 'events' that is
 %             - a .mat file with a variable 'events' (see below)
 %             - a cell array with multiple one and two column vectors for fully
@@ -449,5 +449,4 @@ switch model
 end
 
 sts = 1;
-
-return;
+return
