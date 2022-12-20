@@ -22,7 +22,7 @@ function [lat, lon, lat_range, lon_range] = pspm_compute_visual_angle_core(x_dat
 % ● History
 %   Introduced in PsPM 4.0
 
-%% Initialise
+%% 1 Initialise
 global settings
 if isempty(settings)
   pspm_init;
@@ -32,7 +32,7 @@ options = pspm_options(options, 'compute_visual_angle_core');
 if options.invalid
   return
 end
-% interpolate channel specific data if required
+%% 2 Interpolate channel specific data if required
 if options.interpolate
   interpolate_options = struct('extrapolate', 1);
   [ sts_x, gx_d ] = pspm_interpolate(x_data, interpolate_options);
@@ -53,7 +53,7 @@ end;
 % move (0,0) into center of the screen
 gx_d = gx_d - width/2;
 gy_d = gy_d - height/2;
-%% compute visual angle for gaze_x and gaze_y data:
+%% 3 compute visual angle for gaze_x and gaze_y data:
 % 1) x axis in cartesian coordinates
 s_x = gx_d;
 % 2) y axis in cartesian coordinates, actually the distance from participant to the screen
@@ -67,8 +67,8 @@ s_z = gy_d;
 % 5) convert radians into degrees
 lat = rad2deg(elevation);
 lon = rad2deg(azimuth);
-% compute visual angle for the range (same procedure)
-r_x = [-width/2,width/2,0,0]';
+%% 4 compute visual angle for the range (same procedure)
+r_x = transpose([-width/2,width/2,0,0]);
 r_y = distance * ones(numel(r_x),1);
 r_z = [0,0,-height/2,height/2]';
 [x_range_sp, y_range_sp,~]= cart2sph(r_x,r_y,r_z);
