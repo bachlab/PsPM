@@ -1,4 +1,4 @@
-function newfilename = pspm_ren(filename, newfilename)
+function varargout = pspm_ren(filename, newfilename)
 % ● Description
 %   pspm_ren renames an SCR datafile and updates the infos field
 % ● Format
@@ -19,10 +19,9 @@ end
 sts = -1;
 
 if nargin < 2
-  errmsg = sprintf('No new filename given.');
-  warning('ID:invalid_input', errmsg);
+  warning('ID:invalid_input', 'No new filename given.');
   return;
-end;
+end
 
 warningflag = 0;
 if ~((ischar(filename)&&ischar(newfilename))||((iscell(filename)&&iscell(newfilename))))
@@ -33,51 +32,57 @@ elseif ischar(filename)&&ischar(newfilename)
   else
     filename = {filename};
     newfilename = {newfilename};
-  end;
+  end
 elseif iscell(filename)&&iscell(newfilename)
   if numel(filename) ~= numel(newfilename)
     warningflag = 1;
-  end;
-end;
+  end
+end
 
 if warningflag
   errmsg = sprintf('You must provide either two filenames, or two matched cell arrays of filenames.');
   warning('ID:invalid_input', errmsg);
   newfilename =[];
-  return;
-end;
+  return
+end
 
 %-------------------------------------------------------------------------
 % work on files
 %-------------------------------------------------------------------------
 for f = 1:numel(filename)
   fn = filename{f};
-  [pth nfn ext] = fileparts(newfilename{f});
+  [pth, nfn, ext] = fileparts(newfilename{f});
   if isempty(ext)
     ext = 'mat';
-  end;
+  end
   if isempty(pth)
-    [pth foo foo2] = fileparts(fn);
-  end;
+    [pth, ~, ~] = fileparts(fn);
+  end
   fnfn = fullfile(pth, [nfn, ext]);
-  [sts, infos, data] = pspm_load_data(fn);
-  if sts == -1
+  [sts_load_data, infos, data] = pspm_load_data(fn);
+  if ~sts_load_data
     warning('ID:invalid_input', 'Could not load data properly.');
     return;
-  end;
+  end
   infos.rendate = date;
   infos.newname = [nfn ext];
   save(fnfn, 'infos', 'data');
   delete(fn);
   clear fn nfn fnfn pth ext foo foo2
-end;
+end
 
-%-------------------------------------------------------------------------
-% output
-%-------------------------------------------------------------------------
-
+%% output
 if numel(newfilename) == 1
   newfilename = newfilename{1};
 elseif isempty(newfilename)
   newfilename = [];
-end;
+end
+sts = 1;
+switch nargout
+  case 1
+    varargout{1} = newfilename;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = newfilename;
+end
+return

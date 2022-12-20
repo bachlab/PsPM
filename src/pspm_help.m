@@ -37,6 +37,7 @@ B = regexp(A,'^\s*%.*','match');
 B = vertcat(B{:});
 information = sort_info (B);
 arguments = sort_args (B);
+return
 
 function A = sort_args (B)
 % remove '% '

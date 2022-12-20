@@ -84,4 +84,4 @@ end;
 % store only lo to hi transitions
 data = pulse(1:2:end);
 
-return;
+return

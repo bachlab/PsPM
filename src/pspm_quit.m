@@ -23,3 +23,4 @@ disp('Thanks for using PsPM.');
 disp(repelem('-',20));
 disp('PsPM 6.0.0 (c) 2008-2022 Dominik R. Bach');
 disp('Uni Bonn, DE | UCL, UK | UZH, CH');
+return

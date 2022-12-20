@@ -125,6 +125,7 @@ global settings
 if isempty(settings)
   pspm_init;
 end
+sts = -1;
 %% 2 Create default arguments
 if nargin == 1
   options = struct();
@@ -204,7 +205,7 @@ o.msg.prefix = sprintf(...
   old_channeltype, ...
   smooth_signal.header.channeltype);
 [lsts, out_id] = pspm_write_channel(fn, smooth_signal, options.channel_action, o);
-if lsts ~= 1
+if ~lsts
   return
 end
 out_chan = out_id.channel;
@@ -217,9 +218,10 @@ switch nargout
     varargout{2} = out_chan;
     varargout{3} = model;
 end
-end
+return
+
 function varargout  = pspm_preprocess(data, data_combine, segments, custom_settings, plot_data)
-sts = 0;
+sts = -1;
 % 1 definitions
 combining = ~isempty(data_combine{1}.data);
 data_is_left = strcmpi(pspm_get_eye(data{1}.header.channeltype), 'l');
@@ -314,12 +316,9 @@ catch err
   % https://www.mathworks.com/matlabcentral/answers/225796-rethrow-a-whole-error-as-warning
   warning('ID:invalid_data_structure', getReport(err, 'extended', 'hyperlinks', 'on'));
   smooth_signal.data = NaN(desired_output_samples, 1);
-  sts = -1;
 end
 rmpath(libpath{:});
-if sts == 0
-  sts = 1;
-end
+sts = 1;
 varargout{1} = sts;
 switch nargout
   case 2
@@ -327,7 +326,6 @@ switch nargout
   case 3
     varargout{2} = smooth_signal;
     varargout{3} = model;
-end
 end
 function data = pspm_complete_with_nans(data, t_beg, sr, output_samples)
 % Complete the given data that possibly has missing samples at the
@@ -337,7 +335,6 @@ sec_between_upsampled_samples = 1 / sr;
 n_missing_at_the_beg = round(t_beg / sec_between_upsampled_samples);
 n_missing_at_the_end = output_samples - numel(data) - n_missing_at_the_beg;
 data = [NaN(n_missing_at_the_beg, 1) ; data ; NaN(n_missing_at_the_end, 1)];
-end
 function segments = pspm_store_segment_stats(segments, seg_results, seg_eyes)
 stat_columns = {...
   'Pupil_SmoothSig_meanDiam', ...
@@ -360,7 +357,6 @@ for eyestr = seg_eyes
     end
   end
 end
-end
 function out_struct = pspm_assign_fields_recursively(out_struct, in_struct)
 % Definition
 % pspm_assign_fields_recursively assign all fields of in_struct to
@@ -373,7 +369,6 @@ for i = 1:numel(fnames)
 	else
 		out_struct.(name) = in_struct.(name);
 	end
-end
 end
 function eye = pspm_get_eye(channeltype)
 % Definition
@@ -398,5 +393,4 @@ end
 if strcmp(eye, 'unknown')
 	warning('ID:invalid_input', 'channeltype does not contain a valid eye');
 	return
-end
 end

@@ -41,4 +41,4 @@ switch class(keyword)
 end
 channeltype_new = join(channeltype_new_struct,'_');
 channeltype_new = channeltype_new{1};
-end
+return

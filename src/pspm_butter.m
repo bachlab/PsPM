@@ -57,10 +57,9 @@ else
     a = f(n).a;
     b = f(n).b;
   end;
-end;
-
+end
 sts = 1;
-return;
+return
 
 % create filters (last used on 29.09.2013)
 % ------------------------------------------------------------------------

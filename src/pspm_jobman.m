@@ -15,13 +15,13 @@ function varargout = pspm_jobman(varargin)
 %     job_id = pspm_jobman('interactive','',node)
 % ● Arguments
 %   → Run specified job
-%             job:  filename of a job (.m or .mat), or cell 
-%                   array of filenames, or 'jobs'/'matlabbatch' 
+%             job:  filename of a job (.m or .mat), or cell
+%                   array of filenames, or 'jobs'/'matlabbatch'
 %                   variable, or cell array of 'jobs'/'matlabbatch'
 %                   variables.
-%     output_list:  cell array containing the output arguments from 
-%                   each module in the job. The format and contents 
-%                   of these outputs is defined in the configuration 
+%     output_list:  cell array containing the output arguments from
+%                   each module in the job. The format and contents
+%                   of these outputs is defined in the configuration
 %                   of each module (.prog and .vout callbacks).
 %   → Run the user interface in interactive mode.
 %            node:  indicate which part of the configuration is to be used.
@@ -29,7 +29,7 @@ function varargout = pspm_jobman(varargin)
 %                   changes to the job in cfg_util will not show up in cfg_ui
 %                   unless 'Update View' is called.
 % ● Developer's Notes
-%   This code is based on SPM8 and earlier versions by John Ashburner, 
+%   This code is based on SPM8 and earlier versions by John Ashburner,
 %   Philippe Ciuciu and Guillaume Flandin.
 % ● History
 %   Introduced in PsPM 3.0
@@ -127,7 +127,8 @@ switch cmd
   otherwise
     error([varargin{1} ': unknown option']);
 end
-
+sts = 1;
+return
 
 %==========================================================================
 % function [mljob, comp] = canonicalise_job(job)

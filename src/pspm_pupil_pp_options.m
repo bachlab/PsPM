@@ -12,14 +12,14 @@ function [sts, default_settings] = pspm_pupil_pp_options()
 % ● Outputs
 %     default_settings: Structure with the fields below.
 %   ▶︎ Allowable values criteria
-%     raw.PupilDiameter_Min:  Minimum allowable pupil size. Pupil values less 
+%     raw.PupilDiameter_Min:  Minimum allowable pupil size. Pupil values less
 %                             than this value will be marked as invalid.
 %                             (Default: 1.5)
-%     raw.PupilDiameter_Max:  Maximum allowable pupil size. Pupil values  
+%     raw.PupilDiameter_Max:  Maximum allowable pupil size. Pupil values
 %                             greater than thin value will be markes as invalid.
 %                             (Default: 9.0)
 %   ▶︎ Isolated sample filter criteria
-%       // 'Sample-islands' are clusters of samples that are temporally 
+%       // 'Sample-islands' are clusters of samples that are temporally
 %       // seperated from other samples.
 %     raw.islandFilter_islandSeperation_ms:
 %                             Minimum distance used to consider samples
@@ -32,7 +32,7 @@ function [sts, default_settings] = pspm_pupil_pp_options()
 %                             (Default: 50 ms)
 %   ▶︎ Dilation speed filter criteria
 %     raw.dilationSpeedFilter_MadMultiplier:
-%                             Number of medians to use as the cutoff threshold 
+%                             Number of medians to use as the cutoff threshold
 %                             when applying the speed filter. (Default: 16)
 %     raw.dilationSpeedFilter_maxGap_ms:
 %                             Only calculate the speed when the gap between
@@ -58,9 +58,9 @@ function [sts, default_settings] = pspm_pupil_pp_options()
 %                             which samples are to be rejected. (Default: 50 ms)
 %   ▶︎ Deviation filter criteria
 %       // At this point a subset of the original samples are marked as valid.
-%       // These samples are the input for this filter. The dilation speed 
-%       // filter will not reject samples that do not feature outlying speeds, 
-%       // such as is the case when these samples are clustered together. As 
+%       // These samples are the input for this filter. The dilation speed
+%       // filter will not reject samples that do not feature outlying speeds,
+%       // such as is the case when these samples are clustered together. As
 %       // such, a deviation from a smooth trendline filter is warranted.
 %     raw.residualsFilter_passes:
 %                             Number of passes the deviation filter makes.
@@ -73,7 +73,7 @@ function [sts, default_settings] = pspm_pupil_pp_options()
 %                             samples (even the ones which may have been
 %                             rejected by the previous devation filter pass)
 %                             are considered. (Default: 16)
-%   ▶︎ 
+%   ▶︎
 %       // At each pass, a smooth continuous trendline is generated using the
 %       // data below, from which the deviation is than calculated and used as
 %       // the filter criteria. The below computation is performed:
@@ -116,4 +116,4 @@ addpath(libpath{:});
 default_settings = PupilDataModel.getDefaultSettings();
 rmpath(libpath{:});
 sts = 1;
-end
+return

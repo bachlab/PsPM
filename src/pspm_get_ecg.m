@@ -15,6 +15,7 @@ global settings
 if isempty(settings)
 	pspm_init;
 end
+sts = -1;
 %% assign respiratory data
 data.data = import.data(:);
 %% add header

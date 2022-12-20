@@ -43,9 +43,13 @@ if ~isnumeric(discard_factor)
   return
 end
 [lsts, ~, data] = pspm_load_data(fn);
-if lsts ~= 1; return; end;
+if lsts ~= 1
+  return
+end
 [lsts, ~, data_user] = pspm_load_data(fn, options.channel);
-if lsts ~= 1; return; end;
+if lsts ~= 1
+  return
+end
 data_user = keep_pupil_gaze_channels(data_user);
 %% build matrixes and lists
 data_mat = {};
@@ -88,9 +92,12 @@ if isnumeric(channel_str)
 end
 o.msg.prefix = sprintf('Blink saccade filtering :: Input channel: %s', channel_str);
 [lsts, out_id] = pspm_write_channel(fn, data_user, options.channel_action, o);
-if lsts ~= 1; return; end;
+if lsts ~= 1
+  return
+end
 out_channel = out_id.channel;
 sts = 1;
+return
 %% keep_pupil_gaze_channels
 function [out_cell] = keep_pupil_gaze_channels(in_cell)
 out_cell = {};
@@ -100,3 +107,4 @@ for i = 1:numel(in_cell)
     out_cell{end + 1} = in_cell{i};
   end
 end
+

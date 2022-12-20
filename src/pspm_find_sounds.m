@@ -385,7 +385,8 @@ if options.plot
   legend('Detected sound','Trigger','Sound onset')
   hold off
 end
+
+%% Return values
 sts =1;
 infos = outinfos;
-
-end
+return

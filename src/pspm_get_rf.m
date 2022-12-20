@@ -86,4 +86,5 @@ if ~isempty(outfile)
   outfile = fullfile(pth, [fn, '.m']);
   dlmwrite(outfile, job, 'delimiter', '');
 end;
+sts = 1;
 return

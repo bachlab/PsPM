@@ -1,4 +1,4 @@
-function [sts, v] = pspm_version(varargin)
+function varargout = pspm_version(varargin)
 % ● Description
 %   pspm_version returns the current pspm version and checks if there is an
 %   update available.
@@ -25,6 +25,7 @@ msg = textscan(fid, '%s', 'Delimiter', '$');
 tk =regexp(msg{1},'^Version ([0-9A-Za-z\.]*) .*', 'tokens');
 v_idx = find(~cellfun('isempty', tk), 1, 'first');
 v = tk{v_idx}{1}{1};
+
 %% 2 check if there is an input action given
 if nargin > 0
   switch varargin{1}
@@ -66,4 +67,15 @@ if nargin > 0
       end
   end
 end
+
+%% 3 Sort output
 sts = 1;
+version_of_pspm = v;
+switch nargout
+  case 1
+    varargout = version_of_pspm;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = version_of_pspm;
+end
+return

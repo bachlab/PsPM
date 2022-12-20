@@ -5,7 +5,7 @@ function [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm
 %   [1].
 % ● Developer's Notes
 %   In particular,
-%   1. Target points (T_x, T_y, T_z) are calculated using gaze x and y 
+%   1. Target points (T_x, T_y, T_z) are calculated using gaze x and y
 %      positions at each timestep
 %   2. Cosine of the oblique angle is computed using the dot products of
 %      unitary vectors corresponding to camera C and target T.
@@ -40,7 +40,7 @@ function [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm
 %   └─────────.S_z: The distance between pupil center and top left corner of
 %                   screen if they have same x and y coordinates. (Unit: mm)
 % ● Outputs
-%  pupil_corrected: PFE corrected pupil data. 
+%  pupil_corrected: PFE corrected pupil data.
 %                   (Unit: unit of the input pupil data)
 % ● References
 %   [1] Hayes, Taylor R., and Alexander A. Petrov. "Mapping and correcting the
@@ -111,4 +111,4 @@ if is_rowvec
 end
 
 sts = 1;
-end
+return

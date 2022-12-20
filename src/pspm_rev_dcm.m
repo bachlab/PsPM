@@ -1,4 +1,4 @@
-function pspm_rev_dcm(dcm, job, sn, trl)
+function sts = pspm_rev_dcm(dcm, job, sn, trl)
 % ● Description
 %   pspm_rev_dcm displays DCM results post hoc. It is meant to be called by
 %   pspm_review only.
@@ -90,9 +90,6 @@ switch job
       set(gca, 'XTickLabel', xt * dcm.input.sr);
       set(gca, 'YLim', [min(yhat), max(yhat)]);
     end;
-
-
-
     % display scrf
     % ---------------------------------------------------------------------
   case 'scrf'
@@ -124,4 +121,5 @@ switch job
     fprintf('---------------------------------------\n');
 end;
 
+sts = 1;
 return

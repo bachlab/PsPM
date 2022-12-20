@@ -51,4 +51,4 @@ for reg=1:n
   FIR(starts:stops, reg)=1;
   starts=stops+1;
 end;
-return;
+return

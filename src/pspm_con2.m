@@ -10,13 +10,13 @@ function pspm_con2(modelfile, outfile, con, connames, options)
 %               note: all modelfiles need to have the same contrasts (it's best
 %               to compute these with pspm_con1 in one call)
 %     outfile:  a file the model is being saved to
-%         con:  optional argument containing a vector with the contrasts for 
+%         con:  optional argument containing a vector with the contrasts for
 %               which the second level should be set up (default: all), or 'all'
 %     conname:  optional argument containing names for the contrasts or the
 %               option 'file' to be read from first model file. contrasts
 %               will be numbered by default if this argument is missing or has
 %               value 'number'
-%     options:  
+%     options:
 %  .overwrite:  [logical] (0 or 1)
 %               Define whether to overwrite existing output files or not.
 %               Default value: determined by pspm_overwrite.
@@ -133,7 +133,8 @@ end
 t.files = modelfile;
 %% save
 save(outfile, 't');
-%% subfunctions
+return
+%% subfunction loadmodel
 function [sts, foo] = loadmodel(modelfile, datatype)
 [sts, foo] = pspm_load1(modelfile, 'con', datatype);
 if isempty(foo)

@@ -7,7 +7,7 @@ function index = pspm_time2index(time, sr, varargin)
 %           time: [vector or matrix] time stamps in second.
 %             sr: [numeric] sampling rate or frequency
 %   ┌───varargin: optional variables
-%   └data_length: [interger] the length of data, by which the length of data 
+%   └data_length: [interger] the length of data, by which the length of data
 %                 points should not exceed
 % ● Output
 %          index: [integer] index or data point
@@ -26,3 +26,4 @@ if exist('data_length', 'var')
     index(flag==1) = data_length;
   end
 end
+return

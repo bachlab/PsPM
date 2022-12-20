@@ -13,5 +13,12 @@ function [sts, import, sourceinfo] = pspm_get_csv(datafile, import)
 %   Introduced in PsPM 5.0
 %   Written in 2008-2020 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
+sts = -1;
 import = cellfun(@(c) setfield(c, 'delimiter', ','), import, 'UniformOutput', false);
-[sts, import, sourceinfo] = pspm_get_txt(datafile, import);
+[sts_get_txt, import, sourceinfo] = pspm_get_txt(datafile, import);
+if ~sts_get_txt
+  warning('Failed to get text.');
+  return
+end
+sts = 1;
+return

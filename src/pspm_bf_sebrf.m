@@ -80,3 +80,4 @@ end
 bf = spm_orth(bf);
 % normalise
 bf = bf./repmat((max(bf) - min(bf)), size(bf, 1), 1);
+return

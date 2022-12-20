@@ -42,7 +42,7 @@ function [sts, out] = pspm_extract_segments(varargin)
 %   │                     the glm model file or the dcm model file. In the case
 %   │                     of raw data the timeunit should be seconds.
 %   ├────────────.length: Length of the segments in the 'timeunits'.
-%   │                     If given the same length is taken for segments for 
+%   │                     If given the same length is taken for segments for
 %   │                     glm structure. If not given lengths are take from
 %   │                     the timing data. This argument is optional. If
 %   │                     'timeunit' equals 'markers' then 'length' is
@@ -65,7 +65,7 @@ function [sts, out] = pspm_extract_segments(varargin)
 %   │                     cell array of numeric array of marker data.
 %   ├────────.nan_output: This option defines whether the user wants to output
 %   │                     the NaN ratios of the trials for each condition.
-%   │                     If so,  we values can be printed on the screen (on 
+%   │                     If so,  we values can be printed on the screen (on
 %   │                     MATLAB command window) or written to a created file.
 %   │                     The field can be set to 'screen', 'File Output'or
 %   │                     'none'. 'none' is the default value.
@@ -666,4 +666,6 @@ if options.plot
   legend(legend_lb);
 end
 
+%% Return values
 sts = 1;
+return

@@ -5,7 +5,7 @@ function [sts, import, sourceinfo] = pspm_get_spike(datafile, import)
 %   [sts, import, sourceinfo] = pspm_get_spike(datafile, import);
 % ● Arguments
 %     import: [struct]
-%   .denoise: for marker channels in CED spike format (recorded as 'level'), 
+%   .denoise: for marker channels in CED spike format (recorded as 'level'),
 %             filters out markers duration longer than the value given here (in
 %             ms).
 % ● History
@@ -131,4 +131,4 @@ end;
 % -------------------------------------------------------------------------
 rmpath(pspm_path('Import','SON'));
 sts = 1;
-return;
+return

@@ -80,8 +80,8 @@ for k = 1:numel(import)
 
 end;
 
-% clear path and return
-% -------------------------------------------------------------------------
+% clear path
 rmpath(pspm_path('Import','fieldtrip','fileio'));
+%% return values
 sts = 1;
-return
+end

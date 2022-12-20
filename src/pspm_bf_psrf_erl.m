@@ -56,3 +56,4 @@ bs(:,1) = x.^n.*exp(-n.*x/tmax);
 bs(:,1) = spm_orth(bs(:,1));
 % normalise
 bs = bs./repmat((max(bs) - min(bs)), size(bs, 1), 1);
+return

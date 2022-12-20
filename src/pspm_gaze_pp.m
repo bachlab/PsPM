@@ -1,4 +1,4 @@
-function [sts, out_channel] = pspm_gaze_pp(fn, options)
+function varargout = pspm_gaze_pp(fn, options)
 % ●	Description
 % 	pspm_gaze_pp preprocesses gaze signals, gaze x and gaze y channels at
 % 	the same time.
@@ -99,7 +99,7 @@ if options.valid_sample
   [~, ~, model] = pspm_pupil_pp(fn, options_pp);
   upsampling_factor = options.custom_settings.valid.interp_upsamplingFreq / gaze_og{1}.header.sr;
   desired_output_samples_gaze = round(upsampling_factor * numel(gaze_og{1}.data));
-  preprocessed_gaze.header.channeltype = pspm_update_channel_type(gaze_og{1}.header.channeltype,'pp');
+  preprocessed_gaze.header.channeltype = pspm_update_channeltype(gaze_og{1}.header.channeltype,'pp');
   preprocessed_gaze.header.units = gaze_og{1}.header.units;
   preprocessed_gaze.header.sr = options.custom_settings.valid.interp_upsamplingFreq;
   preprocessed_gaze.header.segments = options.segments;
@@ -119,7 +119,7 @@ if ~action_combine
     preprocessed_gaze.data = gaze_og{1}.data;
     preprocessed_gaze.header.sr = gaze_og{1}.header.sr;
   end
-  preprocessed_gaze.header.channeltype = pspm_update_channel_type(gaze_og{1}.header.channeltype,'pp');
+  preprocessed_gaze.header.channeltype = pspm_update_channeltype(gaze_og{1}.header.channeltype,'pp');
   preprocessed_gaze.header.units = gaze_og{1}.header.units;
 else
   if options.valid_sample
@@ -151,12 +151,21 @@ o.msg.prefix = sprintf(...
   old_channeltype, ...
   preprocessed_gaze.header.channeltype);
 [lsts, out_id] = pspm_write_channel(fn, preprocessed_gaze, options.channel_action, o);
-if lsts ~= 1 % if writting channel is unsuccessful
+if ~lsts % if writting channel is unsuccessful
   return
 end
+%% 8 Return values
 out_channel = out_id.channel;
 sts = 1;
+switch nargout
+  case 1
+    varargout{1} = out_channel;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = out_channel;
 end
+return
+
 function data = pspm_cmpnans(data, t_beg, sr, output_samples)
 % complete with NaNs
 % Complete the given data that possibly has missing samples at the
@@ -166,7 +175,7 @@ sec_between_upsampled_samples = 1 / sr;
 n_missing_at_the_beg = round(t_beg / sec_between_upsampled_samples);
 n_missing_at_the_end = output_samples - numel(data) - n_missing_at_the_beg;
 data = [NaN(n_missing_at_the_beg, 1) ; data ; NaN(n_missing_at_the_end, 1)];
-end
+
 function out_struct = pspm_assign_fields_recursively(out_struct, in_struct)
 % Definition
 % pspm_assign_fields_recursively assign all fields of in_struct to
@@ -179,5 +188,4 @@ for i = 1:numel(fnames)
   else
     out_struct.(name) = in_struct.(name);
   end
-end
 end
