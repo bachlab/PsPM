@@ -57,13 +57,13 @@ switch FunName
     options = autofill_channel_action(options);
   case 'convert_area2diameter'
     %% 2.6 pspm_convert_area2diameter
-    options = autofill_channel_action(options,            'add',      'replace'         );
+    options = autofill_channel_action(options);
   case 'convert_au2unit'
     %% 2.7 pspm_convert_au2unit
     options = autofill_channel_action(options);
   case 'convert_ecg2hb'
     %% 2.8 pspm_convert_ecg2hb
-    options = autofill_channel_action(options, 'replace');
+    options = autofill_channel_action(options);
     options = autofill(options, 'debugmode',              0,          1                 ); % can be merged into development mode?
     options = autofill(options, 'maxHR',                  200,        '>', 20           ); % field: maxHR (bpm)
     options = autofill(options, 'minHR',                  20,         '<', 200          ); % field: minHR (bpm)
@@ -87,16 +87,16 @@ switch FunName
     options = autofill_channel_action(options);
   case 'convert_hb2hp'
     %% 2.11 pspm_convert_hb2hp
-    options = autofill_channel_action(options, 'replace');
-    options = autofill(options, 'limit.lower',            0.2,        '>', 0            );
-    options = autofill(options, 'limit.upper',            2,          '>', 0            );
-    options = check_range(options, 'limit.lower', 'limit.upper');
+    options = autofill_channel_action(options);
+    options = autofill(options, 'limit_lower',            0.2,        '>', 0            );
+    options = autofill(options, 'limit_upper',            2,          '>', 0            );
+    options = check_range(options, 'limit_lower', 'limit_upper');
   case 'convert_pixel2unit'
     %% 2.12 pspm_convert_pixel2unit
     options = autofill_channel_action(options);
   case 'convert_ppg2hb'
     %% 2.13 pspm_convert_ppg2hb
-    options = autofill_channel_action(options, 'replace');
+    options = autofill_channel_action(options);
     options = autofill(options, 'channel',                'ppg2hb',   '*Int*Char*Cell'  );
     options = autofill(options, 'diagnostics',            0,          1                 );
     options = autofill(options, 'lsm',                    0,          [0,100-10^-10]    );
@@ -166,7 +166,7 @@ switch FunName
     options = autofill(options, 'artefact',               [],         '*Char'           );
   case 'emg_pp'
     %% 2.20 pspm_emg_pp
-    options = autofill_channel_action(options,            'replace',  'add'             );
+    options = autofill_channel_action(options);
     options = autofill(options, 'channel',                'emg',      '*Int*Char*Cell'  );
     options = autofill(options, 'mains_freq',             50,         '>', 0            );
   case 'exp'
@@ -632,10 +632,14 @@ function options = autofill_channel_action(options, varargin)
 switch nargin
   case 1
     default_value = 'add';
-    optional_value = {'add', 'replace'};
+    optional_value = 'replace';
   case 2
     default_value = varargin{1};
-    optional_value = {'add', 'replace'};
+    if strcmp(default_value, 'replace')
+      optional_value = 'add';
+    else
+      optional_value = {'add', 'replace'};
+    end
   case 3
     default_value = varargin{1};
     optional_value = varargin{2};
@@ -643,9 +647,15 @@ end
 if ~isfield(options, 'channel_action')
   options.channel_action = default_value;
 else
-  acceptable_values = optional_value;
-  acceptable_values(2:end+1) = acceptable_values(1:end);
+  acceptable_values = {};
   acceptable_values{1} = default_value;
+  switch class(optional_value)
+    case 'char'
+      acceptable_values{2} = optional_value;
+    case 'cell'
+      acceptable_values(2:(length(optional_value)+1)) = optional_value;
+  end
+  acceptable_values = unique(acceptable_values);
   if ~any(strcmpi(options.channel_action, acceptable_values))
     allowed_values_message = generate_allowed_values_message(default_value, optional_value);
     warning('ID:invalid_input', ...
