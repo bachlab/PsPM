@@ -42,7 +42,7 @@ switch FunName
     options = autofill(options, 'channel',                0,          '*Int*Char*Cell'  );
   case 'compute_visual_angle_core'
     %% 2.2 pspm_compute_visual_angle_core
-    options = autofill(options, 'interpolate',            0,          1                 );
+    % leave for future development
   case 'compute_visual_angle'
     %% 2.3 pspm_compute_visual_angle
     options = autofill_channel_action(options);

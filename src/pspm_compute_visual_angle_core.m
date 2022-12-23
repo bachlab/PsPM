@@ -12,8 +12,6 @@ function [lat, lon, lat_range, lon_range] = pspm_compute_visual_angle_core(x_dat
 %            width: screen width in same units as data
 %           height: screen height in same units as data
 %         distance: screen distance in same units as data
-%          options:
-%     .interpolate: Boolean - Interpolate values
 % ● Output
 %              lat: the latitude in degrees
 %              lon: the longitude in degrees
@@ -32,15 +30,8 @@ options = pspm_options(options, 'compute_visual_angle_core');
 if options.invalid
   return
 end
-%% 2 Interpolate channel specific data if required
-if options.interpolate
-  interpolate_options = struct('extrapolate', 1);
-  [ sts_x, gx_d ] = pspm_interpolate(x_data, interpolate_options);
-  [ sts_x, gy_d ] = pspm_interpolate(y_data, interpolate_options);
-else
-  gx_d = x_data;
-  gy_d = x_data;
-end
+gx_d = x_data;
+gy_d = x_data;
 % The convention is that the origin of the screen is in the bottom
 % left corner, so the following line is not needed a priori, but I
 % leave it anyway just in case :
@@ -50,7 +41,7 @@ if N ~= numel(gy_d)
   warning('ID:invalid_input', 'length of data in gaze_x and gaze_y is not the same');
   return;
 end;
-% move (0,0) into center of the screen
+%% 2 move (0,0) into center of the screen
 gx_d = gx_d - width/2;
 gy_d = gy_d - height/2;
 %% 3 compute visual angle for gaze_x and gaze_y data:
