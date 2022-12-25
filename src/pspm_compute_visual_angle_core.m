@@ -31,7 +31,7 @@ if options.invalid
   return
 end
 gx_d = x_data;
-gy_d = x_data;
+gy_d = y_data;
 % The convention is that the origin of the screen is in the bottom
 % left corner, so the following line is not needed a priori, but I
 % leave it anyway just in case :
