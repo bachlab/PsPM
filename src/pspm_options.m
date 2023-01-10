@@ -204,7 +204,7 @@ switch FunName
   case 'find_valid_fixations'
     %% 2.24 pspm_find_valid_fixations
     options = autofill_channel_action(options);
-    % options = autofill(options, 'channel',                1,          '*Int*Char*Cell'  );
+    options = autofill(options, 'channel',                'pupil',    '*Int*Char*Cell'  );
     options = autofill(options, 'eyes',                   settings.lateral.full.c, ...
                                                           {settings.lateral.full.l, ...
                                                           settings.lateral.full.r}      );
