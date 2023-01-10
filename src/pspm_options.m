@@ -263,7 +263,7 @@ switch FunName
 
     options = autofill(options, 'newfile',                0,          1                 );
     options = autofill(options, 'overwrite',              0,          [1, 2]            );
-    % options = autofill(options, 'channel',                0,          '*Int*Char*Cell'  );
+    options = autofill(options, 'channel',                [],         '*Int*Char*Cell'  );
   case 'load1'
     %% 2.31 pspm_load1
     options = autofill(options, 'overwrite',              0,          [1, 2]            );
@@ -424,7 +424,7 @@ switch FunName
     options = autofill(options, 'overwrite',              0,          [1, 2]            );
   case 'write_channel'
     %% 2.47 pspm_write_channel
-    % options = autofill(options, 'channel',                1,          '*Int*Char*Cell'  );
+    options = autofill(options, 'channel',                0,          '*Int*Char*Cell'  );
     options = autofill(options, 'delete',                 'last',     {'first','all'}   );
     if ~isfield('options','msg')
       options.msg = '';
