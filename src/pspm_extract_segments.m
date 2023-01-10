@@ -482,7 +482,7 @@ for session_idx = 1:n_sessions
     assert(numel(onset_write_indices_in_cond_and_session) == num_onsets);
 
     for onset_idx = 1:num_onsets
-      if options.length <= 0
+      if options.length < 0
         try
           segment_length = durations_cond(onset_idx);
           if segment_length==0
