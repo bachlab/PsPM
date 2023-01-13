@@ -52,7 +52,7 @@ else
   if 10*maxtruesamplingrate > resamplingrate
     newresamplingrate = min([round(maxtruesamplingrate*10), 10000/1000]); % max resamplingrate: 10 kHz, otherwise out of memory
     resamplingrate = newresamplingrate;
-  end;
+  end
   fprintf('\nPulse data was converted to waveform with a sampling rate of %01.2f Hz, to allow 10-fold oversampling.\n', resamplingrate*1000);
   scrt = pulsedata;
   scr = 1./diff(scrt);                                            % get frequency information for each timepoint
@@ -64,7 +64,7 @@ else
   % put back into correct timeunits (seconds)
   resamplingrate = 1000 * resamplingrate;
   % substitute missing samplingrate
-  if nargin < 3, samplingrate = resamplingrate; end;
+  if nargin < 3, samplingrate = resamplingrate; end
   % convert
   if samplingrate < resamplingrate
     filt.lpfreq = 0.5 * samplingrate;
@@ -77,11 +77,10 @@ else
     [sts_prepdata, wavedata] = pspm_prepdata(wavedata, filt);
     if sts_prepdata ~= 1
       warning('ID:invalid_input', 'call of pspm_prepdata failed');
-      return;
-    end;
-  end;
-end;
-
+      return
+    end
+  end
+end
 sts = 1;
 switch nargout
   case 1
