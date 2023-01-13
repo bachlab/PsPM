@@ -59,7 +59,9 @@ function varargout = pspm_sf(model, options)
 
 %% 1 Initialise
 global settings
-if isempty(settings), pspm_init; end
+if isempty(settings)
+  pspm_init;
+end
 outfile = [];
 sts = -1;
 %% 2 Check input

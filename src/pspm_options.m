@@ -28,12 +28,9 @@ else
   end
 end
 options.invalid = 0;
-
-
 %% 1 Text
 text_optional_channel_invalid = 'options.channel must contain valid channel types or positive integers.';
 text_optional_channel_invalid_char = 'options.channel is not a valid channel type.';
-
 %% 2 Main Processing
 switch FunName
   case 'blink_saccade_filt'
@@ -278,6 +275,8 @@ switch FunName
   case 'pp'
     %% 2.34 pspm_pp
     options = autofill(options, 'overwrite',              0,          [1, 2]            );
+  case 'prepdata'
+    options = autofill(options, 'fillnan',                1,          0                 );
   case 'process_illuminance'
     %% 2.35 pspm_process_illuminance
     options = autofill(options, 'bf',                     struct(),   '*Struct'         );
