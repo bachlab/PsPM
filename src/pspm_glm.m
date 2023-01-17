@@ -873,19 +873,21 @@ end
 % glm.stats_exclude_names holds the names of the conditions to be excluded
 
 if isfield(options,'exclude_missing')
-  [sts,segments] = pspm_extract_segments('auto', glm, ...
-    struct('length', options.exclude_missing.segment_length));
-  if sts == -1
-    warning('ID:invalid_input', 'call of pspm_extract_segments failed');
-    return;
+  if options.exclude_missing.segment_length > 0
+    [sts,segments] = pspm_extract_segments('auto', glm, ...
+      struct('length', options.exclude_missing.segment_length));
+    if sts == -1
+      warning('ID:invalid_input', 'call of pspm_extract_segments failed');
+      return;
+    end
+    segments = segments.segments;
+    nan_percentages = cellfun(@(x) x.total_nan_percent,segments, ...
+      'un',0);
+    glm.stats_missing = cell2mat(nan_percentages);
+    glm.stats_exclude = glm.stats_missing > options.exclude_missing.cutoff;
+    glm.stats_exclude_names = cellfun(@(x) x.name,segments,'un',0);
+    glm.stats_exclude_names = glm.stats_exclude_names(glm.stats_exclude);
   end
-  segments = segments.segments;
-  nan_percentages = cellfun(@(x) x.total_nan_percent,segments, ...
-    'un',0);
-  glm.stats_missing = cell2mat(nan_percentages);
-  glm.stats_exclude = glm.stats_missing > options.exclude_missing.cutoff;
-  glm.stats_exclude_names = cellfun(@(x) x.name,segments,'un',0);
-  glm.stats_exclude_names = glm.stats_exclude_names(glm.stats_exclude);
 end
 %% save data
 % overwrite is determined in load1
