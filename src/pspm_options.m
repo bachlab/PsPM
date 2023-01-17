@@ -239,11 +239,17 @@ switch FunName
     options = autofill(options, 'trlnames',               {},         '*Cell*Char'      );
   case 'glm'
     %% 2.28 pspm_glm
-    options = autofill(options, 'bf',                     0,          1                 );
-    options = autofill(options, 'centering',              1,          0                 );
     options = autofill(options, 'norm',                   0,          1                 );
     options = autofill(options, 'overwrite',              0,          [1, 2]            );
     % options = autofill(options, 'marker_chan_num',        1,        '*Num'       );
+    if ~isfield(options, 'exclude_missing')
+      options.exclude_missing = struct('segment_length',-1,'cutoff',0);
+    else
+      if ~isfield(options.exclude_missing, 'segment_length') || ...
+          ~isfield(options.exclude_missing, 'cutoff')
+        options.invalid = 1;
+      end
+    end
     options = fill_glm(options);
   case 'import'
     %% 2.29 pspm_import
