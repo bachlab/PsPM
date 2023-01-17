@@ -274,6 +274,10 @@ switch FunName
   case 'merge'
     %% 2.32 pspm_merge
     options = autofill(options, 'marker_chan_num',        [0,0],      '*Num'            );
+    if ~all(size(options.marker_chan_num(:))==[2,1])
+      options.invalid = 1;
+      return
+    end
     options = autofill(options, 'overwrite',              0,          [1, 2]            );
   case 'pfm'
     %% 2.33 pspm_pfm
