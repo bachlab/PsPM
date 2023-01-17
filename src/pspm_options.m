@@ -241,7 +241,7 @@ switch FunName
     %% 2.28 pspm_glm
     options = autofill(options, 'norm',                   0,          1                 );
     options = autofill(options, 'overwrite',              0,          [1, 2]            );
-    % options = autofill(options, 'marker_chan_num',        1,        '*Num'       );
+    options = autofill(options, 'marker_chan_num',        'marker',   '*Num*Char'       );
     if ~isfield(options, 'exclude_missing')
       options.exclude_missing = struct('segment_length',-1,'cutoff',0);
     else
@@ -917,9 +917,7 @@ elseif strcmpi(options.mode,'fixation') && isfield(options, 'fixation_point') &&
 end
 
 function options = fill_glm(options)
-if ~isfield(options, 'marker_chan_num')
-  options.marker_chan_num = 'marker';
-elseif ~(isnumeric(options.marker_chan_num) && numel(options.marker_chan_num)==1)
+if ~(isnumeric(options.marker_chan_num) && numel(options.marker_chan_num)==1)
   options.marker_chan_num = 'marker';
 end
 if isfield(options,'exclude_missing')
