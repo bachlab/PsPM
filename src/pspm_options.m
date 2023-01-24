@@ -174,7 +174,7 @@ switch FunName
     options = autofill(options, 'target',                 'screen',   '*Char'           );
   case 'extract_segments'
     %% 2.22 pspm_extract_segments
-    options = autofill(options, 'length',                 -1,         '>', 0            );
+    options = autofill(options, 'length',                 10,         '>=', 0            );
     options = autofill(options, 'norm',                   0,          1                 );
     options = autofill(options, 'outputfile',             '',         '*Char'           );
     options = autofill(options, 'overwrite',              0,          [1, 2]            );
@@ -201,7 +201,7 @@ switch FunName
   case 'find_valid_fixations'
     %% 2.24 pspm_find_valid_fixations
     options = autofill_channel_action(options);
-    % options = autofill(options, 'channel',                1,          '*Int*Char*Cell'  );
+    options = autofill(options, 'channel',                'pupil',    '*Int*Char*Cell'  );
     options = autofill(options, 'eyes',                   settings.lateral.full.c, ...
                                                           {settings.lateral.full.l, ...
                                                           settings.lateral.full.r}      );
@@ -239,11 +239,17 @@ switch FunName
     options = autofill(options, 'trlnames',               {},         '*Cell*Char'      );
   case 'glm'
     %% 2.28 pspm_glm
-    options = autofill(options, 'bf',                     0,          1                 );
-    options = autofill(options, 'centering',              1,          0                 );
     options = autofill(options, 'norm',                   0,          1                 );
     options = autofill(options, 'overwrite',              0,          [1, 2]            );
     % options = autofill(options, 'marker_chan_num',        1,        '*Num'       );
+    if ~isfield(options, 'exclude_missing')
+      options.exclude_missing = struct('segment_length',-1,'cutoff',0);
+    else
+      if ~isfield(options.exclude_missing, 'segment_length') || ...
+          ~isfield(options.exclude_missing, 'cutoff')
+        options.invalid = 1;
+      end
+    end
     options = fill_glm(options);
   case 'import'
     %% 2.29 pspm_import
@@ -260,7 +266,7 @@ switch FunName
 
     options = autofill(options, 'newfile',                0,          1                 );
     options = autofill(options, 'overwrite',              0,          [1, 2]            );
-    % options = autofill(options, 'channel',                0,          '*Int*Char*Cell'  );
+    options = autofill(options, 'channel',                [],         '*Int*Char*Cell'  );
   case 'load1'
     %% 2.31 pspm_load1
     options = autofill(options, 'overwrite',              0,          [1, 2]            );
@@ -423,7 +429,7 @@ switch FunName
     options = autofill(options, 'overwrite',              0,          [1, 2]            );
   case 'write_channel'
     %% 2.47 pspm_write_channel
-    % options = autofill(options, 'channel',                1,          '*Int*Char*Cell'  );
+    options = autofill(options, 'channel',                0,          '*Int*Char*Cell'  );
     options = autofill(options, 'delete',                 'last',     {'first','all'}   );
     if ~isfield('options','msg')
       options.msg = '';
@@ -534,8 +540,10 @@ switch nargin
                 flag_is_allowed_value = flag_is_allowed_value || iscell(options.(field_name));
               end
               if contains(optional_value, '*Int')
-                flag_is_allowed_value = flag_is_allowed_value || (isnumeric(options.(field_name)) && ...
-                  (options.(field_name)>0) && (mod(options.(field_name), 1)==0));
+                flag_is_allowed_value = flag_is_allowed_value || ...
+                  all([isnumeric(options.(field_name)), ...
+                  options.(field_name)>0, ...
+                  mod(options.(field_name), 1)==0]);
               end
               if contains(optional_value, '*Struct')
                 flag_is_allowed_value = flag_is_allowed_value || isstruct(options.(field_name));
