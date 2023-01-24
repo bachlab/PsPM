@@ -111,7 +111,7 @@ switch FunName
     options = autofill(options, 'overwrite',              0,          [1, 2]);
   case 'dcm'
     %% 2.16 pspm_dcm
-    options = autofill(options, 'aSCR_sigma_offset',      0.1,        '*Num'            ); % minimum dispersion (standard deviation) for flexible responses (second)
+    options = autofill(options, 'aSCR_sigma_offset',      0.1,        '>=', 0           ); % minimum dispersion (standard deviation) for flexible responses (second)
     options = autofill(options, 'crfupdate',              0,          '*Num'            ); % update CRF priors to observed SCRF, or use pre-estimated priors
     options = autofill(options, 'crfupdate',              0,          1                 );
     options = autofill(options, 'depth',                  2,          '*Num'            ); % no of trials to invert at the same time
@@ -120,7 +120,7 @@ switch FunName
     options = autofill(options, 'eventnames',           	{},         '*Cell'           ); % Cell array of names for individual events
     options = autofill(options, 'getrf',                  0,          1                 ); % only estimate RF, do not do trial-wise DCM
     options = autofill(options, 'indrf',                  0,          1                 ); % Estimate the response function from the data
-    % options = autofill(options, 'method',                 'dcm'                       );
+    options = autofill(options, 'method',                 'dcm'                         );
     options = autofill(options, 'nosave',                 0,          1                 ); % Don't save dcm structure (e.g. used by pspm_get_rf)
     options = autofill(options, 'overwrite',              1,          [0, 2]            );
     options = autofill(options, 'rf',                     0,          1                 ); % Call an external file to provide response function (for use when this is previously estimated by pspm_get_rf)
@@ -132,7 +132,7 @@ switch FunName
     options = autofill(options, 'trlnames',               {},         '*Cell*Char'      ); % Cell array of names for individual trials, is used for contrast manager only (e.g. condition descriptions)
   case 'dcm_inv'
     %% 2.17 pspm_dcm_inv
-    options = autofill(options, 'aSCR_sigma_offset',      0.1,        '*Num'            ); % minimum dispersion (standard deviation) for flexible responses (second)
+    options = autofill(options, 'aSCR_sigma_offset',      0.1,        '>=', 0           ); % minimum dispersion (standard deviation) for flexible responses (second)
     options = autofill(options, 'aSCR',                   0,          '*Num'            ); % contains the data to adjust the RF to
     options = autofill(options, 'crfupdate',              0,          '*Num'            ); % update CRF priors to observed SCRF, or use pre-estimated priors, default to use pre-estimated priors
     options = autofill(options, 'crfupdate',              0,          1                 );
@@ -150,7 +150,7 @@ switch FunName
     options = autofill(options, 'sfpre',                  2,          '>=', 0           ); % sf-free window before first event (second)
     % options = autofill(options, 'fixevents', ?); % fixed events tßo adjust amplitude priors
     % options = autofill(options, 'flexevents', ?); % flexible events to adjust amplitude priors
-    % options = autofill(options, 'missing', ?); % data points to be disregarded by inversion
+    options = autofill(options, 'missing',                [],         '*Cell*Num'       ); % data points to be disregarded by inversion
     options = autofill(options, 'rf',                     0,          1                 ); % use pre-specified RF, provided in file, or as 4-element vector in log parameter space
   case 'down'
     %% 2.18 pspm_down
