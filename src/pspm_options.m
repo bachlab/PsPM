@@ -127,8 +127,8 @@ switch FunName
     options = autofill(options, 'sclpost',                5,          '*Num'            ); % scl-change-free window after last event (second)
     options = autofill(options, 'sclpre',                 2,          '*Num'            ); % scl-change-free window before first event (second)
     options = autofill(options, 'sffreq',                 0.5,        '*Num'            ); % maximum frequency of SF in ITIs (Hz)
-    options = autofill(options, 'sfpost',                 5,          '*Num'            ); % sf-free window after last event (second)
-    options = autofill(options, 'sfpre',                  2,          '*Num'            ); % sf-free window before first event (second)
+    options = autofill(options, 'sfpost',                 5,          '>=', 0           ); % sf-free window after last event (second)
+    options = autofill(options, 'sfpre',                  2,          '>=', 0           ); % sf-free window before first event (second)
     options = autofill(options, 'trlnames',               {},         '*Cell*Char'      ); % Cell array of names for individual trials, is used for contrast manager only (e.g. condition descriptions)
   case 'dcm_inv'
     %% 2.17 pspm_dcm_inv
@@ -147,7 +147,7 @@ switch FunName
     options = autofill(options, 'sclpre',                 2.5,        '*Num'            ); % scl-change-free window before first event, avoid overlap of last SCL change with next trial (second)
     options = autofill(options, 'sffreq',                 0.5,        '*Num'            ); % maximum frequency of SF in ITIs (Hz)
     options = autofill(options, 'sfpost',                 5,          '*Num'            ); % sf-free window after last event (second)
-    options = autofill(options, 'sfpre',                  2,          '*Num'            ); % sf-free window before first event (second)
+    options = autofill(options, 'sfpre',                  2,          '>=', 0           ); % sf-free window before first event (second)
     % options = autofill(options, 'fixevents', ?); % fixed events tßo adjust amplitude priors
     % options = autofill(options, 'flexevents', ?); % flexible events to adjust amplitude priors
     % options = autofill(options, 'missing', ?); % data points to be disregarded by inversion
