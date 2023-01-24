@@ -110,7 +110,7 @@ fprintf('Computing non-linear model: %s ...\n', model.modelfile);
 % ------------------------------------------------------------------------
 if nargin < 1, warning('Input model undefined'); return; end;
 
-% set options
+% set model
 % ------------------------------------------------------------------------
 try model.scr; catch, warning('Input data not defined.'); return; end;
 try model.sr; catch, warning('Sample rate not defined.'); return; end;
@@ -121,6 +121,14 @@ try model.iti; catch, warning('ITIs not defined.'); return; end;
 try model.norm; catch, model.norm = 0; end;
 try model.constrained; catch, model.constrained = 0; end
 
+try model.aSCR; catch, model.aSCR = 0; end
+try model.eSCR; catch, model.eSCR = 0; end
+try model.fixevents; catch, warning('model.fixevents not defined.'); end
+try model.flexevents; catch, warning('model.flexevents not defined.'); end
+try model.meanSCR; catch, model.meanSCR = 0; end
+try model.missing_data; catch, warning('model.missing_data not defined.'); end
+
+% set options
 options = pspm_options(options, 'dcm_inv');
 if options.invalid
   return
@@ -153,7 +161,7 @@ theta_n = numel(theta);
 if isfield(options, 'rf')
   if isnumeric(options.rf) && options.rf == 0
     % do nothing
-  elseif any(options.eSCR) || any(options.aSCR) || options.crfupdate
+  elseif any(model.eSCR) || any(model.aSCR) || options.crfupdate
     warning('RF can be provided or estimated, not both.'); return;
   elseif ischar(options.rf)
     [pth, rf, ext] = fileparts(options.rf);
@@ -263,13 +271,13 @@ invopt.inF.dt = 1/sr;
 
 % (2) Estimate response function
 % =======================================================================
-if numel(options.eSCR) > 1
+if numel(model.eSCR) > 1
   c = clock;
   fprintf('----------------------------------------------------------\n');
   fprintf('%02.0f:%02.0f:%02.0f: Estimate response function', c(4:6));
 
   % prepare observed data
-  observed = options.eSCR;
+  observed = model.eSCR;
 
   % prepare inversion
   u = [];
@@ -305,13 +313,13 @@ end;
 
 % (3) Update this on full trial window
 % =======================================================================
-if numel(options.aSCR) > 1
+if numel(model.aSCR) > 1
   c = clock;
   fprintf('----------------------------------------------------------\n');
   fprintf('%02.0f:%02.0f:%02.0f: Adjust response function', c(4:6));
 
   % prepare observed data
-  observed = options.aSCR;
+  observed = model.aSCR;
 
   % prepare inversion
   u = [];
@@ -321,12 +329,12 @@ if numel(options.aSCR) > 1
   u(4, :) = 0;
   u(5, :) = 0;
   for k = 1:aSCRno
-    u(5 + k, :)                 = options.flexevents(k, 1);
-    u(5 + aSCRno + k, :)        = options.flexevents(k, 2);            % aSCR mean upper bound
-    u(5 + 2 * aSCRno + k, :)    = diff(options.flexevents(k, :))/2;    % aSCR SD upper bound
+    u(5 + k, :)                 = model.flexevents(k, 1);
+    u(5 + aSCRno + k, :)        = model.flexevents(k, 2);            % aSCR mean upper bound
+    u(5 + 2 * aSCRno + k, :)    = diff(model.flexevents(k, :))/2;    % aSCR SD upper bound
   end;
   for k = 1:eSCRno
-    u(5 + 3 * aSCRno + k, :)    = options.fixevents(k);                % eSCR onset
+    u(5 + 3 * aSCRno + k, :)    = model.fixevents(k);                % eSCR onset
   end;
   u(:, 1) = 0;
   priors.muTheta = [theta(1:7) repmat([prior.aTheta.m(1) prior.aTheta.s(1) prior.aTheta.a(1)], 1, aSCRno) repmat(prior.eTheta.a, 1, eSCRno)]';
@@ -366,29 +374,29 @@ end;
 
 % (4) estimate the amplitude of the averaged response for use as prior
 % =======================================================================
-if (numel(options.meanSCR) > 1) && (~options.getrf)
+if (numel(model.meanSCR) > 1) && (~options.getrf)
   c = clock;
   fprintf('----------------------------------------------------------\n');
   fprintf('%02.0f:%02.0f:%02.0f: Estimate mean response amplitude', c(4:6));
 
   % prepare inversion
   u = [];
-  u(1, :) = (0:numel(options.meanSCR))/sr;
+  u(1, :) = (0:numel(model.meanSCR))/sr;
   u(2, :) = aSCRno;
   u(3, :) = eSCRno;
   u(4, :) = 0;
   u(5, :) = 0;
   for k = 1:aSCRno
-    u(5 + k, :)                 = options.flexevents(k, 1);
-    u(5 + aSCRno + k, :)        = options.flexevents(k, 2);            % aSCR mean upper bound
+    u(5 + k, :)                 = model.flexevents(k, 1);
+    u(5 + aSCRno + k, :)        = model.flexevents(k, 2);            % aSCR mean upper bound
     if model.constrained
       u(5 + 2 * aSCRno + k, :)    = fixedSD - settings.dcm{1}.sigma_offset;    % aSCR SD upper bound
     else
-      u(5 + 2 * aSCRno + k, :)    = diff(options.flexevents(k, :))/2 - settings.dcm{1}.sigma_offset;    % aSCR SD upper bound
+      u(5 + 2 * aSCRno + k, :)    = diff(model.flexevents(k, :))/2 - settings.dcm{1}.sigma_offset;    % aSCR SD upper bound
     end
   end;
   for k = 1:eSCRno
-    u(5 + 3 * aSCRno + k, :)    = options.fixevents(k);                % eSCR onset
+    u(5 + 3 * aSCRno + k, :)    = model.fixevents(k);                % eSCR onset
   end;
   u(:, 1) = 0;
   aSCRpriors = repmat([prior.aTheta.m' prior.aTheta.s' prior.aTheta.a']', aSCRno, 1);
@@ -409,16 +417,16 @@ if (numel(options.meanSCR) > 1) && (~options.getrf)
   priors.SigmaX0 = zeros(dim.n);
   priors.SigmaX0(1:3,1:3) = eye(3);
   % initialise priors in correct dimensions
-  priors.iQy = cell(numel(options.meanSCR), 1);
-  priors.iQx = cell(numel(options.meanSCR), 1);
-  for k = 1:numel(options.meanSCR)  % default priors on noise covariance
+  priors.iQy = cell(numel(model.meanSCR), 1);
+  priors.iQx = cell(numel(model.meanSCR), 1);
+  for k = 1:numel(model.meanSCR)  % default priors on noise covariance
     priors.iQy{k} = 1;
     priors.iQx{k} = eye(dim.n);
   end;
   invopt.priors = priors;
 
   % estimate
-  [post, out] = VBA_NLStateSpaceModel(options.meanSCR(:)',u,f_fname,g_fname,dim,invopt);
+  [post, out] = VBA_NLStateSpaceModel(model.meanSCR(:)',u,f_fname,g_fname,dim,invopt);
 
   % extract params
   for k = 1:aSCRno
@@ -533,7 +541,7 @@ if ~options.getrf
 
       % assign data
       y = yscr{sn}(win);
-      ymissing = options.missing{sn}(win);
+      ymissing = model.missing_data{sn}(win);
 
       % intial states
       priors.SigmaX0 = zeros(7);

@@ -132,14 +132,12 @@ switch FunName
     options = autofill(options, 'trlnames',               {},         '*Cell*Char'      ); % Cell array of names for individual trials, is used for contrast manager only (e.g. condition descriptions)
   case 'dcm_inv'
     %% 2.17 pspm_dcm_inv
-    options = autofill(options, 'aSCR_sigma_offset',      0.1,        '>=', 0           ); % minimum dispersion (standard deviation) for flexible responses (second)
-    options = autofill(options, 'aSCR',                   0,          '*Num'            ); % contains the data to adjust the RF to
+    options = autofill(options, 'aSCR_sigma_offset',      0.1,        '*Num'            ); % minimum dispersion (standard deviation) for flexible responses (second)
     options = autofill(options, 'crfupdate',              0,          '*Num'            ); % update CRF priors to observed SCRF, or use pre-estimated priors, default to use pre-estimated priors
     options = autofill(options, 'crfupdate',              0,          1                 );
     options = autofill(options, 'depth',                  2,          '*Int'            ); % no of trials to invert at the same time
     options = autofill(options, 'dispsmallwin',           0,          '*Num'            );
     options = autofill(options, 'dispwin',                1,          0                 );
-    options = autofill(options, 'eSCR',                   0,          '*Num'            ); % contains the data to estimate RF from
     options = autofill(options, 'getrf',                  0,          1                 ); % only estimate RF, do not do trial-wise DCM
     options = autofill(options, 'meanSCR',                0,          '*Num'            ); % data to adjust the response amplitude priors to
     options = autofill(options, 'overwrite',              1,          [0, 2]            );
@@ -148,9 +146,6 @@ switch FunName
     options = autofill(options, 'sffreq',                 0.5,        '>=', 0           ); % maximum frequency of SF in ITIs (Hz)
     options = autofill(options, 'sfpost',                 5,          '>=', 0           ); % sf-free window after last event (second)
     options = autofill(options, 'sfpre',                  2,          '>=', 0           ); % sf-free window before first event (second)
-    options = autofill(options, 'fixevents',              [],         '*Num'            ); % fixed events tßo adjust amplitude priors
-    options = autofill(options, 'flexevents',             [],         '*Num'            ); % flexible events to adjust amplitude priors
-    options = autofill(options, 'missing',                [],         '*Cell*Num'       ); % data points to be disregarded by inversion
     options = autofill(options, 'rf',                     0,          1                 ); % use pre-specified RF, provided in file, or as 4-element vector in log parameter space
   case 'down'
     %% 2.18 pspm_down
