@@ -148,8 +148,8 @@ switch FunName
     options = autofill(options, 'sffreq',                 0.5,        '>=', 0           ); % maximum frequency of SF in ITIs (Hz)
     options = autofill(options, 'sfpost',                 5,          '>=', 0           ); % sf-free window after last event (second)
     options = autofill(options, 'sfpre',                  2,          '>=', 0           ); % sf-free window before first event (second)
-    % options = autofill(options, 'fixevents', ?); % fixed events tßo adjust amplitude priors
-    % options = autofill(options, 'flexevents', ?); % flexible events to adjust amplitude priors
+    options = autofill(options, 'fixevents',              [],         '*Num'            ); % fixed events tßo adjust amplitude priors
+    options = autofill(options, 'flexevents',             [],         '*Num'            ); % flexible events to adjust amplitude priors
     options = autofill(options, 'missing',                [],         '*Cell*Num'       ); % data points to be disregarded by inversion
     options = autofill(options, 'rf',                     0,          1                 ); % use pre-specified RF, provided in file, or as 4-element vector in log parameter space
   case 'down'
