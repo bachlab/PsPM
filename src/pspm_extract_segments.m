@@ -416,10 +416,12 @@ if options.plot
 end
 
 %% This section gives each trial over all session a uniquie identifier.
-all_sessions = cell2mat(cellfun(@(x)reshape(x, [min(size(x)), max(size(x))]),comb_sessions,'un', 0));
-all_cond_nr =cell2mat(cellfun(@(x)reshape(x, [min(size(x)), max(size(x))]),comb_cond_nr,'un', 0));
-all_onsets  = cell2mat(cellfun(@(x)reshape(x, [min(size(x)), max(size(x))]),comb_onsets,'un', 0));
-all_dur = cell2mat(cellfun(@(x)reshape(x, [min(size(x)), max(size(x))]),comb_durations,'un', 0));
+
+all_sessions = pspm_reshape(comb_sessions);
+all_cond_nr = pspm_reshape(comb_cond_nr);
+all_onsets = pspm_reshape(comb_onsets);
+all_dur = pspm_reshape(comb_durations);
+
 all_sess_ons =[all_onsets' , all_sessions'];
 %all_sess_ons_cond = [all_onsets' , all_sessions', all_cond_nr'];
 sorted_session = sortrows(all_sess_ons,[2 1]);
@@ -672,3 +674,9 @@ end
 %% Return values
 sts = 1;
 return
+
+function Y = pspm_reshape(X)
+y_cell = cellfun(@(x)reshape(x, [min(size(x)), max(size(x))]), X,'un', 0);
+isEmpty = cellfun( @isempty, y_cell ) ;
+y_cell(isEmpty) = {NaN} ;
+Y = cell2mat( y_cell );
