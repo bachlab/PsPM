@@ -307,6 +307,18 @@ if nFile ~= numel(model.missing)
   return
 end
 
+% 2.11 Fill model values
+try model.aSCR; catch, model.aSCR = 0; end
+try model.eSCR; catch, model.eSCR = 0; end
+try model.meanSCR; catch, model.meanSCR = 0; end
+% These parameters were set with default fallback values but will be
+% determined later by processing
+% try model.fixevents; catch, warning('model.fixevents not defined.'); end
+% try model.flexevents; catch, warning('model.flexevents not defined.'); end
+% try model.missing_data; catch, warning('model.missing_data not defined.'); end
+% These parameters do not need to have a default value and will be
+% determined later
+
 %% 3 Check, get and prepare data
 
 % split into subsessions
@@ -628,7 +640,7 @@ model.iti = sbs_iti(proc_subsessions);
 model.events = {sbs_newevents{1}(proc_subsessions), sbs_newevents{2}(proc_subsessions)};
 model.lasttrlfiltered = lasttrial_log; % recorded the sessions that have last trial filtered
 model.scr = sbs_data(proc_subsessions);
-options.missing = sbs_missing(proc_subsessions);
+model.missing_data = sbs_missing(proc_subsessions);
 
 %% 5 Prepare data for CRF estimation and for amplitude priors
 % 5.1 get average event sequence per trial
@@ -663,7 +675,7 @@ end
 startevent = min([flexevents(:); fixevents(:)]);
 flexevents = flexevents - startevent;
 fixevents  = fixevents  - startevent;
-options.flexevents = flexevents;
+model.flexevents = flexevents;
 options.fixevents  = fixevents;
 clear flexseq fixseq flexevents fixevents startevent
 
@@ -676,8 +688,8 @@ if (options.indrf || options.getrf) && min(proc_miniti) < 5
 end
 
 % 5.3 extract PCA of last fixed response (eSCR) if last event is fixed --
-if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
-    || (max(options.fixevents > max(options.flexevents(:, 2), [], 2))))
+if (options.indrf || options.getrf) && (isempty(model.flexevents) ...
+    || (max(options.fixevents > max(model.flexevents(:, 2), [], 2))))
   [~, lastfix] = max(options.fixevents);
   % extract data
   winsize = floor(model.sr * min([proc_miniti 10]));
@@ -723,7 +735,7 @@ if (options.indrf || options.getrf) && (isempty(options.flexevents) ...
       [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
       options.indrf = 0;
     else
-      options.eSCR = eSCR;
+      model.eSCR = eSCR;
     end
   else
     warning('ID:invalid_input',...
@@ -751,7 +763,7 @@ end
 clear c n
 
 % 5.5 do PCA if required
-if (options.indrf || options.getrf) && ~isempty(options.flexevents)
+if (options.indrf || options.getrf) && ~isempty(model.flexevents)
   if isempty(find(isnan(D(:))))
     % mean SOA
     meansoa = mean(cell2mat(model.trlstop') - cell2mat(model.trlstart'));
@@ -769,7 +781,7 @@ if (options.indrf || options.getrf) && ~isempty(options.flexevents)
     if aSCR(ind) < 0, aSCR = -aSCR; end
     aSCR = (aSCR - min(aSCR))/(max(aSCR) - min(aSCR));
     clear u s c p n s comp mx ind mD
-    options.aSCR = aSCR;
+    model.aSCR = aSCR;
   else
     warning('ID:invalid_input', ...
       'Due to NaNs after some trial endings, PCA could not be computed');
@@ -778,7 +790,7 @@ if (options.indrf || options.getrf) && ~isempty(options.flexevents)
 end
 
 % 5.6 get mean response
-options.meanSCR = transpose(nanmean(D));
+model.meanSCR = transpose(nanmean(D));
 
 %% 6 Invert DCM
 dcm = pspm_dcm_inv(model, options);
