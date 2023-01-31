@@ -47,6 +47,9 @@ fprintf('PsPM: loading defaults ... \n');
 
 % check various settings
 global settings
+if ~isempty(settings) % initialise settings
+  settings = [];
+end
 p = path;
 fs = filesep;
 
@@ -888,7 +891,7 @@ end
 if exist([pth, 'pspm_settings.mat'], 'file')
   load([pth, 'pspm_settings.mat']);
 else
-  settings=defaults;
+  settings = defaults;
 end
 
 %% 11 Finalisation

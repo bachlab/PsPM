@@ -50,6 +50,9 @@ function [sts, out] = pspm_extract_segments(varargin)
 %   │                     For dcm structures the option length will be
 %   │                     ignored and length will be set from timing
 %   │                     data.
+%   │                     The default value is 10. The optional values are >= 0.
+%   │                     When .length is set to be 0, length will be set from timing
+%   │                     data.
 %   ├──────────────.plot: If 1 mean values (solid) and standard error of
 %   │                     the mean (dashed) will be ploted. Default is 0.
 %   ├────────.outputfile: Define filename to store segments. If is equal
@@ -482,7 +485,7 @@ for session_idx = 1:n_sessions
     assert(numel(onset_write_indices_in_cond_and_session) == num_onsets);
 
     for onset_idx = 1:num_onsets
-      if options.length <= 0
+      if options.length == 0
         try
           segment_length = durations_cond(onset_idx);
           if segment_length==0
