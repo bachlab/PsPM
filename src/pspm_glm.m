@@ -82,7 +82,7 @@ function varargout = pspm_glm(model, options)
 %   │             Define whether to overwrite existing output files or not.
 %   │             Default value: determined by pspm_overwrite.
 %   ├──.marker_chan_num:
-%   │             marker channel number; default last marker channel.
+%   │             marker channel number; default first marker channel.
 %   └──.exclude_missing:
 %                 marks trials during which NaN percentage exceeds
 %                 a cutoff value. Requires two subfields:

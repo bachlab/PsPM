@@ -236,7 +236,7 @@ switch FunName
     %% 2.28 pspm_glm
     options = autofill(options, 'norm',                   0,          1                 );
     options = autofill(options, 'overwrite',              0,          [1, 2]            );
-    options = autofill(options, 'marker_chan_num',        'marker',   '*Num*Char'       );
+    options = autofill(options, 'marker_chan_num',        1,          '*Num*Char'       );
     if ~isfield(options, 'exclude_missing')
       options.exclude_missing = struct('segment_length',-1,'cutoff',0);
     else
@@ -268,7 +268,7 @@ switch FunName
     options = autofill(options, 'zscored',                0,          1                 );
   case 'merge'
     %% 2.32 pspm_merge
-    options = autofill(options, 'marker_chan_num',        [0,0],      '*Num'            );
+    options = autofill(options, 'marker_chan_num',        [1,2],      '*Num'            );
     if ~all(size(options.marker_chan_num(:))==[2,1])
       options.invalid = 1;
       return
@@ -375,7 +375,7 @@ switch FunName
     options = autofill(options,'dispsmallwin',            0,          1                 );
     options = autofill(options,'dispwin',                 1,          0                 );
     options = autofill(options,'fresp',                   0.5,        '>=', 0           );
-    options = autofill(options,'marker_chan_num',         0,          '*Int'            );
+    options = autofill(options,'marker_chan_num',         1,          '*Int*Char'       );
     options = autofill(options,'overwrite',               1,          [0, 2]            );
     options = autofill(options,'threshold',               0.1,        '>', 0            );
     options = autofill(options,'theta',                   [0.923581, ...
@@ -424,7 +424,7 @@ switch FunName
   case 'trim'
     %% 2.46 pspm_trim
     options = autofill(options, 'drop_offset_markers',    0,          '*Int'            );
-    options = autofill(options, 'marker_chan_num',        0,          '*Int'            );
+    options = autofill(options, 'marker_chan_num',        1,          '*Int*Char'       );
     options = autofill(options, 'overwrite',              0,          [1, 2]            );
   case 'write_channel'
     %% 2.47 pspm_write_channel
@@ -917,7 +917,7 @@ end
 
 function options = fill_glm(options)
 if ~(isnumeric(options.marker_chan_num) && numel(options.marker_chan_num)==1)
-  options.marker_chan_num = 'marker';
+  options.marker_chan_num = 1;%'marker';
 end
 if isfield(options,'exclude_missing')
   if ~(isfield(options.exclude_missing, 'segment_length') && ...
