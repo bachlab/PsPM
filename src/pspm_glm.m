@@ -316,7 +316,7 @@ else
   if ~isfield(model.bf, 'fhandle')
     warning('No basis function given.');
   elseif ischar(model.bf.fhandle)
-    [basepath, basefn, baseext] = fileparts(model.bf.fhandle);
+    [basepath, basefn, ~] = fileparts(model.bf.fhandle);
     model.bf.fhandle = str2func(basefn);
   elseif ~isa(model.bf.fhandle, 'function_handle')
     warning('Basis function must be a string or function handle.');

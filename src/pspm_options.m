@@ -916,7 +916,21 @@ elseif strcmpi(options.mode,'fixation') && isfield(options, 'fixation_point') &&
 end
 
 function options = fill_glm(options)
-if ~(isnumeric(options.marker_chan_num) && numel(options.marker_chan_num)==1)
+if isfield(options, 'marker_chan_num')
+  if isnumeric(options.marker_chan_num)
+    if numel(options.marker_chan_num) ~= 1
+      warning('ID:invalid_input', 'If set as a number, options.marker_chan_num needs can only be a singular number.');
+      options.invalid = 1;
+      return
+    end
+  else
+    if ~ischar(options.marker_chan_num)
+      warning('ID:invalid_input', 'options.marker_chan_num can only be a number or a character.');
+      options.invalid = 1;
+      return
+    end
+  end
+else
   options.marker_chan_num = 1;%'marker';
 end
 if isfield(options,'exclude_missing')
