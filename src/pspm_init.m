@@ -28,8 +28,7 @@ function pspm_init
 clc
 
 %% 0 load text for help and warnings
-pspm_text;
-load('pspm_text.mat')
+
 
 %% 1 license & user output
 fid = fopen('pspm_msg.txt');
@@ -52,6 +51,9 @@ if ~isempty(settings) % initialise settings
 end
 p = path;
 fs = filesep;
+
+pspm_text(p);
+load(fullfile(p,'pspm_text.mat'))
 
 % 2.2 check if subfolders are already in path
 % get subfolders
@@ -904,5 +906,9 @@ settings.signal = signal;
 settings.pspm_version = pspm_vers;
 settings.developmode = 1;
 
-return
+%% 12 Cleaning
+if isfile(fullfile(p,'pspm_text.mat'))
+  delete(fullfile(p,'pspm_text.mat'))
 end
+
+return
