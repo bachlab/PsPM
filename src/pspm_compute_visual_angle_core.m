@@ -30,8 +30,14 @@ options = pspm_options(options, 'compute_visual_angle_core');
 if options.invalid
   return
 end
-gx_d = x_data;
-gy_d = y_data;
+if options.interpolate
+  interpolate_options = struct('extrapolate', 1);
+  [ sts_x, gx_d ] = pspm_interpolate(x_data, interpolate_options);
+  [ sts_x, gy_d ] = pspm_interpolate(y_data, interpolate_options);
+else
+  gx_d = x_data;
+  gy_d = x_data;
+end
 % The convention is that the origin of the screen is in the bottom
 % left corner, so the following line is not needed a priori, but I
 % leave it anyway just in case :

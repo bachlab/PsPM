@@ -40,6 +40,7 @@ switch FunName
   case 'compute_visual_angle_core'
     %% 2.2 pspm_compute_visual_angle_core
     % leave for future development
+    options = autofill(options, 'interpolate',            1,          0                 );
   case 'compute_visual_angle'
     %% 2.3 pspm_compute_visual_angle
     options = autofill_channel_action(options);
