@@ -821,7 +821,7 @@ end
 if options.manual_chosen == 1 || ...
     (options.manual_chosen == 0 && strcmpi(options.model_strc.modeltype,'glm'))
   if ~isfield(options, 'marker_chan')
-    options.marker_chan = repmat({-1}, numel(options.data_fn),1);
+    options.marker_chan = repmat({1}, numel(options.data_fn),1);
   elseif ~iscell(options.marker_chan)
     options.marker_chan = repmat({options.marker_chan}, size(options.data_fn));
   end
