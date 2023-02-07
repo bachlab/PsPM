@@ -792,7 +792,7 @@ if (options.indrf || options.getrf) && ~isempty(model.flexevents)
 end
 
 % 5.6 get mean response
-model.meanSCR = transpose(nanmean(D));
+model.meanSCR = transpose(mean(D,'omitnan') );
 
 %% 6 Invert DCM
 dcm = pspm_dcm_inv(model, options);
