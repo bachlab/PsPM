@@ -1,36 +1,27 @@
-function [sts, data]=pspm_get_ecg(import)
-% pspm_get_ecg is a common function for importing continuous ECG data
-%
-% FORMAT:
+function [sts, data] = pspm_get_ecg(import)
+% ● Description
+%   pspm_get_ecg is a common function for importing continuous ECG data.
+% ● Format
 %   [sts, data]= pspm_get_ecg(data, import)
-%   with data: column vector of waveform data
-%        import: import job structure with mandatory fields .data and .sr
-%  
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Arguments
+%     data: column vector of waveform data
+%   import: import job structure with mandatory fields .data and .sr
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-% $Id$
-% $Rev$
-
-% v002 29.07.2013 changed to 3.0 architecture
-% v001 08.05.2012 Dominik R Bach
-
-global settings;
-if isempty(settings), pspm_init; end;
-
-% initialise status
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
-
-% assign respiratory data
+%% assign respiratory data
 data.data = import.data(:);
-
-% add header
-data.header.chantype = 'ecg';
+%% add header
+data.header.channeltype = 'ecg';
 data.header.units = import.units;
 data.header.sr = import.sr;
-
-% check status
+%% check status
 sts = 1;
-
-return;
+return

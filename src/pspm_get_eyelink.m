@@ -1,47 +1,40 @@
 function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
+% ● Description
+%   pspm_get_eyelink is the main function for import of SR Research Eyelink 1000
+%   files.
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import);
+% ● Arguments
+%   ┌────────────import:  import job structure with
+%   │ [mandatory fields]
+%   ├───────────────.sr:
+%   ├─────────────.data:  except for custom channels, the field .channel will
+%   │                     be ignored. The id will be determined according to
+%   │                     the channel type.
+%   │ [optional fields]
+%   ├.eyelink_trackdist:  A numeric value representing the distance between
+%   │                     camera and recorded eye. Disabled if 0 or negative.
+%   │                     If it is a positive numeric value, causes the
+%   │                     conversion from arbitrary units to distance unit
+%   │                     according to the set distance.
+%   └────.distance_unit:  The unit to which the data should be converted and
+%                         in which eyelink_trackdist is given.
+% ● Developer's Notes
+%   In this function, channels related to eyes will not produce an error, if
+%   they do not exist. Instead they will produce an empty channel (a channel
+%   with NaN values only).
+% ● History
+%   Introduced in PsPM 3.0 and updated in PsPM 5.1.2
+%   Written in 2008-2017 by Tobias Moser (University of Zurich)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
-% pspm_get_eyelink is the main function for import of SR Research Eyelink 1000
-% files.
-%
-% FORMAT: [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import);
-%          import: import job structure with
-%                   - mandatory fields:
-%                       .sr
-%
-%                       .data
-%                       except for custom channels, the field .channel will
-%                       be ignored. The id will be determined according to
-%                       the channel type.
-%
-%                   - optional fields:
-%                       .eyelink_trackdist:
-%                           A numeric value representing the distance between
-%                           camera and recorded eye. Disabled if 0 or negative.
-%                           If it is a positive numeric value, causes the
-%                           conversion from arbitrary units to distance unit
-%                           according to the set distance.
-%
-%                       .distance_unit:
-%                           the unit to which the data should be converted and
-%                           in which eyelink_trackdist is given
-%
-%
-%
-% In this function, channels related to eyes will not produce an error, if
-% they do not exist. Instead they will produce an empty channel (a channel
-% with NaN values only).
-%
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2017 Tobias Moser (University of Zurich)
-% PsPM 5.1.2
-% 2021 Teddy Chao (WCHN, UCL)
-
-
-%% initialise
-global settings;
-if isempty(settings), pspm_init; end
-sourceinfo = []; sts = -1;
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
+sts = -1;
+sourceinfo = [];
 % add specific import path for specific import function
 addpath(pspm_path('Import','eyelink'));
 
@@ -67,10 +60,10 @@ for i = 1:numel(data)-1
     mask_chans = {'blink_l', 'blink_r', 'saccade_l', 'saccade_r'};
   end
   expand_factor = 0;
-  
+
   data{i}.channels = blink_saccade_filtering(...
     data{i}.channels, ...
-    data{i}.channels_header, ...
+    data{i}.channel_header, ...
     mask_chans, ...
     expand_factor * data{i}.sampleRate ...
     );
@@ -106,45 +99,45 @@ else
   % try to concatenate sessions according to timing
   sr = data{1}.sampleRate;
   last_time = data{1}.raw(1,1);
-  
+
   channels = [];
   markers = [];
-  
+
   mi_value = [];
   mi_name = {};
-  
+
   n_cols = size(data{1}.channels, 2);
   counter = 1;
-  
+
   for c = 1:numel(data)
     if sr ~= data{c}.sampleRate
       warning('ID:invalid_input', ['File consists of multiple ', ...
         'sessions with different sample rates: Unable to concatenate sessions.']);
       return;
     end
-    
+
     start_time = data{c}.raw(1,1);
     end_time = data{c}.raw(end,1);
-    
+
     % time stamps are in miliseconds. if sampling rate different
     % then we have to correct for that otherwise break is too small/large
     n_diff = round((start_time - last_time)*sr/1000);
     if n_diff > 0
-      
+
       % channels and markers
       channels(counter:(counter+n_diff-1),1:n_cols) = NaN(n_diff, n_cols);
       markers(counter:(counter+n_diff-1), 1) = zeros(n_diff,1);
-      
+
       % markerinfos
       mi_value(end + 1 : end + n_diff, 1) = zeros(n_diff,1);
       mi_name( end + 1 : end + n_diff, 1) = {'0'};
-      
+
       % find if there are markers in the breaks
       break_markers_idx = all_markers.times>=last_time & all_markers.times<=start_time;
       tmp_times = all_markers.times(break_markers_idx);
       tmp_vals  = all_markers.vals(break_markers_idx);
       tmp_names = all_markers.names(break_markers_idx);
-      
+
       % calculate, weher to insert missing markers
       tmp_marker_idx = round((tmp_times- last_time)*sr/1000)-1 + counter;
       markers(tmp_marker_idx,1) = 1;
@@ -152,28 +145,28 @@ else
       mi_name(tmp_marker_idx,1) = tmp_names;
       counter = counter + n_diff;
     end
-    
+
     n_data = size(data{c}.channels, 1);
-    
+
     % channels and markers
     channels(counter:(counter+n_data-1),1:n_cols) = data{c}.channels;
     markers(counter:(counter+n_data-1),1) = data{c}.markers;
-    
+
     % markerinfos
     n_markers = numel(data{c}.markerinfos.value);
     mi_value(end + 1 : end + n_markers, 1) = data{c}.markerinfos.value;
     mi_name( end + 1 : end + n_markers, 1) = data{c}.markerinfos.name;
-    
+
     counter = counter + n_data;
     last_time = end_time;
   end
-  
+
   markerinfos.name = mi_name;
   markerinfos.value = mi_value;
-  
+
   % units (they should be for all channels the same)
   units = data{1}.units;
-  
+
   % samplerate
   sampleRate = sr;
 end
@@ -198,16 +191,16 @@ n_blink = sum (channels(:,blink_idx));
 n_saccade= sum (channels(:,saccade_idx));
 
 for k = 1:numel(import)
-  
+
   if ~any(strcmpi(import{k}.type, ...
       settings.import.datatypes(strcmpi('eyelink', ...
-      {settings.import.datatypes.short})).chantypes))
+      {settings.import.datatypes.short})).channeltypes))
     warning('ID:channel_not_contained_in_file', ...
       'Channel type ''%s'' is not supported.\n', ...
       import{k}.type);
     return;
   end
-  
+
   if strcmpi(import{k}.type, 'marker')
     import{k}.marker = 'continuous';
     import{k}.sr     = sampleRate;
@@ -215,15 +208,15 @@ for k = 1:numel(import)
     % marker info is read and set (in this instance) but
     % imported data cannot be read at the moment (in later instances)
     import{k}.markerinfo = markerinfos;
-    
+
     % by default use 'all' flank for translation from continuous to events
     if ~isfield(import{k},'flank')
       import{k}.flank = 'all';
     end
   else
-    % determine chan id from chantype - eyelink specific
+    % determine channel id from channeltype - eyelink specific
     % thats why channel ids will be ignored!
-    if strcmpi(data{1}.eyesObserved, settings.lateral.cap.b) || strcmpi(data{1}.eyesObserved, 'lr')
+    if strcmpi(data{1}.eyesObserved, settings.lateral.cap.c) || strcmpi(data{1}.eyesObserved, 'lr')
       chan_struct = {'pupil_l', 'pupil_r', 'gaze_x_l', 'gaze_y_l', ...
         'gaze_x_r', 'gaze_y_r','blink_l','blink_r','saccade_l','saccade_r'};
     else
@@ -231,44 +224,44 @@ for k = 1:numel(import)
       chan_struct = {['pupil_' eye_obs], ['gaze_x_' eye_obs], ...
         ['gaze_y_' eye_obs], ['blink_' eye_obs],['saccade_' eye_obs]};
     end
-    
+
     if strcmpi(import{k}.type, 'custom')
-      chan = import{k}.channel;
+      channel = import{k}.channel;
     else
-      chan = find(strcmpi(chan_struct, import{k}.type), 1, 'first');
+      channel = find(strcmpi(chan_struct, import{k}.type), 1, 'first');
     end
-    
+
     if ~isempty(regexpi(import{k}.type, '_[lr]', 'once')) && ...
         isempty(regexpi(import{k}.type, ['_([' data{1}.eyesObserved '])'], 'once'))
       warning('ID:channel_not_contained_in_file', ...
         ['Cannot import channel type %s, as data for this eye', ...
         ' does not seem to be present in the datafile. ', ...
         'Will create artificial channel with NaN values.'], import{k}.type);
-      
+
       % create NaN values for this channel
       import{k}.data = NaN(size(channels, 1),1);
-      chan = -1;
+      channel = -1;
       import{k}.units = '';
     else
-      if chan > size(channels, 2)
+      if channel > size(channels, 2)
         warning('ID:channel_not_contained_in_file', ...
           'Column %02.0f (%s) not contained in file %s.\n', ...
-          chan, import{k}.type, datafile);
+          channel, import{k}.type, datafile);
         return;
       end
-      import{k}.data = channels(:, chan);
-      import{k}.units = units{chan};
+      import{k}.data = channels(:, channel);
+      import{k}.units = units{channel};
     end
-    
-    
+
+
     import{k}.sr = sampleRate;
-    sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan);
-    
-    % chan specific stats
+    sourceinfo.channel{k, 1} = sprintf('Column %02.0f', channel);
+
+    % channel specific stats
     sourceinfo.chan_stats{k,1} = struct();
     n_inv = sum(isnan(import{k}.data));
     sourceinfo.chan_stats{k}.nan_ratio = n_inv/n_data;
-    
+
     % check for transfer if import type is a pupil
     if ~isempty(regexpi(import{k}.type, 'pupil', 'once'))
       if isfield(import{k}, 'eyelink_trackdist') && ...
@@ -312,19 +305,19 @@ for k = 1:numel(import)
       import{k}.range = [data{1}.gaze_coords.ymin ...
         data{1}.gaze_coords.ymax];
     end
-    
+
     % create statistics for eye specific channels
-    if ~isempty(regexpi(import{k}.type, ['_[', settings.lateral.char.b, ']'], 'once'))
+    if ~isempty(regexpi(import{k}.type, ['_[', settings.lateral.char.c, ']'], 'once'))
       if size(n_blink, 2) > 1
-        eye_t = regexp(import{k}.type, ['.*_([', settings.lateral.char.b, '])'], 'tokens');
+        eye_t = regexp(import{k}.type, ['.*_([', settings.lateral.char.c, '])'], 'tokens');
         n_eye_blink = n_blink(strcmpi(eye_t{1}, {'l','r'}));
       else
         n_eye_blink = n_blink;
       end
       sourceinfo.chan_stats{k}.blink_ratio = n_eye_blink / n_data;
-      
+
       if size(n_saccade, 2) > 1
-        eye_t = regexp(import{k}.type, ['.*_([',settings.lateral.char.b,'])'], 'tokens');
+        eye_t = regexp(import{k}.type, ['.*_([',settings.lateral.char.c,'])'], 'tokens');
         n_eye_saccade = n_saccade(strcmpi(eye_t{1}, {'l','r'}));
       else
         n_eye_saccade = n_saccade;
@@ -345,7 +338,7 @@ sourceinfo.elcl_proc = data{1}.elcl_proc;
 left_occurance = any(cell2mat(cellfun(@(x) ~isempty(regexpi(x.type, '_l', 'once')), import,'UniformOutput',0)));
 right_occurance = any(cell2mat(cellfun(@(x) ~isempty(regexpi(x.type, '_r', 'once')), import,'UniformOutput',0)));
 if left_occurance && right_occurance
-  sourceinfo.eyesObserved = settings.lateral.char.b;
+  sourceinfo.eyesObserved = settings.lateral.char.c;
 elseif left_occurance && ~right_occurance
   sourceinfo.eyesObserved = 'l';
 else
@@ -375,7 +368,5 @@ end
 
 % remove specific import path
 rmpath(pspm_path('Import','eyelink'));
-
 sts = 1;
-return;
-end
+return

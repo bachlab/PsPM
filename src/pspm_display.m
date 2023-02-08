@@ -1,27 +1,23 @@
 function varargout = pspm_display(varargin)
-% -------------------------------------------------------------------------
-
-% pspm_display (...)
-%
-%   Code for the GUI that is used to display different data from scr
+% ● Description
+%   pspm_display is the code for the GUI that is used to display different data from scr
 %   datafiles.
+% ● Arguments
 %   Accepts input: 'filepath/filename'
-%
-%__________________________________________________________________________
-% Introduced in PsPM 3.0
-% (C) 2013 Philipp C Paulus (Technische Universitaet Dresden)
-%
-% Updated in PsPM 5.1.2
-% 2021 Teddy Chao (WCHN, UCL)
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2013 Philipp C Paulus (Technische Universitaet Dresden)
+%   Maintained in 2021 by Teddy Chao (UCL)
 
-% initialise
-% -------------------------------------------------------------------------
-global settings;
+%% Initialise
+global settings
 if isempty(settings)
   pspm_init;
 end
+sts = -1;
+
 global channel_type_reference_list;
-channel_type_reference_list = settings.chantypes;
+channel_type_reference_list = settings.channeltypes;
 % -------------------------------------------------------------------------
 
 % Begin initialization code - DO NOT EDIT
@@ -61,15 +57,15 @@ if isempty(settings)
   pspm_init;
 end
 
-% load chantypes from settings variable
+% load channeltypes from settings variable
 
 j = 1 ; l = 1;
-for k = 1:length(settings.chantypes)
-  if strcmp(settings.chantypes(k).data,'wave')
-    handles.prop.setwave{j} = settings.chantypes(k).type;
+for k = 1:length(settings.channeltypes)
+  if strcmp(settings.channeltypes(k).data,'wave')
+    handles.prop.setwave{j} = settings.channeltypes(k).type;
     j = j+1;
-  elseif strcmp(settings.chantypes(k).data,'events')
-    handles.prop.setevent{l} = settings.chantypes(k).type;
+  elseif strcmp(settings.channeltypes(k).data,'events')
+    handles.prop.setevent{l} = settings.channeltypes(k).type;
     l = l+1;
   end
 end
@@ -91,50 +87,50 @@ if(numel(varargin)) == 1
   [~,filename_display,~] = fileparts(filename);
   handles.tag_summary_source_file_content.String = filename_display;
   update_summary_list(handles);
-  
+
   % handles.text_file_summary = filename;
   % text_file_summary = ['Data source: ', filename, newline, newline, ...
   %         'Duration: ', num2str(info.duration), newline,...
   %         'Import date: ', info.importdate, newline, ...
   %         'Position of marker: ', num2str(filestruct.posofmarker)];
   %     set(handles.text_file_summary, 'String', text_file_summary);
-  
+
   guidata(hObject, handles);
-  
+
   % ---add text to wave listbox--------------------------------------
-  
+
   listitems{1,1} = 'none';
   handles.prop.wavechans(1) = 0;
   j = 2;
   for k = 1:length(handles.data)
-    if any(strcmp(handles.data{k,1}.header.chantype,handles.prop.setwave))
-      listitems{j,1} = handles.data{k,1}.header.chantype;
+    if any(strcmp(handles.data{k,1}.header.channeltype,handles.prop.setwave))
+      listitems{j,1} = handles.data{k,1}.header.channeltype;
       handles.prop.wavechans(j) = k;
       j = j+1;
     end
   end
-  
+
   set(handles.list_wave_channel,'String',listitems);
   clear listitems
-  
+
   % ---add text to event listbox & activate additional options-------
   listitems{1,1} = 'none';
   handles.prop.eventchans(1) = 0;
   j = 2;
   for k = 1:length(handles.data)
-    if any(strcmp(handles.data{k,1}.header.chantype,handles.prop.setevent))
-      listitems{j,1} = handles.data{k,1}.header.chantype;
+    if any(strcmp(handles.data{k,1}.header.channeltype,handles.prop.setevent))
+      listitems{j,1} = handles.data{k,1}.header.channeltype;
       handles.prop.eventchans(j) = k;
       j = j+1;
       set(handles.option_integrated,'Enable','on');
       set(handles.option_extra,'Enable','on');
     end
   end
-  
+
   set(handles.list_event_channel,'String',listitems);
   set(handles.button_autoscale,'Value',0);
   set(handles.button_all,'Value',1);
-  
+
 elseif numel(varargin)>1
   warning('Too many input arguments. Inputs 2:end ignored. ');
 end
@@ -431,57 +427,57 @@ mesg = 'select pspm_datafiles to display';
 [filename,sts] = spm_select(1,typ,mesg,sel,wd);
 
 if not(sts == 0)
-  
+
   handles.name = filename;
   [~, handles.info, handles.data, ~] = pspm_load_data(filename,0);
   handles.name = filename;
   [~,filename_display,~] = fileparts(filename);
   handles.tag_summary_source_file_content.String = filename_display;
   update_summary_list(handles);
-  
+
   guidata(hObject, handles);
-  
+
   % ---set wave and event channel value to none ---------------------
   handles.prop.wave = 'none';
   set(handles.list_wave_channel,'Value',1)
-  
+
   handles.prop.event = 'none';
   set(handles.list_event_channel,'Value',1)
-  
+
   % ---add text to wave listbox--------------------------------------
-  
+
   listitems{1,1} = 'none';
   handles.prop.wavechans(1) = 0;
   j = 2;
   for k = 1:length(handles.data)
-    if any(strcmp(handles.data{k,1}.header.chantype,handles.prop.setwave))
-      listitems{j,1} = handles.data{k,1}.header.chantype;
+    if any(strcmp(handles.data{k,1}.header.channeltype,handles.prop.setwave))
+      listitems{j,1} = handles.data{k,1}.header.channeltype;
       handles.prop.wavechans(j) = k;
       j = j+1;
     end
   end
-  
+
   set(handles.list_wave_channel,'String',listitems);
   clear listitems
-  
+
   % ---add text to event listbox & activate additional options-------
   listitems{1,1}  =  'none';
   handles.prop.eventchans(1)  =  0;
   j = 2;
   for k = 1:length(handles.data)
-    if any(strcmp(handles.data{k,1}.header.chantype,handles.prop.setevent))
-      listitems{j,1} = handles.data{k,1}.header.chantype;
+    if any(strcmp(handles.data{k,1}.header.channeltype,handles.prop.setevent))
+      listitems{j,1} = handles.data{k,1}.header.channeltype;
       handles.prop.eventchans(j) = k;
       j = j+1;
       set(handles.option_integrated,'Enable','on');
       set(handles.option_extra,'Enable','on');
     end
   end
-  
+
   set(handles.list_event_channel,'String',listitems);
   set(handles.button_autoscale,'Value',0);
   set(handles.button_all,'Value',1);
-  
+
 elseif numel(varargin)>1
   warning('Too many input arguments. Inputs 2:end ignored. ');
 end
@@ -710,7 +706,7 @@ wave = [];
 if not(isempty(handles.prop.eventchans)) && ...
     not(handles.prop.eventchans(handles.prop.idevent)==0) && ...
     strcmp(handles.data{...
-    handles.prop.eventchans(handles.prop.idevent),1}.header.chantype,...
+    handles.prop.eventchans(handles.prop.idevent),1}.header.channeltype,...
     'marker')
   marker = handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
   if get(handles.option_extra,'Value') == 1
@@ -722,7 +718,7 @@ elseif not(isempty(handles.prop.eventchans)) && ...
     not(handles.prop.eventchans(handles.prop.idevent)==0) && ...
     strcmp(...
     handles.data{...
-    handles.prop.eventchans(handles.prop.idevent),1}.header.chantype,'hb')
+    handles.prop.eventchans(handles.prop.idevent),1}.header.channeltype,'hb')
   hbeat = handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
   if get(handles.option_extra,'Value') == 1
     handles.prop.event = 'extra';
@@ -771,7 +767,7 @@ if isempty(wave)
       'Fontsize',settings.ui.FontSizeText)
   else
     f = msgbox(['Nothing to display. ',...
-    'Please select at least one channel.'], 'Error');
+      'Please select at least one channel.'], 'Error');
   end
 else
   y = (0:1/sr.wave:(length(wave)/sr.wave));
@@ -781,7 +777,7 @@ else
   plot(y, wave, 'Color', 'k'); % plot wave channel
   legend(handles.prop.wave);
   % set basline value for the event chanel
-  base(1) = min(wave)-.1*min(wave); 
+  base(1) = min(wave)-.1*min(wave);
   base(2) = min(wave)-(max(wave)-min(wave));
   % Plot heart beats
   if ~isempty(hbeat)
@@ -845,8 +841,8 @@ else
     hold on ; h = stem(y,EVENTS,'r');
     hbase = get(h,'Baseline');
     legend(handles.prop.wave,...
-    [handles.list_event_channel.String{handles.prop.idevent},...
-    ' events'])
+      [handles.list_event_channel.String{handles.prop.idevent},...
+      ' events'])
     if strcmp(handles.prop.event,'extra')
       set(hbase,'BaseValue',base(2),'Visible','off');
     elseif strcmp(handles.prop.event,'integrated')
@@ -1066,9 +1062,9 @@ if r_channels > 1 && c_channels > 1
   for i_r_channel = 1:r_channels
     for i_c_channels = 1:c_channels
       % array_channel_type(r_channels,c_channels) = ...
-      %   handles.data{i_r_channel,i_c_channels}.header.chantype;
+      %   handles.data{i_r_channel,i_c_channels}.header.channeltype;
       targeted_channel_reference = ...
-        handles.data{i_r_channel,i_c_channels}.header.chantype;
+        handles.data{i_r_channel,i_c_channels}.header.channeltype;
       targeted_channel_display = ...
         channel_list_full(strcmp(targeted_channel_reference, ...
         {channel_type_reference_list.type}));
@@ -1090,7 +1086,7 @@ else
       i_r_channels = i_channel;
     end
     targeted_channel_reference = ...
-      handles.data{i_r_channels,i_c_channels}.header.chantype;
+      handles.data{i_r_channels,i_c_channels}.header.channeltype;
     targeted_channel_display = ...
       channel_list_full(strcmp(targeted_channel_reference, ...
       {channel_type_reference_list.type}));

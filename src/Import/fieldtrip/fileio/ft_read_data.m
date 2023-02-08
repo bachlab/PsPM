@@ -788,7 +788,7 @@ switch dataformat
     % In the case that the gdf files are written by one of the FieldTrip
     % realtime applications, such as biosig2ft, the gdf recording can be
     % split over multiple 1GB files. The sequence of files is then
-    %   filename.gdf   <- this is the one that should be specified as the filename/dataset
+    %   filename.gdf   ← this is the one that should be specified as the filename/dataset
     %   filename_1.gdf
     %   filename_2.gdf
     %   ...

@@ -1,39 +1,28 @@
-function [sts, data]=pspm_get_custom(import)
-% pspm_get_custom is a common function for importing custom data
-% in this case the function was made for the blink-data in the 
-% pspm_get_eyelink function
-%
-% FORMAT:
+function [sts, data] = pspm_get_custom(import)
+% ● Description
+%   pspm_get_custom is a common function for importing custom data in this case
+%   the function was made for the blink-data in the pspm_get_eyelink function
+% ● Format
 %   [sts, data]= pspm_get_custom(import)
-%   with import.data: column vector of waveform data
-%        import.sr: sample rate
-%  
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2009-2014 Tobias Moser (University of Zurich)
+% ● Arguments
+%   import.data: column vector of waveform data
+%     import.sr: sample rate
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2009-2014 by Tobias Moser (University of Zurich)
 
-% $Id$
-% $Rev$
-
-
-global settings;
-if isempty(settings), pspm_init; end;
-
-% initialise status
-% -------------------------------------------------------------------------
+%% Initialise
+global settings
+if isempty(settings)
+	pspm_init;
+end
 sts = -1;
-
-% assign data
-% -------------------------------------------------------------------------
+%% assign data
 data.data = import.data(:);
-
-% add header
-% -------------------------------------------------------------------------
-data.header.chantype = 'custom';
+%% add header
+data.header.channeltype = 'custom';
 data.header.units = import.units;
 data.header.sr = import.sr;
-
-% check status
+%% check status
 sts = 1;
-
-return;
+return

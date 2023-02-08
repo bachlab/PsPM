@@ -1,29 +1,29 @@
-function [sts, data]=pspm_get_blink_l(import)
-% pspm_get_blink_l is a common function for importing eyelink data
-% (blink_l data)
-%
-% FORMAT:
+function [sts, data] = pspm_get_blink_l(import)
+% ● Description
+%   pspm_get_blink_l is a common function for importing eyelink data
+%   (blink_l data)
+% ● Format
 %   [sts, data]= pspm_get_blink_l(import)
-%   with import.data: column vector of waveform data
-%        import.sr: sample rate
-%  
-%__________________________________________________________________________
-% PsPM 4.0.2
-% (C) 2018 Laure Ciernik
+% ● Arguments
+%   ┌──import
+%   ├───.data:  column vector of waveform data
+%   └─────.sr:  sample rate
+% ● History
+%   Introduced in PsPM 4.0.2
+%   Written in 2018 Laure Ciernik
 
-global settings;
-if isempty(settings), pspm_init; end
-
-% initialise status
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
 sts = -1;
-
 % assign pupil data
 data.data = import.data(:);
-
 % add header
-data.header.chantype = 'blink_l';
+data.header.channeltype = 'blink_l';
 data.header.units = import.units;
 data.header.sr = import.sr;
-
-% check status
+%% Return values
 sts = 1;
+return

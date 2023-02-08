@@ -1,16 +1,24 @@
-function pspm_ui_initialisation(hObject,handles,window)
+function pspm_ui_initialisation(hObject, handles, window)
+% ● Description
+%   pspm_ui_initialisation adjusts the required UI parameters for window
+%   initialisation.
+% ● Format
+%   pspm_ui_initialisation(hObject, handles, window)
+% ● Arguments
+%   hObject: MATLAB UI controllor
+%   handles: MATLAB UI controllor
+%    window: the name of the GUI window.
+%            accepts: 'main', 'display', and 'review'
+% ● History
+%   Introduced in PsPM 5.1.2
+%   Written and maintained in 2021 by Teddy Chao (UCL)
 
-% pspm_ui_initialisation adjusts the required UI parameters for window
-% initialisation
-%
-% PsPM 5.1.2
-% 2021 Teddy Chao (WCHN, UCL)
-
-global settings;
+%% Initialise
+global settings
 if isempty(settings)
   pspm_init;
 end
-
+sts = -1;
 switch window
   case 'main'
     handles.figure1.Units = settings.ui.DisplayUnit;
@@ -127,6 +135,8 @@ switch window
     hObject.Position(3) = settings.ui.DisplayWeight;
     hObject.Position(4) = settings.ui.DisplayHeight;
     hObject.Resize = 'on';
+  case 'review'
+    handles.button_all.FontName = settings.ui.FontNameText;
+    hObject.Resize = 'on';
 end
-
-end
+return

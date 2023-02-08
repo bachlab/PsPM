@@ -299,7 +299,7 @@ else
     set(findobj(handles.cfg_ui,'-regexp', 'Tag','.*(Del)|(Repl)Mod$'),'Enable','on');
     mrk = cell(size(sts));
     [mrk{dep}] = deal('DEP');
-    [mrk{~sts}] = deal('<-X');
+    [mrk{~sts}] = deal('←X');
     [mrk{~dep & sts}] = deal('');
     str = cfg_textfill(handles.modlist, str, mrk, false);
 end;
@@ -378,7 +378,7 @@ else
     ciid = {udmodlist.cjob udmodlist.id{cmod} udmodule.id{citem}};
 end;
 contents = cellfun(@(c)subsref(c, substruct('{}',{citem})), udmodule.contents, 'UniformOutput', false);
-sout = cat(2, udmodlist.sout{1:cmod-1});
+sout = cat(2, udmodlist.sout(1:cmod-1));
 cfg_ui_util('showvaledit', fig, ciid, contents, sout, dflag, [], @()local_valedit_update(obj));
 drawnow;
 

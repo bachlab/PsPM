@@ -1,77 +1,65 @@
 function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
-% pspm_get_viewpoint is the main function for import of Arrington Research
-% ViewPoint EyeTracker files.
-%
-% FORMAT: [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import);
-%          datafile: Path to a ViewPoint EyeTracker data stored in ASCII format.
-%          import: import job structure with
-%                  - mandatory fields:
-%                      .type:
-%                          Type of the channel. Must be one of pupil_l, pupil_r,
-%                          gaze_x_l, gaze_y_l, gaze_x_r, gaze_y_r, blink_l, blink_r,
-%                          saccade_l, saccade_r, marker, custom.
-%
-%                          Right eye corresponds to eye A in ViewPoint; left eye
-%                          corresponds to eye B. However, when there is only one
-%                          eye in the data and in user input, they are matched.
-%
-%                          If the given channel type does not exist in the given
-%                          datafile, it will be filled with NaNs and a warning will
-%                          be emitted.
-%
-%                          The pupil diameter values returned by get_viewpoint are
-%                          normalized ratio values reported by Viewpoint Eyetracker
-%                          software. This is the ratio of the horizontal pupil
-%                          diameter to the eyecamera window width.
-%
-%                          The gaze values returned are in the given target_unit.
-%                          (x, y) = (0, 0) coordinate represents the top left
-%                          corner of the whole stimulus window. x coordinates grow
-%                          towards right and y coordinates grow towards bottom. The
-%                          gaze coordinates can be negative or larger than screen
-%                          size. These correspond to gaze positions outside the
-%                          screen.
-%
-%                          Specified custom channels must correspond to some form of
-%                          pupil/gaze channels. In addition, when the channel
-%                          type is custom, no postprocessing/conversion is performed
-%                          by pspm_get_viewponit and the channel is returned directly as
-%                          it is in the given datafile.
-%
-%                          Blinks and saccades are read and can be imported if they are
-%                          included in the given datafile as asynchronous messages. This
-%                          corresponds to "Include Events in File" option in ViewPoint
-%                          EyeTracker software. For a given eye, pupil and gaze values
-%                          corresponding to blinks/saccades for that eye are set to NaN.
-%
-%                  - optional fields:
-%                      .channel:
-%                          If .type is custom, the index of the channel to import
-%                          must be specified using this option. This value must be
-%                          the channel index of the desired channel in the raw data columns.
-%                      .target_unit:
-%                          the unit to which the gaze data should be converted. This option
-%                          has no effect for pupil diameter channel since that is always
-%                          returned as ratio. (Default: mm)
-%
-%                  - Each import structure will get the following output fields:
-%                      .data:
-%                          Data channel corresponding to the input channel type or
-%                          custom channel id.
-%                      .units:
-%                          Units of the channel.
-%                      .sr:
-%                          Sampling rate.
-%                      .chan_id:
-%                          Channel index of the imported channel in the raw data columns.
-%__________________________________________________________________________
-%
-% (C) 2019 Eshref Yozdemir (University of Zurich)
-% Updated 2021 Teddy Chao (WCHN, UCL)
+% ● Description
+%   pspm_get_viewpoint is the main function for import of Arrington Research
+%   ViewPoint EyeTracker files.
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import);
+% ● Argument
+%       datafile: Path to a ViewPoint EyeTracker data stored in ASCII format.
+%   ┌─────import: import job structure with
+%   │ ▶︎ mandatory
+%   ├──────.type: Type of the channel. Must be one of pupil_l, pupil_r,
+%   │             gaze_x_l, gaze_y_l, gaze_x_r, gaze_y_r, blink_l, blink_r,
+%   │             saccade_l, saccade_r, marker, custom.
+%   │             Right eye corresponds to eye A in ViewPoint; left eye
+%   │             corresponds to eye B. However, when there is only one
+%   │             eye in the data and in user input, they are matched. If the
+%   │             given channel type does not exist in the given datafile,
+%   │             it will be filled with NaNs and a warning will be emitted.
+%   │             The pupil diameter values returned by get_viewpoint are
+%   │             normalized ratio values reported by Viewpoint Eyetracker
+%   │             software. This is the ratio of the horizontal pupil
+%   │             diameter to the eyecamera window width.
+%   │             The gaze values returned are in the given target_unit.
+%   │             (x, y) = (0, 0) coordinate represents the top left
+%   │             corner of the whole stimulus window. x coordinates grow
+%   │             towards right and y coordinates grow towards bottom. The
+%   │             gaze coordinates can be negative or larger than screen
+%   │             size. These correspond to gaze positions outside the screen.
+%   │             Specified custom channels must correspond to some form of
+%   │             pupil/gaze channels. In addition, when the channel
+%   │             type is custom, no postprocessing/conversion is performed
+%   │             by pspm_get_viewponit and the channel is returned directly as
+%   │             it is in the given datafile.
+%   │             Blinks and saccades are read and can be imported if they are
+%   │             included in the given datafile as asynchronous messages. This
+%   │             corresponds to `Include Events in File` option in ViewPoint
+%   │             EyeTracker software. For a given eye, pupil and gaze values
+%   │             corresponding to blinks/saccades for that eye are set to NaN.
+%   │ ▶︎ optional
+%   ├───.channel: If .type is custom, the index of the channel to import must
+%   │             be specified using this option. This value must be the
+%   │             channel index of the desired channel in the raw data columns.
+%   ├.target_unit:the unit to which the gaze data should be converted. This
+%   │             option has no effect for pupil diameter channel since that is
+%   │             always returned as ratio. (Default: mm)
+%   │ ▶︎ Each import structure will get the following output fields:
+%   ├──────.data: Data channel corresponding to the input channel type or
+%   │             custom channel id.
+%   ├─────.units: Units of the channel.
+%   ├────────.sr: Sampling rate.
+%   └───.chan_id: Channel index of the imported channel in the raw data columns.
+% ● History
+%   Written in 2019 by Eshref Yozdemir (University of Zurich)
+%   Maintained in 2021-2022 by Teddy Chao (UCL)
 
-global settings;
-if isempty(settings), pspm_init; end
-sourceinfo = []; sts = -1;
+% initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
+sts = -1;
+sourceinfo = [];
 addpath(pspm_path('Import','viewpoint'));
 
 if ~iscell(import)
@@ -90,7 +78,7 @@ if ~ischar(datafile)
   return;
 end
 if ~assert_custom_import_channels_has_channel_field(import); return; end
-if ~assert_all_chantypes_are_supported(settings, import); return; end
+if ~assert_all_channeltypes_are_supported(settings, import); return; end
 try
   data = import_viewpoint(datafile);
 catch err
@@ -108,10 +96,10 @@ data = map_viewpoint_eyes_to_left_right(data, import);
 
 sampling_rate = compute_sampling_rate(data{1}.channels(:, 1));
 eyes_observed = lower(data{1}.eyesObserved);
-chan_struct = data{1}.channels_header;
+chan_struct = data{1}.channel_header;
 raw_columns = data{1}.dataraw_header;
 channel_indices = data{1}.channel_indices;
-units = data{1}.channels_units;
+units = data{1}.channel_units;
 screen_size = data{1}.screenSize;
 viewing_dist = data{1}.viewingDistance;
 
@@ -139,9 +127,9 @@ for k = 1:num_import_cells
       [import{k}, chan_id] = import_custom_chan(import{k}, data_concat, channel_indices, raw_columns, chan_struct, units, sampling_rate);
     else
       [import{k}, chan_id] = import_data_chan(import{k}, data_concat, eyes_observed, channel_indices, chan_struct, units, sampling_rate);
-      chantype = import{k}.type;
-      is_gaze_x_chan = ~isempty(regexpi(chantype, 'gaze_x_', 'once'));
-      is_gaze_y_chan = ~isempty(regexpi(chantype, 'gaze_y_', 'once'));
+      channeltype = import{k}.type;
+      is_gaze_x_chan = ~isempty(regexpi(channeltype, 'gaze_x_', 'once'));
+      is_gaze_y_chan = ~isempty(regexpi(channeltype, 'gaze_y_', 'once'));
       if is_gaze_x_chan
         import{k} = convert_gaze_chan(import{k}, screen_size.xmin, screen_size.xmax);
       elseif is_gaze_y_chan
@@ -156,7 +144,7 @@ for k = 1:num_import_cells
         'Will create artificial channel with NaN values.'], ...
         import{k}.type);
     end
-    sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan_id);
+    sourceinfo.channel{k, 1} = sprintf('Column %02.0f', chan_id);
     sourceinfo.chan_stats{k,1} = struct();
     n_nan = sum(isnan(import{k}.data));
     n_data = numel(import{k}.data);
@@ -173,11 +161,10 @@ sourceinfo.best_eye = eye_with_smaller_nan_ratio(import, eyes_observed);
 
 rmpath(pspm_path('Import','viewpoint'));
 sts = 1;
-end
+return
 
 function sr = compute_sampling_rate(seconds_channel)
 sr = round(median(1 ./ diff(seconds_channel)));
-end
 
 function proper = assert_same_sample_rate(data)
 proper = true;
@@ -192,8 +179,7 @@ if any(diff(sample_rates))
     ' different sample rates. Found sample rates: %s'],...
     sample_rates_str);
   proper = false;
-  return;
-end
+  return
 end
 
 function proper = assert_same_eyes_observed(data)
@@ -201,7 +187,7 @@ proper = true;
 eyes_observed = cellfun(@(x) x.eyesObserved, data, 'UniformOutput', false);
 eyes_observed = cell2mat(eyes_observed);
 
-channel_headers = cellfun(@(x) x.channels_header, data, 'UniformOutput', false);
+channel_headers = cellfun(@(x) x.channel_header, data, 'UniformOutput', false);
 same_headers = true;
 for i = 1:(numel(channel_headers) - 1)
   if ~all(strcmpi(channel_headers{i}, channel_headers{i+1}))
@@ -214,8 +200,7 @@ if any(diff(eyes_observed)) || ~same_headers
   error_msg = 'Cannot concatenate multiple sessions with different eye observation or channel headers';
   warning('ID:invalid_data_structure', error_msg);
   proper = false;
-  return;
-end
+  return
 end
 
 function proper = assert_sessions_are_one_after_another(data)
@@ -232,7 +217,6 @@ if ~isempty(neg_diff_indices)
   proper = false;
   return;
 end
-end
 
 function proper = assert_custom_import_channels_has_channel_field(import)
 proper = true;
@@ -243,12 +227,11 @@ for i = 1:numel(import)
     return;
   end
 end
-end
 
-function proper = assert_all_chantypes_are_supported(settings, import)
+function proper = assert_all_channeltypes_are_supported(settings, import)
 proper = true;
 viewpoint_idx = find(strcmpi('viewpoint', {settings.import.datatypes.short}));
-viewpoint_types = settings.import.datatypes(viewpoint_idx).chantypes;
+viewpoint_types = settings.import.datatypes(viewpoint_idx).channeltypes;
 for k = 1:numel(import)
   input_type = import{k}.type;
   if ~any(strcmpi(input_type, viewpoint_types))
@@ -259,22 +242,21 @@ for k = 1:numel(import)
     return;
   end
 end
-end
 
 function data = map_viewpoint_eyes_to_left_right(data, import)
 % Map eye A to right eye, eye B to left eye.
 for i = 1:numel(data)
-  % channels = data{i}.channels_header; % seems not used
-  for k = 1:numel(data{i}.channels_header)
-    header = data{i}.channels_header{k};
+  % channels = data{i}.channel_header; % seems not used
+  for k = 1:numel(data{i}.channel_header)
+    header = data{i}.channel_header{k};
     if strcmpi(header(end - 1:end), '_A')
       header(end - 1:end) = '_R';
     elseif strcmpi(header(end - 1:end), '_B')
       header(end - 1:end) = '_L';
     end
-    data{i}.channels_header{k} = header;
+    data{i}.channel_header{k} = header;
   end
-  
+
   if strcmpi(data{i}.eyesObserved, 'a')
     data{i}.eyesObserved = 'R';
   elseif strcmpi(data{i}.eyesObserved, 'b')
@@ -303,16 +285,15 @@ for i = 1:numel(import)
 end
 if data_has_only_right_eye && import_has_only_left_eye
   for i = 1:numel(data)
-    for k = 1:numel(data{i}.channels_header)
-      header = data{i}.channels_header{k};
+    for k = 1:numel(data{i}.channel_header)
+      header = data{i}.channel_header{k};
       if strcmpi(header(end - 1:end), '_R')
         header(end - 1:end) = '_L';
-        data{i}.channels_header{k} = header;
+        data{i}.channel_header{k} = header;
       end
     end
     data{i}.eyesObserved = 'L';
   end
-end
 end
 
 function import_cell = import_marker_chan(import_cell, markers, mi_names, mi_values, n_rows, sampling_rate)
@@ -340,7 +321,6 @@ import_cell.units = 'unknown';
 markerinfo.name = mi_names;
 markerinfo.value = mi_values;
 import_cell.markerinfo = markerinfo;
-end
 
 function [import_cell, chan_id] = import_custom_chan(...
   import_cell, data_concat, channel_indices, raw_columns, chan_struct, units, sampling_rate)
@@ -366,7 +346,6 @@ else
   import_cell.data_header = chan_struct{chan_id_in_concat};
 end
 import_cell.sr = sampling_rate;
-end
 
 function [import_cell, chan_id] = import_data_chan(...
   import_cell, data_concat, eyes_observed, channel_indices, chan_struct, units, sampling_rate)
@@ -374,9 +353,9 @@ global settings;
 if isempty(settings), pspm_init; end
 % n_data = size(data_concat, 1); % this line is not used in this function
 chan_id_in_concat = find(strcmpi(chan_struct, import_cell.type), 1, 'first');
-chantype_has_L_or_R = ~isempty(regexpi(import_cell.type, ['_[',settings.lateral.char.b,']'], 'once'));
-chantype_hasnt_eyes_obs = isempty(regexpi(import_cell.type, ['_([' eyes_observed '])'], 'once'));
-if (chantype_has_L_or_R && chantype_hasnt_eyes_obs) || isempty(chan_id_in_concat)
+channeltype_has_L_or_R = ~isempty(regexpi(import_cell.type, ['_[',settings.lateral.char.c,']'], 'once'));
+channeltype_hasnt_eyes_obs = isempty(regexpi(import_cell.type, ['_([' eyes_observed '])'], 'once'));
+if (channeltype_has_L_or_R && channeltype_hasnt_eyes_obs) || isempty(chan_id_in_concat)
   chan_id = NaN;
   return;
 else
@@ -385,7 +364,6 @@ else
   chan_id = channel_indices(chan_id_in_concat);
 end
 import_cell.sr = sampling_rate;
-end
 
 function import_cell = convert_gaze_chan(import_cell, mincoord, maxcoord)
 import_cell.range = [mincoord maxcoord];
@@ -394,7 +372,6 @@ if ~strcmp('mm', import_cell.target_unit)
   [~, import_cell.data] = pspm_convert_unit(import_cell.data, 'mm', import_cell.target_unit);
 end
 import_cell.units = import_cell.target_unit;
-end
 
 function [data_concat, markers, mi_names, mi_values] = concat_sessions(data)
 % Concatenate multiple sessions into contiguous arrays, inserting NaN or N/A fields
@@ -422,24 +399,23 @@ last_time = data{1}.channels(1, second_col_idx);
 for c = 1:numel(data)
   start_time = data{c}.channels(1, second_col_idx);
   end_time = data{c}.channels(end, second_col_idx);
-  
+
   time_diff = start_time - last_time;
   if time_diff > 1.5 * (1 / sr)
     n_missing = round(time_diff * sr);
     % curr_len = size(data_concat, 1); % not used in this function
     data_concat(end + 1:(end + n_missing), 1:n_cols) = NaN(n_missing, n_cols);
   end
-  
+
   n_data_in_session = size(data{c}.channels, 1);
   n_markers_in_session = size(data{c}.marker.times, 1);
-  
+
   data_concat(end + 1:(end + n_data_in_session), 1:n_cols) = data{c}.channels;
   markers(end + 1:(end + n_markers_in_session), 1) = data{c}.marker.times;
   mi_values(end + 1:(end + n_markers_in_session),1) = data{c}.marker.value;
   mi_names(end + 1:(end + n_markers_in_session),1) = data{c}.marker.name;
-  
+
   last_time = end_time;
-end
 end
 
 function best_eye = eye_with_smaller_nan_ratio(import, eyes_observed)
@@ -462,5 +438,4 @@ else
   else
     best_eye = 'r';
   end
-end
 end
