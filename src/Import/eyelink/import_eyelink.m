@@ -167,7 +167,10 @@ for i = 1:numel(chan_info)
   strbeg = linefeeds(session_data_beg_end_indices(i)) + 1;
   strend = linefeeds(session_data_beg_end_indices(i + 1)) - 1 - has_backr;
 
-  C = textscan(str(strbeg : strend), fmt_str, ...
+  strscan = str(strbeg : strend);
+  strscan = strrep(strscan, '...');
+
+  C = textscan(strscan, fmt_str, ...
     'Delimiter', '\t', ...
     'CollectOutput', 1, ...
     'CommentStyle', '//', ...
@@ -406,7 +409,7 @@ fmt = '%f';
 for i = 2:numel(parts)
   if numel(parts{i}) == 1
     partfmt = '%f';
-  elseif all(parts{i} == '.') || any(parts{i} >= 'A' & parts{i} <= 'Z') || any(parts{i} >= 'a' & parts{i} <= 'z')
+  elseif all(parts{i} == '.') || any(parts{i} >= 'A' & parts{i} <= 'Z') || any(parts{i} >= 'a' & parts{i} <= 'z') || contains(parts{i}, '..')
     partfmt = '%*s';
   else
     partfmt = '%f';
