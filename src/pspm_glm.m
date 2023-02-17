@@ -619,7 +619,7 @@ end
 glm.input.data    = y;
 glm.input.sr      = sr;
 glm.Y             = Y;
-glm.M             = M;
+glm.M             = M; % set to 1 if data is missing, otherwise set to 0
 glm.infos.sr      = newsr;
 glm.infos.duration     = numel(glm.Y)/glm.infos.sr;
 glm.infos.durationinfo = 'duration in seconds';
@@ -789,15 +789,15 @@ glm.interceptno = iSn;
 glm.regscale((end+1):(end+iSn)) = 1;
 
 % delete missing epochs and prepare output
-perc_missing = 1 - sum(glm.M)/length(glm.M);
+perc_missing = sum(glm.M)/length(glm.M);
 if perc_missing >= 0.1
   if sr == Xfilter.sr
     warning('ID:invalid_input', ...
-      ['More than 10% of input data was filtered out due to missing epochs. ',...
+      ['More than 10%% of input data was filtered out due to missing epochs. ',...
       'Results may be inaccurate.']);
   else
     warning('ID:invalid_input', ...
-      ['More than 10% of input data was filtered out due to missing epochs, ',...
+      ['More than 10%% of input data was filtered out due to missing epochs, ',...
       'which is possibly caused by downsampling. Results may be inaccurate.']);
   end
 end
