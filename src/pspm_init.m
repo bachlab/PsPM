@@ -873,8 +873,5 @@ settings.scrcfgpath = scrcfgpath;
 settings.signal = signal;
 settings.pspm_version = pspm_vers;
 settings.developmode = 1;
-%% 12 Cleaning
-if isfile(fullfile(pth,'pspm_text.mat'))
-  delete(fullfile(pth,'pspm_text.mat'))
-end
+
 return
