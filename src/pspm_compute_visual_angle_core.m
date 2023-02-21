@@ -33,7 +33,7 @@ end
 % The convention is that the origin of the screen is in the bottom
 % left corner, so the following line is not needed a priori, but I
 % leave it anyway just in case :
-% gy_d = data{gy}.header.range(2)-gy_d;
+% y_data = data{gy}.header.range(2)-y_data;
 N = numel(x_data);
 if N ~= numel(y_data)
   warning('ID:invalid_input', 'length of data in gaze_x and gaze_y is not the same');
