@@ -133,30 +133,48 @@ if isfield(options, 'missing')
 else
   ymissing = isnan(y);
 end
-options.isYout = ymissing(:)';
-[posterior, output] = VBA_NLStateSpaceModel(y(:)',u,f_fname,g_fname,dim,options);
-%% 5 Extract parameters
-for i=1:length(output)
-  output(i).options = rmfield(output(i).options, 'hf');
+ymissing_start = find(diff(ymissing)==1);
+ymissing_end = find(diff(ymissing)==-1);
+if length(ymissing_start) > length(ymissing_end)
+  ymissing_end = [ymissing_end, length(ymissing_end)];
+elseif length(ymissing_start) < length(ymissing_end)
+  ymissing_start = [1, ymissing_start];
 end
-t = posterior.muTheta(4:2:end);
-a = exp(posterior.muTheta(5:2:end) - theta(5));   % rescale
-ex = find(t < -2 | t > (numel(scr)/sr - 1)); % find SA responses the SCR peak of which is outside episode
-t(ex) = []; a(ex) = [];
-out.t = t - theta(4);                             % subtract conduction delay
-out.a = a;
-out.n = numel(find(a > threshold));
-out.f = out.n/(numel(scr)/sr);
-out.ma = mean(a(a > threshold));
-out.theta = theta;
-out.if = fresp;
-out.threshold = threshold;
-out.yhat = posterior.muX(1, :);
-out.model.posterior = posterior;
-out.model.output = output;
-out.model.u = u;
-out.model.y = y(:)';
-out.time = toc(tstart);
+miss_epoch = [ymissing_start(:),ymissing_end(:)];
+flag_missing_too_long = 0;
+if diff(miss_epoch, 1, 2)/sr > options.missingthresh
+  out = [];
+  flag_missing_too_long = 1;
+  warning(...
+    ['Imported data includes too long miss epoches (over ',...
+    num2str(options.missingthresh), 's), thus estimation has been skipped.'])
+end
+options.isYout = ymissing(:)';
+%% 5 Extract parameters
+if ~flag_missing_too_long
+  [posterior, output] = VBA_NLStateSpaceModel(y(:)',u,f_fname,g_fname,dim,options);
+  for i=1:length(output)
+    output(i).options = rmfield(output(i).options, 'hf');
+  end
+  t = posterior.muTheta(4:2:end);
+  a = exp(posterior.muTheta(5:2:end) - theta(5));   % rescale
+  ex = find(t < -2 | t > (numel(scr)/sr - 1)); % find SA responses the SCR peak of which is outside episode
+  t(ex) = []; a(ex) = [];
+  out.t = t - theta(4);                             % subtract conduction delay
+  out.a = a;
+  out.n = numel(find(a > threshold));
+  out.f = out.n/(numel(scr)/sr);
+  out.ma = mean(a(a > threshold));
+  out.theta = theta;
+  out.if = fresp;
+  out.threshold = threshold;
+  out.yhat = posterior.muX(1, :);
+  out.model.posterior = posterior;
+  out.model.output = output;
+  out.model.u = u;
+  out.model.y = y(:)';
+  out.time = toc(tstart);
+end
 %% 6 Outputs
 sts = 1;
 switch nargout
