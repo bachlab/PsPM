@@ -58,7 +58,7 @@ function [sts, outdata] = pspm_interpolate(varargin)
 %   Written in 2015 by Tobias Moser (University of Zurich)
 %   Maintained in 2022 by Teddy Chao (UCL)
 
-%% initialise
+%% 1 Initialise
 global settings
 if isempty(settings)
   pspm_init;
