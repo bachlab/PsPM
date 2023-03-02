@@ -1,4 +1,4 @@
-function pspm_text
+function pspm_text(path)
 % ● Description
 %   pspm_text handles the text for GUI display.
 % ● History
@@ -37,5 +37,5 @@ warntext_sigproc_toolbox = 'Signal processing toolbox not installed. Some filter
 warntext_spm_remove = 'The software SPM is currently on your MATLAB search path.\n\nDo you want to remove the folders belonging to SPM from your MATLAB search path in order to avoid potential issues with PsPM?';
 warntext_spm_quit = 'Start of PsPM had to be quit, because of interference with the software SPM, which was on your MATLAB search path. To run PsPM be sure to remove the folders of SPM from your MATLAB search path.';
 
-save('pspm_text.mat')
+save(fullfile(path,'pspm_text.mat'))
 return
