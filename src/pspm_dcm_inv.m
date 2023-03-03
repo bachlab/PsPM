@@ -32,6 +32,8 @@ function dcm = pspm_dcm_inv(model, options)
 %   │                 whether to normalise data.
 %   │                 i. e. data are normalised during inversion but results
 %   │                 transformed back into raw data units.
+%   ├───.flexevents:  flexible events to adjust amplitude priors
+%   ├────.fixevents:  fixed events to adjust amplitude priors
 %   └──.constrained:  [optional]
 %                     constrained model for flexible responses which have
 %                     have fixed dispersion (0.3 s SD) but flexible latency
@@ -40,8 +42,6 @@ function dcm = pspm_dcm_inv(model, options)
 %   ├─────────.eSCR:  contains the data to estimate RF from
 %   ├─────────.aSCR:  contains the data to adjust the RF to
 %   ├──────.meanSCR:  data to adjust the response amplitude priors to
-%   ├───.flexevents:  flexible events to adjust amplitude priors
-%   ├────.fixevents:  fixed events to adjust amplitude priors
 %   ├────.crfupdate:  update CRF priors to observed SCRF, or use
 %   │                 pre-estimated priors (default)
 %   ├────────.getrf:  only estimate RF, do not do trial-wise DCM
