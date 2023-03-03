@@ -67,6 +67,11 @@ elseif numel(modelfile) == 2&&(iscell(modelfile{1}))
 else
   sample = 1;
 end
+%% check options
+if exist('options','var')
+  options = struct();
+end
+options = pspm_options(options, 'con2');
 %% check outfile
 if pspm_overwrite(outfile, options) == 0
   return
