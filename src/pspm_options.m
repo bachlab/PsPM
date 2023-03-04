@@ -385,7 +385,6 @@ switch FunName
     options = autofill(options,'dispwin',                 1,          0                 );
     options = autofill(options,'dispsmallwin',            0,          1                 );
     options = autofill(options,'fresp',                   0.5,        '>', 0            );
-    %options = autofill(options,'missing',                 [],         '*Num'            );
     options = autofill(options,'missingthresh',           2,          '>', 0            );
     options = autofill(options,'threshold',               0.1,        '>', 0            );
     options = autofill(options,'theta',                   [0.923581, ...
