@@ -39888,7 +39888,7 @@ pspm_get_rf..inherited.from.pspm_dcm
 \begin_layout Standard
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="10" columns="4">
+<lyxtabular version="3" rows="18" columns="4">
 <features booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -39938,7 +39938,7 @@ Acceptable values
 
 \begin_layout Plain Layout
 
-\family typewriter
+\series bold
 aSCR_sigma_offset
 \end_layout
 
@@ -39981,6 +39981,8 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 eventnames
 \end_layout
 
@@ -39990,7 +39992,7 @@ eventnames
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+cell
 \end_layout
 
 \end_inset
@@ -39999,7 +40001,7 @@ eventnames
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+{}
 \end_layout
 
 \end_inset
@@ -40008,7 +40010,7 @@ eventnames
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+any char / cell
 \end_layout
 
 \end_inset
@@ -40019,6 +40021,8 @@ eventnames
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 nosave
 \end_layout
 
@@ -40028,7 +40032,7 @@ nosave
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+logical
 \end_layout
 
 \end_inset
@@ -40037,7 +40041,7 @@ nosave
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+0
 \end_layout
 
 \end_inset
@@ -40046,7 +40050,7 @@ nosave
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+1
 \end_layout
 
 \end_inset
@@ -40057,6 +40061,8 @@ nosave
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 sclpost
 \end_layout
 
@@ -40066,7 +40072,7 @@ sclpost
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -40075,7 +40081,7 @@ sclpost
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+5
 \end_layout
 
 \end_inset
@@ -40084,7 +40090,7 @@ sclpost
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+>0
 \end_layout
 
 \end_inset
@@ -40095,6 +40101,8 @@ sclpost
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 sclpre
 \end_layout
 
@@ -40104,7 +40112,7 @@ sclpre
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -40113,7 +40121,7 @@ sclpre
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+2
 \end_layout
 
 \end_inset
@@ -40122,7 +40130,7 @@ sclpre
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+>0
 \end_layout
 
 \end_inset
@@ -40134,6 +40142,8 @@ sclpre
 
 \begin_layout Plain Layout
 
+\series bold
+sffreq
 \end_layout
 
 \end_inset
@@ -40142,7 +40152,7 @@ sclpre
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -40151,7 +40161,7 @@ sclpre
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+0.5
 \end_layout
 
 \end_inset
@@ -40160,7 +40170,7 @@ sclpre
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+>0
 \end_layout
 
 \end_inset
@@ -40172,6 +40182,8 @@ sclpre
 
 \begin_layout Plain Layout
 
+\series bold
+sfpost
 \end_layout
 
 \end_inset
@@ -40180,7 +40192,7 @@ sclpre
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -40189,7 +40201,7 @@ sclpre
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+5
 \end_layout
 
 \end_inset
@@ -40198,7 +40210,7 @@ sclpre
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+>0
 \end_layout
 
 \end_inset
@@ -40210,6 +40222,8 @@ sclpre
 
 \begin_layout Plain Layout
 
+\series bold
+sfpre
 \end_layout
 
 \end_inset
@@ -40218,7 +40232,7 @@ sclpre
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -40227,7 +40241,7 @@ sclpre
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+2
 \end_layout
 
 \end_inset
@@ -40236,7 +40250,327 @@ sclpre
 \begin_inset Text
 
 \begin_layout Plain Layout
+>0
+\end_layout
 
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+crfupdate
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+logical
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+depth
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+double
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+?
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+dispsmallwin
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+logical
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+dispwin
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+logical
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+getrf
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+logical
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+indrf
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+logical
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+overwrite
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+double
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0, 2
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+rf
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+logical
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
 \end_layout
 
 \end_inset
@@ -40248,6 +40582,8 @@ sclpre
 
 \begin_layout Plain Layout
 
+\series bold
+trlnames
 \end_layout
 
 \end_inset
@@ -40256,7 +40592,7 @@ sclpre
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+char / cell
 \end_layout
 
 \end_inset
@@ -40265,7 +40601,7 @@ sclpre
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+{}
 \end_layout
 
 \end_inset
@@ -40274,7 +40610,7 @@ sclpre
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+any char cell
 \end_layout
 
 \end_inset
@@ -41090,7 +41426,7 @@ overwrite
 \begin_inset Text
 
 \begin_layout Plain Layout
-double
+integer
 \end_layout
 
 \end_inset
@@ -41099,6 +41435,8 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 0
 \end_layout
 
@@ -41141,6 +41479,8 @@ logical
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 0
 \end_layout
 
@@ -41150,6 +41490,8 @@ logical
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 1
 \end_layout
 
@@ -41164,7 +41506,7 @@ logical
 \end_layout
 
 \begin_layout Subsubsection
-pspm_merge
+pspm_merge (verified)
 \end_layout
 
 \begin_layout Standard
@@ -41230,7 +41572,7 @@ marker_chan_num
 \begin_inset Text
 
 \begin_layout Plain Layout
-char
+integer (vector)
 \end_layout
 
 \end_inset
@@ -41241,7 +41583,7 @@ char
 \begin_layout Plain Layout
 
 \family typewriter
-add
+[0, 0]
 \end_layout
 
 \end_inset
@@ -41250,9 +41592,7 @@ add
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\family typewriter
-replace
+Any
 \end_layout
 
 \end_inset
@@ -41274,7 +41614,7 @@ overwrite
 \begin_inset Text
 
 \begin_layout Plain Layout
-double
+integer
 \end_layout
 
 \end_inset
@@ -41283,6 +41623,8 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 0
 \end_layout
 
@@ -41292,6 +41634,8 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 1, 2
 \end_layout
 
@@ -41306,7 +41650,7 @@ double
 \end_layout
 
 \begin_layout Subsubsection
-pspm_pfm
+pspm_pfm (verified)
 \end_layout
 
 \begin_layout Standard
@@ -41372,7 +41716,7 @@ overwrite
 \begin_inset Text
 
 \begin_layout Plain Layout
-double
+integer
 \end_layout
 
 \end_inset
@@ -41408,7 +41752,7 @@ double
 \end_layout
 
 \begin_layout Subsubsection
-pspm_pp
+pspm_pp (verified)
 \end_layout
 
 \begin_layout Standard
@@ -41474,7 +41818,7 @@ overwrite
 \begin_inset Text
 
 \begin_layout Plain Layout
-double
+integer
 \end_layout
 
 \end_inset
@@ -41510,13 +41854,13 @@ double
 \end_layout
 
 \begin_layout Subsubsection
-pspm_process_illuminance
+pspm_process_illuminance (verified)
 \end_layout
 
 \begin_layout Standard
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="5" columns="4">
+<lyxtabular version="3" rows="9" columns="4">
 <features booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -41598,7 +41942,7 @@ struct()
 \begin_layout Plain Layout
 
 \family typewriter
-any struct
+Any
 \end_layout
 
 \end_inset
@@ -41629,7 +41973,10 @@ char
 \begin_inset Text
 
 \begin_layout Plain Layout
-`'
+
+\family typewriter
+\shape italic
+empty
 \end_layout
 
 \end_inset
@@ -41638,7 +41985,7 @@ char
 \begin_inset Text
 
 \begin_layout Plain Layout
-any char
+Any
 \end_layout
 
 \end_inset
@@ -41660,7 +42007,7 @@ overwrite
 \begin_inset Text
 
 \begin_layout Plain Layout
-double
+integer
 \end_layout
 
 \end_inset
@@ -41669,6 +42016,8 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 0
 \end_layout
 
@@ -41678,7 +42027,181 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 1, 2
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+transfer
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+double (vector)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+[49.79,-1.05,-0.50]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+[a, b, c]: a, b, c>0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+bf.constriction
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+struct
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+struct()
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Any
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+bf.dilation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+struct
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+struct()
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Any
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+bf.duration
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+double
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+20
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+>= 0
 \end_layout
 
 \end_inset
@@ -41691,7 +42214,7 @@ double
 \begin_layout Plain Layout
 
 \series bold
-transfer
+bf.offset
 \end_layout
 
 \end_inset
@@ -41700,7 +42223,7 @@ transfer
 \begin_inset Text
 
 \begin_layout Plain Layout
-vector
+double
 \end_layout
 
 \end_inset
@@ -41709,7 +42232,9 @@ vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-[49.79,-1.05,-0.50]
+
+\family typewriter
+0.2
 \end_layout
 
 \end_inset
@@ -41718,7 +42243,9 @@ vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-[a, b, c]: a, b, c>0
+
+\family typewriter
+>= 0
 \end_layout
 
 \end_inset
@@ -41732,7 +42259,7 @@ vector
 \end_layout
 
 \begin_layout Subsubsection
-pspm_pupil_correct_eyelink
+pspm_pupil_correct_eyelink (verified)
 \end_layout
 
 \begin_layout Standard
@@ -41798,7 +42325,7 @@ C_x
 \begin_inset Text
 
 \begin_layout Plain Layout
-char
+double
 \end_layout
 
 \end_inset
@@ -41809,7 +42336,7 @@ char
 \begin_layout Plain Layout
 
 \family typewriter
-add
+0
 \end_layout
 
 \end_inset
@@ -41818,9 +42345,7 @@ add
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\family typewriter
-replace
+Any
 \end_layout
 
 \end_inset
@@ -41842,7 +42367,7 @@ C_y
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -41852,6 +42377,8 @@ C_y
 
 \begin_layout Plain Layout
 
+\family typewriter
+0
 \end_layout
 
 \end_inset
@@ -41860,7 +42387,7 @@ C_y
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -41882,7 +42409,7 @@ C_z
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -41892,6 +42419,8 @@ C_z
 
 \begin_layout Plain Layout
 
+\family typewriter
+0
 \end_layout
 
 \end_inset
@@ -41900,7 +42429,7 @@ C_z
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -41922,7 +42451,7 @@ channel
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+char
 \end_layout
 
 \end_inset
@@ -41932,6 +42461,8 @@ channel
 
 \begin_layout Plain Layout
 
+\family typewriter
+pupil
 \end_layout
 
 \end_inset
@@ -41940,7 +42471,7 @@ channel
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -41962,7 +42493,7 @@ channel_action
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+char
 \end_layout
 
 \end_inset
@@ -41972,6 +42503,8 @@ channel_action
 
 \begin_layout Plain Layout
 
+\family typewriter
+add
 \end_layout
 
 \end_inset
@@ -41980,7 +42513,7 @@ channel_action
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+replace
 \end_layout
 
 \end_inset
@@ -42002,7 +42535,7 @@ mode
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+char
 \end_layout
 
 \end_inset
@@ -42012,6 +42545,8 @@ mode
 
 \begin_layout Plain Layout
 
+\family typewriter
+auto
 \end_layout
 
 \end_inset
@@ -42020,7 +42555,7 @@ mode
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+manual
 \end_layout
 
 \end_inset
@@ -42042,7 +42577,7 @@ S_x
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -42052,6 +42587,8 @@ S_x
 
 \begin_layout Plain Layout
 
+\family typewriter
+0
 \end_layout
 
 \end_inset
@@ -42060,7 +42597,7 @@ S_x
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -42082,7 +42619,7 @@ S_y
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -42092,6 +42629,8 @@ S_y
 
 \begin_layout Plain Layout
 
+\family typewriter
+0
 \end_layout
 
 \end_inset
@@ -42100,7 +42639,7 @@ S_y
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -42122,7 +42661,7 @@ S_z
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -42132,6 +42671,8 @@ S_z
 
 \begin_layout Plain Layout
 
+\family typewriter
+0
 \end_layout
 
 \end_inset
@@ -42140,7 +42681,7 @@ S_z
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -42162,7 +42703,7 @@ screen_size_mm
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double (vector)
 \end_layout
 
 \end_inset
@@ -42172,6 +42713,8 @@ screen_size_mm
 
 \begin_layout Plain Layout
 
+\family typewriter
+[43.5, 29.9]
 \end_layout
 
 \end_inset
@@ -42181,6 +42724,8 @@ screen_size_mm
 
 \begin_layout Plain Layout
 
+\family typewriter
+[a, b]: a, b>0
 \end_layout
 
 \end_inset
@@ -42202,7 +42747,7 @@ screen_size_px
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double (vector)
 \end_layout
 
 \end_inset
@@ -42212,6 +42757,8 @@ screen_size_px
 
 \begin_layout Plain Layout
 
+\family typewriter
+[1920, 1080]
 \end_layout
 
 \end_inset
@@ -42221,6 +42768,8 @@ screen_size_px
 
 \begin_layout Plain Layout
 
+\family typewriter
+[a, b]: a, b>0
 \end_layout
 
 \end_inset
@@ -42234,7 +42783,7 @@ screen_size_px
 \end_layout
 
 \begin_layout Subsubsection
-pspm_pupil_pp
+pspm_pupil_pp (verified)
 \end_layout
 
 \begin_layout Standard
@@ -42291,7 +42840,7 @@ Acceptable values
 \begin_layout Plain Layout
 
 \series bold
-channel_action
+channel
 \end_layout
 
 \end_inset
@@ -42311,7 +42860,7 @@ char
 \begin_layout Plain Layout
 
 \family typewriter
-add
+pupil
 \end_layout
 
 \end_inset
@@ -42322,7 +42871,7 @@ add
 \begin_layout Plain Layout
 
 \family typewriter
-replace
+pupil_l, pupil_r
 \end_layout
 
 \end_inset
@@ -42344,7 +42893,7 @@ channel_combine
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+char
 \end_layout
 
 \end_inset
@@ -42354,6 +42903,8 @@ channel_combine
 
 \begin_layout Plain Layout
 
+\family typewriter
+none
 \end_layout
 
 \end_inset
@@ -42363,6 +42914,8 @@ channel_combine
 
 \begin_layout Plain Layout
 
+\family typewriter
+pupil_l, pupil_r
 \end_layout
 
 \end_inset
@@ -42384,7 +42937,7 @@ plot_data
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+logical
 \end_layout
 
 \end_inset
@@ -42394,6 +42947,8 @@ plot_data
 
 \begin_layout Plain Layout
 
+\family typewriter
+0
 \end_layout
 
 \end_inset
@@ -42403,6 +42958,8 @@ plot_data
 
 \begin_layout Plain Layout
 
+\family typewriter
+1
 \end_layout
 
 \end_inset
@@ -42424,7 +42981,7 @@ segments
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+cell
 \end_layout
 
 \end_inset
@@ -42434,6 +42991,8 @@ segments
 
 \begin_layout Plain Layout
 
+\family typewriter
+{}
 \end_layout
 
 \end_inset
@@ -42442,7 +43001,7 @@ segments
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -42456,7 +43015,7 @@ segments
 \end_layout
 
 \begin_layout Subsubsection
-pspm_remove_epochs
+pspm_remove_epochs (verified)
 \end_layout
 
 \begin_layout Standard
@@ -42558,7 +43117,7 @@ replace
 \end_layout
 
 \begin_layout Subsubsection
-pspm_resp_pp
+pspm_resp_pp (verified)
 \end_layout
 
 \begin_layout Standard
@@ -42668,7 +43227,7 @@ datatype
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+cell
 \end_layout
 
 \end_inset
@@ -42678,6 +43237,8 @@ datatype
 
 \begin_layout Plain Layout
 
+\family typewriter
+{rp, ra, rfr, rs, all}
 \end_layout
 
 \end_inset
@@ -42686,7 +43247,7 @@ datatype
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Subset
 \end_layout
 
 \end_inset
@@ -42708,7 +43269,7 @@ diagnostics
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+logical
 \end_layout
 
 \end_inset
@@ -42718,6 +43279,8 @@ diagnostics
 
 \begin_layout Plain Layout
 
+\family typewriter
+0
 \end_layout
 
 \end_inset
@@ -42727,6 +43290,8 @@ diagnostics
 
 \begin_layout Plain Layout
 
+\family typewriter
+1
 \end_layout
 
 \end_inset
@@ -42748,7 +43313,7 @@ plot
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+logical
 \end_layout
 
 \end_inset
@@ -42758,6 +43323,8 @@ plot
 
 \begin_layout Plain Layout
 
+\family typewriter
+0
 \end_layout
 
 \end_inset
@@ -42767,6 +43334,8 @@ plot
 
 \begin_layout Plain Layout
 
+\family typewriter
+1
 \end_layout
 
 \end_inset
@@ -42788,7 +43357,7 @@ systemtype
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+char
 \end_layout
 
 \end_inset
@@ -42798,6 +43367,8 @@ systemtype
 
 \begin_layout Plain Layout
 
+\family typewriter
+bellows
 \end_layout
 
 \end_inset
@@ -42807,6 +43378,8 @@ systemtype
 
 \begin_layout Plain Layout
 
+\family typewriter
+cushion
 \end_layout
 
 \end_inset
@@ -42820,7 +43393,7 @@ systemtype
 \end_layout
 
 \begin_layout Subsubsection
-pspm_scr_pp
+pspm_scr_pp (verified)
 \end_layout
 
 \begin_layout Standard
@@ -42886,7 +43459,7 @@ change_data
 \begin_inset Text
 
 \begin_layout Plain Layout
-char
+logical
 \end_layout
 
 \end_inset
@@ -42897,7 +43470,7 @@ char
 \begin_layout Plain Layout
 
 \family typewriter
-add
+1
 \end_layout
 
 \end_inset
@@ -42908,7 +43481,7 @@ add
 \begin_layout Plain Layout
 
 \family typewriter
-replace
+0
 \end_layout
 
 \end_inset
@@ -42930,7 +43503,7 @@ channel_action
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+char
 \end_layout
 
 \end_inset
@@ -42940,6 +43513,8 @@ channel_action
 
 \begin_layout Plain Layout
 
+\family typewriter
+add
 \end_layout
 
 \end_inset
@@ -42949,6 +43524,8 @@ channel_action
 
 \begin_layout Plain Layout
 
+\family typewriter
+replace, withdraw
 \end_layout
 
 \end_inset
@@ -42970,7 +43547,7 @@ clipping_n_window
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+integer
 \end_layout
 
 \end_inset
@@ -42980,6 +43557,8 @@ clipping_n_window
 
 \begin_layout Plain Layout
 
+\family typewriter
+10000
 \end_layout
 
 \end_inset
@@ -42988,7 +43567,7 @@ clipping_n_window
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -43010,7 +43589,7 @@ clipping_step_size
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+integer
 \end_layout
 
 \end_inset
@@ -43020,6 +43599,8 @@ clipping_step_size
 
 \begin_layout Plain Layout
 
+\family typewriter
+2
 \end_layout
 
 \end_inset
@@ -43028,7 +43609,7 @@ clipping_step_size
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -43050,7 +43631,7 @@ clipping_threshold
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -43060,6 +43641,8 @@ clipping_threshold
 
 \begin_layout Plain Layout
 
+\family typewriter
+0.1
 \end_layout
 
 \end_inset
@@ -43068,7 +43651,7 @@ clipping_threshold
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -43090,7 +43673,7 @@ data_island_threshold
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -43100,6 +43683,8 @@ data_island_threshold
 
 \begin_layout Plain Layout
 
+\family typewriter
+0
 \end_layout
 
 \end_inset
@@ -43109,6 +43694,8 @@ data_island_threshold
 
 \begin_layout Plain Layout
 
+\family typewriter
+>= 0
 \end_layout
 
 \end_inset
@@ -43130,7 +43717,7 @@ deflection_threshold
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -43140,6 +43727,8 @@ deflection_threshold
 
 \begin_layout Plain Layout
 
+\family typewriter
+0.1
 \end_layout
 
 \end_inset
@@ -43148,7 +43737,7 @@ deflection_threshold
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -43170,7 +43759,7 @@ expand_epochs
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -43180,6 +43769,8 @@ expand_epochs
 
 \begin_layout Plain Layout
 
+\family typewriter
+0.5
 \end_layout
 
 \end_inset
@@ -43189,6 +43780,8 @@ expand_epochs
 
 \begin_layout Plain Layout
 
+\family typewriter
+>= 0
 \end_layout
 
 \end_inset
@@ -43210,7 +43803,7 @@ max
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -43220,6 +43813,8 @@ max
 
 \begin_layout Plain Layout
 
+\family typewriter
+60
 \end_layout
 
 \end_inset
@@ -43229,6 +43824,8 @@ max
 
 \begin_layout Plain Layout
 
+\family typewriter
+> 0
 \end_layout
 
 \end_inset
@@ -43250,7 +43847,7 @@ min
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -43260,6 +43857,8 @@ min
 
 \begin_layout Plain Layout
 
+\family typewriter
+0.05
 \end_layout
 
 \end_inset
@@ -43269,6 +43868,8 @@ min
 
 \begin_layout Plain Layout
 
+\family typewriter
+> 0
 \end_layout
 
 \end_inset
@@ -43290,7 +43891,7 @@ missing_epochs_filename
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+char
 \end_layout
 
 \end_inset
@@ -43300,6 +43901,8 @@ missing_epochs_filename
 
 \begin_layout Plain Layout
 
+\family typewriter
+missing_epochs_filename
 \end_layout
 
 \end_inset
@@ -43308,7 +43911,7 @@ missing_epochs_filename
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -43330,7 +43933,7 @@ slope
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -43340,6 +43943,8 @@ slope
 
 \begin_layout Plain Layout
 
+\family typewriter
+10
 \end_layout
 
 \end_inset
@@ -43348,7 +43953,7 @@ slope
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -43362,7 +43967,7 @@ slope
 \end_layout
 
 \begin_layout Subsubsection
-pspm_segment_mean
+pspm_segment_mean (verified)
 \end_layout
 
 \begin_layout Standard
@@ -43439,7 +44044,7 @@ char
 \begin_layout Plain Layout
 
 \family typewriter
-add
+none
 \end_layout
 
 \end_inset
@@ -43450,7 +44055,7 @@ add
 \begin_layout Plain Layout
 
 \family typewriter
-replace
+downsample, interpolate
 \end_layout
 
 \end_inset
@@ -43472,7 +44077,7 @@ newfile
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+char
 \end_layout
 
 \end_inset
@@ -43482,6 +44087,9 @@ newfile
 
 \begin_layout Plain Layout
 
+\family typewriter
+\shape italic
+empty
 \end_layout
 
 \end_inset
@@ -43490,7 +44098,7 @@ newfile
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -43512,7 +44120,7 @@ overwrite
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+integer
 \end_layout
 
 \end_inset
@@ -43522,6 +44130,8 @@ overwrite
 
 \begin_layout Plain Layout
 
+\family typewriter
+0
 \end_layout
 
 \end_inset
@@ -43531,6 +44141,8 @@ overwrite
 
 \begin_layout Plain Layout
 
+\family typewriter
+1, 2
 \end_layout
 
 \end_inset
@@ -43552,7 +44164,7 @@ plot
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+logical
 \end_layout
 
 \end_inset
@@ -43562,6 +44174,8 @@ plot
 
 \begin_layout Plain Layout
 
+\family typewriter
+0
 \end_layout
 
 \end_inset
@@ -43571,6 +44185,8 @@ plot
 
 \begin_layout Plain Layout
 
+\family typewriter
+1
 \end_layout
 
 \end_inset
@@ -43584,7 +44200,7 @@ plot
 \end_layout
 
 \begin_layout Subsubsection
-pspm_sf
+pspm_sf (verified)
 \end_layout
 
 \begin_layout Standard
@@ -43650,7 +44266,7 @@ dispsmallwin
 \begin_inset Text
 
 \begin_layout Plain Layout
-char
+logical
 \end_layout
 
 \end_inset
@@ -43661,7 +44277,7 @@ char
 \begin_layout Plain Layout
 
 \family typewriter
-add
+0
 \end_layout
 
 \end_inset
@@ -43672,7 +44288,7 @@ add
 \begin_layout Plain Layout
 
 \family typewriter
-replace
+1
 \end_layout
 
 \end_inset
@@ -43694,7 +44310,7 @@ dispwin
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+logical
 \end_layout
 
 \end_inset
@@ -43704,6 +44320,8 @@ dispwin
 
 \begin_layout Plain Layout
 
+\family typewriter
+1
 \end_layout
 
 \end_inset
@@ -43713,6 +44331,8 @@ dispwin
 
 \begin_layout Plain Layout
 
+\family typewriter
+0
 \end_layout
 
 \end_inset
@@ -43734,7 +44354,7 @@ fresp
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -43744,6 +44364,8 @@ fresp
 
 \begin_layout Plain Layout
 
+\family typewriter
+0.5
 \end_layout
 
 \end_inset
@@ -43753,6 +44375,8 @@ fresp
 
 \begin_layout Plain Layout
 
+\family typewriter
+>= 0
 \end_layout
 
 \end_inset
@@ -43774,7 +44398,7 @@ marker_chan_num
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+char / integer
 \end_layout
 
 \end_inset
@@ -43784,6 +44408,8 @@ marker_chan_num
 
 \begin_layout Plain Layout
 
+\family typewriter
+marker
 \end_layout
 
 \end_inset
@@ -43792,7 +44418,7 @@ marker_chan_num
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -43814,7 +44440,7 @@ overwrite
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+integer
 \end_layout
 
 \end_inset
@@ -43824,6 +44450,8 @@ overwrite
 
 \begin_layout Plain Layout
 
+\family typewriter
+1
 \end_layout
 
 \end_inset
@@ -43833,6 +44461,8 @@ overwrite
 
 \begin_layout Plain Layout
 
+\family typewriter
+0, 2
 \end_layout
 
 \end_inset
@@ -43854,7 +44484,7 @@ theta
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double (vector)
 \end_layout
 
 \end_inset
@@ -43864,6 +44494,8 @@ theta
 
 \begin_layout Plain Layout
 
+\family typewriter
+[0.923581, 3.921034, 2.159389, 1.5339, 1.6411756741]
 \end_layout
 
 \end_inset
@@ -43872,7 +44504,7 @@ theta
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -43894,7 +44526,7 @@ threshold
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -43904,6 +44536,8 @@ threshold
 
 \begin_layout Plain Layout
 
+\family typewriter
+0.1
 \end_layout
 
 \end_inset
@@ -43913,6 +44547,8 @@ threshold
 
 \begin_layout Plain Layout
 
+\family typewriter
+> 0
 \end_layout
 
 \end_inset
@@ -43926,7 +44562,7 @@ threshold
 \end_layout
 
 \begin_layout Subsubsection
-pspm_sf_dcm
+pspm_sf_dcm (verified)
 \end_layout
 
 \begin_layout Standard
@@ -43983,7 +44619,7 @@ Acceptable values
 \begin_layout Plain Layout
 
 \series bold
-dispsmallwin
+dispwin
 \end_layout
 
 \end_inset
@@ -43992,7 +44628,7 @@ dispsmallwin
 \begin_inset Text
 
 \begin_layout Plain Layout
-char
+logical
 \end_layout
 
 \end_inset
@@ -44003,7 +44639,7 @@ char
 \begin_layout Plain Layout
 
 \family typewriter
-add
+1
 \end_layout
 
 \end_inset
@@ -44014,7 +44650,7 @@ add
 \begin_layout Plain Layout
 
 \family typewriter
-replace
+0
 \end_layout
 
 \end_inset
@@ -44027,7 +44663,16 @@ replace
 \begin_layout Plain Layout
 
 \series bold
-dispwin
+dispsmallwin
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+logical
 \end_layout
 
 \end_inset
@@ -44037,6 +44682,8 @@ dispwin
 
 \begin_layout Plain Layout
 
+\family typewriter
+0
 \end_layout
 
 \end_inset
@@ -44046,15 +44693,8 @@ dispwin
 
 \begin_layout Plain Layout
 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
+\family typewriter
+1
 \end_layout
 
 \end_inset
@@ -44076,7 +44716,7 @@ fresp
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -44086,6 +44726,8 @@ fresp
 
 \begin_layout Plain Layout
 
+\family typewriter
+0.5
 \end_layout
 
 \end_inset
@@ -44095,6 +44737,8 @@ fresp
 
 \begin_layout Plain Layout
 
+\family typewriter
+> 0
 \end_layout
 
 \end_inset
@@ -44116,7 +44760,7 @@ theta
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double (vector)
 \end_layout
 
 \end_inset
@@ -44126,6 +44770,8 @@ theta
 
 \begin_layout Plain Layout
 
+\family typewriter
+[0.923581, 3.921034, 2.159389, 1.5339, 1.6411756741]
 \end_layout
 
 \end_inset
@@ -44134,7 +44780,7 @@ theta
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -44156,7 +44802,7 @@ threshold
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -44166,6 +44812,8 @@ threshold
 
 \begin_layout Plain Layout
 
+\family typewriter
+0.1
 \end_layout
 
 \end_inset
@@ -44175,6 +44823,8 @@ threshold
 
 \begin_layout Plain Layout
 
+\family typewriter
+> 0
 \end_layout
 
 \end_inset
@@ -44188,7 +44838,7 @@ threshold
 \end_layout
 
 \begin_layout Subsubsection
-pspm_sf_mp
+pspm_sf_mp (verified)
 \end_layout
 
 \begin_layout Standard
@@ -44254,7 +44904,7 @@ diagnostics
 \begin_inset Text
 
 \begin_layout Plain Layout
-char
+logical
 \end_layout
 
 \end_inset
@@ -44265,7 +44915,7 @@ char
 \begin_layout Plain Layout
 
 \family typewriter
-add
+0
 \end_layout
 
 \end_inset
@@ -44276,7 +44926,7 @@ add
 \begin_layout Plain Layout
 
 \family typewriter
-replace
+1
 \end_layout
 
 \end_inset
@@ -44298,7 +44948,7 @@ dispwin
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+logical
 \end_layout
 
 \end_inset
@@ -44308,6 +44958,8 @@ dispwin
 
 \begin_layout Plain Layout
 
+\family typewriter
+0
 \end_layout
 
 \end_inset
@@ -44317,6 +44969,8 @@ dispwin
 
 \begin_layout Plain Layout
 
+\family typewriter
+1
 \end_layout
 
 \end_inset
@@ -44338,7 +44992,7 @@ fresp
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -44348,6 +45002,8 @@ fresp
 
 \begin_layout Plain Layout
 
+\family typewriter
+0.5
 \end_layout
 
 \end_inset
@@ -44357,6 +45013,8 @@ fresp
 
 \begin_layout Plain Layout
 
+\family typewriter
+> 0
 \end_layout
 
 \end_inset
@@ -44378,7 +45036,7 @@ theta
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double (vector)
 \end_layout
 
 \end_inset
@@ -44388,6 +45046,8 @@ theta
 
 \begin_layout Plain Layout
 
+\family typewriter
+[0.923581, 3.921034, 2.159389, 1.5339, 1.6411756741]
 \end_layout
 
 \end_inset
@@ -44396,7 +45056,7 @@ theta
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -44418,7 +45078,7 @@ threshold
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -44428,6 +45088,8 @@ threshold
 
 \begin_layout Plain Layout
 
+\family typewriter
+0.1
 \end_layout
 
 \end_inset
@@ -44437,6 +45099,8 @@ threshold
 
 \begin_layout Plain Layout
 
+\family typewriter
+> 0
 \end_layout
 
 \end_inset
@@ -44450,7 +45114,7 @@ threshold
 \end_layout
 
 \begin_layout Subsubsection
-pspm_split_sessions
+pspm_split_sessions (verified)
 \end_layout
 
 \begin_layout Standard
@@ -44516,7 +45180,7 @@ max_sn
 \begin_inset Text
 
 \begin_layout Plain Layout
-char
+double
 \end_layout
 
 \end_inset
@@ -44525,9 +45189,7 @@ char
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\family typewriter
-add
+settings.split.max_sn
 \end_layout
 
 \end_inset
@@ -44538,7 +45200,7 @@ add
 \begin_layout Plain Layout
 
 \family typewriter
-replace
+> 0
 \end_layout
 
 \end_inset
@@ -44560,7 +45222,16 @@ min_break_ratio
 \begin_inset Text
 
 \begin_layout Plain Layout
+double
+\end_layout
 
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+settings.split.min_break_ratio
 \end_layout
 
 \end_inset
@@ -44570,15 +45241,8 @@ min_break_ratio
 
 \begin_layout Plain Layout
 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
+\family typewriter
+> 0
 \end_layout
 
 \end_inset
@@ -44600,7 +45264,7 @@ missing
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+char
 \end_layout
 
 \end_inset
@@ -44610,6 +45274,9 @@ missing
 
 \begin_layout Plain Layout
 
+\family typewriter
+\shape italic
+empty
 \end_layout
 
 \end_inset
@@ -44618,7 +45285,7 @@ missing
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -44640,7 +45307,7 @@ overwrite
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+integer
 \end_layout
 
 \end_inset
@@ -44650,6 +45317,8 @@ overwrite
 
 \begin_layout Plain Layout
 
+\family typewriter
+0
 \end_layout
 
 \end_inset
@@ -44659,6 +45328,8 @@ overwrite
 
 \begin_layout Plain Layout
 
+\family typewriter
+1, 2
 \end_layout
 
 \end_inset
@@ -44680,7 +45351,7 @@ prefix
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -44690,6 +45361,8 @@ prefix
 
 \begin_layout Plain Layout
 
+\family typewriter
+0
 \end_layout
 
 \end_inset
@@ -44699,6 +45372,8 @@ prefix
 
 \begin_layout Plain Layout
 
+\family typewriter
+<= 0
 \end_layout
 
 \end_inset
@@ -44720,7 +45395,7 @@ randomITI
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+logical
 \end_layout
 
 \end_inset
@@ -44730,6 +45405,8 @@ randomITI
 
 \begin_layout Plain Layout
 
+\family typewriter
+0
 \end_layout
 
 \end_inset
@@ -44739,6 +45416,8 @@ randomITI
 
 \begin_layout Plain Layout
 
+\family typewriter
+1
 \end_layout
 
 \end_inset
@@ -44760,7 +45439,7 @@ splitpoints
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double (vector)
 \end_layout
 
 \end_inset
@@ -44770,6 +45449,8 @@ splitpoints
 
 \begin_layout Plain Layout
 
+\family typewriter
+[]
 \end_layout
 
 \end_inset
@@ -44778,7 +45459,7 @@ splitpoints
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -44800,7 +45481,7 @@ suffix
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+double
 \end_layout
 
 \end_inset
@@ -44810,6 +45491,8 @@ suffix
 
 \begin_layout Plain Layout
 
+\family typewriter
+0
 \end_layout
 
 \end_inset
@@ -44819,6 +45502,8 @@ suffix
 
 \begin_layout Plain Layout
 
+\family typewriter
+>= 0
 \end_layout
 
 \end_inset
@@ -44840,7 +45525,7 @@ verbose
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+logical
 \end_layout
 
 \end_inset
@@ -44850,6 +45535,8 @@ verbose
 
 \begin_layout Plain Layout
 
+\family typewriter
+1
 \end_layout
 
 \end_inset
@@ -44859,6 +45546,8 @@ verbose
 
 \begin_layout Plain Layout
 
+\family typewriter
+0
 \end_layout
 
 \end_inset
@@ -44872,7 +45561,7 @@ verbose
 \end_layout
 
 \begin_layout Subsubsection
-pspm_trim
+pspm_trim (verified)
 \end_layout
 
 \begin_layout Standard
@@ -44938,7 +45627,7 @@ drop_offset_markers
 \begin_inset Text
 
 \begin_layout Plain Layout
-double
+integer
 \end_layout
 
 \end_inset
@@ -44949,7 +45638,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
-add
+0
 \end_layout
 
 \end_inset
@@ -44958,9 +45647,7 @@ add
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\family typewriter
-replace
+Any
 \end_layout
 
 \end_inset
@@ -44982,7 +45669,7 @@ marker_chan_num
 \begin_inset Text
 
 \begin_layout Plain Layout
-double
+integer
 \end_layout
 
 \end_inset
@@ -44992,6 +45679,8 @@ double
 
 \begin_layout Plain Layout
 
+\family typewriter
+0
 \end_layout
 
 \end_inset
@@ -45000,7 +45689,7 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -45022,7 +45711,7 @@ overwrite
 \begin_inset Text
 
 \begin_layout Plain Layout
-double
+integer
 \end_layout
 
 \end_inset
@@ -45032,6 +45721,8 @@ double
 
 \begin_layout Plain Layout
 
+\family typewriter
+0
 \end_layout
 
 \end_inset
@@ -45041,6 +45732,8 @@ double
 
 \begin_layout Plain Layout
 
+\family typewriter
+1, 2
 \end_layout
 
 \end_inset
@@ -45054,7 +45747,7 @@ double
 \end_layout
 
 \begin_layout Subsubsection
-pspm_write_channel
+pspm_write_channel (verified)
 \end_layout
 
 \begin_layout Standard
@@ -45120,7 +45813,7 @@ channel
 \begin_inset Text
 
 \begin_layout Plain Layout
-char / double
+integer / char / cell
 \end_layout
 
 \end_inset
@@ -45140,9 +45833,7 @@ char / double
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\family typewriter
-?
+Any
 \end_layout
 
 \end_inset
@@ -45173,6 +45864,8 @@ char
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 last
 \end_layout
 
@@ -45182,6 +45875,8 @@ last
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 first, all
 \end_layout
 
@@ -45213,7 +45908,10 @@ char / struct
 \begin_inset Text
 
 \begin_layout Plain Layout
-`'
+
+\family typewriter
+\shape italic
+empty
 \end_layout
 
 \end_inset
@@ -45222,7 +45920,7 @@ char / struct
 \begin_inset Text
 
 \begin_layout Plain Layout
-any char / struct
+Any
 \end_layout
 
 \end_inset
@@ -45253,7 +45951,9 @@ char
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
+
+\family typewriter
+Generic undocumented operation :: 
 \end_layout
 
 \end_inset
@@ -45262,7 +45962,7 @@ char
 \begin_inset Text
 
 \begin_layout Plain Layout
-any char
+Any
 \end_layout
 
 \end_inset

@@ -341,8 +341,8 @@ switch FunName
     options = autofill(options, 'data_island_threshold',  0,          '>=', 0           );
     options = autofill(options, 'deflection_threshold',   0.1,        '*Num'            );
     options = autofill(options, 'expand_epochs',          0.5,        '>=', 0           );
-    options = autofill(options, 'max',                    60,         '*Num'            );
-    options = autofill(options, 'min',                    0.05,       '*Num'            );
+    options = autofill(options, 'max',                    60,         '>', 0            );
+    options = autofill(options, 'min',                    0.05,       '>', 0            );
     options = autofill(options, 'missing_epochs_filename','missing_epochs_filename',...
                                                                       '*Char'           );
     options = autofill(options, 'slope',                  10,         '*Num'            );
@@ -410,7 +410,7 @@ switch FunName
                                                                       '>', 0            ); % maximum number of sessions (default 10)
     options = autofill(options, 'min_break_ratio',        settings.split.min_break_ratio,...
                                                                       '>', 0            ); % minimum ratio of session break to normal inter marker interval (default 3)
-    options = autofill(options, 'missing',                0,          '*Char'           );
+    options = autofill(options, 'missing',               '',          '*Char'           );
     options = autofill(options, 'overwrite',              0,          [1, 2]            );
     options = autofill(options, 'prefix',                 0,          '<=', 0           );
     options = autofill(options, 'randomITI',              0,          1                 );
@@ -426,6 +426,9 @@ switch FunName
     %% 2.47 pspm_write_channel
     options = autofill(options, 'channel',                0,          '*Int*Char*Cell'  );
     options = autofill(options, 'delete',                 'last',     {'first','all'}   );
+    options = autofill(options, 'prefix', ...
+                      'Generic undocumented operation :: ',...
+                                                                      '*Char'           );
     if ~isfield('options','msg')
       options.msg = '';
     else
@@ -435,8 +438,6 @@ switch FunName
         return
       end
     end
-    options = autofill(options, 'prefix', 'Generic undocumented operation :: ',...
-                                                                      '*Char'           );
     if ~isfield(options, 'channel')
       options.channel = 0;
     else
