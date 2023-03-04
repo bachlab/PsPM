@@ -274,7 +274,12 @@ for iFile = 1:nFile
       warning('ID:invalid_input', 'Could not load the specified markerchannel');
       return
     end
-    events{iFile} = data{end}.data(:) * data{end}.header.sr;
+    if strcmp(options.marker_chan_num_event, 'first')
+      events{iFile} = data{1}.data(:) * data{1}.header.sr;
+    end
+    if strcmp(options.marker_chan_num_event, 'last')
+      events{iFile} = data{end}.data(:) * data{end}.header.sr;
+    end
     if strcmp(model.timeunits,'markervalues')
       model.timing{iFile}.markerinfo = data{end}.markerinfo;
     end
