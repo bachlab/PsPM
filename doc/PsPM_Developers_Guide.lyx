@@ -33115,7 +33115,7 @@ cell / char / int
 \begin_inset Text
 
 \begin_layout Plain Layout
-any cell / char / int
+Any
 \end_layout
 
 \end_inset
@@ -34063,7 +34063,7 @@ second
 \end_layout
 
 \begin_layout Subsubsection
-pspm_convert_ecg2hb_amri
+pspm_convert_ecg2hb_amri 
 \end_layout
 
 \begin_layout Standard
@@ -34168,7 +34168,7 @@ ecg
 \begin_inset Text
 
 \begin_layout Plain Layout
-any cell / char / int
+Any
 \end_layout
 
 \end_inset
@@ -35296,7 +35296,7 @@ cell / char / int
 \begin_inset Text
 
 \begin_layout Plain Layout
-any cell / char / int
+Any
 \end_layout
 
 \end_inset
@@ -35762,7 +35762,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
->0
+> 0
 \end_layout
 
 \end_inset
@@ -35806,7 +35806,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
->0
+> 0
 \end_layout
 
 \end_inset
@@ -35850,7 +35850,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
->0
+> 0
 \end_layout
 
 \end_inset
@@ -35894,7 +35894,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
->0
+> 0
 \end_layout
 
 \end_inset
@@ -35938,7 +35938,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
->0
+> 0
 \end_layout
 
 \end_inset
@@ -36024,7 +36024,7 @@ int
 \begin_inset Text
 
 \begin_layout Plain Layout
-any int
+Any
 \end_layout
 
 \end_inset
@@ -36154,7 +36154,7 @@ cell
 \begin_inset Text
 
 \begin_layout Plain Layout
-any cell
+Any
 \end_layout
 
 \end_inset
@@ -36416,7 +36416,7 @@ cell / char
 \begin_inset Text
 
 \begin_layout Plain Layout
-any cell / char
+Any
 \end_layout
 
 \end_inset
@@ -36914,7 +36914,7 @@ int
 \begin_inset Text
 
 \begin_layout Plain Layout
-any int
+Any
 \end_layout
 
 \end_inset
@@ -37044,7 +37044,7 @@ cell
 \begin_inset Text
 
 \begin_layout Plain Layout
-any cell
+Any
 \end_layout
 
 \end_inset
@@ -37306,7 +37306,7 @@ cell / char
 \begin_inset Text
 
 \begin_layout Plain Layout
-any cell / char
+Any
 \end_layout
 
 \end_inset
@@ -37508,7 +37508,7 @@ char
 \begin_inset Text
 
 \begin_layout Plain Layout
-any char
+Any
 \end_layout
 
 \end_inset
@@ -37550,7 +37550,7 @@ cell / char / int
 \begin_inset Text
 
 \begin_layout Plain Layout
-any cell / char / int
+Any
 \end_layout
 
 \end_inset
@@ -37738,7 +37738,7 @@ emg
 \begin_inset Text
 
 \begin_layout Plain Layout
-any cell / char / int
+Any
 \end_layout
 
 \end_inset
@@ -37928,7 +37928,7 @@ t
 \begin_inset Text
 
 \begin_layout Plain Layout
-any char
+Any
 \end_layout
 
 \end_inset
@@ -38202,7 +38202,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
->= 0
+≥ 0
 \end_layout
 
 \end_inset
@@ -38328,7 +38328,7 @@ char
 \begin_inset Text
 
 \begin_layout Plain Layout
-any char
+Any
 \end_layout
 
 \end_inset
@@ -39140,7 +39140,7 @@ cell / char / int
 \begin_inset Text
 
 \begin_layout Plain Layout
-any cell / char / int
+Any
 \end_layout
 
 \end_inset
@@ -39782,7 +39782,7 @@ char
 \begin_inset Text
 
 \begin_layout Plain Layout
-any char
+Any
 \end_layout
 
 \end_inset
@@ -39824,7 +39824,7 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
-any double
+Any
 \end_layout
 
 \end_inset
@@ -40010,7 +40010,7 @@ cell
 \begin_inset Text
 
 \begin_layout Plain Layout
-any char / cell
+Any
 \end_layout
 
 \end_inset
@@ -40610,7 +40610,7 @@ char / cell
 \begin_inset Text
 
 \begin_layout Plain Layout
-any char cell
+Any
 \end_layout
 
 \end_inset
@@ -41126,7 +41126,7 @@ cell / char / int
 \begin_inset Text
 
 \begin_layout Plain Layout
-any cell / char / int
+Any
 \end_layout
 
 \end_inset
@@ -42201,7 +42201,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
->= 0
+≥ 0
 \end_layout
 
 \end_inset
@@ -42245,7 +42245,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
->= 0
+≥ 0
 \end_layout
 
 \end_inset
@@ -42513,6 +42513,8 @@ add
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 replace
 \end_layout
 
@@ -42555,6 +42557,8 @@ auto
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 manual
 \end_layout
 
@@ -43695,7 +43699,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
->= 0
+≥ 0
 \end_layout
 
 \end_inset
@@ -43781,7 +43785,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
->= 0
+≥ 0
 \end_layout
 
 \end_inset
@@ -44376,7 +44380,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
->= 0
+≥ 0
 \end_layout
 
 \end_inset
@@ -45503,7 +45507,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
->= 0
+≥ 0
 \end_layout
 
 \end_inset
