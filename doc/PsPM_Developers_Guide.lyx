@@ -178,7 +178,7 @@ Contributed by Dominik R Bach
 \end_layout
 
 \begin_layout Quote
-Updated by Dadi Zhao in Feburary 2022
+Updated by Dadi Zhao in Feburary 2023
 \end_layout
 
 \begin_layout Subsection
@@ -32969,11 +32969,23 @@ DZ Dadi Zhao
 \end_layout
 
 \begin_layout Section
-List of Options Fields
+List of Option Fields
+\end_layout
+
+\begin_layout Standard
+Option fields are the fields of the options that are used by many functions
+ in PsPM.
+ Some of them have strict specification requirements and should be set carefully
+ if non-standard values are used.
+ Please check this chapter carefully about how to set the fields.
 \end_layout
 
 \begin_layout Subsection
 Index
+\end_layout
+
+\begin_layout Subsubsection
+Field name
 \end_layout
 
 \begin_layout Itemize
@@ -32988,6 +33000,102 @@ channel
 \end_layout
 
 \end_deeper
+\begin_layout Subsubsection
+Data type
+\end_layout
+
+\begin_layout Standard
+There are five basic kinds of data types used for the values of the fields
+ in PsPM, which are namely 
+\shape italic
+cell
+\shape default
+, 
+\shape italic
+character
+\shape default
+ (abbreviated as 
+\shape italic
+char
+\shape default
+), 
+\shape italic
+double
+\shape default
+, 
+\shape italic
+logical
+\shape default
+, and 
+\shape italic
+struct
+\shape default
+.
+ Among 
+\shape italic
+double
+\shape default
+, there are some values required to be 
+\shape italic
+integers
+\shape default
+ for their actual meanings.
+ There are also some values required to be more than 
+\begin_inset Formula $1\times1$
+\end_inset
+
+ size, and there are therefore denoted as 
+\shape italic
+double (vector)
+\shape default
+ or 
+\shape italic
+double (matrix)
+\shape default
+.
+ If unspecified, 
+\shape italic
+double (vector)
+\shape default
+ denotes a matrix of size 
+\begin_inset Formula $1\times n$
+\end_inset
+
+.
+ If such vectors / matrixes are additionally required to be 
+\shape italic
+integers
+\shape default
+, they will be specified as
+\shape italic
+ integer (vector)
+\shape default
+ or 
+\shape italic
+integer (matrix)
+\shape default
+.
+\end_layout
+
+\begin_layout Subsubsection
+Unit
+\end_layout
+
+\begin_layout Standard
+Content in this column demonstrates the unit of default and acceptable values
+ of this field.
+ This column will not be available for the tables when there are no variables
+ with physical meaning and units.
+\end_layout
+
+\begin_layout Subsubsection
+Default value
+\end_layout
+
+\begin_layout Standard
+Default values are used if users have not customised the fields.
+\end_layout
+
 \begin_layout Itemize
 A word written in typewritter format means a string that is used in the
  code, typically the value of a variable.
@@ -33014,16 +33122,33 @@ Example:
 \end_layout
 
 \end_deeper
-\begin_layout Itemize
-Text written in sans-serif format is just regular description.
+\begin_layout Subsubsection
+Acceptable values
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
-Example: cell / char / int
+\begin_layout Standard
+Apart from the notations described above for the default values, two additional
+ terms, Any and Subset, are also used:
 \end_layout
 
-\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Any 
+\shape italic
+Any
+\shape default
+ means any value that meets the requirement of data type can be used here.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Subset 
+\shape italic
+Subset
+\shape default
+ means any value that is a subset of the default value can be used here.
+\end_layout
+
 \begin_layout Subsection
 Details
 \end_layout
@@ -33046,7 +33171,7 @@ pspm_blink_saccade_filt
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -33095,7 +33220,7 @@ channel
 \begin_inset Text
 
 \begin_layout Plain Layout
-cell / char / int
+cell / char / integer
 \end_layout
 
 \end_inset
@@ -33190,7 +33315,7 @@ pspm_compute_visual_angle
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -33292,7 +33417,7 @@ pspm_con1
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -33394,7 +33519,7 @@ pspm_con2
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -33496,7 +33621,7 @@ pspm_convert_area2diameter
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -33598,7 +33723,7 @@ pspm_convert_au2unit
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -33689,7 +33814,7 @@ pspm_convert_ecg2hb
 \begin_layout Standard
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="7" columns="5">
+<lyxtabular version="3" rows="8" columns="5">
 <features booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -33701,7 +33826,7 @@ pspm_convert_ecg2hb
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -33895,6 +34020,8 @@ bpm
 
 \begin_layout Plain Layout
 
+\family typewriter
+> 20
 \end_layout
 
 \end_inset
@@ -33946,6 +34073,59 @@ bpm
 
 \begin_layout Plain Layout
 
+\family typewriter
+< 200
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+outfact
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+double
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+/
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Any
 \end_layout
 
 \end_inset
@@ -34049,7 +34229,7 @@ second
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Any
 \end_layout
 
 \end_inset
@@ -34081,7 +34261,7 @@ pspm_convert_ecg2hb_amri
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -34139,7 +34319,7 @@ channel
 \begin_inset Text
 
 \begin_layout Plain Layout
-cell / char / int
+cell / char / integer
 \end_layout
 
 \end_inset
@@ -34243,7 +34423,7 @@ ecg_bandpass
 \begin_inset Text
 
 \begin_layout Plain Layout
-vector
+double (vector)
 \end_layout
 
 \end_inset
@@ -34308,7 +34488,7 @@ hrrange
 \begin_inset Text
 
 \begin_layout Plain Layout
-vector
+double (vector)
 \end_layout
 
 \end_inset
@@ -34382,7 +34562,7 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
+/
 \end_layout
 
 \end_inset
@@ -34402,7 +34582,7 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
+Any
 \end_layout
 
 \end_inset
@@ -34433,7 +34613,7 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
+/
 \end_layout
 
 \end_inset
@@ -34453,7 +34633,7 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
+Any
 \end_layout
 
 \end_inset
@@ -34528,7 +34708,7 @@ teo_bandpass
 \begin_inset Text
 
 \begin_layout Plain Layout
-vector
+double (vector)
 \end_layout
 
 \end_inset
@@ -34537,7 +34717,7 @@ vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
+Hz
 \end_layout
 
 \end_inset
@@ -34581,7 +34761,7 @@ teo_order
 \begin_inset Text
 
 \begin_layout Plain Layout
-double
+integer
 \end_layout
 
 \end_inset
@@ -34590,7 +34770,7 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
+/
 \end_layout
 
 \end_inset
@@ -34610,9 +34790,7 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\family typewriter
-> 0
+Any
 \end_layout
 
 \end_inset
@@ -34643,7 +34821,7 @@ pspm_convert_gaze_distance
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -34745,7 +34923,7 @@ pspm_convert_hb2hp
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -34935,7 +35113,7 @@ pspm_convert_pixel2unit
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -35026,7 +35204,7 @@ pspm_convert_ppg2hb
 \begin_layout Standard
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="4">
+<lyxtabular version="3" rows="3" columns="4">
 <features booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -35037,7 +35215,7 @@ pspm_convert_ppg2hb
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -35115,7 +35293,7 @@ add
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -35126,7 +35304,7 @@ diagnostics
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -35135,7 +35313,7 @@ logical
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -35146,57 +35324,13 @@ logical
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \family typewriter
 1
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-lsm
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-double
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-[0, 100-10^-10]?
 \end_layout
 
 \end_inset
@@ -35227,7 +35361,7 @@ pspm_convert_visangle2sps
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -35276,7 +35410,7 @@ channel
 \begin_inset Text
 
 \begin_layout Plain Layout
-cell / char / int
+cell / char / integer
 \end_layout
 
 \end_inset
@@ -35415,7 +35549,7 @@ pspm_data_editor
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -35603,7 +35737,7 @@ pspm_dcm
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -36004,7 +36138,7 @@ depth
 \begin_inset Text
 
 \begin_layout Plain Layout
-int
+integer
 \end_layout
 
 \end_inset
@@ -36447,7 +36581,7 @@ pspm_dcm_inv
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -36584,8 +36718,6 @@ eSCR
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\family typewriter
 logical
 \end_layout
 
@@ -36894,7 +37026,7 @@ depth
 \begin_inset Text
 
 \begin_layout Plain Layout
-int
+integer
 \end_layout
 
 \end_inset
@@ -37337,7 +37469,7 @@ pspm_down
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -37439,7 +37571,7 @@ pspm_ecg_editor
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -37530,7 +37662,7 @@ channel
 \begin_inset Text
 
 \begin_layout Plain Layout
-cell / char / int
+cell / char / integer
 \end_layout
 
 \end_inset
@@ -37669,7 +37801,7 @@ pspm_emg_pp
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -37718,7 +37850,7 @@ channel
 \begin_inset Text
 
 \begin_layout Plain Layout
-cell / char / int
+cell / char / integer
 \end_layout
 
 \end_inset
@@ -37857,7 +37989,7 @@ pspm_exp
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -38047,6 +38179,8 @@ char
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 screen
 \end_layout
 
@@ -38087,7 +38221,7 @@ pspm_extract_segments
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -38487,7 +38621,7 @@ pspm_find_sounds
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -38886,7 +39020,7 @@ roi
 \begin_inset Text
 
 \begin_layout Plain Layout
-numeric
+double (vector)
 \end_layout
 
 \end_inset
@@ -39071,7 +39205,7 @@ pspm_find_valid_fixations
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -39120,7 +39254,7 @@ channel
 \begin_inset Text
 
 \begin_layout Plain Layout
-cell / char / int
+cell / char / integer
 \end_layout
 
 \end_inset
@@ -39206,7 +39340,7 @@ fixation_point
 \begin_inset Text
 
 \begin_layout Plain Layout
-vector
+double (vector)
 \end_layout
 
 \end_inset
@@ -39314,9 +39448,7 @@ char
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\family typewriter
-any char
+Any
 \end_layout
 
 \end_inset
@@ -39426,7 +39558,7 @@ resolution
 \begin_inset Text
 
 \begin_layout Plain Layout
-vector
+double (vector)
 \end_layout
 
 \end_inset
@@ -39479,7 +39611,7 @@ pspm_gaze_pp
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -39713,7 +39845,7 @@ pspm_get_markerinfo
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -39899,7 +40031,7 @@ pspm_get_rf..inherited.from.pspm_dcm
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -40641,7 +40773,7 @@ pspm_glm
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -40955,7 +41087,7 @@ pspm_import
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -41057,7 +41189,7 @@ pspm_interpolate
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -41106,7 +41238,7 @@ channel
 \begin_inset Text
 
 \begin_layout Plain Layout
-cell / char / int
+cell / char / integer
 \end_layout
 
 \end_inset
@@ -41377,7 +41509,7 @@ pspm_load1
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -41523,7 +41655,7 @@ pspm_merge (verified)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -41667,7 +41799,7 @@ pspm_pfm (verified)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -41769,7 +41901,7 @@ pspm_pp (verified)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -41871,7 +42003,7 @@ pspm_process_illuminance (verified)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -42276,7 +42408,7 @@ pspm_pupil_correct_eyelink (verified)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -42804,7 +42936,7 @@ pspm_pupil_pp (verified)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -43036,7 +43168,7 @@ pspm_remove_epochs (verified)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -43138,7 +43270,7 @@ pspm_resp_pp (verified)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -43414,7 +43546,7 @@ pspm_scr_pp (verified)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -43988,7 +44120,7 @@ pspm_segment_mean (verified)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -44212,21 +44344,21 @@ pspm_sf (verified)
 \begin_inset Tabular
 <lyxtabular version="3" rows="8" columns="4">
 <features booktabs="true" tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="0pt">
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -44235,7 +44367,7 @@ Data type
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -44244,7 +44376,7 @@ Default value
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -44255,7 +44387,7 @@ Acceptable values
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -44266,7 +44398,7 @@ dispsmallwin
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -44275,7 +44407,7 @@ logical
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -44286,7 +44418,7 @@ logical
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -44499,7 +44631,7 @@ double (vector)
 \begin_layout Plain Layout
 
 \family typewriter
-[0.923581, 3.921034, 2.159389, 1.5339, 1.6411756741]
+[0.92, 3.92, 2.16, 1.53, 1.64]
 \end_layout
 
 \end_inset
@@ -44583,7 +44715,7 @@ pspm_sf_dcm (verified)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -44775,7 +44907,7 @@ double (vector)
 \begin_layout Plain Layout
 
 \family typewriter
-[0.923581, 3.921034, 2.159389, 1.5339, 1.6411756741]
+[0.92, 3.92, 2.16, 1.53, 1.64]
 \end_layout
 
 \end_inset
@@ -44859,7 +44991,7 @@ pspm_sf_mp (verified)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -45051,7 +45183,7 @@ double (vector)
 \begin_layout Plain Layout
 
 \family typewriter
-[0.923581, 3.921034, 2.159389, 1.5339, 1.6411756741]
+[0.92, 3.92, 2.16, 1.53, 1.64]
 \end_layout
 
 \end_inset
@@ -45135,7 +45267,7 @@ pspm_split_sessions (verified)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -45582,7 +45714,7 @@ pspm_trim (verified)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
@@ -45768,7 +45900,7 @@ pspm_write_channel (verified)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Option field
+Field name
 \end_layout
 
 \end_inset
