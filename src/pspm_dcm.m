@@ -55,6 +55,8 @@ function varargout = pspm_dcm(model, options)
 %		│             i.e. Data are normalised during inversion but results
 %		│             transformed back into raw data units.
 %		│             Default: 0.
+%   ├───.flexevents:  flexible events to adjust amplitude priors
+%   ├────.fixevents:  fixed events to adjust amplitude priors
 % 	└─.constrained:
 %	              	Constrained model for flexible responses which have fixed
 %               	dispersion (0.3 s SD) but flexible latency.
@@ -676,7 +678,7 @@ startevent = min([flexevents(:); fixevents(:)]);
 flexevents = flexevents - startevent;
 fixevents  = fixevents  - startevent;
 model.flexevents = flexevents;
-options.fixevents  = fixevents;
+model.fixevents  = fixevents;
 clear flexseq fixseq flexevents fixevents startevent
 
 % 5.2 check ITI
@@ -689,8 +691,8 @@ end
 
 % 5.3 extract PCA of last fixed response (eSCR) if last event is fixed --
 if (options.indrf || options.getrf) && (isempty(model.flexevents) ...
-    || (max(options.fixevents > max(model.flexevents(:, 2), [], 2))))
-  [~, lastfix] = max(options.fixevents);
+    || (max(model.fixevents > max(model.flexevents(:, 2), [], 2))))
+  [~, lastfix] = max(model.fixevents);
   % extract data
   winsize = floor(model.sr * min([proc_miniti 10]));
   D = [];
@@ -790,7 +792,7 @@ if (options.indrf || options.getrf) && ~isempty(model.flexevents)
 end
 
 % 5.6 get mean response
-model.meanSCR = transpose(nanmean(D));
+model.meanSCR = transpose(mean(D,'omitnan') );
 
 %% 6 Invert DCM
 dcm = pspm_dcm_inv(model, options);

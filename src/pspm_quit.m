@@ -16,6 +16,9 @@ if any(contains(path, 'VBA'))
   rmpath(pspm_path('ext','VBA','subfunctions'));
   rmpath(pspm_path('ext','VBA','stats&plots'));
 end
+if isfile(fullfile(pth,'pspm_text.mat'))
+  delete(fullfile(pth,'pspm_text.mat'))
+end
 clear settings
 close all
 disp(' ');
