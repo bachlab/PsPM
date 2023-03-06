@@ -33150,6 +33150,40 @@ Subset
 \end_layout
 
 \begin_layout Subsection
+References for Values
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+ecg Abbreviation of electrocardiogram.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+emg as
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+combined The combined left and right eyes.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+dcm
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+teo
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+replace
+\end_layout
+
+\begin_layout Subsection
 Details
 \end_layout
 
@@ -34443,7 +34477,7 @@ bpm
 \begin_layout Plain Layout
 
 \family typewriter
-[0.5 40]
+[0.5, 40]
 \end_layout
 
 \end_inset
@@ -34508,7 +34542,7 @@ bpm
 \begin_layout Plain Layout
 
 \family typewriter
-[20 200]
+[20, 200]
 \end_layout
 
 \end_inset
@@ -34728,7 +34762,7 @@ Hz
 \begin_layout Plain Layout
 
 \family typewriter
-[8 40]
+[8, 40]
 \end_layout
 
 \end_inset
@@ -35507,7 +35541,7 @@ char
 \begin_layout Plain Layout
 
 \family typewriter
-c
+settings.
 \end_layout
 
 \end_inset
@@ -36696,7 +36730,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
->0
+> 0
 \end_layout
 
 \end_inset
@@ -36784,7 +36818,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
->0
+> 0
 \end_layout
 
 \end_inset
@@ -36828,7 +36862,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
->0
+> 0
 \end_layout
 
 \end_inset
@@ -36872,7 +36906,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
->0
+> 0
 \end_layout
 
 \end_inset
@@ -36916,7 +36950,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
->0
+> 0
 \end_layout
 
 \end_inset
@@ -36960,7 +36994,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
->0
+> 0
 \end_layout
 
 \end_inset
@@ -38190,7 +38224,7 @@ screen
 \begin_inset Text
 
 \begin_layout Plain Layout
-any char
+Any
 \end_layout
 
 \end_inset
@@ -38367,6 +38401,8 @@ char
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 none
 \end_layout
 
@@ -38376,6 +38412,8 @@ none
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 screen, file output
 \end_layout
 
@@ -38581,6 +38619,8 @@ char
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 seconds
 \end_layout
 
@@ -38590,6 +38630,8 @@ seconds
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 samples, markers
 \end_layout
 
@@ -38679,6 +38721,8 @@ char
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 none
 \end_layout
 
@@ -40102,7 +40146,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
->0?
+> 0?
 \end_layout
 
 \end_inset
@@ -40133,6 +40177,8 @@ cell
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 {}
 \end_layout
 
@@ -40173,6 +40219,8 @@ logical
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 0
 \end_layout
 
@@ -40182,6 +40230,8 @@ logical
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 1
 \end_layout
 
@@ -40213,6 +40263,8 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 5
 \end_layout
 
@@ -40222,7 +40274,9 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
->0
+
+\family typewriter
+> 0
 \end_layout
 
 \end_inset
@@ -40253,6 +40307,8 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 2
 \end_layout
 
@@ -40262,7 +40318,9 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
->0
+
+\family typewriter
+> 0
 \end_layout
 
 \end_inset
@@ -40293,6 +40351,8 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 0.5
 \end_layout
 
@@ -40302,7 +40362,9 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
->0
+
+\family typewriter
+> 0
 \end_layout
 
 \end_inset
@@ -40333,6 +40395,8 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 5
 \end_layout
 
@@ -40342,7 +40406,9 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
->0
+
+\family typewriter
+> 0
 \end_layout
 
 \end_inset
@@ -40373,6 +40439,8 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 2
 \end_layout
 
@@ -40382,7 +40450,9 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
->0
+
+\family typewriter
+> 0
 \end_layout
 
 \end_inset
@@ -40413,6 +40483,8 @@ logical
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 0
 \end_layout
 
@@ -40422,6 +40494,8 @@ logical
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 1
 \end_layout
 
@@ -40453,6 +40527,8 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 2
 \end_layout
 
@@ -40462,6 +40538,8 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 ?
 \end_layout
 
@@ -40493,6 +40571,8 @@ logical
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 0
 \end_layout
 
@@ -40502,6 +40582,8 @@ logical
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 1
 \end_layout
 
@@ -40533,6 +40615,8 @@ logical
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 1
 \end_layout
 
@@ -40542,6 +40626,8 @@ logical
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 0
 \end_layout
 
@@ -40573,6 +40659,8 @@ logical
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 0
 \end_layout
 
@@ -40582,6 +40670,8 @@ logical
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 1
 \end_layout
 
@@ -40613,6 +40703,8 @@ logical
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 0
 \end_layout
 
@@ -40622,6 +40714,8 @@ logical
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 1
 \end_layout
 
@@ -40653,6 +40747,8 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 1
 \end_layout
 
@@ -40662,6 +40758,8 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 0, 2
 \end_layout
 
@@ -40693,6 +40791,8 @@ logical
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 0
 \end_layout
 
@@ -40702,6 +40802,8 @@ logical
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 1
 \end_layout
 
@@ -40733,6 +40835,8 @@ char / cell
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 {}
 \end_layout
 
