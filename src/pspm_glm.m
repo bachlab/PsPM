@@ -15,8 +15,9 @@ function varargout = pspm_glm(model, options)
 %   │             a struct (single session) with fields .names, .onsets,
 %   │             and (optional) .durations and .pmod  OR
 %   │             a cell array of struct OR
-%   │             a struct with fields 'markerinfos', 'markervalues,
-%   │             'names' OR a cell array of struct
+%   │             a struct with fields 'markervalues' and 'names' (when model.timeunits
+%   │             is set to be 'markervalues')
+%   │             OR a cell array of struct
 %   ├.timeunits:  one of 'seconds', 'samples', 'markers', 'markervalues'
 %   ├───.window:  a scalar in seconds that specifies over which time
 %   │             window (starting with the events specified in
