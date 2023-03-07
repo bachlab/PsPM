@@ -33153,14 +33153,32 @@ Subset
 References for Values
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-ecg Abbreviation of electrocardiogram.
+\begin_layout Subsubsection
+Abbreviations
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-emg as
+ecg Electrocardiogram
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+emg Electromyography
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+dcm Dynamic Causal Modelling
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+teo Teager Energy Operator
+\end_layout
+
+\begin_layout Subsubsection
+Action descriptors
 \end_layout
 
 \begin_layout Labeling
@@ -33170,17 +33188,8 @@ combined The combined left and right eyes.
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-dcm
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-teo
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-replace
+replace The action of replacing the current content by the results for the
+ channel of interest.
 \end_layout
 
 \begin_layout Subsection
