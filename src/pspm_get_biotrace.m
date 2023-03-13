@@ -41,7 +41,7 @@ end;
 
 % retrieve recording channel, date and time ---
 foo = regexp(bio.header{1}{9}, ':', 'split');
-sourceinfo.chan{1} = foo{2};
+sourceinfo.channel{1} = foo{2};
 foo = regexp(bio.header{1}{4}, '\s', 'split');
 sourceinfo.date = foo{2};
 foo = regexp(bio.header{1}{5}, '\s', 'split');

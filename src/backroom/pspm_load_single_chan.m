@@ -5,7 +5,7 @@ function [sts, data_cell] = pspm_load_single_chan(fn, channel, which_of_many, de
     %
     % fn: filename
     % channel: channel type
-    % which_of_many: What to do if multiple channels are loaded when type is chan. Pass 'first' or 'last'.
+    % which_of_many: What to do if multiple channels are loaded when type is channel. Pass 'first' or 'last'.
     % desired_type_substr: Substring in the desired channel type.
     %
     % sts: Status

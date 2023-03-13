@@ -8,8 +8,8 @@ function [out_data_mat] = blink_saccade_filtering(data_mat, column_names, mask_c
 end
 
 function data = expand_mask_chans(data, column_names, mask_chans, offset)
-    for chan = mask_chans
-        col_idx = find(strcmpi(column_names, chan{1}));
+    for channel = mask_chans
+        col_idx = find(strcmpi(column_names, channel{1}));
         data(:, col_idx) = expand_mask(data(:, col_idx), offset);
     end
 end

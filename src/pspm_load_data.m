@@ -1,14 +1,14 @@
-function [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
+function [sts, infos, data, filestruct] = pspm_load_data(fn, channel)
 % ● Description
 %   pspm_load_data checks and returns the structure of PsPM 3-5.x and
 %   SCRalyze 2.x data files - SCRalyze 1.x is not supported
 % ● Format
-%   [sts, infos, data, filestruct] = pspm_load_data(fn, chan)
+%   [sts, infos, data, filestruct] = pspm_load_data(fn, channel)
 % ● Arguments
 %   ┌─────fn:   [char] filename / [struct] with fields
 %   ├─.infos:
 %   └──.data:
-%       chan:   [numeric vector] / [char] / [struct]
+%    channel:   [numeric vector] / [char] / [struct]
 %               ▶ vector
 %                 0 or empty: returns all channels
 %                 vector of channels: returns only these channels
@@ -91,7 +91,7 @@ switch nargin
     warning('ID:invalid_input', 'No datafile specified.');
     return;
   case 1
-    chan = 0;
+    channel = 0;
   case 2
     % accept
   otherwise
@@ -111,14 +111,14 @@ switch class(fn)
   case {'string', 'char'}
     % specify if fn is a filename
     if ~exist(fn, 'file')
-      if ~isstruct(chan) % if chan is not a struct, fn must exist
+      if ~isstruct(channel) % if channel is not a struct, fn must exist
         warning('ID:nonexistent_file', 'The file fn does not exist.');
         return
       end
     else
-      if ~isstruct(chan)
-        % check fn as a mat file only if chan is not a struct
-        % because if chan is a struct fn will be overwritten
+      if ~isstruct(channel)
+        % check fn as a mat file only if channel is not a struct
+        % because if channel is a struct fn will be overwritten
         % fn exists but may not be a .mat file
         [~, ~, fExt] = fileparts(fn);
         if ~strcmpi(fExt,'.mat')
@@ -154,37 +154,37 @@ switch class(fn)
     return
 end
 
-%% 4 Check chan
-switch class(chan)
+%% 4 Check channel
+switch class(channel)
   case 'double'
-    % in this case chan is specified as a number or a vector, as double
+    % in this case channel is specified as a number or a vector, as double
     % the number or the vector can only be a 0 or (a) positive number(s)
-    if any(chan < 0)
+    if any(channel < 0)
       warning('ID:invalid_input', 'Negative channel numbers are not allowed.');
       return
     end
   case 'char'
-    % in this case chan is specified as a char
-    if any(~ismember(chan, [{settings.channeltypes.type}, 'none', 'wave', 'events']))
+    % in this case channel is specified as a char
+    if any(~ismember(channel, [{settings.channeltypes.type}, 'none', 'wave', 'events']))
       warning('ID:invalid_channeltype', 'Unknown channel type.');
       return
     end
   case 'struct'
-    if ~isfield(chan, 'data') || ~isfield(chan, 'infos')
+    if ~isfield(channel, 'data') || ~isfield(channel, 'infos')
       % data and infos are mandatory fields and must be provided
       % gerrmsg = sprintf('\nData structure is invalid:');
       warning('ID:invalid_input', 'Input struct is not a valid PsPM struct');
       return
     end
-    if ~isfield(chan, 'options')
+    if ~isfield(channel, 'options')
       % options is an optional field
-      chan.options = [];
+      channel.options = [];
     end
     % add default values
-    if ~isfield(chan.options, 'overwrite')
-      chan.options.overwrite = pspm_overwrite(fn);
+    if ~isfield(channel.options, 'overwrite')
+      channel.options.overwrite = pspm_overwrite(fn);
     end
-    if ~chan.options.overwrite
+    if ~channel.options.overwrite
       warning('ID:data_loss', 'Data not saved.\n');
     end
   otherwise
@@ -192,8 +192,8 @@ switch class(chan)
 end
 
 %% 5 Check infos
-if isstruct(chan)
-  infos = chan.infos;
+if isstruct(channel)
+  infos = channel.infos;
 else
   if isstruct(fn) % data is from a struct fn
     infos = fn.infos;
@@ -219,8 +219,8 @@ if flag_infos
 end
 
 %% 6 Check data
-if isstruct(chan)
-  data = chan.data;
+if isstruct(channel)
+  data = channel.data;
 else
   if isstruct(fn) % data is from a struct fn
     data = fn.data;
@@ -341,51 +341,51 @@ elseif numel(filestruct.posofmarker) > 1
 end
 
 %% 9 Return channels, or save file
-if isstruct(chan)
-  infos = chan.infos;
-  data = chan.data;
+if isstruct(channel)
+  infos = channel.infos;
+  data = channel.data;
 end
 flag = zeros(numel(data), 1);
-if ischar(chan) && ~strcmp(chan, 'none')
-  if contains(chan,'pupil')
-    if strcmpi(chan, 'pupil') && isfield(infos.source, 'best_eye')
+if ischar(channel) && ~strcmp(channel, 'none')
+  if contains(channel,'pupil')
+    if strcmpi(channel, 'pupil') && isfield(infos.source, 'best_eye')
       flag = get_chans_to_load_for_pupil(data, infos.source.best_eye, 0);
-    elseif strcmpi(chan(7), 'l') || strcmpi(chan(7), 'r')
-      flag = get_chans_to_load_for_pupil(data, chan(7), 1);
+    elseif strcmpi(channel(7), 'l') || strcmpi(channel(7), 'r')
+      flag = get_chans_to_load_for_pupil(data, channel(7), 1);
     end
-  elseif strcmpi(chan, 'sps') && isfield(infos.source, 'best_eye')
+  elseif strcmpi(channel, 'sps') && isfield(infos.source, 'best_eye')
     flag = get_chans_to_load_for_sps(data, infos.source.best_eye);
   else
     for k = 1:numel(data)
-      if (any(strcmpi(chan, {'event', 'events'})) && ...
+      if (any(strcmpi(channel, {'event', 'events'})) && ...
           strcmpi(data{k}.header.units, 'events')) || ...
-          (strcmpi(chan, 'wave') && ~strcmpi(data{k}.header.units, 'events')) || ...
-          (any(strcmpi(chan, {'trigger', 'marker'})) && ...
+          (strcmpi(channel, 'wave') && ~strcmpi(data{k}.header.units, 'events')) || ...
+          (any(strcmpi(channel, {'trigger', 'marker'})) && ...
           any(strcmpi(data{k}.header.channeltype, {'trigger', 'marker'})))
         flag(k) = 1;
-      elseif strcmp(data{k}.header.channeltype, chan)
+      elseif strcmp(data{k}.header.channeltype, channel)
         flag(k) = 1;
       end
     end
   end
   if all(flag == 0)
     warning('ID:non_existing_channeltype',...
-      'There are no channels of type ''%s'' in the datafile', chan);
+      'There are no channels of type ''%s'' in the datafile', channel);
     return
   end
   data = data(flag == 1);
   filestruct.posofchannels = find(flag == 1);
-elseif isnumeric(chan)
-  if chan == 0, chan = 1:numel(data); end
-  if any(chan > numel(data))
+elseif isnumeric(channel)
+  if channel == 0, channel = 1:numel(data); end
+  if any(channel > numel(data))
     warning('ID:invalid_input',...
       'Input channel number(s) are greater than the number of channels in the data');
     return
   end
-  data = data(chan);
-  filestruct.posofchannels = chan;
-elseif isstruct(chan) && ~isempty(fn) && (~exist(fn, 'file') || ...
-    chan.options.overwrite == 1)
+  data = data(channel);
+  filestruct.posofchannels = channel;
+elseif isstruct(channel) && ~isempty(fn) && (~exist(fn, 'file') || ...
+    channel.options.overwrite == 1)
   save(fn, 'infos', 'data');
   filestruct.posofchannels = 1:numel(data);
 else

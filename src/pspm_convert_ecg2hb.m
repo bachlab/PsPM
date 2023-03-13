@@ -4,7 +4,7 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, channel, options)
 %   writes them as heart beat channel into the datafile. This function
 %   implements the algorithm by Pan & Tompkins (1985) with some adjustments.
 % ● Format
-%   sts = pspm_convert_ecg2hb(fn, chan,options)
+%   sts = pspm_convert_ecg2hb(fn, channel, options)
 % ● Arguments
 %                 fn: data file name
 %            channel: number of ECG channel (optional, default: first ECG
