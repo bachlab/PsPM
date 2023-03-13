@@ -98,7 +98,7 @@ PsPM: Psychophysiological Modelling
 \end_layout
 
 \begin_layout Title
-Developer's Guide
+Technical Notes
 \end_layout
 
 \begin_layout Standard
@@ -174,41 +174,33 @@ General
 \end_layout
 
 \begin_layout Quote
-Contributed by Dominik R Bach
+Contributed by Dominik R Bach and Teddy Zhao
 \end_layout
 
 \begin_layout Quote
-Updated by Dadi Zhao in Feburary 2023
+Reviewed and revised by Teddy Zhao in March 2023
 \end_layout
 
 \begin_layout Subsection
-Data files: General structure 
+Data files
 \end_layout
 
 \begin_layout Standard
-In PsPM the data is saved in mat-files.
- Each file contains two variables: 
-\end_layout
-
-\begin_layout Description
-
+In PsPM, data and information is stored as 
 \family typewriter
-infos
+struct
 \family default
- A struct variable with general infos 
-\end_layout
-
-\begin_layout Description
-
+ variables and saved as 
 \family typewriter
-data
+mat
 \family default
- A cell array with a cell for each channel.
- 
-\end_layout
-
-\begin_layout Standard
-The cells contain a struct with channel specific 
+ files.
+ A data 
+\family typewriter
+struct
+\family default
+ may contain mutiple cells, and each cell contains a struct with channel
+ specific fields, 
 \family typewriter
 infos
 \family default
@@ -217,110 +209,594 @@ infos
 data
 \family default
 .
- The structs have the following mandatory fields: 
+ Specifically, 
+\family typewriter
+infos
+\family default
+ is a 
+\family typewriter
+struct
+\family default
+ variable with general information, and 
+\family typewriter
+data
+\family default
+ is a 
+\family typewriter
+cell array
+\family default
+ with the data for each channel.
+ Both 
+\family typewriter
+infos
+\family default
+ and 
+\family typewriter
+data
+\family default
+ have the following mandatory subfields, whilst 
+\family typewriter
+infos
+\family default
+ may have some optional subfields that can be defined if necessary, as is
+ shown in 
+\series bold
+Table 1
+\series default
+.
 \end_layout
 
-\begin_layout Description
+\begin_layout Standard
+\noindent
+\align center
 
-\family typewriter
-infos.duration
-\family default
- Duration in seconds.
+\series bold
+Table 1
+\series default
+ Description of data fields in PsPM
 \end_layout
 
-\begin_layout Description
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="12" columns="4">
+<features booktabs="true" tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="6cm">
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Field
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Subfield
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Mandantory
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \family typewriter
-data{n}.header
-\family default
+infos
+\end_layout
 
-\begin_inset Separator latexpar
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+duration
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+The duration of the acquired data, normally defined in seconds
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+data
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+header.channeltype
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+The type of the corresponding channel, as defined in the settings.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+header.sr
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+the sample rate (or frequency) in 1/second (or Hz), or timestamp units in
+ seconds
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+header.units
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+the unit of data, or the `events'
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+data
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+the actual data
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Optional
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+infos
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+sourcefile
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+importfile
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+importdate
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+sourcetype
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+recdate
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+rectime
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
 \end_inset
 
 
 \end_layout
 
-\begin_deeper
-\begin_layout Description
-
-\family typewriter
-data{n}.header.chantype
-\family default
- (as defined in the settings) 
-\end_layout
-
-\begin_layout Description
-
-\family typewriter
-data{n}.header.sr
-\family default
- (sample rate in 1/second, or timestamp units in seconds) 
-\end_layout
-
-\begin_layout Description
-
-\family typewriter
-data{n}.header.units
-\family default
- (data units, or ‘events') 
-\end_layout
-
-\begin_layout Description
-
-\family typewriter
-data{n}.data
-\family default
- (actual data) 
-\end_layout
-
-\end_deeper
 \begin_layout Standard
-Additionally, a typical file contains the optional infos: 
-\end_layout
-
-\begin_layout Itemize
-
+In most cases, only the subfield 
 \family typewriter
-infos.sourcefile
-\end_layout
-
-\begin_layout Itemize
-
+data
+\family default
+ in the field 
 \family typewriter
-infos.importfile 
-\end_layout
-
-\begin_layout Itemize
-
+data
+\family default
+ will be modified since new results have been generated and are expected
+ to replace the old data.
+ All the other fields, for both 
 \family typewriter
-infos.importdate 
-\end_layout
-
-\begin_layout Itemize
-
+data
+\family default
+ and 
 \family typewriter
-infos.sourcetype 
-\end_layout
-
-\begin_layout Itemize
-
-\family typewriter
-infos.recdate 
-\end_layout
-
-\begin_layout Itemize
-
-\family typewriter
-infos.rectime 
-\end_layout
-
-\begin_layout Standard
-Some data manipulation functions (in particular, 
+infos
+\family default
+, the content will be kept unchanged.
+ However, some data manipulation functions, for example 
 \family typewriter
 pspm_trim
 \family default
-) update infos to record some file history.
- 
+, will update 
+\family typewriter
+infos
+\family default
+ to record some file history.
+ Please check the specific descriptions of each function for understanding
+ how 
+\family typewriter
+data
+\family default
+ and 
+\family typewriter
+infos
+\family default
+ will be updated.
 \end_layout
 
 \begin_layout Subsection
@@ -1149,9 +1625,11 @@ Supported Channel types
 \end_layout
 
 \begin_layout Standard
+\noindent
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="22" columns="13">
-<features tabularvalignment="middle">
+<features booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top" width="3.6cm">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
