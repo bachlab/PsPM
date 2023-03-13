@@ -70,7 +70,7 @@ options.overwrite = job.overwrite;
 if strcmp(timeunits, 'markers')
     options.marker_chan_num = job.timeunits.(timeunits).mrk_chan;
 end
-options.threshold = job.threshold;  
+options.threshold = job.threshold;
 if ~isempty(job.theta)
     options.theta = job.theta;
 end

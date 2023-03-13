@@ -39,7 +39,7 @@ for iSession=1:nrSession
             timing{1,iSession}{1,iEvents} = job.session(iSession).timing.timing_man(1,iEvents).onsets;
         end
     end
-    
+
     % conditions
     nrCond = size(job.session(iSession).condition,2);
     for iCond=1:nrCond
@@ -96,7 +96,7 @@ end
 % subsession threshold
 model.substresh = job.data_options.substhresh;
 
-%constrained model 
+%constrained model
 model.constrained = job.data_options.constr_model;
 
 % channel number
