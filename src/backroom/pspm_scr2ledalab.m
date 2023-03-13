@@ -1,7 +1,7 @@
 function [sts, outfile] = pspm_scr2ledalab(datafile, outfile, options)
 % pspm_scr2ledalab is a function for exporting SCRalyze files to ledalab
 % format (for method comparison)
-% exports (first) SCR and (first) evend channel of data file
+% exports (first) SCR and (first) evend chan of data file
 % this version does not support export of event names/values (instead, a
 % '1' is written to all ledalab event fields
 %
@@ -51,7 +51,7 @@ try options.norm; catch, options.norm = 0; end;
 if sts == -1 || isempty(scr)
     warning('\nExport to ledalab unsuccesful'); return;
 elseif numel(scr) > 1
-    warning('n\SCRalyze file contains more than one SCR channel - first one will be exported');
+    warning('n\SCRalyze file contains more than one SCR chan - first one will be exported');
 end;
 
 if options.filter == 1
@@ -75,7 +75,7 @@ if sts == -1 || isempty(events)
     events.data = [];
     events.header = [];
 elseif numel(events) > 1
-    warning('n\SCRalyze file contains more than one event channel - first one will be exported');
+    warning('n\SCRalyze file contains more than one event chan - first one will be exported');
 end;
 if ~isempty(events)
     events = events{1};
@@ -104,10 +104,10 @@ fileinfo.log     = {'Created by SCRalyze for use with Ledalab 3.44.'};
 if exist(outfile, 'file') == 2 && options.overwrite ~= 1
     if feature('ShowFigureWindows')
         msg = ['Imported file already exists. Overwrite?', newline, 'Existing file: ',outfile];
-        overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'No'); % default not to overwrite by users 
+        overwrite = questdlg(msg, 'File already exists', 'Yes', 'No', 'No'); % default not to overwrite by users
     else
         overwrite = 'No'; % default not to overwrite on Jenkins
-    end             
+    end
     close gcf;
 else
     overwrite = 'Yes';

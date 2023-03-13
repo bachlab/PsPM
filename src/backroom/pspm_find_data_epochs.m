@@ -1,27 +1,27 @@
 function [sts, epochfile] = pspm_find_data_epochs(datafile, chan_id, options)
 % pspm_find_data_epochs tries to find epochs of non-zero values in the data
-% of a channel. It then writes it to a file depending on the input and
+% of a chan. It then writes it to a file depending on the input and
 % returns the location of that file.
 %
-% FORMAT: 
+% FORMAT:
 %   [sts, epochfile] = pspm_find_data_epochs(datafile, chan_id, options)
-% 
+%
 % ARGUMENTS:
-%   datafile:           File which contains the corresponding channel to
+%   datafile:           File which contains the corresponding chan to
 %                       look for epochs.
-%   chan_id:            Number or channeltype of the the channel. If
+%   chan_id:            Number or channeltype of the the chan. If
 %                       multiple channels match the specified channeltype
-%                       only the first found channel will be used.
-%   options:            
+%                       only the first found chan will be used.
+%   options:
 %       output_file:    Name and path to the output file. Default is the
 %                       same as datafile but prepended with an 'e'.
 %       overwrite:      Overwrite output file if it already exists. Default
 %                       is 0.
-%                       
+%
 % OUTPUT:
 %   sts:                Return status of the function. If equals 1 no
 %                       error or warnings were produced.
-%   epochfile:          File where the epochs have been saved to. 
+%   epochfile:          File where the epochs have been saved to.
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
@@ -74,7 +74,7 @@ end;
 [~, ~, data] = pspm_load_data(datafile);
 
 if chan_id > numel(data)
-    warning('ID:invalid_input', 'Channel id exceeds channel count.'); return;
+    warning('ID:invalid_input', 'chan id exceeds chan count.'); return;
 end;
 
 % create logical array in order to distinguish between non-zero and zero
@@ -90,7 +90,7 @@ if ~isempty(start) || ~isempty(stop)
     if (isempty(stop) && ~isempty(start)) || (start(end) > stop(end))
         stop = [stop; numel(logi)];
     end;
-    
+
     if (isempty(start) && ~isempty(stop)) || (start(1) > stop(1))
         start = [1; start];
     end;
@@ -102,7 +102,7 @@ epochs = ([start, stop]).*data{chan_id}.header.sr^-1;
 file_exist = exist(options.output_file, 'file');
 write_ok = false;
 if file_exist
-    if options.overwrite 
+    if options.overwrite
         write_ok = true;
     elseif ~options.dont_ask_overwrite
         if feature('ShowFigureWindows')

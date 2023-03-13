@@ -1,7 +1,7 @@
 function data_mat = set_blinks_saccades_to_nan(data_mat, column_names, mask_chans, fn_is_left)
     % set_blinks_saccades_to_nan sets data rows corresponding to blink/saccade periods to NaN values.
-    % This is performed for each eye separately. The function assumes that channel names for blink
-    % channels contain 'blink' in them. Similarly, channel names for saccade channels must contain
+    % This is performed for each eye separately. The function assumes that chan names for blink
+    % channels contain 'blink' in them. Similarly, chan names for saccade channels must contain
     % 'saccade'.
     %
     % Inputs
@@ -14,14 +14,14 @@ function data_mat = set_blinks_saccades_to_nan(data_mat, column_names, mask_chan
     %
     % Optional Inputs
     % ---------------
-    % fn_is_left: Function that takes a LOWERCASED channel name as input and returns true if the channel
+    % fn_is_left: Function that takes a LOWERCASED chan name as input and returns true if the chan
     %             name belongs to left eye. Otherwise, it returns false. By default, this function checks
-    %             if the channel name ends with '_l'.
+    %             if the chan name ends with '_l'.
     %
     % Output
     % ------
     % data_mat: Same data matrix data_mat except that
-    % 
+    %
     %   - all elements in left data columns (except blink/saccade) that correspond to left
     %     blink or saccade rows are set to NaN
     %

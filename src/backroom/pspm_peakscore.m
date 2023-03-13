@@ -18,12 +18,12 @@
 % timeunits: 'seconds', 'markers', 'samples'
 %
 % normalize (default = 1) determines whether the data are normalized. This
-% can help to reduce variance due to peripheral factors (e. g. skin 
+% can help to reduce variance due to peripheral factors (e. g. skin
 % properties)
 %
-% chan: by default, SCRalyze looks for the only waveform channel, or for
-% the first scr channel. Provide an argument to pick a specific waveform
-% channel (and a second one for events, if timeunits = 'markers')
+% chan: by default, SCRalyze looks for the only waveform chan, or for
+% the first scr chan. Provide an argument to pick a specific waveform
+% chan (and a second one for events, if timeunits = 'markers')
 %
 % options.overwrite = 1: overwrite existing files
 % options.method:   'simple' - computes a max/baseline difference
@@ -35,10 +35,10 @@
 %                   peak occurs
 % options.summary: for options.spr - 'amplitude' (based only on values >
 %                   .01 mcS)m 'magnitude' (based on all values)
-% options.window: for method 'simple', baseline post stimulus peak window 
-%                 (default: [-1 0; 1 4], was formerly termed 'baseline' and 
+% options.window: for method 'simple', baseline post stimulus peak window
+%                 (default: [-1 0; 1 4], was formerly termed 'baseline' and
 %                 'peakwindow')
-%                 for method 'spr', post stimulus onset and post onset peak 
+%                 for method 'spr', post stimulus onset and post onset peak
 %                 window (default: [1 4; 0.5 5]);
 % options.diagnostics: makes a plot after every detected peak (for
 %               development purposes, default = 0)
@@ -93,10 +93,10 @@ catch
             warning('Method unknown'); return;
     end;
 end;
-            
+
 
 % check modelfile
-if options.overwrite ~= 1 && exist(modelfile)==2 
+if options.overwrite ~= 1 && exist(modelfile)==2
     overwrite=menu(sprintf('Model file (%s) already exists. Overwrite?', modelfile), 'yes', 'no');
     close gcf;
     if overwrite==2, return; end;
@@ -136,25 +136,25 @@ fprintf('Peak scoring: %s ...', modelfile);
 
 Y=[];
 for d=1:numel(datafile)
-    
+
     clear scr infos filt down pspm_hp pspm_lp pspm_down
-    
+
     if chan == 0
         % load waveform channels
         [sts, infos, data] = pspm_load_data(datafile{d}, 'wave');
         if sts == -1; return; end;
-        % if there is none, or more than one waveform channel
+        % if there is none, or more than one waveform chan
         if isempty(data) || numel(data) > 1
-            % load scr channel(s)
+            % load scr chan(s)
             [sts, infos, data] = pspm_load_data(datafile{d}, 'scr');
             if sts == -1 || isempty(data); return; end;
         end;
-        % use data from single waveform, or first scr channel
+        % use data from single waveform, or first scr chan
         scr = data{1};
         % if required, load events
         if any(strcmp(timeunits, {'trigger', 'markers'}))
             [sts, infos, data] = pspm_load_data(datafile{d}, 'events');
-            if sts == -1 || isempty(data); 
+            if sts == -1 || isempty(data);
                 warning('No event data'); return;
             else
                 events = data{1}.data;
@@ -169,7 +169,7 @@ for d=1:numel(datafile)
         scr = data{1};
          if any(strcmp(timeunits, {'trigger', 'markers'}))
             [sts, infos, data] = pspm_load_data(datafile{d}, 'events');
-            if sts == -1 || isempty(data); 
+            if sts == -1 || isempty(data);
                 warning('No event data'); return;
             else
                 events = data{1}.data;
@@ -186,10 +186,10 @@ for d=1:numel(datafile)
 
     % concatenate if necessary
     Y=[Y; pspm_down];
-    
+
     % get duration of single sessions
     snduration(d)=numel(pspm_down);
-    
+
     % concatenate regressors & convert to samples
     if d <= numel(multi)
         for n = 1:numel(multi(1).n)
@@ -309,7 +309,7 @@ for k = 1:numel(onsets)
                 foundfirstpeak = 0;
                 while (options.diagnostics) && (~foundfirstpeak) && (numel(firstwin) > 1);
                     % look for minimum as change in first derivative from
-                    % neg to pos 
+                    % neg to pos
                     firstonset = find(diff(sign(scr1(firstwin))) == 2, 1);
                     if isempty(firstonset)
                        firstwin = [];
@@ -400,7 +400,7 @@ for f = 1:numel(fns)
         sts = -1;
         return;
     end;
-    
+
     load(fn);
     if (isempty(find(ismember(who, 'names'), 1)))||(isempty(find(ismember(who, 'onsets'), 1))),
         warning(merrmsg); sts = -1; return;
@@ -459,7 +459,7 @@ for f = 1:numel(fns)
             end;
         end;
     end;
-    
+
     if f > 1
         for n = 1:numel(names)
             if ~strcmpi(multi(1).n{n}, names{n})
