@@ -141,10 +141,12 @@ elseif length(ymissing_start) < length(ymissing_end)
   ymissing_start = [1, ymissing_start];
 end
 miss_epoch = [ymissing_start(:),ymissing_end(:)];
+flag_missing_too_long = 0;
 if any(diff(miss_epoch, 1, 2)/sr > options.missingthresh)
   warning_message = ['Imported data includes too long miss epoches (over ',...
     num2str(options.missingthresh), 's), thus estimation has been skipped.'];
   warning('ID:missing_epochs_too_long', warning_message);
+  flag_missing_too_long = 1;
 end
 options.isYout = ymissing(:)';
 %% 5 Extract parameters
@@ -156,21 +158,39 @@ t = posterior.muTheta(4:2:end);
 a = exp(posterior.muTheta(5:2:end) - theta(5));   % rescale
 ex = find(t < -2 | t > (numel(scr)/sr - 1)); % find SA responses the SCR peak of which is outside episode
 t(ex) = []; a(ex) = [];
-out.t = t - theta(4);                             % subtract conduction delay
-out.a = a;
-out.n = numel(find(a > threshold));
-out.f = out.n/(numel(scr)/sr);
-out.ma = mean(a(a > threshold));
-out.theta = theta;
-out.if = fresp;
-out.threshold = threshold;
-out.yhat = posterior.muX(1, :);
-out.model.posterior = posterior;
-out.model.output = output;
-out.model.u = u;
-out.model.y = y(:)';
-out.time = toc(tstart);
 %% 6 Outputs
+if ~flag_missing_too_long
+  out.t               = t - theta(4);                             % subtract conduction delay
+  out.a               = a;
+  out.n               = numel(find(a > threshold));
+  out.f               = out.n/(numel(scr)/sr);
+  out.ma              = mean(a(a > threshold));
+  out.theta           = theta;
+  out.if              = fresp;
+  out.threshold       = threshold;
+  out.yhat            = posterior.muX(1, :);
+  out.model.posterior = posterior;
+  out.model.output    = output;
+  out.model.u         = u;
+  out.model.y         = y(:)';
+  out.time            = toc(tstart);
+else
+  out.t               = NaN;
+  out.a               = NaN;
+  out.n               = NaN;
+  out.f               = NaN;
+  out.ma              = NaN;
+  out.theta           = NaN;
+  out.if              = NaN;
+  out.threshold       = NaN;
+  out.yhat            = NaN;
+  out.model.posterior = NaN;
+  out.model.output    = NaN;
+  out.model.u         = NaN;
+  out.model.y         = NaN;
+  out.time            = NaN;
+  out.warning         = warning_message;
+end
 sts = 1;
 switch nargout
   case 1
