@@ -145,7 +145,7 @@ flag_missing_too_long = 0;
 if any(diff(miss_epoch, 1, 2)/sr > options.missingthresh)
   warning_message = ['Imported data includes too long miss epoches (over ',...
     num2str(options.missingthresh), 's), thus estimation has been skipped.'];
-  warning('ID:missing_epochs_too_long', warning_message);
+  warning('ID:missing_data', warning_message);
   flag_missing_too_long = 1;
 end
 options.isYout = ymissing(:)';
