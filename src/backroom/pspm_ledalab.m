@@ -1,7 +1,7 @@
 function [sts, outfile] = pspm_ledalab(datafile, outfile, options)
 % pspm_ledalab is a wrapper that allows ledalab analysis from within
 % SCRalyze, on SCRalyze data files.
-% pspm_ledalab exports the first SCR and first event chan of a low pass
+% pspm_ledalab exports the first SCR and first event channel of a low pass 
 % filtered and downsampled datafile to ledalab using pspm_scr2ledalab,
 % performs analysis, and transforms ledalab results file to a "dummy" DCM
 % file which can then be assessed with pspm_con1
@@ -55,7 +55,7 @@ elseif sum(strcmpi(options.method, {'continuous', 'CDA'})) > 0
 elseif strcmpi(options.method, 'both');
     options.method = {'DDA', 'CDA'};
 else
-    warning('Unknown Ledalab analysis method'); return;
+    warning('Unknown Ledalab analysis method'); return; 
 end;
 options.filter = 1;
 try options.norm; catch, options.norm = 0; end;
@@ -75,7 +75,7 @@ end;
 workpath = [pwd, fs, 'SCR_ledalab'];
 if exist(workpath, 'dir')
     if ~options.overwrite
-        overwrite = menu(sprintf('Working path ''SCR_ledalab'' already exists. Delete everything?'), 'yes', 'no');
+        overwrite = menu(sprintf('Working path ''SCR_ledalab'' already exists. Delete everything?'), 'yes', 'no');                
         close gcf;
         if overwrite == 2, return; end;
         clear overwrite
@@ -102,7 +102,7 @@ for k = 1:numel(options.method)
     copyfile(fullfile(cpth, ledafn{1}), fullfile(workpath, ledafn{1}));
     % do the analysis
     Ledalab(workpath, 'open', 'leda', 'analyze', options.method{k}, 'optimize', 2, ...
-        'export_era', [1 4 0.01 1]);
+        'export_era', [1 4 0.01 1]); 
     % rename files and copy to current path
     ledafiles = dir(workpath);
     for f = 3:numel(ledafiles)
@@ -146,7 +146,7 @@ end;
 % build 'dummy' DCM results structure
 % -------------------------------------------------------------------------
 for k = 1:size(results, 2)
-    dcm.sn{1}.a(k).a = []; dcm.sn{1}.a(k).m = []; dcm.sn{1}.a(k).s = [];
+    dcm.sn{1}.a(k).a = []; dcm.sn{1}.a(k).m = []; dcm.sn{1}.a(k).s = []; 
     dcm.sn{1}.e(k).a = results(:, k);
 end;
 dcm.sn{1}.description = description;

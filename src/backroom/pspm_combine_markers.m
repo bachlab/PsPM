@@ -22,7 +22,7 @@ markervalues = cell2mat(markervalues);
 [timestamps, indx] = sort(timestamps);
 markervalues = markervalues(indx);
 
-% stack wave channels and new marker chan
+% stack wave channels and new marker channel
 newdata.data = wavedata;
 newdata.data{end + 1, 1}.data = timestamps;
 newdata.data{end}.header = markerdata{1}.header;
