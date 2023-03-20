@@ -2,7 +2,7 @@ function [proc_illuminance] = pspm_cfg_process_illuminance(job)
 % function [proc_illuminance] = pspm_cfg_process_illuminance(job)
 %
 % Matlabbatch function specifies the pspm_cfg_process_illuminance.
-% 
+%
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
@@ -116,7 +116,7 @@ overwrite.tag     = 'overwrite';
 overwrite.val     = {false};
 overwrite.labels  = {'No', 'Yes'};
 overwrite.values  = {false, true};
-overwrite.help    = {'Choose “yes” if you want to overwrite existing file(s) with the same name.'};
+overwrite.help    = {'Choose ï¿½yesï¿½ if you want to overwrite existing file(s) with the same name.'};
 
 %% Executable branch
 proc_illuminance      = cfg_exbranch;
@@ -125,7 +125,7 @@ proc_illuminance.tag  = 'process_illuminance';
 proc_illuminance.val  = {lum_file, sr, bf, outdir, filename, overwrite};
 proc_illuminance.prog = @pspm_cfg_run_proc_illuminance;
 proc_illuminance.vout = @pspm_cfg_vout_proc_illuminance;
-proc_illuminance.help = {['Transform an illuminance time series into ', ... 
+proc_illuminance.help = {['Transform an illuminance time series into ', ...
     'a convolved pupil response time series to be used as nuisance ', ...
     'file in a GLM. This allows you to partial out illuminance ', ...
     'contributions to pupil responses evoked by cognitive inputs. ', ...

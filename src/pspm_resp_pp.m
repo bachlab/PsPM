@@ -1,4 +1,4 @@
-function sts = pspm_resp_pp(fn, sr, chan, options)
+function sts = pspm_resp_pp(fn, sr, channel, options)
 % ● Description
 %   pspm_resp_pp preprocesses raw respiration traces. The function detects
 %   respiration cycles for bellows and cushion systems, computes respiration
@@ -6,11 +6,11 @@ function sts = pspm_resp_pp(fn, sr, chan, options)
 %   cycle and linearly interpolates these (expect rs = respiration time
 %   stamps). Results are written to new channels in the same file
 % ● Format
-%   sts = pspm_resp_pp(fn, sr, chan, options)
+%   sts = pspm_resp_pp(fn, sr, channel, options)
 % ● Arguments
 %                 fn: data file name
 %                 sr: sample rate for new interpolated channel
-%               chan: number of respiration channel (optional, default: first
+%            channel: number of respiration channel (optional, default: first
 %                     respiration channel)
 %   ┌────────options:
 %   ├────.systemtype: ['bellows'(default) /'cushion']
@@ -40,9 +40,9 @@ elseif nargin < 2
   warning('ID:invalid_input', 'No sample rate given.'); return;
 elseif ~isnumeric(sr)
   warning('ID:invalid_input', 'Sample rate needs to be numeric.'); return;
-elseif nargin < 3 || isempty(chan) || (chan == 0)
-  chan = 'resp';
-elseif ~isnumeric(chan)
+elseif nargin < 3 || isempty(channel) || (channel == 0)
+  channel = 'resp';
+elseif ~isnumeric(channel)
   warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end
 if ~exist('options', 'var')
@@ -64,7 +64,7 @@ else
   if datatype(end), datatype(1:end) = 1; end
 end
 %% get data
-[nsts, infos, data] = pspm_load_data(fn, chan);
+[nsts, infos, data] = pspm_load_data(fn, channel);
 old_channeltype = data{1}.header.channeltype;
 if nsts == -1
   warning('ID:invalid_input', 'Could not load data properly.');
@@ -155,7 +155,7 @@ for iType = 1:(numel(datatypes) - 1)
         action_msg = 'Respiration converted to respiration time stamps';
         newdata.header.units = 'events';
     end
-    channel_str = num2str(chan);
+    channel_str = num2str(channel);
     o.msg.prefix = sprintf(...
       'Respiration preprocessing :: Input channel: %s -- Input channeltype: %s -- Output channel: %s -- Action: %s --', ...
       channel_str, ...

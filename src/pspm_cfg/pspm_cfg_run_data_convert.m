@@ -24,7 +24,7 @@ for i=1:numel(job.conversion)
         options.channels = channel;
         options.eyes = job.conversion(i).mode.visangle2sps.eyes;
         pspm_convert_visangle2sps(fn,options);
-    end 
+    end
 end
 
 out = 1;

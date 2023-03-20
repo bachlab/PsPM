@@ -234,7 +234,7 @@ function [pp_scr] = pspm_cfg_pp_scr
                     scr_pp_options.missing_epochs_filename(length_temp-3:length_temp) = [];
                 end
             end
-                
+
         end
         scr_pp_options.channel_action = job.chan_action;
         [sts, output] = pspm_scr_pp(scr_pp_datafile, scr_pp_options);
