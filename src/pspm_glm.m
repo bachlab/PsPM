@@ -158,8 +158,10 @@ tmp = struct([]); % temporary model structure
 % -------------------------------------------------------------------------
 
 % check missing input --
-if nargin<1
-  errmsg='Nothing to do.'; warning('ID:invalid_input', errmsg); return;
+if nargin < 1
+  errmsg = 'Nothing to do.';
+  warning('ID:invalid_input', errmsg);
+  return
 elseif nargin<2
   options = struct();
 end
@@ -274,6 +276,9 @@ for iFile = 1:nFile
     if sts < 1
       warning('ID:invalid_input', 'Could not load the specified markerchannel');
       return
+    end
+    if length(data) > 1
+      data = data{end};
     end
     switch class(options.marker_chan_num_event)
       case 'double'
