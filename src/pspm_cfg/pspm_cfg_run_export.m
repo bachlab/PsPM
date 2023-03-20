@@ -17,14 +17,14 @@ end
 % datatype
 datatype = job.datatype;
 
-% exclude conditions with too many NaN 
+% exclude conditions with too many NaN
 exclude_missing = job.exclude_missing;
 
 % delimiter
 delimfield = fieldnames(job.delim);
 delim = job.delim.(delimfield{1});
 
-% place all optional arguments in an option struct 
+% place all optional arguments in an option struct
 options = struct();
 options.target    = target;
 options.statstype = datatype;

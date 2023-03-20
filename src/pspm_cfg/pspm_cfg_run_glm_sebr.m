@@ -26,7 +26,7 @@ rf = rf{1};
 
 if any(strcmp(rf,{'sebrf0', 'sebrf1'}))
     model.bf.fhandle = str2func('pspm_bf_sebrf');
-    
+
     if strcmp(rf, 'sebrf0')
         model.bf.args = [];
     elseif strcmp(rf, 'sebrf1')

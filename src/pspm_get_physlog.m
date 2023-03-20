@@ -7,7 +7,7 @@ function [sts, import, sourceinfo] = pspm_get_physlog(datafile, import)
 %   Special about this function is that channel numbers for event/marker
 %   channels correspond to the different event types scanphyslog files.
 %   * Possible event types are:
-%     Chan-Nr:   Type:
+%  Channel-Nr:   Type:
 %     --------   -----
 %           1    Trigger ECG
 %           2    Trigger PPG
@@ -20,11 +20,11 @@ function [sts, import, sourceinfo] = pspm_get_physlog(datafile, import)
 %           9    Manual start
 %          10    Reference ECG Trigger
 %   * Channel types are:
-%     Chan-Nr:   Type:
-%     --------   -----
-%         1-4   ECG channel
-%           5   PPG channel
-%           6   Resp channel
+%      Channel number:   Type:
+%             --------   -----
+%                  1-4   ECG channel
+%                    5   PPG channel
+%                    6   Resp channel
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_physlog(datafile, import);
 % ● Arguments
