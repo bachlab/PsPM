@@ -6,10 +6,10 @@ jobs:
     steps:
       
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       
       - name: Add test data
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: bachlab/PsPM-data
           token: ${{ secrets.PSPM_PAT }}
