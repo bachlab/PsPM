@@ -33748,13 +33748,13 @@ replace The action of replacing the current content by the results for the
  channel of interest.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Standard
 Others
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-NS The parameter does not have a default value.
+NS
 \end_layout
 
 \begin_layout Subsection
