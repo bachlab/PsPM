@@ -33739,6 +33739,133 @@ Action descriptors
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+channel_action
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+none
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+add
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+replace
+\end_layout
+
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+channel_output
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+all
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+corrected
+\end_layout
+
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+eyes
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+combined
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+left
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+right
+\end_layout
+
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+nan_output
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+none
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+screen
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+file_output
+\end_layout
+
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+statstype
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+param
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+cond
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+recon Reconstruction
+\end_layout
+
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+timeunit
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+seconds
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+samples
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+markers
+\end_layout
+
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
 combined The combined left and right eyes.
 \end_layout
 
@@ -33748,6 +33875,31 @@ replace The action of replacing the current content by the results for the
  channel of interest.
 \end_layout
 
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+overwrite
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+
+\family typewriter
+1
+\family default
+ The results will overwrite the current data.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+
+\family typewriter
+0
+\family default
+ The results will be dropped and not overwrite the current data.
+\end_layout
+
+\end_deeper
 \begin_layout Subsubsection
 Others
 \end_layout
