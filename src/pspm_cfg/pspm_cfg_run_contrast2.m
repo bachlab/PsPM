@@ -21,7 +21,7 @@ connames = connames{1};
 if isfield(job.def_con_name.(connames),'con_all')
     con = 'all';
 else
-   con = job.def_con_name.(connames).convec; 
+   con = job.def_con_name.(connames).convec;
 end
 % nrCon = size(job.def_con_name.(connames).con, 2);
 % if strcmp(connames, 'name')

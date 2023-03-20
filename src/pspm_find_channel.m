@@ -3,7 +3,7 @@ function varargout = pspm_find_channel(headercell, channeltype)
 %   pspm_find_channel searches a cell arrays of channel headers and
 %   finds the channel that matches the desired type.
 % ● Format
-%   chan = pspm_find_channel(headercell, channeltype)
+%   channel = pspm_find_channel(headercell, channeltype)
 % ● Arguments
 %   headercell: cell array of names (e.g. from acq import)
 %     channeltype: an allowed channel type (char) (or a cell array of possible

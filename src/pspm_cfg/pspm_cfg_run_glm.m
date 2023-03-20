@@ -15,7 +15,7 @@ nrSession = size(job.session,2);
 for iSession=1:nrSession
     % datafile
     model.datafile{iSession,1} = job.session(iSession).datafile{1};
-    
+
     % missing epochs
     if isfield(job.session(iSession).missing,'epochs')
         if isfield(job.session(iSession).missing.epochs,'epochfile')
@@ -24,7 +24,7 @@ for iSession=1:nrSession
             model.missing{1,iSession} = job.session(iSession).missing.epochs.epochentry;
         end
     end
-    
+
     % data & design
     if isfield(job.session(iSession).data_design,'no_condition')
         model.timing = {};
@@ -43,7 +43,7 @@ for iSession=1:nrSession
             model.timing{iSession,1}.names{1,iCond} = job.session(iSession).data_design.condition(iCond).name;
             model.timing{iSession,1}.onsets{1,iCond} = job.session(iSession).data_design.condition(iCond).onsets;
             model.timing{iSession,1}.durations{1,iCond} = job.session(iSession).data_design.condition(iCond).durations;
-            
+
             nrPmod = size(job.session(iSession).data_design.condition(iCond).pmod,2);
             if nrPmod ~= 0
                 for iPmod=1:nrPmod
@@ -58,14 +58,14 @@ for iSession=1:nrSession
             end
         end
     end
-    
+
     % nuisance
     if ~isempty(job.session(iSession).nuisancefile{1})
         model.nuisance{iSession,1} = job.session(iSession).nuisancefile{1};
     else
         model.nuisance{iSession,1} = [];
     end
-    
+
 end
 
 % timeunits

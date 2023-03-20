@@ -455,7 +455,7 @@ if numel(new_chans) >= 1
       end
     end
   end
-  % update chan stats (similar to pspm_get_eyelink)
+  % update channel stats (similar to pspm_get_eyelink)
   for i = 1:numel(new_data)
     % update nan ratio
     n_inv = sum(isnan(new_data{i}.data));
