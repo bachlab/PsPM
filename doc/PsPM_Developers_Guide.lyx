@@ -14343,7 +14343,7 @@ Tests
 \begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="11" columns="2">
-<features tabularvalignment="middle">
+<features booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top" width="6cm">
 <column alignment="center" valignment="top">
 <row>
@@ -14351,6 +14351,8 @@ Tests
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Input
 \end_layout
 
@@ -14360,6 +14362,8 @@ Input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Expected warning
 \end_layout
 
@@ -21323,9 +21327,11 @@ Tests
 \end_layout
 
 \begin_layout Standard
+\noindent
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="4" columns="4">
-<features tabularvalignment="middle">
+<features booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -21335,6 +21341,8 @@ Tests
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 #
 \end_layout
 
@@ -21344,6 +21352,8 @@ Tests
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Issue
 \end_layout
 
@@ -21353,6 +21363,8 @@ Issue
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Parameters of the function
 \end_layout
 
@@ -21362,6 +21374,8 @@ Parameters of the function
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Expected warning
 \end_layout
 
@@ -21755,7 +21769,7 @@ Function name
 invalid_input(this)
 \end_layout
 
-\begin_layout Subparagraph
+\begin_layout Standard
 Description
 \end_layout
 
@@ -21764,11 +21778,7 @@ Checks for warnings, if the input arguments are invalid.
 \end_layout
 
 \begin_layout Subparagraph
-Tests
-\begin_inset Newline linebreak
-\end_inset
-
-
+\noindent
 \begin_inset Tabular
 <lyxtabular version="3" rows="6" columns="2">
 <features tabularvalignment="middle">
@@ -21779,6 +21789,8 @@ Tests
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Input
 \end_layout
 
@@ -21788,6 +21800,8 @@ Input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Expected warning
 \end_layout
 
@@ -21836,7 +21850,7 @@ pspm_prepdata([1 2 3]) [no filt variable]
 \begin_layout Plain Layout
 
 \family typewriter
-ID:invalid_input 
+ID:invalid_input
 \end_layout
 
 \end_inset
@@ -21860,7 +21874,7 @@ pspm_prepdata(data, filt) [filt has no hporder field]
 \begin_layout Plain Layout
 
 \family typewriter
-ID:invalid_input 
+ID:invalid_input
 \end_layout
 
 \end_inset
@@ -21884,7 +21898,7 @@ pspm_prepdata(`foo', filt) [no numeric data]
 \begin_layout Plain Layout
 
 \family typewriter
-ID:invalid_input 
+ID:invalid_input
 \end_layout
 
 \end_inset
@@ -21908,7 +21922,7 @@ pspm_prepdata(data, filt) [with lpfreq = `foo' (not valid)]
 \begin_layout Plain Layout
 
 \family typewriter
-ID:invalid_input 
+ID:invalid_input
 \end_layout
 
 \end_inset
@@ -21919,6 +21933,11 @@ ID:invalid_input
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+\noindent
+Tests
 \end_layout
 
 \begin_layout Paragraph
@@ -22155,9 +22174,11 @@ filt.lpfreq
 \end_layout
 
 \begin_layout Standard
+\noindent
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="2" columns="2">
-<features tabularvalignment="middle">
+<features booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -22165,6 +22186,8 @@ filt.lpfreq
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Input
 \end_layout
 
@@ -22174,6 +22197,8 @@ Input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Expected warning
 \end_layout
 
@@ -22691,17 +22716,21 @@ Tests
 \end_layout
 
 \begin_layout Standard
+\noindent
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="17" columns="3">
-<features tabularvalignment="middle">
+<features booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top">
-<column alignment="center" valignment="top" width="6cm">
+<column alignment="center" valignment="top" width="10cm">
 <column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Test No.
 \end_layout
 
@@ -22711,6 +22740,8 @@ Test No.
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Input
 \end_layout
 
@@ -22720,6 +22751,8 @@ Input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Expected warning
 \end_layout
 
@@ -23620,9 +23653,11 @@ Tests
 \end_layout
 
 \begin_layout Standard
+\noindent
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="4" columns="2">
-<features tabularvalignment="middle">
+<features booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -23630,6 +23665,8 @@ Tests
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Input
 \end_layout
 
@@ -23639,6 +23676,8 @@ Input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Expected warning
 \end_layout
 
@@ -23821,16 +23860,20 @@ Tests
 \end_layout
 
 \begin_layout Standard
+\noindent
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
+<features booktabs="true" tabularvalignment="middle">
+<column alignment="center" valignment="top" width="12cm">
 <column alignment="center" valignment="top">
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Input
 \end_layout
 
@@ -23840,6 +23883,8 @@ Input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Expected warning
 \end_layout
 
@@ -23847,7 +23892,7 @@ Expected warning
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -23871,7 +23916,7 @@ ID:invalid_input
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -24222,12 +24267,18 @@ Checks for warnings, if the input arguments are invalid.
 
 \begin_layout Subparagraph
 Tests
+\begin_inset Newline newline
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
+\noindent
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="4" columns="2">
-<features tabularvalignment="middle">
+<features booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -24235,6 +24286,8 @@ Tests
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Input
 \end_layout
 
@@ -24244,6 +24297,8 @@ Input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Expected warning
 \end_layout
 
@@ -24582,16 +24637,20 @@ Tests
 \end_layout
 
 \begin_layout Standard
+\noindent
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="9" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="6cm">
+<features booktabs="true" tabularvalignment="middle">
+<column alignment="center" valignment="top" width="12cm">
 <column alignment="center" valignment="top">
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Input
 \end_layout
 
@@ -24601,6 +24660,8 @@ Input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Expected warning
 \end_layout
 
@@ -25606,12 +25667,18 @@ Checks for warnings, if the input arguments are invalid.
 
 \begin_layout Subparagraph
 Tests
+\begin_inset Newline newline
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
+\noindent
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="13" columns="2">
-<features tabularvalignment="middle" tabularwidth="100text%">
+<features booktabs="true" tabularvalignment="middle" tabularwidth="100text%">
 <column alignment="center" valignment="top" width="70text%">
 <column alignment="center" valignment="top" width="20text%">
 <row>
@@ -25619,6 +25686,8 @@ Tests
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Input
 \end_layout
 
@@ -25628,6 +25697,8 @@ Input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Expected warning
 \end_layout
 
@@ -27098,7 +27169,7 @@ Now the script should be running ok.
 \end_layout
 
 \begin_layout Section
-List of functions
+List of Functions
 \end_layout
 
 \begin_layout Standard
@@ -33446,6 +33517,13 @@ EY Eshref Yozdemir
 DZ Dadi Zhao
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 List of Option Fields
 \end_layout
@@ -33752,7 +33830,7 @@ cell / char / integer
 \begin_layout Plain Layout
 
 \family typewriter
-1
+0
 \end_layout
 
 \end_inset
@@ -36329,7 +36407,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
->0
+> 0
 \end_layout
 
 \end_inset
@@ -41774,7 +41852,7 @@ pspm_interpolate
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="6cm">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -41803,7 +41881,7 @@ Default value
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
