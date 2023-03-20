@@ -26529,7 +26529,7 @@ test if new channel and added channel have same
 \end_layout
 
 \begin_layout Section
-External functions and tools
+External Functions and Tools
 \end_layout
 
 \begin_layout Subsection
@@ -42316,7 +42316,7 @@ logical
 \end_layout
 
 \begin_layout Subsubsection
-pspm_merge (verified)
+pspm_merge
 \end_layout
 
 \begin_layout Standard
@@ -42460,7 +42460,7 @@ integer
 \end_layout
 
 \begin_layout Subsubsection
-pspm_pfm (verified)
+pspm_pfm
 \end_layout
 
 \begin_layout Standard
@@ -42562,7 +42562,7 @@ integer
 \end_layout
 
 \begin_layout Subsubsection
-pspm_pp (verified)
+pspm_pp
 \end_layout
 
 \begin_layout Standard
@@ -42664,7 +42664,7 @@ integer
 \end_layout
 
 \begin_layout Subsubsection
-pspm_process_illuminance (verified)
+pspm_process_illuminance
 \end_layout
 
 \begin_layout Standard
@@ -43069,7 +43069,7 @@ double
 \end_layout
 
 \begin_layout Subsubsection
-pspm_pupil_correct_eyelink (verified)
+pspm_pupil_correct_eyelink
 \end_layout
 
 \begin_layout Standard
@@ -43597,7 +43597,7 @@ double (vector)
 \end_layout
 
 \begin_layout Subsubsection
-pspm_pupil_pp (verified)
+pspm_pupil_pp
 \end_layout
 
 \begin_layout Standard
@@ -43829,7 +43829,7 @@ Any
 \end_layout
 
 \begin_layout Subsubsection
-pspm_remove_epochs (verified)
+pspm_remove_epochs
 \end_layout
 
 \begin_layout Standard
@@ -43931,7 +43931,7 @@ replace
 \end_layout
 
 \begin_layout Subsubsection
-pspm_resp_pp (verified)
+pspm_resp_pp
 \end_layout
 
 \begin_layout Standard
@@ -44207,7 +44207,7 @@ cushion
 \end_layout
 
 \begin_layout Subsubsection
-pspm_scr_pp (verified)
+pspm_scr_pp
 \end_layout
 
 \begin_layout Standard
@@ -44781,7 +44781,7 @@ Any
 \end_layout
 
 \begin_layout Subsubsection
-pspm_segment_mean (verified)
+pspm_segment_mean
 \end_layout
 
 \begin_layout Standard
@@ -45014,7 +45014,7 @@ logical
 \end_layout
 
 \begin_layout Subsubsection
-pspm_sf (verified)
+pspm_sf
 \end_layout
 
 \begin_layout Standard
@@ -45376,7 +45376,7 @@ double
 \end_layout
 
 \begin_layout Subsubsection
-pspm_sf_dcm (verified)
+pspm_sf_dcm
 \end_layout
 
 \begin_layout Standard
@@ -45652,7 +45652,7 @@ double
 \end_layout
 
 \begin_layout Subsubsection
-pspm_sf_mp (verified)
+pspm_sf_mp
 \end_layout
 
 \begin_layout Standard
@@ -45928,7 +45928,7 @@ double
 \end_layout
 
 \begin_layout Subsubsection
-pspm_split_sessions (verified)
+pspm_split_sessions
 \end_layout
 
 \begin_layout Standard
@@ -46375,7 +46375,7 @@ logical
 \end_layout
 
 \begin_layout Subsubsection
-pspm_trim (verified)
+pspm_trim
 \end_layout
 
 \begin_layout Standard
@@ -46561,7 +46561,7 @@ integer
 \end_layout
 
 \begin_layout Subsubsection
-pspm_write_channel (verified)
+pspm_write_channel
 \end_layout
 
 \begin_layout Standard
