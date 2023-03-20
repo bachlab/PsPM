@@ -150,17 +150,20 @@ if any(diff(miss_epoch, 1, 2)/sr > options.missingthresh)
 end
 options.isYout = ymissing(:)';
 %% 5 Extract parameters
-[posterior, output] = VBA_NLStateSpaceModel(y(:)',u,f_fname,g_fname,dim,options);
-for i = 1:length(output)
-  output(i).options = rmfield(output(i).options, 'hf');
+if ~flag_missing_too_long
+  [posterior, output] = VBA_NLStateSpaceModel(y(:)',u,f_fname,g_fname,dim,options);
+  for i = 1:length(output)
+    output(i).options = rmfield(output(i).options, 'hf');
+  end
+  t = posterior.muTheta(4:2:end);
+  a = exp(posterior.muTheta(5:2:end) - theta(5));   % rescale
+  ex = find(t < -2 | t > (numel(scr)/sr - 1)); % find SA responses the SCR peak of which is outside episode
+  t(ex) = [];
+  a(ex) = [];
 end
-t = posterior.muTheta(4:2:end);
-a = exp(posterior.muTheta(5:2:end) - theta(5));   % rescale
-ex = find(t < -2 | t > (numel(scr)/sr - 1)); % find SA responses the SCR peak of which is outside episode
-t(ex) = []; a(ex) = [];
 %% 6 Outputs
 if ~flag_missing_too_long
-  out.t               = t - theta(4);                             % subtract conduction delay
+  out.t               = t - theta(4);   % subtract conduction delay
   out.a               = a;
   out.n               = numel(find(a > threshold));
   out.f               = out.n/(numel(scr)/sr);
