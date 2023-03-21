@@ -33748,13 +33748,13 @@ replace The action of replacing the current content by the results for the
  channel of interest.
 \end_layout
 
-\begin_layout Standard
+\begin_layout Subsubsection
 Others
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-NS
+NS The parameter does not have a default value.
 \end_layout
 
 \begin_layout Subsection
@@ -35520,8 +35520,9 @@ pspm_convert_hb2hp
 \begin_layout Standard
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="4">
+<lyxtabular version="3" rows="4" columns="5">
 <features booktabs="true" tabularvalignment="middle">
+<column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -35541,6 +35542,15 @@ Field name
 
 \begin_layout Plain Layout
 Data type
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Unit
 \end_layout
 
 \end_inset
@@ -35581,6 +35591,15 @@ channel_action
 
 \begin_layout Plain Layout
 char
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+/
 \end_layout
 
 \end_inset
@@ -35633,6 +35652,15 @@ double
 \begin_inset Text
 
 \begin_layout Plain Layout
+beat
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \family typewriter
 0.2
@@ -35669,6 +35697,15 @@ limit.upper
 
 \begin_layout Plain Layout
 double
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset
@@ -35962,8 +35999,8 @@ pspm_convert_visangle2sps
 <features booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="4cm">
+<column alignment="center" valignment="top" width="4cm">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -35983,7 +36020,7 @@ Data type
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -35992,7 +36029,7 @@ Default value
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -36115,7 +36152,7 @@ char
 \begin_layout Plain Layout
 
 \family typewriter
-settings.
+settings.lateral.char.b
 \end_layout
 
 \end_inset
@@ -36126,7 +36163,7 @@ settings.
 \begin_layout Plain Layout
 
 \family typewriter
-l, r
+settings.lateral.char.l, settings.lateral.char.r
 \end_layout
 
 \end_inset
@@ -36215,9 +36252,7 @@ char
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\family typewriter
-?
+NS
 \end_layout
 
 \end_inset
@@ -36261,7 +36296,7 @@ char
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
+NS
 \end_layout
 
 \end_inset
@@ -38878,9 +38913,7 @@ marker_chan
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\family typewriter
-?
+cell / char / integer
 \end_layout
 
 \end_inset
@@ -40720,7 +40753,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
-> 0?
+> 0
 \end_layout
 
 \end_inset
@@ -41445,7 +41478,7 @@ pspm_glm
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
-<column alignment="center" valignment="top" width="7cm">
+<column alignment="center" valignment="top" width="5cm">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -41500,7 +41533,7 @@ marker_chan_num
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
+cell / char / integer
 \end_layout
 
 \end_inset
@@ -41511,7 +41544,7 @@ marker_chan_num
 \begin_layout Plain Layout
 
 \family typewriter
-1
+marker
 \end_layout
 
 \end_inset
@@ -41522,7 +41555,7 @@ marker_chan_num
 \begin_layout Plain Layout
 
 \family typewriter
-?
+Any
 \end_layout
 
 \end_inset
@@ -41602,6 +41635,8 @@ NS
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family typewriter
 struct('segment_length', m, 'cutoff', n), m, n > 0
 \end_layout
 
