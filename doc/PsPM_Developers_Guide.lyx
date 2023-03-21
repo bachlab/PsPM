@@ -26529,7 +26529,7 @@ test if new channel and added channel have same
 \end_layout
 
 \begin_layout Section
-External functions and tools
+External Functions and Tools
 \end_layout
 
 \begin_layout Subsection
@@ -33739,6 +33739,133 @@ Action descriptors
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+channel_action
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+none
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+add
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+replace
+\end_layout
+
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+channel_output
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+all
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+corrected
+\end_layout
+
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+eyes
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+combined
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+left
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+right
+\end_layout
+
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+nan_output
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+none
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+screen
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+file_output
+\end_layout
+
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+statstype
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+param
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+cond
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+recon Reconstruction
+\end_layout
+
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+timeunit
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+seconds
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+samples
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+markers
+\end_layout
+
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
 combined The combined left and right eyes.
 \end_layout
 
@@ -33748,6 +33875,31 @@ replace The action of replacing the current content by the results for the
  channel of interest.
 \end_layout
 
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+overwrite
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+
+\family typewriter
+1
+\family default
+ The results will overwrite the current data.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+
+\family typewriter
+0
+\family default
+ The results will be dropped and not overwrite the current data.
+\end_layout
+
+\end_deeper
 \begin_layout Subsubsection
 Others
 \end_layout
@@ -42314,7 +42466,7 @@ logical
 \end_layout
 
 \begin_layout Subsubsection
-pspm_merge (verified)
+pspm_merge
 \end_layout
 
 \begin_layout Standard
@@ -42458,7 +42610,7 @@ integer
 \end_layout
 
 \begin_layout Subsubsection
-pspm_pfm (verified)
+pspm_pfm
 \end_layout
 
 \begin_layout Standard
@@ -42560,7 +42712,7 @@ integer
 \end_layout
 
 \begin_layout Subsubsection
-pspm_pp (verified)
+pspm_pp
 \end_layout
 
 \begin_layout Standard
@@ -42662,7 +42814,7 @@ integer
 \end_layout
 
 \begin_layout Subsubsection
-pspm_process_illuminance (verified)
+pspm_process_illuminance
 \end_layout
 
 \begin_layout Standard
@@ -43067,7 +43219,7 @@ double
 \end_layout
 
 \begin_layout Subsubsection
-pspm_pupil_correct_eyelink (verified)
+pspm_pupil_correct_eyelink
 \end_layout
 
 \begin_layout Standard
@@ -43595,7 +43747,7 @@ double (vector)
 \end_layout
 
 \begin_layout Subsubsection
-pspm_pupil_pp (verified)
+pspm_pupil_pp
 \end_layout
 
 \begin_layout Standard
@@ -43827,7 +43979,7 @@ Any
 \end_layout
 
 \begin_layout Subsubsection
-pspm_remove_epochs (verified)
+pspm_remove_epochs
 \end_layout
 
 \begin_layout Standard
@@ -43929,7 +44081,7 @@ replace
 \end_layout
 
 \begin_layout Subsubsection
-pspm_resp_pp (verified)
+pspm_resp_pp
 \end_layout
 
 \begin_layout Standard
@@ -44205,7 +44357,7 @@ cushion
 \end_layout
 
 \begin_layout Subsubsection
-pspm_scr_pp (verified)
+pspm_scr_pp
 \end_layout
 
 \begin_layout Standard
@@ -44779,7 +44931,7 @@ Any
 \end_layout
 
 \begin_layout Subsubsection
-pspm_segment_mean (verified)
+pspm_segment_mean
 \end_layout
 
 \begin_layout Standard
@@ -45012,7 +45164,7 @@ logical
 \end_layout
 
 \begin_layout Subsubsection
-pspm_sf (verified)
+pspm_sf
 \end_layout
 
 \begin_layout Standard
@@ -45374,7 +45526,7 @@ double
 \end_layout
 
 \begin_layout Subsubsection
-pspm_sf_dcm (verified)
+pspm_sf_dcm
 \end_layout
 
 \begin_layout Standard
@@ -45650,7 +45802,7 @@ double
 \end_layout
 
 \begin_layout Subsubsection
-pspm_sf_mp (verified)
+pspm_sf_mp
 \end_layout
 
 \begin_layout Standard
@@ -45926,7 +46078,7 @@ double
 \end_layout
 
 \begin_layout Subsubsection
-pspm_split_sessions (verified)
+pspm_split_sessions
 \end_layout
 
 \begin_layout Standard
@@ -46373,7 +46525,7 @@ logical
 \end_layout
 
 \begin_layout Subsubsection
-pspm_trim (verified)
+pspm_trim
 \end_layout
 
 \begin_layout Standard
@@ -46559,7 +46711,7 @@ integer
 \end_layout
 
 \begin_layout Subsubsection
-pspm_write_channel (verified)
+pspm_write_channel
 \end_layout
 
 \begin_layout Standard
