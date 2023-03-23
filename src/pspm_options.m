@@ -63,14 +63,14 @@ switch FunName
   case 'convert_ecg2hb'
     %% 2.8 pspm_convert_ecg2hb
     options = autofill_channel_action(options);
-    options = autofill(options, 'debugmode',              0,          1                 ); 
+    options = autofill(options, 'debugmode',              0,          1                 );
     % can be merged into development mode?
-    options = autofill(options, 'maxHR',                  200,        '>', 20           ); 
+    options = autofill(options, 'maxHR',                  200,        '>', 20           );
     % field: maxHR (bpm)
-    options = autofill(options, 'minHR',                  20,         '<', 200          ); 
+    options = autofill(options, 'minHR',                  20,         '<', 200          );
     % field: minHR (bpm)
     options = autofill(options, 'outfact',                2,          '*Num'            );
-    options = autofill(options, 'semi',                   0,          1                 ); 
+    options = autofill(options, 'semi',                   0,          1                 );
     % semi==1 will pop a dialog
     options = autofill(options, 'twthresh',               0.36,       '*Num'            );
     options = check_range(options, 'minHR', 'maxHR');
@@ -117,70 +117,70 @@ switch FunName
     options = autofill(options, 'overwrite',              0,          [1, 2]);
   case 'dcm'
     %% 2.16 pspm_dcm
-    options = autofill(options, 'aSCR_sigma_offset',      0.1,        '>=', 0           ); 
+    options = autofill(options, 'aSCR_sigma_offset',      0.1,        '>=', 0           );
     % minimum dispersion (standard deviation) for flexible responses (second)
-    options = autofill(options, 'crfupdate',              0,          '*Num'            ); 
+    options = autofill(options, 'crfupdate',              0,          '*Num'            );
     % update CRF priors to observed SCRF, or use pre-estimated priors
     options = autofill(options, 'crfupdate',              0,          1                 );
-    options = autofill(options, 'depth',                  2,          '*Num'            ); 
+    options = autofill(options, 'depth',                  2,          '*Num'            );
     % no of trials to invert at the same time
     options = autofill(options, 'dispsmallwin',           0,          '*Num'            );
     options = autofill(options, 'dispwin',                1,          0                 );
-    options = autofill(options, 'eventnames',           	{},         '*Cell'           ); 
+    options = autofill(options, 'eventnames',           	{},         '*Cell'           );
     % Cell array of names for individual events
-    options = autofill(options, 'getrf',                  0,          1                 ); 
+    options = autofill(options, 'getrf',                  0,          1                 );
     % only estimate RF, do not do trial-wise DCM
-    options = autofill(options, 'indrf',                  0,          1                 ); 
+    options = autofill(options, 'indrf',                  0,          1                 );
     % Estimate the response function from the data
     options = autofill(options, 'method',                 'dcm'                         );
-    options = autofill(options, 'nosave',                 0,          1                 ); 
+    options = autofill(options, 'nosave',                 0,          1                 );
     % Don't save dcm structure (e.g. used by pspm_get_rf)
     options = autofill(options, 'overwrite',              1,          [0, 2]            );
-    options = autofill(options, 'rf',                     0,          1                 ); 
-    % Call an external file to provide response function (for use when this is previously 
+    options = autofill(options, 'rf',                     0,          1                 );
+    % Call an external file to provide response function (for use when this is previously
     % estimated by pspm_get_rf)
-    options = autofill(options, 'sclpost',                5,          '>=', 0           ); 
+    options = autofill(options, 'sclpost',                5,          '>=', 0           );
     % scl-change-free window after last event (second)
-    options = autofill(options, 'sclpre',                 2,          '>=', 0           ); 
+    options = autofill(options, 'sclpre',                 2,          '>=', 0           );
     % scl-change-free window before first event (second)
-    options = autofill(options, 'sffreq',                 0.5,        '>=', 0           ); 
+    options = autofill(options, 'sffreq',                 0.5,        '>=', 0           );
     % maximum frequency of SF in ITIs (Hz)
-    options = autofill(options, 'sfpost',                 5,          '>=', 0           ); 
+    options = autofill(options, 'sfpost',                 5,          '>=', 0           );
     % sf-free window after last event (second)
-    options = autofill(options, 'sfpre',                  2,          '>=', 0           ); 
+    options = autofill(options, 'sfpre',                  2,          '>=', 0           );
     % sf-free window before first event (second)
-    options = autofill(options, 'trlnames',               {},         '*Cell*Char'      ); 
-    % Cell array of names for individual trials, is used for contrast manager only (e.g. 
+    options = autofill(options, 'trlnames',               {},         '*Cell*Char'      );
+    % Cell array of names for individual trials, is used for contrast manager only (e.g.
     % condition descriptions)
   case 'dcm_inv'
     %% 2.17 pspm_dcm_inv
-    options = autofill(options, 'aSCR_sigma_offset',      0.1,        '*Num'            ); 
+    options = autofill(options, 'aSCR_sigma_offset',      0.1,        '*Num'            );
     % minimum dispersion (standard deviation) for flexible responses (second)
-    options = autofill(options, 'crfupdate',              0,          '*Num'            ); 
-    % update CRF priors to observed SCRF, or use pre-estimated priors, default to use 
+    options = autofill(options, 'crfupdate',              0,          '*Num'            );
+    % update CRF priors to observed SCRF, or use pre-estimated priors, default to use
     % pre-estimated priors
     options = autofill(options, 'crfupdate',              0,          1                 );
-    options = autofill(options, 'depth',                  2,          '*Int'            ); 
+    options = autofill(options, 'depth',                  2,          '*Int'            );
     % no of trials to invert at the same time
     options = autofill(options, 'dispsmallwin',           0,          '*Num'            );
     options = autofill(options, 'dispwin',                1,          0                 );
-    options = autofill(options, 'getrf',                  0,          1                 ); 
+    options = autofill(options, 'getrf',                  0,          1                 );
     % only estimate RF, do not do trial-wise DCM
-    options = autofill(options, 'meanSCR',                0,          '*Num'            ); 
+    options = autofill(options, 'meanSCR',                0,          '*Num'            );
     % data to adjust the response amplitude priors to
     options = autofill(options, 'overwrite',              1,          [0, 2]            );
-    options = autofill(options, 'sclpost',                2,          '>=', 0           ); 
+    options = autofill(options, 'sclpost',                2,          '>=', 0           );
     % scl-change-free window after last event (second)
-    options = autofill(options, 'sclpre',                 2.5,        '>=', 0           ); 
-    % scl-change-free window before first event, avoid overlap of last SCL change 
+    options = autofill(options, 'sclpre',                 2.5,        '>=', 0           );
+    % scl-change-free window before first event, avoid overlap of last SCL change
     % with next trial (second)
-    options = autofill(options, 'sffreq',                 0.5,        '>=', 0           ); 
+    options = autofill(options, 'sffreq',                 0.5,        '>=', 0           );
     % maximum frequency of SF in ITIs (Hz)
-    options = autofill(options, 'sfpost',                 5,          '>=', 0           ); 
+    options = autofill(options, 'sfpost',                 5,          '>=', 0           );
     % sf-free window after last event (second)
-    options = autofill(options, 'sfpre',                  2,          '>=', 0           ); 
+    options = autofill(options, 'sfpre',                  2,          '>=', 0           );
     % sf-free window before first event (second)
-    options = autofill(options, 'rf',                     0,          1                 ); 
+    options = autofill(options, 'rf',                     0,          1                 );
     % use pre-specified RF, provided in file, or as 4-element vector in log parameter space
   case 'down'
     %% 2.18 pspm_down
@@ -975,7 +975,7 @@ if isfield(options, 'marker_chan_num')
     end
   end
 else
-  options.marker_chan_num = 1;%'marker';
+  options.marker_chan_num = 'marker';
 end
 if isfield(options,'exclude_missing')
   if ~(isfield(options.exclude_missing, 'segment_length') && ...
