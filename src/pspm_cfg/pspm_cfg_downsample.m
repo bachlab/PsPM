@@ -66,7 +66,7 @@ downsample.prog = @pspm_cfg_run_downsample;
 downsample.vout = @pspm_cfg_vout_downsample;
 downsample.help = {['This function downsamples individual channels in a PsPM file to a required sampling ' ...
     'rate, applying an anti-aliasing filter at the Nyquist frequency. The resulting data will be written to a ' ...
-    'new .mat file, prependend with ''d'', and will contain all channels – also the ones that were not downsampled.']};
+    'new .mat file, prependend with ''d'', and will contain all channels ï¿½ also the ones that were not downsampled.']};
 
 function [sts, val] =  pspm_cfg_checkdownsample_newfreq(val)
 sts = [];

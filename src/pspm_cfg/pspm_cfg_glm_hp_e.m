@@ -29,7 +29,7 @@ glm_hp_e.tag = 'glm_hp_e';
 glm_hp_e.prog = @pspm_cfg_run_glm_hp_e;
 
 %% Basis function
-% change basis function 
+% change basis function
 
 %FIR
 n         = cfg_entry;

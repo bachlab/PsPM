@@ -1,15 +1,15 @@
-function [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,unit,options)
+function [sts, out] = pspm_compute_visual_angle(fn, channel, width, height, distance, unit, options)
 % ● Description
 %   pspm_compute_visual_angle computes from gaze data the corresponding
 %   visual angle (for each data point). The convention used here is that the
 %   origin of coordinate system for gaze data is at the bottom left corner of
 %   the screen.
 % ● Format
-%   [sts, out] = pspm_compute_visual_angle(fn,chan,width,height, distance,unit,options)
+%   [sts, out] = pspm_compute_visual_angle(fn, channel, width, height, distance, unit, options)
 % ● Arguments
 %                fn:  The actual data file containing the eyelink recording
 %                     with gaze data
-%              chan:  On which subset of channels should the conversion be done.
+%           channel:  On which subset of channels should the conversion be done.
 %                     Supports all values which can be passed to
 %                     pspm_load_data().
 %                     The will only work on gaze-channels.
@@ -49,7 +49,7 @@ if ~ischar(fn) || ~exist(fn, 'file')
   warning('ID:invalid_input', ['File %s is not char or does not ', ...
     'seem to exist.'], fn);
   return
-elseif ~isnumeric(chan)
+elseif ~isnumeric(channel)
   warning('ID:invalid_input', 'Channels must be indicated by their ID nummber.');
   return
 elseif ~isnumeric(width)
@@ -69,7 +69,7 @@ elseif ~isstruct(options)
   return
 end
 %% 3 load data to evaluate
-[lsts, infos, data] = pspm_load_data(fn,chan);
+[lsts, infos, data] = pspm_load_data(fn, channel);
 if lsts ~= 1
   warning('ID:invalid_input', 'Could not load input data correctly.');
   return

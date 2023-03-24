@@ -51,25 +51,25 @@ end
 n_ep = size(ep, 1);
 n_data = numel(data);
 for i_data = 1:n_data
-  chan = data{i_data};
-  sr = chan.header.sr;
-  channeltype = chan.header.channeltype;
+  channel = data{i_data};
+  sr = channel.header.sr;
+  channeltype = channel.header.channeltype;
   for i_ep = 1:n_ep
     epoch = ep(i_ep, :);
     if strcmpi(settings.channeltypes(strcmpi({settings.channeltypes.type}, ...
         channeltype)).data, 'events')
       % remove markers within the period
-      chan.data(chan.data >= epoch(1) & chan.data <= epoch(2)) = [];
+      channel.data(channel.data >= epoch(1) & channel.data <= epoch(2)) = [];
     else
       % find start and stop sample and ensure they're not
       % going over the edges
       smp_start = max(1, round(sr*epoch(1)));
-      smp_stop = min(numel(chan.data), round(sr*epoch(2)));
+      smp_stop = min(numel(channel.data), round(sr*epoch(2)));
       % set period to NaN
-      chan.data(smp_start:smp_stop) = NaN;
+      channel.data(smp_start:smp_stop) = NaN;
     end
     % write back to data struct
-    data{i_data}.data = chan.data;
+    data{i_data}.data = channel.data;
   end
 end
 % save data to file

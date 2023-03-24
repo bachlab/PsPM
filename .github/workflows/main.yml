@@ -6,17 +6,17 @@ jobs:
     steps:
       
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       
       - name: Add test data
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: bachlab/PsPM-data
           token: ${{ secrets.PSPM_PAT }}
           path: ImportTestData
       
       - name: Setup MATLAB
-        uses: matlab-actions/setup-matlab@v1.0.1
+        uses: matlab-actions/setup-matlab@v1.2.4
       
       - name: Run script
         id: pspm_test_main
@@ -26,7 +26,7 @@ jobs:
             
       - name: Check status
         id: check_status
-        uses: andstor/file-existence-action@v1
+        uses: andstor/file-existence-action@v2
         with:
           files: "success.txt"
           
@@ -58,7 +58,7 @@ jobs:
       # Set a variable
       # - name: Set running status variable
       #   id: status_var
-      #   run: echo ::set-output name=status_output::"success"
+      #   run: echo "status_output=success" >> $GITHUB_OUTPUT
       
       # - uses: pCYSl5EDgo/cat@master
       #   id: result_list

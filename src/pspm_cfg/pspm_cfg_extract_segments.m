@@ -47,7 +47,7 @@ cond_onsets.num         = [1 Inf];
 cond_onsets.help        = {['Specify a vector of onsets. The length of ', ...
     'the vector corresponds to the number of events included in this ', ...
     'condition. Onsets have to be indicated in the specified time ', ...
-    'unit (‘seconds’, ‘samples’).']};
+    'unit (ï¿½secondsï¿½, ï¿½samplesï¿½).']};
 
 %% Condition durations
 cond_durations             = cfg_entry;
@@ -151,7 +151,7 @@ segment_length.num      = [1 1];
 segment_length.val      = {-1};
 segment_length.help     = {['Length of segments. If set (= enabled) ', ...
     'durations in conditions will be ignored (-1 = disabled).']};
-%% Outputfile for nan-percentage 
+%% Outputfile for nan-percentage
 nan_file                = cfg_entry;
 nan_file.name           = 'File name';
 nan_file.tag            = 'nan_file';
@@ -185,9 +185,9 @@ nan_screen.tag          = 'nan_screen';
 nan_screen.val          = {'screen'};
 nan_screen.help         = {'Output to screen.'};
 
-%% NaN output 
+%% NaN output
 nan_output              = cfg_choice;
-nan_output.name         = 'NaN-output'; 
+nan_output.name         = 'NaN-output';
 nan_output.tag          = 'nan_output';
 nan_output.val          = {nan_none};
 nan_output.values       = {nan_none, nan_screen, nan_output_file};

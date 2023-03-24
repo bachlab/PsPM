@@ -255,29 +255,29 @@ PlotData(hObject);
 
 function PlotData(hObject)
 handles = guidata(hObject);
-chan = {};
+channel = {};
 switch handles.input_mode % load data
   case 'file'
     sr = max(cellfun(@(x) x.header.sr, handles.data)); % get highest sample rate
     xdata = (0:sr^-1:handles.infos.duration)';
     chan_id = get(handles.lbChannel, 'Value');
     if ~any(numel(handles.data) < chan_id)
-      chan = chan_id;
+      channel = chan_id;
     else
       warning('Cannot plot selected channel(s).');
     end
   case 'raw'
     xdata = (1:numel(handles.data))';
-    chan = 1;
+    channel = 1;
 end
 handles.selected_data = NaN(numel(xdata),1);
 handles.x_data = xdata;
 guidata(hObject, handles);
-if ~isempty(chan)
+if ~isempty(channel)
   np = get(handles.axData, 'NextPlot');
   action = 'replace';
-  for i=1:numel(chan)
-    AddPlot(hObject, chan(i), action);
+  for i=1:numel(channel)
+    AddPlot(hObject, channel(i), action);
     action = 'add';
   end
   set(handles.axData, 'NextPlot', np);
