@@ -59,7 +59,7 @@ function pspm_contrast_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to pspm_contrast (see VARARGIN)
 
-
+[hObject, handles] = pspm_ui(hObject, handles, 'contrast');
 
 % Left alignment of text fields
 set(handles.textStatus,'HorizontalAlignment','left')
@@ -77,7 +77,7 @@ handles.currentContrast = 1;
 handles.contrastNamesString = [];
 
 handles.enableGroupButtons = false;
-[hObject, handles] = pspm_ui(hObject, handles, 'contrast');
+
 % Choose default command line output for pspm_contrast
 handles.output = hObject;
 
