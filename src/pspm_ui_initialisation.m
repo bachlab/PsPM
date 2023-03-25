@@ -138,5 +138,7 @@ switch window
   case 'review'
     handles.button_all.FontName = settings.ui.FontNameText;
     hObject.Resize = 'on';
+  case 'ecg_editor'
+    handles.push_cancel = settings.ui.FontNameText;
 end
 return

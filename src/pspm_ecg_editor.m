@@ -57,6 +57,7 @@ end
 % End initialization code - DO NOT EDIT
 
 
+
 % --- Executes just before pspm_ecg2hb_qc is made visible.
 function pspm_ecg_editor_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
@@ -65,7 +66,7 @@ function pspm_ecg_editor_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to pspm_ecg2hb_qc (see VARARGIN)
 
-set(hObject,'Resize','on');
+pspm_ui(hObject, handles, 'ecg_editor');
 % Choose default command line output for pspm_ecg2hb_qc
 handles.output = hObject;
 % -------------------------------------------------------------------------
