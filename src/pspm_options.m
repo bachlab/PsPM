@@ -452,7 +452,7 @@ switch FunName
     options = autofill(options, 'min_break_ratio',        settings.split.min_break_ratio,...
                                                                       '>', 0            );
     % minimum ratio of session break to normal inter marker interval (default 3)
-    options = autofill(options, 'missing',                0,          '*Char'           );
+    options = autofill(options, 'missing',               [],          '*Char'           );
     options = autofill(options, 'overwrite',              0,          [1, 2]            );
     options = autofill(options, 'prefix',                 0,          '<=', 0           );
     options = autofill(options, 'randomITI',              0,          1                 );
