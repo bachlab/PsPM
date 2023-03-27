@@ -9,13 +9,6 @@ function [hObject, handles] = pspm_ui(hObject,handles,window)
 %   Introduced in PsPM 5.1
 %   Written and maintained in 2021-2022 by Teddy Chao (UCL)
 
-%% Initialise
-global settings
-if isempty(settings)
-  pspm_init;
-end
-sts = -1;
-%% Parameters for UI optimisation
 if ispc
   FSTitle = 11;
   FSText = 10;
@@ -87,9 +80,8 @@ switch window
     handles.tag_attribution.FontSize = FSAttr;
     %handles.tag_attribution.Visible = 'off';
     handles.tag_attribution.HorizontalAlignment = 'center';
-    handles.tag_attribution.String = attribution_disp_text;
     attribution_disp_text = sprintf(['Version 6.1.0, Build ',...
-      datestr(now,'ddmmyyyy'),' with MATLAB 2023a, ',...
+      datetime('today'),' with MATLAB 2023a, ',...
       'The PsPM Team, University College London']);
     handles.tag_attribution.String = attribution_disp_text;
     handles.tag_PsPM.FontName = FNRoman;
@@ -250,6 +242,7 @@ switch window
       };
     TextComponents = {...
       'radioIntercept',...
+      'checkboxDeleteCon',...
       'buttonDeleteContrast',...
       'radioIntercept',...
       'radioCondDiff',...
