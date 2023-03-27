@@ -81,7 +81,7 @@ switch window
     %handles.tag_attribution.Visible = 'off';
     handles.tag_attribution.HorizontalAlignment = 'center';
     attribution_disp_text = sprintf(['Version 6.1.0, Build ',...
-      datetime('today'),' with MATLAB 2023a, ',...
+      char(datetime('today')),' with MATLAB 2023a, ',...
       'The PsPM Team, University College London']);
     handles.tag_attribution.String = attribution_disp_text;
     handles.tag_PsPM.FontName = FNRoman;
@@ -118,8 +118,8 @@ switch window
       'tag_summary_source_file_title',...
       'tag_summary_channel_list_title'};
     % Others
-    hObject.Position(3) = DisplayWeight;
-    hObject.Position(4) = DisplayHeight;
+    %hObject.Position(3) = DisplayWeight;
+    %hObject.Position(4) = DisplayHeight;
     hObject.Resize = 'on';
     handles.name=[];
     handles.prop.axis=[];
@@ -128,7 +128,9 @@ switch window
     handles.prop.wave=[];
     handles.prop.wavechans=[];
   case 'review'
-    hObject.Resize = 'on';
+    hObject.Resize = 'off';
+    %hObject.Position(3) = DisplayWeight;
+    %hObject.Position(4) = DisplayHeight;
     TitleComponents = {'panelStatus',...
       'panelModel',...
       'panelPlot'};
