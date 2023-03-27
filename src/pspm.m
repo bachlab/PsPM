@@ -6,7 +6,7 @@ function pspm(varargin)
 % ● History
 %   Written in 13-09-2022 by Teddy Chao (UCL)
 
-if isMATLABReleaseOlderThan('R2018a')
+if verLessThan('matlab','9.4')
     pspm_guide
 else
     pspm_appdesigner
