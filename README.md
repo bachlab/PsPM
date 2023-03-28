@@ -8,7 +8,7 @@
 
 **PsPM** allows inferring a psychological variable from observable physiological data. For example, associative memory can be inferred from observed SCR signals. This allows for quantitative description of hidden processes, increases the temporal resolution of analysis, and suppresses noise.
 
-**PsPM** implements simple General Linear Convolution Models (GLMs) for evoked SCR, or uses the Dynamic Causal Modelling (DCM) framework -- as a tool to invert more complicated, non-linear models of SCR signals, for example for spontaneous fluctuations or anticipatory responses. Inference is drawn in a hierarchical summary-statistic approach (similar to *SPM* software for functional magnetic resonance imaging).
+**PsPM** implements simple General Linear Convolution Models (GLMs) for evoked SCR, or uses the Dynamic Causal Modelling (DCM) framework — as a tool to invert more complicated, non-linear models of SCR signals, for example for spontaneous fluctuations or anticipatory responses. Inference is drawn in a hierarchical summary-statistic approach (similar to *SPM* software for functional magnetic resonance imaging).
 
 **PsPM** also supports other kinds of data for which no models exist yet, in particular we have extended support for eyetracking data.
 
