@@ -43,7 +43,7 @@ function [data] = import_smi(varargin)
     %
     % (C) 2019 Laure Ciernik
     % Updated 2021 Teddy Chao
-    
+
     if isempty(varargin)
         error('ID:invalid_input', 'import_SMI.m needs at least one input sample_file.');
     end
@@ -147,7 +147,7 @@ function [data] = import_smi(varargin)
     l_eye = any(cell2mat(cellfun(@(x)strcmpi(x,'LEFT'),format_fields,'UniformOutput',0)));
     r_eye = any(cell2mat(cellfun(@(x)strcmpi(x,'RIGHT'),format_fields,'UniformOutput',0)));
     if l_eye && r_eye
-        eyesObserved = 'LR';
+        eyesObserved = 'C';
     elseif l_eye
         eyesObserved = 'L';
     else
@@ -276,7 +276,7 @@ function [data] = import_smi(varargin)
             ignore_str_pos{1}=cell(4,1);
             ignore_str_pos{2}=cell(4,1);
 
-            if strcmpi(eyesObserved, 'LR')
+            if strcmpi(eyesObserved, 'C')
                 % alwas add the time of the beginning of the current trial
                 % since the measured start and end times are relative to the
                 % time of the beginning ot the current trial
@@ -368,7 +368,7 @@ function [data] = import_smi(varargin)
         raw_columns = columns;
         data{sn}.raw_columns = raw_columns;
 
-        if strcmpi(data{sn}.eyesObserved, 'LR')
+        if strcmpi(data{sn}.eyesObserved, 'C')
             % pupilL, pupilR, xL, yL, xR, yR, blinkL, blinkR, saccadeL,
             % saccadeR
             % get idx of different channel

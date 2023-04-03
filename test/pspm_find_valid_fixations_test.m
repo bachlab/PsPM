@@ -115,7 +115,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
       % generate bilateral data
-      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lr');
+      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'c');
       options = struct();
       d = vertcat(degs{:});
       box_degree = d(strcmpi({d.name}, 'some')).deg;
@@ -155,7 +155,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
       % generate bilateral data
-      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lr');
+      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'c');
       options = struct();
       d = vertcat(degs{:});
       box_degree = d(strcmpi({d.name}, 'some')).deg;
@@ -191,7 +191,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     function test_missing(this, missing)
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
-      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lr');
+      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'c');
       options = struct();
       d = vertcat(degs{:});
       box_degree = d(strcmpi({d.name}, 'some')).deg;
@@ -220,7 +220,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     function test_overwrite(this)
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
-      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lr');
+      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'c');
       options = struct();
       d = vertcat(degs{:});
       box_degree = d(strcmpi({d.name}, 'some')).deg;
@@ -249,7 +249,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     function test_chan_action(this, channel_action)
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
-      [degs,~] = this.generate_fixation_data(fn, this.distance{1},  'lr');
+      [degs,~] = this.generate_fixation_data(fn, this.distance{1},  'c');
       options = struct();
       d = vertcat(degs{:});
       box_degree = d(strcmpi({d.name}, 'some')).deg;
@@ -275,7 +275,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     function test_newfile(this, newfile)
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
-      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lr');
+      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'c');
       options = struct();
       d = vertcat(degs{:});
       box_degree = d(strcmpi({d.name}, 'some')).deg;

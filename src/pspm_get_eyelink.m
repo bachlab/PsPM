@@ -216,7 +216,7 @@ for k = 1:numel(import)
   else
     % determine channel id from channeltype - eyelink specific
     % thats why channel ids will be ignored!
-    if strcmpi(data{1}.eyesObserved, settings.lateral.cap.c) || strcmpi(data{1}.eyesObserved, 'lr')
+    if strcmpi(data{1}.eyesObserved, settings.lateral.char.c) || strcmpi(data{1}.eyesObserved, 'lr')
       chan_struct = {'pupil_l', 'pupil_r', 'gaze_x_l', 'gaze_y_l', ...
         'gaze_x_r', 'gaze_y_r','blink_l','blink_r','saccade_l','saccade_r'};
     else
@@ -347,13 +347,13 @@ end
 
 % determine best eye
 switch sourceinfo.eyesObserved
-  case 'l'
+  case settings.lateral.char.l
     sourceinfo.best_eye = sourceinfo.eyesObserved;
-  case 'r'
+  case settings.lateral.char.r
     sourceinfo.best_eye = sourceinfo.eyesObserved;
-  case 'c'
+  case settings.lateral.char.c
     eye_stat = Inf(1,2);
-    eye_choice = 'lr';
+    eye_choice = settings.lateral.char.c;
     for i = 1:2
       e = lower(eye_choice(i));
       e_stat = vertcat(sourceinfo.chan_stats{...
