@@ -353,9 +353,9 @@ switch sourceinfo.eyesObserved
     sourceinfo.best_eye = sourceinfo.eyesObserved;
   case settings.lateral.char.c
     eye_stat = Inf(1,2);
-    eye_choice = settings.lateral.char.c;
+    eye_choice = 'lr';
     for i = 1:2
-      e = lower(eye_choice(i));
+      e = eye_choice(i);
       e_stat = vertcat(sourceinfo.chan_stats{...
         cellfun(@(x) ~isempty(regexpi(x.type, ['_' e], 'once')), import)});
       if ~isempty(e_stat)
