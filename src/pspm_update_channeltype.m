@@ -15,6 +15,12 @@ function [channeltype_new] = pspm_update_channeltype (channeltype_og, keyword)
 %   Introduced in PsPM 6.0.
 %   Written in 2022 by Teddy Chao (UCL)
 
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
+sts = -1;
 channeltype_new = channeltype_og;
 channeltype_og_struct = split(channeltype_og, '_');
 channeltype_new_struct = split(channeltype_new, '_');

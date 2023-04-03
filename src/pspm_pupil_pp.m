@@ -221,6 +221,10 @@ end
 return
 
 function varargout  = pspm_preprocess(data, data_combine, segments, custom_settings, plot_data)
+global settings
+if isempty(settings)
+  pspm_init;
+end
 sts = -1;
 % 1 definitions
 combining = ~isempty(data_combine{1}.data);
@@ -382,6 +386,11 @@ function eye = pspm_get_eye(channeltype)
 %     eye    		a character
 % PsPM (version 5.1.2)
 % (C) 2021 Teddy Chao (UCL)
+global settings
+if isempty(settings)
+  pspm_init;
+end
+sts = -1;
 eye = 'unknown';
 for eye_attempt = [settings.lateral.char.l, settings.lateral.char.r, settings.lateral.char.c]
 	if contains(channeltype, ['_', eye_attempt, '_'])

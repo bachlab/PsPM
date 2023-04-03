@@ -276,7 +276,7 @@ function [data] = import_smi(varargin)
             ignore_str_pos{1}=cell(4,1);
             ignore_str_pos{2}=cell(4,1);
 
-            if strcmpi(eyesObserved, 'C')
+            if strcmpi(eyesObserved, 'C') || strcmpi(eyesObserved, 'LR')
                 % alwas add the time of the beginning of the current trial
                 % since the measured start and end times are relative to the
                 % time of the beginning ot the current trial
@@ -368,7 +368,7 @@ function [data] = import_smi(varargin)
         raw_columns = columns;
         data{sn}.raw_columns = raw_columns;
 
-        if strcmpi(data{sn}.eyesObserved, 'C')
+        if strcmpi(data{sn}.eyesObserved, 'C') || strcmpi(data{sn}.eyesObserved, 'LR')
             % pupilL, pupilR, xL, yL, xR, yR, blinkL, blinkR, saccadeL,
             % saccadeR
             % get idx of different channel
