@@ -139,7 +139,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       for i = 1:numel(work_chans)
         channel = work_chans{i};
         if ischar(channel)
-          w_eyes = {'l','r'};
+          w_eyes = {'l','r','c'};
           for j=1:numel(w_eyes)
             e = w_eyes{j};
             search_chan = [channel '_' e];
