@@ -69,20 +69,17 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %   Maintained in 2021 by Teddy Chao (UCL)
 
 
-% initialise
-% -------------------------------------------------------------------------
+%% initialise
 global settings;
 if isempty(settings), pspm_init; end
 sts = -1;
 out_file = '';
-
 % validate input
 if numel(varargin) < 1
   warning('ID:invalid_input', ['Not enough input arguments.', ...
     ' You have to either pass a bitmap or circle_degree, distance and unit',...
     ' to compute the valid fixations']); return;
 end
-
 %get imput arguments and check if correct values
 if numel(varargin{1}) > 1
   mode = 'bitmap';
@@ -137,20 +134,16 @@ if ~ischar(fn) || ~exist(fn, 'file')
   warning('ID:invalid_input', ['File %s is not char or does not ', ...
     'seem to exist.'], fn); return;
 end
-
 % load data right away (needed if fixation point should be expanded)
 [msts, infos, data] = pspm_load_data(fn);
 if msts ~= 1
   warning('ID:invalid_input', ['An error happened, while ', ...
     'opening the file %s.'],fn); return;
 end
-
 options = pspm_options(options, 'find_valid_fixations');
 if options.invalid
   return
 end
-
-
 %change distance to 'mm'
 if strcmpi(mode,'fixation')
   if ~strcmpi(unit,'mm')
@@ -160,12 +153,10 @@ if strcmpi(mode,'fixation')
     end
   end
 end
-
 % expand fixation_point
 if strcmpi(mode,'fixation')
   if ~isfield(options, 'fixation_point') || isempty(options.fixation_point) ...
       || size(options.fixation_point,1) == 1
-
     % set fixation point default or expand to data size
     % find first wave channel
     ct = cellfun(@(x) x.header.channeltype, data, 'UniformOutput', false);
@@ -173,7 +164,6 @@ if strcmpi(mode,'fixation')
       settings.channeltypes(strcmpi({settings.channeltypes.type}, x)).data, ...
       ct, 'UniformOutput', false);
     wv = find(strcmpi(chan_data, 'wave'));
-
     % initialize fix_point
     fix_point(:,1) = zeros(numel(data{wv(1)}.data), 1);
     fix_point(:,2) = zeros(numel(data{wv(1)}.data), 1);
@@ -193,28 +183,25 @@ else
   map_x_range = [1,xlim];
   map_y_range = [1,ylim];
 end
-
-% calculate radius araund de fixation points
-%-----------------------------------------------------
+%% calculate radius araund de fixation points
 %options = pspm_options(options, 'find_valid_fixations');
-
 % overwrite
 options.overwrite = pspm_overwrite(fn, options);
-
-
-
-
 % iterate through eyes
-n_eyes = numel(infos.source.eyesObserved);
+switch infos.source.eyesObserved
+  case 'C'
+    infos_source_eyesObserved_competible = 'LR';
+  otherwise
+    infos_source_eyesObserved_competible = infos.source.eyesObserved;
+end
+n_eyes = numel(infos_source_eyesObserved_competible);
 new_pu = cell(n_eyes, 1);
 new_excl = cell(n_eyes, 1);
-
-for i=1:n_eyes
+for i = 1:n_eyes
   eye = lower(infos.source.eyesObserved(i));
   if strcmpi(options.eyes, 'combined') || strcmpi(options.eyes(1), eye)
     gaze_x = ['gaze_x_', eye];
     gaze_y = ['gaze_y_', eye];
-
     % find chars to replace
     str_chans = cellfun(@ischar, options.channel);
     channel = options.channel;

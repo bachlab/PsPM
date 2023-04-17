@@ -115,7 +115,8 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
       % generate bilateral data
-      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'c');
+      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lr'); 
+      % this is to generate channel_l and channel_r, not channel_lr!
       options = struct();
       d = vertcat(degs{:});
       box_degree = d(strcmpi({d.name}, 'some')).deg;
@@ -139,7 +140,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       for i = 1:numel(work_chans)
         channel = work_chans{i};
         if ischar(channel)
-          w_eyes = {'l','r','c'};
+          w_eyes = {'l','r'};
           for j=1:numel(w_eyes)
             e = w_eyes{j};
             search_chan = [channel '_' e];
@@ -155,7 +156,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
       % generate bilateral data
-      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'c');
+      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lr');
       options = struct();
       d = vertcat(degs{:});
       box_degree = d(strcmpi({d.name}, 'some')).deg;
@@ -178,8 +179,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
         n_data((n_old_chans+1):n_new_chans), 'UniformOutput', 0);
       switch work_eye
         case 'combined'
-          this.verifyTrue(any(strcmpi(channeltypes, 'pupil_l')) && ...
-            any(strcmpi(channeltypes, 'pupil_r')));
+          this.verifyTrue(any(strcmpi(channeltypes, 'pupil_l')) && any(strcmpi(channeltypes, 'pupil_r')));
         case 'left'
           this.verifyTrue(any(strcmpi(channeltypes, 'pupil_l')) && ...
             all(~strcmpi(channeltypes, 'pupil_r')));
@@ -191,7 +191,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     function test_missing(this, missing)
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
-      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'c');
+      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lr');
       options = struct();
       d = vertcat(degs{:});
       box_degree = d(strcmpi({d.name}, 'some')).deg;
@@ -220,7 +220,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     function test_overwrite(this)
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
-      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'c');
+      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lr');
       options = struct();
       d = vertcat(degs{:});
       box_degree = d(strcmpi({d.name}, 'some')).deg;
@@ -249,7 +249,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     function test_chan_action(this, channel_action)
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
-      [degs,~] = this.generate_fixation_data(fn, this.distance{1},  'c');
+      [degs,~] = this.generate_fixation_data(fn, this.distance{1},  'lr');
       options = struct();
       d = vertcat(degs{:});
       box_degree = d(strcmpi({d.name}, 'some')).deg;
@@ -275,7 +275,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     function test_newfile(this, newfile)
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
-      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'c');
+      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lr');
       options = struct();
       d = vertcat(degs{:});
       box_degree = d(strcmpi({d.name}, 'some')).deg;
@@ -393,7 +393,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       this.verifyWarning(@() pspm_find_valid_fixations('a'), 'ID:invalid_input');
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
-      this.generate_fixation_data(fn, 500, 'c');
+      this.generate_fixation_data(fn, 500, 'lr');
       box_degree = 'a';
       dist = '1';
       options = [];
