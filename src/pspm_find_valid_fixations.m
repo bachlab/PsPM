@@ -187,18 +187,18 @@ end
 %options = pspm_options(options, 'find_valid_fixations');
 % overwrite
 options.overwrite = pspm_overwrite(fn, options);
-% iterate through eyes
+
 switch infos.source.eyesObserved
-  case 'C'
-    infos_source_eyesObserved_competible = 'LR';
+  case {'C', 'c', 'LR', 'lr'}
+    eyesToProcess = {'l','r'};
   otherwise
-    infos_source_eyesObserved_competible = infos.source.eyesObserved;
+    eyesToProcess = {lower(infos.source.eyesObserved)};
 end
-n_eyes = numel(infos_source_eyesObserved_competible);
+n_eyes = numel(eyesToProcess);
 new_pu = cell(n_eyes, 1);
 new_excl = cell(n_eyes, 1);
 for i = 1:n_eyes
-  eye = lower(infos.source.eyesObserved(i));
+  eye = eyesToProcess{i};
   if strcmpi(options.eyes, 'combined') || strcmpi(options.eyes(1), eye)
     gaze_x = ['gaze_x_', eye];
     gaze_y = ['gaze_y_', eye];
