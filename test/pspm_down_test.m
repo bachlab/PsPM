@@ -67,7 +67,7 @@ classdef pspm_down_test < matlab.unittest.TestCase
       this.verifyEqual(numel(old.data),numel(new.data));
       for i = 1:numel(old.data)
         % check if channel has been downsampled (if is wavechannel)
-        if ismember(old.data{i}.header.channeltype, pspm_down_test.wave_channels)
+        if ismember(old.data{i}.header.chantype, pspm_down_test.wave_channels)
           % same duration as in old channel
           dur_old = numel(old.data{i}.data) / old.data{i}.header.sr;
           dur_new = numel(new.data{i}.data) / new.data{i}.header.sr;

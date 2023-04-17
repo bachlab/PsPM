@@ -43,7 +43,7 @@ if isfield(import, 'markerinfo')
 end
 
 %% add header
-data.header.channeltype = 'marker';
+data.header.chantype = 'marker';
 data.header.units = 'events';
 data.header.sr = 1;
 sts = 1;

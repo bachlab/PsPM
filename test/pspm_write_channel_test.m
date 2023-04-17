@@ -58,7 +58,7 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       if ~strcmpi(action, 'delete')
         added_chan = gen_data.data{1};
         % look for channel with same channeltype
-        chan = cellfun(@(f) strcmpi(f.header.channeltype, added_chan.header.channeltype), new.data);
+        chan = cellfun(@(f) strcmpi(f.header.chantype, added_chan.header.chantype), new.data);
         if numel(find(chan)) == 1
           new_chan = new.data{chan};
         elseif numel(find(chan)) > 1
@@ -66,9 +66,9 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
           % only one channeltype is in the testdatafile)
           % because this testfunction works with only one channel
           % type
-          warning('More than one channel with channeltype %s found.', added_chan.header.channeltype);
+          warning('More than one channel with channeltype %s found.', added_chan.header.chantype);
         else
-          warning('No channel found with channeltype %s.', added_chan.header.channeltype);
+          warning('No channel found with channeltype %s.', added_chan.header.chantype);
         end
         % ensure returned channel id is equal to the channel looked for
         this.verifyEqual(find(chan), outinfos.channel);
@@ -201,14 +201,14 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       this.verifyEqual(length(post_unit_change.data), length(new.data) + 1);
       % assert one mm gaze channel and one degree gaze channel
       this.verifyEqual(length(find(cellfun(@(c) strcmp(c.header.units, 'mm') && ...
-        strcmp(c.header.channeltype, 'gaze_x_l'), post_unit_change.data))), 1);
+        strcmp(c.header.chantype, 'gaze_x_l'), post_unit_change.data))), 1);
       this.verifyEqual(length(find(cellfun(@(c) strcmp(c.header.units, 'degree') && ...
-        strcmp(c.header.channeltype, 'gaze_x_l'), post_unit_change.data))), 1);
+        strcmp(c.header.chantype, 'gaze_x_l'), post_unit_change.data))), 1);
     end
     function test_delete_single(this)
       % ●●● 1 Delete with channeltype
       % prepare
-      data.header.channeltype = 'hr';
+      data.header.chantype = 'hr';
       % load file before
       [~, old.infos, old.data] = pspm_load_data(this.testdatafile);
       % run delete
@@ -219,7 +219,7 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       this.verify_write(new, old, [], 'delete', outinfos);
       this.verifyEqual(numel(outinfos.channel), 1);
       % search channel hr (should be deleted)
-      chan = cellfun(@(f) strcmpi(f.header.channeltype, 'hr'), new.data);
+      chan = cellfun(@(f) strcmpi(f.header.chantype, 'hr'), new.data);
       this.verifyTrue(~any(chan));
       % ●●● 2 Delete with channr
       options.channel = numel(new.data);
@@ -288,7 +288,7 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       this.verifyEqual(numel(outinfos.channel), 2);
       % ●●● 2 remove remaining 'resp' channels
       old = new;
-      chan = cellfun(@(f) strcmpi(f.header.channeltype, 'resp'), new.data);
+      chan = cellfun(@(f) strcmpi(f.header.chantype, 'resp'), new.data);
       if find(chan) <= 1
         % add some more 'resp' channels
         c = cell(1,7);
@@ -309,7 +309,7 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       % do basic checks
       this.verify_write(new, old, [], 'delete', outinfos);
       % verify
-      chan = cellfun(@(f) strcmpi(f.header.channeltype, 'resp'), new.data);
+      chan = cellfun(@(f) strcmpi(f.header.chantype, 'resp'), new.data);
       this.verifyTrue(~any(chan));
     end
   end

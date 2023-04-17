@@ -16,7 +16,7 @@ classdef pspm_get_marker_test < matlab.unittest.TestCase
       [sts, data] = pspm_get_marker(import);
       this.verifyEqual(sts, 1);
       this.verifyEqual(data.data, import.data(:));
-      this.verifyTrue(strcmpi(data.header.channeltype, 'marker'));
+      this.verifyTrue(strcmpi(data.header.chantype, 'marker'));
       this.verifyTrue(strcmpi(data.header.units, 'events'));
       this.verifyEqual(data.header.sr, 1);
     end
@@ -32,7 +32,7 @@ classdef pspm_get_marker_test < matlab.unittest.TestCase
         );
       this.verifyEqual(sts, 1);
       this.verifyEqual(data.data, expected.(flank) ./ sr);
-      this.verifyTrue(strcmpi(data.header.channeltype, 'marker'));
+      this.verifyTrue(strcmpi(data.header.chantype, 'marker'));
       this.verifyTrue(strcmpi(data.header.units, 'events'));
       this.verifyEqual(data.header.sr, 1);
     end

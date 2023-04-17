@@ -13,7 +13,7 @@ classdef pspm_convert_gaze_distance_test < matlab.unittest.TestCase
   methods
     % get the gaze data channels for a specific unit
     function len = get_gaze_and_unit(this, data, unit)
-      len = find(cellfun(@(c) strcmp(c.header.units, unit) && ~isempty(regexp(c.header.channeltype, 'gaze_[x|y]_[r|l]')), data));
+      len = find(cellfun(@(c) strcmp(c.header.units, unit) && ~isempty(regexp(c.header.chantype, 'gaze_[x|y]_[r|l]')), data));
     end
   end
   methods(TestMethodSetup)
@@ -58,8 +58,8 @@ classdef pspm_convert_gaze_distance_test < matlab.unittest.TestCase
       if strcmp(target, 'degree')
         this.verifyLength(this.get_gaze_and_unit(data, 'degree'), 0);
       else
-        this.verifyLength(find(cellfun(@(c) strcmp(c.header.channeltype, 'sps_l'), data)), 0);
-        this.verifyLength(find(cellfun(@(c) strcmp(c.header.channeltype, 'sps_r'), data)), 0);
+        this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_l'), data)), 0);
+        this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_r'), data)), 0);
       end
       [sts, out_channel] = this.verifyWarningFree(@() pspm_convert_gaze_distance(...
         this.fn, target, from, width, height, distance, struct('channel_action', channel_action)));
@@ -74,8 +74,8 @@ classdef pspm_convert_gaze_distance_test < matlab.unittest.TestCase
       if strcmp(target, 'degree')
         this.verifyLength(this.get_gaze_and_unit(data, 'degree'), 4);
       else
-        this.verifyLength(find(cellfun(@(c) strcmp(c.header.channeltype, 'sps_l'), data)), 1);
-        this.verifyLength(find(cellfun(@(c) strcmp(c.header.channeltype, 'sps_r'), data)), 1);
+        this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_l'), data)), 1);
+        this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_r'), data)), 1);
       end
       [sts, out_channel] = this.verifyWarningFree(@() pspm_convert_gaze_distance(...
         this.fn, target, from, width, height, distance, struct('channel_action', channel_action)));

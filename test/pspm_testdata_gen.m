@@ -110,7 +110,7 @@ for k = 1:numel(channels)
     else
       outfile.data{k,1}.header.units = 'unknown';
     end
-    outfile.data{k,1}.header.channeltype = channels{k}.channeltype;
+    outfile.data{k,1}.header.chantype = channels{k}.channeltype;
     %Generate sinewaveform
     t = ((channels{k}.sr^-1):(channels{k}.sr^-1):duration)';
     % generate data
@@ -172,7 +172,7 @@ for k = 1:numel(channels)
     else
       outfile.data{k,1}.header.units = 'events';
     end
-    outfile.data{k,1}.header.channeltype = channels{k}.channeltype;
+    outfile.data{k,1}.header.chantype = channels{k}.channeltype;
     outfile.data{k,1}.data = ev_data;
   else
     warning('Type %s is not supported', channels{k}.channeltype); outfile = cell(0); return;

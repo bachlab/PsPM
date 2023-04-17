@@ -201,7 +201,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       % invalid_datafile test 10
       load(this.fn, 'infos');
       load(this.fn, 'data');
-      data{5}.header.channeltype = 'scanner';
+      data{5}.header.chantype = 'scanner';
       save(this.fn2, 'infos', 'data');
       clear('infos')
       clear('data')

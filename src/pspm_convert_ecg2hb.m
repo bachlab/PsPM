@@ -143,7 +143,7 @@ if numel(data) > 1
   fprintf('There is more than one ECG channel in the data file. Only the first of these will be analysed.');
   data = data(1);
 end
-if not(strcmp(data{1,1}.header.channeltype,'ecg'))
+if not(strcmp(data{1,1}.header.chantype,'ecg'))
   warning('ID:not_allowed_channeltype', 'Specified channel is not an ECG channel. Don''t know what to do!')
   return;
 end
@@ -272,7 +272,7 @@ newhr=pt.set.R/pt.settings.filt.sr;
 newdata.data = newhr(:);
 newdata.header.sr = 1;
 newdata.header.units = 'events';
-newdata.header.channeltype = 'hb';
+newdata.header.chantype = 'hb';
 
 % user output
 fprintf(' done.');

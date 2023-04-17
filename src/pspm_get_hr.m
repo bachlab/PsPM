@@ -22,7 +22,7 @@ sts = -1;
 data.data = import.data(:);
 
 % add header
-data.header.channeltype = 'hr';
+data.header.chantype = 'hr';
 if strcmpi(import.units, 'unknown')
   data.header.units = 'bpm';
 else

@@ -66,9 +66,9 @@ for i = 1:n_eyes
   if contains(options.eyes, eye)
     gaze_x = ['gaze_x_', eye];
     gaze_y = ['gaze_y_', eye];
-    gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.channeltype) & ...
+    gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
       strcmpi('degree', x.header.units), data),1);
-    gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.channeltype) & ...
+    gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
       strcmpi('degree', x.header.units), data),1);
     if ~isempty(gx) && ~isempty(gy)
       % get channel specific data
@@ -82,7 +82,7 @@ for i = 1:n_eyes
       end
       % create new channel with data holding distances
       dist_channel.data = rad2deg(arclen) .* data{gx}.header.sr;
-      dist_channel.header.channeltype = strcat('sps_', eye);
+      dist_channel.header.chantype = strcat('sps_', eye);
       dist_channel.header.sr = data{gx}.header.sr;
       dist_channel.header.units = 'degree';
       [lsts, outinfo] = pspm_write_channel(fn, dist_channel, options.channel_action);

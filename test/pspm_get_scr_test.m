@@ -18,7 +18,7 @@ classdef pspm_get_scr_test < matlab.unittest.TestCase
       testCase.verifyTrue(isfield(data.header,'sr'));
       testCase.verifyTrue(isfield(data.header,'channeltype'));
       testCase.verifyEqual(data.header.sr, import.sr);
-      testCase.verifyEqual(data.header.channeltype, 'scr');
+      testCase.verifyEqual(data.header.chantype, 'scr');
     end
     function struct_transferparams(testCase)
       channel.channeltype = 'scr';
@@ -38,7 +38,7 @@ classdef pspm_get_scr_test < matlab.unittest.TestCase
       testCase.verifyTrue(isfield(data.header,'sr'));
       testCase.verifyTrue(isfield(data.header,'channeltype'));
       testCase.verifyEqual(data.header.sr, import.sr);
-      testCase.verifyEqual(data.header.channeltype, 'scr');
+      testCase.verifyEqual(data.header.chantype, 'scr');
       import.transfer = rmfield(import.transfer, 'Rs');
       import.transfer = rmfield(import.transfer, 'offset');
       testCase.verifyWarningFree(@()pspm_get_scr(import));
@@ -62,7 +62,7 @@ classdef pspm_get_scr_test < matlab.unittest.TestCase
       testCase.verifyTrue(isfield(data.header,'sr'));
       testCase.verifyTrue(isfield(data.header,'channeltype'));
       testCase.verifyEqual(data.header.sr, import.sr);
-      testCase.verifyEqual(data.header.channeltype, 'scr');
+      testCase.verifyEqual(data.header.chantype, 'scr');
       delete(filename);
     end
   end
