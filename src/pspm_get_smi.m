@@ -126,9 +126,9 @@ end
 addpath(pspm_path('backroom'));
 chan_struct = data{1}.channel_columns;
 eyes_observed = lower(data{1}.eyesObserved);
-if strcmpi(eyes_observed, 'l')
+if strcmpi(eyes_observed, settings.lateral.char.l)
   mask_chans = {'L Blink', 'L Saccade'};
-elseif strcmpi(eyes_observed, 'r')
+elseif strcmpi(eyes_observed, settings.lateral.char.r)
   mask_chans = {'R Blink', 'R Saccade'};
 else
   mask_chans = {'L Blink', 'L Saccade', 'R Blink', 'R Saccade'};
@@ -153,14 +153,25 @@ for k = 1:num_import_cells
   import{k}.units = 'N/A';
   import{k}.sr = sampling_rate;
   channeltype = lower(import{k}.type);
-  channeltype_has_L_or_R = ~isempty(regexpi(channeltype, '_[lrc]', 'once'));% || ~isempty(regexpi(channeltype, '_c', 'once'));
-  if strcmp(eyes_observed, 'c')
-    eyes_observed_competible = 'lr';
+
+  channellateral = pspm_eye(channeltype, 'channel2lateral');
+  if isempty(channellateral)
+     flag_channeltype_hasnt_eyes_obs = 0;
   else
-    eyes_observed_competible = eyes_observed;
+    flag_channeltype_hasnt_eyes_obs = ~strcmp(channellateral,eyes_observed) && ~strcmp(eyes_observed, settings.lateral.char.c);
   end
-  channeltype_hasnt_eyes_obs = isempty(regexpi(channeltype, ['_([' eyes_observed_competible '])'], 'once'));
-  if channeltype_has_L_or_R && channeltype_hasnt_eyes_obs
+
+
+  % channeltype_has_L_or_R = ~isempty(regexpi(channeltype, '_[lrc]', 'once'));% || ~isempty(regexpi(channeltype, '_c', 'once'));
+  % if strcmp(eyes_observed, 'c')
+  %   eyes_observed_competible = 'lr';
+  % else
+  %   eyes_observed_competible = eyes_observed;
+  % end
+  % channeltype_hasnt_eyes_obs = isempty(regexpi(channeltype, ['_([' eyes_observed_competible '])'], 'once'));
+
+
+  if flag_channeltype_hasnt_eyes_obs
     % no import
   elseif strcmpi(channeltype, 'marker')
     [import{k}, chan_id] = import_marker_chan(import{k}, markers, mi_values, mi_names, size(data_concat, 1), sampling_rate);

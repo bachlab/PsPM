@@ -317,12 +317,9 @@ function [data] = import_smi(varargin)
             % add blinks and saccades to datanum
             ignore_names = {'Blink', 'Saccade'};
             for j = 1:numel(ignore_str_pos)
-                eye_marker = data{sn}.eyesObserved;
-                if strcmp(eye_marker, 'C')
-                    eye_marker = 'LR';
-                end
-                for i = 1:numel(eye_marker)
-                    if strcmpi(eye_marker(i), 'L')
+                eye_individuals = pspm_eye(data{sn}.eyesObserved, 'char2cell');
+                for i = 1:numel(eye_individuals)
+                    if strcmpi(eye_individuals{i}, 'l')
                         ep_start = 1;
                         ep_stop = 2;
                     else
@@ -335,7 +332,7 @@ function [data] = import_smi(varargin)
                         stop_pos = min(size(sn_datanum, 1), ignore_str_pos{j}{ep_stop}(k));
                         sn_datanum(start_pos : stop_pos, idx) = 1;
                     end
-                    columns{idx} = [upper(eye_marker(i)), ' ', ignore_names{j}];
+                    columns{idx} = [upper(eye_individuals{i}), ' ', ignore_names{j}];
                 end
             end
         end
@@ -372,7 +369,7 @@ function [data] = import_smi(varargin)
         raw_columns = columns;
         data{sn}.raw_columns = raw_columns;
 
-        if strcmpi(data{sn}.eyesObserved, 'C') % strcmpi(data{sn}.eyesObserved, 'C') || 
+        if strcmpi(data{sn}.eyesObserved, 'C') % strcmpi(data{sn}.eyesObserved, 'C') ||
             % pupilL, pupilR, xL, yL, xR, yR, blinkL, blinkR, saccadeL,
             % saccadeR
             % get idx of different channel

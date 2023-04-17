@@ -211,20 +211,21 @@ for i = 1:numel(chan_info)
   pupil_mode = chan_info{i}.diam_vals;
   eyesObserved = chan_info{i}.eyesObserved;
   pupil_unit = ['arbitrary ' lower(pupil_mode) ' units'];
-  if strcmpi(eyesObserved, 'l')
-    chan_info{i}.channel_header = {'pupil_l', 'gaze_x_l', 'gaze_y_l'};
-    chan_info{i}.channel_units = {pupil_unit, 'pixel', 'pixel'};
-    chan_info{i}.col_idx = [4, 2, 3];
-  elseif strcmpi(eyesObserved, 'r')
-    chan_info{i}.channel_header = {'pupil_r', 'gaze_x_r', 'gaze_y_r'};
-    chan_info{i}.channel_units = {pupil_unit, 'pixel', 'pixel'};
-    chan_info{i}.col_idx = [4, 2, 3];
-  elseif strcmpi(eyesObserved, 'lr') || strcmpi(eyesObserved, 'rl') || strcmpi(eyesObserved, settings.lateral.char.c)
-    chan_info{i}.channel_header = {'pupil_l', 'pupil_r', 'gaze_x_l', 'gaze_y_l', 'gaze_x_r', 'gaze_y_r'};
-    chan_info{i}.channel_units = {pupil_unit, pupil_unit, 'pixel', 'pixel', 'pixel', 'pixel'};
-    chan_info{i}.col_idx = [4, 7, 2, 3, 5, 6];
-  else
-    error('ID:pspm_error', 'This branch should not have been taken. Please contact PsPM dev team');
+  switch pspm_eye(eyesObserved, 'lr2c')
+    case 'l'
+      chan_info{i}.channel_header = {'pupil_l', 'gaze_x_l', 'gaze_y_l'};
+      chan_info{i}.channel_units = {pupil_unit, 'pixel', 'pixel'};
+      chan_info{i}.col_idx = [4, 2, 3];
+    case 'r'
+      chan_info{i}.channel_header = {'pupil_r', 'gaze_x_r', 'gaze_y_r'};
+      chan_info{i}.channel_units = {pupil_unit, 'pixel', 'pixel'};
+      chan_info{i}.col_idx = [4, 2, 3];
+    case 'c'
+      chan_info{i}.channel_header = {'pupil_l', 'pupil_r', 'gaze_x_l', 'gaze_y_l', 'gaze_x_r', 'gaze_y_r'};
+      chan_info{i}.channel_units = {pupil_unit, pupil_unit, 'pixel', 'pixel', 'pixel', 'pixel'};
+      chan_info{i}.col_idx = [4, 7, 2, 3, 5, 6];
+    otherwise
+      error('ID:pspm_error', 'This branch should not have been taken. Please contact PsPM dev team');
   end
 end
 end

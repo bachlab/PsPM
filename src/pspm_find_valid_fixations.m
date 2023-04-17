@@ -187,13 +187,7 @@ end
 %options = pspm_options(options, 'find_valid_fixations');
 % overwrite
 options.overwrite = pspm_overwrite(fn, options);
-
-switch infos.source.eyesObserved
-  case {'C', 'c', 'LR', 'lr'}
-    eyesToProcess = {'l','r'};
-  otherwise
-    eyesToProcess = {lower(infos.source.eyesObserved)};
-end
+eyesToProcess = pspm_eye(infos.source.eyesObserved, 'char2cell');
 n_eyes = numel(eyesToProcess);
 new_pu = cell(n_eyes, 1);
 new_excl = cell(n_eyes, 1);
