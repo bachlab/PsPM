@@ -153,8 +153,13 @@ for k = 1:num_import_cells
   import{k}.units = 'N/A';
   import{k}.sr = sampling_rate;
   channeltype = lower(import{k}.type);
-  channeltype_has_L_or_R = ~isempty(regexpi(channeltype, '_[lr]', 'once')) || ~isempty(regexpi(channeltype, '_c', 'once'));
-  channeltype_hasnt_eyes_obs = isempty(regexpi(channeltype, ['_([' eyes_observed '])'], 'once'));
+  channeltype_has_L_or_R = ~isempty(regexpi(channeltype, '_[lrc]', 'once'));% || ~isempty(regexpi(channeltype, '_c', 'once'));
+  if strcmp(eyes_observed, 'c')
+    eyes_observed_competible = 'lr';
+  else
+    eyes_observed_competible = eyes_observed;
+  end
+  channeltype_hasnt_eyes_obs = isempty(regexpi(channeltype, ['_([' eyes_observed_competible '])'], 'once'));
   if channeltype_has_L_or_R && channeltype_hasnt_eyes_obs
     % no import
   elseif strcmpi(channeltype, 'marker')
