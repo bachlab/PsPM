@@ -147,7 +147,7 @@ function [data] = import_smi(varargin)
     l_eye = any(cell2mat(cellfun(@(x)strcmpi(x,'LEFT'),format_fields,'UniformOutput',0)));
     r_eye = any(cell2mat(cellfun(@(x)strcmpi(x,'RIGHT'),format_fields,'UniformOutput',0)));
     if l_eye && r_eye
-        eyesObserved = 'C';
+        eyesObserved = 'C';%'C';
     elseif l_eye
         eyesObserved = 'L';
     else
@@ -276,7 +276,7 @@ function [data] = import_smi(varargin)
             ignore_str_pos{1}=cell(4,1);
             ignore_str_pos{2}=cell(4,1);
 
-            if strcmpi(eyesObserved, 'C') || strcmpi(eyesObserved, 'LR')
+            if strcmpi(eyesObserved, 'C')
                 % alwas add the time of the beginning of the current trial
                 % since the measured start and end times are relative to the
                 % time of the beginning ot the current trial
@@ -317,8 +317,12 @@ function [data] = import_smi(varargin)
             % add blinks and saccades to datanum
             ignore_names = {'Blink', 'Saccade'};
             for j = 1:numel(ignore_str_pos)
-                for i=1:numel(data{sn}.eyesObserved)
-                    if strcmpi(data{sn}.eyesObserved(i), 'L')
+                eye_marker = data{sn}.eyesObserved;
+                if strcmp(eye_marker, 'C')
+                    eye_marker = 'LR';
+                end
+                for i = 1:numel(eye_marker)
+                    if strcmpi(eye_marker(i), 'L')
                         ep_start = 1;
                         ep_stop = 2;
                     else
@@ -331,7 +335,7 @@ function [data] = import_smi(varargin)
                         stop_pos = min(size(sn_datanum, 1), ignore_str_pos{j}{ep_stop}(k));
                         sn_datanum(start_pos : stop_pos, idx) = 1;
                     end
-                    columns{idx} = [upper(data{sn}.eyesObserved(i)), ' ', ignore_names{j}];
+                    columns{idx} = [upper(eye_marker(i)), ' ', ignore_names{j}];
                 end
             end
         end
@@ -368,7 +372,7 @@ function [data] = import_smi(varargin)
         raw_columns = columns;
         data{sn}.raw_columns = raw_columns;
 
-        if strcmpi(data{sn}.eyesObserved, 'C') || strcmpi(data{sn}.eyesObserved, 'LR')
+        if strcmpi(data{sn}.eyesObserved, 'C') % strcmpi(data{sn}.eyesObserved, 'C') || 
             % pupilL, pupilR, xL, yL, xR, yR, blinkL, blinkR, saccadeL,
             % saccadeR
             % get idx of different channel
