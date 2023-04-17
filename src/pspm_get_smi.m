@@ -75,7 +75,6 @@ end
 sts = -1;
 sourceinfo = [];
 addpath(pspm_path('Import','smi'));
-
 if ~iscell(import)
   import = {import};
 end
@@ -90,8 +89,7 @@ for i = 1:numel(import)
     import{i}.stimulus_resolution = [-1 -1];
   end
 end
-
-if isstr(datafile)
+if ischar(datafile)
   datafile = {datafile};
 end
 if ~assert_proper_datafile_format(datafile); return; end
@@ -120,9 +118,7 @@ if numel(data) > 1
   if ~assert_same_eyes_observed(data); return; end
   if ~assert_sessions_are_one_after_another(data); return; end
 end
-
 [data_concat, markers, mi_values, mi_names] = concat_sessions(data);
-
 addpath(pspm_path('backroom'));
 chan_struct = data{1}.channel_columns;
 eyes_observed = lower(data{1}.eyesObserved);
@@ -139,7 +135,6 @@ data_concat = set_blinks_saccades_to_nan(...
   mask_chans,...
   @(x) contains(x, 'L '));
 rmpath(pspm_path('backroom'));
-
 sampling_rate = data{1}.sampleRate;
 units = data{1}.units;
 raw_columns = data{1}.raw_columns;
@@ -153,24 +148,12 @@ for k = 1:num_import_cells
   import{k}.units = 'N/A';
   import{k}.sr = sampling_rate;
   channeltype = lower(import{k}.type);
-
   channellateral = pspm_eye(channeltype, 'channel2lateral');
   if isempty(channellateral)
      flag_channeltype_hasnt_eyes_obs = 0;
   else
     flag_channeltype_hasnt_eyes_obs = ~strcmp(channellateral,eyes_observed) && ~strcmp(eyes_observed, settings.lateral.char.c);
   end
-
-
-  % channeltype_has_L_or_R = ~isempty(regexpi(channeltype, '_[lrc]', 'once'));% || ~isempty(regexpi(channeltype, '_c', 'once'));
-  % if strcmp(eyes_observed, 'c')
-  %   eyes_observed_competible = 'lr';
-  % else
-  %   eyes_observed_competible = eyes_observed;
-  % end
-  % channeltype_hasnt_eyes_obs = isempty(regexpi(channeltype, ['_([' eyes_observed_competible '])'], 'once'));
-
-
   if flag_channeltype_hasnt_eyes_obs
     % no import
   elseif strcmpi(channeltype, 'marker')
@@ -199,7 +182,6 @@ for k = 1:num_import_cells
   n_data = numel(import{k}.data);
   sourceinfo.chan_stats{k}.nan_ratio = n_nan / n_data;
 end
-
 sourceinfo.date = data{1}.record_date;
 sourceinfo.time = data{1}.record_time;
 sourceinfo.screen_size_mm = screen_size_mm;
@@ -207,7 +189,6 @@ sourceinfo.calib_area_px = calib_area_px;
 sourceinfo.viewing_distance_mm = viewing_dist;
 sourceinfo.eyes_observed = eyes_observed;
 sourceinfo.best_eye = eye_with_smaller_nan_ratio(import, eyes_observed);
-
 rmpath(pspm_path('Import','smi'));
 sts = 1;
 return

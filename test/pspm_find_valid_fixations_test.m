@@ -67,11 +67,16 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
         struct('deg', none_bit, 'expect', 1, 'name', 'none'), ...
         struct('deg', some_bit, 'expect', -1, 'name', 'some')};
       infos.duration = duration;
+      if strcmp(eyes, 'c') || strcmp(eyes, 'lr')
+        eye_individuals = {'l', 'r'};
+      else
+        eye_individuals = {eyes};
+      end
       infos.source.eyesObserved = upper(eyes);
       n_chans = 3; % will create 3 channels
-      data = cell(n_chans*length(eyes), 1);
-      for i = 1:length(eyes)
-        e = lower(eyes(i));
+      data = cell(n_chans*length(eye_individuals), 1);
+      for i = 1:length(eye_individuals)
+        e = lower(eye_individuals{i});
         % generate gaze data
         gaze_x = fixpoint(1)*screen_width + radius*sin(t) + ...
           rand(numel(t),1)*variance-variance/2;

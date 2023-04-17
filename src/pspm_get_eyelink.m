@@ -216,7 +216,7 @@ for k = 1:numel(import)
   else
     % determine channel id from channeltype - eyelink specific
     % thats why channel ids will be ignored!
-    if strcmpi(data{1}.eyesObserved, settings.lateral.char.c) || strcmpi(data{1}.eyesObserved, 'lr')
+    if strcmpi(pspm_eye(data{1}.eyesObserved, 'lr2c'), settings.lateral.char.c)
       chan_struct = {'pupil_l', 'pupil_r', 'gaze_x_l', 'gaze_y_l', ...
         'gaze_x_r', 'gaze_y_r','blink_l','blink_r','saccade_l','saccade_r'};
     else
@@ -353,9 +353,9 @@ switch sourceinfo.eyesObserved
     sourceinfo.best_eye = sourceinfo.eyesObserved;
   case settings.lateral.char.c
     eye_stat = Inf(1,2);
-    eye_choice = 'lr';
+    eye_choice = pspm_eye(sourceinfo.eyesObserved, 'char2cell');
     for i = 1:2
-      e = eye_choice(i);
+      e = eye_choice{i};
       e_stat = vertcat(sourceinfo.chan_stats{...
         cellfun(@(x) ~isempty(regexpi(x.type, ['_' e], 'once')), import)});
       if ~isempty(e_stat)
@@ -363,7 +363,7 @@ switch sourceinfo.eyesObserved
       end
     end
     [~, min_idx] = min(eye_stat);
-    sourceinfo.best_eye = lower(eye_choice(min_idx));
+    sourceinfo.best_eye = lower(eye_choice{min_idx});
 end
 
 % remove specific import path

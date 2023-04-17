@@ -14,7 +14,6 @@ global settings
 if isempty(settings)
   pspm_init;
 end
-sts = -1;
 switch feature
   case 'lr2c'
   	% Examples
