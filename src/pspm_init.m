@@ -26,7 +26,7 @@ function pspm_init
 %   Maintained in 2022 by Teddy Chao (UCL)
 
 %% 0 Cleaning terminal outputs
-clc
+%clc
 %% 1 license & user output
 fid = fopen('pspm_msg.txt');
 msg = textscan(fid, '%s', 'Delimiter', '$');

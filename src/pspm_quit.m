@@ -11,13 +11,13 @@ if isempty(settings)
 end
 fs = filesep;
 if settings.scrpath, rmpath(settings.path), end;
-if any(contains(path, 'VBA'))
+if any(contains(settings.path, 'VBA'))
   rmpath(pspm_path('ext','VBA'));
   rmpath(pspm_path('ext','VBA','subfunctions'));
   rmpath(pspm_path('ext','VBA','stats&plots'));
 end
-if isfile(fullfile(pth,'pspm_text.mat'))
-  delete(fullfile(pth,'pspm_text.mat'))
+if isfile(fullfile(settings.path,'pspm_text.mat'))
+  delete(fullfile(settings.path,'pspm_text.mat'))
 end
 clear settings
 close all
