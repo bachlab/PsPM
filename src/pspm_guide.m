@@ -117,9 +117,9 @@ function data_preprocessing_list_callback(hObject, ~, ~)
     case 8
       cfg_add_module('pspm.data_preprocessing.pp_pupil.pupil_preprocess');
     case 9
-      cfg_add_module('pspm.data_preprocessing.pupil_size_convert');
+      cfg_add_module('pspm.data_preprocessing.pp_pupil.pupil_size_convert');
     case 10
-      cfg_add_module('pspm.data_preprocessing.gaze_convert');
+      cfg_add_module('pspm.data_preprocessing.pp_pupil.gaze_convert');
     case 11
       cfg_add_module('pspm.data_preprocessing.pp_emg.find_sounds');
     case 12
