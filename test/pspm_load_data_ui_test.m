@@ -1,4 +1,4 @@
-channclassdef pspm_load_data_ui_test < matlab.unittest.TestCase
+classdef pspm_load_data_ui_test < matlab.unittest.TestCase
   % ● Description
   % unittest class for userinteraction parts for the pspm_load_data function
   % ● Authorship
