@@ -48,8 +48,8 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       onsets = {[1 2 3], [4 5 6]};
       save(mcond_tf, 'names', 'onsets');
       clear names onsets
-      channels{1}.channeltype = 'scr';
-      channels{2}.channeltype = 'marker';
+      channels{1}.chantype = 'scr';
+      channels{2}.chantype = 'marker';
       pspm_testdata_gen(channels, 10, pspm_tf);
       model.timing = mcond_tf;
       model.datafile = pspm_tf;

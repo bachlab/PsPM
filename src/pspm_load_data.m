@@ -166,7 +166,7 @@ switch class(channel)
   case 'char'
     % in this case channel is specified as a char
     if any(~ismember(channel, [{settings.channeltypes.type}, 'none', 'wave', 'events']))
-      warning('ID:invalid_channeltype', 'Unknown channel type.');
+      warning('ID:invalid_chantype', 'Unknown channel type.');
       return
     end
   case 'struct'
@@ -313,9 +313,9 @@ end
 % some other optional fields which can be autofilled with default values
 % should be added here.
 for k = 1:numel(data)
-  if isfield(data{k}.header, 'chantype')
-    data{k}.header.chantype = data{k}.header.chantype;
-    data{k}.header = rmfield( data{k}.header , 'chantype' );
+  if isfield(data{k}.header, 'channeltype')
+    data{k}.header.chantype = data{k}.header.channeltype;
+    data{k}.header = rmfield( data{k}.header, 'channeltype');
   end
 end
 

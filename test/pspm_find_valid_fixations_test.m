@@ -133,7 +133,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       [~,~, n_data] = pspm_load_data(outfile);
       n_new_chans = numel(n_data);
       n_old_chans = numel(o_data);
-      channeltypes = cellfun(@(x) x.header.chantype, ...
+      chantypes = cellfun(@(x) x.header.chantype, ...
         n_data((n_old_chans+1):n_new_chans), 'UniformOutput', 0);
       % test for channels
       for i = 1:numel(work_chans)
@@ -143,11 +143,11 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
           for j=1:numel(w_eyes)
             e = w_eyes{j};
             search_chan = [channel '_' e];
-            this.verifyTrue(any(strcmp(search_chan, channeltypes)));
+            this.verifyTrue(any(strcmp(search_chan, chantypes)));
           end
         elseif isnumeric(channel)
           search_chan = o_data{channel}.header.chantype;
-          this.verifyTrue(any(strcmp(search_chan, channeltypes)));
+          this.verifyTrue(any(strcmp(search_chan, chantypes)));
         end
       end
     end
@@ -173,19 +173,19 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       [~,~, n_data] = pspm_load_data(outfile);
       n_old_chans = numel(o_data);
       n_new_chans = numel(n_data);
-      % get list of new channeltypes
-      channeltypes = cellfun(@(x) x.header.chantype, ...
+      % get list of new chantypes
+      chantypes = cellfun(@(x) x.header.chantype, ...
         n_data((n_old_chans+1):n_new_chans), 'UniformOutput', 0);
       switch work_eye
         case 'combined'
-          this.verifyTrue(any(strcmpi(channeltypes, 'pupil_l')) && ...
-            any(strcmpi(channeltypes, 'pupil_r')));
+          this.verifyTrue(any(strcmpi(chantypes, 'pupil_l')) && ...
+            any(strcmpi(chantypes, 'pupil_r')));
         case 'left'
-          this.verifyTrue(any(strcmpi(channeltypes, 'pupil_l')) && ...
-            all(~strcmpi(channeltypes, 'pupil_r')));
+          this.verifyTrue(any(strcmpi(chantypes, 'pupil_l')) && ...
+            all(~strcmpi(chantypes, 'pupil_r')));
         case 'right'
-          this.verifyTrue(any(strcmpi(channeltypes, 'pupil_r')) && ...
-            all(~strcmpi(channeltypes, 'pupil_l')));
+          this.verifyTrue(any(strcmpi(chantypes, 'pupil_r')) && ...
+            all(~strcmpi(chantypes, 'pupil_l')));
       end
     end
     function test_missing(this, missing)
@@ -206,7 +206,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
         pspm_find_valid_fixations(fn, box_degree, dist,dist_unit,options));
       this.verifyEqual(sts, 1);
       [~, ~, n_data] = pspm_load_data(outfile);
-      % look for channels with 'missing' in channeltype
+      % look for channels with 'missing' in chantype
       missing_chans = cellfun(@(x) ...
         numel(regexp(x.header.chantype, 'missing')) > 0, n_data);
       if missing

@@ -49,7 +49,7 @@ if sts ~= 1; warning('ID:invalid_input', 'cannot load data from the file'); retu
 % 3.2 check the channel can be loaded
 [sts, ~, ~, ~] = pspm_load_data(fn, options.channel);
 if sts ~= 1
-  warning('ID:invalid_channeltype', 'cannot load the specified channel from the file');
+  warning('ID:invalid_chantype', 'cannot load the specified channel from the file');
   return
 end
 if action_combine
