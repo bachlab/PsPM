@@ -29,8 +29,10 @@ else
 end
 options.invalid = 0;
 %% 1 Text
-text_optional_channel_invalid = 'options.channel must contain valid channel types or positive integers.';
-text_optional_channel_invalid_char = 'options.channel is not a valid channel type.';
+text_optional_channel_invalid = ...
+  'options.channel must contain valid channel types or positive integers.';
+text_optional_channel_invalid_char = ...
+  'options.channel is not a valid channel type.';
 %% 2 Main Processing
 switch FunName
   case 'blink_saccade_filt'
@@ -61,11 +63,15 @@ switch FunName
   case 'convert_ecg2hb'
     % 2.8 pspm_convert_ecg2hb --
     options = autofill_channel_action(options);
-    options = autofill(options, 'debugmode',              0,          1                 ); % can be merged into development mode?
-    options = autofill(options, 'maxHR',                  200,        '>', 20           ); % field: maxHR (bpm)
-    options = autofill(options, 'minHR',                  20,         '<', 200          ); % field: minHR (bpm)
+    options = autofill(options, 'debugmode',              0,          1                 );
+    % can be merged into development mode?
+    options = autofill(options, 'maxHR',                  200,        '>', 20           );
+    % field: maxHR (bpm)
+    options = autofill(options, 'minHR',                  20,         '<', 200          );
+    % field: minHR (bpm)
     options = autofill(options, 'outfact',                2,          '*Num'            );
-    options = autofill(options, 'semi',                   0,          1                 ); % semi==1 will pop a dialog
+    options = autofill(options, 'semi',                   0,          1                 );
+    % semi==1 will pop a dialog
     options = autofill(options, 'twthresh',               0.36,       '*Num'            );
     options = check_range(options, 'minHR', 'maxHR');
   case 'convert_ecg2hb_amri'
@@ -111,42 +117,70 @@ switch FunName
     options = autofill(options, 'overwrite',              0,          [1, 2]);
   case 'dcm'
     % 2.16 pspm_dcm --
-    options = autofill(options, 'aSCR_sigma_offset',      0.1,        '>=', 0           ); % minimum dispersion (standard deviation) for flexible responses (second)
-    options = autofill(options, 'crfupdate',              0,          '*Num'            ); % update CRF priors to observed SCRF, or use pre-estimated priors
+    options = autofill(options, 'aSCR_sigma_offset',      0.1,        '>=', 0           ); 
+    % minimum dispersion (standard deviation) for flexible responses (second)
+    options = autofill(options, 'crfupdate',              0,          '*Num'            ); 
+    % update CRF priors to observed SCRF, or use pre-estimated priors
     options = autofill(options, 'crfupdate',              0,          1                 );
-    options = autofill(options, 'depth',                  2,          '*Num'            ); % no of trials to invert at the same time
+    options = autofill(options, 'depth',                  2,          '*Num'            );
+    % no of trials to invert at the same time
     options = autofill(options, 'dispsmallwin',           0,          '*Num'            );
     options = autofill(options, 'dispwin',                1,          0                 );
-    options = autofill(options, 'eventnames',           	{},         '*Cell'           ); % Cell array of names for individual events
-    options = autofill(options, 'getrf',                  0,          1                 ); % only estimate RF, do not do trial-wise DCM
-    options = autofill(options, 'indrf',                  0,          1                 ); % Estimate the response function from the data
+    options = autofill(options, 'eventnames',           	{},         '*Cell'           );
+    % Cell array of names for individual events
+    options = autofill(options, 'getrf',                  0,          1                 );
+    % only estimate RF, do not do trial-wise DCM
+    options = autofill(options, 'indrf',                  0,          1                 );
+    % Estimate the response function from the data
     options = autofill(options, 'method',                 'dcm'                         );
-    options = autofill(options, 'nosave',                 0,          1                 ); % Don't save dcm structure (e.g. used by pspm_get_rf)
+    options = autofill(options, 'nosave',                 0,          1                 );
+    % Don't save dcm structure (e.g. used by pspm_get_rf)
     options = autofill(options, 'overwrite',              1,          [0, 2]            );
-    options = autofill(options, 'rf',                     0,          1                 ); % Call an external file to provide response function (for use when this is previously estimated by pspm_get_rf)
-    options = autofill(options, 'sclpost',                5,          '>=', 0           ); % scl-change-free window after last event (second)
-    options = autofill(options, 'sclpre',                 2,          '>=', 0           ); % scl-change-free window before first event (second)
-    options = autofill(options, 'sffreq',                 0.5,        '>=', 0           ); % maximum frequency of SF in ITIs (Hz)
-    options = autofill(options, 'sfpost',                 5,          '>=', 0           ); % sf-free window after last event (second)
-    options = autofill(options, 'sfpre',                  2,          '>=', 0           ); % sf-free window before first event (second)
-    options = autofill(options, 'trlnames',               {},         '*Cell*Char'      ); % Cell array of names for individual trials, is used for contrast manager only (e.g. condition descriptions)
+    options = autofill(options, 'rf',                     0,          1                 );
+    % Call an external file to provide response function (for use when this is previously
+    % estimated by pspm_get_rf)
+    options = autofill(options, 'sclpost',                5,          '>=', 0           );
+    % scl-change-free window after last event (second)
+    options = autofill(options, 'sclpre',                 2,          '>=', 0           );
+    % scl-change-free window before first event (second)
+    options = autofill(options, 'sffreq',                 0.5,        '>=', 0           );
+    % maximum frequency of SF in ITIs (Hz)
+    options = autofill(options, 'sfpost',                 5,          '>=', 0           );
+    % sf-free window after last event (second)
+    options = autofill(options, 'sfpre',                  2,          '>=', 0           );
+    % sf-free window before first event (second)
+    options = autofill(options, 'trlnames',               {},         '*Cell*Char'      );
+    % Cell array of names for individual trials, is used for contrast manager only (e.g.
+    % condition descriptions)
   case 'dcm_inv'
     % 2.17 pspm_dcm_inv --
-    options = autofill(options, 'aSCR_sigma_offset',      0.1,        '*Num'            ); % minimum dispersion (standard deviation) for flexible responses (second)
-    options = autofill(options, 'crfupdate',              0,          '*Num'            ); % update CRF priors to observed SCRF, or use pre-estimated priors, default to use pre-estimated priors
+    options = autofill(options, 'aSCR_sigma_offset',      0.1,        '*Num'            ); 
+    % minimum dispersion (standard deviation) for flexible responses (second)
+    options = autofill(options, 'crfupdate',              0,          '*Num'            ); 
+    % update CRF priors to observed SCRF, or use pre-estimated priors, default to use pre-estimated priors
     options = autofill(options, 'crfupdate',              0,          1                 );
-    options = autofill(options, 'depth',                  2,          '*Int'            ); % no of trials to invert at the same time
+    options = autofill(options, 'depth',                  2,          '*Int'            );
+    % no of trials to invert at the same time
     options = autofill(options, 'dispsmallwin',           0,          '*Num'            );
     options = autofill(options, 'dispwin',                1,          0                 );
-    options = autofill(options, 'getrf',                  0,          1                 ); % only estimate RF, do not do trial-wise DCM
-    options = autofill(options, 'meanSCR',                0,          '*Num'            ); % data to adjust the response amplitude priors to
+    options = autofill(options, 'getrf',                  0,          1                 );
+    % only estimate RF, do not do trial-wise DCM
+    options = autofill(options, 'meanSCR',                0,          '*Num'            );
+    % data to adjust the response amplitude priors to
     options = autofill(options, 'overwrite',              1,          [0, 2]            );
-    options = autofill(options, 'sclpost',                2,          '>=', 0           ); % scl-change-free window after last event (second)
-    options = autofill(options, 'sclpre',                 2.5,        '>=', 0           ); % scl-change-free window before first event, avoid overlap of last SCL change with next trial (second)
-    options = autofill(options, 'sffreq',                 0.5,        '>=', 0           ); % maximum frequency of SF in ITIs (Hz)
-    options = autofill(options, 'sfpost',                 5,          '>=', 0           ); % sf-free window after last event (second)
-    options = autofill(options, 'sfpre',                  2,          '>=', 0           ); % sf-free window before first event (second)
-    options = autofill(options, 'rf',                     0,          1                 ); % use pre-specified RF, provided in file, or as 4-element vector in log parameter space
+    options = autofill(options, 'sclpost',                2,          '>=', 0           );
+    % scl-change-free window after last event (second)
+    options = autofill(options, 'sclpre',                 2.5,        '>=', 0           );
+    % scl-change-free window before first event, avoid overlap of last SCL change
+    % with next trial (second)
+    options = autofill(options, 'sffreq',                 0.5,        '>=', 0           );
+    % maximum frequency of SF in ITIs (Hz)
+    options = autofill(options, 'sfpost',                 5,          '>=', 0           );
+    % sf-free window after last event (second)
+    options = autofill(options, 'sfpre',                  2,          '>=', 0           );
+    % sf-free window before first event (second)
+    options = autofill(options, 'rf',                     0,          1                 );
+    % use pre-specified RF, provided in file, or as 4-element vector in log parameter space
   case 'down'
     % 2.18 pspm_down --
     options = autofill(options, 'overwrite',              1,          [0, 2]            );
@@ -236,7 +270,8 @@ switch FunName
     % 2.28 pspm_glm --
     options = autofill(options, 'norm',                   0,          1                 );
     options = autofill(options, 'overwrite',              0,          [1, 2]            );
-    % options = autofill(options, 'marker_chan_num',        1,        '*Num'       );
+    options = autofill(options, 'marker_chan_num',        'marker',   '*Num*Char'       );
+    options = autofill(options, 'marker_chan_num_event',  'first',    '*Num*Char'       );
     if ~isfield(options, 'exclude_missing')
       options.exclude_missing = struct('segment_length',-1,'cutoff',0);
     else
@@ -267,8 +302,12 @@ switch FunName
     options = autofill(options, 'overwrite',              0,          [1, 2]            );
     options = autofill(options, 'zscored',                0,          1                 );
   case 'merge'
-    % 2.32 pspm_merge --
-    options = autofill(options, 'marker_chan_num',        [0,0],      '*Num'            );
+    %% 2.32 pspm_merge
+    options = autofill(options, 'marker_chan_num',        [1,2],      '*Num'            );
+    if ~all(size(options.marker_chan_num(:))==[2,1])
+      options.invalid = 1;
+      return
+    end
     options = autofill(options, 'overwrite',              0,          [1, 2]            );
   case 'pfm'
     % 2.33 pspm_pfm --
@@ -371,7 +410,7 @@ switch FunName
     options = autofill(options,'dispsmallwin',            0,          1                 );
     options = autofill(options,'dispwin',                 1,          0                 );
     options = autofill(options,'fresp',                   0.5,        '>=', 0           );
-    options = autofill(options,'marker_chan_num',         0,          '*Int'            );
+    options = autofill(options,'marker_chan_num',         1,          '*Int*Char'       );
     options = autofill(options,'overwrite',               1,          [0, 2]            );
     options = autofill(options,'threshold',               0.1,        '>', 0            );
     options = autofill(options,'theta',                   [0.923581, ...
@@ -385,6 +424,7 @@ switch FunName
     options = autofill(options,'dispwin',                 1,          0                 );
     options = autofill(options,'dispsmallwin',            0,          1                 );
     options = autofill(options,'fresp',                   0.5,        '>', 0            );
+    options = autofill(options,'missingthresh',           2,          '>', 0            );
     options = autofill(options,'threshold',               0.1,        '>', 0            );
     options = autofill(options,'theta',                   [0.923581, ...
                                                           3.921034, ...
@@ -407,10 +447,12 @@ switch FunName
   case 'split_sessions'
     % 2.45 pspm_split_sessions --
     options = autofill(options, 'max_sn',                 settings.split.max_sn,...
-                                                                      '>', 0            ); % maximum number of sessions (default 10)
+                                                                      '>', 0            );
+    % maximum number of sessions (default 10)
     options = autofill(options, 'min_break_ratio',        settings.split.min_break_ratio,...
-                                                                      '>', 0            ); % minimum ratio of session break to normal inter marker interval (default 3)
-    options = autofill(options, 'missing',               '',          '*Char'           );
+                                                                      '>', 0            );
+    % minimum ratio of session break to normal inter marker interval (default 3)
+    options = autofill(options, 'missing',               [],          '*Char'           );
     options = autofill(options, 'overwrite',              0,          [1, 2]            );
     options = autofill(options, 'prefix',                 0,          '<=', 0           );
     options = autofill(options, 'randomITI',              0,          1                 );
@@ -420,7 +462,7 @@ switch FunName
   case 'trim'
     % 2.46 pspm_trim --
     options = autofill(options, 'drop_offset_markers',    0,          '*Int'            );
-    options = autofill(options, 'marker_chan_num',        0,          '*Int'            );
+    options = autofill(options, 'marker_chan_num',        1,          '*Int*Char'       );
     options = autofill(options, 'overwrite',              0,          [1, 2]            );
   case 'write_channel'
     % 2.47 pspm_write_channel --
@@ -546,7 +588,8 @@ switch nargin
                 flag_is_allowed_value = flag_is_allowed_value || isstruct(options.(field_name));
               end
               if contains(optional_value, '*Subset')
-                flag_is_allowed_value = flag_is_allowed_value || prod(ismember(options.datatype,default_value),'all');
+                flag_is_allowed_value = ...
+                  flag_is_allowed_value || prod(ismember(options.datatype,default_value),'all');
               end
             else
               allowed_value = {optional_value, default_value};
@@ -623,7 +666,8 @@ switch nargin
         end
       end
       if ~flag_is_allowed_value
-        allowed_values_message = generate_allowed_values_message(default_value, optional_value_boundary, range_marker);
+        allowed_values_message = generate_allowed_values_message(...
+          default_value, optional_value_boundary, range_marker);
         warning('ID:invalid_input', ['options.', field_name, ' has an invalid value. ',...
           allowed_values_message]);
         options.invalid = 1;
@@ -693,7 +737,8 @@ switch nargin
     else
       default_value_message = default_value;
     end
-    allowed_values_message = ['The only allowed value is ', char(34), default_value_message, char(34), '.'];
+    allowed_values_message = ['The only allowed value is ', ...
+      char(34), default_value_message, char(34), '.'];
   case 2
     default_value = varargin{1};
     optional_value = varargin{2};
@@ -819,7 +864,7 @@ end
 if options.manual_chosen == 1 || ...
     (options.manual_chosen == 0 && strcmpi(options.model_strc.modeltype,'glm'))
   if ~isfield(options, 'marker_chan')
-    options.marker_chan = repmat({-1}, numel(options.data_fn),1);
+    options.marker_chan = repmat({1}, numel(options.data_fn),1);
   elseif ~iscell(options.marker_chan)
     options.marker_chan = repmat({options.marker_chan}, size(options.data_fn));
   end
@@ -914,9 +959,23 @@ elseif strcmpi(options.mode,'fixation') && isfield(options, 'fixation_point') &&
 end
 
 function options = fill_glm(options)
-if ~isfield(options, 'marker_chan_num')
-  options.marker_chan_num = 'marker';
-elseif ~(isnumeric(options.marker_chan_num) && numel(options.marker_chan_num)==1)
+if isfield(options, 'marker_chan_num')
+  if isnumeric(options.marker_chan_num)
+    if numel(options.marker_chan_num) ~= 1
+      warning('ID:invalid_input', ...
+        'If set as a number, options.marker_chan_num needs can only be a singular number.');
+      options.invalid = 1;
+      return
+    end
+  else
+    if ~ischar(options.marker_chan_num)
+      warning('ID:invalid_input', ...
+        'options.marker_chan_num can only be a number or a character.');
+      options.invalid = 1;
+      return
+    end
+  end
+else
   options.marker_chan_num = 'marker';
 end
 if isfield(options,'exclude_missing')
@@ -926,7 +985,7 @@ if isfield(options,'exclude_missing')
     options.invalid = 1;
     return
   elseif ~(isnumeric(options.exclude_missing.segment_length) && isnumeric(options.exclude_missing.cutoff))
-    warning('ID:invalid_input', 'To extract the NaN-values,  segment-length and cutoff must be numeric values.');
+    warning('ID:invalid_input', 'To extract the NaN-values, segment-length and cutoff must be numeric values.');
     options.invalid = 1;
     return
   end
@@ -943,7 +1002,8 @@ if options.maxdelay < options.mindelay
 end
 if options.plot; options.diagnostics = true; end
 try options.roi; catch, options.roi = []; end
-if ~isempty(options.roi) && (length(options.roi) ~= 2 || ~all(isnumeric(options.roi) & options.roi >= 0))
+if ~isempty(options.roi) && ...
+    (length(options.roi) ~= 2 || ~all(isnumeric(options.roi) & options.roi >= 0))
   warning('ID:invalid_input', 'Option roi must be a float vector of length 2 or 0');
   options.invalid = 1;
 end

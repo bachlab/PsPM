@@ -735,7 +735,7 @@ elseif not(isempty(handles.prop.eventchans)) && ...
   end
 end
 
-% Get wave chan info
+% Get wave channel info
 if handles.prop.wavechans(handles.prop.idwave) ~= 0
   wave = handles.data{handles.prop.wavechans(handles.prop.idwave),1}.data;
   sr.wave = handles.data{handles.prop.wavechans(handles.prop.idwave),1}.header.sr;

@@ -1,4 +1,4 @@
-function [sts, out] = pspm_scr_pp(datafile, options, chan)
+function [sts, out] = pspm_scr_pp(datafile, options, channel)
 % ● Description
 %   pspm_scr_pp applies simple skin conductance response (SCR) quality
 %   assessment rulesets
@@ -53,7 +53,7 @@ function [sts, out] = pspm_scr_pp(datafile, options, chan)
 %   │             Defines whether the new channel should be added, the previous
 %   │             outputs of this function should be replaced, or new data
 %   │             should be withdrawn. Default: 'add'.
-%   └─────.chan:  Number of SCR channel. Default: first SCR channel
+%   └──.channel:  Number of SCR channel. Default: first SCR channel
 % ● Outputs
 %           sts:  Status indicating whether the program is running as expected.
 %           out:  The path to the  output of the final processed data.
@@ -91,9 +91,9 @@ out = [];
 if ~exist('options', 'var')
   options = struct();
 end
-if nargin < 3 || isempty(chan) || (chan == 0)
-  chan = 'scr';
-elseif ~isnumeric(chan)
+if nargin < 3 || isempty(channel) || (channel == 0)
+  channel = 'scr';
+elseif ~isnumeric(channel)
   warning('ID:invalid_input', 'Channel number must be numeric');
   return
 end
@@ -114,7 +114,7 @@ else
 end
 for d = 1:numel(data_source)
   % out{d} = [];
-  [sts_loading, ~, indatas, ~] = pspm_load_data(data_source{d}, chan); % check and get datafile
+  [sts_loading, ~, indatas, ~] = pspm_load_data(data_source{d}, channel); % check and get datafile
   if sts_loading == -1
     warning('ID:invalid_input', 'Could not load data');
     return;

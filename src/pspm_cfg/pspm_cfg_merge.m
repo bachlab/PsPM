@@ -2,7 +2,7 @@ function merge = pspm_cfg_merge
 % function [proc_illuminance] = pspm_cfg_process_illuminance(job)
 %
 % Matlabbatch function specifies the pspm_cfg_process_illuminance.
-% 
+%
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
