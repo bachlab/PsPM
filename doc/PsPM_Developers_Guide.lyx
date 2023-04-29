@@ -145,7 +145,7 @@ literal "false"
 \align center
 Dominik R Bach, Giuseppe Castegnetti, Laure Ciernik, Samuel Gerster, Saurabh
  Khemka, Christoph Korn, Samuel Maxwell, Tobias Moser, Philipp C Paulus,
- Ivan Rojkov, Matthias Staib, Eshref Yozdemir, Dadi Zhao and collaborators
+ Ivan Rojkov, Matthias Staib, Eshref Yozdemir, Teddy Zhao and collaborators
 \end_layout
 
 \begin_layout Standard
@@ -167,6 +167,29 @@ LatexCommand tableofcontents
 \end_inset
 
 
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Quote
+Contributed by Teddy Zhao in April 2023
+\end_layout
+
+\begin_layout Standard
+PsychoPhysiological Modelling, abbreviated as PsPM, is a software package
+ for model-based analysis of psychophysiological signals.
+ PsPM can be accessed through either graphical user interface (GUI) or command
+ lines.
+ PsPM is written in MATLAB language, thus it supports cross platform usages,
+ either Windows, macOS or Linux, and can be easily utilised in customised
+ shell scripts.
+ PsPM is actively updated and maintained by bringing new features and fixing
+ bugs, thus the latest version of PsPM is always encouraged for users.
+ The recommended version of MATLAB for running PsPM is MATLAB 2023a (version
+ 9.14), and the earliest version of MATLAB that could be used for running
+ PsPM is MATLAB 2006a (version 7.2).
 \end_layout
 
 \begin_layout Section
@@ -6018,11 +6041,11 @@ GUI
 \end_layout
 
 \begin_layout Quote
-Contributed by Gabriel Gräni and Dadi Zhao.
+Contributed by Gabriel Gräni and Teddy Zhao.
 \end_layout
 
 \begin_layout Quote
-Revised by Dadi Zhao in Feburary 2022.
+Revised by Teddy Zhao in Feburary 2022.
 \end_layout
 
 \begin_layout Subsection
@@ -6912,11 +6935,11 @@ Test Environment
 \end_layout
 
 \begin_layout Quote
-Contributed by Linus Rüttimann, Tobias Moser and Dadi Zhao.
+Contributed by Linus Rüttimann, Tobias Moser and Teddy Zhao.
 \end_layout
 
 \begin_layout Quote
-Revised and updated by Dadi Zhao in Feburary 2022.
+Revised and updated by Teddy Zhao in Feburary 2022.
 \end_layout
 
 \begin_layout Subsubsection
@@ -26614,7 +26637,7 @@ GitHub Actions
 \end_layout
 
 \begin_layout Quote
-Contributed by Dadi Zhao
+Contributed by Teddy Zhao
 \end_layout
 
 \begin_layout Quote
@@ -33514,7 +33537,7 @@ EY Eshref Yozdemir
 \end_layout
 
 \begin_layout Description
-DZ Dadi Zhao
+DZ Teddy Zhao
 \end_layout
 
 \begin_layout Standard
