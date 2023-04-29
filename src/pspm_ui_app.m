@@ -5,6 +5,8 @@ function app = pspm_ui_app (app)
 %		guide.
 %	●	History
 %		Written in 2022 by Teddy Chao
+
+%% General Settings
 OS = ispc*1 + ismac*2 + (isunix-ismac)*3;
 pspm_font_list = {'Segoe UI', '.AppleSystemUIFont', 'DejaVu Sans'};
 pspm_font_size_list = {14, 14, 14};
@@ -32,6 +34,15 @@ pspm_layout_component_list_buttons = {'button_open_issue',...
 update_app_struct(app, pspm_layout_component_list_full, 'FontName', pspm_font);
 update_app_struct(app, pspm_layout_component_list_buttons, 'FontSize', pspm_font_size);
 update_app_struct(app, pspm_layout_component_list_buttons, 'FontWeight', 'normal');
+%% Window specific settings
+switch app.layout.Name
+  case 'pspm'
+    attribution_disp_text = ['Build ',...
+      char(datetime('today')),' with MATLAB 2023a, ',...
+      'The PsPM Team, University College London'];
+    app.attribution.Text{1,1} = 'Version 6.1.0';
+    app.attribution.Text{2,1} = attribution_disp_text;
+end
 return
 
 function update_app_struct(app, components, field_name, value)
