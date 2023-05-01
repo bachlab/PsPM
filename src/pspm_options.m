@@ -356,6 +356,7 @@ switch FunName
                                                                       'pupil_r'}        );
     options = autofill(options, 'plot_data',              0,          1                 );
     options = autofill(options, 'segments',               {},         '*Cell'           );
+    options = autofill(options, 'nan_cutoff',             0.5,        '*Num'            );
   case 'remove_epochs'
     %% 2.38 pspm_remove_epochs
     options = autofill_channel_action(options);

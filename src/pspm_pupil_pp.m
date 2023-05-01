@@ -164,26 +164,39 @@ addpath(pspm_path('backroom'));
 if lsts ~= 1
   return
 end
+% 4.1 Actions if to combine channels
 if action_combine
+  % 4.1.1 Load the channel to combine
   [lsts, data_combine] = pspm_load_single_chan(fn, options.channel_combine, 'last', 'pupil');
   if lsts ~= 1
     return
   end
+  % 4.1.2 Check the eye marker of the two channels
   if strcmp(pspm_get_eye(data{1}.header.channeltype), pspm_get_eye(data_combine{1}.header.channeltype))
     warning('ID:invalid_input', 'options.channel and options.channel_combine must specify different eyes');
     return;
   end
+  % 4.1.3 Check the sampling frequency of the two channels
   if data{1}.header.sr ~= data_combine{1}.header.sr
     warning('ID:invalid_input', 'options.channel and options.channel_combine data have different sampling rate');
     return;
   end
+  % 4.1.4 Check the unit of the two channels
   if ~strcmp(data{1}.header.units, data_combine{1}.header.units)
     warning('ID:invalid_input', 'options.channel and options.channel_combine data have different units');
     return;
   end
+  % 4.1.5 Check if channel and channel_combine has the same data length
   if numel(data{1}.data) ~= numel(data_combine{1}.data)
     warning('ID:invalid_input', 'options.channel and options.channel_combine data have different lengths');
     return;
+  end
+  % 4.1.6 Check if one channel is dominated by zeros
+  if sum(isnan(data{1}.data))/length(data{1}.data) > options.nan_cutoff
+    warning('ID:invalid_input', ['options.channel has more than ', num2str(options.nan_cutoff*100),'% missing values.']);
+  end
+  if sum(isnan(data_combine{1}.data))/length(data_combine{1}.data) > options.nan_cutoff
+    warning('ID:invalid_input', ['options.channel_combine has more than ', num2str(options.nan_cutoff*100),'% missing values.']);
   end
   old_channeltype = sprintf('%s and %s', ...
     data{1}.header.channeltype, data_combine{1}.header.channeltype);
