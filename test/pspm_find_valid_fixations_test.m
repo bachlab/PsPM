@@ -67,7 +67,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
         struct('deg', none_bit, 'expect', 1, 'name', 'none'), ...
         struct('deg', some_bit, 'expect', -1, 'name', 'some')};
       infos.duration = duration;
-      if strcmp(eyes, 'c') || strcmp(eyes, 'lr')
+      if strcmp(eyes, 'lr') || strcmp(eyes, 'rl')
         eye_individuals = {'l', 'r'};
       else
         eye_individuals = {eyes};
