@@ -1,7 +1,7 @@
 function varargout = pspm_guide(varargin)
-% ‚óè Description
+% ‚ó? Description
 %   pspm_guide handles the main GUI for PsPM
-% ‚óè Developer's Guide
+% ‚ó? Developer's Guide
 %   * Template
 %     function varargout = FunctionName(hObject, eventdata, handles, varargin)
 %       varargout  cell array for returning output args (see VARARGOUT);
@@ -15,7 +15,7 @@ function varargout = pspm_guide(varargin)
 %       contents{get(hObject,'Value')} returns selected item from the list
 %   * Hint
 %       popupmenu controls usually have a white background on Windows.
-% ‚óè Copyright
+% ‚ó? Copyright
 %   Introduced in PsPM 1.0 and terminated in PsPM 6.1.
 %   Written by Dominik R Bach (Wellcome Centre for Human Neuroimaging) in 2008-2021
 %   Lastly updated in PsPM 6.1 by Teddy Chao (UCL) in 2022
@@ -117,9 +117,9 @@ function data_preprocessing_list_callback(hObject, ~, ~)
     case 8
       cfg_add_module('pspm.data_preprocessing.pp_pupil.pupil_preprocess');
     case 9
-      cfg_add_module('pspm.data_preprocessing.pupil_size_convert');
+      cfg_add_module('pspm.data_preprocessing.pp_pupil.pupil_size_convert');
     case 10
-      cfg_add_module('pspm.data_preprocessing.gaze_convert');
+      cfg_add_module('pspm.data_preprocessing.pp_pupil.gaze_convert');
     case 11
       cfg_add_module('pspm.data_preprocessing.pp_emg.find_sounds');
     case 12
