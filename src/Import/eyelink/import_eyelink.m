@@ -153,7 +153,6 @@ session_data_beg_end_indices = [];
 for i = 1:numel(chan_info)
   linenums_i = msg_linenums{i};
   msg_line_diff = diff(linenums_i);
-
   msg_indices_jump_idx = find(msg_line_diff > 1, 1, 'first');
   first_dataline_idx = linenums_i(msg_indices_jump_idx) + 1;
   line_content = str(linefeeds(first_dataline_idx) + 1 : linefeeds(first_dataline_idx + 1) - 1 - has_backr);
@@ -165,7 +164,6 @@ for i = 1:numel(chan_info)
     first_dataline_idx = linenums_i(msg_indices_jump_idx) + 1;
     line_content = str(linefeeds(first_dataline_idx) + 1 : linefeeds(first_dataline_idx + 1) - 1 - has_backr);
   end
-
   session_data_beg_end_indices(end + 1) = first_dataline_idx;
 end
 session_data_beg_end_indices = [session_data_beg_end_indices numel(linefeeds)];
