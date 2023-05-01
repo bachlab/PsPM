@@ -211,7 +211,7 @@ for i = 1:numel(chan_info)
   pupil_mode = chan_info{i}.diam_vals;
   eyesObserved = chan_info{i}.eyesObserved;
   pupil_unit = ['arbitrary ' lower(pupil_mode) ' units'];
-  switch pspm_eye(eyesObserved, 'lr2c')
+  switch eyesObserved
     case settings.lateral.char.l
       chan_info{i}.channel_header = {'pupil_l', 'gaze_x_l', 'gaze_y_l'};
       chan_info{i}.channel_units = {pupil_unit, 'pixel', 'pixel'};
@@ -220,7 +220,7 @@ for i = 1:numel(chan_info)
       chan_info{i}.channel_header = {'pupil_r', 'gaze_x_r', 'gaze_y_r'};
       chan_info{i}.channel_units = {pupil_unit, 'pixel', 'pixel'};
       chan_info{i}.col_idx = [4, 2, 3];
-    case settings.lateral.char.c
+    case {'lr','rl'}
       chan_info{i}.channel_header = {'pupil_l', 'pupil_r', 'gaze_x_l', 'gaze_y_l', 'gaze_x_r', 'gaze_y_r'};
       chan_info{i}.channel_units = {pupil_unit, pupil_unit, 'pixel', 'pixel', 'pixel', 'pixel'};
       chan_info{i}.col_idx = [4, 7, 2, 3, 5, 6];

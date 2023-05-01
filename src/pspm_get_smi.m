@@ -150,9 +150,9 @@ for k = 1:num_import_cells
   channeltype = lower(import{k}.type);
   channellateral = pspm_eye(channeltype, 'channel2lateral');
   if isempty(channellateral)
-     flag_channeltype_hasnt_eyes_obs = 0;
+    flag_channeltype_hasnt_eyes_obs = 0;
   else
-    flag_channeltype_hasnt_eyes_obs = ~strcmp(channellateral,eyes_observed) && ~strcmp(eyes_observed, settings.lateral.char.c);
+    flag_channeltype_hasnt_eyes_obs = ~contains(eyes_observed,channellateral) && ~strcmp(eyes_observed, settings.lateral.char.c);
   end
   if flag_channeltype_hasnt_eyes_obs
     % no import
