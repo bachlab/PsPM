@@ -142,11 +142,17 @@ elseif length(ymissing_start) < length(ymissing_end)
 end
 miss_epoch = [ymissing_start(:),ymissing_end(:)];
 flag_missing_too_long = 0;
-if any(diff(miss_epoch, 1, 2)/sr > options.missingthresh)
-  warning_message = ['Imported data includes too long miss epoches (over ',...
-    num2str(options.missingthresh), 's), thus estimation has been skipped.'];
+if any(diff(miss_epoch, 1, 2)/sr > 0)
+  if any(diff(miss_epoch, 1, 2)/sr > options.missingthresh)
+    warning_message = ['Imported data includes too long miss epoches (over ',...
+      num2str(options.missingthresh), 's), thus estimation has been skipped.'];
+    flag_missing_too_long = 1;
+  else
+    warning_message = ['Imported data includes miss epoches (over ',...
+      num2str(options.missingthresh), 's), but the trial has been allowed. ',...
+      'Please adjust options.missingthresh to skip if you wish.'];
+  end
   warning('ID:missing_data', warning_message);
-  flag_missing_too_long = 1;
 end
 options.isYout = ymissing(:)';
 %% 5 Extract parameters
