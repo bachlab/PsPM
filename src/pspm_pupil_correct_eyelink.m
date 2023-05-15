@@ -157,7 +157,7 @@ if numel(pupil_data) > 1
     ' We will process only the last one.\n'], options.channel);
   pupil_data = pupil_data(end);
 end
-old_channeltype = pupil_data{1}.header.channeltype;
+old_channeltype = pupil_data{1}.header.chantype;
 if ~contains(old_channeltype, 'pupil')
   warning('ID:invalid_input', 'Specified channel is not a pupil channel');
   return;
@@ -240,13 +240,13 @@ if sts_pupil_correct ~= 1; return; end
 
 %% save data
 pupil_data{1}.data = pupil_corrected;
-pupil_data{1}.header.channeltype = convert_pp(old_channeltype);
+pupil_data{1}.header.chantype = convert_pp(old_channeltype);
 channel_str = num2str(options.channel);
 o.msg.prefix = sprintf(...
   'PFE correction :: Input channel: %s -- Input channeltype: %s -- Output channeltype: %s --', ...
   channel_str, ...
   old_channeltype, ...
-  pupil_data{1}.header.channeltype);
+  pupil_data{1}.header.chantype);
 [lsts, out_id] = pspm_write_channel(fn, pupil_data, options.channel_action, o);
 if lsts ~= 1; return; end
 

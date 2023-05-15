@@ -30,9 +30,9 @@ function [sts, data_cell] = pspm_load_single_chan(fn, channel, which_of_many, de
             data_cell = data_cell(end);
         end
     end
-    channeltype = data_cell{1}.header.channeltype;
-    if ~contains(channeltype, desired_type_substr)
-        warning('ID:invalid_input', sprintf('Loaded channeltype %s does not correspond to a %s channel', channeltype, desired_type_substr));
+    chantype = data_cell{1}.header.chantype;
+    if ~contains(chantype, desired_type_substr)
+        warning('ID:invalid_input', sprintf('Loaded chantype %s does not correspond to a %s channel', chantype, desired_type_substr));
         return;
     end
     sts = 1;

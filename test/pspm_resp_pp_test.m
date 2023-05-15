@@ -41,21 +41,21 @@ classdef pspm_resp_pp_test < pspm_testcase
       [sts, out, old_data] = pspm_load_data(this.r660_results_filename);
       assert(sts == 1);
       assert(numel(old_data) == 5);
-      assert(strcmpi(old_data{1}.header.channeltype, 'resp'));
-      assert(strcmpi(old_data{2}.header.channeltype, 'rp'));
-      assert(strcmpi(old_data{3}.header.channeltype, 'ra'));
-      assert(strcmpi(old_data{4}.header.channeltype, 'rfr'));
-      assert(strcmpi(old_data{5}.header.channeltype, 'rs'));
+      assert(strcmpi(old_data{1}.header.chantype, 'resp'));
+      assert(strcmpi(old_data{2}.header.chantype, 'rp'));
+      assert(strcmpi(old_data{3}.header.chantype, 'ra'));
+      assert(strcmpi(old_data{4}.header.chantype, 'rfr'));
+      assert(strcmpi(old_data{5}.header.chantype, 'rs'));
       sts = pspm_resp_pp(this.input_filename, this.sampling_rate, this.resp_channel, this.options);
       assert(sts == 1);
       [sts, out, new_data] = pspm_load_data(this.input_filename);
       assert(sts == 1);
       assert(numel(new_data) == 5);
-      assert(strcmpi(new_data{1}.header.channeltype, 'resp'));
-      assert(strcmpi(new_data{2}.header.channeltype, 'rp'));
-      assert(strcmpi(new_data{3}.header.channeltype, 'ra'));
-      assert(strcmpi(new_data{4}.header.channeltype, 'rfr'));
-      assert(strcmpi(new_data{5}.header.channeltype, 'rs'));
+      assert(strcmpi(new_data{1}.header.chantype, 'resp'));
+      assert(strcmpi(new_data{2}.header.chantype, 'rp'));
+      assert(strcmpi(new_data{3}.header.chantype, 'ra'));
+      assert(strcmpi(new_data{4}.header.chantype, 'rfr'));
+      assert(strcmpi(new_data{5}.header.chantype, 'rs'));
       for i = 1:5
         this.verifyThat(old_data{i}.data, IsEqualTo(new_data{i}.data, 'Within', RelativeTolerance(1e-10)));
       end

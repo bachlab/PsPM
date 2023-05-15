@@ -123,7 +123,7 @@ elseif ~ischar(datatype)
 		'Data type needs to be a string');
 	return
 elseif sum(strcmpi(datatype, {settings.import.datatypes.short})) == 0
-	warning('ID:invalid_channeltype', ...
+	warning('ID:invalid_chantype', ...
 		'Data type (%s) not recognised', datatype);
 	return
 elseif nargin < 3

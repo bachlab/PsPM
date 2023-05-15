@@ -11,102 +11,102 @@ function varargout = pspm_dcm(model, options)
 % 	Flexible responses can for example be anticipatory, decision-related,
 % 	or evoked with unknown onset.
 % ● Format
-%		dcm = pspm_dcm(model, options)
+% 	dcm = pspm_dcm(model, options)
 % ● Arguments
-%		┌──────model:
-%		│ ▶︎ Mandatory
-% 	├─.modelfile:	[string/cell array]
-%		│             The name of the model output file.
-%		├──.datafile:	[string/cell array]
-%		│             A file name (single session) OR a cell array of file names.
-%		├────.timing:	A file name/cell array of events (single session) OR a cell
-%		│             array of file names/cell arrays.
-%		│             When specifying file names, each file must be a *.mat file
-%		│             that contain a cell variable called 'events'.
-%		│             Each cell should contain either one column (fixed response)
-%		│             or two columns (flexible response).
-%		│             All matrices in the array need to have the same number of
-%		│             rows, i.e. the event structure must be the same for every
-%		│             trial. If this is not the case, include `dummy` events with
-%		│             negative onsets.
-%		│ ▶︎ Optional
-% 	├───.missing:	Allows to specify missing (e. g. artefact) epochs in the
-%		│             data file. See pspm_get_timing for epoch definition; specify
-%		│             a cell array for multiple input files. This must always be
-%		│            	specified in SECONDS.
-%		│             Default: no missing values
-% 	├─.lasttrialcutoff
-%		│             If there fewer data after the end of then last trial in a
-%		│             session than this cutoff value (in s), then estimated
-%		│             parameters from this trial will be assumed inestimable
-%		│             and set to NaN after the
-%		│             inversion. This value can be set as inf to always retain
-%		│             parameters from the last trial.
-%		│             Default: 7 s
+% 	┌──────model:
+% 	│ ▶︎ Mandatory
+% 	├─.modelfile: [string/cell array]
+% 	│             The name of the model output file.
+% 	├──.datafile: [string/cell array]
+% 	│             A file name (single session) OR a cell array of file names.
+% 	├────.timing: A file name/cell array of events (single session) OR a cell
+% 	│             array of file names/cell arrays.
+% 	│             When specifying file names, each file must be a *.mat file
+% 	│             that contain a cell variable called 'events'.
+% 	│             Each cell should contain either one column (fixed response)
+% 	│             or two columns (flexible response).
+% 	│             All matrices in the array need to have the same number of
+% 	│             rows, i.e. the event structure must be the same for every
+% 	│             trial. If this is not the case, include `dummy` events with
+% 	│             negative onsets.
+% 	│ ▶︎ Optional
+% 	├───.missing: Allows to specify missing (e. g. artefact) epochs in the
+% 	│             data file. See pspm_get_timing for epoch definition; specify
+% 	│             a cell array for multiple input files. This must always be
+% 	│             specified in SECONDS.
+% 	│             Default: no missing values
+% 	├─.lasttrialcutoff:
+% 	│             If there fewer data after the end of then last trial in a
+% 	│             session than this cutoff value (in s), then estimated
+% 	│             parameters from this trial will be assumed inestimable
+% 	│             and set to NaN after the
+% 	│             inversion. This value can be set as inf to always retain
+% 	│             parameters from the last trial.
+% 	│             Default: 7 s
 % 	├─.substhresh:Minimum duration (in seconds) of NaN periods to cause
-%		│             splitting up into subsessions which get evaluated
-%		│             independently (excluding NaN values).
-%		│             Default: 2.
-% 	├────.filter:	Filter settings.
-%		│             Modality specific default.
-% 	├───.channel:	Channel number.
-%		│             Default: first SCR channel
-% 	├──────.norm:	Normalise data.
-%		│             i.e. Data are normalised during inversion but results
-%		│             transformed back into raw data units.
-%		│             Default: 0.
-%   ├───.flexevents:  flexible events to adjust amplitude priors
-%   ├────.fixevents:  fixed events to adjust amplitude priors
+% 	│             splitting up into subsessions which get evaluated
+% 	│             independently (excluding NaN values).
+% 	│             Default: 2.
+% 	├────.filter: Filter settings.
+% 	│             Modality specific default.
+% 	├───.channel: Channel number.
+% 	│             Default: first SCR channel
+% 	├──────.norm: Normalise data.
+% 	│             i.e. Data are normalised during inversion but results
+% 	│             transformed back into raw data units.
+% 	│             Default: 0.
+% 	├.flexevents: flexible events to adjust amplitude priors
+% 	├─.fixevents: fixed events to adjust amplitude priors
 % 	└─.constrained:
-%	              	Constrained model for flexible responses which have fixed
+% 	              	Constrained model for flexible responses which have fixed
 %               	dispersion (0.3 s SD) but flexible latency.
-%		┌────options:
-%		│ ▶︎ Response function
+% 	┌────options:
+% 	│ ▶︎ Response function
 % 	├─.crfupdate: Update CRF priors to observed SCRF, or use pre-estimated
-%		│             priors (default). Default as 0, optional as 1.
-% 	├─────.indrf:	Estimate the response function from the data.
-%		│             Default: 0.
-% 	├─────.getrf:	Only estimate RF, do not do trial-wise DCM
-% 	├────────.rf:	Call an external file to provide response function
-%		│             (for use when this is previously estimated by pspm_get_rf)
-%		│ ▶︎ Inversion
-% 	├─────.depth:	No of trials to invert at the same time.
-%		│             Default: 2.
-% 	├─────.sfpre:	sf-free window before first event.
-%		│             Default: 2s.
-% 	├────.sfpost:	sf-free window after last event.
-%		│             Default: 5s.
-% 	├────.sffreq:	maximum frequency of SF in ITIs.
-%		│             Default: 0.5/s.
-% 	├────.sclpre:	scl-change-free window before first event.
-%		│             Default: 2s.
+% 	│             priors (default). Default as 0, optional as 1.
+% 	├─────.indrf: Estimate the response function from the data.
+% 	│             Default: 0.
+% 	├─────.getrf: Only estimate RF, do not do trial-wise DCM
+% 	├────────.rf: Call an external file to provide response function
+% 	│             (for use when this is previously estimated by pspm_get_rf)
+% 	│ ▶︎ Inversion
+% 	├─────.depth: No of trials to invert at the same time.
+% 	│             Default: 2.
+% 	├─────.sfpre: sf-free window before first event.
+% 	│             Default: 2s.
+% 	├────.sfpost: sf-free window after last event.
+% 	│             Default: 5s.
+% 	├────.sffreq: maximum frequency of SF in ITIs.
+% 	│             Default: 0.5/s.
+% 	├────.sclpre: scl-change-free window before first event.
+% 	│             Default: 2s.
 % 	├───.sclpost: scl-change-free window after last event.
-%		│             Default: 5s.
+% 	│             Default: 5s.
 % 	├.aSCR_sigma_offset:
-%		│             Minimum dispersion (standard deviation) for flexible
-%		│             responses.
-%		│             Default: 0.1s.
-%		│ Display
+% 	│             Minimum dispersion (standard deviation) for flexible
+% 	│             responses.
+% 	│             Default: 0.1s.
+% 	│ Display
 % 	├─.dispwin    Display progress window.
-%		│             Default: 1.
+% 	│             Default: 1.
 % 	├─.dispsmallwin
-%		│             display intermediate windows.
-%		│             Default: 0.
-%		│ ▶︎ Output
+% 	│             display intermediate windows.
+% 	│             Default: 0.
+% 	│ ▶︎ Output
 % 	├────.nosave: Don't save dcm structure (e.g. used by pspm_get_rf)
 % 	├─.overwrite: [logical] (0 or 1)
-%   │             Define whether to overwrite existing output files or not.
-%   │             Default value: determined by pspm_overwrite.
-%		│ ▶︎ Naming
+% 	│             Define whether to overwrite existing output files or not.
+% 	│             Default value: determined by pspm_overwrite.
+% 	│ ▶︎ Naming
 % 	├──.trlnames: Cell array of names for individual trials,
-%		│             is used for contrast manager only (e.g. condition
-%		│             descriptions)
+% 	│             is used for contrast manager only (e.g. condition
+% 	│             descriptions)
 % 	└.eventnames: Cell array of names for individual events,
-%               	in the order they are specified in the model.timing array -
-%               	to be used for display and export only
+%                 in the order they are specified in the model.timing array -
+%                 to be used for display and export only
 % ● Output
-%							fn:	Name of the model file.
-%					 	 dcm:	Model struct.
+% 	fn: 	Name of the model file.
+% 	dcm: Model struct.
 %
 % 	Output units: all timeunits are in seconds; eSCR and aSCR amplitude are
 % 	in SN units such that an eSCR SN pulse with 1 unit amplitude causes an
