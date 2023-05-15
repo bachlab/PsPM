@@ -15,8 +15,7 @@
 \renewcommand{\textendash}{--}
 \renewcommand{\textemdash}{---}
 
-\usepackage{bera}
-\usepackage[T1]{fontenc}
+\usepackage{stix2}
 \usepackage{enumitem} \setlist[itemize]{noitemsep}
 \end_preamble
 \use_default_options true
