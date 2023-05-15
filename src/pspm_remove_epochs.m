@@ -53,7 +53,7 @@ n_data = numel(data);
 for i_data = 1:n_data
   channel = data{i_data};
   sr = channel.header.sr;
-  channeltype = channel.header.channeltype;
+  channeltype = channel.header.chantype;
   for i_ep = 1:n_ep
     epoch = ep(i_ep, :);
     if strcmpi(settings.channeltypes(strcmpi({settings.channeltypes.type}, ...

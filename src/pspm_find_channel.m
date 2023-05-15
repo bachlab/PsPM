@@ -31,7 +31,7 @@ elseif ~iscell(headercell)
 end
 if ischar(channeltype)
   if ~ismember(channeltype, {settings.channeltypes.type})
-    warning('ID:not_allowed_channeltype', '\nChannel type %s not allowed.\n', channeltype); return;
+    warning('ID:not_allowed_chantype', '\nChannel type %s not allowed.\n', channeltype); return;
   else
     namestrings = settings.import.channames.(channeltype);
   end

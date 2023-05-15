@@ -67,9 +67,9 @@ if ~isnumeric(distance)
 end
 % distance to sps conversion
 [sts, ~, data] = pspm_load_data(fn,0);
-eyes.l = find(cellfun(@(c) ~isempty(regexp(c.header.channeltype, 'gaze_[x|y]_l', 'once'))...
+eyes.l = find(cellfun(@(c) ~isempty(regexp(c.header.chantype, 'gaze_[x|y]_l', 'once'))...
   && strcmp(c.header.units, from), data));
-eyes.r = find(cellfun(@(c) ~isempty(regexp(c.header.channeltype, 'gaze_[x|y]_r', 'once'))...
+eyes.r = find(cellfun(@(c) ~isempty(regexp(c.header.chantype, 'gaze_[x|y]_r', 'once'))...
   && strcmp(c.header.units, from), data));
 if (length(eyes.l) < 1 && length(eyes.r) < 1)
   warning('ID:invalid_input', 'no gaze data found with the units provided')
@@ -78,7 +78,7 @@ end
 for gaze_eye = fieldnames(eyes)'
   for d = eyes.(gaze_eye{1})'
     sr =  data{d}.header.sr;
-    if ~isempty(regexp(data{d}.header.channeltype, 'gaze_x_', 'once'))
+    if ~isempty(regexp(data{d}.header.chantype, 'gaze_x_', 'once'))
       lon_chan = data{d};
       if (strcmp(from, 'pixel'))
         data_x = pixel_conversion(data{d}.data, width, data{d}.header.range);
@@ -114,7 +114,7 @@ for gaze_eye = fieldnames(eyes)'
   elseif strcmp(target, 'sps')
     arclen = pspm_convert_visangle2sps_core(lat, lon);
     dist_channel.data = rad2deg(arclen) .* sr;
-    dist_channel.header.channeltype = strcat('sps_', gaze_eye{1});
+    dist_channel.header.chantype = strcat('sps_', gaze_eye{1});
     dist_channel.header.sr = sr;
     dist_channel.header.units = 'degree';
     [sts_write_channel, out] = pspm_write_channel(fn, dist_channel, options.channel_action);

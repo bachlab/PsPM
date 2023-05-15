@@ -12,7 +12,7 @@ classdef pspm_get_hr_test < matlab.unittest.TestCase
       [sts, data] = pspm_get_hr(import);
       this.verifyEqual(sts, 1);
       this.verifyEqual(data.data, import.data(:));
-      this.verifyTrue(strcmpi(data.header.channeltype, 'hr'));
+      this.verifyTrue(strcmpi(data.header.chantype, 'hr'));
       this.verifyEqual(data.header.units, import.units);
       this.verifyEqual(data.header.sr, import.sr);
     end

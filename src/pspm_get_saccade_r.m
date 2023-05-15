@@ -22,7 +22,7 @@ sts = -1;
 % assign pupil data
 data.data = import.data(:);
 % add header
-data.header.channeltype = 'saccade_r';
+data.header.chantype = 'saccade_r';
 data.header.units = import.units;
 data.header.sr = import.sr;
 % check status

@@ -20,13 +20,13 @@ classdef pspm_bf_data_test < matlab.unittest.TestCase
   methods (TestClassSetup)
     function gen_testdata(testcase)
       % build a sample datafile for testing
-      channels{1}.channeltype = 'scr';
-      channels{2}.channeltype = 'marker';
-      channels{3}.channeltype = 'hr';
-      channels{4}.channeltype = 'hb';
-      channels{5}.channeltype = 'marker';
-      channels{6}.channeltype = 'resp';
-      channels{7}.channeltype = 'scr';
+      channels{1}.chantype = 'scr';
+      channels{2}.chantype = 'marker';
+      channels{3}.chantype = 'hr';
+      channels{4}.chantype = 'hb';
+      channels{5}.chantype = 'marker';
+      channels{6}.chantype = 'resp';
+      channels{7}.chantype = 'scr';
       testcase.event_channels = [2 4 5];
       testcase.cont_channels = [1 3 6 7];
       testcase.sr = 100;

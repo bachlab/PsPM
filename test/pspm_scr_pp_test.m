@@ -13,18 +13,18 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
       this.verifyWarning(@()pspm_pp('butter', 'file'), 'ID:invalid_input');
       % for the following tests a valid file is required thus
       % generate some random data
-      channels{1}.channeltype = 'scr';
-      channels{2}.channeltype = 'hb';
-      channels{3}.channeltype = 'scr';
+      channels{1}.chantype = 'scr';
+      channels{2}.chantype = 'hb';
+      channels{3}.chantype = 'scr';
       pspm_testdata_gen(channels, this.duration, this.fn);
       % scr_pp is currently an indepedent function, so no need to
       % perform validation with other options like pspm_pp i think?
     end
     function scr_pp_test(this)
-      channels{1}.channeltype = 'scr';
+      channels{1}.chantype = 'scr';
       scr_pp_test_template(this, channels)
-      % channels{1}.channeltype = 'hb';
-      % channels{2}.channeltype = 'scr';
+      % channels{1}.chantype = 'hb';
+      % channels{2}.chantype = 'scr';
       % scr_pp_test_template(this, channels)
 
       % Delete testdata
