@@ -21,9 +21,9 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
     end
     function one_datafile(this)
       fn = 'testdatafile0.mat';
-      channels{1}.channeltype = 'scr';
-      channels{2}.channeltype = 'hb';
-      channels{3}.channeltype = 'marker';
+      channels{1}.chantype = 'scr';
+      channels{2}.chantype = 'hb';
+      channels{3}.chantype = 'marker';
       datastruct = pspm_testdata_gen(channels, 100);
       datastruct.data{3}.data = [1 4 9 12 30 31 34 41 43 59 65 72 74 80 89 96]';
       % with default values MAXSN=10 & BRK2NORM=3 the datafile should be split into 3 files
@@ -47,9 +47,9 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
     end
     function test_dynamic_sessions(this, nsessions)
       fn = pspm_find_free_fn(this.data_fn, '.mat');
-      channels{1}.channeltype = 'scr';
-      channels{2}.channeltype = 'hb';
-      channels{3}.channeltype = 'marker';
+      channels{1}.chantype = 'scr';
+      channels{2}.chantype = 'hb';
+      channels{3}.chantype = 'marker';
       channels{3}.sessions = nsessions;
       channels{3}.session_distance = 10;
       channels{3}.variance = 0.05;
@@ -71,9 +71,9 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
     end
     function test_appendices(this, prefix, suffix)
       fn = pspm_find_free_fn(this.data_fn, '.mat');
-      channels{1}.channeltype = 'scr';
-      channels{2}.channeltype = 'hb';
-      channels{3}.channeltype = 'marker';
+      channels{1}.chantype = 'scr';
+      channels{2}.chantype = 'hb';
+      channels{3}.chantype = 'marker';
       channels{3}.sessions = 10;
       channels{3}.session_distance = 10;
       channels{3}.variance = 0.05;
@@ -104,9 +104,9 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
       n_sess = 10;
       sess_dist = 10;
       fn = pspm_find_free_fn(this.data_fn, '.mat');
-      channels{1}.channeltype = 'scr';
-      channels{2}.channeltype = 'hb';
-      channels{3}.channeltype = 'marker';
+      channels{1}.chantype = 'scr';
+      channels{2}.chantype = 'hb';
+      channels{3}.chantype = 'marker';
       channels{3}.sessions = n_sess;
       channels{3}.session_distance = sess_dist;
       channels{3}.variance = 0.05;

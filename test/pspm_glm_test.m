@@ -48,8 +48,8 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       onsets = {[1 2 3], [4 5 6]};
       save(mcond_tf, 'names', 'onsets');
       clear names onsets
-      channels{1}.channeltype = 'scr';
-      channels{2}.channeltype = 'marker';
+      channels{1}.chantype = 'scr';
+      channels{2}.chantype = 'marker';
       pspm_testdata_gen(channels, 10, pspm_tf);
       model.timing = mcond_tf;
       model.datafile = pspm_tf;
@@ -558,12 +558,12 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       infos.duration = duration;
       data{1}.data = Y;
       data{1}.header.sr = sr;
-      data{1}.header.channeltype = 'scr';
+      data{1}.header.chantype = 'scr';
       data{1}.header.units = 'unknown';
       if nargin > 4
         data{2}.data = onsets;
         data{2}.header.sr = 1;
-        data{2}.header.channeltype = 'marker';
+        data{2}.header.chantype = 'marker';
         data{2}.header.units = 'events';
       end
       save(fn, 'data', 'infos');

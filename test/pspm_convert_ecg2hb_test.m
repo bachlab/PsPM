@@ -65,7 +65,7 @@ classdef pspm_convert_ecg2hb_test < pspm_testcase
             hdr = data{i}.header;
             if hdr.sr ~= 1, warning('Wrong sampling rate in header'); end;
             if ~strcmpi(hdr.units, 'events'), warning('Wrong unit in header'); end;
-            if ~strcmpi(hdr.channeltype, 'hb'), warning('Wrong channeltype in header'); end;
+            if ~strcmpi(hdr.chantype, 'hb'), warning('Wrong chantype in header'); end;
             % check if channel has data
             d = data{i}.data;
             if numel(d) < 1, warning('Less than 1 data points'); end;
@@ -117,7 +117,7 @@ classdef pspm_convert_ecg2hb_test < pspm_testcase
       this.verifyWarning(@()pspm_convert_ecg2hb(filename, 'bla'), 'ID:invalid_input');
       if chan_struct.nr ~= 1
         % invalid channel
-        this.verifyWarning(@()pspm_convert_ecg2hb(filename, 1), 'ID:not_allowed_channeltype');
+        this.verifyWarning(@()pspm_convert_ecg2hb(filename, 1), 'ID:not_allowed_chantype');
       end
       % invalid twthresh (text)
       o.twthresh = 'bla';

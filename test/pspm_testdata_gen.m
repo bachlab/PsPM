@@ -13,15 +13,15 @@ function outfile = pspm_testdata_gen(channels, duration, filename)
 %
 % duration: duration of the testsignal in s (default value is 10s)
 % channels: a cell array of struct with mandatory fields for each channel:
-%           - .channeltype: 'scr', 'hr', 'hb', 'resp', 'trigger', 'scanner'
+%           - .chantype: 'scr', 'hr', 'hb', 'resp', 'trigger', 'scanner'
 %           and optional fields:
-%           if .channeltype is 'scr' or 'hr' (continuous channels):
+%           if .chantype is 'scr' or 'hr' (continuous channels):
 %           - .units: units to write to channel, defaults to 'unknown' for continuous and 'events' for event data
 %           - .sr: sampling rate for waveform (default value is 100Hz)
 %           - .freq: frequencey of the waveform (default value is 1Hz)
 %           - .noise: (default: 0) if 1 will add random normally
 %                      distributed noise
-%           if .channeltype is 'hb', 'resp', 'trigger' or 'scanner' (eventbased channels):
+%           if .chantype is 'hb', 'resp', 'trigger' or 'scanner' (eventbased channels):
 %           - .sessions: split event trains in to multiple sessions
 %                       (pspm_split_sessions). default: 1
 %           - .session_distance: if sessions is > 1 the distance between
@@ -47,7 +47,7 @@ function outfile = pspm_testdata_gen(channels, duration, filename)
 %           - .data:  a cell array of struct with the following fields for
 %                    each channel:
 %                    - .data:   the genarated data as a column vector
-%                    - .header: a struct with the fields '.channeltype',
+%                    - .header: a struct with the fields '.chantype',
 %                               '.units', '.sr' and '.eventrt' for eventbased
 %                               channels or '.freq' and  for continuous channels
 % ● Authorship
@@ -94,9 +94,9 @@ for k = 1:numel(channels)
   if ~isfield(channels{k}, 'sr')
     channels{k}.sr = 100;
   end
-  if ~isfield(channels{k}, 'channeltype')
+  if ~isfield(channels{k}, 'chantype')
     warning('No type given for channels job %2.0f', k); outfile = cell(0); return;
-  elseif regexp(channels{k}.channeltype, cont_channels_regex)
+  elseif regexp(channels{k}.chantype, cont_channels_regex)
     %default values
     if ~isfield(channels{k}, 'freq')
       channels{k}.freq = 1;
@@ -110,9 +110,9 @@ for k = 1:numel(channels)
     else
       outfile.data{k,1}.header.units = 'unknown';
     end
-    outfile.data{k,1}.header.channeltype = channels{k}.channeltype;
+    outfile.data{k,1}.header.chantype = channels{k}.chantype;
     %Generate sinewaveform
-    t = ((channels{k}.sr^-1):(channels{k}.sr^-1):duration)';
+    t = transpose((channels{k}.sr^-1):(channels{k}.sr^-1):duration);
     % generate data
     d = sin(2*pi*t*channels{k}.freq);
     % add noise to data
@@ -120,7 +120,7 @@ for k = 1:numel(channels)
       d = d + randn(size(d))*0.3*max(d);
     end
     outfile.data{k,1}.data = d;
-  elseif any(strcmp(channels{k}.channeltype, event_channels))
+  elseif any(strcmp(channels{k}.chantype, event_channels))
     %default values
     if ~isfield(channels{k}, 'eventrt')
       channels{k}.eventrt = 1;
@@ -172,10 +172,10 @@ for k = 1:numel(channels)
     else
       outfile.data{k,1}.header.units = 'events';
     end
-    outfile.data{k,1}.header.channeltype = channels{k}.channeltype;
+    outfile.data{k,1}.header.chantype = channels{k}.chantype;
     outfile.data{k,1}.data = ev_data;
   else
-    warning('Type %s is not supported', channels{k}.channeltype); outfile = cell(0); return;
+    warning('Type %s is not supported', channels{k}.chantype); outfile = cell(0); return;
   end
 end
 % Save the struct fields in a .mat file

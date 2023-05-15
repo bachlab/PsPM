@@ -46,7 +46,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
         % generate data
         if strcmpi(this.datatype{data{i}}, 'inline')
           % inline is always just one channel
-          c{1}.channeltype = 'scr';
+          c{1}.chantype = 'scr';
           if amount > 1
             opt_chans{i} = {};
           end
@@ -54,7 +54,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
           % not inline is with chans option
           c = cell(1,numel(chans{1}));
           for j=1:numel(chans{1})
-            c{j}.channeltype = chans{1}{j};
+            c{j}.chantype = chans{1}{j};
           end
           opt_chans{i} = chans{2};
         end
@@ -143,7 +143,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
   end
   methods (Test)
     function invalid_input(this)
-      c{1}.channeltype = 'scr';
+      c{1}.chantype = 'scr';
       valid_data = pspm_testdata_gen(c, 10);
       valid_data = {valid_data, valid_data};
       % no input
@@ -182,13 +182,13 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       options = struct('channel_action', 'bla');
       this.verifyWarning(@() pspm_interpolate(valid_data, options), 'ID:invalid_input');
       % try to interpolate an events channel
-      c{1}.channeltype = 'hb';
+      c{1}.chantype = 'hb';
       invalid_data = pspm_testdata_gen(c, 10);
       options = struct('channel', 1);
-      this.verifyWarning(@() pspm_interpolate(invalid_data, options), 'ID:invalid_channeltype');
+      this.verifyWarning(@() pspm_interpolate(invalid_data, options), 'ID:invalid_chantype');
       % try to interpolate with nan from beginning; without
       % extrapolation
-      c{1}.channeltype = 'scr';
+      c{1}.chantype = 'scr';
       invalid_data = pspm_testdata_gen(c, 10);
       backup = invalid_data.data{1}.data(1);
       invalid_data.data{1}.data(1) = NaN;
@@ -273,7 +273,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
     function test_no_nan(this)
       %% try to interpolate without nans
       % generate data
-      c{1}.channeltype = 'scr';
+      c{1}.chantype = 'scr';
       data = pspm_testdata_gen(c, 10);
       % interpolate
       [sts, outdata] = this.verifyWarningFree(@() pspm_interpolate(data));

@@ -124,12 +124,12 @@ classdef pspm_exp_test < matlab.unittest.TestCase
       infos.duration = duration;
       data{1}.data = Y;
       data{1}.header.sr = sr;
-      data{1}.header.channeltype = 'scr';
+      data{1}.header.chantype = 'scr';
       data{1}.header.units = 'unknown';
       if nargin > 4
         data{2}.data = onsets;
         data{2}.header.sr = 1;
-        data{2}.header.channeltype = 'marker';
+        data{2}.header.chantype = 'marker';
         data{2}.header.units = 'events';
       end
       save(fn, 'data', 'infos');

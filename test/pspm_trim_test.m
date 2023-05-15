@@ -18,13 +18,13 @@ classdef pspm_trim_test < matlab.unittest.TestCase
   end
   methods (TestClassSetup)
     function gen_testdata(testCase)
-      channels{1}.channeltype = 'scr';
-      channels{2}.channeltype = 'marker';
-      channels{3}.channeltype = 'hr';
-      channels{4}.channeltype = 'hb';
-      channels{5}.channeltype = 'marker';
-      channels{6}.channeltype = 'resp';
-      channels{7}.channeltype = 'scr';
+      channels{1}.chantype = 'scr';
+      channels{2}.chantype = 'marker';
+      channels{3}.chantype = 'hr';
+      channels{4}.chantype = 'hb';
+      channels{5}.chantype = 'marker';
+      channels{6}.chantype = 'resp';
+      channels{7}.chantype = 'scr';
       testCase.event_channels = [2 4 5];
       testCase.cont_channels = [1 3 6 7];
       testCase.sr = 100;
