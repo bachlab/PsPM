@@ -11,13 +11,13 @@ classdef pspm_get_sps_test < matlab.unittest.TestCase
       import.range = [ 0, 1 ];
       [ sts, out ] = this.verifyWarningFree(@() pspm_get_sps(import));
       this.verifyEqual(sts, 1);
-      this.verifyEqual(out.header.channeltype, 'sps');
+      this.verifyEqual(out.header.chantype, 'sps');
       [ sts, out ] = this.verifyWarningFree(@() pspm_get_sps_l(import));
       this.verifyEqual(sts, 1);
-      this.verifyEqual(out.header.channeltype, 'sps_l');
+      this.verifyEqual(out.header.chantype, 'sps_l');
       [ sts, out ] = this.verifyWarningFree(@() pspm_get_sps_r(import));
       this.verifyEqual(sts, 1);
-      this.verifyEqual(out.header.channeltype, 'sps_r');
+      this.verifyEqual(out.header.chantype, 'sps_r');
     end
   end
 end

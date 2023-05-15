@@ -11,7 +11,7 @@ classdef pspm_get_ecg_test < matlab.unittest.TestCase
       [sts, data] = pspm_get_ecg(import);
       this.verifyEqual(sts, 1);
       this.verifyEqual(data.data, import.data(:));
-      this.verifyTrue(strcmpi(data.header.channeltype, 'ecg'));
+      this.verifyTrue(strcmpi(data.header.chantype, 'ecg'));
       this.verifyEqual(data.header.units, import.units);
       this.verifyEqual(data.header.sr, import.sr);
     end

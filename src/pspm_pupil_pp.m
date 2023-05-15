@@ -171,8 +171,7 @@ if action_combine
   if lsts ~= 1
     return
   end
-  % 4.1.2 Check the eye marker of the two channels
-  if strcmp(pspm_get_eye(data{1}.header.channeltype), pspm_get_eye(data_combine{1}.header.channeltype))
+  if strcmp(pspm_get_eye(data{1}.header.chantype), pspm_get_eye(data_combine{1}.header.chantype))
     warning('ID:invalid_input', 'options.channel and options.channel_combine must specify different eyes');
     return;
   end
@@ -199,10 +198,10 @@ if action_combine
     warning('ID:invalid_input', ['options.channel_combine has more than ', num2str(options.nan_cutoff*100),'% missing values.']);
   end
   old_channeltype = sprintf('%s and %s', ...
-    data{1}.header.channeltype, data_combine{1}.header.channeltype);
+    data{1}.header.chantype, data_combine{1}.header.chantype);
 else
   data_combine{1}.data = [];
-  old_channeltype = data{1}.header.channeltype;
+  old_channeltype = data{1}.header.chantype;
 end
 %% 5 preprocess
 [lsts, smooth_signal, model] = pspm_preprocess(data, data_combine, ...
@@ -216,7 +215,7 @@ o.msg.prefix = sprintf(...
   'Pupil preprocessing :: Input channel: %s -- Input channeltype: %s -- Output channeltype: %s --', ...
   channel_str, ...
   old_channeltype, ...
-  smooth_signal.header.channeltype);
+  smooth_signal.header.chantype);
 [lsts, out_id] = pspm_write_channel(fn, smooth_signal, options.channel_action, o);
 if ~lsts
   return
@@ -237,7 +236,7 @@ function varargout  = pspm_preprocess(data, data_combine, segments, custom_setti
 sts = -1;
 % 1 definitions
 combining = ~isempty(data_combine{1}.data);
-data_is_left = strcmpi(pspm_get_eye(data{1}.header.channeltype), 'l');
+data_is_left = strcmpi(pspm_get_eye(data{1}.header.chantype), 'l');
 n_samples = numel(data{1}.data);
 sr = data{1}.header.sr;
 diameter.t_ms = transpose(linspace(0, 1000 * (n_samples-1) / sr, n_samples));
@@ -269,16 +268,16 @@ addpath(libpath{:});
 model = PupilDataModel(data{1}.header.units, diameter, segmentTable, 0, custom_settings);
 model.filterRawData();
 if combining
-  smooth_signal.header.channeltype = pspm_update_channeltype(data{1}.header.channeltype, {'pp', 'c'});
-elseif contains(data{1}.header.channeltype, '_pp')
-  smooth_signal.header.channeltype = data{1}.header.channeltype;
+  smooth_signal.header.chantype = pspm_update_channeltype(data{1}.header.chantype, {'pp', 'c'});
+elseif contains(data{1}.header.chantype, '_pp')
+  smooth_signal.header.chantype = data{1}.header.chantype;
 else
-  marker = strfind(data{1}.header.channeltype, '_');
+  marker = strfind(data{1}.header.chantype, '_');
   marker = marker(1);
-  smooth_signal.header.channeltype = ...
-    [data{1}.header.channeltype(1:marker-1),...
+  smooth_signal.header.chantype = ...
+    [data{1}.header.chantype(1:marker-1),...
     '_pp_',...
-    data{1}.header.channeltype(marker+1:end)];
+    data{1}.header.chantype(marker+1:end)];
 end
 smooth_signal.header.units = data{1}.header.units;
 smooth_signal.header.sr = new_sr;

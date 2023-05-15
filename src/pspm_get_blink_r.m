@@ -22,7 +22,7 @@ sts = -1;
 % assign pupil data
 data.data = import.data(:);
 % add header
-data.header.channeltype = 'blink_r';
+data.header.chantype = 'blink_r';
 data.header.units = import.units;
 data.header.sr = import.sr;
 %% Return values

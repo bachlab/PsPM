@@ -22,7 +22,7 @@ function check_if_heartbeat_channel_is_saved(this)
   [sts, out_channel] = pspm_convert_ecg2hb_amri(this.input_filename);
   load(this.input_filename);
 
-  this.verifyEqual(data{out_channel}.header.channeltype, 'hb');
+  this.verifyEqual(data{out_channel}.header.chantype, 'hb');
 end
 end
 

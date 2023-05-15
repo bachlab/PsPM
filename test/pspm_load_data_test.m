@@ -50,13 +50,13 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
   end
   methods (TestClassSetup)
     function gen_testdata(this)
-      channels{1}.channeltype = 'scr';
-      channels{2}.channeltype = 'marker';
-      channels{3}.channeltype = 'hr';
-      channels{4}.channeltype = 'hb';
-      channels{5}.channeltype = 'marker';
-      channels{6}.channeltype = 'resp';
-      channels{7}.channeltype = 'scr';
+      channels{1}.chantype = 'scr';
+      channels{2}.chantype = 'marker';
+      channels{3}.chantype = 'hr';
+      channels{4}.chantype = 'hb';
+      channels{5}.chantype = 'marker';
+      channels{6}.chantype = 'resp';
+      channels{7}.chantype = 'scr';
       this.event_channels = [2 4 5];
       this.pspm_channels = [1 7];
       if exist(this.fn, 'file')
@@ -93,7 +93,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
         'invalid_inputargs test 3');
       % test 4
       this.verifyWarning(@()pspm_load_data(this.fn, 'foobar'), ...
-        'ID:invalid_channeltype', ...
+        'ID:invalid_chantype', ...
         'invalid_inputargs test 4');
       % test 5
       foobar.data = 1;
@@ -201,7 +201,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       % invalid_datafile test 10
       load(this.fn, 'infos');
       load(this.fn, 'data');
-      data{5}.header.channeltype = 'scanner';
+      data{5}.header.chantype = 'scanner';
       save(this.fn2, 'infos', 'data');
       clear('infos')
       clear('data')

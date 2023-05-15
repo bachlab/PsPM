@@ -65,7 +65,7 @@ else
 end
 %% get data
 [nsts, infos, data] = pspm_load_data(fn, channel);
-old_channeltype = data{1}.header.channeltype;
+old_channeltype = data{1}.header.chantype;
 if nsts == -1
   warning('ID:invalid_input', 'Could not load data properly.');
   return;
@@ -127,7 +127,7 @@ for iType = 1:(numel(datatypes) - 1)
       case 1
         %rp
         respdata = diff(respstamp);
-        newdata.header.channeltype = 'rp';
+        newdata.header.chantype = 'rp';
         action_msg = 'Respiration converted to respiration period';
         newdata.header.units = 's';
       case 2
@@ -136,7 +136,7 @@ for iType = 1:(numel(datatypes) - 1)
           win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
           respdata(k) = range(resp(win));
         end
-        newdata.header.channeltype = 'ra';
+        newdata.header.chantype = 'ra';
         action_msg = 'Respiration converted to respiration amplitude';
         newdata.header.units = 'unknown';
       case 3
@@ -146,12 +146,12 @@ for iType = 1:(numel(datatypes) - 1)
           win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
           respdata(k) = range(resp(win))/ibi(k);
         end
-        newdata.header.channeltype = 'rfr';
+        newdata.header.chantype = 'rfr';
         action_msg = 'Respiration converted to rfr';
         newdata.header.units = 'unknown';
       case 4
         %rs
-        newdata.header.channeltype = 'rs';
+        newdata.header.chantype = 'rs';
         action_msg = 'Respiration converted to respiration time stamps';
         newdata.header.units = 'events';
     end
@@ -160,7 +160,7 @@ for iType = 1:(numel(datatypes) - 1)
       'Respiration preprocessing :: Input channel: %s -- Input channeltype: %s -- Output channel: %s -- Action: %s --', ...
       channel_str, ...
       old_channeltype, ...
-      newdata.header.channeltype, ...
+      newdata.header.chantype, ...
       action_msg);
     % interpolate
     switch iType

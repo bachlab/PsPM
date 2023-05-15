@@ -12,7 +12,7 @@ classdef pspm_get_resp_test < matlab.unittest.TestCase
       [sts, data] = pspm_get_resp(import);
       this.verifyEqual(sts, 1);
       this.verifyEqual(data.data, import.data(:));
-      this.verifyTrue(strcmpi(data.header.channeltype, 'resp'));
+      this.verifyTrue(strcmpi(data.header.chantype, 'resp'));
       this.verifyEqual(data.header.units, import.units);
       this.verifyEqual(data.header.sr, import.sr);
     end

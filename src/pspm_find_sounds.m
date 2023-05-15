@@ -118,7 +118,7 @@ end
 %% Sound
 % Check for existence of sound channel
 if ~options.sndchannel
-  sndi = find(strcmpi(cellfun(@(x) x.header.channeltype,indata,'un',0),'snd'),1);
+  sndi = find(strcmpi(cellfun(@(x) x.header.chantype,indata,'un',0),'snd'),1);
   if ~any(sndi)
     warning('ID:no_sound_chan', 'No sound channel found. Aborted');  return;
   end
@@ -264,7 +264,7 @@ while searchForMoreSounds == true
   if options.diagnostics
     % Check for existence of marker channel
     if ~options.trigchannel
-      mkri = find(strcmpi(cellfun(@(x) x.header.channeltype,indata,'un',0),'marker'),1);
+      mkri = find(strcmpi(cellfun(@(x) x.header.chantype,indata,'un',0),'marker'),1);
       if ~any(mkri)
         warning('ID:no_marker_chan', 'No marker channel found. Aborted');  return;
       end
@@ -339,7 +339,7 @@ if ~strcmpi(options.channel_action, 'none')
   % marker channels have sr = 1 (because marker events are specified in
   % seconds)
   snd_events.header.sr = 1;
-  snd_events.header.channeltype = 'marker';
+  snd_events.header.chantype = 'marker';
   snd_events.header.units ='events';
   [~, ininfos] = pspm_write_channel(file, snd_events, options.channel_action);
   outinfos.channel = ininfos.channel;

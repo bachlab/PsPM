@@ -29,7 +29,7 @@ classdef pspm_get_biosemi_test < pspm_get_superclass
       import{1} = struct('type', 'scr'   , 'channel', 5);
       import{2} = struct('type', 'scr'   , 'channel', 8);
       import{3} = struct('type', 'scr'   , 'channel',12);
-      import = this.assign_channeltype_number(import);
+      import = this.assign_chantype_number(import);
       this.verifyWarning(@()pspm_get_biosemi(fn, import), 'ID:channel_not_contained_in_file');
     end
   end

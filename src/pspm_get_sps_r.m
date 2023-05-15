@@ -23,7 +23,7 @@ sts = -1;
 % assign sps data
 data.data = import.data(:);
 % add header
-data.header.channeltype = 'sps_r';
+data.header.chantype = 'sps_r';
 data.header.units = import.units;
 data.header.sr = import.sr;
 data.header.range = import.range;
