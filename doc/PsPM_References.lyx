@@ -93,7 +93,7 @@
 \begin_body
 
 \begin_layout Title
-PsPM: Default Parameters
+PsPM: Option References
 \end_layout
 
 \begin_layout Standard
@@ -176,11 +176,23 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-Option fields are the fields of the options that are used by many functions
- in PsPM.
- Some of them have strict specification requirements and should be set carefully
- if non-standard values are used.
- Please check this chapter carefully about how to set the fields.
+Since version 6.1, PsPM has started using 
+\family typewriter
+pspm_options
+\family default
+ to control field values in most functions.
+ The default values for option fields have been set in 
+\family typewriter
+pspm_options
+\family default
+ and described in this document with their explanations wherever available.
+ The values of option fields have their own specification requirements and
+ should be set carefully if non-standard values are used.
+ Please check this document carefully about how to set values for the option
+ fields.
+ The errors which may appear when such variables have been set according
+ to this guideline should be sent to PsPM developer team for getting further
+ support.
 \end_layout
 
 \begin_layout Section
@@ -336,7 +348,11 @@ Apart from the notations described above for the default values, two additional
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-Any 
+
+\family typewriter
+Any
+\family default
+ 
 \shape italic
 Any
 \shape default
@@ -345,7 +361,11 @@ Any
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-Subset 
+
+\family typewriter
+Subset
+\family default
+ 
 \shape italic
 Subset
 \shape default
@@ -362,168 +382,369 @@ Abbreviations
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-ecg Electrocardiogram
+
+\family typewriter
+amri
+\family default
+ Advanced Magnetic Resonance Imaging
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-emg Electromyography
+
+\family typewriter
+au
+\family default
+ Arbitrary Unit
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-dcm Dynamic Causal Modelling
+
+\family typewriter
+dcm
+\family default
+ Dynamic Causal Modelling
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-teo Teager Energy Operator
+
+\family typewriter
+ecg
+\family default
+ Electrocardiogram
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+
+\family typewriter
+emg
+\family default
+ Electromyography
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+
+\family typewriter
+hb
+\family default
+ Heart Beat
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+
+\family typewriter
+hp
+\family default
+ Heart Period
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+
+\family typewriter
+pfm
+\family default
+ Pupil Fitting Model
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+
+\family typewriter
+pp
+\family default
+ PreProcessing
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+
+\family typewriter
+resp
+\family default
+ Respiration
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+
+\family typewriter
+rf
+\family default
+ Response Function
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+
+\family typewriter
+scr
+\family default
+ Skin Conductance Response
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+
+\family typewriter
+sf
+\family default
+ Spontaneous Fluctuations
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+
+\family typewriter
+sps
+\family default
+ ScanPath Speed
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+
+\family typewriter
+teo
+\family default
+ Teager Energy Operator
 \end_layout
 
 \begin_layout Subsection
-Action descriptors
+Action Descriptors
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 channel_action
 \end_layout
 
 \begin_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 none
+\family default
+ No channel action will be performed.
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 add
+\family default
+ A new channel that hosts the data generated will be added.
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 replace
+\family default
+ The old channel will be replaced by the new channel that hosts the generated
+ data.
 \end_layout
 
 \end_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 channel_output
 \end_layout
 
 \begin_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 all
+\family default
+ All sound markers are to be added as channel to the original file.
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 corrected
+\family default
+ Only sound markers which have been assigned to a marker from the trigger
+ channel are to be added as channel to the original file.
 \end_layout
 
 \end_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 eyes
 \end_layout
 
 \begin_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 combined
+\family default
+ Marker referring to the combined bilateral eyes that are computed based
+ on the left and right eyes.
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 left
+\family default
+ Marker referring to the left eye.
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 right
+\family default
+ Marker referring to the right eye.
 \end_layout
 
 \end_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 nan_output
 \end_layout
 
 \begin_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 none
+\family default
+ Values not to be displayed on written intof files.
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 screen
+\family default
+ Values to be displayed on MATLAB's screen.
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 file_output
+\family default
+ Values to be written into a created file.
 \end_layout
 
 \end_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 statstype
 \end_layout
 
 \begin_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 param
+\family default
+ Export all parameter estimates.
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 cond
+\family default
+ Contrasts formulated in terms of conditions.
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-recon Reconstruction
+
+\family typewriter
+recon
+\family default
+ Export all conditions.
 \end_layout
 
 \end_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 timeunit
 \end_layout
 
 \begin_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 seconds
+\family default
+ 
+\shape italic
+Second
+\shape default
+ as the unit of the time series.
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 samples
+\family default
+ 
+\shape italic
+Sample
+\shape default
+ as the unit of the time series.
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+
+\family typewriter
 markers
+\family default
+ 
+\shape italic
+Marker
+\shape default
+ as the unit of the time series.
 \end_layout
 
 \end_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-combined The combined left and right eyes.
-\end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-replace The action of replacing the current content by the results for the
- channel of interest.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\family typewriter
 overwrite
 \end_layout
 
@@ -548,19 +769,16 @@ overwrite
 
 \end_deeper
 \begin_layout Subsection
-Others
+Miscellaneous
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-NS The parameter does not have a default value.
-\end_layout
 
-\begin_layout Standard
-\begin_inset Newpage pagebreak
-\end_inset
-
-
+\family typewriter
+NS
+\family default
+ The parameter does not have a default value.
 \end_layout
 
 \begin_layout Section
@@ -857,7 +1075,7 @@ replace
 \end_layout
 
 \begin_layout Subsection
-Con1
+Contrasts on the 1st Level 
 \end_layout
 
 \begin_layout Standard
@@ -980,7 +1198,7 @@ logical
 \end_layout
 
 \begin_layout Subsection
-Con2
+Contrasts on the 2nd Level
 \end_layout
 
 \begin_layout Standard
@@ -1226,7 +1444,7 @@ replace
 \end_layout
 
 \begin_layout Subsection
-Convert Au To Unit
+Convert Arbitrary Unit To Unit
 \end_layout
 
 \begin_layout Standard
@@ -1349,7 +1567,7 @@ replace
 \end_layout
 
 \begin_layout Subsection
-Convert ECG To Heartbeat
+Convert Electrocardiogram To Heart Beat
 \end_layout
 
 \begin_layout Standard
@@ -1813,7 +2031,7 @@ Any
 \end_layout
 
 \begin_layout Subsection
-Convert ECG To Heartbeat Amri
+Convert Electrocardiogram To Heart Beat, Advanced MRI
 \end_layout
 
 \begin_layout Standard
@@ -2528,7 +2746,7 @@ replace
 \end_layout
 
 \begin_layout Subsection
-Convert Heartbeat To HP
+Convert Heart Beat To Heart Period
 \end_layout
 
 \begin_layout Standard
@@ -2864,7 +3082,7 @@ replace
 \end_layout
 
 \begin_layout Subsection
-Convert PPG To Heartbeat
+Convert Photoplethysmogram To Heart Beat
 \end_layout
 
 \begin_layout Standard
@@ -3032,7 +3250,7 @@ logical
 \end_layout
 
 \begin_layout Subsection
-Convert Visual Angle To SPS
+Convert Visual Angle To Scanpath Speed
 \end_layout
 
 \begin_layout Standard
@@ -3452,7 +3670,7 @@ double
 \end_layout
 
 \begin_layout Subsection
-DCM
+Dynamic Causal Modelling
 \end_layout
 
 \begin_layout Standard
@@ -4334,7 +4552,7 @@ Any
 \end_layout
 
 \begin_layout Subsection
-DCM Inversed
+Dynamic Causal Modelling, Inversed
 \end_layout
 
 \begin_layout Standard
@@ -5384,7 +5602,7 @@ double
 \end_layout
 
 \begin_layout Subsection
-ECG Editor
+Electrocardiogram Editor
 \end_layout
 
 \begin_layout Standard
@@ -5638,7 +5856,7 @@ logical
 \end_layout
 
 \begin_layout Subsection
-EMG PP
+Electromyogram Preprocessing
 \end_layout
 
 \begin_layout Standard
@@ -5849,7 +6067,7 @@ double
 \end_layout
 
 \begin_layout Subsection
-Exp
+Export
 \end_layout
 
 \begin_layout Standard
@@ -8058,7 +8276,7 @@ double
 \end_layout
 
 \begin_layout Subsection
-Get RF
+Get Response Function
 \end_layout
 
 \begin_layout Standard
@@ -8897,7 +9115,7 @@ Any
 \end_layout
 
 \begin_layout Subsection
-GLM
+General Linear Model
 \end_layout
 
 \begin_layout Standard
@@ -9708,7 +9926,7 @@ double
 \end_layout
 
 \begin_layout Subsection
-Load1
+Load – First Level Model
 \end_layout
 
 \begin_layout Standard
@@ -10042,7 +10260,7 @@ integer
 \end_layout
 
 \begin_layout Subsection
-PFM
+Pupil Fitting Model
 \end_layout
 
 \begin_layout Standard
@@ -10165,7 +10383,7 @@ integer
 \end_layout
 
 \begin_layout Subsection
-PP
+Preprocessing
 \end_layout
 
 \begin_layout Standard
@@ -10288,7 +10506,7 @@ integer
 \end_layout
 
 \begin_layout Subsection
-Process illuminance
+Process Illuminance
 \end_layout
 
 \begin_layout Standard
@@ -11659,7 +11877,7 @@ replace
 \end_layout
 
 \begin_layout Subsection
-Resp Preprocessing
+Respiratory Preprocessing
 \end_layout
 
 \begin_layout Standard
@@ -11960,7 +12178,7 @@ cushion
 \end_layout
 
 \begin_layout Subsection
-SCR Preprocessing
+Skin Conductance Response Preprocessing
 \end_layout
 
 \begin_layout Standard
@@ -12823,7 +13041,7 @@ logical
 \end_layout
 
 \begin_layout Subsection
-SF
+Spontaneous Fluctuations
 \end_layout
 
 \begin_layout Standard
@@ -13212,7 +13430,7 @@ double
 \end_layout
 
 \begin_layout Subsection
-SF DCM
+Spontaneous Fluctuations — Dynamic Causal Modelling
 \end_layout
 
 \begin_layout Standard
@@ -13513,7 +13731,7 @@ double
 \end_layout
 
 \begin_layout Subsection
-SF MP
+Spontaneous Fluctuations — Matching Pursuit
 \end_layout
 
 \begin_layout Standard
