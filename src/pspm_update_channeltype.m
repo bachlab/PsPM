@@ -15,15 +15,21 @@ function [channeltype_new] = pspm_update_channeltype (channeltype_og, keyword)
 %   Introduced in PsPM 6.0.
 %   Written in 2022 by Teddy Chao (UCL)
 
+%% Initialise
+global settings
+if isempty(settings)
+  pspm_init;
+end
+sts = -1;
 channeltype_new = channeltype_og;
 channeltype_og_struct = split(channeltype_og, '_');
 channeltype_new_struct = split(channeltype_new, '_');
 switch class(keyword)
   case 'char'
     switch keyword
-      case 'c'
-        loc = strcmp(channeltype_og_struct,'l') + strcmp(channeltype_og_struct,'r');
-        channeltype_new_struct{logical(loc)} = 'c';
+      case settings.lateral.char.c
+        loc = strcmp(channeltype_og_struct, settings.lateral.char.l) + strcmp(channeltype_og_struct,settings.lateral.char.r);
+        channeltype_new_struct{logical(loc)} = settings.lateral.char.c;
       case 'pp'
         if ~strcmp(channeltype_og_struct,'pp')
           channeltype_new_struct = {channeltype_og_struct{1}, 'pp', channeltype_og_struct{2:end}};
@@ -31,9 +37,9 @@ switch class(keyword)
     end
   otherwise
     % if keyword is {'c','pp'}
-    if isempty(setdiff(keyword, {'c','pp'})) || isempty(setdiff(keyword, {'pp','c'}))
-      loc = strcmp(channeltype_og_struct,'l') + strcmp(channeltype_og_struct,'r');
-      channeltype_new_struct{logical(loc)} = 'c';
+    if isempty(setdiff(keyword, {settings.lateral.char.c,'pp'})) || isempty(setdiff(keyword, {'pp',settings.lateral.char.c}))
+      loc = strcmp(channeltype_og_struct,settings.lateral.char.l) + strcmp(channeltype_og_struct,settings.lateral.char.r);
+      channeltype_new_struct{logical(loc)} = settings.lateral.char.c;
       if ~strcmp(channeltype_og_struct,'pp')
         channeltype_new_struct = {channeltype_new_struct{1}, 'pp', channeltype_new_struct{2:end}};
       end
