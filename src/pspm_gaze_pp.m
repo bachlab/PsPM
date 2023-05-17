@@ -140,7 +140,7 @@ else
     preprocessed_gaze.header.sr = gaze_og{1}.header.sr;
   end
   preprocessed_gaze.data = transpose(mean(transpose([preprocessed_gaze.data, preprocessed_gaze_combine.data]),'omitnan'));
-  preprocessed_gaze.header.chantype = pspm_update_channeltype(gaze_og{1}.header.chantype,{'pp','c'});
+  preprocessed_gaze.header.chantype = pspm_update_channeltype(gaze_og{1}.header.chantype,{'pp',settings.lateral.char.c});
   preprocessed_gaze.header.units = gaze_og{1}.header.units;
 end
 %% 7 save

@@ -104,9 +104,9 @@ screen_size = data{1}.screenSize;
 viewing_dist = data{1}.viewingDistance;
 
 addpath(pspm_path('backroom'));
-if strcmpi(eyes_observed, 'l')
+if strcmpi(eyes_observed, settings.lateral.char.l)
   mask_chans = {'blink_l', 'saccade_l'};
-elseif strcmpi(eyes_observed, 'r')
+elseif strcmpi(eyes_observed, settings.lateral.char.r)
   mask_chans = {'blink_r', 'saccade_r'};
 else
   mask_chans = {'blink_l', 'blink_r', 'saccade_l', 'saccade_r'};

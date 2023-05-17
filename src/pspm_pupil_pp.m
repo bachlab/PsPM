@@ -47,7 +47,7 @@ function varargout = pspm_pupil_pp (fn, options)
 %   │           ▶ ︎Preprocessing raw eye data:
 %   │           The best eye is processed when channel is 'pupil'. To
 %   │           process a specific eye, use 'pupil_l' or 'pupil_r'.
-%   │           To process the combined left and right eye, use 'pupil_lr'.
+%   │           To process the combined left and right eye, use 'pupil_c'.
 %   │           ▶ Preprocessing previously processed data:
 %   │           Pupil channels created from other preprocessing steps can
 %   │           be further processed by this function. To enable this, pass
@@ -221,6 +221,10 @@ end
 return
 
 function varargout  = pspm_preprocess(data, data_combine, segments, custom_settings, plot_data)
+global settings
+if isempty(settings)
+  pspm_init;
+end
 sts = -1;
 % 1 definitions
 combining = ~isempty(data_combine{1}.data);
@@ -256,7 +260,7 @@ addpath(libpath{:});
 model = PupilDataModel(data{1}.header.units, diameter, segmentTable, 0, custom_settings);
 model.filterRawData();
 if combining
-  smooth_signal.header.chantype = pspm_update_channeltype(data{1}.header.chantype, {'pp', 'c'});
+  smooth_signal.header.chantype = pspm_update_channeltype(data{1}.header.chantype, {'pp', settings.lateral.char.c});
 elseif contains(data{1}.header.chantype, '_pp')
   smooth_signal.header.chantype = data{1}.header.chantype;
 else
@@ -382,8 +386,13 @@ function eye = pspm_get_eye(channeltype)
 %     eye    		a character
 % PsPM (version 5.1.2)
 % (C) 2021 Teddy Chao (UCL)
+global settings
+if isempty(settings)
+  pspm_init;
+end
+sts = -1;
 eye = 'unknown';
-for eye_attempt = ['l', 'r', 'c']
+for eye_attempt = [settings.lateral.char.l, settings.lateral.char.r, settings.lateral.char.c]
 	if contains(channeltype, ['_', eye_attempt, '_'])
 		eye = eye_attempt;
 	elseif channeltype(length(channeltype)-1:length(channeltype)) == ['_', eye_attempt]
