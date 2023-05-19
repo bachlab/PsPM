@@ -1,6 +1,6 @@
 function varargout = pspm_merge(infile1, infile2, reference, options)
 % ● Description
-%   pspm_merge merges two PsPM datafiles with different channels and writes
+%	pspm_merge merges two PsPM datafiles with different channels and writes
 %   it to a file with the same name as the first file, prepended 'm'.
 %   The data is aligned to file start or first marker. Data after the reference
 %   are extended to the duration of the longer data file
@@ -9,15 +9,15 @@ function varargout = pspm_merge(infile1, infile2, reference, options)
 % ● Arguments
 %    infile1, infile2:  data file name(s) (char, or cell array for multiple
 %                       files)
-%           reference:	'marker' aligns with respect to first marker
-%												'file'   aligns with respect to file start
+%           reference:  'marker' aligns with respect to first marker
+%                       'file'   aligns with respect to file start
 %   ┌─────────options:
-%   ├──────.overwrite:	overwrite existing files by default
-%		│										[logical] (0 or 1)
-%		│										Define whether to overwrite existing output files or not.
-%		│										Default value: determined by pspm_overwrite.
-%   └.marker_chan_num:	2 marker channel numbers - if undefined
-%												or 0, first marker channel is used
+%   ├──────.overwrite:  overwrite existing files by default
+%   │                   [logical] (0 or 1)
+%   │                   Define whether to overwrite existing output files or not.
+%   │                   Default value: determined by pspm_overwrite.
+%   └.marker_chan_num:  2 marker channel numbers - if undefined
+%                       or 0, first marker channel is used
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (UZH, WTCN)

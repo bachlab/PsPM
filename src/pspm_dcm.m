@@ -58,8 +58,8 @@ function varargout = pspm_dcm(model, options)
 % 	├.flexevents: flexible events to adjust amplitude priors
 % 	├─.fixevents: fixed events to adjust amplitude priors
 % 	└─.constrained:
-% 	              	Constrained model for flexible responses which have fixed
-%               	dispersion (0.3 s SD) but flexible latency.
+% 	              Constrained model for flexible responses which have fixed
+%                 dispersion (0.3 s SD) but flexible latency.
 % 	┌────options:
 % 	│ ▶︎ Response function
 % 	├─.crfupdate: Update CRF priors to observed SCRF, or use pre-estimated

@@ -1,11 +1,11 @@
 function arclen = pspm_convert_visangle2sps_core(lat, lon)
-% ? Description
-% ? Format
+% ● Description
+% ● Format
 %   arclen = pspm_convert_visangle2sps_core(lat, lon)
-% ? Arguments
+% ● Arguments
 %   lat:
 %   lon:
-% ? History
+% ● History
 %   Maintained in 2022 by Teddy Chao (UCL)
 
 sts = -1;

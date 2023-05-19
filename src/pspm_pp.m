@@ -11,11 +11,11 @@ function newdatafile = pspm_pp(varargin)
 %          n: number of timepoints for median filter
 %   'butter': 1st order butterworth low pass filter for SCR
 %       freq: cut off frequency (min 20 Hz)
-%	channelnumber:
-%	┌──options:	[struct] optional
-% └.overwrite:[logical] (0 or 1)
-%             Define whether to overwrite existing output files or not.
-%             Default value: determined by pspm_overwrite.
+%  channelnumber:
+%  ┌───options: [struct] optional
+%  └.overwrite: [logical] (0 or 1)
+%               Define whether to overwrite existing output files or not.
+%               Default value: determined by pspm_overwrite.
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2009-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

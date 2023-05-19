@@ -1,9 +1,9 @@
 function pspm(varargin)
-% ‚ó? Description
+% Åú Description
 %   pspm.m handles the main GUI for PsPM
-% ‚ó? Last Updated in
+% Åú Last Updated in
 %   PsPM 6.1
-% ‚ó? History
+% Åú History
 %   Written in 13-09-2022 by Teddy Chao (UCL)
 
 if verLessThan('matlab','9.4')

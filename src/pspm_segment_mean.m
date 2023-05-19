@@ -20,8 +20,8 @@ function [sts, out] = pspm_segment_mean(segments, options)
 %   │               returned. If written to file. The file is also speciefied
 %   │               in the out struct. Default is ''.
 %   └────overwrite: [logical] (0 or 1)
-%										Define whether to overwrite existing output files or not.
-%										Default value: determined by pspm_overwrite.
+%                   Define whether to overwrite existing output files or not.
+%                   Default value: determined by pspm_overwrite.
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2008-2016 by Tobias Moser (University of Zurich)

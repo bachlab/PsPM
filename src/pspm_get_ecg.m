@@ -13,7 +13,7 @@ function [sts, data] = pspm_get_ecg(import)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 %% assign respiratory data
