@@ -114,12 +114,12 @@ switch FunName
     % 2.15 pspm_data_editor --
     % output_file does not have a default value
     % epoch_file does not have a default value
-    options = autofill(options, 'overwrite',              0,          [1, 2]);
+    options = autofill(options, 'overwrite',              0,          1                 );
   case 'dcm'
     % 2.16 pspm_dcm --
-    options = autofill(options, 'aSCR_sigma_offset',      0.1,        '>=', 0           ); 
+    options = autofill(options, 'aSCR_sigma_offset',      0.1,        '>=', 0           );
     % minimum dispersion (standard deviation) for flexible responses (second)
-    options = autofill(options, 'crfupdate',              0,          '*Num'            ); 
+    options = autofill(options, 'crfupdate',              0,          '*Num'            );
     % update CRF priors to observed SCRF, or use pre-estimated priors
     options = autofill(options, 'crfupdate',              0,          1                 );
     options = autofill(options, 'depth',                  2,          '*Num'            );
@@ -135,7 +135,7 @@ switch FunName
     options = autofill(options, 'method',                 'dcm'                         );
     options = autofill(options, 'nosave',                 0,          1                 );
     % Don't save dcm structure (e.g. used by pspm_get_rf)
-    options = autofill(options, 'overwrite',              1,          [0, 2]            );
+    options = autofill(options, 'overwrite',              1,          0                 );
     options = autofill(options, 'rf',                     0,          1                 );
     % Call an external file to provide response function (for use when this is previously
     % estimated by pspm_get_rf)
@@ -154,9 +154,9 @@ switch FunName
     % condition descriptions)
   case 'dcm_inv'
     % 2.17 pspm_dcm_inv --
-    options = autofill(options, 'aSCR_sigma_offset',      0.1,        '*Num'            ); 
+    options = autofill(options, 'aSCR_sigma_offset',      0.1,        '*Num'            );
     % minimum dispersion (standard deviation) for flexible responses (second)
-    options = autofill(options, 'crfupdate',              0,          '*Num'            ); 
+    options = autofill(options, 'crfupdate',              0,          '*Num'            );
     % update CRF priors to observed SCRF, or use pre-estimated priors, default to use pre-estimated priors
     options = autofill(options, 'crfupdate',              0,          1                 );
     options = autofill(options, 'depth',                  2,          '*Int'            );
@@ -167,7 +167,7 @@ switch FunName
     % only estimate RF, do not do trial-wise DCM
     options = autofill(options, 'meanSCR',                0,          '*Num'            );
     % data to adjust the response amplitude priors to
-    options = autofill(options, 'overwrite',              1,          [0, 2]            );
+    options = autofill(options, 'overwrite',              1,          0                 );
     options = autofill(options, 'sclpost',                2,          '>=', 0           );
     % scl-change-free window after last event (second)
     options = autofill(options, 'sclpre',                 2.5,        '>=', 0           );
@@ -183,7 +183,7 @@ switch FunName
     % use pre-specified RF, provided in file, or as 4-element vector in log parameter space
   case 'down'
     % 2.18 pspm_down --
-    options = autofill(options, 'overwrite',              1,          [0, 2]            );
+    options = autofill(options, 'overwrite',              1,          0                 );
   case 'ecg_editor'
     % 2.19 pspm_down
     options = autofill(options, 'factor',                 1,          '>', 0            );
@@ -203,10 +203,10 @@ switch FunName
     options = autofill(options, 'target',                 'screen',   '*Char'           );
   case 'extract_segments'
     % 2.22 pspm_extract_segments --
-    options = autofill(options, 'length',                 10,         '>=', 0            );
+    options = autofill(options, 'length',                 10,         '>=', 0           );
     options = autofill(options, 'norm',                   0,          1                 );
     options = autofill(options, 'outputfile',             '',         '*Char'           );
-    options = autofill(options, 'overwrite',              0,          [1, 2]            );
+    options = autofill(options, 'overwrite',              0,          1                 );
     options = autofill(options, 'plot',                   0,          1                 );
     options = autofill(options, 'timeunit',               'seconds',  {'seconds', ...
                                                                       'samples',...
@@ -257,7 +257,7 @@ switch FunName
     % 2.26 pspm_get_markerinfo --
     options = autofill(options, 'filename',               '',         '*Char'           );
     options = autofill(options, 'markerchan',             -1,         '*Int'            );
-    options = autofill(options, 'overwrite',              0,          [1, 2]            );
+    options = autofill(options, 'overwrite',              0,          1                 );
   case 'get_rf'
     % 2.27 pspm_get_rf --
     options = autofill(options, 'crfupdate',              0,          1                 );
@@ -269,7 +269,7 @@ switch FunName
   case 'glm'
     % 2.28 pspm_glm --
     options = autofill(options, 'norm',                   0,          1                 );
-    options = autofill(options, 'overwrite',              0,          [1, 2]            );
+    options = autofill(options, 'overwrite',              0,          1                 );
     options = autofill(options, 'marker_chan_num',        'marker',   '*Num*Char'       );
     options = autofill(options, 'marker_chan_num_event',  'first',    '*Num*Char'       );
     if ~isfield(options, 'exclude_missing')
@@ -283,7 +283,7 @@ switch FunName
     options = fill_glm(options);
   case 'import'
     % 2.29 pspm_import --
-    options = autofill(options, 'overwrite',              0,          [1, 2]            );
+    options = autofill(options, 'overwrite',              0,          1                 );
   case 'interpolate'
     % 2.30 pspm_interpolate --
     options = autofill_channel_action(options);
@@ -295,11 +295,11 @@ switch FunName
                                                                       'next'}           );
 
     options = autofill(options, 'newfile',                0,          1                 );
-    options = autofill(options, 'overwrite',              0,          [1, 2]            );
+    options = autofill(options, 'overwrite',              0,          1                 );
     options = autofill(options, 'channel',                [],         '*Int*Char*Cell'  );
   case 'load1'
     % 2.31 pspm_load1 --
-    options = autofill(options, 'overwrite',              0,          [1, 2]            );
+    options = autofill(options, 'overwrite',              0,          1                 );
     options = autofill(options, 'zscored',                0,          1                 );
   case 'merge'
     %% 2.32 pspm_merge
@@ -308,13 +308,13 @@ switch FunName
       options.invalid = 1;
       return
     end
-    options = autofill(options, 'overwrite',              0,          [1, 2]            );
+    options = autofill(options, 'overwrite',              0,          1                 );
   case 'pfm'
     % 2.33 pspm_pfm --
-    options = autofill(options, 'overwrite',              0,          [1, 2]            );
+    options = autofill(options, 'overwrite',              0,          1                 );
   case 'pp'
     % 2.34 pspm_pp --
-    options = autofill(options, 'overwrite',              0,          [1, 2]            );
+    options = autofill(options, 'overwrite',              0,          1                 );
   case 'prepdata'
     options = autofill(options, 'fillnan',                1,          0                 );
   case 'process_illuminance'
@@ -402,7 +402,7 @@ switch FunName
     % 2.41 pspm_segment_mean --
     options = autofill(options, 'adjust_method',          'none',     {'downsample', ...
                                                                       'interpolate'}    );
-    options = autofill(options, 'overwrite',              0,          [1, 2]            );
+    options = autofill(options, 'overwrite',              0,          1                 );
     options = autofill(options, 'newfile',                '',         '*Char'           );
     options = autofill(options, 'plot',                   0,          1                 );
   case 'sf'
@@ -411,7 +411,7 @@ switch FunName
     options = autofill(options,'dispwin',                 1,          0                 );
     options = autofill(options,'fresp',                   0.5,        '>=', 0           );
     options = autofill(options,'marker_chan_num',         1,          '*Int*Char'       );
-    options = autofill(options,'overwrite',               1,          [0, 2]            );
+    options = autofill(options,'overwrite',               1,          0                 );
     options = autofill(options,'threshold',               0.1,        '>', 0            );
     options = autofill(options,'theta',                   [0.923581, ...
                                                           3.921034, ...
@@ -453,7 +453,7 @@ switch FunName
                                                                       '>', 0            );
     % minimum ratio of session break to normal inter marker interval (default 3)
     options = autofill(options, 'missing',               [],          '*Char'           );
-    options = autofill(options, 'overwrite',              0,          [1, 2]            );
+    options = autofill(options, 'overwrite',              0,          1                 );
     options = autofill(options, 'prefix',                 0,          '<=', 0           );
     options = autofill(options, 'randomITI',              0,          1                 );
     options = autofill(options, 'splitpoints',           [],          '*Num'            );
@@ -463,7 +463,7 @@ switch FunName
     % 2.46 pspm_trim --
     options = autofill(options, 'drop_offset_markers',    0,          '*Int'            );
     options = autofill(options, 'marker_chan_num',        1,          '*Int*Char'       );
-    options = autofill(options, 'overwrite',              0,          [1, 2]            );
+    options = autofill(options, 'overwrite',              0,          1                 );
   case 'write_channel'
     % 2.47 pspm_write_channel --
     options = autofill(options, 'channel',                0,          '*Int*Char*Cell'  );
