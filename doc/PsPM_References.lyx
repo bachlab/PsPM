@@ -570,7 +570,7 @@ channel_output
 \family typewriter
 all
 \family default
- All sound markers are to be added as channel to the original file.
+ All markers are to be added.
 \end_layout
 
 \begin_layout Labeling
@@ -579,8 +579,7 @@ all
 \family typewriter
 corrected
 \family default
- Only sound markers which have been assigned to a marker from the trigger
- channel are to be added as channel to the original file.
+ Only markers which have been assigned are to be added.
 \end_layout
 
 \end_deeper
@@ -598,8 +597,7 @@ eyes
 \family typewriter
 combined
 \family default
- Marker referring to the combined bilateral eyes that are computed based
- on the left and right eyes.
+ Combined bilateral eyes that are computed based on the left and right eyes.
 \end_layout
 
 \begin_layout Labeling
@@ -608,7 +606,7 @@ combined
 \family typewriter
 left
 \family default
- Marker referring to the left eye.
+ Left eye.
 \end_layout
 
 \begin_layout Labeling
@@ -617,7 +615,7 @@ left
 \family typewriter
 right
 \family default
- Marker referring to the right eye.
+ Right eye.
 \end_layout
 
 \end_deeper
@@ -635,7 +633,7 @@ nan_output
 \family typewriter
 none
 \family default
- Values not to be displayed on written intof files.
+ Values not to be displayed on the screen or written into files.
 \end_layout
 
 \begin_layout Labeling
@@ -711,7 +709,7 @@ seconds
 \shape italic
 Second
 \shape default
- as the unit of the time series.
+ as the unit.
 \end_layout
 
 \begin_layout Labeling
@@ -724,7 +722,7 @@ samples
 \shape italic
 Sample
 \shape default
- as the unit of the time series.
+ as the unit.
 \end_layout
 
 \begin_layout Labeling
@@ -737,7 +735,7 @@ markers
 \shape italic
 Marker
 \shape default
- as the unit of the time series.
+ as the unit.
 \end_layout
 
 \end_deeper
@@ -755,7 +753,7 @@ overwrite
 \family typewriter
 1
 \family default
- The results will overwrite the current data.
+ The results will be overwrite.
 \end_layout
 
 \begin_layout Labeling
@@ -764,7 +762,7 @@ overwrite
 \family typewriter
 0
 \family default
- The results will be dropped and not overwrite the current data.
+ The results will be dropped out.
 \end_layout
 
 \end_deeper
@@ -1307,7 +1305,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
-1, 2
+1
 \end_layout
 
 \end_inset
@@ -3656,7 +3654,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
-1, 2
+1
 \end_layout
 
 \end_inset
@@ -3688,7 +3686,7 @@ pspm_dcm
 \begin_layout Standard
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="19" columns="4">
+<lyxtabular version="3" rows="18" columns="4">
 <features booktabs="true" tabularvalignment="middle" tabularwidth="100line%">
 <column alignment="left" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
@@ -3780,51 +3778,6 @@ double
 
 \family typewriter
 > 0
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-\series bold
-method
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-char
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-dcm
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-?
 \end_layout
 
 \end_inset
@@ -4450,7 +4403,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
-0, 2
+0
 \end_layout
 
 \end_inset
@@ -5377,7 +5330,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
-0, 2
+0
 \end_layout
 
 \end_inset
@@ -5588,7 +5541,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
-1, 2
+1
 \end_layout
 
 \end_inset
@@ -6653,7 +6606,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
-1, 2
+1
 \end_layout
 
 \end_inset
@@ -7570,9 +7523,7 @@ double (vector)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\family typewriter
-?
+Any
 \end_layout
 
 \end_inset
@@ -7705,7 +7656,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
-1, 2
+1
 \end_layout
 
 \end_inset
@@ -8262,7 +8213,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
-1, 2
+1
 \end_layout
 
 \end_inset
@@ -9013,7 +8964,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
-0, 2
+0
 \end_layout
 
 \end_inset
@@ -9443,7 +9394,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
-1, 2
+1
 \end_layout
 
 \end_inset
@@ -9566,7 +9517,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
-1, 2
+1
 \end_layout
 
 \end_inset
@@ -9912,7 +9863,7 @@ double
 \begin_layout Plain Layout
 
 \family typewriter
-1, 2
+1
 \end_layout
 
 \end_inset
@@ -10035,7 +9986,7 @@ integer
 \begin_layout Plain Layout
 
 \family typewriter
-1, 2
+1
 \end_layout
 
 \end_inset
@@ -10246,7 +10197,7 @@ integer
 \begin_layout Plain Layout
 
 \family typewriter
-1, 2
+1
 \end_layout
 
 \end_inset
@@ -10369,7 +10320,7 @@ integer
 \begin_layout Plain Layout
 
 \family typewriter
-1, 2
+1
 \end_layout
 
 \end_inset
@@ -10492,7 +10443,7 @@ integer
 \begin_layout Plain Layout
 
 \family typewriter
-1, 2
+1
 \end_layout
 
 \end_inset
@@ -10704,7 +10655,7 @@ integer
 \begin_layout Plain Layout
 
 \family typewriter
-1, 2
+1
 \end_layout
 
 \end_inset
@@ -12982,7 +12933,7 @@ integer
 \begin_layout Plain Layout
 
 \family typewriter
-1, 2
+1
 \end_layout
 
 \end_inset
@@ -13328,7 +13279,7 @@ integer
 \begin_layout Plain Layout
 
 \family typewriter
-0, 2
+0
 \end_layout
 
 \end_inset
@@ -14271,7 +14222,7 @@ integer
 \begin_layout Plain Layout
 
 \family typewriter
-1, 2
+1
 \end_layout
 
 \end_inset
@@ -14703,7 +14654,7 @@ integer
 \begin_layout Plain Layout
 
 \family typewriter
-1, 2
+1
 \end_layout
 
 \end_inset
