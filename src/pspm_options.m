@@ -468,9 +468,7 @@ switch FunName
     % 2.47 pspm_write_channel --
     options = autofill(options, 'channel',                0,          '*Int*Char*Cell'  );
     options = autofill(options, 'delete',                 'last',     {'first','all'}   );
-    options = autofill(options, 'prefix', ...
-                      'Generic undocumented operation :: ',...
-                                                                      '*Char'           );
+    options = autofill(options, 'prefix',                '',          '*Char'           );
     if ~isfield('options','msg')
       options.msg = '';
     else
