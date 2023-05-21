@@ -30,11 +30,11 @@ function varargout = pspm_load1(fn, action, savedata, options)
 %                        Define whether to overwrite existing output files or not.
 %                        Default value: determined by pspm_overwrite.
 % ● Output
-%       data:	depending on option
+%       data:   depending on option
 %             - none (for 'none', 'savecon', 'save')
 %             - data.stats, data.names, (and data.trlnames if existing) (for
 %                        'stats', 'recon', 'cond')
-%                        -	con structure (for 'con')
+%                        - con structure (for 'con')
 %                        - full first level structure (for 'all')
 % ● Developer's Notes
 %   General structure of PsPM 1st level model files

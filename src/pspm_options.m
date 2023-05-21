@@ -126,7 +126,7 @@ switch FunName
     % no of trials to invert at the same time
     options = autofill(options, 'dispsmallwin',           0,          '*Num'            );
     options = autofill(options, 'dispwin',                1,          0                 );
-    options = autofill(options, 'eventnames',           	{},         '*Cell'           );
+    options = autofill(options, 'eventnames',            {},         '*Cell'           );
     % Cell array of names for individual events
     options = autofill(options, 'getrf',                  0,          1                 );
     % only estimate RF, do not do trial-wise DCM

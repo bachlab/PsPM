@@ -1,19 +1,19 @@
 function varargout = pspm_gaze_pp(fn, options)
-% ●	Description
-% 	pspm_gaze_pp preprocesses gaze signals, gaze x and gaze y channels at
-% 	the same time.
-% ●	Format
-% 	[sts, out_channel] = pspm_gaze_pp(fn) or
-% 	[sts, out_channel] = pspm_gaze_pp(fn, options)
-% ●	Arguments
-% 	              fn: [string] Path to the PsPM file which contains the gaze data.
-% 	         options: [struct]
+% ● Description
+%   pspm_gaze_pp preprocesses gaze signals, gaze x and gaze y channels at
+%   the same time.
+% ● Format
+%   [sts, out_channel] = pspm_gaze_pp(fn) or
+%   [sts, out_channel] = pspm_gaze_pp(fn, options)
+% ● Arguments
+%                 fn: [string] Path to the PsPM file which contains the gaze data.
+%            options: [struct]
 %           .channel: [numeric/string, optional] Channel ID to be preprocessed.
 %   .channel_combine: [numeric/string, optional] Channel ID to be combined.
 %      .valid_sample: [bool] 1 or 0. 1 if use valid samples produced by
 %                     pspm_pupil_pp, 0 if not to use. default as 0.
-% ●	History
-% 	Written in 2021 by Teddy Chao (UCL)
+% ● History
+%   Written in 2021 by Teddy Chao (UCL)
 
 %% 1 Initialise
 global settings;

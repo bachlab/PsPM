@@ -1,6 +1,6 @@
 function varargout = pspm_merge(infile1, infile2, reference, options)
 % ● Description
-%	pspm_merge merges two PsPM datafiles with different channels and writes
+%   pspm_merge merges two PsPM datafiles with different channels and writes
 %   it to a file with the same name as the first file, prepended 'm'.
 %   The data is aligned to file start or first marker. Data after the reference
 %   are extended to the duration of the longer data file
@@ -104,9 +104,9 @@ for iFile = 1:numel(infile{1})
   outfile{iFile} = fullfile(pth, ['m', fn, ext]);
   infos.mergedfile = outfile{iFile} ;
   outdata.data = data;
-	outdata.infos = infos;
-	options.overwrite = pspm_overwrite(outfile{iFile}, options);
-	outdata.options = options;
+  outdata.infos = infos;
+  options.overwrite = pspm_overwrite(outfile{iFile}, options);
+  outdata.options = options;
   sts_load_data = pspm_load_data(outfile{iFile}, outdata);
   if sts_load_data ~= 1, return; end
 end

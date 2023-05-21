@@ -252,9 +252,9 @@ delete(gcbf)
 function panelTestDef_SelectionChangeFcn(hObject, eventdata, handles)
 % hObject    handle to the selected object in panelTestDef
 % eventdata  structure with the following fields (see UIBUTTONGROUP)
-%	EventName: string 'SelectionChanged' (read only)
-%	OldValue: handle of the previously selected object or empty if none was selected
-%	NewValue: handle of the currently selected object
+% EventName: string 'SelectionChanged' (read only)
+% OldValue: handle of the previously selected object or empty if none was selected
+% NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
 
 testGroupVal = getTestGroupValue(handles);
@@ -270,9 +270,9 @@ guidata(hObject, handles);
 function panelStatstype_SelectionChangeFcn(hObject, eventdata, handles)
 % hObject    handle to the selected object in panelTestDef
 % eventdata  structure with the following fields (see UIBUTTONGROUP)
-%	EventName: string 'SelectionChanged' (read only)
-%	OldValue: handle of the previously selected object or empty if none was selected
-%	NewValue: handle of the currently selected object
+% EventName: string 'SelectionChanged' (read only)
+% OldValue: handle of the previously selected object or empty if none was selected
+% NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
 
 % get current stats type and assign names --
