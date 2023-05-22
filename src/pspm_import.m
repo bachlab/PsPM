@@ -305,8 +305,9 @@ for d = 1:numel(D)
 		savedata.infos = infos;
 		if exist('options','var')
 			savedata.options = options;
-		end
-		if pspm_overwrite(outfile{d, blk}, options)
+    end
+    ow = pspm_overwrite(outfile{d, blk}, options);
+		if ow
 			sts = pspm_load_data(outfile{d, blk}, savedata);
 		end
 		if sts ~= 1

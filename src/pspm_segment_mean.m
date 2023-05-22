@@ -154,7 +154,8 @@ out.conditions = conditions;
 if ~isempty(options.newfile)
 	[pathstr, ~, ~] = fileparts(options.newfile);
 	if exist(pathstr, 'dir')
-		if pspm_overwrite(options.newfile, options)
+	  ow = pspm_overwrite(options.newfile, options);
+		if ow
 			segment_mean = conditions;
 			save(options.newfile, 'segment_mean');
 		end
