@@ -14,7 +14,7 @@ function [sts, data] = pspm_get_custom(import)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
 sts = -1;
 %% assign data

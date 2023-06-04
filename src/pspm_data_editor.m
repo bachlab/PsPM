@@ -381,7 +381,7 @@ function lbEpochs_Callback(hObject, ~, ~)
 %   handles    structure with handles and user data (see GUIDATA)
 % Hints
 %   contents = cellstr(get(hObject,'String')) returns lbEpochs contents as cell array
-%	contents{get(hObject,'Value')} returns selected item from lbEpochs
+%   contents{get(hObject,'Value')} returns selected item from lbEpochs
 epId = get(hObject,'Value');
 HighlightEpoch(hObject, epId);
 
@@ -494,7 +494,7 @@ function lbEpochs_CreateFcn(hObject, ~, ~)
 %   handles    empty - handles not created until after all CreateFcns called
 % Hint
 %   listbox controls usually have a white background on Windows.
-%	See ISPC and COMPUTER.
+%   See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
   set(hObject,'BackgroundColor','white');
 end
@@ -925,7 +925,7 @@ end
 
 function pbCancel_Callback(hObject, ~, handles)
 % Feature
-%	Executes on button press in pbCancel.
+%   Executes on button press in pbCancel.
 % Variables
 %   hObject    handle to pbCancel (see GCBO)
 %   eventdata  reserved - to be defined in a future version of MATLAB
@@ -985,7 +985,7 @@ function lbChannel_Callback(hObject, ~, handles)
 %   handles    structure with handles and user data (see GUIDATA)
 % Hints
 %   contents = cellstr(get(hObject,'String')) returns lbChannel contents as cell array
-%	contents{get(hObject,'Value')} returns selected item from lbChannel
+%   contents{get(hObject,'Value')} returns selected item from lbChannel
 if strcmpi(handles.input_mode, 'file')
   plots = find(cellfun(@(x) ~isempty(x), handles.plots));
   sel = get(hObject, 'Value');
@@ -1011,7 +1011,7 @@ function lbChannel_CreateFcn(hObject, ~, ~)
 %   handles    empty - handles not created until after all CreateFcns called
 % Hint
 %   listbox controls usually have a white background on Windows.
-%	See ISPC and COMPUTER.
+%   See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
   set(hObject,'BackgroundColor','white');
 end
@@ -1044,7 +1044,7 @@ bgOutputFormat_SelectionChangedFcn(hObject, eventdata, handles);
 
 function pbOpenInputFile_Callback(hObject, ~, handles)
 % Feature
-%	Executes on button press in pbOpenInputFile.
+%   Executes on button press in pbOpenInputFile.
 % Variables
 %   hObject    handle to pbOpenInputFile (see GCBO)
 %   eventdata  reserved - to be defined in a future version of MATLAB
@@ -1131,7 +1131,7 @@ function edOpenMissingEpochFilePath_Callback(hObject, ~, handles)
 %   handles    structure with handles and user data (see GUIDATA)
 % Hints
 %   get(hObject,'String') returns contents of edOpenMissingEpochFilePath as text
-%	str2double(get(hObject,'String')) returns contents of edOpenMissingEpochFilePath as a double
+%   str2double(get(hObject,'String')) returns contents of edOpenMissingEpochFilePath as a double
 if isempty(handles.epoch_file)
   set(hObject, 'String', 'No input specified');
 else
@@ -1147,7 +1147,7 @@ function edOpenMissingEpochFilePath_CreateFcn(hObject, ~, ~)
 %   handles    empty - handles not created until after all CreateFcns called
 % Hint
 %   edit controls usually have a white background on Windows.
-%	See ISPC and COMPUTER.
+%   See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
   set(hObject,'BackgroundColor','white');
 end

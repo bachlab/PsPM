@@ -21,21 +21,21 @@ function varargout = pspm_load1(fn, action, savedata, options)
 %                       input argument data that contains the contrasts
 %              'save':  check and save first levle model, use an additional
 %                       input argument data that contains the model struct
-%   savedata:	for 'save' option - a struct containing the model as only field
+%   savedata: for 'save' option - a struct containing the model as only field
 %             for 'savecon' option - contains the con structure
-%    options:	.zscored		zscore data - substract the mean and divide
+%    options: .zscored. zscore data - substract the mean and divide
 %                         by the standard deviation.
-%             .overwrite	for 'save'
-%													[logical] (0 or 1)
-%													Define whether to overwrite existing output files or not.
-%													Default value: determined by pspm_overwrite.
+%             .overwrite for 'save'
+%                        [logical] (0 or 1)
+%                        Define whether to overwrite existing output files or not.
+%                        Default value: determined by pspm_overwrite.
 % ● Output
-%       data:	depending on option
+%       data:   depending on option
 %             - none (for 'none', 'savecon', 'save')
 %             - data.stats, data.names, (and data.trlnames if existing) (for
-%								'stats', 'recon', 'cond')
-%							-	con structure (for 'con')
-%							- full first level structure (for 'all')
+%                        'stats', 'recon', 'cond')
+%                        - con structure (for 'con')
+%                        - full first level structure (for 'all')
 % ● Developer's Notes
 %   General structure of PsPM 1st level model files
 %   Each file contains one struct variable with the model

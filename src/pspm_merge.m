@@ -9,15 +9,15 @@ function varargout = pspm_merge(infile1, infile2, reference, options)
 % ● Arguments
 %    infile1, infile2:  data file name(s) (char, or cell array for multiple
 %                       files)
-%           reference:	'marker' aligns with respect to first marker
-%												'file'   aligns with respect to file start
+%           reference:  'marker' aligns with respect to first marker
+%                       'file'   aligns with respect to file start
 %   ┌─────────options:
-%   ├──────.overwrite:	overwrite existing files by default
-%		│										[logical] (0 or 1)
-%		│										Define whether to overwrite existing output files or not.
-%		│										Default value: determined by pspm_overwrite.
-%   └.marker_chan_num:	2 marker channel numbers - if undefined
-%												or 0, first marker channel is used
+%   ├──────.overwrite:  overwrite existing files by default
+%   │                   [logical] (0 or 1)
+%   │                   Define whether to overwrite existing output files or not.
+%   │                   Default value: determined by pspm_overwrite.
+%   └.marker_chan_num:  2 marker channel numbers - if undefined
+%                       or 0, first marker channel is used
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (UZH, WTCN)
@@ -104,9 +104,9 @@ for iFile = 1:numel(infile{1})
   outfile{iFile} = fullfile(pth, ['m', fn, ext]);
   infos.mergedfile = outfile{iFile} ;
   outdata.data = data;
-	outdata.infos = infos;
-	options.overwrite = pspm_overwrite(outfile{iFile}, options);
-	outdata.options = options;
+  outdata.infos = infos;
+  options.overwrite = pspm_overwrite(outfile{iFile}, options);
+  outdata.options = options;
   sts_load_data = pspm_load_data(outfile{iFile}, outdata);
   if sts_load_data ~= 1, return; end
 end

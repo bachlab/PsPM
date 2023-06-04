@@ -3,12 +3,12 @@ function [channeltype_new] = pspm_update_channeltype (channeltype_og, keyword)
 %   pspm_update_channeltype update the keywords of channel type
 % ● Arguments
 %   channeltype_og:  [string] the name of the original channel type
-%       keyword:  the keyword to update to
-%                 accepted values, 'c', 'pp', or {'c','pp'}
-%                 'c': update the lateral keyword 'l' or 'r' to 'c'
-%                 'pp': update the channel type to be preprocessed
-%                 {'c','pp'}: update the channel type to be both bilateral
-%                 and preprocessed.
+%          keyword:  the keyword to update to
+%                    accepted values, 'c', 'pp', or {'c','pp'}
+%                    'c': update the lateral keyword 'l' or 'r' to 'c'
+%                    'pp': update the channel type to be preprocessed
+%                    {'c','pp'}: update the channel type to be both bilateral
+%                    and preprocessed.
 % ● Output
 %   channeltype_new: the new channel type with the updated keyword
 % ● History

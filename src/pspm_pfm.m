@@ -348,7 +348,7 @@ elseif ~ismember(model.norm, [0, 1])
 end
 
 if ~pspm_overwrite(model.modelfile, options)
-	return;
+  return;
 end
 
 %% Loading files
