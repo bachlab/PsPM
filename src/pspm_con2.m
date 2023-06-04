@@ -73,7 +73,8 @@ if exist('options','var')
 end
 options = pspm_options(options, 'con2');
 %% check outfile
-if pspm_overwrite(outfile, options) == 0
+ow = pspm_overwrite(outfile, options)
+if ow == 0
   return
 end
 %% assemble input (for diagnostic checking)

@@ -199,7 +199,8 @@ else
       ep = cellfun(@(x) x.range', handles.epochs, 'UniformOutput', 0);
       epochs = cell2mat(ep)';
       if strcmpi(handles.input_mode, 'file')
-        if pspm_overwrite(out_file)
+        ow = pspm_overwrite(out_file);
+        if ow
           save(out_file, 'epochs');
         end
       else

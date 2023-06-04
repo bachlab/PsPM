@@ -282,8 +282,8 @@ switch FunName
     end
     options = fill_glm(options);
   case 'import'
-    % 2.29 pspm_import --
-    options = autofill(options, 'overwrite',              0,          1                 );
+    %% 2.29 pspm_import
+    options = autofill(options, 'overwrite',              1,          0                 );
   case 'interpolate'
     % 2.30 pspm_interpolate --
     options = autofill_channel_action(options);
