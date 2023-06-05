@@ -158,7 +158,8 @@ end
 options.isYout = ymissing(:)';
 %% 5 Extract parameters
 if ~flag_missing_too_long
-  [posterior, output] = VBA_NLStateSpaceModel(y(:)',u,f_fname,g_fname,dim,options);
+  [~,y_interpolated] = pspm_interpolate(y,struct());
+  [posterior, output] = VBA_NLStateSpaceModel(y_interpolated(:)',u,f_fname,g_fname,dim,options);
   for i = 1:length(output)
     output(i).options = rmfield(output(i).options, 'hf');
   end
