@@ -43,7 +43,7 @@ function [data] = import_smi(varargin)
     %
     % (C) 2019 Laure Ciernik
     % Updated 2021 Teddy Chao
-    
+
     if isempty(varargin)
         error('ID:invalid_input', 'import_SMI.m needs at least one input sample_file.');
     end
@@ -148,6 +148,8 @@ function [data] = import_smi(varargin)
     r_eye = any(cell2mat(cellfun(@(x)strcmpi(x,'RIGHT'),format_fields,'UniformOutput',0)));
     if l_eye && r_eye
         eyesObserved = 'LR';
+        % 'LR' means both the left and right eyes are observed,
+        % and it has no meaning of combining left and right eyes.
     elseif l_eye
         eyesObserved = 'L';
     else
@@ -317,8 +319,9 @@ function [data] = import_smi(varargin)
             % add blinks and saccades to datanum
             ignore_names = {'Blink', 'Saccade'};
             for j = 1:numel(ignore_str_pos)
-                for i=1:numel(data{sn}.eyesObserved)
-                    if strcmpi(data{sn}.eyesObserved(i), 'L')
+                eye_individuals = data{sn}.eyesObserved;
+                for i = 1:numel(eye_individuals)
+                    if strcmpi(eye_individuals(i), 'l')
                         ep_start = 1;
                         ep_stop = 2;
                     else
@@ -331,11 +334,10 @@ function [data] = import_smi(varargin)
                         stop_pos = min(size(sn_datanum, 1), ignore_str_pos{j}{ep_stop}(k));
                         sn_datanum(start_pos : stop_pos, idx) = 1;
                     end
-                    columns{idx} = [upper(data{sn}.eyesObserved(i)), ' ', ignore_names{j}];
+                    columns{idx} = [upper(eye_individuals(i)), ' ', ignore_names{j}];
                 end
             end
         end
-
         %% messages
         data{sn}.markers = [];
         data{sn}.markerinfos.value = [];
@@ -345,7 +347,6 @@ function [data] = import_smi(varargin)
             msg_times_in_sn = cell2mat(msgs(1, :));
             msg_times_in_sn = msg_times_in_sn(val_msg_idx);
             data{sn}.markers = msg_times_in_sn;
-
             msg_str =  msgs(3, val_msg_idx);
             msg_str_idx = cell2mat(cellfun(@(x) find(x==':', 1, 'first'),msg_str,'UniformOutput',0));
             for u=1:length(msg_str_idx)
@@ -367,7 +368,6 @@ function [data] = import_smi(varargin)
         % save column heder of raw data
         raw_columns = columns;
         data{sn}.raw_columns = raw_columns;
-
         if strcmpi(data{sn}.eyesObserved, 'LR')
             % pupilL, pupilR, xL, yL, xR, yR, blinkL, blinkR, saccadeL,
             % saccadeR

@@ -4,8 +4,8 @@ function [bs, x] = pspm_bf_psrf_fc(varargin)
 %   [bs, x] = pspm_bf_psrf_fc(TD, cs, cs_d, us, us_shift)
 %   [bs, x] = pspm_bf_psrf_fc([TD, cs, cs_d, us, us_shift])
 % ● Arguments
-%   td:	time resolution in second
-%    d:	number of derivatives (default 0)
+%   td: time resolution in second
+%    d: number of derivatives (default 0)
 % ● Reference
 %   Christoph W. Korn, Matthias Staib, Athina Tzovara, Giuseppe Castegnetti,
 %   and Dominik R. Bach (2016) A pupil size response model to assess
@@ -21,7 +21,7 @@ if isempty(settings), pspm_init; end
 %% check input arguments
 if nargin == 0
   errmsg = 'No sampling interval stated';
-	warning('ID:invalid_input', errmsg); return;
+  warning('ID:invalid_input', errmsg); return;
 end
 %% default values
 duration = 20;

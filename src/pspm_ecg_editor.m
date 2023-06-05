@@ -709,9 +709,9 @@ uiresume
 function figure1_KeyPressFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)
 % eventdata  structure with the following fields (see MATLAB.UI.FIGURE)
-%	Key: name of the key that was pressed, in lower case
-%	Character: character interpretation of the key(s) that was pressed
-%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
+% Key: name of the key that was pressed, in lower case
+% Character: character interpretation of the key(s) that was pressed
+% Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
 % handles    structure with handles and user data (see GUIDATA)
 if strcmpi(eventdata.Key, 'escape')
   exitModus;

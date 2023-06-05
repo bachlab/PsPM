@@ -1,23 +1,23 @@
 function [lat, lon, lat_range, lon_range] = pspm_compute_visual_angle_core(x_data, y_data, width, height, distance, options)
-% ? Description
+% ● Description
 %   pspm_compute_visual_angle computes from gaze data the corresponding
 %   visual angle (for each data point). The convention used here is that the
 %   origin of coordinate system for gaze data is at the bottom left corner of
 %   the screen.
-% ? Format
+% ● Format
 %   [lat, lon, lat_range, lon_range] = pspm_compute_visual_angle_core(x_data, y_data, options)
-% ? Arguments
+% ● Arguments
 %           x_data: X axis data
 %           y_data: y axis data
 %            width: screen width in same units as data
 %           height: screen height in same units as data
 %         distance: screen distance in same units as data
-% ? Output
+% ● Output
 %              lat: the latitude in degrees
 %              lon: the longitude in degrees
 %        lat_range: the latitude range
 %        lon_range: the longitude range
-% ? History
+% ● History
 %   Introduced in PsPM 4.0
 
 %% 1 Initialise

@@ -203,15 +203,15 @@ end
 sts = 1; % sts is true if all processing above is successful
 return
 
-function epochs = filter_to_epochs(filt)	% Return the start and end points of the excluded interval
-epoch_on = find(diff(filt) == -1) + 1;	% Return the start points of the excluded interval
-epoch_off = find(diff(filt) == 1);		% Return the end points of the excluded interval
+function epochs = filter_to_epochs(filt)    % Return the start and end points of the excluded interval
+epoch_on = find(diff(filt) == -1) + 1;      % Return the start points of the excluded interval
+epoch_off = find(diff(filt) == 1);          % Return the end points of the excluded interval
 if ~isempty(epoch_on) && ~isempty(epoch_off)
-  if (epoch_on(end) > epoch_off(end))     % ends on
-    epoch_off = [epoch_off; length(filt)];	% Include the end point of the whole data sequence
+  if (epoch_on(end) > epoch_off(end))       % ends on
+    epoch_off = [epoch_off; length(filt)];  % Include the end point of the whole data sequence
   end
-  if (epoch_on(1) > epoch_off(1))         % starts on
-    epoch_on = [ 1; epoch_on ];			% Include the start point of the whole data sequence
+  if (epoch_on(1) > epoch_off(1))           % starts on
+    epoch_on = [ 1; epoch_on ];             % Include the start point of the whole data sequence
   end
 elseif ~isempty(epoch_on) && isempty(epoch_off)
   epoch_off = length(filt);

@@ -22,7 +22,7 @@ function [sts, out] = pspm_compute_visual_angle(fn, channel, width, height, dist
 % ├─.channel_action:  [accept: 'add'/'replace', default: 'add']
 % │                   Defines whether the new channels should be added or the
 % │                   previous outputs of this function should be replaced.
-% └───────────.eyes:  [accept: 'l'/'r'/'c', default: 'c']
+% └───────────.eyes:  [accept: 'left'/'right'/'combined', default: 'combined']
 %                     Define on which eye the operations should be performed.
 % ● Output
 %               sts:  Status determining whether the execution was
@@ -84,7 +84,8 @@ n_eyes = numel(infos.source.eyesObserved);
 p = 1;
 for i = 1:n_eyes
   eye = lower(infos.source.eyesObserved(i));
-  if contains(options.eyes, eye)
+  options_eye_char = convert_eye_full2char(options.eye);
+  if contains(options_eye_char, eye)
     gaze_x = ['gaze_x_', eye];
     gaze_y = ['gaze_y_', eye];
 
@@ -101,7 +102,8 @@ for i = 1:n_eyes
       visual_angl_chans{p+1} = data{gy};
 
       try
-        [ lat, lon, lat_range, lon_range ] = pspm_compute_visual_angle_core(data{gx}.data, data{gy}.data, width, height, distance, options);
+        [ lat, lon, lat_range, lon_range ] = ...
+        pspm_compute_visual_angle_core(data{gx}.data, data{gy}.data, width, height, distance, options);
       catch
         warning('ID:invalid_input', 'Could not convert distance data to degrees');
         return
@@ -144,3 +146,19 @@ end
 sts = 1;
 out = outinfo;
 return
+
+function argout = convert_eye_full2char(argin)
+argout = argin;
+[row,column] = size(argin);
+for irow = 1:row
+  for icolumn = 1:column
+    switch argin(irow, icolumn)
+      case settings.lateral.full.c
+        argout(irow, icolumn) = settings.lateral.char.c;
+      case settings.lateral.full.l
+        argout(irow, icolumn) = settings.lateral.char.l;
+      case settings.lateral.full.r
+        argout(irow, icolumn) = settings.lateral.char.r;
+    end
+  end
+end

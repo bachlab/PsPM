@@ -21,9 +21,9 @@ function [sts, outdata] = pspm_interpolate(varargin)
 %                   contains the data to be interpolated
 %   ┌─────options:
 %   ├──.overwrite:  Defines if existing datafiles should be overwritten.
-%		│								[logical] (0 or 1)
-%		│								Define whether to overwrite existing output files or not.
-%		│								Default value: determined by pspm_overwrite.
+%   │               [logical] (0 or 1)
+%   │               Define whether to overwrite existing output files or not.
+%   │               Default value: determined by pspm_overwrite.
 %   ├─────.method:  Defines the interpolation method, see interp1() for
 %   │               possible interpolation methods.
 %   │               [optional; default: linear]

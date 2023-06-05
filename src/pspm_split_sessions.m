@@ -114,7 +114,7 @@ if ~sts_load_data
 end
 
 % 2.2 Handle missing epochs
-if options.missing
+if ~isempty(options.missing)
   % makes sure the epochs are in seconds and not empty
   [sts_get_timing, missing_time] = pspm_get_timing('epochs', options.missing, 'seconds');
   if ~sts_get_timing
@@ -201,7 +201,7 @@ else
     % 2.4.1 Determine filenames
     [p, f, ex] = fileparts(datafile);
     newdatafile{sn} = fullfile(p, sprintf('%s_sn%02.0f%s', f, sn, ex));
-    if ischar(options.missing)
+    if ~isempty(options.missing)
       newepochfile{sn} = fullfile(p_epochs, sprintf('%s_sn%02.0f%s', f_epochs, sn, ex_epochs));
     end
     % 2.4.2 Split data
@@ -212,7 +212,7 @@ else
     newdata.options = options;
     pspm_load_data(newdatafile{sn}, newdata);
     % 2.4.5 Split Epochs
-    if options.missing
+    if ~isempty(options.missing)
       dummydata{1,1}.header = struct('channeltype', 'custom', ...
         'sr', missingsr, ...
         'units', 'unknown');
