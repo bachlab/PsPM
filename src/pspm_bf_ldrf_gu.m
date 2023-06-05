@@ -35,8 +35,8 @@ offset = 0.2;
 %% check input arguments
 if nargin == 0
   errmsg = 'No sampling interval stated';
-	warning('ID:invalid_input', errmsg);
-	return;
+  warning('ID:invalid_input', errmsg);
+  return;
 elseif nargin == 1
   n_el = numel(varargin{1});
   td = varargin{1}(1);

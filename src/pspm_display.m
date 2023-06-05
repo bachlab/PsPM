@@ -537,10 +537,10 @@ end
 function panel_wave_SelectionChangeFcn(hObject, ~, handles)
 % hObject    handle to the selected object in panel_wave
 % eventdata  structure with the following fields (see UIBUTTONGROUP)
-%	EventName: string 'SelectionChanged' (read only)
-%	OldValue: handle of the previously selected object or empty if none was
-%           selected
-%	NewValue: handle of the currently selected object
+% EventName: string 'SelectionChanged' (read only)
+% OldValue: handle of the previously selected object or empty if none was
+%          selected
+% NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
 
 
@@ -599,10 +599,10 @@ end
 function panel_event_SelectionChangeFcn(hObject, ~, handles)
 % hObject    handle to the selected object in panel_event
 % eventdata  structure with the following fields (see UIBUTTONGROUP)
-%	EventName: string 'SelectionChanged' (read only)
-%	OldValue: handle of the previously selected object or empty if none was
-%           selected
-%	NewValue: handle of the currently selected object
+% EventName: string 'SelectionChanged' (read only)
+% OldValue: handle of the previously selected object or empty if none was
+%          selected
+% NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
 
 status0 = get(handles.radio_enone,'Value');
@@ -645,8 +645,8 @@ function edit_y_max_Callback(~, ~, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hints: get(hObject,'String') returns contents of edit_y_max as text
-%         str2double(get(hObject,'String')) returns contents of edit_y_max
-%         as a double
+%        str2double(get(hObject,'String')) returns contents of edit_y_max
+%        as a double
 
 x1 = str2double(get(handles.edit_start_x,'String'));
 x2 = str2double(get(handles.edit_winsize_x,'String'))+x1;
@@ -670,7 +670,7 @@ function edit_y_max_CreateFcn(hObject, ~, ~)
 % handles    empty - handles not created until after all CreateFcns called
 
 % Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
+%      See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), ...
     get(0,'defaultUicontrolBackgroundColor'))
   set(hObject,'BackgroundColor','white');
@@ -688,10 +688,10 @@ end
 
 % ---header----------------------------------------------------------------
 
-%       handles.name ... filename
-%       prop... struct with fields
-%               .wave (channel number)
-%               .event(channel number)
+%      handles.name ... filename
+%      prop... struct with fields
+%              .wave (channel number)
+%              .event(channel number)
 %
 
 % Initialise

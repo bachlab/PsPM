@@ -46,7 +46,7 @@ function [fx, dfdx, dfdP] = f_SCR(Xt, Theta, ut, in)
 %% Initialise settings
 global settings
 if isempty(settings)
-	pspm_init;
+    pspm_init;
 end
 sts = -1;
 sigma = 0.3;  % std for event-related and spontaneous sudomotor input function

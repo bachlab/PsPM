@@ -27,10 +27,11 @@ function varargout = pspm_sf_dcm(scr, sr, options)
 %               (default: read from pspm_sf_theta)
 %      .fresp:  frequency of responses to model (default 0.5 Hz)
 %    .dispwin:  display progress window (default 1)
-%  .dispsmallwin:
+%   .dispsmallwin:
 %               display intermediate windows (default 0);
 %    .missing:  index of missing values to ignore
-% .missingthresh: threshold value for controlling missing epochs (default 2s).
+%   .missingthresh:
+%               threshold value for controlling missing epochs (default 2s).
 % ● References
 %   Bach DR, Daunizeau J, Kuelzow N, Friston KJ, & Dolan RJ (2011). Dynamic
 %   causal modelling of spontaneous fluctuations in skin conductance.

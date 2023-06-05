@@ -67,11 +67,16 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
         struct('deg', none_bit, 'expect', 1, 'name', 'none'), ...
         struct('deg', some_bit, 'expect', -1, 'name', 'some')};
       infos.duration = duration;
+      if strcmp(eyes, 'lr') || strcmp(eyes, 'rl')
+        eye_individuals = {'l', 'r'};
+      else
+        eye_individuals = {eyes};
+      end
       infos.source.eyesObserved = upper(eyes);
       n_chans = 3; % will create 3 channels
-      data = cell(n_chans*length(eyes), 1);
-      for i = 1:length(eyes)
-        e = lower(eyes(i));
+      data = cell(n_chans*length(eye_individuals), 1);
+      for i = 1:length(eye_individuals)
+        e = lower(eye_individuals{i});
         % generate gaze data
         gaze_x = fixpoint(1)*screen_width + radius*sin(t) + ...
           rand(numel(t),1)*variance-variance/2;
@@ -115,7 +120,8 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
       % generate bilateral data
-      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lr');
+      [degs,~] = this.generate_fixation_data(fn, this.distance{1}, 'lr'); 
+      % this is to generate channel_l and channel_r, not channel_lr!
       options = struct();
       d = vertcat(degs{:});
       box_degree = d(strcmpi({d.name}, 'some')).deg;
@@ -393,7 +399,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       this.verifyWarning(@() pspm_find_valid_fixations('a'), 'ID:invalid_input');
       % generate data
       fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
-      this.generate_fixation_data(fn, 500, 'c');
+      this.generate_fixation_data(fn, 500, 'lr');
       box_degree = 'a';
       dist = '1';
       options = [];

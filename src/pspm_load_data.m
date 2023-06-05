@@ -35,7 +35,7 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, channel)
 %                 'channel type'
 %                           returns the respective channels (see settings for
 %                           channel types)
-%                 'none'		just checks the file
+%                 'none'    just checks the file
 %               ▶ struct  check and save file
 %                 ├───.infos (mandatory)
 %                 ├────.data (mandatory)

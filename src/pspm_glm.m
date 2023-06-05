@@ -239,7 +239,7 @@ if ischar(model.timing) || isstruct(model.timing)
   model.timing = {model.timing};
 end
 if ~isempty(model.timing) && (numel(model.datafile) ~= numel(model.timing))
-	warning('ID:number_of_elements_dont_match', 'Session numbers of data files and event definitions do not match.');
+  warning('ID:number_of_elements_dont_match', 'Session numbers of data files and event definitions do not match.');
   return
 end
 
@@ -450,7 +450,7 @@ glm.input         = model;
 glm.input.options = options;
 glm.bf            = model.bf;
 glm.bf.bfno       = size(glm.bf.X, 2);
-% 10.1 prepare timing variables -- 
+% 10.1 prepare timing variables --
 onsets = {};
 names = {};
 durations = {};

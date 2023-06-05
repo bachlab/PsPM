@@ -37,7 +37,7 @@ function dcm = pspm_dcm_inv(model, options)
 %   └──.constrained:  [optional]
 %                     constrained model for flexible responses which have
 %                     have fixed dispersion (0.3 s SD) but flexible latency
-%   ┌─────────options (all optional)
+%   ┌─────── options  (all optional)
 %   │ ▶︎ response function
 %   ├─────────.eSCR:  contains the data to estimate RF from
 %   ├─────────.aSCR:  contains the data to adjust the RF to
