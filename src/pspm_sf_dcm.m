@@ -132,6 +132,26 @@ fprintf(['\n\nEstimating model parameters for f_SF ... \t%02.0f:%02.0f:%02.0f', 
   '\n=========================================================\n'], c(4:6));
 if isfield(options, 'missing')
   ymissing = options.missing;
+  if isfile(ymissing)
+    [~, ~, fExt] = fileparts(ymissing);
+    switch lower(fExt)
+      case '.mat'
+        % A MAT file
+        ymissing = load(ymissing);
+        ymissing = ymissing.epochs;
+      otherwise  % Under all circumstances SWITCH gets an OTHERWISE!
+        warning('ID:invalid_input', 'Missing epochs should be a matlab file if loading from external.');
+    end
+  else
+    if ~isnumeric(ymissing)
+      warning('ID:invalid_input', 'Missing epochs should be numeric if as a variable.');
+    end
+  end
+  if any(size(ymissing)~=size(y))
+    ymiss = ymissing;
+    ymissing = zeros(size(y));
+    ymissing(ymiss(:,1)+1:ymiss(:,2)+1) = 1;
+  end
 else
   ymissing = isnan(y);
 end
