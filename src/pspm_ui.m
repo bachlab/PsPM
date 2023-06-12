@@ -124,9 +124,9 @@ switch window
       'tag_summary_source_file_title',...
       'tag_summary_channel_list_title'};
     % Others
-    hObject.Position(3) = DisplayWeight;
-    hObject.Position(4) = DisplayHeight;
-    hObject.Resize = 'on';
+    %hObject.Position(3) = DisplayWeight;
+    %hObject.Position(4) = DisplayHeight;
+    hObject.Resize = 'off';
     handles.name=[];
     handles.prop.axis=[];
     handles.prop.event=[];
