@@ -1,4 +1,4 @@
-function varargout = pspm_glm(model, options)
+function glm = pspm_glm(model, options)
 % ● Description
 %   pspm_glm specifies a within subject general linear convolution model of
 %   predicted signals and calculates amplitude estimates for these responses.
@@ -260,9 +260,9 @@ for iFile = 1:nFile
       warning('ID:invalid_input', 'Could not load the specified markerchannel');
       return
     end
-    if length(data) > 1
-      data = data{end};
-    end
+    % if length(data) > 1
+    %   data = data{end};
+    % end
     switch class(options.marker_chan_num_event)
       case 'double'
         if options.marker_chan_num_event>length(data)
@@ -344,7 +344,8 @@ try
       'functions are not allowed.']); return;
   end
 catch
-  warning('ID:invalid_fhandle', 'Specified basis function %s doesn''t exist or is faulty', func2str(model.bf.fhandle)); return;
+  warning('ID:invalid_fhandle', 'Specified basis function %s doesn''t exist or is faulty', func2str(model.bf.fhandle));
+  return;
 end
 % 5.1 set shiftbf
 if bf_x(1) < 0
@@ -865,12 +866,4 @@ end
 
 %% 18 User output
 fprintf(' done. \n');
-sts = 1;
-switch nargout
-  case 1
-    varargout{1} = glm;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = glm;
-end
 return
