@@ -281,9 +281,9 @@ for iFile = 1:nFile
           return
         end
     end
-  end
-  if strcmp(model.timeunits,'markervalues')
-    model.timing{iFile}.markerinfo = data{end}.markerinfo;
+    if strcmp(model.timeunits,'markervalues')
+      model.timing{iFile}.markerinfo = data{end}.markerinfo;
+    end
   end
 end
 if nFile > 1 && any(diff(sr) > 0)
