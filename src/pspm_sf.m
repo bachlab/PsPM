@@ -25,6 +25,7 @@ function varargout = pspm_sf(model, options)
 %   │                   as 'dcm'
 %   │                   [cell_array] a cell array of methods mentioned above.
 %   ├─────────.filter:  filter settings; modality specific default
+%   ├────────.missing:  index of missing values to ignore
 %   └────────.channel:  channel number; default: first SCR channel
 %   ┌─────────options
 %   ├──────.overwrite:  [logical] (0 or 1)
@@ -170,6 +171,9 @@ elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
 end
 % 2.8 Set options
 try model.channel; catch, model.channel = 'scr'; end
+if isfield(model, 'missing')
+  options.missing = model.missing;
+end
 options = pspm_options(options, 'sf');
 if options.invalid
   return

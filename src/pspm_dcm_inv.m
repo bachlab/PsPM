@@ -64,7 +64,6 @@ function dcm = pspm_dcm_inv(model, options)
 %   │                 [numeric, default: 0.1, unit: second]
 %   │                 minimum dispersion (standard deviation) for flexible
 %   │                 responses.
-%   ├──────.missing:  data points to be disregarded by inversion.
 %   │ ▶︎ display
 %   ├──────.dispwin:  [bool, default as 1]
 %   │                 display progress window.
