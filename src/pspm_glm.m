@@ -271,23 +271,19 @@ for iFile = 1:nFile
             data{options.marker_chan_num_event}.header.sr;
         end
       case 'char'
-        if length(data) == 1
-          events{iFile} = data.data(:) * data{1}.header.sr;
+        if strcmp(options.marker_chan_num_event, 'first')
+          events{iFile} = data{1}.data(:) * data{1}.header.sr;
+        elseif strcmp(options.marker_chan_num_event, 'last')
+          events{iFile} = data{end}.data(:) * data{end}.header.sr;
         else
-          if strcmp(options.marker_chan_num_event, 'first')
-            events{iFile} = data{1}.data(:) * data{1}.header.sr;
-          elseif strcmp(options.marker_chan_num_event, 'last')
-            events{iFile} = data{end}.data(:) * data{end}.header.sr;
-          else
-            warning('ID:invalid_input', ...
-              'options.marker_chan_num_event can only specify first or last channel as a char.');
-            return
-          end
+          warning('ID:invalid_input', ...
+            'options.marker_chan_num_event can only specify first or last channel as a char.');
+          return
         end
     end
-    if strcmp(model.timeunits,'markervalues')
-      model.timing{iFile}.markerinfo = data{end}.markerinfo;
-    end
+  end
+  if strcmp(model.timeunits,'markervalues')
+    model.timing{iFile}.markerinfo = data{end}.markerinfo;
   end
 end
 if nFile > 1 && any(diff(sr) > 0)
@@ -305,7 +301,7 @@ if strcmpi(model.filter.down, 'none') || ...
     isnumeric(model.filter.down) && isnan(model.filter.down)
   model.filter.down = min(sr);
 else
-% 4.2 check value of model.filter.down --
+  % 4.2 check value of model.filter.down --
   if ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
     % tested because the field is used before the call of
     % pspm_prepdata (everything else is tested there)
@@ -699,7 +695,7 @@ for iCond = 1:numel(names)
       tmp.col = {};
     end
   end
-% 14.3 mean centering --
+  % 14.3 mean centering --
   if model.centering
     for iXCol=1:size(tmp.XC{iCond},2)
       tmp.XC{iCond}(:,iXCol) = tmp.XC{iCond}(:,iXCol) - mean(tmp.XC{iCond}(:,iXCol));

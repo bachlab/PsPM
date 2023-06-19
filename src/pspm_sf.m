@@ -227,28 +227,23 @@ for iFile = 1:numel(model.datafile)
     end
     switch class(options.marker_chan_num_event)
       case 'double'
-        if options.marker_chan_num_event>length(data)
+        if options.marker_chan_num_event > length(data)
           warning('ID:invalid_input', ...
             'options.marker_chan_num_event exceeds the length of data');
           return
         else
-          events = data{options.marker_chan_num_event}.data(:);
+          event = data{options.marker_chan_num_event}.data(:);
         end
       case 'char'
-        if length(data) == 1
-          events{iFile} = data.data(:);
+        if strcmp(options.marker_chan_num_event, 'first')
+          event = data{1}.data(:);
+        elseif strcmp(options.marker_chan_num_event, 'last')
+          event = data{end}.data(:);
         else
-          if strcmp(options.marker_chan_num_event, 'first')
-            events{iFile} = data{1}.data(:);
-          elseif strcmp(options.marker_chan_num_event, 'last')
-            events{iFile} = data{end}.data(:);
-          else
-            warning('ID:invalid_input', ...
-              'options.marker_chan_num_event can only specify first or last channel as a char.');
-            return
-          end
+          warning('ID:invalid_input', ...
+            'options.marker_chan_num_event can only specify first or last channel as a char.');
+          return
         end
-      end
     end
   end
   for iEpoch = 1:size(epochs{iFile}, 1)
@@ -262,7 +257,7 @@ for iFile = 1:numel(model.datafile)
         case 'samples'
           win = round(epochs{iFile}(iEpoch, :) * sr(datatype(k)) / sr(1));
         case 'markers'
-          win = round(events(epochs{1}(iEpoch, :)) * sr(datatype(k)));
+          win = round(event(epochs{1}(iEpoch, :)) * sr(datatype(k)));
         case 'whole'
           win = [1 numel(Y{datatype(k)})];
       end
@@ -299,7 +294,7 @@ for iFile = 1:numel(model.datafile)
   sf.infos.file = model.modelfile{iFile};
   sf.modelfile = model.modelfile{iFile};
   sf.data = Y;
-  if exist('events','var'), sf.events = events; end
+  if exist('event','var'), sf.events = event; end
   sf.input = model;
   sf.options = options;
   sf.modeltype = 'sf';
