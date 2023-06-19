@@ -186,7 +186,9 @@ for iFile = 1:nFile
   % 3.3 get and filter data
   [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
   if sts_load_data < 1, return; end
-  model.filter.sr = sr(1);
+  y{1} = data{1}.data;
+  sr(1) = data{1}.header.sr;
+  model.filter.sr = data{end}.header.sr;
   [sts_prepdata, y{2}, sr(2)] = pspm_prepdata(data{1}.data, model.filter);
   if sts_prepdata == -1
     warning('ID:invalid_input', 'Call of pspm_prepdata failed.');
