@@ -271,7 +271,7 @@ switch FunName
     options = autofill(options, 'norm',                   0,          1                 );
     options = autofill(options, 'overwrite',              0,          1                 );
     options = autofill(options, 'marker_chan_num',        'marker',   '*Num*Char'       );
-    options = autofill(options, 'marker_chan_num_event',  'first',    '*Num*Char'       );
+    options = autofill(options, 'marker_chan_num_event',  'last',     '*Num*Char'       );
     if ~isfield(options, 'exclude_missing')
       options.exclude_missing = struct('segment_length',-1,'cutoff',0);
     else

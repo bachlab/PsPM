@@ -260,9 +260,6 @@ for iFile = 1:nFile
       warning('ID:invalid_input', 'Could not load the specified markerchannel');
       return
     end
-    % if length(data) > 1
-    %   data = data{end};
-    % end
     switch class(options.marker_chan_num_event)
       case 'double'
         if options.marker_chan_num_event>length(data)
@@ -274,14 +271,18 @@ for iFile = 1:nFile
             data{options.marker_chan_num_event}.header.sr;
         end
       case 'char'
-        if strcmp(options.marker_chan_num_event, 'first')
-          events{iFile} = data{1}.data(:) * data{1}.header.sr;
-        elseif strcmp(options.marker_chan_num_event, 'last')
-          events{iFile} = data{end}.data(:) * data{end}.header.sr;
+        if length(data) == 1
+          events{iFile} = data.data(:) * data{1}.header.sr;
         else
-          warning('ID:invalid_input', ...
-            'options.marker_chan_num_event can only specify first or last channel as a char.');
-          return
+          if strcmp(options.marker_chan_num_event, 'first')
+            events{iFile} = data{1}.data(:) * data{1}.header.sr;
+          elseif strcmp(options.marker_chan_num_event, 'last')
+            events{iFile} = data{end}.data(:) * data{end}.header.sr;
+          else
+            warning('ID:invalid_input', ...
+              'options.marker_chan_num_event can only specify first or last channel as a char.');
+            return
+          end
         end
     end
     if strcmp(model.timeunits,'markervalues')
