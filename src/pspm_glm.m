@@ -244,19 +244,23 @@ if ~isempty(model.timing) && (numel(model.datafile) ~= numel(model.timing))
 end
 
 %% 3 Check & get data
-fprintf('Getting data ...');
 nFile = numel(model.datafile);
 for iFile = 1:nFile
-  [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
-  if sts < 1
+  % 3.1 User output
+  fprintf('GLM analysis: %s ...', model.datafile{iFile});
+  % 3.2 Check whether model file exists
+  if ~pspm_overwrite(model.modelfile, options)
     return
   end
+  % 3.3 get and filter data
+  [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
+  if sts_load_data == -1, return; end
   y{iFile} = data{end}.data(:);
   sr(iFile) = data{end}.header.sr;
   fprintf('.');
   if any(strcmp(model.timeunits, {'marker', 'markers','markervalues'}))
-    [sts, ~, data] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
-    if sts < 1
+    [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
+    if sts_load_data == -1
       warning('ID:invalid_input', 'Could not load the specified markerchannel');
       return
     end

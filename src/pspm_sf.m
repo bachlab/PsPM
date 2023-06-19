@@ -9,7 +9,7 @@ function varargout = pspm_sf(model, options)
 %   ├───────.datafile:  one data filename or cell array of filenames.
 %   ├──────.modelfile:  one data filename or cell array of filenames.
 %   ├─────────.timing:  can be one of the following
-%   │                   - an SPM style onset file with two event types: onset &
+%   │                   - an SPM style onset file with two events types: onset &
 %   │                     offset (names are ignored)
 %   │                   - a .mat file with a variable 'epochs', see below
 %   │                   - a two-column text file with on/offsets
@@ -175,7 +175,8 @@ if options.invalid
   return
 end
 %% 3 Get data
-for iFile = 1:numel(model.datafile)
+nFile = numel(model.datafile);
+for iFile = 1:nFile
   % 3.1 User output
   fprintf('SF analysis: %s ...', model.datafile{iFile});
   % 3.2 Check whether model file exists
@@ -184,14 +185,15 @@ for iFile = 1:numel(model.datafile)
   end
   % 3.3 get and filter data
   [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
-  if sts_load_data < 0, return; end
-  Y{1} = data{1}.data; sr(1) = data{1}.header.sr;
+  if sts_load_data < 1, return; end
   model.filter.sr = sr(1);
-  [sts_prepdata, Y{2}, sr(2)] = pspm_prepdata(data{1}.data, model.filter);
+  [sts_prepdata, y{2}, sr(2)] = pspm_prepdata(data{1}.data, model.filter);
   if sts_prepdata == -1
     warning('ID:invalid_input', 'Call of pspm_prepdata failed.');
     return;
   end
+  y{iFile} = data{end}.data(:);
+  sr(iFile) = data{end}.header.sr;
   % 3.4 Check data units
   if ~strcmpi(data{1}.header.units, 'uS') && any(strcmpi('dcm', method))
     fprintf(['\nYour data units are stored as %s, ',...
@@ -202,8 +204,8 @@ for iFile = 1:numel(model.datafile)
   % 3.5 Get marker data
   if any(strcmp(model.timeunits, {'marker', 'markers'}))
     if options.marker_chan_num
-      [nsts, ~, ndata] = pspm_load_data(model.datafile, options.marker_chan_num);
-      if nsts == -1
+      [sts, ~, ndata] = pspm_load_data(model.datafile, options.marker_chan_num);
+      if sts < 1
         warning('ID:invalid_input', 'Could not load data');
         return;
       end
@@ -212,8 +214,8 @@ for iFile = 1:numel(model.datafile)
           ['Channel %i is no marker channel. ',...
           'The first marker channel in the file is used instead'],...
           options.marker_chan_num);
-        [nsts, ~, ~] = pspm_load_data(model.datafile, 'marker');
-        if nsts == -1
+        [sts_load_data, ~, ~] = pspm_load_data(model.datafile, 'marker');
+        if sts_load_data == -1
           warning('ID:invalid_input', 'Could not load data');
           return;
         end
@@ -232,13 +234,13 @@ for iFile = 1:numel(model.datafile)
             'options.marker_chan_num_event exceeds the length of data');
           return
         else
-          event = data{options.marker_chan_num_event}.data(:);
+          events{iFile} = data{options.marker_chan_num_event}.data(:);
         end
       case 'char'
         if strcmp(options.marker_chan_num_event, 'first')
-          event = data{1}.data(:);
+          events{iFile} = data{1}.data(:);
         elseif strcmp(options.marker_chan_num_event, 'last')
-          event = data{end}.data(:);
+          events{iFile} = data{end}.data(:);
         else
           warning('ID:invalid_input', ...
             'options.marker_chan_num_event can only specify first or last channel as a char.');
@@ -257,16 +259,16 @@ for iFile = 1:numel(model.datafile)
         case 'samples'
           win = round(epochs{iFile}(iEpoch, :) * sr(datatype(k)) / sr(1));
         case 'markers'
-          win = round(event(epochs{1}(iEpoch, :)) * sr(datatype(k)));
+          win = round(events(epochs{1}(iEpoch, :)) * sr(datatype(k)));
         case 'whole'
-          win = [1 numel(Y{datatype(k)})];
+          win = [1 numel(y{datatype(k)})];
       end
-      if any(win > numel(Y{datatype(k)}) + 1) || any(win < 0)
+      if any(win > numel(y{datatype(k)}) + 1) || any(win < 0)
         warning('\nEpoch %2.0f outside of file %s ...', iEpoch, model.modelfile{iFile});
       else
         % correct issues with using 'round'
         win(1) = max(win(1), 1);
-        win(2) = min(win(2), numel(Y{datatype(k)}));
+        win(2) = min(win(2), numel(y{datatype(k)}));
       end
       % 3.6 collect information
       sf.model{k}(iEpoch).modeltype = method{k};
@@ -275,7 +277,7 @@ for iFile = 1:numel(model.datafile)
       sf.model{k}(iEpoch).samples    = win;
       sf.model{k}(iEpoch).sr         = sr(datatype(k));
       %
-      escr = Y{datatype(k)}(win(1):win(end));
+      escr = y{datatype(k)}(win(1):win(end));
       sf.model{k}(iEpoch).data = escr;
       % 3.7 do the analysis and collect results
       invrs = fhandle{k}(escr, sr(datatype(k)), options);
@@ -293,8 +295,8 @@ for iFile = 1:numel(model.datafile)
   sf.infos.date = date;
   sf.infos.file = model.modelfile{iFile};
   sf.modelfile = model.modelfile{iFile};
-  sf.data = Y;
-  if exist('event','var'), sf.events = event; end
+  sf.data = y;
+  if exist('events','var'), sf.events = events; end
   sf.input = model;
   sf.options = options;
   sf.modeltype = 'sf';
