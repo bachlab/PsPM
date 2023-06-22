@@ -263,7 +263,8 @@ for iFile = 1:numel(model.datafile)
       escr = Y{datatype(k)}(win(1):win(end));
       sf.model{k}(iEpoch).data = escr;
       % 3.7 do the analysis and collect results
-      invrs = fhandle{k}(escr, sr(datatype(k)), options);
+      model_analysis = struct('scr', escr, 'sr', sr(datatype(k)));
+      invrs = fhandle{k}(model_analysis, options);
       if any(strcmpi(method{k}, {'dcm', 'mp'}))
         sf.model{k}(iEpoch).inv     = invrs;
         sf.stats(iEpoch, k)         = invrs.f;

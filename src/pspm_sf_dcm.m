@@ -4,7 +4,7 @@ function varargout = pspm_sf_dcm(model, options)
 %   uses f_SF and g_Id
 %   the input data is assumed to be in mcS, and sampling rate in Hz
 % ● Format
-%   function out = pspm_sf_dcm(scr, sr, options)
+%   function out = pspm_sf_dcm(model, options)
 % ● Output
 %         out:  output
 %          .n:  number of responses above threshold
@@ -59,18 +59,18 @@ try model.scr; catch, warning('Input data is not defined.'); return; end
 try model.sr; catch, warning('Sample rate is not defined.'); return; end
 try model.missing_data; catch, warning('Missing data file is not defined.'); end
 % 2.2 Validate parameters ---
-if ~isnumeric(sr) || numel(sr) > 1
+if ~isnumeric(model.sr) || numel(model.sr) > 1
   errmsg = sprintf('No valid sample rate given.');
-elseif (sr < 1) || (sr > 1e5)
+elseif (model.sr < 1) || (model.sr > 1e5)
   errmsg = sprintf('Sample rate out of range.');
-elseif exist('osr', 'var') && osr ~= sr
+elseif exist('osr', 'var') && osr ~= model.sr
   errmsg = sprintf('Sample rate of theta file is different from sample rate of data.');
-elseif nargin < 1 || ~isnumeric(scr)
+elseif nargin < 1 || ~isnumeric(model.scr)
   errmsg = 'No data.';
-elseif ~any(size(scr) == 1)
+elseif ~any(size(model.scr) == 1)
   errmsg = 'Input SCR is not a vector';
 else
-  scr = scr(:);
+  model.scr = model.scr(:);
 end
 if exist('errmsg', 'var') == 1
   warning(errmsg);
@@ -104,16 +104,16 @@ priors.b_sigma = 1e1;
 priors.a_alpha = Inf;
 priors.b_alpha = 0;
 % 4.2 initialise priors in correct dimensions
-priors.iQy = cell(numel(scr), 1);
-priors.iQx = cell(numel(scr), 1);
-for k = 1:numel(scr)  % default priors on noise covariance
+priors.iQy = cell(numel(model.scr), 1);
+priors.iQx = cell(numel(model.scr), 1);
+for k = 1:numel(model.scr)  % default priors on noise covariance
   priors.iQy{k} = 1;
   priors.iQx{k} = eye(dim.n);
 end
 options.inG.ind = 1;
-options.inF.dt = 1/sr;
+options.inF.dt = 1/model.sr;
 % 4.3 prepare data
-y = scr;
+y = model.scr;
 y = y - min(y);
 % 4.4 determine initial conditions
 x0 = y(1:3);
@@ -121,9 +121,9 @@ X0(1, 1)   = mean(x0);
 X0(2, 1)   = mean(diff(x0));
 X0(3, 1)   = diff(diff(x0));
 priors.muX0 = X0;
-nresp = floor(fresp * numel(y)/sr) + 1;
+nresp = floor(fresp * numel(y)/model.sr) + 1;
 u = [];
-u(1, :) = (1:numel(y))/sr;
+u(1, :) = (1:numel(y))/model.sr;
 u(2, :) = nresp;
 priors.muTheta = theta(1:3)';
 priors.muTheta(4:2:(2 * nresp + 3)) = 1/fresp * (0:(nresp-1));
@@ -154,7 +154,7 @@ elseif length(ymissing_start) < length(ymissing_end)
 end
 miss_epoch = [ymissing_start(:),ymissing_end(:)];
 flag_missing_too_long = 0;
-if any(diff(miss_epoch, 1, 2)/sr > options.missingthresh)
+if any(diff(miss_epoch, 1, 2)/model.sr > options.missingthresh)
   warning_message = ['Imported data includes too long miss epoches (over ',...
     num2str(options.missingthresh), 's), thus estimation has been skipped.'];
   warning('ID:missing_data', warning_message);
@@ -169,7 +169,7 @@ if ~flag_missing_too_long
   end
   t = posterior.muTheta(4:2:end);
   a = exp(posterior.muTheta(5:2:end) - theta(5));   % rescale
-  ex = find(t < -2 | t > (numel(scr)/sr - 1)); % find SA responses the SCR peak of which is outside episode
+  ex = find(t < -2 | t > (numel(model.scr)/model.sr - 1)); % find SA responses the SCR peak of which is outside episode
   t(ex) = [];
   a(ex) = [];
 end
@@ -178,7 +178,7 @@ if ~flag_missing_too_long
   out.t               = t - theta(4);   % subtract conduction delay
   out.a               = a;
   out.n               = numel(find(a > threshold));
-  out.f               = out.n/(numel(scr)/sr);
+  out.f               = out.n/(numel(model.scr)/model.sr);
   out.ma              = mean(a(a > threshold));
   out.theta           = theta;
   out.if              = fresp;
