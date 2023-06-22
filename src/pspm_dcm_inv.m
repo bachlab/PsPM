@@ -34,6 +34,7 @@ function dcm = pspm_dcm_inv(model, options)
 %   │                 transformed back into raw data units.
 %   ├───.flexevents:  flexible events to adjust amplitude priors
 %   ├────.fixevents:  fixed events to adjust amplitude priors
+%   ├─.missing_data:  file storing missing epochs
 %   └──.constrained:  [optional]
 %                     constrained model for flexible responses which have
 %                     have fixed dispersion (0.3 s SD) but flexible latency
@@ -125,9 +126,9 @@ try model.eSCR; catch, model.eSCR = 0; end
 try model.meanSCR; catch, model.meanSCR = 0; end
 % These parameters were set with default fallback values but will be
 % determined later by processing (same to pspm_dcm)
-%try model.fixevents; catch, warning('model.fixevents not defined.'); end
-%try model.flexevents; catch, warning('model.flexevents not defined.'); end
-%try model.missing_data; catch, warning('model.missing_data not defined.'); end
+try model.fixevents; catch, warning('model.fixevents not defined.'); end
+try model.flexevents; catch, warning('model.flexevents not defined.'); end
+try model.missing_data; catch, warning('model.missing_data not defined.'); end
 % These parameters do not need to have a default value and will be
 % determined later (same to pspm_dcm)
 
