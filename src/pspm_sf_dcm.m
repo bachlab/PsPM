@@ -1,4 +1,4 @@
-function varargout = pspm_sf_dcm(scr, sr, options)
+function varargout = pspm_sf_dcm(model, options)
 % ● Description
 %   pspm_sf_dcm does dynamic causal modelling for SF of the skin conductance
 %   uses f_SF and g_Id
@@ -18,19 +18,24 @@ function varargout = pspm_sf_dcm(scr, sr, options)
 %       .yhat:  fitted time series
 %      .model:  information about the DCM inversion
 % ● Arguments
-%         scr:  skin conductance epoch (maximum size depends on computing
-%               power, a sensible size is 60 s at 10 Hz)
-%          sr:  sampling rate in Hz
-%     options:  options structure
-%  .threshold:  threshold for SN detection (default 0.1 mcS)
-%      .theta:  a (1 x 5) vector of theta values for f_SF
-%               (default: read from pspm_sf_theta)
-%      .fresp:  frequency of responses to model (default 0.5 Hz)
-%    .dispwin:  display progress window (default 1)
-%   .dispsmallwin:
-%               display intermediate windows (default 0);
-%    .missing:  index of missing values to ignore
-%   .missingthresh:
+%   ┌──────model
+%   │ ▶︎ Mandatory
+%   ├───────.scr:  skin conductance epoch (maximum size depends on computing
+%   │              power, a sensible size is 60 s at 10 Hz)
+%   ├────────.sr:  sampling rate in Hz
+%   │ ▶︎ Optional
+%   └.missing_data: the datafile of missing epochs
+%
+%   ┌────options:  options structure
+%   ├─.threshold:  threshold for SN detection (default 0.1 mcS)
+%   ├─────.theta:  a (1 x 5) vector of theta values for f_SF
+%   │              (default: read from pspm_sf_theta)
+%   ├─────.fresp:  frequency of responses to model (default 0.5 Hz)
+%   ├───.dispwin:  display progress window (default 1)
+%   ├.dispsmallwin:
+%   │              display intermediate windows (default 0);
+%   ├───.missing:  index of missing values to ignore
+%   └─.missingthresh:
 %               threshold value for controlling missing epochs (default 2s).
 % ● References
 %   Bach DR, Daunizeau J, Kuelzow N, Friston KJ, & Dolan RJ (2011). Dynamic
@@ -47,8 +52,14 @@ if isempty(settings)
 end
 sts = -1;
 tstart = tic;
+
 %% 2 Check input arguments
-if nargin < 2 || ~isnumeric(sr) || numel(sr) > 1
+% 2.1 set model ---
+try model.scr; catch, warning('Input data is not defined.'); return; end
+try model.sr; catch, warning('Sample rate is not defined.'); return; end
+try model.missing_data; catch, warning('Missing data file is not defined.'); end
+% 2.2 Validate parameters ---
+if ~isnumeric(sr) || numel(sr) > 1
   errmsg = sprintf('No valid sample rate given.');
 elseif (sr < 1) || (sr > 1e5)
   errmsg = sprintf('Sample rate out of range.');
