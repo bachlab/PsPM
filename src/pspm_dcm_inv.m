@@ -35,8 +35,8 @@ function dcm = pspm_dcm_inv(model, options)
 %   ├───.flexevents:  flexible events to adjust amplitude priors
 %   ├────.fixevents:  fixed events to adjust amplitude priors
 %   ├─.missing_data:  missing epoch data, originally loaded as model.missing
-%   │                 from pspm_dcm, but calculated into .missing_data in pspm_dcm
-%   │                 and then transferred to pspm_dcm_inv.
+%   │                 from pspm_dcm, but calculated into .missing_data (created
+%   │                 in pspm_dcm and then transferred to pspm_dcm_inv.
 %   └──.constrained:  [optional]
 %                     constrained model for flexible responses which have
 %                     have fixed dispersion (0.3 s SD) but flexible latency

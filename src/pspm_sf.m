@@ -25,7 +25,12 @@ function varargout = pspm_sf(model, options)
 %   │                   as 'dcm'
 %   │                   [cell_array] a cell array of methods mentioned above.
 %   ├─────────.filter:  filter settings; modality specific default
-%   ├────────.missing:  index of missing values to ignore
+%   ├────────.missing:  [string/cell_array]
+%   │                   Allows to specify missing (e.g. artefact) epochs in the
+%   │                   data file. See pspm_get_timing for epoch definition; specify
+%   │                   a cell array for multiple input files. This must always be
+%   │                   specified in SECONDS.
+%   │                   Default: no missing values
 %   └────────.channel:  channel number; default: first SCR channel
 %   ┌─────────options
 %   ├──────.overwrite:  [logical] (0 or 1)
@@ -171,11 +176,18 @@ elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
 end
 % 2.8 Set options
 try model.channel; catch, model.channel = 'scr'; end
-if isfield(model, 'missing')
-  options.missing = model.missing;
-end
 options = pspm_options(options, 'sf');
 if options.invalid
+  return
+end
+% 2.9 Set missing epochs
+if ~isfield(model, 'missing')
+  model.missing = cell(numel(model.datafile), 1);
+elseif ischar(model.missing) || isnumeric(model.missing)
+  model.missing = {model.missing};
+elseif ~iscell(model.missing)
+  warning('ID:invalid_input',...
+    'Missing values must be a filename, matrix, or cell array of these.');
   return
 end
 %% 3 Get data
@@ -203,7 +215,26 @@ for iFile = 1:numel(model.datafile)
       'Please check your results.\n'], ...
       data{1}.header.units);
   end
-  % 3.5 Get marker data
+  % 3.5 Get missing epochs
+  if ~isempty(model.missing{iFile})
+    [~, missing{iFile}] = pspm_get_timing('epochs', ...
+      model.missing{iFile}, 'seconds');
+    % sort missing epochs
+    if size(missing{iFile}, 1) > 0
+      [~, sortindx] = sort(missing{iFile}(:, 1));
+      missing{iFile} = missing{iFile}(sortindx,:);
+      % check for overlap and merge
+      for k = 2:size(missing{iSn}, 1)
+        if missing{iFile}(k, 1) <= missing{iFile}(k - 1, 2)
+          missing{iFile}(k, 1) =  missing{iFile}(k - 1, 1);
+          missing{iFile}(k - 1, :) = [];
+        end
+      end
+    end
+  else
+    missing{iFile} = [];
+  end
+  % 3.6 Get marker data
   if any(strcmp(model.timeunits, {'marker', 'markers'}))
     if options.marker_chan_num
       [nsts, ~, ndata] = pspm_load_data(model.datafile, options.marker_chan_num);
@@ -253,7 +284,7 @@ for iFile = 1:numel(model.datafile)
         win(1) = max(win(1), 1);
         win(2) = min(win(2), numel(Y{datatype(k)}));
       end
-      % 3.6 collect information
+      % 3.6.1 collect information
       sf.model{k}(iEpoch).modeltype = method{k};
       sf.model{k}(iEpoch).boundaries = squeeze(epochs{iFile}(iEpoch, :));
       sf.model{k}(iEpoch).timeunits  = model.timeunits;
@@ -262,7 +293,7 @@ for iFile = 1:numel(model.datafile)
       %
       escr = Y{datatype(k)}(win(1):win(end));
       sf.model{k}(iEpoch).data = escr;
-      % 3.7 do the analysis and collect results
+      % 3.6.2 do the analysis and collect results
       model_analysis = struct('scr', escr, 'sr', sr(datatype(k)));
       invrs = fhandle{k}(model_analysis, options);
       if any(strcmpi(method{k}, {'dcm', 'mp'}))
