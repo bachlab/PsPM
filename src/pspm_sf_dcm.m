@@ -5,18 +5,6 @@ function varargout = pspm_sf_dcm(model, options)
 %   the input data is assumed to be in mcS, and sampling rate in Hz
 % ● Format
 %   function out = pspm_sf_dcm(model, options)
-% ● Output
-%         out:  output
-%          .n:  number of responses above threshold
-%          .f:  frequency of responses above threshold in Hz
-%         .ma:  mean amplitude of responses above threshold
-%          .t:  timing of (all) responses
-%          .a:  amplitude of (all) responses
-%      .theta:  parameters used for f_SF
-%  .threshold:  threshold
-%         .if:  initial frequency for f_SF
-%       .yhat:  fitted time series
-%      .model:  information about the DCM inversion
 % ● Arguments
 %   ┌──────model
 %   │ ▶︎ Mandatory
@@ -25,7 +13,6 @@ function varargout = pspm_sf_dcm(model, options)
 %   ├────────.sr:  sampling rate in Hz
 %   │ ▶︎ Optional
 %   └.missing_data: the datafile of missing epochs
-%
 %   ┌────options:  options structure
 %   ├─.threshold:  threshold for SN detection (default 0.1 mcS)
 %   ├─────.theta:  a (1 x 5) vector of theta values for f_SF
@@ -37,6 +24,18 @@ function varargout = pspm_sf_dcm(model, options)
 %   ├───.missing:  index of missing values to ignore
 %   └─.missingthresh:
 %               threshold value for controlling missing epochs (default 2s).
+% ● Output
+%   ┌────────out:  output
+%   ├─────────.n:  number of responses above threshold
+%   ├─────────.f:  frequency of responses above threshold in Hz
+%   ├────────.ma:  mean amplitude of responses above threshold
+%   ├─────────.t:  timing of (all) responses
+%   ├─────────.a:  amplitude of (all) responses
+%   ├─────.theta:  parameters used for f_SF
+%   ├─.threshold:  threshold
+%   ├────────.if:  initial frequency for f_SF
+%   ├──────.yhat:  fitted time series
+%   └─────.model:  information about the DCM inversion
 % ● References
 %   Bach DR, Daunizeau J, Kuelzow N, Friston KJ, & Dolan RJ (2011). Dynamic
 %   causal modelling of spontaneous fluctuations in skin conductance.
@@ -52,12 +51,10 @@ if isempty(settings)
 end
 sts = -1;
 tstart = tic;
-
 %% 2 Check input arguments
 % 2.1 set model ---
 try model.scr; catch, warning('Input data is not defined.'); return; end
 try model.sr; catch, warning('Sample rate is not defined.'); return; end
-try model.missing_data; catch, warning('Missing data file is not defined.'); end
 % 2.2 Validate parameters ---
 if ~isnumeric(model.sr) || numel(model.sr) > 1
   errmsg = sprintf('No valid sample rate given.');
@@ -126,14 +123,14 @@ nresp = floor(fresp * numel(y)/model.sr) + 1;
 u = [];
 u(1, :) = (1:numel(y))/model.sr;
 u(2, :) = nresp;
-priors.muTheta = theta(1:3)';
+priors.muTheta = transpose(theta(1:3));
 priors.muTheta(4:2:(2 * nresp + 3)) = 1/fresp * (0:(nresp-1));
 priors.muTheta(5:2:(2 * nresp + 4)) = -10;
 dim.n_theta = numel(priors.muTheta);    % nb of evolution parameters
 priors.SigmaTheta = zeros(dim.n_theta);
 for k = (4:2:(2 * nresp + 3)), priors.SigmaTheta(k, k) = 1e-2;end
 for k = (5:2:(2 * nresp + 4)), priors.SigmaTheta(k, k) = 1e2; end
-priors.muPhi = phi';
+priors.muPhi = transpose(phi);
 priors.SigmaPhi = zeros(dim.n_phi);
 priors.SigmaX0 = 1e-8*eye(dim.n);
 options.priors = priors;
