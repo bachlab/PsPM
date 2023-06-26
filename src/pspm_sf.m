@@ -206,7 +206,7 @@ for iFile = 1:nFile
   % 3.5 Get marker data
   if any(strcmp(model.timeunits, {'marker', 'markers'}))
     if options.marker_chan_num
-      [sts, ~, ndata] = pspm_load_data(model.datafile, options.marker_chan_num);
+      [sts, ~, ndata] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
       if sts < 1
         warning('ID:invalid_input', 'Could not load data');
         return;
@@ -216,14 +216,14 @@ for iFile = 1:nFile
           ['Channel %i is no marker channel. ',...
           'The first marker channel in the file is used instead'],...
           options.marker_chan_num);
-        [sts_load_data, ~, ~] = pspm_load_data(model.datafile, 'marker');
+        [sts_load_data, ~, ~] = pspm_load_data(model.datafile{iFile}, 'marker');
         if sts_load_data == -1
           warning('ID:invalid_input', 'Could not load data');
           return;
         end
       end
     else
-      [nsts, ~, ~] = pspm_load_data(model.datafile, 'marker');
+      [nsts, ~, ~] = pspm_load_data(model.datafile{iFile}, 'marker');
       if nsts == -1
         warning('ID:invalid_input', 'Could not load data');
         return;
