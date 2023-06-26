@@ -227,25 +227,12 @@ for iFile = 1:nFile
         return;
       end
     end
-    switch class(options.marker_chan_num_event)
-      case 'double'
-        if options.marker_chan_num_event > length(data)
-          warning('ID:invalid_input', ...
-            'options.marker_chan_num_event exceeds the length of data');
-          return
-        else
-          events{iFile} = data{options.marker_chan_num_event}.data(:);
-        end
-      case 'char'
-        if strcmp(options.marker_chan_num_event, 'first')
-          events{iFile} = data{1}.data(:);
-        elseif strcmp(options.marker_chan_num_event, 'last')
-          events{iFile} = data{end}.data(:);
-        else
-          warning('ID:invalid_input', ...
-            'options.marker_chan_num_event can only specify first or last channel as a char.');
-          return
-        end
+    if options.marker_chan_num_event > length(data)
+      warning('ID:invalid_input', ...
+        'options.marker_chan_num_event exceeds the length of data');
+      return
+    else
+      events{iFile} = data{options.marker_chan_num_event}.data(:);
     end
   end
   for iEpoch = 1:size(epochs{iFile}, 1)
