@@ -71,7 +71,7 @@ end
 outfile = [];
 sts = -1;
 %% 2 Check input
-% 2.1 Check missing input
+% 2.1 Check missing input --
 if nargin<1
   warning('ID:invalid_input', 'Nothing to do.'); return;
 elseif nargin<2
@@ -86,7 +86,7 @@ elseif ~isfield(model, 'timeunits')
 elseif ~isfield(model, 'timing') && ~strcmpi(model.timeunits, 'file')
   warning('ID:invalid_input', 'No epochs specified.'); return;
 end
-% 2.2 Check faulty input
+% 2.2 Check faulty input --
 if ~ischar(model.datafile) && ~iscell(model.datafile)
   warning('ID:invalid_input', 'Input data must be a cell or string.'); return;
 elseif ~ischar(model.modelfile) && ~iscell(model.modelfile)
@@ -109,7 +109,7 @@ end
 if ischar(model.modelfile)
   model.modelfile = {model.modelfile};
 end
-% 2.4 Check number of files
+% 2.4 Check number of files --
 if ~strcmpi(model.timeunits, 'whole') && numel(model.datafile) ~= numel(model.timing)
   warning('ID:number_of_elements_dont_match',...
     'Number of data files and epoch definitions does not match.'); return;
@@ -117,7 +117,14 @@ elseif numel(model.datafile) ~= numel(model.modelfile)
   warning('ID:number_of_elements_dont_match',...
     'Number of data files and model files does not match.'); return;
 end
-% 2.5 check methods
+% 2.5 check substhresh --
+if ~isfield(model, 'substhresh')
+  model.substhresh = 2;
+elseif ~isnumeric(model.substhresh)
+  warning('ID:invalid_input', 'Subsession threshold must be numeric.');
+  return;
+end
+% 2.6 check methods --
 if ~isfield(model, 'method')
   model.method = {'dcm'};
 elseif ischar(model.method)
@@ -156,7 +163,7 @@ else
     end
   end
 end
-% 2.6 Check timing
+% 2.7 Check timing --
 if strcmpi(model.timeunits, 'whole')
   epochs = repmat({[1 1]}, numel(model.datafile), 1);
 else
@@ -168,19 +175,19 @@ else
     end
   end
 end
-% 2.7 Check filter
+% 2.8 Check filter --
 if ~isfield(model, 'filter')
   model.filter = settings.dcm{2}.filter;
 elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
   warning('ID:invalid_input', 'Filter structure needs a numeric ''down'' field.'); return;
 end
-% 2.8 Set options
+% 2.9 Set options --
 try model.channel; catch, model.channel = 'scr'; end
 options = pspm_options(options, 'sf');
 if options.invalid
   return
 end
-% 2.9 Set missing epochs
+% 2.10 Set missing epochs --
 if ~isfield(model, 'missing')
   model.missing = cell(numel(model.datafile), 1);
 elseif ischar(model.missing) || isnumeric(model.missing)
@@ -191,14 +198,15 @@ elseif ~iscell(model.missing)
   return
 end
 %% 3 Get data
+subsessions = [];
 for iSn = 1:numel(model.datafile)
-  % 3.1 User output
+  % 3.1 User output --
   fprintf('SF analysis: %s ...', model.datafile{iSn});
-  % 3.2 Check whether model file exists
+  % 3.2 Check whether model file exists --
   if ~pspm_overwrite(model.modelfile, options)
     return
   end
-  % 3.3 get and filter data
+  % 3.3 get and filter data --
   [sts_load_data, ~, data] = pspm_load_data(model.datafile{iSn}, model.channel);
   if sts_load_data < 0, return; end
   Y{1} = data{1}.data; sr(1) = data{1}.header.sr;
@@ -208,14 +216,14 @@ for iSn = 1:numel(model.datafile)
     warning('ID:invalid_input', 'Call of pspm_prepdata failed.');
     return;
   end
-  % 3.4 Check data units ---
+  % 3.4 Check data units --
   if ~strcmpi(data{1}.header.units, 'uS') && any(strcmpi('dcm', method))
     fprintf(['\nYour data units are stored as %s, ',...
       'and the method will apply an amplitude threshold in uS. ',...
       'Please check your results.\n'], ...
       data{1}.header.units);
   end
-  % 3.5 Get missing epochs ---
+  % 3.5 Get missing epochs --
   % 3.5.1 Load missing epochs ---
   if ~isempty(model.missing{iSn})
     [~, missing{iSn}] = pspm_get_timing('epochs', model.missing{iSn}, 'seconds');
@@ -235,9 +243,9 @@ for iSn = 1:numel(model.datafile)
     missing{iSn} = [];
   end
   % 3.5.3 find missing epochs according to subsession threshold ---
-  n_data = size(data{iSn}{1}.data,1);
+  n_data = size(data{iSn}.data,1);
   if isempty(missing{iSn})
-    nan_epochs = isnan(data{iSn}{1}.data);
+    nan_epochs = isnan(data{iSn}.data);
     d_nan_ep = transpose(diff(nan_epochs));
     nan_ep_start = find(d_nan_ep == 1);
     nan_ep_stop = find(d_nan_ep == -1);
@@ -259,17 +267,17 @@ for iSn = 1:numel(model.datafile)
     miss_epochs = [nan_ep_start(:), nan_ep_stop(:)];
     % classify if epoch should be considered
     % true for duration > substhresh and for missing epochs
-    ignore_epochs = diff(miss_epochs, 1, 2)/data{iSn}{1}.header.sr > ...
+    ignore_epochs = diff(miss_epochs, 1, 2)/data{iSn}.header.sr > ...
       model.substhresh;
   else
     % use missing epochs as specified by file
-    miss_epochs = pspm_time2index(missing{iSn},data{iSn}{1}.header.sr);
+    miss_epochs = pspm_time2index(missing{iSn},data{iSn}.header.sr);
     ignore_epochs = diff(missing{iSn}, 1, 2) > model.substhresh;
     % and set data to NaN to enable later detection of `short` missing
     % epochs
     for k = 1:size(miss_epochs, 1)
       flanks = round(miss_epochs(k,:));
-      data{iSn}{1}.data(flanks(1):flanks(2)) = NaN;
+      data{iSn}.data(flanks(1):flanks(2)) = NaN;
     end
   end
   if any(ignore_epochs)
@@ -290,7 +298,7 @@ for iSn = 1:numel(model.datafile)
       se_start = se_start(1:end-1);
       se_stop = se_stop(1:end-1);
     end
-    % subsessions header --
+    % subsessions header 
     % =====================
     % 1 session_id
     % 2 start_time (s)
@@ -299,16 +307,16 @@ for iSn = 1:numel(model.datafile)
     n_sbs = numel(se_start);
     % enabled subsessions
     subsessions(end+(1:n_sbs), 1:4) = [ones(n_sbs,1)*iSn, ...
-      [se_start, se_stop]/data{iSn}{1}.header.sr, ...
+      [se_start, se_stop]/data{iSn}.header.sr, ...
       zeros(n_sbs,1)];
     % missing epochs
     n_miss = sum(ignore_epochs);
     subsessions(end+(1:n_miss), 1:4) = [ones(n_miss,1)*iSn, ...
-      miss_epochs(i_e,:)/data{iSn}{1}.header.sr, ...
+      miss_epochs(i_e,:)/data{iSn}.header.sr, ...
       ones(n_miss,1)];
   else
     subsessions(end+1,1:4) = [iSn, ...
-      [1, numel(data{iSn}{1}.data)]/data{iSn}{1}.header.sr, 0];
+      [1, numel(data{iSn}.data)]/data{iSn}.header.sr, 0];
   end
   % 3.6 Get marker data
   if any(strcmp(model.timeunits, {'marker', 'markers'}))
