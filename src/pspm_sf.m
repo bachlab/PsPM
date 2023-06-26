@@ -301,10 +301,16 @@ for iSn = 1:numel(model.datafile)
       %
       escr = Y{datatype(k)}(win(1):win(end));
       sf.model{k}(iEpoch).data = escr;
-      model.missing_data = zeros(size(escr));
-      model.missing_data((missing{iSn}(:,1)+1):(missing{iSn}(:,2)+1)) = 1;
+      if any(missing{iSn})
+        model.missing_data = zeros(size(escr));
+        model.missing_data((missing{iSn}(:,1)+1):(missing{iSn}(:,2)+1)) = 1;
+      end
       % 3.6.2 do the analysis and collect results
-      model_analysis = struct('scr', escr, 'sr', sr(datatype(k)), 'missing_data', model.missing_data);
+      if any(missing{iSn})
+        model_analysis = struct('scr', escr, 'sr', sr(datatype(k)), 'missing_data', model.missing_data);
+      else
+        model_analysis = struct('scr', escr, 'sr', sr(datatype(k)));
+      end
       invrs = fhandle{k}(model_analysis, options);
       if any(strcmpi(method{k}, {'dcm', 'mp'}))
         sf.model{k}(iEpoch).inv     = invrs;
