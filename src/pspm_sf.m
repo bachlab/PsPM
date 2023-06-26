@@ -198,7 +198,7 @@ elseif ~iscell(model.missing)
   return
 end
 %% 3 Get data
-subsessions = [];
+missing = cell(size(model.missing));
 for iSn = 1:numel(model.datafile)
   % 3.1 User output --
   fprintf('SF analysis: %s ...', model.datafile{iSn});
@@ -241,82 +241,6 @@ for iSn = 1:numel(model.datafile)
     end
   else
     missing{iSn} = [];
-  end
-  % 3.5.3 find missing epochs according to subsession threshold ---
-  n_data = size(data{iSn}.data,1);
-  if isempty(missing{iSn})
-    nan_epochs = isnan(data{iSn}.data);
-    d_nan_ep = transpose(diff(nan_epochs));
-    nan_ep_start = find(d_nan_ep == 1);
-    nan_ep_stop = find(d_nan_ep == -1);
-    if numel(nan_ep_start) > 0 || numel(nan_ep_stop) > 0
-      % check for blunt ends and fix
-      if isempty(nan_ep_start)
-        nan_ep_start = 1;
-      elseif isempty(nan_ep_stop)
-        nan_ep_stop = numel(d_nan_ep);
-      end
-      if nan_ep_start(1) > nan_ep_stop(1)
-        nan_ep_start = [1, nan_ep_start];
-      end
-      if nan_ep_start(end) > nan_ep_stop(end)
-        nan_ep_stop(end + 1) = numel(d_nan_ep);
-      end
-    end
-    % put missing epochs together
-    miss_epochs = [nan_ep_start(:), nan_ep_stop(:)];
-    % classify if epoch should be considered
-    % true for duration > substhresh and for missing epochs
-    ignore_epochs = diff(miss_epochs, 1, 2)/data{iSn}.header.sr > ...
-      model.substhresh;
-  else
-    % use missing epochs as specified by file
-    miss_epochs = pspm_time2index(missing{iSn},data{iSn}.header.sr);
-    ignore_epochs = diff(missing{iSn}, 1, 2) > model.substhresh;
-    % and set data to NaN to enable later detection of `short` missing
-    % epochs
-    for k = 1:size(miss_epochs, 1)
-      flanks = round(miss_epochs(k,:));
-      data{iSn}.data(flanks(1):flanks(2)) = NaN;
-    end
-  end
-  if any(ignore_epochs)
-    i_e = find(ignore_epochs);
-    % invert missings to sessions without nans
-    se_start = [1; miss_epochs(i_e(1:end), 2) + 1];
-    se_stop = [miss_epochs(i_e(1:end), 1)-1; n_data];
-    % throw away first session if stop is
-    % earlier than start (can happen because stop - 1)
-    % is used
-    if se_stop(1) <= se_start(1)
-      se_start = se_start(2:end);
-      se_stop = se_stop(2:end);
-    end
-    % throw away last session if start (+1) overlaps
-    % n_data
-    if se_start(end) >= n_data
-      se_start = se_start(1:end-1);
-      se_stop = se_stop(1:end-1);
-    end
-    % subsessions header 
-    % =====================
-    % 1 session_id
-    % 2 start_time (s)
-    % 3 stop_time (s)
-    % 4 missing (1) or data segment (0)
-    n_sbs = numel(se_start);
-    % enabled subsessions
-    subsessions(end+(1:n_sbs), 1:4) = [ones(n_sbs,1)*iSn, ...
-      [se_start, se_stop]/data{iSn}.header.sr, ...
-      zeros(n_sbs,1)];
-    % missing epochs
-    n_miss = sum(ignore_epochs);
-    subsessions(end+(1:n_miss), 1:4) = [ones(n_miss,1)*iSn, ...
-      miss_epochs(i_e,:)/data{iSn}.header.sr, ...
-      ones(n_miss,1)];
-  else
-    subsessions(end+1,1:4) = [iSn, ...
-      [1, numel(data{iSn}.data)]/data{iSn}.header.sr, 0];
   end
   % 3.6 Get marker data
   if any(strcmp(model.timeunits, {'marker', 'markers'}))
@@ -377,8 +301,10 @@ for iSn = 1:numel(model.datafile)
       %
       escr = Y{datatype(k)}(win(1):win(end));
       sf.model{k}(iEpoch).data = escr;
+      model.missing_data = zeros(size(escr));
+      model.missing_data((missing{iSn}(:,1)+1):(missing{iSn}(:,2)+1)) = 1;
       % 3.6.2 do the analysis and collect results
-      model_analysis = struct('scr', escr, 'sr', sr(datatype(k)));
+      model_analysis = struct('scr', escr, 'sr', sr(datatype(k)), 'missing_data', model.missing_data);
       invrs = fhandle{k}(model_analysis, options);
       if any(strcmpi(method{k}, {'dcm', 'mp'}))
         sf.model{k}(iEpoch).inv     = invrs;
