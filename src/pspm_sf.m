@@ -192,14 +192,14 @@ for iFile = 1:nFile
     warning('ID:invalid_input', 'Call of pspm_prepdata failed.');
     return;
   end
-  y{iFile} = data{1}.data(:);
-  sr(iFile) = data{1}.header.sr;
+  y{iFile} = data{end}.data(:); % always use last data channels
+  sr(iFile) = data{end}.header.sr;
   % 3.4 Check data units
-  if ~strcmpi(data{1}.header.units, 'uS') && any(strcmpi('dcm', method))
+  if ~strcmpi(data{end}.header.units, 'uS') && any(strcmpi('dcm', method))
     fprintf(['\nYour data units are stored as %s, ',...
       'and the method will apply an amplitude threshold in uS. ',...
       'Please check your results.\n'], ...
-      data{1}.header.units);
+      data{end}.header.units);
   end
   % 3.5 Get marker data
   if any(strcmp(model.timeunits, {'marker', 'markers'}))
