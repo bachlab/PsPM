@@ -21,7 +21,6 @@ function varargout = pspm_sf_dcm(model, options)
 %   ├───.dispwin:  display progress window (default 1)
 %   ├.dispsmallwin:
 %   │              display intermediate windows (default 0);
-%   ├───.missing:  index of missing values to ignore
 %   └─.missingthresh:
 %               threshold value for controlling missing epochs (default 2s).
 % ● Output
@@ -138,8 +137,8 @@ options.priors = priors;
 c = clock;
 fprintf(['\n\nEstimating model parameters for f_SF ... \t%02.0f:%02.0f:%02.0f', ...
   '\n=========================================================\n'], c(4:6));
-if isfield(options, 'missing')
-  ymissing = options.missing;
+if isfield(model, 'missing_data')
+  ymissing = model.missing_data;
   if isfile(ymissing)
     [~, ~, fExt] = fileparts(ymissing);
     switch lower(fExt)

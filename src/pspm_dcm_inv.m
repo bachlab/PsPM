@@ -128,9 +128,9 @@ try model.eSCR; catch, model.eSCR = 0; end
 try model.meanSCR; catch, model.meanSCR = 0; end
 % These parameters were set with default fallback values but will be
 % determined later by processing (same to pspm_dcm)
-try model.fixevents; catch, warning('model.fixevents not defined.'); end
-try model.flexevents; catch, warning('model.flexevents not defined.'); end
-try model.missing_data; catch, warning('model.missing_data not defined.'); end
+% try model.fixevents; catch, warning('model.fixevents not defined.'); end
+% try model.flexevents; catch, warning('model.flexevents not defined.'); end
+% try model.missing_data; catch, warning('model.missing_data not defined.'); end
 % These parameters do not need to have a default value and will be
 % determined later (same to pspm_dcm)
 
