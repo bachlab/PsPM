@@ -271,7 +271,7 @@ switch FunName
     options = autofill(options, 'norm',                   0,          1                 );
     options = autofill(options, 'overwrite',              0,          1                 );
     options = autofill(options, 'marker_chan_num',        'marker',   '*Num*Char'       );
-    options = autofill(options, 'marker_chan_num_event',  'last',     '*Num*Char'       );
+    options = autofill(options, 'marker_chan_num_event',  1,          '*Int'            );
     if ~isfield(options, 'exclude_missing')
       options.exclude_missing = struct('segment_length',-1,'cutoff',0);
     else
@@ -411,7 +411,7 @@ switch FunName
     options = autofill(options,'dispwin',                 1,          0                 );
     options = autofill(options,'fresp',                   0.5,        '>=', 0           );
     options = autofill(options,'marker_chan_num',         1,          '*Int*Char'       );
-    options = autofill(options,'marker_chan_num_event',   'last',     '*Int*Char'       );
+    options = autofill(options,'marker_chan_num_event',   1,          '*Int'            );
     options = autofill(options,'overwrite',               1,          0                 );
     options = autofill(options,'threshold',               0.1,        '>', 0            );
     options = autofill(options,'theta',                   [0.923581, ...

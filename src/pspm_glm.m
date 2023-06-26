@@ -229,6 +229,7 @@ elseif ~ismember(model.centering, [0, 1])
 end
 % 2.9 check options --
 options = pspm_options(options, 'glm');
+options.overwrite = pspm_overwrite(model.modelfile, options.overwrite);
 if options.invalid
   return
 end
@@ -246,12 +247,6 @@ end
 %% 3 Check & get data
 nFile = numel(model.datafile);
 for iFile = 1:nFile
-  % 3.1 User output
-  fprintf('GLM analysis: %s ...', model.datafile{iFile});
-  % 3.2 Check whether model file exists
-  % if ~pspm_overwrite(model.modelfile, options)
-  %   return
-  % end
   % 3.3 get and filter data
   [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
   if sts_load_data == -1, return; end
