@@ -245,6 +245,7 @@ if ~isempty(model.timing) && (numel(model.datafile) ~= numel(model.timing))
 end
 
 %% 3 Check & get data
+fprintf('Getting data ...');
 nFile = numel(model.datafile);
 for iFile = 1:nFile
   % 3.3 get and filter data
