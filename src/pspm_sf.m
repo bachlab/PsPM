@@ -117,14 +117,7 @@ elseif numel(model.datafile) ~= numel(model.modelfile)
   warning('ID:number_of_elements_dont_match',...
     'Number of data files and model files does not match.'); return;
 end
-% 2.5 check substhresh --
-if ~isfield(model, 'substhresh')
-  model.substhresh = 2;
-elseif ~isnumeric(model.substhresh)
-  warning('ID:invalid_input', 'Subsession threshold must be numeric.');
-  return;
-end
-% 2.6 check methods --
+% 2.5 check methods --
 if ~isfield(model, 'method')
   model.method = {'dcm'};
 elseif ischar(model.method)
@@ -163,7 +156,7 @@ else
     end
   end
 end
-% 2.7 Check timing --
+% 2.6 Check timing --
 if strcmpi(model.timeunits, 'whole')
   epochs = repmat({[1 1]}, numel(model.datafile), 1);
 else
@@ -175,19 +168,19 @@ else
     end
   end
 end
-% 2.8 Check filter --
+% 2.7 Check filter --
 if ~isfield(model, 'filter')
   model.filter = settings.dcm{2}.filter;
 elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
   warning('ID:invalid_input', 'Filter structure needs a numeric ''down'' field.'); return;
 end
-% 2.9 Set options --
+% 2.8 Set options --
 try model.channel; catch, model.channel = 'scr'; end
 options = pspm_options(options, 'sf');
 if options.invalid
   return
 end
-% 2.10 Set missing epochs --
+% 2.9 Set missing epochs --
 if ~isfield(model, 'missing')
   model.missing = cell(numel(model.datafile), 1);
 elseif ischar(model.missing) || isnumeric(model.missing)
@@ -224,10 +217,10 @@ for iSn = 1:numel(model.datafile)
       data{1}.header.units);
   end
   % 3.5 Get missing epochs --
-  % 3.5.1 Load missing epochs ---
+  % 3.5.1 Load missing epochs --
   if ~isempty(model.missing{iSn})
     [~, missing{iSn}] = pspm_get_timing('epochs', model.missing{iSn}, 'seconds');
-  % 3.5.2 sort missing epochs ---
+  % 3.5.2 sort missing epochs --
     if size(missing{iSn}, 1) > 0
       [~, sortindx] = sort(missing{iSn}(:, 1));
       missing{iSn} = missing{iSn}(sortindx,:);
@@ -242,7 +235,7 @@ for iSn = 1:numel(model.datafile)
   else
     missing{iSn} = [];
   end
-  % 3.6 Get marker data
+  % 3.6 Get marker data --
   if any(strcmp(model.timeunits, {'marker', 'markers'}))
     if options.marker_chan_num
       [nsts, ~, ndata] = pspm_load_data(model.datafile, options.marker_chan_num);
@@ -292,7 +285,7 @@ for iSn = 1:numel(model.datafile)
         win(1) = max(win(1), 1);
         win(2) = min(win(2), numel(Y{datatype(k)}));
       end
-      % 3.6.1 collect information
+      % 3.6.1 collect information --
       sf.model{k}(iEpoch).modeltype = method{k};
       sf.model{k}(iEpoch).boundaries = squeeze(epochs{iSn}(iEpoch, :));
       sf.model{k}(iEpoch).timeunits  = model.timeunits;
@@ -305,7 +298,7 @@ for iSn = 1:numel(model.datafile)
         model.missing_data = zeros(size(escr));
         model.missing_data((missing{iSn}(:,1)+1):(missing{iSn}(:,2)+1)) = 1;
       end
-      % 3.6.2 do the analysis and collect results
+      % 3.6.2 do the analysis and collect results --
       if any(missing{iSn})
         model_analysis = struct('scr', escr, 'sr', sr(datatype(k)), 'missing_data', model.missing_data);
       else
