@@ -64,7 +64,6 @@ tstart = tic;
 % 2.1 set model ---
 try model.scr; catch, warning('Input data is not defined.'); return; end
 try model.sr; catch, warning('Sample rate is not defined.'); return; end
-try model.missing_data; catch, warning('Missing epoch data index is not loaded.'); end
 % 2.2 Validate parameters ---
 if ~isnumeric(model.sr) || numel(model.sr) > 1
   errmsg = sprintf('No valid sample rate given.');
