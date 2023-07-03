@@ -10,31 +10,28 @@ function varargout = pspm_sf_dcm(model, options)
 %   │ ▶︎ Mandatory
 %   ├───────.scr:  skin conductance epoch (maximum size depends on computing
 %   │              power, a sensible size is 60 s at 10 Hz)
-%   ├────────.sr:  sampling rate in Hz
+%   ├────────.sr:  [numeric] [unit: Hz]
+%   │              sampling rate.
 %   │ ▶︎ Optional
-%   └.missing_data: the datafile of missing epochs
-%   ┌────options:  options structure
-%   ├─.threshold:  threshold for SN detection (default 0.1 mcS)
-%   ├─────.theta:  a (1 x 5) vector of theta values for f_SF
-%   │              (default: read from pspm_sf_theta)
-%   ├─────.fresp:  frequency of responses to model (default 0.5 Hz)
-%   ├───.dispwin:  display progress window (default 1)
-%   ├.dispsmallwin:
-%   │              display intermediate windows (default 0);
-%   └─.missingthresh:
-%               threshold value for controlling missing epochs (default 2s).
-% ● Output
-%   ┌────────out:  output
-%   ├─────────.n:  number of responses above threshold
-%   ├─────────.f:  frequency of responses above threshold in Hz
-%   ├────────.ma:  mean amplitude of responses above threshold
-%   ├─────────.t:  timing of (all) responses
-%   ├─────────.a:  amplitude of (all) responses
-%   ├─────.theta:  parameters used for f_SF
-%   ├─.threshold:  threshold
-%   ├────────.if:  initial frequency for f_SF
-%   ├──────.yhat:  fitted time series
-%   └─────.model:  information about the DCM inversion
+%   └.missing_data:missing epoch data, originally loaded as model.missing
+%                  from pspm_sf, but calculated into .missing_data (created
+%                  in pspm_sf and then transferred to pspm_sf_dcm.
+%
+%   ┌────options
+%   ├─.threshold:  [numeric] [default: 0.1] [unit: mcS]
+%   │              threshold for SN detection (default 0.1 mcS)
+%   ├─────.theta:  [vector] [default: read from pspm_sf_theta]
+%   │               a (1 x 5) vector of theta values for f_SF
+%   ├─────.fresp:  [numeric] [unit: Hz] [default: 0.5]
+%   │              frequency of responses to model
+%   ├───.dispwin:  [logical] [default: 1]
+%   │              display progress window.
+%   ├.dispsmallwin:[logical] [default: 0]
+%   │              display intermediate windows.
+%   └.missingthresh:
+%                  [numeric] [default: 2] [unit: second]
+%                  threshold value for controlling missing epochs,
+%                  which is originally inherited from SF
 % ● References
 %   Bach DR, Daunizeau J, Kuelzow N, Friston KJ, & Dolan RJ (2011). Dynamic
 %   causal modelling of spontaneous fluctuations in skin conductance.
@@ -78,8 +75,8 @@ options = pspm_options(options, 'sf_dcm');
 if options.invalid
   return
 end
-options.DisplayWin = options.dispwin;
-options.GnFigs = options.dispsmallwin;
+% options.DisplayWin = options.dispwin;
+% options.GnFigs = options.dispsmallwin;
 fresp = options.fresp;
 threshold = options.threshold;
 try
@@ -164,9 +161,10 @@ if any(diff(miss_epoch, 1, 2)/model.sr > 0)
   warning('ID:missing_data', warning_message);
 end
 options.isYout = ymissing(:)';
+% 4.6 interpolate data body to fill NaNs
+y_interpolated = pspm_interp1(y, ymissing);
 %% 5 Extract parameters
 if ~flag_missing_too_long
-  [~,y_interpolated] = pspm_interpolate(y,struct());
   [posterior, output] = VBA_NLStateSpaceModel(y_interpolated(:)',u,f_fname,g_fname,dim,options);
   for i = 1:length(output)
     output(i).options = rmfield(output(i).options, 'hf');
@@ -191,7 +189,7 @@ if ~flag_missing_too_long
   out.model.posterior = posterior;
   out.model.output    = output;
   out.model.u         = u;
-  out.model.y         = y(:)';
+  out.model.y         = y_interpolated(:)';
   out.time            = toc(tstart);
 else
   out.t               = NaN;
