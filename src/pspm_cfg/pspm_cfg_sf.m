@@ -297,8 +297,8 @@ missing.name    = 'Missing epoch file';
 missing.tag     = 'missingfile';
 missing.num     = [1 1];
 missing.filter  = '.*\.(mat|MAT)$';
-missing.help    = {'Missing (e.g. artefact) epochs in the data file, where',...
-                  'data must always be specified in seconds.'};
+missing.help    = {['Missing (e.g. artefact) epochs in the data file, where ',...
+                  'data must always be specified in seconds.']};
 
 % Show figures
 dispwin         = cfg_menu;
