@@ -45,7 +45,9 @@ function varargout = pspm_sf(model, options)
 %   │                   (default: read from pspm_sf_theta)
 %   ├──────────.fresp:  frequency of responses to model (default 0.5 Hz)
 %   ├────────.dispwin:  display progress window (default 1)
-%   └───.dispsmallwin:  display intermediate windows (default 0);
+%   ├───.dispsmallwin:  display intermediate windows (default 0);
+%   └─.missingthresh:
+%                       threshold value for controlling missing epochs (default 2s).
 % ● References
 %   1.[DCM for SF]
 %     Bach DR, Daunizeau J, Kuelzow N, Friston KJ, Dolan RJ (2010). Dynamic

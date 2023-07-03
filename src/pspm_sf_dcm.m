@@ -36,8 +36,9 @@ function varargout = pspm_sf_dcm(model, options)
 %   ├───.dispwin:  display progress window (default 1)
 %   ├.dispsmallwin:
 %   │              display intermediate windows (default 0);
-%   └─.missingthresh:
-%                  threshold value for controlling missing epochs (default 2s).
+%   └.missingthresh:
+%                  threshold value for controlling missing epochs (default 2s),
+%                  which is originally inherited from SF
 % ● References
 %   Bach DR, Daunizeau J, Kuelzow N, Friston KJ, & Dolan RJ (2011). Dynamic
 %   causal modelling of spontaneous fluctuations in skin conductance.
@@ -83,8 +84,8 @@ options = pspm_options(options, 'sf_dcm');
 if options.invalid
   return
 end
-options.DisplayWin = options.dispwin;
-options.GnFigs = options.dispsmallwin;
+% options.DisplayWin = options.dispwin;
+% options.GnFigs = options.dispsmallwin;
 fresp = options.fresp;
 threshold = options.threshold;
 try
