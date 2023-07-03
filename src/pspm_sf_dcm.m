@@ -24,7 +24,9 @@ function varargout = pspm_sf_dcm(model, options)
 %   │              power, a sensible size is 60 s at 10 Hz)
 %   ├────────.sr:  sampling rate in Hz
 %   │ ▶︎ Optional
-%   └.missing_data: the datafile of missing epochs
+%   └.missing_data: missing epoch data, originally loaded as model.missing
+%                  from pspm_sf, but calculated into .missing_data (created
+%                  in pspm_sf and then transferred to pspm_sf_dcm.
 %
 %   ┌────options:  options structure
 %   ├─.threshold:  threshold for SN detection (default 0.1 mcS)
