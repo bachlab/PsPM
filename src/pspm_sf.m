@@ -25,29 +25,33 @@ function varargout = pspm_sf(model, options)
 %   │                   as 'dcm'
 %   │                   [cell_array] a cell array of methods mentioned above.
 %   ├─────────.filter:  filter settings; modality specific default
-%   ├────────.missing:  [string/cell_array]
+%   ├────────.missing:  [string/cell_array] [default: no missing values]
 %   │                   Allows to specify missing (e.g. artefact) epochs in the
 %   │                   data file. See pspm_get_timing for epoch definition; specify
 %   │                   a cell array for multiple input files. This must always be
 %   │                   specified in SECONDS.
-%   │                   Default: no missing values
-%   └────────.channel:  channel number; default: first SCR channel
+%   └────────.channel:  [integer] [default: first SCR channel]
+%                       channel number.
 %   ┌─────────options
-%   ├──────.overwrite:  [logical] (0 or 1)
+%   ├──────.overwrite:  [logical] [default: determined by pspm_overwrite]
 %   │                   Define whether to overwrite existing output files or not.
-%   │                   Default value: determined by pspm_overwrite.
-%   ├.marker_chan_num:  marker channel number
+%   ├.marker_chan_num:  [integer] 
+%   │                   marker channel number
 %   │                   if undefined or 0, first marker channel is used.
-%   │ additional options for individual methods:
+%   │ * Additional options for individual methods:
 %   │ dcm related options
-%   ├──────.threshold:  threshold for SN detection (default 0.1 mcS)
-%   ├──────────.theta:  a (1 x 5) vector of theta values for f_SF
-%   │                   (default: read from pspm_sf_theta)
-%   ├──────────.fresp:  frequency of responses to model (default 0.5 Hz)
-%   ├────────.dispwin:  display progress window (default 1)
-%   ├───.dispsmallwin:  display intermediate windows (default 0);
-%   └─.missingthresh:
-%                       threshold value for controlling missing epochs (default 2s).
+%   ├──────.threshold:  [numeric] [default: 0.1] [unit: mcS]
+%   │                   threshold for SN detection (default 0.1 mcS)
+%   ├──────────.theta:  [vector] [default: read from pspm_sf_theta]
+%   │                   A (1 x 5) vector of theta values for f_SF.
+%   ├──────────.fresp:  [numeric] [unit: Hz] [default: 0.5]
+%   │                   frequency of responses to model.
+%   ├────────.dispwin:  [logical] [default: 1]
+%   │                   display progress window.
+%   ├───.dispsmallwin:  [logical] [default: 0]
+%   │                   display intermediate windows.
+%   └──.missingthresh:  [numeric] [default: 2] [unit: second]
+%                       threshold value for controlling missing epochs.
 % ● References
 %   1.[DCM for SF]
 %     Bach DR, Daunizeau J, Kuelzow N, Friston KJ, Dolan RJ (2010). Dynamic
