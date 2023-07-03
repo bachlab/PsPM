@@ -162,9 +162,11 @@ if any(diff(miss_epoch, 1, 2)/model.sr > options.missingthresh)
   flag_missing_too_long = 1;
 end
 options.isYout = ymissing(:)';
+% 4.6 interpolate data body to fill NaNs
+y_interpolated = pspm_interp1(y, ymissing);
 %% 5 Extract parameters
 if ~flag_missing_too_long
-  [posterior, output] = VBA_NLStateSpaceModel(y(:)',u,f_fname,g_fname,dim,options);
+  [posterior, output] = VBA_NLStateSpaceModel(y_interpolated(:)',u,f_fname,g_fname,dim,options);
   for i = 1:length(output)
     output(i).options = rmfield(output(i).options, 'hf');
   end
@@ -188,7 +190,7 @@ if ~flag_missing_too_long
   out.model.posterior = posterior;
   out.model.output    = output;
   out.model.u         = u;
-  out.model.y         = y(:)';
+  out.model.y         = y_interpolated(:)';
   out.time            = toc(tstart);
 else
   out.t               = NaN;
