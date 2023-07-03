@@ -10,7 +10,7 @@ function Y = pspm_interp1(varargin)
 %                   values. 1 if NaNs, 0 if non-NaNs.
 %   Y:              processed data
 % ● History
-%   Introduced In PsPM 6.1
+%   Introduced in PsPM 6.1
 %   Written in 2023 by Teddy Chao (UCL)
 
 switch nargin
