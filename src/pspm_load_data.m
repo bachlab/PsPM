@@ -229,22 +229,22 @@ else
   end
 end
 %% 7 Check data
-% initialise error flags
+% 7.1 initialise error flags --
 vflag = zeros(numel(data), 1); % records data structure, valid if 0
 wflag = zeros(numel(data), 1); % records whether data is out of range, valid if 0
 nflag = zeros(numel(data), 1);
 zflag = zeros(numel(data), 1); % records whether data is empty
 % loop through channels
 for k = 1:numel(data)
-  % 8.1 Convert header channeltype into chantype if there are --
-  if isfield(data{k}.header, 'channeltype')
-    data{k}.header.chantype = data{k}.header.channeltype;
-    data{k}.header = rmfield( data{k}.header, 'channeltype');
-  end
-  % 8.2 Check header --
+  % 7.2 Check header --
   if ~isfield(data{k}, 'header')
     vflag(k) = 1;
   else
+    % 7.2.1 Convert header channeltype into chantype if there are --
+    if isfield(data{k}.header, 'channeltype')
+      data{k}.header.chantype = data{k}.header.channeltype;
+      data{k}.header = rmfield(data{k}.header, 'channeltype');
+    end
     if (~isfield(data{k}.header, 'channeltype') && ~isfield(data{k}.header, 'chantype')) || ...
         ~isfield(data{k}.header, 'sr') || ...
         ~isfield(data{k}.header, 'units')
@@ -261,7 +261,7 @@ for k = 1:numel(data)
       end
     end
   end
-  % 8.3 Check data --
+  % 7.3 Check data --
   if vflag(k)==0 && nflag(k)==0 && flag_infos==0
     % required information is available and valid in header and infos
     if ~isfield(data{k}, 'data')
