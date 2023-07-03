@@ -24,7 +24,7 @@ function varargout = pspm_sf_dcm(model, options)
 %   │              power, a sensible size is 60 s at 10 Hz)
 %   ├────────.sr:  sampling rate in Hz
 %   │ ▶︎ Optional
-%   └.missing_data: missing epoch data, originally loaded as model.missing
+%   └.missing_data:missing epoch data, originally loaded as model.missing
 %                  from pspm_sf, but calculated into .missing_data (created
 %                  in pspm_sf and then transferred to pspm_sf_dcm.
 %
@@ -37,7 +37,7 @@ function varargout = pspm_sf_dcm(model, options)
 %   ├.dispsmallwin:
 %   │              display intermediate windows (default 0);
 %   └─.missingthresh:
-%               threshold value for controlling missing epochs (default 2s).
+%                  threshold value for controlling missing epochs (default 2s).
 % ● References
 %   Bach DR, Daunizeau J, Kuelzow N, Friston KJ, & Dolan RJ (2011). Dynamic
 %   causal modelling of spontaneous fluctuations in skin conductance.
@@ -58,7 +58,7 @@ tstart = tic;
 % 2.1 set model ---
 try model.scr; catch, warning('Input data is not defined.'); return; end
 try model.sr; catch, warning('Sample rate is not defined.'); return; end
-try model.missing_data; catch, warning('Missing data file is not defined.'); end
+try model.missing_data; catch, warning('Missing epoch data index is not loaded.'); end
 % 2.2 Validate parameters ---
 if ~isnumeric(model.sr) || numel(model.sr) > 1
   errmsg = sprintf('No valid sample rate given.');
