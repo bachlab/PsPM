@@ -13,6 +13,7 @@ function Y = pspm_interp1(varargin)
 %   Introduced in PsPM 6.1
 %   Written in 2023 by Teddy Chao (UCL)
 
+%% 1 Load inputs
 switch nargin
   case 1
     X = varargin{1};
@@ -23,7 +24,33 @@ switch nargin
   otherwise
     warning('ID:invalid_input','pspm_interp1 accepts up to two arguments');
 end
-% find nan head and tail
+%% 2 Check inputs
+switch sum(~isnan(X))
+  case 0
+    % if there are no non-nans, do not process any interpolation, give a
+    % warning and return
+    warning('ID:invalid_input',...
+      'Input data contains only NaNs thus cannot be interpolated.')
+    Y = X;
+    return
+  case 1
+    % if there are only 1 non-nan, do not process any interpolation,
+    % give a warning and explain the reason
+    warning('ID:invalid_input',...
+      'Input data contains only 1 non-NaN thus cannot be interpolated.')
+    Y = X;
+    return
+  otherwise
+    % if there are less than 10^ non-nan, still perform interpolation,
+    % however give a warning and explain the reason
+    non_nan_percentage = sum(~isnan(X))/length(X);
+    if non_nan_percentage<0.1
+      warning('ID:invalid_input',...
+      'Input data contains less than 10% non-NaN. Interpolation can ',... 
+      'still be performed but results could be inaccurate.')
+    end
+end
+%% 3 find nan head and tail
 X_nan_head = 0;
 X_nan_tail = 0;
 X_nan_head_range = [];

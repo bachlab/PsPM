@@ -195,7 +195,7 @@ mrk_chan.val     = {0};
 mrk_chan.num     = [1 1];
 mrk_chan.help    = {['Indicate the marker channel. By default the first marker channel is ' ...
     'assumed to contain the relevant markers.'], ['Markers are only used if you have ' ...
-    'specified the time units as �markers�.']};
+    'specified the time units as "markers".']};
 
 
 %% Timeunits
