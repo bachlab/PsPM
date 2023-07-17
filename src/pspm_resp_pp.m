@@ -85,7 +85,7 @@ filt.hpfreq    = .01;
 filt.hporder   = 1;
 filt.direction = 'bi';
 filt.down      = 10;
-[sts, newresp, newsr] = pspm_prepdata(resp - mean(resp), filt);
+[sts, newresp, newsr] = pspm_prepdata(resp - mean(resp,"omitnan"), filt);
 % Median filter
 newresp = medfilt1(newresp, ceil(newsr) + 1);
 %% detect breathing cycles
