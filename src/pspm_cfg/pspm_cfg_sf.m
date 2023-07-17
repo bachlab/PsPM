@@ -165,6 +165,8 @@ filter.val    = {filter_def};
 filter.values = {filter_def, filter_edit};
 filter.help   = {'Specify how you want filter the SCR data.'};
 
+
+
 %% Epochs
 epochfile         = cfg_files;
 epochfile.name    = 'Epoch File';
@@ -191,11 +193,11 @@ mrk_chan         = cfg_entry;
 mrk_chan.name    = 'Marker Channel';
 mrk_chan.tag     = 'mrk_chan';
 mrk_chan.strtype = 'i';
-mrk_chan.val     = {0};
+mrk_chan.val     = {1};
 mrk_chan.num     = [1 1];
 mrk_chan.help    = {['Indicate the marker channel. By default the first marker channel is ' ...
     'assumed to contain the relevant markers.'], ['Markers are only used if you have ' ...
-    'specified the time units as �markers�.']};
+    'specified the time units as "markers".']};
 
 
 %% Timeunits
@@ -292,13 +294,28 @@ fresp.val     = {[]};
 fresp.help    = {'Frequency of responses to model.'};
 fresp.hidden  = true;
 
-missing         = cfg_files;
-missing.name    = 'Missing epoch file';
-missing.tag     = 'missingfile';
-missing.num     = [1 1];
-missing.filter  = '.*\.(mat|MAT)$';
-missing.help    = {['Missing (e.g. artefact) epochs in the data file, where ',...
+
+
+missingepoch_none        = cfg_const;
+missingepoch_none.name   = 'Not added';
+missingepoch_none.tag    = 'missingdata';
+missingepoch_none.val    = {0};
+missingepoch_none.help   = {'Do not add missing epochs.'};
+
+missingepoch_file         = cfg_files;
+missingepoch_file.name    = 'Missing epoch file';
+missingepoch_file.tag     = 'missingdata';
+missingepoch_file.num     = [1 1];
+missingepoch_file.filter  = '.*\.(mat|MAT)$';
+missingepoch_file.help    = {['Missing (e.g. artefact) epochs in the data file, where ',...
                   'data must always be specified in seconds.']};
+
+missing        = cfg_choice;
+missing.name   = 'Missing Epoch Settings';
+missing.tag    = 'missing';
+missing.val    = {missingepoch_none};
+missing.values = {missingepoch_none, missingepoch_file};
+missing.help   = {'Specify whether you would like to include missing epochs.'};
 
 % Show figures
 dispwin         = cfg_menu;

@@ -201,7 +201,7 @@ for iFile = 1:numel(model.datafile)
   % 3.1 User output
   fprintf('SF analysis: %s ...', model.datafile{iFile});
   % 3.2 Check whether model file exists
-  if ~pspm_overwrite(model.modelfile, options)
+  if ~pspm_overwrite(model.modelfile, options.overwrite)
     return
   end
   % 3.3 get and filter data
@@ -243,7 +243,7 @@ for iFile = 1:numel(model.datafile)
   % 3.6 Get marker data
   if any(strcmp(model.timeunits, {'marker', 'markers'}))
     if options.marker_chan_num
-      [nsts, ~, ndata] = pspm_load_data(model.datafile, options.marker_chan_num);
+      [nsts, ~, ndata] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
       if nsts == -1
         warning('ID:invalid_input', 'Could not load data');
         return;
@@ -253,14 +253,14 @@ for iFile = 1:numel(model.datafile)
           ['Channel %i is no marker channel. ',...
           'The first marker channel in the file is used instead'],...
           options.marker_chan_num);
-        [nsts, ~, ~] = pspm_load_data(model.datafile, 'marker');
+        [nsts, ~, ~] = pspm_load_data(model.datafile{iFile}, 'marker');
         if nsts == -1
           warning('ID:invalid_input', 'Could not load data');
           return;
         end
       end
     else
-      [nsts, ~, ~] = pspm_load_data(model.datafile, 'marker');
+      [nsts, ~, ~] = pspm_load_data(model.datafile{iFile}, 'marker');
       if nsts == -1
         warning('ID:invalid_input', 'Could not load data');
         return;

@@ -1,4 +1,4 @@
-function varargout = pspm_sf_mp(scr, sr, options)
+function varargout = pspm_sf_mp(model, options)
 % ● Description
 %   pspm_sf_mp does the inversion of a DCM for SF of the skin conductance, using
 %   a matching pursuit algorithm, and f_SF for the forward model
@@ -47,9 +47,12 @@ end
 sts = -1;
 tstart = tic;
 
+sr = model.sr;
+scr = model.scr;
+
 % check input arguments
 % ------------------------------------------------------------------------
-if nargin < 2 || ~isnumeric(sr) || numel(sr) > 1
+if ~isnumeric(sr) || numel(sr) > 1
   errmsg = sprintf('No valid sample rate given.');
 elseif (sr < 1) || (sr > 1e5)
   errmsg = sprintf('Sample rate out of range.');
@@ -73,6 +76,7 @@ options = pspm_options(options, 'sf_mp');
 S.dt = 1/sr;                    % sampling interval of the data
 S.n = numel(scr);               % n: number of samples in the data segment
 S.sfduration = 30;              % duration of the modelled SF
+S.fresp = options.fresp;
 S.sftail = 10;                  % model tail of SF in previous seconds
 S.ntail = S.sftail/S.dt;        % number of samples in SF tail to model
 S.nsf = S.sfduration/S.dt;      % number of samples in modelled SF
@@ -82,6 +86,7 @@ S.tonicsets = {[],[]};          % no tonic response components
 S.theta = pspm_sf_theta;         % get SF CRF
 S.maxres = 0.001 * S.n;         % residual threshold per sample
 S.options = options;
+S.threshold = options.threshold;
 
 % generate over-complete dictionary D.D
 % -------------------------------------------------------------------------
@@ -252,9 +257,9 @@ end;
 sts = 1;
 switch nargout
   case 1
-    varargout{1} = mp;
+    varargout{1} = out;
   case 2
     varargout{1} = sts;
-    varargout{2} = mp;
+    varargout{2} = out;
 end
 return
