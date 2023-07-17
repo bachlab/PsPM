@@ -47,8 +47,10 @@ end
 sts = -1;
 tstart = tic;
 
-sr = model.sr;
+try model.scr; catch, warning('Input data is not defined.'); return; end
+try model.sr; catch, warning('Sample rate is not defined.'); return; end
 scr = model.scr;
+sr = model.sr;
 
 % check input arguments
 % ------------------------------------------------------------------------

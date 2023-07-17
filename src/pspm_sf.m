@@ -279,7 +279,7 @@ for iFile = 1:numel(model.datafile)
         case 'samples'
           win = round(epochs{iFile}(iEpoch, :) * sr(datatype(k)) / sr(1));
         case 'markers'
-          win = round(events(epochs{1}(iEpoch, :)) * sr(datatype(k)));
+          win = round(events(epochs{iFile}(iEpoch, :)) * sr(datatype(k)));
         case 'whole'
           win = [1 numel(Y{datatype(k)})];
       end
