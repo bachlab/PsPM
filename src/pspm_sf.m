@@ -285,7 +285,8 @@ for iFile = 1:numel(model.datafile)
       sf.model{k}(iEpoch).data = escr;
       if any(missing{iFile})
         model.missing_data = zeros(size(escr));
-        model.missing_data((missing{iFile}(:,1)+1):(missing{iFile}(:,2)+1)) = 1;
+        missing_index = pspm_time2index(missing, sr(datatype(k)));
+        model.missing_data((missing_index{iFile}(:,1)+1):(missing_index{iFile}(:,2)+1)) = 1;
       end
       % 3.6.2 do the analysis and collect results --
       if any(missing{iFile})
