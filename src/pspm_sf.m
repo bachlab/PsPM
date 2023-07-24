@@ -166,8 +166,8 @@ end
 if strcmpi(model.timeunits, 'whole')
   epochs = repmat({[1 1]}, numel(model.datafile), 1);
 else
-  for iSn = 1:numel(model.datafile)
-    [sts_get_timing, epochs{iSn}] = pspm_get_timing('epochs', model.timing{iSn}, model.timeunits);
+  for iFile = 1:numel(model.datafile)
+    [sts_get_timing, epochs{iFile}] = pspm_get_timing('epochs', model.timing{iFile}, model.timeunits);
     if sts_get_timing == -1
       warning('ID:invalid_input', 'Call of pspm_get_timing failed.');
       return;
@@ -198,15 +198,15 @@ elseif ~iscell(model.missing)
 end
 %% 3 Get data
 missing = cell(size(model.missing));
-for iSn = 1:numel(model.datafile)
+for iFile = 1:numel(model.datafile)
   % 3.1 User output --
-  fprintf('SF analysis: %s ...', model.datafile{iSn});
+  fprintf('SF analysis: %s ...', model.datafile{iFile});
   % 3.2 Check whether model file exists --
   if ~pspm_overwrite(model.modelfile, options)
     return
   end
   % 3.3 get and filter data --
-  [sts_load_data, ~, data] = pspm_load_data(model.datafile{iSn}, model.channel);
+  [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
   if sts_load_data < 0, return; end
   Y{1} = data{1}.data; sr(1) = data{1}.header.sr;
   model.filter.sr = sr(1);
@@ -224,51 +224,51 @@ for iSn = 1:numel(model.datafile)
   end
   % 3.5 Get missing epochs --
   % 3.5.1 Load missing epochs --
-  if ~isempty(model.missing{iSn})
-    [~, missing{iSn}] = pspm_get_timing('epochs', model.missing{iSn}, 'seconds');
+  if ~isempty(model.missing{iFile})
+    [~, missing{iFile}] = pspm_get_timing('epochs', model.missing{iFile}, 'seconds');
   % 3.5.2 sort missing epochs --
-    if size(missing{iSn}, 1) > 0
-      [~, sortindx] = sort(missing{iSn}(:, 1));
-      missing{iSn} = missing{iSn}(sortindx,:);
+    if size(missing{iFile}, 1) > 0
+      [~, sortindx] = sort(missing{iFile}(:, 1));
+      missing{iFile} = missing{iFile}(sortindx,:);
       % check for overlap and merge
-      for k = 2:size(missing{iSn}, 1)
-        if missing{iSn}(k, 1) <= missing{iSn}(k - 1, 2)
-          missing{iSn}(k, 1) =  missing{iSn}(k - 1, 1);
-          missing{iSn}(k - 1, :) = [];
+      for k = 2:size(missing{iFile}, 1)
+        if missing{iFile}(k, 1) <= missing{iFile}(k - 1, 2)
+          missing{iFile}(k, 1) =  missing{iFile}(k - 1, 1);
+          missing{iFile}(k - 1, :) = [];
         end
       end
     end
   else
-    missing{iSn} = [];
+    missing{iFile} = [];
   end
   % 3.6 Get marker data --
   if any(strcmp(model.timeunits, {'marker', 'markers'}))
     if options.marker_chan_num
-      [nsts, ~, ndata] = pspm_load_data(model.datafile{iSn}, options.marker_chan_num);
+      [nsts, ~, ndata] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
       if nsts == -1; warning('ID:invalid_input', 'Could not load data'); return; end
     else
-      [nsts, ~, ndata] = pspm_load_data(model.datafile{iSn}, 'marker');
+      [nsts, ~, ndata] = pspm_load_data(model.datafile{iFile}, 'marker');
       if nsts == -1; warning('ID:invalid_input', 'Could not load data'); return; end
     end
     events = ndata{1}.data;
   end
-  for iEpoch = 1:size(epochs{iSn}, 1)
+  for iEpoch = 1:size(epochs{iFile}, 1)
     if iEpoch > 1, fprintf('\n\t\t\t'); end
     fprintf('epoch %01.0f ...', iEpoch);
     for k = 1:numel(method)
       fprintf('%s ', method{k});
       switch model.timeunits
         case 'seconds'
-          win = round(epochs{iSn}(iEpoch, :) * sr(datatype(k)));
+          win = round(epochs{iFile}(iEpoch, :) * sr(datatype(k)));
         case 'samples'
-          win = round(epochs{iSn}(iEpoch, :) * sr(datatype(k)) / sr(1));
+          win = round(epochs{iFile}(iEpoch, :) * sr(datatype(k)) / sr(1));
         case 'markers'
-          win = round(events(epochs{iSn}(iEpoch, :)) * sr(datatype(k)));
+          win = round(events(epochs{iFile}(iEpoch, :)) * sr(datatype(k)));
         case 'whole'
           win = [1 numel(Y{datatype(k)})];
       end
       if any(win > numel(Y{datatype(k)}) + 1) || any(win < 0)
-        warning('\nEpoch %2.0f outside of file %s ...', iEpoch, model.modelfile{iSn});
+        warning('\nEpoch %2.0f outside of file %s ...', iEpoch, model.modelfile{iFile});
       else
         % correct issues with using 'round'
         win(1) = max(win(1), 1);
@@ -276,19 +276,19 @@ for iSn = 1:numel(model.datafile)
       end
       % 3.6.1 collect information --
       sf.model{k}(iEpoch).modeltype = method{k};
-      sf.model{k}(iEpoch).boundaries = squeeze(epochs{iSn}(iEpoch, :));
+      sf.model{k}(iEpoch).boundaries = squeeze(epochs{iFile}(iEpoch, :));
       sf.model{k}(iEpoch).timeunits  = model.timeunits;
       sf.model{k}(iEpoch).samples    = win;
       sf.model{k}(iEpoch).sr         = sr(datatype(k));
       %
       escr = Y{datatype(k)}(win(1):win(end));
       sf.model{k}(iEpoch).data = escr;
-      if any(missing{iSn})
+      if any(missing{iFile})
         model.missing_data = zeros(size(escr));
-        model.missing_data((missing{iSn}(:,1)+1):(missing{iSn}(:,2)+1)) = 1;
+        model.missing_data((missing{iFile}(:,1)+1):(missing{iFile}(:,2)+1)) = 1;
       end
       % 3.6.2 do the analysis and collect results --
-      if any(missing{iSn})
+      if any(missing{iFile})
         model_analysis = struct('scr', escr, 'sr', sr(datatype(k)), 'missing_data', model.missing_data);
       else
         model_analysis = struct('scr', escr, 'sr', sr(datatype(k)));
@@ -306,16 +306,16 @@ for iSn = 1:numel(model.datafile)
   end
   sf.names = method(:);
   sf.infos.date = date;
-  sf.infos.file = model.modelfile{iSn};
-  sf.modelfile = model.modelfile{iSn};
+  sf.infos.file = model.modelfile{iFile};
+  sf.modelfile = model.modelfile{iFile};
   sf.data = Y;
   if exist('events','var'), sf.events = events; end
   sf.input = model;
   sf.options = options;
   sf.modeltype = 'sf';
   sf.modality = settings.modalities.sf;
-  save(model.modelfile{iSn}, 'sf');
-  outfile = model.modelfile(iSn);
+  save(model.modelfile{iFile}, 'sf');
+  outfile = model.modelfile(iFile);
   fprintf('\n');
 end
 sts = 1;
