@@ -244,29 +244,12 @@ for iFile = 1:numel(model.datafile)
   if any(strcmp(model.timeunits, {'marker', 'markers'}))
     if options.marker_chan_num
       [nsts, ~, ndata] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
-      if nsts == -1
-        warning('ID:invalid_input', 'Could not load data');
-        return;
-      end
-      if ~strcmp(ndata{1}.header.chantype, 'marker')
-        warning('ID:invalid_option', ...
-          ['Channel %i is no marker channel. ',...
-          'The first marker channel in the file is used instead'],...
-          options.marker_chan_num);
-        [nsts, ~, ~] = pspm_load_data(model.datafile{iFile}, 'marker');
-        if nsts == -1
-          warning('ID:invalid_input', 'Could not load data');
-          return;
-        end
-      end
+      if nsts == -1; warning('ID:invalid_input', 'Could not load data'); return; end
     else
-      [nsts, ~, ~] = pspm_load_data(model.datafile{iFile}, 'marker');
-      if nsts == -1
-        warning('ID:invalid_input', 'Could not load data');
-        return;
-      end
+      [nsts, ~, ndata] = pspm_load_data(model.datafile{iFile}, 'marker');
+      if nsts == -1; warning('ID:invalid_input', 'Could not load data'); return; end
     end
-    events = data{1}.data;
+    events = ndata{1}.data;
   end
   for iEpoch = 1:size(epochs{iFile}, 1)
     if iEpoch > 1, fprintf('\n\t\t\t'); end
