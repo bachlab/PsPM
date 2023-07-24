@@ -164,11 +164,14 @@ S.cont = 1;
 S.nosf = 0;
 k = 1;
 S.Yres = y;
-ind = [];
 % initialise diagnostics
 S.diagnostics.neg = 0; % stop because of zero or negative amplitude
 S.diagnostics.num = 0; % number of iterations
 S.diagnostics.error = NaN; % error
+
+a = [];
+asf = [];
+ind = [];
 
 % run algorithm ---
 while S.cont
