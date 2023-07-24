@@ -166,8 +166,8 @@ end
 if strcmpi(model.timeunits, 'whole')
   epochs = repmat({[1 1]}, numel(model.datafile), 1);
 else
-  for iSn = 1:numel(model.datafile)
-    [sts_get_timing, epochs{iSn}] = pspm_get_timing('epochs', model.timing{iSn}, model.timeunits);
+  for iFile = 1:numel(model.datafile)
+    [sts_get_timing, epochs{iFile}] = pspm_get_timing('epochs', model.timing{iFile}, model.timeunits);
     if sts_get_timing == -1
       warning('ID:invalid_input', 'Call of pspm_get_timing failed.');
       return;
@@ -230,7 +230,7 @@ for iFile = 1:numel(model.datafile)
       [~, sortindx] = sort(missing{iFile}(:, 1));
       missing{iFile} = missing{iFile}(sortindx,:);
       % check for overlap and merge
-      for k = 2:size(missing{iSn}, 1)
+      for k = 2:size(missing{iFile}, 1)
         if missing{iFile}(k, 1) <= missing{iFile}(k - 1, 2)
           missing{iFile}(k, 1) =  missing{iFile}(k - 1, 1);
           missing{iFile}(k - 1, :) = [];
