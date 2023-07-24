@@ -244,10 +244,10 @@ for iSn = 1:numel(model.datafile)
   % 3.6 Get marker data --
   if any(strcmp(model.timeunits, {'marker', 'markers'}))
     if options.marker_chan_num
-      [nsts, ~, ndata] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
+      [nsts, ~, ndata] = pspm_load_data(model.datafile{iSn}, options.marker_chan_num);
       if nsts == -1; warning('ID:invalid_input', 'Could not load data'); return; end
     else
-      [nsts, ~, ndata] = pspm_load_data(model.datafile{iFile}, 'marker');
+      [nsts, ~, ndata] = pspm_load_data(model.datafile{iSn}, 'marker');
       if nsts == -1; warning('ID:invalid_input', 'Could not load data'); return; end
     end
     events = ndata{1}.data;
@@ -263,7 +263,7 @@ for iSn = 1:numel(model.datafile)
         case 'samples'
           win = round(epochs{iSn}(iEpoch, :) * sr(datatype(k)) / sr(1));
         case 'markers'
-          win = round(events(epochs{iFile}(iEpoch, :)) * sr(datatype(k)));
+          win = round(events(epochs{iSn}(iEpoch, :)) * sr(datatype(k)));
         case 'whole'
           win = [1 numel(Y{datatype(k)})];
       end
