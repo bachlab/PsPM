@@ -35,7 +35,7 @@ function varargout = pspm_sf(model, options)
 %   ┌─────────options
 %   ├──────.overwrite:  [logical] [default: determined by pspm_overwrite]
 %   │                   Define whether to overwrite existing output files or not.
-%   ├.marker_chan_num:  [integer] 
+%   ├.marker_chan_num:  [integer]
 %   │                   marker channel number
 %   │                   if undefined or 0, first marker channel is used.
 %   │ * Additional options for individual methods:
@@ -244,30 +244,13 @@ for iSn = 1:numel(model.datafile)
   % 3.6 Get marker data --
   if any(strcmp(model.timeunits, {'marker', 'markers'}))
     if options.marker_chan_num
-      [nsts, ~, ndata] = pspm_load_data(model.datafile, options.marker_chan_num);
-      if nsts == -1
-        warning('ID:invalid_input', 'Could not load data');
-        return;
-      end
-      if ~strcmp(ndata{1}.header.chantype, 'marker')
-        warning('ID:invalid_option', ...
-          ['Channel %i is no marker channel. ',...
-          'The first marker channel in the file is used instead'],...
-          options.marker_chan_num);
-        [nsts, ~, ~] = pspm_load_data(model.datafile, 'marker');
-        if nsts == -1
-          warning('ID:invalid_input', 'Could not load data');
-          return;
-        end
-      end
+      [nsts, ~, ndata] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
+      if nsts == -1; warning('ID:invalid_input', 'Could not load data'); return; end
     else
-      [nsts, ~, ~] = pspm_load_data(model.datafile, 'marker');
-      if nsts == -1
-        warning('ID:invalid_input', 'Could not load data');
-        return;
-      end
+      [nsts, ~, ndata] = pspm_load_data(model.datafile{iFile}, 'marker');
+      if nsts == -1; warning('ID:invalid_input', 'Could not load data'); return; end
     end
-    events = data{1}.data;
+    events = ndata{1}.data;
   end
   for iEpoch = 1:size(epochs{iSn}, 1)
     if iEpoch > 1, fprintf('\n\t\t\t'); end
@@ -280,7 +263,7 @@ for iSn = 1:numel(model.datafile)
         case 'samples'
           win = round(epochs{iSn}(iEpoch, :) * sr(datatype(k)) / sr(1));
         case 'markers'
-          win = round(events(epochs{1}(iEpoch, :)) * sr(datatype(k)));
+          win = round(events(epochs{iFile}(iEpoch, :)) * sr(datatype(k)));
         case 'whole'
           win = [1 numel(Y{datatype(k)})];
       end
