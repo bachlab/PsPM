@@ -143,7 +143,7 @@ direction.val     = {'bi'};
 direction.labels  = {'Unidirectional', 'Bidirectional'};
 direction.values  = {'uni', 'bi'};
 direction.help    = {['A unidirectional filter is applied twice in the forward direction. ' ...
-    'A �bidirectional� filter is applied once in the forward direction and once in the ' ...
+    'A "bidirectional" filter is applied once in the forward direction and once in the ' ...
     'backward direction to correct the temporal shift due to filtering in forward direction.']};
 
 filter_edit        = cfg_branch;
@@ -195,7 +195,7 @@ mrk_chan.val     = {0};
 mrk_chan.num     = [1 1];
 mrk_chan.help    = {['Indicate the marker channel. By default the first marker channel is ' ...
     'assumed to contain the relevant markers.'], ['Markers are only used if you have ' ...
-    'specified the time units as �markers�.']};
+    'specified the time units as "markers".']};
 
 
 %% Timeunits
@@ -228,8 +228,8 @@ timeunits.name    = 'Time Units';
 timeunits.tag     = 'timeunits';
 timeunits.values  = {seconds, samples, markers, whole};
 timeunits.help    = {['Indicate the time units on which the specification of the conditions will be based. ' ...
-    'Time units can be specified in �seconds�, number of �markers�, or number of data �samples� . Time units ' ...
-    'refer to the beginning of the data file and not to the beginning of the original recordings e. g. if ' ...
+    'Time units can be specified in "seconds", number of "markers", or number of data "samples". Time units ' ...
+    'refer to the beginning of the data file and not to the beginning of the original recordings e.g. if ' ...
     'data were trimmed.']};
 
 %% Channel nr
@@ -292,6 +292,14 @@ fresp.val     = {[]};
 fresp.help    = {'Frequency of responses to model.'};
 fresp.hidden  = true;
 
+missing         = cfg_files;
+missing.name    = 'Missing epoch file';
+missing.tag     = 'missingfile';
+missing.num     = [1 1];
+missing.filter  = '.*\.(mat|MAT)$';
+missing.help    = {['Missing (e.g. artefact) epochs in the data file, where ',...
+                  'data must always be specified in seconds.']};
+
 % Show figures
 dispwin         = cfg_menu;
 dispwin.name    = 'Display Progress Window';
@@ -314,7 +322,7 @@ dispsmallwin.help    = {'Show small plots displaying the progress of each iterat
 sf      = cfg_exbranch;
 sf.name = 'SF';
 sf.tag  = 'sf';
-sf.val  = {datafile, modelfile, outdir, method, timeunits, filter, chan, overwrite, threshold, theta, fresp, dispwin, dispsmallwin};
+sf.val  = {datafile, modelfile, outdir, method, timeunits, filter, chan, overwrite, threshold, missing, theta, fresp, dispwin, dispsmallwin};
 sf.prog = @pspm_cfg_run_sf;
 sf.vout = @pspm_cfg_vout_sf;
 sf.help = {['This suite of models is designed for analysing spontaneous fluctuations (SF) in skin conductance ' ...

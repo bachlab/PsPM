@@ -205,7 +205,7 @@ else
       newepochfile{sn} = fullfile(p_epochs, sprintf('%s_sn%02.0f%s', f_epochs, sn, ex_epochs));
     end
     % 2.4.2 Split data
-    trimoptions = struct('drop_offset_markers', 1);
+    trimoptions = struct('drop_offset_markers', 1, 'marker_chan_num', markerchannel);
     newdata = pspm_trim(struct('data', {indata}, 'infos', ininfos), ...
       options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions);
     options.overwrite = pspm_overwrite(newdatafile{sn}, options);
