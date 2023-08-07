@@ -360,7 +360,7 @@ for iSn = 1:numel(model.datafile)
   % to use the last channel in data channels
   % this is consistent to sf and glm
   sr{iSn} = data{iSn}{end}.header.sr;
-  model.filter.sr = sr; 
+  model.filter.sr = sr{iSn}; 
 
   % try to find missing epochs according to subsession threshold
   n_data = size(y{iSn},1);
