@@ -9,7 +9,7 @@ function varargout = pspm_sf(model, options)
 %   ├───────.datafile:  one data filename or cell array of filenames.
 %   ├──────.modelfile:  one data filename or cell array of filenames.
 %   ├─────────.timing:  can be one of the following
-%   │                   - an SPM style onset file with two events types: onset &
+%   │                   - an SPM style onset file with two event types: onset &
 %   │                     offset (names are ignored)
 %   │                   - a .mat file with a variable 'epochs', see below
 %   │                   - a two-column text file with on/offsets
@@ -35,7 +35,7 @@ function varargout = pspm_sf(model, options)
 %   ┌─────────options
 %   ├──────.overwrite:  [logical] [default: determined by pspm_overwrite]
 %   │                   Define whether to overwrite existing output files or not.
-%   ├.marker_chan_num:  [integer] 
+%   ├.marker_chan_num:  [integer]
 %   │                   marker channel number
 %   │                   if undefined or 0, first marker channel is used.
 %   │ * Additional options for individual methods:
