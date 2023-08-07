@@ -207,9 +207,11 @@ for iFile = 1:nFile
   end
   % 3.3 get and filter data
   [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
-  if sts_load_data < 1, return; end
-  model.filter.sr = data{end}.header.sr;
-  [sts_prepdata, y{iFile}, sr{iFile}] = pspm_prepdata(data{end}.data, model.filter);
+  if sts_load_data < 0, return; end
+  y{1} = data{end}.data;
+  sr(1) = data{end}.header.sr;
+  model.filter.sr = sr(1);
+  [sts_prepdata, y{2}, sr(2)] = pspm_prepdata(data{end}.data, model.filter);
   % always use last data channels
   if sts_prepdata == -1
     warning('ID:invalid_input', 'Call of pspm_prepdata failed.');
