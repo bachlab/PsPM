@@ -209,13 +209,12 @@ for iFile = 1:nFile
   [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
   if sts_load_data < 1, return; end
   model.filter.sr = data{end}.header.sr;
-  [sts_prepdata, y{2}, sr(2)] = pspm_prepdata(data{1}.data, model.filter);
+  [sts_prepdata, y{iFile}, sr{iFile}] = pspm_prepdata(data{end}.data, model.filter);
+  % always use last data channels
   if sts_prepdata == -1
     warning('ID:invalid_input', 'Call of pspm_prepdata failed.');
     return;
   end
-  y{iFile} = data{end}.data(:); % always use last data channels
-  sr(iFile) = data{end}.header.sr;
   % 3.4 Check data units
   if ~strcmpi(data{end}.header.units, 'uS') && any(strcmpi('dcm', method))
     fprintf(['\nYour data units are stored as %s, ',...
