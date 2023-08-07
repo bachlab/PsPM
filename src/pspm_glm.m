@@ -260,14 +260,8 @@ for iFile = 1:nFile
       warning('ID:invalid_input', 'Could not load the specified markerchannel');
       return
     end
-    if options.marker_chan_num_event>length(data)
-      warning('ID:invalid_input', ...
-        'options.marker_chan_num_event exceeds the length of data');
-      return
-    else
-      events{iFile} = data{options.marker_chan_num_event}.data(:) * ...
-        data{options.marker_chan_num_event}.header.sr;
-    end
+    % marker_chan_num_event is removed and the first marker_channel is now used
+    events{iFile} = data{1}.data(:) * data{1}.header.sr;
     if strcmp(model.timeunits,'markervalues')
       model.timing{iFile}.markerinfo = data{end}.markerinfo;
     end
