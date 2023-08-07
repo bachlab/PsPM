@@ -411,7 +411,6 @@ switch FunName
     options = autofill(options,'dispwin',                 1,          0                 );
     options = autofill(options,'fresp',                   0.5,        '>=', 0           );
     options = autofill(options,'marker_chan_num',         1,          '*Int*Char'       );
-    options = autofill(options,'marker_chan_num_event',   1,          '*Int'            );
     options = autofill(options,'overwrite',               1,          0                 );
     options = autofill(options,'threshold',               0.1,        '>', 0            );
     options = autofill(options,'theta',                   [0.923581, ...

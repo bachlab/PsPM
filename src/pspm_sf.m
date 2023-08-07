@@ -227,13 +227,7 @@ for iFile = 1:nFile
         return;
       end
     end
-    if options.marker_chan_num_event > length(data)
-      warning('ID:invalid_input', ...
-        'options.marker_chan_num_event exceeds the length of data');
-      return
-    else
-      events{iFile} = data{options.marker_chan_num_event}.data(:);
-    end
+    events{iFile} = data{1}.data(:);
   end
   for iEpoch = 1:size(epochs{iFile}, 1)
     if iEpoch > 1, fprintf('\n\t\t\t'); end
