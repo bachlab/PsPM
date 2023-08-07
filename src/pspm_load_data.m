@@ -98,7 +98,6 @@ switch nargin
     warning('ID:invalid_input', 'Too many inputs specified.');
     return
 end
-
 %% 3 Check fn
 % fn has to be a file or a struct
 switch class(fn)
@@ -153,7 +152,6 @@ switch class(fn)
     warning('ID:invalid_input', 'fn needs to be an existing file or a struct.');
     return
 end
-
 %% 4 Check channel
 switch class(channel)
   case 'double'
@@ -190,7 +188,6 @@ switch class(channel)
   otherwise
     warning('ID:invalid_input', 'Unknown channel option.');
 end
-
 %% 5 Check infos
 if isstruct(channel)
   infos = channel.infos;
@@ -217,8 +214,7 @@ if flag_infos
   warning('ID:invalid_data_structure', 'Input data does not have sufficient infos');
   return
 end
-
-%% 6 Check data
+%% 6 Load data
 if isstruct(channel)
   data = channel.data;
 else
@@ -232,18 +228,24 @@ else
     clear loaded_data
   end
 end
-% initialise error flags
+%% 7 Check data
+% 7.1 initialise error flags --
 vflag = zeros(numel(data), 1); % records data structure, valid if 0
 wflag = zeros(numel(data), 1); % records whether data is out of range, valid if 0
 nflag = zeros(numel(data), 1);
 zflag = zeros(numel(data), 1); % records whether data is empty
 % loop through channels
 for k = 1:numel(data)
-  % check header
+  % 7.2 Check header --
   if ~isfield(data{k}, 'header')
     vflag(k) = 1;
   else
-    if (~isfield(data{k}.header, 'channeltype') && ~isfield(data{k}.header, 'chantype')) || ...
+    % 7.2.1 Convert header channeltype into chantype if there are --
+    if isfield(data{k}.header, 'channeltype')
+      data{k}.header.chantype = data{k}.header.channeltype;
+      data{k}.header = rmfield(data{k}.header, 'channeltype');
+    end
+    if ~isfield(data{k}.header, 'chantype') || ...
         ~isfield(data{k}.header, 'sr') || ...
         ~isfield(data{k}.header, 'units')
       vflag(k) = 1;
@@ -259,7 +261,7 @@ for k = 1:numel(data)
       end
     end
   end
-  % check data
+  % 7.3 Check data --
   if vflag(k)==0 && nflag(k)==0 && flag_infos==0
     % required information is available and valid in header and infos
     if ~isfield(data{k}, 'data')
@@ -307,18 +309,6 @@ if any(zflag)
   warning('ID:missing_data', 'Channel %01.0f is empty.', find(zflag,1));
   % if there is empty data, give a warning but do not suspend
 end
-
-
-%% 7 Autofill information in header
-% some other optional fields which can be autofilled with default values
-% should be added here.
-for k = 1:numel(data)
-  if isfield(data{k}.header, 'channeltype')
-    data{k}.header.chantype = data{k}.header.channeltype;
-    data{k}.header = rmfield( data{k}.header, 'channeltype');
-  end
-end
-
 %% 8 Analyse file structure
 filestruct.numofwavechan = 0;
 filestruct.numofeventchan = 0;
@@ -339,7 +329,6 @@ if numel(filestruct.posofmarker) == 0
 elseif numel(filestruct.posofmarker) > 1
   filestruct.posofmarker = filestruct.posofmarker(1); % first marker channel
 end
-
 %% 9 Return channels, or save file
 if isstruct(channel)
   infos = channel.infos;
@@ -391,7 +380,6 @@ elseif isstruct(channel) && ~isempty(fn) && (~exist(fn, 'file') || ...
 else
   filestruct.posofchannels = [];
 end
-
 sts = 1;
 return
 
@@ -438,7 +426,6 @@ preprocessed_channels = preprocessed_channels & pupil_channels;
 combined_channels = combined_channels & pupil_channels;
 besteye_channels = besteye_channels & pupil_channels & ~preprocessed_channels;
 % best eye will not select preprocessed eyes
-
 if any(combined_channels)
   flag = combined_channels;
 elseif any(preprocessed_channels) && ~prefer_unprocessed
@@ -449,7 +436,6 @@ elseif any(preprocessed_channels) && ~prefer_unprocessed
 else
   flag = besteye_channels;
 end
-
 
 function flag = get_chans_to_load_for_sps(data, best_eye)
 % 16-06-21 This is a tempory patch for loading sps data, copied from
@@ -494,7 +480,6 @@ besteye_channels = cell2mat(cellfun(...
 preprocessed_channels = preprocessed_channels & sps_channels;
 combined_channels = combined_channels & sps_channels;
 besteye_channels = besteye_channels & sps_channels;
-
 if any(combined_channels)
   flag = combined_channels;
 elseif any(preprocessed_channels)

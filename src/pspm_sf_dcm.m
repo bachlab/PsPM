@@ -1,10 +1,10 @@
-function varargout = pspm_sf_dcm(scr, sr, options)
+function varargout = pspm_sf_dcm(model, options)
 % ● Description
 %   pspm_sf_dcm does dynamic causal modelling for SF of the skin conductance
 %   uses f_SF and g_Id
 %   the input data is assumed to be in mcS, and sampling rate in Hz
 % ● Format
-%   function out = pspm_sf_dcm(scr, sr, options)
+%   function out = pspm_sf_dcm(model, options)
 % ● Output
 %         out:  output
 %          .n:  number of responses above threshold
@@ -18,20 +18,32 @@ function varargout = pspm_sf_dcm(scr, sr, options)
 %       .yhat:  fitted time series
 %      .model:  information about the DCM inversion
 % ● Arguments
-%         scr:  skin conductance epoch (maximum size depends on computing
-%               power, a sensible size is 60 s at 10 Hz)
-%          sr:  sampling rate in Hz
-%     options:  options structure
-%  .threshold:  threshold for SN detection (default 0.1 mcS)
-%      .theta:  a (1 x 5) vector of theta values for f_SF
-%               (default: read from pspm_sf_theta)
-%      .fresp:  frequency of responses to model (default 0.5 Hz)
-%    .dispwin:  display progress window (default 1)
-%   .dispsmallwin:
-%               display intermediate windows (default 0);
-%    .missing:  index of missing values to ignore
-%   .missingthresh:
-%               threshold value for controlling missing epochs (default 2s).
+%   ┌──────model
+%   │ ▶︎ Mandatory
+%   ├───────.scr:  skin conductance epoch (maximum size depends on computing
+%   │              power, a sensible size is 60 s at 10 Hz)
+%   ├────────.sr:  [numeric] [unit: Hz]
+%   │              sampling rate.
+%   │ ▶︎ Optional
+%   └.missing_data:missing epoch data, originally loaded as model.missing
+%                  from pspm_sf, but calculated into .missing_data (created
+%                  in pspm_sf and then transferred to pspm_sf_dcm.
+%
+%   ┌────options
+%   ├─.threshold:  [numeric] [default: 0.1] [unit: mcS]
+%   │              threshold for SN detection (default 0.1 mcS)
+%   ├─────.theta:  [vector] [default: read from pspm_sf_theta]
+%   │               a (1 x 5) vector of theta values for f_SF
+%   ├─────.fresp:  [numeric] [unit: Hz] [default: 0.5]
+%   │              frequency of responses to model
+%   ├───.dispwin:  [logical] [default: 1]
+%   │              display progress window.
+%   ├.dispsmallwin:[logical] [default: 0]
+%   │              display intermediate windows.
+%   └.missingthresh:
+%                  [numeric] [default: 2] [unit: second]
+%                  threshold value for controlling missing epochs,
+%                  which is originally inherited from SF
 % ● References
 %   Bach DR, Daunizeau J, Kuelzow N, Friston KJ, & Dolan RJ (2011). Dynamic
 %   causal modelling of spontaneous fluctuations in skin conductance.
@@ -47,19 +59,24 @@ if isempty(settings)
 end
 sts = -1;
 tstart = tic;
+
 %% 2 Check input arguments
-if nargin < 2 || ~isnumeric(sr) || numel(sr) > 1
+% 2.1 set model ---
+try model.scr; catch, warning('Input data is not defined.'); return; end
+try model.sr; catch, warning('Sample rate is not defined.'); return; end
+% 2.2 Validate parameters ---
+if ~isnumeric(model.sr) || numel(model.sr) > 1
   errmsg = sprintf('No valid sample rate given.');
-elseif (sr < 1) || (sr > 1e5)
+elseif (model.sr < 1) || (model.sr > 1e5)
   errmsg = sprintf('Sample rate out of range.');
-elseif exist('osr', 'var') && osr ~= sr
+elseif exist('osr', 'var') && osr ~= model.sr
   errmsg = sprintf('Sample rate of theta file is different from sample rate of data.');
-elseif nargin < 1 || ~isnumeric(scr)
+elseif nargin < 1 || ~isnumeric(model.scr)
   errmsg = 'No data.';
-elseif ~any(size(scr) == 1)
+elseif ~any(size(model.scr) == 1)
   errmsg = 'Input SCR is not a vector';
 else
-  scr = scr(:);
+  model.scr = model.scr(:);
 end
 if exist('errmsg', 'var') == 1
   warning(errmsg);
@@ -71,8 +88,8 @@ options = pspm_options(options, 'sf_dcm');
 if options.invalid
   return
 end
-options.DisplayWin = options.dispwin;
-options.GnFigs = options.dispsmallwin;
+% options.DisplayWin = options.dispwin;
+% options.GnFigs = options.dispsmallwin;
 fresp = options.fresp;
 threshold = options.threshold;
 try
@@ -93,16 +110,16 @@ priors.b_sigma = 1e1;
 priors.a_alpha = Inf;
 priors.b_alpha = 0;
 % 4.2 initialise priors in correct dimensions
-priors.iQy = cell(numel(scr), 1);
-priors.iQx = cell(numel(scr), 1);
-for k = 1:numel(scr)  % default priors on noise covariance
+priors.iQy = cell(numel(model.scr), 1);
+priors.iQx = cell(numel(model.scr), 1);
+for k = 1:numel(model.scr)  % default priors on noise covariance
   priors.iQy{k} = 1;
   priors.iQx{k} = eye(dim.n);
 end
 options.inG.ind = 1;
-options.inF.dt = 1/sr;
+options.inF.dt = 1/model.sr;
 % 4.3 prepare data
-y = scr;
+y = model.scr;
 y = y - min(y);
 % 4.4 determine initial conditions
 x0 = y(1:3);
@@ -110,9 +127,9 @@ X0(1, 1)   = mean(x0);
 X0(2, 1)   = mean(diff(x0));
 X0(3, 1)   = diff(diff(x0));
 priors.muX0 = X0;
-nresp = floor(fresp * numel(y)/sr) + 1;
+nresp = floor(fresp * numel(y)/model.sr) + 1;
 u = [];
-u(1, :) = (1:numel(y))/sr;
+u(1, :) = (1:numel(y))/model.sr;
 u(2, :) = nresp;
 priors.muTheta = theta(1:3)';
 priors.muTheta(4:2:(2 * nresp + 3)) = 1/fresp * (0:(nresp-1));
@@ -129,8 +146,8 @@ options.priors = priors;
 c = clock;
 fprintf(['\n\nEstimating model parameters for f_SF ... \t%02.0f:%02.0f:%02.0f', ...
   '\n=========================================================\n'], c(4:6));
-if isfield(options, 'missing')
-  ymissing = options.missing;
+if isfield(model, 'missing_data')
+  ymissing = model.missing_data;
 else
   ymissing = isnan(y);
 end
@@ -143,22 +160,24 @@ elseif length(ymissing_start) < length(ymissing_end)
 end
 miss_epoch = [ymissing_start(:),ymissing_end(:)];
 flag_missing_too_long = 0;
-if any(diff(miss_epoch, 1, 2)/sr > options.missingthresh)
+if any(diff(miss_epoch, 1, 2)/model.sr > options.missingthresh)
   warning_message = ['Imported data includes too long miss epoches (over ',...
     num2str(options.missingthresh), 's), thus estimation has been skipped.'];
   warning('ID:missing_data', warning_message);
   flag_missing_too_long = 1;
 end
 options.isYout = ymissing(:)';
+% 4.6 interpolate data body to fill NaNs
+y_interpolated = pspm_interp1(y, ymissing);
 %% 5 Extract parameters
 if ~flag_missing_too_long
-  [posterior, output] = VBA_NLStateSpaceModel(y(:)',u,f_fname,g_fname,dim,options);
+  [posterior, output] = VBA_NLStateSpaceModel(y_interpolated(:)',u,f_fname,g_fname,dim,options);
   for i = 1:length(output)
     output(i).options = rmfield(output(i).options, 'hf');
   end
   t = posterior.muTheta(4:2:end);
   a = exp(posterior.muTheta(5:2:end) - theta(5));   % rescale
-  ex = find(t < -2 | t > (numel(scr)/sr - 1)); % find SA responses the SCR peak of which is outside episode
+  ex = find(t < -2 | t > (numel(model.scr)/model.sr - 1)); % find SA responses the SCR peak of which is outside episode
   t(ex) = [];
   a(ex) = [];
 end
@@ -167,7 +186,7 @@ if ~flag_missing_too_long
   out.t               = t - theta(4);   % subtract conduction delay
   out.a               = a;
   out.n               = numel(find(a > threshold));
-  out.f               = out.n/(numel(scr)/sr);
+  out.f               = out.n/(numel(model.scr)/model.sr);
   out.ma              = mean(a(a > threshold));
   out.theta           = theta;
   out.if              = fresp;
@@ -176,7 +195,7 @@ if ~flag_missing_too_long
   out.model.posterior = posterior;
   out.model.output    = output;
   out.model.u         = u;
-  out.model.y         = y(:)';
+  out.model.y         = y_interpolated(:)';
   out.time            = toc(tstart);
 else
   out.t               = NaN;

@@ -30,7 +30,7 @@ function varargout = pspm_dcm(model, options)
 %   │             trial. If this is not the case, include `dummy` events with
 %   │             negative onsets.
 %   │ ▶︎ Optional
-%   ├───.missing: Allows to specify missing (e. g. artefact) epochs in the
+%   ├───.missing: Allows to specify missing (e.g. artefact) epochs in the
 %   │             data file. See pspm_get_timing for epoch definition; specify
 %   │             a cell array for multiple input files. This must always be
 %   │             specified in SECONDS.
