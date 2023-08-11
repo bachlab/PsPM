@@ -25,21 +25,33 @@ function varargout = pspm_sf(model, options)
 %   │                   as 'dcm'
 %   │                   [cell_array] a cell array of methods mentioned above.
 %   ├─────────.filter:  filter settings; modality specific default
-%   └────────.channel:  channel number; default: first SCR channel
+%   ├────────.missing:  [string/cell_array] [default: no missing values]
+%   │                   Allows to specify missing (e.g. artefact) epochs in the
+%   │                   data file. See pspm_get_timing for epoch definition; specify
+%   │                   a cell array for multiple input files. This must always be
+%   │                   specified in SECONDS.
+%   └────────.channel:  [integer] [default: first SCR channel]
+%                       channel number.
 %   ┌─────────options
-%   ├──────.overwrite:  [logical] (0 or 1)
+%   ├──────.overwrite:  [logical] [default: determined by pspm_overwrite]
 %   │                   Define whether to overwrite existing output files or not.
-%   │                   Default value: determined by pspm_overwrite.
-%   ├.marker_chan_num:  marker channel number
+%   ├.marker_chan_num:  [integer]
+%   │                   marker channel number
 %   │                   if undefined or 0, first marker channel is used.
-%   │ additional options for individual methods:
+%   │ * Additional options for individual methods:
 %   │ dcm related options
-%   ├──────.threshold:  threshold for SN detection (default 0.1 mcS)
-%   ├──────────.theta:  a (1 x 5) vector of theta values for f_SF
-%   │                   (default: read from pspm_sf_theta)
-%   ├──────────.fresp:  frequency of responses to model (default 0.5 Hz)
-%   ├────────.dispwin:  display progress window (default 1)
-%   └───.dispsmallwin:  display intermediate windows (default 0);
+%   ├──────.threshold:  [numeric] [default: 0.1] [unit: mcS]
+%   │                   threshold for SN detection (default 0.1 mcS)
+%   ├──────────.theta:  [vector] [default: read from pspm_sf_theta]
+%   │                   A (1 x 5) vector of theta values for f_SF.
+%   ├──────────.fresp:  [numeric] [unit: Hz] [default: 0.5]
+%   │                   frequency of responses to model.
+%   ├────────.dispwin:  [logical] [default: 1]
+%   │                   display progress window.
+%   ├───.dispsmallwin:  [logical] [default: 0]
+%   │                   display intermediate windows.
+%   └──.missingthresh:  [numeric] [default: 2] [unit: second]
+%                       threshold value for controlling missing epochs.
 % ● References
 %   1.[DCM for SF]
 %     Bach DR, Daunizeau J, Kuelzow N, Friston KJ, Dolan RJ (2010). Dynamic
@@ -65,7 +77,7 @@ end
 outfile = [];
 sts = -1;
 %% 2 Check input
-% 2.1 Check missing input
+% 2.1 Check missing input --
 if nargin<1
   warning('ID:invalid_input', 'Nothing to do.'); return;
 elseif nargin<2
@@ -80,7 +92,7 @@ elseif ~isfield(model, 'timeunits')
 elseif ~isfield(model, 'timing') && ~strcmpi(model.timeunits, 'file')
   warning('ID:invalid_input', 'No epochs specified.'); return;
 end
-% 2.2 Check faulty input
+% 2.2 Check faulty input --
 if ~ischar(model.datafile) && ~iscell(model.datafile)
   warning('ID:invalid_input', 'Input data must be a cell or string.'); return;
 elseif ~ischar(model.modelfile) && ~iscell(model.modelfile)
@@ -103,7 +115,7 @@ end
 if ischar(model.modelfile)
   model.modelfile = {model.modelfile};
 end
-% 2.4 Check number of files
+% 2.4 Check number of files --
 if ~strcmpi(model.timeunits, 'whole') && numel(model.datafile) ~= numel(model.timing)
   warning('ID:number_of_elements_dont_match',...
     'Number of data files and epoch definitions does not match.'); return;
@@ -111,7 +123,7 @@ elseif numel(model.datafile) ~= numel(model.modelfile)
   warning('ID:number_of_elements_dont_match',...
     'Number of data files and model files does not match.'); return;
 end
-% 2.5 check methods
+% 2.5 check methods --
 if ~isfield(model, 'method')
   model.method = {'dcm'};
 elseif ischar(model.method)
@@ -150,39 +162,50 @@ else
     end
   end
 end
-% 2.6 Check timing
+% 2.6 Check timing --
 if strcmpi(model.timeunits, 'whole')
   epochs = repmat({[1 1]}, numel(model.datafile), 1);
 else
-  for iSn = 1:numel(model.datafile)
-    [sts_get_timing, epochs{iSn}] = pspm_get_timing('epochs', model.timing{iSn}, model.timeunits);
+  for iFile = 1:numel(model.datafile)
+    [sts_get_timing, epochs{iFile}] = pspm_get_timing('epochs', model.timing{iFile}, model.timeunits);
     if sts_get_timing == -1
       warning('ID:invalid_input', 'Call of pspm_get_timing failed.');
       return;
     end
   end
 end
-% 2.7 Check filter
+% 2.7 Check filter --
 if ~isfield(model, 'filter')
   model.filter = settings.dcm{2}.filter;
 elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
   warning('ID:invalid_input', 'Filter structure needs a numeric ''down'' field.'); return;
 end
-% 2.8 Set options
+% 2.8 Set options --
 try model.channel; catch, model.channel = 'scr'; end
 options = pspm_options(options, 'sf');
 if options.invalid
   return
 end
+% 2.9 Set missing epochs --
+if ~isfield(model, 'missing')
+  model.missing = cell(numel(model.datafile), 1);
+elseif ischar(model.missing) || isnumeric(model.missing)
+  model.missing = {model.missing};
+elseif ~iscell(model.missing)
+  warning('ID:invalid_input',...
+    'Missing values must be a filename, matrix, or cell array of these.');
+  return
+end
 %% 3 Get data
+missing = cell(size(model.missing));
 for iFile = 1:numel(model.datafile)
-  % 3.1 User output
+  % 3.1 User output --
   fprintf('SF analysis: %s ...', model.datafile{iFile});
-  % 3.2 Check whether model file exists
+  % 3.2 Check whether model file exists --
   if ~pspm_overwrite(model.modelfile, options)
     return
   end
-  % 3.3 get and filter data
+  % 3.3 get and filter data --
   [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
   if sts_load_data < 0, return; end
   Y{1} = data{1}.data; sr(1) = data{1}.header.sr;
@@ -192,40 +215,42 @@ for iFile = 1:numel(model.datafile)
     warning('ID:invalid_input', 'Call of pspm_prepdata failed.');
     return;
   end
-  % 3.4 Check data units
+  % 3.4 Check data units --
   if ~strcmpi(data{1}.header.units, 'uS') && any(strcmpi('dcm', method))
     fprintf(['\nYour data units are stored as %s, ',...
       'and the method will apply an amplitude threshold in uS. ',...
       'Please check your results.\n'], ...
       data{1}.header.units);
   end
-  % 3.5 Get marker data
-  if any(strcmp(model.timeunits, {'marker', 'markers'}))
-    if options.marker_chan_num
-      [nsts, ~, ndata] = pspm_load_data(model.datafile, options.marker_chan_num);
-      if nsts == -1
-        warning('ID:invalid_input', 'Could not load data');
-        return;
-      end
-      if ~strcmp(ndata{1}.header.chantype, 'marker')
-        warning('ID:invalid_option', ...
-          ['Channel %i is no marker channel. ',...
-          'The first marker channel in the file is used instead'],...
-          options.marker_chan_num);
-        [nsts, ~, ~] = pspm_load_data(model.datafile, 'marker');
-        if nsts == -1
-          warning('ID:invalid_input', 'Could not load data');
-          return;
+  % 3.5 Get missing epochs --
+  % 3.5.1 Load missing epochs --
+  if ~isempty(model.missing{iFile})
+    [~, missing{iFile}] = pspm_get_timing('epochs', model.missing{iFile}, 'seconds');
+  % 3.5.2 sort missing epochs --
+    if size(missing{iFile}, 1) > 0
+      [~, sortindx] = sort(missing{iFile}(:, 1));
+      missing{iFile} = missing{iFile}(sortindx,:);
+      % check for overlap and merge
+      for k = 2:size(missing{iFile}, 1)
+        if missing{iFile}(k, 1) <= missing{iFile}(k - 1, 2)
+          missing{iFile}(k, 1) =  missing{iFile}(k - 1, 1);
+          missing{iFile}(k - 1, :) = [];
         end
       end
-    else
-      [nsts, ~, ~] = pspm_load_data(model.datafile, 'marker');
-      if nsts == -1
-        warning('ID:invalid_input', 'Could not load data');
-        return;
-      end
     end
-    events = data{1}.data;
+  else
+    missing{iFile} = [];
+  end
+  % 3.6 Get marker data --
+  if any(strcmp(model.timeunits, {'marker', 'markers'}))
+    if options.marker_chan_num
+      [nsts, ~, ndata] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
+      if nsts == -1; warning('ID:invalid_input', 'Could not load data'); return; end
+    else
+      [nsts, ~, ndata] = pspm_load_data(model.datafile{iFile}, 'marker');
+      if nsts == -1; warning('ID:invalid_input', 'Could not load data'); return; end
+    end
+    events = ndata{1}.data;
   end
   for iEpoch = 1:size(epochs{iFile}, 1)
     if iEpoch > 1, fprintf('\n\t\t\t'); end
@@ -238,7 +263,7 @@ for iFile = 1:numel(model.datafile)
         case 'samples'
           win = round(epochs{iFile}(iEpoch, :) * sr(datatype(k)) / sr(1));
         case 'markers'
-          win = round(events(epochs{1}(iEpoch, :)) * sr(datatype(k)));
+          win = round(events(epochs{iFile}(iEpoch, :)) * sr(datatype(k)));
         case 'whole'
           win = [1 numel(Y{datatype(k)})];
       end
@@ -249,7 +274,7 @@ for iFile = 1:numel(model.datafile)
         win(1) = max(win(1), 1);
         win(2) = min(win(2), numel(Y{datatype(k)}));
       end
-      % 3.6 collect information
+      % 3.6.1 collect information --
       sf.model{k}(iEpoch).modeltype = method{k};
       sf.model{k}(iEpoch).boundaries = squeeze(epochs{iFile}(iEpoch, :));
       sf.model{k}(iEpoch).timeunits  = model.timeunits;
@@ -258,8 +283,18 @@ for iFile = 1:numel(model.datafile)
       %
       escr = Y{datatype(k)}(win(1):win(end));
       sf.model{k}(iEpoch).data = escr;
-      % 3.7 do the analysis and collect results
-      invrs = fhandle{k}(escr, sr(datatype(k)), options);
+      if any(missing{iFile})
+        model.missing_data = zeros(size(escr));
+        missing_index = pspm_time2index(missing, sr(datatype(k)));
+        model.missing_data((missing_index{iFile}(:,1)+1):(missing_index{iFile}(:,2)+1)) = 1;
+      end
+      % 3.6.2 do the analysis and collect results --
+      if any(missing{iFile})
+        model_analysis = struct('scr', escr, 'sr', sr(datatype(k)), 'missing_data', model.missing_data);
+      else
+        model_analysis = struct('scr', escr, 'sr', sr(datatype(k)));
+      end
+      invrs = fhandle{k}(model_analysis, options);
       if any(strcmpi(method{k}, {'dcm', 'mp'}))
         sf.model{k}(iEpoch).inv     = invrs;
         sf.stats(iEpoch, k)         = invrs.f;

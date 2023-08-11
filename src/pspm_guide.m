@@ -1,7 +1,7 @@
 function varargout = pspm_guide(varargin)
-% ‚ó? Description
+% ‚óè Description
 %   pspm_guide handles the main GUI for PsPM
-% ‚ó? Developer's Guide
+% ‚óè Developer's Guide
 %   * Template
 %     function varargout = FunctionName(hObject, eventdata, handles, varargin)
 %       varargout  cell array for returning output args (see VARARGOUT);
@@ -15,7 +15,7 @@ function varargout = pspm_guide(varargin)
 %       contents{get(hObject,'Value')} returns selected item from the list
 %   * Hint
 %       popupmenu controls usually have a white background on Windows.
-% ‚ó? Copyright
+% ‚óè Copyright
 %   Introduced in PsPM 1.0 and terminated in PsPM 6.1.
 %   Written by Dominik R Bach (Wellcome Centre for Human Neuroimaging) in 2008-2021
 %   Lastly updated in PsPM 6.1 by Teddy Chao (UCL) in 2022

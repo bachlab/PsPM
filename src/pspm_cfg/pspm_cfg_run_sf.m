@@ -77,7 +77,11 @@ end
 if ~isempty(job.fresp)
     options.fresp = job.fresp;
 end
-
+if ~isempty(job.missing)
+  if ischar(job.missing.missingdata)
+    options.missing = job.missing;
+  end
+end
 options.dispwin = job.dispwin;
 options.dispsmallwin = job.dispsmallwin;
 
