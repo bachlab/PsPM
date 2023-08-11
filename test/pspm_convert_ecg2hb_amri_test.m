@@ -1,6 +1,6 @@
 classdef pspm_convert_ecg2hb_amri_test < pspm_testcase
-% PSPM_ECG2HB_AMRI_TEST
-% unittest class for the pspm_ecg2hb_amri function
+% PSPM_CONVERT_ECG2HB_AMRI_TEST
+% unittest class for the pspm_convert_ecg2hb_amri function
 %__________________________________________________________________________
 % PsPM TestEnvironment
 % (C) 2019 Eshref Yozdemir (University of Zurich)
