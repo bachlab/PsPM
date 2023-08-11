@@ -96,5 +96,7 @@ switch nargout
   case 2
     varargout{1} = sts;
     varargout{2} = overwrite_final;
+  otherwise
+    varargout{1} = overwrite_final;
 end
 return
