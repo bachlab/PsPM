@@ -553,9 +553,10 @@ if ~options.getrf
       priors.SigmaX0 = zeros(7);
       priors.muX0 = zeros(7, 1);
       if trl == 1
-        priors.muX0(1) = mean(y(1:3));%) - min(y);
-        priors.muX0(2) = mean(diff(y(1:3)));
-        priors.muX0(3) = diff(diff(y(1:3)));
+        y_non_nan = y(~isnan(y));
+        priors.muX0(1) = mean(y_non_nan(1:3));%) - min(y);
+        priors.muX0(2) = mean(diff(y_non_nan(1:3)));
+        priors.muX0(3) = diff(diff(y_non_nan(1:3)));
         priors.muX0(7) = 0;%min(y);
         for n = [1:3 7]
           priors.SigmaX0(n, n) = 1e-2;

@@ -411,6 +411,7 @@ switch FunName
     options = autofill(options,'dispwin',                 1,          0                 );
     options = autofill(options,'fresp',                   0.5,        '>=', 0           );
     options = autofill(options,'marker_chan_num',         1,          '*Int*Char'       );
+    options = autofill(options,'missingthresh',           2,          '>', 0            );
     options = autofill(options,'overwrite',               1,          0                 );
     options = autofill(options,'threshold',               0.1,        '>', 0            );
     options = autofill(options,'missingthresh',           2,          '>', 0            );
@@ -579,7 +580,7 @@ switch nargin
               if contains(optional_value, '*Int')
                 flag_is_allowed_value = flag_is_allowed_value || ...
                   all([isnumeric(options.(field_name)), ...
-                  options.(field_name)>0, ...
+                  options.(field_name)>=0, ...
                   mod(options.(field_name), 1)==0]);
               end
               if contains(optional_value, '*Struct')
