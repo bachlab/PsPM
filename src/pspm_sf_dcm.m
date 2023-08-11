@@ -5,18 +5,6 @@ function varargout = pspm_sf_dcm(model, options)
 %   the input data is assumed to be in mcS, and sampling rate in Hz
 % ● Format
 %   function out = pspm_sf_dcm(model, options)
-% ● Output
-%         out:  output
-%          .n:  number of responses above threshold
-%          .f:  frequency of responses above threshold in Hz
-%         .ma:  mean amplitude of responses above threshold
-%          .t:  timing of (all) responses
-%          .a:  amplitude of (all) responses
-%      .theta:  parameters used for f_SF
-%  .threshold:  threshold
-%         .if:  initial frequency for f_SF
-%       .yhat:  fitted time series
-%      .model:  information about the DCM inversion
 % ● Arguments
 %   ┌──────model
 %   │ ▶︎ Mandatory
@@ -59,7 +47,6 @@ if isempty(settings)
 end
 sts = -1;
 tstart = tic;
-
 %% 2 Check input arguments
 % 2.1 set model ---
 try model.scr; catch, warning('Input data is not defined.'); return; end
@@ -122,7 +109,8 @@ options.inF.dt = 1/model.sr;
 y = model.scr;
 y = y - min(y);
 % 4.4 determine initial conditions
-x0 = y(1:3);
+y_non_nan = y(~isnan(y));
+x0 = y_non_nan(1:3);
 X0(1, 1)   = mean(x0);
 X0(2, 1)   = mean(diff(x0));
 X0(3, 1)   = diff(diff(x0));
@@ -131,14 +119,14 @@ nresp = floor(fresp * numel(y)/model.sr) + 1;
 u = [];
 u(1, :) = (1:numel(y))/model.sr;
 u(2, :) = nresp;
-priors.muTheta = theta(1:3)';
+priors.muTheta = transpose(theta(1:3));
 priors.muTheta(4:2:(2 * nresp + 3)) = 1/fresp * (0:(nresp-1));
 priors.muTheta(5:2:(2 * nresp + 4)) = -10;
 dim.n_theta = numel(priors.muTheta);    % nb of evolution parameters
 priors.SigmaTheta = zeros(dim.n_theta);
 for k = (4:2:(2 * nresp + 3)), priors.SigmaTheta(k, k) = 1e-2;end
 for k = (5:2:(2 * nresp + 4)), priors.SigmaTheta(k, k) = 1e2; end
-priors.muPhi = phi';
+priors.muPhi = transpose(phi);
 priors.SigmaPhi = zeros(dim.n_phi);
 priors.SigmaX0 = 1e-8*eye(dim.n);
 options.priors = priors;
@@ -160,11 +148,17 @@ elseif length(ymissing_start) < length(ymissing_end)
 end
 miss_epoch = [ymissing_start(:),ymissing_end(:)];
 flag_missing_too_long = 0;
-if any(diff(miss_epoch, 1, 2)/model.sr > options.missingthresh)
-  warning_message = ['Imported data includes too long miss epoches (over ',...
-    num2str(options.missingthresh), 's), thus estimation has been skipped.'];
+if any(diff(miss_epoch, 1, 2)/model.sr > 0)
+  if any(diff(miss_epoch, 1, 2)/model.sr > options.missingthresh)
+    warning_message = ['Imported data includes too long miss epoches (over ',...
+      num2str(options.missingthresh), 's), thus estimation has been skipped.'];
+    flag_missing_too_long = 1;
+  else
+    warning_message = ['Imported data includes miss epoches (over ',...
+      num2str(options.missingthresh), 's), but the trial has been allowed. ',...
+      'Please adjust options.missingthresh to skip if you wish.'];
+  end
   warning('ID:missing_data', warning_message);
-  flag_missing_too_long = 1;
 end
 options.isYout = ymissing(:)';
 % 4.6 interpolate data body to fill NaNs
