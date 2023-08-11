@@ -349,11 +349,11 @@ end
 
 % determine best eye
 switch sourceinfo.eyesObserved
-  case defaults.eye.left
+  case settings.eye.left
     sourceinfo.best_eye = sourceinfo.eyesObserved;
-  case sdefaults.eye.right
+  case settings.eye.right
     sourceinfo.best_eye = sourceinfo.eyesObserved;
-  case defaults.eye.bilateral
+  case settings.eye.bilateral
     eye_stat = Inf(1,2);
     eye_choice = pspm_eye(sourceinfo.eyesObserved, 'char2cell');
     for i = 1:2
