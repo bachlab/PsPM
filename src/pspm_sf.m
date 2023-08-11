@@ -77,7 +77,7 @@ end
 outfile = [];
 sts = -1;
 %% 2 Check input
-% 2.1 Check missing input
+% 2.1 Check missing input --
 if nargin<1
   warning('ID:invalid_input', 'Nothing to do.'); return;
 elseif nargin<2
@@ -92,7 +92,7 @@ elseif ~isfield(model, 'timeunits')
 elseif ~isfield(model, 'timing') && ~strcmpi(model.timeunits, 'file')
   warning('ID:invalid_input', 'No epochs specified.'); return;
 end
-% 2.2 Check faulty input
+% 2.2 Check faulty input --
 if ~ischar(model.datafile) && ~iscell(model.datafile)
   warning('ID:invalid_input', 'Input data must be a cell or string.'); return;
 elseif ~ischar(model.modelfile) && ~iscell(model.modelfile)
@@ -115,7 +115,7 @@ end
 if ischar(model.modelfile)
   model.modelfile = {model.modelfile};
 end
-% 2.4 Check number of files
+% 2.4 Check number of files --
 if ~strcmpi(model.timeunits, 'whole') && numel(model.datafile) ~= numel(model.timing)
   warning('ID:number_of_elements_dont_match',...
     'Number of data files and epoch definitions does not match.'); return;
@@ -123,7 +123,7 @@ elseif numel(model.datafile) ~= numel(model.modelfile)
   warning('ID:number_of_elements_dont_match',...
     'Number of data files and model files does not match.'); return;
 end
-% 2.5 check methods
+% 2.5 check methods --
 if ~isfield(model, 'method')
   model.method = {'dcm'};
 elseif ischar(model.method)
@@ -162,31 +162,31 @@ else
     end
   end
 end
-% 2.6 Check timing
+% 2.6 Check timing --
 if strcmpi(model.timeunits, 'whole')
   epochs = repmat({[1 1]}, numel(model.datafile), 1);
 else
-  for iSn = 1:numel(model.datafile)
-    [sts_get_timing, epochs{iSn}] = pspm_get_timing('epochs', model.timing{iSn}, model.timeunits);
+  for iFile = 1:numel(model.datafile)
+    [sts_get_timing, epochs{iFile}] = pspm_get_timing('epochs', model.timing{iFile}, model.timeunits);
     if sts_get_timing == -1
       warning('ID:invalid_input', 'Call of pspm_get_timing failed.');
       return;
     end
   end
 end
-% 2.7 Check filter
+% 2.7 Check filter --
 if ~isfield(model, 'filter')
   model.filter = settings.dcm{2}.filter;
 elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
   warning('ID:invalid_input', 'Filter structure needs a numeric ''down'' field.'); return;
 end
-% 2.8 Set options
+% 2.8 Set options --
 try model.channel; catch, model.channel = 'scr'; end
 options = pspm_options(options, 'sf');
 if options.invalid
   return
 end
-% 2.9 Set missing epochs
+% 2.9 Set missing epochs --
 if ~isfield(model, 'missing')
   model.missing = cell(numel(model.datafile), 1);
 elseif ischar(model.missing) || isnumeric(model.missing)
@@ -201,11 +201,11 @@ nFile = numel(model.datafile);
 for iFile = 1:nFile
   % 3.1 User output
   fprintf('SF analysis: %s ...', model.datafile{iFile});
-  % 3.2 Check whether model file exists
+  % 3.2 Check whether model file exists --
   if ~pspm_overwrite(model.modelfile, options)
     return
   end
-  % 3.3 get and filter data
+  % 3.3 get and filter data --
   [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
   if sts_load_data < 0, return; end
   y{1} = data{end}.data;
@@ -224,16 +224,16 @@ for iFile = 1:nFile
       'Please check your results.\n'], ...
       data{end}.header.units);
   end
-  % 3.5 Get missing epochs
+  % 3.5 Get missing epochs --
+  % 3.5.1 Load missing epochs --
   if ~isempty(model.missing{iFile})
-    [~, missing{iFile}] = pspm_get_timing('epochs', ...
-      model.missing{iFile}, 'seconds');
-    % sort missing epochs
+    [~, missing{iFile}] = pspm_get_timing('epochs', model.missing{iFile}, 'seconds');
+  % 3.5.2 sort missing epochs --
     if size(missing{iFile}, 1) > 0
       [~, sortindx] = sort(missing{iFile}(:, 1));
       missing{iFile} = missing{iFile}(sortindx,:);
       % check for overlap and merge
-      for k = 2:size(missing{iSn}, 1)
+      for k = 2:size(missing{iFile}, 1)
         if missing{iFile}(k, 1) <= missing{iFile}(k - 1, 2)
           missing{iFile}(k, 1) =  missing{iFile}(k - 1, 1);
           missing{iFile}(k - 1, :) = [];
@@ -243,7 +243,7 @@ for iFile = 1:nFile
   else
     missing{iFile} = [];
   end
-  % 3.6 Get marker data
+  % 3.6 Get marker data --
   if any(strcmp(model.timeunits, {'marker', 'markers'}))
     [sts, ~, ndata] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
     if sts < 1
@@ -276,7 +276,7 @@ for iFile = 1:nFile
         case 'samples'
           win = round(epochs{iFile}(iEpoch, :) * sr(datatype(k)) / sr(1));
         case 'markers'
-          win = round(events(epochs{1}(iEpoch, :)) * sr(datatype(k)));
+          win = round(events(epochs{iFile}(iEpoch, :)) * sr(datatype(k)));
         case 'whole'
           win = [1 numel(y{datatype(k)})];
       end
@@ -287,7 +287,7 @@ for iFile = 1:nFile
         win(1) = max(win(1), 1);
         win(2) = min(win(2), numel(y{datatype(k)}));
       end
-      % 3.6.1 collect information
+      % 3.6.1 collect information --
       sf.model{k}(iEpoch).modeltype = method{k};
       sf.model{k}(iEpoch).boundaries = squeeze(epochs{iFile}(iEpoch, :));
       sf.model{k}(iEpoch).timeunits  = model.timeunits;
@@ -296,8 +296,17 @@ for iFile = 1:nFile
       %
       escr = y{datatype(k)}(win(1):win(end));
       sf.model{k}(iEpoch).data = escr;
-      % 3.6.2 do the analysis and collect results
-      model_analysis = struct('scr', escr, 'sr', sr(datatype(k)));
+      if any(missing{iFile})
+        model.missing_data = zeros(size(escr));
+        missing_index = pspm_time2index(missing, sr(datatype(k)));
+        model.missing_data((missing_index{iFile}(:,1)+1):(missing_index{iFile}(:,2)+1)) = 1;
+      end
+      % 3.6.2 do the analysis and collect results --
+      if any(missing{iFile})
+        model_analysis = struct('scr', escr, 'sr', sr(datatype(k)), 'missing_data', model.missing_data);
+      else
+        model_analysis = struct('scr', escr, 'sr', sr(datatype(k)));
+      end
       invrs = fhandle{k}(model_analysis, options);
       if any(strcmpi(method{k}, {'dcm', 'mp'}))
         sf.model{k}(iEpoch).inv     = invrs;
