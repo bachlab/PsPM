@@ -83,7 +83,7 @@ else
   intiming = varargin{2};
 end
 
-if ~ismember(model, {'onsets', 'epochs', 'events', 'file'})
+if ~ismember(model, {'onsets', 'epochs', 'missing', 'events', 'file'})
   warning('ID:invalid_input', 'Invalid input. I don''t know what to do.');
 
   return;
@@ -92,7 +92,7 @@ end
 
 
 switch model
-  case {'onsets', 'epochs'}
+  case {'onsets', 'epochs', 'missing'}
     if nargin < 3
       warning('ID:invalid_input', 'Time units unspecified');  return;
     else
