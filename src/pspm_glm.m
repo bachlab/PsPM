@@ -1,4 +1,4 @@
-function varargout = pspm_glm(model, options)
+function glm = pspm_glm(model, options)
 % ● Description
 %   pspm_glm specifies a within subject general linear convolution model of
 %   predicted signals and calculates amplitude estimates for these responses.
@@ -229,6 +229,7 @@ elseif ~ismember(model.centering, [0, 1])
 end
 % 2.9 check options --
 options = pspm_options(options, 'glm');
+options.overwrite = pspm_overwrite(model.modelfile, options.overwrite);
 if options.invalid
   return
 end
@@ -247,43 +248,20 @@ end
 fprintf('Getting data ...');
 nFile = numel(model.datafile);
 for iFile = 1:nFile
-  [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
-  if sts < 1
-    return
-  end
+  % 3.3 get and filter data
+  [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
+  if sts_load_data == -1, return; end
   y{iFile} = data{end}.data(:);
   sr(iFile) = data{end}.header.sr;
   fprintf('.');
   if any(strcmp(model.timeunits, {'marker', 'markers','markervalues'}))
-    [sts, ~, data] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
-    if sts < 1
+    [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
+    if sts_load_data == -1
       warning('ID:invalid_input', 'Could not load the specified markerchannel');
       return
     end
-    if length(data) > 1
-      data = data{end};
-    end
-    switch class(options.marker_chan_num_event)
-      case 'double'
-        if options.marker_chan_num_event>length(data)
-          warning('ID:invalid_input', ...
-            'options.marker_chan_num_event exceeds the length of data');
-          return
-        else
-          events{iFile} = data{options.marker_chan_num_event}.data(:) * ...
-            data{options.marker_chan_num_event}.header.sr;
-        end
-      case 'char'
-        if strcmp(options.marker_chan_num_event, 'first')
-          events{iFile} = data{1}.data(:) * data{1}.header.sr;
-        elseif strcmp(options.marker_chan_num_event, 'last')
-          events{iFile} = data{end}.data(:) * data{end}.header.sr;
-        else
-          warning('ID:invalid_input', ...
-            'options.marker_chan_num_event can only specify first or last channel as a char.');
-          return
-        end
-    end
+    % first marker_channel is used
+    events{iFile} = data{1}.data(:) * data{1}.header.sr;
     if strcmp(model.timeunits,'markervalues')
       model.timing{iFile}.markerinfo = data{end}.markerinfo;
     end
@@ -304,7 +282,7 @@ if strcmpi(model.filter.down, 'none') || ...
     isnumeric(model.filter.down) && isnan(model.filter.down)
   model.filter.down = min(sr);
 else
-% 4.2 check value of model.filter.down --
+  % 4.2 check value of model.filter.down --
   if ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
     % tested because the field is used before the call of
     % pspm_prepdata (everything else is tested there)
@@ -344,7 +322,8 @@ try
       'functions are not allowed.']); return;
   end
 catch
-  warning('ID:invalid_fhandle', 'Specified basis function %s doesn''t exist or is faulty', func2str(model.bf.fhandle)); return;
+  warning('ID:invalid_fhandle', 'Specified basis function %s doesn''t exist or is faulty', func2str(model.bf.fhandle));
+  return;
 end
 % 5.1 set shiftbf
 if bf_x(1) < 0
@@ -697,7 +676,7 @@ for iCond = 1:numel(names)
       tmp.col = {};
     end
   end
-% 14.3 mean centering --
+  % 14.3 mean centering --
   if model.centering
     for iXCol=1:size(tmp.XC{iCond},2)
       tmp.XC{iCond}(:,iXCol) = tmp.XC{iCond}(:,iXCol) - mean(tmp.XC{iCond}(:,iXCol));
@@ -865,12 +844,4 @@ end
 
 %% 18 User output
 fprintf(' done. \n');
-sts = 1;
-switch nargout
-  case 1
-    varargout{1} = glm;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = glm;
-end
 return
