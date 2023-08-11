@@ -6,7 +6,7 @@ function varargout = pspm_ecg_editor(varargin)
 %   [sts, R] = pspm_ecg_editor(pt)
 %   [sts, R] = pspm_ecg_editor(fn, channel, options)
 % ● Arguments
-%         pt:  A struct() from pspm_ecg2hb detection.
+%         pt:  A struct() from pspm_convert_ecg2hb detection.
 %         fn:  A file to  data file containing the ecg channel to be edited
 %       channel:  Channel id of ecg channel in the data file
 % ┌──options:  A struct() of options
