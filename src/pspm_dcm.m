@@ -356,12 +356,16 @@ for iSn = 1:numel(model.datafile)
   else
     missing{iSn} = [];
   end
-  model.filter.sr = data{iSn}{1}.header.sr;
+  y{iSn} = data{iSn}{end}.data; 
+  % to use the last channel in data channels
+  % this is consistent to sf and glm
+  sr{iSn} = data{iSn}{end}.header.sr;
+  model.filter.sr = sr{iSn}; 
 
   % try to find missing epochs according to subsession threshold
-  n_data = size(data{iSn}{1}.data,1);
+  n_data = size(y{iSn},1);
   if isempty(missing{iSn})
-    nan_epochs = isnan(data{iSn}{1}.data);
+    nan_epochs = isnan(y{iSn});
 
     d_nan_ep = transpose(diff(nan_epochs));
     nan_ep_start = find(d_nan_ep == 1);
@@ -388,19 +392,19 @@ for iSn = 1:numel(model.datafile)
 
     % classify if epoch should be considered
     % true for duration > substhresh and for missing epochs
-    ignore_epochs = diff(miss_epochs, 1, 2)/data{iSn}{1}.header.sr > ...
+    ignore_epochs = diff(miss_epochs, 1, 2)/sr{iSn} > ...
       model.substhresh;
 
   else
     % use missing epochs as specified by file
-    miss_epochs = pspm_time2index(missing{iSn},data{iSn}{1}.header.sr);
+    miss_epochs = pspm_time2index(missing{iSn}, sr{iSn});
     ignore_epochs = diff(missing{iSn}, 1, 2) > model.substhresh;
 
     % and set data to NaN to enable later detection of `short` missing
     % epochs
     for k = 1:size(miss_epochs, 1)
       flanks = round(miss_epochs(k,:));
-      data{iSn}{1}.data(flanks(1):flanks(2)) = NaN;
+      y{iSn}(flanks(1):flanks(2)) = NaN;
     end
   end
 
@@ -436,17 +440,17 @@ for iSn = 1:numel(model.datafile)
     n_sbs = numel(se_start);
     % enabled subsessions
     subsessions(end+(1:n_sbs), 1:4) = [ones(n_sbs,1)*iSn, ...
-      [se_start, se_stop]/data{iSn}{1}.header.sr, ...
+      [se_start, se_stop]/sr{iSn}, ...
       zeros(n_sbs,1)];
 
     % missing epochs
     n_miss = sum(ignore_epochs);
     subsessions(end+(1:n_miss), 1:4) = [ones(n_miss,1)*iSn, ...
-      miss_epochs(i_e,:)/data{iSn}{1}.header.sr, ...
+      miss_epochs(i_e,:)/sr{iSn}, ...
       ones(n_miss,1)];
   else
     subsessions(end+1,1:4) = [iSn, ...
-      [1, numel(data{iSn}{1}.data)]/data{iSn}{1}.header.sr, 0];
+      [1, numel(y{iSn})]/sr{iSn}, 0];
 
 
   end

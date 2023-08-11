@@ -193,9 +193,9 @@ mrk_chan         = cfg_entry;
 mrk_chan.name    = 'Marker Channel';
 mrk_chan.tag     = 'mrk_chan';
 mrk_chan.strtype = 'i';
-mrk_chan.val     = {1};
+mrk_chan.val     = {0};
 mrk_chan.num     = [1 1];
-mrk_chan.help    = {['Indicate the marker channel. By default the first marker channel is ' ...
+mrk_chan.help    = {['Indicate the marker channel. By default (value 0) the first marker channel is ' ...
     'assumed to contain the relevant markers.'], ['Markers are only used if you have ' ...
     'specified the time units as "markers".']};
 
