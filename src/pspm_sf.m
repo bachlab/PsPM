@@ -223,21 +223,8 @@ for iFile = 1:numel(model.datafile)
       data{1}.header.units);
   end
   % 3.5 Get missing epochs --
-  % 3.5.1 Load missing epochs --
   if ~isempty(model.missing{iFile})
-    [~, missing{iFile}] = pspm_get_timing('epochs', model.missing{iFile}, 'seconds');
-  % 3.5.2 sort missing epochs --
-    if size(missing{iFile}, 1) > 0
-      [~, sortindx] = sort(missing{iFile}(:, 1));
-      missing{iFile} = missing{iFile}(sortindx,:);
-      % check for overlap and merge
-      for k = 2:size(missing{iFile}, 1)
-        if missing{iFile}(k, 1) <= missing{iFile}(k - 1, 2)
-          missing{iFile}(k, 1) =  missing{iFile}(k - 1, 1);
-          missing{iFile}(k - 1, :) = [];
-        end
-      end
-    end
+    [~, missing{iFile}] = pspm_get_timing('missing', model.missing{iFile}, 'seconds');
   else
     missing{iFile} = [];
   end

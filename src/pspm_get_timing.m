@@ -7,6 +7,7 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %   [sts, multi]  = pspm_get_timing('onsets', intiming, timeunits)
 %   [sts, epochs] = pspm_get_timing('epochs', epochs, timeunits)
 %   [sts, events] = pspm_get_timing('events', events)
+%   [sts, epochs] = pspm_get_timing('missing', epochs, timeunits)
 %   for recursive calls also:
 %   [sts, epochs] = pspm_get_timing('file', filename)
 % ● Arguments
@@ -352,7 +353,7 @@ switch model
     end
 
 
-    % Epoch information for SF and GLM (model.missing)
+    % Epoch information for SF and recursive call from option "missing"
     % ------------------------------------------------------------------------
   case 'epochs'
     % get epoch information from file or from input --
@@ -408,6 +409,24 @@ switch model
         'time units are ''%s'''], timeunits);  return;
     end
 
+       % Missing epoch information for GLM and DCM
+    % ------------------------------------------------------------------------
+  case 'missing'
+    [sts, missepochs] = pspm_get_timing('epochs', intiming, timeunits);
+     if sts < 1, return; end
+     % sort & merge missing epochs
+    if size(missepochs, 1) > 0
+      [~, sortindx] = sort(missepochs(:, 1));
+      missepochs = missepochs(sortindx,:);
+      % check for overlap and merge
+      for k = 2:size(missepochs, 1)
+        if missepochs(k, 1) <= missepochs(k - 1, 2)
+          missepochs(k, 1) =  missepochs(k - 1, 1);
+          missepochs(k - 1, :) = [];
+        end
+      end
+    end
+    outtiming = missepochs;
 
     % Event information for DCM
     % ------------------------------------------------------------------------
