@@ -381,7 +381,6 @@ switch model
       if filewarning
         warning('File %s is not a valid epochs or onsets file', ...
           intiming);
-
         return;
       end
     else
@@ -394,6 +393,10 @@ switch model
         if size(outtiming, 2) ~= 2
           warning(['Epochs must be specified by a e x 2 vector', ...
             'of onset/offsets.']);  return;
+        else
+            if any(diff(outtiming, [], 2) < 0)
+                warning('Offsets must be larger than onsets.');  return;
+            end
         end
       else
         warning('Unknown epoch definition format.');  return;
@@ -419,12 +422,14 @@ switch model
       [~, sortindx] = sort(missepochs(:, 1));
       missepochs = missepochs(sortindx,:);
       % check for overlap and merge
+      overlapindx = zeros(size(missepochs, 1), 1);
       for k = 2:size(missepochs, 1)
         if missepochs(k, 1) <= missepochs(k - 1, 2)
           missepochs(k, 1) =  missepochs(k - 1, 1);
-          missepochs(k - 1, :) = [];
+          overlapindx(k - 1) = 1;
         end
       end
+      missepochs(logical(overlapindx), :) = [];
     end
     outtiming = missepochs;
 
