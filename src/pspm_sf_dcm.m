@@ -47,6 +47,15 @@ if isempty(settings)
 end
 sts = -1;
 tstart = tic;
+out = [];
+switch nargout
+  case 1
+    varargout{1} = out;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = out;
+end
+
 %% 2 Check input arguments
 % 2.1 set model ---
 try model.scr; catch, warning('Input data is not defined.'); return; end

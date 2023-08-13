@@ -17,6 +17,13 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+switch nargout
+  case 1
+    varargout{1} = newfilename;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = newfilename;
+end
 
 if nargin < 2
   warning('ID:invalid_input', 'No new filename given.');

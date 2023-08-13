@@ -46,6 +46,14 @@ if isempty(settings)
 end
 sts = -1;
 tstart = tic;
+out = [];
+switch nargout
+  case 1
+    varargout{1} = out;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = out;
+end
 
 try model.scr; catch, warning('Input data is not defined.'); return; end
 try model.sr; catch, warning('Sample rate is not defined.'); return; end
@@ -66,7 +74,7 @@ else
   scr = scr(:);
 end;
 
-if exist('errmsg') == 1, warning(errmsg); out = []; return; end;
+if exist('errmsg') == 1, warning(errmsg); return; end;
 
 
 % options

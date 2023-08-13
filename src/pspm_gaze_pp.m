@@ -21,6 +21,15 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+out_channel = [];
+switch nargout
+  case 1
+    varargout{1} = out_channel;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = out_channel;
+end
+
 %% 2 Create default arguments
 % 2.1 set default values
 if nargin == 1

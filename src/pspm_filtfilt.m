@@ -2,7 +2,7 @@ function varargout = pspm_filtfilt(b,a,x)
 % ● Description
 %   pspm_filtfilt. Zero-phase forward and reverse digital filtering
 % ● Format
-%   y = pspm_filtfilt(b,a,x)
+%   [sts, y] = pspm_filtfilt(b,a,x) or y = pspm_filtfilt(b,a,x)
 % ● Arguments
 %   b:  filter parameters (numerator)
 %   a:  filter parameters (denominator)
@@ -38,6 +38,14 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+y = [];
+switch nargout
+  case 1
+    varargout{1} = y;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = y;
+end
 %% Check input data
 if nargin < 3
   warning('ID:invalid_input','Not enough parameters were specified.'); return;

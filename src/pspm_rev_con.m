@@ -16,6 +16,13 @@ if isempty(settings)
 end
 sts = -1;
 fighandle = [];
+switch nargout
+  case 1
+    varargout{1} = fighandle;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = fighandle;
+end
 
 % check input
 % ------------------------------------------------------------------------

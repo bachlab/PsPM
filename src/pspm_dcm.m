@@ -164,8 +164,14 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-
 dcm = [];
+switch nargout
+  case 1
+    varargout{1} = dcm;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = dcm;
+end % assign varargout to avoid errors if the function returns in the middle
 % cell array which saves all the warnings which are not followed
 % by a `return` function
 warnings = {};
@@ -356,11 +362,11 @@ for iSn = 1:numel(model.datafile)
   else
     missing{iSn} = [];
   end
-  y{iSn} = data{iSn}{end}.data; 
+  y{iSn} = data{iSn}{end}.data;
   % to use the last channel in data channels
   % this is consistent to sf and glm
   sr{iSn} = data{iSn}{end}.header.sr;
-  model.filter.sr = sr{iSn}; 
+  model.filter.sr = sr{iSn};
 
   % try to find missing epochs according to subsession threshold
   n_data = size(y{iSn},1);

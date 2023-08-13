@@ -46,6 +46,13 @@ if isempty(settings)
 end
 sts = -1;
 outinfos = struct();
+switch nargout
+  case 1
+    varargout{1} = outinfos;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = outinfos;
+end
 if ~exist('options','var')
   options = struct();
 end

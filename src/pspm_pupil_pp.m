@@ -126,6 +126,16 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+varargout{1} = sts;
+smooth_signal = [];
+model = [];
+switch nargout
+  case 2
+    varargout{2} = smooth_signal;
+  case 3
+    varargout{2} = smooth_signal;
+    varargout{3} = model;
+end
 %% 2 Create default arguments
 if nargin == 1
   options = struct();

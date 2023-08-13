@@ -76,6 +76,13 @@ if isempty(settings)
 end
 outfile = [];
 sts = -1;
+switch nargout
+  case 1
+    varargout{1} = outfile;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = outfile;
+end
 %% 2 Check input
 % 2.1 Check missing input --
 if nargin<1
