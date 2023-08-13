@@ -37,10 +37,10 @@ if isempty(settings)
 end
 sts = -1;
 data = varargin{1};
+options = struct();
 switch nargin
   case 2
     filt = varargin{2};
-    options = struct();
   case 3
     filt = varargin{2};
     options = varargin{3};
