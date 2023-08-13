@@ -76,6 +76,13 @@ if isempty(settings)
 end
 outfile = [];
 sts = -1;
+switch nargout
+  case 1
+    varargout{1} = outfile;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = outfile;
+end
 %% 2 Check input
 % 2.1 Check missing input --
 if nargin<1
@@ -203,6 +210,7 @@ for iFile = 1:nFile
   fprintf('SF analysis: %s ...', model.datafile{iFile});
   % 3.2 Check whether model file exists --
   if ~pspm_overwrite(model.modelfile, options)
+    warning('results are not saved.');
     return
   end
   % 3.3 get and filter data --
