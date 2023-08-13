@@ -1,7 +1,7 @@
 classdef pspm_butter_test < matlab.unittest.TestCase
   % ● Description
-  % unittest class for the pspm_hb2hp function
-  % ● Authorship
+  % unittest class for the pspm_butter function
+  % ● History
   % (C) 2019 Ivan Rojkov (University of Zurich)
   methods (Test)
     function invalid_input(this)

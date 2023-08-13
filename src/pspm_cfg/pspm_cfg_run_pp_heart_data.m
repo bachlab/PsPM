@@ -49,7 +49,7 @@ for i=1:numel(job.pp_type)
                 opt.channel_action = channel_action;
 
                 % call function
-                [sts, winfo] = pspm_ecg2hb(fn, chan, opt);
+                [sts, winfo] = pspm_convert_ecg2hb(fn, chan, opt);
             case 'ecg2hb_amri'
                 opt = pp_field.opt;
                 opt.channel_action = channel_action;
@@ -77,7 +77,7 @@ for i=1:numel(job.pp_type)
                 opt.channel_action = channel_action;
 
                 % call ecg2hb
-                [sts, winfo] = pspm_ecg2hb(fn, chan, opt);
+                [sts, winfo] = pspm_convert_ecg2hb(fn, chan, opt);
 
                 if sts ~= -1
 
