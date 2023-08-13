@@ -227,6 +227,9 @@ for iFile = 1:nFile
   % 3.5 Get missing epochs --
   if ~isempty(model.missing{iFile})
     [~, missing{iFile}] = pspm_get_timing('missing', model.missing{iFile}, 'seconds');
+    model.missing_data = zeros(size(y{2}));
+    missing_index = pspm_time2index(missing{iFile}, sr(datatype(k)));
+    model.missing_data((missing_index(:,1)+1):(missing_index(:,2)+1)) = 1;
   else
     missing{iFile} = [];
   end
@@ -247,9 +250,9 @@ for iFile = 1:nFile
         return;
       end
     end
+    % use first marker channel
+    events{iFile} = ndata{1}.data(:);
   end
-  % use first marker channel
-  events{iFile} = data{1}.data(:);
 
 
   for iEpoch = 1:size(epochs{iFile}, 1)
@@ -263,16 +266,22 @@ for iFile = 1:nFile
         case 'samples'
           win = round(epochs{iFile}(iEpoch, :) * sr(datatype(k)) / sr(1));
         case 'markers'
-          win = round(events(epochs{iFile}(iEpoch, :)) * sr(datatype(k)));
+          win = round(events{iFile}(epochs{iFile}(iEpoch, :)) * sr(datatype(k)));
         case 'whole'
           win = [1 numel(y{datatype(k)})];
       end
       if any(win > numel(y{datatype(k)}) + 1) || any(win < 0)
         warning('\nEpoch %2.0f outside of file %s ...', iEpoch, model.modelfile{iFile});
+        inv_flag = 0;
       else
+        inv_flag = 1;
         % correct issues with using 'round'
         win(1) = max(win(1), 1);
         win(2) = min(win(2), numel(y{datatype(k)}));
+      end
+      if diff(win) < 4
+          warning('\nEpoch %2.0f contains insufficient data ...', iEpoch);
+          inv_flag = 0;
       end
       % 3.6.1 collect information --
       sf.model{k}(iEpoch).modeltype = method{k};
@@ -283,23 +292,24 @@ for iFile = 1:nFile
       %
       escr = y{datatype(k)}(win(1):win(end));
       sf.model{k}(iEpoch).data = escr;
-      if any(missing{iFile})
-        model.missing_data = zeros(size(escr));
-        missing_index = pspm_time2index(missing, sr(datatype(k)));
-        model.missing_data((missing_index{iFile}(:,1)+1):(missing_index{iFile}(:,2)+1)) = 1;
-      end
+      
       % 3.6.2 do the analysis and collect results --
-      if any(missing{iFile})
-        model_analysis = struct('scr', escr, 'sr', sr(datatype(k)), 'missing_data', model.missing_data);
+      if ~isempty(model.missing{iFile})
+        model_analysis = struct('scr', escr, 'sr', sr(datatype(k)), 'missing_data', model.missing_data(win(1):win(end)));
       else
         model_analysis = struct('scr', escr, 'sr', sr(datatype(k)));
       end
-      invrs = fhandle{k}(model_analysis, options);
-      if any(strcmpi(method{k}, {'dcm', 'mp'}))
-        sf.model{k}(iEpoch).inv     = invrs;
+       if inv_flag ~= 0
+           invrs = fhandle{k}(model_analysis, options);
+           sf.model{k}(iEpoch).inv = invrs;
+       else
+           sf.model{k}(iEpoch).inv = [];
+       end
+     if inv_flag == 0
+         sf.stats(iEpoch, k) = NaN;
+     elseif any(strcmpi(method{k}, {'dcm', 'mp'}))
         sf.stats(iEpoch, k)         = invrs.f;
-      else
-        sf.model{k}(iEpoch).stats   = invrs;
+     else
         sf.stats(iEpoch, k)         = invrs;
       end
     end
