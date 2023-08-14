@@ -69,11 +69,10 @@ if index_non_nan_full(end) < length(X)
 end
 X_body = X(index_non_nan_full(1):index_non_nan_full(end));
 % processing body
-index = 1:length(X_body);
-index_nan = index(isnan(X_body) | index_missing(index_non_nan_full(1):index_non_nan_full(end))) ;
-index_non_nan = 1 - index_nan;
-if ~isempty(index_nan)
-  X_body_interp = interp1(index_non_nan,X_body(index_non_nan),index_nan);
+index_nan = zeros(size(X_body));
+index_nan(isnan(X_body) | index_missing(index_non_nan_full(1):index_non_nan_full(end))) = 1;
+if any(index_nan)
+  X_body_interp = interp1(find(~index_nan),X_body(~index_nan), (1:numel(X_body))');
 else
   X_body_interp = X_body;
 end
