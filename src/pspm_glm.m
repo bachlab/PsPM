@@ -368,7 +368,7 @@ else
     if isempty(model.missing{iSn})
       sts = 1; missing{iSn} = [];
     else
-      [sts, missing{iSn}] = pspm_get_timing('epochs', model.missing{iSn}, 'seconds');
+      [sts, missing{iSn}] = pspm_get_timing('missing', model.missing{iSn}, 'seconds');
     end
     if sts == -1, warning('ID:invalid_input',...
         'Failed to call pspm_get_timing'); return; end

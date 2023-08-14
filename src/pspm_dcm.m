@@ -164,8 +164,14 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-
 dcm = [];
+switch nargout
+  case 1
+    varargout{1} = dcm;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = dcm;
+end % assign varargout to avoid errors if the function returns in the middle
 % cell array which saves all the warnings which are not followed
 % by a `return` function
 warnings = {};
@@ -339,28 +345,16 @@ for iSn = 1:numel(model.datafile)
 
   % load and check existing missing data (if defined)
   if ~isempty(model.missing{iSn})
-    [~, missing{iSn}] = pspm_get_timing('epochs', ...
+    [~, missing{iSn}] = pspm_get_timing('missing', ...
       model.missing{iSn}, 'seconds');
-    % sort missing epochs
-    if size(missing{iSn}, 1) > 0
-      [~, sortindx] = sort(missing{iSn}(:, 1));
-      missing{iSn} = missing{iSn}(sortindx,:);
-      % check for overlap and merge
-      for k = 2:size(missing{iSn}, 1)
-        if missing{iSn}(k, 1) <= missing{iSn}(k - 1, 2)
-          missing{iSn}(k, 1) =  missing{iSn}(k - 1, 1);
-          missing{iSn}(k - 1, :) = [];
-        end
-      end
-    end
   else
     missing{iSn} = [];
   end
-  y{iSn} = data{iSn}{end}.data; 
+  y{iSn} = data{iSn}{end}.data;
   % to use the last channel in data channels
   % this is consistent to sf and glm
   sr{iSn} = data{iSn}{end}.header.sr;
-  model.filter.sr = sr{iSn}; 
+  model.filter.sr = sr{iSn};
 
   % try to find missing epochs according to subsession threshold
   n_data = size(y{iSn},1);

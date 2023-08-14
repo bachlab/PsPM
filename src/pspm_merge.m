@@ -30,6 +30,13 @@ if isempty(settings)
 end
 sts = -1;
 outfile = [];
+switch nargout
+  case 1
+    varargout{1} = outfile;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = outfile;
+end
 
 %% Check input
 % check missing input --

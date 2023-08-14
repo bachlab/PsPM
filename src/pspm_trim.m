@@ -55,6 +55,13 @@ if isempty(settings)
 end
 sts = -1;
 newdatafile = [];
+switch nargout
+    case 1
+        varargout{1} = newdatafile;
+    case 2
+        varargout{1} = sts;
+        varargout{2} = newdatafile;
+end
 % 1.2 Verify the number of input arguments
 switch nargin
     case 0

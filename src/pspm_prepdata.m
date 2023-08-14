@@ -36,18 +36,30 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-%% Check input
 data = varargin{1};
 options = struct();
 switch nargin
   case 2
     filt = varargin{2};
-    options = struct();
   case 3
     filt = varargin{2};
     options = varargin{3};
 end
+outdata = data;
 newsr = 0;
+switch nargout
+  case 1
+    varargout{1} = outdata;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = outdata;
+  case 3
+    varargout{1} = sts;
+    varargout{2} = outdata;
+    varargout{3} = newsr;
+end
+
+%% Check input
 options = pspm_options(options, 'prepdata');
 if nargin < 2
   warning('ID:invalid_input', 'Nothing to do.'); return;

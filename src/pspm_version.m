@@ -18,15 +18,20 @@ function varargout = pspm_version(varargin)
 %% 0 start
 % do not include pspm_init, because pspm_version is called by pspm_init!!!
 sts = -1;
-
-%% 1 load startup info file
 fid = fopen('pspm_msg.txt');
 msg = textscan(fid, '%s', 'Delimiter', '$');
 tk =regexp(msg{1},'^Version ([0-9A-Za-z\.]*) .*', 'tokens');
 v_idx = find(~cellfun('isempty', tk), 1, 'first');
 v = tk{v_idx}{1}{1};
+switch nargout
+  case 1
+    varargout = v;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = v;
+end
 
-%% 2 check if there is an input action given
+%% 1 check if there is an input action given
 if nargin > 0
   switch varargin{1}
     case 'check' % check for updates

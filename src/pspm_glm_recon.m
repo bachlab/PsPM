@@ -4,7 +4,7 @@ function varargout = pspm_glm_recon(modelfile)
 %   Reconstructed responses are written into the field glm.resp, and
 %   reconstructed response peaks into the field glm.recon in original GLM file.
 % ● Format
-%   [sts, glm] = pspm_glm_recon(glmfile)
+%   glm = pspm_glm_recon(glmfile) or [sts, glm] = pspm_glm_recon(glmfile)
 % ● Arguments
 %   glmfile:
 % ● Outputs
@@ -21,6 +21,14 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+glm = [];
+switch nargout
+  case 1
+    varargout{1} = glm;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = glm;
+end
 
 % get GLM & basis functions
 % -------------------------------------------------------------------------

@@ -27,6 +27,14 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+wavedata = [];
+switch nargout
+  case 1
+    varargout{1} = wavedata;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = wavedata;
+end
 
 % check input arguments
 if nargin<1

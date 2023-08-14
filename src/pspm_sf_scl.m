@@ -21,6 +21,15 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+scl = [];
+switch nargout
+  case 1
+    varargout{1} = scl;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = scl;
+end
+
 % check input arguments
 if nargin < 1
   warning('No data specified'); return;
