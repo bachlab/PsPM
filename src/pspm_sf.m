@@ -210,7 +210,6 @@ for iFile = 1:nFile
   fprintf('SF analysis: %s ...', model.datafile{iFile});
   % 3.2 Check whether model file exists --
   if ~pspm_overwrite(model.modelfile, options)
-    warning('results are not saved.');
     return
   end
   % 3.3 get and filter data --
@@ -300,7 +299,7 @@ for iFile = 1:nFile
       %
       escr = y{datatype(k)}(win(1):win(end));
       sf.model{k}(iEpoch).data = escr;
-      
+
       % 3.6.2 do the analysis and collect results --
       if ~isempty(model.missing{iFile})
         model_analysis = struct('scr', escr, 'sr', sr(datatype(k)), 'missing_data', model.missing_data(win(1):win(end)));
