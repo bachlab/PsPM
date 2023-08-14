@@ -60,10 +60,10 @@ if nargin > 0
               sprintf('Latest version : %s\n', new_v)]);
           end
         else
-          warning('ID:invalid_input', 'Cannot figure out if there is a new version.'); return;
+          warning('ID:invalid_input', 'Cannot figure out if there is a new version.');
         end
       catch
-        warning('ID:invalid_input', 'Cannot check for updates.'); return
+        warning('ID:invalid_input', 'Cannot check for updates.');
       end
   end
 end
