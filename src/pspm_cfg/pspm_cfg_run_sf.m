@@ -79,7 +79,7 @@ if ~isempty(job.fresp)
 end
 if ~isempty(job.missing)
   if ischar(job.missing.missingepoch_include.missingepoch_file{1})
-    options.missing = job.missing.missingepoch_include.missingepoch_file{1};
+    model.missing = job.missing.missingepoch_include.missingepoch_file{1};
   end
 end
 options.dispwin = job.dispwin;

@@ -306,17 +306,17 @@ for iFile = 1:nFile
       else
         model_analysis = struct('scr', escr, 'sr', sr(datatype(k)));
       end
-       if inv_flag ~= 0
-           invrs = fhandle{k}(model_analysis, options);
-           sf.model{k}(iEpoch).inv = invrs;
-       else
-           sf.model{k}(iEpoch).inv = [];
-       end
-     if inv_flag == 0
-         sf.stats(iEpoch, k) = NaN;
-     elseif any(strcmpi(method{k}, {'dcm', 'mp'}))
+      if inv_flag ~= 0
+        invrs = fhandle{k}(model_analysis, options);
+        sf.model{k}(iEpoch).inv = invrs;
+      else
+        sf.model{k}(iEpoch).inv = [];
+      end
+      if inv_flag == 0
+        sf.stats(iEpoch, k) = NaN;
+      elseif any(strcmpi(method{k}, {'dcm', 'mp'}))
         sf.stats(iEpoch, k)         = invrs.f;
-     else
+      else
         sf.stats(iEpoch, k)         = invrs;
       end
     end
