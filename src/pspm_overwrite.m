@@ -33,6 +33,15 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+overwrite_final = 0;
+switch nargout
+  case 1
+    varargout{1} = overwrite_final;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = overwrite_final;
+end
+
 %% Define overwrite
 switch numel(varargin)
   case 0

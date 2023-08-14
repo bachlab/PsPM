@@ -28,6 +28,14 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+fig = struct();
+switch nargout
+  case 1
+    varargout{1} = fig;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = fig;
+end
 
 % check input
 % ------------------------------------------------------------------------
