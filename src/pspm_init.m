@@ -683,6 +683,11 @@ defaults.lateral.full.c = 'combined';
 defaults.lateral.full.l = 'left';
 defaults.lateral.full.r = 'right';
 
+% Observed eyes
+defaults.eye.bilateral = 'lr';
+defaults.eye.left = 'l';
+defaults.eye.right = 'r';
+
 % other settings
 % resampling rate for automatic transfer function computation
 defaults.get_transfer_sr = 100;
