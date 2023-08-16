@@ -54,19 +54,19 @@ All course webcasts are hosted on our [SwitchTube channel](https://tube.switch.c
 
 * **07 Measuring fear conditioning with PsPM:** [Slides](http://bachlab.org/07_fear_conditioning_xia)
 
-<iframe width="640" height="360" src="https://tube.switch.ch/embed/debe5229" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/9a364b4e-9c80-4d4f-995f-5acbd0b0848b" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 * **Tutorial 2: GLM** (Dominik R Bach)
 
-<iframe width="640" height="360" src="https://tube.switch.ch/embed/0418dfa6" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/3790bace-80bc-4c88-93f7-fef4eb17cfd2" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 * **Tutorial 3: non-linear SCR model and artefact removal** (Dominik R Bach)
 
-<iframe width="640" height="360" src="https://tube.switch.ch/embed/2d4c0680" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/a310e31a-010b-4ebb-9076-daf15d3bf2f0" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 * **Tutorial 4: pupil size analysis** (Christoph W Korn)
 
-<iframe width="640" height="360" src="https://tube.switch.ch/embed/464a4f44" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/c15a44c7-7e04-4b7b-a0df-fa2e7b565739" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 * **Tutorial 5: Workflow automation I** (Filip Melinscak)
 * [Slides](https://docs.google.com/presentation/d/1LsaEB3MozxvxJVSfZUQdXBhJ6BjEkqLeFf_0nZiD4Zc/edit?usp=sharing)
