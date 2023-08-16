@@ -16,7 +16,7 @@ There are **regular PsPM courses**. To check for updates, have a look on our [ne
 * **21.-22. July 2021** [ESCAN 2021 Budapest (online 1.5-day PsPM satellite workshop with practical training)](http://www.escan2020.eu/) (This was moved by one day from the originally planned dates after the decision to hold ESCAN 2021 as a virtual conference only)
 
 ## Past PsPM courses
-* **30.6.-01.07.2020** [ESCAN 2020 Budapest (full 2-day PsPM satellite workshop with practical training)](http://www.escan2020.eu/) (postponed due to COVID-19 pandemic) 
+* **30.6.-01.07.2020** [ESCAN 2020 Budapest (full 2-day PsPM satellite workshop with practical training)](http://www.escan2020.eu/) (postponed due to COVID-19 pandemic)
 * **6. April - 14. May 2020** Live online course (see course recordings and slides below)
 * **30. March 2020** [EMHFC 2020 Bochum (workshop on pupil size measurements)](https://emhfc.blogs.uni-hamburg.de/pre-conference-seminars/) (cancelled due to COVID-19 pandemic)
 * **13. November 2019:** [Universität Göttingen](https://www.uni-goettingen.de/de/509586.html)
@@ -30,7 +30,7 @@ All course webcasts are hosted on our [SwitchTube channel](https://tube.switch.c
 
 * **01 PsPM Overview:** [Slides](http://bachlab.org/wp-content/uploads/2020/04/01_Overview_Bach.pdf) (Dominik R. Bach)
 
-<iframe width="640" height="360" src="https://tube.switch.ch/embed/2856b404" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/a3a65f7e-8551-4ede-a115-8734795c2b98" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 * **02 LTI & GLM:** [Slides](http://bachlab.org/wp-content/uploads/2020/04/02_LTI_GLM_Bach.pdf) (Dominik R. Bach)
 
