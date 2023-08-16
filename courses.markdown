@@ -28,29 +28,29 @@ There are **regular PsPM courses**. To check for updates, have a look on our [ne
 
 All course webcasts are hosted on our [SwitchTube channel](https://tube.switch.ch/channels/13e2563b?order=alphabetical&view=list).
 
-* **01 PsPM Overview:** [Slides](http://bachlab.org/wp-content/uploads/2020/04/01_Overview_Bach.pdf) (Dominik R. Bach)
+* **01 Retrodictive validity & why do we need this:** [Slides](http://bachlab.org/wp-content/uploads/2020/04/01_Overview_Bach.pdf) (Dominik R. Bach)
 
 <iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/a3a65f7e-8551-4ede-a115-8734795c2b98" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 * **02 LTI & GLM:** [Slides](http://bachlab.org/wp-content/uploads/2020/04/02_LTI_GLM_Bach.pdf) (Dominik R. Bach)
 
-<iframe width="640" height="360" src="https://tube.switch.ch/embed/3e7f5595" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/e20a1233-9bcc-4536-b2c7-03a42aadfbdc" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-* **03 SCR models:** [Slides](http://bachlab.org/wp-content/uploads/2020/04/03_SCR_Bach.pdf) (Dominik R. Bach)
+* **03 Skin conductance responses:** [Slides](http://bachlab.org/wp-content/uploads/2020/04/03_SCR_Bach.pdf) (Dominik R. Bach)
 
-<iframe width="640" height="360" src="https://tube.switch.ch/embed/6780f498" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/9710ce99-a74f-4073-aa8c-8edd400d1570" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-* **04 Pupil size models:** [Slides](http://bachlab.org/04_pupil_korn) (Christoph W. Korn)
+* **04 Pupil size responses:** [Slides](http://bachlab.org/04_pupil_korn) (Christoph W. Korn)
 
-<iframe width="640" height="360" src="https://tube.switch.ch/embed/d64ac1d2" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/2a119016-fa9a-4dd9-a399-fb51fb4186b2" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-* **05 Heart period models:** [Slides](http://bachlab.org/05_hpr_paulus) (Philipp C. Paulus)
+* **05 Heart period responses:** [Slides](http://bachlab.org/05_hpr_paulus) (Philipp C. Paulus)
 
-<iframe width="640" height="360" src="https://tube.switch.ch/embed/7fdd2a18" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/59d0c837-95e5-4e29-8fa5-62bf1fedae57" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-* **06 Respiration & startle eye blink models:** [Slides](http://bachlab.org/06_rar_sebr_bach) (Dominik R. Bach)
+* **06 Respiration and startle eye blink:** [Slides](http://bachlab.org/06_rar_sebr_bach) (Dominik R. Bach)
 
-<iframe width="640" height="360" src="https://tube.switch.ch/embed/00cf2b02" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/9bdf9373-fdb8-4b59-8a45-69263e715cc5" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 * **07 Measuring fear conditioning with PsPM:** [Slides](http://bachlab.org/07_fear_conditioning_xia)
 
@@ -60,7 +60,7 @@ All course webcasts are hosted on our [SwitchTube channel](https://tube.switch.c
 
 <iframe width="640" height="360" src="https://tube.switch.ch/embed/0418dfa6" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-* **Tutorial 3: non-linear SCR model and artefact control** (Dominik R Bach)
+* **Tutorial 3: non-linear SCR model and artefact removal** (Dominik R Bach)
 
 <iframe width="640" height="360" src="https://tube.switch.ch/embed/2d4c0680" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
