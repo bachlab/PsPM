@@ -36,7 +36,7 @@ All course webcasts are hosted on our [SwitchTube channel](https://tube.switch.c
 
 <iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/e20a1233-9bcc-4536-b2c7-03a42aadfbdc" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-* **03 Skin conductance responses:** [Slides](http://bachlab.org/wp-content/uploads/2020/04/03_SCR_Bach.pdf) (Dominik R. Bach)
+* **03 Skin conductance responses (SCR):** [Slides](http://bachlab.org/wp-content/uploads/2020/04/03_SCR_Bach.pdf) (Dominik R. Bach)
 
 <iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/9710ce99-a74f-4073-aa8c-8edd400d1570" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
@@ -44,23 +44,23 @@ All course webcasts are hosted on our [SwitchTube channel](https://tube.switch.c
 
 <iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/2a119016-fa9a-4dd9-a399-fb51fb4186b2" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-* **05 Heart period responses:** [Slides](http://bachlab.org/05_hpr_paulus) (Dominik R. Bach)
+* **05 Heart period responses:** [Slides](http://bachlab.org/05_hpr_paulus) (Philipp Paulus)
 
 <iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/59d0c837-95e5-4e29-8fa5-62bf1fedae57" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-* **06 Respiration and startle eye blink:** [Slides](http://bachlab.org/06_rar_sebr_bach) (Dominik R. Bach)
+* **06 Respiration & startle eye blink:** [Slides](http://bachlab.org/06_rar_sebr_bach) (Dominik R. Bach)
 
 <iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/9bdf9373-fdb8-4b59-8a45-69263e715cc5" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-* **07 Measuring fear conditioning with PsPM:** [Slides](http://bachlab.org/07_fear_conditioning_xia)
+* **07 Measuring fear conditioning with PsPM:** [Slides](http://bachlab.org/07_fear_conditioning_xia) (Yanfang Xia)
 
 <iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/9a364b4e-9c80-4d4f-995f-5acbd0b0848b" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-* **Tutorial 2: GLM** (Dominik R Bach)
+* **Tutorial 2: GLM for SCR** (Dominik R Bach)
 
 <iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/3790bace-80bc-4c88-93f7-fef4eb17cfd2" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-* **Tutorial 3: non-linear SCR model and artefact removal** (Dominik R Bach)
+* **Tutorial 3: Non-linear models for SCR & artefact removal** (Dominik R Bach)
 
 <iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/a310e31a-010b-4ebb-9076-daf15d3bf2f0" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
