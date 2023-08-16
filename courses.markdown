@@ -40,11 +40,11 @@ All course webcasts are hosted on our [SwitchTube channel](https://tube.switch.c
 
 <iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/9710ce99-a74f-4073-aa8c-8edd400d1570" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-* **04 Pupil size responses:** [Slides](http://bachlab.org/04_pupil_korn) (Christoph W. Korn)
+* **04 Pupil size responses:** [Slides](http://bachlab.org/04_pupil_korn) (Dominik R. Bach)
 
 <iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/2a119016-fa9a-4dd9-a399-fb51fb4186b2" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-* **05 Heart period responses:** [Slides](http://bachlab.org/05_hpr_paulus) (Philipp C. Paulus)
+* **05 Heart period responses:** [Slides](http://bachlab.org/05_hpr_paulus) (Dominik R. Bach)
 
 <iframe width="640" height="360" src="https://player.uni-bonn.educast.nrw/59d0c837-95e5-4e29-8fa5-62bf1fedae57" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
