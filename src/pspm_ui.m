@@ -94,6 +94,10 @@ switch window
     hObject.Position(3) = MainWeight;
     hObject.Position(4) = MainHeight;
     hObject.Resize = SwitchResize;
+  case 'contrast'
+    hObject.Resize = 'on';
+    TitleComponents = {};
+    TextComponents = {};
   case 'display'
     % TitleCase
     TitleComponents = {'button_all',...
