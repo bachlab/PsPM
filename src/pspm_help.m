@@ -103,6 +103,8 @@ for i_D = 1:length(D)
         break
     elseif strcmp(B{N_target+1,1}(1),'●')
       break
+    elseif strcmp(B{N_target+1,1}(1),'%')
+      break
     end
   end
   A.(D{i_D}) = remove_multiple_space(str);
