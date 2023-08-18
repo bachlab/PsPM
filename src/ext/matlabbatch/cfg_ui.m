@@ -528,6 +528,8 @@ local_showjob(hObject);
 % Choose default command line output for cfg_ui
 handles.output = hObject;
 
+pspm_ui(hObject, handles, 'cfg_ui');
+
 % Update handles structure
 guidata(hObject, handles);
 
