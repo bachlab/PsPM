@@ -1,4 +1,4 @@
-function pspm_ui(hObject,handles,window)
+function varargout = pspm_ui(hObject,handles,window)
 % ● Description
 %   pspm_ui controls the UI of the referred handle.
 % ● Arguments
@@ -185,10 +185,10 @@ switch window
     hObject.Resize = 'on';
     TitleComponents = {'text4', ...
                       'moduleHead', ...
-                      'valshowLabel',...
-                      'BtnValEditVal',...
+                      'valshowLabel'};
+    TextComponents = {'modlist','module', 'valshow',...
+                      'helpbox','BtnValEditVal',...
                       'BtnValAddDep'};
-    TextComponents = {'modlist','module', 'valshow','helpbox'};
 end
 if exist('TitleComponents', 'var')
   ApplyStyle(handles, TitleComponents, FNRoman, FSTitle);
@@ -201,6 +201,13 @@ if exist('CaptionComponents', 'var')
 end
 if exist('EmphComponents', 'var')
   ApplyStyle(handles, EmphComponents, FNEmph, FSText);
+end
+switch nargout
+  case 1
+    varargout{1} = hObject;
+  case 2
+    varargout{1} = hObject;
+    varargout{2} = handles;
 end
 return
 function ApplyStyle(handles, widgt, FN, FS)
