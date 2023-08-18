@@ -9,6 +9,10 @@ function pspm(varargin)
 if verLessThan('matlab','9.4')
     pspm_guide
 else
+  if ~exist('getRunningApp','builtin')
+    pspm_guide
+  else
     pspm_appdesigner
+  end
 end
 return
