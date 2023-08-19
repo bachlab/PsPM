@@ -50,7 +50,7 @@ function varargout = pspm_dcm(model, options)
 %   ├────.filter: Filter settings.
 %   │             Modality specific default.
 %   ├───.channel: Channel number.
-%   │             Default: first SCR channel
+%   │             Default: last SCR channel
 %   ├──────.norm: Normalise data.
 %   │             i.e. Data are normalised during inversion but results
 %   │             transformed back into raw data units.
@@ -204,7 +204,7 @@ end
 % 2.3 get further input or set defaults --
 % check data channel --
 if ~isfield(model, 'channel')
-  model.channel = 'scr'; % this returns the first SCR channel
+  model.channel = 'scr'; % this returns the last SCR channel
 elseif ~isnumeric(model.channel) && ~strcmp(model.channel,'scr')
   warning('ID:invalid_input', 'Channel number must be numeric.'); return;
 end
@@ -343,6 +343,12 @@ for iSn = 1:numel(model.datafile)
     return;
   end
 
+  % use the last data channel, consistent with sf and glm
+  y{iSn} = data{iSn}{end}.data;
+  sr{iSn} = data{iSn}{end}.header.sr;
+  model.filter.sr = sr{iSn};
+
+
   % load and check existing missing data (if defined)
   if ~isempty(model.missing{iSn})
     [~, missing{iSn}] = pspm_get_timing('missing', ...
@@ -350,12 +356,7 @@ for iSn = 1:numel(model.datafile)
   else
     missing{iSn} = [];
   end
-  y{iSn} = data{iSn}{end}.data;
-  % to use the last channel in data channels
-  % this is consistent to sf and glm
-  sr{iSn} = data{iSn}{end}.header.sr;
-  model.filter.sr = sr{iSn};
-
+ 
   % try to find missing epochs according to subsession threshold
   n_data = size(y{iSn},1);
   if isempty(missing{iSn})
@@ -384,16 +385,10 @@ for iSn = 1:numel(model.datafile)
     % put missing epochs together
     miss_epochs = [nan_ep_start(:), nan_ep_stop(:)];
 
-    % classify if epoch should be considered
-    % true for duration > substhresh and for missing epochs
-    ignore_epochs = diff(miss_epochs, 1, 2)/sr{iSn} > ...
-      model.substhresh;
-
   else
     % use missing epochs as specified by file
     miss_epochs = pspm_time2index(missing{iSn}, sr{iSn});
-    ignore_epochs = diff(missing{iSn}, 1, 2) > model.substhresh;
-
+  
     % and set data to NaN to enable later detection of `short` missing
     % epochs
     for k = 1:size(miss_epochs, 1)
@@ -401,6 +396,9 @@ for iSn = 1:numel(model.datafile)
       y{iSn}(flanks(1):flanks(2)) = NaN;
     end
   end
+
+  % epoch should be ignored if duration > threshold
+  ignore_epochs = diff(miss_epochs, 1, 2)/sr{iSn} > model.substhresh;
 
   if any(ignore_epochs)
     i_e = find(ignore_epochs);
@@ -444,8 +442,7 @@ for iSn = 1:numel(model.datafile)
       ones(n_miss,1)];
   else
     subsessions(end+1,1:4) = [iSn, ...
-      [1, numel(y{iSn})]/sr{iSn}, 0];
-
+      [0, numel(y{iSn})]/sr{iSn}, 0];
 
   end
 end
@@ -556,8 +553,8 @@ for iSn = 1:numel(model.timing)
 
   % assign trials to subsessions
   trls = num2cell([sn_trlstart{iSn}, sn_trlstop{iSn}],2);
-  subs = cellfun(@(x) find(x(1) > subsessions(:,2) & ...
-    x(2) < (subsessions(:,3)) ...
+  subs = cellfun(@(x) find(x(1) >= subsessions(:,2) & ...
+    x(2) <= (subsessions(:,3)) ...
     & subsessions(:, 1) == iSn), trls, 'UniformOutput', 0);
 
   emp_subs = cellfun(@isempty, subs);
