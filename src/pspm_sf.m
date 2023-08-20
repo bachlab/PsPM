@@ -85,28 +85,15 @@ switch nargout
 end
 %% 2 Check input
 % 2.1 Check missing input --
-if nargin<1
-  warning('ID:invalid_input', 'Nothing to do.'); return;
-elseif nargin<2
-  options = struct();
-end
-if ~isfield(model, 'datafile')
-  warning('ID:invalid_input', 'No input data file specified.'); return;
-elseif ~isfield(model, 'modelfile')
-  warning('ID:invalid_input', 'No output model file specified.'); return;
-elseif ~isfield(model, 'timeunits')
-  warning('ID:invalid_input', 'No timeunits specified.'); return;
-elseif ~isfield(model, 'timing') && ~strcmpi(model.timeunits, 'file')
-  warning('ID:invalid_input', 'No epochs specified.'); return;
-end
+if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); return
+elseif nargin < 2; options = struct(); end
+model = pspm_check_model(model, 'sf');
+
+
+
+
 % 2.2 Check faulty input --
-if ~ischar(model.datafile) && ~iscell(model.datafile)
-  warning('ID:invalid_input', 'Input data must be a cell or string.'); return;
-elseif ~ischar(model.modelfile) && ~iscell(model.modelfile)
-  warning('ID:invalid_input', 'Output model must be a string.'); return;
-elseif ~ischar(model.timing) && ~iscell(model.timing) && ~isnumeric(model.timing)
-  warning('ID:invalid_input', 'Event onsets must be a string, cell, or struct.'); return;
-elseif ~ischar(model.timeunits) || ~ismember(model.timeunits, {'seconds', 'markers', 'samples', 'whole'})
+if ~ischar(model.timeunits) || ~ismember(model.timeunits, {'seconds', 'markers', 'samples', 'whole'})
   warning('ID:invalid_input',...
     'Timeunits (%s) not recognised; ',...
     'only ''seconds'', ''markers'', ''samples'' and ''whole'' are supported',...

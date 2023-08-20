@@ -158,14 +158,9 @@ tmp = struct([]); % temporary model structure
 % 2.1 check missing input --
 if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); return
 elseif nargin < 2; options = struct(); end
+model = pspm_check_model(model, 'glm');
+
 fprintf('Computing GLM: %s ...\n', model.modelfile);
-if ~isfield(model, 'datafile')
-  warning('ID:invalid_input', 'No input data file specified.'); return;
-elseif ~isfield(model, 'modelfile')
-  warning('ID:invalid_input', 'No output model file specified.'); return;
-elseif ~isfield(model, 'timeunits')
-  warning('ID:invalid_input', 'No timeunits specified.'); return;
-end
 % 2.2 check existing --
 % whether field timing doesnt exist, field is emtpy or field is cell with empty entries
 if ~isfield(model, 'timing') || isempty(model.timing) || ...
@@ -183,11 +178,7 @@ if ~isfield(model, 'latency')
   model.latency = 'fixed';
 end
 % 2.4 check faulty input --
-if ~ischar(model.datafile) && ~iscell(model.datafile)
-  warning('ID:invalid_input', 'Input data must be a cell or string.'); return;
-elseif ~ischar(model.modelfile)
-  warning('ID:invalid_input', 'Output model must be a string.'); return;
-elseif ~ischar(model.timing) && ~iscell(model.timing) && ~isstruct(model.timing)
+if ~ischar(model.timing) && ~iscell(model.timing) && ~isstruct(model.timing)
   warning('ID:invalid_input', 'Event onsets must be a string, cell, or struct.'); return;
 elseif ~ischar(model.timeunits) || ~ismember(model.timeunits, {'seconds', 'markers', 'samples','markervalues'})
   warning('ID:invalid_input', 'Timeunits (%s) not recognised; only ''seconds'', ''markers'' and ''samples'' are supported', model.timeunits); return;
@@ -215,12 +206,7 @@ if ~isfield(model, 'channel')
 elseif ~isnumeric(model.channel) && ~ismember(model.channel, {settings.channeltypes.type})
   warning('ID:invalid_input', 'Channel number must be numeric.'); return;
 end
-% 2.7 check normalisation --
-if ~isfield(model, 'norm')
-  model.norm = 0;
-elseif ~ismember(model.norm, [0, 1])
-  warning('ID:invalid_input', 'Normalisation must be specified as 0 or 1.'); return;
-end
+
 % 2.8 check mean centering --
 if ~isfield(model,'centering')
   model.centering = 1;
@@ -274,9 +260,6 @@ else
 end
 
 %% 4 check filter
-if ~isfield(model, 'filter')
-  model.filter = settings.glm(modno).filter;
-end
 % 4.1 set default model.filter.down --
 if strcmpi(model.filter.down, 'none') || ...
     isnumeric(model.filter.down) && isnan(model.filter.down)
