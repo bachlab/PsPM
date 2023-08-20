@@ -275,3 +275,7 @@ function feedback_callback(~, ~, ~)
 function quit_callback(~, ~, ~)
   pspm_quit;
   return
+
+%% 18   Patch
+function figure1_WindowKeyReleaseFcn(~, ~, ~)
+  return
