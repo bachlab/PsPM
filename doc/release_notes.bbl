@@ -1,0 +1,27 @@
+\begin{thebibliography}{1}
+
+\bibitem{Bach:2013aa}
+Bach, D.~R, Friston, K.~J,  \& Dolan, R.~J.
+\newblock (2013) An improved algorithm for model-based analysis of evoked skin
+  conductance responses.
+\newblock {\em Biol. Psychol.} {\bf 94}, 490--497.
+
+\bibitem{Bach:2015aa}
+Bach, D.~R \& Staib, M.
+\newblock (2015) A matching pursuit algorithm for inferring tonic sympathetic
+  arousal from spontaneous skin conductance fluctuations.
+\newblock {\em Psychophysiology} {\bf 52}, 1106--1112.
+
+\bibitem{Daunizeau:2014aa}
+Daunizeau, J, Adam, V,  \& Rigoux, L.
+\newblock (2014) {VBA}: a probabilistic treatment of nonlinear models for
+  neurobiological and behavioural data.
+\newblock {\em PLoS Comput. Biol.} {\bf 10}, e1003441.
+
+\bibitem{Hayes:2015a}
+Hayes, T.~R \& Petrov, A.~A.
+\newblock (2015) Mapping and correcting the influence of gaze position on pupil
+  size measurements.
+\newblock {\em Behav. Res. Methods} {\bf 48}, 510--527.
+
+\end{thebibliography}
