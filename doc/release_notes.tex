@@ -985,96 +985,96 @@ This is a major release and may have incompatibility with previous versions.
 		\item \texttt{pspm\_sf}
 		\begin{itemize}
 			\item A bug that has lead to incorrect input datafile assigning has been fixed.
-			\item A bug that leads PsPM crash when `pspm\_sf` is analysing data with missing epochs has been fixed.
-			\item A bug that leads to error when `pspm\_sf` analyses data where `time unit` is defined as `marker` has been fixed.
+			\item A bug that leads PsPM crash when \texttt{pspm\_sf} is analysing data with missing epochs has been fixed.
+			\item A bug that leads to error when \texttt{pspm\_sf} analyses data where \texttt{time unit} is defined as \texttt{marker} has been fixed.
 		\end{itemize}
 		\item \texttt{pspm\_split\_sessions}
 		\begin{itemize}
-			\item `pspm\_split\_sessions` now considers `marker\_chan\_num` when calling `pspm\_trim`.
+			\item \texttt{pspm\_split\_sessions} now considers \texttt{marker\_chan\_num} when calling \texttt{pspm\_trim}.
 		\end{itemize}
 	\end{itemize}
 	
     \item Improvements
     \begin{itemize}
-    	\item `channel`
+    	\item \texttt{channel}
     	\begin{itemize}
-    		\item We have generalised the `channel` related variables throughout PsPM, which are given as 
+    		\item We have generalised \texttt{channel} related variables throughout PsPM, which are given as 
     		\begin{itemize}
-    			\item `chan/channel` to `channel`
-    			\item `chans/channels` to `channels`
-    			\item `channel\_units/channels\_units/chan\_units/chans\_units` to `channel\_units`
-    			\item `chan\_combine` to `channel\_combine`
-    			\item `chan\_action` to `channel\_action`
-    			\item `channels\_header` to `channel\_header`
-    			\item `chantype` to `channeltype`
+    			\item \texttt{chan/channel} to \texttt{channel}
+    			\item \texttt{chans/channels} to \texttt{channels}
+    			\item \texttt{channel\_units/channels\_units/chan\_units/chans\_units} to \texttt{channel\_units}
+    			\item \texttt{chan\_combine} to \texttt{channel\_combine}
+    			\item \texttt{chan\_action} to \texttt{channel\_action}
+    			\item \texttt{channels\_header} to \texttt{channel\_header}
+    			\item \texttt{chantype} to \texttt{channeltype}
     		\end{itemize}
 			\end{itemize}
-    	\item `import\_eyelink`
+    	\item \texttt{import\_eyelink}
     	\begin{itemize}
-    		\item Improved `import\_eyelink` for adding some support for importing eyelink data converted by higher version of .EDF files.
+    		\item Improved \texttt{import\_eyelink} for adding some support for importing eyelink data converted by higher version of .EDF files.
     	\end{itemize}
-    	\item `pspm\_con2`
+    	\item \texttt{pspm\_con2}
     	\begin{itemize}
-    		\item `pspm\_con2` is now using `pspm\_overwrite`.
+    		\item \texttt{pspm\_con2} is now using \texttt{pspm\_overwrite}.
     	\end{itemize}
-    	\item `pspm\_dcm` and `pspm\_dcm\_inv`
+    	\item \texttt{pspm\_dcm} and \texttt{pspm\_dcm\_inv}
     	\begin{itemize}
-    		\item `.flexevents` and `.fixevents` are now fields of `model` instead of `options`.
-    		\item `pspm\_dcm` now uses `pspm\_get\_timing` to handle missing epochs.
+    		\item \texttt{.flexevents} and \texttt{.fixevents} are now fields of \texttt{model} instead of \texttt{options}.
+    		\item \texttt{pspm\_dcm} now uses \texttt{pspm\_get\_timing} to handle missing epochs.
     		\item Improved missing epoch support
     		\begin{itemize}
-    			\item The field `.missing` is now allocated from `options` to `model`.
-    			\item `.missing\_data` is used to load missing epoch data that was loaded from dcm, as an optional field.
+    			\item The field \texttt{.missing} is now allocated from \texttt{options} to \texttt{model}.
+    			\item \texttt{.missing\_data} is used to load missing epoch data that was loaded from dcm, as an optional field.
     		\end{itemize}
     		\item The index is changed so that the first event will not be excluded when at time 0 in session.
     	\end{itemize}
-    	\item `pspm\_extract\_segments`
+    	\item \texttt{pspm\_extract\_segments}
     	\begin{itemize}
-    		\item The first channel is always referred by `marker\_chan` as default.
+    		\item The first channel is always referred by \texttt{marker\_chan} as default.
     	\end{itemize}
-    	\item `pspm\_glm`
+    	\item \texttt{pspm\_glm}
     	\begin{itemize}
-    		\item The fallback for `options.exclude\_missing` has been set for `pspm\_glm`, which is not to exclude any missing epochs.
+    		\item The fallback for \texttt{options.exclude\_missing} has been set for \texttt{pspm\_glm}, which is not to exclude any missing epochs.
     		\item A bug that leads to incorrect missing epoch checking has been fixed.
     		\item Help text was updated.
-    		\item `marker\_chan\_num` now refers to the first marker channel as default.
-    		\item `pspm\_glm` now uses `pspm\_get\_timing` to handle missing epochs.
+    		\item \texttt{marker\_chan\_num} now refers to the first marker channel as default.
+    		\item \texttt{pspm\_glm} now uses \texttt{pspm\_get\_timing} to handle missing epochs.
     	\end{itemize}
-    	\item `pspm\_interp1`
+    	\item \texttt{pspm\_interp1}
     	\begin{itemize}
-    		\item `pspm\_interp1` now considers the data where no valid values are detected and interpolation is not possible, and warnings will be reported in this case.
+    		\item \texttt{pspm\_interp1} now considers the data where no valid values are detected and interpolation is not possible, and warnings will be reported in this case.
     	\end{itemize}
-    	\item `pspm\_merge`
+    	\item \texttt{pspm\_merge}
     	\begin{itemize}
     		\item The default value is set to be [1,2], meaning the first channel will be merged as the default option.
     	\end{itemize}
-    	\item `pspm\_prepdata`
+    	\item \texttt{pspm\_prepdata}
     	\begin{itemize}
-    		\item `pspm\_prepdata` now uses interpolation to handle data with `NaN`.
+    		\item \texttt{pspm\_prepdata} now uses interpolation to handle data with \texttt{NaN}.
     		\begin{itemize}
-    		\item Data that begins and/or ends with `NaN` will be filled with the first/last non-`NaN` values in those positions.
+    		\item Data that begins and/or ends with \texttt{NaN} will be filled with the first/last non-\texttt{NaN} values in those positions.
     		\end{itemize}
     	\end{itemize}
-    	\item `pspm\_sf`
+    	\item \texttt{pspm\_sf}
     	\begin{itemize}
-    		\item `pspm\_sf` now supports missing epochs.
+    		\item \texttt{pspm\_sf} now supports missing epochs.
     		\begin{itemize}
-    			\item Now allow input with `NaN` that indicates missing epochs. 
-    			\item Missing epochs can be specified with options.missing or the automatic `NaN` detection. 
-    			\item Missing epochs will be verified with `options.missingthresh`. 
-    			\item When the missing epochs are longer than 2s, the result out will be converted to `[]`.
+    			\item Now allow input with \texttt{NaN} that indicates missing epochs. 
+    			\item Missing epochs can be specified with options.missing or the automatic \texttt{NaN} detection. 
+    			\item Missing epochs will be verified with \texttt{options.missingthresh}. 
+    			\item When the missing epochs are longer than 2s, the result out will be converted to \texttt{[]}.
     			\item The UI of SF analysis now allows using missing epochs from files or not to define any missing epochs.
     		\end{itemize}
-    		\item `pspm\_sf` now uses `pspm\_get\_timing` to handle missing epochs.
-    		\item `marker\_chan\_num` now refers to the first marker channel as default.
+    		\item \texttt{pspm\_sf} now uses \texttt{pspm\_get\_timing} to handle missing epochs.
+    		\item \texttt{marker\_chan\_num} now refers to the first marker channel as default.
     	\end{itemize}
-    	\item `pspm\_sf\_dcm`
+    	\item \texttt{pspm\_sf\_dcm}
     	\begin{itemize}
-    		\item `pspm\_sf\_dcm` now uses `pspm\_interp1` for interpolating data.
+    		\item \texttt{pspm\_sf\_dcm} now uses \texttt{pspm\_interp1} for interpolating data.
     	\end{itemize}
     	\item \texttt{pspm\_text}
     	\begin{itemize}
-    		\item The Matlab file that stores the information of help text `pspm\_text.mat` will be stored inside the source folder of PsPM and will be deleted when PsPM is quit.
+    		\item The Matlab file that stores the information of help text \texttt{pspm\_text.mat} will be stored inside the source folder of PsPM and will be deleted when PsPM is quit.
     	\end{itemize}
     	\item \texttt{pspm\_trim}
     	\begin{itemize}
