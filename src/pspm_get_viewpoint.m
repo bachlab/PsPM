@@ -244,6 +244,10 @@ for k = 1:numel(import)
 end
 
 function data = map_viewpoint_eyes_to_left_right(data, import)
+global settings
+if isempty(settings)
+  pspm_init;
+end
 % Map eye A to right eye, eye B to left eye.
 for i = 1:numel(data)
   % channels = data{i}.channel_header; % seems not used
