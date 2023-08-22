@@ -684,9 +684,14 @@ defaults.lateral.full.l = 'left';
 defaults.lateral.full.r = 'right';
 
 % Observed eyes
-defaults.eye.bilateral = 'lr';
-defaults.eye.left = 'l';
-defaults.eye.right = 'r';
+defaults.eye.char.b = 'lr';
+defaults.eye.char.l = 'l';
+defaults.eye.char.r = 'r';
+
+defaults.eye.cap.b = 'LR';
+defaults.eye.cap.br = 'RL';
+defaults.eye.cap.l = 'L';
+defaults.eye.cap.r = 'R';
 
 % other settings
 % resampling rate for automatic transfer function computation
