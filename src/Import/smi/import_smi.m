@@ -42,7 +42,13 @@ function [data] = import_smi(varargin)
     %__________________________________________________________________________
     %
     % (C) 2019 Laure Ciernik
-    % Updated 2021 Teddy Chao
+    % Updated 2023 Teddy Chao
+
+    %% Initialise
+    global settings
+    if isempty(settings)
+      pspm_init;
+    end
 
     if isempty(varargin)
         error('ID:invalid_input', 'import_SMI.m needs at least one input sample_file.');
@@ -147,13 +153,13 @@ function [data] = import_smi(varargin)
     l_eye = any(cell2mat(cellfun(@(x)strcmpi(x,'LEFT'),format_fields,'UniformOutput',0)));
     r_eye = any(cell2mat(cellfun(@(x)strcmpi(x,'RIGHT'),format_fields,'UniformOutput',0)));
     if l_eye && r_eye
-        eyesObserved = 'LR';
+        eyesObserved = settings.eye.cap.b;
         % 'LR' means both the left and right eyes are observed,
         % and it has no meaning of combining left and right eyes.
     elseif l_eye
-        eyesObserved = 'L';
+        eyesObserved = settings.eye.cap.l;
     else
-        eyesObserved = 'R';
+        eyesObserved = settings.eye.cap.r;
     end
     % Stimulus dimension
     sd_pos = strncmpi(header_sample, '## Stimulus Dimension',21);
@@ -278,7 +284,7 @@ function [data] = import_smi(varargin)
             ignore_str_pos{1}=cell(4,1);
             ignore_str_pos{2}=cell(4,1);
 
-            if strcmpi(eyesObserved, 'LR')
+            if strcmpi(eyesObserved, settings.eye.cap.b)
                 % alwas add the time of the beginning of the current trial
                 % since the measured start and end times are relative to the
                 % time of the beginning ot the current trial
@@ -300,7 +306,7 @@ function [data] = import_smi(varargin)
                 [ignore_str_pos{2}{3},ignore_str_pos{2}{4}]=get_idx(times,start_saccade_r,end_saccade_r);
 
 
-            elseif strcmpi(eyesObserved, 'L')
+            elseif strcmpi(eyesObserved, settings.eye.cap.l)
                 start_blink = eventsRaw.blink_l.start(blink_l_trial_sess);%+time;
                 end_blink = eventsRaw.blink_l.end(blink_l_trial_sess)+time;
                 start_saccade = eventsRaw.sacc_l.start(sacc_l_trial_sess);%+time;
@@ -368,7 +374,7 @@ function [data] = import_smi(varargin)
         % save column heder of raw data
         raw_columns = columns;
         data{sn}.raw_columns = raw_columns;
-        if strcmpi(data{sn}.eyesObserved, 'LR')
+        if strcmpi(data{sn}.eyesObserved, settings.eye.cap.b)
             % pupilL, pupilR, xL, yL, xR, yR, blinkL, blinkR, saccadeL,
             % saccadeR
             % get idx of different channel

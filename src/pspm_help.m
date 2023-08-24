@@ -56,6 +56,10 @@ while ( ~strcmp(B{N_target+1,1}(1),'●') )
   N_target = N_target + 1;
   if strcmp(B{N_target+1,1}(1:2),' ●')
     break
+  elseif strcmp(B{N_target+1,1}(1),'%')
+    break
+  elseif strcmp(B{N_target+1,1}(1:2),' 1')
+    break
   end
 end
 D = remove_multiple_space(str);
@@ -102,6 +106,8 @@ for i_D = 1:length(D)
     if N_target == length(B)
         break
     elseif strcmp(B{N_target+1,1}(1),'●')
+      break
+    elseif strcmp(B{N_target+1,1}(1),'%')
       break
     end
   end

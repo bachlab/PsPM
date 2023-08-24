@@ -94,7 +94,7 @@ switch lower(cmd)
                 end;
             end;
         else
-            datastr = '←X';
+            datastr = '<- X';
         end;
         namestr = sprintf('%s%s  ', indent, contents{1});
         varargout{1} = namestr;
