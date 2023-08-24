@@ -6,6 +6,12 @@ permalink: /news/
 
 # News
 
+### 24.08.2023
+
+PsPM 6.1.0 released -- including pspm options for parameter controlling, AppDesigner for the launchpad, various UI improvements, bug fixes and adjustments for functions like dcm, glm and sf, and more. Thanks to everybody involved!
+
+---
+
 ### 16.07.2022
 
 PsPM 6.0.0 released -- including developer mode, gaze signal post processing, specific lateral or combined pupil data processing, improved file overwriting behaviour, supporting PPG data loading, various bug fixes and improvements for functions, and more. Thanks to everybody involved!
