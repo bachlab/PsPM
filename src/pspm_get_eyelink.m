@@ -52,11 +52,11 @@ data = import_eyelink(datafile);
 % -------------------------------------------------------------------------
 addpath(pspm_path('backroom'));
 for i = 1:numel(data)-1
-  if strcmpi(data{i}.eyesObserved, settings.eye.left)
+  if strcmpi(data{i}.eyesObserved, settings.eye.char.l)
     mask_chans = {'blink_l', 'saccade_l'};
-  elseif strcmpi(data{i}.eyesObserved, settings.eye.right)
+  elseif strcmpi(data{i}.eyesObserved, settings.eye.char.r)
     mask_chans = {'blink_r', 'saccade_r'};
-  elseif strcmpi(data{i}.eyesObserved, settings.eye.bilateral)
+  elseif strcmpi(data{i}.eyesObserved, settings.eye.char.b)
     mask_chans = {'blink_l', 'blink_r', 'saccade_l', 'saccade_r'};
   else
     warning('ID:invalid_input', ['No valid eye marker is detected, please check input channels.']);
@@ -312,7 +312,7 @@ for k = 1:numel(import)
     if ~isempty(regexpi(import{k}.type, ['_[', settings.lateral.char.c, ']'], 'once'))
       if size(n_blink, 2) > 1
         eye_t = regexp(import{k}.type, ['.*_([', settings.lateral.char.c, '])'], 'tokens');
-        n_eye_blink = n_blink(strcmpi(eye_t{1}, {settings.eye.left, settings.eye.right}));
+        n_eye_blink = n_blink(strcmpi(eye_t{1}, {settings.eye.char.l, settings.eye.char.r}));
       else
         n_eye_blink = n_blink;
       end
@@ -320,7 +320,7 @@ for k = 1:numel(import)
 
       if size(n_saccade, 2) > 1
         eye_t = regexp(import{k}.type, ['.*_([',settings.lateral.char.c,'])'], 'tokens');
-        n_eye_saccade = n_saccade(strcmpi(eye_t{1}, {settings.eye.left, settings.eye.right}));
+        n_eye_saccade = n_saccade(strcmpi(eye_t{1}, {settings.eye.char.l, settings.eye.char.r}));
       else
         n_eye_saccade = n_saccade;
       end
@@ -340,20 +340,20 @@ sourceinfo.elcl_proc = data{1}.elcl_proc;
 left_occurance = any(cell2mat(cellfun(@(x) ~isempty(regexpi(x.type, '_l', 'once')), import,'UniformOutput',0)));
 right_occurance = any(cell2mat(cellfun(@(x) ~isempty(regexpi(x.type, '_r', 'once')), import,'UniformOutput',0)));
 if left_occurance && right_occurance
-  sourceinfo.eyesObserved = settings.eye.bilateral;
+  sourceinfo.eyesObserved = settings.eye.char.b;
 elseif left_occurance && ~right_occurance
-  sourceinfo.eyesObserved = settings.eye.left;
+  sourceinfo.eyesObserved = settings.eye.char.l;
 else
-  sourceinfo.eyesObserved = settings.eye.right;
+  sourceinfo.eyesObserved = settings.eye.char.r;
 end
 
 % determine best eye
 switch sourceinfo.eyesObserved
-  case settings.eye.left
+  case settings.eye.char.l
     sourceinfo.best_eye = sourceinfo.eyesObserved;
-  case settings.eye.right
+  case settings.eye.char.r
     sourceinfo.best_eye = sourceinfo.eyesObserved;
-  case settings.eye.bilateral
+  case settings.eye.char.b
     eye_stat = Inf(1,2);
     eye_choice = pspm_eye(sourceinfo.eyesObserved, 'char2cell');
     for i = 1:2
