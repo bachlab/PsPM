@@ -4,7 +4,7 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, channel, options)
 %   writes them as heart beat channel into the datafile. This function
 %   implements the algorithm by Pan & Tompkins (1985) with some adjustments.
 % ● Format
-%   sts = pspm_convert_ecg2hb(fn, chan,options)
+%   sts = pspm_convert_ecg2hb(fn, channel, options)
 % ● Arguments
 %                 fn: data file name
 %            channel: number of ECG channel (optional, default: first ECG
@@ -143,8 +143,8 @@ if numel(data) > 1
   fprintf('There is more than one ECG channel in the data file. Only the first of these will be analysed.');
   data = data(1);
 end
-if not(strcmp(data{1,1}.header.channeltype,'ecg'))
-  warning('ID:not_allowed_channeltype', 'Specified channel is not an ECG channel. Don''t know what to do!')
+if not(strcmp(data{1,1}.header.chantype,'ecg'))
+  warning('ID:not_allowed_chantype', 'Specified channel is not an ECG channel. Don''t know what to do!')
   return;
 end
 
@@ -272,7 +272,7 @@ newhr=pt.set.R/pt.settings.filt.sr;
 newdata.data = newhr(:);
 newdata.header.sr = 1;
 newdata.header.units = 'events';
-newdata.header.channeltype = 'hb';
+newdata.header.chantype = 'hb';
 
 % user output
 fprintf(' done.');
@@ -285,9 +285,7 @@ if nsts == -1, return; end
 infos.channel = write_info.channel;
 infos.pt_debug = pt_debug;
 sts = 1;
-
-
-return;
+return
 
 % -------------------------------------------------------------------------
 %   see below for subfunctions find_r, update_set, tmax, twave_check

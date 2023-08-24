@@ -32,7 +32,7 @@ addpath(pspm_path('Import','labchart','adi'));
 
 % check for multiple sessions
 if labchart.n_records > 1
-  fprintf(['\nFound (%i) sessions in file "%s". ', ...
+  fprintf(['\nFound (%i) sessions in file %s. ', ...
     'Will concatenate the sessions into one PsPM file.\n'], ...
     labchart.n_records, datafile);
 end
@@ -124,3 +124,4 @@ delete(labchart.file_h);
 % -------------------------------------------------------------------------
 rmpath(pspm_path('Import','labchart','adi'));
 sts = 1;
+return

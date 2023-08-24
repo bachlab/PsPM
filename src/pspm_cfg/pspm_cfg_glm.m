@@ -62,7 +62,7 @@ epochfile.tag     = 'epochfile';
 epochfile.num     = [1 1];
 epochfile.filter  = '.*\.(mat|MAT|txt|TXT)$';
 epochfile.help    = {['Indicate an epoch file specifying the start and end points of missing epochs (m). ' ...
-    'The mat file has to contain a variable ‘epochs’, which is an m x 2 array, where m is the number of ' ...
+    'The mat file has to contain a variable ï¿½epochsï¿½, which is an m x 2 array, where m is the number of ' ...
     'missing epochs. The first column marks the start points of the epochs that are excluded from the ' ...
     'analysis and the second column the end points.']};
 
@@ -100,22 +100,22 @@ condfile.tag     = 'condfile';
 condfile.num     = [1 1];
 condfile.filter  = '.*\.(mat|MAT)$';
 condfile.help    = {['Create a file with the following variables:'],
-    ['– names: a cell array of string for the names of the experimental conditions'],
-    ['– onsets: a cell array of number vectors for the onsets of events for '...
+    ['ï¿½ names: a cell array of string for the names of the experimental conditions'],
+    ['ï¿½ onsets: a cell array of number vectors for the onsets of events for '...
     'each experimental condition, expressed in seconds, marker numbers, '...
     'or samples, as specified in timeunits'],
-    ['– durations (optional, default 0): a cell array of vectors for '...
+    ['ï¿½ durations (optional, default 0): a cell array of vectors for '...
     '  the duration of each event. You need to use ''seconds'' or ''samples'' as time units'],
-    ['– pmod: this is used to specify regressors that specify how responses '...
-    'in an experimental condition depend on a parameter to model the '... 
+    ['ï¿½ pmod: this is used to specify regressors that specify how responses '...
+    'in an experimental condition depend on a parameter to model the '...
     'effect e.g. of habituation, reaction times, or stimulus ratings. pmod '...
     'is a struct array corresponding to names and onsets and containing the fields'],
     ['  * name: cell array of names for each parametric modulator for this condition'],
     ['  * param: cell array of vectors for each parameter for this condition, '...
     'containing as many numbers as there are onsets'],
     ['  * poly (optional, default 1): specifies the polynomial degree'],
-    [' – e.g. produce a simple multiple condition file by typing: '...
-    'names = {''condition a'', ''condition b''}; onsets = {[1 2 3], [4 5 6]}; '... 
+    [' ï¿½ e.g. produce a simple multiple condition file by typing: '...
+    'names = {''condition a'', ''condition b''}; onsets = {[1 2 3], [4 5 6]}; '...
     'save(''testfile'', ''names'', ''onsets'');']};
 
 % Name
@@ -134,7 +134,7 @@ onsets.strtype = 'r';
 onsets.num     = [1 Inf];
 onsets.help    = {['Specify a vector of onsets. The length of the vector corresponds to ' ...
     'the number of events included in this condition. Onsets have to be indicated in the ' ...
-    'specified time unit (‘seconds’, ‘markers’, or ‘samples’).']};
+    'specified time unit (ï¿½secondsï¿½, ï¿½markersï¿½, or ï¿½samplesï¿½).']};
 
 % Parameter
 param         = cfg_entry;
@@ -213,7 +213,7 @@ condition_rep.values  = {condition};
 condition_rep.num     = [1 Inf];
 condition_rep.help    = {'Specify the conditions that you want to include in your design matrix.'};
 
-% markervalues vector of numbers 
+% markervalues vector of numbers
 marker_values_val         = cfg_entry;
 marker_values_val.name    = 'Values for conditions';
 marker_values_val.tag     = 'marker_values_val';
@@ -223,7 +223,7 @@ marker_values_val.val     = {0};
 marker_values_val.help    = {'Specify the values for the conditions.'};
 
 % markervalues cell array of strings
-marker_values_names         = cfg_entry; 
+marker_values_names         = cfg_entry;
 marker_values_names.name    = 'Names for conditions';
 marker_values_names.tag     = 'marker_values_names';
 marker_values_names.strtype = 's+';
@@ -232,13 +232,13 @@ marker_values_names.help    = {'Specify the names for the conditions.',...
                                ' Separate each name by a whitespace.'};
 
 % condition values for marker based conditions
-marker_values        = cfg_choice;  
+marker_values        = cfg_choice;
 marker_values.name   = 'Condition-defining values/names ';
 marker_values.tag    = 'marker_values';
 marker_values.values = {marker_values_val, marker_values_names};
 marker_values.help   = {'Specify the values or names for the conditions.'};
 
-% condition names for marker based conditions 
+% condition names for marker based conditions
 cond_names         = cfg_entry;
 cond_names.name    = 'Name';
 cond_names.tag     = 'cond_names';
@@ -250,13 +250,13 @@ cond_names.help    = {'Specify the names of the conditions in the same order', .
 
 % condition from marker
 marker_cond        = cfg_branch;
-marker_cond.name   = 'Define conditions from distinct values/names of event markers '; 
+marker_cond.name   = 'Define conditions from distinct values/names of event markers ';
 marker_cond.tag    = 'marker_cond';
 marker_cond.val    = {marker_values, cond_names};
 marker_cond.help   = {'This option defines event onsets according to the values or',...
                      ' names of events stored in a marker channel. These names/values',...
                      ' are imported for some data types.'};
-% no condition 
+% no condition
 no_condition        = cfg_const;
 no_condition.name   = 'No condition';
 no_condition.tag    = 'no_condition';
@@ -270,8 +270,8 @@ timing.name    = 'Design';
 timing.tag     = 'data_design';
 timing.values  = {condfile, condition_rep, marker_cond ,no_condition};
 timing.help    = {['Specify the timing of the events within the design matrix. Timing can '...
-    'be specified in ‘seconds’, ‘markers’ or ‘samples’ with respect to the beginning of the ' ...
-    'data file. See ‘Time Units’ settings. Conditions can be specified manually or by using ' ...
+    'be specified in ï¿½secondsï¿½, ï¿½markersï¿½ or ï¿½samplesï¿½ with respect to the beginning of the ' ...
+    'data file. See ï¿½Time Unitsï¿½ settings. Conditions can be specified manually or by using ' ...
     'multiple condition files (i.e., an SPM-style mat file).']};
 
 % Nuisance
@@ -309,9 +309,9 @@ mrk_chan.tag     = 'mrk_chan';
 mrk_chan.strtype = 'i';
 mrk_chan.val     = {0};
 mrk_chan.num     = [1 1];
-mrk_chan.help    = {['Indicate the marker channel. By default the last marker channel is ' ...
+mrk_chan.help    = {['Indicate the marker channel. By default (value 0) the first marker channel is ' ...
     'assumed to contain the relevant markers.'], ['Markers are only used if you have ' ...
-    'specified the time units as ‘markers’.']};
+    'specified the time units as "markers".']};
 
 % Timeunits
 seconds         = cfg_const;
@@ -337,8 +337,8 @@ timeunits.name    = 'Time Units';
 timeunits.tag     = 'timeunits';
 timeunits.values = {seconds, samples, markers};
 timeunits.help    = {['Indicate the time units on which the specification of the conditions ' ...
-    'will be based. Time units can be specified in ‘seconds’, number of ‘markers’, or number ' ...
-    'of data ‘samples’ . Time units refer to the beginning of the data file and not to the ' ...
+    'will be based. Time units can be specified in ï¿½secondsï¿½, number of ï¿½markersï¿½, or number ' ...
+    'of data ï¿½samplesï¿½ . Time units refer to the beginning of the data file and not to the ' ...
     'beginning of the original recordings e. g. if data were trimmed.']};
 
 % Normalize
@@ -380,7 +380,7 @@ chan.help    = {['Indicate the channel containing the ', vars.modality, ' data.'
 %settings if Create Stats Exclude = yes
 excl_segment_length         = cfg_entry;
 excl_segment_length.name    = 'Segment length';
-excl_segment_length.tag     = 'segment_length';  
+excl_segment_length.tag     = 'segment_length';
 excl_segment_length.strtype = 'i';
 excl_segment_length.num     = [1 1];
 excl_segment_length.help    = {['Length of segments after each event onset over',...
@@ -388,7 +388,7 @@ excl_segment_length.help    = {['Length of segments after each event onset over'
 
 excl_cutoff         = cfg_entry;
 excl_cutoff.name    = 'Cutoff';
-excl_cutoff.tag     = 'cutoff';  
+excl_cutoff.tag     = 'cutoff';
 excl_cutoff.strtype = 'r';
 excl_cutoff.num     = [1 1];
 excl_cutoff.help    = {['Maximum NaN ratio for a condition to be accepted for further analysis.']};
@@ -406,7 +406,7 @@ excl_no.tag              = 'excl_no';
 excl_no.val              = {'No'};
 excl_no.help             = {'No statistics created.'};
 
-%Create Stats Exclude 
+%Create Stats Exclude
 exclude_missing          = cfg_choice;
 exclude_missing.name     = 'Create information on missing data values';
 exclude_missing.tag      = 'exclude_missing';
@@ -616,7 +616,7 @@ end;
 direction.labels  = {'Unidirectional', 'Bidirectional'};
 direction.values  = {'uni', 'bi'};
 direction.help    = {['A unidirectional filter is applied twice in the forward direction. ' ...
-    'A ‘bidirectional’ filter is applied once in the forward direction and once in the ' ...
+    'A ï¿½bidirectionalï¿½ filter is applied once in the forward direction and once in the ' ...
     'backward direction to correct the temporal shift due to filtering in forward direction.']};
 
 filter_edit        = cfg_branch;
@@ -649,7 +649,7 @@ glm.val   = {modelfile, outdir, chan, timeunits, session_rep, latency, ...
 %glm_scr.prog  = ;
 glm.vout  = @pspm_cfg_vout_glm;
 glm.help  = {...
-    
+
     ['General linear convolution models (GLM) are powerful for analysing evoked responses that ' ...
     'follow an event with (approximately) fixed latency. This is similar to standard analysis of fMRI data. ' ...
     'The user specifies events for different conditions. These are used to estimate the mean response amplitude ' ...

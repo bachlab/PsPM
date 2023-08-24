@@ -11,7 +11,7 @@ classdef (Abstract) pspm_get_superclass < pspm_testcase
     define_testcases(this)
   end
   methods (Static)
-    function import = assign_channeltype_number(import)
+    function import = assign_chantype_number(import)
       global settings;
       if isempty(settings), pspm_init; end;
       for m = 1:numel(import)

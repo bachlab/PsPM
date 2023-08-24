@@ -157,7 +157,7 @@ if numel(pupil_data) > 1
     ' We will process only the last one.\n'], options.channel);
   pupil_data = pupil_data(end);
 end
-old_channeltype = pupil_data{1}.header.channeltype;
+old_channeltype = pupil_data{1}.header.chantype;
 if ~contains(old_channeltype, 'pupil')
   warning('ID:invalid_input', 'Specified channel is not a pupil channel');
   return;
@@ -235,31 +235,30 @@ gaze_y_mm = get_gaze_in_mm(gaze_y_data{1}.data,...
 pupil = pupil_data{1}.data;
 
 %% correction
-[sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm, options);
-if sts ~= 1; return; end
+[sts_pupil_correct, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm, options);
+if sts_pupil_correct ~= 1; return; end
 
 %% save data
 pupil_data{1}.data = pupil_corrected;
-pupil_data{1}.header.channeltype = convert_pp(old_channeltype);
+pupil_data{1}.header.chantype = convert_pp(old_channeltype);
 channel_str = num2str(options.channel);
 o.msg.prefix = sprintf(...
   'PFE correction :: Input channel: %s -- Input channeltype: %s -- Output channeltype: %s --', ...
   channel_str, ...
   old_channeltype, ...
-  pupil_data{1}.header.channeltype);
+  pupil_data{1}.header.chantype);
 [lsts, out_id] = pspm_write_channel(fn, pupil_data, options.channel_action, o);
 if lsts ~= 1; return; end
 
 out_channel = out_id.channel;
 sts = 1;
-end
+return
 
 function gaze_mm = get_gaze_in_mm(gaze_data, units, side_mm, side_px)
 if strcmp(units, 'pixel')
   gaze_mm = gaze_data * (side_mm / side_px);
 else
   [~, gaze_mm] = pspm_convert_unit(gaze_data, units, 'mm');
-end
 end
 
 function channeltype_pp = convert_pp(channeltype)
@@ -293,5 +292,4 @@ if ~is_pp
   channeltype_pp = channeltype_pp{1};
 else
   channeltype_pp = channeltype;
-end
 end

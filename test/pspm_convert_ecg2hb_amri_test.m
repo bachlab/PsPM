@@ -1,6 +1,6 @@
 classdef pspm_convert_ecg2hb_amri_test < pspm_testcase
-% PSPM_ECG2HB_AMRI_TEST
-% unittest class for the pspm_ecg2hb_amri function
+% PSPM_CONVERT_ECG2HB_AMRI_TEST
+% unittest class for the pspm_convert_ecg2hb_amri function
 %__________________________________________________________________________
 % PsPM TestEnvironment
 % (C) 2019 Eshref Yozdemir (University of Zurich)
@@ -22,7 +22,7 @@ function check_if_heartbeat_channel_is_saved(this)
   [sts, out_channel] = pspm_convert_ecg2hb_amri(this.input_filename);
   load(this.input_filename);
 
-  this.verifyEqual(data{out_channel}.header.channeltype, 'hb');
+  this.verifyEqual(data{out_channel}.header.chantype, 'hb');
 end
 end
 

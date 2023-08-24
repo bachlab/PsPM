@@ -6,7 +6,7 @@ function varargout = pspm_ecg_editor(varargin)
 %   [sts, R] = pspm_ecg_editor(pt)
 %   [sts, R] = pspm_ecg_editor(fn, channel, options)
 % ● Arguments
-%         pt:  A struct() from pspm_ecg2hb detection.
+%         pt:  A struct() from pspm_convert_ecg2hb detection.
 %         fn:  A file to  data file containing the ecg channel to be edited
 %       channel:  Channel id of ecg channel in the data file
 % ┌──options:  A struct() of options
@@ -57,6 +57,7 @@ end
 % End initialization code - DO NOT EDIT
 
 
+
 % --- Executes just before pspm_ecg2hb_qc is made visible.
 function pspm_ecg_editor_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
@@ -65,7 +66,7 @@ function pspm_ecg_editor_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to pspm_ecg2hb_qc (see VARARGIN)
 
-set(hObject,'Resize','on');
+pspm_ui(hObject, handles, 'ecg_editor');
 % Choose default command line output for pspm_ecg2hb_qc
 handles.output = hObject;
 % -------------------------------------------------------------------------
@@ -317,7 +318,7 @@ if strcmpi(handles.gui_mode, 'file') && numel(handles.R) > 0
   out_d = struct();
   out_d.data = handles.R/sr;
   out_d.header = struct();
-  out_d.header.channeltype = 'hb';
+  out_d.header.chantype = 'hb';
   out_d.header.sr = 1;
   out_d.header.units = 'events';
 
@@ -708,9 +709,9 @@ uiresume
 function figure1_KeyPressFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)
 % eventdata  structure with the following fields (see MATLAB.UI.FIGURE)
-%	Key: name of the key that was pressed, in lower case
-%	Character: character interpretation of the key(s) that was pressed
-%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
+% Key: name of the key that was pressed, in lower case
+% Character: character interpretation of the key(s) that was pressed
+% Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
 % handles    structure with handles and user data (see GUIDATA)
 if strcmpi(eventdata.Key, 'escape')
   exitModus;
@@ -856,7 +857,7 @@ end
 function load_data_file(hObject, handles, fn)
 [sts, ~, handles.data, ~] = pspm_load_data(fn);
 if sts == 1
-  ecg_chans = find(cellfun(@(x) strcmpi(x.header.channeltype, 'ecg'), handles.data));
+  ecg_chans = find(cellfun(@(x) strcmpi(x.header.chantype, 'ecg'), handles.data));
   % set possible ecg chans
   sel_ecg_chan = find(ecg_chans == handles.data_chan, 1, 'first');
   if isempty(sel_ecg_chan)
@@ -866,7 +867,7 @@ if sts == 1
   set(handles.ppEcgChan, 'String', ecg_chans);
   set(handles.ppEcgChan, 'Value', sel_ecg_chan);
 
-  hb_chans = find(cellfun(@(x) strcmpi(x.header.channeltype, 'hb'), handles.data));
+  hb_chans = find(cellfun(@(x) strcmpi(x.header.chantype, 'hb'), handles.data));
   hb_chan_list = cell(1,length(hb_chans)+1);
   hb_chan_list{1} = 'None';
   hb_chan_list(2:end) = num2cell(hb_chans);

@@ -222,6 +222,6 @@ if fid ~= 1
   fclose(fid);
 end;
 
-% return --
+%% Return values
 sts = 1;
 return

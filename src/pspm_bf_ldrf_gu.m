@@ -35,8 +35,8 @@ offset = 0.2;
 %% check input arguments
 if nargin == 0
   errmsg = 'No sampling interval stated';
-	warning('ID:invalid_input', errmsg);
-	return;
+  warning('ID:invalid_input', errmsg);
+  return;
 elseif nargin == 1
   n_el = numel(varargin{1});
   td = varargin{1}(1);
@@ -88,3 +88,4 @@ sg_gt = exp(-((x2).^2)./(2.*p(1).^2));
 sg_ht = exp(-x2*p(2)) + exp (-x2*p(3));
 sg_ft = conv(sg_gt, sg_ht);
 bs(round(offset/td + 1):end) = p(4) * sg_ft(1:numel(x2));
+return

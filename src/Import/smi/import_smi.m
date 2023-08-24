@@ -42,8 +42,14 @@ function [data] = import_smi(varargin)
     %__________________________________________________________________________
     %
     % (C) 2019 Laure Ciernik
-    % Updated 2021 Teddy Chao
-    
+    % Updated 2023 Teddy Chao
+
+    %% Initialise
+    global settings
+    if isempty(settings)
+      pspm_init;
+    end
+
     if isempty(varargin)
         error('ID:invalid_input', 'import_SMI.m needs at least one input sample_file.');
     end
@@ -147,11 +153,13 @@ function [data] = import_smi(varargin)
     l_eye = any(cell2mat(cellfun(@(x)strcmpi(x,'LEFT'),format_fields,'UniformOutput',0)));
     r_eye = any(cell2mat(cellfun(@(x)strcmpi(x,'RIGHT'),format_fields,'UniformOutput',0)));
     if l_eye && r_eye
-        eyesObserved = 'LR';
+        eyesObserved = settings.eye.cap.b;
+        % 'LR' means both the left and right eyes are observed,
+        % and it has no meaning of combining left and right eyes.
     elseif l_eye
-        eyesObserved = 'L';
+        eyesObserved = settings.eye.cap.l;
     else
-        eyesObserved = 'R';
+        eyesObserved = settings.eye.cap.r;
     end
     % Stimulus dimension
     sd_pos = strncmpi(header_sample, '## Stimulus Dimension',21);
@@ -276,7 +284,7 @@ function [data] = import_smi(varargin)
             ignore_str_pos{1}=cell(4,1);
             ignore_str_pos{2}=cell(4,1);
 
-            if strcmpi(eyesObserved, 'LR')
+            if strcmpi(eyesObserved, settings.eye.cap.b)
                 % alwas add the time of the beginning of the current trial
                 % since the measured start and end times are relative to the
                 % time of the beginning ot the current trial
@@ -298,7 +306,7 @@ function [data] = import_smi(varargin)
                 [ignore_str_pos{2}{3},ignore_str_pos{2}{4}]=get_idx(times,start_saccade_r,end_saccade_r);
 
 
-            elseif strcmpi(eyesObserved, 'L')
+            elseif strcmpi(eyesObserved, settings.eye.cap.l)
                 start_blink = eventsRaw.blink_l.start(blink_l_trial_sess);%+time;
                 end_blink = eventsRaw.blink_l.end(blink_l_trial_sess)+time;
                 start_saccade = eventsRaw.sacc_l.start(sacc_l_trial_sess);%+time;
@@ -317,8 +325,9 @@ function [data] = import_smi(varargin)
             % add blinks and saccades to datanum
             ignore_names = {'Blink', 'Saccade'};
             for j = 1:numel(ignore_str_pos)
-                for i=1:numel(data{sn}.eyesObserved)
-                    if strcmpi(data{sn}.eyesObserved(i), 'L')
+                eye_individuals = data{sn}.eyesObserved;
+                for i = 1:numel(eye_individuals)
+                    if strcmpi(eye_individuals(i), 'l')
                         ep_start = 1;
                         ep_stop = 2;
                     else
@@ -331,11 +340,10 @@ function [data] = import_smi(varargin)
                         stop_pos = min(size(sn_datanum, 1), ignore_str_pos{j}{ep_stop}(k));
                         sn_datanum(start_pos : stop_pos, idx) = 1;
                     end
-                    columns{idx} = [upper(data{sn}.eyesObserved(i)), ' ', ignore_names{j}];
+                    columns{idx} = [upper(eye_individuals(i)), ' ', ignore_names{j}];
                 end
             end
         end
-
         %% messages
         data{sn}.markers = [];
         data{sn}.markerinfos.value = [];
@@ -345,7 +353,6 @@ function [data] = import_smi(varargin)
             msg_times_in_sn = cell2mat(msgs(1, :));
             msg_times_in_sn = msg_times_in_sn(val_msg_idx);
             data{sn}.markers = msg_times_in_sn;
-
             msg_str =  msgs(3, val_msg_idx);
             msg_str_idx = cell2mat(cellfun(@(x) find(x==':', 1, 'first'),msg_str,'UniformOutput',0));
             for u=1:length(msg_str_idx)
@@ -367,8 +374,7 @@ function [data] = import_smi(varargin)
         % save column heder of raw data
         raw_columns = columns;
         data{sn}.raw_columns = raw_columns;
-
-        if strcmpi(data{sn}.eyesObserved, 'LR')
+        if strcmpi(data{sn}.eyesObserved, settings.eye.cap.b)
             % pupilL, pupilR, xL, yL, xR, yR, blinkL, blinkR, saccadeL,
             % saccadeR
             % get idx of different channel

@@ -1,13 +1,13 @@
-function [sts, infos] = pspm_convert_hb2hp(fn, sr, chan, options)
+function [sts, infos] = pspm_convert_hb2hp(fn, sr, channel, options)
 % ● Description
 %   pspm_convert_hb2hp transforms heart beat data into an interpolated heart
 %   rate signal and adds this as an additional channel to the data file
 % ● Format
-%   sts = pspm_convert_hb2hp(fn, sr, chan, options)
+%   sts = pspm_convert_hb2hp(fn, sr, channel, options)
 % ● Arguments
 %                 fn: data file name
 %                 sr: new sample rate for heart period channel
-%               chan: number of heart beat channel (optional, default:
+%            channel: number of heart beat channel (optional, default:
 %                     first heart beat channel); if empty (= 0 / [])
 %                     will be set to default value
 %   ┌────────options: optional arguments [struct]
@@ -52,16 +52,16 @@ elseif nargin < 2
   warning('ID:invalid_input','No sample rate given.'); return;
 elseif ~isnumeric(sr)
   warning('ID:invalid_input','Sample rate needs to be numeric.'); return;
-elseif nargin < 3 || isempty(chan) || (isnumeric(chan) && (chan == 0))
-  chan = 'hb';
-elseif ~isnumeric(chan) && ~strcmpi(chan, 'hb')
+elseif nargin < 3 || isempty(channel) || (isnumeric(channel) && (channel == 0))
+  channel = 'hb';
+elseif ~isnumeric(channel) && ~strcmpi(channel, 'hb')
   warning('ID:invalid_input','Channel number must be numeric'); return;
 end
 
 
 % get data
 % -------------------------------------------------------------------------
-[nsts, dinfos, data] = pspm_load_data(fn, chan);
+[nsts, dinfos, data] = pspm_load_data(fn, channel);
 if nsts == -1
   warning('ID:invalid_input', 'call of pspm_load_data failed');
   return;
@@ -92,7 +92,7 @@ end
 newdata.data = newhp(:);
 newdata.header.sr = sr;
 newdata.header.units = 'ms';
-newdata.header.channeltype = 'hp';
+newdata.header.chantype = 'hp';
 
 
 o.msg.prefix = 'Heart beat converted to heart period and';
@@ -105,6 +105,5 @@ catch
   return;
 end
 infos.channel = winfos.channel;
-
 sts = 1;
-end
+return

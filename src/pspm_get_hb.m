@@ -32,8 +32,8 @@ data.data = import.data;
 
 % add header
 % -------------------------------------------------------------------------
-data.header.channeltype = 'hb';
+data.header.chantype = 'hb';
 data.header.units = 'events';
 data.header.sr = 1;
-sts =1;
-return;
+sts = 1;
+return

@@ -11,9 +11,9 @@ classdef pspm_pp_test < matlab.unittest.TestCase
       this.verifyWarning(@()pspm_pp('butter', 'file'), 'ID:invalid_input');
       % for the following tests a valid file is required thus
       % generate some random data
-      channels{1}.channeltype = 'scr';
-      channels{2}.channeltype = 'hb';
-      channels{3}.channeltype = 'scr';
+      channels{1}.chantype = 'scr';
+      channels{2}.chantype = 'hb';
+      channels{3}.chantype = 'scr';
       fn = 'testfile549813.mat';
       pspm_testdata_gen(channels, 10, fn);
       % perform the other tests with invalid input data
@@ -23,9 +23,9 @@ classdef pspm_pp_test < matlab.unittest.TestCase
     end
     function median_test(this)
       %generate testdata
-      channels{1}.channeltype = 'scr';
-      channels{2}.channeltype = 'hb';
-      channels{3}.channeltype = 'scr';
+      channels{1}.chantype = 'scr';
+      channels{2}.chantype = 'hb';
+      channels{3}.chantype = 'scr';
       fn = 'testfile549813.mat';
       pspm_testdata_gen(channels, 10, fn);
       %filter one channel
@@ -45,9 +45,9 @@ classdef pspm_pp_test < matlab.unittest.TestCase
     end
     function butter_test(this)
       %generate testdata
-      channels{1}.channeltype = 'scr';
-      channels{2}.channeltype = 'hb';
-      channels{3}.channeltype = 'scr';
+      channels{1}.chantype = 'scr';
+      channels{2}.chantype = 'hb';
+      channels{3}.chantype = 'scr';
       fn = 'testfile549814.mat';
       pspm_testdata_gen(channels, 10, fn);
       %filter one channel
@@ -67,7 +67,7 @@ classdef pspm_pp_test < matlab.unittest.TestCase
     end
     %        function simple_qa_test(this)
     %            %generate testdata
-    %            channels{1}.channeltype = 'scr';
+    %            channels{1}.chantype = 'scr';
     %
     %            fn = 'missing_epochs_test_generated_data.mat';
     %            pspm_testdata_gen(channels, 10, fn);
@@ -108,14 +108,14 @@ classdef pspm_pp_test < matlab.unittest.TestCase
     %        end
     function overwrite_test(this)
       % generate test data
-      channels{1}.channeltype = 'scr';
-      channels{2}.channeltype = 'hb';
+      channels{1}.chantype = 'scr';
+      channels{2}.chantype = 'hb';
       fn = 'testfile549815.mat';
       pspm_testdata_gen(channels, 10, fn);
       % run once
       newfile = pspm_pp('butter', fn, 40);
       % add one channel, run again and don't overwrite
-      channels{3}.channeltype = 'scr';
+      channels{3}.chantype = 'scr';
       pspm_testdata_gen(channels, 10, fn);
       options.overwrite = 0;
       newfile = pspm_pp('butter', fn, 40, [1,3], options);

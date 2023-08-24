@@ -22,4 +22,4 @@ if ~all(cellfun(@(x) isstr(x), varargin))
 end
 pspm_root_path = fileparts(which('pspm_path'));
 path_to_folder = fullfile(pspm_root_path, varargin{:});
-end
+return

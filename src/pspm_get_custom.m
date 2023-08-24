@@ -14,12 +14,13 @@ function [sts, data] = pspm_get_custom(import)
 %% Initialise
 global settings
 if isempty(settings)
-	pspm_init;
+  pspm_init;
 end
+sts = -1;
 %% assign data
 data.data = import.data(:);
 %% add header
-data.header.channeltype = 'custom';
+data.header.chantype = 'custom';
 data.header.units = import.units;
 data.header.sr = import.sr;
 %% check status

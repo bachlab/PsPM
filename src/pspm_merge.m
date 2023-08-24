@@ -1,4 +1,4 @@
-function outfile = pspm_merge(infile1, infile2, reference, options)
+function varargout = pspm_merge(infile1, infile2, reference, options)
 % ● Description
 %   pspm_merge merges two PsPM datafiles with different channels and writes
 %   it to a file with the same name as the first file, prepended 'm'.
@@ -9,15 +9,15 @@ function outfile = pspm_merge(infile1, infile2, reference, options)
 % ● Arguments
 %    infile1, infile2:  data file name(s) (char, or cell array for multiple
 %                       files)
-%           reference:	'marker' aligns with respect to first marker
-%												'file'   aligns with respect to file start
+%           reference:  'marker' aligns with respect to first marker
+%                       'file'   aligns with respect to file start
 %   ┌─────────options:
-%   ├──────.overwrite:	overwrite existing files by default
-%		│										[logical] (0 or 1)
-%		│										Define whether to overwrite existing output files or not.
-%		│										Default value: determined by pspm_overwrite.
-%   └.marker_chan_num:	2 marker channel numbers - if undefined
-%												or 0, first marker channel is used
+%   ├──────.overwrite:  overwrite existing files by default
+%   │                   [logical] (0 or 1)
+%   │                   Define whether to overwrite existing output files or not.
+%   │                   Default value: determined by pspm_overwrite.
+%   └.marker_chan_num:  2 marker channel numbers - if undefined
+%                       or 0, first marker channel of each file is used
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (UZH, WTCN)
@@ -30,6 +30,13 @@ if isempty(settings)
 end
 sts = -1;
 outfile = [];
+switch nargout
+  case 1
+    varargout{1} = outfile;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = outfile;
+end
 
 %% Check input
 % check missing input --
@@ -68,8 +75,8 @@ for iFile = 1:numel(infile{1})
   infos = cell(2,1);
   data = cell(2,1);
   for iNum = 1:2
-    [sts, infos{iNum}, data{iNum}] = pspm_load_data(infile{iNum}{iFile});
-    if sts ~= 1
+    [sts_load_data, infos{iNum}, data{iNum}] = pspm_load_data(infile{iNum}{iFile});
+    if sts_load_data ~= 1
       warning('ID:invalid_input', 'call of pspm_load_data failed');
       return;
     end
@@ -84,8 +91,8 @@ for iFile = 1:numel(infile{1})
     end
   end
   % put together and cut away data from the end --
-  [sts, data, duration] = pspm_align_channels([data{1}; data{2}]);
-  if sts ~= 1
+  [sts_align_channels, data, duration] = pspm_align_channels([data{1}; data{2}]);
+  if sts_align_channels ~= 1
     warning('ID:invalid_input', 'call of pspm_align_channels failed');
     return;
   end
@@ -104,13 +111,21 @@ for iFile = 1:numel(infile{1})
   outfile{iFile} = fullfile(pth, ['m', fn, ext]);
   infos.mergedfile = outfile{iFile} ;
   outdata.data = data;
-	outdata.infos = infos;
-	options.overwrite = pspm_overwrite(outfile{iFile}, options);
-	outdata.options = options;
-  sts = pspm_load_data(outfile{iFile}, outdata);
-  if sts ~= 1, return; end
+  outdata.infos = infos;
+  options.overwrite = pspm_overwrite(outfile{iFile}, options);
+  outdata.options = options;
+  sts_load_data = pspm_load_data(outfile{iFile}, outdata);
+  if sts_load_data ~= 1, return; end
 end
 
 % convert to char if only one file was given
 if numel(infile{1}) == 1, outfile = outfile{1}; end
-return;
+sts = 1;
+switch nargout
+  case 1
+    varargout{1} = outfile;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = outfile;
+end
+return

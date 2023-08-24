@@ -40,3 +40,4 @@ ht = exp(-t*lambda1) + exp(-t*lambda2);
 ft = conv(gt, ht);
 ft = ft(1:numel(t));
 ft = ft/max(ft);
+return

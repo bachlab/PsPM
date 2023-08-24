@@ -1,6 +1,6 @@
 classdef pspm_filtfilt_test < matlab.unittest.TestCase
   % ● Description
-  % unittest class for the pspm_hb2hp function
+  % unittest class for the pspm_filtfilt function
   % ● Authorship
   % (C) 2019 Ivan Rojkov (University of Zurich)
   methods (Test)

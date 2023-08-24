@@ -42,13 +42,16 @@ function [sts, out] = pspm_extract_segments(varargin)
 %   │                     the glm model file or the dcm model file. In the case
 %   │                     of raw data the timeunit should be seconds.
 %   ├────────────.length: Length of the segments in the 'timeunits'.
-%   │                     If given the same length is taken for segments for 
+%   │                     If given the same length is taken for segments for
 %   │                     glm structure. If not given lengths are take from
 %   │                     the timing data. This argument is optional. If
 %   │                     'timeunit' equals 'markers' then 'length' is
 %   │                     expected to be in seconds.
 %   │                     For dcm structures the option length will be
 %   │                     ignored and length will be set from timing
+%   │                     data.
+%   │                     The default value is 10. The optional values are >= 0.
+%   │                     When .length is set to be 0, length will be set from timing
 %   │                     data.
 %   ├──────────────.plot: If 1 mean values (solid) and standard error of
 %   │                     the mean (dashed) will be ploted. Default is 0.
@@ -65,7 +68,7 @@ function [sts, out] = pspm_extract_segments(varargin)
 %   │                     cell array of numeric array of marker data.
 %   ├────────.nan_output: This option defines whether the user wants to output
 %   │                     the NaN ratios of the trials for each condition.
-%   │                     If so,  we values can be printed on the screen (on 
+%   │                     If so,  we values can be printed on the screen (on
 %   │                     MATLAB command window) or written to a created file.
 %   │                     The field can be set to 'screen', 'File Output'or
 %   │                     'none'. 'none' is the default value.
@@ -73,7 +76,7 @@ function [sts, out] = pspm_extract_segments(varargin)
 %                         (default: 0).
 % ● Developer's Notes
 %   This function uses three different flags encoded in the variable
-%   "manual_chosen", it can take the following values:
+%   `manual_chosen`, it can take the following values:
 %       - manual_chosen = 0  ---> it means the function runs in auto mode
 %       - manual_chosen = 1  ---> it means the function runs in manual mode
 %                                 but the given data are not raw but
@@ -482,7 +485,7 @@ for session_idx = 1:n_sessions
     assert(numel(onset_write_indices_in_cond_and_session) == num_onsets);
 
     for onset_idx = 1:num_onsets
-      if options.length <= 0
+      if options.length == 0
         try
           segment_length = durations_cond(onset_idx);
           if segment_length==0
@@ -666,4 +669,6 @@ if options.plot
   legend(legend_lb);
 end
 
+%% Return values
 sts = 1;
+return

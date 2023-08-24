@@ -70,4 +70,4 @@ t = (start:td:stop-td)';
 bs = A * gampdf(t - shift, a, b);
 bs = bs/max(bs); % Normalizing by the max value
 bs = bs./repmat((max(bs) - min(bs)), size(bs, 1), 1); % making it between [0,1]
-end
+return

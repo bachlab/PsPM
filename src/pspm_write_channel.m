@@ -1,4 +1,4 @@
-function [sts, infos] = pspm_write_channel(fn, newdata, channel_action, options)
+function varargout = pspm_write_channel(fn, newdata, channel_action, options)
 % ● Description
 %   pspm_write_channel adds, replaces and deletes channels in an existing
 %   data file. This function is an integration of the former functions
@@ -39,13 +39,20 @@ function [sts, infos] = pspm_write_channel(fn, newdata, channel_action, options)
 %                      Tobias Moser (University of Zurich)
 %   Updated in 2022 by Teddy Chao (UCL)
 
-%% Initialise
+%% 0 Initialise
 global settings
 if isempty(settings)
   pspm_init;
 end
 sts = -1;
 outinfos = struct();
+switch nargout
+  case 1
+    varargout{1} = outinfos;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = outinfos;
+end
 if ~exist('options','var')
   options = struct();
 end
@@ -53,7 +60,7 @@ options = pspm_options(options, 'write_channel');
 if options.invalid
   return
 end
-%% Check arguments
+%% 1 Check arguments
 if nargin < 1
   warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
 elseif ~ischar(fn)
@@ -69,13 +76,10 @@ elseif isempty(newdata)
 elseif ~isempty(newdata) && ~isstruct(newdata) && ~iscell(newdata)
   warning('ID:invalid_input', 'newdata must either be a newdata structure or empty'); return;
 end
-
-%% Determine whether the data has the correct 'orientation' and try to fix it
-
+% Determine whether the data has the correct 'orientation' and try to fix it
 if isstruct(newdata)
   newdata = {newdata};
 end
-
 if ~strcmpi(channel_action, 'delete')
   for i=1:numel(newdata)
     if isfield(newdata{i}, 'data') && isfield(newdata{i}, 'header')
@@ -106,21 +110,19 @@ if ~strcmpi(channel_action, 'delete')
     end
   end
 end
-
-
-%% Get data
+%% 2 Get data
 [nsts, infos, data] = pspm_load_data(fn);
 if nsts == -1
   return
 end
 % importdata = data; % importdata is not used by following steps
 
-%% Find channel according to action
+%% 3 Find channel according to action
 % channels in file
 fchannels = [];
 if ~strcmpi(channel_action, 'add')
   % Search for channel(s)
-  fchannels = cellfun(@(x) x.header.channeltype,data,'un',0);
+  fchannels = cellfun(@(x) x.header.chantype,data,'un',0);
   if ischar(options.channel)
     if strcmpi(options.delete,'all')
       channeli = find(strcmpi(options.channel,fchannels));
@@ -156,70 +158,73 @@ end
 
 if strcmpi(channel_action, 'add')
   channeli = numel(data) + (1:numel(newdata));
-  channeltypes = cellfun(@(f) f.header.channeltype, newdata, 'un', 0);
+  channeltypes = cellfun(@(f) f.header.chantype, newdata, 'un', 0);
   fchannels = cell(numel(data) + numel(newdata),1);
   fchannels(channeli,1) = channeltypes;
 end
 
-%% Manage message
+%% 4 Manage message
 msg = options.msg;
 switch channel_action
   case 'add', v = 'added';
   case 'replace', v = 'replaced';
   case 'delete', v = 'deleted';
 end
-
 if isstruct(options.msg) && isfield(options.msg, 'prefix')
   prefix = options.msg.prefix;
 else
   prefix = options.prefix;
 end
 prefix = [prefix ' Output channel ID: #%02d --'];
-
 msg = '';
 for i = channeli'
   % translate prefix
   p = sprintf(prefix, i);
   msg = [msg, p, sprintf(' %s on %s', v, date)];
 end
-msg(end-1:end)='';
+msg(end-1:end) = '';
 
-%% Modify data according to action
+%% 5 Modify data according to action
 if strcmpi(channel_action, 'delete')
   data(channeli) = [];
 else
   data(channeli,1) = newdata;
 end
-
 if isfield(infos, 'history')
   nhist = numel(infos.history);
 else
   nhist = 0;
 end
 infos.history{nhist + 1} = msg;
-
 % add infos to outinfo struct
 outinfos.channel = channeli;
 
-%% Save data
+%% 6 Save data
 outdata.infos = infos;
 outdata.data  = data;
 outdata.options.overwrite = 1;
-
 nsts = pspm_load_data(fn, outdata);
 if nsts == -1
   return
 end
 
+%% 7 Sort output
 infos = outinfos;
-
 sts = 1;
+switch nargout
+  case 1
+    varargout{1} = infos;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = infos;
+end
+return
 
 function matches = match_chan(existing_channels, exisiting_units, channel)
 if isfield(channel.header, 'units')
   matches = find(...
-    strcmpi(channel.header.channeltype, existing_channels)...
+    strcmpi(channel.header.chantype, existing_channels)...
     & strcmpi(channel.header.units, exisiting_units),1,'last');
 else
-  matches = find(strcmpi(channel.header.channeltype, existing_channels) ,1,'last');
+  matches = find(strcmpi(channel.header.chantype, existing_channels) ,1,'last');
 end

@@ -41,11 +41,11 @@ classdef pspm_get_physlog_test < pspm_get_superclass
       fn = 'ImportTestData/physlog/SCANPHYSLOG20150821194530.log';
       % data channel does not exist
       import{1} = struct('type', 'ecg', 'channel', 8);
-      import = this.assign_channeltype_number(import);
+      import = this.assign_chantype_number(import);
       this.verifyWarning(@() this.fhandle(fn, import), 'ID:channel_not_contained_in_file');
       % trigger channel does not exist
       import{1} = struct('type', 'marker', 'channel', 11);
-      import = this.assign_channeltype_number(import);
+      import = this.assign_chantype_number(import);
       this.verifyWarning(@() this.fhandle(fn, import), 'ID:channel_not_contained_in_file');
     end
   end

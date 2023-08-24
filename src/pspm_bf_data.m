@@ -40,4 +40,3 @@ bf = interp1(x_old, data, x, 'nearest', 'extrap');
 bf = [0; bf(:)];
 x  = [0; x(:)];
 return
-end

@@ -21,9 +21,9 @@ function [sts, outdata] = pspm_interpolate(varargin)
 %                   contains the data to be interpolated
 %   ┌─────options:
 %   ├──.overwrite:  Defines if existing datafiles should be overwritten.
-%		│								[logical] (0 or 1)
-%		│								Define whether to overwrite existing output files or not.
-%		│								Default value: determined by pspm_overwrite.
+%   │               [logical] (0 or 1)
+%   │               Define whether to overwrite existing output files or not.
+%   │               Default value: determined by pspm_overwrite.
 %   ├─────.method:  Defines the interpolation method, see interp1() for
 %   │               possible interpolation methods.
 %   │               [optional; default: linear]
@@ -58,7 +58,7 @@ function [sts, outdata] = pspm_interpolate(varargin)
 %   Written in 2015 by Tobias Moser (University of Zurich)
 %   Maintained in 2022 by Teddy Chao (UCL)
 
-%% initialise
+%% 1 Initialise
 global settings
 if isempty(settings)
   pspm_init;
@@ -180,7 +180,7 @@ for d = 1:numel(D)
     % look for event channel
     ev = cellfun(@(f) strcmpi(f.header.units, 'events'), channel);
     if any(ev)
-      warning('ID:invalid_channeltype', 'Cannot interpolate event channel.');
+      warning('ID:invalid_chantype', 'Cannot interpolate event channel.');
       return;
     end
   else
@@ -299,3 +299,4 @@ if (numel(outdata) == 1) && ~iscell(indata)
   outdata = outdata{1};
 end
 sts = 1;
+return

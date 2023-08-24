@@ -1,4 +1,4 @@
-function auc = pspm_sf_auc(scr, sr, options)
+function varargout = pspm_sf_auc(model, options)
 % ● Description
 %   pspm_sf_auc returns the integral/area under the curve of an SCR time series
 % ● Format
@@ -18,15 +18,37 @@ function auc = pspm_sf_auc(scr, sr, options)
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy Chao (UCL)
 
-% initialise
+%% initialise
 global settings
 if isempty(settings)
   pspm_init;
 end
 sts = -1;
-% check input arguments
+auc = [];
+switch nargout
+  case 1
+    varargout{1} = auc;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = auc;
+end
+
+%% check input arguments
 if nargin < 1
   warning('No data specified'); return;
 end;
+try model.scr; catch, warning('Input data is not defined.'); return; end
+try model.sr; catch, warning('Sample rate is not defined.'); return; end
+scr = model.scr;
+sr = model.sr;
 scr = scr - min(scr);
 auc = mean(scr);
+sts = 1;
+switch nargout
+  case 1
+    varargout{1} = auc;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = auc;
+end
+end

@@ -56,4 +56,4 @@ end;
 x = (0:td:stop-td)';
 bs = zeros(stop_idx,1);
 bs(start_idx:stop_idx) = 1;
-end
+return

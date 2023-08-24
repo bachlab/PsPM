@@ -1,4 +1,4 @@
-function theta = pspm_get_rf(fn, events, outfile, chan, options)
+function theta = pspm_get_rf(fn, events, outfile, channel, options)
 % ● Description
 %   pspm_get_rf estimates a response function from an event-related design
 %   (e.g. for further use in a GLM analysis), using a regularisation as
@@ -7,14 +7,14 @@ function theta = pspm_get_rf(fn, events, outfile, chan, options)
 %   the function returns an m-function for the RF, and the parameters of that
 %   function
 % ● Format
-%   theta = pspm_get_rf(fn, events, outfile, chan, options)
+%   theta = pspm_get_rf(fn, events, outfile, channel, options)
 % ● Arguments
 %         fn: the file name of a PsPM data file
 %     events: specified in seconds as either (1) a vector of onsets, or (2) an
 %             SPM style onsets file with one event type, or (3) an epochs file
 %             (see pspm_dcm or pspm_get_epochs).
 %    outfile: (optional) a file to write the response function to
-%       chan: (optional) data channel (default: look for first SCR channel)
+%    channel: (optional) data channel (default: look for first SCR channel)
 %    options: [struct] to be passed on to pspm_dcm
 % ● History
 %   Introduced in PsPM 3.0
@@ -41,14 +41,14 @@ if isempty(outfile) || ~ischar(outfile)
   outfile = fullfile(pth, ['RF_', infn, ext]);
 end;
 if nargin < 4
-  chan = 'scr';
+  channel = 'scr';
 end;
 
 %% call DCM
 options = pspm_options(options, 'get_rf');
 % options.getrf = 1;
 %try options.nosave, catch, options.nosave = 1; end;
-options.chan = chan;
+options.channel = channel;
 [foo dcm] = pspm_dcm(fn, '', events, options);
 if numel(dcm{1}.prior.posterior) == 2
   % based on eSCR
@@ -86,4 +86,5 @@ if ~isempty(outfile)
   outfile = fullfile(pth, [fn, '.m']);
   dlmwrite(outfile, job, 'delimiter', '');
 end;
+sts = 1;
 return

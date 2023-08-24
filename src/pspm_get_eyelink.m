@@ -52,12 +52,14 @@ data = import_eyelink(datafile);
 % -------------------------------------------------------------------------
 addpath(pspm_path('backroom'));
 for i = 1:numel(data)-1
-  if strcmpi(data{i}.eyesObserved, 'l')
+  if strcmpi(data{i}.eyesObserved, settings.eye.char.l)
     mask_chans = {'blink_l', 'saccade_l'};
-  elseif strcmpi(data{i}.eyesObserved, 'r')
+  elseif strcmpi(data{i}.eyesObserved, settings.eye.char.r)
     mask_chans = {'blink_r', 'saccade_r'};
-  else
+  elseif strcmpi(data{i}.eyesObserved, settings.eye.char.b)
     mask_chans = {'blink_l', 'blink_r', 'saccade_l', 'saccade_r'};
+  else
+    warning('ID:invalid_input', ['No valid eye marker is detected, please check input channels.']);
   end
   expand_factor = 0;
 
@@ -216,7 +218,7 @@ for k = 1:numel(import)
   else
     % determine channel id from channeltype - eyelink specific
     % thats why channel ids will be ignored!
-    if strcmpi(data{1}.eyesObserved, settings.lateral.cap.c) || strcmpi(data{1}.eyesObserved, 'lr')
+    if strcmpi(pspm_eye(data{1}.eyesObserved, 'lr2c'), settings.lateral.char.c)
       chan_struct = {'pupil_l', 'pupil_r', 'gaze_x_l', 'gaze_y_l', ...
         'gaze_x_r', 'gaze_y_r','blink_l','blink_r','saccade_l','saccade_r'};
     else
@@ -310,7 +312,7 @@ for k = 1:numel(import)
     if ~isempty(regexpi(import{k}.type, ['_[', settings.lateral.char.c, ']'], 'once'))
       if size(n_blink, 2) > 1
         eye_t = regexp(import{k}.type, ['.*_([', settings.lateral.char.c, '])'], 'tokens');
-        n_eye_blink = n_blink(strcmpi(eye_t{1}, {'l','r'}));
+        n_eye_blink = n_blink(strcmpi(eye_t{1}, {settings.eye.char.l, settings.eye.char.r}));
       else
         n_eye_blink = n_blink;
       end
@@ -318,7 +320,7 @@ for k = 1:numel(import)
 
       if size(n_saccade, 2) > 1
         eye_t = regexp(import{k}.type, ['.*_([',settings.lateral.char.c,'])'], 'tokens');
-        n_eye_saccade = n_saccade(strcmpi(eye_t{1}, {'l','r'}));
+        n_eye_saccade = n_saccade(strcmpi(eye_t{1}, {settings.eye.char.l, settings.eye.char.r}));
       else
         n_eye_saccade = n_saccade;
       end
@@ -338,24 +340,24 @@ sourceinfo.elcl_proc = data{1}.elcl_proc;
 left_occurance = any(cell2mat(cellfun(@(x) ~isempty(regexpi(x.type, '_l', 'once')), import,'UniformOutput',0)));
 right_occurance = any(cell2mat(cellfun(@(x) ~isempty(regexpi(x.type, '_r', 'once')), import,'UniformOutput',0)));
 if left_occurance && right_occurance
-  sourceinfo.eyesObserved = settings.lateral.char.c;
+  sourceinfo.eyesObserved = settings.eye.char.b;
 elseif left_occurance && ~right_occurance
-  sourceinfo.eyesObserved = 'l';
+  sourceinfo.eyesObserved = settings.eye.char.l;
 else
-  sourceinfo.eyesObserved = 'r';
+  sourceinfo.eyesObserved = settings.eye.char.r;
 end
 
 % determine best eye
 switch sourceinfo.eyesObserved
-  case 'l'
+  case settings.eye.char.l
     sourceinfo.best_eye = sourceinfo.eyesObserved;
-  case 'r'
+  case settings.eye.char.r
     sourceinfo.best_eye = sourceinfo.eyesObserved;
-  case 'c'
+  case settings.eye.char.b
     eye_stat = Inf(1,2);
-    eye_choice = 'lr';
+    eye_choice = pspm_eye(sourceinfo.eyesObserved, 'char2cell');
     for i = 1:2
-      e = lower(eye_choice(i));
+      e = eye_choice{i};
       e_stat = vertcat(sourceinfo.chan_stats{...
         cellfun(@(x) ~isempty(regexpi(x.type, ['_' e], 'once')), import)});
       if ~isempty(e_stat)
@@ -363,12 +365,10 @@ switch sourceinfo.eyesObserved
       end
     end
     [~, min_idx] = min(eye_stat);
-    sourceinfo.best_eye = lower(eye_choice(min_idx));
+    sourceinfo.best_eye = lower(eye_choice{min_idx});
 end
 
 % remove specific import path
 rmpath(pspm_path('Import','eyelink'));
-
 sts = 1;
-return;
-end
+return

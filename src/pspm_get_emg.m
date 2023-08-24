@@ -22,9 +22,9 @@ sts = -1;
 % assign data
 data.data = import.data(:);
 % add header
-data.header.channeltype = 'emg';
+data.header.chantype = 'emg';
 data.header.units = import.units;
 data.header.sr = import.sr;
 % check status
 sts = 1;
-return;
+return

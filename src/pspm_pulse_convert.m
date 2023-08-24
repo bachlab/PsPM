@@ -1,4 +1,4 @@
-function wavedata = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
+function varargout = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
 % ● Description
 %   pspm_pulse_convert converts pulsed data into a data waveform, assuming
 %   milliseconds as time unit and a resamplingrate in Hz given as input argument
@@ -27,6 +27,14 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+wavedata = [];
+switch nargout
+  case 1
+    varargout{1} = wavedata;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = wavedata;
+end
 
 % check input arguments
 if nargin<1
@@ -52,7 +60,7 @@ else
   if 10*maxtruesamplingrate > resamplingrate
     newresamplingrate = min([round(maxtruesamplingrate*10), 10000/1000]); % max resamplingrate: 10 kHz, otherwise out of memory
     resamplingrate = newresamplingrate;
-  end;
+  end
   fprintf('\nPulse data was converted to waveform with a sampling rate of %01.2f Hz, to allow 10-fold oversampling.\n', resamplingrate*1000);
   scrt = pulsedata;
   scr = 1./diff(scrt);                                            % get frequency information for each timepoint
@@ -64,7 +72,7 @@ else
   % put back into correct timeunits (seconds)
   resamplingrate = 1000 * resamplingrate;
   % substitute missing samplingrate
-  if nargin < 3, samplingrate = resamplingrate; end;
+  if nargin < 3, samplingrate = resamplingrate; end
   % convert
   if samplingrate < resamplingrate
     filt.lpfreq = 0.5 * samplingrate;
@@ -74,14 +82,19 @@ else
     filt.direction = 'bi';
     filt.down = samplingrate;
     filt.sr = resamplingrate;
-    [sts, wavedata] = pspm_prepdata(wavedata, filt);
-    if sts ~= 1
+    [sts_prepdata, wavedata] = pspm_prepdata(wavedata, filt);
+    if sts_prepdata ~= 1
       warning('ID:invalid_input', 'call of pspm_prepdata failed');
-      return;
-    end;
-  end;
-end;
-
-
-
-return;
+      return
+    end
+  end
+end
+sts = 1;
+switch nargout
+  case 1
+    varargout{1} = wavedata;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = wavedata;
+end
+return

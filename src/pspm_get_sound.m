@@ -19,8 +19,9 @@ sts = -1;
 % assign respiratory data
 data.data = import.data(:);
 % add header
-data.header.channeltype = 'snd';
+data.header.chantype = 'snd';
 data.header.units = import.units;
 data.header.sr = import.sr;
 % check status
 sts = 1;
+return

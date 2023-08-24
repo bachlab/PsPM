@@ -1,4 +1,4 @@
-function fig = pspm_rev_glm(modelfile, glm, plotNr)
+function varargout = pspm_rev_glm(modelfile, glm, plotNr)
 % ● Description
 %   pspm_rev_glm is a tool for reviewing a first level GLM designs. It is
 %   meant to be called by pspm_review only.
@@ -15,6 +15,7 @@ function fig = pspm_rev_glm(modelfile, glm, plotNr)
 %               4 - print regressor names
 %               5 - reconstructed responses
 % ● Outputs
+%         sts:  status variable indicating whether the function run successfully
 %         fig:  returns the figure handles
 % ● History
 %   Introduced In PsPM 3.0
@@ -27,13 +28,21 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+fig = struct();
+switch nargout
+  case 1
+    varargout{1} = fig;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = fig;
+end
 
 % check input
 % ------------------------------------------------------------------------
 if nargin < 2, return; end
 
-[sts, glm] = pspm_glm_recon(modelfile);
-if sts == -1, return; end
+[sts_glm_recon, glm] = pspm_glm_recon(modelfile);
+if sts_glm_recon == -1, return; end
 
 % prepare
 % ------------------------------------------------------------------------
@@ -229,3 +238,12 @@ for i=1:length(plotNr)
     end
   end
 end
+sts = 1;
+switch nargout
+  case 1
+    varargout{1} = fig;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = fig;
+end
+return

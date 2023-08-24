@@ -1,4 +1,4 @@
-function sts = pspm_resp_pp(fn, sr, chan, options)
+function sts = pspm_resp_pp(fn, sr, channel, options)
 % ● Description
 %   pspm_resp_pp preprocesses raw respiration traces. The function detects
 %   respiration cycles for bellows and cushion systems, computes respiration
@@ -6,11 +6,11 @@ function sts = pspm_resp_pp(fn, sr, chan, options)
 %   cycle and linearly interpolates these (expect rs = respiration time
 %   stamps). Results are written to new channels in the same file
 % ● Format
-%   sts = pspm_resp_pp(fn, sr, chan, options)
+%   sts = pspm_resp_pp(fn, sr, channel, options)
 % ● Arguments
 %                 fn: data file name
 %                 sr: sample rate for new interpolated channel
-%               chan: number of respiration channel (optional, default: first
+%            channel: number of respiration channel (optional, default: first
 %                     respiration channel)
 %   ┌────────options:
 %   ├────.systemtype: ['bellows'(default) /'cushion']
@@ -40,9 +40,9 @@ elseif nargin < 2
   warning('ID:invalid_input', 'No sample rate given.'); return;
 elseif ~isnumeric(sr)
   warning('ID:invalid_input', 'Sample rate needs to be numeric.'); return;
-elseif nargin < 3 || isempty(chan) || (chan == 0)
-  chan = 'resp';
-elseif ~isnumeric(chan)
+elseif nargin < 3 || isempty(channel) || (channel == 0)
+  channel = 'resp';
+elseif ~isnumeric(channel)
   warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end
 if ~exist('options', 'var')
@@ -64,8 +64,8 @@ else
   if datatype(end), datatype(1:end) = 1; end
 end
 %% get data
-[nsts, infos, data] = pspm_load_data(fn, chan);
-old_channeltype = data{1}.header.channeltype;
+[nsts, infos, data] = pspm_load_data(fn, channel);
+old_channeltype = data{1}.header.chantype;
 if nsts == -1
   warning('ID:invalid_input', 'Could not load data properly.');
   return;
@@ -85,7 +85,7 @@ filt.hpfreq    = .01;
 filt.hporder   = 1;
 filt.direction = 'bi';
 filt.down      = 10;
-[sts, newresp, newsr] = pspm_prepdata(resp - mean(resp), filt);
+[sts, newresp, newsr] = pspm_prepdata(resp - mean(resp,"omitnan"), filt);
 % Median filter
 newresp = medfilt1(newresp, ceil(newsr) + 1);
 %% detect breathing cycles
@@ -127,7 +127,7 @@ for iType = 1:(numel(datatypes) - 1)
       case 1
         %rp
         respdata = diff(respstamp);
-        newdata.header.channeltype = 'rp';
+        newdata.header.chantype = 'rp';
         action_msg = 'Respiration converted to respiration period';
         newdata.header.units = 's';
       case 2
@@ -136,7 +136,7 @@ for iType = 1:(numel(datatypes) - 1)
           win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
           respdata(k) = range(resp(win));
         end
-        newdata.header.channeltype = 'ra';
+        newdata.header.chantype = 'ra';
         action_msg = 'Respiration converted to respiration amplitude';
         newdata.header.units = 'unknown';
       case 3
@@ -146,21 +146,21 @@ for iType = 1:(numel(datatypes) - 1)
           win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
           respdata(k) = range(resp(win))/ibi(k);
         end
-        newdata.header.channeltype = 'rfr';
+        newdata.header.chantype = 'rfr';
         action_msg = 'Respiration converted to rfr';
         newdata.header.units = 'unknown';
       case 4
         %rs
-        newdata.header.channeltype = 'rs';
+        newdata.header.chantype = 'rs';
         action_msg = 'Respiration converted to respiration time stamps';
         newdata.header.units = 'events';
     end
-    channel_str = num2str(chan);
+    channel_str = num2str(channel);
     o.msg.prefix = sprintf(...
       'Respiration preprocessing :: Input channel: %s -- Input channeltype: %s -- Output channel: %s -- Action: %s --', ...
       channel_str, ...
       old_channeltype, ...
-      newdata.header.channeltype, ...
+      newdata.header.chantype, ...
       action_msg);
     % interpolate
     switch iType
@@ -181,7 +181,7 @@ for iType = 1:(numel(datatypes) - 1)
     end
     % write
     newdata.data = writedata(:);
-    nsts = pspm_write_channel(fn, newdata, options.channel_action, o);
+    [nsts, ~] = pspm_write_channel(fn, newdata, options.channel_action, o);
     if nsts == -1, return; end
   end
 end
@@ -202,3 +202,4 @@ if options.plot
   stem(respstamp, ones(size(respstamp)), 'Marker', 'o', 'Color', 'b');
 end
 sts = 1;
+return

@@ -18,7 +18,7 @@ function [sts, import, sourceinfo] = pspm_get_labchartmat_ext(datafile, import)
 % ● Developer's Notes
 %   Tue Jun 08, 2010 12:25 am from
 %   http://www.adinstruments.com/forum/viewtopic.php?f=7&t=35&p=79#p79
-%   Export MATLAB writes the comment timestamps using the overall "tick rate".
+%   Export MATLAB writes the comment timestamps using the overall `tick rate`.
 %   The tick rate corresponds to the highest sample rate. If all channels are
 %   at the same sample rate then that's the tick rate. However if you had
 %   three channels recorded at 1kHz, 2kHz and 500Hz, then the tick rate would
@@ -104,4 +104,4 @@ for k = 1:numel(import)
 end;
 
 sts = 1;
-return;
+return

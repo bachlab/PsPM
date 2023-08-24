@@ -7,8 +7,8 @@ function [sts, data] = pspm_get_scr(import)
 %     import:  import job structure with mandatory fields
 %         .sr:
 %       .data:
-%   .transfer:  transfer parameters, either a struct with fields .Rs, .c, 
-%               .offset, .recsys, or a file containing variables 'Rs' 'c', 
+%   .transfer:  transfer parameters, either a struct with fields .Rs, .c,
+%               .offset, .recsys, or a file containing variables 'Rs' 'c',
 %               'offset', 'recsys'.
 % ● History
 %   Introduced in PsPM 3.0
@@ -78,7 +78,7 @@ data.data = pspm_transfer_function(inputdata, c, Rs, offset, recsys);
 data.data = data.data(:);
 
 % add header
-data.header.channeltype = 'scr';
+data.header.chantype = 'scr';
 data.header.units = dataunits;
 data.header.sr = import.sr;
 data.header.transfer = struct('Rs', Rs, 'offset', offset, 'c', c, 'recsys', recsys);

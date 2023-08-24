@@ -103,8 +103,8 @@ if(numel(varargin)) == 1
   handles.prop.wavechans(1) = 0;
   j = 2;
   for k = 1:length(handles.data)
-    if any(strcmp(handles.data{k,1}.header.channeltype,handles.prop.setwave))
-      listitems{j,1} = handles.data{k,1}.header.channeltype;
+    if any(strcmp(handles.data{k,1}.header.chantype,handles.prop.setwave))
+      listitems{j,1} = handles.data{k,1}.header.chantype;
       handles.prop.wavechans(j) = k;
       j = j+1;
     end
@@ -118,8 +118,8 @@ if(numel(varargin)) == 1
   handles.prop.eventchans(1) = 0;
   j = 2;
   for k = 1:length(handles.data)
-    if any(strcmp(handles.data{k,1}.header.channeltype,handles.prop.setevent))
-      listitems{j,1} = handles.data{k,1}.header.channeltype;
+    if any(strcmp(handles.data{k,1}.header.chantype,handles.prop.setevent))
+      listitems{j,1} = handles.data{k,1}.header.chantype;
       handles.prop.eventchans(j) = k;
       j = j+1;
       set(handles.option_integrated,'Enable','on');
@@ -450,8 +450,8 @@ if not(sts == 0)
   handles.prop.wavechans(1) = 0;
   j = 2;
   for k = 1:length(handles.data)
-    if any(strcmp(handles.data{k,1}.header.channeltype,handles.prop.setwave))
-      listitems{j,1} = handles.data{k,1}.header.channeltype;
+    if any(strcmp(handles.data{k,1}.header.chantype,handles.prop.setwave))
+      listitems{j,1} = handles.data{k,1}.header.chantype;
       handles.prop.wavechans(j) = k;
       j = j+1;
     end
@@ -465,8 +465,8 @@ if not(sts == 0)
   handles.prop.eventchans(1)  =  0;
   j = 2;
   for k = 1:length(handles.data)
-    if any(strcmp(handles.data{k,1}.header.channeltype,handles.prop.setevent))
-      listitems{j,1} = handles.data{k,1}.header.channeltype;
+    if any(strcmp(handles.data{k,1}.header.chantype,handles.prop.setevent))
+      listitems{j,1} = handles.data{k,1}.header.chantype;
       handles.prop.eventchans(j) = k;
       j = j+1;
       set(handles.option_integrated,'Enable','on');
@@ -537,10 +537,10 @@ end
 function panel_wave_SelectionChangeFcn(hObject, ~, handles)
 % hObject    handle to the selected object in panel_wave
 % eventdata  structure with the following fields (see UIBUTTONGROUP)
-%	EventName: string 'SelectionChanged' (read only)
-%	OldValue: handle of the previously selected object or empty if none was
-%           selected
-%	NewValue: handle of the currently selected object
+% EventName: string 'SelectionChanged' (read only)
+% OldValue: handle of the previously selected object or empty if none was
+%          selected
+% NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
 
 
@@ -599,10 +599,10 @@ end
 function panel_event_SelectionChangeFcn(hObject, ~, handles)
 % hObject    handle to the selected object in panel_event
 % eventdata  structure with the following fields (see UIBUTTONGROUP)
-%	EventName: string 'SelectionChanged' (read only)
-%	OldValue: handle of the previously selected object or empty if none was
-%           selected
-%	NewValue: handle of the currently selected object
+% EventName: string 'SelectionChanged' (read only)
+% OldValue: handle of the previously selected object or empty if none was
+%          selected
+% NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
 
 status0 = get(handles.radio_enone,'Value');
@@ -645,8 +645,8 @@ function edit_y_max_Callback(~, ~, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hints: get(hObject,'String') returns contents of edit_y_max as text
-%         str2double(get(hObject,'String')) returns contents of edit_y_max
-%         as a double
+%        str2double(get(hObject,'String')) returns contents of edit_y_max
+%        as a double
 
 x1 = str2double(get(handles.edit_start_x,'String'));
 x2 = str2double(get(handles.edit_winsize_x,'String'))+x1;
@@ -670,7 +670,7 @@ function edit_y_max_CreateFcn(hObject, ~, ~)
 % handles    empty - handles not created until after all CreateFcns called
 
 % Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
+%      See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), ...
     get(0,'defaultUicontrolBackgroundColor'))
   set(hObject,'BackgroundColor','white');
@@ -688,10 +688,10 @@ end
 
 % ---header----------------------------------------------------------------
 
-%       handles.name ... filename
-%       prop... struct with fields
-%               .wave (channel number)
-%               .event(channel number)
+%      handles.name ... filename
+%      prop... struct with fields
+%              .wave (channel number)
+%              .event(channel number)
 %
 
 % Initialise
@@ -706,7 +706,7 @@ wave = [];
 if not(isempty(handles.prop.eventchans)) && ...
     not(handles.prop.eventchans(handles.prop.idevent)==0) && ...
     strcmp(handles.data{...
-    handles.prop.eventchans(handles.prop.idevent),1}.header.channeltype,...
+    handles.prop.eventchans(handles.prop.idevent),1}.header.chantype,...
     'marker')
   marker = handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
   if get(handles.option_extra,'Value') == 1
@@ -718,7 +718,7 @@ elseif not(isempty(handles.prop.eventchans)) && ...
     not(handles.prop.eventchans(handles.prop.idevent)==0) && ...
     strcmp(...
     handles.data{...
-    handles.prop.eventchans(handles.prop.idevent),1}.header.channeltype,'hb')
+    handles.prop.eventchans(handles.prop.idevent),1}.header.chantype,'hb')
   hbeat = handles.data{handles.prop.eventchans(handles.prop.idevent),1}.data;
   if get(handles.option_extra,'Value') == 1
     handles.prop.event = 'extra';
@@ -735,7 +735,7 @@ elseif not(isempty(handles.prop.eventchans)) && ...
   end
 end
 
-% Get wave chan info
+% Get wave channel info
 if handles.prop.wavechans(handles.prop.idwave) ~= 0
   wave = handles.data{handles.prop.wavechans(handles.prop.idwave),1}.data;
   sr.wave = handles.data{handles.prop.wavechans(handles.prop.idwave),1}.header.sr;
@@ -1062,9 +1062,9 @@ if r_channels > 1 && c_channels > 1
   for i_r_channel = 1:r_channels
     for i_c_channels = 1:c_channels
       % array_channel_type(r_channels,c_channels) = ...
-      %   handles.data{i_r_channel,i_c_channels}.header.channeltype;
+      %   handles.data{i_r_channel,i_c_channels}.header.chantype;
       targeted_channel_reference = ...
-        handles.data{i_r_channel,i_c_channels}.header.channeltype;
+        handles.data{i_r_channel,i_c_channels}.header.chantype;
       targeted_channel_display = ...
         channel_list_full(strcmp(targeted_channel_reference, ...
         {channel_type_reference_list.type}));
@@ -1086,7 +1086,7 @@ else
       i_r_channels = i_channel;
     end
     targeted_channel_reference = ...
-      handles.data{i_r_channels,i_c_channels}.header.channeltype;
+      handles.data{i_r_channels,i_c_channels}.header.chantype;
     targeted_channel_display = ...
       channel_list_full(strcmp(targeted_channel_reference, ...
       {channel_type_reference_list.type}));

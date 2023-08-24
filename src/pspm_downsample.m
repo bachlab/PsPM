@@ -29,3 +29,4 @@ end
 %% 3 Performing downsampling
 data = data(freqratio:freqratio:end);
 sts = 1;
+return

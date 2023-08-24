@@ -23,10 +23,11 @@ sts = -1;
 data.data = import.data(:);
 
 % add header
-data.header.channeltype = 'gaze_y_r';
+data.header.chantype = 'gaze_y_r';
 data.header.units = import.units;
 data.header.sr = import.sr;
 data.header.range = import.range;
 
 % check status
 sts = 1;
+return

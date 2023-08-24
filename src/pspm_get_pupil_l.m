@@ -23,8 +23,9 @@ sts = -1;
 % assign pupil data
 data.data = import.data(:);
 % add header
-data.header.channeltype = 'pupil_l';
+data.header.chantype = 'pupil_l';
 data.header.units = import.units;
 data.header.sr = import.sr;
 % check status
 sts = 1;
+return

@@ -22,9 +22,9 @@ sts = -1;
 % assign respiratory data
 data.data = import.data(:);
 % add header
-data.header.channeltype = 'pupil';
+data.header.chantype = 'pupil';
 data.header.units = import.units;
 data.header.sr = import.sr;
 % check status
 sts = 1;
-return;
+return

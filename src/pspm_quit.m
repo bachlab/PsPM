@@ -11,15 +11,19 @@ if isempty(settings)
 end
 fs = filesep;
 if settings.scrpath, rmpath(settings.path), end;
-if any(contains(path, 'VBA'))
+if any(contains(settings.path, 'VBA'))
   rmpath(pspm_path('ext','VBA'));
   rmpath(pspm_path('ext','VBA','subfunctions'));
   rmpath(pspm_path('ext','VBA','stats&plots'));
+end
+if isfile(fullfile(settings.path,'pspm_text.mat'))
+  delete(fullfile(settings.path,'pspm_text.mat'))
 end
 clear settings
 close all
 disp(' ');
 disp('Thanks for using PsPM.');
 disp(repelem('-',20));
-disp('PsPM 6.0.0 (c) 2008-2022 Dominik R. Bach');
+disp('PsPM 6.1.0 (c) 2008-2023 Dominik R. Bach');
 disp('Uni Bonn, DE | UCL, UK | UZH, CH');
+return

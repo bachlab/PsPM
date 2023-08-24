@@ -77,7 +77,10 @@ end
 % if necessary, write into a file
 outfn = options.filename;
 if ~isempty(outfn)
-  if pspm_overwrite(outfn, options)
+  ow = pspm_overwrite(outfn, options);
+  if ow
     save(outfn, 'markerinfo');
   end
 end
+sts = 1;
+return

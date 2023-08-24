@@ -207,12 +207,15 @@ switch mode
   case 'file'
     data{1}.data = convert_data;
     data{1}.header.units = unit;
-    [f_sts, f_info] = pspm_write_channel(fn, data{1},...
-      options.channel_action);
-    sts = f_sts;
-    out.channel = f_info.channel;
-    out.fn = fn;
+    [f_sts, f_info] = pspm_write_channel(fn, data{1}, options.channel_action);
+    if ~f_sts
+      return
+    else
+      out.channel = f_info.channel;
+      out.fn = fn;
+    end
   case 'data'
     out = convert_data;
-    sts = 1;
 end
+sts = 1;
+return

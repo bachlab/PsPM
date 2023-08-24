@@ -10,7 +10,7 @@ function [glm_sps] = pspm_cfg_glm_sps
 % Initialise
 global settings
 if isempty(settings)
-    pspm_init; 
+    pspm_init;
 end
 
 % set variables

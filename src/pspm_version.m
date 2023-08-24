@@ -1,4 +1,4 @@
-function [sts, v] = pspm_version(varargin)
+function varargout = pspm_version(varargin)
 % ● Description
 %   pspm_version returns the current pspm version and checks if there is an
 %   update available.
@@ -9,23 +9,29 @@ function [sts, v] = pspm_version(varargin)
 %   [sts, v] = pspm_version()
 %   [sts, v] = pspm_version(action)
 % ● Arguments
-%   action: define an additional action. Possible actions are 'check' that 
+%   action: define an additional action. Possible actions are 'check' that
 %           checks if there is a new pspm version available.
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2009-2016 by Tobias Moser (University of Zurich)
 
-%% start
+%% 0 start
 % do not include pspm_init, because pspm_version is called by pspm_init!!!
 sts = -1;
-
-%% 1 load startup info file
 fid = fopen('pspm_msg.txt');
 msg = textscan(fid, '%s', 'Delimiter', '$');
 tk =regexp(msg{1},'^Version ([0-9A-Za-z\.]*) .*', 'tokens');
 v_idx = find(~cellfun('isempty', tk), 1, 'first');
 v = tk{v_idx}{1}{1};
-%% 2 check if there is an input action given
+switch nargout
+  case 1
+    varargout = v;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = v;
+end
+
+%% 1 check if there is an input action given
 if nargin > 0
   switch varargin{1}
     case 'check' % check for updates
@@ -59,11 +65,22 @@ if nargin > 0
               sprintf('Latest version : %s\n', new_v)]);
           end
         else
-          warning('ID:invalid_input', 'Cannot figure out if there is a new version.'); return;
+          warning('ID:invalid_input', 'Cannot figure out if there is a new version.');
         end
       catch
-        warning('ID:invalid_input', 'Cannot check for updates.'); return
+        warning('ID:invalid_input', 'Cannot check for updates.');
       end
   end
 end
+
+%% 3 Sort output
 sts = 1;
+version_of_pspm = v;
+switch nargout
+  case 1
+    varargout = version_of_pspm;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = version_of_pspm;
+end
+return

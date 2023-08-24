@@ -199,7 +199,8 @@ else
       ep = cellfun(@(x) x.range', handles.epochs, 'UniformOutput', 0);
       epochs = cell2mat(ep)';
       if strcmpi(handles.input_mode, 'file')
-        if pspm_overwrite(out_file)
+        ow = pspm_overwrite(out_file);
+        if ow
           save(out_file, 'epochs');
         end
       else
@@ -227,7 +228,7 @@ for i=1:numel(handles.plots) % remove plots
   end
 end
 [~, infos, data] = pspm_load_data(file); % load file
-channels = cellfun(@(x) {x.header.channeltype,x.header.units}, data, 'UniformOutput', 0);
+channels = cellfun(@(x) {x.header.chantype,x.header.units}, data, 'UniformOutput', 0);
 set(handles.edOpenFilePath, 'String', file);
 corder = get(handles.fgDataEditor, 'defaultAxesColorOrder'); % format channels
 cl = length(corder)-2;
@@ -255,29 +256,29 @@ PlotData(hObject);
 
 function PlotData(hObject)
 handles = guidata(hObject);
-chan = {};
+channel = {};
 switch handles.input_mode % load data
   case 'file'
     sr = max(cellfun(@(x) x.header.sr, handles.data)); % get highest sample rate
     xdata = (0:sr^-1:handles.infos.duration)';
     chan_id = get(handles.lbChannel, 'Value');
     if ~any(numel(handles.data) < chan_id)
-      chan = chan_id;
+      channel = chan_id;
     else
       warning('Cannot plot selected channel(s).');
     end
   case 'raw'
     xdata = (1:numel(handles.data))';
-    chan = 1;
+    channel = 1;
 end
 handles.selected_data = NaN(numel(xdata),1);
 handles.x_data = xdata;
 guidata(hObject, handles);
-if ~isempty(chan)
+if ~isempty(channel)
   np = get(handles.axData, 'NextPlot');
   action = 'replace';
-  for i=1:numel(chan)
-    AddPlot(hObject, chan(i), action);
+  for i=1:numel(channel)
+    AddPlot(hObject, channel(i), action);
     action = 'add';
   end
   set(handles.axData, 'NextPlot', np);
@@ -313,7 +314,7 @@ end
 handles.axData = gca;
 p = plot(xdata,ydata, 'Color', color);
 xlabel('time -- second');
-ylabel([handles.data{1,1}.header.channeltype, ' -- ', handles.data{1,1}.header.units]);
+ylabel([handles.data{1,1}.header.chantype, ' -- ', handles.data{1,1}.header.units]);
 handles.axData.FontSize = 14;
 set(handles.axData, 'NextPlot', 'add');
 NaN_data = NaN(numel(xdata),1);
@@ -380,7 +381,7 @@ function lbEpochs_Callback(hObject, ~, ~)
 %   handles    structure with handles and user data (see GUIDATA)
 % Hints
 %   contents = cellstr(get(hObject,'String')) returns lbEpochs contents as cell array
-%	contents{get(hObject,'Value')} returns selected item from lbEpochs
+%   contents{get(hObject,'Value')} returns selected item from lbEpochs
 epId = get(hObject,'Value');
 HighlightEpoch(hObject, epId);
 
@@ -493,7 +494,7 @@ function lbEpochs_CreateFcn(hObject, ~, ~)
 %   handles    empty - handles not created until after all CreateFcns called
 % Hint
 %   listbox controls usually have a white background on Windows.
-%	See ISPC and COMPUTER.
+%   See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
   set(hObject,'BackgroundColor','white');
 end
@@ -609,7 +610,7 @@ guidata(hObject, handles);
 
 function buttonDown_Callback(hObject, ~)
 % Comment
-%   Used to be "buttonDown_Callback(hObject, data)", but the variable
+%   Used to be `buttonDown_Callback(hObject, data)`, but the variable
 %   data seems to be not used.
 handles = guidata(hObject); % get current cursor position
 switch handles.mode
@@ -621,7 +622,7 @@ guidata(hObject, handles);
 
 function buttonUp_Callback(hObject, ~)
 % Comment
-%   Used to be "buttonUp_Callback(hObject, data)", but the variable
+%   Used to be `buttonUp_Callback(hObject, data)`, but the variable
 %   data seems to be not used.
 % get current cursor position
 handles = guidata(hObject);
@@ -649,7 +650,7 @@ UpdateEpochList(hObject);
 
 function buttonMotion_Callback(hObject, ~)
 % Comment
-%   Used to be "buttonMotion_Callback(hObject, data)", but the variable
+%   Used to be `buttonMotion_Callback(hObject, data)`, but the variable
 %   data seems to be not used.
 handles = guidata(hObject);
 if isfield(handles, 'mode')
@@ -924,7 +925,7 @@ end
 
 function pbCancel_Callback(hObject, ~, handles)
 % Feature
-%	Executes on button press in pbCancel.
+%   Executes on button press in pbCancel.
 % Variables
 %   hObject    handle to pbCancel (see GCBO)
 %   eventdata  reserved - to be defined in a future version of MATLAB
@@ -984,7 +985,7 @@ function lbChannel_Callback(hObject, ~, handles)
 %   handles    structure with handles and user data (see GUIDATA)
 % Hints
 %   contents = cellstr(get(hObject,'String')) returns lbChannel contents as cell array
-%	contents{get(hObject,'Value')} returns selected item from lbChannel
+%   contents{get(hObject,'Value')} returns selected item from lbChannel
 if strcmpi(handles.input_mode, 'file')
   plots = find(cellfun(@(x) ~isempty(x), handles.plots));
   sel = get(hObject, 'Value');
@@ -1010,7 +1011,7 @@ function lbChannel_CreateFcn(hObject, ~, ~)
 %   handles    empty - handles not created until after all CreateFcns called
 % Hint
 %   listbox controls usually have a white background on Windows.
-%	See ISPC and COMPUTER.
+%   See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
   set(hObject,'BackgroundColor','white');
 end
@@ -1043,7 +1044,7 @@ bgOutputFormat_SelectionChangedFcn(hObject, eventdata, handles);
 
 function pbOpenInputFile_Callback(hObject, ~, handles)
 % Feature
-%	Executes on button press in pbOpenInputFile.
+%   Executes on button press in pbOpenInputFile.
 % Variables
 %   hObject    handle to pbOpenInputFile (see GCBO)
 %   eventdata  reserved - to be defined in a future version of MATLAB
@@ -1130,7 +1131,7 @@ function edOpenMissingEpochFilePath_Callback(hObject, ~, handles)
 %   handles    structure with handles and user data (see GUIDATA)
 % Hints
 %   get(hObject,'String') returns contents of edOpenMissingEpochFilePath as text
-%	str2double(get(hObject,'String')) returns contents of edOpenMissingEpochFilePath as a double
+%   str2double(get(hObject,'String')) returns contents of edOpenMissingEpochFilePath as a double
 if isempty(handles.epoch_file)
   set(hObject, 'String', 'No input specified');
 else
@@ -1146,7 +1147,7 @@ function edOpenMissingEpochFilePath_CreateFcn(hObject, ~, ~)
 %   handles    empty - handles not created until after all CreateFcns called
 % Hint
 %   edit controls usually have a white background on Windows.
-%	See ISPC and COMPUTER.
+%   See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
   set(hObject,'BackgroundColor','white');
 end

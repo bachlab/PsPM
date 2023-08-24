@@ -6,7 +6,7 @@ function [sts, import, sourceinfo] = pspm_get_edf(datafile, import)
 %   [sts, import, sourceinfo] = pspm_get_edf(datafile, import);
 % ● Arguments
 %   datafile:
-%     import:  
+%     import:
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Tobias Moser (University of Zurich)
@@ -80,4 +80,4 @@ end;
 % -------------------------------------------------------------------------
 rmpath(pspm_path('Import','fieldtrip','fileio'));
 sts = 1;
-return;
+return

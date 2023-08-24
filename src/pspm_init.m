@@ -25,12 +25,8 @@ function pspm_init
 %   Written in 2009-2015 by Dominik R Bach (WTCN, UZH)
 %   Maintained in 2022 by Teddy Chao (UCL)
 
-clc
-
-%% 0 load text for help and warnings
-pspm_text;
-load('pspm_text.mat')
-
+%% 0 Cleaning terminal outputs
+%clc
 %% 1 license & user output
 fid = fopen('pspm_msg.txt');
 msg = textscan(fid, '%s', 'Delimiter', '$');
@@ -40,35 +36,32 @@ for n = 1:numel(msg{1})
   fprintf('%s\n', msg{1}{n});
 end
 fprintf('PsPM: loading defaults ... \n');
-
 %% 2 check
 % 2.1 check pspm version
 [~, pspm_vers] = pspm_version('check');
-
-% check various settings
+% 2.2 check various settings
 global settings
+if ~isempty(settings) % initialise settings
+  settings = [];
+end
 p = path;
 fs = filesep;
-
-% 2.2 check if subfolders are already in path
+% 2.3 check if subfolders are already in path
 % get subfolders
 current_path = fileparts(mfilename('fullpath'));
 folder_content = dir(current_path);
 is_folder = [folder_content(:).isdir];
 subfolders = {folder_content(is_folder).name}';
 subfolders(ismember(subfolders, {'.','..'})) = [];
-
 subfolders = regexprep(subfolders, '(.*)',...
   [regexptranslate('escape', [current_path, filesep]) , '$1']);
-
 sp = textscan(path,'%s','delimiter',pathsep);
 mem = ~ismember(subfolders, sp{1});
 if numel(subfolders(mem)) == 0
   % loaded subdirs which may cause trouble
   warning(warntext_subfolder);
 end
-
-% check whether scralyze is on the path
+% 2.4 check whether scralyze is on the path
 pth = fileparts(which('pspm_guide'));
 if ~contains(p, pth)
   scrpath=1;
@@ -77,22 +70,21 @@ else
   scrpath=0;
 end
 pth = [pth, fs];
-
-% 2.3 check matlab version
+pspm_text(pth);
+load(fullfile(pth,'pspm_text.mat'))
+% 2.5 check matlab version
 v = version;
 if str2double(v(1:3)) < 7.1
   warning(warntext_matlab_old, v);
 end
-
-% 2.4 check matlab toolbox: signal processing
+% 2.6 check matlab toolbox: signal processing
 tboxes = ver;
 signal = any(strcmp({tboxes.Name}, 'Signal Processing Toolbox'));
 if ~signal
   errmsg = warntext_sigproc_toolbox;
   warning(errmsg);
 end
-
-% 2.5 Check SPM
+% 2.7 Check SPM
 % check if SPM Software is on the current Path
 % Dialog Window open to ask whether to remove program from the path or quit
 % pspm_init.
@@ -114,7 +106,6 @@ if ~isempty(all_paths_spm)
     error(errmsg);
   end
 end
-
 % check whether SPM 8 is already on path
 dummy = which('spm');
 if ~isempty (dummy)
@@ -136,8 +127,7 @@ if addspm
 else
   spmpath = 0;
 end
-
-% 2.6 Check matlabbatch
+% 2.8 Check matlabbatch
 % check whether matlabbatch is already on path
 dummy=which('cfg_ui');
 if isempty (dummy)
@@ -168,9 +158,7 @@ else
     matlabbatchpath = 0;
   end
 end
-
-
-% 2.7 Check pspm_cfg
+% 2.9 Check pspm_cfg
 % check whether pspm_cfg is already on path
 dummy=which('pspm_cfg');
 if isempty (dummy)
@@ -179,14 +167,11 @@ if isempty (dummy)
 else
   scrcfgpath=0;
 end
-
-% 2.8 Check VBA
+% 2.10 Check VBA
 % add VBA because this is used in various functions
 addpath(pspm_path('ext','VBA'));
 addpath(pspm_path('ext','VBA','subfunctions'));
 addpath(pspm_path('ext','VBA','stats&plots'));
-
-
 %% 3 Chennel types
 %
 % 3.1 allowed channel types
@@ -198,7 +183,7 @@ addpath(pspm_path('ext','VBA','stats&plots'));
 % explanations.
 % These are the allowed channeltypes in a data file (checked by pspm_load_data)
 % channeltypes are not ordered.
-
+%
 s_t = 'type'; % data type
 s_de = 'description';
 s_i = 'import';
@@ -698,6 +683,16 @@ defaults.lateral.full.c = 'combined';
 defaults.lateral.full.l = 'left';
 defaults.lateral.full.r = 'right';
 
+% Observed eyes
+defaults.eye.char.b = 'lr';
+defaults.eye.char.l = 'l';
+defaults.eye.char.r = 'r';
+
+defaults.eye.cap.b = 'LR';
+defaults.eye.cap.br = 'RL';
+defaults.eye.cap.l = 'L';
+defaults.eye.cap.r = 'R';
+
 % other settings
 % resampling rate for automatic transfer function computation
 defaults.get_transfer_sr = 100;
@@ -719,7 +714,7 @@ defaults.modalities = struct('glm', 'scr', 'sf', 'scr', 'dcm', 'scr', 'pfm', 'pu
 % 'hpfreq', 0.05, 'hporder', 1, 'down', 10,...
 % 'direction', 'uni'),...
 % 'default', 1);
-
+%
 % GLM for SCR
 defaults.glm(1) = struct(...
   'modality',     'scr',...
@@ -797,13 +792,10 @@ defaults.glm(10) = struct(...
 % Currently this is being used for DCM for SCR and SF
 % analysis. Further modalities and models can be implemented.
 %
-
 % DCM for SCR filter settings
 defaults.dcm{1} = struct('filter', struct('lpfreq', 5,  'lporder',  1,  'hpfreq', 0.0159, 'hporder',  1,  'down', 10, 'direction', 'bi'), 'sigma_offset', 0.3);
 % DCM for SF filter settings
 defaults.dcm{2} = struct('filter', struct('lpfreq', 5,  'lporder',  1,  'hpfreq', 0.0159, 'hporder',  1,  'down', 10, 'direction', 'uni'));
-
-
 %% 8 PFM settings
 %
 % DEVELOPERS NOTES
@@ -817,28 +809,21 @@ defaults.pfm(1) = struct( ...
   'lb', [0,0,0,0], 'ub', [0,Inf,Inf,Inf]),...                          % & the lower/upper bounds
   'filter', struct('lpfreq', 'none', 'lporder', 0,  ...                               % default filter
   'hpfreq', 'none', 'hporder', 0, 'down', 0, 'direction', 'bi'));
-
 defaults.pfm(2) = struct(...
   'modality', 'constriction',...
   'cbf', struct('fhandle', @pspm_bf_lcrf_gm, 'args', [0.2, 3.24 , 0.18 , 0.43]),...
   'cif', struct('fhandle', @pspm_bf_lcrf_gm, 'args', [0, 2.76 , 0.09 , 0.31], 'lb', [0,0,0,0], 'ub', [0,Inf,Inf,Inf]),...
   'filter', struct('lpfreq', 'none', 'lporder', 0, 'hpfreq', 'none', 'hporder', 0, 'down', 0, 'direction', 'bi'));
-
-
-%%   9 FIRST LEVEL settings
-
-% allowed first level model types
+%% 9 FIRST LEVEL settings
+% 9.1 allowed first level model types
 defaults.first = {'glm', 'sf', 'dcm', 'pfm'};
-
-
-% Data/module file helptext settings
+% 9.2 Data/module file helptext settings
 defaults.datafilehelp = ['In case data/model file(s) are chosen via the ',...
   'dependency button, make sure the number of output ',...
   'files of the preceding module corresponds with the ',...
   'allowed number of input files for this module.'];
-
 %% 10 UI settings
-% Parameters for UI optimisation
+% 10.1 Parameters for UI optimisation
 if ispc
   defaults.ui = struct(...
     'DisplayHeight',    250/5,...
@@ -883,14 +868,12 @@ else
     'MainWeight',       650,...
     'SwitchResize',     'on');
 end
-
-% Look for settings, otherwise set defaults
+% 10.2 Look for settings, otherwise set defaults
 if exist([pth, 'pspm_settings.mat'], 'file')
   load([pth, 'pspm_settings.mat']);
 else
-  settings=defaults;
+  settings = defaults;
 end
-
 %% 11 Finalisation
 settings.path = pth;
 settings.scrpath = scrpath;
@@ -902,4 +885,3 @@ settings.pspm_version = pspm_vers;
 settings.developmode = 1;
 
 return
-end

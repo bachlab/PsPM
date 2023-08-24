@@ -23,8 +23,8 @@ function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 %   ├─────────.fn:  [filename] if specified ldata{i,j} will be saved to a file
 %   │               with filename options.fn{i,j} into the variable 'R'.
 %   └──.overwrite:  [logical] (0 or 1)
-%										Define whether to overwrite existing output files or not.
-%										Default value: determined by pspm_overwrite.
+%                   Define whether to overwrite existing output files or not.
+%                   Default value: determined by pspm_overwrite.
 % ● Outputs
 %             sts:  status
 %             out:  has same size as ldata and contains either the
@@ -251,3 +251,4 @@ end
 
 out = reg;
 sts = 1;
+return

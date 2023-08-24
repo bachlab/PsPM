@@ -11,9 +11,9 @@ function varargout = pspm_contrast(varargin)
 %   the existing singleton*.  Starting from the left, property value pairs are
 %   applied to the GUI before pspm_contrast_OpeningFcn gets called.  An
 %   unrecognized property name or invalid value makes property application
-%   stop.  All inputs are passed to pspm_contrast_OpeningFcn via varargin.
-%   *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
-%   instance to run (singleton)".
+%   stop. All inputs are passed to pspm_contrast_OpeningFcn via varargin.
+%   *See GUI Options on GUIDE's Tools menu.  Choose `GUI allows only one
+%   instance to run (singleton)`.
 %   See also: GUIDE, GUIDATA, GUIHANDLES
 %   Edit the above text to modify the response to help pspm_contrast
 % ● Format
@@ -59,6 +59,8 @@ function pspm_contrast_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to pspm_contrast (see VARARGIN)
 
+
+
 % Left alignment of text fields
 set(handles.textStatus,'HorizontalAlignment','left')
 set(handles.editContrastName,'HorizontalAlignment','left')
@@ -78,7 +80,8 @@ handles.enableGroupButtons = false;
 
 % Choose default command line output for pspm_contrast
 handles.output = hObject;
-
+% Apply UI
+pspm_ui(hObject, handles, 'contrast');
 % Update handles structure
 guidata(hObject, handles);
 
@@ -250,9 +253,9 @@ delete(gcbf)
 function panelTestDef_SelectionChangeFcn(hObject, eventdata, handles)
 % hObject    handle to the selected object in panelTestDef
 % eventdata  structure with the following fields (see UIBUTTONGROUP)
-%	EventName: string 'SelectionChanged' (read only)
-%	OldValue: handle of the previously selected object or empty if none was selected
-%	NewValue: handle of the currently selected object
+% EventName: string 'SelectionChanged' (read only)
+% OldValue: handle of the previously selected object or empty if none was selected
+% NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
 
 testGroupVal = getTestGroupValue(handles);
@@ -268,9 +271,9 @@ guidata(hObject, handles);
 function panelStatstype_SelectionChangeFcn(hObject, eventdata, handles)
 % hObject    handle to the selected object in panelTestDef
 % eventdata  structure with the following fields (see UIBUTTONGROUP)
-%	EventName: string 'SelectionChanged' (read only)
-%	OldValue: handle of the previously selected object or empty if none was selected
-%	NewValue: handle of the currently selected object
+% EventName: string 'SelectionChanged' (read only)
+% OldValue: handle of the previously selected object or empty if none was selected
+% NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
 
 % get current stats type and assign names --

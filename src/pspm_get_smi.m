@@ -75,7 +75,6 @@ end
 sts = -1;
 sourceinfo = [];
 addpath(pspm_path('Import','smi'));
-
 if ~iscell(import)
   import = {import};
 end
@@ -90,8 +89,7 @@ for i = 1:numel(import)
     import{i}.stimulus_resolution = [-1 -1];
   end
 end
-
-if isstr(datafile)
+if ischar(datafile)
   datafile = {datafile};
 end
 if ~assert_proper_datafile_format(datafile); return; end
@@ -120,15 +118,13 @@ if numel(data) > 1
   if ~assert_same_eyes_observed(data); return; end
   if ~assert_sessions_are_one_after_another(data); return; end
 end
-
 [data_concat, markers, mi_values, mi_names] = concat_sessions(data);
-
 addpath(pspm_path('backroom'));
 chan_struct = data{1}.channel_columns;
 eyes_observed = lower(data{1}.eyesObserved);
-if strcmpi(eyes_observed, 'l')
+if strcmpi(eyes_observed, settings.lateral.char.l)
   mask_chans = {'L Blink', 'L Saccade'};
-elseif strcmpi(eyes_observed, 'r')
+elseif strcmpi(eyes_observed, settings.lateral.char.r)
   mask_chans = {'R Blink', 'R Saccade'};
 else
   mask_chans = {'L Blink', 'L Saccade', 'R Blink', 'R Saccade'};
@@ -139,7 +135,6 @@ data_concat = set_blinks_saccades_to_nan(...
   mask_chans,...
   @(x) contains(x, 'L '));
 rmpath(pspm_path('backroom'));
-
 sampling_rate = data{1}.sampleRate;
 units = data{1}.units;
 raw_columns = data{1}.raw_columns;
@@ -153,9 +148,13 @@ for k = 1:num_import_cells
   import{k}.units = 'N/A';
   import{k}.sr = sampling_rate;
   channeltype = lower(import{k}.type);
-  channeltype_has_L_or_R = ~isempty(regexpi(channeltype, '_[lr]', 'once'));
-  channeltype_hasnt_eyes_obs = isempty(regexpi(channeltype, ['_([' eyes_observed '])'], 'once'));
-  if channeltype_has_L_or_R && channeltype_hasnt_eyes_obs
+  channellateral = pspm_eye(channeltype, 'channel2lateral');
+  if isempty(channellateral)
+    flag_channeltype_hasnt_eyes_obs = 0;
+  else
+    flag_channeltype_hasnt_eyes_obs = ~contains(eyes_observed,channellateral) && ~strcmp(eyes_observed, settings.lateral.char.c);
+  end
+  if flag_channeltype_hasnt_eyes_obs
     % no import
   elseif strcmpi(channeltype, 'marker')
     [import{k}, chan_id] = import_marker_chan(import{k}, markers, mi_values, mi_names, size(data_concat, 1), sampling_rate);
@@ -183,7 +182,6 @@ for k = 1:num_import_cells
   n_data = numel(import{k}.data);
   sourceinfo.chan_stats{k}.nan_ratio = n_nan / n_data;
 end
-
 sourceinfo.date = data{1}.record_date;
 sourceinfo.time = data{1}.record_time;
 sourceinfo.screen_size_mm = screen_size_mm;
@@ -191,16 +189,14 @@ sourceinfo.calib_area_px = calib_area_px;
 sourceinfo.viewing_distance_mm = viewing_dist;
 sourceinfo.eyes_observed = eyes_observed;
 sourceinfo.best_eye = eye_with_smaller_nan_ratio(import, eyes_observed);
-
 rmpath(pspm_path('Import','smi'));
 sts = 1;
-end
+return
 
 function proper = assert_proper_datafile_format(datafile)
 proper = is_proper_datafile_format(datafile);
 if ~proper
   warning('ID:invalid_input', 'Given datafile is not valid. Please check the documentation');
-end
 end
 
 function proper = is_proper_datafile_format(datafile)
@@ -221,7 +217,6 @@ if numel(datafile) == 2 && ~isstr(datafile{2})
   proper = false;
   return;
 end
-end
 
 function proper = assert_same_sample_rate(data)
 proper = true;
@@ -237,7 +232,6 @@ if any(diff(sample_rates))
   proper = false;
   return;
 end
-end
 
 function equal = all_strs_in_cell_array_are_equal(cell_arr)
 equal = true;
@@ -247,22 +241,18 @@ for i = 1:numel(cell_arr) - 1
     break;
   end
 end
-end
 
 function proper = assert_same_eyes_observed(data)
 proper = true;
 eyes_observed = cellfun(@(x) x.eyesObserved, data, 'UniformOutput', false);
 same_eyes = all_strs_in_cell_array_are_equal(eyes_observed);
-
 channel_headers = cellfun(@(x) x.channel_columns, data, 'UniformOutput', false);
 same_headers = all_strs_in_cell_array_are_equal(channel_headers);
-
 if ~(same_eyes && same_headers)
   error_msg = 'Cannot concatenate multiple sessions with different eye observation or channel headers';
   warning('ID:invalid_data_structure', error_msg);
   proper = false;
   return;
-end
 end
 
 function proper = assert_sessions_are_one_after_another(data)
@@ -276,7 +266,6 @@ if ~isempty(neg_diff_indices)
   proper = false;
   return;
 end
-end
 
 function proper = assert_custom_import_channels_has_channel_field(import)
 proper = true;
@@ -286,7 +275,6 @@ for i = 1:numel(import)
     proper = false;
     return;
   end
-end
 end
 
 function proper = assert_all_channeltypes_are_supported(settings, import)
@@ -301,7 +289,6 @@ for k = 1:numel(import)
     proper = false;
     return;
   end
-end
 end
 
 function expect_list = map_pspm_header_to_smi_headers(pspm_channeltype)
@@ -320,7 +307,6 @@ elseif strcmpi(type_parts{1}, 'saccade')
   which_eye = upper(type_parts{2});
   expect_list = {[which_eye ' Saccade']};
 end
-end
 
 function [import_cell, chan_id] = import_marker_chan(import_cell, markers, mi_values, mi_names, n_rows, sampling_rate)
 import_cell.marker = 'continuous';
@@ -337,7 +323,6 @@ markerinfo.name = mi_names;
 markerinfo.value = mi_values;
 import_cell.markerinfo = markerinfo;
 chan_id = -1;
-end
 
 function [import_cell, chan_id] = import_pupil_chan(import_cell, data_concat, viewing_dist, raw_columns, chan_struct, units, sampling_rate)
 smi_headers = map_pspm_header_to_smi_headers(import_cell.type);
@@ -396,7 +381,6 @@ else
 end
 chan_id = find(contains(raw_columns, chan_struct{chan_id_concat}));
 import_cell.sr = sampling_rate;
-end
 
 function [import_cell, chan_id] = import_gaze_chan(import_cell, data_concat, screen_size_mm, calib_area_px, raw_columns, chan_struct, sampling_rate)
 screen_size_px = import_cell.stimulus_resolution;
@@ -436,7 +420,6 @@ else
 end
 chan_id = find(contains(raw_columns, chan_struct{chan_id_concat}));
 import_cell.sr = sampling_rate;
-end
 
 function [import_cell, chan_id] = import_blink_or_saccade_chan(import_cell, data_concat, raw_columns, chan_struct, units, sampling_rate)
 smi_headers = map_pspm_header_to_smi_headers(import_cell.type);
@@ -452,7 +435,6 @@ chan_id = -1;
 import_cell.data = data_concat(:, chan_id_concat);
 import_cell.units = units{chan_id_concat};
 import_cell.sr = sampling_rate;
-end
 
 function [import_cell, chan_id] = import_custom_chan(import_cell, data_concat, raw_columns, chan_struct, units, sampling_rate)
 n_cols = size(raw_columns, 2);
@@ -475,7 +457,7 @@ import_cell.data = data_concat(:, chan_id_in_concat);
 import_cell.units = units{chan_id_in_concat};
 import_cell.data_header = chan_struct{chan_id_in_concat};
 import_cell.sr = sampling_rate;
-end
+
 
 function [data_concat, markers, mi_values, mi_names] = concat_sessions(data)
 % Concatenate multiple sessions into contiguous arrays, inserting NaN or N/A fields
@@ -521,7 +503,6 @@ for c = 1:numel(data)
 
   last_time = end_time;
 end
-end
 
 function best_eye = eye_with_smaller_nan_ratio(import, eyes_observed)
 if numel(eyes_observed) == 1
@@ -543,5 +524,4 @@ else
   else
     best_eye = 'l'; % if equal, set left
   end
-end
 end

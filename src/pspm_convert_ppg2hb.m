@@ -1,4 +1,4 @@
-function [ sts, outinfo ] = pspm_convert_ppg2hb( fn,chan,options )
+function [ sts, outinfo ] = pspm_convert_ppg2hb( fn, channel, options )
 % ● Description
 %   pspm_convert_ppg2hb Converts a pulse oxymeter channel to heartbeats and
 %   adds it as a new channel.
@@ -7,7 +7,7 @@ function [ sts, outinfo ] = pspm_convert_ppg2hb( fn,chan,options )
 %   identified as heartbeat maximas and a heartbeat channel is then
 %   generated from these.
 % ● Format
-%   [ sts, outinfo ] = pspm_convert_ppg2hb( fn,chan,options )
+%   [ sts, outinfo ] = pspm_convert_ppg2hb( fn, channel, options )
 % ● Arguments
 %                 fn: file name with path
 %            channel: ppu channel number
@@ -51,7 +51,7 @@ elseif ~isnumeric(channel) && ~strcmp(channel,'ppg')
 end
 
 %%% Process options
-% Display diagnostic plots? default is "false"
+% Display diagnostic plots? default is false
 % try if ~islogical(options.diagnostics),options.diagnostics = false;end
 % catch, options.diagnostics = false; end
 options = pspm_options(options, 'convert_ppg2hb');
@@ -77,8 +77,8 @@ if numel(data) > 1
   data = data(1);
 end
 % Check that channel is ppg
-if ~strcmp(data{1,1}.header.channeltype,'ppg')
-  warning('ID:not_allowed_channeltype', 'Specified channel is not a PPG channel. Don''t know what to do!')
+if ~strcmp(data{1,1}.header.chantype,'ppg')
+  warning('ID:not_allowed_chantype', 'Specified channel is not a PPG channel. Don''t know what to do!')
   return;
 end
 
@@ -185,19 +185,18 @@ msg = sprintf('Heart beat detection from ppg with cross correlation HB-timeserie
 newdata.data = hb(:);
 newdata.header.sr = 1;
 newdata.header.units = 'events';
-newdata.header.channeltype = 'hb';
+newdata.header.chantype = 'hb';
 
 write_options = struct();
 write_options.msg = msg;
 
 % Replace last existing channel or save as new channel
 [nsts, nout] = pspm_write_channel(fn, newdata, options.channel_action, write_options);
-
+if ~nsts
+  return
+end
 % user output
 fprintf('  done.\n');
-if nsts ~= -1,
-  sts = 1;
-  outinfo.channel = nout.channel;
-end;
-return;
-end
+sts = 1;
+outinfo.channel = nout.channel;
+return

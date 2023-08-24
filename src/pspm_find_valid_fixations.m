@@ -69,20 +69,17 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %   Maintained in 2021 by Teddy Chao (UCL)
 
 
-% initialise
-% -------------------------------------------------------------------------
+%% initialise
 global settings;
 if isempty(settings), pspm_init; end
 sts = -1;
 out_file = '';
-
 % validate input
 if numel(varargin) < 1
   warning('ID:invalid_input', ['Not enough input arguments.', ...
     ' You have to either pass a bitmap or circle_degree, distance and unit',...
     ' to compute the valid fixations']); return;
 end
-
 %get imput arguments and check if correct values
 if numel(varargin{1}) > 1
   mode = 'bitmap';
@@ -137,20 +134,16 @@ if ~ischar(fn) || ~exist(fn, 'file')
   warning('ID:invalid_input', ['File %s is not char or does not ', ...
     'seem to exist.'], fn); return;
 end
-
 % load data right away (needed if fixation point should be expanded)
 [msts, infos, data] = pspm_load_data(fn);
 if msts ~= 1
   warning('ID:invalid_input', ['An error happened, while ', ...
     'opening the file %s.'],fn); return;
 end
-
 options = pspm_options(options, 'find_valid_fixations');
 if options.invalid
   return
 end
-
-
 %change distance to 'mm'
 if strcmpi(mode,'fixation')
   if ~strcmpi(unit,'mm')
@@ -160,20 +153,17 @@ if strcmpi(mode,'fixation')
     end
   end
 end
-
 % expand fixation_point
 if strcmpi(mode,'fixation')
   if ~isfield(options, 'fixation_point') || isempty(options.fixation_point) ...
       || size(options.fixation_point,1) == 1
-
     % set fixation point default or expand to data size
     % find first wave channel
-    ct = cellfun(@(x) x.header.channeltype, data, 'UniformOutput', false);
+    ct = cellfun(@(x) x.header.chantype, data, 'UniformOutput', false);
     chan_data = cellfun(@(x) ...
       settings.channeltypes(strcmpi({settings.channeltypes.type}, x)).data, ...
       ct, 'UniformOutput', false);
     wv = find(strcmpi(chan_data, 'wave'));
-
     % initialize fix_point
     fix_point(:,1) = zeros(numel(data{wv(1)}.data), 1);
     fix_point(:,2) = zeros(numel(data{wv(1)}.data), 1);
@@ -193,28 +183,19 @@ else
   map_x_range = [1,xlim];
   map_y_range = [1,ylim];
 end
-
-% calculate radius araund de fixation points
-%-----------------------------------------------------
+%% calculate radius araund de fixation points
 %options = pspm_options(options, 'find_valid_fixations');
-
 % overwrite
 options.overwrite = pspm_overwrite(fn, options);
-
-
-
-
-% iterate through eyes
-n_eyes = numel(infos.source.eyesObserved);
+eyesToProcess = pspm_eye(infos.source.eyesObserved, 'char2cell');
+n_eyes = numel(eyesToProcess);
 new_pu = cell(n_eyes, 1);
 new_excl = cell(n_eyes, 1);
-
-for i=1:n_eyes
-  eye = lower(infos.source.eyesObserved(i));
+for i = 1:n_eyes
+  eye = eyesToProcess{i};
   if strcmpi(options.eyes, 'combined') || strcmpi(options.eyes(1), eye)
     gaze_x = ['gaze_x_', eye];
     gaze_y = ['gaze_y_', eye];
-
     % find chars to replace
     str_chans = cellfun(@ischar, options.channel);
     channel = options.channel;
@@ -229,7 +210,7 @@ for i=1:n_eyes
     str_chan_num = channel(str_chans);
     for j=1:numel(str_chan_num)
       str_chan_num(j) = {find(cellfun(@(y) strcmpi(str_chan_num(j),...
-        y.header.channeltype), data),1)};
+        y.header.chantype), data),1)};
     end
     channel(str_chans) = str_chan_num;
     work_chans = cell2mat(channel);
@@ -238,14 +219,14 @@ for i=1:n_eyes
       % always use first found channel
       switch mode
         case 'bitmap'
-          gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.channeltype) & ...
+          gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
             ~strcmpi(x.header.units,'degree'), data),1);
-          gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.channeltype) & ...
+          gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
             ~strcmpi(x.header.units,'degree'), data),1);
         case 'fixation'
-          gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.channeltype) & ...
+          gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
             ~strcmpi(x.header.units,'degree') & ~strcmpi(x.header.units,'pixel'),data),1);
-          gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.channeltype) & ...
+          gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
             ~strcmpi(x.header.units,'degree')& ~strcmpi(x.header.units,'pixel'),data),1);
       end
 
@@ -397,9 +378,9 @@ for i=1:n_eyes
           if all(isnan(new_pu{i}{j}.data))
             warning('ID:invalid_input', ['All values of channel ''%s'' ', ...
               'completely set to NaN. Please reconsider your parameters.'], ...
-              new_pu{i}{j}.header.channeltype);
+              new_pu{i}{j}.header.chantype);
           end
-          excl_hdr = struct('channeltype', ['pupil_missing_', eye],...
+          excl_hdr = struct('chantype', ['pupil_missing_', eye],...
             'units', '', 'sr', new_pu{i}{j}.header.sr);
           new_excl{i}{j} = struct('data', double(excl), 'header', excl_hdr);
         end
@@ -443,7 +424,7 @@ if numel(new_chans) >= 1
       chan_idx(i) = numel(new_data);
     else
       % look for same chan_type
-      channel = cellfun(@(x) strcmpi(new_chans{i}.header.channeltype, x.header.channeltype), new_data);
+      channel = cellfun(@(x) strcmpi(new_chans{i}.header.chantype, x.header.chantype), new_data);
       if any(channel)
         % replace the first found channel
         idx = find(channel, 1, 'first');
@@ -455,7 +436,7 @@ if numel(new_chans) >= 1
       end
     end
   end
-  % update chan stats (similar to pspm_get_eyelink)
+  % update channel stats (similar to pspm_get_eyelink)
   for i = 1:numel(new_data)
     % update nan ratio
     n_inv = sum(isnan(new_data{i}.data));
@@ -467,7 +448,7 @@ if numel(new_chans) >= 1
   for i = 1:numel(infos.source.eyesObserved)
     e = lower(infos.source.eyesObserved(i));
     e_stat = {infos.source.chan_stats{...
-      cellfun(@(x) ~isempty(regexpi(x.header.channeltype, ['_' e], 'once')), new_data)}};
+      cellfun(@(x) ~isempty(regexpi(x.header.chantype, ['_' e], 'once')), new_data)}};
     eye_stat(i) = max(cellfun(@(x) x.nan_ratio, e_stat));
   end
   [~, min_idx] = min(eye_stat);
@@ -475,7 +456,9 @@ if numel(new_chans) >= 1
   file_struct.infos = infos;
   file_struct.data = new_data;
   file_struct.options = op;
-  [sts, ~, ~, ~] = pspm_load_data(out_file, file_struct);
+  [sts_load_data, ~, ~, ~] = pspm_load_data(out_file, file_struct);
 else
   warning('ID:invalid_input', 'Appearently no data was generated.');
 end
+sts = 1;
+return

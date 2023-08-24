@@ -118,8 +118,8 @@ filt.direction = 'uni';
 if lsts == -1, return; end
 
 % change channel type to emg_pp to match sebr modality
-old_channeltype = data{1}.header.channeltype;
-data{1}.header.channeltype = 'emg_pp';
+old_channeltype = data{1}.header.chantype;
+data{1}.header.chantype = 'emg_pp';
 
 % save data
 % -------------------------------------------------------------------------
@@ -128,11 +128,10 @@ o.msg.prefix = sprintf(...
   'EMG preprocessing :: Input channel: %s -- Input channeltype: %s -- Output channeltype: %s --', ...
   channel_str, ...
   old_channeltype, ...
-  data{1}.header.channeltype);
+  data{1}.header.chantype);
 [lsts, outinfos] = pspm_write_channel(fn, data{1}, options.channel_action, o);
 if lsts ~= 1, return; end
 
 output.channel = outinfos.channel;
 sts = 1;
-
-end
+return

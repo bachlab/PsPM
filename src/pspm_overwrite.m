@@ -1,4 +1,4 @@
-function overwrite_final = pspm_overwrite(varargin)
+function varargout = pspm_overwrite(varargin)
 % ● Description
 %   pspm_overwrite generalises the overwriting operation
 %   pspm_overwrite considers the following situations
@@ -18,7 +18,7 @@ function overwrite_final = pspm_overwrite(varargin)
 %               option of overwrite if this option is presented
 %               can be a value or a struct
 %               if a value, can be 0 (not to overwrite) or 1 (to overwrite)
-%               if a struct, check if the field "overwrite" exist
+%               if a struct, check if the field `overwrite` exist
 % ● Outputs
 %   overwrite_final  option of overwriting determined by pspm_overwrite
 %                     0: not to overwrite
@@ -32,6 +32,16 @@ global settings
 if isempty(settings)
   pspm_init;
 end
+sts = -1;
+overwrite_final = 0;
+switch nargout
+  case 1
+    varargout{1} = overwrite_final;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = overwrite_final;
+end
+
 %% Define overwrite
 switch numel(varargin)
   case 0
@@ -46,7 +56,7 @@ switch numel(varargin)
       overwrite_final = 1; % In develop mode, always overwrite
     else
       if ~exist(fn, 'file')
-        % if file does not exist, always "overwrite"
+        % if file does not exist, always overwrite
         overwrite_final = 1;
       else
         if feature('ShoverwriteFigureWindoverwrites') % if in gui
@@ -76,7 +86,7 @@ switch numel(varargin)
           overwrite_final = overwrite_struct.overwrite;
         else
           if ~exist(fn, 'file')
-            % if file does not exist, always "overwrite"
+            % if file does not exist, always **overwrite**
             overwrite_final = 1;
           else
             overwrite_final = 0;
@@ -89,3 +99,13 @@ if overwrite_final ~= 0 && overwrite_final ~= 1
   warning('ID:invalid_input', 'overwrite can be only 0 or 1');
   return
 end
+switch nargout
+  case 1
+    varargout{1} = overwrite_final;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = overwrite_final;
+  otherwise
+    varargout{1} = overwrite_final;
+end
+return
