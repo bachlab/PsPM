@@ -34,6 +34,15 @@ text_optional_channel_invalid = ...
 text_optional_channel_invalid_char = ...
   'options.channel is not a valid channel type.';
 %% 2 Main Processing
+
+% deal with global settings
+if (isfield(options, 'marker_chan_num') && ...
+        numel(options.marker_chan_num) == 1 && ...
+        options.marker_chan_num == 0)
+    options.marker_chan_num = 'marker';
+end
+
+% deal with function-specific settings
 switch FunName
   case 'blink_saccade_filt'
     % 2.1 pspm_blink_saccade_filt --
@@ -271,7 +280,6 @@ switch FunName
     options = autofill(options, 'norm',                   0,          1                 );
     options = autofill(options, 'overwrite',              0,          1                 );
     options = autofill(options, 'marker_chan_num',        'marker',   '*Num*Char'       );
-    options = autofill(options, 'marker_chan_num_event',  'first',    '*Num*Char'       );
     if ~isfield(options, 'exclude_missing')
       options.exclude_missing = struct('segment_length',-1,'cutoff',0);
     else
@@ -303,10 +311,12 @@ switch FunName
     options = autofill(options, 'zscored',                0,          1                 );
   case 'merge'
     %% 2.32 pspm_merge
-    options = autofill(options, 'marker_chan_num',        [1,2],      '*Num'            );
-    if ~all(size(options.marker_chan_num(:))==[2,1])
-      options.invalid = 1;
-      return
+    options = autofill(options, 'marker_chan_num',        [0, 0],      '*Num*Char'      ); % NOTE: the default values will be converted to 'marker' by a subsequent call to pspm_trim
+    if isnumeric(options.marker_chan_num)
+        if ~all(size(options.marker_chan_num(:))==[2,1])
+            options.invalid = 1;
+            return
+        end
     end
     options = autofill(options, 'overwrite',              0,          1                 );
   case 'pfm'
@@ -411,8 +421,7 @@ switch FunName
     options = autofill(options,'dispsmallwin',            0,          1                 );
     options = autofill(options,'dispwin',                 1,          0                 );
     options = autofill(options,'fresp',                   0.5,        '>=', 0           );
-    options = autofill(options,'marker_chan_num',         1,          '*Int*Char'       );
-    options = autofill(options,'missingthresh',           2,          '>', 0            );
+    options = autofill(options,'marker_chan_num',         'marker',   '*Int*Char'       );
     options = autofill(options,'overwrite',               1,          0                 );
     options = autofill(options,'threshold',               0.1,        '>', 0            );
     options = autofill(options,'missingthresh',           2,          '>', 0            );
@@ -464,7 +473,7 @@ switch FunName
   case 'trim'
     % 2.46 pspm_trim --
     options = autofill(options, 'drop_offset_markers',    0,          '*Int'            );
-    options = autofill(options, 'marker_chan_num',        1,          '*Int*Char'       );
+    options = autofill(options, 'marker_chan_num',        'marker',   '*Int*Char'       );
     options = autofill(options, 'overwrite',              0,          1                 );
   case 'write_channel'
     % 2.47 pspm_write_channel --
@@ -864,7 +873,7 @@ end
 if options.manual_chosen == 1 || ...
     (options.manual_chosen == 0 && strcmpi(options.model_strc.modeltype,'glm'))
   if ~isfield(options, 'marker_chan')
-    options.marker_chan = repmat({1}, numel(options.data_fn),1);
+    options.marker_chan = repmat({'marker'}, numel(options.data_fn),1);
   elseif ~iscell(options.marker_chan)
     options.marker_chan = repmat({options.marker_chan}, size(options.data_fn));
   end
@@ -975,8 +984,6 @@ if isfield(options, 'marker_chan_num')
       return
     end
   end
-else
-  options.marker_chan_num = 'marker';
 end
 if isfield(options,'exclude_missing')
   if ~(isfield(options.exclude_missing, 'segment_length') && ...

@@ -37,6 +37,14 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+scr = [];
+switch nargout
+  case 1
+    varargout{1} = scr;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = scr;
+end
 
 % check input arguments
 if nargin < 1

@@ -47,6 +47,15 @@ if isempty(settings)
 end
 sts = -1;
 tstart = tic;
+out = [];
+switch nargout
+  case 1
+    varargout{1} = out;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = out;
+end
+
 %% 2 Check input arguments
 % 2.1 set model ---
 try model.scr; catch, warning('Input data is not defined.'); return; end
@@ -150,12 +159,13 @@ miss_epoch = [ymissing_start(:),ymissing_end(:)];
 flag_missing_too_long = 0;
 if any(diff(miss_epoch, 1, 2)/model.sr > 0)
   if any(diff(miss_epoch, 1, 2)/model.sr > options.missingthresh)
-    warning_message = ['Imported data includes too long miss epoches (over ',...
-      num2str(options.missingthresh), 's), thus estimation has been skipped.'];
+    warning_message = ['Epoch includes missing data of more than ',...
+      num2str(options.missingthresh), ' s, thus estimation has been skipped. ', ...
+      'Please adjust options.missingthresh to proceed if you wish.'];
     flag_missing_too_long = 1;
   else
-    warning_message = ['Imported data includes miss epoches (over ',...
-      num2str(options.missingthresh), 's), but the trial has been allowed. ',...
+    warning_message = ['Epoch includes missing data of less than ',...
+      num2str(options.missingthresh), ' s, hence estimation is proceeding. ', ...
       'Please adjust options.missingthresh to skip if you wish.'];
   end
   warning('ID:missing_data', warning_message);

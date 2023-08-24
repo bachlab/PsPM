@@ -17,7 +17,7 @@ function varargout = pspm_merge(infile1, infile2, reference, options)
 %   │                   Define whether to overwrite existing output files or not.
 %   │                   Default value: determined by pspm_overwrite.
 %   └.marker_chan_num:  2 marker channel numbers - if undefined
-%                       or 0, first marker channel is used
+%                       or 0, first marker channel of each file is used
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (UZH, WTCN)
@@ -30,6 +30,13 @@ if isempty(settings)
 end
 sts = -1;
 outfile = [];
+switch nargout
+  case 1
+    varargout{1} = outfile;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = outfile;
+end
 
 %% Check input
 % check missing input --

@@ -7,6 +7,7 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %   [sts, multi]  = pspm_get_timing('onsets', intiming, timeunits)
 %   [sts, epochs] = pspm_get_timing('epochs', epochs, timeunits)
 %   [sts, events] = pspm_get_timing('events', events)
+%   [sts, epochs] = pspm_get_timing('missing', epochs, timeunits)
 %   for recursive calls also:
 %   [sts, epochs] = pspm_get_timing('file', filename)
 % ● Arguments
@@ -82,7 +83,7 @@ else
   intiming = varargin{2};
 end
 
-if ~ismember(model, {'onsets', 'epochs', 'events', 'file'})
+if ~ismember(model, {'onsets', 'epochs', 'missing', 'events', 'file'})
   warning('ID:invalid_input', 'Invalid input. I don''t know what to do.');
 
   return;
@@ -91,7 +92,7 @@ end
 
 
 switch model
-  case {'onsets', 'epochs'}
+  case {'onsets', 'epochs', 'missing'}
     if nargin < 3
       warning('ID:invalid_input', 'Time units unspecified');  return;
     else
@@ -352,7 +353,7 @@ switch model
     end
 
 
-    % Epoch information for SF and GLM (model.missing)
+    % Epoch information for SF and recursive call from option "missing"
     % ------------------------------------------------------------------------
   case 'epochs'
     % get epoch information from file or from input --
@@ -380,7 +381,6 @@ switch model
       if filewarning
         warning('File %s is not a valid epochs or onsets file', ...
           intiming);
-
         return;
       end
     else
@@ -393,6 +393,10 @@ switch model
         if size(outtiming, 2) ~= 2
           warning(['Epochs must be specified by a e x 2 vector', ...
             'of onset/offsets.']);  return;
+        else
+            if any(diff(outtiming, [], 2) < 0)
+                warning('Offsets must be larger than onsets.');  return;
+            end
         end
       else
         warning('Unknown epoch definition format.');  return;
@@ -408,6 +412,26 @@ switch model
         'time units are ''%s'''], timeunits);  return;
     end
 
+       % Missing epoch information for GLM and DCM
+    % ------------------------------------------------------------------------
+  case 'missing'
+    [sts, missepochs] = pspm_get_timing('epochs', intiming, timeunits);
+     if sts < 1, return; end
+     % sort & merge missing epochs
+    if size(missepochs, 1) > 0
+      [~, sortindx] = sort(missepochs(:, 1));
+      missepochs = missepochs(sortindx,:);
+      % check for overlap and merge
+      overlapindx = zeros(size(missepochs, 1), 1);
+      for k = 2:size(missepochs, 1)
+        if missepochs(k, 1) <= missepochs(k - 1, 2)
+          missepochs(k, 1) =  missepochs(k - 1, 1);
+          overlapindx(k - 1) = 1;
+        end
+      end
+      missepochs(logical(overlapindx), :) = [];
+    end
+    outtiming = missepochs;
 
     % Event information for DCM
     % ------------------------------------------------------------------------

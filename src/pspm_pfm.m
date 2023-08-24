@@ -120,7 +120,14 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-
+pfm = struct();
+switch nargout
+  case 1
+    varargout{1} = pfm;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = pfm;
+end
 
 %%  Checking inputs
 

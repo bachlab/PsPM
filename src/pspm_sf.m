@@ -76,6 +76,13 @@ if isempty(settings)
 end
 outfile = [];
 sts = -1;
+switch nargout
+  case 1
+    varargout{1} = outfile;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = outfile;
+end
 %% 2 Check input
 % 2.1 Check missing input --
 if nargin<1
@@ -197,9 +204,9 @@ elseif ~iscell(model.missing)
   return
 end
 %% 3 Get data
-missing = cell(size(model.missing));
-for iFile = 1:numel(model.datafile)
-  % 3.1 User output --
+nFile = numel(model.datafile);
+for iFile = 1:nFile
+  % 3.1 User output
   fprintf('SF analysis: %s ...', model.datafile{iFile});
   % 3.2 Check whether model file exists --
   if ~pspm_overwrite(model.modelfile, options)
@@ -208,50 +215,53 @@ for iFile = 1:numel(model.datafile)
   % 3.3 get and filter data --
   [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
   if sts_load_data < 0, return; end
-  Y{1} = data{1}.data; sr(1) = data{1}.header.sr;
+  y{1} = data{end}.data;
+  sr(1) = data{end}.header.sr;
   model.filter.sr = sr(1);
-  [sts_prepdata, Y{2}, sr(2)] = pspm_prepdata(data{1}.data, model.filter);
+  [sts_prepdata, y{2}, sr(2)] = pspm_prepdata(data{end}.data, model.filter);
+  % always use last data channels
   if sts_prepdata == -1
     warning('ID:invalid_input', 'Call of pspm_prepdata failed.');
     return;
   end
-  % 3.4 Check data units --
-  if ~strcmpi(data{1}.header.units, 'uS') && any(strcmpi('dcm', method))
+  % 3.4 Check data units
+  if ~strcmpi(data{end}.header.units, 'uS') && any(strcmpi('dcm', method))
     fprintf(['\nYour data units are stored as %s, ',...
       'and the method will apply an amplitude threshold in uS. ',...
       'Please check your results.\n'], ...
-      data{1}.header.units);
+      data{end}.header.units);
   end
   % 3.5 Get missing epochs --
-  % 3.5.1 Load missing epochs --
   if ~isempty(model.missing{iFile})
-    [~, missing{iFile}] = pspm_get_timing('epochs', model.missing{iFile}, 'seconds');
-  % 3.5.2 sort missing epochs --
-    if size(missing{iFile}, 1) > 0
-      [~, sortindx] = sort(missing{iFile}(:, 1));
-      missing{iFile} = missing{iFile}(sortindx,:);
-      % check for overlap and merge
-      for k = 2:size(missing{iFile}, 1)
-        if missing{iFile}(k, 1) <= missing{iFile}(k - 1, 2)
-          missing{iFile}(k, 1) =  missing{iFile}(k - 1, 1);
-          missing{iFile}(k - 1, :) = [];
-        end
-      end
-    end
+    [~, missing{iFile}] = pspm_get_timing('missing', model.missing{iFile}, 'seconds');
+    model.missing_data = zeros(size(y{2}));
+    missing_index = pspm_time2index(missing{iFile}, sr(datatype(k)));
+    model.missing_data((missing_index(:,1)+1):(missing_index(:,2)+1)) = 1;
   else
     missing{iFile} = [];
   end
   % 3.6 Get marker data --
   if any(strcmp(model.timeunits, {'marker', 'markers'}))
-    if options.marker_chan_num
-      [nsts, ~, ndata] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
-      if nsts == -1; warning('ID:invalid_input', 'Could not load data'); return; end
-    else
-      [nsts, ~, ndata] = pspm_load_data(model.datafile{iFile}, 'marker');
-      if nsts == -1; warning('ID:invalid_input', 'Could not load data'); return; end
+    [sts, ~, ndata] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
+    if sts < 1
+      warning('ID:invalid_input', 'Could not load data');
+      return;
+    elseif ~strcmp(ndata{1}.header.chantype, 'marker')
+      warning('ID:invalid_option', ...
+        ['Channel %i is no marker channel. ',...
+        'The first marker channel in the file is used instead'],...
+        options.marker_chan_num);
+      [sts_load_data, ~, ~] = pspm_load_data(model.datafile{iFile}, 'marker');
+      if sts_load_data == -1
+        warning('ID:invalid_input', 'Could not load data');
+        return;
+      end
     end
-    events = ndata{1}.data;
+    % use first marker channel
+    events{iFile} = ndata{1}.data(:);
   end
+
+
   for iEpoch = 1:size(epochs{iFile}, 1)
     if iEpoch > 1, fprintf('\n\t\t\t'); end
     fprintf('epoch %01.0f ...', iEpoch);
@@ -263,16 +273,22 @@ for iFile = 1:numel(model.datafile)
         case 'samples'
           win = round(epochs{iFile}(iEpoch, :) * sr(datatype(k)) / sr(1));
         case 'markers'
-          win = round(events(epochs{iFile}(iEpoch, :)) * sr(datatype(k)));
+          win = round(events{iFile}(epochs{iFile}(iEpoch, :)) * sr(datatype(k)));
         case 'whole'
-          win = [1 numel(Y{datatype(k)})];
+          win = [1 numel(y{datatype(k)})];
       end
-      if any(win > numel(Y{datatype(k)}) + 1) || any(win < 0)
+      if any(win > numel(y{datatype(k)}) + 1) || any(win < 0)
         warning('\nEpoch %2.0f outside of file %s ...', iEpoch, model.modelfile{iFile});
+        inv_flag = 0;
       else
+        inv_flag = 1;
         % correct issues with using 'round'
         win(1) = max(win(1), 1);
-        win(2) = min(win(2), numel(Y{datatype(k)}));
+        win(2) = min(win(2), numel(y{datatype(k)}));
+      end
+      if diff(win) < 4
+          warning('\nEpoch %2.0f contains insufficient data ...', iEpoch);
+          inv_flag = 0;
       end
       % 3.6.1 collect information --
       sf.model{k}(iEpoch).modeltype = method{k};
@@ -281,25 +297,26 @@ for iFile = 1:numel(model.datafile)
       sf.model{k}(iEpoch).samples    = win;
       sf.model{k}(iEpoch).sr         = sr(datatype(k));
       %
-      escr = Y{datatype(k)}(win(1):win(end));
+      escr = y{datatype(k)}(win(1):win(end));
       sf.model{k}(iEpoch).data = escr;
-      if any(missing{iFile})
-        model.missing_data = zeros(size(escr));
-        missing_index = pspm_time2index(missing, sr(datatype(k)));
-        model.missing_data((missing_index{iFile}(:,1)+1):(missing_index{iFile}(:,2)+1)) = 1;
-      end
+
       % 3.6.2 do the analysis and collect results --
-      if any(missing{iFile})
-        model_analysis = struct('scr', escr, 'sr', sr(datatype(k)), 'missing_data', model.missing_data);
+      if ~isempty(model.missing{iFile})
+        model_analysis = struct('scr', escr, 'sr', sr(datatype(k)), 'missing_data', model.missing_data(win(1):win(end)));
       else
         model_analysis = struct('scr', escr, 'sr', sr(datatype(k)));
       end
-      invrs = fhandle{k}(model_analysis, options);
-      if any(strcmpi(method{k}, {'dcm', 'mp'}))
-        sf.model{k}(iEpoch).inv     = invrs;
+      if inv_flag ~= 0
+        invrs = fhandle{k}(model_analysis, options);
+        sf.model{k}(iEpoch).inv = invrs;
+      else
+        sf.model{k}(iEpoch).inv = [];
+      end
+      if inv_flag == 0
+        sf.stats(iEpoch, k) = NaN;
+      elseif any(strcmpi(method{k}, {'dcm', 'mp'}))
         sf.stats(iEpoch, k)         = invrs.f;
       else
-        sf.model{k}(iEpoch).stats   = invrs;
         sf.stats(iEpoch, k)         = invrs;
       end
     end
@@ -309,7 +326,7 @@ for iFile = 1:numel(model.datafile)
   sf.infos.date = date;
   sf.infos.file = model.modelfile{iFile};
   sf.modelfile = model.modelfile{iFile};
-  sf.data = Y;
+  sf.data = y;
   if exist('events','var'), sf.events = events; end
   sf.input = model;
   sf.options = options;
