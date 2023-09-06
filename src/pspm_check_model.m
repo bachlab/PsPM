@@ -55,14 +55,9 @@ elseif ischar(model.modelfile) && strcmpi (modeltype, 'sf')
 end
 
 % 3. Fill missing fields common to all models, and accept only allowed values
-if ~isfield(model, 'norm')
-  model.norm = 0;
-elseif ~any(ismember(model.norm, [0, 1]))
-  warning('ID:invalid_input', 'Normalisation must be specified as 0 or 1.'); return;
-end
 if ~isfield(model, 'timing')
     model.timing = cell(nFile, 1);
-elseif ischar(model.timing) || isnumeric(model.timing)
+elseif ~iscell(model.timing)
     model.timing = {model.timing};
 end
 if ~isfield(model, 'missing')
@@ -73,6 +68,11 @@ elseif ~iscell(model.missing)
   warning('ID:invalid_input',...
     'Missing values must be a filename, matrix, or cell array of these.');
   return
+end
+if ~isfield(model, 'norm')
+  model.norm = 0;
+elseif ~any(ismember(model.norm, [0, 1]))
+  warning('ID:invalid_input', 'Normalisation must be specified as 0 or 1.'); return;
 end
 
 % 4. Check that session-related field entries have compatible size
