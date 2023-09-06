@@ -299,7 +299,7 @@ else
     set(findobj(handles.cfg_ui,'-regexp', 'Tag','.*(Del)|(Repl)Mod$'),'Enable','on');
     mrk = cell(size(sts));
     [mrk{dep}] = deal('DEP');
-    [mrk{~sts}] = deal('←X');
+    [mrk{~sts}] = deal('<- X');
     [mrk{~dep & sts}] = deal('');
     str = cfg_textfill(handles.modlist, str, mrk, false);
 end;
@@ -527,6 +527,8 @@ local_showjob(hObject);
 
 % Choose default command line output for cfg_ui
 handles.output = hObject;
+
+pspm_ui(hObject, handles, 'cfg_ui');
 
 % Update handles structure
 guidata(hObject, handles);

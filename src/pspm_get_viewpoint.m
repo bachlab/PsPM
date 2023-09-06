@@ -244,6 +244,10 @@ for k = 1:numel(import)
 end
 
 function data = map_viewpoint_eyes_to_left_right(data, import)
+global settings
+if isempty(settings)
+  pspm_init;
+end
 % Map eye A to right eye, eye B to left eye.
 for i = 1:numel(data)
   % channels = data{i}.channel_header; % seems not used
@@ -258,11 +262,11 @@ for i = 1:numel(data)
   end
 
   if strcmpi(data{i}.eyesObserved, 'a')
-    data{i}.eyesObserved = 'R';
+    data{i}.eyesObserved = settings.eye.cap.r;
   elseif strcmpi(data{i}.eyesObserved, 'b')
-    data{i}.eyesObserved = 'L';
+    data{i}.eyesObserved = settings.eye.cap.l;
   elseif strcmpi(data{i}.eyesObserved, 'ab')
-    data{i}.eyesObserved = 'RL';
+    data{i}.eyesObserved = settings.eye.cap.br;
   else
     warning('ID:invalid_imported_data', 'eyesObserved field in imported data has a value different than A and/or B');
     return;
@@ -271,7 +275,7 @@ end
 % If import has only left eye and data only right eye, map data right eye to left
 data_has_only_right_eye = true;
 for i = 1:numel(data)
-  if contains(data{i}.eyesObserved, 'L', 'IgnoreCase', true)
+  if contains(data{i}.eyesObserved, settings.eye.cap.l, 'IgnoreCase', true)
     data_has_only_right_eye = false;
     break;
   end
@@ -292,7 +296,7 @@ if data_has_only_right_eye && import_has_only_left_eye
         data{i}.channel_header{k} = header;
       end
     end
-    data{i}.eyesObserved = 'L';
+    data{i}.eyesObserved = settings.eye.cap.l;
   end
 end
 
