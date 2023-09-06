@@ -48,9 +48,9 @@ nFile = numel(model.datafile);
 % 3. Reject wrong type of mandatory fields --------------------------------
 if ~iscell(model.datafile) && ~ischar(model.datafile)
   warning('ID:invalid_input', 'Input data must be a cell or string.'); return;
-elseif ~ischar(model.modelfile) && ~strmpci (modeltype, 'sf')
+elseif ~ischar(model.modelfile) && ~strcmpi (modeltype, 'sf')
   warning('ID:invalid_input', 'Output model must be a string.'); return;
-elseif ischar(model.modelfile) && strmpci (modeltype, 'sf') 
+elseif ischar(model.modelfile) && strcmpi (modeltype, 'sf') 
     model.modelfile = {model.modelfile};
 end
 
