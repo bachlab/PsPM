@@ -176,7 +176,7 @@ end % assign varargout to avoid errors if the function returns in the middle
 % by a `return` function
 warnings = {};
 
-%% 2 Check input arguments & set defaults
+%% 2 Check input 
 % 2.1 check missing input --
 if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); return
 elseif nargin < 2; options = struct(); end
@@ -187,11 +187,13 @@ if model.invalid
     return
 end
 
-% 2.3 check options (could be re-factored into pspm_options)
+% 2.3 check options 
 options = pspm_options(options, 'dcm');
 if options.invalid
   return
 end
+
+% all the below should be re-factored into pspm_options -------------------
 % numeric fields
 num_fields = {'depth', 'sfpre', 'sfpost', 'sffreq', 'sclpre', ...
   'sclpost', 'aSCR_sigma_offset'};
@@ -221,10 +223,12 @@ if options.indrf && options.rf
   return
 end
 
+% .........................................................................
+
 % 2.10 check files
 % stop the script if files are not allowed to overwrite
 if ~pspm_overwrite(model.modelfile, options)
-  warning('ID:invalid_input', 'Results are not allowed to overwrite.');
+  warning('ID:invalid_input', 'Model file exists, and overwriting not allowed by user.');
   return
 end
 

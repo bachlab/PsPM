@@ -154,83 +154,32 @@ sts = -1;
 glm = struct([]); % output model structure
 tmp = struct([]); % temporary model structure
 
-%% 2 Check input arguments & set defaults
+%% 2 Check input 
 % 2.1 check missing input --
 if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); return
 elseif nargin < 2; options = struct(); end
+
+% 2.2 check model
 model = pspm_check_model(model, 'glm');
-
-fprintf('Computing GLM: %s ...\n', model.modelfile);
-% 2.2 check existing --
-% whether field timing doesnt exist, field is emtpy or field is cell with empty entries
-if ~isfield(model, 'timing') || isempty(model.timing) || ...
-    iscell(model.timing) && (sum(cellfun(@(f) isempty(f), model.timing)) == numel(model.timing))
-  % model.timing is not set
-  % test the same way if nuisance is not set
-  if ~isfield(model, 'nuisance') || isempty(model.nuisance) || ...
-      iscell(model.nuisance) && (sum(cellfun(@(f) isempty(f), model.nuisance)) == numel(model.nuisance))
-    % nuisance is not set
-    warning('ID:invalid_input', 'Event onsets and nuisance file are not specified. At least one of the two must be specified.'); return;
-  end
-end
-% 2.3 set default values --
-if ~isfield(model, 'latency')
-  model.latency = 'fixed';
-end
-% 2.4 check faulty input --
-if ~ischar(model.timing) && ~iscell(model.timing) && ~isstruct(model.timing)
-  warning('ID:invalid_input', 'Event onsets must be a string, cell, or struct.'); return;
-elseif ~ischar(model.timeunits) || ~ismember(model.timeunits, {'seconds', 'markers', 'samples','markervalues'})
-  warning('ID:invalid_input', 'Timeunits (%s) not recognised; only ''seconds'', ''markers'' and ''samples'' are supported', model.timeunits); return;
-elseif ~ismember(model.latency, {'free', 'fixed'})
-  warning('ID:invalid_input', 'Latency should be either ''fixed'' or ''free''.'); return;
-elseif strcmpi(model.latency, 'free') && (~isnumeric(model.window) || isempty(model.window))
-  warning('ID:invalid_input', 'Window is expected to be a numeric value.'); return;
-end
-% 2.5 get further input or set defaults --
-if ~isfield(model, 'modelspec')
-  % load default model specification
-  model.modelspec = settings.glm(1).modelspec;
-elseif ~ismember(model.modelspec, {settings.glm.modelspec})
-  warning('ID:invalid_input', 'Unknown model specification %s.', model.modelspec); return;
-end
-modno = find(strcmpi(model.modelspec, {settings.glm.modelspec}));
-model.modality = settings.glm(modno).modality;
-% 2.6 check data channel --
-if ~isfield(model, 'channel')
-  if strcmp(model.modality, 'psr')
-    model.channel = 'pupil';
-  else
-    model.channel = model.modality;
-  end
-elseif ~isnumeric(model.channel) && ~ismember(model.channel, {settings.channeltypes.type})
-  warning('ID:invalid_input', 'Channel number must be numeric.'); return;
+if model.invalid
+    return
 end
 
-% 2.8 check mean centering --
-if ~isfield(model,'centering')
-  model.centering = 1;
-elseif ~ismember(model.centering, [0, 1])
-  model.centering = 1;
-end
-% 2.9 check options --
+% 2.3 check options 
 options = pspm_options(options, 'glm');
-options.overwrite = pspm_overwrite(model.modelfile, options.overwrite);
 if options.invalid
   return
 end
-if ischar(model.datafile)
-  model.datafile={model.datafile};
-end
-if ischar(model.timing) || isstruct(model.timing)
-  model.timing = {model.timing};
-end
-if ~isempty(model.timing) && (numel(model.datafile) ~= numel(model.timing))
-  warning('ID:number_of_elements_dont_match', 'Session numbers of data files and event definitions do not match.');
+
+% 2.4 check files
+% stop the script if files are not allowed to overwrite
+if ~pspm_overwrite(model.modelfile, options)
+  warning('ID:invalid_input', 'Model file exists, and overwriting not allowed by user.');
   return
 end
 
 %% 3 Check & get data
+fprintf('Computing GLM: %s ...\n', model.modelfile);
 fprintf('Getting data ...');
 nFile = numel(model.datafile);
 for iFile = 1:nFile
@@ -275,24 +224,11 @@ else
   model.filter.down = min([sr model.filter.down]);
 end
 
-%% 5 check & get basis functions
+%% 5 get basis functions
 basepath = [];
-if ~isfield(model, 'bf')
-  model.bf = settings.glm(modno).cbf;
-else
-  if ~isfield(model.bf, 'fhandle')
-    warning('No basis function given.');
-  elseif ischar(model.bf.fhandle)
+if ischar(model.bf.fhandle)
     [basepath, basefn, ~] = fileparts(model.bf.fhandle);
     model.bf.fhandle = str2func(basefn);
-  elseif ~isa(model.bf.fhandle, 'function_handle')
-    warning('Basis function must be a string or function handle.');
-  end
-  if ~isfield(model.bf, 'args')
-    model.bf.args = [];
-  elseif ~isnumeric(model.bf.args)
-    warning('Basis function arguments must be numeric.');
-  end
 end
 if ~isempty(basepath), addpath(basepath); end
 try

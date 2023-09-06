@@ -402,7 +402,7 @@ switch model
         warning('Unknown epoch definition format.');  return;
       end
     else
-      warning('Defined epoch is empty.'); return;
+       return;
     end
 
     % check time units --
