@@ -208,21 +208,6 @@ else
   fprintf('\n');
 end
 
-%% 4 check filter
-% 4.1 set default model.filter.down --
-if strcmpi(model.filter.down, 'none') || ...
-    isnumeric(model.filter.down) && isnan(model.filter.down)
-  model.filter.down = min(sr);
-else
-  % 4.2 check value of model.filter.down --
-  if ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
-    % tested because the field is used before the call of
-    % pspm_prepdata (everything else is tested there)
-    warning('ID:invalid_input', ['Filter struct needs field ', ...
-      '''down'' to be numeric or ''none''.']); return;
-  end
-  model.filter.down = min([sr model.filter.down]);
-end
 
 %% 5 get basis functions
 basepath = [];
@@ -260,9 +245,8 @@ clear basepath basefn baseext
 
 %% 7 check regressor files
 [sts, multi] = pspm_get_timing('onsets', model.timing, model.timeunits);
-if sts < 0
-  warning('ID:invalid_input', 'Failed to call pspm_get_timing'); return;
-elseif strcmpi(model.timeunits,'markervalues')
+
+if strcmpi(model.timeunits,'markervalues')
   nr_multi = numel(multi);
   for n_m = 1:nr_multi
     model.timing{n_m} = multi(n_m);
@@ -271,27 +255,12 @@ elseif strcmpi(model.timeunits,'markervalues')
 end
 
 %% 8 check & get missing values
-if ~isfield(model, 'missing')
-  missing = cell(nFile, 1);
+for iSn = 1:nFile
+if isempty(model.missing{iSn})
+  sts = 1; missing{iSn} = [];
 else
-  if ischar(model.missing) || isnumeric(model.missing)
-    model.missing = {model.missing};
-  elseif ~iscell(model.missing)
-    warning('ID:invalid_input', 'Missing values must be a filename, matrix, or cell array of these.'); return;
-  end
-  if numel(model.missing) ~= nFile
-    warning('ID:number_of_elements_dont_match',...
-      'Same number of data files and missing value definitions is needed.'); return;
-  end
-  for iSn = 1:nFile
-    if isempty(model.missing{iSn})
-      sts = 1; missing{iSn} = [];
-    else
-      [sts, missing{iSn}] = pspm_get_timing('missing', model.missing{iSn}, 'seconds');
-    end
-    if sts == -1, warning('ID:invalid_input',...
-        'Failed to call pspm_get_timing'); return; end
-  end
+  [sts, missing{iSn}] = pspm_get_timing('missing', model.missing{iSn}, 'seconds');
+end
 end
 
 %% 9 check and get nuisance regressors
