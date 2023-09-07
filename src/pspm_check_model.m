@@ -139,7 +139,7 @@ if strcmpi(modeltype, 'glm')
         model.bf = settings.glm(modno).cbf;
     elseif ~isfield(model.bf, 'fhandle')
         warning('No basis function given.'); return
-    elseif ~(ischar(model.bf.handle) || isa(model.bf.fhandle, 'function_handle'))
+    elseif ~(ischar(model.bf.fhandle) || isa(model.bf.fhandle, 'function_handle'))
         warning('Basis function must be a string or function handle.'); return
     elseif ~isfield(model.bf, 'args')
         model.bf.args = [];
