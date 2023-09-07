@@ -52,7 +52,9 @@ classdef pspm_load1_test < matlab.unittest.TestCase
           this.modelfiles{i} = mfn;
           this.dummyfiles{i} = dfn;
           fh = str2func(['pspm_', settings.first{i}]);
-          fh(model);
+          options = struct();
+          options.overwrite = 1;
+          fh(model, options);
           copyfile(this.modelfiles{i}, this.dummyfiles{i});
         end
       end

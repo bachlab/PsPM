@@ -82,12 +82,12 @@ switch numel(varargin)
         overwrite_final = overwrite;
       case 'struct'
         overwrite_struct = overwrite;
-        if isfield(overwrite_struct, 'overwrite')
-          overwrite_final = overwrite_struct.overwrite;
+        if ~exist(fn, 'file')
+          % if file does not exist, always **overwrite**
+          overwrite_final = 1;
         else
-          if ~exist(fn, 'file')
-            % if file does not exist, always **overwrite**
-            overwrite_final = 1;
+          if isfield(overwrite_struct, 'overwrite')
+            overwrite_final = overwrite_struct.overwrite;
           else
             overwrite_final = 0;
           end
