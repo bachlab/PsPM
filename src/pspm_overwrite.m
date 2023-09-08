@@ -27,7 +27,7 @@ function varargout = pspm_overwrite(varargin)
 %   Introduced in PsPM 6.0
 %   Written in 2022 by Teddy Chao (UCL)
 
-%% Initialise
+%% 1 Initialise
 global settings
 if isempty(settings)
   pspm_init;
@@ -42,58 +42,58 @@ switch nargout
     varargout{2} = overwrite_final;
 end
 
-%% Define overwrite
-switch numel(varargin)
-  case 0
-    warning('ID:invalid_input', 'at least one argument is required');
-    return;
-  case 1 % overwrite is not defined
-    fn = varargin{1};
-    if iscell(fn)
-      fn = fn{1};
-    end
-    if settings.developmode
-      overwrite_final = 1; % In develop mode, always overwrite
-    else
-      if ~exist(fn, 'file')
-        % if file does not exist, always overwrite
-        overwrite_final = 1;
-      else
-        if feature('ShoverwriteFigureWindoverwrites') % if in gui
-          msg = ['Model file already exists. Overwrite?', ...
-            newline, 'Existing file: ', fn];
-          overwrite = questdlg(msg, ...
-            'File already exists', 'Yes', 'No', 'Yes');
-          % default as Yes (to overwrite)
-          overwrite_final = strcmp(overwrite, 'Yes');
-        else
-          overwrite_final = 1; % if GUI is not available, always overwrite
-        end
+%% 2 Define overwrite
+if settings.developmode
+  overwrite_final = 1;
+else
+  switch numel(varargin)
+    case 0
+      warning('ID:invalid_input', 'at least one argument is required');
+      return;
+    case 1 % overwrite is not defined
+      fn = varargin{1};
+      if iscell(fn)
+        fn = fn{1};
       end
-    end
-  case 2
-    fn = varargin{1};
-    if iscell(fn)
-      fn = fn{1};
-    end
-    overwrite = varargin{2};
-    switch class(overwrite)
-      case 'double'
-        overwrite_final = overwrite;
-      case 'struct'
-        overwrite_struct = overwrite;
-        if ~exist(fn, 'file')
-          % if file does not exist, always **overwrite**
-          overwrite_final = 1;
-        else
-          if isfield(overwrite_struct, 'overwrite')
-            overwrite_final = overwrite_struct.overwrite;
+      overwrite_final = 0;
+      % the default value of overwrite is initialised here and will be checked later
+    case 2
+      fn = varargin{1};
+      if iscell(fn)
+        fn = fn{1};
+      end
+      switch class(varargin{2})
+        case 'double'
+          overwrite = varargin{2};
+        case 'struct'
+          options_struct = varargin{2};
+          if isfield(options_struct, 'overwrite')
+            overwrite_final = options_struct.overwrite;
           else
             overwrite_final = 0;
           end
-        end
+        otherwise
+          warning('ID:invalid_input', ...
+            'the second input argument should be either a double or a struct.');
+          return;
+      end
     end
+    if ~exist(fn, 'file')
+      % if file does not exist, always overwrite
+      overwrite_final = 1;
+    else
+      if feature('ShoverwriteFigureWindoverwrites') % if in gui
+        msg = ['Model file already exists. Overwrite?', ...
+          newline, 'Existing file: ', fn];
+        overwrite = questdlg(msg, ...
+          'File already exists', 'Yes', 'No', 'Yes');
+        % default as Yes (to overwrite)
+        overwrite_final = strcmp(overwrite, 'Yes');
+      end
+    end
+  end
 end
+
 %% Validate overwrite_final
 if overwrite_final ~= 0 && overwrite_final ~= 1
   warning('ID:invalid_input', 'overwrite can be only 0 or 1');
