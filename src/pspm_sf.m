@@ -95,7 +95,7 @@ if model.invalid
 end
 
 % 2.3 check options 
-options = pspm_options(options, 'glm');
+options = pspm_options(options, 'sf');
 if options.invalid
   return
 end
