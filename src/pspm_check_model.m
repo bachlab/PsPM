@@ -90,7 +90,7 @@ end
 % 5. Check validity of missing epochs
 for iFile = 1:nFile
     if ~isempty(model.missing{iFile})
-        sts = pspm_get_timing('missing', model.missing{iFile});
+        sts = pspm_get_timing('missing', model.missing{iFile}, 'seconds');
         if sts < 1, return, end
     end
 end
