@@ -24,7 +24,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       model.timeunits = 'seconds';
       model.timing = zeros(10,2);
       this.verifyWarning(@()pspm_glm(model), 'ID:invalid_input');
-      model.timing = 'foo';
+      model.timing = struct('names', {{'foo'}}, 'onsets', {{1}});
       %modelspec
       model.modelspec = 'foo';
       this.verifyWarning(@()pspm_glm(model), 'ID:invalid_input');

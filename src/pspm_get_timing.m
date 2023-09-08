@@ -76,7 +76,6 @@ filewarning = 0;
 % ------------------------------------------------------------------------
 if nargin < 2
   warning('ID:invalid_input', 'No input. I don''t know what to do.');
-
   return;
 else
   model = varargin{1};
@@ -85,11 +84,8 @@ end
 
 if ~ismember(model, {'onsets', 'epochs', 'missing', 'events', 'file'})
   warning('ID:invalid_input', 'Invalid input. I don''t know what to do.');
-
   return;
 end
-
-
 
 switch model
   case {'onsets', 'epochs', 'missing'}
@@ -412,7 +408,7 @@ switch model
         'time units are ''%s'''], timeunits);  return;
     end
 
-       % Missing epoch information for GLM and DCM
+    % Missing epoch information for GLM and DCM
     % ------------------------------------------------------------------------
   case 'missing'
     [sts, missepochs] = pspm_get_timing('epochs', intiming, timeunits);
@@ -436,7 +432,7 @@ switch model
     % Event information for DCM
     % ------------------------------------------------------------------------
   case('events')
-    if ~iscell(intiming)
+    if ischar(intiming)
       % recursive call to retrieve file
       [sts, in] = pspm_get_timing('file', intiming);
       if sts == -1, return; end
@@ -444,14 +440,15 @@ switch model
         intiming = in.events;
       else
         warning('File must contain a variable called ''events''.');
-
         return;
       end
     end
     r = [];
     if isempty(intiming)
       warning('ID:invalid_input', 'No event data given.');
-
+      return;
+    elseif ~iscell(intiming)
+         warning('ID:invalid_input', 'Timing information must be a cell array.');
       return;
     end
     for k = 1:numel(intiming)
@@ -459,7 +456,6 @@ switch model
       if c > 2
         warning('ID:invalid_vector_size', ...
           'Only one- and two-column vectors are allowed.');
-
         return;
       end
     end

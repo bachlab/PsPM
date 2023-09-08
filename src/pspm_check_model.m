@@ -54,11 +54,20 @@ elseif ischar(model.modelfile) && strcmpi (modeltype, 'sf')
     model.modelfile = {model.modelfile};
 end
 
+% NOTE we need to separate the case of DCM timing being
+% . a cell array of cell arrays 
+% . just a cell array
+
 % 3. Fill missing fields common to all models, and accept only allowed values
 if ~isfield(model, 'timing')
     model.timing = cell(nFile, 1);
-elseif ~iscell(model.timing)
-    model.timing = {model.timing};
+elseif ~iscell(model.timing) || ...
+    strcmpi(modeltype, 'dcm') && ~iscell(model.timing{1})
+    % for DCM, model.timing is either a file name or a cell array of
+    % events, or a cell array of file names or cell arrays, so we need to
+    % take care of cases where model.timing is a cell array but not a cell
+    % array of cell arrays
+    model.timing = {model.timing};    
 end
 if ~isfield(model, 'missing')
   model.missing = cell(nFile, 1);
