@@ -150,6 +150,8 @@ if strcmpi(modeltype, 'glm')
         warning('No basis function given.'); return
     elseif ~(ischar(model.bf.fhandle) || isa(model.bf.fhandle, 'function_handle'))
         warning('Basis function must be a string or function handle.'); return
+    elseif ischar(model.bf.fhandle) && ~exist(model.bf.fhandle, 'file')
+        warning('ID:invalid_fhandle', 'Specified basis function %s doesn''t exist or is faulty', model.bf.fhandle); return;
     elseif ~isfield(model.bf, 'args')
         model.bf.args = [];
     elseif ~isnumeric(model.bf.args)

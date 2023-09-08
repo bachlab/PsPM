@@ -12,35 +12,36 @@ classdef pspm_glm_test < matlab.unittest.TestCase
   end
   methods (Test)
     function invalid_input(this)
+      options = struct('overwrite', 1);
       %missing input
       this.verifyWarning(@()pspm_glm(), 'ID:invalid_input');
       model.datafile = 'infile';
       model.modelfile = 'outfile';
       model.timing = 'foo';
-      this.verifyWarning(@()pspm_glm(model), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_glm(model, options), 'ID:invalid_input');
       %faulty input
       model.timeunits = 'foo';
-      this.verifyWarning(@()pspm_glm(model), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_glm(model, options), 'ID:invalid_input');
       model.timeunits = 'seconds';
       model.timing = zeros(10,2);
-      this.verifyWarning(@()pspm_glm(model), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_glm(model, options), 'ID:invalid_input');
       model.timing = struct('names', {{'foo'}}, 'onsets', {{1}});
       %modelspec
       model.modelspec = 'foo';
-      this.verifyWarning(@()pspm_glm(model), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_glm(model, options), 'ID:invalid_input');
       model.modelspec = 'scr';
       %channel
       model.channel = 'foo';
-      this.verifyWarning(@()pspm_glm(model), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_glm(model, options), 'ID:invalid_input');
       model.channel = 1;
       %normalisation
       model.norm = 'no';
-      this.verifyWarning(@()pspm_glm(model), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_glm(model, options), 'ID:invalid_input');
       model.norm = 1;
       %files
       model.datafile = {'f1', 'f2'};
       model.timing = 'f3';
-      this.verifyWarning(@()pspm_glm(model), 'ID:number_of_elements_dont_match');
+      this.verifyWarning(@()pspm_glm(model, options), 'ID:number_of_elements_dont_match');
       %generate testdata
       pspm_tf = 'testfile489423.mat';
       mcond_tf = 'testfile687514.mat';
@@ -61,33 +62,33 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       model.filter.hpfreq = 20;
       model.filter.hporder = 1;
       model.filter.down = 'bla';
-      this.verifyWarning(@()pspm_glm(model), 'ID:invalid_input'); %filt.down is not numeric
+      this.verifyWarning(@()pspm_glm(model, options), 'ID:invalid_input'); %filt.down is not numeric
       model.filter.down = 50;
       %basis functions
       model.bf.fhandle = 'foohandle';
-      this.verifyWarning(@()pspm_glm(model), 'ID:invalid_fhandle');
+      this.verifyWarning(@()pspm_glm(model, options), 'ID:invalid_fhandle');
       model = rmfield(model,'bf');
       %missing values
       model.missing.foo = [];
-      this.verifyWarning(@()pspm_glm(model), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_glm(model, options), 'ID:invalid_input');
       model = rmfield(model, 'missing');
       model.missing = {'n1','n2'};
-      this.verifyWarning(@()pspm_glm(model), 'ID:number_of_elements_dont_match');
+      this.verifyWarning(@()pspm_glm(model, options), 'ID:number_of_elements_dont_match');
       model.missing = ones(5,2);
       %nuisance regressors
       model.nuisance.foo = [];
-      this.verifyWarning(@()pspm_glm(model), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_glm(model, options), 'ID:invalid_input');
       model = rmfield(model, 'nuisance');
       model.nuisance = {'n1','n2'};
-      this.verifyWarning(@()pspm_glm(model), 'ID:number_of_elements_dont_match');
+      this.verifyWarning(@()pspm_glm(model, options), 'ID:number_of_elements_dont_match');
       nuisance_tf = 'testdatafile867643.mat';
       model.nuisance = nuisance_tf;
       foovar = 3;
       save(nuisance_tf, 'foovar');
-      this.verifyWarning(@()pspm_glm(model), 'ID:invalid_file_type');
+      this.verifyWarning(@()pspm_glm(model, options), 'ID:invalid_file_type');
       R = ones(10,2);
       save(nuisance_tf, 'R');
-      this.verifyWarning(@()pspm_glm(model), 'ID:number_of_elements_dont_match');
+      this.verifyWarning(@()pspm_glm(model, options), 'ID:number_of_elements_dont_match');
       %delete testdata
       delete(pspm_tf);
       delete(mcond_tf);

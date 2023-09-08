@@ -238,7 +238,7 @@ end
 % colnames: iSn start stop enabled (if contains events)
 subsessions = [];
 data = cell(numel(model.datafile), 1);
-missing = cell(nFile, 1);
+missing = cell(numel(model.datafile), 1);
 for iSn = 1:numel(model.datafile)
   % check & load data
   [sts, ~, data{iSn}] = pspm_load_data(model.datafile{iSn}, model.channel);

@@ -226,8 +226,7 @@ try
       'functions are not allowed.']); return;
   end
 catch
-  warning('ID:invalid_fhandle', 'Specified basis function %s doesn''t exist or is faulty', func2str(model.bf.fhandle));
-  return;
+  warning('ID:invalid_fhandle', 'Specified basis function %s is faulty', model.bf.fhandle); return;
 end
 % 5.1 set shiftbf
 if bf_x(1) < 0
