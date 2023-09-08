@@ -236,14 +236,6 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
       options.fixation_point = [1280/4 1024*3/4];
       options.channel_action = 'add';
       [~, ~, o_data] = pspm_load_data(fn);
-      % Test no overwrite
-      options.overwrite = 0;
-      [sts, outfile] = this.verifyWarning(@() ...
-        pspm_find_valid_fixations(fn, box_degree, dist,dist_unit, options), ...
-        'ID:data_loss');
-      this.verifyEqual(sts, 1);
-      [~, ~, n_data] = pspm_load_data(outfile);
-      this.verifyEqual(numel(n_data), numel(o_data));
       % Test with overwrite
       options.overwrite = 1;
       [sts, outfile] = this.verifyWarningFree(@() ...

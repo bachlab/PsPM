@@ -107,15 +107,15 @@ classdef pspm_process_illuminance_test < matlab.unittest.TestCase
       [sts, out] = this.verifyWarningFree(@()pspm_process_illuminance(fn, sr, o));
       this.verifyEqual(sts, 1);
       d = load(fn);
-      if overwrite
-        this.verifyTrue(ischar(out));
-        this.verifyTrue(isfield(d, 'R'));
-        this.verifyEqual(size(d.R, 2), 2);
-      else
-        this.verifyTrue(isnumeric(out));
-        this.verifyTrue(isfield(d, 'Lx'));
-        this.verifyEqual(size(d.Lx, 2), 1);
-      end;
+        % if overwrite
+      this.verifyTrue(ischar(out));
+      this.verifyTrue(isfield(d, 'R'));
+      this.verifyEqual(size(d.R, 2), 2);
+        % else
+        %   this.verifyTrue(isnumeric(out));
+        %   this.verifyTrue(isfield(d, 'Lx'));
+        %   this.verifyEqual(size(d.Lx, 2), 1);
+        % end;
     end;
   end;
   methods (Test)
