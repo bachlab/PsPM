@@ -131,8 +131,21 @@ if strcmpi(modeltype, 'glm')
       model.latency = 'fixed';
     elseif ~ismember(model.latency, {'free', 'fixed'})
       warning('ID:invalid_input', 'Latency should be either ''fixed'' or ''free''.'); return;
-    elseif strcmpi(model.latency, 'free') && (~isnumeric(model.window) || isempty(model.window))
+    elseif strcmpi(model.latency, 'free') && (~isfield(model, 'window') || ...
+            isempty(model.window) || ~isnumeric(model.window))
       warning('ID:invalid_input', 'Window is expected to be a numeric value.'); return;
+    elseif strcmpi(model.latency, 'free') && numel(model.window) == 1
+      model.window = [0, model.window];
+    elseif strcmpi(model.latency, 'free') && numel(model.window) > 2
+      warning('ID:invalid_input', 'Only first two elements of model.window are used');
+      model.window = model.window(1:2);
+    elseif strcmpi(model.latency, 'fixed') && isfield(model, 'window')
+      warning('ID:invalid_input', 'model.window was provided but will be ignored');
+      model = rmfield(model, 'window');
+    end
+
+    if strcmpi(model.latency, 'free') && diff(model.window < 0)
+        warning('ID:invalid_input', 'model.window invalid');
     end
 
     if ~isfield(model, 'modelspec')
