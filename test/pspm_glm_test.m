@@ -481,7 +481,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       %t
       pspm_glm_test.save_datafile(Y, sr, duration, model.datafile);
       % test
-      glm = pspm_glm(model, struct('exclude_missing', struct('segment_length',segment_length,'cutoff',cutoff)));
+      glm = pspm_glm(model, struct('exclude_missing', struct('segment_length',segment_length,'cutoff',cutoff), 'overwrite', 1));
       exptected_number_of_conditions = 3;
       this.verifyEqual(length(glm.stats_missing),exptected_number_of_conditions, sprintf('test_extract_missing: glm.stats_missing does not have the expected number (%i) of elements', exptected_number_of_conditions));
       this.verifyEqual(length(glm.stats_exclude),exptected_number_of_conditions, sprintf('test_extract_missing: glm.stats_exclude does not have the expected number (%i) of elements', exptected_number_of_conditions));
