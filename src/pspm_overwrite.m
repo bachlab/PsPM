@@ -73,9 +73,7 @@ switch numel(varargin)
         warning('ID:invalid_input', ...
           'the second input argument should be either a double or a struct.');
         return
-      end
     end
-  end
 end
 %% 3 Define overwrite
 if settings.developmode
