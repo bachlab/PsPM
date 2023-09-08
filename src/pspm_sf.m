@@ -89,7 +89,7 @@ if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); r
 elseif nargin < 2; options = struct(); end
 
 % 2.2 check model
-model = pspm_check_model(model, 'glm');
+model = pspm_check_model(model, 'sf');
 if model.invalid
     return
 end
