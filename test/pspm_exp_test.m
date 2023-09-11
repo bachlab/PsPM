@@ -115,8 +115,7 @@ classdef pspm_exp_test < matlab.unittest.TestCase
       signal = this.testdata_gen(model.timing.onsets{1}, 1, 0, 0, sr, duration);
       this.save_datafile(signal, sr, duration, model.datafile, model.timing.onsets{1});
       % generate model
-      options.overwrite = 1;
-      glm = pspm_glm(model, options);
+      glm = pspm_glm(model, struct());
       model = glm.modelfile;
     end
     % saves a datavector to a file copied from pspm_glm_test
