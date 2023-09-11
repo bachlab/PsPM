@@ -19,11 +19,11 @@ function glm = pspm_glm(model, options)
 %   │             is set to be 'markervalues')
 %   │             OR a cell array of struct
 %   ├.timeunits:  one of 'seconds', 'samples', 'markers', 'markervalues'
-%   ├───.window:  a scalar in seconds that specifies over which time
-%   │             window (starting with the events specified in
-%   │             model.timing) the model should be evaluated. Is only
-%   │             required if model.latency equals 'free'. Is ignored
-%   │             otherwise.
+%   ├───.window:  only required if model.latency equals 'free' and ignored
+%   │             otherwise. A scalar or 2-element vector in seconds that 
+%   │             specifies over which time window (relative to the event
+%   │             onsets specified in model.timing) the model should be 
+%   │             evaluated. 
 %   │ ▶︎ optional
 %   ├.modelspec:  'scr' (default); specify the model to be used.
 %   │             See pspm_init, defaults.glm() which modelspecs are possible
@@ -489,7 +489,13 @@ clear iSn iMs ynew newonsets newdurations newmissing missingtimes
 for iCond = 1:numel(names)
   tmp.regscale{iCond} = 1;
   % first process event onset, then pmod
-  tmp.onsets = onsets{iCond};
+  if strcmpi(model.latency, 'free')
+      offset = model.window(1);
+  else
+      offset = 0;
+  end
+  tmp.onsets = onsets{iCond} - offset;
+  clear offset
   tmp.durations = durations{iCond};
   % if file starts with first event, set that onset to 1 instead of 0
   if any(tmp.onsets == 0)
@@ -653,7 +659,7 @@ clear tmp Xfilter r iSn n iCond
 % this is where the beef is
 if strcmpi(model.latency, 'free')
   % prepare dictionary onsets and new design matrix
-  D_on = eye(ceil(model.window*glm.infos.sr));
+  D_on = eye(ceil(diff(model.window)*glm.infos.sr));
   XMnew = NaN(size(glm.XM));
   % go through columns
   ncol = size(glm.XM, 2) - nR - glm.interceptno;

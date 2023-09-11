@@ -51,7 +51,6 @@ classdef pspm_import_test <  matlab.unittest.TestCase
       for k = 1:length(tc)
         tc{k}.define_testcases;
         options = struct();
-        options.overwrite = 1;
         outfile = pspm_import(tc{k}.testcases{1}.pth, tc{k}.datatype, tc{k}.testcases{1}.import, options);
         if ~(isprop(tc{k}, 'blocks') && tc{k}.blocks)
           this.verifyTrue(pspm_load_data(outfile{1},'none') == 1);
@@ -74,7 +73,6 @@ classdef pspm_import_test <  matlab.unittest.TestCase
       datafile{2} = [pathstr,name,'_copy',ext];
       copyfile(datafile{1},datafile{2});
       options = struct();
-      options.overwrite = 1;
       outfile = pspm_import(datafile, tc.datatype, tc.testcases{1}.import, options);
       this.verifyTrue(iscell(outfile) && numel(outfile) == 2, 'outfile is not a 2-element cell array');
       this.verifyTrue(pspm_load_data(outfile{1},'none') == 1);

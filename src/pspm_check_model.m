@@ -103,7 +103,7 @@ if isempty(settings)
   pspm_init;
 end
 
-% 1. General checks  ------------------------------------------------------
+%% 1. General checks  ------------------------------------------------------
 if ~isstruct(model)
   warning('ID:invalid_input', 'Model must be a struct.');
   model = struct('invalid', 1);
@@ -116,7 +116,7 @@ else
   end
 end
 
-% 2. Reject missing mandatory fields common to all models -----------------
+%% 2. Reject missing mandatory fields common to all models -----------------
 if ~isfield(model, 'datafile')
   warning('ID:invalid_input', 'No input data file specified.'); return;
 elseif ~isfield(model, 'modelfile')
@@ -139,16 +139,20 @@ end
 % . a cell array of cell arrays
 % . just a cell array
 
-% 3. Fill missing fields common to all models, and accept only allowed values
+%% 3. Fill missing fields common to all models, and accept only allowed values
 if ~isfield(model, 'timing')
     model.timing = cell(nFile, 1);
-elseif ~iscell(model.timing) || ...
-    strcmpi(modeltype, 'dcm') && ~iscell(model.timing{1})
-    % for DCM, model.timing is either a file name or a cell array of
-    % events, or a cell array of file names or cell arrays, so we need to
-    % take care of cases where model.timing is a cell array but not a cell
-    % array of cell arrays
-    model.timing = {model.timing};
+else
+  if ~isempty(model.timing)
+    if ~iscell(model.timing) || ...
+      strcmpi(modeltype, 'dcm') && ~iscell(model.timing{1})
+      % for DCM, model.timing is either a file name or a cell array of
+      % events, or a cell array of file names or cell arrays, so we need to
+      % take care of cases where model.timing is a cell array but not a cell
+      % array of cell arrays
+      model.timing = {model.timing};
+    end
+  end
 end
 if ~isfield(model, 'missing')
   model.missing = cell(nFile, 1);
@@ -165,7 +169,7 @@ elseif ~any(ismember(model.norm, [0, 1]))
   warning('ID:invalid_input', 'Normalisation must be specified as 0 or 1.'); return;
 end
 
-% 4. Check that session-related field entries have compatible size
+%% 4. Check that session-related field entries have compatible size
 if nFile ~= numel(model.timing)
   warning('ID:number_of_elements_dont_match',...
     'Session numbers of data files and event definitions do not match.');
@@ -177,7 +181,7 @@ if nFile ~= numel(model.missing)
   return
 end
 
-% 5. Check validity of missing epochs
+%% 5. Check validity of missing epochs
 for iFile = 1:nFile
     if ~isempty(model.missing{iFile})
         sts = pspm_get_timing('missing', model.missing{iFile}, 'seconds');
@@ -185,7 +189,7 @@ for iFile = 1:nFile
     end
 end
 
-% 6. GLM-specific checks
+%% 6. GLM-specific checks
 % -------------------------------------------------------------------------
 if strcmpi(modeltype, 'glm')
 
@@ -212,8 +216,21 @@ if strcmpi(modeltype, 'glm')
       model.latency = 'fixed';
     elseif ~ismember(model.latency, {'free', 'fixed'})
       warning('ID:invalid_input', 'Latency should be either ''fixed'' or ''free''.'); return;
-    elseif strcmpi(model.latency, 'free') && (~isnumeric(model.window) || isempty(model.window))
+    elseif strcmpi(model.latency, 'free') && (~isfield(model, 'window') || ...
+            isempty(model.window) || ~isnumeric(model.window))
       warning('ID:invalid_input', 'Window is expected to be a numeric value.'); return;
+    elseif strcmpi(model.latency, 'free') && numel(model.window) == 1
+      model.window = [0, model.window];
+    elseif strcmpi(model.latency, 'free') && numel(model.window) > 2
+      warning('ID:invalid_input', 'Only first two elements of model.window are used');
+      model.window = model.window(1:2);
+    elseif strcmpi(model.latency, 'fixed') && isfield(model, 'window')
+      warning('ID:invalid_input', 'model.window was provided but will be ignored');
+      model = rmfield(model, 'window');
+    end
+
+    if strcmpi(model.latency, 'free') && diff(model.window < 0)
+        warning('ID:invalid_input', 'model.window invalid');
     end
 
     if ~isfield(model, 'modelspec')
@@ -258,7 +275,7 @@ if strcmpi(modeltype, 'glm')
 end
 
 
-% 7. DCM-specific check
+%% 7. DCM-specific check
 % -------------------------------------------------------------------------
 if strcmpi(modeltype, 'dcm')
 
@@ -301,7 +318,7 @@ if strcmpi(modeltype, 'dcm')
 
 end
 
-% 8. SF-specific check
+%% 8. SF-specific check
 % -------------------------------------------------------------------------
 if strcmpi(modeltype, 'sf')
 
@@ -336,7 +353,7 @@ if strcmpi(modeltype, 'sf')
 end
 
 
-% General checks that require GLM-specific checks in case of GLM
+%% 9. General checks that require GLM-specific checks in case of GLM
 % -------------------------------------------------------------------------
 if ~isfield(model, 'filter')
     switch modeltype

@@ -23,7 +23,6 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       {{'scr', 'scr', 'scr'}, [1,3]} ... % all channels except first should be interpolated
       };
     newfile = {true, false};
-    overwrite = {true, false};
     replace_channels = {true, false};
   end
   methods
@@ -175,9 +174,6 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       % invalid extrapolate
       options = struct('extrapolate', 'bla');
       this.verifyWarning(@() pspm_interpolate(valid_data, options), 'ID:invalid_input');
-      % invalid overwrite
-      options = struct('overwrite', 'bla');
-      this.verifyWarning(@() pspm_interpolate(valid_data, options), 'ID:invalid_input');
       % invalid channel_action
       options = struct('channel_action', 'bla');
       this.verifyWarning(@() pspm_interpolate(valid_data, options), 'ID:invalid_input');
@@ -299,7 +295,6 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       options.channel = opt_chans;
       options.extrapolate = false;
       % don't care about that right now
-      options.overwrite = 1;
       options.newfile = newfile;
       % call function
       [sts, outdata] = this.verifyWarningFree(@() pspm_interpolate(data, options));
@@ -336,7 +331,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
         end
       end
     end
-    function test_overwrite(this, overwrite)
+    function test_overwrite(this)
       % generate data
       [data, ~] = generate_data(this, 'file', 2, 'center', ...
         {{'scr', 'scr', 'scr'}, [1,2,3]} , false);
@@ -344,21 +339,15 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       for i = 1:numel(data)
         fclose(fopen(['i', data{i}], 'w'));
       end
-      options = struct('overwrite', overwrite, 'newfile', true);
+      options = struct('newfile', true);
       % call function
-      if overwrite
-        [sts, ~] = this.verifyWarningFree(@() pspm_interpolate(data, options));
-        this.verifyEqual(sts, 1); % sts should be 1
-        %else
-        %  [sts, ~] = this.verifyWarning(@() pspm_interpolate(data, options), 'ID:data_loss');
-      end
+      [sts, ~] = this.verifyWarningFree(@() pspm_interpolate(data, options));
+      this.verifyEqual(sts, 1); % sts should be 1
+      %else
+      %  [sts, ~] = this.verifyWarning(@() pspm_interpolate(data, options), 'ID:data_loss');
       % test if cannot btw. can be loaded
       for i = 1:numel(data)
-        if overwrite
-          this.verifyWarningFree(@() pspm_load_data(['i', data{i}], 0));
-        %else
-        %  this.verifyWarning(@() pspm_load_data(['i', data{i}], 0), 'ID:invalid_file_type');
-        end
+        this.verifyWarningFree(@() pspm_load_data(['i', data{i}], 0));
         if exist(['i', data{i}], 'file')
           delete(['i', data{i}]);
         end

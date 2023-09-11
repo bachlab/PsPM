@@ -215,7 +215,6 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       save(this.fn2, 'infos', 'data');
       chan.infos = infos;
       chan.data = data;
-      chan.options.overwrite = 1;
       clear('infos')
       clear('data')
       this.verifyWarning(@()pspm_load_data(this.fn2, chan), ...
@@ -233,7 +232,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       exp_val = load(this.fn);
       this.compare_data(act_val, exp_val);
     end
-    %% Return all channels (struct input) 
+    %% Return all channels (struct input)
     function valid_datafile_1(this)
       struct = load(this.fn);
       [~, infos, data] = pspm_load_data(struct);
@@ -282,13 +281,12 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       exp_val.data = exp_val.data(this.event_channels);
       this.compare_data(act_val, exp_val);
     end
-    %% Save data 
+    %% Save data
     function valid_datafile_6(this)
       chan = 0;
       [~, infos, data] = pspm_load_data(this.fn, chan); % load
       save.data = data;
       save.infos = infos;
-      save.options.overwrite = 1;
       pspm_load_data(this.fn, save); % save in different file
       [~, infos, data] = pspm_load_data(this.fn, chan);% load again
       act_val.infos = infos;
