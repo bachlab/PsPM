@@ -93,7 +93,7 @@ for k = 1:numel(import)
       pulse = pulse(1:2:end);
       import{k}.data = pspm_pulse_convert(pulse, settings.import.rsr, settings.import.sr);
       import{k}.sr = settings.import.sr;
-      import{k}.minfreq = min(workdata);
+      import{k}.minfreq = min(import{k}.data);
     else
       warning('Unknown channel format in CED spike file for import job %02.0f', k);  return;
     end;
