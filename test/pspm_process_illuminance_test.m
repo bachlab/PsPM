@@ -16,7 +16,6 @@ classdef pspm_process_illuminance_test < matlab.unittest.TestCase
     % multiple files
     n_times = {1, 8}
     mode = {'file', 'data', 'mixed'};
-    overwrite = {true, false};
   end;
   methods(TestMethodTeardown)
     %% Cleanup function
@@ -97,12 +96,11 @@ classdef pspm_process_illuminance_test < matlab.unittest.TestCase
       end;
     end;
     %% test overwrite
-    function test_overwrite(this, overwrite)
+    function test_overwrite(this)
       [fn_list, sr_list] = this.generate_lx(10, 100, 1, 'file');
       fn = fn_list{1};
       sr = sr_list{1};
       o = struct();
-      o.overwrite = overwrite;
       o.fn = fn;
       [sts, out] = this.verifyWarningFree(@()pspm_process_illuminance(fn, sr, o));
       this.verifyEqual(sts, 1);
@@ -158,10 +156,6 @@ classdef pspm_process_illuminance_test < matlab.unittest.TestCase
       this.verifyWarning(@() pspm_process_illuminance({1:10}, {1}, opt), 'ID:invalid_input');
       % fn not same format as ldata
       opt.fn = 'a';
-      this.verifyWarning(@() pspm_process_illuminance({1:10}, {1}, opt), 'ID:invalid_input');
-      % wrong overwrite
-      opt.overwrite = 'b';
-      opt.fn = {'testfile'};
       this.verifyWarning(@() pspm_process_illuminance({1:10}, {1}, opt), 'ID:invalid_input');
     end;
   end;

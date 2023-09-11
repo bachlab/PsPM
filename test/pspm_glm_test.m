@@ -12,7 +12,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
   end
   methods (Test)
     function invalid_input(this)
-      options = struct('overwrite', 1);
+      options = struct();
       %missing input
       this.verifyWarning(@()pspm_glm(), 'ID:invalid_input');
       model.datafile = 'infile';
@@ -431,8 +431,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       pspm_glm_test.save_datafile(Y1, 200, 10, model.datafile{1});
       Y2 = rand(200*10,1);
       pspm_glm_test.save_datafile(Y2, 200, 10, model.datafile{2});
-      options.overwrite = 1;
-      glm = pspm_glm(model, options);
+      glm = pspm_glm(model, struct());
       %tests
       exptected_number_of_stats = 16;
       this.verifyEqual(length(glm.stats),exptected_number_of_stats, sprintf('test6: glm.stats does not have the expected number (%i) of elements', exptected_number_of_stats));
@@ -482,7 +481,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       %t
       pspm_glm_test.save_datafile(Y, sr, duration, model.datafile);
       % test
-      glm = pspm_glm(model, struct('exclude_missing', struct('segment_length',segment_length,'cutoff',cutoff), 'overwrite', 1));
+      glm = pspm_glm(model, struct('exclude_missing', struct('segment_length',segment_length,'cutoff',cutoff)));
       exptected_number_of_conditions = 3;
       this.verifyEqual(length(glm.stats_missing),exptected_number_of_conditions, sprintf('test_extract_missing: glm.stats_missing does not have the expected number (%i) of elements', exptected_number_of_conditions));
       this.verifyEqual(length(glm.stats_exclude),exptected_number_of_conditions, sprintf('test_extract_missing: glm.stats_exclude does not have the expected number (%i) of elements', exptected_number_of_conditions));
@@ -500,8 +499,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       % update known files
       rehash;
       %call pspm_glm
-      options.overwrite = 1;
-      options.marker_chan_num = 'marker';
+      options = struct('marker_chan_num', 'marker');
       glm = pspm_glm(model, options);
       %check if output is equal the timing
       actual = glm.stats;

@@ -1,15 +1,15 @@
 function model = pspm_check_model(model, modeltype)
 
-% mandatory fields 
+% mandatory fields
 % .modelfile (a string for all models, or a cell array of string for SF)
 % .datafile
 % .timing (DCM)
 % .timing OR .nuisance (GLM)
 % .timing OR .timeunits == 'whole' (SF)
 % .timeunits (GLM, SF)
-% 
+%
 % and optional fields
-% .missing 
+% .missing
 % .latency and .window (GLM)
 % .bf (GLM)
 % .modelspec (GLM)
@@ -22,7 +22,7 @@ if isempty(settings)
   pspm_init;
 end
 
-% 1. General checks  ------------------------------------------------------
+%% 1. General checks  ------------------------------------------------------
 if ~isstruct(model)
   warning('ID:invalid_input', 'Model must be a struct.');
   model = struct('invalid', 1);
@@ -35,7 +35,7 @@ else
   end
 end
 
-% 2. Reject missing mandatory fields common to all models -----------------
+%% 2. Reject missing mandatory fields common to all models -----------------
 if ~isfield(model, 'datafile')
   warning('ID:invalid_input', 'No input data file specified.'); return;
 elseif ~isfield(model, 'modelfile')
@@ -50,24 +50,28 @@ if ~iscell(model.datafile) && ~ischar(model.datafile)
   warning('ID:invalid_input', 'Input data must be a cell or string.'); return;
 elseif ~ischar(model.modelfile) && ~strcmpi (modeltype, 'sf')
   warning('ID:invalid_input', 'Output model must be a string.'); return;
-elseif ischar(model.modelfile) && strcmpi (modeltype, 'sf') 
+elseif ischar(model.modelfile) && strcmpi (modeltype, 'sf')
     model.modelfile = {model.modelfile};
 end
 
 % NOTE we need to separate the case of DCM timing being
-% . a cell array of cell arrays 
+% . a cell array of cell arrays
 % . just a cell array
 
-% 3. Fill missing fields common to all models, and accept only allowed values
+%% 3. Fill missing fields common to all models, and accept only allowed values
 if ~isfield(model, 'timing')
     model.timing = cell(nFile, 1);
-elseif ~iscell(model.timing) || ...
-    strcmpi(modeltype, 'dcm') && ~iscell(model.timing{1})
-    % for DCM, model.timing is either a file name or a cell array of
-    % events, or a cell array of file names or cell arrays, so we need to
-    % take care of cases where model.timing is a cell array but not a cell
-    % array of cell arrays
-    model.timing = {model.timing};    
+else
+  if ~isempty(model.timing)
+    if ~iscell(model.timing) || ...
+      strcmpi(modeltype, 'dcm') && ~iscell(model.timing{1})
+      % for DCM, model.timing is either a file name or a cell array of
+      % events, or a cell array of file names or cell arrays, so we need to
+      % take care of cases where model.timing is a cell array but not a cell
+      % array of cell arrays
+      model.timing = {model.timing};
+    end
+  end
 end
 if ~isfield(model, 'missing')
   model.missing = cell(nFile, 1);
@@ -84,7 +88,7 @@ elseif ~any(ismember(model.norm, [0, 1]))
   warning('ID:invalid_input', 'Normalisation must be specified as 0 or 1.'); return;
 end
 
-% 4. Check that session-related field entries have compatible size
+%% 4. Check that session-related field entries have compatible size
 if nFile ~= numel(model.timing)
   warning('ID:number_of_elements_dont_match',...
     'Session numbers of data files and event definitions do not match.');
@@ -96,7 +100,7 @@ if nFile ~= numel(model.missing)
   return
 end
 
-% 5. Check validity of missing epochs
+%% 5. Check validity of missing epochs
 for iFile = 1:nFile
     if ~isempty(model.missing{iFile})
         sts = pspm_get_timing('missing', model.missing{iFile}, 'seconds');
@@ -104,10 +108,10 @@ for iFile = 1:nFile
     end
 end
 
-% 6. GLM-specific checks
+%% 6. GLM-specific checks
 % -------------------------------------------------------------------------
 if strcmpi(modeltype, 'glm')
-    
+
     % Reject missing or invalid mandatory fields
     if ~isfield(model, 'timeunits')
         warning('ID:invalid_input', 'No timeunits specified.'); return;
@@ -123,9 +127,9 @@ if strcmpi(modeltype, 'glm')
         for iFile = 1:nFile
             sts = pspm_get_timing('onsets', model.timing{iFile}, model.timeunits);
             if sts < 1, return; end
-        end    
+        end
     end
-  
+
     % Check optional fields, set default values and reject invalid values
     if ~isfield(model, 'latency')
       model.latency = 'fixed';
@@ -170,7 +174,7 @@ if strcmpi(modeltype, 'glm')
     elseif ~isnumeric(model.bf.args)
         warning('Basis function arguments must be numeric.'); return
     end
-  
+
     if ~isfield(model, 'channel')
         if strcmp(model.modality, 'psr')
             model.channel = 'pupil';
@@ -184,16 +188,16 @@ if strcmpi(modeltype, 'glm')
     if ~isfield(model,'centering')
       model.centering = 1;
     elseif ~ismember(model.centering, [0, 1])
-        warning('ID:invalid_input', 'Mean centering must be specified as 0 or 1.'); return;    
+        warning('ID:invalid_input', 'Mean centering must be specified as 0 or 1.'); return;
     end
 
 end
 
 
-% 7. DCM-specific check
+%% 7. DCM-specific check
 % -------------------------------------------------------------------------
 if strcmpi(modeltype, 'dcm')
-    
+
     % Reject missing or invalid mandatory fields
     if sum(cellfun(@(f) isempty(f), model.timing)) > 0
         warning('ID:invalid_input', 'No event onsets specified.'); return;
@@ -201,9 +205,9 @@ if strcmpi(modeltype, 'dcm')
         for iFile = 1:nFile
             sts = pspm_get_timing('events', model.timing{iFile});
             if sts < 1, return; end
-        end  
+        end
     end
-    
+
     % Check optional fields, set default values and reject invalid values
     if ~isfield(model, 'channel')
         model.channel = 'scr'; % this returns the last SCR channel
@@ -233,10 +237,10 @@ if strcmpi(modeltype, 'dcm')
 
 end
 
-% 8. SF-specific check
+%% 8. SF-specific check
 % -------------------------------------------------------------------------
 if strcmpi(modeltype, 'sf')
- 
+
     % Reject missing or invalid mandatory fields
     if ~isfield(model, 'timeunits')
         warning('ID:invalid_input', 'No timeunits specified.'); return;
@@ -249,14 +253,14 @@ if strcmpi(modeltype, 'sf')
         warning('ID:number_of_elements_dont_match',...
             'Number of data files and model files does not match.'); return;
     end
-  
+
     % Check optional fields, set default values and reject invalid values
     if ~isfield(model, 'channel')
         model.channel = 'scr'; % this returns the last SCR channel
     elseif ~isnumeric(model.channel) && ~strcmp(model.channel,'scr')
         warning('ID:invalid_input', 'Channel number must be numeric or SCR.'); return;
     end
-    
+
     if ~isfield(model, 'method')
       model.method = {'dcm'};
     elseif ischar(model.method)
@@ -268,7 +272,7 @@ if strcmpi(modeltype, 'sf')
 end
 
 
-% General checks that require GLM-specific checks in case of GLM
+%% 9. General checks that require GLM-specific checks in case of GLM
 % -------------------------------------------------------------------------
 if ~isfield(model, 'filter')
     switch modeltype
