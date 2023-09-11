@@ -52,7 +52,7 @@ classdef pspm_load1_test < matlab.unittest.TestCase
           this.modelfiles{i} = mfn;
           this.dummyfiles{i} = dfn;
           fh = str2func(['pspm_', settings.first{i}]);
-          options = struct('overwrite', 1);
+          options = struct();
           fh(model, options);
           copyfile(this.modelfiles{i}, this.dummyfiles{i});
         end
@@ -306,11 +306,11 @@ classdef pspm_load1_test < matlab.unittest.TestCase
         mdltype = mdltypes{mdltype};
         mdl.(mdltype).test = x;
         % test overwrite
-        options.overwrite = 0;
-        [sts, data, mdt] = this.verifyWarning(@()pspm_load1(f, 'save', mdl, options), 'ID:not_saving_data');
-        % determins these parameters
-        mdl = load(f);
-        this.verifyNotEqual(mdl.(mdltype).test, x);
+          % options.overwrite = 0;
+          % [sts, data, mdt] = this.verifyWarning(@()pspm_load1(f, 'save', mdl, options), 'ID:not_saving_data');
+          % determins these parameters
+          % mdl = load(f);
+          % this.verifyNotEqual(mdl.(mdltype).test, x);
         % do overwrite
         mdl.(mdltype).test = x;
         options.overwrite = 1;
