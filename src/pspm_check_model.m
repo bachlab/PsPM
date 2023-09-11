@@ -1,20 +1,101 @@
 function model = pspm_check_model(model, modeltype)
-
-% mandatory fields
-% .modelfile (a string for all models, or a cell array of string for SF)
-% .datafile
-% .timing (DCM)
-% .timing OR .nuisance (GLM)
-% .timing OR .timeunits == 'whole' (SF)
-% .timeunits (GLM, SF)
-%
-% and optional fields
-% .missing
-% .latency and .window (GLM)
-% .bf (GLM)
-% .modelspec (GLM)
-% .channel (GLM)
-% .centering (GLM)
+% ● Definition
+%   pspm_check_model automatically determine the fields of the struct model for the
+%   corresponding function.
+% ● Arguments
+%   ┌─────model:
+%   │ ▶︎ mandatory
+%   ├─.modelfile: a file name for the model output
+%   ├──.datafile: a file name (single session) OR
+%   │             a cell array of file names
+%   ├──.timing (DCM):
+%   │             A file name/cell array of events (single session) OR a cell
+%   │             array of file names/cell arrays.
+%   │             When specifying file names, each file must be a *.mat file
+%   │             that contain a cell variable called 'events'.
+%   │             Each cell should contain either one column (fixed response)
+%   │             or two columns (flexible response).
+%   │             All matrices in the array need to have the same number of
+%   │             rows, i.e. the event structure must be the same for every
+%   │             trial. If this is not the case, include `dummy` events with
+%   │             negative onsets.
+%   ├──.timing (GLM):
+%   │             a multiple condition file name (single session) OR
+%   │             a cell array of multiple condition file names OR
+%   │             a struct (single session) with fields .names, .onsets,
+%   │             and (optional) .durations and .pmod  OR
+%   │             a cell array of struct OR
+%   │             a struct with fields 'markervalues' and 'names' (when model.timeunits
+%   │             is set to be 'markervalues')
+%   │             OR a cell array of struct
+%   ├──.timing (SF) OR .timeunits == 'whole' (SF)
+%   │             can be one of the following
+%   │                 - an SPM style onset file with two event types: onset &
+%   │                   offset (names are ignored)
+%   │                 - a .mat file with a variable 'epochs', see below
+%   │                 - a two-column text file with on/offsets
+%   │                 - e x 2 array of epoch on- and offsets, with
+%   │             e: number of epochs
+%   │             or cell array of any of these, for multiple files
+%   ├─.timeunits (GLM, SF):
+%   │             one of 'seconds', 'samples', 'markers', 'markervalues'
+%   │ ▶︎ optional
+%   ├───.missing: allows to specify missing (e. g. artefact) epochs in the
+%   │             data file. See pspm_get_timing for epoch definition;
+%   │             specify a cell array for multiple input files. This
+%   │             must always be specified in SECONDS.
+%   │             Default: no missing values
+%   ├───.latency: allows to specify whether latency should be 'fixed'
+%   │             (default) or should be 'free'. In 'free' models an
+%   │             additional dictionary matching algorithm will try to
+%   │             estimate the best latency. Latencies will then be added
+%   │             at the end of the output. In 'free' models the fiel
+%   │             model.window is MANDATORY and single basis functions
+%   │             are allowed only.
+%   │ ▶︎ optional, GLM (modeltype) only
+%   ├────.window: a scalar in seconds that specifies over which time
+%   │             window (starting with the events specified in
+%   │             model.timing) the model should be evaluated. Is only
+%   │             required if model.latency equals 'free'. Is ignored
+%   │             otherwise.
+%   ├────────.bf: basis function/basis set; modality specific default
+%   │             with subfields .fhandle (function handle or string) and
+%   │             .args (arguments, first argument sampling interval will
+%   │             be added by pspm_glm). The optional subfield .shiftbf = n
+%   │             indicates that the onset of the basis function precedes
+%   │             event onsets by n seconds (default: 0: used for
+%   │             interpolated data channels)
+%   ├─.modelspec: 'scr' (default); specify the model to be used.
+%   │             See pspm_init, defaults.glm() which modelspecs are possible
+%   │             with glm.
+%   ├───.channel: channel number or channel type. if a channel type is
+%   │             specified the LAST channel matching the given type will
+%   │             be used. The rationale for this is that, in general channels
+%   │             later in the channel list are preprocessed/filtered versions
+%   │             of raw channels.
+%   │             SPECIAL: if 'pupil' is specified the function uses the
+%   │             last pupil channel returned by
+%   │             <a href="matlab:help pspm_load_data">pspm_load_data</a>.
+%   │             pspm_load_data loads 'pupil' channels according to a specific
+%   │             precedence order described in its documentation. In a nutshell,
+%   │             it prefers preprocessed channels and channels from the best eye
+%   │             to other pupil channels.
+%   │             SPECIAL: for the modality 'sps', the model.channel
+%   │             accepts only 'sps_l', 'sps_r', or 'sps'.
+%   │             DEFAULT: last channel of the specified modality
+%   │             (for PSR this is 'pupil')
+%   ├─.nuisance:  allows to specify nuisance regressors. Must be a file
+%   │             name; the file is either a .txt file containing the
+%   │             regressors in columns, or a .mat file containing the
+%   │             regressors in a matrix variable called R. There must be
+%   │             as many values for each column of R as there are data
+%   │             values. SCRalyze will call these regressors R1, R2, ...
+%   └─.centering: if set to 0 the function would not perform the
+%                 mean centering of the convolved X data. For example, to
+%                 invert SPS model, set centering to 0. Default: 1
+% ● History
+%   Introduced in PsPM 6.2
+%   Written in 2023 by Dominik Bach (UCL and Bonn)
 
 % 0. Initialise
 global settings
