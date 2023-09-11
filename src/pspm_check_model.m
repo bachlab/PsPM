@@ -1,20 +1,101 @@
 function model = pspm_check_model(model, modeltype)
-
-% mandatory fields 
-% .modelfile (a string for all models, or a cell array of string for SF)
-% .datafile
-% .timing (DCM)
-% .timing OR .nuisance (GLM)
-% .timing OR .timeunits == 'whole' (SF)
-% .timeunits (GLM, SF)
-% 
-% and optional fields
-% .missing 
-% .latency and .window (GLM)
-% .bf (GLM)
-% .modelspec (GLM)
-% .channel (GLM)
-% .centering (GLM)
+% ● Definition
+%   pspm_check_model automatically determine the fields of the struct model for the
+%   corresponding function.
+% ● Arguments
+%   ┌─────model:
+%   │ ▶︎ mandatory
+%   ├─.modelfile: a file name for the model output
+%   ├──.datafile: a file name (single session) OR
+%   │             a cell array of file names
+%   ├──.timing (DCM):
+%   │             A file name/cell array of events (single session) OR a cell
+%   │             array of file names/cell arrays.
+%   │             When specifying file names, each file must be a *.mat file
+%   │             that contain a cell variable called 'events'.
+%   │             Each cell should contain either one column (fixed response)
+%   │             or two columns (flexible response).
+%   │             All matrices in the array need to have the same number of
+%   │             rows, i.e. the event structure must be the same for every
+%   │             trial. If this is not the case, include `dummy` events with
+%   │             negative onsets.
+%   ├──.timing (GLM):
+%   │             a multiple condition file name (single session) OR
+%   │             a cell array of multiple condition file names OR
+%   │             a struct (single session) with fields .names, .onsets,
+%   │             and (optional) .durations and .pmod  OR
+%   │             a cell array of struct OR
+%   │             a struct with fields 'markervalues' and 'names' (when model.timeunits
+%   │             is set to be 'markervalues')
+%   │             OR a cell array of struct
+%   ├──.timing (SF) OR .timeunits == 'whole' (SF)
+%   │             can be one of the following
+%   │                 - an SPM style onset file with two event types: onset &
+%   │                   offset (names are ignored)
+%   │                 - a .mat file with a variable 'epochs', see below
+%   │                 - a two-column text file with on/offsets
+%   │                 - e x 2 array of epoch on- and offsets, with
+%   │             e: number of epochs
+%   │             or cell array of any of these, for multiple files
+%   ├─.timeunits (GLM, SF):
+%   │             one of 'seconds', 'samples', 'markers', 'markervalues'
+%   │ ▶︎ optional
+%   ├───.missing: allows to specify missing (e. g. artefact) epochs in the
+%   │             data file. See pspm_get_timing for epoch definition;
+%   │             specify a cell array for multiple input files. This
+%   │             must always be specified in SECONDS.
+%   │             Default: no missing values
+%   ├───.latency: allows to specify whether latency should be 'fixed'
+%   │             (default) or should be 'free'. In 'free' models an
+%   │             additional dictionary matching algorithm will try to
+%   │             estimate the best latency. Latencies will then be added
+%   │             at the end of the output. In 'free' models the fiel
+%   │             model.window is MANDATORY and single basis functions
+%   │             are allowed only.
+%   │ ▶︎ optional, GLM (modeltype) only
+%   ├────.window: a scalar in seconds that specifies over which time
+%   │             window (starting with the events specified in
+%   │             model.timing) the model should be evaluated. Is only
+%   │             required if model.latency equals 'free'. Is ignored
+%   │             otherwise.
+%   ├────────.bf: basis function/basis set; modality specific default
+%   │             with subfields .fhandle (function handle or string) and
+%   │             .args (arguments, first argument sampling interval will
+%   │             be added by pspm_glm). The optional subfield .shiftbf = n
+%   │             indicates that the onset of the basis function precedes
+%   │             event onsets by n seconds (default: 0: used for
+%   │             interpolated data channels)
+%   ├─.modelspec: 'scr' (default); specify the model to be used.
+%   │             See pspm_init, defaults.glm() which modelspecs are possible
+%   │             with glm.
+%   ├───.channel: channel number or channel type. if a channel type is
+%   │             specified the LAST channel matching the given type will
+%   │             be used. The rationale for this is that, in general channels
+%   │             later in the channel list are preprocessed/filtered versions
+%   │             of raw channels.
+%   │             SPECIAL: if 'pupil' is specified the function uses the
+%   │             last pupil channel returned by
+%   │             <a href="matlab:help pspm_load_data">pspm_load_data</a>.
+%   │             pspm_load_data loads 'pupil' channels according to a specific
+%   │             precedence order described in its documentation. In a nutshell,
+%   │             it prefers preprocessed channels and channels from the best eye
+%   │             to other pupil channels.
+%   │             SPECIAL: for the modality 'sps', the model.channel
+%   │             accepts only 'sps_l', 'sps_r', or 'sps'.
+%   │             DEFAULT: last channel of the specified modality
+%   │             (for PSR this is 'pupil')
+%   ├─.nuisance:  allows to specify nuisance regressors. Must be a file
+%   │             name; the file is either a .txt file containing the
+%   │             regressors in columns, or a .mat file containing the
+%   │             regressors in a matrix variable called R. There must be
+%   │             as many values for each column of R as there are data
+%   │             values. SCRalyze will call these regressors R1, R2, ...
+%   └─.centering: if set to 0 the function would not perform the
+%                 mean centering of the convolved X data. For example, to
+%                 invert SPS model, set centering to 0. Default: 1
+% ● History
+%   Introduced in PsPM 6.2
+%   Written in 2023 by Dominik Bach (UCL and Bonn)
 
 % 0. Initialise
 global settings
@@ -50,12 +131,12 @@ if ~iscell(model.datafile) && ~ischar(model.datafile)
   warning('ID:invalid_input', 'Input data must be a cell or string.'); return;
 elseif ~ischar(model.modelfile) && ~strcmpi (modeltype, 'sf')
   warning('ID:invalid_input', 'Output model must be a string.'); return;
-elseif ischar(model.modelfile) && strcmpi (modeltype, 'sf') 
+elseif ischar(model.modelfile) && strcmpi (modeltype, 'sf')
     model.modelfile = {model.modelfile};
 end
 
 % NOTE we need to separate the case of DCM timing being
-% . a cell array of cell arrays 
+% . a cell array of cell arrays
 % . just a cell array
 
 % 3. Fill missing fields common to all models, and accept only allowed values
@@ -67,7 +148,7 @@ elseif ~iscell(model.timing) || ...
     % events, or a cell array of file names or cell arrays, so we need to
     % take care of cases where model.timing is a cell array but not a cell
     % array of cell arrays
-    model.timing = {model.timing};    
+    model.timing = {model.timing};
 end
 if ~isfield(model, 'missing')
   model.missing = cell(nFile, 1);
@@ -107,7 +188,7 @@ end
 % 6. GLM-specific checks
 % -------------------------------------------------------------------------
 if strcmpi(modeltype, 'glm')
-    
+
     % Reject missing or invalid mandatory fields
     if ~isfield(model, 'timeunits')
         warning('ID:invalid_input', 'No timeunits specified.'); return;
@@ -123,9 +204,9 @@ if strcmpi(modeltype, 'glm')
         for iFile = 1:nFile
             sts = pspm_get_timing('onsets', model.timing{iFile}, model.timeunits);
             if sts < 1, return; end
-        end    
+        end
     end
-  
+
     % Check optional fields, set default values and reject invalid values
     if ~isfield(model, 'latency')
       model.latency = 'fixed';
@@ -157,7 +238,7 @@ if strcmpi(modeltype, 'glm')
     elseif ~isnumeric(model.bf.args)
         warning('Basis function arguments must be numeric.'); return
     end
-  
+
     if ~isfield(model, 'channel')
         if strcmp(model.modality, 'psr')
             model.channel = 'pupil';
@@ -171,7 +252,7 @@ if strcmpi(modeltype, 'glm')
     if ~isfield(model,'centering')
       model.centering = 1;
     elseif ~ismember(model.centering, [0, 1])
-        warning('ID:invalid_input', 'Mean centering must be specified as 0 or 1.'); return;    
+        warning('ID:invalid_input', 'Mean centering must be specified as 0 or 1.'); return;
     end
 
 end
@@ -180,7 +261,7 @@ end
 % 7. DCM-specific check
 % -------------------------------------------------------------------------
 if strcmpi(modeltype, 'dcm')
-    
+
     % Reject missing or invalid mandatory fields
     if sum(cellfun(@(f) isempty(f), model.timing)) > 0
         warning('ID:invalid_input', 'No event onsets specified.'); return;
@@ -188,9 +269,9 @@ if strcmpi(modeltype, 'dcm')
         for iFile = 1:nFile
             sts = pspm_get_timing('events', model.timing{iFile});
             if sts < 1, return; end
-        end  
+        end
     end
-    
+
     % Check optional fields, set default values and reject invalid values
     if ~isfield(model, 'channel')
         model.channel = 'scr'; % this returns the last SCR channel
@@ -223,7 +304,7 @@ end
 % 8. SF-specific check
 % -------------------------------------------------------------------------
 if strcmpi(modeltype, 'sf')
- 
+
     % Reject missing or invalid mandatory fields
     if ~isfield(model, 'timeunits')
         warning('ID:invalid_input', 'No timeunits specified.'); return;
@@ -236,14 +317,14 @@ if strcmpi(modeltype, 'sf')
         warning('ID:number_of_elements_dont_match',...
             'Number of data files and model files does not match.'); return;
     end
-  
+
     % Check optional fields, set default values and reject invalid values
     if ~isfield(model, 'channel')
         model.channel = 'scr'; % this returns the last SCR channel
     elseif ~isnumeric(model.channel) && ~strcmp(model.channel,'scr')
         warning('ID:invalid_input', 'Channel number must be numeric or SCR.'); return;
     end
-    
+
     if ~isfield(model, 'method')
       model.method = {'dcm'};
     elseif ischar(model.method)
