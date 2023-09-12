@@ -12,7 +12,8 @@ This file contains the steps required for finalising a PsPM release. Many items 
 - [ ] Get the manual reviewed
 - [ ] Create manual and dev guide PDFs using `lyx`
 - [ ] Check if underscores and dashes are visible in newly added manual sections
-- [ ] Create git branch
+- [ ] Create new git branch for this release
+- [ ] Merge branch 'develop' into branch 'master' 
 - [ ] Delete temporary files if there are any, like `.asv`.
 - [ ] Create zip of the new branch
 - [ ] Make sure zip doesn't contain any svn related files. As a sanity check, the zip file should be roughly the same size as the previous version zip files (maybe slightly larger but not much)
