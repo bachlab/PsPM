@@ -1,13 +1,15 @@
 function model = pspm_check_model(model, modeltype)
 % ● Definition
-%   pspm_check_model automatically determine the fields of the struct model for the
-%   corresponding function.
+%   pspm_check_model automatically determine the fields of the struct model 
+%   for the corresponding function.
 % ● Format
 %   model = pspm_check_model(model, modeltype)
 % ● Arguments
 %   ┌──────model:
 %   │ ▶︎ mandatory
-%   ├──.datafile: a file name (single session) OR a cell array of file names
+%   ├──.datafile: Values (any of the following)
+%   │               * A file name (single session)
+%   │               * A cell array of file names (multiple sessions)
 %   ├─.modelfile: a file name for the model output
 %   ├─.timeunits:
 %   │ ├─.timeunits (GLM)
@@ -22,37 +24,41 @@ function model = pspm_check_model(model, modeltype)
 %   │ │             * A file name/cell array of events (single session);
 %   │ │             * A cell array of file names/cell arrays.
 %   │ │           Descriptions:
-%   │ │             * When specifying file names, each file must be a *.mat file that
-%   │ │               contain a cell variable called 'events'.
-%   │ │             * Each cell should contain either one column (fixed response) or
-%   │ │               two columns (flexible response).
-%   │ │             * All matrices in the array need to have the same number of rows,
-%   │ │               i.e. the event structure must be the same for every trial. If this
-%   │ │               is not the case, include `dummy` events with negative onsets.
+%   │ │             * When specifying file names, each file must be a *.mat 
+%   │ │               file that contain a cell variable called 'events'.
+%   │ │             * Each cell should contain either one column (fixed 
+%   │ │               response) or two columns (flexible response).
+%   │ │             * All matrices in the array need to have the same 
+%   │ │               number of rows, i.e. the event structure must be the 
+%   │ │               same for every trial. If this is not the case, 
+%   │ │               include `dummy` events with negative onsets.
 %   │ ├─.timing (GLM):
 %   │ │           Acceptable values (any of the following):
 %   │ │             * A multiple condition file name (single session);
 %   │ │             * A cell array of multiple condition file names;
-%   │ │             * A struct (single session) or a cell array of struct (multiple
-%   │ │               sessions), where each struct show have the following fields:
+%   │ │             * A struct (single session) or a cell array of struct 
+%   │ │               (multiple sessions), where each struct show have the 
+%   │ │               following fields:
 %   │ │               * .names (mandatory)
 %   │ │               * .onsets (mandatory)
 %   │ │               * .durations (optional)
 %   │ │               * .pmod (optional)
-%   │ │             * A struct (single session) or a cell array of struct (multiple
-%   │ │               sessions), if model.timeunits is set as 'markervalues', where each
+%   │ │             * A struct (single session) or a cell array of struct 
+%   │ │               (multiple sessions), if model.timeunits is set as 
+%   │ │               'markervalues', where each
 %   │ │               struct show have the following fields:
 %   │ │               * .markervalues
 %   │ │               * .names
 %   │ └─.timing (SF) OR .timeunits == 'whole' (SF)
 %   │             Acceptable values (any of the following):
-%   │               * An SPM style onset file with two following event types:
+%   │               * A SPM style onset file with two following event types:
 %   │                 * onset
 %   │                 * offset (names are ignored)
 %   │               * a .mat file with a variable 'epochs', see below
 %   │               * a two-column text file with on/offsets
-%   │               * e x 2 array of epoch on- and offsets, with e: number of epochs
-%   │                 or cell array of any of these, for multiple files
+%   │               * e x 2 array of epoch on- and offsets, with e: number 
+%   │                 of epochs or cell array of any of these, for multiple 
+%   │                 files.
 %   │ ▶︎ optional
 %   ├───.missing: allows to specify missing (e. g. artefact) epochs in the
 %   │             data file. See pspm_get_timing for epoch definition;
@@ -67,10 +73,10 @@ function model = pspm_check_model(model, modeltype)
 %   │             SPECIAL: if 'pupil' is specified the function uses the
 %   │             last pupil channel returned by
 %   │             <a href="matlab:help pspm_load_data">pspm_load_data</a>.
-%   │             pspm_load_data loads 'pupil' channels according to a specific
-%   │             precedence order described in its documentation. In a nutshell,
-%   │             it prefers preprocessed channels and channels from the best eye
-%   │             to other pupil channels.
+%   │             pspm_load_data loads 'pupil' channels according to a 
+%   │             specific precedence order described in its documentation. 
+%   │             In a nutshell, it prefers preprocessed channels and 
+%   │             channels from the best eye to other pupil channels.
 %   │             SPECIAL: for the modality 'sps', the model.channel
 %   │             accepts only 'sps_l', 'sps_r', or 'sps'.
 %   │             DEFAULT: last channel of the specified modality for GLM;
@@ -99,8 +105,8 @@ function model = pspm_check_model(model, modeltype)
 %   │             event onsets by n seconds (default: 0: used for
 %   │             interpolated data channels)
 %   ├─.modelspec: 'scr' (default); specify the model to be used.
-%   │             See pspm_init, defaults.glm() which modelspecs are possible
-%   │             with glm.
+%   │             See pspm_init, defaults.glm() which modelspecs are 
+%   │             possible with glm.
 %   ├─.nuisance:  allows to specify nuisance regressors. Must be a file
 %   │             name; the file is either a .txt file containing the
 %   │             regressors in columns, or a .mat file containing the
@@ -124,12 +130,12 @@ function model = pspm_check_model(model, modeltype)
 %   │             splitting up into subsessions which get evaluated
 %   │             independently (excluding NaN values).
 %   │             Default: 2.
-%   ├─.constrained: Constrained model for flexible responses which have fixed
-%   │             dispersion (0.3 s SD) but flexible latency.
+%   ├─.constrained: Constrained model for flexible responses which have 
+%   │             fixed dispersion (0.3 s SD) but flexible latency.
 %   │
 %   │ ▶︎ optional, SF (modeltype) only
 %   └─────method: [string/cell_array]
-%                 [string] either 'auc', 'scl', 'dcm', or 'mp', default as 'dcm'
+%                 [string] either 'auc', 'scl', 'dcm' (default), or 'mp'.
 %                 [cell_array] a cell array of methods mentioned above.
 %
 % ● History
