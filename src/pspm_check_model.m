@@ -76,11 +76,11 @@ function model = pspm_check_model(model, modeltype)
 %   │             at the end of the output. In 'free' models the fiel
 %   │             model.window is MANDATORY and single basis functions
 %   │             are allowed only.
-%   ├────.window: a scalar in seconds that specifies over which time
-%   │             window (starting with the events specified in
-%   │             model.timing) the model should be evaluated. Is only
-%   │             required if model.latency equals 'free'. Is ignored
-%   │             otherwise.
+%   ├───.window:  only required if model.latency equals 'free' and ignored
+%   │             otherwise. A scalar or 2-element vector in seconds that 
+%   │             specifies over which time window (relative to the event
+%   │             onsets specified in model.timing) the model should be 
+%   │             evaluated. 
 %   ├────────.bf: basis function/basis set; modality specific default
 %   │             with subfields .fhandle (function handle or string) and
 %   │             .args (arguments, first argument sampling interval will
