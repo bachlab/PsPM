@@ -2,6 +2,8 @@ function model = pspm_check_model(model, modeltype)
 % ● Definition
 %   pspm_check_model automatically determine the fields of the struct model for the
 %   corresponding function.
+% ● Format
+%   model = pspm_check_model(model, modeltype)
 % ● Arguments
 %   ┌─────model:
 %   │ ▶︎ mandatory
@@ -38,13 +40,35 @@ function model = pspm_check_model(model, modeltype)
 %   │             e: number of epochs
 %   │             or cell array of any of these, for multiple files
 %   ├─.timeunits (GLM, SF):
-%   │             one of 'seconds', 'samples', 'markers', 'markervalues'
+%   │             one of 'seconds', 'samples', 'markers', or, for GLM, 
+%   │             'markervalues'
+%   │
 %   │ ▶︎ optional
 %   ├───.missing: allows to specify missing (e. g. artefact) epochs in the
 %   │             data file. See pspm_get_timing for epoch definition;
 %   │             specify a cell array for multiple input files. This
 %   │             must always be specified in SECONDS.
 %   │             Default: no missing values
+%   ├───.channel: channel number (or, for GLM, channel type). 
+%   │             If a channel type is specified the LAST channel matching 
+%   │             the given type will be used. The rationale for this is
+%   │             that, in general channels later in the channel list are 
+%   │             preprocessed/filtered versions of raw channels.            
+%   │             SPECIAL: if 'pupil' is specified the function uses the
+%   │             last pupil channel returned by
+%   │             <a href="matlab:help pspm_load_data">pspm_load_data</a>.
+%   │             pspm_load_data loads 'pupil' channels according to a specific
+%   │             precedence order described in its documentation. In a nutshell,
+%   │             it prefers preprocessed channels and channels from the best eye
+%   │             to other pupil channels.
+%   │             SPECIAL: for the modality 'sps', the model.channel
+%   │             accepts only 'sps_l', 'sps_r', or 'sps'.
+%   │             DEFAULT: last channel of the specified modality for GLM; 
+%   │             'scr' for DCM and SF
+%   ├─────.norm:  normalise data; default 0
+%   ├───.filter:  filter settings; modality specific default
+%   │
+%   │ ▶︎ optional, GLM (modeltype) only
 %   ├───.latency: allows to specify whether latency should be 'fixed'
 %   │             (default) or should be 'free'. In 'free' models an
 %   │             additional dictionary matching algorithm will try to
@@ -52,7 +76,6 @@ function model = pspm_check_model(model, modeltype)
 %   │             at the end of the output. In 'free' models the fiel
 %   │             model.window is MANDATORY and single basis functions
 %   │             are allowed only.
-%   │ ▶︎ optional, GLM (modeltype) only
 %   ├────.window: a scalar in seconds that specifies over which time
 %   │             window (starting with the events specified in
 %   │             model.timing) the model should be evaluated. Is only
@@ -68,22 +91,6 @@ function model = pspm_check_model(model, modeltype)
 %   ├─.modelspec: 'scr' (default); specify the model to be used.
 %   │             See pspm_init, defaults.glm() which modelspecs are possible
 %   │             with glm.
-%   ├───.channel: channel number or channel type. if a channel type is
-%   │             specified the LAST channel matching the given type will
-%   │             be used. The rationale for this is that, in general channels
-%   │             later in the channel list are preprocessed/filtered versions
-%   │             of raw channels.
-%   │             SPECIAL: if 'pupil' is specified the function uses the
-%   │             last pupil channel returned by
-%   │             <a href="matlab:help pspm_load_data">pspm_load_data</a>.
-%   │             pspm_load_data loads 'pupil' channels according to a specific
-%   │             precedence order described in its documentation. In a nutshell,
-%   │             it prefers preprocessed channels and channels from the best eye
-%   │             to other pupil channels.
-%   │             SPECIAL: for the modality 'sps', the model.channel
-%   │             accepts only 'sps_l', 'sps_r', or 'sps'.
-%   │             DEFAULT: last channel of the specified modality
-%   │             (for PSR this is 'pupil')
 %   ├─.nuisance:  allows to specify nuisance regressors. Must be a file
 %   │             name; the file is either a .txt file containing the
 %   │             regressors in columns, or a .mat file containing the
@@ -93,6 +100,30 @@ function model = pspm_check_model(model, modeltype)
 %   └─.centering: if set to 0 the function would not perform the
 %                 mean centering of the convolved X data. For example, to
 %                 invert SPS model, set centering to 0. Default: 1
+%
+%   │ ▶︎ optional, DCM (modeltype) only
+%   ├─.lasttrialcutoff:
+%   │             If there fewer data after the end of then last trial in a
+%   │             session than this cutoff value (in s), then estimated
+%   │             parameters from this trial will be assumed inestimable
+%   │             and set to NaN after the
+%   │             inversion. This value can be set as inf to always retain
+%   │             parameters from the last trial.
+%   │             Default: 7 s
+%   ├─.substhresh:Minimum duration (in seconds) of NaN periods to cause
+%   │             splitting up into subsessions which get evaluated
+%   │             independently (excluding NaN values).
+%   │             Default: 2.
+%   └─.constrained: Constrained model for flexible responses which have fixed
+%                 dispersion (0.3 s SD) but flexible latency.
+%   │
+%   │ ▶︎ optional, DCM (modeltype) only
+%   ├──────────method:  [string/cell_array]
+%   │                   [string] accept 'auc', 'scl', 'dcm', or 'mp', default
+%   │                   as 'dcm'
+%   │                   [cell_array] a cell array of methods mentioned above.
+
+%   
 % ● History
 %   Introduced in PsPM 6.2
 %   Written in 2023 by Dominik Bach (UCL and Bonn)
