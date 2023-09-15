@@ -11,6 +11,11 @@ function model = pspm_check_model(model, modeltype)
 %   │               * A file name (single session)
 %   │               * A cell array of file names (multiple sessions)
 %   ├─.modelfile: a file name for the model output
+%   │ ├─.modelfile (GLM, DCM)
+%   │ │             * A file name
+%   │ └─.modelfile (SF)
+%   │               * A file name (single data file)
+%   │               * A cell array of file names (multiple data files)
 %   ├─.timeunits:
 %   │ ├─.timeunits (GLM)
 %   │ │           Acceptable values:
