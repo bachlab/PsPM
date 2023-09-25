@@ -6,19 +6,23 @@ function model = pspm_check_model(model, modeltype)
 %   model = pspm_check_model(model, modeltype)
 % ● Arguments
 %   ┌──────model:
+%   │
 %   │ ▶︎ mandatory
+%   │
 %   ├──.datafile: Definition:
-%   │               The data files to be processed by corresponding models.
+%   │               The name of the input datafile.
 %   │             Acceptable values (any of the following):
 %   │               * A file name (single session)
 %   │               * A cell array of file names (multiple sessions)
-%   ├─.modelfile: a file name for the model output
+%   ├─.modelfile: Definition:
+%   │ │             The name of the output model file.
 %   │ ├─.modelfile (GLM, DCM)
 %   │ │             * A file name
 %   │ └─.modelfile (SF)
 %   │               * A file name (single data file)
 %   │               * A cell array of file names (multiple data files)
-%   ├─.timeunits:
+%   ├─.timeunits: Definition:
+%   │ │             The time unites used for describing events.
 %   │ ├─.timeunits (GLM)
 %   │ │           Acceptable values:
 %   │ │             'seconds', 'samples', 'markers', or 'markervalues'
@@ -28,7 +32,8 @@ function model = pspm_check_model(model, modeltype)
 %   │ └─.timeunits (DCM, GLM, SF)
 %   │             Acceptable values:
 %   │               'whole'
-%   ├─.timing:
+%   ├─.timing:    Definition:
+%   │ │             The data files that stores onsets and offsets of events.
 %   │ ├─.timing (DCM):
 %   │ │           Acceptable values (any of the following):
 %   │ │             * A file name/cell array of events (single session);
@@ -47,7 +52,7 @@ function model = pspm_check_model(model, modeltype)
 %   │ │             * A multiple condition file name (single session);
 %   │ │             * A cell array of multiple condition file names;
 %   │ │             * A struct (single session) or a cell array of struct
-%   │ │               (multiple sessions), where each struct show have the
+%   │ │               (multiple sessions), where each struct shall have the
 %   │ │               following fields:
 %   │ │               * .names (mandatory)
 %   │ │               * .onsets (mandatory)
@@ -66,15 +71,44 @@ function model = pspm_check_model(model, modeltype)
 %   │ │               * offset (names are ignored)
 %   │ │             * a .mat file with a variable 'epochs', see below
 %   │ │             * a two-column text file with on/offsets
-%   │ │             * e x 2 array of epoch on- and offsets, with e: number
-%   │ │               of epochs or cell array of any of these, for multiple
-%   │ │               files.
+%   │ │             * e x 2 array of epoch on- and offsets,
+%   │ │               * e: number of epochs or cell array of any of these,
+%   │ │                    for multiple files.
 %   │ └─.timing (DCM, GLM, SF):
 %   │             Not used, if and only if .timeunits == 'whole'
+%   │
 %   │ ▶︎ optional
-%   ├───.missing: Descriptions:
+%   │
+%   ├───.channel: Definition:
+%   │               * [DCM, SF] channel number
+%   │               * [GLM] channel type
+%   │             Descriptions:
+%   │               * If a channel type is specified the LAST channel
+%   │                 matching the given type will be used.
+%   │               * The rationale for this is that, in general channels
+%   │                 later in the channel list are preprocessed/filtered
+%   │                 versions of raw channels.
+%   │             Special:
+%   │               * If 'pupil' is specified, the function uses the last
+%   │                 pupil channel returned by
+%   │                 <a href="matlab:help pspm_load_data">pspm_load_data</a>.
+%   │                 pspm_load_data loads 'pupil' channels according to a
+%   │                 specific precedence order described in its documentation.
+%   │                 In a nutshell, it prefers preprocessed channels and
+%   │                 channels from the best eye to other pupil channels.
+%   │               * For the modality 'sps', the .channel accepts
+%   │                 only 'sps_l', 'sps_r', or 'sps'.
+%   │             Defaults:
+%   │               * [DCM, SF] 'scr'
+%   │               * [GLM] last channel of the specified modality
+%   ├───.filter:  Definition:
+%   │               * filter settings;
+%   │             Defaults:
+%   │               * modality specific.
+%   ├───.missing: Definition:
 %   │               * Specification of missing epoch files.
-%   │               * Missing epochs should be specified in seconds.
+%   │             Descriptions:
+%   │               * Missing epochs should be specified in SECONDs.
 %   │               * If no missing data is sorted, leave undefined.
 %   │               * In default, .missing is not defined, which means
 %   │                 there is no missing data
@@ -82,24 +116,11 @@ function model = pspm_check_model(model, modeltype)
 %   │               * The name of a .mat file that stores missing epochs
 %   │               * A cell array of multiple .mat files that store
 %   │                 missing epochs
-%   ├───.channel: channel number (or, for GLM, channel type).
-%   │             If a channel type is specified the LAST channel matching
-%   │             the given type will be used. The rationale for this is
-%   │             that, in general channels later in the channel list are
-%   │             preprocessed/filtered versions of raw channels.
-%   │             SPECIAL: if 'pupil' is specified the function uses the
-%   │             last pupil channel returned by
-%   │             <a href="matlab:help pspm_load_data">pspm_load_data</a>.
-%   │             pspm_load_data loads 'pupil' channels according to a
-%   │             specific precedence order described in its documentation.
-%   │             In a nutshell, it prefers preprocessed channels and
-%   │             channels from the best eye to other pupil channels.
-%   │             SPECIAL: for the modality 'sps', the model.channel
-%   │             accepts only 'sps_l', 'sps_r', or 'sps'.
-%   │             DEFAULT: last channel of the specified modality for GLM;
-%   │             'scr' for DCM and SF
-%   ├─────.norm:  normalise data; default 0
-%   ├───.filter:  filter settings; modality specific default
+%   ├─────.norm:  Definition:
+%   │               * Defines whether to normalise data.
+%   │             Acceptable values:
+%   │               * 0: Not to normalise (default)
+%   │               * 1: To normalise
 %   │
 %   │ ▶︎ optional, GLM (modeltype) only
 %   ├───.latency: allows to specify whether latency should be 'fixed'
