@@ -55,10 +55,7 @@ function varargout = pspm_dcm(model, options)
 %   │             i.e. Data are normalised during inversion but results
 %   │             transformed back into raw data units.
 %   │             Default: 0.
-%   ├.flexevents: flexible events to adjust amplitude priors
-%   ├─.fixevents: fixed events to adjust amplitude priors
-%   └─.constrained:
-%                 Constrained model for flexible responses which have fixed
+%   └─.constrained: Constrained model for flexible responses which have fixed
 %                 dispersion (0.3 s SD) but flexible latency.
 %   ┌────options:
 %   │ ▶︎ Response function
