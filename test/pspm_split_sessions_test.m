@@ -5,22 +5,59 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
   % (C) 2013 Linus Rüttimann (University of Zurich)
   properties
     expected_number_of_files = 3;
-    data_fn = 'datafile';
+    fn_data = 'datafile';
+    fn_missing = 'test_missing';
   end
   properties (TestParameter)
     nsessions = {2,5}
     prefix = {-1,-5,-15}
     suffix = {3,9,12}
     splitpoints = {[2 5 7 9 11],[10 20 33 35 60 80 90 100 111 114 116 120],[]}
+    splitpoints_for_missing = {[2, 6]}
   end
   methods (Test)
+    function test_missing(this, splitpoints_for_missing)
+      n_sess = 10;
+      sess_dist = 10;
+      fn = pspm_find_free_fn(this.fn_data, '.mat');
+      channels{1}.chantype = 'scr';
+      channels{2}.chantype = 'hb';
+      channels{3}.chantype = 'marker';
+      channels{3}.sessions = n_sess;
+      channels{3}.session_distance = sess_dist;
+      channels{3}.variance = 0.05;
+      % 6 minutes data
+      dur = 60*6;
+      data = pspm_testdata_gen(channels, dur, fn);
+      options.splitpoints = splitpoints_for_missing;
+      options.missing = [this.fn_missing,'.mat'];
+
+      % generate artificial missing epoch file
+      epochs = zeros(1,2);
+      epochs(1,1)=3;
+      epochs(1,2)=4;
+      save([this.fn_missing,'.mat'],"epochs")
+      newdatafile = pspm_split_sessions(fn, 3, options);
+      this.verifyTrue(isfile(newdatafile{1}));
+      this.verifyTrue(isfile(newdatafile{2}));
+      this.verifyTrue(isfile(newdatafile{3}));
+      % clear
+      delete([this.fn_data,'.mat']);
+      delete([this.fn_missing,'.mat']);
+      delete(newdatafile{1});
+      delete(newdatafile{2});
+      delete(newdatafile{3});
+      delete([this.fn_missing,'_sn01.mat']);
+      delete([this.fn_missing,'_sn02.mat']);
+      delete([this.fn_missing,'_sn03.mat']);
+    end
     function invalid_input(this)
       this.verifyWarning(@()pspm_split_sessions(), 'ID:invalid_input');
       this.verifyWarning(@()pspm_split_sessions(2), 'ID:invalid_input');
       this.verifyWarning(@()pspm_split_sessions('fn', 'foo'), 'ID:invalid_input');
     end
     function one_datafile(this)
-      fn = 'testdatafile0.mat';
+      fn = [this.fn_data,'.mat'];
       channels{1}.chantype = 'scr';
       channels{2}.chantype = 'hb';
       channels{3}.chantype = 'marker';
@@ -45,7 +82,7 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
       delete(fn);
     end
     function test_dynamic_sessions(this, nsessions)
-      fn = pspm_find_free_fn(this.data_fn, '.mat');
+      fn = pspm_find_free_fn(this.fn_data, '.mat');
       channels{1}.chantype = 'scr';
       channels{2}.chantype = 'hb';
       channels{3}.chantype = 'marker';
@@ -68,7 +105,7 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
       end
     end
     function test_appendices(this, prefix, suffix)
-      fn = pspm_find_free_fn(this.data_fn, '.mat');
+      fn = pspm_find_free_fn(this.fn_data, '.mat');
       channels{1}.chantype = 'scr';
       channels{2}.chantype = 'hb';
       channels{3}.chantype = 'marker';
@@ -101,7 +138,7 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
     function test_splitpoints(this, splitpoints)
       n_sess = 10;
       sess_dist = 10;
-      fn = pspm_find_free_fn(this.data_fn, '.mat');
+      fn = pspm_find_free_fn(this.fn_data, '.mat');
       channels{1}.chantype = 'scr';
       channels{2}.chantype = 'hb';
       channels{3}.chantype = 'marker';
@@ -140,5 +177,6 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
         delete(fn);
       end
     end
+    
   end
 end
