@@ -220,8 +220,10 @@ else
       % add marker channel so that pspm_trim has a reference
       dummydata{2,1}      = indata{markerchannel};
       dummyinfos          = ininfos;
+			trimoptions_missing = trimoptions;
+			trimoptions_missing.marker_chan_num = 2;
       newmissing = pspm_trim(struct('data', {dummydata}, 'infos', dummyinfos), ...
-        options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions);
+        options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions_missing);
       epochs = newmissing.data{1}.data;
       epoch_on = 1 + strfind(epochs.', [0 1]); % Return the start points of the excluded interval
       epoch_off = strfind(epochs.', [1 0]); % Return the end points of the excluded interval
