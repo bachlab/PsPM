@@ -58,7 +58,7 @@ function model = pspm_check_model(model, modeltype)
 %   │             Acceptable values (any of the following):
 %   │               * A SPM style onset file with two following event types:
 %   │                 * onset
-%   │                 * offset (names are ignored)
+%   │                 * offset (other names are ignored)
 %   │               * a .mat file with a variable 'epochs', see below
 %   │               * a two-column text file with on/offsets
 %   │               * e x 2 array of epoch on- and offsets, with e: number
