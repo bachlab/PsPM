@@ -7,7 +7,9 @@ function model = pspm_check_model(model, modeltype)
 % ● Arguments
 %   ┌──────model:
 %   │ ▶︎ mandatory
-%   ├──.datafile: Values (any of the following)
+%   ├──.datafile: Definition:
+%   │               The data files to be processed by corresponding models.
+%   │             Acceptable values (any of the following):
 %   │               * A file name (single session)
 %   │               * A cell array of file names (multiple sessions)
 %   ├─.modelfile: a file name for the model output
@@ -53,8 +55,8 @@ function model = pspm_check_model(model, modeltype)
 %   │ │               * .pmod (optional)
 %   │ │             * A struct (single session) or a cell array of struct
 %   │ │               (multiple sessions), if model.timeunits is set as
-%   │ │               'markervalues', where each
-%   │ │               struct show have the following fields:
+%   │ │               'markervalues', where each struct shall have the
+%   │ │               following fields:
 %   │ │               * .markervalues
 %   │ │               * .names
 %   │ ├─.timing (SF):
@@ -68,13 +70,18 @@ function model = pspm_check_model(model, modeltype)
 %   │ │               of epochs or cell array of any of these, for multiple
 %   │ │               files.
 %   │ └─.timing (DCM, GLM, SF):
-%   │ │           Not used, if and only if .timeunits == 'whole'
+%   │             Not used, if and only if .timeunits == 'whole'
 %   │ ▶︎ optional
-%   ├───.missing: allows to specify missing (e. g. artefact) epochs in the
-%   │             data file. See pspm_get_timing for epoch definition;
-%   │             specify a cell array for multiple input files. This
-%   │             must always be specified in SECONDS.
-%   │             Default: no missing values
+%   ├───.missing: Descriptions:
+%   │               * Specification of missing epoch files.
+%   │               * Missing epochs should be specified in seconds.
+%   │               * If no missing data is sorted, leave undefined.
+%   │               * In default, .missing is not defined, which means
+%   │                 there is no missing data
+%   │             Acceptable values (any of the following):
+%   │               * The name of a .mat file that stores missing epochs
+%   │               * A cell array of multiple .mat files that store
+%   │                 missing epochs
 %   ├───.channel: channel number (or, for GLM, channel type).
 %   │             If a channel type is specified the LAST channel matching
 %   │             the given type will be used. The rationale for this is
@@ -144,7 +151,7 @@ function model = pspm_check_model(model, modeltype)
 %   │             fixed dispersion (0.3 s SD) but flexible latency.
 %   │
 %   │ ▶︎ optional, SF (modeltype) only
-%   └─────method: [string/cell_array]
+%   └────.method: [string/cell_array]
 %                 [string] either 'auc', 'scl', 'dcm' (default), or 'mp'.
 %                 [cell_array] a cell array of methods mentioned above.
 %
@@ -158,7 +165,7 @@ if isempty(settings)
   pspm_init;
 end
 
-%% 1. General checks  ------------------------------------------------------
+%% 1. General checks  -----------------------------------------------------
 if ~isstruct(model)
   warning('ID:invalid_input', 'Model must be a struct.');
   model = struct('invalid', 1);
@@ -171,7 +178,7 @@ else
   end
 end
 
-%% 2. Reject missing mandatory fields common to all models -----------------
+%% 2. Reject missing mandatory fields common to all models ----------------
 if ~isfield(model, 'datafile')
   warning('ID:invalid_input', 'No input data file specified.'); return;
 elseif ~isfield(model, 'modelfile')
