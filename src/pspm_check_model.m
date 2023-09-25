@@ -9,30 +9,27 @@ function model = pspm_check_model(model, modeltype)
 %   │
 %   │ ▶︎ mandatory
 %   │
-%   ├──.datafile: Definition:
+%   ├─.datafile:  Definition:
 %   │               The name of the input datafile.
 %   │             Acceptable values (any of the following):
 %   │               * A file name (single session)
 %   │               * A cell array of file names (multiple sessions)
-%   ├─.modelfile: Definition:
+%   ├.modelfile:  Definition:
 %   │ │             The name of the output model file.
-%   │ ├─.modelfile (GLM, DCM)
+%   │ ├─.modelfile (GLM, DCM):
 %   │ │             * A file name
-%   │ └─.modelfile (SF)
+%   │ └─.modelfile (SF):
 %   │               * A file name (single data file)
 %   │               * A cell array of file names (multiple data files)
-%   ├─.timeunits: Definition:
+%   ├.timeunits:  Definition:
 %   │ │             The time unites used for describing events.
-%   │ ├─.timeunits (GLM)
+%   │ ├─.timeunits (GLM):
 %   │ │           Acceptable values:
 %   │ │             'seconds', 'samples', 'markers', or 'markervalues'
-%   │ ├─.timeunits (SF)
-%   │ │           Acceptable values:
-%   │ │             'seconds', 'samples', or 'markers'
-%   │ └─.timeunits (DCM, GLM, SF)
+%   │ └─.timeunits (SF):
 %   │             Acceptable values:
-%   │               'whole'
-%   ├─.timing:    Definition:
+%   │               'seconds', 'samples', 'markers', or 'whole'
+%   ├─┬─.timing:  Definition:
 %   │ │             The data files that stores onsets and offsets of events.
 %   │ ├─.timing (DCM):
 %   │ │           Acceptable values (any of the following):
@@ -64,22 +61,22 @@ function model = pspm_check_model(model, modeltype)
 %   │ │               following fields:
 %   │ │               * .markervalues
 %   │ │               * .names
-%   │ ├─.timing (SF):
-%   │ │           Acceptable values (any of the following):
-%   │ │             * A SPM style onset file with two following event types:
-%   │ │               * onset
-%   │ │               * offset (names are ignored)
-%   │ │             * a .mat file with a variable 'epochs', see below
-%   │ │             * a two-column text file with on/offsets
-%   │ │             * e x 2 array of epoch on- and offsets,
-%   │ │               * e: number of epochs or cell array of any of these,
-%   │ │                    for multiple files.
-%   │ └─.timing (DCM, GLM, SF):
-%   │             Not used, if and only if .timeunits == 'whole'
+%   │ └─.timing (SF):
+%   │             Acceptable values (any of the following):
+%   │               * A SPM style onset file with two following event types:
+%   │                 * onset
+%   │                 * offset (names are ignored)
+%   │               * a .mat file with a variable 'epochs', see below
+%   │               * a two-column text file with on/offsets
+%   │               * e x 2 array of epoch on- and offsets,
+%   │                 * e: number of epochs or cell array of any of these,
+%   │                      for multiple files.
+%   │             Special:
+%   │               * .timing is not used if and only if .timeunits == 'whole'
 %   │
 %   │ ▶︎ optional
 %   │
-%   ├───.channel: Definition:
+%   ├──.channel:  Definition:
 %   │               * [DCM, SF] channel number
 %   │               * [GLM] channel type
 %   │             Descriptions:
@@ -101,10 +98,6 @@ function model = pspm_check_model(model, modeltype)
 %   │             Defaults:
 %   │               * [DCM, SF] 'scr'
 %   │               * [GLM] last channel of the specified modality
-%   ├───.filter:  Definition:
-%   │               * filter settings;
-%   │             Defaults:
-%   │               * modality specific.
 %   ├───.missing: Definition:
 %   │               * Specification of missing epoch files.
 %   │             Descriptions:
@@ -116,6 +109,10 @@ function model = pspm_check_model(model, modeltype)
 %   │               * The name of a .mat file that stores missing epochs
 %   │               * A cell array of multiple .mat files that store
 %   │                 missing epochs
+%   ├───.filter:  Definition:
+%   │               * filter settings;
+%   │             Defaults:
+%   │               * modality specific.
 %   ├─────.norm:  Definition:
 %   │               * Defines whether to normalise data.
 %   │             Acceptable values:
@@ -123,6 +120,7 @@ function model = pspm_check_model(model, modeltype)
 %   │               * 1: To normalise
 %   │
 %   │ ▶︎ optional, GLM (modeltype) only
+%   │
 %   ├───.latency: allows to specify whether latency should be 'fixed'
 %   │             (default) or should be 'free'. In 'free' models an
 %   │             additional dictionary matching algorithm will try to
@@ -155,23 +153,34 @@ function model = pspm_check_model(model, modeltype)
 %   │             mean centering of the convolved X data. For example, to
 %   │             invert SPS model, set centering to 0. Default: 1
 %   │
-%   │ ▶︎ optional, DCM (modeltype) only
+%   │ ▶︎ optional (DCM only)
+%   │
 %   ├─.lasttrialcutoff:
-%   │             If there fewer data after the end of then last trial in a
-%   │             session than this cutoff value (in s), then estimated
-%   │             parameters from this trial will be assumed inestimable
-%   │             and set to NaN after the
-%   │             inversion. This value can be set as inf to always retain
-%   │             parameters from the last trial.
-%   │             Default: 7 s
-%   ├─.substhresh:Minimum duration (in seconds) of NaN periods to cause
-%   │             splitting up into subsessions which get evaluated
-%   │             independently (excluding NaN values).
-%   │             Default: 2.
+%   │             Definition:
+%   │               * Cutoff value for filtering last trials, in seconds
+%   │             Definition:
+%   │               * If there fewer data after the end of then last trial
+%   │                 in a session than this cutoff value, the estimated
+%   │                 parameters from this trial will be assumed
+%   │                 inestimable and set to NaN after the inversion
+%   │               * This value can be set as inf to always retain
+%   │                 parameters from the last trial.
+%   │             Default:
+%   │               * 7 seconds
+%   ├─.substhresh:
+%   │             Definition:
+%   │               * Thresholds for subsessions, in seconds
+%   │             Definition:
+%   │               * Minimum duration of NaN periods to cause splitting
+%   │                 up into subsessions which get evaluated independently
+%   │                 (excluding NaN values).
+%   │             Default:
+%   │               * 2 seconds
 %   ├─.constrained: Constrained model for flexible responses which have
 %   │             fixed dispersion (0.3 s SD) but flexible latency.
 %   │
-%   │ ▶︎ optional, SF (modeltype) only
+%   │ ▶︎ optional (SF only)
+%   │
 %   └────.method: [string/cell_array]
 %                 [string] either 'auc', 'scl', 'dcm' (default), or 'mp'.
 %                 [cell_array] a cell array of methods mentioned above.
@@ -180,7 +189,7 @@ function model = pspm_check_model(model, modeltype)
 %   Introduced in PsPM 6.2
 %   Written in 2023 by Dominik Bach (UCL and Bonn)
 
-% 0. Initialise
+%% 0. Initialise
 global settings
 if isempty(settings)
   pspm_init;
