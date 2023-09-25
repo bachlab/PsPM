@@ -22,7 +22,7 @@ function model = pspm_check_model(model, modeltype)
 %   │ │             'seconds', 'samples', 'markers', or 'markervalues'
 %   │ └─.timeunits (SF)
 %   │             Acceptable values:
-%   │               'seconds', 'samples', or 'markers'
+%   │               'seconds', 'samples', 'markers', or 'whole'
 %   ├─.timing:
 %   │ ├─.timing (DCM):
 %   │ │           Acceptable values (any of the following):
@@ -54,7 +54,7 @@ function model = pspm_check_model(model, modeltype)
 %   │ │               struct show have the following fields:
 %   │ │               * .markervalues
 %   │ │               * .names
-%   │ └─.timing (SF) OR .timeunits == 'whole' (SF)
+%   │ └─.timing (SF) (ignored if .timeunits == 'whole' (SF)):
 %   │             Acceptable values (any of the following):
 %   │               * A SPM style onset file with two following event types:
 %   │                 * onset
@@ -91,10 +91,10 @@ function model = pspm_check_model(model, modeltype)
 %   │
 %   │ ▶︎ optional, GLM (modeltype) only
 %   ├───.latency: allows to specify whether latency should be 'fixed'
-%   │             (default) or should be 'free'. In 'free' models an
+%   │             (default) or should be 'free'. In 'free' models, an
 %   │             additional dictionary matching algorithm will try to
 %   │             estimate the best latency. Latencies will then be added
-%   │             at the end of the output. In 'free' models the fiel
+%   │             at the end of the output. In 'free' models the field
 %   │             model.window is MANDATORY and single basis functions
 %   │             are allowed only.
 %   ├───.window:  only required if model.latency equals 'free' and ignored
