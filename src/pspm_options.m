@@ -5,7 +5,7 @@ function options = pspm_options(options, FunName)
 % ● Arguments
 %   options:  a struct to be filled by the function
 %   FunName:  a string, the name of the function where option is used
-% ● Copyright
+% ● History
 %   Introduced in PsPM 6.1
 %   Written in 2022 by Teddy Chao (UCL)
 
