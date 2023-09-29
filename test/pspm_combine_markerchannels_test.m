@@ -27,7 +27,7 @@ classdef pspm_combine_markerchannels_test < matlab.unittest.TestCase
       this.verifyTrue(sts_out == 1, 'the processed file couldn''t be loaded');
       this.verifyTrue(fstruct.numofchan == numel(channels)+1, 'the output has a different size');
 
-      % test defaultly combining all marker channels
+      % test combining all marker channels and replacing the original
       sts = pspm_combine_markerchannels(fn, struct('channel_action', 'replace'));
       this.verifyTrue(sts == 1, 'the function run successfully');
       [sts_out, ~, ~, fstruct] = pspm_load_data(fn, 'none');
