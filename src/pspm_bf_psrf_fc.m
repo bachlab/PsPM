@@ -4,10 +4,10 @@ function [bs, x] = pspm_bf_psrf_fc(varargin)
 %   [bs, x] = pspm_bf_psrf_fc(TD, cs, cs_d, us, us_shift)
 %   [bs, x] = pspm_bf_psrf_fc([TD, cs, cs_d, us, us_shift])
 % ● Arguments
-%   td: time resolution in second
-%   cs: include CS-evoked response in the basis set (0 or 1, default 1)
-%   cs_d: include derivative of CS-evoked response in the basis set (0 or 1, default 0)
-%   us: include US-evoked response in the basis set (0 or 1, default 0)
+%   td:       time resolution in second
+%   cs:       include CS-evoked response in the basis set (0 or 1, default 1)
+%   cs_d:     include derivative of CS-evoked response in the basis set (0 or 1, default 0)
+%   us:       include US-evoked response in the basis set (0 or 1, default 0)
 %   us_shift: CS-US SOA in seconds. Ignored if us == 0 (default: 3.5)
 % ● Reference
 %   Christoph W. Korn, Matthias Staib, Athina Tzovara, Giuseppe Castegnetti,
