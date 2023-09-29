@@ -55,7 +55,7 @@ classdef pspm_dcm_test < pspm_testcase
       % invalid timing
       wrong_model = correct_model;
       wrong_model.timing = {};
-      this.verifyWarning(@() pspm_dcm(wrong_model), 'ID:invalid_input');
+      this.verifyWarning(@() pspm_dcm(wrong_model), 'ID:number_of_elements_dont_match');
       % model settings
       % invalid filter
       wrong_model = correct_model;

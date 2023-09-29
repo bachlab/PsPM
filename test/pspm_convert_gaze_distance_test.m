@@ -30,7 +30,7 @@ classdef pspm_convert_gaze_distance_test < matlab.unittest.TestCase
       import{end + 1}.type = 'gaze_x_l';
       import{end + 1}.type = 'gaze_y_l';
       import{end + 1}.type = 'marker';
-      options.overwrite = true;
+      options = struct();
       this.fn = pspm_import(this.raw_input_filename, 'eyelink', import, options);
       this.fn = this.fn{1};
     end
