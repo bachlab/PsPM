@@ -18,7 +18,7 @@ datafile.num     = [1 1];
 datafile.help    = {['Specify the PsPM datafile containing the channels ', ...
   'to be converted.'],' ',settings.datafilehelp};
 
-% Overwrite File
+% Channel action
 channel_action         = cfg_menu;
 channel_action.name    = 'Channel Action';
 channel_action.tag     = 'channel_action';
@@ -30,11 +30,32 @@ channel_action.help    = {['Specify whether the new channel should be added ',..
                           'all existing marker channels should be deleted ',...
                           'and replaced with the one new channel (replace).']};
 
+% Specific marker channel
+marker_chan_num         = cfg_entry;
+marker_chan_num.name    = 'Marker channel number';
+marker_chan_num.tag     = 'marker_chan_num';
+marker_chan_num.strtype = 'i';
+marker_chan_num.num     = [1 1];
+marker_chan_num.help    = {['Choose any number of marker channel numbers ',...
+                           'to combine. If undefined or 0, all marker ',...
+                           'channels of each file are combined.']};
+
+% Marker chan
+marker_chan         = cfg_menu;
+marker_chan.name    = 'Marker channels';
+marker_chan.tag     = 'marker_chan_num';
+marker_chan.val     = {0};
+marker_chan.labels  = {'All', 'Specific channels'};
+marker_chan.values  = {0, marker_chan_num};
+marker_chan.help    = {['Choose any number of marker channel numbers ',...
+                           'to combine. If undefined or 0, all marker ',...
+                           'channels of each file are combined.']};
+
 %% Executable branch
 combine_markerchannels        = cfg_exbranch;
 combine_markerchannels.name   = 'Combine marker channels';
 combine_markerchannels.tag    = 'combine_markerchannels';
-combine_markerchannels.val    = {datafile, channel_action};
+combine_markerchannels.val    = {datafile, channel_action, marker_chan};
 combine_markerchannels.prog   = @pspm_cfg_run_combine_markerchannels;
 combine_markerchannels.help   = {['The feature combine marker channels ',...
   'can combine all the marker channels of a data file and add the ',...
