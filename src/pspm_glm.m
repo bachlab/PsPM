@@ -604,6 +604,10 @@ for iCond = 1:numel(names)
   % first process event onset, then pmod
   tmp.onsets = onsets{iCond};
   tmp.durations = durations{iCond};
+  if sum(tmp.durations) > 0 && ~strcmpi(model.modality, 'sps')
+      warning(sprintf('Non-zero durations in condition %s detected. This is discouraged for modality %s.', ...
+          names{iCond}, model.modality));
+  end
   % if file starts with first event, set that onset to 1 instead of 0
   if any(tmp.onsets == 0)
     tmp.onsets(tmp.onsets == 0) = 1;
