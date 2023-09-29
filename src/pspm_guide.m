@@ -170,6 +170,8 @@ function tools_list_callback(hObject, ~, ~)
       pspm_data_editor();
     case 12
       cfg_add_module('pspm.tools.convert_data');
+    case 13
+      cfg_add_module('pspm.tools.combine_markerchannels');
   end
 function tools_list_create_function(hObject, ~, ~)
   if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
