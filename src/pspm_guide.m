@@ -87,6 +87,8 @@ function data_preparation_list_callback(hObject, ~, ~)
       cfg_add_module('pspm.prep.import');
     case 2
       cfg_add_module('pspm.prep.trim');
+    case 3
+      cfg_add_module('pspm.prep.combine_markerchannels');
   end
 function data_preparation_list_create_function(hObject, ~, ~)
   % Hint: popupmenu controls usually have a white background on Windows.

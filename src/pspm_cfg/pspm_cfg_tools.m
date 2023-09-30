@@ -1,10 +1,4 @@
 function cfg = pspm_cfg_tools
-
-% $Id$
-% $Rev$
-
-
-%% Preparation
 cfg        = cfg_repeat;
 cfg.name   = 'Tools';
 cfg.tag    = 'tools';
