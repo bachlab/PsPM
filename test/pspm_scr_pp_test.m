@@ -23,10 +23,11 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
     function scr_pp_test(this)
       channels{1}.chantype = 'scr';
       scr_pp_test_template(this, channels)
-      % channels{1}.chantype = 'hb';
-      % channels{2}.chantype = 'scr';
-      % scr_pp_test_template(this, channels)
-
+      scr_pp_test_missing(this, channels)
+      channels{2}.chantype = 'hb';
+      channels{3}.chantype = 'scr';
+      scr_pp_test_template(this, channels)
+      scr_pp_test_missing(this, channels)
       % Delete testdata
       if exist(this.fn, 'file')
         delete(this.fn);
@@ -84,14 +85,14 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
       options5 = struct('missing_epochs_filename', 'test_missing.mat', ...
         'deflection_threshold', 0, ...
         'expand_epochs', 0, ...
-        'channel_action', 'replace');
+        'channel_action', 'add');
       % Verifying the situation with missing epochs filename option without
       % saving to datafile
       pspm_testdata_gen(channels, this.duration, this.fn);
       [~, out] = pspm_scr_pp(this.fn, options4);
       [sts_out, ~, ~, fstruct_out] = pspm_load_data(out{1}, 'none');
       this.verifyTrue(sts_out == 1, 'the returned file couldn''t be loaded');
-      this.verifyTrue(fstruct_out.numofchan == numel(channels)+1, 'output has a different size');
+      this.verifyTrue(fstruct_out.numofchan == numel(channels), 'output has a different size');
       sts_out = exist('test_missing.mat', 'file');
       this.verifyTrue(sts_out > 0, 'missing epoch file was not saved');
       delete('test_missing.mat');
@@ -109,7 +110,6 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
       % this.verifyError(@()load('missing_epochs_test_out'), 'MATLAB:load:couldNotReadFile');
       % Delete testdata
       delete(this.fn);
-      delete('test_missing.mat');
     end
   end
 end

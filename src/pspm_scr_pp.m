@@ -185,7 +185,7 @@ for d = 1:numel(data_source)
     epochs = [];
   end
   %% Save data
-  if isfield(options, 'missing_epochs_filename')
+  if ~isempty(options.missing_epochs_filename)
     save(options.missing_epochs_filename, 'epochs');
     % Write epochs to mat if missing_epochs_filename option is present
   else
