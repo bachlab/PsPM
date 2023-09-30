@@ -40,18 +40,20 @@ for i=1:4
     psrf_fc{i}.tag    = ['psrf_fc' num2str(i-1)];
     psrf_fc{i}.val    = {i-1};
 end
-psrf_fc{1}.help   = {'PSRF_FC CS only and without derivatives.'};
-psrf_fc{2}.help   = {'PSRF_FC CS and derivatives for CS (default).'};
-psrf_fc{3}.help    = {'PSRF_FC with CS and US. Without derivatives.'};
-psrf_fc{4}.help    = {'PSRF_FC with US only and without derivatives.'};
+psrf_fc{1}.help   = {'PSRF_FC: CS-evoked response only and without derivatives.'};
+psrf_fc{2}.help   = {'PSRF_FC: CS-evoked response and time derivative (default).'};
+psrf_fc{3}.help    = {['PSRF_FC: CS- and US-evoked response (3.5 s SOA) without derivatives. ', ... 
+    'For other SOAs, specify the basis function outside the GUI.']};
+psrf_fc{4}.help    = {['PSRF_FC: US-evoked response only (3.5 s SOA) and without derivatives. ', ...
+    'For other SOAs, specify the basis function outside the GUI. Specify CS onset rather than US onset in your timings.']};
 
 % add erlang response function
 psrf_fc{5} = cfg_const;
 psrf_fc{5}.name = 'PSRF_ERL';
 psrf_fc{5}.tag = 'psrf_erl';
 psrf_fc{5}.val = {4};
-psrf_fc{5}.help = {'PSRF_ERL use a Erlang response funcation according to', ...
-    ['Hoeks, B., & Levelt, W.J.M. (1993). Pupillary Dilation as a Measure ', ...
+psrf_fc{5}.help = {['PSRF_ERL use a Erlang response funcation according to', ...
+    'Hoeks, B., & Levelt, W.J.M. (1993). Pupillary Dilation as a Measure ', ...
     'of Attention - a Quantitative System-Analysis. Behavior Research ', ...
     'Methods Instruments & Computers, 25, 16-26.']};
 
@@ -61,7 +63,8 @@ bf.tag    = 'bf';
 bf.val    = {psrf_fc{2}};
 bf.values = {psrf_fc{:}};
 bf.help   = {['Basis functions. Standard is to use a canonical pupil size response function ' ...
-    ' for fear conditioning (PSRF_FC) with time derivative for later reconstruction of the response peak.']};
+    'for fear conditioning (PSRF_FC) with time derivative for later reconstruction of the response peak. ', ...
+    'For help on the options, click on the basis function in the window above.']};
 
 % look for bf and replace
 b = cellfun(@(f) strcmpi(f.tag, 'bf'), glm_ps_fc.val);
