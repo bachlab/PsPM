@@ -27,10 +27,11 @@ function varargout = pspm_split_sessions(datafile, markerchannel, options)
 %   │                   Defines how long data before start trim point should
 %   │                   also be included. First marker will be at
 %   │                   t = options.prefix.
-%   ├─────────.suffix:  [numeric, unit:second, default:0]
+%   ├─────────.suffix:  [positive numeric, unit:second, default: mean marker distance in the file]
 %   │                   Defines how long data after the end trim point should be
 %   │                   included. Last marker will be at t = duration (of
-%   │                   session) - options.suffix.
+%   │                   session) - options.suffix. If options.suffix == 0,
+%   │                   it will be set to the mean marker distance.
 %   ├───────.randomITI: [default:0]
 %   │                   Tell the function to use all the markers to evaluate
 %   │                   the mean distance between them.
