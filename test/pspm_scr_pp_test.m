@@ -1,8 +1,8 @@
 classdef pspm_scr_pp_test < matlab.unittest.TestCase
   % ● Description
-  % unittest class for pspm_scr_pp
-  % ● Authorship
-  % 2021 Teddy Chao (UCL)
+  %   Unittest class for the pspm_scr_pp function
+  % ● History
+  %   Written in 2021 by Teddy Chao
   properties(Constant)
     fn = 'scr_pp_test.mat';
     duration = 10;

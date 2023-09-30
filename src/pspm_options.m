@@ -509,6 +509,10 @@ switch FunName
           return
       end
     end
+    case 'combine_markerchannels'
+        % 2.48 pspm_combine_markerchannels
+        options = autofill(options, 'marker_chan_num',        'marker',   '*Int*Char'       );
+        options = autofill_channel_action(options);
 end
 return
 
