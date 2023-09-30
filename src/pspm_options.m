@@ -5,7 +5,7 @@ function options = pspm_options(options, FunName)
 % ● Arguments
 %   options:  a struct to be filled by the function
 %   FunName:  a string, the name of the function where option is used
-% ● Copyright
+% ● History
 %   Introduced in PsPM 6.1
 %   Written in 2022 by Teddy Chao (UCL)
 
@@ -510,6 +510,10 @@ switch FunName
           return
       end
     end
+    case 'combine_markerchannels'
+        % 2.48 pspm_combine_markerchannels
+        options = autofill(options, 'marker_chan_num',        'marker',   '*Int*Char'       );
+        options = autofill_channel_action(options);
 end
 return
 

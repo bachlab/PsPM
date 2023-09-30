@@ -40,16 +40,13 @@ classdef pspm_load_data_ui_test < matlab.unittest.TestCase
   methods (Test)
     % overwrite option
     function overwrite_option_test(testCase)
-      %             fn2 = 'testdatafile89846556.mat';
-      %
-      %             chan = 0;
-      %             [sts, infos, data] = pspm_load_data(scr_load_data_test.fn, chan); % load
-      %             save.data = data;
-      %             save.infos = infos;
-      %             save.options.overwrite = 1;
-      %
-      %             if exist(fn2), delete(fn2); end;
-      %             sts = pspm_load_data(fn2, save);
+      fn2 = 'testdata_load_data_ui.mat';
+      chan = 0;
+      [sts, infos, data] = pspm_load_data(scr_load_data_test.fn, chan); % load
+      save.data = data;
+      save.infos = infos;
+      if exist(fn2), delete(fn2); end;
+      sts = pspm_load_data(fn2, save);
     end
   end
 end
