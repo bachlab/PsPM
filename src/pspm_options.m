@@ -402,10 +402,11 @@ switch FunName
         options.invalid = 1;
         return
       end
-    end
-    if options.change_data == 0 && ~isempty(options.missing_epochs_filename)
-      warning('This procedure leads to no output, according to the selected options.');
-      options.invalid = 1;
+    else
+      if options.change_data == 0
+        warning('This procedure leads to no output, according to the selected options.');
+        options.invalid = 1;
+      end
     end
   case 'segment_mean'
     % 2.41 pspm_segment_mean --
