@@ -86,6 +86,7 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
         'deflection_threshold', 0, ...
         'expand_epochs', 0, ...
         'channel_action', 'add');
+      options6 = struct('change_data', 0);
       % Verifying the situation with missing epochs filename option without
       % saving to datafile
       pspm_testdata_gen(channels, this.duration, this.fn);
@@ -106,8 +107,9 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
       sts_out = exist('test_missing.mat', 'file');
       this.verifyTrue(sts_out > 0, 'missing epoch file was not saved');
       delete('test_missing.mat');
-      % test no file exists when not provided
-      % this.verifyError(@()load('missing_epochs_test_out'), 'MATLAB:load:couldNotReadFile');
+      % test no output files are allowed
+      pspm_testdata_gen(channels, this.duration, this.fn);
+      this.verifyWarning(@()pspm_scr_pp(this.fn, options6), 'ID:invalid_input');
       % Delete testdata
       delete(this.fn);
     end
