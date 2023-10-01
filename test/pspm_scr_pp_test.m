@@ -23,10 +23,11 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
     function scr_pp_test(this)
       channels{1}.chantype = 'scr';
       scr_pp_test_template(this, channels)
-      % channels{1}.chantype = 'hb';
-      % channels{2}.chantype = 'scr';
-      % scr_pp_test_template(this, channels)
-
+      scr_pp_test_missing(this, channels)
+      channels{2}.chantype = 'hb';
+      channels{3}.chantype = 'scr';
+      scr_pp_test_template(this, channels)
+      scr_pp_test_missing(this, channels)
       % Delete testdata
       if exist(this.fn, 'file')
         delete(this.fn);
@@ -50,13 +51,6 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
         'channel', 'scr', ...
         'expand_epochs', 0, ...
         'channel_action', 'withdraw');
-      options4 = struct('missing_epochs_filename', 'test_missing.mat', ...
-        'deflection_threshold', 0, ...
-        'expand_epochs', 0);
-      options5 = struct('missing_epochs_filename', 'test_missing.mat', ...
-        'deflection_threshold', 0, ...
-        'expand_epochs', 0, ...
-        'channel_action', 'replace');
       pspm_testdata_gen(channels, this.duration, this.fn); % generate testdata
       [sts, ~, ~, filestruct] = pspm_load_data(this.fn, 'none');
       this.verifyTrue(sts == 1, 'the returned file couldn''t be loaded');
@@ -83,13 +77,23 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
       [sts_out, ~, ~, fstruct_out] = pspm_load_data(out{1}, 'none');
       this.verifyTrue(sts_out == 1, 'the returned file couldn''t be loaded');
       this.verifyTrue(fstruct_out.numofchan == numel(channels), 'output was saved unexpectedly');
+    end
+    function scr_pp_test_missing(this, channels)
+      options4 = struct('missing_epochs_filename', 'test_missing.mat', ...
+        'deflection_threshold', 0, ...
+        'expand_epochs', 0);
+      options5 = struct('missing_epochs_filename', 'test_missing.mat', ...
+        'deflection_threshold', 0, ...
+        'expand_epochs', 0, ...
+        'channel_action', 'add');
+      options6 = struct('change_data', 0);
       % Verifying the situation with missing epochs filename option without
       % saving to datafile
       pspm_testdata_gen(channels, this.duration, this.fn);
       [~, out] = pspm_scr_pp(this.fn, options4);
       [sts_out, ~, ~, fstruct_out] = pspm_load_data(out{1}, 'none');
       this.verifyTrue(sts_out == 1, 'the returned file couldn''t be loaded');
-      this.verifyTrue(fstruct_out.numofchan == numel(channels)+1, 'output has a different size');
+      this.verifyTrue(fstruct_out.numofchan == numel(channels), 'output has a different size');
       sts_out = exist('test_missing.mat', 'file');
       this.verifyTrue(sts_out > 0, 'missing epoch file was not saved');
       delete('test_missing.mat');
@@ -103,11 +107,11 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
       sts_out = exist('test_missing.mat', 'file');
       this.verifyTrue(sts_out > 0, 'missing epoch file was not saved');
       delete('test_missing.mat');
-      % test no file exists when not provided
-      % this.verifyError(@()load('missing_epochs_test_out'), 'MATLAB:load:couldNotReadFile');
+      % test no output files are allowed
+      pspm_testdata_gen(channels, this.duration, this.fn);
+      this.verifyWarning(@()pspm_scr_pp(this.fn, options6), 'ID:invalid_input');
       % Delete testdata
       delete(this.fn);
-      delete('test_missing.mat');
     end
   end
 end
