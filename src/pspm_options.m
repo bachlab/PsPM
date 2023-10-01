@@ -560,58 +560,58 @@ switch nargin
     if ~isfield(options, field_name)
       options.(field_name) = default_value;
     else
-%       if ~strcmp(class(default_value),class(options.(field_name)))
-%         if (isnumeric(default_value) && islogical(options.(field_name))) || ...
-%             (islogical(default_value) && isnumeric(options.(field_name)))
-%           flag_is_allowed_value = 1;
-%         else
-%           flag_is_allowed_value = 0;
-%         end
-%       else
-        switch class(optional_value)
-          case 'double'
-            if length(default_value) ~= length(options.(field_name))
-              flag_is_allowed_value = 0;
-            else
-              allowed_value = [optional_value, default_value];
-              truetable = options.(field_name) == allowed_value;
-              flag_is_allowed_value = any(sum(truetable,2));
+      %       if ~strcmp(class(default_value),class(options.(field_name)))
+      %         if (isnumeric(default_value) && islogical(options.(field_name))) || ...
+      %             (islogical(default_value) && isnumeric(options.(field_name)))
+      %           flag_is_allowed_value = 1;
+      %         else
+      %           flag_is_allowed_value = 0;
+      %         end
+      %       else
+      switch class(optional_value)
+        case 'double'
+          if length(default_value) ~= length(options.(field_name))
+            flag_is_allowed_value = 0;
+          else
+            allowed_value = [optional_value, default_value];
+            truetable = options.(field_name) == allowed_value;
+            flag_is_allowed_value = any(sum(truetable,2));
+          end
+        case 'char'
+          if strcmp(optional_value, '*')
+            flag_is_allowed_value = 1;
+          elseif contains(optional_value, '*')
+            if contains(optional_value, '*Char')
+              flag_is_allowed_value = flag_is_allowed_value || ischar(options.(field_name));
             end
-          case 'char'
-            if strcmp(optional_value, '*')
-              flag_is_allowed_value = 1;
-            elseif contains(optional_value, '*')
-              if contains(optional_value, '*Char')
-                flag_is_allowed_value = flag_is_allowed_value || ischar(options.(field_name));
-              end
-              if contains(optional_value, '*Num')
-                flag_is_allowed_value = flag_is_allowed_value || isnumeric(options.(field_name));
-              end
-              if contains(optional_value, '*Cell')
-                flag_is_allowed_value = flag_is_allowed_value || iscell(options.(field_name));
-              end
-              if contains(optional_value, '*Int')
-                flag_is_allowed_value = flag_is_allowed_value || ...
-                  all([isnumeric(options.(field_name)), ...
-                  options.(field_name)>=0, ...
-                  mod(options.(field_name), 1)==0]);
-              end
-              if contains(optional_value, '*Struct')
-                flag_is_allowed_value = flag_is_allowed_value || isstruct(options.(field_name));
-              end
-              if contains(optional_value, '*Subset')
-                flag_is_allowed_value = ...
-                  flag_is_allowed_value || prod(ismember(options.datatype,default_value),'all');
-              end
-            else
-              allowed_value = {optional_value, default_value};
-              flag_is_allowed_value = strcmp(options.(field_name), allowed_value);
+            if contains(optional_value, '*Num')
+              flag_is_allowed_value = flag_is_allowed_value || isnumeric(options.(field_name));
             end
-          case 'cell'
-            allowed_value = optional_value;
-            allowed_value{end+1} = default_value;
-            flag_is_allowed_value = any(strcmp(options.(field_name), allowed_value));
-        end
+            if contains(optional_value, '*Cell')
+              flag_is_allowed_value = flag_is_allowed_value || iscell(options.(field_name));
+            end
+            if contains(optional_value, '*Int')
+              flag_is_allowed_value = flag_is_allowed_value || ...
+                all([isnumeric(options.(field_name)), ...
+                options.(field_name)>=0, ...
+                mod(options.(field_name), 1)==0]);
+            end
+            if contains(optional_value, '*Struct')
+              flag_is_allowed_value = flag_is_allowed_value || isstruct(options.(field_name));
+            end
+            if contains(optional_value, '*Subset')
+              flag_is_allowed_value = ...
+                flag_is_allowed_value || prod(ismember(options.datatype,default_value),'all');
+            end
+          else
+            allowed_value = {optional_value, default_value};
+            flag_is_allowed_value = strcmp(options.(field_name), allowed_value);
+          end
+        case 'cell'
+          allowed_value = optional_value;
+          allowed_value{end+1} = default_value;
+          flag_is_allowed_value = any(strcmp(options.(field_name), allowed_value));
+      end
       if ~flag_is_allowed_value
         allowed_values_message = generate_allowed_values_message(default_value, optional_value);
         warning('ID:invalid_input', ['options.', field_name, ' has an invalid value. ',...
