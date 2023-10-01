@@ -392,23 +392,22 @@ switch FunName
     options = autofill(options, 'expand_epochs',          0.5,        '>=', 0           );
     options = autofill(options, 'max',                    60,         '>', 0            );
     options = autofill(options, 'min',                    0.05,       '>', 0            );
-    options = autofill(options, 'missing_epochs_filename','',         '*Char'           );
+    options = autofill(options, 'missing_epochs_filename','missing_epochs_filename',...
+                                                                      '*Char'           );
     options = autofill(options, 'slope',                  10,         '*Num'            );
-    if ~isempty(options.missing_epochs_filename)
-       [pth, ~, ~] = fileparts(options.missing_epochs_filename);
-       if ~isempty(pth) && exist(pth,'dir')~=7
-         warning('ID:invalid_input',...
-           'Please specify a valid output directory if you want to save missing epochs.');
-         options.invalid = 1;
-         return
-       end
-     else
-       if options.change_data == 0
-         warning('ID:invalid_input',...
-         'This procedure leads to no output, according to the selected options.');
-         options.invalid = 1;
-       end
-     end
+    if isfield(options, 'missing_epochs_filename')
+      [pth, ~, ~] = fileparts(options.missing_epochs_filename);
+      if ~isempty(pth) && exist(pth,'dir')~=7
+        warning('ID:invalid_input',...
+          'Please specify a valid output directory if you want to save missing epochs.');
+        options.invalid = 1;
+        return
+      end
+    end
+    if options.change_data == 0 && ~isfield(options, 'missing_epochs_filename')
+      warning('This procedure leads to no output, according to the selected options.');
+      options.invalid = 1;
+    end
   case 'segment_mean'
     % 2.41 pspm_segment_mean --
     options = autofill(options, 'adjust_method',          'none',     {'downsample', ...

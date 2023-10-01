@@ -185,19 +185,18 @@ for d = 1:numel(data_source)
     epochs = [];
   end
   %% Save data
-  if ~isempty(options.missing_epochs_filename)
+  if isfield(options, 'missing_epochs_filename')
     save(options.missing_epochs_filename, 'epochs');
     % Write epochs to mat if missing_epochs_filename option is present
-  else
-    % If not save epochs, save the changed data to the original data as
-    % a new channel or replace the old data
-    if ~strcmp(options.channel_action, 'withdraw')
-      data_to_write = indatas{1,1};
-      data_to_write.data = data_changed;
-      [sts_write, ~] = pspm_write_channel(out{d}, data_to_write, options.channel_action);
-      if sts_write == -1
-        warning('Epochs were not written to the original file successfully.');
-      end
+  end
+  % If not save epochs, save the changed data to the original data as
+  % a new channel or replace the old data
+  if ~strcmp(options.channel_action, 'withdraw')
+    data_to_write = indatas{1,1};
+    data_to_write.data = data_changed;
+    [sts_write, ~] = pspm_write_channel(out{d}, data_to_write, options.channel_action);
+    if sts_write == -1
+      warning('Epochs were not written to the original file successfully.');
     end
   end
 end
