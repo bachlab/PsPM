@@ -5,8 +5,8 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
   % (C) 2013 Linus Rüttimann (University of Zurich)
   properties
     expected_number_of_files = 3;
-    fn_data = 'datafile';
-    fn_missing = 'test_missing';
+    fn_data = 'split_sessions_datafile';
+    fn_missing = 'split_sessions_missing';
   end
   properties (TestParameter)
     nsessions = {2,5}
@@ -42,6 +42,7 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
       this.verifyTrue(isfile(newdatafile{2}));
       this.verifyTrue(isfile(newdatafile{3}));
       % clear
+      delete(fn)
       delete([this.fn_data,'.mat']);
       delete([this.fn_missing,'.mat']);
       delete(newdatafile{1});
