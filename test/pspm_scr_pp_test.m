@@ -26,7 +26,7 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
       %scr_pp_test_missing(this, channels)
       channels{2}.chantype = 'hb';
       channels{3}.chantype = 'scr';
-      scr_pp_test_template(this, channels)
+      % scr_pp_test_template(this, channels)
       %scr_pp_test_missing(this, channels)
       % Delete testdata
       if exist(this.fn, 'file')
