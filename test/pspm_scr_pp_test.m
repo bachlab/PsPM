@@ -63,6 +63,7 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
       [sts_out, ~, ~, fstruct_out] = pspm_load_data(out{1}, 'none');
       this.verifyTrue(sts_out == 1, 'the returned file couldn''t be loaded');
       this.verifyTrue(fstruct_out.numofchan == numel(channels)+1, 'the output has the same size');
+      delete(this.fn)
       % Verifying the situation without no missing epochs filename option
       % and replace the data in the file
       pspm_testdata_gen(channels, this.duration, this.fn);
@@ -70,6 +71,7 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
       [sts_out, ~, ~, fstruct_out] = pspm_load_data(out{1}, 'none');
       this.verifyTrue(sts_out == 1, 'the returned file couldn''t be loaded');
       this.verifyTrue(fstruct_out.numofchan == numel(channels), 'the output has a different size');
+      delete(this.fn)
       % Verifying the situation without no missing epochs filename option
       % and withdraw the data in the file
       pspm_testdata_gen(channels, this.duration, this.fn);
@@ -77,6 +79,7 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
       [sts_out, ~, ~, fstruct_out] = pspm_load_data(out{1}, 'none');
       this.verifyTrue(sts_out == 1, 'the returned file couldn''t be loaded');
       this.verifyTrue(fstruct_out.numofchan == numel(channels), 'output was saved unexpectedly');
+      delete(this.fn)
     end
     function scr_pp_test_missing(this, channels)
       options4 = struct('missing_epochs_filename', 'test_missing.mat', ...
@@ -96,6 +99,7 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
       this.verifyTrue(fstruct_out.numofchan == numel(channels), 'output has a different size');
       sts_out = exist('test_missing.mat', 'file');
       this.verifyTrue(sts_out > 0, 'missing epoch file was not saved');
+      delete(this.fn)
       delete('test_missing.mat');
       % Verifying the situation with missing epochs filename option with
       % saving to datafile
@@ -106,6 +110,7 @@ classdef pspm_scr_pp_test < matlab.unittest.TestCase
       this.verifyTrue(fstruct_out.numofchan == numel(channels), 'output has a different size');
       sts_out = exist('test_missing.mat', 'file');
       this.verifyTrue(sts_out > 0, 'missing epoch file was not saved');
+      delete(this.fn)
       delete('test_missing.mat');
       % test no output files are allowed
       pspm_testdata_gen(channels, this.duration, this.fn);
