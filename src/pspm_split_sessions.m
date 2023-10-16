@@ -1,59 +1,59 @@
-function [newdatafile, newepochfile] = pspm_split_sessions(datafile, markerchannel, options)
-% pspm_split_sessions splits experimental sessions/blocks, based on
-% regularly incoming markers, for example volume or slice markers from an
-% MRI scanner, or based on a vector of split points that is defined in
-% terms of markers. The first and the last marker will define the start of
-% the first session and the end of the last session.
-%
-% FORMAT:
-% newdatafile = pspm_split_sessions(datafile, markerchannel, options)
-%
-% INPUT:
-% datafile:                 a file name
-% markerchannel (optional): number of the channel that contains the
-%                           relevant markers
-% options
-% options.overwrite:        overwrite existing files by default
-% options.max_sn:           Define the maximum of sessions to look for.
-%                           Default is 10 (defined by
-%                           settings.split.max_sn)
-% options.min_break_ratio:  Minimum for ratio
-%                           [(session distance)/(maximum marker distance)]
-%                           Default is 3 (defined by
-%                           settings.split.min_break_ratio)
-% options.splitpoints       Alternatively, directly specify session start
-%                           (excluding the first session starting at the
-%                           first marker) in terms of markers (vector of integer)
-% options.prefix            In seconds, how long data before start trim point
-%                           should also be included. First marker will be
-%                           at t = options.prefix
-%                           Default = 0
-% options.suffix            In seconds, how long data after the end trim
-%                           point should be included. Last marker will be
-%                           at t = duration (of session) - options.suffix
-%                           Default = 0
-% options.randomITI         Tell the function to use all the markers to
-%                           evaluate the mean distance between them.
-%                           Usefull for random ITI since it reduces the
-%                           variance. Default = 0
-% options.missing           Optional name of an epoch file, e.g. containing
-%                           a missing epochs definition in s. This is then split accordingly.
-%                           epochs have a fixed sampling rate of 10000
-%
-%       REMARK for suffix and prefix:
-%           Markers in the prefix and suffix intervals are ignored. Only markers
-%           between the splitpoints are considered for each session, to
-%           avoid duplication of markers.
-%
-%
-% OUTPUT:
-% newdatafile: cell array of filenames for the individual sessions
-% newepochfile: cell array of missing epoch filenames for the individual
-% sessions (empty if no options.missing not specified)
-%__________________________________________________________________________
-% PsPM 5.1.1
-% 2021 PsPM Team
-
+function varargout = pspm_split_sessions(datafile, markerchannel, options)
+% ● Description
+%   pspm_split_sessions splits experimental sessions/blocks, based on
+%   regularly incoming markers, for example volume or slice markers from an
+%   MRI scanner, or based on a vector of split points that is defined in
+%   terms of markers. The first and the last marker will define the start of
+%   the first session and the end of the last session.
+% ● Format
+%   newdatafile = pspm_split_sessions(datafile, markerchannel, options)
+% ● Arguments
+%            datafile:  a file name
+%       markerchannel:  (optional)
+%                       number of the channel containing the relevant markers.
+%   ┌─────────options:
+%   ├──────.overwrite:  [logical] (0 or 1)
+%   │                   Define whether to overwrite existing output files or not.
+%   │                   Default value: determined by pspm_overwrite.
+%   ├─────────.max_sn:  Define the maximum of sessions to look for.
+%   │                   Default is 10 (defined by settings.split.max_sn)
+%   ├.min_break_ratio:  Minimum for ratio
+%   │                   [(session distance)/(maximum marker distance)]
+%   │                   Default is 3 (defined by settings.split.min_break_ratio)
+%   ├────.splitpoints:  Alternatively, directly specify session start
+%   │                   (excluding the first session starting at the
+%   │                   first marker) in terms of markers (vector of integer)
+%   ├─────────.prefix:  [numeric, unit:second, default:0]
+%   │                   Defines how long data before start trim point should
+%   │                   also be included. First marker will be at
+%   │                   t = options.prefix.
+%   ├─────────.suffix:  [numeric, unit:second, default:0]
+%   │                   Defines how long data after the end trim point should be
+%   │                   included. Last marker will be at t = duration (of
+%   │                   session) - options.suffix.
+%   ├───────.randomITI: [default:0]
+%   │                   Tell the function to use all the markers to evaluate
+%   │                   the mean distance between them.
+%   │                   Usefull for random ITI since it reduces the variance.
+%   ├─────────.verbose: [default:1]
+%   │                   printing processing messages
+%   └─────────.missing: Optional name of an epoch file, e.g. containing a
+%                       missing epochs definition in s. This is then split
+%                       accordingly.
+% ● Outputs
+%          newdatafile: cell array of filenames for the individual sessions
+%         newepochfile: cell array of missing epoch filenames for the individual
+%                       sessions (empty if no options.missing not specified)
+% ● Developer's notes
+%   epochs have a fixed sampling rate of 10000
+%   REMARK for suffix and prefix:
+%   Markers in the prefix and suffix intervals are ignored. Only markers
+%   between the splitpoints are considered for each session, to avoid
+%   duplication of markers.
+% ● History
+%   Introduced in PsPM 5.1.1
+%   Written in 2021 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Updated and maintained in 2022 by Teddy Chao (UCL)
 
 %% 1 Initialise
 global settings
@@ -73,47 +73,15 @@ end
 if ~exist('options','var') || isempty(options) || ~isstruct(options)
   options = struct();
 end
-if ~isfield(options, 'overwrite')
-  options.overwrite = 0;
-elseif options.overwrite ~= 1
-  options.overwrite = 0;
+options = pspm_options(options, 'split_sessions');
+if options.invalid
+  return
 end
-try options.prefix; catch
-  options.prefix = 0;
-end
-try options.suffix; catch
-  options.suffix = 0;
-end
-try options.verbose; catch
-  options.verbose = 0;
-end
-try options.splitpoints; catch
-  options.splitpoints = [];
-end
-try options.missing; catch
-  options.missing = 0;
-end
-try options.randomITI; catch
-  options.randomITI = 0;
-end
-try options.max_sn; catch
-  options.max_sn = settings.split.max_sn; % maximum number of sessions (default 10)
-end
-try options.min_break_ratio; catch
-  options.min_break_ratio = settings.split.min_break_ratio; % minimum ratio of session break to normal inter marker interval (default 3)
-end
-
 % 1.3 Handle data files
 % 1.3.1 check data file argument
 if ~ischar(datafile)
   warning('ID:invalid_input', 'Data file must be a char.');
   return;
-end
-% 1.3.2 clear datafile
-if options.missing
-  if ~ischar(options.missing)
-    warning('ID:invalid_input', 'Missing epochs file needs to be a char.\n');
-  end
 end
 
 % 1.4 Check if prefix is positiv and suffix is negative
@@ -132,14 +100,6 @@ elseif ~isnumeric(markerchannel)
   warning('ID:invalid_input', 'Marker channel needs to be a number.\n');
   return;
 end
-if ~isnumeric(options.splitpoints)
-  warning('ID:invalid_input', 'options.splitpoints has to be numeric.');
-  return;
-end
-if ~isnumeric(options.randomITI) || ~ismember(options.randomITI, [0, 1])
-  warning('ID:invalid_input', 'options.randomITI should be 0 or 1.');
-  return;
-end
 
 %% 2 Work on all data files
 
@@ -147,17 +107,17 @@ end
 if options.verbose
   fprintf('Splitting %s ... \n', datafile);
 end
-[sts, ininfos, indata, filestruct] = pspm_load_data(datafile); % check and get datafile ---
-if sts == -1
+[sts_load_data, ininfos, indata, filestruct] = pspm_load_data(datafile); % check and get datafile ---
+if ~sts_load_data
   warning('ID:invalid_input', 'Could not load data.');
   return;
 end
 
 % 2.2 Handle missing epochs
-if options.missing
+if ~isempty(options.missing)
   % makes sure the epochs are in seconds and not empty
-  [sts, missing_time] = pspm_get_timing('epochs', options.missing, 'seconds');
-  if sts < 0
+  [sts_get_timing, missing_time] = pspm_get_timing('epochs', options.missing, 'seconds');
+  if ~sts_get_timing
     warning('ID:invalid_input', 'Could not load missing epochs.');
   end
   missingsr = 10000; % dummy sample rate, should be higher than data sampling rates (but no need to make it dynamic)
@@ -199,8 +159,8 @@ if isempty(options.splitpoints)
 else
   splitpoint = options.splitpoints;
   if numel(mrk) < max(splitpoint)
-      warning('ID:invalid_input', 'Splitpoint definition assumes more markers than there are in the file.');
-      return
+    warning('ID:invalid_input', 'Splitpoint definition assumes more markers than there are in the file.');
+    return
   end
 end
 
@@ -238,49 +198,56 @@ else
 
   % 2.4 Split files
   for sn = 1:size(trimpoint,1)
-
     % 2.4.1 Determine filenames
     [p, f, ex] = fileparts(datafile);
     newdatafile{sn} = fullfile(p, sprintf('%s_sn%02.0f%s', f, sn, ex));
-
-    if ischar(options.missing)
+    if ~isempty(options.missing)
       newepochfile{sn} = fullfile(p_epochs, sprintf('%s_sn%02.0f%s', f_epochs, sn, ex_epochs));
     end
-
     % 2.4.2 Split data
-    trimoptions = struct('drop_offset_markers', 1);
+    trimoptions = struct('drop_offset_markers', 1, 'marker_chan_num', markerchannel);
     newdata = pspm_trim(struct('data', {indata}, 'infos', ininfos), ...
       options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions);
-    newdata.options = struct('overwrite', options.overwrite);
+    options.overwrite = pspm_overwrite(newdatafile{sn}, options);
+    newdata.options = options;
     pspm_load_data(newdatafile{sn}, newdata);
-
-
     % 2.4.5 Split Epochs
-    if options.missing
+    if ~isempty(options.missing)
       dummydata{1,1}.header = struct('chantype', 'custom', ...
         'sr', missingsr, ...
         'units', 'unknown');
       dummydata{1,1}.data   = dp_epochs;
-
       % add marker channel so that pspm_trim has a reference
       dummydata{2,1}      = indata{markerchannel};
       dummyinfos          = ininfos;
-
       newmissing = pspm_trim(struct('data', {dummydata}, 'infos', dummyinfos), ...
         options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions);
-
       epochs = newmissing.data{1}.data;
-
       epoch_on = 1 + strfind(epochs.', [0 1]); % Return the start points of the excluded interval
       epoch_off = strfind(epochs.', [1 0]); % Return the end points of the excluded interval
       if numel(epoch_off) < numel(epoch_on) % if the epochs is in the middle of 2 blocks
         epoch_off(end+1) = numel(epochs);
       elseif numel(epoch_on) < numel(epoch_off)
         epoch_on = [0, epoch_on];
+      elseif (numel(epoch_on) > 0 && numel(epoch_off > 0) && epoch_off(1) < epoch_on(1))
+        epoch_on = [0, epoch_on];
+        epoch_off(end+1) = numel(epochs);
       end
       epochs = [epoch_on.', epoch_off.']/missingsr; % convert back to seconds
       save(newepochfile{sn}, 'epochs');
     end
-
   end
 end
+sts = 1;
+switch nargout
+  case 1
+    varargout{1} = newdatafile;
+  case 2
+    varargout{1} = newdatafile;
+    varargout{2} = newepochfile;
+  case 3
+    varargout{1} = sts;
+    varargout{2} = newdatafile;
+    varargout{3} = newepochfile;
+end
+return

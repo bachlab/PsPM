@@ -1,52 +1,52 @@
 function [fx, dfdx, dfdP] = f_SCR(Xt, Theta, ut, in)
-% f_SCR implements a phenomenological forward model for anticipatory and 
-% event-related skin conductance responses, taking into account spontaneous
-% fluctuations [SF] in the absence of experimental input, and slow baseline
-% [SCL] changes between experimental inputs that might not be completely
-% removed by filtering
-%
-% output function: third order differential equation the parameters of
-% which are estimated across trials, plus derivatives wrt time and
-% parameters
-%
-% event input: gaussian bumps with 0.3 s variance, emulating sudomotor
-% firing
-% 
-% sustained input: modeled by gaussian bumps with variable variance
-% 
-% spontaneous input: in inter-trial intervals > 7 s, SF are assumed with a
-% frequency of 0.5 Hz and a function analogous to f_SF
-%
-% FORMAT [fx, dfdx, dfdP] = f_aSCR(Xt,Theta,ut,in)
-%               Theta:  4 ER constants (3 ODE params + time)
-%                       3 SF constants (3 ODE params)
-%                       3 values per aSCR (invsigma(peaktime), invsigma(std),
-%                       log(amplitude))
-%                       1 value  per eSCR (log(amplitude))
-%                       2 values per SF (invsigma(peaktime), log(amplitude))
-%                       2 values per SCL change (invsigma(time), amplitude)
-%               ut: row 1 - time (after cue onset)
-%                   row 2 - number of aSCR
-%                   row 3 - number of eSCR
-%                   row 4 - number of SF
-%                   row 5 - number of SCL changes
-%                   row 6 - ...: event onsets for aSCR
-%                   row ... - ...: upper bounds for each aSCR.m
-%                   row ... - ...: upper bounds for each aSCR.s
-%                   row ... - ...: event onsets for eSCR
-%                   row ... - ...: lower bound for SF
-%                   row ... - ...: upper bound for SF
-%                   row ... - ...: lower bound for SCL
-%                   row ... - ...: upper bound for SCL
-%
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach & Jean Daunizeau (Wellcome Trust Centre for Neuroimaging)
+% ● Description
+%   f_SCR implements a phenomenological forward model for anticipatory and
+%   event-related skin conductance responses, taking into account spontaneous
+%   fluctuations [SF] in the absence of experimental input, and slow baseline
+%   [SCL] changes between experimental inputs that might not be completely
+%   removed by filtering.
+%   output function:
+%   third order differential equation the parameters of which are estimated
+%   across trials, plus derivatives wrt time and parameters.
+%   event input:
+%   gaussian bumps with 0.3 s variance, emulating sudomotor firing
+%   sustained input:
+%   modeled by gaussian bumps with variable variance
+%   spontaneous input:
+%   in inter-trial intervals > 7 s, SF are assumed with a
+%   frequency of 0.5 Hz and a function analogous to f_SF
+% ● Format
+%   [fx, dfdx, dfdP] = f_SCR(Xt,Theta,ut,in)
+% ● Arguments
+%   Theta:  4 ER constants (3 ODE params + time)
+%           3 SF constants (3 ODE params)
+%           3 values per aSCR (invsigma(peaktime), invsigma(std),
+%           log(amplitude))
+%           1 value  per eSCR (log(amplitude))
+%           2 values per SF (invsigma(peaktime), log(amplitude))
+%           2 values per SCL change (invsigma(time), amplitude)
+%      ut:  row 1 - time (after cue onset)
+%           row 2 - number of aSCR
+%           row 3 - number of eSCR
+%           row 4 - number of SF
+%           row 5 - number of SCL changes
+%           row 6 - ...: event onsets for aSCR
+%           row ... - ...: upper bounds for each aSCR.m
+%           row ... - ...: upper bounds for each aSCR.s
+%           row ... - ...: event onsets for eSCR
+%           row ... - ...: lower bound for SF
+%           row ... - ...: upper bound for SF
+%           row ... - ...: lower bound for SCL
+%           row ... - ...: upper bound for SCL
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%                           Jean Daunizeau (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise settings
 global settings
 if isempty(settings)
-	pspm_init;
+    pspm_init;
 end
 sts = -1;
 sigma = 0.3;  % std for event-related and spontaneous sudomotor input function
@@ -77,7 +77,7 @@ if ut(2) > 0
     % - unpack Theta
     aTheta = Theta(Theta_n + (1:(3 * ut(2))))';
     aTheta = reshape(aTheta, [3, ut(2)])';
-    % - set sigmoid function defaults 
+    % - set sigmoid function defaults
     dmdx = NaN(ut(2), 1);
     dsdx = NaN(ut(2), 1);
     sig.beta = 0.5;
@@ -126,7 +126,7 @@ if ut(4) > 0
         [t, dtdx(k)] = sigm(Theta(Theta_n + 3 * ut(2) + ut(3) + (k - 1) * 2 + 1), sig);
         sfTheta(k, 1) = ut(SF_lb(k)) + t; % lower bound plus parameter vaue
     end;
-    sfTheta(:, 2) = sigma;   
+    sfTheta(:, 2) = sigma;
     sfTheta(:, 3) = exp(Theta((Theta_n + 3 * ut(2) + ut(3)) + (2:2:(2 * ut(4)))));
 else
     sfTheta = [];
@@ -161,9 +161,9 @@ xdot = [Xt(2)
         Xt(6)
         -Theta(5:7) * Xt(4:6) + gu(ut(1), sfTheta, 1)
         gu(ut(1), SCLtheta, 1)];
-        
 
-% compute fx    
+
+% compute fx
 fx = Xt + dt .* xdot;
 
 
@@ -176,7 +176,7 @@ J = [0 1 0       0 0 0      0
      0 0 0       0 0 1      0
      0 0 0      -Theta(5:7) 0
      0 0 0       0 0 0      0];
- 
+
 dfdx = (dt .* J + eye(7))';
 
 % compute dfdP
@@ -191,7 +191,7 @@ Jp(6, 5:7) = -Xt(4:6);
      Jp(3, 7 + (2:3:(3 * ut(2))))  = gu(ut(1), aTheta, 0) .* (ut(1) - aTheta(:, 1)).^2 .* (aTheta(:, 2)).^-3 .* dsdx;
      Jp(3, 7 + (3:3:(3 * ut(2))))  = gu(ut(1), aTheta, 0);
  end;
-    
+
 if ~isempty(eTheta)
     Jp(3, (7 + 3 * ut(2)) + (1:ut(3)))  = gu(ut(1), eTheta, 0);
 end;
@@ -209,7 +209,7 @@ end;
 if ~isempty(SCLtheta)
     Jp(7, (7 + 3 * ut(2) + ut(3)) + 2 * ut(4) + (1:2:(2 * ut(5)))) = gu(ut(1), SCLtheta, 0) .* 1./(sigma_SCL.^2) .* (ut(1) - SCLtheta(:, 1)) .* dtscldx;
     SCLtheta(:, 3) = 1; % we don't take the exp(amp) here, so dSCLdamp = gu for unit amplitude
-    Jp(7, (7 + 3 * ut(2) + ut(3)) + 2 * ut(4) + (2:2:(2 * ut(5)))) = gu(ut(1), SCLtheta, 0); 
+    Jp(7, (7 + 3 * ut(2) + ut(3)) + 2 * ut(4) + (2:2:(2 * ut(5)))) = gu(ut(1), SCLtheta, 0);
 end;
 
 dfdP = dt .* Jp';
@@ -245,4 +245,3 @@ return;
 
 % =========================================================================
 
-       

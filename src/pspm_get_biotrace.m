@@ -1,10 +1,16 @@
 function [sts, import, sourceinfo] = pspm_get_biotrace(datafile, import)
-% pspm_get_biotrace is the main function for import of text-exported
-% Mindemedia BioTrace files
-% FORMAT: [sts, import, sourceinfo] = pspm_get_biotrace(datafile, import);
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Description
+%   pspm_get_biotrace is the main function for import of text-exported
+%   Mindemedia BioTrace files
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_biotrace(datafile, import);
+% ● Arguments
+%       datafile:
+%         import:
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings
@@ -35,7 +41,7 @@ end;
 
 % retrieve recording channel, date and time ---
 foo = regexp(bio.header{1}{9}, ':', 'split');
-sourceinfo.chan{1} = foo{2};
+sourceinfo.channel{1} = foo{2};
 foo = regexp(bio.header{1}{4}, '\s', 'split');
 sourceinfo.date = foo{2};
 foo = regexp(bio.header{1}{5}, '\s', 'split');
@@ -54,6 +60,6 @@ for k = 1:numel(import)
     import{k}.sr = sr;
   end;
 end;
-
+%% Return values
 sts = 1;
 return

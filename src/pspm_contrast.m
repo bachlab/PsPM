@@ -1,33 +1,28 @@
-% create appropriate contrasts for DCM cond option
-
 function varargout = pspm_contrast(varargin)
-% PSPM_CONTRAST MATLAB code for pspm_contrast.fig
-%      PSPM_CONTRAST, by itself, creates a new PSPM_CONTRAST or raises the existing
-%      singleton*.
-%
-%      H = PSPM_CONTRAST returns the handle to a new PSPM_CONTRAST or the handle to
-%      the existing singleton*.
-%
-%      PSPM_CONTRAST('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in PSPM_CONTRAST.M with the given input arguments.
-%
-%      PSPM_CONTRAST('Property','Value',...) creates a new PSPM_CONTRAST or raises the
-%      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before pspm_contrast_OpeningFcn gets called.  An
-%      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to pspm_contrast_OpeningFcn via varargin.
-%
-%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
-%      instance to run (singleton)".
-%
-% See also: GUIDE, GUIDATA, GUIHANDLES
-
-% Edit the above text to modify the response to help pspm_contrast
-
-% Last Modified by GUIDE v2.5 03-Jul-2017 13:59:10
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Description
+%   PSPM_CONTRAST MATLAB code for pspm_contrast.fig
+%   PSPM_CONTRAST, by itself, creates a new PSPM_CONTRAST or raises the existing
+%   singleton*.
+%   H = PSPM_CONTRAST returns the handle to a new PSPM_CONTRAST or the handle to
+%   the existing singleton*.
+%   PSPM_CONTRAST('CALLBACK',hObject,eventData,handles,...) calls the local
+%   function named CALLBACK in PSPM_CONTRAST.M with the given input arguments.
+%   PSPM_CONTRAST('Property','Value',...) creates a new PSPM_CONTRAST or raises
+%   the existing singleton*.  Starting from the left, property value pairs are
+%   applied to the GUI before pspm_contrast_OpeningFcn gets called.  An
+%   unrecognized property name or invalid value makes property application
+%   stop. All inputs are passed to pspm_contrast_OpeningFcn via varargin.
+%   *See GUI Options on GUIDE's Tools menu.  Choose `GUI allows only one
+%   instance to run (singleton)`.
+%   See also: GUIDE, GUIDATA, GUIHANDLES
+%   Edit the above text to modify the response to help pspm_contrast
+% ● Format
+%   pspm_contrast('CALLBACK',hObject,eventData,handles,...)
+%   pspm_contrast('Property','Value',...)
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao
 
 %% Initialise
 global settings
@@ -64,6 +59,8 @@ function pspm_contrast_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to pspm_contrast (see VARARGIN)
 
+
+
 % Left alignment of text fields
 set(handles.textStatus,'HorizontalAlignment','left')
 set(handles.editContrastName,'HorizontalAlignment','left')
@@ -83,7 +80,8 @@ handles.enableGroupButtons = false;
 
 % Choose default command line output for pspm_contrast
 handles.output = hObject;
-
+% Apply UI
+pspm_ui(hObject, handles, 'contrast');
 % Update handles structure
 guidata(hObject, handles);
 
@@ -255,9 +253,9 @@ delete(gcbf)
 function panelTestDef_SelectionChangeFcn(hObject, eventdata, handles)
 % hObject    handle to the selected object in panelTestDef
 % eventdata  structure with the following fields (see UIBUTTONGROUP)
-%	EventName: string 'SelectionChanged' (read only)
-%	OldValue: handle of the previously selected object or empty if none was selected
-%	NewValue: handle of the currently selected object
+% EventName: string 'SelectionChanged' (read only)
+% OldValue: handle of the previously selected object or empty if none was selected
+% NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
 
 testGroupVal = getTestGroupValue(handles);
@@ -273,9 +271,9 @@ guidata(hObject, handles);
 function panelStatstype_SelectionChangeFcn(hObject, eventdata, handles)
 % hObject    handle to the selected object in panelTestDef
 % eventdata  structure with the following fields (see UIBUTTONGROUP)
-%	EventName: string 'SelectionChanged' (read only)
-%	OldValue: handle of the previously selected object or empty if none was selected
-%	NewValue: handle of the currently selected object
+% EventName: string 'SelectionChanged' (read only)
+% OldValue: handle of the previously selected object or empty if none was selected
+% NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
 
 % get current stats type and assign names --

@@ -36,14 +36,14 @@ classdef import_smi_test < matlab.unittest.TestCase
         % find channels
         % ------------------------------------------------------------
         timecol = data{1}.raw(:, 1);
-        blink_l_chan = find(strcmp(data{1}.channels_columns, 'L Blink'));
-        blink_r_chan = find(strcmp(data{1}.channels_columns, 'R Blink'));
-        sacc_l_chan = find(strcmp(data{1}.channels_columns, 'L Saccade'));
-        sacc_r_chan = find(strcmp(data{1}.channels_columns, 'R Saccade'));
-        datacols = true(size(data{1}.channels_columns));
+        blink_l_chan = find(strcmp(data{1}.channel_columns, 'L Blink'));
+        blink_r_chan = find(strcmp(data{1}.channel_columns, 'R Blink'));
+        sacc_l_chan = find(strcmp(data{1}.channel_columns, 'L Saccade'));
+        sacc_r_chan = find(strcmp(data{1}.channel_columns, 'R Saccade'));
+        datacols = true(size(data{1}.channel_columns));
         datacols([blink_l_chan blink_r_chan sacc_l_chan sacc_r_chan]) = false;
-        datacols_l = datacols & contains(data{1}.channels_columns, 'L ');
-        datacols_r = datacols & contains(data{1}.channels_columns, 'R ');
+        datacols_l = datacols & contains(data{1}.channel_columns, 'L ');
+        datacols_r = datacols & contains(data{1}.channel_columns, 'R ');
         % go through blinks, saccades, and check if data is set to NaN
         % correctly and blink/saccade periods are 1.
         %
@@ -79,7 +79,7 @@ classdef import_smi_test < matlab.unittest.TestCase
         % check raw data is same as channels
         % ------------------------------------------
         for col = cols_to_check
-          channels_idx = find(strcmp(data{1}.channels_columns, col{1}));
+          channels_idx = find(strcmp(data{1}.channel_columns, col{1}));
           dataraw_idx = find(strcmp(data{1}.raw_columns, col{1}));
           this.verifyEqual(data{1}.raw(:, dataraw_idx), data{1}.channels(:, channels_idx));
         end

@@ -1,18 +1,13 @@
 function varargout = pspm_display(varargin)
-% -------------------------------------------------------------------------
-
-% pspm_display (...)
-%
-%   Code for the GUI that is used to display different data from scr
+% ● Description
+%   pspm_display is the code for the GUI that is used to display different data from scr
 %   datafiles.
+% ● Arguments
 %   Accepts input: 'filepath/filename'
-%
-%__________________________________________________________________________
-% Introduced in PsPM 3.0
-% (C) 2013 Philipp C Paulus (Technische Universitaet Dresden)
-%
-% Updated in PsPM 5.1.2
-% 2021 Teddy Chao (WCHN, UCL)
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2013 Philipp C Paulus (Technische Universitaet Dresden)
+%   Maintained in 2021 by Teddy Chao (UCL)
 
 %% Initialise
 global settings
@@ -22,7 +17,7 @@ end
 sts = -1;
 
 global channel_type_reference_list;
-channel_type_reference_list = settings.chantypes;
+channel_type_reference_list = settings.channeltypes;
 % -------------------------------------------------------------------------
 
 % Begin initialization code - DO NOT EDIT
@@ -62,15 +57,15 @@ if isempty(settings)
   pspm_init;
 end
 
-% load chantypes from settings variable
+% load channeltypes from settings variable
 
 j = 1 ; l = 1;
-for k = 1:length(settings.chantypes)
-  if strcmp(settings.chantypes(k).data,'wave')
-    handles.prop.setwave{j} = settings.chantypes(k).type;
+for k = 1:length(settings.channeltypes)
+  if strcmp(settings.channeltypes(k).data,'wave')
+    handles.prop.setwave{j} = settings.channeltypes(k).type;
     j = j+1;
-  elseif strcmp(settings.chantypes(k).data,'events')
-    handles.prop.setevent{l} = settings.chantypes(k).type;
+  elseif strcmp(settings.channeltypes(k).data,'events')
+    handles.prop.setevent{l} = settings.channeltypes(k).type;
     l = l+1;
   end
 end
@@ -542,10 +537,10 @@ end
 function panel_wave_SelectionChangeFcn(hObject, ~, handles)
 % hObject    handle to the selected object in panel_wave
 % eventdata  structure with the following fields (see UIBUTTONGROUP)
-%	EventName: string 'SelectionChanged' (read only)
-%	OldValue: handle of the previously selected object or empty if none was
-%           selected
-%	NewValue: handle of the currently selected object
+% EventName: string 'SelectionChanged' (read only)
+% OldValue: handle of the previously selected object or empty if none was
+%          selected
+% NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
 
 
@@ -604,10 +599,10 @@ end
 function panel_event_SelectionChangeFcn(hObject, ~, handles)
 % hObject    handle to the selected object in panel_event
 % eventdata  structure with the following fields (see UIBUTTONGROUP)
-%	EventName: string 'SelectionChanged' (read only)
-%	OldValue: handle of the previously selected object or empty if none was
-%           selected
-%	NewValue: handle of the currently selected object
+% EventName: string 'SelectionChanged' (read only)
+% OldValue: handle of the previously selected object or empty if none was
+%          selected
+% NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
 
 status0 = get(handles.radio_enone,'Value');
@@ -650,8 +645,8 @@ function edit_y_max_Callback(~, ~, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hints: get(hObject,'String') returns contents of edit_y_max as text
-%         str2double(get(hObject,'String')) returns contents of edit_y_max
-%         as a double
+%        str2double(get(hObject,'String')) returns contents of edit_y_max
+%        as a double
 
 x1 = str2double(get(handles.edit_start_x,'String'));
 x2 = str2double(get(handles.edit_winsize_x,'String'))+x1;
@@ -675,7 +670,7 @@ function edit_y_max_CreateFcn(hObject, ~, ~)
 % handles    empty - handles not created until after all CreateFcns called
 
 % Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
+%      See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), ...
     get(0,'defaultUicontrolBackgroundColor'))
   set(hObject,'BackgroundColor','white');
@@ -693,10 +688,10 @@ end
 
 % ---header----------------------------------------------------------------
 
-%       handles.name ... filename
-%       prop... struct with fields
-%               .wave (channel number)
-%               .event(channel number)
+%      handles.name ... filename
+%      prop... struct with fields
+%              .wave (channel number)
+%              .event(channel number)
 %
 
 % Initialise
@@ -740,7 +735,7 @@ elseif not(isempty(handles.prop.eventchans)) && ...
   end
 end
 
-% Get wave chan info
+% Get wave channel info
 if handles.prop.wavechans(handles.prop.idwave) ~= 0
   wave = handles.data{handles.prop.wavechans(handles.prop.idwave),1}.data;
   sr.wave = handles.data{handles.prop.wavechans(handles.prop.idwave),1}.header.sr;

@@ -9,7 +9,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
     norm = {0, 1};
     cutoff = {0, .5, .95};
     nan_percent = {0,.25,.5,.75,.95};
-  end;
+  end
   methods (Test)
     function invalid_input(this)
       %missing input
@@ -121,7 +121,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       expected = [cond1 offset]';
       if norm
         expected = expected * ((1-mean(Y))/std(Y));
-      end;
+      end
       glm{1} = this.test_stats(model, expected, 'Test 1.1.1.1.1.1 (no pmods)');
       %delete testdata
       delete(model.datafile);
@@ -138,7 +138,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       expected = [cond1 cond1_pmod1 offset]';
       if norm
         expected = expected * ((1-mean(Y))/std(Y));
-      end;
+      end
       glm{2} = this.test_stats(model, expected, 'Test 1.1.1.1.1.2 (one orthogonal pmod)');
       %delete testdata
       delete(model.datafile);
@@ -155,7 +155,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       expected = [cond1 cond1_pmod1 cond1_pmod2 offset]';
       if norm
         expected = expected * ((1-mean(Y))/std(Y));
-      end;
+      end
       glm{3} = this.test_stats(model, expected, 'Test 1.1.1.1.1.3 (two orthogonal pmods)');
       %delete testdata
       delete(model.datafile);
@@ -194,7 +194,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       expected = [cond1 cond2 offset]';
       if norm
         expected = expected * ((1-mean(Y))/std(Y));
-      end;
+      end
       glm{1} = this.test_stats(model, expected, 'Test 1.1.1.1.2.1 (two cond, no pmods)');
       %delete testdata
       delete(model.datafile);
@@ -213,7 +213,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       expected = [cond1 cond2 cond2_pmod1 offset]';
       if norm
         expected = expected * ((1-mean(Y))/std(Y));
-      end;
+      end
       glm{2} = this.test_stats(model, expected, 'Test 1.1.1.1.2.2 (2 cond, 1. cond: no pmod, 2. cond: 1 pmod)');
       %delete testdata
       delete(model.datafile);
@@ -236,7 +236,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       expected = [cond1, cond1_pmod1, cond2, cond2_pmod1, cond2_pmod2, offset]';
       if norm
         expected = expected * ((1-mean(Y))/std(Y));
-      end;
+      end
       glm{3} = this.test_stats(model, expected, 'Test 1.1.1.1.2.3 (2 cond, 1. cond: 1 pmod, 2. cond: 2 pmod)');
       %delete testdata
       delete(model.datafile);
@@ -276,7 +276,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       expected = [cond1 nuis1 nuis2 offset]';
       if norm
         expected = expected * ((1-mean(Y))/std(Y));
-      end;
+      end
       glm{1} = this.test_stats(model, expected, 'Test 1.1.1.2 (1 cond, 2 nuisance)');
       %delete testdata
       delete(model.datafile);
@@ -316,7 +316,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       expected = [cond1 offset1 offset2]';
       if norm
         expected = expected * ((1-mean([Y1,Y2]))/std([Y1,Y2]));
-      end;
+      end
       glm{1} = this.test_stats(model, expected, 'Test 1.1.2.1 (2 sessions, 1 cond, tu: seconds)');
       %delete testdata
       delete(model.modelfile);
@@ -327,7 +327,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       expected = [cond1 offset1 offset2]';
       if norm
         expected = expected * ((1-mean([Y1,Y2]))/std([Y1,Y2]));
-      end;
+      end
       glm{2} = this.test_stats(model, expected, 'Test 1.1.2.2 (2 sessions, 1 cond, tu: samples)');
       %delete testdata
       delete(model.modelfile);
@@ -338,7 +338,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       expected = [cond1 offset1 offset2]';
       if norm
         expected = expected * ((1-mean([Y1,Y2]))/std([Y1,Y2]));
-      end;
+      end
       glm{3} = this.test_stats(model, expected, 'Test 1.1.2.3 (2 sessions, 1 cond, tu: markers)');
       %delete testdata
       delete(model.datafile{1});
@@ -372,7 +372,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       expected = [bf1 bf2 offset]';
       if norm
         expected = expected * ((1-mean(Y))/std(Y));
-      end;
+      end
       glm{1} = this.test_stats(model, expected, 'Test 1.2.1 (2 bf)');
       %delete testdata
       delete(model.modelfile);
@@ -385,7 +385,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       expected = [bf1 bf2 offset]';
       if norm
         expected = expected * ((1-mean(Y))/std(Y));
-      end;
+      end
       glm{2} = this.test_stats(model, expected, 'Test 1.2.2 (2bf, missing)');
       %delete testdata
       delete(model.datafile);
@@ -500,6 +500,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       rehash;
       %call pspm_glm
       options.overwrite = 1;
+      options.marker_chan_num = 'marker';
       glm = pspm_glm(model, options);
       %check if output is equal the timing
       actual = glm.stats;
@@ -517,10 +518,10 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       % td: sample interval
       % d: duration
       % tau: amount of columns (amount of rows: floor(d/td)
-      if nargin < 5, shift = 0; end;
-      if nargin < 4, zero_padding = 0; end;
-      if nargin < 3, tau = 0; end;
-      if nargin < 2, d = 10; end;
+      if nargin < 5, shift = 0; end
+      if nargin < 4, zero_padding = 0; end
+      if nargin < 3, tau = 0; end
+      if nargin < 2, d = 10; end
       y = zeros(floor(d/td)+1,length(tau));
       x = -shift:td:d-shift;
       for i=1:length(tau)
@@ -528,19 +529,19 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       end
       if zero_padding == 1
         y = [zeros(floor(d/td),1);y];
-      end;
-    end;
+      end
+    end
     %returns a signal vector with signal(onsets) = scal + offset and
     %signal = offset everywhere else
     function signal = testdata_gen(onsets, scal, offset,  onsets_duration, sr, duration)
-      if nargin < 6, duration = 10; end;
-      if nargin < 5, sr = 100; end;
+      if nargin < 6, duration = 10; end
+      if nargin < 5, sr = 100; end
       if nargin < 4
         onsets_duration = zeros(size(onsets));
       elseif isscalar(onsets_duration)
         onsets_duration = onsets_duration .* ones(size(onsets));
       end
-      if nargin < 3, offset = 0; end;
+      if nargin < 3, offset = 0; end
       if nargin < 2
         scal = ones(size(onsets));
       elseif isscalar(scal)
@@ -549,7 +550,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       signal = zeros(sr*duration,1);
       for i = 1:length(onsets)
         signal(floor(onsets(i)*sr):floor((onsets(i)+onsets_duration(i))*sr)) = scal(i);
-      end;
+      end
       signal = signal + offset;
     end
     %saves a datavector to a file

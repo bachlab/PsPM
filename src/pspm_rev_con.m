@@ -1,13 +1,13 @@
-function fighandle = pspm_rev_con(model)
-% pspm_rev_con is a tool for reviewing contrasts of first level models
-%
-% FORMAT:
-% pspm_rev_con(modelfile)
-%
-% modelfile: filename and path of modelfile
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (UZH, WTCN)
+function varargout = pspm_rev_con(model)
+% ● Description
+%   pspm_rev_con is a tool for reviewing contrasts of first level models
+% ● Format
+%   fighandle = pspm_rev_con(modelfile)
+% ● Arguments
+%   modelfile: filename and path of modelfile
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (UZH, WTCN)
 
 %% Initialise
 global settings
@@ -16,6 +16,13 @@ if isempty(settings)
 end
 sts = -1;
 fighandle = [];
+switch nargout
+  case 1
+    varargout{1} = fighandle;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = fighandle;
+end
 
 % check input
 % ------------------------------------------------------------------------
@@ -32,3 +39,13 @@ for n=1:numel(model.con)
   fprintf('Contrast %d: %s\n',n,model.con(n).name);
 end;
 fprintf('---------------------------------------\n');
+
+sts = 1;
+switch nargout
+  case 1
+    varargout{1} = fighandle;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = fighandle;
+end
+return

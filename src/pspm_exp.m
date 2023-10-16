@@ -1,34 +1,39 @@
 function sts = pspm_exp(modelfile, options)
-% pspm_exp exports first level statistics from one or several first-level
-% models. The output is organised as a matrix with rows for observations
-% (first-level models) and columns for statistics (must be the same for all
-% models)
-%
-% FORMAT:   pspm_exp(modelfile, options)
-%
-% mandatory argument
-% modelfile: a filename, or cell array of filenames
-%
-% OPTIONS with optional fields
-% options.target: 'screen' (default), or a name of an output text file
-% options.statstype: 'param', 'cond', 'recon'
-%           'param': export all parameter estimates (default)
-%            'cond': GLM - contrasts formulated in terms of conditions,
-%                    automatically detects number of basis functions and
-%                    uses only the first one (i.e. without derivatives)
-%                    other models - contrasts based on unique trial names
-%           'recon': export all conditions in a GLM,
-%                    reconstructs estimated response from all basis functions
-%                    and export the peak of the estimated response
-% options.delim:     delimiter for output file (default: tab)
-% options.exclude_missing:
-%                    exclude parameters from conditions with too many NaN values.
-%                    This option can only be used for GLM files when exclude_missing
-%                    was set during model setup. Otherwise this argument is ignored (Default: 0).
-%
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2009-2015 Dominik R Bach (WTCN, UZH)
+% ● Description
+%   pspm_exp exports first level statistics from one or several first-level
+%   models. The output is organised as a matrix with rows for observations
+%   (first-level models) and columns for statistics (must be the same for all
+%   models)
+% ● Format
+%   pspm_exp(modelfile, options)
+% ● Arguments
+%           modelfile:  [mandatory, string/cell_array]
+%                       a filename, or cell array of filenames
+%   ┌─────────options
+%   ├─────────.target:  [optional, string, default as 'screen']
+%   │                   'screen' (default), or a name of an output text file.
+%   ├──────.statstype:  [optional, string, accepts 'param'/'cond'/'recon']
+%   │                   'param':  export all parameter estimates (default)
+%   │                    'cond':  GLM - contrasts formulated in terms of
+%   │                             conditions, automatically detects number of
+%   │                             basis functions and uses only the first one
+%   │                             (i.e. without derivatives)
+%   │                             other models - contrasts based on unique trial
+%   │                             names.
+%   │                   'recon':  export all conditions in a GLM,
+%   │                             reconstructs estimated response from all basis
+%   │                             functions and export the peak of the estimated
+%   │                             response.
+%   ├──────────.delim:  [optional, default as tab('\t')]
+%   │                   delimiter for output file.
+%   └.exclude_missing:  [optional, default as 0]
+%                       exclude parameters from conditions with too many NaN
+%                       values. This option can only be used for GLM files when
+%                       exclude_missing was set during model setup.
+%                       Otherwise this argument is ignored.
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2009-2015 by Dominik R Bach (WTCN, UZH)
 
 %% Initialise
 global settings
@@ -48,26 +53,15 @@ elseif nargin < 2
   options = struct();
 end;
 
-if ~isfield(options,'target')
-  target = 'screen';
-else
-  target = options.target;
+options = pspm_options(options, 'exp');
+if options.invalid
+  return
 end
-if ~isfield(options,'statstype')
-  statstype = 'param';
-else
-  statstype = options.statstype;
-end
-if ~isfield(options,'delim')
-  delim = '\t';
-else
-  delim = options.delim;
-end
-if ~isfield(options,'exclude_missing')
-  exclude_missing = 0;
-else
-  exclude_missing = options.exclude_missing;
-end
+
+target = options.target;
+statstype = options.statstype;
+delim = options.delim;
+exclude_missing = options.exclude_missing;
 
 % check model file argument (actual files are checked below) --
 if ischar(modelfile)
@@ -228,6 +222,6 @@ if fid ~= 1
   fclose(fid);
 end;
 
-% return --
+%% Return values
 sts = 1;
 return

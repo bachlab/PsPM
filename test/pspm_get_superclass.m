@@ -15,7 +15,7 @@ classdef (Abstract) pspm_get_superclass < pspm_testcase
       global settings;
       if isempty(settings), pspm_init; end;
       for m = 1:numel(import)
-        import{m}.typeno = find(strcmpi(import{m}.type, {settings.chantypes.type}));
+        import{m}.typeno = find(strcmpi(import{m}.type, {settings.channeltypes.type}));
       end
     end
   end
@@ -27,7 +27,7 @@ classdef (Abstract) pspm_get_superclass < pspm_testcase
       % assign channel type number
       for k = 1:numel(this.testcases)
         for m = 1:numel(this.testcases{k}.import)
-          this.testcases{k}.import{m}.typeno = find(strcmpi(this.testcases{k}.import{m}.type, {settings.chantypes.type}));
+          this.testcases{k}.import{m}.typeno = find(strcmpi(this.testcases{k}.import{m}.type, {settings.channeltypes.type}));
         end
       end
     end
@@ -35,7 +35,7 @@ classdef (Abstract) pspm_get_superclass < pspm_testcase
   methods (Test)
     function valid_datafile(this)
       global settings;
-      if isempty(settings), pspm_init; end;
+      if isempty(settings), pspm_init; end
       fprintf('\n');
       for k = 1:numel(this.testcases)
         [sts, import, sourceinfo] = this.fhandle(this.testcases{k}.pth, this.testcases{k}.import);
@@ -75,26 +75,26 @@ classdef (Abstract) pspm_get_superclass < pspm_testcase
             this.verifyTrue(isfield(import{blk}{m}, 'type'), sprintf('There is no field ''type'' in importjob %i in testcase %i', m, k));
             % if data is of kind event check if there is field
             % marker present
-            if strcmpi(settings.chantypes(this.testcases{k}.import{m}.typeno).data, 'events')
+            if strcmpi(settings.channeltypes(this.testcases{k}.import{m}.typeno).data, 'events')
               this.verifyTrue(isfield(import{blk}{m}, 'marker'), sprintf('There is no field ''marker'' in event importjob %i in testcase %i', m, k));
             end
             % check if sr is within a possible range
-            if strcmpi(settings.chantypes(this.testcases{k}.import{m}.typeno).data, 'wave') || ...
+            if strcmpi(settings.channeltypes(this.testcases{k}.import{m}.typeno).data, 'wave') || ...
             	strcmpi(import{blk}{m}.marker, 'continuous')
               this.verifyTrue(1 <= import{blk}{m}.sr && import{blk}{m}.sr <= 10000, ...
               	sprintf('The samplerate of wave importjob %i in testcase %i is out of the range [1,10000]', m, k));
               this.verifyTrue(numel(import{blk}{m}.data) / import{blk}{m}.sr <= 3600, ...
               	sprintf('The duration of the data of wave importjob %i in testcase %i is longer then 3600s', m, k))
-            elseif strcmpi(settings.chantypes(this.testcases{k}.import{m}.typeno).data, 'events') && ...
+            elseif strcmpi(settings.channeltypes(this.testcases{k}.import{m}.typeno).data, 'events') && ...
             	(strcmpi(import{blk}{m}.marker, 'timestamps') || strcmpi(import{blk}{m}.marker, 'timestamp'))
               this.verifyTrue(10^-6 <= import{blk}{m}.sr && import{blk}{m}.sr <= 1, ...
               sprintf('The samplerate of event importjob %i in testcase %i is out of the range [10^-6,1]', m, k));
               this.verifyTrue(max(import{blk}{m}.data) * import{blk}{m}.sr <= 3600, ...
               sprintf('The duration of the data of wave importjob %i in testcase %i is longer then 3600s', m, k))
             else
-              warning('Invalid channel type! (settings.chantypes.data{%i} is neither ''wave'' nor ''events'')', chantype);
+              warning('Invalid channel type! (settings.channeltypes.data{%i} is neither ''wave'' nor ''events'')', channeltype);
             end
-            if strcmpi(settings.chantypes(this.testcases{k}.import{m}.typeno).data, 'events') && ...
+            if strcmpi(settings.channeltypes(this.testcases{k}.import{m}.typeno).data, 'events') && ...
             (strcmpi(import{blk}{m}.marker, 'timestamps') || strcmpi(import{blk}{m}.marker, 'timestamp'))
               duration = import{blk}{m}.data(end);
             else
@@ -105,7 +105,7 @@ classdef (Abstract) pspm_get_superclass < pspm_testcase
               warning('The amount of data in channel %g corresponds to less than 1 seconds.', m);
             end
           end
-          if strcmpi(settings.chantypes(this.testcases{k}.import{1}.typeno).data, 'events') && ...
+          if strcmpi(settings.channeltypes(this.testcases{k}.import{1}.typeno).data, 'events') && ...
           (strcmpi(import{blk}{1}.marker, 'timestamps') || strcmpi(import{blk}{1}.marker, 'timestamp'))
             duration = import{blk}{1}.data(end);
           else

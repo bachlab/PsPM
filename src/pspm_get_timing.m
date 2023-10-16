@@ -1,17 +1,17 @@
 function [sts, outtiming] = pspm_get_timing(varargin)
-% pspm_get_timing is a shared function to read timing information from
-% different formats and align with a number of files. Time units (seconds,
-% samples, markers) are not changed.
-%
-% FORMAT:
-% [sts, multi]  = pspm_get_timing('onsets', intiming, timeunits)
-% [sts, epochs] = pspm_get_timing('epochs', epochs, timeunits)
-% [sts, events] = pspm_get_timing('events', events)
-%
-% for recursive calls also:
-% [sts, epochs] = pspm_get_timing('file', filename)
-%
-% onsets and timeunits are 'seconds', 'samples' or 'markers':
+% ● Description
+%   pspm_get_timing is a shared function to read timing information from
+%   different formats and align with a number of files. Time units (seconds,
+%   samples, markers) are not changed.
+% ● Format
+%   [sts, multi]  = pspm_get_timing('onsets', intiming, timeunits)
+%   [sts, epochs] = pspm_get_timing('epochs', epochs, timeunits)
+%   [sts, events] = pspm_get_timing('events', events)
+%   [sts, epochs] = pspm_get_timing('missing', epochs, timeunits)
+%   for recursive calls also:
+%   [sts, epochs] = pspm_get_timing('file', filename)
+% ● Arguments
+%   onsets and timeunits are 'seconds', 'samples' or 'markers':
 %      for defining event onsets for multiple conditions (e. g. GLM)
 %      intiming is - a multiple condition file name (single session) OR
 %                  - a cell array of multiple condition file names OR
@@ -24,7 +24,7 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %
 %      if timeunits are 'samples' or 'markers', all onsets must be integer
 %
-% % onsets and timeunits are 'markervalues':
+%   onsets and timeunits are 'markervalues':
 %      for defining onsets for multiple conditions (e.g. GLM) from
 %      entries in markerinfos:
 %      intiming:  - a struct with fields 'markerinfos', 'markervalues,
@@ -37,38 +37,30 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %                      conditions from the entries in markerinfos.name
 %                    - names: cell array of condition names
 %
-% epochs: for defining data epochs (e. g. analysis of SF, missing epochs in GLM)
-%         epochs can be one of the following
-%               - an SPM style onset file with two event types: onset &
-%                    offset (names are ignored)
-%               - a two-column text file with on/offsets
-%               - a .mat file with a variable 'epochs' (see below)
-%               - e x 2 matrix of epoch on- and offsets (e: number of
-%                   epochs)
-%
-% events: for defining events and event windows (e. g. in DCM), events can
-%         be either a variable that is, or a file name that contains a variable
-%         'events' that is
-%               - a .mat file with a variable 'events' (see below)
-%               - a cell array with multiple one and two column vectors for
-%                   fully flexible DCMs that must all have the same number of
-%                   rows
-%
-%
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2009-2015 Dominik R Bach (WTCN, UZH)
-
-% -------------------------------------------------------------------------
-% DEVELOPERS NOTES
-% Differences in GLM multiple condition definitions between SPM and
-% PsPM
-% (1) 'durations' is optional - default is 0
-% (2) 'durations' must be 0 if onsets are specified by markers
-% (3) 'poly' is an optional field in pmods - default is 1. Polynomial
-%     values larger than 1 are expanded here and returned as additional cells
-%     for 'param'
-% -------------------------------------------------------------------------
+%     epochs: for defining data epochs (e. g. analysis of SF, missing epochs in
+%             GLM). epochs can be one of the following
+%             - an SPM style onset file with two event types: onset & offset
+%               (names are ignored)
+%             - a two-column text file with on/offsets
+%             - a .mat file with a variable 'epochs' (see below)
+%             - e x 2 matrix of epoch on- and offsets (e: number of epochs)
+%     events: for defining events and event windows (e. g. in DCM), events can
+%             be either a variable that is, or a file name that contains a
+%             variable. 'events' that is
+%             - a .mat file with a variable 'events' (see below)
+%             - a cell array with multiple one and two column vectors for fully
+%               flexible DCMs that must all have the same number of rows.
+% ● Developer's Notes
+%   Differences in GLM multiple condition definitions between SPM and PsPM
+%   (1) 'durations' is optional - default is 0
+%   (2) 'durations' must be 0 if onsets are specified by markers
+%   (3) 'poly' is an optional field in pmods - default is 1. Polynomial
+%       values larger than 1 are expanded here and returned as additional cells
+%       for 'param'
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2009-2015 by Dominik R Bach (WTCN, UZH)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings
@@ -91,7 +83,7 @@ else
   intiming = varargin{2};
 end
 
-if ~ismember(model, {'onsets', 'epochs', 'events', 'file'})
+if ~ismember(model, {'onsets', 'epochs', 'missing', 'events', 'file'})
   warning('ID:invalid_input', 'Invalid input. I don''t know what to do.');
 
   return;
@@ -100,7 +92,7 @@ end
 
 
 switch model
-  case {'onsets', 'epochs'}
+  case {'onsets', 'epochs', 'missing'}
     if nargin < 3
       warning('ID:invalid_input', 'Time units unspecified');  return;
     else
@@ -196,7 +188,7 @@ switch model
               (isempty(in.onsets{iCond}) && ...
               ~strcmp('', in.onsets{iCond})))
             warning('ID:no_numeric_vector', ...
-              ['%sCondition "%s" - onsets{%i} must be a ', ...
+              ['%sCondition `%s` - onsets{%i} must be a ', ...
               'numeric vector or empty.'], errmsg, ...
               in.names{iCond}, iCond); return;
           end
@@ -205,33 +197,33 @@ switch model
             in.durations{iCond} = repmat(in.durations{iCond}, ...
               numel(in.onsets{iCond}), 1);
           elseif (numel(in.onsets{iCond}) ~= numel(in.durations{iCond}))
-            warning('ID:number_of_elements_dont_match',['%sCondition "%s" - Number of event onsets ', ...
+            warning('ID:number_of_elements_dont_match',['%sCondition `%s` - Number of event onsets ', ...
               '(%d) does not match the number of durations (%d).'],...
               errmsg, in.names{iCond}, numel(in.onsets{iCond}),...
               numel(in.durations{iCond}));
             return;
           end
           if any(in.onsets{iCond}<0)
-            warning('ID:invalid_input',['%sCondition "%s" contains onset values ', ...
+            warning('ID:invalid_input',['%sCondition `%s` contains onset values ', ...
               'smaller than zero'], errmsg, in.names{iCond});
             return;
           end
           if any(strcmpi(timeunits, {'samples', 'markers'})) && ...
               any(in.onsets{iCond} ~= ceil(in.onsets{iCond}))
-            warning('ID:invalid_input',['%sCondition "%s" contains non-integer ', ...
+            warning('ID:invalid_input',['%sCondition `%s` contains non-integer ', ...
               'onset values but is defined in %s'], ...
               errmsg, in.names{iCond}, timeunits);
             return;
           end
           if strcmpi(timeunits, 'markers') && any(in.durations{iCond} ~= 0)
-            warning('ID:invalid_input',['%sCondition "%s" contains non-zero ', ...
+            warning('ID:invalid_input',['%sCondition `%s` contains non-zero ', ...
               'durations - this is not allowed for marker time ', ...
               'units. Please use ''samples'' or ', ...
               '''seconds'' instead.'], errmsg, in.names{iCond});
             return;
           end
           if any(in.durations{iCond} < 0)
-            warning('ID:invalid_input',['%sConditions "%s% contains ', ...
+            warning('ID:invalid_input',['%sConditions `%s% contains ', ...
               'negative durations.'], errmsg, in.names{iCond});
             return;
           end
@@ -261,7 +253,7 @@ switch model
             for iParam = 1:numel(in.pmod(iPmod).param)
               if numel(in.onsets{iPmod}) ~= ...
                   numel(in.pmod(iPmod).param{iParam})
-                warning(['%s"%s" & "%s": Number of event ', ...
+                warning(['%s`%s` & `%s`: Number of event ', ...
                   'onsets (%d) does not equal the number of ', ...
                   'parameters (%d).'],...
                   errmsg, in.names{iPmod}, ...
@@ -352,7 +344,7 @@ switch model
             intiming{iMarker}.onsets{iCond} = find(strcmpi(markervalue{iCond}, markerinfo.name) == 1);
             marker_value = markervalue{iCond};
           end
-          % give screen output: "n marker with value xx for condition xx found"
+          % give screen output: `n marker with value xx for condition xx found`
           n_marker = numel (intiming{iMarker}.onsets{iCond});
           fprintf('  %i markers with value %s for condition %s found. \n',n_marker, marker_value,names{iCond});
         end
@@ -361,7 +353,7 @@ switch model
     end
 
 
-    % Epoch information for SF and GLM (model.missing)
+    % Epoch information for SF and recursive call from option "missing"
     % ------------------------------------------------------------------------
   case 'epochs'
     % get epoch information from file or from input --
@@ -389,7 +381,6 @@ switch model
       if filewarning
         warning('File %s is not a valid epochs or onsets file', ...
           intiming);
-
         return;
       end
     else
@@ -402,6 +393,10 @@ switch model
         if size(outtiming, 2) ~= 2
           warning(['Epochs must be specified by a e x 2 vector', ...
             'of onset/offsets.']);  return;
+        else
+            if any(diff(outtiming, [], 2) < 0)
+                warning('Offsets must be larger than onsets.');  return;
+            end
         end
       else
         warning('Unknown epoch definition format.');  return;
@@ -417,6 +412,26 @@ switch model
         'time units are ''%s'''], timeunits);  return;
     end
 
+       % Missing epoch information for GLM and DCM
+    % ------------------------------------------------------------------------
+  case 'missing'
+    [sts, missepochs] = pspm_get_timing('epochs', intiming, timeunits);
+     if sts < 1, return; end
+     % sort & merge missing epochs
+    if size(missepochs, 1) > 0
+      [~, sortindx] = sort(missepochs(:, 1));
+      missepochs = missepochs(sortindx,:);
+      % check for overlap and merge
+      overlapindx = zeros(size(missepochs, 1), 1);
+      for k = 2:size(missepochs, 1)
+        if missepochs(k, 1) <= missepochs(k - 1, 2)
+          missepochs(k, 1) =  missepochs(k - 1, 1);
+          overlapindx(k - 1) = 1;
+        end
+      end
+      missepochs(logical(overlapindx), :) = [];
+    end
+    outtiming = missepochs;
 
     % Event information for DCM
     % ------------------------------------------------------------------------
@@ -458,5 +473,4 @@ switch model
 end
 
 sts = 1;
-
-return;
+return

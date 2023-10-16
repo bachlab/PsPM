@@ -15,9 +15,7 @@
 \renewcommand{\textendash}{--}
 \renewcommand{\textemdash}{---}
 
-\usepackage[sfdefault]{inter} %% Option 'sfdefault' only if 'inter' is to be
-% the base font of the document
-\usepackage[T1]{fontenc}
+\usepackage{bera}
 \usepackage{enumitem} \setlist[itemize]{noitemsep}
 \end_preamble
 \use_default_options true
@@ -43,11 +41,11 @@
 \output_sync 0
 \bibtex_command default
 \index_command default
-\paperfontsize default
+\paperfontsize 10
 \spacing single
 \use_hyperref false
 \papersize default
-\use_geometry false
+\use_geometry true
 \use_package amsmath 1
 \use_package amssymb 1
 \use_package cancel 1
@@ -72,6 +70,7 @@
 \shortcut idx
 \color #008000
 \end_index
+\leftmargin 1in
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
@@ -103,7 +102,7 @@ Developer's Guide
 
 \begin_layout Standard
 \align center
-Version 6.0.0
+Version 6.1.0
 \end_layout
 
 \begin_layout Standard
@@ -145,7 +144,7 @@ literal "false"
 \align center
 Dominik R Bach, Giuseppe Castegnetti, Laure Ciernik, Samuel Gerster, Saurabh
  Khemka, Christoph Korn, Samuel Maxwell, Tobias Moser, Philipp C Paulus,
- Ivan Rojkov, Matthias Staib, Eshref Yozdemir, Dadi Zhao and collaborators
+ Ivan Rojkov, Matthias Staib, Eshref Yozdemir, Teddy Zhao and collaborators
 \end_layout
 
 \begin_layout Standard
@@ -170,45 +169,60 @@ LatexCommand tableofcontents
 \end_layout
 
 \begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Quote
+Contributed by Teddy Zhao in April 2023
+\end_layout
+
+\begin_layout Standard
+PsychoPhysiological Modelling, abbreviated as PsPM, is a software package
+ for model-based analysis of psychophysiological signals.
+ PsPM can be accessed through either graphical user interface (GUI) or command
+ lines.
+ PsPM is written in MATLAB language, thus it supports cross platform usages,
+ either Windows, macOS or Linux, and can be easily utilised in customised
+ shell scripts.
+ PsPM is actively updated and maintained by bringing new features and fixing
+ bugs, thus the latest version of PsPM is always encouraged for users.
+ The recommended version of MATLAB for running PsPM is MATLAB 2023a (version
+ 9.14), and the earliest version of MATLAB that could be used for running
+ PsPM is MATLAB 2006a (version 7.2).
+\end_layout
+
+\begin_layout Section
 General
 \end_layout
 
 \begin_layout Quote
-Contributed by Dominik R Bach
+Contributed by Dominik R Bach and Teddy Zhao
 \end_layout
 
 \begin_layout Quote
-Updated by Dadi Zhao in Feburary 2022
+Reviewed and revised by Teddy Zhao in March 2023
 \end_layout
 
 \begin_layout Subsection
-Data files: General structure 
+Data files
 \end_layout
 
 \begin_layout Standard
-In PsPM the data is saved in mat-files.
- Each file contains two variables: 
-\end_layout
-
-\begin_layout Description
-
+In PsPM, data and information is stored as 
 \family typewriter
-infos
+struct
 \family default
- A struct variable with general infos 
-\end_layout
-
-\begin_layout Description
-
+ variables and saved as 
 \family typewriter
-data
+mat
 \family default
- A cell array with a cell for each channel.
- 
-\end_layout
-
-\begin_layout Standard
-The cells contain a struct with channel specific 
+ files.
+ A data 
+\family typewriter
+struct
+\family default
+ may contain mutiple cells, and each cell contains a struct with channel
+ specific fields, 
 \family typewriter
 infos
 \family default
@@ -217,110 +231,594 @@ infos
 data
 \family default
 .
- The structs have the following mandatory fields: 
+ Specifically, 
+\family typewriter
+infos
+\family default
+ is a 
+\family typewriter
+struct
+\family default
+ variable with general information, and 
+\family typewriter
+data
+\family default
+ is a 
+\family typewriter
+cell array
+\family default
+ with the data for each channel.
+ Both 
+\family typewriter
+infos
+\family default
+ and 
+\family typewriter
+data
+\family default
+ have the following mandatory subfields, whilst 
+\family typewriter
+infos
+\family default
+ may have some optional subfields that can be defined if necessary, as is
+ shown in 
+\series bold
+Table 1
+\series default
+.
 \end_layout
 
-\begin_layout Description
+\begin_layout Standard
+\noindent
+\align center
 
-\family typewriter
-infos.duration
-\family default
- Duration in seconds.
+\series bold
+Table 1
+\series default
+ Description of data fields in PsPM
 \end_layout
 
-\begin_layout Description
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="12" columns="4">
+<features booktabs="true" tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="6cm">
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Field
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Subfield
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Mandantory
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \family typewriter
-data{n}.header
-\family default
+infos
+\end_layout
 
-\begin_inset Separator latexpar
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+duration
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+The duration of the acquired data, normally defined in seconds
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+data
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+header.channeltype
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+The type of the corresponding channel, as defined in the settings.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+header.sr
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+the sample rate (or frequency) in 1/second (or Hz), or timestamp units in
+ seconds
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+header.units
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+the unit of data, or the `events'
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+data
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+the actual data
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Optional
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+infos
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+sourcefile
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+importfile
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+importdate
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+sourcetype
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+recdate
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+rectime
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
 \end_inset
 
 
 \end_layout
 
-\begin_deeper
-\begin_layout Description
-
-\family typewriter
-data{n}.header.chantype
-\family default
- (as defined in the settings) 
-\end_layout
-
-\begin_layout Description
-
-\family typewriter
-data{n}.header.sr
-\family default
- (sample rate in 1/second, or timestamp units in seconds) 
-\end_layout
-
-\begin_layout Description
-
-\family typewriter
-data{n}.header.units
-\family default
- (data units, or ‘events') 
-\end_layout
-
-\begin_layout Description
-
-\family typewriter
-data{n}.data
-\family default
- (actual data) 
-\end_layout
-
-\end_deeper
 \begin_layout Standard
-Additionally, a typical file contains the optional infos: 
-\end_layout
-
-\begin_layout Itemize
-
+In most cases, only the subfield 
 \family typewriter
-infos.sourcefile
-\end_layout
-
-\begin_layout Itemize
-
+data
+\family default
+ in the field 
 \family typewriter
-infos.importfile 
-\end_layout
-
-\begin_layout Itemize
-
+data
+\family default
+ will be modified since new results have been generated and are expected
+ to replace the old data.
+ All the other fields, for both 
 \family typewriter
-infos.importdate 
-\end_layout
-
-\begin_layout Itemize
-
+data
+\family default
+ and 
 \family typewriter
-infos.sourcetype 
-\end_layout
-
-\begin_layout Itemize
-
-\family typewriter
-infos.recdate 
-\end_layout
-
-\begin_layout Itemize
-
-\family typewriter
-infos.rectime 
-\end_layout
-
-\begin_layout Standard
-Some data manipulation functions (in particular, 
+infos
+\family default
+, the content will be kept unchanged.
+ However, some data manipulation functions, for example 
 \family typewriter
 pspm_trim
 \family default
-) update infos to record some file history.
- 
+, will update 
+\family typewriter
+infos
+\family default
+ to record some file history.
+ Please check the specific descriptions of each function for understanding
+ how 
+\family typewriter
+data
+\family default
+ and 
+\family typewriter
+infos
+\family default
+ will be updated.
 \end_layout
 
 \begin_layout Subsection
@@ -1149,9 +1647,11 @@ Supported Channel types
 \end_layout
 
 \begin_layout Standard
+\noindent
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="22" columns="13">
-<features tabularvalignment="middle">
+<features booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top" width="3.6cm">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -5540,11 +6040,11 @@ GUI
 \end_layout
 
 \begin_layout Quote
-Contributed by Gabriel Gräni and Dadi Zhao.
+Contributed by Gabriel Gräni and Teddy Zhao.
 \end_layout
 
 \begin_layout Quote
-Revised by Dadi Zhao in Feburary 2022.
+Revised by Teddy Zhao in Feburary 2022.
 \end_layout
 
 \begin_layout Subsection
@@ -6317,25 +6817,32 @@ pspm_cfg_run_functionname.m
 \end_layout
 
 \begin_layout Subsection
-Recommendations for GUI development
-\end_layout
-
-\begin_layout Subsubsection
-Mlapp
+GUI Development Progress
 \end_layout
 
 \begin_layout Standard
+MATLAB GUIDE 
+\begin_inset Flex URL
+status open
 
-\family typewriter
-Mlapp
-\family default
- is the new format for developing GUI in MATLAB.
- The old GUIDE based GUI will lose support from Mathworks in a future release.
- Therefore, it is recommended to move from the old GUIDE to the new Mlapp.
+\begin_layout Plain Layout
+
+https://uk.mathworks.com/help/matlab/migrate-guide-apps.html
 \end_layout
 
-\begin_layout Standard
-The 
+\end_inset
+
+ was originally used as the framework for designing the GUI of PsPM.
+ However, the framework suffers from the risk that plots may be unexpectedly
+ displayed on such figures since they need to be called by users' command
+ lines.
+ At the same time, GUIDE based GUI will lose support from Mathworks in a
+ future release of MATLAB.
+ Consequently, PsPM is currently slowly being migrated to the new UI designing
+ framework, MATLAB AppDesigner.
+ Instead of creating .fig files, the new AppDesigner frameworks will create
+ .mlapp files.
+ The 
 \family typewriter
 .mlapp
 \family default
@@ -6348,8 +6855,60 @@ migration
 .
 \end_layout
 
-\begin_layout Subsubsection
-Style
+\begin_layout Standard
+The main GUI has been recreated by using AppDesigner in PsPM version 6.1,
+ where the function lists inherted from the legacy of GUIDE-based GUI.
+ The code has been re-sorted out in MATLAB by following the coding style
+ of AppDesigner.
+ A typical button corresponds to the function shown below
+\begin_inset Newline linebreak
+\end_inset
+
+
+\family typewriter
+
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+function 
+\end_layout
+
+\begin_layout Plain Layout
+
+button_Callback(app, event) 
+\end_layout
+
+\begin_layout Plain Layout
+
+switch event.Value 
+\end_layout
+
+\begin_layout Plain Layout
+
+case 'A'  
+\end_layout
+
+\begin_layout Plain Layout
+
+action; 
+\end_layout
+
+\begin_layout Plain Layout
+
+end 
+\end_layout
+
+\begin_layout Plain Layout
+
+end
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -6358,8 +6917,9 @@ The new GUI is currently using the colour
 #7f2534
 \family default
  for stylishing.
- The main typeface for UI design is Segoe UI, Helvetica Neue and DejaVu
- Sans for Windows, macOS and Linux, respectively.
+ The main typeface for UI design is Segoe UI, San Francisco (or Helvetica
+ Neue for pre-macOS Yosemite) and DejaVu Sans for Windows, macOS and Linux,
+ respectively.
 \end_layout
 
 \begin_layout Standard
@@ -6374,11 +6934,11 @@ Test Environment
 \end_layout
 
 \begin_layout Quote
-Contributed by Linus Rüttimann, Tobias Moser and Dadi Zhao.
+Contributed by Linus Rüttimann, Tobias Moser and Teddy Zhao.
 \end_layout
 
 \begin_layout Quote
-Revised and updated by Dadi Zhao in Feburary 2022.
+Revised and updated by Teddy Zhao in Feburary 2022.
 \end_layout
 
 \begin_layout Subsubsection
@@ -13805,7 +14365,7 @@ Tests
 \begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="11" columns="2">
-<features tabularvalignment="middle">
+<features booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top" width="6cm">
 <column alignment="center" valignment="top">
 <row>
@@ -13813,6 +14373,8 @@ Tests
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Input
 \end_layout
 
@@ -13822,6 +14384,8 @@ Input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Expected warning
 \end_layout
 
@@ -20785,9 +21349,11 @@ Tests
 \end_layout
 
 \begin_layout Standard
+\noindent
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="4" columns="4">
-<features tabularvalignment="middle">
+<features booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -20797,6 +21363,8 @@ Tests
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 #
 \end_layout
 
@@ -20806,6 +21374,8 @@ Tests
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Issue
 \end_layout
 
@@ -20815,6 +21385,8 @@ Issue
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Parameters of the function
 \end_layout
 
@@ -20824,6 +21396,8 @@ Parameters of the function
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Expected warning
 \end_layout
 
@@ -21217,7 +21791,7 @@ Function name
 invalid_input(this)
 \end_layout
 
-\begin_layout Subparagraph
+\begin_layout Standard
 Description
 \end_layout
 
@@ -21226,11 +21800,7 @@ Checks for warnings, if the input arguments are invalid.
 \end_layout
 
 \begin_layout Subparagraph
-Tests
-\begin_inset Newline linebreak
-\end_inset
-
-
+\noindent
 \begin_inset Tabular
 <lyxtabular version="3" rows="6" columns="2">
 <features tabularvalignment="middle">
@@ -21241,6 +21811,8 @@ Tests
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Input
 \end_layout
 
@@ -21250,6 +21822,8 @@ Input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Expected warning
 \end_layout
 
@@ -21298,7 +21872,7 @@ pspm_prepdata([1 2 3]) [no filt variable]
 \begin_layout Plain Layout
 
 \family typewriter
-ID:invalid_input 
+ID:invalid_input
 \end_layout
 
 \end_inset
@@ -21322,7 +21896,7 @@ pspm_prepdata(data, filt) [filt has no hporder field]
 \begin_layout Plain Layout
 
 \family typewriter
-ID:invalid_input 
+ID:invalid_input
 \end_layout
 
 \end_inset
@@ -21346,7 +21920,7 @@ pspm_prepdata(`foo', filt) [no numeric data]
 \begin_layout Plain Layout
 
 \family typewriter
-ID:invalid_input 
+ID:invalid_input
 \end_layout
 
 \end_inset
@@ -21370,7 +21944,7 @@ pspm_prepdata(data, filt) [with lpfreq = `foo' (not valid)]
 \begin_layout Plain Layout
 
 \family typewriter
-ID:invalid_input 
+ID:invalid_input
 \end_layout
 
 \end_inset
@@ -21381,6 +21955,11 @@ ID:invalid_input
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+\noindent
+Tests
 \end_layout
 
 \begin_layout Paragraph
@@ -21617,9 +22196,11 @@ filt.lpfreq
 \end_layout
 
 \begin_layout Standard
+\noindent
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="2" columns="2">
-<features tabularvalignment="middle">
+<features booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -21627,6 +22208,8 @@ filt.lpfreq
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Input
 \end_layout
 
@@ -21636,6 +22219,8 @@ Input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Expected warning
 \end_layout
 
@@ -22153,17 +22738,21 @@ Tests
 \end_layout
 
 \begin_layout Standard
+\noindent
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="17" columns="3">
-<features tabularvalignment="middle">
+<features booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top">
-<column alignment="center" valignment="top" width="6cm">
+<column alignment="center" valignment="top" width="10cm">
 <column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Test No.
 \end_layout
 
@@ -22173,6 +22762,8 @@ Test No.
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Input
 \end_layout
 
@@ -22182,6 +22773,8 @@ Input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Expected warning
 \end_layout
 
@@ -23082,9 +23675,11 @@ Tests
 \end_layout
 
 \begin_layout Standard
+\noindent
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="4" columns="2">
-<features tabularvalignment="middle">
+<features booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -23092,6 +23687,8 @@ Tests
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Input
 \end_layout
 
@@ -23101,6 +23698,8 @@ Input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Expected warning
 \end_layout
 
@@ -23283,16 +23882,20 @@ Tests
 \end_layout
 
 \begin_layout Standard
+\noindent
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
+<features booktabs="true" tabularvalignment="middle">
+<column alignment="center" valignment="top" width="12cm">
 <column alignment="center" valignment="top">
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Input
 \end_layout
 
@@ -23302,6 +23905,8 @@ Input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Expected warning
 \end_layout
 
@@ -23309,7 +23914,7 @@ Expected warning
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -23333,7 +23938,7 @@ ID:invalid_input
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -23684,12 +24289,18 @@ Checks for warnings, if the input arguments are invalid.
 
 \begin_layout Subparagraph
 Tests
+\begin_inset Newline newline
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
+\noindent
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="4" columns="2">
-<features tabularvalignment="middle">
+<features booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -23697,6 +24308,8 @@ Tests
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Input
 \end_layout
 
@@ -23706,6 +24319,8 @@ Input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Expected warning
 \end_layout
 
@@ -24044,16 +24659,20 @@ Tests
 \end_layout
 
 \begin_layout Standard
+\noindent
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="9" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="6cm">
+<features booktabs="true" tabularvalignment="middle">
+<column alignment="center" valignment="top" width="12cm">
 <column alignment="center" valignment="top">
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Input
 \end_layout
 
@@ -24063,6 +24682,8 @@ Input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Expected warning
 \end_layout
 
@@ -25068,12 +25689,18 @@ Checks for warnings, if the input arguments are invalid.
 
 \begin_layout Subparagraph
 Tests
+\begin_inset Newline newline
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
+\noindent
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="13" columns="2">
-<features tabularvalignment="middle" tabularwidth="100text%">
+<features booktabs="true" tabularvalignment="middle" tabularwidth="100text%">
 <column alignment="center" valignment="top" width="70text%">
 <column alignment="center" valignment="top" width="20text%">
 <row>
@@ -25081,6 +25708,8 @@ Tests
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Input
 \end_layout
 
@@ -25090,6 +25719,8 @@ Input
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Expected warning
 \end_layout
 
@@ -25920,7 +26551,7 @@ test if new channel and added channel have same
 \end_layout
 
 \begin_layout Section
-External functions and tools
+External Functions and Tools
 \end_layout
 
 \begin_layout Subsection
@@ -26005,7 +26636,7 @@ GitHub Actions
 \end_layout
 
 \begin_layout Quote
-Contributed by Dadi Zhao
+Contributed by Teddy Zhao
 \end_layout
 
 \begin_layout Quote
@@ -26560,13 +27191,13 @@ Now the script should be running ok.
 \end_layout
 
 \begin_layout Section
-List of functions
+List of Functions
 \end_layout
 
 \begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="157" columns="4">
-<features islongtable="true" longtabularalignment="center">
+<features booktabs="true" islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="50text%">
 <column alignment="center" valignment="top" width="15text%">
 <column alignment="center" valignment="top" width="10text%">
@@ -31305,7 +31936,7 @@ pspm_overwrite
 \begin_inset Text
 
 \begin_layout Plain Layout
-DZ
+TZ
 \end_layout
 
 \end_inset
@@ -32185,7 +32816,7 @@ pspm_scr_pp
 \begin_inset Text
 
 \begin_layout Plain Layout
-DZ
+TZ
 \end_layout
 
 \end_inset
@@ -32665,7 +33296,7 @@ pspm_time2index
 \begin_inset Text
 
 \begin_layout Plain Layout
-DZ
+TZ
 \end_layout
 
 \end_inset
@@ -32905,7 +33536,7 @@ EY Eshref Yozdemir
 \end_layout
 
 \begin_layout Description
-DZ Dadi Zhao
+TZ Teddy Zhao
 \end_layout
 
 \end_body

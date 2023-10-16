@@ -1,21 +1,25 @@
 function newdatafile = pspm_pp(varargin)
-% pspm_pp contains various preprocessing utilities for reducing noise in the
-% data.
-%
-% INPUT:
+% ● Description
+%   pspm_pp contains various preprocessing utilities for reducing noise in the
+%   data.
+% ● Format
 %   pspm_pp('median', datafile, n, channelnumber, options)
 %   pspm_pp('butter', datafile, freq, channelnumber, options)
-%
-% Currently implemented:
-%   'median':                           medianfilter for SCR
-%       n:                              number of timepoints for median filter
-%   'butter':                           1st order butterworth low pass filter for SCR
-%       freq:                           cut off frequency (min 20 Hz)
-%__________________________________________________________________________
-%
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2009-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Arguments
+%   [Currently implemented]
+%   'median': medianfilter for SCR
+%          n: number of timepoints for median filter
+%   'butter': 1st order butterworth low pass filter for SCR
+%       freq: cut off frequency (min 20 Hz)
+%  channelnumber:
+%  ┌───options: [struct] optional
+%  └.overwrite: [logical] (0 or 1)
+%               Define whether to overwrite existing output files or not.
+%               Default value: determined by pspm_overwrite.
+% ● History
+%   Introduced In PsPM 3.0
+%   Written in 2009-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings
@@ -23,9 +27,7 @@ if isempty(settings)
   pspm_init;
 end
 newdatafile = [];
-
-% check input arguments
-% -------------------------------------------------------------------------
+%% Check input arguments
 if nargin < 1
   warning('ID:invalid_input', 'No input arguments. Don''t know what to do.');
 elseif nargin < 2
@@ -42,25 +44,23 @@ if nargin < 3
     warning('ID:invalid_input', 'Missing filter specs.'); return;
   end
 end
-
 fn = varargin{2};
-
 if nargin >=5 && isstruct(varargin{5}) && isfield(varargin{5}, 'overwrite')
   options = varargin{5};
 else
-  options.overwrite = 0;
+  options = struct(); % build an empty struct if nothing is available
 end
-
-% load data
-% -------------------------------------------------------------------------
+options = pspm_options(options, 'pp');% update options
+if options.invalid
+  return
+end
+%% Load data
 [sts, infos, data] = pspm_load_data(fn, 0);
 if sts ~= 1
   warning('ID:invalid_input', 'call of pspm_load_data failed');
   return;
 end
-
-% determine channel number
-% -------------------------------------------------------------------------
+%% Determine channel number
 if nargin >= 4 && ~isempty(varargin{4}) && ...
     (~isequal(size(varargin{4}), [1,1]) || varargin{4} ~= 0)
   channum = varargin{4};
@@ -72,9 +72,7 @@ else
   end
   channum = find(channum == 1);
 end
-
-% do the job
-% -------------------------------------------------------------------------
+%% Do the job
 switch method
   case 'median'
     n = varargin{3};
@@ -110,15 +108,15 @@ switch method
     warning('ID:invalid_input', 'Unknown filter option ...');
     return;
 end
-
 [pth, fn, ext] = fileparts(fn);
 newdatafile = fullfile(pth, ['m', fn, ext]);
 infos.ppdate = date;
 infos.ppfile = newdatafile;
 clear savedata
-savedata.data = data; savedata.infos = infos;
+savedata.data = data;
+savedata.infos = infos;
+options.overwrite = pspm_overwrite(newdatafile, options);
 savedata.options = options;
 pspm_load_data(newdatafile, savedata);
 fprintf('done.');
-
 return

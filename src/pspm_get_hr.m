@@ -1,14 +1,15 @@
-function [sts, data]=pspm_get_hr(import)
-% pspm_get_hr is a common function for importing heart rate data
-%
-% FORMAT:
+function [sts, data] = pspm_get_hr(import)
+% ● Description
+%   pspm_get_hr is a common function for importing heart rate data
+% ● Format
 %   [sts, data]= pspm_get_hr(import)
-%   with data: column vector of waveform data
-%        import: import job structure with mandatory fields .data and .sr
-%
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+% ● Arguments
+%     data: column vector of waveform data
+%   import: import job structure with mandatory fields .data and .sr
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings
@@ -31,5 +32,4 @@ data.header.sr = import.sr;
 
 % check status
 sts = 1;
-
-return;
+return

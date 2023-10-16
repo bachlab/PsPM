@@ -1,24 +1,38 @@
-function [sts, glm] = pspm_glm_recon(modelfile)
-% pspm_glm_recon reconstructs the estimated responses and measures its peak.
-% Reconstructed responses are written into the field glm.resp, and
-% reconstructed response peaks into the field glm.recon in original GLM file
-%
-% FORMAT: [sts, glm] = pspm_glm_recon(glmfile)
-%
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2018 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+function varargout = pspm_glm_recon(modelfile)
+% ● Description
+%   pspm_glm_recon reconstructs the estimated responses and measures its peak.
+%   Reconstructed responses are written into the field glm.resp, and
+%   reconstructed response peaks into the field glm.recon in original GLM file.
+% ● Format
+%   glm = pspm_glm_recon(glmfile) or [sts, glm] = pspm_glm_recon(glmfile)
+% ● Arguments
+%   glmfile:
+% ● Outputs
+%   sts:
+%   glm:
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2008-2018 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
-%% Initialise
+% initialise
 global settings
 if isempty(settings)
   pspm_init;
 end
 sts = -1;
+glm = [];
+switch nargout
+  case 1
+    varargout{1} = glm;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = glm;
+end
 
 % get GLM & basis functions
 % -------------------------------------------------------------------------
-[bsts, glm] = pspm_load1(modelfile, 'all', 'glm');
+[bsts, glm, mdltype] = pspm_load1(modelfile, 'all', 'glm');
 if bsts ~= 1
   warning('ID:invalid_input', 'call of pspm_load1 failed');
   return;
@@ -66,5 +80,13 @@ end
 glm.recon = recon;
 glm.resp  = resp;
 glm.reconnames = condname(:);
-sts =1;
 save(modelfile, 'glm');
+sts = 1;
+switch nargout
+  case 1
+    varargout{1} = glm;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = glm;
+end
+return

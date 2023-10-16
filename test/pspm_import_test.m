@@ -16,7 +16,7 @@ classdef pspm_import_test <  matlab.unittest.TestCase
       import{1}.type = 'scr';
       datatype = 'foo';
       this.verifyWarning(@()pspm_import(datafile, datatype, import), ...
-      'ID:invalid_channeltype', 'invalid_input test 3'); %invalid channeltype
+      'ID:invalid_chantype', 'invalid_input test 3'); %invalid chantype
       datatype = 'spike';
       datafile = 5;
       this.verifyWarning(@()pspm_import(datafile, datatype, import), ...
@@ -50,7 +50,9 @@ classdef pspm_import_test <  matlab.unittest.TestCase
       tc{1}.setup_path;
       for k = 1:length(tc)
         tc{k}.define_testcases;
-        outfile = pspm_import(tc{k}.testcases{1}.pth, tc{k}.datatype, tc{k}.testcases{1}.import);
+        options = struct();
+        options.overwrite = 1;
+        outfile = pspm_import(tc{k}.testcases{1}.pth, tc{k}.datatype, tc{k}.testcases{1}.import, options);
         if ~(isprop(tc{k}, 'blocks') && tc{k}.blocks)
           this.verifyTrue(pspm_load_data(outfile{1},'none') == 1);
           delete(outfile{1});
@@ -71,7 +73,9 @@ classdef pspm_import_test <  matlab.unittest.TestCase
       [pathstr,name,ext] = fileparts(datafile{1});
       datafile{2} = [pathstr,name,'_copy',ext];
       copyfile(datafile{1},datafile{2});
-      outfile = pspm_import(datafile, tc.datatype, tc.testcases{1}.import);
+      options = struct();
+      options.overwrite = 1;
+      outfile = pspm_import(datafile, tc.datatype, tc.testcases{1}.import, options);
       this.verifyTrue(iscell(outfile) && numel(outfile) == 2, 'outfile is not a 2-element cell array');
       this.verifyTrue(pspm_load_data(outfile{1},'none') == 1);
       this.verifyTrue(pspm_load_data(outfile{2},'none') == 1);

@@ -1,6 +1,6 @@
 function [pp_emg] = pspm_cfg_pp_emg_data
 % function to process emg data which leads to emg_proc data
-% 
+%
 
 % $Id$
 % $Rev$

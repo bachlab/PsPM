@@ -1,16 +1,19 @@
 function [sts, import, sourceinfo] = pspm_get_labchart(datafile, import)
-% pspm_get_labchartmat is the main function for import of LabChart
-% (ADInstruments) files.
-% See pspm_labchartmat_in and pspm_labchart_mat_ex for import of matlab
-% files that were exported either using the built-in function or the
-% online conversion tool.
-%
-%
-% FORMAT: [sts, import, sourceinfo] = pspm_get_labchart(datafile, import);
-%
-%__________________________________________________________________________
-% PsPM 3.1
-% (C) 2016 Tobias Moser (University of Zurich)
+% ● Description
+%   pspm_get_labchart is the main function for import of LabChart
+%   (ADInstruments) files.
+%   See pspm_labchartmat_in and pspm_labchart_mat_ex for import of matlab
+%   files that were exported either using the built-in function or the
+%   online conversion tool.
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_labchart(datafile, import);
+% ● Arguments
+%   datafile:
+%     import:
+% ● History
+%   Introduced in PsPM 3.1
+%   Written in 2016 by Tobias Moser (University of Zurich)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings
@@ -29,7 +32,7 @@ addpath(pspm_path('Import','labchart','adi'));
 
 % check for multiple sessions
 if labchart.n_records > 1
-  fprintf(['\nFound (%i) sessions in file "%s". ', ...
+  fprintf(['\nFound (%i) sessions in file %s. ', ...
     'Will concatenate the sessions into one PsPM file.\n'], ...
     labchart.n_records, datafile);
 end
@@ -64,17 +67,17 @@ for k = 1:numel(import)
   % find channel number if not marker channel
   if ~strcmpi(import{k}.type, 'marker')
     if import{k}.channel > 0
-      chan = import{k}.channel;
+      channel = import{k}.channel;
     else
-      chan = pspm_find_channel(cellstr(labchart.channel_names(:)), import{k}.type);
-      if chan < 1, return; end
+      channel = pspm_find_channel(cellstr(labchart.chan_names(:)), import{k}.type);
+      if channel < 1, return; end
     end
-    if chan > labchart.n_channels
+    if channel > labchart.n_channels
       warning('ID:channel_not_contained_in_file', ...
-        'Channel %02.0f not contained in file %s.\n', chan, datafile);
+        'Channel %02.0f not contained in file %s.\n', channel, datafile);
       return;
     end
-    lab_chan = labchart.channel_specs(chan);
+    lab_chan = labchart.channel_specs(channel);
   end
 
   % loop through records
@@ -105,14 +108,14 @@ for k = 1:numel(import)
     import{k}.marker = 'timestamps';
     import{k}.markerinfo = struct('name', {vertcat(marker_name{:})}, ...
       'value', {cell2mat(vertcat(marker_value{:}))});
-    sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', k, 'Events');
+    sourceinfo.channel{k, 1} = sprintf('Channel %02.0f: %s', k, 'Events');
   else
     % get units ---
     import{k}.units = lab_chan.units{1};
     % get sr ---
     import{k}.sr = lab_chan.fs(1);
-    sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', chan, ...
-      labchart.channel_names{chan});
+    sourceinfo.channel{k, 1} = sprintf('Channel %02.0f: %s', channel, ...
+      labchart.chan_names{channel});
   end
 end
 
@@ -121,3 +124,4 @@ delete(labchart.file_h);
 % -------------------------------------------------------------------------
 rmpath(pspm_path('Import','labchart','adi'));
 sts = 1;
+return

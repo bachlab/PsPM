@@ -1,83 +1,71 @@
 function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
-% pspm_get_smi is the main function for import of SensoMotoric Instruments
-% iView X EyeTracker files.
-%
-% FORMAT: [sts, import, sourceinfo] = pspm_get_smi(datafile, import);
-%          datafile: String or cell array of strings. The size of the cell array can be 1 or 2.
-%
-%                    If datafile is string, it must be the path to the sample file containing
-%                    eye measuremnts. The file must be stored in ASCII format.
-%
-%                    If datafile is a cell array, the first element must be the path to the
-%                    sample file defined above. The optional second string in the cell array
-%                    can be the event file containing blink/saccade events. The file must be
-%                    stored in ASCII format.
-%
-%          import: import job structure with
-%                  - mandatory fields:
-%                      .type:
-%                          Type of the channel. Must be one of pupil_l, pupil_r,
-%                          gaze_x_l, gaze_y_l, gaze_x_r, gaze_y_r, blink_l, blink_r,
-%                          saccade_l, saccade_r, marker, custom.
-%
-%                          If the given channel type does not exist in the given datafile,
-%                          it will be filled with NaNs and a warning will be emitted.
-%
-%                          Specified custom channels must correspond to some form of
-%                          pupil/gaze channels. In addition,
-%                          when the channel type is custom, no postprocessing/conversion
-%                          is performed by pspm_get_smi and the channel is returned directly
-%                          as it is in the given datafile.
-%
-%                          The gaze values returned are in the given target_unit.
-%                          (x, y) = (0, 0) coordinate represents the top left
-%                          corner of the calibration area. x coordinates grow
-%                          towards right and y coordinates grow towards bottom. The
-%                          gaze coordinates can be negative or larger than calibration
-%                          area axis length. These correspond to gaze positions outside the
-%                          calibration area.
-%
-%                          Since there are multiple ways to specify pupil size in SMI files,
-%                          pspm_get_smi selects the channel according to the following
-%                          precendence order (earlier items have precedence):
-%                            1. Mapped Diameter (mm)
-%                            2. Dia X (mm)
-%                            3. Dia (mm2)
-%                            4. Dia X (pixel)
-%                            5. Dia (pixel2)
-%                          If a pixel/pixel2 channels is chosen, it is NOT converted to a mm/mm2
-%                          channel. It is returned as it is. In mm2/pixel2 case, the pupil is
-%                          assumed to be a circle. Therefore, diameter d from area a is
-%                          calculated as 2*sqrt(a/pi).
-%
-%                  - optional fields:
-%                      .channel:
-%                          If .type is custom, the index of the channel to import
-%                          must be specified using this option.
-%                      .stimulus_resolution:
-%                          An array of length 2 storing the screen resolution of the whole
-%                          stimulus window in pixels. This resolution is required in order to
-%                          perform pixel to mm conversions. If not given, no manual conversion
-%                          is performed by get_smi and all the values are returned as they are
-%                          in the datafile.
-%                      .target_unit:
-%                          the unit to which the gaze data should be converted. Used only if
-%                          stimulus_resolution is specified.
-%                          (Default: mm)
-%
-%                  - Each import structure will get the following output fields:
-%                      .data:
-%                          Data channel corresponding to the input channel type or
-%                          custom channel id.
-%                      .units:
-%                          Units of the channel.
-%                      .sr:
-%                          Sampling rate.
-%                      .chan_id:
-%                          Channel index of the imported channel in the raw data columns.
-%__________________________________________________________________________
-%
-% (C) 2019 Eshref Yozdemir (University of Zurich)
+% ● Description
+%   pspm_get_smi is the main function for import of SensoMotoric Instruments
+%   iView X EyeTracker files.
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_smi(datafile, import);
+% ● Arguments
+%       datafile: String or cell array of strings. The size of the cell
+%                 array can be 1 or 2. If datafile is string, it must be the
+%                 path to the sample file containing eye measuremnts. The file
+%                 must be stored in ASCII format. If datafile is a cell array,
+%                 the first element must be the path to the sample file defined
+%                 above. The optional second string in the cell array can be
+%                 the event file containing blink/saccade events.
+%                 The file must be stored in ASCII format.
+%  ┌──────import: [struct] import job structure
+%  │              [mandatory fields]
+%  ├───────.type: Type of the channel. Must be one of pupil_l, pupil_r,
+%  │              gaze_x_l, gaze_y_l, gaze_x_r, gaze_y_r, blink_l, blink_r,
+%  │              saccade_l, saccade_r, marker, custom. If the given
+%  │              channel type does not exist in the given datafile, it
+%  │              will be filled with NaNs and a warning will be emitted.
+%  │              Specified custom channels must correspond to some form of
+%  │              pupil/gaze channels. In addition, when the channel type
+%  │              is custom, no postprocessing/conversion is performed by
+%  │              pspm_get_smi and the channel is returned directly as it
+%  │              is in the given datafile.
+%  │              The gaze values returned are in the given target_unit.
+%  │              (x, y) = (0, 0) coordinate represents the top left corner
+%  │              of the calibration area. x coordinates grow towards right
+%  │              and y coordinates grow towards bottom. The gaze
+%  │              coordinates can be negative or larger than calibration
+%  │              area axis length. These correspond to gaze positions
+%  │              outside the calibration area.
+%  │              Since there are multiple ways to specify pupil size in
+%  │              SMI files, pspm_get_smi selects the channel according to
+%  │              the following precendence order (earlier items have
+%  │              precedence):
+%  │              1. Mapped Diameter (mm)
+%  │              2. Dia X (mm)
+%  │              3. Dia (mm2)
+%  │              4. Dia X (pixel)
+%  │              5. Dia (pixel2)
+%  │              If a pixel/pixel2 channels is chosen, it is NOT converted
+%  │              to a mm/mm2 channel. It is returned as it is. In
+%  │              mm2/pixel2 case, the pupil is assumed to be a circle.
+%  │              Therefore, diameter d from area a is calculated as
+%  │              2*sqrt(a/pi).
+%  │              [optional fields]
+%  ├────.channel: If .type is custom, the index of the channel to import
+%  │              must be specified using this option.
+%  ├.stimulus_resolution:
+%  │              An array of length 2 storing the screen resolution of
+%  │              the whole stimulus window in pixels. This resolution is
+%  │              required in order to perform pixel to mm conversions. If
+%  │              not given, no manual conversion is performed by get_smi
+%  │              and all the values are returned as they are in the datafile.
+%  ├.target_unit: the unit to which the gaze data should be converted. Used
+%  │              only if stimulus_resolution is specified. (Default: mm)
+%  │              [Each import structure will get the following output fields]
+%  ├───────.data: Data channel corresponding to the input channel type or
+%  │              custom channel id.
+%  ├──────.units: Units of the channel.
+%  ├─────────.sr: Sampling rate.
+%  └────.chan_id: Channel index of the imported channel in the raw data columns.
+% ● History
+%   Written in 2019 by Eshref Yozdemir (University of Zurich)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings
@@ -87,7 +75,6 @@ end
 sts = -1;
 sourceinfo = [];
 addpath(pspm_path('Import','smi'));
-
 if ~iscell(import)
   import = {import};
 end
@@ -102,13 +89,12 @@ for i = 1:numel(import)
     import{i}.stimulus_resolution = [-1 -1];
   end
 end
-
-if isstr(datafile)
+if ischar(datafile)
   datafile = {datafile};
 end
-if ~assert_proper_datafile_format(datafile); return; end;
-if ~assert_custom_import_channels_has_channel_field(import); return; end;
-if ~assert_all_chantypes_are_supported(settings, import); return; end;
+if ~assert_proper_datafile_format(datafile); return; end
+if ~assert_custom_import_channels_has_channel_field(import); return; end
+if ~assert_all_channeltypes_are_supported(settings, import); return; end
 try
   if numel(datafile) == 2
     data = import_smi(datafile{1}, datafile{2});
@@ -128,19 +114,17 @@ catch err
   return;
 end
 if numel(data) > 1
-  if ~assert_same_sample_rate(data); return; end;
-  if ~assert_same_eyes_observed(data); return; end;
-  if ~assert_sessions_are_one_after_another(data); return; end;
+  if ~assert_same_sample_rate(data); return; end
+  if ~assert_same_eyes_observed(data); return; end
+  if ~assert_sessions_are_one_after_another(data); return; end
 end
-
 [data_concat, markers, mi_values, mi_names] = concat_sessions(data);
-
 addpath(pspm_path('backroom'));
-chan_struct = data{1}.channels_columns;
+chan_struct = data{1}.channel_columns;
 eyes_observed = lower(data{1}.eyesObserved);
-if strcmpi(eyes_observed, 'l')
+if strcmpi(eyes_observed, settings.lateral.char.l)
   mask_chans = {'L Blink', 'L Saccade'};
-elseif strcmpi(eyes_observed, 'r')
+elseif strcmpi(eyes_observed, settings.lateral.char.r)
   mask_chans = {'R Blink', 'R Saccade'};
 else
   mask_chans = {'L Blink', 'L Saccade', 'R Blink', 'R Saccade'};
@@ -151,7 +135,6 @@ data_concat = set_blinks_saccades_to_nan(...
   mask_chans,...
   @(x) contains(x, 'L '));
 rmpath(pspm_path('backroom'));
-
 sampling_rate = data{1}.sampleRate;
 units = data{1}.units;
 raw_columns = data{1}.raw_columns;
@@ -164,20 +147,24 @@ for k = 1:num_import_cells
   chan_id = NaN;
   import{k}.units = 'N/A';
   import{k}.sr = sampling_rate;
-  chantype = lower(import{k}.type);
-  chantype_has_L_or_R = ~isempty(regexpi(chantype, '_[lr]', 'once'));
-  chantype_hasnt_eyes_obs = isempty(regexpi(chantype, ['_([' eyes_observed '])'], 'once'));
-  if chantype_has_L_or_R && chantype_hasnt_eyes_obs
+  channeltype = lower(import{k}.type);
+  channellateral = pspm_eye(channeltype, 'channel2lateral');
+  if isempty(channellateral)
+    flag_channeltype_hasnt_eyes_obs = 0;
+  else
+    flag_channeltype_hasnt_eyes_obs = ~contains(eyes_observed,channellateral) && ~strcmp(eyes_observed, settings.lateral.char.c);
+  end
+  if flag_channeltype_hasnt_eyes_obs
     % no import
-  elseif strcmpi(chantype, 'marker')
+  elseif strcmpi(channeltype, 'marker')
     [import{k}, chan_id] = import_marker_chan(import{k}, markers, mi_values, mi_names, size(data_concat, 1), sampling_rate);
-  elseif contains(chantype, 'pupil')
+  elseif contains(channeltype, 'pupil')
     [import{k}, chan_id] = import_pupil_chan(import{k}, data_concat, viewing_dist, raw_columns, chan_struct, units, sampling_rate);
-  elseif contains(chantype, 'gaze')
+  elseif contains(channeltype, 'gaze')
     [import{k}, chan_id] = import_gaze_chan(import{k}, data_concat, screen_size_mm, calib_area_px, raw_columns, chan_struct, sampling_rate);
-  elseif contains(chantype, 'blink') || contains(chantype, 'saccade')
+  elseif contains(channeltype, 'blink') || contains(channeltype, 'saccade')
     [import{k}, chan_id] = import_blink_or_saccade_chan(import{k}, data_concat, raw_columns, chan_struct, units, sampling_rate);
-  elseif strcmpi(chantype, 'custom')
+  elseif strcmpi(channeltype, 'custom')
     [import{k}, chan_id] = import_custom_chan(import{k}, data_concat, raw_columns, chan_struct, units, sampling_rate);
   else
     warning('ID:pspm_error', 'This branch should not have been taken. Please report this error to PsPM dev team'); return;
@@ -189,13 +176,12 @@ for k = 1:num_import_cells
       ' does not seem to be present in the datafile. ', ...
       'Will create artificial channel with NaN values.'], import{k}.type));
   end
-  sourceinfo.chan{k, 1} = sprintf('Column %02.0f', chan_id);
+  sourceinfo.channel{k, 1} = sprintf('Column %02.0f', chan_id);
   sourceinfo.chan_stats{k,1} = struct();
   n_nan = sum(isnan(import{k}.data));
   n_data = numel(import{k}.data);
   sourceinfo.chan_stats{k}.nan_ratio = n_nan / n_data;
 end
-
 sourceinfo.date = data{1}.record_date;
 sourceinfo.time = data{1}.record_time;
 sourceinfo.screen_size_mm = screen_size_mm;
@@ -203,16 +189,14 @@ sourceinfo.calib_area_px = calib_area_px;
 sourceinfo.viewing_distance_mm = viewing_dist;
 sourceinfo.eyes_observed = eyes_observed;
 sourceinfo.best_eye = eye_with_smaller_nan_ratio(import, eyes_observed);
-
 rmpath(pspm_path('Import','smi'));
 sts = 1;
-end
+return
 
 function proper = assert_proper_datafile_format(datafile)
 proper = is_proper_datafile_format(datafile);
 if ~proper
   warning('ID:invalid_input', 'Given datafile is not valid. Please check the documentation');
-end
 end
 
 function proper = is_proper_datafile_format(datafile)
@@ -233,7 +217,6 @@ if numel(datafile) == 2 && ~isstr(datafile{2})
   proper = false;
   return;
 end
-end
 
 function proper = assert_same_sample_rate(data)
 proper = true;
@@ -249,7 +232,6 @@ if any(diff(sample_rates))
   proper = false;
   return;
 end
-end
 
 function equal = all_strs_in_cell_array_are_equal(cell_arr)
 equal = true;
@@ -259,22 +241,18 @@ for i = 1:numel(cell_arr) - 1
     break;
   end
 end
-end
 
 function proper = assert_same_eyes_observed(data)
 proper = true;
 eyes_observed = cellfun(@(x) x.eyesObserved, data, 'UniformOutput', false);
 same_eyes = all_strs_in_cell_array_are_equal(eyes_observed);
-
-channel_headers = cellfun(@(x) x.channels_columns, data, 'UniformOutput', false);
+channel_headers = cellfun(@(x) x.channel_columns, data, 'UniformOutput', false);
 same_headers = all_strs_in_cell_array_are_equal(channel_headers);
-
 if ~(same_eyes && same_headers)
   error_msg = 'Cannot concatenate multiple sessions with different eye observation or channel headers';
   warning('ID:invalid_data_structure', error_msg);
   proper = false;
   return;
-end
 end
 
 function proper = assert_sessions_are_one_after_another(data)
@@ -288,7 +266,6 @@ if ~isempty(neg_diff_indices)
   proper = false;
   return;
 end
-end
 
 function proper = assert_custom_import_channels_has_channel_field(import)
 proper = true;
@@ -299,12 +276,11 @@ for i = 1:numel(import)
     return;
   end
 end
-end
 
-function proper = assert_all_chantypes_are_supported(settings, import)
+function proper = assert_all_channeltypes_are_supported(settings, import)
 proper = true;
 viewpoint_idx = find(strcmpi('smi', {settings.import.datatypes.short}));
-viewpoint_types = settings.import.datatypes(viewpoint_idx).chantypes;
+viewpoint_types = settings.import.datatypes(viewpoint_idx).channeltypes;
 for k = 1:numel(import)
   input_type = import{k}.type;
   if ~any(strcmpi(input_type, viewpoint_types))
@@ -314,10 +290,9 @@ for k = 1:numel(import)
     return;
   end
 end
-end
 
-function expect_list = map_pspm_header_to_smi_headers(pspm_chantype)
-type_parts = split(pspm_chantype, '_');
+function expect_list = map_pspm_header_to_smi_headers(pspm_channeltype)
+type_parts = split(pspm_channeltype, '_');
 if strcmpi(type_parts{1}, 'pupil')
   which_eye = upper(type_parts{2});
   expect_list = {[which_eye ' Dia'], [which_eye ' Dia X'], [which_eye ' Area'], [which_eye ' Mapped Diameter']};
@@ -331,7 +306,6 @@ elseif strcmpi(type_parts{1}, 'blink')
 elseif strcmpi(type_parts{1}, 'saccade')
   which_eye = upper(type_parts{2});
   expect_list = {[which_eye ' Saccade']};
-end
 end
 
 function [import_cell, chan_id] = import_marker_chan(import_cell, markers, mi_values, mi_names, n_rows, sampling_rate)
@@ -349,7 +323,6 @@ markerinfo.name = mi_names;
 markerinfo.value = mi_values;
 import_cell.markerinfo = markerinfo;
 chan_id = -1;
-end
 
 function [import_cell, chan_id] = import_pupil_chan(import_cell, data_concat, viewing_dist, raw_columns, chan_struct, units, sampling_rate)
 smi_headers = map_pspm_header_to_smi_headers(import_cell.type);
@@ -408,7 +381,6 @@ else
 end
 chan_id = find(contains(raw_columns, chan_struct{chan_id_concat}));
 import_cell.sr = sampling_rate;
-end
 
 function [import_cell, chan_id] = import_gaze_chan(import_cell, data_concat, screen_size_mm, calib_area_px, raw_columns, chan_struct, sampling_rate)
 screen_size_px = import_cell.stimulus_resolution;
@@ -448,7 +420,6 @@ else
 end
 chan_id = find(contains(raw_columns, chan_struct{chan_id_concat}));
 import_cell.sr = sampling_rate;
-end
 
 function [import_cell, chan_id] = import_blink_or_saccade_chan(import_cell, data_concat, raw_columns, chan_struct, units, sampling_rate)
 smi_headers = map_pspm_header_to_smi_headers(import_cell.type);
@@ -464,7 +435,6 @@ chan_id = -1;
 import_cell.data = data_concat(:, chan_id_concat);
 import_cell.units = units{chan_id_concat};
 import_cell.sr = sampling_rate;
-end
 
 function [import_cell, chan_id] = import_custom_chan(import_cell, data_concat, raw_columns, chan_struct, units, sampling_rate)
 n_cols = size(raw_columns, 2);
@@ -487,7 +457,7 @@ import_cell.data = data_concat(:, chan_id_in_concat);
 import_cell.units = units{chan_id_in_concat};
 import_cell.data_header = chan_struct{chan_id_in_concat};
 import_cell.sr = sampling_rate;
-end
+
 
 function [data_concat, markers, mi_values, mi_names] = concat_sessions(data)
 % Concatenate multiple sessions into contiguous arrays, inserting NaN or N/A fields
@@ -533,7 +503,6 @@ for c = 1:numel(data)
 
   last_time = end_time;
 end
-end
 
 function best_eye = eye_with_smaller_nan_ratio(import, eyes_observed)
 if numel(eyes_observed) == 1
@@ -555,5 +524,4 @@ else
   else
     best_eye = 'l'; % if equal, set left
   end
-end
 end

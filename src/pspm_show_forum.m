@@ -1,11 +1,6 @@
 function pspm_show_forum
-% PsPM 5.1
-% (C) 2020 Teddy Chao (UCL)
-%% Initialise
-global settings
-if isempty(settings)
-  pspm_init;
-end
-%% Show webpage
+% ● History
+%   Introduced In PsPM 5.1
+%   Written in 2020 by Teddy Chao (UCL)
 web('https://github.com/bachlab/PsPM/issues', '-browser')
 return

@@ -1,33 +1,33 @@
 function [sts, out] = pspm_segment_mean(segments, options)
-% pspm_segment_mean is a function which takes segments created by
-% pspm_extract_segments and creates means among sessions.
-%
-% FORMAT:
+% ● Description
+%   pspm_segment_mean is a function which takes segments created by
+%   pspm_extract_segments and creates means among sessions.
+% ● Format
 %   [sts, out] = pspm_segment_mean(segments, options)
-%
-% INPUT:
-%   segments:           Cell of multiple segments, each obtained with
-%                       pspm_extract_segments()
-%   options:
-%       plot:           Display plot of the mean of each condition over
-%                       multiple subjects
-%       adjust_method:  How to deal with different sampling rates. Options
-%                       are 'none' (Default; will fail if sampling rates
-%                       are different), 'downsample' (will sample down to
-%                       minimum sample rate), 'interpolate' (will
-%                       interpolate to maximum sample rate)
-%       newfile:        If specified, the segment data will be written into
-%                       file specified. If is equal to '' (empty) then data
-%                       will not be returned. If written to file. The file
-%                       is also speciefied in the out struct. Default is
-%                       ''.
-%       overwrite:      If specified, file specified in options.newfile,
-%                       will be overwritten, if it already exists.
-%__________________________________________________________________________
-% PsPM 3.1
-% (C) 2008-2016 Tobias Moser (University of Zurich)
+% ● Arguments
+%         segments: Cell of multiple segments, each obtained with
+%                   pspm_extract_segments()
+%   ┌──────options:
+%   ├─────────plot: Display plot of the mean of each condition over multiple
+%   │               subjects
+%   ├adjust_method: How to deal with different sampling rates. Accepted values
+%   │               are 'none' (Default; will fail if sampling rates are
+%   │               different), 'downsample' (will sample down to minimum
+%   │               sample rate), 'interpolate' (will interpolate to maximum
+%   │               sample rate).
+%   ├──────newfile: If specified, the segment data will be written into file
+%   │               specified. If is equal to '' (empty) then data will not be
+%   │               returned. If written to file. The file is also speciefied
+%   │               in the out struct. Default is ''.
+%   └────overwrite: [logical] (0 or 1)
+%                   Define whether to overwrite existing output files or not.
+%                   Default value: determined by pspm_overwrite.
+% ● History
+%   Introduced in PsPM 3.1
+%   Written in 2008-2016 by Tobias Moser (University of Zurich)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
-%% Initialise
+%% initialise
 global settings
 if isempty(settings)
   pspm_init;
@@ -38,37 +38,16 @@ out = struct();
 if nargin < 2
   options = struct();
 end
-
-if ~isfield(options, 'plot')
-  options.plot = 0;
+options = pspm_options(options, 'segment_mean');
+if options.invalid
+  return
 end
-
-if ~isfield(options, 'newfile')
-  options.newfile = '';
-end
-
-if ~isfield(options, 'overwrite')
-  options.overwrite = 0;
-end
-
-if ~isfield(options, 'adjust_method')
-  options.adjust_method = 'none';
-end
-
 if nargin > 1 && ~isstruct(options)
   warning('ID:invalid_input', 'Options must be a struct.'); return;
-elseif ~isnumeric(options.plot) && ~islogical(options.plot)
-  warning('ID:invalid_input', 'Options.plot must be numeric or logical.'); return;
 elseif ~(iscell(segments) || ischar(segments)) || ...
     (iscell(segments) && any(~cellfun(@(x) iscell(x) || ischar(x), segments)))
   warning('ID:invalid_input', ['The function expects segments to be a ', ...
     'cell of cells or a cell of strings.']); return;
-elseif ~any(ismember(options.adjust_method, {'none', 'downsample', 'interpolate'}))
-  warning('ID:invalid_input', 'options.adjust_method must be ''none'', ''downsample'' or ''interpolate'''); return;
-elseif ~isempty(options.newfile) && ~ischar(options.newfile)
-  warning('ID:invalid_input', 'options.newfile is not a string.'); return;
-elseif ~isnumeric(options.overwrite) && ~islogical(options.overwrite)
-  warning('ID:invalid_input', 'options.overwrite has to be either numeric or logical.'); return;
 end
 
 % if files specified load them
@@ -172,14 +151,10 @@ if options.plot
   legend(legend_lb);
 end
 out.conditions = conditions;
-
 if ~isempty(options.newfile)
   [pathstr, ~, ~] = fileparts(options.newfile);
   if exist(pathstr, 'dir')
-  	if ~options.overwrite
-    	options.overwrite = pspm_overwrite(options.newfile);
-    end
-    if options.overwrite
+    if pspm_overwrite(options.newfile, options)
       segment_mean = conditions;
       save(options.newfile, 'segment_mean');
     end
@@ -189,4 +164,4 @@ if ~isempty(options.newfile)
   out.file = options.newfile;
 end
 sts = 1;
-
+return

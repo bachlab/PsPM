@@ -1,38 +1,37 @@
-function [sts, v] = pspm_version(varargin)
-% pspm_version returns the current pspm version and checks if there is an
-% update available.
-%
-%   Note: The term 'version' is a reserved keyword and should not be used
-%       in matlab without an according prefix, such as pspm_version etc.
-%
-%   Format:
-%       [sts, v] = pspm_version()
-%       [sts, v] = pspm_version(action)
-%
-%
-%   Attributes:
-%       action:         define an additional action. possible actions are:
-%                           - 'check': checks if there is a new pspm
-%                               version available.
-%__________________________________________________________________________
-% PsPM 3.1
-% (C) 2009-2016 Tobias Moser (University of Zurich)
+function varargout = pspm_version(varargin)
+% ● Description
+%   pspm_version returns the current pspm version and checks if there is an
+%   update available.
+% ● Note
+%   The term 'version' is a reserved keyword and should not be used
+%   in matlab without an according prefix, such as pspm_version etc.
+% ● Format
+%   [sts, v] = pspm_version()
+%   [sts, v] = pspm_version(action)
+% ● Arguments
+%   action: define an additional action. Possible actions are 'check' that
+%           checks if there is a new pspm version available.
+% ● History
+%   Introduced in PsPM 3.1
+%   Written in 2009-2016 by Tobias Moser (University of Zurich)
 
-
-%% start
+%% 0 start
 % do not include pspm_init, because pspm_version is called by pspm_init!!!
 sts = -1;
-
-%% load startup info file
-% -------------------------------------------------------------------------
 fid = fopen('pspm_msg.txt');
 msg = textscan(fid, '%s', 'Delimiter', '$');
 tk =regexp(msg{1},'^Version ([0-9A-Za-z\.]*) .*', 'tokens');
 v_idx = find(~cellfun('isempty', tk), 1, 'first');
 v = tk{v_idx}{1}{1};
+switch nargout
+  case 1
+    varargout = v;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = v;
+end
 
-%% check if there is an input action given
-% -------------------------------------------------------------------------
+%% 1 check if there is an input action given
 if nargin > 0
   switch varargin{1}
     case 'check' % check for updates
@@ -45,26 +44,20 @@ if nargin > 0
         % use first found version
         if any(~cellfun('isempty', tk))
           new_v = tk{1}{1};
-
           % compare versions
           v_l = regexp(v, '\.', 'split');
           new_v_l = regexp(new_v, '\.', 'split');
-
           comp_vers = zeros(max(numel(v_l), numel(new_v_l)),2);
           comp_vers(1:numel(v_l), 1) = hex2dec(v_l);
           comp_vers(1:numel(new_v_l), 2) = hex2dec(new_v_l);
-
           d_v = diff(comp_vers, 1, 2);
-
           smaller = d_v < 0;
           bigger = d_v > 0;
-
           if any(smaller) && any(bigger)
             new_version = find(smaller,1) > find(bigger,1);
           else
             new_version = any(bigger);
           end
-
           if new_version
             warning('ID:old_version',...
               ['\nNew PsPM version available.\n',...
@@ -72,12 +65,22 @@ if nargin > 0
               sprintf('Latest version : %s\n', new_v)]);
           end
         else
-          warning('ID:invalid_input', 'Cannot figure out if there is a new version.'); return;
+          warning('ID:invalid_input', 'Cannot figure out if there is a new version.');
         end
       catch
-        warning('ID:invalid_input', 'Cannot check for updates.'); return
+        warning('ID:invalid_input', 'Cannot check for updates.');
       end
   end
 end
 
+%% 3 Sort output
 sts = 1;
+version_of_pspm = v;
+switch nargout
+  case 1
+    varargout = version_of_pspm;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = version_of_pspm;
+end
+return

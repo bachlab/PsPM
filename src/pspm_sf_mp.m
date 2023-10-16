@@ -1,46 +1,43 @@
-function out = pspm_sf_mp(scr, sr, opt)
-% pspm_sf_mp does the inversion of a DCM for SF of the skin conductance, using a matching
-% pursuit algorithm, and f_SF for the forward model
-%
-% the input data is assumed to be in mcS, and sampling rate in Hz
-%
-% FORMAT
-% function out = pspm_sf_mp(scr, sr, opt)
-%
-%   out:        output
-%               out.n: number of responses above threshold
-%               out.f: frequency of responses above threshold in Hz
-%               out.ma: mean amplitude of responses above threshold
-%               out.t: timing of responses
-%               out.a: amplitude of responses (re-estimated)
-%               out.rawa: amplitude of responses (initial estimate)
-%               out.theta: parameters used for f_SF
-%               out.threshold: threshold
-%               out.yhat: fitted time series (reestimated amplitudes)
-%               out.yhatraw: fitted time series (original amplitudes)
-%               out.S: inversion settings
-%               out.D: inversion dictionary
-%   scr:        skin conductance epoch (maximum size depends on computing
-%               power, a sensible size is 60 s at 10 Hz)
-%   sr:         sampling rate in Hz
-%
-%   options: options structure
-%       - options.threshold: threshold for SN detection (default 0.1 mcS)
-%       - options.theta: a (1 x 5) vector of theta values for f_SF
-%           (default: read from pspm_sf_theta)
-%       - options.fresp: maximum frequency of modelled responses (default 0.5 Hz)
-%       - options.dispwin: display result window (default 1)
-%       - options.diagnostics: add further diagnostics to the output. Is
-%                              disabled if set to false. If set to true
-%                              this will add a further field 'D' to the
-%                              output struct. Default is false.
-%
-%
-% REFERENCE
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (UZH, WTCN)
-% last edited 18.08.2014
+function varargout = pspm_sf_mp(model, options)
+% ● Description
+%   pspm_sf_mp does the inversion of a DCM for SF of the skin conductance, using
+%   a matching pursuit algorithm, and f_SF for the forward model
+%   the input data is assumed to be in mcS, and sampling rate in Hz
+% ● Format
+%   function out = pspm_sf_mp(scr, sr, options)
+% ● Output
+%        out: output
+%         .n: number of responses above threshold
+%         .f: frequency of responses above threshold in Hz
+%        .ma: mean amplitude of responses above threshold
+%         .t: timing of responses
+%         .a: amplitude of responses (re-estimated)
+%      .rawa: amplitude of responses (initial estimate)
+%     .theta: parameters used for f_SF
+% .threshold: threshold
+%      .yhat: fitted time series (reestimated amplitudes)
+%   .yhatraw: fitted time series (original amplitudes)
+%         .S: inversion settings
+%         .D: inversion dictionary
+% ● Arguments
+%        scr: skin conductance epoch (maximum size depends on computing
+%             power, a sensible size is 60 s at 10 Hz)
+%         sr: sampling rate in Hz
+%    options: options structure
+% .threshold: threshold for SN detection (default 0.1 mcS)
+%     .theta: a (1 x 5) vector of theta values for f_SF
+%             (default: read from pspm_sf_theta)
+%     .fresp: maximum frequency of modelled responses (default 0.5 Hz)
+%   .dispwin: display result window (default 1)
+%   .diagnostics:
+%             add further diagnostics to the output. Is disabled if set to
+%             false. If set to true this will add a further field 'D' to the
+%             output struct. Default is false.
+% ● References
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (UZH, WTCN) last edited 18.08.2014
+%   Maintained in 2022 by Teddy Chao
 
 %% Initialise
 global settings
@@ -49,10 +46,23 @@ if isempty(settings)
 end
 sts = -1;
 tstart = tic;
+out = [];
+switch nargout
+  case 1
+    varargout{1} = out;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = out;
+end
+
+try model.scr; catch, warning('Input data is not defined.'); return; end
+try model.sr; catch, warning('Sample rate is not defined.'); return; end
+scr = model.scr;
+sr = model.sr;
 
 % check input arguments
-%==========================================================================
-if nargin < 2 || ~isnumeric(sr) || numel(sr) > 1
+% ------------------------------------------------------------------------
+if ~isnumeric(sr) || numel(sr) > 1
   errmsg = sprintf('No valid sample rate given.');
 elseif (sr < 1) || (sr > 1e5)
   errmsg = sprintf('Sample rate out of range.');
@@ -64,43 +74,19 @@ else
   scr = scr(:);
 end;
 
-if exist('errmsg') == 1, warning(errmsg); out = []; return; end;
+if exist('errmsg') == 1, warning(errmsg); return; end;
 
 
 % options
 % ------------------------------------------------------------------------
-try
-  S.fresp = opt.fresp;
-catch
-  S.fresp = 0.5;
-end;
-try
-  S.theta = opt.theta;
-catch
-  [S.theta, osr] = pspm_sf_theta;
-end;
-try
-  S.threshold = opt.threshold;
-catch
-  S.threshold = 0.1;
-end;
-try
-  opt.dispwin;
-catch
-  opt.dispwin = 0;
-end;
-try
-  opt.diagnostics;
-catch
-  opt.diagnostics = 0;
-end;
-
+options = pspm_options(options, 'sf_mp');
 
 % inversion settings in structure S
 % ------------------------------------------------------------------------
 S.dt = 1/sr;                    % sampling interval of the data
 S.n = numel(scr);               % n: number of samples in the data segment
 S.sfduration = 30;              % duration of the modelled SF
+S.fresp = options.fresp;
 S.sftail = 10;                  % model tail of SF in previous seconds
 S.ntail = S.sftail/S.dt;        % number of samples in SF tail to model
 S.nsf = S.sfduration/S.dt;      % number of samples in modelled SF
@@ -109,7 +95,8 @@ S.sfsets = {[1, 0]};            % model single response only (latency 1, amplitu
 S.tonicsets = {[],[]};          % no tonic response components
 S.theta = pspm_sf_theta;         % get SF CRF
 S.maxres = 0.001 * S.n;         % residual threshold per sample
-S.options = opt;
+S.options = options;
+S.threshold = options.threshold;
 
 % generate over-complete dictionary D.D
 % -------------------------------------------------------------------------
@@ -185,11 +172,14 @@ S.cont = 1;
 S.nosf = 0;
 k = 1;
 S.Yres = y;
-ind = [];
 % initialise diagnostics
 S.diagnostics.neg = 0; % stop because of zero or negative amplitude
 S.diagnostics.num = 0; % number of iterations
 S.diagnostics.error = NaN; % error
+
+a = [];
+asf = [];
+ind = [];
 
 % run algorithm ---
 while S.cont
@@ -254,8 +244,8 @@ out.ma = mean(out.a(out.a > S.threshold));
 S = rmfield(S, 'Dtemp');
 out.S = S;
 
-% only add field D if opt.diagnostics is set to true.
-if opt.diagnostics
+% only add field D if options.diagnostics is set to true.
+if options.diagnostics
   out.D = D;
 end;
 out.ind = ind;
@@ -268,7 +258,7 @@ out.time = toc(tstart);
 
 % diagnostic plot
 % -------------------------------------------------------------------------
-if opt.dispwin
+if options.dispwin
   figure;
   ind = ind(out.a > S.threshold);
   plot(Yhatprime, 'g'); hold on
@@ -277,4 +267,12 @@ if opt.dispwin
   plot(Yhat, 'r');
 end;
 
-
+sts = 1;
+switch nargout
+  case 1
+    varargout{1} = out;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = out;
+end
+return

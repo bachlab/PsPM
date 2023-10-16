@@ -97,7 +97,7 @@ pixel2unit.help = {['Convert pupil gaze coordinates from pixel values ',...
                     'The range for the elevation indicates the angle of the ',...
                     'bottom edge of the screen to the angle of the top edge ',...
                     'of the screen.','(mathworks.com/help/matlab/ref/cart2sph.html ).']};
-               
+
 %% Eyes
 eyes                = cfg_menu;
 eyes.name           = 'Eyes';
@@ -117,8 +117,8 @@ visangle2sps.val    = {eyes};
 visangle2sps.help   = {['Takes paires of channels with gaze data in spherical',...
                        ' coordinates (i.e. visual angle) and computes scanpath speed',...
                        ' (i.e. scalar distance per second). Saves result into a ',...
-                       'new channel with channeltype ''sps'' (scanpath speed)']};
-               
+                       'new channel with chantype ''sps'' (scanpath speed)']};
+
 %% Mode
 mode                = cfg_choice;
 mode.name           = 'Mode';
@@ -149,7 +149,7 @@ chan_action.tag     = 'channel_action';
 chan_action.val     = {'add'};
 chan_action.values  = {'replace', 'add'};
 chan_action.labels  = {'Replace channel', 'Add channel'};
-chan_action.help    = {['Choose whether to ''replace'' the given channel ', ... 
+chan_action.help    = {['Choose whether to ''replace'' the given channel ', ...
     'or ''add'' the converted data as a new channel.']};
 
 %% Executable branch

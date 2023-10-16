@@ -1,20 +1,19 @@
-function [sts, out_channel] = pspm_gaze_pp(fn, options)
-
-% ●	Description
-% 	pspm_gaze_pp preprocesses gaze signals, gaze x and gaze y channels at
-% 	the same time.
-% ●	Format
-% 	[sts, out_channel] = pspm_gaze_pp(fn) or
-% 	[sts, out_channel] = pspm_gaze_pp(fn, options)
-% ●	Arguments
-% 	              fn: [string] Path to the PsPM file which contains the gaze data.
-% 	         options: [struct]
+function varargout = pspm_gaze_pp(fn, options)
+% ● Description
+%   pspm_gaze_pp preprocesses gaze signals, gaze x and gaze y channels at
+%   the same time.
+% ● Format
+%   [sts, out_channel] = pspm_gaze_pp(fn) or
+%   [sts, out_channel] = pspm_gaze_pp(fn, options)
+% ● Arguments
+%                 fn: [string] Path to the PsPM file which contains the gaze data.
+%            options: [struct]
 %           .channel: [numeric/string, optional] Channel ID to be preprocessed.
 %   .channel_combine: [numeric/string, optional] Channel ID to be combined.
 %      .valid_sample: [bool] 1 or 0. 1 if use valid samples produced by
 %                     pspm_pupil_pp, 0 if not to use. default as 0.
-% ●	Authors
-% 	(C) 2021 Teddy Chao (UCL)
+% ● History
+%   Written in 2021 by Teddy Chao (UCL)
 
 %% 1 Initialise
 global settings;
@@ -22,19 +21,27 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+out_channel = [];
+switch nargout
+  case 1
+    varargout{1} = out_channel;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = out_channel;
+end
+
 %% 2 Create default arguments
-% 2.1 static variables
-list_channels = {'gaze_x_l', 'gaze_x_r', 'gaze_y_l', 'gaze_y_r'};
-% 2.2 set default values
-if nargin == 1;                        options = struct();              end
-if ~isfield(options,'channel');        options.channel = 'gaze_x_l';    end
-if ~isfield(options,'channel_action'); options.channel_action = 'add';  end
-if ~isfield(options,'channel_combine');options.channel_combine = 'none';end
-if ~isfield(options,'valid_sample');   options.valid_sample = 0;        end
-if ~isfield(options, 'plot_data');     options.plot_data = false;       end
-if ~isfield(options, 'segments');      options.segments = {};           end
+% 2.1 set default values
+if nargin == 1
+  options = struct();
+end
+options = pspm_options(options, 'gaze_pp');
+if options.invalid
+  return
+end
+
 action_combine = ~strcmp(options.channel_combine, 'none');
-% 2.3 set default options from pupil_pp
+% 2.2 set default options from pupil_pp
 [lsts, default_settings] = pspm_pupil_pp_options();
 if lsts ~= 1
   return
@@ -51,30 +58,14 @@ if sts ~= 1; warning('ID:invalid_input', 'cannot load data from the file'); retu
 % 3.2 check the channel can be loaded
 [sts, ~, ~, ~] = pspm_load_data(fn, options.channel);
 if sts ~= 1
-  warning('ID:invalid_channeltype', 'cannot load the specified channel from the file');
-  return
-end
-if ~ismember(options.channel_action, {'add', 'replace'})
-  warning('ID:invalid_input', ...
-    'Option channel_action must be either ''add'' or ''replace''.');
-  return
-end
-if ~ismember(options.channel, list_channels)
-  warning('ID:invalid_input', ...
-    'Option channel must be either ''gaze_x_l'', ''gaze_x_r'', ''gaze_y_l'' or ''gaze_y_r''.');
+  warning('ID:invalid_chantype', 'cannot load the specified channel from the file');
   return
 end
 if action_combine
-  if ~ismember(options.channel_combine, list_channels)
-    warning('ID:invalid_input', ...
-      'Option channel_combine must be either ''gaze_x_l'', ''gaze_x_r'', ''gaze_y_l'' or ''gaze_y_r''.');
+  if strcmp(options.channel(end),options.channel_combine(end)) || ...
+      ~strcmp(options.channel(6),options.channel_combine(6))
+    warning('ID:invalid_input', 'Option channel_combine must match channel.');
     return
-  else
-    if strcmp(options.channel(end),options.channel_combine(end)) || ...
-        ~strcmp(options.channel(6),options.channel_combine(6))
-      warning('ID:invalid_input', 'Option channel_combine must match channel.');
-      return
-    end
   end
 end
 for seg = options.segments
@@ -103,11 +94,11 @@ if action_combine
       'options.channel and options.channel_combine data have different lengths');
     return;
   end
-  old_chantype = sprintf('%s and %s', ...
+  old_channeltype = sprintf('%s and %s', ...
     gaze_og{1}.header.chantype, gaze_combine{1}.header.chantype);
 else
   gaze_combine{1}.data = [];
-  old_chantype = gaze_og{1}.header.chantype;
+  old_channeltype = gaze_og{1}.header.chantype;
 end
 %% 5 Obtain valid sample from pupil
 % obtain valid samples from pupil
@@ -117,7 +108,7 @@ if options.valid_sample
   [~, ~, model] = pspm_pupil_pp(fn, options_pp);
   upsampling_factor = options.custom_settings.valid.interp_upsamplingFreq / gaze_og{1}.header.sr;
   desired_output_samples_gaze = round(upsampling_factor * numel(gaze_og{1}.data));
-  preprocessed_gaze.header.chantype = pspm_update_chantype(gaze_og{1}.header.chantype,'pp');
+  preprocessed_gaze.header.chantype = pspm_update_channeltype(gaze_og{1}.header.chantype,'pp');
   preprocessed_gaze.header.units = gaze_og{1}.header.units;
   preprocessed_gaze.header.sr = options.custom_settings.valid.interp_upsamplingFreq;
   preprocessed_gaze.header.segments = options.segments;
@@ -137,7 +128,7 @@ if ~action_combine
     preprocessed_gaze.data = gaze_og{1}.data;
     preprocessed_gaze.header.sr = gaze_og{1}.header.sr;
   end
-  preprocessed_gaze.header.chantype = pspm_update_chantype(gaze_og{1}.header.chantype,'pp');
+  preprocessed_gaze.header.chantype = pspm_update_channeltype(gaze_og{1}.header.chantype,'pp');
   preprocessed_gaze.header.units = gaze_og{1}.header.units;
 else
   if options.valid_sample
@@ -158,23 +149,32 @@ else
     preprocessed_gaze.header.sr = gaze_og{1}.header.sr;
   end
   preprocessed_gaze.data = transpose(mean(transpose([preprocessed_gaze.data, preprocessed_gaze_combine.data]),'omitnan'));
-  preprocessed_gaze.header.chantype = pspm_update_chantype(gaze_og{1}.header.chantype,{'pp','c'});
+  preprocessed_gaze.header.chantype = pspm_update_channeltype(gaze_og{1}.header.chantype,{'pp',settings.lateral.char.c});
   preprocessed_gaze.header.units = gaze_og{1}.header.units;
 end
 %% 7 save
 channel_str = num2str(options.channel);
 o.msg.prefix = sprintf(...
-  'Gaze preprocessing :: Input channel: %s -- Input chantype: %s -- Output chantype: %s --', ...
+  'Gaze preprocessing :: Input channel: %s -- Input channeltype: %s -- Output channeltype: %s --', ...
   channel_str, ...
-  old_chantype, ...
+  old_channeltype, ...
   preprocessed_gaze.header.chantype);
 [lsts, out_id] = pspm_write_channel(fn, preprocessed_gaze, options.channel_action, o);
-if lsts ~= 1 % if writting channel is unsuccessful
+if ~lsts % if writting channel is unsuccessful
   return
 end
+%% 8 Return values
 out_channel = out_id.channel;
 sts = 1;
+switch nargout
+  case 1
+    varargout{1} = out_channel;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = out_channel;
 end
+return
+
 function data = pspm_cmpnans(data, t_beg, sr, output_samples)
 % complete with NaNs
 % Complete the given data that possibly has missing samples at the
@@ -184,18 +184,17 @@ sec_between_upsampled_samples = 1 / sr;
 n_missing_at_the_beg = round(t_beg / sec_between_upsampled_samples);
 n_missing_at_the_end = output_samples - numel(data) - n_missing_at_the_beg;
 data = [NaN(n_missing_at_the_beg, 1) ; data ; NaN(n_missing_at_the_end, 1)];
-end
+
 function out_struct = pspm_assign_fields_recursively(out_struct, in_struct)
 % Definition
-% pspm_assign_fields_recursively assign all fields of in_struct to 
+% pspm_assign_fields_recursively assign all fields of in_struct to
 % out_struct recursively, overwriting when necessary.
 fnames = fieldnames(in_struct);
 for i = 1:numel(fnames)
-	name = fnames{i};
-	if isstruct(in_struct.(name)) && isfield(out_struct, name)
-		out_struct.(name) = pspm_assign_fields_recursively(out_struct.(name), in_struct.(name));
-	else
-		out_struct.(name) = in_struct.(name);
-	end
-end
+  name = fnames{i};
+  if isstruct(in_struct.(name)) && isfield(out_struct, name)
+    out_struct.(name) = pspm_assign_fields_recursively(out_struct.(name), in_struct.(name));
+  else
+    out_struct.(name) = in_struct.(name);
+  end
 end

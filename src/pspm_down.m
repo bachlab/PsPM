@@ -1,26 +1,23 @@
-function [sts, newfile]=pspm_down(datafile, newsr, chan, options)
-%
-% pspm_down downsamples a PsPm dataset to the desired new sample rate
-% this function applies anti-aliasing filtering at 1/2 of the new sample
-% rate. The data will be written to a new file, the original name will be
-% prepended with 'd'
-%
-% FORMAT:
-% [STS, NEWFILE] = pspm_down(datafile, newsr, chan, options)
-%
-% INPUT:
-%   datafile:   can be a name, or for convenience, a cell array of filenames
-%   newfreq:    new frequency (must be >= 10 Hz)
-%   chan:       channels to downsample (default: all channels)
-%   options:    options.overwrite - overwrite existing files by default
-%
-% OUTPUT:
-%   sts:        1 if the
-%   newfile:    a filename for the updated file, or cell array of filenames
-%
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2010-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+function [sts, newfile] = pspm_down(datafile, newsr, channel, options)
+% ● Description
+%   pspm_down downsamples a PsPm dataset to the desired new sample rate
+%   this function applies anti-aliasing filtering at 1/2 of the new sample
+%   rate. The data will be written to a new file, the original name will be
+%   prepended with 'd'.
+% ● Format
+%   [sts, newfile] = pspm_down(datafile, newsr, channel, options)
+% ● Arguments
+%   datafile:  can be a name, or for convenience, a cell array of filenames
+%    newfreq:  new frequency (must be >= 10 Hz)
+%    channel:  channels to downsample (default: all channels)
+%    options:  defines whether to overwrite the file.
+%              Default value: overwrite, and also determined by pspm_overwrite.
+% ● Output
+%        sts:  1 if the function runs successfully
+%    newfile:  the filename for the updated file, or cell array of filenames
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2010-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings
@@ -29,8 +26,7 @@ if isempty(settings)
 end
 sts = -1;
 
-% check input arguments
-% -------------------------------------------------------------------------
+%% check input arguments
 if nargin<1
   errmsg='No data file'; warning('ID:invalid_input', errmsg); return;
 elseif nargin<2
@@ -41,57 +37,50 @@ elseif newsr < 10
   return;
 end
 
-if nargin < 3 || isempty(chan)
-  chan = 0;
-elseif isnumeric(chan) && isvector(chan)
-  if numel(chan) == 1 && chan < 0
-    warning('ID:invalid_input', 'chan must be nonnegative'); return;
-  elseif any(chan < 0)
-    warning('ID:invalid_input', 'All elements of chan must be positive'); return;
+if nargin < 3 || isempty(channel)
+  channel = 0;
+elseif isnumeric(channel) && isvector(channel)
+  if numel(channel) == 1 && channel < 0
+    warning('ID:invalid_input', 'channel must be nonnegative'); return;
+  elseif any(channel < 0)
+    warning('ID:invalid_input', 'All elements of channel must be positive'); return;
   end
-elseif ischar(chan)
-  if strcmpi(chan, 'all')
-    chan = 0;
+elseif ischar(channel)
+  if strcmpi(channel, 'all')
+    channel = 0;
   else
     warning('ID:invalid_input', 'Channel argument must be a number, or ''all''.'); return;
   end
 end
 
-if nargin == 4 && ~isstruct(options)
+if nargin == 4
+if ~isstruct(options)
   warning('ID:invalid_input','options has to be a struct');
   return;
 end
-
-
-% set options
-% -------------------------------------------------------------------------
-try
-  if options.overwrite ~= 1, options.overwrite = 0; end
-catch
-  options.overwrite = 0;
+options = pspm_options(options, 'down');
+if options.invalid
+  return
 end
 
-
-% convert datafile to cell for convenience
-% -------------------------------------------------------------------------
+%% convert datafile to cell for convenience
 if iscell(datafile)
-  D=datafile;
+  D = datafile;
 else
-  D={datafile};
+  D = {datafile};
 end
 clear datafile
 
-% work on all data files
-% -------------------------------------------------------------------------
-for d=1:numel(D)
+%% work on all data files
+for d = 1:numel(D)
   % determine file names
-  datafile=D{d};
+  datafile = D{d};
 
   % check and get datafile
-  [lsts infos data] = pspm_load_data(datafile, 0);
+  [lsts, ~, ~] = pspm_load_data(datafile, 0);
   if lsts == -1, continue; end
 
-  if any(chan > numel(data))
+  if any(channel > numel(data))
     warning(['Datafile %s contains only %i channels. ', ...
       'At least one selected channel is inexistent'], ...
       datafile, numel(data));
@@ -99,21 +88,22 @@ for d=1:numel(D)
   end
 
   % set channels
-  if chan == 0
-    chan = 1:numel(data);
+  if channel == 0
+    channel = 1:numel(data);
   end
 
   % make outputfile
-  [p f ex]=fileparts(datafile);
+  [p, f, ex]=fileparts(datafile);
   newfile=fullfile(p, ['d', f, ex]);
 
+  % if not to overwrite files, end the function
   if ~pspm_overwrite(newfile, options); return; end
 
   % user output
   fprintf('Downsampling %s ... ', datafile);
 
   % downsample channel after channel
-  for k = chan
+  for k = channel
     % leave event channels alone
     if strcmpi(data{k}.header.units, 'events')
       fprintf(['\nNo downsampling for event channel %2.0f in ', ...
@@ -132,7 +122,7 @@ for d=1:numel(D)
     end
   end
 
-  [pth nfn ext] = fileparts(newfile);
+  [pth, nfn, ext] = fileparts(newfile);
   infos.downsampledfile = [nfn ext];
   save(newfile, 'infos', 'data');
   Dout{d}=newfile;
@@ -150,5 +140,4 @@ if d>1
 end
 
 sts = 1;
-
-return;
+return

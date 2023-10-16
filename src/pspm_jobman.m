@@ -1,42 +1,40 @@
 function varargout = pspm_jobman(varargin)
-% Main interface for PsPM Batch System
-%
-% FORMAT pspm_jobman('initcfg')
-% Initialise jobs configuration and set MATLAB path accordingly.
-%
-% FORMAT pspm_jobman('run',job)
-% FORMAT output_list = pspm_jobman('run',job)
-% Run specified job
-% job         - filename of a job (.m or .mat), or
-%               cell array of filenames, or
-%               'jobs'/'matlabbatch' variable, or
-%               cell array of 'jobs'/'matlabbatch' variables.
-% output_list - cell array containing the output arguments from each
-%               module in the job. The format and contents of these
-%               outputs is defined in the configuration of each module
-%               (.prog and .vout callbacks).
-%
-% FORMAT job_id = pspm_jobman
-%        job_id = pspm_jobman('interactive')
-%        job_id = pspm_jobman('interactive',job)
-%        job_id = pspm_jobman('interactive',job,node)
-%        job_id = pspm_jobman('interactive','',node)
-% Run the user interface in interactive mode.
-% node        - indicate which part of the configuration is to be used.
-% job_id      - can be used to manipulate this job in cfg_util. Note that
-%               changes to the job in cfg_util will not show up in cfg_ui
-%               unless 'Update View' is called.
-%__________________________________________________________________________
-%
-% This code is based on SPM8 and earlier versions by John Ashburner, Philippe
-% Ciuciu and Guillaume Flandin.
-%__________________________________________________________________________
-% PsPM 3.0
-% Copyright (C) 2008 Wellcome Trust Centre for Neuroimaging
-% Copyright (C) 2008 Freiburg Brain Imaging
-
-% $Id$
-% $Rev$
+% ● Description
+%   Main interface for PsPM Batch System
+%   Initialise jobs configuration and set MATLAB path accordingly.
+% ● Format
+%     pspm_jobman('initcfg')
+%   → Run specified job
+%     pspm_jobman('run',job)
+%     output_list = pspm_jobman('run',job)
+%   → Run specified job
+%     job_id = pspm_jobman
+%     job_id = pspm_jobman('interactive')
+%     job_id = pspm_jobman('interactive',job)
+%     job_id = pspm_jobman('interactive',job,node)
+%     job_id = pspm_jobman('interactive','',node)
+% ● Arguments
+%   → Run specified job
+%             job:  filename of a job (.m or .mat), or cell
+%                   array of filenames, or 'jobs'/'matlabbatch'
+%                   variable, or cell array of 'jobs'/'matlabbatch'
+%                   variables.
+%     output_list:  cell array containing the output arguments from
+%                   each module in the job. The format and contents
+%                   of these outputs is defined in the configuration
+%                   of each module (.prog and .vout callbacks).
+%   → Run the user interface in interactive mode.
+%            node:  indicate which part of the configuration is to be used.
+%          job_id:  can be used to manipulate this job in cfg_util. Note that
+%                   changes to the job in cfg_util will not show up in cfg_ui
+%                   unless 'Update View' is called.
+% ● Developer's Notes
+%   This code is based on SPM8 and earlier versions by John Ashburner,
+%   Philippe Ciuciu and Guillaume Flandin.
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2008 by Wellcome Trust Centre for Neuroimaging and Freiburg Brain Imaging
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings
@@ -127,9 +125,10 @@ switch cmd
     cfg_util('deljob', cjob);
 
   otherwise
-    error(['"' varargin{1} '" - unknown option']);
+    error([varargin{1} ': unknown option']);
 end
-
+sts = 1;
+return
 
 %==========================================================================
 % function [mljob, comp] = canonicalise_job(job)

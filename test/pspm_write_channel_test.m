@@ -63,7 +63,7 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
           new_chan = new.data{chan};
         elseif numel(find(chan)) > 1
           % this should not happen (the function is only in use when
-          % only one channeltype is in the testdatafile)
+          % only one chantype is in the testdatafile)
           % because this testfunction works with only one channel
           % type
           warning('More than one channel with chantype %s found.', added_chan.header.chantype);

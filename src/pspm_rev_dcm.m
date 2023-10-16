@@ -1,21 +1,30 @@
-function pspm_rev_dcm(dcm, job, sn, trl)
-
-% This function displays DCM results post hoc. It is meant to be called by
-% pspm_review only
-% Work in progress. More jobs to be implemented.
-% FORMAT: pspm_rev_dcm(FILENAME, JOB, SN, TRL)
-%   job: 'inv' - show inversion results, input argument session & trial number
-%        'sf'  - same for SF, input argument episode number
-%        'sum' - show trial-by-trial summary, input argument session
-%                number, optional argument figure name (saves the figure)
-%                (can also be called as ...(dcm, 'sum', figname) for
-%                on-the-fly display and saving of figure)
-%       'scrf' - show peripheral skin conductance response function as used
-%                for trial-by-trial estimation of sympathetic input
-%       'names' - show trial and condition names in command window
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+function sts = pspm_rev_dcm(dcm, job, sn, trl)
+% ● Description
+%   pspm_rev_dcm displays DCM results post hoc. It is meant to be called by
+%   pspm_review only.
+% ● Developer's Notes
+%   The development of this funcrion is still in progress.
+%   More jobs to be implemented.
+% ● Format
+%   pspm_rev_dcm(dcm, job, sn, trl)
+% ● Arguments
+%   dcm:
+%   job:  [char], accepts 'inv', 'sf', 'sum', 'scrf', or 'names'.
+%           'inv' show inversion results, input argument session & trial number
+%            'sf' same for SF, input argument episode number
+%           'sum' show trial-by-trial summary, input argument session
+%                 number, optional argument figure name (saves the figure)
+%                 (can also be called as ...(dcm, 'sum', figname) for
+%                 on-the-fly display and saving of figure)
+%          'scrf' show peripheral skin conductance response function as used
+%                 for trial-by-trial estimation of sympathetic input
+%         'names' show trial and condition names in command window
+%    sn:
+%   trl:
+% ● History
+%   Introduced In PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings
@@ -78,12 +87,9 @@ switch job
       subplot(f.r, f.c, n);
       plot(data);
       xt = get(gca, 'XTick');
-      set(gca, 'XTickLabel', xt * dcm.input.sr);
+      set(gca, 'XTickLabel', xt / dcm.input.sr);
       set(gca, 'YLim', [min(yhat), max(yhat)]);
     end;
-
-
-
     % display scrf
     % ---------------------------------------------------------------------
   case 'scrf'
@@ -115,4 +121,5 @@ switch job
     fprintf('---------------------------------------\n');
 end;
 
+sts = 1;
 return

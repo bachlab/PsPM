@@ -1,32 +1,34 @@
 function varargout = pspm_data_editor(varargin)
 % ● Description
-% pspm_data_editor MATLAB code for pspm_data_editor.fig
+%   pspm_data_editor MATLAB code for pspm_data_editor.fig
 % ● Format
 %   [varargout] = pspm_data_editor(varargin)
 %   [sts, out]  = pspm_data_editor(indata, options)
 % ● Arguments
-%   indata            Can be multiple kinds of data types. In order to use
-%                     pspm_data_editor() to edit acquisition data, the actual
-%                     data vector has to be passed via the varargin
-%                     argmument. The data should be 1xn or nx1 double vector.
-%   options           [struct]
-%   ┣━.output_file    Use output_file to specify a file the changed data
-%   ┃                 is saved to when clicking 'save' or 'apply'. Only
-%   ┃                 works in 'file' mode.
-%   ┣━.epoch_file     Use epoch_file to specify a .mat file to import epoch data
-%   ┃                 .mat file must be a struct with an 'epoch' field
-%   ┃                 and a e x 2 matrix of epoch on- and offsets
-%   ┃                 (n: number of epochs)
-%   ┗━.overwrite      defines whether to overwrite the file
+%          indata:  Can be multiple kinds of data types. In order to use
+%                   pspm_data_editor() to edit acquisition data, the actual
+%                   data vector has to be passed via the varargin
+%                   argmument. The data should be 1xn or nx1 double vector.
+%   ┌─────options:  [struct]
+%   ├.output_file:  Use output_file to specify a file the changed data
+%   │               is saved to when clicking 'save' or 'apply'. Only
+%   │               works in 'file' mode.
+%   ├─.epoch_file:  Use epoch_file to specify a .mat file to import epoch data
+%   │               .mat file must be a struct with an 'epoch' field
+%   │               and a e x 2 matrix of epoch on- and offsets
+%   │               (n: number of epochs)
+%   └──.overwrite:  [logical] (0 or 1)
+%                   Define whether to overwrite existing output files or not.
+%                   Default value: not to overwrite.
 % ● Outputs
-%   out:              The output depends on the actual output type chosen in
-%                     the graphical interface. At the moment either the
-%                     interpolated data or epochs only can be chosen as
-%                     output of the function.
-%__________________________________________________________________________
-% PsPM 3.1
-% (C) 2015 Tobias Moser (University of Zurich)
-%     2021 Teddy Chao (UCL)
+%             out:  The output depends on the actual output type chosen in
+%                   the graphical interface. At the moment either the
+%                   interpolated data or epochs only can be chosen as
+%                   output of the function.
+% ● History
+%   Introduced in PsPM 3.1
+%   Written in 2015 by Tobias Moser (University of Zurich)
+%   Maintained in 2021 by Teddy Chao (UCL)
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -92,6 +94,10 @@ set(handles.fgDataEditor, 'WindowButtonUpFcn', @buttonUp_Callback);
 set(handles.fgDataEditor, 'WindowButtonMotionFcn', @buttonMotion_Callback);
 if numel(varargin) > 1 && isstruct(varargin{2}) % load options
   handles.options = varargin{2};
+  handles.options = pspm_options(handles.options, 'data_editor');
+  if handles.options.invalid
+    return
+  end
   if isfield(handles.options, 'output_file') && ... % check if options are valid and assign accordingly
       ischar(handles.options.output_file)
     handles.output_file = handles.options.output_file;
@@ -173,11 +179,7 @@ else
           end
         end
         if write_file
-          if isfield(options, 'overwrite')
-            newd.options.overwrite = options.overwrite;
-          else
-            newd.options.overwrite = pspm_overwrite(out_file);
-          end
+          newd.options.overwrite = pspm_overwrite(out_file, options);
           [write_success, ~, ~] = pspm_load_data(out_file, newd);
           if disp_success
             if write_success
@@ -197,7 +199,8 @@ else
       ep = cellfun(@(x) x.range', handles.epochs, 'UniformOutput', 0);
       epochs = cell2mat(ep)';
       if strcmpi(handles.input_mode, 'file')
-        if pspm_overwrite(out_file)
+        ow = pspm_overwrite(out_file);
+        if ow
           save(out_file, 'epochs');
         end
       else
@@ -253,29 +256,29 @@ PlotData(hObject);
 
 function PlotData(hObject)
 handles = guidata(hObject);
-chan = {};
+channel = {};
 switch handles.input_mode % load data
   case 'file'
     sr = max(cellfun(@(x) x.header.sr, handles.data)); % get highest sample rate
     xdata = (0:sr^-1:handles.infos.duration)';
     chan_id = get(handles.lbChannel, 'Value');
     if ~any(numel(handles.data) < chan_id)
-      chan = chan_id;
+      channel = chan_id;
     else
       warning('Cannot plot selected channel(s).');
     end
   case 'raw'
     xdata = (1:numel(handles.data))';
-    chan = 1;
+    channel = 1;
 end
 handles.selected_data = NaN(numel(xdata),1);
 handles.x_data = xdata;
 guidata(hObject, handles);
-if ~isempty(chan)
+if ~isempty(channel)
   np = get(handles.axData, 'NextPlot');
   action = 'replace';
-  for i=1:numel(chan)
-    AddPlot(hObject, chan(i), action);
+  for i=1:numel(channel)
+    AddPlot(hObject, channel(i), action);
     action = 'add';
   end
   set(handles.axData, 'NextPlot', np);
@@ -378,7 +381,7 @@ function lbEpochs_Callback(hObject, ~, ~)
 %   handles    structure with handles and user data (see GUIDATA)
 % Hints
 %   contents = cellstr(get(hObject,'String')) returns lbEpochs contents as cell array
-%	contents{get(hObject,'Value')} returns selected item from lbEpochs
+%   contents{get(hObject,'Value')} returns selected item from lbEpochs
 epId = get(hObject,'Value');
 HighlightEpoch(hObject, epId);
 
@@ -491,7 +494,7 @@ function lbEpochs_CreateFcn(hObject, ~, ~)
 %   handles    empty - handles not created until after all CreateFcns called
 % Hint
 %   listbox controls usually have a white background on Windows.
-%	See ISPC and COMPUTER.
+%   See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
   set(hObject,'BackgroundColor','white');
 end
@@ -607,7 +610,7 @@ guidata(hObject, handles);
 
 function buttonDown_Callback(hObject, ~)
 % Comment
-%   Used to be "buttonDown_Callback(hObject, data)", but the variable
+%   Used to be `buttonDown_Callback(hObject, data)`, but the variable
 %   data seems to be not used.
 handles = guidata(hObject); % get current cursor position
 switch handles.mode
@@ -619,7 +622,7 @@ guidata(hObject, handles);
 
 function buttonUp_Callback(hObject, ~)
 % Comment
-%   Used to be "buttonUp_Callback(hObject, data)", but the variable
+%   Used to be `buttonUp_Callback(hObject, data)`, but the variable
 %   data seems to be not used.
 % get current cursor position
 handles = guidata(hObject);
@@ -647,7 +650,7 @@ UpdateEpochList(hObject);
 
 function buttonMotion_Callback(hObject, ~)
 % Comment
-%   Used to be "buttonMotion_Callback(hObject, data)", but the variable
+%   Used to be `buttonMotion_Callback(hObject, data)`, but the variable
 %   data seems to be not used.
 handles = guidata(hObject);
 if isfield(handles, 'mode')
@@ -922,7 +925,7 @@ end
 
 function pbCancel_Callback(hObject, ~, handles)
 % Feature
-%	Executes on button press in pbCancel.
+%   Executes on button press in pbCancel.
 % Variables
 %   hObject    handle to pbCancel (see GCBO)
 %   eventdata  reserved - to be defined in a future version of MATLAB
@@ -982,7 +985,7 @@ function lbChannel_Callback(hObject, ~, handles)
 %   handles    structure with handles and user data (see GUIDATA)
 % Hints
 %   contents = cellstr(get(hObject,'String')) returns lbChannel contents as cell array
-%	contents{get(hObject,'Value')} returns selected item from lbChannel
+%   contents{get(hObject,'Value')} returns selected item from lbChannel
 if strcmpi(handles.input_mode, 'file')
   plots = find(cellfun(@(x) ~isempty(x), handles.plots));
   sel = get(hObject, 'Value');
@@ -1008,7 +1011,7 @@ function lbChannel_CreateFcn(hObject, ~, ~)
 %   handles    empty - handles not created until after all CreateFcns called
 % Hint
 %   listbox controls usually have a white background on Windows.
-%	See ISPC and COMPUTER.
+%   See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
   set(hObject,'BackgroundColor','white');
 end
@@ -1041,7 +1044,7 @@ bgOutputFormat_SelectionChangedFcn(hObject, eventdata, handles);
 
 function pbOpenInputFile_Callback(hObject, ~, handles)
 % Feature
-%	Executes on button press in pbOpenInputFile.
+%   Executes on button press in pbOpenInputFile.
 % Variables
 %   hObject    handle to pbOpenInputFile (see GCBO)
 %   eventdata  reserved - to be defined in a future version of MATLAB
@@ -1128,7 +1131,7 @@ function edOpenMissingEpochFilePath_Callback(hObject, ~, handles)
 %   handles    structure with handles and user data (see GUIDATA)
 % Hints
 %   get(hObject,'String') returns contents of edOpenMissingEpochFilePath as text
-%	str2double(get(hObject,'String')) returns contents of edOpenMissingEpochFilePath as a double
+%   str2double(get(hObject,'String')) returns contents of edOpenMissingEpochFilePath as a double
 if isempty(handles.epoch_file)
   set(hObject, 'String', 'No input specified');
 else
@@ -1144,7 +1147,7 @@ function edOpenMissingEpochFilePath_CreateFcn(hObject, ~, ~)
 %   handles    empty - handles not created until after all CreateFcns called
 % Hint
 %   edit controls usually have a white background on Windows.
-%	See ISPC and COMPUTER.
+%   See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
   set(hObject,'BackgroundColor','white');
 end

@@ -1,31 +1,34 @@
-function [ sts, outinfo ] = pspm_convert_ppg2hb( fn,chan,options )
-% pspm_convert_ppg2hb Converts a pulse oxymeter channel to heartbeats and adds it as
-% a new channel
-%   First a template is generated from non ambiguous heartbeats. The ppg
+function [ sts, outinfo ] = pspm_convert_ppg2hb( fn, channel, options )
+% ● Description
+%   pspm_convert_ppg2hb Converts a pulse oxymeter channel to heartbeats and
+%   adds it as a new channel.
+%   First a template is generated from non ambiguous heartbeats. The ppu
 %   signal is then cross correlated with the template and maximas are
 %   identified as heartbeat maximas and a heartbeat channel is then
 %   generated from these.
-%   Format: [ sts, outinfo ] = pspm_convert_ppg2hb( fn,chan,options )
-%   Inputs :
-%       fn : file name with path
-%       chan : ppg channel number
-%       options : struct with following possible fields
-%           diagnostics : [true/FALSE] displays some debugging information
-%           replace     : [true/FALSE] replace existing heartbeat channel.
-%                         If multiple channels are present, replaces last.
-%           channel_action ['add'/'replace'] Defines whether the interpolated
-%                          data should be added or the corresponding channel
-%                          should be replaced.
-%                          (Default: 'replace')
-%           lsm         : [integer] large spikes mode compensates for
-%                         large spikes while generating template by
-%                         removing the [integer] largest percentile of
-%                         spikes from consideration
-%__________________________________________________________________________
-% PsPM 3.1
-% (C) 2016  Samuel Gerster (University of Zurich)
-%           Tobias Moser (University of Zurich)
-%     2022  Teddy Chao (UCL)
+% ● Format
+%   [ sts, outinfo ] = pspm_convert_ppg2hb( fn, channel, options )
+% ● Arguments
+%                 fn: file name with path
+%            channel: ppu channel number
+%   ┌────────options: struct with following possible fields
+%   ├───.diagnostics: [true/FALSE]
+%   │                 displays some debugging information
+%   ├───────.replace: [true/FALSE] replace existing heartbeat channel.
+%   │                 If multiple channels are present, replaces last.
+%   ├.channel_action: ['add'/'replace', 'replace']
+%   │                 Defines whether the interpolated
+%   │                 data should be added or the corresponding channel
+%   │                 should be replaced.
+%   └───────────.lsm: [integer]
+%                     large spikes mode compensates for large spikes
+%                     while generating template by removing the [integer]
+%                     largest percentile of spikes from consideration.
+% ● History
+%   Introduced in PsPM 3.1
+%   Written in 2016 by Samuel Gerster (University of Zurich)
+%                      Tobias Moser (University of Zurich)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings
@@ -41,19 +44,22 @@ if nargin < 1
   warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
 elseif ~ischar(fn)
   warning('ID:invalid_input', 'Need file name string as first input.'); return;
-elseif nargin < 2 || isempty(chan)
-  chan = 'ppg';
-elseif ~isnumeric(chan) && ~strcmp(chan,'ppg')
+elseif nargin < 2 || isempty(channel)
+  channel = 'ppg';
+elseif ~isnumeric(channel) && ~strcmp(channel,'ppg')
   warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end
 
 %%% Process options
-% Display diagnostic plots? default is "false"
-try if ~islogical(options.diagnostics),options.diagnostics = false;end
-catch, options.diagnostics = false; end
-try options.channel_action; catch, options.channel_action = 'replace'; end;
-try if ~isnumeric(options.lsm),options.lsm = 0;end
-catch, options.lsm = 0; end
+% Display diagnostic plots? default is false
+% try if ~islogical(options.diagnostics),options.diagnostics = false;end
+% catch, options.diagnostics = false; end
+options = pspm_options(options, 'convert_ppg2hb');
+if options.invalid
+  return
+end
+% try if ~isnumeric(options.lsm),options.lsm = 0;end
+% catch, options.lsm = 0; end
 
 %% user output
 % -------------------------------------------------------------------------
@@ -61,7 +67,7 @@ fprintf('Heartbeat detection for %s ... \n', fn);
 
 % get data
 % -------------------------------------------------------------------------
-[nsts, ~, data] = pspm_load_data(fn, chan);
+[nsts, ~, data] = pspm_load_data(fn, channel);
 if nsts == -1
   warning('ID:invalid_input', 'call of pspm_load_data failed');
   return;
@@ -72,7 +78,7 @@ if numel(data) > 1
 end
 % Check that channel is ppg
 if ~strcmp(data{1,1}.header.chantype,'ppg')
-  warning('ID:not_allowed_channeltype', 'Specified channel is not a PPG channel. Don''t know what to do!')
+  warning('ID:not_allowed_chantype', 'Specified channel is not a PPG channel. Don''t know what to do!')
   return;
 end
 
@@ -186,14 +192,11 @@ write_options.msg = msg;
 
 % Replace last existing channel or save as new channel
 [nsts, nout] = pspm_write_channel(fn, newdata, options.channel_action, write_options);
-
+if ~nsts
+  return
+end
 % user output
 fprintf('  done.\n');
-if nsts ~= -1,
-  sts = 1;
-  outinfo.channel = nout.channel;
-end;
-
-return;
-
-end
+sts = 1;
+outinfo.channel = nout.channel;
+return

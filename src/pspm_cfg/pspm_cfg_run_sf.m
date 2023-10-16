@@ -70,14 +70,18 @@ options.overwrite = job.overwrite;
 if strcmp(timeunits, 'markers')
     options.marker_chan_num = job.timeunits.(timeunits).mrk_chan;
 end
-options.threshold = job.threshold;  
+options.threshold = job.threshold;
 if ~isempty(job.theta)
     options.theta = job.theta;
 end
 if ~isempty(job.fresp)
     options.fresp = job.fresp;
 end
-
+if ~isempty(job.missing)
+  if ischar(job.missing.missingepoch_include.missingepoch_file{1})
+    model.missing = job.missing.missingepoch_include.missingepoch_file{1};
+  end
+end
 options.dispwin = job.dispwin;
 options.dispsmallwin = job.dispsmallwin;
 

@@ -20,7 +20,7 @@ function varargout = cfg_ui(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 %
-% This code is part of a batch job configuration system for MATLAB. See 
+% This code is part of a batch job configuration system for MATLAB. See
 %      help matlabbatch
 % for a general overview.
 %_______________________________________________________________________
@@ -299,7 +299,7 @@ else
     set(findobj(handles.cfg_ui,'-regexp', 'Tag','.*(Del)|(Repl)Mod$'),'Enable','on');
     mrk = cell(size(sts));
     [mrk{dep}] = deal('DEP');
-    [mrk{~sts}] = deal('<-X');
+    [mrk{~sts}] = deal('<- X');
     [mrk{~dep & sts}] = deal('');
     str = cfg_textfill(handles.modlist, str, mrk, false);
 end;
@@ -309,7 +309,7 @@ if ~isempty(sts) && all(sts)
     set(findobj(handles.cfg_ui,'-regexp', 'Tag','.*File(Run)|(RunSerial)$'),'Enable','on');
 else
     set(findobj(handles.cfg_ui,'-regexp', 'Tag','.*File(Run)|(RunSerial)$'),'Enable','off');
-end    
+end
 local_showmod(obj);
 
 % --------------------------------------------------------------------
@@ -378,7 +378,7 @@ else
     ciid = {udmodlist.cjob udmodlist.id{cmod} udmodule.id{citem}};
 end;
 contents = cellfun(@(c)subsref(c, substruct('{}',{citem})), udmodule.contents, 'UniformOutput', false);
-sout = cat(2, udmodlist.sout(1:cmod-1));
+sout = cat(2, udmodlist.sout{1:cmod-1});
 cfg_ui_util('showvaledit', fig, ciid, contents, sout, dflag, [], @()local_valedit_update(obj));
 drawnow;
 
@@ -528,6 +528,8 @@ local_showjob(hObject);
 % Choose default command line output for cfg_ui
 handles.output = hObject;
 
+pspm_ui(hObject, handles, 'cfg_ui');
+
 % Update handles structure
 guidata(hObject, handles);
 
@@ -564,7 +566,7 @@ switch lower(cmd)
 end;
 
 % --- Outputs from this function are returned to the command line.
-function varargout = cfg_ui_OutputFcn(hObject, eventdata, handles) 
+function varargout = cfg_ui_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -612,7 +614,7 @@ if strcmpi(cmd, 'continue')
         catch
             l = lasterror;
             errordlg(l.message,'Error loading job', 'modal');
-        end    
+        end
         set(handles.modlist, 'userdata', udmodlist);
         set(handles.module, 'userdata', []);
         local_showjob(hObject);
@@ -815,7 +817,7 @@ function MenuViewUpdateView_Callback(hObject, eventdata, handles)
 
 % This function seems to be called on startup without guidata - do nothing
 % there
-if ~isempty(handles) 
+if ~isempty(handles)
     local_setmenu(handles.cfg_ui, [], @local_AddMod, true);
     udmodlist = get(handles.modlist,'Userdata');
     if isstruct(udmodlist)
@@ -872,7 +874,7 @@ if isempty(fg)
     ctxt = uicontrol('Parent',fg, 'Style','listbox', 'Units','normalized', 'Position',[0 0 1 1], 'FontName','FixedWidth','Tag',[mfilename 'ShowCodeList']);
 else
     figure(fg);
-    ctxt = findobj(fg,'Tag',[mfilename 'ShowCodeList']); 
+    ctxt = findobj(fg,'Tag',[mfilename 'ShowCodeList']);
 end
 um = uicontextmenu;
 um1 = uimenu('Label','Copy', 'Callback',@(ob,ev)local_ShowCode_Copy(ob,ev,ctxt), 'Parent',um);
@@ -1044,7 +1046,7 @@ function MenuFileMultiBatch_Callback(hObject, eventdata, handles)
 
 udmodlist = get(handles.modlist,'userdata');
 cjob = udmodlist.cjob;
-if cfg_util('isjob_id', cjob) 
+if cfg_util('isjob_id', cjob)
     njob = cfg_util('clonejob', cjob);
     cfg_ui_multibatch(njob);
 end

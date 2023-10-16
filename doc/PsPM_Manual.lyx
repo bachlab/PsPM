@@ -17,6 +17,7 @@
 % Added by lyx2lyx
 \renewcommand{\textendash}{--}
 \renewcommand{\textemdash}{---}
+\usepackage{bera}
 \end_preamble
 \use_default_options true
 \begin_modules
@@ -103,7 +104,7 @@ PsPM: Psychophysiological Modelling
 
 \begin_layout Standard
 \align center
-Version 6.0.0
+Version 6.1.0
 \end_layout
 
 \begin_layout Standard
@@ -145,7 +146,7 @@ literal "false"
 \align center
 Dominik R Bach, Giuseppe Castegnetti, Laure Ciernik, Samuel Gerster, Saurabh
  Khemka, Christoph Korn, Samuel Maxwell, Tobias Moser, Philipp C Paulus,
- Ivan Rojkov, Matthias Staib, Yanfang Xia, Eshref Yozdemir, Dadi Zhao and
+ Ivan Rojkov, Matthias Staib, Yanfang Xia, Eshref Yozdemir, Teddy Zhao and
  collaborators
 \end_layout
 
@@ -18097,7 +18098,7 @@ Comparison of different measures: Xia Y, Gurkina A & Bach DR (2019).
 Release notes
 \end_layout
 
-\begin_layout Section*
+\begin_layout Section
 PsPM Version 3
 \end_layout
 
@@ -18560,7 +18561,7 @@ Support for Philips Scanphyslog files and for bioread-converted AcqKnowledge
  files has been added to the import function.
 \end_layout
 
-\begin_layout Section*
+\begin_layout Section
 PsPM Version 4
 \end_layout
 
@@ -19509,7 +19510,7 @@ pspm_compute_visual_angle
  to mm.
 \end_layout
 
-\begin_layout Section*
+\begin_layout Section
 PsPM Version 5
 \end_layout
 
@@ -19877,12 +19878,1317 @@ A bug that leads to incorrect matrix construction has been fixed.
 \end_layout
 
 \end_deeper
+\begin_layout Section
+PsPM Version 6
+\end_layout
+
+\begin_layout Subsection*
+Version 6.0.0
+\end_layout
+
+\begin_layout Standard
+This is a major release and may have incompatibility with previous versions.
+\end_layout
+
+\begin_layout Subsubsection*
+New features
+\end_layout
+
+\begin_layout Itemize
+PsPM now support a develop mode, which allows
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Minimised terminal output.
+\end_layout
+
+\begin_layout Itemize
+Automagical parameter selection for testing.
+\end_layout
+
+\begin_layout Itemize
+Always to overwrite files.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_extract_segments
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now allows an optional 
+\shape italic
+z
+\shape default
+ - score for normalisation.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_find_valid_fixations
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now allows processing preprocessed left/right/combined pupil data.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_gaze_pp
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now allows preprocessing gaze signals.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_overwrite
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now handles the behaviour of overwrite if not defined by the user, and is
+ used where applicable.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_time2index
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now processes adjustable conversion from time to index globally.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_update_chantype
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now allows generalised behaviour of updating channel types.
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection*
+Bug Fixes
+\end_layout
+
+\begin_layout Itemize
+General
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A bug which may lead to failure of pspm path searching has been fixed.
+\end_layout
+
+\begin_layout Itemize
+A bug which may display figures in the GUI has been fixed.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_bf_spsrf_box
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now uses correct parameter settings.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_convert_ppu2hb
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now terminates if only one pulse is detected.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_data_editor
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now able to show figures when import a datafile correctly.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_dcm
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now handles missing epochs that start at 0 correctly.
+\end_layout
+
+\begin_layout Itemize
+now processes variables properly to make length consistent.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_display
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now displays plots with correct x-axis ranges.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_glm
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now applies correct variable settings.
+\end_layout
+
+\begin_layout Itemize
+now produces results correctly when facing many short missing epochs.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_interpolate
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now returns results correctly when applying forced extrapolation.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_resp_pp
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now allows replace as the channel action properly.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_scr_pp
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now uses inconsistent variables when delivering missing epochs.
+\end_layout
+
+\begin_layout Itemize
+now writes data out properly when epochs are removed.
+\end_layout
+
+\begin_layout Itemize
+now properly handles data if the first channel is not 
+\family typewriter
+scr
+\family default
+.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_sf
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now refer to model file correctly.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_split_sessions
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now processes missing files with an epoch starting at 0 s properly.
+ 
+\end_layout
+
+\begin_layout Itemize
+now properly catches edge cases.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+ValidSamplesModel
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now properly throws warnings if histogram counts are zeros.
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection*
+Improvements
+\end_layout
+
+\begin_layout Itemize
+General
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now supports loading 
+\family typewriter
+ppg
+\family default
+ data.
+\end_layout
+
+\begin_layout Itemize
+now displays improved terminal output text.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_con1
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now assesses the statistics in the arguments for throwing warnings when
+ detecting invalid values.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_data_editor
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now displays the 
+\shape italic
+x
+\shape default
+ and 
+\shape italic
+y
+\shape default
+ axis label and text according to the input data.
+\end_layout
+
+\begin_layout Itemize
+now sorts the epoch list according to the start data point.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_get_marker
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now detects and update the field 
+\family typewriter
+flank
+\family default
+ when applicable.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_import
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now detects and update the field 
+\family typewriter
+flank
+\family default
+ when applicable.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_load_data
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now checks whether the input has an empty channel.
+\end_layout
+
+\begin_layout Itemize
+now autofills some variables.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_pupil_pp
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now calls 
+\family typewriter
+pspm_load_data
+\family default
+ to load single channels.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_rev_glm
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now displays normalised data for visualisation purpose only.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_write_channel
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+now checks whether the input has an empty channel.
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection*
+GUI
+\end_layout
+
+\begin_layout Itemize
+"Edit defaults" in the GUI is now working properly.
+\end_layout
+
+\begin_layout Itemize
+GUI typeface is now generalised across the software.
+\end_layout
+
+\begin_layout Subsubsection*
+For Developers
+\end_layout
+
+\begin_layout Itemize
+General
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+PsPM now uses 
+\family typewriter
+.editorconfig
+\family default
+ to control the indent.
+\end_layout
+
+\begin_layout Itemize
+PsPM now uses UTF-8, LF, and MATLAB's soft tab indent as the standard code
+ formatting style.
+\end_layout
+
+\begin_layout Itemize
+PsPM now uses test data from the repository PsPM-data.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+pspm_get_text_test
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A bug, which leaves residual test files after code testing, has been fixed.
+\end_layout
+
+\end_deeper
+\begin_layout Subsection*
+Version 6.1.0
+\end_layout
+
+\begin_layout Subsubsection*
+General
+\end_layout
+
+\begin_layout Itemize
+Minimum version of MATLAB
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+The minimum version of MATLAB required for running PsPM is 
+\begin_inset CommandInset href
+LatexCommand href
+name "MATLAB 7.1"
+target "https://uk.mathworks.com/content/dam/mathworks/mathworks-dot-com/support/sysreq/files/SystemRequirements-Release14-ServicePack3_SupportedCompilers.pdf"
+literal "false"
+
+\end_inset
+
+ or R14 Service Pack 3.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Entering PsPM 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Entering PsPM is now hybrid based on the version of MATLAB, namely through
+ AppDesigner or Guide.
+ PsPM will be entered through AppDesigner when supported and through Guide
+ for older versions of MATLAB.
+ To call PsPM, users should still use the command 
+\family typewriter
+pspm
+\family default
+ in the Command Window of MATLAB, where the appropriate way of entering
+ PsPM will be recognised automatically.
+\end_layout
+
+\begin_layout Itemize
+Users can still use their preferred way to enter PsPM.
+ To enter PsPM through AppDesigner, please type 
+\family typewriter
+pspm_appdesigner
+\family default
+.
+ To enter PsPM through Guide, which is the classic entrance, please type
+ 
+\family typewriter
+pspm_guide
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+The AppDesigner version of PsPM UI is newly introduced by MATLAB and the
+ encouraged way for launching PsPM, and it has no functionality difference
+ than the Guide version of PsPM UI.
+\end_layout
+
+\begin_layout Itemize
+Both AppDesigner and Guide are designed and tested for Windows, macOS (either
+ Intel or Apple Silicon) and Linux.
+ Issues of opening PsPM through either of the two UI systems are encouraged
+ to be reported to PsPM developing group at GitHub.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Introducing 
+\family typewriter
+pspm_options
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A new function 
+\family typewriter
+pspm_options
+\family default
+ is introduced to PsPM for controlling the default and acceptable values
+ of the struct 
+\family typewriter
+options
+\family default
+ used by most PsPM functions.
+ The default values of the fields in the struct 
+\family typewriter
+options
+\family default
+ for various functions can be directly checked by searching in 
+\family typewriter
+pspm_options
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+The default values in 
+\family typewriter
+pspm_options
+\family default
+ have been checked and tested for PsPM.
+ If preferred values are different from defaults, users can specify them
+ when calling the corresponding PsPM functions, and the corresponding functions
+ and 
+\family typewriter
+pspm_options
+\family default
+ will always respect the users' specification with the highest priority.
+ However, the user's specification needs to satisfy the condition set in
+ 
+\family typewriter
+pspm_options
+\family default
+, and invalid values may be reported as errors.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Help text
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+The help text has been updated for all PsPM functions.
+ 
+\end_layout
+
+\begin_layout Itemize
+Help text can be checked by right clicking the functions and select 
+\begin_inset Quotes eld
+\end_inset
+
+help text
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection*
+UI Improvements 
+\end_layout
+
+\begin_layout Itemize
+The UI for the following features has been improved and tested 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Launchpad (AppDesigner) 
+\end_layout
+
+\begin_layout Itemize
+Launchpad (Guide) 
+\end_layout
+
+\begin_layout Itemize
+Batch editor 
+\end_layout
+
+\begin_layout Itemize
+Display data
+\end_layout
+
+\begin_layout Itemize
+Contrast manager 
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection*
+Bug Fixes
+\end_layout
+
+\begin_layout Itemize
+UI
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A bug that used to make PsPM crash when 
+\family typewriter
+pupil size convert
+\family default
+ and 
+\family typewriter
+gaze convert
+\family default
+ in 
+\family typewriter
+Data Preprocessing
+\family default
+ were selected has been fixed.
+ 
+\end_layout
+
+\begin_layout Itemize
+A bug that leads to error when PsPM is started offline has been fixed.
+\end_layout
+
+\begin_layout Itemize
+A bug that leads to incorrect x labels in 
+\family typewriter
+pspm_rev_dcm
+\family default
+ has been fixed.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_convert_...
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A bug that leads PsPM to crash, which is caused by outdated UI calling for
+ 
+\family typewriter
+pspm_convert_...
+
+\family default
+ functions, has been fixed.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_get_eyelink
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A bug that causes issues when importing eye link data that is scanned at
+ both left and right sides has been fixed.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_glm
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A bug that incorrectly identifies the 
+\family typewriter
+NaN
+\family default
+s in the input data has been fixed.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_sf
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A bug that has lead to incorrect input datafile assigning has been fixed.
+\end_layout
+
+\begin_layout Itemize
+A bug that leads PsPM crash when 
+\family typewriter
+pspm_sf
+\family default
+ is analysing data with missing epochs has been fixed.
+\end_layout
+
+\begin_layout Itemize
+A bug that leads to error when 
+\family typewriter
+pspm_sf
+\family default
+ analyses data where 
+\family typewriter
+time unit
+\family default
+ is defined as 
+\family typewriter
+marker
+\family default
+ has been fixed.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_split_sessions
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_split_sessions
+\family default
+ now considers 
+\family typewriter
+marker_chan_num
+\family default
+ when calling 
+\family typewriter
+pspm_trim
+\family default
+.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection*
+Improvements
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+channel
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+We have generalised 
+\family typewriter
+channel
+\family default
+ related variables throughout PsPM, which are given as 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\family typewriter
+chan/channel
+\family default
+ to 
+\family typewriter
+channel
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+chans/channels
+\family default
+ to 
+\family typewriter
+channels
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+channel_units
+\family default
+/
+\family typewriter
+channels_units
+\family default
+/
+\family typewriter
+chan_units
+\family default
+/
+\family typewriter
+chans_units
+\family default
+ to 
+\family typewriter
+channel_units
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+chan_combine
+\family default
+ to 
+\family typewriter
+channel_combine
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+chan_action
+\family default
+ to 
+\family typewriter
+channel_action
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+channels_header
+\family default
+ to 
+\family typewriter
+channel_header
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+chantype
+\family default
+ to 
+\family typewriter
+channeltype
+\family default
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+import_eyelink
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Improved 
+\family typewriter
+import_eyelink
+\family default
+ for adding some support for importing eyelink data converted by higher
+ version of .EDF files.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_con2
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_con2
+\family default
+ now uses 
+\family typewriter
+pspm_overwrite
+\family default
+.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_dcm
+\family default
+ and 
+\family typewriter
+pspm_dcm_inv
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\family typewriter
+.flexevents
+\family default
+ and 
+\family typewriter
+.fixevents
+\family default
+ are now fields of 
+\family typewriter
+model
+\family default
+ instead of 
+\family typewriter
+options
+\family default
+.
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_dcm
+\family default
+ now uses 
+\family typewriter
+pspm_get_timing
+\family default
+ to handle missing epochs.
+ 
+\end_layout
+
+\begin_layout Itemize
+Improved missing epoch support
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+The field 
+\family typewriter
+.missing
+\family default
+ is now allocated from 
+\family typewriter
+options
+\family default
+ to 
+\family typewriter
+model
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+.missing_data
+\family default
+ is used to load missing epoch data that was loaded from dcm, as an optional
+ field.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+The index is update to keep the first event when it is at time 0 in session.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_extract_segments
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+The first channel is always referred by 
+\family typewriter
+marker_chan
+\family default
+ as default.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_glm
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+The fallback for 
+\family typewriter
+options.exclude_missing
+\family default
+ has been set for 
+\family typewriter
+pspm_glm
+\family default
+, which is not to exclude any missing epochs.
+ 
+\end_layout
+
+\begin_layout Itemize
+A bug that leads to incorrect missing epoch checking has been fixed.
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+marker_chan_num
+\family default
+ now refers to the first marker channel as default.
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_glm
+\family default
+ now uses 
+\family typewriter
+pspm_get_timing
+\family default
+ to handle missing epochs.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_interp1
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_interp1
+\family default
+ now considers the data where no valid values are detected and interpolation
+ is not possible, and warnings will be reported in this case.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_merge
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+The first two channels will be merged as the default option.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_prepdata
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_prepdata
+\family default
+ now uses interpolation to handle data with 
+\family typewriter
+NaN
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+Data that begins and/or ends with 
+\family typewriter
+NaN
+\family default
+ will be filled with the first/last non-
+\family typewriter
+NaN
+\family default
+ values in those positions.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_sf
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\family typewriter
+N
+\family default
+ow supports missing epochs by allowing input with 
+\family typewriter
+NaN
+\family default
+ that indicates missing epochs.
+\end_layout
+
+\begin_layout Itemize
+Missing epochs can be specified with 
+\family typewriter
+options.missing
+\family default
+ or the automatic 
+\family typewriter
+NaN
+\family default
+ detection.
+\end_layout
+
+\begin_layout Itemize
+Missing epochs will be verified with 
+\family typewriter
+options.missingthresh
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+When the missing epochs are longer than 2s, the result out will be converted
+ to 
+\family typewriter
+[]
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+The UI of SF analysis now allows using missing epochs from files or not
+ to define any missing epochs.
+\end_layout
+
+\begin_layout Itemize
+Now uses 
+\family typewriter
+pspm_get_timing
+\family default
+ to handle missing epochs.
+\end_layout
+
+\begin_layout Itemize
+The field 
+\family typewriter
+.marker_chan_num
+\family default
+ now refers to the first marker channel as default.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_sf_dcm
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_sf_dcm
+\family default
+ now uses 
+\family typewriter
+pspm_interp1
+\family default
+ for interpolating data.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_text
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+The Matlab file that stores the information of help text 
+\family typewriter
+pspm_text.mat
+\family default
+ will be stored inside the source folder of PsPM and will be deleted when
+ PsPM is quit.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_trim
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\family typewriter
+marker_chan_num
+\family default
+ now refers to the first marker channel as default.
+ 
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Subsubsection*
+Minor Adjustments
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_sf
+\family default
+, 
+\family typewriter
+pspm_glm
+\family default
+ and 
+\family typewriter
+pspm_dcm
+\family default
+.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+The option 
+\family typewriter
+marker_chan_num_event
+\family default
+ is removed.
+\end_layout
+
+\begin_layout Itemize
+In default, the first marker channel / event channel is always selected
+ and no users' customisation is allowed.
+\end_layout
+
+\begin_layout Itemize
+The last data channel / wave channel is always selected.
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection*
+Reference document
+\end_layout
+
+\begin_layout Itemize
+Added a new document 
+\shape italic
+PsPM Reference
+\shape default
+ for checking the default values and restrictions of 
+\family typewriter
+options
+\family default
+ fields.
+\end_layout
+
 \begin_layout Part
 Acknowledgements
 \end_layout
 
 \begin_layout Standard
-SCRalyze versions 1-2 were developed at the FIL, Wellcome Centre for Human
+SCRalyze versions 1–2 were developed at the FIL, Wellcome Centre for Human
  Neuroimaging, University College London, under the auspices of Karl J.
  Friston and Raymond J.
  Dolan.

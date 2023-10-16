@@ -34,7 +34,7 @@ classdef pspm_pupil_pp_test < pspm_testcase
       this.verifyWarning(@()pspm_pupil_pp('abc'), 'ID:nonexistent_file');
       opt.channel = 'pupil_x_l';
       this.verifyWarning(@()pspm_pupil_pp(...
-        this.pspm_input_filename, opt), 'ID:invalid_channeltype');
+        this.pspm_input_filename, opt), 'ID:invalid_input');
       opt.channel = 'pupil_l';
       opt.channel_combine = 'gaze_y_l';
       this.verifyWarning(@()pspm_pupil_pp(...
@@ -45,16 +45,16 @@ classdef pspm_pupil_pp_test < pspm_testcase
     end
     function check_if_preprocessed_channel_is_saved(this)
       opt.channel = 'pupil_r';
-      [~, out_channel] = pspm_pupil_pp(this.pspm_input_filename, opt);
+      [~, out_chan] = pspm_pupil_pp(this.pspm_input_filename, opt);
       testdata = load(this.pspm_input_filename);
-      this.verifyEqual(testdata.data{out_channel}.header.chantype,...
+      this.verifyEqual(testdata.data{out_chan}.header.chantype,...
         'pupil_pp_r');
     end
     function check_upsampling_rate(this)
       for freq = [500 1000 1500]
         opt.custom_settings.valid.interp_upsamplingFreq = freq;
         opt.channel = 'pupil_r';
-        [~, out_channel] = pspm_pupil_pp(this.pspm_input_filename, opt);
+        [~, out_chan] = pspm_pupil_pp(this.pspm_input_filename, opt);
         testdata = load(this.pspm_input_filename);
         pupil_chan_indices = find(...
           cell2mat(cellfun(@(x) strcmp(x.header.chantype, 'pupil_r'),...
@@ -64,15 +64,15 @@ classdef pspm_pupil_pp_test < pspm_testcase
         upsampling_factor = freq / sr;
         this.verifyEqual(...
           numel(testdata.data{pupil_chan}.data) * upsampling_factor,...
-          numel(testdata.data{out_channel}.data));
+          numel(testdata.data{out_chan}.data));
       end
     end
     function check_channel_combining(this)
       opt.channel = 'pupil_r';
       opt.channel_combine = 'pupil_l';
-      [~, out_channel] = pspm_pupil_pp(this.pspm_input_filename, opt);
+      [~, out_chan] = pspm_pupil_pp(this.pspm_input_filename, opt);
       testdata = load(this.pspm_input_filename);
-      this.verifyEqual(testdata.data{out_channel}.header.chantype, 'pupil_pp_c');
+      this.verifyEqual(testdata.data{out_chan}.header.chantype, 'pupil_pp_c');
     end
     function check_segments(this)
       opt.channel = 'pupil_r';
@@ -82,12 +82,12 @@ classdef pspm_pupil_pp_test < pspm_testcase
       opt.segments{2}.start = 25;
       opt.segments{2}.end = 27;
       opt.segments{2}.name = 'seg2';
-      [~, out_channel] = pspm_pupil_pp(this.pspm_input_filename, opt);
+      [~, out_chan] = pspm_pupil_pp(this.pspm_input_filename, opt);
       testdata = load(this.pspm_input_filename);
 
-      this.verifyTrue(isfield(testdata.data{out_channel}.header, 'segments'));
-      this.verifyEqual(testdata.data{out_channel}.header.segments{1}.name, 'seg1');
-      this.verifyEqual(testdata.data{out_channel}.header.segments{2}.name, 'seg2');
+      this.verifyTrue(isfield(testdata.data{out_chan}.header, 'segments'));
+      this.verifyEqual(testdata.data{out_chan}.header.segments{1}.name, 'seg1');
+      this.verifyEqual(testdata.data{out_chan}.header.segments{2}.name, 'seg2');
     end
   end
   methods(TestClassTeardown)

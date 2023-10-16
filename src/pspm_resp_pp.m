@@ -1,27 +1,29 @@
-function sts = pspm_resp_pp(fn, sr, chan, options)
+function sts = pspm_resp_pp(fn, sr, channel, options)
 % ● Description
-% pspm_resp_pp preprocesses raw respiration traces. The function detects
-% respiration cycles for bellows and cushion systems, computes respiration
-% period, amplitude and RFR, assigns these measures to the start of each
-% cycle and linearly interpolates these (expect rs = respiration time
-% stamps). Results are written to new channels in the same file
+%   pspm_resp_pp preprocesses raw respiration traces. The function detects
+%   respiration cycles for bellows and cushion systems, computes respiration
+%   period, amplitude and RFR, assigns these measures to the start of each
+%   cycle and linearly interpolates these (expect rs = respiration time
+%   stamps). Results are written to new channels in the same file
 % ● Format
-% sts = pspm_resp_pp(fn, sr, chan, options)
+%   sts = pspm_resp_pp(fn, sr, channel, options)
 % ● Arguments
-% fn                  data file name
-% sr                  sample rate for new interpolated channel
-% chan                number of respiration channel (optional, default: first
+%                 fn: data file name
+%                 sr: sample rate for new interpolated channel
+%            channel: number of respiration channel (optional, default: first
 %                     respiration channel)
-% options
-% ┣━.systemtype       ['bellows'(default) /'cushion']
-% ┣━.datatype         a cell array with any of 'rp', 'ra', 'rfr',
-% ┃                   'rs', 'all' (default)
-% ┣━.plot             1 creates a respiratory cycle detection plot
-% ┗━.channel_action   ['add'(default) /'replace']
-%                     Defines whether the new channels should be added or 
-%                     the corresponding channel should be replaced.
-% PsPM 3.0
-% (C) 2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   ┌────────options:
+%   ├────.systemtype: ['bellows'(default) /'cushion']
+%   ├──────.datatype: a cell array with any of 'rp', 'ra', 'rfr',
+%   │                   'rs', 'all' (default)
+%   ├───.diagnostics:
+%   ├──────────.plot: 1 creates a respiratory cycle detection plot
+%   └.channel_action: ['add'(default) /'replace']
+%                     Defines whether the new channels should be added or the
+%                     corresponding channel should be replaced.
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings
@@ -38,19 +40,20 @@ elseif nargin < 2
   warning('ID:invalid_input', 'No sample rate given.'); return;
 elseif ~isnumeric(sr)
   warning('ID:invalid_input', 'Sample rate needs to be numeric.'); return;
-elseif nargin < 3 || isempty(chan) || (chan == 0)
-  chan = 'resp';
-elseif ~isnumeric(chan)
+elseif nargin < 3 || isempty(channel) || (channel == 0)
+  channel = 'resp';
+elseif ~isnumeric(channel)
   warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end
-try options.systemtype; catch, options.systemtype = 'bellows'; end
+if ~exist('options', 'var')
+  options = struct();
+end
+options = pspm_options(options, 'resp_pp');
+if options.invalid
+  return
+end
 try options.datatype; catch, options.datatype = {'rp', 'ra', 'rfr', 'rs'}; end
-try options.plot; catch, options.plot = 0; end
-try options.diagnostics; catch, options.diagnostics = 0; end
-try options.channel_action; catch, options.channel_action = 'add'; end
-if ~ischar(options.systemtype) || sum(strcmpi(options.systemtype, {'bellows', 'cushion'})) == 0
-  warning('ID:invalid_input', 'Unknown system type.'); return;
-elseif ~iscell(options.datatype)
+if ~iscell(options.datatype)
   warning('ID:invalid_input', 'Unknown data type.'); return;
 else
   datatypes = {'rp', 'ra', 'rfr', 'rs', 'all'};
@@ -61,8 +64,8 @@ else
   if datatype(end), datatype(1:end) = 1; end
 end
 %% get data
-[nsts, infos, data] = pspm_load_data(fn, chan);
-old_chantype = data{1}.header.chantype;
+[nsts, infos, data] = pspm_load_data(fn, channel);
+old_channeltype = data{1}.header.chantype;
 if nsts == -1
   warning('ID:invalid_input', 'Could not load data properly.');
   return;
@@ -82,7 +85,7 @@ filt.hpfreq    = .01;
 filt.hporder   = 1;
 filt.direction = 'bi';
 filt.down      = 10;
-[sts, newresp, newsr] = pspm_prepdata(resp - mean(resp), filt);
+[sts, newresp, newsr] = pspm_prepdata(resp - mean(resp,"omitnan"), filt);
 % Median filter
 newresp = medfilt1(newresp, ceil(newsr) + 1);
 %% detect breathing cycles
@@ -152,11 +155,11 @@ for iType = 1:(numel(datatypes) - 1)
         action_msg = 'Respiration converted to respiration time stamps';
         newdata.header.units = 'events';
     end
-    channel_str = num2str(chan);
+    channel_str = num2str(channel);
     o.msg.prefix = sprintf(...
-      'Respiration preprocessing :: Input channel: %s -- Input chantype: %s -- Output channel: %s -- Action: %s --', ...
+      'Respiration preprocessing :: Input channel: %s -- Input channeltype: %s -- Output channel: %s -- Action: %s --', ...
       channel_str, ...
-      old_chantype, ...
+      old_channeltype, ...
       newdata.header.chantype, ...
       action_msg);
     % interpolate
@@ -165,7 +168,7 @@ for iType = 1:(numel(datatypes) - 1)
         newt = (1/sr):(1/sr):infos.duration;
         if ~isempty(respdata)
           % assign rp/ra/RFR to following zero crossing
-          writedata = interp1(respstamp(2:end), respdata, newt, 'linear' ,'extrap'); 
+          writedata = interp1(respstamp(2:end), respdata, newt, 'linear' ,'extrap');
           % 'extrap' option may introduce falsely negative values
           writedata(writedata < 0) = 0;
         else
@@ -178,7 +181,7 @@ for iType = 1:(numel(datatypes) - 1)
     end
     % write
     newdata.data = writedata(:);
-    nsts = pspm_write_channel(fn, newdata, options.channel_action, o);
+    [nsts, ~] = pspm_write_channel(fn, newdata, options.channel_action, o);
     if nsts == -1, return; end
   end
 end
@@ -199,3 +202,4 @@ if options.plot
   stem(respstamp, ones(size(respstamp)), 'Marker', 'o', 'Color', 'b');
 end
 sts = 1;
+return

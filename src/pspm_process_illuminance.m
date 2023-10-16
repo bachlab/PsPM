@@ -1,44 +1,41 @@
 function [sts, out] = pspm_process_illuminance(ldata, sr, options)
-% pspm_process_illuminance is used to process raw lux data and transfer
-% it into two nuisance regressors (dilation and constriction) for glm
-%
-% Pupil size models were developed with pupil size data recorded in
-% diameter values. Therefore pupil size data analyzed using these models
-% should also be in diameter.
-%
-% [sts, out] = pspm_process_illuminance(ldata, sr, options)
-%   Inputs:
-%       ldata:      illuminance data as (cell of) 1x1 double or filename
-%       sr:         sample rate in Hz of the input data
-%       options:    struct with optional settings
-%           .transfer   params for the transfer function
-%
-%           .bf         settings for the basis functions
-%               .duration       duration of the basis functions in s
-%               .offset         offset in s
-%               .dilation       options for the dilation basis function
-%                   .fhandle        function handle to the dilation
-%                                   response function
-%               .constriction
-%                   .fhandle        function handle to the constriction
-%                                   response function
-%           .fn         [filename] if specified ldata{i,j} will be saved to
-%                       a file with filename options.fn{i,j} into the
-%                       variable 'R'
-%
-%           .overwrite  [true/FALSE] specifies if file specified with
-%                       options.fn should be overwritten or not.
-%
-%   Outputs:
-%           sts:    status
-%           out:    has same size as ldata and contains either the
+% ● Description
+%   pspm_process_illuminance is used to process raw lux data and transfer
+%   it into two nuisance regressors (dilation and constriction) for glm
+% ● Developer's Notes
+%   Pupil size models were developed with pupil size data recorded in
+%   diameter values. Therefore pupil size data analyzed using these models
+%   should also be in diameter.
+% ● Format
+%   [sts, out] = pspm_process_illuminance(ldata, sr, options)
+% ● Arguments
+%           ldata:  illuminance data as (cell of) 1x1 double or filename
+%              sr:  sample rate in Hz of the input data
+%   ┌─────options:  struct with optional settings
+%   ├───.transfer:  params for the transfer function
+%   ├─────────.bf:  settings for the basis functions
+%   ├───.duration:  duration of the basis functions in s
+%   ├─────.offset:  offset in s
+%   ├───.dilation:  options for the dilation basis function
+%   ├────.fhandle:  function handle to the dilation response function.
+%   ├.constriction:
+%   ├────.fhandle:  function handle to the constriction response function.
+%   ├─────────.fn:  [filename] if specified ldata{i,j} will be saved to a file
+%   │               with filename options.fn{i,j} into the variable 'R'.
+%   └──.overwrite:  [logical] (0 or 1)
+%                   Define whether to overwrite existing output files or not.
+%                   Default value: determined by pspm_overwrite.
+% ● Outputs
+%             sts:  status
+%             out:  has same size as ldata and contains either the
 %                   processed data or contains the path to the .mat file
 %                   where the data has been stored to
-%__________________________________________________________________________
-% PsPM 3.1
-% (C) 2015 Tobias Moser, Christoph Korn (University of Zurich)
+% ● History
+%   Introduced In PsPM 3.1
+%   Written in 2015 by Tobias Moser, Christoph Korn (University of Zurich)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
-%% Initialise
+% initialise
 global settings
 if isempty(settings)
   pspm_init;
@@ -54,24 +51,10 @@ elseif ~isstruct(options)
 end
 
 % setup default values
-if ~isfield(options, 'transfer')
-  options.transfer = [49.79,-1.05,-0.50];
+options = pspm_options(options, 'process_illuminance');
+if options.invalid
+  return
 end
-if ~isfield(options, 'bf') || ~isstruct(options.bf)
-  options.bf = struct();
-end
-if ~isfield(options.bf, 'duration')
-  options.bf.duration = 20;
-end
-if ~isfield(options.bf, 'offset')
-  options.bf.offset = .2;
-end
-try options.bf.dilation; catch; options.bf.dilation = struct(); end
-try options.bf.constriction; catch; options.bf.constriction = struct(); end
-try options.bf.dilation.fhandle; catch; options.bf.dilation.fhandle = @pspm_bf_ldrf_gm; end
-try options.bf.constriction.fhandle; catch; options.bf.constriction.fhandle = @pspm_bf_lcrf_gm; end
-try options.fn; catch; options.fn = ''; end
-try options.overwrite; catch; options.overwrite = false; end
 
 % ensure parameters are correct
 % -------------------------------------------------------------------------
@@ -88,9 +71,6 @@ elseif ~isnumeric(sr) && ~iscell(sr)
 elseif ~isempty(options.fn) && (iscell(ldata) && ~iscell(options.fn)) || ...
     (~iscell(ldata) && iscell(options.fn))
   warning('ID:invalid_input', 'ldata and options.fn have not the same dimension.');
-  return;
-elseif ~islogical(options.overwrite) && ~isnumeric(options.overwrite)
-  warning('ID:invalid_input', 'options.overwrite must be numeric or logical.');
   return;
 elseif ~isnumeric(options.bf.duration)
   warning('ID:invalid_input', 'options.bf.duration must be numeric.');
@@ -271,3 +251,4 @@ end
 
 out = reg;
 sts = 1;
+return

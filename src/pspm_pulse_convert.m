@@ -1,28 +1,40 @@
-function wavedata=pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
-% pspm_pulse_convert converts pulsed data into a data waveform, assuming
-% milliseconds as time unit and a resamplingrate in Hz given as input argument
-% This function is designed for data from CED spike, recorded by CED Micro
-% 1401. These data should not normally exceed pulse frequencies of 10 kHz,
-% corresponding to a pulse time stamp difference of 0.1 ms. Smaller values
-% are frequently observed, in time series with otherwise much higher
-% values. This is unlikely to reflect a pulse frequency above the sampling
-% resolution of the 1401 and more likely to be a technical glitch. These
-% time stamps are filtered out before re-sampling.
-% FORMAT:
-% wavedata = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
-%           with pulsedata: timestamps in ms
-%                resamplingrate: for interpolation
-%                samplingrate: to be downsampled to
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+function varargout = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
+% ● Description
+%   pspm_pulse_convert converts pulsed data into a data waveform, assuming
+%   milliseconds as time unit and a resamplingrate in Hz given as input argument
+% ● Developer's Notes
+%   This function is designed for data from CED spike, recorded by CED Micro
+%   1401. These data should not normally exceed pulse frequencies of 10 kHz,
+%   corresponding to a pulse time stamp difference of 0.1 ms. Smaller values
+%   are frequently observed, in time series with otherwise much higher
+%   values. This is unlikely to reflect a pulse frequency above the sampling
+%   resolution of the 1401 and more likely to be a technical glitch. These
+%   time stamps are filtered out before re-sampling.
+% ● Format
+%   wavedata = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
+% ● Arguments
+%        pulsedata: timestamps in ms
+%   resamplingrate: for interpolation
+%     samplingrate: to be downsampled to
+% ● History
+%   Introduced In PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao
 
-%% Initialise
+% initialise
 global settings
 if isempty(settings)
   pspm_init;
 end
 sts = -1;
+wavedata = [];
+switch nargout
+  case 1
+    varargout{1} = wavedata;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = wavedata;
+end
 
 % check input arguments
 if nargin<1
@@ -48,7 +60,7 @@ else
   if 10*maxtruesamplingrate > resamplingrate
     newresamplingrate = min([round(maxtruesamplingrate*10), 10000/1000]); % max resamplingrate: 10 kHz, otherwise out of memory
     resamplingrate = newresamplingrate;
-  end;
+  end
   fprintf('\nPulse data was converted to waveform with a sampling rate of %01.2f Hz, to allow 10-fold oversampling.\n', resamplingrate*1000);
   scrt = pulsedata;
   scr = 1./diff(scrt);                                            % get frequency information for each timepoint
@@ -60,7 +72,7 @@ else
   % put back into correct timeunits (seconds)
   resamplingrate = 1000 * resamplingrate;
   % substitute missing samplingrate
-  if nargin < 3, samplingrate = resamplingrate; end;
+  if nargin < 3, samplingrate = resamplingrate; end
   % convert
   if samplingrate < resamplingrate
     filt.lpfreq = 0.5 * samplingrate;
@@ -70,14 +82,19 @@ else
     filt.direction = 'bi';
     filt.down = samplingrate;
     filt.sr = resamplingrate;
-    [sts, wavedata] = pspm_prepdata(wavedata, filt);
-    if sts ~= 1
+    [sts_prepdata, wavedata] = pspm_prepdata(wavedata, filt);
+    if sts_prepdata ~= 1
       warning('ID:invalid_input', 'call of pspm_prepdata failed');
-      return;
-    end;
-  end;
-end;
-
-
-
-return;
+      return
+    end
+  end
+end
+sts = 1;
+switch nargout
+  case 1
+    varargout{1} = wavedata;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = wavedata;
+end
+return

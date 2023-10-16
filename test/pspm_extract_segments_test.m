@@ -8,6 +8,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
     testfile_prefix = 'datafile';
     nan_output_prefix = 'nan_output';
     outputfile_prefix = 'segments'
+    options = struct('length', 0)
   end
   properties(TestParameter)
     % different NaN ratios
@@ -183,7 +184,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       % do the actual test with durations all other option field
       % are set to default
       [sts,out] = this.verifyWarningFree(@() ...
-        pspm_extract_segments('manual', fn,0, timing));
+        pspm_extract_segments('manual', fn,0, timing, this.options));
       this.verifyEqual(sts, 1);
       % check contains segments
       this.verifyTrue(isfield(out,'segments'));
@@ -207,6 +208,10 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       import matlab.unittest.constraints.RelativeTolerance
       load(['ImportTestData' filesep 'fitted_models' filesep 'glm_scr_cond_marker.mat'], 'glm');
       load(['ImportTestData' filesep 'fitted_models' filesep 'glm_orig_data.mat'], 'data');
+      if ~isfield(glm.input, 'channel') && isfield(glm.input, 'chan')
+        glm.input.channel = glm.input.chan;
+        glm.input = rmfield(glm.input,'chan'); % rename the field channel to chan
+      end
       marker = data{5}.data;
       assert(numel(glm.input.timing) == 1);
       input_data = glm.input.data{1};
@@ -221,7 +226,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       for i = 1:numel(glm.timing.multi.durations)
         glm.timing.multi.durations{i} = 5*i*ones(1, numel(glm.timing.multi.durations{i}));
       end
-      [sts, out] = pspm_extract_segments('auto', glm);
+      [sts, out] = pspm_extract_segments('auto', glm, this.options);
       this.verifyEqual(sts, 1);
       seg = out.segments;
       this.verifyEqual(numel(seg), 3);
@@ -279,7 +284,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       for i = 1:numel(glm.timing.multi.durations)
         glm.timing.multi.durations{i} = 5*i*ones(1, numel(glm.timing.multi.durations{i}));
       end
-      [sts, out] = pspm_extract_segments('auto', glm);
+      [sts, out] = pspm_extract_segments('auto', glm, this.options);
       this.verifyEqual(sts, 1);
       seg = out.segments;
       this.verifyEqual(numel(seg), 3);
@@ -364,7 +369,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
           dcm.trlnames{indices_i(j)} = sprintf('Trial %d', i);
         end
       end
-      [sts, out] = pspm_extract_segments('auto', dcm);
+      [sts, out] = pspm_extract_segments('auto', dcm, this.options);
       this.verifyEqual(sts, 1);
       seg = out.segments;
       this.verifyEqual(numel(seg), 8);

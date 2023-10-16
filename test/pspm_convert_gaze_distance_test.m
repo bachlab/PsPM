@@ -14,7 +14,7 @@ classdef pspm_convert_gaze_distance_test < matlab.unittest.TestCase
     % get the gaze data channels for a specific unit
     function len = get_gaze_and_unit(this, data, unit)
       len = find(cellfun(@(c) strcmp(c.header.units, unit) && ~isempty(regexp(c.header.chantype, 'gaze_[x|y]_[r|l]')), data));
-    end;
+    end
   end
   methods(TestMethodSetup)
     function backup(this)
@@ -49,11 +49,11 @@ classdef pspm_convert_gaze_distance_test < matlab.unittest.TestCase
       width = 323;
       height = 232;
       distance = 600;
-      if (~strcmp(from, 'pixel'));
+      if (~strcmp(from, 'pixel'))
         pspm_convert_pixel2unit(this.fn, 0, from, width, height, distance);
         load(this.fn);
         this.verifyLength(this.get_gaze_and_unit(data, from), 4);
-      end;
+      end
       data_length = length(data);
       if strcmp(target, 'degree')
         this.verifyLength(this.get_gaze_and_unit(data, 'degree'), 0);
@@ -64,7 +64,7 @@ classdef pspm_convert_gaze_distance_test < matlab.unittest.TestCase
       [sts, out_channel] = this.verifyWarningFree(@() pspm_convert_gaze_distance(...
         this.fn, target, from, width, height, distance, struct('channel_action', channel_action)));
       load(this.fn);
-      this.verifyTrue(length(out_channel.channel) > 0);
+      this.verifyTrue(~isempty(out_channel.channel));
       extra = 2;
       if strcmp(target, 'degree')
         extra = 4;
@@ -81,13 +81,13 @@ classdef pspm_convert_gaze_distance_test < matlab.unittest.TestCase
         this.fn, target, from, width, height, distance, struct('channel_action', channel_action)));
       load(this.fn);
       extra = 0;
-      if (strcmp(channel_action, 'add'));
+      if (strcmp(channel_action, 'add'))
         if strcmp(target, 'degree')
           extra = extra + 4;
         else
           extra = extra + 2;
         end
-      end;
+      end
       this.verifyLength(data, data_length + extra);
       this.verifyEqual(sts, 1);
     end

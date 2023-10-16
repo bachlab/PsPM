@@ -1,13 +1,14 @@
 $___________________________________________________________________________
 Welcome to PsPM -- PsychoPhysiological Modelling
 (incorporating SCRalyze)
-Version 5.1.1 (22.07.2021)
+Version 6.1.0 (22.08.2023)
 $
 ------------------------------------------
-(c) 2008-2021
+(c) 2008-2023
 Dominik R Bach
 * Wellcome Centre for Human Neuroimaging
 University College London
+University of Bonn
 University of Zurich
 d.bach@ucl.ac.uk
 bachlab.github.io/PsPM

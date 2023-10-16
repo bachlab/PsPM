@@ -39,11 +39,11 @@ classdef pspm_get_physlog_test < pspm_get_superclass
       fn = 'ImportTestData/nwdq/sc4b26.WDQ';
       this.verifyWarning(@() this.fhandle(fn, {}), 'ID:invalid_input');
       fn = 'ImportTestData/physlog/SCANPHYSLOG20150821194530.log';
-      % data chan does not exist
+      % data channel does not exist
       import{1} = struct('type', 'ecg', 'channel', 8);
       import = this.assign_chantype_number(import);
       this.verifyWarning(@() this.fhandle(fn, import), 'ID:channel_not_contained_in_file');
-      % trigger chan does not exist
+      % trigger channel does not exist
       import{1} = struct('type', 'marker', 'channel', 11);
       import = this.assign_chantype_number(import);
       this.verifyWarning(@() this.fhandle(fn, import), 'ID:channel_not_contained_in_file');

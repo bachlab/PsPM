@@ -1,96 +1,17 @@
-function output = pspm_pfm(model, options)
-% PFM stands for Pupil Fitting Model and allows to fit models to the puipil
-% data. The function starts by extracting and averaging signal segments of
-% length `model.window` from each data file individually, then averages
-% these mean segments and finally fits an LTI model.
-% The fitting process is a residual least square minimisation where the
-% predicted value is calculated as following:
-%          Y_predicted = input_function (*) basis_function
-% with (*) represents a convolution. Only parameters of the input
-% function are optimised.
-%
-% MODEL is made of:
-% - REQUIRED FIELDS:
-%    model.modelfile:    a file name for the model output
-%    model.datafile:     a file name (single session) OR
-%                        a cell array of file names
-%    model.timing:       a multiple condition file name (single session) OR
-%                        a cell array of multiple condition file names OR
-%                        a struct (single session) with fields .names, .onsets,
-%                             and (optional) .durations OR
-%                        a cell array of struct OR
-%                        a struct with fields 'markerinfos', 'markervalues',
-%                            'names' OR
-%                        a cell array of struct
-%    model.timeunits:    a char array equal to 'seconds', 'samples' or 'markers'
-%    model.window:       a scalar in model.timeunits as unit that specifies
-%                        over which time window (starting with the events
-%                        specified in model.timing) the model should
-%                        be evaluated.
-%                        For model.timeunits == 'markers', the unit of the
-%                        window should be specified in 'seconds'.
-%
-% - OPTIONAL FIELDS:
-%    model.modality:     a char array equal to 'constriction' or 'dilation'
-%                        corresponding to the fitted model.
-%                        DEFAULT: 'dilation'
-%    model.bf:           basis function/basis set with required subfields:
-%                           .fhandle : function handle or string
-%                           .args    : arguments; the first two arguments
-%                                      (time resolution and duration)
-%                                      will be added by pspm_pupil_model.
-%                        DEFAULT: specified by the modality
-%    model.if:           input function (function which will be fitted)
-%                        with required subfields:
-%                           .fhandle : function handle or string
-%                           .arg     : initial arguments, numeric array
-%                           .lb      : lower bounds, numeric array of the
-%                                      same size as .arg
-%                           .ub      : upper bounds, numeric array of the
-%                                      same size as .arg
-%                        If an argument should not be fitted, set the
-%                        corresponding value of .lb and .ub to the same
-%                        value as .arg. For unbounded parameters set -Inf
-%                        or/and Inf respectively.
-%                        DEFAULT: specified by the modality
-%    model.channel:      allows to specify channel number or channel type.
-%                        If there is only one element specified, this element
-%                        will be applied to each datafile.
-%                        model.channel can also be a cell array of the size of
-%                        model.datafile in which case each element of the array
-%                        correspond to the channel to use for each data file.
-%                        DEFAULT: last channel of 'pupil' data type
-%    model.zscore:       allows to specify whether data should be zscored or not
-%                        DEFAULT: 1
-%    model.filter:       filter settings; modality specific default
-%                        filter is applied after extracting the segments, in
-%                        case of differing sr the segments will be downsampled
-%                        DEFAULT: no filter is applied
-%    model.baseline:     allows to specify a baseline in 'seconds' which is
-%                        applied to the data before fitting the model. It
-%                        has to be positive and smaller than model.window.
-%                        If no baseline specified, data will be baselined
-%                        wrt. the first datapoint.
-%                        DEFAULT: 0
-%    model.marker_chan:  marker channel number OR
-%                        a cell array of marker channel number of
-%                        the size of the model.datafile
-%                        DEFAULT: 'marker' (i.e. last marker channel)
-%    model.std_exp_cond: allows to specify the standard experimental condition
-%                        as a string or an index in timing.names.
-%                        if specified this experimental condition will be
-%                        substracted from all the other conditions.
-%                        DEFAULT: 'none'
-%    model.norm:         allows ot specify if the model have to be normalized
-%                        before fitting the model, i.e. setting the first
-%                        peak at 1.
-%                        DEFAULT: 0 (not normalize)
-%
-% OPTIONS can contain: (optional argument)
-%     options.overwrite:       overwrite existing model output;
-%                              DEFAULT: 0
-%
-% TIMING - multiple condition file(s) or struct variable(s):
+function varargout = pspm_pfm(model, options)
+% ● Description
+%   PFM stands for Pupil Fitting Model and allows to fit models to the puipil
+%   data. pspm_pfm starts by extracting and averaging signal segments of
+%   length `model.window` from each data file individually, then averages
+%   these mean segments and finally fits an LTI model.
+% ● Developer's Notes
+%   The fitting process is a residual least square minimisation where the
+%   predicted value is calculated as following:
+%     Y_predicted = input_function (*) basis_function
+%   with (*) represents a convolution. Only parameters of the input
+%   function are optimised.
+%   ---
+%   TIMING - multiple condition file(s) or struct variable(s):
 %    The structure is equivalent to SPM2/5/8/12 (www.fil.ion.ucl.ac.uk/spm),
 %    such that SPM files can be used.
 %    The file contains the following variables:
@@ -106,16 +27,92 @@ function output = pspm_pfm(model, options)
 %      names = {'condition a', 'condition b'};
 %      onsets = {[1 2 3], [4 5 6]};
 %      save('testfilcircle_degreee', 'names', 'onsets');
-%
-% RETURNS a structure 'pfm' which is also written to file
-%
-% REFERENCE
-% J Vis. 2016;16(3):28. doi: 10.1167/16.3.28.
-% A solid frame for the window on cognition: Modeling event-related pupil responses.
-% Korn CW, Bach DR.
-%________________________________________________________________________
-% PsPM 4.2
-% (C) 2020 Ivan Rojkov (University of Zurich)
+% ● Arguments
+%   ┌───────model:  [struct]
+%   │ ▶︎ mandantory
+%   ├──.modelfile:  a file name for the model output
+%   ├───.datafile:  a file name (single session) OR
+%   │               a cell array of file names
+%   ├─────.timing:  a multiple condition file name (single session) OR
+%   │               a cell array of multiple condition file names OR
+%   │               a struct (single session) with fields .names, .onsets,
+%   │               and (optional) .durations OR
+%   │               a cell array of struct OR
+%   │               a struct with fields 'markerinfos', 'markervalues',
+%   │               'names' OR
+%   │               a cell array of struct
+%   ├──.timeunits:  a char array equal to 'seconds', 'samples' or 'markers'
+%   ├─────.window:  a scalar in model.timeunits as unit that specifies
+%   │               over which time window (starting with the events specified
+%   │               in model.timing) the model should be evaluated.
+%   │               For model.timeunits == 'markers', the unit of the window
+%   │               should be specified in 'seconds'.
+%   │ ▶︎ optional
+%   ├───.modality:  a char array equal to 'constriction' or 'dilation'
+%   │               corresponding to the fitted model.
+%   │               DEFAULT: 'dilation'
+%   ├─────────.bf:  basis function/basis set with required subfields:
+%   │          ├────.fhandle: function handle or string
+%   │          └───────.args: arguments; the first two arguments
+%   │                          (time resolution and duration)
+%   │                          will be added by pspm_pupil_model.
+%   │               DEFAULT: specified by the modality
+%   ├─────────.if:  input function (function which will be fitted) with required
+%   │          │    subfields:
+%   │          ├────.fhandle: function handle or string
+%   │          ├────────.arg: initial arguments, numeric array
+%   │          ├─────────.lb: lower bounds, numeric array of the same size as
+%   │          │              .arg
+%   │          └─────────.ub: upper bounds, numeric array of the same size as
+%   │                         .arg
+%   │               If an argument should not be fitted, set the corresponding
+%   │               value of .lb and .ub to the same value as .arg.
+%   │               For unbounded parameters set -Inf or/and Inf respectively.
+%   │               DEFAULT: specified by the modality
+%   ├────.channel:  allows to specify channel number or channel type.
+%   │               If there is only one element specified, this element
+%   │               will be applied to each datafile.
+%   │               model.channel can also be a cell array of the size of
+%   │               model.datafile in which case each element of the array
+%   │               correspond to the channel to use for each data file.
+%   │               DEFAULT: last channel of 'pupil' data type
+%   ├─────.zscore:  allows to specify whether data should be zscored or not
+%   │               DEFAULT: 1
+%   ├─────.filter:  filter settings; modality specific default
+%   │               filter is applied after extracting the segments, in
+%   │               case of differing sr the segments will be downsampled
+%   │               DEFAULT: no filter is applied
+%   ├───.baseline:  allows to specify a baseline in 'seconds' which is
+%   │               applied to the data before fitting the model. It has to
+%   │               be positive and smaller than model.window. If no baseline
+%   │               specified, data will be baselined wrt. the first datapoint.
+%   │               DEFAULT: 0
+%   ├.marker_chan:  marker channel number OR a cell array of marker channel
+%   │               number of the size of the model.datafile.
+%   │               DEFAULT: 'marker' (i.e. last marker channel)
+%   ├.std_exp_cond: allows to specify the standard experimental condition
+%   │               as a string or an index in timing.names.
+%   │               if specified this experimental condition will be
+%   │               substracted from all the other conditions.
+%   │               DEFAULT: 'none'
+%   └───────.norm:  allows ot specify if the model have to be normalized
+%                   before fitting the model, i.e. setting the first peak at 1.
+%                   DEFAULT: 0 (not normalize)
+%   ┌─────options:  [struct]
+%   └──.overwrite:  (optional) overwrite existing model output;
+%                   [logical] (0 or 1)
+%                   Define whether to overwrite existing output files or not.
+%                   Default value: determined by pspm_overwrite.
+% ● Outputs
+%   pfm: a structure 'pfm' which is also written to file
+% ● Reference
+%   Korn, C. W., & Bach, D. R. (2016). A solid frame for the window on
+%   cognition: Modeling event-related pupil responses. Journal of Vision,
+%   16(3), 28. https://doi.org/10.1167/16.3.28
+% ● History
+%   Introduced In PsPM 4.2
+%   Written in 2020 by Ivan Rojkov (University of Zurich)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings
@@ -123,9 +120,16 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+pfm = struct();
+switch nargout
+  case 1
+    varargout{1} = pfm;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = pfm;
+end
 
-
-%%%%%%%% Checking inputs %%%%%%%%
+%%  Checking inputs
 
 if nargin<1
   errmsg='Nothing to do.'; warning('ID:invalid_input', errmsg); return;
@@ -133,7 +137,13 @@ elseif nargin<2
   options = struct();
 end
 
-%%% Checking required fields %%%
+%% Update options
+options = pspm_options(options, 'pfm');
+if options.invalid
+  return
+end
+
+%%  Checking required fields
 if ~isfield(model, 'datafile')
   warning('ID:invalid_input', 'No input data file specified.'); return;
 elseif ~ischar(model.datafile) && ~iscell(model.datafile)
@@ -173,7 +183,7 @@ if ~isempty(model.timing) && (numel(model.datafile) ~= numel(model.timing))
     'Session numbers of data files and event definitions do not match.'); return;
 end
 
-%%% Checking optionnal fields %%%
+%%  Checking optionnal fields
 
 % Checking model specs
 if ~isfield(model, 'modality')
@@ -249,7 +259,7 @@ chan_war_msg = ['Channel number must be a unique number,', ...
 if ~isfield(model, 'channel')
   model.channel = 'pupil';
 elseif ~iscell(model.channel) && ~isnumeric(model.channel) && ...
-    ~ismember(model.channel, {settings.chantypes.type})
+    ~ismember(model.channel, {settings.channeltypes.type})
   warning('ID:invalid_input', chan_war_msg); return;
 elseif ~iscell(model.channel) && numel(model.channel) > 1
   warning('ID:invalid_input', chan_war_msg); return;
@@ -259,7 +269,7 @@ elseif iscell(model.channel) && numel(model.channel)~=numel(model.datafile)
 elseif iscell(model.channel)
   model.channel = model.channel(:);
   tmp_fun = @(x) ~isnumeric(x) && numel(x)~=1 ...
-    && ~ismember(x, {settings.chantypes.type});
+    && ~ismember(x, {settings.channeltypes.type});
   tmp = cellfun(tmp_fun,model.channel);
   if any(tmp)
     warning('ID:invalid_input', chan_war_msg); return;
@@ -337,17 +347,18 @@ elseif isnumeric(model.std_exp_cond)
 end
 clear std_cond_war_msg tmp_ind
 
-%Checking norm
+% Checking norm
 if ~isfield(model, 'norm')
   model.norm = 0;
 elseif ~ismember(model.norm, [0, 1])
   warning('ID:invalid_input', '''model.zscore'' has to be 0 or 1.'); return;
 end
 
-if ~pspm_overwrite(model.modelfile, options); return; end
+if ~pspm_overwrite(model.modelfile, options)
+  return;
+end
 
-%%
-%%%%%%%% Loading files %%%%%%%%
+%% Loading files
 
 fprintf('Computing Pupil Model: %s \n', model.modelfile);
 
@@ -403,7 +414,7 @@ else
   fprintf('\n');
 end
 
-%%%%%%%% Zscoring the data %%%%%%%%
+%%  Zscoring the data
 if model.zscore
   fprintf('Zscoring ...\n')
   n_file = numel(model.datafile);
@@ -413,7 +424,7 @@ if model.zscore
   end
 end
 
-%%%%%%%% Extracting segments %%%%%%%%
+%%  Extracting segments
 fprintf('Extracting segments ...\n')
 
 % temporary structure which is deleted after extracting segments
@@ -444,7 +455,7 @@ for k=1:n_file
 end
 clear extrsg tmp_data s lsts
 
-%%%%%%%% Downsample the data %%%%%%%%
+%% Downsample the data
 % if a filter was specified or if the data differ in sr
 if model.filter.applied_filt
   fprintf('Filtering ...\n')
@@ -474,7 +485,7 @@ else
   filtered = 0;
 end
 
-%%%%%%%% Determining mean values %%%%%%%%
+%% Determining mean values
 fprintf('Preparing for fitting ...\n')
 
 baseline_index = floor(sr(1)*model.baseline)+1;
@@ -519,7 +530,7 @@ for i=1:n_exp_cond
   clear tmp_data tmp_data_new tmp_max tmp_max_ind
 end
 
-%%%%%%%% Fitting the model %%%%%%%%
+%% Fitting the model
 fprintf('Fitting ...\n')
 
 for i=1:n_exp_cond
@@ -568,7 +579,7 @@ for i=1:n_exp_cond
 
 end
 
-%%%%%%%% Saving model %%%%%%%%
+%% Saving model
 fprintf('Saving model ...\n');
 
 % Collecting input model information
@@ -622,10 +633,14 @@ if sts == -1
   warning('ID:invalid_input', 'call of pspm_load1 failed');
   return;
 end
-
-%%%%%%%% User output %%%%%%%%
-output = pfm;
-
+%% User output
 fprintf('done. \n');
-
+sts = 1;
+switch nargout
+  case 1
+    varargout{1} = pfm;
+  case 2
+    varargout{1} = sts;
+    varargout{2} = pfm;
 end
+return

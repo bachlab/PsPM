@@ -112,7 +112,7 @@ for k = 1:numel(channels)
     end
     outfile.data{k,1}.header.chantype = channels{k}.chantype;
     %Generate sinewaveform
-    t = ((channels{k}.sr^-1):(channels{k}.sr^-1):duration)';
+    t = transpose((channels{k}.sr^-1):(channels{k}.sr^-1):duration);
     % generate data
     d = sin(2*pi*t*channels{k}.freq);
     % add noise to data

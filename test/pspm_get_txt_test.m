@@ -101,11 +101,11 @@ classdef pspm_get_txt_test < pspm_get_superclass
       import = this.assign_chantype_number(import);
       this.verifyWarning(@()pspm_get_txt(fn, import), 'ID:channel_not_contained_in_file');
       % Test "no indication what to select"
-      import{1} = struct('type', 'scr' , 'channel', 0, 'channel_names_line', 0);
-      import{2} = struct('type', 'scr' , 'channel', 0, 'channel_names_line', 0);
-      import{3} = struct('type', 'scr' , 'channel', 0, 'channel_names_line', 0);
+      import{1} = struct('type', 'scr' , 'channel', 0, 'chan_names_line', 0);
+      import{2} = struct('type', 'scr' , 'channel', 0, 'chan_names_line', 0);
+      import{3} = struct('type', 'scr' , 'channel', 0, 'chan_names_line', 0);
       import = this.assign_chantype_number(import);
-      this.verifyWarning(@()pspm_get_txt(fn, import), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_get_txt(fn, import), 'ID:no_matching_channels');
     end
   end
 end

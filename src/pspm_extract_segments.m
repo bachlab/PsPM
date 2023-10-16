@@ -1,88 +1,82 @@
 function [sts, out] = pspm_extract_segments(varargin)
-% pspm_extract_segments. Function in order to extract segments of a certain
-% length after defined onsets and create summary statistics
-% (mean, SD, SEM, % NaN) over these segments
-%
-% The function supports either manual setting of data files, channels,
-% timing and timeunits or automatic extraction from a glm model file.
-%
-% The segments variable returned will be a cx1 cell where c corresponds to
-% the number of conditions. Each element contains a struct with
-% fields data, mean, std and sem (std of the mean).
-% The field data is a nxo*s vector where n is number of data points and o*s
-% corresponds to the onsets multiplied by the sessions.
-%
-%   FORMAT:
-%       [sts, segments] = pspm_extract_segments('manual', data_fn, chan, timing, options)
-%       [sts, segments] = pspm_extract_segments('manual', data_raw, sr, timing, options)
-%       [sts, segments] = pspm_extract_segments('auto', glm, options)
-%       [sts, segments] = pspm_extract_segments('auto', dcm, options)
-%
-%   ARGUMENTS:
-%       mode:               Tells the function in which mode get the
-%                           settings from. Either 'manual' or 'auto'.
-%       glm:                Path to the glm file or a glm structure.
-%       dcm:                Path to the dcm file or a dcm structure.
-%       data_fn:            Path or cell of paths to data files from which
-%                           the segments should be extracted. Each file
-%                           will be treated as session. Onset values are
-%                           averaged through conditions and sessions.
-%       data_raw:           Numeric raw data or a cell array of numeric raw data.
-%       chan:               Channel number or cell of channel numbers which
-%                           defines which channel should be taken to
-%                           extract the segments. Chan should correspond to
-%                           data_fn and should have the same length. If
-%                           data_fn is a cell and chan is a single number,
-%                           the number will be taken for all files.
-%       sr:                 Array of sampling rates of same dimension as
-%                           the cell array data_raw or one sample rate
-%                           if all the data have the same one.
-%       timing:             Either a cell containing the timing settings or
-%                           a string pointing to the timing file.
-%       options:
-%           timeunit:       'seconds' (default), 'samples' or 'markers'. In 'auto'
-%                           mode the value will be ignored and taken from
-%                           the glm model file or the dcm model file.
-%                           In the case of raw data the timeunit should
-%                           be seconds.
-%           length:         Length of the segments in the 'timeunits'.
-%                           If given the same length is taken for
-%                           segments for glm structure. If not given lengths
-%                           are take from the timing data. This argument is optional. If
-%                           'timeunit' equals 'markers' then 'length' is
-%                           expected to be in seconds.
-%                           For dcm structures the option length will be
-%                           ignored and length will be set from timing
-%                           data.
-%           plot:           If 1 mean values (solid) and standard error of
-%                           the mean (dashed) will be ploted. Default is 0.
-%           outputfile:     Define filename to store segments. If is equal
-%                           to '', no file will be written. Default is 0.
-%           overwrite:      Define if already existing files should be
-%                           overwritten. Default ist 0.
-%           marker_chan:    Mandatory if timeunit is 'markers'. For the
-%                           function to find the appropriate timing of the
-%                           specified marker ids. Must have the same format
-%                           as data_fn.
-%                           If timeunit is 'markers' and raw data are
-%                           given then this parameter should be an
-%                           cell array of numeric array of marker data.
-%           nan_output:     This option defines whether the user wants to
-%                           output the NaN ratios of the trials for each condition.
-%                           If so,  we values can be printed on the screen
-%                           (on MATLAB command window) or written to a created file.
-%                           The field can be set to 'screen', 'File Output'or
-%                           'none'. 'none' is the default value.
-%           norm:           If 1, z-scores the entire data time series
-%                           (default: 0).
-%__________________________________________________________________________
-% PsPM 4.3
-% (C) 2008-2018 Tobias Moser (University of Zurich)
-
-% -------------------------------------------------------------------------
-% DEVELOPERS NOTES:
+% ● Description
+%   pspm_extract_segments. Function in order to extract segments of a certain
+%   length after defined onsets and create summary statistics
+%   (mean, SD, SEM, % NaN) over these segments
+%   The function supports either manual setting of data files, channels,
+%   timing and timeunits or automatic extraction from a glm model file.
+%   The segments variable returned will be a cx1 cell where c corresponds to
+%   the number of conditions. Each element contains a struct with
+%   fields data, mean, std and sem (std of the mean).
+%   The field data is a nxo*s vector where n is number of data points and o*s
+%   corresponds to the onsets multiplied by the sessions.
+% ● Format
+%   [sts, segments] = pspm_extract_segments('manual', data_fn, channel, timing, options)
+%   [sts, segments] = pspm_extract_segments('manual', data_raw, sr, timing, options)
+%   [sts, segments] = pspm_extract_segments('auto', glm, options)
+%   [sts, segments] = pspm_extract_segments('auto', dcm, options)
+% ● Arguments
+%                   mode:  Tells the function in which mode get the
+%                          settings from. Either 'manual' or 'auto'.
+%                    glm:  Path to the glm file or a glm structure.
+%                    dcm:  Path to the dcm file or a dcm structure.
+%                data_fn:  Path or cell of paths to data files from which
+%                          the segments should be extracted. Each file
+%                          will be treated as session. Onset values are
+%                          averaged through conditions and sessions.
+%               data_raw:  Numeric raw data or a cell array of numeric raw data.
+%                   channel:  Channel number or cell of channel numbers which
+%                          defines which channel should be taken to
+%                          extract the segments. channel should correspond to
+%                          data_fn and should have the same length. If
+%                          data_fn is a cell and channel is a single number,
+%                          the number will be taken for all files.
+%                     sr:  Array of sampling rates of same dimension as
+%                          the cell array data_raw or one sample rate
+%                          if all the data have the same one.
+%                 timing:  Either a cell containing the timing settings or
+%                          a string pointing to the timing file.
+%   ┌────────────options:
+%   ├──────────.timeunit: 'seconds' (default), 'samples' or 'markers'. In 'auto'
+%   │                     mode the value will be ignored and taken from
+%   │                     the glm model file or the dcm model file. In the case
+%   │                     of raw data the timeunit should be seconds.
+%   ├────────────.length: Length of the segments in the 'timeunits'.
+%   │                     If given the same length is taken for segments for
+%   │                     glm structure. If not given lengths are take from
+%   │                     the timing data. This argument is optional. If
+%   │                     'timeunit' equals 'markers' then 'length' is
+%   │                     expected to be in seconds.
+%   │                     For dcm structures the option length will be
+%   │                     ignored and length will be set from timing
+%   │                     data.
+%   │                     The default value is 10. The optional values are >= 0.
+%   │                     When .length is set to be 0, length will be set from timing
+%   │                     data.
+%   ├──────────────.plot: If 1 mean values (solid) and standard error of
+%   │                     the mean (dashed) will be ploted. Default is 0.
+%   ├────────.outputfile: Define filename to store segments. If is equal
+%   │                     to '', no file will be written. Default is 0.
+%   ├─────────.overwrite: Define if already existing files should be
+%   │                     overwritten. Default ist 0.
+%   ├───────.marker_chan: Mandatory if timeunit is 'markers'. For the
+%   │                     function to find the appropriate timing of the
+%   │                     specified marker ids. Must have the same format
+%   │                     as data_fn.
+%   │                     If timeunit is 'markers' and raw data are
+%   │                     given then this parameter should be an
+%   │                     cell array of numeric array of marker data.
+%   ├────────.nan_output: This option defines whether the user wants to output
+%   │                     the NaN ratios of the trials for each condition.
+%   │                     If so,  we values can be printed on the screen (on
+%   │                     MATLAB command window) or written to a created file.
+%   │                     The field can be set to 'screen', 'File Output'or
+%   │                     'none'. 'none' is the default value.
+%   └──────────────.norm: If 1, z-scores the entire data time series
+%                         (default: 0).
+% ● Developer's Notes
 %   This function uses three different flags encoded in the variable
-%   "manual_chosen", it can take the following values:
+%   `manual_chosen`, it can take the following values:
 %       - manual_chosen = 0  ---> it means the function runs in auto mode
 %       - manual_chosen = 1  ---> it means the function runs in manual mode
 %                                 but the given data are not raw but
@@ -90,7 +84,9 @@ function [sts, out] = pspm_extract_segments(varargin)
 %       - manual_chosen = 2  ---> it means the function runs in manual mode
 %                                 and with raw data.
 %   Search FLAG to see where these flags are set.
-% -------------------------------------------------------------------------
+% ● History
+%   Introduced in PsPM 4.3
+%   Written in 2008-2018 by Tobias Moser (University of Zurich)
 
 %% Initialise
 global settings
@@ -107,7 +103,7 @@ if nargin >= 2
       end
 
       data_fn = varargin{2};
-      chan = varargin{3};
+      channel = varargin{3};
       timing = varargin{4};
 
       if nargin == 5
@@ -137,33 +133,33 @@ if nargin >= 2
         clear data_fn
       end
 
-      % check chan variable (and creation of sr if needed)
-      if isnumeric(chan) && numel(chan) == 1
+      % check channel variable (and creation of sr if needed)
+      if isnumeric(channel) && numel(channel) == 1
         if manual_chosen == 1
-          chan = repmat({chan}, size(data_fn));
+          channel = repmat({channel}, size(data_fn));
         else
-          sr = repmat({chan}, size(data_raw));
-          clear chan
+          sr = repmat({channel}, size(data_raw));
+          clear channel
         end
       else
-        if ~iscell(chan) || (any(~cellfun(@isnumeric, chan)) &&  manual_chosen == 1)
-          warning('ID:invalid_input', 'chan has to be numeric or a cell array of numerics.'); return;
-        elseif ~iscell(chan) || (any(~cellfun(@isnumeric, chan)) &&  manual_chosen == 2)
+        if ~iscell(channel) || (any(~cellfun(@isnumeric, channel)) &&  manual_chosen == 1)
+          warning('ID:invalid_input', 'channel has to be numeric or a cell array of numerics.'); return;
+        elseif ~iscell(channel) || (any(~cellfun(@isnumeric, channel)) &&  manual_chosen == 2)
           warning('ID:invalid_input', 'sr has to be numeric or a cell array of numerics.'); return;
         elseif manual_chosen == 2
-          sr = chan;
+          sr = channel;
         end
       end
 
       if manual_chosen == 1
-        if strcmpi(class(data_fn), class(chan)) && (numel(chan) ~= numel(data_fn))
-          warning('ID:invalid_input', 'data_fn and chan must correspond in number of elements.'); return;
+        if strcmpi(class(data_fn), class(channel)) && (numel(channel) ~= numel(data_fn))
+          warning('ID:invalid_input', 'data_fn and channel must correspond in number of elements.'); return;
         elseif strcmpi(class(data_fn), class(timing)) && (iscell(timing) && (numel(timing) ~= numel(data_fn)))
           warning('ID:invalid_input', 'data_fn and timing must correspond in number of elements.'); return;
         end
       else
         if strcmpi(class(data_raw), class(sr)) && (numel(sr) ~= numel(data_raw))
-          warning('ID:invalid_input', 'data_fn and chan must correspond in number of elements.'); return;
+          warning('ID:invalid_input', 'data_fn and channel must correspond in number of elements.'); return;
         elseif strcmpi(class(data_raw), class(timing)) && (numel(timing) ~= numel(data_raw))
           warning('ID:invalid_input', 'data_fn and timing must correspond in number of elements.'); return;
         end
@@ -178,7 +174,7 @@ if nargin >= 2
       if ~isstruct(struct_file)
         if ~ischar(struct_file) || ~exist(struct_file, 'file')
           warning('ID:invalid_input', 'GLM file is not a string or does not exist.'); return;
-        end;
+        end
         [~, model_strc, ~] = pspm_load1(struct_file, 'all');
       else
         model_strc = struct_file;
@@ -188,12 +184,12 @@ if nargin >= 2
         options = varargin{3};
       else
         options = struct();
-      end;
+      end
 
       data_fn = model_strc.input.datafile;
       n_file = numel(data_fn);
       timing = model_strc.input.timing;
-      chan = repmat({model_strc.input.channel}, size(data_fn));
+      channel = repmat({model_strc.input.channel}, size(data_fn));
 
       if strcmpi(model_strc.modeltype,'glm')
         options.timeunit = model_strc.input.timeunits;
@@ -204,104 +200,35 @@ if nargin >= 2
             warning('ID:invalid_input', ['''markers'' defined as ', ...
               'timeunit, but cannot load the corresponding ', ...
               'marker channel information from the GLM input.']);
-          end;
-        end;
-      end;
+          end
+        end
+      end
 
       manual_chosen = 0;      % set FLAG to indicate 'not manual', i.e. 'auto'
 
     otherwise
       warning('ID:invalid_input', 'Unknown mode specified.'); return;
-  end;
+  end
 else
   warning('ID:invalid_input', 'The function expects at least 2 parameters.'); return;
-end;
+end
 
 if (manual_chosen == 0) && ~iscell(data_fn)
   data_fn = {data_fn};
-end;
-
-if ~isstruct(options)
-  warning('ID:invalid_input', 'Options must be a struct.'); return;
-end;
-
-% set default timeunit
-if ~isfield(options, 'timeunit')
-  options.timeunit = 'seconds';
-else
-  options.timeunit = lower(options.timeunit);
-end;
-
-% set default normalisation
-if ~isfield(options, 'norm')
-  options.norm = 0;
 end
 
-% set default marker_chan, if it is a glm struct (only for non-raw data)
-if manual_chosen == 1 || (manual_chosen == 0 && strcmpi(model_strc.modeltype,'glm'))
-  if ~isfield(options, 'marker_chan')
-    options.marker_chan = repmat({-1}, numel(data_fn),1);
-  elseif ~iscell(options.marker_chan)
-    options.marker_chan = repmat({options.marker_chan}, size(data_fn));
-  end;
-end;
-
-% set default length
-if ~isfield(options, 'length')
-  options.length = -1;
-end;
-
-% default plot
-if ~isfield(options, 'plot')
-  options.plot = 0;
-end;
-
-% outputfile
-if ~isfield(options, 'outputfile')
-  options.outputfile = '';
-end;
-
-% overwrite
-if ~isfield(options, 'overwrite')
-  options.overwrite = 0;
-end;
-
-%set default ouput_nan
-if ~isfield(options, 'nan_output')|| strcmpi(options.nan_output, 'none')
-  options.nan_output = 'none';
-elseif ~strcmpi( options.nan_output,'screen')
-  [path, name, ext ]= fileparts(options.nan_output);
-  if 7 ~= exist(path, 'dir')
-    warning('ID:invalid_input', 'Path for nan_output does not exist'); return;
+if isstruct(options)
+  options.manual_chosen = manual_chosen;
+  if exist('model_strc', 'var')
+    options.model_strc = model_strc;
   end
+  options.data_fn = data_fn;
+end
+options = pspm_options(options, 'extract_segments');
+if options.invalid
+  return
 end
 
-% check mutual arguments (options)
-if ~ismember(options.timeunit, {'seconds','samples', 'markers'})
-  warning('ID:invalid_input', 'Invalid timeunit, use either ''markers'', ''seconds'' or ''samples'''); return;
-elseif ~isnumeric(options.length)
-  warning('ID:invalid_input', 'options.length is not numeric.'); return;
-elseif ~isnumeric(options.plot) && ~islogical(options.plot)
-  warning('ID:invalid_input', 'options.plot is not numeric.'); return;
-elseif ~isempty(options.outputfile) && ~ischar(options.outputfile)
-  warning('ID:invalid_input', 'options.outputfile has to be a string.'); return;
-elseif ~isnumeric(options.overwrite) && ~islogical(options.overwrite)
-  warning('ID:invalid_input', 'Options.overwrite has to be numeric or logical.'); return;
-elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 2 && ~isfield(options,'marker_chan')
-  warning('ID:invalid_input','''markers'' specified as a timeunit but nothing was specified in ''options.marker_chan''')
-elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 2 && ~all(size(data_raw) == size(options.marker_chan))
-  warning('ID:invalid_input', '''data_raw'' and ''options.marker_chan'' do not have the same size.'); return;
-elseif strcmpi(options.timeunit, 'markers') && manual_chosen == 1 && ~all(size(data_fn) == size(options.marker_chan))
-  warning('ID:invalid_input', '''data_fn'' and ''options.marker_chan'' do not have the same size.'); return;
-elseif manual_chosen == 1 || (manual_chosen == 0 && strcmpi(model_strc.modeltype,'glm'))
-  if any(cellfun(@(x) ~strcmpi(x, 'marker') && ~isnumeric(x), options.marker_chan))
-    warning('ID:invalid_input', 'Options.marker_chan has to be numeric or ''marker''.'); return;
-  elseif strcmpi(options.timeunit, 'markers') ...
-      && any(cellfun(@(x) isnumeric(x) && x <= 0, options.marker_chan))
-    warning('ID:invalid_input', ['''markers'' specified as a timeunit but ', ...
-      'no valid marker channel is defined.']); return;
-  end;
-end;
 
 if manual_chosen == 2
   n_sessions = numel(data_raw);
@@ -309,7 +236,7 @@ elseif manual_chosen == 1 || strcmpi(model_strc.modeltype, 'glm')
   n_sessions = numel(data_fn);
 else
   n_sessions = numel(model_strc.input.scr);
-end;
+end
 
 % load timing
 if manual_chosen ~= 0
@@ -328,7 +255,7 @@ if manual_chosen ~= 0
   marker_data = {};
   if manual_chosen == 1
     for i=1:numel(data_fn)
-      [sts, ~, data] = pspm_load_data(data_fn{i}, chan{i});
+      [sts, ~, data] = pspm_load_data(data_fn{i}, channel{i});
       assert(sts == 1);
       input_data{end + 1} = data{1}.data;
       sampling_rates(end + 1) = data{1}.header.sr;
@@ -341,7 +268,7 @@ if manual_chosen ~= 0
   elseif manual_chosen == 2
     input_data = data_raw;
     sampling_rates = [sr{:}];
-    if strcmpi(options.timeunit, 'markers'), marker_data = options.marker_chan; end;
+    if strcmpi(options.timeunit, 'markers'), marker_data = options.marker_chan; end
   end
 elseif strcmpi(model_strc.modeltype, 'glm')
   multi = model_strc.timing.multi;
@@ -389,13 +316,13 @@ else
       multi(1).durations{1} = durations;
     end
     point= point+nr_trials_in_sess;
-  end;
+  end
   input_data = model_strc.input.scr;
   sampling_rates = model_strc.input.sr;
   if numel(sampling_rates) == 1
     sampling_rates = repmat(sampling_rates, n_sessions, 1);
   end
-end;
+end
 %% Normalise data
 if options.norm
   newmat = cell2mat(input_data(:));
@@ -486,7 +413,7 @@ if options.plot
 
   % legend labels
   legend_lb = cell(n_cond*3,1);
-end;
+end
 
 %% This section gives each trial over all session a uniquie identifier.
 all_sessions = cell2mat(cellfun(@(x)reshape(x, [min(size(x)), max(size(x))]),comb_sessions,'un', 0));
@@ -558,7 +485,7 @@ for session_idx = 1:n_sessions
     assert(numel(onset_write_indices_in_cond_and_session) == num_onsets);
 
     for onset_idx = 1:num_onsets
-      if options.length <= 0
+      if options.length == 0
         try
           segment_length = durations_cond(onset_idx);
           if segment_length==0
@@ -566,10 +493,10 @@ for session_idx = 1:n_sessions
           end
         catch
           warning('ID:invalid_input', 'Cannot determine onset duration.'); return;
-        end;
+        end
       else
         segment_length = options.length;
-      end;
+      end
 
       % ensure start and segment_length have the 'sample' format to
       % access on data
@@ -591,8 +518,8 @@ for session_idx = 1:n_sessions
             start = start;
           else
             start = start * sr / filtered_sr;
-          end;
-      end;
+          end
+      end
 
       start = max(1, round(start));
       stop = min(numel(session_data) + 1, start + round(segment_length));
@@ -605,7 +532,7 @@ for session_idx = 1:n_sessions
 
       if ~isfield(segments{cond_idx}, 'data')
         segments{cond_idx}.data = NaN((stop-start), n_onsets_in_cond{cond_idx});
-      end;
+      end
       if (stop - start) > size(segments{cond_idx}.data, 1)
         last_row = size(segments{cond_idx}.data, 1);
         segments{cond_idx}.data(last_row + 1 : (stop - start), :) = NaN;
@@ -613,10 +540,10 @@ for session_idx = 1:n_sessions
 
       onset_write_idx = onset_write_indices_in_cond_and_session(onset_idx);
       segments{cond_idx}.data(1:(stop-start), onset_write_idx) = session_data(start:(stop-1));
-    end;
-  end;
+    end
+  end
   num_prev_conds = num_prev_conds + num_conds_in_session;
-end;
+end
 
 %% create statistics for each condition
 for c=1:n_cond
@@ -648,8 +575,8 @@ for c=1:n_cond
     legend_lb{(c-1)*3 + 1} = [comb_names{c} ' AVG'];
     legend_lb{(c-1)*3 + 2} = [comb_names{c} ' SEM+'];
     legend_lb{(c-1)*3 + 3} = [comb_names{c} ' SEM-'];
-  end;
-end;
+  end
+end
 
 %% nan_output
 if ~strcmpi(options.nan_output,'none')
@@ -725,22 +652,23 @@ if ~isempty(options.outputfile)
         outfile), 'Replace file?', 'Yes', 'No', 'No');
 
       write_ok = strcmpi(button, 'Yes');
-    end;
+    end
   else
     write_ok = 1;
-  end;
+  end
 
   if write_ok
     save(outfile, 'segments');
     out.outputfile = outfile;
-  end;
-end;
+  end
+end
 
 if options.plot
   % show plot
   set(fg, 'Visible', 'on');
   legend(legend_lb);
-end;
+end
 
+%% Return values
 sts = 1;
-
+return

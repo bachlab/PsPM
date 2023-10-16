@@ -1,32 +1,31 @@
 function pspm_con1(modelfile, connames, convec, datatype, deletecon, options)
 % ● Description
-%   pspm_con1 creates contrasts on the first level (i.e. within one
-%   dataset) and saves them to the modelfile to be accessed later.
+%   pspm_con1 creates contrasts on the first level (i.e. within one dataset)
+%   and saves them to the modelfile to be accessed later.
 % ● Format
 %   pspm_con1 (modelfile, connames, convec, [datatype, deletecon, options])
 % ● Arguments
-%   modelfile:  a filename, or cell array of filenames.
-%    connames:  a cell array of names for the desired contrasts.
-%      convec:  a cell array of contrasts.
-%    datatype:  an optional structure
-%      .param:  use all parameter estimates
-%       .cond:  GLM - contrasts formulated in terms of conditions,
-%               automatically detects number of basis functions and uses
-%               only the first one (i.e. without derivatives) other models
-%               - contrasts based on unique trial names.
-%      .recon:  contrasts formulated in terms of conditions in a GLM,
-%               reconstructs estimated response from all basis functions
-%               and uses the peak of the estimated response
-%  .deletecon:  should existing contrasts be deleted (1) or appended (0)?
-%               default as 0;
-%     options:
-%    .zscored: 1 - zscore data
-%                  Restriction: only for non-linear models
-%                  and not when datatype == 'recon'
-%              0 - do not zscore data
-% ● Version
-%   PsPM 3.0
-%   (C) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%    modelfile: a filename, or cell array of filenames
+%     connames: a cell array of names for the desired contrasts
+%       convec: a cell array of contrasts
+%     datatype: 'param':  use all parameter estimates
+%                'cond':  GLM - contrasts formulated in terms of conditions,
+%                         automatically detects number of basis functions and
+%                         uses only the first one (i.e. without derivatives)
+%                         other models - contrasts based on unique trial names
+%               'recon':  contrasts formulated in terms of conditions in a GLM,
+%                         reconstructs estimated response from all basis
+%                         functions and uses the peak of the estimated response
+%    deletecon: define existing contrasts to be deleted (1) or appended (0,
+%               default).
+%      options: [struct]
+%               .zscored: 1 - zscore data
+%                             Restriction: only for non-linear models
+%                             and not when datatype == 'recon'
+%                         0 - do not zscore data
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
 %% Initialise
 global settings
@@ -34,7 +33,7 @@ if isempty(settings)
   pspm_init;
 end
 %% 2 check input arguments
-% 2.1 check nargin
+%% 2.1 check nargin
 if nargin < 1
   errmsg = 'No modelfile specified'; warning(errmsg); return;
 elseif nargin < 2
@@ -50,7 +49,7 @@ end
 if nargin < 6
   options = struct();
 end
-% 2.2 check & convert filenames
+%% 2.2 check & convert filenames
 if ischar(modelfile)
   modelfile = {modelfile};
 elseif ~iscell(modelfile)
@@ -83,20 +82,24 @@ switch datatype
 end
 % 2.6 set load1_options
 load1_options = struct('zscored',0);
-if isfield(options, 'zscored') && options.zscored
+options = pspm_options(options, 'con1');
+if options.invalid
+  return
+end
+if options.zscored
   load1_options.zscored = 1;
 end
 %% 3 work on contrasts
 for iFn = 1:numel(modelfile)
-  % 3.1 user output --
+  %% 3.1 user output --
   fprintf('Loading data ... ');
-  % 3.2 retrieve stats --
+  %% 3.2 retrieve stats --
   [lsts, data, ~] = pspm_load1(modelfile{iFn}, datatype, '', load1_options);
   if lsts == -1
     warning('ID:invalid_input', 'Could not retrieve stats');
     return;
   end
-  % 3.3 create con structure or retrieve existing contrasts --
+  %% 3.3 create con structure or retrieve existing contrasts --
   if deletecon == 1
     con = []; conno = 0;
   else
@@ -108,9 +111,9 @@ for iFn = 1:numel(modelfile)
       conno = numel(con);
     end
   end
-  % 3.4 user output --
+  %% 3.4 user output --
   fprintf('\nWriting contrasts to %s\n', modelfile{iFn});
-  % 3.5 check number of contrast weights --
+  %% 3.5 check number of contrast weights --
   paramno = size(data.stats, 1);
   for c = 1:numel(convec)
     if numel(convec{c}) > paramno
@@ -129,27 +132,24 @@ for iFn = 1:numel(modelfile)
   % data.stats has more than one column
   % there are issues if data.stats has NaN and the corresponding conmat
   % also contains 0
-  idx_issue = any(isnan(data.stats),2);
-  l_conmat_r = length(conmat(:,1)); 
-  if any(idx_issue(:))
-    for i_conmat_r = 1:l_conmat_r % if conmat is a 2D matrix, repeat for each row
-      conmat_array = conmat(i_conmat_r,:);
-      idx_valid_issue = transpose(conmat_array==0) .* idx_issue;
-      idx_invalid_issue = transpose(conmat_array~=0) .* idx_issue;
-      if any(idx_valid_issue) && ~any(idx_invalid_issue)
-        warning(['Calculated data.stats contain NaNs that are caused by unknown reasons. '...
-          'data.stats are then used in a contrasts, producing an invalid results (NaN).']);
-        data_stats_converted = data.stats;
-        data_stats_converted(isnan(data_stats_converted)) = 0;
-        conval = conmat * data_stats_converted;
-      else
+  IdxIssueRow = any(isnan(data.stats),2);
+  conval = conmat * data.stats; % initialise conval
+  [Rconval, ~] = size(conval);
+  if any(IdxIssueRow(:))
+    for rconval = 1:Rconval
+      if all(conmat(rconval,IdxIssueRow) == 0)
+        % all the issues refer to 0 in conmat
+        conval(rconval,:) = conmat(rconval,~IdxIssueRow) * data.stats(~IdxIssueRow,:);
         warning(['Calculated data.stats contain NaNs that are caused by unknown reasons. '...
           'However they were not used in the computation of the contrasts.']);
-        conval = conmat * data.stats;
+      else
+        % the issues refer to non-0 or 0 in conmat
+        conval(rconval,:) = conmat(rconval,:) * data.stats;
+        warning(['Calculated data.stats contain NaNs that are caused by unknown reasons. '...
+            'data.stats are then used in a contrasts, producing an invalid result (NaN).']);
       end
     end
   end
-
   % zscored text-output for connames
   if isfield(data, 'zscored') && data.zscored
     out_zscored = ' (z-scored)';
@@ -167,7 +167,7 @@ for iFn = 1:numel(modelfile)
   else
     newconnames = connames;
   end
-  % 3.9 save contrasts
+  %% 3.9 save contrasts
   for iCon = 1:numel(conval)
     con(conno+iCon).type   = out_datatype;
     con(conno+iCon).name   = newconnames{iCon};
@@ -178,3 +178,4 @@ for iFn = 1:numel(modelfile)
   end
   pspm_load1(modelfile{iFn}, 'savecon', con);
 end
+return

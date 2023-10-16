@@ -1,12 +1,21 @@
 function [sts, import, sourceinfo] = pspm_get_obs(datafile, import)
-% pspm_get_obs is the main function for import of text-exported Noldus
-% Observer XT compatible files. At the current state the function is only
-% assured to work with the output files of Vsrrp98.
-%
-% FORMAT: [sts, import, sourceinfo] = pspm_get_obs(datafile, import);
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2013-2015 Linus R¸ttimann (University of Zurich)
+% ● Description
+%   pspm_get_obs is the main function for import of text-exported Noldus
+%   Observer XT compatible files. At the current state the function is only
+%   assured to work with the output files of Vsrrp98.
+% ● Format
+%   [sts, import, sourceinfo] = pspm_get_obs(datafile, import);
+% ● Arguments
+%     datafile:
+%       import:
+% ● Outputs
+%          sts:
+%       import:
+%   sourceinfo:
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2013-2015 by Linus Rüttimann (University of Zurich)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings
@@ -74,27 +83,27 @@ end
 % -------------------------------------------------------------------------
 for k = 1:numel(import)
   if import{k}.channel > 0
-    chan = import{k}.channel;
+    channel = import{k}.channel;
   elseif strcmpi(import{k}.type, 'marker')
-    chan = pspm_find_channel(obs.channel_names, {'sync'});
-    if chan < 1, warning('Marker channel for import job %02.0f could not be identified (it''s name needs to be SYNC). Please specify as field .channel', k);  return; end;
+    channel = pspm_find_channel(obs.channel_names, {'sync'});
+    if channel < 1, warning('Marker channel for import job %02.0f could not be identified (it''s name needs to be SYNC). Please specify as field .channel', k);  return; end;
   else
-    chan = pspm_find_channel(obs.channel_names, import{k}.type);
-    if chan < 1, return; end;
+    channel = pspm_find_channel(obs.channel_names, import{k}.type);
+    if channel < 1, return; end;
   end;
 
-  if chan > numel(obs.data), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', chan, datafile); return; end;
+  if channel > numel(obs.data), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', channel, datafile); return; end;
 
-  sourceinfo.chan{k, 1} = sprintf('Channel %02.0f: %s', chan, obs.channel_names{chan});
+  sourceinfo.channel{k, 1} = sprintf('Channel %02.0f: %s', channel, obs.channel_names{channel});
 
   import{k}.sr = obs.sr;
   if strcmpi(import{k}.type, 'marker')
     import{k}.marker = 'continuous';
   end;
-  import{k}.data = obs.data{chan};
+  import{k}.data = obs.data{channel};
 
 end;
 
 sts = 1;
-return;
+return
 

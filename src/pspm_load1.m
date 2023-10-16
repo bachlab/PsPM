@@ -1,63 +1,58 @@
-function [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
-% FORMAT: [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
-%           datafile: filename
-%           action (default 'none'):
-%                   'none':  check whether file is valid at all
-%                   'stats': retrieve stats struct with fields .stats
-%                            and .names
-%                   'cond':  for GLM - retrieve stats struct using only
-%                            first regressor/basis function for each condition
-%                            for models with 2D stats structure - retrieve
-%                            mean parameter values per condition, based on
-%                            unique trial names
-%                   'recon': (for GLM) retrieve stats struct using
-%                            reconstructed responses (which are at the same
-%                            time written into the glm struct as glm.recon)
-%                   'con':   retrieve full con structure
-%                   'all':   retrieve the full first level structure
-%                   'savecon': add contrasts to file, use an additional
-%                            input argument data that contains the contrasts
-%                   'save':  check and save first levle model, use an additional
-%                            input argument data that contains the model
-%                            struct
-%
-%           savedata:       for 'save' option - a struct containing the
-%                           model as only field
-%                           for 'savecon' option - contains the con structure
-%
-%           options:        options.zscored
-%                               zscore data - substract the mean and divide
-%                               by the standard deviation.
-%
-%                           for 'save' - options.overwrite
-%                           (default: user dialogue)
-%
-%           output
-%           'data' - depending on option
-%           'none', 'savecon', 'save':  none
-%           'stats', 'recon', 'cond': data.stats, data.names, (and data.trlnames if existing)
-%           'con':   con structure
-%           'all':   full first level structure
-%__________________________________________________________________________
-% PsPM 3.0
-% (C) 2008-2015 Dominik R Bach (WTCN, UZH)
-
-% -------------------------------------------------------------------------
-% DEVELOPERS NOTES: General structure of PsPM 1st level model files
-%
-% each file contains one struct variable with the model
-% allowed model names are specified in pspm_init
-% each model must contain the following fields:
-%   .stats: a n x 1 vector (glm, for n regressors) or n x k matrix (dcm,
+function varargout = pspm_load1(fn, action, savedata, options)
+% ● Format
+%   [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
+% ● Arguments
+%         fn: filename
+%     action: (default 'none'):
+%             'none':   check whether file is valid at all
+%             'stats':  retrieve stats struct with fields .stats
+%                       and .names
+%             'cond':   for GLM - retrieve stats struct using only
+%                       first regressor/basis function for each condition
+%                       for models with 2D stats structure - retrieve
+%                       mean parameter values per condition, based on
+%                       unique trial names
+%             'recon':  (for GLM) retrieve stats struct using
+%                       reconstructed responses (which are at the same
+%                       time written into the glm struct as glm.recon)
+%               'con':  retrieve full con structure
+%               'all':  retrieve the full first level structure
+%           'savecon':  add contrasts to file, use an additional
+%                       input argument data that contains the contrasts
+%              'save':  check and save first levle model, use an additional
+%                       input argument data that contains the model struct
+%   savedata: for 'save' option - a struct containing the model as only field
+%             for 'savecon' option - contains the con structure
+%    options: .zscored. zscore data - substract the mean and divide
+%                         by the standard deviation.
+%             .overwrite for 'save'
+%                        [logical] (0 or 1)
+%                        Define whether to overwrite existing output files or not.
+%                        Default value: determined by pspm_overwrite.
+% ● Output
+%       data:   depending on option
+%             - none (for 'none', 'savecon', 'save')
+%             - data.stats, data.names, (and data.trlnames if existing) (for
+%                        'stats', 'recon', 'cond')
+%                        - con structure (for 'con')
+%                        - full first level structure (for 'all')
+% ● Developer's Notes
+%   General structure of PsPM 1st level model files
+%   Each file contains one struct variable with the model
+%   allowed model names are specified in pspm_init
+%   each model must contain the following fields:
+%     .stats: a n x 1 vector (glm, for n regressors) or n x k matrix (dcm,
 %           sf; for k measures, n trials/epochs)
-%   .names: a cell array corresponding to regressor names (glm) or measure
+%     .names: a cell array corresponding to regressor names (glm) or measure
 %           names across trials/epochs (sf, dcm)
-%   .trlnames for models with 2D stats structure (dcm, sf)
-% optional fields:
-%   .recon for reconstructed glm responses
-%   .con for contrasts
-% -------------------------------------------------------------------------
-
+%     .trlnames for models with 2D stats structure (dcm, sf)
+%   optional fields:
+%     .recon for reconstructed glm responses
+%     .con for contrasts
+% ● History
+%   Introduced In PsPM 3.0
+%   Written in 2008-2015 by Dominik R Bach (WTCN, UZH)
+%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% Initialise
 global settings
@@ -88,24 +83,28 @@ if isempty(ext)
 end
 fn = fullfile(pth, [filename, ext]);
 
-try options.overwrite = (options.overwrite == 1); catch, options.overwrite = 0; end
-
+%  set default zscored
+if nargin <= 3
+  options = struct();
+end
+options = pspm_options(options, 'load1');
+if options.invalid
+  return
+end
+writefile = 1;
 % check whether file exists --
 if exist(fn, 'file')
   if strcmpi(action, 'save')
-    if ~pspm_overwrite(fn, options)
+    writefile = pspm_overwrite(fn, options);
+    if ~writefile
       warning('ID:not_saving_data', 'Not saving data.\n');
-      return
     end
   end
 elseif ~strcmpi(action, 'save')
-  warning('ID:invalid_input', '1st level file (%s) doesn''t exist', fn); return;
+  warning('ID:invalid_input', '1st level file (%s) doesn''t exist', fn);
 end
 
-%  set default zscored
-if nargin <= 3 || ~isfield(options, 'zscored')
-  options.zscored = 0;
-end
+
 
 % check whether file is a matlab file --
 if ~strcmpi(action, 'save')
@@ -273,8 +272,8 @@ switch action
   case 'recon'
     if strcmpi(mdltype, 'glm')
       if ~reconflag
-        [sts, indata.glm] = pspm_glm_recon(fn);
-        if sts ~= 1, warning('GLM reconstruction not successful.'); return; end
+        [sts_glm_recon, indata.glm] = pspm_glm_recon(fn);
+        if sts_glm_recon ~= 1, warning('GLM reconstruction not successful.'); return; end
       end
       data.stats = indata.glm.recon;
       data.names = indata.glm.reconnames;
@@ -296,12 +295,27 @@ switch action
     data = indata.(mdltype);
   case 'savecon'
     indata.(mdltype).con = savedata;
-    save(fn, '-struct', 'indata', mdltype);
+    if writefile
+      save(fn, '-struct', 'indata', mdltype);
+    end
   case 'save'
-    save(fn, '-struct', 'indata', mdltype);
+    if writefile
+      save(fn, '-struct', 'indata', mdltype);
+    end
   otherwise
     warning('ID:unknown_action', 'Unknown action. Just checking file. File is valid.'); return;
 end
 
-% set status and return
 sts = 1;
+switch nargout
+  case 1
+    varargout{1} = data;
+  case 2
+    varargout{1} = data;
+    varargout{2} = mdltype;
+  case 3
+    varargout{1} = sts;
+    varargout{2} = data;
+    varargout{3} = mdltype;
+end
+return
