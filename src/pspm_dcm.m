@@ -55,10 +55,7 @@ function varargout = pspm_dcm(model, options)
 %   │             i.e. Data are normalised during inversion but results
 %   │             transformed back into raw data units.
 %   │             Default: 0.
-%   ├.flexevents: flexible events to adjust amplitude priors
-%   ├─.fixevents: fixed events to adjust amplitude priors
-%   └─.constrained:
-%                 Constrained model for flexible responses which have fixed
+%   └─.constrained: Constrained model for flexible responses which have fixed
 %                 dispersion (0.3 s SD) but flexible latency.
 %   ┌────options:
 %   │ ▶︎ Response function
@@ -176,83 +173,24 @@ end % assign varargout to avoid errors if the function returns in the middle
 % by a `return` function
 warnings = {};
 
-%% 2 Check input arguments & set defaults
-% 2.1 check input
-if nargin < 1
-  warning('ID:invalid_input', 'No data to work on.');
-  return
-elseif nargin < 2
-  options = struct();
-end
-if ~isfield(model, 'datafile')
-  warning('ID:invalid_input', 'No input data file specified.'); return;
-elseif ~isfield(model, 'modelfile')
-  warning('ID:invalid_input', 'No output model file specified.'); return;
-elseif ~isfield(model, 'timing')
-  warning('ID:invalid_input', 'No event onsets specified.'); return;
+%% 2 Check input 
+% 2.1 check missing input --
+if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); return
+elseif nargin < 2; options = struct(); end
+
+% 2.2 check model
+model = pspm_check_model(model, 'dcm');
+if model.invalid
+    return
 end
 
-% 2.2 check faulty input
-if ~iscell(model.datafile) && ~ischar(model.datafile)
-  warning('ID:invalid_input', 'Input data must be a cell or string.'); return;
-elseif ~ischar(model.modelfile)
-  warning('ID:invalid_input', 'Output model must be a string.'); return;
-elseif ~ischar(model.timing) && ~iscell(model.timing)
-  warning('ID:invalid_input', 'Event definition must be a string or cell array.'); return;
-end
-
-% 2.3 get further input or set defaults --
-% check data channel --
-if ~isfield(model, 'channel')
-  model.channel = 'scr'; % this returns the last SCR channel
-elseif ~isnumeric(model.channel) && ~strcmp(model.channel,'scr')
-  warning('ID:invalid_input', 'Channel number must be numeric.'); return;
-end
-
-% 2.4 check normalisation --
-if ~isfield(model, 'norm')
-  model.norm = 0;
-elseif ~any(ismember(model.norm, [0, 1]))
-  warning('ID:invalid_input', 'Normalisation must be specified as 0 or 1.'); return;
-end
-
-% 2.5 check constrained model --
-if ~isfield(model, 'constrained')
-  model.constrained = 0;
-elseif ~any(ismember(model.constrained, [0, 1]))
-  warning('ID:invalid_input', 'Constrained model must be specified as 0 or 1.'); return;
-end
-
-% 2.6 check substhresh --
-if ~isfield(model, 'substhresh')
-  model.substhresh = 2;
-elseif ~isnumeric(model.substhresh)
-  warning('ID:invalid_input', 'Subsession threshold must be numeric.');
-  return;
-end
-
-% 2.7 check filter --
-if ~isfield(model, 'filter')
-  model.filter = settings.dcm{1}.filter;
-elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
-  warning('ID:invalid_input', 'Filter structure needs a numeric ''down'' field.'); return;
-end
-
-if ~isstruct(options)
-  warning('ID:invalid_input', '''options'' must be a struct.');
-  return;
-end
-
-
-% 2.8 set and check options ---
+% 2.3 check options 
 options = pspm_options(options, 'dcm');
 if options.invalid
   return
 end
 
-try model.lasttrialcutoff;      catch, model.lasttrialcutoff = 7;       end
-
-% 2.9 check option fields --
+% all the below should be re-factored into pspm_options -------------------
 % numeric fields
 num_fields = {'depth', 'sfpre', 'sfpost', 'sffreq', 'sclpre', ...
   'sclpost', 'aSCR_sigma_offset'};
@@ -282,50 +220,14 @@ if options.indrf && options.rf
   return
 end
 
+% .........................................................................
+
 % 2.10 check files
 % stop the script if files are not allowed to overwrite
 if ~pspm_overwrite(model.modelfile, options)
-  warning('ID:invalid_input', 'Results are not allowed to overwrite.');
+  warning('ID:invalid_input', 'Model file exists, and overwriting not allowed by user.');
   return
 end
-
-if ischar(model.datafile)
-  model.datafile = {model.datafile};
-  model.timing   = {model.timing};
-end
-
-nFile = numel(model.datafile);
-if ~isfield(model, 'missing')
-  model.missing = cell(nFile, 1);
-elseif ischar(model.missing) || isnumeric(model.missing)
-  model.missing = {model.missing};
-elseif ~iscell(model.missing)
-  warning('ID:invalid_input',...
-    'Missing values must be a filename, matrix, or cell array of these.');
-  return
-end
-if nFile ~= numel(model.timing)
-  warning('ID:number_of_elements_dont_match',...
-    'Session numbers of data files and event definitions do not match.');
-  return
-end
-if nFile ~= numel(model.missing)
-  warning('ID:number_of_elements_dont_match',...
-    'Same number of data files and missing value definitions is needed.');
-  return
-end
-
-% 2.11 Fill model values
-try model.aSCR; catch, model.aSCR = 0; end
-try model.eSCR; catch, model.eSCR = 0; end
-try model.meanSCR; catch, model.meanSCR = 0; end
-% These parameters were set with default fallback values but will be
-% determined later by processing
-% try model.fixevents; catch, warning('model.fixevents not defined.'); end
-% try model.flexevents; catch, warning('model.flexevents not defined.'); end
-% try model.missing_data; catch, warning('model.missing_data not defined.'); end
-% These parameters do not need to have a default value and will be
-% determined later
 
 %% 3 Check, get and prepare data
 
@@ -333,7 +235,7 @@ try model.meanSCR; catch, model.meanSCR = 0; end
 % colnames: iSn start stop enabled (if contains events)
 subsessions = [];
 data = cell(numel(model.datafile), 1);
-missing = cell(nFile, 1);
+missing = cell(numel(model.datafile), 1);
 for iSn = 1:numel(model.datafile)
   % check & load data
   [sts, ~, data{iSn}] = pspm_load_data(model.datafile{iSn}, model.channel);
@@ -347,7 +249,6 @@ for iSn = 1:numel(model.datafile)
   y{iSn} = data{iSn}{end}.data;
   sr{iSn} = data{iSn}{end}.header.sr;
   model.filter.sr = sr{iSn};
-
 
   % load and check existing missing data (if defined)
   if ~isempty(model.missing{iSn})

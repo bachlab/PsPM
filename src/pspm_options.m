@@ -5,7 +5,7 @@ function options = pspm_options(options, FunName)
 % ● Arguments
 %   options:  a struct to be filled by the function
 %   FunName:  a string, the name of the function where option is used
-% ● Copyright
+% ● History
 %   Introduced in PsPM 6.1
 %   Written in 2022 by Teddy Chao (UCL)
 
@@ -392,22 +392,23 @@ switch FunName
     options = autofill(options, 'expand_epochs',          0.5,        '>=', 0           );
     options = autofill(options, 'max',                    60,         '>', 0            );
     options = autofill(options, 'min',                    0.05,       '>', 0            );
-    options = autofill(options, 'missing_epochs_filename','missing_epochs_filename',...
-                                                                      '*Char'           );
+    options = autofill(options, 'missing_epochs_filename','',         '*Char'           );
     options = autofill(options, 'slope',                  10,         '*Num'            );
-    if isfield(options, 'missing_epochs_filename')
-      [pth, ~, ~] = fileparts(options.missing_epochs_filename);
-      if ~isempty(pth) && exist(pth,'dir')~=7
-        warning('ID:invalid_input',...
-          'Please specify a valid output directory if you want to save missing epochs.');
-        options.invalid = 1;
-        return
-      end
-    end
-    if options.change_data == 0 && ~isfield(options, 'missing_epochs_filename')
-      warning('This procedure leads to no output, according to the selected options.');
-      options.invalid = 1;
-    end
+    if ~isempty(options.missing_epochs_filename)
+       [pth, ~, ~] = fileparts(options.missing_epochs_filename);
+       if ~isempty(pth) && exist(pth,'dir')~=7
+         warning('ID:invalid_input',...
+           'Please specify a valid output directory if you want to save missing epochs.');
+         options.invalid = 1;
+         return
+       end
+     else
+       if options.change_data == 0
+         warning('ID:invalid_input',...
+         'This procedure leads to no output, according to the selected options.');
+         options.invalid = 1;
+       end
+     end
   case 'segment_mean'
     % 2.41 pspm_segment_mean --
     options = autofill(options, 'adjust_method',          'none',     {'downsample', ...
@@ -510,6 +511,10 @@ switch FunName
           return
       end
     end
+    case 'combine_markerchannels'
+        % 2.48 pspm_combine_markerchannels
+        options = autofill(options, 'marker_chan_num',        'marker',   '*Int*Char'       );
+        options = autofill_channel_action(options);
 end
 return
 

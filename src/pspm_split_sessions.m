@@ -27,10 +27,11 @@ function varargout = pspm_split_sessions(datafile, markerchannel, options)
 %   │                   Defines how long data before start trim point should
 %   │                   also be included. First marker will be at
 %   │                   t = options.prefix.
-%   ├─────────.suffix:  [numeric, unit:second, default:0]
+%   ├─────────.suffix:  [positive numeric, unit:second, default: mean marker distance in the file]
 %   │                   Defines how long data after the end trim point should be
 %   │                   included. Last marker will be at t = duration (of
-%   │                   session) - options.suffix.
+%   │                   session) - options.suffix. If options.suffix == 0,
+%   │                   it will be set to the mean marker distance.
 %   ├───────.randomITI: [default:0]
 %   │                   Tell the function to use all the markers to evaluate
 %   │                   the mean distance between them.
@@ -220,8 +221,10 @@ else
       % add marker channel so that pspm_trim has a reference
       dummydata{2,1}      = indata{markerchannel};
       dummyinfos          = ininfos;
+			trimoptions_missing = trimoptions;
+			trimoptions_missing.marker_chan_num = 2;
       newmissing = pspm_trim(struct('data', {dummydata}, 'infos', dummyinfos), ...
-        options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions);
+        options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions_missing);
       epochs = newmissing.data{1}.data;
       epoch_on = 1 + strfind(epochs.', [0 1]); % Return the start points of the excluded interval
       epoch_off = strfind(epochs.', [1 0]); % Return the end points of the excluded interval
