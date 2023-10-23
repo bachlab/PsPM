@@ -142,10 +142,12 @@ for d = 1:numel(data_source)
       end
     end
   end
-  options.jump = 1.5;
-  filt_clipping = detect_clipping(indata, options.clipping_step_size, ...
-    options.clipping_n_window, options.jump, options.clipping_threshold);
+  [filt_clipping, filt_baseline] = detect_clipping_baseline(indata, options.clipping_step_size, ...
+    options.clipping_n_window, options.baseline_jump, options.clipping_threshold);
 
+  if options.include_baseline
+    filt_clipping = filt_clipping || filt_baseline;
+  end
   % combine filters
   filt = filt_range & filt_slope;
   filt = filt & (1-filt_clipping);
@@ -223,11 +225,12 @@ elseif isempty(epoch_on) && ~isempty(epoch_off)
 end
 epochs = [ epoch_on, epoch_off ];
 
-function index_clipping = detect_clipping(data, step_size, n_window, jump, threshold)
+function [index_clipping, index_baseline] = detect_clipping_baseline(data, step_size, n_window, jump, threshold)
 l_data = length(data);
 window_size = n_window * step_size;
 index_window_starter = 1:step_size:(l_data-mod((l_data-window_size),step_size)-window_size-step_size+1);
 index_clipping = zeros(l_data,1);
+index_baseline = zeros(l_data,1);
 for window_starter = index_window_starter
   data_oi_front = data((window_starter+1):(window_starter+window_size));
   data_oi_front_max = max(data_oi_front);
@@ -243,7 +246,7 @@ for window_starter = index_window_starter
       index_clip_potential = index_clip_pred(data_oi_front>prctile(data_oi_front, 1)*jump);
       if ~isempty(index_clip_potential)
         index_clip_pred = window_starter + index_clip_potential;
-        index_clipping(index_clip_pred) = 1;
+        index_baseline(index_clip_pred) = 1;
       end
     end
   end
