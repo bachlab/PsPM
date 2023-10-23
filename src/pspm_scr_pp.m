@@ -45,6 +45,18 @@ function [sts, out] = pspm_scr_pp(datafile, options, channel)
 %   ├.clipping_n_window:
 %   │             A numerical value specifying the number of windows in moving average
 %   │             algorithm for detecting clipping. Default: 10000
+%   ├.baseline_jump:
+%   │             A numerical value to determine how many times of data
+%   │             jumpping will be considered for detecting baseline
+%   │             alteration. For example, when .baseline is set to be 2, 
+%   │             if the maximum value of the window is more than 2 times
+%   │             than the 5% percentile of the values in the window, such
+%   │             periods will be considered as baseline alteration.
+%   │             Default: 1.5          
+%   ├.include_baseline:
+%   │             A bool value to determine if detected baseline alteration
+%   │             will be included in the calculated clippings. 
+%   │             Default: 0 (not to include baseline alteration in clippings)
 %   ├.change_data:
 %   │             A numerical value to choose whether to change the data or not
 %   │             Default: 1 (true)
