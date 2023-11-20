@@ -23,3 +23,4 @@ addpath(pspm_path('Import','CEDS64ML'));
 warning off;
 fid = fopen(datafile);
 chanlist = SONChanList(fid);
+return
