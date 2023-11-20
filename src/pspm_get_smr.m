@@ -28,10 +28,10 @@ warning off;
 fid = fopen(datafile);
 % 2.2 Get channel list
 chanlist = SONChanList(fid);
-% preallocate memory for speed
+% 2.3 Preallocate memory for speed
 chandata = cell(numel(chanlist), 1);
 errorflag = [];
-% read channels
+% 2.4 Read channels
 for channel = 1:numel(chanlist)
   try
     [chandata{channel}, chanhead{channel}] = SONGetChannel(fid, chanlist(channel).number, 'milliseconds');
@@ -42,7 +42,7 @@ for channel = 1:numel(chanlist)
   end
 end
 fclose(fid);
-% delete empty channels
+% 2.5 delete empty channels
 if ~isempty(errorflag)
   ind=find(errorflag);
   for channel=ind(end:-1:1)
@@ -52,9 +52,9 @@ if ~isempty(errorflag)
 end
 warning on;
 %% 3 extract individual channels
-% loop through import jobs
+% 3.1 loop through import jobs
 for k = 1:numel(import)
-  % define channel number ---
+  % 3.1.1 define channel number ---
   if import{k}.channel > 0
     channel = import{k}.channel;
   else
@@ -68,7 +68,7 @@ for k = 1:numel(import)
     return; 
   end
   sourceinfo.channel{k, 1} = sprintf('Channel %02.0f: %s', channel, chanhead{channel}.title);
-  % convert to waveform or get sample rate for wave channel types
+  % 3.2 convert to waveform or get sample rate for wave channel types
   if strcmpi(settings.channeltypes(import{k}.typeno).data, 'wave')
     if chanhead{channel}.kind == 1 % waveform
       import{k}.data = chandata{channel};
