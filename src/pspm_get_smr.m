@@ -1,6 +1,6 @@
 function [sts, import, sourceinfo] = pspm_get_smr(datafile, import)
 % ● Description
-%   pspm_get_smr is the main function for import of spike files in smr format
+%   pspm_get_smr is the main function for importting spike-smr files
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_smr(datafile, import);
 % ● Arguments
@@ -12,7 +12,7 @@ function [sts, import, sourceinfo] = pspm_get_smr(datafile, import)
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 
-%% Initialise
+%% 1 Initialise
 global settings
 if isempty(settings)
   pspm_init;
@@ -21,8 +21,9 @@ sts = -1;
 sourceinfo = [];
 addpath(pspm_path('Import','SON'));
 
-% get external file, using SON library
+%% 2 get external file
 % -------------------------------------------------------------------------
+% using SON library
 warning off;
 
 fid = fopen(datafile);
@@ -35,7 +36,7 @@ errorflag = [];
 % read channels
 for channel = 1:numel(chanlist)
   try
-    [chandata{channel}, chanhead{channel}]=SONGetChannel(fid, chanlist(channel).number, 'milliseconds');
+    [chandata{channel}, chanhead{channel}] = SONGetChannel(fid, chanlist(channel).number, 'milliseconds');
   catch
     errorflag(channel)=1;
     chandata{channel}=[];
@@ -55,7 +56,7 @@ end;
 
 warning on;
 
-% extract individual channels
+%% 3 extract individual channels
 % -------------------------------------------------------------------------
 % loop through import jobs
 for k = 1:numel(import)
@@ -127,7 +128,7 @@ for k = 1:numel(import)
   end;
 end;
 
-% clear path and return
+%% 4 Clear path and return
 % -------------------------------------------------------------------------
 rmpath(pspm_path('Import','SON'));
 sts = 1;
