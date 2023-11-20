@@ -53,13 +53,13 @@ end
 warning on;
 %% 3 extract individual channels
 % 3.1 loop through import jobs
-for k = 1:numel(import)
+for iImport = 1:numel(import)
   % 3.1.1 define channel number ---
-  if import{k}.channel > 0
-    channel = import{k}.channel;
+  if import{iImport}.channel > 0
+    channel = import{iImport}.channel;
   else
     channel = pspm_find_channel(arrayfun(@(i) chanhead{i}.title, 1:numel(chanhead), 'UniformOutput', 0), ...
-      import{k}.type); % bring channel names into a cell array
+      import{iImport}.type); % bring channel names into a cell array
     if channel < 1, return; end
   end
   if channel > numel(chandata)
@@ -67,19 +67,19 @@ for k = 1:numel(import)
       'Channel %02.0f not contained in file %s.\n', channel, datafile); 
     return; 
   end
-  sourceinfo.channel{k, 1} = sprintf('Channel %02.0f: %s', channel, chanhead{channel}.title);
-  % 3.2 convert to waveform or get sample rate for wave channel types
-  if strcmpi(settings.channeltypes(import{k}.typeno).data, 'wave')
+  sourceinfo.channel{iImport, 1} = sprintf('Channel %02.0f: %s', channel, chanhead{channel}.title);
+  % 3.1.2 convert to waveform or get sample rate for wave channel types
+  if strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'wave')
     if chanhead{channel}.kind == 1 % waveform
-      import{k}.data = chandata{channel};
-      import{k}.sr   = 1./chanhead{channel}.sampleinterval;
+      import{iImport}.data = chandata{channel};
+      import{iImport}.sr   = 1./chanhead{channel}.sampleinterval;
     elseif chanhead{channel}.kind == 3 % timestamps
       % get minimum frequency for reporting resolution
-      import{k}.minfreq = min(1./diff(chandata{channel}))*1000;
+      import{iImport}.minfreq = min(1./diff(chandata{channel}))*1000;
       % convert pulse to waveform
-      import{k}.data = pspm_pulse_convert(chandata{channel}, settings.import.rsr, settings.import.sr);
-      import{k}.sr   = settings.import.sr;
-      import{k}.minfreq = min(import{k}.data);
+      import{iImport}.data = pspm_pulse_convert(chandata{channel}, settings.import.rsr, settings.import.sr);
+      import{iImport}.sr   = settings.import.sr;
+      import{iImport}.minfreq = min(import{iImport}.data);
     elseif chanhead{channel}.kind == 4 % up and down timestamps
       pulse = chandata{channel};
       % start with low to high
@@ -87,19 +87,19 @@ for k = 1:numel(import)
         pulse(1)=[];
       end
       pulse = pulse(1:2:end);
-      import{k}.data = pspm_pulse_convert(pulse, settings.import.rsr, settings.import.sr);
-      import{k}.sr = settings.import.sr;
-      import{k}.minfreq = min(import{k}.data);
+      import{iImport}.data = pspm_pulse_convert(pulse, settings.import.rsr, settings.import.sr);
+      import{iImport}.sr = settings.import.sr;
+      import{iImport}.minfreq = min(import{iImport}.data);
     else
-      warning('Unknown channel format in CED spike file for import job %02.0f', k);  return;
+      warning('Unknown channel format in CED spike file for import job %02.0f', iImport);  return;
     end
     % extract, and possibly denoise event channels
-  elseif strcmpi(settings.channeltypes(import{k}.typeno).data, 'events')
+  elseif strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'events')
     if chanhead{channel}.kind == 1 % waveform
-      import{k}.marker = 'continuous';
-      import{k}.data = chandata{channel};
-      import{k}.sr   = 1./chanhead{channel}.sampleinterval;
-    elseif chanhead{channel}.kind == 4 && strcmpi(import{k}.type, 'marker') 
+      import{iImport}.marker = 'continuous';
+      import{iImport}.data = chandata{channel};
+      import{iImport}.sr   = 1./chanhead{channel}.sampleinterval;
+    elseif chanhead{channel}.kind == 4 && strcmpi(import{iImport}.type, 'marker') 
       % for TTL marker channels with up AND down timestamps
       kbchan = pspm_find_channel(arrayfun(@(i) chanhead{i}.title, 1:numel(chanhead), 'UniformOutput', 0), ...
         {'keyboard'}); % keyboard channel doesn't exist by default but is needed for denoising
@@ -108,22 +108,22 @@ for k = 1:numel(import)
       else 
         kbdata = []; 
       end
-      if isfield(import{k}, 'denoise') && ~isempty(import{k}.denoise) && import{k}.denoise > 0
-        import{k}.data = pspm_denoise_spike(chandata{channel}, chanhead{channel}, kbdata, import{k}.denoise);
+      if isfield(import{iImport}, 'denoise') && ~isempty(import{iImport}.denoise) && import{iImport}.denoise > 0
+        import{iImport}.data = pspm_denoise_spike(chandata{channel}, chanhead{channel}, kbdata, import{iImport}.denoise);
       else
         pulse = chandata{channel};
         % start with low to high
         if chanhead{channel}.initLow==0
           pulse(1)=[];
         end
-        import{k}.data = pulse(1:2:end);
+        import{iImport}.data = pulse(1:2:end);
       end
-      import{k}.sr = 0.001; % milliseconds import for marker channels, see above
-      import{k}.marker = 'timestamp';
+      import{iImport}.sr = 0.001; % milliseconds import for marker channels, see above
+      import{iImport}.marker = 'timestamp';
     else        % for TTL channels with up OR down timestamps
-      import{k}.data = chandata{channel};
-      import{k}.sr = 0.001; % milliseconds import for marker channels, see above
-      import{k}.marker = 'timestamp';
+      import{iImport}.data = chandata{channel};
+      import{iImport}.sr = 0.001; % milliseconds import for marker channels, see above
+      import{iImport}.marker = 'timestamp';
     end
   end
 end
