@@ -1,8 +1,8 @@
-function [sts, import, sourceinfo] = pspm_get_spike(datafile, import)
+function [sts, import, sourceinfo] = pspm_get_smr(datafile, import)
 % ● Description
-%   pspm_get_spike is the main function for import of spike files
+%   pspm_get_smr is the main function for import of spike files in smr format
 % ● Format
-%   [sts, import, sourceinfo] = pspm_get_spike(datafile, import);
+%   [sts, import, sourceinfo] = pspm_get_smr(datafile, import);
 % ● Arguments
 %     import: [struct]
 %   .denoise: for marker channels in CED spike format (recorded as 'level'),

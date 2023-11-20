@@ -15139,7 +15139,7 @@ pspm_get_obs_test
 \begin_layout Itemize
 
 \family typewriter
-pspm_get_spike_test
+pspm_get_smr_test
 \end_layout
 
 \begin_layout Itemize
@@ -31087,7 +31087,7 @@ LC
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_get_spike
+pspm_get_smr
 \end_layout
 
 \end_inset
