@@ -20,26 +20,28 @@ function [ sts, outinfo ] = pspm_convert_ppg2hb( fn, channel, options )
 %   │                 Defines whether the interpolated
 %   │                 data should be added or the corresponding channel
 %   │                 should be replaced.
-%   └───────────.lsm: [integer]
-%                     large spikes mode compensates for large spikes
-%                     while generating template by removing the [integer]
-%                     largest percentile of spikes from consideration.
+%   ├───────────.lsm: [integer]
+%   │                 large spikes mode compensates for large spikes
+%   │                 while generating template by removing the [integer]
+%   │                 largest percentile of spikes from consideration.
+%   └──────────.mode: [integer]
+%                     1: PsPM's classic method
+%                     2: HeartPy
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Samuel Gerster (University of Zurich)
 %                      Tobias Moser (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Updated in 2023 by Teddy
 
-%% Initialise
+%% 1 Initialise --------------------------------------------------------
 global settings
 if isempty(settings)
   pspm_init;
 end
 sts = -1;
 outinfo = struct();
-
-%% check input
-% -------------------------------------------------------------------------
+%% 2 Check input -------------------------------------------------------
+% 2.1 Check arguments
 if nargin < 1
   warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
 elseif ~ischar(fn)
@@ -49,49 +51,42 @@ elseif nargin < 2 || isempty(channel)
 elseif ~isnumeric(channel) && ~strcmp(channel,'ppg')
   warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end
-
-%%% Process options
-% Display diagnostic plots? default is false
-% try if ~islogical(options.diagnostics),options.diagnostics = false;end
-% catch, options.diagnostics = false; end
+% 2.2 Check options
 options = pspm_options(options, 'convert_ppg2hb');
 if options.invalid
   return
 end
-% try if ~isnumeric(options.lsm),options.lsm = 0;end
-% catch, options.lsm = 0; end
-
-%% user output
-% -------------------------------------------------------------------------
+%% 3 Get data ----------------------------------------------------------
+% 3.1 Print user output
 fprintf('Heartbeat detection for %s ... \n', fn);
-
-% get data
-% -------------------------------------------------------------------------
+% 3.2 Load data
 [nsts, ~, data] = pspm_load_data(fn, channel);
 if nsts == -1
-  warning('ID:invalid_input', 'call of pspm_load_data failed');
+  warning('ID:invalid_input', ...
+    'call of pspm_load_data failed');
   return;
 end
+% 3.3 Check there is only one channel
 if numel(data) > 1
-  fprintf('There is more than one PPG channel in the data file. Only the first of these will be analysed.');
+  fprintf(['There is more than one PPG channel in the data file. ',...
+    'Only the first of these will be analysed.']);
   data = data(1);
 end
-% Check that channel is ppg
-if ~strcmp(data{1,1}.header.chantype,'ppg')
-  warning('ID:not_allowed_chantype', 'Specified channel is not a PPG channel. Don''t know what to do!')
+% 3.4 Check that channel is ppg
+if ~strcmp(data{1,1}.header.chantype, 'ppg')
+  warning('ID:not_allowed_chantype', ...
+    'Specified channel is not a PPG channel. Don''t know what to do!')
   return;
 end
-
-%% Large spikes mode
-%--------------------------------------------------------------------------
+% 3.5 Get PPG data
 ppg = data{1}.data;
-% large spike mode
+%% 4 Large spikes mode -------------------------------------------------
+% 4.1 Check large spike mode
 if options.lsm
   fprintf('Entering large spikes mode. This might take some time.');
   % Look for all peaks lower than 200 bpm (multiple of two in heart rate
   %  to compensate for absolute value and therefore twice as mani maxima)
-  [pks,pis] = findpeaks(abs(ppg),...
-    'MinPeakDistance',30/200*data{1}.header.sr);
+  [pks, pis] = findpeaks(abs(ppg), 'MinPeakDistance', 30/200*data{1}.header.sr);
   % Ensure at least one spike is removed by adapting quantil to realistic
   % values, given number of detected spikes
   q = floor(length(pks)*(1-options.lsm/100))/length(pks);
@@ -107,37 +102,39 @@ if options.lsm
 else
   minProm = range(ppg)/3;
 end
-
-%% Create template
-%--------------------------------------------------------------------------
+%% 5 Create template ---------------------------------------------------
+% 5.1 Print user output
 fprintf('Creating template. This might take some time.');
-% Find prominent peaks for a max heart rate of 200 bpm
+% 5.2 Find prominent peaks for a max heart rate of 200 bpm
 [~,pis] = findpeaks(data{1}.data,...
   'MinPeakDistance',60/200*data{1}.header.sr,...
   'MinPeakProminence',minProm);
-
+% 5.3 Remove large spikes from, if options.lsm
 if options.lsm
-  % Remove large spikes from
   [~,lsi_in_pis,~] = intersect(pis,lsi);
   pis(lsi_in_pis) = [];
 end
-
-% handle possible errors
-if isempty(pis),warning('ID:NoPulse', 'No pulse found, nothing done.');return;end
-if length(pis)==1,warning('ID:OnePulse', 'Only one pulse found, unable to calculate min_pulse_period.');return;end
-
-% get pulse period lower limit (assumed onset) as 30% of smalest period
+% 5.4 handle possible errors
+if isempty(pis)
+  warning('ID:NoPulse', ...
+    'No pulse found, nothing done.');
+  return;
+end
+if length(pis) == 1
+  warning('ID:OnePulse', ...
+    'Only one pulse found, unable to calculate min_pulse_period.');
+  return;
+end
+% 5.5 get pulse period lower limit (assumed onset) as 30% of smalest period
 % before detected peaks
 min_pulse_period = min(diff(pis));
 period_index_lower_bound = floor(pis(2:end-1)-.3*min_pulse_period);
 fprintf('...');
-
-% Create template from mean of peak time-locked ppg pulse periods
+% 5.6 Create template from mean of peak time-locked ppg pulse periods
 pulses = cell2mat(arrayfun(@(x) data{1}.data(x:x+min_pulse_period),period_index_lower_bound','un',0));
 template = mean(pulses,2);
 fprintf('done.\n');
-
-% handle diagnostic plots relevant to template building
+% 5.7 handle diagnostic plots relevant to template building
 if options.diagnostics
   t_template = (0:length(template)-1)'/data{1}.header.sr;
   t_pulses = repmat(t_template,1,length(pis)-2);
@@ -149,9 +146,7 @@ if options.diagnostics
   ylabel('Amplitude')
   title('Generated ppg template (bk) and pulses used (colored)')
 end
-
-%% Cross correlate the signal with the template and find peaks
-%--------------------------------------------------------------------------
+%% 6 Cross correlate the signal with the template and find peaks -------
 fprintf('Applying template.');
 ppg_corr = xcorr(data{1}.data,template)/sum(template);
 % Truncate ppg_xcorr and realigne it so the max correlation corresponds to
@@ -175,27 +170,22 @@ end
   data{1}.header.sr,...
   'MinPeakdistance',min_pulse_period/data{1}.header.sr);
 fprintf('   done.\n');
-
-%% Prepare output and save
-%--------------------------------------------------------------------------
-% save data
+%% 7 Prepare output and save -------------------------------------------
+% 7.1 save data
 fprintf('Saving data.');
-msg = sprintf('Heart beat detection from ppg with cross correlation HB-timeseries added to data on %s', date);
-
+msg = sprintf('Heart beat detection from PPG with cross correlation HB-timeseries added to data on %s', date);
 newdata.data = hb(:);
 newdata.header.sr = 1;
 newdata.header.units = 'events';
 newdata.header.chantype = 'hb';
-
 write_options = struct();
 write_options.msg = msg;
-
-% Replace last existing channel or save as new channel
+% 7.2 Replace last existing channel or save as new channel
 [nsts, nout] = pspm_write_channel(fn, newdata, options.channel_action, write_options);
 if ~nsts
   return
 end
-% user output
+% 7.3 user output
 fprintf('  done.\n');
 sts = 1;
 outinfo.channel = nout.channel;
