@@ -16,8 +16,8 @@ if isempty(settings)
 end
 sts = -1;
 sourceinfo = [];
-addpath(pspm_path('Import','CEDS64ML'));
-if ~strcmpi(bst_get('OsType'), 'win64')
+% addpath(pspm_path('Import','CEDS64ML'));
+if ~strcmpi(computer('arch'), 'win64')
   error('The MATCED library for reading .smrx files is available only on Windows 64bit.');
 end
 % Add path to CED code
