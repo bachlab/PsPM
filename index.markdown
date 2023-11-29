@@ -5,7 +5,7 @@
 layout: page
 ---
 
-**Current version: PsPM 6.1.0, released on 24.08.2022**
+**Current version: PsPM 6.1.0, released on 24.08.2023**
 
 <img src="http://bachlab.org/wp-content/uploads/2019/09/PsPM_Website_Figure_1.jpg" alt="drawing">
 
