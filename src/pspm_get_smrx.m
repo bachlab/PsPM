@@ -16,16 +16,14 @@ if isempty(settings)
 end
 sts = -1;
 sourceinfo = [];
-% addpath(pspm_path('Import','CEDS64ML'));
+addpath(pspm_path('Import','CEDS64ML'));
 if ~strcmpi(computer('arch'), 'win64')
   error('The MATCED library for reading .smrx files is available only on Windows 64bit.');
 end
 % Add path to CED code
-if isempty(getenv('CEDS64ML'))
-  cedpath = fileparts(which('CEDS64Open'));
-  setenv('CEDS64ML', fileparts(which('CEDS64Open')));
-  CEDS64LoadLib(cedpath);
-end
+cedpath = fileparts(which('CEDS64Open'));
+setenv('CEDS64ML', fileparts(which('CEDS64Open')));
+CEDS64LoadLib(cedpath);
 %% 2 Get external file
 warning off;
 % 2.1 Open file
@@ -130,7 +128,7 @@ for iImport = 1:numel(import)
       case 1 % waveform
         import{iImport}.marker  = 'continuous';
         import{iImport}.data    = fileinfo.chaninfo(channel).gain;
-        import{iImport}.sr      = 1./fileinfo.chaninfo(channel).sampleinterval;
+        import{iImport}.sr      = fileinfo.chaninfo(channel).realRate;
       case 4
         if strcmpi(import{iImport}.type, 'marker')
           kbchan = pspm_find_channel(fileinfo.chaninfo.kind, {'keyboard'});
