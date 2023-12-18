@@ -1,7 +1,6 @@
 function out = pspm_cfg_run_interpolate(job)
 
-% $Id$
-% $Rev$
+% Updated 18-12-2023 by Teddy
 
 options = struct();
 fn = job.datafiles;
@@ -15,9 +14,9 @@ elseif isfield(job.mode, 'channel')
     options.newfile = false;
 
     if isfield(job.mode.channel.mode, 'new_chan')
-        options.replace_channels = false;
+        options.channel_action = 'add';
     elseif isfield(job.mode.channel.mode, 'replace_chan')
-        options.replace_channels = true;
+        options.channel_action = 'replace';
     end;
 
 end;
