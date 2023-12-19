@@ -1,12 +1,8 @@
 function [out] = pspm_cfg_run_data_convert(job)
-
-% $Id$
-% $Rev$
-
+% Updated on 19-12-2023 by Teddy
 channel_action = job.channel_action;
 fn = job.datafile{1};
-
-for i=1:numel(job.conversion)
+for i = 1:numel(job.conversion)
   options = struct();
   options.channel_action = channel_action;
   channel = job.conversion(i).channel;
@@ -26,5 +22,4 @@ for i=1:numel(job.conversion)
     pspm_convert_visangle2sps(fn, options);
   end
 end
-
 out = 1;

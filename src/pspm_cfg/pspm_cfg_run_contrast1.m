@@ -1,13 +1,13 @@
 function out = pspm_cfg_run_contrast1(job)
 % Updated on 18-12-2023 by Teddy
-%% Assign
+%% Variables
 % modelfile
 modelfile = job.modelfile;
 % connames, convec
 nrCon = size(job.con,2);
-for iCon=1:nrCon
+for iCon = 1:nrCon
     connames{1,iCon} = job.con(iCon).conname;
-    convec{1,iCon} = job.con(iCon).convec;
+    convec{1,iCon}   = job.con(iCon).convec;
 end
 % datatype
 datatype = job.datatype;

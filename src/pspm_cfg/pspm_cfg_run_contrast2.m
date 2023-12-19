@@ -1,8 +1,5 @@
 function out = pspm_cfg_run_contrast2(job)
-% Executes pspm_con1
-
-% $Id$
-% $Rev$
+% Updated on 19-12-2023 by Teddy
 %% Variables
 % modelfile
 if isfield(job.testtype, 'one_sample')
@@ -11,11 +8,9 @@ else
   modelfile{1,1} = job.testtype.two_sample.modelfile1';
   modelfile{1,2} = job.testtype.two_sample.modelfile2';
 end
-
 % outfile
 outfile = [job.outdir{1} filesep  job.filename '.mat'];
-
-% connames & con
+% con and connames
 connames = fieldnames(job.def_con_name);
 connames = connames{1};
 if isfield(job.def_con_name.(connames),'con_all')
@@ -35,13 +30,10 @@ end
 %         con(1,iCon) = job.def_con_name.(connames).con(iCon).conval;
 %     end
 % end
-
 % datatype
-%datatype = job.datatype;
-
+% datatype = job.datatype;
 % options
 options.overwrite = job.overwrite;
-
+%% Run
 pspm_con2(modelfile, outfile, con, connames, options);
-
 out = {outfile};
