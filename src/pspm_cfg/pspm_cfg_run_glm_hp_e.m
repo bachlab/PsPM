@@ -1,12 +1,7 @@
 function out = pspm_cfg_run_glm_hp_e(job)
-% Executes pspm_glm
-
-% $Id$
-% $Rev$
-
+% Updated on 19-12-2023 by Teddy
 global settings
 if isempty(settings), pspm_init; end;
-
 % set modality
 modality = 'hp';
 modelspec = 'hp_e';

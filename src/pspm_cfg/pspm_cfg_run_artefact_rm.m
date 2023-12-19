@@ -1,5 +1,4 @@
 function out = pspm_cfg_run_artefact_rm(job)
-% Executes pspm_pp
 % Reviewed and updated on 18-Dec-2023 by Teddy
 options = struct;
 options.overwrite = job.overwrite;

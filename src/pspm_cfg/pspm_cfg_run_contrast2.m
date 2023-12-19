@@ -3,7 +3,7 @@ function out = pspm_cfg_run_contrast2(job)
 
 % $Id$
 % $Rev$
-
+%% Variables
 % modelfile
 if isfield(job.testtype, 'one_sample')
   modelfile = job.testtype.one_sample.modelfile';
