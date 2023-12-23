@@ -1,11 +1,14 @@
 function [out] = pspm_cfg_run_data_convert(job)
 % Updated on 19-12-2023 by Teddy
-channel_action = job.channel_action;
 fn = job.datafile{1};
 for i = 1:numel(job.conversion)
   options = struct();
-  options.channel_action = channel_action;
-  channel = job.conversion(i).channel;
+  if isfield(job, 'channel_action')
+    options.channel_action = job.channel_action;
+  end
+  if isfield(job.conversion(i), 'channel')
+    channel = job.conversion(i).channel;
+  end
   if isfield(job.conversion(i).mode, 'area2diameter')
     pspm_convert_area2diameter(fn, chan, options);
   end

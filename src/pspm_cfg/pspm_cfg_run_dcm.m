@@ -1,14 +1,9 @@
 function [out, dcm] = pspm_cfg_run_dcm(job)
-% Executes pspm_dcm
 
-% $Id$
-% $Rev$
 
-% initialise
-% -------------------------------------------------------------------------
+%% initialise
 global settings
 if isempty(settings), pspm_init; end;
-
 eventnameflag = 1;
 
 % construct job structure
@@ -105,21 +100,21 @@ if isfield(job.chan, 'chan_nr')
 end
 
 % options
-options.crfupdate = job.resp_options.crfupdate;
-options.indrf = job.resp_options.indrf;
-options.getrf = job.resp_options.getrf;
-options.rf = job.resp_options.rf;
+options = pspm_update_struct(options, job.resp_options, 'crfupdate');
+options = pspm_update_struct(options, job.resp_options, 'indrf');
+options = pspm_update_struct(options, job.resp_options, 'getrf');
+options = pspm_update_struct(options, job.resp_options, 'rf');
 
-options.depth = job.inv_options.depth;
-options.sfpre = job.inv_options.sfpre;
-options.sfpost = job.inv_options.sfpost;
-options.sffreq = job.inv_options.sffreq;
-options.sclpre = job.inv_options.sclpre;
-options.sclpost = job.inv_options.sclpost;
-options.aSCR_sigma_offset = job.inv_options.ascr_sigma_offset;
+options = pspm_update_struct(options, job.inv_options, 'depth');
+options = pspm_update_struct(options, job.inv_options, 'sfpre');
+options = pspm_update_struct(options, job.inv_options, 'sfpost');
+options = pspm_update_struct(options, job.inv_options, 'sffreq');
+options = pspm_update_struct(options, job.inv_options, 'sclpre');
+options = pspm_update_struct(options, job.inv_options, 'sclpost');
+options = pspm_update_struct(options, job.inv_options, 'aSCR_sigma_offset');
 
-options.dispwin = job.disp_options.dispwin;
-options.dispsmallwin = job.disp_options.dispsmallwin;
+options = pspm_update_struct(options, job.disp_options, 'dispwin');
+options = pspm_update_struct(options, job.disp_options, 'dispsmallwin');
 
 % condition and event names
 if isfield(options, 'trlnames')

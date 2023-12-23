@@ -33,7 +33,10 @@ end
 % datatype
 % datatype = job.datatype;
 % options
-options.overwrite = job.overwrite;
+options = struct();
+if isfield(job, 'overwrite')
+  options.overwrite = job.overwrite;
+end
 %% Run
 pspm_con2(modelfile, outfile, con, connames, options);
 out = {outfile};
