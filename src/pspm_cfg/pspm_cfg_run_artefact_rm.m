@@ -16,10 +16,12 @@ switch filtertype
     out = pspm_pp(filtertype, datafile, freq, channelnumber, options);
   case 'scr_pp'
     scr_job = job.filtertype.(filtertype);
-    % Option structure sent to pspm_simple_qa
-    if isfield(scr_job, 'min'), options.min = scr_job.min; end
-    if isfield(scr_job, 'max'), options.max = scr_job.max; end
-    if isfield(scr_job, 'slope'), options.slope = scr_job.slope; end
+    options = pspm_update_struct(options, scr_job, 'min')
+    options = pspm_update_struct(options, scr_job, 'max')
+    options = pspm_update_struct(options, scr_job, 'slope')
+    options = pspm_update_struct(options, scr_job, 'deflection_threshold')
+    options = pspm_update_struct(options, scr_job, 'data_island_threshold')
+    options = pspm_update_struct(options, scr_job, 'expand_epochs')
     if isfield(scr_job.missing_epochs, 'write_to_file')
       if isfield(scr_job.missing_epochs.write_to_file,'filename') && ...
           isfield(scr_job.missing_epochs.write_to_file,'outdir')
@@ -28,19 +30,10 @@ switch filtertype
           scr_job.missing_epochs.write_to_file.filename);
       end
     end
-    if isfield(scr_job, 'deflection_threshold')
-      options.deflection_threshold = scr_job.deflection_threshold; 
-    end
-    if isfield(scr_job, 'data_island_threshold')
-      options.data_island_threshold = scr_job.data_island_threshold; 
-    end
-    if isfield(scr_job, 'expand_epochs')
-      options.expand_epochs = scr_job.expand_epochs;
-    end
     if isfield(scr_job, 'change_data')
-      options.channel_action = 'add'; 
+      options.channel_action = 'add';
     else
-      options.channel_action = 'replace'; 
+      options.channel_action = 'replace';
     end
     [~, out] = pspm_scr_pp(datafile, options);
 end

@@ -15,9 +15,7 @@ datatype = job.datatype;
 deletecon = job.deletecon;
 % options
 options = struct;
-if isfield(options, 'zscored')
-  options.zscored = job.zscored;
-end
+options = pspm_update_struct(options, job, 'zscored')
 %% Run
 pspm_con1(modelfile, connames, convec, datatype, deletecon, options);
 out = modelfile;

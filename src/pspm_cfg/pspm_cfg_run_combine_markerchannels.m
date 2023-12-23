@@ -5,11 +5,7 @@ function pspm_cfg_run_combine_markerchannels(job)
 fn = job.datafile{1};
 % options
 options = struct();
-if isfield(job, 'channel_action')
-  options.channel_action = job.channel_action;
-end
-if isfield(job, 'marker_chan_num')
-  options.channel_action = job.marker_chan_num;
-end
+options = pspm_update_struct(options, job, 'channel_action')
+options = pspm_update_struct(options, job, 'marker_chan_num')
 %% Run
 pspm_combine_markerchannels(fn, options);
