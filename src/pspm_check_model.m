@@ -11,13 +11,13 @@ function model = pspm_check_model(model, modeltype)
 %   │               * A file name (single session)
 %   │               * A cell array of file names (multiple sessions)
 %   ├─.modelfile: a file name for the model output
-%   │ ├─.modelfile (GLM, DCM)
+%   │ ├─.modelfile (GLM, DCM, TAM)
 %   │ │             * A file name
 %   │ └─.modelfile (SF)
 %   │               * A file name (single data file)
 %   │               * A cell array of file names (multiple data files)
 %   ├─.timeunits:
-%   │ ├─.timeunits (GLM)
+%   │ ├─.timeunits (GLM, TAM)
 %   │ │           Acceptable values:
 %   │ │             'seconds', 'samples', 'markers', or 'markervalues'
 %   │ └─.timeunits (SF)
@@ -37,7 +37,7 @@ function model = pspm_check_model(model, modeltype)
 %   │ │               number of rows, i.e. the event structure must be the
 %   │ │               same for every trial. If this is not the case,
 %   │ │               include `dummy` events with negative onsets.
-%   │ ├─.timing (GLM):
+%   │ ├─.timing (GLM, TAM):
 %   │ │           Acceptable values (any of the following):
 %   │ │             * A multiple condition file name (single session);
 %   │ │             * A cell array of multiple condition file names;
@@ -139,9 +139,14 @@ function model = pspm_check_model(model, modeltype)
 %   │             fixed dispersion (0.3 s SD) but flexible latency.
 %   │
 %   │ ▶︎ optional, SF (modeltype) only
-%   └─────method: [string/cell_array]
-%                 [string] either 'auc', 'scl', 'dcm' (default), or 'mp'.
-%                 [cell_array] a cell array of methods mentioned above.
+%   ├─────method: [string/cell_array]
+%   │              [string] either 'auc', 'scl', 'dcm' (default), or 'mp'.
+%   │              [cell_array] a cell array of methods mentioned above.
+%   │
+%   │ ▶︎ optional, GLM (modeltype) only
+
+
+% CHECK WHY WE NEED MODALITY IN GLM, MODELSPEC SHOULD BE ENOUGH?
 %
 % ● History
 %   Introduced in PsPM 6.2
@@ -399,11 +404,27 @@ if strcmpi(modeltype, 'sf')
     elseif ~iscell(model.method)
       warning('Method needs to be a char or cell array'); return;
     end
+end
+
+%% 9. TAM-specific checks
+% -------------------------------------------------------------------------
+if strcmpi(modeltype, 'tam')
+ if (~isfield(model, 'window') || isempty(model.window) || ~isnumeric(model.window))
+      warning('ID:invalid_input', 'Window is expected to be a numeric value.'); return;
+ elseif
+   
+if ~isfield(model, 'modelspec')
+        model.modelspec = settings.tam(1).modelspec;
+    elseif ~ismember(model.modelspec, {settings.tam.modelspec})
+      warning('ID:invalid_input', 'Unknown model specification %s.', model.modelspec); return;
+    end
+
+    modno = find(strcmpi(model.modelspec, {settings.tam.modelspec}));
+    model.modality = settings.tam(modno).modality;
 
 end
 
-
-%% 9. General checks that require GLM-specific checks in case of GLM
+%% 10. General checks that require GLM-specific checks in case of GLM
 % -------------------------------------------------------------------------
 if ~isfield(model, 'filter')
     switch modeltype

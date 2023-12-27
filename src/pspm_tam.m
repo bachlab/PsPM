@@ -1,7 +1,7 @@
-function varargout = pspm_pfm(model, options)
+function tam = pspm_tam(model, options)
 % ● Description
-%   PFM stands for Pupil Fitting Model and allows to fit models to the puipil
-%   data. pspm_pfm starts by extracting and averaging signal segments of
+%   TAM stands for Trial Average Model and allows to fit models on
+%   trial-averaged data. pspm_tam starts by extracting and averaging signal segments of
 %   length `model.window` from each data file individually, then averages
 %   these mean segments and finally fits an LTI model.
 % ● Developer's Notes
@@ -29,7 +29,7 @@ function varargout = pspm_pfm(model, options)
 %      save('testfilcircle_degreee', 'names', 'onsets');
 % ● Arguments
 %   ┌───────model:  [struct]
-%   │ ▶︎ mandantory
+%   │ ▶︎ mandatory
 %   ├──.modelfile:  a file name for the model output
 %   ├───.datafile:  a file name (single session) OR
 %   │               a cell array of file names
@@ -104,11 +104,12 @@ function varargout = pspm_pfm(model, options)
 %                   Define whether to overwrite existing output files or not.
 %                   Default value: determined by pspm_overwrite.
 % ● Outputs
-%   pfm: a structure 'pfm' which is also written to file
+%   tam: a structure 'tam' which is also written to file
 % ● Reference
 %   Korn, C. W., & Bach, D. R. (2016). A solid frame for the window on
 %   cognition: Modeling event-related pupil responses. Journal of Vision,
 %   16(3), 28. https://doi.org/10.1167/16.3.28
+%   Abivardi ...
 % ● History
 %   Introduced In PsPM 4.2
 %   Written in 2020 by Ivan Rojkov (University of Zurich)
@@ -119,69 +120,32 @@ global settings
 if isempty(settings)
   pspm_init;
 end
-sts = -1;
-pfm = struct();
-switch nargout
-  case 1
-    varargout{1} = pfm;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = pfm;
+tam = struct();
+
+%% 2 Check input 
+% 2.1 check missing input --
+if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); return
+elseif nargin < 2; options = struct(); end
+
+% 2.2 check model
+model = pspm_check_model(model, 'tam');
+if model.invalid
+    return
 end
 
-%%  Checking inputs
-
-if nargin<1
-  errmsg='Nothing to do.'; warning('ID:invalid_input', errmsg); return;
-elseif nargin<2
-  options = struct();
-end
-
-%% Update options
-options = pspm_options(options, 'pfm');
+% 2.3 check options 
+options = pspm_options(options, 'tam');
 if options.invalid
   return
 end
 
-%%  Checking required fields
-if ~isfield(model, 'datafile')
-  warning('ID:invalid_input', 'No input data file specified.'); return;
-elseif ~ischar(model.datafile) && ~iscell(model.datafile)
-  warning('ID:invalid_input', 'Input data must be a cell or string.'); return;
-elseif ~isfield(model, 'modelfile')
-  warning('ID:invalid_input', 'No output model file specified.'); return;
-elseif ~ischar(model.modelfile)
-  warning('ID:invalid_input', 'Output model must be a string.'); return;
-elseif ~isfield(model, 'timeunits')
-  warning('ID:invalid_input', 'No timeunits specified.'); return;
-elseif ~isfield(model, 'timing') || isempty(model.timing) || iscell(model.timing) ...
-    && (sum(cellfun(@(f) isempty(f), model.timing)) == numel(model.timing))
-  % Timing doesnt exist, is emtpy or is a cell array with empty entries
-  warning('ID:invalid_input', 'Event onsets file is not specified.'); return;
-elseif ~ischar(model.timing) && ~iscell(model.timing) && ~isstruct(model.timing)
-  warning('ID:invalid_input', 'Event onsets must be a string, cell, or struct.'); return;
-elseif ~ischar(model.timeunits) || ~ismember(model.timeunits, {'seconds', 'markers', 'samples'})
-  warning('ID:invalid_input', ['Timeunits (%s) not recognised; only ''seconds'','...
-    ' ''markers'' and ''samples'' are supported'], model.timeunits); return;
-elseif ~isfield(model,'window')
-  warning('ID:invalid_input','No window specified.'); return
-elseif ~isnumeric(model.window)
-  warning('ID:invalid_input', 'Time window must be numeric.'); return
+% 2.4 check files
+% stop the script if files are not allowed to overwrite
+if ~pspm_overwrite(model.modelfile, options)
+  warning('ID:invalid_input', 'Model file exists, and overwriting not allowed by user.');
+  return
 end
 
-if ischar(model.datafile)
-  model.datafile={model.datafile};
-end
-model.datafile = model.datafile(:);
-
-if ischar(model.timing) || isstruct(model.timing)
-  model.timing = {model.timing};
-end
-
-if ~isempty(model.timing) && (numel(model.datafile) ~= numel(model.timing))
-  warning('ID:number_of_elements_dont_match', ...
-    'Session numbers of data files and event definitions do not match.'); return;
-end
 
 %%  Checking optionnal fields
 
@@ -566,7 +530,7 @@ for i=1:n_exp_cond
     disp(fmincon_output);
   elseif sts == -2
     warning('ID:fmincon',['During the fitting process, ''fmincon''', ...
-      ' haven''t found any feasible point.']);
+      ' hasn''t found any feasible point.']);
     fprintf('Here is the output of fmincon:\n');
     disp(fmincon_output);
   end
@@ -583,51 +547,51 @@ end
 fprintf('Saving model ...\n');
 
 % Collecting input model information
-pfm.modelfile     = model.modelfile;
-pfm.input         = model;
-pfm.input.options = options;
-pfm.input.sr      = num2cell(oldsr(:).');
-pfm.bf            = model.bf;
-pfm.if            = model.if;
+tam.modelfile     = model.modelfile;
+tam.input         = model;
+tam.input.options = options;
+tam.input.sr      = num2cell(oldsr(:).');
+tam.bf            = model.bf;
+tam.if            = model.if;
 
 % Collecting fitting data
 tmp_mean = [mean{1,:}];
-pfm.data.Y        = {tmp_mean.data};
-pfm.data.X        = {tmp_mean.t};
-pfm.data.std      = {tmp_mean.std};
-pfm.data.sem      = {tmp_mean.sem};
-pfm.data.sr       = num2cell(sr(:).');
-pfm.data.filtered = filtered;
-pfm.data.zscored  = model.zscore;
-pfm.data.norm     = model.norm;
+tam.data.Y        = {tmp_mean.data};
+tam.data.X        = {tmp_mean.t};
+tam.data.std      = {tmp_mean.std};
+tam.data.sem      = {tmp_mean.sem};
+tam.data.sr       = num2cell(sr(:).');
+tam.data.filtered = filtered;
+tam.data.zscored  = model.zscore;
+tam.data.norm     = model.norm;
 
 if exist('std_exp_cond','var')
-  pfm.data.std_exp_cond.name  = std_exp_cond.name;
-  pfm.data.std_exp_cond.ind   = std_exp_cond.ind;
+  tam.data.std_exp_cond.name  = std_exp_cond.name;
+  tam.data.std_exp_cond.ind   = std_exp_cond.ind;
 else
-  pfm.data.std_exp_cond       = 'none';
+  tam.data.std_exp_cond       = 'none';
 end
 
 % Collecting fits
 tmp_fitted = [fitted{1,:}];
-pfm.fit.Y         = {tmp_fitted.data};
-pfm.fit.X         = {tmp_mean.t};
-pfm.fit.rss       = {tmp_fitted.fval};  % RSS (residual sum square)
-pfm.fit.args      = {tmp_fitted.optargs};
-pfm.fit.sr        = num2cell(sr(:).');
+tam.fit.Y         = {tmp_fitted.data};
+tam.fit.X         = {tmp_mean.t};
+tam.fit.rss       = {tmp_fitted.fval};  % RSS (residual sum square)
+tam.fit.args      = {tmp_fitted.optargs};
+tam.fit.sr        = num2cell(sr(:).');
 
-pfm.infos.duration     = model.window;
-pfm.infos.durationinfo = 'duration in seconds';
+tam.infos.duration     = model.window;
+tam.infos.durationinfo = 'duration in seconds';
 
-pfm.timing        = model.timing;
+tam.timing        = model.timing;
 
-pfm.modeltype     = 'pfm';
-pfm.modality      = model.modality;
+tam.modeltype     = 'pfm';
+tam.modality      = model.modality;
 
-pfm.names         = model.timing{1}.names(:).';
+tam.names         = model.timing{1}.names(:).';
 
 % Saving structure
-savedata = struct('pfm', pfm);
+savedata = struct('pfm', tam);
 [sts, ~ , ~ ] = pspm_load1(model.modelfile, 'save', savedata, options);
 if sts == -1
   warning('ID:invalid_input', 'call of pspm_load1 failed');
@@ -638,9 +602,9 @@ fprintf('done. \n');
 sts = 1;
 switch nargout
   case 1
-    varargout{1} = pfm;
+    varargout{1} = tam;
   case 2
     varargout{1} = sts;
-    varargout{2} = pfm;
+    varargout{2} = tam;
 end
 return
