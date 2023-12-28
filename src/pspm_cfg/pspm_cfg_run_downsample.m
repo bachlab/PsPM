@@ -5,7 +5,7 @@ if isfield(job.chan,'all_chan')
 else
   chan = job.chan.chan_vec;
 end
-options.overwrite = job.overwrite;
+options = pspm_update_struct(options, job, 'overwrite');
 [~, out] = pspm_down(job.datafile, job.newfreq, chan, options);
 if ~iscell(out)
   out ={out};

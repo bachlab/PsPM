@@ -1,12 +1,8 @@
 function [out] = pspm_cfg_run_extract_segments(job)
-
-% $Id$
-% $Rev$
-
+% Updated on 25-12-2023 by Teddy
 out = {};
 options = struct();
 mode = 'auto';
-
 if isfield(job, 'mode')
   if isfield(job.mode, 'mode_automatic')
     mode = 'auto';
@@ -15,7 +11,6 @@ if isfield(job, 'mode')
     mode = 'manual';
     chan = job.mode.mode_manual.channel;
     fn = job.mode.mode_manual.datafiles;
-
     if isfield(job.mode.mode_manual.conditions, 'condition')
       conditions = job.mode.mode_manual.conditions.condition;
       tm = struct();
@@ -30,14 +25,11 @@ if isfield(job, 'mode')
     elseif isfield(job.mode.mode_manual.conditions, 'condition_files')
       tm = job.mode.mode_manual.conditions.condition_files;
     end
-
   end
-
   % extract options
-  options.timeunit = job.options.timeunit;
-  options.marker_chan = job.options.marker_chan;
+  options = pspm_update_struct(options, job.options, {'timeunit',...
+                                                      'marker_chan'});
   options.length = job.options.segment_length;
-
   field_name_nan_output = fieldnames(job.options.nan_output);
   switch field_name_nan_output{1}
     case 'nan_none'
@@ -49,23 +41,18 @@ if isfield(job, 'mode')
       file_path = job.options.nan_output.nan_output_file.nan_path{1};
       options.nan_output = fullfile(file_path, file_name);
   end
-
   % extract output
-  options.overwrite = job.output.overwrite;
-  options.plot = job.output.plot;
-
+  options = pspm_update_struct(options, job.output, {'overwrite',...
+                                                     'plot'});
   out_file = job.output.output_file.file_name;
   out_path = job.output.output_file.file_path{1};
-
   options.outputfile = [out_path filesep out_file];
-
   switch mode
     case 'auto'
       [~, out] = pspm_extract_segments(mode, glm_file, options);
     case 'manual'
       [~, out] = pspm_extract_segments(mode, fn, chan, tm, options);
   end
-
   out = {out.outputfile};
 else
   warning('ID:invalid_input', 'No mode specified');

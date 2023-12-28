@@ -17,7 +17,7 @@ if isfield(job.artefact_epochs, 'artefact_file')
 else
   options.artefact = '';
 end
-options.factor = job.faulty_settings.factor;
-options.limit.upper = job.faulty_settings.limit.upper;
-options.limit.lower = job.faulty_settings.limit.lower;
+options = pspm_update_struct(options, job.faulty_settings, {'factor',...
+                                                            'limit.upper',...
+                                                            'limit.lower'});
 pspm_ecg_editor(fn, ecg_chan, options);
