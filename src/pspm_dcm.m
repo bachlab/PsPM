@@ -653,7 +653,7 @@ for isbSn = 1:numel(model.scr)
     numtrials(isbSn) = numel(trialduration);
 end
 % initialise data matrix
-D = NaN(sum(numtrials), ceil(max(maxtrialduration) * model.sr)); 
+D = NaN(sum(numtrials), ceil(max(maxtrialduration) * model.sr) + winsize); 
 c = 1;
 for isbSn = 1:numel(model.scr)
   scr_sess = model.scr{isbSn};
