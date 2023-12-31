@@ -644,7 +644,17 @@ end
 
 % 5.4 extract data from all trials
 winsize = floor(model.sr * min([proc_miniti 10]));
-D = []; c = 1;
+% check maximum trial duration
+maxtrial = NaN(numel(model.scr), 1);
+numtrials = NaN(numel(model.scr), 1);
+for isbSn = 1:numel(model.scr)
+    trialduration = model.trlstop{isbSn} - model.trlstart{isbSn};
+    maxtrialduration(isbSn) = max(trialduration(:));
+    numtrials(isbSn) = numel(trialduration);
+end
+% initialise data matrix
+D = NaN(sum(numtrials), ceil(max(maxtrialduration) * model.sr)); 
+c = 1;
 for isbSn = 1:numel(model.scr)
   scr_sess = model.scr{isbSn};
   for n = 1:numel(model.trlstart{isbSn})
