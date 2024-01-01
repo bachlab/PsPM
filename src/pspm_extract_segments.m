@@ -320,7 +320,7 @@ elseif strcmpi(model_strc.modeltype, 'dcm')
   input_data = model_strc.input.scr;
   % incorporate missing information
   if isfield(model_strc.input, 'missing_data')
-      input_data(model.input.missing_data) = NaN;
+      input_data(model_strc.input.missing_data) = NaN;
   end
   sampling_rates = model_strc.input.sr;
   if numel(sampling_rates) == 1
