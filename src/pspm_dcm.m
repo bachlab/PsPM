@@ -362,7 +362,7 @@ for vs = 1:numel(valid_subsessions)
   isbSn = valid_subsessions(vs);
   sbSn = subsessions(isbSn, :);
   flanks = pspm_time2index(sbSn(2:3), data{sbSn(1)}{1}.header.sr);
-  sbSn_data = y{sbSn(1)}{1}.data(flanks(1):flanks(2));
+  sbSn_data = y{sbSn(1)}(flanks(1):flanks(2));
   sbs_miss = isnan(sbSn_data);
 
   if any(sbs_miss)
