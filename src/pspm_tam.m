@@ -48,9 +48,11 @@ function tam = pspm_tam(model, options)
 %   │               For model.timeunits == 'markers', the unit of the window
 %   │               should be specified in 'seconds'.
 %   │ ▶︎ optional
-%   ├───.modality:  a char array equal to 'constriction' or 'dilation'
-%   │               corresponding to the fitted model.
-%   │               DEFAULT: 'dilation'
+%   ├.modelspec:  'dilation' (default); specify the model to be used.
+%   │             See pspm_init, defaults.tam() which modelspecs are possible
+%   │             with glm.
+%   ├─.modality:  specify the data modality to be processed. By
+%   │             default, this is determined automatically from "modelspec"
 %   ├─────────.bf:  basis function/basis set with required subfields:
 %   │          ├────.fhandle: function handle or string
 %   │          └───────.args: arguments; the first two arguments
@@ -72,33 +74,25 @@ function tam = pspm_tam(model, options)
 %   ├────.channel:  allows to specify channel number or channel type.
 %   │               If there is only one element specified, this element
 %   │               will be applied to each datafile.
-%   │               model.channel can also be a cell array of the size of
-%   │               model.datafile in which case each element of the array
-%   │               correspond to the channel to use for each data file.
 %   │               DEFAULT: last channel of 'pupil' data type
-%   ├─────.zscore:  allows to specify whether data should be zscored or not
+%   ├─────.norm:  allows to specify whether data should be zscored or not
 %   │               DEFAULT: 1
 %   ├─────.filter:  filter settings; modality specific default
-%   │               filter is applied after extracting the segments, in
-%   │               case of differing sr the segments will be downsampled
-%   │               DEFAULT: no filter is applied
 %   ├───.baseline:  allows to specify a baseline in 'seconds' which is
 %   │               applied to the data before fitting the model. It has to
 %   │               be positive and smaller than model.window. If no baseline
 %   │               specified, data will be baselined wrt. the first datapoint.
 %   │               DEFAULT: 0
-%   ├.marker_chan:  marker channel number OR a cell array of marker channel
-%   │               number of the size of the model.datafile.
-%   │               DEFAULT: 'marker' (i.e. last marker channel)
 %   ├.std_exp_cond: allows to specify the standard experimental condition
 %   │               as a string or an index in timing.names.
 %   │               if specified this experimental condition will be
 %   │               substracted from all the other conditions.
 %   │               DEFAULT: 'none'
-%   └───────.norm:  allows ot specify if the model have to be normalized
-%                   before fitting the model, i.e. setting the first peak at 1.
+%   └───────.norm_max:  set the first peak at 1 before model fitting.
 %                   DEFAULT: 0 (not normalize)
 %   ┌─────options:  [struct]
+%   ├.marker_chan:  marker channel number 
+%   │               DEFAULT: 'marker' (i.e. last marker channel)
 %   └──.overwrite:  (optional) overwrite existing model output;
 %                   [logical] (0 or 1)
 %                   Define whether to overwrite existing output files or not.
@@ -109,7 +103,10 @@ function tam = pspm_tam(model, options)
 %   Korn, C. W., & Bach, D. R. (2016). A solid frame for the window on
 %   cognition: Modeling event-related pupil responses. Journal of Vision,
 %   16(3), 28. https://doi.org/10.1167/16.3.28
-%   Abivardi ...
+%   Abivardi, A., Korn, C.W., Rojkov, I. et al. Acceleration of inferred 
+%   neural responses to oddball targets in an individual with bilateral 
+%   amygdala lesion compared to healthy controls. Sci Rep 13, 14550 (2023). 
+%   https://doi.org/10.1038/s41598-023-41357-1 
 % ● History
 %   Introduced In PsPM 4.2
 %   Written in 2020 by Ivan Rojkov (University of Zurich)
@@ -146,185 +143,9 @@ if ~pspm_overwrite(model.modelfile, options)
   return
 end
 
-
-%%  Checking optionnal fields
-
-% Checking model specs
-if ~isfield(model, 'modality')
-  % load default model specification
-  model.modality = settings.pfm(1).modality;
-elseif ~ismember(model.modality, {settings.pfm.modality})
-  warning('ID:invalid_input', 'Unknown model specification %s.', model.modality); return;
-end
-modno = strcmpi(model.modality, {settings.pfm.modality});
-
-% Checking the basis function
-if ~isfield(model, 'bf')
-  model.bf = settings.pfm(modno).cbf;
-else
-  if ~isfield(model.bf, 'fhandle')
-    warning('No basis function given.'); return;
-  elseif ischar(model.bf.fhandle)
-    [~, basefn,~] = fileparts(model.bf.fhandle);
-    model.bf.fhandle = str2func(basefn);
-    clear basefn
-  elseif ~isa(model.bf.fhandle, 'function_handle')
-    warning('Basis function must be a string or function handle.'); return;
-  end
-  if ~isfield(model.bf, 'args')
-    model.bf.args = [];
-  elseif ~isnumeric(model.bf.args)
-    warning('Basis function arguments must be numeric.');
-  end
-end
-model.bf.args = model.bf.args(:).';
-
-% Checking the input function
-if ~isfield(model, 'if')
-  model.if = settings.pfm(modno).cif;
-else
-  if ~isfield(model.if, 'fhandle')
-    warning('No input function given.'); return;
-  elseif ischar(model.if.fhandle)
-    [~, basefn,~] = fileparts(model.if.fhandle);
-    model.if.fhandle = str2func(basefn);
-    clear basefn
-  elseif ~isa(model.bf.fhandle, 'function_handle')
-    warning('Basis function must be a string or function handle.'); return;
-  end
-  if ~isfield(model.if,'args') || isempty(model.if.args) || ~isnumeric(model.if.args)
-    warning('ID:invalid_input',['Arguments for the input',...
-      ' function must be a non-empty numeric array.']); return;
-  end
-  if ~isfield(model.if,'lb') || ~isnumeric(model.if.lb) ...
-      || any(size(model.if.lb)~=size(model.if.args))
-    warning('ID:invalid_input',['The lower bounds for the input function',...
-      ' must be a numeric array of the same size than ''model.if.arg''.']); return;
-  end
-  if ~isfield(model.if,'ub') || ~isnumeric(model.if.ub) ...
-      || any(size(model.if.ub)~=size(model.if.args))
-    warning('ID:invalid_input',['The upper bounds for the input function',...
-      ' must be a numeric array of the same size than ''model.if.arg''.']); return;
-  end
-  if any(model.if.lb > model.if.ub) || any(model.if.lb > model.if.args) ...
-      || any(model.if.args > model.if.ub)
-    warning('ID:invalid_input',['Input function''s parameters are inconsistent.',...
-      ' They must respect: model.if.lb <= model.if.arg <= model.if.ub.']); return;
-  end
-end
-model.if.args = model.if.args(:).';
-model.if.lb = model.if.lb(:).';
-model.if.ub = model.if.ub(:).';
-
-% Checking data channel
-chan_war_msg = ['Channel number must be a unique number,', ...
-  'a cell array of unique number', ...
-  'or correspond to a valid channel type.'];
-if ~isfield(model, 'channel')
-  model.channel = 'pupil';
-elseif ~iscell(model.channel) && ~isnumeric(model.channel) && ...
-    ~ismember(model.channel, {settings.channeltypes.type})
-  warning('ID:invalid_input', chan_war_msg); return;
-elseif ~iscell(model.channel) && numel(model.channel) > 1
-  warning('ID:invalid_input', chan_war_msg); return;
-elseif iscell(model.channel) && numel(model.channel)~=numel(model.datafile)
-  warning('ID:invalid_input', ...
-    'Channel array must be of the same size as datafile array.'); return;
-elseif iscell(model.channel)
-  model.channel = model.channel(:);
-  tmp_fun = @(x) ~isnumeric(x) && numel(x)~=1 ...
-    && ~ismember(x, {settings.channeltypes.type});
-  tmp = cellfun(tmp_fun,model.channel);
-  if any(tmp)
-    warning('ID:invalid_input', chan_war_msg); return;
-  end
-  clear tmp_fun
-end
-clear chan_war_msg
-
-% Checking zscore
-if ~isfield(model, 'zscore')
-  model.zscore = 1;
-elseif ~ismember(model.zscore, [0, 1])
-  warning('ID:invalid_input', '''model.zscore'' has to be 0 or 1.'); return;
-end
-
-% Checking filter
-if ~isfield(model, 'filter')
-  model.filter = settings.pfm(modno).filter;
-  model.filter.applied_filt = false;      % parameter which determine if we apply or not the filter
-else
-  if ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
-    warning('ID:invalid_input', ['Filter struct needs field ', ...
-      '''down'' to be numeric or ''none''.']); return;
-  end
-
-  model.filter.applied_filt = true;       % parameter which determine if we apply or not the filter
-end
-
-% Checking baseline
-if ~isfield(model,'baseline')
-  model.baseline = 0;
-elseif ~isnumeric(model.baseline)
-  warning('ID:invalid_input','''model.baseline'' has to be a numeric.'); return;
-elseif model.baseline > model.window || model.baseline < 0
-  warning('ID:invalid_input',['''model.baseline'' has to be positive ',...
-    'and smaller than ''model.window''.']); return;
-end
-
-% Checking marker channels
-if strcmpi(model.timeunits,'markers')
-  if ~isfield(model,'marker_chan')
-    model.marker_chan = 'marker';
-  elseif numel(model.marker_chan)==1 && ~isnumeric(model.marker_chan)
-    warning('ID:invalid_input','Marker channels have to be numeric.'); return;
-  elseif numel(model.marker_chan)>1 && ...
-      ( ~iscell(model.marker_chan) || ...
-      numel(model.marker_chan)~=numel(model.marker_chan) )
-    warning('ID:invalid_input',['Marker channels have to be a cell array', ...
-      ' of the same size than ''model.modelfile''.'])
-  end
-end
-
-% Checking standard experimental condition
-std_cond_war_msg = ['The standard experimetal condition must be',...
-  ' either a valid experimental condition or an',...
-  ' index corresponding to it.'];
-if ~isfield(model,'std_exp_cond')
-  model.std_exp_cond = 'none';
-elseif ~ischar(model.std_exp_cond) && ~isnumeric(model.std_exp_cond)
-  warning('ID:invalid_input',std_cond_war_msg); return;
-elseif ischar(model.std_exp_cond)
-  tmp_ind = cellfun(@(x) strcmpi(model.std_exp_cond,x),model.timing{1}.names);
-  if ~any(tmp_ind)
-    warning('ID:invalid_input',std_cond_war_msg); return;
-  end
-  std_exp_cond.name = model.std_exp_cond;
-  std_exp_cond.ind = find(tmp_ind);
-elseif isnumeric(model.std_exp_cond)
-  if model.std_exp_cond < 1 || ...
-      model.std_exp_cond > numel(model.timing{1}.names)
-    warning('ID:invalid_input',std_cond_war_msg); return;
-  end
-  std_exp_cond.name = model.timing{1}.names(model.std_exp_cond);
-  std_exp_cond.ind = model.std_exp_cond;
-end
-clear std_cond_war_msg tmp_ind
-
-% Checking norm
-if ~isfield(model, 'norm')
-  model.norm = 0;
-elseif ~ismember(model.norm, [0, 1])
-  warning('ID:invalid_input', '''model.zscore'' has to be 0 or 1.'); return;
-end
-
-if ~pspm_overwrite(model.modelfile, options)
-  return;
-end
-
 %% Loading files
 
-fprintf('Computing Pupil Model: %s \n', model.modelfile);
+fprintf('Computing Trial Average Model: %s \n', model.modelfile);
 
 n_exp_cond = numel(model.timing{1}.names);      % number of experimental conditions
 n_file = numel(model.datafile);                 % number of files
@@ -332,33 +153,26 @@ n_file = numel(model.datafile);                 % number of files
 % Loading data and sr
 fprintf('Getting data .');
 for iFile = 1:n_file
-  if iscell(model.channel)
-    [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel{iFile});
-  else
+
     [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
-  end
-  if sts < 1, warning('ID:load_data_fail', 'Problem encountered while loading data.'); return; end
+    if sts < 1, warning('ID:load_data_fail', 'Problem encountered while loading data.'); return; end
 
-  % Filling up the data and the sampling rates
-  y{iFile} = data{end}.data(:);
-  sr(iFile) = data{end}.header.sr;
-  fprintf('.');
+    % Filling up the data and the sampling rates
+    y{iFile} = data{end}.data(:);
+    sr(iFile) = data{end}.header.sr;
+    fprintf('.');
 
-  % If the timeunits is markers
-  if strcmpi(model.timeunits, 'markers')
-    if iscell(model.marker_chan)
-      [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.marker_chan{iFile});
-    else
-      [sts, ~, data] = pspm_load_data(model.datafile{iFile}, model.marker_chan);
+    % If the timeunits is markers
+    if strcmpi(model.timeunits, 'markers')
+        [sts, ~, data] = pspm_load_data(model.datafile{iFile}, options.marker_chan{iFile});
+        if sts < 1
+            warning('ID:invalid_input','Could not load the specified marker channel.');
+            return;
+        end
+        markers{iFile} = data{end}.data;
     end
-    if sts < 1
-      warning('ID:invalid_input','Could not load the specified marker channel.');
-      return;
-    end
-    markers{iFile} = data{end}.data;
-  end
 
-  fprintf('.');
+    fprintf('.');
 end
 
 % Old sampling rate
@@ -366,11 +180,8 @@ oldsr = sr;
 
 % Checking if the sampling rate is the same for all samples.
 if n_file > 1 && any(diff(sr) > 0)
-  if ~model.filter.applied_filt || ...                                    % if no filter where specified
-      (isnumeric(model.filter.down) && model.filter.down > min(sr)) ||...  % if filter.down is less than the minimal sr
+  if model.filter.down > min(sr)) ||...                                    % if filter.down is less than the minimal sr
       strcmpi(model.filter.down,'none')                                    % if filter.down is none
-
-    model.filter.applied_filt = true;
     model.filter.down = min(sr);
     fprintf('\nSampling rate differs between sessions. Data will be downsampled.\n')
   end
@@ -379,12 +190,12 @@ else
 end
 
 %%  Zscoring the data
-if model.zscore
+if model.norm
   fprintf('Zscoring ...\n')
   n_file = numel(model.datafile);
   for iFile = 1:n_file
     % NANZSCORE found in src/VBA/stats&plots
-    [y{iFile},~,~] = nanzscore(y{iFile});
+    [y{iFile},~,~] = nannorm(y{iFile});
   end
 end
 
@@ -421,33 +232,22 @@ clear extrsg tmp_data s lsts
 
 %% Downsample the data
 % if a filter was specified or if the data differ in sr
-if model.filter.applied_filt
-  fprintf('Filtering ...\n')
-  for i = 1:n_exp_cond
+fprintf('Filtering ...\n')
+for i = 1:n_exp_cond
     for k = 1:n_file
 
-      model.filter.sr = sr(k);
+        model.filter.sr = sr(k);
 
-      [lsts, segm{k,i}, ~] = structfun(@(x) pspm_prepdata(x, model.filter),segm{k,i},'UniformOutput',false);
-      if any(structfun(@(x) x<1,lsts)), warning('ID:error_prepdata','An error occured in pspm_prepdata.'); return; end
+        [lsts, segm{k,i}, ~] = structfun(@(x) pspm_prepdata(x, model.filter),segm{k,i},'UniformOutput',false);
+        if any(structfun(@(x) x<1,lsts)), warning('ID:error_prepdata','An error occured in pspm_prepdata.'); return; end
 
-      clear new_sr lsts
+        clear new_sr lsts
     end
-  end
-
-  % changing the sampling rate
-  sr = model.filter.down*ones(size(sr));
-
-  % delete fields that are not useful for the model output
-  model.filter = rmfield(model.filter,'sr');
-  model.filter = rmfield(model.filter,'applied_filt');
-  filtered = 1;
-
-  % if data were not filtered
-else
-  model = rmfield(model,'filter');
-  filtered = 0;
 end
+
+% changing the sampling rate
+sr = model.filter.down*ones(size(sr));
+
 
 %% Determining mean values
 fprintf('Preparing for fitting ...\n')
@@ -482,7 +282,7 @@ for i=1:n_exp_cond
   tmp_data_new.data = tmp_data_new.data - tmp_data_new.data(baseline_index);
 
   % Dividing by the max value
-  if model.norm
+  if model.norm_max
     [tmp_max,tmp_max_ind] = max(tmp_data_new.data);
     tmp_data_new.data = tmp_data_new.data/tmp_max;
     tmp_data_new.std = tmp_data_new.std + tmp_data_new.std(tmp_max_ind); % the error adds up
@@ -562,7 +362,7 @@ tam.data.std      = {tmp_mean.std};
 tam.data.sem      = {tmp_mean.sem};
 tam.data.sr       = num2cell(sr(:).');
 tam.data.filtered = filtered;
-tam.data.zscored  = model.zscore;
+tam.data.normd  = model.norm;
 tam.data.norm     = model.norm;
 
 if exist('std_exp_cond','var')
