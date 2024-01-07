@@ -161,6 +161,10 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
         ends = [split_times dur];
         sess_dur = diff([starts; ends]);
       end
+      % adapt the first and last session duration, as no trimming will be
+      % performed towards file start/end
+      sess_dur(1) = split_times(1);
+      sess_dur(end) = dur - split_times(end);
       options.splitpoints = splitpoints;
       newdatafile = pspm_split_sessions(fn, 3, options);
       if ~isempty(splitpoints)
@@ -171,11 +175,9 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
       this.verifyEqual(numel(newdatafile),n_sess_exp);
       for i = 1:numel(newdatafile)
         if exist(newdatafile{i}, 'file')
-          % test suffix and prefix
-          if i > 1 && i < numel(newdatafile)
-              [~, info, ~] = pspm_load_data(newdatafile{i});
-              this.verifyEqual(info.duration, sess_dur(i), 'RelTol', 0.5);
-          end
+          % test session duration
+          [~, info, ~] = pspm_load_data(newdatafile{i});
+          this.verifyEqual(info.duration, sess_dur(i), 'RelTol', 0.5);
           % remove file
           delete(newdatafile{i});
         end
