@@ -275,7 +275,7 @@ elseif strcmpi(model_strc.modeltype, 'glm')
   input_data = model_strc.input.data;
   sampling_rates = model_strc.input.sr;
   filtered_sr = model_strc.input.filter.down;
-else
+elseif strcmpi(model_strc.modeltype, 'dcm')
   % want to map the informations of dcm into a multi
   cond_names = unique(model_strc.trlnames);
 
@@ -318,10 +318,18 @@ else
     point= point+nr_trials_in_sess;
   end
   input_data = model_strc.input.scr;
+  % incorporate missing information
+  if isfield(model_strc.input, 'missing_data')
+      for sn = 1:numel(model_strc.input)
+        input_data{sn}(model_strc.input.missing_data{sn}) = NaN;
+      end
+  end
   sampling_rates = model_strc.input.sr;
   if numel(sampling_rates) == 1
     sampling_rates = repmat(sampling_rates, n_sessions, 1);
   end
+else
+    error('Don''t know what to do');
 end
 %% Normalise data
 if options.norm
