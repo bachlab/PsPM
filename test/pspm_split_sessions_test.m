@@ -163,8 +163,10 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
       end
       % adapt the first and last session duration, as no trimming will be
       % performed towards file start/end
-      sess_dur(1) = split_times(1);
-      sess_dur(end) = dur - split_times(end);
+      if ~isempty(splitpoints)
+        sess_dur(1) = split_times(1);
+        sess_dur(end) = dur - split_times(end);
+      end
       options.splitpoints = splitpoints;
       newdatafile = pspm_split_sessions(fn, 3, options);
       if ~isempty(splitpoints)
