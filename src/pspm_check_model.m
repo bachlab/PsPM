@@ -389,12 +389,10 @@ end
 %% 9. TAM-specific checks
 % -------------------------------------------------------------------------
 if strcmpi(modeltype, 'tam')
- if (~isfield(model, 'window') || isempty(model.window) || ~isnumeric(model.window))
+    if (~isfield(model, 'window') || isempty(model.window) || ~isnumeric(model.window))
       warning('ID:invalid_input', 'Window is expected to be a numeric value.'); return;
- elseif
-   
-  if ~isfield(model, 'modelspec')
-        model.modelspec = settings.tam(1).modelspec;
+    elseif ~isfield(model, 'modelspec')
+      model.modelspec = settings.tam(1).modelspec;
     elseif ~ismember(model.modelspec, {settings.tam.modelspec})
       warning('ID:invalid_input', 'Unknown model specification %s.', model.modelspec); return;
     end
