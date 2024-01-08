@@ -5,7 +5,7 @@ if isempty(settings), pspm_init; end
 options = struct();
 model.modelfile = [job.outdir{1}, filesep, job.modelfile '.mat'];
 nrSession = size(job.session,2);
-for iSession=1:nrSession
+for iSession = 1:nrSession
   % datafile
   model.datafile{iSession,1} = job.session(iSession).datafile{1};
   % missing epochs
@@ -94,7 +94,9 @@ else
   model.filter.direction = job.filter.edit.direction; % sampling rate
 end
 % channel number
-model = pspm_update_struct(model, job.chan, 'chan_nr');
+if isfield(job.chan, 'chan_nr')
+  model.channel = job.chan.chan_nr;
+end
 if isfield(job.latency, 'free')
   model.latency = 'free';
   model.window = job.latency.free.time_window;

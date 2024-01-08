@@ -30,9 +30,7 @@ end
 if isfield(job.missing, 'enable_missing')
   options.missing = 1;
 end
-if isfield(job, 'eyes')
-  options.eyes = job.eyes;
-end
+options = pspm_update_struct(options, job, 'eyes');
 options.channels = regexp(job.channels, '\s+', 'split');
 num_vals = str2double(options.channels); % convert numbers
 nums = ~isnan(num_vals);
