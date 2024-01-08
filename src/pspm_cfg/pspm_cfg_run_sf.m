@@ -24,7 +24,6 @@ else
   epochs = [];
 end
 model.timing = epochs;
-
 % filter
 if ~isfield(job.filter,'def')
   if isfield(job.filter.edit.lowpass,'disable') % lowpass
@@ -48,12 +47,10 @@ end
 if isfield(job.chan, 'chan_nr')
   model.channel = job.chan.chan_nr;
 end
-options.overwrite = job.overwrite;
 if strcmp(timeunits, 'markers')
   options.marker_chan_num = job.timeunits.(timeunits).mrk_chan;
 end
-options.threshold = job.threshold;
-if ~isempty(job.theta)
+if ~isempty(job.theta) % why is this '~isempty'?
   options.theta = job.theta;
 end
 if ~isempty(job.fresp)
@@ -64,6 +61,8 @@ if ~isempty(job.missing)
     model.missing = job.missing.missingepoch_include.missingepoch_file{1};
   end
 end
-options.dispwin = job.dispwin;
-options.dispsmallwin = job.dispsmallwin;
+options = pspm_update_struct(options, job, {'dispwin', ...
+                                            'dispsmallwin', ...
+                                            'overwrite', ...
+                                            'threshold'});
 out = pspm_sf(model, options);
