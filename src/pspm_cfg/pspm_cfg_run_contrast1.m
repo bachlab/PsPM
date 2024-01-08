@@ -7,14 +7,14 @@ modelfile = job.modelfile;
 nrCon = size(job.con,2);
 for iCon = 1:nrCon
     connames{1,iCon} = job.con(iCon).conname;
-    convec{1,iCon}   = job.con(iCon).convec;
+    convec{1,iCon} = job.con(iCon).convec;
 end
 % datatype
 datatype = job.datatype;
 % deletecon
 deletecon = job.deletecon;
 % options
-options = struct;
+options = struct();
 options = pspm_update_struct(options, job, 'zscored')
 %% Run
 pspm_con1(modelfile, connames, convec, datatype, deletecon, options);

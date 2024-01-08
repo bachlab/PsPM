@@ -130,7 +130,7 @@ function split_sessions = pspm_cfg_split_sessions
         else
             markerchannel = 0;
         end
-        options = struct;
+        options = struct();
         options.overwrite = job.overwrite;
         if isfield(job.missing_epochs_file,'name')
             options.missing = job.missing_epochs_file.name{1,1};

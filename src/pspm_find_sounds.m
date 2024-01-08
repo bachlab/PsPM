@@ -84,7 +84,7 @@ sts = -1;
 switch length(varargin)
   case 1
     file = varargin{1};
-    options = struct;
+    options = struct();
   case 2
     file = varargin{1};
     options = varargin{2};
