@@ -20,13 +20,11 @@ else
   box_degree = job.val_method.validation_settings.box_degree;
   distance = job.val_method.validation_settings.distance;
   unit = job.val_method.validation_settings.unit;
-  options.resolution = job.val_method.validation_settings.resolution;
+  options = pspm_update_struct(options, job.val_method.validation_settings, 'resolution');
   if isfield(job.val_method.validation_settings.fixation_point, 'fixpoint')
-    options.fixation_point = ...
-      job.val_method.validation_settings.fixation_point.fixpoint;
+    options.fixation_point = job.val_method.validation_settings.fixation_point.fixpoint;
   elseif isfield(job.val_method.validation_settings.fixation_point, 'fixpoint_file')
-    options.fixation_point = ...
-      job.val_method.validation_settings.fixation_point.fixpoint_file{1};
+    options.fixation_point = job.val_method.validation_settings.fixation_point.fixpoint_file{1};
   end
 end
 if isfield(job.missing, 'enable_missing')
@@ -47,8 +45,8 @@ elseif isfield(job.output_settings.file_output, 'overwrite_original')
   options.newfile = '';
   options.overwrite = 1;
 end
-options.channel_action = job.output_settings.channel_action;
-options.plot_gaze_coords = job.output_settings.plot_gaze_coords;
+options = pspm_update_struct(options, job.output_settings, {'channel_action', ...
+                                                            'plot_gaze_coords'});
 if isfield(job.val_method,'bitmap_file')
   [~, out{1}] = pspm_find_valid_fixations(data_file,bitmap, options);
 else
