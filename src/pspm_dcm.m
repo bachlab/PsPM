@@ -260,42 +260,46 @@ for iSn = 1:numel(model.datafile)
  
   % try to find missing epochs according to subsession threshold
   n_data = size(y{iSn},1);
-  if isempty(missing{iSn})
-    nan_epochs = isnan(y{iSn});
 
-    d_nan_ep = transpose(diff(nan_epochs));
-    nan_ep_start = find(d_nan_ep == 1);
-    nan_ep_stop = find(d_nan_ep == -1);
+   if ~isempty(missing{iSn})
+      % use missing epochs as specified by file
+      miss_epochs = pspm_time2index(missing{iSn}, sr{iSn});
 
-    if numel(nan_ep_start) > 0 || numel(nan_ep_stop) > 0
-      % check for blunt ends and fix
-      if isempty(nan_ep_start)
-        nan_ep_start = 1;
-      elseif isempty(nan_ep_stop)
-        nan_ep_stop = numel(d_nan_ep);
+      % and set data to NaN to enable later detection of `short` missing
+      % epochs
+      for k = 1:size(miss_epochs, 1)
+          flanks = round(miss_epochs(k,:));
+          y{iSn}(flanks(1):flanks(2)) = NaN;
       end
+  end
+ 
+  % find NaN in data, which might originate in previous step or exist in
+  % the data already. This will update the previous miss_epochs definition.
+  nan_epochs = isnan(y{iSn});
 
-      if nan_ep_start(1) > nan_ep_stop(1)
-        nan_ep_start = [1, nan_ep_start];
+  if ~isempty(nan_epochs)
+      d_nan_ep = transpose(diff(nan_epochs));
+      nan_ep_start = find(d_nan_ep == 1);
+      nan_ep_stop = find(d_nan_ep == -1);
+
+      if numel(nan_ep_start) > 0 || numel(nan_ep_stop) > 0
+          % check for blunt ends and fix
+          if isempty(nan_ep_start)
+              nan_ep_start = 1;
+          elseif isempty(nan_ep_stop)
+              nan_ep_stop = numel(d_nan_ep);
+          end
+
+          if nan_ep_start(1) > nan_ep_stop(1)
+              nan_ep_start = [1, nan_ep_start];
+          end
+          if nan_ep_start(end) > nan_ep_stop(end)
+              nan_ep_stop(end + 1) = numel(d_nan_ep);
+          end
       end
-      if nan_ep_start(end) > nan_ep_stop(end)
-        nan_ep_stop(end + 1) = numel(d_nan_ep);
-      end
-    end
 
     % put missing epochs together
     miss_epochs = [nan_ep_start(:), nan_ep_stop(:)];
-
-  else
-    % use missing epochs as specified by file
-    miss_epochs = pspm_time2index(missing{iSn}, sr{iSn});
-  
-    % and set data to NaN to enable later detection of `short` missing
-    % epochs
-    for k = 1:size(miss_epochs, 1)
-      flanks = round(miss_epochs(k,:));
-      y{iSn}(flanks(1):flanks(2)) = NaN;
-    end
   end
 
   % epoch should be ignored if duration > threshold
@@ -358,7 +362,7 @@ for vs = 1:numel(valid_subsessions)
   isbSn = valid_subsessions(vs);
   sbSn = subsessions(isbSn, :);
   flanks = pspm_time2index(sbSn(2:3), data{sbSn(1)}{1}.header.sr);
-  sbSn_data = data{sbSn(1)}{1}.data(flanks(1):flanks(2));
+  sbSn_data = y{sbSn(1)}(flanks(1):flanks(2));
   sbs_miss = isnan(sbSn_data);
 
   if any(sbs_miss)
