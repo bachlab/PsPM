@@ -447,7 +447,7 @@ hp
 \labelwidthstring 00.00.0000
 
 \family typewriter
-pfm
+tam
 \family default
  Pupil Fitting Model
 \end_layout
@@ -9299,7 +9299,7 @@ Table 31
 \series default
  Default values for 
 \family typewriter
-pspm_pfm
+pspm_tam
 \end_layout
 
 \begin_layout Standard

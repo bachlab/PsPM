@@ -294,9 +294,9 @@ if strcmpi(modeltype, 'glm')
     elseif ~ismember(model.modelspec, {settings.glm.modelspec})
       warning('ID:invalid_input', 'Unknown model specification %s.', model.modelspec); return;
     end
-    
+
     modno = find(strcmpi(model.modelspec, {settings.glm.modelspec}));
-    
+
     if ~isfield(model, 'modality')
         model.modality = settings.glm(modno).modality;
     end
@@ -396,9 +396,9 @@ if strcmpi(modeltype, 'tam')
     elseif ~ismember(model.modelspec, {settings.tam.modelspec})
       warning('ID:invalid_input', 'Unknown model specification %s.', model.modelspec); return;
     end
-    
+
     modno = find(strcmpi(model.modelspec, {settings.tam.modelspec}));
-    
+
     if ~isfield(model, 'modality')
         model.modality = settings.tam(modno).modality;
     end
@@ -406,7 +406,7 @@ if strcmpi(modeltype, 'tam')
 
     % Checking the input function
     if ~isfield(model, 'if')
-        model.if = settings.pfm(modno).cif;
+        model.if = settings.tam(modno).cif;
     else
         if ~isfield(model.if, 'fhandle')
             warning('No input function given.'); return;
@@ -519,7 +519,7 @@ if strcmpi(modeltype, 'glm') || strcmpi(modeltype, 'tam')
 
 end
 
-%% 10. General checks that require preceding GLM/TAM-specific checks in 
+%% 10. General checks that require preceding GLM/TAM-specific checks in
 %      case of GLM/TAM
 % -------------------------------------------------------------------------
 if ~isfield(model, 'filter')

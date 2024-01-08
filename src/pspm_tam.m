@@ -91,7 +91,7 @@ function tam = pspm_tam(model, options)
 %   └───────.norm_max:  set the first peak at 1 before model fitting.
 %                   DEFAULT: 0 (not normalize)
 %   ┌─────options:  [struct]
-%   ├.marker_chan:  marker channel number 
+%   ├.marker_chan:  marker channel number
 %   │               DEFAULT: 'marker' (i.e. last marker channel)
 %   └──.overwrite:  (optional) overwrite existing model output;
 %                   [logical] (0 or 1)
@@ -103,10 +103,10 @@ function tam = pspm_tam(model, options)
 %   Korn, C. W., & Bach, D. R. (2016). A solid frame for the window on
 %   cognition: Modeling event-related pupil responses. Journal of Vision,
 %   16(3), 28. https://doi.org/10.1167/16.3.28
-%   Abivardi, A., Korn, C.W., Rojkov, I. et al. Acceleration of inferred 
-%   neural responses to oddball targets in an individual with bilateral 
-%   amygdala lesion compared to healthy controls. Sci Rep 13, 14550 (2023). 
-%   https://doi.org/10.1038/s41598-023-41357-1 
+%   Abivardi, A., Korn, C.W., Rojkov, I. et al. Acceleration of inferred
+%   neural responses to oddball targets in an individual with bilateral
+%   amygdala lesion compared to healthy controls. Sci Rep 13, 14550 (2023).
+%   https://doi.org/10.1038/s41598-023-41357-1
 % ● History
 %   Introduced In PsPM 4.2
 %   Written in 2020 by Ivan Rojkov (University of Zurich)
@@ -119,7 +119,7 @@ if isempty(settings)
 end
 tam = struct();
 
-%% 2 Check input 
+%% 2 Check input
 % 2.1 check missing input --
 if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); return
 elseif nargin < 2; options = struct(); end
@@ -130,7 +130,7 @@ if model.invalid
     return
 end
 
-% 2.3 check options 
+% 2.3 check options
 options = pspm_options(options, 'tam');
 if options.invalid
   return
@@ -385,13 +385,13 @@ tam.infos.durationinfo = 'duration in seconds';
 
 tam.timing        = model.timing;
 
-tam.modeltype     = 'pfm';
+tam.modeltype     = 'tam';
 tam.modality      = model.modality;
 
 tam.names         = model.timing{1}.names(:).';
 
 % Saving structure
-savedata = struct('pfm', tam);
+savedata = struct('tam', tam);
 [sts, ~ , ~ ] = pspm_load1(model.modelfile, 'save', savedata, options);
 if sts == -1
   warning('ID:invalid_input', 'call of pspm_load1 failed');

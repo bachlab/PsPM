@@ -698,7 +698,7 @@ defaults.eye.cap.r = 'R';
 defaults.get_transfer_sr = 100;
 
 % default modalities
-defaults.modalities = struct('glm', 'scr', 'sf', 'scr', 'dcm', 'scr', 'pfm', 'pupil');
+defaults.modalities = struct('glm', 'scr', 'sf', 'scr', 'dcm', 'scr', 'tam', 'pupil');
 
 %% 7 modality-specific GLM settings
 %
@@ -818,7 +818,7 @@ defaults.tam(2) = struct(...
   'filter', struct('lpfreq', 'none', 'lporder', 0, 'hpfreq', 'none', 'hporder', 0, 'down', 0, 'direction', 'bi'));
 %% 9 FIRST LEVEL settings
 % 9.1 allowed first level model types
-defaults.first = {'glm', 'sf', 'dcm', 'pfm'};
+defaults.first = {'glm', 'sf', 'dcm', 'tam'};
 % 9.2 Data/module file helptext settings
 defaults.datafilehelp = ['In case data/model file(s) are chosen via the ',...
   'dependency button, make sure the number of output ',...
