@@ -449,7 +449,7 @@ hp
 \family typewriter
 tam
 \family default
- Pupil Fitting Model
+ Trial Average Model
 \end_layout
 
 \begin_layout Labeling
@@ -9287,7 +9287,7 @@ integer
 \end_layout
 
 \begin_layout Subsection
-Pupil Fitting Model
+Trial Average Model
 \end_layout
 
 \begin_layout Standard
