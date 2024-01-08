@@ -319,8 +319,8 @@ switch FunName
         end
     end
     options = autofill(options, 'overwrite',              0,          1                 );
-  case 'pfm'
-    % 2.33 pspm_pfm --
+  case 'tam'
+    % 2.33 pspm_tam --
     options = autofill(options, 'overwrite',              0,          1                 );
   case 'pp'
     % 2.34 pspm_pp --
