@@ -50,7 +50,7 @@ function varargout = pspm_split_sessions(datafile, markerchannel, options)
 %   REMARK for suffix and prefix:
 %   Markers in the prefix and suffix intervals are ignored. Only markers
 %   between the splitpoints are considered for each session, to avoid
-%   duplication of markers.
+%   duplication of markers. 
 % ● History
 %   Introduced in PsPM 5.1.1
 %   Written in 2021 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -170,7 +170,8 @@ if isempty(splitpoint)
   return;
 else
   % initialise
-  suffix = zeros(1,(numel(splitpoint)+1));
+  preffix = num2cell(zeros(1,(numel(splitpoint)+1)));
+  suffix = num2cell(zeros(1,(numel(splitpoint)+1)));
   for sn = 1:(numel(splitpoint)+1)
     if sn == 1
       trimpoint(sn, :) = [1, max(splitpoint(sn) - 1, 1)];
@@ -180,20 +181,21 @@ else
       trimpoint(sn, :) = [splitpoint(sn - 1), max(splitpoint(sn) - 1, 1)];
     end
 
-    if sn > numel(splitpoint)
-      trimpoint(sn, 2) = numel(mrk);
-    else
-      trimpoint(sn, 2) = max(1, splitpoint(sn) - 1);
-    end
-
     if options.suffix == 0
       if trimpoint(sn, 1) == trimpoint(sn, 2) || options.randomITI
-        suffix(sn) = mean(diff(mrk));
+        suffix{sn} = mean(diff(mrk));
       else
-        suffix(sn) = mean(diff(mrk(trimpoint(sn, 1):trimpoint(sn, 2))));
+        suffix{sn}  = mean(diff(mrk(trimpoint(sn, 1):trimpoint(sn, 2))));
       end
     else
-      suffix(sn) = options.suffix;
+      suffix{sn} = options.suffix;
+    end
+    prefix{sn} = options.prefix;
+
+    if sn == 1
+        prefix{sn} = 'none'; % don't trim start for first session
+    elseif sn > numel(splitpoint)
+        suffix{sn} = 'none'; % don't trim end for last session
     end
   end
 
@@ -208,7 +210,7 @@ else
     % 2.4.2 Split data
     trimoptions = struct('drop_offset_markers', 1, 'marker_chan_num', markerchannel);
     newdata = pspm_trim(struct('data', {indata}, 'infos', ininfos), ...
-      options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions);
+      prefix{sn}, suffix{sn}, trimpoint(sn, 1:2), trimoptions);
     options.overwrite = pspm_overwrite(newdatafile{sn}, options);
     newdata.options = options;
     pspm_load_data(newdatafile{sn}, newdata);
@@ -224,7 +226,7 @@ else
 			trimoptions_missing = trimoptions;
 			trimoptions_missing.marker_chan_num = 2;
       newmissing = pspm_trim(struct('data', {dummydata}, 'infos', dummyinfos), ...
-        options.prefix, suffix(sn), trimpoint(sn, 1:2), trimoptions_missing);
+        prefix{sn}, suffix{sn}, trimpoint(sn, 1:2), trimoptions_missing);
       epochs = newmissing.data{1}.data;
       epoch_on = 1 + strfind(epochs.', [0 1]); % Return the start points of the excluded interval
       epoch_off = strfind(epochs.', [1 0]); % Return the end points of the excluded interval
