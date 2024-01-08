@@ -55,8 +55,6 @@ for iSession=1:nrSession
 end
 model.datafile = datafile;
 model.timing = timing;
-% normalization
-model.norm = job.data_options.norm;
 % filter
 if ~isfield(job.data_options.filter,'def')
   % lowpass
@@ -79,9 +77,9 @@ if ~isfield(job.data_options.filter,'def')
   filter.direction = job.data_options.filter.edit.direction; % sampling rate
   model.filter = filter;
 end
-% subsession threshold
-model.substresh = job.data_options.substhresh;
-%constrained model
+% normalization, subsession threshold
+model = pspm_update_struct(model, job.data_options, {'norm', 'substhresh'});
+% constrained model
 model.constrained = job.data_options.constr_model;
 % channel number
 if isfield(job.chan, 'chan_nr')
