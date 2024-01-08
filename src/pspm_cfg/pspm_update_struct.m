@@ -1,4 +1,7 @@
 function StructY = pspm_update_struct(StructY, StructX, Fields)
+if ~exist('StructY','var')
+  StructY = struct();
+end
 switch length(Fields)
 case 1
 	if isfield(StructX, Fields)

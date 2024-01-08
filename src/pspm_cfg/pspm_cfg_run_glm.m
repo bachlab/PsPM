@@ -33,7 +33,6 @@ for iSession=1:nrSession
       model.timing{iSession,1}.names{1,iCond} = job.session(iSession).data_design.condition(iCond).name;
       model.timing{iSession,1}.onsets{1,iCond} = job.session(iSession).data_design.condition(iCond).onsets;
       model.timing{iSession,1}.durations{1,iCond} = job.session(iSession).data_design.condition(iCond).durations;
-
       nrPmod = size(job.session(iSession).data_design.condition(iCond).pmod,2);
       if nrPmod ~= 0
         for iPmod=1:nrPmod
@@ -69,7 +68,7 @@ if isfield(job.timeunits, 'markers')
   end
 end
 % normalize
-model.norm = job.norm;
+model = pspm_update_struct(model, job, {'norm'});
 % filter
 if isfield(job.filter,'def')
   model.filter = def_filter;
@@ -94,9 +93,7 @@ else
   model.filter.direction = job.filter.edit.direction; % sampling rate
 end
 % channel number
-if isfield(job.chan, 'chan_nr')
-  model.channel = job.chan.chan_nr;
-end
+model = pspm_update_struct(model, job.chan, 'chan_nr');
 if isfield(job.latency, 'free')
   model.latency = 'free';
   model.window = job.latency.free.time_window;
@@ -104,7 +101,7 @@ else
   model.latency = 'fixed';
 end
 % options
-options.overwrite = job.overwrite;
+options = pspm_update_struct(options, job, {'overwrite'});
 % set option to create stats exclude if set
 if isfield(job.exclude_missing,'exclude_missing_yes')
   length = job.exclude_missing.exclude_missing_yes.segment_length;
