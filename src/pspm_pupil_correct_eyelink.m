@@ -240,7 +240,7 @@ if sts_pupil_correct ~= 1; return; end
 
 %% save data
 pupil_data{1}.data = pupil_corrected;
-pupil_data{1}.header.chantype = convert_pp(old_channeltype);
+pupil_data{1}.header.chantype = old_channeltype;
 channel_str = num2str(options.channel);
 o.msg.prefix = sprintf(...
   'PFE correction :: Input channel: %s -- Input channeltype: %s -- Output channeltype: %s --', ...
@@ -261,35 +261,4 @@ else
   [~, gaze_mm] = pspm_convert_unit(gaze_data, units, 'mm');
 end
 
-function channeltype_pp = convert_pp(channeltype)
-global settings;
-if isempty(settings), pspm_init; end
-% analyse channel type and convert it as preprocessed (pp) channel type
-channeltype_array = split(channeltype,'_');
-% find if there is pp
-is_pp = any(strcmp(channeltype_array,'pp'));
-% find if it is combined (c), left (l) or right (r)
-is_c = any(strcmp(channeltype_array, settings.lateral.char.c));
-is_l = any(strcmp(channeltype_array, settings.lateral.char.l));
-is_r = any(strcmp(channeltype_array, settings.lateral.char.r));
-if ~is_pp
-  if is_c
-    channeltype_array(ismember(channeltype_array,settings.lateral.char.b)) = [];
-    channeltype_array{end+1} = 'pp';
-    channeltype_array{end+1} = settings.lateral.char.b;
-  elseif is_l
-    channeltype_array(ismember(channeltype_array,settings.lateral.char.l)) = [];
-    channeltype_array{end+1} = 'pp';
-    channeltype_array{end+1} = settings.lateral.char.l;
-  elseif is_r
-    channeltype_array(ismember(channeltype_array,settings.lateral.char.r)) = [];
-    channeltype_array{end+1} = 'pp';
-    channeltype_array{end+1} = settings.lateral.char.r;
-  else
-    channeltype_array{end+1} = 'pp';
-  end
-  channeltype_pp = join(channeltype_array,'_');
-  channeltype_pp = channeltype_pp{1};
-else
-  channeltype_pp = channeltype;
-end
+
