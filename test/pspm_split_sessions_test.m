@@ -93,11 +93,15 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
       % 6 minutes data
       pspm_testdata_gen(channels, 60*6, fn);
       newdatafile = pspm_split_sessions(fn, 3, struct());
+      % check number of sessions
       this.verifyEqual(numel(newdatafile), nsessions);
+      % check that all sessions (with the exception of the first) start at the marker onset  
       for i = 1:numel(newdatafile)
         if exist(newdatafile{i}, 'file')
-          [~, ~, d] = pspm_load_data(newdatafile{i});
-          this.verifyEqual(d{3}.data(1), 0);
+          if i > 1
+            [~, ~, d] = pspm_load_data(newdatafile{i});
+            this.verifyEqual(d{3}.data(1), 0);
+          end
           delete(newdatafile{i});
         end
       end
@@ -157,6 +161,12 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
         ends = [split_times dur];
         sess_dur = diff([starts; ends]);
       end
+      % adapt the first and last session duration, as no trimming will be
+      % performed towards file start/end
+      if ~isempty(splitpoints)
+        sess_dur(1) = split_times(1);
+        sess_dur(end) = dur - split_times(end);
+      end
       options.splitpoints = splitpoints;
       newdatafile = pspm_split_sessions(fn, 3, options);
       if ~isempty(splitpoints)
@@ -167,7 +177,7 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
       this.verifyEqual(numel(newdatafile),n_sess_exp);
       for i = 1:numel(newdatafile)
         if exist(newdatafile{i}, 'file')
-          % test suffix and prefix
+          % test session duration
           [~, info, ~] = pspm_load_data(newdatafile{i});
           this.verifyEqual(info.duration, sess_dur(i), 'RelTol', 0.5);
           % remove file
