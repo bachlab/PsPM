@@ -9,10 +9,9 @@ end
 delimfield = fieldnames(job.delim);
 delim = job.delim.(delimfield{1});
 options = struct();
-options.delim           = delim;
-options.target          = target;
-datatype = job.datatype;
-options.statstype       = datatype;
+options.delim     = delim;
+options.target    = target;
+options.statstype = job.datatype;
 options = pspm_update_struct(options, job, 'exclude_missing');
 % exclude conditions with too many NaN
 pspm_exp(modelfile, options);

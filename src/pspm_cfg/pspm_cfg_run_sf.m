@@ -2,6 +2,7 @@ function out = pspm_cfg_run_sf(job)
 % Updated on 19-12-2023 by Teddy
 global settings
 if isempty(settings), pspm_init; end
+options = struct();
 model.datafile = job.datafile{1};
 model.modelfile = [job.outdir{1}, filesep, job.modelfile, '.mat'];
 if strcmp(job.method, 'all')

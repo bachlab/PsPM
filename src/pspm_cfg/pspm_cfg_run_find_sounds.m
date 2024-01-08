@@ -2,13 +2,14 @@ function [out] = pspm_cfg_run_find_sounds(job)
 % Updated on 19-12-2023 by Teddy
 out = NaN;
 file = job.datafile{1};
+options = struct();
 if isfield(job.chan, 'chan_nr')
   options.sndchannel = job.chan.chan_nr;
 end
 if isfield(job.roi, 'region')
   options.roi = job.roi.region;
 end
-options.threshold = job.threshold;
+options = pspm_update_struct(options, job, 'threshold');
 options.channel_action = 'none';
 f = fieldnames(job.output);
 switch f{1}

@@ -1,14 +1,11 @@
 function [out] = pspm_cfg_run_gaze_convert(job)
-
-% $Id$
-% $Rev$
-
-channel_action = job.channel_action;
+% Updated on 08-01-2024 by Teddy
 fn = job.datafile{1};
-options = struct('channel_action', channel_action);
+options = struct();
+options = pspm_update_struct(options, job, {'channel_action'});
 if isfield(job.conversion, 'degree2sps')
   % do degree to sps conversion
-  options.eyes = job.conversion.degree2sps.eyes;
+  options = pspm_update_struct(options, job.conversion.degree2sps, {'eyes'});
   [~, out] = pspm_convert_visangle2sps(fn, options);
 elseif isfield(job.conversion, 'pixel2unit')
   args = job.conversion.pixel2unit;

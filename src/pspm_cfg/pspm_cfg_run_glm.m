@@ -2,6 +2,7 @@ function [params] = pspm_cfg_run_glm(job, def_filter)
 % updated on 19-12-2023 by Teddy
 global settings
 if isempty(settings), pspm_init; end
+options = struct();
 model.modelfile = [job.outdir{1}, filesep, job.modelfile '.mat'];
 nrSession = size(job.session,2);
 for iSession=1:nrSession
