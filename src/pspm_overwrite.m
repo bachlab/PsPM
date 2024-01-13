@@ -63,7 +63,7 @@ switch numel(varargin)
     end
     switch class(varargin{2})
       case 'double'
-        overwrite = varargin{2};
+        overwrite_final = varargin{2};
       case 'struct'
         options_struct = varargin{2};
         if isfield(options_struct, 'overwrite')
@@ -85,6 +85,9 @@ else
     % if file does not exist, always overwrite
     overwrite_final = 1;
   else
+    % the detection code for "GUI" is not working
+    % the following code can be re-enabled if the condition can be set
+    % -EOF-
     % if feature('ShoverwriteFigureWindoverwrites') % if in gui
     %   msg = ['Model file already exists. Overwrite?', ...
     %     newline, 'Existing file: ', fn];
