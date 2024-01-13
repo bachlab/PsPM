@@ -182,9 +182,6 @@ switch class(channel)
     if ~isfield(channel.options, 'overwrite')
       channel.options.overwrite = pspm_overwrite(fn);
     end
-    if (exist(fn, 'file') && channel.options.overwrite == 0)
-      warning('ID:data_loss', 'Data not saved.\n');
-    end
   otherwise
     warning('ID:invalid_input', 'Unknown channel option.');
 end

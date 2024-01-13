@@ -19,14 +19,16 @@ function varargout = pspm_overwrite(varargin)
 %               can be a value or a struct
 %               if a value, can be 0 (not to overwrite) or 1 (to overwrite)
 %               if a struct, check if the field `overwrite` exist
+% ● Examples
+%   [sts, overwrite_final] = pspm_overwrite(fn, overwrite)
 % ● Outputs
 %   overwrite_final  option of overwriting determined by pspm_overwrite
 %                     0: not to overwrite
 %                     1: to overwrite
 % ● History
 %   Introduced in PsPM 6.0
-%   Written in 2022 by Teddy Chao (UCL)
-%   Maintained in 2023 by Teddy Chao
+%   Written in 2022 by Teddy
+%   Maintained in 2024 by Teddy
 
 %% 1 Initialise
 global settings
@@ -90,6 +92,9 @@ else
         'File already exists', 'Yes', 'No', 'Yes');
       % default as Yes (to overwrite)
       overwrite_final = strcmp(overwrite, 'Yes');
+    end
+    if overwrite_final channel.options.overwrite == 0
+      warning('ID:data_loss', 'Data not saved.\n');
     end
   end
 end
