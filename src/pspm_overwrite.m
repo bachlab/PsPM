@@ -85,16 +85,18 @@ else
     % if file does not exist, always overwrite
     overwrite_final = 1;
   else
-    if feature('ShoverwriteFigureWindoverwrites') % if in gui
-      msg = ['Model file already exists. Overwrite?', ...
-        newline, 'Existing file: ', fn];
-      overwrite = questdlg(msg, ...
-        'File already exists', 'Yes', 'No', 'Yes');
-      % default as Yes (to overwrite)
-      overwrite_final = strcmp(overwrite, 'Yes');
-    end
-    if overwrite_final channel.options.overwrite == 0
-      warning('ID:data_loss', 'Data not saved.\n');
+    % if feature('ShoverwriteFigureWindoverwrites') % if in gui
+    %   msg = ['Model file already exists. Overwrite?', ...
+    %     newline, 'Existing file: ', fn];
+    %   overwrite = questdlg(msg, ...
+    %     'File already exists', 'Yes', 'No', 'Yes');
+    %   % default as Yes (to overwrite)
+    %   overwrite_final = strcmp(overwrite, 'Yes');
+    % end
+    if overwrite_final == 0
+      warning('ID:data_loss', ['Results are not saved, ',...
+        'because there has been an existing file with the same name, ',...
+        'and overwritting has been set to No.\n']);
     end
   end
 end
