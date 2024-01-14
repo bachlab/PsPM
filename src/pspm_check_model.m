@@ -389,100 +389,100 @@ end
 %% 9. TAM-specific checks
 % -------------------------------------------------------------------------
 if strcmpi(modeltype, 'tam')
-    if (~isfield(model, 'window') || isempty(model.window) || ~isnumeric(model.window))
-      warning('ID:invalid_input', 'Window is expected to be a numeric value.'); return;
-    elseif ~isfield(model, 'modelspec')
-      model.modelspec = settings.tam(1).modelspec;
-    elseif ~ismember(model.modelspec, {settings.tam.modelspec})
-      warning('ID:invalid_input', 'Unknown model specification %s.', model.modelspec); return;
+  if (~isfield(model, 'window') || isempty(model.window) || ~isnumeric(model.window))
+    warning('ID:invalid_input', 'Window is expected to be a numeric value.'); return;
+  elseif ~isfield(model, 'modelspec')
+    model.modelspec = settings.tam(1).modelspec;
+  elseif ~ismember(model.modelspec, {settings.tam.modelspec})
+    warning('ID:invalid_input', 'Unknown model specification %s.', model.modelspec); return;
+  end
+
+  modno = find(strcmpi(model.modelspec, {settings.tam.modelspec}));
+
+  if ~isfield(model, 'modality')
+    model.modality = settings.tam(modno).modality;
+  end
+
+
+  % Checking the input function
+  if ~isfield(model, 'if')
+    model.if = settings.tam(modno).cif;
+  else
+    if ~isfield(model.if, 'fhandle')
+      warning('No input function given.'); return;
+    elseif ischar(model.if.fhandle)
+      [~, basefn,~] = fileparts(model.if.fhandle);
+      model.if.fhandle = str2func(basefn);
+      clear basefn
+    elseif ~isa(model.bf.fhandle, 'function_handle')
+      warning('Basis function must be a string or function handle.'); return;
     end
-
-    modno = find(strcmpi(model.modelspec, {settings.tam.modelspec}));
-
-    if ~isfield(model, 'modality')
-        model.modality = settings.tam(modno).modality;
+    if ~isfield(model.if,'args') || isempty(model.if.args) || ~isnumeric(model.if.args)
+      warning('ID:invalid_input',['Arguments for the input',...
+        ' function must be a non-empty numeric array.']); return;
     end
-
-
-    % Checking the input function
-    if ~isfield(model, 'if')
-        model.if = settings.tam(modno).cif;
-    else
-        if ~isfield(model.if, 'fhandle')
-            warning('No input function given.'); return;
-        elseif ischar(model.if.fhandle)
-            [~, basefn,~] = fileparts(model.if.fhandle);
-            model.if.fhandle = str2func(basefn);
-            clear basefn
-        elseif ~isa(model.bf.fhandle, 'function_handle')
-            warning('Basis function must be a string or function handle.'); return;
-        end
-        if ~isfield(model.if,'args') || isempty(model.if.args) || ~isnumeric(model.if.args)
-            warning('ID:invalid_input',['Arguments for the input',...
-                ' function must be a non-empty numeric array.']); return;
-        end
-        if ~isfield(model.if,'lb') || ~isnumeric(model.if.lb) ...
-                || any(size(model.if.lb)~=size(model.if.args))
-            warning('ID:invalid_input',['The lower bounds for the input function',...
-                ' must be a numeric array of the same size than ''model.if.arg''.']); return;
-        end
-        if ~isfield(model.if,'ub') || ~isnumeric(model.if.ub) ...
-                || any(size(model.if.ub)~=size(model.if.args))
-            warning('ID:invalid_input',['The upper bounds for the input function',...
-                ' must be a numeric array of the same size than ''model.if.arg''.']); return;
-        end
-        if any(model.if.lb > model.if.ub) || any(model.if.lb > model.if.args) ...
-                || any(model.if.args > model.if.ub)
-            warning('ID:invalid_input',['Input function''s parameters are inconsistent.',...
-                ' They must respect: model.if.lb <= model.if.arg <= model.if.ub.']); return;
-        end
+    if ~isfield(model.if,'lb') || ~isnumeric(model.if.lb) ...
+        || any(size(model.if.lb)~=size(model.if.args))
+      warning('ID:invalid_input',['The lower bounds for the input function',...
+        ' must be a numeric array of the same size than ''model.if.arg''.']); return;
     end
-    model.if.args = model.if.args(:).';
-    model.if.lb = model.if.lb(:).';
-    model.if.ub = model.if.ub(:).';
-
-    % Checking baseline
-    if ~isfield(model,'baseline')
-        model.baseline = 0;
-    elseif ~isnumeric(model.baseline)
-        warning('ID:invalid_input','''model.baseline'' has to be a numeric.'); return;
-    elseif model.baseline > model.window || model.baseline < 0
-        warning('ID:invalid_input',['''model.baseline'' has to be positive ',...
-            'and smaller than ''model.window''.']); return;
+    if ~isfield(model.if,'ub') || ~isnumeric(model.if.ub) ...
+        || any(size(model.if.ub)~=size(model.if.args))
+      warning('ID:invalid_input',['The upper bounds for the input function',...
+        ' must be a numeric array of the same size than ''model.if.arg''.']); return;
     end
-
-    % Checking standard experimental condition
-    std_cond_war_msg = ['The standard experimental condition must be',...
-        ' either a valid experimental condition or an',...
-        ' index corresponding to it.'];
-    if ~isfield(model,'std_exp_cond')
-        model.std_exp_cond = 'none';
-    elseif ~ischar(model.std_exp_cond) && ~isnumeric(model.std_exp_cond)
-        warning('ID:invalid_input',std_cond_war_msg); return;
-    elseif ischar(model.std_exp_cond)
-        tmp_ind = cellfun(@(x) strcmpi(model.std_exp_cond,x), model.timing{1}.names);
-        if ~any(tmp_ind)
-            warning('ID:invalid_input',std_cond_war_msg); return;
-        end
-        std_exp_cond.name = model.std_exp_cond;
-        std_exp_cond.ind = find(tmp_ind);
-    elseif isnumeric(model.std_exp_cond)
-        if model.std_exp_cond < 1 || ...
-                model.std_exp_cond > numel(model.timing{1}.names)
-            warning('ID:invalid_input',std_cond_war_msg); return;
-        end
-        std_exp_cond.name = model.timing{1}.names(model.std_exp_cond);
-        std_exp_cond.ind = model.std_exp_cond;
+    if any(model.if.lb > model.if.ub) || any(model.if.lb > model.if.args) ...
+        || any(model.if.args > model.if.ub)
+      warning('ID:invalid_input',['Input function''s parameters are inconsistent.',...
+        ' They must respect: model.if.lb <= model.if.arg <= model.if.ub.']); return;
     end
-    clear std_cond_war_msg tmp_ind
+  end
+  model.if.args = model.if.args(:).';
+  model.if.lb = model.if.lb(:).';
+  model.if.ub = model.if.ub(:).';
 
-    % Checking norm_max
-    if ~isfield(model, 'norm_max')
-        model.norm_max = 0;
-    elseif ~ismember(model.norm_max, [0, 1])
-        warning('ID:invalid_input', '''model.norm_max'' has to be 0 or 1.'); return;
+  % Checking baseline
+  if ~isfield(model,'baseline')
+    model.baseline = 0;
+  elseif ~isnumeric(model.baseline)
+    warning('ID:invalid_input','''model.baseline'' has to be a numeric.'); return;
+  elseif model.baseline > model.window || model.baseline < 0
+    warning('ID:invalid_input',['''model.baseline'' has to be positive ',...
+      'and smaller than ''model.window''.']); return;
+  end
+
+  % Checking standard experimental condition
+  std_cond_war_msg = ['The standard experimental condition must be',...
+    ' either a valid experimental condition or an',...
+    ' index corresponding to it.'];
+  if ~isfield(model,'std_exp_cond')
+    model.std_exp_cond = 'none';
+  elseif ~ischar(model.std_exp_cond) && ~isnumeric(model.std_exp_cond)
+    warning('ID:invalid_input',std_cond_war_msg); return;
+  elseif ischar(model.std_exp_cond)
+    tmp_ind = cellfun(@(x) strcmpi(model.std_exp_cond,x), model.timing{1}.names);
+    if ~any(tmp_ind)
+      warning('ID:invalid_input',std_cond_war_msg); return;
     end
- end
+    std_exp_cond.name = model.std_exp_cond;
+    std_exp_cond.ind = find(tmp_ind);
+  elseif isnumeric(model.std_exp_cond)
+    if model.std_exp_cond < 1 || ...
+        model.std_exp_cond > numel(model.timing{1}.names)
+      warning('ID:invalid_input',std_cond_war_msg); return;
+    end
+    std_exp_cond.name = model.timing{1}.names(model.std_exp_cond);
+    std_exp_cond.ind = model.std_exp_cond;
+  end
+  clear std_cond_war_msg tmp_ind
+
+  % Checking norm_max
+  if ~isfield(model, 'norm_max')
+    model.norm_max = 0;
+  elseif ~ismember(model.norm_max, [0, 1])
+    warning('ID:invalid_input', '''model.norm_max'' has to be 0 or 1.'); return;
+  end
+end
 
  %% 9. GLM- and TAM-specific checks
 % -------------------------------------------------------------------------

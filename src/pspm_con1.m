@@ -103,7 +103,7 @@ for iFn = 1:numel(modelfile)
   if deletecon == 1
     con = []; conno = 0;
   else
-    [lsts, con] = pspm_load1(modelfile{iFn}, 'con');
+    [lsts, con, ~] = pspm_load1(modelfile{iFn}, 'con');
     if lsts == -1
       fprintf(' Creating fresh contrast structure.\n');
       con = []; conno = 0;
