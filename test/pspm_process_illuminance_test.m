@@ -102,6 +102,7 @@ classdef pspm_process_illuminance_test < matlab.unittest.TestCase
       sr = sr_list{1};
       o = struct();
       o.fn = fn;
+      o.overwrite = 1;
       [sts, out] = this.verifyWarningFree(@()pspm_process_illuminance(fn, sr, o));
       this.verifyEqual(sts, 1);
       d = load(fn);
