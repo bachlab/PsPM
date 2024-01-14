@@ -114,10 +114,10 @@ classdef pspm_pp_test < matlab.unittest.TestCase
       pspm_testdata_gen(channels, 10, fn);
       % run once
       newfile = pspm_pp('butter', fn, 40);
-      % add one channel, run again and don't overwrite
+      % add one channel, run again and overwrite
       channels{3}.chantype = 'scr';
       pspm_testdata_gen(channels, 10, fn);
-      newfile = pspm_pp('butter', fn, 40, [1,3], struct());
+      newfile = pspm_pp('butter', fn, 40, [1,3], struct('overwrite', 1));
       % compare the files and ensure there was an overwrite
       [sts, infos, data, filestruct] = pspm_load_data(newfile, 'none');
       this.verifyTrue(filestruct.numofchan == 3, 'The file has not been overwritten even if i told the function to do so!');

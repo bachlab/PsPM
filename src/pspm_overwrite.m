@@ -19,14 +19,16 @@ function varargout = pspm_overwrite(varargin)
 %               can be a value or a struct
 %               if a value, can be 0 (not to overwrite) or 1 (to overwrite)
 %               if a struct, check if the field `overwrite` exist
+% ● Examples
+%   [sts, overwrite_final] = pspm_overwrite(fn, overwrite)
 % ● Outputs
 %   overwrite_final  option of overwriting determined by pspm_overwrite
 %                     0: not to overwrite
 %                     1: to overwrite
 % ● History
 %   Introduced in PsPM 6.0
-%   Written in 2022 by Teddy Chao (UCL)
-%   Maintained in 2023 by Teddy Chao
+%   Written in 2022 by Teddy
+%   Maintained in 2024 by Teddy
 
 %% 1 Initialise
 global settings
@@ -61,7 +63,7 @@ switch numel(varargin)
     end
     switch class(varargin{2})
       case 'double'
-        overwrite = varargin{2};
+        overwrite_final = varargin{2};
       case 'struct'
         options_struct = varargin{2};
         if isfield(options_struct, 'overwrite')
@@ -83,13 +85,21 @@ else
     % if file does not exist, always overwrite
     overwrite_final = 1;
   else
-    if feature('ShoverwriteFigureWindoverwrites') % if in gui
-      msg = ['Model file already exists. Overwrite?', ...
-        newline, 'Existing file: ', fn];
-      overwrite = questdlg(msg, ...
-        'File already exists', 'Yes', 'No', 'Yes');
-      % default as Yes (to overwrite)
-      overwrite_final = strcmp(overwrite, 'Yes');
+    % the detection code for "GUI" is not working
+    % the following code can be re-enabled if the condition can be set
+    % -EOF-
+    % if feature('ShoverwriteFigureWindoverwrites') % if in gui
+    %   msg = ['Model file already exists. Overwrite?', ...
+    %     newline, 'Existing file: ', fn];
+    %   overwrite = questdlg(msg, ...
+    %     'File already exists', 'Yes', 'No', 'Yes');
+    %   % default as Yes (to overwrite)
+    %   overwrite_final = strcmp(overwrite, 'Yes');
+    % end
+    if overwrite_final == 0
+      warning('ID:data_loss', ['Results are not saved, ',...
+        'because there has been an existing file with the same name, ',...
+        'and overwritting has been set to No.\n']);
     end
   end
 end

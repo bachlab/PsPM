@@ -340,6 +340,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
         fclose(fopen(['i', data{i}], 'w'));
       end
       options = struct('newfile', true);
+      options.overwrite = 1;
       % call function
       [sts, ~] = this.verifyWarningFree(@() pspm_interpolate(data, options));
       this.verifyEqual(sts, 1); % sts should be 1
