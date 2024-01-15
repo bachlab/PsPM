@@ -14227,12 +14227,12 @@ You can have a look at the imported data by loading this file into MATLAB.
 placement H
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename Figures/YY1_import.png
-	scale 60
+	scale 40
 
 \end_inset
 
@@ -14277,12 +14277,12 @@ Most of the time, the SCR recording is switched on some time before the
 placement H
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename Figures/YY2_trim.png
-	scale 60
+	scale 40
 
 \end_inset
 
@@ -14535,7 +14535,7 @@ Nuisance File
 placement H
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
