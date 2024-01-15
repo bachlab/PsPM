@@ -28,9 +28,10 @@ function glm = pspm_glm(model, options)
 %   ├.modelspec:  'scr' (default); specify the model to be used.
 %   │             See pspm_init, defaults.glm() which modelspecs are possible
 %   │             with glm.
-%   ├─.modality:  specify the modality to be processed.
+%   ├─.modality:  specify the data modality to be processed.
 %   │             When model.modality is set to be sps, the model.channel
-%   │             should be set among sps_l, sps_r, or defaultly sps.
+%   │             should be set among sps_l, sps_r, or defaultly sps. By
+%   │             default, this is determined automatically from "modelspec"
 %   ├───────.bf:  basis function/basis set; modality specific default
 %   │             with subfields .fhandle (function handle or string) and
 %   │             .args (arguments, first argument sampling interval will
