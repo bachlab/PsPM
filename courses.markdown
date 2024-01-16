@@ -12,7 +12,7 @@ Course videocasts and slides are available at the bottom of the page and on our 
 
 ## Upcoming PsPM courses
 There are **regular PsPM courses**. To check for updates, have a look on our [news site](https://bachlab.github.io/PsPM/news/), on [bachlab news](http://bachlab.org/news), or follow [bachlab on twitter](http://twitter.com/bachlab_uzh).
-* **18.-19. January 2023** Live online course. Please check the <a href="https://www.caian.uni-bonn.de/media/pspm_schedule_012024v2.pdf">schedule</a> and register via <a href="mailto:caian.admin@uni-bonn.de">email</a>.
+* **18.-19. January 2024** Live online course. Please check the <a href="https://www.caian.uni-bonn.de/media/pspm_schedule_012024v2.pdf">schedule</a> and register via <a href="mailto:caian.admin@uni-bonn.de">email</a>.
 
 
 ## Past PsPM courses
