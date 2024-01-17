@@ -175,7 +175,7 @@ function artefact_rm = pspm_cfg_artefact_rm
     overwrite.val     = {false};
     overwrite.labels  = {'No', 'Yes'};
     overwrite.values  = {false, true};
-    overwrite.help    = {'Overwrite existing file?'};
+    overwrite.help    = {'Overwrite if a file with the same name has existed?'};
 
     %% Executable branch
     artefact_rm      = cfg_exbranch;

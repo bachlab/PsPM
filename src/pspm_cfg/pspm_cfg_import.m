@@ -405,7 +405,7 @@ overwrite.tag     = 'overwrite';
 overwrite.val     = {false};
 overwrite.labels  = {'No', 'Yes'};
 overwrite.values  = {false, true};
-overwrite.help    = {'Overwrite existing file?'};
+overwrite.help    = {'Overwrite if a file with the same name has existed?'};
 
 %% Executable branch
 import_data      = cfg_exbranch;
