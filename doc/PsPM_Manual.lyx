@@ -21183,6 +21183,352 @@ options
  fields.
 \end_layout
 
+\begin_layout Subsection*
+Version 6.1.1
+\end_layout
+
+\begin_layout Subsubsection*
+New features
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_bf_psrf_2_fc
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_bf_psrf_2_fc
+\family default
+ now allows to set the time delay between CS and US.
+\end_layout
+
+\begin_layout Itemize
+Previously, 
+\family typewriter
+pspm_bf_psrf_2_fc
+\family default
+ used to set a basis function for the CS and for the US response with a
+ time delay of 3.5 s as standard.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_dcm
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Missing data epochs from file and data can be combined.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_glm
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_glm
+\family default
+ now allows a two-element vector and construct the dictionary accordingly.
+\end_layout
+
+\begin_layout Itemize
+Previously 
+\family typewriter
+pspm_glm
+\family default
+ only allows scalar values in model.window.
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection*
+New functions
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_check_model
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_check_model
+\family default
+ checks the fiels of models.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_combine_markerchannels
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_combine_markerchannels
+\family default
+ allows users to use the GLM option "markervalues" to create onsets definition
+ from channels distributed across multiple channels.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_tam
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\family typewriter
+TAM
+\family default
+ stands for Trial Average Model.
+ 
+\family typewriter
+pspm_tam
+\family default
+ allows to fit models on trial-averaged data.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection*
+Adjustments
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_pupil_pp
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Now 
+\family typewriter
+pspm_pupil_pp
+\family default
+ creates channels of type 
+\family typewriter
+pupil
+\family default
+ rather than 
+\family typewriter
+pupil_pp
+\family default
+.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_split_sessions
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_split_sessions
+\family default
+ no longer drops markers at beginning or end of file.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection*
+Bug fixes
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_con
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A bug caused by the new varargout logic of 
+\family typewriter
+pspm_load1
+\family default
+ has been fixed.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_dcm
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A bug that leads dropping sub-threshold missing data periods has been fixed.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_get_spike
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A minor bug caused by a non-existing variable has been fxied.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_scr_pp
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A bug that could change the original file if it saves epochs to 
+\family typewriter
+missing_epoch.mat
+\family default
+ has been fixed.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection*
+Improvements
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_extract_segments
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Now 
+\family typewriter
+pspm_extract_segments
+\family default
+ process the data after excluding the missing data information that is provided
+ in the model structure.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_dcm
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Processed data are now initialised as data matrix with 
+\family typewriter
+NaN
+\family default
+ before inserting data of variable size.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_glm
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A warning has been added if any duration in onset definition is above 
+\family typewriter
+0
+\family default
+ and modality is not 
+\family typewriter
+sps
+\family default
+.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_overwrite
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+The logic of overwriting files in PsPM has been updated.
+\end_layout
+
+\begin_layout Itemize
+Specifically, the overwriting operation is applicable only if there has
+ been a file with the proposed name of the outputfile.
+\end_layout
+
+\begin_layout Itemize
+A warning will be provided if the user chooses not to overwrite the file,
+ since the output of PsPM will not be saved.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_split_sessions
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A misleading warning provided by 
+\family typewriter
+pspm_split_sessions
+\family default
+ when it processes a missing epoch file has been fixed.
+\end_layout
+
+\begin_layout Itemize
+The help text of 
+\family typewriter
+split_sessions
+\family default
+ in the GUI has been updated.
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection*
+UI improvements
+\end_layout
+
+\begin_layout Itemize
+PsPM's UI in Linux environment has been improved.
+\end_layout
+
 \begin_layout Part
 Acknowledgements
 \end_layout
