@@ -27,7 +27,7 @@ classdef pspm_load1_test < matlab.unittest.TestCase
       model.datafile = this.fn;
       model.timeunits = 'seconds';
       for i = 1:length(settings.first)
-        if ~strcmpi(settings.first{i},'pfm')
+        if ~strcmpi(settings.first{i},'tam')
           mbn = ['model_', settings.first{i}];
           fn_ok = false;
           j = 0;
@@ -284,7 +284,7 @@ classdef pspm_load1_test < matlab.unittest.TestCase
         mdltype = find(ismember(mdltypes, fieldnames(mdl)));
         mdltype = mdltypes{mdltype};
         mdl.(mdltype).test = x;
-        [sts, data, mdltype] = this.verifyWarningFree(@()pspm_load1(f, 'save', mdl, struct()));
+        [sts, data, mdltype] = this.verifyWarningFree(@()pspm_load1(f, 'save', mdl, struct('overwrite', 1)));
         this.basic_function_test(f, sts, mdltype);
         % check for fields
         mdl = load(f);
@@ -304,7 +304,7 @@ classdef pspm_load1_test < matlab.unittest.TestCase
         mdl.(mdltype).test = x;
         % do overwrite
         mdl.(mdltype).test = x;
-        [sts, data, mdltype] = this.verifyWarningFree(@()pspm_load1(f, 'save', mdl, struct()));
+        [sts, data, mdltype] = this.verifyWarningFree(@()pspm_load1(f, 'save', mdl, struct('overwrite', 1)));
         mdl = load(f);
         this.verifyEqual(mdl.(mdltype).test, x);
         % test zscored

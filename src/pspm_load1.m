@@ -149,7 +149,7 @@ elseif ~isfield(indata.(mdltype), 'modality')
   % --------------------------------------------
   % return
   indata.(mdltype).modality = settings.modalities.(mdltype);
-elseif strcmpi(mdltype, 'pfm')
+elseif strcmpi(mdltype, 'tam')
   % nothing to do
 elseif ~isfield(indata.(mdltype), 'stats')
   warning('ID:invalid_data_structure', '%sNo stats contained in file.', errmsg); return;
@@ -206,9 +206,9 @@ else
   reconflag = 1;
 end
 
-% if not glm, nor pfm
+% if not glm, nor tam
 % create condition names --
-if ~strcmpi(mdltype, 'glm') && ~strcmpi(mdltype, 'pfm')
+if ~strcmpi(mdltype, 'glm') && ~strcmpi(mdltype, 'tam')
   indata.(mdltype).condnames = ...
     unique(indata.(mdltype).trlnames(cellfun(@ischar,indata.(mdltype).trlnames)));
 end

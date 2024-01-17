@@ -98,7 +98,7 @@ PsPM: Option References
 
 \begin_layout Standard
 \align center
-Version 6.1.0
+Version 6.1.1
 \end_layout
 
 \begin_layout Standard
@@ -447,9 +447,9 @@ hp
 \labelwidthstring 00.00.0000
 
 \family typewriter
-pfm
+tam
 \family default
- Pupil Fitting Model
+ Trial Average Model
 \end_layout
 
 \begin_layout Labeling
@@ -9287,7 +9287,7 @@ integer
 \end_layout
 
 \begin_layout Subsection
-Pupil Fitting Model
+Trial Average Model
 \end_layout
 
 \begin_layout Standard
@@ -9299,7 +9299,7 @@ Table 31
 \series default
  Default values for 
 \family typewriter
-pspm_pfm
+pspm_tam
 \end_layout
 
 \begin_layout Standard
