@@ -7,7 +7,7 @@ function varargout = pspm_ui(hObject,handles,window)
 %    window: the name of the specific GUI window.
 % ● History
 %   Introduced in PsPM 5.1
-%   Written and maintained in 2021-2022 by Teddy Chao (UCL)
+%   Written and maintained in 2021-2022
 
 %% Initialise
 global settings
