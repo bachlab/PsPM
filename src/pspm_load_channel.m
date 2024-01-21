@@ -7,11 +7,13 @@ function [sts, data_struct] = pspm_load_channel(fn, channel, channeltype)
 % ● Arguments
 %    fn:   [char] filename 
 %    channel:   [numeric] / [char]
-%               ▶ numeric: returns this channel
+%               ▶ numeric: returns this channel (or the first of a vector)
 %               ▶ char
-%                 'channel type' (e.g. 'scr')
-%                           returns the last channel of the respective type
+%                 'marker'  returns the first maker channel 
 %                           (see settings for permissible channel types)
+%                 any other channel type (e.g. 'scr')
+%                           returns the last channel of the respective type
+%                           (see settings for permissible channel types)                         
 %                 'pupil', 'sps', 'gaze_x', 'gaze_y', 'blink', 'saccade',
 %                 'pupil_missing' (eyetracker channels)
 %                           goes through the following precedence order, 
@@ -57,19 +59,30 @@ if ~isnumeric(channel) && ismember(channel, eyetracker_channels)
         data = data(global_channels);
     elseif ~isempty(best_channels)
         data = data(best_channels);
+     % else data is left unchanged
     end
 end
        
-% if more than one channel exists, select last channel and give message 
+% if more than one channel exists, select first/last channel and give message 
 if numel(data) == 0
     warning('ID:invalid_input', 'No data of type %s contained in file %s.\n', ...
-      channel, fn);
+        channel, fn);
 elseif numel(data) == 1
     data_struct = data{1};
+elseif ischar(channel)
+    if strcmp(channel, 'marker')
+        data_struct = data{1};
+        keyword = 'first';
+    else
+        data_struct = data{end};
+        keyword = 'last';
+    end
+    fprintf('More than one channel of type ''%s'' exists. The %s one will be used.\n', ...
+        channel, keyword)
 else
-    data_struct = data{end};
-    fprintf('More than one channel of type %s exists. The last one will be used.\n', ...
-        channel)
+    data_struct = data{1};
+    fprintf('More than one channel provided. The first one will be used.\n', ...
+        channel, keyword)
 end
 
 % if channeltype is given and channel is numeric, check if channel is of
@@ -90,3 +103,8 @@ end
 % - pspm_emg_pp
 % - pspm_extract_segments
 % - pspm_find_sounds
+% - pspm_glm
+% - pspm_tam
+
+% functions checked
+% - 
