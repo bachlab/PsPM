@@ -153,7 +153,7 @@ n_file = numel(model.datafile);                 % number of files
 % Loading data and sr
 fprintf('Getting data .');
 for iFile = 1:n_file
-    [sts, ~, data] = pspm_load_channel(model.datafile{iFile}, model.channel, model.modality);
+    [sts, data] = pspm_load_channel(model.datafile{iFile}, model.channel, model.modality);
     if sts < 1, warning('ID:load_data_fail', 'Problem encountered while loading data.'); return; end
 
     % Filling up the data and the sampling rates
@@ -163,7 +163,7 @@ for iFile = 1:n_file
 
     % If the timeunits is markers
     if strcmpi(model.timeunits, 'markers')
-        [sts, ~, data] = pspm_load_channel(model.datafile{iFile}, options.marker_chan{iFile}, 'marker');
+        [sts, data] = pspm_load_channel(model.datafile{iFile}, options.marker_chan{iFile}, 'marker');
         if sts < 1
             warning('ID:invalid_input','Could not load the specified marker channel.');
             return;
