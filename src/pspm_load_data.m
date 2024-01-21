@@ -15,26 +15,14 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, channel)
 %               ▶ char
 %                 'wave'    returns all waveform channels
 %                 'events'  returns all event channels
-%                 'pupil'   goes through the below precedence order and loads
-%                           all channels corresponding to the first existing
-%                           option:
-%                           1.  Combined pupil channels (by definition also
-%                               preprocessed)
-%                           2.  Preprocessed pupil channels corresponding to
-%                               best eye
-%                           3.  Preprocessed pupil channels
-%                           4.  Best eye pupil channels
-%                           please note that if there is only one eye in
-%                           the datafile, that eye is defined as the best eye.
-%                 'pupil_l' returns the left pupil channel
-%                 'pupil_r' returns the right pupil channel
-%                 'gaze_x_l'
-%                           returns the left gaze x channel
-%                 'gaze_x_r'
-%                           returns the right gaze x channel
-%                 'channel type'
+%                 'pupil', 'sps', 'gaze_x', 'gaze_y', 'blink', 'saccade',
+%                 'pupil_missing' (eyetracker channels)
+%                           returns all channels of the respective type
+%                           (i.e., 'pupil' returns all of 'pupil', 'pupil_l',
+%                            'pupil_r', 'pupil_c')
+%                 'channel type' (e.g. 'scr')
 %                           returns the respective channels (see settings for
-%                           channel types)
+%                           permissible channel types)
 %                 'none'    just checks the file
 %               ▶ struct  check and save file
 %                 ├───.infos (mandatory)
@@ -71,7 +59,6 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, channel)
 %   data.header.chantype = 'trigger' is allowed for backward compatibility;
 %       this feature will be removed in the future
 % ● History
-%   Introduced in PsPM 6.0
 %   Written in 2008-2021 by Dominik R. Bach (Wellcome Centre for Human Neuroimaging, UCL)
 %     2022 Teddy Chao (UCL)
 
@@ -333,27 +320,17 @@ if isstruct(channel)
 end
 flag = zeros(numel(data), 1);
 if ischar(channel) && ~strcmp(channel, 'none')
-  if contains(channel,'pupil')
-    if strcmpi(channel, 'pupil') && isfield(infos.source, 'best_eye')
-      flag = get_chans_to_load_for_pupil(data, infos.source.best_eye, 0);
-    elseif strcmpi(channel(7), 'l') || strcmpi(channel(7), 'r')
-      flag = get_chans_to_load_for_pupil(data, channel(7), 1);
-    end
-  elseif strcmpi(channel, 'sps') && isfield(infos.source, 'best_eye')
-    flag = get_chans_to_load_for_sps(data, infos.source.best_eye);
-  else
     for k = 1:numel(data)
-      if (any(strcmpi(channel, {'event', 'events'})) && ...
-          strcmpi(data{k}.header.units, 'events')) || ...
-          (strcmpi(channel, 'wave') && ~strcmpi(data{k}.header.units, 'events')) || ...
-          (any(strcmpi(channel, {'trigger', 'marker'})) && ...
-          any(strcmpi(data{k}.header.chantype, {'trigger', 'marker'})))
-        flag(k) = 1;
-      elseif strcmp(data{k}.header.chantype, channel)
-        flag(k) = 1;
-      end
+        if (contains(channel, {'event'}) && ...
+                strcmpi(data{k}.header.units, 'events')) || ...
+                (strcmpi(channel, 'wave') && ~strcmpi(data{k}.header.units, 'events')) || ...
+                (any(strcmpi(channel, {'trigger', 'marker'})) && ...
+                any(strcmpi(data{k}.header.chantype, {'trigger', 'marker'})))
+            flag(k) = 1;
+        elseif contains(data{k}.header.chantype, channel)
+            flag(k) = 1;
+        end
     end
-  end
   if all(flag == 0)
     warning('ID:non_existing_chantype',...
       'There are no channels of type ''%s'' in the datafile', channel);
@@ -380,110 +357,3 @@ end
 sts = 1;
 return
 
-function flag = get_chans_to_load_for_pupil(data, best_eye, prefer_unprocessed)
-% Set flag variable according to the precedence order:
-%
-%   1. Combined channels (by definition also preprocessed)
-%   2. Preprocessed channels corresponding to best eye
-%   3. Preprocessed channels
-%   4. Best eye pupil channels
-%
-% The earliest possible option is taken and then the function returns.
-global settings;
-if isempty(settings)
-  pspm_init;
-end
-channeltype_list = cellfun(@(x) x.header.chantype, data, 'uni', false);
-pupil_channels = cell2mat(cellfun(...
-  @(chantype) strncmp(chantype, 'pupil',numel('pupil')),...
-  channeltype_list,...
-  'uni',...
-  false...
-  ));
-preprocessed_channels = cell2mat(cellfun(...
-  @(chantype) any(strcmp(split(chantype,'_'),'pp')),...
-  channeltype_list,...
-  'uni',...
-  false...
-  ));
-combined_channels = cell2mat(cellfun(...
-  @(chantype) any(strcmp(split(chantype,'_'),settings.lateral.char.c)) && ...
-  any(strcmp(split(chantype,'_'),'pp')),...
-  channeltype_list,...
-  'uni',...
-  false...
-  ));
-besteye_channels = cell2mat(cellfun(...
-  @(chantype) any(strcmpi(split(chantype,'_'),best_eye)),...
-  channeltype_list,...
-  'uni',...
-  false...
-  ));
-preprocessed_channels = preprocessed_channels & pupil_channels;
-combined_channels = combined_channels & pupil_channels;
-besteye_channels = besteye_channels & pupil_channels & ~preprocessed_channels;
-% best eye will not select preprocessed eyes
-if any(combined_channels)
-  flag = combined_channels;
-elseif any(preprocessed_channels) && ~prefer_unprocessed
-  flag = preprocessed_channels & besteye_channels;
-  if ~any(flag)
-    flag = preprocessed_channels;
-  end
-else
-  flag = besteye_channels;
-end
-
-function flag = get_chans_to_load_for_sps(data, best_eye)
-% 16-06-21 This is a tempory patch for loading sps data, copied from
-% pupil data
-% It needs to be updated for testing the compatibility with sps
-% Set flag variable according to the precedence order:
-%
-%   1. Combined channels (by definition also preprocessed)
-%   2. Preprocessed channels corresponding to best eye
-%   3. Preprocessed channels
-%   4. Best eye pupil channels
-%
-% The earliest possible option is taken and then the function returns.
-best_eye = lower(best_eye);
-channeltype_list = cellfun(@(x) x.header.chantype, data, 'uni', false);
-sps_channels = cell2mat(cellfun(...
-  @(chantype) strncmp(chantype, 'sps',numel('sps')),...
-  channeltype_list,...
-  'uni',...
-  false...
-  ));
-preprocessed_channels = cell2mat(cellfun(...
-  @(chantype) strcmp(chantype(end-2:end), '_pp'),...
-  channeltype_list,...
-  'uni',...
-  false...
-  ));
-combined_channels = cell2mat(cellfun(...
-  @(chantype) contains(chantype, ['_',settings.lateral.char.c,'_']) && ...
-  strcmp(chantype(end-2:end), '_pp'),...
-  channeltype_list,...
-  'uni',...
-  false...
-  ));
-besteye_channels = cell2mat(cellfun(...
-  @(chantype) strcmp(chantype(end-1:end), ['_' best_eye]) || ...
-  contains(chantype, ['_' best_eye '_']),...
-  channeltype_list,...
-  'uni',...
-  false...
-  ));
-preprocessed_channels = preprocessed_channels & sps_channels;
-combined_channels = combined_channels & sps_channels;
-besteye_channels = besteye_channels & sps_channels;
-if any(combined_channels)
-  flag = combined_channels;
-elseif any(preprocessed_channels)
-  flag = preprocessed_channels & besteye_channels;
-  if ~any(flag)
-    flag = preprocessed_channels;
-  end
-else
-  flag = besteye_channels;
-end

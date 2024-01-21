@@ -53,7 +53,7 @@ function [sts, infos] = pspm_find_sounds(varargin)
 % │                 Only sounds included inbetween the 2 timestamps will be
 % │                 considered.
 % ├────.sndchannel: [integer] number of the channel holding the sound.
-% │                 By default first 'snd' channel.
+% │                 By default the last 'snd' channel.
 % ├─────.threshold: [0...1] percent of the max of the power in the signal that
 % │                 will be accepted as a sound event. Default is 0.1.
 % ├───.trigchannel: [integer] number of the channel holding the triggers.
@@ -110,24 +110,12 @@ outinfos = struct();
 
 
 % Load Data
-[lsts, foo, indata] = pspm_load_data(file);
+[lsts, snd] = pspm_load_channel(file, options.sndchannel, 'snd');
 if lsts == -1
-  warning('ID:invalid_input', 'Failed loading file %s.', file); return;
+  return;
 end
 
 %% Sound
-% Check for existence of sound channel
-if ~options.sndchannel
-  sndi = find(strcmpi(cellfun(@(x) x.header.chantype,indata,'un',0),'snd'),1);
-  if ~any(sndi)
-    warning('ID:no_sound_chan', 'No sound channel found. Aborted');  return;
-  end
-  snd = indata{sndi};
-elseif options.sndchannel > numel(indata)
-  warning('ID:out_of_range', 'Option sndchannel is out of the data range.'); return;
-else
-  snd = indata{options.sndchannel};
-end
 
 % Process Sound
 snd.data = snd.data-mean(snd.data);
