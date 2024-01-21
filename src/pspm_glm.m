@@ -199,7 +199,7 @@ for iFile = 1:nFile
     % first marker_channel is used
     events{iFile} = data{1}.data(:) * data{1}.header.sr;
     if strcmp(model.timeunits,'markervalues')
-      model.timing{iFile}.markerinfo = data{end}.markerinfo;
+      model.timing{iFile}.markerinfo = data{1}.markerinfo;
     end
   end
 end
