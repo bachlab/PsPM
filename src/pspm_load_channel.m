@@ -88,4 +88,5 @@ end
 % functions changed
 % - pspm_dcm
 % - pspm_emg_pp
+% - pspm_extract_segments
 % - pspm_find_sounds

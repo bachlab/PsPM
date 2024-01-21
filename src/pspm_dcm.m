@@ -238,12 +238,12 @@ data = cell(numel(model.datafile), 1);
 missing = cell(numel(model.datafile), 1);
 for iSn = 1:numel(model.datafile)
   % check & load data
-  [sts, data{iSn}] = pspm_load_channel(model.datafile{iSn}, model.channel, 'scr');
+  [sts, data] = pspm_load_channel(model.datafile{iSn}, model.channel, 'scr');
   if sts == -1 
     return;
   else
-     y{iSn} = data{iSn}.data;
-     sr{iSn} = data{iSn}.header.sr;
+     y{iSn} = data.data;
+     sr{iSn} = data.header.sr;
      model.filter.sr = sr{iSn};
   end
 
@@ -358,7 +358,7 @@ foo = {};
 for vs = 1:numel(valid_subsessions)
   isbSn = valid_subsessions(vs);
   sbSn = subsessions(isbSn, :);
-  flanks = pspm_time2index(sbSn(2:3), data{sbSn(1)}.header.sr);
+  flanks = pspm_time2index(sbSn(2:3), sr{sbSn(1)});
   sbSn_data = y{sbSn(1)}(flanks(1):flanks(2));
   sbs_miss = isnan(sbSn_data);
 

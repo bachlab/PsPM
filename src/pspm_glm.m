@@ -185,13 +185,13 @@ fprintf('Getting data ...');
 nFile = numel(model.datafile);
 for iFile = 1:nFile
   % 3.3 get and filter data
-  [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
+  [sts_load_data, ~, data] = pspm_load_channel(model.datafile{iFile}, model.channel, model.modality);
   if sts_load_data == -1, return; end
   y{iFile} = data{end}.data(:);
   sr(iFile) = data{end}.header.sr;
   fprintf('.');
   if any(strcmp(model.timeunits, {'marker', 'markers','markervalues'}))
-    [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
+    [sts_load_data, ~, data] = pspm_load_channel(model.datafile{iFile}, options.marker_chan_num, 'marker');
     if sts_load_data == -1
       warning('ID:invalid_input', 'Could not load the specified markerchannel');
       return

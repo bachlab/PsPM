@@ -255,12 +255,12 @@ if manual_chosen ~= 0
   marker_data = {};
   if manual_chosen == 1
     for i=1:numel(data_fn)
-      [sts, ~, data] = pspm_load_data(data_fn{i}, channel{i});
+      [sts, ~, data] = pspm_load_channel(data_fn{i}, channel{i});
       assert(sts == 1);
       input_data{end + 1} = data{1}.data;
       sampling_rates(end + 1) = data{1}.header.sr;
       if strcmpi(options.timeunit, 'markers')
-        [sts, ~, data] = pspm_load_data(data_fn{i}, options.marker_chan{i});
+        [sts, ~, data] = pspm_load_channel(data_fn{i}, options.marker_chan{i});
         assert(sts == 1);
         marker_data{end + 1} = data{1,1}.data;
       end
