@@ -93,11 +93,6 @@ switch length(varargin)
     return
 end
 
-% Check argument
-if ~exist(file, 'file')
-  warning('ID:file_not_found', 'File %s was not found. Aborted.',file); return;
-end
-
 fprintf('Processing sound in file %s\n',file);
 
 options = pspm_options(options, 'find_sounds');
@@ -111,7 +106,7 @@ outinfos = struct();
 
 % Load Data
 [lsts, snd] = pspm_load_channel(file, options.sndchannel, 'snd');
-if lsts == -1
+if lsts == -1 
   return;
 end
 

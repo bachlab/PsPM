@@ -16,18 +16,17 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
     channel_action = {'none', 'add', 'replace'};
   end
   methods(Test)
-    function invalid_input(this)
-      % file does not exist
-      this.verifyWarning(@() pspm_find_sounds(''), 'ID:file_not_found');
+    function invalid_input(this) % file does not exist
+      this.verifyWarning(@() pspm_find_sounds(''), 'ID:nonexistent_file');
       % create empty file
       fn = pspm_find_free_fn(this.testdata_fn, '.mat');
       fclose(fopen(fn, 'w'));
       % test with invalid pspm file
-      this.verifyWarning(@() pspm_find_sounds(fn), 'ID:invalid_input');
+      this.verifyWarning(@() pspm_find_sounds(fn), 'ID:invalid_data_structure');
       % test with data without a snd channel
       c{1}.chantype = 'scr';
       pspm_testdata_gen(c, 10, fn);
-      this.verifyWarning(@() pspm_find_sounds(fn), 'ID:no_sound_chan');
+      this.verifyWarning(@() pspm_find_sounds(fn), 'ID:invalid_input');
       c{1}.chantype = 'snd';
       c{1}.noise = 1;
       pspm_testdata_gen(c, 10, fn);

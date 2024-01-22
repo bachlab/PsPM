@@ -230,9 +230,9 @@ switch FunName
     options = autofill(options, 'maxdelay',               3,          '>=',  0          );
     options = autofill(options, 'mindelay',               0,          '>=',  0          );
     options = autofill(options, 'plot',                   0,          1                 );
-    options = autofill(options, 'resample',               1,          '*Int*Char'       );
+    options = autofill(options, 'resample',               1,          '*Int'            );
     options = autofill(options, 'snd_in_snd',             0,          1                 );
-    options = autofill(options, 'sndchannel',             'snd',      '*Int'            );
+    options = autofill(options, 'sndchannel',             'snd',      '*Int*Char'       );
     options = autofill(options, 'threshold',              0.1,        '>=',  0          );
     options = autofill(options, 'trigchannel',            'marker',   '*Int*Char'       );
     options = fill_find_sounds(options);
