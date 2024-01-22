@@ -19,7 +19,7 @@ function newdatafile = pspm_pp(varargin)
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2009-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2024 by Teddy
 
 %% Initialise
 global settings
