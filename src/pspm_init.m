@@ -59,6 +59,7 @@ sp = textscan(path,'%s','delimiter',pathsep);
 mem = ~ismember(subfolders, sp{1});
 if numel(subfolders(mem)) == 0
   % loaded subdirs which may cause trouble
+  warntext_subfolder = 'test_folder'
   warning(warntext_subfolder);
 end
 % 2.4 check whether scralyze is on the path
