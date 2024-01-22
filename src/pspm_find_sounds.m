@@ -250,18 +250,10 @@ while searchForMoreSounds == true
 
   %% Triggers
   if options.diagnostics
-    % Check for existence of marker channel
-    if ~options.trigchannel
-      mkri = find(strcmpi(cellfun(@(x) x.header.chantype,indata,'un',0),'marker'),1);
-      if ~any(mkri)
-        warning('ID:no_marker_chan', 'No marker channel found. Aborted');  return;
-      end
-    elseif options.trigchannel > numel(indata)
-      warning('ID:out_of_range', 'Option trigchannel is out of the data range.');  return;
-    else
-      mkri=options.trigchannel;
+    [lsts, mkr] = pspm_load_channel(file, options.trigchannel, 'mkr');
+    if lsts == -1
+      return;
     end
-    mkr = indata{mkri};
 
     %% Estimate delays from trigger to sound
     delays = nan(length(mkr.data),1);

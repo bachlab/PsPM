@@ -234,7 +234,7 @@ switch FunName
     options = autofill(options, 'snd_in_snd',             0,          1                 );
     options = autofill(options, 'sndchannel',             'snd',      '*Int'            );
     options = autofill(options, 'threshold',              0.1,        '>=',  0          );
-    options = autofill(options, 'trigchannel',            0,          '*Int'            );
+    options = autofill(options, 'trigchannel',            'marker',   '*Int*Char'       );
     options = fill_find_sounds(options);
   case 'find_valid_fixations'
     % 2.24 pspm_find_valid_fixations --
