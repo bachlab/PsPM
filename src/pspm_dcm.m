@@ -361,7 +361,7 @@ foo = {};
 for vs = 1:numel(valid_subsessions)
   isbSn = valid_subsessions(vs);
   sbSn = subsessions(isbSn, :);
-  flanks = pspm_time2index(sbSn(2:3), data{sbSn(1)}{1}.header.sr);
+  flanks = pspm_time2index(sbSn(2:3), sr{sbSn(1)});
   sbSn_data = y{sbSn(1)}(flanks(1):flanks(2));
   sbs_miss = isnan(sbSn_data);
 
