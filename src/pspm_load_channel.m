@@ -1,4 +1,4 @@
-function [sts, data_struct] = pspm_load_channel(fn, channel, channeltype)
+function [sts, data_struct, infos] = pspm_load_channel(fn, channel, channeltype)
 % ● Definition
 %   pspm_load_channel loads a single data channel and provides integrated 
 %   channel checking logic
@@ -26,6 +26,7 @@ function [sts, data_struct] = pspm_load_channel(fn, channel, channeltype)
 %                           4.  Any pupil channels
 % ● History
 % Written in 2019 by Eshref Yozdemir (University of Zurich)
+% Updated in 2024 by Dominik Bach (University of Bonn)
 % Introduced in PsPM 6.1.2
 
 % no checking of file and channel type as this is done downstream in 
@@ -36,15 +37,12 @@ if isempty(settings)
   pspm_init;
 end
 
-eyetracker_channels = {'pupil', 'sps', 'gaze_x', 'gaze_y', 'blink', ...
-    'saccade', 'pupil_missing'};
-
 sts = -1; data_struct = struct();
 [sts, infos, data] = pspm_load_data(fn, channel);
 if sts < 1, return; end
 
 % precedence order for eyetracker channels
-if ~isnumeric(channel) && ismember(channel, eyetracker_channels)
+if ~isnumeric(channel) && ismember(channel, settings.eyetracker_channels)
     channeltype_list = cellfun(@(x) x.header.chantype, data, 'uni', false);
     combined_channels = find(contains(channeltype_list, ['_' settings.lateral.char.c]));
     global_channels = find(strcmp(channeltype_list, channel));
@@ -88,15 +86,10 @@ end
 % if channeltype is given and channel is numeric, check if channel is of
 % correct type
 if isnumeric(channel) && nargin > 2 && ~strcmpi(data_struct.header.chantype, channeltype)
-    warning('ID:channeltype', ... 
+    warning('ID:unexpected_channeltype', ... 
         'Channel type ''%s'' was expected. Channel %i is of type ''%s''.\n', ...
         channeltype, channel, data_struct.header.chantype);
 end
-
-
-% functions to check
-% - compute visual angle (first channel?)
-% - convert functions (all should allow multiple channels)
 
 % functions changed
 % - pspm_dcm
@@ -105,6 +98,13 @@ end
 % - pspm_find_sounds
 % - pspm_glm
 % - pspm_tam
+% - pspm_resp_pp
+% - pspm_convert_ecg2hb
+% - pspm_convert_ecg2hb_amri
+% - pspm_convert_hb2hp
+% - pspm_convert_ppg2hb
 
-% functions checked
-% - 
+% - check whether accidentally anything was changed in
+% pspm_pupil_correct_eyelink
+
+

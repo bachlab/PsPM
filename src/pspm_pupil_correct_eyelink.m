@@ -157,7 +157,7 @@ if numel(pupil_data) > 1
     ' We will process only the last one.\n'], options.channel);
   pupil_data = pupil_data(end);
 end
-old_channeltype = pupil_data{1}.header.chantype;
+old_channeltype = pupil_data{end}.header.chantype;
 if ~contains(old_channeltype, 'pupil')
   warning('ID:invalid_input', 'Specified channel is not a pupil channel');
   return;
