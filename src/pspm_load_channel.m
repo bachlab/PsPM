@@ -83,28 +83,12 @@ else
         channel, keyword)
 end
 
-% if channeltype is given and channel is numeric, check if channel is of
-% correct type
-if isnumeric(channel) && nargin > 2 && ~strcmpi(data_struct.header.chantype, channeltype)
+% if channeltype is given, check if channel is of correct type
+if nargin > 2 && ~contains(data_struct.header.chantype, channeltype)
     warning('ID:unexpected_channeltype', ... 
-        'Channel type ''%s'' was expected. Channel %i is of type ''%s''.\n', ...
-        channeltype, channel, data_struct.header.chantype);
+        'Channel type ''%s'' was expected. The retrieved channel is of type ''%s''.\n', ...
+        channeltype, data_struct.header.chantype);
 end
 
-% functions changed
-% - pspm_dcm
-% - pspm_emg_pp
-% - pspm_extract_segments
-% - pspm_find_sounds
-% - pspm_glm
-% - pspm_tam
-% - pspm_resp_pp
-% - pspm_convert_ecg2hb
-% - pspm_convert_ecg2hb_amri
-% - pspm_convert_hb2hp
-% - pspm_convert_ppg2hb
-
-% - check whether accidentally anything was changed in
-% pspm_pupil_correct_eyelink
 
 
