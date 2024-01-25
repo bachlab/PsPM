@@ -21530,6 +21530,67 @@ UI improvements
 PsPM's UI in Linux environment has been improved.
 \end_layout
 
+\begin_layout Subsection*
+Version 6.1.2
+\end_layout
+
+\begin_layout Subsubsection*
+Bug fixes
+\end_layout
+
+\begin_layout Itemize
+GUI
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A bug that made channel actions in EMG pre-processing unrecognised has been
+ fixed.
+\end_layout
+
+\begin_layout Itemize
+A bug, which sometimes made DCM not run from the GUI, has been fixed.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_convert_hb2hp
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A bug, which incorrectly selected heart rate channels, has been fixed.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_dcm
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A bug, which could lead to a wrong sample rate being used if more than one
+ SCR channel existed in the file, has been fixed.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_glm
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A bug, which leads to markers being taken from the first marker channel
+ but markervalues from the last, has been fixed.
+\end_layout
+
+\end_deeper
 \begin_layout Part
 Acknowledgements
 \end_layout
