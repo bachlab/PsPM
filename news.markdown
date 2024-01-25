@@ -6,6 +6,14 @@ permalink: /news/
 
 # News
 
+### 25.01.2024
+
+PsPM 6.1.2 released -- including bug fixes for the GUI, DCM, and GLM. Thanks to everybody involved!
+
+### 17.01.2024
+
+PsPM 6.1.1 released -- including new functions check model, combine markchannels, and tam, bug fixes for con, dcm, get spike, and scr pp, as well as various improvements. Thanks to everybody involved!
+
 ### 24.08.2023
 
 PsPM 6.1.0 released -- including pspm options for parameter controlling, AppDesigner for the launchpad, various UI improvements, bug fixes and adjustments for functions like dcm, glm and sf, and more. Thanks to everybody involved!
