@@ -18,6 +18,7 @@
 \renewcommand{\textendash}{--}
 \renewcommand{\textemdash}{---}
 \usepackage{bera}
+\renewcommand*\l@subsection{\@dottedtocline{2}{1.8em}{3.2 em}}
 \end_preamble
 \use_default_options true
 \begin_modules
@@ -104,7 +105,7 @@ PsPM: Psychophysiological Modelling
 
 \begin_layout Standard
 \align center
-Version 6.1.1
+Version 6.1.2
 \end_layout
 
 \begin_layout Standard
