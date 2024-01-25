@@ -201,11 +201,11 @@ if ~isfield(model, 'timing')
 else
   if ~isempty(model.timing)
     if ~iscell(model.timing) || ...
-      strcmpi(modeltype, 'dcm') && ~iscell(model.timing{1})
+      (strcmpi(modeltype, 'dcm') && ~iscell(model.timing{1}) && ~ischar(model.timing{1}))
       % for DCM, model.timing is either a file name or a cell array of
       % events, or a cell array of file names or cell arrays, so we need to
       % take care of cases where model.timing is a cell array but not a cell
-      % array of cell arrays
+      % array of cell arrays or a cell array of char
       model.timing = {model.timing};
     end
   end

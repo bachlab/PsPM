@@ -3,7 +3,7 @@ function pspm_quit
 %   pspm_quit clears settings, removes paths & closes figures
 % ● History
 %   Written in 2008-2022 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2024 by Teddy
 
 global settings
 if isempty(settings)
