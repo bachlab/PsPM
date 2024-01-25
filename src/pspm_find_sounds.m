@@ -245,7 +245,7 @@ while searchForMoreSounds == true
 
   %% Triggers
   if options.diagnostics
-    [lsts, mkr] = pspm_load_channel(file, options.trigchannel, 'mkr');
+    [lsts, mkr] = pspm_load_channel(file, options.trigchannel, 'marker');
     if lsts == -1
       return;
     end
