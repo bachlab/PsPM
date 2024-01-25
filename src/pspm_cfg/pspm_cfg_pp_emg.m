@@ -6,8 +6,6 @@ function [cfg] = pspm_cfg_pp_emg
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
 
-% $Id$
-% $Rev$
 
 %% Data preprocessing
 cfg        = cfg_repeat;

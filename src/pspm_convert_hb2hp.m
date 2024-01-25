@@ -67,8 +67,8 @@ if nsts == -1
   return;
 end
 if numel(data) > 1
-  fprintf('There is more than one heart beat channel in the data file. Only the first of these will be analysed.');
-  data = data(1);
+  fprintf('There is more than one heart beat channel in the data file. Only the last of these will be analysed.');
+  data = data(end);
 end
 
 % interpolate
