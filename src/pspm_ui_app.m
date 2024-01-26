@@ -39,7 +39,7 @@ switch app.layout.Name
   case 'pspm'
     attribution_disp_text = ['Build 17-01-2024 with MATLAB 2023a, ',...
       'The PsPM Team, University College London'];
-    app.attribution.Text{1,1} = 'Version 6.1.1';
+    app.attribution.Text{1,1} = 'Version 6.1.2';
     app.attribution.Text{2,1} = attribution_disp_text;
 end
 return
