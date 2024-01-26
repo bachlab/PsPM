@@ -7,7 +7,7 @@ function varargout = pspm_ui(hObject,handles,window)
 %    window: the name of the specific GUI window.
 % ● History
 %   Introduced in PsPM 5.1
-%   Written and maintained in 2021-2022 by Teddy Chao (UCL)
+%   Written and maintained in 2021-2022
 
 %% Initialise
 global settings
@@ -87,7 +87,7 @@ switch window
     handles.tag_attribution.FontSize = FSAttr;
     %handles.tag_attribution.Visible = 'off';
     handles.tag_attribution.HorizontalAlignment = 'center';
-    attribution_disp_text = sprintf(['Version 6.1.1, Build 17-01-2024 with MATLAB 2023a, ',...
+    attribution_disp_text = sprintf(['Version 6.1.2, Build 25-01-2024 with MATLAB 2023a, ',...
       'The PsPM Team, University College London']);
     handles.tag_attribution.String = attribution_disp_text;
     handles.tag_PsPM.FontName = FNRoman;
