@@ -14,7 +14,8 @@
 % Added by lyx2lyx
 \renewcommand{\textendash}{--}
 \renewcommand{\textemdash}{---}
-
+\renewcommand*\l@subsection{\@dottedtocline{2}{3.8em}{3.2 em}}
+\renewcommand*\l@subsubsection{\@dottedtocline{3}{7.0em}{4.1em}}
 \usepackage{bera}
 \usepackage{enumitem} \setlist[itemize]{noitemsep}
 \end_preamble
@@ -102,7 +103,7 @@ Developer's Guide
 
 \begin_layout Standard
 \align center
-Version 6.1.0
+Version 6.1.2
 \end_layout
 
 \begin_layout Standard

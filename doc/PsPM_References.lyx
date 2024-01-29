@@ -11,12 +11,12 @@
 \definecolor{colComments}{rgb}{0.53, 0.66, 0.42}
 \definecolor{colString}{rgb}{0.87, 0.36, 0.51}
 \definecolor{barColor}{rgb}{0.43, 0.5, 0.5}
-% Added by lyx2lyx
 \renewcommand{\textendash}{--}
 \renewcommand{\textemdash}{---}
-
 \usepackage{bera}
-\usepackage{enumitem} \setlist[itemize]{noitemsep}
+\renewcommand*\l@subsection{\@dottedtocline{2}{1.8em}{3.2 em}}
+\usepackage{enumitem}
+\setlist[itemize]{noitemsep}
 \end_preamble
 \use_default_options true
 \maintain_unincluded_children false
@@ -98,7 +98,7 @@ PsPM: Option References
 
 \begin_layout Standard
 \align center
-Version 6.1.0
+Version 6.1.2
 \end_layout
 
 \begin_layout Standard
@@ -447,9 +447,9 @@ hp
 \labelwidthstring 00.00.0000
 
 \family typewriter
-pfm
+tam
 \family default
- Pupil Fitting Model
+ Trial Average Model
 \end_layout
 
 \begin_layout Labeling
@@ -9287,7 +9287,7 @@ integer
 \end_layout
 
 \begin_layout Subsection
-Pupil Fitting Model
+Trial Average Model
 \end_layout
 
 \begin_layout Standard
@@ -9299,7 +9299,7 @@ Table 31
 \series default
  Default values for 
 \family typewriter
-pspm_pfm
+pspm_tam
 \end_layout
 
 \begin_layout Standard

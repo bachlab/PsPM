@@ -712,7 +712,7 @@ defaults.eye.cap.r = 'R';
 defaults.get_transfer_sr = 100;
 
 % default modalities
-defaults.modalities = struct('glm', 'scr', 'sf', 'scr', 'dcm', 'scr', 'pfm', 'pupil');
+defaults.modalities = struct('glm', 'scr', 'sf', 'scr', 'dcm', 'scr', 'tam', 'pupil');
 
 %% 7 modality-specific GLM settings
 %
@@ -810,27 +810,29 @@ defaults.glm(10) = struct(...
 defaults.dcm{1} = struct('filter', struct('lpfreq', 5,  'lporder',  1,  'hpfreq', 0.0159, 'hporder',  1,  'down', 10, 'direction', 'bi'), 'sigma_offset', 0.3);
 % DCM for SF filter settings
 defaults.dcm{2} = struct('filter', struct('lpfreq', 5,  'lporder',  1,  'hpfreq', 0.0159, 'hporder',  1,  'down', 10, 'direction', 'uni'));
-%% 8 PFM settings
+%% 8 TAM settings
 %
 % DEVELOPERS NOTES
-% Currently this is being used for PFM for pupil data.
+% Currently this is being used for TAM for pupil data.
 % Further modalities and models can be implemented.
 %
-defaults.pfm(1) = struct( ...
-  'modality', 'dilation',...                                                       % modality name
+defaults.tam(1) = struct( ...
+  'modality', 'pupil', ...
+  'modelspec', 'dilation',...                                                       % modality name
   'cbf', struct('fhandle', @pspm_bf_ldrf_gm, 'args', [0.2, 2.40 , 0.29 , 0.77]),...  % basis function & default parameters
   'cif', struct('fhandle', @pspm_bf_ldrf_gm, 'args', [0, 2.76 , 0.09 , 0.31],...     % input function & default parameters
   'lb', [0,0,0,0], 'ub', [0,Inf,Inf,Inf]),...                          % & the lower/upper bounds
   'filter', struct('lpfreq', 'none', 'lporder', 0,  ...                               % default filter
   'hpfreq', 'none', 'hporder', 0, 'down', 0, 'direction', 'bi'));
-defaults.pfm(2) = struct(...
-  'modality', 'constriction',...
+defaults.tam(2) = struct(...
+  'modality',  'pupil', ...
+  'modelspec', 'constriction',...
   'cbf', struct('fhandle', @pspm_bf_lcrf_gm, 'args', [0.2, 3.24 , 0.18 , 0.43]),...
   'cif', struct('fhandle', @pspm_bf_lcrf_gm, 'args', [0, 2.76 , 0.09 , 0.31], 'lb', [0,0,0,0], 'ub', [0,Inf,Inf,Inf]),...
   'filter', struct('lpfreq', 'none', 'lporder', 0, 'hpfreq', 'none', 'hporder', 0, 'down', 0, 'direction', 'bi'));
 %% 9 FIRST LEVEL settings
 % 9.1 allowed first level model types
-defaults.first = {'glm', 'sf', 'dcm', 'pfm'};
+defaults.first = {'glm', 'sf', 'dcm', 'tam'};
 % 9.2 Data/module file helptext settings
 defaults.datafilehelp = ['In case data/model file(s) are chosen via the ',...
   'dependency button, make sure the number of output ',...
@@ -896,6 +898,6 @@ settings.matlabbatchpath = matlabbatchpath;
 settings.scrcfgpath = scrcfgpath;
 settings.signal = signal;
 settings.pspm_version = pspm_vers;
-settings.developmode = 1;
+settings.developmode = 0;
 
 return

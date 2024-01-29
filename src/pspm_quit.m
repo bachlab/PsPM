@@ -3,7 +3,7 @@ function pspm_quit
 %   pspm_quit clears settings, removes paths & closes figures
 % ● History
 %   Written in 2008-2022 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2024 by Teddy
 
 global settings
 if isempty(settings)
@@ -24,6 +24,6 @@ close all
 disp(' ');
 disp('Thanks for using PsPM.');
 disp(repelem('-',20));
-disp('PsPM 6.1.0 (c) 2008-2023 Dominik R. Bach');
+disp('PsPM 6.1.1 (c) 2008-2024 Dominik R. Bach');
 disp('Uni Bonn, DE | UCL, UK | UZH, CH');
 return

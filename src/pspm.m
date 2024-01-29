@@ -4,11 +4,25 @@ function pspm(varargin)
 % ● Last Updated in
 %   PsPM 6.1
 % ● History
-%   Written in 13-09-2022 by Teddy Chao (UCL)
+%   Updated 12-2023 by Teddy
 
-if verLessThan('matlab','9.4')
-    pspm_guide
-else
-    pspm_appdesigner
+if ispc
+  if verLessThan('matlab','9.4') % MATLAB 2018
+      pspm_guide
+  else
+      pspm_appdesigner
+  end
+elseif ismac
+  if verLessThan('matlab','9.4') % MATLAB 2018
+      pspm_guide
+  else
+      pspm_appdesigner
+  end
+else % Linux
+  if verLessThan('matlab','9.12') % MATLAB 2022
+      pspm_guide
+  else
+      pspm_appdesigner
+  end
 end
 return
