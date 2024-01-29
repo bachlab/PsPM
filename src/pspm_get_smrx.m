@@ -65,7 +65,7 @@ for i = 1:fileinfo.maxchan
     case {2,3,4,5,6,7,8} % Markers and events
       iMarkerChan(end+1) = i;
       [~, chTitle] = CEDS64ChanTitle(fhand, i);
-      chTitle = str_remove_spec_chars(chTitle);
+      % chTitle = str_remove_spec_chars(chTitle);
       if ~isempty(chTitle)
         MarkerChanName{end+1} = chTitle;
       else
@@ -102,59 +102,24 @@ for iImport = 1:numel(import)
   if strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'wave')
     switch fileinfo.chaninfo(channel).kind
       case 1 % waveform
-        import{iImport}.data    = fileinfo.chaninfo(channel).gain;
-        import{iImport}.sr      = fileinfo.chaninfo(channel).realRate;
-      case 3 % timestamp
-        import{iImport}.minfreq = min(1./diff(fileinfo.chaninfo(channel).gain))*1000;
-        import{iImport}.data    = pspm_pulse_convert(fileinfo.chaninfo(channel).gain, settings.import.rsr, settings.import.sr);
-        import{iImport}.sr      = settings.import.sr;
-        import{iImport}.minfreq = min(import{iImport}.data);
-      case 4
-        pulse = fileinfo.chaninfo(channel).gain;
-        % start with low to high % Not sure about what these codes mean. Need to ask.
-        %if chanhead{channel}.initLow==0
-        %  pulse(1)=[];
-        %end
-        pulse = pulse(1:2:end);
-        import{iImport}.data    = pspm_pulse_convert(pulse, settings.import.rsr, settings.import.sr);
-        import{iImport}.sr      = settings.import.sr;
-        import{iImport}.minfreq = min(import{iImport}.data);
-      otherwise
-        warning('Unknown channel format in CED spike file for import job %02.0f', iImport);
-        return;
+        % Use CED64ReadWaveF
+        [nRead, Fchan] = CEDS64ReadWaveF(fhand, ...
+                                         channel, ...
+                                         fileinfo.chaninfo(channel).div, ...
+                                         1);
+        % import{iImport}.?    = fileinfo.chaninfo(channel).idealRate;
+        % import{iImport}.?    = fileinfo.chaninfo(channel).realRate;
+        % import{iImport}.?    = fileinfo.chaninfo(channel).number;
+        % import{iImport}.?    = fileinfo.chaninfo(channel).div;
     end
   elseif strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'events')
     switch fileinfo.chaninfo(channel).kind
       case 1 % waveform
-        import{iImport}.marker  = 'continuous';
-        import{iImport}.data    = fileinfo.chaninfo(channel).gain;
-        import{iImport}.sr      = fileinfo.chaninfo(channel).realRate;
-      case 4
-        if strcmpi(import{iImport}.type, 'marker')
-          kbchan = pspm_find_channel(fileinfo.chaninfo.kind, {'keyboard'});
-          % keyboard channel doesn't exist by default but is needed for denoising
-          if kbchan > 0
-            kbdata = fileinfo.chaninfo(kbchan).gain;
-          else
-            kbdata = [];
-          end
-          if isfield(import{iImport}, 'denoise') && ~isempty(import{iImport}.denoise) && import{iImport}.denoise > 0
-            import{iImport}.data = pspm_denoise_spike(chandata{channel}, chanhead{channel}, kbdata, import{iImport}.denoise);
-          else
-            pulse = fileinfo.chaninfo(channel).gain;
-            % start with low to high ?
-            %if chanhead{channel}.initLow==0
-            %  pulse(1) =[];
-            %end
-            import{iImport}.data = pulse(1:2:end);
-          end
-          import{iImport}.sr      = 0.001; % milliseconds import for marker channels, see above
-          import{iImport}.marker  = 'timestamp';
-        end
-      otherwise
-        import{iImport}.data    = fileinfo.chaninfo(channel).gain;
-        import{iImport}.sr      = 0.001; % milliseconds import for marker channels, see above
-        import{iImport}.marker  = 'timestamp';
+        % import{iImport}.marker  = 'continuous';
+        % import{iImport}.?    = fileinfo.chaninfo(channel).div;
+        % import{iImport}.?    = fileinfo.chaninfo(channel).idealRate;
+        % import{iImport}.?    = fileinfo.chaninfo(channel).realRate;
+        % import{iImport}.?    = fileinfo.chaninfo(channel).kind;
     end
   end
 end
