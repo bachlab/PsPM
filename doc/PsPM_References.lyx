@@ -11,12 +11,12 @@
 \definecolor{colComments}{rgb}{0.53, 0.66, 0.42}
 \definecolor{colString}{rgb}{0.87, 0.36, 0.51}
 \definecolor{barColor}{rgb}{0.43, 0.5, 0.5}
-% Added by lyx2lyx
 \renewcommand{\textendash}{--}
 \renewcommand{\textemdash}{---}
-
 \usepackage{bera}
-\usepackage{enumitem} \setlist[itemize]{noitemsep}
+\renewcommand*\l@subsection{\@dottedtocline{2}{1.8em}{3.2 em}}
+\usepackage{enumitem}
+\setlist[itemize]{noitemsep}
 \end_preamble
 \use_default_options true
 \maintain_unincluded_children false
@@ -98,7 +98,7 @@ PsPM: Option References
 
 \begin_layout Standard
 \align center
-Version 6.1.1
+Version 6.1.2
 \end_layout
 
 \begin_layout Standard
