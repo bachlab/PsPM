@@ -139,22 +139,8 @@ switch class(fn)
     warning('ID:invalid_input', 'fn needs to be an existing file or a struct.');
     return
 end
-%% 4 Check channel
-switch class(channel)
-  case 'double'
-    % in this case channel is specified as a number or a vector, as double
-    % the number or the vector can only be a 0 or (a) positive number(s)
-    if any(channel < 0)
-      warning('ID:invalid_input', 'Negative channel numbers are not allowed.');
-      return
-    end
-  case 'char'
-    % in this case channel is specified as a char
-    if any(~ismember(channel, [{settings.channeltypes.type}, 'none', 'wave', 'events']))
-      warning('ID:invalid_chantype', 'Unknown channel type.');
-      return
-    end
-  case 'struct'
+%% 4 Check channel if struct, otherwise checking is done in pspm_select_channels
+if class(channel) == 'struct'
     if ~isfield(channel, 'data') || ~isfield(channel, 'infos')
       % data and infos are mandatory fields and must be provided
       % gerrmsg = sprintf('\nData structure is invalid:');
@@ -169,8 +155,6 @@ switch class(channel)
     if ~isfield(channel.options, 'overwrite')
       channel.options.overwrite = pspm_overwrite(fn);
     end
-  otherwise
-    warning('ID:invalid_input', 'Unknown channel option.');
 end
 %% 5 Check infos
 if isstruct(channel)
@@ -314,45 +298,21 @@ elseif numel(filestruct.posofmarker) > 1
   filestruct.posofmarker = filestruct.posofmarker(1); % first marker channel
 end
 %% 9 Return channels, or save file
-if isstruct(channel)
-  infos = channel.infos;
-  data = channel.data;
-end
-flag = zeros(numel(data), 1);
-if ischar(channel) && ~strcmp(channel, 'none')
-    for k = 1:numel(data)
-        if (contains(channel, {'event'}) && ...
-                strcmpi(data{k}.header.units, 'events')) || ...
-                (strcmpi(channel, 'wave') && ~strcmpi(data{k}.header.units, 'events')) || ...
-                (any(strcmpi(channel, {'trigger', 'marker'})) && ...
-                any(strcmpi(data{k}.header.chantype, {'trigger', 'marker'})))
-            flag(k) = 1;
-        elseif contains(data{k}.header.chantype, channel)
-            flag(k) = 1;
-        end
+if ischar(channel) && strcmp(channel, 'none')
+    sts = 1; return;
+elseif isstruct(channel) 
+    infos = channel.infos;
+    data = channel.data;
+    filestruct.posofchannels = 1:numel(data);
+    if ~isempty(fn) && (~exist(fn, 'file') || ...
+        channel.options.overwrite == 1)
+        save(fn, 'infos', 'data');
+    else
+        warning('ID:existing_file', 'File exists and overwriting not allowed.\n')
     end
-  if all(flag == 0)
-    warning('ID:non_existing_chantype',...
-      'There are no channels of type ''%s'' in the datafile', channel);
-    return
-  end
-  data = data(flag == 1);
-  filestruct.posofchannels = find(flag == 1);
-elseif isnumeric(channel)
-  if channel == 0, channel = 1:numel(data); end
-  if any(channel > numel(data))
-    warning('ID:invalid_input',...
-      'Input channel number(s) are greater than the number of channels in the data');
-    return
-  end
-  data = data(channel);
-  filestruct.posofchannels = channel;
-elseif isstruct(channel) && ~isempty(fn) && (~exist(fn, 'file') || ...
-    channel.options.overwrite == 1)
-  save(fn, 'infos', 'data');
-  filestruct.posofchannels = 1:numel(data);
-else
-  filestruct.posofchannels = [];
+elseif ~(isnumeric(channel) && channel == 0)
+    [sts, data, filestruct.posofchannels] = pspm_select_channels(data, channel);
+    if sts < 1, return; end
 end
 sts = 1;
 return

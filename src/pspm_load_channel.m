@@ -5,7 +5,10 @@ function [sts, data_struct, infos] = pspm_load_channel(fn, channel, channeltype)
 % ● Format
 %   [sts, data_struct] = pspm_load_channel(fn, channel, channeltype)
 % ● Arguments
-%    fn:   [char] filename 
+%    fn:   [char] / [cell array] filename 
+%               ▶ char: file name to load
+%               ▶ cell array: data cell array as returned from
+%               pspm_load_data
 %    channel:   [numeric] / [char]
 %               ▶ numeric: returns this channel (or the first of a vector)
 %               ▶ char
