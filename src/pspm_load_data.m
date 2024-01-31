@@ -140,7 +140,7 @@ switch class(fn)
     return
 end
 %% 4 Check channel if struct, otherwise checking is done in pspm_select_channels
-if class(channel) == 'struct'
+if isstruct(channel)
     if ~isfield(channel, 'data') || ~isfield(channel, 'infos')
       % data and infos are mandatory fields and must be provided
       % gerrmsg = sprintf('\nData structure is invalid:');
@@ -310,7 +310,7 @@ elseif isstruct(channel)
     else
         warning('ID:existing_file', 'File exists and overwriting not allowed.\n')
     end
-elseif ~(isnumeric(channel) && channel == 0)
+elseif ~(isnumeric(channel) && numel(channel) == 1 && channel == 0)
     [sts, data, filestruct.posofchannels] = pspm_select_channels(data, channel);
     if sts < 1, return; end
 end

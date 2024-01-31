@@ -39,14 +39,15 @@ switch class(channel)
     end
   otherwise
     warning('ID:invalid_input', 'Unknown channel option.');
+    return
 end
 
 %% 3 Select channels 
 channeltype_list = cellfun(@(x) x.header.chantype, data, 'uni', false);
 channelunits_list = cellfun(@(x) x.header.units, data, 'uni', false);
-if contains(channel, 'event')
+if ischar(channel)  && contains(channel, 'event')
     pos_of_channels = find(strcmpi(channelunits_list, 'events'));
-elseif strcmpi(channel, 'wave')
+elseif ischar(channel) && strcmpi(channel, 'wave')
     pos_of_channels = find(~strcmpi(channelunits_list, 'events'));
 elseif ischar(channel) 
     pos_of_channels = find(contains(channeltype_list, channel));
