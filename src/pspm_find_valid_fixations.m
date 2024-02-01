@@ -7,8 +7,7 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %   timeseries with NaN values during invalid fixations (as defined by the
 %   parameters).
 %   With two options it is possible to tell the function whether to add or
-%   replace the channels and to tell whether the function should create a new
-%   file or overwrite the file given in fn.
+%   replace the channels.
 % ● Format
 %   [sts, out_file] = pspm_find_valid_fixations(fn, bitmap, options)
 %   [sts, out_file] = pspm_find_valid_fixations(fn, circle_degree, distance,
@@ -44,30 +43,32 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %   │                 'add'. Possible values are 'add' or 'replace'
 %   ├───────.newfile: Define new filename to store data to it. Default is ''
 %   │                 which means that the file under fn will be 'replaced'.
-%   ├─────.overwrite: [logical] (0 or 1)
-%   │                 Define whether to overwrite existing output files or not.
-%   │                 Default value: determined by pspm_overwrite.
 %   ├───────.missing: If missing is enabled (=1), an extra channel will be
 %   │                 written containing information about the validated data.
 %   │                 Data points equal to 1 describe epochs which have been
 %   │                 discriminated as invalid during validation. Data points
 %   │                 equal to 0 describe epochs of valid data (= no blink &
 %   │                 valid fixation). Default is disabled (=0)
-%   ├──────────.eyes: Define on which eye the operations should be performed.
-%   │                 Possible values are: 'left', 'right', 'all'. Default is
-%   │                 'all'.
 %   └───────.channel: Choose channels in which the data should be set to NaN
-%                     during invalid fixations. Default is 'pupil'. A char or
-%                     numeric value or a cell array of char or numerics is
-%                     expected. Channel names pupil, gaze_x, gaze_y,
-%                     pupil_missing will be automatically expanded to the
-%                     corresponding eye. E.g. pupil becomes pupil_l or pupil_r
-%                     according to the eye which is being processed.
+%                     during invalid fixations. This can be a channel
+%                     number, any channel type including 'pupil' (which
+%                     will select a channel according to the precedence
+%                     order specified in pspm_load_channel), or 'both',
+%                     which will work on 'pupil_r' and 'pupil_l' and 
+%                     then update channel statistics and best eye. 
+%                     The selected channel must be an eyetracker 
+%                     channel, and the file must contain the corresponding 
+%                     gaze channel(s).
+%                     Default is 'both'. 
 % ● History
 %   Introduced in PsPM 4.0
 %   Written in 2016 Tobias Moser (University of Zurich)
 %   Maintained in 2021 by Teddy Chao (UCL)
+%   Channel logic changed in 2024 by Dominik Bach (Uni Bonn)
 
+% ------>>>
+% ensure default for options.channel is 'both'
+% check occurence of options.eye
 
 %% initialise
 global settings;
@@ -129,21 +130,6 @@ else
   end
 end
 
-% fn
-if ~ischar(fn) || ~exist(fn, 'file')
-  warning('ID:invalid_input', ['File %s is not char or does not ', ...
-    'seem to exist.'], fn); return;
-end
-% load data right away (needed if fixation point should be expanded)
-[msts, infos, data] = pspm_load_data(fn);
-if msts ~= 1
-  warning('ID:invalid_input', ['An error happened, while ', ...
-    'opening the file %s.'],fn); return;
-end
-options = pspm_options(options, 'find_valid_fixations');
-if options.invalid
-  return
-end
 %change distance to 'mm'
 if strcmpi(mode,'fixation')
   if ~strcmpi(unit,'mm')
@@ -153,6 +139,44 @@ if strcmpi(mode,'fixation')
     end
   end
 end
+
+% check options
+options = pspm_options(options, 'find_valid_fixations');
+if options.invalid
+  return
+end
+
+% in recursive calls, fn is a struct with fields .data and .infos, which is 
+% simply checked by by pspm_load_data 
+alldata = struct();
+[sts, alldata.infos, alldata.data] = pspm_load_data(fn);
+
+% progress according to options.channel
+if ~strcmpi(options.channel, 'both')
+    [sts, data] = pspm_load_channel(alldata, options.channel);
+    if sts < 1, return; end
+    if ~contains(data.header.chantype, settings.eyetracker_channels)
+        warning('ID:invalid_input', 'This function only allows eyetracker input');
+        return
+    end
+
+    % check laterality identifier
+    eye = data.header.chantype((end-1):end);
+    if ~(eye(1) == '_' && contains(eye, {settings.lateral.char.r, ...
+            settings.lateral.char.l, settings.lateral.char.c}))
+        eye = '';
+    end
+    % load corresponding gaze channels
+    [stsx, gaze_x] = pspm_load_channel(alldata, options.channel, ['gaze_x', eye], 'gaze_x', alldata);
+    [stsy, gaze_y] = pspm_load_channel(alldata, options.channel, ['gaze_y', eye], 'gaze_y', alldata);
+    
+    if (stsx*stsy) < 1, return; end
+    
+
+else
+
+
+
 % expand fixation_point
 if strcmpi(mode,'fixation')
   if ~isfield(options, 'fixation_point') || isempty(options.fixation_point) ...
@@ -184,51 +208,14 @@ else
   map_y_range = [1,ylim];
 end
 %% calculate radius araund de fixation points
-%options = pspm_options(options, 'find_valid_fixations');
-% overwrite
-options.overwrite = pspm_overwrite(fn, options);
-eyesToProcess = pspm_eye(infos.source.eyesObserved, 'char2cell');
-n_eyes = numel(eyesToProcess);
+
 new_pu = cell(n_eyes, 1);
 new_excl = cell(n_eyes, 1);
-for i = 1:n_eyes
-  eye = eyesToProcess{i};
-  if strcmpi(options.eyes, 'combined') || strcmpi(options.eyes(1), eye)
-    gaze_x = ['gaze_x_', eye];
-    gaze_y = ['gaze_y_', eye];
-    % find chars to replace
-    str_chans = cellfun(@ischar, options.channel);
-    channel = options.channel;
-    str_channeltypes = ['(', settings.findvalidfixations.channeltypes{1}];
-    for i_channeltypes = 2:length(settings.findvalidfixations.channeltypes)
-      str_channeltypes = [str_channeltypes, '|', ...
-        settings.findvalidfixations.channeltypes{i_channeltypes}];
-    end
-    str_channeltypes = [str_channeltypes, ')'];
-    channel(str_chans) = regexprep(channel(str_chans), str_channeltypes, ['$0_' eye]);
-    % replace strings with numbers
-    str_chan_num = channel(str_chans);
-    for j=1:numel(str_chan_num)
-      str_chan_num(j) = {find(cellfun(@(y) strcmpi(str_chan_num(j),...
-        y.header.chantype), data),1)};
-    end
-    channel(str_chans) = str_chan_num;
-    work_chans = cell2mat(channel);
 
-    if numel(work_chans) >= 1
-      % always use first found channel
-      switch mode
-        case 'bitmap'
-          gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
-            ~strcmpi(x.header.units,'degree'), data),1);
-          gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
-            ~strcmpi(x.header.units,'degree'), data),1);
-        case 'fixation'
-          gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
-            ~strcmpi(x.header.units,'degree') & ~strcmpi(x.header.units,'pixel'),data),1);
-          gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
-            ~strcmpi(x.header.units,'degree')& ~strcmpi(x.header.units,'pixel'),data),1);
-      end
+
+% bitmap: not degree
+% fixation: not degree, not pixel. converts to 'mm'.
+
 
       if ~isempty(gx) && ~isempty(gy)
         % we choose to convert the data in whatevercase to 'mm'
@@ -461,4 +448,8 @@ else
   warning('ID:invalid_input', 'Appearently no data was generated.');
 end
 sts = 1;
+
+else
+% call this function recursively and then update channel statistics.
+end
 return
