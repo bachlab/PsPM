@@ -29,7 +29,7 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, channel)
 %                 ├────.data (mandatory)
 %                 └─.options (mandatory)
 % ● Outputs
-%                sts: [logical] 0 as default, -1 if check is unsuccessful
+%                sts: [logical] 1 as default, -1 if check is unsuccessful
 %              infos: [struct] variable from data file
 %               data: cell array of channels as specified
 %   ┌─────filestruct: [struct]
