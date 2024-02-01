@@ -1,15 +1,16 @@
-function [sts, data, pos_of_channels] = pspm_select_channels(data, channel)
+function [sts, data, pos_of_channels] = pspm_select_channels(data, channel, units)
 % ● Definition
 %   pspm_select_channels selects one or several channels from a provided
-%   data cell array
+%   data cell array, according to channel type and units
 % ● Format
-%   [sts, data, pos_of_channels] = pspm_select_channels(data, channel)
+%   [sts, data, pos_of_channels] = pspm_select_channels(data, channel, units)
 % ● Arguments
 %    data:      a data cell array as loaded by pspm_load_data 
 %    channel:   [numeric] / [char]
 %               ▶ numeric vector: returns these channels
 %               ▶ char:     any permissible channel type, 'events' or
 %                           'wave': returns all channels of this type
+%   units:      any units definition (e.g., 'mm' or 'V') - can be omitted
 % 
 % ● History
 % Introduced in PsPM 6.2
@@ -21,6 +22,12 @@ if isempty(settings)
 end
 sts = -1;
 pos_of_channels = [];
+if nargin < 2
+    warning('ID:invalid_input', 'No channnel specified. Don''t know what to do.\n');
+      return
+elseif nargin < 3
+    units = 'any';
+end
 
 %% 2 Check channel
 switch class(channel)
@@ -45,12 +52,15 @@ end
 %% 3 Select channels 
 channeltype_list = cellfun(@(x) x.header.chantype, data, 'uni', false);
 channelunits_list = cellfun(@(x) x.header.units, data, 'uni', false);
-if ischar(channel)  && contains(channel, 'event')
-    pos_of_channels = find(strcmpi(channelunits_list, 'events'));
+if strcmp(units, 'any')
+    units = channelunits_list;
+end
+if ischar(channel) && contains(channel, 'event')
+    pos_of_channels = find(strcmpi(channelunits_list, 'events') & strcmp(channelunits_list, units));
 elseif ischar(channel) && strcmpi(channel, 'wave')
-    pos_of_channels = find(~strcmpi(channelunits_list, 'events'));
+    pos_of_channels = find(~strcmpi(channelunits_list, 'events') & strcmp(channelunits_list, units));
 elseif ischar(channel) 
-    pos_of_channels = find(contains(channeltype_list, channel));
+    pos_of_channels = find(contains(channeltype_list, channel) & strcmp(channelunits_list, units));
 else 
     pos_of_channels = channel;
 end

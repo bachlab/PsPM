@@ -168,16 +168,23 @@ if ~strcmpi(options.channel, 'both')
             settings.lateral.char.l, settings.lateral.char.c}))
         eye = '';
     end
-    % load corresponding gaze channels
-    [stsx, gaze_x] = pspm_load_channel(alldata, options.channel, ['gaze_x', eye], 'gaze_x', alldata);
-    [stsy, gaze_y] = pspm_load_channel(alldata, options.channel, ['gaze_y', eye], 'gaze_y', alldata);
-    
+
+    % load corresponding gaze channels in correct units
+    channelunits_list = cellfun(@(x) alldata.header.units, data, 'uni', false);
+    if strcmpi(mode, 'fixation')
+        channels_correct_units = find(~contains(channelunits_list, 'degree') & ~contains(channelunits_list, 'pixel'));
+    elseif strcmpi(mode, 'bitmap')
+        channels_correct_units = find(~contains(channelunits_list, 'degree'));
+    end
+    [stsx, gaze_x] = pspm_load_channel(alldata(channels_correct_units), ['gaze_x', eye]);
+    [stsy, gaze_y] = pspm_load_channel(alldata(channels_correct_units), ['gaze_y', eye]);    
     if (stsx*stsy) < 1, return; end
     
 
 else
+% call function recursively
 
-
+end
 
 % expand fixation_point
 if strcmpi(mode,'fixation')

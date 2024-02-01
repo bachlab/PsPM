@@ -8,7 +8,7 @@ function [sts, data_struct, infos] = pspm_load_channel(fn, channel, channeltype)
 %   ┌─────fn:   [char] filename / [struct] with fields
 %   ├─.infos:
 %   └──.data:
-%    channel:   [numeric] / [char]
+%    channel:   [numeric] / [char] / [struct]
 %               ▶ numeric: returns this channel (or the first of a vector)
 %               ▶ char
 %                 'marker'  returns the first maker channel 
@@ -26,6 +26,9 @@ function [sts, data_struct, infos] = pspm_load_channel(fn, channel, channeltype)
 %                           2.  Non-lateralised channels (e.g., 'pupil')
 %                           3.  Best eye pupil channels
 %                           4.  Any pupil channels
+%               ▶ struct: with fields
+%                 ├─.channel: as defined for the 'char' option above
+%                 └──.units: units of the channel
 %   channeltype: [char] any channel type as permitted per pspm_init; checks
 %                 whether retrieved data channel is of the specified type
 % ● Outputs
@@ -42,12 +45,19 @@ function [sts, data_struct, infos] = pspm_load_channel(fn, channel, channeltype)
 % no checking of file and channel type as this is done downstream in 
 % pspm_load_data
 
+% initialise
 global settings;
 if isempty(settings)
   pspm_init;
 end
-
 sts = -1; data_struct = struct();
+
+% expand channel if defined as struct
+if isstruct(channel)
+    units = channel.units;
+    channel = channel.channel;
+end
+
 [sts, infos, data] = pspm_load_data(fn, channel);
 if sts < 1, return; end
 
@@ -89,8 +99,7 @@ elseif ischar(channel)
         channel, keyword)
 else
     data_struct = data{1};
-    fprintf('More than one channel provided. The first one will be used.\n', ...
-        channel, keyword)
+    fprintf('More than one channel provided. The first one will be used.\n')
 end
 
 % if channeltype is given, check if channel is of correct type
