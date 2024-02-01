@@ -257,8 +257,6 @@ defaults.channeltypes(end+1) = struct(s_t, 'sps_c',            s_de, 'Scanpath s
 % Custom
 defaults.channeltypes(end+1) = struct(s_t, 'custom',           s_de, 'Custom',                                   s_i, @pspm_get_custom,    s_da, 'wave');
 
-defaults.findvalidfixations.channeltypes = {'gaze_pp_x',   'gaze_pp_y',   'gaze_x',   'gaze_y',   'pupil',   'pupil_missing',   'pupil_pp'}; % alphabetical order
-
 for k = 1:numel(defaults.channeltypes)
   if strcmpi(func2str(defaults.channeltypes(k).import), 'none')
     indx(k) = 0;
