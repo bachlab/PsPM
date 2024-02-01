@@ -33,7 +33,7 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %   │                 into account if there is no bitmap.
 %   ├────.resolution: Resolution with which the fixation point is defined
 %   │                 (Maximum value of the x and y coordinates). This can be
-%   │                 the resolution set in cogent (e.g. [1280 1024]) or the
+%   │                 the screen resolution in pixels (e.g. [1280 1024]) or the
 %   │                 width and height of the screen in cm (e.g. [50 30]).
 %   │                 Default is [1 1]. Only taken into account if there is no
 %   │                 bitmap.
@@ -58,7 +58,9 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %                     then update channel statistics and best eye. 
 %                     The selected channel must be an eyetracker 
 %                     channel, and the file must contain the corresponding 
-%                     gaze channel(s).
+%                     gaze channel(s) in the correct units: distance units for
+%                     mode "fixation" and distance or pixel units for mode 
+%                     "bitmap".
 %                     Default is 'both'. 
 % ● History
 %   Introduced in PsPM 4.0
@@ -68,7 +70,7 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 
 % ------>>>
 % ensure default for options.channel is 'both'
-% check occurence of options.eye
+% check occurence of options.eye (removed)
 
 %% initialise
 global settings;
