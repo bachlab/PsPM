@@ -238,17 +238,14 @@ data = cell(numel(model.datafile), 1);
 missing = cell(numel(model.datafile), 1);
 for iSn = 1:numel(model.datafile)
   % check & load data
-  [sts, ~, data{iSn}] = pspm_load_data(model.datafile{iSn}, model.channel);
-  if sts == -1 || isempty(data{iSn})
-    warning('ID:invalid_input', 'No SCR data contained in file %s', ...
-      model.datafile{iSn});
+  [sts, data] = pspm_load_channel(model.datafile{iSn}, model.channel, 'scr');
+  if sts == -1 
     return;
+  else
+     y{iSn} = data.data;
+     sr{iSn} = data.header.sr;
+     model.filter.sr = sr{iSn};
   end
-
-  % use the last data channel, consistent with sf and glm
-  y{iSn} = data{iSn}{end}.data;
-  sr{iSn} = data{iSn}{end}.header.sr;
-  model.filter.sr = sr{iSn};
 
   % load and check existing missing data (if defined)
   if ~isempty(model.missing{iSn})

@@ -5,7 +5,9 @@ function [sts, data_struct, infos] = pspm_load_channel(fn, channel, channeltype)
 % ● Format
 %   [sts, data_struct] = pspm_load_channel(fn, channel, channeltype)
 % ● Arguments
-%    fn:   [char] filename 
+%   ┌─────fn:   [char] filename / [struct] with fields
+%   ├─.infos:
+%   └──.data:
 %    channel:   [numeric] / [char]
 %               ▶ numeric: returns this channel (or the first of a vector)
 %               ▶ char
@@ -24,6 +26,14 @@ function [sts, data_struct, infos] = pspm_load_channel(fn, channel, channeltype)
 %                           2.  Non-lateralised channels (e.g., 'pupil')
 %                           3.  Best eye pupil channels
 %                           4.  Any pupil channels
+%   channeltype: [char] any channel type as permitted per pspm_init; checks
+%                 whether retrieved data channel is of the specified type
+% ● Outputs
+%                sts: [logical] 1 as default, -1 if unsuccessful
+%                data_struct: a struct with fields .data and .header,
+%                     corresponding to a single cell of a data cell array
+%                     returned by pspm_load_data
+%                infos: file infos as returned from pspm_load_data
 % ● History
 % Written in 2019 by Eshref Yozdemir (University of Zurich)
 % Updated in 2024 by Dominik Bach (University of Bonn)

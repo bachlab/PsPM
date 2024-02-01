@@ -22,7 +22,7 @@ function invalid_input(this)
   % Verify not a numeric channel
   this.verifyWarning(@() pspm_convert_hb2hp('abc',2,'abc'), 'ID:invalid_input');
   % Verify that call of pspm_load_data fails
-  this.verifyWarning(@() pspm_convert_hb2hp(files{1},100), 'ID:invalid_input');
+  this.verifyWarning(@() pspm_convert_hb2hp(files{1},100), 'ID:nonexistent_file');
   % Verify that interpolation does not have enough points
   % this.verifyWarning(@() pspm_convert_hb2hp(files{2}, 100), 'ID:too_strict_limits');
   % Verify that call of pspm_write_channel fails
