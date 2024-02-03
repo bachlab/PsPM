@@ -117,6 +117,9 @@ for iImport = 1:numel(import)
         import{iImport}.sr        = fileinfo.chaninfo(channel).realRate;
         import{iImport}.title     = fileinfo.chaninfo(channel).title;
         import{iImport}.units     = fileinfo.chaninfo(channel).units;
+      otherwise
+        warning('ID:feature_unsupported', 'Only waveforms are currently supported. \n');
+        return
     end
   elseif strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'events')
     switch fileinfo.chaninfo(channel).kind
@@ -126,6 +129,10 @@ for iImport = 1:numel(import)
         % import{iImport}.?    = fileinfo.chaninfo(channel).idealRate;
         % import{iImport}.?    = fileinfo.chaninfo(channel).realRate;
         % import{iImport}.?    = fileinfo.chaninfo(channel).kind;
+        warning('ID:feature_unsupported', 'Only waveforms are currently supported. \n');
+      otherwise
+        warning('ID:feature_unsupported', 'Only waveforms are currently supported. \n');
+        return
     end
   end
 end
