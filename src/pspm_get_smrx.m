@@ -105,12 +105,18 @@ for iImport = 1:numel(import)
         % Use CED64ReadWaveF
         [nRead, Fchan] = CEDS64ReadWaveF(fhand, ...
                                          channel, ...
-                                         fileinfo.chaninfo(channel).div, ...
+                                         floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div), ...
                                          1);
-        % import{iImport}.?    = fileinfo.chaninfo(channel).idealRate;
-        % import{iImport}.?    = fileinfo.chaninfo(channel).realRate;
-        % import{iImport}.?    = fileinfo.chaninfo(channel).number;
-        % import{iImport}.?    = fileinfo.chaninfo(channel).div;
+        import{iImport}.data      = Fchan;
+        import{iImport}.div       = fileinfo.chaninfo(channel).div;
+        import{iImport}.gain      = fileinfo.chaninfo(channel).gain;
+        import{iImport}.length    = nRead;
+        import{iImport}.idealRate = fileinfo.chaninfo(channel).idealRate;
+        import{iImport}.number    = fileinfo.chaninfo(channel).number;
+        import{iImport}.realRate  = fileinfo.chaninfo(channel).realRate;
+        import{iImport}.sr        = fileinfo.chaninfo(channel).realRate;
+        import{iImport}.title     = fileinfo.chaninfo(channel).title;
+        import{iImport}.units     = fileinfo.chaninfo(channel).units;
     end
   elseif strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'events')
     switch fileinfo.chaninfo(channel).kind
