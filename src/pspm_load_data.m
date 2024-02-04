@@ -313,6 +313,8 @@ elseif isstruct(channel)
 elseif ~(isnumeric(channel) && numel(channel) == 1 && channel == 0)
     [sts, data, filestruct.posofchannels] = pspm_select_channels(data, channel);
     if sts < 1, return; end
+else
+    filestruct.posofchannels = 1:numel(data);
 end
 sts = 1;
 return
