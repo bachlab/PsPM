@@ -60,7 +60,7 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, channel)
 %       this feature will be removed in the future
 % ● History
 %   Written in 2008-2021 by Dominik R. Bach (Wellcome Centre for Human Neuroimaging, UCL)
-%     2022 Teddy Chao (UCL)
+%   Updated in 2022 by Teddy and in 2024 by Dominik R. Bach (Wellcome Centre for Human Neuroimaging, UCL)
 
 %% 1 Initialise
 global settings
