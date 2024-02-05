@@ -10,8 +10,8 @@ function sts = pspm_resp_pp(fn, sr, channel, options)
 % ● Arguments
 %                 fn: data file name
 %                 sr: sample rate for new interpolated channel
-%            channel: number of respiration channel (optional, default: first
-%                     respiration channel)
+%            channel: number of respiration channel (optional, default:
+%                     last respiration channel)
 %   ┌────────options:
 %   ├────.systemtype: ['bellows'(default) /'cushion']
 %   ├──────.datatype: a cell array with any of 'rp', 'ra', 'rfr',
@@ -64,21 +64,14 @@ else
   if datatype(end), datatype(1:end) = 1; end
 end
 %% get data
-[nsts, infos, data] = pspm_load_data(fn, channel);
-old_channeltype = data{1}.header.chantype;
-if nsts == -1
-  warning('ID:invalid_input', 'Could not load data properly.');
-  return;
-end
-if numel(data) > 1
-  fprintf(['There is more than one respiration channel in the data file. ',...
-    'Only the first of these will be analysed.']);
-  data = data(1);
-end
-resp = data{1}.data;
+[nsts, data, infos] = pspm_load_channel(fn, channel, 'resp');
+if nsts == -1, return; end
+old_channeltype = data.header.chantype;
+
+resp = data.data;
 %% filter mean-centred data
 % Butterworth filter
-filt.sr        = data{1}.header.sr;
+filt.sr        = data.header.sr;
 filt.lpfreq    = 0.6;
 filt.lporder   = 1;
 filt.hpfreq    = .01;
@@ -133,7 +126,7 @@ for iType = 1:(numel(datatypes) - 1)
       case 2
         %ra
         for k = 1:(numel(respstamp) - 1)
-          win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
+          win = ceil(respstamp(k) * data.header.sr):ceil(respstamp(k + 1) * data.header.sr);
           respdata(k) = range(resp(win));
         end
         newdata.header.chantype = 'ra';
@@ -143,7 +136,7 @@ for iType = 1:(numel(datatypes) - 1)
         %rfr
         ibi = diff(respstamp);
         for k = 1:(numel(respstamp) - 1)
-          win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
+          win = ceil(respstamp(k) * data.header.sr):ceil(respstamp(k + 1) * data.header.sr);
           respdata(k) = range(resp(win))/ibi(k);
         end
         newdata.header.chantype = 'rfr';
@@ -189,7 +182,7 @@ end
 if options.plot
   figure('Position', [50, 50, 1000, 500]);
   axes; hold on;
-  oldsr = data{1}.header.sr;
+  oldsr = data.header.sr;
   oldt = (1/oldsr):(1/oldsr):infos.duration;
   newt = (1/newsr):(1/newsr):infos.duration;
   % normal breathing is 12-20 per minute, i. e. 3 - 5 s per breath. prd.
