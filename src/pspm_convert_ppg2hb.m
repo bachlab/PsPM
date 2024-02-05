@@ -14,8 +14,6 @@ function [ sts, outinfo ] = pspm_convert_ppg2hb( fn, channel, options )
 %   ┌────────options: struct with following possible fields
 %   ├───.diagnostics: [true/FALSE]
 %   │                 displays some debugging information
-%   ├───────.replace: [true/FALSE] replace existing heartbeat channel.
-%   │                 If multiple channels are present, replaces last.
 %   ├.channel_action: ['add'/'replace', 'replace']
 %   │                 Defines whether the interpolated
 %   │                 data should be added or the corresponding channel
