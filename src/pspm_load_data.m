@@ -60,7 +60,7 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, channel)
 %       this feature will be removed in the future
 % ● History
 %   Written in 2008-2021 by Dominik R. Bach (Wellcome Centre for Human Neuroimaging, UCL)
-%   Updated in 2022 by Teddy and in 2024 by Dominik R. Bach (Wellcome Centre for Human Neuroimaging, UCL)
+%     2022 Teddy Chao (UCL)
 
 %% 1 Initialise
 global settings
@@ -313,6 +313,8 @@ elseif isstruct(channel)
 elseif ~(isnumeric(channel) && numel(channel) == 1 && channel == 0)
     [sts, data, filestruct.posofchannels] = pspm_select_channels(data, channel);
     if sts < 1, return; end
+else
+    filestruct.posofchannels = 1:numel(data);
 end
 sts = 1;
 return
