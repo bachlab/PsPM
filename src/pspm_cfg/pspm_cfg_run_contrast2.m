@@ -1,27 +1,22 @@
 function out = pspm_cfg_run_contrast2(job)
-% Executes pspm_con1
-
-% $Id$
-% $Rev$
-
+% Updated on 19-12-2023 by Teddy
+%% Variables
 % modelfile
 if isfield(job.testtype, 'one_sample')
-    modelfile = job.testtype.one_sample.modelfile';
+  modelfile = job.testtype.one_sample.modelfile';
 else
-    modelfile{1,1} = job.testtype.two_sample.modelfile1';
-    modelfile{1,2} = job.testtype.two_sample.modelfile2';
+  modelfile{1,1} = job.testtype.two_sample.modelfile1';
+  modelfile{1,2} = job.testtype.two_sample.modelfile2';
 end
-
 % outfile
 outfile = [job.outdir{1} filesep  job.filename '.mat'];
-
-% connames & con
+% con and connames
 connames = fieldnames(job.def_con_name);
 connames = connames{1};
 if isfield(job.def_con_name.(connames),'con_all')
-    con = 'all';
+  con = 'all';
 else
-   con = job.def_con_name.(connames).convec;
+  con = job.def_con_name.(connames).convec;
 end
 % nrCon = size(job.def_con_name.(connames).con, 2);
 % if strcmp(connames, 'name')
@@ -35,13 +30,11 @@ end
 %         con(1,iCon) = job.def_con_name.(connames).con(iCon).conval;
 %     end
 % end
-
 % datatype
-%datatype = job.datatype;
-
+% datatype = job.datatype;
 % options
-options.overwrite = job.overwrite;
-
+options = struct();
+options = pspm_update_struct(options, job, 'overwrite');
+%% Run
 pspm_con2(modelfile, outfile, con, connames, options);
-
 out = {outfile};
