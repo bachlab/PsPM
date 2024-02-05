@@ -57,19 +57,19 @@ classdef pspm_gaze_pp_test < pspm_testcase
       opt.channel = 'gaze_x_r';
       [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
       testdata = load(this.pspm_input_fn);
-      this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_x_r');
+      this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_x_r');
       opt.channel = 'gaze_x_l';
       [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
       testdata = load(this.pspm_input_fn);
-      this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_x_l');
+      this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_x_l');
       opt.channel = 'gaze_y_r';
       [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
       testdata = load(this.pspm_input_fn);
-      this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_y_r');
+      this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_y_r');
       opt.channel = 'gaze_y_l';
       [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
       testdata = load(this.pspm_input_fn);
-      this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_pp_y_l');
+      this.verifyEqual(testdata.data{out_channel}.header.chantype,'gaze_y_l');
     end
     function upsampling_rate(this)
       % check if the upsampling rate is correct
@@ -96,12 +96,12 @@ classdef pspm_gaze_pp_test < pspm_testcase
       opt.channel_combine = 'gaze_x_l';
       [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
       testdata = load(this.pspm_input_fn);
-      this.verifyEqual(testdata.data{out_channel}.header.chantype, 'gaze_pp_x_c');
+      this.verifyEqual(testdata.data{out_channel}.header.chantype, 'gaze_x_c');
       opt.channel = 'gaze_y_r';
       opt.channel_combine = 'gaze_y_l';
       [~, out_channel] = pspm_gaze_pp(this.pspm_input_fn, opt);
       testdata = load(this.pspm_input_fn);
-      this.verifyEqual(testdata.data{out_channel}.header.chantype, 'gaze_pp_y_c');
+      this.verifyEqual(testdata.data{out_channel}.header.chantype, 'gaze_y_c');
     end
   end
   methods(TestClassTeardown)
