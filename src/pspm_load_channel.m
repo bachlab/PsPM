@@ -1,14 +1,14 @@
-function [sts, data_struct, infos] = pspm_load_channel(fn, channel, channeltype)
+function [sts, data_struct, infos, pos_of_channel] = pspm_load_channel(fn, channel, channeltype)
 % ● Definition
 %   pspm_load_channel loads a single data channel and provides integrated 
 %   channel checking logic
 % ● Format
-%   [sts, data_struct] = pspm_load_channel(fn, channel, channeltype)
+%   [sts, data_struct, infos, pos_of_channel] = pspm_load_channel(fn, channel, channeltype)
 % ● Arguments
 %   ┌─────fn:   [char] filename / [struct] with fields
 %   ├─.infos:
 %   └──.data:
-%    channel:   [numeric] / [char]
+%    channel:   [numeric] / [char] / [struct]
 %               ▶ numeric: returns this channel (or the first of a vector)
 %               ▶ char
 %                 'marker'  returns the first maker channel 
@@ -26,14 +26,19 @@ function [sts, data_struct, infos] = pspm_load_channel(fn, channel, channeltype)
 %                           2.  Non-lateralised channels (e.g., 'pupil')
 %                           3.  Best eye pupil channels
 %                           4.  Any pupil channels
-%   channeltype: [char] any channel type as permitted per pspm_init; checks
-%                 whether retrieved data channel is of the specified type
+%               ▶ struct: with fields
+%                 ├─.channel: as defined for the 'char' option above
+%                 └──.units: units of the channel
+%   channeltype: [char] optional; any channel type as permitted per pspm_init; 
+%                 checks whether retrieved data channel is of the specified type
+%                 and gives a warning if not
 % ● Outputs
 %                sts: [logical] 1 as default, -1 if unsuccessful
 %                data_struct: a struct with fields .data and .header,
 %                     corresponding to a single cell of a data cell array
 %                     returned by pspm_load_data
 %                infos: file infos as returned from pspm_load_data
+%                pos_of_channel: index of the returned channel
 % ● History
 % Written in 2019 by Eshref Yozdemir (University of Zurich)
 % Updated in 2024 by Dominik Bach (University of Bonn)
@@ -42,13 +47,20 @@ function [sts, data_struct, infos] = pspm_load_channel(fn, channel, channeltype)
 % no checking of file and channel type as this is done downstream in 
 % pspm_load_data
 
+% initialise
 global settings;
 if isempty(settings)
   pspm_init;
 end
+sts = -1; data_struct = struct(); pos_of_channel = -1;
 
-sts = -1; data_struct = struct();
-[sts, infos, data] = pspm_load_data(fn, channel);
+% expand channel if defined as struct
+if isstruct(channel)
+    units = channel.units;
+    channel = channel.channel;
+end
+
+[sts, infos, data, filestruct] = pspm_load_data(fn, channel);
 if sts < 1, return; end
 
 % precedence order for eyetracker channels
@@ -63,34 +75,46 @@ if ~isnumeric(channel) && ismember(channel, settings.eyetracker_channels)
     end
     if ~isempty(combined_channels)
         data = data(combined_channels);
+        fprintf('L-R-combined channel(s) of type ''%s'' identified and will be used.\n', channel)
+        channel = sprintf('combined %s', channel);
     elseif ~isempty(global_channels)
         data = data(global_channels);
+        fprintf('Non-lateralised channel(s) of type ''%s'' identified and will be used.\n', channel)
+        channel = sprintf('non-lateralised %s', channel);
     elseif ~isempty(best_channels)
         data = data(best_channels);
-     % else data is left unchanged
+        fprintf('Best eye channel(s) of type ''%s'' identified and will be used.\n', channel)
+        channel = sprintf('best eye %s', channel);
+        % else data is left unchanged
+    else
+        fprintf('Lateralised channel(s) of type ''%s'' identified and will be used.\n', channel)
+        channel = sprintf('lateralised %s', channel);
     end
 end
-       
+
 % if more than one channel exists, select first/last channel and give message 
 if numel(data) == 0
     warning('ID:invalid_input', 'No data of type %s contained in file %s.\n', ...
         channel, fn);
 elseif numel(data) == 1
     data_struct = data{1};
+    pos_of_channel = filestruct.posofchannels(1);
 elseif ischar(channel)
     if strcmp(channel, 'marker')
         data_struct = data{1};
+        pos_of_channel = filestruct.posofchannels(1);
         keyword = 'first';
     else
         data_struct = data{end};
+        pos_of_channel = filestruct.posofchannels(end);
         keyword = 'last';
     end
     fprintf('More than one channel of type ''%s'' exists. The %s one will be used.\n', ...
         channel, keyword)
 else
     data_struct = data{1};
-    fprintf('More than one channel provided. The first one will be used.\n', ...
-        channel, keyword)
+    pos_of_channel = filestruct.posofchannels(1);
+    fprintf('More than one channel provided. The first one will be used.\n')
 end
 
 % if channeltype is given, check if channel is of correct type

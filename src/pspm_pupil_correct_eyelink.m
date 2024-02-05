@@ -155,9 +155,9 @@ else
   gaze_y_chan = 'gaze_y_r';
 end
 
-[lsts, gaze_x_data] = pspm_load_channel(fn, gaze_x_chan, 'gaze');
+[lsts, gaze_x_data] = pspm_load_channel(fn, gaze_x_chan, 'gaze_x');
 if lsts ~= 1; return; end
-[lsts, gaze_y_data] = pspm_load_channel(fn, gaze_y_chan, 'gaze');
+[lsts, gaze_y_data] = pspm_load_channel(fn, gaze_y_chan, 'gaze_y');
 if lsts ~= 1; return; end
 
 %% conditionally mandatory input checks
