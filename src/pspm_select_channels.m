@@ -1,4 +1,4 @@
-edit pfunction [sts, data, pos_of_channels] = pspm_select_channels(data, channel)
+function [sts, data, pos_of_channels] = pspm_select_channels(data, channel)
 % ● Definition
 %   pspm_select_channels selects one or several channels from a provided
 %   data cell array
