@@ -169,37 +169,36 @@ for seg = options.segments
 end
 %% 4 Load
 action_combine = ~strcmp(options.channel_combine, 'none');
-addpath(pspm_path('backroom'));
-[lsts, data] = pspm_load_single_chan(fn, options.channel, 'last', 'pupil');
+[lsts, data] = pspm_load_channel(fn, options.channel, 'pupil');
 if lsts ~= 1
   return
 end
 if action_combine
-  [lsts, data_combine] = pspm_load_single_chan(fn, options.channel_combine, 'last', 'pupil');
+  [lsts, data_combine] = pspm_load_channel(fn, options.channel_combine, 'pupil');
   if lsts ~= 1
     return
   end
-  if strcmp(pspm_get_eye(data{1}.header.chantype), pspm_get_eye(data_combine{1}.header.chantype))
+  if strcmp(pspm_get_eye(data.header.chantype), pspm_get_eye(data_combine.header.chantype))
     warning('ID:invalid_input', 'options.channel and options.channel_combine must specify different eyes');
     return;
   end
-  if data{1}.header.sr ~= data_combine{1}.header.sr
+  if data.header.sr ~= data_combine.header.sr
     warning('ID:invalid_input', 'options.channel and options.channel_combine data have different sampling rate');
     return;
   end
-  if ~strcmp(data{1}.header.units, data_combine{1}.header.units)
+  if ~strcmp(data.header.units, data_combine.header.units)
     warning('ID:invalid_input', 'options.channel and options.channel_combine data have different units');
     return;
   end
-  if numel(data{1}.data) ~= numel(data_combine{1}.data)
+  if numel(data.data) ~= numel(data_combine.data)
     warning('ID:invalid_input', 'options.channel and options.channel_combine data have different lengths');
     return;
   end
   old_channeltype = sprintf('%s and %s', ...
-    data{1}.header.chantype, data_combine{1}.header.chantype);
+    data.header.chantype, data_combine.header.chantype);
 else
-  data_combine{1}.data = [];
-  old_channeltype = data{1}.header.chantype;
+  data_combine.data = [];
+  old_channeltype = data.header.chantype;
 end
 %% 5 preprocess
 [lsts, smooth_signal, model] = pspm_preprocess(data, data_combine, ...
@@ -237,17 +236,17 @@ if isempty(settings)
 end
 sts = -1;
 % 1 definitions
-combining = ~isempty(data_combine{1}.data);
-data_is_left = strcmpi(pspm_get_eye(data{1}.header.chantype), 'l');
-n_samples = numel(data{1}.data);
-sr = data{1}.header.sr;
+combining = ~isempty(data_combine.data);
+data_is_left = strcmpi(pspm_get_eye(data.header.chantype), 'l');
+n_samples = numel(data.data);
+sr = data.header.sr;
 diameter.t_ms = transpose(linspace(0, 1000 * (n_samples-1) / sr, n_samples));
 if data_is_left
-  diameter.L = data{1}.data;
-  diameter.R = data_combine{1}.data;
+  diameter.L = data.data;
+  diameter.R = data_combine.data;
 else
-  diameter.L = data_combine{1}.data;
-  diameter.R = data{1}.data;
+  diameter.L = data_combine.data;
+  diameter.R = data.data;
 end
 if size(diameter.L, 1) == 1
   diameter.L = transpose(diameter.L);
@@ -261,20 +260,20 @@ segmentName = transpose(cellfun(@(x) x.name, segments, 'uni', false));
 segmentTable = table(segmentStart, segmentEnd, segmentName);
 new_sr = custom_settings.valid.interp_upsamplingFreq;
 upsampling_factor = new_sr / sr;
-desired_output_samples = round(upsampling_factor * numel(data{1}.data));
+desired_output_samples = round(upsampling_factor * numel(data.data));
 % 2 load lib
 libbase_path = pspm_path('ext',['pupil', '-size'], 'code');
 libpath = {fullfile(libbase_path, 'dataModels'), fullfile(libbase_path, 'helperFunctions')};
 addpath(libpath{:});
 % 3 filtering
-model = PupilDataModel(data{1}.header.units, diameter, segmentTable, 0, custom_settings);
+model = PupilDataModel(data.header.units, diameter, segmentTable, 0, custom_settings);
 model.filterRawData();
 if combining
-  smooth_signal.header.chantype = pspm_update_channeltype(data{1}.header.chantype, settings.lateral.char.c);
+  smooth_signal.header.chantype = pspm_update_channeltype(data.header.chantype, settings.lateral.char.c);
 else
-  smooth_signal.header.chantype = data{1}.header.chantype;
+  smooth_signal.header.chantype = data.header.chantype;
 end
-smooth_signal.header.units = data{1}.header.units;
+smooth_signal.header.units = data.header.units;
 smooth_signal.header.sr = new_sr;
 smooth_signal.header.segments = segments;
 % 4 store signal and valid samples

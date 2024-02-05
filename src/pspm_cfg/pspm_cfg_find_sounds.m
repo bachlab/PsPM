@@ -41,7 +41,7 @@ chan.name    = 'Channel';
 chan.tag     = 'chan';
 chan.val     = {chan_def};
 chan.values  = {chan_def,chan_nr};
-chan.help    = {'Number of channel containing the startle sounds (default: first sound channel).'};
+chan.help    = {'Number of channel containing the startle sounds (default: last sound channel).'};
 
 %% Threshold
 threshold            = cfg_entry;

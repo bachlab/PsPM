@@ -53,7 +53,7 @@ function [sts, out] = pspm_scr_pp(datafile, options, channel)
 %   │             Defines whether the new channel should be added, the previous
 %   │             outputs of this function should be replaced, or new data
 %   │             should be withdrawn. Default: 'add'.
-%   └──.channel:  Number of SCR channel. Default: first SCR channel
+%   └──.channel:  Number of SCR channel. Default: last SCR channel
 % ● Outputs
 %           sts:  Status indicating whether the program is running as expected.
 %           out:  The path to the  output of the final processed data.
@@ -114,17 +114,12 @@ else
 end
 for d = 1:numel(data_source)
   % out{d} = [];
-  [sts_loading, ~, indatas, ~] = pspm_load_data(data_source{d}, channel); % check and get datafile
+  [sts_loading, indatas, ] = pspm_load_channel(data_source{d}, channel, 'scr'); % check and get datafile
   if sts_loading == -1
-    warning('ID:invalid_input', 'Could not load data');
     return;
   end
-  indata = indatas{1,1}.data;
-  if ~isfield(indatas{1,1}.header, 'sr')
-    warning('ID:invalid_input', 'Input data header must contain the field sample rate (sr).');
-    return;
-  end
-  sr = indatas{1,1}.header.sr; % return sampling frequency from the input data
+  indata = indatas.data;
+  sr = indatas.header.sr; % return sampling frequency from the input data
   if ~any(size(indata) > 1)
     warning('ID:invalid_input', 'Argument ''data'' should contain > 1 data points.');
     return;
@@ -192,7 +187,7 @@ for d = 1:numel(data_source)
     % If not save epochs, save the changed data to the original data as
     % a new channel or replace the old data
     if ~strcmp(options.channel_action, 'withdraw')
-      data_to_write = indatas{1,1};
+      data_to_write = indatas;
       data_to_write.data = data_changed;
       [sts_write, ~] = pspm_write_channel(out{d}, data_to_write, options.channel_action);
       if sts_write == -1

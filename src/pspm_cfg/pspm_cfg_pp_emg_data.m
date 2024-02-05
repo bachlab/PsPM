@@ -39,7 +39,7 @@ chan.tag                = 'channel';
 chan.val                = {first_chan};
 chan.values             = {first_chan, cust_chan};
 chan.help               = {['Channel ID of the channel containing the ', ...
-    'unprocessed EMG data.']};
+    'unprocessed EMG data. Default: last EMG channel.']};
 
 % Mains frequency
 mains                   = cfg_entry;

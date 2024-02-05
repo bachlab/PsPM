@@ -30,7 +30,7 @@ function varargout = pspm_sf(model, options)
 %   │                   data file. See pspm_get_timing for epoch definition; specify
 %   │                   a cell array for multiple input files. This must always be
 %   │                   specified in SECONDS.
-%   └────────.channel:  [integer] [default: first SCR channel]
+%   └────────.channel:  [integer] [default: last SCR channel]
 %                       channel number.
 %   ┌─────────options
 %   ├──────.overwrite:  [logical] [default: determined by pspm_overwrite]
@@ -159,23 +159,23 @@ for iFile = 1:nFile
   fprintf('SF analysis: %s ...', model.datafile{iFile});
   
   % 3.2 get and filter data --
-  [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
+  [sts_load_data, data] = pspm_load_channel(model.datafile{iFile}, model.channel, 'scr');
   if sts_load_data < 0, return; end
-  y{1} = data{end}.data;
-  sr(1) = data{end}.header.sr;
+  y{1} = data.data;
+  sr(1) = data.header.sr;
   model.filter.sr = sr(1);
-  [sts_prepdata, y{2}, sr(2)] = pspm_prepdata(data{end}.data, model.filter);
+  [sts_prepdata, y{2}, sr(2)] = pspm_prepdata(y{1}, model.filter);
   % always use last data channels
   if sts_prepdata == -1
     warning('ID:invalid_input', 'Call of pspm_prepdata failed.');
     return;
   end
   % 3.3 Check data units
-  if ~strcmpi(data{end}.header.units, 'uS') && any(strcmpi('dcm', method))
+  if ~strcmpi(data.header.units, 'uS') && any(strcmpi('dcm', method))
     fprintf(['\nYour data units are stored as %s, ',...
       'and the method will apply an amplitude threshold in uS. ',...
       'Please check your results.\n'], ...
-      data{end}.header.units);
+      data.header.units);
   end
   % 3.4 Get missing epochs --
   if ~isempty(model.missing{iFile})
@@ -188,25 +188,10 @@ for iFile = 1:nFile
   end
   % 3.5 Get marker data --
   if any(strcmp(model.timeunits, {'marker', 'markers'}))
-    [sts, ~, ndata] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
-    if sts < 1
-      warning('ID:invalid_input', 'Could not load data');
-      return;
-    elseif ~strcmp(ndata{1}.header.chantype, 'marker')
-      warning('ID:invalid_option', ...
-        ['Channel %i is no marker channel. ',...
-        'The first marker channel in the file is used instead'],...
-        options.marker_chan_num);
-      [sts_load_data, ~, ~] = pspm_load_data(model.datafile{iFile}, 'marker');
-      if sts_load_data == -1
-        warning('ID:invalid_input', 'Could not load data');
-        return;
-      end
-    end
-    % use first marker channel
-    events{iFile} = ndata{1}.data(:);
+    [sts, ndata] = pspm_load_channel(model.datafile{iFile}, options.marker_chan_num, 'marker');
+    if sts < 1, return;  end
+    events{iFile} = ndata.data(:);
   end
-
 
   for iEpoch = 1:size(epochs{iFile}, 1)
     if iEpoch > 1, fprintf('\n\t\t\t'); end

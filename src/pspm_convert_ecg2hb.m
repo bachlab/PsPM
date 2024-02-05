@@ -7,7 +7,7 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, channel, options)
 %   sts = pspm_convert_ecg2hb(fn, channel, options)
 % ● Arguments
 %                 fn: data file name
-%            channel: number of ECG channel (optional, default: first ECG
+%            channel: number of ECG channel (optional, default: last ECG
 %                     channel) if is empty (= 0 / []) then default channel will
 %                     be used.
 %   ┌────────options:
@@ -137,16 +137,8 @@ pt.settings.debugmode = options.debugmode;    %   no debuggin [def]
 pt_debug=[];
 
 %% get data
-[nsts, ~, data] = pspm_load_data(fn, channel);
+[nsts, data] = pspm_load_channel(fn, channel, 'ecg');
 if nsts == -1, return; end
-if numel(data) > 1
-  fprintf('There is more than one ECG channel in the data file. Only the first of these will be analysed.');
-  data = data(1);
-end
-if not(strcmp(data{1,1}.header.chantype,'ecg'))
-  warning('ID:not_allowed_chantype', 'Specified channel is not an ECG channel. Don''t know what to do!')
-  return;
-end
 
 % =========================================================================
 % Pan Tompkins QRS detection
@@ -154,7 +146,7 @@ end
 
 % ---Settings -------------------------------------------------------------
 % define filter properties
-pt.settings.filt.sr=data{1}.header.sr ;
+pt.settings.filt.sr=data.header.sr ;
 pt.settings.filt.lpfreq=15;
 pt.settings.filt.lporder=1;
 pt.settings.filt.hpfreq=5;
@@ -167,7 +159,7 @@ pt.settings.tmin=round(60/pt.settings.maxHR*pt.settings.filt.down);
 pt.set.tmax=round(60/pt.settings.minHR*pt.settings.filt.down);
 
 % ---Filter Rawdata--------------------------------------------------------
-[nsts,pt.data.x,pt.settings.filt.sr]=pspm_prepdata(data{1}.data,pt.settings.filt);
+[nsts,pt.data.x,pt.settings.filt.sr]=pspm_prepdata(data.data,pt.settings.filt);
 if nsts == -1, return; end
 pt.settings.n=length(pt.data.x);
 
