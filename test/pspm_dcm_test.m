@@ -41,7 +41,7 @@ classdef pspm_dcm_test < pspm_testcase
       wrong_model = correct_model;
       % invalid_data file
       wrong_model.datafile = '';
-      this.verifyWarning(@() pspm_dcm(wrong_model), 'ID:invalid_input');
+      this.verifyWarning(@() pspm_dcm(wrong_model), 'ID:nonexistent_file');
       % not all mandatory fields
       % modelfiles
       wrong_model = rmfield(correct_model, 'modelfile');

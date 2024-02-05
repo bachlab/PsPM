@@ -22,7 +22,7 @@ function [sts, output] = pspm_emg_pp(fn, options)
 %                     with notch filter (default: 50Hz).
 %          .channel:  [numeric/string] Channel to be preprocessed.
 %                     Can be a channel ID or a channel name.
-%                     Default is 'emg' (i.e. first EMG channel)
+%                     Default is 'emg' (i.e. last EMG channel)
 %   .channel_action:  ['add'/'replace'] Defines whether the new channel should
 %                     be added or the previous outputs of this function should
 %                     be replaced. (Default: 'replace')
@@ -66,7 +66,7 @@ end
 
 % load data
 % -------------------------------------------------------------------------
-[lsts, infos, data] = pspm_load_data(fn, options.channel);
+[lsts, data] = pspm_load_channel(fn, options.channel, 'emg');
 if lsts ~= 1, return, end
 
 % do the job
