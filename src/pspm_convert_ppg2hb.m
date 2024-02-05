@@ -10,7 +10,7 @@ function [ sts, outinfo ] = pspm_convert_ppg2hb( fn, channel, options )
 %   [ sts, outinfo ] = pspm_convert_ppg2hb( fn, channel, options )
 % ● Arguments
 %                 fn: file name with path
-%            channel: ppu channel number
+%            channel: ppg channel number, default: last ppg channel
 %   ┌────────options: struct with following possible fields
 %   ├───.diagnostics: [true/FALSE]
 %   │                 displays some debugging information
@@ -67,31 +67,19 @@ fprintf('Heartbeat detection for %s ... \n', fn);
 
 % get data
 % -------------------------------------------------------------------------
-[nsts, ~, data] = pspm_load_data(fn, channel);
-if nsts == -1
-  warning('ID:invalid_input', 'call of pspm_load_data failed');
-  return;
-end
-if numel(data) > 1
-  fprintf('There is more than one PPG channel in the data file. Only the first of these will be analysed.');
-  data = data(1);
-end
-% Check that channel is ppg
-if ~strcmp(data{1,1}.header.chantype,'ppg')
-  warning('ID:not_allowed_chantype', 'Specified channel is not a PPG channel. Don''t know what to do!')
-  return;
-end
+[nsts, data] = pspm_load_channel(fn, channel, 'ppg');
+if nsts == -1, return; end
 
 %% Large spikes mode
 %--------------------------------------------------------------------------
-ppg = data{1}.data;
+ppg = data.data;
 % large spike mode
 if options.lsm
   fprintf('Entering large spikes mode. This might take some time.');
   % Look for all peaks lower than 200 bpm (multiple of two in heart rate
   %  to compensate for absolute value and therefore twice as mani maxima)
   [pks,pis] = findpeaks(abs(ppg),...
-    'MinPeakDistance',30/200*data{1}.header.sr);
+    'MinPeakDistance',30/200*data.header.sr);
   % Ensure at least one spike is removed by adapting quantil to realistic
   % values, given number of detected spikes
   q = floor(length(pks)*(1-options.lsm/100))/length(pks);
@@ -112,8 +100,8 @@ end
 %--------------------------------------------------------------------------
 fprintf('Creating template. This might take some time.');
 % Find prominent peaks for a max heart rate of 200 bpm
-[~,pis] = findpeaks(data{1}.data,...
-  'MinPeakDistance',60/200*data{1}.header.sr,...
+[~,pis] = findpeaks(data.data,...
+  'MinPeakDistance',60/200*data.header.sr,...
   'MinPeakProminence',minProm);
 
 if options.lsm
@@ -133,13 +121,13 @@ period_index_lower_bound = floor(pis(2:end-1)-.3*min_pulse_period);
 fprintf('...');
 
 % Create template from mean of peak time-locked ppg pulse periods
-pulses = cell2mat(arrayfun(@(x) data{1}.data(x:x+min_pulse_period),period_index_lower_bound','un',0));
+pulses = cell2mat(arrayfun(@(x) data.data(x:x+min_pulse_period),period_index_lower_bound','un',0));
 template = mean(pulses,2);
 fprintf('done.\n');
 
 % handle diagnostic plots relevant to template building
 if options.diagnostics
-  t_template = (0:length(template)-1)'/data{1}.header.sr;
+  t_template = (0:length(template)-1)'/data.header.sr;
   t_pulses = repmat(t_template,1,length(pis)-2);
   figure
   plot(t_pulses,pulses,'--')
@@ -153,17 +141,17 @@ end
 %% Cross correlate the signal with the template and find peaks
 %--------------------------------------------------------------------------
 fprintf('Applying template.');
-ppg_corr = xcorr(data{1}.data,template)/sum(template);
+ppg_corr = xcorr(data.data,template)/sum(template);
 % Truncate ppg_xcorr and realigne it so the max correlation corresponds to
 % templates peak and not beginning of template.
-ppg_corr = ppg_corr(length(data{1}.data)-floor(.3*min_pulse_period):end-floor(.3*min_pulse_period));
+ppg_corr = ppg_corr(length(data.data)-floor(.3*min_pulse_period):end-floor(.3*min_pulse_period));
 if options.diagnostics
-  t_ppg = (0:length(data{1}.data)-1)'/data{1}.header.sr;
+  t_ppg = (0:length(data.data)-1)'/data.header.sr;
   figure
   if length(t_ppg) ~= length(ppg_corr)
     length(t_ppg)
   end
-  plot(t_ppg,ppg_corr,t_ppg,data{1}.data)
+  plot(t_ppg,ppg_corr,t_ppg,data.data)
   xlabel('time [s]')
   ylabel('Amplitude')
   title('ppg cross-corelated with template and ppg')
@@ -172,8 +160,8 @@ end
 % Get peaks that are at least one template width appart. These are the best
 % correlation points.
 [~,hb] = findpeaks(ppg_corr/max(ppg_corr),...
-  data{1}.header.sr,...
-  'MinPeakdistance',min_pulse_period/data{1}.header.sr);
+  data.header.sr,...
+  'MinPeakdistance',min_pulse_period/data.header.sr);
 fprintf('   done.\n');
 
 %% Prepare output and save
