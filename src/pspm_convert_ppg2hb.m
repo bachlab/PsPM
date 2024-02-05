@@ -67,7 +67,7 @@ fprintf('Heartbeat detection for %s ... \n', fn);
 
 % get data
 % -------------------------------------------------------------------------
-[nsts, data] = pspm_load_data(fn, channel, 'ppg');
+[nsts, data] = pspm_load_channel(fn, channel, 'ppg');
 if nsts == -1, return; end
 
 %% Large spikes mode

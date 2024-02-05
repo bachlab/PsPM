@@ -198,7 +198,7 @@ for iFile = 1:nFile
     end
     events{iFile} = data.data(:) * data.header.sr;
     if strcmp(model.timeunits,'markervalues')
-      model.timing{iFile}.markerinfo = data{1}.markerinfo;
+      model.timing{iFile}.markerinfo = data.markerinfo;
     end
   end
 end
