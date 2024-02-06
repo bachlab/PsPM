@@ -1,4 +1,4 @@
-function [sts, out_channel] = pspm_pupil_pp (fn, options)
+function [sts, varargout] = pspm_pupil_pp (fn, options)
 % ● Description
 %   pspm_pupil_pp preprocesses pupil diameter signals given in any unit of
 %   measurement. It performs the steps described in [1]. This function uses
@@ -151,8 +151,11 @@ if action_combine
   if sts_load ~= 1
     return
   end
-  if strcmp(pspm_extract_eye(data.header.chantype), pspm_extract_eye(data_combine.header.chantype))
-    warning('ID:invalid_input', 'options.channel and options.channel_combine must specify different eyes');
+  [sts1, eye1] = pspm_find_eye(data.header.chantype);
+  [sts2, eye2] = pspm_find_eye(data_combine.header.chantype);
+  if (sts1 < 1 || sts2 < 1), return, end
+  if sum(strcmp([eye1, eye2], {'lr', 'rl'}) < 1)
+    warning('ID:invalid_input', 'options.channel and options.channel_combine must specify left and right eyes');
     return;
   end
   if data.header.sr ~= data_combine.header.sr
@@ -210,7 +213,7 @@ end
 sts = -1;
 % 1 definitions
 combining = ~isempty(data_combine.data);
-data_is_left = strcmpi(pspm_get_eye(data.header.chantype), 'l');
+data_is_left = strcmpi(pspm_find_eye(data.header.chantype), 'l');
 n_samples = numel(data.data);
 sr = data.header.sr;
 diameter.t_ms = transpose(linspace(0, 1000 * (n_samples-1) / sr, n_samples));
