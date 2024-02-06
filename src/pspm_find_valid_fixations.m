@@ -165,14 +165,7 @@ if sts_load < 1, return, end
 if ~strcmpi(options.channel, 'both')
     [sts_load, data, infos, pos_of_channel] = pspm_load_channel(alldata, options.channel);
     if sts_load < 1, return; end
-    if ~contains(data.header.chantype, settings.eyetracker_channels)
-        warning('ID:invalid_input', 'This function only allows eyetracker input');
-        return
-    end
-
-    % check laterality identifier
-    eye = pspm_get_eye(data.header.chantype);
-
+  
     % load corresponding gaze channels in correct units
     channelunits_list = cellfun(@(x) data.header.units, alldata.data, 'uni', false);
     if strcmpi(mode, 'fixation')
@@ -181,9 +174,10 @@ if ~strcmpi(options.channel, 'both')
         channels_correct_units = find(~contains(channelunits_list, 'degree'));
     end
     gazedata = struct('infos', alldata.infos, 'data', {alldata.data(channels_correct_units)});
-    [stsx, gaze_x] = pspm_load_channel(gazedata, ['gaze_x', eye]);
-    [stsy, gaze_y] = pspm_load_channel(gazedata, ['gaze_y', eye]);
-    if stsx < 1 || stsy < 1
+    
+    [sts_gaze, gaze_x, gaze_y, eye] = pspm_load_gaze(gazedata, data.header.chantype);
+    
+    if sts_gaze < 1 
         warning('ID:invalid_input', ['Unable to perform gaze ', ...
           'validation. Cannot find gaze channels with distance ',...
           'unit values. Maybe you need to convert them with ', ...

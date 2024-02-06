@@ -1,4 +1,4 @@
-function varargout = pspm_pupil_pp (fn, options)
+function [sts, out_channel] = pspm_pupil_pp (fn, options)
 % ● Description
 %   pspm_pupil_pp preprocesses pupil diameter signals given in any unit of
 %   measurement. It performs the steps described in [1]. This function uses
@@ -141,16 +141,17 @@ for seg = options.segments
 end
 %% 4 Load
 action_combine = ~strcmp(options.channel_combine, 'none');
-[lsts, data,] = pspm_load_channel(fn, options.channel, 'pupil');
-if lsts ~= 1
-  return
-end
+alldata = struct();
+[sts_load, alldata.infos, alldata.data] = pspm_load_data(fn);
+if sts_load < 1, return, end
+[sts_load, data,] = pspm_load_channel(alldata, options.channel, 'pupil');
+if sts_load ~= 1, return, end
 if action_combine
-  [lsts, data_combine] = pspm_load_channel(fn, options.channel_combine, 'pupil');
-  if lsts ~= 1
+  [sts_load, data_combine] = pspm_load_channel(alldata, options.channel_combine, 'pupil');
+  if sts_load ~= 1
     return
   end
-  if strcmp(pspm_get_eye(data.header.chantype), pspm_get_eye(data_combine.header.chantype))
+  if strcmp(pspm_extract_eye(data.header.chantype), pspm_extract_eye(data_combine.header.chantype))
     warning('ID:invalid_input', 'options.channel and options.channel_combine must specify different eyes');
     return;
   end
@@ -347,33 +348,4 @@ for i = 1:numel(fnames)
   else
     out_struct.(name) = in_struct.(name);
   end
-end
-function eye = pspm_get_eye(channeltype)
-% Definition
-% pspm_get_eye detect the eye location from an input channel type
-%  FORMAT
-%  eye = pspm_get_eye(channeltype)
-% ARGUMENTS
-%   Input
-%     channeltype  a string that contains the eye location
-%   Output
-%     eye        a character
-% PsPM (version 5.1.2)
-% (C) 2021 Teddy Chao (UCL)
-global settings
-if isempty(settings)
-  pspm_init;
-end
-sts = -1;
-eye = 'unknown';
-for eye_attempt = [settings.lateral.char.l, settings.lateral.char.r, settings.lateral.char.c]
-  if contains(channeltype, ['_', eye_attempt, '_'])
-    eye = eye_attempt;
-  elseif channeltype(length(channeltype)-1:length(channeltype)) == ['_', eye_attempt]
-    eye = eye_attempt;
-  end
-end
-if strcmp(eye, 'unknown')
-  warning('ID:invalid_input', 'channeltype does not contain a valid eye');
-  return
 end

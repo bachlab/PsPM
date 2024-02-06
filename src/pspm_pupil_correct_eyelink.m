@@ -60,11 +60,7 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 %   │               processed. You can alos specify the number of a channel.
 %   └channel_action:  ['add'/'replace'] Defines whether output data should
 %                     be added or the corresponding preprocessed channel
-%                     should be replaced. Note that 'replace' mode does not
-%                     replace raw data channels. It replaces a previously
-%                     stored preprocessed channel with a '_pp' suffix at the
-%                     end of its type.
-%                     (Default: 'add')
+%                     should be replaced. (Default: 'add')
 % ● Outputs
 %       out_channel:  Channel index of the stored output channel.
 % ● Reference
@@ -127,27 +123,19 @@ if strcmpi(options.mode, 'auto')
   end
 end
 
-
 %% load data
 alldata = struct();
 [sts_load, alldata.infos, alldata.data] = pspm_load_data(fn);
 if sts_load < 1, return, end
 
-
+% get pupil and gaze channels
 [lsts, pupil_data] = pspm_load_channel(alldata, options.channel, 'pupil');
 if lsts ~= 1, return, end
-old_channeltype = pupil_data.header.chantype;
-
-% check laterality identifier
-eye = pspm_get_eye(data.header.chantype);
-
-
-[lsts, gaze_x_data] = pspm_load_channel(alldata, gaze_x_chan, 'gaze_x');
-if lsts ~= 1; return; end
-[lsts, gaze_y_data] = pspm_load_channel(alldata, gaze_y_chan, 'gaze_y');
+[lsts, gaze_x_data, gaze_y_data] = pspm_load_gaze(alldata, pupil_data.header.chantype);
 if lsts ~= 1; return; end
 
 %% conditionally mandatory input checks
+old_channeltype = pupil_data.header.chantype;
 
 if strcmp(gaze_x_data.header.units, 'pixel') || strcmp(gaze_y_data.header.units, 'pixel')
   if ~isfield(options, 'screen_size_px')
@@ -178,7 +166,6 @@ else
 end
 
 %% gaze conversion
-
 gaze_x_mm = get_gaze_in_mm(gaze_x_data.data,...
   gaze_x_data.header.units, options.screen_size_mm(1),...
   options.screen_size_px(1));
