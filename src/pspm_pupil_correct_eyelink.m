@@ -47,24 +47,17 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 %   ├─────────S_x:  See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
 %   ├─────────S_y:  See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
 %   ├─────────S_z:  See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
-%   ├─────channel:  [numeric/string] Channel ID to be preprocessed.
-%   │               (Default: 'pupil')
-%   │               * Preprocessing raw eye data:
-%   │                 The best eye is processed when channel is 'pupil'.
-%   │                 In order to process a specific eye, use 'pupil_l' or
-%   │                 'pupil_r'.
-%   │               * Finally, a channel can be specified by its
-%   │                 index in the given PsPM data structure. It will be
-%   │                 preprocessed as long as it is a valid pupil channel.
-%   │               * If channel is specified as a string and there are
-%   │                 multiple channels with the exact same type, only the
-%   │                 last one will be processed. This is normally not the
-%   │                 case with raw data channels; however, there may be
-%   │                 multiple preprocessed channels with same type if 'add'
-%   │                 channel_action was previously used. This feature can
-%   │                 be combined with 'add' channel_action to create
-%   │                 preprocessing histories where the result of each step
-%   │                 is stored as a separate channel.
+%   ├─.channel:     [optional][numeric/string] [Default: 'pupil']
+%   │               Channel ID to be preprocessed.
+%   │               To process a specific eye, use 'pupil_l' or 'pupil_r'.
+%   │               To process the combined left and right eye, use 'pupil_c'.
+%   │               To combine both eyes, specify one eye here and the other
+%   │               under option 'channel_combine'. The identifier 'pupil' will
+%   │               use the first existing option out of the following: 
+%   │               (1) L-R-combined pupil, (2) non-lateralised pupil, (3) best
+%   │               eye pupil, (4) any pupil channel. If there are multiple
+%   │               channels of the specified type, only last one will be
+%   │               processed. You can alos specify the number of a channel.
 %   └channel_action:  ['add'/'replace'] Defines whether output data should
 %                     be added or the corresponding preprocessed channel
 %                     should be replaced. Note that 'replace' mode does not
@@ -136,28 +129,22 @@ end
 
 
 %% load data
-[lsts, pupil_data] = pspm_load_channel(fn, options.channel, 'pupil');
+alldata = struct();
+[sts_load, alldata.infos, alldata.data] = pspm_load_data(fn);
+if sts_load < 1, return, end
+
+
+[lsts, pupil_data] = pspm_load_channel(alldata, options.channel, 'pupil');
 if lsts ~= 1, return, end
 old_channeltype = pupil_data.header.chantype;
 
-is_left = contains(old_channeltype, '_l');
-is_both = contains(old_channeltype, '_c');
-if is_both
-  warning('ID:invalid_input',...
-    'pspm_pupil_correct_eyelink cannot work with combined pupil channels');
-  return;
-end
-if is_left
-  gaze_x_chan = 'gaze_x_l';
-  gaze_y_chan = 'gaze_y_l';
-else
-  gaze_x_chan = 'gaze_x_r';
-  gaze_y_chan = 'gaze_y_r';
-end
+% check laterality identifier
+eye = pspm_get_eye(data.header.chantype);
 
-[lsts, gaze_x_data] = pspm_load_channel(fn, gaze_x_chan, 'gaze_x');
+
+[lsts, gaze_x_data] = pspm_load_channel(alldata, gaze_x_chan, 'gaze_x');
 if lsts ~= 1; return; end
-[lsts, gaze_y_data] = pspm_load_channel(fn, gaze_y_chan, 'gaze_y');
+[lsts, gaze_y_data] = pspm_load_channel(alldata, gaze_y_chan, 'gaze_y');
 if lsts ~= 1; return; end
 
 %% conditionally mandatory input checks

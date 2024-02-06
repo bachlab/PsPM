@@ -171,15 +171,7 @@ if ~strcmpi(options.channel, 'both')
     end
 
     % check laterality identifier
-    eye = data.header.chantype((end-1):end);
-    if ~(eye(1) == '_' && contains(eye, {settings.lateral.char.r, ...
-            settings.lateral.char.l, settings.lateral.char.c}))
-        eye = '';
-        new_chantype = data.header.chantype;
-    else
-        new_chantype = data.header.chantype(1:(end-2));
-    end
-
+    eye = pspm_get_eye(data.header.chantype);
 
     % load corresponding gaze channels in correct units
     channelunits_list = cellfun(@(x) data.header.units, alldata.data, 'uni', false);

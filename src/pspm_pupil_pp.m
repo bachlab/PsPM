@@ -59,14 +59,11 @@ function varargout = pspm_pupil_pp (fn, options)
 %   │           The input format is exactly the same as the .channel field.
 %   │           However, the eye specified in this channel must be different
 %   │           from the one specified in .channel field. The output channel 
-%   │           will then be of type 'pupil_pp_c'.
+%   │           will then be of type 'pupil_c'.
 %   ├─.channel_action:
 %   │           [optional][string][Accepts: 'add'/'replace'][Default: 'add']
 %   │           Defines whether corrected data should be added or the
-%   │           corresponding preprocessed channel should be replaced. Note
-%   │           that 'replace' mode does not replace the raw data channel,
-%   │           but a previously stored preprocessed channel with a '_pp'
-%   │           suffix at the end of its type.
+%   │           corresponding preprocessed channel should be replaced. 
 %   ├─.custom_settings:
 %   │           [optional][Default: See pspm_pupil_pp_options]
 %   │           Settings structure to modify the preprocessing steps. If
