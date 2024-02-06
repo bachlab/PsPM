@@ -1,36 +1,27 @@
 function [out] = pspm_cfg_run_proc_illuminance(job)
-
-% $Id$
-% $Rev$
-
+% Updated on 08-01-2024 by Teddy
 src_file = job.lum_file{1};
 out_file = [job.outdir{1}, filesep, job.filename];
-if isempty(regexpi(out_file, '.*\.mat$'))
-    out_file = [out_file, '.mat'];
-end;
-
+if isempty(regexpi(out_file, '.*\.mat$', 'once'))
+  out_file = [out_file, '.mat'];
+end
 sr = job.sr;
-
 options = struct();
 options.fn = out_file;
-options.bf.duration = job.bf.duration;
-options.bf.offset = job.bf.offset;
-options.overwrite = job.overwrite;
-
+options.bf = pspm_update_struct(options.bf, job.bf, {'duration','offset'});
+options = pspm_update_struct(options, job, {'overwrite'});
 dil_f = fields(job.bf.dilation);
 % only check first field
 switch dil_f{1}
-    case 'ldrf_gm'
-        options.bf.dilation.fhandle = @pspm_bf_ldrf_gm;
-    case 'ldrf_gu'
-        options.bf.dilation.fhandle = @pspm_bf_ldrf_gu;
-end;
-
+  case 'ldrf_gm'
+    options.bf.dilation.fhandle = @pspm_bf_ldrf_gm;
+  case 'ldrf_gu'
+    options.bf.dilation.fhandle = @pspm_bf_ldrf_gu;
+end
 con_f = fields(job.bf.constriction);
 switch con_f{1}
-    case 'lcrf_gm'
-        options.bf.constriction.fhandle = @pspm_bf_lcrf_gm;
-end;
-
-[sts, nuis_file] = pspm_process_illuminance(src_file, sr, options);
+  case 'lcrf_gm'
+    options.bf.constriction.fhandle = @pspm_bf_lcrf_gm;
+end
+[~, nuis_file] = pspm_process_illuminance(src_file, sr, options);
 out{1} = nuis_file;
