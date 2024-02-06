@@ -1,7 +1,10 @@
 function [segments, sessions] = pspm_extract_segments_core(data, onsets, segment_length, missing)
     % Verify if the inputs have the same size
     if ~(length(data) == length(onsets) && length(data) == length(missing))
-        error('pspm_extract_segments_core:SizeMismatch','The cell arrays data, onsets, and missing must have the same size.');
+        warning('pspm_extract_segments_core:SizeMismatch','The cell arrays data, onsets, and missing must have the same size.');
+        segments = []; % Return empty outputs if there's a size mismatch
+        sessions = [];
+        return;
     end
 
     segments = []; % Initialize segments matrix
@@ -15,12 +18,14 @@ function [segments, sessions] = pspm_extract_segments_core(data, onsets, segment
 
         % Check for valid onsets
         if any(currentOnsets < 1) || any(currentOnsets > length(currentData))
-            error('pspm_extract_segments_core:InvalidOnset','Onset values must be between 1 and the length of the corresponding data vector.');
+            warning('pspm_extract_segments_core:InvalidOnset','Onset values must be between 1 and the length of the corresponding data vector.');
+            continue;
         end
 
         % Check if the length of the current missing data matches the length of the current data
         if length(currentMissing) ~= length(currentData)
-            error('pspm_extract_segments_core:MissingDataLengthMismatch', 'The length of the missing data vector must be the same as the corresponding data vector in cell %d.', i);
+            warning('pspm_extract_segments_core:MissingDataLengthMismatch', 'The length of the missing data vector must be the same as the corresponding data vector in cell.');
+            continue;
         end
 
         % Handle missing data
@@ -42,6 +47,5 @@ function [segments, sessions] = pspm_extract_segments_core(data, onsets, segment
             segments = [segments; segment];
             sessions = [sessions, i];
         end
-
     end
 end
