@@ -1,4 +1,4 @@
-function [sts, varargout] = pspm_pupil_pp (fn, options)
+function [sts, out_chan] = pspm_pupil_pp (fn, options)
 % ● Description
 %   pspm_pupil_pp preprocesses pupil diameter signals given in any unit of
 %   measurement. It performs the steps described in [1]. This function uses
@@ -103,16 +103,8 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-varargout{1} = sts;
-smooth_signal = [];
-model = [];
-switch nargout
-  case 2
-    varargout{2} = smooth_signal;
-  case 3
-    varargout{2} = smooth_signal;
-    varargout{3} = model;
-end
+out_chan = [];
+
 %% 2 Create default arguments
 if nargin == 1
   options = struct();
@@ -154,7 +146,7 @@ if action_combine
   [sts1, eye1] = pspm_find_eye(data.header.chantype);
   [sts2, eye2] = pspm_find_eye(data_combine.header.chantype);
   if (sts1 < 1 || sts2 < 1), return, end
-  if sum(strcmp([eye1, eye2], {'lr', 'rl'}) < 1)
+  if sum(strcmp([eye1, eye2], {'lr', 'rl'})) < 1
     warning('ID:invalid_input', 'options.channel and options.channel_combine must specify left and right eyes');
     return;
   end
@@ -189,20 +181,9 @@ o.msg.prefix = sprintf(...
   channel_str, ...
   old_channeltype, ...
   smooth_signal.header.chantype);
-[lsts, out_id] = pspm_write_channel(fn, smooth_signal, options.channel_action, o);
-if ~lsts
-  return
-end
+[sts, out_id] = pspm_write_channel(fn, smooth_signal, options.channel_action, o);
 out_chan = out_id.channel;
-sts = 1;
-varargout{1} = sts;
-switch nargout
-  case 2
-    varargout{2} = out_chan;
-  case 3
-    varargout{2} = out_chan;
-    varargout{3} = model;
-end
+
 return
 
 function varargout  = pspm_preprocess(data, data_combine, segments, custom_settings, plot_data)
