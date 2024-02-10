@@ -76,9 +76,6 @@ function [sts, fn, pos_of_channel] = pspm_find_valid_fixations(fn, varargin)
 % pspm_load_data, (2) the output argument pos_of_channels is an index of
 % the channel(s) that was/were replaced or added
 
-% --> fix message in pspm_load_channel if no preferred pupil channel exists
-% and the last one is chosen.
-
 %% initialise
 global settings;
 if isempty(settings), pspm_init; end

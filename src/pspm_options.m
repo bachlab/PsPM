@@ -48,15 +48,6 @@ switch FunName
     % 2.1 pspm_blink_saccade_filt --
     options = autofill_channel_action(options);
     options = autofill(options, 'channel',                0,          '*Int*Char*Cell'  );
-  case 'compute_visual_angle_core'
-    % 2.2 pspm_compute_visual_angle_core --
-    % leave for future development
-  case 'compute_visual_angle'
-    % 2.3 pspm_compute_visual_angle --
-    options = autofill_channel_action(options);
-    options = autofill(options, 'eyes',                   settings.lateral.full.b,...
-                                                          {settings.lateral.full.l,...
-                                                          settings.lateral.full.r}      );
   case 'con1'
     % 2.4 pspm_con1 --
     options = autofill(options, 'zscored',                0,          1                 );
@@ -94,32 +85,22 @@ switch FunName
     options = autofill(options, 'signal_to_use',          'auto',     {'ecg', 'teo'}    );
     options = autofill(options, 'teo_bandpass',           [8,40],     '>', 0            );
     options = autofill(options, 'teo_order',              1,          '>', 0            );
-  case 'convert_gaze_distance'
+  case 'convert_gaze'
     % 2.10 pspm_convert_gaze_distance --
     options = autofill_channel_action(options);
-    options = autofill(options, 'channel',                'gaze',      '*Int*Char*Cell'  ); % this function operates on pairs of channels; hence cell is allowed here
+    options = autofill(options, 'channel',                'gaze',      '*Int*Char*Cell'  ); % this function operates on pairs of channels; hence cell is exceptionally allowed here
   case 'convert_hb2hp'
     % 2.11 pspm_convert_hb2hp --
     options = autofill_channel_action(options);
     options = autofill(options, 'limit_lower',            0.2,        '>', 0            );
     options = autofill(options, 'limit_upper',            2,          '>', 0            );
     options = check_range(options, 'limit_lower', 'limit_upper');
-  case 'convert_pixel2unit'
-    % 2.12 pspm_convert_pixel2unit --
-    options = autofill_channel_action(options);
   case 'convert_ppg2hb'
     % 2.13 pspm_convert_ppg2hb --
     options = autofill_channel_action(options);
     options = autofill(options, 'channel',                'ppg2hb',   '*Int*Char'  );
     options = autofill(options, 'diagnostics',            0,          1                 );
     options = autofill(options, 'lsm',                    0,          [0,100-10^-10]    );
-  case 'convert_visangle2sps'
-    % 2.14 pspm_convert_visangle2sps --
-    options = autofill_channel_action(options);
-    options = autofill(options, 'channel',                1,          '*Int*Char'  );
-    options = autofill(options, 'eye',                    settings.lateral.char.b, ...
-                                                          {settings.lateral.char.r, ...
-                                                          settings.lateral.char.l}      );
   case 'data_editor'
     % 2.15 pspm_data_editor --
     % output_file does not have a default value
