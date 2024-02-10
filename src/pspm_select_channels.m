@@ -40,8 +40,8 @@ switch class(channel)
     end
   case 'char'
     % in this case channel is specified as a char
-    if any(~ismember(channel, [{settings.channeltypes.type}, 'none', 'wave', 'events']))
-      warning('ID:invalid_chantype', 'Unknown channel type.');
+    if ~any(contains([{settings.channeltypes.type}, 'none', 'wave', 'events'], channel))
+      warning('ID:invalid_chantype', 'Unknown channel type ''%s''.', channel);
       return
     end
   otherwise

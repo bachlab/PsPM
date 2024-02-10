@@ -6,7 +6,7 @@ function [sts, channel_index] = pspm_convert_gaze(fn, conversion, options)
 %   degrees, to translate the coordinate system to the centre of
 %   the display.
 % ● Format
-%   [sts, out_file] = pspm_convert_gaze_distance(fn, from, target, width, height, distance, options)
+%   [sts, out_file] = pspm_convert_gaze_distance(fn, conversion, options)
 % ● Arguments
 %                 fn: A data file name
 %   ┌────────conversion [ struct ] with fields
@@ -14,9 +14,9 @@ function [sts, channel_index] = pspm_convert_gaze(fn, conversion, options)
 %   │                 unit, or 'degree'
 %   ├────────.target: target unit of conversion: a metric distance unit,
 %   │                 'degree' or 'sps'
-%   ├─────────.width: with of the display in mm (not required if 'from' is
+%   ├──.screen_width: with of the display in mm (not required if 'from' is
 %   │                 'degree'
-%   ├────────.height: height of the display in mm (not required if 'from' is
+%   ├─.screen_height: height of the display in mm (not required if 'from' is
 %   │                 'degree'
 %   └──────.distance: Subject distance from the screen in mm (not required
 %                     if 'from' is'degree', or if 'target' is metric)
@@ -57,22 +57,22 @@ if options.invalid
 end
 
 % Input argument validation
-if ~isfield(conversion, 'from') || ~ismember(conversion.from, {'pixel', 'mm', 'cm', 'm', 'degree'})
-    warning('ID:invalid_input:target', 'target conversion must be sps or degree');
+if ~isfield(conversion, 'from') || ~ismember(conversion.from, {'pixel', 'mm', 'cm', 'm', 'inches', 'degree'})
+    warning('ID:invalid_input:from', 'Conversion field ''from'' must be pixel, metric units, or degree.');
     return
-elseif ~isfield(conversion, 'target') || ~ismember(conversion.target, { 'mm', 'cm', 'm', 'degree', 'sps' })
+elseif ~isfield(conversion, 'target') || ~ismember(conversion.target, { 'mm', 'cm', 'm', 'inches', 'degree', 'sps' })
     warning('ID:invalid_input:target', 'target conversion must be sps or degree');
     return
 end
-distance_required = (~strcmpi(conversion.from, 'degree') && ismember(target, {'degree', 'sps'}));
+distance_required = (~strcmpi(conversion.from, 'degree') && ismember(conversion.target, {'degree', 'sps'}));
 screen_length_required = strcmpi(conversion.from, 'pixel') || distance_required;
-if screen_length_required && (~isfield(conversion, 'height') || ~isnumeric(height))
-    warning('ID:invalid_input:height', 'height must be numeric');
+if screen_length_required && (~isfield(conversion, 'screen_height') || ~isnumeric(conversion.screen_height))
+    warning('ID:invalid_input:height', 'screen_height must be numeric');
     return
-elseif screen_length_required && (~isfield(conversion, 'width') || ~isnumeric(width))
-    warning('ID:invalid_input:width', 'width must be numeric');
+elseif screen_length_required && (~isfield(conversion, 'screen_width') || ~isnumeric(conversion.screen_width))
+    warning('ID:invalid_input:width', 'screen_width must be numeric');
     return
-elseif distance_required && (~isfield(conversion, 'distance') || ~isnumeric(distance))
+elseif distance_required && (~isfield(conversion, 'distance') || ~isnumeric(conversion.distance))
     warning('ID:invalid_input:distance', 'distance must be numeric');
     return
 end
@@ -80,11 +80,11 @@ end
 % bring conversion field names to workspace
 names = fieldnames(conversion);
 for i=1:length(names)
-    eval([names{i} '=conversion.' names{i} ]);
+    eval([names{i}, '=conversion.', names{i}, ';' ]);
 end
 
 if strcmpi(from, 'pixel')
-    screen_length = {width, height};
+    screen_length = {screen_width, screen_height};
 end
 
 % Parse channel specification
@@ -108,7 +108,7 @@ end
 % load data & check units
 [lsts, alldata.infos, alldata.data] = pspm_load_data(fn);
 if lsts < 1, return, end
-channelunits_list = cellfun(@(x) alldata.data.header.units, alldata.data, 'uni', false);
+channelunits_list = cellfun(@(x) x.header.units, alldata.data, 'uni', false);
 channels_correct_units = find(contains(channelunits_list, from));
 gazedata = struct('infos', alldata.infos, 'data', {alldata.data(channels_correct_units)});
 channeltypes = {'gaze_x', 'gaze_y'};
@@ -130,11 +130,18 @@ for i = 1:numel(channel)
     if lsts < 1, return, end
 end
 
-if strcmpi(pspm_find_eye(data{1}.header.chantype), pspm_find_eye(data{2}.header.chantype))
+eye = {};
+for i = 1:2
+    [sts, eye{i}] = pspm_find_eye(data{i}.header.chantype);
+end
+
+if ~strcmpi(eye{1}, eye{2})
     warning('ID:invalid_input', 'The specified pair of channels seems to come from different eyes. Please check if this is intended.')
     eye = '';
+elseif strcmpi(eye{1}, '')
+    eye = '';
 else
-    eye = ['_', pspm_find_eye(data{1}.header.chantype)];
+    eye = ['_', eye{1}];
 end
 
 % convert data to metric units unless already in degree
@@ -145,7 +152,7 @@ for i = 1:numel(channel)
         [lsts, data{i}.data] = pspm_convert_unit(data{i}.data, data{i}.header.units, 'mm');
         if lsts < 1, return, end
     end
-    if ~ismember(target, 'degree', 'sps')
+    if ~ismember(target, {'degree', 'sps'})
         [lsts, data{i}.data] = pspm_convert_unit(data{i}.data, 'mm', target);
         if lsts < 1, return, end
         data{i}.header.units = target;
@@ -159,11 +166,11 @@ if ismember(target, {'degree', 'sps'})
     data_x = data{1}.data;
     data_y = data{2}.data;
     if ~strcmpi(from, 'degree')
-        [data_x, data_y, data_x_range, data_y_range] = pspm_convert_visual_angle_core(data_x, data_y, width, height, distance, options);
-        if numel(lat) == 1 && lat == 0, return; end
+        [data_x, data_y, data_x_range, data_y_range] = pspm_convert_visual_angle_core(data_x, data_y, screen_width, screen_height, distance);
+        if numel(data_x) == 1 && data_x == 0, return; end
     else
-        data_x_range = data{chans(1)}.header.range;
-        data_y_range = data{chans(2)}.header.range;
+        data_x_range = data{1}.header.range;
+        data_y_range = data{1}.header.range;
     end
 end
 if strcmp(target, 'degree')

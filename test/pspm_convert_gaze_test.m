@@ -1,4 +1,4 @@
-classdef pspm_convert_gaze_test < matlab.unittest.TestCase
+classdef pspm_convert_gaze_test < pspm_testcase
   % ● Description
   % unittest class for the pspm_convert_gaze_test function
   properties
@@ -7,7 +7,7 @@ classdef pspm_convert_gaze_test < matlab.unittest.TestCase
   end
   properties (TestParameter)
     channel_action = { 'add', 'replace' };
-    from = { 'pixel', 'mm', 'inches', 'degrees'};
+    from = { 'pixel', 'mm', 'inches', 'degree'};
     target = {'mm', 'cm', 'inches', 'degree', 'sps' };
   end
   methods
@@ -37,59 +37,78 @@ classdef pspm_convert_gaze_test < matlab.unittest.TestCase
   end
   methods (Test)
     function validations(this, target)
-      this.verifyWarningFree(@() pspm_convert_gaze(this.fn, target, 'pixel', 111, 222, 333));
-      this.verifyWarning(@() pspm_convert_gaze(this.fn, target, 'not_a_unit', 111, 222, 333),  'ID:invalid_input:from');
-      this.verifyWarning(@() pspm_convert_gaze(this.fn, target, 'pixel', 'not_a_number', 222, 333),  'ID:invalid_input:width');
-      this.verifyWarning(@() pspm_convert_gaze(this.fn, target, 'pixel', 111, 'not_a_number', 333),  'ID:invalid_input:height');
-      this.verifyWarning(@() pspm_convert_gaze(this.fn, target, 'pixel', 111, 222, 'not_a_number'),  'ID:invalid_input:distance');
-      this.verifyWarning(@() pspm_convert_gaze(this.fn, 'invalid_conversion', 'pixel', 111, 222, 333), 'ID:invalid_input:target');
+      this.verifyWarningFree(@() pspm_convert_gaze(this.fn, struct('target', target, 'from', 'pixel', 'screen_width', 111, 'screen_height', 222, 'distance', 333)));
+      this.verifyWarning(@() pspm_convert_gaze(this.fn, struct('target', target, 'from', 'not a unit', 'screen_width', 111, 'screen_height', 222, 'distance', 333)),  'ID:invalid_input:from');
+      this.verifyWarning(@() pspm_convert_gaze(this.fn, struct('target', target, 'from', 'pixel', 'screen_width', 'not a number', 'screen_height', 222, 'distance', 333)),  'ID:invalid_input:width');
+      this.verifyWarning(@() pspm_convert_gaze(this.fn, struct('target', target, 'from', 'pixel', 'screen_width', 111, 'screen_height', 'not a number', 'distance', 333)),  'ID:invalid_input:height');
+      this.verifyWarning(@() pspm_convert_gaze(this.fn, struct('target', 'degree', 'from', 'pixel', 'screen_width', 111, 'screen_height', 222, 'distance', 'not a number')),  'ID:invalid_input:distance');
+      this.verifyWarning(@() pspm_convert_gaze(this.fn, struct('target', 'invalid conversion', 'from', 'pixel', 'screen_width', 111, 'screen_height', 222, 'distance', 333)), 'ID:invalid_input:target');
     end
     function conversion(this, target, from, channel_action)
-      load(this.fn);
-      width = 323;
-      height = 232;
-      distance = 600;
-      if (~strcmp(from, 'pixel'))
-        pspm_convert_pixel2unit(this.fn, 0, from, width, height, distance);
         load(this.fn);
-        this.verifyLength(this.get_gaze_and_unit(data, from), 4);
-      end
-      data_length = length(data);
-      if strcmp(target, 'degree')
-        this.verifyLength(this.get_gaze_and_unit(data, 'degree'), 0);
-      else
-        this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_l'), data)), 0);
-        this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_r'), data)), 0);
-      end
-      [sts, out_channel] = this.verifyWarningFree(@() pspm_convert_gaze(...
-        this.fn, target, from, width, height, distance, struct('channel_action', channel_action)));
-      load(this.fn);
-      this.verifyTrue(~isempty(out_channel.channel));
-      extra = 2;
-      if strcmp(target, 'degree')
-        extra = 4;
-      end
-      this.verifyLength(data, data_length + extra);
-      data_length = length(data);
-      if strcmp(target, 'degree')
-        this.verifyLength(this.get_gaze_and_unit(data, 'degree'), 4);
-      else
-        this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_l'), data)), 1);
-        this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_r'), data)), 1);
-      end
-      [sts, out_channel] = this.verifyWarningFree(@() pspm_convert_gaze(...
-        this.fn, target, from, width, height, distance, struct('channel_action', channel_action)));
-      load(this.fn);
-      extra = 0;
-      if (strcmp(channel_action, 'add'))
-        if strcmp(target, 'degree')
-          extra = extra + 4;
-        else
-          extra = extra + 2;
+        screen_width = 323;
+        screen_height = 232;
+        distance = 600;
+        % conversion from degree to metric units is not possible
+        if ~strcmp(from, 'degree') || strcmp(target, 'sps')
+            % convert data to 'from' units
+            if (~strcmp(from, 'pixel'))
+                [sts, infos, data] = pspm_load_data(this.fn);
+                [sts, data, pos_of_channels] = pspm_select_channels(data, 'gaze', 'pixel');
+                for i = 1:numel(data)
+                    if contains(data{i}.header.chantype, 'x')
+                        screen_length = screen_width;
+                    else
+                        screen_length = screen_height;
+                    end
+                    [data{i}.data, data{i}.header.range] = pspm_convert_pixel2unit_core(data{i}.data, data{i}.header.range, screen_length);
+                    if ~strcmp(from, 'degree')
+                        [sts, data{i}.data] = pspm_convert_unit(data{i}.data, 'mm', from);
+                        data{i}.header.units = from;
+                    end
+                end
+                if strcmp(from, 'degree')
+                    for eye = {'r','l'}
+                        gaze_x = find(cellfun(@(c) strcmp(c.header.chantype, ['gaze_x_', eye{1}]), data));
+                        gaze_y = find(cellfun(@(c) strcmp(c.header.chantype, ['gaze_y_', eye{1}]), data));
+                        [data{gaze_x}.data, data{gaze_y}.data, ...
+                            data{gaze_x}.header.range, data{gaze_y}.header.range] = ...
+                            pspm_convert_visual_angle_core(data{gaze_x}.data, data{gaze_y}.data, ...
+                            screen_width, screen_height, distance);
+                        data{gaze_x}.header.units = from;
+                        data{gaze_y}.header.units = from;
+                    end
+                end
+                this.verifyLength(this.get_gaze_and_unit(data, from), 4);
+            end
+            pspm_write_channel(this.fn, data, 'add');
+            [sts, infos, data] = pspm_load_data(this.fn);
+            data_length = length(data);
+            if strcmp(target, 'degree')
+                this.verifyLength(this.get_gaze_and_unit(data, 'degree'), 0);
+            else
+                this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_l'), data)), 0);
+                this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_r'), data)), 0);
+            end
+            [sts, out_channel] = this.verifyWarningFree(@() pspm_convert_gaze(...
+                this.fn, struct('target', target, 'from', from, 'screen_width', screen_width, 'screen_height', screen_height, 'distance', distance), struct('channel_action', channel_action)));
+            load(this.fn);
+            this.verifyTrue(~isempty(out_channel));
+            if strcmpi(target, 'sps')
+                extra = 1;                
+            elseif strcmpi(channel_action, 'add') || ~strcmpi(target, from) 
+                extra = 2;
+            else
+                extra = 0;
+            end
+            this.verifyLength(data, data_length + extra);
+            data_length = length(data);
+            if strcmp(target, 'degree')
+                this.verifyLength(this.get_gaze_and_unit(data, 'degree'), 2);
+            elseif strcmp(target, 'sps')
+                this.verifyLength(find(cellfun(@(c) contains(c.header.chantype, 'sps'), data)), 1);
+            end
         end
-      end
-      this.verifyLength(data, data_length + extra);
-      this.verifyEqual(sts, 1);
     end
   end
 end

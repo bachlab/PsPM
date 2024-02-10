@@ -315,7 +315,7 @@ for d = 1:numel(D)
     end
   end
   if ~settings.developmode
-    fprintf('Done.');
+    fprintf('Done.\n');
   end
   % 4.4 convert import cell back and remove data
   import = import{1};

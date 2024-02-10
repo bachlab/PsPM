@@ -76,7 +76,7 @@ classdef pspm_pupil_correct_eyelink_test < pspm_testcase
       opt.S_z = 5;
       this.verifyWarningFree(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt));
       opt.channel = 'gaze_x_l';
-      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:unexpected_channeltype');
+      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
       opt.channel = 5;
       this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
     end

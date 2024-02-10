@@ -17,7 +17,7 @@ function [out_data, out_range] = pspm_convert_pixel2unit_core(data, data_range, 
 % length per pixel along width or height
 length_per_pixel = screen_length ./ (diff(data_range) + 1);
 % baseline data in pixels wrt. the range (i.e. pixels of interest)
-pixel_index = data-data_range;
+pixel_index = data-data_range(1);
 % convert indices into coordinates in the units of interests
 out_data = pixel_index * length_per_pixel ;
 % same procedure for the range (baseline + conversion)
