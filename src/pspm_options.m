@@ -86,7 +86,7 @@ switch FunName
   case 'convert_ecg2hb_amri'
     % 2.9 pspm_convert_ecg2hb_amri --
     options = autofill_channel_action(options);
-    options = autofill(options, 'channel',                'ecg',      '*Int*Char*Cell'  );
+    options = autofill(options, 'channel',                'ecg',      '*Int*Char'  );
     options = autofill(options, 'ecg_bandpass',           [0.5,40],   '>', 0            );
     options = autofill(options, 'hrrange',                [20,200],   '>', 0            );
     options = autofill(options, 'min_cross_corr',         0.5,        '*Num'            );
@@ -97,6 +97,7 @@ switch FunName
   case 'convert_gaze_distance'
     % 2.10 pspm_convert_gaze_distance --
     options = autofill_channel_action(options);
+    options = autofill(options, 'channel',                'gaze',      '*Int*Char*Cell'  ); % this function operates on pairs of channels; hence cell is allowed here
   case 'convert_hb2hp'
     % 2.11 pspm_convert_hb2hp --
     options = autofill_channel_action(options);
@@ -109,13 +110,13 @@ switch FunName
   case 'convert_ppg2hb'
     % 2.13 pspm_convert_ppg2hb --
     options = autofill_channel_action(options);
-    options = autofill(options, 'channel',                'ppg2hb',   '*Int*Char*Cell'  );
+    options = autofill(options, 'channel',                'ppg2hb',   '*Int*Char'  );
     options = autofill(options, 'diagnostics',            0,          1                 );
     options = autofill(options, 'lsm',                    0,          [0,100-10^-10]    );
   case 'convert_visangle2sps'
     % 2.14 pspm_convert_visangle2sps --
     options = autofill_channel_action(options);
-    options = autofill(options, 'channel',                1,          '*Int*Char*Cell'  );
+    options = autofill(options, 'channel',                1,          '*Int*Char'  );
     options = autofill(options, 'eye',                    settings.lateral.char.b, ...
                                                           {settings.lateral.char.r, ...
                                                           settings.lateral.char.l}      );
@@ -202,7 +203,7 @@ switch FunName
   case 'emg_pp'
     % 2.20 pspm_emg_pp --
     options = autofill_channel_action(options);
-    options = autofill(options, 'channel',                'emg',      '*Int*Char*Cell'  );
+    options = autofill(options, 'channel',                'emg',      '*Int*Char'       );
     options = autofill(options, 'mains_freq',             50,         '>', 0            );
   case 'exp'
     % 2.21 pspm_exp --
@@ -239,14 +240,14 @@ switch FunName
   case 'find_valid_fixations'
     % 2.24 pspm_find_valid_fixations --
     options = autofill_channel_action(options);
-    options = autofill(options, 'channel',                'both',    '*Int*Char'        );
+    options = autofill(options, 'channel',                'pupil',    '*Int*Char'       );
     options = autofill(options, 'add_invalid',            0,          1                 );
     options = autofill(options, 'plot_gaze_coords',       0,          1                 );
     options = fill_find_valid_fixations(options);
   case 'gaze_pp'
     % 2.25 pspm_gaze_pp --
-    options = autofill(options, 'channel',                'none',     '*Num*Char'       );
-    options = autofill(options, 'channel_combine',        'none',     '*Num*Char'       );
+    options = autofill(options, 'channel',                'none',     '*Int*Char'       );
+    options = autofill(options, 'channel_combine',        'none',     '*Int*Char'       );
     options = autofill(options, 'plot_data',              false                         );
     options = autofill(options, 'segments',               {}                            );
     options = autofill(options, 'valid_sample',           0,          1                 );
@@ -337,7 +338,7 @@ switch FunName
     options = autofill(options, 'C_x',                    0,          '*Num'            );
     options = autofill(options, 'C_y',                    0,          '*Num'            );
     options = autofill(options, 'C_z',                    0,          '*Num'            );
-    options = autofill(options, 'channel',                'pupil',    '*Char'           );
+    options = autofill(options, 'channel',                'pupil',    '*Int*Char'       );
     options = autofill(options, 'mode',                   'auto',     'manual'          );
     options = autofill(options, 'S_x',                    0,          '*Num'            );
     options = autofill(options, 'S_y',                    0,          '*Num'            );
@@ -349,8 +350,8 @@ switch FunName
   case 'pupil_pp'
     % 2.37 pspm_pupil_pp --
     options = autofill_channel_action(options);
-    options = autofill(options, 'channel',                'pupil',    '*Num*Char'       );
-    options = autofill(options, 'channel_combine',        'none',     '*Num*Char'       );
+    options = autofill(options, 'channel',                'pupil',    '*Int*Char'       );
+    options = autofill(options, 'channel_combine',        'none',     '*Int*Char'       );
     options = autofill(options, 'plot_data',              0,          1                 );
     options = autofill(options, 'segments',               {},         '*Cell'           );
   case 'remove_epochs'
@@ -465,7 +466,7 @@ switch FunName
     options = autofill(options, 'overwrite',              0,          1                 );
   case 'write_channel'
     % 2.47 pspm_write_channel --
-    options = autofill(options, 'channel',                0,          '*Int*Char*Cell'  );
+    options = autofill(options, 'channel',                0,          '*Int*Char'  );
     options = autofill(options, 'delete',                 'last',     {'first','all'}   );
     options = autofill(options, 'prefix',                '',          '*Char'           );
     if ~isfield('options','msg')

@@ -64,7 +64,7 @@ function [sts, fn, pos_of_channel] = pspm_find_valid_fixations(fn, varargin)
 %                     gaze channel(s) in the correct units: distance units for
 %                     mode "fixation" and distance or pixel units for mode 
 %                     "bitmap".
-%                     Default is 'both'. 
+%                     Default is 'pupil'. 
 % ● History
 %   Introduced in PsPM 4.0
 %   Written in 2016 Tobias Moser (University of Zurich)

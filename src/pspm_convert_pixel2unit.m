@@ -15,7 +15,7 @@ function [sts, out] = pspm_convert_pixel2unit(fn, channel, unit, width, ...
 %                     to pspm_load_data(). This will only work on
 %                     gaze-channels. Other channels specified will be
 %                     ignored.(For conversion into 'degree' there must be
-%                     the same amount of gane_x as gaze_y channels)
+%                     the same amount of gaze_x as gaze_y channels)
 %               unit: unit  to which the measurements should be converted.
 %                     The value can contain any length unit or
 %                     'degree'. In this case the corresponding data

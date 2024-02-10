@@ -1,11 +1,11 @@
-function [lat, lon, lat_range, lon_range] = pspm_compute_visual_angle_core(x_data, y_data, width, height, distance, options)
+function [lat, lon, lat_range, lon_range] = pspm_compute_visual_angle_core(x_data, y_data, width, height, distance)
 % ● Description
 %   pspm_compute_visual_angle computes from gaze data the corresponding
 %   visual angle (for each data point). The convention used here is that the
 %   origin of coordinate system for gaze data is at the bottom left corner of
 %   the screen.
 % ● Format
-%   [lat, lon, lat_range, lon_range] = pspm_compute_visual_angle_core(x_data, y_data, options)
+%   [lat, lon, lat_range, lon_range] = pspm_compute_visual_angle_core(x_data, y_data, width, height, distance)
 % ● Arguments
 %           x_data: X axis data
 %           y_data: y axis data
@@ -25,11 +25,8 @@ global settings
 if isempty(settings)
   pspm_init;
 end
-sts = -1;
-options = pspm_options(options, 'compute_visual_angle_core');
-if options.invalid
-  return
-end
+lat = 0; lon = 0; lat_range = 0; lon_range = 0;
+
 % The convention is that the origin of the screen is in the bottom
 % left corner, so the following line is not needed a priori, but I
 % leave it anyway just in case :

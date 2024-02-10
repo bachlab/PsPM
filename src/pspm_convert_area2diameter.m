@@ -69,7 +69,7 @@ elseif strcmpi(mode, 'file')
         [sts, channeldata] = pspm_load_channel(alldata, channel{i}, 'pupil');
         if sts < 1, return; end
         % recursive call to avoid the formula being stated twice in the same function
-        [sts, diam{i}.data] = pspm_covert_area2diameter(channeldata.data);
+        [sts, diam{i}.data] = pspm_convert_area2diameter(channeldata.data);
         if sts < 1, return; end
         diam{i}.header = channeldata.header;
         % replace metric values
