@@ -117,21 +117,28 @@ for iImport = 1:numel(import)
         import{iImport}.sr        = fileinfo.chaninfo(channel).realRate;
         import{iImport}.title     = fileinfo.chaninfo(channel).title;
         import{iImport}.units     = fileinfo.chaninfo(channel).units;
+      case 3 % timesstamp
       otherwise
-        warning('ID:feature_unsupported', 'Only waveforms are currently supported. \n');
+        warning('ID:feature_unsupported', 'The imported waveform channel has not been currently supported. \n');
         return
     end
   elseif strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'events')
     switch fileinfo.chaninfo(channel).kind
-      case 1 % waveform
+      case 1 % Events
+        [nRead, Fchan] = CEDS64ReadEvents(fhand, ...
+                                         channel, ...
+                                         floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div), ...
+                                         1);
         % import{iImport}.marker  = 'continuous';
-        % import{iImport}.?    = fileinfo.chaninfo(channel).div;
-        % import{iImport}.?    = fileinfo.chaninfo(channel).idealRate;
-        % import{iImport}.?    = fileinfo.chaninfo(channel).realRate;
-        % import{iImport}.?    = fileinfo.chaninfo(channel).kind;
-        warning('ID:feature_unsupported', 'Only waveforms are currently supported. \n');
+        import{iImport}.div       = fileinfo.chaninfo(channel).div;
+        import{iImport}.gain      = fileinfo.chaninfo(channel).gain;
+        import{iImport}.idealRate = fileinfo.chaninfo(channel).idealRate;
+        import{iImport}.number    = fileinfo.chaninfo(channel).number;
+        import{iImport}.realRate  = fileinfo.chaninfo(channel).realRate;
+        import{iImport}.title     = fileinfo.chaninfo(channel).title;
+        import{iImport}.units     = fileinfo.chaninfo(channel).units;
       otherwise
-        warning('ID:feature_unsupported', 'Only waveforms are currently supported. \n');
+        warning('ID:feature_unsupported', 'The imported event channel has not been currently supported. \n');
         return
     end
   end

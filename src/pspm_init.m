@@ -23,7 +23,8 @@ function pspm_init
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2009-2015 by Dominik R Bach (WTCN, UZH)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
+%   Updated in 2024 by Dominik R Bach (Uni Bonn)
 
 %% 0 Cleaning terminal outputs
 %clc
