@@ -146,10 +146,8 @@ function model = pspm_check_model(model, modeltype)
 %   │ ▶︎ optional, GLM (modeltype) only
 
 
-% CHECK WHY WE NEED MODALITY IN GLM, MODELSPEC SHOULD BE ENOUGH?
-%
 % ● History
-%   Introduced in PsPM 6.2
+%   Introduced in PsPM 6.1.1
 %   Written in 2023 by Dominik Bach (UCL and Bonn)
 
 % 0. Initialise

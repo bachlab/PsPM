@@ -68,7 +68,7 @@ sts = -1;
 switch length(varargin)
   case 1
     indata = varargin{1};
-    options = struct;
+    options = struct();
   case 2
     indata = varargin{1};
     options = varargin{2};

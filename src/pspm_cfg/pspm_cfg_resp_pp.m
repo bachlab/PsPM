@@ -37,7 +37,7 @@ function resp_pp = pspm_cfg_resp_pp
     chan_def.name    = 'Default';
     chan_def.tag     = 'chan_def';
     chan_def.val     = {0};
-    chan_def.help    = {'First respiration channel.'};
+    chan_def.help    = {'Last respiration channel.'};
 
     chan_nr         = cfg_entry;
     chan_nr.name    = 'Number';
@@ -51,7 +51,7 @@ function resp_pp = pspm_cfg_resp_pp
     chan.tag     = 'chan';
     chan.val     = {chan_def};
     chan.values  = {chan_def,chan_nr};
-    chan.help    = {'Number of respiration channel (default: first respiration channel).'};
+    chan.help    = {'Number of respiration channel (default: last respiration channel).'};
 
     % define channel_action
     % ------------------------------------------------------
