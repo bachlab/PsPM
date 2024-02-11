@@ -18,7 +18,7 @@ function [sts, channel_index] = pspm_convert_gaze(fn, conversion, options)
 %   │                 'degree'
 %   ├─.screen_height: height of the display in mm (not required if 'from' is
 %   │                 'degree'
-%   └──────.distance: Subject distance from the screen in mm (not required
+%   └.screen_distance: Subject distance from the screen in mm (not required
 %                     if 'from' is'degree', or if 'target' is metric)
 %   ┌────────options
 %   ├───────.channel: gaze x and y channels to work on. This can be a pair
@@ -72,7 +72,7 @@ if screen_length_required && (~isfield(conversion, 'screen_height') || ~isnumeri
 elseif screen_length_required && (~isfield(conversion, 'screen_width') || ~isnumeric(conversion.screen_width))
     warning('ID:invalid_input:width', 'screen_width must be numeric');
     return
-elseif distance_required && (~isfield(conversion, 'distance') || ~isnumeric(conversion.distance))
+elseif distance_required && (~isfield(conversion, 'screen_distance') || ~isnumeric(conversion.screen_distance))
     warning('ID:invalid_input:distance', 'distance must be numeric');
     return
 end
@@ -166,7 +166,7 @@ if ismember(target, {'degree', 'sps'})
     data_x = data{1}.data;
     data_y = data{2}.data;
     if ~strcmpi(from, 'degree')
-        [data_x, data_y, data_x_range, data_y_range] = pspm_convert_visual_angle_core(data_x, data_y, screen_width, screen_height, distance);
+        [data_x, data_y, data_x_range, data_y_range] = pspm_convert_visual_angle_core(data_x, data_y, screen_width, screen_height, screen_distance);
         if numel(data_x) == 1 && data_x == 0, return; end
     else
         data_x_range = data{1}.header.range;

@@ -37,18 +37,18 @@ classdef pspm_convert_gaze_test < pspm_testcase
   end
   methods (Test)
     function validations(this, target)
-      this.verifyWarningFree(@() pspm_convert_gaze(this.fn, struct('target', target, 'from', 'pixel', 'screen_width', 111, 'screen_height', 222, 'distance', 333)));
-      this.verifyWarning(@() pspm_convert_gaze(this.fn, struct('target', target, 'from', 'not a unit', 'screen_width', 111, 'screen_height', 222, 'distance', 333)),  'ID:invalid_input:from');
-      this.verifyWarning(@() pspm_convert_gaze(this.fn, struct('target', target, 'from', 'pixel', 'screen_width', 'not a number', 'screen_height', 222, 'distance', 333)),  'ID:invalid_input:width');
-      this.verifyWarning(@() pspm_convert_gaze(this.fn, struct('target', target, 'from', 'pixel', 'screen_width', 111, 'screen_height', 'not a number', 'distance', 333)),  'ID:invalid_input:height');
-      this.verifyWarning(@() pspm_convert_gaze(this.fn, struct('target', 'degree', 'from', 'pixel', 'screen_width', 111, 'screen_height', 222, 'distance', 'not a number')),  'ID:invalid_input:distance');
-      this.verifyWarning(@() pspm_convert_gaze(this.fn, struct('target', 'invalid conversion', 'from', 'pixel', 'screen_width', 111, 'screen_height', 222, 'distance', 333)), 'ID:invalid_input:target');
+      this.verifyWarningFree(@() pspm_convert_gaze(this.fn, struct('target', target, 'from', 'pixel', 'screen_width', 111, 'screen_height', 222, 'screen_distance', 333)));
+      this.verifyWarning(@() pspm_convert_gaze(this.fn, struct('target', target, 'from', 'not a unit', 'screen_width', 111, 'screen_height', 222, 'screen_distance', 333)),  'ID:invalid_input:from');
+      this.verifyWarning(@() pspm_convert_gaze(this.fn, struct('target', target, 'from', 'pixel', 'screen_width', 'not a number', 'screen_height', 222, 'screen_distance', 333)),  'ID:invalid_input:width');
+      this.verifyWarning(@() pspm_convert_gaze(this.fn, struct('target', target, 'from', 'pixel', 'screen_width', 111, 'screen_height', 'not a number', 'screen_distance', 333)),  'ID:invalid_input:height');
+      this.verifyWarning(@() pspm_convert_gaze(this.fn, struct('target', 'degree', 'from', 'pixel', 'screen_width', 111, 'screen_height', 222, 'screen_distance', 'not a number')),  'ID:invalid_input:distance');
+      this.verifyWarning(@() pspm_convert_gaze(this.fn, struct('target', 'invalid conversion', 'from', 'pixel', 'screen_width', 111, 'screen_height', 222, 'screen_distance', 333)), 'ID:invalid_input:target');
     end
     function conversion(this, target, from, channel_action)
         load(this.fn);
         screen_width = 323;
         screen_height = 232;
-        distance = 600;
+        screen_distance = 600;
         % conversion from degree to metric units is not possible
         if ~strcmp(from, 'degree') || strcmp(target, 'sps')
             % convert data to 'from' units
@@ -74,7 +74,7 @@ classdef pspm_convert_gaze_test < pspm_testcase
                         [data{gaze_x}.data, data{gaze_y}.data, ...
                             data{gaze_x}.header.range, data{gaze_y}.header.range] = ...
                             pspm_convert_visual_angle_core(data{gaze_x}.data, data{gaze_y}.data, ...
-                            screen_width, screen_height, distance);
+                            screen_width, screen_height, screen_distance);
                         data{gaze_x}.header.units = from;
                         data{gaze_y}.header.units = from;
                     end
@@ -91,7 +91,7 @@ classdef pspm_convert_gaze_test < pspm_testcase
                 this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_r'), data)), 0);
             end
             [sts, out_channel] = this.verifyWarningFree(@() pspm_convert_gaze(...
-                this.fn, struct('target', target, 'from', from, 'screen_width', screen_width, 'screen_height', screen_height, 'distance', distance), struct('channel_action', channel_action)));
+                this.fn, struct('target', target, 'from', from, 'screen_width', screen_width, 'screen_height', screen_height, 'screen_distance', screen_distance), struct('channel_action', channel_action)));
             load(this.fn);
             this.verifyTrue(~isempty(out_channel));
             if strcmpi(target, 'sps')
