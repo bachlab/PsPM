@@ -131,10 +131,10 @@ function [pp_scr] = pspm_cfg_pp_scr
 
     % First scr channel
     first_chan              = cfg_const;
-    first_chan.name         = 'First SCR channel';
+    first_chan.name         = 'Last SCR channel';
     first_chan.tag          = 'first_channel';
     first_chan.val          = {'scr'};
-    first_chan.help         = {'Use the default first channel of the SCR for processing.'};
+    first_chan.help         = {'Use the default last channel of the SCR for processing.'};
 
     % Channel
     chan                    = cfg_choice;

@@ -707,6 +707,9 @@ defaults.eye.cap.br = 'RL';
 defaults.eye.cap.l = 'L';
 defaults.eye.cap.r = 'R';
 
+defaults.eyetracker_channels = {'pupil', 'sps', 'gaze_x', 'gaze_y', 'blink', ...
+    'saccade', 'pupil_missing'};
+
 % other settings
 % resampling rate for automatic transfer function computation
 defaults.get_transfer_sr = 100;

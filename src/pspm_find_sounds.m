@@ -53,7 +53,7 @@ function [sts, infos] = pspm_find_sounds(varargin)
 % │                 Only sounds included inbetween the 2 timestamps will be
 % │                 considered.
 % ├────.sndchannel: [integer] number of the channel holding the sound.
-% │                 By default first 'snd' channel.
+% │                 By default the last 'snd' channel.
 % ├─────.threshold: [0...1] percent of the max of the power in the signal that
 % │                 will be accepted as a sound event. Default is 0.1.
 % ├───.trigchannel: [integer] number of the channel holding the triggers.
@@ -84,18 +84,13 @@ sts = -1;
 switch length(varargin)
   case 1
     file = varargin{1};
-    options = struct;
+    options = struct();
   case 2
     file = varargin{1};
     options = varargin{2};
   case 3
     warning('Up to two variables are accepted by pspm_find_sounds.');
     return
-end
-
-% Check argument
-if ~exist(file, 'file')
-  warning('ID:file_not_found', 'File %s was not found. Aborted.',file); return;
 end
 
 fprintf('Processing sound in file %s\n',file);
@@ -110,24 +105,12 @@ outinfos = struct();
 
 
 % Load Data
-[lsts, foo, indata] = pspm_load_data(file);
-if lsts == -1
-  warning('ID:invalid_input', 'Failed loading file %s.', file); return;
+[lsts, snd] = pspm_load_channel(file, options.sndchannel, 'snd');
+if lsts == -1 
+  return;
 end
 
 %% Sound
-% Check for existence of sound channel
-if ~options.sndchannel
-  sndi = find(strcmpi(cellfun(@(x) x.header.chantype,indata,'un',0),'snd'),1);
-  if ~any(sndi)
-    warning('ID:no_sound_chan', 'No sound channel found. Aborted');  return;
-  end
-  snd = indata{sndi};
-elseif options.sndchannel > numel(indata)
-  warning('ID:out_of_range', 'Option sndchannel is out of the data range.'); return;
-else
-  snd = indata{options.sndchannel};
-end
 
 % Process Sound
 snd.data = snd.data-mean(snd.data);
@@ -262,18 +245,10 @@ while searchForMoreSounds == true
 
   %% Triggers
   if options.diagnostics
-    % Check for existence of marker channel
-    if ~options.trigchannel
-      mkri = find(strcmpi(cellfun(@(x) x.header.chantype,indata,'un',0),'marker'),1);
-      if ~any(mkri)
-        warning('ID:no_marker_chan', 'No marker channel found. Aborted');  return;
-      end
-    elseif options.trigchannel > numel(indata)
-      warning('ID:out_of_range', 'Option trigchannel is out of the data range.');  return;
-    else
-      mkri=options.trigchannel;
+    [lsts, mkr] = pspm_load_channel(file, options.trigchannel, 'marker');
+    if lsts == -1
+      return;
     end
-    mkr = indata{mkri};
 
     %% Estimate delays from trigger to sound
     delays = nan(length(mkr.data),1);
