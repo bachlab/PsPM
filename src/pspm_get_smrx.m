@@ -75,7 +75,7 @@ for i = 1:fileinfo.maxchan
 end
 fileinfo.nchan = length(fileinfo.chaninfo);
 % 2.4 Get maximum sampling rate
-[sfreq, chMax] = max([fileinfo.chaninfo.idealRate]);
+[~, ~] = max([fileinfo.chaninfo.idealRate]);
 warning on;
 %% 3 Extract individual channels
 % 3.1 Loop through import jobs
@@ -103,14 +103,14 @@ for iImport = 1:numel(import)
     switch fileinfo.chaninfo(channel).kind
       case 1 % waveform
         % Use CED64ReadWaveF
-        [nRead, Fchan] = CEDS64ReadWaveF(fhand, ...
-                                         channel, ...
-                                         floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div), ...
-                                         1);
-        import{iImport}.data      = Fchan;
+        [nRead_waveform, Fchan_waveform] = CEDS64ReadWaveF(fhand, ...
+          channel, ...
+          floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div), ...
+          1);
+        import{iImport}.data      = Fchan_waveform;
         import{iImport}.div       = fileinfo.chaninfo(channel).div;
         import{iImport}.gain      = fileinfo.chaninfo(channel).gain;
-        import{iImport}.length    = nRead;
+        import{iImport}.length    = nRead_waveform;
         import{iImport}.idealRate = fileinfo.chaninfo(channel).idealRate;
         import{iImport}.number    = fileinfo.chaninfo(channel).number;
         import{iImport}.realRate  = fileinfo.chaninfo(channel).realRate;
@@ -125,13 +125,36 @@ for iImport = 1:numel(import)
   elseif strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'events')
     switch fileinfo.chaninfo(channel).kind
       case 1 % Events
-        [nRead, Fchan] = CEDS64ReadEvents(fhand, ...
-                                         channel, ...
-                                         floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div), ...
-                                         1);
+        [nRead_events, Fchan_events] = CEDS64ReadEvents(fhand, ...
+          channel, ...
+          floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div), ...
+          1);
         % import{iImport}.marker  = 'continuous';
+        import{iImport}.data      = Fchan_events;
         import{iImport}.div       = fileinfo.chaninfo(channel).div;
         import{iImport}.gain      = fileinfo.chaninfo(channel).gain;
+        import{iImport}.length    = nRead_events;
+        import{iImport}.idealRate = fileinfo.chaninfo(channel).idealRate;
+        import{iImport}.number    = fileinfo.chaninfo(channel).number;
+        import{iImport}.realRate  = fileinfo.chaninfo(channel).realRate;
+        import{iImport}.title     = fileinfo.chaninfo(channel).title;
+        import{iImport}.units     = fileinfo.chaninfo(channel).units;
+      otherwise
+        warning('ID:feature_unsupported', 'The imported event channel has not been currently supported. \n');
+        return
+    end
+  elseif strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'markers')
+    switch fileinfo.chaninfo(channel).kind
+      case 1 % Events
+        [nRead_markers, Fchan_markers] = CEDS64ReadMarkers(fhand, ...
+          channel, ...
+          floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div), ...
+          1);
+        % import{iImport}.marker  = 'continuous';
+        import{iImport}.data      = Fchan_markers;
+        import{iImport}.div       = fileinfo.chaninfo(channel).div;
+        import{iImport}.gain      = fileinfo.chaninfo(channel).gain;
+        import{iImport}.length    = nRead_markers;
         import{iImport}.idealRate = fileinfo.chaninfo(channel).idealRate;
         import{iImport}.number    = fileinfo.chaninfo(channel).number;
         import{iImport}.realRate  = fileinfo.chaninfo(channel).realRate;
