@@ -152,7 +152,10 @@ for iImport = 1:numel(import)
     end
   elseif strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'markers')
     switch fileinfo.chaninfo(channel).kind
-      case 1 % Events
+      case 1 % Markers
+        % This situation has been written based on the provided API
+        % function, but no test data has been supplied to test whether this
+        % situation will work.
         [nRead_markers, Fchan_markers] = CEDS64ReadMarkers(fhand, ...
           channel, ...
           floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div), ...
