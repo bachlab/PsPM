@@ -6,8 +6,8 @@ function [sts, import, sourceinfo] = pspm_get_smrx(datafile, import)
 % ● Arguments
 %     import: [struct]
 % ● History
-%   Introduced in PsPM 6.1
-%   Written in 2023 by Teddy
+%   Introduced in PsPM 6.2
+%   Written in 2024 by Teddy
 
 %% 1 Initialise
 global settings
@@ -42,42 +42,18 @@ for i = 1:fileinfo.maxchan
   switch chanType % Check type of the channel
     case {1,9} % ADC channels: read as signals
       iChan = iChan + 1;
-      fileinfo.chaninfo(iChan).number        = i;
-      fileinfo.chaninfo(iChan).kind          = chanType;
-      [~, fileinfo.chaninfo(iChan).title]    = CEDS64ChanTitle(fhand, i);
-      [~, fileinfo.chaninfo(iChan).comment]  = CEDS64ChanComment(fhand, i);
-      fileinfo.chaninfo(iChan).div           = CEDS64ChanDiv(fhand, i);
-      fileinfo.chaninfo(iChan).idealRate     = CEDS64IdealRate(fhand, i);
-      fileinfo.chaninfo(iChan).realRate      = 1 ./ (fileinfo.timebase .* fileinfo.chaninfo(iChan).div);
-      [~, fileinfo.chaninfo(iChan).units]    = CEDS64ChanUnits(fhand, i); % Convert units to gain
-      chUnits = lower(strtrim(fileinfo.chaninfo(iChan).units));
-      if ~isempty(chUnits)
-        if contains(chUnits, 'μ') || contains(chUnits, 'micro')
-          fileinfo.chaninfo(iChan).gain = 1e-6;
-        elseif contains(chUnits, 'milli') || contains(chUnits, 'mv')
-          fileinfo.chaninfo(iChan).gain = 1e-3;
-        else
-          fileinfo.chaninfo(iChan).gain = 1;
-        end
-      end
+      fileinfo.chaninfo(iChan).kind     = chanType;
+      fileinfo.chaninfo(iChan).realRate = 1 ./ (fileinfo.timebase .* fileinfo.chaninfo(iChan).div);
+      fileinfo.chaninfo(iChan)          = GetCEDChanInfo(fhand, i);
     case {2,3,4,5,6,7,8} % Markers and events
       iChan = iChan + 1;
-      fileinfo.chaninfo(iChan).number        = i;
-      fileinfo.chaninfo(iChan).kind          = chanType;
-      fileinfo.chaninfo(iChan).div           = CEDS64ChanDiv(fhand, i);
-      fileinfo.chaninfo(iChan).idealRate     = CEDS64IdealRate(fhand, i);
-      [~, chTitle]    = CEDS64ChanTitle(fhand, i);
-      % chTitle = str_remove_spec_chars(chTitle);
-      if ~isempty(chTitle)
-        fileinfo.chaninfo(iChan).title = chTitle;
-      else
-        fileinfo.chaninfo(iChan).title = num2str(i);
-      end
+      fileinfo.chaninfo(iChan).kind     = chanType;
+      fileinfo.chaninfo(iChan) = GetCEDChanInfo(fhand, i);
     otherwise
       iChan = iChan + 1;
-      fileinfo.chaninfo(iChan).number        = i;
-      fileinfo.chaninfo(iChan).kind          = 0;
-      fileinfo.chaninfo(iChan).title         = '0';
+      fileinfo.chaninfo(iChan).number   = i;
+      fileinfo.chaninfo(iChan).kind     = 0;
+      fileinfo.chaninfo(iChan).title    = '0';
   end
 end
 fileinfo.nchan = length(fileinfo.chaninfo);
@@ -120,10 +96,13 @@ for iImport = 1:numel(import)
         import{iImport} = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
       case 3 % time stamps
         % waiting for test data
+        disp('not read!');
       case 4 % up and down time stamps
         % waiting for test data
+        disp('not read!');
       otherwise
-        warning('ID:feature_unsupported', 'The imported waveform channel has not been currently supported. \n');
+        warning('ID:feature_unsupported', ...
+          'The imported waveform channel has not been currently supported. \n');
         return
     end
   elseif strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'events')
@@ -139,6 +118,7 @@ for iImport = 1:numel(import)
         import{iImport} = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
       case 3 % time stamps
         % waiting for test data
+        disp('not read!');
       case 4 % For events and type 4 channel, to read as marker channels
         [nRead_markers, Fchan_markers] = CEDS64ReadMarkers(fhand, ...
           channel, ...
@@ -180,4 +160,28 @@ if isfield(X, 'title')
 end
 if isfield(X, 'units')
   Y.units = X.units;
+end
+
+function Y = GetCEDChanInfo(fhand, i);
+Y.number = i;
+Y.div           = CEDS64ChanDiv(fhand, i);
+Y.idealRate     = CEDS64IdealRate(fhand, i);
+[~, chTitle]    = CEDS64ChanTitle(fhand, i);
+% chTitle = str_remove_spec_chars(chTitle);
+if ~isempty(chTitle)
+  Y.title = chTitle;
+else
+  Y.title = num2str(i);
+end
+[~, Y.comment]  = CEDS64ChanComment(fhand, i);
+[~, Y.units]    = CEDS64ChanUnits(fhand, i); % Convert units to gain
+chUnits = lower(strtrim(Y.units));
+if ~isempty(chUnits)
+  if contains(chUnits, 'μ') || contains(chUnits, 'micro')
+    Y.gain = 1e-6;
+  elseif contains(chUnits, 'milli') || contains(chUnits, 'mv')
+    Y.gain = 1e-3;
+  else
+    Y.gain = 1;
+  end
 end
