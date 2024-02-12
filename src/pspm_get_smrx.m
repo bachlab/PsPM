@@ -1,10 +1,20 @@
 function [sts, import, sourceinfo] = pspm_get_smrx(datafile, import)
 % ● Description
-%   pspm_get_smrx is the main function for importting spike-smr files
+%   pspm_get_smrx is the main function for reading spike-smrx files
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_smr(datafile, import);
 % ● Arguments
-%     import: [struct]
+%     datafile: path to the smrx file
+%   ┌───import: [struct]  The struct that stores required parameters.
+%   ├─.channel: [integer] The number of the channel to load. Use '0' to load all channels.
+%   ├───.flank: [string]  
+%   ├.transfer: [string]  The transfer function, use a file, an input or 'none'.
+%   ├────.type: [string]  The type of input channel, such as 'scr'.
+%   └──.typeno: [integer] The number of channel type, please see pspm_init.
+% ● Output
+%   sts: the status recording whether the function runs successfully.
+%   import: the struct that stores read information.
+%   sourceinfo: the struct that stores channel titles.
 % ● History
 %   Introduced in PsPM 6.2
 %   Written in 2024 by Teddy
@@ -18,7 +28,7 @@ sts = -1;
 sourceinfo = [];
 addpath(pspm_path('Import','CEDS64ML'));
 if ~strcmpi(computer('arch'), 'win64')
-  error('The MATCED library for reading .smrx files is available only on Windows 64bit.');
+  error('Reading .smrx files is available only on Windows 64bit.');
 end
 % Add path to CED code
 cedpath = fileparts(which('CEDS64Open'));
@@ -41,18 +51,18 @@ for i = 1:fileinfo.maxchan
   chanType = CEDS64ChanType(fhand, i); % Read channel type
   switch chanType % Check type of the channel
     case {1,9} % ADC channels: read as signals
-      iChan = iChan + 1;
+      iChan                             = iChan + 1;
       fileinfo.chaninfo(iChan).kind     = chanType;
-      X = GetCEDChanInfo(fhand, i);
+      X                                 = GetCEDChanInfo(fhand, i);
       for fn = fieldnames(X)'; fileinfo.chaninfo(iChan).(fn{1}) = X.(fn{1}); end % transfer to fileinfo
       fileinfo.chaninfo(iChan).realRate = 1 ./ (fileinfo.timebase .* fileinfo.chaninfo(iChan).div);
     case {2,3,4,5,6,7,8} % Markers and events
       iChan = iChan + 1;
       fileinfo.chaninfo(iChan).kind     = chanType;
-      X = GetCEDChanInfo(fhand, i);
+      X                                 = GetCEDChanInfo(fhand, i);
       for fn = fieldnames(X)'; fileinfo.chaninfo(iChan).(fn{1}) = X.(fn{1}); end % transfer to fileinfo
     otherwise
-      iChan = iChan + 1;
+      iChan                             = iChan + 1;
       fileinfo.chaninfo(iChan).number   = i;
       fileinfo.chaninfo(iChan).kind     = 0;
       fileinfo.chaninfo(iChan).title    = '0';
@@ -98,10 +108,10 @@ for iImport = 1:numel(import)
         import{iImport} = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
       case 3 % time stamps
         % waiting for test data
-        disp('not read!');
+        disp('Feature of reading time stamps has not been available.');
       case 4 % up and down time stamps
         % waiting for test data
-        disp('not read!');
+        disp('Feature of reading time stamps has not been available.');
       otherwise
         warning('ID:feature_unsupported', ...
           'The imported waveform channel has not been currently supported. \n');
@@ -120,7 +130,7 @@ for iImport = 1:numel(import)
         import{iImport} = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
       case 3 % time stamps
         % waiting for test data
-        disp('not read!');
+        disp('Feature of reading time stamps has not been available.');
       case 4 % For events and type 4 channel, to read as marker channels
         [nRead_markers, Fchan_markers] = CEDS64ReadMarkers(fhand, ...
           channel, ...
@@ -140,9 +150,13 @@ end
 rmpath(pspm_path('Import','CEDS64ML'));
 sts = 1;
 return
-
 function Y = InheritFields(Y, X)
-% inherit fields from X to Y
+% ● Description
+%   InheritFields reads fields from X and transfer to Y.
+%   The fields read include number, comment div, ideal rate, title,
+%   comment, units, and gain.
+% ● History
+%   Written in 2024 by Teddy
 if isfield(X, 'div')
   Y.div = X.div;
 end
@@ -164,8 +178,15 @@ end
 if isfield(X, 'units')
   Y.units = X.units;
 end
-
 function Y = GetCEDChanInfo(fhand, i)
+% ● Description
+%   GetCEDChanInfo reads information from the raw file into output.
+%   If the information is not available, read as an empty field.
+%   This function can be used by waveform and event channels.
+%   The fields read include number, comment div, ideal rate, title,
+%   comment, units, and gain.
+% ● History
+%   Written in 2024 by Teddy
 Y.number = i;
 Y.div           = CEDS64ChanDiv(fhand, i);
 Y.idealRate     = CEDS64IdealRate(fhand, i);
