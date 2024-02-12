@@ -6,7 +6,8 @@ function [sts, import, sourceinfo] = pspm_get_smrx(datafile, import)
 % ● Arguments
 %     datafile: path to the smrx file
 %   ┌───import: [struct]  The struct that stores required parameters.
-%   ├─.channel: [integer] The number of the channel to load. Use '0' to load all channels.
+%   ├─.channel: [integer] The number of the channel to load. Use '0' to 
+%   │                     load all channels.
 %   ├───.flank: [string]  
 %   ├.transfer: [string]  The transfer function, use a file, an input or 'none'.
 %   ├────.type: [string]  The type of input channel, such as 'scr'.
@@ -15,6 +16,10 @@ function [sts, import, sourceinfo] = pspm_get_smrx(datafile, import)
 %   sts: the status recording whether the function runs successfully.
 %   import: the struct that stores read information.
 %   sourceinfo: the struct that stores channel titles.
+% ● Disclaim
+%   The calculation of data points for marker channels is performed by 
+%   multiplying time with gain and ideal rate, This has not been tested 
+%   and validated.
 % ● History
 %   Introduced in PsPM 6.2
 %   Written in 2024 by Teddy
