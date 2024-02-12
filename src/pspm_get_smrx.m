@@ -43,12 +43,14 @@ for i = 1:fileinfo.maxchan
     case {1,9} % ADC channels: read as signals
       iChan = iChan + 1;
       fileinfo.chaninfo(iChan).kind     = chanType;
+      X = GetCEDChanInfo(fhand, i);
+      for fn = fieldnames(X)'; fileinfo.chaninfo(iChan).(fn{1}) = X.(fn{1}); end % transfer to fileinfo
       fileinfo.chaninfo(iChan).realRate = 1 ./ (fileinfo.timebase .* fileinfo.chaninfo(iChan).div);
-      fileinfo.chaninfo(iChan)          = GetCEDChanInfo(fhand, i);
     case {2,3,4,5,6,7,8} % Markers and events
       iChan = iChan + 1;
       fileinfo.chaninfo(iChan).kind     = chanType;
-      fileinfo.chaninfo(iChan) = GetCEDChanInfo(fhand, i);
+      X = GetCEDChanInfo(fhand, i);
+      for fn = fieldnames(X)'; fileinfo.chaninfo(iChan).(fn{1}) = X.(fn{1}); end % transfer to fileinfo
     otherwise
       iChan = iChan + 1;
       fileinfo.chaninfo(iChan).number   = i;
@@ -140,6 +142,7 @@ sts = 1;
 return
 
 function Y = InheritFields(Y, X)
+% inherit fields from X to Y
 if isfield(X, 'div')
   Y.div = X.div;
 end
@@ -162,7 +165,7 @@ if isfield(X, 'units')
   Y.units = X.units;
 end
 
-function Y = GetCEDChanInfo(fhand, i);
+function Y = GetCEDChanInfo(fhand, i)
 Y.number = i;
 Y.div           = CEDS64ChanDiv(fhand, i);
 Y.idealRate     = CEDS64IdealRate(fhand, i);
