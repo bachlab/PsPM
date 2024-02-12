@@ -6,28 +6,22 @@ classdef pspm_get_smrx_test < pspm_get_superclass
   properties
     testcases;
     fhandle = @pspm_get_smrx;
-    datatype = 'spike';
+    datatype = 'smrx';
+    fn;
+    fn2;
+    import;
   end
-  methods
+  methods (TestMethodSetup)
     function define_testcases(this)
-      % testcase 1
-      this.testcases{1}.pth = 'ImportTestData/spike/SmrxTest.smrx';
-      this.testcases{1}.import{1} = struct('type', 'scr'   , 'channel', 1);
-      this.testcases{1}.import{2} = struct('type', 'marker', 'channel', 2);
-      this.testcases{1}.import{3} = struct('type', 'marker', 'channel', 3);
-      this.testcases{1}.import{4} = struct('type', 'marker', 'channel', 4);
-      % this.testcases{1}.import{8} = struct('type', 'marker', 'channel', 8);
-      % this.testcases{1}.import{9} = struct('type', 'marker', 'channel', 9);
+      this.fn = 'ImportTestData/smrx/25.10.2023.smrx';
+      this.fn2 = 'ImportTestData/smrx/25.10.2023_Versuch2.smrx';
+      import_raw{1} = struct('type', 'scr', 'channel', 1,'transfer','none','flank','both','typeno',5);
+      this.import = import_raw;
     end
   end
   methods (Test)
-    function invalid_datafile(this)
-      fn = 'ImportTestData/spike/SmrxTest.smrx';
-      import{1} = struct('type', 'scr'   , 'channel', 1);
-      import{2} = struct('type', 'marker', 'channel', 2);
-      import{3} = struct('type', 'marker', 'channel', 7);
-      import = this.assign_chantype_number(import);
-      this.verifyWarning(@()pspm_get_smrx(fn, import), 'ID:channel_not_contained_in_file');
+    function test_basic(this)
+      this.verifyWarningFree(@()pspm_get_smrx(this.fn, this.import));
     end
   end
 end

@@ -117,7 +117,10 @@ for iImport = 1:numel(import)
         import{iImport}.sr        = fileinfo.chaninfo(channel).realRate;
         import{iImport}.title     = fileinfo.chaninfo(channel).title;
         import{iImport}.units     = fileinfo.chaninfo(channel).units;
-      case 3 % timesstamp
+      case 3 % time stamps
+        % waiting for test data
+      case 4 % up and down time stamps
+        % waiting for test data
       otherwise
         warning('ID:feature_unsupported', 'The imported waveform channel has not been currently supported. \n');
         return
@@ -139,6 +142,10 @@ for iImport = 1:numel(import)
         import{iImport}.realRate  = fileinfo.chaninfo(channel).realRate;
         import{iImport}.title     = fileinfo.chaninfo(channel).title;
         import{iImport}.units     = fileinfo.chaninfo(channel).units;
+      case 3 % time stamps
+        % waiting for test data
+      case 4 % up and down time stamps
+        % waiting for test data
       otherwise
         warning('ID:feature_unsupported', 'The imported event channel has not been currently supported. \n');
         return
