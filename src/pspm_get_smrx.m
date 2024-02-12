@@ -37,8 +37,6 @@ fileinfo.maxtime       = CEDS64MaxTime(fhand);
 fileinfo.timedate = double(fileinfo.timedate);
 % 2.3 Get list of channels
 iChan = 0;
-iMarkerChan = [];
-MarkerChanName = {};
 for i = 1:fileinfo.maxchan
   chanType = CEDS64ChanType(fhand, i); % Read channel type
   switch chanType % Check type of the channel
@@ -47,7 +45,7 @@ for i = 1:fileinfo.maxchan
       fileinfo.chaninfo(iChan).number        = i;
       fileinfo.chaninfo(iChan).kind          = chanType;
       [~, fileinfo.chaninfo(iChan).title]    = CEDS64ChanTitle(fhand, i);
-      % [~, fileinfo.chaninfo(iChan).comment]= CEDS64ChanComment(fhand, i);
+      [~, fileinfo.chaninfo(iChan).comment]  = CEDS64ChanComment(fhand, i);
       fileinfo.chaninfo(iChan).div           = CEDS64ChanDiv(fhand, i);
       fileinfo.chaninfo(iChan).idealRate     = CEDS64IdealRate(fhand, i);
       fileinfo.chaninfo(iChan).realRate      = 1 ./ (fileinfo.timebase .* fileinfo.chaninfo(iChan).div);
@@ -63,14 +61,23 @@ for i = 1:fileinfo.maxchan
         end
       end
     case {2,3,4,5,6,7,8} % Markers and events
-      iMarkerChan(end+1) = i;
-      [~, chTitle] = CEDS64ChanTitle(fhand, i);
+      iChan = iChan + 1;
+      fileinfo.chaninfo(iChan).number        = i;
+      fileinfo.chaninfo(iChan).kind          = chanType;
+      fileinfo.chaninfo(iChan).div           = CEDS64ChanDiv(fhand, i);
+      fileinfo.chaninfo(iChan).idealRate     = CEDS64IdealRate(fhand, i);
+      [~, chTitle]    = CEDS64ChanTitle(fhand, i);
       % chTitle = str_remove_spec_chars(chTitle);
       if ~isempty(chTitle)
-        MarkerChanName{end+1} = chTitle;
+        fileinfo.chaninfo(iChan).title = chTitle;
       else
-        MarkerChanName{end+1} = num2str(i);
+        fileinfo.chaninfo(iChan).title = num2str(i);
       end
+    otherwise
+      iChan = iChan + 1;
+      fileinfo.chaninfo(iChan).number        = i;
+      fileinfo.chaninfo(iChan).kind          = 0;
+      fileinfo.chaninfo(iChan).title         = '0';
   end
 end
 fileinfo.nchan = length(fileinfo.chaninfo);
@@ -108,15 +115,9 @@ for iImport = 1:numel(import)
           floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div), ...
           1);
         import{iImport}.data      = Fchan_waveform;
-        import{iImport}.div       = fileinfo.chaninfo(channel).div;
-        import{iImport}.gain      = fileinfo.chaninfo(channel).gain;
         import{iImport}.length    = nRead_waveform;
-        import{iImport}.idealRate = fileinfo.chaninfo(channel).idealRate;
-        import{iImport}.number    = fileinfo.chaninfo(channel).number;
-        import{iImport}.realRate  = fileinfo.chaninfo(channel).realRate;
         import{iImport}.sr        = fileinfo.chaninfo(channel).realRate;
-        import{iImport}.title     = fileinfo.chaninfo(channel).title;
-        import{iImport}.units     = fileinfo.chaninfo(channel).units;
+        import{iImport} = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
       case 3 % time stamps
         % waiting for test data
       case 4 % up and down time stamps
@@ -134,42 +135,19 @@ for iImport = 1:numel(import)
           1);
         % import{iImport}.marker  = 'continuous';
         import{iImport}.data      = Fchan_events;
-        import{iImport}.div       = fileinfo.chaninfo(channel).div;
-        import{iImport}.gain      = fileinfo.chaninfo(channel).gain;
         import{iImport}.length    = nRead_events;
-        import{iImport}.idealRate = fileinfo.chaninfo(channel).idealRate;
-        import{iImport}.number    = fileinfo.chaninfo(channel).number;
-        import{iImport}.realRate  = fileinfo.chaninfo(channel).realRate;
-        import{iImport}.title     = fileinfo.chaninfo(channel).title;
-        import{iImport}.units     = fileinfo.chaninfo(channel).units;
+        import{iImport} = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
       case 3 % time stamps
         % waiting for test data
-      case 4 % up and down time stamps
-        % waiting for test data
-      otherwise
-        warning('ID:feature_unsupported', 'The imported event channel has not been currently supported. \n');
-        return
-    end
-  elseif strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'markers')
-    switch fileinfo.chaninfo(channel).kind
-      case 1 % Markers
-        % This situation has been written based on the provided API
-        % function, but no test data has been supplied to test whether this
-        % situation will work.
+      case 4 % For events and type 4 channel, to read as marker channels
         [nRead_markers, Fchan_markers] = CEDS64ReadMarkers(fhand, ...
           channel, ...
-          floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div), ...
+          floor(fileinfo.maxtime * fileinfo.timebase * fileinfo.chaninfo(iChan).idealRate), ... % this is the length of data points
           1);
         % import{iImport}.marker  = 'continuous';
         import{iImport}.data      = Fchan_markers;
-        import{iImport}.div       = fileinfo.chaninfo(channel).div;
-        import{iImport}.gain      = fileinfo.chaninfo(channel).gain;
         import{iImport}.length    = nRead_markers;
-        import{iImport}.idealRate = fileinfo.chaninfo(channel).idealRate;
-        import{iImport}.number    = fileinfo.chaninfo(channel).number;
-        import{iImport}.realRate  = fileinfo.chaninfo(channel).realRate;
-        import{iImport}.title     = fileinfo.chaninfo(channel).title;
-        import{iImport}.units     = fileinfo.chaninfo(channel).units;
+        import{iImport} = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
       otherwise
         warning('ID:feature_unsupported', 'The imported event channel has not been currently supported. \n');
         return
@@ -180,3 +158,26 @@ end
 rmpath(pspm_path('Import','CEDS64ML'));
 sts = 1;
 return
+
+function Y = InheritFields(Y, X)
+if isfield(X, 'div')
+  Y.div = X.div;
+end
+if isfield(X, 'gain')
+  Y.gain = X.gain;
+end
+if isfield(X, 'idealRate')
+  Y.idealRate = X.idealRate;
+end
+if isfield(X, 'number')
+  Y.number = X.number;
+end
+if isfield(X, 'realRate')
+  Y.realRate = X.realRate;
+end
+if isfield(X, 'title')
+  Y.title = X.title;
+end
+if isfield(X, 'units')
+  Y.units = X.units;
+end
