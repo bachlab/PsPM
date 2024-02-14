@@ -1,14 +1,14 @@
-function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
+function [sts, fn, pos_of_channel] = pspm_find_valid_fixations(fn, varargin)
 % ● Description
 %   pspm_find_valid_fixations takes a file with data from eyelink recordings
 %   which has been converted to length units and filters out invalid fixations.
 %   Gaze values outside of a defined range are set to NaN, which can later
 %   be interpolated using pspm_interpolate. The function will create a
 %   timeseries with NaN values during invalid fixations (as defined by the
-%   parameters).
-%   With two options it is possible to tell the function whether to add or
-%   replace the channels and to tell whether the function should create a new
-%   file or overwrite the file given in fn.
+%   parameters). If a fixation point is given, the function assumes that
+%   the screen is perpendicular to the vector from the eye to the fixation 
+%   point (which is approximately correct for large enough screen 
+%   distance).
 % ● Format
 %   [sts, out_file] = pspm_find_valid_fixations(fn, bitmap, options)
 %   [sts, out_file] = pspm_find_valid_fixations(fn, circle_degree, distance,
@@ -17,24 +17,28 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %                 fn: The actual data file containing the eyelink recording
 %                     with gaze data converted to cm.
 %             bitmap: A nxm matrix representing the display window and holding
-%                     for each poisition a one, where a gaze value is taken into
-%                     account. If there exists gaze data at a point with a zero
+%                     for each poisition a one, where a gaze value is valid. 
+%                     If there exists gaze data at a point with a zero
 %                     value in the bitmap the corresponding data is set to NaN.
+%                     IMPORTANT: the bitmap has to be defined in terms of
+%                     the eyetracker coordinate system, i.e. bitmap(1,1)
+%                     must correpond to the origin of the eyetracker
+%                     coordinate system. 
 %      circle_degree: size of boundary circle given in degree visual angles.
 %           distance: distance between eye and screen in length units.
 %               unit: unit in which distance is given.
 %   ┌────────options: Optional values
 %   ├.fixation_point: A nx2 vector containing x and y of the fixation point
-%   │                 (with resepect to the given resolution). n should be
-%   │                 either 1 or should have the length of the actual data.
-%   │                 Default is the middle of the screen.
+%   │                 (with respect to the given resolution, and in the 
+%   │                 eyetracker coordinate system). n should equal either 1
+%   │                 (constant fixation point) or the length of the actual data.
 %   │                 If resolution is not defined the values are given in
 %   │                 percent. Therefore [0.5 0.5] would correspond to the
 %   │                 middle of the screen. Default is [0.5 0.5]. Only taken
 %   │                 into account if there is no bitmap.
 %   ├────.resolution: Resolution with which the fixation point is defined
 %   │                 (Maximum value of the x and y coordinates). This can be
-%   │                 the resolution set in cogent (e.g. [1280 1024]) or the
+%   │                 the screen resolution in pixels (e.g. [1280 1024]) or the
 %   │                 width and height of the screen in cm (e.g. [50 30]).
 %   │                 Default is [1 1]. Only taken into account if there is no
 %   │                 bitmap.
@@ -42,45 +46,51 @@ function [sts, out_file] = pspm_find_valid_fixations(fn,varargin)
 %   │                 inspection of the validation process. Default is false.
 %   ├.channel_action: Define whether to add or replace the data. Default is
 %   │                 'add'. Possible values are 'add' or 'replace'
-%   ├───────.newfile: Define new filename to store data to it. Default is ''
-%   │                 which means that the file under fn will be 'replaced'.
-%   ├─────.overwrite: [logical] (0 or 1)
-%   │                 Define whether to overwrite existing output files or not.
-%   │                 Default value: determined by pspm_overwrite.
-%   ├───────.missing: If missing is enabled (=1), an extra channel will be
+%   ├───.add_invalid: If missing is enabled (=1), an extra channel will be
 %   │                 written containing information about the validated data.
 %   │                 Data points equal to 1 describe epochs which have been
 %   │                 discriminated as invalid during validation. Data points
 %   │                 equal to 0 describe epochs of valid data (= no blink &
 %   │                 valid fixation). Default is disabled (=0)
-%   ├──────────.eyes: Define on which eye the operations should be performed.
-%   │                 Possible values are: 'left', 'right', 'all'. Default is
-%   │                 'all'.
 %   └───────.channel: Choose channels in which the data should be set to NaN
-%                     during invalid fixations. Default is 'pupil'. A char or
-%                     numeric value or a cell array of char or numerics is
-%                     expected. Channel names pupil, gaze_x, gaze_y,
-%                     pupil_missing will be automatically expanded to the
-%                     corresponding eye. E.g. pupil becomes pupil_l or pupil_r
-%                     according to the eye which is being processed.
+%                     during invalid fixations. This can be a channel
+%                     number, any channel type including 'pupil' (which
+%                     will select a channel according to the precedence
+%                     order specified in pspm_load_channel), or 'both',
+%                     which will work on 'pupil_r' and 'pupil_l' and 
+%                     then update channel statistics and best eye. 
+%                     The selected channel must be an eyetracker 
+%                     channel, and the file must contain the corresponding 
+%                     gaze channel(s) in the correct units: distance units for
+%                     mode "fixation" and distance or pixel units for mode 
+%                     "bitmap".
+%                     Default is 'both'. 
 % ● History
 %   Introduced in PsPM 4.0
 %   Written in 2016 Tobias Moser (University of Zurich)
 %   Maintained in 2021 by Teddy Chao (UCL)
+%   Channel logic changed in 2024 by Dominik Bach (Uni Bonn)
 
+% Developer note: additional i/o options for recursive calls are not
+% included in the help. (1) fn can be a data structure as permitted by
+% pspm_load_data, (2) the output argument pos_of_channels is an index of
+% the channel(s) that was/were replaced or added
+
+% --> fix message in pspm_load_channel if no preferred pupil channel exists
+% and the last one is chosen.
 
 %% initialise
 global settings;
 if isempty(settings), pspm_init; end
 sts = -1;
-out_file = '';
-% validate input
+pos_of_channel = -1;
+
+%% validate input
 if numel(varargin) < 1
   warning('ID:invalid_input', ['Not enough input arguments.', ...
     ' You have to either pass a bitmap or circle_degree, distance and unit',...
     ' to compute the valid fixations']); return;
 end
-%get imput arguments and check if correct values
 if numel(varargin{1}) > 1
   mode = 'bitmap';
   bitmap = varargin{1};
@@ -129,22 +139,7 @@ else
   end
 end
 
-% fn
-if ~ischar(fn) || ~exist(fn, 'file')
-  warning('ID:invalid_input', ['File %s is not char or does not ', ...
-    'seem to exist.'], fn); return;
-end
-% load data right away (needed if fixation point should be expanded)
-[msts, infos, data] = pspm_load_data(fn);
-if msts ~= 1
-  warning('ID:invalid_input', ['An error happened, while ', ...
-    'opening the file %s.'],fn); return;
-end
-options = pspm_options(options, 'find_valid_fixations');
-if options.invalid
-  return
-end
-%change distance to 'mm'
+% check & change distance to 'mm'
 if strcmpi(mode,'fixation')
   if ~strcmpi(unit,'mm')
     [nsts,distance] = pspm_convert_unit(distance,unit ,'mm');
@@ -153,211 +148,120 @@ if strcmpi(mode,'fixation')
     end
   end
 end
-% expand fixation_point
-if strcmpi(mode,'fixation')
-  if ~isfield(options, 'fixation_point') || isempty(options.fixation_point) ...
-      || size(options.fixation_point,1) == 1
-    % set fixation point default or expand to data size
-    % find first wave channel
-    ct = cellfun(@(x) x.header.chantype, data, 'UniformOutput', false);
-    chan_data = cellfun(@(x) ...
-      settings.channeltypes(strcmpi({settings.channeltypes.type}, x)).data, ...
-      ct, 'UniformOutput', false);
-    wv = find(strcmpi(chan_data, 'wave'));
-    % initialize fix_point
-    fix_point(:,1) = zeros(numel(data{wv(1)}.data), 1);
-    fix_point(:,2) = zeros(numel(data{wv(1)}.data), 1);
 
-    if isfield(options, 'fixation_point') && size(options.fixation_point,1) == 1
-      % normalize values according to resolution
-      fix_point = options.fixation_point ./ options.resolution;
-    else
-      fix_point(:,:) = 0.5;
-    end
-  else
-    % normalized values
-    fix_point = options.fixation_point ./ options.resolution;
-  end
-else
-  [ylim,xlim] = size(bitmap);
-  map_x_range = [1,xlim];
-  map_y_range = [1,ylim];
+% check options
+options = pspm_options(options, 'find_valid_fixations');
+if options.invalid
+  return
 end
-%% calculate radius araund de fixation points
-%options = pspm_options(options, 'find_valid_fixations');
-% overwrite
-options.overwrite = pspm_overwrite(fn, options);
-eyesToProcess = pspm_eye(infos.source.eyesObserved, 'char2cell');
-n_eyes = numel(eyesToProcess);
-new_pu = cell(n_eyes, 1);
-new_excl = cell(n_eyes, 1);
-for i = 1:n_eyes
-  eye = eyesToProcess{i};
-  if strcmpi(options.eyes, 'combined') || strcmpi(options.eyes(1), eye)
-    gaze_x = ['gaze_x_', eye];
-    gaze_y = ['gaze_y_', eye];
-    % find chars to replace
-    str_chans = cellfun(@ischar, options.channel);
-    channel = options.channel;
-    str_channeltypes = ['(', settings.findvalidfixations.channeltypes{1}];
-    for i_channeltypes = 2:length(settings.findvalidfixations.channeltypes)
-      str_channeltypes = [str_channeltypes, '|', ...
-        settings.findvalidfixations.channeltypes{i_channeltypes}];
+
+% in recursive calls, fn is a struct with fields .data and .infos, which is 
+% simply checked by by pspm_load_data 
+alldata = struct();
+[sts_load, alldata.infos, alldata.data] = pspm_load_data(fn);
+if sts_load < 1, return, end
+
+% progress according to options.channel
+if ~strcmpi(options.channel, 'both')
+    [sts_load, data, infos, pos_of_channel] = pspm_load_channel(alldata, options.channel);
+    if sts_load < 1, return; end
+    if ~contains(data.header.chantype, settings.eyetracker_channels)
+        warning('ID:invalid_input', 'This function only allows eyetracker input');
+        return
     end
-    str_channeltypes = [str_channeltypes, ')'];
-    channel(str_chans) = regexprep(channel(str_chans), str_channeltypes, ['$0_' eye]);
-    % replace strings with numbers
-    str_chan_num = channel(str_chans);
-    for j=1:numel(str_chan_num)
-      str_chan_num(j) = {find(cellfun(@(y) strcmpi(str_chan_num(j),...
-        y.header.chantype), data),1)};
+
+    % check laterality identifier
+    eye = data.header.chantype((end-1):end);
+    if ~(eye(1) == '_' && contains(eye, {settings.lateral.char.r, ...
+            settings.lateral.char.l, settings.lateral.char.c}))
+        eye = '';
+        new_chantype = data.header.chantype;
+    else
+        new_chantype = data.header.chantype(1:(end-2));
     end
-    channel(str_chans) = str_chan_num;
-    work_chans = cell2mat(channel);
 
-    if numel(work_chans) >= 1
-      % always use first found channel
-      switch mode
-        case 'bitmap'
-          gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
-            ~strcmpi(x.header.units,'degree'), data),1);
-          gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
-            ~strcmpi(x.header.units,'degree'), data),1);
-        case 'fixation'
-          gx = find(cellfun(@(x) strcmpi(gaze_x, x.header.chantype) & ...
-            ~strcmpi(x.header.units,'degree') & ~strcmpi(x.header.units,'pixel'),data),1);
-          gy = find(cellfun(@(x) strcmpi(gaze_y, x.header.chantype) & ...
-            ~strcmpi(x.header.units,'degree')& ~strcmpi(x.header.units,'pixel'),data),1);
-      end
 
-      if ~isempty(gx) && ~isempty(gy)
-        % we choose to convert the data in whatevercase to 'mm'
-        x_unit = data{gx}.header.units;
-        y_unit = data{gy}.header.units;
+    % load corresponding gaze channels in correct units
+    channelunits_list = cellfun(@(x) data.header.units, alldata.data, 'uni', false);
+    if strcmpi(mode, 'fixation')
+        channels_correct_units = find(~contains(channelunits_list, 'degree') & ~contains(channelunits_list, 'pixel'));
+    elseif strcmpi(mode, 'bitmap')
+        channels_correct_units = find(~contains(channelunits_list, 'degree'));
+    end
+    gazedata = struct('infos', alldata.infos, 'data', {alldata.data(channels_correct_units)});
+    [stsx, gaze_x] = pspm_load_channel(gazedata, ['gaze_x', eye]);
+    [stsy, gaze_y] = pspm_load_channel(gazedata, ['gaze_y', eye]);
+    if stsx < 1 || stsy < 1
+        warning('ID:invalid_input', ['Unable to perform gaze ', ...
+          'validation. Cannot find gaze channels with distance ',...
+          'unit values. Maybe you need to convert them with ', ...
+          'pspm_convert_pixel2unit()']);
+        return; 
+    end
 
-        if ~strcmpi(x_unit,'mm')&& strcmpi(mode,'fixation')
-          [nsts,x_data] = pspm_convert_unit(data{gx}.data, x_unit, 'mm');
-          [msts,x_range] = pspm_convert_unit(transpose(data{gx}.header.range), x_unit, 'mm');
-          if nsts~=1 || msts~=1
-            warning('ID:invalid_input', 'Failed to convert data.');
-          end
-        else
-          x_data = data{gx}.data;
-          x_range = data{gx}.header.range;
-        end
-        if ~strcmpi(y_unit,'mm')&& strcmpi(mode,'fixation')
-          [nsts,y_data] = pspm_convert_unit(data{gy}.data, y_unit, 'mm');
-          [msts,y_range] = pspm_convert_unit(transpose(data{gy}.header.range), y_unit, 'mm');
-          if nsts~=1 || msts~=1
-            warning('ID:invalid_input', 'Failed to convert data.');
-          end
-        else
-          y_data = data{gy}.data;
-          y_range = data{gy}.header.range;
-        end
+    x_unit = gaze_x.header.units;
+    y_unit = gaze_y.header.units;
 
-        % distinguish the validation method
-        switch mode
-          case 'bitmap'
-            % NOTE: the data of y is not inverted sind the
-            % matrix has the same (0,0) as the gaze channels
-            % nr of data points
-            N = numel(x_data);
+    switch mode
+         case 'fixation'
+             % expand fixation point to size of data
+             fix_point = options.fixation_point;
+             if size(fix_point, 1) == 1
+                 fix_point = repmat(fix_point(:)', numel(gaze_x.data), 1);
+             elseif size(fix_point, 1) ~= numel(gaze_x)
+                 warning('ID:invalid_input', ['Fixation point has wrong ', ...
+                     'dimensions - it should be 1x2 or nx2 where n is the ', ...
+                     'number of gaze data points.']);
+                    return
+             end
 
-            % change bitmap to logical
-            bitmap = logical(bitmap);
+             % normalise fixation point to fraction of full screen
+             fix_point = fix_point ./ repmat(options.resolution(:)', ...
+                 size(fix_point, 1), 1);
 
-            % normalize recorded data to adjust to right range
-            % of the bitmap
-            x_data = (x_data - x_range(1))/diff(x_range);
-            y_data = (y_data - y_range(1))/diff(y_range);
-
-            %adapt to bitmap range
-            x_data = map_x_range(1)+ x_data * diff(map_x_range);
-            y_data = map_y_range(1)+ y_data * diff(map_y_range);
-
-            %round gaze data such that we can use them as
-            %indexed
-            x_data = round(x_data);
-            y_data = round(y_data);
-
-            %set all gaze values which are out of the display
-            %window range to NaN
-            x_data(x_data > map_x_range(2) | x_data < map_x_range(1)) = NaN;
-            y_data(y_data > map_y_range(2) | y_data < map_y_range(1)) = NaN;
-
-            %only take gaze coordinates which both aren't NaNs
-            valid_gaze_idx = find(~isnan(x_data) & ~isnan(y_data));
-            valid_gaze = [x_data(valid_gaze_idx),y_data(valid_gaze_idx)];
-
-            val= zeros(N,1);
-            for k=1:numel(valid_gaze_idx)
-              val(valid_gaze_idx(k)) = bitmap(valid_gaze(k,2),valid_gaze(k,1));
-            end
-            val = logical(val);
-            excl = ~val;
-
-            if options.plot_gaze_coords
-              fg = figure;
-              ax = axes('NextPlot', 'add');
-              set(ax, 'Parent', handle(fg));
-
-              % plot gaze coordinates
-              %                             mi=min(min(x_data),min(y_data));
-              %                             ma=max(max(x_data),max(y_data));
-              %                             axis([mi ma mi ma]);
-              imshow(bitmap);
-              hold on;
-              scatter( x_data, y_data);
-
-            end
-
-          case 'fixation'
-            % need to invert the y_data because of the different (0,0)
-            % point of the eyetracker
-            y_data = y_range(2)-y_data;
-
-            % adapt the normalized fixation points to the
-            % corresponding range of the data
+             % convert data to mm
+             if ~strcmpi(x_unit,'mm')
+                [nsts,x_data] = pspm_convert_unit(gaze_x.data, x_unit, 'mm');
+                [msts,x_range] = pspm_convert_unit(transpose(gaze_x.header.range), x_unit, 'mm');
+                  if nsts~=1 || msts~=1
+                    warning('ID:invalid_input', 'Failed to convert data.');
+                    return
+                  end
+             end
+             if ~strcmpi(y_unit,'mm')
+                [nsts,y_data] = pspm_convert_unit(gaze_y.data, y_unit, 'mm');
+                [msts,y_range] = pspm_convert_unit(transpose(gaze_y.header.range), y_unit, 'mm');
+                  if nsts~=1 || msts~=1
+                    warning('ID:invalid_input', 'Failed to convert data.');
+                    return
+                  end
+             end            
+         
+            % convert normalized fixation points to data resolution
+            fix_point_temp = zeros(size(fix_point));
             fix_point_temp(:,1) = x_range(1)+ fix_point(:,1)* diff(x_range);
             fix_point_temp(:,2) = y_range(1)+ fix_point(:,2)* diff(y_range);
 
-            % calculate the middlepoint of the display
-            middlepoint= [x_range(1)+ diff(x_range)/2, ...
-              y_range(1)+ diff(y_range)/2];
-
-            % caluculate the visual angle of the fixation points
-            % according to the right range
-
-            dist = middlepoint - fix_point_temp;
-            dist = sqrt(dist(:,1).^2 + dist(:,2).^2);
-            angle_of_fix = 2 * atan(dist/(2*distance));
-            angle_of_fix = rad2deg(angle_of_fix);
-
-            % find for each fixation point the right radius
-            tot_angle = angle_of_fix + circle_degree;
-            tot_angle = deg2rad(tot_angle);
-            radius = 2*distance * tan(tot_angle/2);
-            radius = radius - dist;
-
-            % calculate for ech point distance to fixationpoint
-            gaze_data = [x_data,y_data];
-            dist_fix_gaze = fix_point_temp - gaze_data;
-            dist_fix_gaze = (sqrt(dist_fix_gaze(:,1).^2 + dist_fix_gaze(:,2).^2));
-
+            % calculate the visual angle of the gaze points
+            gaze_dist = fix_point_temp - [x_data(:), y_data(:)];
+            gaze_dist = sqrt(gaze_dist(:,1).^2 + gaze_dist(:,2).^2);
+            angle_of_gaze = 2 * atan(gaze_dist/(2*distance));
+           
             % compare calculated distance to accepted radius
-            excl = dist_fix_gaze > radius;
+            excl = angle_of_gaze > deg2rad(circle_degree);
 
+            % check plotting
             if options.plot_gaze_coords
               fg = figure;
               ax = axes('NextPlot', 'add');
               set(ax, 'Parent', handle(fg));
 
-              % validation middlepoint
+              % first fixation point
               x_point = fix_point_temp(1,1);
               y_point = fix_point_temp(1,2);
+              radius  = tan(deg2rad(circle_degree)/2) * 2 * distance;
 
-              %for the circle around the first fixation point
+              % plot the circle around the first fixation point
               th = 0:pi/50:2*pi;
               x_unit = radius(1) * cos(th) + x_point;
               y_unit = radius(1) * sin(th) + y_point;
@@ -366,99 +270,126 @@ for i = 1:n_eyes
               mi=min(min(x_data),min(y_data));
               ma=max(max(x_data),max(y_data));
               axis([mi ma mi ma]);
-              plot(ax, x_data, y_data);
-              plot(x_unit, y_unit);
+              scatter(ax, x_data, y_data, 'k.'); 
+              plot(x_unit, y_unit, 'r');
             end
-        end
-        % set excluded periods in pupil data to NaN
-        new_pu{i} = {data{work_chans}};
-        new_excl{i} = cell(1,numel(new_pu{i}));
-        for j=1:numel(new_pu{i})
-          new_pu{i}{j}.data(excl == 1) = NaN;
-          if all(isnan(new_pu{i}{j}.data))
-            warning('ID:invalid_input', ['All values of channel ''%s'' ', ...
-              'completely set to NaN. Please reconsider your parameters.'], ...
-              new_pu{i}{j}.header.chantype);
-          end
-          excl_hdr = struct('chantype', ['pupil_missing_', eye],...
-            'units', '', 'sr', new_pu{i}{j}.header.sr);
-          new_excl{i}{j} = struct('data', double(excl), 'header', excl_hdr);
-        end
-      else
-        warning('ID:invalid_input', ['Unable to perform gaze ', ...
-          'validation. Cannot find gaze channels with length ',...
-          'unit values. Maybe you need to convert them with ', ...
-          'pspm_convert_pixel2unit()']);
-      end
-    else
-      warning('ID:invalid_input', ['Unable to perform gaze ', ...
-        'validation. There must be a pupil channel. Eventually ', ...
-        'only gaze channels have been imported.']);
+         case 'bitmap'
+             [ylim,xlim] = size(bitmap);
+             map_x_range = [1,xlim];
+             map_y_range = [1,ylim];
+
+             x_data = gaze_x.data;
+             y_data = gaze_y.data;
+             x_range = gaze_x.header.range;
+             y_range = gaze_y.header.range;
+             
+             N = numel(x_data);
+
+             % change bitmap to logical
+             bitmap = logical(bitmap);
+
+             % normalize recorded data to adjust to right range
+             % of the bitmap
+             x_data = (x_data - x_range(1))/diff(x_range);
+             y_data = (y_data - y_range(1))/diff(y_range);
+
+             % adapt to bitmap range
+             x_data = map_x_range(1)+ x_data * diff(map_x_range);
+             y_data = map_y_range(1)+ y_data * diff(map_y_range);
+
+             % round gaze data such that we can use them as
+             % indexed
+             x_data = round(x_data);
+             y_data = round(y_data);
+
+             % set all gaze values which are out of the display
+             % window range to NaN
+             x_data(x_data > map_x_range(2) | x_data < map_x_range(1)) = NaN;
+             y_data(y_data > map_y_range(2) | y_data < map_y_range(1)) = NaN;
+
+             % only take gaze coordinates which both aren't NaNs
+             valid_gaze_idx = find(~isnan(x_data) & ~isnan(y_data));
+             valid_gaze = [x_data(valid_gaze_idx),y_data(valid_gaze_idx)];
+
+             val= zeros(N,1);
+             for k=1:numel(valid_gaze_idx)
+                 val(valid_gaze_idx(k)) = bitmap(valid_gaze(k,2),valid_gaze(k,1));
+             end
+             val = logical(val);
+             excl = ~val;
+
+             if options.plot_gaze_coords
+                 fg = figure;
+                 ax = axes('NextPlot', 'add');
+                 set(ax, 'Parent', handle(fg));
+
+                 % plot gaze coordinates
+                 mi=min(min(x_data),min(y_data));
+                 ma=max(max(x_data),max(y_data));
+                 axis([mi ma mi ma]);
+                 imshow(bitmap);
+                 hold on;
+                 scatter( x_data, y_data);
+
+             end
+     end
+
+     % set excluded periods in data to NaN
+     data.data(excl == 1) = NaN;
+     if all(isnan(data.data))
+         warning('ID:invalid_input', ['All values of channel ''%s'' ', ...
+             'completely set to NaN. Please reconsider your parameters.'], ...
+             data.header.chantype);
+     end
+
+     % add to alldata and update infos
+     if ~strcmpi(options.channel_action, 'replace')
+         pos_of_channel = numel(alldata.data) + 1;
+     end
+
+     alldata.data{pos_of_channel} = data;
+     n_inv = sum(isnan(data.data));
+     n_data = numel(data.data);
+     alldata.infos.source.chan_stats{pos_of_channel}.nan_ratio = n_inv/n_data;
+
+     % add invalid fixations if requested
+     if options.add_invalid
+         excl_hdr = struct('chantype', [new_chantype, '_missing', eye],...
+             'units', '', 'sr', data.header.sr);
+         excl_data = struct('data', double(excl), 'header', excl_hdr);
+         alldata.data{end+1} = excl_data;
+     end
+elseif strcmpi(options.channel, 'both')
+    % call this function recursively
+    channels = {'pupil_r', 'pupil_l'};
+    for i_channel = 1:2
+        options.channel = channels{i_channel};
+        varargin{end} = options;
+        % varargin{:} unpacks the cell array into single arguments:
+        [rsts(i_channel), alldata, pos_of_channel(i_channel)] = pspm_find_valid_fixations(alldata, varargin{:}); 
     end
-  end
-end
-op = struct();
-op.overwrite = options.overwrite;
-if ~isempty(options.newfile)
-  [pathstr, ~, ~] = fileparts(options.newfile);
-  if exist(pathstr, 'dir') || isempty(pathstr)
-    out_file = options.newfile;
-  else
-    warning('ID:invalid_input', 'Path to options.newfile (%s) does not exist.', options.newfile);
-  end
-else
-  out_file = fn;
-end
-% collect data
-if options.missing
-  new_chans = [[new_excl{:}], [new_pu{:}]];
-else
-  new_chans = [new_pu{:}];
-end
-if numel(new_chans) >= 1
-  new_data = data;
-  chan_idx = NaN(1,numel(new_chans));
-  for i = 1:numel(new_chans)
-    if strcmpi(options.channel_action, 'add')
-      new_data{end+1} = new_chans{i};
-      chan_idx(i) = numel(new_data);
+    if (rsts(1) < 1 && rsts(2) < 1) 
+        return; 
+    elseif (rsts(1) < 1 || rsts(2) < 1)
+        pos_of_channel(rsts < 1) = [];
     else
-      % look for same chan_type
-      channel = cellfun(@(x) strcmpi(new_chans{i}.header.chantype, x.header.chantype), new_data);
-      if any(channel)
-        % replace the first found channel
-        idx = find(channel, 1, 'first');
-        new_data{idx}.data = new_chans{i}.data;
-        chan_idx(i) = idx;
-      else
-        new_data{end+1} = new_chans{i};
-        chan_idx(i) = numel(new_data);
-      end
+        % update best eye
+        eye_stat = Inf(1,numel(alldata.infos.source.eyesObserved));
+        for i = 1:numel(alldata.infos.source.eyesObserved)
+            e_stat = alldata.infos.source.chan_stats(pos_of_channel);
+            eye_stat(i) = max(cellfun(@(x) x.nan_ratio, e_stat));
+        end
+        [~, min_idx] = min(eye_stat);
+        alldata.infos.source.best_eye = lower(alldata.infos.source.eyesObserved(min_idx));
     end
-  end
-  % update channel stats (similar to pspm_get_eyelink)
-  for i = 1:numel(new_data)
-    % update nan ratio
-    n_inv = sum(isnan(new_data{i}.data));
-    n_data = numel(new_data{i}.data);
-    infos.source.chan_stats{i}.nan_ratio = n_inv/n_data;
-  end
-  % update best eye
-  eye_stat = Inf(1,numel(infos.source.eyesObserved));
-  for i = 1:numel(infos.source.eyesObserved)
-    e = lower(infos.source.eyesObserved(i));
-    e_stat = {infos.source.chan_stats{...
-      cellfun(@(x) ~isempty(regexpi(x.header.chantype, ['_' e], 'once')), new_data)}};
-    eye_stat(i) = max(cellfun(@(x) x.nan_ratio, e_stat));
-  end
-  [~, min_idx] = min(eye_stat);
-  infos.source.best_eye = lower(infos.source.eyesObserved(min_idx));
-  file_struct.infos = infos;
-  file_struct.data = new_data;
-  file_struct.options = op;
-  [sts_load_data, ~, ~, ~] = pspm_load_data(out_file, file_struct);
-else
-  warning('ID:invalid_input', 'Appearently no data was generated.');
 end
-sts = 1;
-return
+
+% write to file or return data
+if ischar(fn)
+  alldata.options = struct('overwrite', 1); 
+  [sts, ~, ~, ~] = pspm_load_data(fn, alldata);
+elseif isstruct(fn)
+    sts = 1;
+    fn = alldata;
+end
+
