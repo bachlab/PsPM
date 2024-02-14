@@ -25,7 +25,7 @@ classdef pspm_extract_segments_core_test < matlab.unittest.TestCase
           missing = {logical([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])};
           segment_length = 3;
           expected_segments = [3,4,5; 4,5,6; 5,6,7];
-          expected_sessions = [1,1,1];
+          expected_sessions = [1;1;1];
           [segments, sessions] = pspm_extract_segments_core(data, onsets, segment_length, missing);
           this.verifyEqual(segments, expected_segments);
           this.verifyEqual(sessions, expected_sessions);
@@ -38,7 +38,7 @@ classdef pspm_extract_segments_core_test < matlab.unittest.TestCase
           missing = {logical([0, 0, 1, 0, 1, 0, 0, 0, 0, 0])};
           segment_length = 3;
           expected_segments = [NaN,4,NaN; 4,NaN,6; NaN,6,7];
-          expected_sessions = [1,1,1];
+          expected_sessions = [1;1;1];
           [segments, sessions] = pspm_extract_segments_core(data, onsets, segment_length, missing);
           this.verifyEqual(segments, expected_segments);
           this.verifyEqual(sessions, expected_sessions);
@@ -50,7 +50,7 @@ classdef pspm_extract_segments_core_test < matlab.unittest.TestCase
           missing = {false(1, 10)};
           segment_length = 4;
           expected_segments = [8,9,10,NaN; 9,10,NaN,NaN; 10,NaN,NaN,NaN];
-          expected_sessions = [1,1,1];
+          expected_sessions = [1;1;1];
           [segments, sessions] = pspm_extract_segments_core(data, onsets, segment_length, missing);
           this.verifyEqual(segments, expected_segments);
           this.verifyEqual(sessions, expected_sessions);
@@ -117,7 +117,7 @@ classdef pspm_extract_segments_core_test < matlab.unittest.TestCase
           missing = {false(1, 10),false(1,10)};
           segment_length = 2;
           expected_segments = [3,4;4,5;5,6;14,15;20,NaN];
-          expected_sessions = [1,1,1,2,2];
+          expected_sessions = [1;1;1;2;2];
           [segments, sessions] = pspm_extract_segments_core(data, onsets, segment_length, missing);
           this.verifyEqual(segments, expected_segments);
           this.verifyEqual(sessions, expected_sessions);
