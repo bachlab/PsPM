@@ -45,7 +45,7 @@ function [segments, sessions] = pspm_extract_segments_core(data, onsets, segment
 
             % Add to segments and sessions
             segments = [segments; segment];
-            sessions = [sessions, i];
+            sessions = [sessions; i];
         end
     end
 end
