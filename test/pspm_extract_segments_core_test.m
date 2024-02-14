@@ -2,7 +2,7 @@ classdef pspm_extract_segments_core_test < matlab.unittest.TestCase
   % unittest class for the pspm_extract_segments_core function
   % PsPM TestEnvironment
   % ● Authorship
-  % (C) 2013 Linus Rüttimann (University of Zurich)
+  % (C) 2024 Abdul Wahab Madni (University of Bonn)
   methods (TestMethodSetup)
       function addFunctionPath(testCase)
           % Add the path to the source directory
