@@ -346,7 +346,6 @@ if ~strcmpi(options.channel, 'both')
 
          [sts, ~, new_chantype] = pspm_find_eye(data.header.chantype);
          excl_hdr = struct('chantype', [new_chantype, '_missing_', eye],...
-
              'units', '', 'sr', data.header.sr);
          excl_data = struct('data', double(excl), 'header', excl_hdr);
          alldata.data{end+1} = excl_data;
