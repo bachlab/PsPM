@@ -144,7 +144,7 @@ for seg = options.segments
 end
 %% 4 Load
 action_combine = ~strcmp(options.channel_combine, 'none');
-[lsts, data,] = pspm_load_channel(fn, options.channel, 'pupil');
+[lsts, data] = pspm_load_channel(fn, options.channel, 'pupil');
 if lsts ~= 1
   return
 end

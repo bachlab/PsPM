@@ -269,7 +269,7 @@ if ~strcmpi(options.channel, 'both')
               % plot gaze coordinates
               mi=min(min(x_data),min(y_data));
               ma=max(max(x_data),max(y_data));
-              %axis([mi ma mi ma]);
+              axis([mi ma mi ma]);
               scatter(ax, x_data, y_data, 'k.'); 
               plot(x_unit, y_unit, 'r');
             end
@@ -324,9 +324,9 @@ if ~strcmpi(options.channel, 'both')
                  set(ax, 'Parent', handle(fg));
 
                  % plot gaze coordinates
-                 %                             mi=min(min(x_data),min(y_data));
-                 %                             ma=max(max(x_data),max(y_data));
-                 %                             axis([mi ma mi ma]);
+                 mi=min(min(x_data),min(y_data));
+                 ma=max(max(x_data),max(y_data));
+                 axis([mi ma mi ma]);
                  imshow(bitmap);
                  hold on;
                  scatter( x_data, y_data);
