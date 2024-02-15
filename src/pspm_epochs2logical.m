@@ -24,9 +24,8 @@ end
 
 index = zeros(datalength, 1);
 if ~isempty(epochs)
-    for k = 1:size(epochs, 1)
-        flanks = round(epochs(k,:));
+    for k = 1:size(epoch_index, 1)
+        flanks = round(epoch_index(k,:));
         index(flanks(1):flanks(2)) = 1;
-        index = index(1:datalength)
     end
 end
