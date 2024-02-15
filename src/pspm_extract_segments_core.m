@@ -1,14 +1,14 @@
-function [segments, sessions] = pspm_extract_segments_core(data, onsets, segment_length, missing)
-    % Verify if the inputs have the same size
-    if ~(length(data) == length(onsets) && length(data) == length(missing))
-        warning('pspm_extract_segments_core:SizeMismatch','The cell arrays data, onsets, and missing must have the same size.');
-        segments = []; % Return empty outputs if there's a size mismatch
-        sessions = [];
-        return;
-    end
+function [sts, segments, sessions] = pspm_extract_segments_core(data, onsets, segment_length, missing)
+    sts = -1;
 
     segments = []; % Initialize segments matrix
     sessions = []; % Initialize session index vector
+
+    % Verify if the inputs have the same size
+    if ~(length(data) == length(onsets) && length(data) == length(missing))
+        warning('pspm_extract_segments_core:SizeMismatch','The cell arrays data, onsets, and missing must have the same size.');
+        return;
+    end
 
     % Iterate through each cell of data
     for i = 1:length(data)
@@ -19,13 +19,13 @@ function [segments, sessions] = pspm_extract_segments_core(data, onsets, segment
         % Check for valid onsets
         if any(currentOnsets < 1) || any(currentOnsets > length(currentData))
             warning('pspm_extract_segments_core:InvalidOnset','Onset values must be between 1 and the length of the corresponding data vector.');
-            continue;
+            return;
         end
 
         % Check if the length of the current missing data matches the length of the current data
         if length(currentMissing) ~= length(currentData)
             warning('pspm_extract_segments_core:MissingDataLengthMismatch', 'The length of the missing data vector must be the same as the corresponding data vector in cell.');
-            continue;
+            return;
         end
 
         % Handle missing data
@@ -48,4 +48,5 @@ function [segments, sessions] = pspm_extract_segments_core(data, onsets, segment
             sessions = [sessions; i];
         end
     end
+    sts = 1;
 end
