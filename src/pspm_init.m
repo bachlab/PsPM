@@ -208,6 +208,16 @@ defaults.channeltypes(end+1) = struct(s_t, 'emg_pp',           s_de, 'EMG prepro
 defaults.channeltypes(end+1) = struct(s_t, 'marker',           s_de, 'Marker',                                   s_i, @pspm_get_marker,    s_da, 'events');
 defaults.channeltypes(end+1) = struct(s_t, 'snd',              s_de, 'Sound channel',                            s_i, @pspm_get_sound,     s_da, 'wave');
 defaults.channeltypes(end+1) = struct(s_t, 'ppg',              s_de, 'Photoplethysmography',                     s_i, @pspm_get_ppg,       s_da, 'wave');
+% Gaze preprocessed X
+defaults.channeltypes(end+1) = struct(s_t, 'gaze_pp_x',        s_de, 'Gaze preprocessed x',                      s_i, @none,               s_da, 'wave');
+defaults.channeltypes(end+1) = struct(s_t, 'gaze_pp_x_c',      s_de, 'Gaze preprocessed x combined',             s_i, @none,               s_da, 'wave');
+defaults.channeltypes(end+1) = struct(s_t, 'gaze_pp_x_l',      s_de, 'Gaze preprocessed x left',                 s_i, @none,               s_da, 'wave');
+defaults.channeltypes(end+1) = struct(s_t, 'gaze_pp_x_r',      s_de, 'Gaze preprocessed x right',                s_i, @none,               s_da, 'wave');
+% Gaze preprocessed Y
+defaults.channeltypes(end+1) = struct(s_t, 'gaze_pp_y',        s_de, 'Gaze preprocessed y',                      s_i, @none,               s_da, 'wave');
+defaults.channeltypes(end+1) = struct(s_t, 'gaze_pp_y_c',      s_de, 'Gaze preprocessed y combined',             s_i, @none,               s_da, 'wave');
+defaults.channeltypes(end+1) = struct(s_t, 'gaze_pp_y_l',      s_de, 'Gaze preprocessed y left',                 s_i, @none,               s_da, 'wave');
+defaults.channeltypes(end+1) = struct(s_t, 'gaze_pp_y_r',      s_de, 'Gaze preprocessed y right',                s_i, @none,               s_da, 'wave');
 % Gaze X
 defaults.channeltypes(end+1) = struct(s_t, 'gaze_x',           s_de, 'Gaze x',                                   s_i, @pspm_get_gaze_x,    s_da, 'wave');
 defaults.channeltypes(end+1) = struct(s_t, 'gaze_x_l',         s_de, 'Gaze x left',                              s_i, @pspm_get_gaze_x_l,  s_da, 'wave');
@@ -228,6 +238,11 @@ defaults.channeltypes(end+1) = struct(s_t, 'pupil_missing',    s_de, 'Pupil data
 defaults.channeltypes(end+1) = struct(s_t, 'pupil_missing_l',  s_de, 'Pupil data missing/interpolated left',     s_i, @none,               s_da, 'wave');
 defaults.channeltypes(end+1) = struct(s_t, 'pupil_missing_r',  s_de, 'Pupil data missing/interpolated right',    s_i, @none,               s_da, 'wave');
 defaults.channeltypes(end+1) = struct(s_t, 'pupil_missing_c',  s_de, 'Pupil data missing/interpolated combined', s_i, @none,               s_da, 'wave');
+% Pupil preprocessed
+defaults.channeltypes(end+1) = struct(s_t, 'pupil_pp',         s_de, 'Pupil preprocessed',                       s_i, @none,               s_da, 'wave');
+defaults.channeltypes(end+1) = struct(s_t, 'pupil_pp_c',       s_de, 'Pupil preprocessed combined',              s_i, @none,               s_da, 'wave');
+defaults.channeltypes(end+1) = struct(s_t, 'pupil_pp_l',       s_de, 'Pupil preprocessed left',                  s_i, @none,               s_da, 'wave');
+defaults.channeltypes(end+1) = struct(s_t, 'pupil_pp_r',       s_de, 'Pupil preprocessed right',                 s_i, @none,               s_da, 'wave');
 % Blink
 defaults.channeltypes(end+1) = struct(s_t, 'blink_l',          s_de, 'Blink left',                               s_i, @pspm_get_blink_l,   s_da, 'wave');
 defaults.channeltypes(end+1) = struct(s_t, 'blink_r',          s_de, 'Blink right',                              s_i, @pspm_get_blink_r,   s_da, 'wave');
@@ -241,6 +256,8 @@ defaults.channeltypes(end+1) = struct(s_t, 'sps_r',            s_de, 'Scanpath s
 defaults.channeltypes(end+1) = struct(s_t, 'sps_c',            s_de, 'Scanpath speed combined',                  s_i, @pspm_get_sps_c,     s_da, 'wave');
 % Custom
 defaults.channeltypes(end+1) = struct(s_t, 'custom',           s_de, 'Custom',                                   s_i, @pspm_get_custom,    s_da, 'wave');
+
+defaults.findvalidfixations.channeltypes = {'gaze_pp_x',   'gaze_pp_y',   'gaze_x',   'gaze_y',   'pupil',   'pupil_missing',   'pupil_pp'}; % alphabetical order
 
 for k = 1:numel(defaults.channeltypes)
   if strcmpi(func2str(defaults.channeltypes(k).import), 'none')

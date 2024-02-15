@@ -42,24 +42,44 @@ function varargout = pspm_pupil_pp (fn, options)
 %          fn:  [string]
 %               Path to the PsPM file which contains the pupil data.
 %   ┌──options: [struct]
-%   ├─.channel: [optional][numeric/string] [Default: 'pupil']
+%   ├─.channel: [optional][numeric/string][Default: 'pupil']
 %   │           Channel ID to be preprocessed.
-%   │           To process a specific eye, use 'pupil_l' or 'pupil_r'.
+%   │           ▶ ︎Preprocessing raw eye data:
+%   │           The best eye is processed when channel is 'pupil'. To
+%   │           process a specific eye, use 'pupil_l' or 'pupil_r'.
 %   │           To process the combined left and right eye, use 'pupil_c'.
-%   │           To combine both eyes, specify one eye here and the other
-%   │           under option 'channel_combine'. The identifier 'pupil' will
-%   │           use the first existing option out of the following: 
-%   │           (1) L-R-combined pupil, (2) non-lateralised pupil, (3) best
-%   │           eye pupil, (4) any pupil channel. If there are multiple
-%   │           channels of the specified type, only last one will be
-%   │           processed. You can alos specify the number of a channel.
+%   │           ▶ Preprocessing previously processed data:
+%   │           Pupil channels created from other preprocessing steps can
+%   │           be further processed by this function. To enable this, pass
+%   │           one of 'pupil_l_pp' or 'pupil_r_pp'. There is no best eye
+%   │           selection in this mode. Hence, the type of the channel must
+%   │           be given exactly. Finally, a channel can be specified by
+%   │           its index in the given PsPM data structure. It will be
+%   │           preprocessed as long as it is a valid pupil channel. If
+%   │           channel is specified as a string and there are multiple
+%   │           channels with the exact same type, only last one will be
+%   │           processed. This is normally not the case with raw data
+%   │           channels; however, there may be multiple channels with same
+%   │           type if 'add' channel_action was previously used. This
+%   │           feature can be combined with 'add' channel_action to create
+%   │           preprocessing histories where the result of each step is
+%   │           stored as a separate channel.
+%   ├────.data: field of the preprocessed channel contains the smoothed,
+%   │           upsampled signal that is the result of step 3 in [1].
+%   ├──.header: field of the preprocessed channel contains information
+%   │           regarding which samples in the input signal were considered
+%   │           valid in addition to the usual information of PsPM channels.
+%   │           This valid sample info is stored in .header.valid_samples
+%   │           field.
 %   ├─.channel_combine:
 %   │           [optional][numeric/string][Default: 'none']
-%   │           Channel to be used for computing the mean pupil signal.
+%   │           Channel ID to be used for computing the mean pupil signal.
 %   │           The input format is exactly the same as the .channel field.
 %   │           However, the eye specified in this channel must be different
-%   │           from the one specified in .channel field. The output channel 
-%   │           will then be of type 'pupil_pp_c'.
+%   │           than the one specified in .channel field. By default, this
+%   │           channel is not used. Only specify it if you want to combine
+%   │           left and right pupil eye signals, and in this situation,
+%   │           the type of the output channel becomes 'pupil_pp_c'.
 %   ├─.channel_action:
 %   │           [optional][string][Accepts: 'add'/'replace'][Default: 'add']
 %   │           Defines whether corrected data should be added or the
@@ -68,7 +88,7 @@ function varargout = pspm_pupil_pp (fn, options)
 %   │           but a previously stored preprocessed channel with a '_pp'
 %   │           suffix at the end of its type.
 %   ├─.custom_settings:
-%   │           [optional][Default: See pspm_pupil_pp_options]
+%   │           [optional][Default: See pspm_pupil_pp_options above]
 %   │           Settings structure to modify the preprocessing steps. If
 %   │           not specified, the default settings structure obtained from
 %   │           <a href="matlab:help pspm_pupil_pp_options">pspm_pupil_pp_options</a>
@@ -135,6 +155,11 @@ end
 options.custom_settings = default_settings;
 
 %% 3 Input checks
+if ~ismember(options.channel_action, {'add', 'replace'})
+  warning('ID:invalid_input', ...
+    'Option channel_action must be either ''add'' or ''replace''');
+  return
+end
 for seg = options.segments
   if ~isfield(seg{1}, 'start') || ~isfield(seg{1}, 'end') || ~isfield(seg{1}, 'name')
     warning('ID:invalid_input', ...

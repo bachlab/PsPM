@@ -1,13 +1,21 @@
 function out = pspm_cfg_run_downsample(job)
-% Updated on 18-12-2023 by Teddy
-options = struct();
+% Executes pspm_down
+
+% $Id$
+% $Rev$
+
+% channels to downsample
 if isfield(job.chan,'all_chan')
-  chan = 0;
+    chan = 0;
 else
-  chan = job.chan.chan_vec;
+    chan = job.chan.chan_vec;
 end
-options = pspm_update_struct(options, job, 'overwrite');
-[~, out] = pspm_down(job.datafile, job.newfreq, chan, options);
+
+% options
+options.overwrite = job.overwrite;
+
+[sts, out] = pspm_down(job.datafile, job.newfreq, chan, options);
+
 if ~iscell(out)
-  out ={out};
+    out ={out};
 end

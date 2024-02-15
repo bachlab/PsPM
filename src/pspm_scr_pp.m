@@ -114,7 +114,7 @@ else
 end
 for d = 1:numel(data_source)
   % out{d} = [];
-  [sts_loading, indatas] = pspm_load_channel(data_source{d}, channel, 'scr'); % check and get datafile
+  [sts_loading, indatas, ] = pspm_load_channel(data_source{d}, channel, 'scr'); % check and get datafile
   if sts_loading == -1
     return;
   end
