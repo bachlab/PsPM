@@ -52,6 +52,7 @@ fileinfo.maxtime       = CEDS64MaxTime(fhand);
 fileinfo.timedate = double(fileinfo.timedate);
 % 2.3 Get list of channels
 iChan = 0;
+chanindx = [];
 for i = 1:fileinfo.maxchan
   chanType = CEDS64ChanType(fhand, i); % Read channel type
   switch chanType % Check type of the channel
@@ -61,11 +62,13 @@ for i = 1:fileinfo.maxchan
       X                                 = GetCEDChanInfo(fhand, i);
       for fn = fieldnames(X)'; fileinfo.chaninfo(iChan).(fn{1}) = X.(fn{1}); end % transfer to fileinfo
       fileinfo.chaninfo(iChan).realRate = 1 ./ (fileinfo.timebase .* fileinfo.chaninfo(iChan).div);
+      chanindx = [chanindx, iChan];
     case {2,3,4,5,6,7,8} % Markers and events
       iChan = iChan + 1;
       fileinfo.chaninfo(iChan).kind     = chanType;
       X                                 = GetCEDChanInfo(fhand, i);
       for fn = fieldnames(X)'; fileinfo.chaninfo(iChan).(fn{1}) = X.(fn{1}); end % transfer to fileinfo
+      chanindx = [chanindx, iChan];
     otherwise
       iChan                             = iChan + 1;
       fileinfo.chaninfo(iChan).number   = i;
@@ -82,7 +85,7 @@ warning on;
 for iImport = 1:numel(import)
   % 3.1.1 define channel number
   if import{iImport}.channel > 0
-    channel = import{iImport}.channel;
+    channel = chanindx(import{iImport}.channel);
   else
     channel = pspm_find_channel(fileinfo.chaninfo.kind,...
       import{iImport}.type);
@@ -101,8 +104,11 @@ for iImport = 1:numel(import)
   % 3.1.2 convert to waveform or get sample rate for wave channel types
   if strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'wave')
     switch fileinfo.chaninfo(channel).kind
+      case 0 % empty
+         warning('ID:empty_channel', 'The specified channel was not recorded. \n');
+         return
       case 1 % waveform
-        % Use CED64ReadWaveF
+              % Use CED64ReadWaveF
         [nRead_waveform, Fchan_waveform] = CEDS64ReadWaveF(fhand, ...
           channel, ...
           floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div), ...
@@ -118,13 +124,15 @@ for iImport = 1:numel(import)
         % waiting for test data
         disp('Feature of reading time stamps has not been available.');
       otherwise
-        warning('ID:feature_unsupported', ...
-          'The imported waveform channel has not been currently supported. \n');
+        warning('ID:feature_unsupported', 'The specified channel is of unsupported type. \n');
         return
     end
   elseif strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'events')
     switch fileinfo.chaninfo(channel).kind
-      case 1 % Events
+        case 0 % empty
+            warning('ID:empty_channel', 'The specified event channel was not recorded. \n');
+            return
+        % case 1 % Events
         [nRead_events, Fchan_events] = CEDS64ReadEvents(fhand, ...
           channel, ...
           floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div), ...
@@ -146,7 +154,7 @@ for iImport = 1:numel(import)
         import{iImport}.length    = nRead_markers;
         import{iImport} = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
       otherwise
-        warning('ID:feature_unsupported', 'The imported event channel has not been currently supported. \n');
+        warning('ID:feature_unsupported', 'The specified channel is of unsupported type. \n');
         return
     end
   end
