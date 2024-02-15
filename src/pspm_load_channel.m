@@ -1,6 +1,6 @@
 function [sts, data_struct, infos, pos_of_channel] = pspm_load_channel(fn, channel, channeltype)
 % ● Definition
-%   pspm_load_channel loads a single data channel and provides integrated 
+%   pspm_load_channel loads a single data channel and provides integrated
 %   channel checking logic
 % ● Format
 %   [sts, data_struct, infos, pos_of_channel] = pspm_load_channel(fn, channel, channeltype)
@@ -11,14 +11,14 @@ function [sts, data_struct, infos, pos_of_channel] = pspm_load_channel(fn, chann
 %    channel:   [numeric] / [char] / [struct]
 %               ▶ numeric: returns this channel (or the first of a vector)
 %               ▶ char
-%                 'marker'  returns the first maker channel 
+%                 'marker'  returns the first maker channel
 %                           (see settings for permissible channel types)
 %                 any other channel type (e.g. 'scr')
 %                           returns the last channel of the respective type
-%                           (see settings for permissible channel types)                         
+%                           (see settings for permissible channel types)
 %                 'pupil', 'sps', 'gaze_x', 'gaze_y', 'blink', 'saccade',
 %                 'pupil_missing' (eyetracker channels)
-%                           goes through the following precedence order, 
+%                           goes through the following precedence order,
 %                           selects the first category that is found in the
 %                           data, and returns the last channel of this
 %                           category
@@ -29,7 +29,7 @@ function [sts, data_struct, infos, pos_of_channel] = pspm_load_channel(fn, chann
 %               ▶ struct: with fields
 %                 ├─.channel: as defined for the 'char' option above
 %                 └──.units: units of the channel
-%   channeltype: [char] optional; any channel type as permitted per pspm_init; 
+%   channeltype: [char] optional; any channel type as permitted per pspm_init;
 %                 checks whether retrieved data channel is of the specified type
 %                 and gives a warning if not
 % ● Outputs
@@ -44,7 +44,7 @@ function [sts, data_struct, infos, pos_of_channel] = pspm_load_channel(fn, chann
 % Updated in 2024 by Dominik Bach (University of Bonn)
 % Introduced in PsPM 6.1.2
 
-% no checking of file and channel type as this is done downstream in 
+% no checking of file and channel type as this is done downstream in
 % pspm_load_data
 
 % initialise
@@ -92,7 +92,7 @@ if ~isnumeric(channel) && ismember(channel, settings.eyetracker_channels)
     end
 end
 
-% if more than one channel exists, select first/last channel and give message 
+% if more than one channel exists, select first/last channel and give message
 if numel(data) == 0
     warning('ID:invalid_input', 'No data of type %s contained in file %s.\n', ...
         channel, fn);
@@ -119,7 +119,7 @@ end
 
 % if channeltype is given, check if channel is of correct type
 if nargin > 2 && ~contains(data_struct.header.chantype, channeltype)
-    warning('ID:unexpected_channeltype', ... 
+    warning('ID:unexpected_channeltype', ...
         'Channel type ''%s'' was expected. The retrieved channel is of type ''%s''.\n', ...
         channeltype, data_struct.header.chantype);
 end

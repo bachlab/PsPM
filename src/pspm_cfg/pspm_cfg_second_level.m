@@ -1,10 +1,5 @@
 function cfg = pspm_cfg_second_level
-
-% $Id$
-% $Rev$
-
-
-%% First Level
+% Updated on 08-01-2024 by Teddy
 cfg        = cfg_repeat;
 cfg.name   = 'Second Level';
 cfg.tag    = 'second_level';

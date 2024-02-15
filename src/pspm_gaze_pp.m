@@ -108,7 +108,7 @@ if options.valid_sample
   [~, ~, model] = pspm_pupil_pp(fn, options_pp);
   upsampling_factor = options.custom_settings.valid.interp_upsamplingFreq / gaze_og{1}.header.sr;
   desired_output_samples_gaze = round(upsampling_factor * numel(gaze_og{1}.data));
-  preprocessed_gaze.header.chantype = pspm_update_channeltype(gaze_og{1}.header.chantype,'pp');
+  preprocessed_gaze.header.chantype = gaze_og{1}.header.chantype;
   preprocessed_gaze.header.units = gaze_og{1}.header.units;
   preprocessed_gaze.header.sr = options.custom_settings.valid.interp_upsamplingFreq;
   preprocessed_gaze.header.segments = options.segments;
@@ -128,7 +128,7 @@ if ~action_combine
     preprocessed_gaze.data = gaze_og{1}.data;
     preprocessed_gaze.header.sr = gaze_og{1}.header.sr;
   end
-  preprocessed_gaze.header.chantype = pspm_update_channeltype(gaze_og{1}.header.chantype,'pp');
+  preprocessed_gaze.header.chantype = gaze_og{1}.header.chantype;
   preprocessed_gaze.header.units = gaze_og{1}.header.units;
 else
   if options.valid_sample
@@ -149,7 +149,7 @@ else
     preprocessed_gaze.header.sr = gaze_og{1}.header.sr;
   end
   preprocessed_gaze.data = transpose(mean(transpose([preprocessed_gaze.data, preprocessed_gaze_combine.data]),'omitnan'));
-  preprocessed_gaze.header.chantype = pspm_update_channeltype(gaze_og{1}.header.chantype,{'pp',settings.lateral.char.c});
+  preprocessed_gaze.header.chantype = pspm_update_channeltype(gaze_og{1}.header.chantype,settings.lateral.char.c);
   preprocessed_gaze.header.units = gaze_og{1}.header.units;
 end
 %% 7 save

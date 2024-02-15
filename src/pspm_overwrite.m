@@ -98,8 +98,8 @@ else
     % end
     if overwrite_final == 0
       warning('ID:data_loss', ['Results are not saved, ',...
-        'because there has been an existing file with the same name, ',...
-        'and overwritting has been set to No.\n']);
+        'because there is an existing file with the same name, ',...
+        'and ''options.overwrite'' is set to ''0''.\n']);
     end
   end
 end
