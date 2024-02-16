@@ -13,7 +13,7 @@ function pspm_check_or_setup_pythonEnv(pythonPath)
     currentEnv = pyenv;
     
     % Report the current environment
-    if isempty(currentEnv.Executable)
+    if if strcmp(currentEnv.Version, '')
         fprintf('No Python environment is configured in MATLAB.\n');
     else
         fprintf('Current Python environment: %s (Version: %s)\n', currentEnv.Executable, currentEnv.Version);
