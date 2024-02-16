@@ -239,12 +239,8 @@ switch FunName
   case 'find_valid_fixations'
     % 2.24 pspm_find_valid_fixations --
     options = autofill_channel_action(options);
-    options = autofill(options, 'channel',                'pupil',    '*Int*Char*Cell'  );
-    options = autofill(options, 'eyes',                   settings.lateral.full.c, ...
-                                                          {settings.lateral.full.l, ...
-                                                          settings.lateral.full.r}      );
-    options = autofill(options, 'missing',                0,          1                 );
-    options = autofill(options, 'newfile',                '',         '*Char'           );
+    options = autofill(options, 'channel',                'both',    '*Int*Char'        );
+    options = autofill(options, 'add_invalid',            0,          1                 );
     options = autofill(options, 'plot_gaze_coords',       0,          1                 );
     options = fill_find_valid_fixations(options);
   case 'gaze_pp'
@@ -922,34 +918,13 @@ elseif options.manual_chosen == 1 || ...
 end
 
 function options = fill_find_valid_fixations(options)
-global settings
-if isempty(settings)
-  pspm_init;
-end
-if ~isfield(options, 'channel')
-  options.channel = 'pupil';
-elseif ~iscell(options.channel) && ~ischar(options.channel) && ...
-    ~isnumeric(options.channel)
-  warning('ID:invalid_input', ['Options.channel should be a char, ', ...
-    'numeric or a cell of char or numeric.']);
-  options.invalid = 1;
-  return;
-end
-if ~iscell(options.channel)
-  options.channel = {options.channel};
-end
 if strcmpi(options.mode,'fixation') && ~isfield(options, 'resolution')
   options.resolution = [1 1];
 end
 if strcmpi(options.mode,'fixation') && ~isfield(options, 'fixation_point')
-  options.resolution = [0.5 0.5];
+  options.fixation_point = [0.5 0.5];
 end
-if iscell(options.channel) && any(~cellfun(@(x) isnumeric(x) || ...
-    any(strcmpi(x, settings.findvalidfixations.channeltypes)), options.channel))
-  warning('ID:invalid_input', 'Option.channel contains invalid values.');
-  options.invalid = 1;
-  return;
-elseif strcmpi(options.mode,'fixation') && isfield(options, 'fixation_point') && ...
+if strcmpi(options.mode,'fixation') && isfield(options, 'fixation_point') && ...
     (~isnumeric(options.fixation_point) || ...
     size(options.fixation_point,2) ~= 2)
   warning('ID:invalid_input', ['Options.fixation_point is not ', ...
