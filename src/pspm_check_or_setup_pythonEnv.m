@@ -12,22 +12,30 @@ function pspm_check_or_setup_pythonEnv(pythonPath)
 
     currentEnv = pyenv;
     
-    % Report the current environment first
-    if isempty(currentEnv)
+    % Check if Python is configured in MATLAB
+    if isempty(currentEnv.Executable)
         fprintf('No Python environment is configured in MATLAB.\n');
+        % Attempt to set up a new Python environment if a path is provided
+        if nargin > 0 && ~isempty(pythonPath)
+            try
+                newEnv = pyenv('Version', pythonPath);
+                fprintf('Python environment successfully updated to: %s (Version: %s)\n', newEnv.Executable, newEnv.Version);
+            catch ME
+                fprintf('Failed to update Python environment. Error: %s\n', ME.message);
+            end
+        end
     else
         fprintf('Current Python environment: %s (Version: %s)\n', currentEnv.Executable, currentEnv.Version);
-    end
-    
-    % Attempt to update the environment only if a path is provided and it's different
-    if nargin > 0 && ~isempty(pythonPath) && ~strcmp(currentEnv.Executable, pythonPath)
-        try
-            newEnv = pyenv('Version', pythonPath);
-            fprintf('Python environment successfully updated to: %s (Version: %s)\n', newEnv.Executable, newEnv.Version);
-        catch ME
-            warning('Failed to update Python environment: %s', ME.message);
+        % If a path is provided and it is different from the current one, attempt to update
+        if nargin > 0 && ~isempty(pythonPath) && ~strcmp(currentEnv.Executable, pythonPath)
+            try
+                newEnv = pyenv('Version', pythonPath);
+                fprintf('Python environment successfully updated to: %s (Version: %s)\n', newEnv.Executable, newEnv.Version);
+            catch ME
+                fprintf('Failed to update Python environment. Error: %s\n', ME.message);
+            end
+        elseif nargin > 0 && ~isempty(pythonPath) && strcmp(currentEnv.Executable, pythonPath)
+            fprintf('The specified Python environment is already set as current.\n');
         end
-    elseif nargin > 0 && ~isempty(pythonPath) && strcmp(currentEnv.Executable, pythonPath)
-        fprintf('The specified Python environment is already set as current.\n');
     end
 end
