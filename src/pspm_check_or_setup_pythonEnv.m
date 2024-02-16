@@ -1,7 +1,7 @@
 function pspm_check_or_setup_pythonEnv(pythonPath)
     % pspm_check_or_setup_pythonEnv Checks and sets the Python environment if path is provided.
     %
-    % This function reports the current Python environment setup in MATLAB.
+    % This function checks the current Python environment setup in MATLAB.
     % If a specific Python executable path is provided, the function attempts
     % to update the Python environment to use the provided path.
     %
