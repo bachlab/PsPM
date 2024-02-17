@@ -1,18 +1,18 @@
 function [sts, eye, new_chantype] = pspm_find_eye(chantype)
-% Definition
-% pspm_get_eye detects the eye location ('l', 'r', 'c', '') from an 
-%  eyetracker channel type
-%  FORMAT
-%  [sts, eye, new_chantype] = pspm_find_eye(chantype)
-% ARGUMENTS
+% ● Definition
+%   pspm_get_eye detects the eye location ('l', 'r', 'c', '') from an
+%   eyetracker channel type
+% ● Format
+%   [sts, eye, new_chantype] = pspm_find_eye(chantype)
+% ● Arguments
 %   Input
-%     chantype: the field header.chantype as returned by pspm_load_data 
+%     chantype: the field header.chantype as returned by pspm_load_data
 %   Output
 %            eye:  one of {'r', 'l', 'c', ''}
 %   new_chantype:  chantype with eye marker removed
 % ● History
 %   Introduced in PsPM version 5.1.2
-%   Written in 2021 by Dadi Zhao (UCL)
+%   Written in 2021 by Teddy
 
 global settings
 if isempty(settings)

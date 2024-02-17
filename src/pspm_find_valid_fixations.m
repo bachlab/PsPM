@@ -152,6 +152,7 @@ if options.invalid
   return
 end
 
+
 % in recursive calls, fn is a struct with fields .data and .infos, which is 
 % simply checked by by pspm_load_data 
 alldata = struct();
@@ -163,6 +164,7 @@ if ~strcmpi(options.channel, 'both')
     [sts_load, data, infos, pos_of_channel] = pspm_load_channel(alldata, options.channel);
     if sts_load < 1, return; end
   
+
     % load corresponding gaze channels in correct units
     channelunits_list = cellfun(@(x) data.header.units, alldata.data, 'uni', false);
     if strcmpi(mode, 'fixation')
@@ -171,7 +173,7 @@ if ~strcmpi(options.channel, 'both')
         channels_correct_units = find(~contains(channelunits_list, 'degree'));
     end
     gazedata = struct('infos', alldata.infos, 'data', {alldata.data(channels_correct_units)});
-    
+
     [sts_gaze, gaze_x, gaze_y, eye] = pspm_load_gaze(gazedata, data.header.chantype);
     
     if sts_gaze < 1 
@@ -252,7 +254,8 @@ if ~strcmpi(options.channel, 'both')
               % plot gaze coordinates
               mi=min(min(x_data),min(y_data));
               ma=max(max(x_data),max(y_data));
-              %axis([mi ma mi ma]);
+
+              axis([mi ma mi ma]);
               scatter(ax, x_data, y_data, 'k.'); 
               plot(x_unit, y_unit, 'r');
             end
@@ -306,10 +309,10 @@ if ~strcmpi(options.channel, 'both')
                  ax = axes('NextPlot', 'add');
                  set(ax, 'Parent', handle(fg));
 
-                 % plot gaze coordinates
-                 %                             mi=min(min(x_data),min(y_data));
-                 %                             ma=max(max(x_data),max(y_data));
-                 %                             axis([mi ma mi ma]);
+
+                 mi=min(min(x_data),min(y_data));
+                 ma=max(max(x_data),max(y_data));
+                 axis([mi ma mi ma]);
                  imshow(bitmap);
                  hold on;
                  scatter( x_data, y_data);
@@ -337,6 +340,7 @@ if ~strcmpi(options.channel, 'both')
 
      % add invalid fixations if requested
      if options.add_invalid
+
          [sts, ~, new_chantype] = pspm_find_eye(data.header.chantype);
          excl_hdr = struct('chantype', [new_chantype, '_missing_', eye],...
              'units', '', 'sr', data.header.sr);
