@@ -155,6 +155,7 @@ if options.invalid
   return
 end
 
+
 % in recursive calls, fn is a struct with fields .data and .infos, which is 
 % simply checked by by pspm_load_data 
 alldata = struct();
@@ -165,21 +166,7 @@ if sts_load < 1, return, end
 if ~strcmpi(options.channel, 'both')
     [sts_load, data, infos, pos_of_channel] = pspm_load_channel(alldata, options.channel);
     if sts_load < 1, return; end
-    if ~contains(data.header.chantype, settings.eyetracker_channels)
-        warning('ID:invalid_input', 'This function only allows eyetracker input');
-        return
-    end
-
-    % check laterality identifier
-    eye = data.header.chantype((end-1):end);
-    if ~(eye(1) == '_' && contains(eye, {settings.lateral.char.r, ...
-            settings.lateral.char.l, settings.lateral.char.c}))
-        eye = '';
-        new_chantype = data.header.chantype;
-    else
-        new_chantype = data.header.chantype(1:(end-2));
-    end
-
+  
 
     % load corresponding gaze channels in correct units
     channelunits_list = cellfun(@(x) data.header.units, alldata.data, 'uni', false);
@@ -189,9 +176,10 @@ if ~strcmpi(options.channel, 'both')
         channels_correct_units = find(~contains(channelunits_list, 'degree'));
     end
     gazedata = struct('infos', alldata.infos, 'data', {alldata.data(channels_correct_units)});
-    [stsx, gaze_x] = pspm_load_channel(gazedata, ['gaze_x', eye]);
-    [stsy, gaze_y] = pspm_load_channel(gazedata, ['gaze_y', eye]);
-    if stsx < 1 || stsy < 1
+
+    [sts_gaze, gaze_x, gaze_y, eye] = pspm_load_gaze(gazedata, data.header.chantype);
+    
+    if sts_gaze < 1 
         warning('ID:invalid_input', ['Unable to perform gaze ', ...
           'validation. Cannot find gaze channels with distance ',...
           'unit values. Maybe you need to convert them with ', ...
@@ -269,6 +257,7 @@ if ~strcmpi(options.channel, 'both')
               % plot gaze coordinates
               mi=min(min(x_data),min(y_data));
               ma=max(max(x_data),max(y_data));
+
               axis([mi ma mi ma]);
               scatter(ax, x_data, y_data, 'k.'); 
               plot(x_unit, y_unit, 'r');
@@ -323,7 +312,7 @@ if ~strcmpi(options.channel, 'both')
                  ax = axes('NextPlot', 'add');
                  set(ax, 'Parent', handle(fg));
 
-                 % plot gaze coordinates
+
                  mi=min(min(x_data),min(y_data));
                  ma=max(max(x_data),max(y_data));
                  axis([mi ma mi ma]);
@@ -354,7 +343,9 @@ if ~strcmpi(options.channel, 'both')
 
      % add invalid fixations if requested
      if options.add_invalid
-         excl_hdr = struct('chantype', [new_chantype, '_missing', eye],...
+
+         [sts, ~, new_chantype] = pspm_find_eye(data.header.chantype);
+         excl_hdr = struct('chantype', [new_chantype, '_missing_', eye],...
              'units', '', 'sr', data.header.sr);
          excl_data = struct('data', double(excl), 'header', excl_hdr);
          alldata.data{end+1} = excl_data;
