@@ -1,10 +1,12 @@
 classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     % ● Description
-    % unittest class for pspm_find_valid_fixations
-    % ● Authorship
-    % PsPM TestEnvironment
-    % (C) 2016 Tobias Moser (University of Zurich)
-    % Updated 2021 Teddy Chao (WCHN, UCL)
+    %   unittest class for pspm_find_valid_fixations
+    % ● History
+    %   PsPM TestEnvironment
+    %   (C) 2016 Tobias Moser (University of Zurich)
+    %   Updated in 2021 by Teddy Chao (UCL)
+    %   Updated for fitting logic in 2024 by Dominik R Bach (Uni Bonn)
+
     properties
         datafiles = {};
         testfile_prefix = 'datafile';
@@ -205,6 +207,8 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
             [degs,~] = this.generate_fixation_data(fn, distance, eyes);
             for i = 1:numel(degs)
                 testfn = pspm_find_free_fn(this.testfile_prefix, '.mat');
+
+
                 copyfile(fn, testfn); 
                 this.datafiles{end+1} = testfn;
                 d = degs{i};
