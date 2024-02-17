@@ -1,4 +1,4 @@
-function varargout = pspm_pupil_pp (fn, options)
+function [sts, out_chan] = pspm_pupil_pp (fn, options)
 % ● Description
 %   pspm_pupil_pp preprocesses pupil diameter signals given in any unit of
 %   measurement. It performs the steps described in [1]. This function uses
@@ -59,14 +59,11 @@ function varargout = pspm_pupil_pp (fn, options)
 %   │           The input format is exactly the same as the .channel field.
 %   │           However, the eye specified in this channel must be different
 %   │           from the one specified in .channel field. The output channel 
-%   │           will then be of type 'pupil_pp_c'.
+%   │           will then be of type 'pupil_c'.
 %   ├─.channel_action:
 %   │           [optional][string][Accepts: 'add'/'replace'][Default: 'add']
 %   │           Defines whether corrected data should be added or the
-%   │           corresponding preprocessed channel should be replaced. Note
-%   │           that 'replace' mode does not replace the raw data channel,
-%   │           but a previously stored preprocessed channel with a '_pp'
-%   │           suffix at the end of its type.
+%   │           corresponding preprocessed channel should be replaced. 
 %   ├─.custom_settings:
 %   │           [optional][Default: See pspm_pupil_pp_options]
 %   │           Settings structure to modify the preprocessing steps. If
@@ -106,16 +103,8 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-varargout{1} = sts;
-smooth_signal = [];
-model = [];
-switch nargout
-  case 2
-    varargout{2} = smooth_signal;
-  case 3
-    varargout{2} = smooth_signal;
-    varargout{3} = model;
-end
+out_chan = [];
+
 %% 2 Create default arguments
 if nargin == 1
   options = struct();
@@ -144,17 +133,21 @@ for seg = options.segments
 end
 %% 4 Load
 action_combine = ~strcmp(options.channel_combine, 'none');
-[lsts, data] = pspm_load_channel(fn, options.channel, 'pupil');
-if lsts ~= 1
-  return
-end
+alldata = struct();
+[sts_load, alldata.infos, alldata.data] = pspm_load_data(fn);
+if sts_load < 1, return, end
+[sts_load, data,] = pspm_load_channel(alldata, options.channel, 'pupil');
+if sts_load ~= 1, return, end
 if action_combine
-  [lsts, data_combine] = pspm_load_channel(fn, options.channel_combine, 'pupil');
-  if lsts ~= 1
+  [sts_load, data_combine] = pspm_load_channel(alldata, options.channel_combine, 'pupil');
+  if sts_load ~= 1
     return
   end
-  if strcmp(pspm_get_eye(data.header.chantype), pspm_get_eye(data_combine.header.chantype))
-    warning('ID:invalid_input', 'options.channel and options.channel_combine must specify different eyes');
+  [sts1, eye1] = pspm_find_eye(data.header.chantype);
+  [sts2, eye2] = pspm_find_eye(data_combine.header.chantype);
+  if (sts1 < 1 || sts2 < 1), return, end
+  if sum(strcmp([eye1, eye2], {'lr', 'rl'})) < 1
+    warning('ID:invalid_input', 'options.channel and options.channel_combine must specify left and right eyes');
     return;
   end
   if data.header.sr ~= data_combine.header.sr
@@ -188,20 +181,9 @@ o.msg.prefix = sprintf(...
   channel_str, ...
   old_channeltype, ...
   smooth_signal.header.chantype);
-[lsts, out_id] = pspm_write_channel(fn, smooth_signal, options.channel_action, o);
-if ~lsts
-  return
-end
+[sts, out_id] = pspm_write_channel(fn, smooth_signal, options.channel_action, o);
 out_chan = out_id.channel;
-sts = 1;
-varargout{1} = sts;
-switch nargout
-  case 2
-    varargout{2} = out_chan;
-  case 3
-    varargout{2} = out_chan;
-    varargout{3} = model;
-end
+
 return
 
 function varargout  = pspm_preprocess(data, data_combine, segments, custom_settings, plot_data)
@@ -212,7 +194,7 @@ end
 sts = -1;
 % 1 definitions
 combining = ~isempty(data_combine.data);
-data_is_left = strcmpi(pspm_get_eye(data.header.chantype), 'l');
+data_is_left = strcmpi(pspm_find_eye(data.header.chantype), 'l');
 n_samples = numel(data.data);
 sr = data.header.sr;
 diameter.t_ms = transpose(linspace(0, 1000 * (n_samples-1) / sr, n_samples));
@@ -350,33 +332,4 @@ for i = 1:numel(fnames)
   else
     out_struct.(name) = in_struct.(name);
   end
-end
-function eye = pspm_get_eye(channeltype)
-% Definition
-% pspm_get_eye detect the eye location from an input channel type
-%  FORMAT
-%  eye = pspm_get_eye(channeltype)
-% ARGUMENTS
-%   Input
-%     channeltype  a string that contains the eye location
-%   Output
-%     eye        a character
-% PsPM (version 5.1.2)
-% (C) 2021 Teddy Chao (UCL)
-global settings
-if isempty(settings)
-  pspm_init;
-end
-sts = -1;
-eye = 'unknown';
-for eye_attempt = [settings.lateral.char.l, settings.lateral.char.r, settings.lateral.char.c]
-  if contains(channeltype, ['_', eye_attempt, '_'])
-    eye = eye_attempt;
-  elseif channeltype(length(channeltype)-1:length(channeltype)) == ['_', eye_attempt]
-    eye = eye_attempt;
-  end
-end
-if strcmp(eye, 'unknown')
-  warning('ID:invalid_input', 'channeltype does not contain a valid eye');
-  return
 end
