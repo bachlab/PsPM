@@ -132,21 +132,33 @@ for iImport = 1:numel(import)
         return
       case 1 % Events
         dataLength = floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div);
-        [nEvents, dataEvents] = CEDS64ReadEvents(fhand, channel, dataLength, 1);
-        % import{iImport}.marker  = 'continuous';
+        [nEvents, dataEvents]     = CEDS64ReadEvents(fhand, channel, dataLength, 1);
+        import{iImport}.marker    = 'continuous';
         import{iImport}.data      = dataEvents;
         import{iImport}.length    = nEvents;
-        import{iImport} = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
+        import{iImport}           = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
+        switch ~isempty(fileinfo.chaninfo(channel).realRate)
+          case 0
+            import{iImport}.sr    = fileinfo.chaninfo(channel).idealRate;
+          case 1
+            import{iImport}.sr    = fileinfo.chaninfo(channel).realRate;
+        end
       case 3 % time stamps
         % waiting for test data
         disp('Feature of reading time stamps has not been available.');
       case 4 % For events and type 4 channel, to read as marker channels
         dataLength = floor(fileinfo.maxtime * fileinfo.timebase * fileinfo.chaninfo(iChan).idealRate);
-        [nMarker, dataMarker] = CEDS64ReadMarkers(fhand, channel, dataLength, 1);
-        % import{iImport}.marker  = 'continuous';
+        [nMarker, dataMarker]     = CEDS64ReadMarkers(fhand, channel, dataLength, 1);
+        import{iImport}.marker    = 'continuous';
         import{iImport}.data      = double([dataMarker(:,1).m_Time]);
         import{iImport}.length    = nMarker;
         import{iImport}           = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
+        switch ~isempty(fileinfo.chaninfo(channel).realRate)
+          case 0
+            import{iImport}.sr    = fileinfo.chaninfo(channel).idealRate;
+          case 1
+            import{iImport}.sr    = fileinfo.chaninfo(channel).realRate;
+        end
       otherwise
         warning('ID:feature_unsupported', 'The specified channel is of unsupported type. \n');
         return
