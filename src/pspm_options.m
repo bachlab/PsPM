@@ -245,14 +245,8 @@ switch FunName
     options = fill_find_valid_fixations(options);
   case 'gaze_pp'
     % 2.25 pspm_gaze_pp --
-    options = autofill(options, 'channel',                'none',     {'gaze_x_l',...
-                                                                      'gaze_x_r',...
-                                                                      'gaze_y_l',...
-                                                                      'gaze_y_r'}       );
-    options = autofill(options, 'channel_combine',        'none',     {'gaze_x_l',...
-                                                                      'gaze_x_r',...
-                                                                      'gaze_y_l',...
-                                                                      'gaze_y_r'}       );
+    options = autofill(options, 'channel',                'none',     '*Num*Char'       );
+    options = autofill(options, 'channel_combine',        'none',     '*Num*Char'       );
     options = autofill(options, 'plot_data',              false                         );
     options = autofill(options, 'segments',               {}                            );
     options = autofill(options, 'valid_sample',           0,          1                 );
@@ -355,10 +349,8 @@ switch FunName
   case 'pupil_pp'
     % 2.37 pspm_pupil_pp --
     options = autofill_channel_action(options);
-    options = autofill(options, 'channel',                'pupil',    {'pupil_l', ...
-                                                                      'pupil_r'}        );
-    options = autofill(options, 'channel_combine',        'none',     {'pupil_l', ...
-                                                                      'pupil_r'}        );
+    options = autofill(options, 'channel',                'pupil',    '*Num*Char'       );
+    options = autofill(options, 'channel_combine',        'none',     '*Num*Char'       );
     options = autofill(options, 'plot_data',              0,          1                 );
     options = autofill(options, 'segments',               {},         '*Cell'           );
   case 'remove_epochs'

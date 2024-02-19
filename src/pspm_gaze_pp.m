@@ -1,7 +1,8 @@
 function varargout = pspm_gaze_pp(fn, options)
 % ● Description
 %   pspm_gaze_pp preprocesses gaze signals, gaze x and gaze y channels at
-%   the same time.
+%   the same time. The output channel type will remain with the same title
+%   to the title of the original  channel type.
 % ● Format
 %   [sts, out_channel] = pspm_gaze_pp(fn) or
 %   [sts, out_channel] = pspm_gaze_pp(fn, options)
@@ -13,7 +14,8 @@ function varargout = pspm_gaze_pp(fn, options)
 %      .valid_sample: [bool] 1 or 0. 1 if use valid samples produced by
 %                     pspm_pupil_pp, 0 if not to use. default as 0.
 % ● History
-%   Written in 2021 by Teddy Chao (UCL)
+%   Written in 2021 by Teddy
+%   Updated in 2024 by Dominik R Bach (Uni Bonn)
 
 %% 1 Initialise
 global settings;
