@@ -6,9 +6,9 @@ function [sts, import, sourceinfo] = pspm_get_smrx(datafile, import)
 % ● Arguments
 %     datafile: path to the smrx file
 %   ┌───import: [struct]  The struct that stores required parameters.
-%   ├─.channel: [integer] The number of the channel to load. Use '0' to 
+%   ├─.channel: [integer] The number of the channel to load. Use '0' to
 %   │                     load all channels.
-%   ├───.flank: [string]  
+%   ├───.flank: [string]
 %   ├.transfer: [string]  The transfer function, use a file, an input or 'none'.
 %   ├────.type: [string]  The type of input channel, such as 'scr'.
 %   └──.typeno: [integer] The number of channel type, please see pspm_init.
@@ -17,8 +17,8 @@ function [sts, import, sourceinfo] = pspm_get_smrx(datafile, import)
 %   import: the struct that stores read information.
 %   sourceinfo: the struct that stores channel titles.
 % ● Disclaim
-%   The calculation of data points for marker channels is performed by 
-%   multiplying time with gain and ideal rate, This has not been tested 
+%   The calculation of data points for marker channels is performed by
+%   multiplying time with gain and ideal rate, This has not been tested
 %   and validated.
 % ● History
 %   Introduced in PsPM 6.2
@@ -49,7 +49,7 @@ fileinfo.timebase      = CEDS64TimeBase(fhand);
 fileinfo.maxchan       = CEDS64MaxChan(fhand);
 fileinfo.maxtime       = CEDS64MaxTime(fhand);
 [~, fileinfo.timedate] = CEDS64TimeDate(fhand);
-fileinfo.timedate = double(fileinfo.timedate);
+fileinfo.timedate      = double(fileinfo.timedate);
 % 2.3 Get list of channels
 iChan = 0;
 chanindx = [];
@@ -102,67 +102,68 @@ for iImport = 1:numel(import)
   end
   sourceinfo.channel{iImport, 1} = sprintf('Channel %02.0f: %s', channel, fileinfo.chaninfo.title);
   % 3.1.2 convert to waveform or get sample rate for wave channel types
-  if strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'wave')
-    switch fileinfo.chaninfo(channel).kind
-      case 0 % empty
-         warning('ID:empty_channel', 'The specified channel was not recorded. \n');
-         return
-      case 1 % waveform
-        % Use CED64ReadWaveF
-        dataLength = floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div);
-        [nWF, dataWF] = CEDS64ReadWaveF(fhand, channel, dataLength, 1);
-        import{iImport}.data      = dataWF;
-        import{iImport}.length    = nWF;
-        import{iImport}.sr        = fileinfo.chaninfo(channel).realRate;
-        import{iImport} = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
-      case 3 % time stamps
-        % waiting for test data
-        disp('Feature of reading time stamps has not been available.');
-      case 4 % up and down time stamps
-        % waiting for test data
-        disp('Feature of reading time stamps has not been available.');
-      otherwise
-        warning('ID:feature_unsupported', 'The specified channel is of unsupported type. \n');
-        return
-    end
-  elseif strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'events')
-    switch fileinfo.chaninfo(channel).kind
-      case 0 % empty
-        warning('ID:empty_channel', 'The specified event channel was not recorded. \n');
-        return
-      case 1 % Events
-        dataLength = floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div);
-        [nEvents, dataEvents]     = CEDS64ReadEvents(fhand, channel, dataLength, 1);
-        import{iImport}.marker    = 'continuous';
-        import{iImport}.data      = dataEvents;
-        import{iImport}.length    = nEvents;
-        import{iImport}           = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
-        switch ~isempty(fileinfo.chaninfo(channel).realRate)
-          case 0
-            import{iImport}.sr    = fileinfo.chaninfo(channel).idealRate;
-          case 1
-            import{iImport}.sr    = fileinfo.chaninfo(channel).realRate;
-        end
-      case 3 % time stamps
-        % waiting for test data
-        disp('Feature of reading time stamps has not been available.');
-      case 4 % For events and type 4 channel, to read as marker channels
-        dataLength = floor(fileinfo.maxtime * fileinfo.timebase * fileinfo.chaninfo(iChan).idealRate);
-        [nMarker, dataMarker]     = CEDS64ReadMarkers(fhand, channel, dataLength, 1);
-        import{iImport}.marker    = 'continuous';
-        import{iImport}.data      = double([dataMarker(:,1).m_Time]);
-        import{iImport}.length    = nMarker;
-        import{iImport}           = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
-        switch ~isempty(fileinfo.chaninfo(channel).realRate)
-          case 0
-            import{iImport}.sr    = fileinfo.chaninfo(channel).idealRate;
-          case 1
-            import{iImport}.sr    = fileinfo.chaninfo(channel).realRate;
-        end
-      otherwise
-        warning('ID:feature_unsupported', 'The specified channel is of unsupported type. \n');
-        return
-    end
+  switch settings.channeltypes(import{iImport}.typeno).data
+    case 'wave'
+      switch fileinfo.chaninfo(channel).kind
+        case 0 % empty
+          warning('ID:empty_channel', 'The specified channel was not recorded. \n');
+          return
+        case 1 % waveform
+          % Use CED64ReadWaveF
+          dataLength                = floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div);
+          [nWF, dataWF]             = CEDS64ReadWaveF(fhand, channel, dataLength, 1);
+          import{iImport}.data      = dataWF;
+          import{iImport}.length    = nWF;
+          import{iImport}.sr        = fileinfo.chaninfo(channel).realRate;
+          import{iImport}           = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
+        case 3 % time stamps
+          % waiting for test data
+          disp('Feature of reading time stamps has not been available.');
+        case 4 % up and down time stamps
+          % waiting for test data
+          disp('Feature of reading time stamps has not been available.');
+        otherwise
+          warning('ID:feature_unsupported', 'The specified channel is of unsupported type. \n');
+          return
+      end
+    case 'events'
+      switch fileinfo.chaninfo(channel).kind
+        case 0 % empty
+          warning('ID:empty_channel', 'The specified event channel was not recorded. \n');
+          return
+        case 1 % Events
+          dataLength                = floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div);
+          [nEvents, dataEvents]     = CEDS64ReadEvents(fhand, channel, dataLength, 1);
+          import{iImport}.marker    = 'continuous';
+          import{iImport}.data      = dataEvents;
+          import{iImport}.length    = nEvents;
+          import{iImport}           = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
+          switch ~isempty(fileinfo.chaninfo(channel).realRate)
+            case 0
+              import{iImport}.sr    = fileinfo.chaninfo(channel).idealRate;
+            case 1
+              import{iImport}.sr    = fileinfo.chaninfo(channel).realRate;
+          end
+        case 3 % time stamps
+          % waiting for test data
+          disp('Feature of reading time stamps has not been available.');
+        case 4 % For events and type 4 channel, to read as marker channels
+          dataLength = floor(fileinfo.maxtime * fileinfo.timebase * fileinfo.chaninfo(iChan).idealRate);
+          [nMarker, dataMarker]     = CEDS64ReadMarkers(fhand, channel, dataLength, 1);
+          import{iImport}.marker    = 'continuous';
+          import{iImport}.data      = double([dataMarker(:,1).m_Time]);
+          import{iImport}.length    = nMarker;
+          import{iImport}           = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
+          switch ~isempty(fileinfo.chaninfo(channel).realRate)
+            case 0
+              import{iImport}.sr    = fileinfo.chaninfo(channel).idealRate;
+            case 1
+              import{iImport}.sr    = fileinfo.chaninfo(channel).realRate;
+          end
+        otherwise
+          warning('ID:feature_unsupported', 'The specified channel is of unsupported type. \n');
+          return
+      end
   end
 end
 %% 4 Clear path and return

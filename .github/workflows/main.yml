@@ -2,7 +2,7 @@ name: GitHub Actions for PsPM
 on: [push]
 jobs:
   PsPM-test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       
       - name: Check out repository code
