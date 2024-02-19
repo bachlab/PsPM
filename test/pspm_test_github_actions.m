@@ -1,13 +1,13 @@
 function pspm_test_github_actions(varargin)
 % ● Description
-% pspm_test_github_actions is a test suite for PsPM with GitHub Actions
-% ● Authorship
-% (C) 2021 Dominik Bach (WCHN, UCL)
-%          Linus Ruettimann (UZH)
-%          Teddy Chao (WCHN, UCL)
+%   pspm_test_github_actions is a test suite for PsPM with GitHub Actions
+% ● History
+%   Written in 2021 by Dominik Bach (WCHN, UCL)
+%                      Linus Ruettimann (UZH)
+%   Updated in 2024 by Teddy
 % ● Developer's notes
-% exit_code: indicating the result of testing, 0 if succeed, -1 if fail
-% PsPM TestEnvironment for GitHub Actions
+%   exit_code: indicating the result of testing, 0 if succeed, -1 if fail
+%   PsPM TestEnvironment for GitHub Actions
 
 %% imports
 import matlab.unittest.TestSuite;
@@ -77,6 +77,7 @@ import_suite = [...
   TestSuite.fromClass(?pspm_get_physlog_test), ...
   TestSuite.fromClass(?pspm_get_smi_test), ...
   TestSuite.fromClass(?pspm_get_smr_test), ...
+  TestSuite.fromClass(?pspm_get_smrx_test), ...
   TestSuite.fromClass(?pspm_get_txt_test), ...
   TestSuite.fromClass(?pspm_get_vario_test), ...
   TestSuite.fromClass(?pspm_get_viewpoint_test), ...
