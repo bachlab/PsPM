@@ -229,7 +229,7 @@ end
 % Previous checks have been passed.
 for d = 1:numel(D)
   if ~settings.developmode
-    fprintf(['\n\xBB Importing ', D{d}, ': ']);
+    fprintf('\n\xBB Importing %s: ', D{d});
   end
   % 4.1 pass over to import function if datafile exists, otherwise next file
   file_exists = true;
@@ -315,7 +315,7 @@ for d = 1:numel(D)
     end
   end
   if ~settings.developmode
-    fprintf('Done.');
+    fprintf('Done.\n');
   end
   % 4.4 convert import cell back and remove data
   import = import{1};
