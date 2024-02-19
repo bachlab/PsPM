@@ -43,19 +43,19 @@ classdef pspm_get_smrx_test < pspm_get_superclass
       import4_raw             = {};
       import4_raw{1}.channel  = 1;
       import4_raw{1}.type     = 'scr';
-      import4_raw{1}.channel  = 2;
-      import4_raw{1}.type     = 'scr';
-      import4_raw{1}.channel  = 5;
-      import4_raw{1}.type     = 'marker';
+      import4_raw{2}.channel  = 2;
+      import4_raw{2}.type     = 'scr';
+      import4_raw{3}.channel  = 5;
+      import4_raw{3}.type     = 'marker';
       this.import4            = import4_raw;
     end
   end
   methods (Test)
     function test_basic(this)
-      % this.verifyWarningFree(@()pspm_import(this.fn, 'smrx', this.import1));
-      % this.verifyWarningFree(@()pspm_import(this.fn, 'smrx', this.import2, struct('overwrite', 1)));
-      % this.verifyWarning(@()pspm_import(this.fn, 'smrx', this.import3, struct('overwrite', 1)), 'MATLAB:structOnObject');
-      this.verifyWarning(@()pspm_import(this.fn2, 'smrx', this.import4, struct('overwrite', 1)), 'MATLAB:structOnObject');
+      this.verifyWarningFree(@()pspm_import(this.fn, 'smrx', this.import1));
+      this.verifyWarningFree(@()pspm_import(this.fn, 'smrx', this.import2, struct('overwrite', 1)));
+      this.verifyWarning(@()pspm_import(this.fn, 'smrx', this.import3, struct('overwrite', 1)), 'MATLAB:structOnObject');
+      % this.verifyWarning(@()pspm_import(this.fn2, 'smrx', this.import4, struct('overwrite', 1)), 'MATLAB:structOnObject');
     end
   end
 end

@@ -117,11 +117,22 @@ for iImport = 1:numel(import)
           import{iImport}.sr        = fileinfo.chaninfo(channel).realRate;
           import{iImport}           = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
         case 3 % time stamps
-          % waiting for test data
-          disp('Feature of reading time stamps has not been available.');
+          dataLength                = floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div);
+          [nWF, dataWF]             = CEDS64ReadWaveF(fhand, channel, dataLength, 1);
+          import{iImport}.data      = pspm_pulse_convert(dataWF, settings.import.rsr, settings.import.sr);
+          import{iImport}.length    = nWF;
+          import{iImport}.sr        = settings.import.sr;
+          import{iImport}.minfreq   = min(1./diff(dataWF))*1000;
+          import{iImport}           = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
         case 4 % up and down time stamps
-          % waiting for test data
-          disp('Feature of reading time stamps has not been available.');
+          dataLength                = floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div);
+          [nTS, dataTS]             = CEDS64ReadWaveF(fhand, channel, dataLength, 1);
+          if fileinfo.chaninfo(iChan).initLow == 0; dataTS(1) = []; end
+          dataTS                    = dataTS(1:2:end);
+          import{iImport}.data      = pspm_pulse_convert(dataTS, settings.import.rsr, settings.import.sr);
+          import{iImport}.length    = nTS;
+          import{iImport}.sr        = settings.import.sr;
+          import{iImport}.minfreq   = min(1./diff(dataTS))*1000;
         otherwise
           warning('ID:feature_unsupported', 'The specified channel is of unsupported type. \n');
           return
@@ -150,7 +161,7 @@ for iImport = 1:numel(import)
         case 4 % For events and type 4 channel, to read as marker channels
           dataLength = floor(fileinfo.maxtime * fileinfo.timebase * fileinfo.chaninfo(iChan).idealRate);
           [nMarker, dataMarker]     = CEDS64ReadMarkers(fhand, channel, dataLength, 1);
-          import{iImport}.marker    = 'continuous';
+          import{iImport}.marker    = 'timestamp';
           import{iImport}.data      = double([dataMarker(:,1).m_Time]);
           import{iImport}.length    = nMarker;
           import{iImport}           = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
@@ -161,8 +172,12 @@ for iImport = 1:numel(import)
               import{iImport}.sr    = fileinfo.chaninfo(channel).realRate;
           end
         otherwise
-          warning('ID:feature_unsupported', 'The specified channel is of unsupported type. \n');
-          return
+          dataLength = floor(fileinfo.maxtime * fileinfo.timebase * fileinfo.chaninfo(iChan).idealRate);
+          [nMarker, dataMarker]     = CEDS64ReadMarkers(fhand, channel, dataLength, 1);
+          import{iImport}.data      = dataMarker;
+          import{iImport}.length    = nMarker;
+          import{iImport}.sr        = 0.001; % milliseconds import for marker channels, see above
+          import{iImport}.marker    = 'timestamp';
       end
   end
 end
