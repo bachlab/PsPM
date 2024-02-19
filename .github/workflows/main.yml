@@ -16,7 +16,9 @@ jobs:
           path: ImportTestData
       
       - name: Setup MATLAB
-        uses: matlab-actions/setup-matlab@v1.2.4
+        uses: matlab-actions/setup-matlab@v2
+        with:
+          products: Signal_Processing_Toolbox Statistics_and_Machine_Learning_Toolbox
       
       - name: Run script
         id: pspm_test_main
