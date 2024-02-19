@@ -16,9 +16,22 @@ function [sts, import, sourceinfo] = pspm_get_smrx(datafile, import)
 %   sts: the status recording whether the function runs successfully.
 %   import: the struct that stores read information.
 %   sourceinfo: the struct that stores channel titles.
+% ● Developer's notes
+%   The following fields are read from the datafile and saved in import
+%   * data      | via CEDS64ReadWaveF/CEDS64ReadEvents/CEDS64ReadMarkers
+%   * div       | via CEDS64ChanDiv
+%   * gain      | determined based on Unit
+%   * idealRate | via CEDS64IdealRate
+%   * length    | via CEDS64ReadWaveF/CEDS64ReadEvents/CEDS64ReadMarkers
+%   * marker    | based on channel type
+%   * number    | the number of channel
+%   * realRate  | via CEDS64RealRate
+%   * sr        | as realRate or idealRate (if realRate is unavailable)
+%   * title     | via CEDS64ChanTitle
+%   * units     | via CEDS64ChanUnits
 % ● Disclaim
 %   The calculation of data points for marker channels is performed by
-%   multiplying time with gain and ideal rate, This has not been tested
+%   multiplying time with gain and ideal rate, which has not been tested
 %   and validated.
 % ● History
 %   Introduced in PsPM 6.2
@@ -109,7 +122,6 @@ for iImport = 1:numel(import)
           warning('ID:empty_channel', 'The specified channel was not recorded. \n');
           return
         case 1 % waveform
-          % Use CED64ReadWaveF
           dataLength                = floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div);
           [nWF, dataWF]             = CEDS64ReadWaveF(fhand, channel, dataLength, 1);
           import{iImport}.data      = dataWF;
@@ -122,7 +134,6 @@ for iImport = 1:numel(import)
           import{iImport}.data      = pspm_pulse_convert(dataWF, settings.import.rsr, settings.import.sr);
           import{iImport}.length    = nWF;
           import{iImport}.sr        = settings.import.sr;
-          import{iImport}.minfreq   = min(1./diff(dataWF))*1000;
           import{iImport}           = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
         case 4 % up and down time stamps
           dataLength                = floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div);
@@ -132,7 +143,7 @@ for iImport = 1:numel(import)
           import{iImport}.data      = pspm_pulse_convert(dataTS, settings.import.rsr, settings.import.sr);
           import{iImport}.length    = nTS;
           import{iImport}.sr        = settings.import.sr;
-          import{iImport}.minfreq   = min(1./diff(dataTS))*1000;
+          import{iImport}           = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
         otherwise
           warning('ID:feature_unsupported', 'The specified channel is of unsupported type. \n');
           return
@@ -148,29 +159,30 @@ for iImport = 1:numel(import)
           import{iImport}.marker    = 'continuous';
           import{iImport}.data      = dataEvents;
           import{iImport}.length    = nEvents;
-          import{iImport}           = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
           switch ~isempty(fileinfo.chaninfo(channel).realRate)
             case 0
               import{iImport}.sr    = fileinfo.chaninfo(channel).idealRate;
             case 1
               import{iImport}.sr    = fileinfo.chaninfo(channel).realRate;
           end
+          import{iImport}           = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
         case 3 % time stamps
           % waiting for test data
-          disp('Feature of reading time stamps has not been available.');
+          warning('ID:feature_unsupported', 'Feature of reading time stamps has not been available. \n');
+          return
         case 4 % For events and type 4 channel, to read as marker channels
           dataLength = floor(fileinfo.maxtime * fileinfo.timebase * fileinfo.chaninfo(iChan).idealRate);
           [nMarker, dataMarker]     = CEDS64ReadMarkers(fhand, channel, dataLength, 1);
           import{iImport}.marker    = 'timestamp';
           import{iImport}.data      = double([dataMarker(:,1).m_Time]);
           import{iImport}.length    = nMarker;
-          import{iImport}           = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
           switch ~isempty(fileinfo.chaninfo(channel).realRate)
             case 0
               import{iImport}.sr    = fileinfo.chaninfo(channel).idealRate;
             case 1
               import{iImport}.sr    = fileinfo.chaninfo(channel).realRate;
           end
+          import{iImport}           = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
         otherwise
           dataLength = floor(fileinfo.maxtime * fileinfo.timebase * fileinfo.chaninfo(iChan).idealRate);
           [nMarker, dataMarker]     = CEDS64ReadMarkers(fhand, channel, dataLength, 1);
@@ -178,7 +190,11 @@ for iImport = 1:numel(import)
           import{iImport}.length    = nMarker;
           import{iImport}.sr        = 0.001; % milliseconds import for marker channels, see above
           import{iImport}.marker    = 'timestamp';
+          import{iImport}           = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
       end
+    otherwise
+      warning('ID:feature_unsupported', 'The specified channel is of unsupported type. \n');
+      return
   end
 end
 %% 4 Clear path and return
@@ -222,17 +238,17 @@ function Y = GetCEDChanInfo(fhand, i)
 %   comment, units, and gain.
 % ● History
 %   Written in 2024 by Teddy
-Y.number = i;
+[~, Y.comment]  = CEDS64ChanComment(fhand, i);
 Y.div           = CEDS64ChanDiv(fhand, i);
 Y.idealRate     = CEDS64IdealRate(fhand, i);
+Y.number        = i;
+Y.realRate      = CEDS64RealRate(fhand, i);
 [~, chTitle]    = CEDS64ChanTitle(fhand, i);
-% chTitle = str_remove_spec_chars(chTitle);
 if ~isempty(chTitle)
   Y.title = chTitle;
 else
   Y.title = num2str(i);
 end
-[~, Y.comment]  = CEDS64ChanComment(fhand, i);
 [~, Y.units]    = CEDS64ChanUnits(fhand, i); % Convert units to gain
 chUnits = lower(strtrim(Y.units));
 if ~isempty(chUnits)
