@@ -108,13 +108,11 @@ for iImport = 1:numel(import)
          warning('ID:empty_channel', 'The specified channel was not recorded. \n');
          return
       case 1 % waveform
-              % Use CED64ReadWaveF
-        [nRead_waveform, Fchan_waveform] = CEDS64ReadWaveF(fhand, ...
-          channel, ...
-          floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div), ...
-          1);
-        import{iImport}.data      = Fchan_waveform;
-        import{iImport}.length    = nRead_waveform;
+        % Use CED64ReadWaveF
+        dataLength = floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div);
+        [nWF, dataWF] = CEDS64ReadWaveF(fhand, channel, dataLength, 1);
+        import{iImport}.data      = dataWF;
+        import{iImport}.length    = nWF;
         import{iImport}.sr        = fileinfo.chaninfo(channel).realRate;
         import{iImport} = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
       case 3 % time stamps
@@ -129,30 +127,26 @@ for iImport = 1:numel(import)
     end
   elseif strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'events')
     switch fileinfo.chaninfo(channel).kind
-        case 0 % empty
-            warning('ID:empty_channel', 'The specified event channel was not recorded. \n');
-            return
-        % case 1 % Events
-        [nRead_events, Fchan_events] = CEDS64ReadEvents(fhand, ...
-          channel, ...
-          floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div), ...
-          1);
+      case 0 % empty
+        warning('ID:empty_channel', 'The specified event channel was not recorded. \n');
+        return
+      case 1 % Events
+        dataLength = floor(fileinfo.maxtime/fileinfo.chaninfo(channel).div);
+        [nEvents, dataEvents] = CEDS64ReadEvents(fhand, channel, dataLength, 1);
         % import{iImport}.marker  = 'continuous';
-        import{iImport}.data      = Fchan_events;
-        import{iImport}.length    = nRead_events;
+        import{iImport}.data      = dataEvents;
+        import{iImport}.length    = nEvents;
         import{iImport} = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
       case 3 % time stamps
         % waiting for test data
         disp('Feature of reading time stamps has not been available.');
       case 4 % For events and type 4 channel, to read as marker channels
-        [nRead_markers, Fchan_markers] = CEDS64ReadMarkers(fhand, ...
-          channel, ...
-          floor(fileinfo.maxtime * fileinfo.timebase * fileinfo.chaninfo(iChan).idealRate), ... % this is the length of data points
-          1);
+        dataLength = floor(fileinfo.maxtime * fileinfo.timebase * fileinfo.chaninfo(iChan).idealRate);
+        [nMarker, dataMarker] = CEDS64ReadMarkers(fhand, channel, dataLength, 1);
         % import{iImport}.marker  = 'continuous';
-        import{iImport}.data      = Fchan_markers;
-        import{iImport}.length    = nRead_markers;
-        import{iImport} = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
+        import{iImport}.data      = double([dataMarker(:,1).m_Time]);
+        import{iImport}.length    = nMarker;
+        import{iImport}           = InheritFields(import{iImport}, fileinfo.chaninfo(channel));
       otherwise
         warning('ID:feature_unsupported', 'The specified channel is of unsupported type. \n');
         return
