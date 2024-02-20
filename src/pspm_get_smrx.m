@@ -220,9 +220,6 @@ end
 if isfield(X, 'number')
   Y.number = X.number;
 end
-if isfield(X, 'realRate')
-  Y.realRate = X.realRate;
-end
 if isfield(X, 'title')
   Y.title = X.title;
 end
@@ -242,7 +239,6 @@ function Y = GetCEDChanInfo(fhand, i)
 Y.div           = CEDS64ChanDiv(fhand, i);
 Y.idealRate     = CEDS64IdealRate(fhand, i);
 Y.number        = i;
-Y.realRate      = CEDS64RealRate(fhand, i);
 [~, chTitle]    = CEDS64ChanTitle(fhand, i);
 if ~isempty(chTitle)
   Y.title = chTitle;
