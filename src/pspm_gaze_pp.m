@@ -1,7 +1,8 @@
 function varargout = pspm_gaze_pp(fn, options)
 % ● Description
 %   pspm_gaze_pp preprocesses gaze signals, gaze x and gaze y channels at
-%   the same time.
+%   the same time. The output channel type will remain with the same title
+%   to the title of the original  channel type.
 % ● Format
 %   [sts, out_channel] = pspm_gaze_pp(fn) or
 %   [sts, out_channel] = pspm_gaze_pp(fn, options)
@@ -13,7 +14,8 @@ function varargout = pspm_gaze_pp(fn, options)
 %      .valid_sample: [bool] 1 or 0. 1 if use valid samples produced by
 %                     pspm_pupil_pp, 0 if not to use. default as 0.
 % ● History
-%   Written in 2021 by Teddy Chao (UCL)
+%   Written in 2021 by Teddy
+%   Updated in 2024 by Dominik R Bach (Uni Bonn)
 
 %% 1 Initialise
 global settings;
@@ -108,7 +110,7 @@ if options.valid_sample
   [~, ~, model] = pspm_pupil_pp(fn, options_pp);
   upsampling_factor = options.custom_settings.valid.interp_upsamplingFreq / gaze_og{1}.header.sr;
   desired_output_samples_gaze = round(upsampling_factor * numel(gaze_og{1}.data));
-  preprocessed_gaze.header.chantype = pspm_update_channeltype(gaze_og{1}.header.chantype,'pp');
+  preprocessed_gaze.header.chantype = gaze_og{1}.header.chantype;
   preprocessed_gaze.header.units = gaze_og{1}.header.units;
   preprocessed_gaze.header.sr = options.custom_settings.valid.interp_upsamplingFreq;
   preprocessed_gaze.header.segments = options.segments;
@@ -128,7 +130,7 @@ if ~action_combine
     preprocessed_gaze.data = gaze_og{1}.data;
     preprocessed_gaze.header.sr = gaze_og{1}.header.sr;
   end
-  preprocessed_gaze.header.chantype = pspm_update_channeltype(gaze_og{1}.header.chantype,'pp');
+  preprocessed_gaze.header.chantype = gaze_og{1}.header.chantype;
   preprocessed_gaze.header.units = gaze_og{1}.header.units;
 else
   if options.valid_sample
@@ -149,7 +151,7 @@ else
     preprocessed_gaze.header.sr = gaze_og{1}.header.sr;
   end
   preprocessed_gaze.data = transpose(mean(transpose([preprocessed_gaze.data, preprocessed_gaze_combine.data]),'omitnan'));
-  preprocessed_gaze.header.chantype = pspm_update_channeltype(gaze_og{1}.header.chantype,{'pp',settings.lateral.char.c});
+  preprocessed_gaze.header.chantype = pspm_update_channeltype(gaze_og{1}.header.chantype,settings.lateral.char.c);
   preprocessed_gaze.header.units = gaze_og{1}.header.units;
 end
 %% 7 save

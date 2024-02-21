@@ -122,7 +122,7 @@ classdef pspm_dcm_test < pspm_testcase
       end
     end
   end
-  methods
+  methods 
     function test_hra1_flex_cs(this)
       for i=1:20
         % find free filename
