@@ -1,4 +1,4 @@
-function varargout = pspm_write_channel(fn, newdata, channel_action, options)
+function [sts, infos] = pspm_write_channel(fn, newdata, channel_action, options)
 % ● Description
 %   pspm_write_channel adds, replaces and deletes channels in an existing
 %   data file. This function is an integration of the former functions
@@ -18,7 +18,7 @@ function varargout = pspm_write_channel(fn, newdata, channel_action, options)
 %    ├─────.prefix: custom history message prefix text, but automatically added
 %    │              action verb (only prefix defined). The text will be
 %    │              <prefix> <action>ed on <date>
-%    ├────.channel: specifiy which channel should be 'edited'
+%    ├────.channel: specify which channel should be 'edited'
 %    │              default value is 0
 %    └─────.delete: method to look for a channel when options.channel is not an
 %                   integer, accepts 'last'/'first'/'all'.
@@ -211,13 +211,6 @@ end
 %% 7 Sort output
 infos = outinfos;
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = infos;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = infos;
-end
 return
 
 function matches = match_chan(existing_channels, exisiting_units, channel)
