@@ -21,8 +21,9 @@ function sts = pspm_check_python(pythonPath)
 
     % Report the current environment
     if strcmp(currentEnv.Version, '')
-        fprintf('No Python environment is configured in MATLAB.\n');
-    else
+        fprintf('No Python environment is configured in MATLAB. Call this function with complete python execution path to create the environment. \n');
+    return;
+    else nargin < 1
         fprintf('Current Python environment: %s (Version: %s)\n', currentEnv.Executable, currentEnv.Version);
     end
 
@@ -31,7 +32,6 @@ function sts = pspm_check_python(pythonPath)
         try
             newEnv = pyenv('Version', pythonPath);
             fprintf('Python environment successfully updated to: %s (Version: %s)\n', newEnv.Executable, newEnv.Version);
-            fprintf('New current environment: %s (Version: %s)\n', newEnv.Executable, currentEnv.Version);
             sts = 1;
         catch ME
             fprintf('Failed to update Python environment. Error: %s\n', ME.message);
