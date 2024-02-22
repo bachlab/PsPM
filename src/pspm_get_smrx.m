@@ -29,13 +29,9 @@ function [sts, import, sourceinfo] = pspm_get_smrx(datafile, import)
 %   * sr        | as realRate or idealRate (if realRate is unavailable)
 %   * title     | via CEDS64ChanTitle
 %   * units     | via CEDS64ChanUnits
-% ● Disclaim
-%   The calculation of data points for marker channels is performed by
-%   multiplying time with gain and ideal rate, which has not been tested
-%   and validated.
 % ● History
 %   Introduced in PsPM 6.2
-%   Written in 2024 by Teddy
+%   Written in 2024 by Teddy Chao & Dominik Bach
 
 %% 1 Initialise
 global settings
