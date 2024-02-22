@@ -11,6 +11,9 @@ function [sts, import] = pspm_get_events(import)
 %               1/seconds)
 %      .flank:  optional for continuous channels; default: both; accepts
 %               'ascending', 'descending', 'both', 'all'.
+%   .denoise: for continuous marker channels: only retains markers of duration 
+%              longer than the value given here (in seconds).
+
 % ● Output
 %       import: returns event timestamps in seconds in import.data
 % ● History
@@ -77,6 +80,28 @@ elseif strcmpi(import.marker, 'continuous')
   % hi2lo should be maxima
   lo2hi = temp(1+find(d(temp(2:end-1)-2) > 0))-3;
   hi2lo = temp(1+find(d(temp(2:end-1)-2) < 0))-4;
+
+  % denoise 
+  if isfield(import, 'denoise') && isnumeric(import.denoise) && import.denoise > 0
+     initial_level = lo2hi(1) > hi2lo(1);
+     last_level    = lo2hi(end) > hi2lo(end);
+     if initial_level
+         lo2hi = [1; lo2hi];
+     end
+     if last_level
+         hi2lo = [hi2lo; numel(import.data)];
+     end
+     pulse_duration = diff([lo2hi(:), hi2lo(:)], [], 2)/import.sr;
+     pulse_index = find(pulse_duration > import.denoise);
+     lo2hi = lo2hi(pulse_index);
+     hi2lo = hi2lo(pulse_index);
+     if initial_level && lo2hi(1) == 1 % if initial level not already removed
+         lo2hi = lo2hi(2:end);
+     end
+     if last_level && hi2lo(end) == numel(import.data) % if last level not already removed
+         hi2lo = hi2lo(1:(end-1));
+     end
+  end
 
   if isempty(lo2hi) && isempty(hi2lo)
     fprintf('\n');
