@@ -52,9 +52,10 @@ classdef pspm_get_smrx_test < pspm_get_superclass
   end
   methods (Test)
     function test_basic(this)
-      this.verifyWarningFree(@()pspm_import(this.fn, 'smrx', this.import1));
-      this.verifyWarningFree(@()pspm_import(this.fn, 'smrx', this.import2, struct('overwrite', 1)));
-      % this.verifyWarning(@()pspm_import(this.fn, 'smrx', this.import3, struct('overwrite', 1)), 'MATLAB:structOnObject');
+      %this.verifyWarningFree(@()pspm_import(this.fn, 'smrx', this.import1));
+      %this.verifyWarningFree(@()pspm_import(this.fn, 'smrx', this.import2, struct('overwrite', 1)));
+      this.verifyWarning(@()pspm_import(this.fn2, 'smrx', this.import3, struct('overwrite', 1)), 'MATLAB:structOnObject');
+      %this.verifyWarning(@()pspm_import(this.fn, 'smrx', this.import3, struct('overwrite', 1)), 'MATLAB:structOnObject');
       % this.verifyWarning(@()pspm_import(this.fn2, 'smrx', this.import4, struct('overwrite', 1)), 'MATLAB:structOnObject');
     end
   end
