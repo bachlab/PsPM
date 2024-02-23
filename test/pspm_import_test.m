@@ -45,7 +45,7 @@ classdef pspm_import_test <  matlab.unittest.TestCase
       'ID:nonexistent_file', 'invalid_import_struct test 4');
     end
     function one_datafile(this)
-      tc{1} = pspm_get_spike_test;
+      tc{1} = pspm_get_smr_test;
       tc{2} = pspm_get_labchartmat_in_test;
       tc{1}.setup_path;
       for k = 1:length(tc)
@@ -64,7 +64,7 @@ classdef pspm_import_test <  matlab.unittest.TestCase
       end
     end
     function multiple_datafiles(this)
-      tc = pspm_get_spike_test;
+      tc = pspm_get_smr_test;
       tc.setup_path;
       tc.define_testcases;
       % test import of multiple datafiles
