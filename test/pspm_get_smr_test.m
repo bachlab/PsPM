@@ -1,11 +1,11 @@
-classdef pspm_get_spike_test < pspm_get_superclass
+classdef pspm_get_smr_test < pspm_get_superclass
   % ● Description
-  % unittest class for the pspm_get_spike function
+  % unittest class for the pspm_get_smr function
   % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
   properties
     testcases;
-    fhandle = @pspm_get_spike;
+    fhandle = @pspm_get_smr;
     datatype = 'spike';
   end
   methods
@@ -34,7 +34,7 @@ classdef pspm_get_spike_test < pspm_get_superclass
       import{2} = struct('type', 'marker', 'channel', 2);
       import{3} = struct('type', 'marker', 'channel', 4);
       import = this.assign_chantype_number(import);
-      this.verifyWarning(@()pspm_get_spike(fn, import), 'ID:channel_not_contained_in_file');
+      this.verifyWarning(@()pspm_get_smr(fn, import), 'ID:channel_not_contained_in_file');
     end
   end
 end

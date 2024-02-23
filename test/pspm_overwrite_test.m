@@ -1,8 +1,8 @@
-classdef pspm_bf_data_test < matlab.unittest.TestCase
+classdef pspm_overwrite_test < matlab.unittest.TestCase
 % ● Description
 %   unittest class for pspm_overwrite, PsPM TestEnvironment
-% ● Authorship
-%   (C) 2023 Teddy Chao
+% ● History
+%   Written in 2023 by Teddy
 % ● Developer's notes
   properties(Constant)
     fn = 'pspm_overwrite_sample.mat';
