@@ -24,7 +24,7 @@ function [sts, channel_index] = pspm_convert_gaze(fn, conversion, options)
 %   ├───────.channel: gaze x and y channels to work on. This can be a pair
 %   │                 of channel numbers, any pair of channel types, 'gaze',
 %   │                 which will search gaze_x and gaze_y channel according
-%   │                 to the precedence order specifie d in pspm_load_channel.
+%   │                 to the precedence order specified in pspm_load_channel.
 %   │                 Default is 'gaze'.
 %   └.channel_action: Channel action for sps data, add / replace existing sps
 %                     data (default: add)
