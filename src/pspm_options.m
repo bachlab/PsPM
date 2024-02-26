@@ -373,7 +373,7 @@ switch FunName
                                                                        'withdraw'}      );
     options = autofill(options, 'baseline_jump',          1.5,        '>', 0            );
     options = autofill(options, 'change_data',            1,          0                 );
-    options = autofill(options, 'clipping_n_window',      10000,      '*Int'            );
+    options = autofill(options, 'clipping_window_size',   10000,      '*Int'            );
     options = autofill(options, 'clipping_step_size',     2,          '*Int'            );
     options = autofill(options, 'clipping_threshold',     0.1,        '*Num'            );
     options = autofill(options, 'data_island_threshold',  0,          '>=', 0           );
