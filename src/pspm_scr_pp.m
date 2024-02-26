@@ -86,10 +86,9 @@ function [sts, out] = pspm_scr_pp(datafile, options, channel)
 % ● History
 %   Introduced In PsPM 5.1
 %   Written in 2009-2017 by Tobias Moser (University of Zurich)
-%   Updated in 2020 by Samuel Maxwell (UCL)
-%                      Dominik R Bach (UCL)
-%              2021 by Teddy Chao (UCL)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Updated in 2020      by Samuel Maxwell (UCL)
+%                           Dominik R Bach (UCL)
+%              2021-2024 by Teddy
 
 %% Initialise
 global settings
@@ -151,9 +150,8 @@ for d = 1:numel(data_source)
   end
   [filt_clipping, filt_baseline] = detect_clipping_baseline(indata, options.clipping_step_size, ...
     options.clipping_window_size, options.baseline_jump, options.clipping_threshold);
-
   if options.include_baseline
-    filt_clipping = filt_clipping || filt_baseline;
+    filt_clipping = filt_clipping | filt_baseline;
   end
   % combine filters
   filt = filt_range & filt_slope;
@@ -243,12 +241,13 @@ index_baseline_end = [];
 for window_starter = index_window_starter
   data_windowed = data(window_starter:(window_starter+window_size)-1);
   data_windowed_max = max(data_windowed);
-  index_pred = 1:length(data_windowed)+window_starter-1;
+  index_pred = (1:length(data_windowed))+window_starter-1;
   if sum(data_windowed==data_windowed_max)/length(data_windowed) > threshold % detect clipping
     index_clipping(index_pred) = 1;
   end
   if prctile(data_windowed, 1)>0 && (data_windowed_max / prctile(data_windowed, 1))>jump % detect baseline
-    if max(diff(data_windowed))>0 && min(diff(data_windowed))<0
+    if max(diff(data_windowed))>jump*prctile(data_windowed, 1) && ...
+        (min(diff(data_windowed))<jump*prctile(data_windowed, 1)*(-1))
       target = find(diff(data_windowed)==max(diff(data_windowed)));
       target = target(1);
       index_baseline_starter(end+1) = index_pred(target+1);
