@@ -50,9 +50,10 @@ function outfile = pspm_import(datafile, datatype, import, options)
 %   │                     default value is 'mm' otherwise the distance unit is
 %   │                     ''; Accepted values include 'mm', 'cm',
 %   │                     'm', and 'inches'.
-%   ├──────────.denoise:  for marker channels in CED spike format (recorded
-%   │                     as 'level'), filters out markers duration longer than
-%   │                     the value given here (in ms).
+%   ├──────────.denoise:  for continuous marker channels or those recorded as
+%   │                     digital level with two values (e.g. CED spike); 
+%   │                     retains markers of duration longer than the 
+%   │                     value given here (in seconds).
 %   └────────.delimiter:  for delimiter separated values, value used as
 %                         delimiter for file read.
 %   ┌───────────options:  a struct.

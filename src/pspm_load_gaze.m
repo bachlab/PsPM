@@ -8,7 +8,7 @@ function [sts, gaze_x, gaze_y, eye] = pspm_load_gaze (fn, chantype)
 %          fn:  [string] / [struct]
 %               Path to a PsPM file, or a struct accepted by pspm_load_data
 %    chantype:  Definition of an eyetracker channel to which the gaze
-%               should correspond
+%               should correspond, or one of {'r', 'l', 'c', ''}
 % ● Outputs
 %       gaze_x, gaze_y:  struct with fields .data and .header as returned
 %                        by pspm_load_channel
@@ -25,8 +25,12 @@ end
 sts = -1; gaze_x = []; gaze_y = [];
 
 % check laterality identifier
-[eyests, eye] = pspm_find_eye(chantype);
-if eyests < 1, return, end
+if ismember(chantype, {'r', 'l', 'c', ''})
+    eye = chantype;
+else
+    [eyests, eye] = pspm_find_eye(chantype);
+    if eyests < 1, return, end
+end
 
 if ~strcmpi(eye, '')
     neweye = ['_', eye];

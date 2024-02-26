@@ -53,10 +53,8 @@ elseif ischar(channel)
   end
 end
 
-if nargin == 4
-if ~isstruct(options)
-  warning('ID:invalid_input','options has to be a struct');
-  return;
+if nargin < 4
+    options = struct();
 end
 options = pspm_options(options, 'down');
 if options.invalid
@@ -77,7 +75,7 @@ for d = 1:numel(D)
   datafile = D{d};
 
   % check and get datafile
-  [lsts, ~, ~] = pspm_load_data(datafile, 0);
+  [lsts, infos, data] = pspm_load_data(datafile, 0);
   if lsts == -1, continue; end
 
   if any(channel > numel(data))
