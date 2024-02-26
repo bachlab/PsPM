@@ -8,11 +8,11 @@ function [varargout] = pspm_convert_area2diameter(varargin)
 % ● Arguments
 %                 fn: a numeric vector of milimeter values
 %               channel: Channels which should be converted from area to diameter.
-%                     This can be a channel number, any channel type including 
-%                     'pupil' (which will select a channel according to the 
+%                     This can be a channel number, any channel type including
+%                     'pupil' (which will select a channel according to the
 %                     precedence order specified in pspm_load_channel), or 'both',
-%                     which will work on 'pupil_r' and 'pupil_l'. 
-%                     Default is 'both'. 
+%                     which will work on 'pupil_r' and 'pupil_l'.
+%                     Default is 'both'.
 %               area: a numeric vector of area values (the unit is not
 %                     important)
 %   ┌────────options:
@@ -22,6 +22,7 @@ function [varargout] = pspm_convert_area2diameter(varargin)
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Tobias Moser (University of Zurich)
+%   Updated in 2024 by Dominik R Bach (Uni Bonn)
 
 %% Initialise
 global settings
@@ -29,12 +30,9 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-
 narginchk(1, 3);
-
 if numel(varargin) == 1
   area = varargin{1};
-
   if ~isnumeric(area)
     warning('ID:invalid_input', 'area is not numeric'); return;
   end
@@ -42,6 +40,7 @@ if numel(varargin) == 1
 else
   fn = varargin{1};
   channel = varargin{2};
+  options = varargin{3};
   if strcmpi(channel, 'both')
       channel = {'pupil_r', 'pupil_l'};
   else
@@ -51,11 +50,8 @@ else
   if options.invalid
     return
   end
-
   mode = 'file';
-
 end
-
 if strcmpi(mode, 'vector')
     varargout{2} = 2.*sqrt(area./pi);
     sts = 1;
