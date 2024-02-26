@@ -350,13 +350,15 @@ switch FunName
     % 2.40 pspm_scr_pp --
     options = autofill_channel_action(options,            'add',      {'replace', ...
                                                                        'withdraw'}      );
+    options = autofill(options, 'baseline_jump',          1.5,        '>', 0            );
     options = autofill(options, 'change_data',            1,          0                 );
-    options = autofill(options, 'clipping_n_window',      10000,      '*Int'            );
+    options = autofill(options, 'clipping_window_size',   10000,      '*Int'            );
     options = autofill(options, 'clipping_step_size',     2,          '*Int'            );
     options = autofill(options, 'clipping_threshold',     0.1,        '*Num'            );
     options = autofill(options, 'data_island_threshold',  0,          '>=', 0           );
     options = autofill(options, 'deflection_threshold',   0.1,        '*Num'            );
     options = autofill(options, 'expand_epochs',          0.5,        '>=', 0           );
+    options = autofill(options, 'include_baseline',       0,          1                 );
     options = autofill(options, 'max',                    60,         '>', 0            );
     options = autofill(options, 'min',                    0.05,       '>', 0            );
     options = autofill(options, 'missing_epochs_filename','',         '*Char'           );
