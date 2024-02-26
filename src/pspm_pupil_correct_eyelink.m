@@ -57,7 +57,7 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 %   │               (1) L-R-combined pupil, (2) non-lateralised pupil, (3) best
 %   │               eye pupil, (4) any pupil channel. If there are multiple
 %   │               channels of the specified type, only last one will be
-%   │               processed. You can alos specify the number of a channel.
+%   │               processed. You can also specify the number of a channel.
 %   └channel_action:  ['add'/'replace'] Defines whether output data should
 %                     be added or the corresponding preprocessed channel
 %                     should be replaced. (Default: 'add')

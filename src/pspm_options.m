@@ -228,11 +228,7 @@ switch FunName
     options = fill_find_valid_fixations(options);
   case 'gaze_pp'
     % 2.25 pspm_gaze_pp --
-    options = autofill(options, 'channel',                'none',     '*Int*Char'       );
-    options = autofill(options, 'channel_combine',        'none',     '*Int*Char'       );
-    options = autofill(options, 'plot_data',              false                         );
-    options = autofill(options, 'segments',               {}                            );
-    options = autofill(options, 'valid_sample',           0,          1                 );
+    options = autofill(options, 'channel',                'gaze',      '*Int*Char'      );  
     options = autofill_channel_action(options,            'add',      {'replace',...
                                                                       'none'}           );
   case 'get_markerinfo'
