@@ -25,7 +25,7 @@ function [sts, out] = pspm_extract_segments(varargin)
 %                          will be treated as session. Onset values are
 %                          averaged through conditions and sessions.
 %               data_raw:  Numeric raw data or a cell array of numeric raw data.
-%                   channel:  Channel number or cell of channel numbers which
+%                channel:  Channel number or cell of channel numbers which
 %                          defines which channel should be taken to
 %                          extract the segments. channel should correspond to
 %                          data_fn and should have the same length. If
