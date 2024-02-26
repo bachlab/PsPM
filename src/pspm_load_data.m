@@ -267,7 +267,7 @@ if any(wflag)
   return
 end
 if any(nflag)
-  errmsg = [gerrmsg, sprintf('Unknown channel type in channel %01.0f', find(nflag,1))];
+  errmsg = [gerrmsg, sprintf('Unknown channel type %s in channel %01.0f', data{find(nflag,1)}.header.chantype, find(nflag,1))];
   warning('ID:invalid_data_structure', '%s', errmsg);
   return
 end
