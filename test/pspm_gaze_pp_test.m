@@ -42,11 +42,11 @@ classdef pspm_gaze_pp_test < pspm_testcase
       % the input filename refers to a non-existing file
       this.verifyWarning(@()pspm_gaze_pp('abc'), 'ID:nonexistent_file');
       % the input filename is valid, but the channel referred through options is not existing
-      opt.channel = 'gaze';
+      opt.channel = 'scr';
       this.verifyWarning(@()pspm_gaze_pp(this.pspm_input_fn, opt), 'ID:invalid_chantype');
       % the input filename is valid, but the two channels to combine are identical
       opt.channel = 'gaze_x_l';
-      opt.channel_combine = 'pupil_x_l';
+      opt.channel_combine = 'gaze_x_l';
       this.verifyWarning(@()pspm_gaze_pp(this.pspm_input_fn, opt), 'ID:invalid_input');
       % the input filename is valid, but the two channels to combine are not both x or both y
       opt.channel_combine = 'gaze_y_l';
