@@ -7,7 +7,7 @@ function [sts, channel_index] = pspm_gaze_pp(fn, options)
 %   [sts, channel_index] = pspm_gaze_pp(fn, options)
 % ● Arguments
 %                 fn: [string] Path to the PsPM file which contains the gaze data.
-%   ┌────────options: [struct]
+%   ┌────────options: [struct] options for processing, please check pspm_options.
 %   ├───────.channel: gaze_x_r/gaze_x_l/gaze_y_r/gaze_y_l channels to work on. 
 %   │                 This can be a 4-element vector of channel numbers, or 'gaze',
 %   │                 which will use the last channel of the types
@@ -17,9 +17,12 @@ function [sts, channel_index] = pspm_gaze_pp(fn, options)
 % ● Output
 %                sts: Status determining whether the execution was
 %                     successfull (sts == 1) or not (sts == -1)
-%      channel_index: Id of the added or replaced channels.
+%      channel_index: Index of the generated combined gaze channels.
+%                     This can be in the end if channel action is specified to be 'add', 
+%                     or around the old left/right channels if channel_action is specified 
+%                     to be 'replace'.
 % ● History
-%   Written in 2021 by Teddy Chao
+%   Written in 2021 by Teddy
 %   Updated in 2024 by Dominik R Bach (Uni Bonn)
 
 %% 1 Initialise
@@ -30,8 +33,7 @@ end
 sts = -1;
 channel_index = 0;
 
-%% 2 Create default arguments
-% 2.1 set default values
+%% 2 Create default arguments and initialise data to be added
 if nargin == 1
   options = struct();
 end
@@ -43,9 +45,10 @@ gaze_x_c = struct();
 gaze_y_c = struct();
 
 %% 3 Load data
+% 3.1 load all data
 [sts, alldata.infos, alldata.data] = pspm_load_data(fn);
 if sts ~= 1; return; end
-
+% 3.2 check single channels
 stsc = 0;
 if isnumeric(options.channel) && numel(options.channel) == 4
     [stsc(1), gaze_x_r] = pspm_load_channel(alldata, options.channel(1), 'gaze_x_r');
@@ -63,28 +66,30 @@ else
 end
 
 %% 4 Process data
+% 4.1 process gaze_x data
 if numel(gaze_x_r.data) == numel(gaze_x_l.data)
-    gaze_x_c.data = mean([gaze_x_r.data(:), gaze_x_l.data(:)], 2, 'omitnan' );
+    gaze_x_c.data = mean([gaze_x_r.data(:), gaze_x_l.data(:)], 2, 'omitnan');
     gaze_x_c.header = gaze_x_r.header;
     gaze_x_c.header.chantype = 'gaze_x_c';
 else
-    warning('ID:invalid_input', 'Gaze x data dimensions do not match.')
+    warning('ID:invalid_input', 'Gaze x data dimensions do not match.');
+    return
 end
-
+% 4.2 process gaze_y data
 if numel(gaze_y_r.data) == numel(gaze_y_l.data)
-    gaze_y_c.data = mean([gaze_y_r.data(:), gaze_y_l.data(:)], 2, 'omitnan' );
+    gaze_y_c.data = mean([gaze_y_r.data(:), gaze_y_l.data(:)], 2, 'omitnan');
     gaze_y_c.header = gaze_y_r.header;
     gaze_y_c.header.chantype = 'gaze_y_c';
 else
-    warning('ID:invalid_input', 'Gaze y data dimensions do not match.')
+    warning('ID:invalid_input', 'Gaze y data dimensions do not match.');
+    return
 end
 
 %% 5 save
-out.msg.prefix = sprintf(...
-  'Gaze preprocessing');
+out.msg.prefix = sprintf('Gaze preprocessing');
 [lsts, out_id] = pspm_write_channel(fn, {gaze_x_c, gaze_y_c}, options.channel_action, out);
 if lsts < 1, return, end
 
-%% 8 Return values
+%% 6 Return values
 channel_index = out_id.channel;
 sts = 1;
