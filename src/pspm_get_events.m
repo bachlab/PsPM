@@ -11,14 +11,15 @@ function [sts, import] = pspm_get_events(import)
 %               1/seconds)
 %      .flank:  optional for continuous channels; default: both; accepts
 %               'ascending', 'descending', 'both', 'all'.
-%   .denoise: for continuous marker channels: only retains markers of duration 
-%              longer than the value given here (in seconds).
+%    .denoise:  for continuous marker channels: only retains markers of duration
+%               longer than the value given here (in seconds).
 
 % ● Output
 %       import: returns event timestamps in seconds in import.data
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2013-2015 by Dominik R Bach & Tobias Moser (University of Zurich)
+%   Updated in 2024      by Dominik R Bach (Uni Bonn)
 
 %% Initialise
 global settings
@@ -81,7 +82,7 @@ elseif strcmpi(import.marker, 'continuous')
   lo2hi = temp(1+find(d(temp(2:end-1)-2) > 0))-3;
   hi2lo = temp(1+find(d(temp(2:end-1)-2) < 0))-4;
 
-  % denoise 
+  % denoise
   if isfield(import, 'denoise') && isnumeric(import.denoise) && import.denoise > 0
      initial_level = lo2hi(1) > hi2lo(1);
      last_level    = lo2hi(end) > hi2lo(end);
