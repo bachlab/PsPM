@@ -7,7 +7,8 @@ function options = pspm_options(options, FunName)
 %   FunName:  a string, the name of the function where option is used
 % ● History
 %   Introduced in PsPM 6.1
-%   Written in 2022 by Teddy Chao (UCL)
+%   Written in 2022 by Teddy
+%   Updated in 2024 by Dominik R Bach (Uni Bonn)
 
 %% 0 Initialise
 global settings
@@ -77,7 +78,7 @@ switch FunName
   case 'convert_ecg2hb_amri'
     % 2.9 pspm_convert_ecg2hb_amri --
     options = autofill_channel_action(options);
-    options = autofill(options, 'channel',                'ecg',      '*Int*Char'  );
+    options = autofill(options, 'channel',                'ecg',      '*Int*Char'       );
     options = autofill(options, 'ecg_bandpass',           [0.5,40],   '>', 0            );
     options = autofill(options, 'hrrange',                [20,200],   '>', 0            );
     options = autofill(options, 'min_cross_corr',         0.5,        '*Num'            );
@@ -86,7 +87,7 @@ switch FunName
     options = autofill(options, 'teo_bandpass',           [8,40],     '>', 0            );
     options = autofill(options, 'teo_order',              1,          '>', 0            );
   case 'convert_gaze'
-    % 2.10 pspm_convert_gaze_distance --
+    % 2.10 pspm_convert_gaze --
     options = autofill_channel_action(options);
     options = autofill(options, 'channel',                'gaze',      '*Int*Char*Cell'  ); % this function operates on pairs of channels; hence cell is exceptionally allowed here
   case 'convert_hb2hp'

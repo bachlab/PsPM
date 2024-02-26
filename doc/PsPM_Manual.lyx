@@ -9510,7 +9510,7 @@ Related function:
 \shape default
  
 \family typewriter
-pspm_convert_gaze_distance
+pspm_convert_gaze
 \end_layout
 
 \begin_layout Standard
@@ -19558,7 +19558,7 @@ pspm_simple_qa
 \begin_layout Itemize
 Allow 
 \family typewriter
-pspm_convert_gaze_distance
+pspm_convert_gaze
 \family default
  to convert from distance units to degrees or scanpath speed.
  The accompanying GUI editor is available under 'Gaze Convert' in the data

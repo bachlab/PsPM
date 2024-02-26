@@ -1,12 +1,12 @@
 function [sts, channel_index] = pspm_convert_gaze(fn, conversion, options)
 % ● Description
-%   pspm_convert_gaze converts between any gaze units or scanpath speed. 
+%   pspm_convert_gaze converts between any gaze units or scanpath speed.
 %   Display width and height are required for conversion from pixels to relate
-%   the screen pixel definition to metric units; and for conversion to 
+%   the screen pixel definition to metric units; and for conversion to
 %   degrees, to translate the coordinate system to the centre of
 %   the display.
 % ● Format
-%   [sts, out_file] = pspm_convert_gaze_distance(fn, conversion, options)
+%   [sts, out_file] = pspm_convert_gaze(fn, conversion, options)
 % ● Arguments
 %                 fn: A data file name
 %   ┌────────conversion [ struct ] with fields

@@ -2511,7 +2511,7 @@ Table 9
 \series default
  Default values for 
 \family typewriter
-pspm_convert_gaze_distance
+pspm_convert_gaze
 \end_layout
 
 \begin_layout Standard
