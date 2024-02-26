@@ -78,7 +78,7 @@ classdef pspm_pupil_correct_eyelink_test < pspm_testcase
       opt.channel = 'gaze_x_l';
       this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:unexpected_channeltype');
       opt.channel = 5;
-      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:unexpected_channeltype');
     end
     function check_if_corrected_channel_is_saved(this)
       options.screen_size_px = [1920 1080];
