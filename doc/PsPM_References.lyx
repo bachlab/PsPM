@@ -2847,7 +2847,7 @@ Table 11
 \series default
  Default values for 
 \family typewriter
-pspm_convert_pixel2unit
+pspm_convert_pixel2unit_core
 \end_layout
 
 \begin_layout Standard

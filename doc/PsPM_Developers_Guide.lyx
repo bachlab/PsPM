@@ -28730,7 +28730,7 @@ TM
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_convert_pixel2unit
+pspm_convert_pixel2unit_core
 \end_layout
 
 \end_inset
