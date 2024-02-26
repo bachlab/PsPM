@@ -17,8 +17,8 @@ function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 %   ┌─────── options
 %   ├───────.channel: [optional, numeric/string, default as 'ecg']
 %   │                 Channel ID to be preprocessed.
-%   │                 Channel can be specified by its index in the given PsPM
-%   │                 data structure, or by specifying a channel type.
+%   │                 Channel can be specified by its index (numeric) in the given
+%   │                 PsPM data structure or by its channel type (string).
 %   │                 If there are multiple channels with this type, only
 %   │                 the last one will be processed. If you want to detect
 %   │                 r-peaks for all ECG channels in a PsPM file separately,

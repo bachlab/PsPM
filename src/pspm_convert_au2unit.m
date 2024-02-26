@@ -51,6 +51,7 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Tobias Moser (University of Zurich)
+%   Updated in 2024 by Dominik R Bach (University of Bonn)
 
 %% initialise
 global settings
