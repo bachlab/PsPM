@@ -1,66 +1,65 @@
 function [sts, fn] = pspm_pp(varargin)
 % ● Description
-%   pspm_pp contains various preprocessing utilities for reducing noise in the
-%   data. The 'butter' option allows downsampling after application of an
-%   anti-alias filter.
+%   pspm_pp contains various preprocessing utilities for reducing noise in 
+%   the data. It features a 'butter' option that allows downsampling after 
+%   application of an anti-alias filter.
 % ● Format
-%   [sts, datafile] = pspm_pp('median', datafile, channel, n, options)
-%   [sts, datafile] = pspm_pp('butter', datafile, channel, filterstruct, options)
+%   [sts, fn] = pspm_pp('median', fn, channel, n,    options) or
+%   [sts, fn] = pspm_pp('butter', fn, channel, filt, options)
 % ● Arguments
-%   [Currently implemented]
-%   'median': medianfilter
-%          n: number of timepoints for median filter
-%   'butter': Butterworth band pass filter potentially including
-%             downsampling
-%   ┌──────filt:  a struct with fields:
+%        method:  [string] Method of filtering. Currently implemented
+%                 methods are 'median' and 'butter'. (1) 'median': a median
+%                 filter will be applied. (2) 'butter': Butterworth band
+%                 pass filter potentially including downsampling.
+%            fn:  [string] The datafile that saves data to process
+%       channel:  A channel definition accepted by pspm_load_channel
+%             n:  [numeric, only if method=='median']
+%                 number of timepoints for median filter
+%   ┌──────filt:  [struct, only if method=='butter']
+%   │             a struct with following fields
 %   ├───.lpfreq:  low pass filt frequency or 'none' (default)
 %   ├──.lporder:  low pass filt order (default: 1)
 %   ├───.hpfreq:  high pass filt frequency or 'none' (default)
 %   ├──.hporder:  high pass filt order (default: 1)
 %   ├.direction:  filt direction ('uni' or 'bi', default 'uni')
 %   └─────.down:  sample rate in Hz after downsampling or 'none' (default)
-%  channel: A channel definition accepted by pspm_load_channel
-%   ┌──options: [struct]
-%   └─.channel_action:
-%              [optional][string][Accepts: 'add'/'replace'][Default: 'add']
-%              Defines whether corrected data should be added or the
-%              corresponding preprocessed channel should be replaced. 
+%   ┌──options:   [struct]
+%   └.channel_action:
+%                 [optional][string][Accepts: 'add'/'replace'][Default: 'add']
+%                 Defines whether corrected data should be added or the
+%                 corresponding preprocessed channel should be replaced.
 % ● History
-%   Introduced In PsPM 3.0
-%   Written in 2009-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Refactored in 2024 by Dominik R Bach
+%   Introduced in PsPM 3.0
+%   Written    in 2009-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Refactored in 2024      by Dominik R Bach (Uni Bonn)
 
-%% Initialise
+%% 1 Initialise
 global settings
 if isempty(settings)
   pspm_init;
 end
 sts = -1;
-newdatafile = [];
-%% Check input arguments
+%% 2 Check input arguments
 if nargin < 1
   warning('ID:invalid_input', 'No input arguments. Don''t know what to do.');
 elseif nargin < 2
   warning('ID:invalid_input', 'No datafile.'); return;
 elseif nargin < 3
-    warning('ID:invalid_input', 'No channel given.'); return;
+  warning('ID:invalid_input', 'No channel given.'); return;
 elseif nargin < 4
-      warning('ID:invalid_input', 'Missing filter specs.'); return;
+  warning('ID:invalid_input', 'Missing filter specs.'); return;
 elseif nargin < 5
-    options = struct(); % build an empty struct if nothing is available
+  options = struct(); % build an empty struct if nothing is available
 else
-    options = varargin{5};
+  options = varargin{5};
 end
-
-method = varargin{1};
-fn = varargin{2};
+method  = varargin{1};
+fn      = varargin{2};
 channel = varargin{3};
-  
-%% Load data
+%% 3 Load data
 [sts, data, ~, pos_of_channel] = pspm_load_channel(fn, channel);
 if sts ~= 1, return; end
-
-%% Do the job
+%% 4 Do the job
 switch method
   case 'median'
     n = varargin{4};
@@ -69,28 +68,28 @@ switch method
     data.data = medfilt1(data.data, n);
     msg = sprintf('median filter over %1.0f timepoints', n);
   case 'butter'
-    filt = varargin{4};    
+    filt = varargin{4};
     if ~isstruct(filt)
-        warning('ID:invalid_input', 'Filter must be a struct.'); return;
+      warning('ID:invalid_input', 'Filter must be a struct.'); return;
     end
     % set defaults
     if ~isfield(filt, 'down')
-        filt.down = 'none';
+      filt.down = 'none';
     end
     if ~isfield(filt, 'lpfreq')
-        filt.lpfreq = 'none';
+      filt.lpfreq = 'none';
     end
     if ~isfield(filt, 'hpfreq')
-        filt.hpfreq = 'none';
+      filt.hpfreq = 'none';
     end
     if ~isfield(filt, 'lporder')
-        filt.lporder = 1;
+      filt.lporder = 1;
     end
     if ~isfield(filt, 'hporder')
-        filt.hporder = 1;
+      filt.hporder = 1;
     end
     if ~isfield(filt, 'direction')
-        filt.direction = 'uni';
+      filt.direction = 'uni';
     end
     filt.sr = data.header.sr;
     fprintf('\n\xBB Preprocess: butterworth filtering datafile %s ... ', fn);
