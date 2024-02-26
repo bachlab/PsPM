@@ -8,10 +8,11 @@ function [varargout] = pspm_convert_area2diameter(varargin)
 % ● Arguments
 %                 fn: a numeric vector of milimeter values
 %               channel: Channels which should be converted from area to diameter.
-%                     Should be either a string representing the channels
-%                     channeltype or a numeric value representing the channels id.
-%                     Multiple channels are allowed and should be provided as
-%                     cell.
+%                     This can be a channel number, any channel type including
+%                     'pupil' (which will select a channel according to the
+%                     precedence order specified in pspm_load_channel), or 'both',
+%                     which will work on 'pupil_r' and 'pupil_l'.
+%                     Default is 'both'.
 %               area: a numeric vector of area values (the unit is not
 %                     important)
 %   ┌────────options:
@@ -21,6 +22,7 @@ function [varargout] = pspm_convert_area2diameter(varargin)
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Tobias Moser (University of Zurich)
+%   Updated in 2024 by Dominik R Bach (Uni Bonn)
 
 %% Initialise
 global settings
@@ -28,12 +30,9 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-
 narginchk(1, 3);
-
 if numel(varargin) == 1
   area = varargin{1};
-
   if ~isnumeric(area)
     warning('ID:invalid_input', 'area is not numeric'); return;
   end
@@ -41,49 +40,46 @@ if numel(varargin) == 1
 else
   fn = varargin{1};
   channel = varargin{2};
-
-  if ~iscell(channel)
-    channel = num2cell(channel);
-  end
-
-  if numel(varargin) == 3
-    options = varargin{3};
+  options = varargin{3};
+  if strcmpi(channel, 'both')
+      channel = {'pupil_r', 'pupil_l'};
   else
-    options = struct();
+      channel = {channel};
   end
-
   options = pspm_options(options, 'convert_area2diameter');
   if options.invalid
     return
   end
-
   mode = 'file';
-
 end
-
 if strcmpi(mode, 'vector')
-  varargout{2} = 2.*sqrt(area./pi);
-  sts = 1;
+    varargout{2} = 2.*sqrt(area./pi);
+    sts = 1;
 elseif strcmpi(mode, 'file')
-  diam = cell(numel(channel), 1);
-  for i = 1:numel(channel)
-    [~, ~, data] = pspm_load_data(fn, channel{i});
-    diam{i} = data{1};
-    diam{i}.data = 2.*sqrt(diam{i}.data./pi);
-
-    % replace metric values
-    diam{i}.header.units = ...
-      regexprep(data{1}.header.units, ...
-      '(square)?(centi|milli|deci|c|m|d)?(m(et(er|re))?)(s?\^?2?)', ...
-      '$2$3');
-    % if not metric, replace area with diameter
-    if strcmpi(diam{1}.header.units, 'area units')
-      diam{1}.header.units = 'diameter units';
+    % load the data once to avoid multiple i/o operations in case 'both' is
+    % specified
+    [sts, alldata.infos, alldata.data] = pspm_load_data(fn);
+    if sts < 1, return; end
+    diam = cell(numel(channel), 1);
+    for i = 1:numel(channel)
+        [sts, channeldata] = pspm_load_channel(alldata, channel{i}, 'pupil');
+        if sts < 1, return; end
+        % recursive call to avoid the formula being stated twice in the same function
+        [sts, diam{i}.data] = pspm_convert_area2diameter(channeldata.data);
+        if sts < 1, return; end
+        diam{i}.header = channeldata.header;
+        % replace metric values
+        diam{i}.header.units = ...
+            regexprep(channeldata{1}.header.units, ...
+            '(square)?(centi|milli|deci|c|m|d)?(m(et(er|re))?)(s?\^?2?)', ...
+            '$2$3');
+        % if not metric, replace area with diameter
+        if strcmpi(diam{i}.header.units, 'area units')
+            diam{i}.header.units = 'diameter units';
+        end
     end
-  end
-  [~, infos] = pspm_write_channel(fn, diam, options.channel_action);
-  varargout{2} = infos.channel;
-  sts = 1;
+    [sts, infos] = pspm_write_channel(fn, diam, options.channel_action);
+    varargout{2} = infos.channel;
 end
 varargout{1} = sts;
 return

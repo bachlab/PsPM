@@ -31,7 +31,7 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
       c{1}.noise = 1;
       pspm_testdata_gen(c, 10, fn);
       % invalid values for positive integer fields
-      invalid_values = {'a', 1.5, -1};
+      invalid_values = {'noise', 1.5, -1};
       pos_int_fields = {'resample','sndchannel', 'trigchannel', 'expectedSoundCount'};
       warning_IDs = {'ID:invalid_input', 'ID:invalid_input', 'ID:invalid_input'; ...
                      'ID:invalid_chantype', 'ID:invalid_input', 'ID:invalid_input'; ...
