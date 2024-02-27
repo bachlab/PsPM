@@ -3,8 +3,6 @@ function moduleNames = pspm_check_python_modules()
     %
     % This function retrieves and returns the names of Python modules that have been imported
     % into the current MATLAB session. 
-    % It checks the status of the Python environment in MATLAB
-    % and provides informative feedback to the user based on the Python setup status.
 
     % Initialize return variable
     moduleNames = {};
