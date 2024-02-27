@@ -371,16 +371,6 @@ for iSn = 1:nFile
   % convert regressor information to samples
   if ~isempty(multi)
     for n = 1:numel(multi(iSn).names)
-      % look for index
-      name_idx = find(strcmpi(names, multi(iSn).names(n)));
-      if numel(name_idx) > 1
-        warning(['Name was found multiple times, ', ...
-          'will take first occurence.']);
-        name_idx = name_idx(1);
-      elseif numel(name_idx) == 0
-        % append
-        name_idx = numel(names) + 1;
-      end
       % convert onsets to samples
       switch model.timeunits
         case 'samples'
@@ -401,27 +391,15 @@ for iSn = 1:nFile
           end
           newdurations = multi(iSn).durations{n};
       end
-      % get the first multiple condition definition --
-      if numel(names) < name_idx
-        names{name_idx} = multi(iSn).names{n};
-        onsets{name_idx} = [];
-        durations{name_idx} = [];
-        if isfield(multi, 'pmod') && (numel(multi(iSn).pmod) >= n)
-          for p = 1:numel(multi(iSn).pmod(n).param)
-            pmod(name_idx).param{p} = [];
-          end
-          pmod(name_idx).name = multi(iSn).pmod(n).name;
-        end
-      end
       % shift conditions for sessions not being the first
       if iSn > 1
         newonsets = newonsets + sum(tmp.snduration(1:(iSn - 1)));
       end
-      onsets{name_idx} = [onsets{name_idx}; newonsets(:)];
-      durations{name_idx} = [durations{name_idx}; newdurations(:)];
+      onsets{n} = [onsets{n}; newonsets(:)];
+      durations{n} = [durations{n}; newdurations(:)];
       if isfield(multi, 'pmod') && (numel(multi(iSn).pmod) >= n)
         for p = 1:numel(multi(iSn).pmod(n).param)
-          pmod(name_idx).param{p} = [pmod(name_idx).param{p}; ...
+          pmod(n).param{p} = [pmod(n).param{p}; ...
             multi(iSn).pmod(n).param{p}(:)];
         end
       end

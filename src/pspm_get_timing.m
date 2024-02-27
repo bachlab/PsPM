@@ -133,6 +133,7 @@ switch model
       end
 
       nFiles = numel(intiming);
+      allnames = {};
       for iFile = 1:nFiles
         % load regressor information from file if necessary --
         if ischar(intiming{iFile})
@@ -277,14 +278,27 @@ switch model
             end
           end
         end
-        outtiming(iFile).names     = in.names;
-        outtiming(iFile).onsets    = in.onsets;
-        outtiming(iFile).durations = in.durations;
+        % ensure same names exist for all sessions and re-sort if
+        % necesssary
+        for i_cond = 1:numel(in.names)
+            name_idx = find(strcmpi(allnames, in.names{i_cond}));
+            if numel(name_idx) > 1
+                warning(['Name was found multiple times, ', ...
+                    'check your onsets definition.']);
+                name_idx = name_idx(1);
+            elseif numel(name_idx) == 0
+                % append
+                name_idx = numel(allnames) + 1;
+                names = {allnames, in.names{i_cond}};
+            end
+        end
+        outtiming(iFile).names{name_idx}  = in.names{i_cond};
+        outtiming(iFile).onsets{name_idx}    = in.onsets{i_cond};
+        outtiming(iFile).durations{name_idx}  = in.durations{i_cond};
         if isfield(in, 'pmod')
-          outtiming(iFile).pmod  = in.pmodnew;
+          outtiming(iFile).pmod{name_idx}  = in.pmodnew{i_cond};
         end
       end
-
       % clear local variables
       clear iParam iParamNew iCond iFile iPmod
     else
