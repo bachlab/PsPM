@@ -289,14 +289,18 @@ switch model
             elseif numel(name_idx) == 0
                 % append
                 name_idx = numel(allnames) + 1;
-                names = {allnames, in.names{i_cond}};
+                if isempty(allnames)
+                    allnames = in.names(i_cond);
+                else
+                    allnames = {allnames, in.names{i_cond}};
+                end
             end
-        end
-        outtiming(iFile).names{name_idx}  = in.names{i_cond};
-        outtiming(iFile).onsets{name_idx}    = in.onsets{i_cond};
-        outtiming(iFile).durations{name_idx}  = in.durations{i_cond};
-        if isfield(in, 'pmod')
-          outtiming(iFile).pmod{name_idx}  = in.pmodnew{i_cond};
+            outtiming(iFile).names{name_idx}  = in.names{i_cond};
+            outtiming(iFile).onsets{name_idx}    = in.onsets{i_cond};
+            outtiming(iFile).durations{name_idx}  = in.durations{i_cond};
+            if isfield(in, 'pmod') && numel(in.pmodnew) >= i_cond
+                outtiming(iFile).pmod(name_idx)  = in.pmodnew(i_cond);
+            end
         end
       end
       % clear local variables

@@ -113,8 +113,8 @@ classdef pspm_get_timing_test < matlab.unittest.TestCase
       fn_mat = struct('markerinfo',markerinfo,'markervalues',markervalue,'names',{names});
       [sts, outtiming] = pspm_get_timing('onsets', fn_mat, 'markervalues');
       this.verifyTrue(sts==1);
-      this.verifyEqual(outtiming.onsets, onsets);
-      this.verifyEqual(outtiming.names, names);
+      this.verifyEqual(outtiming.onsets(:), onsets(:));
+      this.verifyEqual(outtiming.names(:), names(:));
       this.verifyTrue(isfield(outtiming, 'durations'));
     end
     function case_events(this)
