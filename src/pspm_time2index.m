@@ -15,12 +15,11 @@ function index = pspm_time2index(time, sr, varargin)
 %   Introduced in PsPM 5.1.2
 %   Written in 2021 by Teddy Chao (UCL)
 
-if ~isempty(varargin)
-  data_length = varargin{1};
-end
 index = round(time * sr);
 index(index == 0) = 1;
-if exist('data_length', 'var')
+
+if ~isempty(varargin)
+  data_length = varargin{1};
   flag = index > ones(size(index)) * data_length;
   if sum(sum(flag)) > 0
     index(flag==1) = data_length;

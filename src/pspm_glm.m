@@ -374,16 +374,16 @@ for iSn = 1:nFile
       % convert onsets to samples
       switch model.timeunits
         case 'samples'
-          newonsets    = round(multi(iSn).onsets{n} * newsr/sr(iSn));
+          newonsets    = pspm_time2index(multi(iSn).onsets{n}, newsr/sr(iSn), tmp.snduration(iSn));
           newdurations = round(multi(iSn).durations{n} * newsr/sr(iSn));
         case 'seconds'
-          newonsets    = round(multi(iSn).onsets{n} * newsr);
+          newonsets    = pspm_time2index(multi(iSn).onsets{n}, newsr, tmp.snduration(iSn));
           newdurations = round(multi(iSn).durations{n} * newsr);
         case 'markers'
           try
             % markers are timestamps in seconds
-            newonsets = round(events{iSn}(multi(iSn).onsets{n}) ...
-              * newsr);
+            newonsets = pspm_time2index(events{iSn}(multi(iSn).onsets{n}), ...
+              newsr, tmp.snduration(iSn));
           catch
             warning(['\nSome events in condition %01.0f were ', ...
               'not found in the data file %s'], n, ...
