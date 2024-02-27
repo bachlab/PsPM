@@ -1,14 +1,10 @@
 function artefact_rm = pspm_cfg_artefact_rm
-
-    % $Id$
-    % $Rev$
-
+    % Updated 26-Feb-2024 by Teddy
     % Initialise
     global settings
     if isempty(settings)
         pspm_init;
     end
-
     %% Global items
     chan_nr         = cfg_entry;
     chan_nr.name    = 'Channel Number';
@@ -16,14 +12,14 @@ function artefact_rm = pspm_cfg_artefact_rm
     chan_nr.strtype = 'i';
     chan_nr.num     = [1 Inf];
     chan_nr.help    = {''};
-
     %% Medianfilter
     nr_time_pt         = cfg_entry;
     nr_time_pt.name    = 'Number of Time Points';
     nr_time_pt.tag     = 'nr_time_pt';
     nr_time_pt.strtype = 'i';
     nr_time_pt.num     = [1 1];
-    nr_time_pt.help    = {'Number of time points over which the median is taken.'};
+    nr_time_pt.help    = {['Number of time points over which the ',...
+    'median is taken.']};
 
     median         = cfg_branch;
     median.name    = 'Median Filter';

@@ -10,10 +10,16 @@ channelnumber = job.chan_nr;
 switch filtertype
   case 'median'
     n = job.filtertype.(filtertype).nr_time_pt;
-    out = pspm_pp(filtertype, datafile, n, channelnumber, options);
+    out = pspm_pp(filtertype, datafile, channelnumber, n, options);
   case 'butter'
-    freq = job.filtertype.(filtertype).freq;
-    out = pspm_pp(filtertype, datafile, freq, channelnumber, options);
+    filt = struct();
+    filt.lpfreq    = job.filtertype.(filtertype).lqfreq;
+    filt.lporder   = job.filtertype.(filtertype).lporder;
+    filt.hpfreq    = job.filtertype.(filtertype).hqfreq;
+    filt.hporder   = job.filtertype.(filtertype).hporder;
+    filt.direction = job.filtertype.(filtertype).direction;
+    filt.down      = job.filtertype.(filtertype).down;
+    out = pspm_pp(filtertype, datafile, channelnumber, filt, options);
   case 'scr_pp'
     scr_job = job.filtertype.(filtertype);
     options = pspm_update_struct(options, scr_job, {'min',...
