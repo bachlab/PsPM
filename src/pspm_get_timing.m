@@ -292,7 +292,7 @@ switch model
                 if isempty(allnames)
                     allnames = in.names(i_cond);
                 else
-                    allnames = {allnames, in.names{i_cond}};
+                    allnames = [allnames, in.names(i_cond)];
                 end
             end
             outtiming(iFile).names{name_idx}  = in.names{i_cond};
