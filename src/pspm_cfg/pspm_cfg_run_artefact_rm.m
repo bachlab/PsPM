@@ -13,10 +13,10 @@ switch filtertype
     out = pspm_pp(filtertype, datafile, channelnumber, n, options);
   case 'butter'
     filt = struct();
-    filt.lpfreq    = job.filtertype.(filtertype).lqfreq;
-    filt.lporder   = job.filtertype.(filtertype).lporder;
-    filt.hpfreq    = job.filtertype.(filtertype).hqfreq;
-    filt.hporder   = job.filtertype.(filtertype).hporder;
+    filt.lpfreq    = job.filtertype.(filtertype).freqLP;
+    filt.lporder   = job.filtertype.(filtertype).orderLP;
+    filt.hpfreq    = job.filtertype.(filtertype).freqHP;
+    filt.hporder   = job.filtertype.(filtertype).orderHP;
     filt.direction = job.filtertype.(filtertype).direction;
     filt.down      = job.filtertype.(filtertype).down;
     out = pspm_pp(filtertype, datafile, channelnumber, filt, options);
