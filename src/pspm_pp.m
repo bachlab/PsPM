@@ -5,12 +5,16 @@ function newdatafile = pspm_pp(varargin)
 % ● Format
 %   pspm_pp('median', datafile, n, channelnumber, options)
 %   pspm_pp('butter', datafile, freq, channelnumber, options)
+%   pspm_pp('leaky', datafile, tau, channelnumber, options)
 % ● Arguments
 %   [Currently implemented]
 %   'median': medianfilter for SCR
 %          n: number of timepoints for median filter
 %   'butter': 1st order butterworth low pass filter for SCR
 %       freq: cut off frequency (min 20 Hz)
+%   'leaky': Leaky integrator filter
+%        tau: Time constant of the leaky integrator. Higher tau value results in 
+%             slower decay.
 %  channelnumber:
 %  ┌───options: [struct] optional
 %  └.overwrite: [logical] (0 or 1)
@@ -20,6 +24,7 @@ function newdatafile = pspm_pp(varargin)
 %   Introduced In PsPM 3.0
 %   Written in 2009-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2024 by Teddy
+%   Updated in 2024 to include leaky integrator by Abdul Wahab Madni
 
 %% Initialise
 global settings
@@ -34,7 +39,7 @@ elseif nargin < 2
   warning('ID:invalid_input', 'No datafile.'); return;
 end
 method = varargin{1};
-supported_methods = {'median', 'butter', 'simple_qa'};
+supported_methods = {'median', 'butter', 'simple_qa', 'leaky'};
 if ~any(strcmp(method, supported_methods))
   methods_str = sprintf('%s ', supported_methods{:});
   warning('ID:invalid_input', sprintf('Preprocessing method must be one of %s', methods_str)); return;
@@ -74,39 +79,53 @@ else
 end
 %% Do the job
 switch method
-  case 'median'
-    n = varargin{3};
-    % user output
-    fprintf('\n\xBB Preprocess: median filtering datafile %s, ', fn);
-    for k = 1:numel(channum)
-      curr_chan = channum(k);
-      data{curr_chan}.data = medfilt1(data{curr_chan}.data, n);
-    end
-    infos.pp = sprintf('median filter over %1.0f timepoints', n);
-  case 'butter'
-    freq = varargin{3};
-    if freq < 20, warning('ID:invalid_freq', 'Cut off frequency must be at least 20 Hz'); return; end
-    % user output
-    fprintf('\n\xBB Preprocess: butterworth filtering datafile %s, ', fn);
-    for k = 1:numel(channum)
-      curr_chan = channum(k);
-      filt.sr = data{curr_chan}.header.sr;
-      filt.lpfreq = freq;
-      filt.lporder = 1;
-      filt.hpfreq = 'none';
-      filt.hporder = 0;
-      filt.down = 'none';
-      filt.direction = 'bi';
-      [sts, data{curr_chan}.data, data{curr_chan}.header.sr] = pspm_prepdata(data{curr_chan}.data, filt);
-      if sts == -1
-        warning('ID:invalid_input', 'call of pspm_prepdata failed');
+    case 'median'
+        n = varargin{3};
+        % user output
+        fprintf('\n\xBB Preprocess: median filtering datafile %s, ', fn);
+        for k = 1:numel(channum)
+            curr_chan = channum(k);
+            data{curr_chan}.data = medfilt1(data{curr_chan}.data, n);
+        end
+        infos.pp = sprintf('median filter over %1.0f timepoints', n);
+    case 'butter'
+        freq = varargin{3};
+        if freq < 20, warning('ID:invalid_freq', 'Cut off frequency must be at least 20 Hz'); return; end
+        % user output
+        fprintf('\n\xBB Preprocess: butterworth filtering datafile %s, ', fn);
+        for k = 1:numel(channum)
+            curr_chan = channum(k);
+            filt.sr = data{curr_chan}.header.sr;
+            filt.lpfreq = freq;
+            filt.lporder = 1;
+            filt.hpfreq = 'none';
+            filt.hporder = 0;
+            filt.down = 'none';
+            filt.direction = 'bi';
+            [sts, data{curr_chan}.data, data{curr_chan}.header.sr] = pspm_prepdata(data{curr_chan}.data, filt);
+            if sts == -1
+                warning('ID:invalid_input', 'call of pspm_prepdata failed');
+                return;
+            end
+        end
+        infos.pp = sprintf('butterworth 1st order low pass filter at cutoff frequency %2.2f Hz', freq);
+    case 'leaky'
+        tau = varargin{3};  % Assuming the third argument is tau for the leaky integrator
+        % Validate tau
+        if tau <= 0
+            warning('ID:invalid_input', 'Leak constant (tau) must be greater than 0');
+            return;
+        end
+        fprintf('\n\xBB Preprocess: leaky integrator filtering datafile %s, ', fn);
+        for k = 1:numel(channum)
+            curr_chan = channum(k);
+            % Apply the leaky integrator filter to the data
+            data{curr_chan}.data = pspm_leaky_integrator(data{curr_chan}.data, tau);
+        end
+        infos.pp = sprintf('leaky integrator with constant %2.2f', tau);
+    otherwise
+        warning('ID:invalid_input', 'Unknown filter option ...');
         return;
-      end
-    end
-    infos.pp = sprintf('butterworth 1st order low pass filter at cutoff frequency %2.2f Hz', freq);
-  otherwise
-    warning('ID:invalid_input', 'Unknown filter option ...');
-    return;
 end
 [pth, fn, ext] = fileparts(fn);
 newdatafile = fullfile(pth, ['m', fn, ext]);
