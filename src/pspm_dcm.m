@@ -275,9 +275,14 @@ for iSn = 1:numel(model.datafile)
   nan_epochs = isnan(y{iSn});
 
   if ~isempty(nan_epochs)
-      d_nan_ep = transpose(diff(nan_epochs));
-      nan_ep_start = find(d_nan_ep == 1);
-      nan_ep_stop = find(d_nan_ep == -1);
+      if all(nan_epochs)
+          nan_ep_start = 1;
+          nan_ep_stop = numel(nan_epochs);
+      else
+          d_nan_ep = transpose(diff(nan_epochs));
+          nan_ep_start = find(d_nan_ep == 1);
+          nan_ep_stop = find(d_nan_ep == -1);
+      end
 
       if numel(nan_ep_start) > 0 || numel(nan_ep_stop) > 0
           % check for blunt ends and fix
@@ -295,8 +300,8 @@ for iSn = 1:numel(model.datafile)
           end
       end
 
-    % put missing epochs together
-    miss_epochs = [nan_ep_start(:), nan_ep_stop(:)];
+      % put missing epochs together
+      miss_epochs = [nan_ep_start(:), nan_ep_stop(:)];
   end
 
   % epoch should be ignored if duration > threshold
