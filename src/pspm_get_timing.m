@@ -180,57 +180,65 @@ switch model
 
         % check number of events and non-allowed values per condition:
         for iCond = 1:numel(in.names)
-          if ~((isvector(in.onsets{iCond}) && ...
-              isnumeric(in.onsets{iCond})) || ...
-              (isempty(in.onsets{iCond}) && ...
-              ~strcmp('', in.onsets{iCond})))
-            warning('ID:no_numeric_vector', ...
-              ['%sCondition `%s` - onsets{%i} must be a ', ...
-              'numeric vector or empty.'], errmsg, ...
-              in.names{iCond}, iCond); return;
-          end
+            if ~((isvector(in.onsets{iCond}) && ...
+                    isnumeric(in.onsets{iCond})) || ...
+                    (isempty(in.onsets{iCond}) && ...
+                    ~strcmp('', in.onsets{iCond})))
+                warning('ID:no_numeric_vector', ...
+                    ['%sCondition `%s` - onsets{%i} must be a ', ...
+                    'numeric vector or empty.'], errmsg, ...
+                    in.names{iCond}, iCond); return;
+            end
 
-          if numel(in.durations{iCond}) == 1
-            in.durations{iCond} = repmat(in.durations{iCond}, ...
-              numel(in.onsets{iCond}), 1);
-          elseif (numel(in.onsets{iCond}) ~= numel(in.durations{iCond}))
-            warning('ID:number_of_elements_dont_match',['%sCondition `%s` - Number of event onsets ', ...
-              '(%d) does not match the number of durations (%d).'],...
-              errmsg, in.names{iCond}, numel(in.onsets{iCond}),...
-              numel(in.durations{iCond}));
-            return;
-          end
-          if any(in.onsets{iCond}<0)
-            warning('ID:invalid_input',['%sCondition `%s` contains onset values ', ...
-              'smaller than zero'], errmsg, in.names{iCond});
-            return;
-          end
-          if any(strcmpi(timeunits, {'samples', 'markers'})) && ...
-              any(in.onsets{iCond} ~= ceil(in.onsets{iCond}))
-            warning('ID:invalid_input',['%sCondition `%s` contains non-integer ', ...
-              'onset values but is defined in %s'], ...
-              errmsg, in.names{iCond}, timeunits);
-            return;
-          end
-          if strcmpi(timeunits, 'markers') && any(in.durations{iCond} ~= 0)
-            warning('ID:invalid_input',['%sCondition `%s` contains non-zero ', ...
-              'durations - this is not allowed for marker time ', ...
-              'units. Please use ''samples'' or ', ...
-              '''seconds'' instead.'], errmsg, in.names{iCond});
-            return;
-          end
-          if any(in.durations{iCond} < 0)
-            warning('ID:invalid_input',['%sConditions `%s% contains ', ...
-              'negative durations.'], errmsg, in.names{iCond});
-            return;
-          end
+            if numel(in.durations{iCond}) == 1
+                in.durations{iCond} = repmat(in.durations{iCond}, ...
+                    numel(in.onsets{iCond}), 1);
+            elseif (numel(in.onsets{iCond}) ~= numel(in.durations{iCond}))
+                warning('ID:number_of_elements_dont_match',['%sCondition `%s` - Number of event onsets ', ...
+                    '(%d) does not match the number of durations (%d).'],...
+                    errmsg, in.names{iCond}, numel(in.onsets{iCond}),...
+                    numel(in.durations{iCond}));
+                return;
+            end
+            if any(in.onsets{iCond}<0)
+                warning('ID:invalid_input',['%sCondition `%s` contains onset values ', ...
+                    'smaller than zero'], errmsg, in.names{iCond});
+                return;
+            end
+            if any(strcmpi(timeunits, {'samples', 'markers'})) && ...
+                    any(in.onsets{iCond} ~= ceil(in.onsets{iCond}))
+                warning('ID:invalid_input',['%sCondition `%s` contains non-integer ', ...
+                    'onset values but is defined in %s'], ...
+                    errmsg, in.names{iCond}, timeunits);
+                return;
+            end
+            if strcmpi(timeunits, 'markers') && any(in.durations{iCond} ~= 0)
+                warning('ID:invalid_input',['%sCondition `%s` contains non-zero ', ...
+                    'durations - this is not allowed for marker time ', ...
+                    'units. Please use ''samples'' or ', ...
+                    '''seconds'' instead.'], errmsg, in.names{iCond});
+                return;
+            end
+            if any(in.durations{iCond} < 0)
+                warning('ID:invalid_input',['%sConditions `%s% contains ', ...
+                    'negative durations.'], errmsg, in.names{iCond});
+                return;
+            end
+            % collect all names from all sessions for later re-sorting
+            name_idx = find(strcmpi(allnames, in.names{iCond}));
+            if numel(name_idx) == 0
+                if isempty(allnames)
+                    allnames = in.names(iCond);
+                else
+                    allnames = [allnames, in.names(iCond)];
+                end
+            end
         end
         % check pmods:
         if isfield(in, 'pmod')
           % check consistency and add field
           if ~isstruct(in.pmod)
             warning('%sPmod must be a struct variable.', errmsg);
-
             return;
           elseif numel(in.pmod) > numel(in.names)
             warning(['%sNumber of parametric modulators (%d) ', ...
@@ -278,29 +286,33 @@ switch model
             end
           end
         end
-        % ensure same names exist for all sessions and re-sort if
-        % necesssary
-        for i_cond = 1:numel(in.names)
-            name_idx = find(strcmpi(allnames, in.names{i_cond}));
+        temptiming(iFile).names     = in.names;
+        temptiming(iFile).onsets    = in.onsets;
+        temptiming(iFile).durations = in.durations;
+        if isfield(in, 'pmod')
+          temptiming(iFile).pmod  = in.pmodnew;
+        end  
+      end
+      % ensure same names exist for all sessions and re-sort if
+      % necesssary
+      outtiming = struct('names', {}, 'onsets', {}, 'durations', {});
+      for iFile = 1:nFiles
+        for iCond = 1:numel(allnames)
+            name_idx = find(strcmpi(temptiming(iFile).names, allnames{iCond}));
             if numel(name_idx) > 1
-                warning(['Name was found multiple times, ', ...
-                    'check your onsets definition.']);
-                name_idx = name_idx(1);
+                warning('Names must be unique within each session.');
+                return;
+            elseif numel(name_idx) == 1
+                outtiming(iFile).onsets{iCond}    = temptiming(iFile).onsets{name_idx};
+                outtiming(iFile).durations{iCond}  = temptiming(iFile).durations{name_idx};
+            if isfield(temptiming, 'pmod') && numel(temptiming(iFile).pmod) >= name_idx
+                outtiming(iFile).pmod(iCond)  = temptiming(iFile).pmod(name_idx);
+            end
             elseif numel(name_idx) == 0
-                % append
-                name_idx = numel(allnames) + 1;
-                if isempty(allnames)
-                    allnames = in.names(i_cond);
-                else
-                    allnames = [allnames, in.names(i_cond)];
-                end
+                outtiming(iFile).onsets{iCond}    = [];
+                outtiming(iFile).durations{iCond}  = [];
             end
-            outtiming(iFile).names{name_idx}  = in.names{i_cond};
-            outtiming(iFile).onsets{name_idx}    = in.onsets{i_cond};
-            outtiming(iFile).durations{name_idx}  = in.durations{i_cond};
-            if isfield(in, 'pmod') && numel(in.pmodnew) >= i_cond
-                outtiming(iFile).pmod(name_idx)  = in.pmodnew(i_cond);
-            end
+            outtiming(iFile).names{iCond}  = allnames{iCond};
         end
       end
       % clear local variables
