@@ -31,19 +31,22 @@ function sts = pspm_check_python(pythonPath)
         end
     end
 
-    % Update the environment if a path is provided and it's either not set or different
-    if nargin > 0 && ~isempty(pythonPath) && (isempty(currentEnv.Executable) || ~strcmp(currentEnv.Executable, pythonPath))
-        try
-            newEnv = pyenv('Version', pythonPath);
-            fprintf('Python environment successfully updated to: %s (Version: %s)\n', newEnv.Executable, newEnv.Version);
-            sts = 1;
-        catch ME
-            fprintf('Failed to update Python environment. Error: %s\n', ME.message);
-            warning('Failed to create or update the Python environment.');
+    % Attempt to update the environment if a path is provided
+    if nargin > 0 && ~isempty(pythonPath)
+        if isempty(currentEnv.Executable) || ~strcmp(currentEnv.Executable, pythonPath)
+            try
+                newEnv = pyenv('Version', pythonPath);
+                fprintf('Python environment successfully updated to: %s (Version: %s)\n', newEnv.Executable, newEnv.Version);
+                sts = 1; 
+            catch ME
+                fprintf('Failed to update Python environment. Error: %s\n', ME.message);
+                warning('Failed to create or update the Python environment.');
+            end
+        else
+            % If the specified Python environment is already set as current.
+            fprintf('The specified Python environment is already set as current.\n');
+            sts = 1; 
         end
-    elseif nargin > 0 && ~isempty(pythonPath) && strcmp(currentEnv.Executable, pythonPath)
-        fprintf('The specified Python environment is already set as current.\n');
-        sts = 1;
     end
 
     return;
