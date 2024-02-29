@@ -6,20 +6,15 @@ function [sts, fn] = pspm_pp(varargin)
 % ● Format
 %   [sts, fn] = pspm_pp('median', fn, channel, n,    options) or
 %   [sts, fn] = pspm_pp('butter', fn, channel, filt, options)
-%   [sts, fn] = pspm_pp('leaky_integrator', fn, channel, tau, options)
 % ● Arguments
 %        method:  [string] Method of filtering. Currently implemented
-%                 methods are 'median','butter' and 'leaky'. (1) 'median': a median
+%                 methods are 'median' and 'butter'. (1) 'median': a median
 %                 filter will be applied. (2) 'butter': Butterworth band
-%                 pass filter potentially including downsampling. 
-%                 (3) 'leaky_integrator': Applies a leaky integrator filter
-%                 where tau is specified in seconds.
+%                 pass filter potentially including downsampling.
 %            fn:  [string] The datafile that saves data to process
 %       channel:  A channel definition accepted by pspm_load_channel
 %             n:  [numeric, only if method=='median']
 %                 number of timepoints for median filter
-%           tau:  [numeric, only if method=='leaky_integrator']
-%                 Time constant for the leaky integrator in seconds.
 %   ┌──────filt:  [struct, only if method=='butter']
 %   │             a struct with following fields
 %   ├───.lpfreq:  low pass filt frequency or 'none' (default)
@@ -37,8 +32,6 @@ function [sts, fn] = pspm_pp(varargin)
 %   Introduced in PsPM 3.0
 %   Written    in 2009-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Refactored in 2024      by Dominik R Bach (Uni Bonn)
-%   Updated to include 'leaky_integrator' method in 2024 by Abdul Wahab Madni
-
 
 %% 1 Initialise
 global settings
@@ -103,20 +96,6 @@ switch method
     [sts, data.data, data.header.sr] = pspm_prepdata(data.data, filt);
     if sts == -1, return; end
     msg = sprintf('butterworth filter');
-  case 'leaky_integrator'
-    tau_sec = varargin{4}; 
-    if ~isnumeric(tau_sec)
-      warning('ID:invalid_input', 'Tau must be numeric.'); return;
-    end
-    % Convert tau from seconds to samples
-    sampleRate = data.header.sr;  % Assuming the sample rate is stored here
-    tau_samples = tau_sec * sampleRate;
-    
-    fprintf('\n\xBB Preprocess: applying leaky integrator to datafile %s ... ', fn);
-    % Apply the leaky integrator function
-    data.data = pspm_leaky_integrator(data.data, tau_samples);
-    if isempty(data.data), return; end  % Check if the operation was successful
-    msg = sprintf('leaky integrator with tau %1.0f samples', tau_samples);
   otherwise
     warning('ID:invalid_input', 'Unknown filter option ...');
     return;
