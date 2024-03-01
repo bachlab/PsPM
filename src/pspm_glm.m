@@ -395,12 +395,23 @@ for iSn = 1:nFile
       if iSn > 1
         newonsets = newonsets + sum(tmp.snduration(1:(iSn - 1)));
       end
-      onsets{n} = [onsets{n}; newonsets(:)];
-      durations{n} = [durations{n}; newdurations(:)];
-      if isfield(multi, 'pmod') && (numel(multi(iSn).pmod) >= n)
-        for p = 1:numel(multi(iSn).pmod(n).param)
-          pmod(n).param{p} = [pmod(n).param{p}; ...
-            multi(iSn).pmod(n).param{p}(:)];
+      if iSn == 1
+          names{n} = multi(1).names{n};
+          onsets{n} = newonsets(:);
+          durations{n} = newdurations(:);
+          if isfield(multi, 'pmod') && (numel(multi(iSn).pmod) >= n)
+              for p = 1:numel(multi(iSn).pmod(n).param)
+                  pmod(n).param{p} = multi(iSn).pmod(n).param{p}(:);
+              end
+            pmod(n).name = multi(1).pmod(n).name;
+          end
+      else
+        onsets{n} = [onsets{n}; newonsets(:)];
+        durations{n} = [durations{n}; newdurations(:)];
+        if isfield(multi, 'pmod') && (numel(multi(iSn).pmod) >= n)
+              for p = 1:numel(multi(iSn).pmod(n).param)
+                  pmod(n).param{p} = [pmod(n).param{p}; multi(iSn).pmod(n).param{p}(:)];
+              end
         end
       end
     end
