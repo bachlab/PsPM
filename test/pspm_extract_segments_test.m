@@ -141,12 +141,12 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       nr_t = 9;
       [~,timing] = generate_segment_data_manual(this, fn,nr_t,0);
       % not enough input elements
-      this.verifyWarning(@() pspm_extract_segments('manual',fn,0), 'ID:invalid_input');
+      this.verifyWarning(@() pspm_extract_segments('file',fn,0), 'ID:invalid_input');
       % wrong input elements
-      this.verifyWarning(@() pspm_extract_segments('manual',struct('a',10),0,timing), 'ID:invalid_input');
-      this.verifyWarning(@() pspm_extract_segments('manual',[1,3],logical(32),timing), 'ID:invalid_input');
-      this.verifyWarning(@() pspm_extract_segments('manual',fn,'a',timing), 'ID:invalid_input');
-      this.verifyWarning(@() pspm_extract_segments('manual',fn,{'a'},timing), 'ID:invalid_input');
+      this.verifyWarning(@() pspm_extract_segments('file',struct('a',10),0,timing), 'ID:invalid_input');
+      this.verifyWarning(@() pspm_extract_segments('file',[1,3],logical(32),timing), 'ID:invalid_input');
+      this.verifyWarning(@() pspm_extract_segments('file',fn,'a',timing), 'ID:invalid_input');
+      this.verifyWarning(@() pspm_extract_segments('file',fn,{'a'},timing), 'ID:invalid_input');
       % test invalid auto input
       this.verifyWarning(@() pspm_extract_segments('auto',{1}), 'ID:invalid_input');
       this.verifyWarning(@() pspm_extract_segments('auto','some'), 'ID:invalid_input');
@@ -158,7 +158,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       % do the actual test with options length all other option field
       % are set to default
       [sts,out] = this.verifyWarningFree(@() ...
-        pspm_extract_segments('manual', fn,0, timing,struct('length',3.5)));
+        pspm_extract_segments('file', fn, 0, timing,struct('length',3.5)));
       this.verifyEqual(sts, 1);
       % check contains segments
       this.verifyTrue(isfield(out,'segments'));
