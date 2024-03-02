@@ -1,7 +1,8 @@
 function [sts, onsets, durations] = pspm_multi2index(timeunits, multi, sr, session_duration, varargin)
 % ● Description
-%   pspm_multi2index converts a multi structure from pspm_get_timing to a
-%   cell array of numerical indices.
+%   pspm_multi2index converts a multi onsets structure from pspm_get_timing to a
+%   cell array of numerical indices. This function is used by pspm_glm and
+%   pspm_extract_segments.
 % ● Format
 % [onsets, durations] = pspm_multi2index('samples', multi, sr_ratio, session_duration)
 % [onsets, durations] = pspm_multi2index('seconds', multi, sr, session_duration)
@@ -20,7 +21,7 @@ function [sts, onsets, durations] = pspm_multi2index(timeunits, multi, sr, sessi
 %   Introduced in PsPM 6.2
 %   Written in 2024 by Dominik Bach (Uni Bonn)
 
-sts = 0;
+sts = 0; onsets = {}; durations = {};
 if numel(sr) == 1
     sr = repmat(sr, numel(multi), 1);
 end
@@ -28,7 +29,7 @@ if numel(sr) ~= numel(multi) || numel(session_duration) ~= numel(multi)
     warning('ID:invalid_input', 'No event definition provided.'); return;
 end
 if ~isempty(multi)
-    for iSn = 1:multi
+    for iSn = 1:numel(multi)
         for n = 1:numel(multi(iSn).names)
             % convert onsets to samples
             switch timeunits
@@ -41,16 +42,13 @@ if ~isempty(multi)
                 case 'markers'
                     if nargin == 0
                         warning('ID:invalid_input', 'No event definition provided.'); return;
+                    else
+                        events = varargin{1};
                     end
-                    try
-                        % markers are timestamps in seconds
-                        newonsets = pspm_time2index(events{iSn}(multi(iSn).onsets{n}), ...
-                            sr, session_duration);
-                    catch
-                        warning(['\nSome events in condition %01.0f were ', ...
-                            'not found in the data file'], n); return;
-                    end
-                    newdurations = multi(iSn).durations{n}*sr(iSn);
+                    % markers are timestamps in seconds
+                    onsets{n}{iSn} = pspm_time2index(events{iSn}(multi(iSn).onsets{n}), ...
+                        sr, session_duration);
+                    durations{n}{iSn} = multi(iSn).durations{n}*sr(iSn);
             end
         end
     end

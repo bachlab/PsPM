@@ -184,28 +184,30 @@ fprintf('Computing GLM: %s ...\n', model.modelfile);
 fprintf('Getting data ...');
 nFile = numel(model.datafile);
 for iFile = 1:nFile
-  % 3.3 get and filter data
-  [sts, data] = pspm_load_channel(model.datafile{iFile}, model.channel, model.modality);
-  if sts == -1, return; end
-  y{iFile} = data.data(:);
-  sr(iFile) = data.header.sr;
-  fprintf('.');
-  if any(strcmp(model.timeunits, {'marker', 'markers','markervalues'}))
-    [sts, data] = pspm_load_channel(model.datafile{iFile}, options.marker_chan_num, 'marker');
-    if sts == -1
-      warning('ID:invalid_input', 'Could not load the specified markerchannel');
-      return
+    % 3.3 get and filter data
+    [sts, data] = pspm_load_channel(model.datafile{iFile}, model.channel, model.modality);
+    if sts == -1, return; end
+    y{iFile} = data.data(:);
+    sr(iFile) = data.header.sr;
+    fprintf('.');
+    if any(strcmp(model.timeunits, {'marker', 'markers','markervalues'}))
+        [sts, data] = pspm_load_channel(model.datafile{iFile}, options.marker_chan_num, 'marker');
+        if sts == -1
+            warning('ID:invalid_input', 'Could not load the specified markerchannel');
+            return
+        end
+        events{iFile} = data.data(:) * data.header.sr;
+        if strcmp(model.timeunits,'markervalues')
+            model.timing{iFile}.markerinfo = data.markerinfo;
+        end
+    else
+        events{iFile} = [];
     end
-    events{iFile} = data.data(:) * data.header.sr;
-    if strcmp(model.timeunits,'markervalues')
-      model.timing{iFile}.markerinfo = data.markerinfo;
-    end
-  end
 end
 if nFile > 1 && any(diff(sr) > 0)
-  fprintf('\nSample rate differs between sessions.\n')
+    fprintf('\nSample rate differs between sessions.\n')
 else
-  fprintf('\n');
+    fprintf('\n');
 end
 
 
@@ -370,55 +372,43 @@ for iSn = 1:nFile
   M = [M; ones(newsr * model.bf.shiftbf, 1); newmissing];
   % convert regressor information to samples
   if ~isempty(multi)
-    for n = 1:numel(multi(iSn).names)
-      % convert onsets to samples
-      switch model.timeunits
-        case 'samples'
-          newonsets    = pspm_time2index(multi(iSn).onsets{n}, newsr/sr(iSn), tmp.snduration(iSn));
-          newdurations = round(multi(iSn).durations{n} * newsr/sr(iSn));
-        case 'seconds'
-          newonsets    = pspm_time2index(multi(iSn).onsets{n}, newsr, tmp.snduration(iSn));
-          newdurations = round(multi(iSn).durations{n} * newsr);
-        case 'markers'
-          try
-            % markers are timestamps in seconds
-            newonsets = pspm_time2index(events{iSn}(multi(iSn).onsets{n}), ...
-              newsr, tmp.snduration(iSn));
-          catch
-            warning(['\nSome events in condition %01.0f were ', ...
-              'not found in the data file %s'], n, ...
-              model.datafile{iSn}); return;
-          end
-          newdurations = multi(iSn).durations{n};
-      end
-      % shift conditions for sessions not being the first
-      if iSn > 1
-        newonsets = newonsets + sum(tmp.snduration(1:(iSn - 1)));
-      end
-      if iSn == 1
-          names{n} = multi(1).names{n};
-          onsets{n} = newonsets(:);
-          durations{n} = newdurations(:);
-          if isfield(multi, 'pmod') && (numel(multi(iSn).pmod) >= n)
-              for p = 1:numel(multi(iSn).pmod(n).param)
-                  pmod(n).param{p} = multi(iSn).pmod(n).param{p}(:);
-              end
-            pmod(n).name = multi(1).pmod(n).name;
-          end
+      if strcmpi(model.timeunits, 'samples')
+          sn_sr = newsr/sr(iSn);
       else
-        onsets{n} = [onsets{n}; newonsets(:)];
-        durations{n} = [durations{n}; newdurations(:)];
-        if isfield(multi, 'pmod') && (numel(multi(iSn).pmod) >= n)
-              for p = 1:numel(multi(iSn).pmod(n).param)
-                  pmod(n).param{p} = [pmod(n).param{p}; multi(iSn).pmod(n).param{p}(:)];
-              end
-        end
+          sn_sr = sr(iSn);
       end
-    end
+      [msts, newonsets, newdurations] = pspm_multi2index(model.timeunits, ...
+          multi(iSn), sn_sr, tmp.snduration(iSn), events(iSn));
+      if msts < 1, return; end
+      % shift conditions for sessions not being the first
+      for n = 1:numel(multi(iSn).names)
+          if iSn > 1
+              newonsets{n}{1} = newonsets{n}{1} + sum(tmp.snduration(1:(iSn - 1)));
+          end
+          if iSn == 1
+              names{n} = multi(1).names{n};
+              onsets{n} = newonsets{n}{1}(:);
+              durations{n} = newdurations{n}{1}(:);
+              if isfield(multi, 'pmod') && (numel(multi(iSn).pmod) >= n)
+                  for p = 1:numel(multi(iSn).pmod(n).param)
+                      pmod(n).param{p} = multi(iSn).pmod(n).param{p}(:);
+                  end
+                  pmod(n).name = multi(1).pmod(n).name;
+              end
+          else
+              onsets{n} = [onsets{n}; newonsets{n}{1}(:)];
+              durations{n} = [durations{n}; newdurations{n}{1}(:)];
+              if isfield(multi, 'pmod') && (numel(multi(iSn).pmod) >= n)
+                  for p = 1:numel(multi(iSn).pmod(n).param)
+                      pmod(n).param{p} = [pmod(n).param{p}; multi(iSn).pmod(n).param{p}(:)];
+                  end
+              end
+          end
+      end
   else
-    names = {};
-    onsets = {};
-    durations = {};
+      names = {};
+      onsets = {};
+      durations = {};
   end
 end
 % 11.1 normalise if desired --
