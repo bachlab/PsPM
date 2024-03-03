@@ -58,6 +58,7 @@ function [sts, out] = pspm_extract_segments(method, data, varargin)
 % ● History
 %   Introduced in PsPM 4.3
 %   Written in 2008-2018 by Tobias Moser (University of Zurich)
+%   Refactored 2024 Dominik R Bach (Uni Bonn)
 
 %% Initialise
 global settings
@@ -75,7 +76,7 @@ elseif strcmpi(method, 'model')
     if ~ischar(data) 
         warning('ID:invalid_input', 'No model file specified.'); return
     else
-        data = pspm_load1(data);
+        data = pspm_load1(data, 'all');
     end
     if nargin > 2
         options = varargin{1};
@@ -140,7 +141,13 @@ switch method
             end
         end
 case 'model'
-% ------------->>>
+    if strcmpi(data.modeltype, 'glm')
+        data_raw = data.input.data;
+    elseif strcmpi(data.modeltype, 'dcm')
+        data_raw = data.input.scr;
+    else
+        warning('ID:invalid_input', 'Unknown model type.')
+    end
 end
 
 if options.norm
@@ -153,15 +160,23 @@ if options.norm
 end
 
 %% prepare timing
-if ismember(method, {'data', 'file'})
-     for i_sn = 1:numel(data_raw)
-         session_duration(i_sn) = numel(data_raw{i_sn});
-     end
-     [lsts, multi] = pspm_get_timing('onsets', timing, options.timeunits);
-     [msts, onsets] = pspm_multi2index(options.timeunits, multi, sr, session_duration, events);
-     if lsts < 1 || msts < 1, return; end
+for i_sn = 1:numel(data_raw)
+    session_duration(i_sn) = numel(data_raw{i_sn});
+end
+
+if strcmpi(method, 'model') && strcmpi(data.modeltype, 'glm')
+    timing = data.input.timing;
+end
+
+if strcmpi(method, 'model') && strcmpi(data.modeltype, 'dcm')
+    onsets = cellfun(@(x, y) pspm_time2index(x, sr , y), ...
+    input.model.trlstart, ...
+    num2cell(session_duration), ...
+    'UniformOutput', false);
 else
-% ------------->>>    
+    [lsts, multi] = pspm_get_timing('onsets', timing, options.timeunits);
+     [msts, onsets] = pspm_multi2index(options.timeunits, multi, sr, session_duration, events);
+     if lsts < 1 || msts < 1, return; end    
 end
 
 %% prepare missing
@@ -172,6 +187,8 @@ if ~isfield(options, 'missing')
     end
 end
 options.missing = cellfun(@(x, y) pspm_epochs2logical(x, y, sr), options.missing, num2cell(session_duration), 'un', false);
+
+% ---> add missing for models
 
 %% extract segments
 for i_cond = 1:numel(onsets)
