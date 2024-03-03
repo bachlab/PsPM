@@ -10,7 +10,7 @@ function [sts, segments, sessions] = pspm_extract_segments_core(data, onsets, se
 %                        segment onsets defined in terms of a numerical
 %                        index of arbitrary length
 % segment_length: [integer] an integer specificying the length of the
-%                  data segments
+%                  data segments (in samples)
 %        missing: [cell array] OPTIONAL a logical index of missing values
 %                        which will be set to NaN in the extracted segments.
 %                        A cell array of the same size as 'data', with
@@ -67,11 +67,13 @@ for i = 1:length(data)
         onset = currentOnsets(j);
         endIndex = onset + segment_length - 1;
 
-        % Check if the segment extends beyond the data
+        % Check if the segment extends beyond the data. int64 avoids
+        % imprecision problems with previous rounding operations (which can
+        % in fact result in non-integer values)
         if endIndex > length(currentData)
-            segment = [currentData(onset:end), NaN(1, endIndex - length(currentData))];
+            segment = [int64(currentData(onset:end)), NaN(1, endIndex - length(currentData))];
         else
-            segment = currentData(onset:endIndex);
+            segment = currentData(int64(onset:endIndex));
         end
 
         % Add to segments and sessions

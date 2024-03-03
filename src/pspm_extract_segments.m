@@ -68,8 +68,8 @@ sts = -1;
 out = struct();
 
 %% check input
-if ~ischar(method) || ~ismember(method, {'file', 'data', 'model'}) || ...
-        (~strcmpi(method, 'model') && nargin < 3)
+if nargin < 3 || ~ischar(method) || ~ismember(method, {'file', 'data', 'model'}) || ...
+        (~strcmpi(method, 'model') && nargin < 5)
     warning('ID:invalid_input', 'Don''t know what to do'); return 
 elseif strcmpi(method, 'model')
     if ~ischar(data) 
@@ -175,7 +175,7 @@ options.missing = cellfun(@(x, y) pspm_epochs2logical(x, y, sr), options.missing
 
 %% extract segments
 for i_cond = 1:numel(onsets)
-    [sts, segments{i_cond}.data, sessions] = pspm_extract_segments_core(data_raw, onsets{i_cond}, options.length, options.missing);
+    [sts, segments{i_cond}.data, sessions] = pspm_extract_segments_core(data_raw, onsets{i_cond}, int64(round(sr * options.length)), options.missing);
     if sts < 1, return; end
 end
 
@@ -631,16 +631,15 @@ end
 % end
 
 %% create statistics for each condition
-for c=1:n_cond
+for c=1:numel(onsets)
   m = segments{c}.data;
   segments{c}.name = multi(1).names{c};
   % create mean
-  segments{c}.mean = nanmean(m,2);
-
-  segments{c}.std = nanstd(m,0,2);
-  segments{c}.sem = segments{c}.std./sqrt(size(segments{c}.data, 2));
-  segments{c}.trial_nan_percent = 100.0 * sum(isnan(m))/size(m,1);
-  segments{c}.total_nan_percent = 100.0 * sum(sum(isnan(m)))/numel(m);
+  segments{c}.mean = nanmean(m, 1);
+  segments{c}.std = nanstd(m, [], 1);
+  segments{c}.sem = segments{c}.std./sqrt(size(segments{c}.data, 1));
+  segments{c}.trial_nan_percent = 100.0 * sum(isnan(m), 2)/size(m,2);
+  segments{c}.total_nan_percent = 100.0 * sum(sum(isnan(m), 2))/numel(m);
   %   segments{c}.total_nan_percent = mean(segments{c}.trial_nan_percent);
   segments{c}.t = linspace(sr^-1, numel(segments{c}.mean)/sr, numel(segments{c}.mean))';
   %% create plot per condition

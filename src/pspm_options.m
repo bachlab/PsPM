@@ -195,7 +195,7 @@ switch FunName
     options = autofill(options, 'target',                 'screen',   '*Char'           );
   case 'extract_segments'
     % 2.22 pspm_extract_segments --
-    options = autofill(options, 'length',                 10,         '>=', 0           );
+    options = autofill(options, 'length',                 10,         '>', 0            );
     options = autofill(options, 'norm',                   0,          1                 );
     options = autofill(options, 'outputfile',             '',         '*Char'           );
     options = autofill(options, 'overwrite',              0,          1                 );
