@@ -162,11 +162,11 @@ if action_combine
     warning('ID:invalid_input', 'options.channel and options.channel_combine data have different lengths');
     return;
   end
-  % 4.1.6 Check if one channel is dominated by zeros
-  if sum(isnan(data{1}.data))/length(data{1}.data) > options.nan_cutoff
+  % Check if one channel is dominated by zeros
+  if sum(isnan(data.data))/length(data.data) > options.nan_cutoff
     warning('ID:invalid_input', ['options.channel has more than ', num2str(options.nan_cutoff*100),'% missing values.']);
   end
-  if sum(isnan(data_combine{1}.data))/length(data_combine{1}.data) > options.nan_cutoff
+  if sum(isnan(data_combine.data))/length(data_combine.data) > options.nan_cutoff
     warning('ID:invalid_input', ['options.channel_combine has more than ', num2str(options.nan_cutoff*100),'% missing values.']);
   end
   old_channeltype = sprintf('%s and %s', ...
