@@ -274,7 +274,7 @@ for iSn = 1:numel(model.datafile)
   % the data already. This will update the previous miss_epochs definition.
   nan_epochs = isnan(y{iSn});
 
-  if ~isempty(nan_epochs)
+  if any(nan_epochs)
       if all(nan_epochs)
           nan_ep_start = 1;
           nan_ep_stop = numel(nan_epochs);
@@ -305,7 +305,11 @@ for iSn = 1:numel(model.datafile)
   end
 
   % epoch should be ignored if duration > threshold
-  ignore_epochs = diff(miss_epochs, 1, 2)/sr{iSn} > model.substhresh;
+  if exist('miss_epochs', 'var')
+    ignore_epochs = diff(miss_epochs, 1, 2)/sr{iSn} > model.substhresh;
+  else
+    ignore_epochs = [];
+  end
 
   if any(ignore_epochs)
     i_e = find(ignore_epochs);

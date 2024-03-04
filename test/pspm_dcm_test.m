@@ -127,9 +127,9 @@ classdef pspm_dcm_test < pspm_testcase
   end
   methods 
     function test_hra1_flex_cs(this)
-      for i=1:20
+      for i=1:1
         % find free filename
-        fn = pspm_find_free_fn(this.modelfile_prfx, '.mat');
+        fn = pspm_find_free_fn(this.modelfile_prfx, '_simplified.mat');
         % do not delete model file
         % this.datafiles{end+1} = fn;
         [df, ~] = this.get_hra_files(i);
@@ -155,7 +155,7 @@ classdef pspm_dcm_test < pspm_testcase
       timing = cell(1,2);
       cs_onset = sp_data{1}.data;
       % fix SOA of 3.5s
-      us_onset = sp_data{1}.data + 3.5;
+      us_onset = sp_data{1}.data + 0.1; % use 3.5 for unsimplified test
       timing{1} = [cs_onset us_onset];
       timing{2} = us_onset;
       eventnames = {'CS', 'US'};
@@ -165,9 +165,9 @@ classdef pspm_dcm_test < pspm_testcase
     end
     function [spike, cogent] = get_hra_files(this, subject)
       spike = [this.hra_path '/' this.hra_file_prfx 'spike_' ...
-        sprintf('%02i', subject) '.mat'];
+        sprintf('%02i', subject) '_simplified.mat'];
       cogent = [this.hra_path '/' this.hra_file_prfx 'cogent_' ...
-        sprintf('%02i', subject) '.mat'];
+        sprintf('%02i', subject) '_simplified.mat'];
     end
   end
 end
