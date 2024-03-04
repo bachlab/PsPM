@@ -60,6 +60,18 @@ classdef pspm_get_events_test < matlab.unittest.TestCase
       %if we invert the signal, number of markers denoted by high signals is one more!
       this.verifyTrue(length(rimport.data) == length(d) + 1);
       import.data = -1 * import.data;
+      %introduce noise spikes
+      import.marker = 'continuous';
+      import.sr = 10^3;
+      t = import.sr^-1:import.sr^-1:10;
+      d = [1 2.5 6 8];
+      import.data = pulstran(t,d,'rectpuls', 0.1);
+      d_noise = [1.2, 4];
+      import.data = import.data + pulstran(t,d_noise,'rectpuls', 0.01);
+      import.denoise = 0.02;
+      [sts, rimport] = pspm_get_events(import);
+      this.verifyEqual(sts, 1);
+      this.verifyTrue(length(rimport.data) == length(d));  
       % case ascending
       import.flank = 'ascending';
       [sts, rimport] = pspm_get_events(import);

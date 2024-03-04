@@ -16,17 +16,20 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 %   2. x ← A*(Dconv/Dref)*x
 %   3. Convert x from ref_unit to unit.
 % ● Format
-%   [sts, out] = pspm_convert_au2unit(fn, channel, unit, distance, multiplicator,
+%   [sts, channel_index] = pspm_convert_au2unit(fn, channel, unit, distance, multiplicator,
 %                reference_distance, reference_unit, options)
-%   [sts, out] = pspm_convert_au2unit(data, unit, distance, record_method,
+%   [sts, converted_data] = pspm_convert_au2unit(data, unit, distance, record_method,
 %                multiplicator, reference_distance, reference_unit, options)
 % ● Arguments
 %                 fn: filename which contains the channels to be converted
 %               data: a one-dimensional vector which contains the data to be
 %                     converted
-%               channel: channel id of the channel to be coverted.
-%                     Expected to be numeric. The channel should contain area
-%                     or diameter unit values.
+%               channel: Channels which should be converted from area to diameter.
+%                     This can be a channel number, any channel type including 
+%                     'pupil' (which will select a channel according to the 
+%                     precedence order specified in pspm_load_channel), or 'both',
+%                     which will work on 'pupil_r' and 'pupil_l'. 
+%                     Default is 'both'. 
 %               unit: To which unit the data should be converted. possible
 %                     values are mm, cm, dm, m, in, inches.
 %           distance: distance between camera and eyes in units as specified in
@@ -48,174 +51,169 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Tobias Moser (University of Zurich)
+%   Updated in 2024 by Dominik R Bach (University of Bonn)
 
 %% initialise
 global settings
 if isempty(settings)
-  pspm_init;
+    pspm_init;
 end
 sts = -1;
 out = struct();
 %% load alternating inputs
 if nargin < 1
-  warning('ID:invalid_input', 'No arguments given. Don''t know what to do.');
-  return;
+    warning('ID:invalid_input', 'No arguments given. Don''t know what to do.');
+    return;
 else
-  if ischar(varargin{1})
-    fn = varargin{1};
-    mode = 'file';
-    data  = -1;
-    if nargin < 2
-      warning('ID:invalid_input', ['Channel to be converted not ', ...
-        'given. Don''t know what to do.']);
-      return;
-    elseif nargin < 3
-      warning('ID:invalid_input','''unit'' is required.');
-      return;
-    elseif nargin < 4
-      warning('ID:invalid_input','''distance'' is required.');
-      return;
-    elseif nargin < 5
-      warning('ID:invalid_input', '''multiplicator'' is required.');
-      return;
-    elseif nargin < 6
-      warning('ID:invalid_input', '''reference_distance'' is required.');
-      return;
-    elseif nargin < 7
-      warning('ID:invalid_input', '''reference_unit'' is required.');
-      return;
-    else
-      unit = varargin{3};
-      distance = varargin{4};
-      channel = varargin{2};
-      multiplicator = varargin{5};
-      reference_distance = varargin{6};
-      reference_unit = varargin{7};
-      record_method = '';
-      opt_idx = 9;
+    if ischar(varargin{1})
+        fn = varargin{1};
+        mode = 'file';
+        data  = -1;
+        if nargin < 2
+            warning('ID:invalid_input', ['Channel to be converted not ', ...
+                'given. Don''t know what to do.']);
+            return;
+        elseif nargin < 3
+            warning('ID:invalid_input','''unit'' is required.');
+            return;
+        elseif nargin < 4
+            warning('ID:invalid_input','''distance'' is required.');
+            return;
+        elseif nargin < 5
+            warning('ID:invalid_input', '''multiplicator'' is required.');
+            return;
+        elseif nargin < 6
+            warning('ID:invalid_input', '''reference_distance'' is required.');
+            return;
+        elseif nargin < 7
+            warning('ID:invalid_input', '''reference_unit'' is required.');
+            return;
+        else
+            unit = varargin{3};
+            distance = varargin{4};
+            channel = varargin{2};
+            if strcmpi(channel, 'both')
+                channel = {'pupil_r', 'pupil_l'};
+            else
+                channel = {channel};
+            end
+            multiplicator = varargin{5};
+            reference_distance = varargin{6};
+            reference_unit = varargin{7};
+            record_method = '';
+            opt_idx = 9;
+        end
+    elseif isnumeric(varargin{1})
+        mode = 'data';
+        data = varargin{1};
+        if nargin < 2
+            warning('ID:invalid_input','''unit'' is required.');
+            return;
+        elseif nargin < 3
+            warning('ID:invalid_input','''distance'' is required.');
+            return;
+        elseif nargin < 4
+            warning('ID:invalid_input', '''record_method'' is required.');
+            return;
+        elseif nargin < 5
+            warning('ID:invalid_input', '''multiplicator'' is required.');
+            return;
+        elseif nargin < 6
+            warning('ID:invalid_input', '''reference_distance'' is required.');
+            return;
+        elseif nargin < 7
+            warning('ID:invalid_input', '''reference_unit'' is required.');
+            return;
+        else
+            unit = varargin{2};
+            distance = varargin{3};
+            fn = '';
+            channel = -1;
+            record_method = varargin{4};
+            multiplicator = varargin{5};
+            reference_distance = varargin{6};
+            reference_unit = varargin{7};
+            opt_idx = 9;
+        end
     end
-  elseif isnumeric(varargin{1})
-    mode = 'data';
-    data = varargin{1};
-    if nargin < 2
-      warning('ID:invalid_input','''unit'' is required.');
-      return;
-    elseif nargin < 3
-      warning('ID:invalid_input','''distance'' is required.');
-      return;
-    elseif nargin < 4
-      warning('ID:invalid_input', '''record_method'' is required.');
-      return;
-    elseif nargin < 5
-      warning('ID:invalid_input', '''multiplicator'' is required.');
-      return;
-    elseif nargin < 6
-      warning('ID:invalid_input', '''reference_distance'' is required.');
-      return;
-    elseif nargin < 7
-      warning('ID:invalid_input', '''reference_unit'' is required.');
-      return;
-    else
-      unit = varargin{2};
-      distance = varargin{3};
-      fn = '';
-      channel = -1;
-      record_method = varargin{4};
-      multiplicator = varargin{5};
-      reference_distance = varargin{6};
-      reference_unit = varargin{7};
-      opt_idx = 9;
+    if nargin >= opt_idx
+        options = varargin{opt_idx};
     end
-  end
-  if nargin >= opt_idx
-    options = varargin{opt_idx};
-  end
 end
 %% set default values
 if ~exist('options', 'var')
-  options = struct();
+    options = struct();
 elseif ~isstruct(options)
-  warning('ID:invalid_input', 'options is not a struct.'); return;
+    warning('ID:invalid_input', 'options is not a struct.'); return;
 end
 if ~(strcmpi(record_method, 'area') || strcmpi(record_method, 'diameter'))
-  warning('ID:invalid_input', 'record_method must be ''area'' or ''diameter''');
-  return;
+    warning('ID:invalid_input', 'record_method must be ''area'' or ''diameter''');
+    return;
 end
 if ~isnumeric(distance)
-  warning('ID:invalid_input', 'distance must be a numeric value');
-  return;
+    warning('ID:invalid_input', 'distance must be a numeric value');
+    return;
 end
 if ~isnumeric(multiplicator)
-  warning('ID:invalid_input', 'multiplicator must be a numeric value');
-  return;
+    warning('ID:invalid_input', 'multiplicator must be a numeric value');
+    return;
 end
 if ~isnumeric(reference_distance)
-  warning('ID:invalid_input', 'reference_distance must be a numeric value');
-  return;
+    warning('ID:invalid_input', 'reference_distance must be a numeric value');
+    return;
 end
 %% check if everything is needed for conversion
 if strcmpi(mode, 'data') && strcmpi(record_method, '') && ...
-    (~isstruct(options) || ~isfield(options, 'multiplicator'))
-  warning('ID:invalid_input', ['If only a numeric data vector ', ...
-    'is provided, either ''record_method'' or ', ...
-    'options.multiplicator have to be specified.']);
-  return;
+        (~isstruct(options) || ~isfield(options, 'multiplicator'))
+    warning('ID:invalid_input', ['If only a numeric data vector ', ...
+        'is provided, either ''record_method'' or ', ...
+        'options.multiplicator have to be specified.']);
+    return;
 end
 options = pspm_options(options, 'convert_au2unit');
 if options.invalid
-  return
+    return
 end
 %% check values
-if ~ischar(fn)
-  warning('ID:invalid_input', 'fn is not a char.');
-  return;
-elseif ~isnumeric(data)
-  warning('ID:invalid_input', 'data is not numeric.');
-  return;
+if ~isnumeric(data)
+    warning('ID:invalid_input', 'data is not numeric.');
+    return;
 elseif ~isnumeric(distance)
-  warning('ID:invalid_input', 'distance is not numeric.');
-  return;
-elseif ~isnumeric(channel) && ~ischar(channel)
-  warning('ID:invalid_input', 'channel must be numeric or a string.');
-  return;
-elseif ~any(strcmpi(options.channel_action, {'add', 'replace'}))
-  warning('ID:invalid_input', ['options.channel_action must be either ', ...
-    '''add'' or ''replace''.']);
-  return;
+    warning('ID:invalid_input', 'distance is not numeric.');
+    return;
 end
-%% try to load data
+
+%% main part
 switch mode
-  case 'file'
-    [f_sts, infos, data] = pspm_load_data(fn, channel);
-    if f_sts ~= 1
-      warning('ID:invalid_input', 'Error while load data.');
-      return;
-    end
-    convert_data = data{1}.data;
-  case 'data'
-    convert_data = data;
-end
-if strcmpi(record_method, 'area')
-  convert_data = sqrt(convert_data);
-end
-[~, distance] = pspm_convert_unit(distance, unit, reference_unit);
-convert_data = multiplicator * (distance / reference_distance) * convert_data;
-%% convert data from reference_unit to unit
-[~, convert_data] = pspm_convert_unit(convert_data, reference_unit, unit);
-%% create output
-switch mode
-  case 'file'
-    data{1}.data = convert_data;
-    data{1}.header.units = unit;
-    [f_sts, f_info] = pspm_write_channel(fn, data{1}, options.channel_action);
-    if ~f_sts
-      return
-    else
-      out.channel = f_info.channel;
-      out.fn = fn;
-    end
-  case 'data'
-    out = convert_data;
+    % try to load data
+    case 'file'
+        [f_sts, alldata.infos, alldata.data] = pspm_load_data(fn);
+        if f_sts < 1, return; end
+        convert_data = {};
+        for i = 1:numel(channel)
+            [sts, channeldata] = pspm_load_channel(alldata, channel{i}, 'pupil');
+            if sts < 1, return; end
+            % recursive call to avoid the formula being stated twice in the same function
+            [sts, convert_data.data{i}] = pspm_convert_au2unit(channeldata.data, unit, distance, record_method, ...
+                multiplicator, reference_distance, reference_unit, options);
+            if sts < 1, return; end
+            convert_data{i}.header = channeldata.header;
+            convert_data{i}.header.units = unit;
+        end
+        [f_sts, f_info] = pspm_write_channel(fn, convert_data, options.channel_action);
+        if f_sts < 1, return; end
+        out = f_info.channel;
+     % convert data
+    case 'data'
+        convert_data = data;
+        if strcmpi(record_method, 'area')
+            convert_data = sqrt(convert_data);
+        end
+        [~, distance] = pspm_convert_unit(distance, unit, reference_unit);
+        convert_data = multiplicator * (distance / reference_distance) * convert_data;
+        %% convert data from reference_unit to unit
+        [~, convert_data] = pspm_convert_unit(convert_data, reference_unit, unit);
+        out = convert_data;
 end
 sts = 1;
 return
