@@ -6,7 +6,7 @@ classdef pspm_import_test <  matlab.unittest.TestCase
   methods (Test)
     function invalid_inputargs(this)
       datafile = 'string';
-      datatype = 'spike';
+      datatype = 'smr';
       this.verifyWarning(@()pspm_import(datafile, datatype), ...
       'ID:invalid_input', 'invalid_input test 1'); %no import variable
       import = 'foo';
@@ -17,7 +17,7 @@ classdef pspm_import_test <  matlab.unittest.TestCase
       datatype = 'foo';
       this.verifyWarning(@()pspm_import(datafile, datatype, import), ...
       'ID:invalid_chantype', 'invalid_input test 3'); %invalid chantype
-      datatype = 'spike';
+      datatype = 'smr';
       datafile = 5;
       this.verifyWarning(@()pspm_import(datafile, datatype, import), ...
       'ID:invalid_input', 'invalid_input test 4'); %no char filname
