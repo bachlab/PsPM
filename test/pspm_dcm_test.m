@@ -121,6 +121,9 @@ classdef pspm_dcm_test < pspm_testcase
         end
       end
     end
+    function valid_input(this)
+      test_hra1_flex_cs(this);
+    end
   end
   methods 
     function test_hra1_flex_cs(this)
