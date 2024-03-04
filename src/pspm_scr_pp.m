@@ -38,13 +38,25 @@ function [sts, out] = pspm_scr_pp(datafile, options, channel)
 %   │             of artefact epochs will be removed. Default: 0.5 s
 %   ├.clipping_step_size:
 %   │             A numerical value specifying the step size in moving average
-%   │             algorithm for detecting clipping. Default: 2
+%   │             algorithm for detecting clipping. Default: 10
+%   ├.clipping_window_size:
+%   │             A numerical value specifying the window size in moving average
+%   │             algorithm for detecting clipping. Default: 100
 %   ├.clipping_threshold:
 %   │             A float between 0 and 1 specifying the proportion of local
 %   │             maximum in a step. Default: 0.1
-%   ├.clipping_n_window:
-%   │             A numerical value specifying the number of windows in moving average
-%   │             algorithm for detecting clipping. Default: 10000
+%   ├.baseline_jump:
+%   │             A numerical value to determine how many times of data
+%   │             jumpping will be considered for detecting baseline
+%   │             alteration. For example, when .baseline is set to be 2, 
+%   │             if the maximum value of the window is more than 2 times
+%   │             than the 5% percentile of the values in the window, such
+%   │             periods will be considered as baseline alteration.
+%   │             Default: 1.5          
+%   ├.include_baseline:
+%   │             A bool value to determine if detected baseline alteration
+%   │             will be included in the calculated clippings. 
+%   │             Default: 0 (not to include baseline alteration in clippings)
 %   ├.change_data:
 %   │             A numerical value to choose whether to change the data or not
 %   │             Default: 1 (true)
@@ -53,7 +65,7 @@ function [sts, out] = pspm_scr_pp(datafile, options, channel)
 %   │             Defines whether the new channel should be added, the previous
 %   │             outputs of this function should be replaced, or new data
 %   │             should be withdrawn. Default: 'add'.
-%   └──.channel:  Number of SCR channel. Default: first SCR channel
+%   └──.channel:  Number of SCR channel. Default: last SCR channel
 % ● Outputs
 %           sts:  Status indicating whether the program is running as expected.
 %           out:  The path to the  output of the final processed data.
@@ -74,10 +86,9 @@ function [sts, out] = pspm_scr_pp(datafile, options, channel)
 % ● History
 %   Introduced In PsPM 5.1
 %   Written in 2009-2017 by Tobias Moser (University of Zurich)
-%   Updated in 2020 by Samuel Maxwell (UCL)
-%                      Dominik R Bach (UCL)
-%              2021 by Teddy Chao (UCL)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Updated in 2020      by Samuel Maxwell (UCL)
+%                           Dominik R Bach (UCL)
+%              2021-2024 by Teddy
 
 %% Initialise
 global settings
@@ -114,17 +125,12 @@ else
 end
 for d = 1:numel(data_source)
   % out{d} = [];
-  [sts_loading, ~, indatas, ~] = pspm_load_data(data_source{d}, channel); % check and get datafile
+  [sts_loading, indatas] = pspm_load_channel(data_source{d}, channel, 'scr'); % check and get datafile
   if sts_loading == -1
-    warning('ID:invalid_input', 'Could not load data');
     return;
   end
-  indata = indatas{1,1}.data;
-  if ~isfield(indatas{1,1}.header, 'sr')
-    warning('ID:invalid_input', 'Input data header must contain the field sample rate (sr).');
-    return;
-  end
-  sr = indatas{1,1}.header.sr; % return sampling frequency from the input data
+  indata = indatas.data;
+  sr = indatas.header.sr; % return sampling frequency from the input data
   if ~any(size(indata) > 1)
     warning('ID:invalid_input', 'Argument ''data'' should contain > 1 data points.');
     return;
@@ -142,8 +148,11 @@ for d = 1:numel(data_source)
       end
     end
   end
-  filt_clipping = detect_clipping(indata, options.clipping_step_size, ...
-    options.clipping_n_window, options.clipping_threshold);
+  [filt_clipping, filt_baseline] = detect_clipping_baseline(indata, options.clipping_step_size, ...
+    options.clipping_window_size, options.baseline_jump, options.clipping_threshold);
+  if options.include_baseline
+    filt_clipping = filt_clipping | filt_baseline;
+  end
   % combine filters
   filt = filt_range & filt_slope;
   filt = filt & (1-filt_clipping);
@@ -185,18 +194,19 @@ for d = 1:numel(data_source)
     epochs = [];
   end
   %% Save data
-  if isfield(options, 'missing_epochs_filename')
+  if ~isempty(options.missing_epochs_filename)
     save(options.missing_epochs_filename, 'epochs');
     % Write epochs to mat if missing_epochs_filename option is present
-  end
-  % If not save epochs, save the changed data to the original data as
-  % a new channel or replace the old data
-  if ~strcmp(options.channel_action, 'withdraw')
-    data_to_write = indatas{1,1};
-    data_to_write.data = data_changed;
-    [sts_write, ~] = pspm_write_channel(out{d}, data_to_write, options.channel_action);
-    if sts_write == -1
-      warning('Epochs were not written to the original file successfully.');
+  else
+    % If not save epochs, save the changed data to the original data as
+    % a new channel or replace the old data
+    if ~strcmp(options.channel_action, 'withdraw')
+      data_to_write = indatas;
+      data_to_write.data = data_changed;
+      [sts_write, ~] = pspm_write_channel(out{d}, data_to_write, options.channel_action);
+      if sts_write == -1
+        warning('Epochs were not written to the original file successfully.');
+      end
     end
   end
 end
@@ -220,17 +230,34 @@ elseif isempty(epoch_on) && ~isempty(epoch_off)
 end
 epochs = [ epoch_on, epoch_off ];
 
-function index_clipping = detect_clipping(data, step_size, n_window, threshold)
+function [index_clipping, index_baseline] = detect_clipping_baseline(data, step_size, window_size, jump, threshold)
 l_data = length(data);
-window_size = n_window * step_size;
-index_window_starter = 1:step_size:(l_data-mod((l_data-window_size),step_size)-window_size-step_size+1);
+n_window = floor((l_data-window_size) / step_size);
+index_window_starter = 1:step_size:(step_size*n_window+1);
 index_clipping = zeros(l_data,1);
+index_baseline = zeros(l_data,1);
+index_baseline_starter = [];
+index_baseline_end = [];
 for window_starter = index_window_starter
-  data_oi_front = data((window_starter+1):(window_starter+window_size));
-  data_oi_front_max = max(data_oi_front);
-  if sum(data_oi_front==data_oi_front_max)/length(data_oi_front) > threshold
-    index_clip_pred = 1:length(data_oi_front);
-    index_clip_pred = window_starter + [0,index_clip_pred(data_oi_front==data_oi_front_max)];
-    index_clipping(index_clip_pred) = 1;
+  data_windowed = data(window_starter:(window_starter+window_size)-1);
+  data_windowed_max = max(data_windowed);
+  index_pred = (1:length(data_windowed))+window_starter-1;
+  if sum(data_windowed==data_windowed_max)/length(data_windowed) > threshold % detect clipping
+    index_clipping(index_pred) = 1;
   end
+  if prctile(data_windowed, 1)>0 && (data_windowed_max / prctile(data_windowed, 1))>jump % detect baseline
+    if max(diff(data_windowed))>jump*prctile(data_windowed, 1) && ...
+        (min(diff(data_windowed))<jump*prctile(data_windowed, 1)*(-1))
+      target = find(diff(data_windowed)==max(diff(data_windowed)));
+      target = target(1);
+      index_baseline_starter(end+1) = index_pred(target+1);
+      target = find(diff(data_windowed)==min(diff(data_windowed)));
+      target = target(1);
+      index_baseline_end(end+1) = index_pred(target);
+    end
+  end
+end
+if ~isempty(index_baseline_starter)
+  C=cellfun(@(x,y)x:y,num2cell(index_baseline_starter),num2cell(index_baseline_end),'uni',false);
+  index_baseline([C{:}])=1;
 end

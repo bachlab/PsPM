@@ -6,9 +6,6 @@ function [pp_convert] = pspm_cfg_data_convert
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
 
-% $Id: pspm_cfg_data_convert.m 635 2019-03-14 10:14:50Z lciernik $
-% $Rev: 635 $
-
 % Initialise
 global settings
 if isempty(settings), pspm_init; end

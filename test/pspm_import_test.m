@@ -45,13 +45,12 @@ classdef pspm_import_test <  matlab.unittest.TestCase
       'ID:nonexistent_file', 'invalid_import_struct test 4');
     end
     function one_datafile(this)
-      tc{1} = pspm_get_spike_test;
+      tc{1} = pspm_get_smr_test;
       tc{2} = pspm_get_labchartmat_in_test;
       tc{1}.setup_path;
       for k = 1:length(tc)
         tc{k}.define_testcases;
         options = struct();
-        options.overwrite = 1;
         outfile = pspm_import(tc{k}.testcases{1}.pth, tc{k}.datatype, tc{k}.testcases{1}.import, options);
         if ~(isprop(tc{k}, 'blocks') && tc{k}.blocks)
           this.verifyTrue(pspm_load_data(outfile{1},'none') == 1);
@@ -65,7 +64,7 @@ classdef pspm_import_test <  matlab.unittest.TestCase
       end
     end
     function multiple_datafiles(this)
-      tc = pspm_get_spike_test;
+      tc = pspm_get_smr_test;
       tc.setup_path;
       tc.define_testcases;
       % test import of multiple datafiles
@@ -74,7 +73,6 @@ classdef pspm_import_test <  matlab.unittest.TestCase
       datafile{2} = [pathstr,name,'_copy',ext];
       copyfile(datafile{1},datafile{2});
       options = struct();
-      options.overwrite = 1;
       outfile = pspm_import(datafile, tc.datatype, tc.testcases{1}.import, options);
       this.verifyTrue(iscell(outfile) && numel(outfile) == 2, 'outfile is not a 2-element cell array');
       this.verifyTrue(pspm_load_data(outfile{1},'none') == 1);

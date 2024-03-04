@@ -96,7 +96,7 @@ function split_sessions = pspm_cfg_split_sessions
     overwrite.val     = {false};
     overwrite.labels  = {'No', 'Yes'};
     overwrite.values  = {false, true};
-    overwrite.help    = {'Overwrite existing file?'};
+    overwrite.help    = {'Overwrite if a file with the same name has existed?'};
 
 
     %% Executable branch
@@ -130,7 +130,7 @@ function split_sessions = pspm_cfg_split_sessions
         else
             markerchannel = 0;
         end
-        options = struct;
+        options = struct();
         options.overwrite = job.overwrite;
         if isfield(job.missing_epochs_file,'name')
             options.missing = job.missing_epochs_file.name{1,1};

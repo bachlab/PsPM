@@ -19,18 +19,19 @@ function glm = pspm_glm(model, options)
 %   │             is set to be 'markervalues')
 %   │             OR a cell array of struct
 %   ├.timeunits:  one of 'seconds', 'samples', 'markers', 'markervalues'
-%   ├───.window:  a scalar in seconds that specifies over which time
-%   │             window (starting with the events specified in
-%   │             model.timing) the model should be evaluated. Is only
-%   │             required if model.latency equals 'free'. Is ignored
-%   │             otherwise.
+%   ├───.window:  only required if model.latency equals 'free' and ignored
+%   │             otherwise. A scalar or 2-element vector in seconds that 
+%   │             specifies over which time window (relative to the event
+%   │             onsets specified in model.timing) the model should be 
+%   │             evaluated. 
 %   │ ▶︎ optional
 %   ├.modelspec:  'scr' (default); specify the model to be used.
 %   │             See pspm_init, defaults.glm() which modelspecs are possible
 %   │             with glm.
-%   ├─.modality:  specify the modality to be processed.
+%   ├─.modality:  specify the data modality to be processed.
 %   │             When model.modality is set to be sps, the model.channel
-%   │             should be set among sps_l, sps_r, or defaultly sps.
+%   │             should be set among sps_l, sps_r, or defaultly sps. By
+%   │             default, this is determined automatically from "modelspec"
 %   ├───────.bf:  basis function/basis set; modality specific default
 %   │             with subfields .fhandle (function handle or string) and
 %   │             .args (arguments, first argument sampling interval will
@@ -154,116 +155,50 @@ sts = -1;
 glm = struct([]); % output model structure
 tmp = struct([]); % temporary model structure
 
-%% 2 Check input arguments & set defaults
+%% 2 Check input 
 % 2.1 check missing input --
 if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); return
 elseif nargin < 2; options = struct(); end
-fprintf('Computing GLM: %s ...\n', model.modelfile);
-if ~isfield(model, 'datafile')
-  warning('ID:invalid_input', 'No input data file specified.'); return;
-elseif ~isfield(model, 'modelfile')
-  warning('ID:invalid_input', 'No output model file specified.'); return;
-elseif ~isfield(model, 'timeunits')
-  warning('ID:invalid_input', 'No timeunits specified.'); return;
+
+% 2.2 check model
+model = pspm_check_model(model, 'glm');
+if model.invalid
+    return
 end
-% 2.2 check existing --
-% whether field timing doesnt exist, field is emtpy or field is cell with empty entries
-if ~isfield(model, 'timing') || isempty(model.timing) || ...
-    iscell(model.timing) && (sum(cellfun(@(f) isempty(f), model.timing)) == numel(model.timing))
-  % model.timing is not set
-  % test the same way if nuisance is not set
-  if ~isfield(model, 'nuisance') || isempty(model.nuisance) || ...
-      iscell(model.nuisance) && (sum(cellfun(@(f) isempty(f), model.nuisance)) == numel(model.nuisance))
-    % nuisance is not set
-    warning('ID:invalid_input', 'Event onsets and nuisance file are not specified. At least one of the two must be specified.'); return;
-  end
-end
-% 2.3 set default values --
-if ~isfield(model, 'latency')
-  model.latency = 'fixed';
-end
-% 2.4 check faulty input --
-if ~ischar(model.datafile) && ~iscell(model.datafile)
-  warning('ID:invalid_input', 'Input data must be a cell or string.'); return;
-elseif ~ischar(model.modelfile)
-  warning('ID:invalid_input', 'Output model must be a string.'); return;
-elseif ~ischar(model.timing) && ~iscell(model.timing) && ~isstruct(model.timing)
-  warning('ID:invalid_input', 'Event onsets must be a string, cell, or struct.'); return;
-elseif ~ischar(model.timeunits) || ~ismember(model.timeunits, {'seconds', 'markers', 'samples','markervalues'})
-  warning('ID:invalid_input', 'Timeunits (%s) not recognised; only ''seconds'', ''markers'' and ''samples'' are supported', model.timeunits); return;
-elseif ~ismember(model.latency, {'free', 'fixed'})
-  warning('ID:invalid_input', 'Latency should be either ''fixed'' or ''free''.'); return;
-elseif strcmpi(model.latency, 'free') && (~isnumeric(model.window) || isempty(model.window))
-  warning('ID:invalid_input', 'Window is expected to be a numeric value.'); return;
-end
-% 2.5 get further input or set defaults --
-if ~isfield(model, 'modelspec')
-  % load default model specification
-  model.modelspec = settings.glm(1).modelspec;
-elseif ~ismember(model.modelspec, {settings.glm.modelspec})
-  warning('ID:invalid_input', 'Unknown model specification %s.', model.modelspec); return;
-end
-modno = find(strcmpi(model.modelspec, {settings.glm.modelspec}));
-model.modality = settings.glm(modno).modality;
-% 2.6 check data channel --
-if ~isfield(model, 'channel')
-  if strcmp(model.modality, 'psr')
-    model.channel = 'pupil';
-  else
-    model.channel = model.modality;
-  end
-elseif ~isnumeric(model.channel) && ~ismember(model.channel, {settings.channeltypes.type})
-  warning('ID:invalid_input', 'Channel number must be numeric.'); return;
-end
-% 2.7 check normalisation --
-if ~isfield(model, 'norm')
-  model.norm = 0;
-elseif ~ismember(model.norm, [0, 1])
-  warning('ID:invalid_input', 'Normalisation must be specified as 0 or 1.'); return;
-end
-% 2.8 check mean centering --
-if ~isfield(model,'centering')
-  model.centering = 1;
-elseif ~ismember(model.centering, [0, 1])
-  model.centering = 1;
-end
-% 2.9 check options --
+
+% 2.3 check options 
 options = pspm_options(options, 'glm');
-options.overwrite = pspm_overwrite(model.modelfile, options.overwrite);
 if options.invalid
   return
 end
-if ischar(model.datafile)
-  model.datafile={model.datafile};
-end
-if ischar(model.timing) || isstruct(model.timing)
-  model.timing = {model.timing};
-end
-if ~isempty(model.timing) && (numel(model.datafile) ~= numel(model.timing))
-  warning('ID:number_of_elements_dont_match', 'Session numbers of data files and event definitions do not match.');
+
+% 2.4 check files
+% stop the script if files are not allowed to overwrite
+if ~pspm_overwrite(model.modelfile, options)
+  warning('ID:invalid_input', 'Model file exists, and overwriting not allowed by user.');
   return
 end
 
 %% 3 Check & get data
+fprintf('Computing GLM: %s ...\n', model.modelfile);
 fprintf('Getting data ...');
 nFile = numel(model.datafile);
 for iFile = 1:nFile
   % 3.3 get and filter data
-  [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
-  if sts_load_data == -1, return; end
-  y{iFile} = data{end}.data(:);
-  sr(iFile) = data{end}.header.sr;
+  [sts, data] = pspm_load_channel(model.datafile{iFile}, model.channel, model.modality);
+  if sts == -1, return; end
+  y{iFile} = data.data(:);
+  sr(iFile) = data.header.sr;
   fprintf('.');
   if any(strcmp(model.timeunits, {'marker', 'markers','markervalues'}))
-    [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
-    if sts_load_data == -1
+    [sts, data] = pspm_load_channel(model.datafile{iFile}, options.marker_chan_num, 'marker');
+    if sts == -1
       warning('ID:invalid_input', 'Could not load the specified markerchannel');
       return
     end
-    % first marker_channel is used
-    events{iFile} = data{1}.data(:) * data{1}.header.sr;
+    events{iFile} = data.data(:) * data.header.sr;
     if strcmp(model.timeunits,'markervalues')
-      model.timing{iFile}.markerinfo = data{end}.markerinfo;
+      model.timing{iFile}.markerinfo = data.markerinfo;
     end
   end
 end
@@ -273,43 +208,12 @@ else
   fprintf('\n');
 end
 
-%% 4 check filter
-if ~isfield(model, 'filter')
-  model.filter = settings.glm(modno).filter;
-end
-% 4.1 set default model.filter.down --
-if strcmpi(model.filter.down, 'none') || ...
-    isnumeric(model.filter.down) && isnan(model.filter.down)
-  model.filter.down = min(sr);
-else
-  % 4.2 check value of model.filter.down --
-  if ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
-    % tested because the field is used before the call of
-    % pspm_prepdata (everything else is tested there)
-    warning('ID:invalid_input', ['Filter struct needs field ', ...
-      '''down'' to be numeric or ''none''.']); return;
-  end
-  model.filter.down = min([sr model.filter.down]);
-end
 
-%% 5 check & get basis functions
+%% 5 get basis functions
 basepath = [];
-if ~isfield(model, 'bf')
-  model.bf = settings.glm(modno).cbf;
-else
-  if ~isfield(model.bf, 'fhandle')
-    warning('No basis function given.');
-  elseif ischar(model.bf.fhandle)
+if ischar(model.bf.fhandle)
     [basepath, basefn, ~] = fileparts(model.bf.fhandle);
     model.bf.fhandle = str2func(basefn);
-  elseif ~isa(model.bf.fhandle, 'function_handle')
-    warning('Basis function must be a string or function handle.');
-  end
-  if ~isfield(model.bf, 'args')
-    model.bf.args = [];
-  elseif ~isnumeric(model.bf.args)
-    warning('Basis function arguments must be numeric.');
-  end
 end
 if ~isempty(basepath), addpath(basepath); end
 try
@@ -322,8 +226,7 @@ try
       'functions are not allowed.']); return;
   end
 catch
-  warning('ID:invalid_fhandle', 'Specified basis function %s doesn''t exist or is faulty', func2str(model.bf.fhandle));
-  return;
+  warning('ID:invalid_fhandle', 'Specified basis function %s is faulty', model.bf.fhandle); return;
 end
 % 5.1 set shiftbf
 if bf_x(1) < 0
@@ -341,9 +244,8 @@ clear basepath basefn baseext
 
 %% 7 check regressor files
 [sts, multi] = pspm_get_timing('onsets', model.timing, model.timeunits);
-if sts < 0
-  warning('ID:invalid_input', 'Failed to call pspm_get_timing'); return;
-elseif strcmpi(model.timeunits,'markervalues')
+
+if strcmpi(model.timeunits,'markervalues')
   nr_multi = numel(multi);
   for n_m = 1:nr_multi
     model.timing{n_m} = multi(n_m);
@@ -352,27 +254,12 @@ elseif strcmpi(model.timeunits,'markervalues')
 end
 
 %% 8 check & get missing values
-if ~isfield(model, 'missing')
-  missing = cell(nFile, 1);
+for iSn = 1:nFile
+if isempty(model.missing{iSn})
+  sts = 1; missing{iSn} = [];
 else
-  if ischar(model.missing) || isnumeric(model.missing)
-    model.missing = {model.missing};
-  elseif ~iscell(model.missing)
-    warning('ID:invalid_input', 'Missing values must be a filename, matrix, or cell array of these.'); return;
-  end
-  if numel(model.missing) ~= nFile
-    warning('ID:number_of_elements_dont_match',...
-      'Same number of data files and missing value definitions is needed.'); return;
-  end
-  for iSn = 1:nFile
-    if isempty(model.missing{iSn})
-      sts = 1; missing{iSn} = [];
-    else
-      [sts, missing{iSn}] = pspm_get_timing('missing', model.missing{iSn}, 'seconds');
-    end
-    if sts == -1, warning('ID:invalid_input',...
-        'Failed to call pspm_get_timing'); return; end
-  end
+  [sts, missing{iSn}] = pspm_get_timing('missing', model.missing{iSn}, 'seconds');
+end
 end
 
 %% 9 check and get nuisance regressors
@@ -602,8 +489,18 @@ clear iSn iMs ynew newonsets newdurations newmissing missingtimes
 for iCond = 1:numel(names)
   tmp.regscale{iCond} = 1;
   % first process event onset, then pmod
-  tmp.onsets = onsets{iCond};
+  if strcmpi(model.latency, 'free')
+      offset = model.window(1);
+  else
+      offset = 0;
+  end
+  tmp.onsets = onsets{iCond} - offset;
+  clear offset
   tmp.durations = durations{iCond};
+  if sum(tmp.durations) > 0 && ~strcmpi(model.modality, 'sps')
+      warning(sprintf('Non-zero durations in condition %s detected. This is discouraged for modality %s.', ...
+          names{iCond}, model.modality));
+  end
   % if file starts with first event, set that onset to 1 instead of 0
   if any(tmp.onsets == 0)
     tmp.onsets(tmp.onsets == 0) = 1;
@@ -766,7 +663,7 @@ clear tmp Xfilter r iSn n iCond
 % this is where the beef is
 if strcmpi(model.latency, 'free')
   % prepare dictionary onsets and new design matrix
-  D_on = eye(ceil(model.window*glm.infos.sr));
+  D_on = eye(ceil(diff(model.window)*glm.infos.sr));
   XMnew = NaN(size(glm.XM));
   % go through columns
   ncol = size(glm.XM, 2) - nR - glm.interceptno;

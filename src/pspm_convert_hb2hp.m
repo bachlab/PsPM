@@ -8,7 +8,7 @@ function [sts, infos] = pspm_convert_hb2hp(fn, sr, channel, options)
 %                 fn: data file name
 %                 sr: new sample rate for heart period channel
 %            channel: number of heart beat channel (optional, default:
-%                     first heart beat channel); if empty (= 0 / [])
+%                     last heart beat channel); if empty (= 0 / [])
 %                     will be set to default value
 %   ┌────────options: optional arguments [struct]
 %   ├.channel_action: ['add'/'replace', default as 'replace']
@@ -61,19 +61,13 @@ end
 
 % get data
 % -------------------------------------------------------------------------
-[nsts, dinfos, data] = pspm_load_data(fn, channel);
-if nsts == -1
-  warning('ID:invalid_input', 'call of pspm_load_data failed');
-  return;
-end
-if numel(data) > 1
-  fprintf('There is more than one heart beat channel in the data file. Only the first of these will be analysed.');
-  data = data(1);
-end
+[nsts, data, dinfos] = pspm_load_channel(fn, channel, 'hb');
+if nsts == -1, return; end
+
 
 % interpolate
 % -------------------------------------------------------------------------
-hb  = data{1}.data;
+hb  = data.data;
 ibi = diff(hb);
 idx = find(ibi > options.limit.lower & ibi < options.limit.upper);
 hp = 1000 * ibi; % in ms

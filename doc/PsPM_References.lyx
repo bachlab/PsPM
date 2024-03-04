@@ -11,12 +11,12 @@
 \definecolor{colComments}{rgb}{0.53, 0.66, 0.42}
 \definecolor{colString}{rgb}{0.87, 0.36, 0.51}
 \definecolor{barColor}{rgb}{0.43, 0.5, 0.5}
-% Added by lyx2lyx
 \renewcommand{\textendash}{--}
 \renewcommand{\textemdash}{---}
-
 \usepackage{bera}
-\usepackage{enumitem} \setlist[itemize]{noitemsep}
+\renewcommand*\l@subsection{\@dottedtocline{2}{1.8em}{3.2 em}}
+\usepackage{enumitem}
+\setlist[itemize]{noitemsep}
 \end_preamble
 \use_default_options true
 \maintain_unincluded_children false
@@ -98,7 +98,7 @@ PsPM: Option References
 
 \begin_layout Standard
 \align center
-Version 6.1.0
+Version 6.1.2
 \end_layout
 
 \begin_layout Standard
@@ -447,9 +447,9 @@ hp
 \labelwidthstring 00.00.0000
 
 \family typewriter
-pfm
+tam
 \family default
- Pupil Fitting Model
+ Trial Average Model
 \end_layout
 
 \begin_layout Labeling
@@ -932,129 +932,6 @@ add
 \end_inset
 </cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-replace
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Compute Visual Angle
-\end_layout
-
-\begin_layout Standard
-\noindent
-\align center
-
-\series bold
-Table 2
-\series default
- Default values for 
-\family typewriter
-pspm_compute_visual_angle
-\end_layout
-
-\begin_layout Standard
-\align center
-\begin_inset Tabular
-<lyxtabular version="3" rows="2" columns="4">
-<features booktabs="true" tabularvalignment="middle" tabularwidth="100line%">
-<column alignment="left" valignment="top" width="0pt">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<row>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-Field name
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-Data type
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-Default value
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-Acceptable values
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-\series bold
-channel_action
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-char
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-add
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2634,7 +2511,7 @@ Table 9
 \series default
  Default values for 
 \family typewriter
-pspm_convert_gaze_distance
+pspm_convert_gaze
 \end_layout
 
 \begin_layout Standard
@@ -2970,7 +2847,7 @@ Table 11
 \series default
  Default values for 
 \family typewriter
-pspm_convert_pixel2unit
+pspm_convert_pixel2unit_core
 \end_layout
 
 \begin_layout Standard
@@ -9287,7 +9164,7 @@ integer
 \end_layout
 
 \begin_layout Subsection
-Pupil Fitting Model
+Trial Average Model
 \end_layout
 
 \begin_layout Standard
@@ -9299,7 +9176,7 @@ Table 31
 \series default
  Default values for 
 \family typewriter
-pspm_pfm
+pspm_tam
 \end_layout
 
 \begin_layout Standard

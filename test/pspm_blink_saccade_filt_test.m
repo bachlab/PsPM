@@ -28,9 +28,7 @@ classdef pspm_blink_saccade_filt_test < pspm_get_superclass
         import{3}.type = 'gaze_y_r';
         import{4}.type = 'blink_r';
         import{5}.type = 'saccade_r';
-        options.eyelink_trackdist = 700;
-        options.distance_unit = 'mm';
-        options.overwrite = true;
+        options = struct('eyelink_trackdist',700,'distance_unit','mm');
         fn_imported = pspm_import(this.fn, 'eyelink', import, options);
         fn_imported = fn_imported{1};
         [~, ~, data_old] = pspm_load_data(fn_imported);

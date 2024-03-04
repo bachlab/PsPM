@@ -41,7 +41,7 @@ classdef pspm_dcm_test < pspm_testcase
       wrong_model = correct_model;
       % invalid_data file
       wrong_model.datafile = '';
-      this.verifyWarning(@() pspm_dcm(wrong_model), 'ID:invalid_input');
+      this.verifyWarning(@() pspm_dcm(wrong_model), 'ID:nonexistent_file');
       % not all mandatory fields
       % modelfiles
       wrong_model = rmfield(correct_model, 'modelfile');
@@ -55,7 +55,7 @@ classdef pspm_dcm_test < pspm_testcase
       % invalid timing
       wrong_model = correct_model;
       wrong_model.timing = {};
-      this.verifyWarning(@() pspm_dcm(wrong_model), 'ID:invalid_input');
+      this.verifyWarning(@() pspm_dcm(wrong_model), 'ID:number_of_elements_dont_match');
       % model settings
       % invalid filter
       wrong_model = correct_model;
@@ -122,7 +122,7 @@ classdef pspm_dcm_test < pspm_testcase
       end
     end
   end
-  methods
+  methods 
     function test_hra1_flex_cs(this)
       for i=1:20
         % find free filename

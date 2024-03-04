@@ -21,14 +21,13 @@ classdef pspm_pupil_correct_eyelink_test < pspm_testcase
       import{end + 1}.type = 'gaze_x_l';
       import{end + 1}.type = 'gaze_y_l';
       import{end + 1}.type = 'marker';
-      options.overwrite = true;
-      this.pspm_input_filename = pspm_import(this.raw_input_filename, 'eyelink', import, options);
+      this.pspm_input_filename = pspm_import(this.raw_input_filename, 'eyelink', import, struct());
       this.pspm_input_filename = this.pspm_input_filename{1};
     end
   end
   methods(Test)
     function invalid_input(this)
-      opt = struct();
+      opt = struct('overwrite', 1);
       this.verifyWarning(@()pspm_pupil_correct_eyelink(52, opt), 'ID:invalid_input');
       this.verifyWarning(@()pspm_pupil_correct_eyelink('abc', opt), 'ID:invalid_input');
       this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
@@ -60,6 +59,7 @@ classdef pspm_pupil_correct_eyelink_test < pspm_testcase
       opt.screen_size_mm = [-25 14];
       this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
       opt.screen_size_mm = [25 14];
+      %this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
       this.verifyWarningFree(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt));
       opt.mode = 'mixed';
       this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
@@ -74,11 +74,11 @@ classdef pspm_pupil_correct_eyelink_test < pspm_testcase
       opt.S_y = 5;
       this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
       opt.S_z = 5;
-      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
+      this.verifyWarningFree(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt));
       opt.channel = 'gaze_x_l';
-      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:unexpected_channeltype');
       opt.channel = 5;
-      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:unexpected_channeltype');
     end
     function check_if_corrected_channel_is_saved(this)
       options.screen_size_px = [1920 1080];
@@ -88,7 +88,7 @@ classdef pspm_pupil_correct_eyelink_test < pspm_testcase
       options.channel = 'pupil_l';
       [sts, out_channel] = pspm_pupil_correct_eyelink(this.pspm_input_filename, options);
       load(this.pspm_input_filename);
-      this.verifyEqual(data{out_channel}.header.chantype, 'pupil_pp_l');
+      this.verifyEqual(data{out_channel}.header.chantype, 'pupil_l');
       ecg_chan_indices = find(cell2mat(cellfun(@(x) strcmp(x.header.chantype, 'pupil_l'), data, 'uni', false)));
       this.verifyEqual(numel(data{ecg_chan_indices(end)}.data), numel(data{out_channel}.data));
     end

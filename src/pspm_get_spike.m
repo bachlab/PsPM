@@ -7,7 +7,7 @@ function [sts, import, sourceinfo] = pspm_get_spike(datafile, import)
 %     import: [struct]
 %   .denoise: for marker channels in CED spike format (recorded as 'level'),
 %             filters out markers duration longer than the value given here (in
-%             ms).
+%             seconds).
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -93,7 +93,7 @@ for k = 1:numel(import)
       pulse = pulse(1:2:end);
       import{k}.data = pspm_pulse_convert(pulse, settings.import.rsr, settings.import.sr);
       import{k}.sr = settings.import.sr;
-      import{k}.minfreq = min(workdata);
+      import{k}.minfreq = min(import{k}.data);
     else
       warning('Unknown channel format in CED spike file for import job %02.0f', k);  return;
     end;
@@ -108,7 +108,7 @@ for k = 1:numel(import)
         {'keyboard'}); % keyboard channel doesn't exist by default but is needed for denoising
       if kbchan > 0, kbdata = chandata{kbchan}; else kbdata = []; end;
       if isfield(import{k}, 'denoise') && ~isempty(import{k}.denoise) && import{k}.denoise > 0
-        import{k}.data = pspm_denoise_spike(chandata{channel}, chanhead{channel}, kbdata, import{k}.denoise);
+        import{k}.data = pspm_denoise_spike(chandata{channel}, chanhead{channel}, kbdata, import{k}.denoise/1000); % pspm_denoise_spike takes ms input
       else
         pulse = chandata{channel};
         % start with low to high

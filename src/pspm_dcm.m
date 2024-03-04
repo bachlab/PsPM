@@ -55,10 +55,7 @@ function varargout = pspm_dcm(model, options)
 %   │             i.e. Data are normalised during inversion but results
 %   │             transformed back into raw data units.
 %   │             Default: 0.
-%   ├.flexevents: flexible events to adjust amplitude priors
-%   ├─.fixevents: fixed events to adjust amplitude priors
-%   └─.constrained:
-%                 Constrained model for flexible responses which have fixed
+%   └─.constrained: Constrained model for flexible responses which have fixed
 %                 dispersion (0.3 s SD) but flexible latency.
 %   ┌────options:
 %   │ ▶︎ Response function
@@ -176,83 +173,24 @@ end % assign varargout to avoid errors if the function returns in the middle
 % by a `return` function
 warnings = {};
 
-%% 2 Check input arguments & set defaults
-% 2.1 check input
-if nargin < 1
-  warning('ID:invalid_input', 'No data to work on.');
-  return
-elseif nargin < 2
-  options = struct();
-end
-if ~isfield(model, 'datafile')
-  warning('ID:invalid_input', 'No input data file specified.'); return;
-elseif ~isfield(model, 'modelfile')
-  warning('ID:invalid_input', 'No output model file specified.'); return;
-elseif ~isfield(model, 'timing')
-  warning('ID:invalid_input', 'No event onsets specified.'); return;
+%% 2 Check input 
+% 2.1 check missing input --
+if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); return
+elseif nargin < 2; options = struct(); end
+
+% 2.2 check model
+model = pspm_check_model(model, 'dcm');
+if model.invalid
+    return
 end
 
-% 2.2 check faulty input
-if ~iscell(model.datafile) && ~ischar(model.datafile)
-  warning('ID:invalid_input', 'Input data must be a cell or string.'); return;
-elseif ~ischar(model.modelfile)
-  warning('ID:invalid_input', 'Output model must be a string.'); return;
-elseif ~ischar(model.timing) && ~iscell(model.timing)
-  warning('ID:invalid_input', 'Event definition must be a string or cell array.'); return;
-end
-
-% 2.3 get further input or set defaults --
-% check data channel --
-if ~isfield(model, 'channel')
-  model.channel = 'scr'; % this returns the last SCR channel
-elseif ~isnumeric(model.channel) && ~strcmp(model.channel,'scr')
-  warning('ID:invalid_input', 'Channel number must be numeric.'); return;
-end
-
-% 2.4 check normalisation --
-if ~isfield(model, 'norm')
-  model.norm = 0;
-elseif ~any(ismember(model.norm, [0, 1]))
-  warning('ID:invalid_input', 'Normalisation must be specified as 0 or 1.'); return;
-end
-
-% 2.5 check constrained model --
-if ~isfield(model, 'constrained')
-  model.constrained = 0;
-elseif ~any(ismember(model.constrained, [0, 1]))
-  warning('ID:invalid_input', 'Constrained model must be specified as 0 or 1.'); return;
-end
-
-% 2.6 check substhresh --
-if ~isfield(model, 'substhresh')
-  model.substhresh = 2;
-elseif ~isnumeric(model.substhresh)
-  warning('ID:invalid_input', 'Subsession threshold must be numeric.');
-  return;
-end
-
-% 2.7 check filter --
-if ~isfield(model, 'filter')
-  model.filter = settings.dcm{1}.filter;
-elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
-  warning('ID:invalid_input', 'Filter structure needs a numeric ''down'' field.'); return;
-end
-
-if ~isstruct(options)
-  warning('ID:invalid_input', '''options'' must be a struct.');
-  return;
-end
-
-
-% 2.8 set and check options ---
+% 2.3 check options 
 options = pspm_options(options, 'dcm');
 if options.invalid
   return
 end
 
-try model.lasttrialcutoff;      catch, model.lasttrialcutoff = 7;       end
-
-% 2.9 check option fields --
+% all the below should be re-factored into pspm_options -------------------
 % numeric fields
 num_fields = {'depth', 'sfpre', 'sfpost', 'sffreq', 'sclpre', ...
   'sclpost', 'aSCR_sigma_offset'};
@@ -282,50 +220,14 @@ if options.indrf && options.rf
   return
 end
 
+% .........................................................................
+
 % 2.10 check files
 % stop the script if files are not allowed to overwrite
 if ~pspm_overwrite(model.modelfile, options)
-  warning('ID:invalid_input', 'Results are not allowed to overwrite.');
+  warning('ID:invalid_input', 'Model file exists, and overwriting not allowed by user.');
   return
 end
-
-if ischar(model.datafile)
-  model.datafile = {model.datafile};
-  model.timing   = {model.timing};
-end
-
-nFile = numel(model.datafile);
-if ~isfield(model, 'missing')
-  model.missing = cell(nFile, 1);
-elseif ischar(model.missing) || isnumeric(model.missing)
-  model.missing = {model.missing};
-elseif ~iscell(model.missing)
-  warning('ID:invalid_input',...
-    'Missing values must be a filename, matrix, or cell array of these.');
-  return
-end
-if nFile ~= numel(model.timing)
-  warning('ID:number_of_elements_dont_match',...
-    'Session numbers of data files and event definitions do not match.');
-  return
-end
-if nFile ~= numel(model.missing)
-  warning('ID:number_of_elements_dont_match',...
-    'Same number of data files and missing value definitions is needed.');
-  return
-end
-
-% 2.11 Fill model values
-try model.aSCR; catch, model.aSCR = 0; end
-try model.eSCR; catch, model.eSCR = 0; end
-try model.meanSCR; catch, model.meanSCR = 0; end
-% These parameters were set with default fallback values but will be
-% determined later by processing
-% try model.fixevents; catch, warning('model.fixevents not defined.'); end
-% try model.flexevents; catch, warning('model.flexevents not defined.'); end
-% try model.missing_data; catch, warning('model.missing_data not defined.'); end
-% These parameters do not need to have a default value and will be
-% determined later
 
 %% 3 Check, get and prepare data
 
@@ -333,21 +235,17 @@ try model.meanSCR; catch, model.meanSCR = 0; end
 % colnames: iSn start stop enabled (if contains events)
 subsessions = [];
 data = cell(numel(model.datafile), 1);
-missing = cell(nFile, 1);
+missing = cell(numel(model.datafile), 1);
 for iSn = 1:numel(model.datafile)
   % check & load data
-  [sts, ~, data{iSn}] = pspm_load_data(model.datafile{iSn}, model.channel);
-  if sts == -1 || isempty(data{iSn})
-    warning('ID:invalid_input', 'No SCR data contained in file %s', ...
-      model.datafile{iSn});
+  [sts, data] = pspm_load_channel(model.datafile{iSn}, model.channel, 'scr');
+  if sts == -1 
     return;
+  else
+     y{iSn} = data.data;
+     sr{iSn} = data.header.sr;
+     model.filter.sr = sr{iSn};
   end
-
-  % use the last data channel, consistent with sf and glm
-  y{iSn} = data{iSn}{end}.data;
-  sr{iSn} = data{iSn}{end}.header.sr;
-  model.filter.sr = sr{iSn};
-
 
   % load and check existing missing data (if defined)
   if ~isempty(model.missing{iSn})
@@ -359,42 +257,46 @@ for iSn = 1:numel(model.datafile)
  
   % try to find missing epochs according to subsession threshold
   n_data = size(y{iSn},1);
-  if isempty(missing{iSn})
-    nan_epochs = isnan(y{iSn});
 
-    d_nan_ep = transpose(diff(nan_epochs));
-    nan_ep_start = find(d_nan_ep == 1);
-    nan_ep_stop = find(d_nan_ep == -1);
+   if ~isempty(missing{iSn})
+      % use missing epochs as specified by file
+      miss_epochs = pspm_time2index(missing{iSn}, sr{iSn});
 
-    if numel(nan_ep_start) > 0 || numel(nan_ep_stop) > 0
-      % check for blunt ends and fix
-      if isempty(nan_ep_start)
-        nan_ep_start = 1;
-      elseif isempty(nan_ep_stop)
-        nan_ep_stop = numel(d_nan_ep);
+      % and set data to NaN to enable later detection of `short` missing
+      % epochs
+      for k = 1:size(miss_epochs, 1)
+          flanks = round(miss_epochs(k,:));
+          y{iSn}(flanks(1):flanks(2)) = NaN;
       end
+  end
+ 
+  % find NaN in data, which might originate in previous step or exist in
+  % the data already. This will update the previous miss_epochs definition.
+  nan_epochs = isnan(y{iSn});
 
-      if nan_ep_start(1) > nan_ep_stop(1)
-        nan_ep_start = [1, nan_ep_start];
+  if ~isempty(nan_epochs)
+      d_nan_ep = transpose(diff(nan_epochs));
+      nan_ep_start = find(d_nan_ep == 1);
+      nan_ep_stop = find(d_nan_ep == -1);
+
+      if numel(nan_ep_start) > 0 || numel(nan_ep_stop) > 0
+          % check for blunt ends and fix
+          if isempty(nan_ep_start)
+              nan_ep_start = 1;
+          elseif isempty(nan_ep_stop)
+              nan_ep_stop = numel(d_nan_ep);
+          end
+
+          if nan_ep_start(1) > nan_ep_stop(1)
+              nan_ep_start = [1, nan_ep_start];
+          end
+          if nan_ep_start(end) > nan_ep_stop(end)
+              nan_ep_stop(end + 1) = numel(d_nan_ep);
+          end
       end
-      if nan_ep_start(end) > nan_ep_stop(end)
-        nan_ep_stop(end + 1) = numel(d_nan_ep);
-      end
-    end
 
     % put missing epochs together
     miss_epochs = [nan_ep_start(:), nan_ep_stop(:)];
-
-  else
-    % use missing epochs as specified by file
-    miss_epochs = pspm_time2index(missing{iSn}, sr{iSn});
-  
-    % and set data to NaN to enable later detection of `short` missing
-    % epochs
-    for k = 1:size(miss_epochs, 1)
-      flanks = round(miss_epochs(k,:));
-      y{iSn}(flanks(1):flanks(2)) = NaN;
-    end
   end
 
   % epoch should be ignored if duration > threshold
@@ -456,8 +358,8 @@ foo = {};
 for vs = 1:numel(valid_subsessions)
   isbSn = valid_subsessions(vs);
   sbSn = subsessions(isbSn, :);
-  flanks = pspm_time2index(sbSn(2:3), data{sbSn(1)}{1}.header.sr);
-  sbSn_data = data{sbSn(1)}{1}.data(flanks(1):flanks(2));
+  flanks = pspm_time2index(sbSn(2:3), sr{sbSn(1)});
+  sbSn_data = y{sbSn(1)}(flanks(1):flanks(2));
   sbs_miss = isnan(sbSn_data);
 
   if any(sbs_miss)
@@ -689,23 +591,14 @@ if (options.indrf || options.getrf) && (isempty(model.flexevents) ...
     || (max(model.fixevents > max(model.flexevents(:, 2), [], 2))))
   [~, lastfix] = max(model.fixevents);
   % extract data
-  winsize = floor(model.sr * min([proc_miniti 10]));
-  D = [];
-  c = 1;
-  valid_newevents = sbs_newevents{2}(proc_subsessions);
-  for isbSn = 1:numel(model.scr)
-    scr_sess = model.scr{isbSn};
-    foo = valid_newevents{isbSn}(:, lastfix);
-    foo(foo < 0) = [];
-    for n = 1:size(foo, 1)
-      win = ceil(model.sr * foo(n) + (1:winsize));
-      [row, warnings] = get_data_after_trial_filling_with_nans_when_necessary(...
-        scr_sess, win, n, isbSn, model.iti, proc_miniti, warnings);
-      D(c, 1:numel(row)) = row;
-      c = c + 1;
-    end
-  end
-  clear c k n
+  segment_length = floor(model.sr * min([proc_miniti 10]));
+  valid_newevents = cellfun(@(x, y) pspm_time2index(x(:, lastfix), model.sr , length(y)), ...
+      sbs_newevents{2}(proc_subsessions), ...
+      model.scr', ...
+      'UniformOutput', false);
+  [sts, D] = pspm_extract_segments_core(model.scr, valid_newevents, segment_length);
+  if sts < 1, return; end
+
   if isempty(find(isnan(D(:))))
     mD = D - repmat(mean(D, 2), 1, size(D, 2)); % mean centre
     % PCA
@@ -742,22 +635,23 @@ if (options.indrf || options.getrf) && (isempty(model.flexevents) ...
 end
 
 % 5.4 extract data from all trials
-winsize = floor(model.sr * min([proc_miniti 10]));
-D = []; c = 1;
+% check maximum trial duration
+maxtrial = NaN(numel(model.scr), 1);
+numtrials = NaN(numel(model.scr), 1);
 for isbSn = 1:numel(model.scr)
-  scr_sess = model.scr{isbSn};
-  for n = 1:numel(model.trlstart{isbSn})
-    win = ceil(((model.sr * model.trlstart{isbSn}(n)):...
-      (model.sr * model.trlstop{isbSn}(n) + winsize)));
-    % correct rounding errors
-    win(win == 0) = [];
-    [row,warnings] = get_data_after_trial_filling_with_nans_when_necessary(...
-      scr_sess, win, n, isbSn, model.iti, proc_miniti, warnings);
-    D(c, 1:numel(row)) = row;
-    c = c + 1;
-  end
+    trialduration = model.trlstop{isbSn} - model.trlstart{isbSn};
+    maxtrialduration(isbSn) = max(trialduration(:));
+    numtrials(isbSn) = numel(trialduration);
 end
-clear c n
+segment_length = floor(model.sr * (max(maxtrialduration) + min([proc_miniti 10])));
+
+valid_newevents = cellfun(@(x, y) pspm_time2index(x, model.sr , length(y)), ...
+    model.trlstart, ...
+    model.scr', ...
+    'UniformOutput', false);
+
+[sts, D] = pspm_extract_segments_core(model.scr, valid_newevents, segment_length);
+if sts < 1, return; end
 
 % 5.5 do PCA if required
 if (options.indrf || options.getrf) && ~isempty(model.flexevents)
@@ -781,7 +675,7 @@ if (options.indrf || options.getrf) && ~isempty(model.flexevents)
     model.aSCR = aSCR;
   else
     warning('ID:invalid_input', ...
-      'Due to NaNs after some trial endings, PCA could not be computed');
+      'Due to NaNs in the data, PCA could not be computed');
     [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
   end
 end
@@ -868,28 +762,6 @@ switch nargout
 end
 return
 
-function [datacol, warnings] = ...
-  get_data_after_trial_filling_with_nans_when_necessary(...
-  scr_sess, win, n, isbSn, sbs_iti, proc_miniti, warnings)
-% Try to get all the data elements after the end of the trial n in session
-% isbSn. Indices of the elements to return are sto
-% red in win. In case these indices are larger than size of scr_sess{isbSn}, then fill the
-% rest of the data with NaN values.
-datacol = NaN(1, numel(win));
-num_indices_outside_scr = win(end) - numel(scr_sess);
-if num_indices_outside_scr > 0
-  warning('ID:too_short_ITI',...
-    ['Trial %d in session %d has ITI %f; but for mean response we use %f seconds',...
-    ' after each trial. Filling the rest with NaNs'],...
-    n, isbSn, sbs_iti{isbSn}(n), proc_miniti(isbSn)...
-    );
-  [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
-  win(end - num_indices_outside_scr + 1 : end) = [];
-  datacol(1:numel(win)) = scr_sess(win);
-  datacol(numel(win) + 1 : end) = NaN;
-else
-  datacol(1:numel(win)) = scr_sess(win);
-end
 
 function [sts] = pspm_dcm_check_options(type, check_opt, fields)
 % pspm_dcm_check_options is a helper function for other functions which should

@@ -27,7 +27,7 @@ classdef pspm_load1_test < matlab.unittest.TestCase
       model.datafile = this.fn;
       model.timeunits = 'seconds';
       for i = 1:length(settings.first)
-        if ~strcmpi(settings.first{i},'pfm')
+        if ~strcmpi(settings.first{i},'tam')
           mbn = ['model_', settings.first{i}];
           fn_ok = false;
           j = 0;
@@ -52,7 +52,7 @@ classdef pspm_load1_test < matlab.unittest.TestCase
           this.modelfiles{i} = mfn;
           this.dummyfiles{i} = dfn;
           fh = str2func(['pspm_', settings.first{i}]);
-          fh(model);
+          fh(model, struct());
           copyfile(this.modelfiles{i}, this.dummyfiles{i});
         end
       end
@@ -243,8 +243,7 @@ classdef pspm_load1_test < matlab.unittest.TestCase
         f = this.modelfiles{i};
         x = rand(1);
         savecon = struct('test', x, 'con', 0);
-        options.overwrite = 1;
-        [sts, data, mdltype] = this.verifyWarningFree(@()pspm_load1(f, 'savecon', savecon, options));
+        [sts, data, mdltype] = this.verifyWarningFree(@()pspm_load1(f, 'savecon', savecon, struct()));
         this.basic_function_test(f, sts, mdltype);
         % check for fields
         % just check if it was written, do not check for structure
@@ -285,8 +284,7 @@ classdef pspm_load1_test < matlab.unittest.TestCase
         mdltype = find(ismember(mdltypes, fieldnames(mdl)));
         mdltype = mdltypes{mdltype};
         mdl.(mdltype).test = x;
-        options.overwrite = 1;
-        [sts, data, mdltype] = this.verifyWarningFree(@()pspm_load1(f, 'save', mdl, options));
+        [sts, data, mdltype] = this.verifyWarningFree(@()pspm_load1(f, 'save', mdl, struct('overwrite', 1)));
         this.basic_function_test(f, sts, mdltype);
         % check for fields
         mdl = load(f);
@@ -304,19 +302,11 @@ classdef pspm_load1_test < matlab.unittest.TestCase
         mdltype = find(ismember(mdltypes, fieldnames(mdl)));
         mdltype = mdltypes{mdltype};
         mdl.(mdltype).test = x;
-        % test overwrite
-        options.overwrite = 0;
-        [sts, data, mdt] = this.verifyWarning(@()pspm_load1(f, 'save', mdl, options), 'ID:not_saving_data');
-        % determins these parameters
-        mdl = load(f);
-        this.verifyNotEqual(mdl.(mdltype).test, x);
         % do overwrite
         mdl.(mdltype).test = x;
-        options.overwrite = 1;
-        [sts, data, mdltype] = this.verifyWarningFree(@()pspm_load1(f, 'save', mdl, options));
+        [sts, data, mdltype] = this.verifyWarningFree(@()pspm_load1(f, 'save', mdl, struct('overwrite', 1)));
         mdl = load(f);
         this.verifyEqual(mdl.(mdltype).test, x);
-        options.overwrite = 1;
         % test zscored
         if strcmpi(mdltype, 'dcm')
           % zscore stats of model to compare with 'stats'

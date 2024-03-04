@@ -1,9 +1,8 @@
 function [pp_emg] = pspm_cfg_pp_emg_data
-% function to process emg data which leads to emg_proc data
-%
-
-% $Id$
-% $Rev$
+% * Description
+%   function to process emg data which leads to emg_proc data
+% * History
+%   Updated in 2024 by Teddy
 
 % Initialise
 global settings
@@ -40,7 +39,7 @@ chan.tag                = 'channel';
 chan.val                = {first_chan};
 chan.values             = {first_chan, cust_chan};
 chan.help               = {['Channel ID of the channel containing the ', ...
-    'unprocessed EMG data.']};
+    'unprocessed EMG data. Default: last EMG channel.']};
 
 % Mains frequency
 mains                   = cfg_entry;

@@ -30,7 +30,7 @@ function varargout = pspm_sf(model, options)
 %   │                   data file. See pspm_get_timing for epoch definition; specify
 %   │                   a cell array for multiple input files. This must always be
 %   │                   specified in SECONDS.
-%   └────────.channel:  [integer] [default: first SCR channel]
+%   └────────.channel:  [integer] [default: last SCR channel]
 %                       channel number.
 %   ┌─────────options
 %   ├──────.overwrite:  [logical] [default: determined by pspm_overwrite]
@@ -84,154 +84,100 @@ switch nargout
     varargout{2} = outfile;
 end
 %% 2 Check input
-% 2.1 Check missing input --
-if nargin<1
-  warning('ID:invalid_input', 'Nothing to do.'); return;
-elseif nargin<2
-  options = struct();
+% 2.1 check missing input --
+if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); return
+elseif nargin < 2; options = struct(); end
+
+% 2.2 check model
+model = pspm_check_model(model, 'sf');
+if model.invalid
+    return
 end
-if ~isfield(model, 'datafile')
-  warning('ID:invalid_input', 'No input data file specified.'); return;
-elseif ~isfield(model, 'modelfile')
-  warning('ID:invalid_input', 'No output model file specified.'); return;
-elseif ~isfield(model, 'timeunits')
-  warning('ID:invalid_input', 'No timeunits specified.'); return;
-elseif ~isfield(model, 'timing') && ~strcmpi(model.timeunits, 'file')
-  warning('ID:invalid_input', 'No epochs specified.'); return;
-end
-% 2.2 Check faulty input --
-if ~ischar(model.datafile) && ~iscell(model.datafile)
-  warning('ID:invalid_input', 'Input data must be a cell or string.'); return;
-elseif ~ischar(model.modelfile) && ~iscell(model.modelfile)
-  warning('ID:invalid_input', 'Output model must be a string.'); return;
-elseif ~ischar(model.timing) && ~iscell(model.timing) && ~isnumeric(model.timing)
-  warning('ID:invalid_input', 'Event onsets must be a string, cell, or struct.'); return;
-elseif ~ischar(model.timeunits) || ~ismember(model.timeunits, {'seconds', 'markers', 'samples', 'whole'})
-  warning('ID:invalid_input',...
-    'Timeunits (%s) not recognised; ',...
-    'only ''seconds'', ''markers'', ''samples'' and ''whole'' are supported',...
-    model.timeunits); return;
-end
-% 2.3 Convert single file input to cell --
-if ischar(model.datafile)
-  model.datafile={model.datafile};
-end
-if ischar(model.timing) || isnumeric(model.timing)
-  model.timing = {model.timing};
-end
-if ischar(model.modelfile)
-  model.modelfile = {model.modelfile};
-end
-% 2.4 Check number of files --
-if ~strcmpi(model.timeunits, 'whole') && numel(model.datafile) ~= numel(model.timing)
-  warning('ID:number_of_elements_dont_match',...
-    'Number of data files and epoch definitions does not match.'); return;
-elseif numel(model.datafile) ~= numel(model.modelfile)
-  warning('ID:number_of_elements_dont_match',...
-    'Number of data files and model files does not match.'); return;
-end
-% 2.5 check methods --
-if ~isfield(model, 'method')
-  model.method = {'dcm'};
-elseif ischar(model.method)
-  model.method={model.method};
-end
-if ~iscell(model.method)
-  warning('Method needs to be a char or cell array'); return;
-else
-  method = cell(numel(model.method), 1);
-  fhandle = method;
-  datatype = NaN(numel(model.method));
-  for k = 1:numel(model.method)
-    switch model.method{k}
-      case {'auc', 'AUC'}
-        method{k} = 'auc';
-        fhandle{k} = @pspm_sf_auc;
-        datatype(k) = 2; % filtered
-      case {'DCM', 'dcm'}
-        method{k} = 'dcm';
-        fhandle{k} = @pspm_sf_dcm;
-        datatype(k) = 2; % filtered
-      case {'MP', 'mp'}
-        method{k} = 'mp';
-        fhandle{k} = @pspm_sf_mp;
-        datatype(k) = 2; % filtered
-      case {'SCL', 'scl', 'level'}
-        method{k} = 'scl';
-        fhandle{k} = @pspm_sf_scl;
-        datatype(k) = 1; % unfiltered
-      case 'all'
-        method = {'scl', 'auc', 'dcm', 'mp'};
-        fhandle = {@pspm_sf_scl, @pspm_sf_auc,  @pspm_sf_dcm, @pspm_sf_mp};
-        datatype = [1 2 2 2];
-      otherwise
-        warning('Method %s not supported', model.method{k}); return;
-    end
-  end
-end
-% 2.6 Check timing --
-if strcmpi(model.timeunits, 'whole')
-  epochs = repmat({[1 1]}, numel(model.datafile), 1);
-else
-  for iFile = 1:numel(model.datafile)
-    [sts_get_timing, epochs{iFile}] = pspm_get_timing('epochs', model.timing{iFile}, model.timeunits);
-    if sts_get_timing == -1
-      warning('ID:invalid_input', 'Call of pspm_get_timing failed.');
-      return;
-    end
-  end
-end
-% 2.7 Check filter --
-if ~isfield(model, 'filter')
-  model.filter = settings.dcm{2}.filter;
-elseif ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
-  warning('ID:invalid_input', 'Filter structure needs a numeric ''down'' field.'); return;
-end
-% 2.8 Set options --
-try model.channel; catch, model.channel = 'scr'; end
+
+% 2.3 check options 
 options = pspm_options(options, 'sf');
 if options.invalid
   return
 end
-% 2.9 Set missing epochs --
-if ~isfield(model, 'missing')
-  model.missing = cell(numel(model.datafile), 1);
-elseif ischar(model.missing) || isnumeric(model.missing)
-  model.missing = {model.missing};
-elseif ~iscell(model.missing)
-  warning('ID:invalid_input',...
-    'Missing values must be a filename, matrix, or cell array of these.');
+
+% 2.4 check files
+% stop the script if files are not allowed to overwrite
+if ~pspm_overwrite(model.modelfile, options)
+  warning('ID:invalid_input', 'Model file exists, and overwriting not allowed by user.');
   return
 end
+
+%% 3. Parse methods
+method = cell(numel(model.method), 1);
+fhandle = method;
+datatype = NaN(numel(model.method));
+for k = 1:numel(model.method)
+switch model.method{k}
+  case {'auc', 'AUC'}
+    method{k} = 'auc';
+    fhandle{k} = @pspm_sf_auc;
+    datatype(k) = 2; % filtered
+  case {'DCM', 'dcm'}
+    method{k} = 'dcm';
+    fhandle{k} = @pspm_sf_dcm;
+    datatype(k) = 2; % filtered
+  case {'MP', 'mp'}
+    method{k} = 'mp';
+    fhandle{k} = @pspm_sf_mp;
+    datatype(k) = 2; % filtered
+  case {'SCL', 'scl', 'level'}
+    method{k} = 'scl';
+    fhandle{k} = @pspm_sf_scl;
+    datatype(k) = 1; % unfiltered
+  case 'all'
+    method = {'scl', 'auc', 'dcm', 'mp'};
+    fhandle = {@pspm_sf_scl, @pspm_sf_auc,  @pspm_sf_dcm, @pspm_sf_mp};
+    datatype = [1 2 2 2];
+  otherwise
+    warning('Method %s not supported', model.method{k}); return;
+end
+  
+end
+% 2.6 Get timing --
+if strcmpi(model.timeunits, 'whole')
+  epochs = repmat({[1 1]}, numel(model.datafile), 1);
+else
+  for iFile = 1:numel(model.datafile)
+    [sts, epochs{iFile}] = pspm_get_timing('epochs', model.timing{iFile}, model.timeunits);
+  end
+end
+
+options = pspm_options(options, 'sf');
+if options.invalid
+  return
+end
+
 %% 3 Get data
 nFile = numel(model.datafile);
 for iFile = 1:nFile
   % 3.1 User output
   fprintf('SF analysis: %s ...', model.datafile{iFile});
-  % 3.2 Check whether model file exists --
-  if ~pspm_overwrite(model.modelfile, options)
-    return
-  end
-  % 3.3 get and filter data --
-  [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
+  
+  % 3.2 get and filter data --
+  [sts_load_data, data] = pspm_load_channel(model.datafile{iFile}, model.channel, 'scr');
   if sts_load_data < 0, return; end
-  y{1} = data{end}.data;
-  sr(1) = data{end}.header.sr;
+  y{1} = data.data;
+  sr(1) = data.header.sr;
   model.filter.sr = sr(1);
-  [sts_prepdata, y{2}, sr(2)] = pspm_prepdata(data{end}.data, model.filter);
+  [sts_prepdata, y{2}, sr(2)] = pspm_prepdata(y{1}, model.filter);
   % always use last data channels
   if sts_prepdata == -1
     warning('ID:invalid_input', 'Call of pspm_prepdata failed.');
     return;
   end
-  % 3.4 Check data units
-  if ~strcmpi(data{end}.header.units, 'uS') && any(strcmpi('dcm', method))
+  % 3.3 Check data units
+  if ~strcmpi(data.header.units, 'uS') && any(strcmpi('dcm', method))
     fprintf(['\nYour data units are stored as %s, ',...
       'and the method will apply an amplitude threshold in uS. ',...
       'Please check your results.\n'], ...
-      data{end}.header.units);
+      data.header.units);
   end
-  % 3.5 Get missing epochs --
+  % 3.4 Get missing epochs --
   if ~isempty(model.missing{iFile})
     [~, missing{iFile}] = pspm_get_timing('missing', model.missing{iFile}, 'seconds');
     model.missing_data = zeros(size(y{2}));
@@ -240,27 +186,12 @@ for iFile = 1:nFile
   else
     missing{iFile} = [];
   end
-  % 3.6 Get marker data --
+  % 3.5 Get marker data --
   if any(strcmp(model.timeunits, {'marker', 'markers'}))
-    [sts, ~, ndata] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
-    if sts < 1
-      warning('ID:invalid_input', 'Could not load data');
-      return;
-    elseif ~strcmp(ndata{1}.header.chantype, 'marker')
-      warning('ID:invalid_option', ...
-        ['Channel %i is no marker channel. ',...
-        'The first marker channel in the file is used instead'],...
-        options.marker_chan_num);
-      [sts_load_data, ~, ~] = pspm_load_data(model.datafile{iFile}, 'marker');
-      if sts_load_data == -1
-        warning('ID:invalid_input', 'Could not load data');
-        return;
-      end
-    end
-    % use first marker channel
-    events{iFile} = ndata{1}.data(:);
+    [sts, ndata] = pspm_load_channel(model.datafile{iFile}, options.marker_chan_num, 'marker');
+    if sts < 1, return;  end
+    events{iFile} = ndata.data(:);
   end
-
 
   for iEpoch = 1:size(epochs{iFile}, 1)
     if iEpoch > 1, fprintf('\n\t\t\t'); end
