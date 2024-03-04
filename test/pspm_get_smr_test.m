@@ -6,7 +6,7 @@ classdef pspm_get_smr_test < pspm_get_superclass
   properties
     testcases;
     fhandle = @pspm_get_smr;
-    datatype = 'spike';
+    datatype = 'smr';
   end
   methods
     function define_testcases(this)
