@@ -13,12 +13,12 @@ switch filtertype
     out = pspm_pp(filtertype, datafile, channelnumber, n, options);
   case 'butter'
     filt = struct();
-    filt.lpfreq    = job.filtertype.(filtertype).freqLP;
+    filt.lpfreq    = job.filtertype.(filtertype).freqLP.freqLP;
     filt.lporder   = job.filtertype.(filtertype).orderLP;
-    filt.hpfreq    = job.filtertype.(filtertype).freqHP;
+    filt.hpfreq    = job.filtertype.(filtertype).freqHP.freqHP;
     filt.hporder   = job.filtertype.(filtertype).orderHP;
     filt.direction = job.filtertype.(filtertype).direction;
-    filt.down      = job.filtertype.(filtertype).down;
+    filt.down      = job.filtertype.(filtertype).down.down;
     out = pspm_pp(filtertype, datafile, channelnumber, filt, options);
   case 'scr_pp'
     scr_job = job.filtertype.(filtertype);
@@ -27,7 +27,7 @@ switch filtertype
                                                     'slope',...
                                                     'deflection_threshold',...
                                                     'data_island_threshold',...
-                                                    'expand_epochs'})
+                                                    'expand_epochs'});
     if isfield(scr_job.missing_epochs, 'write_to_file')
       if isfield(scr_job.missing_epochs.write_to_file,'filename') && ...
           isfield(scr_job.missing_epochs.write_to_file,'outdir')
