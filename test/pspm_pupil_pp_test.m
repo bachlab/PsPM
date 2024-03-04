@@ -65,6 +65,7 @@ classdef pspm_pupil_pp_test < pspm_testcase
     function check_channel_combining(this)
       opt.channel = 1;
       opt.channel_combine = 2;
+      opt.nan_cutoff = 0.2;
       [~, out_chan] = pspm_pupil_pp(this.pspm_input_filename, opt);
       testdata = load(this.pspm_input_filename);
       this.verifyEqual(testdata.data{out_chan}.header.chantype, 'pupil_c');

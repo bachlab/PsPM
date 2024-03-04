@@ -332,7 +332,7 @@ switch FunName
     options = autofill(options, 'channel_combine',        'none',     '*Int*Char'       );
     options = autofill(options, 'plot_data',              0,          1                 );
     options = autofill(options, 'segments',               {},         '*Cell'           );
-    options = autofill(options, 'nan_cutoff',             0.01,       '*Num'            );
+    options = autofill(options, 'nan_cutoff',             0.1,        '*Num'            );
   case 'remove_epochs'
     % 2.38 pspm_remove_epochs --
     options = autofill_channel_action(options);
