@@ -123,6 +123,7 @@ classdef pspm_dcm_test < pspm_testcase
     end
     function valid_input(this)
       test_hra1_flex_cs(this);
+      test_hra1_flex_cs_missing(this);
     end
   end
   methods 
@@ -147,6 +148,28 @@ classdef pspm_dcm_test < pspm_testcase
         this.verifyWarningFree(@() pspm_dcm(model, options));
       end
     end
+    function test_hra1_flex_cs_missing(this)
+      for i=1:1
+        % find free filename
+        fn = pspm_find_free_fn(this.modelfile_prfx, '_simplified.mat');
+        % do not delete model file
+        % this.datafiles{end+1} = fn;
+        [df, ~] = this.get_hra_files(i);
+        [timing, eventnames, trialnames] = this.extract_hra_timings(i);
+        model = struct(...
+          'modelfile', fn, ...
+          'datafile', df, ...
+          'timing', {timing}, ...
+          'missing', {[13.491,16.551]} ...
+          );
+        options = struct( ...
+          'dispwin', 0,...
+          'trlnames', {trialnames},...
+          'eventnames', {eventnames} ...
+          );
+        this.verifyWarningFree(@() pspm_dcm(model, options));
+      end
+    end
     function [timing, eventnames, trialnames] = ...
         extract_hra_timings(this, subject)
       [s, c] = this.get_hra_files(subject);
@@ -154,8 +177,10 @@ classdef pspm_dcm_test < pspm_testcase
       [~, ~, sp_data] = pspm_load_data(s);
       timing = cell(1,2);
       cs_onset = sp_data{1}.data;
-      % fix SOA of 3.5s
-      us_onset = sp_data{1}.data + 0.1; % use 3.5 for unsimplified test
+      % use SOA=0.1 for simplified test
+      % use SOA=3.5 for realworld test
+      SOA = 0.1; 
+      us_onset = sp_data{1}.data + SOA; 
       timing{1} = [cs_onset us_onset];
       timing{2} = us_onset;
       eventnames = {'CS', 'US'};
