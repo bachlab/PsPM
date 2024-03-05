@@ -108,8 +108,8 @@ switch method
       warning('ID:invalid_input', 'Tau must be numeric.'); return;
     end
     % Convert tau from seconds to samples
-    sampleRate = data.header.sr;  % Assuming the sample rate is stored here
-    tau_samples = tau_sec * sampleRate;
+    sample_rate = data.header.sr;  % Assuming the sample rate is stored here
+    tau_samples = tau_sec * sample_rate;
     
     fprintf('\n\xBB Preprocess: applying leaky integrator to datafile %s ... ', fn);
     % Apply the leaky integrator function
