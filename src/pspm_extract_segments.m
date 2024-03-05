@@ -75,11 +75,7 @@ if nargin < 3 || ~ischar(method) || ~ismember(method, {'file', 'data', 'model'})
         (~strcmpi(method, 'model') && nargin < 5)
     warning('ID:invalid_input', 'Don''t know what to do'); return 
 elseif strcmpi(method, 'model')
-    if ~ischar(data) 
-        warning('ID:invalid_input', 'No model file specified.'); return
-    else
-        data = pspm_load1(data, 'all');
-    end
+     data = pspm_load1(data, 'all');
     if nargin > 2
         options = varargin{1};
     end
@@ -148,8 +144,10 @@ case 'model'
     elseif strcmpi(data.modeltype, 'dcm')
         data_raw = data.input.scr;
     else
-        warning('ID:invalid_input', 'Unknown model type.')
+        warning('ID:invalid_input', 'Unknown model type.');
+        return;
     end
+    sr = data.input.sr;
 end
 
 if options.norm
@@ -193,11 +191,11 @@ else
     end
 end
 
-options.missing = cellfun(@(x, y) pspm_epochs2logical(x, y, sr), options.missing, num2cell(session_duration), 'un', false);
+missing = cellfun(@(x, y) pspm_epochs2logical(x, y, sr), missing, num2cell(session_duration), 'un', false);
 
 %% extract segments
 for i_cond = 1:numel(onsets)
-    [sts, segments{i_cond}.data, sessions] = pspm_extract_segments_core(data_raw, onsets{i_cond}, int64(round(sr * options.length)), options.missing);
+    [sts, segments{i_cond}.data, sessions] = pspm_extract_segments_core(data_raw, onsets{i_cond}, int64(round(sr * options.length)), missing);
     if sts < 1, return; end
 end
 
