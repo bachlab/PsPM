@@ -45,7 +45,9 @@ function [sts, out] = pspm_extract_segments(method, data, varargin)
 %   ├───────────.missing: allows to specify missing (e. g. artefact) epochs in the
 %   │                     data file. See pspm_get_timing for epoch definition;
 %   │                     specify a cell array for multiple input files. This
-%   │                     must always be specified in SECONDS.
+%   │                     must always be specified in SECONDS. if method is
+%   │                     'model', then this option overides the missing 
+%   │                     values given in the model
 %   │                     Default: no missing values
 %   ├────────.nan_output: This option defines whether the user wants to output
 %   │                     the NaN ratios of the trials for each condition.
@@ -170,7 +172,7 @@ end
 
 if strcmpi(method, 'model') && strcmpi(data.modeltype, 'dcm')
     onsets = cellfun(@(x, y) pspm_time2index(x, sr , y), ...
-    input.model.trlstart, ...
+    data.input.model.trlstart, ...
     num2cell(session_duration), ...
     'UniformOutput', false);
 else
@@ -180,15 +182,18 @@ else
 end
 
 %% prepare missing
-if ~isfield(options, 'missing')
+if isfield(options, 'missing')
+    missing = options.missing;
+elseif strcmpi(method, 'model')
+    missing = data.input.missing;
+else
     options.missing = cell(numel(data_raw), 1);
     for i_sn = 1:numel(data_raw)
-        options.missing{i_sn} = [];
+        missing{i_sn} = [];
     end
 end
-options.missing = cellfun(@(x, y) pspm_epochs2logical(x, y, sr), options.missing, num2cell(session_duration), 'un', false);
 
-% ---> add missing for models
+options.missing = cellfun(@(x, y) pspm_epochs2logical(x, y, sr), options.missing, num2cell(session_duration), 'un', false);
 
 %% extract segments
 for i_cond = 1:numel(onsets)

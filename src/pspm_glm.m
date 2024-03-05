@@ -693,7 +693,7 @@ end
 
 if isfield(options,'exclude_missing')
   if options.exclude_missing.segment_length > 0
-    [sts,segments] = pspm_extract_segments('auto', glm, ...
+    [sts,segments] = pspm_extract_segments('file', glm, ...
       struct('length', options.exclude_missing.segment_length));
     if sts == -1
       warning('ID:invalid_input', 'call of pspm_extract_segments failed');
