@@ -7,7 +7,8 @@ function options = pspm_options(options, FunName)
 %   FunName:  a string, the name of the function where option is used
 % ● History
 %   Introduced in PsPM 6.1
-%   Written in 2022 by Teddy Chao (UCL)
+%   Written in 2022 by Teddy
+%   Updated in 2024 by Dominik R Bach (Uni Bonn)
 
 %% 0 Initialise
 global settings
@@ -48,15 +49,6 @@ switch FunName
     % 2.1 pspm_blink_saccade_filt --
     options = autofill_channel_action(options);
     options = autofill(options, 'channel',                0,          '*Int*Char*Cell'  );
-  case 'compute_visual_angle_core'
-    % 2.2 pspm_compute_visual_angle_core --
-    % leave for future development
-  case 'compute_visual_angle'
-    % 2.3 pspm_compute_visual_angle --
-    options = autofill_channel_action(options);
-    options = autofill(options, 'eyes',                   settings.lateral.full.b,...
-                                                          {settings.lateral.full.l,...
-                                                          settings.lateral.full.r}      );
   case 'con1'
     % 2.4 pspm_con1 --
     options = autofill(options, 'zscored',                0,          1                 );
@@ -86,7 +78,7 @@ switch FunName
   case 'convert_ecg2hb_amri'
     % 2.9 pspm_convert_ecg2hb_amri --
     options = autofill_channel_action(options);
-    options = autofill(options, 'channel',                'ecg',      '*Int*Char*Cell'  );
+    options = autofill(options, 'channel',                'ecg',      '*Int*Char'       );
     options = autofill(options, 'ecg_bandpass',           [0.5,40],   '>', 0            );
     options = autofill(options, 'hrrange',                [20,200],   '>', 0            );
     options = autofill(options, 'min_cross_corr',         0.5,        '*Num'            );
@@ -94,31 +86,22 @@ switch FunName
     options = autofill(options, 'signal_to_use',          'auto',     {'ecg', 'teo'}    );
     options = autofill(options, 'teo_bandpass',           [8,40],     '>', 0            );
     options = autofill(options, 'teo_order',              1,          '>', 0            );
-  case 'convert_gaze_distance'
-    % 2.10 pspm_convert_gaze_distance --
+  case 'convert_gaze'
+    % 2.10 pspm_convert_gaze --
     options = autofill_channel_action(options);
+    options = autofill(options, 'channel',                'gaze',      '*Int*Char*Cell'  ); % this function operates on pairs of channels; hence cell is exceptionally allowed here
   case 'convert_hb2hp'
     % 2.11 pspm_convert_hb2hp --
     options = autofill_channel_action(options);
     options = autofill(options, 'limit_lower',            0.2,        '>', 0            );
     options = autofill(options, 'limit_upper',            2,          '>', 0            );
     options = check_range(options, 'limit_lower', 'limit_upper');
-  case 'convert_pixel2unit'
-    % 2.12 pspm_convert_pixel2unit --
-    options = autofill_channel_action(options);
   case 'convert_ppg2hb'
     % 2.13 pspm_convert_ppg2hb --
     options = autofill_channel_action(options);
-    options = autofill(options, 'channel',                'ppg2hb',   '*Int*Char*Cell'  );
+    options = autofill(options, 'channel',                'ppg2hb',   '*Int*Char'  );
     options = autofill(options, 'diagnostics',            0,          1                 );
     options = autofill(options, 'lsm',                    0,          [0,100-10^-10]    );
-  case 'convert_visangle2sps'
-    % 2.14 pspm_convert_visangle2sps --
-    options = autofill_channel_action(options);
-    options = autofill(options, 'channel',                1,          '*Int*Char*Cell'  );
-    options = autofill(options, 'eye',                    settings.lateral.char.b, ...
-                                                          {settings.lateral.char.r, ...
-                                                          settings.lateral.char.l}      );
   case 'data_editor'
     % 2.15 pspm_data_editor --
     % output_file does not have a default value
@@ -202,7 +185,7 @@ switch FunName
   case 'emg_pp'
     % 2.20 pspm_emg_pp --
     options = autofill_channel_action(options);
-    options = autofill(options, 'channel',                'emg',      '*Int*Char*Cell'  );
+    options = autofill(options, 'channel',                'emg',      '*Int*Char'       );
     options = autofill(options, 'mains_freq',             50,         '>', 0            );
   case 'exp'
     % 2.21 pspm_exp --
@@ -232,34 +215,20 @@ switch FunName
     options = autofill(options, 'plot',                   0,          1                 );
     options = autofill(options, 'resample',               1,          '*Int'            );
     options = autofill(options, 'snd_in_snd',             0,          1                 );
-    options = autofill(options, 'sndchannel',             0,          '*Int'            );
+    options = autofill(options, 'sndchannel',             'snd',      '*Int*Char'       );
     options = autofill(options, 'threshold',              0.1,        '>=',  0          );
-    options = autofill(options, 'trigchannel',            0,          '*Int'            );
+    options = autofill(options, 'trigchannel',            'marker',   '*Int*Char'       );
     options = fill_find_sounds(options);
   case 'find_valid_fixations'
     % 2.24 pspm_find_valid_fixations --
     options = autofill_channel_action(options);
-    options = autofill(options, 'channel',                'pupil',    '*Int*Char*Cell'  );
-    options = autofill(options, 'eyes',                   settings.lateral.full.c, ...
-                                                          {settings.lateral.full.l, ...
-                                                          settings.lateral.full.r}      );
-    options = autofill(options, 'missing',                0,          1                 );
-    options = autofill(options, 'newfile',                '',         '*Char'           );
+    options = autofill(options, 'channel',                'pupil',    '*Int*Char'       );
+    options = autofill(options, 'add_invalid',            0,          1                 );
     options = autofill(options, 'plot_gaze_coords',       0,          1                 );
     options = fill_find_valid_fixations(options);
   case 'gaze_pp'
     % 2.25 pspm_gaze_pp --
-    options = autofill(options, 'channel',                'none',     {'gaze_x_l',...
-                                                                      'gaze_x_r',...
-                                                                      'gaze_y_l',...
-                                                                      'gaze_y_r'}       );
-    options = autofill(options, 'channel_combine',        'none',     {'gaze_x_l',...
-                                                                      'gaze_x_r',...
-                                                                      'gaze_y_l',...
-                                                                      'gaze_y_r'}       );
-    options = autofill(options, 'plot_data',              false                         );
-    options = autofill(options, 'segments',               {}                            );
-    options = autofill(options, 'valid_sample',           0,          1                 );
+    options = autofill(options, 'channel',                'gaze',      '*Int*Char'      );  
     options = autofill_channel_action(options,            'add',      {'replace',...
                                                                       'none'}           );
   case 'get_markerinfo'
@@ -347,7 +316,7 @@ switch FunName
     options = autofill(options, 'C_x',                    0,          '*Num'            );
     options = autofill(options, 'C_y',                    0,          '*Num'            );
     options = autofill(options, 'C_z',                    0,          '*Num'            );
-    options = autofill(options, 'channel',                'pupil',    '*Char'           );
+    options = autofill(options, 'channel',                'pupil',    '*Int*Char'       );
     options = autofill(options, 'mode',                   'auto',     'manual'          );
     options = autofill(options, 'S_x',                    0,          '*Num'            );
     options = autofill(options, 'S_y',                    0,          '*Num'            );
@@ -359,10 +328,8 @@ switch FunName
   case 'pupil_pp'
     % 2.37 pspm_pupil_pp --
     options = autofill_channel_action(options);
-    options = autofill(options, 'channel',                'pupil',    {'pupil_l', ...
-                                                                      'pupil_r'}        );
-    options = autofill(options, 'channel_combine',        'none',     {'pupil_l', ...
-                                                                      'pupil_r'}        );
+    options = autofill(options, 'channel',                'pupil',    '*Int*Char'       );
+    options = autofill(options, 'channel_combine',        'none',     '*Int*Char'       );
     options = autofill(options, 'plot_data',              0,          1                 );
     options = autofill(options, 'segments',               {},         '*Cell'           );
   case 'remove_epochs'
@@ -383,13 +350,15 @@ switch FunName
     % 2.40 pspm_scr_pp --
     options = autofill_channel_action(options,            'add',      {'replace', ...
                                                                        'withdraw'}      );
+    options = autofill(options, 'baseline_jump',          1.5,        '>', 0            );
     options = autofill(options, 'change_data',            1,          0                 );
-    options = autofill(options, 'clipping_n_window',      10000,      '*Int'            );
+    options = autofill(options, 'clipping_window_size',   10000,      '*Int'            );
     options = autofill(options, 'clipping_step_size',     2,          '*Int'            );
     options = autofill(options, 'clipping_threshold',     0.1,        '*Num'            );
     options = autofill(options, 'data_island_threshold',  0,          '>=', 0           );
     options = autofill(options, 'deflection_threshold',   0.1,        '*Num'            );
     options = autofill(options, 'expand_epochs',          0.5,        '>=', 0           );
+    options = autofill(options, 'include_baseline',       0,          1                 );
     options = autofill(options, 'max',                    60,         '>', 0            );
     options = autofill(options, 'min',                    0.05,       '>', 0            );
     options = autofill(options, 'missing_epochs_filename','',         '*Char'           );
@@ -477,7 +446,7 @@ switch FunName
     options = autofill(options, 'overwrite',              0,          1                 );
   case 'write_channel'
     % 2.47 pspm_write_channel --
-    options = autofill(options, 'channel',                0,          '*Int*Char*Cell'  );
+    options = autofill(options, 'channel',                0,          '*Int*Char'  );
     options = autofill(options, 'delete',                 'last',     {'first','all'}   );
     options = autofill(options, 'prefix',                '',          '*Char'           );
     if ~isfield('options','msg')
@@ -922,34 +891,13 @@ elseif options.manual_chosen == 1 || ...
 end
 
 function options = fill_find_valid_fixations(options)
-global settings
-if isempty(settings)
-  pspm_init;
-end
-if ~isfield(options, 'channel')
-  options.channel = 'pupil';
-elseif ~iscell(options.channel) && ~ischar(options.channel) && ...
-    ~isnumeric(options.channel)
-  warning('ID:invalid_input', ['Options.channel should be a char, ', ...
-    'numeric or a cell of char or numeric.']);
-  options.invalid = 1;
-  return;
-end
-if ~iscell(options.channel)
-  options.channel = {options.channel};
-end
 if strcmpi(options.mode,'fixation') && ~isfield(options, 'resolution')
   options.resolution = [1 1];
 end
 if strcmpi(options.mode,'fixation') && ~isfield(options, 'fixation_point')
-  options.resolution = [0.5 0.5];
+  options.fixation_point = [0.5 0.5];
 end
-if iscell(options.channel) && any(~cellfun(@(x) isnumeric(x) || ...
-    any(strcmpi(x, settings.findvalidfixations.channeltypes)), options.channel))
-  warning('ID:invalid_input', 'Option.channel contains invalid values.');
-  options.invalid = 1;
-  return;
-elseif strcmpi(options.mode,'fixation') && isfield(options, 'fixation_point') && ...
+if strcmpi(options.mode,'fixation') && isfield(options, 'fixation_point') && ...
     (~isnumeric(options.fixation_point) || ...
     size(options.fixation_point,2) ~= 2)
   warning('ID:invalid_input', ['Options.fixation_point is not ', ...

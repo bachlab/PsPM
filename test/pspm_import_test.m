@@ -6,7 +6,7 @@ classdef pspm_import_test <  matlab.unittest.TestCase
   methods (Test)
     function invalid_inputargs(this)
       datafile = 'string';
-      datatype = 'spike';
+      datatype = 'smr';
       this.verifyWarning(@()pspm_import(datafile, datatype), ...
       'ID:invalid_input', 'invalid_input test 1'); %no import variable
       import = 'foo';
@@ -17,7 +17,7 @@ classdef pspm_import_test <  matlab.unittest.TestCase
       datatype = 'foo';
       this.verifyWarning(@()pspm_import(datafile, datatype, import), ...
       'ID:invalid_chantype', 'invalid_input test 3'); %invalid chantype
-      datatype = 'spike';
+      datatype = 'smr';
       datafile = 5;
       this.verifyWarning(@()pspm_import(datafile, datatype, import), ...
       'ID:invalid_input', 'invalid_input test 4'); %no char filname
@@ -45,7 +45,7 @@ classdef pspm_import_test <  matlab.unittest.TestCase
       'ID:nonexistent_file', 'invalid_import_struct test 4');
     end
     function one_datafile(this)
-      tc{1} = pspm_get_spike_test;
+      tc{1} = pspm_get_smr_test;
       tc{2} = pspm_get_labchartmat_in_test;
       tc{1}.setup_path;
       for k = 1:length(tc)
@@ -64,7 +64,7 @@ classdef pspm_import_test <  matlab.unittest.TestCase
       end
     end
     function multiple_datafiles(this)
-      tc = pspm_get_spike_test;
+      tc = pspm_get_smr_test;
       tc.setup_path;
       tc.define_testcases;
       % test import of multiple datafiles

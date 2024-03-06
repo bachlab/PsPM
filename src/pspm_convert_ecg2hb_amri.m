@@ -17,11 +17,9 @@ function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 %   ┌─────── options
 %   ├───────.channel: [optional, numeric/string, default as 'ecg']
 %   │                 Channel ID to be preprocessed.
-%   │                 Channel can be specified by its index in the given PsPM
-%   │                 data structure.
-%   │                 It will be preprocessed as long as it is a valid ECG
-%   │                 channel.
-%   │                 If there are multiple channels with 'ecg' type, only
+%   │                 Channel can be specified by its index (numeric) in the given
+%   │                 PsPM data structure or by its channel type (string).
+%   │                 If there are multiple channels with this type, only
 %   │                 the last one will be processed. If you want to detect
 %   │                 r-peaks for all ECG channels in a PsPM file separately,
 %   │                 call this function multiple times with the index of
@@ -100,14 +98,12 @@ if options.invalid
   return
 end
 %% load
-addpath(pspm_path('backroom'));
-[lsts, data] = pspm_load_single_chan(fn, options.channel, 'last', 'ecg');
-if lsts ~= 1; return; end;
-rmpath(pspm_path('backroom'));
+[lsts, data] = pspm_load_channel(fn, options.channel, 'ecg');
+if lsts ~= 1; return; end
 %% process
 addpath(pspm_path('ext','amri_eegfmri'));
-ecg.data = data{1}.data;
-ecg.srate = data{1}.header.sr;
+ecg.data = data.data;
+ecg.srate = data.header.sr;
 rpeak_logic_vec = amri_eeg_rpeak(ecg, ...
   'WhatIsY', options.signal_to_use, ...
   'PulseRate', options.hrrange, ...

@@ -25,7 +25,7 @@ function [sts, out] = pspm_extract_segments(varargin)
 %                          will be treated as session. Onset values are
 %                          averaged through conditions and sessions.
 %               data_raw:  Numeric raw data or a cell array of numeric raw data.
-%                   channel:  Channel number or cell of channel numbers which
+%                channel:  Channel number or cell of channel numbers which
 %                          defines which channel should be taken to
 %                          extract the segments. channel should correspond to
 %                          data_fn and should have the same length. If
@@ -255,14 +255,14 @@ if manual_chosen ~= 0
   marker_data = {};
   if manual_chosen == 1
     for i=1:numel(data_fn)
-      [sts, ~, data] = pspm_load_data(data_fn{i}, channel{i});
+      [sts, data] = pspm_load_channel(data_fn{i}, channel{i});
       assert(sts == 1);
-      input_data{end + 1} = data{1}.data;
-      sampling_rates(end + 1) = data{1}.header.sr;
+      input_data{end + 1} = data.data;
+      sampling_rates(end + 1) = data.header.sr;
       if strcmpi(options.timeunit, 'markers')
-        [sts, ~, data] = pspm_load_data(data_fn{i}, options.marker_chan{i});
+        [sts, data] = pspm_load_channel(data_fn{i}, options.marker_chan{i}, 'marker');
         assert(sts == 1);
-        marker_data{end + 1} = data{1,1}.data;
+        marker_data{end + 1} = data.data;
       end
     end
   elseif manual_chosen == 2

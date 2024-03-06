@@ -9135,7 +9135,7 @@ Related function:
 \shape default
  
 \family typewriter
-pspm_convert_area2mm, pspm_convert_pixel2unit
+pspm_convert_area2mm, pspm_convert_pixel2unit_core
 \end_layout
 
 \begin_layout Standard
@@ -9510,7 +9510,7 @@ Related function:
 \shape default
  
 \family typewriter
-pspm_convert_gaze_distance
+pspm_convert_gaze
 \end_layout
 
 \begin_layout Standard
@@ -14233,7 +14233,7 @@ status open
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename Figures/YY1_import.png
-	scale 40
+	scale 50
 
 \end_inset
 
@@ -14283,7 +14283,7 @@ status open
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename Figures/YY2_trim.png
-	scale 40
+	scale 50
 
 \end_inset
 
@@ -18835,7 +18835,7 @@ New Functions
 \begin_layout Itemize
 
 \family typewriter
-pspm_convert_pixel2unit
+pspm_convert_pixel2unit_core
 \family default
 : Allows to transfer gaze data from pixel to units.
  This facilitates the use of pspm_find_valid_fixations which needs data
@@ -18845,7 +18845,7 @@ pspm_convert_pixel2unit
 \begin_layout Itemize
 
 \family typewriter
-pspm_compute_visual_angle
+pspm_convert_visual_angle_core
 \family default
 : Computes visual angle from gaze data.
 \end_layout
@@ -18967,7 +18967,7 @@ lost
 \begin_layout Itemize
 
 \family typewriter
-pspm_compute_visual_angle
+pspm_convert_visual_angle_core
 \family default
 : Fix bug in range computation.
 \end_layout
@@ -19505,7 +19505,7 @@ pspm_bf_ldrf_gm
 \begin_layout Itemize
 Fix a bug in 
 \family typewriter
-pspm_compute_visual_angle
+pspm_convert_visual_angle_core
 \family default
  where there was an error in the conversion factor of pixels wrt.
  to mm.
@@ -19558,7 +19558,7 @@ pspm_simple_qa
 \begin_layout Itemize
 Allow 
 \family typewriter
-pspm_convert_gaze_distance
+pspm_convert_gaze
 \family default
  to convert from distance units to degrees or scanpath speed.
  The accompanying GUI editor is available under 'Gaze Convert' in the data
