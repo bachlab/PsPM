@@ -12,22 +12,31 @@ function [ sts, outinfo ] = pspm_convert_ppg2hb(fn, channel, options )
 %                 fn: file name with path
 %            channel: ppg channel number, default: last ppg channel
 %   ┌────────options: struct with following possible fields
-%   ├───.method:      "classic" (default), "heartpy"
+%   ├───.method:      'classic' (default), 'heartpy'
 %   ├───.diagnostics: [true/FALSE]
 %   │                 displays some debugging information
 %   ├.channel_action: ['add'/'replace', 'replace']
 %   │                 Defines whether the interpolated
 %   │                 data should be added or the corresponding channel
 %   │                 should be replaced.
-%   └───────────.lsm: [integer]
-%                     large spikes mode compensates for large spikes
-%                     while generating template by removing the [integer]
-%                     largest percentile of spikes from consideration.
+%   ├──────.missing:  allows to specify missing (e. g. artefact) epochs in the
+%   │                 data file. See pspm_get_timing for epoch definition. This
+%   │                 must always be specified in SECONDS. These epochs will be
+%   │                 set to 0 for the detection.
+%   │                 Default: no missing values
+%   ├─────────.lsm: [integer] for method 'classic'
+%   │                 large spikes mode compensates for large spikes
+%   │                 while generating template by removing the [integer]
+%   │                 largest percentile of spikes from consideration.
+%   └────.python_path: [char] for method 'heartpy'
+%                     The path where python can be found. Mandatory if
+%                     python environment is not yet set up
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Samuel Gerster (University of Zurich)
 %                      Tobias Moser (University of Zurich)
 %   Maintained in 2022 by Teddy Chao (UCL)
+%   Updated in 2024 by Dominik Bach/Uzay Gokay (Uni Bonn)
 
 %% Initialise
 global settings
@@ -45,39 +54,30 @@ elseif ~ischar(fn)
     warning('ID:invalid_input', 'Need file name string as first input.'); return;
 elseif nargin < 2 || isempty(channel)
     channel = 'ppg';
-elseif ~isnumeric(channel) && ~strcmp(channel,'ppg')
-    warning('ID:invalid_input', 'Channel number must be numeric'); return;
 end
 
-
-% =====> update pspm_options with new opions, see header
-
-%%% Process options
-% Display diagnostic plots? default is false
-% try if ~islogical(options.diagnostics),options.diagnostics = false;end
-% catch, options.diagnostics = false; end
 options = pspm_options(options, 'convert_ppg2hb');
 if options.invalid
     return
 end
-% try if ~isnumeric(options.lsm),options.lsm = 0;end
-% catch, options.lsm = 0; end
 
-%% user output
+% user output
 % -------------------------------------------------------------------------
 fprintf('Heartbeat detection for %s ... \n', fn);
 
 % get data
 % -------------------------------------------------------------------------
+[nsts, data] = pspm_load_channel(fn, channel, 'ppg');
+if nsts == -1, return; end
+ppg = data.data;
 
-
-% % =====> allow & process missing data
-% deal with missing data
+% process missing data
 nan_index = isnan(ppg);
 if ~isempty(nan_index)
     ppg(nan_index) = 0;
 end
-if isfield(options, 'missing')
+
+if ~isempty(options.missing)
     [sts, missing] = pspm_get_timing('epochs', options.missing, 'seconds');
     if sts < 1, return; end
     index   = epochs2index(missing, numel(ppg), sr);
@@ -86,16 +86,19 @@ if isfield(options, 'missing')
     end
 end
 
-
+% -------------------------------------------------------------------------
+%% Heartpy
 if strcmpi(options.method, 'heartpy')
-    % % =====> check whether Python is setup and available. Take path as
-    % options.argument. If Python not available, fall back to other method
-    PathPython = 'C:\Users\dbach\Anaconda3\python.exe';
-    pyenv(Version=PathPython)
-
-    % % =====> does python module have to imported every time, or can we check that it
-    % is already imported?
-    py.importlib.import_module('heartpy');
+    % initialise python
+    if isempty(options.python_path)
+        sts = pspm_check_python;
+    else
+        sts = pspm_check_python(options.python_path);
+    end
+    if sts < 1, return; end
+    pspm_check_python_modules('heartpy');
+    
+    % prepare detection
     ParametersSTFT = struct('TWindow', 16, ...
         'TStep', 1, ...
         'Tolerance', 0.5, ...
@@ -129,11 +132,7 @@ if strcmpi(options.method, 'heartpy')
     end
 
 else
-
-    %% Large spikes mode
-    %--------------------------------------------------------------------------
-    ppg = data{1}.data;
-    % large spike mode
+    %% large spike mode
     if options.lsm
         fprintf('Entering large spikes mode. This might take some time.');
         % Look for all peaks lower than 200 bpm (multiple of two in heart rate
@@ -224,109 +223,8 @@ else
         'MinPeakdistance',min_pulse_period/data{1}.header.sr);
     fprintf('   done.\n');
 
-    %% Prepare output and save
-    %--------------------------------------------------------------------------
-    % save data
-    fprintf('Saving data.');
-    msg = sprintf('Heart beat detection from ppg with cross correlation HB-timeseries added to data on %s', date);
-end
-=======
-[nsts, data] = pspm_load_channel(fn, channel, 'ppg');
-if nsts == -1, return; end
-
-%% Large spikes mode
-%--------------------------------------------------------------------------
-ppg = data.data;
-% large spike mode
-if options.lsm
-  fprintf('Entering large spikes mode. This might take some time.');
-  % Look for all peaks lower than 200 bpm (multiple of two in heart rate
-  %  to compensate for absolute value and therefore twice as mani maxima)
-  [pks,pis] = findpeaks(abs(ppg),...
-    'MinPeakDistance',30/200*data.header.sr);
-  % Ensure at least one spike is removed by adapting quantil to realistic
-  % values, given number of detected spikes
-  q = floor(length(pks)*(1-options.lsm/100))/length(pks);
-  % define large spikes index as last lsm percentile (or as adapted above)
-  lsi = pks>quantile(pks,q);
-  %define a minimum peak prominence 2/3 of non large spikes range (more
-  %or less)
-  minProm = max(pks(~lsi))*2/3;
-  % save indexes of large spikes for later removal while generating
-  % template
-  lsi = pis(lsi);
-  fprintf('   done.\n');
-else
-  minProm = range(ppg)/3;
 end
 
-%% Create template
-%--------------------------------------------------------------------------
-fprintf('Creating template. This might take some time.');
-% Find prominent peaks for a max heart rate of 200 bpm
-[~,pis] = findpeaks(data.data,...
-  'MinPeakDistance',60/200*data.header.sr,...
-  'MinPeakProminence',minProm);
-
-if options.lsm
-  % Remove large spikes from
-  [~,lsi_in_pis,~] = intersect(pis,lsi);
-  pis(lsi_in_pis) = [];
-end
-
-% handle possible errors
-if isempty(pis),warning('ID:NoPulse', 'No pulse found, nothing done.');return;end
-if length(pis)==1,warning('ID:OnePulse', 'Only one pulse found, unable to calculate min_pulse_period.');return;end
-
-% get pulse period lower limit (assumed onset) as 30% of smalest period
-% before detected peaks
-min_pulse_period = min(diff(pis));
-period_index_lower_bound = floor(pis(2:end-1)-.3*min_pulse_period);
-fprintf('...');
-
-% Create template from mean of peak time-locked ppg pulse periods
-pulses = cell2mat(arrayfun(@(x) data.data(x:x+min_pulse_period),period_index_lower_bound','un',0));
-template = mean(pulses,2);
-fprintf('done.\n');
-
-% handle diagnostic plots relevant to template building
-if options.diagnostics
-  t_template = (0:length(template)-1)'/data.header.sr;
-  t_pulses = repmat(t_template,1,length(pis)-2);
-  figure
-  plot(t_pulses,pulses,'--')
-  set(gca,'NextPlot','add')
-  plot(t_template,template,'k','lineWidth',3)
-  xlabel('time [s]')
-  ylabel('Amplitude')
-  title('Generated ppg template (bk) and pulses used (colored)')
-end
-
-%% Cross correlate the signal with the template and find peaks
-%--------------------------------------------------------------------------
-fprintf('Applying template.');
-ppg_corr = xcorr(data.data,template)/sum(template);
-% Truncate ppg_xcorr and realigne it so the max correlation corresponds to
-% templates peak and not beginning of template.
-ppg_corr = ppg_corr(length(data.data)-floor(.3*min_pulse_period):end-floor(.3*min_pulse_period));
-if options.diagnostics
-  t_ppg = (0:length(data.data)-1)'/data.header.sr;
-  figure
-  if length(t_ppg) ~= length(ppg_corr)
-    length(t_ppg)
-  end
-  plot(t_ppg,ppg_corr,t_ppg,data.data)
-  xlabel('time [s]')
-  ylabel('Amplitude')
-  title('ppg cross-corelated with template and ppg')
-  legend('ppg (X) template','ppg')
-end
-% Get peaks that are at least one template width appart. These are the best
-% correlation points.
-[~,hb] = findpeaks(ppg_corr/max(ppg_corr),...
-  data.header.sr,...
-  'MinPeakdistance',min_pulse_period/data.header.sr);
-fprintf('   done.\n');
 
 %% Prepare output and save
 %--------------------------------------------------------------------------
