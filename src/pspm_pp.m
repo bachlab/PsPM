@@ -109,7 +109,7 @@ switch method
     end
     % Convert tau from seconds to samples
     sample_rate = data.header.sr;  % Assuming the sample rate is stored here
-    tau_samples = tau_sec * sample_rate;
+    tau_samples = pspm_time2index(tau_sec, sample_rate);
     
     fprintf('\n\xBB Preprocess: applying leaky integrator to datafile %s ... ', fn);
     % Apply the leaky integrator function
