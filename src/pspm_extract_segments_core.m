@@ -71,7 +71,7 @@ for i = 1:length(data)
         % imprecision problems with previous rounding operations (which can
         % in fact result in non-integer values)
         if endIndex > length(currentData)
-            segment = [int64(currentData(onset:end)), NaN(1, endIndex - length(currentData))];
+            segment = [currentData(int64(onset):end), NaN(1, endIndex - length(currentData))];
         else
             segment = currentData(int64(onset:endIndex));
         end

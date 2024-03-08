@@ -33,12 +33,9 @@ if ~isempty(multi)
         for n = 1:numel(multi(iSn).names)
             % convert onsets to samples
             switch timeunits
-                case 'samples'
+                case {'samples', 'seconds'}
                     onsets{n}{iSn}    = pspm_time2index(multi(iSn).onsets{n}, sr(iSn), session_duration);
-                    durations{n}{iSn}  = round(multi(iSn).durations{n} * sr(iSn));
-                case 'seconds'
-                    onsets{n}{iSn}    = pspm_time2index(multi(iSn).onsets{n}, sr(iSn), session_duration);
-                    durations{n}{iSn} = round(multi(iSn).durations{n} * sr(iSn));
+                    durations{n}{iSn}  = pspm_time2index(multi(iSn).durations{n}, sr(iSn), session_duration, 1);
                 case 'markers'
                     if nargin == 0
                         warning('ID:invalid_input', 'No event definition provided.'); return;
@@ -46,9 +43,8 @@ if ~isempty(multi)
                         events = varargin{1};
                     end
                     % markers are timestamps in seconds
-                    onsets{n}{iSn} = pspm_time2index(events{iSn}(multi(iSn).onsets{n}), ...
-                        sr, session_duration);
-                    durations{n}{iSn} = multi(iSn).durations{n}*sr(iSn);
+                    onsets{n}{iSn}    = pspm_time2index(multi(iSn).onsets{n}, sr(iSn), session_duration, 0, events{iSn});
+                    durations{n}{iSn}  = pspm_time2index(multi(iSn).durations{n}, sr(iSn), session_duration, 1);
             end
         end
     end

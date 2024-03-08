@@ -132,8 +132,8 @@ switch method
             elseif alldata{i_sn}.header.sr ~= sr
                 warning('ID:invalid_input', 'Unequal sample rates detected.'); return;
             end
-            if strcmpi(options.timeunits, 'marker')
-                [lsts, markerdata] = pspm_load_channel(datafile{i_sn}, channel);
+            if strcmpi(options.timeunits, 'markers')
+                [lsts, markerdata] = pspm_load_channel(datafile{i_sn}, options.marker_chan_num);
                 if lsts < 1, return; end
                 events{i_sn} = markerdata.data;
             end
@@ -206,7 +206,7 @@ missing = cellfun(@(x, y) pspm_epochs2logical(x, y, sr), missing(:), num2cell(se
 
 %% extract segments
 for i_cond = 1:numel(onsets)
-    [sts, segments{i_cond}.data, sessions] = pspm_extract_segments_core(data_raw, onsets{i_cond}, int64(round(sr * options.length)), missing);
+    [sts, segments{i_cond}.data, segments{i_cond}.sessions] = pspm_extract_segments_core(data_raw, onsets{i_cond}, pspm_time2index(options.length, sr, inf, 1), missing);
     if sts < 1, return; end
 end
 
