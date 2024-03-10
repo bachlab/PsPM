@@ -5,6 +5,8 @@ for i = 1:numel(job.conversion)
   options = struct();
   options = pspm_update_struct(options, job, 'channel_action');
   if isfield(job.conversion(i).mode, 'area2diameter')
+    fn = job.datafile;
+    chan = job.conversion(i).channel;
     pspm_convert_area2diameter(fn, chan, options);
   end
   if isfield(job.conversion(i).mode, 'pixel2unit')
@@ -12,6 +14,7 @@ for i = 1:numel(job.conversion)
     height = job.conversion(i).mode.pixel2unit.height;
     distance = job.conversion(i).mode.pixel2unit.distance;
     unit = job.conversion(i).mode.pixel2unit.unit;
+    chan = job.conversion(i).channel;
     pspm_convert_pixel2unit(fn, chan, unit, width, height,distance, options);
   end
   if isfield(job.conversion(i).mode, 'visangle2sps')
