@@ -174,19 +174,20 @@ if action_combine
   if sum(isnan(data.data))/length(data.data) > options.nan_cutoff
     warning('ID:invalid_input', ...
       ['options.channel has more than ', ...
-      num2str(options.nan_cutoff*100),'% missing values.']);
-    return;
+      num2str(options.nan_cutoff*100),'% missing values but will still be processed.']);
   end
   if sum(isnan(data_combine.data))/length(data_combine.data) > options.nan_cutoff
     warning('ID:invalid_input', ...
       ['options.channel_combine has more than ', ...
-      num2str(options.nan_cutoff*100),'% missing values.']);
-    return;
+      num2str(options.nan_cutoff*100),'% missing values thus will not be used for combining.']);
+    data_combine.data = [];
   end
   old_channeltype = sprintf('%s and %s', ...
     data.header.chantype, data_combine.header.chantype);
 else
   data_combine.data = [];
+  warning('ID:no_data_combination',...
+    'options.channel_combine does not contain data to combine.');
   old_channeltype = data.header.chantype;
 end
 %% 5 preprocess
