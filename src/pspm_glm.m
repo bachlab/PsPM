@@ -382,10 +382,7 @@ for iSn = 1:nFile
       if msts < 1, return; end
       % shift conditions for sessions not being the first
       for n = 1:numel(multi(iSn).names)
-          if iSn > 1
-              newonsets{n}{1} = newonsets{n}{1} + sum(tmp.snduration(1:(iSn - 1)));
-          end
-          if iSn == 1
+           if iSn == 1
               names{n} = multi(1).names{n};
               onsets{n} = newonsets{n}{1}(:);
               durations{n} = newdurations{n}{1}(:);
@@ -396,6 +393,9 @@ for iSn = 1:nFile
                   pmod(n).name = multi(1).pmod(n).name;
               end
           else
+               % shift conditions for sessions not being the first
+               newonsets = newonsets + sum(tmp.snduration(1:(iSn - 1)));
+              % then insert
               onsets{n} = [onsets{n}; newonsets{n}{1}(:)];
               durations{n} = [durations{n}; newdurations{n}{1}(:)];
               if isfield(multi, 'pmod') && (numel(multi(iSn).pmod) >= n)
