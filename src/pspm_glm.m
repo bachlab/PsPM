@@ -380,7 +380,6 @@ for iSn = 1:nFile
       [msts, newonsets, newdurations] = pspm_multi2index(model.timeunits, ...
           multi(iSn), sn_sr, tmp.snduration(iSn), events(iSn));
       if msts < 1, return; end
-      % shift conditions for sessions not being the first
       for n = 1:numel(multi(iSn).names)
            if iSn == 1
               names{n} = multi(1).names{n};
@@ -394,7 +393,8 @@ for iSn = 1:nFile
               end
           else
                % shift conditions for sessions not being the first
-               newonsets = newonsets + sum(tmp.snduration(1:(iSn - 1)));
+               % (tmp.snduration is in samples)
+              newonsets{n}{1}(:) = newonsets{n}{1}(:) + sum(tmp.snduration(1:(iSn - 1)));
               % then insert
               onsets{n} = [onsets{n}; newonsets{n}{1}(:)];
               durations{n} = [durations{n}; newdurations{n}{1}(:)];
