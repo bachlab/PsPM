@@ -1,14 +1,10 @@
 function split_sessions = pspm_cfg_split_sessions
-
-    % $Id$
-    % $Rev$
-
+    % Updated 11-03-2024 by Teddy
     % Initialise
     global settings
     if isempty(settings)
         pspm_init;
     end
-
     %% Data file
     datafile         = cfg_files;
     datafile.name    = 'Data File';
@@ -53,7 +49,7 @@ function split_sessions = pspm_cfg_split_sessions
     split_manual.tag    = 'marker';
     split_manual.strtype = 'i';
     split_manual.num    = [1 inf];
-    split_manual.help   = {['Split sessions according to given marker id''s.']};
+    split_manual.help   = {'Split sessions according to given marker id''s.'};
 
     %% Split behaviour
     split_behavior         = cfg_choice;
@@ -134,9 +130,9 @@ function split_sessions = pspm_cfg_split_sessions
         options.overwrite = job.overwrite;
         if isfield(job.missing_epochs_file,'name')
             options.missing = job.missing_epochs_file.name{1,1};
-        else
-            options.missing = 0;
         end
+        % options.missing has a default value in pspm_options if
+        % unspecified.
         if isfield(job.split_behavior, 'auto')
             options.splitpoints = [];
         elseif isfield(job.split_behavior, 'marker')
