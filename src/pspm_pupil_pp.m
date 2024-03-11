@@ -48,7 +48,7 @@ function [sts, out_chan] = pspm_pupil_pp (fn, options)
 %   │           To process the combined left and right eye, use 'pupil_c'.
 %   │           To combine both eyes, specify one eye here and the other
 %   │           under option 'channel_combine'. The identifier 'pupil' will
-%   │           use the first existing option out of the following: 
+%   │           use the first existing option out of the following:
 %   │           (1) L-R-combined pupil, (2) non-lateralised pupil, (3) best
 %   │           eye pupil, (4) any pupil channel. If there are multiple
 %   │           channels of the specified type, only last one will be
@@ -58,12 +58,12 @@ function [sts, out_chan] = pspm_pupil_pp (fn, options)
 %   │           Channel to be used for computing the mean pupil signal.
 %   │           The input format is exactly the same as the .channel field.
 %   │           However, the eye specified in this channel must be different
-%   │           from the one specified in .channel field. The output channel 
+%   │           from the one specified in .channel field. The output channel
 %   │           will then be of type 'pupil_c'.
 %   ├─.channel_action:
 %   │           [optional][string][Accepts: 'add'/'replace'][Default: 'add']
 %   │           Defines whether corrected data should be added or the
-%   │           corresponding preprocessed channel should be replaced. 
+%   │           corresponding preprocessed channel should be replaced.
 %   ├─.custom_settings:
 %   │           [optional][Default: See pspm_pupil_pp_options]
 %   │           Settings structure to modify the preprocessing steps. If
@@ -170,17 +170,21 @@ if action_combine
       'options.channel and options.channel_combine data have different lengths.');
     return;
   end
-  % Check if one channel is dominated by NaNs
-  if sum(isnan(data.data))/length(data.data) > options.nan_cutoff
+
+  flag_valid_data    = sum(isnan(data.data))/length(data.data) > options.nan_cutoff;
+  flag_valid_combine = sum(isnan(data_combine.data))/length(data_combine.data) > options.nan_cutoff;
+  if flag_valid_data && ~flag_valid_combine
     warning('ID:invalid_input', ...
-      ['options.channel has more than ', ...
-      num2str(options.nan_cutoff*100),'% missing values but will still be processed.']);
-  end
-  if sum(isnan(data_combine.data))/length(data_combine.data) > options.nan_cutoff
-    warning('ID:invalid_input', ...
-      ['options.channel_combine has more than ', ...
-      num2str(options.nan_cutoff*100),'% missing values thus will not be used for combining.']);
+      ['data channel is good, but channel_combine channel has more than ', ...
+      num2str(options.nan_cutoff*100),'% missing values, thus it will not be used for combining.']);
     data_combine.data = [];
+  end
+  if ~flag_valid_data && flag_valid_combine
+    warning('ID:invalid_input', ...
+      ['channel_combine channel is good, but data channel has more than ', ...
+      num2str(options.nan_cutoff*100),'% missing values, thus only data_combine channel will be used.']);
+    data = data_combine; % exchange data and data_combine including fields
+    data_combine.data = []; % to only use the value stored in data_combine
   end
   old_channeltype = sprintf('%s and %s', ...
     data.header.chantype, data_combine.header.chantype);
