@@ -110,12 +110,45 @@ classdef pspm_get_timing_test < matlab.unittest.TestCase
       'Condition A','Condition A','Condition B','Condition A','Condition B',...
       'Condition B','Condition B','Condition A','Condition A','Condition B'};
       markervalue = [1 2];
-      fn_mat = struct('markerinfo',markerinfo,'markervalues',markervalue,'names',{names});
-      [sts, outtiming] = pspm_get_timing('onsets', fn_mat, 'markervalues');
+      timing = struct('markerinfo',markerinfo,'markervalues',markervalue,'names',{names});
+      [sts, outtiming] = pspm_get_timing('onsets', timing, 'markervalues');
       this.verifyTrue(sts==1);
-      this.verifyEqual(outtiming.onsets, onsets);
-      this.verifyEqual(outtiming.names, names);
+      this.verifyEqual(outtiming.onsets(:), onsets(:));
+      this.verifyEqual(outtiming.names(:), names(:));
       this.verifyTrue(isfield(outtiming, 'durations'));
+      % test 4
+      names = {'name1', 'name2'};
+      onsets = {[1 2 3], [3 4 5]};
+      durations = {[3 4 5]', [5 6 7]'};
+      pmod.name = {'name3', 'name4'};
+      pmod.param = {[2 3 4], [4 5 6]};
+      pmod.poly = {2, 1};
+      save(fn_mat, 'names', 'onsets', 'pmod', 'durations');
+      fn_mat2 = 'testfile2243538.mat';
+      names = {'name5', 'name1'};
+      onsets = {[1 2 3], [3 4 5]};
+      durations = {[3 4 5]', [5 6 7]'};
+      pmod.name = {'name6', 'name4'};
+      pmod.param = {[2 3 4], [4 5 6]};
+      pmod.poly = {2, 1};
+      save(fn_mat2, 'names', 'onsets', 'pmod', 'durations');    
+      [sts, outtiming] = pspm_get_timing('onsets', {fn_mat, fn_mat2}, 'samples');
+      load(fn_mat);
+      this.verifyTrue(sts==1);
+      this.verifyEqual(outtiming(1).onsets, [onsets, {[]}]);
+      this.verifyEqual(outtiming(1).names, {'name1', 'name2', 'name5'});
+      this.verifyTrue(isfield(outtiming(1), 'durations'));
+      this.verifyEqual(outtiming(1).durations, [durations, {[]}]);
+      this.verifyEqual(outtiming(1).pmod.param, {[2 3 4], [4 9 16], [4 5 6]});
+      load(fn_mat2);
+      this.verifyTrue(sts==1);
+      this.verifyEqual(outtiming(2).onsets, [onsets{2}, {[]}, onsets{1}]);
+      this.verifyEqual(outtiming(2).names, {'name1', 'name2', 'name5'});
+      this.verifyTrue(isfield(outtiming(2), 'durations'));
+      this.verifyEqual(outtiming(2).durations, [durations{2}, {[]}, durations{1}]);
+      this.verifyEqual(outtiming(2).pmod(3).param, {[2 3 4], [4 9 16], [4 5 6]});
+      delete(fn_mat);
+      delete(fn_mat2);
     end
     function case_events(this)
       intiming{1} = [1 2; 3 4; 4 6];
