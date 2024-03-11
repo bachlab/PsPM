@@ -305,9 +305,9 @@ switch model
             elseif numel(name_idx) == 1
                 outtiming(iFile).onsets{iCond}    = temptiming(iFile).onsets{name_idx};
                 outtiming(iFile).durations{iCond}  = temptiming(iFile).durations{name_idx};
-            if isfield(temptiming, 'pmod') && numel(temptiming(iFile).pmod) >= name_idx
-                outtiming(iFile).pmod(iCond)  = temptiming(iFile).pmod(name_idx);
-            end
+                if isfield(temptiming, 'pmod') && numel(temptiming(iFile).pmod) >= name_idx
+                    outtiming(iFile).pmod(iCond)  = temptiming(iFile).pmod(name_idx);
+                end
             elseif numel(name_idx) == 0
                 outtiming(iFile).onsets{iCond}    = [];
                 outtiming(iFile).durations{iCond}  = [];
