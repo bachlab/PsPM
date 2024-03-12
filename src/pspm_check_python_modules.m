@@ -22,6 +22,7 @@ function [sts, moduleNames] = pspm_check_python_modules(module)
             modulesDict = py.sys.modules;
             moduleNamesList = py.list(modulesDict.keys());
             moduleNames = cell(moduleNamesList);
+            moduleNames = cellfun(@(x) char(x), moduleNames, 'UniformOutput', false);
 
             % Print confirmation message
             fprintf('Python modules have been successfully retrieved. Total modules: %d\n', numel(moduleNames));

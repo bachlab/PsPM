@@ -83,7 +83,7 @@ if ~isempty(options.missing)
     if sts < 1, return; end
     index   = pspm_epochs2logical(missing, numel(ppg), sr);
     if (sum(index) > 0)
-        ppg(index) = 0;
+        ppg(find(index)) = 0; % sometimes the logical indexing does not work even though index contains only 0 and 1 and is of correct size
     end
 end
 
