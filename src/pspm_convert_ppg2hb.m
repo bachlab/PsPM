@@ -81,7 +81,7 @@ end
 if ~isempty(options.missing)
     [sts, missing] = pspm_get_timing('epochs', options.missing, 'seconds');
     if sts < 1, return; end
-    index   = epochs2index(missing, numel(ppg), sr);
+    index   = pspm_epochs2logical(missing, numel(ppg), sr);
     if (sum(index) > 0)
         ppg(index) = 0;
     end
