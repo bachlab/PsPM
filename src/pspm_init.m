@@ -38,9 +38,6 @@ for n = 1:numel(msg{1})
 end
 fprintf('PsPM: loading defaults ... \n');
 %% 2 check
-pth = [pth, fs];
-pspm_text(pth);
-load(fullfile(pth,'pspm_text.mat'))
 % 2.1 check pspm version
 [~, pspm_vers] = pspm_version('check');
 % 2.2 check various settings
@@ -50,6 +47,10 @@ if ~isempty(settings) % initialise settings
 end
 p = path;
 fs = filesep;
+pth = fileparts(which('pspm_guide'));
+pth = [pth, fs];
+pspm_text(pth);
+load(fullfile(pth,'pspm_text.mat'))
 % 2.3 check if subfolders are already in path
 % get subfolders
 current_path = fileparts(mfilename('fullpath'));
@@ -66,7 +67,6 @@ if numel(subfolders(mem)) == 0
   warning(warntext_subfolder);
 end
 % 2.4 check whether scralyze is on the path
-pth = fileparts(which('pspm_guide'));
 if ~contains(p, pth)
   scrpath=1;
   addpath(pth);
