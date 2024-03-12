@@ -38,6 +38,9 @@ for n = 1:numel(msg{1})
 end
 fprintf('PsPM: loading defaults ... \n');
 %% 2 check
+pth = [pth, fs];
+pspm_text(pth);
+load(fullfile(pth,'pspm_text.mat'))
 % 2.1 check pspm version
 [~, pspm_vers] = pspm_version('check');
 % 2.2 check various settings
@@ -70,9 +73,6 @@ if ~contains(p, pth)
 else
   scrpath=0;
 end
-pth = [pth, fs];
-pspm_text(pth);
-load(fullfile(pth,'pspm_text.mat'))
 % 2.5 check matlab version
 v = version;
 if str2double(v(1:3)) < 7.1
