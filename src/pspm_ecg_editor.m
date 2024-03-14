@@ -857,7 +857,7 @@ end
 function load_data_file(hObject, handles, fn)
 [sts, ~, handles.data, ~] = pspm_load_data(fn);
 if sts == 1
-  ecg_chans = find(cellfun(@(x) strcmpi(x.header.chantype, 'ecg'), handles.data));
+  ecg_chans = find(cellfun(@(x) any(strcmpi(x.header.chantype, {'ecg', 'ppg'})), handles.data));
   % set possible ecg chans
   sel_ecg_chan = find(ecg_chans == handles.data_chan, 1, 'first');
   if isempty(sel_ecg_chan)
