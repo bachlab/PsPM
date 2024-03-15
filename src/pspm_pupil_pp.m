@@ -142,6 +142,8 @@ alldata = struct();
 if sts_load < 1, return, end
 [sts_load, data,] = pspm_load_channel(alldata, options.channel, 'pupil');
 if sts_load ~= 1, return, end
+flag_valid_data    = sum(isnan(data.data))/length(data.data) < options.nan_cutoff;
+
 if action_combine
   [sts_load, data_combine] = pspm_load_channel(alldata, options.channel_combine, 'pupil');
   if sts_load ~= 1
@@ -171,8 +173,7 @@ if action_combine
     return;
   end
 
-  flag_valid_data    = sum(isnan(data.data))/length(data.data) > options.nan_cutoff;
-  flag_valid_combine = sum(isnan(data_combine.data))/length(data_combine.data) > options.nan_cutoff;
+  flag_valid_combine = sum(isnan(data_combine.data))/length(data_combine.data) < options.nan_cutoff;
   if flag_valid_data && ~flag_valid_combine
     warning('ID:invalid_input', ...
       ['data channel is good, but channel_combine channel has more than ', ...
@@ -190,9 +191,12 @@ if action_combine
     data.header.chantype, data_combine.header.chantype);
 else
   data_combine.data = [];
-  warning('ID:no_data_combination',...
-    'options.channel_combine does not contain data to combine.');
+  fprintf('No data to combine provided - only one channel will be used.\');
   old_channeltype = data.header.chantype;
+  if ~flag_valid_data 
+    warning('ID:invalid_input', ...
+      ['Data channel has more than ', ...
+      num2str(options.nan_cutoff*100),'% missing values. Please double-check your output.'],   
 end
 %% 5 preprocess
 [lsts, smooth_signal, ~] = pspm_preprocess(data, data_combine, ...
