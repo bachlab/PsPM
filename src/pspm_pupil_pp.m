@@ -196,7 +196,8 @@ else
   if ~flag_valid_data 
     warning('ID:invalid_input', ...
       ['Data channel has more than ', ...
-      num2str(options.nan_cutoff*100),'% missing values. Please double-check your output.'],   
+      num2str(options.nan_cutoff*100),'% missing values. Please double-check your output.']);
+  end
 end
 %% 5 preprocess
 [lsts, smooth_signal, ~] = pspm_preprocess(data, data_combine, ...
