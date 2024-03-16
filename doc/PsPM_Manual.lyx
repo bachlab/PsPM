@@ -7573,9 +7573,9 @@ File mode
 \begin_layout Standard
 Is entered when the editor is started from the PsPM window, from the Matlabbatch
  or when a file path or no argument is specified at the command line startup.
- If the first argument is a file path, a second (ECG channel) and a third
- argument (Options struct) is possible.
- The second argument specifies the ECG channel to be plotted.
+ If the first argument is a file path, a second (ECG or PPG channel) and
+ a third argument (Options struct) is possible.
+ The second argument specifies the ECG or PPG channel to be plotted.
  The third argument is expected to be a struct with the following fields:
 \end_layout
 
@@ -7603,9 +7603,9 @@ limits - with fields 'lower' and 'upper' defines hard limits for the faulty
 The second and third argument is optional.
  In file mode the 'Input / Output' panel on the bottom of the left side
  is visible.
- It allows to specifiy and change input files and channels (ECG and HB)
- and allows to choose whether the edited data should be added as a new HB
- channel or replace the existing HB channel.
+ It allows to specifiy and change input files and channels (ECG/PPG and
+ HB) and allows to choose whether the edited data should be added as a new
+ HB channel or replace the existing HB channel.
  
 \end_layout
 
