@@ -86,10 +86,11 @@ function [sts, out_chan] = pspm_pupil_pp (fn, options)
 %   ├─.plot_data:
 %   │           [Boolean][Default: false or 0]
 %   │           Plot the preprocessing steps if true.
-%   ├─.nan_cutoff:
+%   ├─.chan_valid_cutoff:
 %   │           [optional][Default: 0.01]
 %   │           A cut-off value for checking whether there are too many
-%   │           missing values in the data.
+%   │           missing values in the data channel. Valid data channels 
+%   │           should have NaNs fewer than this cut-off value.
 %   └.out_chan: Channel ID of the preprocessed output.
 % ● References
 %   [1] Kret, Mariska E., and Elio E. Sjak-Shie. "Preprocessing pupil size
@@ -142,7 +143,7 @@ alldata = struct();
 if sts_load < 1, return, end
 [sts_load, data,] = pspm_load_channel(alldata, options.channel, 'pupil');
 if sts_load ~= 1, return, end
-flag_valid_data    = sum(isnan(data.data))/length(data.data) < options.nan_cutoff;
+flag_valid_data    = sum(isnan(data.data))/length(data.data) < options.chan_valid_cutoff;
 
 if action_combine
   [sts_load, data_combine] = pspm_load_channel(alldata, options.channel_combine, 'pupil');
@@ -173,13 +174,13 @@ if action_combine
     return;
   end
 
-  flag_valid_combine = sum(isnan(data_combine.data))/length(data_combine.data) < options.nan_cutoff;
+  flag_valid_combine = sum(isnan(data_combine.data))/length(data_combine.data) < options.chan_valid_cutoff;
   if flag_valid_data && ~flag_valid_combine
     warning('ID:invalid_input', ...
       ['data channel is good, ',...
       'but channel_combine channel has more than %s percent missing values, ',...
       'thus it will not be used for combining.'], ...
-      num2str(options.nan_cutoff*100));
+      num2str(options.chan_valid_cutoff*100));
     data_combine.data = [];
   end
   if ~flag_valid_data && flag_valid_combine
@@ -187,7 +188,7 @@ if action_combine
       ['channel_combine channel is good, ',...
       'but data channel has more than %s percent missing values, ',...
       'thus only data_combine channel will be used.'], ...
-      num2str(options.nan_cutoff*100));
+      num2str(options.chan_valid_cutoff*100));
     data = data_combine; % exchange data and data_combine including fields
     data_combine.data = []; % to only use the value stored in data_combine
   end
@@ -199,7 +200,7 @@ else
   old_channeltype = data.header.chantype;
   if ~flag_valid_data 
     warning('ID:invalid_input', ...
-      'Data channel has more than %s percent missing values. Please double-check your output.', num2str(options.nan_cutoff*100));
+      'Data channel has more than %s percent missing values. Please double-check your output.', num2str(options.chan_valid_cutoff*100));
   end
 end
 %% 5 preprocess

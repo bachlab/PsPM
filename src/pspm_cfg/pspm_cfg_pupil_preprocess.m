@@ -3,7 +3,7 @@ function [PupilPP] = pspm_cfg_pupil_preprocess(~)
 %   Matlabbatch function for pspm_pupil_pp
 % * History
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
-%   Updated in 2024 by Teddy
+%   Updated in 17-03-2024 by Teddy
 % Initialise
 global settings
 if isempty(settings), pspm_init; end
@@ -50,20 +50,21 @@ Chan.tag          = 'channel';
 Chan.values       = {ChanDef, ChanNum};
 Chan.val          = {ChanDef};
 Chan.help         = {'Choose the primary channel to preprocess.'};
-%% Channel to combine (ChanCombDef)
+%% Channel to combine
+% Define channel to combine
 ChanCombDef       = cfg_menu;
 ChanCombDef.name  = 'Channel definition';
 ChanCombDef.tag   = 'chan_def';
-ChanCombDef.values  = {'none'       , ...
-                      'pupil_l'     , ...
-                      'pupil_r'     , ...
-                      'pupil_pp_l'  , ...
-                      'pupil_pp_r'};
-ChanCombDef.labels  = {'No combining',...
-                      'Pupil left',...
-                      'Pupil right',...
-                      'Pupil preprocessed left',...
-                      'Pupil preprocessed right'};
+ChanCombDef.values= {'none'       , ...
+                    'pupil_l'     , ...
+                    'pupil_r'     , ...
+                    'pupil_pp_l'  , ...
+                    'pupil_pp_r'};
+ChanCombDef.labels= {'No combining',...
+                    'Pupil left',...
+                    'Pupil right',...
+                    'Pupil preprocessed left',...
+                    'Pupil preprocessed right'};
 ChanCombDef.val   = {'none'};
 ChanCombDef.help  = {['Choose the channel definition. ',...
                     'Only the last channel in the file ',...
@@ -82,12 +83,22 @@ ChanComb.help     = {['Choose the secondary channel to preprocess using ',...
                     'the recorded eye in secondary channel must be ',...
                     'different than the recorded eye in primary channel']};
 % valid channel cut-off
-ChanValidCutoff       = cfg_entry;
-ChanValidCutoff.name  = 'Cut-off';
-ChanValidCutoff.tag   = 'chan_valid_cutoff';
-ChanValidCutoff.num   = [1 1];
-ChanValidCutoff.val   = {10};
-ChanValidCutoff.help  = {''};
+ChanCutoff        = cfg_entry;
+ChanCutoff.name   = 'Cut-off';
+ChanCutoff.tag    = 'chan_valid_cutoff';
+ChanCutoff.num    = [1 1];
+ChanCutoff.val    = {10};
+ChanCutoff.help   = {['Determine the proportion of missing values ',...
+                      '(NaNs) in the dataset. The default value is ',...
+                      '10 (10 percent). Valid data channels should ',...
+                      'have NaNs less than this proportion. If both ',...
+                      'the two channels (primary channel and channel ',...
+                      'to combine) are valid or invalid, combining ',...
+                      'action will be executed. If only one channel, ',...
+                      'either the primary channel or the channel to ',...
+                      'combine, is valid, then the generated new ',...
+                      'channel will be the valid channel, including ',...
+                      'the tags such as channel name.']};
 % define channel_action
 ChanAct           = cfg_menu;
 ChanAct.name      = 'Channel action';
@@ -97,7 +108,7 @@ ChanAct.labels    = {'Add', 'Replace'};
 ChanAct.val       = {'add'};
 ChanAct.help      = {'Choose whether to add the corrected channel or ',...
                      'replace a previously corrected channel.'};
-%% Settings
+%% Parameters
 % Pupil diameter minimum
 PupilDiameterMin      = cfg_entry;
 PupilDiameterMin.name = 'Minimum allowed pupil diameter';
@@ -166,15 +177,15 @@ GapDetectMaxWidth.num   = [1 1];
 GapDetectMaxWidth.val   = {2000};
 GapDetectMaxWidth.help  = {'Maximum width of a missing data section ',...
                           'that causes it to be classified as a gap.'};
-
+% Gap padding backword
 GapPaddingBwd           = cfg_entry;
 GapPaddingBwd.name      = 'Reject before missing data (ms)';
 GapPaddingBwd.tag       = 'gapPadding_backward';
 GapPaddingBwd.num       = [1 1];
 GapPaddingBwd.val       = {50};
 GapPaddingBwd.help      = {'The section right before the start of a ',...
-                            'gap within which samples are to be rejected.'};
-
+                           'gap within which samples are to be rejected.'};
+% Gap padding forward
 GapPaddingFwd           = cfg_entry;
 GapPaddingFwd.name      = 'Reject after missing data (ms)';
 GapPaddingFwd.tag       = 'gapPadding_forward';
@@ -182,7 +193,7 @@ GapPaddingFwd.num       = [1 1];
 GapPaddingFwd.val       = {50};
 GapPaddingFwd.help      = {'The section right after the end of a gap ',...
                             'within which samples are to be rejected.'};
-
+% Residual filter passes
 ResdFiltPass            = cfg_entry;
 ResdFiltPass.name       = 'Deviation filter passes';
 ResdFiltPass.tag        = 'residualsFilter_passes';
@@ -204,164 +215,194 @@ ResdFiltMedMp.help      = {['The multiplier used when defining the ',...
                             'ones which may have been rejected by ',...
                             'the previous devation filter pass) are ',...
                             'considered.']};
-ResdFiltInterpFs = cfg_entry;
-ResdFiltInterpFs.name = 'Butterworth sampling frequency (Hz)';
-ResdFiltInterpFs.tag = 'residualsFilter_interpFs';
-ResdFiltInterpFs.num = [1 1];
-ResdFiltInterpFs.val = {100};
-ResdFiltInterpFs.help = {'Fs for first order Butterworth filter.'};
-
-ResdFiltLPCF = cfg_entry;
-ResdFiltLPCF.name = 'Butterworth cutoff frequency (Hz)';
-ResdFiltLPCF.tag = 'residualsFilter_interpFs';
-ResdFiltLPCF.num = [1 1];
-ResdFiltLPCF.val = {100};
-ResdFiltLPCF.help = {'Cutoff frequency for first order Butterworth filter.'};
-
-KeepFiltData = cfg_menu;
-KeepFiltData.name = 'Store intermediate steps';
-KeepFiltData.tag = 'keepFilterData';
-KeepFiltData.values = {true, false};
-KeepFiltData.labels = {'True', 'False'};
-KeepFiltData.val = {false};
-KeepFiltData.help = {['If true, intermediate filter data will be stored for plotting. ',...
-  'Set to false to save memory and improve plotting performance.']};
-
-RawCustomSet = cfg_branch;
-RawCustomSet.name = 'Settings for raw preprocessing';
-RawCustomSet.tag = 'raw';
-RawCustomSet.val = {...
-  PupilDiameterMin,...
-  PupilDiameterMax,...
-  IslandFiltSeparation,...
-  IslandFiltMinWidth,...
-  DilationSpdFiltMedMp,...
-  DilationSpdFiltMaxGap,...
-  GapDetectMinWidth,...
-  GapDetectMaxWidth,...
-  GapPaddingBwd,...
-  GapPaddingFwd,...
-  ResdFiltPass,...
-  ResdFiltMedMp,...
-  ResdFiltInterpFs,...
-  ResdFiltLPCF,...
-  KeepFiltData...
-  };
-
-InterpUpSampFreq = cfg_entry;
-InterpUpSampFreq.name = 'Interpolation upsampling frequency (Hz)';
-InterpUpSampFreq.tag = 'interp_upsamplingFreq';
-InterpUpSampFreq.num = [1 1];
-InterpUpSampFreq.val = {1000};
-InterpUpSampFreq.help = {'The upsampling frequency used to generate the smooth signal. (Hz)'};
-
-LPFiltCutoffFreq = cfg_entry;
-LPFiltCutoffFreq.name = 'Lowpass filter cutoff frequency (Hz)';
-LPFiltCutoffFreq.tag = 'LpFilt_cutoffFreq';
-LPFiltCutoffFreq.num = [1 1];
-LPFiltCutoffFreq.val = {4};
-LPFiltCutoffFreq.help = {'Cutoff frequency of the lowpass filter used during final smoothing. (Hz)'};
-
-LPFiltOrder = cfg_entry;
-LPFiltOrder.name = 'Lowpass filter order';
-LPFiltOrder.tag = 'LpFilt_order';
-LPFiltOrder.num = [1 1];
-LPFiltOrder.val = {4};
-LPFiltOrder.help = {'Filter order of the lowpass filter used during final smoothing.'};
-
-InterpMaxGap = cfg_entry;
-InterpMaxGap.name = 'Interpolation max gap (ms)';
-InterpMaxGap.tag = 'interp_maxGap';
-InterpMaxGap.num = [1 1];
-InterpMaxGap.val = {250};
-InterpMaxGap.help = {['Maximum gap in the used (valid) raw samples to interpolate over. ',...
-  'Sections that were interpolated over distances larger than this value will be set to NaN. (ms)']};
-
-ValidCustomSet = cfg_branch;
-ValidCustomSet.name = 'Settings for valid data preprocessing';
-ValidCustomSet.tag = 'valid';
-ValidCustomSet.val = {InterpUpSampFreq, LPFiltCutoffFreq, LPFiltOrder, InterpMaxGap};
-
-CustomSet = cfg_branch;
-CustomSet.name = 'Custom settings';
-CustomSet.tag = 'custom_settings';
-CustomSet.val = {RawCustomSet, ValidCustomSet};
-
-DefaultSet = cfg_const;
-DefaultSet.name = 'Default settings';
-DefaultSet.tag = 'default_settings';
-DefaultSet.val = {'Default settings'};
-
-Set = cfg_choice;
-Set.name = 'Settings';
-Set.tag = 'settings';
-Set.values = {DefaultSet, CustomSet};
-Set.val = {DefaultSet};
-Set.help = {'Define settings to modify preprocessing'};
-
-% define segments
-% ------------------------------------------------------
-SegStart = cfg_entry;
-SegStart.name = 'Segment start (seconds)';
-SegStart.tag = 'start';
-SegStart.num = [1 1];
-SegStart.help = {'Segment start (seconds)'};
-SegEnd = cfg_entry;
-SegEnd.name = 'Segment end (seconds)';
-SegEnd.tag = 'end';
-SegEnd.num = [1 1];
-SegEnd.help = {'Segment end (seconds)'};
-SegName = cfg_entry;
-SegName.name = 'Segment name';
-SegName.strtype = 's';
-SegName.tag = 'name';
-SegName.help = {'Segment name'};
-
-Seg = cfg_branch;
-Seg.name = 'Segment';
-Seg.tag = 'segments';
-Seg.val = {SegStart, SegEnd, SegName};
-
-SegRep = cfg_repeat;
-SegRep.name = 'Segments';
-SegRep.tag = 'segments_rep';
-SegRep.values = {Seg};
-SegRep.num = [0 Inf];
-SegRep.help = {['Define segments to calculate statistics on. These segments will be stored ',...
-  'in the output channel and also will be show if plotting is enabled']};
-
-% define plot_data
-% ------------------------------------------------------
-PlotData = cfg_menu;
-PlotData.name = 'Plot data';
-PlotData.tag = 'plot_data';
-PlotData.values = {true, false};
-PlotData.labels = {'True', 'False'};
-PlotData.val = {false};
-PlotData.help = {'Choose whether to plot the data'};
-
-% Executable branch
-% ------------------------------------------------------
-PupilPP      = cfg_exbranch;
-PupilPP.name = 'Pupil preprocessing';
-PupilPP.tag  = 'pupil_preprocess';
-PupilPP.val  = {DataFile, Chan, ChanComb, ChanValidCutoff, ChanAct, Set, SegRep, PlotData};
-PupilPP.prog = @pspm_cfg_run_pupil_preprocess;
-PupilPP.vout = @pspm_cfg_vout_pupil_preprocess;
-PupilPP.help = {['Pupil size preprocessing using the steps described in the reference article. The function allows',...
-  ' users to preprocess two eyes simultaneously and average them in addition to offering single eye preprocessing.',...
-  ' Further, users can define segments on which statistics such as min, max, mean, etc. will be computed. In order to',...
-  ' get information about the preprocessing steps, please refer to pupil preprocessing user guide section in PsPM',...
-  ' manual for an explanation.'],...
-  ['Reference: ',...
-  'Kret, Mariska E., and Elio E. Sjak-Shie. "Preprocessing pupil size data: Guidelines and code." ',...
-  'Behavior research methods (2018): 1-7.']};
-end
-
+% Residual filter interpolation sampling frequency
+ResdFiltInterpFs        = cfg_entry;
+ResdFiltInterpFs.name   = 'Butterworth sampling frequency (Hz)';
+ResdFiltInterpFs.tag    = 'residualsFilter_interpFs';
+ResdFiltInterpFs.num    = [1 1];
+ResdFiltInterpFs.val    = {100};
+ResdFiltInterpFs.help   = {'Sampling frequency for first order ',...
+                           'Butterworth filter.'};
+% Residual filter for lowpass cut-off
+ResdFiltLPCF            = cfg_entry;
+ResdFiltLPCF.name       = 'Butterworth cutoff frequency (Hz)';
+ResdFiltLPCF.tag        = 'residualsFilter_interpFs';
+ResdFiltLPCF.num        = [1 1];
+ResdFiltLPCF.val        = {100};
+ResdFiltLPCF.help       = {'Cutoff frequency for first order ',...
+                            'Butterworth filter.'};
+% Keep filter data
+KeepFiltData            = cfg_menu;
+KeepFiltData.name       = 'Store intermediate steps';
+KeepFiltData.tag        = 'keepFilterData';
+KeepFiltData.values     = {true, false};
+KeepFiltData.labels     = {'True', 'False'};
+KeepFiltData.val        = {false};
+KeepFiltData.help       = {['If true, intermediate filter data will ',...
+                            'be stored for plotting. ',...
+                            'Set to false to save memory and improve ',...
+                            'plotting performance.']};
+% Raw custom setting
+RawCustomSet            = cfg_branch;
+RawCustomSet.name       = 'Settings for raw data preprocessing';
+RawCustomSet.tag        = 'raw';
+RawCustomSet.val        = {PupilDiameterMin,...
+                           PupilDiameterMax,...
+                           IslandFiltSeparation,...
+                           IslandFiltMinWidth,...
+                           DilationSpdFiltMedMp,...
+                           DilationSpdFiltMaxGap,...
+                           GapDetectMinWidth,...
+                           GapDetectMaxWidth,...
+                           GapPaddingBwd,...
+                           GapPaddingFwd,...
+                           ResdFiltPass,...
+                           ResdFiltMedMp,...
+                           ResdFiltInterpFs,...
+                           ResdFiltLPCF,...
+                           KeepFiltData...
+                          };
+% Interpolation upsampling frequency
+InterpUpSampFreq        = cfg_entry;
+InterpUpSampFreq.name   = 'Interpolation upsampling frequency (Hz)';
+InterpUpSampFreq.tag    = 'interp_upsamplingFreq';
+InterpUpSampFreq.num    = [1 1];
+InterpUpSampFreq.val    = {1000};
+InterpUpSampFreq.help   = {'The upsampling frequency used to generate ',...
+                           'the smooth signal. (Hz)'};
+% Low pass filter cutoff frequency in Hz
+LPFiltCutoffFreq        = cfg_entry;
+LPFiltCutoffFreq.name   = 'Lowpass filter cutoff frequency (Hz)';
+LPFiltCutoffFreq.tag    = 'LpFilt_cutoffFreq';
+LPFiltCutoffFreq.num    = [1 1];
+LPFiltCutoffFreq.val    = {4};
+LPFiltCutoffFreq.help   = {'Cutoff frequency of the lowpass filter ',...
+                           'used during final smoothing. (Hz)'};
+% Low pass filter order
+LPFiltOrder             = cfg_entry;
+LPFiltOrder.name        = 'Lowpass filter order';
+LPFiltOrder.tag         = 'LpFilt_order';
+LPFiltOrder.num         = [1 1];
+LPFiltOrder.val         = {4};
+LPFiltOrder.help        = {'Filter order of the lowpass filter used ',...
+                           'during final smoothing.'};
+% Interpolation maximum gap in millisecond
+InterpMaxGap            = cfg_entry;
+InterpMaxGap.name       = 'Interpolation max gap (ms)';
+InterpMaxGap.tag        = 'interp_maxGap';
+InterpMaxGap.num        = [1 1];
+InterpMaxGap.val        = {250};
+InterpMaxGap.help       = {['Maximum gap in the used (valid) raw ',...
+                            'samples to interpolate over. ',...
+                            'Sections that were interpolated over ',...
+                            'distances larger than this value will ',...
+                            'be set to NaN. (ms)']};
+%% Settings
+% Settings for valid data preprocessing
+ValidCustomSet          = cfg_branch;
+ValidCustomSet.name     = 'Settings for valid data preprocessing';
+ValidCustomSet.tag      = 'valid';
+ValidCustomSet.val      = {InterpUpSampFreq, ...
+                           LPFiltCutoffFreq, ...
+                           LPFiltOrder, ...
+                           InterpMaxGap...
+                          };
+% Custom settings
+CustomSet               = cfg_branch;
+CustomSet.name          = 'Custom settings';
+CustomSet.tag           = 'custom_settings';
+CustomSet.val           = {RawCustomSet, ValidCustomSet};
+% Default settings
+DefaultSet              = cfg_const;
+DefaultSet.name         = 'Default settings';
+DefaultSet.tag          = 'default_settings';
+DefaultSet.val          = {'Default settings'};
+% Settings
+Set                     = cfg_choice;
+Set.name                = 'Settings';
+Set.tag                 = 'settings';
+Set.values              = {DefaultSet, CustomSet};
+Set.val                 = {DefaultSet};
+Set.help                = {'Define settings to modify preprocessing'};
+%% Segments
+% Segement start in second
+SegStart                = cfg_entry;
+SegStart.name           = 'Segment start (seconds)';
+SegStart.tag            = 'start';
+SegStart.num            = [1 1];
+SegStart.help           = {'Segment start, in seconds.'};
+% Segment end in second
+SegEnd                  = cfg_entry;
+SegEnd.name             = 'Segment end (seconds)';
+SegEnd.tag              = 'end';
+SegEnd.num              = [1 1];
+SegEnd.help             = {'Segment end, in seconds.'};
+% Segment name
+SegName                 = cfg_entry;
+SegName.name            = 'Segment name';
+SegName.strtype         = 's';
+SegName.tag             = 'name';
+SegName.help            = {'Segment name'};
+% Segment
+Seg                     = cfg_branch;
+Seg.name                = 'Segment';
+Seg.tag                 = 'segments';
+Seg.val                 = {SegStart, SegEnd, SegName};
+% Segment repeat
+SegRep                  = cfg_repeat;
+SegRep.name             = 'Segments';
+SegRep.tag              = 'segments_rep';
+SegRep.values           = {Seg};
+SegRep.num              = [0 Inf];
+SegRep.help             = {['Define segments to calculate statistics ',...
+                            'on. These segments will be stored in ',...
+                            'the output channel and also will be ',...
+                            'show if plotting is enabled']...
+                           };
+%% Plot data
+PlotData                = cfg_menu;
+PlotData.name           = 'Plot data';
+PlotData.tag            = 'plot_data';
+PlotData.values         = {true, false};
+PlotData.labels         = {'True', 'False'};
+PlotData.val            = {false};
+PlotData.help           = {'Please choose whether to plot the data.'};
+%% Executable branch
+PupilPP                 = cfg_exbranch;
+PupilPP.name            = 'Pupil preprocessing';
+PupilPP.tag             = 'pupil_preprocess';
+PupilPP.val             = {DataFile, ...
+                           Chan, ...
+                           ChanComb, ...
+                           ChanCutoff, ...
+                           ChanAct, ...
+                           Set, ...
+                           SegRep, ...
+                           PlotData ...
+                          };
+PupilPP.prog            = @pspm_cfg_run_pupil_preprocess;
+PupilPP.vout            = @pspm_cfg_vout_pupil_preprocess;
+PupilPP.help            = {['Pupil size preprocessing using the ',...
+                            'steps described in the reference article. ',...
+                            'The function allows users to preprocess ',...
+                            'two eyes simultaneously and average  ',...
+                            'them in addition to offering single  ',...
+                            'eye preprocessing. ',...
+                            'Further, users can define segments on ',...
+                            'which statistics such as min, max, mean, ',...
+                            'etc. will be computed. In order to get ',...
+                            'information about the preprocessing ',...
+                            'steps, please refer to pupil ',...
+                            'preprocessing user guide section in PsPM ',...
+                            ' manual for an explanation.'],...
+                           ['Reference: Kret, Mariska E., and Elio E. ',...
+                            'Sjak-Shie. "Preprocessing pupil size data: ',...
+                            'Guidelines and code." Behavior research ',...
+                            'methods (2018): 1-7.']...
+                           };
+%% Running function
 function vout = pspm_cfg_vout_pupil_preprocess(~)
 vout = cfg_dep;
 vout.sname      = 'Output File';
-% only cfg_files
-vout.tgt_spec   = cfg_findspec({{'class','cfg_files'}});
+vout.tgt_spec   = cfg_findspec({{'class','cfg_files'}}); % only cfg_files
 vout.src_output = substruct('()',{':'});
-end
