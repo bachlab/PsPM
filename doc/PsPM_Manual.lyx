@@ -8932,18 +8932,84 @@ Channel definition: Choose the channel definition.
 Channel number: Number of the pupil channel in the PsPM file.
 \end_layout
 
+\begin_layout Standard
+The channel combination feature also considerates the number of NaNs in
+ the two channels to combine, which follows the rules as below
+\end_layout
+
+\begin_layout Itemize
+The channel is considered to be valid if it contains limted number of NaNs.
+ This is determined by the parameter 
+\family typewriter
+nan_cutoff
+\family default
+.
+ The default value of 
+\family typewriter
+nan_cutoff
+\family default
+ is 
+\family typewriter
+0.1
+\family default
+ or 
+\family typewriter
+10%
+\family default
+ (excluding 
+\family typewriter
+0.1
+\family default
+ or 
+\family typewriter
+10%
+\family default
+).
+\end_layout
+
+\begin_layout Itemize
+If one channel is valid and the other is invalid, then only the valid channel
+ will be used as the generated channel from combining the two channels.
+ The invalid channel will not be used.
+ The valid channel can be either the original data channel or the data channel
+ to combine.
+ The metadata of the generated channel will be exactly the same to the used
+ channel, such as 
+\family typewriter
+pupil_l
+\family default
+ instead of 
+\family typewriter
+pupil_c
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+If both of two channels are valid or invalid, then the two channel will
+ be combined following the conventional rule.
+\end_layout
+
 \begin_layout Subsubsection*
 Channel action
 \end_layout
 
 \begin_layout Itemize
-add: Add a new preprocessed channel to the PsPM file.
+
+\family typewriter
+add
+\family default
+: Add a new preprocessed channel to the PsPM file.
  The new channel type will contain a 'pp' suffix at the end if the input
  channel did not contain a 'pp' suffix.
 \end_layout
 
 \begin_layout Itemize
-replace: Replace a previously existing preprocessed channel.
+
+\family typewriter
+replace
+\family default
+: Replace a previously existing preprocessed channel.
  If no preprocessed channel exists, this option behaves the same way as
  add option.
  (default)
@@ -8954,13 +9020,21 @@ Settings
 \end_layout
 
 \begin_layout Itemize
-default: Use the default settings provided in the underlying preprocessing
- implementation.
+
+\family typewriter
+default
+\family default
+: Use the default settings provided in the underlying preprocessing implementati
+on.
 \end_layout
 
 \begin_layout Itemize
-custom: In custom settings mode, you can specify any of the settings below
- according to your preferences.
+
+\family typewriter
+custom
+\family default
+: In custom settings mode, you can specify any of the settings below according
+ to your preferences.
 \end_layout
 
 \begin_deeper
