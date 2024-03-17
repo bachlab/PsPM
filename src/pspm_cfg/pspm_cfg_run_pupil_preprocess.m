@@ -18,8 +18,6 @@ options.segments= {};
 for i = 1:numel(job.segments)
   options.segments{end + 1} = job.segments(i);
 end
-options = pspm_update_struct(options, job, {'chan_valid_cutoff',...
-                                            'channel_action',...
-                                            'plot_data'});
+options = pspm_update_struct(options, job, {'channel_action', 'plot_data'});
 [~, out{1}] = pspm_pupil_pp(fn, options);
 end
