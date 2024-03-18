@@ -308,8 +308,8 @@ switch FunName
     options.bf = autofill(options.bf,   'dilation',       struct(),   '*Struct'         );
     options.bf = autofill(options.bf,   'duration',       20,         '>=',  0          );
     options.bf = autofill(options.bf,   'offset',         0.2,        '>=',  0          );
-    options.bf.constriction = autofill(options.bf.constriction, 'fhandle', @pspm_bf_lcrf_gm);
-    options.bf.dilation     = autofill(options.bf.dilation,     'fhandle', @pspm_bf_ldrf_gm);
+    options.bf.constriction = autofill(options.bf.constriction, 'fhandle', @pspm_bf_lcrf_gm); 
+    options.bf.dilation     = autofill(options.bf.dilation,     'fhandle', @pspm_bf_ldrf_gm, {@pspm_bf_ldrf_gm, @pspm_bf_ldrf_gu});
   case 'pupil_correct_eyelink'
     % 2.36 pspm_pupil_correct_eyelink --
     options = autofill_channel_action(options);
@@ -511,6 +511,8 @@ switch nargin
             flag_is_allowed_value = strcmp(options.(field_name), default_value);
           case 'cell'
             flag_is_allowed_value = isequal(options.(field_name), default_value);
+          case 'function_handle'
+            flag_is_allowed_value = isequal(options.(field_name), default_value);
         end
       end
       if ~flag_is_allowed_value
@@ -580,7 +582,14 @@ switch nargin
           case 'cell'
             allowed_value = optional_value;
             allowed_value{end+1} = default_value;
-            flag_is_allowed_value = any(strcmp(options.(field_name), allowed_value));
+            switch class(optional_value{1})
+              case 'char'
+                flag_is_allowed_value = any(strcmp(options.(field_name), allowed_value));
+              case 'function_handle'
+                allowed_value_char = cellfun(@(x) {func2str(x)}, allowed_value);
+                candidate_value_char = func2str(options.(field_name));
+                flag_is_allowed_value = any(strcmp(candidate_value_char, allowed_value_char));
+            end
         end
       if ~flag_is_allowed_value
         allowed_values_message = generate_allowed_values_message(default_value, optional_value);
