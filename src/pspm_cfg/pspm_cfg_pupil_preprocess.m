@@ -16,11 +16,11 @@ DataFile.help     = {'Specify the PsPM datafile containing the pupil ',...
                     'recordings ', settings.datafilehelp};
 %% Channel
 Chan           = pspm_cfg_channel_selector('pupil');
-Chan.name      = {'Primary channel to preprocess'};
+Chan.name      = 'Primary channel to preprocess';
 
 %% Channel to combine
 ChanComb           = pspm_cfg_channel_selector('pupil');
-ChanComb.name      = {'Secondary channel to preprocess'};
+ChanComb.name      = 'Secondary channel to preprocess';
 ChanComb.help      = {ChanComb.help{1}, ' This can be left empty.'};
 
 % valid channel cut-off

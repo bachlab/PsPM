@@ -1,3 +1,5 @@
+
+
 function resp_pp = pspm_cfg_resp_pp
     % Coversion of continuous respiration data various respiration data types
 
@@ -33,7 +35,7 @@ function resp_pp = pspm_cfg_resp_pp
     ['Will be ignored for datatype "respiration time stamps".']};
 
     % Channel
-    chan         = pspm_cfg_channel_selector('Respiration');
+    chan         = pspm_cfg_channel_selector('respiration');
     
     % define channel_action
     % ------------------------------------------------------
@@ -139,11 +141,7 @@ function resp_pp = pspm_cfg_resp_pp
 
     function out = pspm_cfg_run_resp_pp(job)
         sr = job.sr;% sample rate
-        if isfield(job.chan,'chan_nr')
-            chan = job.chan.chan_nr;
-        else
-            chan = '';
-        end
+        chan = pspm_cfg_channel_selector('run', job.chan);
         resp_pp_options.plot = job.options.plot;
         if isfield(job.options.systemtype, 'bellows')
             resp_pp_options.systemtype = 'bellows';

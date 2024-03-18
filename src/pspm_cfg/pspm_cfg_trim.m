@@ -15,7 +15,7 @@ datafile.num     = [1 Inf];
 datafile.help    = {'Select datafile.',' ',settings.datafilehelp};
 
 %% Marker channel number
-mrk_chan = pspm_cfg_channel_selector('Marker');
+mrk_chan = pspm_cfg_channel_selector('marker');
 
 %% Items for reference: File
 file_from         = cfg_entry;

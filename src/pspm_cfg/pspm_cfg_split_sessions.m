@@ -15,7 +15,7 @@ function split_sessions = pspm_cfg_split_sessions
         ' Split sessions can handle only one data file.']};
 
     %% Marker channel
-    mrk_chan         = pspm_cfg_channel_selector('Marker');
+    mrk_chan         = pspm_cfg_channel_selector('marker');
     
     %% split auto
     split_auto          = cfg_const;

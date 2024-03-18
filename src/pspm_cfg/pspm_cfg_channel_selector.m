@@ -95,3 +95,4 @@ else
     out.values  = {chan_default, chan_nr};
     out.help    = {sprintf('Number of %s channel (default: %s %s channel).', channame, lower(pos_str), channame)};
 end
+
