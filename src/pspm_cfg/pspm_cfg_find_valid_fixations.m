@@ -24,9 +24,9 @@ datafile.help    = {['Specify the PsPM datafile containing the gaze ', ...
 eyes                = cfg_menu;
 eyes.name           = 'Eyes';
 eyes.tag            = 'eyes';
-eyes.val            = {'all'};
-eyes.labels         = {'All eyes', 'Left eye', 'Right eye'};
-eyes.values         = {'all', 'left', 'right'};
+eyes.val            = {'combined'};
+eyes.labels         = {'Combined eyes', 'Left eye', 'Right eye'};
+eyes.values         = {'combined', 'left', 'right'};
 eyes.help           = {['Choose eyes which should be processed. If ''All', ...
     'eyes'' is selected, all eyes which are present in the data will ', ...
     'be processed. Otherwise only the chosen eye will be processed.']};
@@ -274,7 +274,7 @@ find_valid_fixations.help = {['Pupil data time series can contain missing ', ...
     'Korn, Bach (2016) Journal of Vision', ...
     'Hayes & Petrov, 2015, Behavior Research Methods'};
 
-function vout = pspm_cfg_vout_find_valid_fixations(job)
+function vout = pspm_cfg_vout_find_valid_fixations(~)
 vout = cfg_dep;
 vout.sname      = 'Output File';
 % only cfg_files
