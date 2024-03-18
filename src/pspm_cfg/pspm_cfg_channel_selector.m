@@ -48,14 +48,14 @@ elseif strcmpi(channame, 'pupil')
     chan_nr.name    = 'Channel specification';
     chan_nr.tag     = 'chan_nr';
     chan_nr.strtype = 's';
-    chan_nr.help    = {sprintf('Specify channel number or channel type (e.g., "pupil_l", "pupil_c" or another type accepted by PsPM.')};
+    chan_nr.help    = {'Specify channel number or channel type (e.g., "pupil_l", "pupil_c" or another type accepted by PsPM.'};
 
     out = cfg_choice;
     out.name    = 'Channel';
     out.tag     = 'chan';
-    out.val     = {out};
+    out.val     = {chan_default};
     out.values  = {chan_default, chan_nr};
-    out.help    = {sprintf('Specification of %s channel (default: follow precedence order).', channame)};
+    out.help    = {sprintf('Specification of %s channel (default: follow precedence order).', lower(channame))};
 
 % numerical definition
 elseif isempty(channame)
@@ -91,7 +91,7 @@ else
     out = cfg_choice;
     out.name    = 'Channel';
     out.tag     = 'chan';
-    out.val     = {out};
+    out.val     = {chan_default};
     out.values  = {chan_default, chan_nr};
-    out.help    = {sprintf('Number of %s channel (default: %s %s channel).', channame, lower(pos_str), channame)};
+    out.help    = {sprintf('Number of %s channel (default: %s %s channel).', lower(channame), lower(pos_str), lower(channame))};
 end
