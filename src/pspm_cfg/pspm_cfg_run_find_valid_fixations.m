@@ -1,8 +1,12 @@
 function [out] = pspm_cfg_run_find_valid_fixations(job)
 % updated on 19-12-2023 by Teddy
-data_file = job.datafile{1};
+%% Initialise
 options = struct();
+%% fn
+fn = job.datafile{1};
+%% bitmap
 if isfield(job.val_method,'bitmap_file')
+  % bitmap
   try
     indata = load(job.val_method.bitmap_file{1});
   catch
@@ -17,6 +21,7 @@ if isfield(job.val_method,'bitmap_file')
   end
   bitmap = indata.bitmap;
 else
+  % ValidSet
   box_degree = job.val_method.validation_settings.box_degree;
   distance = job.val_method.validation_settings.distance;
   unit = job.val_method.validation_settings.unit;
@@ -27,10 +32,12 @@ else
     options.fixation_point = job.val_method.validation_settings.fixation_point.fixpoint_file{1};
   end
 end
-if isfield(job.missing, 'enable_missing')
-  options.missing = 1;
-end
-options = pspm_update_struct(options, job, 'eyes');
+%% options
+options.missing = job.missing;
+options = pspm_update_struct(options, job, 'eyes'); % this does not seem to be used at all?
+options.overwrite = job.output_settings.file_output.overwrite;
+options = pspm_update_struct(options, job.output_settings, {'channel_action', ...
+                                                            'plot_gaze_coords'});
 options.channels = regexp(job.channels, '\s+', 'split');
 num_vals = str2double(options.channels); % convert numbers
 nums = ~isnan(num_vals);
@@ -38,16 +45,14 @@ options.channels(nums) = num2cell(num_vals(nums));
 if isfield(job.output_settings.file_output, 'new_file')
   f_path = job.output_settings.file_output.new_file.file_path{1};
   f_name = job.output_settings.file_output.new_file.file_name;
-  options.newfile = [f_path filesep f_name];
-elseif isfield(job.output_settings.file_output, 'overwrite_original')
+  options.newfile = [f_path filesep f_name]; % this does not seem to be used at all?
+elseif job.output_settings.file_output.overwrite
   options.newfile = '';
-  options.overwrite = 1;
 end
-options = pspm_update_struct(options, job.output_settings, {'channel_action', ...
-                                                            'plot_gaze_coords'});
+%% run
 if isfield(job.val_method,'bitmap_file')
-  [~, out{1}] = pspm_find_valid_fixations(data_file,bitmap, options);
+  [~, out{1}] = pspm_find_valid_fixations(fn, bitmap, options);
 else
-  [~, out{1}] = pspm_find_valid_fixations(data_file, box_degree, ...
+  [~, out{1}] = pspm_find_valid_fixations(fn, box_degree, ...
     distance, unit, options);
 end
