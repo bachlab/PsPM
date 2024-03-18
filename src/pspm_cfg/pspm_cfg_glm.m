@@ -304,7 +304,7 @@ session_rep.help    = {'Add the appropriate number of sessions here. These will 
 
 % Marker Channel
 mrk_chan         = pspm_cfg_channel_selector('marker');
-mrk_chan.help    = {mrk_chan.help, ['Markers are only used if you have ' ...
+mrk_chan.help    = {[mrk_chan.help{1}, ' Markers are only used if you have ' ...
     'specified the time units as "markers".']};
 
 % Timeunits
@@ -362,7 +362,7 @@ excl_cutoff.name    = 'Cutoff';
 excl_cutoff.tag     = 'cutoff';
 excl_cutoff.strtype = 'r';
 excl_cutoff.num     = [1 1];
-excl_cutoff.help    = {['Maximum NaN ratio for a condition to be accepted for further analysis.']};
+excl_cutoff.help    = {'Maximum NaN ratio for a condition to be accepted for further analysis.'};
 
 exclude_missing_yes      = cfg_branch;
 exclude_missing_yes.name = 'Settings for stats exclude';

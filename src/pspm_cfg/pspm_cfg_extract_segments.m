@@ -124,11 +124,11 @@ timeunit.tag            = 'timeunit';
 timeunit.labels         = {'Seconds', 'Samples', 'Markers'};
 timeunit.values         = {'seconds', 'samples', 'markers'};
 timeunit.val            = {'seconds'};
-timeunit.help           = {['The timeunit in which conditions should be interpreted.']};
+timeunit.help           = {'The timeunit in which conditions should be interpreted.'};
 
 %% Marker channel
 marker_chan                = pspm_cfg_channel_selector('Marker');
-marker_chan.help           = {marker_chan.help, 'Only needed if options ''Timeunit'' is set to ''markers''.'};
+marker_chan.help           = {marker_chan.help{1}, 'Only needed if options ''Timeunit'' is set to ''markers''.'};
 
 %% Segment length
 segment_length          = cfg_entry;
