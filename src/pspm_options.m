@@ -309,7 +309,7 @@ switch FunName
     options.bf = autofill(options.bf,   'duration',       20,         '>=',  0          );
     options.bf = autofill(options.bf,   'offset',         0.2,        '>=',  0          );
     options.bf.constriction = autofill(options.bf.constriction, 'fhandle', @pspm_bf_lcrf_gm); 
-    options.bf.dilation     = autofill(options.bf.dilation,     'fhandle', @pspm_bf_ldrf_gm, {@pspm_bf_ldrf_gm, @pspm_bf_ldrf_gu});
+    options.bf.dilation     = autofill(options.bf.dilation,     'fhandle', @pspm_bf_ldrf_gm);
   case 'pupil_correct_eyelink'
     % 2.36 pspm_pupil_correct_eyelink --
     options = autofill_channel_action(options);
