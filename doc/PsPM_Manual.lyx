@@ -8938,8 +8938,8 @@ The channel combination feature also considerates the number of NaNs in
 \end_layout
 
 \begin_layout Itemize
-The channel is considered to be valid if it contains limted number of NaNs.
- This is determined by the parameter 
+The channel is considered to be valid if its percentage of NaNs is below
+ the parameter 
 \family typewriter
 nan_cutoff
 \family default
@@ -8950,21 +8950,9 @@ nan_cutoff
 \family default
  is 
 \family typewriter
-0.1
-\family default
- or 
-\family typewriter
 10%
 \family default
- (excluding 
-\family typewriter
-0.1
-\family default
- or 
-\family typewriter
-10%
-\family default
-).
+.
 \end_layout
 
 \begin_layout Itemize
@@ -8986,8 +8974,12 @@ pupil_c
 \end_layout
 
 \begin_layout Itemize
-If both of two channels are valid or invalid, then the two channel will
- be combined following the conventional rule.
+If both of two channels are valid or invalid, then they will be combined
+ following the conventional rule.
+\end_layout
+
+\begin_layout Itemize
+A warning is always thrown if any channel is invalid.
 \end_layout
 
 \begin_layout Subsubsection*
