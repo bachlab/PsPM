@@ -1,11 +1,9 @@
 function [glm_sps] = pspm_cfg_glm_sps
-% GLM SPS
-% This function applies to the glm model for the modality ScanPath Speed (sps) only
-
-% $Id: pspm_cfg_glm_sps.m 404 2017-01-06 14:02:02Z tmoser $
-% $Rev: 404 $
-
-% Updated by Teddy (WCHN)
+% * Description
+%   This function applies to the glm model for the modality ScanPath
+%   Speed (sps)
+% * History
+%   Updated in 2024 by Teddy
 
 % Initialise
 global settings
@@ -25,7 +23,7 @@ vars.glmhelp = '';
 glm_sps = pspm_cfg_glm(vars);
 
 % set correct name
-glm_sps.name = 'GLM for SPS';
+glm_sps.name = 'GLM for SPS (fear-conditioning)';
 glm_sps.tag = 'glm_sps';
 
 % set callback function
