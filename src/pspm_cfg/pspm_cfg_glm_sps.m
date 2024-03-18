@@ -1,10 +1,13 @@
 function [glm_sps] = pspm_cfg_glm_sps
 % * Description
-%   This function applies to the glm model for the
-%   modality ScanPath Speed (sps) only
+
+%   This function applies to the glm model for the modality ScanPath
+%   Speed (sps)
 % * History
-%   Updated by Teddy
-%% Initialise
+%   Updated in 2024 by Teddy
+
+% Initialise
+
 global settings
 if isempty(settings)
     pspm_init;
@@ -12,16 +15,21 @@ end
 %% Set variables
 vars          = struct();
 vars.modality = 'sps';
-vars.modspec  = 'sps';
-vars.glmref   = {['unknown'] };
-vars.glmhelp  = '';
-% Default settings
-glm_sps       = pspm_cfg_glm(vars);
-% Set correct name
-glm_sps.name  = 'GLM for SPS';
-glm_sps.tag   = 'glm_sps';
-% Set callback function
-glm_sps.prog  = @pspm_cfg_run_glm_sps;
+
+vars.modspec = 'sps';
+vars.glmref = {['unknown'] };
+vars.glmhelp = '';
+
+% load default settings
+glm_sps = pspm_cfg_glm(vars);
+
+% set correct name
+glm_sps.name = 'GLM for SPS (fear-conditioning)';
+glm_sps.tag = 'glm_sps';
+
+% set callback function
+glm_sps.prog = @pspm_cfg_run_glm_sps;
+
 %% SOA
 soa           = cfg_entry;
 soa.name      = 'SOA';
