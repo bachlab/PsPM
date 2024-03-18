@@ -6,12 +6,8 @@ if isempty(settings)
   pspm_init;
 end
 %% Global items
-chan_nr                  = cfg_entry;
-chan_nr.name             = 'Channel Number';
-chan_nr.tag              = 'chan_nr';
-chan_nr.strtype          = 'i';
-chan_nr.num              = [1 Inf];
-chan_nr.help             = {''};
+chan_nr                  = pspm_cfg_channel_selector('any');
+
 %% Medianfilter
 nr_time_pt               = cfg_entry;
 nr_time_pt.name          = 'Number of Time Points';
@@ -106,136 +102,7 @@ FilterButter.name        = 'Butterworth Filter';
 FilterButter.tag         = 'butter';
 FilterButter.val         = {OrderLowPass,FreqLowPass,OrderHighPass,FreqHighPass,FiltDirection,DownSR};
 FilterButter.help        = {'Butterworth Filter.'};
-%% simple SCR quality correction
-% ScrMin: SCR minimum value
-ScrMin                   = cfg_entry;
-ScrMin.name              = 'Minimum value';
-ScrMin.tag               = 'min';
-ScrMin.strtype           = 'r';
-ScrMin.num               = [1 1];
-ScrMin.val               = {0.05};
-ScrMin.help              = {'Minimum SCR value in microsiemens.'};
-% ScrMax: SCR maximum value
-ScrMax                   = cfg_entry;
-ScrMax.name              = 'Maximum value';
-ScrMax.tag               = 'max';
-ScrMax.strtype           = 'r';
-ScrMax.num               = [1 1];
-ScrMax.val               = {60};
-ScrMax.help              = {'Maximum SCR value in microsiemens.'};
-% ScrSlope:
-ScrSlope                 = cfg_entry;
-ScrSlope.name            = 'Maximum slope';
-ScrSlope.tag             = 'slope';
-ScrSlope.strtype         = 'r';
-ScrSlope.num             = [1 1];
-ScrSlope.val             = {10};
-ScrSlope.help            = {'Maximum SCR slope in microsiemens per second.'};
 
-ScrMissEpoNoFN           = cfg_const;
-ScrMissEpoNoFN.name      = 'Do not write to file';
-ScrMissEpoNoFN.tag       = 'no_missing_epochs';
-ScrMissEpoNoFN.val       = {0};
-ScrMissEpoNoFN.help      = {'Do not store artefacts epochs to file'};
-
-ScrMissEpoFN             = cfg_entry;
-ScrMissEpoFN.name        = 'File name';
-ScrMissEpoFN.tag         = 'filename';
-ScrMissEpoFN.strtype     = 's';
-ScrMissEpoFN.num         = [ 1 Inf ];
-ScrMissEpoFN.help        = {['Specify the name of the file where ',...
-                           'to store artefact epochs. Provide only ',...
-                           'the name and not the extension, the ',...
-                           'file will be stored as a .mat file.']};
-
-ScrMissEpoFP             = cfg_files;
-ScrMissEpoFP.name        = 'Output Directory';
-ScrMissEpoFP.tag         = 'outdir';
-ScrMissEpoFP.filter      = 'dir';
-ScrMissEpoFP.num         = [1 1];
-ScrMissEpoFP.help        = {'Specify the directory where the .mat file ',...
-                           'with artefact epochs will be written.'};
-
-ScrMissEpoF              = cfg_exbranch;
-ScrMissEpoF.name         = 'Write to filename';
-ScrMissEpoF.tag          = 'write_to_file';
-ScrMissEpoF.val          = {ScrMissEpoFN, ScrMissEpoFP};
-ScrMissEpoF.help         = {['If you choose to store the artefact ',...
-                           'epochs please specify a filename as well ',...
-                           'as an output directory. When giving the ',...
-                           'filename do not specify any extension, the ',...
-                           'artefact epochs will be stored as .mat file.']};
-ScrMissEpo               = cfg_choice;
-ScrMissEpo.name          = 'Missing epochs file';
-ScrMissEpo.tag           = 'missing_epochs';
-ScrMissEpo.val           = {ScrMissEpoNoFN};
-ScrMissEpo.values        = {ScrMissEpoNoFN, ScrMissEpoF};
-ScrMissEpo.help          = {'Specify if you want to store the artefact ',...
-                           'epochs in a separate file of not.', ...
-                           'Default: artefact epochs are not stored.'};
-
-ScrDeflectionThr         = cfg_entry;
-ScrDeflectionThr.name    = 'Deflection threshold';
-ScrDeflectionThr.tag     = 'deflection_threshold';
-ScrDeflectionThr.strtype = 'r';
-ScrDeflectionThr.num     = [1 1];
-ScrDeflectionThr.val     = {0.1};
-ScrDeflectionThr.help    = {['Define an threshold in original data ',...
-                           'units for a slope to pass to be considered ',...
-                           'in the filter. ', ...
-                           'This is useful, for example, with ',...
-                           'oscillatory wave data. ', ...
-                            'The slope may be steep due to a jump ',...
-                           'between voltages but we likely do not want ', ...
-                            'to consider this to be filtered. ', ...
-                           'A value of 0.1 would filter oscillatory ', ...
-                           'behaviour with threshold less than 0.1v ', ...
-                           'but not greater.' ],...
-                           'Default: 0.1', ...
-                           };
-
-ScrDataIslandThr         = cfg_entry;
-ScrDataIslandThr.name    = 'Data island threshold';
-ScrDataIslandThr.tag     = 'data_island_threshold';
-ScrDataIslandThr.strtype = 'r';
-ScrDataIslandThr.num     = [1 1];
-ScrDataIslandThr.val     = {0};
-ScrDataIslandThr.help    = {['A float in seconds to determine the ' ...
-                           'maximum length of unfiltered data ' ...
-                           'between epochs.', ...
-                           ' If an island exists for less than the ' ...
-                           'threshold it will also be filtered'], ...
-                           'Default: 0 s - will take no effect on ' ...
-                           'filter', ...
-                           };
-
-ScrExpandEpo             = cfg_entry;
-ScrExpandEpo.name        = 'Expand epochs';
-ScrExpandEpo.tag         = 'expand_epochs';
-ScrExpandEpo.strtype     = 'r';
-ScrExpandEpo.num         = [1 1];
-ScrExpandEpo.val         = {0.5};
-ScrExpandEpo.help        = {'A float in seconds to determine ',...
-                           'by how much data on the flanks of ',...
-                           'artefact epochs will be removed.', ...
-                           'Default: 0.5 s.'};
-scr_pp                   = cfg_branch;
-scr_pp.name              = 'Preprocessing SCR';
-scr_pp.tag               = 'scr_pp';
-scr_pp.val               = {ScrMin, ...
-                           ScrMax, ...
-                           ScrSlope, ...
-                           ScrMissEpo, ...
-                           ScrDeflectionThr, ...
-                           ScrDataIslandThr, ...
-                           ScrExpandEpo};
-scr_pp.help              = {['Preprocessing SCR. See I. R. Kleckner ',...
-                           'et al.,"Simple, Transparent, and Flexible '...
-                           'Automated Quality Assessment Procedures ',...
-                           'for Ambulatory Electrodermal Activity ',...
-                           'Data," in IEEE Transactions on Biomedical ', ...
-                           'Engineering, vol. 65, no. 7, pp. 1460-1467,',...
-                           'July 2018.']};
 %% Data file
 datafile                 = cfg_files;
 datafile.name            = 'Data File';

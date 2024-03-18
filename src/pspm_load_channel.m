@@ -60,6 +60,16 @@ if isstruct(channel)
     channel = channel.channel;
 end
 
+% expand channel if zero
+if isnumeric(channel) && channel == 0
+    if nargin > 2
+        channel = channeltype;
+    else
+        warning('ID:invalid_input', 'Channel not specified.')
+        return
+    end
+end
+
 [sts, infos, data, filestruct] = pspm_load_data(fn, channel);
 if sts < 1, return; end
 

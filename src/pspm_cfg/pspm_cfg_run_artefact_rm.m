@@ -6,7 +6,7 @@ filtertype = fieldnames(job.filtertype);
 filtertype = filtertype{1};
 datafile = job.datafile;
 datafile = datafile{1};
-channelnumber = job.chan_nr;
+channelnumber = pspm_cfg_channel_selector('run', job);
 switch filtertype
   case 'median'
     n = job.filtertype.(filtertype).nr_time_pt;

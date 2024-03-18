@@ -23,25 +23,7 @@ datafile.help    = {['Specify the PsPM datafile containing the imported ', ...
     'startle sound data.'],' ',settings.datafilehelp };
 
 %% Channel
-chan_def         = cfg_const;
-chan_def.name    = 'Default';
-chan_def.tag     = 'chan_def';
-chan_def.val     = {0};
-chan_def.help    = {'First sound channel'};
-
-chan_nr         = cfg_entry;
-chan_nr.name    = 'Number';
-chan_nr.tag     = 'chan_nr';
-chan_nr.strtype = 'i';
-chan_nr.num     = [1 1];
-chan_nr.help    = {''};
-
-chan         = cfg_choice;
-chan.name    = 'Channel';
-chan.tag     = 'chan';
-chan.val     = {chan_def};
-chan.values  = {chan_def,chan_nr};
-chan.help    = {'Number of channel containing the startle sounds (default: last sound channel).'};
+chan         = pspm_cfg_channel_selector('sound');
 
 %% Threshold
 threshold            = cfg_entry;
