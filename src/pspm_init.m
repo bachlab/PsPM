@@ -47,6 +47,10 @@ if ~isempty(settings) % initialise settings
 end
 p = path;
 fs = filesep;
+pth = fileparts(which('pspm_guide'));
+pth = [pth, fs];
+pspm_text(pth);
+load(fullfile(pth,'pspm_text.mat'))
 % 2.3 check if subfolders are already in path
 % get subfolders
 current_path = fileparts(mfilename('fullpath'));
@@ -63,16 +67,12 @@ if numel(subfolders(mem)) == 0
   warning(warntext_subfolder);
 end
 % 2.4 check whether scralyze is on the path
-pth = fileparts(which('pspm_guide'));
 if ~contains(p, pth)
   scrpath=1;
   addpath(pth);
 else
   scrpath=0;
 end
-pth = [pth, fs];
-pspm_text(pth);
-load(fullfile(pth,'pspm_text.mat'))
 % 2.5 check matlab version
 v = version;
 if str2double(v(1:3)) < 7.1

@@ -229,7 +229,7 @@ switch FunName
     options = fill_find_valid_fixations(options);
   case 'gaze_pp'
     % 2.25 pspm_gaze_pp --
-    options = autofill(options, 'channel',                'gaze',      '*Int*Char'      );  
+    options = autofill(options, 'channel',                'gaze',      '*Int*Char'      );
     options = autofill_channel_action(options,            'add',      {'replace',...
                                                                       'none'}           );
   case 'get_markerinfo'
@@ -333,6 +333,7 @@ switch FunName
     options = autofill(options, 'channel_combine',        'none',     '*Int*Char'       );
     options = autofill(options, 'plot_data',              0,          1                 );
     options = autofill(options, 'segments',               {},         '*Cell'           );
+    options = autofill(options, 'chan_valid_cutoff',      0.1,        '*Num'            );
   case 'remove_epochs'
     % 2.38 pspm_remove_epochs --
     options = autofill_channel_action(options);
