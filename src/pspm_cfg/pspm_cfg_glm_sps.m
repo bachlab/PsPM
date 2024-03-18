@@ -43,7 +43,6 @@ spsrf_box.help  = {['This option implements a boxcar function over the SOA, and 
  'scan path speed over that interval (i.e.', ...
  'the scan path length over that interval, divided by the SOA).', ...
  '(default).']};
-
 % bf = gammafunction
 spsrf_gamma = cfg_const;
 spsrf_gamma.name = 'SPSRF_FC';
@@ -51,48 +50,46 @@ spsrf_gamma.tag = 'spsrf_gamma';
 spsrf_gamma.val = {'spsrf_gamma'};
 spsrf_gamma.help = {['This option implements a gamma function for fear-conditioned scan path speed', ...
  'responses, time-locked to the end of the CS-US interval.']};
-
+% rf function
 rf        = cfg_choice;
 rf.name   = 'Function';
 rf.tag    = 'rf';
 rf.val    = {spsrf_box};
 rf.values = {spsrf_box,spsrf_gamma};
-
+% basis function
 bf        = cfg_branch;
 bf.name   = 'Basis Function';
 bf.tag    = 'bf';
 bf.val    = {rf,soa};
-bf.help   = {['Basis functions.']};
-
+bf.help   = {'Basis functions.'};
 % look for bf and replace
 b = cellfun(@(f) strcmpi(f.tag, 'bf'), glm_sps.val);
 glm_sps.val{b} = bf;
-
 % specific channel
+% left sps
 chan_def_left         = cfg_const;
 chan_def_left.name    = 'Last left eye';
 chan_def_left.tag     = 'chan_def_left';
 chan_def_left.val     = {'sps_l'};
 chan_def_left.help    = {'Use the last sps channel from left eye.'};
-
+% right sps
 chan_def_right         = cfg_const;
 chan_def_right.name    = 'Last right eye';
 chan_def_right.tag     = 'chan_def_right';
 chan_def_right.val     = {'sps_r'};
 chan_def_right.help    = {'Use the last sps channel from right eye.'};
-
+% best eye
 best_eye                = cfg_const;
 best_eye.name           = 'Best eye';
 best_eye.tag            = 'best_eye';
 best_eye.val            = {'sps'};
 best_eye.help           = {'Use the sps data from the eye with fewest NaN values.'};
-
+%% Define channel
 chan_def                = cfg_choice;
 chan_def.name           = 'Default';
 chan_def.tag            = 'chan_def';
 chan_def.val            = {best_eye};
 chan_def.values         = {best_eye, chan_def_left, chan_def_right};
-
 a = cellfun(@(f) strcmpi(f.tag, 'chan'), glm_sps.val);
 glm_sps.val{a}.values{1} = chan_def;
 glm_sps.val{a}.val{1} = chan_def;
