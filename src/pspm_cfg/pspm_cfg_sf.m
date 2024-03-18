@@ -190,7 +190,7 @@ epochs.help   = {''};
 
 %% Marker Channel
 mrk_chan         = pspm_cfg_channel_selector('Marker');
-mrk_chan.help    = {mrk_chan.help , ['Markers are only used if you have ' ...
+mrk_chan.help    = {mrk_chan.help{1} , ['Markers are only used if you have ' ...
     'specified the time units as "markers".']};
 
 
