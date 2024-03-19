@@ -3,9 +3,9 @@ function [out] = pspm_cfg_run_gaze_convert(job)
 fn = job.datafile{1};
 options = struct();
 options = pspm_update_struct(options, job, {'channel_action'});
+options.channel = pspm_cfg_channel_selector('run', job.chan);
 if isfield(job.conversion, 'degree2sps')
   % do degree to sps conversion
-  options = pspm_update_struct(options, job.conversion.degree2sps, {'eyes'});
   [~, out] = pspm_convert_visangle2sps(fn, options);
 elseif isfield(job.conversion, 'pixel2unit')
   args = job.conversion.pixel2unit;

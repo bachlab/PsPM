@@ -15,9 +15,9 @@ function [sts, channel_index] = pspm_convert_gaze(fn, conversion, options)
 %   ├────────.target: target unit of conversion: a metric distance unit,
 %   │                 'degree' or 'sps'
 %   ├──.screen_width: with of the display in mm (not required if 'from' is
-%   │                 'degree'
+%   │                 'degree', or both source and target are metric)
 %   ├─.screen_height: height of the display in mm (not required if 'from' is
-%   │                 'degree'
+%   │                 'degree', or both source and target are metric)
 %   └.screen_distance: Subject distance from the screen in mm (not required
 %                     if 'from' is'degree', or if 'target' is metric)
 %   ┌────────options

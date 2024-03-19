@@ -13,10 +13,13 @@ if strcmpi(channame, 'run')
         out = job.chan_default;
     elseif isfield(job, 'chan_nr')
         out = job.chan_nr;
+    elseif isfield(job, 'chan_menu')
+        out = job.chan_menu;
     else
         out = 0;
     end
 
+    % convert numbers provided as chars
     if ischar(out)
         if strcmpi(out, num2str(int64(str2num(out))))
             out = str2num(out);
@@ -28,7 +31,7 @@ if strcmpi(channame, 'run')
 elseif strcmpi(channame, 'any')
     out         = str_chan(channame);
 
-% numerical or string definition or default
+% specific pupil options or numerical definition
 elseif ismember(channame, {'pupil', 'pupil_both', 'pupil_none'})
     if strcmpi(channame, 'pupil')
         chan_menu = [1, 3:5];
@@ -40,12 +43,19 @@ elseif ismember(channame, {'pupil', 'pupil_both', 'pupil_none'})
         chan_menu = [1, 3:6];
         chan_default = 6;
     end
-    out = cfg_choice;
-    out.name    = 'Channel';
-    out.tag     = 'chan';
+    out = chan_choice;
     out.val     = {pupil_chan(chan_menu, chan_default)};
     out.values  = {pupil_chan(chan_menu, chan_default), num_chan('pupil')};
     out.help    = {sprintf('Specification of %s channel (default: follow precedence order).', 'pupil')};
+
+% specific gaze options or numerical definition
+elseif strcmpi(channame, 'gaze')
+    gaze_chan_nr = vec_chan('gaze', [2 2]);
+    gaze_chan_nr.help = {sprintf('Specify an x/y pair of %s channel numbers.', 'gaze')};
+    out = chan_choice;
+    out.val     = {gaze_chan(1:4, 4)};
+    out.values  = {gaze_chan(1:4, 4), gaze_chan_nr};
+    out.help    = {sprintf('Specification of %s channels (default: follow precedence order).', 'gaze')};
 
 % numerical definition
 elseif isempty(channame)
@@ -58,9 +68,7 @@ else
     else
         pos_str = 'Last';
     end
-    out = cfg_choice;
-    out.name    = 'Channel';
-    out.tag     = 'chan';
+    out = chan_choice;
     out.val     = {def_chan(channame, pos_str)};
     out.values  = {def_chan(channame, pos_str), num_chan(channame)};
     out.help    = {sprintf('Number of %s channel (default: %s %s channel).', channame, lower(pos_str), channame)};
@@ -68,6 +76,12 @@ end
 end
 
 % possible menu items -----------------------------------------------------
+function out = chan_choice
+    out = cfg_choice;
+    out.name    = 'Channel';
+    out.tag     = 'chan';
+end
+
 function out = def_chan(channame, pos_str)
     out      = cfg_const;
     out.name = 'Default channel';
@@ -83,6 +97,15 @@ function out = num_chan(channame)
     out.strtype = 'i';
     out.num     = [1 1];
     out.help    = {sprintf('Specify %s channel number.', channame)};
+end
+
+function out = vec_chan(channame, n)
+    out = cfg_entry;
+    out.name    = 'Channel number';
+    out.tag     = 'chan_nr';
+    out.strtype = 'i';
+    out.num     =  n;
+    out.help    = {sprintf('Specify %s channel numbers.', channame)};
 end
 
 function out = str_chan(channame)
@@ -109,7 +132,27 @@ function out = pupil_chan(menu_set, menu_default)
         'existing option out of the following: ', ...
         '(1) Combined pupil, (2) non-lateralised pupil, (3) best ', ...
         'eye pupil, (4) any pupil channel. If there are multiple ', ...
-        'channels in the first existing option, only last one will be ', ...
+        'channels in the first existing option, only last the one will be ', ...
+        'processed.']};
+end
+
+function out = gaze_chan(menu_set, menu_default)
+
+    labels                 = {'Combined gaze channels', 'Left eye', 'Right eye', 'Default'};
+    values                 = {{'gaze_x_c', 'gaze_y_c'},{'gaze_x_l', 'gaze_y_l'}, {'gaze_x_r', 'gaze_y_r'}, {'gaze'}};
+    
+    out                    = cfg_menu;
+    out.name               = 'Channel specification';
+    out.tag                = 'chan_menu';
+    out.labels             = labels(menu_set);
+    out.values             = values(menu_set);
+    out.val                = values(menu_default);
+    out.help               = {['Specify gaze channels to process. This will ', ...
+        'use the last x/y channels of the specified type. Default is the first ', ...
+        'existing option out of the following: ', ...
+        '(1) Combined eyes, (2) non-lateralised gaze, (3) best ', ...
+        'eye, (4) any gaze channel. If there are multiple ', ...
+        'x or y channels in the first existing option, only the last one will be ', ...
         'processed.']};
 end
 

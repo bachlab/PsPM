@@ -158,7 +158,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       % do the actual test with options length all other option field
       % are set to default
       [sts,out] = this.verifyWarningFree(@() ...
-        pspm_extract_segments('manual', fn,0, timing,struct('length',3.5)));
+        pspm_extract_segments('manual', fn,1, timing,struct('length',3.5)));
       this.verifyEqual(sts, 1);
       % check contains segments
       this.verifyTrue(isfield(out,'segments'));
@@ -184,7 +184,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       % do the actual test with durations all other option field
       % are set to default
       [sts,out] = this.verifyWarningFree(@() ...
-        pspm_extract_segments('manual', fn,0, timing, this.options));
+        pspm_extract_segments('manual', fn,1, timing, this.options));
       this.verifyEqual(sts, 1);
       % check contains segments
       this.verifyTrue(isfield(out,'segments'));
