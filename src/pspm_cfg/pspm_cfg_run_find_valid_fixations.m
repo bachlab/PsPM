@@ -34,7 +34,7 @@ else
 end
 %% options
 options.missing = job.missing;
-options = pspm_update_struct(options, job, 'eyes'); % this does not seem to be used at all?
+options.channel = pspm_cfg_channel_selector('run', job.chan); 
 options.overwrite = job.output_settings.file_output.overwrite;
 options = pspm_update_struct(options, job.output_settings, {'channel_action', ...
                                                             'plot_gaze_coords'});

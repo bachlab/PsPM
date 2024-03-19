@@ -18,17 +18,8 @@ datafile.help           = {['Specify the PsPM datafile containing the ',...
                             'gaze recordings in length units.'],' ',...
                             settings.datafilehelp};
 %% Eyes
-eyes                    = cfg_menu;
-eyes.name               = 'Eyes';
-eyes.tag                = 'eyes';
-eyes.labels             = {'All eyes', 'Left eye', 'Right eye'};
-eyes.values             = {'combined', 'left', 'right'};
-eyes.val                = {'combined'};
-eyes.help               = {['Choose eyes which should be processed. ',...
-                            'If "All eyes" is selected, all eyes ',...
-                            'which are present in the data will ', ...
-                            'be processed. Otherwise only the chosen ',...
-                            'eye will be processed.']};
+chan                    = pspm_cfg_channel_selector('pupil_both');
+
 %% Visual angle
 box_degree              = cfg_entry;
 box_degree.name         = 'Visual angle';
@@ -138,18 +129,6 @@ val_method.help         = {['You can either validate the data by ',...
                             'or by passing a bitmap representing the ',...
                             'screen and holding a 1 for all the ',...
                             'fixations that are valid.']};
-%% Channels
-channels                = cfg_entry;
-channels.name           = 'Channels';
-channels.tag            = 'channels';
-channels.strtype        = 's';
-channels.num            = [1 Inf];
-channels.val            = {'pupil'};
-channels.help           = {['Enter a list of channels (numbers or names)', ...
-                            'to work on. Default is pupil channels. ', ...
-                            'Channel names which depend on eyes will ', ...
-                            'automatically be expanded. E.g. pupil ', ...
-                            'becomes pupil_l.']};
 %% Missing
 missing                 = cfg_menu;
 missing.name            = 'Enable missing validation';
@@ -235,7 +214,7 @@ output.val              = {file_output, ChanAct, plot_gaze_coords};
 FindValidFixa           = cfg_exbranch;
 FindValidFixa.name      = 'Find valid fixations';
 FindValidFixa.tag       = 'find_valid_fixations';
-FindValidFixa.val       = {datafile, eyes, val_method, channels, missing, output};
+FindValidFixa.val       = {datafile, chan, val_method, missing, output};
 FindValidFixa.prog      = @pspm_cfg_run_find_valid_fixations;
 FindValidFixa.vout      = @pspm_cfg_vout_find_valid_fixations;
 FindValidFixa.help      = {['Pupil data time series can contain missing ',...
