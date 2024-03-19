@@ -98,7 +98,7 @@ FixPt.help              = {['X- and y-coordinates for the point',...
                             'resolution.']};
 %% Validation settings
 ValidSet                = cfg_branch;
-ValidSet.name           = 'Validation settings';
+ValidSet.name           = 'Fixation point';
 ValidSet.tag            = 'validation_settings';
 ValidSet.val            = {box_degree, distance, unit, Resol, FixPt};
 ValidSet.help           = {['Settings to validate fixations within a ', ...

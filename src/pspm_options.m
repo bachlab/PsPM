@@ -1,4 +1,4 @@
-ffunction options = pspm_options(options, FunName)
+function options = pspm_options(options, FunName)
 % ● Definition
 %   pspm_options automatically determine the fields of options for the
 %   corresponding function.

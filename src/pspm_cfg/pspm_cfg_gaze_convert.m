@@ -23,8 +23,8 @@ datafile.help    = {['Specify the PsPM datafile containing the channels ', ...
 
 %% width
 width = cfg_entry;
-width.name = 'Width';
-width.tag = 'width';
+width.name = 'Screen width';
+width.tag = 'screen_width';
 width.strtype = 'r';
 width.num = [1 1];
 width.val = {NaN};
@@ -32,8 +32,8 @@ width.help = {['Width of the display window. Unit is `mm`. Only required if sour
 
 %% height
 height = cfg_entry;
-height.name = 'Height';
-height.tag = 'height';
+height.name = 'Screen height';
+height.tag = 'screen_height';
 height.strtype = 'r';
 height.num = [1 1];
 height.val = {NaN};
@@ -61,7 +61,7 @@ from.help    = {'Channel unit of the source channel pair. If in doubt, use the "
 %% Target
 target         = cfg_menu;
 target.name    = 'To channel unit';
-target.tag     = 'from';
+target.tag     = 'target';
 target.values  = { 'pixel', 'mm', 'cm', 'm', 'inches', 'degree', 'sps'};
 target.labels  = { 'pixel', 'mm', 'cm', 'm', 'inches', 'degree' 'Scan path speed (degree/s)'};
 target.val     = {'mm'};

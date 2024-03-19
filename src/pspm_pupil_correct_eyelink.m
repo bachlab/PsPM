@@ -77,6 +77,7 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+out_channel = 0;
 
 %% Default values
 

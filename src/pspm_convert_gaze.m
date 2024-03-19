@@ -6,7 +6,7 @@ function [sts, channel_index] = pspm_convert_gaze(fn, conversion, options)
 %   degrees, to translate the coordinate system to the centre of
 %   the display.
 % ● Format
-%   [sts, out_file] = pspm_convert_gaze(fn, conversion, options)
+%   [sts, channel_index] = pspm_convert_gaze(fn, conversion, options)
 % ● Arguments
 %                 fn: A data file name
 %   ┌────────conversion [ struct ] with fields
@@ -45,6 +45,8 @@ if isempty(settings)
     pspm_init;
 end
 sts = -1;
+channel_index = 0;
+
 % Number of arguments validation
 if nargin < 2
     warning('ID:invalid_input','Not enough input arguments.'); return;
@@ -89,6 +91,9 @@ end
 
 % Parse channel specification
 channel = options.channel;
+if isnumeric(channel) && numel(channel) == 1 && channel == 0
+    channel = 'gaze';
+end
 if (iscell(channel) || isnumeric(channel)) && numel(channel) ~= 2
     warning('ID:invalid_input', 'This function operates on pairs of channels; two input channels required.');
     return
@@ -101,8 +106,9 @@ elseif ischar(channel)
         warning('ID:invalid_input', 'This function operates on pairs of channels; two input channels required.');
         return
     end
-else
+elseif ~iscell(channel)
     warning('ID:invalid_input', 'Channel specification not recognised');
+    return
 end
 
 % load data & check units
@@ -119,7 +125,7 @@ for i = 1:numel(channel)
         if ismember(channel{i}, channels_correct_units)
             [lsts, data{i}] = pspm_load_channel(alldata, channel{i}, 'gaze');
         else
-            warning('ID:invalid_input', 'Channel %i is in units %s, expected was %s.', ...
+            warning('ID:invalid_input', 'Channel %i is in units "%s", expected was "%s".', ...
                 channel{i}, alldata.data{channel{i}}.header.units, from);
             return
         end

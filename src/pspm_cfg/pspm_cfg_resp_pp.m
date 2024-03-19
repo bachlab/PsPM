@@ -1,5 +1,3 @@
-
-
 function resp_pp = pspm_cfg_resp_pp
     % Coversion of continuous respiration data various respiration data types
 

@@ -81,7 +81,7 @@ elseif ismember(channame, {'pupil', 'pupil_both', 'pupil_none'})
 
 % specific gaze options or numerical definition
 elseif strcmpi(channame, 'gaze')
-    gaze_chan_nr = vec_chan('gaze', [2 2]);
+    gaze_chan_nr = vec_chan('gaze', [1 2]);
     gaze_chan_nr.help = {sprintf('Specify an x/y pair of %s channel numbers.', 'gaze')};
     out = chan_choice;
     out.val     = {gaze_chan(1:4, 4)};
@@ -167,7 +167,7 @@ end
 function out = gaze_chan(menu_set, menu_default)
 
     labels                 = {'Combined gaze channels', 'Left eye', 'Right eye', 'Default'};
-    values                 = {{'gaze_x_c', 'gaze_y_c'},{'gaze_x_l', 'gaze_y_l'}, {'gaze_x_r', 'gaze_y_r'}, {'gaze'}};
+    values                 = {{'gaze_x_c', 'gaze_y_c'},{'gaze_x_l', 'gaze_y_l'}, {'gaze_x_r', 'gaze_y_r'}, 'gaze'};
     
     out                    = cfg_menu;
     out.name               = 'Channel specification';
