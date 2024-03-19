@@ -1,5 +1,28 @@
 function out = pspm_cfg_channel_selector(channame, varargin)
-% Generates a standardised channel selector GUI entry
+% ● Description
+% pspm_cfg_channel_selector generates a standardised matlabbatch entry for 
+% channel selection 
+% ● Format
+%   sts = pspm_cfg_channel_selector(channeltype)
+%   sts = pspm_cfg_channel_selector('run', job)
+% ● Arguments
+% channeltype: (1) a channeltype string - generates a default channel of 
+%                  this type, and a numerical channel selector
+%              (2) 'pupil' - generates a choice of 'combined', 'left',
+%                  'right', 'pupil' (default), and a numerical channel 
+%                   selector
+%              (3) 'pupil_both' - like 'pupil' but with the option of
+%                   selecting both pupils
+%              (4) 'pupil_none' - like 'pupil' but with the option of
+%                   selecting no channel (used for pspm_pupil_pp)
+%              (5) 'gaze' - generates a choice of 'combined', 'left',
+%                  'right', 'gaze' (default), and a numerical selector for 
+%                   an x/y pair of channels 
+%              (5) 'any' - generates a string channel selector for at most
+%                   one channel
+%              (6) 'many' - generates a numerical channel selector for an
+%                   arbitrary number of channels
+
 
 % check input
 if nargin == 0 
@@ -31,6 +54,14 @@ if strcmpi(channame, 'run')
 elseif strcmpi(channame, 'any')
     out         = str_chan(channame);
 
+% numerical definition
+elseif isempty(channame)
+    out         = num_chan;
+
+% vector definition
+elseif strcmpi(channame, 'many')
+    out         = vec_chan('any', [1 Inf]);
+
 % specific pupil options or numerical definition
 elseif ismember(channame, {'pupil', 'pupil_both', 'pupil_none'})
     if strcmpi(channame, 'pupil')
@@ -57,9 +88,6 @@ elseif strcmpi(channame, 'gaze')
     out.values  = {gaze_chan(1:4, 4), gaze_chan_nr};
     out.help    = {sprintf('Specification of %s channels (default: follow precedence order).', 'gaze')};
 
-% numerical definition
-elseif isempty(channame)
-    out         = num_chan;
 
 % numerical definition or default 
 else
@@ -85,7 +113,7 @@ end
 function out = def_chan(channame, pos_str)
     out      = cfg_const;
     out.name = 'Default channel';
-    choutan_default.tag  = 'chan_def';
+    out.tag  = 'chan_def';
     out.val  = {0};
     out.help = {sprintf('%s %s channel.', pos_str, channame)};
 end
@@ -104,7 +132,7 @@ function out = vec_chan(channame, n)
     out.name    = 'Channel number';
     out.tag     = 'chan_nr';
     out.strtype = 'i';
-    out.num     =  n;
+    out.num     =  n; % n is a two-element vector
     out.help    = {sprintf('Specify %s channel numbers.', channame)};
 end
 

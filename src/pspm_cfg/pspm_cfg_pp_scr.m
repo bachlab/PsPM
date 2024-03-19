@@ -197,7 +197,7 @@ function [pp_scr] = pspm_cfg_pp_scr
         scr_pp_options.slope = job.slope;
         scr_pp_options.deflection_threshold = job.deflection_threshold;
         scr_pp_options.expand_epochs = job.expand_epochs;
-        scr_pp_options.channel = pspm_cfg_channel_selector('run', job.channel);
+        scr_pp_options.channel = pspm_cfg_channel_selector('run', job.chan);
         scr_pp_options.clipping_step_size = job.clipping_detection.clipping_step_size;
         scr_pp_options.clipping_threshold = job.clipping_detection.clipping_threshold;
         if isfield(job.missing_epochs, 'write_to_file')
