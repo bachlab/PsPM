@@ -6,7 +6,7 @@ function out = pspm_cfg_run_pp_emg_data(job)
 options = struct();
 options.mains_freq = job.options(1).mains_freq;
 options.channel_action = job.options(1).chan_action;
-options.channel = pspm_cfg_channel_selector('run', job.options(1).channel(1));
+options.channel = pspm_cfg_channel_selector('run', job.options(1).chan);
 [sts, output] = pspm_emg_pp(job.datafile{1}, options);
 if sts == 1
   out = {output.channel};

@@ -103,11 +103,7 @@ function split_sessions = pspm_cfg_split_sessions
 
     function out = pspm_cfg_run_split_sessions(job)
         datafile = job.datafile{1,1};
-        if isfield(job.mrk_chan,'chan_nr')
-            markerchannel = job.mrk_chan.chan_nr;
-        else
-            markerchannel = 0;
-        end
+        markerchannel = pspm_cfg_channel_selector('run', job.chan);
         options = struct();
         options.overwrite = job.overwrite;
         if isfield(job.missing_epochs_file,'name')

@@ -234,7 +234,7 @@ switch FunName
   case 'get_markerinfo'
     % 2.26 pspm_get_markerinfo --
     options = autofill(options, 'filename',               '',         '*Char'           );
-    options = autofill(options, 'markerchan',             -1,         '*Int'            );
+    options = autofill(options, 'markerchan',             0,         '*Int'            );
     options = autofill(options, 'overwrite',              0,          1                 );
   case 'get_rf'
     % 2.27 pspm_get_rf --
@@ -293,7 +293,7 @@ switch FunName
     options = autofill(options, 'overwrite',              0,          1                 );
   case 'pp'
     % 2.34 pspm_pp --
-    options = autofill(options, 'overwrite',              0,          1                 );
+    options = autofill_channel_action(options);
   case 'prepdata'
     options = autofill(options, 'fillnan',                1,          0                 );
   case 'process_illuminance'
