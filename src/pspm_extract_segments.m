@@ -168,6 +168,7 @@ if strcmpi(method, 'model') && strcmpi(data.modeltype, 'glm')
     timing = data.input.timing;
 end
 
+
 if strcmpi(method, 'model') && strcmpi(data.modeltype, 'dcm')
     % DCM has no condition information
     onsets{1} = cellfun(@(x, y) pspm_time2index(x, sr , y), ...
@@ -210,6 +211,7 @@ for i_cond = 1:numel(onsets)
     if sts < 1, return; end
 end
 
+n_cond = numel(multi(1).names);
 
 if options.plot
   fg = figure('Name', 'Condition mean per subject', 'Visible', 'off');
