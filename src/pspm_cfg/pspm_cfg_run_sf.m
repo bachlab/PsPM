@@ -57,7 +57,7 @@ end
 if ~isempty(job.fresp)
   options.fresp = job.fresp;
 end
-if ~isempty(job.missing)
+if ~isempty(job.missing) && isfield(job.missing, 'missingepoch_include')
   if ischar(job.missing.missingepoch_include.missingepoch_file{1})
     model.missing = job.missing.missingepoch_include.missingepoch_file{1};
   end

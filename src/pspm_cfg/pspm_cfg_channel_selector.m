@@ -60,7 +60,7 @@ elseif isempty(channame)
 
 % vector definition
 elseif strcmpi(channame, 'many')
-    out         = vec_chan('any', [1 Inf]);
+    out         = vec_chan('any', Inf);
 
 % specific pupil options or numerical definition
 elseif ismember(channame, {'pupil', 'pupil_both', 'pupil_none'})
@@ -81,7 +81,7 @@ elseif ismember(channame, {'pupil', 'pupil_both', 'pupil_none'})
 
 % specific gaze options or numerical definition
 elseif strcmpi(channame, 'gaze')
-    gaze_chan_nr = vec_chan('gaze', [1 2]);
+    gaze_chan_nr = vec_chan('gaze', 2);
     gaze_chan_nr.help = {sprintf('Specify an x/y pair of %s channel numbers.', 'gaze')};
     out = chan_choice;
     out.val     = {gaze_chan(1:4, 4)};
@@ -132,7 +132,7 @@ function out = vec_chan(channame, n)
     out.name    = 'Channel number';
     out.tag     = 'chan_nr';
     out.strtype = 'i';
-    out.num     =  n; % n is a two-element vector
+    out.num     =  [1 n]; 
     out.help    = {sprintf('Specify %s channel numbers.', channame)};
 end
 
@@ -141,7 +141,7 @@ function out = str_chan(channame)
     out.name    = 'Channel specification';
     out.tag     = 'chan_nr';
     out.strtype = 's';
-    out.help    = {sprintf('Specify %s channel number or channel type (e.g., "scr", "ecg" or any other type accepted by PsPM.', channame)};
+    out.help    = {sprintf('Specify %s channel number or channel type (e.g., "scr", "ecg" or any other type accepted by PsPM.)', channame)};
 end
 
 function out = pupil_chan(menu_set, menu_default)

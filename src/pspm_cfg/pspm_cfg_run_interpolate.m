@@ -6,8 +6,7 @@ if isfield(job.mode, 'file')
   options = pspm_update_struct(options, job.mode.file, {'overwrite'});
   options.newfile = true;
 elseif isfield(job.mode, 'channel')
-  options.channels = cell(size(job.datafiles));
-  options.channels{:} = job.mode.channel.source_chan;
+  options.channels = pspm_cfg_channel_selector('run', job.mode.channel);
   options.newfile = false;
   if isfield(job.mode.channel.mode, 'new_chan')
     options.channel_action = 'add';
