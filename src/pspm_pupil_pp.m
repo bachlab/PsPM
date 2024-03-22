@@ -48,7 +48,7 @@ function [sts, out_chan] = pspm_pupil_pp (fn, options)
 %   │           To process the combined left and right eye, use 'pupil_c'.
 %   │           To combine both eyes, specify one eye here and the other
 %   │           under option 'channel_combine'. The identifier 'pupil' will
-%   │           use the first existing option out of the following: 
+%   │           use the first existing option out of the following:
 %   │           (1) L-R-combined pupil, (2) non-lateralised pupil, (3) best
 %   │           eye pupil, (4) any pupil channel. If there are multiple
 %   │           channels of the specified type, only last one will be
@@ -58,12 +58,12 @@ function [sts, out_chan] = pspm_pupil_pp (fn, options)
 %   │           Channel to be used for computing the mean pupil signal.
 %   │           The input format is exactly the same as the .channel field.
 %   │           However, the eye specified in this channel must be different
-%   │           from the one specified in .channel field. The output channel 
+%   │           from the one specified in .channel field. The output channel
 %   │           will then be of type 'pupil_c'.
 %   ├─.channel_action:
 %   │           [optional][string][Accepts: 'add'/'replace'][Default: 'add']
 %   │           Defines whether corrected data should be added or the
-%   │           corresponding preprocessed channel should be replaced. 
+%   │           corresponding preprocessed channel should be replaced.
 %   ├─.custom_settings:
 %   │           [optional][Default: See pspm_pupil_pp_options]
 %   │           Settings structure to modify the preprocessing steps. If
@@ -86,6 +86,14 @@ function [sts, out_chan] = pspm_pupil_pp (fn, options)
 %   ├─.plot_data:
 %   │           [Boolean][Default: false or 0]
 %   │           Plot the preprocessing steps if true.
+%   ├─.chan_valid_cutoff:
+%   │           [optional][Default: 0.01]
+%   │           A cut-off value for checking whether there are too many
+%   │           missing values in the data channel. Valid data channels 
+%   │           should have NaNs fewer than this cut-off value. If
+%   │           combination is requested and only one of the two channels has fewer
+%   │           than this percentage of missing values, then only this channel will be
+%   │           used and no combination will be performed.
 %   └.out_chan: Channel ID of the preprocessed output.
 % ● References
 %   [1] Kret, Mariska E., and Elio E. Sjak-Shie. "Preprocessing pupil size
@@ -94,8 +102,8 @@ function [sts, out_chan] = pspm_pupil_pp (fn, options)
 % ● History
 %   Introduced in PsPM version ?
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
-%              2021 by Teddy Chao (UCL)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%              2021 by Teddy
+%   Updated in 2024 by Dominik R Bach (Uni Bonn)
 
 %% 1 Initialise
 global settings
@@ -138,6 +146,8 @@ alldata = struct();
 if sts_load < 1, return, end
 [sts_load, data,] = pspm_load_channel(alldata, options.channel, 'pupil');
 if sts_load ~= 1, return, end
+flag_valid_data    = sum(isnan(data.data))/length(data.data) < options.chan_valid_cutoff;
+
 if action_combine
   [sts_load, data_combine] = pspm_load_channel(alldata, options.channel_combine, 'pupil');
   if sts_load ~= 1
@@ -147,29 +157,57 @@ if action_combine
   [sts2, eye2] = pspm_find_eye(data_combine.header.chantype);
   if (sts1 < 1 || sts2 < 1), return, end
   if sum(strcmp([eye1, eye2], {'lr', 'rl'})) < 1
-    warning('ID:invalid_input', 'options.channel and options.channel_combine must specify left and right eyes');
+    warning('ID:invalid_input', ...
+      'options.channel and options.channel_combine must specify left and right eyes.');
+    return;
+  elseif data.header.sr ~= data_combine.header.sr
+    warning('ID:invalid_input', ...
+      'options.channel and options.channel_combine data have different sampling rate.');
+    return;
+  elseif ~strcmp(data.header.units, data_combine.header.units)
+    warning('ID:invalid_input', ...
+      'options.channel and options.channel_combine data have different units.');
+    return;
+  elseif numel(data.data) ~= numel(data_combine.data)
+    warning('ID:invalid_input', ...
+      'options.channel and options.channel_combine data have different lengths.');
     return;
   end
-  if data.header.sr ~= data_combine.header.sr
-    warning('ID:invalid_input', 'options.channel and options.channel_combine data have different sampling rate');
-    return;
-  end
-  if ~strcmp(data.header.units, data_combine.header.units)
-    warning('ID:invalid_input', 'options.channel and options.channel_combine data have different units');
-    return;
-  end
-  if numel(data.data) ~= numel(data_combine.data)
-    warning('ID:invalid_input', 'options.channel and options.channel_combine data have different lengths');
-    return;
+
+  flag_valid_combine = sum(isnan(data_combine.data))/length(data_combine.data) < options.chan_valid_cutoff;
+  if flag_valid_data && ~flag_valid_combine
+    warning('ID:invalid_input', ...
+      ['data channel is good, ',...
+      'but channel_combine channel has more than %s percent missing values, ',...
+      'thus it will not be used for combining.'], ...
+      num2str(options.chan_valid_cutoff*100));
+    data_combine.data = [];
+  elseif ~flag_valid_data && flag_valid_combine
+    warning('ID:invalid_input', ...
+      ['channel_combine channel is good, ',...
+      'but data channel has more than %s percent missing values, ',...
+      'thus only data_combine channel will be used.'], ...
+      num2str(options.chan_valid_cutoff*100));
+    data = data_combine; % exchange data and data_combine including fields
+    data_combine.data = []; % to only use the value stored in data_combine
+  elseif ~flag_valid_data && ~flag_valid_combine
+        warning('ID:invalid_input', ...
+      'Both channels have more than %s percent missing values. No combination will be peformed.\nOnly the data channel will be used. Please double-check your output.', num2str(options.chan_valid_cutoff*100));
+    data_combine.data = []; % to only use the value stored in data_combine
   end
   old_channeltype = sprintf('%s and %s', ...
     data.header.chantype, data_combine.header.chantype);
 else
   data_combine.data = [];
+  fprintf('No data to combine provided - only one channel will be used.\n');
   old_channeltype = data.header.chantype;
+  if ~flag_valid_data 
+    warning('ID:invalid_input', ...
+      'Data channel has more than %s percent missing values. Please double-check your output.', num2str(options.chan_valid_cutoff*100));
+  end
 end
 %% 5 preprocess
-[lsts, smooth_signal, model] = pspm_preprocess(data, data_combine, ...
+[lsts, smooth_signal, ~] = pspm_preprocess_pupil(data, data_combine, ...
   options.segments, options.custom_settings, options.plot_data);
 if lsts ~= 1
   return
@@ -186,7 +224,7 @@ out_chan = out_id.channel;
 
 return
 
-function varargout  = pspm_preprocess(data, data_combine, segments, custom_settings, plot_data)
+function varargout  = pspm_preprocess_pupil(data, data_combine, segments, custom_settings, plot_data)
 global settings
 if isempty(settings)
   pspm_init;
