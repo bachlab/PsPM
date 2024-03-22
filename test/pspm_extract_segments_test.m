@@ -158,11 +158,11 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       % do the actual test with options length all other option field
       % are set to default
       [sts,~] = this.verifyWarningFree(@() ...
-        pspm_extract_segments('file', fn, 0, timing,struct('length',3.5)));
+        pspm_extract_segments('file', fn, 1, timing,struct('length',3.5)));
       this.verifyEqual(sts, 1);
       % add testing 'screen' for nan_output
       [sts,out] = this.verifyWarningFree(@() ...
-        pspm_extract_segments('file', fn, 0, timing,...
+        pspm_extract_segments('file', fn, 1, timing,...
         struct('length',3.5,'nan_output','screen')));
       this.verifyEqual(sts, 1);
       % check contains segments
@@ -182,7 +182,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
         this.verifyTrue(abs(seg.total_nan_percent-control.total_nan_percent)<1e-12);
       end
     end
-   function test_auto_mode_glm_with_markers(this)
+ function test_auto_mode_glm_with_markers(this)
       import matlab.unittest.constraints.IsEqualTo
       import matlab.unittest.constraints.RelativeTolerance
       load(['ImportTestData' filesep 'fitted_models' filesep 'glm_scr_cond_marker.mat'], 'glm');
