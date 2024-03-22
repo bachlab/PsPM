@@ -6,7 +6,7 @@ function [sts, out] = pspm_extract_segments(method, data, varargin)
 %   The function supports either manual setting of data file, channel,
 %   timing and timeunits or automatic extraction from a glm or dcm model file.
 %   The segments variable returned will be a cx1 cell where c corresponds to
-%   the number of conditions (1 if extracted from non-linear model). 
+%   the number of conditions (1 if extracted from non-linear model).
 %   Each element contains a struct with fields data, mean, std and sem.
 %   The field data is a nxo*s vector where n is number of data points and o*s
 %   corresponds to the onsets multiplied by the sessions.
@@ -19,7 +19,7 @@ function [sts, out] = pspm_extract_segments(method, data, varargin)
 %                          settings from. Either 'file', 'data', or 'model'.
 %              modelfile:  Path to the glm or dcm file or a glm/dcm structure.
 %                data_fn:  Path or cell of paths to data file from which
-%                          the segments should be extracted. 
+%                          the segments should be extracted.
 %                   data:  Numeric data or a cell array of numeric data.
 %                channel:  Channel identifier accepted by pspm_load_channel
 %                     sr:  Sample rate (ignored if options.timeunits ==
@@ -32,21 +32,21 @@ function [sts, out] = pspm_extract_segments(method, data, varargin)
 %   │                     the model file. In the case
 %   │                     of 'data', the timeunits must be samples or seconds.
 %   ├────────────.length: Length of the segments in the 'timeunits'.
-%   │                     The default value is 10. 
+%   │                     The default value is 10.
 %   ├──────────────.plot: If 1 mean values (solid) and standard error of
 %   │                     the mean (dashed) will be ploted. Default is 0.
 %   ├────────.outputfile: Define filename to store segments. If is equal
 %   │                     to '', no file will be written. Default is 0.
 %   ├─────────.overwrite: Define if already existing files should be
 %   │                     overwritten. Default ist 0.
-%   ├───.marker_chan_num: Optional if timeunit is 'markers'. Channel
+%   ├───.marker_chan_num: Optional if timeunits are 'markers'. Channel
 %   │                     identifier for the marker channel. Default: first
 %   │                     marker channel in the file.
 %   ├───────────.missing: allows to specify missing (e. g. artefact) epochs in the
 %   │                     data file. See pspm_get_timing for epoch definition;
 %   │                     specify a cell array for multiple input files. This
 %   │                     must always be specified in SECONDS. if method is
-%   │                     'model', then this option overides the missing 
+%   │                     'model', then this option overides the missing
 %   │                     values given in the model
 %   │                     Default: no missing values
 %   ├────────.nan_output: This option defines whether the user wants to output
@@ -73,7 +73,7 @@ out = struct();
 %% check input
 if nargin < 3 || ~ischar(method) || ~ismember(method, {'file', 'data', 'model'}) || ...
         (~strcmpi(method, 'model') && nargin < 5)
-    warning('ID:invalid_input', 'Don''t know what to do'); return 
+    warning('ID:invalid_input', 'Don''t know what to do'); return
 elseif strcmpi(method, 'model')
      data = pspm_load1(data, 'all');
     if nargin > 2
@@ -89,7 +89,7 @@ options = pspm_options(options, 'extract_segments');
 if options.invalid, return, end
 
 % check consistency of input for the other methods
-if strcmpi(method, 'file') % in this case use pspm_check_model to verify 
+if strcmpi(method, 'file') % in this case use pspm_check_model to verify
     channel = varargin{1};
     model = pspm_check_model( ...
         struct('modelfile', 'dummyfile.mat', ...
@@ -114,7 +114,7 @@ elseif strcmpi(method, 'data') % verify directly
    end
    if ~isnumeric(sr)
         warning('ID:invalid_input', 'Sample rate definition not recognised.'); return;
-   end       
+   end
 end
 
 %% prepare data
@@ -179,7 +179,7 @@ if strcmpi(method, 'model') && strcmpi(data.modeltype, 'dcm')
 else
     [lsts, multi] = pspm_get_timing('onsets', timing, options.timeunits);
      [msts, onsets] = pspm_multi2index(options.timeunits, multi, sr, session_duration, events);
-     if lsts < 1 || msts < 1, return; end  
+     if lsts < 1 || msts < 1, return; end
      for i_cond = 1:numel(multi(1).names)
          names{i_cond} = multi(1).names{i_cond};
      end
@@ -188,7 +188,7 @@ end
 %% prepare missing
 if isfield(options, 'missing')
     missing = options.missing;
-elseif strcmpi(method, 'model') && isfield(data.input, 'missing') 
+elseif strcmpi(method, 'model') && isfield(data.input, 'missing')
     missing = data.input.missing;
 else
     missing = {};
