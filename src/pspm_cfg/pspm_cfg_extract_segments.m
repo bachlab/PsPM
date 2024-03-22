@@ -123,14 +123,14 @@ extract_mode.values     = {mode_automatic, mode_manual};
 extract_mode.help       = {['Either extract all information from a GLM ', ...
     'model file or define the relevant information manually. ']};
 
-%% Timeunit
-timeunit                = cfg_menu;
-timeunit.name           = 'Timeunit';
-timeunit.tag            = 'timeunit';
-timeunit.labels         = {'Seconds', 'Samples', 'Markers'};
-timeunit.values         = {'seconds', 'samples', 'markers'};
-timeunit.val            = {'seconds'};
-timeunit.help           = {['The timeunit in which conditions should be interpreted.']};
+%% Timeunits
+timeunits                = cfg_menu;
+timeunits.name           = 'Timeunits';
+timeunits.tag            = 'timeunits';
+timeunits.labels         = {'Seconds', 'Samples', 'Markers'};
+timeunits.values         = {'seconds', 'samples', 'markers'};
+timeunits.val            = {'seconds'};
+timeunits.help           = {['The timeunits in which conditions should be interpreted.']};
 
 %% Marker channel
 marker_chan                = cfg_entry;
@@ -140,7 +140,7 @@ marker_chan.strtype        = 'i';
 marker_chan.num            = [1 1];
 marker_chan.val            = {-1};
 marker_chan.help           = {['Channel containing the markers referenced ', ...
-    'in the conditions. Only needed if options ''Timeunit'' is set to ''markers''.']};
+    'in the conditions. Only needed if options ''Timeunits'' is set to ''markers''.']};
 
 %% Segment length
 segment_length          = cfg_entry;
@@ -196,7 +196,7 @@ nan_output.help         = {'Option to visulaize the percentages of NaN values of
 options                 = cfg_branch;
 options.name            = 'Options';
 options.tag             = 'options';
-options.val             = {timeunit, segment_length, marker_chan, nan_output};
+options.val             = {timeunits, segment_length, marker_chan, nan_output};
 options.help            = {['Change values of optional settings.']};
 
 %% File path

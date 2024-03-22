@@ -202,7 +202,7 @@ end
 fprintf('Extracting segments ...\n')
 
 % temporary structure which is deleted after extracting segments
-extrsgopt.timeunit = model.timeunits;
+extrsgopt.timeunits = model.timeunits;
 extrsgopt.length = model.window;       % segments of 'model.window' time unit long
 extrsgopt.plot = 0;                    % do not plot mean value and std
 

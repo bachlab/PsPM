@@ -27,7 +27,7 @@ if isfield(job, 'mode')
     end
   end
   % extract options
-  options = pspm_update_struct(options, job.options, {'timeunit',...
+  options = pspm_update_struct(options, job.options, {'timeunits',...
                                                       'marker_chan'});
   options.length = job.options.segment_length;
   field_name_nan_output = fieldnames(job.options.nan_output);
