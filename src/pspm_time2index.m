@@ -2,7 +2,8 @@ function index = pspm_time2index(time, sr, varargin)
 % ● Description
 %   pspm_time2index converts time stamps and durations in seconds or markers 
 %   to a sample index.
-% ● Format (optional arguments in [])
+% ● Format (optional arguments in []; all arguments up the last specified
+%           one need to be specified)
 %   index = pspm_time2index(time, sr [, data_length, zero_permitted, events])
 % ● Arguments
 %           time: [vector or matrix] time stamps in second.
@@ -18,6 +19,7 @@ function index = pspm_time2index(time, sr, varargin)
 % ● History
 %   Introduced in PsPM 5.1.2
 %   Written in 2021 by Teddy Chao (UCL)
+%   Refactored in 2024 by Dominik Bach (Uni Bonn)
 
 if nargin < 3
     data_length = inf;
@@ -43,6 +45,6 @@ if zero_permitted < 1
 end
 
 flag = index > ones(size(index)) * data_length;
-if sum(sum(flag)) > 0
+if any(flag(:) > 0)
     index(flag==1) = data_length;
 end

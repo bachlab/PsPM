@@ -42,7 +42,7 @@ end
 % Iterate through each cell of data ---------------------------------------
 for i = 1:length(data)
     currentData = data{i}(:)';
-    currentOnsets = onsets{i};
+    currentOnsets = int64(onsets{i});
     currentMissing = missing{i}(:)';
 
     % Check for valid onsets
@@ -67,13 +67,11 @@ for i = 1:length(data)
         onset = currentOnsets(j);
         endIndex = onset + segment_length - 1;
 
-        % Check if the segment extends beyond the data. int64 avoids
-        % imprecision problems with previous rounding operations (which can
-        % in fact result in non-integer values)
+        % Check if the segment extends beyond the data. 
         if endIndex > length(currentData)
-            segment = [currentData(int64(onset):end), NaN(1, endIndex - length(currentData))];
+            segment = [currentData(onset:end), NaN(1, endIndex - length(currentData))];
         else
-            segment = currentData(int64(onset:endIndex));
+            segment = currentData(onset:endIndex);
         end
 
         % Add to segments and sessions

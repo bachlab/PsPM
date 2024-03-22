@@ -258,38 +258,30 @@ end
 %% nan_output
 if ~strcmpi(options.nan_output,'none')
   %count number of trials
-  trials_nr_per_cond = cellfun(@(x) size(x.data,1),segments,'un',0);
-  trials_nr = cell2mat(trials_nr_per_cond);
-  trials_nr_sum = sum(trials_nr);
+  trials_nr_per_cond = cell2mat(cellfun(@(x) size(x.data,1),segments,'un',0));
+  trials_nr_max = max(trials_nr_per_cond);
 
-  % --- check this I don't un derstand it >>>
-  %create matix with values
-  trials_nan(1:(trials_nr_sum+1),1:n_cond) = NaN;
+  % create matix with values
+  trials_nan(1:(trials_nr_max+1),1:n_cond) = NaN;
   for i=1:n_cond
-    %nan_idx_length = trials_nr(i);
-    nan_idx_length = size(segments{i}.data,1);
-    for j = 1:nan_idx_length
+    for j = 1:trials_nr_per_cond(i)
       nan_perc = segments{i}.trial_nan_percent(j);
-      trials_nan(segments{i}.trial_idx(j),i) = nan_perc;
+      trials_nan(j,i) = nan_perc;
     end
-    trials_nan(trials_nr_sum+1,i) = segments{i}.total_nan_percent;
+    trials_nan(trials_nr_max+1,i) = segments{i}.total_nan_percent;
   end
 
   %define names of rows in table
-  r_names = strsplit(num2str(1:trials_nr_sum));
+  r_names = cellstr(strcat('Trial (per condition) #', num2str((1:trials_nr_max)')));
   r_names{end+1} = 'total';
-  %valriable Names
-  var_names = cellfun(@(x)regexprep( x, '[+]' , '_plus'), comb_names, 'un',0);
-  var_names = cellfun(@(x)regexprep( x, '[-]' , '_minus'), var_names, 'un',0);
-  var_names = cellfun(@(x)regexprep( x, '[^a-zA-Z0-9]' , '_'), var_names, 'un',0);
   %create table with the right format
-  trials_nan_output = array2table(trials_nan,'VariableNames', var_names, 'RowNames', r_names');
+  trials_nan_output = array2table(trials_nan, 'VariableNames', names, 'RowNames', r_names');
   switch options.nan_output
     case 'screen'
-      fprintf(['\nThe following tabel shows for each condition the NaN-ratio ',...
-        'in the different trials.\nA NaN-value in the table indicates ',...
-        'that a trial does not correspond to the condition.\n',...
-        'The last value indicates the average Nan-ratio over all trials ',...
+      fprintf(['\nThe following table shows for each condition the NaN-ratio ',...
+        'in the different trials.\nA NaN-value indicates ',...
+        'that this trial does not occur the condition.\n',...
+        'The last row indicates the average Nan-ratio over all trials ',...
         'belonging to this condition.\n\n']);
       disp(trials_nan_output);
     case 'none'
@@ -305,9 +297,9 @@ if ~strcmpi(options.nan_output,'none')
       new_file_base = sprintf('%s.txt', name);
       output_file = fullfile(path,new_file_base);
       fprintf(['\nThe table in file (%s)shows for each condition the NaN-ratio ',...
-        'in the different trials.\nA NaN-value in the table indicates ',...
-        'that a trial does not correspond to the condition.\n',...
-        'The last value indicates the average Nan-ratio over all trials ',...
+        'in the different trials.\nA NaN-value indicates ',...
+        'that this trial does not occur the condition.\n',...
+        'The last row indicates the average Nan-ratio over all trials ',...
         'belonging to this condition.\n\n'],new_file_base);
       writetable(trials_nan_output, output_file,'WriteRowNames', true ,'Delimiter', '\t');
 
