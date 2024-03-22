@@ -2,7 +2,7 @@ function varargout = pspm_load1(fn, action, savedata, options)
 % ● Format
 %   [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
 % ● Arguments
-%         fn: filename
+%         fn: filename, or model structure
 %     action: (default 'none'):
 %             'none':   check whether file is valid at all
 %             'stats':  retrieve stats struct with fields .stats
@@ -74,14 +74,18 @@ elseif any(strcmpi(action, {'save', 'savecon'})) && nargin < 3
   warning('ID:missing_data', 'Save failed, no data provided'); return;
 end
 
-errmsg = sprintf('Data file %s is not a valid PsPM file:\n', fn);
 
 % canonicalise file name
-[pth, filename, ext] = fileparts(fn);
-if isempty(ext)
-  ext = '.mat';
+if ischar(fn)
+    [pth, filename, ext] = fileparts(fn);
+    if isempty(ext)
+      ext = '.mat';
+    end
+    fn = fullfile(pth, [filename, ext]);
+    errmsg = sprintf('Data file %s is not a valid PsPM file:\n', fn);
+else
+    errmsg = sprintf('Input must be a valid PsPM file:\n');
 end
-fn = fullfile(pth, [filename, ext]);
 
 %  set default zscored
 if nargin <= 3
@@ -93,14 +97,14 @@ if options.invalid
 end
 writefile = 1;
 % check whether file exists --
-if exist(fn, 'file')
+if ischar(fn) && exist(fn, 'file')
   if strcmpi(action, 'save')
     writefile = pspm_overwrite(fn, options);
     if ~writefile
       warning('ID:not_saving_data', 'Not saving data.\n');
     end
   end
-elseif ~strcmpi(action, 'save')
+elseif ~isstruct(fn) && ~strcmpi(action, 'save')
   warning('ID:invalid_input', '1st level file (%s) doesn''t exist', fn);
 end
 
@@ -108,13 +112,17 @@ end
 
 % check whether file is a matlab file --
 if ~strcmpi(action, 'save')
-  try
-    indata = load(fn);
-  catch
-    errmsg = [errmsg, 'Not a matlab data file.']; warning('ID:invalid_input', errmsg); return;
-  end
+    if ischar(fn)
+        try
+            indata = load(fn);
+        catch
+            errmsg = [errmsg, 'Not a matlab data file.']; warning('ID:invalid_input', errmsg); return;
+        end
+    else
+        indata.(fn.modeltype) = fn;
+    end
 else
-  indata = savedata;
+    indata = savedata;
 end
 
 % check for SCRalyze 1.x files --

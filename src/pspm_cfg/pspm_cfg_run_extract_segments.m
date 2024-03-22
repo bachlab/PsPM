@@ -26,9 +26,10 @@ if isfield(job, 'mode')
       tm = job.mode.mode_manual.conditions.condition_files;
     end
   end
-  % extract options
-  options = pspm_update_struct(options, job.options, {'timeunit'});
+
+  options = pspm_update_struct(options, job.options, {'timeunits'});
   options.marker_chan = pspm_cfg_channel_selector('run', job.options);
+
   options.length = job.options.segment_length;
   field_name_nan_output = fieldnames(job.options.nan_output);
   switch field_name_nan_output{1}

@@ -119,8 +119,8 @@ extract_mode.help       = {['Either extract all information from a GLM ', ...
 
 %% Timeunit
 timeunit                = cfg_menu;
-timeunit.name           = 'Timeunit';
-timeunit.tag            = 'timeunit';
+timeunit.name           = 'Timeunits';
+timeunit.tag            = 'timeunits';
 timeunit.labels         = {'Seconds', 'Samples', 'Markers'};
 timeunit.values         = {'seconds', 'samples', 'markers'};
 timeunit.val            = {'seconds'};
@@ -128,7 +128,7 @@ timeunit.help           = {'The timeunit in which conditions should be interpret
 
 %% Marker channel
 marker_chan                = pspm_cfg_channel_selector('Marker');
-marker_chan.help           = {marker_chan.help{1}, 'Only needed if options ''Timeunit'' is set to ''markers''.'};
+
 
 %% Segment length
 segment_length          = cfg_entry;
@@ -184,7 +184,7 @@ nan_output.help         = {'Option to visulaize the percentages of NaN values of
 options                 = cfg_branch;
 options.name            = 'Options';
 options.tag             = 'options';
-options.val             = {timeunit, segment_length, marker_chan, nan_output};
+options.val             = {timeunits, segment_length, marker_chan, nan_output};
 options.help            = {['Change values of optional settings.']};
 
 %% File path
