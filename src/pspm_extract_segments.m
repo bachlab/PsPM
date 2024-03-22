@@ -176,11 +176,13 @@ if strcmpi(method, 'model') && strcmpi(data.modeltype, 'dcm')
     num2cell(session_duration), ...
     'UniformOutput', false);
     names{1} = 'all';
+    n_cond = 1;
 else
     [lsts, multi] = pspm_get_timing('onsets', timing, options.timeunits);
      [msts, onsets] = pspm_multi2index(options.timeunits, multi, sr, session_duration, events);
      if lsts < 1 || msts < 1, return; end
-     for i_cond = 1:numel(multi(1).names)
+     n_cond = numel(multi(1).names);
+     for i_cond = 1:n_cond
          names{i_cond} = multi(1).names{i_cond};
      end
 end
@@ -211,7 +213,7 @@ for i_cond = 1:numel(onsets)
     if sts < 1, return; end
 end
 
-n_cond = numel(multi(1).names);
+
 
 if options.plot
   fg = figure('Name', 'Condition mean per subject', 'Visible', 'off');
