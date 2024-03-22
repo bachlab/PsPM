@@ -17,26 +17,7 @@ datafile.help    = {['Specify the PsPM datafile containing a marker channel ',..
                      'with a markerinfo field.'],' ',settings.datafilehelp};
 
 %% Marker channel
-chan_def         = cfg_const;
-chan_def.name    = 'Default';
-chan_def.tag     = 'chan_def';
-chan_def.val     = {0};
-chan_def.help    = {''};
-
-chan_nr         = cfg_entry;
-chan_nr.name    = 'Number';
-chan_nr.tag     = 'chan_nr';
-chan_nr.strtype = 'i';
-chan_nr.num     = [1 1];
-chan_nr.help    = {''};
-
-mrk_chan         = cfg_choice;
-mrk_chan.name    = 'Marker Channel';
-mrk_chan.tag     = 'mrk_chan';
-mrk_chan.val     = {chan_def};
-mrk_chan.values  = {chan_def, chan_nr};
-mrk_chan.help    = {['Specify which marker channel should be used for marker info extraction.']};
-
+mrk_chan         = pspm_cfg_channel_selector('marker');
 
 %% file name
 file_name        = cfg_entry;

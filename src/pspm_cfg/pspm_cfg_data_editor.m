@@ -37,7 +37,7 @@ enabled             = cfg_branch;
 enabled.name        = 'Enabled';
 enabled.tag         = 'enabled';
 enabled.val         = {file_name, file_path};
-enabled.help        = {'Specify the output file to which the editor output should be written to.'};
+enabled.help        = {'Specify an epoch file to which the editor output should be written to.'};
 
 %% disabled
 disabled            = cfg_const;

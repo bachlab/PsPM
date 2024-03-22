@@ -2,12 +2,8 @@ function [out] = pspm_cfg_run_pupil_preprocess(job)
 % Updated on 17-03-2024 by Teddy
 fn                        = job.datafile{1};
 options                   = struct();
-chankey                   = fieldnames(job.channel);
-chankey                   = chankey{1};
-options.channel           = job.channel.(chankey);
-chankey                   = fieldnames(job.channel_combine);
-chankey                   = chankey{1};
-options.channel_combine   = job.channel_combine.(chankey);
+options.channel           = pspm_cfg_channel_selector('run', job.chan);
+options.channel_combine   = pspm_cfg_channel_selector('run', job.chan_comb);
 options.chan_valid_cutoff = job.chan_valid_cutoff/100;
 settkey                   = fieldnames(job.settings);
 settkey                   = settkey{1};

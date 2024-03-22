@@ -67,11 +67,11 @@ end
 
 if isempty(pos_of_channels)
   warning('ID:non_existing_chantype',...
-      'There are no channels of type ''%s'' in the datafile', channel);
+      'There are no channels of type ''%s'' in the data file', channel);
     return
 elseif any(pos_of_channels > numel(data))
       warning('ID:invalid_input',...
-      'Input channel number(s) are greater than the number of channels in the data');
+      'Input channel number(s) are greater than the number of channels in the data file.');
     return
 else
     data = data(pos_of_channels);

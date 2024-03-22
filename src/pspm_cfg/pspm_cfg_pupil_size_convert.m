@@ -19,13 +19,7 @@ datafile.help    = {['Specify the PsPM datafile containing the channels ', ...
     'to be converted.'],' ',settings.datafilehelp};
 
 %% Channel
-channel             = cfg_entry;
-channel.name        = 'Channel';
-channel.tag         = 'channel';
-channel.strtype     = 'i';
-channel.num         = [1 Inf];
-channel.help        = {['Specify the channel which should be converted.', ...
-    'If 0, functions are executed on all channels.']};
+channel             = pspm_cfg_channel_selector('pupil_both');
 
 %% area2diameter
 area2diameter       = cfg_const;

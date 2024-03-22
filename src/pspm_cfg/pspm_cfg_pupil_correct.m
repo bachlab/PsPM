@@ -94,27 +94,7 @@ function [pupil_correct] = pspm_cfg_pupil_correct(job)
     mode.val = {manual_mode};
     mode.help = {'Choose the correction mode'};
 
-    chan_nr = cfg_entry;
-    chan_nr.name = 'Channel number';
-    chan_nr.tag  = 'chan_nr';
-    chan_nr.num  = [1 1];
-    chan_nr.help = {'Enter a channel number'};
-
-    chan_def = cfg_menu;
-    chan_def.name = 'Channel definition';
-    chan_def.tag = 'chan_def';
-    chan_def.values = {'pupil', 'pupil_l', 'pupil_r', 'pupil_pp_l', 'pupil_pp_r'};
-    chan_def.labels = {'Best pupil', 'Left pupil', 'Right pupil', 'Left preprocessed pupil', 'Right preprocessed pupil'};
-    chan_def.val = {'pupil'};
-    chan_def.help = {['Choose the channel definition. Only the last channel in the file corresponding to the selection ',...
-        'will be corrected.']};
-
-    channel  = cfg_choice;
-    channel.name = 'Channel to correct';
-    channel.tag = 'channel';
-    channel.values = {chan_def, chan_nr};
-    channel.val = {chan_def};
-    channel.help = {'Choose the channel to correct.'};
+    channel = pspm_cfg_channel_selector('pupil');
 
     channel_action = cfg_menu;
     channel_action.name = 'Channel action';

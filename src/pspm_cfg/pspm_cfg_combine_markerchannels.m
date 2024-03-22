@@ -31,25 +31,10 @@ channel_action.help    = {['Specify whether the new channel should be added ',..
                           'and replaced with the one new channel (replace).']};
 
 % Specific marker channel
-marker_chan_num         = cfg_entry;
-marker_chan_num.name    = 'Marker channel number';
-marker_chan_num.tag     = 'marker_chan_num';
-marker_chan_num.strtype = 'i';
-marker_chan_num.num     = [1 1];
-marker_chan_num.help    = {['Choose any number of marker channel numbers ',...
-                           'to combine. If undefined or 0, all marker ',...
-                           'channels of each file are combined.']};
-
-% Marker chan
-marker_chan         = cfg_menu;
-marker_chan.name    = 'Marker channels';
-marker_chan.tag     = 'marker_chan_num';
-marker_chan.val     = {0};
-marker_chan.labels  = {'All', 'Specific channels'};
-marker_chan.values  = {0, marker_chan_num};
+marker_chan         = pspm_cfg_channel_selector('many');
 marker_chan.help    = {['Choose any number of marker channel numbers ',...
-                           'to combine. If undefined or 0, all marker ',...
-                           'channels of each file are combined.']};
+                           'to combine. If 0, all marker ',...
+                           'channels in each file are combined.']};
 
 %% Executable branch
 combine_markerchannels        = cfg_exbranch;

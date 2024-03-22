@@ -121,29 +121,8 @@ function [pp_scr] = pspm_cfg_pp_scr
                                 'Default: 0.5 s', ...
                                 };
 
-    % Custom channel
-    cust_chan                = cfg_entry;
-    cust_chan.name           = 'Specify channel ID';
-    cust_chan.tag            = 'cust_channel';
-    cust_chan.strtype        = 'i';
-    cust_chan.num            = [1 1];
-    cust_chan.help           = {'Customise the channel ID of the SCR for processing.'};
-
-    % First scr channel
-    first_chan              = cfg_const;
-    first_chan.name         = 'Last SCR channel';
-    first_chan.tag          = 'first_channel';
-    first_chan.val          = {'scr'};
-    first_chan.help         = {'Use the default last channel of the SCR for processing.'};
-
     % Channel
-    chan                    = cfg_choice;
-    chan.name               = 'Channel';
-    chan.tag                = 'channel';
-    chan.val                = {first_chan};
-    chan.values             = {first_chan, cust_chan};
-    chan.help               = {['Channel ID of the channel containing the unprocessed SCR data.']};
-
+    chan                    = pspm_cfg_channel_selector('SCR');
 
     % Step size for clipping detection
     clipping_step_size                   = cfg_entry;
@@ -218,11 +197,7 @@ function [pp_scr] = pspm_cfg_pp_scr
         scr_pp_options.slope = job.slope;
         scr_pp_options.deflection_threshold = job.deflection_threshold;
         scr_pp_options.expand_epochs = job.expand_epochs;
-        if isfield(job.channel, 'cust_channel')
-            scr_pp_options.channel = job.channel.cust_channel;
-        elseif isfield(job.channel, 'first_channel')
-            scr_pp_options.channel = job.channel.first_channel;
-        end
+        scr_pp_options.channel = pspm_cfg_channel_selector('run', job.chan);
         scr_pp_options.clipping_step_size = job.clipping_detection.clipping_step_size;
         scr_pp_options.clipping_threshold = job.clipping_detection.clipping_threshold;
         if isfield(job.missing_epochs, 'write_to_file')

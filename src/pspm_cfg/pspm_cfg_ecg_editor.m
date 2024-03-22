@@ -16,43 +16,11 @@ datafile.num     = [1 Inf];
 datafile.help    = {'Specify the PsPM datafile containing the ECG data',...
                     ' ',settings.datafilehelp};
 
-%% Default channel
-chan_def         = cfg_const;
-chan_def.name    = 'Default';
-chan_def.tag     = 'chan_def';
-chan_def.val     = {0};
-chan_def.help    = {''};
-
-%% chan none
-chan_none         = cfg_const;
-chan_none.name    = 'None';
-chan_none.tag     = 'chan_none';
-chan_none.val     = {0};
-chan_none.help    = {''};
-
-%% chan default
-chan_nr         = cfg_entry;
-chan_nr.name    = 'Number';
-chan_nr.tag     = 'chan_nr';
-chan_nr.strtype = 'i';
-chan_nr.num     = [1 1];
-chan_nr.help    = {''};
-
 %% ecg chan
-ecg_chan         = cfg_choice;
-ecg_chan.name    = 'ECG Channel';
-ecg_chan.tag     = 'ecg_chan';
-ecg_chan.val     = {chan_def};
-ecg_chan.values  = {chan_def, chan_nr};
-ecg_chan.help    = {['Specify the channel containing the ECG data.']};
+ecg_chan         = pspm_cfg_channel_selector('ECG');
 
 %% hb chan
-hb_chan         = cfg_choice;
-hb_chan.name    = 'HB Channel';
-hb_chan.tag     = 'hb_chan';
-hb_chan.val     = {chan_none};
-hb_chan.values  = {chan_none, chan_nr};
-hb_chan.help    = {['Specify the channel containing the HB data.']};
+hb_chan         =  pspm_cfg_channel_selector('Heart beat');
 
 %% artefact none
 artefact_none         = cfg_const;

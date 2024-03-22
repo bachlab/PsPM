@@ -12,7 +12,7 @@ function [sts, markerinfo] = pspm_get_markerinfo(fn, options)
 %   ┌────options:
 %   ├.markerchan: [double]
 %   │             channel id of the marker channel;
-%   │             default value: -1, meaning to use the first found marker
+%   │             default value: 0, meaning to use the first found marker
 %   │             channel
 %   ├──.filename: [char]
 %   │             name of a file to write the markerinfo to;
@@ -48,21 +48,18 @@ options = pspm_options(options, 'get_markerinfo');
 if nargin < 1 || isempty(fn)
   fn = spm_select(1, 'mat', 'Extract markers from which file?');
 end
-if options.markerchan == -1
-  options.markerchan = 'events';
-end
 % get file
-[bsts, ~, data] = pspm_load_data(fn, options.markerchan);
+[bsts, data] = pspm_load_channel(fn, options.markerchan, 'marker');
 if bsts == -1, return, end
 % check markers
-if isempty(data{1}.data)
+if ~isfield(data, 'markerinfo')
   sts = -1;
-  warning('File (%s) contains no event markers', fn);
+  warning('File (%s) contains no event marker infos', fn);
   return;
 end
 %% extract markers: find unique type/value combinations ...
-markertype = data{1}.markerinfo.name;
-markervalue = data{1}.markerinfo.value;
+markertype = data.markerinfo.name;
+markervalue = data.markerinfo.value;
 markerall = strcat(markertype', regexp(num2str(markervalue'), '\s+', 'split'));
 markerunique = unique(markerall);
 % ... and write them into a struct

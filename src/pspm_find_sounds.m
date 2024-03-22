@@ -80,6 +80,7 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+infos = struct();
 
 switch length(varargin)
   case 1

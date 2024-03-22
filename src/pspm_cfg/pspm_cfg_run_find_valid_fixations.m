@@ -34,14 +34,10 @@ else
 end
 %% options
 options.missing = job.missing;
-options = pspm_update_struct(options, job, 'eyes'); % this does not seem to be used at all?
+options.channel = pspm_cfg_channel_selector('run', job.chan); 
 options.overwrite = job.output_settings.file_output.overwrite;
 options = pspm_update_struct(options, job.output_settings, {'channel_action', ...
                                                             'plot_gaze_coords'});
-options.channels = regexp(job.channels, '\s+', 'split');
-num_vals = str2double(options.channels); % convert numbers
-nums = ~isnan(num_vals);
-options.channels(nums) = num2cell(num_vals(nums));
 if isfield(job.output_settings.file_output, 'new_file')
   f_path = job.output_settings.file_output.new_file.file_path{1};
   f_name = job.output_settings.file_output.new_file.file_name;

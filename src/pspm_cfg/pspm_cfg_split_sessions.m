@@ -15,26 +15,8 @@ function split_sessions = pspm_cfg_split_sessions
         ' Split sessions can handle only one data file.']};
 
     %% Marker channel
-    chan_def         = cfg_const;
-    chan_def.name    = 'Default';
-    chan_def.tag     = 'chan_def';
-    chan_def.val     = {0};
-    chan_def.help    = {''};
-
-    chan_nr         = cfg_entry;
-    chan_nr.name    = 'Number';
-    chan_nr.tag     = 'chan_nr';
-    chan_nr.strtype = 'i';
-    chan_nr.num     = [1 1];
-    chan_nr.help    = {''};
-
-    mrk_chan         = cfg_choice;
-    mrk_chan.name    = 'Marker Channel';
-    mrk_chan.tag     = 'mrk_chan';
-    mrk_chan.val     = {chan_def};
-    mrk_chan.values  = {chan_def, chan_nr};
-    mrk_chan.help    = {['If you have more than one marker channel, choose the marker ' ...
-    'channel used for splitting sessions (default: use first marker channel).']};
+    mrk_chan         = pspm_cfg_channel_selector('marker');
+    
     %% split auto
     split_auto          = cfg_const;
     split_auto.name     = 'Automatic';
@@ -121,11 +103,7 @@ function split_sessions = pspm_cfg_split_sessions
 
     function out = pspm_cfg_run_split_sessions(job)
         datafile = job.datafile{1,1};
-        if isfield(job.mrk_chan,'chan_nr')
-            markerchannel = job.mrk_chan.chan_nr;
-        else
-            markerchannel = 0;
-        end
+        markerchannel = pspm_cfg_channel_selector('run', job.chan);
         options = struct();
         options.overwrite = job.overwrite;
         if isfield(job.missing_epochs_file,'name')

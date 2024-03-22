@@ -60,6 +60,16 @@ if isstruct(channel)
     channel = channel.channel;
 end
 
+% expand channel if zero
+if isnumeric(channel) && channel == 0
+    if nargin > 2
+        channel = channeltype;
+    else
+        warning('ID:invalid_input', 'Channel not specified.')
+        return
+    end
+end
+
 [sts, infos, data, filestruct] = pspm_load_data(fn, channel);
 if sts < 1, return; end
 
@@ -94,7 +104,7 @@ end
 
 % if more than one channel exists, select first/last channel and give message
 if numel(data) == 0
-    warning('ID:invalid_input', 'No data of type %s contained in file %s.\n', ...
+    warning('ID:invalid_input', 'No data of type %s contained in file %s.', ...
         channel, fn);
 elseif numel(data) == 1
     data_struct = data{1};
@@ -120,7 +130,7 @@ end
 % if channeltype is given, check if channel is of correct type
 if nargin > 2 && ~contains(data_struct.header.chantype, channeltype)
     warning('ID:unexpected_channeltype', ...
-        'Channel type ''%s'' was expected. The retrieved channel is of type ''%s''.\n', ...
+        'Channel type ''%s'' was expected. The retrieved channel is of type ''%s''.', ...
         channeltype, data_struct.header.chantype);
 end
 

@@ -51,8 +51,7 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 %   │               Channel ID to be preprocessed.
 %   │               To process a specific eye, use 'pupil_l' or 'pupil_r'.
 %   │               To process the combined left and right eye, use 'pupil_c'.
-%   │               To combine both eyes, specify one eye here and the other
-%   │               under option 'channel_combine'. The identifier 'pupil' will
+%   │               The default identifier 'pupil' will
 %   │               use the first existing option out of the following: 
 %   │               (1) L-R-combined pupil, (2) non-lateralised pupil, (3) best
 %   │               eye pupil, (4) any pupil channel. If there are multiple
@@ -78,6 +77,7 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+out_channel = 0;
 
 %% Default values
 

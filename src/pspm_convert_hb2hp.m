@@ -75,7 +75,7 @@ newt = (1/sr):(1/sr):dinfos.duration;
 try
   newhp = interp1(hb(idx+1), hp(idx), newt, 'linear' ,'extrap'); % assign hr to following heart beat
 catch
-  warning('ID:too_strict_limits', ['Interpolation failed because there wasn''t enough heartbeats within the ',...
+  warning('ID:too_strict_limits', ['Interpolation failed because there weren''t enough heartbeats within the ',...
     'required period limits. Filling the heart period channel with NaNs.']);
   newhp = NaN(1, size(newt, 2));
 end
