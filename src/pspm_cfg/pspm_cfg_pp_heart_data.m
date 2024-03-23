@@ -273,13 +273,21 @@ ppg2hb_chan.name    = 'Channel';
 ppg2hb_chan.tag     = 'chan';
 ppg2hb_chan.val     = {ppg2hb_chan_def};
 ppg2hb_chan.values  = {ppg2hb_chan_def, ppg2hb_chan_nr};
-ppg2hb_chan.help    = {['Number of Peripheral pulse oximetry channel ', ...
-    '(default: last Peripheral puls oximetry channel)']};
+ppg2hb_chan.help    = {['Number of peripheral pulse oximetry channel ', ...
+    '(default: last peripheral puls oximetry channel)']};
+
+ppg2hb_method       = cfg_menu;
+ppg2hb_method.name  = 'Select the method of converting the data';
+ppg2hb_method.tag   = 'ppg2hb_convert';
+ppg2hb_method.values= {'classic', 'heartpy'};
+ppg2hb_method.labels= {'Classic', 'Heartpy'};
+ppg2hb_method.val   = {'classic'};
+ppg2hb_method.help  = {['Convert the PPG data into heart rate by using the selected method.']};
 
 ppg2hb              = cfg_exbranch;
-ppg2hb.name         = 'Convert Peripheral pulse oximetry to Heart Beat';
+ppg2hb.name         = 'Convert peripheral pulse oximetry to Heart Beat';
 ppg2hb.tag          = 'ppg2hb';
-ppg2hb.val          = {ppg2hb_chan};
+ppg2hb.val          = {ppg2hb_chan, ppg2hb_method};
 ppg2hb.help          = {['Convert Peripheral pulse oximetry to ', ...
     'Heart Beat events.']};
 
