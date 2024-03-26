@@ -1,144 +1,140 @@
 function pp_heart_data = pspm_cfg_pp_heart_data
-
-% $Id: pspm_cfg_pp_heart_data.m 784 2019-07-08 08:16:46Z esrefo $
-% $Rev: 784 $
-
-% Initialise
+% Updated on 26-Mar-2024 by Teddy
+%% Initialise
 global settings
 if isempty(settings), pspm_init; end
+%% Preprocess ECG data
+% [Fil] Data File ---
+datafile                = cfg_files;
+datafile.name           = 'Data File';
+datafile.tag            = 'datafile';
+datafile.num            = [1 1];
+datafile.filter         = '.*\.(mat|MAT)$';
+datafile.help           = {'Specify data file.',' ',settings.datafilehelp};
+% [Con] ECG2HB channel definition ---
+ecg2hbChanDef           = cfg_const;
+ecg2hbChanDef.name      = 'Default';
+ecg2hbChanDef.tag       = 'chan_def';
+ecg2hbChanDef.val       = {0};
+ecg2hbChanDef.help      = {'Last ECG channel.'};
+% [Ent] ECG2HB channel number --- 
+ecg2hbChanNum           = cfg_entry;
+ecg2hbChanNum.name      = 'Number';
+ecg2hbChanNum.tag       = 'chan_nr';
+ecg2hbChanNum.strtype   = 'i';
+ecg2hbChanNum.num       = [1 1];
+ecg2hbChanNum.help      = {''};
+% [Cho] ECG2HB channel ---
+ecg2hbChan              = cfg_choice;
+ecg2hbChan.name         = 'Channel';
+ecg2hbChan.tag          = 'chan';
+ecg2hbChan.val          = {ecg2hbChanDef};
+ecg2hbChan.values       = {ecg2hbChanDef, ecg2hbChanNum};
+ecg2hbChan.help         = {'Number of ECG channel (default: last ECG channel).'};
+% [Ent] ECG2HB minimum heart rate ---
+ecg2hbMinHR             = cfg_entry;
+ecg2hbMinHR.name        = 'Minimum Heart Rate';
+ecg2hbMinHR.tag         = 'minhr';
+ecg2hbMinHR.strtype     = 'r';
+ecg2hbMinHR.num         = [1 1];
+ecg2hbMinHR.val         = {30};
+ecg2hbMinHR.help        = {''};
+ecg2hbMinHR.hidden      = true;
+% [Ent] ECG2HB maximum heart rate ---
+ecg2hbMaxHR             = cfg_entry;
+ecg2hbMaxHR.name        = 'Max Heart Rate';
+ecg2hbMaxHR.tag         = 'maxhr';
+ecg2hbMaxHR.strtype     = 'r';
+ecg2hbMaxHR.num         = [1 1];
+ecg2hbMaxHR.val         = {200};
+ecg2hbMaxHR.help        = {''};
+ecg2hbMaxHR.hidden      = true;
+% [Men] ECG2HB semi-automatic mode switch ---
+ecg2hbSemi              = cfg_menu;
+ecg2hbSemi.name         = 'Semi automatic mode';
+ecg2hbSemi.tag          = 'semi';
+ecg2hbSemi.val          = {0};
+ecg2hbSemi.values       = {0,1};
+ecg2hbSemi.labels       = {'Off', 'On'};
+ecg2hbSemi.help         = {'Switch for allowing manual correction of all potential beat intervals.'};
+% [Ent] ECG2HB T wave threshold ---
+ecg2hbTWaveThr          = cfg_entry;
+ecg2hbTWaveThr.name     = 'T wave threshold';
+ecg2hbTWaveThr.tag      = 'twthresh';
+ecg2hbTWaveThr.strtype  = 'r';
+ecg2hbTWaveThr.num      = [1 1];
+ecg2hbTWaveThr.val      = {0.36};
+ecg2hbTWaveThr.hidden   = true;
+ecg2hbTWaveThr.help     = {'Threshold to perform the T wave check.'};
+% [Bra] ECG2HB options ---
+ecg2hbOpt               = cfg_branch;
+ecg2hbOpt.name          = 'Options';
+ecg2hbOpt.tag           = 'opt';
+ecg2hbOpt.val           = {ecg2hbMinHR, ecg2hbMaxHR, ecg2hbSemi, ecg2hbTWaveThr};
+ecg2hbOpt.help          = {''};
+% [ExB] ECG2HB execute branch ---
+ecg2hb                  = cfg_exbranch;
+ecg2hb.name             = 'Convert ECG to Heart Beat (Pan & Tompkins)';
+ecg2hb.tag              = 'ecg2hb';
+ecg2hb.help             = {['Convert ECG data into Heart beat time ',...
+                          'stamps using Pan & Tompkins algorithm']};
+ecg2hb.val              = {ecg2hbChan, ecg2hbOpt};
+% [Con] ECG2HB amri channel definition ---
+ecg2hbAmriChanDef       = cfg_const;
+ecg2hbAmriChanDef.name  = 'Default';
+ecg2hbAmriChanDef.tag   = 'chan_def';
+ecg2hbAmriChanDef.val   = {'ecg'};
+ecg2hbAmriChanDef.help  = {'Last ECG channel.'};
 
-% Preprocess ECG data
-% Data File
-datafile         = cfg_files;
-datafile.name    = 'Data File';
-datafile.tag     = 'datafile';
-datafile.num     = [1 1];
-%datafile.filter  = '.*\.(mat|MAT)$';
-datafile.help    = {'Specify data file.',' ',settings.datafilehelp};
+ecg2hbAmriChanNum       = cfg_entry;
+ecg2hbAmriChanNum.name  = 'Number';
+ecg2hbAmriChanNum.tag   = 'chan_nr';
+ecg2hbAmriChanNum.strtype = 'i';
+ecg2hbAmriChanNum.num   = [1 1];
+ecg2hbAmriChanNum.help  = {'Channel ID of the ECG channel in the given PsPM file'};
 
-ecg2hb_chan_def      = cfg_const;
-ecg2hb_chan_def.name = 'Default';
-ecg2hb_chan_def.tag  = 'chan_def';
-ecg2hb_chan_def.val  = {0};
-ecg2hb_chan_def.help = {'Last ECG channel.'};
+ecg2hbAmriChan          = cfg_choice;
+ecg2hbAmriChan.name     = 'Channel';
+ecg2hbAmriChan.tag      = 'chan';
+ecg2hbAmriChan.val      = {ecg2hbAmriChanDef};
+ecg2hbAmriChan.values   = {ecg2hbAmriChanDef, ecg2hbAmriChanNum};
+ecg2hbAmriChan.help     = {'ID of ECG channel in the PsPM file (default: last ECG channel).'};
+% [Men] ECG2HB AMRI signal to use ---
+ecg2hbAmriSig           = cfg_menu;
+ecg2hbAmriSig.name      = 'Signal to use';
+ecg2hbAmriSig.tag       = 'signal_to_use';
+ecg2hbAmriSig.val       = {'auto'};
+ecg2hbAmriSig.values    = {'ecg', 'teo', 'auto'};
+ecg2hbAmriSig.labels    = {'Filtered ECG signal', 'Filtered and TEO applied ECG signal',...
+                          'Choose automatically based on autocorrelation'};
+ecg2hbAmriSig.help      = {['Which signal to feed to the core ',...
+                          'heartbeat detection procedure. ''ecg'' corresponds to filtered ECG signal. ''teo'' corresponds to the signal obtained by filtering ',...
+                          'the ECG signal even more and applying the Teager Enery Operator. ''auto'' option picks the one of ',...
+                          'these two options that results in higher autocorrelation']};
+% [Ent] ECG2HB AMRI heart rate range ---
+ecg2hbAmriHRRg          = cfg_entry;
+ecg2hbAmriHRRg.name     = 'Feasible heartrate range';
+ecg2hbAmriHRRg.tag      = 'hrrange';
+ecg2hbAmriHRRg.strtype  = 'r';
+ecg2hbAmriHRRg.num      = [1 2];
+ecg2hbAmriHRRg.val      = {[20 200]};
+ecg2hbAmriHRRg.help     = {'Define the minimum and maximum possible heartrates for your data'};
 
-ecg2hb_chan_nr         = cfg_entry;
-ecg2hb_chan_nr.name    = 'Number';
-ecg2hb_chan_nr.tag     = 'chan_nr';
-ecg2hb_chan_nr.strtype = 'i';
-ecg2hb_chan_nr.num     = [1 1];
-ecg2hb_chan_nr.help    = {''};
+ecg2hbAmriECGBP         = cfg_entry;
+ecg2hbAmriECGBP.name    = 'ECG bandpass filter';
+ecg2hbAmriECGBP.tag     = 'ecg_bandpass';
+ecg2hbAmriECGBP.strtype = 'r';
+ecg2hbAmriECGBP.num     = [1 2];
+ecg2hbAmriECGBP.val     = {[0.5 40]};
+ecg2hbAmriECGBP.help    = {'Define the cutoff frequencies (Hz) for bandpass filter applied to raw ECG signal'};
 
-ecg2hb_chan         = cfg_choice;
-ecg2hb_chan.name    = 'Channel';
-ecg2hb_chan.tag     = 'chan';
-ecg2hb_chan.val     = {ecg2hb_chan_def};
-ecg2hb_chan.values  = {ecg2hb_chan_def, ecg2hb_chan_nr};
-ecg2hb_chan.help    = {'Number of ECG channel (default: last ECG channel).'};
-
-ecg2hb_minhr         = cfg_entry;
-ecg2hb_minhr.name    = 'Min Heart Rate';
-ecg2hb_minhr.tag     = 'minhr';
-ecg2hb_minhr.strtype = 'r';
-ecg2hb_minhr.num     = [1 1];
-ecg2hb_minhr.val     = {30};
-ecg2hb_minhr.help    = {''};
-ecg2hb_minhr.hidden  = true;
-
-ecg2hb_maxhr         = cfg_entry;
-ecg2hb_maxhr.name    = 'Max Heart Rate';
-ecg2hb_maxhr.tag     = 'maxhr';
-ecg2hb_maxhr.strtype = 'r';
-ecg2hb_maxhr.num     = [1 1];
-ecg2hb_maxhr.val     = {200};
-ecg2hb_maxhr.help    = {''};
-ecg2hb_maxhr.hidden  = true;
-
-ecg2hb_semi         = cfg_menu;
-ecg2hb_semi.name    = 'Semi automatic mode';
-ecg2hb_semi.tag     = 'semi';
-ecg2hb_semi.val     = {0};
-ecg2hb_semi.values  = {0,1};
-ecg2hb_semi.labels  = {'Off', 'On'};
-ecg2hb_semi.help    = {'Allows manual correction of all potential beat intervals.'};
-
-ecg2hb_twthresh     = cfg_entry;
-ecg2hb_twthresh.name = 'T wave threshold';
-ecg2hb_twthresh.tag = 'twthresh';
-ecg2hb_twthresh.strtype = 'r';
-ecg2hb_twthresh.num = [1 1];
-ecg2hb_twthresh.val = {0.36};
-ecg2hb_twthresh.hidden = true;
-ecg2hb_twthresh.help = {'Threshold to perform the T wave check.'};
-
-ecg2hb_opt          = cfg_branch;
-ecg2hb_opt.name     = 'Options';
-ecg2hb_opt.tag      = 'opt';
-ecg2hb_opt.val      = {ecg2hb_minhr, ecg2hb_maxhr, ...
-    ecg2hb_semi, ecg2hb_twthresh};
-ecg2hb_opt.help     = {''};
-
-ecg2hb              = cfg_exbranch;
-ecg2hb.name         = 'Convert ECG to Heart Beat (Pan & Tompkins)';
-ecg2hb.tag          = 'ecg2hb';
-ecg2hb.help         = {'Convert ECG data into Heart beat time stamps using Pan & Tompkins algorithm'};
-ecg2hb.val          = {ecg2hb_chan, ecg2hb_opt};
-
-ecg2hb_amri_chan_def      = cfg_const;
-ecg2hb_amri_chan_def.name = 'Default';
-ecg2hb_amri_chan_def.tag  = 'chan_def';
-ecg2hb_amri_chan_def.val  = {'ecg'};
-ecg2hb_amri_chan_def.help = {'Last ECG channel.'};
-
-ecg2hb_amri_chan_nr         = cfg_entry;
-ecg2hb_amri_chan_nr.name    = 'Number';
-ecg2hb_amri_chan_nr.tag     = 'chan_nr';
-ecg2hb_amri_chan_nr.strtype = 'i';
-ecg2hb_amri_chan_nr.num     = [1 1];
-ecg2hb_amri_chan_nr.help    = {'Channel ID of the ECG channel in the given PsPM file'};
-
-ecg2hb_amri_chan         = cfg_choice;
-ecg2hb_amri_chan.name    = 'Channel';
-ecg2hb_amri_chan.tag     = 'chan';
-ecg2hb_amri_chan.val     = {ecg2hb_amri_chan_def};
-ecg2hb_amri_chan.values  = {ecg2hb_amri_chan_def, ecg2hb_amri_chan_nr};
-ecg2hb_amri_chan.help    = {'ID of ECG channel in the PsPM file (default: last ECG channel).'};
-
-ecg2hb_amri_signal_to_use         = cfg_menu;
-ecg2hb_amri_signal_to_use.name    = 'Signal to use';
-ecg2hb_amri_signal_to_use.tag     = 'signal_to_use';
-ecg2hb_amri_signal_to_use.val     = {'auto'};
-ecg2hb_amri_signal_to_use.values  = {'ecg', 'teo', 'auto'};
-ecg2hb_amri_signal_to_use.labels  = {'Filtered ECG signal', 'Filtered and TEO applied ECG signal',...
-    'Choose automatically based on autocorrelation'};
-ecg2hb_amri_signal_to_use.help    = {['Which signal to feed to the core heartbeat detection procedure. ',...
-    '''ecg'' corresponds to filtered ECG signal. ''teo'' corresponds to the signal obtained by filtering ',...
-    'the ECG signal even more and applying the Teager Enery Operator. ''auto'' option picks the one of ',...
-    'these two options that results in higher autocorrelation']};
-
-ecg2hb_amri_hrrange         = cfg_entry;
-ecg2hb_amri_hrrange.name    = 'Feasible heartrate range';
-ecg2hb_amri_hrrange.tag     = 'hrrange';
-ecg2hb_amri_hrrange.strtype = 'r';
-ecg2hb_amri_hrrange.num     = [1 2];
-ecg2hb_amri_hrrange.val     = {[20 200]};
-ecg2hb_amri_hrrange.help    = {'Define the minimum and maximum possible heartrates for your data'};
-
-ecg2hb_amri_ecg_bandpass         = cfg_entry;
-ecg2hb_amri_ecg_bandpass.name    = 'ECG bandpass filter';
-ecg2hb_amri_ecg_bandpass.tag     = 'ecg_bandpass';
-ecg2hb_amri_ecg_bandpass.strtype = 'r';
-ecg2hb_amri_ecg_bandpass.num     = [1 2];
-ecg2hb_amri_ecg_bandpass.val     = {[0.5 40]};
-ecg2hb_amri_ecg_bandpass.help    = {'Define the cutoff frequencies (Hz) for bandpass filter applied to raw ECG signal'};
-
-ecg2hb_amri_teo_bandpass         = cfg_entry;
-ecg2hb_amri_teo_bandpass.name    = 'TEO bandpass filter';
-ecg2hb_amri_teo_bandpass.tag     = 'teo_bandpass';
-ecg2hb_amri_teo_bandpass.strtype = 'r';
-ecg2hb_amri_teo_bandpass.num     = [1 2];
-ecg2hb_amri_teo_bandpass.val     = {[8 40]};
-ecg2hb_amri_teo_bandpass.help    = {['Define the cutoff frequencies (Hz) for bandpass filter applied to filtered ECG',...
+ecg2hbAmriTeoBP         = cfg_entry;
+ecg2hbAmriTeoBP.name    = 'TEO bandpass filter';
+ecg2hbAmriTeoBP.tag     = 'teo_bandpass';
+ecg2hbAmriTeoBP.strtype = 'r';
+ecg2hbAmriTeoBP.num     = [1 2];
+ecg2hbAmriTeoBP.val     = {[8 40]};
+ecg2hbAmriTeoBP.help    = {['Define the cutoff frequencies (Hz) for bandpass filter applied to filtered ECG',...
     ' signal before applying TEO']};
 
 ecg2hb_amri_teo_order         = cfg_entry;
@@ -150,30 +146,30 @@ ecg2hb_amri_teo_order.val     = {1};
 ecg2hb_amri_teo_order.help    = {['Define the order k of TEO. Note that for signal x(t),'],...
     ['TEO[x(t); k] = x(t)x(t) - x(t-k)x(t+k)']};
 
-ecg2hb_amri_min_cross_corr         = cfg_entry;
-ecg2hb_amri_min_cross_corr.name    = 'Minimum cross correlation';
-ecg2hb_amri_min_cross_corr.tag     = 'min_cross_corr';
-ecg2hb_amri_min_cross_corr.strtype = 'r';
-ecg2hb_amri_min_cross_corr.num     = [1 1];
-ecg2hb_amri_min_cross_corr.val     = {0.5};
-ecg2hb_amri_min_cross_corr.help    = {['Define the minimum cross correlation between a candidate R-peak',...
+ecg2hbAmriMinCorr         = cfg_entry;
+ecg2hbAmriMinCorr.name    = 'Minimum cross correlation';
+ecg2hbAmriMinCorr.tag     = 'min_cross_corr';
+ecg2hbAmriMinCorr.strtype = 'r';
+ecg2hbAmriMinCorr.num     = [1 1];
+ecg2hbAmriMinCorr.val     = {0.5};
+ecg2hbAmriMinCorr.help    = {['Define the minimum cross correlation between a candidate R-peak',...
     ' and the found template such that the candidate is classified as an R-peak']};
 
-ecg2hb_amri_min_relative_amplitude         = cfg_entry;
-ecg2hb_amri_min_relative_amplitude.name    = 'Minimum relative amplitude';
-ecg2hb_amri_min_relative_amplitude.tag     = 'min_relative_amplitude';
-ecg2hb_amri_min_relative_amplitude.strtype = 'r';
-ecg2hb_amri_min_relative_amplitude.num     = [1 1];
-ecg2hb_amri_min_relative_amplitude.val     = {0.4};
-ecg2hb_amri_min_relative_amplitude.help    = {['Define the minimum relative amplitude of a candidate R-peak',...
+ecg2hbAmriMinRelaAmp         = cfg_entry;
+ecg2hbAmriMinRelaAmp.name    = 'Minimum relative amplitude';
+ecg2hbAmriMinRelaAmp.tag     = 'min_relative_amplitude';
+ecg2hbAmriMinRelaAmp.strtype = 'r';
+ecg2hbAmriMinRelaAmp.num     = [1 1];
+ecg2hbAmriMinRelaAmp.val     = {0.4};
+ecg2hbAmriMinRelaAmp.help    = {['Define the minimum relative amplitude of a candidate R-peak',...
     ' such that it is classified as an R-peak']};
 
 ecg2hb_amri_opt      = cfg_branch;
 ecg2hb_amri_opt.name = 'Options';
 ecg2hb_amri_opt.tag  = 'opt';
-ecg2hb_amri_opt.val  = {ecg2hb_amri_signal_to_use, ecg2hb_amri_hrrange, ...
-    ecg2hb_amri_ecg_bandpass, ecg2hb_amri_teo_bandpass, ecg2hb_amri_teo_order,...
-    ecg2hb_amri_min_cross_corr, ecg2hb_amri_min_relative_amplitude};
+ecg2hb_amri_opt.val  = {ecg2hbAmriSig, ecg2hbAmriHRRg, ...
+    ecg2hbAmriECGBP, ecg2hbAmriTeoBP, ecg2hb_amri_teo_order,...
+    ecg2hbAmriMinCorr, ecg2hbAmriMinRelaAmp};
 ecg2hb_amri_opt.help = {'Define various options that change the procedure''s behaviour'};
 
 ecg2hb_amri         = cfg_exbranch;
@@ -184,7 +180,7 @@ ecg2hb_amri.help    = {['Convert ECG data into heart beat time stamps using the 
     ' data and applying Teager Energy Operator (TEO)'],...
     ['Reference: Liu, Zhongming, et al. "Statistical feature extraction for artifact removal ',...
     'from concurrent fMRI-EEG recordings." Neuroimage 59.3 (2012): 2073-2087.']};
-ecg2hb_amri.val     = {ecg2hb_amri_chan, ecg2hb_amri_opt};
+ecg2hb_amri.val     = {ecg2hbAmriChan, ecg2hb_amri_opt};
 
 hb2hp_sr            = cfg_entry;
 hb2hp_sr.name       = 'Sample rate';
@@ -255,48 +251,55 @@ hb2hp.help          = {['Convert heart beat time stamps into interpolated ', ...
     'Heart beat conversion, or directly work on heart beat time stamps, ', ...
     'for example obtained by a pulse oxymeter.']};
 
-ppg2hb_chan_def     = cfg_const;
-ppg2hb_chan_def.name = 'Default';
-ppg2hb_chan_def.tag = 'chan_def';
-ppg2hb_chan_def.val = {0};
-ppg2hb_chan_def.help = {['Last peripheral pulse oximetry channel.']};
+ppg2hbChanDef     = cfg_const;
+ppg2hbChanDef.name = 'Default';
+ppg2hbChanDef.tag = 'chan_def';
+ppg2hbChanDef.val = {0};
+ppg2hbChanDef.help = {['Last peripheral pulse oximetry channel.']};
 
-ppg2hb_chan_nr      = cfg_entry;
-ppg2hb_chan_nr.name = 'Number';
-ppg2hb_chan_nr.tag  = 'chan_nr';
-ppg2hb_chan_nr.strtype = 'i';
-ppg2hb_chan_nr.num  = [1 1];
-ppg2hb_chan_nr.help = {''};
+ppg2hbChanNum      = cfg_entry;
+ppg2hbChanNum.name = 'Number';
+ppg2hbChanNum.tag  = 'chan_nr';
+ppg2hbChanNum.strtype = 'i';
+ppg2hbChanNum.num  = [1 1];
+ppg2hbChanNum.help = {''};
 
-ppg2hb_chan         = cfg_choice;
-ppg2hb_chan.name    = 'Channel';
-ppg2hb_chan.tag     = 'chan';
-ppg2hb_chan.val     = {ppg2hb_chan_def};
-ppg2hb_chan.values  = {ppg2hb_chan_def, ppg2hb_chan_nr};
-ppg2hb_chan.help    = {['Number of peripheral pulse oximetry channel ', ...
+ppg2hbChan         = cfg_choice;
+ppg2hbChan.name    = 'Channel';
+ppg2hbChan.tag     = 'chan';
+ppg2hbChan.val     = {ppg2hbChanDef};
+ppg2hbChan.values  = {ppg2hbChanDef, ppg2hbChanNum};
+ppg2hbChan.help    = {['Number of peripheral pulse oximetry channel ', ...
     '(default: last peripheral puls oximetry channel)']};
 
-ppg2hb_method       = cfg_menu;
-ppg2hb_method.name  = 'Select the method of converting the data';
-ppg2hb_method.tag   = 'ppg2hb_convert';
-ppg2hb_method.values= {'classic', 'heartpy'};
-ppg2hb_method.labels= {'Classic', 'Heartpy'};
-ppg2hb_method.val   = {'classic'};
-ppg2hb_method.help  = {['Convert the PPG data into heart rate by using the selected method.']};
+ppg2hbMethod       = cfg_menu;
+ppg2hbMethod.name  = 'Select the method of converting the data';
+ppg2hbMethod.tag   = 'ppg2hb_convert';
+ppg2hbMethod.values= {'classic', 'heartpy'};
+ppg2hbMethod.labels= {'Classic', 'Heartpy'};
+ppg2hbMethod.val   = {'classic'};
+ppg2hbMethod.help  = {['Convert the PPG data into heart rate by using the selected method.']};
 
 ppg2hb              = cfg_exbranch;
 ppg2hb.name         = 'Convert peripheral pulse oximetry to Heart Beat';
 ppg2hb.tag          = 'ppg2hb';
-ppg2hb.val          = {ppg2hb_chan, ppg2hb_method};
-ppg2hb.help          = {['Convert Peripheral pulse oximetry to ', ...
+ppg2hb.val          = {ppg2hbChan, ppg2hbMethod};
+ppg2hb.help          = {['Convert Peripheral pulse oximetry (PPG) to ', ...
     'Heart Beat events.']};
+    
+PyDetectMode                = cfg_menu;
+PyDetectMode.name           = 'Select the method of detecting python code';
+PyDetectMode.tag            = 'py_mode';
+PyDetectMode.values= {'py_auto', 'py_manual'};
+PyDetectMode.labels= {'Automatic', 'Manual'};
+PyDetectMode.help           = {'1'};
 
 ecg2hp              = cfg_exbranch;
 ecg2hp.name         = 'Convert ECG to Heart Period';
 ecg2hp.tag          = 'ecg2hp';
 % re-use already defined variables
-ecg2hp.val          = {ecg2hb_chan,ecg2hb_opt,hb2hp_sr, limit};
-ecg2hp.help         = {['Convert ECG data into Heart period time series.']};
+ecg2hp.val          = {ecg2hbChan,ecg2hbOpt,hb2hp_sr, limit};
+ecg2hp.help         = {'Convert ECG data into Heart period time series.'};
 
 pp_type             = cfg_choice;
 pp_type.name        = 'Type of preprocessing';
@@ -350,7 +353,7 @@ pp_heart_data.help = {['Convert ECG to heart beat using Pan & Tompkins detects Q
     'combination of the two functions "Convert ECG to heart beat" ', ...
     'and "Convert Heart Beat to heart period".']};
 
-function vout = pspm_cfg_vout_pp_heart_data(job)
+function vout = pspm_cfg_vout_pp_heart_data(~)
 vout = cfg_dep;
 vout.sname      = 'Output File';
 vout.tgt_spec = cfg_findspec({{'class','cfg_files'}});
