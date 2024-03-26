@@ -13,10 +13,16 @@ datafile.filter         = '.*\.(mat|MAT)$';
 datafile.help           = {'Specify data file.',' ',settings.datafilehelp};
 % [Fil] Python path --
 PyPath                  = cfg_files;
-PyPath.name             = 'Manually select Python file';
+PyPath.name             = 'Manual';
 PyPath.tag              = 'py_path';
 PyPath.num              = [1 1];
-PyPath.help             = {'Specify python executable file on the computer.'};
+PyPath.help             = {'Please specify python executable file on the computer.'};
+% [Con] PPG2HB python path --
+ppg2hbPy                = cfg_const;
+ppg2hbPy.name           = 'Automatic';
+ppg2hbPy.tag            = 'ppg2hbPy';
+ppg2hbPy.val            = {0};
+ppg2hbPy.help           = {''};
 %% Constants
 % [Con] ECG2HB channel definition --
 ecg2hbChanDef           = cfg_const;
@@ -42,6 +48,12 @@ ppg2hbChanDef.name      = 'Default';
 ppg2hbChanDef.tag       = 'chan_def';
 ppg2hbChanDef.val       = {0};
 ppg2hbChanDef.help      = {'Last peripheral pulse oximetry channel.'};
+% [Con] PPG2HB mode --
+ppg2hbClassic           = cfg_const;
+ppg2hbClassic.name      = 'Classic';
+ppg2hbClassic.tag       = 'classic';
+ppg2hbClassic.val       = {0};
+ppg2hbClassic.help      = {'Mode.'};
 %% Entry
 % [Ent] ECG2HB channel number -- 
 ecg2hbChanNum           = cfg_entry;
@@ -226,15 +238,6 @@ ChanAction.labels       = {'Add', 'Replace'};
 ChanAction.val          = {'replace'};
 ChanAction.help         = {'Choose whether to add the new channels or ', ...
                            'replace a channel previously added by this method.'};
-% [Men] PPG2HB method
-ppg2hbMethod            = cfg_menu;
-ppg2hbMethod.name       = 'Select the method of converting the data';
-ppg2hbMethod.tag        = 'ppg2hb_convert';
-ppg2hbMethod.values     = {'classic', 'heartpy'};
-ppg2hbMethod.labels     = {'Classic', 'Heartpy'};
-ppg2hbMethod.val        = {'classic'};
-ppg2hbMethod.help       = {['Convert the PPG data into heart rate by using the ', ...
-                           'selected method.']};
 %% Branch
 % [Bra] Limit --
 limit                   = cfg_branch;
@@ -258,7 +261,6 @@ ecg2hbAmriOpt.val       = {ecg2hbAmriSig, ecg2hbAmriHRRg, ecg2hbAmriECGBP, ...
                            ecg2hbAmriMinRelaAmp};
 ecg2hbAmriOpt.help      = {'Define various options that change the procedure''s behaviour'};
 %% Choice, Execute Branch and Repeat
-% ECG2HB --
 % [Cho] ECG2HB channel --
 ecg2hbChan              = cfg_choice;
 ecg2hbChan.name         = 'Channel';
@@ -293,19 +295,21 @@ ecg2hbAmri.help         = {['Convert ECG data into heart beat time stamps using 
                            'extraction for artifact removal from concurrent fMRI-EEG ',...
                            'recordings." Neuroimage 59.3 (2012): 2073-2087.']};
 ecg2hbAmri.val          = {ecg2hbAmriChan, ecg2hbAmriOpt};
-% [ExB] PPG2HB python path --
-ppg2hbPy                = cfg_const;
-ppg2hbPy.name           = 'Auto';
-ppg2hbPy.tag            = 'ppg2hbPy';
-ppg2hbPy.val            = {0};
-ppg2hbPy.help           = {''};
 % [Cho] Python detection mode --
 ppg2hbPyDetectMode      = cfg_choice;
-ppg2hbPyDetectMode.name = 'Load Python';
-ppg2hbPyDetectMode.tag  = 'py_mode';
+ppg2hbPyDetectMode.name = 'HeartPy';
+ppg2hbPyDetectMode.tag  = 'HeartPy';
 ppg2hbPyDetectMode.val  = {ppg2hbPy};
 ppg2hbPyDetectMode.values = {ppg2hbPy, PyPath};
 ppg2hbPyDetectMode.help = {'Mode of detecting python path in the operating system.'};
+% [Men] PPG2HB method
+ppg2hbMethod            = cfg_choice;
+ppg2hbMethod.name       = 'Select the method of converting the data';
+ppg2hbMethod.tag        = 'ppg2hb_convert';
+ppg2hbMethod.val        = {ppg2hbClassic};
+ppg2hbMethod.values     = {ppg2hbClassic, ppg2hbPyDetectMode};
+ppg2hbMethod.help       = {['Convert the PPG data into heart rate by using the ', ...
+                           'selected method.']};
 % [Cho] PPG2HB channel choice --
 ppg2hbChan              = cfg_choice;
 ppg2hbChan.name         = 'Channel';
@@ -318,7 +322,7 @@ ppg2hbChan.help         = {['Number of peripheral pulse oximetry channel ', ...
 ppg2hb                  = cfg_exbranch;
 ppg2hb.name             = 'Convert peripheral pulse oximetry (PPG) to Heart Beat';
 ppg2hb.tag              = 'ppg2hb';
-ppg2hb.val              = {ppg2hbChan, ppg2hbPyDetectMode};
+ppg2hb.val              = {ppg2hbChan, ppg2hbMethod};
 ppg2hb.help             = {['Convert Peripheral pulse oximetry (PPG) to ', ...
                            'Heart Beat events.']};
 % [Cho] HB2HP channel --

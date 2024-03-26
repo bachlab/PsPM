@@ -35,7 +35,7 @@ function [ sts, outinfo ] = pspm_convert_ppg2hb(fn, channel, options )
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Samuel Gerster (University of Zurich)
 %                      Tobias Moser (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 %   Updated in 2024 by Dominik Bach/Uzay Gokay (Uni Bonn)
 
 %% Initialise
