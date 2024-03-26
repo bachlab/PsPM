@@ -12,23 +12,23 @@ function [ sts, outinfo ] = pspm_convert_ppg2hb(fn, channel, options )
 %                 fn: file name with path
 %            channel: ppg channel number, default: last ppg channel
 %   ┌────────options: struct with following possible fields
-%   ├───.method:      'classic' (default), 'heartpy'
+%   ├────────.method: 'classic' (default) or 'heartpy'.
 %   ├───.diagnostics: [true/FALSE]
 %   │                 displays some debugging information
 %   ├.channel_action: ['add'/'replace', 'replace']
 %   │                 Defines whether the interpolated
 %   │                 data should be added or the corresponding channel
 %   │                 should be replaced.
-%   ├──────.missing:  allows to specify missing (e. g. artefact) epochs in the
+%   ├───────.missing: allows to specify missing (e. g. artefact) epochs in the
 %   │                 data file. See pspm_get_timing for epoch definition. This
 %   │                 must always be specified in SECONDS. These epochs will be
 %   │                 set to 0 for the detection.
 %   │                 Default: no missing values
-%   ├─────────.lsm: [integer] for method 'classic'
+%   ├───────────.lsm: [integer] for method 'classic'
 %   │                 large spikes mode compensates for large spikes
 %   │                 while generating template by removing the [integer]
 %   │                 largest percentile of spikes from consideration.
-%   └────.python_path: [char] for method 'heartpy'
+%   └───.python_path: [char] for method 'heartpy'
 %                     The path where python can be found. Mandatory if
 %                     python environment is not yet set up
 % ● History
