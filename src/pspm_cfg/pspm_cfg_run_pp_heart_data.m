@@ -1,5 +1,5 @@
 function out = pspm_cfg_run_pp_heart_data(job)
-% Updated on 08-01-2024 by Teddy
+% Updated on 26-03-2024 by Teddy
 fn = job.datafile{1};
 outputs = cell(size(job.pp_type));
 for i = 1:numel(job.pp_type)
@@ -35,8 +35,8 @@ for i = 1:numel(job.pp_type)
         options.minHR = job.pp_type{i}.ecg2hb.opt.minhr;
         options.maxHR = job.pp_type{i}.ecg2hb.opt.maxhr;
         options = pspm_update_struct(options, ...
-                                     job.pp_type{i}.ecg2hb.opt, ...
-                                     {'semi', 'twthresh'});
+          job.pp_type{i}.ecg2hb.opt, ...
+          {'semi', 'twthresh'});
         options = pspm_update_struct(options, job, 'channel_action');
         % call function
         [sts, winfo] = pspm_convert_ecg2hb(fn, chan, options);
@@ -57,11 +57,11 @@ for i = 1:numel(job.pp_type)
         % copy options
         options = struct();
         options = pspm_update_struct(options, ...
-                                     job.pp_type{i}.ecg2hp.opt, ...
-                                     {'minhr', ...
-                                      'maxhr', ...
-                                      'semi', ...
-                                      'twthresh'});
+          job.pp_type{i}.ecg2hp.opt, ...
+          {'minhr', ...
+          'maxhr', ...
+          'semi', ...
+          'twthresh'});
         % set replace
         options = pspm_update_struct(options, job, {'channel_action'});
         % call ecg2hb
@@ -70,14 +70,21 @@ for i = 1:numel(job.pp_type)
           % replace channel
           options.channel_action = 'replace';
           options = pspm_update_struct(options, ...
-                                       job.pp_type{i}.ecg2hp, ...
-                                       'limit');
+            job.pp_type{i}.ecg2hp, ...
+            'limit');
           % call ecg2hp
           [sts, winfo] = pspm_convert_hb2hp(fn, sr, winfo.channel, options);
         end
       case 'ppg2hb'
         options = struct();
-        options.method = job.pp_type{i}.ppg2hb.ppg2hb_convert;
+        if ~isfield(job.pp_type{i}.ppg2hb.ppg2hb_convert, 'HeartPy')
+          options.method = 'classic';
+        else
+          options.method = 'heartpy';
+          if isfield(job.pp_type{i}.ppg2hb.ppg2hb_convert.HeartPy, 'py_path')
+            options.python_path = job.pp_type{i}.ppg2hb.ppg2hb_convert.HeartPy.py_path{1};
+          end
+        end
         options = pspm_update_struct(options, job, {'channel_action'});
         [sts, winfo] = pspm_convert_ppg2hb(fn, chan, options);
     end

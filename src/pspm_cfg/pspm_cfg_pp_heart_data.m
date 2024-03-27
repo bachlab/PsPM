@@ -1,7 +1,6 @@
 function pp_heart_data = pspm_cfg_pp_heart_data
 
-% $Id: pspm_cfg_pp_heart_data.m 784 2019-07-08 08:16:46Z esrefo $
-% $Rev: 784 $
+% Updated 27-Mar-2024 by Teddy
 
 % Initialise
 global settings
@@ -276,19 +275,52 @@ ppg2hb_chan.values  = {ppg2hb_chan_def, ppg2hb_chan_nr};
 ppg2hb_chan.help    = {['Number of peripheral pulse oximetry channel ', ...
     '(default: last peripheral puls oximetry channel)']};
 
-ppg2hb_method       = cfg_menu;
-ppg2hb_method.name  = 'Select the method of converting the data';
-ppg2hb_method.tag   = 'ppg2hb_convert';
-ppg2hb_method.values= {'classic', 'heartpy'};
-ppg2hb_method.labels= {'Classic', 'Heartpy'};
-ppg2hb_method.val   = {'classic'};
-ppg2hb_method.help  = {['Convert the PPG data into heart rate by using the selected method.']};
+%ppg2hb_method       = cfg_menu;
+%ppg2hb_method.name  = 'Select the method of converting the data';
+%ppg2hb_method.tag   = 'ppg2hb_convert';
+%ppg2hb_method.values= {'classic', 'heartpy'};
+%ppg2hb_method.labels= {'Classic', 'Heartpy'};
+%ppg2hb_method.val   = {'classic'};
+%ppg2hb_method.help  = {['Convert the PPG data into heart rate by using the selected method.']};
 
-ppg2hb              = cfg_exbranch;
-ppg2hb.name         = 'Convert peripheral pulse oximetry to Heart Beat';
-ppg2hb.tag          = 'ppg2hb';
-ppg2hb.val          = {ppg2hb_chan, ppg2hb_method};
-ppg2hb.help          = {['Convert Peripheral pulse oximetry to ', ...
+python_path             = cfg_files;
+python_path.name        = 'Manual';
+python_path.tag         = 'py_path';
+python_path.num         = [1 1];
+python_path.help        = {'Please specify python executable file on the computer.'};
+
+ppg2hb_py                = cfg_const;
+ppg2hb_py.name           = 'Automatic';
+ppg2hb_py.tag            = 'ppg2hb_py';
+ppg2hb_py.val            = {0};
+ppg2hb_py.help           = {''};
+
+ppg2hb_classic           = cfg_const;
+ppg2hb_classic.name      = 'Classic';
+ppg2hb_classic.tag       = 'classic';
+ppg2hb_classic.val       = {0};
+ppg2hb_classic.help      = {'Classic mode.'};
+
+ppg2hb_py_detect_mode         = cfg_choice;
+ppg2hb_py_detect_mode.name    = 'HeartPy';
+ppg2hb_py_detect_mode.tag     = 'HeartPy';
+ppg2hb_py_detect_mode.val     = {ppg2hb_py};
+ppg2hb_py_detect_mode.values  = {ppg2hb_py, python_path};
+ppg2hb_py_detect_mode.help    = {'Mode of detecting python path in the operating system.'};
+
+ppg2hb_method            = cfg_choice;
+ppg2hb_method.name       = 'Select the method of converting the data';
+ppg2hb_method.tag        = 'ppg2hb_convert';
+ppg2hb_method.val        = {ppg2hb_classic};
+ppg2hb_method.values     = {ppg2hb_classic, ppg2hb_py_detect_mode};
+ppg2hb_method.help       = {['Convert the PPG data into heart rate by using the ', ...
+                           'selected method.']};
+
+ppg2hb                   = cfg_exbranch;
+ppg2hb.name              = 'Convert peripheral pulse oximetry to Heart Beat';
+ppg2hb.tag               = 'ppg2hb';
+ppg2hb.val               = {ppg2hb_chan, ppg2hb_method};
+ppg2hb.help              = {['Convert Peripheral pulse oximetry to ', ...
     'Heart Beat events.']};
 
 ecg2hp              = cfg_exbranch;
@@ -311,6 +343,9 @@ pp.values           = {pp_type};
 pp.num              = [1 Inf];
 pp.help             = {['Add different preprocessing steps here. ', ...
     'The converted data will be written into a new channel in the same file.']};
+
+
+
 
 % define channel_action
 % ------------------------------------------------------
