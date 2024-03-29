@@ -3,7 +3,7 @@ function [pupil_pp] = pspm_cfg_pupil_preprocess(~)
 %   Matlabbatch function for pspm_pupil_pp
 % * History
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
-%   Updated in 17-03-2024 by Teddy
+%   Updated on 17-03-2024 by Teddy
 % Initialise
 global settings
 if isempty(settings), pspm_init; end
