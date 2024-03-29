@@ -195,6 +195,13 @@ hb2hp.help          = {['Convert heart beat time stamps into interpolated ', ...
 
 ppg2hb_chan         = pspm_cfg_channel_selector('peripheral pulse oxymetry');
 
+ppg2hb_method       = cfg_menu;
+ppg2hb_method.name  = 'Select the method of converting the data';
+ppg2hb_method.tag   = 'ppg2hb_convert';
+ppg2hb_method.values= {'classic', 'heartpy'};
+ppg2hb_method.labels= {'Classic', 'Heartpy'};
+ppg2hb_method.val   = {'classic'};
+ppg2hb_method.help  = {['Convert the PPG data into heart rate by using the selected method.']};
 
 ppg2hb              = cfg_exbranch;
 ppg2hb.name         = 'Convert peripheral pulse oximetry to Heart Beat';
