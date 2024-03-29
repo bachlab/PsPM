@@ -192,12 +192,14 @@ hb2hp.help          = {['Convert heart beat time stamps into interpolated ', ...
     'Heart beat conversion, or directly work on heart beat time stamps, ', ...
     'for example obtained by a pulse oxymeter.']};
 
+
 ppg2hb_chan         = pspm_cfg_channel_selector('peripheral pulse oxymetry');
 
+
 ppg2hb              = cfg_exbranch;
-ppg2hb.name         = 'Convert Peripheral pulse oximetry to Heart Beat';
+ppg2hb.name         = 'Convert peripheral pulse oximetry to Heart Beat';
 ppg2hb.tag          = 'ppg2hb';
-ppg2hb.val          = {ppg2hb_chan};
+ppg2hb.val          = {ppg2hb_chan, ppg2hb_method};
 ppg2hb.help          = {['Convert Peripheral pulse oximetry to ', ...
     'Heart Beat events.']};
 

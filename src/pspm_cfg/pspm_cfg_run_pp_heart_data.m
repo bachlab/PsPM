@@ -60,6 +60,7 @@ for i = 1:numel(job.pp_type)
         end
       case 'ppg2hb'
         options = struct();
+        options.method = job.pp_type{i}.ppg2hb.ppg2hb_convert;
         options = pspm_update_struct(options, job, {'channel_action'});
         [sts, winfo] = pspm_convert_ppg2hb(fn, chan, options);
     end
