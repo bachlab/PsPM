@@ -10,12 +10,12 @@ if isempty(settings), pspm_init; end
 
 % Preprocess ECG data
 % Data File
-datafile         = cfg_files;
-datafile.name    = 'Data File';
-datafile.tag     = 'datafile';
-datafile.num     = [1 1];
+datafile              = cfg_files;
+datafile.name         = 'Data File';
+datafile.tag          = 'datafile';
+datafile.num          = [1 1];
 %datafile.filter  = '.*\.(mat|MAT)$';
-datafile.help    = {'Specify data file.',' ',settings.datafilehelp};
+datafile.help         = {'Specify data file.',' ',settings.datafilehelp};
 
 ecg2hb_chan = pspm_cfg_channel_selector('ECG');
 

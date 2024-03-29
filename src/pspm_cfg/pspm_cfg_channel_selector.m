@@ -6,23 +6,29 @@ function out = pspm_cfg_channel_selector(channame, varargin)
 %   sts = pspm_cfg_channel_selector(channeltype)
 %   sts = pspm_cfg_channel_selector('run', job)
 % ● Arguments
-% channeltype: (1) a channeltype string - generates a default channel of 
-%                  this type, and a numerical channel selector
-%              (2) 'pupil' - generates a choice of 'combined', 'left',
-%                  'right', 'pupil' (default), and a numerical channel 
-%                   selector
-%              (3) 'pupil_both' - like 'pupil' but with the option of
-%                   selecting both pupils
-%              (4) 'pupil_none' - like 'pupil' but with the option of
-%                   selecting no channel (used for pspm_pupil_pp)
-%              (5) 'gaze' - generates a choice of 'combined', 'left',
-%                  'right', 'gaze' (default), and a numerical selector for 
-%                   an x/y pair of channels 
-%              (5) 'any' - generates a string channel selector for at most
-%                   one channel
-%              (6) 'many' - generates a numerical channel selector for an
-%                   arbitrary number of channels
-
+%   ┌──channeltype (either of the following values)
+%   │  ├─(1) a channeltype string generates a default channel of this type,
+%   │  │     and a numerical channel selector.
+%   │  ├─(2) 'pupil'
+%   │  │     generates a choice of 'combined', 'left', 'right', 'pupil' (default), 
+%   │  │     and a numerical channel selector.
+%   │  ├─(3) 'pupil_both'
+%   │  │     like 'pupil' but with the option of selecting both pupils.
+%   │  ├─(4) 'pupil_none'
+%   │  │     like 'pupil' but with the option of selecting no channel 
+%   │  │     (used for pspm_pupil_pp).
+%   │  ├─(5) 'gaze'
+%   │  │     generates a choice of 'combined', 'left', 'right', 'gaze' (default), 
+%   │  │     and a numerical selector for an x/y pair of channels.
+%   │  ├─(6) 'any'
+%   │  │     generates a string channel selector for at most one channel.
+%   │  └─(7) 'many'
+%   │        generates a numerical channel selector for an arbitrary number of channels.
+%   └─job
+%     A struct that stores the variables from the GUI.
+% ● History
+%   Introduced in PsPM 6.2
+%   Written by Dominik R Bach (Uni Bonn) in 2024
 
 % check input
 if nargin == 0 
