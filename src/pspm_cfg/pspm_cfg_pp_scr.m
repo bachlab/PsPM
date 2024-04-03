@@ -220,7 +220,7 @@ pp_scr.help           = {['Pre processing (PP) skin conductance ',...
       end
     end
     scr_pp_options.channel_action = job.chan_action;
-    [sts, output] = pspm_scr_pp(scr_pp_datafile, scr_pp_options);
+    [sts, output] = pspm_scr_pp(scr_pp_datafile, scr_pp_options, scr_pp_options.channel);
     if sts == 1
       % out = {output.channel};
       out = output{1};
