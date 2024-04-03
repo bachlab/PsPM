@@ -1,151 +1,165 @@
 function artefact_rm = pspm_cfg_artefact_rm
-% Updated 26-Feb-2024 by Teddy
+% Updated 29-Mar-2024 by Teddy
 % Initialise
 global settings
 if isempty(settings)
   pspm_init;
 end
 %% Global items
-chan_nr                  = pspm_cfg_channel_selector('any');
-
-%% Medianfilter
-nr_time_pt               = cfg_entry;
-nr_time_pt.name          = 'Number of Time Points';
-nr_time_pt.tag           = 'nr_time_pt';
-nr_time_pt.strtype       = 'i';
-nr_time_pt.num           = [1 1];
-nr_time_pt.help          = {'Number of time points over which the median is taken.'};
-% Medianfilter
-FilterMedian             = cfg_branch;
-FilterMedian.name        = 'Median Filter';
-FilterMedian.tag         = 'median';
-FilterMedian.val         = {nr_time_pt};
-FilterMedian.help        = {''};
+chan_nr                   = pspm_cfg_channel_selector('any');
+%% Median filter
+nr_time_pt                = cfg_entry;
+nr_time_pt.name           = 'Number of Time Points';
+nr_time_pt.tag            = 'nr_time_pt';
+nr_time_pt.strtype        = 'i';
+nr_time_pt.num            = [1 1];
+nr_time_pt.help           = {'Number of time points over which the median is taken.'};
+% Median filter
+filter_median             = cfg_branch;
+filter_median.name        = 'Median Filter';
+filter_median.tag         = 'median';
+filter_median.val         = {nr_time_pt};
+filter_median.help        = {''};
 %% Butterworth LP frequency
-FreqLowPassNone          = cfg_const;
-FreqLowPassNone.name     = 'none';
-FreqLowPassNone.tag      = 'freqLP';
-FreqLowPassNone.val      = {'none'};
-FreqLowPassNone.help     = {'No sample rate defined.'};
-FreqLowPassNum           = cfg_entry;
-FreqLowPassNum.name      = 'number';
-FreqLowPassNum.tag       = 'freqLP';
-FreqLowPassNum.strtype   = 'r';
-FreqLowPassNum.num       = [1 1];
-FreqLowPassNum.help      = {'Define the low-pass filter frequency as a number.'};
-FreqLowPass              = cfg_choice;
-FreqLowPass.name         = 'High-pass filter frequency';
-FreqLowPass.tag          = 'freqLP';
-FreqLowPass.values       = {FreqLowPassNone, FreqLowPassNum};
-FreqLowPass.help         = {'Frequency of the low pass filter. It must be a number or "none" (default value).'};
+freq_low_pass_none        = cfg_const;
+freq_low_pass_none.name   = 'none';
+freq_low_pass_none.tag    = 'freqLPnone';
+freq_low_pass_none.val    = {'none'};
+freq_low_pass_none.help   = {'No sample rate defined.'};
+freq_low_pass_num         = cfg_entry;
+freq_low_pass_num.name    = 'number';
+freq_low_pass_num.tag     = 'freqLPnum';
+freq_low_pass_num.strtype = 'r';
+freq_low_pass_num.num     = [1 1];
+freq_low_pass_num.help    = {'Define the low-pass filter frequency as a number.'};
+freq_low_pass             = cfg_choice;
+freq_low_pass.name        = 'Low-pass filter frequency';
+freq_low_pass.tag         = 'freqLP';
+freq_low_pass.values      = {freq_low_pass_none, freq_low_pass_num};
+freq_low_pass.help        = {['Frequency of the low pass filter. ',...
+                            'It must be a number or "none" (default value).']};
 %% Butterworth LP order
-OrderLowPass             = cfg_entry;
-OrderLowPass.name        = 'Low-pass filter order';
-OrderLowPass.tag         = 'orderLP';
-OrderLowPass.strtype     = 'r';
-OrderLowPass.val         = {1};
-OrderLowPass.num         = [1 1];
-OrderLowPass.help        = {'Order of the low pass filter. It must be a non-zero integer. The default value is 1.'};
+order_low_pass            = cfg_entry;
+order_low_pass.name       = 'Low-pass filter order';
+order_low_pass.tag        = 'orderLP';
+order_low_pass.strtype    = 'r';
+order_low_pass.val        = {1};
+order_low_pass.num        = [1 1];
+order_low_pass.help       = {['Order of the low pass filter. ',...
+                            'It must be a non-zero integer. ',...
+                            'The default value is 1.']};
 %% Butterworth HP frequency
-FreqHighPassNone         = cfg_const;
-FreqHighPassNone.name    = 'none';
-FreqHighPassNone.tag     = 'freqHP';
-FreqHighPassNone.val     = {'none'};
-FreqHighPassNone.help    = {'No sample rate defined.'};
-FreqHighPassNum          = cfg_entry;
-FreqHighPassNum.name     = 'number';
-FreqHighPassNum.tag      = 'freqHP';
-FreqHighPassNum.strtype  = 'r';
-FreqHighPassNum.num      = [1 1];
-FreqHighPassNum.help     = {'Define the high-pass filter frequency as a number.'};
-FreqHighPass             = cfg_choice;
-FreqHighPass.name        = 'High-pass filter frequency';
-FreqHighPass.tag         = 'freqHP';
-FreqHighPass.values      = {FreqHighPassNone, FreqHighPassNum};
-FreqHighPass.help        = {'Frequency of the high pass filter. It must be a number or "none" (default value).'};
+freq_high_pass_none       = cfg_const;
+freq_high_pass_none.name  = 'none';
+freq_high_pass_none.tag   = 'freqHPnone';
+freq_high_pass_none.val   = {'none'};
+freq_high_pass_none.help  = {'No sample rate defined.'};
+freq_high_pass_num        = cfg_entry;
+freq_high_pass_num.name   = 'number';
+freq_high_pass_num.tag    = 'freqHPnum';
+freq_high_pass_num.strtype= 'r';
+freq_high_pass_num.num    = [1 1];
+freq_high_pass_num.help   = {'Define the high-pass filter frequency as a number.'};
+freq_high_pass            = cfg_choice;
+freq_high_pass.name       = 'High-pass filter frequency';
+freq_high_pass.tag        = 'freqHP';
+freq_high_pass.values     = {freq_high_pass_none, freq_high_pass_num};
+freq_high_pass.help       = {['Frequency of the high pass filter. ',...
+                            'It must be a number or "none" (default value).']};
 %% Butterworth HP order
-OrderHighPass            = cfg_entry;
-OrderHighPass.name       = 'High-pass filter order';
-OrderHighPass.tag        = 'orderHP';
-OrderHighPass.strtype    = 'r';
-OrderHighPass.val        = {1};
-OrderHighPass.num        = [1 1];
-OrderHighPass.help       = {'Order of the high pass filter. It must be a non-zero integer. The default value is 1.'};
+order_high_pass           = cfg_entry;
+order_high_pass.name      = 'High-pass filter order';
+order_high_pass.tag       = 'orderHP';
+order_high_pass.strtype   = 'r';
+order_high_pass.val       = {1};
+order_high_pass.num       = [1 1];
+order_high_pass.help      = {['Order of the high pass filter. ',...
+                            'It must be a non-zero integer. ',...
+                            'The default value is 1.']};
 %% Butterworth filter direction
-FiltDirection            = cfg_menu;
-FiltDirection.name       = 'Direction';
-FiltDirection.tag        = 'direction';
-FiltDirection.val        = {'uni'};
-FiltDirection.labels     = {'Uni', 'Bi'};
-FiltDirection.values     = {'uni', 'bi'};
-FiltDirection.help       = {'Direction of the filter. Can be either "uni" or "bi".'};
+filter_direction          = cfg_menu;
+filter_direction.name     = 'Direction';
+filter_direction.tag      = 'direction';
+filter_direction.val      = {'uni'};
+filter_direction.labels   = {'Uni', 'Bi'};
+filter_direction.values   = {'uni', 'bi'};
+filter_direction.help     = {['Direction of the filter. ',...
+                            'Can be either "uni" or "bi".']};
 %% Downsampling rate
-DownSRNone               = cfg_const;
-DownSRNone.name          = 'none';
-DownSRNone.tag           = 'down';
-DownSRNone.val           = {'none'};
-DownSRNone.help          = {'No sample rate defined.'};
-DownSRNum                = cfg_entry;
-DownSRNum.name           = 'number';
-DownSRNum.tag            = 'down';
-DownSRNum.strtype        = 'r';
-DownSRNum.num            = [1 1];
-DownSRNum.help           = {'Define the post-downsampling sampling rate as a number.'};
-DownSR                   = cfg_choice;
-DownSR.name              = 'Sampling rate after downsampling';
-DownSR.tag               = 'down';
-DownSR.values            = {DownSRNone, DownSRNum};
-DownSR.help              = {'Sample rate in Hz after downsampling. It must be a number or "none" (default value).'};
+downsamp_rate_none        = cfg_const;
+downsamp_rate_none.name   = 'none';
+downsamp_rate_none.tag    = 'down';
+downsamp_rate_none.val    = {'none'};
+downsamp_rate_none.help   = {'No sample rate defined.'};
+downsamp_rate_num         = cfg_entry;
+downsamp_rate_num.name    = 'number';
+downsamp_rate_num.tag     = 'down';
+downsamp_rate_num.strtype = 'r';
+downsamp_rate_num.num     = [1 1];
+downsamp_rate_num.help    = {['Define the post-downsampling sampling ',...
+                            'rate as a number.']};
+downsamp_rate             = cfg_choice;
+downsamp_rate.name        = 'Sampling rate after downsampling';
+downsamp_rate.tag         = 'down';
+downsamp_rate.values      = {downsamp_rate_none, downsamp_rate_num};
+downsamp_rate.help        = {['Sample rate in Hz after downsampling. ',...
+                            'It must be a number or "none" (default value).']};
 %% Butterworth filtering
-FilterButter             = cfg_branch;
-FilterButter.name        = 'Butterworth Filter';
-FilterButter.tag         = 'butter';
-FilterButter.val         = {OrderLowPass,FreqLowPass,OrderHighPass,FreqHighPass,FiltDirection,DownSR};
-FilterButter.help        = {'Butterworth Filter.'};
-
+filter_butter             = cfg_branch;
+filter_butter.name        = 'Butterworth Filter';
+filter_butter.tag         = 'butter';
+filter_butter.val         = {order_low_pass, freq_low_pass, ...
+                            order_high_pass, freq_high_pass, ...
+                            filter_direction, downsamp_rate};
+filter_butter.help        = {'Butterworth Filter.'};
 %% Data file
-datafile                 = cfg_files;
-datafile.name            = 'Data File';
-datafile.tag             = 'datafile';
-datafile.num             = [1 1];
-%datafile.filter         = '\.mat$';
-datafile.help            = {settings.datafilehelp};
-
-filtertype               = cfg_choice;
-filtertype.name          = 'Filter Type';
-filtertype.tag           = 'filtertype';
-filtertype.values        = {FilterMedian,FilterButter};
-filtertype.help          = {['Currently, median and butterworth ',...
-                           'filters are implemented. A median filter is ' ...
-                           'recommended for short spikes, generated ' ...
-                           'for example in MRI scanners by gradient ' ...
-                           'switching. A butterworth filter is applied ' ...
-                           'in most models; check there to see whether ' ...
+datafile                  = cfg_files;
+datafile.name             = 'Data File';
+datafile.tag              = 'datafile';
+datafile.num              = [1 1];
+%datafile.filter          = '\.mat$';
+datafile.help             = {settings.datafilehelp};
+%% Filter type
+filter_type               = cfg_choice;
+filter_type.name          = 'Filter Type';
+filter_type.tag           = 'filtertype';
+filter_type.values        = {filter_median,filter_butter};
+filter_type.help          = {['Currently, median and butterworth ',...
+                           'filters are implemented. A median filter is ',...
+                           'recommended for short spikes, generated ',...
+                           'for example in MRI scanners by gradient ',...
+                           'switching. A butterworth filter is applied ',...
+                           'in most models; check there to see whether ',...
                            'an additional filtering is meaningful.']};
 %% Overwrite file
-overwrite                = cfg_menu;
-overwrite.name           = 'Overwrite Existing File';
-overwrite.tag            = 'overwrite';
-overwrite.val            = {false};
-overwrite.labels         = {'No', 'Yes'};
-overwrite.values         = {false, true};
-overwrite.help           = {'Overwrite if a file with the same name has existed?'};
+overwrite                 = cfg_menu;
+overwrite.name            = 'Overwrite Existing File';
+overwrite.tag             = 'overwrite';
+overwrite.val             = {false};
+overwrite.labels          = {'No', 'Yes'};
+overwrite.values          = {false, true};
+overwrite.help            = {'Overwrite if a file with the same name has existed?'};
 %% Executable branch
-artefact_rm             = cfg_exbranch;
-artefact_rm.name        = 'Artefact Removal';
-artefact_rm.tag         = 'artefact_rm';
-artefact_rm.val         = {datafile,chan_nr,filtertype,overwrite};
-artefact_rm.prog        = @pspm_cfg_run_artefact_rm;
-artefact_rm.vout        = @pspm_cfg_vout_artefact;
-artefact_rm.help        = {['This module offers a few basic artefact removal functions. ',...
-                           'Currently, a median filter and a butterworth low pass ' ...
-                           'filter are implemented. The median filter is useful to ' ...
-                           'remove short "spikes" in the data, for example from gradient ' ...
-                           'switching in MRI. The Butterworth filter can be used to get ' ...
-                           'rid of high frequency noise that is not sufficiently ',...
-                           'filtered away by the filters implemented on-the-fly during ',...
-                           'first level modelling.']};
+artefact_rm               = cfg_exbranch;
+artefact_rm.name          = 'Artefact Removal';
+artefact_rm.tag           = 'artefact_rm';
+artefact_rm.val           = {datafile,chan_nr,filter_type,overwrite};
+artefact_rm.prog          = @pspm_cfg_run_artefact_rm;
+artefact_rm.vout          = @pspm_cfg_vout_artefact;
+artefact_rm.help          = {['This module offers a few basic ',...
+                            'artefact removal functions. Currently, ',...
+                            'a median filter and a butterworth low ',...
+                            'pass filter are implemented. The median ',...
+                            'filter is useful to remove short ',...
+                            '"spikes" in the data, for example ',...
+                            'from gradient switching in MRI. ',...
+                            'The Butterworth filter can be used to ',...
+                            'get rid of high frequency noise that is ',...
+                            'not sufficiently filtered away by the ',...
+                            'filters implemented on-the-fly during ',...
+                            'first level modelling.']};
 
+  % Not sure about the function below was executed
   function [sts, val] =  pspm_cfg_check_artefact_rm_freq(val)
     sts = [];
     if val < 20
@@ -156,7 +170,7 @@ artefact_rm.help        = {['This module offers a few basic artefact removal fun
     end
   end
 
-  function vout = pspm_cfg_vout_artefact(job)
+  function vout = pspm_cfg_vout_artefact(~)
     vout = cfg_dep;
     vout.sname      = 'Output File';
     % this can be entered into any file selector

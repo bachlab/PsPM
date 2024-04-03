@@ -10,12 +10,12 @@ if isempty(settings), pspm_init; end
 
 % Preprocess ECG data
 % Data File
-datafile         = cfg_files;
-datafile.name    = 'Data File';
-datafile.tag     = 'datafile';
-datafile.num     = [1 1];
+datafile              = cfg_files;
+datafile.name         = 'Data File';
+datafile.tag          = 'datafile';
+datafile.num          = [1 1];
 %datafile.filter  = '.*\.(mat|MAT)$';
-datafile.help    = {'Specify data file.',' ',settings.datafilehelp};
+datafile.help         = {'Specify data file.',' ',settings.datafilehelp};
 
 ecg2hb_chan = pspm_cfg_channel_selector('ECG');
 
@@ -192,13 +192,22 @@ hb2hp.help          = {['Convert heart beat time stamps into interpolated ', ...
     'Heart beat conversion, or directly work on heart beat time stamps, ', ...
     'for example obtained by a pulse oxymeter.']};
 
+
 ppg2hb_chan         = pspm_cfg_channel_selector('peripheral pulse oxymetry');
 
+ppg2hb_method       = cfg_menu;
+ppg2hb_method.name  = 'Select the method of converting the data';
+ppg2hb_method.tag   = 'ppg2hb_convert';
+ppg2hb_method.values= {'classic', 'heartpy'};
+ppg2hb_method.labels= {'Classic', 'Heartpy'};
+ppg2hb_method.val   = {'classic'};
+ppg2hb_method.help  = {['Convert the PPG data into heart rate by using the selected method.']};
+
 ppg2hb              = cfg_exbranch;
-ppg2hb.name         = 'Convert Peripheral pulse oximetry to Heart Beat';
+ppg2hb.name         = 'Convert peripheral pulse oximetry (PPG) to Heart Beat';
 ppg2hb.tag          = 'ppg2hb';
-ppg2hb.val          = {ppg2hb_chan};
-ppg2hb.help          = {['Convert Peripheral pulse oximetry to ', ...
+ppg2hb.val          = {ppg2hb_chan, ppg2hb_method};
+ppg2hb.help          = {['Convert Peripheral pulse oximetry (PPG) to ', ...
     'Heart Beat events.']};
 
 ecg2hp              = cfg_exbranch;

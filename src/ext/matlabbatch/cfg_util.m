@@ -47,14 +47,14 @@ function varargout = cfg_util(cmd, varargin)
 %
 %  [new_job_id] = cfg_util('clonejob', job_id)
 %
-% Clone an already initialised job. 
+% Clone an already initialised job.
 %
 %  [mod_job_idlist, new2old_id] = cfg_util('compactjob', job_id)
 %
 % Modifies the internal representation of a job by removing deleted modules
 % from the job configuration tree. This will invalidate all mod_job_ids and
 % generate a new mod_job_idlist.
-% A translation table new2old_id is provided, where 
+% A translation table new2old_id is provided, where
 %  mod_job_idlist = old_mod_job_idlist{new2old_id}
 % translates between an old id list and the compact new id list.
 %
@@ -70,7 +70,7 @@ function varargout = cfg_util(cmd, varargin)
 %
 %  cfg_util('deljob', job_id)
 %
-% Delete job with job_id from the job list. 
+% Delete job with job_id from the job list.
 %
 %  sts = cfg_util('filljob', job_id, input1, ..., inputN)
 %  sts = cfg_util('filljobui', job_id, ui_fcn, input1, ..., inputN)
@@ -78,7 +78,7 @@ function varargout = cfg_util(cmd, varargin)
 % Fill missing inputs in a job from a list of input items. For
 % cfg_entry/cfg_files, each input should be suitable to be assigned to
 % item.val{1}. For cfg_menu, input should be an index into the menu list as
-% displayed in the GUI, starting with 1. 
+% displayed in the GUI, starting with 1.
 % If an item can not be filled by the specified input, this input will be
 % discarded. If cfg_util('filljobui'...) is called, [val sts] =
 % ui_fcn(item) will be run and should return a value which is suitable for
@@ -105,7 +105,7 @@ function varargout = cfg_util(cmd, varargin)
 % allows to automatically include e.g. copyright or revision.
 %
 %  cfg_util('genscript', job_id, scriptdir, filename)
-% 
+%
 % Generate a script which collects missing inputs of a batch job and runs
 % the job using cfg_util('filljob', ...). The script will be written to
 % file filename.m in scriptdir, the job will be saved to filename_job.m in
@@ -113,12 +113,12 @@ function varargout = cfg_util(cmd, varargin)
 % the appropriate inputs for the job.
 %
 %  outputs = cfg_util('getAllOutputs', job_id)
-% 
+%
 % outputs - cell array with module outputs. If a module has not yet been
 %           run, a cfg_inv_out object is returned.
 %
 %  voutputs = cfg_util('getAllVOutputs', job_id[, mod_job_id])
-% 
+%
 % voutputs - cell array with virtual output descriptions (cfg_dep objects).
 %            These describe the structure of the job outputs. To create
 %            dependencies, they can be entered into matching input objects
@@ -181,10 +181,10 @@ function varargout = cfg_util(cmd, varargin)
 % matches apptag/whose id matches cfg_id is harvested. In this case,
 % appdef is a struct/cell array that can be supplied as a second argument
 % in application initialisation by cfg_util('addapp', appcfg,
-% appdef). 
+% appdef).
 % If no application is specified, defaults of all applications will be
-% returned in one struct/cell array. 
-% 
+% returned in one struct/cell array.
+%
 %  [tag, val] = cfg_util('harvestrun', job_id)
 %
 % Harvest data of a job that has been (maybe partially) run, resolving
@@ -200,7 +200,7 @@ function varargout = cfg_util(cmd, varargin)
 % Initial application data will be initialised to a combination of
 % cfg_mlbatch_appcfg.m files in their order found on the MATLAB path. Each
 % of these config files should be a function with calling syntax
-%   function [cfg, def] = cfg_mlbatch_appcfg(varargin) 
+%   function [cfg, def] = cfg_mlbatch_appcfg(varargin)
 % This function should do application initialisation (e.g. add
 % paths). cfg and def should be configuration and defaults data
 % structures or the name of m-files on the MATLAB path containing these
@@ -353,7 +353,7 @@ function varargout = cfg_util(cmd, varargin)
 % in order to update dependencies from and to other modules.
 %
 %  cfg_util('setdef', mod_cfg_id, item_mod_id, val)
-% 
+%
 % Like cfg_util('setval',...) but set items in the defaults tree. This is
 % only supported for cfg_leaf items, not for cfg_choice, cfg_repeat,
 % cfg_branch items.
@@ -378,10 +378,10 @@ function varargout = cfg_util(cmd, varargin)
 % Return information about the current job (or the part referenced by the
 % input cell array mod_job_idlist). Output arguments
 % * mod_job_idlist - cell list of module ids (same as input, if provided)
-% * str            - cell string of names of modules 
+% * str            - cell string of names of modules
 % * sts            - array of all set status of modules
 % * dep            - array of dependency status of modules
-% * sout           - array of output description structures 
+% * sout           - array of output description structures
 % Each module configuration may provide a callback function 'vout' that
 % returns a struct describing module output variables. See 'cfg_exbranch'
 % for details about this callback, output description and output structure.
@@ -400,7 +400,7 @@ function varargout = cfg_util(cmd, varargin)
 % node.
 % Use cfg_util('ismod_cfg_id') and cfg_util('isitem_mod_id') to determine
 % whether returned ids are valid or not.
-% Tag strings should begin at the root level of an application configuration, 
+% Tag strings should begin at the root level of an application configuration,
 % not at the matlabbatch root level.
 %
 %  mod_cfg_id = cfg_util('tag2mod_cfg_id', tagstr)
@@ -416,7 +416,7 @@ function varargout = cfg_util(cmd, varargin)
 % completely rewritten based on an object oriented model of the
 % configuration tree.
 %
-% This code is part of a batch job configuration system for MATLAB. See 
+% This code is part of a batch job configuration system for MATLAB. See
 %      help matlabbatch
 % for a general overview.
 %_______________________________________________________________________
@@ -536,7 +536,7 @@ switch lower(cmd),
         else
             sts = false;
         end
-        varargout{1} = sts;    
+        varargout{1} = sts;
     case 'filljobui',
         cjob = varargin{1};
         if cfg_util('isjob_id', cjob)
@@ -733,7 +733,7 @@ switch lower(cmd),
         if cfg_util('isjob_id', cjob) && ~isempty(jobs(cjob).cjrun)
             [tag, val] = harvest(jobs(cjob).cjrun, jobs(cjob).cjrun, false, ...
                                 true);
-        end            
+        end
         varargout{1} = tag;
         varargout{2} = val;
     case 'initcfg',
@@ -758,7 +758,7 @@ switch lower(cmd),
             varargout{1} = cjob;
             varargout{2} = {};
         else
-            if ischar(varargin{1}) 
+            if ischar(varargin{1})
                 % assume single job filename
                 [job, jobdedup] = cfg_load_jobs(varargin{1});
             elseif iscell(varargin{1}) && all(cellfun('isclass', varargin{1}, 'struct'))
@@ -820,7 +820,7 @@ switch lower(cmd),
             isnumeric(varargin{1}) && ...
             varargin{1} <= numel(jobs) ...
             && (~isempty(jobs(varargin{1}).cjid2subs) ...
-                || varargin{1} == numel(jobs));            
+                || varargin{1} == numel(jobs));
     case 'ismod_cfg_id'
         varargout{1} = isstruct(varargin{1}) && ...
             all(isfield(varargin{1}, {'type','subs'}));
@@ -1175,7 +1175,7 @@ for k = 1:2:numel(cjsubs)
     % add path to module to cj
     job.cj = subsasgn(job.cj, cjsubs(1:(k+1)), cm);
 end
-% set id in module    
+% set id in module
 job.cj = subsasgn(job.cj, [cjsubs substruct('.', 'id')], cjsubs);
 job.cjid2subs{id} = cjsubs;
 % clear run configuration
@@ -1250,7 +1250,7 @@ function job = local_delfromjob(job, id)
 % are set to {} in order to keep relationships within the tree consistent
 % and in order to keep other ids valid. A rebuild of job.cj and an update
 % of changed subsrefs would be possible (and needs to be done before
-% e.g. saving the job). 
+% e.g. saving the job).
 if isempty(job.cjid2subs) || isempty(job.cjid2subs{id}) || numel(job.cjid2subs) < id
     cfg_message('matlabbatch:cfg_util:invid', ...
             'Invalid id %d.', id);
@@ -1352,7 +1352,7 @@ end
 
 %-----------------------------------------------------------------------
 function [cj, cjid2subs] = local_getcjid2subs(cjin)
-% Find ids of exbranches. 
+% Find ids of exbranches.
 % find ids
 exspec = cfg_findspec({{'class', 'cfg_exbranch'}});
 tropts = cfg_tropts({{'class', 'cfg_exbranch'}}, 1, Inf, 0, Inf, false);

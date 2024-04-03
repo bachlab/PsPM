@@ -102,6 +102,9 @@ switch FunName
     options = autofill(options, 'channel',                'ppg2hb',   '*Int*Char'  );
     options = autofill(options, 'diagnostics',            0,          1                 );
     options = autofill(options, 'lsm',                    0,          [0,100-10^-10]    );
+    options = autofill(options, 'method',                 'classic',  {'classic', 'heartpy'});
+    options = autofill(options, 'python_path',            '',         '*Char');
+    options = autofill(options, 'missing',                {},         '*Char*Num');
   case 'data_editor'
     % 2.15 pspm_data_editor --
     % output_file does not have a default value

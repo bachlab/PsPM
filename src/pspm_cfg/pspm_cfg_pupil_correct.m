@@ -19,14 +19,18 @@ function [pupil_correct] = pspm_cfg_pupil_correct(job)
     screen_size_px.tag  = 'screen_size_px';
     screen_size_px.num  = [1 2];
     screen_size_px.val = {[NaN NaN]};
-    screen_size_px.help = {'Specify screen resolution ([width height]) in pixels. Only required if gaze data in the file is in pixels.'};
+    screen_size_px.help = {['Specify screen resolution ([width height]) in pixels. ',...
+      'Only required if gaze data in the file is in pixels. ',...
+      'Otherwise please leave as [NaN NaN]']};
 
     screen_size_mm      = cfg_entry;
     screen_size_mm.name = 'Screen size';
     screen_size_mm.tag  = 'screen_size_mm';
     screen_size_mm.num  = [1 2];
     screen_size_mm.val = {[NaN NaN]};
-    screen_size_mm.help = {'Specify screen size ([width height]) in milimeters. Only required if gaze data in the file is in pixels.'};
+    screen_size_mm.help = {['Specify screen size ([width height]) in milimeters. ',...
+      'Only required if gaze data in the file is in pixels. ',...
+      'Otherwise please leave as [NaN NaN]']};
 
     C_x      = cfg_entry;
     C_x.name = 'C_x';
