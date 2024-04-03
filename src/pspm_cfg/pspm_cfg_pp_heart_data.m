@@ -204,10 +204,10 @@ ppg2hb_method.val   = {'classic'};
 ppg2hb_method.help  = {['Convert the PPG data into heart rate by using the selected method.']};
 
 ppg2hb              = cfg_exbranch;
-ppg2hb.name         = 'Convert peripheral pulse oximetry to Heart Beat';
+ppg2hb.name         = 'Convert peripheral pulse oximetry (PPG) to Heart Beat';
 ppg2hb.tag          = 'ppg2hb';
 ppg2hb.val          = {ppg2hb_chan, ppg2hb_method};
-ppg2hb.help          = {['Convert Peripheral pulse oximetry to ', ...
+ppg2hb.help          = {['Convert Peripheral pulse oximetry (PPG) to ', ...
     'Heart Beat events.']};
 
 ecg2hp              = cfg_exbranch;
