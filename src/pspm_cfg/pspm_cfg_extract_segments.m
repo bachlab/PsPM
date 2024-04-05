@@ -23,13 +23,7 @@ datafile.help           = {['PsPM files from which data segments should ', ...
     'be extracted.'],' ',settings.datafilehelp};
 
 %% Channel
-channel                 = cfg_entry;
-channel.name            = 'Channel';
-channel.tag             = 'channel';
-channel.num             = [1 1];
-channel.strtype         = 'i';
-channel.help            = {['Channel in specified data file from which ', ...
-    'the segments should be extracted.']};
+channel                 = pspm_cfg_channel_selector('any');
 
 %% Condition file
 condition_file          = cfg_files;
@@ -125,22 +119,16 @@ extract_mode.help       = {['Either extract all information from a GLM ', ...
 
 %% Timeunit
 timeunit                = cfg_menu;
-timeunit.name           = 'Timeunit';
-timeunit.tag            = 'timeunit';
+timeunit.name           = 'Timeunits';
+timeunit.tag            = 'timeunits';
 timeunit.labels         = {'Seconds', 'Samples', 'Markers'};
 timeunit.values         = {'seconds', 'samples', 'markers'};
 timeunit.val            = {'seconds'};
-timeunit.help           = {['The timeunit in which conditions should be interpreted.']};
+timeunit.help           = {'The timeunit in which conditions should be interpreted.'};
 
 %% Marker channel
-marker_chan                = cfg_entry;
-marker_chan.name           = 'Marker channel';
-marker_chan.tag            = 'marker_chan';
-marker_chan.strtype        = 'i';
-marker_chan.num            = [1 1];
-marker_chan.val            = {-1};
-marker_chan.help           = {['Channel containing the markers referenced ', ...
-    'in the conditions. Only needed if options ''Timeunit'' is set to ''markers''.']};
+marker_chan                = pspm_cfg_channel_selector('Marker');
+
 
 %% Segment length
 segment_length          = cfg_entry;

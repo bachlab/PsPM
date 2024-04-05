@@ -10,7 +10,7 @@ function [sts] = pspm_remove_epochs(datafile, channel, epochfile, options)
 %               are defined therein.
 %   epochfile:  a filename which defines the epoch to be set to NaN. The epochs
 %               must be in seconds. This parameter is passed to pspm_get_timing().
-%   timeunits:  timeunit of the epochfile.
+%   timeunits:  timeunits of the epochfile.
 %   ┌─options:  [struct]
 %   └.channel_action:
 %               ['add'/'replace'] Defines whether the new channels should be

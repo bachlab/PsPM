@@ -39,14 +39,6 @@ elseif strcmp(bf, 'psrf_erl')
   model.bf.fhandle = str2func('pspm_bf_psrf_erl');
   model.bf.args = [];
 end
-% set default channel (hard coded)
-if isfield(job.chan, 'chan_def')
-  % get the value of the first field
-  fields = fieldnames(job.chan.chan_def);
-  s.type = '.';
-  s.subs = fields{1};
-  model.channel = subsref(job.chan.chan_def, s);
-end
 model.modality = modality;
 model.modelspec = modelspec;
 out = pspm_glm(model, options);
