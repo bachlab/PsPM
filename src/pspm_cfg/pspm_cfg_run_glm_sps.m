@@ -26,13 +26,6 @@ elseif any(strcmpi(rf,{'spsrf_gamma'}))
 end
 model.modality = modality;
 model.modelspec = modelspec;
-if isfield(job.chan.chan_def, 'chan_def_left')
-  model.channel = 'sps_l';
-elseif isfield(job.chan.chan_def, 'chan_def_right')
-  model.channel = 'sps_r';
-else
-  model.channel = 'sps';
-end
 out = pspm_glm(model, options);
 if exist('out', 'var') && isfield(out, 'modelfile')
   if ~iscell(out.modelfile)

@@ -64,9 +64,7 @@ else
 end
 % marker channel
 if isfield(job.timeunits, 'markers')
-  if job.timeunits.markers.mrk_chan ~= 0
-    options.marker_chan_num = job.timeunits.markers.mrk_chan;
-  end
+  options.marker_chan_num = pspm_cfg_channel_selector('run', job.timeunits.markers.chan);
 end
 % normalize
 model = pspm_update_struct(model, job, {'norm'});
@@ -93,10 +91,7 @@ else
   model.filter.down = job.filter.edit.down; % sampling rate
   model.filter.direction = job.filter.edit.direction; % sampling rate
 end
-% channel number
-if isfield(job.chan, 'chan_nr')
-  model.channel = job.chan.chan_nr;
-end
+model.channel = pspm_cfg_channel_selector('run', job.chan);
 if isfield(job.latency, 'free')
   model.latency = 'free';
   model.window = job.latency.free.time_window;

@@ -1,31 +1,10 @@
 function [out] = pspm_cfg_run_gaze_convert(job)
 % Updated on 26-02-2024 by Teddy
 fn = job.datafile{1};
+conversion = struct();
+conversion = pspm_update_struct(conversion, job, {'from', 'target', 'screen_width', 'screen_height', 'screen_distance'});
 options = struct();
 options = pspm_update_struct(options, job, {'channel_action'});
-if isfield(job.conversion, 'degree2sps')
-  % do degree to sps conversion
-  options = pspm_update_struct(options, job.conversion.degree2sps, {'eyes'});
-  [~, out] = pspm_convert_visangle2sps(fn, options);
-elseif isfield(job.conversion, 'pixel2unit')
-  args = job.conversion.pixel2unit;
-  [~, out] = pspm_convert_pixel2unit(fn, ...
-                                     args.channel, ...
-                                     args.unit, ...
-                                     args.width, ...
-                                     args.height, ...
-                                     args.screen_distance, ...
-                                     options);
-elseif isfield(job.conversion, 'distance2sps')
-  args = job.conversion.distance2sps;
-  args.target = 'sps';
-  [~, out] = pspm_convert_gaze(fn, ...
-                               args, ...
-                               options);
-elseif isfield(job.conversion, 'distance2degree')
-  args = job.conversion.distance2degree;
-  args.target = 'degree';
-  [~, out ] = pspm_convert_gaze(fn, ...
-                                args,  ...
-                                options);
-end
+options.channel = pspm_cfg_channel_selector('run', job.chan);
+[~, out] = pspm_convert_gaze(fn, conversion, options);
+

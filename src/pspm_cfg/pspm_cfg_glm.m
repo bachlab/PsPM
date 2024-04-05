@@ -270,8 +270,8 @@ timing.name    = 'Design';
 timing.tag     = 'data_design';
 timing.values  = {condfile, condition_rep, marker_cond ,no_condition};
 timing.help    = {['Specify the timing of the events within the design matrix. Timing can '...
-    'be specified in �seconds�, �markers� or �samples� with respect to the beginning of the ' ...
-    'data file. See �Time Units� settings. Conditions can be specified manually or by using ' ...
+    'be specified in "seconds", "markers" or "samples" with respect to the beginning of the ' ...
+    'data file. See "Time Units" settings. Conditions can be specified manually or by using ' ...
     'multiple condition files (i.e., an SPM-style mat file).']};
 
 % Nuisance
@@ -303,14 +303,8 @@ session_rep.num     = [1 Inf];
 session_rep.help    = {'Add the appropriate number of sessions here. These will be concatenated.'};
 
 % Marker Channel
-mrk_chan         = cfg_entry;
-mrk_chan.name    = 'Marker Channel';
-mrk_chan.tag     = 'mrk_chan';
-mrk_chan.strtype = 'i';
-mrk_chan.val     = {0};
-mrk_chan.num     = [1 1];
-mrk_chan.help    = {['Indicate the marker channel. By default (value 0) the first marker channel is ' ...
-    'assumed to contain the relevant markers.'], ['Markers are only used if you have ' ...
+mrk_chan         = pspm_cfg_channel_selector('marker');
+mrk_chan.help    = {[mrk_chan.help{1}, ' Markers are only used if you have ' ...
     'specified the time units as "markers".']};
 
 % Timeunits
@@ -352,30 +346,7 @@ norm.help         = {['Specify if you want to z-normalize the ', vars.modality, 
     'designs, this is highly recommended, but for between-subjects designs it needs to be set to "no". ']};
 
 % Channel
-chan_def          = cfg_const;
-chan_def.name     = 'Default';
-chan_def.tag      = 'chan_def';
-chan_def.val      = {0};
-chan_def.help     = {''};
-
-chan_nr           = cfg_entry;
-chan_nr.name      = 'Number';
-chan_nr.tag       = 'chan_nr';
-chan_nr.strtype   = 'i';
-chan_nr.num       = [1 1];
-chan_nr.help      = {''};
-
-chan              = cfg_choice;
-chan.name         = [vars.modality, ' Channel'];
-chan.tag          = 'chan';
-chan.val          = {chan_def};
-chan.values       = {chan_def,chan_nr};
-chan.help    = {['Indicate the channel containing the ', vars.modality, ' data.'], ['By default ' ...
-    'the last ', vars.modality ,' channel is assumed to contain the data for this model.'], ...
-    ['If the last ', vars.modality, ' channel does not contain the data for this', ...
-    ' model (e. g. there are two ', vars.modality, ' channels), ' ...
-    'indicate the the channel number (within the ', vars.modality, ...
-    ' file) that contains the data for this model.']};
+chan              = pspm_cfg_channel_selector(vars.modality);
 
 %settings if Create Stats Exclude = yes
 excl_segment_length         = cfg_entry;
@@ -391,7 +362,7 @@ excl_cutoff.name    = 'Cutoff';
 excl_cutoff.tag     = 'cutoff';
 excl_cutoff.strtype = 'r';
 excl_cutoff.num     = [1 1];
-excl_cutoff.help    = {['Maximum NaN ratio for a condition to be accepted for further analysis.']};
+excl_cutoff.help    = {'Maximum NaN ratio for a condition to be accepted for further analysis.'};
 
 exclude_missing_yes      = cfg_branch;
 exclude_missing_yes.name = 'Settings for stats exclude';
