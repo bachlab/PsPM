@@ -49,7 +49,7 @@ if isfield(job.chan, 'chan_nr')
   model.channel = job.chan.chan_nr;
 end
 if strcmp(timeunits, 'markers')
-  options.marker_chan_num = job.timeunits.(timeunits).mrk_chan;
+  options.marker_chan_num = pspm_cfg_channel_selector('run', job.timeunits.markers.chan);
 end
 if ~isempty(job.theta) % why is this '~isempty'?
   options.theta = job.theta;
