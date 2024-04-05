@@ -47,6 +47,10 @@ if ~isempty(settings) % initialise settings
 end
 p = path;
 fs = filesep;
+pth = fileparts(which('pspm_guide'));
+pth = [pth, fs];
+pspm_text(pth);
+load(fullfile(pth,'pspm_text.mat'))
 % 2.3 check if subfolders are already in path
 % get subfolders
 current_path = fileparts(mfilename('fullpath'));
@@ -63,16 +67,12 @@ if numel(subfolders(mem)) == 0
   warning(warntext_subfolder);
 end
 % 2.4 check whether scralyze is on the path
-pth = fileparts(which('pspm_guide'));
 if ~contains(p, pth)
   scrpath=1;
   addpath(pth);
 else
   scrpath=0;
 end
-pth = [pth, fs];
-pspm_text(pth);
-load(fullfile(pth,'pspm_text.mat'))
 % 2.5 check matlab version
 v = version;
 if str2double(v(1:3)) < 7.1
@@ -258,7 +258,7 @@ defaults.importchanneltypes = defaults.channeltypes(indx==1);
 % DEVELOPERS NOTES
 % in order to implement new datatype import, add a field
 % to defaults.import.datatypes and create the associated pspm_get_xxx
-% function. See first datatype (CED spike) for explanations.
+% function. See first datatype (CED smr) for explanations.
 
 % TEMPLATE
 % defaults.import.datatypes(i) =
@@ -277,7 +277,7 @@ defaults.importchanneltypes = defaults.channeltypes(indx==1);
 %
 % 4.1 Cambridge Electronic Design (CED) Spike file -- smr
 defaults.import.datatypes(1) = struct(...
-  'short',            'spike',...
+  'short',            'smr',...
   'long',             'CED Spike (.smr)',...
   'ext',              'smr',...
   'funct',            @pspm_get_smr,...

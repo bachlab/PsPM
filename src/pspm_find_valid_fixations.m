@@ -65,16 +65,16 @@ function [sts, fn, pos_of_channel] = pspm_find_valid_fixations(fn, varargin)
 %                     mode "fixation" and distance or pixel units for mode 
 %                     "bitmap".
 %                     Default is 'pupil'. 
+% ● Developer note
+%   Additional i/o options for recursive calls are not included in the help. 
+%   (1) fn can be a data structure as permitted by pspm_load_data, 
+%   (2) the output argument pos_of_channels is an index of the channel(s)
+%   that was/were replaced or added
 % ● History
 %   Introduced in PsPM 4.0
 %   Written in 2016 Tobias Moser (University of Zurich)
-%   Maintained in 2021 by Teddy Chao (UCL)
+%   Updated in 2021 by Teddy
 %   Channel logic changed in 2024 by Dominik Bach (Uni Bonn)
-
-% Developer note: additional i/o options for recursive calls are not
-% included in the help. (1) fn can be a data structure as permitted by
-% pspm_load_data, (2) the output argument pos_of_channels is an index of
-% the channel(s) that was/were replaced or added
 
 %% initialise
 global settings;

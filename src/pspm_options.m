@@ -195,14 +195,15 @@ switch FunName
     options = autofill(options, 'target',                 'screen',   '*Char'           );
   case 'extract_segments'
     % 2.22 pspm_extract_segments --
-    options = autofill(options, 'length',                 10,         '>=', 0           );
+    options = autofill(options, 'length',                 10,         '>', 0            );
     options = autofill(options, 'norm',                   0,          1                 );
     options = autofill(options, 'outputfile',             '',         '*Char'           );
     options = autofill(options, 'overwrite',              0,          1                 );
     options = autofill(options, 'plot',                   0,          1                 );
-    options = autofill(options, 'timeunit',               'seconds',  {'seconds', ...
+    options = autofill(options, 'timeunits',              'seconds',  {'seconds', ...
                                                                       'samples',...
                                                                       'markers'}        );
+    options = autofill(options, 'marker_chan_num',        'marker',   '*Num*Char'       );  
     options = fill_extract_segments(options);
   case 'find_sounds'
     % 2.23 pspm_find_sounds --
@@ -228,13 +229,13 @@ switch FunName
     options = fill_find_valid_fixations(options);
   case 'gaze_pp'
     % 2.25 pspm_gaze_pp --
-    options = autofill(options, 'channel',                'gaze',      '*Int*Char'      );  
+    options = autofill(options, 'channel',                'gaze',      '*Int*Char'      );
     options = autofill_channel_action(options,            'add',      {'replace',...
                                                                       'none'}           );
   case 'get_markerinfo'
     % 2.26 pspm_get_markerinfo --
     options = autofill(options, 'filename',               '',         '*Char'           );
-    options = autofill(options, 'markerchan',             -1,         '*Int'            );
+    options = autofill(options, 'markerchan',             0,         '*Int'            );
     options = autofill(options, 'overwrite',              0,          1                 );
   case 'get_rf'
     % 2.27 pspm_get_rf --
@@ -293,7 +294,7 @@ switch FunName
     options = autofill(options, 'overwrite',              0,          1                 );
   case 'pp'
     % 2.34 pspm_pp --
-    options = autofill(options, 'overwrite',              0,          1                 );
+    options = autofill_channel_action(options);
   case 'prepdata'
     options = autofill(options, 'fillnan',                1,          0                 );
   case 'process_illuminance'
@@ -308,7 +309,7 @@ switch FunName
     options.bf = autofill(options.bf,   'dilation',       struct(),   '*Struct'         );
     options.bf = autofill(options.bf,   'duration',       20,         '>=',  0          );
     options.bf = autofill(options.bf,   'offset',         0.2,        '>=',  0          );
-    options.bf.constriction = autofill(options.bf.constriction, 'fhandle', @pspm_bf_lcrf_gm);
+    options.bf.constriction = autofill(options.bf.constriction, 'fhandle', @pspm_bf_lcrf_gm); 
     options.bf.dilation     = autofill(options.bf.dilation,     'fhandle', @pspm_bf_ldrf_gm);
   case 'pupil_correct_eyelink'
     % 2.36 pspm_pupil_correct_eyelink --
@@ -332,6 +333,7 @@ switch FunName
     options = autofill(options, 'channel_combine',        'none',     '*Int*Char'       );
     options = autofill(options, 'plot_data',              0,          1                 );
     options = autofill(options, 'segments',               {},         '*Cell'           );
+    options = autofill(options, 'chan_valid_cutoff',      0.1,        '*Num'            );
   case 'remove_epochs'
     % 2.38 pspm_remove_epochs --
     options = autofill_channel_action(options);
@@ -511,6 +513,8 @@ switch nargin
             flag_is_allowed_value = strcmp(options.(field_name), default_value);
           case 'cell'
             flag_is_allowed_value = isequal(options.(field_name), default_value);
+          case 'function_handle'
+            flag_is_allowed_value = isequal(options.(field_name), default_value);
         end
       end
       if ~flag_is_allowed_value
@@ -580,7 +584,14 @@ switch nargin
           case 'cell'
             allowed_value = optional_value;
             allowed_value{end+1} = default_value;
-            flag_is_allowed_value = any(strcmp(options.(field_name), allowed_value));
+            switch class(optional_value{1})
+              case 'char'
+                flag_is_allowed_value = any(strcmp(options.(field_name), allowed_value));
+              case 'function_handle'
+                allowed_value_char = cellfun(@(x) {func2str(x)}, allowed_value);
+                candidate_value_char = func2str(options.(field_name));
+                flag_is_allowed_value = any(strcmp(candidate_value_char, allowed_value_char));
+            end
         end
       if ~flag_is_allowed_value
         allowed_values_message = generate_allowed_values_message(default_value, optional_value);
@@ -838,53 +849,6 @@ elseif ~strcmpi( options.nan_output,'screen')
   [path, ~, ~ ]= fileparts(options.nan_output);
   if 7 ~= exist(path, 'dir')
     warning('ID:invalid_input', 'Path for nan_output does not exist');
-    options.invalid = 1;
-    return
-  end
-end
-% 2.21.2 set default marker_chan, if it is a glm struct (only for non-raw data)
-if options.manual_chosen == 1 || ...
-    (options.manual_chosen == 0 && strcmpi(options.model_strc.modeltype,'glm'))
-  if ~isfield(options, 'marker_chan')
-    options.marker_chan = repmat({'marker'}, numel(options.data_fn),1);
-  elseif ~iscell(options.marker_chan)
-    options.marker_chan = repmat({options.marker_chan}, size(options.data_fn));
-  end
-end
-% 2.21.3 check mutual arguments (options)
-if strcmpi(options.timeunit, 'markers') && ...
-    options.manual_chosen == 2 && ...
-    ~isfield(options,'marker_chan')
-  warning('ID:invalid_input',...
-    '''markers'' specified as a timeunit but nothing was specified in ''options.marker_chan''');
-  options.invalid = 1;
-  return
-elseif strcmpi(options.timeunit, 'markers') && ...
-    options.manual_chosen == 2 && ...
-    ~all(size(options.data_raw) == size(options.marker_chan))
-  warning('ID:invalid_input',...
-    '''data_raw'' and ''options.marker_chan'' do not have the same size.');
-  options.invalid = 1;
-  return
-elseif strcmpi(options.timeunit, 'markers') && ...
-    options.manual_chosen == 1 && ...
-    ~all(size(options.data_fn) == size(options.marker_chan))
-  warning('ID:invalid_input', ...
-    '''data_fn'' and ''options.marker_chan'' do not have the same size.');
-  options.invalid = 1;
-  return
-elseif options.manual_chosen == 1 || ...
-    (options.manual_chosen == 0 && strcmpi(options.model_strc.modeltype,'glm'))
-  if any(cellfun(@(x) ~strcmpi(x, 'marker') && ~isnumeric(x), options.marker_chan))
-    warning('ID:invalid_input', ...
-      'Options.marker_chan has to be numeric or ''marker''.');
-    options.invalid = 1;
-    return
-  elseif strcmpi(options.timeunit, 'markers') ...
-      && any(cellfun(@(x) isnumeric(x) && x <= 0, options.marker_chan))
-    warning('ID:invalid_input', ...
-      ['''markers'' specified as a timeunit but ', ...
-      'no valid marker channel is defined.']);
     options.invalid = 1;
     return
   end

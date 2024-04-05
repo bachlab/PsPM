@@ -184,28 +184,30 @@ fprintf('Computing GLM: %s ...\n', model.modelfile);
 fprintf('Getting data ...');
 nFile = numel(model.datafile);
 for iFile = 1:nFile
-  % 3.3 get and filter data
-  [sts, data] = pspm_load_channel(model.datafile{iFile}, model.channel, model.modality);
-  if sts == -1, return; end
-  y{iFile} = data.data(:);
-  sr(iFile) = data.header.sr;
-  fprintf('.');
-  if any(strcmp(model.timeunits, {'marker', 'markers','markervalues'}))
-    [sts, data] = pspm_load_channel(model.datafile{iFile}, options.marker_chan_num, 'marker');
-    if sts == -1
-      warning('ID:invalid_input', 'Could not load the specified markerchannel');
-      return
+    % 3.3 get and filter data
+    [sts, data] = pspm_load_channel(model.datafile{iFile}, model.channel, model.modality);
+    if sts == -1, return; end
+    y{iFile} = data.data(:);
+    sr(iFile) = data.header.sr;
+    fprintf('.');
+    if any(strcmp(model.timeunits, {'marker', 'markers','markervalues'}))
+        [sts, data] = pspm_load_channel(model.datafile{iFile}, options.marker_chan_num, 'marker');
+        if sts == -1
+            warning('ID:invalid_input', 'Could not load the specified markerchannel');
+            return
+        end
+        events{iFile} = data.data(:) * data.header.sr;
+        if strcmp(model.timeunits,'markervalues')
+            model.timing{iFile}.markerinfo = data.markerinfo;
+        end
+    else
+        events{iFile} = [];
     end
-    events{iFile} = data.data(:) * data.header.sr;
-    if strcmp(model.timeunits,'markervalues')
-      model.timing{iFile}.markerinfo = data.markerinfo;
-    end
-  end
 end
 if nFile > 1 && any(diff(sr) > 0)
-  fprintf('\nSample rate differs between sessions.\n')
+    fprintf('\nSample rate differs between sessions.\n')
 else
-  fprintf('\n');
+    fprintf('\n');
 end
 
 
@@ -370,66 +372,43 @@ for iSn = 1:nFile
   M = [M; ones(newsr * model.bf.shiftbf, 1); newmissing];
   % convert regressor information to samples
   if ~isempty(multi)
-    for n = 1:numel(multi(iSn).names)
-      % look for index
-      name_idx = find(strcmpi(names, multi(iSn).names(n)));
-      if numel(name_idx) > 1
-        warning(['Name was found multiple times, ', ...
-          'will take first occurence.']);
-        name_idx = name_idx(1);
-      elseif numel(name_idx) == 0
-        % append
-        name_idx = numel(names) + 1;
+      if strcmpi(model.timeunits, 'samples')
+          sn_sr = newsr/sr(iSn);
+      else
+          sn_sr = sr(iSn);
       end
-      % convert onsets to samples
-      switch model.timeunits
-        case 'samples'
-          newonsets    = round(multi(iSn).onsets{n} * newsr/sr(iSn));
-          newdurations = round(multi(iSn).durations{n} * newsr/sr(iSn));
-        case 'seconds'
-          newonsets    = round(multi(iSn).onsets{n} * newsr);
-          newdurations = round(multi(iSn).durations{n} * newsr);
-        case 'markers'
-          try
-            % markers are timestamps in seconds
-            newonsets = round(events{iSn}(multi(iSn).onsets{n}) ...
-              * newsr);
-          catch
-            warning(['\nSome events in condition %01.0f were ', ...
-              'not found in the data file %s'], n, ...
-              model.datafile{iSn}); return;
+      [msts, newonsets, newdurations] = pspm_multi2index(model.timeunits, ...
+          multi(iSn), sn_sr, tmp.snduration(iSn), events(iSn));
+      if msts < 1, return; end
+      for n = 1:numel(multi(iSn).names)
+           if iSn == 1
+              names{n} = multi(1).names{n};
+              onsets{n} = newonsets{n}{1}(:);
+              durations{n} = newdurations{n}{1}(:);
+              if isfield(multi, 'pmod') && (numel(multi(iSn).pmod) >= n)
+                  for p = 1:numel(multi(iSn).pmod(n).param)
+                      pmod(n).param{p} = multi(iSn).pmod(n).param{p}(:);
+                  end
+                  pmod(n).name = multi(1).pmod(n).name;
+              end
+          else
+               % shift conditions for sessions not being the first
+               % (tmp.snduration is in samples)
+              newonsets{n}{1}(:) = newonsets{n}{1}(:) + sum(tmp.snduration(1:(iSn - 1)));
+              % then insert
+              onsets{n} = [onsets{n}; newonsets{n}{1}(:)];
+              durations{n} = [durations{n}; newdurations{n}{1}(:)];
+              if isfield(multi, 'pmod') && (numel(multi(iSn).pmod) >= n)
+                  for p = 1:numel(multi(iSn).pmod(n).param)
+                      pmod(n).param{p} = [pmod(n).param{p}; multi(iSn).pmod(n).param{p}(:)];
+                  end
+              end
           end
-          newdurations = multi(iSn).durations{n};
       end
-      % get the first multiple condition definition --
-      if numel(names) < name_idx
-        names{name_idx} = multi(iSn).names{n};
-        onsets{name_idx} = [];
-        durations{name_idx} = [];
-        if isfield(multi, 'pmod') && (numel(multi(iSn).pmod) >= n)
-          for p = 1:numel(multi(iSn).pmod(n).param)
-            pmod(name_idx).param{p} = [];
-          end
-          pmod(name_idx).name = multi(iSn).pmod(n).name;
-        end
-      end
-      % shift conditions for sessions not being the first
-      if iSn > 1
-        newonsets = newonsets + sum(tmp.snduration(1:(iSn - 1)));
-      end
-      onsets{name_idx} = [onsets{name_idx}; newonsets(:)];
-      durations{name_idx} = [durations{name_idx}; newdurations(:)];
-      if isfield(multi, 'pmod') && (numel(multi(iSn).pmod) >= n)
-        for p = 1:numel(multi(iSn).pmod(n).param)
-          pmod(name_idx).param{p} = [pmod(name_idx).param{p}; ...
-            multi(iSn).pmod(n).param{p}(:)];
-        end
-      end
-    end
   else
-    names = {};
-    onsets = {};
-    durations = {};
+      names = {};
+      onsets = {};
+      durations = {};
   end
 end
 % 11.1 normalise if desired --
@@ -714,7 +693,7 @@ end
 
 if isfield(options,'exclude_missing')
   if options.exclude_missing.segment_length > 0
-    [sts,segments] = pspm_extract_segments('auto', glm, ...
+    [sts,segments] = pspm_extract_segments('model', glm, ...
       struct('length', options.exclude_missing.segment_length));
     if sts == -1
       warning('ID:invalid_input', 'call of pspm_extract_segments failed');

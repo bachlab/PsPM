@@ -104,8 +104,8 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       sr = 100;
       duration = 10+shiftbf;
       model.norm = norm;
-      model.modelfile = 'testdatafile987654.mat';
-      model.datafile = 'testdatafile897654.mat';
+      model.modelfile = 'GLMTestModelFile.mat';
+      model.datafile = 'GLMTestDataFile.mat';
       model.timeunits = 'seconds';
       model.filter = struct('lpfreq', 'none', 'lporder', 1,  ...
         'hpfreq', 'none', 'hporder', 1, ...
@@ -174,8 +174,8 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       sr = 100;
       duration = 10+shiftbf;
       model.norm = norm;
-      model.modelfile = 'testdatafile987654.mat';
-      model.datafile = 'testdatafile897654.mat';
+      model.modelfile = 'GLMTestModelFile.mat';
+      model.datafile = 'GLMTestDataFile.mat';
       model.timeunits = 'seconds';
       model.filter = struct('lpfreq', 'none', 'lporder', 1,  ...
         'hpfreq', 'none', 'hporder', 1, ...
@@ -253,8 +253,8 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       sr = 100;
       duration = 10+shiftbf;
       model.norm = norm;
-      model.modelfile = 'testdatafile987654.mat';
-      model.datafile = 'testdatafile897654.mat';
+      model.modelfile = 'GLMTestModelFile.mat';
+      model.datafile = 'GLMTestDataFile.mat';
       model.timeunits = 'seconds';
       model.filter = struct('lpfreq', 'none', 'lporder', 1,  ...
         'hpfreq', 'none', 'hporder', 1, ...
@@ -293,9 +293,9 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       sr = 100;
       duration = 10+ shiftbf;
       model.norm = norm;
-      model.modelfile = 'testdatafile987654.mat';
-      model.datafile{1} = 'testdatafile897654.mat';
-      model.datafile{2} = 'testdatafile897655.mat';
+      model.modelfile = 'GLMTestModelFile.mat';
+      model.datafile{1} = 'GLMTestDataFile.mat';
+      model.datafile{2} = 'GLMTestDataFile2.mat';
       model.filter = struct('lpfreq', 'none', 'lporder', 1,  ...
         'hpfreq', 'none', 'hporder', 1, ...
         'down', sr, ...
@@ -355,8 +355,8 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       sr = 100;
       duration = 10 + shiftbf;
       model.norm = norm;
-      model.modelfile = 'testdatafile987654.mat';
-      model.datafile = 'testdatafile897654.mat';
+      model.modelfile = 'GLMTestModelFile.mat';
+      model.datafile = 'GLMTestDataFile.mat';
       model.timeunits = 'seconds';
       model.filter = struct('lpfreq', 'none', 'lporder', 1,  ...
         'hpfreq', 'none', 'hporder', 1, ...
@@ -393,11 +393,11 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       delete(model.modelfile);
     end
     function glm = test6(this)
-      model.modelfile = 'testdatafile987654.mat';
-      model.datafile{1} = 'testdatafile897654.mat';
-      model.datafile{2} = 'testdatafile897655.mat';
-      model.timing{1} = 'testdatafile8597657.mat';
-      model.timing{2} = 'testdatafile8597658.mat';
+      model.modelfile = 'GLMTestModelFile.mat';
+      model.datafile{1} = 'GLMTestDataFile.mat';
+      model.datafile{2} = 'GLMTestDataFile2.mat';
+      model.timing{1} = 'GLMTestTimingFile.mat';
+      model.timing{2} = 'GLMTestTimingFile2.mat';
       model.timeunits = 'seconds';
       model.filter = struct('lpfreq', 50, 'lporder', 1,  ...
         'hpfreq', 10, 'hporder', 1, ...
@@ -443,6 +443,48 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       delete(model.timing{1});
       delete(model.timing{2});
     end
+    function test_eye(this, cutoff)
+      bf1 = 1;
+      offset = 0;
+      sr = 100;
+      duration = 200;
+      segment_length = 10-1/sr;
+      model.modelfile = 'TestGLMEyeModel.mat';
+      model.datafile = 'TestGLMEyeData.mat';
+      model.timeunits = 'seconds';
+      model.filter = struct(...
+        'lpfreq', 'none', 'lporder', 1,  ...
+        'hpfreq', 'none', 'hporder', 1, ...
+        'down', sr,'direction', 'uni');
+      model.bf.fhandle = @(td) pspm_glm_test.kron_delta(td,duration,[0 1],0,0);
+      model.timing.names{1} = 'cond_a';
+      model.timing.onsets{1} = [10 40 70 100]';
+      model.timing.names{2} = 'cond_b';
+      model.timing.onsets{2} = [20 50 80 110]';
+      model.timing.names{3} = 'cond_c';
+      model.timing.onsets{3} = [30 60 90 120]';
+      Y1 = pspm_glm_test.testdata_gen(model.timing.onsets{1}, bf1, offset, 0,  sr, duration);
+      Y2 = pspm_glm_test.testdata_gen(model.timing.onsets{2}, bf1, offset, 0,  sr, duration);
+      Y3 = pspm_glm_test.testdata_gen(model.timing.onsets{3}, bf1, offset, 0,  sr, duration);
+      Y = Y1 + Y2 +Y3;
+      pspm_glm_test.save_datafile_sps(Y, sr, duration, model.datafile);
+      options = struct('exclude_missing', struct('segment_length',segment_length,'cutoff',cutoff),...
+        'overwrite',1);
+      % test left eye
+      model.channel = 'sps_l';
+      model.modelspec = 'sps';
+      model.modality = 'sps';
+      this.verifyWarningFree(@() pspm_glm(model, options));
+      % test right eye
+      model.channel = 'sps_r';
+      this.verifyWarningFree(@() pspm_glm(model, options));
+      % test best eye
+      model.channel = 'sps';
+      this.verifyWarningFree(@() pspm_glm(model, options));
+      % clean up
+      delete(model.datafile);
+      delete(model.modelfile);
+    end
   end
   methods(Test, ParameterCombination='exhaustive')
     function glm = test_extract_missing(this, cutoff, nan_percent)
@@ -451,8 +493,8 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       sr = 100;
       duration = 200;
       segment_length = 10-1/sr;
-      model.modelfile = 'test_extract_missing_model.mat';
-      model.datafile = 'test_extract_missing_data.mat';
+      model.modelfile = 'GLMTestExtraMissingModel.mat';
+      model.datafile = 'GLMTestExtraMissingData.mat';
       model.timeunits = 'seconds';
       model.filter = struct(...
         'lpfreq', 'none', 'lporder', 1,  ...
@@ -564,6 +606,29 @@ classdef pspm_glm_test < matlab.unittest.TestCase
         data{2}.header.sr = 1;
         data{2}.header.chantype = 'marker';
         data{2}.header.units = 'events';
+      end
+      save(fn, 'data', 'infos');
+    end
+    function save_datafile_sps(Y, sr, duration, fn, onsets)
+      infos.duration = duration;
+      infos.source = [];
+      data{1}.data = Y;
+      data{1}.header.sr = sr;
+      data{1}.header.chantype = 'sps';
+      data{1}.header.units = 'unknown';
+      data{2}.data = Y;
+      data{2}.header.sr = sr;
+      data{2}.header.chantype = 'sps_l';
+      data{2}.header.units = 'unknown';
+      data{3}.data = Y;
+      data{3}.header.sr = sr;
+      data{3}.header.chantype = 'sps_r';
+      data{3}.header.units = 'unknown';
+      if nargin > 4
+        data{4}.data = onsets;
+        data{4}.header.sr = 1;
+        data{4}.header.chantype = 'marker';
+        data{4}.header.units = 'events';
       end
       save(fn, 'data', 'infos');
     end

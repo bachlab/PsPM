@@ -6,14 +6,28 @@ filtertype = fieldnames(job.filtertype);
 filtertype = filtertype{1};
 datafile = job.datafile;
 datafile = datafile{1};
-channelnumber = job.chan_nr;
+channelnumber = pspm_cfg_channel_selector('run', job);
 switch filtertype
   case 'median'
     n = job.filtertype.(filtertype).nr_time_pt;
-    out = pspm_pp(filtertype, datafile, n, channelnumber, options);
+    out = pspm_pp(filtertype, datafile, channelnumber, n, options);
   case 'butter'
-    freq = job.filtertype.(filtertype).freq;
-    out = pspm_pp(filtertype, datafile, freq, channelnumber, options);
+    filt = struct();
+    if isfield(job.filtertype.(filtertype).freqLP, 'freqLP')
+      filt.lpfreq  = job.filtertype.(filtertype).freqLP.freqLP;
+    else
+      filt.lpfreq  = 'none';
+    end
+    filt.lporder   = job.filtertype.(filtertype).orderLP;
+    if isfield(job.filtertype.(filtertype).freqHP, 'freqHP')
+      filt.hpfreq  = job.filtertype.(filtertype).freqHP.freqHP;
+    else
+      filt.hpfreq  = 'none';
+    end
+    filt.hporder   = job.filtertype.(filtertype).orderHP;
+    filt.direction = job.filtertype.(filtertype).direction;
+    filt.down      = job.filtertype.(filtertype).down.down;
+    out = pspm_pp(filtertype, datafile, channelnumber, filt, options);
   case 'scr_pp'
     scr_job = job.filtertype.(filtertype);
     options = pspm_update_struct(options, scr_job, {'min',...
@@ -21,7 +35,7 @@ switch filtertype
                                                     'slope',...
                                                     'deflection_threshold',...
                                                     'data_island_threshold',...
-                                                    'expand_epochs'})
+                                                    'expand_epochs'});
     if isfield(scr_job.missing_epochs, 'write_to_file')
       if isfield(scr_job.missing_epochs.write_to_file,'filename') && ...
           isfield(scr_job.missing_epochs.write_to_file,'outdir')
