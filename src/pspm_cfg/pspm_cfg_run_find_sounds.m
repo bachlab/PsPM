@@ -16,8 +16,12 @@ switch f{1}
   case 'create_chan'
     options.diagnostics = false;
     options = pspm_update_struct(options, job.output.create_chan, 'channel_action');
-    [~, infos] = pspm_find_sounds(file, options);
-    out = infos.channel;
+    [sts, infos] = pspm_find_sounds(file, options);
+    if sts == 1
+        out = infos.channel;
+    else
+        out = 0;
+    end
   case 'diagnostic'
     d = job.output.diagnostic;
     if isfield(d.create_corrected_chan, 'yes')

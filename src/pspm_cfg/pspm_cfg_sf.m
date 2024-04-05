@@ -189,14 +189,8 @@ epochs.values = {epochfile, epochentry};
 epochs.help   = {''};
 
 %% Marker Channel
-mrk_chan         = cfg_entry;
-mrk_chan.name    = 'Marker Channel';
-mrk_chan.tag     = 'mrk_chan';
-mrk_chan.strtype = 'i';
-mrk_chan.val     = {0};
-mrk_chan.num     = [1 1];
-mrk_chan.help    = {['Indicate the marker channel. By default (value 0) the first marker channel is ' ...
-    'assumed to contain the relevant markers.'], ['Markers are only used if you have ' ...
+mrk_chan         = pspm_cfg_channel_selector('Marker');
+mrk_chan.help    = {mrk_chan.help{1} , ['Markers are only used if you have ' ...
     'specified the time units as "markers".']};
 
 
@@ -235,31 +229,8 @@ timeunits.help    = {['Indicate the time units on which the specification of the
     'data were trimmed.']};
 
 %% Channel nr
-% Channel number default
-chan_def         = cfg_const;
-chan_def.name    = 'Default';
-chan_def.tag     = 'chan_def';
-chan_def.val     = {0};
-chan_def.help    = {''};
-
-% Channel number
-chan_nr         = cfg_entry;
-chan_nr.name    = 'Number';
-chan_nr.tag     = 'chan_nr';
-chan_nr.strtype = 'r';
-chan_nr.num     = [1 1];
-chan_nr.help    = {''};
-
 % Channel
-chan        = cfg_choice;
-chan.name   = 'Channel';
-chan.tag    = 'chan';
-chan.val    = {chan_def};
-chan.values = {chan_def, chan_nr};
-chan.help   = {'Indicate the channel containing the SCR data.', ['By default the first SCR channel is ' ...
-    'assumed to contain the data for this model.'], ['If the first SCR channel does not contain the data ' ...
-    'for this model (e. g. there are two SCR channels), indicate the channel number (within the SCR file) ' ...
-    'that contains the data for this model.']};
+chan        = pspm_cfg_channel_selector('SCR');
 
 %% Overwrite file
 overwrite         = cfg_menu;
