@@ -1,37 +1,31 @@
 function out = pspm_cfg_channel_selector(channame, varargin)
 % ● Description
-% pspm_cfg_channel_selector generates a standardised matlabbatch entry for
-% channel selection
+% pspm_cfg_channel_selector generates a standardised matlabbatch entry for 
+% channel selection 
 % ● Format
 %   sts = pspm_cfg_channel_selector(channeltype)
 %   sts = pspm_cfg_channel_selector('run', job)
 % ● Arguments
-%   ┌──channeltype (either of the following values)
-%   │  ├─(1) a channeltype string generates a default channel of this type,
-%   │  │     and a numerical channel selector.
-%   │  ├─(2) 'pupil'
-%   │  │     generates a choice of 'combined', 'left', 'right', 'pupil' (default),
-%   │  │     and a numerical channel selector.
-%   │  ├─(3) 'pupil_both'
-%   │  │     like 'pupil' but with the option of selecting both pupils.
-%   │  ├─(4) 'pupil_none'
-%   │  │     like 'pupil' but with the option of selecting no channel
-%   │  │     (used for pspm_pupil_pp).
-%   │  ├─(5) 'gaze'
-%   │  │     generates a choice of 'combined', 'left', 'right', 'gaze' (default),
-%   │  │     and a numerical selector for an x/y pair of channels.
-%   │  ├─(6) 'any'
-%   │  │     generates a string channel selector for at most one channel.
-%   │  └─(7) 'many'
-%   │        generates a numerical channel selector for an arbitrary number of channels.
-%   └─job
-%     A struct that stores the variables from the GUI.
-% ● History
-%   Introduced in PsPM 6.2
-%   Written by Dominik R Bach (Uni Bonn) in 2024
+% channeltype: (1) a channeltype string - generates a default channel of 
+%                  this type, and a numerical channel selector
+%              (2) 'pupil' - generates a choice of 'combined', 'left',
+%                  'right', 'pupil' (default), and a numerical channel 
+%                   selector
+%              (3) 'pupil_both' - like 'pupil' but with the option of
+%                   selecting both pupils
+%              (4) 'pupil_none' - like 'pupil' but with the option of
+%                   selecting no channel (used for pspm_pupil_pp)
+%              (5) 'gaze' - generates a choice of 'combined', 'left',
+%                  'right', 'gaze' (default), and a numerical selector for 
+%                   an x/y pair of channels 
+%              (5) 'any' - generates a string channel selector for at most
+%                   one channel
+%              (6) 'many' - generates a numerical channel selector for an
+%                   arbitrary number of channels
+
 
 % check input
-if nargin == 0
+if nargin == 0 
     channame = '';
 end
 
@@ -55,7 +49,7 @@ if strcmpi(channame, 'run')
         end
     end
 
-%% gather channel selection in matlabbatch
+%% gather channel selection in matlabbatch  
 % numerical or string definition
 elseif strcmpi(channame, 'any')
     out         = str_chan(channame);
@@ -95,7 +89,7 @@ elseif strcmpi(channame, 'gaze')
     out.help    = {sprintf('Specification of %s channels (default: follow precedence order).', 'gaze')};
 
 
-% numerical definition or default
+% numerical definition or default 
 else
     if strcmpi(channame, 'marker')
         pos_str = 'First';
@@ -118,7 +112,7 @@ end
 
 function out = def_chan(channame, pos_str)
     out      = cfg_const;
-    out.name = 'Default Channel';
+    out.name = 'Default channel';
     out.tag  = 'chan_def';
     out.val  = {0};
     out.help = {sprintf('%s %s channel.', pos_str, channame)};
@@ -126,7 +120,7 @@ end
 
 function out = num_chan(channame)
     out = cfg_entry;
-    out.name    = 'Channel Number';
+    out.name    = 'Channel number';
     out.tag     = 'chan_nr';
     out.strtype = 'i';
     out.num     = [1 1];
@@ -135,16 +129,16 @@ end
 
 function out = vec_chan(channame, n)
     out = cfg_entry;
-    out.name    = 'Channel Number';
+    out.name    = 'Channel number';
     out.tag     = 'chan_nr';
     out.strtype = 'i';
-    out.num     =  [1 n];
+    out.num     =  [1 n]; 
     out.help    = {sprintf('Specify %s channel numbers.', channame)};
 end
 
 function out = str_chan(channame)
     out         = cfg_entry;
-    out.name    = 'Channel Specification';
+    out.name    = 'Channel specification';
     out.tag     = 'chan_nr';
     out.strtype = 's';
     out.help    = {sprintf('Specify %s channel number or channel type (e.g., "scr", "ecg" or any other type accepted by PsPM.)', channame)};
@@ -154,9 +148,9 @@ function out = pupil_chan(menu_set, menu_default)
 
     labels                 = {'Combined pupil channel', 'Both pupil channels', 'Left pupil', 'Right pupil', 'Default', 'None'};
     values                 = {'pupil_c', 'both', 'pupil_l', 'pupil_r', 'pupil', ''};
-
+    
     out                    = cfg_menu;
-    out.name               = 'Channel Specification';
+    out.name               = 'Channel specification';
     out.tag                = 'chan_menu';
     out.labels             = labels(menu_set);
     out.values             = values(menu_set);
@@ -174,9 +168,9 @@ function out = gaze_chan(menu_set, menu_default)
 
     labels                 = {'Combined gaze channels', 'Left eye', 'Right eye', 'Default'};
     values                 = {{'gaze_x_c', 'gaze_y_c'},{'gaze_x_l', 'gaze_y_l'}, {'gaze_x_r', 'gaze_y_r'}, 'gaze'};
-
+    
     out                    = cfg_menu;
-    out.name               = 'Channel Specification';
+    out.name               = 'Channel specification';
     out.tag                = 'chan_menu';
     out.labels             = labels(menu_set);
     out.values             = values(menu_set);

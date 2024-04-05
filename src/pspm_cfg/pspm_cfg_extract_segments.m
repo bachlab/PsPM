@@ -184,7 +184,7 @@ nan_output.help         = {'Option to visulaize the percentages of NaN values of
 options                 = cfg_branch;
 options.name            = 'Options';
 options.tag             = 'options';
-options.val             = {timeunit, segment_length, marker_chan, nan_output};
+options.val             = {timeunits, segment_length, marker_chan, nan_output};
 options.help            = {['Change values of optional settings.']};
 
 %% File path
