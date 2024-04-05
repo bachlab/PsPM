@@ -62,6 +62,12 @@ end
 method  = varargin{1};
 fn      = varargin{2};
 channel = varargin{3};
+
+options = pspm_options(options, 'convert_gaze');
+if options.invalid
+    return
+end
+
 %% 3 Load data
 [sts, data, ~, pos_of_channel] = pspm_load_channel(fn, channel);
 if sts ~= 1, return; end

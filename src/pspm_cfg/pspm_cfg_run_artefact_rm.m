@@ -6,16 +6,24 @@ filtertype = fieldnames(job.filtertype);
 filtertype = filtertype{1};
 datafile = job.datafile;
 datafile = datafile{1};
-channelnumber = job.chan_nr;
+channelnumber = pspm_cfg_channel_selector('run', job);
 switch filtertype
   case 'median'
     n = job.filtertype.(filtertype).nr_time_pt;
     out = pspm_pp(filtertype, datafile, channelnumber, n, options);
   case 'butter'
     filt = struct();
-    filt.lpfreq    = job.filtertype.(filtertype).freqLP.freqLP;
+    if isfield(job.filtertype.(filtertype).freqLP, 'freqLP')
+      filt.lpfreq  = job.filtertype.(filtertype).freqLP.freqLP;
+    else
+      filt.lpfreq  = 'none';
+    end
     filt.lporder   = job.filtertype.(filtertype).orderLP;
-    filt.hpfreq    = job.filtertype.(filtertype).freqHP.freqHP;
+    if isfield(job.filtertype.(filtertype).freqHP, 'freqHP')
+      filt.hpfreq  = job.filtertype.(filtertype).freqHP.freqHP;
+    else
+      filt.hpfreq  = 'none';
+    end
     filt.hporder   = job.filtertype.(filtertype).orderHP;
     filt.direction = job.filtertype.(filtertype).direction;
     filt.down      = job.filtertype.(filtertype).down.down;

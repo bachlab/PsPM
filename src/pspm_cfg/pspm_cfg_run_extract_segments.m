@@ -9,7 +9,7 @@ if isfield(job, 'mode')
     glm_file = job.mode.mode_automatic.glm_file{1};
   elseif isfield(job.mode, 'mode_manual')
     mode = 'manual';
-    chan = job.mode.mode_manual.channel;
+    chan = pspm_cfg_channel_selector('run', job.mode.mode_manual);
     fn = job.mode.mode_manual.datafiles;
     if isfield(job.mode.mode_manual.conditions, 'condition')
       conditions = job.mode.mode_manual.conditions.condition;
@@ -26,9 +26,10 @@ if isfield(job, 'mode')
       tm = job.mode.mode_manual.conditions.condition_files;
     end
   end
-  % extract options
-  options = pspm_update_struct(options, job.options, {'timeunits',...
-                                                      'marker_chan'});
+
+  options = pspm_update_struct(options, job.options, {'timeunits'});
+  options.marker_chan = pspm_cfg_channel_selector('run', job.options);
+
   options.length = job.options.segment_length;
   field_name_nan_output = fieldnames(job.options.nan_output);
   switch field_name_nan_output{1}

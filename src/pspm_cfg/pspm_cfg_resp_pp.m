@@ -33,26 +33,8 @@ function resp_pp = pspm_cfg_resp_pp
     ['Will be ignored for datatype "respiration time stamps".']};
 
     % Channel
-    chan_def         = cfg_const;
-    chan_def.name    = 'Default';
-    chan_def.tag     = 'chan_def';
-    chan_def.val     = {0};
-    chan_def.help    = {'Last respiration channel.'};
-
-    chan_nr         = cfg_entry;
-    chan_nr.name    = 'Number';
-    chan_nr.tag     = 'chan_nr';
-    chan_nr.strtype = 'i';
-    chan_nr.num     = [1 1];
-    chan_nr.help    = {''};
-
-    chan         = cfg_choice;
-    chan.name    = 'Channel';
-    chan.tag     = 'chan';
-    chan.val     = {chan_def};
-    chan.values  = {chan_def,chan_nr};
-    chan.help    = {'Number of respiration channel (default: last respiration channel).'};
-
+    chan         = pspm_cfg_channel_selector('respiration');
+    
     % define channel_action
     % ------------------------------------------------------
     channel_action = cfg_menu;
@@ -157,11 +139,7 @@ function resp_pp = pspm_cfg_resp_pp
 
     function out = pspm_cfg_run_resp_pp(job)
         sr = job.sr;% sample rate
-        if isfield(job.chan,'chan_nr')
-            chan = job.chan.chan_nr;
-        else
-            chan = '';
-        end
+        chan = pspm_cfg_channel_selector('run', job.chan);
         resp_pp_options.plot = job.options.plot;
         if isfield(job.options.systemtype, 'bellows')
             resp_pp_options.systemtype = 'bellows';

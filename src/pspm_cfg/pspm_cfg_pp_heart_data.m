@@ -1,3 +1,4 @@
+
 function pp_heart_data = pspm_cfg_pp_heart_data
 
 % $Id: pspm_cfg_pp_heart_data.m 784 2019-07-08 08:16:46Z esrefo $
@@ -16,25 +17,7 @@ datafile.num     = [1 1];
 %datafile.filter  = '.*\.(mat|MAT)$';
 datafile.help    = {'Specify data file.',' ',settings.datafilehelp};
 
-ecg2hb_chan_def      = cfg_const;
-ecg2hb_chan_def.name = 'Default';
-ecg2hb_chan_def.tag  = 'chan_def';
-ecg2hb_chan_def.val  = {0};
-ecg2hb_chan_def.help = {'Last ECG channel.'};
-
-ecg2hb_chan_nr         = cfg_entry;
-ecg2hb_chan_nr.name    = 'Number';
-ecg2hb_chan_nr.tag     = 'chan_nr';
-ecg2hb_chan_nr.strtype = 'i';
-ecg2hb_chan_nr.num     = [1 1];
-ecg2hb_chan_nr.help    = {''};
-
-ecg2hb_chan         = cfg_choice;
-ecg2hb_chan.name    = 'Channel';
-ecg2hb_chan.tag     = 'chan';
-ecg2hb_chan.val     = {ecg2hb_chan_def};
-ecg2hb_chan.values  = {ecg2hb_chan_def, ecg2hb_chan_nr};
-ecg2hb_chan.help    = {'Number of ECG channel (default: last ECG channel).'};
+ecg2hb_chan = pspm_cfg_channel_selector('ECG');
 
 ecg2hb_minhr         = cfg_entry;
 ecg2hb_minhr.name    = 'Min Heart Rate';
@@ -84,25 +67,7 @@ ecg2hb.tag          = 'ecg2hb';
 ecg2hb.help         = {'Convert ECG data into Heart beat time stamps using Pan & Tompkins algorithm'};
 ecg2hb.val          = {ecg2hb_chan, ecg2hb_opt};
 
-ecg2hb_amri_chan_def      = cfg_const;
-ecg2hb_amri_chan_def.name = 'Default';
-ecg2hb_amri_chan_def.tag  = 'chan_def';
-ecg2hb_amri_chan_def.val  = {'ecg'};
-ecg2hb_amri_chan_def.help = {'Last ECG channel.'};
-
-ecg2hb_amri_chan_nr         = cfg_entry;
-ecg2hb_amri_chan_nr.name    = 'Number';
-ecg2hb_amri_chan_nr.tag     = 'chan_nr';
-ecg2hb_amri_chan_nr.strtype = 'i';
-ecg2hb_amri_chan_nr.num     = [1 1];
-ecg2hb_amri_chan_nr.help    = {'Channel ID of the ECG channel in the given PsPM file'};
-
-ecg2hb_amri_chan         = cfg_choice;
-ecg2hb_amri_chan.name    = 'Channel';
-ecg2hb_amri_chan.tag     = 'chan';
-ecg2hb_amri_chan.val     = {ecg2hb_amri_chan_def};
-ecg2hb_amri_chan.values  = {ecg2hb_amri_chan_def, ecg2hb_amri_chan_nr};
-ecg2hb_amri_chan.help    = {'ID of ECG channel in the PsPM file (default: last ECG channel).'};
+ecg2hb_amri_chan         = pspm_cfg_channel_selector('ECG');
 
 ecg2hb_amri_signal_to_use         = cfg_menu;
 ecg2hb_amri_signal_to_use.name    = 'Signal to use';
@@ -194,35 +159,7 @@ hb2hp_sr.num        = [1 1];
 hb2hp_sr.val        = {10};
 hb2hp_sr.strtype    = 'r';
 
-hb2hp_chan_def      = cfg_const;
-hb2hp_chan_def.name = 'Default';
-hb2hp_chan_def.tag  = 'chan_def';
-hb2hp_chan_def.val  = {0};
-hb2hp_chan_def.help = {'Last Heart Beat channel.'};
-
-
-hb2hp_chan_nr         = cfg_entry;
-hb2hp_chan_nr.name    = 'Number';
-hb2hp_chan_nr.tag     = 'chan_nr';
-hb2hp_chan_nr.strtype = 'i';
-hb2hp_chan_nr.num     = [1 1];
-hb2hp_chan_nr.help    = {''};
-
-hb2hp_proc_chan         = cfg_entry;
-hb2hp_proc_chan.name    = 'Processed channel';
-hb2hp_proc_chan.tag     = 'proc_chan';
-hb2hp_proc_chan.strtype = 'i';
-hb2hp_proc_chan.num     = [1 1];
-hb2hp_proc_chan.help    = {['Convert a channel already preprocessed with ', ...
-    'ECG to Heart beat. Specify the preprocessed channel with a number ', ...
-    'corresponding to the position in the list of preprocessings.']};
-
-hb2hp_chan          = cfg_choice;
-hb2hp_chan.name     = 'Channel';
-hb2hp_chan.tag      = 'chan';
-hb2hp_chan.help     = {'Number of Heart Beat channel (default: last Heart Beat channel).'};
-hb2hp_chan.val     = {hb2hp_chan_def};
-hb2hp_chan.values  = {hb2hp_chan_def, hb2hp_chan_nr, hb2hp_proc_chan};
+hb2hp_chan          = pspm_cfg_channel_selector('heart beat');
 
 limit_upper         = cfg_entry;
 limit_upper.name    = 'Upper limit';
@@ -255,39 +192,12 @@ hb2hp.help          = {['Convert heart beat time stamps into interpolated ', ...
     'Heart beat conversion, or directly work on heart beat time stamps, ', ...
     'for example obtained by a pulse oxymeter.']};
 
-ppg2hb_chan_def     = cfg_const;
-ppg2hb_chan_def.name = 'Default';
-ppg2hb_chan_def.tag = 'chan_def';
-ppg2hb_chan_def.val = {0};
-ppg2hb_chan_def.help = {['Last peripheral pulse oximetry channel.']};
-
-ppg2hb_chan_nr      = cfg_entry;
-ppg2hb_chan_nr.name = 'Number';
-ppg2hb_chan_nr.tag  = 'chan_nr';
-ppg2hb_chan_nr.strtype = 'i';
-ppg2hb_chan_nr.num  = [1 1];
-ppg2hb_chan_nr.help = {''};
-
-ppg2hb_chan         = cfg_choice;
-ppg2hb_chan.name    = 'Channel';
-ppg2hb_chan.tag     = 'chan';
-ppg2hb_chan.val     = {ppg2hb_chan_def};
-ppg2hb_chan.values  = {ppg2hb_chan_def, ppg2hb_chan_nr};
-ppg2hb_chan.help    = {['Number of peripheral pulse oximetry channel ', ...
-    '(default: last peripheral puls oximetry channel)']};
-
-ppg2hb_method       = cfg_menu;
-ppg2hb_method.name  = 'Select the method of converting the data';
-ppg2hb_method.tag   = 'ppg2hb_convert';
-ppg2hb_method.values= {'classic', 'heartpy'};
-ppg2hb_method.labels= {'Classic', 'Heartpy'};
-ppg2hb_method.val   = {'classic'};
-ppg2hb_method.help  = {['Convert the PPG data into heart rate by using the selected method.']};
+ppg2hb_chan         = pspm_cfg_channel_selector('peripheral pulse oxymetry');
 
 ppg2hb              = cfg_exbranch;
-ppg2hb.name         = 'Convert peripheral pulse oximetry to Heart Beat';
+ppg2hb.name         = 'Convert Peripheral pulse oximetry to Heart Beat';
 ppg2hb.tag          = 'ppg2hb';
-ppg2hb.val          = {ppg2hb_chan, ppg2hb_method};
+ppg2hb.val          = {ppg2hb_chan};
 ppg2hb.help          = {['Convert Peripheral pulse oximetry to ', ...
     'Heart Beat events.']};
 

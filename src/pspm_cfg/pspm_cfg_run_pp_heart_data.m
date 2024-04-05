@@ -10,25 +10,8 @@ for i = 1:numel(job.pp_type)
     subs_pp.type= '.';
     subs_pp.subs = pp;
     pp_field = subsref(job.pp_type{i}, subs_pp);
-    if isfield(pp_field.chan, 'chan_nr')
-      chan = pp_field.chan.chan_nr;
-    elseif isfield(pp_field.chan, 'chan_def')
-      % only works as long as pp has format of something2somethingelse
-      % e.g. ppg2hb
-      chan = regexprep(pp, '(\w*)2(\w*)', '$1');
-    elseif isfield(pp_field.chan, 'proc_chan')
-      pchan = pp_field.chan.proc_chan;
-      if pchan > numel(outputs)
-        warning('Argument for processed channel is out of range.');
-        return;
-      elseif pchan >= i
-        warning('Processed channel is not yet processed, cannot continue.');
-        return;
-      else
-        chan = outputs{pchan};
-      end
-    end
-    switch pp
+    chan = pspm_cfg_channel_selector('run', pp_field.chan);
+     switch pp
       case 'ecg2hb'
         % copy options
         options = struct();
@@ -77,7 +60,6 @@ for i = 1:numel(job.pp_type)
         end
       case 'ppg2hb'
         options = struct();
-        options.method = job.pp_type{i}.ppg2hb.ppg2hb_convert;
         options = pspm_update_struct(options, job, {'channel_action'});
         [sts, winfo] = pspm_convert_ppg2hb(fn, chan, options);
     end
