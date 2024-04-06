@@ -49,16 +49,18 @@ for i = 1:numel(job.pp_type)
                                       'twthresh'});
         % set replace
         options = pspm_update_struct(options, job, {'channel_action'});
+        options.channel = chan;
         % call ecg2hb
-        [sts, winfo] = pspm_convert_ecg2hb(fn, chan, options);
+        [sts, winfo] = pspm_convert_ecg2hb(fn, options);
         if sts ~= -1
           % replace channel
           options.channel_action = 'replace';
           options = pspm_update_struct(options, ...
-                                       job.pp_type{i}.ecg2hp, ...
-                                       'limit');
+              job.pp_type{i}.ecg2hp, ...
+              'limit');
+          options.channel = winfo.channel;
           % call ecg2hp
-          [sts, winfo] = pspm_convert_hb2hp(fn, sr, winfo.channel, options);
+          [sts, winfo] = pspm_convert_hb2hp(fn, sr, options);
         end
       case 'ppg2hb'
         options = struct();
