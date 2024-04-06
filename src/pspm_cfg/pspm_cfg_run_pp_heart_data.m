@@ -33,9 +33,10 @@ for i = 1:numel(job.pp_type)
       case 'hb2hp'
         sr = job.pp_type{i}.hb2hp.sr;
         options = struct();
+        options.channel = chan;
         options.limit = job.pp_type{i}.hb2hp.limit;
         options = pspm_update_struct(options, job, 'channel_action');
-        [sts, winfo] = pspm_convert_hb2hp(fn, sr, chan, options);
+        [sts, winfo] = pspm_convert_hb2hp(fn, sr, options);
       case 'ecg2hp'
         sr = job.pp_type{i}.ecg2hp.sr;
         % copy options

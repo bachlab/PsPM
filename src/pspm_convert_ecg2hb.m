@@ -18,11 +18,11 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, options)
 %   │                 file, or by channel type (string).
 %   │                 If there are multiple channels with this type, only
 %   │                 the last one will be processed. If you want to detect
-%   │                 R-peaks for all ECG channels in a PsPM file separately,
+%   │                 R-peaks for several ECG channels in a PsPM file separately,
 %   │                 call this function multiple times with the index of
 %   │                 each channel.  In this case, set the option 
 %   │                 'channel_action' to 'add',  to store each
-%   │                 resulting 'heartbeat' channel separately.
+%   │                 resulting 'hb' channel separately.
 %   ├──────────.semi: activates the semi automatic mode, allowing the
 %   │                 handcorrection of all IBIs that fulfill:
 %   │                 >/< mean(ibi) +/- 3 * std(ibi) [def. 0].
@@ -141,7 +141,7 @@ pt.settings.debugmode = options.debugmode;    %   no debuggin [def]
 pt_debug=[];
 
 %% get data
-[nsts, data] = pspm_load_channel(fn, channel, 'ecg');
+[nsts, data] = pspm_load_channel(fn, options.channel, 'ecg');
 if nsts == -1, return; end
 
 % =========================================================================

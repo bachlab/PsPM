@@ -94,6 +94,7 @@ switch FunName
   case 'convert_hb2hp'
     % 2.11 pspm_convert_hb2hp --
     options = autofill_channel_action(options);
+    options = autofill(options, 'channel',                'hb',      '*Int*Char'       );
     options = autofill(options, 'limit_lower',            0.2,        '>', 0            );
     options = autofill(options, 'limit_upper',            2,          '>', 0            );
     options = check_range(options, 'limit_lower', 'limit_upper');
