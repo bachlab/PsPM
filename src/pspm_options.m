@@ -353,7 +353,8 @@ switch FunName
   case 'scr_pp'
     % 2.40 pspm_scr_pp --
     options = autofill_channel_action(options,            'add',      {'replace', ...
-                                                                       'withdraw'}      );
+        'withdraw'}      );
+    options = autofill(options, 'channel',                'scr',      '*Int*Char'       );
     options = autofill(options, 'baseline_jump',          1.5,        '>', 0            );
     options = autofill(options, 'change_data',            1,          0                 );
     options = autofill(options, 'clipping_window_size',   10000,      '*Int'            );

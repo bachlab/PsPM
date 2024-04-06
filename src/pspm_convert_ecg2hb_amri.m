@@ -22,7 +22,7 @@ function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 %   │                 file, or by channel type (string).
 %   │                 If there are multiple channels with this type, only
 %   │                 the last one will be processed. If you want to detect
-%   │                 R-peaks for several ECG channels in a PsPM file separately,
+%   │                 R-peaks for several ECG channels in a PsPM file,
 %   │                 call this function multiple times with the index of
 %   │                 each channel.  In this case, set the option 
 %   │                 'channel_action' to 'add',  to store each

@@ -18,7 +18,7 @@ function [ sts, outinfo ] = pspm_convert_ppg2hb( fn , options )
 %   │                 file, or by channel type (string).
 %   │                 If there are multiple channels with this type, only
 %   │                 the last one will be processed. If you want to
-%   │                 process several PPG channels in a PsPM file separately,
+%   │                 process several PPG channels in a PsPM file,
 %   │                 call this function multiple times with the index of
 %   │                 each channel.  In this case, set the option 
 %   │                 'channel_action' to 'add',  to store each

@@ -7,6 +7,7 @@ function [sts, infos] = pspm_convert_hb2hp(fn, sr, options)
 % ● Arguments
 %                 fn: data file name
 %                 sr: new sample rate for heart period channel
+%   ┌─────── options
 %   ├───────.channel: [optional, numeric/string, default: 'hb', i.e. last 
 %   │                 heart beat channel in the file]
 %   │                 Channel type or channel ID to be preprocessed.
@@ -14,7 +15,7 @@ function [sts, infos] = pspm_convert_hb2hp(fn, sr, options)
 %   │                 file, or by channel type (string).
 %   │                 If there are multiple channels with this type, only
 %   │                 the last one will be processed. If you want to
-%   │                 convert several heart beat channels in a PsPM file separately,
+%   │                 convert several heart beat channels in a PsPM file,
 %   │                 call this function multiple times with the index of
 %   │                 each channel.  In this case, set the option 
 %   │                 'channel_action' to 'add',  to store each
