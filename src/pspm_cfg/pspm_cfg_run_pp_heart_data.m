@@ -15,6 +15,7 @@ for i = 1:numel(job.pp_type)
       case 'ecg2hb'
         % copy options
         options = struct();
+        options.channel = chan;
         options.minHR = job.pp_type{i}.ecg2hb.opt.minhr;
         options.maxHR = job.pp_type{i}.ecg2hb.opt.maxhr;
         options = pspm_update_struct(options, ...
@@ -22,7 +23,7 @@ for i = 1:numel(job.pp_type)
                                      {'semi', 'twthresh'});
         options = pspm_update_struct(options, job, 'channel_action');
         % call function
-        [sts, winfo] = pspm_convert_ecg2hb(fn, chan, options);
+        [sts, winfo] = pspm_convert_ecg2hb(fn, options);
       case 'ecg2hb_amri'
         options = pp_field.opt;
         options.channel = chan;

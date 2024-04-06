@@ -64,6 +64,7 @@ switch FunName
   case 'convert_ecg2hb'
     % 2.8 pspm_convert_ecg2hb --
     options = autofill_channel_action(options);
+    options = autofill(options, 'channel',                'ecg',      '*Int*Char'       );
     options = autofill(options, 'debugmode',              0,          1                 );
     % can be merged into development mode?
     options = autofill(options, 'maxHR',                  200,        '>', 20           );

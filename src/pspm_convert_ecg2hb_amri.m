@@ -15,15 +15,17 @@ function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 %                 fn: [string] Path to the PsPM file which contains the pupil
 %                     data.
 %   ┌─────── options
-%   ├───────.channel: [optional, numeric/string, default as 'ecg']
-%   │                 Channel ID to be preprocessed.
-%   │                 Channel can be specified by its index (numeric) in the given
-%   │                 PsPM data structure or by its channel type (string).
+%   ├───────.channel: [optional, numeric/string, default: 'ecg', i.e. last 
+%   │                 ECG channel in the file]
+%   │                 Channel type or channel ID to be preprocessed.
+%   │                 Channel can be specified by its index (numeric) in the 
+%   │                 file, or by channel type (string).
 %   │                 If there are multiple channels with this type, only
 %   │                 the last one will be processed. If you want to detect
-%   │                 r-peaks for all ECG channels in a PsPM file separately,
+%   │                 R-peaks for all ECG channels in a PsPM file separately,
 %   │                 call this function multiple times with the index of
-%   │                 each channel.  Further, use 'add' mode to store each
+%   │                 each channel.  In this case, set the option 
+%   │                 'channel_action' to 'add',  to store each
 %   │                 resulting 'heartbeat' channel separately.
 %   ├─.signal_to_use: ['ecg'/'teo'/'auto', default as 'auto']
 %   │                 Choose which signal will be used as the input to the core
