@@ -1,4 +1,4 @@
-function [ sts, outinfo ] = pspm_convert_ppg2hb( fn, channel, options )
+function [ sts, outinfo ] = pspm_convert_ppg2hb( fn , options )
 % ● Description
 %   pspm_convert_ppg2hb Converts a pulse oxymeter channel to heartbeats and
 %   adds it as a new channel.
@@ -7,11 +7,22 @@ function [ sts, outinfo ] = pspm_convert_ppg2hb( fn, channel, options )
 %   identified as heartbeat maximas and a heartbeat channel is then
 %   generated from these.
 % ● Format
-%   [ sts, outinfo ] = pspm_convert_ppg2hb( fn, channel, options )
+%   [ sts, outinfo ] = pspm_convert_ppg2hb( fn, options )
 % ● Arguments
 %                 fn: file name with path
-%            channel: ppg channel number, default: last ppg channel
-%   ┌────────options: struct with following possible fields
+%   ┌─────── options
+%   ├───────.channel: [optional, numeric/string, default: 'ppg', i.e. last 
+%   │                 PPG channel in the file]
+%   │                 Channel type or channel ID to be preprocessed.
+%   │                 Channel can be specified by its index (numeric) in the 
+%   │                 file, or by channel type (string).
+%   │                 If there are multiple channels with this type, only
+%   │                 the last one will be processed. If you want to
+%   │                 process several PPG channels in a PsPM file separately,
+%   │                 call this function multiple times with the index of
+%   │                 each channel.  In this case, set the option 
+%   │                 'channel_action' to 'add',  to store each
+%   │                 resulting 'hb' channel separately.
 %   ├───.diagnostics: [true/FALSE]
 %   │                 displays some debugging information
 %   ├.channel_action: ['add'/'replace', 'replace']
@@ -40,24 +51,13 @@ outinfo = struct();
 % -------------------------------------------------------------------------
 if nargin < 1
   warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
-elseif ~ischar(fn)
-  warning('ID:invalid_input', 'Need file name string as first input.'); return;
-elseif nargin < 2 || isempty(channel)
-  channel = 'ppg';
-elseif ~isnumeric(channel) && ~strcmp(channel,'ppg')
-  warning('ID:invalid_input', 'Channel number must be numeric'); return;
+elseif nargin < 2 
+    options = struct();
 end
-
-%%% Process options
-% Display diagnostic plots? default is false
-% try if ~islogical(options.diagnostics),options.diagnostics = false;end
-% catch, options.diagnostics = false; end
 options = pspm_options(options, 'convert_ppg2hb');
 if options.invalid
   return
 end
-% try if ~isnumeric(options.lsm),options.lsm = 0;end
-% catch, options.lsm = 0; end
 
 %% user output
 % -------------------------------------------------------------------------
@@ -65,7 +65,7 @@ fprintf('Heartbeat detection for %s ... \n', fn);
 
 % get data
 % -------------------------------------------------------------------------
-[nsts, data] = pspm_load_channel(fn, channel, 'ppg');
+[nsts, data] = pspm_load_channel(fn, options.channel, 'ppg');
 if nsts == -1, return; end
 
 %% Large spikes mode

@@ -62,8 +62,9 @@ for i = 1:numel(job.pp_type)
         end
       case 'ppg2hb'
         options = struct();
+        options.channel = chan;
         options = pspm_update_struct(options, job, {'channel_action'});
-        [sts, winfo] = pspm_convert_ppg2hb(fn, chan, options);
+        [sts, winfo] = pspm_convert_ppg2hb(fn, options);
     end
     if sts ~= -1
       outputs{i} = winfo.channel;

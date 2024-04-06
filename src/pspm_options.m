@@ -101,7 +101,7 @@ switch FunName
   case 'convert_ppg2hb'
     % 2.13 pspm_convert_ppg2hb --
     options = autofill_channel_action(options);
-    options = autofill(options, 'channel',                'ppg2hb',   '*Int*Char'  );
+    options = autofill(options, 'channel',                'ppg',     '*Int*Char'  );
     options = autofill(options, 'diagnostics',            0,          1                 );
     options = autofill(options, 'lsm',                    0,          [0,100-10^-10]    );
   case 'data_editor'
