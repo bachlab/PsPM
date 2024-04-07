@@ -191,13 +191,46 @@ hb2hp.help          = {['Convert heart beat time stamps into interpolated ', ...
     'Heart beat conversion, or directly work on heart beat time stamps, ', ...
     'for example obtained by a pulse oxymeter.']};
 
+%% ppg2hb
+ppg2hb_py_auto          = cfg_const;
+ppg2hb_py_auto.name     = 'Automatically detect Python';
+ppg2hb_py_auto.tag      = 'ppg2hb_py_auto';
+ppg2hb_py_auto.val      = {0};
+ppg2hb_py_auto.help     = {'PsPM will try to detect Python if possible.'};
+
+ppg2hb_py_path          = cfg_files;
+ppg2hb_py_path.name     = 'Manually define Python';
+ppg2hb_py_path.tag      = 'ppg2hb_py_path';
+ppg2hb_py_path.num      = [1 1];
+ppg2hb_py_path.help     = {'Please specify python executable file on the computer.'};
+
+ppg2hb_py_detect        = cfg_choice;
+ppg2hb_py_detect.name   = 'HeartPy';
+ppg2hb_py_detect.tag    = 'heart_py';
+ppg2hb_py_detect.val    = {ppg2hb_py_auto};
+ppg2hb_py_detect.values = {ppg2hb_py_auto, ppg2hb_py_path};
+ppg2hb_py_detect.help   = {'Mode of detecting python path in the operating system.'};
+
+ppg2hb_classic          = cfg_const;
+ppg2hb_classic.name     = 'Classic';
+ppg2hb_classic.tag      = 'ppg2hb_classic';
+ppg2hb_classic.val      = {0};
+ppg2hb_classic.help     = {'Classic mode.'};
+
+ppg2hb_method           = cfg_choice;
+ppg2hb_method.name      = 'Select the method of converting the data';
+ppg2hb_method.tag       = 'ppg2hb_convert';
+ppg2hb_method.val       = {ppg2hb_classic};
+ppg2hb_method.values    = {ppg2hb_classic, ppg2hb_py_detect};
+ppg2hb_method.help      = {['Convert the PPG data into heart rate by using the ', ...
+                          'selected method.']};
 
 ppg2hb_chan         = pspm_cfg_channel_selector('peripheral pulse oxymetry');
 
 ppg2hb              = cfg_exbranch;
 ppg2hb.name         = 'Convert Peripheral pulse oximetry to Heart Beat';
 ppg2hb.tag          = 'ppg2hb';
-ppg2hb.val          = {ppg2hb_chan};
+ppg2hb.val          = {ppg2hb_chan, ppg2hb_method};
 ppg2hb.help          = {['Convert Peripheral pulse oximetry to ', ...
     'Heart Beat events.']};
 

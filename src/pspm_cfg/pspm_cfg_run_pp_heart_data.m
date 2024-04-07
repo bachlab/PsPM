@@ -60,12 +60,12 @@ for i = 1:numel(job.pp_type)
         end
       case 'ppg2hb'
         options = struct();
-        if ~isfield(job.pp_type{i}.ppg2hb.ppg2hb_convert, 'HeartPy')
+        if ~isfield(job.pp_type{i}.ppg2hb.ppg2hb_convert, 'heart_py')
           options.method = 'classic';
         else
           options.method = 'heartpy';
-          if isfield(job.pp_type{i}.ppg2hb.ppg2hb_convert.HeartPy, 'py_path')
-            options.python_path = job.pp_type{i}.ppg2hb.ppg2hb_convert.HeartPy.py_path{1};
+          if isfield(job.pp_type{i}.ppg2hb.ppg2hb_convert.heart_py, 'ppg2hb_py_path')
+            options.python_path = job.pp_type{i}.ppg2hb.ppg2hb_convert.heart_py.ppg2hb_py_path{1};
           end
         end
         options = pspm_update_struct(options, job, {'channel_action'});
