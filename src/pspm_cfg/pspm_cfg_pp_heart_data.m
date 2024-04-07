@@ -255,9 +255,6 @@ pp.num              = [1 Inf];
 pp.help             = {['Add different preprocessing steps here. ', ...
     'The converted data will be written into a new channel in the same file.']};
 
-
-
-
 % define channel_action
 % ------------------------------------------------------
 channel_action = cfg_menu;
