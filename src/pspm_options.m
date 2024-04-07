@@ -62,6 +62,7 @@ switch FunName
   case 'convert_au2unit'
     % 2.7 pspm_convert_au2unit --
     options = autofill_channel_action(options);
+    options = autofill(options, 'channel',                'both',      '*Int*Char'       );
   case 'convert_ecg2hb'
     % 2.8 pspm_convert_ecg2hb --
     options = autofill_channel_action(options);
