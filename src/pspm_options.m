@@ -432,6 +432,7 @@ switch FunName
                                                           ],          '*Num'            );
   case 'split_sessions'
     % 2.45 pspm_split_sessions --
+    options = autofill(options,'marker_chan_num',         'marker',   '*Int*Char'       );
     options = autofill(options, 'max_sn',                 settings.split.max_sn,...
                                                                       '>', 0            );
     % maximum number of sessions (default 10)
