@@ -58,6 +58,7 @@ switch FunName
   case 'convert_area2diameter'
     % 2.6 pspm_convert_area2diameter --
     options = autofill_channel_action(options);
+    options = autofill(options, 'channel',                'both',      '*Int*Char'       );
   case 'convert_au2unit'
     % 2.7 pspm_convert_au2unit --
     options = autofill_channel_action(options);
