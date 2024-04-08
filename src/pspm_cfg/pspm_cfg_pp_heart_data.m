@@ -192,19 +192,19 @@ hb2hp.help          = {['Convert heart beat time stamps into interpolated ', ...
     'for example obtained by a pulse oxymeter.']};
 
 %% ppg2hb
-ppg2hb_pyheart      = pspm_cfg_python(1,'PyHeart');
+ppg2hb_heartpy      = pspm_cfg_python(1,'HeartPy');
 
 ppg2hb_classic      = cfg_const;
 ppg2hb_classic.name = 'Classic';
-ppg2hb_classic.tag  = 'ppg2hb_classic';
+ppg2hb_classic.tag  = 'classic';
 ppg2hb_classic.val  = {0};
 ppg2hb_classic.help = {'Analyse the data with the classic mode.'};
 
 ppg2hb_method       = cfg_choice;
 ppg2hb_method.name  = 'Select the method of converting the data';
-ppg2hb_method.tag   = 'ppg2hb_convert';
+ppg2hb_method.tag   = 'method';
 ppg2hb_method.val   = {ppg2hb_classic};
-ppg2hb_method.values    = {ppg2hb_classic, ppg2hb_pyheart};
+ppg2hb_method.values    = {ppg2hb_classic, ppg2hb_heartpy};
 ppg2hb_method.help  = {['Convert the PPG data into heart rate by using the ', ...
                           'selected method.']};
 

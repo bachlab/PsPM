@@ -64,12 +64,12 @@ for i = 1:numel(job.pp_type)
         end
       case 'ppg2hb'
         options = struct();
-        if ~isfield(job.pp_type{i}.ppg2hb.ppg2hb_convert, 'heart_py')
+        if ~isfield(job.pp_type{i}.ppg2hb.method, 'HeartPy')
           options.method = 'classic';
         else
           options.method = 'heartpy';
-          if isfield(job.pp_type{i}.ppg2hb.ppg2hb_convert.heart_py, 'ppg2hb_py_path')
-            options.python_path = job.pp_type{i}.ppg2hb.ppg2hb_convert.heart_py.ppg2hb_py_path{1};
+          if isfield(job.pp_type{i}.ppg2hb.method.HeartPy, 'pypath')
+            options.python_path = job.pp_type{i}.ppg2hb.method.HeartPy.pypath{1};
           end
         end
         options.channel = chan;
