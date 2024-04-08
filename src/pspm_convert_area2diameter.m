@@ -4,7 +4,7 @@ function [varargout] = pspm_convert_area2diameter(varargin)
 %   It can work on PsPM files or on numeric vectors.
 % ● Format
 %   [sts, d]    = pspm_convert_area2diameter(area)
-%   [sts, channel] = pspm_convert_area2diameter(fn, channel, options)
+%   [sts, channel] = pspm_convert_area2diameter(fn, options)
 % ● Arguments
 %                 fn: a numeric vector of milimeter values
 %               channel: Channels which should be converted from area to diameter.
@@ -16,6 +16,19 @@ function [varargout] = pspm_convert_area2diameter(varargin)
 %               area: a numeric vector of area values (the unit is not
 %                     important)
 %   ┌────────options:
+%   ├───────.channel: [optional][numeric/string] [Default: 'both']
+%   │                 Channel ID to be preprocessed.
+%   │                 To process both eyes, use 'both', which will work on
+%   │                 'pupil_r' and 'pupil_l'.
+%   │                 To process a specific eye, use 'pupil_l' or 'pupil_r'.
+%   │                 To process the combined left and right eye, use 'pupil_c'.
+%   │                 The identifier 'pupil' will use the first existing 
+%   │                 option out of the following:
+%   │                 (1) L-R-combined pupil, (2) non-lateralised pupil, (3) best
+%   │                 eye pupil, (4) any pupil channel. If there are multiple
+%   │                 channels of the specified type, only last one will be
+%   │                 processed. 
+%   │                 You can also specify the number of a channel.
 %   └.channel_action: ['add'/'replace', default as 'add']
 %                     Defines whether the new channel should be added or the
 %                     previous outputs of this function should be replaced.
@@ -31,7 +44,7 @@ if isempty(settings)
 end
 sts = -1;
 narginchk(1, 3);
-if numel(varargin) == 1
+if numel(varargin) == 1 && ~ischar(varargin{1})
   area = varargin{1};
   if ~isnumeric(area)
     warning('ID:invalid_input', 'area is not numeric'); return;
@@ -39,16 +52,20 @@ if numel(varargin) == 1
   mode = 'vector';
 else
   fn = varargin{1};
-  channel = varargin{2};
-  options = varargin{3};
-  if strcmpi(channel, 'both')
-      channel = {'pupil_r', 'pupil_l'};
+  if nargin == 2
+     options = varargin{2};
   else
-      channel = {channel};
+      options = struct();
   end
   options = pspm_options(options, 'convert_area2diameter');
   if options.invalid
     return
+  end
+  channel = options.channel;
+   if strcmpi(channel, 'both')
+      channel = {'pupil_r', 'pupil_l'};
+  else
+      channel = {channel};
   end
   mode = 'file';
 end
