@@ -27,12 +27,8 @@ classdef pspm_resp_pp_test < pspm_testcase
       this.verifyWarning(@()pspm_resp_pp(5, 20), 'ID:invalid_input');
       % pass nonnumeric sampling rate
       this.verifyWarning(@()pspm_resp_pp('filename', '205'), 'ID:invalid_input');
-      % pass nonnumeric sampling rate
-      this.verifyWarning(@()pspm_resp_pp('filename', '205'), 'ID:invalid_input');
-      % pass nonnumeric sampling rate
-      this.verifyWarning(@()pspm_resp_pp('filename', '205'), 'ID:invalid_input');
       % pass too high channel
-      this.verifyWarning(@()pspm_resp_pp(this.input_filename, 2000, 999999999), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_resp_pp(this.input_filename, 2000, struct('channel', 999999999)), 'ID:invalid_input');
     end
     % Regression test. Compare results to r660 version which is presumably correct
     function compare_results_to_results_obtained_from_r660_version(this)
@@ -46,7 +42,9 @@ classdef pspm_resp_pp_test < pspm_testcase
       assert(strcmpi(old_data{3}.header.chantype, 'ra'));
       assert(strcmpi(old_data{4}.header.chantype, 'rfr'));
       assert(strcmpi(old_data{5}.header.chantype, 'rs'));
-      sts = pspm_resp_pp(this.input_filename, this.sampling_rate, this.resp_channel, this.options);
+      options = this.options;
+      options.channel = this.resp_channel;
+      sts = pspm_resp_pp(this.input_filename, this.sampling_rate, options);
       assert(sts == 1);
       [sts, out, new_data] = pspm_load_data(this.input_filename);
       assert(sts == 1);
