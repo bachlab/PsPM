@@ -139,7 +139,8 @@ function resp_pp = pspm_cfg_resp_pp
 
     function out = pspm_cfg_run_resp_pp(job)
         sr = job.sr;% sample rate
-        chan = pspm_cfg_channel_selector('run', job.chan);
+        resp_pp_options = struct();
+        resp_pp_options.channel = pspm_cfg_channel_selector('run', job.chan);
         resp_pp_options.plot = job.options.plot;
         if isfield(job.options.systemtype, 'bellows')
             resp_pp_options.systemtype = 'bellows';
@@ -154,7 +155,7 @@ function resp_pp = pspm_cfg_resp_pp
             end
         end
         resp_pp_options.channel_action = job.channel_action;
-        sts = pspm_resp_pp(job.datafile{1}, sr, chan, resp_pp_options);
+        sts = pspm_resp_pp(job.datafile{1}, sr, resp_pp_options);
         out = job.datafile;
     end
 

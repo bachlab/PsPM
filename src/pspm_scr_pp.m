@@ -1,4 +1,4 @@
-function [sts, out] = pspm_scr_pp(datafile, options, channel)
+function [sts, out] = pspm_scr_pp(datafile, options)
 % ● Description
 %   pspm_scr_pp applies simple skin conductance response (SCR) quality
 %   assessment rulesets
@@ -10,7 +10,19 @@ function [sts, out] = pspm_scr_pp(datafile, options, channel)
 % ● Arguments
 %      datafile:  a file name, or cell array of file names
 %   [Optional]
-%   ┌───options:  A struct with algorithm specific settings.
+%   ┌─────── options
+%   ├───────.channel: [optional, numeric/string, default: 'scr', i.e. last 
+%   │                 SCR channel in the file]
+%   │                 Channel type or channel ID to be preprocessed.
+%   │                 Channel can be specified by its index (numeric) in the 
+%   │                 file, or by channel type (string).
+%   │                 If there are multiple channels with this type, only
+%   │                 the last one will be processed. If you want to
+%   │                 preprocess several SCR in a PsPM file,
+%   │                 call this function multiple times with the index of
+%   │                 each channel.  In this case, set the option 
+%   │                 'channel_action' to 'add',  to store each
+%   │                 resulting 'scr' channel separately.
 %   ├──────.min:  Minimum value in microsiemens (default: 0.05).
 %   ├──────.max:  Maximum value in microsiemens (default: 60).
 %   ├────.slope:  Maximum slope in microsiemens per sec (default: 10).
@@ -99,14 +111,10 @@ sts = -1;
 out = [];
 
 %% Set default values
-if ~exist('options', 'var')
-  options = struct();
-end
-if nargin < 3 || isempty(channel) || (channel == 0)
-  channel = 'scr';
-elseif ~isnumeric(channel)
-  warning('ID:invalid_input', 'Channel number must be numeric');
-  return
+if nargin < 1
+  warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
+elseif nargin < 2 
+    options = struct();
 end
 options = pspm_options(options, 'scr_pp');
 if options.invalid
@@ -125,7 +133,7 @@ else
 end
 for d = 1:numel(data_source)
   % out{d} = [];
-  [sts_loading, indatas] = pspm_load_channel(data_source{d}, channel, 'scr'); % check and get datafile
+  [sts_loading, indatas] = pspm_load_channel(data_source{d}, options.channel, 'scr'); % check and get datafile
   if sts_loading == -1
     return;
   end
