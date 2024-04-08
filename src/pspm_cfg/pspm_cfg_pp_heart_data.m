@@ -192,30 +192,23 @@ hb2hp.help          = {['Convert heart beat time stamps into interpolated ', ...
     'for example obtained by a pulse oxymeter.']};
 
 %% ppg2hb
-ppg2hb_pyheart          = pspm_cfg_python;
-ppg2hb_pyheart.name     = 'HeartPy';
-ppg2hb_pyheart.tag      = 'heart_py';
-ppg2hb_pyheart.help     = {['Use HeartPy to detect heart rate from input data. ',...
-                            'Please select the mode of detecting python path in ',...
-                            'the operating system.']};
+ppg2hb_pyheart      = pspm_cfg_python(1,'PyHeart');
 
-ppg2hb_classic          = cfg_const;
-ppg2hb_classic.name     = 'Classic';
-ppg2hb_classic.tag      = 'ppg2hb_classic';
-ppg2hb_classic.val      = {0};
-ppg2hb_classic.help     = {'Classic mode.'};
+ppg2hb_classic      = cfg_const;
+ppg2hb_classic.name = 'Classic';
+ppg2hb_classic.tag  = 'ppg2hb_classic';
+ppg2hb_classic.val  = {0};
+ppg2hb_classic.help = {'Analyse the data with the classic mode.'};
 
-ppg2hb_method           = cfg_choice;
-ppg2hb_method.name      = 'Select the method of converting the data';
-ppg2hb_method.tag       = 'ppg2hb_convert';
-ppg2hb_method.val       = {ppg2hb_classic};
+ppg2hb_method       = cfg_choice;
+ppg2hb_method.name  = 'Select the method of converting the data';
+ppg2hb_method.tag   = 'ppg2hb_convert';
+ppg2hb_method.val   = {ppg2hb_classic};
 ppg2hb_method.values    = {ppg2hb_classic, ppg2hb_pyheart};
-ppg2hb_method.help      = {['Convert the PPG data into heart rate by using the ', ...
+ppg2hb_method.help  = {['Convert the PPG data into heart rate by using the ', ...
                           'selected method.']};
 
 ppg2hb_chan         = pspm_cfg_channel_selector('peripheral pulse oxymetry');
-ppg2hb_chan.help    = {['Number of peripheral pulse oximetry channel ', ...
-     '(default: last peripheral puls oximetry channel)']};
 
 ppg2hb              = cfg_exbranch;
 ppg2hb.name         = 'Convert peripheral pulse oximetry to Heart Beat';

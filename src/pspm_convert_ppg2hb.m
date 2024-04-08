@@ -10,7 +10,6 @@ function [ sts, outinfo ] = pspm_convert_ppg2hb( fn , options )
 %   [ sts, outinfo ] = pspm_convert_ppg2hb( fn, options )
 % ● Arguments
 %                 fn: file name with path
-%            channel: ppg channel number, default: last ppg channel
 %   ┌────────options: struct with following possible fields
 %   ├────────.method: 'classic' (default) or 'heartpy'.
 %   ├───────.channel: [optional, numeric/string, default: 'ppg', i.e. last
@@ -61,8 +60,6 @@ outinfo = struct();
 % -------------------------------------------------------------------------
 if nargin < 1
   warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
-elseif ~ischar(fn)
-  warning('ID:invalid_input', 'Need file name string as first input.'); return;
 elseif nargin < 2
   options = struct();
   options.channel = 'ppg';
