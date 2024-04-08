@@ -13,6 +13,8 @@ function out = pspm_cfg_python(varargin)
 %                   will be set as 1. 
 %   python_package: [string] the python package PsPM wants to use.
 %   out:            [struct] The UI struct variable for python detection.
+% ● History
+%   Written on 08-04-2024 by Teddy
 
 %% Input checking
 switch length(varargin)
