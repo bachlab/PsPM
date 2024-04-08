@@ -4,9 +4,9 @@ fn = job.datafile{1};
 for i = 1:numel(job.conversion)
   options = struct();
   options = pspm_update_struct(options, job, {'channel_action'});
-  chan = pspm_cfg_channel_selector('run', job.conversion(i).chan);
+  options.channel = pspm_cfg_channel_selector('run', job.conversion(i).chan);
   if isfield(job.conversion(i).mode, 'area2diameter')
-    pspm_convert_area2diameter(fn, chan, options);
+    pspm_convert_area2diameter(fn, options);
   end
 end
 out = 1;

@@ -117,33 +117,36 @@ classdef pspm_convert_ecg2hb_test < pspm_testcase
       this.verifyWarning(@()pspm_convert_ecg2hb(filename, 'bla'), 'ID:invalid_input');
       if chan_struct.nr ~= 1
         % invalid channel
-        this.verifyWarning(@()pspm_convert_ecg2hb(filename, 1), 'ID:unexpected_channeltype');
+        this.verifyWarning(@()pspm_convert_ecg2hb(filename, struct('channel', 1)), 'ID:unexpected_channeltype');
       end
       % invalid twthresh (text)
-      o.twthresh = 'bla';
-      this.verifyWarning(@()pspm_convert_ecg2hb(filename, chan_struct, o), 'ID:invalid_input');
+      o = struct('twthresh', 'bla');
+      this.verifyWarning(@()pspm_convert_ecg2hb(filename, o), 'ID:invalid_input');
       % invalid minHR (> default_maxHR)
-      o.minHR = 202;
-      this.verifyWarning(@()pspm_convert_ecg2hb(filename, chan_struct, o), 'ID:invalid_input');
+      o = struct('minHR', 202);
+      this.verifyWarning(@()pspm_convert_ecg2hb(filename, o), 'ID:invalid_input');
       % invalid minHR and maxHR (> given maxHR)
       o.maxHR = 19;
-      this.verifyWarning(@()pspm_convert_ecg2hb(filename, chan_struct, o), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_convert_ecg2hb(filename, o), 'ID:invalid_input');
       % invalid maxHR (< default_minHR)
       o = rmfield(o, 'minHR');
-      this.verifyWarning(@()pspm_convert_ecg2hb(filename, chan_struct, o), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_convert_ecg2hb(filename, o), 'ID:invalid_input');
       % invalid debugmode (not in [0,1])
-      o.debugmode = 5;
-      this.verifyWarning(@()pspm_convert_ecg2hb(filename, chan_struct, o), 'ID:invalid_input');
+      o = struct('debugmode', 5);
+      this.verifyWarning(@()pspm_convert_ecg2hb(filename, o), 'ID:invalid_input');
       % invalid semi (not in [0,1])
-      o.semi = 5;
-      this.verifyWarning(@()pspm_convert_ecg2hb(filename, chan_struct, o), 'ID:invalid_input');
+      o = struct('semi', 5);
+      this.verifyWarning(@()pspm_convert_ecg2hb(filename, o), 'ID:invalid_input');
     end
     function valid_input(this, filename, chan_struct, num_channels)
-      % call function and vary arguments
-      this.verifyWarningFree(@()pspm_convert_ecg2hb(filename, chan_struct.nr, this.options));
-      this.verifyWarningFree(@()pspm_convert_ecg2hb(filename, chan_struct.name, this.options));
-      % test added data
-      this.verifyWarningFree(@()this.test_added_data(filename, num_channels));
+        % call function and vary arguments
+        options = this.options;
+        options.channel = chan_struct.nr;
+        this.verifyWarningFree(@()pspm_convert_ecg2hb(filename, options));
+        options.channel = chan_struct.name;
+        this.verifyWarningFree(@()pspm_convert_ecg2hb(filename, options));
+        % test added data
+        this.verifyWarningFree(@()this.test_added_data(filename, num_channels));
     end
   end
   methods(TestClassTeardown)

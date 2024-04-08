@@ -58,12 +58,15 @@ switch FunName
   case 'convert_area2diameter'
     % 2.6 pspm_convert_area2diameter --
     options = autofill_channel_action(options);
+    options = autofill(options, 'channel',                'both',      '*Int*Char'       );
   case 'convert_au2unit'
     % 2.7 pspm_convert_au2unit --
     options = autofill_channel_action(options);
+    options = autofill(options, 'channel',                'both',      '*Int*Char'       );
   case 'convert_ecg2hb'
     % 2.8 pspm_convert_ecg2hb --
     options = autofill_channel_action(options);
+    options = autofill(options, 'channel',                'ecg',      '*Int*Char'       );
     options = autofill(options, 'debugmode',              0,          1                 );
     % can be merged into development mode?
     options = autofill(options, 'maxHR',                  200,        '>', 20           );
@@ -93,13 +96,14 @@ switch FunName
   case 'convert_hb2hp'
     % 2.11 pspm_convert_hb2hp --
     options = autofill_channel_action(options);
+    options = autofill(options, 'channel',                'hb',      '*Int*Char'       );
     options = autofill(options, 'limit_lower',            0.2,        '>', 0            );
     options = autofill(options, 'limit_upper',            2,          '>', 0            );
     options = check_range(options, 'limit_lower', 'limit_upper');
   case 'convert_ppg2hb'
     % 2.13 pspm_convert_ppg2hb --
     options = autofill_channel_action(options);
-    options = autofill(options, 'channel',                'ppg2hb',   '*Int*Char'  );
+    options = autofill(options, 'channel',                'ppg',     '*Int*Char'  );
     options = autofill(options, 'diagnostics',            0,          1                 );
     options = autofill(options, 'lsm',                    0,          [0,100-10^-10]    );
   case 'data_editor'
@@ -216,9 +220,9 @@ switch FunName
     options = autofill(options, 'plot',                   0,          1                 );
     options = autofill(options, 'resample',               1,          '*Int'            );
     options = autofill(options, 'snd_in_snd',             0,          1                 );
-    options = autofill(options, 'sndchannel',             'snd',      '*Int*Char'       );
+    options = autofill(options, 'channel',                'snd',      '*Int*Char'       );
     options = autofill(options, 'threshold',              0.1,        '>=',  0          );
-    options = autofill(options, 'trigchannel',            'marker',   '*Int*Char'       );
+    options = autofill(options, 'marker_chan_num',        'marker',   '*Int*Char'       );
     options = fill_find_sounds(options);
   case 'find_valid_fixations'
     % 2.24 pspm_find_valid_fixations --
@@ -340,6 +344,7 @@ switch FunName
   case 'resp_pp'
     % 2.39 pspm_resp_pp --
     options = autofill_channel_action(options);
+    options = autofill(options, 'channel',                'resp',    '*Int*Char'       );
     options = autofill(options, 'datatype',               {'rp', ...
                                                            'ra', ...
                                                            'rfr', ...
@@ -351,7 +356,8 @@ switch FunName
   case 'scr_pp'
     % 2.40 pspm_scr_pp --
     options = autofill_channel_action(options,            'add',      {'replace', ...
-                                                                       'withdraw'}      );
+        'withdraw'}      );
+    options = autofill(options, 'channel',                'scr',      '*Int*Char'       );
     options = autofill(options, 'baseline_jump',          1.5,        '>', 0            );
     options = autofill(options, 'change_data',            1,          0                 );
     options = autofill(options, 'clipping_window_size',   10000,      '*Int'            );
@@ -428,6 +434,7 @@ switch FunName
                                                           ],          '*Num'            );
   case 'split_sessions'
     % 2.45 pspm_split_sessions --
+    options = autofill(options,'marker_chan_num',         'marker',   '*Int*Char'       );
     options = autofill(options, 'max_sn',                 settings.split.max_sn,...
                                                                       '>', 0            );
     % maximum number of sessions (default 10)
@@ -935,8 +942,9 @@ function options = check_range(options, range_start, range_end)
 if options.(range_start) > options.(range_end)
   warning('ID:invalid_input', ...
   ['options.', range_start, ' and options.', range_end, ...
-  ' must be positive numeric.'
+  ' must be positive numeric.', ...
   'options.', range_start, ' must be ', ...
-  'smaller than ''options.', range_end, '.']);
+  'smaller than options.', range_end, '.']);
   options.invalid = 1;
 end
+

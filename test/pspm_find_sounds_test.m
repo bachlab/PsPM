@@ -32,7 +32,7 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
       pspm_testdata_gen(c, 10, fn);
       % invalid values for positive integer fields
       invalid_values = {'noise', 1.5, -1};
-      pos_int_fields = {'resample','sndchannel', 'trigchannel', 'expectedSoundCount'};
+      pos_int_fields = {'resample','channel', 'marker_chan_num', 'expectedSoundCount'};
       warning_IDs = {'ID:invalid_input', 'ID:invalid_input', 'ID:invalid_input'; ...
                      'ID:invalid_chantype', 'ID:invalid_input', 'ID:invalid_input'; ...
                      'ID:invalid_chantype', 'ID:invalid_input', 'ID:invalid_input'; ...,
@@ -61,7 +61,7 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
       o = struct('channel_output', 'a');
       this.verifyWarning(@() pspm_find_sounds(fn, o), 'ID:invalid_input');
       % invalid channel ids out of range
-      channel_fields = {'sndchannel', 'trigchannel'};
+      channel_fields = {'channel', 'marker_chan_num'};
       for i=1:numel(channel_fields)
         o = struct(channel_fields{i}, 5);
         this.verifyWarning(@() pspm_find_sounds(fn, o), 'ID:invalid_input');

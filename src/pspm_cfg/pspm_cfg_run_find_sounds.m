@@ -3,9 +3,7 @@ function [out] = pspm_cfg_run_find_sounds(job)
 out = NaN;
 file = job.datafile{1};
 options = struct();
-if isfield(job.chan, 'chan_nr')
-  options.sndchannel = job.chan.chan_nr;
-end
+options.channel = pspm_cfg_channel_selector('run', job.chan);
 if isfield(job.roi, 'region')
   options.roi = job.roi.region;
 end
@@ -28,9 +26,7 @@ switch f{1}
       options = pspm_update_struct(options, d.create_corrected_chan.yes, 'channel_action');
       options.channel_output = 'corrected';
     end
-    if isfield(d.marker_chan, 'marker_nr')
-      options.trigchannel = d.marker_nr;
-    end
+    options.marker_chan_num = pspm_cfg_channel_selector('run', d.chan);
     if job.output.diagnostic.n_sounds > 0
       options.expectedSoundCount = job.output.diagnostic.n_sounds;
     end
