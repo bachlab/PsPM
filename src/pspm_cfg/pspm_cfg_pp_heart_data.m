@@ -228,9 +228,11 @@ ppg2hb_method.help      = {['Convert the PPG data into heart rate by using the '
                           'selected method.']};
 
 ppg2hb_chan         = pspm_cfg_channel_selector('peripheral pulse oxymetry');
+ppg2hb_chan.help    = {['Number of peripheral pulse oximetry channel ', ...
+     '(default: last peripheral puls oximetry channel)']};
 
 ppg2hb              = cfg_exbranch;
-ppg2hb.name         = 'Convert Peripheral pulse oximetry to Heart Beat';
+ppg2hb.name         = 'Convert peripheral pulse oximetry to Heart Beat';
 ppg2hb.tag          = 'ppg2hb';
 ppg2hb.val          = {ppg2hb_chan, ppg2hb_method};
 ppg2hb.help          = {['Convert Peripheral pulse oximetry to ', ...
