@@ -63,7 +63,7 @@ method  = varargin{1};
 fn      = varargin{2};
 channel = varargin{3};
 
-options = pspm_options(options, 'convert_gaze');
+options = pspm_options(options, 'pp');
 if options.invalid
     return
 end
