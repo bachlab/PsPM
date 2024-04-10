@@ -16,7 +16,7 @@ function sts = pspm_check_python(pythonPath)
     %   sts - Status of the operation (1 for success, 0 for failure).
     %
     % ● History
-    %   Written in March 2024 by Dominik R Bach (Uni Bonn)
+    %   Written in 2024 by Dominik R Bach (Uni Bonn)
 
     % Initialize the status to failure
     sts = 0;

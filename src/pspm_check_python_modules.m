@@ -7,7 +7,7 @@ function [sts, moduleNames] = pspm_check_python_modules(module)
     %   argument, will try to load this module of not already loaded
     %
     % ● History
-    %   Written in March 2024 by Dominik R Bach (Uni Bonn)
+    %   Written in 2024 by Dominik R Bach (Uni Bonn)
 
     % Initialize return variables
     sts = 0;
