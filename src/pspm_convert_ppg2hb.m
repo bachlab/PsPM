@@ -79,11 +79,8 @@ fprintf('Heartbeat detection for %s ... \n', fn);
 [nsts, data] = pspm_load_channel(fn, options.channel, 'ppg');
 if nsts == -1, return; end
 
-%% Large spikes mode
-%--------------------------------------------------------------------------
 ppg = data.data;
 sr = data.header.sr;
-
 
 % process missing data
 nan_index = isnan(ppg);
