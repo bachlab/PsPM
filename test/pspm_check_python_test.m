@@ -7,7 +7,7 @@ classdef pspm_check_python_test < matlab.unittest.TestCase
     methods (TestMethodSetup)
         function addFunctionPath(testCase)
             % Add the path to the source directory
-            src_path = fullfile(pwd, '..', 'src');
+            src_path = fullfile(pwd, 'src');
             addpath(src_path);
         end
     end
@@ -15,7 +15,7 @@ classdef pspm_check_python_test < matlab.unittest.TestCase
     methods (TestMethodTeardown)
         function removeFunctionPath(testCase)
             % Remove the path to the source directory
-            src_path = fullfile(pwd, '..', 'src');
+            src_path = fullfile(pwd, 'src');
             rmpath(src_path);
         end
     end
