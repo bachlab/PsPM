@@ -143,6 +143,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
   methods (Test)
     function invalid_input(this)
       c{1}.chantype = 'scr';
+      c{2}.chantype = 'hb';
       fn = pspm_find_free_fn(this.datafile, '.mat');
       pspm_testdata_gen(c, 10, fn);
       valid_data = fn;
@@ -176,25 +177,27 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
       options = struct('channel_action', 'bla');
       this.verifyWarning(@() pspm_interpolate(valid_data, 'all', options), 'ID:invalid_input');
       % try to interpolate an events channel
-      c{1}.chantype = 'hb';
-      this.verifyWarning(@() pspm_interpolate(valid_data, 1), 'ID:invalid_chantype');
+      this.verifyWarning(@() pspm_interpolate(valid_data, 2), 'ID:unexpected_channeltype');
       % try to interpolate with nan from beginning; without
       % extrapolation
+      fn1 = pspm_find_free_fn(this.datafile, '.mat');
       c{1}.chantype = 'scr';
       invalid_data = pspm_testdata_gen(c, 10);
-      backup = invalid_data.data{1}.data(1);
       invalid_data.data{1}.data(1) = NaN;
-      this.verifyWarning(@() pspm_interpolate(invalid_data), 'ID:option_disabled');
-      options = struct('extrapolate', true, 'method', 'previous');
-      this.verifyWarning(@() pspm_interpolate(invalid_data, 'all', options), 'ID:out_of_range');
-      % finalise
-      invalid_data.data{1}.data(1) = backup;
+      sts = pspm_load_data(fn1, invalid_data);
+      fn2 = pspm_find_free_fn(this.datafile, '.mat');
+      invalid_data.data{1}.data(1) = 0;
       invalid_data.data{1}.data(end) = NaN;
-      this.verifyWarning(@() pspm_interpolate(invalid_data), 'all', 'ID:option_disabled');
+      sts = pspm_load_data(fn2, invalid_data);
+      this.verifyWarning(@() pspm_interpolate(fn1, 1), 'ID:option_disabled');
+      options = struct('extrapolate', true, 'method', 'previous');
+      this.verifyWarning(@() pspm_interpolate(fn1, 1, options), 'ID:out_of_range');
+      % finalise
       options = struct('extrapolate', true, 'method', 'next');
-      this.verifyWarning(@() pspm_interpolate(invalid_data, options), 'ID:out_of_range');
-      % clear file
-      delete(valid_data);
+      this.verifyWarning(@() pspm_interpolate(fn2, 1, options), 'ID:out_of_range');
+      % clear files
+      delete(fn1);
+      delete(fn2);
     end
     function test_datatypes(this, datatype, amount, chans)
       % generate data

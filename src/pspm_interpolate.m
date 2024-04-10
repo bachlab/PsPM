@@ -116,7 +116,7 @@ elseif method == 2
     if lsts < 1, return; end
     method = 2;
 elseif method == 3
-    [lsts, data, infos, pos_of_channel] = pspm_load_channel(indata, channel);
+    [lsts, data, infos, pos_of_channel] = pspm_load_channel(indata, channel, 'wave');
     if lsts < 1, return; end
     data = {data};
 end
