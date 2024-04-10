@@ -47,42 +47,19 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 %   ├─────────S_x:  See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
 %   ├─────────S_y:  See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
 %   ├─────────S_z:  See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
-%   ├─────channel:  [numeric/string] Channel ID to be preprocessed.
-%   │               (Default: 'pupil')
-%   │               * Preprocessing raw eye data:
-%   │                 The best eye is processed when channel is 'pupil'.
-%   │                 In order to process a specific eye, use 'pupil_l' or
-%   │                 'pupil_r'.
-%   │               * Preprocessing previously processed data:
-%   │                 Pupil channels created from other preprocessing steps
-%   │                 can be further processed by this function. To enable
-%   │                 this, pass one of 'pupil_pp_l' or 'pupil_pp_r'. There
-%   │                 is no best eye selection in this mode. Hence, the
-%   │                 type of the channel must be given exactly.
-%   │               * Finally, a channel can be specified by its
-%   │                 index in the given PsPM data structure. It will be
-%   │                 preprocessed as long as it is a valid pupil channel.
-%   │               * If channel is specified as a string and there are
-%   │                 multiple channels with the exact same type, only the
-%   │                 last one will be processed. This is normally not the
-%   │                 case with raw data channels; however, there may be
-%   │                 multiple preprocessed channels with same type if 'add'
-%   │                 channel_action was previously used. This feature can
-%   │                 be combined with 'add' channel_action to create
-%   │                 preprocessing histories where the result of each step
-%   │                 is stored as a separate channel.
-%   │               * In all of the above cases, if the type of the input
-%   │                 channel does not contain a '_pp' suffix, then a '_pp'
-%   │                 suffix will be appended to the type of the output channel.
-%   │                 Therefore, this function should not overwrite a raw data
-%   │                 channel.
+%   ├─.channel:     [optional][numeric/string] [Default: 'pupil']
+%   │               Channel ID to be preprocessed.
+%   │               To process a specific eye, use 'pupil_l' or 'pupil_r'.
+%   │               To process the combined left and right eye, use 'pupil_c'.
+%   │               The default identifier 'pupil' will
+%   │               use the first existing option out of the following: 
+%   │               (1) L-R-combined pupil, (2) non-lateralised pupil, (3) best
+%   │               eye pupil, (4) any pupil channel. If there are multiple
+%   │               channels of the specified type, only last one will be
+%   │               processed. You can also specify the number of a channel.
 %   └channel_action:  ['add'/'replace'] Defines whether output data should
 %                     be added or the corresponding preprocessed channel
-%                     should be replaced. Note that 'replace' mode does not
-%                     replace raw data channels. It replaces a previously
-%                     stored preprocessed channel with a '_pp' suffix at the
-%                     end of its type.
-%                     (Default: 'add')
+%                     should be replaced. (Default: 'add')
 % ● Outputs
 %       out_channel:  Channel index of the stored output channel.
 % ● Reference
@@ -100,6 +77,7 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+out_channel = 0;
 
 %% Default values
 
@@ -121,9 +99,10 @@ options = pspm_options(options, 'pupil_correct_eyelink');
 if options.invalid
   return
 end
+
 if strcmp(options.mode, 'manual')
   for field = all_fieldnames
-    if ~isfield(options, field{1})
+    if ~isfield(options, field{1}) || options.(field{1}) == 0
       warning('ID:invalid_input',...
         'In manual mode, options must contain all geometry parameters');
       return;
@@ -144,59 +123,21 @@ if strcmpi(options.mode, 'auto')
   end
 end
 
-
 %% load data
+alldata = struct();
+[sts_load, alldata.infos, alldata.data] = pspm_load_data(fn);
+if sts_load < 1, return, end
 
-[lsts, ~, pupil_data] = pspm_load_data(fn, options.channel);
-if lsts ~= 1
-  return
-end
-if numel(pupil_data) > 1
-  warning('ID:invalid_input', ['There is more than one channel'...
-    ' with type %s in the data file.\n'...
-    ' We will process only the last one.\n'], options.channel);
-  pupil_data = pupil_data(end);
-end
-old_channeltype = pupil_data{1}.header.chantype;
-if ~contains(old_channeltype, 'pupil')
-  warning('ID:invalid_input', 'Specified channel is not a pupil channel');
-  return;
-end
-
-is_left = contains(old_channeltype, '_l');
-is_both = contains(old_channeltype, '_c');
-if is_both
-  warning('ID:invalid_input',...
-    'pspm_pupil_correct_eyelink cannot work with combined pupil channels');
-  return;
-end
-if is_left
-  gaze_x_chan = 'gaze_x_l';
-  gaze_y_chan = 'gaze_y_l';
-else
-  gaze_x_chan = 'gaze_x_r';
-  gaze_y_chan = 'gaze_y_r';
-end
-
-[lsts, ~, gaze_x_data] = pspm_load_data(fn, gaze_x_chan);
+% get pupil and gaze channels
+[lsts, pupil_data] = pspm_load_channel(alldata, options.channel, 'pupil');
+if lsts ~= 1, return, end
+[lsts, gaze_x_data, gaze_y_data] = pspm_load_gaze(alldata, pupil_data.header.chantype);
 if lsts ~= 1; return; end
-[lsts, ~, gaze_y_data] = pspm_load_data(fn, gaze_y_chan);
-if lsts ~= 1; return; end
-
-if numel(gaze_x_data) > 1
-  warning('ID:multiple_channels',...
-    'There are more than one gaze x channel. We will use the last one');
-  gaze_x_data = gaze_x_data(end:end);
-end
-if numel(gaze_y_data) > 1
-  warning('ID:multiple_channels',...
-    'There are more than one gaze y channel. We will use the last one');
-  gaze_y_data = gaze_y_data(end:end);
-end
 
 %% conditionally mandatory input checks
+old_channeltype = pupil_data.header.chantype;
 
-if strcmp(gaze_x_data{1}.header.units, 'pixel') || strcmp(gaze_y_data{1}.header.units, 'pixel')
+if strcmp(gaze_x_data.header.units, 'pixel') || strcmp(gaze_y_data.header.units, 'pixel')
   if ~isfield(options, 'screen_size_px')
     warning('ID:invalid_input', 'options struct must contain ''screen_size_px''');
     return;
@@ -225,28 +166,27 @@ else
 end
 
 %% gaze conversion
-
-gaze_x_mm = get_gaze_in_mm(gaze_x_data{1}.data,...
-  gaze_x_data{1}.header.units, options.screen_size_mm(1),...
+gaze_x_mm = get_gaze_in_mm(gaze_x_data.data,...
+  gaze_x_data.header.units, options.screen_size_mm(1),...
   options.screen_size_px(1));
-gaze_y_mm = get_gaze_in_mm(gaze_y_data{1}.data,...
-  gaze_y_data{1}.header.units, options.screen_size_mm(2),...
+gaze_y_mm = get_gaze_in_mm(gaze_y_data.data,...
+  gaze_y_data.header.units, options.screen_size_mm(2),...
   options.screen_size_px(2));
-pupil = pupil_data{1}.data;
+pupil = pupil_data.data;
 
 %% correction
 [sts_pupil_correct, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm, options);
 if sts_pupil_correct ~= 1; return; end
 
 %% save data
-pupil_data{1}.data = pupil_corrected;
-pupil_data{1}.header.chantype = old_channeltype;
+pupil_data.data = pupil_corrected;
+pupil_data.header.chantype = old_channeltype;
 channel_str = num2str(options.channel);
 o.msg.prefix = sprintf(...
   'PFE correction :: Input channel: %s -- Input channeltype: %s -- Output channeltype: %s --', ...
   channel_str, ...
   old_channeltype, ...
-  pupil_data{1}.header.chantype);
+  pupil_data.header.chantype);
 [lsts, out_id] = pspm_write_channel(fn, pupil_data, options.channel_action, o);
 if lsts ~= 1; return; end
 

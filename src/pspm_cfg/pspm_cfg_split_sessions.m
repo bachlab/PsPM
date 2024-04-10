@@ -1,14 +1,10 @@
 function split_sessions = pspm_cfg_split_sessions
-
-    % $Id$
-    % $Rev$
-
+    % Updated 11-03-2024 by Teddy
     % Initialise
     global settings
     if isempty(settings)
         pspm_init;
     end
-
     %% Data file
     datafile         = cfg_files;
     datafile.name    = 'Data File';
@@ -19,26 +15,8 @@ function split_sessions = pspm_cfg_split_sessions
         ' Split sessions can handle only one data file.']};
 
     %% Marker channel
-    chan_def         = cfg_const;
-    chan_def.name    = 'Default';
-    chan_def.tag     = 'chan_def';
-    chan_def.val     = {0};
-    chan_def.help    = {''};
-
-    chan_nr         = cfg_entry;
-    chan_nr.name    = 'Number';
-    chan_nr.tag     = 'chan_nr';
-    chan_nr.strtype = 'i';
-    chan_nr.num     = [1 1];
-    chan_nr.help    = {''};
-
-    mrk_chan         = cfg_choice;
-    mrk_chan.name    = 'Marker Channel';
-    mrk_chan.tag     = 'mrk_chan';
-    mrk_chan.val     = {chan_def};
-    mrk_chan.values  = {chan_def, chan_nr};
-    mrk_chan.help    = {['If you have more than one marker channel, choose the marker ' ...
-    'channel used for splitting sessions (default: use first marker channel).']};
+    mrk_chan         = pspm_cfg_channel_selector('marker');
+    
     %% split auto
     split_auto          = cfg_const;
     split_auto.name     = 'Automatic';
@@ -53,7 +31,7 @@ function split_sessions = pspm_cfg_split_sessions
     split_manual.tag    = 'marker';
     split_manual.strtype = 'i';
     split_manual.num    = [1 inf];
-    split_manual.help   = {['Split sessions according to given marker id''s.']};
+    split_manual.help   = {'Split sessions according to given marker id''s.'};
 
     %% Split behaviour
     split_behavior         = cfg_choice;
@@ -125,24 +103,20 @@ function split_sessions = pspm_cfg_split_sessions
 
     function out = pspm_cfg_run_split_sessions(job)
         datafile = job.datafile{1,1};
-        if isfield(job.mrk_chan,'chan_nr')
-            markerchannel = job.mrk_chan.chan_nr;
-        else
-            markerchannel = 0;
-        end
-        options = struct;
+        options = struct();
+        options.marker_chan_num = pspm_cfg_channel_selector('run', job.chan);
         options.overwrite = job.overwrite;
         if isfield(job.missing_epochs_file,'name')
             options.missing = job.missing_epochs_file.name{1,1};
-        else
-            options.missing = 0;
         end
+        % options.missing has a default value in pspm_options if
+        % unspecified.
         if isfield(job.split_behavior, 'auto')
             options.splitpoints = [];
         elseif isfield(job.split_behavior, 'marker')
             options.splitpoints = job.split_behavior.marker;
         end
-        out = pspm_split_sessions(datafile, markerchannel, options);
+        out = pspm_split_sessions(datafile, options);
         if ~iscell(out)
             out = {out};
         end

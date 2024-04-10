@@ -19,28 +19,7 @@ datafile.help    = {['Add the data file containing the SCR data. If you ',...
                      'trimmed data.'],' ',settings.datafilehelp};
 
 % Channel
-chan_def         = cfg_const;
-chan_def.name    = 'Default';
-chan_def.tag     = 'chan_def';
-chan_def.val     = {0};
-chan_def.help    = {''};
-
-chan_nr         = cfg_entry;
-chan_nr.name    = 'Number';
-chan_nr.tag     = 'chan_nr';
-chan_nr.strtype = 'i';
-chan_nr.num     = [1 1];
-chan_nr.help    = {''};
-
-chan         = cfg_choice;
-chan.name    = 'SCR channel';
-chan.tag     = 'chan';
-chan.val     = {chan_def};
-chan.values  = {chan_def,chan_nr};
-chan.help    = {['Indicate the channel containing the SCR data.'], ['By default ' ...
-    'the first SCR channel is assumed to contain the data for this model.'], ['If the first ' ...
-    'SCR channel does not contain the data for this model (e. g. there are two SCR channels), ' ...
-    'indicate the the channel number (within the SCR file) that contains the data for this model.']};
+chan         = pspm_cfg_channel_selector('SCR');
 
 % Modelfile name
 modelfile         = cfg_entry;

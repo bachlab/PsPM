@@ -7,7 +7,19 @@ function [sts, infos] = pspm_find_sounds(varargin)
 %   [sts, infos] = pspm_find_sounds(file,options)
 % ● Arguments
 %             file: path and filename of the pspm file holding the sound
-% ┌────────options: struct with following possible values
+% ┌─────── options
+% ├───────.channel: [optional, numeric/string, default: 'snd', i.e. last 
+% │                 sound channel in the file]
+% │                 Channel type or channel ID to be preprocessed.
+% │                 Channel can be specified by its index (numeric) in the 
+% │                 file, or by channel type (string).
+% │                 If there are multiple channels with this type, only
+% │                 the last one will be processed. If you want to
+% │                 preprocess several sound in a PsPM file,
+% │                 call this function multiple times with the index of
+% │                 each channel.  In this case, set the option 
+% │                 'channel_action' to 'add',  to store each
+% │                 resulting channel separately.
 % ├.channel_action: ['none'/'add'/'replace'] if not set to 'none'
 % │                 sound events are written as marker channel to the
 % │                 specified pspm file. Onset times then correspond to marker
@@ -52,11 +64,9 @@ function [sts, infos] = pspm_find_sounds(varargin)
 % │                 sounds. Especially usefull if pairing events with triggers.
 % │                 Only sounds included inbetween the 2 timestamps will be
 % │                 considered.
-% ├────.sndchannel: [integer] number of the channel holding the sound.
-% │                 By default first 'snd' channel.
 % ├─────.threshold: [0...1] percent of the max of the power in the signal that
 % │                 will be accepted as a sound event. Default is 0.1.
-% ├───.trigchannel: [integer] number of the channel holding the triggers.
+% ├.marker_chan_num: [integer] number of the channel holding the markers.
 % │                 By default first 'marker' channel.
 % │   EXPERIMENTAL, use with caution!
 % └.expectedSoundCount: [integer] Checks for correct number of detected sounds.
@@ -80,22 +90,18 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+infos = struct();
 
 switch length(varargin)
   case 1
     file = varargin{1};
-    options = struct;
+    options = struct();
   case 2
     file = varargin{1};
     options = varargin{2};
   case 3
     warning('Up to two variables are accepted by pspm_find_sounds.');
     return
-end
-
-% Check argument
-if ~exist(file, 'file')
-  warning('ID:file_not_found', 'File %s was not found. Aborted.',file); return;
 end
 
 fprintf('Processing sound in file %s\n',file);
@@ -110,24 +116,12 @@ outinfos = struct();
 
 
 % Load Data
-[lsts, foo, indata] = pspm_load_data(file);
-if lsts == -1
-  warning('ID:invalid_input', 'Failed loading file %s.', file); return;
+[lsts, snd] = pspm_load_channel(file, options.channel, 'snd');
+if lsts == -1 
+  return;
 end
 
 %% Sound
-% Check for existence of sound channel
-if ~options.sndchannel
-  sndi = find(strcmpi(cellfun(@(x) x.header.chantype,indata,'un',0),'snd'),1);
-  if ~any(sndi)
-    warning('ID:no_sound_chan', 'No sound channel found. Aborted');  return;
-  end
-  snd = indata{sndi};
-elseif options.sndchannel > numel(indata)
-  warning('ID:out_of_range', 'Option sndchannel is out of the data range.'); return;
-else
-  snd = indata{options.sndchannel};
-end
 
 % Process Sound
 snd.data = snd.data-mean(snd.data);
@@ -262,18 +256,10 @@ while searchForMoreSounds == true
 
   %% Triggers
   if options.diagnostics
-    % Check for existence of marker channel
-    if ~options.trigchannel
-      mkri = find(strcmpi(cellfun(@(x) x.header.chantype,indata,'un',0),'marker'),1);
-      if ~any(mkri)
-        warning('ID:no_marker_chan', 'No marker channel found. Aborted');  return;
-      end
-    elseif options.trigchannel > numel(indata)
-      warning('ID:out_of_range', 'Option trigchannel is out of the data range.');  return;
-    else
-      mkri=options.trigchannel;
+    [lsts, mkr] = pspm_load_channel(file, options.marker_chan_num, 'marker');
+    if lsts == -1
+      return;
     end
-    mkr = indata{mkri};
 
     %% Estimate delays from trigger to sound
     delays = nan(length(mkr.data),1);

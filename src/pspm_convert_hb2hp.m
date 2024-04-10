@@ -1,16 +1,25 @@
-function [sts, infos] = pspm_convert_hb2hp(fn, sr, channel, options)
+function [sts, infos] = pspm_convert_hb2hp(fn, sr, options)
 % ● Description
 %   pspm_convert_hb2hp transforms heart beat data into an interpolated heart
 %   rate signal and adds this as an additional channel to the data file
 % ● Format
-%   sts = pspm_convert_hb2hp(fn, sr, channel, options)
+%   sts = pspm_convert_hb2hp(fn, sr, options)
 % ● Arguments
 %                 fn: data file name
 %                 sr: new sample rate for heart period channel
-%            channel: number of heart beat channel (optional, default:
-%                     first heart beat channel); if empty (= 0 / [])
-%                     will be set to default value
-%   ┌────────options: optional arguments [struct]
+%   ┌─────── options
+%   ├───────.channel: [optional, numeric/string, default: 'hb', i.e. last 
+%   │                 heart beat channel in the file]
+%   │                 Channel type or channel ID to be preprocessed.
+%   │                 Channel can be specified by its index (numeric) in the 
+%   │                 file, or by channel type (string).
+%   │                 If there are multiple channels with this type, only
+%   │                 the last one will be processed. If you want to
+%   │                 convert several heart beat channels in a PsPM file,
+%   │                 call this function multiple times with the index of
+%   │                 each channel.  In this case, set the option 
+%   │                 'channel_action' to 'add',  to store each
+%   │                 resulting 'hp' channel separately.
 %   ├.channel_action: ['add'/'replace', default as 'replace']
 %   │                 Defines whether heart rate signal
 %   │                 should be added or the corresponding preprocessed
@@ -32,48 +41,35 @@ function [sts, infos] = pspm_convert_hb2hp(fn, sr, channel, options)
 %% initialise & user output
 sts = -1;
 global settings;
-if isempty(settings), pspm_init;
-end
-if ~exist('options','var')
-  options = struct();
-end
-options = pspm_options(options, 'convert_hb2hp');
-if options.invalid
-  return
+if isempty(settings), 
+    pspm_init;
 end
 
 % check input
 % -------------------------------------------------------------------------
 if nargin < 1
   warning('ID:invalid_input','No input. Don''t know what to do.'); return;
-elseif ~ischar(fn)
-  warning('ID:invalid_input','Need file name string as first input.'); return;
 elseif nargin < 2
   warning('ID:invalid_input','No sample rate given.'); return;
 elseif ~isnumeric(sr)
   warning('ID:invalid_input','Sample rate needs to be numeric.'); return;
-elseif nargin < 3 || isempty(channel) || (isnumeric(channel) && (channel == 0))
-  channel = 'hb';
-elseif ~isnumeric(channel) && ~strcmpi(channel, 'hb')
-  warning('ID:invalid_input','Channel number must be numeric'); return;
+elseif nargin < 3   
+    options = struct();
 end
-
+options = pspm_options(options, 'convert_hb2hp');
+if options.invalid
+  return
+end
 
 % get data
 % -------------------------------------------------------------------------
-[nsts, dinfos, data] = pspm_load_data(fn, channel);
-if nsts == -1
-  warning('ID:invalid_input', 'call of pspm_load_data failed');
-  return;
-end
-if numel(data) > 1
-  fprintf('There is more than one heart beat channel in the data file. Only the last of these will be analysed.');
-  data = data(end);
-end
+[nsts, data, dinfos] = pspm_load_channel(fn, options.channel, 'hb');
+if nsts == -1, return; end
+
 
 % interpolate
 % -------------------------------------------------------------------------
-hb  = data{1}.data;
+hb  = data.data;
 ibi = diff(hb);
 idx = find(ibi > options.limit.lower & ibi < options.limit.upper);
 hp = 1000 * ibi; % in ms
@@ -81,7 +77,7 @@ newt = (1/sr):(1/sr):dinfos.duration;
 try
   newhp = interp1(hb(idx+1), hp(idx), newt, 'linear' ,'extrap'); % assign hr to following heart beat
 catch
-  warning('ID:too_strict_limits', ['Interpolation failed because there wasn''t enough heartbeats within the ',...
+  warning('ID:too_strict_limits', ['Interpolation failed because there weren''t enough heartbeats within the ',...
     'required period limits. Filling the heart period channel with NaNs.']);
   newhp = NaN(1, size(newt, 2));
 end

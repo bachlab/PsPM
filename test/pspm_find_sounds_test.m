@@ -16,29 +16,32 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
     channel_action = {'none', 'add', 'replace'};
   end
   methods(Test)
-    function invalid_input(this)
-      % file does not exist
-      this.verifyWarning(@() pspm_find_sounds(''), 'ID:file_not_found');
+    function invalid_input(this) % file does not exist
+      this.verifyWarning(@() pspm_find_sounds(''), 'ID:nonexistent_file');
       % create empty file
       fn = pspm_find_free_fn(this.testdata_fn, '.mat');
       fclose(fopen(fn, 'w'));
       % test with invalid pspm file
-      this.verifyWarning(@() pspm_find_sounds(fn), 'ID:invalid_input');
+      this.verifyWarning(@() pspm_find_sounds(fn), 'ID:invalid_file_type');
       % test with data without a snd channel
       c{1}.chantype = 'scr';
       pspm_testdata_gen(c, 10, fn);
-      this.verifyWarning(@() pspm_find_sounds(fn), 'ID:no_sound_chan');
+      this.verifyWarning(@() pspm_find_sounds(fn), 'ID:non_existing_chantype');
       c{1}.chantype = 'snd';
       c{1}.noise = 1;
       pspm_testdata_gen(c, 10, fn);
       % invalid values for positive integer fields
-      invalid_values = {'a', 1.5, -1};
-      pos_int_fields = {'resample','sndchannel', 'trigchannel', 'expectedSoundCount'};
-      for i=1:numel(invalid_values)
-        for j=1:numel(pos_int_fields)
-          o = struct(pos_int_fields{j}, invalid_values{i});
-          this.verifyWarning(@() pspm_find_sounds(fn, o), 'ID:invalid_input');
-        end
+      invalid_values = {'noise', 1.5, -1};
+      pos_int_fields = {'resample','channel', 'marker_chan_num', 'expectedSoundCount'};
+      warning_IDs = {'ID:invalid_input', 'ID:invalid_input', 'ID:invalid_input'; ...
+                     'ID:invalid_chantype', 'ID:invalid_input', 'ID:invalid_input'; ...
+                     'ID:invalid_chantype', 'ID:invalid_input', 'ID:invalid_input'; ...,
+                     'ID:invalid_input', 'ID:invalid_input', 'ID:invalid_input'};
+      for i=1:numel(pos_int_fields)
+          for j=1:numel(invalid_values)
+              o = struct(pos_int_fields{i}, invalid_values{j});
+              this.verifyWarning(@() pspm_find_sounds(fn, o), warning_IDs{i, j});
+          end
       end
       % invalid values for positive numeric fields
       invalid_values = {'a', -1};
@@ -58,14 +61,14 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
       o = struct('channel_output', 'a');
       this.verifyWarning(@() pspm_find_sounds(fn, o), 'ID:invalid_input');
       % invalid channel ids out of range
-      channel_fields = {'sndchannel', 'trigchannel'};
+      channel_fields = {'channel', 'marker_chan_num'};
       for i=1:numel(channel_fields)
         o = struct(channel_fields{i}, 5);
-        this.verifyWarning(@() pspm_find_sounds(fn, o), 'ID:out_of_range');
+        this.verifyWarning(@() pspm_find_sounds(fn, o), 'ID:invalid_input');
       end
       % test with diagnostics and no marker channel in data
       o = struct('diagnostics', 1);
-      this.verifyWarning(@() pspm_find_sounds(fn, o), 'ID:no_marker_chan');
+      this.verifyWarning(@() pspm_find_sounds(fn, o), 'ID:non_existing_chantype');
       % test with invalid channel_action
       inv_val = {'a', 1};
       for i=1:length(inv_val)

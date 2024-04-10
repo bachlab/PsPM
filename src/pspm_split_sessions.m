@@ -1,4 +1,4 @@
-function varargout = pspm_split_sessions(datafile, markerchannel, options)
+function varargout = pspm_split_sessions(datafile, options)
 % ● Description
 %   pspm_split_sessions splits experimental sessions/blocks, based on
 %   regularly incoming markers, for example volume or slice markers from an
@@ -6,12 +6,12 @@ function varargout = pspm_split_sessions(datafile, markerchannel, options)
 %   terms of markers. The first and the last marker will define the start of
 %   the first session and the end of the last session.
 % ● Format
-%   newdatafile = pspm_split_sessions(datafile, markerchannel, options)
+%   newdatafile = pspm_split_sessions(datafile, options)
 % ● Arguments
 %            datafile:  a file name
-%       markerchannel:  (optional)
-%                       number of the channel containing the relevant markers.
 %   ┌─────────options:
+%   ├.marker_chan_num: [integer] number of the channel holding the markers.
+%   │                   By default first 'marker' channel.
 %   ├──────.overwrite:  [logical] (0 or 1)
 %   │                   Define whether to overwrite existing output files or not.
 %   │                   Default value: determined by pspm_overwrite.
@@ -63,17 +63,17 @@ if isempty(settings)
 end
 sts = -1;
 newdatafile = [];
+newepochfile = [];
 
 % 1.1 Check input arguments
 if nargin<1
   warning('ID:invalid_input', 'No data.\n');
   return;
+elseif nargin < 2
+  options = struct();
 end
 
 % 1.2 Set options
-if ~exist('options','var') || isempty(options) || ~isstruct(options)
-  options = struct();
-end
 options = pspm_options(options, 'split_sessions');
 if options.invalid
   return
@@ -91,14 +91,6 @@ if options.prefix > 0
   return;
 elseif options.suffix < 0
   warning('ID:invalid_input', 'Suffix must be positive.');
-  return;
-end
-if nargin < 2
-  markerchannel = 0;
-elseif isempty(markerchannel)
-  markerchannel = 0;
-elseif ~isnumeric(markerchannel)
-  warning('ID:invalid_input', 'Marker channel needs to be a number.\n');
   return;
 end
 
@@ -139,10 +131,10 @@ end
 % 2.3 Handle markers
 
 % 2.3.1 Define marker channel
-if markerchannel == 0
-  markerchannel = filestruct.posofmarker;
-end
-mrk = indata{markerchannel}.data;
+[sts, mrkdata] = pspm_load_channel(struct('data', {indata}, 'infos', ininfos), options.marker_chan_num);
+if sts < 1, return; end
+mrk = mrkdata.data;
+
 newdatafile = cell(0);
 newepochfile = cell(0);
 
@@ -150,9 +142,9 @@ newepochfile = cell(0);
 if isempty(options.splitpoints)
   imi = sort(diff(mrk), 'descend');
   if min(imi)*options.min_break_ratio > max(imi)
-    fprintf('  The file won''t be split. No possible split points found in marker channel %i.\n', markerchannel);
+    fprintf('  The file won''t be split. No possible split points found in marker channel %i.\n', options.marker_chan_num);
   elseif numel(mrk) <=  options.max_sn
-    fprintf('  The file won''t be split. Not enough markers in marker channel %i.\n', markerchannel);
+    fprintf('  The file won''t be split. Not enough markers in marker channel %i.\n', options.marker_chan_num);
   end
   imi(1:(options.max_sn-1)) = [];
   cutoff = options.min_break_ratio * max(imi);
@@ -208,7 +200,7 @@ else
       newepochfile{sn} = fullfile(p_epochs, sprintf('%s_sn%02.0f%s', f_epochs, sn, ex_epochs));
     end
     % 2.4.2 Split data
-    trimoptions = struct('drop_offset_markers', 1, 'marker_chan_num', markerchannel);
+    trimoptions = struct('drop_offset_markers', 1, 'marker_chan_num', options.marker_chan_num);
     newdata = pspm_trim(struct('data', {indata}, 'infos', ininfos), ...
       prefix{sn}, suffix{sn}, trimpoint(sn, 1:2), trimoptions);
     options.overwrite = pspm_overwrite(newdatafile{sn}, options);
@@ -221,7 +213,7 @@ else
         'units', 'unknown');
       dummydata{1,1}.data   = dp_epochs;
       % add marker channel so that pspm_trim has a reference
-      dummydata{2,1}      = indata{markerchannel};
+      dummydata{2,1}      = mrkdata;
       dummyinfos          = ininfos;
 			trimoptions_missing = trimoptions;
 			trimoptions_missing.marker_chan_num = 2;

@@ -18,6 +18,7 @@
 \renewcommand{\textendash}{--}
 \renewcommand{\textemdash}{---}
 \usepackage{bera}
+\renewcommand*\l@subsection{\@dottedtocline{2}{1.8em}{3.2 em}}
 \end_preamble
 \use_default_options true
 \begin_modules
@@ -104,7 +105,7 @@ PsPM: Psychophysiological Modelling
 
 \begin_layout Standard
 \align center
-Version 6.1.1
+Version 6.1.2
 \end_layout
 
 \begin_layout Standard
@@ -7572,9 +7573,9 @@ File mode
 \begin_layout Standard
 Is entered when the editor is started from the PsPM window, from the Matlabbatch
  or when a file path or no argument is specified at the command line startup.
- If the first argument is a file path, a second (ECG channel) and a third
- argument (Options struct) is possible.
- The second argument specifies the ECG channel to be plotted.
+ If the first argument is a file path, a second (ECG or PPG channel) and
+ a third argument (Options struct) is possible.
+ The second argument specifies the ECG or PPG channel to be plotted.
  The third argument is expected to be a struct with the following fields:
 \end_layout
 
@@ -7602,9 +7603,9 @@ limits - with fields 'lower' and 'upper' defines hard limits for the faulty
 The second and third argument is optional.
  In file mode the 'Input / Output' panel on the bottom of the left side
  is visible.
- It allows to specifiy and change input files and channels (ECG and HB)
- and allows to choose whether the edited data should be added as a new HB
- channel or replace the existing HB channel.
+ It allows to specifiy and change input files and channels (ECG/PPG and
+ HB) and allows to choose whether the edited data should be added as a new
+ HB channel or replace the existing HB channel.
  
 \end_layout
 
@@ -8931,18 +8932,76 @@ Channel definition: Choose the channel definition.
 Channel number: Number of the pupil channel in the PsPM file.
 \end_layout
 
+\begin_layout Standard
+The channel combination feature also considerates the number of NaNs in
+ the two channels to combine, which follows the rules as below
+\end_layout
+
+\begin_layout Itemize
+The channel is considered to be valid if its percentage of NaNs is below
+ the parameter 
+\family typewriter
+nan_cutoff
+\family default
+.
+ The default value of 
+\family typewriter
+nan_cutoff
+\family default
+ is 
+\family typewriter
+10%
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+If one channel is valid and the other is invalid, then only the valid channel
+ will be used as the generated channel from combining the two channels.
+ The invalid channel will not be used.
+ The valid channel can be either the original data channel or the data channel
+ to combine.
+ The metadata of the generated channel will be exactly the same to the used
+ channel, such as 
+\family typewriter
+pupil_l
+\family default
+ instead of 
+\family typewriter
+pupil_c
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+If both of two channels are valid or invalid, then they will be combined
+ following the conventional rule.
+\end_layout
+
+\begin_layout Itemize
+A warning is always thrown if any channel is invalid.
+\end_layout
+
 \begin_layout Subsubsection*
 Channel action
 \end_layout
 
 \begin_layout Itemize
-add: Add a new preprocessed channel to the PsPM file.
+
+\family typewriter
+add
+\family default
+: Add a new preprocessed channel to the PsPM file.
  The new channel type will contain a 'pp' suffix at the end if the input
  channel did not contain a 'pp' suffix.
 \end_layout
 
 \begin_layout Itemize
-replace: Replace a previously existing preprocessed channel.
+
+\family typewriter
+replace
+\family default
+: Replace a previously existing preprocessed channel.
  If no preprocessed channel exists, this option behaves the same way as
  add option.
  (default)
@@ -8953,13 +9012,21 @@ Settings
 \end_layout
 
 \begin_layout Itemize
-default: Use the default settings provided in the underlying preprocessing
- implementation.
+
+\family typewriter
+default
+\family default
+: Use the default settings provided in the underlying preprocessing implementati
+on.
 \end_layout
 
 \begin_layout Itemize
-custom: In custom settings mode, you can specify any of the settings below
- according to your preferences.
+
+\family typewriter
+custom
+\family default
+: In custom settings mode, you can specify any of the settings below according
+ to your preferences.
 \end_layout
 
 \begin_deeper
@@ -9134,7 +9201,7 @@ Related function:
 \shape default
  
 \family typewriter
-pspm_convert_area2mm, pspm_convert_pixel2unit
+pspm_convert_area2mm, pspm_convert_pixel2unit_core
 \end_layout
 
 \begin_layout Standard
@@ -9509,7 +9576,7 @@ Related function:
 \shape default
  
 \family typewriter
-pspm_convert_gaze_distance
+pspm_convert_gaze
 \end_layout
 
 \begin_layout Standard
@@ -10996,7 +11063,7 @@ SEBRF with derivative.
 \end_layout
 
 \begin_layout Subsection
-GLM for SPS
+GLM for SPS (fear-conditioning)
 \end_layout
 
 \begin_layout Standard
@@ -14232,7 +14299,7 @@ status open
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename Figures/YY1_import.png
-	scale 40
+	scale 50
 
 \end_inset
 
@@ -14282,7 +14349,7 @@ status open
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename Figures/YY2_trim.png
-	scale 40
+	scale 50
 
 \end_inset
 
@@ -18834,7 +18901,7 @@ New Functions
 \begin_layout Itemize
 
 \family typewriter
-pspm_convert_pixel2unit
+pspm_convert_pixel2unit_core
 \family default
 : Allows to transfer gaze data from pixel to units.
  This facilitates the use of pspm_find_valid_fixations which needs data
@@ -18844,7 +18911,7 @@ pspm_convert_pixel2unit
 \begin_layout Itemize
 
 \family typewriter
-pspm_compute_visual_angle
+pspm_convert_visual_angle_core
 \family default
 : Computes visual angle from gaze data.
 \end_layout
@@ -18966,7 +19033,7 @@ lost
 \begin_layout Itemize
 
 \family typewriter
-pspm_compute_visual_angle
+pspm_convert_visual_angle_core
 \family default
 : Fix bug in range computation.
 \end_layout
@@ -19504,7 +19571,7 @@ pspm_bf_ldrf_gm
 \begin_layout Itemize
 Fix a bug in 
 \family typewriter
-pspm_compute_visual_angle
+pspm_convert_visual_angle_core
 \family default
  where there was an error in the conversion factor of pixels wrt.
  to mm.
@@ -19557,7 +19624,7 @@ pspm_simple_qa
 \begin_layout Itemize
 Allow 
 \family typewriter
-pspm_convert_gaze_distance
+pspm_convert_gaze
 \family default
  to convert from distance units to degrees or scanpath speed.
  The accompanying GUI editor is available under 'Gaze Convert' in the data
@@ -21529,6 +21596,67 @@ UI improvements
 PsPM's UI in Linux environment has been improved.
 \end_layout
 
+\begin_layout Subsection*
+Version 6.1.2
+\end_layout
+
+\begin_layout Subsubsection*
+Bug fixes
+\end_layout
+
+\begin_layout Itemize
+GUI
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A bug that made channel actions in EMG pre-processing unrecognised has been
+ fixed.
+\end_layout
+
+\begin_layout Itemize
+A bug, which sometimes made DCM not run from the GUI, has been fixed.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_convert_hb2hp
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A bug, which incorrectly selected heart rate channels, has been fixed.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_dcm
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A bug, which could lead to a wrong sample rate being used if more than one
+ SCR channel existed in the file, has been fixed.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family typewriter
+pspm_glm
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A bug, which leads to markers being taken from the first marker channel
+ but markervalues from the last, has been fixed.
+\end_layout
+
+\end_deeper
 \begin_layout Part
 Acknowledgements
 \end_layout

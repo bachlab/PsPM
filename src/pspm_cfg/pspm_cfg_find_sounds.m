@@ -23,25 +23,7 @@ datafile.help    = {['Specify the PsPM datafile containing the imported ', ...
     'startle sound data.'],' ',settings.datafilehelp };
 
 %% Channel
-chan_def         = cfg_const;
-chan_def.name    = 'Default';
-chan_def.tag     = 'chan_def';
-chan_def.val     = {0};
-chan_def.help    = {'First sound channel'};
-
-chan_nr         = cfg_entry;
-chan_nr.name    = 'Number';
-chan_nr.tag     = 'chan_nr';
-chan_nr.strtype = 'i';
-chan_nr.num     = [1 1];
-chan_nr.help    = {''};
-
-chan         = cfg_choice;
-chan.name    = 'Channel';
-chan.tag     = 'chan';
-chan.val     = {chan_def};
-chan.values  = {chan_def,chan_nr};
-chan.help    = {'Number of channel containing the startle sounds (default: first sound channel).'};
+chan         = pspm_cfg_channel_selector('sound');
 
 %% Threshold
 threshold            = cfg_entry;
@@ -147,25 +129,7 @@ new_corrected_chan.help    = {['Create new data channel which contains ', ...
     'marker in the specified marker channel.']};
 
 %% Marker channel
-mrk_chan_def         = cfg_const;
-mrk_chan_def.name    = 'Default';
-mrk_chan_def.tag     = 'marker_def';
-mrk_chan_def.val     = {0};
-mrk_chan_def.help    = {'First marker channel'};
-
-mrk_chan_nr         = cfg_entry;
-mrk_chan_nr.name    = 'Number';
-mrk_chan_nr.tag     = 'marker_nr';
-mrk_chan_nr.strtype = 'i';
-mrk_chan_nr.num     = [1 1];
-mrk_chan_nr.help    = {''};
-
-marker_chan         = cfg_choice;
-marker_chan.name    = 'Marker channel';
-marker_chan.tag     = 'marker_chan';
-marker_chan.val     = {mrk_chan_def};
-marker_chan.values  = {mrk_chan_def,mrk_chan_nr};
-marker_chan.help    = {''};
+marker_chan         = pspm_cfg_channel_selector('marker');
 
 %% Max delay
 max_delay        = cfg_entry;

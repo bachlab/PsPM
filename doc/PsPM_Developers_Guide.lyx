@@ -14,7 +14,8 @@
 % Added by lyx2lyx
 \renewcommand{\textendash}{--}
 \renewcommand{\textemdash}{---}
-
+\renewcommand*\l@subsection{\@dottedtocline{2}{3.8em}{3.2 em}}
+\renewcommand*\l@subsubsection{\@dottedtocline{3}{7.0em}{4.1em}}
 \usepackage{bera}
 \usepackage{enumitem} \setlist[itemize]{noitemsep}
 \end_preamble
@@ -102,7 +103,7 @@ Developer's Guide
 
 \begin_layout Standard
 \align center
-Version 6.1.1
+Version 6.1.2
 \end_layout
 
 \begin_layout Standard
@@ -4316,7 +4317,7 @@ Further settings
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="22" columns="8">
+<lyxtabular version="3" rows="23" columns="8">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="3.6cm">
 <column alignment="center" valignment="top">
@@ -4401,7 +4402,7 @@ Ask for sampling rate
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -4426,6 +4427,82 @@ spike
 
 \family typewriter
 .smr
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CED
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+✓
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+✓
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CED Spike
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+spike
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+.smrx
 \end_layout
 
 \end_inset
@@ -15139,7 +15216,13 @@ pspm_get_obs_test
 \begin_layout Itemize
 
 \family typewriter
-pspm_get_spike_test
+pspm_get_smr_test
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+pspm_get_smrx_test
 \end_layout
 
 \begin_layout Itemize
@@ -27196,7 +27279,7 @@ List of Functions
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="157" columns="4">
+<lyxtabular version="3" rows="158" columns="4">
 <features booktabs="true" islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="50text%">
 <column alignment="center" valignment="top" width="15text%">
@@ -28327,46 +28410,6 @@ X
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_compute_visual_angle
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-LC
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
 pspm_con1
 \end_layout
 
@@ -28687,7 +28730,7 @@ TM
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_convert_pixel2unit
+pspm_convert_pixel2unit_core
 \end_layout
 
 \end_inset
@@ -28791,6 +28834,46 @@ LC
 \end_inset
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_convert_visual_angle_core
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DB
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -31087,7 +31170,7 @@ LC
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_get_spike
+pspm_get_smr
 \end_layout
 
 \end_inset
@@ -31115,6 +31198,46 @@ x
 
 \begin_layout Plain Layout
 x
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_get_smrx
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TZ
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
 \end_layout
 
 \end_inset

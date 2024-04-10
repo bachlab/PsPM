@@ -9,31 +9,34 @@ function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 % ● Format
 %   [sts, out] = pspm_process_illuminance(ldata, sr, options)
 % ● Arguments
-%           ldata:  illuminance data as (cell of) 1x1 double or filename
-%              sr:  sample rate in Hz of the input data
-%   ┌─────options:  struct with optional settings
-%   ├───.transfer:  params for the transfer function
-%   ├─────────.bf:  settings for the basis functions
-%   ├───.duration:  duration of the basis functions in s
-%   ├─────.offset:  offset in s
-%   ├───.dilation:  options for the dilation basis function
-%   ├────.fhandle:  function handle to the dilation response function.
-%   ├.constriction:
-%   ├────.fhandle:  function handle to the constriction response function.
-%   ├─────────.fn:  [filename] if specified ldata{i,j} will be saved to a file
-%   │               with filename options.fn{i,j} into the variable 'R'.
-%   └──.overwrite:  [logical] (0 or 1)
-%                   Define whether to overwrite existing output files or not.
-%                   Default value: determined by pspm_overwrite.
+%              ldata: illuminance data as (cell of) 1x1 double or filename.
+%                 sr: sample rate in Hz of the input data.
+%   ┌────────options: struct with optional settings.
+%   ├────────────.fn: [filename] if specified ldata{i,j} will be saved to a file
+%   │                 with filename options.fn{i,j} into the variable 'R'.
+%   ├─────.overwrite: [logical] (0 or 1)
+%   │                 Define whether to overwrite existing output files or not.
+%   │                 Default value: determined by pspm_overwrite.
+%   ├──────.transfer: params for the transfer function
+%   └┬───────────.bf: settings for the basis functions.
+%    ├┬.constriction: options to the constriction response function.
+%    │└─────.fhandle: function handle to the constriction response function.
+%    │                The allowed values are @pspm_bf_lcrf_gm.
+%    ├┬────.dilation: options for the dilation basis function.
+%    │└─────.fhandle: function handle to the dilation response function.
+%    │                The allowed values are @pspm_bf_ldrf_gm and 
+%    │                @pspm_bf_ldrf_gu.
+%    ├─────.duration: duration of the basis functions in second.
+%    └───────.offset: offset in second.
 % ● Outputs
-%             sts:  status
-%             out:  has same size as ldata and contains either the
-%                   processed data or contains the path to the .mat file
-%                   where the data has been stored to
+%                sts: status
+%                out: has same size as ldata and contains either the
+%                     processed data or contains the path to the .mat file
+%                     where the data has been stored to
 % ● History
 %   Introduced In PsPM 3.1
 %   Written in 2015 by Tobias Moser, Christoph Korn (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Updated in 2022 by Teddy
 
 % initialise
 global settings

@@ -50,9 +50,10 @@ function outfile = pspm_import(datafile, datatype, import, options)
 %   │                     default value is 'mm' otherwise the distance unit is
 %   │                     ''; Accepted values include 'mm', 'cm',
 %   │                     'm', and 'inches'.
-%   ├──────────.denoise:  for marker channels in CED spike format (recorded
-%   │                     as 'level'), filters out markers duration longer than
-%   │                     the value given here (in ms).
+%   ├──────────.denoise:  for continuous marker channels or those recorded as
+%   │                     digital level with two values (e.g. CED spike); 
+%   │                     retains markers of duration longer than the 
+%   │                     value given here (in seconds).
 %   └────────.delimiter:  for delimiter separated values, value used as
 %                         delimiter for file read.
 %   ┌───────────options:  a struct.
@@ -229,7 +230,7 @@ end
 % Previous checks have been passed.
 for d = 1:numel(D)
   if ~settings.developmode
-    fprintf(['\n\xBB Importing ', D{d}, ': ']);
+    fprintf('\n\xBB Importing %s: ', D{d});
   end
   % 4.1 pass over to import function if datafile exists, otherwise next file
   file_exists = true;
@@ -315,7 +316,7 @@ for d = 1:numel(D)
     end
   end
   if ~settings.developmode
-    fprintf('Done.');
+    fprintf('Done.\n');
   end
   % 4.4 convert import cell back and remove data
   import = import{1};

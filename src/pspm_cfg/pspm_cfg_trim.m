@@ -15,26 +15,7 @@ datafile.num     = [1 Inf];
 datafile.help    = {'Select datafile.',' ',settings.datafilehelp};
 
 %% Marker channel number
-chan_def         = cfg_const;
-chan_def.name    = 'Default';
-chan_def.tag     = 'chan_def';
-chan_def.val     = {0};
-chan_def.help    = {''};
-
-chan_nr         = cfg_entry;
-chan_nr.name    = 'Number';
-chan_nr.tag     = 'chan_nr';
-chan_nr.strtype = 'i';
-chan_nr.num     = [1 1];
-chan_nr.help    = {''};
-
-mrk_chan         = cfg_choice;
-mrk_chan.name    = 'Marker Channel';
-mrk_chan.tag     = 'mrk_chan';
-mrk_chan.val  = {chan_def};
-mrk_chan.values  = {chan_def,chan_nr};
-mrk_chan.help    = {['If you have more than one marker channel, choose the reference ' ...
-    'marker channel (default: use the first marker channel in the file).']};
+mrk_chan = pspm_cfg_channel_selector('marker');
 
 %% Items for reference: File
 file_from         = cfg_entry;

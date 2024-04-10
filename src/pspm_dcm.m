@@ -238,17 +238,14 @@ data = cell(numel(model.datafile), 1);
 missing = cell(numel(model.datafile), 1);
 for iSn = 1:numel(model.datafile)
   % check & load data
-  [sts, ~, data{iSn}] = pspm_load_data(model.datafile{iSn}, model.channel);
-  if sts == -1 || isempty(data{iSn})
-    warning('ID:invalid_input', 'No SCR data contained in file %s', ...
-      model.datafile{iSn});
+  [sts, data] = pspm_load_channel(model.datafile{iSn}, model.channel, 'scr');
+  if sts == -1 
     return;
+  else
+     y{iSn} = data.data;
+     sr{iSn} = data.header.sr;
+     model.filter.sr = sr{iSn};
   end
-
-  % use the last data channel, consistent with sf and glm
-  y{iSn} = data{iSn}{end}.data;
-  sr{iSn} = data{iSn}{end}.header.sr;
-  model.filter.sr = sr{iSn};
 
   % load and check existing missing data (if defined)
   if ~isempty(model.missing{iSn})
@@ -277,10 +274,15 @@ for iSn = 1:numel(model.datafile)
   % the data already. This will update the previous miss_epochs definition.
   nan_epochs = isnan(y{iSn});
 
-  if ~isempty(nan_epochs)
-      d_nan_ep = transpose(diff(nan_epochs));
-      nan_ep_start = find(d_nan_ep == 1);
-      nan_ep_stop = find(d_nan_ep == -1);
+  if any(nan_epochs)
+      if all(nan_epochs)
+          nan_ep_start = 1;
+          nan_ep_stop = numel(nan_epochs);
+      else
+          d_nan_ep = transpose(diff(nan_epochs));
+          nan_ep_start = find(d_nan_ep == 1);
+          nan_ep_stop = find(d_nan_ep == -1);
+      end
 
       if numel(nan_ep_start) > 0 || numel(nan_ep_stop) > 0
           % check for blunt ends and fix
@@ -298,12 +300,16 @@ for iSn = 1:numel(model.datafile)
           end
       end
 
-    % put missing epochs together
-    miss_epochs = [nan_ep_start(:), nan_ep_stop(:)];
+      % put missing epochs together
+      miss_epochs = [nan_ep_start(:), nan_ep_stop(:)];
   end
 
   % epoch should be ignored if duration > threshold
-  ignore_epochs = diff(miss_epochs, 1, 2)/sr{iSn} > model.substhresh;
+  if exist('miss_epochs', 'var')
+    ignore_epochs = diff(miss_epochs, 1, 2)/sr{iSn} > model.substhresh;
+  else
+    ignore_epochs = [];
+  end
 
   if any(ignore_epochs)
     i_e = find(ignore_epochs);
@@ -594,23 +600,14 @@ if (options.indrf || options.getrf) && (isempty(model.flexevents) ...
     || (max(model.fixevents > max(model.flexevents(:, 2), [], 2))))
   [~, lastfix] = max(model.fixevents);
   % extract data
-  winsize = floor(model.sr * min([proc_miniti 10]));
-  D = [];
-  c = 1;
-  valid_newevents = sbs_newevents{2}(proc_subsessions);
-  for isbSn = 1:numel(model.scr)
-    scr_sess = model.scr{isbSn};
-    foo = valid_newevents{isbSn}(:, lastfix);
-    foo(foo < 0) = [];
-    for n = 1:size(foo, 1)
-      win = ceil(model.sr * foo(n) + (1:winsize));
-      [row, warnings] = get_data_after_trial_filling_with_nans_when_necessary(...
-        scr_sess, win, n, isbSn, model.iti, proc_miniti, warnings);
-      D(c, 1:numel(row)) = row;
-      c = c + 1;
-    end
-  end
-  clear c k n
+  segment_length = floor(model.sr * min([proc_miniti 10]));
+  valid_newevents = cellfun(@(x, y) pspm_time2index(x(:, lastfix), model.sr , length(y)), ...
+      sbs_newevents{2}(proc_subsessions), ...
+      model.scr', ...
+      'UniformOutput', false);
+  [sts, D] = pspm_extract_segments_core(model.scr, valid_newevents, segment_length);
+  if sts < 1, return; end
+
   if isempty(find(isnan(D(:))))
     mD = D - repmat(mean(D, 2), 1, size(D, 2)); % mean centre
     % PCA
@@ -647,7 +644,6 @@ if (options.indrf || options.getrf) && (isempty(model.flexevents) ...
 end
 
 % 5.4 extract data from all trials
-winsize = floor(model.sr * min([proc_miniti 10]));
 % check maximum trial duration
 maxtrial = NaN(numel(model.scr), 1);
 numtrials = NaN(numel(model.scr), 1);
@@ -656,23 +652,15 @@ for isbSn = 1:numel(model.scr)
     maxtrialduration(isbSn) = max(trialduration(:));
     numtrials(isbSn) = numel(trialduration);
 end
-% initialise data matrix
-D = NaN(sum(numtrials), ceil(max(maxtrialduration) * model.sr) + winsize); 
-c = 1;
-for isbSn = 1:numel(model.scr)
-  scr_sess = model.scr{isbSn};
-  for n = 1:numel(model.trlstart{isbSn})
-    win = ceil(((model.sr * model.trlstart{isbSn}(n)):...
-      (model.sr * model.trlstop{isbSn}(n) + winsize)));
-    % correct rounding errors
-    win(win == 0) = [];
-    [row,warnings] = get_data_after_trial_filling_with_nans_when_necessary(...
-      scr_sess, win, n, isbSn, model.iti, proc_miniti, warnings);
-    D(c, 1:numel(row)) = row;
-    c = c + 1;
-  end
-end
-clear c n
+segment_length = floor(model.sr * (max(maxtrialduration) + min([proc_miniti 10])));
+
+valid_newevents = cellfun(@(x, y) pspm_time2index(x, model.sr , length(y)), ...
+    model.trlstart, ...
+    model.scr', ...
+    'UniformOutput', false);
+
+[sts, D] = pspm_extract_segments_core(model.scr, valid_newevents, segment_length);
+if sts < 1, return; end
 
 % 5.5 do PCA if required
 if (options.indrf || options.getrf) && ~isempty(model.flexevents)
@@ -696,7 +684,7 @@ if (options.indrf || options.getrf) && ~isempty(model.flexevents)
     model.aSCR = aSCR;
   else
     warning('ID:invalid_input', ...
-      'Due to NaNs after some trial endings, PCA could not be computed');
+      'Due to NaNs in the data, PCA could not be computed');
     [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
   end
 end
@@ -783,28 +771,6 @@ switch nargout
 end
 return
 
-function [datacol, warnings] = ...
-  get_data_after_trial_filling_with_nans_when_necessary(...
-  scr_sess, win, n, isbSn, sbs_iti, proc_miniti, warnings)
-% Try to get all the data elements after the end of the trial n in session
-% isbSn. Indices of the elements to return are sto
-% red in win. In case these indices are larger than size of scr_sess{isbSn}, then fill the
-% rest of the data with NaN values.
-datacol = NaN(1, numel(win));
-num_indices_outside_scr = win(end) - numel(scr_sess);
-if num_indices_outside_scr > 0
-  warning('ID:too_short_ITI',...
-    ['Trial %d in session %d has ITI %f; but for mean response we use %f seconds',...
-    ' after each trial. Filling the rest with NaNs'],...
-    n, isbSn, sbs_iti{isbSn}(n), proc_miniti(isbSn)...
-    );
-  [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
-  win(end - num_indices_outside_scr + 1 : end) = [];
-  datacol(1:numel(win)) = scr_sess(win);
-  datacol(numel(win) + 1 : end) = NaN;
-else
-  datacol(1:numel(win)) = scr_sess(win);
-end
 
 function [sts] = pspm_dcm_check_options(type, check_opt, fields)
 % pspm_dcm_check_options is a helper function for other functions which should
