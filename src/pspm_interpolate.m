@@ -1,17 +1,15 @@
 function [sts, outdata] = pspm_interpolate(indata, varargin)
 % ● Description
 %   pspm_interpolate interpolates NaN values passed with the indata parameter.
-%   Indata can be a numeric array, a filename or a PsPM data struct as 
-%   accepted by pspm_load_data. If indata is a filename or PsPM data
-%   structure, then the function either acts on one selected channel and 
+%   Indata can be a numeric array or a filename. If indata is a filename, 
+%   then the function either acts on one selected channel and 
 %   writes the result to the same file, or on all channels in the file and 
 %   writes a new file if the input is a file name. 
 % ● Format
 %   [sts, outdata] = pspm_interpolate(numeric_array, options)
 %   [sts, outdata] = pspm_interpolate(filename, channel, options)
 % ● Arguments
-%          indata:  [struct/char/numeric] or [cell array of struct/char/numeric]
-%                   contains the data to be interpolated
+%          indata:  [char/numeric] contains the data to be interpolated
 %          channel: a single channel identifier accepted by pspm_load_channel
 %                   (numeric or char), or 'all', which will work on all 
 %                   channels. If indata is a file name and channel is 'all' 
@@ -63,15 +61,22 @@ elseif isempty(indata)
   return;
 end
 
-if isnumeric(indata) && nargin >= 2
-    options = varargin{2};
+if isnumeric(indata) 
+    if nargin >= 2
+        options = varargin{1};
+    else
+        options = struct();
+    end
 elseif nargin < 2
     warning('ID:invalid_input', 'Channel undefined - don''t know what to do.');
     return;
-elseif nargin >= 3
-    options = varargin{3};
 else
-    options = struct();
+    channel = varargin{1};
+    if nargin >= 3
+        options = varargin{2};
+    else
+        options = struct();
+    end
 end
 
 % 1.2 initialise options
@@ -83,16 +88,12 @@ end
 % 1.3 determine the method
 if isnumeric(indata)
     method = 1;
-elseif isstruct(indata) && strcmpi(indata, 'all')
-    method = 2;
-elseif isstruct(indata)
-    method = 3;
 elseif ischar(indata) && strcmpi(indata, 'all')
-    method = 4;
+    method = 2;
 elseif ischar(indata)
-    method = 5;
+    method = 3;
 else
-    warning('ID:invalid_input', 'Wrong input format.');
+    warning('ID:invalid_input', 'Wrong input data format.');
     return
 end
 
@@ -105,24 +106,19 @@ end
 
 %% 2 work on data
 % 2.1 load data
-if isnumeric(indata)
+if method == 1
     data{1}.data = indata;
     method = 1;
-elseif ischar(indata) && strcmpi(indata, 'all')
+elseif method == 2
     [lsts, infos, alldata] = pspm_load_data(indata);
     if lsts < 1, return; end
-    [lsts, data, pos_of_channel] = pspm_select_channels(data, 'wave');
+    [lsts, data, pos_of_channel] = pspm_select_channels(alldata, 'wave');
     if lsts < 1, return; end
     method = 2;
-else
-    [lsts, data, infos, pos_of_channel] = pspm_load_channel(fn, channel);
+elseif method == 3
+    [lsts, data, infos, pos_of_channel] = pspm_load_channel(indata, channel);
     if lsts < 1, return; end
     data = {data};
-    if ischar(indata)
-        method = 3;
-    else
-        method = 4;
-    end
 end
 
 % 2.2 work on all channels
@@ -132,10 +128,9 @@ for i_channel = 1:numel(data)
       warning('ID:invalid_input',...
         'Need at least two sample points to run interpolation (Channel %i). Skipping.', k);
     else
-      x = 1:length(dat);
-      v = dat;
+      x = 1:length(v);
       xq = find(isnan(v));
-      % throw away data matching 'filt'
+      % throw away data matching 'xq'
       x(xq) = [];
       v(xq) = [];
       % check for overlaps
@@ -168,9 +163,9 @@ for i_channel = 1:numel(data)
           vq = interp1(x, v, xq, options.method);
       end
       % update data depending on method
-      if ismember(method, [2, 4])
+      if method == 2
           alldata{pos_of_channel(i_channel)}.data(xq) = vq;
-      elseif method == 1
+      else
           data{i_channel}.data(xq) = vq;
       end
     end
@@ -178,86 +173,43 @@ end
 
 % 2.3 update history
 if method > 1
-    if isfield(infos, 'history')
-      nhist = numel(infos.history);
-    else
-      nhist = 0;
-    end
     if method == 2
         channelstr = 'All channels';
     else
         channelstr = sprintf('Channel %i', pos_of_channel);
     end
-    infos.history{nhist + 1} = ...
-        [channelstr, ' on ', datestr(now, 'dd-mmm-yyyy HH:MM:SS')];
+    msg = [channelstr, ' on ', datestr(now, 'dd-mmm-yyyy HH:MM:SS')];
 end
 
 % 2.4 write and/or return data
 if method == 1 % numeric indata
     outdata =  data{1}.data;
+    sts = 1;
 elseif method == 2 % write new file
     % save as a new file preprended with 'i'
-    [pth, fn, ext] = fileparts(fn);
+    [pth, fn, ext] = fileparts(indata);
     newdatafile    = fullfile(pth, ['i', fn, ext]);
+    if isfield(infos, 'history')
+      nhist = numel(infos.history);
+    else
+      nhist = 0;
+    end
+    infos.history{nhist + 1} = msg;
     infos.interpolatefile = newdatafile;
-    % pass options
-    o.overwrite = pspm_overwrite(newdatafile, options);
-    savedata.options = o;
-    sts = pspm_load_data(newdatafile, struct('data', {alldata}, ...
-        'infos', infos, ...
-        'options', struct('overwrite', o.overwrite)));
+    sts = pspm_load_data(newdatafile, ...
+        struct('data', {alldata}, ...
+               'infos', infos, ...
+               'options', ...
+                  struct('overwrite', pspm_overwrite(newdatafile, options))));
     if sts == 1
         outdata = newdatafile;
     end
-elseif method == 
-
-
-
-
 elseif method == 3
-
-
-end
-
-
-
-  if ~inline_flag
-   
-    else
-      if options.newfile
-        % save as a new file preprended with 'i'
-        [pth, fn, ext] = fileparts(fn);
-        newdatafile    = fullfile(pth, ['i', fn, ext]);
-        savedata.infos.interpolatefile = newdatafile;
-        % pass options
-        o.overwrite = pspm_overwrite(newdatafile, options);
-        savedata.options = o;
-        sts = pspm_load_data(newdatafile, savedata);
-        if sts == 1
-          outdata{d} = newdatafile;
-        end
-      else
-        o = struct();
-        % add to existing file
-        if strcmp(options.channel_action, 'replace')
-          o.channel = work_channels;
-        end
-        o.msg.prefix = 'Interpolated channel';
-        [sts, infos] = pspm_write_channel(fn, savedata.data(work_channels), options.channel_action, o);
-        % added channel ids are in infos.channel
-        outdata{d} = infos.channel;
-      end
+    [sts, infos] = pspm_write_channel(indata, data, options.channel_action, ...
+        struct('channel', pos_of_channel, ...
+               'msg', msg));
+    if sts == 1
+        outdata = indata;
     end
-  else
-    outdata{d} = channel{1};
-  end
-  if ischar(fn)
-    fprintf('done.')
-  end
 end
-% format output same as input
-if (numel(outdata) == 1) && ~iscell(indata)
-  outdata = outdata{1};
-end
-sts = 1;
-return
+
