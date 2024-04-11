@@ -7,9 +7,6 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, options)
 %   sts = pspm_convert_ecg2hb(fn, options)
 % ● Arguments
 %                 fn: data file name
-%            channel: number of ECG channel (optional, default: last ECG
-%                     channel) if is empty (= 0 / []) then default channel will
-%                     be used.
 %   ┌─────── options
 %   ├───────.channel: [optional, numeric/string, default: 'ecg', i.e. last 
 %   │                 ECG channel in the file]

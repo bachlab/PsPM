@@ -1,8 +1,7 @@
 
 function pp_heart_data = pspm_cfg_pp_heart_data
 
-% $Id: pspm_cfg_pp_heart_data.m 784 2019-07-08 08:16:46Z esrefo $
-% $Rev: 784 $
+% Updated 27-Mar-2024 by Teddy
 
 % Initialise
 global settings
@@ -192,12 +191,29 @@ hb2hp.help          = {['Convert heart beat time stamps into interpolated ', ...
     'Heart beat conversion, or directly work on heart beat time stamps, ', ...
     'for example obtained by a pulse oxymeter.']};
 
+%% ppg2hb
+ppg2hb_heartpy      = pspm_cfg_python(1,'HeartPy');
+
+ppg2hb_classic      = cfg_const;
+ppg2hb_classic.name = 'Classic';
+ppg2hb_classic.tag  = 'classic';
+ppg2hb_classic.val  = {0};
+ppg2hb_classic.help = {'Analyse the data with the classic mode.'};
+
+ppg2hb_method       = cfg_choice;
+ppg2hb_method.name  = 'Select the method of converting the data';
+ppg2hb_method.tag   = 'method';
+ppg2hb_method.val   = {ppg2hb_classic};
+ppg2hb_method.values    = {ppg2hb_classic, ppg2hb_heartpy};
+ppg2hb_method.help  = {['Convert the PPG data into heart rate by using the ', ...
+                          'selected method.']};
+
 ppg2hb_chan         = pspm_cfg_channel_selector('peripheral pulse oxymetry');
 
 ppg2hb              = cfg_exbranch;
-ppg2hb.name         = 'Convert Peripheral pulse oximetry to Heart Beat';
+ppg2hb.name         = 'Convert peripheral pulse oximetry to Heart Beat';
 ppg2hb.tag          = 'ppg2hb';
-ppg2hb.val          = {ppg2hb_chan};
+ppg2hb.val          = {ppg2hb_chan, ppg2hb_method};
 ppg2hb.help          = {['Convert Peripheral pulse oximetry to ', ...
     'Heart Beat events.']};
 
