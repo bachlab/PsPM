@@ -88,7 +88,7 @@ end
 % 1.3 determine the method
 if isnumeric(indata)
     method = 1;
-elseif ischar(indata) && strcmpi(indata, 'all')
+elseif ischar(indata) && strcmpi(channel, 'all')
     method = 2;
 elseif ischar(indata)
     method = 3;
