@@ -8,9 +8,9 @@ function out = pspm_cfg_python(varargin)
 %   out = pspm_cfg_python(python_package)
 %   out = pspm_cfg_python(default_auto, python_package)
 % ● Arguments
-%   default_auto:   [logical] The logical value that determines whether the 
-%                   to automatically detect python. If not determined, it 
-%                   will be set as 1. 
+%   default_auto:   [logical] The logical value that determines whether the
+%                   to automatically detect python. If not determined, it
+%                   will be set as 1.
 %   python_package: [string] the python package PsPM wants to use.
 %   out:            [struct] The UI struct variable for python detection.
 % ● History
@@ -34,7 +34,7 @@ switch length(varargin)
     default_auto      = varargin{1};
     python_package    = varargin{2};
   otherwise
-    warning('ID:invalid_input', 'Up to one input variable is allowed');
+    warning('ID:invalid_input', 'Up to two input variables are allowed');
 end
 %% Structs
 % automatically detect python
