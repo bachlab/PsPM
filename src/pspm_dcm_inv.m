@@ -834,13 +834,13 @@ if ~options.getrf
       eTheta(trl).a = newzfactor .* exp(eTheta(trl).a) ./ eSCR_unit;
     end
 
-    for trl = 1:size(sfTheta)
+    for trl = 1:numel(sfTheta)
       % SF response function includes a parameter for the amplitude of an
       % SN burst that causes a 1 mcS response, see pspm_sf_get_theta
       sfTheta(trl).a = newzfactor * exp(sfTheta(trl).a) * sf_unit;
     end
 
-    for trl = 1:size(SCLtheta)
+    for trl = 1:numel(SCLtheta)
       if scl_ln(trl) > 0
         sig.G0 = scl_ln(trl);
         SCLtheta(trl).t = scl_lb(trl) + sigm(SCLtheta(trl).t, sig);
