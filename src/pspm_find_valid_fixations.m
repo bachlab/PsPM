@@ -212,16 +212,22 @@ if ~strcmpi(options.channel, 'both')
                     warning('ID:invalid_input', 'Failed to convert data.');
                     return
                   end
+             else
+                x_data = gaze_x.data;
+                x_range = gaze_x.header.range;
              end
              if ~strcmpi(y_unit,'mm')
-                [nsts,y_data] = pspm_convert_unit(gaze_y.data, y_unit, 'mm');
-                [msts,y_range] = pspm_convert_unit(transpose(gaze_y.header.range), y_unit, 'mm');
-                  if nsts~=1 || msts~=1
-                    warning('ID:invalid_input', 'Failed to convert data.');
-                    return
-                  end
-             end            
-         
+                 [nsts,y_data] = pspm_convert_unit(gaze_y.data, y_unit, 'mm');
+                 [msts,y_range] = pspm_convert_unit(transpose(gaze_y.header.range), y_unit, 'mm');
+                 if nsts~=1 || msts~=1
+                     warning('ID:invalid_input', 'Failed to convert data.');
+                     return
+                 end
+             else
+                 y_data = gaze_y.data;
+                 y_range = gaze_y.header.range;
+             end
+
             % convert normalized fixation points to data resolution
             fix_point_temp = zeros(size(fix_point));
             fix_point_temp(:,1) = x_range(1)+ fix_point(:,1)* diff(x_range);
