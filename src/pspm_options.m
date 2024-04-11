@@ -103,9 +103,12 @@ switch FunName
   case 'convert_ppg2hb'
     % 2.13 pspm_convert_ppg2hb --
     options = autofill_channel_action(options);
-    options = autofill(options, 'channel',                'ppg',     '*Int*Char'  );
+    options = autofill(options, 'channel',                'ppg',     '*Int*Char'        );
     options = autofill(options, 'diagnostics',            0,          1                 );
     options = autofill(options, 'lsm',                    0,          [0,100-10^-10]    );
+    options = autofill(options, 'method',                 'classic',  {'classic', 'heartpy'});
+    options = autofill(options, 'python_path',            '',         '*Char'           );
+    options = autofill(options, 'missing',                {},         '*Char*Num'       );
   case 'data_editor'
     % 2.15 pspm_data_editor --
     % output_file does not have a default value
@@ -207,7 +210,7 @@ switch FunName
     options = autofill(options, 'timeunits',              'seconds',  {'seconds', ...
                                                                       'samples',...
                                                                       'markers'}        );
-    options = autofill(options, 'marker_chan_num',        'marker',   '*Num*Char'       );  
+    options = autofill(options, 'marker_chan_num',        'marker',   '*Num*Char'       );
     options = fill_extract_segments(options);
   case 'find_sounds'
     % 2.23 pspm_find_sounds --
@@ -313,7 +316,7 @@ switch FunName
     options.bf = autofill(options.bf,   'dilation',       struct(),   '*Struct'         );
     options.bf = autofill(options.bf,   'duration',       20,         '>=',  0          );
     options.bf = autofill(options.bf,   'offset',         0.2,        '>=',  0          );
-    options.bf.constriction = autofill(options.bf.constriction, 'fhandle', @pspm_bf_lcrf_gm); 
+    options.bf.constriction = autofill(options.bf.constriction, 'fhandle', @pspm_bf_lcrf_gm);
     options.bf.dilation     = autofill(options.bf.dilation,     'fhandle', @pspm_bf_ldrf_gm);
   case 'pupil_correct_eyelink'
     % 2.36 pspm_pupil_correct_eyelink --

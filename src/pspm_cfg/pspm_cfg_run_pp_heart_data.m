@@ -1,5 +1,5 @@
 function out = pspm_cfg_run_pp_heart_data(job)
-% Updated on 08-01-2024 by Teddy
+% Updated on 26-03-2024 by Teddy
 fn = job.datafile{1};
 outputs = cell(size(job.pp_type));
 for i = 1:numel(job.pp_type)
@@ -64,6 +64,14 @@ for i = 1:numel(job.pp_type)
         end
       case 'ppg2hb'
         options = struct();
+        if ~isfield(job.pp_type{i}.ppg2hb.method, 'HeartPy')
+          options.method = 'classic';
+        else
+          options.method = 'heartpy';
+          if isfield(job.pp_type{i}.ppg2hb.method.HeartPy, 'pypath')
+            options.python_path = job.pp_type{i}.ppg2hb.method.HeartPy.pypath{1};
+          end
+        end
         options.channel = chan;
         options = pspm_update_struct(options, job, {'channel_action'});
         [sts, winfo] = pspm_convert_ppg2hb(fn, options);
