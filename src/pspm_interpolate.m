@@ -144,7 +144,9 @@ for i_channel = 1:numel(data)
       if s_overlap || e_overlap
         if ~options.extrapolate
           warning('ID:option_disabled', ...
-            'Extrapolating was forced because interpolate without extrapolating cannot be done');
+            'NaN data at beginning or end of file will not be extrapolated.');
+          xq(xq>max(x)) = [];
+          xq(xq<min(x)) = [];
           vq = interp1(x, v, xq, options.method, 'extrap');
         elseif s_overlap && strcmpi(options.method, 'previous')
           warning('ID:out_of_range', ['Cannot extrapolate with ', ...

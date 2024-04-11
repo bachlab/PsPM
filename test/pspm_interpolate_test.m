@@ -197,6 +197,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
             options = struct('extrapolate', true, 'method', 'next');
             this.verifyWarning(@() pspm_interpolate(fn2, 1, options), 'ID:out_of_range');
             % clear files
+            delete(fn);
             delete(fn1);
             delete(fn2);
         end
