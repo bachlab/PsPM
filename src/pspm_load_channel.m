@@ -58,6 +58,8 @@ sts = -1; data_struct = struct(); pos_of_channel = -1;
 if isstruct(channel)
     units = channel.units;
     channel = channel.channel;
+else
+    units = [];
 end
 
 % expand channel if zero
@@ -70,7 +72,13 @@ if isnumeric(channel) && channel == 0
     end
 end
 
-[sts, infos, data, filestruct] = pspm_load_data(fn, channel);
+if isempty(units)
+    [sts, infos, data, filestruct] = pspm_load_data(fn, channel);
+else
+    [sts, infos, data] = pspm_load_data(fn);
+    if sts < 1, return; end
+    [sts, infos, data, filestruct] = pspm_select_channels(data, channel, units);
+end
 if sts < 1, return; end
 
 % precedence order for eyetracker channels

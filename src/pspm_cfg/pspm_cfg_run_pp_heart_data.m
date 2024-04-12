@@ -23,7 +23,7 @@ for i = 1:numel(job.pp_type)
                                      {'semi', 'twthresh'});
         options = pspm_update_struct(options, job, 'channel_action');
         % call function
-        [sts, winfo] = pspm_convert_ecg2hb(fn, options);
+        [sts, outchannel] = pspm_convert_ecg2hb(fn, options);
       case 'ecg2hb_amri'
         options = pp_field.opt;
         options.channel = chan;
