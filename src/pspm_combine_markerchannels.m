@@ -1,4 +1,4 @@
-function sts = pspm_combine_markerchannels(datafile, options)
+function [sts, outchannel] = pspm_combine_markerchannels(datafile, options)
 % ● Description
 %   pspm_combine_markerchannels combines several marker channels into one.
 %   Index of original marker channel is converted into marker name and marker
@@ -6,7 +6,7 @@ function sts = pspm_combine_markerchannels(datafile, options)
 %   This allows for example creating GLM timing definitions based on
 %   markers distributed across multiple channels.
 % ● Format
-%   sts = pspm_combine_markerchannels(datafile, options)
+%   [sts, outchannel] = pspm_combine_markerchannels(datafile, options)
 % ● Arguments
 %    datafile:          data file name(s) (char, or cell array for 
 %                       multiple files)
@@ -14,13 +14,16 @@ function sts = pspm_combine_markerchannels(datafile, options)
 %   ├.channel_action:
 %   │                   Accepted values: 'add'/'replace'
 %   │                   Defines whether the new channel should be added 
-%   │                   on top of existing marker channels ('add'), or all 
-%   │                   existing marker channels should be deleted and 
-%   │                   replaced with the one new channel ('replace').
+%   │                   on top of combined marker channels ('add'), or all 
+%   │                   combined marker channels should be deleted and 
+%   │                   replaced with the one new channel ('replace'). If
+%   │                   the first option is used, then use marker channel 
+%   │                   indexing in further processing which by default 
+%   │                   takes the first marker channel as input
 %   └.marker_chan_num:  any number of marker channel numbers - if undefined
 %                       or 0, all marker channels of each file are used
 % ● History
-%   Introduced In PsPM 6.2
+%   Introduced In PsPM 6.1.2
 %   Written in 2023 by Dominik R Bach (Uni Bonn)
 
 %% Initialise
@@ -29,6 +32,7 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+outchannel = [];
 
 % check faulty input --
 if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); return
@@ -73,7 +77,7 @@ for iFile = 1:numel(datafile)
   data(end + 1) = newdata;
   sts = pspm_load_data(datafile{iFile}, struct('data', {data}, ...
     'infos', infos, 'options', struct('overwrite', 1)));
-
+  outchannel = numel(data) + 1;
   if sts < 1, return; end
 end
 
