@@ -214,7 +214,7 @@ switch FunName
     options = fill_extract_segments(options);
   case 'find_sounds'
     % 2.23 pspm_find_sounds --
-    options = autofill_channel_action(options,            'none',     {'add','replace'} );
+    options = autofill_channel_action(options,            'add',     {'replace'} );
     options = autofill(options, 'channel_output',         'all',      'corrected'       );
     options = autofill(options, 'diagnostics',            1,          0                 );
     options = autofill(options, 'expectedSoundCount',     0,          '*Int'            );

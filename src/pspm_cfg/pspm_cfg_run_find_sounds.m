@@ -8,7 +8,6 @@ if isfield(job.roi, 'region')
   options.roi = job.roi.region;
 end
 options = pspm_update_struct(options, job, 'threshold');
-options.channel_action = 'none';
 f = fieldnames(job.output);
 switch f{1}
   case 'create_chan'
@@ -38,8 +37,5 @@ switch f{1}
       case 'text_only'
         options.plot = false;
     end
-    [~, infos] = pspm_find_sounds(file, options);
-    if isfield(infos, 'channel')
-      out = infos.channel;
-    end
+    [~, out, infos] = pspm_find_sounds(file, options);
 end

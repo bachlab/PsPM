@@ -66,7 +66,7 @@ end
 
 % get data
 % -------------------------------------------------------------------------
-[nsts, data, dinfos, pos_of_channel] = pspm_load_channel(fn, options.channel, 'hb');
+[nsts, data, dinfos] = pspm_load_channel(fn, options.channel, 'hb');
 if nsts == -1, return; end
 
 
@@ -93,9 +93,7 @@ newdata.header.sr = sr;
 newdata.header.units = 'ms';
 newdata.header.chantype = 'hp';
 
-
 o.msg.prefix = 'Heart beat converted to heart period and';
-o.channel = pos_of_channel;
 try
   [nsts,winfos] = pspm_write_channel(fn, newdata, options.channel_action, o);
   if nsts == -1, return;

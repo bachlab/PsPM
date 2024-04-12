@@ -68,7 +68,7 @@ end
 
 % load data
 % -------------------------------------------------------------------------
-[lsts, data, infos, pos_of_channel] = pspm_load_channel(fn, options.channel, 'emg');
+[lsts, data] = pspm_load_channel(fn, options.channel, 'emg');
 if lsts ~= 1, return, end
 
 % do the job
@@ -131,7 +131,6 @@ o.msg.prefix = sprintf(...
   channel_str, ...
   old_channeltype, ...
   data.header.chantype);
-o.channel = pos_of_channel;
 [lsts, outinfos] = pspm_write_channel(fn, data, options.channel_action, o);
 if lsts ~= 1, return; end
 
