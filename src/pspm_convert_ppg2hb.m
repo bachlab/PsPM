@@ -1,4 +1,4 @@
-function [ sts, outinfo ] = pspm_convert_ppg2hb( fn , options )
+function [ sts, outchannel ] = pspm_convert_ppg2hb( fn , options )
 % ● Description
 %   pspm_convert_ppg2hb Converts a pulse oxymeter channel to heartbeats and
 %   adds it as a new channel.
@@ -7,7 +7,7 @@ function [ sts, outinfo ] = pspm_convert_ppg2hb( fn , options )
 %   identified as heartbeat maximas and a heartbeat channel is then
 %   generated from these.
 % ● Format
-%   [ sts, outinfo ] = pspm_convert_ppg2hb( fn, options )
+%   [sts, channel_index] = pspm_convert_ppg2hb( fn, options )
 % ● Arguments
 %                 fn: file name with path
 %   ┌────────options: struct with following possible fields
@@ -42,6 +42,8 @@ function [ sts, outinfo ] = pspm_convert_ppg2hb( fn , options )
 %   └───.python_path: [char] for method 'heartpy'
 %                     The path where python can be found. Mandatory if
 %                     python environment is not yet set up
+% ● Output
+%      channel_index: index of channel containing the processed data
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Samuel Gerster (University of Zurich)
@@ -54,7 +56,7 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-outinfo = struct();
+outchannel = [];
 
 %% check input
 % -------------------------------------------------------------------------
@@ -76,7 +78,7 @@ fprintf('Heartbeat detection for %s ... \n', fn);
 
 % get data
 % -------------------------------------------------------------------------
-[nsts, data] = pspm_load_channel(fn, options.channel, 'ppg');
+[nsts, data, infos, pos_of_channel] = pspm_load_channel(fn, options.channel, 'ppg');
 if nsts == -1, return; end
 
 ppg = data.data;
@@ -222,7 +224,6 @@ else
   [~,hb] = findpeaks(ppg_corr/max(ppg_corr),...
     sr,...
     'MinPeakdistance',min_pulse_period/sr);
-  fprintf('   done.\n');
 end
 
 
@@ -239,6 +240,7 @@ newdata.header.chantype = 'hb';
 
 write_options = struct();
 write_options.msg = msg;
+write_options.channel = pos_of_channel;
 
 % Replace last existing channel or save as new channel
 [nsts, nout] = pspm_write_channel(fn, newdata, options.channel_action, write_options);
@@ -248,5 +250,5 @@ end
 % user output
 fprintf('  done.\n');
 sts = 1;
-outinfo.channel = nout.channel;
+outchannel = nout.channel;
 return
