@@ -37,7 +37,7 @@ classdef pspm_pupil_pp_test < pspm_testcase
       opt.channel = 'pupil_l';
       opt.channel_combine = 'gaze_y_l';
       this.verifyWarning(@()pspm_pupil_pp(...
-        this.pspm_input_filename, opt), 'ID:invalid_input');
+        this.pspm_input_filename, opt), 'ID:unexpected_channeltype');
       opt.channel_combine = 'pupil_l';
       this.verifyWarning(@()pspm_pupil_pp(...
         this.pspm_input_filename, opt), 'ID:invalid_input');
