@@ -1,4 +1,4 @@
-function sts = pspm_resp_pp(fn, sr, options)
+function [sts, outchannel] = pspm_resp_pp(fn, sr, options)
 % ● Description
 %   pspm_resp_pp preprocesses raw respiration traces. The function detects
 %   respiration cycles for bellows and cushion systems, computes respiration
@@ -6,7 +6,7 @@ function sts = pspm_resp_pp(fn, sr, options)
 %   cycle and linearly interpolates these (expect rs = respiration time
 %   stamps). Results are written to new channels in the same file
 % ● Format
-%   sts = pspm_resp_pp(fn, sr, options)
+%   [sts, channel_index] = pspm_resp_pp(fn, sr, options)
 % ● Arguments
 %                 fn: data file name
 %                 sr: sample rate for new interpolated channel
@@ -31,6 +31,8 @@ function sts = pspm_resp_pp(fn, sr, options)
 %   └.channel_action: ['add'(default) /'replace']
 %                     Defines whether the new channels should be added or the
 %                     corresponding channel should be replaced.
+% ● Output
+%      channel_index: index of channel containing the processed data
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -41,6 +43,8 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+outchannel = [];
+
 % check input
 % -------------------------------------------------------------------------
 if nargin < 1
@@ -172,8 +176,9 @@ for iType = 1:(numel(datatype) - 1)
     end
     % write
     newdata.data = writedata(:);
-    [nsts, ~] = pspm_write_channel(fn, newdata, options.channel_action, o);
+    [nsts, out] = pspm_write_channel(fn, newdata, options.channel_action, o);
     if nsts == -1, return; end
+    outchannel(iType) = out.channel;
   end
 end
 %% create diagnostic plot for detection/interpolation
@@ -193,4 +198,5 @@ if options.plot
   stem(respstamp, ones(size(respstamp)), 'Marker', 'o', 'Color', 'b');
 end
 sts = 1;
+outchannel = outchannel(datatype);
 return
