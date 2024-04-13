@@ -358,11 +358,9 @@ switch FunName
     options = autofill(options, 'systemtype',             'bellows',  'cushion'         );
   case 'scr_pp'
     % 2.40 pspm_scr_pp --
-    options = autofill_channel_action(options,            'add',      {'replace', ...
-        'withdraw'}      );
+    options = autofill_channel_action(options,            'add',      {'replace'}       );
     options = autofill(options, 'channel',                'scr',      '*Int*Char'       );
     options = autofill(options, 'baseline_jump',          1.5,        '>', 0            );
-    options = autofill(options, 'change_data',            1,          0                 );
     options = autofill(options, 'clipping_window_size',   10000,      '*Int'            );
     options = autofill(options, 'clipping_step_size',     2,          '*Int'            );
     options = autofill(options, 'clipping_threshold',     0.1,        '*Num'            );
@@ -381,12 +379,6 @@ switch FunName
            'Please specify a valid output directory if you want to save missing epochs.');
          options.invalid = 1;
          return
-       end
-     else
-       if options.change_data == 0
-         warning('ID:invalid_input',...
-         'This procedure leads to no output, according to the selected options.');
-         options.invalid = 1;
        end
      end
   case 'segment_mean'
