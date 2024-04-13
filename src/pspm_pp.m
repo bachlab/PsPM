@@ -1,12 +1,12 @@
-function [sts, fn] = pspm_pp(varargin)
+function [sts, outchannel] = pspm_pp(varargin)
 % ● Description
 %   pspm_pp contains various preprocessing utilities for reducing noise in 
-%   the data. It features a 'butter' option that allows downsampling after 
-%   application of an anti-alias filter.
+%   the data. The 'butter' option that also allows downsampling after 
+%   application of an anti-alias Butterworth filter.
 % ● Format
-%   [sts, fn] = pspm_pp('median', fn, channel, n,    options) or
-%   [sts, fn] = pspm_pp('butter', fn, channel, filt, options) or
-%   [sts, fn] = pspm_pp('leaky_integrator', fn, channel, tau, options)
+%   [sts, channel_index] = pspm_pp('median', fn, channel, n,    options) or
+%   [sts, channel_index] = pspm_pp('butter', fn, channel, filt, options) or
+%   [sts, channel_index] = pspm_pp('leaky_integrator', fn, channel, tau, options)
 % ● Arguments
 %        method:  [string] Method of filtering. Currently implemented
 %                 methods are 'median' and 'butter'. (1) 'median': a median
@@ -33,6 +33,8 @@ function [sts, fn] = pspm_pp(varargin)
 %                 [optional][string][Accepts: 'add'/'replace'][Default: 'add']
 %                 Defines whether corrected data should be added or the
 %                 corresponding preprocessed channel should be replaced.
+% ● Output
+%      channel_index: index of channel containing the processed data
 % ● History
 %   Introduced in PsPM 3.0
 %   Written    in 2009-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -45,6 +47,8 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+outchannel = [];
+
 %% 2 Check input arguments
 if nargin < 1
   warning('ID:invalid_input', 'No input arguments. Don''t know what to do.');
@@ -71,6 +75,7 @@ end
 %% 3 Load data
 [sts, data, ~, pos_of_channel] = pspm_load_channel(fn, channel);
 if sts ~= 1, return; end
+
 %% 4 Do the job
 switch method
   case 'median'
@@ -127,5 +132,6 @@ switch method
     return;
 end
 fprintf('done.\n');
-sts = pspm_write_channel(fn, data, options.channel_action, struct('prefix', msg, 'channel', pos_of_channel));
-return
+[sts, out] = pspm_write_channel(fn, data, options.channel_action, struct('prefix', msg, 'channel', pos_of_channel));
+outchannel = out.channel;
+
