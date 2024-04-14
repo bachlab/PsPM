@@ -12,8 +12,4 @@ if isfield(job.options, 'marker_chan')
   options.marker_chan_num = job.options.marker_chan;
 end
 % run merge
-[out] = pspm_merge(infile1, infile2, ref, options);
-% ensure output is always a cell
-if ~iscell(out)
-  out = {out};
-end
+[sts, out] = pspm_merge(infile1, infile2, ref, options);
