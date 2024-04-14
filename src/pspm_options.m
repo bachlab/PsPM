@@ -344,6 +344,9 @@ switch FunName
   case 'remove_epochs'
     % 2.38 pspm_remove_epochs --
     options = autofill_channel_action(options);
+  case 'ren'
+    % pspm_ren
+    options = autofill(options, 'overwrite',              0,          1                 );
   case 'resp_pp'
     % 2.39 pspm_resp_pp --
     options = autofill_channel_action(options);

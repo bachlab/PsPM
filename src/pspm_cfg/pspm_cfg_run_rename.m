@@ -7,7 +7,7 @@ for i = 1:n
   filename{i} = job.file(i).filename{1};
   newfilename{i} = job.file(i).newfilename;
 end
-out = pspm_ren(filename, newfilename);
+[sts, out] = pspm_ren(filename, newfilename);
 if ~iscell(out)
   out = {out};
 end

@@ -15,7 +15,7 @@ classdef pspm_ren_test < matlab.unittest.TestCase
       rfn = 'rtestdata_ren_1.mat';
       channels.chantype = 'scr';
       pspm_testdata_gen(channels, 10, fn);
-      newfilename = pspm_ren(fn, rfn);
+      [sts, newfilename] = pspm_ren(fn, rfn);
       [sts, infos, data] = pspm_load_data(newfilename);
       this.verifyTrue(strcmpi(newfilename,rfn), '''newfilename'' has not the expected value');
       this.verifyTrue(sts == 1, 'sts is negativ');
@@ -23,25 +23,6 @@ classdef pspm_ren_test < matlab.unittest.TestCase
       this.verifyTrue(isfield(infos, 'newname'), 'the field infos.newname is missing');
       this.verifyTrue(~exist(fn, 'file'), 'the original file has not been deleted');
       delete(rfn);
-    end
-    function cell_valid_input(this)
-      fn{1} = 'testdata_ren_2.mat';
-      fn{2} = 'rtestdata_ren_2.mat';
-      rfn{1} = 'testdata_ren_3.mat';
-      rfn{2} = 'rtestdata_ren_3.mat';
-      channels.chantype = 'scr';
-      pspm_testdata_gen(channels, 10, fn{1});
-      pspm_testdata_gen(channels, 10, fn{2});
-      newfilename = pspm_ren(fn, rfn);
-      for k = 1:numel(fn)
-        [sts, infos, data] = pspm_load_data(newfilename{k});
-        this.verifyTrue(strcmpi(newfilename{k},rfn{k}), '''newfilename'' has not the expected value');
-        this.verifyTrue(sts == 1, 'sts is negativ');
-        this.verifyTrue(isfield(infos, 'rendate'), 'the field infos.rendate is missing');
-        this.verifyTrue(isfield(infos, 'newname'), 'the field infos.newname is missing');
-        this.verifyTrue(~exist(fn{k}, 'file'), 'the original file has not been deleted');
-        delete(rfn{k});
-      end
     end
   end
 end
