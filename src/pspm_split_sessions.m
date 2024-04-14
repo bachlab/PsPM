@@ -1,4 +1,4 @@
-function varargout = pspm_split_sessions(datafile, options)
+function [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, options)
 % ● Description
 %   pspm_split_sessions splits experimental sessions/blocks, based on
 %   regularly incoming markers, for example volume or slice markers from an
@@ -6,7 +6,7 @@ function varargout = pspm_split_sessions(datafile, options)
 %   terms of markers. The first and the last marker will define the start of
 %   the first session and the end of the last session.
 % ● Format
-%   newdatafile = pspm_split_sessions(datafile, options)
+%   [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, options)
 % ● Arguments
 %            datafile:  a file name
 %   ┌─────────options:
@@ -44,7 +44,7 @@ function varargout = pspm_split_sessions(datafile, options)
 % ● Outputs
 %          newdatafile: cell array of filenames for the individual sessions
 %         newepochfile: cell array of missing epoch filenames for the individual
-%                       sessions (empty if no options.missing not specified)
+%                       sessions (empty if options.missing not specified)
 % ● Developer's notes
 %   epochs have a fixed sampling rate of 10000
 %   REMARK for suffix and prefix:
@@ -94,7 +94,7 @@ elseif options.suffix < 0
   return;
 end
 
-%% 2 Work on all data files
+%% 2 Work on data file
 
 % 2.1 Obtain data
 if options.verbose
@@ -235,16 +235,5 @@ else
     end
   end
 end
+
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = newdatafile;
-  case 2
-    varargout{1} = newdatafile;
-    varargout{2} = newepochfile;
-  case 3
-    varargout{1} = sts;
-    varargout{2} = newdatafile;
-    varargout{3} = newepochfile;
-end
-return
