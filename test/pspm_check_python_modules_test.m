@@ -1,8 +1,9 @@
 classdef pspm_check_python_modules_test < matlab.unittest.TestCase
-  % unittest class for the pspm_check_python_modules function
+  % ● Description
+  %   Unittest class for the pspm_check_python_modules function
   % PsPM TestEnvironment
-  % ● Authorship
-  % Abdul Wahab Madni 2024(Uni Bonn)
+  % ● History
+  %   Written in Apr 2024 by Abdul Wahab Madni (Uni Bonn) and Teddy
 
   methods (TestMethodSetup)
     function addFunctionPath(testCase)
@@ -11,14 +12,6 @@ classdef pspm_check_python_modules_test < matlab.unittest.TestCase
       addpath(src_path);
     end
   end
-
-  % methods (TestMethodTeardown)
-  %     function removeFunctionPath(testCase)
-  %         % Remove the path from the source directory
-  %         src_path = fullfile(pwd, '..', 'src');
-  %         rmpath(src_path);
-  %     end
-  % end
 
   methods (Test)
     % function test_no_python_environment(this)
@@ -43,7 +36,7 @@ classdef pspm_check_python_modules_test < matlab.unittest.TestCase
       % Test case when Python modules are explicitly imported
       addpath('src');
       py.importlib.import_module('math');  % Import a Python module to ensure there's at least one
-      [output, ~] = evalc('pspm_check_python_modules()');
+      [output, ~] = evalc('pspm_check_python_modules("math")');
       expectedMessage = 'Python modules have been successfully retrieved.';
       this.verifyTrue(contains(output, expectedMessage), ...
         'Test failed: Unexpected output instead of confirming Python modules were retrieved.');
