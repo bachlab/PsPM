@@ -16,11 +16,11 @@ jobs:
           path: ImportTestData
           
       - name: Identify python
-        uses: actions/checkout@v4
         uses: actions/setup-python@v5
         with:
           python-version: '3.10' 
-        run: python 'test/py_find_location.py'
+      
+      - run: python 'test/py_find_location.py'
       
       - name: Setup MATLAB
         uses: matlab-actions/setup-matlab@v2
