@@ -70,6 +70,9 @@ for i = 1:numel(job.pp_type)
           options.method = 'heartpy';
           if isfield(job.pp_type{i}.ppg2hb.method.HeartPy, 'pypath')
             options.python_path = job.pp_type{i}.ppg2hb.method.HeartPy.pypath{1};
+          else
+            pyinfo = pspm_find_python();
+            options.python_path = pyinfo{1};
           end
         end
         options.channel = chan;

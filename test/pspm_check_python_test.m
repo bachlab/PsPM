@@ -37,14 +37,8 @@ classdef pspm_check_python_test < matlab.unittest.TestCase
     function test_set_new_python_environment(this)
       % Test setting a new Python environment
       % Note: Insert a valid path for the Python executable in your system
-      filetext = fileread('py_loc.txt');
-      if isunix
-        filetext = [filetext,'/python']; % for mac and linux
-      else
-        filetext = [filetext,'\python.exe'];
-      end
-      valid_python_path = filetext;
-      disp(filetext);
+      pyinfo = pspm_find_python();
+      valid_python_path = pyinfo{1};
       original_env = pyenv;
       sts = pspm_check_python(valid_python_path);
       this.verifyEqual(sts, 1, 'Test passed: Expected sts = 1 when setting a new Python environment');
