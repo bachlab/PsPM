@@ -43,7 +43,8 @@ ppg2hb_py_auto.name   = 'Automatically detect Python';
 ppg2hb_py_auto.tag    = 'pypath_auto';
 ppg2hb_py_auto.val    = {0};
 ppg2hb_py_auto.help   = {['This only works if a Python environment ',...
-                          'already exists in Matlab.']};
+                          'already exists in Matlab, created by ',...
+                          'previous PsPM function calls or manually.']]};
 % manually detect python
 pspm_py_path          = cfg_files;
 pspm_py_path.name     = 'Manually define Python';
