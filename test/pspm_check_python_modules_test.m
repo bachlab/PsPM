@@ -4,13 +4,21 @@ classdef pspm_check_python_modules_test < matlab.unittest.TestCase
   % ● Authorship
   % Abdul Wahab Madni 2024(Uni Bonn)
 
-  methods (Static)
-    function addFunctionPath(~)
+  methods (TestMethodSetup)
+    function addFunctionPath(testCase)
       % Add the path to the source directory
       src_path = fullfile('src');
       addpath(src_path);
     end
   end
+
+  % methods (TestMethodTeardown)
+  %     function removeFunctionPath(testCase)
+  %         % Remove the path from the source directory
+  %         src_path = fullfile(pwd, '..', 'src');
+  %         rmpath(src_path);
+  %     end
+  % end
 
   methods (Test)
     function test_no_python_environment(this)
