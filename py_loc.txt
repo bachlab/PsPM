@@ -1,0 +1,2 @@
+/usr/local/opt/python@3.11/bin
+3.11
