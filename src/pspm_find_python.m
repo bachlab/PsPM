@@ -12,9 +12,10 @@ pyinfo        = pyinfo_struct(1:2);
 
 % Adjustments
 if isunix
+  % for macOS, this needs to be something like ".../python3.11"
   pyinfo{1} = [pyinfo{1}, '/python', pyinfo{2}];
 else
-  pyinfo{1} = [pyinfo{1}, '\python', pyinfo{2}, '.exe'];
+  % for windows
 end
 
 end
