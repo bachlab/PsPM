@@ -16,6 +16,7 @@ if isunix
   pyinfo{1} = [pyinfo{1}, '/python', pyinfo{2}];
 else
   % for windows
+  pyinfo{1} = [pyinfo{1}, '\python.EXE'];
 end
 
 end
