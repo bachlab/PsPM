@@ -4,21 +4,21 @@ classdef pspm_check_python_test < matlab.unittest.TestCase
   % ● History
   %   Written in Apr 2024 by Abdul Wahab Madni (Uni Bonn) and Teddy
 
-  methods (TestMethodSetup)
-    function addFunctionPath(testCase)
-      % Add the path to the source directory
-      src_path = fullfile(pwd, 'src');
-      addpath(src_path);
-    end
-  end
-
-  methods (TestMethodTeardown)
-    function removeFunctionPath(testCase)
-      % Remove the path to the source directory
-      src_path = fullfile(pwd, 'src');
-      rmpath(src_path);
-    end
-  end
+  % methods (TestMethodSetup)
+  %   function addFunctionPath(testCase)
+  %     % Add the path to the source directory
+  %     src_path = fullfile(pwd, 'src');
+  %     addpath(src_path);
+  %   end
+  % end
+  % 
+  % methods (TestMethodTeardown)
+  %   function removeFunctionPath(testCase)
+  %     % Remove the path to the source directory
+  %     src_path = fullfile(pwd, 'src');
+  %     rmpath(src_path);
+  %   end
+  % end
 
   methods (Test)
     function test_current_python_environment(this)
@@ -38,7 +38,11 @@ classdef pspm_check_python_test < matlab.unittest.TestCase
       % Test setting a new Python environment
       % Note: Insert a valid path for the Python executable in your system
       filetext = fileread('py_loc.txt');
-      filetext = [filetext,'\python.exe'];
+      if isunix
+        filetext = [filetext,'/python']; % for mac and linux
+      else
+        filetext = [filetext,'\python.exe'];
+      end
       valid_python_path = filetext;
       disp(filetext);
       original_env = pyenv;
