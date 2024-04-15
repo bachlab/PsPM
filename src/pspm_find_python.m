@@ -7,7 +7,7 @@ function pyinfo = pspm_find_python()
 pyrunfile("py_find_location.py")
 pyinfo_text   = fileread('py_loc.txt');
 disp(pyinfo_text);
-pyinfo_struct = regexp(pyinfo_text, '\n', 'split');
+pyinfo_struct = regexp(pyinfo_text, '\r\n', 'split');
 pyinfo        = pyinfo_struct(1:2);
 
 % Adjustments

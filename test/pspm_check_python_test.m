@@ -40,9 +40,9 @@ classdef pspm_check_python_test < matlab.unittest.TestCase
       pyinfo = pspm_find_python();
       valid_python_path = pyinfo{1};
       disp(valid_python_path);
-      disp('Diff');
-      disp(strcmp(valid_python_path, 'C:\hostedtoolcache\windows\Python\3.10.11\x64\python.EXE'));
-      valid_python_path = 'C:\hostedtoolcache\windows\Python\3.10.11\x64\python.EXE';
+      %disp('Diff');
+      %disp(strcmp(valid_python_path, 'C:\hostedtoolcache\windows\Python\3.10.11\x64\python.EXE'));
+      %valid_python_path = 'C:\hostedtoolcache\windows\Python\3.10.11\x64\python.EXE';
       original_env = pyenv;
       sts = pspm_check_python(valid_python_path);
       this.verifyEqual(sts, 1, 'Test passed: Expected sts = 1 when setting a new Python environment');
