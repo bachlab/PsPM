@@ -12,17 +12,7 @@ classdef pspm_check_python_modules_test < matlab.unittest.TestCase
       addpath(src_path);
     end
   end
-
   methods (Test)
-    % function test_no_python_environment(this)
-    %   % Test case when no Python environment is configured
-    %   addpath('src');
-    %   [output, ~] = evalc('pspm_check_python_modules()');
-    %   expectedMessage = 'Python environment does not exist.';
-    %   this.verifyTrue(contains(output, expectedMessage), ...
-    %     'Test failed: Expected output to state that no Python environment exists.');
-    % end
-
     % function test_python_environment_no_modules(this)
     %   % Test case when Python environment is set but no modules are explicitly imported
     %   % Assumption: Python is already set up for MATLAB.
@@ -31,7 +21,6 @@ classdef pspm_check_python_modules_test < matlab.unittest.TestCase
     %   this.verifyFalse(contains(output, expectedMessage), ...
     %     'Test failed: Unexpected output instead of no modules are loaded.');
     % end
-
     function test_python_environment_with_modules(this)
       % Test case when Python modules are explicitly imported
       addpath('src');
