@@ -1,4 +1,4 @@
-function dcm = pspm_dcm_inv(model, options)
+function [sts, dcm] = pspm_dcm_inv(model, options)
 % ● Description
 %   pspm_dcm_inv does trial-by-trial inversion of a DCM for skin conductance
 %   created by pspm_dcm. This includes estimating trial by trial estimates of
@@ -7,7 +7,7 @@ function dcm = pspm_dcm_inv(model, options)
 %   Whether the IR is estimated from the data or not is determined by pspm_dcm
 %   and passed to the inversion routine in the options.
 % ● Format
-%   dcm = pspm_dcm_inv(model, options)
+%   [sts, dcm] = pspm_dcm_inv(model, options)
 % ● Arguments
 %   ┌─────────model
 %   │ ▶︎ Mandatory

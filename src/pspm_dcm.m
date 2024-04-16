@@ -687,7 +687,10 @@ end
 model.meanSCR = transpose(mean(D,'omitnan') );
 
 %% 6 Invert DCM
-dcm = pspm_dcm_inv(model, options);
+[sts, dcm] = pspm_dcm_inv(model, options);
+if sts < 1,
+    return
+end
 
 %% 7 Assemble stats & names
 dcm.stats = [];
