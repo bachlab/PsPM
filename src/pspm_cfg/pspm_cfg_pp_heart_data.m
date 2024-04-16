@@ -192,7 +192,7 @@ hb2hp.help          = {['Convert heart beat time stamps into interpolated ', ...
     'for example obtained by a pulse oxymeter.']};
 
 %% ppg2hb
-ppg2hb_heartpy      = pspm_cfg_python(0,'HeartPy');
+ppg2hb_heartpy      = pspm_cfg_python('HeartPy');
 
 ppg2hb_classic      = cfg_const;
 ppg2hb_classic.name = 'Classic';
