@@ -22,7 +22,24 @@ classdef pspm_check_python_test < matlab.unittest.TestCase
     function test_set_new_python_environment(this)
       % Test setting a new Python environment
       % Note: Insert a valid path for the Python executable in your system
-      pyinfo = pspm_find_python();
+      pyrunfile("test/pspm_py_find_location.py")
+      pyinfo_file = 'test/py_loc.txt';
+      pyinfo_text   = fileread(pyinfo_file);
+      disp(pyinfo_text);
+      if isunix
+        pyinfo_struct = regexp(pyinfo_text, '\n', 'split'); % LF for unix
+      else
+        pyinfo_struct = regexp(pyinfo_text, '\r\n', 'split'); % CRLF for windows
+      end
+      pyinfo        = pyinfo_struct(1:2);
+      % Adjustments
+      if isunix
+        % for unix, this needs to be something like ".../python3.11"
+        pyinfo{1} = [pyinfo{1}, '/python', pyinfo{2}];
+      else
+        % for windows
+        pyinfo{1} = [pyinfo{1}, '\python.EXE'];
+      end
       valid_python_path = pyinfo{1};
       disp(valid_python_path);
       original_env = pyenv;

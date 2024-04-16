@@ -68,16 +68,8 @@ for i = 1:numel(job.pp_type)
           options.method = 'classic';
         else
           options.method = 'heartpy';
-          if isfield(job.pp_type{i}.ppg2hb.method.HeartPy, 'pypath')
-            options.python_path = job.pp_type{i}.ppg2hb.method.HeartPy.pypath{1};
-            currentEnv = pyenv;
-          else
-            pyinfo = pspm_find_python('py_loc.txt');
-            options.python_path = pyinfo{1};
-            currentEnv = pyinfo{2};
-          end
-          lines = [options.python_path, currentEnv];
-          writelines(lines,"py_loc.txt")
+          % in the heartpy mode, users have to define python path by themselves
+          options.python_path = job.pp_type{i}.ppg2hb.method.HeartPy.pypath{1};
         end
         options.channel = chan;
         options = pspm_update_struct(options, job, {'channel_action'});
