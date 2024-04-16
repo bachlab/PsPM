@@ -1,8 +1,8 @@
-function varargout = pspm_sf_scl(model, options)
+function [sts, scl] = pspm_sf_scl(model, options)
 % ● Description
 %   pspm_sf_scl returns the mean skin conductance level for an epoch
 % ● Format
-%   auc = pspm_sf_scl(scr, sr)
+%   [sts, scl] = pspm_sf_scl(scr, sr)
 % ● Arguments
 %       scr:
 %        sr:
@@ -22,13 +22,7 @@ if isempty(settings)
 end
 sts = -1;
 scl = [];
-switch nargout
-  case 1
-    varargout{1} = scl;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = scl;
-end
+
 
 % check input arguments
 if nargin < 1
@@ -38,11 +32,4 @@ try model.scr; catch, warning('Input data is not defined.'); return; end
 try model.sr; catch, warning('Sample rate is not defined.'); return; end
 scl = mean(scr);
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = scl;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = scl;
-end
-return
+
