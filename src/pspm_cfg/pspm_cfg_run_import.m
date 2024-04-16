@@ -85,4 +85,4 @@ for i = 1:n
 end
 options = struct();
 options = pspm_update_struct(options, job, 'overwrite');
-out = pspm_import(datafiles, datatype, import, options);
+[sts, out] = pspm_import(datafiles, datatype, import, options);
