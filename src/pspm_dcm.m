@@ -1,4 +1,4 @@
-function varargout = pspm_dcm(model, options)
+function [sts, dcm] = pspm_dcm(model, options)
 % ● Description
 %   pspm_dcm sets up a DCM for skin conductance, prepares and normalises the
 %   data, passes it over to the model inversion routine, and saves both the
@@ -11,7 +11,7 @@ function varargout = pspm_dcm(model, options)
 %   Flexible responses can for example be anticipatory, decision-related,
 %   or evoked with unknown onset.
 % ● Format
-%   dcm = pspm_dcm(model, options)
+%   [sts, dcm] = pspm_dcm(model, options)
 % ● Arguments
 %   ┌──────model:
 %   │ ▶︎ Mandatory
@@ -162,13 +162,7 @@ if isempty(settings)
 end
 sts = -1;
 dcm = [];
-switch nargout
-  case 1
-    varargout{1} = dcm;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = dcm;
-end % assign varargout to avoid errors if the function returns in the middle
+
 % cell array which saves all the warnings which are not followed
 % by a `return` function
 warnings = {};
@@ -762,13 +756,8 @@ if ~options.nosave
   save(model.modelfile, 'dcm');
 end
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = dcm;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = dcm;
-end
+
+
 return
 
 

@@ -107,14 +107,5 @@ end
 if eventnameflag
   options.eventnames = eventnames;
 end
-[varargout] = pspm_dcm(model, options);
-if numel(varargout) < 2
-  out = varargout;
-  dcm = [];
-else
-  out = varargout{1};
-  dcm = varargout{2};
-end
-if ~iscell(out)
-  out = {out};
-end
+[out, dcm] = pspm_dcm(model, options);
+
