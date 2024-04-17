@@ -23,7 +23,7 @@ end
 %% Structs
 % manually detect python
 pspm_py_path          = cfg_files;
-pspm_py_path.name     = 'Manually define Python';
+pspm_py_path.name     = 'Specify Python';
 pspm_py_path.tag      = 'pypath';
 pspm_py_path.num      = [1 1];
 pspm_py_path.help     = {'Please specify python executable file on the computer.'};
