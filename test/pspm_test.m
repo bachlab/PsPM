@@ -6,9 +6,9 @@ function pspm_test(varargin)
 %                    Define whether the script should quit MATLAB with a success/fail flag
 %                    after the tests are run.
 %                    (Default: false)
-% ● Authorship
+% ● History
 % (C) 2013 Dominik Bach & Linus Ruettimann (University of Zurich)
-% Updated Teddy Chao (WCHN)
+%     2024 Teddy
 
 %% imports
 import matlab.unittest.TestSuite;
