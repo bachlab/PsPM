@@ -7568,7 +7568,7 @@ ID:toolbox_missing
 \end_layout
 
 \begin_layout Subsection
-pspm_bf_test
+pspm_bf
 \end_layout
 
 \begin_layout Subsubsection
@@ -26626,6 +26626,232 @@ test if new channel and added channel have same
 .
 \end_layout
 
+\begin_layout Subsection
+Python
+\end_layout
+
+\begin_layout Subsubsection
+Overview
+\end_layout
+
+\begin_layout Subparagraph
+Testclass
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+pspm_check_python_test
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+pspm_check_python_module_test
+\end_layout
+
+\begin_layout Subparagraph
+Format
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+out = pspm_cfg_python(package_name)
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+sts = pspm_check_python(valid_python_path)
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+sts = pspm_check_python_modules(package_name)
+\end_layout
+
+\begin_layout Subparagraph
+Note
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+pspm_cfg_python
+\family default
+ is a UI controller function that handles python path.
+ The function can be called by other UI functions if Python is required
+ for performing relavent processing.
+ The function will ask users to define the path for python that has been
+ installed in the system.
+\end_layout
+
+\begin_layout Subsubsection
+Test for python
+\end_layout
+
+\begin_layout Subparagraph
+Function name
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+pspm_check_python
+\end_layout
+
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+pspm_check_python_test
+\family default
+ is a test function that checks the installation of python in the system
+ by using 
+\family typewriter
+pspm_check_python
+\family default
+, and the path of the python package that has been installed is detected
+ by 
+\family typewriter
+pspm_py_find_location.py
+\family default
+.
+\end_layout
+
+\begin_layout Subparagraph
+Tests
+\end_layout
+
+\begin_layout Enumerate
+
+\family typewriter
+test_current_python_environment
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+ensure a Python environment is already configured
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+
+\family typewriter
+test_set_new_python_environment
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Automatically detect the python installed in the system and test if it can
+ be checked successfully by 
+\family typewriter
+pspm_check_python
+\family default
+.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+test_set_invalid_python_environment
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Use an invalid python path to check if 
+\family typewriter
+pspm_check_python returns invalid results
+\family default
+.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+
+\family typewriter
+test_python_environment_already_set
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Test when the specified Python environment is already set as the current.
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection
+Test for python modules
+\end_layout
+
+\begin_layout Subparagraph
+Function name
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+pspm_check_python_module_test
+\end_layout
+
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+pspm_check_python_module_test
+\family default
+ manages to check the modules that is installed in the system by using 
+\family typewriter
+pspm_check_python_modules
+\family default
+.
+ Currently, it only tests the module
+\family typewriter
+ 
+\begin_inset Quotes eld
+\end_inset
+
+math
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subparagraph
+Tests
+\end_layout
+
+\begin_layout Enumerate
+
+\family typewriter
+test_python_environment_with_modules
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+To test the package 
+\begin_inset Quotes eld
+\end_inset
+
+math
+\begin_inset Quotes erd
+\end_inset
+
+ that has been installed can be checked successfully by using 
+\family typewriter
+pspm_check_python_modules
+\family default
+.
+\end_layout
+
+\end_deeper
 \begin_layout Standard
 \begin_inset Newpage pagebreak
 \end_inset

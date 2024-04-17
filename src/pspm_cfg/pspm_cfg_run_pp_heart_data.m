@@ -68,9 +68,8 @@ for i = 1:numel(job.pp_type)
           options.method = 'classic';
         else
           options.method = 'heartpy';
-          if isfield(job.pp_type{i}.ppg2hb.method.HeartPy, 'pypath')
-            options.python_path = job.pp_type{i}.ppg2hb.method.HeartPy.pypath{1};
-          end
+          % in the heartpy mode, users have to define python path by themselves
+          options.python_path = job.pp_type{i}.ppg2hb.method.HeartPy.pypath{1};
         end
         options.channel = chan;
         options = pspm_update_struct(options, job, {'channel_action'});
