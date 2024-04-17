@@ -14,6 +14,14 @@ jobs:
           repository: bachlab/PsPM-data
           token: ${{ secrets.PSPM_PAT }}
           path: ImportTestData
+          
+      - name: Set up python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10' 
+      
+      - name: Detect python
+        run: python 'test/pspm_py_find_location.py'
       
       - name: Setup MATLAB
         uses: matlab-actions/setup-matlab@v2

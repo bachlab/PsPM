@@ -26,4 +26,5 @@ test/pspm_test_temp.m
 test/pspm_test_dynamic.m
 success.txt
 failure.txt
+py_loc.txt
 *.dll
