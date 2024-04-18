@@ -6,7 +6,7 @@ permalink: /documentation/
 
 # Documentation
 
-<img class="PsPM_Doc" src="images/PsPM_Website_Figure_2.png" alt="PsPM" >
+<img class="PsPM_Doc" src="images/PsPM_Website_Figure_2.jpg" type="image/jpg" alt="PsPM" >
 
  **PsPM** provides a principled approach to
 solving the inverse problem in psychophysiology: making inferences about
