@@ -130,45 +130,47 @@ for i_channel = 1:numel(data)
     else
       x = 1:length(v);
       xq = find(isnan(v));
-      % throw away data matching 'xq'
-      x(xq) = [];
-      v(xq) = [];
-      % check for overlaps
-      if numel(xq) < 1
-        e_overlap = 0;
-        s_overlap = 0;
-      else
-        e_overlap = max(xq) > max(x);
-        s_overlap = min(xq) < min(x);
-      end
-      if s_overlap || e_overlap
-        if ~options.extrapolate
-          warning('ID:option_disabled', ...
-            'NaN data at beginning or end of file will not be extrapolated.');
-          xq(xq>max(x)) = [];
-          xq(xq<min(x)) = [];
-          vq = interp1(x, v, xq, options.method, 'extrap');
-        elseif s_overlap && strcmpi(options.method, 'previous')
-          warning('ID:out_of_range', ['Cannot extrapolate with ', ...
-            'method ''previous'' and overlap at the beginning.']);
-          return;
-        elseif e_overlap && strcmpi(options.method, 'next')
-          warning('ID:out_of_range', ['Cannot extrapolate with ', ...
-            'method ''next'' and overlap at the end.']);
-          return;
-        else
-          % extrapolate because of overlaps
-          vq = interp1(x, v, xq, options.method, 'extrap');
-        end
-      else
-          % no overlap
-          vq = interp1(x, v, xq, options.method);
-      end
-      % update data depending on method
-      if method == 2
-          alldata{pos_of_channel(i_channel)}.data(xq) = vq;
-      else
-          data{i_channel}.data(xq) = vq;
+      if numel(xq) > 0
+          % throw away data matching 'xq'
+          x(xq) = [];
+          v(xq) = [];
+          % check for overlaps
+          if numel(xq) < 1
+            e_overlap = 0;
+            s_overlap = 0;
+          else
+            e_overlap = max(xq) > max(x);
+            s_overlap = min(xq) < min(x);
+          end
+          if s_overlap || e_overlap
+            if ~options.extrapolate
+              warning('ID:option_disabled', ...
+                'NaN data at beginning or end of file will not be extrapolated.');
+              xq(xq>max(x)) = [];
+              xq(xq<min(x)) = [];
+              vq = interp1(x, v, xq, options.method, 'extrap');
+            elseif s_overlap && strcmpi(options.method, 'previous')
+              warning('ID:out_of_range', ['Cannot extrapolate with ', ...
+                'method ''previous'' and overlap at the beginning.']);
+              return;
+            elseif e_overlap && strcmpi(options.method, 'next')
+              warning('ID:out_of_range', ['Cannot extrapolate with ', ...
+                'method ''next'' and overlap at the end.']);
+              return;
+            else
+              % extrapolate because of overlaps
+              vq = interp1(x, v, xq, options.method, 'extrap');
+            end
+          else
+              % no overlap
+              vq = interp1(x, v, xq, options.method);
+          end
+          % update data depending on method
+          if method == 2
+              alldata{pos_of_channel(i_channel)}.data(xq) = vq;
+          else
+              data{i_channel}.data(xq) = vq;
+          end
       end
     end
 end
