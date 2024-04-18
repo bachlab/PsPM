@@ -6,6 +6,8 @@ permalink: /documentation/
 
 # Documentation
 
+<img class="PsPM_Web" src="images/PsPM_Website_Figure_1.jpg" type="image/jpg" alt="PsPM" >
+
 <img class="PsPM_Doc" src="images/PsPM_Website_Figure_2.jpg" type="image/jpg" alt="PsPM" >
 
  **PsPM** provides a principled approach to
