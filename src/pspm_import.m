@@ -249,6 +249,7 @@ if iscell(sourceinfo)
 else
     blkno = 1;
     sourceinfo = {sourceinfo};
+    import{1} = import;
 end
 % 4.3 Loop
 for blk = 1:blkno
@@ -260,7 +261,7 @@ for blk = 1:blkno
         [lsts(k), data{k}] = feval(settings.channeltypes(channeltype).import, import{blk}{k});
         if isfield(import{blk}{k}, 'minfreq'), data{k}.header.minfreq = import{blk}{k}.minfreq; end
     end
-    if any(slts < 1), fprintf('\nData conversion unsuccesful for job %02.0f file %s.\n', ...
+    if any(lsts < 1), fprintf('\nData conversion unsuccesful for job %02.0f file %s.\n', ...
             find(slts < 1), datafile); return; end
     % 4.3.2 collect infos and save
     [pth, fn, ~] = fileparts(datafile);
