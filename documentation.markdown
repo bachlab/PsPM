@@ -6,10 +6,6 @@ permalink: /documentation/
 
 # Documentation
 
-<img class="PsPM_Web" src="images/PsPM_Website_Figure_1.jpg" type="image/jpg" alt="PsPM" >
-
-<img class="PsPM_Doc" src="images/PsPM_Website_Figure_2.jpg" type="image/jpg" alt="PsPM" >
-
  **PsPM** provides a principled approach to
 solving the inverse problem in psychophysiology: making inferences about
 psychological processes, given physiological data. This is a common
@@ -23,6 +19,10 @@ towards funders. Some PsPM pre-processing algorithms are based on other
 people's work. This is detailed in the help of the respective
 functions, and we kindly ask you to reference these researchers' work
 when you use them.
+
+<img class="PsPM_Web" src="images/PsPM_Website_Figure_1.jpg" type="image/jpg" alt="PsPM" >
+
+<img class="PsPM_Doc" src="http://bachlab.org/wp-content/uploads/2019/09/PsPM_Website_Figure_2.png" alt="PsPM" >
 
 ## General background of PsPM and related methods
 * Bach DR & Friston KJ (2013). Model-based analysis of skin conductance
