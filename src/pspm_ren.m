@@ -23,7 +23,7 @@ if isempty(settings)
 end
 sts = -1;
 
-if nargin < 2 && ~ischar(newfilename)
+if nargin < 2 || ~ischar(newfilename)
   warning('ID:invalid_input', 'No new filename given.');
   return;
 elseif nargin < 3
@@ -52,8 +52,9 @@ if ~sts_load_data
 end
 infos.rendate = date;
 infos.newname = [nfn ext];
-sts = pspm_load_data(fnfn, struct('data', data, 'infos', infos, 'options', options));
+sts = pspm_load_data(fnfn, struct('data', {data}, 'infos', infos, 'options', options));
 if sts < 1
     return
 end
 delete(filename);
+newfilename = fnfn;

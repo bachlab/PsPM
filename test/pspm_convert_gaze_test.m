@@ -90,6 +90,7 @@ classdef pspm_convert_gaze_test < pspm_testcase
                 this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_l'), data)), 0);
                 this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_r'), data)), 0);
             end
+            %if strcmpi(from ,'mm') & strcmpi(channel_action, 'replace'), keyboard; end
             [sts, out_channel] = this.verifyWarningFree(@() pspm_convert_gaze(...
                 this.fn, struct('target', target, 'from', from, 'screen_width', screen_width, 'screen_height', screen_height, 'screen_distance', screen_distance), struct('channel_action', channel_action)));
             load(this.fn);

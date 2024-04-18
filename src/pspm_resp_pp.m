@@ -198,5 +198,5 @@ if options.plot
   stem(respstamp, ones(size(respstamp)), 'Marker', 'o', 'Color', 'b');
 end
 sts = 1;
-outchannel = outchannel(datatype);
+outchannel = outchannel(datatype(1:(end-1)));
 return

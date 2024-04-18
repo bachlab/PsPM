@@ -134,6 +134,10 @@ for i = 1:numel(channel)
     if lsts < 1, return, end
 end
 
+% map channel index from list of channels with correct units to list of all channels 
+pos_of_channel = channels_correct_units(pos_of_channel); 
+
+% find eye of channels to use
 eye = {};
 for i = 1:2
     [sts, eye{i}] = pspm_find_eye(data{i}.header.chantype);

@@ -80,6 +80,7 @@ else
     [sts, infos, data, filestruct] = pspm_select_channels(data, channel, units);
 end
 if sts < 1, return; end
+channel_index = filestruct.posofchannels;
 
 % precedence order for eyetracker channels
 if ~isnumeric(channel) && ismember(channel, settings.eyetracker_channels)
@@ -95,14 +96,17 @@ if ~isnumeric(channel) && ismember(channel, settings.eyetracker_channels)
         data = data(combined_channels);
         fprintf('L-R-combined channel(s) of type ''%s'' identified and will be used.\n', channel)
         channel = sprintf('combined %s', channel);
+        channel_index = channel_index(combined_channels);
     elseif ~isempty(global_channels)
         data = data(global_channels);
         fprintf('Non-lateralised channel(s) of type ''%s'' identified and will be used.\n', channel)
         channel = sprintf('non-lateralised %s', channel);
+        channel_index = channel_index(global_channels);
     elseif ~isempty(best_channels)
         data = data(best_channels);
         fprintf('Best eye channel(s) of type ''%s'' identified and will be used.\n', channel)
         channel = sprintf('best eye %s', channel);
+        channel_index = channel_index(best_channels);
         % else data is left unchanged
     else
         fprintf('Lateralised channel(s) of type ''%s'' identified and will be used.\n', channel)
@@ -116,22 +120,22 @@ if numel(data) == 0
         channel, fn);
 elseif numel(data) == 1
     data_struct = data{1};
-    pos_of_channel = filestruct.posofchannels(1);
+    pos_of_channel = channel_index(1);
 elseif ischar(channel)
     if strcmp(channel, 'marker')
         data_struct = data{1};
-        pos_of_channel = filestruct.posofchannels(1);
+        pos_of_channel = channel_index(1);
         keyword = 'first';
     else
         data_struct = data{end};
-        pos_of_channel = filestruct.posofchannels(end);
+        pos_of_channel = channel_index(end);
         keyword = 'last';
     end
     fprintf('More than one channel of type ''%s'' exists. The %s one will be used.\n', ...
         channel, keyword)
 else
     data_struct = data{1};
-    pos_of_channel = filestruct.posofchannels(1);
+    pos_of_channel = channel_index(1);
     fprintf('More than one channel provided. The first one will be used.\n')
 end
 

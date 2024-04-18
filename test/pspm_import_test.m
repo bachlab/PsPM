@@ -53,12 +53,12 @@ classdef pspm_import_test <  matlab.unittest.TestCase
         options = struct();
         [sts, outfile] = pspm_import(tc{k}.testcases{1}.pth, tc{k}.datatype, tc{k}.testcases{1}.import, options);
         if ~(isprop(tc{k}, 'blocks') && tc{k}.blocks)
-          this.verifyTrue(pspm_load_data(outfile{1},'none') == 1);
-          delete(outfile{1});
+          this.verifyTrue(pspm_load_data(outfile,'none') == 1);
+          delete(outfile);
         else
           for blk = 1:tc{k}.testcases{1}.numofblocks
-            this.verifyTrue(pspm_load_data(outfile{1, blk},'none') == 1);
-            delete(outfile{1, blk});
+            this.verifyTrue(pspm_load_data(outfile{blk},'none') == 1);
+            delete(outfile{blk});
           end
         end
       end

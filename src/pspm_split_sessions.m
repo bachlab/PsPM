@@ -201,8 +201,9 @@ else
     end
     % 2.4.2 Split data
     trimoptions = struct('drop_offset_markers', 1, 'marker_chan_num', options.marker_chan_num);
-    newdata = pspm_trim(struct('data', {indata}, 'infos', ininfos), ...
+    [tsts, newdata] = pspm_trim(struct('data', {indata}, 'infos', ininfos), ...
       prefix{sn}, suffix{sn}, trimpoint(sn, 1:2), trimoptions);
+    if tsts < 1, return; end
     options.overwrite = pspm_overwrite(newdatafile{sn}, options);
     newdata.options = options;
     pspm_load_data(newdatafile{sn}, newdata);
@@ -217,8 +218,9 @@ else
       dummyinfos          = ininfos;
 			trimoptions_missing = trimoptions;
 			trimoptions_missing.marker_chan_num = 2;
-      newmissing = pspm_trim(struct('data', {dummydata}, 'infos', dummyinfos), ...
+      [tsts, newmissing] = pspm_trim(struct('data', {dummydata}, 'infos', dummyinfos), ...
         prefix{sn}, suffix{sn}, trimpoint(sn, 1:2), trimoptions_missing);
+      if tsts < 1, return; end
       epochs = newmissing.data{1}.data;
       epoch_on = 1 + strfind(epochs.', [0 1]); % Return the start points of the excluded interval
       epoch_off = strfind(epochs.', [1 0]); % Return the end points of the excluded interval

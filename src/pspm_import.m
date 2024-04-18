@@ -123,11 +123,13 @@ elseif ~ischar(datafile)
         'Input file needs to be a string or cell array');
     return
 elseif ~exist(datafile, 'file')
-    warning('ID:invalid_input', ...
-        'Input file %s does not exist.', datafile);
+    warning('ID:nonexistent_file', ...
+        'Input file %s does not exist.', datafile); 
+    return
 elseif nargin < 2
     warning('ID:invalid_input', ...
-        'No data type'); return
+        'No data type'); 
+    return
 elseif ~ischar(datatype)
     warning('ID:invalid_input', ...
         'Data type needs to be a string');

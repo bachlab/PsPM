@@ -226,9 +226,9 @@ if ischar(from) % 'none'
 else
     if getmarker % 'marker'
         sta_p = events(startmarker);
-        sta_offset = from(i_D);
+        sta_offset = from;
     else         % 'file'
-        sta_p = from(i_D);
+        sta_p = from;
         sta_offset = 0;
     end
 end
@@ -245,10 +245,10 @@ else
             sto_offset = 0;
         else
             sto_p = events(l_endmarker);
-            sto_offset = to(i_D);
+            sto_offset = to;
         end
     else          % 'file'
-        sto_p = to(i_D);
+        sto_p = to;
         sto_offset = 0;
     end
 end

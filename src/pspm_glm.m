@@ -228,7 +228,7 @@ try
       'functions are not allowed.']); return;
   end
 catch
-  warning('ID:invalid_fhandle', 'Specified basis function %s is faulty', model.bf.fhandle); return;
+  warning('ID:invalid_fhandle', 'Specified basis function is faulty.'); return;
 end
 % 5.1 set shiftbf
 if bf_x(1) < 0

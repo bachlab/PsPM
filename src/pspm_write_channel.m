@@ -109,7 +109,7 @@ if ~strcmpi(channel_action, 'add')
         else
             channeli = pos_of_channels(end);
         end
-    elseif options.channel == 0
+    elseif all(options.channel == 0)
         % for each cell of newdata, find the matching channel to replace
         for iChannel = 1:numel(newdata)
             warning off

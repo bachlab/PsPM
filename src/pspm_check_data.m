@@ -43,7 +43,7 @@ end
 vflag = zeros(numel(data), 1); % records data structure, valid if 0
 wflag = zeros(numel(data), 1); % records whether data is out of range, valid if 0
 nflag = zeros(numel(data), 1);
-zflag = zeros(numel(data), 1); % records whether data is empty
+
 % loop through channels
 for k = 1:numel(data)
     % 7.2 Check header --
@@ -75,14 +75,14 @@ for k = 1:numel(data)
                 warning('ID:missing_data', 'Channel %01.0f is empty.', k);
                 % convert empty data to a generalised 1-by-0 matrix
                 data{k}.data = zeros(1,0);
-            elseif   ~isvector(data{k}.data)
+            elseif ~isvector(data{k}.data)
                 vflag(k) = 1;
             elseif size(data{k}.data, 1) < size(data{k}.data, 2) 
                 data{k}.data = data{k}.data(:);
                 warning('ID:invalid_data_structure', ...
                     'Channel %i seems to have the wrong orientation. Trying to transpose...', k);
             end
-            if ~flag_infos
+            if ~flag_infos && ~vflag(k)
                 if strcmpi(data{k}.header.units, 'events')
                     if (any(data{k}.data > infos.duration) || any(data{k}.data < 0))
                         wflag(k) = 1;

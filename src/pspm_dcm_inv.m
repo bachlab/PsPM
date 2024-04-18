@@ -902,4 +902,5 @@ end
 % ========================================================================
 settings.dcm{1}.sigma_offset = sigma_offset_temp;
 dcm.invmodel = model;
+sts = 1;
 return
