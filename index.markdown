@@ -7,7 +7,7 @@ layout: page
 
 **Current version: PsPM 6.1.2, released on 25.01.2024**
 
-<img src="http://bachlab.org/wp-content/uploads/2019/09/PsPM_Website_Figure_1.jpg" alt="drawing">
+<img src="http://bachlab.org/wp-content/uploads/2019/09/PsPM_Website_Figure_1.jpg" />
 
 **PsPM** stands for PsychoPhysiological Modelling. It is a powerful matlab toolbox for model-based analysis of psychophysiological signals, for example SCR, ECG, respiration, pupil size, or startle eye-blink EMG. Currently, PsPM implements models for all of these modalities, and we are working towards further models, for example, for skin potential and ocular scan path length.
 
