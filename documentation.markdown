@@ -5,7 +5,8 @@ permalink: /documentation/
 ---
 
 # Documentation
-![](http://bachlab.org/wp-content/uploads/2019/09/PsPM_Website_Figure_2.png)
+<img class="PsPM_Doc" src="images/PsPM_Website_Figure_2.jpg" type="image/jpg" alt="PsPM" >
+
  **PsPM** provides a principled approach to
 solving the inverse problem in psychophysiology: making inferences about
 psychological processes, given physiological data. This is a common
