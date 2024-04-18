@@ -126,7 +126,7 @@ for i_channel = 1:numel(data)
     v = data{i_channel}.data;
     if numel(find(~isnan(v))) < 2
       warning('ID:invalid_input',...
-        'Need at least two sample points to run interpolation (Channel %i). Skipping.', k);
+        'Need at least two sample points to run interpolation (Channel %i). Skipping.', i_channel);
     else
       x = 1:length(v);
       xq = find(isnan(v));
