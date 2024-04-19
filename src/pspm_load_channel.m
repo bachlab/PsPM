@@ -29,9 +29,9 @@ function [sts, data_struct, infos, pos_of_channel] = pspm_load_channel(fn, chann
 %               ▶ struct: with fields
 %                 ├─.channel: as defined for the 'char' option above
 %                 └──.units: units of the channel
-%   channeltype: [char] optional; any channel type as permitted per pspm_init;
-%                 checks whether retrieved data channel is of the specified type
-%                 and gives a warning if not
+%   channeltype: [char] optional; any channel type as permitted per pspm_init,
+%                 'wave', or 'events': checks whether retrieved data channel 
+%                is of the specified type and gives a warning if not
 % ● Outputs
 %                sts: [logical] 1 as default, -1 if unsuccessful
 %                data_struct: a struct with fields .data and .header,
@@ -140,10 +140,15 @@ else
 end
 
 % if channeltype is given, check if channel is of correct type
-if nargin > 2 && ~contains(data_struct.header.chantype, channeltype)
-    warning('ID:unexpected_channeltype', ...
-        'Channel type ''%s'' was expected. The retrieved channel is of type ''%s''.', ...
-        channeltype, data_struct.header.chantype);
+if nargin > 2 
+    warning('off', 'all');
+    sts = pspm_select_channels({data_struct}, channeltype);
+    warning('on', 'all');
+    if sts < 1
+        warning('ID:unexpected_channeltype', ...
+            'Channel type ''%s'' was expected. The retrieved channel is of type ''%s''.', ...
+            channeltype, data_struct.header.chantype);
+    end
 end
 
 

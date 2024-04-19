@@ -3,6 +3,7 @@ function [sts, outchannel] = pspm_pp(varargin)
 %   pspm_pp contains various preprocessing utilities for reducing noise in 
 %   the data. The 'butter' option that also allows downsampling after 
 %   application of an anti-alias Butterworth filter.
+
 % ● Format
 %   [sts, channel_index] = pspm_pp('median', fn, channel, n,    options) or
 %   [sts, channel_index] = pspm_pp('butter', fn, channel, filt, options) or
@@ -11,7 +12,8 @@ function [sts, outchannel] = pspm_pp(varargin)
 %        method:  [string] Method of filtering. Currently implemented
 %                 methods are 'median' and 'butter'. (1) 'median': a median
 %                 filter will be applied. (2) 'butter': Butterworth band
-%                 pass filter potentially including downsampling.
+%                 pass filter potentially including downsampling; any NaN
+%                 data are interpolated before filtering and then removed
 %                 (3) 'leaky_integrator': Applies a leaky integrator filter
 %                 where tau is specified in seconds.
 %            fn:  [string] The datafile that saves data to process
