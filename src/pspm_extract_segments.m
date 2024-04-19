@@ -91,15 +91,20 @@ if options.invalid, return, end
 % check consistency of input for the other methods
 if strcmpi(method, 'file') % in this case use pspm_check_model to verify
     channel = varargin{1};
-    model = pspm_check_model( ...
-        struct('modelfile', 'dummyfile.mat', ...
+    model = struct('modelfile', 'dummyfile.mat', ...
                    'datafile', data, ...
                    'timing', timing, ...
-                   'timeunits', options.timeunits), ...
-                   'glm');
+                   'timeunits', options.timeunits);
+    if isfield(options, 'missing')
+        model.missing = options.missing;
+    end
+    model = pspm_check_model(model, 'glm');
     if model.invalid, return; end
     timing = model.timing;
     datafile = model.datafile;
+    if isfield(options, 'missing')
+        options.missing =  model.missing;
+    end
 elseif strcmpi(method, 'data') % verify directly
    sr = varargin{1};
    if isnumeric(data)
@@ -212,8 +217,6 @@ for i_cond = 1:numel(onsets)
     [sts, segments{i_cond}.data, segments{i_cond}.sessions] = pspm_extract_segments_core(data_raw, onsets{i_cond}, pspm_time2index(options.length, sr, inf, 1), missing);
     if sts < 1, return; end
 end
-
-
 
 if options.plot
   fg = figure('Name', 'Condition mean per subject', 'Visible', 'off');
