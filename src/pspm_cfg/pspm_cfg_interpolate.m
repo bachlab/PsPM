@@ -9,10 +9,10 @@ if isempty(settings), pspm_init; end;
 
 %% Select file
 datafile         = cfg_files;
-datafile.name    = 'Data File(s)';
+datafile.name    = 'Data File';
 datafile.tag     = 'datafiles';
-datafile.num     = [1 Inf];
-datafile.help    = {'Select data files.',' ',settings.datafilehelp};
+datafile.num     = [1 1];
+datafile.help    = {'Select data file.',' ',settings.datafilehelp};
 
 %% Extrapolate
 extrapolate      = cfg_menu;
@@ -41,7 +41,7 @@ fm.help           = {''};
 fm.val            = {overwrite};
 
 %% Interpolate channels
-src_chan          = pspm_cfg_channel_selector('many');
+src_chan          = pspm_cfg_channel_selector('any');
 
 %% New channel
 new_chan          = cfg_const;
