@@ -28,7 +28,7 @@ All course webcasts are hosted on our [opencast e-lecture channel](https://elect
 ### PsPM Lectures 
 
 #### **Lecture 1: Theoretical overview (beginner)** 
-[Slides Lecture 1](replace link) (Dominik R. Bach)
+
 <iframe allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" src="https://electure.uni-bonn.de/paella/ui/watch.html?id=a256bf0a-3c51-4bcf-bf6f-45b6f1013613" style="border:0px #FFFFFF none;" name="Paella Player" scrolling="no" frameborder="0" marginheight="0px" marginwidth="0px" width="640" height="360"></iframe>
 
 
@@ -37,7 +37,7 @@ We are sorry. There is currently no material available for Lecture 2.
 
 
 #### **Lecture 3: Theoretical overview (advanced)** 
-[Slides Lecture 3](replace link) (Dominik R. Bach)
+
 <iframe allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" src="https://electure.uni-bonn.de/paella/ui/watch.html?id=99bbede5-f3a2-4993-8af0-0493f5dc11ab" style="border:0px #FFFFFF none;" name="Paella Player" scrolling="no" frameborder="0" marginheight="0px" marginwidth="0px" width="640" height="360"></iframe>
 
 
