@@ -431,7 +431,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       pspm_glm_test.save_datafile(Y1, 200, 10, model.datafile{1});
       Y2 = rand(200*10,1);
       pspm_glm_test.save_datafile(Y2, 200, 10, model.datafile{2});
-      glm = pspm_glm(model, struct());
+      [sts, glm] = pspm_glm(model, struct());
       %tests
       exptected_number_of_stats = 16;
       this.verifyEqual(length(glm.stats),exptected_number_of_stats, sprintf('test6: glm.stats does not have the expected number (%i) of elements', exptected_number_of_stats));
