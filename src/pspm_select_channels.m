@@ -57,17 +57,17 @@ if strcmp(units, 'any')
 end
 % To facilitate identification of eyetracker channels we use 'contain'
 % rather than 'strcmpi' - therefore we need to catch cases where channel
-% names are ambiguous (emg/emg_pp and pupil/pupil_missing)
+% names are ambiguous (pupil/pupil_missing)
 if ischar(channel) && contains(channel, 'event')
     pos_of_channels = find(strcmpi(channelunits_list, 'events') & strcmp(channelunits_list, units));
 elseif ischar(channel) && strcmpi(channel, 'wave')
     pos_of_channels = find(~strcmpi(channelunits_list, 'events') & strcmp(channelunits_list, units));
-elseif ischar(channel) && strcmpi(channel, 'emg')
-    pos_of_channels = find(strcmpi(channeltype_list, 'emg') & strcmp(channelunits_list, units));
 elseif ischar(channel) && strcmpi(channel, 'pupil')
     pos_of_channels = find(contains(channeltype_list, 'pupil') & ~contains(channeltype_list, 'pupil_missing') & strcmp(channelunits_list, units));
-elseif ischar(channel)
+elseif ischar(channel) && ismember(channel, settings.eyetracker_channels)
     pos_of_channels = find(contains(channeltype_list, channel) & strcmp(channelunits_list, units));
+elseif ischar(channel)
+    pos_of_channels = find(strcmpi(channeltype_list, channel) & strcmp(channelunits_list, units));
 else 
     pos_of_channels = channel;
 end
