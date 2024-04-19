@@ -64,7 +64,7 @@ elseif ischar(channel) && strcmpi(channel, 'wave')
     pos_of_channels = find(~strcmpi(channelunits_list, 'events') & strcmp(channelunits_list, units));
 elseif ischar(channel) && strcmpi(channel, 'pupil')
     pos_of_channels = find(contains(channeltype_list, 'pupil') & ~contains(channeltype_list, 'pupil_missing') & strcmp(channelunits_list, units));
-elseif ischar(channel) && ismember(channel, settings.eyetracker_channels)
+elseif ischar(channel) && ismember(channel, [settings.eyetracker_channels, 'gaze']) 
     pos_of_channels = find(contains(channeltype_list, channel) & strcmp(channelunits_list, units));
 elseif ischar(channel)
     pos_of_channels = find(strcmpi(channeltype_list, channel) & strcmp(channelunits_list, units));
