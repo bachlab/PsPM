@@ -328,7 +328,7 @@ switch model
       end
 
       nMarkers = numel(intiming);
-      for iMarker = 1: nMarkers
+      for iMarker = 1:nMarkers
         % check whether all fields are present and in correct format:
         if isstruct(intiming{iMarker})
           in = intiming{iMarker};
