@@ -385,7 +385,7 @@ switch model
     % get epoch information from file or from input --
     if ischar(intiming)
       [sts, in] = pspm_get_timing('file', intiming);
-      if sts < 1, return; end;
+      if sts < 1, return; end
       if isfield(in, 'epochs')
         outtiming = in.epochs;
       elseif isfield(in, 'onsets')
@@ -427,8 +427,6 @@ switch model
       else
         warning('Unknown epoch definition format.');  return;
       end
-    else
-       return;
     end
 
     % check time units --

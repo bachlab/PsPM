@@ -98,7 +98,7 @@ switch class(fn)
     % specify if fn is a filename
     if ~exist(fn, 'file')
       if ~isstruct(channel) % if channel is not a struct, fn must exist
-        warning('ID:nonexistent_file', 'The file fn does not exist.');
+        warning('ID:nonexistent_file', 'The file %s does not exist.', fn);
         return
       end
     else

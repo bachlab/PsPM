@@ -38,7 +38,9 @@ if nargin > 4
     time = events(time);
 end
 
-index = double(int64(round(time * sr))); % round can sometimes result in non-integer values
+% 1. 'round' can sometimes result in non-integer values
+% 2. The first sample of the file corresponds to index 1 and time 0
+index = double(int64(round(time * sr))) + 1; 
 
 if zero_permitted < 1
     index(index == 0) = 1;
