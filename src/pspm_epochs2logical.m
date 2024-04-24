@@ -18,17 +18,19 @@ function index = pspm_epochs2logical(epochs, datalength, sr)
 %   Introduced in PsPM 6.2
 %   Written in 2024 by Dominik Bach (Uni Bonn)
 
-if nargin > 2 
-    % do not let pspm_time2index account for data length, as this would
-    % lead to wrong indices below
+if nargin > 2 && sr ~= 1
+    % (1) do not let pspm_time2index account for data length, as this would
+    %     lead to wrong indices below
+    % (2) if epochs are specified in samples, then this conversion would
+    %     lead to wrong results
     epochs = pspm_time2index(epochs, sr);
 end
 
 index = zeros(datalength, 1);
 if ~isempty(epochs)
     for k = 1:size(epochs, 1)
-        flanks = round(epochs(k,:));
-        % ensure the epoch has duration: round(diff(epochs(k, :))
+        flanks = epochs(k,:);
+        % ensure the epoch has duration: diff(flanks)
         index(flanks(1):(flanks(2) - 1)) = 1;
     end
 end

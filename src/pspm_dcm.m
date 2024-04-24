@@ -361,8 +361,7 @@ foo = {};
 for vs = 1:numel(valid_subsessions)
   isbSn = valid_subsessions(vs);
   sbSn = subsessions(isbSn, :);
-  flanks = pspm_time2index(sbSn(2:3), sr{sbSn(1)});
-  sbSn_data = y{sbSn(1)}(flanks(1):flanks(2));
+  sbSn_data = y{sbSn(1)}((pspm_epochs2logical(sbSn(2:3), length(y{sbSn(1)}), sr{sbSn(1)})==1));
   sbs_miss = isnan(sbSn_data);
 
   if any(sbs_miss)
@@ -688,7 +687,7 @@ model.meanSCR = transpose(mean(D,'omitnan') );
 
 %% 6 Invert DCM
 [sts, dcm] = pspm_dcm_inv(model, options);
-if sts < 1,
+if sts < 1
     return
 end
 

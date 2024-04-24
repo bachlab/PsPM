@@ -43,13 +43,13 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       % figure, plot(x,bs);
       signal_len = length(x);
       % change onsets values from seconds to sample idx
-      onsets_idx = onsets .* sr;
+      onsets_idx = round(onsets .* sr);
       % generate trial matrix
       trial_mat = zeros(nr_trials,length_sec*sr);
       % fill matrix with signal shifted over time
       for i=1:nr_trials
-        start = onsets_idx(i);
-        stop = onsets_idx(i)+signal_len-1;
+        start = onsets_idx(i) + 1;
+        stop = onsets_idx(i)+signal_len;
         if stop <=length_sec*sr
           trial_mat(i,start:stop) = bs';
         else
@@ -99,7 +99,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
         cond_trial_data{i} = zeros(samples_per_trial,numel(idx));
         cond_durations{i} = 3.5* ones(numel(idx),1);
         for k=1:numel(idx)
-          cond_trial_data{i}(:,k) = y(cond_consets_idx{i}(k):min(length_sec*sr,(cond_consets_idx{i}(k)+samples_per_trial-1)));
+          cond_trial_data{i}(:,k) = y((cond_consets_idx{i}(k)+1):min(length_sec*sr,(cond_consets_idx{i}(k)+samples_per_trial)));
         end
         cond_trial_mean{i} = nanmean(cond_trial_data{i}, 2);
         cond_trial_std{i}  = nanstd(cond_trial_data{i}, [], 2);

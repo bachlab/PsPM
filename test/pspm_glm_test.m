@@ -312,6 +312,12 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       % correct out shiftbf
       model.timing{1}.onsets{1} = model.timing{1}.onsets{1} + shiftbf;
       model.timing{2}.onsets{1} = model.timing{2}.onsets{1} + shiftbf;
+      for i_file = 1:2
+          [sts, newdata.infos, newdata.data] = pspm_load_data(model.datafile{i_file});
+          newdata.data{2}.data = newdata.data{2}.data + shiftbf;
+          newdata.options.overwrite = 1;
+          sts = pspm_load_data(model.datafile{i_file}, newdata);
+      end
       %test 1
       model.timeunits = 'seconds';
       expected = [cond1 offset1 offset2]';
@@ -590,7 +596,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       end
       signal = zeros(sr*duration,1);
       for i = 1:length(onsets)
-        signal(floor(onsets(i)*sr):floor((onsets(i)+onsets_duration(i))*sr)) = scal(i);
+        signal(round(onsets(i)*sr+1):round((onsets(i)+onsets_duration(i))*sr+1)) = scal(i);
       end
       signal = signal + offset;
     end
