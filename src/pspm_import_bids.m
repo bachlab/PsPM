@@ -1,112 +1,129 @@
-function sts = pspm_import_bids(dataset_path, save_path)
-%PSPM_IMPORT_BIDS
-%   reads a BIDS formatted pupil dataset(experimental readings for a set of participants) from a given data path
-%   stores data in pspm formatted structures
-sts = 0;
+function [sts, outfile] = pspm_import_bids(dataset_path, save_path)
+% ● Description
+%   pspm_import_bids reads a BIDS-PP formatted dataset for a set of 
+%   participants from a given data path and stores data as PsPM file(s).
+% ● Format
+%   [sts, outfile] = pspm_import_bids(dataset_path, save_path)
+% ● Arguments
+%    dataset_path:  path to the data set
+%       save_path:  path to save the PsPM files
+% ● Output
+%         outfile:  cell array of generated PsPM file names
+% ● History
+%   Introduced in PsPM 7.0
+%   Written in 2024 by Sourav Koulkarni & Dominik R Bach (Uni Bonn)
 
-% dataset_path = '.\sample_data\LI_BIDS';
+%% 1 Initialise -----------------------------------------------------------
+global settings
+if isempty(settings)
+  pspm_init;
+end
+sts = -1;
+outfile = [];
 
-% save_path = './BIDS_Import';
 if ~exist(save_path, 'dir')
     mkdir(save_path);
 end
 
+%% 2 Read meta information ------------------------------------------------
 dataset_description = read_dataset_description(dataset_path);
 
-[participants_data, participant_data_headings] = read_participants_data(dataset_path);
+[participants_data, participant_data_headings] = ...
+    read_participants_data(dataset_path);
 
 dataset_description.ParticipantInformation = participant_data_headings;
 
-dataset_dir = dir(dataset_path);
+dataset_dir = dir(fullfile(dataset_path, 'sub-*'));
+dataset_dir = dataset_dir(cellfun(@(x) x == 1, {dataset_dir.isdir}));
+
+%% 3 loop over subjects ---------------------------------------------------
 for i = 1:length(dataset_dir)
-    if startsWith(dataset_dir(i).name, 'sub-') && dataset_dir(i).isdir
-        % For each subject
-        subject_id = dataset_dir(i).name(5:end);
-        % disp(dataset_dir(i).name);
-        
-        sub_path = fullfile(dataset_path, dataset_dir(i).name);
-        
-        subject_dir = dir(sub_path);
-        
-        % Create cogent file - subject
-        participant = struct();
-        for p_info_ind = 1:numel(dataset_description.ParticipantInformation)
-            field_name = dataset_description.ParticipantInformation{p_info_ind};
-            participant.(field_name) = participants_data{p_info_ind}{str2double(subject_id)};
-        end
-        
-        for j = 1:length(subject_dir)
-            if startsWith(subject_dir(j).name, 'ses-') && subject_dir(j).isdir
-                % For each session
-                session_id = subject_dir(j).name(5:end);
-                % disp(subject_dir(j).name);
-                
-                ses_path = fullfile(sub_path, subject_dir(j).name, 'beh');
-                
-                task_name = "DelayFearConditioning";
-                
-                filenames = cell(1, 5);
-                
-                % ------------ Build file names ------------
-                eyetrack_tsv_filename = sprintf('sub-%s_ses-%s_task-%s_eyetrack.tsv', subject_id, session_id, task_name);
-                eyetrack_json_filename = sprintf('sub-%s_ses-%s_task-%s_eyetrack.json', subject_id, session_id, task_name);
-                filenames{1} = eyetrack_tsv_filename;
-                filenames{2} = eyetrack_json_filename;
-                
-                events_tsv_filename = sprintf('sub-%s_ses-%s_task-%s_events.tsv', subject_id, session_id, task_name);
-                events_json_filename = sprintf('sub-%s_ses-%s_task-%s_events.json', subject_id, session_id, task_name);
-                filenames{3} = events_tsv_filename;
-                filenames{4} = events_json_filename;
-                
-                beh_json_filename = sprintf('sub-%s_ses-%s_task-%s_beh.json', subject_id, session_id, task_name);
-                filenames{5} = beh_json_filename;
-                
-                % Check if any file is missing
-                files_missing = checkFileMiss(ses_path, filenames);
-                if files_missing
-                    disp('Files missing');
-                    sts = 0;
-                    return
-                end
-                
-                % ------------ Handle Data ------------
-                % events
-                events_tsv_filepath = fullfile(ses_path, events_tsv_filename);
-                [event_data, event_data_headings] = read_event_data(events_tsv_filepath);
-                event_data_struct = struct();
-                for event_heading_ind = 1:numel(event_data_headings)
-                    event_data_heading = event_data_headings{event_heading_ind};
-                    event_data_struct.(event_data_heading) = event_data{event_heading_ind};
-                end
-                
-                % eyetrack
-                eyetrack_json_filepath = fullfile(ses_path, eyetrack_json_filename);
-                eyetrack_json_jsondata = fileread(eyetrack_json_filepath);
-                eyetrack_json = jsondecode(eyetrack_json_jsondata);
-                dataset_description.EyeTrack = eyetrack_json;
-                clear jsonData;
-                
-                eyetrack_tsv_filepath = fullfile(ses_path, eyetrack_tsv_filename);
-                eyetrack_data = read_eyetrack_data(eyetrack_tsv_filepath);
-                
-                pupil_file_name = sprintf('%s_pupil_%s_sn%s.mat', dataset_description.Name, subject_id, session_id);
-                pupil_filepath = fullfile(save_path, pupil_file_name);
-                
-                % TODO: Marker Data in PSPM format?
-                pdata_sts = save_eyetrack_data(eyetrack_data, eyetrack_json, event_data_struct, pupil_filepath);
+    
+    subject_id = dataset_dir(i).name(5:end);
+   
+    fprintf('Importing %s ... \', dataset_dir(i).name);
+
+    sub_path = fullfile(dataset_path, dataset_dir(i).name);
+
+    subject_dir = dir(sub_path);
+
+    % Create cogent file - subject
+    participant = struct();
+    for p_info_ind = 1:numel(dataset_description.ParticipantInformation)
+        field_name = dataset_description.ParticipantInformation{p_info_ind};
+        participant.(field_name) = participants_data{p_info_ind}{str2double(subject_id)};
+    end
+
+    for j = 1:length(subject_dir)
+        if startsWith(subject_dir(j).name, 'ses-') && subject_dir(j).isdir
+            % For each session
+            session_id = subject_dir(j).name(5:end);
+            % disp(subject_dir(j).name);
+
+            ses_path = fullfile(sub_path, subject_dir(j).name, 'beh');
+
+            task_name = 'DelayFearConditioning';
+
+            filenames = cell(1, 5);
+
+            % ------------ Build file names ------------
+            eyetrack_tsv_filename = sprintf('sub-%s_ses-%s_task-%s_eyetrack.tsv', subject_id, session_id, task_name);
+            eyetrack_json_filename = sprintf('sub-%s_ses-%s_task-%s_eyetrack.json', subject_id, session_id, task_name);
+            filenames{1} = eyetrack_tsv_filename;
+            filenames{2} = eyetrack_json_filename;
+
+            events_tsv_filename = sprintf('sub-%s_ses-%s_task-%s_events.tsv', subject_id, session_id, task_name);
+            events_json_filename = sprintf('sub-%s_ses-%s_task-%s_events.json', subject_id, session_id, task_name);
+            filenames{3} = events_tsv_filename;
+            filenames{4} = events_json_filename;
+
+            beh_json_filename = sprintf('sub-%s_ses-%s_task-%s_beh.json', subject_id, session_id, task_name);
+            filenames{5} = beh_json_filename;
+
+            % Check if any file is missing
+            files_missing = checkFileMiss(ses_path, filenames);
+            if files_missing
+                warning('ID:invalid_input', 'Files missing');
+                return
             end
-            % cogent
-            cogent_file_name = sprintf('%s_cogent_%s.mat', dataset_description.Name, subject_id);
-            cogent_filepath = fullfile(save_path, cogent_file_name);
-            
-            saveCogent(participant, cogent_filepath)
+
+            % ------------ Handle Data ------------
+            % events
+            events_tsv_filepath = fullfile(ses_path, events_tsv_filename);
+            [event_data, event_data_headings] = read_event_data(events_tsv_filepath);
+            event_data_struct = struct();
+            for event_heading_ind = 1:numel(event_data_headings)
+                event_data_heading = event_data_headings{event_heading_ind};
+                event_data_struct.(event_data_heading) = event_data{event_heading_ind};
+            end
+
+            % eyetrack
+            eyetrack_json_filepath = fullfile(ses_path, eyetrack_json_filename);
+            eyetrack_json_jsondata = fileread(eyetrack_json_filepath);
+            eyetrack_json = jsondecode(eyetrack_json_jsondata);
+            dataset_description.EyeTrack = eyetrack_json;
+            clear jsonData;
+
+            eyetrack_tsv_filepath = fullfile(ses_path, eyetrack_tsv_filename);
+            eyetrack_data = read_eyetrack_data(eyetrack_tsv_filepath);
+
+            pupil_file_name = sprintf('%s_pupil_%s_sn%s.mat', dataset_description.Name, subject_id, session_id);
+            pupil_filepath = fullfile(save_path, pupil_file_name);
+
+            % TODO: Marker Data in PSPM format?
+            pdata_sts = save_eyetrack_data(eyetrack_data, eyetrack_json, event_data_struct, pupil_filepath);
         end
+        % cogent
+        cogent_file_name = sprintf('%s_cogent_%s.mat', dataset_description.Name, subject_id);
+        cogent_filepath = fullfile(save_path, cogent_file_name);
+
+        saveCogent(participant, cogent_filepath)
     end
 end
 sts = 1;
 end
 
-
+%% 4 subfunctions ---------------------------------------------------------
 function fileFound = isFileInDirectory(folderPath, fileName)
 % List all items in the folder
 items = dir(folderPath);
@@ -216,7 +233,7 @@ infos.source.eyesObservered = eyetrack_json.RecordedEye;
 infos.eyetrackingGeometry = struct();
 infos.eyetrackingGeometry.measurements = eyetrack_json.EyetrackingGeometry.distances;
 infos.eyetrackingGeometry.units = eyetrack_json.EyetrackingGeometry.distanceUnits;
-save(pupil_filepath, "data", "infos")
+save(pupil_filepath, 'data', 'infos')
 % disp('Saved Pupil')
 
 sts = 1;
@@ -270,7 +287,7 @@ end
 
 function saveCogent(participantData, cogent_filepath)
 subject = participantData;
-save(cogent_filepath, "subject")
+save(cogent_filepath, 'subject')
 % disp('Saved Cogent')
 end
 
