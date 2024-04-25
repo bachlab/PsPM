@@ -185,6 +185,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
  function test_auto_mode_glm_with_markers(this)
       import matlab.unittest.constraints.IsEqualTo
       import matlab.unittest.constraints.RelativeTolerance
+      rehash
       load(['ImportTestData' filesep 'fitted_models' filesep 'glm_scr_cond_marker.mat'], 'glm');
       load(['ImportTestData' filesep 'fitted_models' filesep 'glm_orig_data.mat'], 'data');
       if ~isfield(glm.input, 'channel') && isfield(glm.input, 'chan')
@@ -225,7 +226,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
         seg_len = this.options.length * sr;
         onset_i = glm.timing.multi.onsets{i};
         for j = 1:numel(onset_i)
-          onset = round(onset_i(j) * sr);
+          onset = round(onset_i(j) * sr) + 1;
           all_vecs = [all_vecs, input_data(onset : onset + seg_len - 1)];
         end
         all_vecs = all_vecs';
@@ -280,7 +281,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
         seg_len = this.options.length * sr;
         onset_i = glm.timing.multi.onsets{i};
         for j = 1:numel(onset_i)
-          onset = round(onset_i(j) * sr);
+          onset = round(onset_i(j) * sr) + 1;
           all_vecs = [all_vecs, input_data(onset : onset + seg_len - 1)];
         end
         all_vecs = all_vecs';
@@ -318,7 +319,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       for i = 1:numel(input_data)
           onset_i = dcm.input.trlstart{i};
           for j = 1:numel(onset_i)
-              onset = round(onset_i(j) * sr);
+              onset = round(onset_i(j) * sr) + 1;
               all_vecs = [all_vecs, input_data{i}(onset : onset + seg_len - 1)];
           end
       end
