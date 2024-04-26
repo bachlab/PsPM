@@ -41,7 +41,7 @@ for i = 1:length(dataset_dir)
     
     subject_id = dataset_dir(i).name(5:end);
    
-    fprintf('Importing %s ... \', dataset_dir(i).name);
+    fprintf('Importing %s ... \n', dataset_dir(i).name);
 
     sub_path = fullfile(dataset_path, dataset_dir(i).name);
 
