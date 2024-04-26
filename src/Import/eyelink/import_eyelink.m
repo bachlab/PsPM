@@ -267,7 +267,8 @@ sblink_indices = find(strncmp(messages, 'SBLINK', numel('SBLINK')));
 eblink_indices = find(strncmp(messages, 'EBLINK', numel('EBLINK')));
 ssacc_indices = find(strncmp(messages, 'SSACC', numel('SSACC')));
 esacc_indices = find(strncmp(messages, 'ESACC', numel('ESACC')));
-msg_indices = strncmp(messages, 'MSG', numel('MSG'));
+msg_indices = strncmp(messages, 'MSG', numel('MSG')) | ...
+    strncmp(messages, 'INPUT', numel('INPUT'));
 for name = {'RECCFG', 'ELCLCFG', 'GAZE_COORDS', 'THRESHOLDS', 'ELCL_', 'PUPIL_DATA_TYPE', '!MODE'}
   msg_indices = msg_indices & ~contains(messages, name);
 end
@@ -433,7 +434,7 @@ if numel(beg_indices) > numel(end_indices)
   extra = setdiff(beg_indices, end_indices);
   for idx = extra
     parts = split(messages{idx});
-    which_eye = parts{2}
+    which_eye = parts{2};
     beg_time = str2num(parts{3});
     end_time = session_end_time;
 
