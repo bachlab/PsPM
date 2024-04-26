@@ -294,8 +294,9 @@ switch model
         end  
       end
       % ensure same names exist for all sessions and re-sort if
-      % necesssary
+      % necesssary; collect number and names of all pmods
       outtiming = struct('names', {}, 'onsets', {}, 'durations', {});
+      pmodname = {};
       for iFile = 1:nFiles
         for iCond = 1:numel(allnames)
             name_idx = find(strcmpi(temptiming(iFile).names, allnames{iCond}));
@@ -305,8 +306,17 @@ switch model
             elseif numel(name_idx) == 1
                 outtiming(iFile).onsets{iCond}    = temptiming(iFile).onsets{name_idx};
                 outtiming(iFile).durations{iCond}  = temptiming(iFile).durations{name_idx};
-                if isfield(temptiming, 'pmod') && numel(temptiming(iFile).pmod) >= name_idx
-                    outtiming(iFile).pmod(iCond)  = temptiming(iFile).pmod(name_idx);
+                if isfield(temptiming, 'pmod') && ~isempty(temptiming(iFile).pmod)
+                    if numel(temptiming(iFile).pmod) >= name_idx
+                        outtiming(iFile).pmod(iCond)  = temptiming(iFile).pmod(name_idx);
+                    end
+                    % store pmod number and name for later use
+                    pmodno(iFile, iCond) = numel(temptiming(iFile).pmod(name_idx).param);
+                    if isempty(pmodname) || isempty(pmodname{iCond})
+                        pmodname{iCond} = temptiming(iFile).pmod(name_idx).name;
+                    end
+                else
+                    pmodno(iFile, iCond) = 0;
                 end
             elseif numel(name_idx) == 0
                 outtiming(iFile).onsets{iCond}    = [];
@@ -315,6 +325,22 @@ switch model
             outtiming(iFile).names{iCond}  = allnames{iCond};
         end
       end
+      % initialise pmods
+      pmodno = max(pmodno, [], 2);
+      for iFile = 1:nFiles
+          for iCond = 1:numel(allnames)
+              % insert pmods if they exist in other sessions
+              if ~isfield(outtiming, 'pmod') || ...
+                      isempty(outtiming(iFile).pmod) || ...
+                      isempty(outtiming(iFile).pmod(iCond).param)
+                  for i_pmod = 1:pmodno(iCond)
+                      outtiming(iFile).pmod(iCond).param{i_pmod} = [];
+                      outtiming(iFile).pmod(iCond).name{i_pmod} = pmodname{iCond}{i_pmod};
+                  end
+              end
+          end
+      end
+    
       % clear local variables
       clear iParam iParamNew iCond iFile iPmod
     else
