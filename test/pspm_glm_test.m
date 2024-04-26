@@ -7,7 +7,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
   properties (TestParameter)
     shiftbf = {0, 5};
     norm = {0, 1};
-    cutoff = {0, .5, .95};
+    cutoff = {0, .1, .5, .95};
     nan_percent = {0,.25,.5,.75,.95};
   end
   methods (Test)
@@ -526,16 +526,25 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       else
         new_nan_percent = nan_percent * 100;
       end
-      %t
       pspm_glm_test.save_datafile(Y, sr, duration, model.datafile);
-      % test
-      [sts, glm] = pspm_glm(model, struct('exclude_missing', struct('segment_length',segment_length,'cutoff',cutoff)));
+      % find conditions to exclude
+      for i_cond = 1:3
+        onsets = pspm_time2index(model.timing.onsets{i_cond}, sr);
+        duration = pspm_time2index(segment_length, sr, inf, 1);
+        [sts, segments] = pspm_extract_segments_core({Y}, {onsets}, duration);
+        nan_ratio = sum(isnan(segments(:)))/numel(segments);
+        exclude_cond(i_cond) = nan_ratio > cutoff;
+      end
+      % test (caution: here we specify cutoff as proportion but pspm_glm
+      % expects and returns percentage)
+      [sts, glm] = pspm_glm(model, struct('exclude_missing', struct('segment_length',segment_length,'cutoff', 100 * cutoff)));
       exptected_number_of_conditions = 3;
       this.verifyEqual(length(glm.stats_missing),exptected_number_of_conditions, sprintf('test_extract_missing: glm.stats_missing does not have the expected number (%i) of elements', exptected_number_of_conditions));
       this.verifyEqual(length(glm.stats_exclude),exptected_number_of_conditions, sprintf('test_extract_missing: glm.stats_exclude does not have the expected number (%i) of elements', exptected_number_of_conditions));
       this.verifyTrue((abs(mean(glm.stats_missing)-new_nan_percent) < 1), sprintf('test_extract_missing: mean of glm.stats_missing (%i) does not correspond to expected nan_percentage (%i)', mean(glm.stats_missing), new_nan_percent));
-      check_values = glm.stats_missing > cutoff;
+      check_values = glm.stats_missing > 100 * cutoff;
       this.verifyTrue(all(glm.stats_exclude == check_values), sprintf('test_extract_missing: glm.stats_exclude does not exclude the right conditions'));
+      this.verifyTrue(all(glm.stats_exclude == exclude_cond), sprintf('test_extract_missing: glm.stats_exclude does not exclude the right conditions'));
       % clean up
       delete(model.datafile);
       delete(model.modelfile);

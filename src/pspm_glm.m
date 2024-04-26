@@ -616,7 +616,9 @@ end
 glm.interceptno = iSn;
 glm.regscale((end+1):(end+iSn)) = 1;
 % 14.7 delete missing epochs and prepare output --
-perc_missing = sum(glm.M)/length(glm.M);
+% user output on missing values (not accounting for those introduced by
+% shiftbf parameter)
+perc_missing = (sum(glm.M)  - newsr * model.bf.shiftbf)/length(glm.M);
 if perc_missing >= 0.1
   if sr == Xfilter.sr
     warning('ID:invalid_input', ...
