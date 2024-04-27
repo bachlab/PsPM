@@ -311,14 +311,15 @@ for idx = msg_indices
   msgline = messages{idx};
   parts = split(msgline);
   time = str2num(parts{2});
-  if ismember(time,markers.times)
-    warning('ID:markers_with_same_timestamp',['PsPM found markers with same timestamps.',...
-      'Only the first one will be imported.'])
-  elseif time <= session_end_time
+  % if ismember(time,markers.times)
+  %   warning('ID:markers_with_same_timestamp',['PsPM found markers with same timestamps.',...
+  %     'Only the first one will be imported.'])
+  %   keyboard
+  % elseif time <= session_end_time
     markers.markers(bsearch(timecol, time)) = true;
     markers.times(end + 1, 1) = time;
     markers.names{end + 1, 1} = cell2mat(join(parts(3:end), ' '));
-  end
+  % end
 end
 
 % set data columns
