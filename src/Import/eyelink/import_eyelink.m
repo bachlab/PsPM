@@ -79,19 +79,15 @@ data{end + 1} = combine_markers(markers_sess);
 session_end_times = calc_session_end_times(messages);
 for i = 1:numel(data) - 1
   [data{i}.markers, data{i}.markerinfo] = remove_markers_beyond_end(...
-    data{i}.markers, data{i}.markerinfo, markers_sess{i}.times, session_end_times{i});
+    data{i}.markers, data{i}.markerinfo, session_end_times{i}, data{1}.raw(1,1));
 end
-end
-
-function [markers_out, markerinfos_out] = remove_markers_beyond_end(markers, markerinfo, markertimes, sess_end_time)
-mask = markertimes <= sess_end_time;
-
-marker_indices = find(markers);
-markers_out = markers;
-if any(~mask)
-  markers_out(marker_indices(end)) = 0;
+[data{end}.markers, data{end}.markerinfo] = remove_markers_beyond_end(...
+    data{end}.markers, data{end}.markerinfo, session_end_times{end}, data{1}.raw(1,1));
 end
 
+function [markers_out, markerinfos_out] = remove_markers_beyond_end(markers, markerinfo, sess_end_time, first_sess_start)
+mask = (markers <= sess_end_time) & (markers > first_sess_start);
+markers_out = markers(mask);
 markerinfos_out = markerinfo;
 markerinfos_out.name = markerinfos_out.name(mask);
 markerinfos_out.value = markerinfos_out.value(mask);
@@ -457,10 +453,10 @@ for i = 1:numel(markers_sess)
   all_marker_names = [all_marker_names; markers_sess{i}.names];
 end
 all_markers_struct.markers = [];
-all_markers_struct.markerinfo.vals = [];
-all_markers_struct.markerinfo.names = all_marker_names;
+all_markers_struct.markerinfo.value = [];
+all_markers_struct.markerinfo.name = all_marker_names;
 for i = 1:numel(markers_sess)
   all_markers_struct.markers = [all_markers_struct.markers; markers_sess{i}.times];
-  all_markers_struct.markerinfo.vals = [all_markers_struct.markerinfo.vals; markers_sess{i}.vals];
+  all_markers_struct.markerinfo.value = [all_markers_struct.markerinfo.value; markers_sess{i}.vals];
 end
 end

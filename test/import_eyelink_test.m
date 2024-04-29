@@ -62,7 +62,7 @@ classdef import_eyelink_test < matlab.unittest.TestCase
           sn = sn + 1;
           sample_idx = 1;
           msg_idx = 1;
-          msgtimes = data{sn}.raw(data{sn}.markers, 1);
+          msgtimes = data{sn}.raw(data{sn}.markers-data{sn}.raw(1,1)+1, 1);
           this.verifyEqual(data{sn}.sampleRate, to_num(parts{5}));
           this.verifyEqual(lower(data{sn}.eyesObserved), lower(parts{8}));
           eyesObserved = parts{8};

@@ -92,7 +92,7 @@ if numel(data) > 1 && (any(diff(sr)) || any(~strcmp(eyesObs,eyesObs{1})))
   % samplerate
   sampleRate = data{1}.sampleRate;
   % markers
-  markers = data{1}.markers/sampleRate;
+  markers = (data{1}.markers-data{1}.raw(1,1))/sampleRate;
   % markerinfo
   markerinfo = data{1}.markerinfo;
   % units
@@ -143,7 +143,7 @@ else
   sampleRate = sr;
 
   % markers
-  markers = all_markers.markers/sampleRate;
+  markers = (all_markers.markers-data{1}.raw(1,1))/sampleRate;
   % markerinfo
   markerinfo = all_markers.markerinfo;
 
