@@ -22,9 +22,8 @@ function [data] = import_eyelink(filepath)
 %                           - ymin: y coordinate of top left corner of screen in pixels.
 %                           - xmax: x coordinate of bottom right corner of screen in pixels.
 %                           - ymax: y coordinate of bottom right corner of screen in pixels.
-%                       markers: Array of the same size as data columns. An entry is 1 if there is
-%                                marker at that time.
-%                       markerinfos: Structure with the following fields:
+%                       markers: Sample number of any detected marker
+%                       markerinfo: Structure with the following fields:
 %                           - name: Cell array of marker name.
 %                           - value: Index of the marker name to an array containing
 %                                    unique marker names.
@@ -52,7 +51,7 @@ rmpath(bsearch_path);
 
 % write outputs
 % -------------
-markers_sess = create_marker_val_fields(markers_sess);
+markers_sess = create_marker_val_fields(markers_sess); % create marker values from unique names
 for sn = 1:numel(dataraw)
   data{sn}.raw = dataraw{sn};
   data{sn}.channels = data{sn}.raw(:, chan_info{sn}.col_idx);
@@ -71,20 +70,20 @@ for sn = 1:numel(dataraw)
   data{sn}.gaze_coords.ymax = chan_info{sn}.ymax;
   data{sn}.elcl_proc = chan_info{sn}.elcl_proc;
 
-  data{sn}.markers = markers_sess{sn}.markers;
-  data{sn}.markerinfos.name = markers_sess{sn}.names;
-  data{sn}.markerinfos.value = markers_sess{sn}.vals;
+  data{sn}.markers = markers_sess{sn}.times;
+  data{sn}.markerinfo.name = markers_sess{sn}.names;
+  data{sn}.markerinfo.value = markers_sess{sn}.vals;
 end
 data{end + 1} = combine_markers(markers_sess);
 
 session_end_times = calc_session_end_times(messages);
 for i = 1:numel(data) - 1
-  [data{i}.markers, data{i}.markerinfos] = remove_markers_beyond_end(...
-    data{i}.markers, data{i}.markerinfos, markers_sess{i}.times, session_end_times{i});
+  [data{i}.markers, data{i}.markerinfo] = remove_markers_beyond_end(...
+    data{i}.markers, data{i}.markerinfo, markers_sess{i}.times, session_end_times{i});
 end
 end
 
-function [markers_out, markerinfos_out] = remove_markers_beyond_end(markers, markerinfos, markertimes, sess_end_time)
+function [markers_out, markerinfos_out] = remove_markers_beyond_end(markers, markerinfo, markertimes, sess_end_time)
 mask = markertimes <= sess_end_time;
 
 marker_indices = find(markers);
@@ -93,7 +92,7 @@ if any(~mask)
   markers_out(marker_indices(end)) = 0;
 end
 
-markerinfos_out = markerinfos;
+markerinfos_out = markerinfo;
 markerinfos_out.name = markerinfos_out.name(mask);
 markerinfos_out.value = markerinfos_out.value(mask);
 end
@@ -267,6 +266,8 @@ sblink_indices = find(strncmp(messages, 'SBLINK', numel('SBLINK')));
 eblink_indices = find(strncmp(messages, 'EBLINK', numel('EBLINK')));
 ssacc_indices = find(strncmp(messages, 'SSACC', numel('SSACC')));
 esacc_indices = find(strncmp(messages, 'ESACC', numel('ESACC')));
+% according to information from Yanfang, MSG refers to ethernet input using
+% python eyelink library, and INPUT to analog (?) input
 msg_indices = strncmp(messages, 'MSG', numel('MSG')) | ...
     strncmp(messages, 'INPUT', numel('INPUT'));
 for name = {'RECCFG', 'ELCLCFG', 'GAZE_COORDS', 'THRESHOLDS', 'ELCL_', 'PUPIL_DATA_TYPE', '!MODE'}
@@ -304,22 +305,14 @@ for idx = [eblink_indices esacc_indices]
 end
 
 % construct markers
-markers.markers = false(size(dataraw, 1), 1);
 markers.times = [];
 markers.names = {};
 for idx = msg_indices
   msgline = messages{idx};
   parts = split(msgline);
   time = str2num(parts{2});
-  % if ismember(time,markers.times)
-  %   warning('ID:markers_with_same_timestamp',['PsPM found markers with same timestamps.',...
-  %     'Only the first one will be imported.'])
-  %   keyboard
-  % elseif time <= session_end_time
-    markers.markers(bsearch(timecol, time)) = true;
-    markers.times(end + 1, 1) = time;
-    markers.names{end + 1, 1} = cell2mat(join(parts(3:end), ' '));
-  % end
+  markers.times(end + 1, 1) = time;
+  markers.names{end + 1, 1} = cell2mat(join(parts(3:end), ' '));
 end
 
 % set data columns
@@ -463,11 +456,11 @@ all_marker_names = {};
 for i = 1:numel(markers_sess)
   all_marker_names = [all_marker_names; markers_sess{i}.names];
 end
-all_markers_struct.times = [];
-all_markers_struct.vals = [];
-all_markers_struct.names = all_marker_names;
+all_markers_struct.markers = [];
+all_markers_struct.markerinfo.vals = [];
+all_markers_struct.markerinfo.names = all_marker_names;
 for i = 1:numel(markers_sess)
-  all_markers_struct.times = [all_markers_struct.times; markers_sess{i}.times];
-  all_markers_struct.vals = [all_markers_struct.vals; markers_sess{i}.vals];
+  all_markers_struct.markers = [all_markers_struct.markers; markers_sess{i}.times];
+  all_markers_struct.markerinfo.vals = [all_markers_struct.markerinfo.vals; markers_sess{i}.vals];
 end
 end
