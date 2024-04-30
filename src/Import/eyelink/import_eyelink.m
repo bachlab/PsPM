@@ -262,8 +262,8 @@ sblink_indices = find(strncmp(messages, 'SBLINK', numel('SBLINK')));
 eblink_indices = find(strncmp(messages, 'EBLINK', numel('EBLINK')));
 ssacc_indices = find(strncmp(messages, 'SSACC', numel('SSACC')));
 esacc_indices = find(strncmp(messages, 'ESACC', numel('ESACC')));
-% according to information from Yanfang, MSG refers to ethernet input using
-% python eyelink library, and INPUT to analog (?) input
+% MSG refers to ethernet input using python eyelink library, and INPUT to 
+% parallel/serial port input
 msg_indices = strncmp(messages, 'MSG', numel('MSG')) | ...
     strncmp(messages, 'INPUT', numel('INPUT'));
 for name = {'RECCFG', 'ELCLCFG', 'GAZE_COORDS', 'THRESHOLDS', 'ELCL_', 'PUPIL_DATA_TYPE', '!MODE'}
