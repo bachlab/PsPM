@@ -136,14 +136,15 @@ else
     last_time = end_time;
   end
 
-  % units (they should be for all channels the same)
+  % units (they should be the same for all sessions)
   units = data{1}.units;
 
   % samplerate
   sampleRate = sr;
 
-  % markers
-  markers = (all_markers.markers-data{1}.raw(1,1))/sampleRate;
+  % markers (time stamps are in ms; convert to seconds)
+  markers = (all_markers.markers-data{1}.raw(1,1))/1000;
+
   % markerinfo
   markerinfo = all_markers.markerinfo;
 
