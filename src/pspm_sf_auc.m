@@ -13,6 +13,12 @@ function varargout = pspm_sf_auc(model, options)
 %   Bach DR, Friston KJ, Dolan RJ (2010). Analytic measures for the
 %   quantification of arousal from spontanaeous skin conductance
 %   fluctuations. International Journal of Psychophysiology, 76, 52-55.
+% 
+% ● References
+%   [1] Bach DR, Friston KJ, Dolan RJ (2010). Analytic measures for the
+%       quantification of arousal from spontanaeous skin conductance
+%       fluctuations. International Journal of Psychophysiology, 76, 52-55.
+% 
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

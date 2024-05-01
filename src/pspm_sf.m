@@ -52,15 +52,21 @@ function varargout = pspm_sf(model, options)
 %   │                   display intermediate windows.
 %   └──.missingthresh:  [numeric] [default: 2] [unit: second]
 %                       threshold value for controlling missing epochs.
+% 
 % ● References
-%   1.[DCM for SF]
-%     Bach DR, Daunizeau J, Kuelzow N, Friston KJ, Dolan RJ (2010). Dynamic
-%     causal modelling of spontaneous fluctuations in skin conductance.
-%     Psychophysiology, 48, 252-257.
-%   2.[AUC measure]
-%     Bach DR, Friston KJ, Dolan RJ (2010). Analytic measures for the
-%     quantification of arousal from spontanaeous skin conductance
-%     fluctuations. International Journal of Psychophysiology, 76, 52-55.
+%   [1] DCM for SF:
+%       Bach DR, Daunizeau J, Kuelzow N, Friston KJ, Dolan RJ (2010). Dynamic
+%       causal modelling of spontaneous fluctuations in skin conductance.
+%       Psychophysiology, 48, 252-257.
+%   [2] MP approximation:
+%       Bach DR, Staib M (2015). A matching pursuit algorithm for inferring 
+%       tonic sympathetic arousal from spontaneous skin conductance 
+%       fluctuations. Psychophysiology, 52, 1106-12.
+%   [3] AUC for SF: 
+%       Bach DR, Friston KJ, Dolan RJ (2010). Analytic measures for the
+%       quantification of arousal from spontanaeous skin conductance
+%       fluctuations. International Journal of Psychophysiology, 76, 52-55.
+% 
 % ● Developer's Note
 %   the output also contains a field .time that contains the inversion time
 %   in ms (for DCM and MP)

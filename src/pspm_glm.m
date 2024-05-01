@@ -94,6 +94,78 @@ function glm = pspm_glm(model, options)
 %                 .stats_exclude but not used further.
 % ● Outputs
 %           glm:  a structure 'glm' which is also written to file
+% ● References
+% 
+%   Skin conductance response analysis
+%   ---------------------------------- 
+%   [1] GLM for SCR:
+%       Bach DR, Flandin G, Friston KJ, Dolan RJ (2009). Time-series analysis for
+%       rapid event-related skin conductance responses. Journal of Neuroscience
+%       Methods, 184, 224-234.
+%   [2] Canonical skin conductance response function, and GLM assumptions:
+%       Bach DR, Flandin G, Friston KJ, Dolan RJ (2010). Modelling event-related
+%       skin conductance responses. International Journal of Psychophysiology,
+%       75, 349-356.
+%   [3] Validating GLM assumptions with intraneural recordings:
+%       Gerster S, Namer B, Elam M, Bach DR (2018). Testing a linear time 
+%       invariant model for skin conductance responses by intraneural 
+%       recording and stimulation. Psychophysiology, 55, e12986.
+%   [4] Fine-tuning of SCR CLM:
+%       Bach DR, Friston KJ, Dolan RJ (2013). An improved algorithm for
+%       model-based analysis of evoked skin conductance responses. Biological
+%       Psychology, 94, 490-497.
+%   [5] SCR GLM validation and comparison with Ledalab:
+%       Bach DR (2014).  A head-to-head comparison of SCRalyze and Ledalab, two
+%       model-based methods for skin conductance analysis. Biological Psychology,
+%       103, 63-88.
+%  
+%   Pupil size analysis
+%   -------------------
+%   [6] GLM for fear-conditioned pupil dilation:
+%       Korn CK, Staib M, Tzovara A, Castegnetti G, Bach DR (2017). 
+%       A pupil size response model to assess fear learning. 
+%       Psychophysiology, 54, 330-343.
+%   
+%   Heart rate/period analysis
+%   --------------------------
+%   [7] GLM for evoked heart period responses:
+%       Paulus PC, Castegnetti G, & Bach DR (2016). Modeling event-related 
+%       heart period responses. Psychophysiology, 53, 837-846. 
+%   [8] GLM for fear-conditioned bradycardia:
+%       Castegnetti G, Tzovara A, Staib M, Paulus PC, Hofer N, & Bach DR 
+%       (2016). Modelling fear-conditioned bradycardia in humans. 
+%       Psychophysiology, 53, 930-939.
+%   
+%   Respiration analysis
+%   --------------------
+%   [9] GLM for evoked respiratory responses:
+%       Bach DR, Gerster S, Tzovara A, Castegnetti G (2016). A linear model 
+%       for event-related respiration responses. Journal of Neuroscience 
+%       Methods, 270, 174-155.
+%  [10] GLM for fear-conditioned respiration amplitude responses
+%       Castegnetti G, Tzovara A, Staib M, Gerster S, Bach DR (2017). 
+%       Assessing fear learning via conditioned respiratory amplitude 
+%       responses. Psychophysiology, 54, 215-223.
+%   
+%   Startle eye-blink analysis
+%   --------------------------
+%  [11] GLM for startle eye-blink responses: 
+%       Khemka S, Tzovara A, Gerster S, Quednow B and Bach DR (2017)
+%       Modeling Startle Eyeblink Electromyogram to Assess
+%       Fear Learning. Psychophysiology
+%
+%   Eye gaze analysis
+%   -----------------
+%  [12] GLM for saccadic scanpath speed
+%       Xia Y, Melinščak F,  Bach DR (2020). Saccadic scanpath length: an 
+%       index for human threat conditioning. Behavior Research Methods, 53, 
+%       1426-1439.
+% 
+% ● History
+%   Introduced in PsPM 3.1
+%   Written in 2008-2016 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy Chao (UCL)
+%
 % ● Developer's Notes
 %   TIMING - multiple condition file(s) or struct variable(s):
 %   The structure is equivalent to SPM2/5/8/12 (www.fil.ion.ucl.ac.uk/spm),
@@ -121,30 +193,6 @@ function glm = pspm_glm(model, options)
 %     names = {'condition a', 'condition b'};
 %     onsets = {[1 2 3], [4 5 6]};
 %     save('testfile', 'names', 'onsets');
-% ● References
-%   [1] GLM for SCR:
-%       Bach DR, Flandin G, Friston KJ, Dolan RJ (2009). Time-series analysis for
-%       rapid event-related skin conductance responses. Journal of Neuroscience
-%       Methods, 184, 224-234.
-%   [2] SCR: Canonical response function, and GLM assumptions:
-%       Bach DR, Flandin G, Friston KJ, Dolan RJ (2010). Modelling event-related
-%       skin conductance responses. International Journal of Psychophysiology,
-%       75, 349-356.
-%   [3] Fine-tuning of SCR CLM:
-%       Bach DR, Friston KJ, Dolan RJ (2013). An improved algorithm for
-%       model-based analysis of evoked skin conductance responses. Biological
-%       Psychology, 94, 490-497.
-%   [4] SCR GLM validation and comparison with Ledalab:
-%       Bach DR (2014).  A head-to-head comparison of SCRalyze and Ledalab, two
-%       model-based methods for skin conductance analysis. Biological Psychology,
-%       103, 63-88.
-%   [5] SEBR GLM: Khemka S, Tzovara A, Gerster S, Quednow B and Bach DR (2017)
-%       Modeling Startle Eyeblink Electromyogram to Assess
-%       Fear Learning. Psychophysiology
-% ● History
-%   Introduced in PsPM 3.1
-%   Written in 2008-2016 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% 1 Initialise
 global settings

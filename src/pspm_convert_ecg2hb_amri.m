@@ -76,11 +76,13 @@ function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 %                     be written to a 'heartbeat' channel to the given PsPM
 %                     file. .data field contains the timestamps of heartbeats
 %                     in seconds.
+% 
 % ● References
 %   [1] Liu, Zhongming, et al. "Statistical feature extraction for artifact
 %       removal from concurrent fMRI-EEG recordings." Neuroimage 59.3 (2012):
 %       2073-2087.
 %   [2] http://www.amri.ninds.nih.gov/software.html
+% 
 % ● History
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
 %   Updated in 2022 by Teddy Chao
