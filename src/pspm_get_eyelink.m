@@ -50,7 +50,6 @@ data = import_eyelink(datafile);
 % expand blink/saccade channels with offset
 % set data channels with blinks/saccades to NaN
 % -------------------------------------------------------------------------
-addpath(pspm_path('backroom'));
 for i = 1:numel(data)-1
   if strcmpi(data{i}.eyesObserved, settings.eye.char.l)
     mask_chans = {'blink_l', 'saccade_l'};
@@ -61,16 +60,13 @@ for i = 1:numel(data)-1
   else
     warning('ID:invalid_input', ['No valid eye marker is detected, please check input channels.']);
   end
-  expand_factor = 0;
 
-  data{i}.channels = blink_saccade_filtering(...
+  data{i}.channels = set_blinks_saccades_to_nan(...
     data{i}.channels, ...
     data{i}.channel_header, ...
-    mask_chans, ...
-    expand_factor * data{i}.sampleRate ...
+    mask_chans ...
     );
 end
-rmpath(pspm_path('backroom'));
 
 % iterate through data and fill up channel list as long as there is no
 % marker channel. if there is any marker channel, the settings accordingly
