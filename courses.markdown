@@ -29,7 +29,7 @@ All course webcasts are hosted on our [opencast e-lecture channel](https://elect
 
 #### **Lecture 1: Theoretical overview (beginner)** 
 
-<iframe allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" src="https://electure.uni-bonn.de/paella/ui/watch.html?id=a256bf0a-3c51-4bcf-bf6f-45b6f1013613" style="border:0px #FFFFFF none;" name="Paella Player" scrolling="no" frameborder="0" marginheight="0px" marginwidth="0px" width="640" height="360"></iframe>
+[![PsPM Lecture 1](https://www.caian.uni-bonn.de/media/pspm-lecture-1.jpg)](https://electure.uni-bonn.de/paella/ui/watch.html?id=a256bf0a-3c51-4bcf-bf6f-45b6f1013613)
 
 
 #### **Lecture 2: Practical overview (beginner)** 
@@ -38,7 +38,7 @@ We are sorry. There is currently no material available for Lecture 2.
 
 #### **Lecture 3: Theoretical overview (advanced)** 
 
-<iframe allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" src="https://electure.uni-bonn.de/paella/ui/watch.html?id=99bbede5-f3a2-4993-8af0-0493f5dc11ab" style="border:0px #FFFFFF none;" name="Paella Player" scrolling="no" frameborder="0" marginheight="0px" marginwidth="0px" width="640" height="360"></iframe>
+[![PsPM Lecture 3](https://www.caian.uni-bonn.de/media/pspm-lecture-3.jpg)](https://electure.uni-bonn.de/paella/ui/watch.html?id=99bbede5-f3a2-4993-8af0-0493f5dc11ab)
 
 
 #### **Lecture 4: Practical overview (advanced)** 
@@ -47,20 +47,20 @@ We are sorry. There is currently no material available for Lecture 4.
 
 #### **Lecture 5: Skin Conductance Responses (SCR)** 
 
-<iframe allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" src="https://electure.uni-bonn.de/paella/ui/watch.html?id=9710ce99-a74f-4073-aa8c-8edd400d1570" style="border:0px #FFFFFF none;" name="Paella Player" scrolling="no" frameborder="0" marginheight="0px" marginwidth="0px" width="640" height="360"></iframe>
+[![PsPM Lecture 5](https://www.caian.uni-bonn.de/media/pspm-lecture-5.jpg)](https://electure.uni-bonn.de/paella/ui/watch.html?id=9710ce99-a74f-4073-aa8c-8edd400d1570)
 
 
 #### **Lecture 6: Pupil and gaze** (Dominik R. Bach)
 
-<iframe allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" src="https://electure.uni-bonn.de/paella/ui/watch.html?id=bd2ed4fb-14ed-4e71-b32e-c3098912ac29" style="border:0px #FFFFFF none;" name="Paella Player" scrolling="no" frameborder="0" marginheight="0px" marginwidth="0px" width="640" height="360"></iframe>
+[![PsPM Lecture 6](https://www.caian.uni-bonn.de/media/pspm-lecture-6.jpg)](https://electure.uni-bonn.de/paella/ui/watch.html?id=bd2ed4fb-14ed-4e71-b32e-c3098912ac29)
 
 
 #### **Lecture 7: Cardiac, respiratory and startle responses** 
 *Lecture 7a:* 
-<iframe allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" src="https://electure.uni-bonn.de/paella/ui/watch.html?id=9bdf9373-fdb8-4b59-8a45-69263e715cc5" style="border:0px #FFFFFF none;" name="Paella Player" scrolling="no" frameborder="0" marginheight="0px" marginwidth="0px" width="640" height="360"></iframe>
+[![PsPM Lecture 7a](https://www.caian.uni-bonn.de/media/pspm-lecture-7a.jpg)](https://electure.uni-bonn.de/paella/ui/watch.html?id=9bdf9373-fdb8-4b59-8a45-69263e715cc5)
 
 *Lecture 7b:* 
-<iframe allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" src="https://electure.uni-bonn.de/paella/ui/watch.html?id=a98b09d2-571f-4b9f-a6d9-f579f3bb8eec" style="border:0px #FFFFFF none;" name="Paella Player" scrolling="no" frameborder="0" marginheight="0px" marginwidth="0px" width="640" height="360"></iframe>     
+[![PsPM Lecture 7b](https://www.caian.uni-bonn.de/media/pspm-lecture-7b.jpg)](https://electure.uni-bonn.de/paella/ui/watch.html?id=a98b09d2-571f-4b9f-a6d9-f579f3bb8eec)     
 
 
 #### **Lecture 8: Measuring fear conditioning with PsPM**
@@ -76,19 +76,19 @@ We are sorry. There is currently no material available for tutorial 1.
 
 
 #### **Tutorial 2: GLM and timing definitions** 
-<iframe allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" src="https://electure.uni-bonn.de/paella/ui/watch.html?id=3790bace-80bc-4c88-93f7-fef4eb17cfd2" style="border:0px #FFFFFF none;" name="Paella Player" scrolling="no" frameborder="0" marginheight="0px" marginwidth="0px" width="640" height="360"></iframe>
+[![PsPM Tutorial 2](https://www.caian.uni-bonn.de/media/pspm-tutorial-2.jpg)](https://electure.uni-bonn.de/paella/ui/watch.html?id=3790bace-80bc-4c88-93f7-fef4eb17cfd2)
 
 
 #### **Tutorial 3: SCR and non-linear models** 
-<iframe allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" src="https://electure.uni-bonn.de/paella/ui/watch.html?id=a310e31a-010b-4ebb-9076-daf15d3bf2f0" style="border:0px #FFFFFF none;" name="Paella Player" scrolling="no" frameborder="0" marginheight="0px" marginwidth="0px" width="640" height="360"></iframe>
+[![PsPM Tutorial 3](https://www.caian.uni-bonn.de/media/pspm-tutorial-3.jpg)](https://electure.uni-bonn.de/paella/ui/watch.html?id=a310e31a-010b-4ebb-9076-daf15d3bf2f0)
 
 
 #### **Tutorial 4: Pupil and gaze analysis** 
-<iframe allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" src="https://electure.uni-bonn.de/paella/ui/watch.html?id=c15a44c7-7e04-4b7b-a0df-fa2e7b565739" style="border:0px #FFFFFF none;" name="Paella Player" scrolling="no" frameborder="0" marginheight="0px" marginwidth="0px" width="640" height="360"></iframe>   
+[![PsPM Tutorial 4](https://www.caian.uni-bonn.de/media/pspm-tutorial-4.jpg)](https://electure.uni-bonn.de/paella/ui/watch.html?id=c15a44c7-7e04-4b7b-a0df-fa2e7b565739)   
 
 
 #### **Tutorial 5: Cardiac, respiratory and SEBR analysis** 
-<iframe allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" src="https://electure.uni-bonn.de/paella/ui/watch.html?id=a98b09d2-571f-4b9f-a6d9-f579f3bb8eec" style="border:0px #FFFFFF none;" name="Paella Player" scrolling="no" frameborder="0" marginheight="0px" marginwidth="0px" width="640" height="360"></iframe>
+[![PsPM Tutorial 5](https://www.caian.uni-bonn.de/media/pspm-tutorial-5.jpg)](https://electure.uni-bonn.de/paella/ui/watch.html?id=a98b09d2-571f-4b9f-a6d9-f579f3bb8eec)
 
 
 #### **Tutorial 6: Workflow automation** 
