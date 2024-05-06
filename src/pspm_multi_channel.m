@@ -1,4 +1,4 @@
-function [sts, outchannel] = pspm_multi_channel(fhandle, channels, varargin)
+function [sts, channel_index] = pspm_multi_channel(fhandle, channels, varargin)
 % ● Description
 %   pspm_multi_channel applies the same pre-processing function to multiple 
 %   channels in the same data file. This works by calling the pre-processing 
@@ -8,16 +8,18 @@ function [sts, outchannel] = pspm_multi_channel(fhandle, channels, varargin)
 %   [sts, channel_index] = pspm_multi_channel(function, channels, argument1, argument2, ..., options) 
 % ● Arguments
 %            fhandle: [char or function handle] Preprocessing function
-%           channels: [char, vector, cell array] Channel specification
-%                     1. Eyetracker channels without lateralisation
+%           channels: [char, vector, cell array] Channel specifications:
+%                     1. 'gaze' will be expanded to {'gaze_x_r', 'gaze_y_r', 
+%                     'gaze_x_l', 'gaze_y_l'}
+%                     2. Eyetracker channels without lateralisation
 %                     specification (_r or _l) will be expanded to include
 %                     both eyes (i.e. 'pupil' will be expanded to 
 %                     {'pupil_r', 'pupil_l'}, which work on the last
 %                     channel of this type.
-%                     2. Any other valid channel identifier of type 'char' 
-%                     will work on all channels of this type in the file.
-%                     3. Any numerical vector or cell array will work on
-%                     the specified channels.
+%                     3. Any other valid channel identifier of type 'char' 
+%                     will be expanded to all channels of this type in the file.
+%                     4. Any numerical vector or cell array will work on
+%                     the specified channels exactly.
 %     argument1, ...: all input arguments for the pre-processing function
 %            options: must always be specified as the last input argument
 % ● Output
@@ -38,11 +40,15 @@ sts = -1;
 outchannel = NaN;
 
 %% 3 Expand channels
-if ischar(channels) && ismember(channels, settings.eyetracker_channels) 
-    [sts, eye] = pspm_find_eye(channels);
-    if sts < 1, return; end
-    if strcmpi(eye, '')
-        channels = {[channels, '_r'], [channels, '_l']};
+if ischar(channels) 
+    if strcmpi(channels, 'gaze')
+        channels = {'gaze_x_r', 'gaze_y_r', 'gaze_x_l', 'gaze_y_l'};
+    elseif ismember(channels, settings.eyetracker_channels) 
+        [sts, eye] = pspm_find_eye(channels);
+        if sts < 1, return; end
+        if strcmpi(eye, '')
+            channels = {[channels, '_r'], [channels, '_l']};
+        end
     end
 end
 
@@ -51,7 +57,7 @@ if ischar(channels)
     fn = varargin{1};
     [sts, infos, data, filestruct] = pspm_load_data(fn, channels);
     if sts < 1, return; end
-    channels = filestruct.posofchannels;
+    channels = num2cell(filestruct.posofchannels);
 elseif isnumeric(channels)
     channels = num2cell(channels);
 elseif ~iscell(channels) 
@@ -63,12 +69,12 @@ end
 options = varargin{end};
 varargin(end) = [];
 for i_channel = 1:numel(channels)
-    options.channel = channels{i};
-    [csts(i), outchannel] = feval(fhandle, varargin{:}, options);
-    if csts(i) == 1
-        channel_index(i) = outchannel;
+    options.channel = channels{i_channel};
+    [csts, outchannel] = feval(fhandle, varargin{:}, options);
+    if csts == 1
+        channel_index(i_channel) = outchannel;
     else
-        channel_index(i) = NaN;
+        channel_index(i_channel) = NaN;
     end
 end
 sts = 1;
