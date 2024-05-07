@@ -1,4 +1,4 @@
-function out = pspm_cfg_run_artefact_rm(job)
+function out = pspm_cfg_run_filtering(job)
 % Reviewed and updated on 18-Dec-2023 by Teddy
 options = struct();
 options = pspm_update_struct(options, job, {'overwrite'});

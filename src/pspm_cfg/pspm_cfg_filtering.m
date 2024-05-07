@@ -1,4 +1,4 @@
-function artefact_rm = pspm_cfg_artefact_rm
+function filtering = pspm_cfg_filtering
 % Updated 26-Feb-2024 by Teddy
 % Initialise
 global settings
@@ -131,13 +131,13 @@ overwrite.labels         = {'No', 'Yes'};
 overwrite.values         = {false, true};
 overwrite.help           = {'Overwrite if a file with the same name has existed?'};
 %% Executable branch
-artefact_rm             = cfg_exbranch;
-artefact_rm.name        = 'Artefact Removal';
-artefact_rm.tag         = 'artefact_rm';
-artefact_rm.val         = {datafile,chan_nr,filtertype,overwrite};
-artefact_rm.prog        = @pspm_cfg_run_artefact_rm;
-artefact_rm.vout        = @pspm_cfg_vout_artefact;
-artefact_rm.help        = {['This module offers a few basic artefact removal functions. ',...
+filtering             = cfg_exbranch;
+filtering.name        = 'Data filtering';
+filtering.tag         = 'filtering';
+filtering.val         = {datafile,chan_nr,filtertype,overwrite};
+filtering.prog        = @pspm_cfg_run_filtering;
+filtering.vout        = @pspm_cfg_vout_artefact;
+filtering.help        = {['This module offers several basic filtering functions. ',...
                            'Currently, a median filter and a butterworth low pass ' ...
                            'filter are implemented. The median filter is useful to ' ...
                            'remove short "spikes" in the data, for example from gradient ' ...
@@ -146,10 +146,10 @@ artefact_rm.help        = {['This module offers a few basic artefact removal fun
                            'filtered away by the filters implemented on-the-fly during ',...
                            'first level modelling.']};
 
-  function [sts, val] =  pspm_cfg_check_artefact_rm_freq(val)
+  function [sts, val] =  pspm_cfg_check_filtering_freq(val)
     sts = [];
     if val < 20
-      sts = 'Cutoff Frequency hast to be at least 20Hz';
+      sts = 'Cutoff Frequency hast to be at least 20 Hz';
     end
     if ~isempty(sts)
       uiwait(msgbox(sts));
