@@ -8,6 +8,9 @@ datafile = job.datafile;
 datafile = datafile{1};
 channelnumber = pspm_cfg_channel_selector('run', job);
 switch filtertype
+  case 'leaky_integrator'
+    tau = job.filtertype.(filtertype).tau;
+    out = pspm_pp(filtertype, datafile, channelnumber, tau, options);
   case 'median'
     n = job.filtertype.(filtertype).nr_time_pt;
     out = pspm_pp(filtertype, datafile, channelnumber, n, options);
