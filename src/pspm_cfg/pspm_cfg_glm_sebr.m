@@ -11,7 +11,7 @@ if isempty(settings), pspm_init; end;
 % set variables
 
 vars = struct();
-vars.modality = 'SEBR';
+vars.modality = 'preprocessed EMG';
 vars.modspec = 'sebr';
 vars.glmref = { ...
         ['Khemka, Tzovara, Gerster, Quednow & Bach (2016) Psychophysiology'] ...
