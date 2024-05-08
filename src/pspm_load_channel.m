@@ -142,9 +142,9 @@ end
 % if channeltype is given, check if channel is of correct type
 if nargin > 2 
     warning('off', 'all');
-    sts = pspm_select_channels({data_struct}, channeltype);
+    chantype_sts = pspm_select_channels({data_struct}, channeltype);
     warning('on', 'all');
-    if sts < 1
+    if chantype_sts < 1
         warning('ID:unexpected_channeltype', ...
             'Channel type ''%s'' was expected. The retrieved channel is of type ''%s''.', ...
             channeltype, data_struct.header.chantype);
