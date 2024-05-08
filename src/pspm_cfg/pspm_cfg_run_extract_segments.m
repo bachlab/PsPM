@@ -1,34 +1,24 @@
 function [out] = pspm_cfg_run_extract_segments(job)
 % Updated on 25-12-2023 by Teddy
 out = {};
-options = struct();
+
 mode = 'auto';
 if isfield(job, 'mode')
   if isfield(job.mode, 'mode_automatic')
-    mode = 'auto';
+    mode = 'model';
     glm_file = job.mode.mode_automatic.glm_file{1};
   elseif isfield(job.mode, 'mode_manual')
-    mode = 'manual';
+    mode = 'file';
     chan = pspm_cfg_channel_selector('run', job.mode.mode_manual);
-    fn = job.mode.mode_manual.datafiles;
-    if isfield(job.mode.mode_manual.conditions, 'condition')
-      conditions = job.mode.mode_manual.conditions.condition;
-      tm = struct();
-      tm.names = cell(numel(conditions),1);
-      tm.onsets = cell(numel(conditions),1);
-      tm.durations = cell(numel(conditions),1);
-      for i = 1:numel(conditions)
-        tm.names{i} = conditions(i).cond_name;
-        tm.onsets{i} = conditions(i).cond_onsets;
-        tm.durations{i} = conditions(i).cond_duration;
-      end
-    elseif isfield(job.mode.mode_manual.conditions, 'condition_files')
-      tm = job.mode.mode_manual.conditions.condition_files;
+    % call common data & design selector
+    [model, options] = pspm_cfg_data_design_selector('run', job.mode.mode_manual);
+    data_fn = model.datafile;
+    timing = model.timing;
+    if isfield(model, 'missing')
+        options.missing = model.missing;
     end
+    options.timeunits = model.timeunits;
   end
-
-  options = pspm_update_struct(options, job.options, {'timeunits'});
-  options.marker_chan = pspm_cfg_channel_selector('run', job.options);
 
   options.length = job.options.segment_length;
   field_name_nan_output = fieldnames(job.options.nan_output);
@@ -52,9 +42,8 @@ if isfield(job, 'mode')
     case 'auto'
       [~, out] = pspm_extract_segments(mode, glm_file, options);
     case 'manual'
-      [~, out] = pspm_extract_segments(mode, fn, chan, tm, options);
+      [~, out] = pspm_extract_segments(mode, data_fn, chan, timing, options);
   end
-  out = {out.outputfile};
 else
   warning('ID:invalid_input', 'No mode specified');
 end
