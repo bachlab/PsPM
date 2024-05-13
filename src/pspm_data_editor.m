@@ -279,6 +279,8 @@ if ~isempty(channel)
   action = 'replace';
   for i=1:numel(channel)
     AddPlot(hObject, channel(i), action);
+    % Update y-axis label based on selected channel
+    ylabel(handles.axData, [handles.data{channel(i)}.header.chantype, ' -- ', handles.data{channel(i)}.header.units]);
     action = 'add';
   end
   set(handles.axData, 'NextPlot', np);
