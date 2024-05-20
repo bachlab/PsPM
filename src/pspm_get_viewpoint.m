@@ -103,7 +103,7 @@ units = data{1}.channel_units;
 screen_size = data{1}.screenSize;
 viewing_dist = data{1}.viewingDistance;
 
-addpath(pspm_path('backroom'));
+addpath(pspm_path('Import', 'eyelink'));
 if strcmpi(eyes_observed, settings.lateral.char.l)
   mask_chans = {'blink_l', 'saccade_l'};
 elseif strcmpi(eyes_observed, settings.lateral.char.r)
@@ -112,7 +112,7 @@ else
   mask_chans = {'blink_l', 'blink_r', 'saccade_l', 'saccade_r'};
 end
 data_concat = set_blinks_saccades_to_nan(data_concat, chan_struct, mask_chans, @(x) strcmp(x(end-1:end), '_l'));
-rmpath(pspm_path('backroom'));
+rmpath(pspm_path('Import', 'eyelink'));
 
 num_import_cells = numel(import);
 for k = 1:num_import_cells
