@@ -5,6 +5,7 @@ function pspm_text(path)
 %   Introduced in PsPM 6.0
 %   Written and maintained in 2022 by Teddy Chao (UCL)
 helptext_import_acq = '';
+helptext_import_acq_python = 'Load acq files directly to PsPM with Python';
 helptext_import_acqmat = '';
 helptext_import_bioread = 'Loads mat files which have been converted using the bioread tool acq2mat. Bioread can be installed using pip (installed by python) or can be downloaded and installed manually from here https://github.com/njvack/bioread. It requires python and the python libraries numpy and scipy.';
 helptext_import_csv = 'Read using comma as a delimiter.';
