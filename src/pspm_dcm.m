@@ -67,7 +67,9 @@ function varargout = pspm_dcm(model, options)
 %   ├────────.rf: Call an external file to provide response function
 %   │             (for use when this is previously estimated by pspm_get_rf)
 %   │ ▶︎ Inversion
-%   ├─────.depth: No of trials to invert at the same time.
+%   ├─────.depth: No of trials to invert at the same time. Estimation will
+%   │             progress trial-by-trial until the last trial of a session. If set to
+%   |             inf, then an entire sessin will be inverted at the same time.
 %   │             Default: 2.
 %   ├─────.sfpre: sf-free window before first event.
 %   │             Default: 2s.
