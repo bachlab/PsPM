@@ -1,5 +1,7 @@
 function [out,datafiles, datatype, import, options] = pspm_cfg_run_import(job)
 % Updated on 08-01-2024 by Teddy
+global settings
+if isempty(settings), pspm_init; end
 datatype = fieldnames(job.datatype);
 datatype = datatype{1};
 datafiles = job.datatype.(datatype).datafile;
@@ -85,4 +87,9 @@ for i = 1:n
 end
 options = struct();
 options = pspm_update_struct(options, job, 'overwrite');
+
+if isfield(job.datatype, 'acq_python')
+  settings.python_path = job.datatype.acq_python.python_path{1};
+end
+
 out = pspm_import(datafiles, datatype, import, options);

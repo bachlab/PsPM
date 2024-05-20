@@ -30,5 +30,5 @@ sourceinfo = [];
 addpath(pspm_path('Import','acq'));
 
 %% load data but suppress output
-[sts, data] = evalc('acqread_python(datafile)');
+[sts, data] = acqread_python(datafile);
 end
