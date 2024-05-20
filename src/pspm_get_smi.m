@@ -119,7 +119,7 @@ if numel(data) > 1
   if ~assert_sessions_are_one_after_another(data); return; end
 end
 [data_concat, markers, mi_values, mi_names] = concat_sessions(data);
-addpath(pspm_path('backroom'));
+addpath(pspm_path('Import','eyelink'));
 chan_struct = data{1}.channel_columns;
 eyes_observed = lower(data{1}.eyesObserved);
 if strcmpi(eyes_observed, settings.lateral.char.l)
@@ -134,7 +134,7 @@ data_concat = set_blinks_saccades_to_nan(...
   chan_struct,...
   mask_chans,...
   @(x) contains(x, 'L '));
-rmpath(pspm_path('backroom'));
+rmpath(pspm_path('Import','eyelink'));
 sampling_rate = data{1}.sampleRate;
 units = data{1}.units;
 raw_columns = data{1}.raw_columns;
