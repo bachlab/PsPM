@@ -50,7 +50,6 @@ data = import_eyelink(datafile);
 % expand blink/saccade channels with offset
 % set data channels with blinks/saccades to NaN
 % -------------------------------------------------------------------------
-addpath(pspm_path('backroom'));
 for i = 1:numel(data)-1
   if strcmpi(data{i}.eyesObserved, settings.eye.char.l)
     mask_chans = {'blink_l', 'saccade_l'};
@@ -61,25 +60,22 @@ for i = 1:numel(data)-1
   else
     warning('ID:invalid_input', ['No valid eye marker is detected, please check input channels.']);
   end
-  expand_factor = 0;
 
-  data{i}.channels = blink_saccade_filtering(...
+  data{i}.channels = set_blinks_saccades_to_nan(...
     data{i}.channels, ...
     data{i}.channel_header, ...
-    mask_chans, ...
-    expand_factor * data{i}.sampleRate ...
+    mask_chans ...
     );
 end
-rmpath(pspm_path('backroom'));
 
 % iterate through data and fill up channel list as long as there is no
 % marker channel. if there is any marker channel, the settings accordingly
-% markerinfos, markers and marker type.
+% markerinfo, markers and marker type.
 % -------------------------------------------------------------------------
 
 % ensure sessions have the same samplerate
-%separate marker_data from real data
-all_markers = data{numel(data)};
+% separate marker_data from real data
+all_markers = data{end};
 data = data(1:numel(data)-1);
 sr = cell2mat(cellfun(@(d) d.sampleRate, data, 'UniformOutput', false));
 eyesObs = cellfun(@(d) d.eyesObserved, data, 'UniformOutput', false);
@@ -92,9 +88,9 @@ if numel(data) > 1 && (any(diff(sr)) || any(~strcmp(eyesObs,eyesObs{1})))
   % samplerate
   sampleRate = data{1}.sampleRate;
   % markers
-  markers = data{1}.markers;
-  % markerinfos
-  markerinfos = data{1}.markerinfos;
+  markers = (data{1}.markers-data{1}.raw(1,1))/sampleRate;
+  % markerinfo
+  markerinfo = data{1}.markerinfo;
   % units
   units = data{1}.units;
 else
@@ -103,10 +99,6 @@ else
   last_time = data{1}.raw(1,1);
 
   channels = [];
-  markers = [];
-
-  mi_value = [];
-  mi_name = {};
 
   n_cols = size(data{1}.channels, 2);
   counter = 1;
@@ -126,25 +118,8 @@ else
     n_diff = round((start_time - last_time)*sr/1000);
     if n_diff > 0
 
-      % channels and markers
+      % channels 
       channels(counter:(counter+n_diff-1),1:n_cols) = NaN(n_diff, n_cols);
-      markers(counter:(counter+n_diff-1), 1) = zeros(n_diff,1);
-
-      % markerinfos
-      mi_value(end + 1 : end + n_diff, 1) = zeros(n_diff,1);
-      mi_name( end + 1 : end + n_diff, 1) = {'0'};
-
-      % find if there are markers in the breaks
-      break_markers_idx = all_markers.times>=last_time & all_markers.times<=start_time;
-      tmp_times = all_markers.times(break_markers_idx);
-      tmp_vals  = all_markers.vals(break_markers_idx);
-      tmp_names = all_markers.names(break_markers_idx);
-
-      % calculate, weher to insert missing markers
-      tmp_marker_idx = round((tmp_times- last_time)*sr/1000)-1 + counter;
-      markers(tmp_marker_idx,1) = 1;
-      mi_value(tmp_marker_idx,1) = tmp_vals;
-      mi_name(tmp_marker_idx,1) = tmp_names;
       counter = counter + n_diff;
     end
 
@@ -152,25 +127,23 @@ else
 
     % channels and markers
     channels(counter:(counter+n_data-1),1:n_cols) = data{c}.channels;
-    markers(counter:(counter+n_data-1),1) = data{c}.markers;
-
-    % markerinfos
-    n_markers = numel(data{c}.markerinfos.value);
-    mi_value(end + 1 : end + n_markers, 1) = data{c}.markerinfos.value;
-    mi_name( end + 1 : end + n_markers, 1) = data{c}.markerinfos.name;
 
     counter = counter + n_data;
     last_time = end_time;
   end
 
-  markerinfos.name = mi_name;
-  markerinfos.value = mi_value;
-
-  % units (they should be for all channels the same)
+  % units (they should be the same for all sessions)
   units = data{1}.units;
 
   % samplerate
   sampleRate = sr;
+
+  % markers (time stamps are in ms; convert to seconds)
+  markers = (all_markers.markers-data{1}.raw(1,1))/1000;
+
+  % markerinfo
+  markerinfo = all_markers.markerinfo;
+
 end
 
 
@@ -204,17 +177,10 @@ for k = 1:numel(import)
   end
 
   if strcmpi(import{k}.type, 'marker')
-    import{k}.marker = 'continuous';
-    import{k}.sr     = sampleRate;
+    import{k}.marker = 'timestamps';
+    import{k}.sr     = 1;
     import{k}.data   = markers;
-    % marker info is read and set (in this instance) but
-    % imported data cannot be read at the moment (in later instances)
-    import{k}.markerinfo = markerinfos;
-
-    % by default use 'all' flank for translation from continuous to events
-    if ~isfield(import{k},'flank')
-      import{k}.flank = 'all';
-    end
+    import{k}.markerinfo = markerinfo;
   else
     % determine channel id from channeltype - eyelink specific
     % thats why channel ids will be ignored!
