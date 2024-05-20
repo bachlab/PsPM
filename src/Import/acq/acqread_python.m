@@ -1,12 +1,23 @@
-function data = pspm_read_acq_file(filename)
-    % Set the Python environment and the filename
+function [sts, data] = acqread_python(filename)
+% ● Description
+%   acqread_python read data from acq files
+% ● Format
+%   [sts, data] = acqread_python(filename)
+% ● Arguments
+%   filename: the ACQ data file to import
+%     import: the import struct of importing settings
+% ● History
+%   Introduced in PsPM 6.1.2
+%   Written in May 2024 by Madni Abdul Wahab (Uni Bonn)
+    
+    %% Set the Python environment and the filename
     py_filename = py.str(filename);
     acq_data = py.bioread.read(py_filename); % Load the data using Bioread
     
     num_channels = length(acq_data.channels); % Determine the number of channels
     data.channels = cell(1, num_channels);
     
-    % Iterate through each channel
+    %% Iterate through each channel
     for idx = 1:num_channels
         channel = acq_data.channels{idx}; 
         data.channels{idx} = struct(); 
@@ -51,4 +62,3 @@ function data = pspm_read_acq_file(filename)
     end
     
     return;
-end
