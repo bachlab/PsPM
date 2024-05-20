@@ -62,7 +62,7 @@ classdef import_eyelink_test < matlab.unittest.TestCase
           sn = sn + 1;
           sample_idx = 1;
           msg_idx = 1;
-          msgtimes = data{sn}.raw(data{sn}.markers, 1);
+          msgtimes = data{sn}.markers;
           this.verifyEqual(data{sn}.sampleRate, to_num(parts{5}));
           this.verifyEqual(lower(data{sn}.eyesObserved), lower(parts{8}));
           eyesObserved = parts{8};
@@ -146,7 +146,7 @@ classdef import_eyelink_test < matlab.unittest.TestCase
           % check if current message and its time is correct
           message = parts(3:end);
           message = message{1};
-          this.verifyEqual(message, data{sn}.markerinfos.name{msg_idx});
+          this.verifyEqual(message, data{sn}.markerinfo.name{msg_idx});
           this.verifyEqual(to_num(parts{2}), msgtimes(msg_idx));
           msg_idx = msg_idx + 1;
         end
