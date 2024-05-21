@@ -15,7 +15,7 @@ newfilename         = cfg_entry;
 newfilename.name    = 'New File Name';
 newfilename.tag     = 'newfilename';
 newfilename.strtype = 's';
-newfilename.num     = [1 1];
+newfilename.num     = [1 inf];
 newfilename.help    = {''};
 
 file         = cfg_branch;

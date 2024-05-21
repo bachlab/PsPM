@@ -40,7 +40,7 @@ end
 %-------------------------------------------------------------------------
 [pth, nfn, ext] = fileparts(newfilename);
 if isempty(ext)
-    ext = 'mat';
+    ext = '.mat';
 end
 if isempty(pth)
     [pth, ~, ~] = fileparts(filename);
