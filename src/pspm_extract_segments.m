@@ -81,10 +81,15 @@ elseif strcmpi(method, 'model')
     end
 else
     timing = varargin{2};
-    options = varargin{3};
+    if nargin > 4
+        options = varargin{3};
+    end
 end
 
 % set options (required for next input checks)
+if ~exist('options', 'var')
+    options = struct();
+end
 options = pspm_options(options, 'extract_segments');
 if options.invalid, return, end
 
