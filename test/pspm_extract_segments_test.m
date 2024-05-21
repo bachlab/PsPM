@@ -145,7 +145,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       % wrong input elements
       this.verifyWarning(@() pspm_extract_segments('file',struct('a',10),0,timing), 'ID:invalid_input');
       this.verifyWarning(@() pspm_extract_segments('file',[1,3],logical(32),timing), 'ID:invalid_input');
-      this.verifyWarning(@() pspm_extract_segments('file',fn,'a',timing), 'ID:invalid_input');
+      this.verifyWarning(@() pspm_extract_segments('file',fn,'a',timing), 'ID:invalid_chantype');
       this.verifyWarning(@() pspm_extract_segments('file',fn,{'a'},timing), 'ID:invalid_input');
       % test invalid auto input
       this.verifyWarning(@() pspm_extract_segments('auto',{1}), 'ID:invalid_input');
