@@ -40,7 +40,7 @@ switch class(channel)
     end
   case 'char'
     % in this case channel is specified as a char
-    if ~any(contains([{settings.channeltypes.type}, 'none', 'wave', 'events'], channel))
+    if ~any(startsWith([{settings.channeltypes.type}, 'none', 'wave', 'events'], channel))
       warning('ID:invalid_chantype', 'Unknown channel type ''%s''.', channel);
       return
     end
@@ -55,7 +55,7 @@ channelunits_list = cellfun(@(x) x.header.units, data, 'uni', false);
 if strcmp(units, 'any')
     units = channelunits_list;
 end
-% To facilitate identification of eyetracker channels we use 'contain'
+% To facilitate identification of eyetracker channels we use 'startsWith'
 % rather than 'strcmpi' - therefore we need to catch cases where channel
 % names are ambiguous (pupil/pupil_missing)
 if ischar(channel) && contains(channel, 'event')
@@ -63,9 +63,9 @@ if ischar(channel) && contains(channel, 'event')
 elseif ischar(channel) && strcmpi(channel, 'wave')
     pos_of_channels = find(~strcmpi(channelunits_list, 'events') & strcmp(channelunits_list, units));
 elseif ischar(channel) && strcmpi(channel, 'pupil')
-    pos_of_channels = find(contains(channeltype_list, 'pupil') & ~contains(channeltype_list, 'pupil_missing') & strcmp(channelunits_list, units));
+    pos_of_channels = find(startsWith(channeltype_list, 'pupil') & ~contains(channeltype_list, 'pupil_missing') & strcmp(channelunits_list, units));
 elseif ischar(channel) && ismember(channel, [settings.eyetracker_channels, 'gaze']) 
-    pos_of_channels = find(contains(channeltype_list, channel) & strcmp(channelunits_list, units));
+    pos_of_channels = find(startsWith(channeltype_list, channel) & strcmp(channelunits_list, units));
 elseif ischar(channel)
     pos_of_channels = find(strcmpi(channeltype_list, channel) & strcmp(channelunits_list, units));
 else 
