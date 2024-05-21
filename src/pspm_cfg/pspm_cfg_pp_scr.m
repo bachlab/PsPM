@@ -214,10 +214,9 @@ function [pp_scr] = pspm_cfg_pp_scr
         scr_pp_options.channel_action = job.chan_action;
         [sts, output] = pspm_scr_pp(scr_pp_datafile, scr_pp_options);
         if sts == 1
-            % out = {output.channel};
-            out = output{1};
+            out = output;
         else
-            out = {-1};
+            out = -1;
         end
     end
 

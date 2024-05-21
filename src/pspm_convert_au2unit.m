@@ -1,4 +1,4 @@
-function [sts, out] = pspm_convert_au2unit(varargin)
+function [sts, outchannel] = pspm_convert_au2unit(varargin)
 % ● Description
 %   pspm_convert_au2unit converts arbitrary unit values to unit values. It
 %   works on a PsPM file and is able to replace a channel or add the data as
@@ -55,6 +55,8 @@ function [sts, out] = pspm_convert_au2unit(varargin)
 %   └.channel_action: ['add'/'replace', default as 'add']
 %                     Defines whether the new channel should be added or the
 %                     previous outputs of this function should be replaced.
+% ● Output
+%      channel_index: index of channel containing the processed data
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Tobias Moser (University of Zurich)
@@ -66,7 +68,7 @@ if isempty(settings)
     pspm_init;
 end
 sts = -1;
-out = struct();
+outchannel = [];
 %% load alternating inputs
 if nargin < 1
     warning('ID:invalid_input', 'No arguments given. Don''t know what to do.');
@@ -160,7 +162,7 @@ switch mode
         if f_sts < 1, return; end
         convert_data = {};
         for i = 1:numel(channel)
-            [sts, channeldata] = pspm_load_channel(alldata, channel{i}, 'pupil');
+        [sts, channeldata, infos, pos_of_channel(i)] = pspm_load_channel(alldata, channel{i}, 'pupil');
             if sts < 1, return; end
             % recursive call to avoid the formula being stated twice in the same function
             [sts, convert_data.data{i}] = pspm_convert_au2unit(channeldata.data, unit, distance, record_method, ...
@@ -169,9 +171,9 @@ switch mode
             convert_data{i}.header = channeldata.header;
             convert_data{i}.header.units = unit;
         end
-        [f_sts, f_info] = pspm_write_channel(fn, convert_data, options.channel_action);
+        [f_sts, f_info] = pspm_write_channel(fn, convert_data, options.channel_action, struct('channel', pos_of_channel));
         if f_sts < 1, return; end
-        out = f_info.channel;
+        outchannel = f_info.channel;
      % convert data
     case 'data'
         convert_data = data;
@@ -182,7 +184,6 @@ switch mode
         convert_data = multiplicator * (distance / reference_distance) * convert_data;
         %% convert data from reference_unit to unit
         [~, convert_data] = pspm_convert_unit(convert_data, reference_unit, unit);
-        out = convert_data;
+        outchannel = convert_data;
 end
 sts = 1;
-return

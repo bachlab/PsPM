@@ -29,7 +29,5 @@ end
 if ~isfield(options,'marker_chan_num')
   options.marker_chan_num = 0; % Default value
 end
-out = pspm_trim(job.datafile, from, to, ref, options);
-if ~iscell(out)
-  out = {out};
-end
+[sts, out] = pspm_trim(job.datafile{1}, from, to, ref, options);
+

@@ -1,10 +1,10 @@
-function varargout = pspm_sf_dcm(model, options)
+function [sts, out] = pspm_sf_dcm(model, options)
 % ● Description
 %   pspm_sf_dcm does dynamic causal modelling for SF of the skin conductance
 %   uses f_SF and g_Id
 %   the input data is assumed to be in mcS, and sampling rate in Hz
 % ● Format
-%   function out = pspm_sf_dcm(model, options)
+%   [sts, dcm] = pspm_sf_dcm(model, options)
 % ● Arguments
 %   ┌──────model
 %   │ ▶︎ Mandatory
@@ -48,13 +48,7 @@ end
 sts = -1;
 tstart = tic;
 out = [];
-switch nargout
-  case 1
-    varargout{1} = out;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = out;
-end
+
 
 %% 2 Check input arguments
 % 2.1 set model ---
@@ -219,11 +213,3 @@ else
   out.warning         = warning_message;
 end
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = out;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = out;
-end
-return

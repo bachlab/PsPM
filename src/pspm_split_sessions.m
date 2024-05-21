@@ -1,4 +1,4 @@
-function varargout = pspm_split_sessions(datafile, options)
+function [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, options)
 % ● Description
 %   pspm_split_sessions splits experimental sessions/blocks, based on
 %   regularly incoming markers, for example volume or slice markers from an
@@ -6,7 +6,7 @@ function varargout = pspm_split_sessions(datafile, options)
 %   terms of markers. The first and the last marker will define the start of
 %   the first session and the end of the last session.
 % ● Format
-%   newdatafile = pspm_split_sessions(datafile, options)
+%   [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, options)
 % ● Arguments
 %            datafile:  a file name
 %   ┌─────────options:
@@ -44,7 +44,7 @@ function varargout = pspm_split_sessions(datafile, options)
 % ● Outputs
 %          newdatafile: cell array of filenames for the individual sessions
 %         newepochfile: cell array of missing epoch filenames for the individual
-%                       sessions (empty if no options.missing not specified)
+%                       sessions (empty if options.missing not specified)
 % ● Developer's notes
 %   epochs have a fixed sampling rate of 10000
 %   REMARK for suffix and prefix:
@@ -94,7 +94,7 @@ elseif options.suffix < 0
   return;
 end
 
-%% 2 Work on all data files
+%% 2 Work on data file
 
 % 2.1 Obtain data
 if options.verbose
@@ -201,8 +201,9 @@ else
     end
     % 2.4.2 Split data
     trimoptions = struct('drop_offset_markers', 1, 'marker_chan_num', options.marker_chan_num);
-    newdata = pspm_trim(struct('data', {indata}, 'infos', ininfos), ...
+    [tsts, newdata] = pspm_trim(struct('data', {indata}, 'infos', ininfos), ...
       prefix{sn}, suffix{sn}, trimpoint(sn, 1:2), trimoptions);
+    if tsts < 1, return; end
     options.overwrite = pspm_overwrite(newdatafile{sn}, options);
     newdata.options = options;
     pspm_load_data(newdatafile{sn}, newdata);
@@ -217,8 +218,9 @@ else
       dummyinfos          = ininfos;
 			trimoptions_missing = trimoptions;
 			trimoptions_missing.marker_chan_num = 2;
-      newmissing = pspm_trim(struct('data', {dummydata}, 'infos', dummyinfos), ...
+      [tsts, newmissing] = pspm_trim(struct('data', {dummydata}, 'infos', dummyinfos), ...
         prefix{sn}, suffix{sn}, trimpoint(sn, 1:2), trimoptions_missing);
+      if tsts < 1, return; end
       epochs = newmissing.data{1}.data;
       epoch_on = 1 + strfind(epochs.', [0 1]); % Return the start points of the excluded interval
       epoch_off = strfind(epochs.', [1 0]); % Return the end points of the excluded interval
@@ -235,16 +237,5 @@ else
     end
   end
 end
+
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = newdatafile;
-  case 2
-    varargout{1} = newdatafile;
-    varargout{2} = newepochfile;
-  case 3
-    varargout{1} = sts;
-    varargout{2} = newdatafile;
-    varargout{3} = newepochfile;
-end
-return
