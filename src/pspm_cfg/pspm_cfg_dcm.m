@@ -1,40 +1,13 @@
 function dcm = pspm_cfg_dcm
-% DCM
-
-% $Id: pspm_cfg_dcm.m 626 2019-02-20 16:14:40Z lciernik $
-% $Rev: 626 $
-
-% Initialise
-global settings
-if isempty(settings), pspm_init; end;
 
 % Datafile
-datafile         = cfg_files;
-datafile.name    = 'Data File';
-datafile.tag     = 'datafile';
-datafile.num     = [1 1];
-datafile.filter  = '.*\.(mat|MAT)$';
-datafile.help    = {['Add the data file containing the SCR data. If you ',...
-                     'have trimmed your data, add the file containing the' ,...
-                     'trimmed data.'],' ',settings.datafilehelp};
+datafile = pspm_cfg_selector_datafile();
 
 % Channel
 chan         = pspm_cfg_channel_selector('SCR');
 
 % Modelfile name
-modelfile         = cfg_entry;
-modelfile.name    = 'Model Filename';
-modelfile.tag     = 'modelfile';
-modelfile.strtype = 's';
-modelfile.help    = {'Specify file name for the resulting model.'};
-
-% Output directory
-outdir         = cfg_files;
-outdir.name    = 'Output Directory';
-outdir.tag     = 'outdir';
-outdir.filter  = 'dir';
-outdir.num     = [1 1];
-outdir.help    = {'Specify directory where the mat file with the resulting model will be written.'};
+[modelfile, outdir] = pspm_cfg_selector_modelfile();
 
 % Parameter estimation
 timingfile         = cfg_files;
