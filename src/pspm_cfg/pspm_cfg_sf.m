@@ -8,8 +8,8 @@ datafile            = pspm_cfg_selector_datafile;
 channel             = pspm_cfg_selector_channel('SCR');
 [modelfile, outdir] = pspm_cfg_selector_outputfile('model');
 filter              = pspm_cfg_selector_filter(settings.dcm{2});
-timeunits           = pspm_cfg_selector_timeunits('sf');
 overwrite           = pspm_cfg_selector_overwrite;
+% (see below for timeunits, requires specification of epochs item first)
 
 %% Specific items
 %% Method
@@ -50,6 +50,8 @@ epochs.name   = 'Epochs';
 epochs.tag    = 'epochs';
 epochs.values = {epochfile, epochentry};
 epochs.help   = {''};
+
+timeunits           = pspm_cfg_selector_timeunits('sf', epochs);
 
 %% Additional options for individual methods (hidden in GUI)
 threshold         = cfg_entry;
