@@ -15,34 +15,19 @@ function [glm] = pspm_cfg_glm(vars)
 % PsPM 3.0
 % (C) 2015 Tobias Moser (University of Zurich)
 
-% $Id: pspm_cfg_glm.m 626 2019-02-20 16:14:40Z lciernik $
-% $Rev: 626 $
-
 % Initialise
 global settings
-if isempty(settings), pspm_init; end
 
-%% Modality independent items
-
-% call the common data & design selector to be used later
-[session_rep, timeunits] = pspm_cfg_data_design_selector('glm', vars);
-
-% Modelfile name
-modelfile         = cfg_entry;
-modelfile.name    = 'Model Filename';
-modelfile.tag     = 'modelfile';
-modelfile.strtype = 's';
-modelfile.help    = {'Specify file name for the resulting model.'};
-
-% Output directory
-outdir         = cfg_files;
-outdir.name    = 'Output Directory';
-outdir.tag     = 'outdir';
-outdir.filter  = 'dir';
-outdir.num     = [1 1];
-outdir.help    = {'Specify directory where the mat file with the resulting model will be written.'};
+%% Standard items
+[modelfile, outdir]      = pspm_cfg_selector_outputfile('model');
+overwrite                = pspm_cfg_selector_overwrite;
+[session_rep, timeunits] = pspm_cfg_selector_data_design('glm', vars);
+chan                     = pspm_cfg_selector_channel(vars.modality);
+modelspec                = strcmpi({settings.glm.modelspec}, vars.modspec);
+filter                   = pspm_cfg_selector_filter(settings.glm(modelspec).filter);
 
 
+%% Specific items
 % Normalize
 norm              = cfg_menu;
 norm.name         = 'Normalize';
@@ -52,9 +37,6 @@ norm.labels       = {'No', 'Yes'};
 norm.values       = {false, true};
 norm.help         = {['Specify if you want to z-normalize the ', vars.modality, ' data for each subject. For within-subjects ' ...
     'designs, this is highly recommended, but for between-subjects designs it needs to be set to "no". ']};
-
-% Channel
-chan              = pspm_cfg_channel_selector(vars.modality);
 
 %settings if Create Stats Exclude = yes
 excl_segment_length         = cfg_entry;
@@ -96,15 +78,6 @@ exclude_missing.help   = {'Option to extract information over missing values in 
                           ' over all trials for each condition, and whether this ratio exceeds',...
                           ' a cutoff value. The information is stored in the GLM structure and',...
                           ' will be used in future releases for excluding vales during extraction and first-level contrasts'};
-
-% Overwrite File
-overwrite         = cfg_menu;
-overwrite.name    = 'Overwrite Existing File';
-overwrite.tag     = 'overwrite';
-overwrite.val     = {false};
-overwrite.labels  = {'No', 'Yes'};
-overwrite.values  = {false, true};
-overwrite.help    = {'Specify whether you want to overwrite existing mat files.'};
 
 
 %% Modality dependent items
@@ -190,134 +163,6 @@ latency.help    = {['Latency is either ''fixed'' or ''free''. If latency is ''fr
     'for each regressor (using a dictionary matching algorithm) and ', ...
     'then inverts the GLM with these latencies. See Khemka et al. 2016 ', ...
     'in the context of SEBR.']};
-
-%% Filter settings
-% try to get default settings for filter
-f = strcmpi({settings.glm.modelspec}, vars.modspec);
-def_filt = settings.glm(f).filter;
-
-% Filter
-disable        = cfg_const;
-disable.name   = 'Disable';
-disable.tag    = 'disable';
-disable.val    = {0};
-disable.help   = {''};
-
-% Low pass
-lpfreq         = cfg_entry;
-lpfreq.name    = 'Cutoff Frequency';
-lpfreq.tag     = 'freq';
-lpfreq.strtype = 'r';
-if isfield(def_filt,'lpfreq')
-    lpfreq.val = {def_filt.lpfreq};
-end
-lpfreq.num     = [1 1];
-lpfreq.help    = {'Specify the low-pass filter cutoff in Hz.'};
-
-lporder         = cfg_entry;
-lporder.name    = 'Filter Order';
-lporder.tag     = 'order';
-lporder.strtype = 'i';
-if isfield(def_filt,'lporder')
-    lporder.val = {def_filt.lporder};
-end
-lporder.num     = [1 1];
-lporder.help    = {'Specify the low-pass filter order.'};
-
-enable_lp        = cfg_branch;
-enable_lp.name   = 'Enable';
-enable_lp.tag    = 'enable';
-enable_lp.val    = {lpfreq, lporder};
-enable_lp.help   = {''};
-
-lowpass        = cfg_choice;
-lowpass.name   = 'Low-Pass Filter';
-lowpass.tag    = 'lowpass';
-lowpass.val    = {enable_lp};
-lowpass.values = {enable_lp, disable};
-lowpass.help   = {''};
-
-% High pass
-hpfreq         = cfg_entry;
-hpfreq.name    = 'Cutoff Frequency';
-hpfreq.tag     = 'freq';
-hpfreq.strtype = 'r';
-if isfield(def_filt,'hpfreq')
-    hpfreq.val = {def_filt.hpfreq};
-end
-hpfreq.num     = [1 1];
-hpfreq.help    = {'Specify the high-pass filter cutoff in Hz.'};
-
-hporder         = cfg_entry;
-hporder.name    = 'Filter Order';
-hporder.tag     = 'order';
-hporder.strtype = 'i';
-if isfield(def_filt,'hporder')
-    hporder.val = {def_filt.hporder};
-end
-hporder.num     = [1 1];
-hporder.help    = {'Specify the high-pass filter order.'};
-
-enable_hp        = cfg_branch;
-enable_hp.name   = 'Enable';
-enable_hp.tag    = 'enable';
-enable_hp.val    = {hpfreq, hporder};
-enable_hp.help   = {''};
-
-highpass        = cfg_choice;
-highpass.name   = 'High-Pass Filter';
-highpass.tag    = 'highpass';
-highpass.val    = {enable_hp};
-highpass.values = {enable_hp, disable};
-highpass.help   = {''};
-
-% Sampling rate
-down         = cfg_entry;
-down.name    = 'New Sampling Rate';
-down.tag     = 'down';
-down.strtype = 'r';
-if isfield(def_filt,'down')
-    down.val = {def_filt.down};
-end
-down.num     = [1 1];
-down.help    = {['Specify the sampling rate in Hz to down sample ', vars.modality, ' data.', ...
-    ' Enter NaN to leave the sampling rate unchanged.']};
-
-% Filter direction
-direction         = cfg_menu;
-direction.name    = 'Filter Direction';
-direction.tag     = 'direction';
-if isfield(def_filt, 'direction')
-    direction.val = {def_filt.direction};
-else
-    direction.val     = {'uni'};
-end;
-direction.labels  = {'Unidirectional', 'Bidirectional'};
-direction.values  = {'uni', 'bi'};
-direction.help    = {['A unidirectional filter is applied twice in the forward direction. ' ...
-    'A �bidirectional� filter is applied once in the forward direction and once in the ' ...
-    'backward direction to correct the temporal shift due to filtering in forward direction.']};
-
-filter_edit        = cfg_branch;
-filter_edit.name   = 'Edit Settings';
-filter_edit.tag    = 'edit';
-filter_edit.val    = {lowpass, highpass, down, direction};
-filter_edit.help   = {'Create your own filter settings (discouraged).'};
-
-filter_def        = cfg_const;
-filter_def.name   = 'Default';
-filter_def.tag    = 'def';
-filter_def.val    = {0};
-filter_def.help   = {['Standard settings for the Butterworth bandpass filter. These are the optimal ' ...
-    'settings for ', vars.modality, ' data.']};
-
-filter        = cfg_choice;
-filter.name   = 'Filter Settings';
-filter.tag    = 'filter';
-filter.val    = {filter_def};
-filter.values = {filter_def, filter_edit};
-filter.help   = {['Specify how you want filter the ',vars.modality,' data.']};
-
 
 %% Executable Branch
 glm       = cfg_exbranch;

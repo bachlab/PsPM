@@ -1,24 +1,16 @@
-function [extract_segments] = pspm_cfg_extract_segments(job)
-% function [extract_segments] = pspm_cfg_extract_segments(job)
+function [extract_segments] = pspm_cfg_extract_segments
+% function [extract_segments] = pspm_cfg_extract_segments
 %
 % Matlabbatch function for pspm_extract_segments
 %__________________________________________________________________________
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
 
-% $Id$
-% $Rev$
-
-% Initialise
-global settings
-if isempty(settings), pspm_init; end;
-
-% call the common data & design selector to be used later
-[session_rep, timeunits] = pspm_cfg_data_design_selector('extract');
-
-
-%% Channel
-channel                 = pspm_cfg_channel_selector('any');
+%% General items
+channel                  = pspm_cfg_selector_channel('any');
+overwrite                = pspm_cfg_selector_overwrite;
+[session_rep, timeunits] = pspm_cfg_selector_data_design('extract');
+[file_name, file_path]   = pspm_cfg_selector_outputfile('output');
 
 %% Manual mode
 mode_manual             = cfg_branch;
@@ -32,8 +24,7 @@ glm_file                = cfg_files;
 glm_file.name           = 'Model file';
 glm_file.tag            = 'glm_file';
 glm_file.num            = [1 1];
-glm_file.help           = {['Choose model file to extract the required information.'],...
-                            ' ',settings.datafilehelp};
+glm_file.help           = {['Choose model file to extract the required information.']};
 
 %% Automatic mode
 mode_automatic          = cfg_branch;
@@ -65,25 +56,10 @@ segment_length.val      = {10};
 segment_length.help     = {['Length of segments in seconds. Default: 10 s.']};
 
 %% Outputfile for nan-percentage
-nan_file                = cfg_entry;
-nan_file.name           = 'File name';
-nan_file.tag            = 'nan_file';
-nan_file.strtype        = 's';
-nan_file.num            = [1 Inf];
-nan_file.help           = {['The name of the file to which the ', ...
-    'NaN output should be written']};
-
-nan_path                = cfg_files;
-nan_path.name           = 'Path to File';
-nan_path.tag            = 'nan_path';
-nan_path.filter         = 'dir';
-nan_path.help           = {['Path where the NaN output file should ', ...
-    'be written.']};
-
 nan_output_file         = cfg_branch;
 nan_output_file.name    = 'File output';
 nan_output_file.tag     = 'nan_output_file';
-nan_output_file.val     = {nan_file, nan_path};
+nan_output_file.val     = {file_name, file_path};
 nan_output_file.help    = {['Write NaN output to file.']};
 
 nan_none                = cfg_const;
@@ -112,36 +88,13 @@ options.tag             = 'options';
 options.val             = {segment_length, nan_output};
 options.help            = {['Change values of optional settings.']};
 
-%% File path
-file_path               = cfg_files;
-file_path.name          = 'File path';
-file_path.tag           = 'file_path';
-file_path.filter        = 'dir';
-file_path.help          = {['Path to file.']};
-
-%% File name
-file_name               = cfg_entry;
-file_name.name          = 'File name';
-file_name.tag           = 'file_name';
-file_name.strtype       = 's';
-file_name.num           = [1 Inf];
-file_name.help          = {['Name of file.']};
 
 %% Output file
 output_file             = cfg_branch;
 output_file.name        = 'Output file';
 output_file.tag         = 'output_file';
-output_file.val         = {file_path, file_name};
+output_file.val         = {file_name, file_path};
 output_file.help        = {['Where to store the extracted segments.']};
-
-%% Overwrite
-overwrite               = cfg_menu;
-overwrite.name          = 'Overwrite existing file';
-overwrite.tag           = 'overwrite';
-overwrite.val           = {false};
-overwrite.labels        = {'No', 'Yes'};
-overwrite.values        = {false, true};
-overwrite.help          = {['Overwrite existing segment files.']};
 
 %% Plot
 plot                    = cfg_menu;

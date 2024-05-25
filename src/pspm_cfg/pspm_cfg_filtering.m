@@ -1,12 +1,10 @@
 function filtering = pspm_cfg_filtering
 % Updated 26-Feb-2024 by Teddy
-% Initialise
-global settings
-if isempty(settings)
-  pspm_init;
-end
-%% Global items
-chan_nr                  = pspm_cfg_channel_selector('any');
+
+%% Standard items
+datafile                 = pspm_cfg_selector_datafile;
+chan_nr                  = pspm_cfg_selector_channel('any');
+FilterButter             = pspm_cfg_selector_filter('none');
 
 %% Leaky integrator
 tau               = cfg_entry;
@@ -34,95 +32,6 @@ FilterMedian.name        = 'Median Filter';
 FilterMedian.tag         = 'median';
 FilterMedian.val         = {nr_time_pt};
 FilterMedian.help        = {''};
-%% Butterworth LP frequency
-FreqLowPassNone          = cfg_const;
-FreqLowPassNone.name     = 'none';
-FreqLowPassNone.tag      = 'freqLP';
-FreqLowPassNone.val      = {'none'};
-FreqLowPassNone.help     = {'No sample rate defined.'};
-FreqLowPassNum           = cfg_entry;
-FreqLowPassNum.name      = 'number';
-FreqLowPassNum.tag       = 'freqLP';
-FreqLowPassNum.strtype   = 'r';
-FreqLowPassNum.num       = [1 1];
-FreqLowPassNum.help      = {'Define the low-pass filter frequency as a number.'};
-FreqLowPass              = cfg_choice;
-FreqLowPass.name         = 'Low-pass filter frequency';
-FreqLowPass.tag          = 'freqLP';
-FreqLowPass.values       = {FreqLowPassNone, FreqLowPassNum};
-FreqLowPass.help         = {'Frequency of the low pass filter. It must be a number or "none" (default value).'};
-%% Butterworth LP order
-OrderLowPass             = cfg_entry;
-OrderLowPass.name        = 'Low-pass filter order';
-OrderLowPass.tag         = 'orderLP';
-OrderLowPass.strtype     = 'r';
-OrderLowPass.val         = {1};
-OrderLowPass.num         = [1 1];
-OrderLowPass.help        = {'Order of the low pass filter. It must be a non-zero integer. The default value is 1.'};
-%% Butterworth HP frequency
-FreqHighPassNone         = cfg_const;
-FreqHighPassNone.name    = 'none';
-FreqHighPassNone.tag     = 'freqHP';
-FreqHighPassNone.val     = {'none'};
-FreqHighPassNone.help    = {'No sample rate defined.'};
-FreqHighPassNum          = cfg_entry;
-FreqHighPassNum.name     = 'number';
-FreqHighPassNum.tag      = 'freqHP';
-FreqHighPassNum.strtype  = 'r';
-FreqHighPassNum.num      = [1 1];
-FreqHighPassNum.help     = {'Define the high-pass filter frequency as a number.'};
-FreqHighPass             = cfg_choice;
-FreqHighPass.name        = 'High-pass filter frequency';
-FreqHighPass.tag         = 'freqHP';
-FreqHighPass.values      = {FreqHighPassNone, FreqHighPassNum};
-FreqHighPass.help        = {'Frequency of the high pass filter. It must be a number or "none" (default value).'};
-%% Butterworth HP order
-OrderHighPass            = cfg_entry;
-OrderHighPass.name       = 'High-pass filter order';
-OrderHighPass.tag        = 'orderHP';
-OrderHighPass.strtype    = 'r';
-OrderHighPass.val        = {1};
-OrderHighPass.num        = [1 1];
-OrderHighPass.help       = {'Order of the high pass filter. It must be a non-zero integer. The default value is 1.'};
-%% Butterworth filter direction
-FiltDirection            = cfg_menu;
-FiltDirection.name       = 'Direction';
-FiltDirection.tag        = 'direction';
-FiltDirection.val        = {'uni'};
-FiltDirection.labels     = {'Uni', 'Bi'};
-FiltDirection.values     = {'uni', 'bi'};
-FiltDirection.help       = {'Direction of the filter. Can be either "uni" or "bi".'};
-%% Downsampling rate
-DownSRNone               = cfg_const;
-DownSRNone.name          = 'none';
-DownSRNone.tag           = 'down';
-DownSRNone.val           = {'none'};
-DownSRNone.help          = {'No sample rate defined.'};
-DownSRNum                = cfg_entry;
-DownSRNum.name           = 'number';
-DownSRNum.tag            = 'down';
-DownSRNum.strtype        = 'r';
-DownSRNum.num            = [1 1];
-DownSRNum.help           = {'Define the post-downsampling sampling rate as a number.'};
-DownSR                   = cfg_choice;
-DownSR.name              = 'Sampling rate after downsampling';
-DownSR.tag               = 'down';
-DownSR.values            = {DownSRNone, DownSRNum};
-DownSR.help              = {'Sample rate in Hz after downsampling. It must be a number or "none" (default value).'};
-%% Butterworth filtering
-FilterButter             = cfg_branch;
-FilterButter.name        = 'Butterworth Filter';
-FilterButter.tag         = 'butter';
-FilterButter.val         = {OrderLowPass,FreqLowPass,OrderHighPass,FreqHighPass,FiltDirection,DownSR};
-FilterButter.help        = {'Butterworth Filter.'};
-
-%% Data file
-datafile                 = cfg_files;
-datafile.name            = 'Data File';
-datafile.tag             = 'datafile';
-datafile.num             = [1 1];
-%datafile.filter         = '\.mat$';
-datafile.help            = {settings.datafilehelp};
 
 filtertype               = cfg_choice;
 filtertype.name          = 'Filter Type';

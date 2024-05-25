@@ -6,19 +6,10 @@ function [FindValidFixa] = pspm_cfg_find_valid_fixations(~)
 %   Written in 2016 by Tobias Moser (University of Zurich)
 %   Updated in 2024 by Teddy
 
-%% Initialise
-global settings
-if isempty(settings), pspm_init; end
-%% Data file
-datafile                = cfg_files;
-datafile.name           = 'Data File';
-datafile.tag            = 'datafile';
-datafile.num            = [1 Inf];
-datafile.help           = {['Specify the PsPM datafile containing the ',...
-                            'gaze recordings in length units.'],' ',...
-                            settings.datafilehelp};
-%% Eyes
-chan                    = pspm_cfg_channel_selector('pupil_both');
+%% Standard items
+datafile         = pspm_cfg_selector_datafile;
+chan             = pspm_cfg_selector_channel('pupil_both');
+ChanAct          = pspm_cfg_selector_channel_action;
 
 %% Visual angle
 box_degree              = cfg_entry;
@@ -145,56 +136,7 @@ missing.help            = {['If enabled an additional channel ', ...
                             'Data points equal to 0 describe epochs of ', ...
                             'valid data. This function may be enabled ', ...
                             'in combination with enabled interpolation.']};
-%% Overwrite
-overwrite               = cfg_menu;
-overwrite.name          = 'Overwrite Existing File';
-overwrite.tag           = 'overwrite';
-overwrite.labels        = {'No', 'Yes'};
-overwrite.values        = {0, 1};
-overwrite.val           = {1};
-overwrite.help          = {['Specify whether you want to overwrite ', ...
-                            'existing mat files.']};
-%% File path
-file_path               = cfg_files;
-file_path.name          = 'File path';
-file_path.tag           = 'file_path';
-file_path.filter        = 'dir';
-file_path.help          = {'Path to new file.'};
-%% File name
-file_name               = cfg_entry;
-file_name.name          = 'File name';
-file_name.tag           = 'file_name';
-file_name.strtype       = 's';
-file_name.num           = [1 Inf];
-file_name.help          = {'Name of new file.'};
-%% Create new file
-new_file                = cfg_branch;
-new_file.name           = 'Create new file';
-new_file.tag            = 'new_file';
-new_file.val            = {file_path, file_name};
-new_file.help           = {['Write data into given file. The original ',...
-                            'data will be copied to the given file ',...
-                            'and the new data channels will, according ', ...
-                            'to the channel output, either be added ',...
-                            'or replace the original channels.']};
-%% File output
-file_output             = cfg_choice;
-file_output.name        = 'File output';
-file_output.tag         = 'file_output';
-file_output.values      = {overwrite, new_file};
-file_output.val         = {overwrite};
-file_output.help        = {['Write data to a new file or overwrite ',...
-                            'original data file.']};
-%% Channel action
-ChanAct                 = cfg_menu;
-ChanAct.name            = 'Channel action';
-ChanAct.tag             = 'channel_action';
-ChanAct.values          = {'add', 'replace'};
-ChanAct.labels          = {'Add', 'Replace'};
-ChanAct.val             = {'add'};
-ChanAct.help            = {['Choose whether to add the new channels ',...
-                            'or replace a channel previously added by ',...
-                            'this method.']};
+
 %% plot_gaze_coords
 plot_gaze_coords        = cfg_menu;
 plot_gaze_coords.name   = 'Plot gaze coords and fixation point(s)';
@@ -209,7 +151,7 @@ plot_gaze_coords.help   = {['Define whether to plot the gaze coordinates ',...
 output                  = cfg_branch;
 output.name             = 'Output settings';
 output.tag              = 'output_settings';
-output.val              = {file_output, ChanAct, plot_gaze_coords};
+output.val              = {ChanAct, plot_gaze_coords};
 %% Executable branch
 FindValidFixa           = cfg_exbranch;
 FindValidFixa.name      = 'Find valid fixations';

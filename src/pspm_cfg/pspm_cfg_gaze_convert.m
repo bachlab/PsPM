@@ -8,18 +8,10 @@ function [pp_gaze_convert] = pspm_cfg_gaze_convert
 % PsPM 5.1.2
 % Updated 2021 Teddy Chao (WCHN, UCL)
 
-% Initialise
-global settings
-if isempty(settings), pspm_init; end
-
-%% Datafile
-datafile         = cfg_files;
-datafile.name    = 'Data File';
-datafile.tag     = 'datafile';
-datafile.num     = [1 1];
-datafile.help    = {['Specify the PsPM datafile containing the channels ', ...
-    'to be converted.'],' ',settings.datafilehelp};
-
+%% Standard items
+datafile         = pspm_cfg_selector_datafile;
+chan             = pspm_cfg_selector_channel('gaze');
+chan_action      = pspm_cfg_selector_channel_action;
 
 %% width
 width = cfg_entry;
@@ -66,19 +58,6 @@ target.values  = { 'pixel', 'mm', 'cm', 'm', 'inches', 'degree', 'sps'};
 target.labels  = { 'pixel', 'mm', 'cm', 'm', 'inches', 'degree' 'Scan path speed (degree/s)'};
 target.val     = {'mm'};
 target.help    = {'Channel unit of the target channel(s).'};
-
-%% Channel
-chan                = pspm_cfg_channel_selector('gaze');
-
-%% Channel action
-chan_action         = cfg_menu;
-chan_action.name    = 'Channel action';
-chan_action.tag     = 'channel_action';
-chan_action.val     = {'add'};
-chan_action.values  = {'replace', 'add'};
-chan_action.labels  = {'Replace channel', 'Add channel'};
-chan_action.help    = {['Choose whether to ''replace'' the given channel ', ...
-    'or ''add'' the converted data as a new channel.']};
 
 %% Executable branch
 pp_gaze_convert        = cfg_exbranch;

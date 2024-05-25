@@ -1,19 +1,11 @@
 function interpolate_data = pspm_cfg_interpolate
 
-% $Id$
-% $Rev$
-
-% Initialise
-global settings
-if isempty(settings), pspm_init; end;
-
-%% Select file
-datafile         = cfg_files;
-datafile.name    = 'Data File';
-datafile.tag     = 'datafiles';
-datafile.num     = [1 1];
-datafile.help    = {'Select data file.',' ',settings.datafilehelp};
-
+%% Standard items
+datafile          = pspm_cfg_selector_datafile;
+src_chan          = pspm_cfg_selector_channel('any');
+channel_action    = pspm_cfg_selector_channel_action;
+overwrite         = pspm_cfg_selector_overwrite;
+ 
 %% Extrapolate
 extrapolate      = cfg_menu;
 extrapolate.name = 'Extrapolate';
@@ -24,15 +16,6 @@ extrapolate.values = {true, false};
 extrapolate.help   = {['Enable extrapolation when trying to interpolate ', ...
     'NaN values at the edges of the data files.']};
 
-%% Overwrite file
-overwrite         = cfg_menu;
-overwrite.name    = 'Overwrite existing file';
-overwrite.tag     = 'overwrite';
-overwrite.val     = {false};
-overwrite.labels  = {'No', 'Yes'};
-overwrite.values  = {false, true};
-overwrite.help    = {'Choose "yes" if you want to overwrite existing file(s) with the same name.'};
-
 %% File mode
 fm                = cfg_branch;
 fm.name           = 'File mode';
@@ -40,37 +23,12 @@ fm.tag            = 'file';
 fm.help           = {''};
 fm.val            = {overwrite};
 
-%% Interpolate channels
-src_chan          = pspm_cfg_channel_selector('any');
-
-%% New channel
-new_chan          = cfg_const;
-new_chan.name     = 'New channel';
-new_chan.tag      = 'new_chan';
-new_chan.help     = {'Always add as a new channel.'};
-new_chan.val      = {true};
-
-%% Replace channel
-replace_chan      = cfg_const;
-replace_chan.name = 'Replace channel';
-replace_chan.tag  = 'replace_chan';
-replace_chan.help = {'Replace specified channel.'};
-replace_chan.val  = {true};
-
-%% Interpolated data mode
-mode              = cfg_choice;
-mode.name         = 'Mode';
-mode.tag          = 'mode';
-mode.help         = {'Specify what to do with the interpolated data.'};
-mode.val          = {new_chan};
-mode.values       = {new_chan, replace_chan};
-
 %% Channel mode
 cm                = cfg_branch;
 cm.name           = 'Channel mode';
 cm.tag            = 'channel';
 cm.help           = {''};
-cm.val            = {src_chan, mode};
+cm.val            = {src_chan, channel_action};
 
 %% Work mode
 wm                = cfg_choice;

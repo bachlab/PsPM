@@ -1,23 +1,16 @@
-
 function pp_heart_data = pspm_cfg_pp_heart_data
 
 % Updated 27-Mar-2024 by Teddy
 
-% Initialise
-global settings
-if isempty(settings), pspm_init; end
+%% Standard items
+datafile         = pspm_cfg_selector_datafile;
+ecg_chan         = pspm_cfg_selector_channel('ECG');
+hb_chan          = pspm_cfg_selector_channel('heart beat');
+ppg_chan         = pspm_cfg_selector_channel('peripheral pulse oxymetry');
+channel_action   = pspm_cfg_selector_channel_action;
+ppg2hb_heartpy   = pspm_cfg_selector_python('HeartPy');
 
-% Preprocess ECG data
-% Data File
-datafile         = cfg_files;
-datafile.name    = 'Data File';
-datafile.tag     = 'datafile';
-datafile.num     = [1 1];
-%datafile.filter  = '.*\.(mat|MAT)$';
-datafile.help    = {'Specify data file.',' ',settings.datafilehelp};
-
-ecg2hb_chan = pspm_cfg_channel_selector('ECG');
-
+%% Specific items
 ecg2hb_minhr         = cfg_entry;
 ecg2hb_minhr.name    = 'Min Heart Rate';
 ecg2hb_minhr.tag     = 'minhr';
@@ -64,9 +57,7 @@ ecg2hb              = cfg_exbranch;
 ecg2hb.name         = 'Convert ECG to Heart Beat (Pan & Tompkins)';
 ecg2hb.tag          = 'ecg2hb';
 ecg2hb.help         = {'Convert ECG data into Heart beat time stamps using Pan & Tompkins algorithm'};
-ecg2hb.val          = {ecg2hb_chan, ecg2hb_opt};
-
-ecg2hb_amri_chan         = pspm_cfg_channel_selector('ECG');
+ecg2hb.val          = {ecg_chan, ecg2hb_opt};
 
 ecg2hb_amri_signal_to_use         = cfg_menu;
 ecg2hb_amri_signal_to_use.name    = 'Signal to use';
@@ -148,7 +139,7 @@ ecg2hb_amri.help    = {['Convert ECG data into heart beat time stamps using the 
     ' data and applying Teager Energy Operator (TEO)'],...
     ['Reference: Liu, Zhongming, et al. "Statistical feature extraction for artifact removal ',...
     'from concurrent fMRI-EEG recordings." Neuroimage 59.3 (2012): 2073-2087.']};
-ecg2hb_amri.val     = {ecg2hb_amri_chan, ecg2hb_amri_opt};
+ecg2hb_amri.val     = {ecg_chan, ecg2hb_amri_opt};
 
 hb2hp_sr            = cfg_entry;
 hb2hp_sr.name       = 'Sample rate';
@@ -157,8 +148,6 @@ hb2hp_sr.help       = {'Sample rate for the interpolated time series. Default: 1
 hb2hp_sr.num        = [1 1];
 hb2hp_sr.val        = {10};
 hb2hp_sr.strtype    = 'r';
-
-hb2hp_chan          = pspm_cfg_channel_selector('heart beat');
 
 limit_upper         = cfg_entry;
 limit_upper.name    = 'Upper limit';
@@ -185,14 +174,13 @@ limit.help          = {'Define unrealistic values which should be ignored and in
 hb2hp               = cfg_exbranch;
 hb2hp.name          = 'Convert Heart Beat to Heart Period';
 hb2hp.tag           = 'hb2hp';
-hb2hp.val           = {hb2hp_sr, hb2hp_chan, limit};
+hb2hp.val           = {hb2hp_sr, hb_chan, limit};
 hb2hp.help          = {['Convert heart beat time stamps into interpolated ', ...
     'heart period time series. You can use the output of the ECG to ', ...
     'Heart beat conversion, or directly work on heart beat time stamps, ', ...
     'for example obtained by a pulse oxymeter.']};
 
 %% ppg2hb
-ppg2hb_heartpy      = pspm_cfg_python('HeartPy');
 
 ppg2hb_classic      = cfg_const;
 ppg2hb_classic.name = 'Classic';
@@ -208,12 +196,10 @@ ppg2hb_method.values    = {ppg2hb_classic, ppg2hb_heartpy};
 ppg2hb_method.help  = {['Convert the PPG data into heart rate by using the ', ...
                           'selected method.']};
 
-ppg2hb_chan         = pspm_cfg_channel_selector('peripheral pulse oxymetry');
-
 ppg2hb              = cfg_exbranch;
 ppg2hb.name         = 'Convert peripheral pulse oximetry to Heart Beat';
 ppg2hb.tag          = 'ppg2hb';
-ppg2hb.val          = {ppg2hb_chan, ppg2hb_method};
+ppg2hb.val          = {ppg_chan, ppg2hb_method};
 ppg2hb.help         = {['Convert Peripheral pulse oximetry to ', ...
     'Heart Beat events.']};
 
@@ -221,7 +207,7 @@ ecg2hp              = cfg_exbranch;
 ecg2hp.name         = 'Convert ECG to Heart Period';
 ecg2hp.tag          = 'ecg2hp';
 % re-use already defined variables
-ecg2hp.val          = {ecg2hb_chan,ecg2hb_opt,hb2hp_sr, limit};
+ecg2hp.val          = {ecg_chan,ecg2hb_opt,hb2hp_sr, limit};
 ecg2hp.help         = {['Convert ECG data into Heart period time series.']};
 
 pp_type             = cfg_choice;
@@ -237,16 +223,6 @@ pp.values           = {pp_type};
 pp.num              = [1 Inf];
 pp.help             = {['Add different preprocessing steps here. ', ...
     'The converted data will be written into a new channel in the same file.']};
-
-% define channel_action
-% ------------------------------------------------------
-channel_action = cfg_menu;
-channel_action.name = 'Channel action';
-channel_action.tag  = 'channel_action';
-channel_action.values = {'add', 'replace'};
-channel_action.labels = {'Add', 'Replace'};
-channel_action.val = {'replace'};
-channel_action.help = {'Choose whether to add the new channels or replace a channel previously added by this method.'};
 
 % Executable Branch
 pp_heart_data      = cfg_exbranch;

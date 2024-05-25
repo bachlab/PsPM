@@ -1,5 +1,5 @@
-function [find_sounds] = pspm_cfg_find_sounds(job)
-% function [find_sounds] = pspm_cfg_find_sounds(job)
+function [find_sounds] = pspm_cfg_find_sounds
+% function [find_sounds] = pspm_cfg_find_sounds
 %
 % Matlabbatch function specifies the pspm_cfg_find_sounds.
 %
@@ -7,23 +7,11 @@ function [find_sounds] = pspm_cfg_find_sounds(job)
 % PsPM 3.0
 % (C) 2015 Tobias Moser (University of Zurich)
 
-% $Id: pspm_cfg_find_sounds.m 626 2019-02-20 16:14:40Z lciernik $
-% $Rev: 626 $
-
-% Initialise
-global settings
-if isempty(settings), pspm_init; end
-
-%% Select file / datafile
-datafile         = cfg_files;
-datafile.name    = 'Data File';
-datafile.tag     = 'datafile';
-datafile.num     = [1 Inf];
-datafile.help    = {['Specify the PsPM datafile containing the imported ', ...
-    'startle sound data.'],' ',settings.datafilehelp };
-
-%% Channel
-chan         = pspm_cfg_channel_selector('sound');
+%% Standard items
+datafile         = pspm_cfg_selector_datafile;
+chan             = pspm_cfg_selector_channel('sound');
+chan_action      = pspm_cfg_selector_channel_action;
+marker_chan      = pspm_cfg_selector_channel('marker');
 
 %% Threshold
 threshold            = cfg_entry;
@@ -57,18 +45,6 @@ roi.val             = {whole};
 roi.values          = {whole, region};
 roi.help            = {['Region of interest for discovering sounds. ', ...
     'Only sounds between the 2 timestamps will be considered.']};
-
-%% Channel action
-chan_action         = cfg_menu;
-chan_action.name    = 'Channel action';
-chan_action.tag     = 'channel_action';
-chan_action.val     = {'replace'};
-chan_action.values  = {'add', 'replace'};
-chan_action.labels  = {'add', 'replace'};
-chan_action.help    = {['Add will append the new marker channel as ', ...
-    'additional channel to the specified PsPM file. Replace will ', ...
-    'overwrite the last marker channel of the PsPM file ', ...
-    '(be careful with reference markers).']};
 
 %% Create Channel
 new_chan        = cfg_branch;
@@ -127,9 +103,6 @@ new_corrected_chan.values  = {no, yes};
 new_corrected_chan.help    = {['Create new data channel which contains ', ...
     'only marker onsets which could have been assigned to a ', ...
     'marker in the specified marker channel.']};
-
-%% Marker channel
-marker_chan         = pspm_cfg_channel_selector('marker');
 
 %% Max delay
 max_delay        = cfg_entry;

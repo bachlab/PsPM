@@ -57,26 +57,9 @@ end
 model.datafile = datafile;
 model.timing = timing;
 % filter
-if ~isfield(job.data_options.filter,'def')
-  % lowpass
-  if isfield(job.data_options.filter.edit.lowpass,'disable')
-    filter.lpfreq = NaN;
-    filter.lporder = settings.dcm{1,1}.filter.lporder;
-  else
-    filter.lpfreq = job.data_options.filter.edit.lowpass.enable.freq;
-    filter.lporder = job.data_options.filter.edit.lowpass.enable.order;
-  end
-  % highpass
-  if isfield(job.data_options.filter.edit.highpass,'disable')
-    filter.hpfreq = NaN;
-    filter.hporder = settings.dcm{1,1}.filter.hporder;
-  else
-    filter.hpfreq = job.data_options.filter.edit.highpass.enable.freq;
-    filter.hporder = job.data_options.filter.edit.highpass.enable.order;
-  end
-  filter.down = job.data_options.filter.edit.down; % sampling rate
-  filter.direction = job.data_options.filter.edit.direction; % sampling rate
-  model.filter = filter;
+filter = pspm_cfg_selector_filter('run', job.data_options.filter);
+if isstruct(filter)
+    model.filter = filter;
 end
 % normalization, subsession threshold
 model = pspm_update_struct(model, job.data_options, {'norm', 'substhresh'});

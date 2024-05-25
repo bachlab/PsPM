@@ -2,9 +2,11 @@ function import_data = pspm_cfg_import
 
 %% Initialise
 global settings
-if isempty(settings), pspm_init; end
 
-% Get filetype
+%% Standard items
+overwrite = pspm_cfg_selector_overwrite;
+
+%% Get filetype
 fileoptions={settings.import.datatypes.long};
 channeltypesDescription = {settings.channeltypes.description};
 channeltypesData = {settings.channeltypes.data};
@@ -317,16 +319,10 @@ for datatype_i=1:length(fileoptions)
 
 
   % Data File
-  datafile         = cfg_files;
-  datafile.name    = 'Data File(s)';
-  datafile.tag     = 'datafile';
-  datafile.num     = [1 Inf];
+  datafile         = pspm_cfg_selector_datafile(ext);
   if strcmpi(ext, 'any')
     datafile.filter ='.*';
-  else
-    datafile.filter  = ['.*\.(' ext '|' upper(ext) ')$'];
   end
-  datafile.help    = {settings.datafilehelp} ;
 
   if any(strcmpi(settings.import.datatypes(datatype_i).short, 'smi'))
     input_file = cfg_files;
@@ -343,7 +339,6 @@ for datatype_i=1:length(fileoptions)
     datafile.name    = 'Data File(s)';
     datafile.tag     = 'datafile';
     datafile.num     = [1 Inf];
-    datafile.help    = {settings.datafilehelp} ;
     datafile.values  = {input_file};
   end
 
@@ -397,15 +392,6 @@ datatype.name    = 'Data Type';
 datatype.tag     = 'datatype';
 datatype.values  = datatype_item;
 datatype.help    = {''};
-
-%% Overwrite file
-overwrite         = cfg_menu;
-overwrite.name    = 'Overwrite Existing File';
-overwrite.tag     = 'overwrite';
-overwrite.val     = {false};
-overwrite.labels  = {'No', 'Yes'};
-overwrite.values  = {false, true};
-overwrite.help    = {'Overwrite if a file with the same name has existed?'};
 
 %% Executable branch
 import_data      = cfg_exbranch;

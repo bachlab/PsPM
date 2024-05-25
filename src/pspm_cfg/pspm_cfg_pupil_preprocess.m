@@ -4,22 +4,15 @@ function [PupilPP] = pspm_cfg_pupil_preprocess(~)
 % * History
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
 %   Updated in 17-03-2024 by Teddy
-% Initialise
-global settings
-if isempty(settings), pspm_init; end
-%% Data file
-DataFile          = cfg_files;
-DataFile.name     = 'Data File';
-DataFile.tag      = 'datafile';
-DataFile.num      = [1 1];
-DataFile.help     = {'Specify the PsPM datafile containing the pupil ',...
-                    'recordings ', settings.datafilehelp};
-%% Channel
-Chan           = pspm_cfg_channel_selector('pupil');
-Chan.name      = 'Primary channel to preprocess';
 
-%% Channel to combine
-ChanComb           = pspm_cfg_channel_selector('pupil_none');
+%% Standard items
+datafile         = pspm_cfg_selector_datafile;
+Chan             = pspm_cfg_selector_channel('pupil');
+ChanComb         = pspm_cfg_selector_channel('pupil_none');
+channel_action   = pspm_cfg_selector_channel_action;
+
+%% Specific items
+Chan.name      = 'Primary channel to preprocess';
 ChanComb.tag       = 'chan_comb';
 ChanComb.name      = 'Secondary channel to preprocess';
 ChanComb.help      = {ChanComb.help{1}, ' This can be left empty.'};
@@ -41,15 +34,7 @@ ChanCutoff.help   = {['Determine the percentage of missing values ',...
                       'and no combination will be performed. ',...
                       'Otherwise, the channels will be combined, ',...
                       'even if both have more missing values.']};
-% define channel_action
-ChanAct           = cfg_menu;
-ChanAct.name      = 'Channel action';
-ChanAct.tag       = 'channel_action';
-ChanAct.values    = {'add', 'replace'};
-ChanAct.labels    = {'Add', 'Replace'};
-ChanAct.val       = {'add'};
-ChanAct.help      = {'Choose whether to add the corrected channel or ',...
-                     'replace a previously corrected channel.'};
+
 %% Parameters
 % Pupil diameter minimum
 PupilDiameterMin      = cfg_entry;
@@ -313,11 +298,11 @@ PlotData.help           = {'Please choose whether to plot the data.'};
 PupilPP                 = cfg_exbranch;
 PupilPP.name            = 'Pupil preprocessing';
 PupilPP.tag             = 'pupil_preprocess';
-PupilPP.val             = {DataFile, ...
+PupilPP.val             = {datafile, ...
                            Chan, ...
                            ChanComb, ...
                            ChanCutoff, ...
-                           ChanAct, ...
+                           channel_action, ...
                            Set, ...
                            SegRep, ...
                            PlotData ...

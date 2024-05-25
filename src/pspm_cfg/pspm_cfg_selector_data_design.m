@@ -381,7 +381,7 @@ session_rep.num     = [1 Inf];
 session_rep.help    = {'Add the appropriate number of sessions here. These will be concatenated.'};
 
 % Marker Channel
-mrk_chan         = pspm_cfg_channel_selector('marker');
+mrk_chan         = pspm_cfg_selector_channel('marker');
 mrk_chan.help    = {[mrk_chan.help{1}, ' Markers are only used if you have ' ...
     'specified the time units as ''markers''.']};
 

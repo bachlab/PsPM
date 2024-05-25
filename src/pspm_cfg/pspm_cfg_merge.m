@@ -7,30 +7,24 @@ function merge = pspm_cfg_merge
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
 
-% $Id$
-% $Rev$
+%% Standard items
+datafile          = pspm_cfg_selector_datafile;
+overwrite         = pspm_cfg_selector_overwrite;
+marker_chan       = pspm_cfg_selector_channel(2);
 
-% Initialise
-global settings
-if isempty(settings), pspm_init; end;
-
-%% First file
-first_file          = cfg_files;
-first_file.name     = 'First file(s)';
+%% Specific items
+first_file = datafile;
+first_file.name    = 'First file(s)';
 first_file.tag      = 'first_file';
-first_file.num      = [1 1];
 first_file.help     = {['Specify the first of the two files to be ', ...
     'merged. The output file ', ...
-    'will have the name of the first file prepended with an ''m''.'],...
-    ' ',settings.datafilehelp};
+    'will have the name of the first file prepended with an ''m''.']};
 
 %% Second file
-second_file         = cfg_files;
+second_file         = datafile;
 second_file.name    = 'Second file(s)';
 second_file.tag     = 'second_file';
-second_file.num     = [1 1];
-second_file.help    = {['Specify the second of the two files to be merged. '], ...
-    '  ', settings.datafilehelp};
+second_file.help    = {['Specify the second of the two files to be merged. ']};
 
 %% Data files
 datafiles           = cfg_branch;
@@ -49,22 +43,9 @@ reference.val       = {'file'};
 reference.help      = {['Specify whether to align the files with respect ', ...
     'to the first marker or with respect to the file start.']};
 
-%% Overwrite file
-overwrite           = cfg_menu;
-overwrite.name      = 'Overwrite existing file(s)';
-overwrite.tag       = 'overwrite';
-overwrite.val       = {false};
-overwrite.labels    = {'No', 'Yes'};
-overwrite.values    = {false, true};
-overwrite.help      = {'Specify whether existing files should be overwritten (Yes) or not (No). Default: No'};
 
 %% Marker channel
-marker_chan         = cfg_entry;
-marker_chan.name    = 'Marker channel';
-marker_chan.tag     = 'marker_chan';
 marker_chan.val     = {[0 0]};
-marker_chan.num     = [1 2];
-marker_chan.strtype = 'i';
 marker_chan.help    = {['Specify for both files a numerical ', ...
     'channel index, which should be used as marker reference. A 1x2 vector is ', ...
     'expected. If equal to 0, the first marker channel is used. ', ...

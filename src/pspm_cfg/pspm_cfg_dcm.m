@@ -1,14 +1,14 @@
 function dcm = pspm_cfg_dcm
 
-% Datafile
-datafile = pspm_cfg_selector_datafile();
+global settings
 
-% Channel
-chan         = pspm_cfg_channel_selector('SCR');
+%% Standard items
+datafile            = pspm_cfg_selector_datafile;
+chan                = pspm_cfg_selector_channel('SCR');
+[modelfile, outdir] = pspm_cfg_selector_outputfile('model');
+filter              = pspm_cfg_selector_filter(settings.dcm{1,1}.filter);
 
-% Modelfile name
-[modelfile, outdir] = pspm_cfg_selector_modelfile();
-
+%% Specific items
 % Parameter estimation
 timingfile         = cfg_files;
 timingfile.name    = 'Timing File';
@@ -213,123 +213,6 @@ norm.val     = {0};
 norm.values  = {0,1};
 norm.help    = {['Specify if you want to normalize the SCR data for each subject. For within-subjects designs, ' ...
     'this is highly recommended.']};
-
-% Filter
-disable        = cfg_const;
-disable.name   = 'Disable';
-disable.tag    = 'disable';
-disable.val    = {0};
-disable.help   = {''};
-
-% Low pass
-lpfreq         = cfg_entry;
-lpfreq.name    = 'Cutoff Frequency';
-lpfreq.tag     = 'freq';
-lpfreq.strtype = 'r';
-if isfield(settings.dcm{1,1}.filter,'lpfreq')
-    lpfreq.val = {settings.dcm{1,1}.filter.lpfreq};
-end
-lpfreq.num     = [1 1];
-lpfreq.help    = {'Specify the low-pass filter cutoff in Hz.'};
-
-lporder         = cfg_entry;
-lporder.name    = 'Filter Order';
-lporder.tag     = 'order';
-lporder.strtype = 'i';
-if isfield(settings.dcm{1,1}.filter,'lporder')
-    lporder.val = {settings.dcm{1,1}.filter.lporder};
-end
-lporder.num     = [1 1];
-lporder.help    = {'Specify the low-pass filter order.'};
-
-enable_lp        = cfg_branch;
-enable_lp.name   = 'Enable';
-enable_lp.tag    = 'enable';
-enable_lp.val    = {lpfreq, lporder};
-enable_lp.help   = {''};
-
-lowpass        = cfg_choice;
-lowpass.name   = 'Low-Pass Filter';
-lowpass.tag    = 'lowpass';
-lowpass.val    = {enable_lp};
-lowpass.values = {enable_lp, disable};
-lowpass.help   = {''};
-
-% High pass
-hpfreq         = cfg_entry;
-hpfreq.name    = 'Cutoff Frequency';
-hpfreq.tag     = 'freq';
-hpfreq.strtype = 'r';
-if isfield(settings.dcm{1,1}.filter,'hpfreq')
-    hpfreq.val = {settings.dcm{1,1}.filter.hpfreq};
-end
-hpfreq.num     = [1 1];
-hpfreq.help    = {'Specify the high-pass filter cutoff in Hz.'};
-
-hporder         = cfg_entry;
-hporder.name    = 'Filter Order';
-hporder.tag     = 'order';
-hporder.strtype = 'i';
-if isfield(settings.dcm{1,1}.filter,'hporder')
-    hporder.val = {settings.dcm{1,1}.filter.hporder};
-end
-hporder.num     = [1 1];
-hporder.help    = {'Specify the high-pass filter order.'};
-
-enable_hp        = cfg_branch;
-enable_hp.name   = 'Enable';
-enable_hp.tag    = 'enable';
-enable_hp.val    = {hpfreq, hporder};
-enable_hp.help   = {''};
-
-highpass        = cfg_choice;
-highpass.name   = 'High-Pass Filter';
-highpass.tag    = 'highpass';
-highpass.val    = {enable_hp};
-highpass.values = {enable_hp, disable};
-highpass.help   = {''};
-
-% Sampling rate
-down         = cfg_entry;
-down.name    = 'New Sampling Rate';
-down.tag     = 'down';
-down.strtype = 'r';
-if isfield(settings.dcm{1,1}.filter,'down')
-    down.val = {settings.dcm{1,1}.filter.down};
-end
-down.num     = [1 1];
-down.help    = {'Specify the sampling rate in Hz to down sample SCR data. Enter NaN to leave the sampling rate unchanged.'};
-
-% Filter direction
-direction         = cfg_menu;
-direction.name    = 'Filter Direction';
-direction.tag     = 'direction';
-direction.val     = {'bi'};
-direction.labels  = {'Unidirectional', 'Bidirectional'};
-direction.values  = {'uni', 'bi'};
-direction.help    = {['A unidirectional filter is applied twice in the forward direction. ' ...
-    'A ''bidirectional'' filter is applied once in the forward direction and once in the ' ...
-    'backward direction to correct the temporal shift due to filtering in forward direction.']};
-
-filter_edit        = cfg_branch;
-filter_edit.name   = 'Edit Settings';
-filter_edit.tag    = 'edit';
-filter_edit.val    = {lowpass, highpass, down, direction};
-filter_edit.help   = {'Create your own filter (discouraged).'};
-
-filter_def        = cfg_const;
-filter_def.name   = 'Default';
-filter_def.tag    = 'def';
-filter_def.val    = {0};
-filter_def.help   = {['Standard settings for the Butterworth bandpass filter. These are the optimal ' ...
-    'settings from the paper by Staib, Castegnetti & Bach (2015).']};
-
-filter        = cfg_choice;
-filter.name   = 'Filter Settings';
-filter.tag    = 'filter';
-filter.val    = {filter_def};
-filter.values = {filter_def, filter_edit};
-filter.help   = {'Specify how you want filter the SCR data.'};
 
 substhresh          = cfg_entry;
 substhresh.name     = 'Subsession threshold';

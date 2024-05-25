@@ -1,22 +1,14 @@
 function rename = pspm_cfg_rename
 
-% $Id$
-% $Rev$
+%% Standard items
+datafile         = pspm_cfg_selector_datafile;
+newfilename      = pspm_cfg_selector_outputfile('file');
 
+%% Specific items
 %% Data file
-filename         = cfg_files;
-filename.name    = 'File Name';
-filename.tag     = 'filename';
-filename.num     = [1 1];
-filename.filter  = '\.mat$';
+filename         = datafile;
 filename.help    = {'Choose name of original file.'};
-
-newfilename         = cfg_entry;
-newfilename.name    = 'New File Name';
 newfilename.tag     = 'newfilename';
-newfilename.strtype = 's';
-newfilename.num     = [1 1];
-newfilename.help    = {''};
 
 file         = cfg_branch;
 file.name    = 'File';

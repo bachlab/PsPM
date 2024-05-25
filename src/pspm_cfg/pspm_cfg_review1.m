@@ -14,8 +14,7 @@ modelfile.name    = 'Model File';
 modelfile.tag     = 'modelfile';
 modelfile.num     = [1 1];
 modelfile.filter  = '.*\.(mat|MAT)$';
-modelfile.help    = {'Choose model file to review.',...
-                     ' ',settings.datafilehelp};
+modelfile.help    = {'Choose model file to review.'};
 
 %% GLM
 glm         = cfg_menu;
