@@ -7,6 +7,7 @@ datafile            = pspm_cfg_selector_datafile;
 chan                = pspm_cfg_selector_channel('SCR');
 [modelfile, outdir] = pspm_cfg_selector_outputfile('model');
 filter              = pspm_cfg_selector_filter(settings.dcm{1,1}.filter);
+norm                = pspm_cfg_selector_norm;
 
 %% Specific items
 % Parameter estimation
@@ -204,16 +205,6 @@ session_rep.help    = {'Add the appropriate number of sessions here.'};
 
 
 %% Data options
-% Normalization
-norm         = cfg_menu;
-norm.name    = 'Normalization';
-norm.tag     = 'norm';
-norm.labels  = {'No', 'Yes'};
-norm.val     = {0};
-norm.values  = {0,1};
-norm.help    = {['Specify if you want to normalize the SCR data for each subject. For within-subjects designs, ' ...
-    'this is highly recommended.']};
-
 substhresh          = cfg_entry;
 substhresh.name     = 'Subsession threshold';
 substhresh.tag      = 'substhresh';

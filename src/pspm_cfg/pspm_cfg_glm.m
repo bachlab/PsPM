@@ -25,18 +25,10 @@ overwrite                = pspm_cfg_selector_overwrite;
 chan                     = pspm_cfg_selector_channel(vars.modality);
 modelspec                = strcmpi({settings.glm.modelspec}, vars.modspec);
 filter                   = pspm_cfg_selector_filter(settings.glm(modelspec).filter);
+norm                     = pspm_cfg_selector_norm;
 
 
 %% Specific items
-% Normalize
-norm              = cfg_menu;
-norm.name         = 'Normalize';
-norm.tag          = 'norm';
-norm.val          = {false};
-norm.labels       = {'No', 'Yes'};
-norm.values       = {false, true};
-norm.help         = {['Specify if you want to z-normalize the ', vars.modality, ' data for each subject. For within-subjects ' ...
-    'designs, this is highly recommended, but for between-subjects designs it needs to be set to "no". ']};
 
 %settings if Create Stats Exclude = yes
 excl_segment_length         = cfg_entry;
