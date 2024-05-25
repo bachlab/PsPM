@@ -6,9 +6,9 @@ global settings
 %% Standard items
 datafile            = pspm_cfg_selector_datafile;
 channel             = pspm_cfg_selector_channel('SCR');
-mrk_chan            = pspm_cfg_selector_channel('Marker');
 [modelfile, outdir] = pspm_cfg_selector_outputfile('model');
 filter              = pspm_cfg_selector_filter(settings.dcm{2});
+timeunits           = pspm_cfg_selector_timeunits('sf');
 overwrite           = pspm_cfg_selector_overwrite;
 
 %% Specific items
@@ -50,44 +50,6 @@ epochs.name   = 'Epochs';
 epochs.tag    = 'epochs';
 epochs.values = {epochfile, epochentry};
 epochs.help   = {''};
-
-%% Marker Channel
-mrk_chan.help    = {mrk_chan.help{1} , ['Markers are only used if you have ' ...
-    'specified the time units as "markers".']};
-
-%% Timeunits
-seconds         = cfg_branch;
-seconds.name    = 'Seconds';
-seconds.tag     = 'seconds';
-seconds.val     = {epochs};
-seconds.help    = {''};
-
-samples         = cfg_branch;
-samples.name    = 'Samples';
-samples.tag     = 'samples';
-samples.val     = {epochs};
-samples.help    = {''};
-
-markers         = cfg_branch;
-markers.name    = 'Markers';
-markers.tag     = 'markers';
-markers.val     = {epochs, mrk_chan};
-markers.help    = {''};
-
-whole         = cfg_const;
-whole.name    = 'Whole';
-whole.tag     = 'whole';
-whole.val     = {'whole'};
-whole.help    = {''};
-
-timeunits         = cfg_choice;
-timeunits.name    = 'Time Units';
-timeunits.tag     = 'timeunits';
-timeunits.values  = {seconds, samples, markers, whole};
-timeunits.help    = {['Indicate the time units on which the specification of the conditions will be based. ' ...
-    'Time units can be specified in "seconds", number of "markers", or number of data "samples". Time units ' ...
-    'refer to the beginning of the data file and not to the beginning of the original recordings e.g. if ' ...
-    'data were trimmed.']};
 
 %% Additional options for individual methods (hidden in GUI)
 threshold         = cfg_entry;

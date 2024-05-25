@@ -1,10 +1,10 @@
-function [out1, out2] = pspm_cfg_data_design_selector(modeltype, varargin)
+function [out1, out2] = pspm_cfg_selector_data_design(modeltype, varargin)
 % pspm_cfg_data_design handles data and design specification for
 % statistical models and data extraction. 
 % pspm_cfg_data_design(modeltype)
 % modeltype: 'glm', 'dcm', 'extract'
 % varargin: further specification passed by glm
-% [session_rep, timeunits] = pspm_cfg_data_design_selector(modeltype, varargin)
+% session_rep = pspm_cfg_data_design_selector(modeltype, varargin)
 % [model, options] = pspm_cfg_data_design_selector('run', varargin)
 
 % run mode ----------------------------------------------------------------
@@ -385,33 +385,6 @@ mrk_chan         = pspm_cfg_selector_channel('marker');
 mrk_chan.help    = {[mrk_chan.help{1}, ' Markers are only used if you have ' ...
     'specified the time units as ''markers''.']};
 
-% Timeunits
-seconds         = cfg_const;
-seconds.name    = 'Seconds';
-seconds.tag     = 'seconds';
-seconds.val     = {'seconds'};
-seconds.help    = {''};
-
-samples         = cfg_const;
-samples.name    = 'Samples';
-samples.tag     = 'samples';
-samples.val     = {'samples'};
-samples.help    = {''};
-
-markers         = cfg_branch;
-markers.name    = 'Markers';
-markers.tag     = 'markers';
-markers.val     = {mrk_chan};
-markers.help    = {''};
-
-timeunits         = cfg_choice;
-timeunits.name    = 'Time Units';
-timeunits.tag     = 'timeunits';
-timeunits.values = {seconds, samples, markers};
-timeunits.help    = {['Indicate the time units on which the specification of the conditions ' ...
-    'will be based. Time units can be specified in ''seconds'', number of ''markers'', or number ' ...
-    'of data ''samples''.']};
-
 out1 = session_rep;
-out2 = timeunits;
+out2 = [];
 

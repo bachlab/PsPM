@@ -9,7 +9,8 @@ function [extract_segments] = pspm_cfg_extract_segments
 %% General items
 channel                  = pspm_cfg_selector_channel('any');
 overwrite                = pspm_cfg_selector_overwrite;
-[session_rep, timeunits] = pspm_cfg_selector_data_design('extract');
+session_rep              = pspm_cfg_selector_data_design('extract');
+timeunits                = pspm_cfg_selector_timeunits;
 [file_name, file_path]   = pspm_cfg_selector_outputfile('output');
 
 %% Manual mode

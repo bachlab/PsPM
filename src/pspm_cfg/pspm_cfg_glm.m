@@ -21,7 +21,8 @@ global settings
 %% Standard items
 [modelfile, outdir]      = pspm_cfg_selector_outputfile('model');
 overwrite                = pspm_cfg_selector_overwrite;
-[session_rep, timeunits] = pspm_cfg_selector_data_design('glm', vars);
+session_rep              = pspm_cfg_selector_data_design('glm', vars);
+timeunits                = pspm_cfg_selector_timeunits;
 chan                     = pspm_cfg_selector_channel(vars.modality);
 modelspec                = strcmpi({settings.glm.modelspec}, vars.modspec);
 filter                   = pspm_cfg_selector_filter(settings.glm(modelspec).filter);
