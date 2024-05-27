@@ -41,7 +41,7 @@ end
 
 % initialise error flags --
 vflag = zeros(numel(data), 1); % records data structure, valid if 0
-wflag = zeros(numel(data), 1); % records whether data is out of range, valid if 0
+wflag = zeros(numel(data), 1);
 nflag = zeros(numel(data), 1);
 
 % loop through channels
@@ -77,7 +77,7 @@ for k = 1:numel(data)
                 data{k}.data = zeros(1,0);
             elseif ~isvector(data{k}.data)
                 vflag(k) = 1;
-            elseif size(data{k}.data, 1) < size(data{k}.data, 2) 
+            elseif size(data{k}.data, 1) < size(data{k}.data, 2)
                 data{k}.data = data{k}.data(:);
                 warning('ID:invalid_data_structure', ...
                     'Channel %i seems to have the wrong orientation. Trying to transpose...', k);
@@ -86,6 +86,17 @@ for k = 1:numel(data)
                 if strcmpi(data{k}.header.units, 'events')
                     if (any(data{k}.data > infos.duration) || any(data{k}.data < 0))
                         wflag(k) = 1;
+                    end
+                    if isfield(data{k}, 'markerinfo')
+                        if ~isfield(data{k}.markerinfo, 'name') || ...
+                                ~isfield(data{k}.markerinfo, 'value') || ...
+                                numel(data{k}.markerinfo.name) ~= numel(data{k}.data) || ...
+                                numel(data{k}.markerinfo.value) ~= numel(data{k}.data) || ...
+                                ~iscell(data{k}.markerinfo.name) || ...
+                                ~isvector(data{k}.markerinfo.value)
+                            warning('ID:invalid_data_structure', 'Invalid markerinfo structure.')
+                            return
+                        end
                     end
                 else
                     if (length(data{k}.data) < infos.duration * data{k}.header.sr - 3 ||...
@@ -105,7 +116,7 @@ if any(vflag)
 end
 if any(wflag)
     errmsg = [sprintf(['The data in channel %01.0f is out of ',...
-        'the range [0, infos.duration]'], find(wflag,1))];
+        'the range [0, infos.duration]'], k)];
     warning('ID:invalid_data_structure', '%s', errmsg);
     return
 end

@@ -258,7 +258,10 @@ if strcmpi(modeltype, 'glm')
             iscell(model.nuisance) && (sum(cellfun(@(f) isempty(f), model.nuisance)) == numel(model.nuisance))
             warning('ID:invalid_input', 'Event onsets and nuisance file are not specified. At least one of the two must be specified.'); return;
         end
-     else  % model.timing is defined -> check timing definition
+        % model.timing is defined -> check timing definition, unless
+        % timeunits are 'markervalues' - these cannot be checked upfront
+        % because they require loading the data
+    elseif ~strcmpi(model.timeunits, 'markervalues')  
         for iFile = 1:nFile
             sts = pspm_get_timing('onsets', model.timing{iFile}, model.timeunits);
             if sts < 1, return; end
