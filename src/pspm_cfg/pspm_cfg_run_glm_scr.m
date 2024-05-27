@@ -23,7 +23,7 @@ elseif isfield(job.bf,'fir')
 end
 model.modality = modality;
 model.modelspec = modelspec;
-out = pspm_glm(model, options);
+[sts, out] = pspm_glm(model, options);
 if exist('out', 'var') && isfield(out, 'modelfile')
   if ~iscell(out.modelfile)
     out.modelfile ={out.modelfile};
