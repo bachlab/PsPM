@@ -1,4 +1,4 @@
-function varargout = pspm_version(varargin)
+function v = pspm_version(varargin)
 % ● Description
 %   pspm_version returns the current pspm version and checks if there is an
 %   update available.
@@ -6,8 +6,7 @@ function varargout = pspm_version(varargin)
 %   The term 'version' is a reserved keyword and should not be used
 %   in matlab without an according prefix, such as pspm_version etc.
 % ● Format
-%   [sts, v] = pspm_version()
-%   [sts, v] = pspm_version(action)
+%   v = pspm_version()
 % ● Arguments
 %   action: define an additional action. Possible actions are 'check' that
 %           checks if there is a new pspm version available.
@@ -17,19 +16,12 @@ function varargout = pspm_version(varargin)
 
 %% 0 start
 % do not include pspm_init, because pspm_version is called by pspm_init!!!
-sts = -1;
 fid = fopen('pspm_msg.txt');
 msg = textscan(fid, '%s', 'Delimiter', '$');
 tk =regexp(msg{1},'^Version ([0-9A-Za-z\.]*) .*', 'tokens');
 v_idx = find(~cellfun('isempty', tk), 1, 'first');
 v = tk{v_idx}{1}{1};
-switch nargout
-  case 1
-    varargout = v;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = v;
-end
+
 
 %% 1 check if there is an input action given
 if nargin > 0
@@ -38,7 +30,7 @@ if nargin > 0
       try
         str = webread('https://bachlab.github.io/PsPM/');
         begidx = strfind(str, 'Current version');
-        endidx = begidx + strfind(str(begidx : end), sprintf('\n'));
+        endidx = begidx + strfind(str(begidx : end), newline);
         endidx = endidx(1);
         tk = regexpi(str(begidx : endidx), '(\d+\.\d+\.\d+)', 'tokens');
         % use first found version
@@ -72,15 +64,3 @@ if nargin > 0
       end
   end
 end
-
-%% 3 Sort output
-sts = 1;
-version_of_pspm = v;
-switch nargout
-  case 1
-    varargout = version_of_pspm;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = version_of_pspm;
-end
-return

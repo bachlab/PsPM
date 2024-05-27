@@ -7,7 +7,8 @@ function [sts, outdata] = pspm_interpolate(indata, varargin)
 %   writes a new file if the input is a file name. 
 % ● Format
 %   [sts, outdata] = pspm_interpolate(numeric_array, options)
-%   [sts, outdata] = pspm_interpolate(filename, channel, options)
+%   [sts, channel_index] = pspm_interpolate(filename, channel, options)
+%   [sts, newfile] = pspm_interpolate(filename, channel, options)
 % ● Arguments
 %          indata:  [char/numeric] contains the data to be interpolated
 %          channel: a single channel identifier accepted by pspm_load_channel
@@ -32,12 +33,9 @@ function [sts, outdata] = pspm_interpolate(indata, varargin)
 %                   [optional; accept: 'add', 'replace'; default: 'add']
 %                   Only used if 'channel' is not 'all'.
 % ● Output
-%             sts:  Returns the status of the function
-%                   -1: function did not work properly
-%                    1: the function went through properly
-%         outdata:  Has the same format as indata but contains the interpolated
-%                   data (or the filename(s) where the interpolated data can be
-%                   found).
+%         outdata:  interpolated numeric array.
+%   channel_index: index of new channel if no new file is created
+%         newfile: name of new file if channel == 'all'
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2015 by Tobias Moser (University of Zurich)
@@ -49,7 +47,7 @@ global settings
 if isempty(settings)
   pspm_init;
 end
-outdata = {}; % will return a cell of the same size as the indata
+outdata = []; 
 sts = -1;
 
 % 1.1 check input arguments
@@ -213,7 +211,7 @@ elseif method == 3
         struct('channel', pos_of_channel, ...
                'msg', msg));
     if sts == 1
-        outdata = indata;
+        outdata = infos.channel;
     end
 end
 

@@ -1,4 +1,4 @@
-function [sts, output] = pspm_emg_pp(fn, options)
+function [sts, outchannel] = pspm_emg_pp(fn, options)
 % ● Description
 %   pspm_emg_pp reduces noise in emg data in 3 steps. Following from the
 %   literature[1] it does the following steps:
@@ -13,7 +13,7 @@ function [sts, output] = pspm_emg_pp(fn, options)
 %   it will either replace the existing channel or add it as new channel to
 %   the provided file.
 % ● Format
-%   [sts, output] = pspm_emg_pp(fn, options)
+%   [sts, channel_index]  = pspm_emg_pp(fn, options)
 % ● Arguments
 %                fn:  [string]
 %                     Path to the PsPM file which contains the EMG data.
@@ -26,6 +26,8 @@ function [sts, output] = pspm_emg_pp(fn, options)
 %   .channel_action:  ['add'/'replace'] Defines whether the new channel should
 %                     be added or the previous outputs of this function should
 %                     be replaced. (Default: 'replace')
+% ● Output
+%      channel_index: index of channel containing the processed data
 % ● References
 %   [1] Khemka S, Tzovara A, Gerster S, Quednow BB, Bach DR (2016).
 %       Modeling Startle Eyeblink Electromyogram to Assess Fear Learning.
@@ -40,7 +42,7 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-output = struct();
+outchannel = [];
 
 % set default values
 % -------------------------------------------------------------------------
@@ -132,6 +134,6 @@ o.msg.prefix = sprintf(...
 [lsts, outinfos] = pspm_write_channel(fn, data, options.channel_action, o);
 if lsts ~= 1, return; end
 
-output.channel = outinfos.channel;
+outchannel = outinfos.channel;
 sts = 1;
-return
+

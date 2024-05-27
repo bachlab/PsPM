@@ -9,9 +9,9 @@ if isempty(settings), pspm_init; end
 
 %% Select file
 datafile         = cfg_files;
-datafile.name    = 'Data File(s)';
+datafile.name    = 'Data File';
 datafile.tag     = 'datafile';
-datafile.num     = [1 Inf];
+datafile.num     = [1 1];
 datafile.help    = {'Select datafile.',' ',settings.datafilehelp};
 
 %% Marker channel number

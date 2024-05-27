@@ -82,47 +82,10 @@ classdef pspm_trim_test < matlab.unittest.TestCase
         trimtest(testCase, testCase.fn, 'num', k, 2);
       end
     end
-    %% Multiple file reference tests
-    function multiple_files(testCase)
-      %with datafile input
-      fn2 = 'trim_test_2.mat';
-      copyfile(testCase.fn,fn2);
-      fncell{1} = testCase.fn;
-      fncell{2} = fn2;
-      [from, to, exp_val{1}, ~, ~] = filetest_3(testCase);
-      newdatafile = pspm_trim(fncell, from, to, 'file');
-      import matlab.unittest.constraints.HasElementCount;
-      testCase.verifyTrue(iscell(newdatafile),...
-        'multiple_files test with datafile input (newdatafile is not a cell array)');
-      [~, act_val{1}.infos, act_val{1}.data] = pspm_load_data(newdatafile{1},0);
-      [~, act_val{2}.infos, act_val{2}.data] = pspm_load_data(newdatafile{2},0);
-      exp_val{1}.infos.trimdate = date;
-      exp_val{2} = exp_val{1};
-      exp_val{1}.infos.trimfile = newdatafile{1};
-      exp_val{2}.infos.trimfile = newdatafile{2};
-      import matlab.unittest.constraints.IsEqualTo;
-      testCase.verifyThat(act_val, IsEqualTo(exp_val), 'multiple_files test with datafile input');
-      delete(newdatafile{1});
-      delete(newdatafile{2});
-      delete(fn2);
-      % with struct input
-      [~, datafile{1}.infos, datafile{1}.data] = pspm_load_data(testCase.fn);
-      datafile{2} = datafile{1};
-      [from, to, exp_val{1}, ~, ~] = filetest_3(testCase);
-      newdatafile = pspm_trim(datafile, from, to, 'file');
-      import matlab.unittest.constraints.HasElementCount;
-      testCase.verifyTrue(iscell(newdatafile), ...
-        'multiple_files test with stuct input (newdatafile is not a cell array)');
-      act_val = newdatafile;
-      exp_val{1}.infos.trimdate = date;
-      exp_val{2} = exp_val{1};
-      import matlab.unittest.constraints.IsEqualTo;
-      testCase.verifyThat(act_val, IsEqualTo(exp_val), 'multiple_files test with stuct input');
-    end
     %% Option tests (marker channel number option)
     function marker_chan_num_option_test(testCase)
       options.marker_chan_num = 3;
-      newdatafile = testCase.verifyWarning(@() ...
+      [sts, newdatafile] = testCase.verifyWarning(@() ...
         pspm_trim(testCase.fn,'none','none','marker', options), ...
         'ID:invalid_option', 'marker_chan_num_option_test test 1');
       delete(newdatafile);
@@ -130,10 +93,10 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       struct.data{5}.data = struct.data{5}.data(2:end);
       save(testCase.fn,'-struct', 'struct');
       options.marker_chan_num = 5;
-      newdatafile = pspm_trim(testCase.fn,'none','none',[2,length(struct.data{2}.data)]);
+      [sts, newdatafile] = pspm_trim(testCase.fn,'none','none',[2,length(struct.data{2}.data)]);
       [~, exp_val.infos, exp_val.data] = pspm_load_data(newdatafile, 0);
       delete(newdatafile);
-      newdatafile = pspm_trim(testCase.fn,'none','none', 'marker', options);
+      [sts, newdatafile] = pspm_trim(testCase.fn,'none','none', 'marker', options);
       [~, act_val.infos, act_val.data] = pspm_load_data(newdatafile, 0);
       delete(newdatafile);
       import matlab.unittest.constraints.IsEqualTo;
@@ -155,9 +118,9 @@ classdef pspm_trim_test < matlab.unittest.TestCase
           reference = num;
       end
       if strcmpi(warningID, 'none')
-        newdatafile=pspm_trim(datafile, from, to, reference);
+        [sts, newdatafile]=pspm_trim(datafile, from, to, reference);
       else
-        newdatafile = testCase.verifyWarning(@()...
+        [sts, newdatafile] = testCase.verifyWarning(@()...
           pspm_trim(datafile, from, to, reference),...
           warningID, [testmsg ' (invalid warning)']);
       end

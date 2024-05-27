@@ -1,10 +1,10 @@
-function varargout = pspm_sf_mp(model, options)
+function [sts, out] = pspm_sf_mp(model, options)
 % ● Description
 %   pspm_sf_mp does the inversion of a DCM for SF of the skin conductance, using
 %   a matching pursuit algorithm, and f_SF for the forward model
 %   the input data is assumed to be in mcS, and sampling rate in Hz
 % ● Format
-%   function out = pspm_sf_mp(scr, sr, options)
+%   [sts, mp] = pspm_sf_mp(model, options)
 % ● Output
 %        out: output
 %         .n: number of responses above threshold
@@ -47,13 +47,6 @@ end
 sts = -1;
 tstart = tic;
 out = [];
-switch nargout
-  case 1
-    varargout{1} = out;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = out;
-end
 
 try model.scr; catch, warning('Input data is not defined.'); return; end
 try model.sr; catch, warning('Sample rate is not defined.'); return; end
@@ -266,13 +259,3 @@ if options.dispwin
   plot(D.D(ind, :)', 'b');
   plot(Yhat, 'r');
 end;
-
-sts = 1;
-switch nargout
-  case 1
-    varargout{1} = out;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = out;
-end
-return
