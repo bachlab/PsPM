@@ -68,7 +68,12 @@ for k = 1:numel(import)
   % acqread function returns the signal without any processing. scale and offset parameters
   % provided an .acq files are meant to apply a linear transformation to each x_i.
   % See https://www.mathworks.com/matlabcentral/fileexchange/16023-acqread
-  import{k}.data = header.dAmplScale(channel) * double(inputdata{channel}) + header.dAmplOffset(channel);
+  temp = header.dAmplScale(channel) * double(inputdata{channel}) + header.dAmplOffset(channel);
+  [r,c]= size(temp);
+  if r == 1 && c > 1
+    temp = transpose(temp);
+  end
+  import{k}.data = temp;
   if strcmpi(settings.channeltypes(import{k}.typeno).data, 'events')
     import{k}.marker = 'continuous';
   end

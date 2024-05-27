@@ -77,6 +77,28 @@ classdef pspm_get_acq_test < pspm_get_superclass
       import matlab.unittest.constraints.RelativeTolerance
       this.verifyThat(orig_data, IsEqualTo(acq_data, 'Within', RelativeTolerance(1e-10)));
     end
+    function get_acq_returns_same_data_as_acqknowledge_exported_mat_python(this)
+      global settings
+      if isempty(settings), pspm_init; end
+      settings.python_path = '/usr/local/bin/python3.11';
+      fpath_acq = 'ImportTestData/acq/impedance_acq.acq';
+      import = {struct( ...
+        'type', 'scr', ...
+        'channel', 1, ...
+        'transfer', 'none', ...
+        'typeno', 1, ...
+        'method', 'python' ...
+        )};
+      [sts, import, sourceinfo] = pspm_get_acq(fpath_acq, import);
+      this.verifyEqual(sts, 1);
+      acq_data = import{1}.data;
+      fpath_mat = 'ImportTestData/acq/impedance_mat.mat';
+      orig_data = load(fpath_mat);
+      orig_data = orig_data.data(:, 1);
+      import matlab.unittest.constraints.IsEqualTo
+      import matlab.unittest.constraints.RelativeTolerance
+      this.verifyThat(orig_data, IsEqualTo(acq_data, 'Within', RelativeTolerance(1e-10)));
+    end
   end
 end
 
